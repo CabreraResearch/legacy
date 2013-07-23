@@ -474,4 +474,14 @@
             return dialogsCount;
         });
 
+    Csw.subStrAfter = Csw.subStrAfter ||
+        Csw.register('subStrAfter', function(src, substr) {
+            /// <summary>
+            /// Returns everything after the LAST occurence of substr
+            /// </summary>
+            /// <param name="src">The source string</param>
+            /// <param name="substr">What to get everything after</param>
+            return src.substr(src.lastIndexOf(substr) + 1);
+        });
+
 } ());

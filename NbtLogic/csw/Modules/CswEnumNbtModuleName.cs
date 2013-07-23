@@ -8,27 +8,26 @@ namespace ChemSW.Nbt
     /// <summary>
     /// Represents an NBT Module
     /// </summary>
-    public sealed class CswEnumNbtModuleName: IEquatable<CswEnumNbtModuleName>, IComparable<CswEnumNbtModuleName>
+    public sealed class CswEnumNbtModuleName : IEquatable<CswEnumNbtModuleName>, IComparable<CswEnumNbtModuleName>
     {
         #region Internals
 
         public static IEnumerable<CswEnumNbtModuleName> All
         {
             get { return _Enums.Select( KeyValuePair => KeyValuePair.Key ).Select( Key => (CswEnumNbtModuleName) Key ); }
-        } 
+        }
 
         private static Dictionary<string, string> _Enums = new Dictionary<string, string>( StringComparer.OrdinalIgnoreCase )
         {
-            {BioSafety                , BioSafety},
             {CofA                     , CofA},
             {C3                       , C3},
-            {CCPro                    , CCPro},
             {CISPro                   , CISPro},
             {Containers               , Containers},
             {Dev                      , Dev},
             {FireCode                 , FireCode},
             {FireDbSync               , FireDbSync},
             {IMCS                     , IMCS},
+            {LOLISync                 , LOLISync },
             {MLM                      , MLM},
             {MultiInventoryGroup      , MultiInventoryGroup},
             {MultiSite                , MultiSite},
@@ -36,8 +35,7 @@ namespace ChemSW.Nbt
             {PCIDSync                 , PCIDSync},
             {RegulatoryLists          , RegulatoryLists},
             {SDS                      , SDS},
-            {SI                       , SI},
-            {STIS                     , STIS}
+            {SI                       , SI}
         };
 
         /// <summary>
@@ -86,14 +84,6 @@ namespace ChemSW.Nbt
         public const string Unknown = "Unknown";
 
         /// <summary>
-        /// BioSafety
-        /// </summary>
-        public const string BioSafety = "BioSafety";
-        /// <summary>
-        /// Control Chart Pro
-        /// </summary> 
-        public const string CCPro = "CCPro";
-        /// <summary>
         /// Chemical Inventory
         /// </summary>
         public const string CISPro = "CISPro";
@@ -117,10 +107,6 @@ namespace ChemSW.Nbt
         /// Site Inspection
         /// </summary>
         public const string SI = "SI";
-        /// <summary>
-        /// Sample Tracking
-        /// </summary>
-        public const string STIS = "STIS";
         /// <summary>
         /// ChemCatCentral
         /// </summary>
@@ -161,6 +147,10 @@ namespace ChemSW.Nbt
         /// Certificate of Analysis
         /// </summary>
         public const string CofA = "C of A";
+        /// <summary>
+        /// Module that syncs Regulatory List data with LOLI.
+        /// </summary>
+        public const string LOLISync = "LOLI Sync";
 
         #endregion
 
