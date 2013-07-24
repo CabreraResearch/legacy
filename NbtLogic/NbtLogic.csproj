@@ -137,7 +137,7 @@
     <Compile Include="csw\Mobile\CswNbtMobileRapidLoader.cs" />
     <Compile Include="csw\Modules\CswNbtModuleRuleLOLISync.cs" />
     <Compile Include="csw\Modules\CswNbtModuleRulePCIDSync.cs" />
-    <Compile Include="csw\Modules\CswNbtModuleRuleCofA.cs" />
+    <Compile Include="csw\Modules\CswNbtModuleRuleManufacturerLotInfo.cs" />
     <Compile Include="csw\Modules\CswNbtModuleRuleFireDbSync.cs" />
     <Compile Include="csw\Modules\CswNbtModuleRuleSDS.cs" />
     <Compile Include="csw\Modules\CswNbtModuleRuleFireCode.cs" />

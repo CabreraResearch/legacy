@@ -425,7 +425,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             bool canAddCofA = false;
             CswNbtMetaDataObjectClass CofADocOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.CofADocumentClass );
-            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.CofA ) )
+            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.ManufacturerLotInfo ) )
             {
                 CswNbtMetaDataNodeType CofANT = CofADocOC.FirstNodeType;
                 canAddCofA = _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Create, CofANT );

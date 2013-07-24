@@ -114,7 +114,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// <param name="ButtonData">Data required for the client to open the file</param>
         public void getCofA( NbtButtonData ButtonData )
         {
-            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.CofA ) )
+            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.ManufacturerLotInfo ) )
             {
                 if( ButtonData.SelectedText.Equals( PropertyName.ViewCofA ) )
                 {

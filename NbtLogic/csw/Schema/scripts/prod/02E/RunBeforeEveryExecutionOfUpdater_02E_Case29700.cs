@@ -1,3 +1,5 @@
+using System.Data;
+using ChemSW.DB;
 using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
@@ -84,6 +86,15 @@ namespace ChemSW.Nbt.Schema
                 {
                     _CswNbtSchemaModTrnsctn.MetaData.DeleteNodeTypeProp( ManufacturerLotNoNTP );
                 }
+            }
+            //Rename "C of A" module to "Manufacturer Lot Info"
+            CswTableUpdate ModulesTableUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "ModulesSelect_29700", "modules" );
+            DataTable ModulesTable = ModulesTableUpdate.getTable( "where name = 'C of A'" );
+            if( ModulesTable.Rows.Count > 0 )
+            {
+                ModulesTable.Rows[0]["name"] = CswEnumNbtModuleName.ManufacturerLotInfo;
+                ModulesTable.Rows[0]["description"] = "Manufacturer Lot Info";
+                ModulesTableUpdate.update( ModulesTable );
             }
         }
 
