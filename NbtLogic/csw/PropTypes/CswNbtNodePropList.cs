@@ -70,6 +70,12 @@ namespace ChemSW.Nbt.PropTypes
                 {
                     Text = SelectedOption.Text;
                 }
+                else
+                {
+                    // When we don't have a SelectedOption, we set Text = Value 
+                    // because having any value is better than no value.
+                    Text = Value;
+                }
             }
         }
 

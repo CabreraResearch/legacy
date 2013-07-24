@@ -27,7 +27,7 @@
                         }
                         if (span) {
                             span.remove();
-                            span = nodeProperty.propDiv.span({ text: cswPrivate.text });
+                            span = nodeProperty.propDiv.span({ text: cswPrivate.value });
                         }
                     }
                 });//nodeProperty.onPropChangeBroadcast()
@@ -42,7 +42,7 @@
                 };
 
                 if (nodeProperty.isReadOnly()) {
-                    var span = nodeProperty.propDiv.span({ text: cswPrivate.text });
+                    var span = nodeProperty.propDiv.span({ text: cswPrivate.value });
                 } else {
 
                     // Create the Store
