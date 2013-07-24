@@ -41,6 +41,8 @@
                     sdsDocId: '',
                     cofaDocTypeId: '',
                     cofaDocId: '',
+                    receiptLotTypeId: '',
+                    receiptLotId: '',
                     requestitem: {}
                 },
                 printBarcodes: true,
@@ -175,19 +177,30 @@
                     if (false === cswPrivate['step' + StepNo + 'Complete']) {
                         cswPrivate.setStepHeader(StepNo, 'Define Manufacturer Lot information for this Receipt.');
 
-                        //TODO - Case 29700: Add ReceiptLot addlayout
+                        var manufacturerLotInfoTable = cswPrivate['divStep' + StepNo].table();
+                        cswPrivate.receiptLotTabsAndProps = Csw.layouts.tabsAndProps(manufacturerLotInfoTable.cell(1,1), {
+                            tabState: {
+                                excludeOcProps: ['material','save'],
+                                ShowAsReport: false,
+                                nodetypeid: cswPrivate.state.receiptLotTypeId,
+                                EditMode: Csw.enums.editMode.Add
+                            },
+                            ReloadTabOnSave: false,
+                            onNodeIdSet: function (receiptLotId) {
+                                cswPrivate.state.receiptLotId = receiptLotId;
+                            }
+                        });
 
                         var attachCofATable = cswPrivate['divStep' + StepNo].table();
                         attachCofATable.cell(1, 1).a({
-                            text: 'Add a new C of A',
+                            text: 'Add a new C of A:',
                             onClick: function () {
-                                attachCofATable.cell(1, 1).hide();
-                                attachCofATable.cell(1, 2).show();
+                                attachCofATable.cell(2, 1).show();
                             }
                         });
-                        attachCofATable.cell(1, 2).hide();
+                        attachCofATable.cell(2, 1).hide();
 
-                        cswPrivate.cofaDocTabsAndProps = Csw.layouts.tabsAndProps(attachCofATable.cell(1, 2), {
+                        cswPrivate.cofaDocTabsAndProps = Csw.layouts.tabsAndProps(attachCofATable.cell(2, 1), {
                             tabState: {
                                 excludeOcProps: ['owner', 'save'],
                                 ShowAsReport: false,
@@ -372,6 +385,7 @@
                     containernodetypeid: cswPrivate.state.containerNodeTypeId,
                     sdsDocId: cswPrivate.state.sdsDocId,
                     cofaDocId: cswPrivate.state.cofaDocId,
+                    receiptLotId: cswPrivate.state.receiptLotId,
                     quantities: cswPrivate.amountsGrid.quantities(),
                     sizeid: cswPrivate.state.selectedSizeId,
                     props: cswPrivate.state.properties,
@@ -382,6 +396,9 @@
                 }
                 if (false === Csw.isNullOrEmpty(cswPrivate.cofaDocTabsAndProps)) {
                     container.cofaDocProperties = cswPrivate.cofaDocTabsAndProps.getProps();
+                }
+                if (false === Csw.isNullOrEmpty(cswPrivate.receiptLotTabsAndProps)) {
+                    container.receiptLotProperties = cswPrivate.receiptLotTabsAndProps.getProps();
                 }
                 Csw.ajax.post({
                     urlMethod: 'receiveMaterial',
