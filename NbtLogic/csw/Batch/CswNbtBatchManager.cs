@@ -59,7 +59,7 @@ namespace ChemSW.Nbt.Batch
 
                     BatchNode.BatchData.Text = BatchData;
                     BatchNode.CreatedDate.DateTimeValue = DateTime.Now;
-                    BatchNode.OpName.Value = BatchOpName.ToString();
+                    BatchNode.OpName.Text = BatchOpName.ToString();
                     if( false == Double.IsNaN( Priority ) )
                     {
                         BatchNode.Priority.Value = Priority;

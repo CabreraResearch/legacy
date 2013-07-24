@@ -70,6 +70,12 @@ namespace ChemSW.Nbt.PropTypes
                 {
                     Text = SelectedOption.Text;
                 }
+                else
+                {
+                    // When we don't have a SelectedOption, we set Text = Value 
+                    // because having any value is better than no value.
+                    Text = Value;
+                }
             }
         }
 
@@ -186,29 +192,26 @@ namespace ChemSW.Nbt.PropTypes
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
             // TODO: Test that this is the correct logic
-            // Text is replacing value
             Text = CswTools.XmlRealAttributeName( PropRow[_TextSubField.ToXmlNodeName()].ToString() );
             //Value = CswTools.XmlRealAttributeName( PropRow[_ValueSubField.ToXmlNodeName()].ToString() );
         }
 
         public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
+            if( null != JObject[_ValueSubField.ToXmlNodeName( true )] )
+            {
+                Value = JObject[_ValueSubField.ToXmlNodeName( true )].ToString();
+            }
 
             if( null != JObject[_TextSubField.ToXmlNodeName( true )] )
             {
                 Text = JObject[_TextSubField.ToXmlNodeName( true )].ToString();
-            }
-
-            if( null != JObject[_ValueSubField.ToXmlNodeName( true )] )
-            {
-                Value = JObject[_ValueSubField.ToXmlNodeName( true )].ToString();
             }
         }
 
         public override void SyncGestalt()
         {
             //TODO: Check this is the correct logic
-            // Text is replacing value
             _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, Text );
             //_CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, Value );
         }
