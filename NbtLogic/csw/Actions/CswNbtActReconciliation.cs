@@ -177,20 +177,24 @@ namespace ChemSW.Nbt.Actions
         {
             if( null != Request.ContainerActions )
             {
-                foreach (ContainerData.ReconciliationActions Action in Request.ContainerActions)
+                foreach( ContainerData.ReconciliationActions Action in Request.ContainerActions )
                 {
-                    if (Action.Action == CswEnumNbtContainerLocationActionOptions.MarkMissing.ToString())
+                    if( Action.Action == CswEnumNbtContainerLocationActionOptions.MarkMissing.ToString() )
                     {
-                        _createMissingContainerLocation( Action );
+                        _createNotScannedContainerLocation( Action, CswEnumNbtContainerLocationTypeOptions.Missing );
                     }
                     else
                     {
-                        CswPrimaryKey ContLocNodeId = CswConvert.ToPrimaryKey(Action.ContainerLocationId);
-                        if( null != ContLocNodeId )
+                        CswPrimaryKey ContLocNodeId = CswConvert.ToPrimaryKey( Action.ContainerLocationId );
+                        if( CswTools.IsPrimaryKey( ContLocNodeId ) )
                         {
-                            CswNbtObjClassContainerLocation ContLocNode = _CswNbtResources.Nodes.GetNode( CswConvert.ToPrimaryKey( Action.ContainerLocationId ) );
+                            CswNbtObjClassContainerLocation ContLocNode = _CswNbtResources.Nodes.GetNode( ContLocNodeId );
                             ContLocNode.Action.Value = Action.Action;
                             ContLocNode.postChanges( false );
+                        }
+                        else if( Action.Action == CswEnumNbtContainerLocationActionOptions.Ignore.ToString() )
+                        {
+                            _createNotScannedContainerLocation( Action, CswEnumNbtContainerLocationTypeOptions.Ignore );
                         }
                     }
                 }
@@ -356,7 +360,7 @@ namespace ChemSW.Nbt.Actions
             if( Status != CswEnumNbtContainerLocationStatusOptions.Correct.ToString() &&
                 Status != CswEnumNbtContainerLocationStatusOptions.ScannedCorrect.ToString() )
             {
-                ActionOptions.Add( CswEnumNbtContainerLocationActionOptions.NoAction.ToString() );
+                ActionOptions.Add( CswEnumNbtContainerLocationActionOptions.Ignore.ToString() );
             }
             if( Status == CswEnumNbtContainerLocationStatusOptions.NotScanned.ToString() )
             {
@@ -379,7 +383,7 @@ namespace ChemSW.Nbt.Actions
             return ActionOptions;
         }
 
-        private void _createMissingContainerLocation( ContainerData.ReconciliationActions Action )
+        private void _createNotScannedContainerLocation( ContainerData.ReconciliationActions Action, CswEnumNbtContainerLocationTypeOptions Type )
         {
             CswNbtMetaDataObjectClass ContLocOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerLocationClass );
             CswNbtMetaDataNodeType ContLocNt = ContLocOc.FirstNodeType;
@@ -392,9 +396,16 @@ namespace ChemSW.Nbt.Actions
                     );
                 ContLocNode.Container.RelatedNodeId = CswConvert.ToPrimaryKey( Action.ContainerId );
                 ContLocNode.Location.SelectedNodeId = CswConvert.ToPrimaryKey( Action.LocationId );
-                ContLocNode.Type.Value = CswEnumNbtContainerLocationTypeOptions.Missing.ToString();
+                ContLocNode.Type.Value = Type.ToString();
                 ContLocNode.Status.Value = CswEnumNbtContainerLocationStatusOptions.NotScanned.ToString();
-                ContLocNode.Action.Value = CswEnumNbtContainerLocationActionOptions.MarkMissing.ToString();
+                if( Type == CswEnumNbtContainerLocationTypeOptions.Missing )
+                {
+                    ContLocNode.Action.Value = CswEnumNbtContainerLocationActionOptions.MarkMissing.ToString();
+                }
+                else if( Type == CswEnumNbtContainerLocationTypeOptions.Ignore )
+                {
+                    ContLocNode.Action.Value = CswEnumNbtContainerLocationActionOptions.Ignore.ToString();
+                }
                 ContLocNode.ActionApplied.Checked = CswEnumTristate.False;
                 ContLocNode.ScanDate.DateTimeValue = DateTime.Now;
                 ContLocNode.User.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
