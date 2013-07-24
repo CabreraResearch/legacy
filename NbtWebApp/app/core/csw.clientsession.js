@@ -292,23 +292,16 @@
                         UserId: o.data.ExpirationReset.UserId,
                         UserKey: o.data.ExpirationReset.UserKey,
                         PasswordId: o.data.ExpirationReset.PasswordId,
-                        onSuccess: function () {
-                            Csw.tryExec(o.success);
-                        }
+                        onSuccess: function () {}
                     });
+                    Csw.tryExec(o.success);
                     break;
                 case 'ShowLicense':
-                    $.CswDialog('ShowLicenseDialog', {
-                        'onAccept': function () {
-                            o.success();
-                        },
-                        'onDecline': function () {
-                            o.failure('You must accept the license agreement to use this application');
-                        }
-                    });
+                    $.CswDialog('ShowLicenseDialog', {});
+                    Csw.tryExec(o.success);
                     break;
                 case 'Ignore':
-                    o.success();
+                    Csw.tryExec(o.success());
                     break;
                 default:
                     txt = 'An error occurred';

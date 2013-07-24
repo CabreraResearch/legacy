@@ -33,6 +33,10 @@
     var posY = cswPrivate.origYAccessor();
     var incrPosBy = 30;
 
+    // case 21337 - Prevent showing multiples of these dialogs...
+    var ExistingChangePasswordDialog = false;
+    var ExistingShowLicenseDialog = false;
+
     var afterObjectClassButtonClick = function (action, dialog) {
         'use strict';
         switch (Csw.string(action).toLowerCase()) {
@@ -832,61 +836,68 @@
 
         ChangePasswordDialog: function (options) {
             'use strict';
-            var cswDlgPrivate = {
-                UserId: '',
-                UserKey: '',
-                PasswordId: '',
-                title: 'Your password has expired.  Please change it now:',
-                onSuccess: function () { }
-            };
-            Csw.extend(cswDlgPrivate, options);
-
-            var doRefresh = true;
-            var cswPublic = {
-                closed: false,
-                div: Csw.literals.div({ ID: window.Ext.id() }), //Case 28799 - we have to differentiate dialog div Ids from each other
-                close: function () {
-                    if (false === cswPublic.closed && doRefresh) {
-                        cswPublic.closed = true;
-                        cswPublic.tabsAndProps.tearDown();
-                        Csw.tryExec(cswDlgPrivate.onClose);
+            var allowClose = false;
+            if (false === ExistingChangePasswordDialog) {
+                ExistingChangePasswordDialog = true;
+                var cswDlgPrivate = {
+                    UserId: '',
+                    UserKey: '',
+                    PasswordId: '',
+                    title: 'Your password has expired.  Please change it now:',
+                    onSuccess: function() {
                     }
-                }
-            };
+                };
+                Csw.extend(cswDlgPrivate, options);
 
-            cswPublic.title = Csw.string(cswDlgPrivate.title);
-
-            cswDlgPrivate.onOpen = function () {
-                var table = cswPublic.div.table({ width: '100%' });
-                var tabCell = table.cell(1, 2);
-
-                cswPublic.tabsAndProps = Csw.layouts.tabsAndProps(tabCell, {
-                    forceReadOnly: cswDlgPrivate.ReadOnly,
-                    Multi: cswDlgPrivate.Multi,
-                    tabState: {
-                        filterToPropId: cswDlgPrivate.PasswordId,
-                        nodeid: cswDlgPrivate.UserId,
-                        nodekey: cswDlgPrivate.UserKey,
-                        isChangePasswordDialog: true     // kludgetastic!  case 29841
-                    },
-                    onSave: function (nodeids, nodekeys, tabcount) {
-                        Csw.clientChanges.unsetChanged();
-                        if (false === cswPublic.closed) {
-                            cswPublic.close();
-                            cswPublic.div.$.dialog('close');
+                var doRefresh = true;
+                var cswPublic = {
+                    closed: false,
+                    div: Csw.literals.div({ ID: window.Ext.id() }), //Case 28799 - we have to differentiate dialog div Ids from each other
+                    close: function() {
+                        if (false === cswPublic.closed && doRefresh) {
+                            cswPublic.closed = true;
+                            cswPublic.tabsAndProps.tearDown();
+                            Csw.tryExec(cswDlgPrivate.onClose);
+                            ExistingChangePasswordDialog = false;
                         }
-                        Csw.tryExec(cswDlgPrivate.onSuccess, nodeids, nodekeys, cswPublic.close);
-                    },
-                    onBeforeTabSelect: function () {
-                        return Csw.clientChanges.manuallyCheckChanges();
-                    },
-                    onPropertyChange: function () {
-                        Csw.clientChanges.setChanged();
                     }
-                }); // tabsandprops
-            }; // onOpen()
+                };
 
-            openDialog(cswPublic.div, 900, 600, cswPublic.close, cswPublic.title, cswDlgPrivate.onOpen);
+                cswPublic.title = Csw.string(cswDlgPrivate.title);
+
+                cswDlgPrivate.onOpen = function() {
+                    var table = cswPublic.div.table({ width: '100%' });
+                    var tabCell = table.cell(1, 2);
+
+                    cswPublic.tabsAndProps = Csw.layouts.tabsAndProps(tabCell, {
+                        forceReadOnly: cswDlgPrivate.ReadOnly,
+                        Multi: cswDlgPrivate.Multi,
+                        tabState: {
+                            filterToPropId: cswDlgPrivate.PasswordId,
+                            nodeid: cswDlgPrivate.UserId,
+                            nodekey: cswDlgPrivate.UserKey,
+                            isChangePasswordDialog: true     // kludgetastic!  case 29841
+                        },
+                        onSave: function(nodeids, nodekeys, tabcount) {
+                            Csw.clientChanges.unsetChanged();
+                            if (false === cswPublic.closed) {
+                                allowClose = true;
+                                cswPublic.close();
+                                cswPublic.div.$.dialog('close');
+                            }
+                            Csw.tryExec(cswDlgPrivate.onSuccess, nodeids, nodekeys, cswPublic.close);
+                        },
+                        onBeforeTabSelect: function() {
+                            return Csw.clientChanges.manuallyCheckChanges();
+                        },
+                        onPropertyChange: function() {
+                            Csw.clientChanges.setChanged();
+                        }
+                    }); // tabsandprops
+                }; // onOpen()
+
+                openDialog(cswPublic.div, 900, 600, cswPublic.close, cswPublic.title, cswDlgPrivate.onOpen, function() { return allowClose; });
+            } // if (false === ExistingChangePasswordDialog)
             return cswPublic;
         }, // ChangePasswordDialog
 
@@ -1544,55 +1555,52 @@
         }, // FileUploadDialog
         ShowLicenseDialog: function (options) {
             'use strict';
-            var o = {
-                GetLicenseUrl: 'getLicense',
-                AcceptLicenseUrl: 'acceptLicense',
-                onAccept: function () { },
-                onDecline: function () { }
-            };
-            if (options) {
-                Csw.extend(o, options);
+            if (false === ExistingShowLicenseDialog) {
+                ExistingShowLicenseDialog = true;
+                var allowClose = false;
+                var o = {
+                    GetLicenseUrl: 'getLicense',
+                    AcceptLicenseUrl: 'acceptLicense',
+                    onAccept: function() {
+                    },
+                    onDecline: function() {
+                    }
+                };
+                if (options) {
+                    Csw.extend(o, options);
+                }
+
+                var div = Csw.literals.div({ align: 'center' });
+                div.append('Service Level Agreement').br();
+                var licenseTextArea = div.textArea({ name: 'license', rows: 30, cols: 80 }).propDom({ disabled: true });
+                div.br();
+
+                Csw.ajax.post({
+                    urlMethod: o.GetLicenseUrl,
+                    success: function(data) {
+                        licenseTextArea.text(data.license);
+                    }
+                });
+
+                var acceptBtn = div.button({
+                    name: 'license_accept',
+                    enabledText: 'I Accept',
+                    disabledText: 'Accepting...',
+                    onClick: function() {
+                        Csw.ajax.post({
+                            urlMethod: o.AcceptLicenseUrl,
+                            success: function() {
+                                allowClose = true;
+                                div.$.dialog('close');
+                                Csw.tryExec(o.onAccept);
+                            },
+                            error: acceptBtn.enable
+                        }); // ajax
+                    } // onClick
+                }); // 
+
+                openDialog(div, 800, 600, function() { ExistingShowLicenseDialog = false; }, 'Terms and Conditions', null, function() { return allowClose; });
             }
-
-            var div = Csw.literals.div({ align: 'center' });
-            div.append('Service Level Agreement').br();
-            var licenseTextArea = div.textArea({ name: 'license', rows: 30, cols: 80 }).propDom({ disabled: true });
-            div.br();
-
-            Csw.ajax.post({
-                urlMethod: o.GetLicenseUrl,
-                success: function (data) {
-                    licenseTextArea.text(data.license);
-                }
-            });
-
-            var acceptBtn = div.button({
-                name: 'license_accept',
-                enabledText: 'I Accept',
-                disabledText: 'Accepting...',
-                onClick: function () {
-                    Csw.ajax.post({
-                        urlMethod: o.AcceptLicenseUrl,
-                        success: function () {
-                            div.$.dialog('close');
-                            Csw.tryExec(o.onAccept);
-                        },
-                        error: acceptBtn.enable
-                    }); // ajax
-                } // onClick
-            }); // 
-
-            div.button({
-                name: 'license_decline',
-                enabledText: 'I Decline',
-                disabledText: 'Declining...',
-                onClick: function () {
-                    div.$.dialog('close');
-                    Csw.tryExec(o.onDecline);
-                }
-            });
-
-            openDialog(div, 800, 600, null, 'Terms and Conditions');
         }, // ShowLicenseDialog
         PrintLabelDialog: function (options) {
             'use strict';
@@ -2769,7 +2777,7 @@
     };
 
 
-    function openDialog(div, width, height, onClose, title, onOpen) {
+    function openDialog(div, width, height, onClose, title, onOpen, beforeClose) {
         'use strict';
         $('<div id="DialogErrorDiv" style="display: none;"></div>')
             .prependTo(div.$);
@@ -2794,7 +2802,11 @@
             title: title,
             position: [posX, posY],
             beforeClose: function () {
-                return Csw.clientChanges.manuallyCheckChanges();
+                var ret = Csw.clientChanges.manuallyCheckChanges();
+                if (Csw.isFunction(beforeClose)) {
+                    ret = ret && beforeClose();
+                }
+                return ret;
             },
             close: function () {
                 posX -= incrPosBy;
