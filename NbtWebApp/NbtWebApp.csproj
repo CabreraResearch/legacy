@@ -1248,7 +1248,7 @@
     <Content Include="Skin\Window\WindowSprites.gif" />
     <Content Include="Skin\Window\WindowVerticalSprites.gif" />
     <Content Include="Statistics.aspx" />
-    <Content Include="TermsOfUse.aspx" />
+    <Content Include="TermsOfUse.html" />
     <Content Include="Services\Views.svc" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
@@ -1378,13 +1378,6 @@
     </Compile>
     <Compile Include="Statistics.aspx.designer.cs">
       <DependentUpon>Statistics.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="TermsOfUse.aspx.cs">
-      <DependentUpon>TermsOfUse.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="TermsOfUse.aspx.designer.cs">
-      <DependentUpon>TermsOfUse.aspx</DependentUpon>
     </Compile>
     <Compile Include="WebSvc\Core\CswWebSvcCommonMethods.cs" />
     <Compile Include="WebSvc\Core\CswWebSvcResourceInitializerNbt.cs" />

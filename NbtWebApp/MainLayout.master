@@ -319,7 +319,7 @@
     </div> 
 
     <div style="text-align: right">
-        Your use of this website implies your agreement with our <a target="_blank" href="TermsOfUse.aspx">Terms of Use</a>.&nbsp;&nbsp;&nbsp;
+        Your use of this website implies your agreement with our <a target="_blank" href="TermsOfUse.html">Terms of Use</a>.&nbsp;&nbsp;&nbsp;
     </div>
 
 </asp:Content>
