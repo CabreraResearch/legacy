@@ -1,11 +1,11 @@
-﻿using System.ComponentModel;
+﻿using ChemSW.WebSvc;
+using NbtWebApp.WebSvc.Logic.Mobile.CISProNbt;
+using System.ComponentModel;
 using System.IO;
 using System.ServiceModel;
 using System.ServiceModel.Activation;
 using System.ServiceModel.Web;
 using System.Web;
-using ChemSW.WebSvc;
-using NbtWebApp.WebSvc.Logic.Mobile.CISProNbt;
 
 namespace NbtWebApp
 {
@@ -38,7 +38,7 @@ namespace NbtWebApp
                 ReturnObj: Ret,
                 WebSvcMethodPtr: CswNbtWebServiceLegacyMobile.parseDataFile,
                 ParamObj: Stream
-                );
+                );                                                                                           
 
             SvcDriver.run();
             return ( Ret );

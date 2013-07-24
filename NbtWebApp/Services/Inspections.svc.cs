@@ -1,12 +1,13 @@
-﻿using System.Collections.ObjectModel;
+﻿using ChemSW.Nbt;
+using ChemSW.Nbt.WebServices;
+using ChemSW.WebSvc;
+using NbtWebAppServices.Response;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.ServiceModel;
 using System.ServiceModel.Activation;
 using System.ServiceModel.Web;
 using System.Web;
-using ChemSW.Nbt.WebServices;
-using ChemSW.WebSvc;
-using NbtWebAppServices.Response;
 
 namespace NbtWebApp
 {
@@ -19,7 +20,15 @@ namespace NbtWebApp
     public class Inspections
     {
         private HttpContext _Context = HttpContext.Current;
-
+        private static CswWebSvcSessionAuthenticateData.Authentication.Request AuthRequest
+        {
+            get
+            {
+                CswWebSvcSessionAuthenticateData.Authentication.Request Ret = new CswWebSvcSessionAuthenticateData.Authentication.Request();
+                Ret.RequiredModules.Add( CswEnumNbtModuleName.SI );
+                return Ret;
+            }
+        }
         /// <summary>
         /// 
         /// </summary>
@@ -37,7 +46,7 @@ namespace NbtWebApp
                     EndingDate = EndingDate
                 };
             var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceInspections.CswNbtInspectionGet, CswNbtWebServiceInspections.Dates>(
-                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, AuthRequest ),
                 ReturnObj: Ret,
                 WebSvcMethodPtr: CswNbtWebServiceInspections.getInspectionsByDateRange,
                 ParamObj: Dates
@@ -60,7 +69,7 @@ namespace NbtWebApp
             CswNbtWebServiceInspections.CswNbtInspectionGet Ret = new CswNbtWebServiceInspections.CswNbtInspectionGet();
             
             var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceInspections.CswNbtInspectionGet, string>(
-                CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
+                CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, AuthRequest ),
                 ReturnObj : Ret,
                 WebSvcMethodPtr : CswNbtWebServiceInspections.getInspectionsByUser,
                 ParamObj : ""
@@ -84,7 +93,7 @@ namespace NbtWebApp
             CswNbtWebServiceInspections.CswNbtInspectionGet Ret = new CswNbtWebServiceInspections.CswNbtInspectionGet();
             
             var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceInspections.CswNbtInspectionGet, string>(
-                CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
+                CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, AuthRequest ),
                 ReturnObj : Ret,
                 WebSvcMethodPtr : CswNbtWebServiceInspections.getInspectionsByBarcode,
                 ParamObj : Barcode
@@ -107,7 +116,7 @@ namespace NbtWebApp
             CswNbtWebServiceInspections.CswNbtInspectionGet Ret = new CswNbtWebServiceInspections.CswNbtInspectionGet();
             
             var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceInspections.CswNbtInspectionGet, string>(
-                CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
+                CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, AuthRequest ),
                 ReturnObj : Ret,
                 WebSvcMethodPtr : CswNbtWebServiceInspections.getInspectionsByLocation,
                 ParamObj : LocationName
@@ -131,7 +140,7 @@ namespace NbtWebApp
             CswNbtWebServiceInspections.CswNbtInspectionSet Ret = new CswNbtWebServiceInspections.CswNbtInspectionSet();
 
             var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceInspections.CswNbtInspectionSet, Collection<CswNbtSdInspectionsDataModels.InspectionData.CswNbtInspection>>(
-                CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
+                CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, AuthRequest ),
                 ReturnObj : Ret,
                 WebSvcMethodPtr : CswNbtWebServiceInspections.update,
                 ParamObj: Inspections

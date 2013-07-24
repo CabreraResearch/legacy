@@ -1,24 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Data;
-using ChemSW.Audit;
-using ChemSW.Config;
-using ChemSW.Core;
-using ChemSW.DB;
-using ChemSW.Log;
-using ChemSW.Mail;
-using ChemSW.Nbt.Actions;
-using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.PropTypes;
-using ChemSW.Nbt.Search;
-using ChemSW.Nbt.Security;
-using ChemSW.RscAdo;
-using ChemSW.Security;
-using ChemSW.Session;
-using ChemSW.StructureSearch;
-using ChemSW.TblDn;
 
 namespace ChemSW.Nbt
 {
@@ -95,11 +74,6 @@ namespace ChemSW.Nbt
         /// If 1, use image-based location controls
         /// </summary>
         loc_use_images,
-
-        /// <summary>
-        /// Number of results to display for views on Mobile
-        /// </summary>
-        mobileview_resultlim,
 
         /// <summary>
         /// When set to 1, total quantity to deduct in DispenseContainer cannot exceed container netquantity.
