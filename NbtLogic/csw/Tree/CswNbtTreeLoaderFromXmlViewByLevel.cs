@@ -231,7 +231,7 @@ namespace ChemSW.Nbt
                 }
 
                 // case 24678 - Mark truncated results
-                if( NodesTable.Rows.Count == thisResultLimit )
+                if( KeysThisLevel.Count == thisResultLimit )
                 {
                     //if( ParentNodeKeys != null && ParentNodeKeys.Count > 0 )
                     //{
