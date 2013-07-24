@@ -41,7 +41,7 @@ namespace ChemSW.Nbt.Schema
             foreach( CswNbtMetaDataNodeType BatchOpNT in BatchOpOC.getNodeTypes() )
             {
                 CswTableUpdate NodetypePropsTableUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "nodetype_props_tbl_update_case_30263", "nodetype_props" );
-                DataTable NTPDataTable = NodetypePropsTableUpdate.getTable( "where nodetypeid = " + BatchOpNT.NodeTypeId + " and propname = '" + BatchOpOpNameOCP.PropName + "'" );
+                DataTable NTPDataTable = NodetypePropsTableUpdate.getTable( "where nodetypeid = " + BatchOpNT.NodeTypeId + " and objectclasspropid = '" + BatchOpOpNameOCP.PropId + "'" );
                 if( NTPDataTable.Rows.Count > 0 )
                 {
                     NTPDataTable.Rows[0]["fieldtypeid"] = TextFieldType.FieldTypeId;
