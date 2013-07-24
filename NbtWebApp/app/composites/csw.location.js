@@ -177,6 +177,7 @@
                         showToggleLink: false,
                         useScrollbars: false,
                         rootVisible: true,
+                        requireViewPermissions: false,
                         useHover: (cswPrivate.EditMode !== Csw.enums.editMode.Add), // case 28849
                         state: {
                             viewId: cswPrivate.viewid,

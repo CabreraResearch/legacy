@@ -48,7 +48,6 @@ namespace ChemSW.Nbt.PropTypes
 
         override public string Gestalt
         {
-            //TODO: gestalt will be a comma delimited list of filenames
             get
             {
                 return _CswNbtNodePropData.Gestalt;
@@ -166,8 +165,12 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void SyncGestalt()
         {
-            //TODO: set gestalt to comma delimited list of file names from blob_data tbl
-            //_CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, FileName );
+            CswCommaDelimitedString imageNames = new CswCommaDelimitedString();
+            foreach( CswNbtSdBlobData.CswNbtBlob Image in Images )
+            {
+                imageNames.Add(Image.FileName);
+            }
+            _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, imageNames.ToString() );
         }
     }
 

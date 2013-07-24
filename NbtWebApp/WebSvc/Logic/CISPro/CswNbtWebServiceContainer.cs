@@ -100,6 +100,15 @@ namespace ChemSW.Nbt.WebServices
         }
 
         /// <summary>
+        /// Gets the number of ContainerLocation records whose Action has been set, but not applied, for the given Location
+        /// </summary>
+        public static void getOutstandingActionsCount( ICswResources CswResources, ContainerDataReturn Return, ContainerData.ReconciliationRequest Request )
+        {
+            CswNbtActReconciliation _CswNbtActReconciliation = new CswNbtActReconciliation( (CswNbtResources) CswResources );
+            Return.Data = _CswNbtActReconciliation.getOutstandingActionsCount( Request );
+        }
+
+        /// <summary>
         /// Gets all of the ContainerLocation Statuses along with their Container count and scan percentage for the given Location and timeframe
         /// </summary>
         public static void getContainerStatistics( ICswResources CswResources, ContainerDataReturn Return, ContainerData.ReconciliationRequest Request )
