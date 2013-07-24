@@ -126,7 +126,8 @@ namespace ChemSW.Nbt.ObjClasses
                     ContLocStatus = CswEnumNbtContainerLocationStatusOptions.Missing;
                 }
             }
-            else if( Type.Value == CswEnumNbtContainerLocationTypeOptions.Missing.ToString() )
+            else if( Type.Value == CswEnumNbtContainerLocationTypeOptions.Missing.ToString() ||
+                     Type.Value == CswEnumNbtContainerLocationTypeOptions.Ignore.ToString() )
             {
                 ContLocStatus = CswEnumNbtContainerLocationStatusOptions.NotScanned;
             }

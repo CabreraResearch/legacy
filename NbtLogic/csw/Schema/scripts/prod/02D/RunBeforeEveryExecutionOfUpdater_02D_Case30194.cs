@@ -9,7 +9,7 @@ namespace ChemSW.Nbt.Schema
     /// </summary>
     public class RunBeforeEveryExecutionOfUpdater_02D_Case30194 : CswUpdateSchemaTo
     {
-        public static string Title = "Pre-Script: Case 30194";
+        public static string Title = "Pre-Script: Case 30194A";
 
         #region Blame Logic
 
@@ -31,16 +31,22 @@ namespace ChemSW.Nbt.Schema
         public override void update()
         {
             CswNbtMetaDataObjectClass WorkUnitOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.WorkUnitClass );
-            _CswNbtSchemaModTrnsctn.deleteModuleObjectClassJunction( CswEnumNbtModuleName.Containers, WorkUnitOC.ObjectClassId );
-
             CswNbtObjClassWorkUnit DefaultWorkUnit = null;
+            CswNbtObjClassWorkUnit FakeDefaultWorkUnit = null;
             foreach( CswNbtObjClassWorkUnit WorkUnitNode in WorkUnitOC.getNodes( false, false, IncludeHiddenNodes: true ) )
             {
                 if( WorkUnitNode.Name.Text == "Default Work Unit" )
                 {
                     WorkUnitNode.IsDemo = false;
                     WorkUnitNode.postChanges( false );
-                    DefaultWorkUnit = WorkUnitNode;
+                    if( null == DefaultWorkUnit )
+                    {
+                        DefaultWorkUnit = WorkUnitNode;
+                    }
+                    else
+                    {
+                        FakeDefaultWorkUnit = WorkUnitNode;
+                    }
                 }
             }
             if( null == DefaultWorkUnit )
@@ -53,16 +59,26 @@ namespace ChemSW.Nbt.Schema
                     DefaultWorkUnit.postChanges( false );
                 }
             }
-
-            CswNbtMetaDataObjectClass UserOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.UserClass );
-            foreach( CswNbtObjClassUser UserNode in UserOC.getNodes( false, false, IncludeHiddenNodes: true ) )
+            if( null != DefaultWorkUnit )
             {
-                if( null == UserNode.WorkUnitProperty.RelatedNodeId && null != DefaultWorkUnit )
+                CswNbtMetaDataObjectClass UserOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.UserClass );
+                foreach( CswNbtObjClassUser UserNode in UserOC.getNodes( false, false, IncludeHiddenNodes: true ) )
                 {
-                    UserNode.WorkUnitProperty.RelatedNodeId = DefaultWorkUnit.NodeId;
-                    UserNode.postChanges( false );
+                    if( null == UserNode.WorkUnitProperty.RelatedNodeId ||
+                        ( null != FakeDefaultWorkUnit && UserNode.WorkUnitProperty.RelatedNodeId == FakeDefaultWorkUnit.NodeId ) )
+                    {
+                        UserNode.WorkUnitProperty.RelatedNodeId = DefaultWorkUnit.NodeId;
+                        UserNode.postChanges( false );
+                    }
+                }
+                if( null != FakeDefaultWorkUnit )
+                {
+                    FakeDefaultWorkUnit.Node.delete( false, true );
                 }
             }
+            CswNbtMetaDataObjectClassProp WorkUnitNameOCP = WorkUnitOC.getObjectClassProp( CswNbtObjClassWorkUnit.PropertyName.Name );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( WorkUnitNameOCP, CswEnumNbtObjectClassPropAttributes.isunique, true );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( WorkUnitNameOCP, CswEnumNbtObjectClassPropAttributes.isrequired, true );
         }
 
     }//class RunBeforeEveryExecutionOfUpdater_02D_Case30194

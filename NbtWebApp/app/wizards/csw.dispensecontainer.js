@@ -554,7 +554,6 @@
                                 cswPrivate.state.initialQuantity.isRequired = true;
                                 quantityTable.cell(qtyTableRow, 1).br({ number: 2 });
                                 cswPrivate.quantityControl = quantityTable.cell(qtyTableRow, 1).quantity(cswPrivate.state.initialQuantity);
-                                quantityTable.cell(qtyTableRow, 1).br({ number: 1 });
                                 makeSerialBalanceButton(quantityTable.cell(qtyTableRow, 1), cswPrivate.quantityControl);
 
                                 qtyTableRow++;

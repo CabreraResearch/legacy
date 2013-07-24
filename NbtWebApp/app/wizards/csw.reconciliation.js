@@ -171,10 +171,25 @@
                                 cswPrivate.state.LocationId = locationId;
                                 cswPrivate.state.LocationName = locationName;
                                 cswPrivate.reinitSteps(2);
+                                getPendingChangesCount();
                             }
                         });
                         cswPrivate.state.LocationId = locationControl.val();
                         cswPrivate.state.LocationName = locationControl.selectedName();
+                        
+                        //Pending Actions
+                        var pendingActionLabel = locationDatesTable.cell(rowNum, 2).span({ text: 'Pending Actions:' });
+                        var getPendingChangesCount = function() {
+                            Csw.ajaxWcf.post({
+                                urlMethod: 'Containers/getOutstandingActionsCount',
+                                data: cswPrivate.state,
+                                success: function(ajaxdata) {
+                                    var count = ajaxdata.OutstandingActionsCount;
+                                    pendingActionLabel.text('Pending Actions: ' + count);
+                                }
+                            });
+                        };
+                        getPendingChangesCount();
                         rowNum++;
                         //IncludeChildLocations
                         var checkBoxTable = locationDatesTable.cell(rowNum, 2).table({
@@ -186,6 +201,7 @@
                             onChange: Csw.method(function () {
                                 cswPrivate.state.IncludeChildLocations = cswPrivate.childLocationsCheckBox.checked();
                                 cswPrivate.reinitSteps(2);
+                                getPendingChangesCount();
                             })
                         });
                         checkBoxTable.cell(1, 2).span({ text: ' Include child locations' });
