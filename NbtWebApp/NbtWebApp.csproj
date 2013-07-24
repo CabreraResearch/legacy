@@ -1088,7 +1088,6 @@
     <Content Include="Images\view\viewtree.gif" />
     <Content Include="Images\vld\bad.gif" />
     <Content Include="Images\vld\good.gif" />
-    <Content Include="License.aspx" />
     <Content Include="Main.aspx" />
     <Content Include="Deprecated\Main.js" />
     <Content Include="Popup_DesignAdd.aspx" />
@@ -1275,9 +1274,6 @@
     <Compile Include="ExternalLogin.aspx.designer.cs">
       <DependentUpon>ExternalLogin.aspx</DependentUpon>
     </Compile>
-    <Compile Include="License.aspx.designer.cs">
-      <DependentUpon>License.aspx</DependentUpon>
-    </Compile>
     <Compile Include="Main.aspx.designer.cs">
       <DependentUpon>Main.aspx</DependentUpon>
     </Compile>
@@ -1313,10 +1309,6 @@
     </Compile>
     <Compile Include="DisplayLog.aspx.cs">
       <DependentUpon>DisplayLog.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="License.aspx.cs">
-      <DependentUpon>License.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Main.aspx.cs">
