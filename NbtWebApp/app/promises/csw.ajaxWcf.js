@@ -131,7 +131,6 @@
         };
         Csw.extend(cswInternal, options);
         
-        var cswExternal = { };
         cswInternal.urlMethod = 'Services/' + cswInternal.urlMethod;
         cswInternal.url = Csw.string(cswInternal.url, cswInternal.urlMethod);
         cswInternal.startTime = new Date();
@@ -145,7 +144,7 @@
         }
 
         Csw.publish(Csw.enums.events.ajax.ajaxStart, cswInternal.watchGlobal);
-        cswExternal.ajax = $.ajax({
+        return $.ajax({
             type: verb,
             url: cswInternal.urlMethod,
             xhrFields: {
@@ -169,8 +168,7 @@
             complete: function(xmlHttpRequest, textStatus) {
                 Csw.tryExec(cswInternal.complete, xmlHttpRequest, textStatus);
             }
-        }); /* $.ajax({ */
-        return cswExternal;
+        }); 
     }); /* cswPrivate.jsonPost */
 
     Csw.ajaxWcf.post = Csw.ajaxWcf.post ||

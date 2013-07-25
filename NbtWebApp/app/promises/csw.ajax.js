@@ -111,12 +111,11 @@
         };
         Csw.extend(cswInternal, options);
 
-        var cswExternal = { };
         cswInternal.url = Csw.string(cswInternal.url, cswInternal.urlPrefix + cswInternal.urlMethod);
         cswInternal.startTime = new Date();
 
         Csw.publish(Csw.enums.events.ajax.ajaxStart, cswInternal.watchGlobal);
-        cswExternal.ajax = $.ajax({
+        return $.ajax({
             type: 'POST',
             async: cswInternal.async,
             urlPrefix: Csw.enums.ajaxUrlPrefix,
@@ -133,8 +132,7 @@
             error: function (xmlHttpRequest, textStatus) {
                 cswPrivate.onJsonError(xmlHttpRequest, textStatus, cswInternal);
             }
-        }); /* $.ajax({ */
-        return cswExternal;
+        });
     }); /* cswPrivate.jsonPost */
 
     cswPrivate.jsonGet = Csw.method(function (options) {
@@ -164,12 +162,12 @@
             watchGlobal: true
         };
         Csw.extend(cswInternal, options);
-        var cswExternal = { };
+        
         cswInternal.url = Csw.string(cswInternal.url, cswInternal.urlPrefix + cswInternal.urlMethod);
         //Csw.debug.time(url);
         Csw.publish(Csw.enums.events.ajax.ajaxStart, cswInternal.watchGlobal);
 
-        cswExternal.ajax = $.ajax({
+        return $.ajax({
             type: 'GET',
             async: cswInternal.async,
             url: cswInternal.url,
@@ -182,8 +180,7 @@
             error: function (xmlHttpRequest, textStatus) {
                 cswPrivate.onJsonError(xmlHttpRequest, textStatus, cswInternal);
             }
-        }); /* $.ajax({ */
-        return cswExternal;
+        }); 
     });
 
     cswPrivate.ajaxStart = function (eventObj, watchGlobal) {

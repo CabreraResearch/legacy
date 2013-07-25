@@ -768,6 +768,8 @@
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\mousetrap.js" />
     <Content Include="Scripts\mousetrap.min.js" />
+    <Content Include="Scripts\q.js" />
+    <Content Include="Scripts\q.min.js" />
     <Content Include="Services\Properties.svc" />
     <Content Include="Services\Search.svc" />
     <Content Include="Services\Query.svc" />
