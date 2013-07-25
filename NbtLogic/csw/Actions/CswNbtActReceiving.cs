@@ -1,6 +1,7 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Runtime.Serialization;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
@@ -23,6 +24,11 @@ namespace ChemSW.Nbt.Actions
         #endregion Private, core methods
 
         #region Constructor
+
+        public CswNbtActReceiving( CswNbtResources CswNbtResources )
+        {
+            _CswNbtResources = CswNbtResources;
+        }
 
         public CswNbtActReceiving( CswNbtResources CswNbtResources, CswNbtMetaDataObjectClass MaterialOc, CswPrimaryKey MaterialNodeId )
         {
@@ -98,6 +104,35 @@ namespace ChemSW.Nbt.Actions
                 Ret = PropsAction.getProps( Container.Node, "", null, CswEnumNbtLayoutType.Add );
             }
             return Ret;
+        }
+
+        public ContainerData.ReceivingData updateExpirationDate( ContainerData.ReceiptLotRequest Request )
+        {
+            ContainerData.ReceivingData ReceiveData = new ContainerData.ReceivingData();
+            JObject ReceiptLotPropsObj = CswConvert.ToJObject( Request.ReceiptLotProps );
+            if( ReceiptLotPropsObj.HasValues )
+            {
+                // Convert the nodeid to a primary key
+                CswPrimaryKey ReceiptLotId = CswConvert.ToPrimaryKey( Request.ReceiptLotId );
+                if( CswTools.IsPrimaryKey( ReceiptLotId ) )
+                {
+                    CswNbtObjClassReceiptLot ReceiptLot = _CswNbtResources.Nodes.GetNode( ReceiptLotId );
+                    CswNbtSdTabsAndProps SdTabsAndProps = new CswNbtSdTabsAndProps( _CswNbtResources );
+                    SdTabsAndProps.saveNodeProps( ReceiptLot.Node, ReceiptLotPropsObj );
+                    CswPrimaryKey ContainerId = CswConvert.ToPrimaryKey( Request.ContainerId );
+                    if( CswTools.IsPrimaryKey( ContainerId ) &&
+                        ReceiptLot.ManufacturedDate.DateTimeValue != DateTime.MinValue )
+                    {
+                        CswNbtObjClassContainer Container = _CswNbtResources.Nodes.GetNode( ContainerId );
+                        CswNbtPropertySetMaterial Material = _CswNbtResources.Nodes.GetNode( Container.Material.RelatedNodeId );
+                        Container.ExpirationDate.DateTimeValue = Material.getDefaultExpirationDate( ReceiptLot.ManufacturedDate.DateTimeValue );
+                        Container.postChanges( false );
+                        JObject ContainerProps = getContainerAddProps( Container );
+                        ReceiveData.ContainerProps = ContainerProps.ToString();
+                    }
+                }
+            }//if( PropsObj.HasValues )
+            return ReceiveData;
         }
 
         /// <summary>

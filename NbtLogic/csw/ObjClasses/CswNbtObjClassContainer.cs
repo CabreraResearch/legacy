@@ -156,7 +156,7 @@ namespace ChemSW.Nbt.ObjClasses
                     CswNbtPropertySetMaterial MaterialNodeAsMaterial = MaterialNode;
                     if( ExpirationDate.DateTimeValue == DateTime.MinValue )
                     {
-                        ExpirationDate.DateTimeValue = MaterialNodeAsMaterial.getDefaultExpirationDate();
+                        ExpirationDate.DateTimeValue = MaterialNodeAsMaterial.getDefaultExpirationDate( DateTime.Now );
                     }
                 }
             }

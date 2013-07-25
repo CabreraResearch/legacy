@@ -47,7 +47,8 @@
                 },
                 printBarcodes: true,
                 amountsGrid: null,
-                saveError: false
+                saveError: false,
+                manufacturerLotInfoChanged: false
             };
 
             var cswPublic = {};           
@@ -82,21 +83,26 @@
             
             cswPrivate.handleStep = function (newStepNo) {
                 cswPrivate.setState();
-                //Not sure if we need last and current step...
+                if (false === Csw.isNullOrEmpty(cswPrivate.onStepChange[cswPrivate.currentStepNo])) {
+                    cswPrivate.onStepChange[cswPrivate.currentStepNo](cswPrivate.currentStepNo);
+                }
                 cswPrivate.lastStepNo = cswPrivate.currentStepNo;
                 cswPrivate.currentStepNo = newStepNo;
                 if (false === Csw.isNullOrEmpty(cswPrivate.stepFunc[newStepNo])) {
                     cswPrivate.stepFunc[newStepNo](newStepNo);
                 }
+                
             };
             
             cswPrivate.setWizardSteps = function () {
                 var wizardSteps = {};
                 cswPrivate.stepFunc = {};
+                cswPrivate.onStepChange = {};
                 cswPrivate.stepCount = 1;
                 if (cswPrivate.state.canAddCofA) {
                     wizardSteps[cswPrivate.stepCount] = 'Manufacturer Lot Info';
                     cswPrivate.stepFunc[cswPrivate.stepCount] = cswPrivate.makeStepManufacturerLotInfo;
+                    cswPrivate.onStepChange[cswPrivate.stepCount] = cswPrivate.onStepManufacturerLotInfoChange;
                     cswPrivate.stepCount++;
                 }
                 wizardSteps[cswPrivate.stepCount] = 'Create Containers';
@@ -188,6 +194,10 @@
                             ReloadTabOnSave: false,
                             onNodeIdSet: function (receiptLotId) {
                                 cswPrivate.state.receiptLotId = receiptLotId;
+                            },
+                            onPropertyChange: function () {
+                                cswPrivate.manufacturerLotInfoChanged = true;
+                                cswPrivate.reinitSteps(StepNo + 2);
                             }
                         });
 
@@ -217,6 +227,25 @@
                     }
                 };
             }());
+
+            cswPrivate.onStepManufacturerLotInfoChange = function () {
+                if (cswPrivate.manufacturerLotInfoChanged && false === Csw.isNullOrEmpty(cswPrivate.receiptLotTabsAndProps)) {
+                    Csw.ajaxWcf.post({
+                        urlMethod: 'Containers/updateExpirationDate',
+                        data: {
+                            ReceiptLotId: cswPrivate.state.receiptLotId,
+                            ReceiptLotProps: Csw.serialize(cswPrivate.receiptLotTabsAndProps.getProps()),
+                            ContainerId: cswPrivate.state.containerNodeId
+                        },
+                        success: function (data) {
+                            cswPrivate.manufacturerLotInfoChanged = false;
+                            if (false === Csw.isNullOrEmpty(data.ContainerProps)) {
+                                cswPrivate.state.containerAddLayout = JSON.parse(data.ContainerProps);
+                            }
+                        }
+                    });
+                }
+            };
             //#endregion Step 1: Manufacturer Lot Info
 
             //#region Step 2: Create Containers
