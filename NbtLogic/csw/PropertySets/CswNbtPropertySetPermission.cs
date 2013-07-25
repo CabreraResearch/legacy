@@ -10,14 +10,14 @@ namespace ChemSW.Nbt.ObjClasses
     /// <summary>
     /// Permission Property Set
     /// </summary>
-    public abstract class CswNbtPropertySetPermission: CswNbtObjClass
+    public abstract class CswNbtPropertySetPermission : CswNbtObjClass
     {
         #region Enums
 
         /// <summary>
         /// Object Class property names
         /// </summary>
-        public new class PropertyName: CswNbtObjClass.PropertyName
+        public new class PropertyName : CswNbtObjClass.PropertyName
         {
             /// <summary>
             /// The Group with which to apply permissions
@@ -204,6 +204,8 @@ namespace ChemSW.Nbt.ObjClasses
 
         private void _validateCompoundUniqueness()
         {
+            _validateWorkUnit();
+            _validateRole();
             if( false == IsTemp )
             {
                 CswNbtView MatchingPermissionsView = new CswNbtView( _CswNbtResources );
@@ -293,6 +295,22 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
+        private void _validateWorkUnit()
+        {
+            if( false == IsTemp && ApplyToAllWorkUnits.Checked == CswEnumTristate.False && null == WorkUnit.RelatedNodeId )
+            {
+                throw new CswDniException( CswEnumErrorType.Warning, "A Work Unit must be selected if 'Apply To All Work Units' is unchecked.", "User did not supply a valid Work Unit." );
+            }
+        }
+
+        private void _validateRole()
+        {
+            if( false == IsTemp && ApplyToAllRoles.Checked == CswEnumTristate.False && null == Role.RelatedNodeId )
+            {
+                throw new CswDniException( CswEnumErrorType.Warning, "A Role must be selected if 'Apply To All Roles' is unchecked.", "User did not supply a valid Role." );
+            }
+        }
+
         #endregion Custom Logic
 
         #region Property Set specific properties
@@ -317,9 +335,9 @@ namespace ChemSW.Nbt.ObjClasses
                 WorkUnit.RelatedNodeId = null;
                 WorkUnit.RefreshNodeName();
             }
-            else if( false == IsTemp && ApplyToAllWorkUnits.Checked == CswEnumTristate.False && null == WorkUnit.RelatedNodeId )
+            else
             {
-                throw new CswDniException( CswEnumErrorType.Warning, "A Work Unit must be selected if 'Apply To All Work Units' is unchecked.", "User did not supply a valid Work Unit." );
+                _validateWorkUnit();
             }
         }
         public CswNbtNodePropRelationship Role { get { return _CswNbtNode.Properties[PropertyName.Role]; } }
@@ -338,9 +356,9 @@ namespace ChemSW.Nbt.ObjClasses
                 Role.RelatedNodeId = null;
                 Role.RefreshNodeName();
             }
-            else if( false == IsTemp && ApplyToAllRoles.Checked == CswEnumTristate.False && null == Role.RelatedNodeId )
+            else
             {
-                throw new CswDniException( CswEnumErrorType.Warning, "A Role must be selected if 'Apply To All Roles' is unchecked.", "User did not supply a valid Role." );
+                _validateRole();
             }
         }
         public CswNbtNodePropLogical View { get { return _CswNbtNode.Properties[PropertyName.View]; } }
