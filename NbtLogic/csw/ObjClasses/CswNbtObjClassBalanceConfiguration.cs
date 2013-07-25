@@ -4,31 +4,35 @@ using ChemSW.Nbt.PropTypes;
 namespace ChemSW.Nbt.ObjClasses
 {
     /// <summary>
-    /// Balance Object Class
+    /// Stores information about a set of configuration settings for Balances
     /// </summary>
-    public class CswNbtObjClassBalance : CswNbtObjClass
+    public class CswNbtObjClassBalanceConfiguration : CswNbtObjClass
     {
+
+        
         /// <summary>
-        /// Property names for Balances
+        /// Property names for Balance Configurations
         /// </summary>
         public new sealed class PropertyName : CswNbtObjClass.PropertyName
         {
             public const string Name = "Name";
-            public const string Quantity = "Quantity";
-            public const string LastActive = "Last Active";
-            public const string Manufacturer = "Manufacturer";
-            public const string Device = "Device Description";
-            public const string Operational = "Operational";
-            public const string BalanceConfiguration = "Balance Configuration";
+            public const string RequestFormat = "Request Format";
+            public const string ResponseFormat = "Response Format";
+            public const string BaudRate = "Baud Rate";
+            public const string ParityBit = "Parity Bit";
+            public const string DataBits = "Data Bits";
+            public const string StopBits = "Stop Bits";
+            public const string Handshake = "Handshake";
         }
 
         public CswNbtNodePropText Name  { get { return _CswNbtNode.Properties[PropertyName.Name]; } }
-        public CswNbtNodePropQuantity Quantity{ get { return _CswNbtNode.Properties[PropertyName.Quantity]; } }
-        public CswNbtNodePropDateTime LastActive { get { return _CswNbtNode.Properties[PropertyName.LastActive]; } }
-        public CswNbtNodePropText Manufacturer { get { return _CswNbtNode.Properties[PropertyName.Manufacturer]; } }
-        public CswNbtNodePropText Device { get { return _CswNbtNode.Properties[PropertyName.Device]; } }
-        public CswNbtNodePropLogical Operational { get { return _CswNbtNode.Properties[PropertyName.Operational]; } }
-        public CswNbtNodePropRelationship BalanceConfiguration { get { return _CswNbtNode.Properties[PropertyName.BalanceConfiguration];  } }
+        public CswNbtNodePropText RequestFormat { get { return _CswNbtNode.Properties[PropertyName.RequestFormat]; } }
+        public CswNbtNodePropText ResponseFormat { get { return _CswNbtNode.Properties[PropertyName.ResponseFormat]; } }
+        public CswNbtNodePropNumber BaudRate { get { return _CswNbtNode.Properties[PropertyName.BaudRate];  } }
+        public CswNbtNodePropText ParityBit { get { return _CswNbtNode.Properties[PropertyName.ParityBit]; } }
+        public CswNbtNodePropNumber DataBits { get { return _CswNbtNode.Properties[PropertyName.DataBits]; } }
+        public CswNbtNodePropText StopBits { get { return _CswNbtNode.Properties[PropertyName.StopBits]; } }
+        public CswNbtNodePropText Handshake { get { return _CswNbtNode.Properties[PropertyName.Handshake]; } }
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault;
 
@@ -36,7 +40,7 @@ namespace ChemSW.Nbt.ObjClasses
 
 
 
-        public CswNbtObjClassBalance( CswNbtResources Resources, CswNbtNode Node )
+        public CswNbtObjClassBalanceConfiguration( CswNbtResources Resources, CswNbtNode Node )
             : base( Resources, Node )
         {
             _CswNbtObjClassDefault = new CswNbtObjClassDefault( _CswNbtResources, Node );
@@ -45,7 +49,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
-            get { return _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.BalanceClass ); }
+            get { return _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.BalanceConfigurationClass ); }
         }
 
 
@@ -53,12 +57,12 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Convert a CswNbtNode to a CswNbtObjClassBalance
         /// </summary>
-        public static implicit operator CswNbtObjClassBalance( CswNbtNode Node )
+        public static implicit operator CswNbtObjClassBalanceConfiguration( CswNbtNode Node )
         {
-            CswNbtObjClassBalance ret = null;
-            if( null != Node && _Validate( Node, CswEnumNbtObjectClass.BalanceClass ) )
+            CswNbtObjClassBalanceConfiguration ret = null;
+            if( null != Node && _Validate( Node, CswEnumNbtObjectClass.BalanceConfigurationClass ) )
             {
-                ret = (CswNbtObjClassBalance) Node.ObjClass;
+                ret = (CswNbtObjClassBalanceConfiguration) Node.ObjClass;
             }
             return ret;
         }
@@ -118,7 +122,5 @@ namespace ChemSW.Nbt.ObjClasses
 
         #endregion
 
-
-    }//class CswNbtObjClassBalance
-
-}//namespace ChemSW.Nbt.csw.ObjClasses
+    }
+}

@@ -147,6 +147,7 @@
     <Compile Include="csw\Modules\CswNbtModuleRuleContainers.cs" />
     <Compile Include="csw\MetaData\CswNbtMetaDataPropertySet.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassBalance.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassBalanceConfiguration.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassRegulatoryListListCode.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassMailReportGroup.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassReportGroup.cs" />

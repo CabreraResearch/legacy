@@ -21,17 +21,88 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
+            _createBalanceConfigurationObjectClass();
             _createBalanceObjectClass();
             _addUserDefaultBalanceProp();
         }
+
+
+        public void _createBalanceConfigurationObjectClass()
+        {
+            CswNbtMetaDataObjectClass BalanceConfigurationOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.BalanceConfigurationClass );
+
+            if( null == BalanceConfigurationOC )
+            {
+                BalanceConfigurationOC = _CswNbtSchemaModTrnsctn.createObjectClass( CswEnumNbtObjectClass.BalanceConfigurationClass, "options.png", false );
+
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( BalanceConfigurationOC )
+                    {
+                        PropName = CswNbtObjClassBalanceConfiguration.PropertyName.Name,
+                        FieldType = CswEnumNbtFieldType.Text,
+                        ServerManaged = true,
+                    } );
+
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( BalanceConfigurationOC )
+                    {
+                        PropName = CswNbtObjClassBalanceConfiguration.PropertyName.RequestFormat,
+                        FieldType = CswEnumNbtFieldType.Text,
+                        ServerManaged = true,
+                    } );
+
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( BalanceConfigurationOC )
+                {
+                    PropName = CswNbtObjClassBalanceConfiguration.PropertyName.ResponseFormat,
+                    FieldType = CswEnumNbtFieldType.Text,
+                    ServerManaged = true,
+                } );
+
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( BalanceConfigurationOC )
+                {
+                    PropName = CswNbtObjClassBalanceConfiguration.PropertyName.BaudRate,
+                    FieldType = CswEnumNbtFieldType.Number,
+                    ServerManaged = true,
+                } );
+
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( BalanceConfigurationOC )
+                {
+                    PropName = CswNbtObjClassBalanceConfiguration.PropertyName.ParityBit,
+                    FieldType = CswEnumNbtFieldType.Text,
+                    ServerManaged = true,
+                } );
+
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( BalanceConfigurationOC )
+                {
+                    PropName = CswNbtObjClassBalanceConfiguration.PropertyName.DataBits,
+                    FieldType = CswEnumNbtFieldType.Number,
+                    ServerManaged = true,
+                } );
+
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( BalanceConfigurationOC )
+                {
+                    PropName = CswNbtObjClassBalanceConfiguration.PropertyName.StopBits,
+                    FieldType = CswEnumNbtFieldType.Text,
+                    ServerManaged = true,
+                } );
+
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( BalanceConfigurationOC )
+                {
+                    PropName = CswNbtObjClassBalanceConfiguration.PropertyName.Handshake,
+                    FieldType = CswEnumNbtFieldType.Text,
+                    ServerManaged = true,
+                } );
+
+            }//if ( null == BalanceConfigurationOC )
+        }//createBalanceConfigurationObjectClass()
+
 
 
         public void _createBalanceObjectClass()
         {
 
             CswNbtMetaDataObjectClass BalanceOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.BalanceClass );
+            CswNbtMetaDataObjectClass BalanceConfigurationOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.BalanceConfigurationClass );
 
-            if( null == BalanceOC )
+            if( null == BalanceOC && null != BalanceConfigurationOC )
             {
 
                 BalanceOC = _CswNbtSchemaModTrnsctn.createObjectClass( CswEnumNbtObjectClass.BalanceClass, "harddrive.png", false );
@@ -70,20 +141,6 @@ namespace ChemSW.Nbt.Schema
                     FieldType = CswEnumNbtFieldType.Text,
                     ServerManaged = true
                 } );
-
-                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( BalanceOC )
-                {
-                    PropName = CswNbtObjClassBalance.PropertyName.RequestConfiguration,
-                    FieldType = CswEnumNbtFieldType.Text,
-                    ServerManaged = true
-                } );
-
-                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( BalanceOC )
-                {
-                    PropName = CswNbtObjClassBalance.PropertyName.ResponseConfiguration,
-                    FieldType = CswEnumNbtFieldType.Text,
-                    ServerManaged = true
-                } );
             
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( BalanceOC )
                 {
@@ -92,6 +149,15 @@ namespace ChemSW.Nbt.Schema
                     ServerManaged = true
                  } );
 
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( BalanceOC )
+                 {
+                     PropName = CswNbtObjClassBalance.PropertyName.BalanceConfiguration,
+                     FieldType = CswEnumNbtFieldType.Relationship,
+                     IsFk = true,
+                     FkType = CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(),
+                     FkValue = BalanceConfigurationOC.ObjectClassId,
+                     ServerManaged = true
+                 } );
 
 
             }//if ( null == BalanceOC )
