@@ -1,9 +1,10 @@
-using System.Web;
 using ChemSW.Config;
 using ChemSW.Core;
+using ChemSW.Exceptions;
 using ChemSW.Nbt;
 using ChemSW.Nbt.Actions;
 using ChemSW.Security;
+using System.Web;
 
 namespace ChemSW.WebSvc
 {
@@ -28,7 +29,7 @@ namespace ChemSW.WebSvc
             _AuthenticationRequest.IpAddress = CswWebSvcCommonMethods.getIpAddress();
         }
 
-        public CswWebSvcResourceInitializerNbt( HttpContext HttpContext, CswWebSvcSessionAuthenticateData.Authentication.Request AuthenticationRequest ) //TODO: add Username/Password
+        public CswWebSvcResourceInitializerNbt( HttpContext HttpContext, CswWebSvcSessionAuthenticateData.Authentication.Request AuthenticationRequest = null ) //TODO: add Username/Password
         {
             _HttpContext = HttpContext;
             _AuthenticationRequest = AuthenticationRequest ?? new CswWebSvcSessionAuthenticateData.Authentication.Request();
@@ -53,8 +54,19 @@ namespace ChemSW.WebSvc
             _CswSessionResourcesNbt = new CswSessionResourcesNbt( _HttpContext.Application, _HttpContext.Request, _HttpContext.Response, _HttpContext, string.Empty, CswEnumSetupMode.NbtWeb );
             _CswNbtResources = _CswSessionResourcesNbt.CswNbtResources;
             _CswNbtResources.beginTransaction();
+
+            if( null != _AuthenticationRequest.RequiredModules )
+            {
+                foreach( string RequiredModule in _AuthenticationRequest.RequiredModules )
+                {
+                    if( false == _CswNbtResources.Modules.IsModuleEnabled( RequiredModule ) )
+                    {
+                        throw new CswDniException( CswEnumErrorType.Warning, "Not all required modules are enabled. Please contact your administrator.", "The " + RequiredModule + " module is required in order to complete this request." );
+                    }
+                }
+            }
             _SessionAuthenticate = new CswNbtSessionAuthenticate( _CswNbtResources, _CswSessionResourcesNbt.CswSessionManager, _AuthenticationRequest );
-            _OnDeInit = new _OnDeInitDelegate( _deInitResources );
+            _OnDeInit =  _deInitResources;
             return ( _CswNbtResources );
 
         }//_initResources() 

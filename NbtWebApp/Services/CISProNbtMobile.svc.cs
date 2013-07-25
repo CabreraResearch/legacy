@@ -1,11 +1,12 @@
-﻿using System.ComponentModel;
+﻿using ChemSW.Nbt;
+using ChemSW.Nbt.csw.Mobile;
+using ChemSW.WebSvc;
+using NbtWebApp.WebSvc.Logic.Mobile.CISProNbt;
+using System.ComponentModel;
 using System.ServiceModel;
 using System.ServiceModel.Activation;
 using System.ServiceModel.Web;
 using System.Web;
-using ChemSW.Nbt.csw.Mobile;
-using ChemSW.WebSvc;
-using NbtWebApp.WebSvc.Logic.Mobile.CISProNbt;
 
 namespace NbtWebApp.Services
 {
@@ -17,6 +18,16 @@ namespace NbtWebApp.Services
     {
         private HttpContext _Context = HttpContext.Current;
 
+        private static CswWebSvcSessionAuthenticateData.Authentication.Request AuthRequest
+        {
+            get
+            {
+                CswWebSvcSessionAuthenticateData.Authentication.Request Ret = new CswWebSvcSessionAuthenticateData.Authentication.Request();
+                Ret.RequiredModules.Add( CswEnumNbtModuleName.CISPro );
+                return Ret;
+            }
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -26,10 +37,10 @@ namespace NbtWebApp.Services
         [FaultContract( typeof( FaultException ) )]
         public CswNbtWebServiceCISProNbtMobile.CswNbtMobileReturn saveOperations( CswNbtCISProNbtMobileData.MobileRequest OperationsArray )
         {
-
             CswNbtWebServiceCISProNbtMobile.CswNbtMobileReturn Ret = new CswNbtWebServiceCISProNbtMobile.CswNbtMobileReturn();
+
             var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceCISProNbtMobile.CswNbtMobileReturn, CswNbtCISProNbtMobileData.MobileRequest>(
-                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, AuthRequest ),
                 ReturnObj: Ret,
                 WebSvcMethodPtr: CswNbtWebServiceCISProNbtMobile.saveOperations,
                 ParamObj: OperationsArray
@@ -48,7 +59,7 @@ namespace NbtWebApp.Services
         {
             CswNbtWebServiceCISProNbtMobile.CswNbtMobileReturn Ret = new CswNbtWebServiceCISProNbtMobile.CswNbtMobileReturn();
             var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceCISProNbtMobile.CswNbtMobileReturn, RapidLoaderData.RapidLoaderDataRequest>(
-                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, AuthRequest ),
                 ReturnObj: Ret,
                 WebSvcMethodPtr: CswNbtWebServiceCISProNbtMobile.RLSaveData,
                 ParamObj: Request
