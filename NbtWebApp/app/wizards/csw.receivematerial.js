@@ -150,11 +150,17 @@
 
             cswPrivate.clearState = function () {
                 Csw.clientDb.removeItem(cswPrivate.name + '_' + cswReceiveMaterialWizardState);
-                if (false === Csw.isNullOrEmpty(cswPrivate.tabsAndProps)) {
-                    cswPrivate.tabsAndProps.tearDown();
+                if (false === Csw.isNullOrEmpty(cswPrivate.containerTabsAndProps)) {
+                    cswPrivate.containerTabsAndProps.tearDown();
                 }
                 if (false === Csw.isNullOrEmpty(cswPrivate.sdsDocTabsAndProps)) {
                     cswPrivate.sdsDocTabsAndProps.tearDown();
+                }
+                if (false === Csw.isNullOrEmpty(cswPrivate.cofaDocTabsAndProps)) {
+                    cswPrivate.cofaDocTabsAndProps.tearDown();
+                }
+                if (false === Csw.isNullOrEmpty(cswPrivate.receiptLotTabsAndProps)) {
+                    cswPrivate.receiptLotTabsAndProps.tearDown();
                 }
             };           
             //#endregion State Functions
@@ -251,8 +257,8 @@
             cswPrivate.wizardStepCreateContainers = {
                 stepName: 'Create Containers',
                 stepNo: '',
-                makeStep: (function () {
-                    return function (StepNo) {
+                makeStep: (function() {
+                    return function(StepNo) {
                         cswPrivate.toggleStepButtons(StepNo);
 
                         if (false === cswPrivate['step' + StepNo + 'Complete']) {
@@ -263,7 +269,7 @@
                                 objectClassName: 'ContainerClass',
                                 labelText: 'Select a Container: ',
                                 data: cswPrivate.state.container,
-                                onSelect: function () {
+                                onSelect: function() {
                                     if (cswPrivate.state.containerNodeTypeId !== containerSelect.selectedNodeTypeId) {
                                         cswPrivate.reinitSteps(cswPrivate.wizardStepContainerProps.stepNo);
                                         cswPrivate.state.containerAddLayout = null;
@@ -272,13 +278,13 @@
                                     }
                                     cswPrivate.state.containerNodeTypeId = containerSelect.selectedNodeTypeId;
                                 },
-                                onSuccess: function () {
+                                onSuccess: function() {
                                     makeAmountsGrid();
                                     makeBarcodeCheckBox();
                                 }
                             });
                             //Container Sizes and Amounts
-                            var makeAmountsGrid = function () {
+                            var makeAmountsGrid = function() {
                                 cswPrivate.amountsDiv = cswPrivate.amountsDiv || cswPrivate['divStep' + StepNo].div();
                                 cswPrivate.amountsDiv.empty();
 
@@ -293,7 +299,7 @@
                                 });
                             };
                             //Print Barcodes Checkbox
-                            var makeBarcodeCheckBox = function () {
+                            var makeBarcodeCheckBox = function() {
                                 cswPrivate.barcodeCheckBoxDiv = cswPrivate.barcodeCheckBoxDiv || cswPrivate['divStep' + StepNo].div();
                                 cswPrivate.barcodeCheckBoxDiv.empty();
 
@@ -302,7 +308,7 @@
                                 });
                                 var printBarcodesCheckBox = checkBoxTable.cell(1, 1).checkBox({
                                     checked: true,
-                                    onChange: Csw.method(function () {
+                                    onChange: Csw.method(function() {
                                         if (printBarcodesCheckBox.checked()) {
                                             cswPrivate.printBarcodes = true;
                                         } else {
@@ -312,12 +318,11 @@
                                 });
                                 checkBoxTable.cell(1, 2).span({ text: 'Print barcode labels for new containers' });
                             };
-
                             cswPrivate['step' + StepNo + 'Complete'] = true;
                         }
                     };
                 }())
-            }
+            };
             //#endregion Step: Create Containers
 
             //#region Step: Define Properties
@@ -332,7 +337,7 @@
                             cswPrivate.setStepHeader(StepNo, 'Configure the properties to apply to all containers upon receipt.');
                             cswPrivate['divStep' + StepNo].br({ number: 2 });
 
-                            cswPrivate.tabsAndProps = Csw.wizard.addLayout(cswPrivate['divStep' + StepNo], {
+                            cswPrivate.containerTabsAndProps = Csw.wizard.addLayout(cswPrivate['divStep' + StepNo], {
                                 name: cswPrivate.state.containerNodeTypeId + 'add_layout',
                                 excludeOcProps: ['save'],
                                 tabState: {
@@ -427,7 +432,7 @@
                     receiptLotId: cswPrivate.state.receiptLotId,
                     quantities: cswPrivate.amountsGrid.quantities(),
                     sizeid: cswPrivate.state.selectedSizeId,
-                    props: cswPrivate.state.properties,
+                    props: cswPrivate.containerTabsAndProps.getProps(),
                     requestitem: cswPrivate.state.requestitem
                 };
                 if (false === Csw.isNullOrEmpty(cswPrivate.sdsDocTabsAndProps)) {

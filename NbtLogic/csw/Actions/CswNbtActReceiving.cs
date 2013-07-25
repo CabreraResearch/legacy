@@ -148,6 +148,9 @@ namespace ChemSW.Nbt.Actions
                 CswNbtObjClassContainer InitialContainerNode = CswNbtResources.Nodes[CswConvert.ToString( ReceiptObj["containernodeid"] )];
                 if( null != InitialContainerNode )
                 {
+                    JObject ContainerAddProps = CswConvert.ToJObject( ReceiptObj["props"] );
+                    CswNbtSdTabsAndProps SdTabsAndProps = new CswNbtSdTabsAndProps( CswNbtResources );
+                    SdTabsAndProps.saveNodeProps( InitialContainerNode.Node, ContainerAddProps );
                     Int32 ContainerNodeTypeId = CswConvert.ToInt32( ReceiptObj["containernodetypeid"] );
                     if( Int32.MinValue != ContainerNodeTypeId )
                     {
@@ -159,11 +162,9 @@ namespace ChemSW.Nbt.Actions
                         {
                             commitSDSDocNode( CswNbtResources, MaterialId, ReceiptObj );
                             CswPrimaryKey RequestId = _getRequestId( ReceiptObj );
-                            CswNbtNode ReceiptLot = _makeReceiptLot( CswNbtResources, MaterialId, RequestId, ReceiptObj );
-                            JObject ContainerAddProps = CswConvert.ToJObject( ReceiptObj["props"] );
+                            CswNbtNode ReceiptLot = _makeReceiptLot( CswNbtResources, MaterialId, RequestId, ReceiptObj, InitialContainerNode.ExpirationDate.DateTimeValue );
                             JObject jBarcodes = new JObject();
                             Ret["barcodes"] = jBarcodes;
-                            CswNbtSdTabsAndProps SdTabsAndProps = new CswNbtSdTabsAndProps( CswNbtResources );
                             for( int index = 0; index < Quantities.Count; index++ )
                             {
                                 JObject QuantityDef = CswConvert.ToJObject( Quantities[index] );
@@ -187,7 +188,7 @@ namespace ChemSW.Nbt.Actions
                                         {
                                             AsContainer = InitialContainerNode;
                                             AsContainer.IsTemp = false;
-                                            SdTabsAndProps.saveNodeProps( AsContainer.Node, ContainerAddProps ); //case 29387
+                                            
 
                                             if( false == CswTools.IsPrimaryKey(AsContainer.Location.SelectedNodeId) )
                                             {
@@ -300,7 +301,7 @@ namespace ChemSW.Nbt.Actions
             return RequestId;
         }
 
-        private static CswNbtNode _makeReceiptLot( CswNbtResources _CswNbtResources, CswPrimaryKey MaterialId, CswPrimaryKey RequestId, JObject ReceiptObj )
+        private static CswNbtNode _makeReceiptLot( CswNbtResources _CswNbtResources, CswPrimaryKey MaterialId, CswPrimaryKey RequestId, JObject ReceiptObj, DateTime ExpirationDate )
         {
             CswNbtSdTabsAndProps SdTabsAndProps = new CswNbtSdTabsAndProps( _CswNbtResources );
             CswNbtObjClassReceiptLot ReceiptLot = _CswNbtResources.Nodes[CswConvert.ToString( ReceiptObj["receiptLotId"] )];
@@ -315,6 +316,7 @@ namespace ChemSW.Nbt.Actions
             }
             ReceiptLot.Material.RelatedNodeId = MaterialId;
             ReceiptLot.RequestItem.RelatedNodeId = RequestId;
+            ReceiptLot.ExpirationDate.DateTimeValue = ExpirationDate;
             ReceiptLot.postChanges( false );
             _attachCofA( _CswNbtResources, ReceiptLot.NodeId, ReceiptObj );
             return ReceiptLot.Node;

@@ -147,20 +147,6 @@ namespace ChemSW.Nbt.ObjClasses
                 }
             }
 
-            //Review K5183
-            if( ExpirationDate.DateTimeValue == DateTime.MinValue && Material.RelatedNodeId != null )
-            {
-                CswNbtNode MaterialNode = _CswNbtResources.Nodes.GetNode( Material.RelatedNodeId );
-                if( MaterialNode != null )
-                {
-                    CswNbtPropertySetMaterial MaterialNodeAsMaterial = MaterialNode;
-                    if( ExpirationDate.DateTimeValue == DateTime.MinValue )
-                    {
-                        ExpirationDate.DateTimeValue = MaterialNodeAsMaterial.getDefaultExpirationDate( DateTime.Now );
-                    }
-                }
-            }
-
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
 
         }//beforeWriteNode()
