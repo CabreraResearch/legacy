@@ -1,9 +1,6 @@
 /// <reference path="~/app/CswApp-vsdoc.js" />
-
-
 (function () {
     var cswReceiveMaterialWizardState = 'cswReceiveMaterialWizardState';
-
     Csw.nbt.receiveMaterialWizard = Csw.nbt.receiveMaterialWizard ||
         Csw.nbt.register('receiveMaterialWizard', function (cswParent, options) {
             'use strict';
@@ -91,33 +88,32 @@
                 if (false === Csw.isNullOrEmpty(cswPrivate.stepFunc[newStepNo])) {
                     cswPrivate.stepFunc[newStepNo](newStepNo);
                 }
-                
             };
             
             cswPrivate.setWizardSteps = function () {
                 var wizardSteps = {};
                 cswPrivate.stepFunc = {};
                 cswPrivate.onStepChange = {};
-                cswPrivate.stepCount = 1;
+                cswPrivate.stepCount = 0;
+                var setWizardStep = function (wizardStep) {
+                    cswPrivate.stepCount++;
+                    cswPrivate.stepFunc[cswPrivate.stepCount] = wizardStep.makeStep;
+                    cswPrivate.onStepChange[cswPrivate.stepCount] = wizardStep.onStepChange;
+                    wizardStep.stepNo = cswPrivate.stepCount;
+                    wizardSteps[cswPrivate.stepCount] = wizardStep.stepName;
+                };
+                //Add steps here:
                 if (cswPrivate.state.canAddCofA) {
-                    wizardSteps[cswPrivate.stepCount] = 'Manufacturer Lot Info';
-                    cswPrivate.stepFunc[cswPrivate.stepCount] = cswPrivate.makeStepManufacturerLotInfo;
-                    cswPrivate.onStepChange[cswPrivate.stepCount] = cswPrivate.onStepManufacturerLotInfoChange;
-                    cswPrivate.stepCount++;
+                    setWizardStep(cswPrivate.wizardStepManufacturerLotInfo);
                 }
-                wizardSteps[cswPrivate.stepCount] = 'Create Containers';
-                cswPrivate.stepFunc[cswPrivate.stepCount] = cswPrivate.makeStepCreateContainers;
-                cswPrivate.stepCount++;
-                wizardSteps[cswPrivate.stepCount] = 'Define Properties';
-                cswPrivate.stepFunc[cswPrivate.stepCount] = cswPrivate.makeStepContainerProps;
+                setWizardStep(cswPrivate.wizardStepCreateContainers);
+                setWizardStep(cswPrivate.wizardStepContainerProps);
                 if (cswPrivate.state.canAddSDS) {
-                    cswPrivate.stepCount++;
-                    wizardSteps[cswPrivate.stepCount] = 'Attach SDS';
-                    cswPrivate.stepFunc[cswPrivate.stepCount] = cswPrivate.makeStepAttachSDS;
+                    setWizardStep(cswPrivate.wizardStepAttachSDS);
                 }
                 cswPrivate.reinitSteps(1);
                 return wizardSteps;
-            };            
+            };
 
             cswPrivate.setStepHeader = function (StepNo, Header) {
                 cswPrivate['divStep' + StepNo] = cswPrivate['divStep' + StepNo] || cswPrivate.wizard.div(StepNo);
@@ -175,234 +171,248 @@
             }());
             //#endregion ctor preInit
             
-            //#region Step 1: Manufacturer Lot Info
-            cswPrivate.makeStepManufacturerLotInfo = (function () {
-                return function (StepNo) {
-                    cswPrivate.toggleStepButtons(StepNo);
+            //#region Step: Manufacturer Lot Info
+            cswPrivate.wizardStepManufacturerLotInfo = {
+                stepName: 'Manufacturer Lot Info',
+                stepNo: '',
+                makeStep: (function () {
+                    return function (StepNo) {
+                        cswPrivate.toggleStepButtons(StepNo);
 
-                    if (false === cswPrivate['step' + StepNo + 'Complete']) {
-                        cswPrivate.setStepHeader(StepNo, 'Define Manufacturer Lot information for this Receipt.');
+                        if (false === cswPrivate['step' + StepNo + 'Complete']) {
+                            cswPrivate.setStepHeader(StepNo, 'Define Manufacturer Lot information for this Receipt.');
 
-                        var manufacturerLotInfoTable = cswPrivate['divStep' + StepNo].table();
-                        cswPrivate.receiptLotTabsAndProps = Csw.layouts.tabsAndProps(manufacturerLotInfoTable.cell(1,1), {
-                            tabState: {
-                                excludeOcProps: ['material','save'],
-                                ShowAsReport: false,
-                                nodetypeid: cswPrivate.state.receiptLotTypeId,
-                                EditMode: Csw.enums.editMode.Add
-                            },
-                            ReloadTabOnSave: false,
-                            onNodeIdSet: function (receiptLotId) {
-                                cswPrivate.state.receiptLotId = receiptLotId;
-                            },
-                            onPropertyChange: function () {
-                                cswPrivate.manufacturerLotInfoChanged = true;
-                                cswPrivate.reinitSteps(StepNo + 2);
-                            }
-                        });
+                            var manufacturerLotInfoTable = cswPrivate['divStep' + StepNo].table();
+                            cswPrivate.receiptLotTabsAndProps = Csw.layouts.tabsAndProps(manufacturerLotInfoTable.cell(1,1), {
+                                tabState: {
+                                    excludeOcProps: ['material','save'],
+                                    ShowAsReport: false,
+                                    nodetypeid: cswPrivate.state.receiptLotTypeId,
+                                    EditMode: Csw.enums.editMode.Add
+                                },
+                                ReloadTabOnSave: false,
+                                onNodeIdSet: function (receiptLotId) {
+                                    cswPrivate.state.receiptLotId = receiptLotId;
+                                },
+                                onPropertyChange: function () {
+                                    cswPrivate.manufacturerLotInfoChanged = true;
+                                    cswPrivate.reinitSteps(cswPrivate.wizardStepContainerProps.stepNo);
+                                }
+                            });
 
-                        var attachCofATable = cswPrivate['divStep' + StepNo].table();
-                        attachCofATable.cell(1, 1).a({
-                            text: 'Add a new C of A:',
-                            onClick: function () {
-                                attachCofATable.cell(2, 1).show();
-                            }
-                        });
-                        attachCofATable.cell(2, 1).hide();
+                            var attachCofATable = cswPrivate['divStep' + StepNo].table();
+                            attachCofATable.cell(1, 1).a({
+                                text: 'Add a new C of A:',
+                                onClick: function () {
+                                    attachCofATable.cell(2, 1).show();
+                                }
+                            });
+                            attachCofATable.cell(2, 1).hide();
 
-                        cswPrivate.cofaDocTabsAndProps = Csw.layouts.tabsAndProps(attachCofATable.cell(2, 1), {
-                            tabState: {
-                                excludeOcProps: ['owner', 'save'],
-                                ShowAsReport: false,
-                                nodetypeid: cswPrivate.state.cofaDocTypeId,
-                                EditMode: Csw.enums.editMode.Add
-                            },
-                            ReloadTabOnSave: false,
-                            onNodeIdSet: function (cofaDocId) {
-                                cswPrivate.state.cofaDocId = cofaDocId;
-                            }
-                        });
+                            cswPrivate.cofaDocTabsAndProps = Csw.layouts.tabsAndProps(attachCofATable.cell(2, 1), {
+                                tabState: {
+                                    excludeOcProps: ['owner', 'save'],
+                                    ShowAsReport: false,
+                                    nodetypeid: cswPrivate.state.cofaDocTypeId,
+                                    EditMode: Csw.enums.editMode.Add
+                                },
+                                ReloadTabOnSave: false,
+                                onNodeIdSet: function (cofaDocId) {
+                                    cswPrivate.state.cofaDocId = cofaDocId;
+                                }
+                            });
 
-                        cswPrivate['step' + StepNo + 'Complete'] = true;
-                    }
-                };
-            }());
-
-            cswPrivate.onStepManufacturerLotInfoChange = function () {
-                if (cswPrivate.manufacturerLotInfoChanged && false === Csw.isNullOrEmpty(cswPrivate.receiptLotTabsAndProps)) {
-                    Csw.ajaxWcf.post({
-                        urlMethod: 'Containers/updateExpirationDate',
-                        data: {
-                            ReceiptLotId: cswPrivate.state.receiptLotId,
-                            ReceiptLotProps: Csw.serialize(cswPrivate.receiptLotTabsAndProps.getProps()),
-                            ContainerId: cswPrivate.state.containerNodeId
-                        },
-                        success: function (data) {
-                            cswPrivate.manufacturerLotInfoChanged = false;
-                            if (false === Csw.isNullOrEmpty(data.ContainerProps)) {
-                                cswPrivate.state.containerAddLayout = JSON.parse(data.ContainerProps);
-                            }
+                            cswPrivate['step' + StepNo + 'Complete'] = true;
                         }
-                    });
+                    };
+                }()),
+                onStepChange: function () {
+                    if (cswPrivate.manufacturerLotInfoChanged && false === Csw.isNullOrEmpty(cswPrivate.receiptLotTabsAndProps)) {
+                        Csw.ajaxWcf.post({
+                            urlMethod: 'Containers/updateExpirationDate',
+                            data: {
+                                ReceiptLotId: cswPrivate.state.receiptLotId,
+                                ReceiptLotProps: Csw.serialize(cswPrivate.receiptLotTabsAndProps.getProps()),
+                                ContainerId: cswPrivate.state.containerNodeId
+                            },
+                            success: function (data) {
+                                cswPrivate.manufacturerLotInfoChanged = false;
+                                if (false === Csw.isNullOrEmpty(data.ContainerProps)) {
+                                    cswPrivate.state.containerAddLayout = JSON.parse(data.ContainerProps);
+                                }
+                            }
+                        });
+                    }
                 }
             };
-            //#endregion Step 1: Manufacturer Lot Info
+            //#endregion Step: Manufacturer Lot Info
 
-            //#region Step 2: Create Containers
-            cswPrivate.makeStepCreateContainers = (function () {
-                return function (StepNo) {
-                    cswPrivate.toggleStepButtons(StepNo);
-                    
-                    if (false === cswPrivate['step' + StepNo + 'Complete']) {
-                        cswPrivate.setStepHeader(StepNo, 'Select the number of containers and their quantities to receive.');
+            //#region Step: Create Containers
+            cswPrivate.wizardStepCreateContainers = {
+                stepName: 'Create Containers',
+                stepNo: '',
+                makeStep: (function () {
+                    return function (StepNo) {
+                        cswPrivate.toggleStepButtons(StepNo);
 
-                        //Container Select (if multiple container nodetypes exist)
-                        var containerSelect = Csw.wizard.nodeTypeSelect(cswPrivate['divStep' + StepNo].div(), {
-                            objectClassName: 'ContainerClass',
-                            labelText: 'Select a Container: ',
-                            data: cswPrivate.state.container,
-                            onSelect: function () {
-                                if (cswPrivate.state.containerNodeTypeId !== containerSelect.selectedNodeTypeId) {
-                                    cswPrivate.reinitSteps(StepNo+1);
-                                    cswPrivate.state.containerAddLayout = null;
-                                    //TODO - instead of blanking out the existing temp container, we should make a new temp
-                                    cswPrivate.state.containerNodeId = null;
-                                }
-                                cswPrivate.state.containerNodeTypeId = containerSelect.selectedNodeTypeId;
-                            },
-                            onSuccess: function () {
-                                makeAmountsGrid();
-                                makeBarcodeCheckBox();
-                            }
-                        });
-                        //Container Sizes and Amounts
-                        var makeAmountsGrid = function () {
-                            cswPrivate.amountsDiv = cswPrivate.amountsDiv || cswPrivate['divStep' + StepNo].div();
-                            cswPrivate.amountsDiv.empty();
+                        if (false === cswPrivate['step' + StepNo + 'Complete']) {
+                            cswPrivate.setStepHeader(StepNo, 'Select the number of containers and their quantities to receive.');
 
-                            cswPrivate.amountsGrid = Csw.wizard.amountsGrid(cswPrivate.amountsDiv, {
-                                name: 'wizardAmountsThinGrid',
-                                quantity: cswPrivate.state.quantity,
-                                containerlimit: cswPrivate.state.containerlimit,
-                                materialId: cswPrivate.state.materialId,
-                                action: 'Receive',
-                                customBarcodes: cswPrivate.state.customBarcodes,
-                                nodeTypeName: cswPrivate.state.nodetypename
-                            });
-                        };
-                        //Print Barcodes Checkbox
-                        var makeBarcodeCheckBox = function () {
-                            cswPrivate.barcodeCheckBoxDiv = cswPrivate.barcodeCheckBoxDiv || cswPrivate['divStep' + StepNo].div();
-                            cswPrivate.barcodeCheckBoxDiv.empty();
-
-                            var checkBoxTable = cswPrivate.barcodeCheckBoxDiv.table({
-                                cellvalign: 'middle'
-                            });
-                            var printBarcodesCheckBox = checkBoxTable.cell(1, 1).checkBox({
-                                checked: true,
-                                onChange: Csw.method(function () {
-                                    if (printBarcodesCheckBox.checked()) {
-                                        cswPrivate.printBarcodes = true;
-                                    } else {
-                                        cswPrivate.printBarcodes = false;
+                            //Container Select (if multiple container nodetypes exist)
+                            var containerSelect = Csw.wizard.nodeTypeSelect(cswPrivate['divStep' + StepNo].div(), {
+                                objectClassName: 'ContainerClass',
+                                labelText: 'Select a Container: ',
+                                data: cswPrivate.state.container,
+                                onSelect: function () {
+                                    if (cswPrivate.state.containerNodeTypeId !== containerSelect.selectedNodeTypeId) {
+                                        cswPrivate.reinitSteps(cswPrivate.wizardStepContainerProps.stepNo);
+                                        cswPrivate.state.containerAddLayout = null;
+                                        //TODO - instead of blanking out the existing temp container, we should make a new temp
+                                        cswPrivate.state.containerNodeId = null;
                                     }
-                                })
+                                    cswPrivate.state.containerNodeTypeId = containerSelect.selectedNodeTypeId;
+                                },
+                                onSuccess: function () {
+                                    makeAmountsGrid();
+                                    makeBarcodeCheckBox();
+                                }
                             });
-                            checkBoxTable.cell(1, 2).span({ text: 'Print barcode labels for new containers' });
-                        };
+                            //Container Sizes and Amounts
+                            var makeAmountsGrid = function () {
+                                cswPrivate.amountsDiv = cswPrivate.amountsDiv || cswPrivate['divStep' + StepNo].div();
+                                cswPrivate.amountsDiv.empty();
 
-                        cswPrivate['step' + StepNo + 'Complete'] = true;
-                    }
-                };
-            }());
-            //#endregion Step 2: Create Containers
-
-            //#region Step 3: Define Properties
-            cswPrivate.makeStepContainerProps = (function () {
-                return function (StepNo) {
-                    cswPrivate.toggleStepButtons(StepNo);
-
-                    if (false === cswPrivate['step' + StepNo + 'Complete']) {
-                        cswPrivate.setStepHeader(StepNo, 'Configure the properties to apply to all containers upon receipt.');
-                        cswPrivate['divStep' + StepNo].br({ number: 2 });
-
-                        cswPrivate.tabsAndProps = Csw.wizard.addLayout(cswPrivate['divStep' + StepNo], {
-                            name: cswPrivate.state.containerNodeTypeId + 'add_layout',
-                            excludeOcProps: ['save'],
-                            tabState: {
-                                propertyData: cswPrivate.state.containerAddLayout,
-                                removeTempStatus: false,
-                                nodetypeid: cswPrivate.state.containerNodeTypeId,
-                                nodeid: cswPrivate.state.containerNodeId
-                            },
-                            onSaveError: function (errorData) {
-                                console.log(errorData);
-                                cswPrivate.saveError = true;
-                            }
-
-                        });
-
-                        cswPrivate['step' + StepNo + 'Complete'] = true;
-                    }
-                };
-            }());
-            //#endregion Step 3: Define Properties
-
-            //#region Step 4: Attach SDS
-            cswPrivate.makeStepAttachSDS = (function () {
-                return function (StepNo) {
-                    cswPrivate.toggleStepButtons(StepNo);
-
-                    if (false === cswPrivate['step' + StepNo + 'Complete']) {
-                        cswPrivate.setStepHeader(StepNo, 'Define a Safety Data Sheet to attach to ' + cswPrivate.state.tradeName);
-
-                        var SDSTable = cswPrivate['divStep' + StepNo].table(),
-                            SDSAddCell = SDSTable.cell(1, 1).css({ width: '450px' }),
-                            SDSGridCell = SDSTable.cell(1, 2).css({ width: '550px' }),
-                            attachSDSTable = SDSAddCell.table();
-                        
-                        attachSDSTable.cell(1, 1).a({
-                            text: 'Add a new SDS Document',
-                            onClick: function () {
-                                attachSDSTable.cell(1, 1).hide();
-                                attachSDSTable.cell(1, 2).show();
-                            }
-                        });
-                        attachSDSTable.cell(1, 2).hide();
-
-                        cswPrivate.sdsDocTabsAndProps = Csw.layouts.tabsAndProps(attachSDSTable.cell(1, 2), {
-                            tabState: {
-                                excludeOcProps: ['owner', 'save'],
-                                ShowAsReport: false,
-                                nodetypeid: cswPrivate.state.sdsDocTypeId,
-                                EditMode: Csw.enums.editMode.Add
-                            },
-                            ReloadTabOnSave: false,
-                            onNodeIdSet: function (sdsDocId) {
-                                cswPrivate.state.sdsDocId = sdsDocId;
-                            }
-                        });
-
-                        if (cswPrivate.state.sdsDocs.length > 0) {
-                            SDSGridCell.span().setLabelText('Existing SDS Documents:').br({number: 2});
-                            cswPrivate.sdsDocGrid = SDSGridCell.thinGrid({ linkText: '' });
-                            var row = 2;
-                            Csw.iterate(cswPrivate.state.sdsDocs, function(sdsDoc) {
-                                cswPrivate.sdsDocGrid.addCell(sdsDoc.revisiondate, row, 1);
-                                var linkCell = cswPrivate.sdsDocGrid.addCell('', row, 2);
-                                linkCell.a({
-                                    href: sdsDoc.linktext,
-                                    text: sdsDoc.displaytext
+                                cswPrivate.amountsGrid = Csw.wizard.amountsGrid(cswPrivate.amountsDiv, {
+                                    name: 'wizardAmountsThinGrid',
+                                    quantity: cswPrivate.state.quantity,
+                                    containerlimit: cswPrivate.state.containerlimit,
+                                    materialId: cswPrivate.state.materialId,
+                                    action: 'Receive',
+                                    customBarcodes: cswPrivate.state.customBarcodes,
+                                    nodeTypeName: cswPrivate.state.nodetypename
                                 });
-                                row++;
-                            });
-                        }
+                            };
+                            //Print Barcodes Checkbox
+                            var makeBarcodeCheckBox = function () {
+                                cswPrivate.barcodeCheckBoxDiv = cswPrivate.barcodeCheckBoxDiv || cswPrivate['divStep' + StepNo].div();
+                                cswPrivate.barcodeCheckBoxDiv.empty();
 
-                        cswPrivate['step' + StepNo + 'Complete'] = true;
-                    }
-                };
-            }());
-            //#endregion Step 4: Attach SDS
+                                var checkBoxTable = cswPrivate.barcodeCheckBoxDiv.table({
+                                    cellvalign: 'middle'
+                                });
+                                var printBarcodesCheckBox = checkBoxTable.cell(1, 1).checkBox({
+                                    checked: true,
+                                    onChange: Csw.method(function () {
+                                        if (printBarcodesCheckBox.checked()) {
+                                            cswPrivate.printBarcodes = true;
+                                        } else {
+                                            cswPrivate.printBarcodes = false;
+                                        }
+                                    })
+                                });
+                                checkBoxTable.cell(1, 2).span({ text: 'Print barcode labels for new containers' });
+                            };
+
+                            cswPrivate['step' + StepNo + 'Complete'] = true;
+                        }
+                    };
+                }())
+            }
+            //#endregion Step: Create Containers
+
+            //#region Step: Define Properties
+            cswPrivate.wizardStepContainerProps = {
+                stepName: 'Define Properties',
+                stepNo: '',
+                makeStep: (function() {
+                    return function(StepNo) {
+                        cswPrivate.toggleStepButtons(StepNo);
+
+                        if (false === cswPrivate['step' + StepNo + 'Complete']) {
+                            cswPrivate.setStepHeader(StepNo, 'Configure the properties to apply to all containers upon receipt.');
+                            cswPrivate['divStep' + StepNo].br({ number: 2 });
+
+                            cswPrivate.tabsAndProps = Csw.wizard.addLayout(cswPrivate['divStep' + StepNo], {
+                                name: cswPrivate.state.containerNodeTypeId + 'add_layout',
+                                excludeOcProps: ['save'],
+                                tabState: {
+                                    propertyData: cswPrivate.state.containerAddLayout,
+                                    removeTempStatus: false,
+                                    nodetypeid: cswPrivate.state.containerNodeTypeId,
+                                    nodeid: cswPrivate.state.containerNodeId
+                                },
+                                onSaveError: function(errorData) {
+                                    console.log(errorData);
+                                    cswPrivate.saveError = true;
+                                }
+                            });
+
+                            cswPrivate['step' + StepNo + 'Complete'] = true;
+                        }
+                    };
+                }())
+            };
+            //#endregion Step: Define Properties
+
+            //#region Step: Attach SDS
+            cswPrivate.wizardStepAttachSDS = {
+                stepName: 'Attach SDS',
+                stepNo: '',
+                makeStep: (function() {
+                    return function(StepNo) {
+                        cswPrivate.toggleStepButtons(StepNo);
+
+                        if (false === cswPrivate['step' + StepNo + 'Complete']) {
+                            cswPrivate.setStepHeader(StepNo, 'Define a Safety Data Sheet to attach to ' + cswPrivate.state.tradeName);
+
+                            var SDSTable = cswPrivate['divStep' + StepNo].table(),
+                                SDSAddCell = SDSTable.cell(1, 1).css({ width: '450px' }),
+                                SDSGridCell = SDSTable.cell(1, 2).css({ width: '550px' }),
+                                attachSDSTable = SDSAddCell.table();
+
+                            attachSDSTable.cell(1, 1).a({
+                                text: 'Add a new SDS Document',
+                                onClick: function() {
+                                    attachSDSTable.cell(1, 1).hide();
+                                    attachSDSTable.cell(1, 2).show();
+                                }
+                            });
+                            attachSDSTable.cell(1, 2).hide();
+
+                            cswPrivate.sdsDocTabsAndProps = Csw.layouts.tabsAndProps(attachSDSTable.cell(1, 2), {
+                                tabState: {
+                                    excludeOcProps: ['owner', 'save'],
+                                    ShowAsReport: false,
+                                    nodetypeid: cswPrivate.state.sdsDocTypeId,
+                                    EditMode: Csw.enums.editMode.Add
+                                },
+                                ReloadTabOnSave: false,
+                                onNodeIdSet: function(sdsDocId) {
+                                    cswPrivate.state.sdsDocId = sdsDocId;
+                                }
+                            });
+
+                            if (cswPrivate.state.sdsDocs.length > 0) {
+                                SDSGridCell.span().setLabelText('Existing SDS Documents:').br({ number: 2 });
+                                cswPrivate.sdsDocGrid = SDSGridCell.thinGrid({ linkText: '' });
+                                var row = 2;
+                                Csw.iterate(cswPrivate.state.sdsDocs, function(sdsDoc) {
+                                    cswPrivate.sdsDocGrid.addCell(sdsDoc.revisiondate, row, 1);
+                                    var linkCell = cswPrivate.sdsDocGrid.addCell('', row, 2);
+                                    linkCell.a({
+                                        href: sdsDoc.linktext,
+                                        text: sdsDoc.displaytext
+                                    });
+                                    row++;
+                                });
+                            }
+
+                            cswPrivate['step' + StepNo + 'Complete'] = true;
+                        }
+                    };
+                }())
+            };
+            //#endregion Step: Attach SDS
             
             //#region Finish
             cswPrivate.finalize = function () {
@@ -455,6 +465,7 @@
             };
             //#endregion Finish
 
+            //#region ctor _post
             (function _post() {
                 var wizardSteps = cswPrivate.setWizardSteps();
                 cswPrivate.state.containerlimit = Csw.number(cswPrivate.state.containerlimit, 25);
@@ -482,7 +493,8 @@
                 });
                 cswPrivate.stepFunc[1](1);
             } ());
-
+            //#endregion ctor _post
+            
             return cswPublic;
         });
 } ());
