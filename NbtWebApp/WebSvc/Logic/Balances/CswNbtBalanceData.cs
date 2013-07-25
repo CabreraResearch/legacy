@@ -46,21 +46,6 @@ namespace NbtWebApp.WebSvc.Logic
         [Description( "The hardware description of the balance" )]
         public string DeviceDescription = string.Empty;
 
-
-        /// <summary>
-        /// The configured request string for the balance
-        /// </summary>
-        [DataMember( IsRequired = true )]
-        [Description( "The configured request string for the balance" )]
-        public string RequestFormat = string.Empty;
-
-        /// <summary>
-        /// The configured response string for the balance
-        /// </summary>
-        [DataMember( IsRequired = true )]
-        [Description( "The configured response string for the balance" )]
-        public string ResponseFormat = string.Empty;
-
         /// <summary>
         /// Whether the balance is receiving data on requests
         /// </summary>
@@ -68,15 +53,83 @@ namespace NbtWebApp.WebSvc.Logic
         [Description( "Whether the balance is receiving data on requests" )] 
         public bool Operational = false;
 
+        ///<summary>
+        /// What configuration set the balance is using for serial port
+        /// </summary>
+        [DataMember( IsRequired = true )] 
+        [Description( "What configuration the balance is using for serial port" )] 
+        public string Configuration = string.Empty;
+
+
+    }//class SerialBalance
 
 
 
 
+    /// <summary>
+    /// Object used to transfer Balance configuration data
+    /// </summary>
+    [DataContract]
+    [Description( "Object used to transfer Balance configuration data" )]
+    public class BalanceConfiguration
+    {
+        /// <summary>
+        /// Unique name of this configuration
+        /// </summary>
+        [DataMember( IsRequired = true )] 
+        [Description( "Unique name of this configuration") ]
+        public string Name = string.Empty;
+
+        /// <summary>
+        /// Request string sent to query balance
+        /// </summary>
+        [DataMember( IsRequired = true )]
+        [Description( "Request string sent to query balance" )]
+        public string RequestFormat = string.Empty;
+
+        /// <summary>
+        /// Regular expression to parse weights received from balance
+        /// </summary>
+        [DataMember( IsRequired = true )]
+        [Description( "Regular expression to parse weights received from balance" )]
+        public string ResponseFormat = string.Empty;
+
+        /// <summary>
+        /// Baud Rate of serial port connection
+        /// </summary>
+        [DataMember( IsRequired = true )]
+        [Description( "Baud Rate of serial port connection" )]
+        public int BaudRate = int.MinValue;
+
+        /// <summary>
+        /// Parity Bit of serial port connection
+        /// </summary>
+        [DataMember( IsRequired = true )]
+        [Description( "Parity Bit of serial port connection" )]
+        public string ParityBit  = string.Empty;
+
+        /// <summary>
+        /// Data Bits of serial port connection
+        /// </summary>
+        [DataMember( IsRequired = true )]
+        [Description( "Data bits of serial port connection" )]
+        public int DataBits  = int.MinValue;
+
+        /// <summary>
+        /// Stop Bits of serial port connection
+        /// </summary>
+        [DataMember( IsRequired = true )]
+        [Description( "Stop Bits of serial port connection" )]
+        public string StopBits  = string.Empty;
+
+        /// <summary>
+        /// Handshake of serial port connection
+        /// </summary>
+        [DataMember( IsRequired = true )]
+        [Description( "Handshake of serial port connection" )]
+        public string Handshake = string.Empty;
 
 
-
-
-
-    }
+    }//class BalanceConfiguration
 
 }
