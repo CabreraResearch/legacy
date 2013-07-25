@@ -189,8 +189,8 @@
             //Bind an unrender callback to terminate any outstanding ajax requests
             nodeProperty.unBindRender(function() {
                 Csw.iterate(cswPrivate.ajaxCollection, function(async) {
-                    if (async && async.ajax) {
-                        async.ajax.abort();
+                    if (async) {
+                        async.abort();
                     }
                 });
             });
