@@ -49,7 +49,6 @@ namespace ChemSW.Nbt.Sched
                 if( null != _MasterSchemaResources )
                 {
 
-                    string sql = @"se";
                     CswArbitrarySelect CswArbitrarySelectSessionList = _MasterSchemaResources.makeCswArbitrarySelect( "expired_session_list_query", _makeLoadCountSql( CswResources.AccessId ) );
                     DataTable SessionListTable = CswArbitrarySelectSessionList.getTable();
                     Int32 ExpiredSessionRecordCount = CswConvert.ToInt32( SessionListTable.Rows[0]["cnt"] );
