@@ -115,7 +115,7 @@
         cswInternal.startTime = new Date();
 
         Csw.publish(Csw.enums.events.ajax.ajaxStart, cswInternal.watchGlobal);
-        return $.ajax({
+        var ajax = $.ajax({
             type: 'POST',
             async: cswInternal.async,
             urlPrefix: Csw.enums.ajaxUrlPrefix,
@@ -126,13 +126,17 @@
             dataType: 'json',
             contentType: 'application/json; charset=utf-8',
             data: JSON.stringify(cswInternal.data),
-            success: function (data) {
+            done: function (data, textStatus, jqXHR) {
                 cswPrivate.onJsonSuccess(cswInternal, data, cswInternal.url);
             }, /* success{} */
-            error: function (xmlHttpRequest, textStatus) {
-                cswPrivate.onJsonError(xmlHttpRequest, textStatus, cswInternal);
+            fail: function (jqXHR, textStatus, errorThrown) {
+                cswPrivate.onJsonError(jqXHR, textStatus, cswInternal);
+            },
+            always: function(data, textStatus, jqXHR) {    // or jqXHR, textStatus, errorThrown
+                
             }
         });
+        return Csw.promises.ajax(ajax);
     }); /* cswPrivate.jsonPost */
 
     cswPrivate.jsonGet = Csw.method(function (options) {
@@ -167,20 +171,25 @@
         //Csw.debug.time(url);
         Csw.publish(Csw.enums.events.ajax.ajaxStart, cswInternal.watchGlobal);
 
-        return $.ajax({
+        var ajax = $.ajax({
             type: 'GET',
             async: cswInternal.async,
             url: cswInternal.url,
             dataType: 'json',
             contentType: 'application/json; charset=utf-8',
             data: $.param(cswInternal.data),
-            success: function (data) {
+            done: function (data, textStatus, jqXHR) {
                 cswPrivate.onJsonSuccess(cswInternal, data, cswInternal.url);
             }, /* success{} */
-            error: function (xmlHttpRequest, textStatus) {
+            fail: function (xmlHttpRequest, textStatus) {
                 cswPrivate.onJsonError(xmlHttpRequest, textStatus, cswInternal);
+            },
+            always: function (data, textStatus, jqXHR) {    // or jqXHR, textStatus, errorThrown
+
             }
-        }); 
+        });
+
+        return Csw.promises.ajax(ajax);
     });
 
     cswPrivate.ajaxStart = function (eventObj, watchGlobal) {

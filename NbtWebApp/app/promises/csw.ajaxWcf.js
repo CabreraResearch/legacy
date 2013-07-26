@@ -144,7 +144,7 @@
         }
 
         Csw.publish(Csw.enums.events.ajax.ajaxStart, cswInternal.watchGlobal);
-        return $.ajax({
+        var ajax = $.ajax({
             type: verb,
             url: cswInternal.urlMethod,
             xhrFields: {
@@ -154,21 +154,23 @@
             contentType: 'application/json; charset=utf-8',
             //processdata: false,
             data: cswInternal.data,
-            success: function (data) {
+            done: function (data) {
                 cswPrivate.onJsonSuccess(cswInternal, data, document.location + '/' + cswInternal.urlMethod);
             }, /* success{} */
-            error: function (xmlHttpRequest, textStatus, param1) {
-                cswPrivate.onJsonError(xmlHttpRequest, textStatus, param1, { 
+            fail: function (jqXHR, textStatus, errorText) {
+                cswPrivate.onJsonError(jqXHR, textStatus, errorText, { 
                     data: cswInternal.data, 
                     watchGlobal: cswInternal.watchGlobal, 
                     urlMethod: document.location + '/' + cswInternal.urlMethod 
                     }
                  );
             },
-            complete: function(xmlHttpRequest, textStatus) {
+            always: function(xmlHttpRequest, textStatus) {
                 Csw.tryExec(cswInternal.complete, xmlHttpRequest, textStatus);
             }
-        }); 
+        });
+        
+        return Csw.promises.ajax(ajax);
     }); /* cswPrivate.jsonPost */
 
     Csw.ajaxWcf.post = Csw.ajaxWcf.post ||
