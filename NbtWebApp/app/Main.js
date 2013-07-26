@@ -208,18 +208,6 @@ window.initMain = window.initMain || function (undefined) {
             Csw.clientChanges.unsetChanged();
         });
 
-    var startSpinner = function () {
-        Csw.main.ajaxImage.show();
-        Csw.main.ajaxSpacer.hide();
-    };
-    Csw.subscribe(Csw.enums.events.ajax.globalAjaxStart, startSpinner);
-
-    var stopSpinner = function () {
-        Csw.main.ajaxImage.hide();
-        Csw.main.ajaxSpacer.show();
-    };
-    Csw.subscribe(Csw.enums.events.ajax.globalAjaxStop, stopSpinner);
-
     function refreshMain(eventObj, data) {
         Csw.clientChanges.unsetChanged();
         Csw.main.is.multi = false;
