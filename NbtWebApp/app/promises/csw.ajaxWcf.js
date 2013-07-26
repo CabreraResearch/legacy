@@ -153,21 +153,21 @@
             dataType: 'json',
             contentType: 'application/json; charset=utf-8',
             //processdata: false,
-            data: cswInternal.data,
-            done: function (data) {
-                cswPrivate.onJsonSuccess(cswInternal, data, document.location + '/' + cswInternal.urlMethod);
-            }, /* success{} */
-            fail: function (jqXHR, textStatus, errorText) {
-                cswPrivate.onJsonError(jqXHR, textStatus, errorText, { 
-                    data: cswInternal.data, 
-                    watchGlobal: cswInternal.watchGlobal, 
-                    urlMethod: document.location + '/' + cswInternal.urlMethod 
-                    }
-                 );
-            },
-            always: function(xmlHttpRequest, textStatus) {
-                Csw.tryExec(cswInternal.complete, xmlHttpRequest, textStatus);
-            }
+            data: cswInternal.data
+        });
+        ajax.done(function(data) {
+            cswPrivate.onJsonSuccess(cswInternal, data, document.location + '/' + cswInternal.urlMethod);
+        }); /* success{} */
+        ajax.fail(function(jqXHR, textStatus, errorText) {
+            cswPrivate.onJsonError(jqXHR, textStatus, errorText, {
+                    data: cswInternal.data,
+                    watchGlobal: cswInternal.watchGlobal,
+                    urlMethod: document.location + '/' + cswInternal.urlMethod
+                }
+            );
+        });
+        ajax.always(function(xmlHttpRequest, textStatus) {
+            Csw.tryExec(cswInternal.complete, xmlHttpRequest, textStatus);
         });
         
         return Csw.promises.ajax(ajax);

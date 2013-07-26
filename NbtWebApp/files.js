@@ -50,7 +50,8 @@ module.exports.vendorMin = [
     'vendor/extjs-4.1.0/ext-all.js',
     'vendor/ext-done.js',
     'vendor/jquery.flot.js',
-    'vendor/extjs-4.1.0/ux/**/*.js'
+    'vendor/extjs-4.1.0/ux/**/*.js',
+    'Scripts/Q.min.js'
 ];
 
 module.exports.vendor = [
@@ -74,7 +75,8 @@ module.exports.vendor = [
     'vendor/extjs-4.1.0/ext-all-debug.js',
     'vendor/ext-done.js',
     'vendor/jquery.flot.js',
-    'vendor/extjs-4.1.0/ux/**/*.js'
+    'vendor/extjs-4.1.0/ux/**/*.js',
+    'Scripts/q.js'
 ];
 
 module.exports.images = [

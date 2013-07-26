@@ -125,16 +125,16 @@
             },
             dataType: 'json',
             contentType: 'application/json; charset=utf-8',
-            data: JSON.stringify(cswInternal.data),
-            done: function (data, textStatus, jqXHR) {
-                cswPrivate.onJsonSuccess(cswInternal, data, cswInternal.url);
-            }, /* success{} */
-            fail: function (jqXHR, textStatus, errorThrown) {
-                cswPrivate.onJsonError(jqXHR, textStatus, cswInternal);
-            },
-            always: function(data, textStatus, jqXHR) {    // or jqXHR, textStatus, errorThrown
-                
-            }
+            data: JSON.stringify(cswInternal.data)
+        });
+        ajax.done(function(data, textStatus, jqXHR) {
+            cswPrivate.onJsonSuccess(cswInternal, data, cswInternal.url);
+        }); /* success{} */
+        ajax.fail(function(jqXHR, textStatus, errorThrown) {
+            cswPrivate.onJsonError(jqXHR, textStatus, cswInternal);
+        });
+        ajax.always(function(data, textStatus, jqXHR) { // or jqXHR, textStatus, errorThrown
+
         });
         return Csw.promises.ajax(ajax);
     }); /* cswPrivate.jsonPost */
@@ -177,18 +177,17 @@
             url: cswInternal.url,
             dataType: 'json',
             contentType: 'application/json; charset=utf-8',
-            data: $.param(cswInternal.data),
-            done: function (data, textStatus, jqXHR) {
-                cswPrivate.onJsonSuccess(cswInternal, data, cswInternal.url);
-            }, /* success{} */
-            fail: function (xmlHttpRequest, textStatus) {
-                cswPrivate.onJsonError(xmlHttpRequest, textStatus, cswInternal);
-            },
-            always: function (data, textStatus, jqXHR) {    // or jqXHR, textStatus, errorThrown
-
-            }
+            data: $.param(cswInternal.data)
         });
+        ajax.done(function(data, textStatus, jqXHR) {
+            cswPrivate.onJsonSuccess(cswInternal, data, cswInternal.url);
+        }); /* success{} */
+        ajax.fail(function(xmlHttpRequest, textStatus) {
+            cswPrivate.onJsonError(xmlHttpRequest, textStatus, cswInternal);
+        });
+        ajax.always(function(data, textStatus, jqXHR) { // or jqXHR, textStatus, errorThrown
 
+        });
         return Csw.promises.ajax(ajax);
     });
 
