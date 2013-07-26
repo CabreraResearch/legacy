@@ -169,10 +169,14 @@ namespace ChemSW.Nbt.PropTypes
                 }
                 if( false == foundValue )
                 {
-                    JObject Opt = new JObject();
-                    Opt["Text"] = Text;
-                    Opt["Value"] = Value;
-                    OptionsArr.Add( Opt );
+                    // We don't want to send an empty option if the property is required
+                    if( false == string.IsNullOrEmpty( Value ) || false == string.IsNullOrEmpty( Text ) || false == _CswNbtMetaDataNodeTypeProp.IsRequired )
+                    {
+                        JObject Opt = new JObject();
+                        Opt["Text"] = Text;
+                        Opt["Value"] = Value;
+                        OptionsArr.Add( Opt );
+                    }
                 }
                 ParentObject["options"] = OptionsArr;
 
