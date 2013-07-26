@@ -166,7 +166,7 @@ namespace ChemSW.Nbt.ObjClasses
             bool HasActiveSDS = false;
             if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.SDS ) && null != MaterialId )
             {
-                CswNbtView docView = getAssignedSDSDocumentsView( _CswNbtResources );
+                CswNbtView docView = getAssignedSDSDocumentsView( _CswNbtResources, MaterialId );
                 ICswNbtTree docsTree = _CswNbtResources.Trees.getTreeFromView( docView, false, false, false );
                 docsTree.goToNthChild( 0 ); //The docView is a property view
                 HasActiveSDS = docsTree.getChildNodeCount() > 0;
@@ -179,8 +179,7 @@ namespace ChemSW.Nbt.ObjClasses
             string url = "";
             if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.SDS ) )
             {
-                CswNbtView docView = getAssignedSDSDocumentsView( _CswNbtResources );
-                docView = docView.PrepGridView( MaterialId );
+                CswNbtView docView = getAssignedSDSDocumentsView( _CswNbtResources, MaterialId );
                 CswNbtObjClassUser currentUserNode = _CswNbtResources.Nodes[_CswNbtResources.CurrentNbtUser.UserId];
                 CswNbtObjClassJurisdiction userJurisdictionNode = _CswNbtResources.Nodes[currentUserNode.JurisdictionProperty.RelatedNodeId];
 
@@ -284,11 +283,12 @@ namespace ChemSW.Nbt.ObjClasses
             return url;
         }
 
-        public static CswNbtView getAssignedSDSDocumentsView( CswNbtResources _CswNbtResources )
+        public static CswNbtView getAssignedSDSDocumentsView( CswNbtResources _CswNbtResources, CswPrimaryKey NodeId )
         {
             CswNbtMetaDataObjectClass ChemicalOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass );
             CswNbtMetaDataObjectClassProp AssignedSDS_OCP = ChemicalOC.getObjectClassProp( CswNbtObjClassChemical.PropertyName.AssignedSDS );
             CswNbtView docView = _CswNbtResources.ViewSelect.restoreView( AssignedSDS_OCP.ViewXml );
+            docView = docView.PrepGridView( NodeId );
             return docView;
         }
 
