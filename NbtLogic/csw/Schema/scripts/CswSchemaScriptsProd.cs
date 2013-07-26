@@ -6,7 +6,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Keeps the schema up-to-date
     /// </summary>
-    public class CswSchemaScriptsProd : ICswSchemaScripts
+    public class CswSchemaScriptsProd: ICswSchemaScripts
     {
         private Dictionary<CswSchemaVersion, CswSchemaUpdateDriver> _UpdateDrivers = new Dictionary<CswSchemaVersion, CswSchemaUpdateDriver>();
         public Dictionary<CswSchemaVersion, CswSchemaUpdateDriver> UpdateDrivers { get { return _UpdateDrivers; } }
@@ -39,13 +39,14 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case30239() ) );                    //02D-017
 
             #endregion DOGWOOD
-            
+
             #region EUCALYPTUS
 
             // e.g. _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02E_CaseXXXXX() ) );            //02D-017 //02E-000
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02E_Case30014() ) );                    //02D-018 //02E-001
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02E_Case30222() ) );                    //02D-019 //02E-002
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02E_Case29847() ) );                    //02D-020 //02E-003
+
 
             #endregion EUCALYPTUS
 
@@ -60,7 +61,7 @@ namespace ChemSW.Nbt.Schema
             }
 
             #region Before Scripts
-            
+
             //TODO: Remove this generic script
             _addRunBeforeScript( new CswSchemaUpdateDriver( new Deprecated_RunBeforeEveryExecutionOfUpdater_01OC() ), Deprecated_RunBeforeEveryExecutionOfUpdater_01OC.Title );
 
@@ -81,17 +82,14 @@ namespace ChemSW.Nbt.Schema
 
             #endregion
 
-            #region EUCALYPTUS Run Before Scripts 
+            #region EUCALYPTUS Run Before Scripts
 
-            
+            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02E_Case29701() ), "Case 29701: OC Script" );
+
             #endregion EUCALYPTUS Run Before Scripts
 
-
-            
             _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_MakeMissingNodeTypeProps() ), "MakeMissingNodeTypeProps" );
-
-
-            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_MakeMissingNodeTypeProps() ), "MakeMissingNodeTypeProps" );
+;
             _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02SQL() ), RunBeforeEveryExecutionOfUpdater_02SQL.Title );
             _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_03() ), RunBeforeEveryExecutionOfUpdater_03.Title );
 

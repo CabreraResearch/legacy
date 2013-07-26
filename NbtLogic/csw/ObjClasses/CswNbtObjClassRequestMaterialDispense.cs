@@ -1,6 +1,5 @@
 using System;
 using ChemSW.Core;
-using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropertySets;
 using ChemSW.Nbt.PropTypes;
@@ -98,6 +97,11 @@ namespace ChemSW.Nbt.ObjClasses
             /// <para>ServerManaged</para>
             /// </summary>
             public const string TotalMoved = "Total Moved";
+
+            /// <summary>
+            /// The Approval level of this Create Material request
+            /// </summary>
+            public const string ApprovalLevel = "Approval Level";
 
             public static CswCommaDelimitedString MLMCmgTabProps = new CswCommaDelimitedString
             {
@@ -700,6 +704,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             NextReorderDate.DateTimeValue = CswNbtPropertySetSchedulerImpl.getNextDueDate( this.Node, NextReorderDate, RecurringFrequency );
         }
+        public CswNbtNodePropList ApprovelLevel { get { return _CswNbtNode.Properties[PropertyName.ApprovalLevel]; } }
 
         #endregion
     }//CswNbtObjClassRequestMaterialDispense
