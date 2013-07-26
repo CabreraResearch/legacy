@@ -197,7 +197,7 @@ namespace NbtWebApp
         [WebInvoke( Method = "POST", ResponseFormat = WebMessageFormat.Json )]
         [Description( "fetch existing balance configurations in NBT" )]
         [FaultContract( typeof( FaultException ) )]
-        public void ListBalanceConfigurations()
+        public CswNbtBalanceReturn ListBalanceConfigurations()
         {
             //delegate has to be static because you can't create an instance yet: you don't have resources until the delegate is actually called
             CswNbtBalanceReturn Ret = new CswNbtBalanceReturn();
@@ -210,6 +210,8 @@ namespace NbtWebApp
                 );
 
             SvcDriver.run();
+
+            return Ret;
         }
 
 
@@ -221,7 +223,7 @@ namespace NbtWebApp
         [WebInvoke( Method = "POST", ResponseFormat = WebMessageFormat.Json )]
         [Description( "update or create a new balance configuration on the server" )]
         [FaultContract( typeof( FaultException ) )]
-        public void registerBalanceConfiguration(BalanceConfiguration Request)
+        public CswNbtBalanceReturn registerBalanceConfiguration(BalanceConfiguration Request)
         {
             //delegate has to be static because you can't create an instance yet: you don't have resources until the delegate is actually called
             CswNbtBalanceReturn Ret = new CswNbtBalanceReturn();
@@ -234,6 +236,8 @@ namespace NbtWebApp
                 );
 
             SvcDriver.run();
+
+            return Ret;
         }
 
 
