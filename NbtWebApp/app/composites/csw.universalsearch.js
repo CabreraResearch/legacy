@@ -69,7 +69,7 @@
                 }; // onFilterClick()
 
                 // Nodetype Filter Menu
-                Csw.ajax.post({
+                cswPublic.ready = Csw.ajax.post({
                     urlMethod: 'getNodeTypes',
                     data: {
                         PropertySetName: '',

@@ -54,7 +54,7 @@
 
                 cswPrivate.div = cswParent.div();
 
-                Csw.ajaxWcf.post({
+                return Csw.ajaxWcf.post({
                     urlMethod: 'Modules/Initialize',
                     success: function (response) {
                         cswPrivate.render(response);
@@ -62,7 +62,7 @@
                 });
             }; // cswPrivate.init()
 
-            cswPrivate.init();
+            return cswPrivate.init();
 
         }); // register()
 }());

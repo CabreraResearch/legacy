@@ -167,7 +167,7 @@
             ///<summary>Attempt a login.</summary>
             Csw.extend(cswPrivate, loginopts);
             cswPrivate.isAuthenticated = true;
-            Csw.ajaxWcf.post({
+            return Csw.ajaxWcf.post({
                 urlMethod: 'Session/Init',
                 data: {
                     CustomerId: cswPrivate.AccessId,
@@ -204,7 +204,7 @@
             Csw.extend(cswPrivate, options);
 
             cswPrivate.isAuthenticated = false;
-            Csw.ajaxWcf.post({
+            return Csw.ajaxWcf.post({
                 urlMethod: 'Session/EndWithAuth',
                 data: {},
                 complete: function() {
@@ -331,7 +331,7 @@
                 Csw.extend(o, options);
             }
 
-            Csw.ajax.post({
+            return Csw.ajax.post({
                 urlMethod: 'isAdministrator',
                 success: function (data) {
                     if (Csw.bool(data.Administrator)) {
