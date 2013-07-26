@@ -1084,7 +1084,6 @@
     <Content Include="Images\view\viewtree.gif" />
     <Content Include="Images\vld\bad.gif" />
     <Content Include="Images\vld\good.gif" />
-    <Content Include="License.aspx" />
     <Content Include="Main.aspx" />
     <Content Include="Deprecated\Main.js" />
     <Content Include="Popup_DesignAdd.aspx" />
@@ -1244,7 +1243,7 @@
     <Content Include="Skin\Window\WindowSprites.gif" />
     <Content Include="Skin\Window\WindowVerticalSprites.gif" />
     <Content Include="Statistics.aspx" />
-    <Content Include="TermsOfUse.aspx" />
+    <Content Include="TermsOfUse.html" />
     <Content Include="Services\Views.svc" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
@@ -1270,9 +1269,6 @@
     </Compile>
     <Compile Include="ExternalLogin.aspx.designer.cs">
       <DependentUpon>ExternalLogin.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="License.aspx.designer.cs">
-      <DependentUpon>License.aspx</DependentUpon>
     </Compile>
     <Compile Include="Main.aspx.designer.cs">
       <DependentUpon>Main.aspx</DependentUpon>
@@ -1309,10 +1305,6 @@
     </Compile>
     <Compile Include="DisplayLog.aspx.cs">
       <DependentUpon>DisplayLog.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="License.aspx.cs">
-      <DependentUpon>License.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Main.aspx.cs">
@@ -1374,13 +1366,6 @@
     </Compile>
     <Compile Include="Statistics.aspx.designer.cs">
       <DependentUpon>Statistics.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="TermsOfUse.aspx.cs">
-      <DependentUpon>TermsOfUse.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="TermsOfUse.aspx.designer.cs">
-      <DependentUpon>TermsOfUse.aspx</DependentUpon>
     </Compile>
     <Compile Include="WebSvc\Core\CswWebSvcCommonMethods.cs" />
     <Compile Include="WebSvc\Core\CswWebSvcResourceInitializerNbt.cs" />

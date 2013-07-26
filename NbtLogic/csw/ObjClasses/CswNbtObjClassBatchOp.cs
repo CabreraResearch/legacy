@@ -183,7 +183,7 @@ namespace ChemSW.Nbt.ObjClasses
                 return ( _CswNbtNode.Properties[PropertyName.Log] );
             }
         }
-        public CswNbtNodePropList OpName
+        public CswNbtNodePropText OpName
         {
             get
             {
@@ -194,7 +194,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return (CswEnumNbtBatchOpName) OpName.Value;
+                return (CswEnumNbtBatchOpName) OpName.Text;
             }
         }
         public CswNbtNodePropNumber PercentDone

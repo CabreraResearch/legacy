@@ -1,11 +1,9 @@
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
 using ChemSW.Core;
 using ChemSW.DB;
-using ChemSW.Nbt.Batch;
 using ChemSW.Nbt.ChemCatCentral;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
@@ -232,6 +230,16 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void onPropertySetAddDefaultViewFilters( CswNbtViewRelationship ParentRelationship ) { }
 
+        /// <summary>
+        /// This method is called when the UpdtPropVals Schedule Rule is run.
+        /// </summary>
+        public override void onUpdatePropertyValue()
+        {
+            RefreshRegulatoryListMembers();
+            syncFireDbData();
+            syncPCIDData();
+        }
+
         #endregion Inherited Events
 
         #region Custom Logic
@@ -277,35 +285,6 @@ namespace ChemSW.Nbt.ObjClasses
             }
             return DefaultExpDate;
         }
-
-        //private void _updateRegulatoryLists()
-        //{
-        //RegulatoryLists.StaticText = "";
-
-        //if( false == String.IsNullOrEmpty( CasNo.Text ) ) //if the CASNo is empty we don't both matching
-        //{
-        //    CswNbtMetaDataObjectClass regListOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RegulatoryListClass );
-        //    CswNbtMetaDataObjectClassProp casNosOCP = regListOC.getObjectClassProp( CswNbtObjClassRegulatoryList.PropertyName.CASNumbers );
-
-        //    CswNbtView matchingRegLists = new CswNbtView( _CswNbtResources );
-        //    CswNbtViewRelationship parent = matchingRegLists.AddViewRelationship( regListOC, true );
-        //    matchingRegLists.AddViewPropertyAndFilter( parent, casNosOCP,
-        //        Value: CasNo.Text,
-        //        FilterMode: CswEnumNbtFilterMode.Contains );
-
-        //    ICswNbtTree tree = _CswNbtResources.Trees.getTreeFromView( matchingRegLists, true, false, false );
-        //    int childCount = tree.getChildNodeCount();
-
-        //    CswCommaDelimitedString regLists = new CswCommaDelimitedString();
-        //    for( int i = 0; i < childCount; i++ )
-        //    {
-        //        tree.goToNthChild( i );
-        //        regLists.Add( tree.getNodeNameForCurrentPosition() );
-        //        tree.goToParentNode();
-        //    }
-        //    RegulatoryLists.StaticText = regLists.ToString();
-        //}
-        //}
 
         /// <summary>
         /// Gets all the node ids of materials that use this material as a component
@@ -422,9 +401,6 @@ namespace ChemSW.Nbt.ObjClasses
 
                         // Set the value of the property to the new list
                         this.HazardClasses.Value = UpdatedHazardClasses;
-
-                        // Set the C3SyncDate property
-                        this.C3SyncDate.DateTimeValue = DateTime.Now;
                     }
                 }
             }
@@ -604,9 +580,6 @@ namespace ChemSW.Nbt.ObjClasses
                             }
 
                         }//foreach( CswC3ExtChemData.PCID.AdditionalProperty Property in C3ExtChemData.ExtensionData1.PcidData.AdditionalProperties )
-
-                        // Set the C3SyncDate property
-                        this.C3SyncDate.DateTimeValue = DateTime.Now;
 
                     }//if( SearchResults.ExtChemDataResults.Length > 0 )
 

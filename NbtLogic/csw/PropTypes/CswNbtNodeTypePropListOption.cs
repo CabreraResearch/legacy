@@ -1,51 +1,43 @@
 
+using System.Runtime.Serialization;
+
 namespace ChemSW.Nbt.PropTypes
 {
-
+    [DataContract]
     public class CswNbtNodeTypePropListOption
     {
-
-
         public CswNbtNodeTypePropListOption( string Text, string Value )
         {
             _Text = Text;
             _Value = Value;
         }//ctor
 
+        public CswNbtNodeTypePropListOption( string Value )
+        {
+            _Text = Value;
+            _Value = Value;
+        }//ctor
+
         public bool Empty
         {
-            get
-            {
-                return ( string.Empty == Text || string.Empty == Value );
-            }//get
+            get { return ( string.Empty == Text || string.Empty == Value ); }
         }//Empty
 
         private string _Text = "";
+        private string _Value = "";
+
+        [DataMember]
         public string Text
         {
-            set
-            {
-                _Text = value;
-            }//set
-
-            get
-            {
-                return ( _Text );
-            }//get
+            set { _Text = value; }
+            get { return ( _Text ); }
         }//Text
 
-        private string _Value = "";
+        [DataMember]
         public string Value
         {
-            set
-            {
-                _Value = value;
-            }//set
-
-            get
-            {
-                return ( _Value );
-            }//get
+            set { _Value = value; }
+            get { return ( _Value ); }
         }//Value
 
     }//CswNbtNodeTypePropListOption

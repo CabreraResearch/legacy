@@ -19,6 +19,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static readonly CswEnumNbtContainerLocationTypeOptions Dispose = new CswEnumNbtContainerLocationTypeOptions( "Dispose" );
         public static readonly CswEnumNbtContainerLocationTypeOptions Undispose = new CswEnumNbtContainerLocationTypeOptions( "Undispose" );
         public static readonly CswEnumNbtContainerLocationTypeOptions Missing = new CswEnumNbtContainerLocationTypeOptions( "Missing" );
+        public static readonly CswEnumNbtContainerLocationTypeOptions Ignore = new CswEnumNbtContainerLocationTypeOptions( "Ignore" );
     }
 }//namespace ChemSW.Nbt.ObjClasses
 
