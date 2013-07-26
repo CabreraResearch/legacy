@@ -3,7 +3,6 @@ using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
 using System.Xml.Serialization;
-using Microsoft.Win32;
 using NbtPrintLib;
 
 namespace NbtPrintClient
@@ -14,7 +13,7 @@ namespace NbtPrintClient
         private CswPrintJobServiceThread _svcThread;
         //private PrinterSetupDataCollection printers = null;
         private NbtPrintClientConfig config = null;
-        private RegistryKey myRootKey = null;
+        // private RegistryKey myRootKey = null;
 
         public Form1()
         {
@@ -219,53 +218,32 @@ namespace NbtPrintClient
             config.password = tbPassword.Text;
             config.url = tbURL.Text;
             config.SaveToReg( Application.UserAppDataRegistry );
-            try
+            if( config.serviceMode == true )
             {
-                /*
-                                string subkeyname = @"SOFTWARE\ChemSW\NbtPrintClient";
-                                RegistryKey areg = Registry.LocalMachine.OpenSubKey( subkeyname, true );
-                                if( areg == null )
-                                {
-                                    areg = Registry.LocalMachine.CreateSubKey( subkeyname );
-                                }
-                                config.SaveToReg( areg );
-                */
-                string path = Assembly.GetExecutingAssembly().Location;
-                FileInfo fileInfo = new FileInfo( path );
-                string FilePath = fileInfo.DirectoryName + "\\printersetup.config";
-                XmlSerializer writer = new XmlSerializer( typeof( NbtPrintClientConfig ) );
-                using( FileStream file = File.OpenWrite( FilePath ) )
+                try
                 {
-                    writer.Serialize( file, config );
-                    file.Flush();
-                    file.Close();
-                }
+                    string path = Assembly.GetExecutingAssembly().Location;
+                    FileInfo fileInfo = new FileInfo( path );
+                    string FilePath = fileInfo.DirectoryName + "\\printersetup.config";
+                    XmlSerializer writer = new XmlSerializer( typeof( NbtPrintClientConfig ) );
+                    using( FileStream file = File.OpenWrite( FilePath ) )
+                    {
+                        writer.Serialize( file, config );
+                        file.Flush();
+                        file.Close();
+                    }
 
-            }
-            catch( Exception e )
-            {
-                //we can't do anything about this. the user cdoe snot have admin rights to the registry
+                }
+                catch( Exception e )
+                {
+                    MessageBox.Show( e.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error );
+                }
             }
         }
 
         private void LoadSettings()
         {
             config.LoadFromReg( Application.UserAppDataRegistry );
-            try
-            {
-                string subkeyname = @"SOFTWARE\ChemSW\NbtPrintClient";
-                RegistryKey areg = Registry.LocalMachine.OpenSubKey( subkeyname, true );
-                if( areg != null && config.url.Length > 0 )
-                {
-                    //if we can read it (admin) and its non-blank:
-                    //force the user data to match the common data
-                    config.SaveToReg( Application.UserAppDataRegistry );
-                }
-            }
-            catch( Exception e )
-            {
-                //oh well, no admin rights to registry
-            }
             tbAccessId.Text = config.accessid;
             tbUsername.Text = config.logon;
             cbServiceMode.Checked = config.serviceMode;

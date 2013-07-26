@@ -43,6 +43,7 @@ namespace NbtPrintLib
             {
                 pwd = _CswEncryption.encrypt( pwd );
             }
+
             rootKey.SetValue( "password", pwd, Microsoft.Win32.RegistryValueKind.String );
             if( url == string.Empty )
             {
@@ -64,13 +65,9 @@ namespace NbtPrintLib
                 logon = rootKey.GetValue( "logon" ).ToString();
                 String pwd = rootKey.GetValue( "password" ).ToString();
                 pwd = pwd.Replace( "\0", string.Empty );
-                try
+                if( pwd.Length > 4 )
                 {
                     password = _CswEncryption.decrypt( pwd );
-                }
-                catch( Exception e )
-                {
-                    password = "";
                 }
                 url = rootKey.GetValue( "serverurl" ).ToString();
                 if( url == string.Empty )
@@ -80,16 +77,6 @@ namespace NbtPrintLib
 
                 //Log( "Loaded settings." );
                 serviceMode = ( rootKey.GetValue( "serviceMode" ).ToString().ToLower() == "true" );
-                /*
-                            if( true != enabled )
-                            {
-                                logMessages = "Print jobs are not enabled, see Setup tab.";
-                            }
-                            else
-                            {
-                                timer1.Enabled = true;
-                                lblStatus.Text = "Waiting...";
-                            } */
                 try
                 {
                     RegistryKey akey = rootKey.OpenSubKey( "printers", true );
