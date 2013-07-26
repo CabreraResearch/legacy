@@ -153,7 +153,8 @@
             dataType: 'json',
             contentType: 'application/json; charset=utf-8',
             //processdata: false,
-            data: cswInternal.data
+            data: cswInternal.data,
+            watchGlobal: cswInternal.watchGlobal
         });
         ajax.done(function(data) {
             cswPrivate.onJsonSuccess(cswInternal, data, document.location + '/' + cswInternal.urlMethod);

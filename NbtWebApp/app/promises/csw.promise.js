@@ -28,5 +28,39 @@
         return promise;
     });
 
+    //Fires when all jQuery AJAX requests have completed
+    $(document).ajaxStop(function () {
+        window.name.ajaxCount = 0;
+        Csw.main.onReady.then(function() {
+            Csw.main.ajaxImage.hide();
+            Csw.main.ajaxSpacer.show();
+        });
+    });
+
+    //Fires when any jQuery AJAX request starts
+    $(document).ajaxSend(function (event, jqXHR, ajaxOptions) {
+        if (ajaxOptions.watchGlobal) {
+            window.name.ajaxCount = window.name.ajaxCount || 0;
+            window.name.ajaxCount += 1;
+
+            Csw.main.onReady.then(function() {
+                Csw.main.ajaxImage.show();
+                Csw.main.ajaxSpacer.hide();
+            });
+        }
+    });
+
+    //Fires when any jQuery AJAX request ends
+    $(document).ajaxComplete(function (event, jqXHR, ajaxOptions) {
+        if (ajaxOptions.watchGlobal) {
+            window.name.ajaxCount = window.name.ajaxCount || 1;
+            window.name.ajaxCount -= 1;
+
+            Csw.main.onReady.then(function() {
+                Csw.main.ajaxImage.hide();
+                Csw.main.ajaxSpacer.show();
+            });
+        }
+    });
 
 } ());

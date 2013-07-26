@@ -5,14 +5,12 @@
     'use strict';
 
     var cswPrivate = {
-        ajaxCount: 0,
         enums: {
             dataType: {
                 json: 'json',
                 xml: 'xml'
             }
-        },
-        ajaxBindingsHaveRun: false
+        }
     };
 
     cswPrivate.handleAjaxError = function (errorJson) {
@@ -20,7 +18,6 @@
     }; /* cswPrivate.handleAjaxError() */
 
     cswPrivate.onJsonSuccess = Csw.method(function (o, data, url) {
-        Csw.publish(Csw.enums.events.ajax.ajaxStop, o.watchGlobal);
         var result = data;
         if (data.d) {
             result = $.parseJSON(data.d);
@@ -77,9 +74,8 @@
         }
     });
 
-    cswPrivate.onJsonError = Csw.method(function (xmlHttpRequest, textStatus, o) {
-        Csw.publish(Csw.enums.events.ajax.ajaxStop, o.watchGlobal, xmlHttpRequest, textStatus);
-        if (textStatus !== 'abort' && xmlHttpRequest.status !== 0 && xmlHttpRequest.readyState !== 0) {
+    cswPrivate.onJsonError = Csw.method(function (jqXHR, textStatus, o) {
+        if (textStatus !== 'abort' && jqXHR.status !== 0 && jqXHR.readyState !== 0) {
             Csw.debug.error('Webservice Request (' + o.url + ') Failed: ' + textStatus);
             Csw.tryExec(o.error, textStatus);
         }
@@ -113,8 +109,7 @@
 
         cswInternal.url = Csw.string(cswInternal.url, cswInternal.urlPrefix + cswInternal.urlMethod);
         cswInternal.startTime = new Date();
-
-        Csw.publish(Csw.enums.events.ajax.ajaxStart, cswInternal.watchGlobal);
+        
         var ajax = $.ajax({
             type: 'POST',
             async: cswInternal.async,
@@ -125,7 +120,8 @@
             },
             dataType: 'json',
             contentType: 'application/json; charset=utf-8',
-            data: JSON.stringify(cswInternal.data)
+            data: JSON.stringify(cswInternal.data),
+            watchGlobal: cswInternal.watchGlobal
         });
         ajax.done(function(data, textStatus, jqXHR) {
             cswPrivate.onJsonSuccess(cswInternal, data, cswInternal.url);
@@ -134,7 +130,7 @@
             cswPrivate.onJsonError(jqXHR, textStatus, cswInternal);
         });
         ajax.always(function(data, textStatus, jqXHR) { // or jqXHR, textStatus, errorThrown
-
+            
         });
         return Csw.promises.ajax(ajax);
     }); /* cswPrivate.jsonPost */
@@ -168,16 +164,15 @@
         Csw.extend(cswInternal, options);
         
         cswInternal.url = Csw.string(cswInternal.url, cswInternal.urlPrefix + cswInternal.urlMethod);
-        //Csw.debug.time(url);
-        Csw.publish(Csw.enums.events.ajax.ajaxStart, cswInternal.watchGlobal);
-
+        
         var ajax = $.ajax({
             type: 'GET',
             async: cswInternal.async,
             url: cswInternal.url,
             dataType: 'json',
             contentType: 'application/json; charset=utf-8',
-            data: $.param(cswInternal.data)
+            data: $.param(cswInternal.data),
+            watchGlobal: cswInternal.watchGlobal
         });
         ajax.done(function(data, textStatus, jqXHR) {
             cswPrivate.onJsonSuccess(cswInternal, data, cswInternal.url);
@@ -186,45 +181,15 @@
             cswPrivate.onJsonError(xmlHttpRequest, textStatus, cswInternal);
         });
         ajax.always(function(data, textStatus, jqXHR) { // or jqXHR, textStatus, errorThrown
-
+            
         });
         return Csw.promises.ajax(ajax);
     });
-
-    cswPrivate.ajaxStart = function (eventObj, watchGlobal) {
-        if (watchGlobal) {
-            cswPrivate.ajaxCount += 1;
-            if (cswPrivate.ajaxCount === 1) {
-                Csw.publish(Csw.enums.events.ajax.globalAjaxStart);
-            }
-        }
-    };
     
-
-    cswPrivate.ajaxStop = function (eventObj, watchGlobal) {
-        if (watchGlobal) {
-            cswPrivate.ajaxCount -= 1;
-            if (cswPrivate.ajaxCount < 0) {
-                cswPrivate.ajaxCount = 0;
-            }
-        }
-        if (cswPrivate.ajaxCount <= 0) {
-            Csw.publish(Csw.enums.events.ajax.globalAjaxStop);
-        }
-    };
-    
-    cswPrivate.bindAjaxEvents = function () {
-        if (false === cswPrivate.ajaxBindingsHaveRun) {
-            cswPrivate.ajaxBindingsHaveRun = true;
-            Csw.subscribe(Csw.enums.events.ajax.ajaxStart, cswPrivate.ajaxStart);
-            Csw.subscribe(Csw.enums.events.ajax.ajaxStop, cswPrivate.ajaxStop);
-        }
-    };
-
     Csw.ajax.ajaxInProgress = Csw.ajax.ajaxInProgress ||
         Csw.ajax.register('ajaxInProgress', function () {
             /// <summary> Evaluates whether a pending ajax request is still open. </summary>
-            return (cswPrivate.ajaxCount > 0);
+            return (window.name.ajaxCount > 0);
         });
 
     Csw.ajax.get = Csw.ajax.get ||
