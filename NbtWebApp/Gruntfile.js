@@ -142,10 +142,11 @@ module.exports = function (grunt) {
             test: {
                 options: {
                     complexity: {
-                        logicalor: false,
-                        switchcase: false,
+                        logicalor: true,
+                        switchcase: true,
                         forin: true,
-                        trycatch: true
+                        trycatch: true,
+                        newmi: true
                     }
                 },
                 globals: {
@@ -155,13 +156,20 @@ module.exports = function (grunt) {
                     Ext: true
                 },
                 files: {
-                    'test/plato': cswAppJsFiles,
+                    'plato': cswAppJsFiles,
                 },
             }
         },
 
         qunit: {
-            files: ['test/*.html']
+            //files: ['test/*.html'],
+            all: {
+                options: {
+                    urls: [
+                      'https://nbtdaily.chemswlive.com/CiDevUnitTests/test/test.html'
+                    ]
+                }
+            }
         },
 
         tmpHtml: {
@@ -279,9 +287,12 @@ module.exports = function (grunt) {
             grunt.task.run('toHtml:dev:nodereport'); //Generate the NodeReport HTML file from the template
             grunt.task.run('toHtml:dev:report'); //Generate the Report HTML file from the template
             grunt.task.run('toHtml:dev:print'); //Generate the PrintingLabels HTML file from the template
+            grunt.task.run('toHtml:dev:test'); //Generate the Unit Tests HTML file from the template
         }
         grunt.task.run('toHtml:dev:dManifest'); //Generate the appcache from the manifest template
-        grunt.task.run('runUnitTests'); //Unit tests
+        grunt.task.run('plato');
+        grunt.task.run('jshint');
+        //grunt.task.run('runUnitTests'); //Unit tests
     });
 
     grunt.registerTask('toHtml', function (buildMode, page) {
@@ -316,7 +327,7 @@ module.exports = function (grunt) {
         }
     });
 
-    grunt.registerTask('runArbitraryTask', function (taskName, arg1, arg2) {
+    grunt.registerTask('runArbitraryTask', function (taskName) {
         /// <summary>
         /// Run any registered task
         /// </summary>
@@ -324,7 +335,7 @@ module.exports = function (grunt) {
             throw grunt.task.taskError('Task Name must be supplied');
         }
         grunt.log.write(grunt.template.today('dddd mmmm dS yyyy h:MM:ss TT'));
-        grunt.task.run(taskName, arg1, arg2);
+        grunt.task.run(taskName);
     });
 
     grunt.registerTask('runUnitTests', function () {
@@ -332,8 +343,6 @@ module.exports = function (grunt) {
         /// Build the Test HTML and execute the QUnit tests
         /// </summary>
         grunt.task.run('toHtml:dev:test'); //Generate the HTML file from the template
-        grunt.task.run('plato');
-        //grunt.task.run('jshint');
         grunt.task.run('qunit');
     });
 

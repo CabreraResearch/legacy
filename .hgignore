@@ -47,6 +47,7 @@ NbtWebApp/Csw2/test/*.html
 glob:CswSetupVariables.json
 Nbt.sln.DotSettings.user
 NbtWebApp/mobile/*
+NbtWebApp/plato*
 syntax: regexp
 .*\.orig
 .*\.vsp
