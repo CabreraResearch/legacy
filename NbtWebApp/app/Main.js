@@ -2,6 +2,88 @@
 
 window.initMain = window.initMain || function (undefined) {
 
+    Csw.main.register('is', (function() {
+        var isMulti = false;
+        var isExtReady = true;
+        var isDocumentReady = true;
+        var isOneTimeReset = false;
+        var isDashDone = false;
+        var isMenuDone = false;
+        var isSearchDone = false;
+        var isQuotaDone = false;
+
+        var trueOrFalse = function(val) {
+            var ret = false;
+            if (val === true) {
+                ret = true;
+            }
+            return ret;
+        };
+        return {
+            get multi() {
+                return isMulti;
+            },
+            set multi(nuVal) {
+                isMulti = trueOrFalse(nuVal);
+                return isMulti;
+            },
+            toggleMulti: function() {
+                isMulti = !isMulti;
+                return isMulti;
+            },
+            get extReady() {
+                return isExtReady;
+            },
+            set extReady(nuVal) {
+                isExtReady = trueOrFalse(nuVal);
+                return isExtReady;
+            },
+            get documentReady() {
+                return isDocumentReady;
+            },
+            set documentReady(nuVal) {
+                isDocumentReady = trueOrFalse(nuVal);
+                return isDocumentReady;
+            },
+            get oneTimeReset() {
+                var ret = isOneTimeReset;
+                if (true === ret) {
+                    isOneTimeReset = false;
+                }
+                return ret;
+            },
+            set oneTimeReset(nuVal) {
+                isOneTimeReset = trueOrFalse(nuVal);
+                return isOneTimeReset;
+            },
+            // see case 29072
+            get menuDone() {
+                return isMenuDone;
+            },
+            set menuDone(val) {
+                isMenuDone = trueOrFalse(val);
+            },
+            get dashDone() {
+                return isDashDone;
+            },
+            set dashDone(val) {
+                isDashDone = trueOrFalse(val);
+            },
+            get searchDone() {
+                return isSearchDone;
+            },
+            set searchDone(val) {
+                isSearchDone = trueOrFalse(val);
+            },
+            get quotaDone() {
+                return isQuotaDone;
+            },
+            set quotaDone(val) {
+                isQuotaDone = trueOrFalse(val);
+            }
+        };
+    }()));
+
     var cswPrivate = {
         tabsAndProps: null,
         mainMenu: null,
@@ -121,8 +203,8 @@ window.initMain = window.initMain || function (undefined) {
             Csw.unsubscribe('CswMultiEdit'); //omitting a function handle removes all
             Csw.unsubscribe('CswNodeDelete'); //omitting a function handle removes all
             Csw.publish('initPropertyTearDown');
-            cswPrivate.is.multi = false;
-            cswPrivate.is.oneTimeReset = true;
+            Csw.main.is.multi = false;
+            Csw.main.is.oneTimeReset = true;
             Csw.clientChanges.unsetChanged();
         });
 
@@ -140,7 +222,7 @@ window.initMain = window.initMain || function (undefined) {
 
     function refreshMain(eventObj, data) {
         Csw.clientChanges.unsetChanged();
-        cswPrivate.is.multi = false;
+        Csw.main.is.multi = false;
         clear({ all: true });
         Csw.tryExec(refreshSelected, data);
     }
@@ -351,11 +433,11 @@ window.initMain = window.initMain || function (undefined) {
         var afterSuccessfulAuthentication = function () {
             setUsername();
             refreshDashboard(function () {
-                cswPrivate.is.dashDone = true;
+                Csw.main.is.dashDone = true;
                 _finishInitAll(onSuccess);
             });
             refreshHeaderMenu(function () {
-                cswPrivate.is.menuDone = true;
+                Csw.main.is.menuDone = true;
                 _finishInitAll(onSuccess);
             });
             universalsearch = Csw.composites.universalSearch(null, {
@@ -382,14 +464,14 @@ window.initMain = window.initMain || function (undefined) {
                     });
                 },
                 onSuccess: function () {
-                    cswPrivate.is.searchDone = true;
+                    Csw.main.is.searchDone = true;
                     _finishInitAll(onSuccess);
                 }
             });
 
             Csw.actions.quotaImage(Csw.main.headerQuota, {
                 onSuccess: function () {
-                    cswPrivate.is.quotaDone = true;
+                    Csw.main.is.quotaDone = true;
                     _finishInitAll(onSuccess);
                 }
             });
@@ -401,10 +483,10 @@ window.initMain = window.initMain || function (undefined) {
     } // initAll()
 
     function _finishInitAll(onSuccess) {
-        if (cswPrivate.is.menuDone === true &&
-            cswPrivate.is.quotaDone === true &&
-            cswPrivate.is.searchDone === true &&
-            cswPrivate.is.dashDone === true) {
+        if (Csw.main.is.menuDone === true &&
+            Csw.main.is.quotaDone === true &&
+            Csw.main.is.searchDone === true &&
+            Csw.main.is.dashDone === true) {
 
             // handle querystring arguments
             var loadCurrent = handleQueryString();
@@ -445,17 +527,17 @@ window.initMain = window.initMain || function (undefined) {
                 Csw.tryExec(onSuccess);
             }
 
-            cswPrivate.is.menuDone = false;
-            cswPrivate.is.quotaDone = false;
-            cswPrivate.is.searchDone = false;
-            cswPrivate.is.dashDone = false;
+            Csw.main.is.menuDone = false;
+            Csw.main.is.quotaDone = false;
+            Csw.main.is.searchDone = false;
+            Csw.main.is.dashDone = false;
 
         } // if(_headerInitDone == true)
     } // _finishInitAll()
 
 
     function refreshDashboard(onSuccess) {
-        if (false === cswPrivate.is.dashDone) {
+        if (false === Csw.main.is.dashDone) {
             Csw.main.headerDashboard.empty();
             Csw.main.headerDashboard.$.CswDashboard({ onSuccess: onSuccess });
         }
@@ -632,7 +714,7 @@ window.initMain = window.initMain || function (undefined) {
             Csw.extend(o, options);
         }
 
-        cswPrivate.is.multi = false; /* Case 26134. Revert multi-edit selection when switching views, etc. */
+        Csw.main.is.multi = false; /* Case 26134. Revert multi-edit selection when switching views, etc. */
         var linkType = Csw.string(o.linktype).toLowerCase();
 
         var type = Csw.string(o.type).toLowerCase();
@@ -759,7 +841,7 @@ window.initMain = window.initMain || function (undefined) {
                         break;
                     default:
                         Csw.publish('CswMultiEdit', {
-                            multi: cswPrivate.is.toggleMulti(),
+                            multi: Csw.main.is.toggleMulti(),
                             nodeid: o.nodeid,
                             viewid: o.viewid
                         });
@@ -791,7 +873,7 @@ window.initMain = window.initMain || function (undefined) {
                         break;
                 }
             },
-            Multi: cswPrivate.is.multi,
+            Multi: Csw.main.is.multi,
             viewMode: o.viewmode,
             nodeTreeCheck: mainTree,
             nodeGrid: o.nodeGrid
@@ -833,7 +915,7 @@ window.initMain = window.initMain || function (undefined) {
         o.onRefresh = function (options) {
             clear({ centertop: true, centerbottom: true });
             Csw.clientChanges.unsetChanged();
-            cswPrivate.is.multi = false; // semi-kludge for multi-edit batch op
+            Csw.main.is.multi = false; // semi-kludge for multi-edit batch op
             refreshSelected(options);
         };
         clear({ centertop: true, centerbottom: true });
@@ -933,7 +1015,7 @@ window.initMain = window.initMain || function (undefined) {
             //            nodeid: o.nodeid,
             //            nodekey: o.nodekey,
             name: mainTableId,
-            Multi: cswPrivate.is.multi,
+            Multi: Csw.main.is.multi,
             //'onAddNode': o.onAddNode,
             onEditNode: o.onEditNode,
             onDeleteNode: o.onDeleteNode,
@@ -1037,14 +1119,14 @@ window.initMain = window.initMain || function (undefined) {
 
         clear({ right: true });
 
-        if (cswPrivate.is.oneTimeReset ||
+        if (Csw.main.is.oneTimeReset ||
             Csw.isNullOrEmpty(cswPrivate.tabsAndProps) ||
             o.viewid !== cswPrivate.tabsAndProps.getViewId()) {
             cswPrivate.tabsAndProps = Csw.layouts.tabsAndProps(Csw.main.rightDiv, {
                 name: 'nodetabs',
                 tabState: {
                     viewid: o.viewid,
-                    ShowCheckboxes: cswPrivate.is.multi,
+                    ShowCheckboxes: Csw.main.is.multi,
                     tabid: Csw.cookie.get(Csw.cookie.cookieNames.CurrentTabId),
                     nodeid: o.nodeid,
                     nodekey: o.nodekey
@@ -1057,7 +1139,7 @@ window.initMain = window.initMain || function (undefined) {
                 },
                 Refresh: function (options) {
                     Csw.clientChanges.unsetChanged();
-                    cswPrivate.is.multi = false; // semi-kludge for multi-edit batch op
+                    Csw.main.is.multi = false; // semi-kludge for multi-edit batch op
                     refreshSelected(options);
                 },
                 onTabSelect: function (tabid) {
@@ -1218,7 +1300,7 @@ window.initMain = window.initMain || function (undefined) {
                     nodekey: optSelect.nodekey
                 });
             },
-            isMulti: cswPrivate.is.multi,
+            isMulti: Csw.main.is.multi,
             state: {
                 viewId: o.viewid,
                 viewMode: o.viewmode,
