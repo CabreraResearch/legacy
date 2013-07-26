@@ -39,6 +39,7 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case30246() ) );                    //02D-016
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case30239() ) );                    //02D-017
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case30086() ) );                    //02D-018
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case30266() ) );                    //02D-019
 
             #endregion DOGWOOD
 
