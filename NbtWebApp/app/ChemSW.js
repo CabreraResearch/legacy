@@ -48,8 +48,10 @@
             if (anInternalCollection) {
                 $.extend(anInternalCollection, internalCollection);
             }
-
+            
             externalCollection = externalCollection || { };
+
+            var deferred = Q.defer();
 
             externalCollection.register = externalCollection.register ||
                 function(name, obj, isProtected) {
@@ -61,36 +63,28 @@
                     /// <param name="isProtected" type="Boolean"> If true, the object cannot be removed from the namespace </param>
                     /// <returns type="Boolean">True if the object name did not already exist in the namespace.</returns>
                     'use strict';
-                    var succeeded = false;
                     if (internalCollection.methods.indexOf(name) === -1) {
                         internalCollection.methods.push(name);
-                        obj[name] = true; //for shimming our own instanceof
+                        if (obj) {
+                            obj[name] = true; //for shimming our own instanceof
+                        }
                         if (isProtected && internalCollection.protectedmethods.indexOf(name) === -1) {
                             internalCollection.protectedmethods.push(name);
                         }
                         externalCollection[name] = obj;
-                        succeeded = true;
                     }
                     return obj;
                 };
 
-            externalCollection.deregister = externalCollection.deregister ||
-                externalCollection.register('deregister', function(name) {
-                    /// <summary>
-                    ///   Deregister an Object from the ChemSW namespace
-                    /// </summary>
-                    /// <param name="name" type="String"> Name of the object.</param>
-                    /// <returns type="Boolean">True if the object was removed.</returns>
-                    'use strict';
-                    var succeeded = false;
-                    if (internalCollection.protectedmethods.indexOf(name) === -1) {
-                        if (internalCollection.methods.indexOf(name) !== -1) {
-                            internalCollection.methods.splice(name, 1);
-                        }
-                        delete cswPublic[name];
-                        succeeded = true;
+            externalCollection.onReady = externalCollection.onReady ||
+                externalCollection.register('onReady', deferred.promise);
+
+            externalCollection.isReady = externalCollection.isReady ||
+                externalCollection.register('isReady', function(ready) {
+                    if (true === ready) {
+                        deferred.resolve();
                     }
-                    return succeeded;
+                    return externalCollection.onReady;
                 });
 
             externalCollection.getGlobalProp = externalCollection.getGlobalProp ||

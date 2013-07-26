@@ -2,6 +2,7 @@
 
 module.exports.app = [
     'app/ChemSW.js',
+    'app/main/**.js',
     'app/types/**.js',
     'app/promises/**.js',
     'app/core/**.js',
