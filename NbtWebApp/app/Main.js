@@ -84,19 +84,12 @@ window.initMain = window.initMain || function (undefined) {
         };
     }()));
 
-    var cswPrivate = {
-        tabsAndProps: null,
-        mainMenu: null
-    };
-
-
-
-    var mainTree;
-    var mainGridId = 'CswNodeGrid';
-    var mainTableId = 'CswNodeTable';
-    var universalsearch;
-    var mainviewselect;
-
+    Csw.main.register('tabsAndProps', null);
+    Csw.main.register('mainMenu', null);
+    Csw.main.register('mainTree', null);
+    Csw.main.register('mainviewselect', null);
+    Csw.main.register('universalsearch', null);
+    
     (function _initMain() {
         Csw.main.body = Csw.main.body || Csw.main.register('body', Csw.domNode({ ID: 'body' })); // case 27563 review K3663 comment 1
         Csw.main.ajaxImage = Csw.main.ajaxImage || Csw.main.register('ajaxImage', Csw.domNode({ ID: 'ajaxImage' }));
@@ -347,7 +340,7 @@ window.initMain = window.initMain || function (undefined) {
                 Csw.main.is.menuDone = true;
                 _finishInitAll(onSuccess);
             });
-            universalsearch = Csw.composites.universalSearch(null, {
+            Csw.main.universalsearch = Csw.composites.universalSearch(null, {
                 searchBoxParent: Csw.main.searchDiv,
                 searchResultsParent: Csw.main.rightDiv,
                 searchFiltersParent: Csw.main.leftDiv,
@@ -453,7 +446,7 @@ window.initMain = window.initMain || function (undefined) {
 
     function refreshViewSelect(onSuccess) {
         Csw.main.viewSelectDiv.empty();
-        mainviewselect = Csw.main.viewSelectDiv.viewSelect({
+        Csw.main.mainviewselect = Csw.main.viewSelectDiv.viewSelect({
             name: 'mainviewselect',
             onSelect: handleItemSelect,
             onSuccess: onSuccess
@@ -499,7 +492,7 @@ window.initMain = window.initMain || function (undefined) {
     });
 
     Csw.main.refreshWelcomeLandingPage = function() {
-        universalsearch.enable();
+        Csw.main.universalsearch.enable();
         setLandingPage(function () {
             Csw.layouts.landingpage(Csw.main.centerBottomDiv, {
                 name: 'welcomeLandingPage',
@@ -627,7 +620,7 @@ window.initMain = window.initMain || function (undefined) {
         var type = Csw.string(o.type).toLowerCase();
 
         //Now is a good time to purge outstanding Node-specific events
-        universalsearch.enable();
+        Csw.main.universalsearch.enable();
 
         if (Csw.clientChanges.manuallyCheckChanges()) { // && itemIsSupported()) {
             Csw.main.initGlobalEventTeardown();
@@ -642,7 +635,7 @@ window.initMain = window.initMain || function (undefined) {
                         break;
                     case 'search':
                         clear({ all: true });
-                        universalsearch.restoreSearch(o.itemid);
+                        Csw.main.universalsearch.restoreSearch(o.itemid);
                         break;
                     case 'report':
                         handleReport(o.itemid);
@@ -719,8 +712,8 @@ window.initMain = window.initMain || function (undefined) {
         Csw.extend(o, options);
 
         //Csw.main.mainMenuDiv.empty();
-        if (cswPrivate.mainMenu) {
-            cswPrivate.mainMenu.abort();
+        if (Csw.main.mainMenu) {
+            Csw.main.mainMenu.abort();
         }
 
         var menuOpts = {
@@ -782,11 +775,11 @@ window.initMain = window.initMain || function (undefined) {
             },
             Multi: Csw.main.is.multi,
             viewMode: o.viewmode,
-            nodeTreeCheck: mainTree,
+            nodeTreeCheck: Csw.main.mainTree,
             nodeGrid: o.nodeGrid
         };
         
-        cswPrivate.mainMenu = o.parent.menu(menuOpts);
+        Csw.main.mainMenu = o.parent.menu(menuOpts);
 
     }
 
@@ -846,7 +839,6 @@ window.initMain = window.initMain || function (undefined) {
             nodeid: o.nodeid,
             nodekey: o.nodekey,
             showempty: getEmptyGrid,
-            name: mainGridId,
             onEditNode: o.onEditNode,
             onDeleteNode: o.onDeleteNode,
             onRefresh: o.onRefresh,
@@ -921,7 +913,6 @@ window.initMain = window.initMain || function (undefined) {
             viewid: o.viewid,
             //            nodeid: o.nodeid,
             //            nodekey: o.nodekey,
-            name: mainTableId,
             Multi: Csw.main.is.multi,
             //'onAddNode': o.onAddNode,
             onEditNode: o.onEditNode,
@@ -1027,9 +1018,9 @@ window.initMain = window.initMain || function (undefined) {
         clear({ right: true });
 
         if (Csw.main.is.oneTimeReset ||
-            Csw.isNullOrEmpty(cswPrivate.tabsAndProps) ||
-            o.viewid !== cswPrivate.tabsAndProps.getViewId()) {
-            cswPrivate.tabsAndProps = Csw.layouts.tabsAndProps(Csw.main.rightDiv, {
+            Csw.isNullOrEmpty(Csw.main.tabsAndProps) ||
+            o.viewid !== Csw.main.tabsAndProps.getViewId()) {
+            Csw.main.tabsAndProps = Csw.layouts.tabsAndProps(Csw.main.rightDiv, {
                 name: 'nodetabs',
                 tabState: {
                     viewid: o.viewid,
@@ -1066,10 +1057,10 @@ window.initMain = window.initMain || function (undefined) {
                         }
                     });
                 },
-                nodeTreeCheck: mainTree
+                nodeTreeCheck: Csw.main.mainTree
             });
         } else {
-            cswPrivate.tabsAndProps.resetTabs(o.nodeid, o.nodekey);
+            Csw.main.tabsAndProps.resetTabs(o.nodeid, o.nodekey);
         }
     }
 
@@ -1101,7 +1092,7 @@ window.initMain = window.initMain || function (undefined) {
             }
 
             if (false === Csw.isNullOrEmpty(o.searchid)) { //if we have a searchid, we are probably looking at a search
-                universalsearch.restoreSearch(o.searchid);
+                Csw.main.universalsearch.restoreSearch(o.searchid);
             } else {
                 var viewMode = Csw.string(o.viewmode).toLowerCase();
                 switch (viewMode) {
@@ -1196,12 +1187,12 @@ window.initMain = window.initMain || function (undefined) {
             } // onEditFilters
         }); // viewFilters
 
-        mainTree = Csw.nbt.nodeTreeExt(Csw.main.leftDiv, {
+        Csw.main.mainTree = Csw.nbt.nodeTreeExt(Csw.main.leftDiv, {
             forSearch: o.forsearch,
             onBeforeSelectNode: Csw.clientChanges.manuallyCheckChanges,
             onSelectNode: function (optSelect) {
                 onSelectTreeNode({
-                    tree: mainTree,
+                    tree: Csw.main.mainTree,
                     viewid: optSelect.viewid,
                     nodeid: optSelect.nodeid,
                     nodekey: optSelect.nodekey
@@ -1245,7 +1236,7 @@ window.initMain = window.initMain || function (undefined) {
 
             clear({ 'all': true });
             refreshMainMenu();
-            universalsearch.enable();
+            Csw.main.universalsearch.enable();
 
             var actionName = Csw.string(o.actionname).replace(/_/g, ' ').trim().toLowerCase();
             switch (actionName) {
@@ -1620,7 +1611,7 @@ window.initMain = window.initMain || function (undefined) {
                 case 'kiosk mode':
                     Csw.actions.kioskmode(Csw.main.centerTopDiv, {
                         onInit: function() {
-                            universalsearch.disable();
+                            Csw.main.universalsearch.disable();
                         },
                         onCancel: function () {
                             clear({ 'all': true });
