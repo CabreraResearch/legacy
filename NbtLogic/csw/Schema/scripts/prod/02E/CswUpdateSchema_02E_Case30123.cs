@@ -22,6 +22,7 @@ namespace ChemSW.Nbt.Schema
         public override void update()
         {
             _addBalanceNT();
+            _addBalanceConfigurationNT();
             _updateUserLayout();
 
         } // update()
@@ -43,6 +44,23 @@ namespace ChemSW.Nbt.Schema
             }
 
         }//_addBalanceNT()
+
+
+        public void _addBalanceConfigurationNT()
+        {
+            CswNbtMetaDataObjectClass BalanceConfigurationOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.BalanceConfigurationClass );
+            if( null == BalanceConfigurationOC.FirstNodeType )
+            {
+                CswNbtMetaDataNodeType BalanceConfigurationNT = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( new CswNbtWcfMetaDataModel.NodeType( BalanceConfigurationOC )
+                    {
+                        NodeTypeName = "Balance Configuration",
+                        Category = "System",
+                    } );
+
+                BalanceConfigurationNT.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassBalanceConfiguration.PropertyName.Name ) );
+            }
+
+        }//_addBalanceConfigurationNT()
 
 
         public void _updateUserLayout()
