@@ -77,7 +77,7 @@
                             width: 'auto'
                         },
                         listeners: {
-                            select: function (combo, records, eOpts) {
+                            select: function (combo, records) {
                                 var text = records[0].get('Text');
                                 cswPrivate.text = text;
                                 nodeProperty.propData.values.text = text;
@@ -98,7 +98,7 @@
 
                                 nodeProperty.broadcastPropChange(text);
                             },
-                            change: function(combo, newvalue, oldvalue) {
+                            change: function(combo, newvalue) {
                                 if (cswPrivate.isRequired) {
                                     if (Csw.isNullOrEmpty(newvalue)) {
                                         cswPrivate.checkBox.val(false);
@@ -119,26 +119,30 @@
                     // Ext validation with JQuery, we will add a checkbox to the ComboBox, set it's state based on
                     // validity of the ComboBox value and validate the checkbox instead.
                     if (cswPrivate.isRequired) {
-                        cswPrivate.checkBox = cswPrivate.validateCell.div().input().css({ 'visibility': 'hidden', 'width': '20px' });
-                        cswPrivate.checkBox.required(true);
-                        cswPrivate.checkBox.addClass('validateExtComboBox');
 
-                        if (false === Csw.isNullOrEmpty(cswPrivate.select.getValue())) {
-                            cswPrivate.checkBox.val(true);
-                        } else {
-                            cswPrivate.checkBox.val(false);
-                        }
+                        var returnObj = Csw.validateComboBox(cswPrivate.validateCell.div(), cswPrivate.select, { 'visibility': 'hidden', 'width': '20px' }, cswPrivate.wasModified, setComboBoxValidityColor);
+                        cswPrivate.checkBox = returnObj.input;
 
-                        if (cswPrivate.wasModified) {
-                            var valid = cswPrivate.checkBox.$.valid();
-                            setComboBoxValidityColor(valid);
-                        }
+                        //cswPrivate.checkBox = cswPrivate.validateCell.div().input().css({ 'visibility': 'hidden', 'width': '20px' });
+                        //cswPrivate.checkBox.required(true);
+                        //cswPrivate.checkBox.addClass('validateExtComboBox');
 
-                        $.validator.addMethod('validateExtComboBox', function () {
-                            var valid = Csw.bool(cswPrivate.checkBox.val());
-                            setComboBoxValidityColor(valid);
-                            return valid;
-                        }, 'This field is required.');
+                        //if (false === Csw.isNullOrEmpty(cswPrivate.select.getValue())) {
+                        //    cswPrivate.checkBox.val(true);
+                        //} else {
+                        //    cswPrivate.checkBox.val(false);
+                        //}
+
+                        //if (cswPrivate.wasModified) {
+                        //    var valid = cswPrivate.checkBox.$.valid();
+                        //    setComboBoxValidityColor(valid);
+                        //}
+
+                        //$.validator.addMethod('validateExtComboBox', function () {
+                        //    var valid = Csw.bool(cswPrivate.checkBox.val());
+                        //    setComboBoxValidityColor(valid);
+                        //    return valid;
+                        //}, 'This field is required.');
                     }
                     
                     /*
