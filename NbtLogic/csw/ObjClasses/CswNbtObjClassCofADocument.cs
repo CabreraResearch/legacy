@@ -193,7 +193,6 @@ namespace ChemSW.Nbt.ObjClasses
             AssignedCofAView.AddViewProperty( DocRel, RevisionDateOCP, 1 );
             AssignedCofAView.AddViewProperty( DocRel, FileOCP, 2 );
             AssignedCofAView.AddViewProperty( DocRel, LinkOCP, 3 );
-            AssignedCofAView.SaveToCache( false );
 
             return AssignedCofAView;
         }
