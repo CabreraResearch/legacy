@@ -279,26 +279,25 @@ namespace ChemSW.Nbt.WebServices
                 //    _CswSessionResources.CswSessionManager.clearSession();
                 //}
                 CswLicenseManager LicenseManager = new CswLicenseManager( _CswNbtResources );
-                if( LicenseManager.AllowLogin( _CswNbtResources.CurrentUser ) )
+                if( LicenseManager.MustShowLicense( _CswNbtResources.CurrentUser ) )
                 {
-                    if( _CswNbtResources.CurrentNbtUser.PasswordIsExpired )
-                    {
-                        // BZ 9077 - Password expired
-                        AuthenticationStatus = CswEnumAuthenticationStatus.ExpiredPassword;
-                    }
-                    else if( LicenseManager.MustShowLicense( _CswNbtResources.CurrentUser ) )
+                    if( LicenseManager.AllowShowLicense( _CswNbtResources.CurrentUser ) )
                     {
                         // BZ 8133 - make sure they've seen the License
                         AuthenticationStatus = CswEnumAuthenticationStatus.ShowLicense;
                     }
+                    else
+                    {
+                        // case 30086 - prevent login if admin hasn't accepted the license yet
+                        AuthenticationStatus = CswEnumAuthenticationStatus.Deactivated;
+                        _CswSessionResources.CswSessionManager.clearSession();
+                    }
                 }
-                else
+                else if( _CswNbtResources.CurrentNbtUser.PasswordIsExpired )
                 {
-                    // case 30086 - prevent login if admin hasn't accepted the license yet
-                    AuthenticationStatus = CswEnumAuthenticationStatus.Deactivated;
-                    _CswSessionResources.CswSessionManager.clearSession();
+                    // BZ 9077 - Password expired
+                    AuthenticationStatus = CswEnumAuthenticationStatus.ExpiredPassword;
                 }
-
             }
 
             return AuthenticationStatus;
