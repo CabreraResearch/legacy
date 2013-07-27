@@ -35,7 +35,8 @@
                         }
                         $tr.append(cellcontent);
                     });
-                    onSuccess();
+                    
+                    if (onSuccess) { onSuccess(); }
 
                 } // success{}
             });

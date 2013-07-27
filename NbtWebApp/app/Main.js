@@ -2,15 +2,18 @@
 
 window.initMain = window.initMain || function (undefined) {
 
+    Csw.main.onReady.then(function () {
+
+        Csw.main.centerBottomDiv.$.CswLogin('init', {
+            onAuthenticate: Csw.main.initAll
+        }); // CswLogin
+
+    });
+
+
     Csw.main.register('is', (function () {
         var isMulti = false;
-        var isExtReady = true;
-        var isDocumentReady = true;
         var isOneTimeReset = false;
-        var isDashDone = false;
-        var isMenuDone = false;
-        var isSearchDone = false;
-        var isQuotaDone = false;
 
         var trueOrFalse = function (val) {
             var ret = false;
@@ -31,20 +34,6 @@ window.initMain = window.initMain || function (undefined) {
                 isMulti = !isMulti;
                 return isMulti;
             },
-            get extReady() {
-                return isExtReady;
-            },
-            set extReady(nuVal) {
-                isExtReady = trueOrFalse(nuVal);
-                return isExtReady;
-            },
-            get documentReady() {
-                return isDocumentReady;
-            },
-            set documentReady(nuVal) {
-                isDocumentReady = trueOrFalse(nuVal);
-                return isDocumentReady;
-            },
             get oneTimeReset() {
                 var ret = isOneTimeReset;
                 if (true === ret) {
@@ -55,31 +44,6 @@ window.initMain = window.initMain || function (undefined) {
             set oneTimeReset(nuVal) {
                 isOneTimeReset = trueOrFalse(nuVal);
                 return isOneTimeReset;
-            },
-            // see case 29072
-            get menuDone() {
-                return isMenuDone;
-            },
-            set menuDone(val) {
-                isMenuDone = trueOrFalse(val);
-            },
-            get dashDone() {
-                return isDashDone;
-            },
-            set dashDone(val) {
-                isDashDone = trueOrFalse(val);
-            },
-            get searchDone() {
-                return isSearchDone;
-            },
-            set searchDone(val) {
-                isSearchDone = trueOrFalse(val);
-            },
-            get quotaDone() {
-                return isQuotaDone;
-            },
-            set quotaDone(val) {
-                isQuotaDone = trueOrFalse(val);
             }
         };
     }()));
@@ -105,14 +69,7 @@ window.initMain = window.initMain || function (undefined) {
     Csw.subscribe(Csw.enums.events.main.reauthenticate, function (eventObj) {
         Csw.main.setUsername();
     });
-
-    Csw.main.register('refreshDashboard', function (onSuccess) {
-        if (false === Csw.main.is.dashDone) {
-            Csw.main.headerDashboard.empty();
-            Csw.main.headerDashboard.$.CswDashboard({ onSuccess: onSuccess });
-        }
-    });
-
+    
 
     Csw.main.register('refreshViewSelect', function (onSuccess) {
         Csw.main.viewSelectDiv.empty();
@@ -122,18 +79,7 @@ window.initMain = window.initMain || function (undefined) {
             onSuccess: onSuccess
         });
     });
-
-
-    Csw.main.onReady.then(function () {
-
-        Csw.main.centerBottomDiv.$.CswLogin('init', {
-            onAuthenticate: Csw.main.initAll
-        }); // CswLogin
-
-    });
-
-
-
+    
     Csw.main.register('initAll', function (onSuccess) {
 
         Csw.main.setUsername();
@@ -160,20 +106,18 @@ window.initMain = window.initMain || function (undefined) {
                     itemid: viewid,
                     mode: viewmode
                 });
-            },
-            onSuccess: function () {
-                Csw.main.is.searchDone = true;
-                Csw.main.finishInitAll(onSuccess);
             }
         });
-
+        var menu = Csw.main.refreshHeaderMenu();
         var ready = Q.all([
             Csw.main.refreshDashboard(),
-            Csw.main.refreshHeaderMenu(),
+            menu.ajax,
             Csw.main.universalsearch.ready,
             Csw.actions.quotaImage(Csw.main.headerQuota)
         ]);
-
+        ready.fail(function (err) {
+            Csw.debug.error(err);
+        });
         ready.then(function () {
             Csw.main.finishInitAll(onSuccess);
         })
@@ -185,7 +129,7 @@ window.initMain = window.initMain || function (undefined) {
         // handle querystring arguments
         var loadCurrent = Csw.main.handleQueryString();
 
-        if (Csw.isNullOrEmpty(onSuccess)) {
+        if (false === Csw.isFunction(onSuccess)) {   
             if (loadCurrent) {
                 var finishInit = function () {
                     var current = Csw.clientState.getCurrent();
