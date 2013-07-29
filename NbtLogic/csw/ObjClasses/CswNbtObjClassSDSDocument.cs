@@ -168,7 +168,6 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 CswNbtView docView = getAssignedSDSDocumentsView( _CswNbtResources, MaterialId );
                 ICswNbtTree docsTree = _CswNbtResources.Trees.getTreeFromView( docView, false, false, false );
-                docsTree.goToNthChild( 0 ); //The docView is a property view
                 HasActiveSDS = docsTree.getChildNodeCount() > 0;
             }
             return HasActiveSDS;
