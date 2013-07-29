@@ -168,7 +168,11 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 CswNbtView docView = getAssignedSDSDocumentsView( _CswNbtResources, MaterialId );
                 ICswNbtTree docsTree = _CswNbtResources.Trees.getTreeFromView( docView, false, false, false );
-                HasActiveSDS = docsTree.getChildNodeCount() > 0;
+                if( docsTree.getChildNodeCount() > 0 ) //if the given Material Id is of a temp node, we won't see it in the view and can't go to it's Nth child
+                {
+                    docsTree.goToNthChild( 0 ); //The docView is a property view
+                    HasActiveSDS = docsTree.getChildNodeCount() > 0;
+                }
             }
             return HasActiveSDS;
         }
