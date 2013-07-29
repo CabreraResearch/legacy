@@ -684,9 +684,9 @@ namespace ChemSW.Nbt.WebServices
                 public string NBTSubFieldPropColName2 = string.Empty;
             }
 
-            private CswNbtObjClassUnitOfMeasure _getUnitOfMeasure( string unitOfMeasurementName )
+            private Tuple<int, string> _getUnitOfMeasure( string unitOfMeasurementName )
             {
-                CswNbtObjClassUnitOfMeasure UnitOfMeasureNode = null;
+                Tuple<int, string> UnitOfMeasureNodeInfo = null;
 
                 if( false == string.IsNullOrEmpty( unitOfMeasurementName ) )
                 {
@@ -718,13 +718,15 @@ namespace ChemSW.Nbt.WebServices
                     for( int i = 0; i < Count; i++ )
                     {
                         MatchingUOMsTree.goToNthChild( i );
-                        UnitOfMeasureNode = MatchingUOMsTree.getNodeForCurrentPosition();
+                        // UnitOfMeasureNode = MatchingUOMsTree.getNodeForCurrentPosition();
+                        UnitOfMeasureNodeInfo = new Tuple<int, string>( MatchingUOMsTree.getNodeIdForCurrentPosition().PrimaryKey,
+                                                   MatchingUOMsTree.getNodeNameForCurrentPosition() );
                         MatchingUOMsTree.goToParentNode();
                     }
 
                 }//if( false == string.IsNullOrEmpty( unitOfMeasurementName ) )
 
-                return UnitOfMeasureNode;
+                return UnitOfMeasureNodeInfo;
 
             }//_getUnitOfMeasure()
 
@@ -944,22 +946,23 @@ namespace ChemSW.Nbt.WebServices
 
                                 // If the UoM wasn't able to be mapped on the C3 side, then
                                 // we use the original chemcatcentral UoM.
+                                Tuple<int, string> UnitOfMeasureInfo = null;
                                 string UoM = _ProductToImport.ProductSize[CurrentIndex].pkg_qty_uom;
                                 if( false == string.IsNullOrEmpty( UoM ) )
                                 {
-                                    unitOfMeasure = _getUnitOfMeasure( UoM );
+                                    UnitOfMeasureInfo = _getUnitOfMeasure( UoM );
                                 }
                                 else
                                 {
                                     UoM = _ProductToImport.ProductSize[CurrentIndex].c3_uom;
-                                    unitOfMeasure = _getUnitOfMeasure( UoM );
+                                    UnitOfMeasureInfo = _getUnitOfMeasure( UoM );
                                 }
 
-                                if( null != unitOfMeasure )
+                                if( false == string.IsNullOrEmpty( UnitOfMeasureInfo.Item1.ToString() ) )
                                 {
-                                    Node.Properties[NTP].SetPropRowValue( (CswEnumNbtPropColumn) C3Mapping.NBTSubFieldPropColName2, unitOfMeasure.Name.Text );
-                                    Node.Properties[NTP].SetPropRowValue( CswEnumNbtPropColumn.Field1_FK, unitOfMeasure.NodeId.PrimaryKey );
-                                    sizeGestalt = _ProductToImport.ProductSize[CurrentIndex].pkg_qty + " " + unitOfMeasure.Name.Text;
+                                    Node.Properties[NTP].SetPropRowValue( (CswEnumNbtPropColumn) C3Mapping.NBTSubFieldPropColName2, UnitOfMeasureInfo.Item2 );
+                                    Node.Properties[NTP].SetPropRowValue( CswEnumNbtPropColumn.Field1_FK, UnitOfMeasureInfo.Item1 );
+                                    sizeGestalt = _ProductToImport.ProductSize[CurrentIndex].pkg_qty + " " + UnitOfMeasureInfo.Item2;
                                     Node.Properties[NTP].SetPropRowValue( CswEnumNbtPropColumn.Gestalt, sizeGestalt );
                                 }
                                 else
