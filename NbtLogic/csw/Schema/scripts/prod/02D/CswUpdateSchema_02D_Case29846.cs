@@ -20,8 +20,8 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
-
-            CswNbtMetaDataObjectClass ContainerOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerClass );
+            //We don't want this anymore as of Case 29700 - it's going on ReceiptLot instead
+            /*CswNbtMetaDataObjectClass ContainerOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerClass );
             foreach( CswNbtMetaDataNodeType ContainerNT in ContainerOC.getNodeTypes() )
             {
                 CswNbtMetaDataNodeTypeTab firstTab = ContainerNT.getFirstNodeTypeTab();
@@ -32,11 +32,11 @@ namespace ChemSW.Nbt.Schema
                 }
 
                 ManuLotNoNTP.updateLayout( CswEnumNbtLayoutType.Add, false );
-            }
+            }*/
 
 
         } // update()
 
-    }//class CswUpdateSchema_02C_Case29846
+    }//class CswUpdateSchema_02D_Case29846
 
 }//namespace ChemSW.Nbt.Schema

@@ -113,5 +113,26 @@ namespace NbtWebApp
             SvcDriver.run();
             return ( Ret );
         }
+
+        #region Receive Material Wizard
+
+        [OperationContract]
+        [WebInvoke( Method = "POST", UriTemplate = "updateExpirationDate" )]
+        [FaultContract( typeof( FaultException ) )]
+        [Description( "Updates the default Expiration Date on containers to receive based on Receipt Lot's Manufactured Date" )]
+        public CswNbtWebServiceContainer.ReceivingDataReturn updateExpirationDate( ContainerData.ReceiptLotRequest Request )
+        {
+            CswNbtWebServiceContainer.ReceivingDataReturn Ret = new CswNbtWebServiceContainer.ReceivingDataReturn();
+            var GetViewDriverType = new CswWebSvcDriver<CswNbtWebServiceContainer.ReceivingDataReturn, ContainerData.ReceiptLotRequest>(
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj: Ret,
+                WebSvcMethodPtr: CswNbtWebServiceContainer.updateExpirationDate,
+                ParamObj: Request
+                );
+            GetViewDriverType.run();
+            return ( Ret );
+        }
+
+        #endregion Receive Material Wizard
     }
 }

@@ -137,7 +137,7 @@
     <Compile Include="csw\Mobile\CswNbtMobileRapidLoader.cs" />
     <Compile Include="csw\Modules\CswNbtModuleRuleLOLISync.cs" />
     <Compile Include="csw\Modules\CswNbtModuleRulePCIDSync.cs" />
-    <Compile Include="csw\Modules\CswNbtModuleRuleCofA.cs" />
+    <Compile Include="csw\Modules\CswNbtModuleRuleManufacturerLotInfo.cs" />
     <Compile Include="csw\Modules\CswNbtModuleRuleFireDbSync.cs" />
     <Compile Include="csw\Modules\CswNbtModuleRuleSDS.cs" />
     <Compile Include="csw\Modules\CswNbtModuleRuleFireCode.cs" />
@@ -356,6 +356,7 @@
     <None Include="csw\Schema\scripts\past\02B\CswUpdateSchema_02B_Case29431.cs" />
     <None Include="csw\Schema\scripts\past\02C\CswUpdateSchema_02C_Case29935.cs" />
     <Compile Include="csw\Schema\scripts\prod\02D\RunBeforeEveryExecutionOfUpdater_02D_Case29570.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02E\RunBeforeEveryExecutionOfUpdater_02E_Case29700.cs" />
     <Compile Include="csw\Security\CswNbtWebSvcSchemaAuthenticator.cs" />
     <Compile Include="csw\Security\CswNbtSchemaAuthenticationLogic.cs" />
     <Compile Include="csw\Security\CswNbtSchemaAuthenticatorFactory.cs" />

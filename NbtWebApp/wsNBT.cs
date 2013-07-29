@@ -3445,7 +3445,8 @@ namespace ChemSW.Nbt.WebServices
                 AuthenticationStatus = _attemptRefresh( true );
 
                 _setEditMode( CswEnumNbtNodeEditMode.Add );
-                ReturnVal = CswNbtActReceiving.receiveMaterial( ReceiptDefinition, _CswNbtResources );
+                CswNbtActReceiving Receiving = new CswNbtActReceiving( _CswNbtResources );
+                ReturnVal = Receiving.receiveMaterial( ReceiptDefinition );
 
                 _deInitResources();
             }
