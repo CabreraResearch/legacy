@@ -442,6 +442,7 @@
                             var makeSerialBalanceButton = function (location, updateQuantity) {
 
                                 ///<summary>
+                                /// attached to handler for item inside arrow menu
                                 /// sets the Csw.quantity attached to the button to value returned by a balance read
                                 ///</summary>
                                 var updateInterface = function (balanceData) {
@@ -475,7 +476,11 @@
                                                 if (false === Csw.isNullOrEmpty(balance.NbtName)) {
                                                     button.menu.add({
                                                         text: balance.NbtName + ' - ' + balance.CurrentWeight + balance.UnitOfMeasurement,
-                                                        handler: function() { updateInterface(balance); }
+                                                        handler: function() {
+                                                            updateInterface(balance);
+                                                            balanceButton.setText(balance.NbtName);
+                                                            balanceButton.setHandler(function () { getBalanceInformation(balance.NodeId); });
+                                                        }
                                                     });//button.menu.add -- Csw.each(data.BalanceList
                                                 }//if (false === Csw.isNullOrEmpty(balance.NbtName)) {
                                             });//Csw.each(data.BalanceList)
@@ -493,10 +498,10 @@
                                 /// Retrieve information for user's preferred balance from the webservice
                                 /// On success, set values on the Csw.quantity attached to button
                                 ///</summary>
-                                var getDefaultBalanceInformation = function () {
+                                var getBalanceInformation = function (balanceIn) {
                                     Csw.ajaxWcf.post({
                                         urlMethod: 'Balances/getBalanceInformation',
-                                        data: userDefaultBalance,
+                                        data: balanceIn,
                                         success: function (data) {
                                             var Balance = data.BalanceList[0];
                                             updateInterface(Balance);
@@ -506,7 +511,7 @@
 
                                 var balanceButton = location.buttonSplit({
                                     buttonText: 'Read from Balance',
-                                    width: 152,
+                                    width: 137,
                                     arrowHandler: function (button) { updateBalanceMenuInfo(button, true); },
                                 });
                                 
@@ -517,14 +522,18 @@
                                 if (null != userDefaultBalance) {
                                     Csw.ajaxWcf.post({
                                         urlMethod: 'Balances/getBalanceInformation',
-                                        data: userDefaultBalance/*, --- having the default text replaced with balance name is unclear
+                                        data: userDefaultBalance,
                                         success: function (data) {
                                             var Balance = data.BalanceList[0];
-                                            balanceButton.setText(Balance.NbtName)
-                                            balanceButton.setWidth(Balance.NbtName.length * 8 + 16);
-                                        }//success*/
+                                            if (Balance.IsActive) {
+                                                balanceButton.setText(Balance.NbtName);
+                                                balanceButton.setHandler(function() { getBalanceInformation(Balance.NodeId); });
+                                            } else {
+                                                balanceButton.setText(Balance.NbtName + " (Inactive)");
+                                            }
+                                        }//success
                                     });
-                                    balanceButton.setHandler(getDefaultBalanceInformation);
+                                    
                                 } //if (null != userDefaultBalance) 
                                 
 

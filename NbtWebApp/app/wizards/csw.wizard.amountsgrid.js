@@ -201,7 +201,11 @@
                                             if (false === Csw.isNullOrEmpty(balance.NbtName)) {
                                                 button.menu.add({
                                                     text: balance.NbtName + ' - ' + balance.CurrentWeight + balance.UnitOfMeasurement,
-                                                    handler: function () { updateBalanceInterface(balance); }
+                                                    handler: function () {
+                                                        updateBalanceInterface(balance);
+                                                        cswPublic.rows[rowid].balanceControl.setText(balance.NbtName);
+                                                        cswPublic.rows[rowid].balanceControl.setHandler(function () { getBalanceInformation(balance.NodeId); });
+                                                    }
                                                 });//button.menu.add -- Csw.each(data.BalanceList
                                             }//if (false === Csw.isNullOrEmpty(balance.NbtName)) {
                                         });//Csw.each(data.BalanceList)
@@ -213,10 +217,10 @@
                             };//updateBalanceMenuInfo
 
 
-                            var getDefaultBalanceInformation = function () {
+                            var getBalanceInformation = function (balanceIn) {
                                 Csw.ajaxWcf.post({
                                     urlMethod: 'Balances/getBalanceInformation',
-                                    data: userDefaultBalance,
+                                    data: balanceIn,
                                     success: function (data) {
                                         var balance = data.BalanceList[0];
                                         updateBalanceInterface(balance);
@@ -305,7 +309,7 @@
                                 case cswPrivate.config.balanceName:
                                       cswPublic.rows[rowid].balanceControl = cswCell.buttonSplit({
                                         buttonText: 'Read from Balance',
-                                        width: 152,
+                                        width: 137,
                                         arrowHandler: function (button) { updateBalanceMenuInfo(button, true); },
                                     });
 
@@ -315,9 +319,17 @@
                                     if (null != userDefaultBalance) {
                                         Csw.ajaxWcf.post({
                                             urlMethod: 'Balances/getBalanceInformation',
-                                            data: userDefaultBalance
+                                            data: userDefaultBalance,
+                                            success: function (data) {
+                                                var Balance = data.BalanceList[0];
+                                                if (Balance.IsActive) {
+                                                    cswPublic.rows[rowid].balanceControl.setText(Balance.NbtName);
+                                                    cswPublic.rows[rowid].balanceControl.setHandler(function() { getBalanceInformation(Balance.NodeId); });
+                                                } else {
+                                                    cswPublic.rows[rowid].balanceControl.setText(Balance.NbtName + " (Inactive)");
+                                                }
+                                            }//success
                                         });
-                                        cswPublic.rows[rowid].balanceControl.setHandler(getDefaultBalanceInformation);
                                     } //if (null != userDefaultBalance) 
 
 

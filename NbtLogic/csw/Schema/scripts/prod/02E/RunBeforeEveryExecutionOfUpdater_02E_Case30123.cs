@@ -39,56 +39,48 @@ namespace ChemSW.Nbt.Schema
                     {
                         PropName = CswNbtObjClassBalanceConfiguration.PropertyName.Name,
                         FieldType = CswEnumNbtFieldType.Text,
-                        ServerManaged = true,
                     } );
 
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( BalanceConfigurationOC )
                     {
                         PropName = CswNbtObjClassBalanceConfiguration.PropertyName.RequestFormat,
                         FieldType = CswEnumNbtFieldType.Text,
-                        ServerManaged = true,
                     } );
 
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( BalanceConfigurationOC )
                 {
                     PropName = CswNbtObjClassBalanceConfiguration.PropertyName.ResponseFormat,
                     FieldType = CswEnumNbtFieldType.Text,
-                    ServerManaged = true,
                 } );
 
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( BalanceConfigurationOC )
                 {
                     PropName = CswNbtObjClassBalanceConfiguration.PropertyName.BaudRate,
                     FieldType = CswEnumNbtFieldType.Number,
-                    ServerManaged = true,
                 } );
 
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( BalanceConfigurationOC )
                 {
                     PropName = CswNbtObjClassBalanceConfiguration.PropertyName.ParityBit,
                     FieldType = CswEnumNbtFieldType.Text,
-                    ServerManaged = true,
                 } );
 
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( BalanceConfigurationOC )
                 {
                     PropName = CswNbtObjClassBalanceConfiguration.PropertyName.DataBits,
                     FieldType = CswEnumNbtFieldType.Number,
-                    ServerManaged = true,
                 } );
 
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( BalanceConfigurationOC )
                 {
                     PropName = CswNbtObjClassBalanceConfiguration.PropertyName.StopBits,
                     FieldType = CswEnumNbtFieldType.Text,
-                    ServerManaged = true,
                 } );
 
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( BalanceConfigurationOC )
                 {
                     PropName = CswNbtObjClassBalanceConfiguration.PropertyName.Handshake,
                     FieldType = CswEnumNbtFieldType.Text,
-                    ServerManaged = true,
                 } );
 
             }//if ( null == BalanceConfigurationOC )

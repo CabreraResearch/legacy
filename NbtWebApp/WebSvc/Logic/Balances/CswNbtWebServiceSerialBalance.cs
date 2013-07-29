@@ -105,47 +105,52 @@ namespace ChemSW.Nbt.WebServices
             CswNbtMetaDataObjectClass BalanceOC = NbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.BalanceClass );
             if( null != BalanceOC )
             {
-                    
-                    CswNbtView ExistingBalancesView = new CswNbtView( NbtResources );
-                    ExistingBalancesView.ViewName = "Connected Balances";
-                    CswNbtViewRelationship BalanceRel = ExistingBalancesView.AddViewRelationship( BalanceOC, true );
-                    //only add to the list of returned balances if it has had an announcement in the last 11 minutes
-                       ExistingBalancesView.AddViewPropertyAndFilter( BalanceRel, BalanceOC.getObjectClassProp( CswNbtObjClassBalance.PropertyName.LastActive ),
-                                               SubFieldName: CswEnumNbtSubFieldName.Value,
-                                               Value : DateTime.Now.Subtract( TimeSpan.FromMinutes( 11 ) ).ToString(),
-                                               FilterMode : CswEnumNbtFilterMode.GreaterThan );
 
-                    //only add to the list of returned balances if it is Operational
-                       ExistingBalancesView.AddViewPropertyAndFilter( BalanceRel, BalanceOC.getObjectClassProp( CswNbtObjClassBalance.PropertyName.Operational ),
-                                               SubFieldName : CswEnumNbtSubFieldName.Checked,
-                                               Value : CswEnumTristate.True,
-                                               FilterMode : CswEnumNbtFilterMode.Equals );
+                CswNbtView ExistingBalancesView = new CswNbtView( NbtResources );
+                ExistingBalancesView.ViewName = "Connected Balances";
+                CswNbtViewRelationship BalanceRel = ExistingBalancesView.AddViewRelationship( BalanceOC, true );
+                //only add to the list of returned balances if it has had an announcement in the last 11 minutes
+                ExistingBalancesView.AddViewPropertyAndFilter( BalanceRel, BalanceOC.getObjectClassProp( CswNbtObjClassBalance.PropertyName.LastActive ),
+                                        SubFieldName : CswEnumNbtSubFieldName.Value,
+                                        Value : DateTime.Now.Subtract( TimeSpan.FromMinutes( 11 ) ).ToString(),
+                                        FilterMode : CswEnumNbtFilterMode.GreaterThan );
 
-                    ICswNbtTree BalanceTree = NbtResources.Trees.getTreeFromView( ExistingBalancesView, true, false, false );
-                    int BalanceCount = BalanceTree.getChildNodeCount();
-                    if( BalanceCount > 0 )
+                //only add to the list of returned balances if it is Operational
+                ExistingBalancesView.AddViewPropertyAndFilter( BalanceRel, BalanceOC.getObjectClassProp( CswNbtObjClassBalance.PropertyName.Operational ),
+                                        SubFieldName : CswEnumNbtSubFieldName.Checked,
+                                        Value : CswEnumTristate.True,
+                                        FilterMode : CswEnumNbtFilterMode.Equals );
+
+                ExistingBalancesView.AddViewPropertyAndFilter( BalanceRel, BalanceOC.getObjectClassProp(  CswNbtObjClassBalance.PropertyName.Quantity ),
+                                        SubFieldName: CswEnumNbtSubFieldName.Value,
+                                        Value: "0",
+                                        FilterMode: CswEnumNbtFilterMode.NotEquals );
+
+                ICswNbtTree BalanceTree = NbtResources.Trees.getTreeFromView( ExistingBalancesView, true, false, false );
+                int BalanceCount = BalanceTree.getChildNodeCount();
+                if( BalanceCount > 0 )
+                {
+                    BalanceTree.goToRoot();
+                    for( int i = 0; i < BalanceCount; i++ )
                     {
-                        BalanceTree.goToRoot();
-                        for( int i = 0; i < BalanceCount; i++ )
+                        BalanceTree.goToNthChild( i );
+                        CswNbtObjClassBalance Balance = BalanceTree.getCurrentNode();
+
+                        Return.Data.BalanceList.Add( new SerialBalance
                         {
-                            BalanceTree.goToNthChild( i );
-                            CswNbtObjClassBalance Balance = BalanceTree.getCurrentNode();
-                            
-                            Return.Data.BalanceList.Add( new SerialBalance
-                                {
-                                    NbtName = Balance.Name.Text,
-                                    CurrentWeight = Balance.Quantity.Quantity,
-                                    UnitOfMeasurement = Balance.Quantity.CachedUnitName,
-                                } );
+                            NbtName = Balance.Name.Text,
+                            CurrentWeight = Balance.Quantity.Quantity,
+                            UnitOfMeasurement = Balance.Quantity.CachedUnitName,
+                            NodeId = Balance.NodeId.ToString(),
+                            IsActive = ( Balance.LastActive.DateTimeValue + TimeSpan.FromMinutes( 10 ) > DateTime.Now ),
+                        } );
 
                         BalanceTree.goToParentNode();
 
-                        } //for ( int i = 0; i < BalanceCount; i++ )
-
-                    } //if( BalanceCount > 0 )
+                    } //for ( int i = 0; i < BalanceCount; i++ )
+                } //if( BalanceCount > 0 )
 
             } //if ( null != BalanceOC )
-
         }//listConnectedBalances( ICswResources CswResources, CswNbtBalanceReturn Return, object Request )
 
 
@@ -289,7 +294,7 @@ namespace ChemSW.Nbt.WebServices
             } );
 
 
-        }//listConnectedBalances( ICswResources CswResources, CswNbtBalanceReturn Return, object Request )
+        }//getBalanceInformation( ICswResources CswResources, CswNbtBalanceReturn Return, string Request )
 
 
 

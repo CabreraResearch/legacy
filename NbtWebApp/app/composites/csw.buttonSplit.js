@@ -33,6 +33,11 @@
                 cswPublic = cswParent.div({ cssclass: 'cswInline' });
             }());
 
+            //expose the ability to dynamically set the button's text
+            cswPublic.setText = Csw.method(function (text) {
+                cswPublic.buttonSplit.setText(text);
+                return cswPublic;
+            });
 
             //expose the ability to dynamically set the button click handler
             cswPublic.setHandler = Csw.method(function (func) {
@@ -58,7 +63,8 @@
                             text: Csw.string(cswPrivate.buttonText),
                             width: cswPrivate.width,
                             renderTo: cswPublic.getId(),
-                            menu: { items: [] },
+                            menu: cswPrivate.menu,
+                            handler: cswPrivate.menuClickHandler,
                             arrowHandler: cswPrivate.arrowHandler
                         });
 

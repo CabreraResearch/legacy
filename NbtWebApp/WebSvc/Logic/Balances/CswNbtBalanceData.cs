@@ -60,6 +60,21 @@ namespace NbtWebApp.WebSvc.Logic
         [Description( "What configuration the balance is using for serial port" )] 
         public string Configuration = string.Empty;
 
+        ///<summary>
+        /// the node id of the balance
+        ///</summary>
+        [DataMember( IsRequired = false )] 
+        [Description( "The node id of the balance" )] 
+        public string NodeId = string.Empty;
+
+        /// <summary>
+        /// whether the balance has been used recently
+        /// </summary>
+        ///</summary>
+        [DataMember( IsRequired = false )]
+        [Description( "whether the balance has been used recently" )]
+        public bool IsActive = false;
+
 
     }//class SerialBalance
 
