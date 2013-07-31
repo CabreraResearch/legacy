@@ -19,7 +19,6 @@ namespace ChemSW.Nbt
 
         private static Dictionary<string, string> _Enums = new Dictionary<string, string>( StringComparer.OrdinalIgnoreCase )
         {
-            {CofA                     , CofA},
             {C3                       , C3},
             {CISPro                   , CISPro},
             {Containers               , Containers},
@@ -28,6 +27,7 @@ namespace ChemSW.Nbt
             {FireDbSync               , FireDbSync},
             {IMCS                     , IMCS},
             {LOLISync                 , LOLISync },
+            {ManufacturerLotInfo      , ManufacturerLotInfo},
             {MLM                      , MLM},
             {MultiInventoryGroup      , MultiInventoryGroup},
             {MultiSite                , MultiSite},
@@ -144,9 +144,9 @@ namespace ChemSW.Nbt
         /// </summary>
         public const string PCIDSync = "PCID Sync";
         /// <summary>
-        /// Certificate of Analysis
+        /// Manufacturer Lot Info
         /// </summary>
-        public const string CofA = "C of A";
+        public const string ManufacturerLotInfo = "Manufacturer Lot Info";
         /// <summary>
         /// Module that syncs Regulatory List data with LOLI.
         /// </summary>

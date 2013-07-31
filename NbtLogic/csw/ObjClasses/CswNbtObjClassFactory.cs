@@ -26,6 +26,15 @@ namespace ChemSW.Nbt.ObjClasses
 
             switch( ObjectClass.ObjectClass )
             {
+
+                case CswEnumNbtObjectClass.BalanceClass:
+                    ReturnVal = new CswNbtObjClassBalance( CswNbtResources, Node );
+                    break;
+
+                case CswEnumNbtObjectClass.BalanceConfigurationClass:
+                    ReturnVal = new CswNbtObjClassBalanceConfiguration( CswNbtResources, Node );
+                    break;
+
                 case CswEnumNbtObjectClass.BatchOpClass:
                     ReturnVal = new CswNbtObjClassBatchOp( CswNbtResources, Node );
                     break;

@@ -13,6 +13,8 @@ namespace ChemSW.Nbt.Actions
             ContainerStatuses = new Collection<ReconciliationStatuses>();
         }
 
+        #region Reconciliation
+
         [DataMember] 
         public Int32 OutstandingActionsCount = 0;
         [DataMember]
@@ -105,6 +107,30 @@ namespace ChemSW.Nbt.Actions
             [DataMember]
             public bool Enabled = true;
         }
+
+        #endregion Reconciliation
+
+        #region Receive Material
+
+        [DataContract]
+        public class ReceivingData
+        {
+            [DataMember]
+            public String ContainerProps = String.Empty;
+        }
+
+        [DataContract]
+        public class ReceiptLotRequest
+        {
+            [DataMember]
+            public String ReceiptLotId = String.Empty;
+            [DataMember]
+            public String ReceiptLotProps = String.Empty;
+            [DataMember]
+            public String ContainerId = String.Empty;
+        }
+
+        #endregion Receive Material
 
     } // ContainerData
 }

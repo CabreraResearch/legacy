@@ -393,7 +393,8 @@
                                     relatedNodeId: cswPrivate.state.sourceContainerNodeId,
                                     selectedSizeId: cswPrivate.state.sizeId,
                                     customBarcodes: cswPrivate.state.customBarcodes
-                                });
+                                });                                
+
                                 qtyTableRow++;
                             };
 
@@ -430,18 +431,131 @@
                                 cswPrivate.toggleButton(cswPrivate.buttons.finish, cswPrivate.formIsValid);
                             };
 
+
+
+
+                            ///<summary>
+                            /// draw an Ext.SplitButton to the wizard and attach relevant logic
+                            /// <param name="location">The elementID to which the button will be rendered</param>
+                            /// <param name="updateQuantity">the Csw.quantity where balance reads will be sent</param>
+                            ///</summary>
+                            var makeSerialBalanceButton = function (location, updateQuantity) {
+
+                                ///<summary>
+                                /// attached to handler for item inside arrow menu
+                                /// sets the Csw.quantity attached to the button to value returned by a balance read
+                                ///</summary>
+                                var updateInterface = function (balanceData) {
+                                    updateQuantity.setQtyVal(balanceData.CurrentWeight);
+
+                                    Csw.each(cswPrivate.state.initialQuantity.options, function (option) {
+                                        if (balanceData.UnitOfMeasurement == option.value) {
+                                            updateQuantity.setUnitVal(option.id);
+                                        }
+                                    }); //Csw.each( cswPrivate.state.initialQuantity.options
+
+                                    getQuantityAfterDispense();
+                                };//updateInterface
+
+
+
+                                ///<summary>
+                                /// attached to arrowHandler for generated button. 
+                                /// Make request to webservice for list of active balances, on success sets menu to reflect results.
+                                /// <param name="button">Split.Button whose menu is being updated</param>
+                                /// <param name="showMenu">bool. On true display menu after update</param>
+                                ///</summary>
+                                var updateBalanceMenuInfo = function (button, showMenu) {
+                                    button.hideMenu();
+                                    Csw.ajaxWcf.post({
+                                        urlMethod: 'Balances/ListConnectedBalances',
+                                        success: function (data) {
+                                            button.menu.removeAll();
+                                            
+                                            Csw.each(data.BalanceList, function (balance) {
+                                                if (false === Csw.isNullOrEmpty(balance.NbtName)) {
+                                                    button.menu.add({
+                                                        text: balance.NbtName + ' - ' + balance.CurrentWeight + balance.UnitOfMeasurement,
+                                                        handler: function() {
+                                                            updateInterface(balance);
+                                                            balanceButton.setText(balance.NbtName);
+                                                            balanceButton.setHandler(function () { getBalanceInformation(balance.NodeId); });
+                                                        }
+                                                    });//button.menu.add -- Csw.each(data.BalanceList
+                                                }//if (false === Csw.isNullOrEmpty(balance.NbtName)) {
+                                            });//Csw.each(data.BalanceList)
+                                            if (true == showMenu) {
+                                                button.showMenu();
+                                            }
+                                        }//success -- ListConnectedBalances
+                                    }); //Csw.ajaxWcf.post
+                                };//updateBalanceMenuInfo
+
+
+
+                                ///<summary>
+                                /// Attached to the button's click handler. 
+                                /// Retrieve information for user's preferred balance from the webservice
+                                /// On success, set values on the Csw.quantity attached to button
+                                ///</summary>
+                                var getBalanceInformation = function (balanceIn) {
+                                    Csw.ajaxWcf.post({
+                                        urlMethod: 'Balances/getBalanceInformation',
+                                        data: balanceIn,
+                                        success: function (data) {
+                                            var Balance = data.BalanceList[0];
+                                            updateInterface(Balance);
+                                        }//success
+                                    }); //Csw.ajaxWcf.post({
+                                };//getDefaultBalanceInformation
+
+                                var balanceButton = location.buttonSplit({
+                                    buttonText: 'Read from Balance',
+                                    width: 137,
+                                    arrowHandler: function (button) { updateBalanceMenuInfo(button, true); },
+                                });
+                                
+                                
+                                //check if user has a default balance. If so, change the behavior of clicking the button
+                                var userDefaultBalance = Csw.clientSession.userDefaults().DefaultBalanceId;
+
+                                if (null != userDefaultBalance) {
+                                    Csw.ajaxWcf.post({
+                                        urlMethod: 'Balances/getBalanceInformation',
+                                        data: userDefaultBalance,
+                                        success: function (data) {
+                                            var Balance = data.BalanceList[0];
+                                            if (Balance.IsActive) {
+                                                balanceButton.setText(Balance.NbtName);
+                                                balanceButton.setHandler(function() { getBalanceInformation(Balance.NodeId); });
+                                            } else {
+                                                balanceButton.setText(Balance.NbtName + " (Inactive)");
+                                            }
+                                        }//success
+                                    });
+                                    
+                                } //if (null != userDefaultBalance) 
+                                
+
+                            };//makeSerialBalanceButton(location, quantity)
+
+
+
                             if (cswPrivate.state.dispenseType === cswPrivate.dispenseTypes.Dispense) {
+                                
                                 makeContainerSelect();
                                 makeQuantityForm();
                                 makePrintBarcodesCheckBox();
+                                
                             } else {
+                                
                                 quantityTable.cell(qtyTableRow, 1).br();
-                                quantityTable.cell(qtyTableRow, 1).span({ text: 'Set quantity for dispense:' });                                
+                                quantityTable.cell(qtyTableRow, 1).span({ text: 'Set quantity for dispense:' });
                                 qtyTableRow++;
                                 cswPrivate.state.initialQuantity.onNumberChange = function() {
                                     getQuantityAfterDispense();
                                 };
-                                cswPrivate.state.initialQuantity.onQuantityChange = function () {
+                                cswPrivate.state.initialQuantity.onQuantityChange = function() {
                                     getQuantityAfterDispense();
                                 };
                                 cswPrivate.state.initialQuantity.quantity = cswPrivate.state.initialQuantity.value;
@@ -449,6 +563,8 @@
                                 cswPrivate.state.initialQuantity.isRequired = true;
                                 quantityTable.cell(qtyTableRow, 1).br({ number: 2 });
                                 cswPrivate.quantityControl = quantityTable.cell(qtyTableRow, 1).quantity(cswPrivate.state.initialQuantity);
+                                makeSerialBalanceButton(quantityTable.cell(qtyTableRow, 1), cswPrivate.quantityControl);
+
                                 qtyTableRow++;
                                 getQuantityAfterDispense();
                             }
@@ -460,7 +576,7 @@
                             cswPrivate.toggleButton(cswPrivate.buttons.next, false);
                         }, 250);
                     };
-                } ());
+                } ());//cswPrivate.makeStepTwo()
 
                 cswPrivate.roundToPrecision = function (num) {
                     var precision = Csw.number(cswPrivate.state.precision, 6);
