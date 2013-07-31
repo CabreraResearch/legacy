@@ -40,14 +40,16 @@
 
                 var setComboBoxSize = function (optionsArray) {
                     //Set the width of the combobox to match the longest string returned
-                    var longestOption = optionsArray.sort(function (a, b) { return b.Text.length - a.Text.length; })[0];
-                    var newWidth = (longestOption.Text.length * 7) + 8;
-                    if (newWidth > comboBoxDefaultWidth) {
-                        cswPrivate.select.setWidth(newWidth);
+                    if (optionsArray.length > 0) {
+                        var longestOption = optionsArray.sort(function (a, b) { return b.Text.length - a.Text.length; })[0];
+                        var newWidth = (longestOption.Text.length * 7) + 8;
+                        if (newWidth > comboBoxDefaultWidth) {
+                            cswPrivate.select.setWidth(newWidth);
+                        }
                     }
                 };//setComboBoxSize()
-                
-                var setComboBoxValidityColor = function (isValid) {
+
+                var onValidation = function (isValid) {
                     if (isValid) {
                         cswPrivate.select.setFieldStyle("background:none #66ff66;");
                     } else {
@@ -93,7 +95,7 @@
                                         cswPrivate.checkBox.val(true);
                                     }
                                     var valid = cswPrivate.checkBox.$.valid();
-                                    setComboBoxValidityColor(valid);
+                                    onValidation(valid);
                                 }
 
                                 nodeProperty.broadcastPropChange(text);
@@ -106,7 +108,7 @@
                                         cswPrivate.checkBox.val(true);
                                     }
                                     var valid = cswPrivate.checkBox.$.valid();
-                                    setComboBoxValidityColor(valid);
+                                    onValidation(valid);
                                 }
                             }
                         },//listeners
@@ -119,32 +121,10 @@
                     // Ext validation with JQuery, we will add a checkbox to the ComboBox, set it's state based on
                     // validity of the ComboBox value and validate the checkbox instead.
                     if (cswPrivate.isRequired) {
-
-                        var returnObj = Csw.validateComboBox(cswPrivate.validateCell.div(), cswPrivate.select, { 'visibility': 'hidden', 'width': '20px' }, cswPrivate.wasModified, setComboBoxValidityColor);
+                        var returnObj = Csw.validator(cswPrivate.validateCell.div(), cswPrivate.select, { cssOptions: { 'visibility': 'hidden', 'width': '20px' }, wasModified: cswPrivate.wasModified, onValidation: onValidation });
                         cswPrivate.checkBox = returnObj.input;
-
-                        //cswPrivate.checkBox = cswPrivate.validateCell.div().input().css({ 'visibility': 'hidden', 'width': '20px' });
-                        //cswPrivate.checkBox.required(true);
-                        //cswPrivate.checkBox.addClass('validateExtComboBox');
-
-                        //if (false === Csw.isNullOrEmpty(cswPrivate.select.getValue())) {
-                        //    cswPrivate.checkBox.val(true);
-                        //} else {
-                        //    cswPrivate.checkBox.val(false);
-                        //}
-
-                        //if (cswPrivate.wasModified) {
-                        //    var valid = cswPrivate.checkBox.$.valid();
-                        //    setComboBoxValidityColor(valid);
-                        //}
-
-                        //$.validator.addMethod('validateExtComboBox', function () {
-                        //    var valid = Csw.bool(cswPrivate.checkBox.val());
-                        //    setComboBoxValidityColor(valid);
-                        //    return valid;
-                        //}, 'This field is required.');
                     }
-                    
+
                     /*
                      * To search or not to search?
                      *
