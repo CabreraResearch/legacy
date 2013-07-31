@@ -63,7 +63,8 @@
                     // Create the Store
                     cswPrivate.listOptionsStore = new Ext.data.Store({
                         fields: ['Text', 'Value'],
-                        autoLoad: false
+                        autoLoad: false,
+                        sorters: [{ property: 'Text', direction: 'ASC' }]
                     });
 
                     // Create the Ext JS ComboBox
@@ -100,7 +101,7 @@
 
                                 nodeProperty.broadcastPropChange(text);
                             },
-                            change: function(combo, newvalue) {
+                            change: function (combo, newvalue) {
                                 if (cswPrivate.isRequired) {
                                     if (Csw.isNullOrEmpty(newvalue)) {
                                         cswPrivate.checkBox.val(false);
