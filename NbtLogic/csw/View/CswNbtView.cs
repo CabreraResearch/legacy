@@ -1,9 +1,3 @@
-using ChemSW.Core;
-using ChemSW.DB;
-using ChemSW.Exceptions;
-using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.ObjClasses;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -12,6 +6,12 @@ using System.Data;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Xml;
+using ChemSW.Core;
+using ChemSW.DB;
+using ChemSW.Exceptions;
+using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.ObjClasses;
+using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt
 {
