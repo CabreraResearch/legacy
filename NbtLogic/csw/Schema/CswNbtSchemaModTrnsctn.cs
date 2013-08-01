@@ -57,11 +57,9 @@ namespace ChemSW.Nbt.Schema
             get
             {
                 Int32 ReturnVal = 30000;
-                string UpdtShellWaitMsecVarName = "UpdtShellWaitMsec";
-
-                if( _CswNbtResources.SetupVbls.doesSettingExist( UpdtShellWaitMsecVarName ) )
+                if ( _CswNbtResources.SetupVbls.doesSettingExist( CswEnumSetupVariableNames.UpdtShellWaitMsec ) )
                 {
-                    ReturnVal = CswConvert.ToInt32( _CswNbtResources.SetupVbls.readSetting( UpdtShellWaitMsecVarName ) );
+                    ReturnVal = CswConvert.ToInt32( _CswNbtResources.SetupVbls.readSetting( CswEnumSetupVariableNames.UpdtShellWaitMsec ) );
                 }
 
                 return ( ReturnVal );
@@ -1576,36 +1574,35 @@ namespace ChemSW.Nbt.Schema
 
         public void execStoredProc( string StoredProcName, List<CswStoredProcParam> Params ) { _CswNbtResources.execStoredProc( StoredProcName, Params ); }
 
-        private string _DumpDirectorySetupVblName = "DumpFileDirectoryId";
         public void getNextSchemaDumpFileInfo( ref string PhysicalDirectoryPath, ref string NameOfCurrentDump )
         {
-            if( _CswNbtResources.SetupVbls.doesSettingExist( _DumpDirectorySetupVblName ) )
+            if ( _CswNbtResources.SetupVbls.doesSettingExist( CswEnumSetupVariableNames.DumpFileDirectoryId ) )
             {
                 string StatusMsg = string.Empty;
-                if( false == _CswNbtResources.getNextSchemaDumpFileInfo( _CswNbtResources.SetupVbls[_DumpDirectorySetupVblName], ref PhysicalDirectoryPath, ref NameOfCurrentDump, ref StatusMsg ) )
+                if ( false == _CswNbtResources.getNextSchemaDumpFileInfo( _CswNbtResources.SetupVbls[CswEnumSetupVariableNames.DumpFileDirectoryId], ref PhysicalDirectoryPath, ref NameOfCurrentDump, ref StatusMsg ) )
                 {
                     throw ( new CswDniException( "Unable to take retrieve dump file information: " + StatusMsg ) );
                 }
             }
             else
             {
-                throw ( new CswDniException( "Unable to get dump file information: there is no " + _DumpDirectorySetupVblName + " setup variable" ) );
+                throw ( new CswDniException( "Unable to get dump file information: there is no " + CswEnumSetupVariableNames.DumpFileDirectoryId + " setup variable" ) );
             }//if-else the dump setup setting exists
 
         }//getNextSchemaDumpFileInfo() 
 
         public void takeADump( ref string DumpFileName, ref string StatusMessage )
         {
-            if( _CswNbtResources.SetupVbls.doesSettingExist( _DumpDirectorySetupVblName ) )
+            if ( _CswNbtResources.SetupVbls.doesSettingExist( CswEnumSetupVariableNames.DumpFileDirectoryId ) )
             {
-                if( false == _CswNbtResources.takeADump( _CswNbtResources.SetupVbls[_DumpDirectorySetupVblName], ref DumpFileName, ref StatusMessage ) )
+                if ( false == _CswNbtResources.takeADump( _CswNbtResources.SetupVbls[CswEnumSetupVariableNames.DumpFileDirectoryId], ref DumpFileName, ref StatusMessage ) )
                 {
                     throw ( new CswDniException( "Unable to take a dump: " + StatusMessage ) );
                 }
             }
             else
             {
-                throw ( new CswDniException( "Unable to take a dump: there is no " + _DumpDirectorySetupVblName + " setup variable" ) );
+                throw ( new CswDniException( "Unable to take a dump: there is no " + CswEnumSetupVariableNames.DumpFileDirectoryId + " setup variable" ) );
 
             }//if-else the dump setup setting exists
 
