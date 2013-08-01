@@ -2269,7 +2269,8 @@ namespace ChemSW.Nbt.WebPages
                             TableRow SelectModeRow = makeEditPropTableRow( EditPropPlaceHolder );
                             ( (Literal) SelectModeRow.Cells[0].Controls[0] ).Text = "Select Mode:";
                             DropDownList SelectModeValue = new DropDownList();
-                            foreach( string NodeTypeSelectModeName in Enum.GetNames( typeof( CswEnumNbtPropertySelectMode ) ) )
+                            //foreach( string NodeTypeSelectModeName in Enum.GetNames( typeof( CswEnumNbtPropertySelectMode ) ) )
+                            foreach( string NodeTypeSelectModeName in CswEnumNbtPropertySelectMode._All )
                             {
                                 if( NodeTypeSelectModeName != CswEnumNbtPropertySelectMode.Blank.ToString() )
                                     SelectModeValue.Items.Add( new ListItem( NodeTypeSelectModeName, NodeTypeSelectModeName ) );
