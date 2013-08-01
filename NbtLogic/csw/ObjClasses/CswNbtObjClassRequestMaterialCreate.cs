@@ -358,7 +358,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropText NewMaterialTradename { get { return _CswNbtNode.Properties[PropertyName.NewMaterialTradename]; } }
         public CswNbtNodePropText NewMaterialPartNo { get { return _CswNbtNode.Properties[PropertyName.NewMaterialPartNo]; } }
         public CswNbtNodePropRelationship NewMaterialSupplier { get { return _CswNbtNode.Properties[PropertyName.NewMaterialSupplier]; } }
-        public CswNbtNodePropList ApprovelLevel { get { return _CswNbtNode.Properties[PropertyName.ApprovalLevel]; } }
+        public CswNbtNodePropList ApprovalLevel { get { return _CswNbtNode.Properties[PropertyName.ApprovalLevel]; } }
 
         #endregion
     }//CswNbtObjClassRequestMaterialCreate

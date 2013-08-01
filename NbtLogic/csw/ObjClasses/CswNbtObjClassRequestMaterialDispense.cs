@@ -704,7 +704,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             NextReorderDate.DateTimeValue = CswNbtPropertySetSchedulerImpl.getNextDueDate( this.Node, NextReorderDate, RecurringFrequency );
         }
-        public CswNbtNodePropList ApprovelLevel { get { return _CswNbtNode.Properties[PropertyName.ApprovalLevel]; } }
+        public CswNbtNodePropList ApprovalLevel { get { return _CswNbtNode.Properties[PropertyName.ApprovalLevel]; } }
 
         #endregion
     }//CswNbtObjClassRequestMaterialDispense
