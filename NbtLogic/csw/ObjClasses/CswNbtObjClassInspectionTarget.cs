@@ -68,7 +68,6 @@ namespace ChemSW.Nbt.ObjClasses
 
         protected override void afterPopulateProps()
         {
-            Status.SetOnPropChange( OnStatusPropChange );
             _CswNbtObjClassDefault.triggerAfterPopulateProps();
         }//afterPopulateProps()
 
@@ -100,13 +99,6 @@ namespace ChemSW.Nbt.ObjClasses
         /// Inspection Target Inspection Status (OK, Deficient)
         /// </summary>
         public CswNbtNodePropList Status { get { return ( _CswNbtNode.Properties[PropertyName.Status] ); } }
-        private void OnStatusPropChange( CswNbtNodeProp NodeProp )
-        {
-            if( string.IsNullOrEmpty( Status.Text ) )
-            {
-                Status.Text = "Not Inspected";
-            }        
-        }
 
         /// <summary>
         /// Location of Inspection Target
