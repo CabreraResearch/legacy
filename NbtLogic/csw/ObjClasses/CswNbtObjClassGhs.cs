@@ -118,7 +118,6 @@ namespace ChemSW.Nbt.ObjClasses
                     }
                 }
             } // if( SelectedPhraseIds.Count > 0 )
-            View.save();
             View.SaveToCache( IncludeInQuickLaunch: false, UpdateCache: true, KeepInQuickLaunch: false );
         } // _setupPhraseView()
 
