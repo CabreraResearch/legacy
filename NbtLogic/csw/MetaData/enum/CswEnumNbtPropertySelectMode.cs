@@ -18,7 +18,12 @@ namespace ChemSW.Nbt.MetaData
         /// </summary>
         public readonly string Value;
 
-        private static string _Parse(string Val)
+        /// <summary>
+        /// All values
+        /// </summary>
+        public static IEnumerable<string> _All { get { return _Enums.Values; } }
+
+        private static string _Parse( string Val )
         {
             string ret = CswResources.UnknownEnum;
             if (_Enums.ContainsKey(Val))
