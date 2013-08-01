@@ -42,7 +42,8 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case30266() ) );                    //02D-019
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case30318() ) );                    //02D-020
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case30299() ) );                    //02D-021
-
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case30304() ) );                    //02D-022
+            
             #endregion DOGWOOD
 
             // This automatically detects the latest version
