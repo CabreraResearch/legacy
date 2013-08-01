@@ -42,38 +42,29 @@ namespace ChemSW.Nbt.Sched
 
             Int32 ReturnVal = 0;
 
-            try
+            _MasterSchemaResources = _getMasterSchemaResources( (CswNbtResources) CswResources );
+
+            if( null != _MasterSchemaResources )
             {
-                _MasterSchemaResources = _getMasterSchemaResources( (CswNbtResources) CswResources );
 
-                if( null != _MasterSchemaResources )
+                CswArbitrarySelect CswArbitrarySelectSessionList = _MasterSchemaResources.makeCswArbitrarySelect( "expired_session_list_query", _makeLoadCountSql( CswResources.AccessId ) );
+                DataTable SessionListTable = CswArbitrarySelectSessionList.getTable();
+                Int32 ExpiredSessionRecordCount = CswConvert.ToInt32( SessionListTable.Rows[0]["expired_cnt"] );
+                Int32 OrhpanSessionDataCount = CswConvert.ToInt32( SessionListTable.Rows[0]["orphan_cnt"] );
+                if( ExpiredSessionRecordCount > 0 || OrhpanSessionDataCount > 0 )
                 {
 
-                    CswArbitrarySelect CswArbitrarySelectSessionList = _MasterSchemaResources.makeCswArbitrarySelect( "expired_session_list_query", _makeLoadCountSql( CswResources.AccessId ) );
-                    DataTable SessionListTable = CswArbitrarySelectSessionList.getTable();
-                    Int32 ExpiredSessionRecordCount = CswConvert.ToInt32( SessionListTable.Rows[0]["expired_cnt"] );
-                    Int32 OrhpanSessionDataCount = CswConvert.ToInt32( SessionListTable.Rows[0]["orphan_cnt"] );
-                    if( ExpiredSessionRecordCount > 0 || OrhpanSessionDataCount > 0 )
-                    {
+                    ReturnVal = ExpiredSessionRecordCount + OrhpanSessionDataCount;
+                    _StaleDataExists = true;
 
-                        ReturnVal = ExpiredSessionRecordCount + OrhpanSessionDataCount;
-                        _StaleDataExists = true;
-
-                    }
-
-                    _CswScheduleLogicDetail.LoadCount = ReturnVal;
                 }
-                else
-                {
-                    CswResources.CswLogger.reportError( new CswDniException( "Unable to get load count of sessionlist records: The master schema resource object is null" ) );
-                }
+
+                _CswScheduleLogicDetail.LoadCount = ReturnVal;
             }
-
-            catch( Exception Exception )
+            else
             {
-                CswResources.CswLogger.reportError( Exception );
-
-            }//catch()
+                CswResources.CswLogger.reportError( new CswDniException( "Unable to get load count of sessionlist records: The master schema resource object is null" ) );
+            }
 
             return ( ReturnVal );
 
