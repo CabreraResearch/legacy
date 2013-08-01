@@ -72,12 +72,13 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterDeleteNode()
         {
+            _setChemicalsPendingUpdate();
             _CswNbtObjClassDefault.afterDeleteNode();
         }//afterDeleteNode()        
 
         protected override void afterPopulateProps()
         {
-            LOLIListName.OnBeforeFilterOptions = searchLOLI;
+            LOLIListName.OnBeforeFilterOptions = _searchLOLI;
             _CswNbtObjClassDefault.triggerAfterPopulateProps();
         }//afterPopulateProps()
 
@@ -93,7 +94,7 @@ namespace ChemSW.Nbt.ObjClasses
         }
         #endregion
 
-        private void searchLOLI( string SearchTerm, Int32 SearchThreshold )
+        private void _searchLOLI( string SearchTerm, Int32 SearchThreshold )
         {
             // Instance a ChemCatCentral SearchClient
             CswC3SearchParams CswC3SearchParams = new CswC3SearchParams();

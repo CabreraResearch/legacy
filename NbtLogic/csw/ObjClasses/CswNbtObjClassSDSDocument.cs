@@ -168,7 +168,11 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 CswNbtView docView = getAssignedSDSDocumentsView( _CswNbtResources, MaterialId );
                 ICswNbtTree docsTree = _CswNbtResources.Trees.getTreeFromView( docView, false, false, false );
-                HasActiveSDS = docsTree.getChildNodeCount() > 0;
+                if( docsTree.getChildNodeCount() > 0 ) //if the given Material Id is of a temp node, we won't see it in the view and can't go to it's Nth child
+                {
+                    docsTree.goToNthChild( 0 ); //The docView is a property view
+                    HasActiveSDS = docsTree.getChildNodeCount() > 0;
+                }
             }
             return HasActiveSDS;
         }
@@ -183,6 +187,7 @@ namespace ChemSW.Nbt.ObjClasses
                 CswNbtObjClassJurisdiction userJurisdictionNode = _CswNbtResources.Nodes[currentUserNode.JurisdictionProperty.RelatedNodeId];
 
                 ICswNbtTree docsTree = _CswNbtResources.Trees.getTreeFromView( docView, false, false, false );
+                docsTree.goToNthChild( 0 ); //This is a property view, so the data is on the 2nd level
                 int childCount = docsTree.getChildNodeCount();
                 int lvlMatched = Int32.MinValue;
                 string matchedFileType = "";
@@ -281,51 +286,12 @@ namespace ChemSW.Nbt.ObjClasses
             return url;
         }
 
-        public static CswNbtView getAssignedSDSDocumentsView( CswNbtResources _CswNbtResources, CswPrimaryKey MaterialId, bool IncludeArchivedDocs = false )
+        public static CswNbtView getAssignedSDSDocumentsView( CswNbtResources _CswNbtResources, CswPrimaryKey NodeId )
         {
-            CswNbtMetaDataObjectClass SDSDocOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.SDSDocumentClass );
-            CswNbtMetaDataObjectClassProp archivedOCP = SDSDocOC.getObjectClassProp( PropertyName.Archived );
-            CswNbtMetaDataObjectClassProp formatOCP = SDSDocOC.getObjectClassProp( PropertyName.Format );
-            CswNbtMetaDataObjectClassProp languageOCP = SDSDocOC.getObjectClassProp( PropertyName.Language );
-            CswNbtMetaDataObjectClassProp fileTypeOCP = SDSDocOC.getObjectClassProp( PropertyName.FileType );
-            CswNbtMetaDataObjectClassProp fileOCP = SDSDocOC.getObjectClassProp( PropertyName.File );
-            CswNbtMetaDataObjectClassProp linkOCP = SDSDocOC.getObjectClassProp( PropertyName.Link );
-            CswNbtMetaDataObjectClassProp ownerOCP = SDSDocOC.getObjectClassProp( PropertyName.Owner );
-            CswNbtMetaDataObjectClassProp revisionDateOCP = SDSDocOC.getObjectClassProp( PropertyName.RevisionDate );
-
-            CswNbtView docView = new CswNbtView( _CswNbtResources )
-                                        {
-                                            ViewName = "All Assigned SDS",
-                                            ViewMode = CswEnumNbtViewRenderingMode.Grid
-                                        };
-            CswNbtViewRelationship parent = docView.AddViewRelationship( SDSDocOC, true );
-
-            if( false == IncludeArchivedDocs )
-            {
-                docView.AddViewPropertyAndFilter( parent,
-                                                    MetaDataProp : archivedOCP,
-                                                    SubFieldName : CswEnumNbtSubFieldName.Checked,
-                                                    Value : false.ToString(),
-                                                    FilterMode : CswEnumNbtFilterMode.Equals,
-                                                    ShowInGrid : false );
-            }
-
-            docView.AddViewPropertyAndFilter( parent,
-                                                MetaDataProp : ownerOCP,
-                                                SubFieldName : CswEnumNbtSubFieldName.NodeID,
-                                                Value : MaterialId.PrimaryKey.ToString(),
-                                                FilterMode : CswEnumNbtFilterMode.Equals,
-                                                ShowInGrid : false );
-
-            docView.AddViewProperty( parent, revisionDateOCP, 1 );
-            docView.AddViewProperty( parent, formatOCP, 5 );
-            docView.AddViewProperty( parent, languageOCP, 4 );
-            docView.AddViewProperty( parent, fileOCP, 2 );
-            docView.AddViewProperty( parent, linkOCP, 3 );
-            CswNbtViewProperty FTVP = docView.AddViewProperty( parent, fileTypeOCP );
-            FTVP.ShowInGrid = false;
-            docView.SaveToCache( false );
-
+            CswNbtMetaDataObjectClass ChemicalOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass );
+            CswNbtMetaDataObjectClassProp AssignedSDS_OCP = ChemicalOC.getObjectClassProp( CswNbtObjClassChemical.PropertyName.AssignedSDS );
+            CswNbtView docView = _CswNbtResources.ViewSelect.restoreView( AssignedSDS_OCP.ViewXml );
+            docView = docView.PrepGridView( NodeId );
             return docView;
         }
 

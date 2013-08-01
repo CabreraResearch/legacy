@@ -70,6 +70,12 @@ namespace ChemSW.Nbt.PropTypes
                 {
                     Text = SelectedOption.Text;
                 }
+                else
+                {
+                    // When we don't have a SelectedOption, we set Text = Value 
+                    // because having any value is better than no value.
+                    Text = Value;
+                }
             }
         }
 
@@ -163,15 +169,20 @@ namespace ChemSW.Nbt.PropTypes
                 }
                 if( false == foundValue )
                 {
-                    JObject Opt = new JObject();
-                    Opt["Text"] = Text;
-                    Opt["Value"] = Value;
-                    OptionsArr.Add( Opt );
+                    // We don't want to send an empty option if the property is required
+                    if( false == string.IsNullOrEmpty( Value ) || false == string.IsNullOrEmpty( Text ) || false == _CswNbtMetaDataNodeTypeProp.IsRequired )
+                    {
+                        JObject Opt = new JObject();
+                        Opt["Text"] = Text;
+                        Opt["Value"] = Value;
+                        OptionsArr.Add( Opt );
+                    }
                 }
                 ParentObject["options"] = OptionsArr;
 
                 // To search or not to search
-                if( Options.Options.Count == 1 && ( string.IsNullOrEmpty( Options.Options[0].Text ) && string.IsNullOrEmpty( Options.Options[0].Value ) ) )
+                if( ( Options.Options.Count == 1 && ( string.IsNullOrEmpty( Options.Options[0].Text ) && string.IsNullOrEmpty( Options.Options[0].Value ) ) )
+                    || _CswNbtMetaDataNodeTypeProp.IsRequired && Options.Options.Count == 0 )
                 {
                     ParentObject["search"] = true;
                 }
@@ -186,29 +197,26 @@ namespace ChemSW.Nbt.PropTypes
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
             // TODO: Test that this is the correct logic
-            // Text is replacing value
             Text = CswTools.XmlRealAttributeName( PropRow[_TextSubField.ToXmlNodeName()].ToString() );
             //Value = CswTools.XmlRealAttributeName( PropRow[_ValueSubField.ToXmlNodeName()].ToString() );
         }
 
         public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
+            if( null != JObject[_ValueSubField.ToXmlNodeName( true )] )
+            {
+                Value = JObject[_ValueSubField.ToXmlNodeName( true )].ToString();
+            }
 
             if( null != JObject[_TextSubField.ToXmlNodeName( true )] )
             {
                 Text = JObject[_TextSubField.ToXmlNodeName( true )].ToString();
-            }
-
-            if( null != JObject[_ValueSubField.ToXmlNodeName( true )] )
-            {
-                Value = JObject[_ValueSubField.ToXmlNodeName( true )].ToString();
             }
         }
 
         public override void SyncGestalt()
         {
             //TODO: Check this is the correct logic
-            // Text is replacing value
             _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, Text );
             //_CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, Value );
         }
