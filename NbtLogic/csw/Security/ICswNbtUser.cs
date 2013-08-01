@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using ChemSW.Core;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Security;
@@ -23,6 +22,7 @@ namespace ChemSW.Nbt.Security
         //CswNbtNodePropRelationship WorkUnitProperty { get; }
         CswPrimaryKey DefaultLocationId { get; }
         CswPrimaryKey DefaultPrinterId { get; }
+        CswPrimaryKey DefaultBalanceId { get; }
         CswPrimaryKey WorkUnitId { get; }
         CswPrimaryKey JurisdictionId { get; }
         Int32 UserNodeTypeId { get; }

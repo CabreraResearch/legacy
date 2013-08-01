@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.Serialization;
+using System.Web;
 using ChemSW;
 //using ChemSW.Nbt;
 using ChemSW.Nbt;
@@ -82,11 +83,11 @@ namespace NbtWebApp.WebSvc.Returns
         /// <summary>
         /// Finalize this request to set Authentication, Logging, Performance and Error content to the response.
         /// </summary>
-        public void finalize( CswEnumAuthenticationStatus AuthenticationStatus )
+        public void finalize( HttpContext HttpContext, CswEnumAuthenticationStatus AuthenticationStatus )
         {
             try
             {
-                CswWebSvcCommonMethods.wAddAuthenticationStatus( _CswNbtResources, null, this, AuthenticationStatus );
+                CswWebSvcCommonMethods.wAddAuthenticationStatus( _CswNbtResources, null, this, AuthenticationStatus, HttpContext );
             }
             catch( Exception Exception )
             {

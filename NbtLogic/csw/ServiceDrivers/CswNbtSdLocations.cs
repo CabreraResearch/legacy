@@ -92,7 +92,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                                       join field_types ft on ntp.fieldtypeid=ft.fieldtypeid
                                       where oc.objectclass='LocationClass' 
                                             and ft.fieldtype='Location'  
-                                      start with n.nodeid = :startlocationids " +
+                                      start with n.nodeid = :startlocationid " +
                                      " connect by jnp.field1_fk = prior n.nodeid )";
                 LocationRel = getLocationRelationship( LocationSql, LocationsView, StartLocationId );
             }

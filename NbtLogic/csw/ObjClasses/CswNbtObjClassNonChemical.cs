@@ -92,7 +92,7 @@ namespace ChemSW.Nbt.ObjClasses
         #region Custom Logic
 
         //NonChemical Materials don't have an expiration interval, so their containers won't have an expiration date defined.
-        public override DateTime getDefaultExpirationDate()
+        public override DateTime getDefaultExpirationDate( DateTime InitialDate )
         {
             return DateTime.MinValue;
         }

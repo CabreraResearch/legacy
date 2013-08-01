@@ -12,6 +12,12 @@ namespace ChemSW.Nbt.PropTypes
             _Value = Value;
         }//ctor
 
+        public CswNbtNodeTypePropListOption( string Value )
+        {
+            _Text = Value;
+            _Value = Value;
+        }//ctor
+
         public bool Empty
         {
             get { return ( string.Empty == Text || string.Empty == Value ); }

@@ -85,11 +85,29 @@
     <Content Include="app\literals\csw.fieldset.js" />
     <Content Include="app\layouts\csw.landingpage.js" />
     <Content Include="app\literals\_template.js" />
+    <Content Include="app\main\csw.mainRefreshDashboard.js" />
+    <Content Include="app\main\csw.mainClear.js" />
+    <Content Include="app\main\csw.mainGetViewGrid.js" />
+    <Content Include="app\main\csw.mainGetViewTable.js" />
+    <Content Include="app\main\csw.mainGetTabs.js" />
+    <Content Include="app\main\csw.mainDefaulContent.js" />
+    <Content Include="app\main\csw.mainRefreshMainMenu.js" />
+    <Content Include="app\main\csw.mainHandleItemSelect.js" />
+    <Content Include="app\main\csw.mainHandleQueryString.js" />
+    <Content Include="app\main\csw.mainRefreshHeaderMenu.js" />
+    <Content Include="app\main\csw.mainRefreshLandingPage.js" />
+    <Content Include="app\main\csw.mainRefreshSelected.js" />
+    <Content Include="app\main\csw.mainRefreshNodesTree.js" />
+    <Content Include="app\main\csw.mainHandleAction.js" />
+    <Content Include="app\main\csw.mainHandleImpersonation.js" />
+    <Content Include="app\main\csw.mainEvents.js" />
+    <Content Include="app\main\csw.mainDivs.js" />
+    <Content Include="app\promises\csw.promise.js" />
     <Content Include="app\proptypes\csw.propTypeChildContents.js" />
     <Content Include="app\nodes\csw.node.treeExt.js" />
     <Content Include="app\proptypes\csw.propTypeCASNo.js" />
     <Content Include="app\proptypes\_propTypeTemplate.js" />
-    <Content Include="app\core\csw.ajaxWcf.js" />
+    <Content Include="app\promises\csw.ajaxWcf.js" />
     <Content Include="app\nodes\csw.node.table.js" />
     <Content Include="app\proptypes\csw.property.js" />
     <Content Include="app\proptypes\csw.propertyOption.js" />
@@ -129,6 +147,7 @@
     <Content Include="app\proptypes\csw.propTypeViewPickList.js" />
     <Content Include="app\proptypes\csw.propTypeViewReference.js" />
     <Content Include="app\tools\csw.ext.js" />
+    <Content Include="app\tools\csw.validation.js" />
     <Content Include="app\view\csw.vieweditor.js" />
     <Content Include="app\wizards\csw.wizard.sizesgrid.js" />
     <Content Include="app\wizards\csw.legacymobile.js" />
@@ -266,6 +285,7 @@
     <Content Include="Content\themes\cupertino\minified\jquery.ui.tabs.min.css" />
     <Content Include="Content\themes\cupertino\minified\jquery.ui.theme.min.css" />
     <Content Include="Content\themes\cupertino\minified\jquery.ui.tooltip.min.css" />
+    <Content Include="files.js" />
     <Content Include="Csw2\app\404.html" />
     <Content Include="Csw2\app\crossdomain.xml" />
     <Content Include="Csw2\app\css\main.css" />
@@ -403,6 +423,8 @@
     <Content Include="Scripts\jquery-2.0.3.min.js" />
     <Content Include="Scripts\jquery-ui-1.10.3.js" />
     <Content Include="Scripts\jquery-ui-1.10.3.min.js" />
+    <Content Include="Scripts\q.js" />
+    <Content Include="Scripts\q.min.js" />
     <Content Include="templates\ExternalLoginIncludes.txt" />
     <Content Include="templates\Manifest.txt" />
     <Content Include="templates\NodeReport_Body.txt" />
@@ -1024,8 +1046,6 @@
     <Content Include="app\wizards\csw.createinspection.js" />
     <Content Include="app\literals\CswInput.js" />
     <Content Include="app\nodes\csw.node.grid.js" />
-    <Content Include="app\pagecmp\CswDashboard.js" />
-    <Content Include="app\pagecmp\CswDefaultContent.js" />
     <Content Include="app\pagecmp\CswDialog.js" />
     <Content Include="app\pagecmp\CswErrorMessage.js" />
     <Content Include="app\pagecmp\CswLogin.js" />
@@ -1062,7 +1082,7 @@
     <Content Include="app\composites\csw.imagebutton.js" />
     <Content Include="app\composites\csw.multiselect.js" />
     <Content Include="app\composites\csw.numbertextbox.js" />
-    <Content Include="app\core\csw.ajax.js" />
+    <Content Include="app\promises\csw.ajax.js" />
     <Content Include="app\types\csw.array.js" />
     <Content Include="app\types\csw.boolean.js" />
     <Content Include="app\core\csw.clientchanges.js" />
@@ -1102,7 +1122,10 @@
     <None Include="Csw2\templates\test.tmpl" />
     <None Include="package.json" />
     <None Include="README.md" />
+    <None Include="Scripts\additional-methods.min.js.map" />
+    <None Include="Scripts\es5-shim.min.js.map" />
     <None Include="Scripts\jquery-2.0.3.min.map" />
+    <None Include="Scripts\mousetrap.min.js.map" />
     <None Include="test\test.tmpl" />
     <None Include="vendor\es5-sham.min.js.map">
       <DependentUpon>es5-sham.js</DependentUpon>

@@ -69,7 +69,7 @@
                 }; // onFilterClick()
 
                 // Nodetype Filter Menu
-                Csw.ajax.post({
+                cswPublic.ready = Csw.ajax.post({
                     urlMethod: 'getNodeTypes',
                     data: {
                         PropertySetName: '',
@@ -570,13 +570,17 @@
 
             cswPublic.disable = function () {
                 cswPrivate.preFilterSelect.disable();
-                cswPrivate.searchButton.disable();
+                if (cswPrivate.searchButton) {
+                    cswPrivate.searchButton.disable();
+                }
                 cswPrivate.searchinput.disable();
             };
             
             cswPublic.enable = function () {
                 cswPrivate.preFilterSelect.enable();
-                cswPrivate.searchButton.enable();
+                if (cswPrivate.searchButton) {
+                    cswPrivate.searchButton.enable();
+                }
                 cswPrivate.searchinput.enable();
             };
 

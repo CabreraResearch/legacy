@@ -12,6 +12,8 @@ namespace ChemSW.Nbt.MetaData
         #region Internals
         private static Dictionary<string, string> _Enums = new Dictionary<string, string>( StringComparer.OrdinalIgnoreCase )
         {
+            { BalanceClass                      , BalanceClass                       },
+            { BalanceConfigurationClass         , BalanceConfigurationClass          },
             { BatchOpClass                      , BatchOpClass                       },
             { MaterialComponentClass            , MaterialComponentClass             },
             { CofADocumentClass                 , CofADocumentClass                  },
@@ -136,6 +138,8 @@ namespace ChemSW.Nbt.MetaData
 
         #region Enum members
 
+        public const string BalanceClass = "BalanceClass";
+        public const string BalanceConfigurationClass = "BalanceConfigurationClass";
         public const string BatchOpClass = "BatchOpClass";
         public const string CofADocumentClass = "CofADocumentClass";
         public const string CofAMethodClass = "CofAMethodClass";

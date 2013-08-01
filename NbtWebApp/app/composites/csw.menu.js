@@ -347,7 +347,7 @@
                     }       //success
                 }); // ajax
 
-                cswPublic.abort = cswPublic.ajax.ajax.abort;
+                cswPublic.abort = cswPublic.ajax.abort;
 
 
             } ()); // constructor

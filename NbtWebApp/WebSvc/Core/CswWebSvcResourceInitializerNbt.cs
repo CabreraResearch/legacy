@@ -11,10 +11,15 @@ namespace ChemSW.WebSvc
     public class CswWebSvcResourceInitializerNbt: ICswWebSvcResourceInitializer
     {
         private CswTimer _Timer = new CswTimer();
-        private HttpContext _HttpContext = null;
         private CswWebSvcSessionAuthenticateData.Authentication.Request _AuthenticationRequest;
         private delegate void _OnDeInitDelegate();
         private _OnDeInitDelegate _OnDeInit;
+
+        public HttpContext _HttpContext = null;
+        public HttpContext HttpContext
+        {
+            get { return _HttpContext; }
+        }
 
         private void _setHttpContextOnRequest()
         {
@@ -85,17 +90,18 @@ namespace ChemSW.WebSvc
             }
 
             //Set audit context
-            if( Ret == CswEnumAuthenticationStatus.Authenticated && null != _CswNbtResources.CurrentNbtUser.Cookies )
+            if( Ret == CswEnumAuthenticationStatus.Authenticated && null != _HttpContext.Request.Cookies )
             {
                 string ContextViewId = string.Empty;
                 string ContextActionName = string.Empty;
-                if( _CswNbtResources.CurrentNbtUser.Cookies.ContainsKey( "csw_currentviewid" ) && null != _CswNbtResources.CurrentNbtUser.Cookies["csw_currentviewid"] )
+                
+                if( null != _HttpContext.Request.Cookies["csw_currentviewid"] )
                 {
-                    ContextViewId = _CswNbtResources.CurrentNbtUser.Cookies["csw_currentviewid"];
+                    ContextViewId = _HttpContext.Request.Cookies["csw_currentviewid"].Value;
                 }
-                if( _CswNbtResources.CurrentNbtUser.Cookies.ContainsKey( "csw_currentactionname" ) && null != _CswNbtResources.CurrentNbtUser.Cookies["csw_currentactionname"] )
+                if( null != _HttpContext.Request.Cookies["csw_currentactionname"] )
                 {
-                    ContextActionName = _CswNbtResources.CurrentNbtUser.Cookies["csw_currentactionname"];
+                    ContextActionName = _HttpContext.Request.Cookies["csw_currentactionname"].Value;
                 }
 
                 if( string.Empty != ContextViewId )

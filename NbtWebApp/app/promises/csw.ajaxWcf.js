@@ -131,7 +131,6 @@
         };
         Csw.extend(cswInternal, options);
         
-        var cswExternal = { };
         cswInternal.urlMethod = 'Services/' + cswInternal.urlMethod;
         cswInternal.url = Csw.string(cswInternal.url, cswInternal.urlMethod);
         cswInternal.startTime = new Date();
@@ -145,7 +144,7 @@
         }
 
         Csw.publish(Csw.enums.events.ajax.ajaxStart, cswInternal.watchGlobal);
-        cswExternal.ajax = $.ajax({
+        var ajax = $.ajax({
             type: verb,
             url: cswInternal.urlMethod,
             xhrFields: {
@@ -155,22 +154,24 @@
             contentType: 'application/json; charset=utf-8',
             //processdata: false,
             data: cswInternal.data,
-            success: function (data) {
-                cswPrivate.onJsonSuccess(cswInternal, data, document.location + '/' + cswInternal.urlMethod);
-            }, /* success{} */
-            error: function (xmlHttpRequest, textStatus, param1) {
-                cswPrivate.onJsonError(xmlHttpRequest, textStatus, param1, { 
-                    data: cswInternal.data, 
-                    watchGlobal: cswInternal.watchGlobal, 
-                    urlMethod: document.location + '/' + cswInternal.urlMethod 
-                    }
-                 );
-            },
-            complete: function(xmlHttpRequest, textStatus) {
-                Csw.tryExec(cswInternal.complete, xmlHttpRequest, textStatus);
-            }
-        }); /* $.ajax({ */
-        return cswExternal;
+            watchGlobal: cswInternal.watchGlobal
+        });
+        ajax.done(function(data) {
+            cswPrivate.onJsonSuccess(cswInternal, data, document.location + '/' + cswInternal.urlMethod);
+        }); /* success{} */
+        ajax.fail(function(jqXHR, textStatus, errorText) {
+            cswPrivate.onJsonError(jqXHR, textStatus, errorText, {
+                    data: cswInternal.data,
+                    watchGlobal: cswInternal.watchGlobal,
+                    urlMethod: document.location + '/' + cswInternal.urlMethod
+                }
+            );
+        });
+        ajax.always(function(xmlHttpRequest, textStatus) {
+            Csw.tryExec(cswInternal.complete, xmlHttpRequest, textStatus);
+        });
+        
+        return Csw.promises.ajax(ajax);
     }); /* cswPrivate.jsonPost */
 
     Csw.ajaxWcf.post = Csw.ajaxWcf.post ||

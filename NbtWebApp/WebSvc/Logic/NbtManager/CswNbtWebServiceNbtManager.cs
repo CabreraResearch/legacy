@@ -238,6 +238,9 @@ namespace ChemSW.Nbt.WebServices
         {
             CswNbtResources OtherResources = makeOtherResources( AccessId );
             CswNbtObjClassUser ChemSWAdminUserNode = OtherResources.Nodes.makeUserNodeFromUsername( CswNbtObjClassUser.ChemSWAdminUsername );
+            // case 30296 - don't let the password be expired
+            ChemSWAdminUserNode.PasswordProperty.ChangedDate = DateTime.Now;
+            ChemSWAdminUserNode.postChanges( false );
             return ChemSWAdminUserNode;
         }
 

@@ -229,6 +229,7 @@
             this.tbPassword.PasswordChar = '*';
             this.tbPassword.Size = new System.Drawing.Size(124, 20);
             this.tbPassword.TabIndex = 35;
+            this.tbPassword.Text = "pwd";
             // 
             // label5
             // 
@@ -245,6 +246,7 @@
             this.tbUsername.Name = "tbUsername";
             this.tbUsername.Size = new System.Drawing.Size(124, 20);
             this.tbUsername.TabIndex = 33;
+            this.tbUsername.Text = "user";
             // 
             // label4
             // 
@@ -261,6 +263,7 @@
             this.tbAccessId.Name = "tbAccessId";
             this.tbAccessId.Size = new System.Drawing.Size(124, 20);
             this.tbAccessId.TabIndex = 31;
+            this.tbAccessId.Text = "customer";
             // 
             // label3
             // 
@@ -394,7 +397,7 @@
             this.ClientSize = new System.Drawing.Size(422, 426);
             this.Controls.Add(this.tabControl1);
             this.Name = "Form1";
-            this.Text = "ChemSW Label Printer Client v1.5";
+            this.Text = "ChemSW Label Printer Client v1.6";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Form1_FormClosed);
             this.Load += new System.EventHandler(this.Form1_Load);
             this.tabControl1.ResumeLayout(false);

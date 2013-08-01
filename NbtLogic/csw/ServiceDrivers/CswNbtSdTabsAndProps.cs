@@ -58,11 +58,11 @@ namespace ChemSW.Nbt.ServiceDrivers
                             CswNbtMetaDataNodeTypeTab Tab = _CswNbtResources.MetaData.getNodeTypeTab( EditLayout.TabId );
                             if(
                                     ( _ConfigMode || Tab.TabName != CswNbtMetaData.IdentityTabName ) && (
-                                        _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.View, NodeType ) ||
-                                        _CswNbtResources.Permit.canTab( CswEnumNbtNodeTypePermission.View, NodeType, Tab ) ||
+                                        ( _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Edit, NodeType ) ||
+                                          _CswNbtResources.Permit.canTab( CswEnumNbtNodeTypePermission.Edit, NodeType, Tab ) ) &&
                                         (
-                                         _CswNbtResources.Permit.isNodeWritable( CswEnumNbtNodeTypePermission.View, NodeType, Node.NodeId ) &&
-                                         _CswNbtResources.Permit.isPropWritable( CswEnumNbtNodeTypePermission.View, Prop, Tab )
+                                         _CswNbtResources.Permit.isNodeWritable( CswEnumNbtNodeTypePermission.Edit, NodeType, Node.NodeId ) &&
+                                         _CswNbtResources.Permit.isPropWritable( CswEnumNbtNodeTypePermission.Edit, Prop, Tab )
                                         )
                                     )
                                )

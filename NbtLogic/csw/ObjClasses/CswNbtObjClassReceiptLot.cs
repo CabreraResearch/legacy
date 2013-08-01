@@ -14,11 +14,13 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Material = "Material";
             //public const string MaterialID = "Material ID"; //waiting on 27864
             public const string ExpirationDate = "Expiration Date";
-            //public const string Certificates = "Certificates"; //waiting for Certificate ObjClass to be implemented (allegedly in William)
             public const string UnderInvestigation = "Under Investigation";
             public const string InvestigationNotes = "Investigation Notes";
             public const string Manufacturer = "Manufacturer";
+            public const string ManufacturerLotNo = "Manufacturer Lot No";
+            public const string ManufacturedDate = "Manufactured Date";
             public const string RequestItem = "Request Item";
+            public const string AssignedCofA = "Assigned C of A";
             public const string ViewCofA = "View C of A";
         }
 
@@ -112,7 +114,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// <param name="ButtonData">Data required for the client to open the file</param>
         public void getCofA( NbtButtonData ButtonData )
         {
-            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.CofA ) )
+            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.ManufacturerLotInfo ) )
             {
                 if( ButtonData.SelectedText.Equals( PropertyName.ViewCofA ) )
                 {
@@ -169,7 +171,10 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropLogical UnderInvestigation { get { return _CswNbtNode.Properties[PropertyName.UnderInvestigation]; } }
         public CswNbtNodePropComments InvestigationNotes { get { return _CswNbtNode.Properties[PropertyName.InvestigationNotes]; } }
         public CswNbtNodePropRelationship Manufacturer { get { return _CswNbtNode.Properties[PropertyName.Manufacturer]; } }
+        public CswNbtNodePropText ManufacturerLotNo { get { return _CswNbtNode.Properties[PropertyName.ManufacturerLotNo]; } }
+        public CswNbtNodePropDateTime ManufacturedDate { get { return _CswNbtNode.Properties[PropertyName.ManufacturedDate]; } }
         public CswNbtNodePropRelationship RequestItem { get { return _CswNbtNode.Properties[PropertyName.RequestItem]; } }
+        public CswNbtNodePropGrid AssignedCofA { get { return _CswNbtNode.Properties[PropertyName.AssignedCofA]; } }
         public CswNbtNodePropButton ViewCofA { get { return _CswNbtNode.Properties[PropertyName.ViewCofA]; } }
 
         #endregion

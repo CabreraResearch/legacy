@@ -70,9 +70,9 @@ namespace ChemSW.Nbt
             {
                 ret = new CswNbtModuleRulePCIDSync( CswNbtResources );
             }
-            else if( CswEnumNbtModuleName.CofA == ModuleName )
+            else if( CswEnumNbtModuleName.ManufacturerLotInfo == ModuleName )
             {
-                ret = new CswNbtModuleRuleCofA( CswNbtResources );
+                ret = new CswNbtModuleRuleManufacturerLotInfo( CswNbtResources );
             }
             else if( CswEnumNbtModuleName.LOLISync == ModuleName )
             {

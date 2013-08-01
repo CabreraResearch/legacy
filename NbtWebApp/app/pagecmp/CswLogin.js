@@ -17,6 +17,8 @@
                 };
                 if (options) Csw.extend(o, options);
 
+                var ret = true;
+
                 var thisSessionId = Csw.cookie.get(Csw.cookie.cookieNames.SessionId);
                 var $parent = $(this);
                 var parent = Csw.literals.factory($parent, {});
@@ -63,7 +65,7 @@
                         if (loginForm.isFormValid()) {
                             loginMsg.hide().empty();
                             //Csw.cookie.set(Csw.cookie.cookieNames.CustomerId, inpAccessId.val());
-                            Csw.clientSession.login({
+                            ret = Csw.clientSession.login({
                                 AccessId: inpAccessId.val(),
                                 UserName: inpUserName.val(),
                                 Password: inpPassword.val(),
@@ -104,7 +106,8 @@
                     assemblyDiv.$.load('_Assembly.txt');
 
                     inpAccessId.$.focus();
-                    
+
+                    return ret;
                 } // if-else(ThisSessionId !== null)
             } // init
         }; // methods

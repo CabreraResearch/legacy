@@ -227,22 +227,22 @@
 
             cswPrivate.destroyOtherTabs = function (preserveTabName) {
                 if (preserveTabName !== 'Favorites' && cswPublic.favoritesGrid) {
-                    cswPublic.favoritesGrid.ajax.ajax.abort();
+                    cswPublic.favoritesGrid.ajax.abort();
                     cswPublic.favoritesGrid.destroy();
                     cswPrivate.favoritesTab.csw.empty();
                 }
                 if (preserveTabName !== 'Recurring' && cswPublic.recurringGrid) {
-                    cswPublic.recurringGrid.ajax.ajax.abort();
+                    cswPublic.recurringGrid.ajax.abort();
                     cswPublic.recurringGrid.destroy();
                     cswPrivate.recurringTab.csw.empty();
                 }
                 if (preserveTabName !== 'Submitted' && cswPublic.submittedGrid) {
-                    cswPublic.submittedGrid.ajax.ajax.abort();
+                    cswPublic.submittedGrid.ajax.abort();
                     cswPublic.submittedGrid.destroy();
                     cswPrivate.submittedTab.csw.empty();
                 }
                 if (preserveTabName !== 'Pending' && cswPublic.pendingGrid) {
-                    cswPublic.pendingGrid.ajax.ajax.abort();
+                    cswPublic.pendingGrid.ajax.abort();
                     cswPublic.pendingGrid.destroy();
                     cswPrivate.pendingTab.csw.empty();
                 }

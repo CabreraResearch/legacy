@@ -126,7 +126,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static bool receiptLotHasActiveCofA( CswNbtResources _CswNbtResources, CswPrimaryKey ReceiptLotId )
         {
             bool HasActiveCofA = false;
-            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.CofA ) && null != ReceiptLotId )
+            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.ManufacturerLotInfo ) && null != ReceiptLotId )
             {
                 CswNbtView CofAView = getAssignedCofADocumentsView( _CswNbtResources, ReceiptLotId );
                 ICswNbtTree CofATree = _CswNbtResources.Trees.getTreeFromView( CofAView, false, false, false );
@@ -142,7 +142,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static CswNbtObjClassCofADocument getActiveCofADocument( CswNbtResources _CswNbtResources, CswPrimaryKey ReceiptLotId )
         {
             CswNbtObjClassCofADocument CofADoc = null;
-            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.CofA ) )
+            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.ManufacturerLotInfo ) )
             {
                 CswNbtMetaDataObjectClass CofADocOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.CofADocumentClass );
                 CswNbtMetaDataNodeType CofADocumentNT = CofADocOC.FirstNodeType;
@@ -193,7 +193,6 @@ namespace ChemSW.Nbt.ObjClasses
             AssignedCofAView.AddViewProperty( DocRel, RevisionDateOCP, 1 );
             AssignedCofAView.AddViewProperty( DocRel, FileOCP, 2 );
             AssignedCofAView.AddViewProperty( DocRel, LinkOCP, 3 );
-            AssignedCofAView.SaveToCache( false );
 
             return AssignedCofAView;
         }
