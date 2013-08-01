@@ -181,7 +181,8 @@ namespace ChemSW.Nbt.PropTypes
                 ParentObject["options"] = OptionsArr;
 
                 // To search or not to search
-                if( Options.Options.Count == 1 && ( string.IsNullOrEmpty( Options.Options[0].Text ) && string.IsNullOrEmpty( Options.Options[0].Value ) ) )
+                if( ( Options.Options.Count == 1 && ( string.IsNullOrEmpty( Options.Options[0].Text ) && string.IsNullOrEmpty( Options.Options[0].Value ) ) )
+                    || _CswNbtMetaDataNodeTypeProp.IsRequired && Options.Options.Count == 0 )
                 {
                     ParentObject["search"] = true;
                 }

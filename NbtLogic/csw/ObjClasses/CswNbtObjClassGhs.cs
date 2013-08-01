@@ -12,7 +12,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Object Class property names
         /// </summary>
-        public new sealed class PropertyName: CswNbtObjClass.PropertyName
+        public new sealed class PropertyName : CswNbtObjClass.PropertyName
         {
             public const string Jurisdiction = "Jurisdiction";
             public const string Material = "Material";
@@ -96,6 +96,7 @@ namespace ChemSW.Nbt.ObjClasses
             View.Root.ChildRelationships.Clear();
             if( SelectedPhraseIds.Count > 0 )
             {
+
                 CswNbtViewRelationship PhraseVR = View.AddViewRelationship( GhsPhraseOC, false );
                 foreach( string PhraseId in SelectedPhraseIds )
                 {
@@ -117,7 +118,7 @@ namespace ChemSW.Nbt.ObjClasses
                     }
                 }
             } // if( SelectedPhraseIds.Count > 0 )
-            View.SaveToCache(IncludeInQuickLaunch: false, UpdateCache: true, KeepInQuickLaunch: false);
+            View.SaveToCache( IncludeInQuickLaunch: false, UpdateCache: true, KeepInQuickLaunch: false );
         } // _setupPhraseView()
 
         private Dictionary<string, string> _initGhsPhraseOptions()

@@ -244,7 +244,7 @@
             var cswPublic = {
                 isOpen: true,
                 div: cswPrivate.div.div({ name: cswDlgPrivate.name }),
-                close: function (nodeid, nodekey, nodename, nodelink) {
+                close: function (nodeid, nodekey, tabcount, nodename, nodelink) {
                     if (cswPublic.isOpen) {
                         cswPublic.isOpen = false;
                         cswPublic.tabsAndProps.refresh(null, null); //do not attempt to refresh the properties on add (the dialog is closing)
@@ -844,7 +844,7 @@
                     UserKey: '',
                     PasswordId: '',
                     title: 'Your password has expired.  Please change it now:',
-                    onSuccess: function() {
+                    onSuccess: function () {
                     }
                 };
                 Csw.extend(cswDlgPrivate, options);
@@ -853,7 +853,7 @@
                 var cswPublic = {
                     closed: false,
                     div: Csw.literals.div({ ID: window.Ext.id() }), //Case 28799 - we have to differentiate dialog div Ids from each other
-                    close: function() {
+                    close: function () {
                         if (false === cswPublic.closed && doRefresh) {
                             cswPublic.closed = true;
                             cswPublic.tabsAndProps.tearDown();
@@ -865,7 +865,7 @@
 
                 cswPublic.title = Csw.string(cswDlgPrivate.title);
 
-                cswDlgPrivate.onOpen = function() {
+                cswDlgPrivate.onOpen = function () {
                     var table = cswPublic.div.table({ width: '100%' });
                     var tabCell = table.cell(1, 2);
 
@@ -878,7 +878,7 @@
                             nodekey: cswDlgPrivate.UserKey,
                             isChangePasswordDialog: true     // kludgetastic!  case 29841
                         },
-                        onSave: function(nodeids, nodekeys, tabcount) {
+                        onSave: function (nodeids, nodekeys, tabcount) {
                             Csw.clientChanges.unsetChanged();
                             if (false === cswPublic.closed) {
                                 allowClose = true;
@@ -887,16 +887,16 @@
                             }
                             Csw.tryExec(cswDlgPrivate.onSuccess, nodeids, nodekeys, cswPublic.close);
                         },
-                        onBeforeTabSelect: function() {
+                        onBeforeTabSelect: function () {
                             return Csw.clientChanges.manuallyCheckChanges();
                         },
-                        onPropertyChange: function() {
+                        onPropertyChange: function () {
                             Csw.clientChanges.setChanged();
                         }
                     }); // tabsandprops
                 }; // onOpen()
 
-                openDialog(cswPublic.div, 900, 600, cswPublic.close, cswPublic.title, cswDlgPrivate.onOpen, function() { return allowClose; });
+                openDialog(cswPublic.div, 900, 600, cswPublic.close, cswPublic.title, cswDlgPrivate.onOpen, function () { return allowClose; });
             } // if (false === ExistingChangePasswordDialog)
             return cswPublic;
         }, // ChangePasswordDialog
@@ -1151,7 +1151,7 @@
                             showActionColumn: false
                         });
                         table1.cell(6, 1).propDom('colspan', 2);
-                        
+
                         var extraDataGridId = 'c3detailsgrid_extradata';
                         table1.cell(7, 1).grid({
                             name: extraDataGridId,
@@ -1182,7 +1182,7 @@
             openDialog(div, 500, 500, null, cswPrivate.title, onOpen);
 
         }, // C3DetailsDialog
-        
+
 
 
         C3SearchDialog: function (options) {
@@ -1224,7 +1224,7 @@
                 searchTypeSelect = tableInner.cell(1, 2).select({
                     name: 'C3Search_searchTypeSelect',
                     selected: 'Name',
-                    onChange:  function (event) {
+                    onChange: function (event) {
                         if (searchTypeSelect.selectedText() == "Structure") {
                             searchOperatorSelect.removeOption('begins');
                             searchTermField.hide();
@@ -1254,7 +1254,7 @@
                         sourceSelect.setOptions(sourceSelect.makeOptions(data.AvailableDataSources));
                     }
                 });
-                
+
             } //function onOpen() 
 
 
@@ -1279,7 +1279,7 @@
                     }
                 }
             });
-            
+
             var molSearchText = tableInner.cell(2, 1).div({
                 text: "<b>Paste MOL data from clipboard:</b>"
             });
@@ -1294,10 +1294,10 @@
             var displayMolThumbnail = function (data) {
                 molImageCell.empty();
                 if (data.molImgAsBase64String) {
-                        molImageCell.img({
+                    molImageCell.img({
                         src: "data:image/jpeg;base64," + data.molImgAsBase64String
                     });
-                }   
+                }
             };
 
 
@@ -1309,7 +1309,7 @@
                     Csw.getMolImgFromText('', molSearchField.val(), displayMolThumbnail);
                 }
             });
-            
+
 
 
             tableInner.cell(2, 1).propDom('colspan', 3);
@@ -1317,7 +1317,7 @@
             molSearchText.hide();
             molSearchField.hide();
             molImageCell.hide();
-            
+
 
             var enableSearchButton = !(Csw.isNullOrEmpty(searchTermField.val()));
 
@@ -1335,7 +1335,7 @@
                         SearchOperator: searchOperatorSelect.selectedVal(),
                         SourceName: sourceSelect.selectedVal()
                     };
-                    
+
                     if (searchTypeSelect.selectedText() == "Structure") {
                         CswC3SearchParams.Query = $.trim(molSearchField.val());
                     }
@@ -1357,9 +1357,9 @@
             tableOuter.cell(2, 1).div(tableInner);
 
             openDialog(div, 750, 300, null, cswPrivate.title, onOpen);
-            
+
         }, // C3SearchDialog
-        
+
 
 
 
@@ -1390,14 +1390,14 @@
             });
 
             var displayMolThumbnail = function (data) {
-                        table.cell(4, 2).empty();
-                        if (data.molImgAsBase64String) {
-                            molText.val(data.molString);
-                            table.cell(4, 2).img({
-                                labelText: "Query Image",
-                                src: "data:image/jpeg;base64," + data.molImgAsBase64String
-                            });
-                        }
+                table.cell(4, 2).empty();
+                if (data.molImgAsBase64String) {
+                    molText.val(data.molString);
+                    table.cell(4, 2).img({
+                        labelText: "Query Image",
+                        src: "data:image/jpeg;base64," + data.molImgAsBase64String
+                    });
+                }
             };
 
             var currentNodeId = Csw.cookie.get(Csw.cookie.cookieNames.CurrentNodeId);
@@ -1426,7 +1426,7 @@
                             cswPrivate.cell12.text(fileName);
                             molText.val(fileText);
                             Csw.getMolImgFromText('', molText.val(), displayMolThumbnail);
-                            
+
                         }
                     });
                 }
@@ -1561,9 +1561,9 @@
                 var o = {
                     GetLicenseUrl: 'getLicense',
                     AcceptLicenseUrl: 'acceptLicense',
-                    onAccept: function() {
+                    onAccept: function () {
                     },
-                    onDecline: function() {
+                    onDecline: function () {
                     }
                 };
                 if (options) {
@@ -1577,7 +1577,7 @@
 
                 Csw.ajax.post({
                     urlMethod: o.GetLicenseUrl,
-                    success: function(data) {
+                    success: function (data) {
                         licenseTextArea.text(data.license);
                     }
                 });
@@ -1586,10 +1586,10 @@
                     name: 'license_accept',
                     enabledText: 'I Accept',
                     disabledText: 'Accepting...',
-                    onClick: function() {
+                    onClick: function () {
                         Csw.ajax.post({
                             urlMethod: o.AcceptLicenseUrl,
-                            success: function() {
+                            success: function () {
                                 allowClose = true;
                                 div.$.dialog('close');
                                 Csw.tryExec(o.onAccept);
@@ -1599,7 +1599,7 @@
                     } // onClick
                 }); // 
 
-                openDialog(div, 800, 600, function() { ExistingShowLicenseDialog = false; }, 'Terms and Conditions', null, function() { return allowClose; });
+                openDialog(div, 800, 600, function () { ExistingShowLicenseDialog = false; }, 'Terms and Conditions', null, function () { return allowClose; });
             }
         }, // ShowLicenseDialog
         PrintLabelDialog: function (options) {
