@@ -25,12 +25,12 @@ namespace ChemSW.Nbt.Sched
         //accessid's temp nodes won't get nuked 
         private string _SessionListWhere( string AccessId )
         {
-            return ( " where lower(sl.accessid) = '" + AccessId.ToLower() + "' and ( sl.timeoutdate + 1/24 ) < sysdate" );
+            return ( " where lower(accessid) = '" + AccessId.ToLower() + "' and ( timeoutdate + 1/24 ) < sysdate" );
         }//SessionListWhere
 
         private string _makeLoadCountSql( string AccessId )
         {
-            string sql = @"with expiredcounts as (select count(*) as expired_cnt from sessionlist sl " + _SessionListWhere( AccessId ) + @"),
+            string sql = @"with expiredcounts as (select count(*) as expired_cnt from sessionlist " + _SessionListWhere( AccessId ) + @"),
                           orphancounts as (select count(*) as orphan_cnt from session_data sd where sd.sessionid not in (select sl.sessionid from sessionlist sl))
                           select expiredcounts.expired_cnt, orphancounts.orphan_cnt from expiredcounts, orphancounts";
 
@@ -51,8 +51,8 @@ namespace ChemSW.Nbt.Sched
 
                     CswArbitrarySelect CswArbitrarySelectSessionList = _MasterSchemaResources.makeCswArbitrarySelect( "expired_session_list_query", _makeLoadCountSql( CswResources.AccessId ) );
                     DataTable SessionListTable = CswArbitrarySelectSessionList.getTable();
-                    Int32 ExpiredSessionRecordCount = CswConvert.ToInt32( SessionListTable.Rows[0]["cnt"] );
-                    Int32 OrhpanSessionDataCount = CswConvert.ToInt32( SessionListTable.Rows[0]["cnt"] );
+                    Int32 ExpiredSessionRecordCount = CswConvert.ToInt32( SessionListTable.Rows[0]["expired_cnt"] );
+                    Int32 OrhpanSessionDataCount = CswConvert.ToInt32( SessionListTable.Rows[0]["orphan_cnt"] );
                     if( ExpiredSessionRecordCount > 0 || OrhpanSessionDataCount > 0 )
                     {
 
