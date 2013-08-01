@@ -357,7 +357,7 @@
                 }
                 if (cswPrivate.select) {
                     Csw.ajaxWcf.post({
-                        urlMethod: cswPrivate.nodesUrlMethod,//'Nodes/get',
+                        urlMethod: cswPrivate.nodesUrlMethod,
                         async: false,
                         data: cswPrivate.ajaxData || {
                             RelatedToNodeTypeId: Csw.number(cswPrivate.relatedTo.relatednodetypeid, 0),
