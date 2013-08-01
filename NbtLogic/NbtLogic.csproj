@@ -755,7 +755,6 @@
     <Compile Include="csw\MetaData\enum\CswEnumNbtObjectClass.cs" />
     <Compile Include="csw\MetaData\CswNbtMetaDataObjectClassProp.cs" />
     <Compile Include="csw\MetaData\Infr\CswNbtMetaDataResources.cs" />
-    <Compile Include="csw\MetaData\Infr\CswNbtMetaDataTableCache.cs" />
     <Compile Include="csw\MetaData\Infr\CswNbtPropFilterSql.cs" />
     <Compile Include="csw\MetaData\CswNbtSubField.cs" />
     <Compile Include="csw\MetaData\Infr\CswNbtSubFieldColl.cs" />
