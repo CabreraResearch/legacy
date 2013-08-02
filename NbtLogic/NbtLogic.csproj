@@ -176,6 +176,7 @@
     <Compile Include="csw\ObjClasses\enum\CswEnumNbtNodeModificationState.cs" />
     <Compile Include="csw\ObjClasses\enum\CswEnumNbtNodeSpecies.cs" />
     <Compile Include="csw\ObjClasses\enum\CswEnumNbtNodeEditMode.cs" />
+    <Compile Include="csw\ObjClasses\enum\CswNbtEnumMaterialRequestApprovalLevels.cs" />
     <Compile Include="csw\PropertySets\ICswNbtPermissionTarget.cs" />
     <Compile Include="csw\PropertySets\CswNbtPropertySetPermission.cs" />
     <Compile Include="csw\PropertySets\CswNbtPropertySetDocument.cs" />
@@ -364,6 +365,7 @@
     <None Include="csw\Schema\scripts\past\02B\CswUpdateSchema_02B_Case29431.cs" />
     <None Include="csw\Schema\scripts\past\02C\CswUpdateSchema_02C_Case29935.cs" />
     <Compile Include="csw\Schema\scripts\prod\02D\RunBeforeEveryExecutionOfUpdater_02D_Case29570.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02E\RunBeforeEveryExecutionOfUpdater_02E_Case29701.cs" />
     <Compile Include="csw\Schema\scripts\prod\02E\RunBeforeEveryExecutionOfUpdater_02E_Case29700.cs" />
     <Compile Include="csw\Security\CswNbtWebSvcSchemaAuthenticator.cs" />
     <Compile Include="csw\Security\CswNbtSchemaAuthenticationLogic.cs" />
