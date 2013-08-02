@@ -1,4 +1,5 @@
 using ChemSW.Config;
+using ChemSW.Core;
 using ChemSW.Nbt.csw.Security;
 using ChemSW.Nbt.Statistics;
 using ChemSW.Security;
@@ -37,14 +38,11 @@ namespace ChemSW.Nbt
             CswResourcesMaster.AccessId = CswDbCfgInfo.MasterAccessId;
 
             CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( CswEnumAppType.Nbt, SetupMode, true, false, CswSuperCycleCache, RscAdo.CswEnumPooledConnectionState.Open, CswResourcesMaster, CswResourcesMaster.CswLogger );
-
-
-
-            string RecordStatisticsVblName = "RecordUserStatistics";
+            
             bool RecordStatistics = false;
-            if( CswNbtResources.SetupVbls.doesSettingExist( RecordStatisticsVblName ) )
+            if ( CswConvert.ToBoolean( CswNbtResources.SetupVbls[CswEnumSetupVariableNames.RecordUserStatistics] ) )
             {
-                RecordStatistics = ( "1" == CswNbtResources.SetupVbls[RecordStatisticsVblName] );
+                RecordStatistics = true;
             }
 
             Dictionary<string, string> Cookies = new Dictionary<string, string>();

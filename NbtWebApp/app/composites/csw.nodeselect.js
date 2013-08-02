@@ -357,7 +357,7 @@
                 }
                 if (cswPrivate.select) {
                     Csw.ajaxWcf.post({
-                        urlMethod: 'Nodes/get',
+                        urlMethod: cswPrivate.nodesUrlMethod,
                         async: false,
                         data: cswPrivate.ajaxData || {
                             RelatedToNodeTypeId: Csw.number(cswPrivate.relatedTo.relatednodetypeid, 0),
@@ -488,7 +488,7 @@
             cswPublic.optionsCount = function (excludeEmpty) {
                 var ret = cswPrivate.options.length;
                 if (excludeEmpty) {
-                    Csw.iterate(cswPrivate.options, function(val) {
+                    Csw.iterate(cswPrivate.options, function (val) {
                         if (!val.id || !val.value) {
                             ret -= 1;
                         }
