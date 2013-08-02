@@ -12,7 +12,7 @@ namespace ChemSW.Nbt.Security
         //CswNbtNodePropPassword PasswordProperty { get; }
         //CswNbtObjClassRole RoleNode { get; }
         //CswNbtObjClassUser UserNode { get; }
-        bool IsAdministrator();
+        new bool IsAdministrator();
         //CswNbtNodePropText FirstNameProperty { get; }
         //CswNbtNodePropText LastNameProperty { get; }
         string Email { get; }
@@ -30,7 +30,7 @@ namespace ChemSW.Nbt.Security
         Int32 RoleNodeTypeId { get; }
         Int32 RoleObjectClassId { get; }
         Int32 PasswordPropertyId { get; }
-        bool PasswordIsExpired { get; }
+        new bool PasswordIsExpired { get; }
         string Language { get; }
         CswNbtPropertySetPermission getPermissionForGroup( CswPrimaryKey PermissionGroupId );
 
