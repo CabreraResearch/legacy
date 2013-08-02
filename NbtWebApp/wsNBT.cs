@@ -1,13 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Data;
-using System.IO;
-using System.IO.Compression;
-using System.Linq;
-using System.Web;
-using System.Web.Script.Services;   // supports ScriptService attribute
-using System.Web.Services;
 using ChemSW.Config;
 using ChemSW.Core;
 using ChemSW.DB;
@@ -26,6 +16,16 @@ using ChemSW.Security;
 using ChemSW.Session;
 using ChemSW.WebSvc;
 using Newtonsoft.Json.Linq;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Data;
+using System.IO;
+using System.IO.Compression;
+using System.Linq;
+using System.Web;
+using System.Web.Script.Services;   // supports ScriptService attribute
+using System.Web.Services;
 
 
 
@@ -2234,9 +2234,9 @@ namespace ChemSW.Nbt.WebServices
             {
                 _initResources();
 
-                if( _CswNbtResources.SetupVbls.doesSettingExist( "Watermark" ) )
+                if ( _CswNbtResources.SetupVbls.doesSettingExist( CswEnumSetupVariableNames.Watermark ) )
                 {
-                    string Watermark = _CswNbtResources.SetupVbls.readSetting( "Watermark" );
+                    string Watermark = _CswNbtResources.SetupVbls[CswEnumSetupVariableNames.Watermark];
                     if( string.Empty != Watermark )
                     {
                         ReturnVal["watermark"] = Watermark;
