@@ -79,6 +79,7 @@
                         listConfig: {
                             width: 'auto'
                         },
+                        forceSelection: true,
                         listeners: {
                             select: function (combo, records) {
                                 var text = records[0].get('Text');
@@ -136,7 +137,20 @@
                      */
                     if (nodeProperty.propData.values.search === false) {
                         cswPrivate.listOptionsStore.loadData(cswPrivate.options);
+                        cswPrivate.select.setValue(cswPrivate.value); // Need to set the value here if comboBox 'forceSelection' is set to 'true'
                         setComboBoxSize(cswPrivate.options);
+                        
+                        // Since we are setting the value, we need to re-validate
+                        if (cswPrivate.isRequired) {
+                            if (Csw.isNullOrEmpty(cswPrivate.select.getValue())) {
+                                cswPrivate.checkBox.val(false);
+                            } else {
+                                cswPrivate.checkBox.val(true);
+                            }
+                            var valid = cswPrivate.checkBox.$.valid();
+                            onValidation(valid);
+                        }
+
                     } else {
                         // Create a proxy to call the searchListOptions web service method
                         cswPrivate.proxy = new Ext.data.proxy.Ajax({
