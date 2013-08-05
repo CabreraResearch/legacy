@@ -39,7 +39,12 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case30246() ) );                    //02D-016
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case30239() ) );                    //02D-017
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case30086() ) );                    //02D-018
-
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case30266() ) );                    //02D-019
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case30318() ) );                    //02D-020
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case30299() ) );                    //02D-021
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case30207() ) );                    //02D-022
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case30304() ) );                    //02D-023
+            
             #endregion DOGWOOD
 
             // This automatically detects the latest version
@@ -72,6 +77,8 @@ namespace ChemSW.Nbt.Schema
             _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02D_Case30090() ), "Case 30090: OC Script" );
             _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02D_Case30126() ), "Case 30126: OC Script" );
             _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02D_Case30263() ), "Case 30263: Before Script" );
+            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02D_Case30287() ), "Case 30287: Before Script" );
+            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02D_Case30329() ), "Case 30329: Before Script" );
 
             #endregion
 

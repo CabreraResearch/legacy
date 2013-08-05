@@ -17,7 +17,13 @@
                 cswPrivate.value = nodeProperty.propData.values.value;
                 cswPrivate.options = nodeProperty.propData.values.options;
                 cswPrivate.propid = nodeProperty.propData.id;
+                cswPrivate.isRequired = nodeProperty.propData.required;
+                cswPrivate.wasModified = nodeProperty.propData.wasmodified;
                 //cswPrivate.fieldtype = nodeProperty.propData.fieldtype;
+
+                cswPrivate.table = nodeProperty.propDiv.table({ TableCssClass: 'cswInline' });
+                cswPrivate.selectCell = cswPrivate.table.cell(1, 1);
+                cswPrivate.validateCell = cswPrivate.table.cell(1, 2);
 
                 nodeProperty.onPropChangeBroadcast(function (val) {
                     if (cswPrivate.value !== val) {
@@ -27,40 +33,55 @@
                         }
                         if (span) {
                             span.remove();
-                            span = nodeProperty.propDiv.span({ text: cswPrivate.text });
+                            span = cswPrivate.selectCell.span({ text: cswPrivate.text });
                         }
                     }
                 });//nodeProperty.onPropChangeBroadcast()
 
                 var setComboBoxSize = function (optionsArray) {
                     //Set the width of the combobox to match the longest string returned
-                    var longestOption = optionsArray.sort(function (a, b) { return b.Text.length - a.Text.length; })[0];
-                    var newWidth = (longestOption.Text.length * 7) + 8;
-                    if (newWidth > comboBoxDefaultWidth) {
-                        cswPrivate.select.setWidth(newWidth);
+                    if (optionsArray.length > 0) {
+                        var longestOption = optionsArray.sort(function (a, b) { return b.Text.length - a.Text.length; })[0];
+                        var newWidth = (longestOption.Text.length * 7) + 8;
+                        if (newWidth > comboBoxDefaultWidth) {
+                            cswPrivate.select.setWidth(newWidth);
+                        }
                     }
-                };
+                };//setComboBoxSize()
+
+                var onValidation = function (isValid) {
+                    if (isValid) {
+                        cswPrivate.select.setFieldStyle("background:none #66ff66;");
+                    } else {
+                        cswPrivate.select.setFieldStyle("background:none #ff6666;");
+                    }
+                };//setComboBoxValidityColor()
 
                 if (nodeProperty.isReadOnly()) {
-                    var span = nodeProperty.propDiv.span({ text: cswPrivate.text });
+                    var span = cswPrivate.selectCell.span({ text: cswPrivate.text });
                 } else {
-
                     // Create the Store
                     cswPrivate.listOptionsStore = new Ext.data.Store({
                         fields: ['Text', 'Value'],
-                        autoLoad: false
+                        autoLoad: false,
+                        sorters: [{ property: 'Text', direction: 'ASC' }]
                     });
 
                     // Create the Ext JS ComboBox
                     cswPrivate.select = Ext.create('Ext.form.field.ComboBox', {
                         name: nodeProperty.name,
-                        renderTo: nodeProperty.propDiv.div().getId(),
+                        renderTo: cswPrivate.selectCell.div().getId(),
                         displayField: 'Text',
                         store: cswPrivate.listOptionsStore,
                         queryMode: 'local',
+                        queryDelay: 2000,
                         value: cswPrivate.text || cswPrivate.value,
+                        listConfig: {
+                            width: 'auto'
+                        },
+                        forceSelection: true,
                         listeners: {
-                            select: function (combo, records, eOpts) {
+                            select: function (combo, records) {
                                 var text = records[0].get('Text');
                                 cswPrivate.text = text;
                                 nodeProperty.propData.values.text = text;
@@ -69,17 +90,42 @@
                                 cswPrivate.value = val;
                                 nodeProperty.propData.values.value = val;
 
-                                nodeProperty.broadcastPropChange(text);
-                            }
-                        },
-                        listConfig: {
-                            width: 'auto'
-                        },
-                        tpl: new Ext.XTemplate('<tpl for=".">' + '<li style="height:22px;" class="x-boundlist-item" role="option">' + '{Text}' + '</li></tpl>'),
-                        queryDelay: 2000
+                                if (cswPrivate.isRequired) {
+                                    if (Csw.isNullOrEmpty(val)) {
+                                        cswPrivate.checkBox.val(false);
+                                    } else {
+                                        cswPrivate.checkBox.val(true);
+                                    }
+                                    var valid = cswPrivate.checkBox.$.valid();
+                                    onValidation(valid);
+                                }
 
+                                nodeProperty.broadcastPropChange(text);
+                            },
+                            change: function (combo, newvalue) {
+                                if (cswPrivate.isRequired) {
+                                    if (Csw.isNullOrEmpty(newvalue)) {
+                                        cswPrivate.checkBox.val(false);
+                                    } else {
+                                        cswPrivate.checkBox.val(true);
+                                    }
+                                    var valid = cswPrivate.checkBox.$.valid();
+                                    onValidation(valid);
+                                }
+                            }
+                        },//listeners
+                        tpl: new Ext.XTemplate('<tpl for=".">' + '<li style="height:22px;" class="x-boundlist-item" role="option">' + '{Text}' + '</li></tpl>'),
 
                     });
+
+                    // Combobox validation
+                    // Note: This is a bit of a hack (ok a full on hack); because there isn't a way to connect
+                    // Ext validation with JQuery, we will add a checkbox to the ComboBox, set it's state based on
+                    // validity of the ComboBox value and validate the checkbox instead.
+                    if (cswPrivate.isRequired) {
+                        var returnObj = Csw.validator(cswPrivate.validateCell.div(), cswPrivate.select, { cssOptions: { 'visibility': 'hidden', 'width': '20px' }, wasModified: cswPrivate.wasModified, onValidation: onValidation });
+                        cswPrivate.checkBox = returnObj.input;
+                    }
 
                     /*
                      * To search or not to search?
@@ -91,7 +137,20 @@
                      */
                     if (nodeProperty.propData.values.search === false) {
                         cswPrivate.listOptionsStore.loadData(cswPrivate.options);
+                        cswPrivate.select.setValue(cswPrivate.value); // Need to set the value here if comboBox 'forceSelection' is set to 'true'
                         setComboBoxSize(cswPrivate.options);
+                        
+                        // Since we are setting the value, we need to re-validate
+                        if (cswPrivate.isRequired) {
+                            if (Csw.isNullOrEmpty(cswPrivate.select.getValue())) {
+                                cswPrivate.checkBox.val(false);
+                            } else {
+                                cswPrivate.checkBox.val(true);
+                            }
+                            var valid = cswPrivate.checkBox.$.valid();
+                            onValidation(valid);
+                        }
+
                     } else {
                         // Create a proxy to call the searchListOptions web service method
                         cswPrivate.proxy = new Ext.data.proxy.Ajax({
@@ -119,11 +178,6 @@
                                     //Set the width of the combobox to match the longest string returned
                                     if (json.Data.Options.length > 0) {
                                         setComboBoxSize(json.Data.Options);
-                                        //var longestOption = json.Data.Options.sort(function (a, b) { return b.Text.length - a.Text.length; })[0];
-                                        //var newWidth = (longestOption.Text.length * 7);
-                                        //if (newWidth > comboBoxDefaultWidth) {
-                                        //    cswPrivate.select.setWidth(newWidth);
-                                        //}
                                     }
 
                                     return this.readRecords(json);
@@ -155,8 +209,7 @@
                         cswPrivate.select.minChars = 1;
                         cswPrivate.select.triggerAction = 'query';
 
-                    }//if (cswPrivate.options.length > 0)
-
+                    }
                 }//if (nodeProperty.isReadOnly())
 
             };//render()

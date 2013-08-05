@@ -39,22 +39,23 @@ namespace ChemSW.Nbt.PropTypes
 
         }//Gestalt
 
+        private CswNbtView _View = null;
         public CswNbtView View
         {
             get
             {
-                //CswNbtView Ret = new CswNbtView(_CswNbtResources);
-                CswNbtView Ret = null;
-                if( _CswNbtMetaDataNodeTypeProp.ViewId.isSet() )
+                if( null == _View )
                 {
-                    //Ret.LoadXml(_CswNbtMetaDataNodeTypeProp.ViewId);
-                    Ret = _CswNbtResources.ViewSelect.restoreView( _CswNbtMetaDataNodeTypeProp.ViewId );
-                    if( false == Ret.SessionViewId.isSet() )
+                    if( _CswNbtMetaDataNodeTypeProp.ViewId.isSet() )
                     {
-                        Ret.SaveToCache( false );
+                        _View = _CswNbtResources.ViewSelect.restoreView( _CswNbtMetaDataNodeTypeProp.ViewId );
+                        if( false == _View.SessionViewId.isSet() )
+                        {
+                            _View.SaveToCache( false );
+                        }
                     }
                 }
-                return Ret;
+                return _View;
             }
         }
         public Int32 Width
