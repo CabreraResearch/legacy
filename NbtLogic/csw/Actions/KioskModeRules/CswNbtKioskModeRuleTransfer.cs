@@ -69,7 +69,18 @@ namespace ChemSW.Nbt.Actions.KioskMode
             ICswNbtTree tree = _getTree( CswEnumNbtObjectClass.UserClass, OpData.Field1.Value, true );
             if( tree.getChildNodeCount() > 0 )
             {
+                tree.goToNthChild( 0 );
+                CswNbtObjClassUser usernode = tree.getNodeForCurrentPosition();
+                if( null == usernode.DefaultLocationId )
+                {
+                    OpData.Field1.StatusMsg = "User with barcode: " + OpData.Field1.Value + " does not have a Location set and cannot be used as a Transfer target ";
+                    OpData.Field1.ServerValidated = false;
+                    OpData.Log.Add( DateTime.Now + " - ERROR: " + OpData.Field1.StatusMsg );
+                }
+                else
+                {
                 ret = true;
+            }
             }
             else
             {
