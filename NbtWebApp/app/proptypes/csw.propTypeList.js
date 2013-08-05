@@ -30,7 +30,7 @@
                     if (cswPrivate.value !== object.val) {
                         cswPrivate.value = object.val;
                         cswPrivate.text = object.text;
-                        
+
                         nodeProperty.propData.values.text = object.text;
                         nodeProperty.propData.values.value = object.val;
 
@@ -101,7 +101,7 @@
                                     var valid = cswPrivate.checkBox.$.valid();
                                     onValidation(valid);
                                 }
-                                
+
                                 nodeProperty.broadcastPropChange({ text: text, val: val });
                             },
                             change: function (combo, newvalue) {
@@ -110,7 +110,7 @@
 
                                         // Is the newvalue an option in the list?
                                         var inlist = false;
-                                        cswPrivate.options.forEach(function(option) {
+                                        cswPrivate.options.forEach(function (option) {
                                             if (option.Text === newvalue) {
                                                 inlist = true;
                                             }
@@ -158,13 +158,16 @@
 
                         // Since we are setting the value, we need to re-validate
                         if (cswPrivate.isRequired) {
+
                             if (Csw.isNullOrEmpty(cswPrivate.select.getValue())) {
                                 cswPrivate.checkBox.val(false);
                             } else {
                                 cswPrivate.checkBox.val(true);
                             }
-                            var valid2 = cswPrivate.checkBox.$.valid();
-                            onValidation(valid2);
+                            if (cswPrivate.wasModified) {
+                                var valid2 = cswPrivate.checkBox.$.valid();
+                                onValidation(valid2);
+                            }
                         }
 
                     } else {
