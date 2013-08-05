@@ -84,7 +84,7 @@ namespace ChemSW.Nbt.Schema
                 LayoutMgr["Profile"].setPermit( CswEnumNbtNodeTypeTabPermission.Edit, true, Roles );
 
             }
-            catch( Exception Ex )
+            catch( Exception )
             {
                 throw new CswDniException("User layout update failed.");
             }
