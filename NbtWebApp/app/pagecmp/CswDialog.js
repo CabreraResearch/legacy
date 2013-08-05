@@ -2452,9 +2452,10 @@
                 cellpadding: 2
             });
 
+            var groupBySelect;
             if ('Tree' === o.view.ViewMode || 'Grid' === o.view.ViewMode) {
                 selectsTbl.cell(1, 1).text('Group By');
-                var groupBySelect = selectsTbl.cell(1, 2).select({
+                groupBySelect = selectsTbl.cell(1, 2).select({
                     name: 'vieweditor_advancededitrelationship_groupbyselect',
                     values: groupByOpts,
                     onChange: function () { }
@@ -2541,13 +2542,15 @@
                 enabledText: 'Apply',
                 onClick: function () {
                     Csw.tryExec(o.onBeforeRelationshipEdit);
-                    var selectedRelArbId = groupBySelect.selectedVal();
-                    var selectedProp = null;
-                    Csw.each(o.properties, function (prop) {
-                        if (prop.ArbitraryId === selectedRelArbId) {
-                            selectedProp = prop;
-                        }
-                    });
+                    if (groupBySelect) {
+                        var selectedRelArbId = groupBySelect.selectedVal();
+                        var selectedProp = null;
+                        Csw.each(o.properties, function(prop) {
+                            if (prop.ArbitraryId === selectedRelArbId) {
+                                selectedProp = prop;
+                            }
+                        });
+                    }
                     o.findRel(o.relationshipNode.ArbitraryId, function (relToUpdate) {
                         relToUpdate.AllowAdd = allowAddInput.checked();
                         relToUpdate.AllowView = allowViewInput.checked();
@@ -2565,7 +2568,6 @@
                                 relToUpdate.GroupByPropType = selectedProp.Type;
                             }
                             Csw.tryExec(o.onRelationshipEdit, o.view);
-                            div.$.dialog('close');
                         } else if ('Grid' === o.view.ViewMode) {
                             Csw.ajaxWcf.post({
                                 urlMethod: 'ViewEditor/HandleAction',
@@ -2578,11 +2580,11 @@
                                 success: function (response) {
                                     o.view = response.CurrentView;
                                     Csw.tryExec(o.onRelationshipEdit, o.view);
-                                    div.$.dialog('close');
                                 }
                             });
                         }
                     });
+                    div.$.dialog('close');
                 }
             });
 
