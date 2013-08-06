@@ -195,6 +195,12 @@ namespace ChemSW.Nbt.ObjClasses
                 }
 
                 this.SchemaVersion.StaticText = OtherSchemaVersion;
+
+                //case 29751
+                if( CompanyID.Text == _CswNbtResources.AccessId )
+                {
+                    Login.setHidden( true, false );
+                }
             }
 
             _CswNbtObjClassDefault.triggerAfterPopulateProps();
