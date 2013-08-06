@@ -334,8 +334,8 @@ namespace ChemSW.Nbt.ImportExport
                                         //IEnumerable<CswNbt2DBinding> UniqueBindings = NodeTypeBindings.Where( b => ( b.DestProperty.IsUnique() || b.DestProperty.IsCompoundUnique() ) );
                                         IEnumerable<CswNbtMetaDataNodeTypeProp> Props = Order.NodeType.getNodeTypeProps();
                                         //IEnumerable<CswNbtMetaDataNodeTypeProp> RequiredProps = Props.Where( p => p.IsRequired && false == p.HasDefaultValue() );
-                                        IEnumerable<CswNbt2DBinding> UniqueBindings = NodeTypeBindings.Where( b => b.DestProperty.IsUnique() || 
-                                                                                                              b.DestProperty.IsCompoundUnique() || 
+                                        IEnumerable<CswNbt2DBinding> UniqueBindings = NodeTypeBindings.Where( b => b.DestProperty.IsUnique() ||
+                                                                                                              b.DestProperty.IsCompoundUnique() ||
                                                                                                               Order.NodeType.NameTemplatePropIds.Contains( b.DestProperty.FirstPropVersionId ) );
                                         //IEnumerable<CswNbtMetaDataNodeTypeProp> UniqueProps = Props.Where( p => UniqueBindings.Any( b => b.DestProperty == p ) );
 
@@ -435,6 +435,21 @@ namespace ChemSW.Nbt.ImportExport
                                                         //Node.Properties[Binding.DestProperty].SetPropRowValue( CswEnumNbtPropColumn.ClobData, rateInterval.ToXmlString() );
                                                         Node.Properties[Binding.DestProperty].SyncGestalt();
                                                     }
+                                                    else if( Binding.DestProperty.getFieldTypeValue() == CswEnumNbtFieldType.NodeTypeSelect )
+                                                    {
+
+                                                        ???//get the nodetypeid from the name here
+
+                                                        CswNbtMetaDataNodeType nt = _CswNbtResources.MetaData.getNodeType(ImportRow[Binding.ImportDataColumnName].ToString());
+                                                        if (nt != null)
+                                                        {
+                                                            Node.Properties[Binding.DestProperty].AsNodeTypeSelect.SelectedNodeTypeIds = new CswCommaDelimitedString() {nt.NodeTypeId.ToString()};
+                                                        }
+                                                        else
+                                                        {
+                                                            OnMessage("Skipped invalid nodetype: " + ImportRow[Binding.ImportDataColumnName].ToString());
+                                                        }
+                                                    }
                                                     else
                                                     {
                                                         Node.Properties[Binding.DestProperty].SetPropRowValue( Binding.DestSubfield.Column, ImportRow[Binding.ImportDataColumnName].ToString() );
@@ -463,7 +478,7 @@ namespace ChemSW.Nbt.ImportExport
 
                                                     TargetOrder = BindingDef.ImportOrder.Values.FirstOrDefault( o => RowRelationship.Relationship.FkMatches( o.NodeType ) && o.Instance == RowRelationship.Instance );
 
-                                                    if( null != TargetOrder )
+                                                    if( null != TargetOrder && null != ImportRow[TargetOrder.PkColName] )
                                                     {
                                                         Node.Properties[RowRelationship.Relationship].SetPropRowValue(
                                                             RowRelationship.Relationship.getFieldTypeRule().SubFields[CswEnumNbtSubFieldName.NodeID].Column,
