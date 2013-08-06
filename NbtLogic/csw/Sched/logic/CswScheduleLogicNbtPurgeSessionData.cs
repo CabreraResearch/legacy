@@ -28,15 +28,6 @@ namespace ChemSW.Nbt.Sched
             return ( " where lower(accessid) = '" + AccessId.ToLower() + "' and ( timeoutdate + 1/24 ) < sysdate" );
         }//SessionListWhere
 
-        private string _makeLoadCountSql( string AccessId )
-        {
-            string sql = @"with expiredcounts as (select count(*) as expired_cnt from sessionlist " + _SessionListWhere( AccessId ) + @"),
-                          orphancounts as (select count(*) as orphan_cnt from session_data sd where sd.sessionid not in (select sl.sessionid from sessionlist sl))
-                          select expiredcounts.expired_cnt, orphancounts.orphan_cnt from expiredcounts, orphancounts";
-
-            return sql;
-        }
-
         public Int32 getLoadCount( ICswResources CswResources )
         {
 
@@ -90,9 +81,8 @@ namespace ChemSW.Nbt.Sched
         /// </remarks>
         private Int32 _getOrphanRowCount( CswNbtResources CswNbtResources )
         {
-            CswCommaDelimitedString SessionListIds = _getMasterSessionIds();
             CswTableSelect DoomedSessionDataTS = CswNbtResources.makeCswTableSelect( "purge_doomed_session_data", "session_data" );
-            DataTable DoomedSessionDataDT = DoomedSessionDataTS.getTable( "where sessionid not in (" + SessionListIds.ToString() + ")" );
+            DataTable DoomedSessionDataDT = DoomedSessionDataTS.getTable( _getMasterSessionIdsWhere() );
             return DoomedSessionDataDT.Rows.Count;
         }
 
@@ -100,17 +90,44 @@ namespace ChemSW.Nbt.Sched
         /// Assumes the _MasterSchemaResources is initialized
         /// </summary>
         /// <returns></returns>
-        private CswCommaDelimitedString _getMasterSessionIds()
+        private string _getMasterSessionIdsWhere()
         {
+            string ret = "";
+            bool first = true;
             CswTableSelect SessionListIdsTS = _MasterSchemaResources.makeCswTableSelect( "get_all_session_ids", "sessionlist" );
             DataTable RemainingSessionListIdsDT = SessionListIdsTS.getTable( new CswCommaDelimitedString { "sessionid" } );
             CswCommaDelimitedString SessionListIds = new CswCommaDelimitedString( 0, "'" );
             foreach( DataRow Row in RemainingSessionListIdsDT.Rows )
             {
+                if( SessionListIds.Count == 999 ) //can't have more than 1000 literals in an "in" clause"
+                {
+                    if( first )
+                    {
+                        ret = " where sessionid not in (" + SessionListIds.ToString() + ") ";
+                        first = false;
+                    }
+                    else
+                    {
+                        ret += " and sessionid not in (" + SessionListIds.ToString() + ") ";
+                    }
+                    SessionListIds.Clear();
+                }
                 SessionListIds.Add( Row["sessionid"].ToString() );
             }
 
-            return SessionListIds;
+            if( SessionListIds.Count > 0 ) //if we never reached the max in the latest iteration
+            {
+                if( first ) //if we never reached the max period
+                {
+                    ret = " where sessionid not in (" + SessionListIds.ToString() + ") ";
+                }
+                else //if we never reached the max on any iteration other than the first
+                {
+                    ret += " and sessionid not in (" + SessionListIds.ToString() + ") ";
+                }
+            }
+
+            return ret;
         }
 
         private CswEnumScheduleLogicRunStatus _LogicRunStatus = CswEnumScheduleLogicRunStatus.Idle;
@@ -186,9 +203,8 @@ namespace ChemSW.Nbt.Sched
                             } //iterate session records
 
                             //Case 30266 - remove all rows in the current schema's session_data with no corresponding session id in the master schema's SessionList
-                            CswCommaDelimitedString SessionListIds = _getMasterSessionIds();
                             CswTableUpdate DoomedSessionDataTU = CurrentSchemaResources.makeCswTableUpdate( "purge_doomed_session_data", "session_data" );
-                            DataTable DoomedSessionDataDT = DoomedSessionDataTU.getTable( "where sessionid not in (" + SessionListIds.ToString() + ")" );
+                            DataTable DoomedSessionDataDT = DoomedSessionDataTU.getTable( _getMasterSessionIdsWhere() );
                             foreach( DataRow DoomedRow in DoomedSessionDataDT.Rows )
                             {
                                 DoomedRow.Delete();
