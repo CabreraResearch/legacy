@@ -6,7 +6,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Keeps the schema up-to-date
     /// </summary>
-    public class CswSchemaScriptsProd: ICswSchemaScripts
+    public class CswSchemaScriptsProd : ICswSchemaScripts
     {
         private Dictionary<CswSchemaVersion, CswSchemaUpdateDriver> _UpdateDrivers = new Dictionary<CswSchemaVersion, CswSchemaUpdateDriver>();
         public Dictionary<CswSchemaVersion, CswSchemaUpdateDriver> UpdateDrivers { get { return _UpdateDrivers; } }
@@ -43,7 +43,7 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case30299() ) );                    //02D-021
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case30207() ) );                    //02D-022
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case30304() ) );                    //02D-023
-            
+
             #endregion DOGWOOD
 
             #region EUCALYPTUS
@@ -57,6 +57,12 @@ namespace ChemSW.Nbt.Schema
 
 
             #endregion EUCALYPTUS
+
+            #region FOXGLOVE
+
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02F_Case29191() ) );                    //02E-006 //02F-001
+
+            #endregion FOXGLOVE
 
             // This automatically detects the latest version
             _LatestVersion = _MinimumVersion;
