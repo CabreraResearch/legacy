@@ -147,7 +147,6 @@
                             var updateColumnVals = function (changeContainerNo) {
                                 if (false === Csw.isNullOrEmpty(cswPublic.rows[rowid].qtyControl)) {
                                     cswPublic.rows[rowid].quantityValues.quantity = cswPublic.rows[rowid].qtyControl.value();
-                                    cswPublic.rows[rowid].quantityValues.unit = cswPublic.rows[rowid].qtyControl.selectedUnitText();
                                     cswPublic.rows[rowid].quantityValues.unitid = cswPublic.rows[rowid].qtyControl.selectedUnit();
                                 }
                                 if (changeContainerNo) {
