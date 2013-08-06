@@ -43,6 +43,7 @@ namespace ChemSW.Nbt.Actions.KioskMode
         {
             bool succeeded = false;
             CswNbtNode node = null;
+            string itemName = OpData.Field2.FoundObjClass.Replace( "Class", "" );
             CswNbtObjClassUser newTransferOwner = _getNodeByBarcode( CswEnumNbtObjectClass.UserClass, OpData.Field1.Value, true );
             switch( OpData.Field2.FoundObjClass )
             {
@@ -78,13 +79,12 @@ namespace ChemSW.Nbt.Actions.KioskMode
             {
                 node.postChanges( false );
                 CswNbtObjClassLocation newLocationNode = _CswNbtResources.Nodes[newTransferOwner.DefaultLocationId];
-                string itemName = node.ObjClass.ObjectClass.ObjectClass.Value.Replace( "Class", "" );
                 OpData.Log.Add( DateTime.Now + " - Transferred " + itemName + " " + OpData.Field2.Value + " ownership to " + newTransferOwner.Username + " (" + OpData.Field1.Value + ") at " + newLocationNode.Name.Text );
                 base.CommitOperation( ref OpData );
             }
             else
             {
-                string statusMsg = "You do not have permission to edit Container (" + OpData.Field2.Value + ")";
+                string statusMsg = "You do not have permission to edit " + itemName + " (" + OpData.Field2.Value + ")";
                 OpData.Field2.StatusMsg = statusMsg;
                 OpData.Field2.ServerValidated = false;
                 OpData.Log.Add( DateTime.Now + " - ERROR: " + statusMsg );
@@ -197,11 +197,6 @@ namespace ChemSW.Nbt.Actions.KioskMode
             }
 
             return ret;
-        }
-
-        private void _moveItem()
-        {
-
         }
 
         #endregion
