@@ -73,7 +73,7 @@
                     cswPrivate.rows.push(firstRow);
                 }
 
-                cswPrivate.getQuantity = function () {
+                cswPrivate.getQuantity = function (onSuccess) {
                     var ret = false;
                     if (false === Csw.isNullOrEmpty(cswPrivate.selectedSizeId)) {
                         Csw.ajax.post({
@@ -83,13 +83,13 @@
                             success: function (data) {
                                 cswPrivate.quantity = data;
                                 ret = false === Csw.isNullOrEmpty(cswPrivate.quantity);
+                                Csw.tryExec(onSuccess);
                             }
                         });
                     }
                     if (false === ret) {
                         cswPrivate.quantity = {
-                            //qtyReadonly: true,
-                            //unitReadonly: true
+                            isUnitReadOnly: true,
                             quantityoptional: false,
                             isReadOnly: false
                         };
@@ -172,9 +172,10 @@
 
                             var onSizeChange = function () {
                                 updateSizeVals();
-                                cswPrivate.getQuantity();
+                                cswPrivate.getQuantity(function() {
                                 cswPublic.rows[rowid].qtyControl.refresh(cswPrivate.quantity);
                                 updateColumnVals(true);
+                                });
                             };
                             
                             var updateBalanceInterface = function (balanceData) {
