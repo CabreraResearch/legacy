@@ -164,6 +164,21 @@ namespace ChemSW.Nbt.ObjClasses
 
         #endregion
 
+        #region Custom Logic
+
+        public void TransferAssembly( CswNbtObjClassUser NewUser )
+        {
+            Location.SelectedNodeId = NewUser.DefaultLocationId;
+            Location.SyncGestalt();
+            Location.RefreshNodeName();
+
+            //TODO: make "User" prop an OCP
+            CswNbtMetaDataNodeTypeProp UserNTP = NodeType.getNodeTypeProp( "User" );
+            _CswNbtNode.Properties[UserNTP].AsRelationship.RelatedNodeId = NewUser.UserId;
+        }
+
+        #endregion
+
         #region Object class specific properties
 
         public CswNbtNodePropRelationship Type
