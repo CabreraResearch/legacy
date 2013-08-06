@@ -42,7 +42,8 @@ namespace ChemSW.Nbt.Schema
                         FieldType = CswEnumNbtFieldType.Relationship,
                         IsFk = true,
                         FkType = CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(),
-                        FkValue = UserOC.ObjectClassId
+                        FkValue = UserOC.ObjectClassId,
+                        ServerManaged = true
                     } );
             }
         } // update()
