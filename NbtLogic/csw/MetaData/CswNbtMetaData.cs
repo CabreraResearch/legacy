@@ -1586,11 +1586,10 @@ namespace ChemSW.Nbt.MetaData
             _ResetAllViews = true;
 
             //validate role nodetype permissions
-            foreach( CswNbtNode roleNode in _CswNbtMetaDataResources.CswNbtMetaData.getObjectClass( CswEnumNbtObjectClass.RoleClass ).getNodes( false, true ) )
+            foreach( CswNbtObjClassRole RoleNode in _CswNbtMetaDataResources.CswNbtMetaData.getObjectClass( CswEnumNbtObjectClass.RoleClass ).getNodes( false, true ) )
             {
-                CswNbtObjClassRole nodeAsRole = (CswNbtObjClassRole) roleNode;
-                CswNbtNodePropMultiList prop = (CswNbtNodePropMultiList) nodeAsRole.NodeTypePermissions;
-                prop.ValidateValues();
+                RoleNode.NodeTypePermissions.ValidateValues();
+                RoleNode.postChanges( true );
             }
 
         }//DeleteNodeType()
