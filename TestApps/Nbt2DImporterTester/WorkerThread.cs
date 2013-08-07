@@ -2,6 +2,7 @@
 using System.Collections.Specialized;
 using ChemSW;
 using ChemSW.Config;
+using ChemSW.Core;
 using ChemSW.Nbt;
 using ChemSW.Nbt.ImportExport;
 using ChemSW.Nbt.Security;
@@ -16,6 +17,9 @@ namespace Nbt2DImporterTester
 
         public delegate void FinishEvent();
         public FinishEvent OnFinish;
+
+        public delegate void GetDefinitionsFinishEvent( CswCommaDelimitedString Definitions );
+        public GetDefinitionsFinishEvent OnGetDefinitionsFinish;
 
         public delegate void StoreDataFinishEvent( StringCollection ImportDataTableNames );
         public StoreDataFinishEvent OnStoreDataFinish;
@@ -49,6 +53,19 @@ namespace Nbt2DImporterTester
             set { _Importer.OnMessage = value; }
         }
 
+        public delegate void getDefinitionsHandler( string AccessId );
+        public void getDefinitions( string AccessId )
+        {
+            _CswNbtResources.AccessId = AccessId;
+
+            CswCommaDelimitedString ret = _Importer.getDefinitions();
+            OnGetDefinitionsFinish( ret );
+
+            _CswNbtResources.commitTransaction();
+            _CswNbtResources.beginTransaction();
+            OnFinish();
+        }
+
         public delegate void storeDataHandler( string AccessId, string DataFilePath );
         public void storeData( string AccessId, string DataFilePath )
         {
@@ -76,12 +93,12 @@ namespace Nbt2DImporterTester
             OnImportFinish( More );
         }
 
-        public delegate void readBindingsHandler( string AccessId, string BindingsFilePath );
-        public void readBindings( string AccessId, string BindingsFilePath )
+        public delegate void loadBindingsHandler( string AccessId, string ImportDefinition );
+        public void loadBindings( string AccessId, string ImportDefinition )
         {
             _CswNbtResources.AccessId = AccessId;
 
-            _Importer.readBindings( BindingsFilePath );
+            _Importer.loadBindings( ImportDefinition );
 
             _CswNbtResources.commitTransaction();
             _CswNbtResources.beginTransaction();
