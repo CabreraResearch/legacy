@@ -1,13 +1,14 @@
-﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Text.RegularExpressions;
-using ChemSW.Core;
+﻿using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.PropertySets;
+using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 using ChemSW.RscAdo;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Text.RegularExpressions;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -157,6 +158,14 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region custom logic
 
+        public sealed class ControlledParams
+        {
+            public const string UserId = "userid";
+            public const string NodeId = "nodeid";
+            public const string RoleId = "roleid";
+            public static CswCommaDelimitedString List = new CswCommaDelimitedString { UserId, NodeId, RoleId }; 
+        }
+
         public Dictionary<string, string> ExtractReportParams( CswNbtObjClassUser UserNode = null )
         {
             Dictionary<string, string> reportParams = new Dictionary<string, string>();
@@ -164,21 +173,27 @@ namespace ChemSW.Nbt.ObjClasses
             MatchCollection matchedParams = Regex.Matches( SQL.Text, @"\{(\w|[0-9])*\}" );
             foreach( Match match in matchedParams )
             {
-
-
                 string paramName = match.Value.Replace( '{', ' ' ).Replace( '}', ' ' ).Trim(); //remove the '{' and '}' and whitespace
 
                 string replacementVal = "";
                 if( null != UserNode )
                 {
-                    CswNbtMetaDataNodeTypeProp userNTP = UserNode.NodeType.getNodeTypeProp( paramName );
-                    if( null != userNTP )
-                    {
-                        replacementVal = UserNode.Node.Properties[userNTP].Gestalt;
-                    }
-                    else if( paramName == "nodeid" || paramName == "userid" )
+                    if ( paramName == ControlledParams.UserId || 
+                        paramName == ControlledParams.NodeId )
                     {
                         replacementVal = UserNode.Node.NodeId.PrimaryKey.ToString();
+                    }
+                    else if( paramName == ControlledParams.RoleId )
+                    {
+                        replacementVal = UserNode.RoleId.PrimaryKey.ToString();
+                    }
+                    else
+                    {
+                        CswNbtMetaDataNodeTypeProp userNTP = UserNode.NodeType.getNodeTypeProp( paramName );
+                        if ( null != userNTP )
+                        {
+                            replacementVal = UserNode.Node.Properties[userNTP].Gestalt;
+                        }
                     }
                 }
 
@@ -195,11 +210,42 @@ namespace ChemSW.Nbt.ObjClasses
             return reportParams;
         }
 
+        //Case 30293: This is not intended to provide the most rubust SQL Param massage possible;
+        //rather, it handles only a few edge cases. This should be refactored as more robust SQL mechanics are implemented.
+        private static string _getParamVal( string Param )
+        {
+            string Ret = "";
+            Int32 IntVal = CswConvert.ToInt32( Param );
+            if( Int32.MinValue != IntVal )
+            {
+                Ret = IntVal.ToString();
+            }
+            else
+            {
+                string SafeParam = CswTools.SafeSqlParam( Param );
+                if( SafeParam.Length == 0 )
+                {
+                    SafeParam = "''";
+                }
+                if(false == SafeParam.EndsWith("'"))
+                {
+                    SafeParam += "'";
+                }
+                if( false == SafeParam.StartsWith( "'" ) )
+                {
+                    SafeParam = "'" + SafeParam;
+                }
+                Ret = SafeParam;
+            }
+
+            return Ret;
+        }
+
         public static string ReplaceReportParams( string SQL, Dictionary<string, string> reportParams )
         {
             foreach( var paramPair in reportParams )
             {
-                SQL = SQL.Replace( "{" + paramPair.Key + "}", CswTools.SafeSqlParam( paramPair.Value ) );
+                SQL = SQL.Replace( "{" + paramPair.Key + "}", _getParamVal( paramPair.Value ) );    
             }
             return SQL;
         }
