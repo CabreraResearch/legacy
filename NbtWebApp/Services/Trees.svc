@@ -1,1 +1,1 @@
-﻿<%@ ServiceHost Language="C#" Debug="true" Service="NbtWebApp.Trees" CodeBehind="Trees.svc.cs" %>
+﻿<%@ ServiceHost Language="C#" Debug="false" Service="NbtWebApp.Trees" CodeBehind="Trees.svc.cs" %>

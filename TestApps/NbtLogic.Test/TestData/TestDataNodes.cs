@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections;
-using System.Linq;
+﻿using System.Collections;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using System;
+using System.Linq;
 
 namespace ChemSW.Nbt.Test
 {
@@ -121,8 +121,10 @@ namespace ChemSW.Nbt.Test
         }
 
         internal CswNbtNode createMaterialNode( string NodeTypeName = "Chemical", string State = "Liquid", double SpecificGravity = 1.0, 
-            string PPE = "", string Hazards = "", string SpecialFlags = "", string CASNo = "12-34-0", CswEnumTristate IsTierII = CswEnumTristate.True )
+            string PPE = "", string Hazards = "", string SpecialFlags = "", string CASNo = "12-34-0", CswEnumTristate IsTierII = null )
         {
+            IsTierII = IsTierII ?? CswEnumTristate.True;
+
             CswNbtObjClassChemical MaterialNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( _getNodeTypeId( NodeTypeName ), CswEnumNbtMakeNodeOperation.DoNothing );
             if( CswTools.IsDouble( SpecificGravity ) )
                 MaterialNode.SpecificGravity.Value = SpecificGravity;
@@ -172,8 +174,11 @@ namespace ChemSW.Nbt.Test
             return ControlZoneNode;
         }
 
-        internal CswNbtNode createUserNode( string Username = "testuser", string Password = "Chemsw123!", CswEnumTristate isLocked = CswEnumTristate.False, CswEnumTristate isArchived = CswEnumTristate.False )
+        internal CswNbtNode createUserNode( string Username = "testuser", string Password = "Chemsw123!", CswEnumTristate isLocked = null, CswEnumTristate isArchived = null )
         {
+            isLocked = isLocked ?? CswEnumTristate.False;
+            isArchived = isArchived ?? CswEnumTristate.False;
+
             CswNbtMetaDataObjectClass RoleOc = CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RoleClass );
             CswPrimaryKey RoleId = RoleOc.getNodeIdAndNames( false, false ).Select( RoleIds => RoleIds.Key ).FirstOrDefault();
 

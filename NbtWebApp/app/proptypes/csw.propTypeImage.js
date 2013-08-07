@@ -37,7 +37,8 @@
                         cswPrivate.ajax = Csw.ajaxWcf.post({
                             urlMethod: 'BlobData/getImageProp',
                             data: {
-                                propid: nodeProperty.propid
+                                propid: nodeProperty.propid,
+                                date: nodeProperty.tabState.date
                             },
                             success: function (response) {
                                 nodeProperty.propDiv.imageGallery({
@@ -50,7 +51,8 @@
                                     onCaptionEdit: onEdit,
                                     onImageDelete: onEdit,
                                     readOnly: nodeProperty.isReadOnly(),
-                                    placeholder: cswPrivate.placeholder
+                                    placeholder: cswPrivate.placeholder,
+                                    date: nodeProperty.tabState.date
                                 });
                             }
                         });

@@ -72,7 +72,7 @@
     <Reference Include="CrystalDecisions.Web, Version=13.0.2000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL" />
     <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Newtonsoft.Json.4.5.11\lib\net40\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\..\..\common\CswCommon\Resources\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -100,6 +100,12 @@
     </Compile>
     <Compile Include="Services\Containers.svc.cs">
       <DependentUpon>Containers.svc</DependentUpon>
+    </Compile>
+    <Compile Include="Services\Properties.svc.cs">
+      <DependentUpon>Properties.svc</DependentUpon>
+    </Compile>
+    <Compile Include="Services\Search.svc.cs">
+      <DependentUpon>Search.svc</DependentUpon>
     </Compile>
     <Compile Include="Services\ViewEditor.svc.cs">
       <DependentUpon>ViewEditor.svc</DependentUpon>
@@ -202,6 +208,7 @@
     <Compile Include="WebSvc\Logic\CISPro\CswNbtWebServiceCreateMaterial.cs" />
     <Compile Include="WebSvc\Logic\Generators\CswNbtWebServiceGenerators.cs" />
     <Compile Include="WebSvc\Logic\Mobile\Legacy\CswNbtWebServiceLegacyMobile.cs" />
+    <Compile Include="WebSvc\Logic\Nodes\CswNbtWebServiceProperties.cs" />
     <Compile Include="WebSvc\Logic\Nodes\CswNbtWebServiceReport.cs" />
     <Compile Include="WebSvc\Logic\Reports\CswNbtWebServiceMailReports.cs" />
     <Compile Include="WebSvc\Logic\Scheduler\CswNbtScheduledRuleStatusReturn.cs" />
@@ -713,56 +720,52 @@
     <Content Include="Images\sqlbuilder\unchecked.gif" />
     <Content Include="Images\sqlbuilder\up_arrow.gif" />
     <Content Include="Images\tab-scroller-menu.gif" />
-    <Content Include="NbtPrintClient\install1.jpg" />
-    <Content Include="NbtPrintClient\install11.jpg" />
-    <Content Include="NbtPrintClient\install12.jpg" />
-    <Content Include="NbtPrintClient\install13.jpg" />
-    <Content Include="NbtPrintClient\install13a.jpg" />
-    <Content Include="NbtPrintClient\install13b.jpg" />
     <Content Include="NbtPrintClient\install14.jpg" />
-    <Content Include="NbtPrintClient\install2.jpg" />
     <Content Include="NbtPrintClient\install20.jpg" />
-    <Content Include="NbtPrintClient\install21.jpg" />
     <Content Include="NbtPrintClient\install22.jpg" />
-    <Content Include="NbtPrintClient\install3.jpg" />
     <Content Include="NbtPrintClient\install30.jpg" />
-    <Content Include="NbtPrintClient\install4.jpg" />
     <Content Include="NbtPrintClient\install5.jpg" />
     <Content Include="NbtPrintClient\install6.jpg" />
-    <Content Include="NbtPrintClient\install7.jpg" />
-    <Content Include="NbtPrintClient\install8.jpg" />
-    <Content Include="NbtPrintClient\install9.jpg" />
+    <Content Include="NbtPrintClient\pic1.PNG" />
+    <Content Include="NbtPrintClient\pic2.PNG" />
+    <Content Include="NbtPrintClient\pic3.PNG" />
+    <Content Include="NbtPrintClient\pic4.png" />
+    <Content Include="NbtPrintClient\pic5.png" />
+    <Content Include="NbtPrintClient\pic6.png" />
+    <Content Include="NbtPrintClient\pic7.png" />
+    <Content Include="NbtPrintClient\pic8.png" />
+    <Content Include="NbtPrintClient\pic9.png" />
     <Content Include="NbtPrintClient\setup.exe" />
     <Content Include="Scripts\additional-methods.min.js.map">
       <DependentUpon>additional-methods.js</DependentUpon>
     </Content>
-    <Content Include="Scripts\es5-shim.min.js.map">
-      <DependentUpon>es5-shim.js</DependentUpon>
-    </Content>
     <None Include="Scripts\jquery-1.9.1-vsdoc.js" />
-    <None Include="Scripts\jquery-1.9.1.intellisense.js" />
     <Content Include="Scripts\additional-methods.js" />
     <Content Include="Scripts\additional-methods.min.js" />
-    <Content Include="Scripts\jquery-1.7.1.min.js" />
     <Content Include="Scripts\es5-shim.js" />
+    <Content Include="Scripts\jquery-1.7.1.min.js" />
     <Content Include="Scripts\es5-shim.min.js" />
-    <Content Include="Scripts\jquery-1.9.1.js" />
     <Content Include="Scripts\jquery-1.9.1.min.js" />
-    <Content Include="Scripts\jquery-1.9.1.min.js.map">
-      <DependentUpon>jquery-1.9.1.js</DependentUpon>
-    </Content>
+    <None Include="Scripts\jquery-2.0.3.intellisense.js" />
+    <Content Include="Scripts\jquery-2.0.3.js" />
+    <Content Include="Scripts\jquery-2.0.3.min.js" />
     <Content Include="Scripts\jquery-ui-1.10.1.min.js.map">
       <DependentUpon>jquery-ui-1.10.1.js</DependentUpon>
     </Content>
-    <None Include="Scripts\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\jquery-2.0.3.min.map" />
     <Content Include="Scripts\jquery-ui-1.10.1.js" />
     <Content Include="Scripts\jquery-ui-1.10.1.min.js" />
+    <Content Include="Scripts\jquery-ui-1.10.3.js" />
+    <Content Include="Scripts\jquery-ui-1.10.3.min.js" />
     <Content Include="Scripts\jquery.cookie.js" />
+    <None Include="Scripts\jquery.validate-vsdoc.js" />
     <Content Include="Scripts\jquery.validate.js" />
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\mousetrap.js" />
     <Content Include="Scripts\mousetrap.min.js" />
+    <Content Include="Services\Properties.svc" />
+    <Content Include="Services\Search.svc" />
     <Content Include="Services\Query.svc" />
     <Content Include="Services\ViewEditor.svc" />
     <Content Include="Services\Modules.svc" />
@@ -1081,7 +1084,6 @@
     <Content Include="Images\view\viewtree.gif" />
     <Content Include="Images\vld\bad.gif" />
     <Content Include="Images\vld\good.gif" />
-    <Content Include="License.aspx" />
     <Content Include="Main.aspx" />
     <Content Include="Deprecated\Main.js" />
     <Content Include="Popup_DesignAdd.aspx" />
@@ -1241,14 +1243,12 @@
     <Content Include="Skin\Window\WindowSprites.gif" />
     <Content Include="Skin\Window\WindowVerticalSprites.gif" />
     <Content Include="Statistics.aspx" />
-    <Content Include="TermsOfUse.aspx" />
+    <Content Include="TermsOfUse.html" />
     <Content Include="Services\Views.svc" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
     <Content Include="wsNBT.asmx" />
-    <Content Include="_Assembly.txt" />
-    <Content Include="_Version.txt" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Base.master.designer.cs">
@@ -1269,9 +1269,6 @@
     </Compile>
     <Compile Include="ExternalLogin.aspx.designer.cs">
       <DependentUpon>ExternalLogin.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="License.aspx.designer.cs">
-      <DependentUpon>License.aspx</DependentUpon>
     </Compile>
     <Compile Include="Main.aspx.designer.cs">
       <DependentUpon>Main.aspx</DependentUpon>
@@ -1310,10 +1307,6 @@
       <DependentUpon>DisplayLog.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="License.aspx.cs">
-      <DependentUpon>License.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
     <Compile Include="Main.aspx.cs">
       <DependentUpon>Main.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1346,13 +1339,6 @@
     <Compile Include="Popup_DesignDelete.aspx.designer.cs">
       <DependentUpon>Popup_DesignDelete.aspx</DependentUpon>
     </Compile>
-    <Compile Include="PrintableLayout.master.cs">
-      <DependentUpon>PrintableLayout.master</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="PrintableLayout.master.designer.cs">
-      <DependentUpon>PrintableLayout.master</DependentUpon>
-    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Report.aspx.cs">
       <DependentUpon>Report.aspx</DependentUpon>
@@ -1381,13 +1367,6 @@
     <Compile Include="Statistics.aspx.designer.cs">
       <DependentUpon>Statistics.aspx</DependentUpon>
     </Compile>
-    <Compile Include="TermsOfUse.aspx.cs">
-      <DependentUpon>TermsOfUse.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="TermsOfUse.aspx.designer.cs">
-      <DependentUpon>TermsOfUse.aspx</DependentUpon>
-    </Compile>
     <Compile Include="WebSvc\Core\CswWebSvcCommonMethods.cs" />
     <Compile Include="WebSvc\Core\CswWebSvcResourceInitializerNbt.cs" />
     <Compile Include="WebSvc\Returns\CswWebSvcReturnError.cs" />
@@ -1401,7 +1380,6 @@
     <Content Include="Base.master" />
     <Content Include="MainLayout.master" />
     <Content Include="PopupLayout.master" />
-    <Content Include="PrintableLayout.master" />
     <Content Include="Standard.master" />
   </ItemGroup>
   <ItemGroup>
@@ -1460,10 +1438,6 @@
     <None Include="Images\newicons\clipcheck_mobile.pspimage" />
     <None Include="Images\newicons\icons.pspimage" />
     <None Include="NbtPrintClient\NbtPrintClientInstall.msi" />
-    <Content Include="Scripts\jquery-1.9.1.min.map" />
-    <Content Include="Scripts\jquery.validate.min.js.map">
-      <DependentUpon>jquery.validate.js</DependentUpon>
-    </Content>
     <Content Include="Scripts\mousetrap.min.js.map">
       <DependentUpon>mousetrap.js</DependentUpon>
     </Content>
@@ -1505,10 +1479,6 @@
     <ProjectReference Include="..\..\..\Common\StructureSearch\StructureSearch\StructureSearch.csproj">
       <Project>{E9156C9A-605E-4F21-8BB1-0970DA055FF0}</Project>
       <Name>StructureSearch</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\NbtConfig\NbtConfig.csproj">
-      <Project>{DABF9D08-70E8-4D42-AF7A-577335A7129F}</Project>
-      <Name>NbtConfig</Name>
     </ProjectReference>
     <ProjectReference Include="..\NbtLogic\NbtLogic.csproj">
       <Project>{7E8253CA-37B0-4CE1-AA9C-8C3086AFD974}</Project>

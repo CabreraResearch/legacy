@@ -65,15 +65,19 @@
             var $a = $li.children('a');
 
             $a.click(function () {
-                $.CswDialog('AddNodeDialog', {
-                    text: text,
-                    nodetypeid: Csw.string(o.itemJson.nodetypeid),
-                    relatednodeid: Csw.string(o.itemJson.relatednodeid), //for Grid Props
-                    relatednodename: Csw.string(o.itemJson.relatednodename), //for Grid Props
-                    relatednodetypeid: Csw.string(o.itemJson.relatednodetypeid), //for NodeTypeSelect
-                    relatedobjectclassid: Csw.string(o.itemJson.relatedobjectclassid),
-                    onAddNode: o.onAlterNode
-                });
+                if (false === Csw.isNullOrEmpty(o.itemJson.action) && o.itemJson.action !== "AddNode") {
+                    Csw.main.handleAction({ actionname: o.itemJson.action });
+                } else {
+                    $.CswDialog('AddNodeDialog', {
+                        text: text,
+                        nodetypeid: Csw.string(o.itemJson.nodetypeid),
+                        relatednodeid: Csw.string(o.itemJson.relatednodeid), //for Grid Props
+                        relatednodename: Csw.string(o.itemJson.relatednodename), //for Grid Props
+                        relatednodetypeid: Csw.string(o.itemJson.relatednodetypeid), //for NodeTypeSelect
+                        relatedobjectclassid: Csw.string(o.itemJson.relatedobjectclassid),
+                        onAddNode: o.onAlterNode
+                    });
+                }
                 return false;
             });
             return $li;

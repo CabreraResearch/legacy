@@ -1,15 +1,15 @@
-using System;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Web.UI;
-using System.Web.UI.HtmlControls;
-using System.Web.UI.WebControls;
 using ChemSW.Exceptions;
 using ChemSW.Nbt;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Security;
+using System;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Web.UI;
+using System.Web.UI.HtmlControls;
+using System.Web.UI.WebControls;
 using Telerik.Web.UI;
 
 namespace ChemSW.NbtWebControls
@@ -143,8 +143,7 @@ namespace ChemSW.NbtWebControls
                 CswEnumNbtViewRenderingMode ReturnVal = CswEnumNbtViewRenderingMode.Unknown;
                 if( null != ViewState["NbtViewRenderingMode"] )
                 {
-                    //ReturnVal = (NbtViewRenderingMode) Enum.Parse( typeof( NbtViewRenderingMode ), ViewState["NbtViewRenderingMode"].ToString() );
-                    ReturnVal = (CswEnumNbtViewRenderingMode) ViewState["NbtViewRenderingMode"].ToString();
+                    ReturnVal = ViewState["NbtViewRenderingMode"].ToString();
                 }
 
                 return ( ReturnVal );

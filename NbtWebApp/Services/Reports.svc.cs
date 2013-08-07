@@ -1,18 +1,14 @@
-﻿using System.ComponentModel;
+﻿using ChemSW.Nbt.WebServices;
+using ChemSW.WebSvc;
+using NbtWebApp.WebSvc.Logic.Reports;
+using NbtWebApp.WebSvc.Returns;
+using System.Collections.Specialized;
+using System.ComponentModel;
+using System.IO;
 using System.ServiceModel;
 using System.ServiceModel.Activation;
 using System.ServiceModel.Web;
 using System.Web;
-using ChemSW.WebSvc;
-using NbtWebApp.WebSvc.Logic.Reports;
-using NbtWebApp.WebSvc.Returns;
-using ChemSW.Nbt.WebServices;
-using System.IO;
-using System.Data;
-using System.Text;
-using ChemSW;
-using System.ServiceModel.Channels;
-using System.Collections.Specialized;
 
 namespace NbtWebApp
 {
@@ -20,14 +16,14 @@ namespace NbtWebApp
     /// WCF Web Methods for Mail Report operations
     /// </summary>
     [ServiceBehavior( IncludeExceptionDetailInFaults = true )]
-    [ServiceContract( Namespace = "" )]
+    [ServiceContract( Namespace = "NbtWebApp" )]
     [AspNetCompatibilityRequirements( RequirementsMode = AspNetCompatibilityRequirementsMode.Allowed )]
     public class Reports
     {
         private HttpContext _Context = HttpContext.Current;
 
         [OperationContract]
-        [WebGet()]
+        [WebInvoke( Method = "GET", ResponseFormat = WebMessageFormat.Json )]
         [Description( "Generate subscription information for the current user" )]
         [FaultContract( typeof( FaultException ) )]
         public CswNbtWebServiceMailReports.MailReportSubscriptionsReturn getSubscriptions()

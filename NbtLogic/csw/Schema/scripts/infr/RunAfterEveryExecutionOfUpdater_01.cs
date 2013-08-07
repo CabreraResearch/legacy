@@ -50,9 +50,9 @@ namespace ChemSW.Nbt.Schema
             _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( "update scheduledrules set reprobate=0,totalroguecount=0,failedcount=0" );
             _resetBlame();
 
-            #region CEDAR
+            #region DOGWOOD
 
-            #endregion CEDAR
+            #endregion DOGWOOD
 
             _CswNbtSchemaModTrnsctn.Modules.TriggerModuleEventHandlers();
         }//Update()

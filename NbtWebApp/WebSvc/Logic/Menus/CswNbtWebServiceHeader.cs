@@ -1,3 +1,11 @@
+using ChemSW.Core;
+using ChemSW.DB;
+using ChemSW.Nbt.Actions;
+using ChemSW.Nbt.ChemCatCentral;
+using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.ObjClasses;
+using ChemSW.Session;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -7,14 +15,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using ChemSW.Core;
-using ChemSW.DB;
-using ChemSW.Nbt.Actions;
-using ChemSW.Nbt.ChemCatCentral;
-using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.ObjClasses;
-using ChemSW.Session;
-using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -251,24 +251,11 @@ namespace ChemSW.Nbt.WebServices
             JProperty ComponentsProp = new JProperty( "components", ComponentObj );
             ret.Add( ComponentsProp );
             string ThisYear = DateTime.Now.Year.ToString();
-            string VersionFilePath = System.Web.Hosting.HostingEnvironment.ApplicationPhysicalPath + "/_Version.txt";
-            if( File.Exists( VersionFilePath ) )
-            {
-                TextReader VersionFileReader = new StreamReader( VersionFilePath );
-                ComponentObj.Add( new JProperty( "NbtWebApp",
-                                        new JObject(
-                                            new JProperty( "name", "NbtWebApp" ),
-                                            new JProperty( "version", VersionFileReader.ReadLine() ),
-                                            new JProperty( "copyright", "Copyright &copy; ChemSW, Inc. 2005-" + ThisYear )
-                                            )
-                             ) );
-                VersionFileReader.Close();
-            }
-
+           
             ArrayList CswAssemblies = new ArrayList();
+            CswAssemblies.Add( "NbtWebApp" );
             CswAssemblies.Add( "CswCommon" );
             CswAssemblies.Add( "CswWebControls" );
-            CswAssemblies.Add( "NbtConfig" );
             CswAssemblies.Add( "NbtLogic" );
             CswAssemblies.Add( "NbtWebControls" );
 

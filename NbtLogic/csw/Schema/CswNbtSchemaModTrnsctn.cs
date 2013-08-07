@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Data;
-using System.Diagnostics;
-using System.IO;
-using System.Threading;
-using System.Windows.Forms;
-using ChemSW.Audit;
+﻿using ChemSW.Audit;
 using ChemSW.Config;
 using ChemSW.Core;
 using ChemSW.DB;
@@ -22,6 +14,14 @@ using ChemSW.Nbt.Search;
 using ChemSW.Nbt.Security;
 using ChemSW.Nbt.ServiceDrivers;
 using ChemSW.RscAdo;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Data;
+using System.Diagnostics;
+using System.IO;
+using System.Threading;
+using System.Windows.Forms;
 
 
 namespace ChemSW.Nbt.Schema
@@ -57,11 +57,9 @@ namespace ChemSW.Nbt.Schema
             get
             {
                 Int32 ReturnVal = 30000;
-                string UpdtShellWaitMsecVarName = "UpdtShellWaitMsec";
-
-                if( _CswNbtResources.SetupVbls.doesSettingExist( UpdtShellWaitMsecVarName ) )
+                if ( _CswNbtResources.SetupVbls.doesSettingExist( CswEnumSetupVariableNames.UpdtShellWaitMsec ) )
                 {
-                    ReturnVal = CswConvert.ToInt32( _CswNbtResources.SetupVbls.readSetting( UpdtShellWaitMsecVarName ) );
+                    ReturnVal = CswConvert.ToInt32( _CswNbtResources.SetupVbls.readSetting( CswEnumSetupVariableNames.UpdtShellWaitMsec ) );
                 }
 
                 return ( ReturnVal );
@@ -485,13 +483,13 @@ namespace ChemSW.Nbt.Schema
         public CswNbtViewSelect ViewSelect { get { return _CswNbtResources.ViewSelect; } }
 
         /// <summary>
-        /// Returns a new CswNbtView. Does not actually call makeNew()
+        /// Returns a new CswNbtView object. Does not save the view
         /// </summary>
         public CswNbtView makeView() { return ( new CswNbtView( _CswNbtResources ) ); }
 
         /// <summary>
+        /// Creates and persists a new CswNbtView object.
         /// STRONGLY RECOMMEND USING makeSafeView()
-        /// Returns a new CswNbtView. (really) Does actually call makeNew() 
         /// </summary>
         public CswNbtView makeNewView( string ViewName, CswEnumNbtViewVisibility Visibility, CswPrimaryKey RoleId = null, CswPrimaryKey UserId = null, Int32 CopyViewId = Int32.MinValue )
         {
@@ -504,7 +502,7 @@ namespace ChemSW.Nbt.Schema
         public CswNbtView restoreView( string ViewName, CswEnumNbtViewVisibility Visibility = null ) { return ViewSelect.restoreView( ViewName, Visibility ); }
 
         /// <summary>
-        /// Clears a matching existing view or creates a new one
+        /// Clears a matching existing view or creates (and saves) a new one
         /// </summary>
         public CswNbtView makeSafeView( string ViewName, CswEnumNbtViewVisibility Visibility, CswPrimaryKey RoleId = null, CswPrimaryKey UserId = null, Int32 CopyViewId = Int32.MinValue )
         {
@@ -1576,36 +1574,35 @@ namespace ChemSW.Nbt.Schema
 
         public void execStoredProc( string StoredProcName, List<CswStoredProcParam> Params ) { _CswNbtResources.execStoredProc( StoredProcName, Params ); }
 
-        private string _DumpDirectorySetupVblName = "DumpFileDirectoryId";
         public void getNextSchemaDumpFileInfo( ref string PhysicalDirectoryPath, ref string NameOfCurrentDump )
         {
-            if( _CswNbtResources.SetupVbls.doesSettingExist( _DumpDirectorySetupVblName ) )
+            if ( _CswNbtResources.SetupVbls.doesSettingExist( CswEnumSetupVariableNames.DumpFileDirectoryId ) )
             {
                 string StatusMsg = string.Empty;
-                if( false == _CswNbtResources.getNextSchemaDumpFileInfo( _CswNbtResources.SetupVbls[_DumpDirectorySetupVblName], ref PhysicalDirectoryPath, ref NameOfCurrentDump, ref StatusMsg ) )
+                if ( false == _CswNbtResources.getNextSchemaDumpFileInfo( _CswNbtResources.SetupVbls[CswEnumSetupVariableNames.DumpFileDirectoryId], ref PhysicalDirectoryPath, ref NameOfCurrentDump, ref StatusMsg ) )
                 {
                     throw ( new CswDniException( "Unable to take retrieve dump file information: " + StatusMsg ) );
                 }
             }
             else
             {
-                throw ( new CswDniException( "Unable to get dump file information: there is no " + _DumpDirectorySetupVblName + " setup variable" ) );
+                throw ( new CswDniException( "Unable to get dump file information: there is no " + CswEnumSetupVariableNames.DumpFileDirectoryId + " setup variable" ) );
             }//if-else the dump setup setting exists
 
         }//getNextSchemaDumpFileInfo() 
 
         public void takeADump( ref string DumpFileName, ref string StatusMessage )
         {
-            if( _CswNbtResources.SetupVbls.doesSettingExist( _DumpDirectorySetupVblName ) )
+            if ( _CswNbtResources.SetupVbls.doesSettingExist( CswEnumSetupVariableNames.DumpFileDirectoryId ) )
             {
-                if( false == _CswNbtResources.takeADump( _CswNbtResources.SetupVbls[_DumpDirectorySetupVblName], ref DumpFileName, ref StatusMessage ) )
+                if ( false == _CswNbtResources.takeADump( _CswNbtResources.SetupVbls[CswEnumSetupVariableNames.DumpFileDirectoryId], ref DumpFileName, ref StatusMessage ) )
                 {
                     throw ( new CswDniException( "Unable to take a dump: " + StatusMessage ) );
                 }
             }
             else
             {
-                throw ( new CswDniException( "Unable to take a dump: there is no " + _DumpDirectorySetupVblName + " setup variable" ) );
+                throw ( new CswDniException( "Unable to take a dump: there is no " + CswEnumSetupVariableNames.DumpFileDirectoryId + " setup variable" ) );
 
             }//if-else the dump setup setting exists
 

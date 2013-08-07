@@ -204,7 +204,7 @@
             cswPrivate.onHoverIn = function (ev, dd, $cell) {
                 var cellSet;
                 if (cswPrivate.isRemoveMode()) {
-                    cellSet = cswPublic.cellSet($cell.attr('data-row'), $cell.attr('data-column'));
+                    cellSet = cswPublic.cellSet($cell.data('row'), $cell.data('column'));
                     cswPrivate.eachCell(cellSet, function (cell) {
                         cell.addClass('CswLayoutTable_remove');
                     });
@@ -214,7 +214,7 @@
             cswPrivate.onHoverOut = function (ev, dd, $cell) {
                 var cellSet;
                 if (cswPrivate.isRemoveMode()) {
-                    cellSet = cswPublic.cellSet($cell.attr('data-row'), $cell.attr('data-column'));
+                    cellSet = cswPublic.cellSet($cell.data('row'), $cell.data('column'));
                     cswPrivate.eachCell(cellSet, function (cell) {
                         cell.removeClass('CswLayoutTable_remove');
                     });
@@ -225,7 +225,7 @@
                 var $dragCell, cells;
                 if (cswPublic.isConfig(cswPublic.table)) {
                     $dragCell = $dragDiv.parent();
-                    cells = cswPublic.cellSet($dragCell.attr('data-row'), $dragCell.attr('data-column'));
+                    cells = cswPublic.cellSet($dragCell.data('row'), $dragCell.data('column'));
                     cswPrivate.eachCell(cells, function (cell) {
                         cell.addClass('CswLayoutTable_dragcell');
                     });
@@ -250,7 +250,7 @@
                     dragCell = Csw.literals.factory($dragDiv.parent(), {});
 
                     dragCells = cswPublic.cellSet(dragCell.data('row'), dragCell.data('column'));
-                    dropCells = cswPublic.cellSet($dropCell.attr('data-row'), $dropCell.attr('data-column'));
+                    dropCells = cswPublic.cellSet($dropCell.data('row'), $dropCell.data('column'));
 
                     // This must happen BEFORE we do the swap, in case the caller relies on the contents of the div being where it was
                     cswPublic.table.trigger(cswPrivate.name + 'CswLayoutTable_onSwap', {

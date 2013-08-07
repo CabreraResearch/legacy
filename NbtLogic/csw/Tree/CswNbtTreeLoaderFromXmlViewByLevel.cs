@@ -101,10 +101,8 @@ namespace ChemSW.Nbt
                 // this could be a performance problem
                 CswNbtMetaDataNodeType ThisNodeType = _CswNbtResources.MetaData.getNodeType( ThisNodeTypeId );
                 if( false == RequireViewPermissions ||
-                   _CswNbtResources.Permit.canAnyTab( CswEnumNbtNodeTypePermission.View, ThisNodeType, _RunAsUser ) ||
-                   _CswNbtResources.Permit.isNodeWritable( CswEnumNbtNodeTypePermission.View, ThisNodeType, ThisNodePk, _RunAsUser )
-
-                    )
+                  ( _CswNbtResources.Permit.canAnyTab( CswEnumNbtNodeTypePermission.View, ThisNodeType, _RunAsUser ) &&
+                    _CswNbtResources.Permit.isNodeWritable( CswEnumNbtNodeTypePermission.View, ThisNodeType, ThisNodePk, _RunAsUser ) ) )
                 {
                     // Handle property multiplexing
                     // This assumes that property rows for the same nodeid are next to one another
@@ -223,7 +221,7 @@ namespace ChemSW.Nbt
                 } // if( false == RequireViewPermissions || _CswNbtResources.Permit.can( CswEnumNbtNodeTypePermission.View, ThisNodeType, true, null, _RunAsUser ) )
             } // foreach(DataRow NodesRow in NodesTable.Rows)
 
-            if( NodesTable.Rows.Count > 0 ) // only recurse if there are results
+            if( KeysThisLevel.Count > 0 ) // only recurse if there are results
             {
                 // Recurse
                 foreach( CswNbtViewRelationship ChildRelationship in Relationship.ChildRelationships )
@@ -233,7 +231,7 @@ namespace ChemSW.Nbt
                 }
 
                 // case 24678 - Mark truncated results
-                if( NodesTable.Rows.Count == thisResultLimit )
+                if( KeysThisLevel.Count == thisResultLimit )
                 {
                     //if( ParentNodeKeys != null && ParentNodeKeys.Count > 0 )
                     //{

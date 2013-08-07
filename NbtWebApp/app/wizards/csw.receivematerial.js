@@ -157,8 +157,6 @@
                         if (false === Csw.isNullOrEmpty(cswPrivate.tabsAndProps) && cswPrivate.currentStepNo > 2) {
                             cswPrivate.state.properties = cswPrivate.tabsAndProps.getProps();
                             if (cswPrivate.lastStepNo === 2) {
-                                //TODO: remove this
-                                cswPrivate.tabsAndProps.callDeprecatedSaveMethod({}, '', null, false, false);
                                 if (cswPrivate.saveError === true) {
                                     cswPrivate.saveError = false;
                                     cswPrivate.toggleButton(cswPrivate.buttons.prev, true, true);
@@ -178,8 +176,6 @@
                         if (false === Csw.isNullOrEmpty(cswPrivate.tabsAndProps)) {
                             cswPrivate.state.properties = cswPrivate.tabsAndProps.getProps();
                             if (cswPrivate.lastStepNo === 1) {
-                                //TODO: Remove this
-                                cswPrivate.tabsAndProps.callDeprecatedSaveMethod({}, '', null, false, false);
                                 if (cswPrivate.saveError === true) {
                                     cswPrivate.saveError = false;
                                     canReceiveMaterial = false;
@@ -371,11 +367,6 @@
                                 removeTempStatus: false,
                                 nodetypeid: cswPrivate.state.containerNodeTypeId,
                                 nodeid: cswPrivate.state.containerNodeId
-                            },
-                            //TODO: client-side property specific change events are evil. Remove this demon.
-                            onOwnerPropChange: function (propObj, data, tabContentDiv) {
-                                //TODO: Remove this
-                                cswPrivate.tabsAndProps.callDeprecatedSaveMethod(tabContentDiv, data.tabid, null, false, true);
                             },
                             onSaveError: function (errorData) {
                                 console.log(errorData);

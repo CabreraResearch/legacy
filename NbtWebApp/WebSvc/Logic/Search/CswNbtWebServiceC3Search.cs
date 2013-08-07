@@ -157,7 +157,7 @@ namespace ChemSW.Nbt.WebServices
                 public MaterialType materialType = null;
 
                 [DataMember]
-                public string documentId = string.Empty;
+                public string sdsDocId = string.Empty;
 
                 [DataContract]
                 public class MaterialType
@@ -239,12 +239,16 @@ namespace ChemSW.Nbt.WebServices
                 CswNbtMetaDataObjectClass ObjectClass = CswNbtResources.MetaData.getObjectClass( ObjectClassName );
                 foreach( CswNbtMetaDataNodeType CurrentNT in ObjectClass.getNodeTypes() )
                 {
-                    JObject NodeType = new JObject();
-                    ImportableNodeTypes[CurrentNT.NodeTypeName] = NodeType;
-                    NodeType["nodetypename"] = CurrentNT.NodeTypeName;
-                    NodeType["nodetypeid"] = CurrentNT.NodeTypeId.ToString();
-                    NodeType["iconfilename"] = CswNbtMetaDataObjectClass.IconPrefix16 + CurrentNT.IconFileName;
-                    NodeType["objclass"] = ObjectClassName.ToString();
+                    CswNbtMetaDataNodeTypeProp IsConstituentNTP = CurrentNT.getNodeTypePropByObjectClassProp( CswNbtPropertySetMaterial.PropertyName.IsConstituent );
+                    if( CswEnumTristate.False == IsConstituentNTP.DefaultValue.AsLogical.Checked )
+                    {
+                        JObject NodeType = new JObject();
+                        ImportableNodeTypes[CurrentNT.NodeTypeName] = NodeType;
+                        NodeType["nodetypename"] = CurrentNT.NodeTypeName;
+                        NodeType["nodetypeid"] = CurrentNT.NodeTypeId.ToString();
+                        NodeType["iconfilename"] = CswNbtMetaDataObjectClass.IconPrefix16 + CurrentNT.IconFileName;
+                        NodeType["objclass"] = ObjectClassName.ToString();
+                    }
                 }
             }
 
@@ -435,7 +439,7 @@ namespace ChemSW.Nbt.WebServices
                     State.sizes = ProductSizes;
                     if( null != SDSDocumentNodeId )
                     {
-                        State.documentId = SDSDocumentNodeId.ToString();
+                        State.sdsDocId = SDSDocumentNodeId.ToString();
                     }
 
                     Return.Data.state = State;

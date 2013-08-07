@@ -48,43 +48,12 @@ namespace ChemSW.Nbt.PropTypes
 
         override public string Gestalt
         {
-            //TODO: gestalt will be a comma delimited list of filenames
             get
             {
                 return _CswNbtNodePropData.Gestalt;
             }
 
         }//Gestalt
-
-        
-        [DataMember]
-        public Collection<string> FileNames
-        {
-            get
-            {
-                //if( null == _FileNames || WasModified )
-                //{
-                //    _FileNames = new Collection<string>();
-                //    if( null != _CswNbtResources ) //WCF getters must always be null safe
-                //    {
-                //        CswTableSelect blobDataTS = _CswNbtResources.makeCswTableSelect( "NodePropImage.getFileNames", "blob_data" );
-                //        DataTable blobDataTbl = blobDataTS.getTable( "where jctnodepropid = " + JctNodePropId );
-                //        foreach( DataRow row in blobDataTbl.Rows )
-                //        {
-                //            _FileNames.Add( row["filename"].ToString() );
-                //        }
-                //    }
-                //}
-                //return _FileNames;
-                return new Collection<string>();
-            }
-            set
-            {
-                Collection<string> IDoNothing = value;
-                //_CswNbtNodePropData.SetPropRowValue( _FileNameSubField.Column, value );
-                //_CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, value );
-            }
-        }
 
         private Collection<CswNbtSdBlobData.CswNbtBlob> _Images = null;
         [DataMember]
@@ -107,7 +76,12 @@ namespace ChemSW.Nbt.PropTypes
             {
                 Collection<CswNbtSdBlobData.CswNbtBlob> IDoNothing = value; //have to use this to use the [DataContract] decoration...
             }
+        }
 
+        public void SetImages( string Date = "" )
+        {
+            CswNbtSdBlobData sdBlobData = new CswNbtSdBlobData( _CswNbtResources );
+            _Images = sdBlobData.GetImages( NodeId, JctNodePropId, Date );
         }
 
         [DataMember]
@@ -191,8 +165,12 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void SyncGestalt()
         {
-            //TODO: set gestalt to comma delimited list of file names from blob_data tbl
-            //_CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, FileName );
+            CswCommaDelimitedString imageNames = new CswCommaDelimitedString();
+            foreach( CswNbtSdBlobData.CswNbtBlob Image in Images )
+            {
+                imageNames.Add(Image.FileName);
+            }
+            _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, imageNames.ToString() );
         }
     }
 

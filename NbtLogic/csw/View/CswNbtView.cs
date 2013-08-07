@@ -722,8 +722,6 @@ namespace ChemSW.Nbt
             string[] SplitStr = ViewString.Split( delimiter );
             if( SplitStr.Length > 1 )
             {
-                //if( ( ( NbtViewType ) Enum.Parse( typeof( NbtViewType ), SplitStr[ 0 ] ) ) != ViewType )
-                //    throw new CswDniException( "Invalid View", "Attempted to restore CswNbtView using ViewType: " + SplitStr[ 0 ] );
                 ViewXmlAsString = SplitStr[1];
             }
             XmlDocument ViewXmlDoc = new XmlDocument();

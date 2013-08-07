@@ -1,13 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Data;
-using System.Runtime.Serialization;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.ServiceDrivers;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Data;
+using System.Runtime.Serialization;
 
 namespace ChemSW.Nbt.MetaData
 {
@@ -16,18 +16,15 @@ namespace ChemSW.Nbt.MetaData
     {
         public static CswEnumNbtObjectClassPropAttributes getObjectClassPropAttributesFromString( string AttributeName )
         {
-            CswEnumNbtObjectClassPropAttributes ReturnVal = CswEnumNbtObjectClassPropAttributes.Unknown;
-            if( Enum.IsDefined( typeof( CswEnumNbtObjectClassPropAttributes ), AttributeName ) )
-            {
-                ReturnVal = (CswEnumNbtObjectClassPropAttributes) Enum.Parse( typeof( CswEnumNbtObjectClassPropAttributes ), AttributeName, true );
-            }
+            CswEnumNbtObjectClassPropAttributes ReturnVal = CswResources.UnknownEnum;
+            ReturnVal = AttributeName;
             return ( ReturnVal );
         }
 
         public static String getObjectClassPropAttributesAsString( CswEnumNbtObjectClassPropAttributes Attribute )
         {
             String ReturnVal = String.Empty;
-            if( Attribute != CswEnumNbtObjectClassPropAttributes.Unknown )
+            if (Attribute != CswResources.UnknownEnum )
                 ReturnVal = Attribute.ToString();
             return ( ReturnVal );
         }
@@ -208,23 +205,7 @@ namespace ChemSW.Nbt.MetaData
                 //    OnEditNodeTypePropOrder( this );
             }
         }
-
-
-        //public void setFilter( CswNbtSubField SubField, CswEnumNbtFilterMode FilterMode, object FilterValue )
-        //{
-        //    _ObjectClassPropRow[ "filter" ] = SubField.Column.ToString() + FilterDelimiter + FilterMode.ToString() + FilterDelimiter + FilterValue.ToString();
-        //    // This can alter the order
-        //    //if ( OnEditNodeTypePropOrder != null )
-        //    //    OnEditNodeTypePropOrder( this );
-        //}
-        //public void clearFilter()
-        //{
-        //    _ObjectClassPropRow[ "filter" ] = string.Empty;
-        //    // This can alter the order
-        //    //if ( OnEditNodeTypePropOrder != null )
-        //    //    OnEditNodeTypePropOrder( this );
-        //}
-
+        
         /// <summary>
         /// Default filter delimiter
         /// </summary>
@@ -234,10 +215,8 @@ namespace ChemSW.Nbt.MetaData
             if( _ObjectClassPropRow["filter"].ToString() != string.Empty )
             {
                 string[] filter = _ObjectClassPropRow["filter"].ToString().Split( FilterDelimiter );
-                //CswEnumNbtPropColumn Column = (CswEnumNbtPropColumn) Enum.Parse( typeof( CswEnumNbtPropColumn ), filter[0] );
                 CswEnumNbtPropColumn Column = (CswEnumNbtPropColumn) filter[0];
                 SubField = _CswNbtMetaDataResources.CswNbtMetaData.getObjectClassProp( FilterObjectClassPropId ).getFieldTypeRule().SubFields[Column];
-                //FilterMode = (CswEnumNbtFilterMode) Enum.Parse( typeof( CswEnumNbtFilterMode ), filter[1] );
                 FilterMode = (CswEnumNbtFilterMode) filter[1];
                 if( filter.GetUpperBound( 0 ) > 1 )
                     FilterValue = filter[2];
@@ -326,7 +305,7 @@ namespace ChemSW.Nbt.MetaData
             get
             {
                 if( _ObjectClassPropRow["multi"].ToString() != string.Empty )
-                    return (CswEnumNbtPropertySelectMode) Enum.Parse( typeof( CswEnumNbtPropertySelectMode ), _ObjectClassPropRow["multi"].ToString() );
+                    return CswConvert.ToString( _ObjectClassPropRow["multi"] );
                 else
                     return CswEnumNbtPropertySelectMode.Blank;
             }
@@ -525,34 +504,7 @@ namespace ChemSW.Nbt.MetaData
             bool ret = false;
             if( this.getFieldTypeValue() == CswEnumNbtFieldType.Relationship )
             {
-                //if( FKType != string.Empty )
-                //{
-                //    //NbtViewRelatedIdType TargetType = (NbtViewRelatedIdType) Enum.Parse( typeof( NbtViewRelatedIdType ), FKType, true );
-                //    NbtViewRelatedIdType TargetType = (NbtViewRelatedIdType) FKType;
-
-                //    if( TargetType == NbtViewRelatedIdType.NodeTypeId )
-                //    {
-                //        CswNbtMetaDataNodeType TargetNodeType = _CswNbtMetaDataResources.CswNbtResources.MetaData.getNodeType( FKValue );
-                //        ret = ( TargetNodeType.getObjectClass().ObjectClass == NbtObjectClass.UserClass );
-                //    }
-                //    else if( TargetType == NbtViewRelatedIdType.ObjectClassId )
-                //    {
-                //        CswNbtMetaDataObjectClass TargetObjectClass = _CswNbtMetaDataResources.CswNbtResources.MetaData.getObjectClass( FKValue );
-                //        ret = ( TargetObjectClass.ObjectClass == NbtObjectClass.UserClass );
-
-                //    }
-                //    else if( TargetType == NbtViewRelatedIdType.PropertySetId )
-                //    {
-                //        CswNbtMetaDataPropertySet TargetPropertySet = _CswNbtMetaDataResources.CswNbtResources.MetaData.getPropertySet( FKValue );
-                //        if( null != TargetPropertySet )
-                //        {
-                //            CswNbtMetaDataObjectClass UserObjectClass = _CswNbtMetaDataResources.CswNbtResources.MetaData.getObjectClass( NbtObjectClass.UserClass );
-                //            ret = ( null != UserObjectClass.getPropertySet() &&
-                //                    TargetPropertySet.PropertySetId == UserObjectClass.getPropertySet().PropertySetId );
-                //        }
-                //    }
-                //}
-                CswNbtMetaDataObjectClass UserOC = _CswNbtMetaDataResources.CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.UserClass );
+               CswNbtMetaDataObjectClass UserOC = _CswNbtMetaDataResources.CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.UserClass );
                 ret = FkMatches( UserOC );
             }
             return ret;

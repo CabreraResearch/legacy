@@ -1,15 +1,15 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using System.Data;
-using System.Drawing;
-using System.IO;
-using System.Runtime.Serialization;
-using ChemSW.Core;
+﻿using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.StructureSearch;
+using System;
+using System.Collections.ObjectModel;
+using System.Data;
+using System.Drawing;
+using System.IO;
+using System.Runtime.Serialization;
 
 namespace ChemSW.Nbt.ServiceDrivers
 {
@@ -121,6 +121,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                 BlobTbl.Rows[0]["blobdata"] = BlobData;
                 BlobTbl.Rows[0]["contenttype"] = ContentType;
                 BlobTbl.Rows[0]["filename"] = FileName;
+                BlobTbl.Rows[0]["auditlevel"] = MetaDataProp.AuditLevel;
                 BlobDataId = CswConvert.ToInt32( BlobTbl.Rows[0]["blobdataid"] );
             }
             else
@@ -130,6 +131,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                 NewRow["blobdata"] = BlobData;
                 NewRow["contenttype"] = ContentType;
                 NewRow["filename"] = FileName;
+                NewRow["auditlevel"] = MetaDataProp.AuditLevel;
                 BlobDataId = CswConvert.ToInt32( NewRow["blobdataid"] );
                 BlobTbl.Rows.Add( NewRow );
             }
@@ -143,10 +145,11 @@ namespace ChemSW.Nbt.ServiceDrivers
                 _createReportFile( ReportPath, Report.RPTFile.JctNodePropId, BlobData );
             }
 
+            SetLastModified( FileProp );
             FileProp.SyncGestalt();
             if( PostChanges )
             {
-            Node.postChanges( false );
+                Node.postChanges( false );
             }
 
             Href = CswNbtNodePropBlob.getLink( FileProp.JctNodePropId, PropId.NodeId, BlobDataId );
@@ -162,7 +165,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             BWriter.Write( BlobData );
         }
 
-        public void saveMol( string MolString, string PropId, out string Href, out string FormattedMolString, bool PostChanges = true)
+        public void saveMol( string MolString, string PropId, out string Href, out string FormattedMolString, bool PostChanges = true )
         {
             CswPropIdAttr PropIdAttr = new CswPropIdAttr( PropId );
             CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtResources.MetaData.getNodeTypeProp( PropIdAttr.NodeTypePropId );
@@ -215,11 +218,23 @@ namespace ChemSW.Nbt.ServiceDrivers
         /// <summary>
         /// Gets a collection of all images for a property
         /// </summary>
-        public Collection<CswNbtBlob> GetImages( CswPrimaryKey NodeId, Int32 JctNodePropId )
+        public Collection<CswNbtBlob> GetImages( CswPrimaryKey NodeId, Int32 JctNodePropId, string Date = "" )
         {
             Collection<CswNbtBlob> images = new Collection<CswNbtBlob>();
-            CswTableSelect blobDataTS = _CswNbtResources.makeCswTableSelect( "NodePropImage.getFileNames", "blob_data" );
-            DataTable blobDataTbl = blobDataTS.getTable( "where jctnodepropid = " + JctNodePropId );
+            DataTable blobDataTbl = null;
+            if( string.IsNullOrEmpty( Date ) )
+            {
+                CswTableSelect blobDataTS = _CswNbtResources.makeCswTableSelect( "NodePropImage.getFileNames", "blob_data" );
+                blobDataTbl = blobDataTS.getTable( "where jctnodepropid = " + JctNodePropId );
+
+            }
+            else //fetch blob content
+            {
+                string sql = GetBlobAuditSQL( Date, JctNodePropId );
+                CswArbitrarySelect blobDataAuditTS = _CswNbtResources.makeCswArbitrarySelect( "getBlobAudit", sql );
+                blobDataTbl = blobDataAuditTS.getTable();
+            }
+
             foreach( DataRow row in blobDataTbl.Rows )
             {
                 Int32 BlobDataId = CswConvert.ToInt32( row["blobdataid"] );
@@ -233,6 +248,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                 };
                 images.Add( img );
             }
+
 
             if( images.Count == 0 ) //add default placeholder
             {
@@ -288,8 +304,11 @@ namespace ChemSW.Nbt.ServiceDrivers
 
             string sql = @"select bd.jctnodepropid from blob_data bd
                               join jct_nodes_props jnp on jnp.jctnodepropid = bd.jctnodepropid
-                           where jnp.nodeid = " + NodeId.PrimaryKey;
+                           where jnp.nodeid = :nodeid ";
+
             CswArbitrarySelect arbSelect = _CswNbtResources.makeCswArbitrarySelect( "getBlobJctNodePropId", sql );
+            arbSelect.addParameter( "nodeid", NodeId.PrimaryKey.ToString() );
+
             DataTable dt = arbSelect.getTable();
 
             if( dt.Rows.Count > 0 ) //there's only one mol img per node
@@ -307,8 +326,11 @@ namespace ChemSW.Nbt.ServiceDrivers
         {
             int ret = Int32.MinValue;
 
-            string sql = @"select blobdataid from blob_data where jctnodepropid = " + JctNodePropId;
+            string sql = @"select blobdataid from blob_data where jctnodepropid = :jctnodepropid ";
+            
             CswArbitrarySelect arbSelect = _CswNbtResources.makeCswArbitrarySelect( "getBlobJctNodePropId", sql );
+            arbSelect.addParameter( "jctnodepropid", JctNodePropId.ToString() );
+
             DataTable dt = arbSelect.getTable();
 
             if( dt.Rows.Count > 0 )
@@ -317,6 +339,26 @@ namespace ChemSW.Nbt.ServiceDrivers
             }
 
             return ret;
+        }
+
+        public void SetLastModified( CswNbtNodePropWrapper BlobProp )
+        {
+            BlobProp.SetPropRowValue( CswEnumNbtPropColumn.Field2_Date, DateTime.Now );
+        }
+
+        public static string GetBlobAuditSQL( string Date, int JctNodePropId, int BlobDataId = Int32.MinValue )
+        {
+            string sql = @"select * from blob_data_audit bda where bda.blobdataauditid in (select max(bd.blobdataauditid) from blob_data_audit bd
+                                    join audit_transactions audt on audt.audittransactionid = bd.audittransactionid
+                                    join jct_nodes_props_audit jnp on jnp.audittransactionid = audt.audittransactionid
+                                where jnp.recordcreated <= to_date('" + Date + "', 'MM/DD/YYYY HH:MI:SS PM') and jnp.jctnodepropid = " + JctNodePropId;
+            if( Int32.MinValue != BlobDataId )
+            {
+                sql += " and bda.blobdataid = " + BlobDataId;
+            }
+            sql += " group by bd.blobdataid ) order by bda.blobdataid";
+
+            return sql;
         }
 
         [DataContract]

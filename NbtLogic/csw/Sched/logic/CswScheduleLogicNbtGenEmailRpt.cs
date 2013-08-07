@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Data;
 using ChemSW.Config;
 using ChemSW.Core;
 using ChemSW.DB;
@@ -10,6 +6,10 @@ using ChemSW.Mail;
 using ChemSW.MtSched.Core;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Security;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Data;
 
 namespace ChemSW.Nbt.Sched
 {
@@ -80,7 +80,7 @@ namespace ChemSW.Nbt.Sched
                     _InnerErrorMessage = string.Empty;
                     CswResources.AuditContext = "Scheduler Task: " + RuleName;
 
-                    Int32 MailReportLimit = CswConvert.ToInt32( CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumNbtConfigurationVariables.generatorlimit.ToString() ) );
+                    Int32 MailReportLimit = CswConvert.ToInt32( CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumConfigurationVariableNames.NodesProcessedPerCycle ) );
                     if( MailReportLimit < 1 )
                     {
                         MailReportLimit = 1;
@@ -320,7 +320,7 @@ namespace ChemSW.Nbt.Sched
                                     if( ReportTable.Rows.Count > 0 )
                                     {
                                         string ReportLink = string.Empty;
-                                        CswEnumNbtMailReportFormatOptions MailRptFormat = (CswEnumNbtMailReportFormatOptions) Enum.Parse( typeof( CswEnumNbtMailReportFormatOptions ), CurrentMailReport.OutputFormat.Value.ToString() );
+                                        CswEnumNbtMailReportFormatOptions MailRptFormat = CurrentMailReport.OutputFormat.Value;
                                         if( CswEnumNbtMailReportFormatOptions.Link == MailRptFormat )
                                         {
                                             ReportLink = _makeReportLink( _CswNbtResources, ReportObjClass );

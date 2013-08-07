@@ -1,12 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.Web;
 using ChemSW.Config;
-using ChemSW.Nbt.Config;
-using ChemSW.Nbt.Security;
+using ChemSW.Core;
+using ChemSW.Nbt.csw.Security;
 using ChemSW.Nbt.Statistics;
 using ChemSW.Security;
 using ChemSW.Session;
+using System;
+using System.Collections.Generic;
+using System.Web;
 
 
 namespace ChemSW.Nbt
@@ -25,27 +25,24 @@ namespace ChemSW.Nbt
 
             //SuperCycleCache configuraiton has to happen here because here is where we can stash the cache,
             //so to speak, in the wrapper class -- the resource factory is agnostic with respect to cache type
-            CswSetupVblsNbt SetupVbls = new CswSetupVblsNbt( CswEnumSetupMode.NbtWeb );
+            CswSetupVbls SetupVbls = new CswSetupVbls( CswEnumSetupMode.NbtWeb );
 
             ICswSuperCycleCache CswSuperCycleCache = new CswSuperCycleCacheWeb( Context.Cache );
             // Set the cache to drop anything 10 minutes old
             CswSuperCycleCache.CacheDirtyThreshold = DateTime.Now.Subtract( new TimeSpan( 0, 10, 0 ) );
 
 
-            CswDbCfgInfo CswDbCfgInfo = new CswDbCfgInfo( CswEnumSetupMode.NbtWeb, IsMobile: false );
+            CswDbCfgInfo CswDbCfgInfo = new CswDbCfgInfo( CswEnumSetupMode.NbtWeb );
             CswResourcesMaster = new CswResources( CswEnumAppType.Nbt, SetupVbls, CswDbCfgInfo, false, new CswSuperCycleCacheDefault(), null );
             CswResourcesMaster.SetDbResources( ChemSW.RscAdo.CswEnumPooledConnectionState.Open );
             CswResourcesMaster.AccessId = CswDbCfgInfo.MasterAccessId;
 
             CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( CswEnumAppType.Nbt, SetupMode, true, false, CswSuperCycleCache, RscAdo.CswEnumPooledConnectionState.Open, CswResourcesMaster, CswResourcesMaster.CswLogger );
-
-
-
-            string RecordStatisticsVblName = "RecordUserStatistics";
+            
             bool RecordStatistics = false;
-            if( CswNbtResources.SetupVbls.doesSettingExist( RecordStatisticsVblName ) )
+            if ( CswConvert.ToBoolean( CswNbtResources.SetupVbls[CswEnumSetupVariableNames.RecordUserStatistics] ) )
             {
-                RecordStatistics = ( "1" == CswNbtResources.SetupVbls[RecordStatisticsVblName] );
+                RecordStatistics = true;
             }
 
             Dictionary<string, string> Cookies = new Dictionary<string, string>();
@@ -53,6 +50,9 @@ namespace ChemSW.Nbt
             {
                 Cookies[CookieName] = Context.Request.Cookies[CookieName].Value;
             }
+
+            CswNbtSchemaAuthenticatorFactory AuthenticatorFactory = new CswNbtSchemaAuthenticatorFactory( CswNbtResources );
+            ICswSchemaAuthenticater Authenticator = AuthenticatorFactory.Make( CswNbtResources.SetupVbls );
 
             CswSessionManager = new CswSessionManager( CswEnumAppType.Nbt,
                                                        new CswWebClientStorageCookies( HttpRequest, HttpResponse ),
@@ -62,7 +62,7 @@ namespace ChemSW.Nbt
                                                        false,
                                                        CswNbtResources,
                                                        CswResourcesMaster,
-                                                       new CswNbtSchemaAuthenticator( CswNbtResources ),
+                                                       Authenticator,
                                                        Cookies,
                                                        _CswNbtStatistics = new CswNbtStatistics( new CswNbtStatisticsStorageDb( CswNbtResources ),
                                                                                                   new CswNbtStatisticsStorageStateServer(),

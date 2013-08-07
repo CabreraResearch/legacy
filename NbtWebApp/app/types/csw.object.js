@@ -425,6 +425,8 @@
             return ret;
         });
 
+
+
     /*
     The following two methods are to make your life easier with IE9, WCF and jQueryFileUpload
 
@@ -456,6 +458,30 @@
             }
             
             return $(iFrameObj.children()[0].getElementsByTagName(tagName)[0]).text();
+        });
+
+    var dialogsCount = 0;
+    Csw.dialogsCount = Csw.dialogsCount ||
+        Csw.register('dialogsCount', function (num) {
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="num">Number to add/subtract from the amount of open dialogs (optional)</param>
+            /// <returns type="">The number of open dialogs</returns>
+            if (num) {
+                dialogsCount += num;
+            }
+            return dialogsCount;
+        });
+
+    Csw.subStrAfter = Csw.subStrAfter ||
+        Csw.register('subStrAfter', function(src, substr) {
+            /// <summary>
+            /// Returns everything after the LAST occurence of substr
+            /// </summary>
+            /// <param name="src">The source string</param>
+            /// <param name="substr">What to get everything after</param>
+            return src.substr(src.lastIndexOf(substr) + 1);
         });
 
 } ());

@@ -1,7 +1,7 @@
-using System;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.csw.Dev;
+using System;
 
 namespace ChemSW.Nbt.Schema
 {

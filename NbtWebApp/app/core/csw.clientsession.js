@@ -153,7 +153,11 @@
     var onLoginSuccess = function(data) {
         //Csw.cookie.set(Csw.cookie.cookieNames.CustomerId, cswPrivate.AccessId);
         //Csw.clientSession.setUsername(cswPrivate.UserName);
-        Csw.cookie.set(Csw.cookie.cookieNames.LogoutPath, cswPrivate.logoutpath);
+        
+        //Case 29617: Once a logout path has been set, do not mutate it.
+        if (Csw.isNullOrEmpty(Csw.cookie.get(Csw.cookie.cookieNames.LogoutPath))) {
+            Csw.cookie.set(Csw.cookie.cookieNames.LogoutPath, cswPrivate.logoutpath);
+        }
         Csw.tryExec(cswPrivate.onAuthenticate, cswPrivate.UserName);
         Csw.cookie.set(Csw.cookie.cookieNames.UserDefaults, JSON.stringify(data));
     };
@@ -258,6 +262,9 @@
                 case 'Deactivated':
                     txt = 'Your account is deactivated.  Please see your account administrator.';
                     break;
+                case 'NoLicense':
+                    txt = 'An administrator must agree to the terms of use before this application can be activated.';
+                    break;
                 case 'ModuleNotEnabled':
                     txt = 'This feature is not enabled.  Please see your account administrator.';
                     break;
@@ -288,23 +295,16 @@
                         UserId: o.data.ExpirationReset.UserId,
                         UserKey: o.data.ExpirationReset.UserKey,
                         PasswordId: o.data.ExpirationReset.PasswordId,
-                        onSuccess: function () {
-                            Csw.tryExec(o.success);
-                        }
+                        onSuccess: function () {}
                     });
+                    Csw.tryExec(o.success);
                     break;
                 case 'ShowLicense':
-                    $.CswDialog('ShowLicenseDialog', {
-                        'onAccept': function () {
-                            o.success();
-                        },
-                        'onDecline': function () {
-                            o.failure('You must accept the license agreement to use this application');
-                        }
-                    });
+                    $.CswDialog('ShowLicenseDialog', {});
+                    Csw.tryExec(o.success);
                     break;
                 case 'Ignore':
-                    o.success();
+                    Csw.tryExec(o.success());
                     break;
                 default:
                     txt = 'An error occurred';

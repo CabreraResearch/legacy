@@ -39,6 +39,14 @@
                 selectedViewId: '',
                 viewStack: [],
 
+                ajaxReqs: {
+                    'Build a View': [],
+                    'Add to View': [],
+                    'Set Filters': [],
+                    'View Attributes': [],
+                    'Fine Tuning (Advanced)': []
+                },
+
                 onFinish: function () { },
                 onCancel: function () { },
                 onDeleteView: function () { },
@@ -86,18 +94,36 @@
             };
 
             cswPrivate.handleStep = function (newStepNo) {
+                cswPrivate.abortAjaxReqs();
                 if (1 === newStepNo) {
-                    cswPrivate.makeStep1();
+                    cswPrivate.makeStep1(false);
                 } else if (2 === newStepNo) {
-                    cswPrivate.makeStep2();
+                    var refreshPreview = cswPrivate.previousStep === 1;
+                    cswPrivate.makeStep2(refreshPreview);
                 } else if (3 === newStepNo) {
-                    cswPrivate.makeStep3();
+                    cswPrivate.makeStep3(false);
                 } else if (4 === newStepNo) {
-                    cswPrivate.makeStep4();
+                    cswPrivate.makeStep4(false);
                 } else if (5 === newStepNo) {
-                    cswPrivate.makeStep5();
+                    cswPrivate.makeStep5(false);
                 } else if (6 === newStepNo) {
-                    cswPrivate.makeStep6();
+                    cswPrivate.makeStep6(false);
+                }
+            };
+
+            cswPrivate.abortAjaxReqs = function (newStepNo) {
+
+                var stepNo = 1;
+                while (stepNo <= cswPrivate.stepCount) {
+                    if (stepNo !== newStepNo) {
+                        var stepName = cswPrivate.wizardSteps[stepNo];
+                        Csw.iterate(cswPrivate.ajaxReqs[stepName], function (req) {
+                            if (req.ajax.readyState != 4) {
+                                req.ajax.abort();
+                            }
+                        });
+                    }
+                    stepNo++;
                 }
             };
 
@@ -263,7 +289,7 @@
             }());
 
             cswPrivate.makeStep2 = (function () {
-                return function () {
+                return function (refreshPreview) {
                     cswPrivate.currentStepNo = 2;
                     cswPrivate.toggleButton(cswPrivate.buttons.next, false); //only enable Next once we finished getting the view
 
@@ -300,7 +326,7 @@
                     });
 
                     var getStep2Data = function () {
-                        Csw.ajaxWcf.post({
+                        var req = Csw.ajaxWcf.post({
                             urlMethod: 'ViewEditor/GetStepData',
                             data: {
                                 ViewId: cswPrivate.selectedViewId,
@@ -326,7 +352,7 @@
                                         if (relSelect.selectedText() !== 'Select...') {
                                             var selected = relSelect.selectedVal();
 
-                                            Csw.ajaxWcf.post({
+                                            var innerReq = Csw.ajaxWcf.post({
                                                 urlMethod: 'ViewEditor/HandleAction',
                                                 data: {
                                                     CurrentView: cswPrivate.View,
@@ -336,9 +362,10 @@
                                                 },
                                                 success: function (addRelResponse) {
                                                     cswPrivate.View = addRelResponse.CurrentView;
-                                                    cswPrivate.makeStep2();
+                                                    cswPrivate.makeStep2(true);
                                                 }
                                             });
+                                            cswPrivate.ajaxReqs[cswPrivate.wizardSteps[cswPrivate.currentStepNo]].push(innerReq);
                                         }
                                     }
                                 });
@@ -358,7 +385,7 @@
                                     }
                                 });
                                 relSelect.setOptions(selectOpts, true);
-                                cswPrivate.buildPreview(previewDiv, cswPrivate.View);
+                                cswPrivate.buildPreview(previewDiv, cswPrivate.View, null, refreshPreview);
 
                                 cswPrivate.makeCells = function () {
                                     var row = 1;
@@ -377,7 +404,7 @@
                                                 });
                                                 var root = cswPrivate.getRootRelationship();
                                                 root.ChildRelationships = cleansedRelationships;
-                                                cswPrivate.makeStep2();
+                                                cswPrivate.makeStep2(true);
                                             }
                                         });
                                         propsTbl.cell(row, 2).text(thisRel.TextLabel);
@@ -388,13 +415,14 @@
 
                             }
                         });
+                        cswPrivate.ajaxReqs[cswPrivate.wizardSteps[cswPrivate.currentStepNo]].push(req);
                     };
                     getStep2Data();
                 };
             }());
 
             cswPrivate.makeStep3 = (function () {
-                return function () {
+                return function (refreshPreview) {
                     cswPrivate.currentStepNo = 3;
                     cswPrivate.toggleButton(cswPrivate.buttons.prev, true);
                     cswPrivate.toggleButton(cswPrivate.buttons.finish, true);
@@ -433,7 +461,7 @@
                     var previewDiv = previewCell.div();
 
                     cswPrivate.getStep3Data = function () {
-                        Csw.ajaxWcf.post({
+                        var req = Csw.ajaxWcf.post({
                             urlMethod: 'ViewEditor/GetStepData',
                             data: {
                                 CurrentView: cswPrivate.View,
@@ -481,7 +509,7 @@
                                                     },
                                                     success: function (addPropResponse) {
                                                         cswPrivate.View = addPropResponse.CurrentView;
-                                                        cswPrivate.makeStep3();
+                                                        cswPrivate.makeStep3(true);
                                                     }
                                                 });
                                             }
@@ -509,7 +537,7 @@
                                         cswPrivate.secondRelationships[secondRel.ArbitraryId] = secondRel;
                                     });
 
-                                    cswPrivate.buildPreview(previewDiv, cswPrivate.View, cswPrivate.onColumnReorder); //this will update the order of the props in the view);
+                                    cswPrivate.buildPreview(previewDiv, cswPrivate.View, cswPrivate.onColumnReorder, refreshPreview); //this will update the order of the props in the view);
 
                                     cswPrivate.makePropsTbl = function () {
                                         var row = 2;
@@ -531,7 +559,7 @@
                                                         },
                                                         success: function (removePropResponse) {
                                                             cswPrivate.View = removePropResponse.CurrentView;
-                                                            cswPrivate.makeStep3();
+                                                            cswPrivate.makeStep3(true);
                                                         }
                                                     });
                                                 }
@@ -561,7 +589,7 @@
                                                 thisRowTxt.remove();
                                                 thisSel.addOption({ value: selectedRel.ArbitraryId, display: selectedRel.TextLabel });
                                                 innerRow--;
-                                                cswPrivate.makeStep3();
+                                                cswPrivate.makeStep3(true);
                                             }
                                         });
                                         var thisRowTxt = thisRelTbl.cell(innerRow, 2).text(selectedRel.TextLabel);
@@ -610,7 +638,7 @@
                                                     thisSel.removeOption('Select...');
                                                     thisSel.addOption({ display: 'Select...', value: 'Select...' }, true);
 
-                                                    cswPrivate.makeStep3();
+                                                    cswPrivate.makeStep3(true);
                                                 }
                                             }
                                         });
@@ -623,7 +651,7 @@
                                         propsDiv.br({ number: 2 });
                                     });
 
-                                    cswPrivate.buildPreview(previewDiv, cswPrivate.View);
+                                    cswPrivate.buildPreview(previewDiv, cswPrivate.View, null, refreshPreview);
                                 } else if ('List' === cswPrivate.View.ViewMode) {
                                     propsDiv.text('Create a Tree view to add relationships below the root level.').css({
                                         'font-style': 'italic',
@@ -633,13 +661,14 @@
                                 }
                             }
                         });
+                        cswPrivate.ajaxReqs[cswPrivate.wizardSteps[cswPrivate.currentStepNo]].push(req);
                     };
                     cswPrivate.getStep3Data();
                 };
             }());
 
             cswPrivate.makeStep4 = (function () {
-                return function () {
+                return function (refreshPreview) {
                     cswPrivate.currentStepNo = 4;
                     cswPrivate.toggleButton(cswPrivate.buttons.prev, true);
                     cswPrivate.toggleButton(cswPrivate.buttons.finish, true);
@@ -685,19 +714,20 @@
 
                     cswPrivate.relationships = {};
                     var getStep4Data = function () {
-                        Csw.ajaxWcf.post({
+                        var req = Csw.ajaxWcf.post({
                             urlMethod: 'ViewEditor/GetStepData',
                             data: {
                                 CurrentView: cswPrivate.View,
                                 StepName: stepNames.SetFilters
                             },
                             success: function (response) {
-                                handleStep4Data(response);
+                                handleStep4Data(response, false);
                             }
                         });
+                        cswPrivate.ajaxReqs[cswPrivate.wizardSteps[cswPrivate.currentStepNo]].push(req);
                     };
 
-                    var handleStep4Data = function (response) {
+                    var handleStep4Data = function (response, refreshPreviewIn) {
                         if (cswPrivate.filterSelectDiv) {
                             cswPrivate.filterSelectDiv.remove();
                         }
@@ -713,7 +743,7 @@
                                 isButton: true,
                                 iconType: Csw.enums.iconType.x,
                                 onClick: function () {
-                                    Csw.ajaxWcf.post({
+                                    var innerReq = Csw.ajaxWcf.post({
                                         urlMethod: 'ViewEditor/HandleAction',
                                         data: {
                                             FilterToRemove: filter,
@@ -722,9 +752,10 @@
                                             Action: "RemoveFilter"
                                         },
                                         success: function (removeFilterResponse) {
-                                            handleStep4Data(removeFilterResponse);
+                                            handleStep4Data(removeFilterResponse, true);
                                         }
                                     });
+                                    cswPrivate.ajaxReqs[cswPrivate.wizardSteps[cswPrivate.currentStepNo]].push(innerReq);
                                 }
                             });
                             Csw.nbt.viewPropFilter({
@@ -800,7 +831,7 @@
                                                             urlMethod: 'ViewEditor/HandleAction',
                                                             data: ajaxData,
                                                             success: function (addFilterResponse) {
-                                                                handleStep4Data(addFilterResponse);
+                                                                handleStep4Data(addFilterResponse, true);
                                                             }
                                                         });
                                                     }
@@ -811,7 +842,7 @@
 
                                     var propOpts = [];
                                     var properties = {};
-                                    Csw.ajaxWcf.post({
+                                    var req = Csw.ajaxWcf.post({
                                         urlMethod: 'ViewEditor/HandleAction',
                                         data: {
                                             Relationship: cswPrivate.relationships[filterSelect.selectedVal()],
@@ -833,6 +864,7 @@
                                             cswPrivate.propSelect.addOption({ display: 'Select...', value: 'Select...' }, true);
                                         }
                                     });
+                                    cswPrivate.ajaxReqs[cswPrivate.wizardSteps[cswPrivate.currentStepNo]].push(req);
                                 }
                             }
                         });
@@ -848,7 +880,7 @@
                         });
                         filterSelect.setOptions(selectOpts, false);
 
-                        cswPrivate.buildPreview(previewDiv, cswPrivate.View);
+                        cswPrivate.buildPreview(previewDiv, cswPrivate.View, null, refreshPreviewIn);
                     };
 
                     getStep4Data();
@@ -948,7 +980,7 @@
                     var handleAttributeChange = function () {
                         //It's better to send this to the server to modify - in some cases (ex: ViewName) we need DB resources which are not available during the "blackbox" deserialization events
                         var visibilityData = visibilitySelect.getSelected();
-                        Csw.ajaxWcf.post({
+                        var req = Csw.ajaxWcf.post({
                             urlMethod: 'ViewEditor/HandleAction',
                             data: {
                                 NewViewName: viewNameInput.val(),
@@ -964,6 +996,7 @@
                                 cswPrivate.View = response.CurrentView;
                             }
                         });
+                        cswPrivate.ajaxReqs[cswPrivate.wizardSteps[cswPrivate.currentStepNo]].push(req);
                     };
 
                     var previewCell = step5Tbl.cell(1, 2).css({
@@ -977,7 +1010,7 @@
             }());
 
             cswPrivate.makeStep6 = (function () {
-                return function () {
+                return function (refreshPreview) {
                     cswPrivate.currentStepNo = 6;
                     cswPrivate.toggleButton(cswPrivate.buttons.prev, true);
                     cswPrivate.toggleButton(cswPrivate.buttons.finish, true);
@@ -1009,7 +1042,7 @@
                         disabled: (cswPrivate.viewStack.length === 0),
                         onClick: function () {
                             cswPrivate.View = JSON.parse(cswPrivate.viewStack.splice(cswPrivate.viewStack.length - 1, 1)[0]);
-                            cswPrivate.makeStep6();
+                            cswPrivate.makeStep6(true);
                         }
                     });
                     var previewCell = cswPrivate.step6Tbl.cell(1, 2).css({
@@ -1042,7 +1075,7 @@
                                         },
                                         success: function (removeNodeResponse) {
                                             cswPrivate.View = removeNodeResponse.CurrentView;
-                                            cswPrivate.makeStep6();
+                                            cswPrivate.makeStep6(true);
                                         }
                                     });
                                 }
@@ -1050,7 +1083,7 @@
                         }
                     });
 
-                    cswPrivate.buildPreview(previewDiv, cswPrivate.View);
+                    cswPrivate.buildPreview(previewDiv, cswPrivate.View, null, refreshPreview);
 
                     var onNodeClick = function (arbitraryId) {
                         Csw.ajaxWcf.post({
@@ -1071,7 +1104,7 @@
                                         },
                                         onFilterEdit: function (updatedView) {
                                             cswPrivate.View = updatedView;
-                                            cswPrivate.makeStep6();
+                                            cswPrivate.makeStep6(true);
                                         }
                                     });
                                 } else if (false === Csw.isNullOrEmpty(response.Step6.RelationshipNode)) {
@@ -1087,7 +1120,7 @@
                                         },
                                         onRelationshipEdit: function (updatedView) {
                                             cswPrivate.View = updatedView;
-                                            cswPrivate.makeStep6();
+                                            cswPrivate.makeStep6(true);
                                         },
                                         findViewNodeByArbId: cswPrivate.findViewNodeByArbId
                                     });
@@ -1102,7 +1135,7 @@
                                         },
                                         onFilterAdd: function (updatedView) {
                                             cswPrivate.View = updatedView;
-                                            cswPrivate.makeStep6();
+                                            cswPrivate.makeStep6(true);
                                         }
                                     });
                                 } else if (false == Csw.isNullOrEmpty(response.Step6.RootNode)) {
@@ -1114,7 +1147,7 @@
                                         },
                                         onAddRelationship: function (updatedView) {
                                             cswPrivate.View = updatedView;
-                                            cswPrivate.makeStep6();
+                                            cswPrivate.makeStep6(true);
                                         },
                                         findViewNodeByArbId: cswPrivate.findViewNodeByArbId
                                     });
@@ -1126,67 +1159,96 @@
                 };
             }());
 
-            cswPrivate.buildPreview = function (previewDiv, view, afterRender) {
-                if ('Grid' === view.ViewMode || 'Table' === view.ViewMode) {
-                    Csw.ajaxWcf.post({
-                        urlMethod: 'ViewEditor/GetPreviewGrid',
-                        data: {
-                            CurrentView: view,
-                            CurrentNodeId: Csw.cookie.get(Csw.cookie.cookieNames.CurrentNodeId)
-                        },
-                        success: function (response) {
-                            previewDiv.empty();
-                            var txtDiv = previewDiv.div();
-                            txtDiv.setLabelText('Preview: ', false, false);
-                            previewDiv.br({ number: 2 });
-                            var previewData = JSON.parse(response.Preview);
-                            if (cswPrivate.View.ViewMode === 'Grid' || cswPrivate.View.ViewMode === 'Table') {
-                                if (cswPrivate.previewGrid) {
-                                    cswPrivate.previewGrid.remove(); //if we don't remove, we got wacky column behavior
-                                }
-                                var gridWidth = 700;
-                                //if ("Property" === cswPrivate.View.Visibility) {
-                                //    gridWidth = cswPrivate.View.Width;
-                                //}
-                                cswPrivate.previewGrid = previewDiv.grid({
-                                    name: 'vieweditor_previewgrid',
-                                    storeId: 'vieweditor_store',
-                                    title: '',
-                                    stateId: 'vieweditor_gridstate',
-                                    usePaging: false,
-                                    showActionColumn: false,
-                                    height: 210,
-                                    width: gridWidth,
-                                    fields: previewData.grid.fields,
-                                    columns: previewData.grid.columns,
-                                    data: previewData.grid.data,
-                                    pageSize: previewData.grid.pageSize,
-                                    canSelectRow: false,
-                                    onColumnReorder: cswPrivate.onColumnReorder,
-                                    groupField: previewData.grid.groupfield,
-                                    stateful: false
-                                });
-                                Csw.tryExec(afterRender);
-                            }
+            cswPrivate.buildPreview = function (previewDiv, view, afterRender, forceRefresh) {
+                var renderGrid = function () {
+                    previewDiv.empty();
+                    var txtDiv = previewDiv.div();
+                    txtDiv.setLabelText('Preview: ', false, false);
+                    previewDiv.br({ number: 2 });
+                    if (cswPrivate.View.ViewMode === 'Grid' || cswPrivate.View.ViewMode === 'Table') {
+                        if (cswPrivate.previewGrid) {
+                            cswPrivate.previewGrid.remove(); //if we don't remove, we got wacky column behavior
                         }
-                    });
+                        var gridWidth = 700;
+                        //if ("Property" === cswPrivate.View.Visibility) {
+                        //    gridWidth = cswPrivate.View.Width;
+                        //}
+                        cswPrivate.previewGrid = previewDiv.grid({
+                            name: 'vieweditor_previewgrid',
+                            storeId: 'vieweditor_store',
+                            title: '',
+                            stateId: 'vieweditor_gridstate',
+                            usePaging: false,
+                            showActionColumn: false,
+                            height: 210,
+                            width: gridWidth,
+                            fields: cswPrivate.previewData.grid.fields,
+                            columns: cswPrivate.previewData.grid.columns,
+                            data: cswPrivate.previewData.grid.data,
+                            pageSize: cswPrivate.previewData.grid.pageSize,
+                            canSelectRow: false,
+                            onColumnReorder: cswPrivate.onColumnReorder,
+                            groupField: cswPrivate.previewData.grid.groupfield,
+                            stateful: false
+                        });
+                        Csw.tryExec(afterRender);
+                    }
+                };
+
+                if ('Grid' === view.ViewMode || 'Table' === view.ViewMode) {
+                    if (forceRefresh || !cswPrivate.previewData) {
+                        Csw.ajaxWcf.post({
+                            urlMethod: 'ViewEditor/GetPreviewGrid',
+                            data: {
+                                CurrentView: view,
+                                CurrentNodeId: Csw.cookie.get(Csw.cookie.cookieNames.CurrentNodeId)
+                            },
+                            success: function (response) {
+                                cswPrivate.previewData = JSON.parse(response.Preview);
+                                renderGrid();
+                            }
+                        });
+                    } else {
+                        renderGrid();
+                    }
                 } else if ('Tree' === view.ViewMode || 'List' === view.ViewMode) {
                     previewDiv.empty();
-                    cswPrivate.previewTree = Csw.nbt.nodeTreeExt(previewDiv, {
-                        urlMethod: 'ViewEditor/GetPreviewTree',
-                        initWithView: cswPrivate.View,
-                        showToggleLink: false,
-                        ExpandAll: true,
-                        useHover: false,
-                        height: '250px',
-                        width: 270,
-                        state: {
-                            viewId: cswPrivate.View.ViewId,
-                            viewMode: cswPrivate.View.ViewMode,
-                            includeInQuickLaunch: false,
-                            includeNodeRequired: false
-                        }
-                    });
+                    if (forceRefresh || !cswPrivate.treePreviewData) {
+                        cswPrivate.previewTree = Csw.nbt.nodeTreeExt(previewDiv, {
+                            urlMethod: 'ViewEditor/GetPreviewTree',
+                            initWithView: cswPrivate.View,
+                            showToggleLink: false,
+                            ExpandAll: true,
+                            useHover: false,
+                            height: '250px',
+                            width: 270,
+                            state: {
+                                viewId: cswPrivate.View.ViewId,
+                                viewMode: cswPrivate.View.ViewMode,
+                                includeInQuickLaunch: false,
+                                includeNodeRequired: false
+                            },
+                            onAfterRender: function () {
+                                cswPrivate.treePreviewData = cswPrivate.previewTree.getTreeData();
+                            }
+                        });
+                    } else {
+                        cswPrivate.previewTree = Csw.nbt.nodeTreeExt(previewDiv, {
+                            urlMethod: '',
+                            showToggleLink: false,
+                            ExpandAll: true,
+                            useHover: false,
+                            height: '250px',
+                            width: 270,
+                            state: {
+                                viewId: cswPrivate.View.ViewId,
+                                viewMode: cswPrivate.View.ViewMode,
+                                includeInQuickLaunch: false,
+                                includeNodeRequired: false
+                            }
+                        });
+                        cswPrivate.previewTree.makeTree(Csw.clone(cswPrivate.treePreviewData));
+                    }
                 }
             };
 
@@ -1371,7 +1433,12 @@
                     },
                     onFinish: cswPrivate.finalize,
                     doNextOnInit: false,
+                    onBeforeNext: function (currentStep) {
+                        cswPrivate.previousStep = currentStep;
+                        return true;
+                    },
                     onBeforePrevious: function (currentStep) {
+                        cswPrivate.previousStep = currentStep;
                         var ret = true;
                         if (1 === (currentStep - 1)) {
                             if (confirm("You will lose any changes made to the current view if you continue. Are you sure?")) {

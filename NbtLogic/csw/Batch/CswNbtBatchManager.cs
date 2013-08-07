@@ -59,7 +59,7 @@ namespace ChemSW.Nbt.Batch
 
                     BatchNode.BatchData.Text = BatchData;
                     BatchNode.CreatedDate.DateTimeValue = DateTime.Now;
-                    BatchNode.OpName.Value = BatchOpName.ToString();
+                    BatchNode.OpName.Text = BatchOpName.ToString();
                     if( false == Double.IsNaN( Priority ) )
                     {
                         BatchNode.Priority.Value = Priority;
@@ -92,6 +92,10 @@ namespace ChemSW.Nbt.Batch
                 else if( OpName == CswEnumNbtBatchOpName.MultiEdit )
                 {
                     op = new CswNbtBatchOpMultiEdit( CswNbtResources );
+                }
+                else if( OpName == CswEnumNbtBatchOpName.MultiButtonClick )
+                {
+                    op = new CswNbtBatchOpMultiButtonClick( CswNbtResources );
                 }
                 else if( OpName == CswEnumNbtBatchOpName.InventoryLevel )
                 {

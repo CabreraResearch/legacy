@@ -1,20 +1,18 @@
-﻿using System;
+﻿using ChemSW.Config;
+using ChemSW.Core;
+using ChemSW.DB;
+using ChemSW.Nbt;
+using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.PropTypes;
+using ChemSW.RscAdo;
+using Microsoft.VisualBasic.FileIO;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Drawing;
 using System.Windows.Forms;
-using ChemSW.Config;
-using ChemSW.Core;
-using ChemSW.DB;
-using ChemSW.Nbt;
-using ChemSW.Nbt.Config;
-using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.PropTypes;
-using ChemSW.Nbt.TreeEvents;
-using ChemSW.RscAdo;
-using Microsoft.VisualBasic.FileIO;
 
 namespace ChemSW.NbtSchemaDiff
 {
@@ -138,48 +136,34 @@ namespace ChemSW.NbtSchemaDiff
         private void _InitSessionResources()
         {
 
-            _CswDbCfgInfoNbt = new CswDbCfgInfoNbt( CswEnumSetupMode.NbtExe, IsMobile: false );
-            _CswSetupVblsNbt = new CswSetupVblsNbt( CswEnumSetupMode.NbtExe );
+            _CswDbCfgInfoNbt = new CswDbCfgInfo( CswEnumSetupMode.NbtExe );
+            _CswSetupVblsNbt = new CswSetupVbls( CswEnumSetupMode.NbtExe );
 
             // Left resources
-            //CswNbtObjClassFactory _CswNbtObjClassFactoryLeft = new CswNbtObjClassFactory();
             _CswNbtResourcesLeft = new CswNbtResources( CswEnumAppType.SchemDiff, _CswSetupVblsNbt, _CswDbCfgInfoNbt, //_CswNbtObjClassFactoryLeft, 
                                                        false, false, null );
             _CswNbtResourcesLeft.SetDbResources( CswEnumPooledConnectionState.Closed );
-            //_CswNbtResources.CswTblFactory = new CswNbtTblFactory( _CswNbtResources );
-            //_CswNbtResources.CswTableCaddyFactory = new CswTableCaddyFactoryNbt( _CswNbtResources );
 
             CswNbtMetaDataEvents _CswNbtMetaDataEventsLeft = new CswNbtMetaDataEvents( _CswNbtResourcesLeft );
-            _CswNbtResourcesLeft.OnMakeNewNodeType += new CswNbtResources.NewNodeTypeEventHandler( _CswNbtMetaDataEventsLeft.OnMakeNewNodeType );
-            _CswNbtResourcesLeft.OnCopyNodeType += new CswNbtResources.CopyNodeTypeEventHandler( _CswNbtMetaDataEventsLeft.OnCopyNodeType );
-            _CswNbtResourcesLeft.OnMakeNewNodeTypeProp += new CswNbtResources.NewNodeTypePropEventHandler( _CswNbtMetaDataEventsLeft.OnMakeNewNodeTypeProp );
-            _CswNbtResourcesLeft.OnEditNodeTypePropName += new CswNbtResources.EditPropNameEventHandler( _CswNbtMetaDataEventsLeft.OnEditNodeTypePropName );
-            _CswNbtResourcesLeft.OnDeleteNodeTypeProp += new CswNbtResources.DeletePropEventHandler( _CswNbtMetaDataEventsLeft.OnDeleteNodeTypeProp );
-            _CswNbtResourcesLeft.OnEditNodeTypeName += new CswNbtResources.EditNodeTypeNameEventHandler( _CswNbtMetaDataEventsLeft.OnEditNodeTypeName );
+            _CswNbtResourcesLeft.OnMakeNewNodeType += ( _CswNbtMetaDataEventsLeft.OnMakeNewNodeType );
+            _CswNbtResourcesLeft.OnCopyNodeType += ( _CswNbtMetaDataEventsLeft.OnCopyNodeType );
+            _CswNbtResourcesLeft.OnMakeNewNodeTypeProp += ( _CswNbtMetaDataEventsLeft.OnMakeNewNodeTypeProp );
+            _CswNbtResourcesLeft.OnEditNodeTypePropName += ( _CswNbtMetaDataEventsLeft.OnEditNodeTypePropName );
+            _CswNbtResourcesLeft.OnDeleteNodeTypeProp += ( _CswNbtMetaDataEventsLeft.OnDeleteNodeTypeProp );
+            _CswNbtResourcesLeft.OnEditNodeTypeName += ( _CswNbtMetaDataEventsLeft.OnEditNodeTypeName );
 
             // Right resources
-            //CswNbtObjClassFactory _CswNbtObjClassFactoryRight = new CswNbtObjClassFactory();
             _CswNbtResourcesRight = new CswNbtResources( CswEnumAppType.SchemDiff, _CswSetupVblsNbt, _CswDbCfgInfoNbt, //_CswNbtObjClassFactoryRight, 
                                                          false, false, null );
             _CswNbtResourcesRight.SetDbResources( CswEnumPooledConnectionState.Closed );
-            //_CswNbtResources.CswTblFactory = new CswNbtTblFactory( _CswNbtResources );
-            //_CswNbtResources.CswTableCaddyFactory = new CswTableCaddyFactoryNbt( _CswNbtResources );
 
             CswNbtMetaDataEvents _CswNbtMetaDataEventsRight = new CswNbtMetaDataEvents( _CswNbtResourcesRight );
-            _CswNbtResourcesRight.OnMakeNewNodeType += new CswNbtResources.NewNodeTypeEventHandler( _CswNbtMetaDataEventsRight.OnMakeNewNodeType );
-            _CswNbtResourcesRight.OnCopyNodeType += new CswNbtResources.CopyNodeTypeEventHandler( _CswNbtMetaDataEventsRight.OnCopyNodeType );
-            _CswNbtResourcesRight.OnMakeNewNodeTypeProp += new CswNbtResources.NewNodeTypePropEventHandler( _CswNbtMetaDataEventsRight.OnMakeNewNodeTypeProp );
-            _CswNbtResourcesRight.OnEditNodeTypePropName += new CswNbtResources.EditPropNameEventHandler( _CswNbtMetaDataEventsRight.OnEditNodeTypePropName );
-            _CswNbtResourcesRight.OnDeleteNodeTypeProp += new CswNbtResources.DeletePropEventHandler( _CswNbtMetaDataEventsRight.OnDeleteNodeTypeProp );
-            _CswNbtResourcesRight.OnEditNodeTypeName += new CswNbtResources.EditNodeTypeNameEventHandler( _CswNbtMetaDataEventsRight.OnEditNodeTypeName );
-
-            //_CswNbtResources.InitDbResources();
-
-            //_CswLogger = _CswNbtResources.CswLogger;
-
-            //_CswNbtResources.CurrentUser = new CswNbtSchemaUpdaterUser();
-
-
+            _CswNbtResourcesRight.OnMakeNewNodeType += ( _CswNbtMetaDataEventsRight.OnMakeNewNodeType );
+            _CswNbtResourcesRight.OnCopyNodeType += ( _CswNbtMetaDataEventsRight.OnCopyNodeType );
+            _CswNbtResourcesRight.OnMakeNewNodeTypeProp += ( _CswNbtMetaDataEventsRight.OnMakeNewNodeTypeProp );
+            _CswNbtResourcesRight.OnEditNodeTypePropName += ( _CswNbtMetaDataEventsRight.OnEditNodeTypePropName );
+            _CswNbtResourcesRight.OnDeleteNodeTypeProp += ( _CswNbtMetaDataEventsRight.OnDeleteNodeTypeProp );
+            _CswNbtResourcesRight.OnEditNodeTypeName += ( _CswNbtMetaDataEventsRight.OnEditNodeTypeName );
         }//_InitSessionResources()
 
         private void CompareButton_Click( object sender, EventArgs e )
@@ -193,7 +177,6 @@ namespace ChemSW.NbtSchemaDiff
 
                 // get all nodes
                 _CswNbtResourcesLeft.AccessId = _LeftAccessId;
-                //                _CswNbtResourcesLeft.refreshDataDictionary();
                 _CswNbtResourcesLeft.MetaData.refreshAll();
                 CswTableSelect LeftNodesSelect = _CswNbtResourcesLeft.makeCswTableSelect( "NbtSchemaDiff_Left_nodes_select", "nodes" );
                 DataTable LeftNodesTable = LeftNodesSelect.getTable();
@@ -206,7 +189,6 @@ namespace ChemSW.NbtSchemaDiff
                 }
 
                 _CswNbtResourcesRight.AccessId = _RightAccessId;
-                //                _CswNbtResourcesRight.refreshDataDictionary();
                 _CswNbtResourcesRight.MetaData.refreshAll();
                 CswTableSelect RightNodesSelect = _CswNbtResourcesRight.makeCswTableSelect( "NbtSchemaDiff_Right_nodes_select", "nodes" );
                 DataTable RightNodesTable = RightNodesSelect.getTable();

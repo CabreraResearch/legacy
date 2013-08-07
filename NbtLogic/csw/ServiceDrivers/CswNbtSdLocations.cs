@@ -1,19 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using ChemSW.Core;
+using ChemSW.DB;
+using ChemSW.Exceptions;
+using ChemSW.Nbt.Actions;
+using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.PropTypes;
+using System;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
 using System.Runtime.Serialization;
-using ChemSW.Core;
-using ChemSW.DB;
-using ChemSW.Exceptions;
-using ChemSW.Mail;
-using ChemSW.Nbt.Actions;
-using ChemSW.Nbt.PropTypes;
-using ChemSW.Nbt.Conversion;
-using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.ObjClasses;
-using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.ServiceDrivers
 {
@@ -31,6 +26,8 @@ namespace ChemSW.Nbt.ServiceDrivers
         {
             CswNbtViewRelationship LocationRel = null;
             CswArbitrarySelect LocationSelect = _CswNbtResources.makeCswArbitrarySelect( "populateLocations_select", LocationSql );
+            LocationSelect.addParameter("startlocationid", StartLocationId.PrimaryKey.ToString() );
+
             DataTable LocationTable = null;
             try
             {
@@ -73,8 +70,8 @@ namespace ChemSW.Nbt.ServiceDrivers
                                       join field_types ft on ntp.fieldtypeid=ft.fieldtypeid
                                       where oc.objectclass='LocationClass' 
                                             and ft.fieldtype='Location'  
-                                            and n.nodeid != " + StartLocationId.PrimaryKey + " " +
-                                     " start with jnp.nodeid = " + StartLocationId.PrimaryKey + " " +
+                                            and n.nodeid != :startlocationid " +
+                                     " start with jnp.nodeid = :startlocationid " +
                                      " connect by n.nodeid = prior jnp.field1_fk )";
                 LocationRel = getLocationRelationship( LocationSql, LocationsView, StartLocationId );
             }
@@ -95,7 +92,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                                       join field_types ft on ntp.fieldtypeid=ft.fieldtypeid
                                       where oc.objectclass='LocationClass' 
                                             and ft.fieldtype='Location'  
-                                      start with n.nodeid = " + StartLocationId.PrimaryKey + " " +
+                                      start with n.nodeid = :startlocationid " +
                                      " connect by jnp.field1_fk = prior n.nodeid )";
                 LocationRel = getLocationRelationship( LocationSql, LocationsView, StartLocationId );
             }

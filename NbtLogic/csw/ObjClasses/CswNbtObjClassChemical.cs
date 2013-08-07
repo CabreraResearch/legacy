@@ -1,11 +1,9 @@
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
 using ChemSW.Core;
 using ChemSW.DB;
-using ChemSW.Nbt.Batch;
 using ChemSW.Nbt.ChemCatCentral;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
@@ -16,7 +14,7 @@ using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassChemical : CswNbtPropertySetMaterial
+    public class CswNbtObjClassChemical: CswNbtPropertySetMaterial
     {
         #region Base
 
@@ -50,7 +48,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Enums
 
-        public new sealed class PropertyName : CswNbtPropertySetMaterial.PropertyName
+        public new sealed class PropertyName: CswNbtPropertySetMaterial.PropertyName
         {
             public const string PhysicalState = "Physical State";
             public const string SpecificGravity = "Specific Gravity";
@@ -232,6 +230,16 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void onPropertySetAddDefaultViewFilters( CswNbtViewRelationship ParentRelationship ) { }
 
+        /// <summary>
+        /// This method is called when the UpdtPropVals Schedule Rule is run.
+        /// </summary>
+        public override void onUpdatePropertyValue()
+        {
+            RefreshRegulatoryListMembers();
+            syncFireDbData();
+            syncPCIDData();
+        }
+
         #endregion Inherited Events
 
         #region Custom Logic
@@ -278,35 +286,6 @@ namespace ChemSW.Nbt.ObjClasses
             return DefaultExpDate;
         }
 
-        //private void _updateRegulatoryLists()
-        //{
-        //RegulatoryLists.StaticText = "";
-
-        //if( false == String.IsNullOrEmpty( CasNo.Text ) ) //if the CASNo is empty we don't both matching
-        //{
-        //    CswNbtMetaDataObjectClass regListOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RegulatoryListClass );
-        //    CswNbtMetaDataObjectClassProp casNosOCP = regListOC.getObjectClassProp( CswNbtObjClassRegulatoryList.PropertyName.CASNumbers );
-
-        //    CswNbtView matchingRegLists = new CswNbtView( _CswNbtResources );
-        //    CswNbtViewRelationship parent = matchingRegLists.AddViewRelationship( regListOC, true );
-        //    matchingRegLists.AddViewPropertyAndFilter( parent, casNosOCP,
-        //        Value: CasNo.Text,
-        //        FilterMode: CswEnumNbtFilterMode.Contains );
-
-        //    ICswNbtTree tree = _CswNbtResources.Trees.getTreeFromView( matchingRegLists, true, false, false );
-        //    int childCount = tree.getChildNodeCount();
-
-        //    CswCommaDelimitedString regLists = new CswCommaDelimitedString();
-        //    for( int i = 0; i < childCount; i++ )
-        //    {
-        //        tree.goToNthChild( i );
-        //        regLists.Add( tree.getNodeNameForCurrentPosition() );
-        //        tree.goToParentNode();
-        //    }
-        //    RegulatoryLists.StaticText = regLists.ToString();
-        //}
-        //}
-
         /// <summary>
         /// Gets all the node ids of materials that use this material as a component
         /// </summary>
@@ -320,9 +299,9 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtView componentsView = new CswNbtView( _CswNbtResources );
             CswNbtViewRelationship parent = componentsView.AddViewRelationship( materialComponentOC, false );
             componentsView.AddViewPropertyAndFilter( parent, constituentOCP,
-                Value: NodeId.PrimaryKey.ToString(),
-                FilterMode: CswEnumNbtFilterMode.Equals,
-                SubFieldName: CswEnumNbtSubFieldName.NodeID );
+                Value : NodeId.PrimaryKey.ToString(),
+                FilterMode : CswEnumNbtFilterMode.Equals,
+                SubFieldName : CswEnumNbtSubFieldName.NodeID );
             componentsView.AddViewRelationship( parent, CswEnumNbtViewPropOwnerType.First, mixtureOCP, false );
 
             ICswNbtTree componentsTree = _CswNbtResources.Trees.getTreeFromView( componentsView, false, false, false );
@@ -364,7 +343,7 @@ namespace ChemSW.Nbt.ObjClasses
                     CswNbtView assignedSDSDocsView = CswNbtObjClassSDSDocument.getAssignedSDSDocumentsView( _CswNbtResources, NodeId );
                     if( null != assignedSDSDocsView )
                     {
-                        ButtonData.Data["viewid"] = assignedSDSDocsView.SessionViewId.ToString();
+                        ButtonData.Data["viewid"] = assignedSDSDocsView.ViewId.ToString();
                         ButtonData.Data["title"] = assignedSDSDocsView.ViewName;
                         ButtonData.Data["nodeid"] = NodeId.ToString();
                         ButtonData.Data["nodetypeid"] = NodeTypeId.ToString();
@@ -422,9 +401,6 @@ namespace ChemSW.Nbt.ObjClasses
 
                         // Set the value of the property to the new list
                         this.HazardClasses.Value = UpdatedHazardClasses;
-
-                        // Set the C3SyncDate property
-                        this.C3SyncDate.DateTimeValue = DateTime.Now;
                     }
                 }
             }
@@ -605,9 +581,6 @@ namespace ChemSW.Nbt.ObjClasses
 
                         }//foreach( CswC3ExtChemData.PCID.AdditionalProperty Property in C3ExtChemData.ExtensionData1.PcidData.AdditionalProperties )
 
-                        // Set the C3SyncDate property
-                        this.C3SyncDate.DateTimeValue = DateTime.Now;
-
                     }//if( SearchResults.ExtChemDataResults.Length > 0 )
 
                 }//if( null != SearchResults.ExtChemDataResults )
@@ -745,13 +718,13 @@ namespace ChemSW.Nbt.ObjClasses
             //CswNbtViewRelationship CompRel = View.AddViewRelationship( ChemRel, CswEnumNbtViewPropOwnerType.Second, ComponentOC.getObjectClassProp( CswNbtObjClassMaterialComponent.PropertyName.Mixture ), false );
             CswNbtViewRelationship CompRel = View.AddViewRelationship( ComponentOC, false );
             View.AddViewPropertyAndFilter( CompRel, ComponentMixtureOCP,
-                                                    SubFieldName: CswEnumNbtSubFieldName.NodeID,
-                                                    FilterMode: CswEnumNbtFilterMode.Equals,
-                                                    Value: this.NodeId.PrimaryKey.ToString() );
+                                                    SubFieldName : CswEnumNbtSubFieldName.NodeID,
+                                                    FilterMode : CswEnumNbtFilterMode.Equals,
+                                                    Value : this.NodeId.PrimaryKey.ToString() );
             CswNbtViewRelationship ConstRel = View.AddViewRelationship( CompRel, CswEnumNbtViewPropOwnerType.First, ComponentConstituentOCP, false );
             View.AddViewProperty( ConstRel, ChemicalCasNoOCP );
 
-            ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, RequireViewPermissions: false, IncludeSystemNodes: true, IncludeHiddenNodes: true );
+            ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, RequireViewPermissions : false, IncludeSystemNodes : true, IncludeHiddenNodes : true );
             //for( Int32 i = 0; i < Tree.getChildNodeCount(); i++ ) // Chemical
             //{
             //    Tree.goToNthChild( i );
@@ -799,12 +772,12 @@ namespace ChemSW.Nbt.ObjClasses
             //CswNbtViewRelationship CompRel = View.AddViewRelationship( ConstRel, CswEnumNbtViewPropOwnerType.Second, ComponentOC.getObjectClassProp( CswNbtObjClassMaterialComponent.PropertyName.Constituent ), false );
             CswNbtViewRelationship CompRel = View.AddViewRelationship( ComponentOC, false );
             View.AddViewPropertyAndFilter( CompRel, ComponentConstituentOCP,
-                                                    SubFieldName: CswEnumNbtSubFieldName.NodeID,
-                                                    FilterMode: CswEnumNbtFilterMode.Equals,
-                                                    Value: this.NodeId.PrimaryKey.ToString() );
+                                                    SubFieldName : CswEnumNbtSubFieldName.NodeID,
+                                                    FilterMode : CswEnumNbtFilterMode.Equals,
+                                                    Value : this.NodeId.PrimaryKey.ToString() );
             CswNbtViewRelationship ChemRel = View.AddViewRelationship( CompRel, CswEnumNbtViewPropOwnerType.First, ComponentMixtureOCP, false );
 
-            ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, RequireViewPermissions: false, IncludeSystemNodes: true, IncludeHiddenNodes: true );
+            ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, RequireViewPermissions : false, IncludeSystemNodes : true, IncludeHiddenNodes : true );
             //for( Int32 i = 0; i < Tree.getChildNodeCount(); i++ ) // Constituent
             //{
             //    Tree.goToNthChild( i );
@@ -858,15 +831,15 @@ namespace ChemSW.Nbt.ObjClasses
                     CswNbtViewRelationship MemberRel = MemberView.AddViewRelationship( RegListMemberOC, false );
                     MemberView.AddViewProperty( MemberRel, MemberByUserOCP, 1 );
                     MemberView.AddViewPropertyAndFilter( MemberRel, MemberChemicalOCP,
-                                                         SubFieldName: CswEnumNbtSubFieldName.NodeID,
-                                                         FilterMode: CswEnumNbtFilterMode.Equals,
-                                                         Value: this.NodeId.PrimaryKey.ToString(),
-                                                         ShowInGrid: false );
+                                                         SubFieldName : CswEnumNbtSubFieldName.NodeID,
+                                                         FilterMode : CswEnumNbtFilterMode.Equals,
+                                                         Value : this.NodeId.PrimaryKey.ToString(),
+                                                         ShowInGrid : false );
                     CswNbtViewRelationship RegListRel = MemberView.AddViewRelationship( MemberRel, CswEnumNbtViewPropOwnerType.First, RegListMemberOC.getObjectClassProp( CswNbtObjClassRegulatoryListMember.PropertyName.RegulatoryList ), false );
                     MemberView.AddViewProperty( RegListRel, RegListNameOCP );
 
 
-                    ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( MemberView, RequireViewPermissions: false, IncludeSystemNodes: true, IncludeHiddenNodes: true );
+                    ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( MemberView, RequireViewPermissions : false, IncludeSystemNodes : true, IncludeHiddenNodes : true );
                     //for( Int32 i = 0; i < Tree.getChildNodeCount(); i++ ) // Chemical
                     //{
                     //    Tree.goToNthChild( i );

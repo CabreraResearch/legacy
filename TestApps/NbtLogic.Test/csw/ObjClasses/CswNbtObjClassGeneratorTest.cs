@@ -154,8 +154,37 @@ namespace ChemSW.Nbt.Test.ObjClasses
                 WarningDays: 0,
                 StartDate: StartDate );
             CswNbtObjClassGenerator ExistingGen = TestData.CswNbtResources.Nodes[GeneratorNode.NodeId];
-            Assert.IsTrue( ExistingGen.NextDueDate.DateTimeValue > StartDate,
+            Assert.IsTrue( ExistingGen.NextDueDate.DateTimeValue >= StartDate,
                 "NextDueDate (" + ExistingGen.NextDueDate.DateTimeValue.ToShortDateString() + ") is not greater than StartDate (" + StartDate.ToShortDateString() + ")." );
+        }
+
+        /// <summary>
+        /// Given a weekly generator with a warning days of 5 whose StartDate is in the future,
+        /// given that today is within the WarningDays limit of the initial NextDueDate,
+        /// when the generator's NextDueDate is updated,
+        /// assert that the NextDueDate is set to one week after the previous NextDueDate
+        /// </summary>
+        [Test]
+        public void updateNextDueDateTest_NextDueDateEqualsStartDate()
+        {
+            DayOfWeek ThreeDaysFromNow = DateTime.Today.AddDays( 3 ).DayOfWeek;
+            CswNbtObjClassGenerator GeneratorNode = TestData.Nodes.createGeneratorNode( CswEnumRateIntervalType.WeeklyByDay, Days: new SortedList { { ThreeDaysFromNow, ThreeDaysFromNow } }, StartDate: DateTime.Today.AddDays( 3 ), WarningDays: 5 );
+            Assert.AreEqual( GeneratorNode.DueDateInterval.getStartDate(), GeneratorNode.NextDueDate.DateTimeValue );
+            CswNbtObjClassGenerator ExistingGen = TestData.CswNbtResources.Nodes[GeneratorNode.NodeId];
+            ExistingGen.updateNextDueDate( ForceUpdate: true, DeleteFutureNodes: false );
+            Assert.AreEqual( DateTime.Today.AddDays( 10 ), ExistingGen.NextDueDate.DateTimeValue );
+        }
+
+        /// <summary>
+        /// Given a weekly generator whose StartDate is today,
+        /// assert that the NextDueDate is set to one week from today
+        /// </summary>
+        [Test]
+        public void updateNextDueDateTest_AWeekFromToday()
+        {
+            DayOfWeek Today = DateTime.Today.DayOfWeek;
+            CswNbtObjClassGenerator GeneratorNode = TestData.Nodes.createGeneratorNode( CswEnumRateIntervalType.WeeklyByDay, Days: new SortedList { { Today, Today } }, StartDate: DateTime.Today );
+            Assert.AreEqual( DateTime.Today.AddDays( 7 ), GeneratorNode.NextDueDate.DateTimeValue );
         }
 
         #endregion updateNextDueDate

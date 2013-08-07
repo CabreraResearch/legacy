@@ -94,7 +94,7 @@ namespace ChemSW.Nbt
         {
             Int32 ItemId = CswConvert.ToInt32( Row[SessionDataColumn_PrimaryKey] );
 
-            CswEnumNbtSessionDataType SessionType = (CswEnumNbtSessionDataType) Enum.Parse( typeof( CswEnumNbtSessionDataType ), Row[SessionDataColumn_SessionDataType].ToString() );
+            CswEnumNbtSessionDataType SessionType = CswConvert.ToString( Row[SessionDataColumn_SessionDataType] );
             string Name = Row[SessionDataColumn_Name].ToString();
             CswNbtSessionDataId SessionDataId = new CswNbtSessionDataId( ItemId );
 
@@ -124,7 +124,7 @@ namespace ChemSW.Nbt
                 itemid = SessionDataId.ToString(),
                 iconurl = "Images/view/view" + ViewMode.ToString().ToLower() + ".gif",
                 mode = ViewMode
-            });
+            } );
         }
 
         private void _addQuickLaunchAction( ViewSelect.Response.Category Category, string Text, CswNbtSessionDataId SessionDataId, CswNbtAction Action )
@@ -314,7 +314,9 @@ namespace ChemSW.Nbt
                     }//there are session records
 
                     CswArbitrarySelect SessionNodeSelect = _CswNbtResources.makeCswArbitrarySelect( "removeSessionData_update_nodes",
-                                                                                                    "select nodeid from nodes where istemp = 1 and sessionid = '" + SessionId + "'" );
+                                                                                                    "select nodeid from nodes where istemp = 1 and sessionid = :sessionid " );
+                    SessionNodeSelect.addParameter( "sessionid", SessionId );
+
                     DataTable NodesTable = SessionNodeSelect.getTable();
                     if( NodesTable.Rows.Count > 0 )
                     {
@@ -334,11 +336,11 @@ namespace ChemSW.Nbt
 
                         foreach( CswNbtNode DoomedNode in DoomedNodes )
                         {
-                            DoomedNode.delete( DeleteAllRequiredRelatedNodes: true, OverridePermissions: true );
+                            DoomedNode.delete( DeleteAllRequiredRelatedNodes : true, OverridePermissions : true );
                         }
 
                     }//there are nodes rows
-                
+
                 }//Db resources are initialzied
 
             }//SessionId is not empty

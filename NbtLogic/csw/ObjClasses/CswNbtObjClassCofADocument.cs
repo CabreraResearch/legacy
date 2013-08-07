@@ -5,13 +5,13 @@ using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassCofADocument : CswNbtPropertySetDocument
+    public class CswNbtObjClassCofADocument: CswNbtPropertySetDocument
     {
         #region Enums
         /// <summary>
         /// Object Class Property Names
         /// </summary>
-        public new sealed class PropertyName : CswNbtPropertySetDocument.PropertyName
+        public new sealed class PropertyName: CswNbtPropertySetDocument.PropertyName
         {
             /// <summary>
             /// Revision Date of the document.
@@ -63,7 +63,10 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public override void beforePropertySetWriteNode( bool IsCopy, bool OverrideUniqueValidation ) { }
+        public override void beforePropertySetWriteNode( bool IsCopy, bool OverrideUniqueValidation )
+        {
+            this.MakeFilePropReadonly();
+        }
 
         public override void afterPropertySetWriteNode() { }
 
@@ -92,7 +95,7 @@ namespace ChemSW.Nbt.ObjClasses
                     CswNbtView ExistingDocsView = new CswNbtView( _CswNbtResources );
                     CswNbtViewRelationship DocumentVr = ExistingDocsView.AddViewRelationship( NodeType, false );
                     ExistingDocsView.AddViewPropertyAndFilter( DocumentVr, Owner.NodeTypeProp, OwnerNode.NodeId.PrimaryKey.ToString(), CswEnumNbtSubFieldName.NodeID );
-                    ExistingDocsView.AddViewPropertyAndFilter( DocumentVr, Archived.NodeTypeProp, CswEnumTristate.True.ToString(), FilterMode: CswEnumNbtFilterMode.NotEquals );
+                    ExistingDocsView.AddViewPropertyAndFilter( DocumentVr, Archived.NodeTypeProp, CswEnumTristate.True.ToString(), FilterMode : CswEnumNbtFilterMode.NotEquals );
 
                     ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( ExistingDocsView, true, false, false );
                     Int32 DocCount = Tree.getChildNodeCount();
@@ -183,14 +186,13 @@ namespace ChemSW.Nbt.ObjClasses
             if( false == IncludeArchivedDocs )
             {
                 AssignedCofAView.AddViewPropertyAndFilter( DocRel, ArchivedOCP, CswEnumTristate.False.ToString(),
-                                                            FilterMode: CswEnumNbtFilterMode.Equals,
-                                                            ShowAtRuntime: true,
-                                                            ShowInGrid: false );
+                                                            FilterMode : CswEnumNbtFilterMode.Equals,
+                                                            ShowAtRuntime : true,
+                                                            ShowInGrid : false );
             }
             AssignedCofAView.AddViewProperty( DocRel, RevisionDateOCP, 1 );
             AssignedCofAView.AddViewProperty( DocRel, FileOCP, 2 );
             AssignedCofAView.AddViewProperty( DocRel, LinkOCP, 3 );
-            AssignedCofAView.SaveToCache( false );
 
             return AssignedCofAView;
         }

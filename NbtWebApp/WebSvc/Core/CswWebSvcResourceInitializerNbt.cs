@@ -2,18 +2,23 @@ using System.Web;
 using ChemSW.Config;
 using ChemSW.Core;
 using ChemSW.Nbt;
+using ChemSW.Nbt.Actions;
 using ChemSW.Security;
-using ChemSW.Session;
 
 namespace ChemSW.WebSvc
 {
-    public class CswWebSvcResourceInitializerNbt : ICswWebSvcResourceInitializer
+    public class CswWebSvcResourceInitializerNbt: ICswWebSvcResourceInitializer
     {
         private CswTimer _Timer = new CswTimer();
-        private HttpContext _HttpContext = null;
         private CswWebSvcSessionAuthenticateData.Authentication.Request _AuthenticationRequest;
         private delegate void _OnDeInitDelegate();
         private _OnDeInitDelegate _OnDeInit;
+
+        public HttpContext _HttpContext = null;
+        public HttpContext HttpContext
+        {
+            get { return _HttpContext; }
+        }
 
         private void _setHttpContextOnRequest()
         {
@@ -70,6 +75,49 @@ namespace ChemSW.WebSvc
             else
             {
                 Ret = _CswSessionResourcesNbt.attemptRefresh();
+            }
+
+            //Set audit context
+            if( Ret == CswEnumAuthenticationStatus.Authenticated && null != _HttpContext.Request.Cookies )
+            {
+                string ContextViewId = string.Empty;
+                string ContextActionName = string.Empty;
+                
+                if( null != _HttpContext.Request.Cookies["csw_currentviewid"] )
+                {
+                    ContextViewId = _HttpContext.Request.Cookies["csw_currentviewid"].Value;
+                }
+                if( null != _HttpContext.Request.Cookies["csw_currentactionname"] )
+                {
+                    ContextActionName = _HttpContext.Request.Cookies["csw_currentactionname"].Value;
+                }
+
+                if( string.Empty != ContextViewId )
+                {
+                    CswNbtView ContextView = null;
+                    if( CswNbtViewId.isViewIdString( ContextViewId ) )
+                    {
+                        CswNbtViewId realViewid = new CswNbtViewId( ContextViewId );
+                        ContextView = _CswNbtResources.ViewSelect.restoreView( realViewid );
+                    }
+                    else if( CswNbtSessionDataId.isSessionDataIdString( ContextViewId ) )
+                    {
+                        CswNbtSessionDataId SessionViewid = new CswNbtSessionDataId( ContextViewId );
+                        ContextView = _CswNbtResources.ViewSelect.getSessionView( SessionViewid );
+                    }
+                    if( null != ContextView )
+                    {
+                        _CswNbtResources.AuditContext = ContextView.ViewName + " (" + ContextView.ViewId.ToString() + ")";
+                    }
+                }
+                else if( string.Empty != ContextActionName )
+                {
+                    CswNbtAction ContextAction = _CswNbtResources.Actions[CswNbtAction.ActionNameStringToEnum( ContextActionName )];
+                    if( null != ContextAction )
+                    {
+                        _CswNbtResources.AuditContext = CswNbtAction.ActionNameEnumToString( ContextAction.Name ) + " (Action_" + ContextAction.ActionId.ToString() + ")";
+                    }
+                }
             }
 
             _CswNbtResources.ServerInitTime = _Timer.ElapsedDurationInMilliseconds;
