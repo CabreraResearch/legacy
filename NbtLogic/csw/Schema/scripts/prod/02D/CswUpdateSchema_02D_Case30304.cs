@@ -25,7 +25,8 @@ namespace ChemSW.Nbt.Schema
         {
             // Set field2 = field1 on any existing List values
             CswTableUpdate JctUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "30304_jct_update", "jct_nodes_props" );
-            DataTable JctTable = JctUpdate.getTable( new CswCommaDelimitedString() {"jctnodepropid", "nodetypepropid", "field1", "field2"},
+            {
+                DataTable JctTable = JctUpdate.getTable( new CswCommaDelimitedString() { "jctnodepropid", "nodetypepropid", "field1", "field2" },
                                                      "",
                                                      Int32.MinValue,
                                                      @"where field1 is not null 
@@ -36,11 +37,32 @@ namespace ChemSW.Nbt.Schema
                                                                                                          from field_types 
                                                                                                         where fieldtype = 'List'))",
                                                      false );
-            foreach( DataRow Row in JctTable.Rows )
-            {
-                Row["field2"] = Row["field1"];
+                foreach( DataRow Row in JctTable.Rows )
+                {
+                    Row["field2"] = Row["field1"];
+                }
+                JctUpdate.update( JctTable );
             }
-            JctUpdate.update( JctTable );
+
+            {
+                // Don't forget the object class prop default values
+                DataTable JctTable2 = JctUpdate.getTable( new CswCommaDelimitedString() { "jctnodepropid", "nodetypepropid", "objectclasspropid", "field1", "field2" },
+                                                          "",
+                                                          Int32.MinValue,
+                                                          @"where field1 is not null 
+                                                         and field2 is null 
+                                                         and objectclasspropid in (select objectclasspropid
+                                                                                  from object_class_props
+                                                                                 where fieldtypeid in (select fieldtypeid 
+                                                                                                         from field_types 
+                                                                                                        where fieldtype = 'List'))",
+                                                          false );
+                foreach( DataRow Row2 in JctTable2.Rows )
+                {
+                    Row2["field2"] = Row2["field1"];
+                }
+                JctUpdate.update( JctTable2 );
+            }
         } // update()
 
     }
