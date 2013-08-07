@@ -2,6 +2,7 @@
 using System.Data;
 using ChemSW.Core;
 using ChemSW.DB;
+using ChemSW.Nbt.ImportExport;
 using ChemSW.Nbt.csw.Dev;
 
 namespace ChemSW.Nbt.Schema
@@ -37,9 +38,9 @@ namespace ChemSW.Nbt.Schema
             _importDefinitionUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "30040_import_def_update", "import_definitions" );
             _importDefinitionTable = _importDefinitionUpdate.getEmptyTable();
             DataRow defrow = _importDefinitionTable.NewRow();
-            defrow["definitionname"] = "IMCS";
+            defrow[CswNbt2DImportTables.ImportDefinitions.definitionname] = "IMCS";
             _importDefinitionTable.Rows.Add( defrow );
-            _importDefId = CswConvert.ToInt32( defrow["importdefinitionid"] );
+            _importDefId = CswConvert.ToInt32( defrow[CswNbt2DImportTables.ImportDefinitions.PkColumnName] );
 
             // Set up other import tables
             _importOrderUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "30040_import_order_update", "import_order" );
@@ -539,11 +540,11 @@ namespace ChemSW.Nbt.Schema
             if( false == string.IsNullOrEmpty( NodeTypeName ) )
             {
                 DataRow row = _importOrderTable.NewRow();
-                row["importdefinitionid"] = _importDefId;
-                row["importorder"] = Order;
-                row["sourcesheetname"] = SheetName;
-                row["nodetypename"] = NodeTypeName;
-                row["instance"] = CswConvert.ToDbVal( Instance );
+                row[CswNbt2DImportTables.ImportOrder.importdefinitionid] = _importDefId;
+                row[CswNbt2DImportTables.ImportOrder.importorder] = Order;
+                row[CswNbt2DImportTables.ImportOrder.sourcesheetname] = SheetName;
+                row[CswNbt2DImportTables.ImportOrder.nodetypename] = NodeTypeName;
+                row[CswNbt2DImportTables.ImportOrder.instance] = CswConvert.ToDbVal( Instance );
                 _importOrderTable.Rows.Add( row );
             }
         } // _importOrder()
@@ -553,24 +554,24 @@ namespace ChemSW.Nbt.Schema
             if( false == string.IsNullOrEmpty( DestNodeTypeName ) )
             {
                 DataRow row = _importBindingsTable.NewRow();
-                row["importdefinitionid"] = _importDefId;
-                row["sourcesheetname"] = SheetName;
-                row["sourcecolumnname"] = SourceColumnName;
-                row["destnodetypename"] = DestNodeTypeName;
-                row["destpropname"] = DestPropertyName;
-                row["destsubfield"] = DestSubFieldName;
-                row["instance"] = CswConvert.ToDbVal( Instance );
+                row[CswNbt2DImportTables.ImportBindings.importdefinitionid] = _importDefId;
+                row[CswNbt2DImportTables.ImportBindings.sourcesheetname] = SheetName;
+                row[CswNbt2DImportTables.ImportBindings.sourcecolumnname] = SourceColumnName;
+                row[CswNbt2DImportTables.ImportBindings.destnodetypename] = DestNodeTypeName;
+                row[CswNbt2DImportTables.ImportBindings.destpropname] = DestPropertyName;
+                row[CswNbt2DImportTables.ImportBindings.destsubfield] = DestSubFieldName;
+                row[CswNbt2DImportTables.ImportBindings.instance] = CswConvert.ToDbVal( Instance );
                 _importBindingsTable.Rows.Add( row );
             }
         } // _importBinding()
         private void _importRelationship( string SheetName, string NodetypeName, string RelationshipPropName, Int32 Instance = Int32.MinValue )
         {
             DataRow row = _importRelationshipsTable.NewRow();
-            row["importdefinitionid"] = _importDefId;
-            row["sourcesheetname"] = SheetName;
-            row["nodetypename"] = NodetypeName;
-            row["relationship"] = RelationshipPropName;
-            row["instance"] = CswConvert.ToDbVal( Instance );
+            row[CswNbt2DImportTables.ImportRelationships.importdefinitionid] = _importDefId;
+            row[CswNbt2DImportTables.ImportRelationships.sourcesheetname] = SheetName;
+            row[CswNbt2DImportTables.ImportRelationships.nodetypename] = NodetypeName;
+            row[CswNbt2DImportTables.ImportRelationships.relationship] = RelationshipPropName;
+            row[CswNbt2DImportTables.ImportRelationships.instance] = CswConvert.ToDbVal( Instance );
             _importRelationshipsTable.Rows.Add( row );
         } // _importRelationship()
 
