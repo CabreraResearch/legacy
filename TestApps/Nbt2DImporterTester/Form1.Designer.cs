@@ -80,7 +80,7 @@
             this.txtDataFilePath.Name = "txtDataFilePath";
             this.txtDataFilePath.Size = new System.Drawing.Size(384, 20);
             this.txtDataFilePath.TabIndex = 3;
-            this.txtDataFilePath.Text = "Z:\\Downloads\\aaVMWARE\\cispro_test_import_dev2short.xlsx";
+            this.txtDataFilePath.Text = "Z:\\Downloads\\aaVMWARE\\cispro_test_import_dev2shortB.xlsx";
             // 
             // txtBindingsFilePath
             // 

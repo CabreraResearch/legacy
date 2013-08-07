@@ -522,7 +522,7 @@ namespace ChemSW.Nbt.ImportExport
 
                                                     TargetOrder = BindingDef.ImportOrder.Values.FirstOrDefault( o => RowRelationship.Relationship.FkMatches( o.NodeType ) && o.Instance == RowRelationship.Instance );
 
-                                                    if( null != TargetOrder && null != ImportRow[TargetOrder.PkColName] )
+                                                    if( null != TargetOrder && null != ImportRow[TargetOrder.PkColName] && CswConvert.ToInt32( ImportRow[TargetOrder.PkColName] ) > 0 )
                                                     {
                                                         Node.Properties[RowRelationship.Relationship].SetPropRowValue(
                                                             RowRelationship.Relationship.getFieldTypeRule().SubFields[CswEnumNbtSubFieldName.NodeID].Column,
