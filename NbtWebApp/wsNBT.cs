@@ -1,3 +1,13 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Data;
+using System.IO;
+using System.IO.Compression;
+using System.Linq;
+using System.Web;
+using System.Web.Script.Services;   // supports ScriptService attribute
+using System.Web.Services;
 using ChemSW.Config;
 using ChemSW.Core;
 using ChemSW.DB;
@@ -16,16 +26,6 @@ using ChemSW.Security;
 using ChemSW.Session;
 using ChemSW.WebSvc;
 using Newtonsoft.Json.Linq;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Data;
-using System.IO;
-using System.IO.Compression;
-using System.Linq;
-using System.Web;
-using System.Web.Script.Services;   // supports ScriptService attribute
-using System.Web.Services;
 
 
 
@@ -3792,8 +3792,6 @@ namespace ChemSW.Nbt.WebServices
             }
 
             Context.Response.Clear();
-            Context.Response.ContentType = "application/json; charset=utf-8";
-            Context.Response.AddHeader( "content-disposition", "attachment; filename=export.json" );
             Context.Response.Flush();
             Context.Response.Write( ReturnVal.ToString() );
         } // finalizeInspectionDesign()
