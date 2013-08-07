@@ -296,7 +296,7 @@
                         value: cswPrivate.selectedNodeId
                     });
 
-                    cswPrivate.table.cell(1, cswPrivate.searchButtonCellCol).buttonExt({
+                    var searchBtn = cswPrivate.table.cell(1, cswPrivate.searchButtonCellCol).buttonExt({
                         icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.magglass),
                         size: 'small',
                         enabledText: "Search",
@@ -315,6 +315,9 @@
                                     cswPrivate.selectedNodeId = nodeObj.nodeid;
                                     cswPrivate.selectedNodeLink = nodeObj.nodelink;
                                     Csw.tryExec(cswPrivate.onSelectNode, nodeObj);
+                                },
+                                onClose: function() {
+                                    searchBtn.enable();
                                 }
                             });
                         }
