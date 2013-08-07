@@ -38,6 +38,7 @@ namespace ChemSW.Nbt.Schema
             _createInvGrpPermApplyToAllOCPs();
             _createPermissionObjClasses();
             _createPermissionPropertySet();
+			_CswNbtSchemaModTrnsctn.MetaData.makeMissingNodeTypeProps();
         }
 
         private void _createInvGrpPermApplyToAllOCPs()
