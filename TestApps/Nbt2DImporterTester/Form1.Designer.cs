@@ -80,7 +80,7 @@
             this.txtDataFilePath.Name = "txtDataFilePath";
             this.txtDataFilePath.Size = new System.Drawing.Size(384, 20);
             this.txtDataFilePath.TabIndex = 3;
-            this.txtDataFilePath.Text = "Z:\\D\\temp\\imcs_export.xlsx";
+            this.txtDataFilePath.Text = "Z:\\Downloads\\aaVMWARE\\cispro_test_import_dev2short.xlsx";
             // 
             // txtBindingsFilePath
             // 
@@ -88,7 +88,7 @@
             this.txtBindingsFilePath.Name = "txtBindingsFilePath";
             this.txtBindingsFilePath.Size = new System.Drawing.Size(384, 20);
             this.txtBindingsFilePath.TabIndex = 4;
-            this.txtBindingsFilePath.Text = "Z:\\D\\temp\\imcs_export_bindings.xlsx";
+            this.txtBindingsFilePath.Text = "Z:\\Downloads\\aaVMWARE\\cispro_RL_export_bindings1.xlsx";
             // 
             // label1
             // 
