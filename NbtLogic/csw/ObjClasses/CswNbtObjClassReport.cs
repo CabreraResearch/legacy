@@ -222,20 +222,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
             else
             {
-                string SafeParam = CswTools.SafeSqlParam( Param );
-                if( SafeParam.Length == 0 )
-                {
-                    SafeParam = "''";
-                }
-                if(false == SafeParam.EndsWith("'"))
-                {
-                    SafeParam += "'";
-                }
-                if( false == SafeParam.StartsWith( "'" ) )
-                {
-                    SafeParam = "'" + SafeParam;
-                }
-                Ret = SafeParam;
+                Ret = CswTools.SafeSqlParam( Param );
             }
 
             return Ret;
