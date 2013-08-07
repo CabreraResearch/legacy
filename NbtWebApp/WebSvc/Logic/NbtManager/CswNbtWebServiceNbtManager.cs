@@ -36,7 +36,7 @@ namespace ChemSW.Nbt.WebServices
         {
             _NbtManagerResources = NbtManagerResources;
             _Action = ActionName;
-            _checkNbtManagerPermission( AllowAnyAdmin );
+            _AllowAllAccessIds = _checkNbtManagerPermission( _NbtManagerResources );
             _OtherResources = makeOtherResources( AccessId );
         } //ctor
 
@@ -44,21 +44,11 @@ namespace ChemSW.Nbt.WebServices
         {
             _NbtManagerResources = NbtManagerResources;
             _Action = ActionName;
-            _checkNbtManagerPermission( AllowAnyAdmin );
+            _AllowAllAccessIds = _checkNbtManagerPermission( _NbtManagerResources );
         } //ctor
         #endregion ctor
 
         #region private
-
-        private void _checkNbtManagerPermission( bool AllowAnyAdmin )
-        {
-            if( _NbtManagerResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.NBTManager ) &&
-                ( _NbtManagerResources.CurrentNbtUser.Username == CswNbtObjClassUser.ChemSWAdminUsername ||
-                _NbtManagerResources.CurrentNbtUser.IsAdministrator() ) )
-            {
-                _AllowAllAccessIds = true;
-            }
-        }
 
         private void _ValidateAccessId( string AccessId )
         {
@@ -562,7 +552,7 @@ namespace ChemSW.Nbt.WebServices
         /// </summary>
         private static void _populateFilterData( CswNbtResources NbtResources, CswNbtSchedServiceTimeLineReturn Return, String OpName, String Schema, HashSet<string> seen )
         {
-            if( NbtResources.CurrentNbtUser.Username == CswAuthenticator.ChemSWAdminUsername || Schema == NbtResources.AccessId )
+            if( _checkNbtManagerPermission( NbtResources ) || Schema == NbtResources.AccessId )
             {
                 FilterData.FilterOption opOpt = new FilterData.FilterOption()
                     {
@@ -636,6 +626,13 @@ namespace ChemSW.Nbt.WebServices
         #endregion public
 
         #region private
+
+        private static bool _checkNbtManagerPermission( CswNbtResources NbtResources )
+        {
+            return NbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.NBTManager ) &&
+                       ( NbtResources.CurrentNbtUser.Username == CswNbtObjClassUser.ChemSWAdminUsername ||
+                         NbtResources.CurrentNbtUser.IsAdministrator() );
+        }
 
         private static void _updateScheduledRulesTable( CswNbtResources NbtResources, IEnumerable<CswScheduleLogicDetail> ScheduledRules )
         {
