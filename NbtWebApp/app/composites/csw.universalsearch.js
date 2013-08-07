@@ -29,7 +29,8 @@
                 restoresearchurl: 'restoreUniversalSearch',
                 sessiondataid: '',
                 searchterm: '',
-                filterHideThreshold: 5 //,
+                filterHideThreshold: 5,
+                searchOnly: false
                 //buttonSingleColumn: '',
                 //buttonMultiColumn: ''
             };
@@ -124,6 +125,7 @@
                 // Search Menu
                 Csw.ajaxWcf.post({
                     urlMethod: 'Menus/getSearchMenuItems',
+                    data: cswPrivate.searchOnly,
                     success: function (data) {
                         var srchMenuItems = [];
 

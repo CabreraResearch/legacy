@@ -55,26 +55,29 @@ namespace ChemSW.Nbt.WebServices
 
         #endregion
 
-        public static void GetSearchMenuItems( ICswResources CswResources, CswNbtSearchMenuReturn Return, object Request )
+        public static void GetSearchMenuItems( ICswResources CswResources, CswNbtSearchMenuReturn Return, bool searchOnly )
         {
             _CswNbtResources = (CswNbtResources) CswResources;
 
             Collection<SearchMenuResponse.SearchType> searchTypes = new Collection<SearchMenuResponse.SearchType>();
 
-            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.CISPro ) )
+            if( false == searchOnly )
             {
-                SearchMenuResponse.SearchType ss = new SearchMenuResponse.SearchType();
-                ss.name = "Structure Search";
-                ss.iconfilename = "Images/newicons/16/atommag.png";
-                searchTypes.Add( ss );
-            }
+                if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.CISPro ) )
+                {
+                    SearchMenuResponse.SearchType ss = new SearchMenuResponse.SearchType();
+                    ss.name = "Structure Search";
+                    ss.iconfilename = "Images/newicons/16/atommag.png";
+                    searchTypes.Add( ss );
+                }
 
-            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.C3 ) )
-            {
-                SearchMenuResponse.SearchType c3 = new SearchMenuResponse.SearchType();
-                c3.name = "ChemCatCentral Search";
-                c3.iconfilename = "Images/newicons/16/cat.png";
-                searchTypes.Add(c3);
+                if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.C3 ) )
+                {
+                    SearchMenuResponse.SearchType c3 = new SearchMenuResponse.SearchType();
+                    c3.name = "ChemCatCentral Search";
+                    c3.iconfilename = "Images/newicons/16/cat.png";
+                    searchTypes.Add( c3 );
+                }
             }
 
             Return.Data.searchTypes = searchTypes;
