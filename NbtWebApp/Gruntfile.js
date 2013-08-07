@@ -1,29 +1,13 @@
 ﻿/*global module:false*/
 module.exports = function (grunt) {
-    var cswAppJsFiles = ['app/ChemSW.js', 'app/types/**.js', 'app/core/**.js', 'app/events/**.js', 'app/tools/**.js', 'app/literals/**.js', 'app/composites/**.js',
-        'app/actions/**.js', 'app/layouts/**.js', 'app/nodes/**.js', 'app/pagecmp/**.js', 'app/proptypes/**.js', 'app/view/**.js',
-        'app/wizards/**.js', 'app/Main.js'
-    ]; //Unfortunately, due to race conditions in loading, we can't blindly accept all (YET)
-    var cswAppCssFiles = ['css/ChemSW.css', 'css/csw*.css'];
+    var files = require('./files');
 
-    var cswTestJsFiles = ['test/*.js', 'test/*/*.js'];
-
-    var cswVendorJsMinFiles = ['Scripts/modernizr-2.6.2.js', 'vendor/loggly-0.1.0.min.js', 'Scripts/es5-shim.min.js', 'vendor/es5-sham.min.js', 'vendor/es6-shim.min.js',
-        'Scripts/mousetrap.min.js', 'Scripts/jquery-2.0.3.min.js', 'Scripts/jquery-ui-1.10.3.min.js', 'Scripts/jquery.validate.min.js',
-        'Scripts/additional-methods.min.js', 'Scripts/jquery.cookie.js', 'vendor/jsTree.v.1.0rc2/jquery.jstree.js', 'vendor/jquery.multiselect.min.js',
-        'vendor/jquery.multiselect.filter.min.js', 'vendor/jQueryFileUpload_2011.12.15/jquery.fileupload.js',
-        'vendor/jQueryFileUpload_2011.12.15/jquery.iframe-transport.js', 'vendor/ext-init.js', 'vendor/extjs-4.1.0/ext-all.js', 'vendor/ext-done.js', 'vendor/jquery.flot.js',
-        'vendor/extjs-4.1.0/ux/**/*.js'
-    ];
-    var cswVendorJsFiles = ['Scripts/modernizr-2.6.2.js', 'vendor/loggly-0.1.0.js', 'Scripts/es5-shim.js', 'vendor/es5-sham.min.js', 'vendor/es6-shim.js',
-        'Scripts/mousetrap.js', 'Scripts/jquery-2.0.3.js', 'Scripts/jquery-ui-1.10.3.js', 'Scripts/jquery.validate.js',
-        'Scripts/additional-methods.js', 'Scripts/jquery.cookie.js', 'vendor/jsTree.v.1.0rc2/jquery.jstree.js', 'vendor/jquery.multiselect.js',
-        'vendor/jquery.multiselect.filter.js', 'vendor/jQueryFileUpload_2011.12.15/jquery.fileupload.js',
-        'vendor/jQueryFileUpload_2011.12.15/jquery.iframe-transport.js', 'vendor/ext-init.js', 'vendor/extjs-4.1.0/ext-all-debug.js', 'vendor/ext-done.js', 'vendor/jquery.flot.js',
-        'vendor/extjs-4.1.0/ux/**/*.js'
-    ];
-
-    var imageResources = ['Images/**/*.png', 'Images/**/*.gif', 'Images/**/*.jpg', 'Images/**/*.jpeg', 'vendor/**/*.png', 'vendor/**/*.gif', 'vendor/**/*.jpg', 'vendor/**/*.jpeg', 'Content/**/*.png', 'Content/**/*.gif', 'Content/**/*.jpg', 'Content/**/*.jpeg'];
+    var cswAppJsFiles = files.app;
+    var cswAppCssFiles = files.css;
+    var cswTestJsFiles = files.test;
+    var cswVendorJsMinFiles = files.vendorMin;
+    var cswVendorJsFiles = files.vendor;
+    var imageResources = files.images;
 
     var cswVendorCssFiles = [];
     var buildDate = grunt.template.today("yyyy.m.d");
@@ -124,6 +108,7 @@ module.exports = function (grunt) {
 
         jshint: {
             options: {
+                force: true,   //don't fail on errors, keep going.
                 bitwise: true,
                 curly: true,
                 eqeqeq: true,
@@ -141,14 +126,15 @@ module.exports = function (grunt) {
                 browser: true,
                 globalstrict: false,
                 smarttabs: true,
-                reporterOutput: 'jslint.log'
+                reporterOutput: 'jslint.log',
+                globals: {
+                    $: true,
+                    Csw: true,
+                    window: true,
+                    Ext: true
+                }
             },
-            globals: {
-                $: true,
-                Csw: true,
-                window: true,
-                Ext: true
-            },
+            
             files: cswAppJsFiles
         },
         
@@ -156,10 +142,11 @@ module.exports = function (grunt) {
             test: {
                 options: {
                     complexity: {
-                        logicalor: false,
-                        switchcase: false,
+                        logicalor: true,
+                        switchcase: true,
                         forin: true,
-                        trycatch: true
+                        trycatch: true,
+                        newmi: true
                     }
                 },
                 globals: {
@@ -169,13 +156,20 @@ module.exports = function (grunt) {
                     Ext: true
                 },
                 files: {
-                    'test/plato': cswAppJsFiles,
+                    'plato': cswAppJsFiles,
                 },
             }
         },
 
         qunit: {
-            files: ['test/*.html']
+            //files: ['test/*.html'],
+            all: {
+                options: {
+                    urls: [
+                      'https://nbtdaily.chemswlive.com/CiDevUnitTests/test/test.html'
+                    ]
+                }
+            }
         },
 
         tmpHtml: {
@@ -229,6 +223,7 @@ module.exports = function (grunt) {
                 verbose: true,
                 mangle: true,
                 compress: true,
+                output: 'uglify.log',
                 //beautify: true,
                 sourceMap: 'release/' + buildName + '.min.js.map',
                 sourceMapRoot: '../',
@@ -292,9 +287,12 @@ module.exports = function (grunt) {
             grunt.task.run('toHtml:dev:nodereport'); //Generate the NodeReport HTML file from the template
             grunt.task.run('toHtml:dev:report'); //Generate the Report HTML file from the template
             grunt.task.run('toHtml:dev:print'); //Generate the PrintingLabels HTML file from the template
+            grunt.task.run('toHtml:dev:test'); //Generate the Unit Tests HTML file from the template
         }
         grunt.task.run('toHtml:dev:dManifest'); //Generate the appcache from the manifest template
-        grunt.task.run('runUnitTests'); //Unit tests
+        grunt.task.run('plato');
+        grunt.task.run('jshint');
+        //grunt.task.run('runUnitTests'); //Unit tests
     });
 
     grunt.registerTask('toHtml', function (buildMode, page) {
@@ -329,7 +327,7 @@ module.exports = function (grunt) {
         }
     });
 
-    grunt.registerTask('runArbitraryTask', function (taskName, arg1, arg2) {
+    grunt.registerTask('runArbitraryTask', function (taskName) {
         /// <summary>
         /// Run any registered task
         /// </summary>
@@ -337,7 +335,7 @@ module.exports = function (grunt) {
             throw grunt.task.taskError('Task Name must be supplied');
         }
         grunt.log.write(grunt.template.today('dddd mmmm dS yyyy h:MM:ss TT'));
-        grunt.task.run(taskName, arg1, arg2);
+        grunt.task.run(taskName);
     });
 
     grunt.registerTask('runUnitTests', function () {
@@ -345,9 +343,7 @@ module.exports = function (grunt) {
         /// Build the Test HTML and execute the QUnit tests
         /// </summary>
         grunt.task.run('toHtml:dev:test'); //Generate the HTML file from the template
-        grunt.task.run('jshint');
         grunt.task.run('qunit');
-        grunt.task.run('plato');
     });
 
     grunt.registerTask('default', ['build:dev:true']);

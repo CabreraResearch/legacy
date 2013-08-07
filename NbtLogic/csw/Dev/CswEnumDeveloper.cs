@@ -85,6 +85,8 @@ namespace ChemSW.Nbt.csw.Dev
         public const string DH = "The Honey Badger";
         /// <summary> Matt </summary>
         public const string MB = "Matt Bischoff";
+        /// <summary> Matt O </summary>
+        public const string MO = "Matt Obetz";
         /// <summary> Phil </summary>
         public const string PG = "Phil Glaser";
         /// <summary> Steve </summary>

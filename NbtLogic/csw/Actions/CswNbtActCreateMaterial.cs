@@ -465,7 +465,8 @@ namespace ChemSW.Nbt.Actions
                                 RequestCreate.postChanges( ForceUpdate: false );
                             }
                         }
-                        CswNbtActReceiving.commitSDSDocNode( _CswNbtResources, NodeAsMaterial.NodeId, MaterialObj );
+                        CswNbtActReceiving Receiving = new CswNbtActReceiving( _CswNbtResources );
+                        Receiving.commitSDSDocNode( NodeAsMaterial.NodeId, MaterialObj );
                     }
                 }
 

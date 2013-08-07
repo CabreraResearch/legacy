@@ -42,7 +42,7 @@
                 row += 1;
 
                 // Quota table
-                Csw.ajax.post({
+                return Csw.ajax.post({
                     urlMethod: o.urlMethod,
                     data: {},
                     success: function (result) {
@@ -135,7 +135,7 @@
 
             // handleSave()
 
-            initTable();
+           return initTable();
         }); // methods
 
 }());

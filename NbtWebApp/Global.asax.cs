@@ -17,6 +17,7 @@ namespace NbtWebApp
         protected void Application_Start( object sender, EventArgs e )
         {
             WebServiceHostFactory Factory = new WebServiceHostFactory();
+            RouteTable.Routes.Add( new ServiceRoute( "Services/Balances", Factory, typeof( Balances ) ) );
             RouteTable.Routes.Add( new ServiceRoute( "Services/Containers", Factory, typeof( Containers ) ) );
             RouteTable.Routes.Add( new ServiceRoute( "Services/ChemCatCentral", Factory, typeof( ChemCatCentral ) ) );
             RouteTable.Routes.Add( new ServiceRoute( "Services/CISProNbtMobile", Factory, typeof( CISProNbtMobile ) ) );

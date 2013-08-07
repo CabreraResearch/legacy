@@ -5,6 +5,7 @@ using System.ServiceModel.Web;
 using System.Web;
 using ChemSW.Nbt.WebServices;
 using ChemSW.WebSvc;
+using NbtWebApp.WebSvc.Logic;
 using NbtWebApp.WebSvc.Logic.Labels;
 
 namespace NbtWebApp
@@ -162,5 +163,85 @@ namespace NbtWebApp
         }
 
         #endregion Print Labels
+
+        #region Balances
+
+
+        /// <summary>
+        /// Register a serial balance
+        /// </summary>
+        [OperationContract]
+        [WebInvoke( Method = "POST", ResponseFormat = WebMessageFormat.Json )]
+        [Description( "Register a serial balance" )]
+        [FaultContract( typeof( FaultException ) )]
+        public void UpdateBalanceData( SerialBalance Request )
+        {
+            //delegate has to be static because you can't create an instance yet: you don't have resources until the delegate is actually called
+            CswNbtBalanceReturn Ret = new CswNbtBalanceReturn();
+
+            var SvcDriver = new CswWebSvcDriver<CswNbtBalanceReturn, SerialBalance>(
+                CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj : Ret,
+                WebSvcMethodPtr : CswNbtWebServiceSerialBalance.UpdateBalanceData,
+                ParamObj : Request
+                );
+
+            SvcDriver.run();
+        }
+
+
+        /// <summary>
+        /// fetch existing balance configurations in NBT
+        /// </summary>
+        [OperationContract]
+        [WebInvoke( Method = "POST", ResponseFormat = WebMessageFormat.Json )]
+        [Description( "fetch existing balance configurations in NBT" )]
+        [FaultContract( typeof( FaultException ) )]
+        public CswNbtBalanceReturn ListBalanceConfigurations()
+        {
+            //delegate has to be static because you can't create an instance yet: you don't have resources until the delegate is actually called
+            CswNbtBalanceReturn Ret = new CswNbtBalanceReturn();
+            object Request = null;
+            var SvcDriver = new CswWebSvcDriver<CswNbtBalanceReturn, object>(
+                CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj : Ret,
+                WebSvcMethodPtr : CswNbtWebServiceSerialBalance.listBalanceConfigurations,
+                ParamObj : Request
+                );
+
+            SvcDriver.run();
+
+            return Ret;
+        }
+
+
+
+        /// <summary>
+        /// update or create a new balance configuration on the server
+        /// </summary>
+        [OperationContract]
+        [WebInvoke( Method = "POST", ResponseFormat = WebMessageFormat.Json )]
+        [Description( "update or create a new balance configuration on the server" )]
+        [FaultContract( typeof( FaultException ) )]
+        public CswNbtBalanceReturn registerBalanceConfiguration(BalanceConfiguration Request)
+        {
+            //delegate has to be static because you can't create an instance yet: you don't have resources until the delegate is actually called
+            CswNbtBalanceReturn Ret = new CswNbtBalanceReturn();
+
+            var SvcDriver = new CswWebSvcDriver<CswNbtBalanceReturn, BalanceConfiguration>(
+                CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj : Ret,
+                WebSvcMethodPtr : CswNbtWebServiceSerialBalance.registerBalanceConfiguration,
+                ParamObj : Request
+                );
+
+            SvcDriver.run();
+
+            return Ret;
+        }
+
+
+
+        #endregion
     }
 }

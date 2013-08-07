@@ -57,6 +57,7 @@ namespace ChemSW.Nbt.Security
         public CswNbtNodePropRelationship WorkUnitProperty { get { return null; } }
         public CswPrimaryKey DefaultLocationId { get { return null; } }
         public CswPrimaryKey DefaultPrinterId { get { return null; } }
+        public CswPrimaryKey DefaultBalanceId { get { return null; } }
         public CswPrimaryKey WorkUnitId { get { return null; } }
         public CswPrimaryKey JurisdictionId { get { return null; } }
         public string Language { get { return string.Empty; } }

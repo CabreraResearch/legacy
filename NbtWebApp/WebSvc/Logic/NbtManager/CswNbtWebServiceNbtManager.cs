@@ -1,3 +1,10 @@
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Data;
+using System.IO;
+using System.Linq;
+using System.ServiceModel;
 using ChemSW.Core;
 using ChemSW.Core.Colors;
 using ChemSW.DB;
@@ -13,13 +20,6 @@ using ChemSW.Nbt.ServiceDrivers;
 using ChemSW.Security;
 using NbtWebApp.WebSvc.Logic.Scheduler;
 using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Data;
-using System.IO;
-using System.Linq;
-using System.ServiceModel;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -36,7 +36,7 @@ namespace ChemSW.Nbt.WebServices
         {
             _NbtManagerResources = NbtManagerResources;
             _Action = ActionName;
-            _checkNbtManagerPermission( AllowAnyAdmin );
+            _AllowAllAccessIds = _checkNbtManagerPermission( _NbtManagerResources );
             _OtherResources = makeOtherResources( AccessId );
         } //ctor
 
@@ -44,21 +44,11 @@ namespace ChemSW.Nbt.WebServices
         {
             _NbtManagerResources = NbtManagerResources;
             _Action = ActionName;
-            _checkNbtManagerPermission( AllowAnyAdmin );
+            _AllowAllAccessIds = _checkNbtManagerPermission( _NbtManagerResources );
         } //ctor
         #endregion ctor
 
         #region private
-
-        private void _checkNbtManagerPermission( bool AllowAnyAdmin )
-        {
-            if( _NbtManagerResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.NBTManager ) &&
-                ( _NbtManagerResources.CurrentNbtUser.Username == CswNbtObjClassUser.ChemSWAdminUsername ||
-                _NbtManagerResources.CurrentNbtUser.IsAdministrator() ) )
-            {
-                _AllowAllAccessIds = true;
-            }
-        }
 
         private void _ValidateAccessId( string AccessId )
         {
@@ -327,7 +317,7 @@ namespace ChemSW.Nbt.WebServices
                         string OpName = splitLine[23].Split( ':' )[0]; //this is something like "GenNode: Execution" and all we want is "GenNode"
                         OpName = MsgType.Equals( "Error" ) ? "Error" : OpName; //If we have an "error" row, the Op gets renamed to "Error"
 
-                        _populateFilterData( Return, OpName, Schema, Seen );
+                        _populateFilterData( NbtResources, Return, OpName, Schema, Seen );
 
                         DateTime ThirtyMinAgo = DateTime.Now.AddMinutes( -30 ); //30 min ago
                         Return.Data.FilterData.DefaultStartTime = ThirtyMinAgo.ToString( "hh:mm:ss tt" );
@@ -357,6 +347,12 @@ namespace ChemSW.Nbt.WebServices
             string LogFileLocation = NbtResources.SetupVbls[CswEnumSetupVariableNames.LogFileLocation];
             _getLogFiles( NbtResources, Return, LogFileLocation ); //Order the log files by last modified date
 
+            //Case 30403 - if the current user is not ChemSW_Admin, scope timeline to the users schema
+            if( NbtResources.CurrentNbtUser.Username != CswAuthenticator.ChemSWAdminUsername )
+            {
+                Request.FilterSchemaTo = NbtResources.AccessId;
+            }
+
             if( Return.Data.FilterData.LogFiles.Count > 0 )
             {
                 //If no log file is selected, default to the last log file modified
@@ -369,7 +365,7 @@ namespace ChemSW.Nbt.WebServices
                     string[] splitLine = line.Split( ',' );
                     string MsgType = splitLine[0];
 
-                    if( ( MsgType.Equals( "PerOp" ) || MsgType.Equals( "Error" ) ) ) //if the row is not "PerOp" it is useless to us
+                    if( ( MsgType.Equals( "PerOp" ) || MsgType.Equals( "Error" ) ) )
                     {
                         string Schema = splitLine[1];
                         string StartTime = splitLine[20];
@@ -384,7 +380,7 @@ namespace ChemSW.Nbt.WebServices
                         }
                         string LegendName = Schema + " " + OpName;
 
-                        _populateFilterData( Return, OpName, Schema, seen );
+                        _populateFilterData( NbtResources, Return, OpName, Schema, seen );
 
                         DateTime thisStartDate = CswConvert.ToDateTime( StartTime );
 
@@ -554,28 +550,31 @@ namespace ChemSW.Nbt.WebServices
         /// <summary>
         /// Populate the Schema and Operation filters
         /// </summary>
-        private static void _populateFilterData( CswNbtSchedServiceTimeLineReturn Return, String OpName, String Schema, HashSet<string> seen )
+        private static void _populateFilterData( CswNbtResources NbtResources, CswNbtSchedServiceTimeLineReturn Return, String OpName, String Schema, HashSet<string> seen )
         {
-            FilterData.FilterOption opOpt = new FilterData.FilterOption()
+            if( _checkNbtManagerPermission( NbtResources ) || Schema == NbtResources.AccessId )
             {
-                text = OpName,
-                value = OpName
-            };
-            if( false == seen.Contains( OpName ) )
-            {
-                Return.Data.FilterData.Operations.Add( opOpt );
-                seen.Add( OpName );
-            }
+                FilterData.FilterOption opOpt = new FilterData.FilterOption()
+                    {
+                        text = OpName,
+                        value = OpName
+                    };
+                if( false == seen.Contains( OpName ) )
+                {
+                    Return.Data.FilterData.Operations.Add( opOpt );
+                    seen.Add( OpName );
+                }
 
-            FilterData.FilterOption schemaOpt = new FilterData.FilterOption()
-            {
-                text = Schema,
-                value = Schema
-            };
-            if( false == seen.Contains( Schema ) )
-            {
-                Return.Data.FilterData.Schema.Add( schemaOpt );
-                seen.Add( Schema );
+                FilterData.FilterOption schemaOpt = new FilterData.FilterOption()
+                    {
+                        text = Schema,
+                        value = Schema
+                    };
+                if( false == seen.Contains( Schema ) )
+                {
+                    Return.Data.FilterData.Schema.Add( schemaOpt );
+                    seen.Add( Schema );
+                }
             }
         }
 
@@ -627,6 +626,13 @@ namespace ChemSW.Nbt.WebServices
         #endregion public
 
         #region private
+
+        private static bool _checkNbtManagerPermission( CswNbtResources NbtResources )
+        {
+            return NbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.NBTManager ) &&
+                       ( NbtResources.CurrentNbtUser.Username == CswNbtObjClassUser.ChemSWAdminUsername ||
+                         NbtResources.CurrentNbtUser.IsAdministrator() );
+        }
 
         private static void _updateScheduledRulesTable( CswNbtResources NbtResources, IEnumerable<CswScheduleLogicDetail> ScheduledRules )
         {

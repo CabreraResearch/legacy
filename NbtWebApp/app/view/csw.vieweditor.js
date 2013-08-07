@@ -118,8 +118,8 @@
                     if (stepNo !== newStepNo) {
                         var stepName = cswPrivate.wizardSteps[stepNo];
                         Csw.iterate(cswPrivate.ajaxReqs[stepName], function (req) {
-                            if (req.ajax.readyState != 4) {
-                                req.ajax.abort();
+                            if (req.readyState != 4) {
+                                req.abort();
                             }
                         });
                     }
