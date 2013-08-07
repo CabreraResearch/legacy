@@ -839,7 +839,7 @@ namespace ChemSW.Nbt.Security
             CswPrimaryKey ret = null;
             if( null == _PermissionGroupDict )
             {
-                _initPermissionGroupDict();
+                _PermissionGroupDict = _initPermissionGroupDict();
             }
             if( _PermissionGroupDict.ContainsKey( NodeId ) )
             {
@@ -848,9 +848,9 @@ namespace ChemSW.Nbt.Security
             return ret;
         } // getPermissionGroupId()
 
-        private void _initPermissionGroupDict()
+        private Dictionary<CswPrimaryKey, CswPrimaryKey> _initPermissionGroupDict()
         {
-            _PermissionGroupDict = new Dictionary<CswPrimaryKey, CswPrimaryKey>();
+            Dictionary<CswPrimaryKey, CswPrimaryKey> ret = new Dictionary<CswPrimaryKey, CswPrimaryKey>();
             string SQL = @"with pval as (select j.nodeid, op.propname, j.field1_fk
                                                from object_class_props op
                                                join nodetype_props p on op.objectclasspropid = p.objectclasspropid
@@ -878,8 +878,9 @@ namespace ChemSW.Nbt.Security
             {
                 CswPrimaryKey NodeId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( Row["nodeid"] ) );
                 CswPrimaryKey PermGrpId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( Row["permissiongroupid"] ) );
-                _PermissionGroupDict[NodeId] = PermGrpId;
+                ret[NodeId] = PermGrpId;
             }
+            return ret;
         } // _initPermissionGroupDict()
 
         #endregion Nodes
