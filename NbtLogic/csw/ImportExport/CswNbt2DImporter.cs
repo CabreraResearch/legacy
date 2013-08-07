@@ -151,50 +151,85 @@ namespace ChemSW.Nbt.ImportExport
 
 
         /// <summary>
-        /// Returns errors encountered
+        /// Returns the set of available Import Definitions
         /// </summary>
-        public bool readBindings( string BindingFilePath )
+        public CswCommaDelimitedString getDefinitions()
         {
-            BindingDefinitions.Clear();
-
-            bool ret = true;
-            DataSet ExcelDataSet = _readExcel( BindingFilePath );
-
-            if( ExcelDataSet.Tables.Count == 3 )
+            CswCommaDelimitedString ret = new CswCommaDelimitedString();
+            CswTableSelect DefSelect = _CswNbtResources.makeCswTableSelect( "loadBindings_def_select1", CswNbt2DImportTables.ImportDefinitions.TableName );
+            DataTable DefDataTable = DefSelect.getTable();
+            foreach( DataRow defrow in DefDataTable.Rows )
             {
-                // Order
-                DataTable OrderDataTable = ExcelDataSet.Tables["Order$"];
+                ret.Add( defrow[CswNbt2DImportTables.ImportDefinitions.definitionname].ToString(), false, true );
+            }
+            return ret;
+        } // getDefinitions()
+
+        /// <summary>
+        /// Loads import definition bindings from the database
+        /// </summary>
+        public bool loadBindings( string ImportDefinition )
+        {
+            bool ret = false;
+            CswTableSelect DefSelect = _CswNbtResources.makeCswTableSelect( "loadBindings_def_select2", CswNbt2DImportTables.ImportDefinitions.TableName );
+            DataTable DefDataTable = DefSelect.getTable( "where " + CswNbt2DImportTables.ImportDefinitions.definitionname + " = '" + ImportDefinition + "'" );
+            if( DefDataTable.Rows.Count > 0 )
+            {
+                ret = loadBindings( CswConvert.ToInt32( DefDataTable.Rows[0][CswNbt2DImportTables.ImportDefinitions.importdefinitionid] ) );
+            }
+            else
+            {
+                OnError( "Error: invalid import definition: " + ImportDefinition );
+                ret = false;
+            }
+            return ret;
+        } // _loadBindings(string)
+
+
+        /// <summary>
+        /// Loads import definition bindings from the database
+        /// </summary>
+        public bool loadBindings( Int32 ImportDefId )
+        {
+            bool ret = true;
+
+            // Order
+            {
+                CswTableSelect OrderSelect = _CswNbtResources.makeCswTableSelect( "loadBindings_order_select", CswNbt2DImportTables.ImportOrder.TableName );
+                DataTable OrderDataTable = OrderSelect.getTable( CswNbt2DImportTables.ImportOrder.importdefinitionid, ImportDefId );
                 foreach( DataRow OrderRow in OrderDataTable.Rows )
                 {
-                    string SheetName = OrderRow["sheet"].ToString();
+                    string SheetName = OrderRow[CswNbt2DImportTables.ImportOrder.sourcesheetname].ToString();
                     if( false == string.IsNullOrEmpty( SheetName ) )
                     {
                         CswNbt2DDefinition BindingDef = BindingDefinitions.bySheetName( SheetName, true );
 
-                        string NTName = OrderRow["nodetype"].ToString();
+                        string NTName = OrderRow[CswNbt2DImportTables.ImportOrder.nodetypename].ToString();
                         CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NTName );
                         if( null != NodeType )
                         {
-                            BindingDef.ImportOrder.Add( CswConvert.ToInt32( OrderRow["order"] ), new CswNbt2DOrder()
+                            BindingDef.ImportOrder.Add( CswConvert.ToInt32( OrderRow[CswNbt2DImportTables.ImportOrder.importorder] ), new CswNbt2DOrder()
                                 {
                                     NodeType = NodeType,
-                                    Instance = OrderRow["instance"].ToString()
+                                    Instance = OrderRow[CswNbt2DImportTables.ImportOrder.instance].ToString()
                                 } );
                         }
                         else
                         {
-                            OnError( "Error reading bindings: invalid NodeType defined in 'Order' sheet: " + NTName );
+                            OnError( "Error reading bindings: invalid NodeType defined in import_order: " + NTName + " (pk: " + OrderRow[CswNbt2DImportTables.ImportOrder.PkColumnName].ToString() + ") " );
                             ret = false;
                         }
                     } // if(false == string.IsNullOrEmpty(SheetName) )
                 } // foreach( DataRow OrderRow in OrderDataTable.Rows )
+            }
 
-
-                // Bindings
-                DataTable BindingsDataTable = ExcelDataSet.Tables["Bindings$"];
+            // Bindings
+            {
+                CswTableSelect BindingsSelect = _CswNbtResources.makeCswTableSelect( "loadBindings_bindings_select", CswNbt2DImportTables.ImportBindings.TableName );
+                DataTable BindingsDataTable = BindingsSelect.getTable( CswNbt2DImportTables.ImportBindings.importdefinitionid, ImportDefId );
                 foreach( DataRow BindingRow in BindingsDataTable.Rows )
                 {
-                    string SheetName = BindingRow["sheet"].ToString();
+                    string SheetName = BindingRow[CswNbt2DImportTables.ImportBindings.sourcesheetname].ToString();
                     if( false == string.IsNullOrEmpty( SheetName ) )
                     {
                         CswNbt2DDefinition BindingDef = BindingDefinitions.bySheetName( SheetName, true );
@@ -203,16 +238,16 @@ namespace ChemSW.Nbt.ImportExport
                         CswNbtMetaDataNodeType DestNodeType = null;
                         CswNbtMetaDataNodeTypeProp DestProp = null;
 
-                        string DestNTName = BindingRow["destnodetype"].ToString();
+                        string DestNTName = BindingRow[CswNbt2DImportTables.ImportBindings.destnodetypename].ToString();
                         if( false == string.IsNullOrEmpty( DestNTName ) )
                         {
                             DestNodeType = _CswNbtResources.MetaData.getNodeType( DestNTName );
                             if( null != DestNodeType )
                             {
-                                DestProp = DestNodeType.getNodeTypeProp( BindingRow["destproperty"].ToString() );
+                                DestProp = DestNodeType.getNodeTypeProp( BindingRow[CswNbt2DImportTables.ImportBindings.destpropname].ToString() );
                                 if( null != DestProp )
                                 {
-                                    CswNbtSubField DestSubfield = DestProp.getFieldTypeRule().SubFields[(CswEnumNbtSubFieldName) BindingRow["destsubfield"].ToString()];
+                                    CswNbtSubField DestSubfield = DestProp.getFieldTypeRule().SubFields[(CswEnumNbtSubFieldName) BindingRow[CswNbt2DImportTables.ImportBindings.destsubfield].ToString()];
                                     if( DestSubfield == null )
                                     {
                                         DestSubfield = DestProp.getFieldTypeRule().SubFields.Default;
@@ -220,74 +255,70 @@ namespace ChemSW.Nbt.ImportExport
 
                                     BindingDef.Bindings.Add( new CswNbt2DBinding
                                         {
-                                            SourceColumnName = BindingRow["sourcecolumnname"].ToString(),
+                                            SourceColumnName = BindingRow[CswNbt2DImportTables.ImportBindings.sourcecolumnname].ToString(),
                                             DestNodeType = DestNodeType,
                                             DestProperty = DestProp,
                                             DestSubfield = DestSubfield,
-                                            Instance = BindingRow["instance"].ToString(),
+                                            Instance = BindingRow[CswNbt2DImportTables.ImportBindings.instance].ToString(),
                                         } );
                                 }
                                 else
                                 {
-                                    OnError( "Error reading bindings: invalid destproperty defined in 'Bindings' sheet: " + BindingRow["destproperty"].ToString() + " (nodetype: " + DestNTName + ")" );
+                                    OnError( "Error reading bindings: invalid destproperty defined in import_bindings: " + BindingRow["destproperty"].ToString() + " (nodetype: " + DestNTName + ")" + " (pk: " + BindingRow[CswNbt2DImportTables.ImportBindings.PkColumnName].ToString() + ") " );
                                     ret = false;
                                 }
                             }
                             else
                             {
-                                OnError( "Error reading bindings: invalid destnodetype defined in 'Bindings' sheet: " + DestNTName );
+                                OnError( "Error reading bindings: invalid destnodetype defined in import_bindings: " + DestNTName + " (pk: " + BindingRow[CswNbt2DImportTables.ImportBindings.PkColumnName].ToString() + ") " );
                                 ret = false;
                             }
                         } // if( false == string.IsNullOrEmpty( DestNTName ) )
                     } // if( false == string.IsNullOrEmpty( SheetName ) )
                 } // foreach( DataRow BindingRow in BindingsDataTable.Rows )
+            }
 
-
-                // Row Relationships
-                DataTable RelationshipsDataTable = ExcelDataSet.Tables["Relationships$"];
+            // Row Relationships
+            {
+                CswTableSelect RelationshipsSelect = _CswNbtResources.makeCswTableSelect( "loadBindings_rel_select", CswNbt2DImportTables.ImportRelationships.TableName );
+                DataTable RelationshipsDataTable = RelationshipsSelect.getTable( CswNbt2DImportTables.ImportRelationships.importdefinitionid, ImportDefId );
                 foreach( DataRow RelRow in RelationshipsDataTable.Rows )
                 {
-                    string SheetName = RelRow["sheet"].ToString();
+                    string SheetName = RelRow[CswNbt2DImportTables.ImportRelationships.sourcesheetname].ToString();
                     if( false == string.IsNullOrEmpty( SheetName ) )
                     {
                         CswNbt2DDefinition BindingDef = BindingDefinitions.bySheetName( SheetName, true );
 
-                        string NodeTypeName = RelRow["nodetype"].ToString();
+                        string NodeTypeName = RelRow[CswNbt2DImportTables.ImportRelationships.nodetypename].ToString();
                         CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeName );
                         if( null != NodeType )
                         {
-                            CswNbtMetaDataNodeTypeProp Relationship = NodeType.getNodeTypeProp( RelRow["relationship"].ToString() );
+                            CswNbtMetaDataNodeTypeProp Relationship = NodeType.getNodeTypeProp( RelRow[CswNbt2DImportTables.ImportRelationships.relationship].ToString() );
                             if( null != Relationship )
                             {
                                 BindingDef.RowRelationships.Add( new CswNbt2DRowRelationship()
                                     {
                                         NodeType = NodeType,
                                         Relationship = Relationship,
-                                        Instance = RelRow["instance"].ToString()
+                                        Instance = RelRow[CswNbt2DImportTables.ImportRelationships.instance].ToString()
                                     } );
                             }
                             else
                             {
-                                OnError( "Error reading bindings: invalid Relationship defined in 'Relationships' sheet: " + RelRow["relationship"].ToString() + " (nodetype: " + NodeTypeName + ")" );
+                                OnError( "Error reading bindings: invalid Relationship defined in 'Relationships' sheet: " + RelRow["relationship"].ToString() + " (nodetype: " + NodeTypeName + ")" + " (pk: " + RelRow[CswNbt2DImportTables.ImportBindings.PkColumnName].ToString() + ") " );
                                 ret = false;
                             }
                         }
                         else
                         {
-                            OnError( "Error reading bindings: invalid NodeType defined in 'Relationships' sheet: " + NodeTypeName );
+                            OnError( "Error reading bindings: invalid NodeType defined in 'Relationships' sheet: " + NodeTypeName + " (pk: " + RelRow[CswNbt2DImportTables.ImportBindings.PkColumnName].ToString() + ") " );
                             ret = false;
                         }
                     } // foreach( DataRow RelRow in RelationshipsDataTable.Rows )
                 } // if( false == string.IsNullOrEmpty( SheetName ) )
-            } // if( ExcelDataSet.Tables.Count == 3 )
-            else
-            {
-                OnError( "Error reading bindings: 3 sheets not found in spreadsheet" );
-                ret = false;
             }
-
             return ret;
-        } // readBindings()
+        } // _loadBindings(Int32)
 
 
         /// <summary>
@@ -334,8 +365,8 @@ namespace ChemSW.Nbt.ImportExport
                                         //IEnumerable<CswNbt2DBinding> UniqueBindings = NodeTypeBindings.Where( b => ( b.DestProperty.IsUnique() || b.DestProperty.IsCompoundUnique() ) );
                                         IEnumerable<CswNbtMetaDataNodeTypeProp> Props = Order.NodeType.getNodeTypeProps();
                                         //IEnumerable<CswNbtMetaDataNodeTypeProp> RequiredProps = Props.Where( p => p.IsRequired && false == p.HasDefaultValue() );
-                                        IEnumerable<CswNbt2DBinding> UniqueBindings = NodeTypeBindings.Where( b => b.DestProperty.IsUnique() || 
-                                                                                                              b.DestProperty.IsCompoundUnique() || 
+                                        IEnumerable<CswNbt2DBinding> UniqueBindings = NodeTypeBindings.Where( b => b.DestProperty.IsUnique() ||
+                                                                                                              b.DestProperty.IsCompoundUnique() ||
                                                                                                               Order.NodeType.NameTemplatePropIds.Contains( b.DestProperty.FirstPropVersionId ) );
                                         //IEnumerable<CswNbtMetaDataNodeTypeProp> UniqueProps = Props.Where( p => UniqueBindings.Any( b => b.DestProperty == p ) );
 
