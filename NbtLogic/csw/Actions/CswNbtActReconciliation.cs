@@ -190,6 +190,7 @@ namespace ChemSW.Nbt.Actions
                         {
                             CswNbtObjClassContainerLocation ContLocNode = _CswNbtResources.Nodes.GetNode( ContLocNodeId );
                             ContLocNode.Action.Value = Action.Action;
+                            ContLocNode.ActionByUser.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
                             ContLocNode.postChanges( false );
                         }
                         else if( Action.Action == CswEnumNbtContainerLocationActionOptions.Ignore.ToString() )
@@ -406,6 +407,7 @@ namespace ChemSW.Nbt.Actions
                 {
                     ContLocNode.Action.Value = CswEnumNbtContainerLocationActionOptions.Ignore.ToString();
                 }
+                ContLocNode.ActionByUser.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId; 
                 ContLocNode.ActionApplied.Checked = CswEnumTristate.False;
                 ContLocNode.ScanDate.DateTimeValue = DateTime.Now;
                 ContLocNode.User.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;

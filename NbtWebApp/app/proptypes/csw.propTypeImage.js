@@ -67,7 +67,7 @@
             //Bind an unrender callback to terminate any outstanding ajax requests, if any. See propTypeGrid.
             nodeProperty.unBindRender(function () {
                 if (cswPrivate.ajax) {
-                    cswPrivate.ajax.ajax.abort();
+                    cswPrivate.ajax.abort();
                 }
             });
 

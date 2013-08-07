@@ -48,12 +48,7 @@ namespace ChemSW.Nbt.PropertySets
                         {
                             // Next Due Date might be invalid if the interval was altered
                             // This guarantees that we get the next due date after Today 
-                            NextDueDate = DateTime.MinValue;
-                        }
-                        // If, at this point, NextDueDate is greater than Today, we're pushing forward to the next interval
-                        // This is necessary to accommodate Warning Days when creating Tasks
-                        if( CswDateTime.GreaterThanNoMs( DateTime.Now, NextDueDate ) )
-                        {
+                            // This is necessary to accommodate Warning Days when creating Tasks
                             NextDueDate = DateTime.Now;
                         }
 

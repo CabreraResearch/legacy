@@ -140,7 +140,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         public abstract void onPropertySetAddDefaultViewFilters( CswNbtViewRelationship ParentRelationship );
 
-        public abstract DateTime getDefaultExpirationDate();
+        public abstract DateTime getDefaultExpirationDate( DateTime InitialDate );
 
         public abstract void onUpdatePropertyValue();
 
@@ -282,7 +282,7 @@ namespace ChemSW.Nbt.ObjClasses
                                 Container.Location.SelectedNodeId = _CswNbtResources.CurrentNbtUser.DefaultLocationId;
                             }
                             Container.Owner.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
-                            DateTime ExpirationDate = getDefaultExpirationDate();
+                            DateTime ExpirationDate = getDefaultExpirationDate( DateTime.Now );
                             if( DateTime.MinValue != ExpirationDate )
                             {
                                 Container.ExpirationDate.DateTimeValue = ExpirationDate;
@@ -425,13 +425,15 @@ namespace ChemSW.Nbt.ObjClasses
         {
             bool canAddCofA = false;
             CswNbtMetaDataObjectClass CofADocOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.CofADocumentClass );
-            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.CofA ) )
+            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.ManufacturerLotInfo ) )
             {
                 CswNbtMetaDataNodeType CofANT = CofADocOC.FirstNodeType;
                 canAddCofA = _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Create, CofANT );
                 if( canAddCofA )
                 {
+                    CswNbtMetaDataObjectClass ReceiptLotOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ReceiptLotClass );
                     ButtonData.Data["state"]["cofaDocTypeId"] = CofANT.NodeTypeId;
+                    ButtonData.Data["state"]["receiptLotTypeId"] = ReceiptLotOC.FirstNodeType.NodeTypeId;
                 }
             }
             ButtonData.Data["state"]["canAddCofA"] = canAddCofA;

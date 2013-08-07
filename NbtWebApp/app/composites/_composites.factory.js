@@ -45,6 +45,16 @@
                     return Csw.composites.buttonExt(cswParent, opts);
                 };
 
+                cswParent.buttonSplit = function(opts) {
+                    /// <summary>
+                    /// Creates a Csw.buttonSplit on this element
+                    /// </summary>
+                    /// <param name="opts" type="Object">Options to describe the buttonSplit</param>
+                    /// <returns type="Csw.composites.buttonSplit">A Csw.composites.buttonSplit</returns>
+                    opts = cswPrivate.controlPreProcessing(opts, 'buttonSplit');
+                    return Csw.composites.buttonSplit(cswParent, opts);
+                };
+
                 cswParent.buttonGroup = function (opts) {
                     /// <summary> Creates a Csw.buttonGroup on this element</summary>
                     /// <param name="opts" type="Object">Options to define the buttonGroup.</param>

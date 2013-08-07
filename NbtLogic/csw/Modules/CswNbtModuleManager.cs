@@ -60,7 +60,6 @@ namespace ChemSW.Nbt
         /// </summary>
         public bool IsModuleEnabled( CswEnumNbtModuleName Module )
         {
-            bool ret = false;     // Assume modules are disabled if we have no db connection (for login page)
             if( false == _RulesAreInitialized )
             {
                 initModules();

@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using ChemSW.Core;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Security;
@@ -13,7 +12,7 @@ namespace ChemSW.Nbt.Security
         //CswNbtNodePropPassword PasswordProperty { get; }
         //CswNbtObjClassRole RoleNode { get; }
         //CswNbtObjClassUser UserNode { get; }
-        bool IsAdministrator();
+        new bool IsAdministrator();
         //CswNbtNodePropText FirstNameProperty { get; }
         //CswNbtNodePropText LastNameProperty { get; }
         string Email { get; }
@@ -23,6 +22,7 @@ namespace ChemSW.Nbt.Security
         //CswNbtNodePropRelationship WorkUnitProperty { get; }
         CswPrimaryKey DefaultLocationId { get; }
         CswPrimaryKey DefaultPrinterId { get; }
+        CswPrimaryKey DefaultBalanceId { get; }
         CswPrimaryKey WorkUnitId { get; }
         CswPrimaryKey JurisdictionId { get; }
         Int32 UserNodeTypeId { get; }
@@ -30,7 +30,7 @@ namespace ChemSW.Nbt.Security
         Int32 RoleNodeTypeId { get; }
         Int32 RoleObjectClassId { get; }
         Int32 PasswordPropertyId { get; }
-        bool PasswordIsExpired { get; }
+        new bool PasswordIsExpired { get; }
         string Language { get; }
         CswNbtPropertySetPermission getPermissionForGroup( CswPrimaryKey PermissionGroupId );
 

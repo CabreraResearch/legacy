@@ -1,8 +1,8 @@
-using ChemSW.Core;
-using ChemSW.Nbt.ObjClasses;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using ChemSW.Core;
+using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.Security
 {
@@ -197,6 +197,19 @@ namespace ChemSW.Nbt.Security
                 if( _UserPropDict.ContainsKey( CswNbtObjClassUser.PropertyName.DefaultPrinter + _FkSuffix ) )
                 {
                     ret = new CswPrimaryKey( "nodes", CswConvert.ToInt32( _UserPropDict[CswNbtObjClassUser.PropertyName.DefaultPrinter + _FkSuffix] ) );
+                }
+                return ret;
+            }
+        }
+
+        public CswPrimaryKey DefaultBalanceId
+        {
+            get
+            {
+                CswPrimaryKey ret = null;
+                if( _UserPropDict.ContainsKey( CswNbtObjClassUser.PropertyName.DefaultBalance + _FkSuffix ) )
+                {
+                    ret = new CswPrimaryKey( "nodes", CswConvert.ToInt32( _UserPropDict[CswNbtObjClassUser.PropertyName.DefaultBalance + _FkSuffix] ) );
                 }
                 return ret;
             }
