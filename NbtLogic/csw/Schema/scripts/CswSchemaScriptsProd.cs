@@ -57,6 +57,8 @@ namespace ChemSW.Nbt.Schema
 
 
             #endregion EUCALYPTUS
+            
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02F_Case30040() ) );
 
             // This automatically detects the latest version
             _LatestVersion = _MinimumVersion;
@@ -100,8 +102,9 @@ namespace ChemSW.Nbt.Schema
             _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02E_Case29701() ), "Case 29701: OC Script" );
             _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02E_Case30347() ), RunBeforeEveryExecutionOfUpdater_02E_Case30347.Title );
 
-
             #endregion EUCALYPTUS Run Before Scripts
+
+            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02F_Case30040() ), RunBeforeEveryExecutionOfUpdater_02F_Case30040.Title );
 
             _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_MakeMissingNodeTypeProps() ), "MakeMissingNodeTypeProps" );
 
