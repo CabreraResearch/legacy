@@ -904,9 +904,9 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Set the context information for this audit transaction to the given Action
         /// </summary>
-        public void setAuditActionContext( String ContextActionName )
+        public void setAuditActionContext( CswEnumNbtActionName ContextActionName )
         {
-            CswNbtAction ContextAction = Actions[CswNbtAction.ActionNameStringToEnum( ContextActionName )];
+            CswNbtAction ContextAction = Actions[ContextActionName];
             if( ContextAction != null )
             {
                 AuditContext = CswNbtAction.ActionNameEnumToString( ContextAction.Name ) + " (Action_" + ContextAction.ActionId.ToString() + ")";
