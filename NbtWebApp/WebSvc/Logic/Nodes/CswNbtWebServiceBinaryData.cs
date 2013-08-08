@@ -72,8 +72,7 @@ namespace ChemSW.Nbt.WebServices
             else //get the audited record
             {
                 int jctnodepropid = CswConvert.ToInt32( Request.propid );
-                string sql = CswNbtSdBlobData.GetBlobAuditSQL( Request.date, jctnodepropid , BlobDataId );
-                CswArbitrarySelect blobDataAuditSelect = NbtResources.makeCswArbitrarySelect( "getAuditBlob", sql );
+                CswArbitrarySelect blobDataAuditSelect = CswNbtSdBlobData.GetBlobAuditSelect( NbtResources, Request.date, jctnodepropid, BlobDataId );
                 blobDataTbl = blobDataAuditSelect.getTable();
             }
 
