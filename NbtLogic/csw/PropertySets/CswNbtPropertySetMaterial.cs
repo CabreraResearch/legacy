@@ -273,7 +273,7 @@ namespace ChemSW.Nbt.ObjClasses
                         {
                             HasPermission = true;
                             CswNbtActReceiving Act = new CswNbtActReceiving( _CswNbtResources, ObjectClass, NodeId );
-
+                            _CswNbtResources.setAuditActionContext( CswEnumNbtActionName.Receiving );
                             CswNbtObjClassContainer Container = Act.makeContainer();
 
                             //Case 29436

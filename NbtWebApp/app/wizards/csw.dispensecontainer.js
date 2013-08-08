@@ -560,6 +560,7 @@
                                 };
                                 cswPrivate.state.initialQuantity.quantity = cswPrivate.state.initialQuantity.value;
                                 cswPrivate.state.initialQuantity.selectedNodeId = cswPrivate.state.initialQuantity.nodeid;
+                                cswPrivate.state.initialQuantity.unit = cswPrivate.state.initialQuantity.name;
                                 cswPrivate.state.initialQuantity.isRequired = true;
                                 quantityTable.cell(qtyTableRow, 1).br({ number: 2 });
                                 cswPrivate.quantityControl = quantityTable.cell(qtyTableRow, 1).quantity(cswPrivate.state.initialQuantity);
