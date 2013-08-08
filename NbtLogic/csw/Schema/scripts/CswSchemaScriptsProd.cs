@@ -32,13 +32,12 @@ namespace ChemSW.Nbt.Schema
 
             #region FOXGLOVE
 
-            // e.g. _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02F_CaseXXXXX() ) );            //02E-006 //02F-000 
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02F_Case30281() ) );                    //02E-007 //02F-001 
+            // e.g. _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02F_CaseXXXXX() ) );            //02E-000 //02F-000 
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02F_Case30281() ) );                    //02E-008 //02F-001 
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02F_Case30040() ) );                    //02E-009 //02F-002 
 
             #endregion FOXGLOVE
             
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02F_Case30040() ) );
-
             // This automatically detects the latest version
             _LatestVersion = _MinimumVersion;
             foreach( CswSchemaVersion Version in _UpdateDrivers.Keys.Where( Version => _LatestVersion == _MinimumVersion ||
@@ -60,11 +59,10 @@ namespace ChemSW.Nbt.Schema
 
             #endregion EUCALYPTUS Run Before Scripts
 
-            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02F_Case30040() ), RunBeforeEveryExecutionOfUpdater_02F_Case30040.Title );
-
             #region FOXGLOVE Run Before Scripts
 
             _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02F_Case30281() ), RunBeforeEveryExecutionOfUpdater_02F_Case30281.Title );
+            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02F_Case30040() ), RunBeforeEveryExecutionOfUpdater_02F_Case30040.Title );
 
             #endregion FOXGLOVE Run Before Scripts
 
