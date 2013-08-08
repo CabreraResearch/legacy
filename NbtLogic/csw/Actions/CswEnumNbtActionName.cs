@@ -13,36 +13,36 @@ namespace ChemSW.Nbt.Actions
     {
         #region Internals
         private static Dictionary<string, string> _Enums = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
-                                                                {
+        {
                                                                     
-                                                                 {   Create_Material, Create_Material},
-                                                                 {   Design,Design},
-                                                                 {   Edit_View,Edit_View},
-                                                                 {   Future_Scheduling,Future_Scheduling},
-                                                                 {   Create_Inspection,Create_Inspection},
-                                                                 {   Multi_Edit,Multi_Edit},
-                                                                 {   Quotas,Quotas},
-                                                                 {   Sessions,Sessions},
-                                                                 {   View_Scheduled_Rules,View_Scheduled_Rules},
-                                                                 {   Modules,Modules},
-                                                                 {   Submit_Request,Submit_Request},
-                                                                 {   DispenseContainer,DispenseContainer},
-                                                                 {   DisposeContainer,DisposeContainer},
-                                                                 {   UndisposeContainer,UndisposeContainer},
-                                                                 {   Receiving,Receiving},
-                                                                 {   Subscriptions,Subscriptions},
-                                                                 {   Reconciliation,Reconciliation},
-                                                                 {   Upload_Legacy_Mobile_Data,Upload_Legacy_Mobile_Data},
-                                                                 {   HMIS_Reporting,HMIS_Reporting},
-                                                                 {   Kiosk_Mode,Kiosk_Mode},
-                                                                 {   Tier_II_Reporting,Tier_II_Reporting},
-                                                                 {   Material_Approval,Manage_Locations},
-                                                                 {   Login_Data, Login_Data},
-                                                                 {   Manage_Locations,Manage_Locations},
-                                                                 {   Delete_Demo_Data, Delete_Demo_Data},
-                                                                 {   Container_Expiration_Lock, Container_Expiration_Lock}
+            {   Create_Material,           Create_Material           },
+            {   Design,                    Design                    },
+            {   Edit_View,                 Edit_View                 },
+            {   Future_Scheduling,         Future_Scheduling         },
+            {   Create_Inspection,         Create_Inspection         },
+            {   Multi_Edit,                Multi_Edit                },
+            {   Quotas,                    Quotas                    },
+            {   Sessions,                  Sessions                  },
+            {   View_Scheduled_Rules,      View_Scheduled_Rules      },
+            {   Modules,                   Modules                   },
+            {   Submit_Request,            Submit_Request            },
+            {   DispenseContainer,         DispenseContainer         },
+            {   DisposeContainer,          DisposeContainer          },
+            {   UndisposeContainer,        UndisposeContainer        },
+            {   Receiving,                 Receiving                 },
+            {   Subscriptions,             Subscriptions             },
+            {   Reconciliation,            Reconciliation            },
+            {   Upload_Legacy_Mobile_Data, Upload_Legacy_Mobile_Data },
+            {   HMIS_Reporting,            HMIS_Reporting            },
+            {   Kiosk_Mode,                Kiosk_Mode                },
+            {   Tier_II_Reporting,         Tier_II_Reporting         },
+            {   Material_Approval,         Material_Approval         },
+            {   Login_Data,                Login_Data                },
+            {   Manage_Locations,          Manage_Locations          },
+            {   Delete_Demo_Data,          Delete_Demo_Data          },
+            {   Container_Expiration_Lock, Container_Expiration_Lock }
 
-                                                                };
+        };
         /// <summary>
         /// The string value of the current instance
         /// </summary>
