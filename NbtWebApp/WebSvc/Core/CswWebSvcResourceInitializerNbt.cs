@@ -1,10 +1,10 @@
+using System.Web;
 using ChemSW.Config;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt;
 using ChemSW.Nbt.Actions;
 using ChemSW.Security;
-using System.Web;
 
 namespace ChemSW.WebSvc
 {
@@ -102,6 +102,10 @@ namespace ChemSW.WebSvc
                 if( null != _HttpContext.Request.Cookies["csw_currentactionname"] )
                 {
                     ContextActionName = _HttpContext.Request.Cookies["csw_currentactionname"].Value;
+                }
+                if( null != _HttpContext.Request.Cookies["CswUsername"] )
+                {
+                    _CswNbtResources.AuditUsername = _HttpContext.Request.Cookies["CswUsername"].Value;
                 }
 
                 if( string.Empty != ContextViewId )
