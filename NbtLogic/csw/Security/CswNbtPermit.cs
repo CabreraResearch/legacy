@@ -1097,7 +1097,7 @@ namespace ChemSW.Nbt.Security
             if( false == ( User is CswNbtSystemUser ) )
             {
                 hasPermission = false;
-                if( CswTools.IsPrimaryKey( PermissionGroupId ) )
+                if( null != User && CswTools.IsPrimaryKey( PermissionGroupId ) )
                 {
                     CswNbtPropertySetPermission PermNode = User.getPermissionForGroup( PermissionGroupId );
                     if( null != PermNode &&
