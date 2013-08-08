@@ -39,7 +39,8 @@ namespace ChemSW.Nbt.Actions
                                                                  {   Material_Approval,Manage_Locations},
                                                                  {   Login_Data, Login_Data},
                                                                  {   Manage_Locations,Manage_Locations},
-                                                                 {   Delete_Demo_Data, Delete_Demo_Data}
+                                                                 {   Delete_Demo_Data, Delete_Demo_Data},
+                                                                 {   Container_Expiration_Lock, Container_Expiration_Lock}
 
                                                                 };
         /// <summary>
@@ -118,6 +119,7 @@ namespace ChemSW.Nbt.Actions
         public const string Login_Data = "Login_Data";
         public const string Manage_Locations = "Manage_Locations";
         public const string Delete_Demo_Data = "Delete_Demo_Data";
+        public const string Container_Expiration_Lock = "Container_Expiration_Lock";
 
         #endregion Enum members
 

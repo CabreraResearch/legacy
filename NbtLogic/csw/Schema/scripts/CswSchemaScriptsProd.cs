@@ -29,7 +29,8 @@ namespace ChemSW.Nbt.Schema
 
             #region FOXGLOVE
 
-            // e.g. _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02F_CaseXXXXX() ) );            //02E-000 //02F-000 
+            // e.g. _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02F_CaseXXXXX() ) );            //02E-005 //02F-000 
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02F_Case30281() ) );                    //02E-006 //02F-001 
 
             #endregion FOXGLOVE
 
@@ -56,7 +57,7 @@ namespace ChemSW.Nbt.Schema
 
             #region FOXGLOVE Run Before Scripts
 
-            
+            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02F_Case30281() ), RunBeforeEveryExecutionOfUpdater_02F_Case30281.Title );
 
             #endregion FOXGLOVE Run Before Scripts
 

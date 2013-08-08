@@ -52,6 +52,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string UseType = "Use Type";
             public const string ViewSDS = "View SDS";
             public const string ViewCofA = "View C of A";
+            public const string ExpirationLocked = "Expiration Locked";
         }
 
         #endregion Properties
@@ -748,6 +749,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Toggles the ReadOnly state of all non-button properties according to the Disposed state of the Container.
         /// Toggles the Hidden state of all button properties according to Disposed state, permissions and business logic
+        /// Toggles the ReadOnly state of Expiration properties according to the Role's ContainerExpiraionLock action permission.
         /// </summary>
         private void _toggleAllPropertyStates()
         {
@@ -758,6 +760,8 @@ namespace ChemSW.Nbt.ObjClasses
             _toggleButtonHiddenState( IsDisposed );
             _toggleButtonHiddenStateByPermission();
             _toggleButtonHiddenStateByDocumentRelationship();
+            ExpirationLocked.setReadOnly( false == _CswNbtResources.Permit.can( CswEnumNbtActionName.Container_Expiration_Lock ), SaveToDb: false );
+            ExpirationDate.setReadOnly( ExpirationLocked.Checked == CswEnumTristate.True, SaveToDb: false );
         }
         
         /// <summary>
@@ -1204,6 +1208,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropList UseType { get { return ( _CswNbtNode.Properties[PropertyName.UseType] ); } }
         public CswNbtNodePropButton ViewSDS { get { return ( _CswNbtNode.Properties[PropertyName.ViewSDS] ); } }
         public CswNbtNodePropButton ViewCofA { get { return ( _CswNbtNode.Properties[PropertyName.ViewCofA] ); } }
+        public CswNbtNodePropLogical ExpirationLocked { get { return ( _CswNbtNode.Properties[PropertyName.ExpirationLocked] ); } }
         #endregion
 
 
