@@ -30,7 +30,7 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClass RoleOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.RoleClass );
             foreach( CswNbtObjClassRole RoleNode in RoleOC.getNodes( false, true ) )
             {
-                _CswNbtSchemaModTrnsctn.Permit.set( CswEnumNbtActionName.Material_Approval, RoleNode.Node, RoleNode.Administrator.Checked == CswEnumTristate.True );
+                _CswNbtSchemaModTrnsctn.Permit.set( CswEnumNbtActionName.Container_Expiration_Lock, RoleNode.Node, RoleNode.Administrator.Checked == CswEnumTristate.True );
             }
 
             CswNbtMetaDataObjectClass ContainerOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerClass );
