@@ -30,7 +30,7 @@
                 sessiondataid: '',
                 searchterm: '',
                 filterHideThreshold: 5,
-                searchOnly: false
+                universalSearchOnly: false
                 //buttonSingleColumn: '',
                 //buttonMultiColumn: ''
             };
@@ -125,7 +125,7 @@
                 // Search Menu
                 Csw.ajaxWcf.post({
                     urlMethod: 'Menus/getSearchMenuItems',
-                    data: cswPrivate.searchOnly,
+                    data: cswPrivate.universalSearchOnly,
                     success: function (data) {
                         var srchMenuItems = [];
 

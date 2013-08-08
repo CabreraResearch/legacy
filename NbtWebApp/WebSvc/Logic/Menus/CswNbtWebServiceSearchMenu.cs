@@ -55,13 +55,13 @@ namespace ChemSW.Nbt.WebServices
 
         #endregion
 
-        public static void GetSearchMenuItems( ICswResources CswResources, CswNbtSearchMenuReturn Return, bool searchOnly )
+        public static void GetSearchMenuItems( ICswResources CswResources, CswNbtSearchMenuReturn Return, bool universalSearchOnly )
         {
             _CswNbtResources = (CswNbtResources) CswResources;
 
             Collection<SearchMenuResponse.SearchType> searchTypes = new Collection<SearchMenuResponse.SearchType>();
 
-            if( false == searchOnly )
+            if( false == universalSearchOnly )
             {
                 if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.CISPro ) )
                 {

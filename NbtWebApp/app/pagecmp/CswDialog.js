@@ -1805,7 +1805,7 @@
                 compactResults: true,
                 extraAction: 'Select',
                 extraActionIcon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.check),
-                searchOnly: true, //No C3 or Structure Search here
+                universalSearchOnly: true, //No C3 or Structure Search here
                 onExtraAction: function (nodeObj) {
                     cswPublic.close();
                     Csw.tryExec(cswDlgPrivate.onSelectNode, nodeObj);
