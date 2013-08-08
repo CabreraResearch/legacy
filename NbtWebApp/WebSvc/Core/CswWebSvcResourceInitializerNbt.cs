@@ -103,10 +103,6 @@ namespace ChemSW.WebSvc
                 {
                     ContextActionName = _HttpContext.Request.Cookies["csw_currentactionname"].Value;
                 }
-                if( null != _HttpContext.Request.Cookies["CswUsername"] )
-                {
-                    _CswNbtResources.AuditUsername = _HttpContext.Request.Cookies["CswUsername"].Value;
-                }
 
                 if( string.Empty != ContextViewId )
                 {
