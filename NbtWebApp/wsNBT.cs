@@ -94,11 +94,7 @@ namespace ChemSW.Nbt.WebServices
                 }
                 else if( ContextActionName != string.Empty )
                 {
-                    CswNbtAction ContextAction = _CswNbtResources.Actions[CswNbtAction.ActionNameStringToEnum( ContextActionName )];
-                    if( ContextAction != null )
-                    {
-                        _CswNbtResources.AuditContext = CswNbtAction.ActionNameEnumToString( ContextAction.Name ) + " (Action_" + ContextAction.ActionId.ToString() + ")";
-                    }
+                    _CswNbtResources.setAuditActionContext( ContextActionName );
                 }
             }
 
@@ -291,7 +287,7 @@ namespace ChemSW.Nbt.WebServices
                     else
                     {
                         // case 30086 - prevent login if admin hasn't accepted the license yet
-                        AuthenticationStatus = CswEnumAuthenticationStatus.Deactivated;
+                        AuthenticationStatus = CswEnumAuthenticationStatus.NoLicense;
                         _CswSessionResources.CswSessionManager.clearSession();
                     }
                 }
