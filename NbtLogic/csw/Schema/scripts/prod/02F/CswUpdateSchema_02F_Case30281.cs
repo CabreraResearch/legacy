@@ -33,11 +33,19 @@ namespace ChemSW.Nbt.Schema
                 _CswNbtSchemaModTrnsctn.Permit.set( CswEnumNbtActionName.Container_Expiration_Lock, RoleNode.Node, RoleNode.Administrator.Checked == CswEnumTristate.True );
             }
 
-            CswNbtMetaDataObjectClass ContainerOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerClass );
-            foreach( CswNbtMetaDataNodeType ContainerNT in ContainerOC.getNodeTypes() )
+            CswNbtMetaDataPropertySet MaterialSet = _CswNbtSchemaModTrnsctn.MetaData.getPropertySet( CswEnumNbtPropertySetName.MaterialSet );
+            foreach( CswNbtMetaDataObjectClass MaterialOC in MaterialSet.getObjectClasses() )
             {
-                CswNbtMetaDataNodeTypeProp ExpirationLockedNTP = ContainerNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.PropertyName.ExpirationLocked );
-                ExpirationLockedNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
+                foreach( CswNbtMetaDataNodeType MaterialNT in MaterialOC.getNodeTypes() )
+                {
+                    CswNbtMetaDataNodeTypeProp ExpirationLockedNTP = MaterialNT.getNodeTypePropByObjectClassProp( CswNbtPropertySetMaterial.PropertyName.ContainerExpirationLocked );
+                    ExpirationLockedNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
+                }
+                foreach( CswNbtPropertySetMaterial MaterialNode in MaterialOC.getNodes( false, false ) )
+                {
+                    MaterialNode.ContainerExpirationLocked.Checked = CswEnumTristate.True;
+                    MaterialNode.postChanges( false );
+                }
             }
         } // update()
 
