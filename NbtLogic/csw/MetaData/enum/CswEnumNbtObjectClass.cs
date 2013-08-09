@@ -44,6 +44,7 @@ namespace ChemSW.Nbt.MetaData
             { InventoryLevelClass               , InventoryLevelClass                },
             { JurisdictionClass                 , JurisdictionClass                  },
             { LocationClass                     , LocationClass                      },
+            { LQNoClass                         , LQNoClass                          },
             { MailReportClass                   , MailReportClass                    },
             { MailReportGroupClass              , MailReportGroupClass               },
             { MailReportGroupPermissionClass    , MailReportGroupPermissionClass     },
@@ -170,6 +171,7 @@ namespace ChemSW.Nbt.MetaData
         public const string InventoryLevelClass = "InventoryLevelClass";
         public const string JurisdictionClass = "JurisdictionClass";
         public const string LocationClass = "LocationClass";
+        public const string LQNoClass = "LQNoClass";
         public const string MailReportClass = "MailReportClass";
         public const string MailReportGroupClass = "MailReportGroupClass";
         public const string MailReportGroupPermissionClass = "MailReportGroupPermissionClass";

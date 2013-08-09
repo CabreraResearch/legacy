@@ -128,7 +128,6 @@ namespace ChemSW.Nbt.ObjClasses
                     break;
 
                 case CswEnumNbtObjectClass.InspectionTargetClass:
-
                     ReturnVal = new CswNbtObjClassInspectionTarget( CswNbtResources, Node );
                     break;
 
@@ -137,7 +136,6 @@ namespace ChemSW.Nbt.ObjClasses
                     break;
 
                 case CswEnumNbtObjectClass.InventoryGroupClass:
-
                     ReturnVal = new CswNbtObjClassInventoryGroup( CswNbtResources, Node );
                     break;
 
@@ -155,6 +153,10 @@ namespace ChemSW.Nbt.ObjClasses
 
                 case CswEnumNbtObjectClass.LocationClass:
                     ReturnVal = new CswNbtObjClassLocation( CswNbtResources, Node );
+                    break;
+
+                case CswEnumNbtObjectClass.LQNoClass:
+                    ReturnVal = new CswNbtObjClassLQNo( CswNbtResources, Node );
                     break;
 
                 case CswEnumNbtObjectClass.ManufacturerEquivalentPartClass:

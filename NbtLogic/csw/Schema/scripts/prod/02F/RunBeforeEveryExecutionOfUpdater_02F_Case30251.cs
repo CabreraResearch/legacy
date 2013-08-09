@@ -1,3 +1,4 @@
+using System;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
@@ -30,6 +31,12 @@ namespace ChemSW.Nbt.Schema
         /// </summary>
         public override void update()
         {
+            _upgradeDepartmentToObjectClass();
+            _upgradeLQNoToObjectClass();
+        }
+
+        private void _upgradeDepartmentToObjectClass()
+        {
             CswNbtMetaDataObjectClass DepartmentOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.DepartmentClass );
             if( null == DepartmentOC )
             {
@@ -49,7 +56,37 @@ namespace ChemSW.Nbt.Schema
             }
         }
 
-    }//class RunBeforeEveryExecutionOfUpdater_02F_Case30281
+        private void _upgradeLQNoToObjectClass()
+        {
+            CswNbtMetaDataObjectClass LQNoOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.LQNoClass );
+            if( null == LQNoOC )
+            {
+                LQNoOC = _CswNbtSchemaModTrnsctn.createObjectClass( CswEnumNbtObjectClass.LQNoClass, "folder.png", false );
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( LQNoOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+                {
+                    PropName = CswNbtObjClassLQNo.PropertyName.LQNo,
+                    FieldType = CswEnumNbtFieldType.Text,
+                    IsUnique = true
+                } );
+                CswNbtMetaDataNodeType WeightNt = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Unit (Weight)" );
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( LQNoOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+                {
+                    PropName = CswNbtObjClassLQNo.PropertyName.Limit,
+                    FieldType = CswEnumNbtFieldType.Quantity,
+                    IsRequired = true,
+                    IsFk = true,
+                    FkType = CswEnumNbtViewRelatedIdType.NodeTypeId.ToString(),
+                    FkValue = WeightNt != null ? WeightNt.NodeTypeId : Int32.MinValue
+                } );
+                CswNbtMetaDataNodeType LQNoNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "LQNo" );
+                if( null != LQNoNT )
+                {
+                    _CswNbtSchemaModTrnsctn.MetaData.ConvertObjectClass( LQNoNT, LQNoOC );
+                }
+            }
+        }
+
+    }//class RunBeforeEveryExecutionOfUpdater_02F_Case30251
 }//namespace ChemSW.Nbt.Schema
 
 
