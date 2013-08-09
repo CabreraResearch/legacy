@@ -34,7 +34,8 @@ namespace ChemSW.Nbt.Schema
             _upgradeDepartmentToObjectClass();
             _upgradeLQNoToObjectClass();
             _upgradeControlZoneToObjectClass();
-            _upgradeVendorNTPS();
+            _upgradeVendorNTPs();
+            _upgradeFeedbackNTPs();
         }
 
         #region ObjectClasses
@@ -146,7 +147,7 @@ namespace ChemSW.Nbt.Schema
 
         #region ObjectClassProps
 
-        private void _upgradeVendorNTPS()
+        private void _upgradeVendorNTPs()
         {
             CswNbtMetaDataObjectClass VendorOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.VendorClass );
             _addOCP( VendorOC, new CswNbtWcfMetaDataModel.ObjectClassProp
@@ -198,6 +199,16 @@ namespace ChemSW.Nbt.Schema
             {
                 PropName = CswNbtObjClassVendor.PropertyName.Fax,
                 FieldType = CswEnumNbtFieldType.Text
+            } );
+        }
+
+        private void _upgradeFeedbackNTPs()
+        {
+            CswNbtMetaDataObjectClass FeedbackOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.FeedbackClass );
+            _addOCP( FeedbackOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+            {
+                PropName = CswNbtObjClassFeedback.PropertyName.Document,
+                FieldType = CswEnumNbtFieldType.File
             } );
         }
 
