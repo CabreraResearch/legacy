@@ -811,12 +811,12 @@ namespace ChemSW.Nbt.Security
                         CswPrimaryKey PermissionGroupId = TargetNode.getPermissionGroupId();
                         ret = ret && _CswNbtResources.Permit.canNode( _CswNbtPermitInfo.NodeTypePermission, PermissionGroupId, _CswNbtPermitInfo.User );
                     }
-                    if( _CswNbtPermitInfo.NodeTypePermission == CswEnumNbtNodeTypePermission.Edit )
-                    {
+                    //if( _CswNbtPermitInfo.NodeTypePermission == CswEnumNbtNodeTypePermission.Edit )
+                    //{
                         // see case 29095; this is now handled in CswNbtSdTabsAndProps
                         //ret = ret && ( _CswNbtPermitInfo.User.IsAdministrator() || false == Node.ReadOnly );
-                        ret = ret && ( false == Node.ReadOnly );
-                    }
+                        //ret = ret && ( false == Node.ReadOnly );
+                    //}
                 }
             }//if NodeId is not null
 
