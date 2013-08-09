@@ -127,7 +127,7 @@ namespace ChemSW.Nbt.Test.ObjClasses
             DateTime LastDueDate = ExistingGen.DueDateInterval.getLastOccuranceBefore( ExistingGen.NextDueDate.DateTimeValue );
             if( LastDueDate > DateTime.Today )
             {
-                ExistingGen.NextDueDate.DateTimeValue = DateTime.MinValue;
+                ExistingGen.NextDueDate.DateTimeValue = DateTime.Now;
                 ExistingGen.updateNextDueDate( ForceUpdate: true, DeleteFutureNodes: false );
                 ExistingGen.postChanges( true );
             }
@@ -185,6 +185,26 @@ namespace ChemSW.Nbt.Test.ObjClasses
             DayOfWeek Today = DateTime.Today.DayOfWeek;
             CswNbtObjClassGenerator GeneratorNode = TestData.Nodes.createGeneratorNode( CswEnumRateIntervalType.WeeklyByDay, Days: new SortedList { { Today, Today } }, StartDate: DateTime.Today );
             Assert.AreEqual( DateTime.Today.AddDays( 7 ), GeneratorNode.NextDueDate.DateTimeValue );
+        }
+
+        /// <summary>
+        /// Given a weekly generator with a warning days of 5 whose StartDate is three weeks ago,
+        /// given that the NextDueDate is one week later than the StartDate (two weeks ago),
+        /// when the generator's NextDueDate is updated,
+        /// assert that the NextDueDate is set to the next week after the previous NextDueDate (one week ago)
+        /// Prior to resolving Case 30308, this test failed.
+        /// </summary>
+        [Test]
+        public void updateNextDueDateTest_NextDueDateStillInPast()
+        {
+            DayOfWeek ThreeDaysFromNow = DateTime.Today.AddDays( 3 ).DayOfWeek;
+            CswNbtObjClassGenerator GeneratorNode = TestData.Nodes.createGeneratorNode( CswEnumRateIntervalType.WeeklyByDay, Days: new SortedList { { ThreeDaysFromNow, ThreeDaysFromNow } }, StartDate: DateTime.Today.AddDays( 3 - 21 ), WarningDays: 5 );
+            GeneratorNode.postChanges( true );
+            CswNbtObjClassGenerator ExistingGen = TestData.CswNbtResources.Nodes[GeneratorNode.NodeId];
+            ExistingGen.NextDueDate.DateTimeValue = DateTime.Today.AddDays( 3 - 14 );
+            Assert.AreEqual( DateTime.Today.AddDays( 3 - 14 ), ExistingGen.NextDueDate.DateTimeValue );
+            ExistingGen.updateNextDueDate( ForceUpdate: true, DeleteFutureNodes: false );
+            Assert.AreEqual( DateTime.Today.AddDays( 3 - 7 ), ExistingGen.NextDueDate.DateTimeValue );
         }
 
         #endregion updateNextDueDate

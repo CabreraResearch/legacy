@@ -57,6 +57,8 @@ namespace ChemSW.Nbt.WebServices
             [DataMember]
             public string DefaultPrinterId;
             [DataMember]
+            public string DefaultBalanceId;
+            [DataMember]
             public string JurisdictionId;
             [DataMember]
             public string WorkUnitId;
@@ -77,6 +79,10 @@ namespace ChemSW.Nbt.WebServices
             if( CswTools.IsPrimaryKey( NbtResources.CurrentNbtUser.DefaultPrinterId ) )
             {
                 Ret.Data.DefaultPrinterId = NbtResources.CurrentNbtUser.DefaultPrinterId.ToString();
+            }
+            if( CswTools.IsPrimaryKey( NbtResources.CurrentNbtUser.DefaultBalanceId ) )
+            {
+                Ret.Data.DefaultBalanceId = NbtResources.CurrentNbtUser.DefaultBalanceId.ToString();
             }
             if( CswTools.IsPrimaryKey( NbtResources.CurrentNbtUser.JurisdictionId ) )
             {
