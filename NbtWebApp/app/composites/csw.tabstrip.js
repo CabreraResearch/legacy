@@ -15,8 +15,9 @@
             (function _pre() {
                 cswPrivate.name = cswPrivate.name || '';
                 cswPrivate.tabPanel = cswPrivate.tabPanel || {};
-                cswPrivate.tabPanel.title = cswPrivate.tabPanel.title || 'Tabs';
-                cswPrivate.tabPanel.height = cswPrivate.tabPanel.height || 700;
+                cswPrivate.tabPanel.title = cswPrivate.tabPanel.title;
+                cswPrivate.tabPanel.height = cswPrivate.tabPanel.height;
+                cswPrivate.tabPanel.minHeight = cswPrivate.tabPanel.minHeight || 100;
                 //cswPrivate.tabPanel.width = cswPrivate.tabPanel.width || 1000;
                 cswPrivate.tabPanel.resizable = cswPrivate.tabPanel.resizable; // || true
                 cswPrivate.tabPanel.stateful = cswPrivate.tabPanel.stateful;  // || true
@@ -32,7 +33,7 @@
                 };
 
                 cswParent.empty();
-                cswPublic = cswParent.div().css({ width: '100%', height: '100%' });
+                cswPublic = cswParent.div(); //.css({ width: '100%', height: '100%' });
 
             }());
 
@@ -61,7 +62,7 @@
                         var ret = null;
                         if (extTab.el) {
                             ret = Csw.domNode({
-                                ID: extTab.el.id,
+                                ID: extTab.el.id + '-body',
                                 el: extTab.el.dom
                             });
                         }
@@ -155,6 +156,14 @@
 
             //#endregion Define Class Members
 
+            cswPublic.empty = function() {
+                if (cswPublic.tabPanel.destroy) {
+                    cswPublic.tabPanel.destroy();
+                }
+                if (cswParent.empty) {
+                    cswParent.empty();
+                }
+            };
 
             //#region Post-ctor
 
@@ -166,6 +175,7 @@
                     id: cswPrivate.ID,
                     layout: 'fit',
                     height: cswPrivate.tabPanel.height, //no height will render as 0px
+                    minHeight: cswPrivate.tabPanel.minHeight, //no height will render as 0px
                     //width: no width is fine
                     renderTo: cswPublic.getId(),
                     title: cswPrivate.tabPanel.title,
@@ -180,15 +190,10 @@
                         //new window.Ext.ux.TabReorderer() //there is no ptype for this plugin. Pass in an instance instead.
                     ],
                     listeners: {
-                        click: {
-                            element: 'el', //bind to the underlying el property on the panel
-                            fn: function (el, eventObj, callBack) {
-                                var clickedItem = el.target.innerHTML;
-                                var tabName = cswPublic.tabPanel.activeTab.title;
-                                if(clickedItem.indexOf(tabName) > -1){
-                                    Csw.tryExec(cswPrivate.onTabSelect, tabName, el, eventObj, callBack);
-                                }
-                            }
+                        tabchange: function(tabPanel, newCard, oldCard, eOpts) {
+                            var tabName = cswPublic.tabPanel.activeTab.title;
+                            Csw.tryExec(cswPrivate.onTabSelect, tabName, tabPanel);
+
                         }
                     }
                 });
