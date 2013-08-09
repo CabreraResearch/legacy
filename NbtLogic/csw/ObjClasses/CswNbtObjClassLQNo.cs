@@ -27,7 +27,7 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         /// <summary>
-        /// Convert a CswNbtNode to a CswNbtObjClassVendor
+        /// Convert a CswNbtNode to a CswNbtObjClassLQNo
         /// </summary>
         public static implicit operator CswNbtObjClassLQNo( CswNbtNode Node )
         {
@@ -87,6 +87,6 @@ namespace ChemSW.Nbt.ObjClasses
 
         #endregion
 
-    }//CswNbtObjClassDepartment
+    }//CswNbtObjClassLQNo
 
 }//namespace ChemSW.Nbt.ObjClasses

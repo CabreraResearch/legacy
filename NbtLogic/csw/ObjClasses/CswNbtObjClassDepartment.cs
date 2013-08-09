@@ -26,7 +26,7 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         /// <summary>
-        /// Convert a CswNbtNode to a CswNbtObjClassVendor
+        /// Convert a CswNbtNode to a CswNbtObjClassDepartment
         /// </summary>
         public static implicit operator CswNbtObjClassDepartment( CswNbtNode Node )
         {
