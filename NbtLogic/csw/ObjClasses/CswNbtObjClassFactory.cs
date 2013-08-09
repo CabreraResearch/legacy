@@ -71,6 +71,10 @@ namespace ChemSW.Nbt.ObjClasses
                     ReturnVal = new CswNbtObjClassCustomer( CswNbtResources, Node );
                     break;
 
+                case CswEnumNbtObjectClass.DepartmentClass:
+                    ReturnVal = new CswNbtObjClassDepartment( CswNbtResources, Node );
+                    break;
+
                 case CswEnumNbtObjectClass.DocumentClass:
                     ReturnVal = new CswNbtObjClassDocument( CswNbtResources, Node );
                     break;

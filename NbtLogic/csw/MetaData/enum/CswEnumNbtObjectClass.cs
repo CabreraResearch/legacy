@@ -24,6 +24,7 @@ namespace ChemSW.Nbt.MetaData
             { ContainerDispenseTransactionClass , ContainerDispenseTransactionClass  },
             { ContainerGroupClass               , ContainerGroupClass                },
             { CustomerClass                     , CustomerClass                      },
+            { DepartmentClass                   , DepartmentClass                    },
             { DocumentClass                     , DocumentClass                      },
             { EnterprisePartClass               , EnterprisePartClass                },
             { EquipmentAssemblyClass            , EquipmentAssemblyClass             },
@@ -149,6 +150,7 @@ namespace ChemSW.Nbt.MetaData
         public const string ContainerDispenseTransactionClass = "ContainerDispenseTransactionClass";
         public const string ContainerGroupClass = "ContainerGroupClass";
         public const string CustomerClass = "CustomerClass";
+        public const string DepartmentClass = "DepartmentClass";
         public const string DocumentClass = "DocumentClass";
         public const string EnterprisePartClass = "EnterprisePartClass";
         public const string EquipmentAssemblyClass = "EquipmentAssemblyClass";
