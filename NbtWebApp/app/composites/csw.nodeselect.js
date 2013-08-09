@@ -448,6 +448,7 @@
                             enabledText: 'New',
                             tooltip: { title: 'Add New ' + cswPrivate.name },
                             onClick: function () {
+                                cswPrivate.addImage.enable();
                                 cswPrivate.table.cell(1, cswPrivate.tipCellCol).empty();
                                 if (Csw.number(cswPrivate.nodeTypeId) > 0) {
                                     cswPrivate.openAddNodeDialog(cswPrivate.nodeTypeId);
