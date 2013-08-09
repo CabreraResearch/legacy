@@ -94,7 +94,7 @@ namespace ChemSW.Nbt.WebServices
                 }
                 else if( ContextActionName != string.Empty )
                 {
-                    _CswNbtResources.setAuditActionContext( ContextActionName );
+                    _CswNbtResources.setAuditActionContext( CswNbtAction.ActionNameStringToEnum( ContextActionName ) );
                 }
             }
 

@@ -122,10 +122,6 @@ namespace ChemSW.Nbt.ObjClasses
 
         protected override void afterPopulateProps()
         {
-            if( false == _CswNbtResources.Permit.canNode( CswEnumNbtNodeTypePermission.View, getPermissionGroupId() ) )
-            {
-                Run.setHidden( value: true, SaveToDb: false );
-            }
             _CswNbtObjClassDefault.triggerAfterPopulateProps();
         }//afterPopulateProps()
 
