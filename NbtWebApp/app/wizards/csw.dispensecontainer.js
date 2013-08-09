@@ -131,7 +131,7 @@
                     cswPrivate.validateState();
                     cswPublic = cswParent.div();
                     cswPrivate.currentStepNo = cswPrivate.startingStep;
-                } ());
+                }());
 
                 cswPrivate.toggleButton = function (button, isEnabled, doClick) {
                     var btn;
@@ -247,7 +247,7 @@
                                 if (false === Csw.isNullOrEmpty(cswPrivate.state.barcode)) {
                                     dispenseTypeTable.cell(1, 1).span().setLabelText('Barcode: ');
                                     dispenseTypeTable.cell(1, 2).span({ text: Csw.string(cswPrivate.state.barcode) });
-                                    
+
                                 }
                                 if (false === Csw.isNullOrEmpty(cswPrivate.state.materialname)) {
                                     dispenseTypeTable.cell(2, 1).span().setLabelText('Material: ');
@@ -285,7 +285,7 @@
                             cswPrivate.stepOneComplete = true;
                         }
                     };
-                } ());
+                }());
 
                 //Step 2. Select Amount
                 //state.dispenseType != Dispense ? 
@@ -319,7 +319,7 @@
                             });
                             qtyTableRow += 1;
                             var propRow = 1;
-                            
+
                             if (false === Csw.isNullOrEmpty(cswPrivate.state.barcode)) {
                                 propTbl.cell(propRow, 1).span().setLabelText('Barcode: ');
                                 propTbl.cell(propRow, 2).span({ text: Csw.string(cswPrivate.state.barcode) });
@@ -393,12 +393,12 @@
                                     relatedNodeId: cswPrivate.state.sourceContainerNodeId,
                                     selectedSizeId: cswPrivate.state.sizeId,
                                     customBarcodes: cswPrivate.state.customBarcodes
-                                });                                
+                                });
 
                                 qtyTableRow++;
                             };
 
-                            var makePrintBarcodesCheckBox = function() {
+                            var makePrintBarcodesCheckBox = function () {
                                 var checkBoxTable = quantityTable.cell(qtyTableRow, 1).table({
                                     name: 'checkboxTable',
                                     cellpadding: '1px',
@@ -407,7 +407,7 @@
                                 qtyTableRow++;
 
                                 cswPrivate.printBarcodesCheckBox = checkBoxTable.cell(1, 1).checkBox({
-                                    onChange: Csw.method(function() {
+                                    onChange: Csw.method(function () {
                                         if (cswPrivate.printBarcodesCheckBox.checked()) {
                                             cswPrivate.printBarcodes = true;
                                         } else {
@@ -418,7 +418,7 @@
                                 checkBoxTable.cell(1, 2).span({ text: 'Print barcode labels for new containers' });
                             };
 
-                            var getQuantityAfterDispense = function() {
+                            var getQuantityAfterDispense = function () {
                                 var deductingValue = Csw.bool(cswPrivate.state.dispenseType !== cswPrivate.dispenseTypes.Add);
                                 cswPrivate.state.quantityAfterDispense = cswPrivate.state.currentQuantity;
                                 var quantities = [];
@@ -471,12 +471,12 @@
                                         urlMethod: 'Balances/ListConnectedBalances',
                                         success: function (data) {
                                             button.menu.removeAll();
-                                            
+
                                             Csw.each(data.BalanceList, function (balance) {
                                                 if (false === Csw.isNullOrEmpty(balance.NbtName)) {
                                                     button.menu.add({
                                                         text: balance.NbtName + ' - ' + balance.CurrentWeight + balance.UnitOfMeasurement,
-                                                        handler: function() {
+                                                        handler: function () {
                                                             updateInterface(balance);
                                                             balanceButton.setText(balance.NbtName);
                                                             balanceButton.setHandler(function () { getBalanceInformation(balance.NodeId); });
@@ -514,8 +514,8 @@
                                     width: 137,
                                     arrowHandler: function (button) { updateBalanceMenuInfo(button, true); },
                                 });
-                                
-                                
+
+
                                 //check if user has a default balance. If so, change the behavior of clicking the button
                                 var userDefaultBalance = Csw.clientSession.userDefaults().DefaultBalanceId;
 
@@ -527,35 +527,35 @@
                                             var Balance = data.BalanceList[0];
                                             if (Balance.IsActive) {
                                                 balanceButton.setText(Balance.NbtName);
-                                                balanceButton.setHandler(function() { getBalanceInformation(Balance.NodeId); });
+                                                balanceButton.setHandler(function () { getBalanceInformation(Balance.NodeId); });
                                             } else {
                                                 balanceButton.setText(Balance.NbtName + " (Inactive)");
                                             }
                                         }//success
                                     });
-                                    
+
                                 } //if (null != userDefaultBalance) 
-                                
+
 
                             };//makeSerialBalanceButton(location, quantity)
 
 
 
                             if (cswPrivate.state.dispenseType === cswPrivate.dispenseTypes.Dispense) {
-                                
+
                                 makeContainerSelect();
                                 makeQuantityForm();
                                 makePrintBarcodesCheckBox();
-                                
+
                             } else {
-                                
+
                                 quantityTable.cell(qtyTableRow, 1).br();
                                 quantityTable.cell(qtyTableRow, 1).span({ text: 'Set quantity for dispense:' });
                                 qtyTableRow++;
-                                cswPrivate.state.initialQuantity.onNumberChange = function() {
+                                cswPrivate.state.initialQuantity.onNumberChange = function () {
                                     getQuantityAfterDispense();
                                 };
-                                cswPrivate.state.initialQuantity.onQuantityChange = function() {
+                                cswPrivate.state.initialQuantity.onQuantityChange = function () {
                                     getQuantityAfterDispense();
                                 };
                                 cswPrivate.state.initialQuantity.quantity = cswPrivate.state.initialQuantity.value;
@@ -577,16 +577,16 @@
                             cswPrivate.toggleButton(cswPrivate.buttons.next, false);
                         }, 250);
                     };
-                } ());//cswPrivate.makeStepTwo()
+                }());//cswPrivate.makeStepTwo()
 
                 cswPrivate.roundToPrecision = function (num) {
                     var precision = Csw.number(cswPrivate.state.precision, 6);
                     return Math.round(Csw.number(num) * Math.pow(10, precision)) / Math.pow(10, precision);
                 };
 
-                cswPrivate.getTotalQuantityToDispense = function(quantities) {
+                cswPrivate.getTotalQuantityToDispense = function (quantities) {
                     var totalQuantityToDispense = 0;
-                    Csw.each(quantities, function(quantity) {
+                    Csw.each(quantities, function (quantity) {
                         if (false === Csw.isNullOrEmpty(quantity)) {
                             var containerNo = quantity.containerNo;
                             if (Csw.number(containerNo) === 0) {
@@ -603,7 +603,7 @@
                                         NewUnitId: cswPrivate.state.unitId,
                                         MaterialId: cswPrivate.state.materialId
                                     },
-                                    success: function(data) {
+                                    success: function (data) {
                                         if (false === Csw.isNullOrEmpty(data)) {
                                             totalQuantityToDispense += cswPrivate.roundToPrecision(Csw.number(data.convertedvalue, 0) * Csw.number(containerNo, 0));
                                         }
@@ -617,7 +617,7 @@
                     return totalQuantityToDispense;
                 };
 
-                cswPrivate.updateQuantityAfterDispense = function(quantities) {
+                cswPrivate.updateQuantityAfterDispense = function (quantities) {
                     var enableFinishButton = true;
                     cswPrivate.state.quantityAfterDispense = cswPrivate.roundToPrecision(Csw.number(cswPrivate.state.currentQuantity - cswPrivate.getTotalQuantityToDispense(quantities)));
 
@@ -651,16 +651,15 @@
                                 Csw.error.throwException(Csw.error.exception('Cannot dispense without a source container.', '', 'csw.dispensecontainer.js', 283));
                             } else {
                                 if (Csw.isNullOrEmpty(cswPrivate.state.barcode) ||
-                                Csw.isNullOrEmpty(cswPrivate.state.materialname) ||
-                                Csw.isNullOrEmpty(cswPrivate.state.location) ||
-                                Csw.isNullOrEmpty(cswPrivate.state.containerNodeTypeId)) {
+                                    Csw.isNullOrEmpty(cswPrivate.state.materialname) ||
+                                    Csw.isNullOrEmpty(cswPrivate.state.location) ||
+                                    Csw.isNullOrEmpty(cswPrivate.state.containerNodeTypeId)) {
 
                                     Csw.ajax.post({
                                         urlMethod: 'getDispenseSourceContainerData',
                                         data: {
                                             ContainerId: cswPrivate.state.sourceContainerNodeId
                                         },
-                                        async: false,
                                         success: function (data) {
                                             cswPrivate.state.barcode = data.barcode;
                                             cswPrivate.state.materialname = data.materialname;
@@ -671,10 +670,12 @@
                                             cswPrivate.state.currentUnitName = data.unit;
                                             cswPrivate.state.sizeId = data.sizeid;
                                             cswPrivate.state.materialId = data.materialid;
+                                            cswPrivate.makeStepTwo(true);
                                         }
                                     });
+                                } else {
+                                    cswPrivate.makeStepTwo(true);
                                 }
-                                cswPrivate.makeStepTwo(true);
                             }
                             break;
                     }
@@ -776,9 +777,9 @@
                     });
 
                     cswPrivate.makeStepOne();
-                } ());
+                }());
             });
             return cswPublic;
         });
-} ());
+}());
 
