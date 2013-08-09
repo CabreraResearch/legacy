@@ -1,20 +1,18 @@
-using System.Data;
-using System.Web;
+using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.Grid;
 using ChemSW.Nbt.ObjClasses;
-using Newtonsoft.Json.Linq;
 using NbtWebApp.WebSvc.Returns;
-using System.Collections.ObjectModel;
-using System.Runtime.Serialization;
-using ChemSW.Core;
-using System.ServiceModel;
-using System.ServiceModel.Web;
-using System.IO;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using ChemSW.Nbt.MetaData;
+using System.Data;
+using System.IO;
+using System.Runtime.Serialization;
+using System.Web;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -54,6 +52,20 @@ namespace ChemSW.Nbt.WebServices
             public Stream stream = null;
             [DataMember]
             public Collection<ReportParam> reportParams = new Collection<ReportParam>();
+
+            [DataMember]
+            public Collection<string> controlledParams
+            {
+                get
+                {
+                    return new Collection<string> { CswNbtObjClassReport.ControlledParams.NodeId, CswNbtObjClassReport.ControlledParams.RoleId, CswNbtObjClassReport.ControlledParams.UserId };
+                }
+                private set
+                {
+                    Collection<string> noSetterAllowed = value;
+                }
+            }
+
             [DataMember]
             public bool doesSupportCrystal = false;
 
@@ -65,7 +77,7 @@ namespace ChemSW.Nbt.WebServices
                 [DataMember]
                 public string value = string.Empty;
             }
-
+            
             private Dictionary<string, string> _reportParamsDictionary = null;
             public Dictionary<string, string> ReportParamDictionary
             {
@@ -76,7 +88,7 @@ namespace ChemSW.Nbt.WebServices
                         _reportParamsDictionary = new Dictionary<string, string>();
                         foreach( ReportParam param in reportParams )
                         {
-                            _reportParamsDictionary.Add( param.name, param.value );
+                            _reportParamsDictionary.Add( param.name,param.value );
                         }
                     }
                     return _reportParamsDictionary;
@@ -134,12 +146,22 @@ namespace ChemSW.Nbt.WebServices
                 CswNbtObjClassReport reportNode = NbtResources.Nodes[pk];
                 if( string.Empty != reportNode.SQL.Text )
                 {
-                    string ReportSql = CswNbtObjClassReport.ReplaceReportParams( reportNode.SQL.Text, reportParams.ReportParamDictionary );
-                    CswArbitrarySelect cswRptSql = NbtResources.makeCswArbitrarySelect( "report_sql", ReportSql );
-                    rptDataTbl = cswRptSql.getTable();
-                    if( string.IsNullOrEmpty( rptDataTbl.TableName ) && null != reportNode )
+                    string ReportSql = "";
+                    //Case 30293: We are not trying to solve all of the (usability) issues with SQL Reporting today;
+                    //rather, we just want to return friendlier errors when SQL faults occur
+                    try
                     {
-                        rptDataTbl.TableName = reportNode.ReportName.Text;
+                        ReportSql = CswNbtObjClassReport.ReplaceReportParams( reportNode.SQL.Text, reportParams.ReportParamDictionary );
+                        CswArbitrarySelect cswRptSql = NbtResources.makeCswArbitrarySelect( "report_sql", ReportSql );
+                        rptDataTbl = cswRptSql.getTable();
+                        if( string.IsNullOrEmpty( rptDataTbl.TableName ) && null != reportNode )
+                        {
+                            rptDataTbl.TableName = reportNode.ReportName.Text;
+                        }
+                    }
+                    catch( Exception Ex )
+                    {
+                        throw new CswDniException( CswEnumErrorType.Warning, "Invalid parameters to the SQL query.", "Could not execute SQL: {" + ReportSql + "}", Ex );
                     }
                 }
                 else

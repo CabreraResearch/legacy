@@ -1,10 +1,11 @@
-using System;
-using System.Collections.ObjectModel;
 using ChemSW.Core;
+using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 using ChemSW.Security;
+using System;
+using System.Collections.ObjectModel;
 
 
 namespace ChemSW.Nbt.ObjClasses
@@ -195,7 +196,15 @@ namespace ChemSW.Nbt.ObjClasses
                 }
 
                 this.SchemaVersion.StaticText = OtherSchemaVersion;
+
+                //case 29751
+                if( CompanyID.Text == _CswNbtResources.AccessId )
+                {
+                    Login.setHidden( true, false );
+                }
             }
+
+            CompanyID.SetOnPropChange( OnCompanyIdPropChange );
 
             _CswNbtObjClassDefault.triggerAfterPopulateProps();
         }//afterPopulateProps()
@@ -253,6 +262,14 @@ namespace ChemSW.Nbt.ObjClasses
                 return ( _CswNbtNode.Properties[PropertyName.CompanyID] );
             }
         }
+        private void OnCompanyIdPropChange( CswNbtNodeProp NodeProp )
+        {
+            if ( false == CswTools.IsValidUsername( CompanyID.Text ) )
+            {
+                throw new CswDniException( CswEnumErrorType.Warning, "The suppplied CustomerId is not in a valid format.", "CustomerId: {" + CompanyID.Text + "} is not well-formed." );
+            }
+        }
+
         public CswNbtNodePropNumber UserCount
         {
             get

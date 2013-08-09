@@ -346,6 +346,8 @@
     <Compile Include="csw\Schema\scripts\prod\02E\CswUpdateSchema_02E_Case29847.cs" />
     <Compile Include="csw\Schema\scripts\prod\02E\CswUpdateSchema_02E_Case30222.cs" />
     <Compile Include="csw\Schema\scripts\prod\02E\CswUpdateSchema_02E_Case30014.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02F\CswUpdateSchema_02F_Case29973.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02F\CswUpdateSchema_02F_Case28998.cs" />
     <Compile Include="csw\Schema\scripts\prod\02F\CswUpdateSchema_02F_Case30281.cs" />
     <Compile Include="csw\Schema\scripts\prod\02F\CswUpdateSchema_02F_CaseXXXXX.cs" />
     <None Include="csw\Schema\scripts\past\02B\CswUpdateSchema_02B_Case29335_DisableSchedules.cs" />

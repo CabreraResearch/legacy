@@ -33,18 +33,21 @@ namespace ChemSW.Nbt.Schema
         /// </summary>
         public override void update()
         {
-            CswNbtMetaDataObjectClass ContainerOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerClass );
-            CswNbtMetaDataObjectClassProp ExpirationLockedOCP = ContainerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.ExpirationLocked );
-            if( null == ExpirationLockedOCP )
+            CswNbtMetaDataPropertySet MaterialSet = _CswNbtSchemaModTrnsctn.MetaData.getPropertySet( CswEnumNbtPropertySetName.MaterialSet );
+            foreach( CswNbtMetaDataObjectClass MaterialOC in MaterialSet.getObjectClasses() )
             {
-                ExpirationLockedOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( ContainerOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+                CswNbtMetaDataObjectClassProp ExpirationLockedOCP = MaterialOC.getObjectClassProp( CswNbtPropertySetMaterial.PropertyName.ContainerExpirationLocked );
+                if( null == ExpirationLockedOCP )
                 {
-                    PropName = CswNbtObjClassContainer.PropertyName.ExpirationLocked,
-                    FieldType = CswEnumNbtFieldType.Logical,
-                    SetValOnAdd = false,
-                    IsRequired = true
-                } );
-                _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( ExpirationLockedOCP, CswEnumTristate.True, CswEnumNbtSubFieldName.Checked );
+                    ExpirationLockedOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( MaterialOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+                    {
+                        PropName = CswNbtPropertySetMaterial.PropertyName.ContainerExpirationLocked,
+                        FieldType = CswEnumNbtFieldType.Logical,
+                        SetValOnAdd = false,
+                        IsRequired = true
+                    } );
+                    _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( ExpirationLockedOCP, CswEnumTristate.True, CswEnumNbtSubFieldName.Checked );
+                }
             }
         }
 

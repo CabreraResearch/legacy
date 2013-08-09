@@ -32,6 +32,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Receive = "Receive";
             public const string C3ProductId = "C3ProductId";
             public const string IsConstituent = "Is Constituent";
+            public const string ContainerExpirationLocked = "Container Expiration Locked";
         }
 
         public sealed class CswEnumPhysicalState
@@ -185,6 +186,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             afterPropertySetPopulateProps();
             ApprovedForReceiving.setReadOnly( false == _CswNbtResources.Permit.can( CswEnumNbtActionName.Material_Approval ), SaveToDb: false );
+            ContainerExpirationLocked.setReadOnly( false == _CswNbtResources.Permit.can( CswEnumNbtActionName.Container_Expiration_Lock ), SaveToDb: false );
             _toggleButtonVisibility();
             _toggleConstituentProps();
             CswNbtObjClassDefault.triggerAfterPopulateProps();
@@ -452,6 +454,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropButton Request { get { return _CswNbtNode.Properties[PropertyName.Request]; } }
         public CswNbtNodePropText C3ProductId { get { return ( _CswNbtNode.Properties[PropertyName.C3ProductId] ); } }
         public CswNbtNodePropLogical IsConstituent { get { return ( _CswNbtNode.Properties[PropertyName.IsConstituent] ); } }
+        public CswNbtNodePropLogical ContainerExpirationLocked { get { return ( _CswNbtNode.Properties[PropertyName.ContainerExpirationLocked] ); } }
 
         #endregion
 

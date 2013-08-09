@@ -21,24 +21,18 @@
 
     var ajaxCount = 0;
     var spinning = false;
-    function showAjaxSpinner() {
-        if (ajaxCount > 0 && spinning === false) {
-            spinning = true;
-            if (Csw.main.ajaxImage) {
+    
+    function toggleSpinner() {
+        if (Csw.main.ajaxImage && Csw.main.ajaxSpacer) {
+            if (ajaxCount > 0 && spinning === false) {
+                spinning = true;
                 Csw.main.ajaxImage.show();
-            }
-            if (Csw.main.ajaxSpacer) {
                 Csw.main.ajaxSpacer.hide();
             }
-        }
-    }
-    function hideAjaxSpinner() {
-        if (ajaxCount === 0 && spinning === true) {
-            spinning = false;
-            if (Csw.main.ajaxImage) {
+            else if (ajaxCount === 0 && spinning === true) {
+                spinning = false;
+                
                 Csw.main.ajaxImage.hide();
-            }
-            if (Csw.main.ajaxSpacer) {
                 Csw.main.ajaxSpacer.show();
             }
         }
@@ -47,14 +41,14 @@
     //Fires when all jQuery AJAX requests have completed
     $(document).ajaxStop(function () {
         ajaxCount = 0;
-        hideAjaxSpinner();
+        toggleSpinner(false);
     });
 
     //Fires when any jQuery AJAX request starts
     $(document).ajaxSend(function (event, jqXHR, ajaxOptions) {
         if (ajaxOptions.watchGlobal) {
             ajaxCount += 1;
-            showAjaxSpinner();
+            toggleSpinner(true);
         }
     });
 
@@ -62,7 +56,7 @@
     $(document).ajaxComplete(function (event, jqXHR, ajaxOptions) {
         if (ajaxOptions.watchGlobal) {
             ajaxCount -= 1;
-            hideAjaxSpinner();
+            toggleSpinner(true);
         }
     });
 

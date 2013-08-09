@@ -166,59 +166,63 @@
                 row += 1;
             }
 
-            var visSelect = Csw.composites.makeViewVisibilitySelect(table, row, 'Available to');
-            row += 1;
-            var saveBtn = form.button({
-                name: o.name + '_submit',
-                enabledText: 'Create View',
-                disabledText: 'Creating View',
-                onClick: function () {
-                    if (form.$.valid()) {
-                        var createData = {
-                            Visibility: '',
-                            VisibilityRoleId: '',
-                            VisibilityUserId: ''
-                        };
-                        createData.ViewName = nameTextBox.val();
-                        createData.Category = categoryTextBox.val();
-                        createData.ViewId = o.viewid;
-                        if (Csw.isNullOrEmpty(o.viewmode)) {
-                            createData.ViewMode = displayModeSelect.val();
-                        } else {
-                            createData.ViewMode = o.viewmode;
+            var visSelect = Csw.composites.makeViewVisibilitySelect(table, row, 'Available to', {
+                onRenderFinish: function() {
+                    row += 1;
+                    var saveBtn = form.button({
+                        name: o.name + '_submit',
+                        enabledText: 'Create View',
+                        disabledText: 'Creating View',
+                        onClick: function() {
+                            if (form.$.valid()) {
+                                var createData = {
+                                    Visibility: '',
+                                    VisibilityRoleId: '',
+                                    VisibilityUserId: ''
+                                };
+                                createData.ViewName = nameTextBox.val();
+                                createData.Category = categoryTextBox.val();
+                                createData.ViewId = o.viewid;
+                                if (Csw.isNullOrEmpty(o.viewmode)) {
+                                    createData.ViewMode = displayModeSelect.val();
+                                } else {
+                                    createData.ViewMode = o.viewmode;
+                                }
+
+                                var visValue = visSelect.getSelected();
+                                createData.Visibility = visValue.visibility;
+                                createData.VisibilityRoleId = visValue.roleid;
+                                createData.VisibilityUserId = visValue.userid;
+
+                                Csw.ajax.post({
+                                    urlMethod: 'createView',
+                                    data: createData,
+                                    success: function(data) {
+                                        div.$.dialog('close');
+                                        Csw.tryExec(o.onAddView, data.newviewid, createData.ViewMode);
+                                    },
+                                    error: saveBtn.enable
+                                });
+                            } else {
+                                saveBtn.enable();
+                            }
                         }
+                    });
 
-                        var visValue = visSelect.getSelected();
-                        createData.Visibility = visValue.visibility;
-                        createData.VisibilityRoleId = visValue.roleid;
-                        createData.VisibilityUserId = visValue.userid;
+                    /* Cancel Button */
+                    form.button({
+                        name: o.name + '_cancel',
+                        enabledText: 'Cancel',
+                        disabledText: 'Canceling',
+                        onClick: function() {
+                            div.$.dialog('close');
+                        }
+                    });
 
-                        Csw.ajax.post({
-                            urlMethod: 'createView',
-                            data: createData,
-                            success: function (data) {
-                                div.$.dialog('close');
-                                Csw.tryExec(o.onAddView, data.newviewid, createData.ViewMode);
-                            },
-                            error: saveBtn.enable
-                        });
-                    } else {
-                        saveBtn.enable();
-                    }
+                    openDialog(div, 425, 210, null, 'New View');
                 }
             });
 
-            /* Cancel Button */
-            form.button({
-                name: o.name + '_cancel',
-                enabledText: 'Cancel',
-                disabledText: 'Canceling',
-                onClick: function () {
-                    div.$.dialog('close');
-                }
-            });
-
-            openDialog(div, 425, 210, null, 'New View');
         }, // AddViewDialog
         AddNodeDialog: function (options) {
             'use strict';
@@ -1773,7 +1777,8 @@
                 title: '',
                 nodetypeid: '',
                 objectclassid: '',
-                onSelectNode: null
+                onSelectNode: null,
+                onClose: function () { }
             };
             if (Csw.isNullOrEmpty(options)) {
                 Csw.error.throwException(Csw.error.exception('Cannot create an Search Dialog without options.', '', 'CswDialog.js', 1013));
@@ -1787,7 +1792,7 @@
                 title: Csw.string(cswDlgPrivate.title, 'Search ' + cswDlgPrivate.propname)
             };
 
-            openDialog(cswPublic.div, 800, 600, null, 'Search ' + cswDlgPrivate.propname);
+            openDialog(cswPublic.div, 800, 600, null, 'Search ' + cswDlgPrivate.propname, cswDlgPrivate.onClose);
 
             cswPublic.search = Csw.composites.universalSearch(cswPublic.div, {
                 name: cswDlgPrivate.name,
@@ -1804,6 +1809,7 @@
                 compactResults: true,
                 extraAction: 'Select',
                 extraActionIcon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.check),
+                universalSearchOnly: true, //No C3 or Structure Search here
                 onExtraAction: function (nodeObj) {
                     cswPublic.close();
                     Csw.tryExec(cswDlgPrivate.onSelectNode, nodeObj);
@@ -2545,7 +2551,7 @@
                     if (groupBySelect) {
                         var selectedRelArbId = groupBySelect.selectedVal();
                         var selectedProp = null;
-                        Csw.each(o.properties, function(prop) {
+                        Csw.each(o.properties, function (prop) {
                             if (prop.ArbitraryId === selectedRelArbId) {
                                 selectedProp = prop;
                             }

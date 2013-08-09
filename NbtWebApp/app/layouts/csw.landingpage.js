@@ -275,7 +275,6 @@
                 cswPrivate.addItemForm.table = parentDiv.table({ name: 'addlandingpageitem_tbl' });
                 cswPrivate.makeTypeControl();
                 cswPrivate.makeViewControl();
-                cswPrivate.makeNodeTypeControl();
                 if (false === Csw.isNullOrEmpty(cswPrivate.ActionId)) {
                     cswPrivate.makeTabControl();
                     if (false === Csw.isNullOrEmpty(cswPrivate.ObjectClassId)) {
@@ -284,7 +283,9 @@
                 }
                 cswPrivate.makeTextControl();
                 cswPrivate.makeIconControl();
-                cswPrivate.makeAddControl(addOptions);
+                cswPrivate.makeNodeTypeControl(function() {
+                    cswPrivate.makeAddControl(addOptions);
+                });
             };
 
             cswPrivate.makeTypeControl = function () {
@@ -326,7 +327,7 @@
                 cswPrivate.addItemForm[cswPrivate.select.view].control.$.hide();
             };
 
-            cswPrivate.makeNodeTypeControl = function () {
+            cswPrivate.makeNodeTypeControl = function (onCtrlRender) {
                 cswPrivate.resetAddItem(cswPrivate.select.nodetype);
                 var filter = '', text = '', objClassId = '';
                 if (cswPrivate.addItemForm[cswPrivate.select.type].control.val() == 'Add') {
@@ -340,12 +341,12 @@
                 cswPrivate.addItemForm[cswPrivate.select.nodetype].label = cswPrivate.addItemForm.table.cell(cswPrivate.select.nodetype, 1).span({ text: text });
                 cswPrivate.addItemForm[cswPrivate.select.nodetype].control = cswPrivate.addItemForm.table.cell(cswPrivate.select.nodetype, 2).nodeTypeSelect({
                     name: 'landingpage_ntsel',
-                    async: false,
                     objectClassId: objClassId,
                     filterToPermission: filter,
                     onSelect: function () {
                         cswPrivate.makeTabControl();
-                    }
+                    },
+                    onSuccess: onCtrlRender
                 });
                 cswPrivate.makeTabControl();
             };
