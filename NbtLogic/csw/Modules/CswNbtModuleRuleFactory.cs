@@ -10,15 +10,7 @@ namespace ChemSW.Nbt
         public static CswNbtModuleRule makeModuleRule( CswNbtResources CswNbtResources, CswEnumNbtModuleName ModuleName )
         {
             CswNbtModuleRule ret = null;
-            if( CswEnumNbtModuleName.BioSafety == ModuleName )
-            {
-                ret = new CswNbtModuleRuleBioSafety( CswNbtResources );
-            }
-            else if( CswEnumNbtModuleName.CCPro == ModuleName )
-            {
-                ret = new CswNbtModuleRuleCCPro( CswNbtResources );
-            }
-            else if( CswEnumNbtModuleName.CISPro == ModuleName )
+            if( CswEnumNbtModuleName.CISPro == ModuleName )
             {
                 ret = new CswNbtModuleRuleCISPro( CswNbtResources );
             }
@@ -41,10 +33,6 @@ namespace ChemSW.Nbt
             else if( CswEnumNbtModuleName.SI == ModuleName )
             {
                 ret = new CswNbtModuleRuleSI( CswNbtResources );
-            }
-            else if( CswEnumNbtModuleName.STIS == ModuleName )
-            {
-                ret = new CswNbtModuleRuleSTIS( CswNbtResources );
             }
             else if( CswEnumNbtModuleName.C3 == ModuleName )
             {
@@ -82,9 +70,9 @@ namespace ChemSW.Nbt
             {
                 ret = new CswNbtModuleRulePCIDSync( CswNbtResources );
             }
-            else if( CswEnumNbtModuleName.CofA == ModuleName )
+            else if( CswEnumNbtModuleName.ManufacturerLotInfo == ModuleName )
             {
-                ret = new CswNbtModuleRuleCofA( CswNbtResources );
+                ret = new CswNbtModuleRuleManufacturerLotInfo( CswNbtResources );
             }
             else if( CswEnumNbtModuleName.LOLISync == ModuleName )
             {

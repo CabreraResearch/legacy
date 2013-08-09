@@ -15,7 +15,7 @@
                 Csw.extend(o, options);
             }
 
-            Csw.ajax.post({
+            return Csw.ajax.post({
                 urlMethod: o.urlMethod,
                 data: {},
                 success: function (data) {

@@ -24,6 +24,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Status = "Status";
             public const string Action = "Action";
             public const string ActionApplied = "Action Applied";
+            public const string ActionByUser = "Action By User";
             public const string User = "User";
         }
 
@@ -231,6 +232,10 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropRelationship User
         {
             get { return _CswNbtNode.Properties[PropertyName.User]; }
+        }
+        public CswNbtNodePropRelationship ActionByUser
+        {
+            get { return _CswNbtNode.Properties[PropertyName.ActionByUser]; }
         }
 
         #endregion

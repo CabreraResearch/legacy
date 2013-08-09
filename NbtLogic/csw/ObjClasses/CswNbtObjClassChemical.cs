@@ -247,14 +247,14 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Calculates the expiration date from today based on the Material's Expiration Interval
         /// </summary>
-        public override DateTime getDefaultExpirationDate()
+        public override DateTime getDefaultExpirationDate( DateTime InitialDate )
         {
             DateTime DefaultExpDate = DateTime.MinValue;
 
             //No point trying to get default if both values are invalid
             if( CswTools.IsPrimaryKey( ExpirationInterval.UnitId ) && ExpirationInterval.Quantity > 0 )
             {
-                DefaultExpDate = DateTime.Now;
+                DefaultExpDate = InitialDate == DateTime.MinValue ? DateTime.Now : InitialDate;
                 switch( this.ExpirationInterval.CachedUnitName.ToLower() )
                 {
                     case "seconds":
