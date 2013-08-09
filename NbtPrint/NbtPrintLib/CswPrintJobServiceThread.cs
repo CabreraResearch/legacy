@@ -64,7 +64,7 @@ namespace NbtPrintLib
                     CustomerId = auth.AccessId,
                     UserName = auth.UserId,
                     Password = auth.Password,
-                    IsMobile = false
+                    IsMobile = true
                 } );
             try
             {
