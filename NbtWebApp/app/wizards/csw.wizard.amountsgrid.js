@@ -73,7 +73,7 @@
                     cswPrivate.rows.push(firstRow);
                 }
 
-                cswPrivate.getQuantity = function () {
+                cswPrivate.getQuantity = function (onSuccess) {
                     var ret = false;
                     if (false === Csw.isNullOrEmpty(cswPrivate.selectedSizeId)) {
                         Csw.ajax.post({
@@ -83,13 +83,13 @@
                             success: function (data) {
                                 cswPrivate.quantity = data;
                                 ret = false === Csw.isNullOrEmpty(cswPrivate.quantity);
+                                Csw.tryExec(onSuccess);
                             }
                         });
                     }
                     if (false === ret) {
                         cswPrivate.quantity = {
-                            //qtyReadonly: true,
-                            //unitReadonly: true
+                            isUnitReadOnly: true,
                             quantityoptional: false,
                             isReadOnly: false
                         };
@@ -147,7 +147,6 @@
                             var updateColumnVals = function (changeContainerNo) {
                                 if (false === Csw.isNullOrEmpty(cswPublic.rows[rowid].qtyControl)) {
                                     cswPublic.rows[rowid].quantityValues.quantity = cswPublic.rows[rowid].qtyControl.value();
-                                    cswPublic.rows[rowid].quantityValues.unit = cswPublic.rows[rowid].qtyControl.selectedUnitText();
                                     cswPublic.rows[rowid].quantityValues.unitid = cswPublic.rows[rowid].qtyControl.selectedUnit();
                                 }
                                 if (changeContainerNo) {
@@ -172,9 +171,10 @@
 
                             var onSizeChange = function () {
                                 updateSizeVals();
-                                cswPrivate.getQuantity();
+                                cswPrivate.getQuantity(function() {
                                 cswPublic.rows[rowid].qtyControl.refresh(cswPrivate.quantity);
                                 updateColumnVals(true);
+                                });
                             };
                             
                             var updateBalanceInterface = function (balanceData) {

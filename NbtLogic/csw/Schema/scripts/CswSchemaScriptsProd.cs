@@ -17,10 +17,8 @@ namespace ChemSW.Nbt.Schema
             _MinimumVersion = new CswSchemaVersion( 2, 'D', 23 );
 
             // This is where you add new versions.
-
             #region EUCALYPTUS
 
-            // e.g. _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02E_CaseXXXXX() ) );            //02E-000
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02E_Case30014() ) );                    //02E-001
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02E_Case30222() ) );                    //02E-002
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02E_Case29847() ) );                    //02E-003
@@ -31,6 +29,15 @@ namespace ChemSW.Nbt.Schema
 
 
             #endregion EUCALYPTUS
+
+            #region FOXGLOVE
+
+            // e.g. _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02F_CaseXXXXX() ) );            //02E-006 //02F-000 
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02F_Case30281() ) );                    //02E-007 //02F-001
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02F_Case28998() ) );                    //02E-008 //02F-002
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02F_Case29973() ) );                    //02E-009 //02F-003
+
+            #endregion FOXGLOVE
 
             // This automatically detects the latest version
             _LatestVersion = _MinimumVersion;
@@ -53,6 +60,9 @@ namespace ChemSW.Nbt.Schema
 
             #endregion EUCALYPTUS Run Before Scripts
 
+            #endregion FOXGLOVE Run Before Scripts
+
+            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02F_Case30281() ), RunBeforeEveryExecutionOfUpdater_02F_Case30281.Title );
             _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_MakeMissingNodeTypeProps() ), RunBeforeEveryExecutionOfUpdater_MakeMissingNodeTypeProps.Title );
             _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02SQL() ), RunBeforeEveryExecutionOfUpdater_02SQL.Title );
             _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_03() ), RunBeforeEveryExecutionOfUpdater_03.Title );
