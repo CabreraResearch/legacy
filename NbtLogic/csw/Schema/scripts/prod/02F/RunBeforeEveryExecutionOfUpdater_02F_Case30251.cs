@@ -33,6 +33,7 @@ namespace ChemSW.Nbt.Schema
         {
             _upgradeDepartmentToObjectClass();
             _upgradeLQNoToObjectClass();
+            _upgradeControlZoneToObjectClass();
         }
 
         private void _upgradeDepartmentToObjectClass()
@@ -82,6 +83,58 @@ namespace ChemSW.Nbt.Schema
                 if( null != LQNoNT )
                 {
                     _CswNbtSchemaModTrnsctn.MetaData.ConvertObjectClass( LQNoNT, LQNoOC );
+                }
+            }
+        }
+
+        private void _upgradeControlZoneToObjectClass()
+        {
+            CswNbtMetaDataObjectClass ControlZoneOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.ControlZoneClass );
+            if( null == ControlZoneOC )
+            {
+                ControlZoneOC = _CswNbtSchemaModTrnsctn.createObjectClass( CswEnumNbtObjectClass.ControlZoneClass, "folder.png", false );
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( ControlZoneOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+                {
+                    PropName = CswNbtObjClassControlZone.PropertyName.Name,
+                    FieldType = CswEnumNbtFieldType.Text,
+                    IsRequired = true,
+                    IsUnique = true
+                } );
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( ControlZoneOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+                {
+                    PropName = CswNbtObjClassControlZone.PropertyName.MAQOffset,
+                    FieldType = CswEnumNbtFieldType.Number,
+                    NumberMinValue = 0,
+                    NumberMaxValue = 100
+                } );
+                CswNbtMetaDataObjectClass FCEASOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.FireClassExemptAmountSetClass );
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( ControlZoneOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+                {
+                    PropName = CswNbtObjClassControlZone.PropertyName.FireClassSetName,
+                    FieldType = CswEnumNbtFieldType.Relationship,
+                    IsRequired = true,
+                    IsFk = true,
+                    FkType = CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(),
+                    FkValue = FCEASOC.ObjectClassId
+                } );
+                CswNbtMetaDataObjectClassProp LocationsOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( ControlZoneOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+                {
+                    PropName = CswNbtObjClassControlZone.PropertyName.Locations,
+                    FieldType = CswEnumNbtFieldType.Grid
+                } );
+                CswNbtMetaDataNodeType ControlZoneNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Control Zone" );
+                if( null != ControlZoneNT )
+                {
+                    CswNbtMetaDataNodeTypeProp CZLocationsNTP = ControlZoneNT.getNodeTypeProp( "Locations" );
+                    if( null != CZLocationsNTP )
+                    {
+                        CswNbtView CZLocationsView = _CswNbtSchemaModTrnsctn.restoreView( CZLocationsNTP.ViewId );
+                        if( null != CZLocationsView )
+                        {
+                            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( LocationsOCP, CswEnumNbtObjectClassPropAttributes.viewxml, CZLocationsView.ToString() );
+                        }
+                    }
+                    _CswNbtSchemaModTrnsctn.MetaData.ConvertObjectClass( ControlZoneNT, ControlZoneOC );
                 }
             }
         }

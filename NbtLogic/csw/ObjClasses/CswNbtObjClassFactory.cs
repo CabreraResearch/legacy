@@ -67,6 +67,10 @@ namespace ChemSW.Nbt.ObjClasses
                     ReturnVal = new CswNbtObjClassContainerLocation( CswNbtResources, Node );
                     break;
 
+                case CswEnumNbtObjectClass.ControlZoneClass:
+                    ReturnVal = new CswNbtObjClassControlZone( CswNbtResources, Node );
+                    break;
+
                 case CswEnumNbtObjectClass.CustomerClass:
                     ReturnVal = new CswNbtObjClassCustomer( CswNbtResources, Node );
                     break;

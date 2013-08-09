@@ -146,6 +146,7 @@
     <Compile Include="csw\Modules\CswNbtModuleRuleRegulatoryLists.cs" />
     <Compile Include="csw\Modules\CswNbtModuleRuleContainers.cs" />
     <Compile Include="csw\MetaData\CswNbtMetaDataPropertySet.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassControlZone.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassLQNo.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassDepartment.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassBalance.cs" />
