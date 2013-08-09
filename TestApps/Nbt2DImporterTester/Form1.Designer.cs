@@ -32,12 +32,10 @@
             this.btnLoadData = new System.Windows.Forms.Button();
             this.btnRunImport = new System.Windows.Forms.Button();
             this.txtDataFilePath = new System.Windows.Forms.TextBox();
-            this.txtBindingsFilePath = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.txtLog = new System.Windows.Forms.TextBox();
-            this.btnReadBindings = new System.Windows.Forms.Button();
             this.txtRows = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
             this.cbxImportDataTableName = new System.Windows.Forms.ComboBox();
@@ -50,6 +48,7 @@
             this.btnRefreshCounts = new System.Windows.Forms.Button();
             this.txtAccessId = new System.Windows.Forms.TextBox();
             this.lblAccessId = new System.Windows.Forms.Label();
+            this.cbxImportDefinition = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
             // 
             // btnLoadData
@@ -82,14 +81,6 @@
             this.txtDataFilePath.TabIndex = 3;
             this.txtDataFilePath.Text = "Z:\\Downloads\\aaVMWARE\\cispro_test_import_dev2shortB.xlsx";
             // 
-            // txtBindingsFilePath
-            // 
-            this.txtBindingsFilePath.Location = new System.Drawing.Point(12, 89);
-            this.txtBindingsFilePath.Name = "txtBindingsFilePath";
-            this.txtBindingsFilePath.Size = new System.Drawing.Size(384, 20);
-            this.txtBindingsFilePath.TabIndex = 4;
-            this.txtBindingsFilePath.Text = "Z:\\Downloads\\aaVMWARE\\cispro_RL_export_bindings1.xlsx";
-            // 
             // label1
             // 
             this.label1.AutoSize = true;
@@ -104,9 +95,9 @@
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(12, 73);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(66, 13);
+            this.label2.Size = new System.Drawing.Size(83, 13);
             this.label2.TabIndex = 6;
-            this.label2.Text = "Bindings File";
+            this.label2.Text = "Import Definition";
             // 
             // label3
             // 
@@ -128,16 +119,6 @@
             this.txtLog.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.txtLog.Size = new System.Drawing.Size(482, 356);
             this.txtLog.TabIndex = 8;
-            // 
-            // btnReadBindings
-            // 
-            this.btnReadBindings.Location = new System.Drawing.Point(15, 114);
-            this.btnReadBindings.Name = "btnReadBindings";
-            this.btnReadBindings.Size = new System.Drawing.Size(90, 27);
-            this.btnReadBindings.TabIndex = 9;
-            this.btnReadBindings.Text = "Read Bindings";
-            this.btnReadBindings.UseVisualStyleBackColor = true;
-            this.btnReadBindings.Click += new System.EventHandler(this.btnReadBindings_Click);
             // 
             // txtRows
             // 
@@ -242,6 +223,7 @@
             this.txtAccessId.Size = new System.Drawing.Size(208, 20);
             this.txtAccessId.TabIndex = 20;
             this.txtAccessId.Text = "1";
+            this.txtAccessId.TextChanged += new System.EventHandler(this.txtAccessId_TextChanged);
             // 
             // lblAccessId
             // 
@@ -252,11 +234,20 @@
             this.lblAccessId.TabIndex = 21;
             this.lblAccessId.Text = "Access Id";
             // 
+            // cbxImportDefinition
+            // 
+            this.cbxImportDefinition.FormattingEnabled = true;
+            this.cbxImportDefinition.Location = new System.Drawing.Point(12, 89);
+            this.cbxImportDefinition.Name = "cbxImportDefinition";
+            this.cbxImportDefinition.Size = new System.Drawing.Size(208, 21);
+            this.cbxImportDefinition.TabIndex = 22;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(896, 396);
+            this.Controls.Add(this.cbxImportDefinition);
             this.Controls.Add(this.lblAccessId);
             this.Controls.Add(this.txtAccessId);
             this.Controls.Add(this.btnRefreshCounts);
@@ -269,12 +260,10 @@
             this.Controls.Add(this.cbxImportDataTableName);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.txtRows);
-            this.Controls.Add(this.btnReadBindings);
             this.Controls.Add(this.txtLog);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.txtBindingsFilePath);
             this.Controls.Add(this.txtDataFilePath);
             this.Controls.Add(this.btnRunImport);
             this.Controls.Add(this.btnLoadData);
@@ -290,12 +279,10 @@
         private System.Windows.Forms.Button btnLoadData;
         private System.Windows.Forms.Button btnRunImport;
         private System.Windows.Forms.TextBox txtDataFilePath;
-        private System.Windows.Forms.TextBox txtBindingsFilePath;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox txtLog;
-        private System.Windows.Forms.Button btnReadBindings;
         private System.Windows.Forms.TextBox txtRows;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.ComboBox cbxImportDataTableName;
@@ -308,6 +295,7 @@
         private System.Windows.Forms.Button btnRefreshCounts;
         private System.Windows.Forms.TextBox txtAccessId;
         private System.Windows.Forms.Label lblAccessId;
+        private System.Windows.Forms.ComboBox cbxImportDefinition;
     }
 }
 

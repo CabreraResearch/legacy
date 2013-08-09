@@ -11,8 +11,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NbtLogic", "NbtLogic\NbtLog
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NbtSchedService", "NbtSchedService\NbtSchedService.csproj", "{BEB21D68-DED7-43B7-8BAB-70F95B98F58A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NbtSchemaImporter", "NbtSchemaImporter\NbtSchemaImporter.csproj", "{3FA9370E-D49B-4BA8-940B-16981057B6E1}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NbtSchemaUpdater", "NbtSchemaUpdater\NbtSchemaUpdater.csproj", "{56F308C4-CDF7-4382-BF14-05C1636677CB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NbtWebControls", "NbtWebControls\NbtWebControls.csproj", "{987AE13B-8118-48E7-9A2A-7D52AB5C1ED3}"
@@ -91,10 +89,6 @@ Global
 		{BEB21D68-DED7-43B7-8BAB-70F95B98F58A}.Debug|x64.Build.0 = Debug|x64
 		{BEB21D68-DED7-43B7-8BAB-70F95B98F58A}.Release|x64.ActiveCfg = Release|x64
 		{BEB21D68-DED7-43B7-8BAB-70F95B98F58A}.Release|x64.Build.0 = Release|x64
-		{3FA9370E-D49B-4BA8-940B-16981057B6E1}.Debug|x64.ActiveCfg = Debug|x64
-		{3FA9370E-D49B-4BA8-940B-16981057B6E1}.Debug|x64.Build.0 = Debug|x64
-		{3FA9370E-D49B-4BA8-940B-16981057B6E1}.Release|x64.ActiveCfg = Release|x64
-		{3FA9370E-D49B-4BA8-940B-16981057B6E1}.Release|x64.Build.0 = Release|x64
 		{56F308C4-CDF7-4382-BF14-05C1636677CB}.Debug|x64.ActiveCfg = Debug|x64
 		{56F308C4-CDF7-4382-BF14-05C1636677CB}.Debug|x64.Build.0 = Debug|x64
 		{56F308C4-CDF7-4382-BF14-05C1636677CB}.Release|x64.ActiveCfg = Release|x64

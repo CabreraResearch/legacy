@@ -20,6 +20,7 @@ namespace Nbt2DImporterTester
             _WorkerThread.OnStoreDataFinish = StoreDataFinished;
             _WorkerThread.OnGetCountsFinish = GetCountsFinished;
             _WorkerThread.OnImportFinish = ImportFinish;
+            _WorkerThread.OnGetDefinitionsFinish = GetDefinitionsFinish;
         }
 
         #region NON-UI THREAD
@@ -38,6 +39,12 @@ namespace Nbt2DImporterTester
             txtLog.BeginInvoke( new logHandler( log ), new object[] { "Finished.", false } );
             btnLoadData.BeginInvoke( new setButtonsEnabledHandler( setButtonsEnabled ), new object[] { true } );
         }
+
+        private void GetDefinitionsFinish( CswCommaDelimitedString Definitions )
+        {
+            cbxImportDefinition.BeginInvoke( new setDefinitionOptionsHandler( setDefinitionOptions ), new object[] { Definitions } );
+        }
+
 
         private void StoreDataFinished( StringCollection ImportDataTableNames )
         {
@@ -73,11 +80,21 @@ namespace Nbt2DImporterTester
         {
             btnLoadData.Enabled = enabled;
             btnRunImport.Enabled = enabled;
-            btnReadBindings.Enabled = enabled;
             if( string.Empty != cbxImportDataTableName.Text )
             {
                 btnRefreshCounts.Enabled = enabled;
             }
+        }
+
+        private delegate void setDefinitionOptionsHandler( CswCommaDelimitedString Definitions );
+        private void setDefinitionOptions( CswCommaDelimitedString Definitions )
+        {
+            cbxImportDefinition.Items.Clear();
+            foreach( string def in Definitions )
+            {
+                cbxImportDefinition.Items.Add( def );
+            }
+            cbxImportDefinition.SelectedIndex = 0;
         }
 
         private delegate void setImportDataTableNameHandler( StringCollection ImportDataTableNames );
@@ -116,7 +133,7 @@ namespace Nbt2DImporterTester
         {
             setButtonsEnabled( false );
             log( "Storing data..." );
-            ( (WorkerThread.storeDataHandler) _WorkerThread.storeData ).BeginInvoke( txtAccessId.Text, txtDataFilePath.Text, null, null );
+            ( (WorkerThread.storeDataHandler) _WorkerThread.storeData ).BeginInvoke( txtAccessId.Text, txtDataFilePath.Text, cbxImportDefinition.Text, null, null );
         }
 
         private void btnRunImport_Click( object sender, EventArgs e )
@@ -131,12 +148,12 @@ namespace Nbt2DImporterTester
             ( (WorkerThread.importRowsHandler) _WorkerThread.importRows ).BeginInvoke( txtAccessId.Text, cbxImportDataTableName.Text, rows, null, null );
         }
 
-        private void btnReadBindings_Click( object sender, EventArgs e )
-        {
-            setButtonsEnabled( false );
-            log( "Reading bindings..." );
-            ( (WorkerThread.readBindingsHandler) _WorkerThread.readBindings ).BeginInvoke( txtAccessId.Text, txtBindingsFilePath.Text, null, null );
-        }
+        //private void btnLoadBindings_Click( object sender, EventArgs e )
+        //{
+        //    setButtonsEnabled( false );
+        //    log( "Loading bindings..." );
+        //    ( (WorkerThread.loadBindingsHandler) _WorkerThread.loadBindings ).BeginInvoke( txtAccessId.Text, cbxImportDefinition.Text, null, null );
+        //}
 
         private void cbxImportDataTableName_TextChanged( object sender, EventArgs e )
         {
@@ -149,6 +166,15 @@ namespace Nbt2DImporterTester
         {
             log( "Refreshing row counts..." );
             ( (WorkerThread.getCountsHandler) _WorkerThread.getCounts ).BeginInvoke( txtAccessId.Text, cbxImportDataTableName.Text, null, null );
+        }
+
+        private void txtAccessId_TextChanged( object sender, EventArgs e )
+        {
+            if( txtAccessId.Text != string.Empty )
+            {
+                log( "Fetching available definitions..." );
+                ( (WorkerThread.getDefinitionsHandler) _WorkerThread.getDefinitions ).BeginInvoke( txtAccessId.Text, null, null );
+            }
         }
     }
 }
