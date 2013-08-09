@@ -33,7 +33,7 @@ namespace ChemSW.Nbt.Schema
                 {
                     nt.NodeTypeName = "Unit_Weight";
                 }
-                if( nt.NodeTypeName == "Unit (Volumme)" )
+                if( nt.NodeTypeName == "Unit (Volume)" )
                 {
                     nt.NodeTypeName = "Unit_Volume";
                 }
