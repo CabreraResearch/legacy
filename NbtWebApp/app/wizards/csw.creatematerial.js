@@ -757,7 +757,6 @@
                 Csw.ajaxWcf.post({
                     urlMethod: 'Materials/initialize',
                     data: cswPrivate.state.materialId,
-                    async: false,
                     success: function (data) {
                         cswPrivate.supplierViewId = data.SuppliersView.ViewId;
                         cswPrivate.state.materialId = data.TempNode.NodeId;
