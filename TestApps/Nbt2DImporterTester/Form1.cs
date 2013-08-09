@@ -80,7 +80,6 @@ namespace Nbt2DImporterTester
         {
             btnLoadData.Enabled = enabled;
             btnRunImport.Enabled = enabled;
-            btnReadBindings.Enabled = enabled;
             if( string.Empty != cbxImportDataTableName.Text )
             {
                 btnRefreshCounts.Enabled = enabled;
@@ -149,12 +148,12 @@ namespace Nbt2DImporterTester
             ( (WorkerThread.importRowsHandler) _WorkerThread.importRows ).BeginInvoke( txtAccessId.Text, cbxImportDataTableName.Text, rows, null, null );
         }
 
-        private void btnLoadBindings_Click( object sender, EventArgs e )
-        {
-            setButtonsEnabled( false );
-            log( "Loading bindings..." );
-            ( (WorkerThread.loadBindingsHandler) _WorkerThread.loadBindings ).BeginInvoke( txtAccessId.Text, cbxImportDefinition.Text, null, null );
-        }
+        //private void btnLoadBindings_Click( object sender, EventArgs e )
+        //{
+        //    setButtonsEnabled( false );
+        //    log( "Loading bindings..." );
+        //    ( (WorkerThread.loadBindingsHandler) _WorkerThread.loadBindings ).BeginInvoke( txtAccessId.Text, cbxImportDefinition.Text, null, null );
+        //}
 
         private void cbxImportDataTableName_TextChanged( object sender, EventArgs e )
         {

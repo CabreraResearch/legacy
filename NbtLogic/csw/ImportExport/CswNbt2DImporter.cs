@@ -18,12 +18,6 @@ namespace ChemSW.Nbt.ImportExport
 {
     public class CswNbt2DImporter
     {
-        public CswNbt2DDefinitionCollection BindingDefinitions = new CswNbt2DDefinitionCollection();
-
-        public bool Overwrite = false;
-
-        public StringCollection ImportDataTableNames = new StringCollection();
-
         private readonly CswNbtResources _CswNbtResources;
         private readonly CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;
 
@@ -84,86 +78,79 @@ namespace ChemSW.Nbt.ImportExport
         /// <summary>
         /// Stores data in temporary Oracle tables
         /// </summary>
-        public void storeData( string DataFilePath, string ImportDefinitionName )
+        public StringCollection storeData( string DataFilePath, string ImportDefinitionName, bool Overwrite )
         {
+            StringCollection ret = new StringCollection();
             DataSet ExcelDataSet = _readExcel( DataFilePath );
             foreach( DataTable ExcelDataTable in ExcelDataSet.Tables )
             {
-                CswNbt2DDefinition BindingDef = BindingDefinitions.bySheetName( ExcelDataTable.TableName );
-                if( null != BindingDef )
+                string SheetName = ExcelDataTable.TableName;
+
+                // Determine Oracle table name
+                Int32 i = 1;
+                string ImportDataTableName = "importdata" + i.ToString();
+                while( _CswNbtSchemaModTrnsctn.isTableDefinedInDataBase( ImportDataTableName ) )
                 {
-                    // Determine Oracle table name
-                    Int32 i = 1;
-                    string ImportDataTableName = "importdata" + i.ToString();
-                    while( _CswNbtSchemaModTrnsctn.isTableDefinedInDataBase( ImportDataTableName ) )
-                    {
-                        i++;
-                        ImportDataTableName = "importdata" + i.ToString();
-                    }
+                    i++;
+                    ImportDataTableName = "importdata" + i.ToString();
+                }
 
-                    // Set binding's table name by sheet name
-                    BindingDef.ImportDataTableName = ImportDataTableName;
+                // Generate an Oracle table for storing and manipulating data
+                _CswNbtSchemaModTrnsctn.addTable( ImportDataTableName, "importdataid" );
+                _CswNbtSchemaModTrnsctn.addBooleanColumn( ImportDataTableName, "error", "", false, false );
+                _CswNbtSchemaModTrnsctn.addClobColumn( ImportDataTableName, "errorlog", "", false, false );
+                foreach( DataColumn ExcelColumn in ExcelDataTable.Columns )
+                {
+                    _CswNbtSchemaModTrnsctn.addStringColumn( ImportDataTableName, CswNbt2DBinding.SafeColName( ExcelColumn.ColumnName ), "", false, false, 4000 );
+                }
+                CswNbt2DDefinition Definition = new CswNbt2DDefinition( _CswNbtResources, ImportDefinitionName, SheetName );
+                foreach( CswNbt2DOrder Order in Definition.ImportOrder.Values )
+                {
+                    _CswNbtSchemaModTrnsctn.addLongColumn( ImportDataTableName, Order.PkColName, "", false, false );
+                }
+                _CswNbtResources.commitTransaction();
+                _CswNbtResources.beginTransaction();
 
-                    // Generate an Oracle table for storing and manipulating data
-                    _CswNbtSchemaModTrnsctn.addTable( ImportDataTableName, "importdataid" );
-                    _CswNbtSchemaModTrnsctn.addBooleanColumn( ImportDataTableName, "error", "", false, false );
-                    _CswNbtSchemaModTrnsctn.addClobColumn( ImportDataTableName, "errorlog", "", false, false );
+                ret.Add( ImportDataTableName );
+
+                // Store the sheet reference in import_data_map
+                CswTableUpdate ImportDataMapUpdate = _CswNbtResources.makeCswTableUpdate( "Importer_Sheet_Update", CswNbt2DImportTables.ImportDataMap.TableName );
+                DataTable ImportDataMapTable = ImportDataMapUpdate.getEmptyTable();
+                DataRow DataMapRow = ImportDataMapTable.NewRow();
+                DataMapRow[CswNbt2DImportTables.ImportDataMap.datatablename] = ImportDataTableName;
+                DataMapRow[CswNbt2DImportTables.ImportDataMap.importdefinitionid] = Definition.ImportDefinitionId;
+                DataMapRow[CswNbt2DImportTables.ImportDataMap.overwrite] = CswConvert.ToDbVal( Overwrite );
+                ImportDataMapTable.Rows.Add( DataMapRow );
+                ImportDataMapUpdate.update( ImportDataMapTable );
+
+                // Copy the Excel data into the Oracle table
+                CswTableUpdate ImportDataUpdate = _CswNbtResources.makeCswTableUpdate( "Importer_Update", ImportDataTableName );
+                DataTable ImportDataTable = ImportDataUpdate.getEmptyTable();
+                foreach( DataRow ExcelRow in ExcelDataTable.Rows )
+                {
+                    DataRow ImportRow = ImportDataTable.NewRow();
+                    ImportRow["error"] = CswConvert.ToDbVal( false );
                     foreach( DataColumn ExcelColumn in ExcelDataTable.Columns )
                     {
-                        _CswNbtSchemaModTrnsctn.addStringColumn( ImportDataTableName, CswNbt2DBinding.SafeColName( ExcelColumn.ColumnName ), "", false, false, 4000 );
+                        ImportRow[CswNbt2DBinding.SafeColName( ExcelColumn.ColumnName )] = ExcelRow[ExcelColumn];
                     }
-                    foreach( CswNbt2DOrder Order in BindingDef.ImportOrder.Values )
-                    {
-                        _CswNbtSchemaModTrnsctn.addLongColumn( ImportDataTableName, Order.PkColName, "", false, false );
-                    }
-                    _CswNbtResources.commitTransaction();
-                    _CswNbtResources.beginTransaction();
-
-                    // Copy the Excel data into the Oracle table
-                    CswTableUpdate ImportDataUpdate = _CswNbtResources.makeCswTableUpdate( "Importer_Update", ImportDataTableName );
-                    DataTable ImportDataTable = ImportDataUpdate.getEmptyTable();
-                    foreach( DataRow ExcelRow in ExcelDataTable.Rows )
-                    {
-                        DataRow ImportRow = ImportDataTable.NewRow();
-                        ImportRow["error"] = CswConvert.ToDbVal( false );
-                        foreach( DataColumn ExcelColumn in ExcelDataTable.Columns )
-                        {
-                            ImportRow[CswNbt2DBinding.SafeColName( ExcelColumn.ColumnName )] = ExcelRow[ExcelColumn];
-                        }
-                        ImportDataTable.Rows.Add( ImportRow );
-                    }
-                    ImportDataUpdate.update( ImportDataTable );
-
-                    ImportDataTableNames.Add( ImportDataTableName );
-
-                    // Store the sheet reference in import_sheets
-                    CswTableUpdate ImportSheetUpdate = _CswNbtResources.makeCswTableUpdate( "Importer_Sheet_Update", CswNbt2DImportTables.ImportSheets.TableName );
-                    DataTable ImportSheetTable = ImportSheetUpdate.getEmptyTable();
-                    DataRow SheetRow = ImportSheetTable.NewRow();
-                    SheetRow[CswNbt2DImportTables.ImportSheets.sheetname] = BindingDef.SheetName;
-                    SheetRow[CswNbt2DImportTables.ImportSheets.datatablename] = BindingDef.ImportDataTableName;
-                    SheetRow[CswNbt2DImportTables.ImportSheets.importdefinitionid] = getImportDefinitionId( ImportDefinitionName );
-                    ImportSheetTable.Rows.Add( SheetRow );
-                    ImportSheetUpdate.update( ImportSheetTable );
-
-                    OnMessage( "Sheet '" + BindingDef.SheetName + "' is stored in Table '" + BindingDef.ImportDataTableName + "'" );
-
-                } // if( null != BindingDef )
-                else
-                {
-                    OnError( "Source data sheet '" + ExcelDataTable.TableName + "' ignored due to lack of bindings." );
+                    ImportDataTable.Rows.Add( ImportRow );
                 }
+                ImportDataUpdate.update( ImportDataTable );
+
+                OnMessage( "Sheet '" + ExcelDataTable.TableName + "' is stored in Table '" + ImportDataTableName + "'" );
             } // foreach( DataTable ExcelDataTable in ExcelDataSet.Tables )
 
             _CswNbtResources.commitTransaction();
             _CswNbtResources.beginTransaction();
+            
+            return ret;
         } // storeData()
 
-
         /// <summary>
-        /// Returns the set of available Import Definitions
+        /// Returns the set of available Import Definition Names
         /// </summary>
-        public CswCommaDelimitedString getDefinitions()
+        public CswCommaDelimitedString getDefinitionNames()
         {
             CswCommaDelimitedString ret = new CswCommaDelimitedString();
             CswTableSelect DefSelect = _CswNbtResources.makeCswTableSelect( "loadBindings_def_select1", CswNbt2DImportTables.ImportDefinitions.TableName );
@@ -174,176 +161,6 @@ namespace ChemSW.Nbt.ImportExport
             }
             return ret;
         } // getDefinitions()
-
-        /// <summary>
-        /// For a given Import Definition name, return the primary key
-        /// </summary>
-        public Int32 getImportDefinitionId( string ImportDefinitionName )
-        {
-            Int32 ret = Int32.MinValue;
-            CswTableSelect DefSelect = _CswNbtResources.makeCswTableSelect( "getImportDefinitionId", CswNbt2DImportTables.ImportDefinitions.TableName );
-            DataTable DefDataTable = DefSelect.getTable( "where " + CswNbt2DImportTables.ImportDefinitions.definitionname + " = '" + ImportDefinitionName + "'" );
-            if( DefDataTable.Rows.Count > 0 )
-            {
-                ret = CswConvert.ToInt32( DefDataTable.Rows[0][CswNbt2DImportTables.ImportDefinitions.importdefinitionid] );
-            }
-            return ret;
-        } // getImportDefinitionId()
-
-        /// <summary>
-        /// Loads import definition bindings from the database
-        /// </summary>
-        public bool loadBindings( string ImportDefinitionName )
-        {
-            bool ret = false;
-            Int32 ImportDefId = getImportDefinitionId( ImportDefinitionName );
-            if( Int32.MinValue != ImportDefId )
-            {
-                ret = loadBindings( ImportDefId );
-            }
-            else
-            {
-                OnError( "Error: invalid import definition: " + ImportDefinitionName );
-                ret = false;
-            }
-            return ret;
-        } // _loadBindings(string)
-
-
-        /// <summary>
-        /// Loads import definition bindings from the database
-        /// </summary>
-        public bool loadBindings( Int32 ImportDefId )
-        {
-            bool ret = true;
-
-            // Order
-            {
-                CswTableSelect OrderSelect = _CswNbtResources.makeCswTableSelect( "loadBindings_order_select", CswNbt2DImportTables.ImportOrder.TableName );
-                DataTable OrderDataTable = OrderSelect.getTable( CswNbt2DImportTables.ImportOrder.importdefinitionid, ImportDefId );
-                foreach( DataRow OrderRow in OrderDataTable.Rows )
-                {
-                    string SheetName = OrderRow[CswNbt2DImportTables.ImportOrder.sourcesheetname].ToString();
-                    if( false == string.IsNullOrEmpty( SheetName ) )
-                    {
-                        CswNbt2DDefinition BindingDef = BindingDefinitions.bySheetName( SheetName, true );
-
-                        string NTName = OrderRow[CswNbt2DImportTables.ImportOrder.nodetypename].ToString();
-                        CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NTName );
-                        if( null != NodeType )
-                        {
-                            BindingDef.ImportOrder.Add( CswConvert.ToInt32( OrderRow[CswNbt2DImportTables.ImportOrder.importorder] ), new CswNbt2DOrder()
-                                {
-                                    NodeType = NodeType,
-                                    Instance = OrderRow[CswNbt2DImportTables.ImportOrder.instance].ToString()
-                                } );
-                        }
-                        else
-                        {
-                            OnError( "Error reading bindings: invalid NodeType defined in import_order: " + NTName + " (pk: " + OrderRow[CswNbt2DImportTables.ImportOrder.PkColumnName].ToString() + ") " );
-                            ret = false;
-                        }
-                    } // if(false == string.IsNullOrEmpty(SheetName) )
-                } // foreach( DataRow OrderRow in OrderDataTable.Rows )
-            }
-
-            // Bindings
-            {
-                CswTableSelect BindingsSelect = _CswNbtResources.makeCswTableSelect( "loadBindings_bindings_select", CswNbt2DImportTables.ImportBindings.TableName );
-                DataTable BindingsDataTable = BindingsSelect.getTable( CswNbt2DImportTables.ImportBindings.importdefinitionid, ImportDefId );
-                foreach( DataRow BindingRow in BindingsDataTable.Rows )
-                {
-                    string SheetName = BindingRow[CswNbt2DImportTables.ImportBindings.sourcesheetname].ToString();
-                    if( false == string.IsNullOrEmpty( SheetName ) )
-                    {
-                        CswNbt2DDefinition BindingDef = BindingDefinitions.bySheetName( SheetName, true );
-
-                        //CswNbtMetaDataObjectClass DestObjectClass = null;
-                        CswNbtMetaDataNodeType DestNodeType = null;
-                        CswNbtMetaDataNodeTypeProp DestProp = null;
-
-                        string DestNTName = BindingRow[CswNbt2DImportTables.ImportBindings.destnodetypename].ToString();
-                        if( false == string.IsNullOrEmpty( DestNTName ) )
-                        {
-                            DestNodeType = _CswNbtResources.MetaData.getNodeType( DestNTName );
-                            if( null != DestNodeType )
-                            {
-                                DestProp = DestNodeType.getNodeTypeProp( BindingRow[CswNbt2DImportTables.ImportBindings.destpropname].ToString() );
-                                if( null != DestProp )
-                                {
-                                    CswNbtSubField DestSubfield = DestProp.getFieldTypeRule().SubFields[(CswEnumNbtSubFieldName) BindingRow[CswNbt2DImportTables.ImportBindings.destsubfield].ToString()];
-                                    if( DestSubfield == null )
-                                    {
-                                        DestSubfield = DestProp.getFieldTypeRule().SubFields.Default;
-                                    }
-
-                                    BindingDef.Bindings.Add( new CswNbt2DBinding
-                                        {
-                                            SourceColumnName = BindingRow[CswNbt2DImportTables.ImportBindings.sourcecolumnname].ToString(),
-                                            DestNodeType = DestNodeType,
-                                            DestProperty = DestProp,
-                                            DestSubfield = DestSubfield,
-                                            Instance = BindingRow[CswNbt2DImportTables.ImportBindings.instance].ToString(),
-                                        } );
-                                }
-                                else
-                                {
-                                    OnError( "Error reading bindings: invalid destproperty defined in import_bindings: " + BindingRow["destproperty"].ToString() + " (nodetype: " + DestNTName + ")" + " (pk: " + BindingRow[CswNbt2DImportTables.ImportBindings.PkColumnName].ToString() + ") " );
-                                    ret = false;
-                                }
-                            }
-                            else
-                            {
-                                OnError( "Error reading bindings: invalid destnodetype defined in import_bindings: " + DestNTName + " (pk: " + BindingRow[CswNbt2DImportTables.ImportBindings.PkColumnName].ToString() + ") " );
-                                ret = false;
-                            }
-                        } // if( false == string.IsNullOrEmpty( DestNTName ) )
-                    } // if( false == string.IsNullOrEmpty( SheetName ) )
-                } // foreach( DataRow BindingRow in BindingsDataTable.Rows )
-            }
-
-            // Row Relationships
-            {
-                CswTableSelect RelationshipsSelect = _CswNbtResources.makeCswTableSelect( "loadBindings_rel_select", CswNbt2DImportTables.ImportRelationships.TableName );
-                DataTable RelationshipsDataTable = RelationshipsSelect.getTable( CswNbt2DImportTables.ImportRelationships.importdefinitionid, ImportDefId );
-                foreach( DataRow RelRow in RelationshipsDataTable.Rows )
-                {
-                    string SheetName = RelRow[CswNbt2DImportTables.ImportRelationships.sourcesheetname].ToString();
-                    if( false == string.IsNullOrEmpty( SheetName ) )
-                    {
-                        CswNbt2DDefinition BindingDef = BindingDefinitions.bySheetName( SheetName, true );
-
-                        string NodeTypeName = RelRow[CswNbt2DImportTables.ImportRelationships.nodetypename].ToString();
-                        CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeName );
-                        if( null != NodeType )
-                        {
-                            CswNbtMetaDataNodeTypeProp Relationship = NodeType.getNodeTypeProp( RelRow[CswNbt2DImportTables.ImportRelationships.relationship].ToString() );
-                            if( null != Relationship )
-                            {
-                                BindingDef.RowRelationships.Add( new CswNbt2DRowRelationship()
-                                    {
-                                        NodeType = NodeType,
-                                        Relationship = Relationship,
-                                        Instance = RelRow[CswNbt2DImportTables.ImportRelationships.instance].ToString()
-                                    } );
-                            }
-                            else
-                            {
-                                OnError( "Error reading bindings: invalid Relationship defined in 'Relationships' sheet: " + RelRow["relationship"].ToString() + " (nodetype: " + NodeTypeName + ")" + " (pk: " + RelRow[CswNbt2DImportTables.ImportBindings.PkColumnName].ToString() + ") " );
-                                ret = false;
-                            }
-                        }
-                        else
-                        {
-                            OnError( "Error reading bindings: invalid NodeType defined in 'Relationships' sheet: " + NodeTypeName + " (pk: " + RelRow[CswNbt2DImportTables.ImportBindings.PkColumnName].ToString() + ") " );
-                            ret = false;
-                        }
-                    } // foreach( DataRow RelRow in RelationshipsDataTable.Rows )
-                } // if( false == string.IsNullOrEmpty( SheetName ) )
-            }
-            return ret;
-        } // _loadBindings(Int32)
-
 
         /// <summary>
         /// Import a number of rows
@@ -358,7 +175,9 @@ namespace ChemSW.Nbt.ImportExport
             {
                 if( false == string.IsNullOrEmpty( ImportDataTableName ) && _CswNbtResources.isTableDefinedInDataBase( ImportDataTableName ) )
                 {
-                    CswNbt2DDefinition BindingDef = BindingDefinitions.byImportDataTableName( ImportDataTableName );
+                    // Lookup the binding definition
+                    CswNbt2DImportDataMap DataMap = new CswNbt2DImportDataMap( _CswNbtResources, ImportDataTableName );
+                    CswNbt2DDefinition BindingDef = new CswNbt2DDefinition( _CswNbtResources, DataMap.ImportDefinitionId );
 
                     if( null != BindingDef && BindingDef.Bindings.Count > 0 && BindingDef.ImportOrder.Count > 0 )
                     {
@@ -387,7 +206,7 @@ namespace ChemSW.Nbt.ImportExport
                                         IEnumerable<CswNbt2DRowRelationship> RowRelationships = BindingDef.RowRelationships.Where( r => r.NodeType.NodeTypeId == Order.NodeType.NodeTypeId ); //&& r.Instance == Order.Instance );
                                         //IEnumerable<CswNbt2DBinding> RequiredBindings = NodeTypeBindings.Where( b => b.DestProperty.IsRequired );
                                         //IEnumerable<CswNbt2DBinding> UniqueBindings = NodeTypeBindings.Where( b => ( b.DestProperty.IsUnique() || b.DestProperty.IsCompoundUnique() ) );
-                                        IEnumerable<CswNbtMetaDataNodeTypeProp> Props = Order.NodeType.getNodeTypeProps();
+                                        //IEnumerable<CswNbtMetaDataNodeTypeProp> Props = Order.NodeType.getNodeTypeProps();
                                         //IEnumerable<CswNbtMetaDataNodeTypeProp> RequiredProps = Props.Where( p => p.IsRequired && false == p.HasDefaultValue() );
                                         IEnumerable<CswNbt2DBinding> UniqueBindings = NodeTypeBindings.Where( b => b.DestProperty.IsUnique() ||
                                                                                                               b.DestProperty.IsCompoundUnique() ||
@@ -472,7 +291,7 @@ namespace ChemSW.Nbt.ImportExport
 
 
                                             // Import property values
-                                            if( isNewNode || Overwrite )
+                                            if( isNewNode || DataMap.Overwrite )
                                             {
                                                 foreach( CswNbt2DBinding Binding in NodeTypeBindings )
                                                 {
@@ -630,7 +449,8 @@ namespace ChemSW.Nbt.ImportExport
                 CswTableSelect ImportDataSelect = _CswNbtResources.makeCswTableSelect( "Importer_Select", ImportDataTableName );
                 ErrorRows = ImportDataSelect.getRecordCount( "where error = '" + CswConvert.ToDbVal( true ) + "'" );
 
-                CswNbt2DDefinition BindingDef = BindingDefinitions.byImportDataTableName( ImportDataTableName );
+                CswNbt2DImportDataMap DataMap = new CswNbt2DImportDataMap( _CswNbtResources, ImportDataTableName );
+                CswNbt2DDefinition BindingDef = new CswNbt2DDefinition( _CswNbtResources, DataMap.ImportDefinitionId );
                 if( null != BindingDef && BindingDef.ImportOrder.Count > 0 )
                 {
                     string PendingWhereClause = string.Empty;

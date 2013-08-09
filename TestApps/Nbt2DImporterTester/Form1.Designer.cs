@@ -36,7 +36,6 @@
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.txtLog = new System.Windows.Forms.TextBox();
-            this.btnReadBindings = new System.Windows.Forms.Button();
             this.txtRows = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
             this.cbxImportDataTableName = new System.Windows.Forms.ComboBox();
@@ -120,16 +119,6 @@
             this.txtLog.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.txtLog.Size = new System.Drawing.Size(482, 356);
             this.txtLog.TabIndex = 8;
-            // 
-            // btnReadBindings
-            // 
-            this.btnReadBindings.Location = new System.Drawing.Point(15, 114);
-            this.btnReadBindings.Name = "btnReadBindings";
-            this.btnReadBindings.Size = new System.Drawing.Size(90, 27);
-            this.btnReadBindings.TabIndex = 9;
-            this.btnReadBindings.Text = "Load Bindings";
-            this.btnReadBindings.UseVisualStyleBackColor = true;
-            this.btnReadBindings.Click += new System.EventHandler(this.btnLoadBindings_Click);
             // 
             // txtRows
             // 
@@ -271,7 +260,6 @@
             this.Controls.Add(this.cbxImportDataTableName);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.txtRows);
-            this.Controls.Add(this.btnReadBindings);
             this.Controls.Add(this.txtLog);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
@@ -295,7 +283,6 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox txtLog;
-        private System.Windows.Forms.Button btnReadBindings;
         private System.Windows.Forms.TextBox txtRows;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.ComboBox cbxImportDataTableName;

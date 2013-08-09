@@ -12,7 +12,9 @@ namespace ChemSW.Nbt.ImportExport
 
             public const string importdefinitionid = "importdefinitionid";
             public const string definitionname = "definitionname";
+            public const string sheetname = "sheetname";
         }
+        
         public class ImportOrder
         {
             public const string TableName = "import_order";
@@ -21,10 +23,10 @@ namespace ChemSW.Nbt.ImportExport
             public const string importorderid = "importorderid";
             public const string importdefinitionid = "importdefinitionid";
             public const string importorder = "importorder";
-            public const string sourcesheetname = "sourcesheetname";
             public const string nodetypename = "nodetypename";
             public const string instance = "instance";
         }
+
         public class ImportBindings
         {
             public const string TableName = "import_bindings";
@@ -32,7 +34,6 @@ namespace ChemSW.Nbt.ImportExport
 
             public const string importbindingid = "importbindingid";
             public const string importdefinitionid = "importdefinitionid";
-            public const string sourcesheetname = "sourcesheetname";
             public const string sourcecolumnname = "sourcecolumnname";
             public const string destnodetypename = "destnodetypename";
             public const string destpropname = "destpropname";
@@ -47,20 +48,20 @@ namespace ChemSW.Nbt.ImportExport
 
             public const string importrelationshipid = "importrelationshipid";
             public const string importdefinitionid = "importdefinitionid";
-            public const string sourcesheetname = "sourcesheetname";
             public const string nodetypename = "nodetypename";
             public const string relationship = "relationship";
             public const string instance = "instance";
         }
-        public class ImportSheets
-        {
-            public const string TableName = "import_sheets";
-            public const string PkColumnName = importsheetid;
 
-            public const string importsheetid = "importsheetid";
+        public class ImportDataMap
+        {
+            public const string TableName = "import_data_map";
+            public const string PkColumnName = importdatamapid;
+
+            public const string importdatamapid = "importdatamapid";
             public const string importdefinitionid = "importdefinitionid";
             public const string datatablename = "datatablename";
-            public const string sheetname = "sheetname";
+            public const string overwrite = "overwrite";
         }
     }
 }
