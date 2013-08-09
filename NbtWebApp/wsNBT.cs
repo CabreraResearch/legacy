@@ -291,7 +291,7 @@ namespace ChemSW.Nbt.WebServices
                     else
                     {
                         // case 30086 - prevent login if admin hasn't accepted the license yet
-                        AuthenticationStatus = CswEnumAuthenticationStatus.Deactivated;
+                        AuthenticationStatus = CswEnumAuthenticationStatus.NoLicense;
                         _CswSessionResources.CswSessionManager.clearSession();
                     }
                 }

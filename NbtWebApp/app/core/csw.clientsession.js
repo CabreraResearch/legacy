@@ -262,6 +262,9 @@
                 case 'Deactivated':
                     txt = 'Your account is deactivated.  Please see your account administrator.';
                     break;
+                case 'NoLicense':
+                    txt = 'An administrator must agree to the terms of use before this application can be activated.';
+                    break;
                 case 'ModuleNotEnabled':
                     txt = 'This feature is not enabled.  Please see your account administrator.';
                     break;

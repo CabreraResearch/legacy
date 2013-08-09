@@ -63,7 +63,6 @@
             cswPrivate.getCart = function (ActiveTab, TabName) {
                 Csw.ajaxWcf.get({
                     urlMethod: 'Requests/cart',
-                    async: false,
                     success: function (data) {
                         cswPrivate.state.pendingItemsViewId = data.PendingItemsView.SessionViewId;
                         cswPrivate.state.favoritesListViewId = data.FavoritesView.SessionViewId;
@@ -87,7 +86,7 @@
 
             cswPrivate.getCartCounts = function () {
                 if (cswPrivate.ajaxii.getCartCounts) {
-                    cswPrivate.ajaxii.getCartCounts.ajax.abort();
+                    cswPrivate.ajaxii.getCartCounts.abort();
                 }
                 cswPrivate.ajaxii.getCartCounts = Csw.ajaxWcf.get({
                     urlMethod: 'Requests/counts',

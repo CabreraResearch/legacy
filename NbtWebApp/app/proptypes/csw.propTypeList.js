@@ -25,15 +25,21 @@
                 cswPrivate.selectCell = cswPrivate.table.cell(1, 1);
                 cswPrivate.validateCell = cswPrivate.table.cell(1, 2);
 
-                nodeProperty.onPropChangeBroadcast(function (val) {
-                    if (cswPrivate.value !== val) {
-                        cswPrivate.value = val;
+                nodeProperty.onPropChangeBroadcast(function (object) {
+
+                    if (cswPrivate.value !== object.val) {
+                        cswPrivate.value = object.val;
+                        cswPrivate.text = object.text;
+
+                        nodeProperty.propData.values.text = object.text;
+                        nodeProperty.propData.values.value = object.val;
+
                         if (cswPrivate.select) {
-                            cswPrivate.select.setValue(val);
+                            cswPrivate.select.setValue(cswPrivate.value);
                         }
                         if (span) {
                             span.remove();
-                            span = cswPrivate.selectCell.span({ text: cswPrivate.text });
+                            span = cswPrivate.selectCell.span({ text: object.text });
                         }
                     }
                 });//nodeProperty.onPropChangeBroadcast()
@@ -62,7 +68,7 @@
                 } else {
                     // Create the Store
                     cswPrivate.listOptionsStore = new Ext.data.Store({
-                        fields: ['Text', 'Value'],
+                        fields: ['Value', 'Text'],
                         autoLoad: false,
                         sorters: [{ property: 'Text', direction: 'ASC' }]
                     });
@@ -72,6 +78,7 @@
                         name: nodeProperty.name,
                         renderTo: cswPrivate.selectCell.div().getId(),
                         displayField: 'Text',
+                        valueField: 'Value',
                         store: cswPrivate.listOptionsStore,
                         queryMode: 'local',
                         queryDelay: 2000,
@@ -83,12 +90,7 @@
                         listeners: {
                             select: function (combo, records) {
                                 var text = records[0].get('Text');
-                                cswPrivate.text = text;
-                                nodeProperty.propData.values.text = text;
-
                                 var val = records[0].get('Value');
-                                cswPrivate.value = val;
-                                nodeProperty.propData.values.value = val;
 
                                 if (cswPrivate.isRequired) {
                                     if (Csw.isNullOrEmpty(val)) {
@@ -100,18 +102,32 @@
                                     onValidation(valid);
                                 }
 
-                                nodeProperty.broadcastPropChange(text);
+                                nodeProperty.broadcastPropChange({ text: text, val: val });
                             },
                             change: function (combo, newvalue) {
-                                if (cswPrivate.isRequired) {
-                                    if (Csw.isNullOrEmpty(newvalue)) {
+                                if (null != newvalue) {
+                                    if (cswPrivate.isRequired) {
+
+                                        // Is the newvalue an option in the list?
+                                        var inlist = false;
+                                        cswPrivate.options.forEach(function (option) {
+                                            if (option.Text === newvalue) {
+                                                inlist = true;
+                                            }
+                                        });
                                         cswPrivate.checkBox.val(false);
-                                    } else {
-                                        cswPrivate.checkBox.val(true);
-                                    }
-                                    var valid = cswPrivate.checkBox.$.valid();
-                                    onValidation(valid);
-                                }
+                                        if (false === Csw.isNullOrEmpty(newvalue)) {
+                                            if (inlist) {
+                                                cswPrivate.checkBox.val(true);
+                                            }
+                                        }
+                                        var valid = cswPrivate.checkBox.$.valid();
+                                        if (valid) {
+                                            nodeProperty.broadcastPropChange({ text: newvalue, val: newvalue });
+                                        }
+                                        onValidation(valid);
+                                    }//if(cswPrivate.isRequired)
+                                }//if(null != newvalue)
                             }
                         },//listeners
                         tpl: new Ext.XTemplate('<tpl for=".">' + '<li style="height:22px;" class="x-boundlist-item" role="option">' + '{Text}' + '</li></tpl>'),
@@ -139,16 +155,19 @@
                         cswPrivate.listOptionsStore.loadData(cswPrivate.options);
                         cswPrivate.select.setValue(cswPrivate.value); // Need to set the value here if comboBox 'forceSelection' is set to 'true'
                         setComboBoxSize(cswPrivate.options);
-                        
+
                         // Since we are setting the value, we need to re-validate
                         if (cswPrivate.isRequired) {
+
                             if (Csw.isNullOrEmpty(cswPrivate.select.getValue())) {
                                 cswPrivate.checkBox.val(false);
                             } else {
                                 cswPrivate.checkBox.val(true);
                             }
-                            var valid = cswPrivate.checkBox.$.valid();
-                            onValidation(valid);
+                            if (cswPrivate.wasModified) {
+                                var valid2 = cswPrivate.checkBox.$.valid();
+                                onValidation(valid2);
+                            }
                         }
 
                     } else {

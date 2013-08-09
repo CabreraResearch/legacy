@@ -347,20 +347,6 @@ namespace ChemSW.Nbt
 
         } // removeAllSessionData()
 
-        /// <summary>
-        /// Removes all rows in Session_Data that do not have a corresponding entry in SessionList
-        /// </summary>
-        public void removeOrphanedSessionData()
-        {
-            CswTableUpdate OrphanDeleteTU = _CswNbtResources.makeCswTableUpdate( "SessionDataMgr.removeOrphanedSessionData", "session_data" );
-            DataTable OrphansDT = OrphanDeleteTU.getTable( "where sessionid not in (select sl.sessionid from sessionlist sl)" );
-            foreach( DataRow row in OrphansDT.Rows )
-            {
-                row.Delete();
-            }
-            OrphanDeleteTU.update( OrphansDT );
-        }
-
         #endregion Remove Session Data
 
     } // class CswNbtSessionViewMgr
