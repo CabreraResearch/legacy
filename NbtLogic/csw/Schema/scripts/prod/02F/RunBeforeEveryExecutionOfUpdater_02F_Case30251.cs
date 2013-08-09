@@ -69,7 +69,7 @@ namespace ChemSW.Nbt.Schema
                     FieldType = CswEnumNbtFieldType.Text,
                     IsUnique = true
                 } );
-                CswNbtMetaDataNodeType WeightNt = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Unit (Weight)" );
+                CswNbtMetaDataNodeType WeightNt = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Unit_Weight" );
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( LQNoOC, new CswNbtWcfMetaDataModel.ObjectClassProp
                 {
                     PropName = CswNbtObjClassLQNo.PropertyName.Limit,
