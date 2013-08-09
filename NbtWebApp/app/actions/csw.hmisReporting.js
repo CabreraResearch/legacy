@@ -33,7 +33,6 @@ Csw.actions.hmisReporting = Csw.actions.template ||
             cswPrivate.controlTbl.cell(1, 1).span({ text: 'Select Control Zone: ' }).addClass('propertylabel');
             cswPrivate.controlZoneSelect = cswPrivate.controlTbl.cell(1, 2).nodeSelect({
                 name: 'Control Zone',
-                async: false,
                 width: '200px',
                 showSelectOnLoad: true,
                 isRequired: false,
@@ -377,7 +376,6 @@ Csw.actions.hmisReporting = Csw.actions.template ||
 
             Csw.ajaxWcf.get({
                 urlMethod: 'RegulatoryReporting/getControlZonesView',
-                async: false,
                 success: function (data) {
                     if (false === Csw.isNullOrEmpty(data)) {
                         cswPrivate.controlZoneViewId = data.ViewId;

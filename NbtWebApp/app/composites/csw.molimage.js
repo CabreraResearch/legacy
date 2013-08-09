@@ -14,7 +14,6 @@
         /// <param name="onSuccess">callback function handling result, which must accept one parameter (dictionary with result information)</param>
 
         Csw.ajaxWcf.post({
-            async: false,
             urlMethod: 'Mol/getImg',
             data: {
                 molString: molTxt,
