@@ -1773,7 +1773,8 @@
                 title: '',
                 nodetypeid: '',
                 objectclassid: '',
-                onSelectNode: null
+                onSelectNode: null,
+                onClose: function () { }
             };
             if (Csw.isNullOrEmpty(options)) {
                 Csw.error.throwException(Csw.error.exception('Cannot create an Search Dialog without options.', '', 'CswDialog.js', 1013));
@@ -1787,7 +1788,7 @@
                 title: Csw.string(cswDlgPrivate.title, 'Search ' + cswDlgPrivate.propname)
             };
 
-            openDialog(cswPublic.div, 800, 600, null, 'Search ' + cswDlgPrivate.propname);
+            openDialog(cswPublic.div, 800, 600, null, 'Search ' + cswDlgPrivate.propname, cswDlgPrivate.onClose);
 
             cswPublic.search = Csw.composites.universalSearch(cswPublic.div, {
                 name: cswDlgPrivate.name,
@@ -1804,6 +1805,7 @@
                 compactResults: true,
                 extraAction: 'Select',
                 extraActionIcon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.check),
+                universalSearchOnly: true, //No C3 or Structure Search here
                 onExtraAction: function (nodeObj) {
                     cswPublic.close();
                     Csw.tryExec(cswDlgPrivate.onSelectNode, nodeObj);
@@ -2545,7 +2547,7 @@
                     if (groupBySelect) {
                         var selectedRelArbId = groupBySelect.selectedVal();
                         var selectedProp = null;
-                        Csw.each(o.properties, function(prop) {
+                        Csw.each(o.properties, function (prop) {
                             if (prop.ArbitraryId === selectedRelArbId) {
                                 selectedProp = prop;
                             }

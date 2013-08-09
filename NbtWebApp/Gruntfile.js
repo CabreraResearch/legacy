@@ -85,14 +85,6 @@ module.exports = function (grunt) {
             }
         },
 
-        docco: {
-            src: cswAppJsFiles,
-            options: {
-                output: 'docs/'
-            }
-
-        },
-
         htmlminifier: {
             removeComments: true,
             collapseWhitespace: true,

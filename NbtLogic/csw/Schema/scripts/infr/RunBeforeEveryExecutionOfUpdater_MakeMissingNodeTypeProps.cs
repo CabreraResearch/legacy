@@ -7,6 +7,8 @@ namespace ChemSW.Nbt.Schema
     /// </summary>
     public class RunBeforeEveryExecutionOfUpdater_MakeMissingNodeTypeProps: CswUpdateSchemaTo
     {
+        public static string Title = "Pre-Script: MakeMissingNodeTypeProps";
+
         public override CswEnumDeveloper Author
         {
             get { return CswEnumDeveloper.NBT; }
