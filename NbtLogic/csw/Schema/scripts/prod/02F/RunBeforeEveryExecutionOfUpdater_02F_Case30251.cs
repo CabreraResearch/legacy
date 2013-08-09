@@ -1,4 +1,5 @@
 using System;
+using ChemSW.Core;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
@@ -35,7 +36,8 @@ namespace ChemSW.Nbt.Schema
             _upgradeLQNoToObjectClass();
             _upgradeControlZoneToObjectClass();
             _upgradeVendorNTPs();
-            _upgradeFeedbackNTPs();
+            _upgradeFeedbackNTP();
+            _upgradeGHSNTP();
         }
 
         #region ObjectClasses
@@ -202,13 +204,45 @@ namespace ChemSW.Nbt.Schema
             } );
         }
 
-        private void _upgradeFeedbackNTPs()
+        private void _upgradeFeedbackNTP()
         {
             CswNbtMetaDataObjectClass FeedbackOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.FeedbackClass );
             _addOCP( FeedbackOC, new CswNbtWcfMetaDataModel.ObjectClassProp
             {
                 PropName = CswNbtObjClassFeedback.PropertyName.Document,
                 FieldType = CswEnumNbtFieldType.File
+            } );
+        }
+
+        private void _upgradeGHSNTP()
+        {
+            CswNbtMetaDataObjectClass GHSOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.GHSClass );
+            CswCommaDelimitedString ClassificationOptions = new CswCommaDelimitedString
+            {
+                "Category 1", 
+                "Category 2", 
+                "Category 3", 
+                "Category 4", 
+                "Category 1 A/1 B/1 C", 
+                "Category 2 (skin)/2A (eye)",
+                "Category 2A",
+                "Category 2B",
+                "Category 1/ 1A / 1B",
+                "Category 1A or Category 1B",
+                "Type A",
+                "Type B",
+                "Type C&D",
+                "Type E&F",
+                "Compressed Gas",
+                "Liquidfied Gas",
+                "Dissolved Gas",
+                "Refridgerated Liquidified Gas"
+            };
+            _addOCP( GHSOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+            {
+                PropName = CswNbtObjClassGHS.PropertyName.Classification,
+                FieldType = CswEnumNbtFieldType.List,
+                ListOptions = ClassificationOptions.ToString()
             } );
         }
 
