@@ -43,13 +43,15 @@ namespace ChemSW.Nbt.Actions.KioskMode
         {
             bool succeeded = false;
             CswNbtNode node = null;
-            string itemName = OpData.Field2.FoundObjClass.Replace( "Class", "" );
+            string itemName = string.Empty;
             CswNbtObjClassUser newOwner = _getNodeByBarcode( CswEnumNbtObjectClass.UserClass, OpData.Field1.Value, true );
             switch( OpData.Field2.FoundObjClass )
             {
                 case CswEnumNbtObjectClass.EquipmentAssemblyClass:
                     node = _getNodeByBarcode( CswEnumNbtObjectClass.EquipmentAssemblyClass, OpData.Field2.Value, false );
-                    if( _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Edit, node.getNodeType() ) )
+                    CswNbtMetaDataNodeType AssemblyNodeType = node.getNodeType();
+                    itemName = AssemblyNodeType.NodeTypeName;
+                    if( _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Edit, AssemblyNodeType ) )
                     {
                         CswNbtObjClassEquipmentAssembly assemblyNode = node;
                         assemblyNode.UpdateOwner( newOwner );
@@ -58,6 +60,8 @@ namespace ChemSW.Nbt.Actions.KioskMode
                     break;
                 case CswEnumNbtObjectClass.EquipmentClass:
                     node = _getNodeByBarcode( CswEnumNbtObjectClass.EquipmentClass, OpData.Field2.Value, false );
+                    CswNbtMetaDataNodeType EquipmentNodeType = node.getNodeType();
+                    itemName = EquipmentNodeType.NodeTypeName;
                     if( _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Edit, node.getNodeType() ) )
                     {
                         CswNbtObjClassEquipment equipmentNode = node;
@@ -67,7 +71,9 @@ namespace ChemSW.Nbt.Actions.KioskMode
                     break;
                 case CswEnumNbtObjectClass.ContainerClass:
                     node = _getNodeByBarcode( CswEnumNbtObjectClass.ContainerClass, OpData.Field2.Value, false );
-                    if( _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Edit, node.getNodeType() ) )
+                    CswNbtMetaDataNodeType ContainerNodeType = node.getNodeType();
+                    itemName = ContainerNodeType.NodeTypeName;
+                    if( _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Edit, ContainerNodeType ) )
                     {
                         CswNbtObjClassContainer containerNode = node;
                         containerNode.UpdateOwner( newOwner );
