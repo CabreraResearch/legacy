@@ -73,7 +73,6 @@
                 nodeTreeCheck: null,
                 onEditView: null,
                 onAfterButtonClick: null,
-                async: true, 
                 forceReadOnly: false
             };
             var cswPublic = {};

@@ -155,8 +155,7 @@
                             showSaveButton: true
                         },
                         Multi: true,
-                       ReloadTabOnSave: false,
-                        async: false 
+                       ReloadTabOnSave: false
                     });
 
             } //initPropValSelectors()
