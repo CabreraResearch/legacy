@@ -34,7 +34,10 @@ namespace ChemSW.Nbt.Schema
             _upgradeDepartmentToObjectClass();
             _upgradeLQNoToObjectClass();
             _upgradeControlZoneToObjectClass();
+            _upgradeVendorNTPS();
         }
+
+        #region ObjectClasses
 
         private void _upgradeDepartmentToObjectClass()
         {
@@ -138,6 +141,76 @@ namespace ChemSW.Nbt.Schema
                 }
             }
         }
+
+        #endregion ObjectClasses
+
+        #region ObjectClassProps
+
+        private void _upgradeVendorNTPS()
+        {
+            CswNbtMetaDataObjectClass VendorOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.VendorClass );
+            _addOCP( VendorOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+            {
+                PropName = CswNbtObjClassVendor.PropertyName.AccountNo,
+                FieldType = CswEnumNbtFieldType.Text
+            } );
+            _addOCP( VendorOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+            {
+                PropName = CswNbtObjClassVendor.PropertyName.DeptBillCode,
+                FieldType = CswEnumNbtFieldType.Text
+            } );
+            _addOCP( VendorOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+            {
+                PropName = CswNbtObjClassVendor.PropertyName.ContactName,
+                FieldType = CswEnumNbtFieldType.Text
+            } );
+            _addOCP( VendorOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+            {
+                PropName = CswNbtObjClassVendor.PropertyName.Street1,
+                FieldType = CswEnumNbtFieldType.Text
+            } );
+            _addOCP( VendorOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+            {
+                PropName = CswNbtObjClassVendor.PropertyName.Street2,
+                FieldType = CswEnumNbtFieldType.Text
+            } );
+            _addOCP( VendorOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+            {
+                PropName = CswNbtObjClassVendor.PropertyName.City,
+                FieldType = CswEnumNbtFieldType.Text
+            } );
+            _addOCP( VendorOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+            {
+                PropName = CswNbtObjClassVendor.PropertyName.State,
+                FieldType = CswEnumNbtFieldType.Text
+            } );
+            _addOCP( VendorOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+            {
+                PropName = CswNbtObjClassVendor.PropertyName.Zip,
+                FieldType = CswEnumNbtFieldType.Text
+            } );
+            _addOCP( VendorOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+            {
+                PropName = CswNbtObjClassVendor.PropertyName.Phone,
+                FieldType = CswEnumNbtFieldType.Text
+            } );
+            _addOCP( VendorOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+            {
+                PropName = CswNbtObjClassVendor.PropertyName.Fax,
+                FieldType = CswEnumNbtFieldType.Text
+            } );
+        }
+
+        private void _addOCP( CswNbtMetaDataObjectClass OC, CswNbtWcfMetaDataModel.ObjectClassProp PropDef )
+        {
+            CswNbtMetaDataObjectClassProp OCP = OC.getObjectClassProp( PropDef.PropName );
+            if( OCP == null )
+            {
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( OC, PropDef );
+            }
+        }
+
+        #endregion ObjectClassProps
 
     }//class RunBeforeEveryExecutionOfUpdater_02F_Case30251
 }//namespace ChemSW.Nbt.Schema
