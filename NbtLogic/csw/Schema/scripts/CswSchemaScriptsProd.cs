@@ -6,7 +6,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Keeps the schema up-to-date
     /// </summary>
-    public class CswSchemaScriptsProd: ICswSchemaScripts
+    public class CswSchemaScriptsProd : ICswSchemaScripts
     {
         private Dictionary<CswSchemaVersion, CswSchemaUpdateDriver> _UpdateDrivers = new Dictionary<CswSchemaVersion, CswSchemaUpdateDriver>();
         public Dictionary<CswSchemaVersion, CswSchemaUpdateDriver> UpdateDrivers { get { return _UpdateDrivers; } }
@@ -28,6 +28,7 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02E_Case30370() ) );                    //02E-005
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02E_Case30360() ) );                    //02E-006
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02E_Case30339_UserProfilex2() ) );      //02E-007
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02E_Case30300() ) );                    //02E-008 
 
 
             #endregion EUCALYPTUS
