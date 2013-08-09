@@ -17,7 +17,7 @@ namespace ChemSW.Nbt.ImportExport
         {
             public const string TableName = "import_order";
             public const string PkColumnName = importorderid;
-            
+
             public const string importorderid = "importorderid";
             public const string importdefinitionid = "importdefinitionid";
             public const string importorder = "importorder";
@@ -29,7 +29,7 @@ namespace ChemSW.Nbt.ImportExport
         {
             public const string TableName = "import_bindings";
             public const string PkColumnName = importbindingid;
-            
+
             public const string importbindingid = "importbindingid";
             public const string importdefinitionid = "importdefinitionid";
             public const string sourcesheetname = "sourcesheetname";
@@ -51,6 +51,16 @@ namespace ChemSW.Nbt.ImportExport
             public const string nodetypename = "nodetypename";
             public const string relationship = "relationship";
             public const string instance = "instance";
+        }
+        public class ImportSheets
+        {
+            public const string TableName = "import_sheets";
+            public const string PkColumnName = importsheetid;
+
+            public const string importsheetid = "importsheetid";
+            public const string importdefinitionid = "importdefinitionid";
+            public const string datatablename = "datatablename";
+            public const string sheetname = "sheetname";
         }
     }
 }

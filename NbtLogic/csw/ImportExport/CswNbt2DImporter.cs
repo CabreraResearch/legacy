@@ -84,7 +84,7 @@ namespace ChemSW.Nbt.ImportExport
         /// <summary>
         /// Stores data in temporary Oracle tables
         /// </summary>
-        public void storeData( string DataFilePath )
+        public void storeData( string DataFilePath, string ImportDefinitionName )
         {
             DataSet ExcelDataSet = _readExcel( DataFilePath );
             foreach( DataTable ExcelDataTable in ExcelDataSet.Tables )
@@ -136,6 +136,16 @@ namespace ChemSW.Nbt.ImportExport
 
                     ImportDataTableNames.Add( ImportDataTableName );
 
+                    // Store the sheet reference in import_sheets
+                    CswTableUpdate ImportSheetUpdate = _CswNbtResources.makeCswTableUpdate( "Importer_Sheet_Update", CswNbt2DImportTables.ImportSheets.TableName );
+                    DataTable ImportSheetTable = ImportSheetUpdate.getEmptyTable();
+                    DataRow SheetRow = ImportSheetTable.NewRow();
+                    SheetRow[CswNbt2DImportTables.ImportSheets.sheetname] = BindingDef.SheetName;
+                    SheetRow[CswNbt2DImportTables.ImportSheets.datatablename] = BindingDef.ImportDataTableName;
+                    SheetRow[CswNbt2DImportTables.ImportSheets.importdefinitionid] = getImportDefinitionId( ImportDefinitionName );
+                    ImportSheetTable.Rows.Add( SheetRow );
+                    ImportSheetUpdate.update( ImportSheetTable );
+
                     OnMessage( "Sheet '" + BindingDef.SheetName + "' is stored in Table '" + BindingDef.ImportDataTableName + "'" );
 
                 } // if( null != BindingDef )
@@ -166,20 +176,34 @@ namespace ChemSW.Nbt.ImportExport
         } // getDefinitions()
 
         /// <summary>
-        /// Loads import definition bindings from the database
+        /// For a given Import Definition name, return the primary key
         /// </summary>
-        public bool loadBindings( string ImportDefinition )
+        public Int32 getImportDefinitionId( string ImportDefinitionName )
         {
-            bool ret = false;
-            CswTableSelect DefSelect = _CswNbtResources.makeCswTableSelect( "loadBindings_def_select2", CswNbt2DImportTables.ImportDefinitions.TableName );
-            DataTable DefDataTable = DefSelect.getTable( "where " + CswNbt2DImportTables.ImportDefinitions.definitionname + " = '" + ImportDefinition + "'" );
+            Int32 ret = Int32.MinValue;
+            CswTableSelect DefSelect = _CswNbtResources.makeCswTableSelect( "getImportDefinitionId", CswNbt2DImportTables.ImportDefinitions.TableName );
+            DataTable DefDataTable = DefSelect.getTable( "where " + CswNbt2DImportTables.ImportDefinitions.definitionname + " = '" + ImportDefinitionName + "'" );
             if( DefDataTable.Rows.Count > 0 )
             {
-                ret = loadBindings( CswConvert.ToInt32( DefDataTable.Rows[0][CswNbt2DImportTables.ImportDefinitions.importdefinitionid] ) );
+                ret = CswConvert.ToInt32( DefDataTable.Rows[0][CswNbt2DImportTables.ImportDefinitions.importdefinitionid] );
+            }
+            return ret;
+        } // getImportDefinitionId()
+
+        /// <summary>
+        /// Loads import definition bindings from the database
+        /// </summary>
+        public bool loadBindings( string ImportDefinitionName )
+        {
+            bool ret = false;
+            Int32 ImportDefId = getImportDefinitionId( ImportDefinitionName );
+            if( Int32.MinValue != ImportDefId )
+            {
+                ret = loadBindings( ImportDefId );
             }
             else
             {
-                OnError( "Error: invalid import definition: " + ImportDefinition );
+                OnError( "Error: invalid import definition: " + ImportDefinitionName );
                 ret = false;
             }
             return ret;

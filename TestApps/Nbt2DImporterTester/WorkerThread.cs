@@ -66,12 +66,12 @@ namespace Nbt2DImporterTester
             OnFinish();
         }
 
-        public delegate void storeDataHandler( string AccessId, string DataFilePath );
-        public void storeData( string AccessId, string DataFilePath )
+        public delegate void storeDataHandler( string AccessId, string DataFilePath, string ImportDefinitionName );
+        public void storeData( string AccessId, string DataFilePath, string ImportDefinitionName )
         {
             _CswNbtResources.AccessId = AccessId;
 
-            _Importer.storeData( DataFilePath );
+            _Importer.storeData( DataFilePath, ImportDefinitionName );
             OnStoreDataFinish( _Importer.ImportDataTableNames );
 
             _CswNbtResources.commitTransaction();

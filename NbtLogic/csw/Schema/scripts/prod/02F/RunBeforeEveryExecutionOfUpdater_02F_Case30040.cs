@@ -67,6 +67,14 @@ namespace ChemSW.Nbt.Schema
                 _CswNbtSchemaModTrnsctn.addStringColumn( Tablename, CswNbt2DImportTables.ImportRelationships.relationship, "Property name of relationship property", false, true, 512 );
                 _CswNbtSchemaModTrnsctn.addLongColumn( Tablename, CswNbt2DImportTables.ImportRelationships.instance, "Instance for mapping imported relationships", false, true );
             }
+            if( false == _CswNbtSchemaModTrnsctn.isTableDefined( CswNbt2DImportTables.ImportSheets.TableName ) )
+            {
+                string Tablename = CswNbt2DImportTables.ImportSheets.TableName;
+                _CswNbtSchemaModTrnsctn.addTable( Tablename, CswNbt2DImportTables.ImportSheets.PkColumnName );
+                _CswNbtSchemaModTrnsctn.addForeignKeyColumn( Tablename, CswNbt2DImportTables.ImportSheets.importdefinitionid, "FK to import definition", false, true, "import_definition", "importdefinitionid" );
+                _CswNbtSchemaModTrnsctn.addStringColumn( Tablename, CswNbt2DImportTables.ImportSheets.datatablename, "Oracle table name for data", false, true, 50 );
+                _CswNbtSchemaModTrnsctn.addStringColumn( Tablename, CswNbt2DImportTables.ImportSheets.sheetname, "Name of source sheet", false, true, 50 );
+            }
         } // update()
 
     }//class RunBeforeEveryExecutionOfUpdater_02F_Case30040

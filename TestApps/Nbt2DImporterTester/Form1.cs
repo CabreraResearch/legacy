@@ -134,7 +134,7 @@ namespace Nbt2DImporterTester
         {
             setButtonsEnabled( false );
             log( "Storing data..." );
-            ( (WorkerThread.storeDataHandler) _WorkerThread.storeData ).BeginInvoke( txtAccessId.Text, txtDataFilePath.Text, null, null );
+            ( (WorkerThread.storeDataHandler) _WorkerThread.storeData ).BeginInvoke( txtAccessId.Text, txtDataFilePath.Text, cbxImportDefinition.Text, null, null );
         }
 
         private void btnRunImport_Click( object sender, EventArgs e )
