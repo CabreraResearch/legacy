@@ -40,6 +40,7 @@
                     showQuantityEditable: false,
                     showDispensable: false,
                     showOriginalUoM: true,
+                    containerlimit: 25,
                     config: {
                         quantityName: 'Initial Quantity',
                         numberName: 'Catalog No.',
@@ -255,6 +256,7 @@
                                         cswPublic.rows[rowid].unitCountCtrl = cswCell.numberTextBox({
                                             name: 'sizeUnitCount',
                                             MinValue: 1,
+                                        MaxValue: cswPrivate.containerlimit,
                                             Precision: 0,
                                             onChange: function (value) {
                                                 cswPublic.rows[rowid].sizeValues.unitCount.value = cswPublic.rows[rowid].unitCountCtrl.val();
@@ -266,7 +268,7 @@
                                         cswPublic.rows[rowid].quantityCtrl = cswCell.numberTextBox({
                                             name: 'quantityNumberBox',
                                             MinValue: 0,
-                                            Precision: '',
+                                            Precision: 6,
                                             excludeRangeLimits: true,
                                             width: '60px',
                                             onChange: function (value) {

@@ -23,7 +23,9 @@ namespace ChemSW.Nbt.MetaData
             { ContainerLocationClass            , ContainerLocationClass             },
             { ContainerDispenseTransactionClass , ContainerDispenseTransactionClass  },
             { ContainerGroupClass               , ContainerGroupClass                },
+            { ControlZoneClass                  , ControlZoneClass                   },
             { CustomerClass                     , CustomerClass                      },
+            { DepartmentClass                   , DepartmentClass                    },
             { DocumentClass                     , DocumentClass                      },
             { EnterprisePartClass               , EnterprisePartClass                },
             { EquipmentAssemblyClass            , EquipmentAssemblyClass             },
@@ -43,6 +45,7 @@ namespace ChemSW.Nbt.MetaData
             { InventoryLevelClass               , InventoryLevelClass                },
             { JurisdictionClass                 , JurisdictionClass                  },
             { LocationClass                     , LocationClass                      },
+            { LQNoClass                         , LQNoClass                          },
             { MailReportClass                   , MailReportClass                    },
             { MailReportGroupClass              , MailReportGroupClass               },
             { MailReportGroupPermissionClass    , MailReportGroupPermissionClass     },
@@ -148,7 +151,9 @@ namespace ChemSW.Nbt.MetaData
         public const string ContainerLocationClass = "ContainerLocationClass";
         public const string ContainerDispenseTransactionClass = "ContainerDispenseTransactionClass";
         public const string ContainerGroupClass = "ContainerGroupClass";
+        public const string ControlZoneClass = "ControlZoneClass";
         public const string CustomerClass = "CustomerClass";
+        public const string DepartmentClass = "DepartmentClass";
         public const string DocumentClass = "DocumentClass";
         public const string EnterprisePartClass = "EnterprisePartClass";
         public const string EquipmentAssemblyClass = "EquipmentAssemblyClass";
@@ -168,6 +173,7 @@ namespace ChemSW.Nbt.MetaData
         public const string InventoryLevelClass = "InventoryLevelClass";
         public const string JurisdictionClass = "JurisdictionClass";
         public const string LocationClass = "LocationClass";
+        public const string LQNoClass = "LQNoClass";
         public const string MailReportClass = "MailReportClass";
         public const string MailReportGroupClass = "MailReportGroupClass";
         public const string MailReportGroupPermissionClass = "MailReportGroupPermissionClass";

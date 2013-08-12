@@ -91,6 +91,7 @@
                     if (Csw.isNullOrEmpty(cswParent)) {
                         Csw.error.throwException(Csw.error.exception('Cannot create a Wizard amounts grid without a parent.', '', 'csw.wizard.amountsgrid.js', 22));
                     }
+                    cswPublic.containerlimit = cswPrivate.containerlimit;
                     cswPublic.containerCount = 0;
 
                     var containerNoSpan = cswParent.span();

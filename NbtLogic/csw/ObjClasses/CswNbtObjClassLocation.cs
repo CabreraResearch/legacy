@@ -1,7 +1,6 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text.RegularExpressions;
 using ChemSW.Config;
 using ChemSW.Core;
 using ChemSW.Exceptions;
@@ -14,9 +13,9 @@ using ChemSW.Nbt.Schema;
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassLocation: CswNbtObjClass
+    public class CswNbtObjClassLocation : CswNbtObjClass
     {
-        public new sealed class PropertyName: CswNbtObjClass.PropertyName
+        public new sealed class PropertyName : CswNbtObjClass.PropertyName
         {
             public const string ChildLocationType = "Child Location Type";
             public const string LocationTemplate = "Location Template";
@@ -83,7 +82,7 @@ namespace ChemSW.Nbt.ObjClasses
                 {
                     CurrLocationPk = Location.SelectedNodeId;
                 }
-                if( PrevLocationPk != CurrLocationPk )
+                if( PrevLocationPk != null && PrevLocationPk != CurrLocationPk )
                 {
                     //Case 26849 - Executing even if one of the locations is Top or null so that the other location can still be updated
                     CswNbtBatchOpInventoryLevels BatchOp = new CswNbtBatchOpInventoryLevels( _CswNbtResources );
@@ -116,10 +115,10 @@ namespace ChemSW.Nbt.ObjClasses
             // Hide the Child Location Type and Location Template controls
             if( _CswNbtResources.ConfigVbls.getConfigVariableValue( "loc_use_images" ) == "0" )
             {
-                this.ChildLocationType.setHidden( value : true, SaveToDb : false );
-                this.Rows.setHidden( value : true, SaveToDb : false );
-                this.Columns.setHidden( value : true, SaveToDb : false );
-                this.LocationTemplate.setHidden( value : true, SaveToDb : false );
+                this.ChildLocationType.setHidden( value: true, SaveToDb: false );
+                this.Rows.setHidden( value: true, SaveToDb: false );
+                this.Columns.setHidden( value: true, SaveToDb: false );
+                this.LocationTemplate.setHidden( value: true, SaveToDb: false );
             }
             Location.SetOnPropChange( OnLocationPropChange );
             _CswNbtObjClassDefault.triggerAfterPopulateProps();
@@ -150,10 +149,10 @@ namespace ChemSW.Nbt.ObjClasses
             if( ParentLevel >= MaxLevel && false == String.IsNullOrEmpty( Name.Text ) )
             {
                 throw new CswDniException
-                ( 
-                    CswEnumErrorType.Warning, 
-                    "Cannot create \"" + Name.Text + "\" under \"" + Location.CachedFullPath + "\" because it exceeds the maximum allowed Location depth.", 
-                    Name.Text + " exceeds loc_max_depth" 
+                (
+                    CswEnumErrorType.Warning,
+                    "Cannot create \"" + Name.Text + "\" under \"" + Location.CachedFullPath + "\" because it exceeds the maximum allowed Location depth.",
+                    Name.Text + " exceeds loc_max_depth"
                 );
             }
         }
@@ -212,9 +211,9 @@ namespace ChemSW.Nbt.ObjClasses
                         // Top level: Only Locations with null parent locations at the root
                         LocReln = LocationsView.AddViewRelationship( LocationOC, true );
                         LocationsView.AddViewPropertyAndFilter( LocReln, LocationLocationOCP,
-                                                                Conjunction : CswEnumNbtFilterConjunction.And,
-                                                                SubFieldName : CswEnumNbtSubFieldName.NodeID,
-                                                                FilterMode : CswEnumNbtFilterMode.Null );
+                                                                Conjunction: CswEnumNbtFilterConjunction.And,
+                                                                SubFieldName: CswEnumNbtSubFieldName.NodeID,
+                                                                FilterMode: CswEnumNbtFilterMode.Null );
                     }
                     else
                     {
@@ -235,13 +234,13 @@ namespace ChemSW.Nbt.ObjClasses
                         {
                             Pks.Add( InventoryGroupId.PrimaryKey.ToString() );
                         }
-                        
+
                         LocationsView.AddViewPropertyFilter( InGroupVp,
-                                                                Conjunction : CswEnumNbtFilterConjunction.And,
-                                                                ResultMode : CswEnumNbtFilterResultMode.Disabled,
-                                                                FilterMode : CswEnumNbtFilterMode.In,
-                                                                SubFieldName : CswEnumNbtSubFieldName.NodeID,
-                                                                Value : Pks.ToString() );
+                                                                Conjunction: CswEnumNbtFilterConjunction.And,
+                                                                ResultMode: CswEnumNbtFilterResultMode.Disabled,
+                                                                FilterMode: CswEnumNbtFilterMode.In,
+                                                                SubFieldName: CswEnumNbtSubFieldName.NodeID,
+                                                                Value: Pks.ToString() );
                     }
 
                     CswNbtViewProperty OrderVPn = LocationsView.AddViewProperty( LocReln, LocationOrderOCP );
@@ -250,10 +249,10 @@ namespace ChemSW.Nbt.ObjClasses
                     if( RequireAllowInventory )
                     {
                         LocationsView.AddViewPropertyAndFilter( LocReln, LocationAllowInventoryOCP,
-                                                                Conjunction : CswEnumNbtFilterConjunction.And,
-                                                                ResultMode : CswEnumNbtFilterResultMode.Disabled,
-                                                                FilterMode : CswEnumNbtFilterMode.Equals,
-                                                                Value : CswEnumTristate.True.ToString() );
+                                                                Conjunction: CswEnumNbtFilterConjunction.And,
+                                                                ResultMode: CswEnumNbtFilterResultMode.Disabled,
+                                                                FilterMode: CswEnumNbtFilterMode.Equals,
+                                                                Value: CswEnumTristate.True.ToString() );
                     }
                 } // for( Int32 i = 1; i <= loc_max_depth; i++ )
             } // if( null != LocationsView )

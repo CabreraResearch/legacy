@@ -102,7 +102,7 @@ PACKAGE BODY TIER_II_DATA_MANAGER AS
       into LAST_RUN_DATE
       from tier2;
     LAST_RUN_INTERVAL := trunc(DATE_ADDED) - trunc(LAST_RUN_DATE);
-    WEIGHT_BASE_UNIT_ID := UNIT_CONVERSION.GET_BASE_UNIT('Unit (Weight)');
+    WEIGHT_BASE_UNIT_ID := UNIT_CONVERSION.GET_BASE_UNIT('Unit_Weight');
   end SET_PACKAGE_PROPERTIES;
   
   function GET_LOCATIONS return tier_ii_location_table is

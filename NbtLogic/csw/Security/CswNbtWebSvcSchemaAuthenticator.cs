@@ -3,7 +3,6 @@ using System.ServiceModel;
 using ChemSW.Core;
 using ChemSW.Encryption;
 using ChemSW.Nbt.csw.Security;
-using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Security;
 
@@ -39,6 +38,7 @@ namespace ChemSW.Nbt.Security
 
         private CswNbtObjClassUser _authorizeUser( CswEncryption CswEncryption, string username, string password )
         {
+            CswNbtObjClassUser ret = null;
             CswNbtObjClassUser UserNode = _CswNbtResources.Nodes.makeUserNodeFromUsername( username, RequireViewPermissions : false );
             if( UserNode != null && false == UserNode.IsArchived() && false == UserNode.IsAccountLocked() )
             {
@@ -47,13 +47,11 @@ namespace ChemSW.Nbt.Security
                 {
                     if( token.Authorized )
                     {
-                        UserNode.clearFailedLoginCount();
                         UserNode.LastLogin.DateTimeValue = DateTime.Now;
 
                         if( null != token.UserId )
                         {
-                            CswNbtMetaDataNodeTypeProp EmployeeIdNTP = UserNode.NodeType.getNodeTypeProp( "Employee Id" );
-                            UserNode.Node.Properties[EmployeeIdNTP].AsText.Text = token.UserId; //TODO: promote Employee Id to OCP
+                            UserNode.EmployeeId.Text = token.UserId;
                         }
                         if( null != token.FirstName )
                         {
@@ -67,19 +65,16 @@ namespace ChemSW.Nbt.Security
                         {
                             UserNode.EmailProperty.Text = token.Email;
                         }
+                        UserNode.postChanges( false );
+                        ret = UserNode;
                     }
                     else if( false == string.IsNullOrEmpty( token.ErrorMsg ) )
                     {
                         _CswNbtResources.logMessage( token.ErrorMsg );
                     }
-                    else
-                    {
-                        UserNode.incFailedLoginCount();
-                    }
                 }
-                UserNode.postChanges( false );
             }
-            return UserNode;
+            return ret;
         }
 
         private CswAuthorizationToken _authenticate( string username, string password )

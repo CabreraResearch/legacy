@@ -11,7 +11,7 @@ using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.PropTypes
 {
-    public class CswNbtNodePropQuantity: CswNbtNodeProp
+    public class CswNbtNodePropQuantity : CswNbtNodeProp
     {
         #region Private Variables
 
@@ -358,7 +358,7 @@ namespace ChemSW.Nbt.PropTypes
 
             ParentObject[_UnitIdSubField.ToXmlNodeName( true )] = string.Empty;
             CswNbtNode RelatedNode = null;
-            if( CswTools.IsPrimaryKey(UnitId) )
+            if( CswTools.IsPrimaryKey( UnitId ) )
             {
                 ParentObject[_UnitIdSubField.ToXmlNodeName( true )] = UnitId.ToString();
                 RelatedNode = _CswNbtResources.Nodes[UnitId];
