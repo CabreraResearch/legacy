@@ -669,7 +669,7 @@
             };
 
             cswPrivate.getActionOptions = function (status) {
-                var actionOptions = ['', 'No Action'];
+                var actionOptions = ['', 'Ignore'];
                 if (status === 'Scanned, but already marked Disposed') {
                     actionOptions.push('Undispose');
                 }
