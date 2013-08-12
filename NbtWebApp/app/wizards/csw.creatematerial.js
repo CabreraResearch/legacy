@@ -472,7 +472,7 @@
                 };
             }());
 
-            cswPrivate.isLastStep = function() {
+            cswPrivate.isLastStep = function () {
                 return ((false === cswPrivate.state.canAddSDS || false === cswPrivate.SDSModuleEnabled) &&
                             (false === cswPrivate.containersModuleEnabled || cswPrivate.isConstituent()));
             };
@@ -517,7 +517,7 @@
                     cswPrivate.additionalPropsDiv.br({ number: 2 }); //Changed from 4 to 2: See Case 28655
 
                     if (false === cswPrivate.state.useExistingTempNode) {
-                        cswPrivate.SaveMaterialSuccess = function() {
+                        cswPrivate.SaveMaterialSuccess = function () {
                             cswPrivate.renderProps();
                         };
                     } else {
@@ -554,7 +554,7 @@
                 cswPrivate.toggleButton(cswPrivate.buttons.next, false === isLastStep);
                 cswPrivate.toggleButton(cswPrivate.buttons.prev, true);
                 cswPrivate.toggleButton(cswPrivate.buttons.cancel, true);
-                
+
                 //toggle these once the Sizes grid is loaded
                 cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
                 cswPrivate.toggleButton(cswPrivate.buttons.next, false);
@@ -580,8 +580,8 @@
                                 sizeNodeTypeId: cswPrivate.state.sizeNodeTypeId,
                                 showQuantityEditable: cswPrivate.showQuantityEditable,
                                 showDispensable: cswPrivate.showDispensable,
-                                showOriginalUoM: cswPrivate.state.showOriginalUoM
-                            containerlimit: cswPrivate.state.containerlimit
+                                showOriginalUoM: cswPrivate.state.showOriginalUoM,
+                                containerlimit: cswPrivate.state.containerlimit
                             });
                         };
                         div.br();
@@ -611,9 +611,9 @@
                                         cswPrivate.showDispensable = Csw.bool(data.showDispensable);
                                         cswPrivate.showQuantityEditable = Csw.bool(data.showQuantityEditable);
                                         makeSizeGrid();
-                                    
-                                    cswPrivate.toggleButton(cswPrivate.buttons.finish, isLastStep);
-                                    cswPrivate.toggleButton(cswPrivate.buttons.next, false === isLastStep);
+
+                                        cswPrivate.toggleButton(cswPrivate.buttons.finish, isLastStep);
+                                        cswPrivate.toggleButton(cswPrivate.buttons.next, false === isLastStep);
                                     }
                                 });
                             },
@@ -717,7 +717,7 @@
 
             (function () {
                 Csw.extend(cswPrivate, options, true);
-                
+
                 cswPrivate.validateState();
                 cswPrivate.currentStepNo = cswPrivate.startingStep;
 
