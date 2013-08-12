@@ -173,6 +173,9 @@
             cswPrivate.onRenderProps = function (tabid) {
 
                 Csw.publish('render_' + cswPublic.getNodeId() + '_' + tabid);
+                //cswPrivate.tabsStrip.tabPanel.render();
+                var height = cswPrivate.forms[tabid].cssVal('height').replace('px', '');
+                cswPrivate.tabsStrip.tabPanel.getActiveTab().setHeight(+height + 20);
             };
 
             /*
@@ -445,7 +448,8 @@
                                     cswPrivate.tabsStrip = cswPrivate.outerTabDiv.tabStrip({
                                         onTabSelect: onTabSelect,
                                         tabPanel: {
-                                            minHeight: 200
+                                            //minHeight: 200
+                                            //height: 'auto'
                                         }
                                     });
 
