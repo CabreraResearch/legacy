@@ -602,13 +602,12 @@
                                 Csw.ajax.post({
                                     urlMethod: 'getSizeLogicalsVisibility',
                                     data: { SizeNodeTypeId: cswPrivate.state.sizeNodeTypeId },
-                                    async: false,
                                     success: function (data) {
                                         cswPrivate.showDispensable = Csw.bool(data.showDispensable);
                                         cswPrivate.showQuantityEditable = Csw.bool(data.showQuantityEditable);
+                                        makeSizeGrid();
                                     }
                                 });
-                                makeSizeGrid();
                             },
                             relatedToNodeTypeId: cswPrivate.state.materialType.val,
                             relatedObjectClassPropName: 'Material'
