@@ -101,7 +101,6 @@
             success: null,
             error: null,
             overrideError: false,
-            async: true,
             watchGlobal: true,
             removeTimer: true
         };
@@ -112,7 +111,6 @@
         
         var ajax = $.ajax({
             type: 'POST',
-            async: cswInternal.async,
             urlPrefix: Csw.enums.ajaxUrlPrefix,
             url: cswInternal.url,
             xhrFields: {
@@ -158,7 +156,6 @@
             success: null,
             error: null,
             overrideError: false,
-            async: true,
             watchGlobal: true
         };
         Csw.extend(cswInternal, options);
@@ -167,7 +164,6 @@
         
         var ajax = $.ajax({
             type: 'GET',
-            async: cswInternal.async,
             url: cswInternal.url,
             dataType: 'json',
             contentType: 'application/json; charset=utf-8',
