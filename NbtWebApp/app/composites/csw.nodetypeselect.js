@@ -25,7 +25,6 @@
                 relatedToNodeTypeId: '',
                 relatedObjectClassPropName: '',
                 relationshipNodeTypePropId: '',
-                async: true,
                 isRequired: false
             };
             var cswPublic = {};
@@ -58,7 +57,6 @@
 
                 Csw.ajax.post({
                     urlMethod: 'getNodeTypes',
-                    async: cswPrivate.async,
                     data: {
                         PropertySetName: Csw.string(cswPrivate.propertySetName),
                         ObjectClassName: Csw.string(cswPrivate.objectClassName),
