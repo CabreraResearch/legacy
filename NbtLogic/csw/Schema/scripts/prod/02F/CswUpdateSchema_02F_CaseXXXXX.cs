@@ -3,9 +3,9 @@
 namespace ChemSW.Nbt.Schema
 {
     /// <summary>
-    /// Schema Update for making the missing NodeTypeProps
+    /// Schema Update
     /// </summary>
-    public class RunBeforeEveryExecutionOfUpdater_MakeMissingNodeTypeProps: CswUpdateSchemaTo
+    public class CswUpdateSchema_02F_CaseXXXXX : CswUpdateSchemaTo
     {
         public override CswEnumDeveloper Author
         {
@@ -19,13 +19,9 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
-
-            //This script must always come after the RunBefore Milestone scripts
-            _CswNbtSchemaModTrnsctn.MetaData.makeMissingNodeTypeProps();
-
+            // This is a placeholder script that does nothing.
         } // update()
 
-
-    }//class CswUpdateSchema_02C_MakeMissingNodeTypeProps
+    }
 
 }//namespace ChemSW.Nbt.Schema

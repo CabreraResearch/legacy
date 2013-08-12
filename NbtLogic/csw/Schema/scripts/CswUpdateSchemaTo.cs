@@ -1,10 +1,12 @@
-﻿using System;
-using ChemSW.Nbt.csw.Dev;
+﻿using ChemSW.Nbt.csw.Dev;
+using System;
 
 namespace ChemSW.Nbt.Schema
 {
     public abstract class CswUpdateSchemaTo
     {
+        public virtual string Title { get { return "Script: Case " + CaseNo;  } }
+        
         public class UnitOfBlame
         {
             public UnitOfBlame()
@@ -21,8 +23,7 @@ namespace ChemSW.Nbt.Schema
             public CswEnumDeveloper Developer;
             public Int32 CaseNumber;
         }
-
-
+        
         protected CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn = null;
         public CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn
         {

@@ -99,6 +99,7 @@ namespace ChemSW.Nbt
             }
 
             _toggleMaterialSupplierView( false );
+            _toggleReceiptLotManufacturerView( false );
 
             _toggleMaterialRequestApprovalLevel( CswEnumNbtObjectClass.RequestMaterialCreateClass, false );
             _toggleMaterialRequestApprovalLevel( CswEnumNbtObjectClass.RequestMaterialDispenseClass, false );
@@ -194,7 +195,7 @@ namespace ChemSW.Nbt
             newSupplierPropView.save();
 
             _toggleMaterialSupplierView( true );
-
+            _toggleReceiptLotManufacturerView( true );
             _toggleMaterialRequestApprovalLevel( CswEnumNbtObjectClass.RequestMaterialCreateClass, true );
             _toggleMaterialRequestApprovalLevel( CswEnumNbtObjectClass.RequestMaterialDispenseClass, true );
 
@@ -224,6 +225,30 @@ namespace ChemSW.Nbt
                     supplierView.ViewName = "Supplier";
                     supplierView.save();
                 }
+            }
+        }
+
+        private void _toggleReceiptLotManufacturerView( bool MLMDisabled )
+        {
+            CswNbtMetaDataObjectClass VendorOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.VendorClass );
+            CswNbtMetaDataObjectClass ReceiptLotOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ReceiptLotClass );
+            foreach( CswNbtMetaDataNodeType ReceiptLotNT in ReceiptLotOC.getNodeTypes() )
+            {
+                CswNbtMetaDataNodeTypeProp ManufacturerNTP = ReceiptLotNT.getNodeTypePropByObjectClassProp( CswNbtObjClassReceiptLot.PropertyName.Manufacturer );
+                CswNbtView ManufacturerView = _CswNbtResources.ViewSelect.restoreView( ManufacturerNTP.ViewId );
+                ManufacturerView.Clear();
+                CswNbtViewRelationship Parent = ManufacturerView.AddViewRelationship( VendorOC, true );
+                if( false == MLMDisabled )
+                {
+                    CswNbtMetaDataObjectClassProp VendorTypeOCP = VendorOC.getObjectClassProp( CswNbtObjClassVendor.PropertyName.VendorTypeName );
+                    ManufacturerView.AddViewPropertyAndFilter( Parent,
+                        MetaDataProp: VendorTypeOCP,
+                        Value: CswNbtObjClassVendor.VendorTypes.Manufacturing,
+                        FilterMode: CswEnumNbtFilterMode.Equals );
+                }
+                ManufacturerView.Visibility = CswEnumNbtViewVisibility.Property;
+                ManufacturerView.ViewName = "Manufacturer";
+                ManufacturerView.save();
             }
         }
 

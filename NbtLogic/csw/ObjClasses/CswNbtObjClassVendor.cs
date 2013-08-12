@@ -10,6 +10,16 @@ namespace ChemSW.Nbt.ObjClasses
         public new sealed class PropertyName: CswNbtObjClass.PropertyName
         {
             public const string VendorName = "Vendor Name";
+            public const string AccountNo = "Account No";
+            public const string DeptBillCode = "Dept Bill Code";
+            public const string ContactName = "Contact Name";
+            public const string Street1 = "Street1";
+            public const string Street2 = "Street2";
+            public const string City = "City";
+            public const string State = "State";
+            public const string Zip = "Zip";
+            public const string Phone = "Phone";
+            public const string Fax = "Fax";
             public const string CorporateEntityName = "Corporate Entity";
             public const string VendorTypeName = "Vendor Type";
         }
@@ -110,9 +120,6 @@ namespace ChemSW.Nbt.ObjClasses
 
         protected override bool onButtonClick( NbtButtonData ButtonData )
         {
-
-
-
             if( null != ButtonData && null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
             return true;
         }
@@ -121,6 +128,16 @@ namespace ChemSW.Nbt.ObjClasses
         #region Object class specific properties
 
         public CswNbtNodePropText VendorName { get { return ( _CswNbtNode.Properties[PropertyName.VendorName] ); } }
+        public CswNbtNodePropText AccountNo { get { return ( _CswNbtNode.Properties[PropertyName.AccountNo] ); } }
+        public CswNbtNodePropText DeptBillCode { get { return ( _CswNbtNode.Properties[PropertyName.DeptBillCode] ); } }
+        public CswNbtNodePropText ContactName { get { return ( _CswNbtNode.Properties[PropertyName.ContactName] ); } }
+        public CswNbtNodePropText Street1 { get { return ( _CswNbtNode.Properties[PropertyName.Street1] ); } }
+        public CswNbtNodePropText Street2 { get { return ( _CswNbtNode.Properties[PropertyName.Street2] ); } }
+        public CswNbtNodePropText City { get { return ( _CswNbtNode.Properties[PropertyName.City] ); } }
+        public CswNbtNodePropText State { get { return ( _CswNbtNode.Properties[PropertyName.State] ); } }
+        public CswNbtNodePropText Zip { get { return ( _CswNbtNode.Properties[PropertyName.Zip] ); } }
+        public CswNbtNodePropText Phone { get { return ( _CswNbtNode.Properties[PropertyName.Phone] ); } }
+        public CswNbtNodePropText Fax { get { return ( _CswNbtNode.Properties[PropertyName.Fax] ); } }
         public CswNbtNodePropText CorporateIdentity { get { return ( _CswNbtNode.Properties[PropertyName.CorporateEntityName] ); } }
         public CswNbtNodePropList VendorType { get { return ( _CswNbtNode.Properties[PropertyName.VendorTypeName] ); } }
 

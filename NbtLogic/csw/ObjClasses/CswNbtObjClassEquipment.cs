@@ -210,6 +210,25 @@ namespace ChemSW.Nbt.ObjClasses
                 }
             }
         } // SynchEquipmentToAssembly()
+
+        public void TransferEquipment( CswNbtObjClassUser NewUser )
+        {
+            Location.SelectedNodeId = NewUser.DefaultLocationId;
+            Location.SyncGestalt();
+            Location.RefreshNodeName();
+
+            UpdateOwner( NewUser );
+        }
+
+        public void UpdateOwner( CswNbtObjClassUser NewUser )
+        {
+            //TODO: make "User" prop an OCP
+            CswNbtMetaDataNodeTypeProp UserNTP = NodeType.getNodeTypeProp( "User" );
+            CswNbtNodePropRelationship UserProp = _CswNbtNode.Properties[UserNTP].AsRelationship;
+            UserProp.RelatedNodeId = NewUser.UserId;
+            UserProp.RefreshNodeName();
+        }
+
     }//CswNbtObjClassEquipment
 
 }//namespace ChemSW.Nbt.ObjClasses

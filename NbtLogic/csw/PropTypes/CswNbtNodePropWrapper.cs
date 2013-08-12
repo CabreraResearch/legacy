@@ -21,6 +21,8 @@ namespace ChemSW.Nbt.PropTypes
         private CswNbtResources _CswNbtResources = null;
         private CswNbtNode _Node = null;
 
+        public CswNbtNode Node { get { return _Node; } }
+
         public CswNbtNodePropWrapper( CswNbtResources CswNbtResources, CswNbtNode Node, CswNbtNodeProp CswNbtNodeProp, CswNbtNodePropData CswNbtNodePropData )
         {
             _CswNbtNodeProp = CswNbtNodeProp;

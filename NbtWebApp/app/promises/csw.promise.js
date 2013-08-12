@@ -22,26 +22,33 @@
     var ajaxCount = 0;
     var spinning = false;
     
+    function toggleSpinner() {
+        if (Csw.main.ajaxImage && Csw.main.ajaxSpacer) {
+            if (ajaxCount > 0 && spinning === false) {
+                spinning = true;
+                Csw.main.ajaxImage.show();
+                Csw.main.ajaxSpacer.hide();
+            }
+            else if (ajaxCount === 0 && spinning === true) {
+                spinning = false;
+                
+                Csw.main.ajaxImage.hide();
+                Csw.main.ajaxSpacer.show();
+            }
+        }
+    }
+
     //Fires when all jQuery AJAX requests have completed
     $(document).ajaxStop(function () {
         ajaxCount = 0;
-        if (true === spinning) {
-            Csw.main.ajaxImage.hide();
-            Csw.main.ajaxSpacer.show();
-        }
+        toggleSpinner(false);
     });
 
     //Fires when any jQuery AJAX request starts
     $(document).ajaxSend(function (event, jqXHR, ajaxOptions) {
         if (ajaxOptions.watchGlobal) {
             ajaxCount += 1;
-
-            if (ajaxCount > 0 && spinning === false) {
-                spinning = true;
-
-                Csw.main.ajaxImage.show();
-                Csw.main.ajaxSpacer.hide();
-            }
+            toggleSpinner(true);
         }
     });
 
@@ -49,13 +56,7 @@
     $(document).ajaxComplete(function (event, jqXHR, ajaxOptions) {
         if (ajaxOptions.watchGlobal) {
             ajaxCount -= 1;
-
-            if (ajaxCount === 0 && spinning === true) {
-                spinning = false;
-
-                Csw.main.ajaxImage.hide();
-                Csw.main.ajaxSpacer.show();
-            }
+            toggleSpinner(true);
         }
     });
 

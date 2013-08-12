@@ -14,53 +14,32 @@ namespace ChemSW.Nbt.Schema
         public CswSchemaScriptsProd()
         {
             // This is where you manually set to the last version of the previous release (the one currently in production)
-            _MinimumVersion = new CswSchemaVersion( 2, 'C', 23 );
+            _MinimumVersion = new CswSchemaVersion( 2, 'D', 23 );
 
             // This is where you add new versions.
-
-            #region DOGWOOD
-
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case29407() ) );                    //02D-001
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case30008() ) );                    //02D-002
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case30010() ) );                    //02D-003
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case29499() ) );                    //02D-004
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case29570() ) );                    //02D-005
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case29570B() ) );                   //02D-006
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case29499B() ) );                   //02D-007
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case29760() ) );                    //02D-008
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case28758() ) );                    //02D-009
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case29846() ) );                    //02D-010
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case30194() ) );                    //02D-011
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case29965() ) );                    //02D-012
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case29863_UserProfile() ) );        //02D-013
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case30126() ) );                    //02D-014
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case30254() ) );                    //02D-015
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case30246() ) );                    //02D-016
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case30239() ) );                    //02D-017
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case30086() ) );                    //02D-018
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case30266() ) );                    //02D-019
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case30318() ) );                    //02D-020
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case30299() ) );                    //02D-021
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case30207() ) );                    //02D-022
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case30304() ) );                    //02D-023
-
-            #endregion DOGWOOD
-
             #region EUCALYPTUS
 
-            // e.g. _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02E_CaseXXXXX() ) );            //02D-017 //02E-000
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02E_Case30014() ) );                    //02D-018 //02E-001
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02E_Case30222() ) );                    //02D-019 //02E-002
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02E_Case29847() ) );                    //02D-020 //02E-003
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02E_Case30123() ) );                    //02D-021 //02E-004
-
-
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02E_Case30014() ) );                    //02E-001
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02E_Case30222() ) );                    //02E-002
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02E_Case29847() ) );                    //02E-003
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02E_Case30123() ) );                    //02E-004
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02E_Case30370() ) );                    //02E-005
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02E_Case30360() ) );                    //02E-006
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02E_Case30339_UserProfilex2() ) );      //02E-007
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02E_Case30300() ) );                    //02E-008 
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02E_Case30360() ) );                    //02E-009
 
             #endregion EUCALYPTUS
 
             #region FOXGLOVE
+            
 
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02F_Case29191() ) );                    //02E-006 //02F-001
+            // e.g. _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02F_CaseXXXXX() ) );            //02E-009 //02F-000 
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02F_Case30281() ) );                    //02E-010 //02F-001
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02F_Case28998() ) );                    //02E-011 //02F-002
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02F_Case29973() ) );                    //02E-012 //02F-003
+
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02F_Case29191() ) );                    //02E-013 //02F-004
 
             #endregion FOXGLOVE
 
@@ -76,42 +55,27 @@ namespace ChemSW.Nbt.Schema
 
             #region Before Scripts
 
-            //TODO: Remove this generic script
-            _addRunBeforeScript( new CswSchemaUpdateDriver( new Deprecated_RunBeforeEveryExecutionOfUpdater_01OC() ), Deprecated_RunBeforeEveryExecutionOfUpdater_01OC.Title );
+                #region EUCALYPTUS Run Before Scripts
 
-            #region Dogwood Run Before Scripts
+                _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02E_Case29700() ), RunBeforeEveryExecutionOfUpdater_02E_Case29700.Title );
+                _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02E_Case30123() ), RunBeforeEveryExecutionOfUpdater_02E_Case30123.Title );
+                _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02E_Case29701() ), RunBeforeEveryExecutionOfUpdater_02E_Case29701.Title );
+                _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02E_Case30347() ), RunBeforeEveryExecutionOfUpdater_02E_Case30347.Title );
 
-            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02D_Case29833() ), "Case 29833: OC Script" );
-            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02D_Case29833B() ), "Case 29833B: OC Script" );
-            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02D_Case29499A() ), "Case 29499A: OC Script" );
-            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02D_Case29499B() ), "Case 29499B: OC Script" );
-            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02D_Case29570() ), RunBeforeEveryExecutionOfUpdater_02D_Case29570.Title );
-            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02D_Case30194_Pre() ), RunBeforeEveryExecutionOfUpdater_02D_Case30194_Pre.Title );
-            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02D_Case30194() ), RunBeforeEveryExecutionOfUpdater_02D_Case30194.Title );
-            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02D_Case29863_UserPhone() ), "Case 29863: OC Script" );
-            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02D_Case30008() ), "Case 30008: OC Script" );
-            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02D_Case30010() ), "Case 30010: OC Script" );
-            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02D_Case30090() ), "Case 30090: OC Script" );
-            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02D_Case30126() ), "Case 30126: OC Script" );
-            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02D_Case30263() ), "Case 30263: Before Script" );
-            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02D_Case30287() ), "Case 30287: Before Script" );
-            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02D_Case30329() ), "Case 30329: Before Script" );
+                #endregion EUCALYPTUS Run Before Scripts
 
-            #endregion
+                #region FOXGLOVE Run Before Scripts
 
-            #region EUCALYPTUS Run Before Scripts
+                _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02F_Case30281() ), RunBeforeEveryExecutionOfUpdater_02F_Case30281.Title );
+                _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02F_Case30251() ), RunBeforeEveryExecutionOfUpdater_02F_Case30251.Title );
+                _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02F_Case30251B() ), RunBeforeEveryExecutionOfUpdater_02F_Case30251B.Title );
+                
+                #endregion FOXGLOVE Run Before Scripts
 
-            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02E_Case29700() ), RunBeforeEveryExecutionOfUpdater_02E_Case29700.Title );
-            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02E_Case30123() ), "Case 30123" );
-            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02E_Case29701() ), "Case 29701: OC Script" );
-
-            #endregion EUCALYPTUS Run Before Scripts
-
-            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_MakeMissingNodeTypeProps() ), "MakeMissingNodeTypeProps" );
-
-            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02SQL() ), RunBeforeEveryExecutionOfUpdater_02SQL.Title );
-            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_03() ), RunBeforeEveryExecutionOfUpdater_03.Title );
-
+                _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_MakeMissingNodeTypeProps() ), RunBeforeEveryExecutionOfUpdater_MakeMissingNodeTypeProps.Title );
+                _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02SQL() ), RunBeforeEveryExecutionOfUpdater_02SQL.Title );
+                _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_03() ), RunBeforeEveryExecutionOfUpdater_03.Title );
+         
 
             #endregion Before Scripts
 

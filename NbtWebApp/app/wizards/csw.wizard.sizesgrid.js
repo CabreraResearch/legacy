@@ -23,7 +23,7 @@
                 sizes: function () {
                     return cswPublic.rows;
                 },
-                deletedSizes: function() {
+                deletedSizes: function () {
                     return cswPublic.deletedRows;
                 },
                 thinGrid: null,
@@ -40,6 +40,7 @@
                     showQuantityEditable: false,
                     showDispensable: false,
                     showOriginalUoM: true,
+                    containerlimit: 25,
                     config: {
                         quantityName: 'Initial Quantity',
                         numberName: 'Catalog No.',
@@ -204,7 +205,7 @@
                     });
 
                 }; //cswPrivate.addPreExistingRows
-                
+
                 cswPrivate.getID = function (unitType) {
                     var ret = '';
                     Csw.each(cswPrivate.unitsOfMeasure, function (obj, key) {
@@ -224,166 +225,163 @@
                             'csw.wizard.sizesgrid.js', 22));
                     }
 
-                    cswPrivate.getUnitsOfMeasure = function () {
-                        Csw.ajax.post({
-                            urlMethod: 'getMaterialUnitsOfMeasure',
-                            data: {
-                                PhysicalStateValue: cswPrivate.physicalState
-                            },
-                            async: false, //wait for this request to finish
-                            success: function (data) {
-                                cswPrivate.unitsOfMeasure = data;
-                            }
-                        });
-                    };
-                    cswPrivate.getUnitsOfMeasure();
-
-
-
-
-                    var showEmptyRow = true;
-                    if (cswPrivate.sizeRowsToAdd.length > 0) {
-                        showEmptyRow = false;
-                    }
-
-                    cswPublic.thinGrid = cswParent.thinGrid({
-                        linkText: '',
-                        hasHeader: true,
-                        rows: [cswPrivate.header],
-                        showEmptyRow: showEmptyRow,
-                        allowDelete: true,
-                        allowAdd: true,
-                        makeAddRow: function (cswCell, columnName, rowid) {
-                            'use strict';
-                            switch (columnName) {
-                                case cswPrivate.config.unitCountName:
-                                    cswPublic.rows[rowid].unitCountCtrl = cswCell.numberTextBox({
-                                        name: 'sizeUnitCount',
-                                        MinValue: 1,
-                                        Precision: 0,
-                                        onChange: function (value) {
-                                            cswPublic.rows[rowid].sizeValues.unitCount.value = cswPublic.rows[rowid].unitCountCtrl.val();
-                                        }
-                                    });
-                                    cswCell.span({ text: ' x' });
-                                    break;
-                                case cswPrivate.config.quantityName:
-                                    cswPublic.rows[rowid].quantityCtrl = cswCell.numberTextBox({
-                                        name: 'quantityNumberBox',
-                                        MinValue: 0,
-                                        Precision: '',
-                                        excludeRangeLimits: true,
-                                        width: '60px',
-                                        onChange: function (value) {
-                                            cswPublic.rows[rowid].sizeValues.quantity.value = cswPublic.rows[rowid].quantityCtrl.val();
-                                        }
-                                    });
-                                    break;
-                                case cswPrivate.config.newUomName:
-                                    cswPublic.rows[rowid].unitsCtrl = cswCell.select({
-                                        name: 'unitsOfMeasureSelect',
-                                        values: cswPrivate.unitsOfMeasure,
-                                        selected: '',
-                                        onChange: function (value) {
-                                            cswPublic.rows[rowid].sizeValues.uom.value = cswPublic.rows[rowid].unitsCtrl.val();
-                                            cswPublic.rows[rowid].sizeValues.uom.id = cswPrivate.getID(cswPublic.rows[rowid].sizeValues.uom.value);
-                                        }
-                                    });
-                                    cswPublic.rows[rowid].sizeValues.uom.value = cswPublic.rows[rowid].unitsCtrl.val();
-                                    cswPublic.rows[rowid].sizeValues.uom.id = cswPrivate.getID(cswPublic.rows[rowid].sizeValues.uom.value);
-                                    break;
-                                case cswPrivate.config.origUomName:
-                                    cswPublic.rows[rowid].origUnitsCtrl = cswCell.label({
-                                        name: 'originalUnitOfMeasure',
-                                        text: ''
-                                    });
-                                    break;
-                                case cswPrivate.config.numberName:
-                                    cswPublic.rows[rowid].catalogNoCtrl = cswCell.input({
-                                        name: 'sizeCatalogNo',
-                                        width: '80px',
-                                        onChange: function (value) {
-                                            cswPublic.rows[rowid].sizeValues.catalogNo.value = value;
-                                        }
-                                    });
-                                    break;
-                                case cswPrivate.config.quantityEditableName:
-                                    cswPublic.rows[rowid].quantEditableCtrl = cswCell.checkBox({
-                                        name: 'sizeQuantEditable',
-                                        checked: true,
-                                        onChange: function (value) {
-                                            cswPublic.rows[rowid].sizeValues.quantityEditable.value = cswPublic.rows[rowid].quantEditableCtrl.val();
-                                        }
-                                    });
-                                    break;
-                                case cswPrivate.configc.dispensibleName:
-                                    cswPublic.rows[rowid].dispensibleCtrl = cswCell.checkBox({
-                                        name: 'sizeDispensible',
-                                        checked: true,
-                                        onChange: function (value) {
-                                            cswPublic.rows[rowid].sizeValues.dispensible.value = cswPublic.rows[rowid].dispensibleCtrl.val();
-                                        }
-                                    });
-                                    break;
-                            }
+                    var ajax = Csw.ajax.post({
+                        urlMethod: 'getMaterialUnitsOfMeasure',
+                        data: {
+                            PhysicalStateValue: cswPrivate.physicalState
                         },
-                        onAdd: function (newRowid) {
-                            var newSize = {};
-                            //This while loop serves as a buffer to remove the +1/-1 issues when comparing 
-                            //the data with the table cell rows in the thingrid.
-                            //This puts the burden on the user of thingrid to ensure their data lines up 
-                            //with the table cells. Also, undefined size values break the serverside foreach
-                            // loop, so an empty one is inserted in each element (including deleted elements).
-                            while (cswPublic.rows.length < newRowid) {
-                                cswPublic.rows[newRowid] = { sizeValues: {} };
-                            }
-
-                            newSize = {
-                                nodeId: {
-                                    value: ''
-                                },
-                                nodeTypeId: {
-                                    value: cswPrivate.sizeNodeTypeId
-                                },
-                                unitCount: {
-                                    value: ''
-                                },
-                                quantity: {
-                                    value: ''
-                                },
-                                uom: {
-                                    value: '',
-                                    id: ''
-                                },
-                                origUom: {
-                                    value: ''
-                                },
-                                catalogNo: {
-                                    value: ''
-                                },
-                                quantityEditable: {
-                                    value: 'true'
-                                },
-                                dispensible: {
-                                    value: 'true'
-                                }
-                            };
-
-                            var extractNewAmount = function (object) {
-                                var ret = Csw.extend({}, object, true);
-                                return ret;
-                            };
-                            cswPublic.rows[newRowid] = { sizeValues: extractNewAmount(newSize) };
-                        },
-                        onDelete: function (rowid) {
-                            cswPublic.deletedRows.push(cswPublic.rows[rowid].sizeValues.nodeId.value);
-                            delete cswPublic.rows[rowid];
-                            cswPublic.rows[rowid] = { sizeValues: {} };
+                        success: function (data) {
+                            cswPrivate.unitsOfMeasure = data;
                         }
                     });
+                    
+                    ajax.then(function () {
 
-                    cswParent.br();
+                        var showEmptyRow = true;
+                        if (cswPrivate.sizeRowsToAdd.length > 0) {
+                            showEmptyRow = false;
+                        }
 
+                        cswPublic.thinGrid = cswParent.thinGrid({
+                            linkText: '',
+                            hasHeader: true,
+                            rows: [cswPrivate.header],
+                            showEmptyRow: showEmptyRow,
+                            allowDelete: true,
+                            allowAdd: true,
+                            makeAddRow: function (cswCell, columnName, rowid) {
+                                'use strict';
+                                switch (columnName) {
+                                    case cswPrivate.config.unitCountName:
+                                        cswPublic.rows[rowid].unitCountCtrl = cswCell.numberTextBox({
+                                            name: 'sizeUnitCount',
+                                            MinValue: 1,
+                                        MaxValue: cswPrivate.containerlimit,
+                                            Precision: 0,
+                                            onChange: function (value) {
+                                                cswPublic.rows[rowid].sizeValues.unitCount.value = cswPublic.rows[rowid].unitCountCtrl.val();
+                                            }
+                                        });
+                                        cswCell.span({ text: ' x' });
+                                        break;
+                                    case cswPrivate.config.quantityName:
+                                        cswPublic.rows[rowid].quantityCtrl = cswCell.numberTextBox({
+                                            name: 'quantityNumberBox',
+                                            MinValue: 0,
+                                            Precision: 6,
+                                            excludeRangeLimits: true,
+                                            width: '60px',
+                                            onChange: function (value) {
+                                                cswPublic.rows[rowid].sizeValues.quantity.value = cswPublic.rows[rowid].quantityCtrl.val();
+                                            }
+                                        });
+                                        break;
+                                    case cswPrivate.config.newUomName:
+                                        cswPublic.rows[rowid].unitsCtrl = cswCell.select({
+                                            name: 'unitsOfMeasureSelect',
+                                            values: cswPrivate.unitsOfMeasure,
+                                            selected: '',
+                                            onChange: function (value) {
+                                                cswPublic.rows[rowid].sizeValues.uom.value = cswPublic.rows[rowid].unitsCtrl.val();
+                                                cswPublic.rows[rowid].sizeValues.uom.id = cswPrivate.getID(cswPublic.rows[rowid].sizeValues.uom.value);
+                                            }
+                                        });
+                                        cswPublic.rows[rowid].sizeValues.uom.value = cswPublic.rows[rowid].unitsCtrl.val();
+                                        cswPublic.rows[rowid].sizeValues.uom.id = cswPrivate.getID(cswPublic.rows[rowid].sizeValues.uom.value);
+                                        break;
+                                    case cswPrivate.config.origUomName:
+                                        cswPublic.rows[rowid].origUnitsCtrl = cswCell.label({
+                                            name: 'originalUnitOfMeasure',
+                                            text: ''
+                                        });
+                                        break;
+                                    case cswPrivate.config.numberName:
+                                        cswPublic.rows[rowid].catalogNoCtrl = cswCell.input({
+                                            name: 'sizeCatalogNo',
+                                            width: '80px',
+                                            onChange: function (value) {
+                                                cswPublic.rows[rowid].sizeValues.catalogNo.value = value;
+                                            }
+                                        });
+                                        break;
+                                    case cswPrivate.config.quantityEditableName:
+                                        cswPublic.rows[rowid].quantEditableCtrl = cswCell.checkBox({
+                                            name: 'sizeQuantEditable',
+                                            checked: true,
+                                            onChange: function (value) {
+                                                cswPublic.rows[rowid].sizeValues.quantityEditable.value = cswPublic.rows[rowid].quantEditableCtrl.val();
+                                            }
+                                        });
+                                        break;
+                                    case cswPrivate.configc.dispensibleName:
+                                        cswPublic.rows[rowid].dispensibleCtrl = cswCell.checkBox({
+                                            name: 'sizeDispensible',
+                                            checked: true,
+                                            onChange: function (value) {
+                                                cswPublic.rows[rowid].sizeValues.dispensible.value = cswPublic.rows[rowid].dispensibleCtrl.val();
+                                            }
+                                        });
+                                        break;
+                                }
+                            },
+                            onAdd: function (newRowid) {
+                                var newSize = {};
+                                //This while loop serves as a buffer to remove the +1/-1 issues when comparing 
+                                //the data with the table cell rows in the thingrid.
+                                //This puts the burden on the user of thingrid to ensure their data lines up 
+                                //with the table cells. Also, undefined size values break the serverside foreach
+                                // loop, so an empty one is inserted in each element (including deleted elements).
+                                while (cswPublic.rows.length < newRowid) {
+                                    cswPublic.rows[newRowid] = { sizeValues: {} };
+                                }
+
+                                newSize = {
+                                    nodeId: {
+                                        value: ''
+                                    },
+                                    nodeTypeId: {
+                                        value: cswPrivate.sizeNodeTypeId
+                                    },
+                                    unitCount: {
+                                        value: ''
+                                    },
+                                    quantity: {
+                                        value: ''
+                                    },
+                                    uom: {
+                                        value: '',
+                                        id: ''
+                                    },
+                                    origUom: {
+                                        value: ''
+                                    },
+                                    catalogNo: {
+                                        value: ''
+                                    },
+                                    quantityEditable: {
+                                        value: 'true'
+                                    },
+                                    dispensible: {
+                                        value: 'true'
+                                    }
+                                };
+
+                                var extractNewAmount = function (object) {
+                                    var ret = Csw.extend({}, object, true);
+                                    return ret;
+                                };
+                                cswPublic.rows[newRowid] = { sizeValues: extractNewAmount(newSize) };
+                            },
+                            onDelete: function (rowid) {
+                                cswPublic.deletedRows.push(cswPublic.rows[rowid].sizeValues.nodeId.value);
+                                delete cswPublic.rows[rowid];
+                                cswPublic.rows[rowid] = { sizeValues: {} };
+                            }
+                        });
+
+                        cswParent.br();
+
+                    });
 
                 }()); //_pre()
 

@@ -748,6 +748,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Toggles the ReadOnly state of all non-button properties according to the Disposed state of the Container.
         /// Toggles the Hidden state of all button properties according to Disposed state, permissions and business logic
+        /// Toggles the ReadOnly state of Expiration Date according to the Material's ContainerExpiraionLock value.
         /// </summary>
         private void _toggleAllPropertyStates()
         {
@@ -758,6 +759,11 @@ namespace ChemSW.Nbt.ObjClasses
             _toggleButtonHiddenState( IsDisposed );
             _toggleButtonHiddenStateByPermission();
             _toggleButtonHiddenStateByDocumentRelationship();
+            if( Material.RelatedNodeId != null )
+            {
+                CswNbtPropertySetMaterial MaterialNode = _CswNbtResources.Nodes[Material.RelatedNodeId];
+                ExpirationDate.setReadOnly( MaterialNode.ContainerExpirationLocked.Checked == CswEnumTristate.True, SaveToDb: false );
+            }
         }
         
         /// <summary>

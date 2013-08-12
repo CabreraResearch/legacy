@@ -16,6 +16,24 @@ namespace ChemSW.Nbt.ObjClasses
             public const string DoneOn = "Done On";
             public const string Parts = "Parts";
             public const string PartsXValue = "Service";
+            public const string CalibrationDate = "Calibration Date";
+            public const string CalibrationResult = "Calibration Result";
+            public const string CompletionDescription = "Completion Description";
+            public const string Department = "Department";
+            public const string EventType = "Event Type";
+            public const string FileLink = "File Link";
+            public const string IgnoreCalibrationResult = "Ignore Calibration Result";
+            public const string IsCriticalTest = "Is Critical Test";
+            public const string LaborCost = "Labor Cost";
+            public const string LowerLimit = "Lower Limit";
+            public const string OtherCost = "Other Cost";
+            public const string OtherCostName = "Other Cost Name";
+            public const string PartsCost = "Parts Cost";
+            public const string SOPRef = "SOP/Ref#";
+            public const string Technician = "Technician";
+            public const string TechnicianPhone = "Technician Phone";
+            public const string TravelCost = "Travel Cost";
+            public const string UpperLimit = "Upper Limit";
         }
         
         // for CswNbtPropertySetGeneratorTarget
@@ -129,6 +147,24 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropRelationship Owner { get { return ( _CswNbtNode.Properties[PropertyName.Owner] ); } }
         public CswNbtNodePropText Summary { get { return ( _CswNbtNode.Properties[PropertyName.Summary] ); } }
         public CswNbtNodePropLogicalSet Parts { get { return ( _CswNbtNode.Properties[PropertyName.Parts] ); } }
+        public CswNbtNodePropDateTime CalibrationDate { get { return ( _CswNbtNode.Properties[PropertyName.CalibrationDate] ); } }
+        public CswNbtNodePropNumber CalibrationResult { get { return ( _CswNbtNode.Properties[PropertyName.CalibrationResult] ); } }
+        public CswNbtNodePropMemo CompletionDescription { get { return ( _CswNbtNode.Properties[PropertyName.CompletionDescription] ); } }
+        public CswNbtNodePropRelationship Department { get { return ( _CswNbtNode.Properties[PropertyName.Department] ); } }
+        public CswNbtNodePropList EventType { get { return ( _CswNbtNode.Properties[PropertyName.EventType] ); } }
+        public CswNbtNodePropLink FileLink { get { return ( _CswNbtNode.Properties[PropertyName.FileLink] ); } }
+        public CswNbtNodePropLogical IgnoreCalibrationResult { get { return ( _CswNbtNode.Properties[PropertyName.IgnoreCalibrationResult] ); } }
+        public CswNbtNodePropLogical IsCriticalTest { get { return ( _CswNbtNode.Properties[PropertyName.IsCriticalTest] ); } }
+        public CswNbtNodePropText LaborCost { get { return ( _CswNbtNode.Properties[PropertyName.LaborCost] ); } }
+        public CswNbtNodePropNumber LowerLimit { get { return ( _CswNbtNode.Properties[PropertyName.LowerLimit] ); } }
+        public CswNbtNodePropText OtherCost { get { return ( _CswNbtNode.Properties[PropertyName.OtherCost] ); } }
+        public CswNbtNodePropText OtherCostName { get { return ( _CswNbtNode.Properties[PropertyName.OtherCostName] ); } }
+        public CswNbtNodePropText PartsCost { get { return ( _CswNbtNode.Properties[PropertyName.PartsCost] ); } }
+        public CswNbtNodePropText SOPRef { get { return ( _CswNbtNode.Properties[PropertyName.SOPRef] ); } }
+        public CswNbtNodePropRelationship Technician { get { return ( _CswNbtNode.Properties[PropertyName.Technician] ); } }
+        public CswNbtNodePropPropertyReference TechnicianPhone { get { return ( _CswNbtNode.Properties[PropertyName.TechnicianPhone] ); } }
+        public CswNbtNodePropText TravelCost { get { return ( _CswNbtNode.Properties[PropertyName.TravelCost] ); } }
+        public CswNbtNodePropNumber UpperLimit { get { return ( _CswNbtNode.Properties[PropertyName.UpperLimit] ); } }
 
         public override CswNbtNodePropRelationship Parent { get { return ( _CswNbtNode.Properties[ParentPropertyName] ); } }
         

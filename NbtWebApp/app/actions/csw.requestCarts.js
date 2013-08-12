@@ -20,7 +20,7 @@
                 cswPrivate.containernodeid = cswPrivate.containernodeid || '';
 
                 cswParent.empty();
-            } ());
+            }());
 
             cswPrivate.requestName = "";
             cswPrivate.gridOpts = {};
@@ -60,10 +60,9 @@
 
             //#region AJAX methods
 
-            cswPrivate.getCart = function (ActiveTab, TabName) {
+            cswPrivate.getCart = function (ActiveTab, TabName, onSuccess) {
                 Csw.ajaxWcf.get({
                     urlMethod: 'Requests/cart',
-                    async: false,
                     success: function (data) {
                         cswPrivate.state.pendingItemsViewId = data.PendingItemsView.SessionViewId;
                         cswPrivate.state.favoritesListViewId = data.FavoritesView.SessionViewId;
@@ -81,13 +80,17 @@
                         } else {
                             cswPrivate.onTabSelect(cswPrivate.currentTab);
                         }
+
+                        if (onSuccess) {
+                            Csw.tryExec(onSuccess);
+                        }
                     }
                 });
             };
 
             cswPrivate.getCartCounts = function () {
-                if (cswPrivate.ajaxii.getCartCounts) {
-                    cswPrivate.ajaxii.getCartCounts.ajax.abort();
+                if (cswPrivate.ajaxii.getCartCounts && cswPrivate.ajaxii.getCartCounts.ajax) {
+                    cswPrivate.ajaxii.getCartCounts.abort();
                 }
                 cswPrivate.ajaxii.getCartCounts = Csw.ajaxWcf.get({
                     urlMethod: 'Requests/counts',
@@ -147,8 +150,7 @@
                     },
                     success: function (json) {
                         if (json.Succeeded) {
-                            cswPrivate.getCart(1, "Submitted");
-                            Csw.tryExec(cswPrivate.onSubmit);
+                            cswPrivate.getCart(1, "Submitted", cswPrivate.onSubmit);
                         }
                     }
                 });
@@ -248,7 +250,7 @@
                 }
             };
 
-            cswPrivate.tabNames = ['Pending', 'Submitted', 'Recurring', 'Favorites'];          
+            cswPrivate.tabNames = ['Pending', 'Submitted', 'Recurring', 'Favorites'];
 
             cswPrivate.onTabSelect = function (tabName, el, eventObj, callBack) {
                 var newTabName = tabName.split(' ')[0].trim(); //remove the '(#)' part from name
@@ -463,7 +465,7 @@
                 opts.gridId = cswPrivate.name + '_pendingGrid';
                 opts.showCheckboxes = true;
                 opts.title = 'Select any Pending items to save to a Favorite list or to copy to a new Recurring request.';
-                opts.onBeforeSelect = function(record, node) {
+                opts.onBeforeSelect = function (record, node) {
                     var ret = true;
                     if (record.raw.objectclassid != cswPrivate.state.copyableId) {
                         ret = false;
@@ -475,7 +477,7 @@
                     toggleCopyButtons();
                 };
                 opts.reapplyViewReadyOnLayout = true;
-                opts.onSuccess = function() {
+                opts.onSuccess = function () {
                     cswPublic.pendingGrid.iterateRows(function (record, node) {
                         if (record.raw.objectclassid != cswPrivate.state.copyableId) {
                             $(node).find('.x-grid-row-checker').remove();
@@ -759,10 +761,10 @@
 
                 cswPrivate.getCart();
 
-            } ());
+            }());
 
             return cswPublic;
 
             //#endregion _postCtor
         });
-} ());
+}());

@@ -1,4 +1,6 @@
-﻿using ChemSW.Core;
+﻿using System.Data;
+using ChemSW.Core;
+using ChemSW.DB;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
@@ -17,7 +19,7 @@ namespace ChemSW.Nbt.Security
 
         private Dictionary<CswNbtPermitInfoKey, CswNbtPermitInfo> _PermitInfoItems = new Dictionary<CswNbtPermitInfoKey, CswNbtPermitInfo>();
 
-        public class CswNbtPermitInfoKey: IEquatable<CswNbtPermitInfoKey>, IComparable<CswNbtPermitInfoKey>
+        public class CswNbtPermitInfoKey : IEquatable<CswNbtPermitInfoKey>, IComparable<CswNbtPermitInfoKey>
         {
             private readonly Int32 HashMultiplier = 1;
             public CswNbtPermitInfoKey( CswNbtObjClassRole CswNbtObjClassRole, CswNbtMetaDataNodeType NodeTypeIn )
@@ -359,7 +361,7 @@ namespace ChemSW.Nbt.Security
             _CswNbtResources = Resources;
         }
 
-        // This is probably a performance problem!
+        // TODO This is probably a performance problem!
         private CswNbtObjClassRole _getRole( CswPrimaryKey RoleId )
         {
             return _CswNbtResources.Nodes[RoleId];
@@ -716,7 +718,7 @@ namespace ChemSW.Nbt.Security
                       MetaDataProp.getFieldType().FieldType == CswEnumNbtFieldType.Button ||
                       (
                 //This prop is not readonly OR
-                          ( ( false == MetaDataProp.ReadOnly ) && ( ( null == NodePropWrapper ) || ( false == NodePropWrapper.ReadOnly ) ) ) ||
+                          ( ( false == MetaDataProp.ReadOnly ) && ( null == NodePropWrapper || ( false == NodePropWrapper.ReadOnly && false == NodePropWrapper.Node.ReadOnly ) ) ) ||
                 //The prop is required AND readonly AND we're creating a new node
                 //This was removed as part of Case 27984, and I think it was a mistake
                           ( MetaDataProp.IsRequired && _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Add && null != MetaDataProp.getAddLayout() )
@@ -801,27 +803,85 @@ namespace ChemSW.Nbt.Security
                     ret = false;
                 }
 
-                // case 24510
-                CswNbtNode Node = _CswNbtResources.Nodes[_CswNbtPermitInfo.NodePrimeKey];
-                if( null != Node )
+                //// case 24510
+                //CswNbtNode Node = _CswNbtResources.Nodes[_CswNbtPermitInfo.NodePrimeKey];
+                //if( null != Node )
+                //{
+                //    if( Node.ObjClass is ICswNbtPermissionTarget )
+                //    {
+                //        ICswNbtPermissionTarget TargetNode = CswNbtPropSetCaster.AsPermissionTarget( Node );
+                //        CswPrimaryKey PermissionGroupId = TargetNode.getPermissionGroupId();
+                //        ret = ret && _CswNbtResources.Permit.canNode( _CswNbtPermitInfo.NodeTypePermission, PermissionGroupId, _CswNbtPermitInfo.User );
+                //    }
+                //    if( _CswNbtPermitInfo.NodeTypePermission == CswEnumNbtNodeTypePermission.Edit )
+                //    {
+                //        // see case 29095; this is now handled in CswNbtSdTabsAndProps
+                //        //ret = ret && ( _CswNbtPermitInfo.User.IsAdministrator() || false == Node.ReadOnly );
+                //        ret = ret && ( false == Node.ReadOnly );
+                //    }
+                //}
+
+                CswPrimaryKey PermissionGroupId = getPermissionGroupId( _CswNbtPermitInfo.NodePrimeKey );
+                if( CswTools.IsPrimaryKey( PermissionGroupId ) )
                 {
-                    if( Node.ObjClass is ICswNbtPermissionTarget )
-                    {
-                        ICswNbtPermissionTarget TargetNode = CswNbtPropSetCaster.AsPermissionTarget( Node );
-                        CswPrimaryKey PermissionGroupId = TargetNode.getPermissionGroupId();
-                        ret = ret && _CswNbtResources.Permit.canNode( _CswNbtPermitInfo.NodeTypePermission, PermissionGroupId, _CswNbtPermitInfo.User );
-                    }
-                    if( _CswNbtPermitInfo.NodeTypePermission == CswEnumNbtNodeTypePermission.Edit )
-                    {
-                        // see case 29095; this is now handled in CswNbtSdTabsAndProps
-                        //ret = ret && ( _CswNbtPermitInfo.User.IsAdministrator() || false == Node.ReadOnly );
-                        ret = ret && ( false == Node.ReadOnly );
-                    }
+                    ret = ret && _CswNbtResources.Permit.canNode( _CswNbtPermitInfo.NodeTypePermission, PermissionGroupId, _CswNbtPermitInfo.User );
                 }
+
             }//if NodeId is not null
 
             return ( ret );
         }//_isNodeWritableImpl()
+
+        private Dictionary<CswPrimaryKey, CswPrimaryKey> _PermissionGroupDict = null;
+
+        public CswPrimaryKey getPermissionGroupId( CswPrimaryKey NodeId )
+        {
+            CswPrimaryKey ret = null;
+            if( null == _PermissionGroupDict )
+            {
+                _PermissionGroupDict = _initPermissionGroupDict();
+            }
+            if( _PermissionGroupDict.ContainsKey( NodeId ) )
+            {
+                ret = _PermissionGroupDict[NodeId];
+            }
+            return ret;
+        } // getPermissionGroupId()
+
+        private Dictionary<CswPrimaryKey, CswPrimaryKey> _initPermissionGroupDict()
+        {
+            Dictionary<CswPrimaryKey, CswPrimaryKey> ret = new Dictionary<CswPrimaryKey, CswPrimaryKey>();
+            string SQL = @"with pval as (select j.nodeid, op.propname, j.field1_fk
+                                               from object_class_props op
+                                               join nodetype_props p on op.objectclasspropid = p.objectclasspropid
+                                               join jct_nodes_props j on j.nodetypepropid = p.nodetypepropid
+                                            )
+                               select n.nodeid, ivg.nodeid permissiongroupid
+                                 from nodes n
+                                 join pval locval on (locval.nodeid = n.nodeid and locval.propname = 'Location')
+                                 join nodes loc on (locval.field1_fk = loc.nodeid)
+                                 join pval ivgval on (ivgval.nodeid = loc.nodeid and ivgval.propname = 'Inventory Group')
+                                 join nodes ivg on (ivgval.field1_fk = ivg.nodeid)
+                             union
+                               select n.nodeid, rg.nodeid permissiongroupid
+                                 from nodes n
+                                 join pval rgval on (rgval.nodeid = n.nodeid and rgval.propname = 'Report Group')
+                                 join nodes rg on (rgval.field1_fk = rg.nodeid)
+                             union
+                               select n.nodeid, mrg.nodeid permissiongroupid
+                                 from nodes n
+                                 join pval mrgval on (mrgval.nodeid = n.nodeid and mrgval.propname = 'Mail Report Group')
+                                 join nodes mrg on (mrgval.field1_fk = mrg.nodeid)";
+            CswArbitrarySelect PermGrpSelect = _CswNbtResources.makeCswArbitrarySelect( "permit_permgrp_select", SQL );
+            DataTable PermGrpTable = PermGrpSelect.getTable();
+            foreach( DataRow Row in PermGrpTable.Rows )
+            {
+                CswPrimaryKey NodeId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( Row["nodeid"] ) );
+                CswPrimaryKey PermGrpId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( Row["permissiongroupid"] ) );
+                ret[NodeId] = PermGrpId;
+            }
+            return ret;
+        } // _initPermissionGroupDict()
 
         #endregion Nodes
 
@@ -1097,7 +1157,7 @@ namespace ChemSW.Nbt.Security
             if( false == ( User is CswNbtSystemUser ) )
             {
                 hasPermission = false;
-                if( CswTools.IsPrimaryKey( PermissionGroupId ) )
+                if( null != User && CswTools.IsPrimaryKey( PermissionGroupId ) )
                 {
                     CswNbtPropertySetPermission PermNode = User.getPermissionForGroup( PermissionGroupId );
                     if( null != PermNode &&

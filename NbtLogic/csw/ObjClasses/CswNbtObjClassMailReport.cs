@@ -152,10 +152,6 @@ namespace ChemSW.Nbt.ObjClasses
             // Setting TemporarilyRequired should be good enough to meet the need.
             Event.TemporarilyRequired = true;
             Event.SetOnPropChange( onEventPropChange );
-            if( false == _CswNbtResources.Permit.canNode( CswEnumNbtNodeTypePermission.View, getPermissionGroupId() ) )
-            {
-                RunNow.setHidden( value: true, SaveToDb: false );
-            }
             _CswNbtObjClassDefault.triggerAfterPopulateProps();
         }//afterPopulateProps()
 
