@@ -56,7 +56,7 @@ namespace ChemSW.Nbt.Sched
             // Only recalculate load count if it's zero
             if( _LoadCount <= 0 )
             {
-                CswNbt2DImporter Importer = new CswNbt2DImporter( CswNbtResources );
+                CswNbtImporter Importer = new CswNbtImporter( CswNbtResources );
                 _DataTableNames = Importer.getImportDataTableNames();
 
                 foreach( string DataTableName in _DataTableNames )
@@ -85,7 +85,7 @@ namespace ChemSW.Nbt.Sched
                         ImportLimit = 10;  // Default
                     }
 
-                    CswNbt2DImporter Importer = new CswNbt2DImporter( CswNbtResources );
+                    CswNbtImporter Importer = new CswNbtImporter( CswNbtResources );
                     if( _DataTableNames.Count > 0 )
                     {
                         Int32 RowsProcessed;

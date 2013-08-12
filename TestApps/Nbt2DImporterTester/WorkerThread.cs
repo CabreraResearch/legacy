@@ -13,7 +13,7 @@ namespace Nbt2DImporterTester
     public class WorkerThread
     {
         private readonly CswNbtResources _CswNbtResources;
-        private readonly CswNbt2DImporter _Importer;
+        private readonly CswNbtImporter _Importer;
 
         public delegate void FinishEvent();
         public FinishEvent OnFinish;
@@ -35,7 +35,7 @@ namespace Nbt2DImporterTester
             _CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( CswEnumAppType.SchemInit, CswEnumSetupMode.NbtExe, false, false );
             _CswNbtResources.InitCurrentUser = InitUser;
 
-            _Importer = new CswNbt2DImporter( _CswNbtResources );
+            _Importer = new CswNbtImporter( _CswNbtResources );
             //_Importer.Overwrite = true;
         }
 
@@ -44,11 +44,11 @@ namespace Nbt2DImporterTester
             return new CswNbtSystemUser( Resources, CswEnumSystemUserNames.SysUsr__SchemaImport );
         }
 
-        public CswNbt2DImporter.ErrorHandler OnError
+        public CswNbtImporter.ErrorHandler OnError
         {
             set { _Importer.OnError = value; }
         }
-        public CswNbt2DImporter.MessageHandler OnMessage
+        public CswNbtImporter.MessageHandler OnMessage
         {
             set { _Importer.OnMessage = value; }
         }

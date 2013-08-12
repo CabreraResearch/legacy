@@ -7,12 +7,12 @@ using ChemSW.Nbt.MetaData;
 
 namespace ChemSW.Nbt.ImportExport
 {
-    public class CswNbt2DOrder
+    public class CswNbtImportDefOrder
     {
         private readonly CswNbtResources _CswNbtResources;
         private readonly DataRow _row;
 
-        public CswNbt2DOrder( CswNbtResources CswNbtResources, DataRow OrderRow )
+        public CswNbtImportDefOrder( CswNbtResources CswNbtResources, DataRow OrderRow )
         {
             _CswNbtResources = CswNbtResources;
             _row = OrderRow;
@@ -20,23 +20,23 @@ namespace ChemSW.Nbt.ImportExport
 
         public Int32 ImportOrderId
         {
-            get { return CswConvert.ToInt32( _row[CswNbt2DImportTables.ImportDefOrder.importorderid] ); }
+            get { return CswConvert.ToInt32( _row[CswNbtImportTables.ImportDefOrder.importdeforderid] ); }
         }
         public Int32 ImportDefinitionId
         {
-            get { return CswConvert.ToInt32( _row[CswNbt2DImportTables.ImportDefOrder.importdefinitionid] ); }
+            get { return CswConvert.ToInt32( _row[CswNbtImportTables.ImportDefOrder.importdefid] ); }
         }
         public Int32 Order
         {
-            get { return CswConvert.ToInt32( _row[CswNbt2DImportTables.ImportDefOrder.importorder] ); }
+            get { return CswConvert.ToInt32( _row[CswNbtImportTables.ImportDefOrder.importorder] ); }
         }
         public string NodeTypeName
         {
-            get { return _row[CswNbt2DImportTables.ImportDefOrder.nodetypename].ToString(); }
+            get { return _row[CswNbtImportTables.ImportDefOrder.nodetypename].ToString(); }
         }
         public Int32 Instance
         {
-            get { return CswConvert.ToInt32( _row[CswNbt2DImportTables.ImportDefOrder.instance] ); }
+            get { return CswConvert.ToInt32( _row[CswNbtImportTables.ImportDefOrder.instance] ); }
         }
 
         public CswNbtMetaDataNodeType NodeType
@@ -48,7 +48,7 @@ namespace ChemSW.Nbt.ImportExport
         {
             get
             {
-                string ret = CswNbt2DBinding.SafeColName( NodeType.NodeTypeName );
+                string ret = CswNbtImportDefBinding.SafeColName( NodeType.NodeTypeName );
                 if( Int32.MinValue != Instance )
                 {
                     ret += "_" + Instance;

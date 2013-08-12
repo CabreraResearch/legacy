@@ -16,12 +16,12 @@ using ChemSW.Nbt.Schema;
 
 namespace ChemSW.Nbt.ImportExport
 {
-    public class CswNbt2DImporter
+    public class CswNbtImporter
     {
         private readonly CswNbtResources _CswNbtResources;
         private readonly CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;
 
-        public CswNbt2DImporter( CswNbtResources CswNbtResources )
+        public CswNbtImporter( CswNbtResources CswNbtResources )
         {
             _CswNbtResources = CswNbtResources;
             _CswNbtSchemaModTrnsctn = new CswNbtSchemaModTrnsctn( _CswNbtResources );
@@ -88,23 +88,23 @@ namespace ChemSW.Nbt.ImportExport
 
                 // Determine Oracle table name
                 Int32 i = 1;
-                string ImportDataTableName = CswNbt2DImportTables.ImportDataN.TableNamePrefix + i.ToString();
+                string ImportDataTableName = CswNbtImportTables.ImportDataN.TableNamePrefix + i.ToString();
                 while( _CswNbtSchemaModTrnsctn.isTableDefinedInDataBase( ImportDataTableName ) )
                 {
                     i++;
-                    ImportDataTableName = CswNbt2DImportTables.ImportDataN.TableNamePrefix + i.ToString();
+                    ImportDataTableName = CswNbtImportTables.ImportDataN.TableNamePrefix + i.ToString();
                 }
 
                 // Generate an Oracle table for storing and manipulating data
-                _CswNbtSchemaModTrnsctn.addTable( ImportDataTableName, CswNbt2DImportTables.ImportDataN.PkColumnName );
-                _CswNbtSchemaModTrnsctn.addBooleanColumn( ImportDataTableName, CswNbt2DImportTables.ImportDataN.error, "", false, false );
-                _CswNbtSchemaModTrnsctn.addClobColumn( ImportDataTableName, CswNbt2DImportTables.ImportDataN.errorlog, "", false, false );
+                _CswNbtSchemaModTrnsctn.addTable( ImportDataTableName, CswNbtImportTables.ImportDataN.PkColumnName );
+                _CswNbtSchemaModTrnsctn.addBooleanColumn( ImportDataTableName, CswNbtImportTables.ImportDataN.error, "", false, false );
+                _CswNbtSchemaModTrnsctn.addClobColumn( ImportDataTableName, CswNbtImportTables.ImportDataN.errorlog, "", false, false );
                 foreach( DataColumn ExcelColumn in ExcelDataTable.Columns )
                 {
-                    _CswNbtSchemaModTrnsctn.addStringColumn( ImportDataTableName, CswNbt2DBinding.SafeColName( ExcelColumn.ColumnName ), "", false, false, 4000 );
+                    _CswNbtSchemaModTrnsctn.addStringColumn( ImportDataTableName, CswNbtImportDefBinding.SafeColName( ExcelColumn.ColumnName ), "", false, false, 4000 );
                 }
-                CswNbt2DDefinition Definition = new CswNbt2DDefinition( _CswNbtResources, ImportDefinitionName, SheetName );
-                foreach( CswNbt2DOrder Order in Definition.ImportOrder.Values )
+                CswNbtImportDef Definition = new CswNbtImportDef( _CswNbtResources, ImportDefinitionName, SheetName );
+                foreach( CswNbtImportDefOrder Order in Definition.ImportOrder.Values )
                 {
                     _CswNbtSchemaModTrnsctn.addLongColumn( ImportDataTableName, Order.PkColName, "", false, false );
                 }
@@ -114,13 +114,13 @@ namespace ChemSW.Nbt.ImportExport
                 ret.Add( ImportDataTableName );
 
                 // Store the sheet reference in import_data_map
-                CswTableUpdate ImportDataMapUpdate = _CswNbtResources.makeCswTableUpdate( "Importer_Sheet_Update", CswNbt2DImportTables.ImportDataMap.TableName );
+                CswTableUpdate ImportDataMapUpdate = _CswNbtResources.makeCswTableUpdate( "Importer_Sheet_Update", CswNbtImportTables.ImportDataMap.TableName );
                 DataTable ImportDataMapTable = ImportDataMapUpdate.getEmptyTable();
                 DataRow DataMapRow = ImportDataMapTable.NewRow();
-                DataMapRow[CswNbt2DImportTables.ImportDataMap.datatablename] = ImportDataTableName;
-                DataMapRow[CswNbt2DImportTables.ImportDataMap.importdefinitionid] = Definition.ImportDefinitionId;
-                DataMapRow[CswNbt2DImportTables.ImportDataMap.overwrite] = CswConvert.ToDbVal( Overwrite );
-                DataMapRow[CswNbt2DImportTables.ImportDataMap.completed] = CswConvert.ToDbVal( false );
+                DataMapRow[CswNbtImportTables.ImportDataMap.datatablename] = ImportDataTableName;
+                DataMapRow[CswNbtImportTables.ImportDataMap.importdefid] = Definition.ImportDefinitionId;
+                DataMapRow[CswNbtImportTables.ImportDataMap.overwrite] = CswConvert.ToDbVal( Overwrite );
+                DataMapRow[CswNbtImportTables.ImportDataMap.completed] = CswConvert.ToDbVal( false );
                 ImportDataMapTable.Rows.Add( DataMapRow );
                 ImportDataMapUpdate.update( ImportDataMapTable );
 
@@ -131,14 +131,14 @@ namespace ChemSW.Nbt.ImportExport
                 {
                     bool hasData = false;
                     DataRow ImportRow = ImportDataTable.NewRow();
-                    ImportRow[CswNbt2DImportTables.ImportDataN.error] = CswConvert.ToDbVal( false );
+                    ImportRow[CswNbtImportTables.ImportDataN.error] = CswConvert.ToDbVal( false );
                     foreach( DataColumn ExcelColumn in ExcelDataTable.Columns )
                     {
                         if( ExcelRow[ExcelColumn] != DBNull.Value )
                         {
                             hasData = true;
                         }
-                        ImportRow[CswNbt2DBinding.SafeColName( ExcelColumn.ColumnName )] = ExcelRow[ExcelColumn];
+                        ImportRow[CswNbtImportDefBinding.SafeColName( ExcelColumn.ColumnName )] = ExcelRow[ExcelColumn];
                     }
                     if( hasData == true )
                     {
@@ -162,11 +162,11 @@ namespace ChemSW.Nbt.ImportExport
         public CswCommaDelimitedString getDefinitionNames()
         {
             CswCommaDelimitedString ret = new CswCommaDelimitedString();
-            CswTableSelect DefSelect = _CswNbtResources.makeCswTableSelect( "loadBindings_def_select1", CswNbt2DImportTables.ImportDef.TableName );
+            CswTableSelect DefSelect = _CswNbtResources.makeCswTableSelect( "loadBindings_def_select1", CswNbtImportTables.ImportDef.TableName );
             DataTable DefDataTable = DefSelect.getTable();
             foreach( DataRow defrow in DefDataTable.Rows )
             {
-                ret.Add( defrow[CswNbt2DImportTables.ImportDef.definitionname].ToString(), false, true );
+                ret.Add( defrow[CswNbtImportTables.ImportDef.definitionname].ToString(), false, true );
             }
             return ret;
         } // getDefinitions()
@@ -177,15 +177,15 @@ namespace ChemSW.Nbt.ImportExport
             string WhereClause = string.Empty;
             if( false == IncludeCompleted )
             {
-                WhereClause = "where " + CswNbt2DImportTables.ImportDataMap.completed + " = '" + CswConvert.ToDbVal( false ) + "'";
+                WhereClause = "where " + CswNbtImportTables.ImportDataMap.completed + " = '" + CswConvert.ToDbVal( false ) + "'";
             }
-            Collection<OrderByClause> OrderBy = new Collection<OrderByClause>() { new OrderByClause( CswNbt2DImportTables.ImportDataMap.PkColumnName, CswEnumOrderByType.Ascending ) };
+            Collection<OrderByClause> OrderBy = new Collection<OrderByClause>() { new OrderByClause( CswNbtImportTables.ImportDataMap.PkColumnName, CswEnumOrderByType.Ascending ) };
 
-            CswTableSelect ImportDataMapSelect = _CswNbtResources.makeCswTableSelect( "getImportDataTableNames_DataMap_Select", CswNbt2DImportTables.ImportDataMap.TableName );
+            CswTableSelect ImportDataMapSelect = _CswNbtResources.makeCswTableSelect( "getImportDataTableNames_DataMap_Select", CswNbtImportTables.ImportDataMap.TableName );
             DataTable ImportDataMapTable = ImportDataMapSelect.getTable( WhereClause, OrderBy );
             foreach( DataRow ImportDataMapRow in ImportDataMapTable.Rows )
             {
-                ret.Add( ImportDataMapRow[CswNbt2DImportTables.ImportDataMap.datatablename].ToString() );
+                ret.Add( ImportDataMapRow[CswNbtImportTables.ImportDataMap.datatablename].ToString() );
             }
             return ret;
         } // getImportDataTableNames()
@@ -205,14 +205,14 @@ namespace ChemSW.Nbt.ImportExport
                 if( false == string.IsNullOrEmpty( ImportDataTableName ) && _CswNbtResources.isTableDefinedInDataBase( ImportDataTableName ) )
                 {
                     // Lookup the binding definition
-                    CswNbt2DImportDataMap DataMap = new CswNbt2DImportDataMap( _CswNbtResources, ImportDataTableName );
-                    CswNbt2DDefinition BindingDef = new CswNbt2DDefinition( _CswNbtResources, DataMap.ImportDefinitionId );
+                    CswNbtImportDataMap DataMap = new CswNbtImportDataMap( _CswNbtResources, ImportDataTableName );
+                    CswNbtImportDef BindingDef = new CswNbtImportDef( _CswNbtResources, DataMap.ImportDefinitionId );
 
                     //if( null != BindingDef && BindingDef.Bindings.Count > 0 && BindingDef.ImportOrder.Count > 0 ) //original
 
                     if( null != BindingDef && ( BindingDef.Bindings.Count > 0 || BindingDef.RowRelationships.Count > 0 ) && BindingDef.ImportOrder.Count > 0 ) //dch
                     {
-                        foreach( CswNbt2DOrder Order in BindingDef.ImportOrder.Values )
+                        foreach( CswNbtImportDefOrder Order in BindingDef.ImportOrder.Values )
                         {
                             string msgPrefix = Order.NodeType.NodeTypeName + " Import: ";
                             CswTableUpdate ImportDataUpdate = _CswNbtResources.makeCswTableUpdate( "Importer_Update", ImportDataTableName );
@@ -221,8 +221,8 @@ namespace ChemSW.Nbt.ImportExport
                             bool moreRows = true;
                             while( moreRows )
                             {
-                                DataTable ImportDataTable = ImportDataUpdate.getTable( "where " + CswNbt2DImportTables.ImportDataN.error + " = '" + CswConvert.ToDbVal( false ) + "' and " + Order.PkColName + " is null",
-                                                                                       new Collection<OrderByClause> { new OrderByClause( CswNbt2DImportTables.ImportDataN.importdataid, CswEnumOrderByType.Ascending ) },
+                                DataTable ImportDataTable = ImportDataUpdate.getTable( "where " + CswNbtImportTables.ImportDataN.error + " = '" + CswConvert.ToDbVal( false ) + "' and " + Order.PkColName + " is null",
+                                                                                       new Collection<OrderByClause> { new OrderByClause( CswNbtImportTables.ImportDataN.importdataid, CswEnumOrderByType.Ascending ) },
                                                                                        0, 1 );
                                 moreRows = ( ImportDataTable.Rows.Count > 0 );
                                 if( moreRows )
@@ -230,12 +230,12 @@ namespace ChemSW.Nbt.ImportExport
                                     DataRow ImportRow = ImportDataTable.Rows[0];
                                     try
                                     {
-                                        msgPrefix = Order.NodeType.NodeTypeName + " Import (" + ImportRow[CswNbt2DImportTables.ImportDataN.importdataid].ToString() + "): ";
+                                        msgPrefix = Order.NodeType.NodeTypeName + " Import (" + ImportRow[CswNbtImportTables.ImportDataN.importdataid].ToString() + "): ";
                                         CswNbtNode Node = null;
 
-                                        IEnumerable<CswNbt2DBinding> NodeTypeBindings = BindingDef.Bindings.Where( b => b.DestNodeType == Order.NodeType && b.Instance == Order.Instance );
-                                        IEnumerable<CswNbt2DRowRelationship> RowRelationships = BindingDef.RowRelationships.Where( r => r.NodeType.NodeTypeId == Order.NodeType.NodeTypeId ); //&& r.Instance == Order.Instance );
-                                        IEnumerable<CswNbt2DRowRelationship> UniqueRelationships = RowRelationships.Where( r => r.Relationship.IsUnique() ||
+                                        IEnumerable<CswNbtImportDefBinding> NodeTypeBindings = BindingDef.Bindings.Where( b => b.DestNodeType == Order.NodeType && b.Instance == Order.Instance );
+                                        IEnumerable<CswNbtImportDefRelationship> RowRelationships = BindingDef.RowRelationships.Where( r => r.NodeType.NodeTypeId == Order.NodeType.NodeTypeId ); //&& r.Instance == Order.Instance );
+                                        IEnumerable<CswNbtImportDefRelationship> UniqueRelationships = RowRelationships.Where( r => r.Relationship.IsUnique() ||
                                                                                                               r.Relationship.IsCompoundUnique() ||
                                                                                                               Order.NodeType.NameTemplatePropIds.Contains( r.Relationship.FirstPropVersionId ) );
 
@@ -243,20 +243,20 @@ namespace ChemSW.Nbt.ImportExport
                                         //IEnumerable<CswNbt2DBinding> UniqueBindings = NodeTypeBindings.Where( b => ( b.DestProperty.IsUnique() || b.DestProperty.IsCompoundUnique() ) );
                                         //IEnumerable<CswNbtMetaDataNodeTypeProp> Props = Order.NodeType.getNodeTypeProps();
                                         //IEnumerable<CswNbtMetaDataNodeTypeProp> RequiredProps = Props.Where( p => p.IsRequired && false == p.HasDefaultValue() );
-                                        IEnumerable<CswNbt2DBinding> UniqueBindings = NodeTypeBindings.Where( b => b.DestProperty.IsUnique() ||
+                                        IEnumerable<CswNbtImportDefBinding> UniqueBindings = NodeTypeBindings.Where( b => b.DestProperty.IsUnique() ||
                                                                                                               b.DestProperty.IsCompoundUnique() ||
                                                                                                               Order.NodeType.NameTemplatePropIds.Contains( b.DestProperty.FirstPropVersionId ) );
                                         //IEnumerable<CswNbtMetaDataNodeTypeProp> UniqueProps = Props.Where( p => UniqueBindings.Any( b => b.DestProperty == p ) );
 
                                         // Skip rows with null values for all unique properties
                                         bool allEmpty = true;
-                                        foreach( CswNbt2DBinding Binding in UniqueBindings )
+                                        foreach( CswNbtImportDefBinding Binding in UniqueBindings )
                                         {
                                             allEmpty = allEmpty && string.IsNullOrEmpty( ImportRow[Binding.ImportDataColumnName].ToString() );
                                         }
-                                        foreach( CswNbt2DRowRelationship Relation in UniqueRelationships )
+                                        foreach( CswNbtImportDefRelationship Relation in UniqueRelationships )
                                         {
-                                            CswNbt2DOrder thisTargetOrder = BindingDef.ImportOrder.Values.FirstOrDefault( o => Relation.Relationship.FkMatches( o.NodeType ) && o.Instance == Relation.Instance );
+                                            CswNbtImportDefOrder thisTargetOrder = BindingDef.ImportOrder.Values.FirstOrDefault( o => Relation.Relationship.FkMatches( o.NodeType ) && o.Instance == Relation.Instance );
                                             Int32 Value = CswConvert.ToInt32( ImportRow[thisTargetOrder.PkColName] );
 
                                             allEmpty = allEmpty && ( Value != Int32.MinValue );
@@ -272,7 +272,7 @@ namespace ChemSW.Nbt.ImportExport
                                             if( UniqueBindings.Any() )
                                             {
                                                 bool atLeastOneFilter = false;
-                                                foreach( CswNbt2DBinding Binding in UniqueBindings )
+                                                foreach( CswNbtImportDefBinding Binding in UniqueBindings )
                                                 {
                                                     string Value = ImportRow[Binding.ImportDataColumnName].ToString();
                                                     if( Value != string.Empty )
@@ -294,9 +294,9 @@ namespace ChemSW.Nbt.ImportExport
                                                     atLeastOneFilter = true;
                                                 }
 
-                                                foreach( CswNbt2DRowRelationship Relation in UniqueRelationships )
+                                                foreach( CswNbtImportDefRelationship Relation in UniqueRelationships )
                                                 {
-                                                    CswNbt2DOrder thisTargetOrder = BindingDef.ImportOrder.Values.FirstOrDefault( o => Relation.Relationship.FkMatches( o.NodeType ) && o.Instance == Relation.Instance );
+                                                    CswNbtImportDefOrder thisTargetOrder = BindingDef.ImportOrder.Values.FirstOrDefault( o => Relation.Relationship.FkMatches( o.NodeType ) && o.Instance == Relation.Instance );
                                                     Int32 Value = CswConvert.ToInt32( ImportRow[thisTargetOrder.PkColName] );
 
                                                     if( Value != Int32.MinValue )
@@ -360,7 +360,7 @@ namespace ChemSW.Nbt.ImportExport
                                             // Import property values
                                             if( isNewNode || DataMap.Overwrite )
                                             {
-                                                foreach( CswNbt2DBinding Binding in NodeTypeBindings )
+                                                foreach( CswNbtImportDefBinding Binding in NodeTypeBindings )
                                                 {
                                                     // special case for TimeInterval, specifically for IMCS imports
                                                     if( Binding.DestProperty.getFieldTypeValue() == CswEnumNbtFieldType.TimeInterval )
@@ -396,9 +396,9 @@ namespace ChemSW.Nbt.ImportExport
                                                     }
                                                 }
 
-                                                foreach( CswNbt2DRowRelationship RowRelationship in RowRelationships )
+                                                foreach( CswNbtImportDefRelationship RowRelationship in RowRelationships )
                                                 {
-                                                    CswNbt2DOrder TargetOrder = null;
+                                                    CswNbtImportDefOrder TargetOrder = null;
 
                                                     //if( RowRelationship.Relationship.FKType == NbtViewRelatedIdType.NodeTypeId.ToString() )
                                                     //{
@@ -457,22 +457,22 @@ namespace ChemSW.Nbt.ImportExport
                                             if( UniqueBindings.Any() )
                                             {
                                                 // We have to check for repeats amongst all instances
-                                                IEnumerable<CswNbt2DOrder> AllInstanceNodeTypeOrders = BindingDef.ImportOrder.Values.Where( o => o.NodeType == Order.NodeType );
-                                                foreach( CswNbt2DOrder OtherOrder in AllInstanceNodeTypeOrders )
+                                                IEnumerable<CswNbtImportDefOrder> AllInstanceNodeTypeOrders = BindingDef.ImportOrder.Values.Where( o => o.NodeType == Order.NodeType );
+                                                foreach( CswNbtImportDefOrder OtherOrder in AllInstanceNodeTypeOrders )
                                                 {
-                                                    string WhereClause = "where " + CswNbt2DImportTables.ImportDataN.error + " = '" + CswConvert.ToDbVal( false ) + "' and " + OtherOrder.PkColName + " is null";
-                                                    foreach( CswNbt2DBinding UniqueBinding in UniqueBindings )
+                                                    string WhereClause = "where " + CswNbtImportTables.ImportDataN.error + " = '" + CswConvert.ToDbVal( false ) + "' and " + OtherOrder.PkColName + " is null";
+                                                    foreach( CswNbtImportDefBinding UniqueBinding in UniqueBindings )
                                                     {
-                                                        CswNbt2DBinding OtherUniqueBinding = BindingDef.Bindings.byProp( OtherOrder.Instance, UniqueBinding.DestProperty, UniqueBinding.DestSubfield ).FirstOrDefault();
+                                                        CswNbtImportDefBinding OtherUniqueBinding = BindingDef.Bindings.byProp( OtherOrder.Instance, UniqueBinding.DestProperty, UniqueBinding.DestSubfield ).FirstOrDefault();
                                                         if( null != OtherUniqueBinding )
                                                         {
                                                             WhereClause += " and lower(" + OtherUniqueBinding.ImportDataColumnName + ") = '" + CswTools.SafeSqlParam( ImportRow[UniqueBinding.ImportDataColumnName].ToString().ToLower() ) + "' ";
                                                         }
                                                     }
 
-                                                    foreach( CswNbt2DRowRelationship Relation in UniqueRelationships )
+                                                    foreach( CswNbtImportDefRelationship Relation in UniqueRelationships )
                                                     {
-                                                        CswNbt2DOrder thisTargetOrder = BindingDef.ImportOrder.Values.FirstOrDefault( o => Relation.Relationship.FkMatches( o.NodeType ) && o.Instance == Relation.Instance );
+                                                        CswNbtImportDefOrder thisTargetOrder = BindingDef.ImportOrder.Values.FirstOrDefault( o => Relation.Relationship.FkMatches( o.NodeType ) && o.Instance == Relation.Instance );
                                                         Int32 Value = CswConvert.ToInt32( ImportRow[thisTargetOrder.PkColName] );
 
                                                         if( Value != Int32.MinValue )
@@ -507,8 +507,8 @@ namespace ChemSW.Nbt.ImportExport
                                         string ErrorMsg = msgPrefix + ex.Message; //+ "\r\n" + ex.StackTrace;
                                         OnError( ErrorMsg );
 
-                                        ImportRow[CswNbt2DImportTables.ImportDataN.error] = CswConvert.ToDbVal( true );
-                                        ImportRow[CswNbt2DImportTables.ImportDataN.errorlog] = ErrorMsg;
+                                        ImportRow[CswNbtImportTables.ImportDataN.error] = CswConvert.ToDbVal( true );
+                                        ImportRow[CswNbtImportTables.ImportDataN.errorlog] = ErrorMsg;
                                         ImportDataUpdate.update( ImportDataTable );
                                     }
                                     RowsImported += 1;
@@ -557,12 +557,12 @@ namespace ChemSW.Nbt.ImportExport
             if( false == string.IsNullOrEmpty( ImportDataTableName ) && _CswNbtResources.isTableDefinedInDataBase( ImportDataTableName ) )
             {
                 CswTableSelect ImportDataSelect = _CswNbtResources.makeCswTableSelect( "Importer_Select", ImportDataTableName );
-                CswNbt2DImportDataMap DataMap = new CswNbt2DImportDataMap( _CswNbtResources, ImportDataTableName );
-                CswNbt2DDefinition BindingDef = new CswNbt2DDefinition( _CswNbtResources, DataMap.ImportDefinitionId );
+                CswNbtImportDataMap DataMap = new CswNbtImportDataMap( _CswNbtResources, ImportDataTableName );
+                CswNbtImportDef BindingDef = new CswNbtImportDef( _CswNbtResources, DataMap.ImportDefinitionId );
                 if( null != BindingDef && BindingDef.ImportOrder.Count > 0 )
                 {
                     string PendingWhereClause = string.Empty;
-                    foreach( CswNbt2DOrder Order in BindingDef.ImportOrder.Values )
+                    foreach( CswNbtImportDefOrder Order in BindingDef.ImportOrder.Values )
                     {
                         if( string.Empty != PendingWhereClause )
                         {
@@ -570,7 +570,7 @@ namespace ChemSW.Nbt.ImportExport
                         }
                         PendingWhereClause += Order.PkColName + " is null";
                     }
-                    PendingRows = ImportDataSelect.getRecordCount( "where " + CswNbt2DImportTables.ImportDataN.error + " = '" + CswConvert.ToDbVal( false ) + "' and (" + PendingWhereClause + ") " );
+                    PendingRows = ImportDataSelect.getRecordCount( "where " + CswNbtImportTables.ImportDataN.error + " = '" + CswConvert.ToDbVal( false ) + "' and (" + PendingWhereClause + ") " );
                 } // if( null != BindingDef && BindingDef.ImportOrder.Count > 0 )
             } // if( false == string.IsNullOrEmpty( ImportDataTableName ) && _CswNbtResources.isTableDefinedInDataBase( ImportDataTableName ) )
             return PendingRows;

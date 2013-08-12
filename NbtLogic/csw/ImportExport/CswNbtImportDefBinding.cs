@@ -6,12 +6,12 @@ using ChemSW.Nbt.MetaData;
 
 namespace ChemSW.Nbt.ImportExport
 {
-    public class CswNbt2DBinding
+    public class CswNbtImportDefBinding
     {
         private CswNbtResources _CswNbtResources;
         private DataRow _row;
 
-        public CswNbt2DBinding( CswNbtResources CswNbtResources, DataRow BindingRow )
+        public CswNbtImportDefBinding( CswNbtResources CswNbtResources, DataRow BindingRow )
         {
             _CswNbtResources = CswNbtResources;
             if( null != BindingRow )
@@ -27,31 +27,31 @@ namespace ChemSW.Nbt.ImportExport
 
         public Int32 ImportDefinitionId
         {
-            get { return CswConvert.ToInt32( _row[CswNbt2DImportTables.ImportDefBindings.importdefinitionid] ); }
+            get { return CswConvert.ToInt32( _row[CswNbtImportTables.ImportDefBindings.importdefid] ); }
         }
         public Int32 ImportBindingId
         {
-            get { return CswConvert.ToInt32( _row[CswNbt2DImportTables.ImportDefBindings.importbindingid] ); }
+            get { return CswConvert.ToInt32( _row[CswNbtImportTables.ImportDefBindings.importdefbindingid] ); }
         }
         public string SourceColumnName
         {
-            get { return _row[CswNbt2DImportTables.ImportDefBindings.sourcecolumnname].ToString(); }
+            get { return _row[CswNbtImportTables.ImportDefBindings.sourcecolumnname].ToString(); }
         }
         public string DestNodeTypeName
         {
-            get { return _row[CswNbt2DImportTables.ImportDefBindings.destnodetypename].ToString(); }
+            get { return _row[CswNbtImportTables.ImportDefBindings.destnodetypename].ToString(); }
         }
         public string DestPropName
         {
-            get { return _row[CswNbt2DImportTables.ImportDefBindings.destpropname].ToString(); }
+            get { return _row[CswNbtImportTables.ImportDefBindings.destpropname].ToString(); }
         }
         public string DestSubFieldName
         {
-            get { return _row[CswNbt2DImportTables.ImportDefBindings.destsubfield].ToString(); }
+            get { return _row[CswNbtImportTables.ImportDefBindings.destsubfield].ToString(); }
         }
         public Int32 Instance
         {
-            get { return CswConvert.ToInt32( _row[CswNbt2DImportTables.ImportDefBindings.instance] ); }
+            get { return CswConvert.ToInt32( _row[CswNbtImportTables.ImportDefBindings.instance] ); }
         }
 
         public string ImportDataColumnName
