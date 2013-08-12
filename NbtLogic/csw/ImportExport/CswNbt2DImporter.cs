@@ -88,17 +88,17 @@ namespace ChemSW.Nbt.ImportExport
 
                 // Determine Oracle table name
                 Int32 i = 1;
-                string ImportDataTableName = "importdata" + i.ToString();
+                string ImportDataTableName = CswNbt2DImportTables.ImportDataN.TableNamePrefix + i.ToString();
                 while( _CswNbtSchemaModTrnsctn.isTableDefinedInDataBase( ImportDataTableName ) )
                 {
                     i++;
-                    ImportDataTableName = "importdata" + i.ToString();
+                    ImportDataTableName = CswNbt2DImportTables.ImportDataN.TableNamePrefix + i.ToString();
                 }
 
                 // Generate an Oracle table for storing and manipulating data
-                _CswNbtSchemaModTrnsctn.addTable( ImportDataTableName, "importdataid" );
-                _CswNbtSchemaModTrnsctn.addBooleanColumn( ImportDataTableName, "error", "", false, false );
-                _CswNbtSchemaModTrnsctn.addClobColumn( ImportDataTableName, "errorlog", "", false, false );
+                _CswNbtSchemaModTrnsctn.addTable( ImportDataTableName, CswNbt2DImportTables.ImportDataN.PkColumnName );
+                _CswNbtSchemaModTrnsctn.addBooleanColumn( ImportDataTableName, CswNbt2DImportTables.ImportDataN.error, "", false, false );
+                _CswNbtSchemaModTrnsctn.addClobColumn( ImportDataTableName, CswNbt2DImportTables.ImportDataN.errorlog, "", false, false );
                 foreach( DataColumn ExcelColumn in ExcelDataTable.Columns )
                 {
                     _CswNbtSchemaModTrnsctn.addStringColumn( ImportDataTableName, CswNbt2DBinding.SafeColName( ExcelColumn.ColumnName ), "", false, false, 4000 );
@@ -120,6 +120,7 @@ namespace ChemSW.Nbt.ImportExport
                 DataMapRow[CswNbt2DImportTables.ImportDataMap.datatablename] = ImportDataTableName;
                 DataMapRow[CswNbt2DImportTables.ImportDataMap.importdefinitionid] = Definition.ImportDefinitionId;
                 DataMapRow[CswNbt2DImportTables.ImportDataMap.overwrite] = CswConvert.ToDbVal( Overwrite );
+                DataMapRow[CswNbt2DImportTables.ImportDataMap.completed] = CswConvert.ToDbVal( false );
                 ImportDataMapTable.Rows.Add( DataMapRow );
                 ImportDataMapUpdate.update( ImportDataMapTable );
 
@@ -128,30 +129,30 @@ namespace ChemSW.Nbt.ImportExport
                 DataTable ImportDataTable = ImportDataUpdate.getEmptyTable();
                 foreach( DataRow ExcelRow in ExcelDataTable.Rows )
                 {
-                        bool hasData = false;
+                    bool hasData = false;
                     DataRow ImportRow = ImportDataTable.NewRow();
-                    ImportRow["error"] = CswConvert.ToDbVal( false );
+                    ImportRow[CswNbt2DImportTables.ImportDataN.error] = CswConvert.ToDbVal( false );
                     foreach( DataColumn ExcelColumn in ExcelDataTable.Columns )
                     {
-                            if( ExcelRow[ExcelColumn] != DBNull.Value )
-                            {
-                                hasData = true;
-                            }
+                        if( ExcelRow[ExcelColumn] != DBNull.Value )
+                        {
+                            hasData = true;
+                        }
                         ImportRow[CswNbt2DBinding.SafeColName( ExcelColumn.ColumnName )] = ExcelRow[ExcelColumn];
                     }
-                        if( hasData == true )
-                        {
-                            ImportDataTable.Rows.Add( ImportRow );
-                        }
+                    if( hasData == true )
+                    {
+                        ImportDataTable.Rows.Add( ImportRow );
                     }
+                }
                 ImportDataUpdate.update( ImportDataTable );
 
-                OnMessage( "Sheet '" + ExcelDataTable.TableName + "' is stored in Table '" + ImportDataTableName + "'" );
+                OnMessage( "Sheet '" + SheetName + "' is stored in Table '" + ImportDataTableName + "'" );
             } // foreach( DataTable ExcelDataTable in ExcelDataSet.Tables )
 
             _CswNbtResources.commitTransaction();
             _CswNbtResources.beginTransaction();
-            
+
             return ret;
         } // storeData()
 
@@ -170,15 +171,35 @@ namespace ChemSW.Nbt.ImportExport
             return ret;
         } // getDefinitions()
 
+        public StringCollection getImportDataTableNames( bool IncludeCompleted = false )
+        {
+            StringCollection ret = new StringCollection();
+            string WhereClause = string.Empty;
+            if( false == IncludeCompleted )
+            {
+                WhereClause = "where " + CswNbt2DImportTables.ImportDataMap.completed + " = '" + CswConvert.ToDbVal( false ) + "'";
+            }
+            Collection<OrderByClause> OrderBy = new Collection<OrderByClause>() { new OrderByClause( CswNbt2DImportTables.ImportDataMap.PkColumnName, CswEnumOrderByType.Ascending ) };
+
+            CswTableSelect ImportDataMapSelect = _CswNbtResources.makeCswTableSelect( "getImportDataTableNames_DataMap_Select", CswNbt2DImportTables.ImportDataMap.TableName );
+            DataTable ImportDataMapTable = ImportDataMapSelect.getTable( WhereClause, OrderBy );
+            foreach( DataRow ImportDataMapRow in ImportDataMapTable.Rows )
+            {
+                ret.Add( ImportDataMapRow[CswNbt2DImportTables.ImportDataMap.datatablename].ToString() );
+            }
+            return ret;
+        } // getImportDataTableNames()
+
         /// <summary>
         /// Import a number of rows
         /// </summary>
         /// <param name="RowsToImport">Number of rows to import</param>
         /// <param name="ImportDataTableName">Source Oracle table to import</param>
+        /// <param name="RowsImported">(out) Number of rows processed in this execution</param>
         /// <returns>True if there are more rows to import from this source data, false otherwise</returns>
-        public bool ImportRows( Int32 RowsToImport, string ImportDataTableName )
+        public bool ImportRows( Int32 RowsToImport, string ImportDataTableName, out Int32 RowsImported )
         {
-            Int32 RowsImported = 0;
+            RowsImported = 0;
             try
             {
                 if( false == string.IsNullOrEmpty( ImportDataTableName ) && _CswNbtResources.isTableDefinedInDataBase( ImportDataTableName ) )
@@ -200,8 +221,8 @@ namespace ChemSW.Nbt.ImportExport
                             bool moreRows = true;
                             while( moreRows )
                             {
-                                DataTable ImportDataTable = ImportDataUpdate.getTable( "where error = '" + CswConvert.ToDbVal( false ) + "' and " + Order.PkColName + " is null",
-                                                                                       new Collection<OrderByClause> { new OrderByClause( "importdataid", CswEnumOrderByType.Ascending ) },
+                                DataTable ImportDataTable = ImportDataUpdate.getTable( "where " + CswNbt2DImportTables.ImportDataN.error + " = '" + CswConvert.ToDbVal( false ) + "' and " + Order.PkColName + " is null",
+                                                                                       new Collection<OrderByClause> { new OrderByClause( CswNbt2DImportTables.ImportDataN.importdataid, CswEnumOrderByType.Ascending ) },
                                                                                        0, 1 );
                                 moreRows = ( ImportDataTable.Rows.Count > 0 );
                                 if( moreRows )
@@ -209,7 +230,7 @@ namespace ChemSW.Nbt.ImportExport
                                     DataRow ImportRow = ImportDataTable.Rows[0];
                                     try
                                     {
-                                        msgPrefix = Order.NodeType.NodeTypeName + " Import (" + ImportRow["importdataid"].ToString() + "): ";
+                                        msgPrefix = Order.NodeType.NodeTypeName + " Import (" + ImportRow[CswNbt2DImportTables.ImportDataN.importdataid].ToString() + "): ";
                                         CswNbtNode Node = null;
 
                                         IEnumerable<CswNbt2DBinding> NodeTypeBindings = BindingDef.Bindings.Where( b => b.DestNodeType == Order.NodeType && b.Instance == Order.Instance );
@@ -439,7 +460,7 @@ namespace ChemSW.Nbt.ImportExport
                                                 IEnumerable<CswNbt2DOrder> AllInstanceNodeTypeOrders = BindingDef.ImportOrder.Values.Where( o => o.NodeType == Order.NodeType );
                                                 foreach( CswNbt2DOrder OtherOrder in AllInstanceNodeTypeOrders )
                                                 {
-                                                    string WhereClause = "where error = '" + CswConvert.ToDbVal( false ) + "' and " + OtherOrder.PkColName + " is null";
+                                                    string WhereClause = "where " + CswNbt2DImportTables.ImportDataN.error + " = '" + CswConvert.ToDbVal( false ) + "' and " + OtherOrder.PkColName + " is null";
                                                     foreach( CswNbt2DBinding UniqueBinding in UniqueBindings )
                                                     {
                                                         CswNbt2DBinding OtherUniqueBinding = BindingDef.Bindings.byProp( OtherOrder.Instance, UniqueBinding.DestProperty, UniqueBinding.DestSubfield ).FirstOrDefault();
@@ -486,8 +507,8 @@ namespace ChemSW.Nbt.ImportExport
                                         string ErrorMsg = msgPrefix + ex.Message; //+ "\r\n" + ex.StackTrace;
                                         OnError( ErrorMsg );
 
-                                        ImportRow["error"] = CswConvert.ToDbVal( true );
-                                        ImportRow["errorlog"] = ErrorMsg;
+                                        ImportRow[CswNbt2DImportTables.ImportDataN.error] = CswConvert.ToDbVal( true );
+                                        ImportRow[CswNbt2DImportTables.ImportDataN.errorlog] = ErrorMsg;
                                         ImportDataUpdate.update( ImportDataTable );
                                     }
                                     RowsImported += 1;
@@ -525,13 +546,17 @@ namespace ChemSW.Nbt.ImportExport
 
         public void getCounts( string ImportDataTableName, out Int32 PendingRows, out Int32 ErrorRows )
         {
-            PendingRows = Int32.MinValue;
-            ErrorRows = Int32.MinValue;
+            PendingRows = getCountPending( ImportDataTableName );
+            ErrorRows = getCountError( ImportDataTableName );
+        } // getCounts()
+
+
+        public Int32 getCountPending( string ImportDataTableName )
+        {
+            Int32 PendingRows = 0;
             if( false == string.IsNullOrEmpty( ImportDataTableName ) && _CswNbtResources.isTableDefinedInDataBase( ImportDataTableName ) )
             {
                 CswTableSelect ImportDataSelect = _CswNbtResources.makeCswTableSelect( "Importer_Select", ImportDataTableName );
-                ErrorRows = ImportDataSelect.getRecordCount( "where error = '" + CswConvert.ToDbVal( true ) + "'" );
-
                 CswNbt2DImportDataMap DataMap = new CswNbt2DImportDataMap( _CswNbtResources, ImportDataTableName );
                 CswNbt2DDefinition BindingDef = new CswNbt2DDefinition( _CswNbtResources, DataMap.ImportDefinitionId );
                 if( null != BindingDef && BindingDef.ImportOrder.Count > 0 )
@@ -545,10 +570,22 @@ namespace ChemSW.Nbt.ImportExport
                         }
                         PendingWhereClause += Order.PkColName + " is null";
                     }
-                    PendingRows = ImportDataSelect.getRecordCount( "where error = '" + CswConvert.ToDbVal( false ) + "' and (" + PendingWhereClause + ") " );
+                    PendingRows = ImportDataSelect.getRecordCount( "where " + CswNbt2DImportTables.ImportDataN.error + " = '" + CswConvert.ToDbVal( false ) + "' and (" + PendingWhereClause + ") " );
                 } // if( null != BindingDef && BindingDef.ImportOrder.Count > 0 )
             } // if( false == string.IsNullOrEmpty( ImportDataTableName ) && _CswNbtResources.isTableDefinedInDataBase( ImportDataTableName ) )
-        } // getCounts()
+            return PendingRows;
+        } // getCountPending()
+
+        public Int32 getCountError( string ImportDataTableName )
+        {
+            Int32 ErrorRows = 0;
+            if( false == string.IsNullOrEmpty( ImportDataTableName ) && _CswNbtResources.isTableDefinedInDataBase( ImportDataTableName ) )
+            {
+                CswTableSelect ImportDataSelect = _CswNbtResources.makeCswTableSelect( "Importer_Select", ImportDataTableName );
+                ErrorRows = ImportDataSelect.getRecordCount( "where error = '" + CswConvert.ToDbVal( true ) + "'" );
+            }
+            return ErrorRows;
+        } // getCountError()
 
     } // class CswNbt2DImporter
 } // namespace ChemSW.Nbt.ImportExport

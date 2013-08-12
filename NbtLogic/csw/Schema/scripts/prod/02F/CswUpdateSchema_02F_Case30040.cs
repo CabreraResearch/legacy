@@ -38,6 +38,8 @@ namespace ChemSW.Nbt.Schema
         public override void update()
         {
             // IMCS bindings definitions
+            _importDefinitionUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "30040_import_def_update", "import_definitions" );
+            _importDefinitionTable = _importDefinitionUpdate.getEmptyTable();
             foreach( string sheetname in new StringCollection()
                 {
                     "assembly",
@@ -50,8 +52,6 @@ namespace ChemSW.Nbt.Schema
                     "eq_tasks"
                 } )
             {
-                _importDefinitionUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "30040_import_def_update", "import_definitions" );
-                _importDefinitionTable = _importDefinitionUpdate.getEmptyTable();
                 DataRow defrow = _importDefinitionTable.NewRow();
                 defrow[CswNbt2DImportTables.ImportDefinitions.definitionname] = "IMCS";
                 defrow[CswNbt2DImportTables.ImportDefinitions.sheetname] = sheetname;

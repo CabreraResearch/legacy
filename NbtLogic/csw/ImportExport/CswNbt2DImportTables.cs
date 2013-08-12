@@ -62,6 +62,18 @@ namespace ChemSW.Nbt.ImportExport
             public const string importdefinitionid = "importdefinitionid";
             public const string datatablename = "datatablename";
             public const string overwrite = "overwrite";
+            public const string completed = "completed";
+        }
+
+        public class ImportDataN
+        {
+            public const string TableNamePrefix = "importdata";
+            public const string PkColumnName = importdataid;
+
+            public const string importdataid = "importdataid";
+            public const string error = "error";
+            public const string errorlog = "errorlog";
+            // plus a lot more configurable columns
         }
     }
 }

@@ -17,7 +17,7 @@ namespace ChemSW.Nbt.ImportExport
         public CswNbt2DImportDataMap( CswNbtResources CswNbtResources, string ImportDataTableName )
         {
             CswTableUpdate ImportDataMapSelect = CswNbtResources.makeCswTableUpdate( "Importer_DataMap_Update", CswNbt2DImportTables.ImportDataMap.TableName );
-            DataTable ImportDataMapTable = ImportDataMapSelect.getTable( "where " + CswNbt2DImportTables.ImportDataMap.datatablename + " = '" + ImportDataTableName );
+            DataTable ImportDataMapTable = ImportDataMapSelect.getTable( "where " + CswNbt2DImportTables.ImportDataMap.datatablename + " = '" + ImportDataTableName + "'" );
             if( ImportDataMapTable.Rows.Count > 0 )
             {
                 _finishConstructor( CswNbtResources, ImportDataMapTable.Rows[0] );
@@ -55,6 +55,10 @@ namespace ChemSW.Nbt.ImportExport
         public bool Overwrite
         {
             get { return CswConvert.ToBoolean( _row[CswNbt2DImportTables.ImportDataMap.overwrite] ); }
+        }
+        public bool Completed
+        {
+            get { return CswConvert.ToBoolean( _row[CswNbt2DImportTables.ImportDataMap.completed] ); }
         }
     }
 }

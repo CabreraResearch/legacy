@@ -76,6 +76,7 @@ namespace ChemSW.Nbt.Schema
                 _CswNbtSchemaModTrnsctn.addStringColumn( Tablename, CswNbt2DImportTables.ImportDataMap.datatablename, "Oracle table name for data", false, true, 50 );
                 //_CswNbtSchemaModTrnsctn.addStringColumn( Tablename, CswNbt2DImportTables.ImportDataMap.sheetname, "Name of source sheet", false, true, 50 );
                 _CswNbtSchemaModTrnsctn.addBooleanColumn( Tablename, CswNbt2DImportTables.ImportDataMap.overwrite, "When importing, whether to overwrite existing nodes", false, true );
+                _CswNbtSchemaModTrnsctn.addBooleanColumn( Tablename, CswNbt2DImportTables.ImportDataMap.completed, "If true, the import is completed", false, true );
             }
         } // update()
 

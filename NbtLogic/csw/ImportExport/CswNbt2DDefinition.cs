@@ -16,9 +16,12 @@ namespace ChemSW.Nbt.ImportExport
 
         public CswNbt2DDefinition( CswNbtResources CswNbtResources, string DefinitionName, string SheetName )
         {
+            // If incoming sheet name has a $, trim it off    
+            SheetName = SheetName.TrimEnd( new char[] {'$'} );
+
             CswTableSelect defSelect = CswNbtResources.makeCswTableSelect( "CswNbt2DDefinition_select", CswNbt2DImportTables.ImportDefinitions.TableName );
-            DataTable defTable = defSelect.getTable( "where " + CswNbt2DImportTables.ImportDefinitions.definitionname + " = '" + DefinitionName + "'" +
-                                                     "  and " + CswNbt2DImportTables.ImportDefinitions.sheetname + " = '" + SheetName + "'" );
+            DataTable defTable = defSelect.getTable( "where lower(" + CswNbt2DImportTables.ImportDefinitions.definitionname + ") = '" + DefinitionName.ToLower() + "'" +
+                                                     "  and lower(" + CswNbt2DImportTables.ImportDefinitions.sheetname + ") = '" + SheetName.ToLower() + "'" );
             if( defTable.Rows.Count > 0 )
             {
                 _finishConstructor( CswNbtResources, defTable.Rows[0] );
@@ -59,7 +62,7 @@ namespace ChemSW.Nbt.ImportExport
             {
                 throw new CswDniException( CswEnumErrorType.Error, "Invalid import definition", "CswNbt2DDefinition was passed a null DefinitionRow" );
             }
-            loadBindings();
+            _loadBindings();
         }
 
         public Int32 ImportDefinitionId
@@ -83,7 +86,7 @@ namespace ChemSW.Nbt.ImportExport
         /// <summary>
         /// Loads import definition bindings from the database
         /// </summary>
-        private void loadBindings()
+        private void _loadBindings()
         {
             if( Int32.MinValue != ImportDefinitionId )
             {

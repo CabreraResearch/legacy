@@ -91,6 +91,7 @@ namespace ChemSW.Nbt.Sched
         public const string Reconciliation = "Reconciliation";
         public const string TierII = "TierII";
         public const string CAFImport = "CAFImport";
+        public const string Import = "Import";
         public const string ExtChemDataSync = "ExtChemDataSync";
         public const string PurgeSessionData = "PurgeSessionData";
         public const string NodeCounts = "NodeCounts";

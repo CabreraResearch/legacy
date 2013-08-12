@@ -83,8 +83,9 @@ namespace Nbt2DImporterTester
         public void importRows( string AccessId, string ImportDataTableName, Int32 rows )
         {
             _CswNbtResources.AccessId = AccessId;
-
-            bool More = _Importer.ImportRows( rows, ImportDataTableName );
+            
+            Int32 RowsProcessed;
+            bool More = _Importer.ImportRows( rows, ImportDataTableName, out RowsProcessed );
 
             _CswNbtResources.commitTransaction();
             _CswNbtResources.beginTransaction();
