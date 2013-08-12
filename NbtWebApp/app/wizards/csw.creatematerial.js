@@ -484,8 +484,7 @@
                         nodetypeid: cswPrivate.state.materialType.val,
                         EditMode: Csw.enums.editMode.Temp //This is intentional. We don't want the node accidental upversioned to a real node.
                     },
-                    ReloadTabOnSave: false,
-                    async: false
+                    ReloadTabOnSave: false
                 });
             };
 
