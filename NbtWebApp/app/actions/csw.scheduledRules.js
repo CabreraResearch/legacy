@@ -418,9 +418,7 @@
                             width: '95%',
                             title: 'Scheduled Rules',
                             usePaging: true,
-                            onRefresh: function() {
-                                cswPrivate.makeScheduledRulesGrid();
-                            },
+                            onRefresh: cswPrivate.makeScheduledRulesGrid,
                             showActionColumn: false, 
                             canSelectRow: false,
                             selModel: {
@@ -445,7 +443,7 @@
                     cswPrivate.schedulerRequest.Grid.data.items[row.rowIdx].Row['has_changed'] = 'true';
                 }
                 cswPrivate.schedulerRequest.Grid.data.items[row.rowIdx][row.field] = row.value;
-                cswPrivate.schedulerRequest.Grid.data.items[row.rowIdx].Row[row.field] = row.value
+                cswPrivate.schedulerRequest.Grid.data.items[row.rowIdx].Row[row.field] = row.value;
                 
                 var req = Csw.extend({}, cswPrivate.schedulerRequest, true);
                 req.Grid.columns.forEach(function (col) {
