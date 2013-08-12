@@ -106,7 +106,7 @@ namespace ChemSW.Nbt.Test
 
         internal CswNbtNode createUnitOfMeasureNode( string NodeTypeName, string Name, double ConversionFactorBase, int ConversionFactorExponent, CswEnumTristate Fractional )
         {
-            CswNbtObjClassUnitOfMeasure UnitOfMeasureNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( _getNodeTypeId( "Unit (" + NodeTypeName + ")" ), CswEnumNbtMakeNodeOperation.DoNothing );
+            CswNbtObjClassUnitOfMeasure UnitOfMeasureNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( _getNodeTypeId( "Unit_" + NodeTypeName ), CswEnumNbtMakeNodeOperation.DoNothing );
             UnitOfMeasureNode.Name.Text = Name + "Test";
             if( CswTools.IsDouble( ConversionFactorBase ) )
                 UnitOfMeasureNode.ConversionFactor.Base = ConversionFactorBase;

@@ -22,6 +22,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string ClassCodesGrid = "Class Codes Grid";
             public const string SignalWord = "Signal Word";
             public const string Pictograms = "Pictograms";
+            public const string Classification = "Classification";
         }
 
         #endregion Enums
@@ -150,6 +151,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropGrid ClassCodesGrid { get { return ( _CswNbtNode.Properties[PropertyName.ClassCodesGrid] ); } }
         public CswNbtNodePropList SignalWord { get { return ( _CswNbtNode.Properties[PropertyName.SignalWord] ); } }
         public CswNbtNodePropImageList Pictograms { get { return ( _CswNbtNode.Properties[PropertyName.Pictograms] ); } }
+        public CswNbtNodePropList Classification { get { return ( _CswNbtNode.Properties[PropertyName.Classification] ); } }
 
         #endregion
 

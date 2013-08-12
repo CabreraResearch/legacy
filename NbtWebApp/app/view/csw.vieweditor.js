@@ -214,6 +214,7 @@
                     buttonsTbl.cell(1, 3).buttonExt({
                         name: 'vieweditor_step1_createviewbtn',
                         enabledText: 'Create New View',
+                        disableOnClick: false,
                         onClick: function () {
                             $.CswDialog('AddViewDialog', {
                                 onAddView: function (newViewId, viewMode) {

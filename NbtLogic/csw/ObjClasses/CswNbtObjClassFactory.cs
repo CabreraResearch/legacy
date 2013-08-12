@@ -67,8 +67,16 @@ namespace ChemSW.Nbt.ObjClasses
                     ReturnVal = new CswNbtObjClassContainerLocation( CswNbtResources, Node );
                     break;
 
+                case CswEnumNbtObjectClass.ControlZoneClass:
+                    ReturnVal = new CswNbtObjClassControlZone( CswNbtResources, Node );
+                    break;
+
                 case CswEnumNbtObjectClass.CustomerClass:
                     ReturnVal = new CswNbtObjClassCustomer( CswNbtResources, Node );
+                    break;
+
+                case CswEnumNbtObjectClass.DepartmentClass:
+                    ReturnVal = new CswNbtObjClassDepartment( CswNbtResources, Node );
                     break;
 
                 case CswEnumNbtObjectClass.DocumentClass:
@@ -124,7 +132,6 @@ namespace ChemSW.Nbt.ObjClasses
                     break;
 
                 case CswEnumNbtObjectClass.InspectionTargetClass:
-
                     ReturnVal = new CswNbtObjClassInspectionTarget( CswNbtResources, Node );
                     break;
 
@@ -133,7 +140,6 @@ namespace ChemSW.Nbt.ObjClasses
                     break;
 
                 case CswEnumNbtObjectClass.InventoryGroupClass:
-
                     ReturnVal = new CswNbtObjClassInventoryGroup( CswNbtResources, Node );
                     break;
 
@@ -151,6 +157,10 @@ namespace ChemSW.Nbt.ObjClasses
 
                 case CswEnumNbtObjectClass.LocationClass:
                     ReturnVal = new CswNbtObjClassLocation( CswNbtResources, Node );
+                    break;
+
+                case CswEnumNbtObjectClass.LQNoClass:
+                    ReturnVal = new CswNbtObjClassLQNo( CswNbtResources, Node );
                     break;
 
                 case CswEnumNbtObjectClass.ManufacturerEquivalentPartClass:

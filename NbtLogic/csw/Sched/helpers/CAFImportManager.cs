@@ -80,9 +80,9 @@ namespace ChemSW.Nbt
             vendorNameNTP = vendorNT.getNodeTypePropByObjectClassProp( CswNbtObjClassVendor.PropertyName.VendorName );
             vendorLegacyIdNTP = vendorNT.getNodeTypeProp( "Legacy Id" );
 
-            UoM_weight_NT = _NBTResources.MetaData.getNodeType( "Unit (Weight)" );
-            UoM_each_NT = _NBTResources.MetaData.getNodeType( "Unit (Each)" );
-            UoM_vol_NT = _NBTResources.MetaData.getNodeType( "Unit (Volume)" );
+            UoM_weight_NT = _NBTResources.MetaData.getNodeType( "Unit_Weight" );
+            UoM_each_NT = _NBTResources.MetaData.getNodeType( "Unit_Each" );
+            UoM_vol_NT = _NBTResources.MetaData.getNodeType( "Unit_Volume" );
 
             unitOfMeasureOC = _NBTResources.MetaData.getObjectClass( CswEnumNbtObjectClass.UnitOfMeasureClass );
             nameOCP = unitOfMeasureOC.getObjectClassProp( CswNbtObjClassUnitOfMeasure.PropertyName.Name );

@@ -59,7 +59,8 @@
                     canAddSDS: true,
                     showOriginalUoM: false,
                     chemicalObjClassId: '',
-                    constituentNtIds: ''
+                    constituentNtIds: '',
+                    containerlimit: 25
                 },
                 physicalStateModified: false,
                 containersModuleEnabled: true,
@@ -571,7 +572,8 @@
                             sizeNodeTypeId: cswPrivate.state.sizeNodeTypeId,
                             showQuantityEditable: cswPrivate.showQuantityEditable,
                             showDispensable: cswPrivate.showDispensable,
-                            showOriginalUoM: cswPrivate.state.showOriginalUoM
+                            showOriginalUoM: cswPrivate.state.showOriginalUoM,
+                            containerlimit: cswPrivate.state.containerlimit
                         });
                     };
                     div.br();
@@ -764,6 +766,7 @@
                         cswPrivate.state.materialType.objclassid = data.TempNodeObjClassId;
                         cswPrivate.state.chemicalObjClassId = data.ChemicalObjClassId;
                         cswPrivate.state.constituentNtIds = data.ConstituentNodeTypeIds;
+                        cswPrivate.state.containerlimit = data.ContainerLimit;
 
                         cswPrivate.containersModuleEnabled = data.ContainersModuleEnabled;
                         cswPrivate.SDSModuleEnabled = data.SDSModuleEnabled;

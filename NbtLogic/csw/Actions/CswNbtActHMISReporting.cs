@@ -153,13 +153,10 @@ namespace ChemSW.Nbt.Actions
         public CswNbtView getControlZonesView()
         {
             CswNbtView ControlZonesView = new CswNbtView( _CswNbtResources );
-            CswNbtMetaDataNodeType ControlZoneNT = _CswNbtResources.MetaData.getNodeTypeFirstVersion( "Control Zone" );
-            if( null != ControlZoneNT )
-            {
-                ControlZonesView.AddViewRelationship(ControlZoneNT, IncludeDefaultFilters: true);
-                ControlZonesView.ViewName = "HMIS Control Zones";
-                ControlZonesView.SaveToCache(IncludeInQuickLaunch: false);
-            }
+            CswNbtMetaDataObjectClass ControlZoneOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ControlZoneClass );
+            ControlZonesView.AddViewRelationship( ControlZoneOC, IncludeDefaultFilters: true );
+            ControlZonesView.ViewName = "HMIS Control Zones";
+            ControlZonesView.SaveToCache( IncludeInQuickLaunch: false );
             return ControlZonesView;
         }
 

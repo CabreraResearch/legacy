@@ -1,15 +1,15 @@
-﻿using ChemSW.Core;
-using ChemSW.DB;
-using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.PropTypes;
-using ChemSW.StructureSearch;
-using System;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Runtime.Serialization;
+using ChemSW.Core;
+using ChemSW.DB;
+using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.PropTypes;
+using ChemSW.StructureSearch;
 
 namespace ChemSW.Nbt.ServiceDrivers
 {
@@ -230,8 +230,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             }
             else //fetch blob content
             {
-                string sql = GetBlobAuditSQL( Date, JctNodePropId );
-                CswArbitrarySelect blobDataAuditTS = _CswNbtResources.makeCswArbitrarySelect( "getBlobAudit", sql );
+                CswArbitrarySelect blobDataAuditTS = GetBlobAuditSelect( _CswNbtResources, Date, JctNodePropId );
                 blobDataTbl = blobDataAuditTS.getTable();
             }
 
@@ -346,19 +345,27 @@ namespace ChemSW.Nbt.ServiceDrivers
             BlobProp.SetPropRowValue( CswEnumNbtPropColumn.Field2_Date, DateTime.Now );
         }
 
-        public static string GetBlobAuditSQL( string Date, int JctNodePropId, int BlobDataId = Int32.MinValue )
+        public static CswArbitrarySelect GetBlobAuditSelect( CswNbtResources NbtResources, string Date, int JctNodePropId, int BlobDataId = Int32.MinValue )
         {
             string sql = @"select * from blob_data_audit bda where bda.blobdataauditid in (select max(bd.blobdataauditid) from blob_data_audit bd
                                     join audit_transactions audt on audt.audittransactionid = bd.audittransactionid
                                     join jct_nodes_props_audit jnp on jnp.audittransactionid = audt.audittransactionid
-                                where jnp.recordcreated <= to_date('" + Date + "', 'MM/DD/YYYY HH:MI:SS PM') and jnp.jctnodepropid = " + JctNodePropId;
+                                where jnp.recordcreated <= to_date(:blobdate, 'MM/DD/YYYY HH:MI:SS PM') and jnp.jctnodepropid = :jctnodepropid";
             if( Int32.MinValue != BlobDataId )
             {
-                sql += " and bda.blobdataid = " + BlobDataId;
+                sql += " and bda.blobdataid = :blobdataid";
             }
             sql += " group by bd.blobdataid ) order by bda.blobdataid";
 
-            return sql;
+            CswArbitrarySelect BlobAuditSelect = NbtResources.makeCswArbitrarySelect( "SdBlobData.GetBlobAuditSelect", sql );
+            BlobAuditSelect.addParameter( "blobdate", Date );
+            BlobAuditSelect.addParameter( "jctnodepropid", JctNodePropId.ToString() );
+            if( Int32.MinValue != BlobDataId )
+            {
+                BlobAuditSelect.addParameter( "blobdataid", BlobDataId.ToString() );    
+            }
+
+            return BlobAuditSelect;
         }
 
         [DataContract]
