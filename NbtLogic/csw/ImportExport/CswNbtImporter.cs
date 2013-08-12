@@ -114,7 +114,7 @@ namespace ChemSW.Nbt.ImportExport
                 ret.Add( ImportDataTableName );
 
                 // Store the sheet reference in import_data_map
-                CswTableUpdate ImportDataMapUpdate = _CswNbtResources.makeCswTableUpdate( "Importer_Sheet_Update", CswNbtImportTables.ImportDataMap.TableName );
+                CswTableUpdate ImportDataMapUpdate = _CswNbtResources.makeCswTableUpdate( "Importer_DataMap_Insert", CswNbtImportTables.ImportDataMap.TableName );
                 DataTable ImportDataMapTable = ImportDataMapUpdate.getEmptyTable();
                 DataRow DataMapRow = ImportDataMapTable.NewRow();
                 DataMapRow[CswNbtImportTables.ImportDataMap.datatablename] = ImportDataTableName;
@@ -547,7 +547,21 @@ namespace ChemSW.Nbt.ImportExport
             {
                 OnError( ex.Message + "\r\n" + ex.StackTrace );
             }
-            return ( RowsImported != 0 );
+
+            bool MoreToDo = ( RowsImported != 0 );
+
+            if( false == MoreToDo )
+            {
+                // Set 'completed' = true
+                CswTableUpdate ImportDataMapUpdate = _CswNbtResources.makeCswTableUpdate( "ImportRows_DataMap_Update", CswNbtImportTables.ImportDataMap.TableName );
+                DataTable ImportDataMapTable = ImportDataMapUpdate.getTable( "where " + CswNbtImportTables.ImportDataMap.datatablename + " = '" + ImportDataTableName + "'" );
+                if( ImportDataMapTable.Rows.Count > 0 )
+                {
+                    ImportDataMapTable.Rows[0][CswNbtImportTables.ImportDataMap.completed] = CswConvert.ToDbVal( true );
+                    ImportDataMapUpdate.update( ImportDataMapTable );
+                }
+            }
+            return MoreToDo;
         } // ImportRows()
 
 
