@@ -4,7 +4,9 @@ using System.Collections.Specialized;
 using System.Data;
 using ChemSW.Core;
 using ChemSW.DB;
+using ChemSW.MtSched.Core;
 using ChemSW.Nbt.ImportExport;
+using ChemSW.Nbt.Sched;
 using ChemSW.Nbt.csw.Dev;
 
 namespace ChemSW.Nbt.Schema
@@ -554,6 +556,9 @@ namespace ChemSW.Nbt.Schema
             _importOrderUpdate.update( _importOrderTable );
             _importBindingsUpdate.update( _importBindingsTable );
             _importRelationshipsUpdate.update( _importRelationshipsTable );
+
+            // Add schedule rule
+            _CswNbtSchemaModTrnsctn.createScheduledRule( CswEnumNbtScheduleRuleNames.Import, CswEnumRecurrence.NHours, 1 );
         } // update()
 
         private void _importOrder( Int32 Order, string SheetName, string NodeTypeName, Int32 Instance = Int32.MinValue )
