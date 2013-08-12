@@ -1,4 +1,3 @@
-using System;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropertySets;
@@ -6,6 +5,7 @@ using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.ServiceDrivers;
 using ChemSW.Nbt.UnitsOfMeasure;
 using Newtonsoft.Json.Linq;
+using System;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -254,6 +254,21 @@ namespace ChemSW.Nbt.ObjClasses
         public override void afterPropertySetWriteNode()
         {
 
+        }
+
+        public override void beforePropertySetDeleteNode()
+        {
+            CswNbtObjClassUser.Cache UserCache = CswNbtObjClassUser.getCurrentUserCache( _CswNbtResources );
+            if( _IsFavorite )
+            {
+                UserCache.CartCounts.FavoriteRequestItems -= 1;
+                UserCache.update( _CswNbtResources );
+            }
+            if ( _IsRecurring )
+            {
+                UserCache.CartCounts.RecurringRequestItems -= 1;
+                UserCache.update( _CswNbtResources );
+            }
         }
 
         /// <summary>
@@ -656,6 +671,10 @@ namespace ChemSW.Nbt.ObjClasses
                     RecurringFrequency.setHidden( value : false, SaveToDb : true );
                     NextReorderDate.setHidden( value : false, SaveToDb : true );
                     Name.setHidden( value : true, SaveToDb : true );
+
+                    CswNbtObjClassUser.Cache UserCache = CswNbtObjClassUser.getCurrentUserCache( _CswNbtResources );
+                    UserCache.CartCounts.RecurringRequestItems += 1;
+                    UserCache.update( _CswNbtResources );
                 }
                 else if( false == _IsFavorite )
                 {
@@ -687,6 +706,10 @@ namespace ChemSW.Nbt.ObjClasses
                     NextReorderDate.setHidden( value : true, SaveToDb : true );
                     RecurringFrequency.setHidden( value : true, SaveToDb : true );
                     Name.setHidden( value : false, SaveToDb : true );
+
+                    CswNbtObjClassUser.Cache UserCache = CswNbtObjClassUser.getCurrentUserCache( _CswNbtResources );
+                    UserCache.CartCounts.FavoriteRequestItems += 1;
+                    UserCache.update( _CswNbtResources );
                 }
                 else if( false == _IsRecurring )
                 {

@@ -1,8 +1,8 @@
-using System.Collections.ObjectModel;
 using ChemSW.Core;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
+using System.Collections.ObjectModel;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -232,6 +232,11 @@ namespace ChemSW.Nbt.ObjClasses
         public abstract void afterPropertySetWriteNode();
 
         /// <summary>
+        /// Before delete node event
+        /// </summary>
+        public abstract void beforePropertySetDeleteNode();
+
+        /// <summary>
         /// Populate props event for derived classes to implement
         /// </summary>
         public abstract void afterPropertySetPopulateProps();
@@ -309,6 +314,19 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
         {
+            CswNbtObjClassUser.Cache UserCache = CswNbtObjClassUser.getCurrentUserCache( _CswNbtResources );
+            switch( Status.Value )
+            {
+                case Statuses.Pending:
+                    UserCache.CartCounts.PendingRequestItems -= 1;
+                    UserCache.update( _CswNbtResources );
+                    break;
+                case Statuses.Submitted:
+                    UserCache.CartCounts.SubmittedRequestItems -= 1;
+                    UserCache.update( _CswNbtResources );
+                    break;
+            }
+            beforePropertySetDeleteNode();
             CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes );
 
         }//beforeDeleteNode()
@@ -409,9 +427,16 @@ namespace ChemSW.Nbt.ObjClasses
             ExternalOrderNumber.setHidden( value: ( Status.Value == Statuses.Pending ), SaveToDb: true );
             Type.setHidden( value: ( Status.Value == Statuses.Pending ), SaveToDb: true );
 
+            CswNbtObjClassUser.Cache UserCache = CswNbtObjClassUser.getCurrentUserCache( _CswNbtResources );
             switch ( Status.Value )
             {
+                case Statuses.Pending:
+                    UserCache.CartCounts.PendingRequestItems += 1;
+                    UserCache.update( _CswNbtResources );
+                    break;
                 case Statuses.Submitted:
+                    UserCache.CartCounts.SubmittedRequestItems += 1;
+                    UserCache.update( _CswNbtResources );
                     toggleReadOnlyProps( true, this );
                     break;
                 case Statuses.Cancelled: //This fallthrough is intentional
@@ -425,6 +450,19 @@ namespace ChemSW.Nbt.ObjClasses
                     Node.setReadOnly( value: true, SaveToDb: true );
                     break;
             }
+
+            if( Status.Text != Statuses.Pending )
+            {
+                string LastStatus = Status.GetOriginalPropRowValue();
+                switch ( LastStatus )
+                {
+                    case Statuses.Pending:
+                        UserCache.CartCounts.PendingRequestItems -= 1;
+                        UserCache.update( _CswNbtResources );
+                        break;
+                }
+            }            
+            
 
             onStatusPropChange( Prop );
 
