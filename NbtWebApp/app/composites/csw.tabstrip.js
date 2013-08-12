@@ -55,27 +55,15 @@
                     tooltip: ''
                 };
                 tab.layout = 'fit';
-
-                var id = window.Ext.id();
-                var panel = Ext.create('Ext.panel.Panel', {
-                    title: tab.title,
-                    autoRender: true,
-                    height: 'auto',
-                    layout: {
-                        type: 'fit'
-                    },
-                    html: '<div id="' + id + '">' + tab.html + '</div>'
-                });
-
-                var extTab = cswPublic.tabPanel.add([panel])[0];
+                var extTab = cswPublic.tabPanel.add([tab])[0];
 
                 var newTab = {
                     get csw() {
                         var ret = null;
                         if (extTab.el) {
                             ret = Csw.domNode({
-                                ID: panel.el.id,
-                                el: panel.el.dom
+                                ID: extTab.el.id + '-body',
+                                el: extTab.el.dom
                             });
                         }
                         return ret;
