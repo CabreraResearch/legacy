@@ -6,10 +6,14 @@ using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 using ChemSW.Security;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
+using System.IO;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Json;
 using System.Text.RegularExpressions;
 
 namespace ChemSW.Nbt.ObjClasses
@@ -45,6 +49,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Username = "Username";
             public const string DefaultBalance = "Default Balance";
             public const string WorkUnit = "Work Unit";
+            public const string CachedData = "Cached Data";
         }
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
@@ -141,6 +146,11 @@ namespace ChemSW.Nbt.ObjClasses
         public bool PasswordIsExpired
         {
             get { return PasswordProperty.IsExpired; }
+        }
+
+        string ICswUser.CachedData
+        {
+            get { return CachedData.Text; }
         }
 
         public static string getValidUserName( string Name )
@@ -504,7 +514,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswPrimaryKey DefaultLocationId { get { return DefaultLocationProperty.SelectedNodeId; } }
         public CswNbtNodePropRelationship DefaultPrinterProperty { get { return _CswNbtNode.Properties[PropertyName.DefaultPrinter]; } }
         public CswPrimaryKey DefaultPrinterId { get { return DefaultPrinterProperty.RelatedNodeId; } }
-        public CswNbtNodePropRelationship DefaultBalanceProperty { get { return _CswNbtNode.Properties[PropertyName.DefaultBalance];  } }
+        public CswNbtNodePropRelationship DefaultBalanceProperty { get { return _CswNbtNode.Properties[PropertyName.DefaultBalance]; } }
         public CswPrimaryKey DefaultBalanceId { get { return DefaultBalanceProperty.RelatedNodeId; } }
         public CswNbtNodePropRelationship WorkUnitProperty { get { return _CswNbtNode.Properties[PropertyName.WorkUnit]; } }
         public CswPrimaryKey WorkUnitId { get { return WorkUnitProperty.RelatedNodeId; } }
@@ -525,9 +535,104 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
+        [DataContract]
+        public class Cache
+        {
+            private readonly CswNbtResources _Resources;
+            public Cache( CswNbtResources Resources )
+            {
+                _Resources = Resources;
+            }
+
+            [DataContract]
+            public class Cart
+            {
+                private int get( ref int val )
+                {
+                    if( val < 0 )
+                    {
+                        val = 0;
+                    }
+                    return val;
+                }
+                private int pending = 0;
+                private int submitted = 0;
+                private int recurring = 0;
+                private int favorite = 0;
+
+                [DataMember( IsRequired = false )]
+                public Int32 PendingRequestItems
+                {
+                    get { return get( ref pending ); }
+                    set { pending = get( ref value ); }
+                }
+                [DataMember( IsRequired = false )]
+                public Int32 SubmittedRequestItems
+                {
+                    get { return get( ref submitted ); }
+                    set { submitted = get( ref value ); }
+                }
+                [DataMember( IsRequired = false )]
+                public Int32 RecurringRequestItems
+                {
+                    get { return get( ref recurring ); }
+                    set { recurring = get( ref value ); }
+                }
+                [DataMember( IsRequired = false )]
+                public Int32 FavoriteRequestItems
+                {
+                    get { return get( ref favorite ); }
+                    set { favorite = get( ref value ); }
+                }
+            }
+
+            [DataMember]
+            public Cart CartCounts = new Cart();
+
+            public void update( CswNbtResources Resources )
+            {
+                if ( null != Resources )
+                {
+                    CswNbtObjClassUser CurrentUser = Resources.Nodes[Resources.CurrentNbtUser.UserId];
+                    if ( null != CurrentUser )
+                    {
+                        CurrentUser.CurrentCache = this;
+                        CurrentUser.postChanges( ForceUpdate: false );
+                    }
+                }
+            }
+        }
+
+        public Cache CurrentCache
+        {
+            get
+            {
+                return getCurrentUserCache( _CswNbtResources );
+            }
+            set
+            {
+                Cache Cache = value;
+                string Memo = JsonConvert.SerializeObject( Cache );
+                CachedData.Text = Memo;
+            }
+        }
+
+        public static Cache getCurrentUserCache( CswNbtResources Resources )
+        {
+            //return ( (CswNbtObjClassUser) Resources.CurrentNbtUser ).CurrentCache;
+            Cache Ret = new Cache( Resources );
+            if ( false == string.IsNullOrEmpty( Resources.CurrentNbtUser.CachedData ) )
+            {
+                DataContractJsonSerializer Dcjs = new DataContractJsonSerializer( typeof( Cache ) );
+                Stream MemoStream = CswConvert.ToStream( Resources.CurrentNbtUser.CachedData );
+                Ret = (Cache) Dcjs.ReadObject( MemoStream );
+            }
+            return Ret;
+        }
+
+        public CswNbtNodePropMemo CachedData { get { return _CswNbtNode.Properties[PropertyName.CachedData]; } }
 
         #endregion
-
 
         public int getFailedLoginCount()
         {
