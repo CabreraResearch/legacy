@@ -1,4 +1,3 @@
-using System.Data;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Grid.ExtJs;
@@ -6,6 +5,7 @@ using ChemSW.Nbt.Grid;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Security;
 using Newtonsoft.Json.Linq;
+using System.Data;
 namespace ChemSW.Nbt.WebServices
 {
     public class CswNbtWebServiceAuditing
@@ -37,7 +37,7 @@ namespace ChemSW.Nbt.WebServices
                                 join audit_transactions x on ja.audittransactionid = x.audittransactionid
                                 join nodetype_props np on ja.nodetypepropid = np.nodetypepropid
                                 join field_types ft on ft.fieldtypeid = np.fieldtypeid
-                            where ja.nodeid = " + Node.NodeId.PrimaryKey.ToString();
+                            where ja.nodeid = :nodeid ";
 
 
                 CswCommaDelimitedString sysUserNames = new CswCommaDelimitedString( 0, "'" );
@@ -45,9 +45,12 @@ namespace ChemSW.Nbt.WebServices
                 {
                     sysUserNames.Add( sysUserName.ToString() );
                 }
-                SQL += @" and x.transactionusername not in (" + sysUserNames + ") order by AuditId desc";
+                SQL += @" and x.transactionusername not in ( :sysusernames ) order by AuditId desc";
 
                 CswArbitrarySelect HistorySelect = _CswNbtResources.makeCswArbitrarySelect( "CswNbtWebServiceAuditing_getAuditHistory_select", SQL );
+                HistorySelect.addParameter( "nodeid", Node.NodeId.PrimaryKey.ToString() );
+                HistorySelect.addParameter( "sysusernames", sysUserNames.ToString() );
+
                 DataTable HistoryTable = HistorySelect.getTable();
 
                 //for the audit grid we want to group by audittransactionid, but show the changedate
