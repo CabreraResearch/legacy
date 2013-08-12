@@ -230,14 +230,6 @@
                 return cswPublic;
             };
 
-            cswPublic.cssVal = function (param1) {
-                var ret = '';
-                if (cswPrivate.isControlStillValid()) {
-                    ret = cswPublic.$.css(param1);
-                }
-                return ret;
-            };
-
             //#region data methods
 
             cswPrivate.getData = function (propName) {

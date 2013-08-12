@@ -53,7 +53,7 @@
 
                 },
                 forms: {
-
+                    
                 },
                 IdentityTab: null,
                 tabContentDiv: null,
@@ -73,14 +73,14 @@
                 nodeTreeCheck: null,
                 onEditView: null,
                 onAfterButtonClick: null,
-                async: true,
+                async: true, 
                 forceReadOnly: false
             };
             var cswPublic = {};
 
             (function () {
                 var tabid = '', first = true;
-                Object.defineProperties(cswPrivate.tabState, {
+                Object.defineProperties(cswPrivate.tabState, { 
                     tabid: {
                         get: function () {
                             return tabid;
@@ -90,7 +90,7 @@
                                 throw new Error('Tabid must be a string or a number');
                             }
                             if (false === first && tabid !== val) { //after tabid is defined once, nuke subsequent changes.
-                                cswPrivate.tabState.resetPropertyData();
+                                cswPrivate.tabState.resetPropertyData(); 
                             }
                             first = false;
                             cswPrivate.tabState.tabIds.add(val);
@@ -98,7 +98,7 @@
                         }
                     },
                     resetPropertyData: {
-                        value: function () {
+                        value: function() {
                             //Case 29533: Nuke propertyData when we change nodes/tabs. Outstanding references will be fine.
                             cswPrivate.tabState.propertyData = Csw.object();
                             cswPrivate.tabState.tabIds = Csw.delimitedString();
@@ -171,7 +171,7 @@
              * Publish the render event to trigger the property display
             */
             cswPrivate.onRenderProps = function (tabid) {
-
+                
                 Csw.publish('render_' + cswPublic.getNodeId() + '_' + tabid);
             };
 
@@ -212,10 +212,10 @@
             cswPrivate.clearTabs = function () {
                 cswPrivate.titleDiv.empty();
                 cswPrivate.identityForm.empty();
-                //cswPrivate.outerTabDiv.empty();
-                Csw.iterate(cswPrivate.forms, function (tabId) {
-                    if (cswPrivate.forms[tabId] && cswPrivate.forms[tabId].empty) {
-                        cswPrivate.forms[tabId].empty();
+                cswPrivate.outerTabDiv.empty();
+                Csw.iterate(cswPrivate.tabs, function (tabId) {
+                    if (cswPrivate.tabs[tabId] && cswPrivate.tabs[tabId].remove) {
+                        cswPrivate.tabs[tabId].remove();
                     }
                 });
                 cswPrivate.tabs = [];
@@ -223,35 +223,33 @@
 
             cswPrivate.makeTabContentDiv = function (tabParent, tabid, canEditLayout) {
                 'use strict';
-                if (tabParent) {
-                    tabParent.empty();
-
-                    cswPrivate.tabs[tabid] = tabParent;
-
-                    tabParent.data({
-                        tabid: tabid,
-                        canEditLayout: canEditLayout
-                    });
-
-                    var form = tabParent.form({
-                        name: tabid + '_form',
-                        onsubmit: 'return false;'
-                    });
-
-                    form.css({ margin: '10px' }); //, 'background-color': '#ebebeb' });
-                    cswPrivate.forms[tabid] = form;
-
-                    var handle = function () {
-                        tabParent.empty();
-                        Csw.unsubscribe(Csw.enums.events.CswNodeDelete, null, handle);
-                        return false;
-                    };
-
-                    if (false === Csw.isNullOrEmpty(tabParent.$.parent(), true)) {
-                        Csw.subscribe(Csw.enums.events.CswNodeDelete, handle);
-                    }
-                    return tabParent;
+                if (cswPrivate.tabs[tabid] && cswPrivate.tabs[tabid].remove) {
+                    cswPrivate.tabs[tabid].remove();
                 }
+                cswPrivate.tabs[tabid] = tabParent.tabDiv({});
+
+                cswPrivate.tabs[tabid].data({
+                    tabid: tabid,
+                    canEditLayout: canEditLayout
+                });
+
+                cswPrivate.forms[tabid] = cswPrivate.tabs[tabid].form({
+                    name: tabid + '_form',
+                    onsubmit: 'return false;'
+                });
+
+                var handle = function () {
+                    tabParent.empty();
+                    Csw.unsubscribe(Csw.enums.events.CswNodeDelete, null, handle);
+                    return false;
+                };
+
+                if (false === Csw.isNullOrEmpty(tabParent.parent(), true)) {
+                    Csw.subscribe(Csw.enums.events.CswNodeDelete, handle);
+                }
+                return cswPrivate.tabs[tabid];
+
+
             };
 
             cswPrivate.setPrivateProp = function (obj, propName) {
@@ -328,14 +326,13 @@
                         }
                     }
                 });
-                return cswPrivate.ajax.tabs;
             };
 
-            cswPublic.getEditMode = function () {
+            cswPublic.getEditMode = function() {
                 return Csw.string(cswPrivate.tabState.EditMode, 'Edit');
             };
 
-            cswPrivate.getPkForLastTab = function () {
+            cswPrivate.getPkForLastTab = function() {
                 var viewName = Csw.clientDb.getItem('CswViewId_' + cswPrivate.tabState.viewid);
                 if (!viewName) {
                     viewName = cswPrivate.tabState.viewid;
@@ -344,7 +341,7 @@
                 return ret;
             };
 
-            cswPrivate.getLastSelectedTab = function () {
+            cswPrivate.getLastSelectedTab = function() {
                 var ret = null;
                 var tryRet = Csw.clientDb.getItem(cswPrivate.getPkForLastTab());
                 if (tryRet) {
@@ -356,7 +353,7 @@
                 return ret;
             };
 
-            cswPrivate.setLastSelectedTab = function (tabno, tabid) {
+            cswPrivate.setLastSelectedTab = function(tabno, tabid) {
                 if (tabno >= 0 && tabid) {
                     var lastTab = tabno + ',' + tabid;
                     Csw.clientDb.setItem(cswPrivate.getPkForLastTab(), lastTab);
@@ -392,22 +389,27 @@
                             Multi: Csw.bool(cswPrivate.tabState.Multi),
                             ConfigMode: cswPrivate.tabState.Config
                         },
-                        success: function(data) {
+                        success: function (data) {
 
                             cswPrivate.tabState.nodetypeid = Csw.number(data.node.nodetypeid, 0);
-
+                            
                             if (Object.keys(data).length <= 0 || Object.keys(data.tabs).length <= 0) {
                                 Csw.error.throwException('Cannot create a property layout without at least one tab.', 'csw.tabsandprops.js');
                             }
-                            if (cswPrivate.tabState.EditMode !== Csw.enums.editMode.PrintReport) {
-                                var lastTab = cswPrivate.getLastSelectedTab();
-                                if (lastTab) {
-                                    cswPrivate.tabState.tabid = lastTab.tabid;
-                                    cswPrivate.tabState.tabNo = lastTab.tabno;
-                                }
+
+                            var lastTab = cswPrivate.getLastSelectedTab();
+                            if (lastTab) {
+                                cswPrivate.tabState.tabid = lastTab.tabid;
+                                cswPrivate.tabState.tabNo = lastTab.tabno;
+                            }
+
+                            function makeTabs() {
+                                cswPrivate.clearTabs();
+
+                                cswPrivate.makeIdentityTab();
 
                                 var tabIds = Csw.delimitedString();
-                                Csw.iterate(data.tabs, function(tab) {
+                                Csw.iterate(data.tabs, function (tab) {
                                     tabIds.add(tab.id);
                                 });
                                 if (false === tabIds.contains(cswPrivate.tabState.tabid)) {
@@ -415,76 +417,80 @@
                                     cswPrivate.tabState.tabNo = 0;
                                 }
 
+                                var tabno = 0;
+                                var jqTabs = [];
+                                var tabUls = [];
+                                var tabLis = [];
 
-                                var extTabs = [];
-                                var extTabMap = {};
+                                var tabFunc = function (thisTab) {
+                                    var tabStrip, tabUl;
+                                    var thisTabId = thisTab.id;
 
-                                var makeTabs = function() {
-
-                                    var onTabSelect = function(tabName) {
-                                        var ret = Csw.tryExec(cswPrivate.onBeforeTabSelect, cswPrivate.tabState.tabid);
-                                        if (ret) {
-                                            cswPrivate.makeIdentityTab();
-                                            cswPrivate.tabState.tabNo = extTabMap[tabName];
-                                            var tab = extTabs[cswPrivate.tabState.tabNo];
-
-                                            cswPrivate.makeTabContentDiv(tab.csw, tab.tabId, tab.canEditLayout);
-                                            cswPrivate.tabState.tabid = tab.tabId;
-                                            Csw.tryExec(cswPrivate.onTabSelect, cswPrivate.tabState.tabid);
-                                            cswPrivate.onTearDownProps();
-                                            cswPrivate.setLastSelectedTab(cswPrivate.tabState.tabNo, cswPrivate.tabState.tabid);
-                                            cswPrivate.getProps(cswPrivate.tabState.tabid);
-                                        }
-
-                                        return ret;
-                                    };
-
-                                    if (cswPrivate.tabsStrip) {
-                                        cswPrivate.tabsStrip.empty();
+                                    if (cswPrivate.tabState.EditMode === Csw.enums.editMode.PrintReport || jqTabs.length === 0) {
+                                        tabStrip = cswPrivate.outerTabDiv.tabDiv();
+                                        tabUl = tabStrip.ul();
+                                        jqTabs[jqTabs.length] = tabStrip;
+                                        tabUls[tabUls.length] = tabUl;
+                                    } else {
+                                        tabStrip = jqTabs[jqTabs.length - 1];
+                                        tabUl = tabUls[tabUls.length - 1];
                                     }
-                                    cswPrivate.tabsStrip = cswPrivate.outerTabDiv.tabStrip({
-                                        onTabSelect: onTabSelect,
-                                        tabPanel: {
-                                            minHeight: 200
-                                        }
+
+                                    var tabLi = tabUl.li();
+                                    tabLis.push(tabLi);
+                                    tabLi.data({
+                                        tabid: thisTabId,
+                                        tabno: tabLis.length
                                     });
+                                    tabLi.a({ href: '#tab-' + thisTabId, text: thisTab.name });
 
-                                    var tabFunc = function(TabObj) {
-                                        var thisTabId = TabObj.id;
-                                        var thisTabName = TabObj.name;
-                                        var canEditLayout = TabObj.canEditLayout;
+                                    cswPrivate.makeTabContentDiv(tabStrip, thisTabId, thisTab.canEditLayout);
 
-                                        var nextIdx = extTabs.length;
-                                        extTabs[nextIdx] = cswPrivate.tabsStrip.addTab({
-                                            title: thisTabName
-                                        });
+                                    if (Csw.string(thisTabId) === Csw.string(cswPrivate.tabState.tabid)) {
+                                        cswPrivate.tabState.tabNo = tabno;
+                                    }
+                                    if (Csw.isNullOrEmpty(cswPrivate.tabState.tabid)) {
+                                        cswPrivate.tabState.tabid = thisTabId;
+                                    }
+                                    tabno += 1;
 
-                                        extTabMap[thisTabName] = nextIdx;
-                                        extTabs[nextIdx].tabId = thisTabId;
-                                        extTabs[nextIdx].canEditLayout = canEditLayout;
-
-                                        cswPrivate.tabs[thisTabId] = extTabs[nextIdx].csw;
-
-                                        if (Csw.isNullOrEmpty(cswPrivate.tabState.tabid)) {
-                                            cswPrivate.tabState.tabid = thisTabId;
-                                        }
-                                        if (Csw.string(thisTabId) === Csw.string(cswPrivate.tabState.tabid)) {
-                                            cswPrivate.tabState.tabNo = nextIdx;
-                                        }
-                                    };
-                                    Csw.iterate(data.tabs, tabFunc);
-
-
-                                    cswPrivate.tabsStrip.setActiveTab(cswPrivate.tabState.tabNo);
-
-
-                                    cswPrivate.tabcnt = extTabs.length;
+                                    if (cswPrivate.tabState.EditMode === Csw.enums.editMode.PrintReport) {
+                                        tabStrip.$.tabs();
+                                        cswPrivate.getProps(thisTabId);
+                                        Csw.tryExec(cswPrivate.onTabSelect, thisTabId);
+                                    }
                                 };
-                                cswPrivate.makeIdentityTab().then(makeTabs);
+
+                                Csw.iterate(data.tabs, tabFunc);
+
+                                if (cswPrivate.tabState.EditMode !== Csw.enums.editMode.PrintReport) {
+                                    jqTabs[0].$.tabs({
+                                        active: cswPrivate.tabState.tabNo,
+                                        beforeActivate: function (event, ui) {
+                                            var ret = Csw.tryExec(cswPrivate.onBeforeTabSelect, cswPrivate.tabState.tabid);
+                                            if (ret) {
+                                                cswPrivate.tabState.tabNo = ui.newTab.index();
+                                                cswPrivate.tabState.tabid = ui.newTab.data('tabid');
+                                                Csw.tryExec(cswPrivate.onTabSelect, cswPrivate.tabState.tabid);
+                                                cswPrivate.form.empty();
+                                                cswPrivate.onTearDown();
+                                                cswPrivate.setLastSelectedTab(cswPrivate.tabState.tabNo, cswPrivate.tabState.tabid);
+                                                makeTabs();
+                                            }
+                                            return ret;
 
 
-                            } // success
-                        }
+                                        }
+                                    }); // tabs
+                                    cswPrivate.getProps(cswPrivate.tabState.tabid);
+                                    Csw.tryExec(cswPrivate.onTabSelect, cswPrivate.tabState.tabid);
+                                }
+
+                                cswPrivate.tabcnt = tabno;
+                            }
+
+                            makeTabs();
+                        } // success
                     }); // ajax
                 } // if-else editmode is add or preview
             }; // getTabs()
@@ -494,7 +500,7 @@
             //#region Validator
 
 
-            cswPublic.validator = function () {
+            cswPublic.validator = function() {
                 return cswPrivate.form.validator;
             };
 
@@ -526,7 +532,7 @@
                 /// <summary>
                 /// True if Multi Edit is enabled
                 /// </summary>
-                return (cswPrivate.tabState.EditMode === Csw.enums.editMode.Edit || cswPrivate.tabState.EditMode === Csw.enums.editMode.EditInPopup || cswPrivate.tabState.EditMode === Csw.enums.editMode.Temp) && cswPrivate.Multi;
+                return (cswPrivate.tabState.EditMode === Csw.enums.editMode.Edit || cswPrivate.tabState.EditMode === Csw.enums.editMode.EditInPopup || cswPrivate.tabState.EditMode === Csw.enums.editMode.Temp ) && cswPrivate.Multi  ;
             };
 
             cswPrivate.setNode = function (node) {
@@ -577,7 +583,7 @@
                 cswPrivate.tabState.selectedPropIds.remove(propid);
             };
 
-            cswPrivate.addTabId = function (tabId) {
+            cswPrivate.addTabId = function(tabId) {
                 cswPrivate.tabState.tabIds.addToFront(tabId);
             };
 
@@ -618,7 +624,7 @@
 
                 return propJson;
             };
-
+            
             cswPublic.getProps = function () {
                 /// <summary>
                 /// Get all of the properties for the current tab (NOT including the identity tab)
@@ -627,8 +633,8 @@
                 /// </summary>
                 return cswPrivate.tabState.propertyData;
             };
-
-            cswPublic.getTabIds = function () {
+            
+            cswPublic.getTabIds = function() {
                 return cswPrivate.tabState.tabIds.string();
             };
 
@@ -894,8 +900,8 @@
 
                     //    cswPublic.save(tabid);
                     //} else {
-                    Csw.tryExec(cswPrivate.onInitFinish, cswPrivate.atLeastOne.Property);
-                    Csw.tryExec(onSuccess);
+                        Csw.tryExec(cswPrivate.onInitFinish, cswPrivate.atLeastOne.Property);
+                        Csw.tryExec(onSuccess);
                     //}
                 }
 
@@ -919,7 +925,7 @@
                             RelatedNodeTypeId: Csw.string(cswPrivate.tabState.relatednodetypeid),
                             RelatedObjectClassId: Csw.string(cswPrivate.tabState.relatedobjectclassid),
                             GetIdentityTab: Csw.bool(Csw.isNullOrEmpty(cswPrivate.IdentityTab)),
-                            ForceReadOnly: cswPrivate.forceReadOnly
+                            ForceReadOnly: cswPrivate.forceReadOnly 
                         },
                         success: function (data) {
                             if (Csw.isNullOrEmpty(data) && cswPrivate.tabState.EditMode === Csw.enums.editMode.Edit) {
@@ -1093,7 +1099,7 @@
                 'use strict';
                 propCell.empty();
                 if (cswPrivate.canDisplayProp(propData, configMode)) {
-
+                    
                     var fieldOpt = Csw.nbt.propertyOption({
                         isMulti: cswPrivate.isMultiEdit,
                         fieldtype: propData.fieldtype,
@@ -1164,11 +1170,11 @@
                     }
                 }, 150);
             }; // _updateSubProps()
-
+            
             //#endregion Properties
 
             //#region commit
-
+            
             cswPublic.refresh = function (propData, refreshData) {
                 Csw.publish('onAnyNodeButtonClickFinish', true);
                 Csw.tryExec(cswPrivate.onSave, cswPublic.getNodeId(), cswPublic.getNodeKey(), cswPrivate.tabcnt, cswPrivate.tabState.nodename, cswPrivate.tabState.nodelink);
