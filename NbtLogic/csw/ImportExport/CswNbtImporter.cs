@@ -170,19 +170,26 @@ namespace ChemSW.Nbt.ImportExport
             }
             return ret;
         } // getDefinitions()
-
+        
+        /// <summary>
+        /// Returns import data table names, in import order
+        /// </summary>
+        /// <param name="IncludeCompleted">If true, also include table names for already completed imports</param>
         public StringCollection getImportDataTableNames( bool IncludeCompleted = false )
         {
             StringCollection ret = new StringCollection();
-            string WhereClause = string.Empty;
+
+            string sql = "select m." + CswNbtImportTables.ImportDataMap.datatablename +
+                         " from " + CswNbtImportTables.ImportDataMap.TableName + " m " +
+                         " join " + CswNbtImportTables.ImportDef.TableName + " d on (d." + CswNbtImportTables.ImportDef.importdefid + " = m." + CswNbtImportTables.ImportDataMap.importdefid + ")";
             if( false == IncludeCompleted )
             {
-                WhereClause = "where " + CswNbtImportTables.ImportDataMap.completed + " = '" + CswConvert.ToDbVal( false ) + "'";
+                sql += "where m." + CswNbtImportTables.ImportDataMap.completed + " = '" + CswConvert.ToDbVal( false ) + "'";
             }
-            Collection<OrderByClause> OrderBy = new Collection<OrderByClause>() { new OrderByClause( CswNbtImportTables.ImportDataMap.PkColumnName, CswEnumOrderByType.Ascending ) };
+            sql += "order by d." + CswNbtImportTables.ImportDef.sheetorder + ", m." + CswNbtImportTables.ImportDataMap.PkColumnName;
 
-            CswTableSelect ImportDataMapSelect = _CswNbtResources.makeCswTableSelect( "getImportDataTableNames_DataMap_Select", CswNbtImportTables.ImportDataMap.TableName );
-            DataTable ImportDataMapTable = ImportDataMapSelect.getTable( WhereClause, OrderBy );
+            CswArbitrarySelect ImportDataMapSelect = _CswNbtResources.makeCswArbitrarySelect( "getImportDataTableNames_DataMap_Select", sql );
+            DataTable ImportDataMapTable = ImportDataMapSelect.getTable();
             foreach( DataRow ImportDataMapRow in ImportDataMapTable.Rows )
             {
                 ret.Add( ImportDataMapRow[CswNbtImportTables.ImportDataMap.datatablename].ToString() );
