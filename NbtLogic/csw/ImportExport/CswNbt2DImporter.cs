@@ -162,11 +162,11 @@ namespace ChemSW.Nbt.ImportExport
         public CswCommaDelimitedString getDefinitionNames()
         {
             CswCommaDelimitedString ret = new CswCommaDelimitedString();
-            CswTableSelect DefSelect = _CswNbtResources.makeCswTableSelect( "loadBindings_def_select1", CswNbt2DImportTables.ImportDefinitions.TableName );
+            CswTableSelect DefSelect = _CswNbtResources.makeCswTableSelect( "loadBindings_def_select1", CswNbt2DImportTables.ImportDef.TableName );
             DataTable DefDataTable = DefSelect.getTable();
             foreach( DataRow defrow in DefDataTable.Rows )
             {
-                ret.Add( defrow[CswNbt2DImportTables.ImportDefinitions.definitionname].ToString(), false, true );
+                ret.Add( defrow[CswNbt2DImportTables.ImportDef.definitionname].ToString(), false, true );
             }
             return ret;
         } // getDefinitions()

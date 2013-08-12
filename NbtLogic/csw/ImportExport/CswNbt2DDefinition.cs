@@ -17,32 +17,32 @@ namespace ChemSW.Nbt.ImportExport
         public CswNbt2DDefinition( CswNbtResources CswNbtResources, string DefinitionName, string SheetName )
         {
             // If incoming sheet name has a $, trim it off    
-            SheetName = SheetName.TrimEnd( new char[] {'$'} );
+            SheetName = SheetName.TrimEnd( new char[] { '$' } );
 
-            CswTableSelect defSelect = CswNbtResources.makeCswTableSelect( "CswNbt2DDefinition_select", CswNbt2DImportTables.ImportDefinitions.TableName );
-            DataTable defTable = defSelect.getTable( "where lower(" + CswNbt2DImportTables.ImportDefinitions.definitionname + ") = '" + DefinitionName.ToLower() + "'" +
-                                                     "  and lower(" + CswNbt2DImportTables.ImportDefinitions.sheetname + ") = '" + SheetName.ToLower() + "'" );
+            CswTableSelect defSelect = CswNbtResources.makeCswTableSelect( "CswNbt2DDefinition_select", CswNbt2DImportTables.ImportDef.TableName );
+            DataTable defTable = defSelect.getTable( "where lower(" + CswNbt2DImportTables.ImportDef.definitionname + ") = '" + DefinitionName.ToLower() + "'" +
+                                                     "  and lower(" + CswNbt2DImportTables.ImportDef.sheetname + ") = '" + SheetName.ToLower() + "'" );
             if( defTable.Rows.Count > 0 )
             {
                 _finishConstructor( CswNbtResources, defTable.Rows[0] );
             }
             else
             {
-                throw new CswDniException( CswEnumErrorType.Error, "Invalid import definition: " + DefinitionName + " and sheetname: " + SheetName, "Could not find a matching record in " + CswNbt2DImportTables.ImportDefinitions.TableName );
+                throw new CswDniException( CswEnumErrorType.Error, "Invalid import definition: " + DefinitionName + " and sheetname: " + SheetName, "Could not find a matching record in " + CswNbt2DImportTables.ImportDef.TableName );
             }
         }
 
         public CswNbt2DDefinition( CswNbtResources CswNbtResources, Int32 ImportDefinitionId )
         {
-            CswTableSelect defSelect = CswNbtResources.makeCswTableSelect( "CswNbt2DDefinition_select", CswNbt2DImportTables.ImportDefinitions.TableName );
-            DataTable defTable = defSelect.getTable( CswNbt2DImportTables.ImportDefinitions.importdefinitionid, ImportDefinitionId );
+            CswTableSelect defSelect = CswNbtResources.makeCswTableSelect( "CswNbt2DDefinition_select", CswNbt2DImportTables.ImportDef.TableName );
+            DataTable defTable = defSelect.getTable( CswNbt2DImportTables.ImportDef.importdefinitionid, ImportDefinitionId );
             if( defTable.Rows.Count > 0 )
             {
                 _finishConstructor( CswNbtResources, defTable.Rows[0] );
             }
             else
             {
-                throw new CswDniException( CswEnumErrorType.Error, "Invalid import definition id: " + ImportDefinitionId, "Could not find a matching record in " + CswNbt2DImportTables.ImportDefinitions.TableName );
+                throw new CswDniException( CswEnumErrorType.Error, "Invalid import definition id: " + ImportDefinitionId, "Could not find a matching record in " + CswNbt2DImportTables.ImportDef.TableName );
             }
         }
 
@@ -67,15 +67,19 @@ namespace ChemSW.Nbt.ImportExport
 
         public Int32 ImportDefinitionId
         {
-            get { return CswConvert.ToInt32( _row[CswNbt2DImportTables.ImportDefinitions.importdefinitionid] ); }
+            get { return CswConvert.ToInt32( _row[CswNbt2DImportTables.ImportDef.importdefinitionid] ); }
         }
         public string DefinitionName
         {
-            get { return _row[CswNbt2DImportTables.ImportDefinitions.definitionname].ToString(); }
+            get { return _row[CswNbt2DImportTables.ImportDef.definitionname].ToString(); }
         }
         public string SheetName
         {
-            get { return _row[CswNbt2DImportTables.ImportDefinitions.sheetname].ToString(); }
+            get { return _row[CswNbt2DImportTables.ImportDef.sheetname].ToString(); }
+        }
+        public Int32 SheetOrder
+        {
+            get { return CswConvert.ToInt32( _row[CswNbt2DImportTables.ImportDef.sheetorder] ); }
         }
 
         public CswNbt2DBindingCollection Bindings = new CswNbt2DBindingCollection();
@@ -91,24 +95,24 @@ namespace ChemSW.Nbt.ImportExport
             if( Int32.MinValue != ImportDefinitionId )
             {
                 // Order
-                CswTableSelect OrderSelect = _CswNbtResources.makeCswTableSelect( "loadBindings_order_select", CswNbt2DImportTables.ImportOrder.TableName );
-                DataTable OrderDataTable = OrderSelect.getTable( CswNbt2DImportTables.ImportOrder.importdefinitionid, ImportDefinitionId );
+                CswTableSelect OrderSelect = _CswNbtResources.makeCswTableSelect( "loadBindings_order_select", CswNbt2DImportTables.ImportDefOrder.TableName );
+                DataTable OrderDataTable = OrderSelect.getTable( CswNbt2DImportTables.ImportDefOrder.importdefinitionid, ImportDefinitionId );
                 foreach( DataRow OrderRow in OrderDataTable.Rows )
                 {
-                    this.ImportOrder.Add( CswConvert.ToInt32( OrderRow[CswNbt2DImportTables.ImportOrder.importorder] ), new CswNbt2DOrder( _CswNbtResources, OrderRow ) );
+                    this.ImportOrder.Add( CswConvert.ToInt32( OrderRow[CswNbt2DImportTables.ImportDefOrder.importorder] ), new CswNbt2DOrder( _CswNbtResources, OrderRow ) );
                 }
 
                 // Bindings
-                CswTableSelect BindingsSelect = _CswNbtResources.makeCswTableSelect( "loadBindings_bindings_select", CswNbt2DImportTables.ImportBindings.TableName );
-                DataTable BindingsDataTable = BindingsSelect.getTable( CswNbt2DImportTables.ImportBindings.importdefinitionid, ImportDefinitionId );
+                CswTableSelect BindingsSelect = _CswNbtResources.makeCswTableSelect( "loadBindings_bindings_select", CswNbt2DImportTables.ImportDefBindings.TableName );
+                DataTable BindingsDataTable = BindingsSelect.getTable( CswNbt2DImportTables.ImportDefBindings.importdefinitionid, ImportDefinitionId );
                 foreach( DataRow BindingRow in BindingsDataTable.Rows )
                 {
                     Bindings.Add( new CswNbt2DBinding( _CswNbtResources, BindingRow ) );
                 }
 
                 // Row Relationships
-                CswTableSelect RelationshipsSelect = _CswNbtResources.makeCswTableSelect( "loadBindings_rel_select", CswNbt2DImportTables.ImportRelationships.TableName );
-                DataTable RelationshipsDataTable = RelationshipsSelect.getTable( CswNbt2DImportTables.ImportRelationships.importdefinitionid, ImportDefinitionId );
+                CswTableSelect RelationshipsSelect = _CswNbtResources.makeCswTableSelect( "loadBindings_rel_select", CswNbt2DImportTables.ImportDefRelationships.TableName );
+                DataTable RelationshipsDataTable = RelationshipsSelect.getTable( CswNbt2DImportTables.ImportDefRelationships.importdefinitionid, ImportDefinitionId );
                 foreach( DataRow RelRow in RelationshipsDataTable.Rows )
                 {
                     RowRelationships.Add( new CswNbt2DRowRelationship( _CswNbtResources, RelRow ) );

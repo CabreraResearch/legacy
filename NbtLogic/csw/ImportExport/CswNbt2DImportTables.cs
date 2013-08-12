@@ -5,19 +5,20 @@ namespace ChemSW.Nbt.ImportExport
 {
     public class CswNbt2DImportTables
     {
-        public class ImportDefinitions
+        public class ImportDef
         {
-            public const string TableName = "import_definitions";
+            public const string TableName = "import_def";
             public const string PkColumnName = importdefinitionid;
 
             public const string importdefinitionid = "importdefinitionid";
             public const string definitionname = "definitionname";
             public const string sheetname = "sheetname";
+            public const string sheetorder = "sheetorder";
         }
         
-        public class ImportOrder
+        public class ImportDefOrder
         {
-            public const string TableName = "import_order";
+            public const string TableName = "import_def_order";
             public const string PkColumnName = importorderid;
 
             public const string importorderid = "importorderid";
@@ -27,9 +28,9 @@ namespace ChemSW.Nbt.ImportExport
             public const string instance = "instance";
         }
 
-        public class ImportBindings
+        public class ImportDefBindings
         {
-            public const string TableName = "import_bindings";
+            public const string TableName = "import_def_bindings";
             public const string PkColumnName = importbindingid;
 
             public const string importbindingid = "importbindingid";
@@ -41,9 +42,9 @@ namespace ChemSW.Nbt.ImportExport
             public const string instance = "instance";
         }
 
-        public class ImportRelationships
+        public class ImportDefRelationships
         {
-            public const string TableName = "import_relationships";
+            public const string TableName = "import_def_relationships";
             public const string PkColumnName = importrelationshipid;
 
             public const string importrelationshipid = "importrelationshipid";
@@ -67,7 +68,7 @@ namespace ChemSW.Nbt.ImportExport
 
         public class ImportDataN
         {
-            public const string TableNamePrefix = "importdata";
+            public const string TableNamePrefix = "import_data";
             public const string PkColumnName = importdataid;
 
             public const string importdataid = "importdataid";

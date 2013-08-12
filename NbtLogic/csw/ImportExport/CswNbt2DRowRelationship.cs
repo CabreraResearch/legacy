@@ -18,23 +18,23 @@ namespace ChemSW.Nbt.ImportExport
 
         public Int32 ImportRelationshipId
         {
-            get { return CswConvert.ToInt32( _row[CswNbt2DImportTables.ImportRelationships.importrelationshipid] ); }
+            get { return CswConvert.ToInt32( _row[CswNbt2DImportTables.ImportDefRelationships.importrelationshipid] ); }
         }
         public Int32 ImportDefinitionId
         {
-            get { return CswConvert.ToInt32( _row[CswNbt2DImportTables.ImportRelationships.importdefinitionid] ); }
+            get { return CswConvert.ToInt32( _row[CswNbt2DImportTables.ImportDefRelationships.importdefinitionid] ); }
         }
         public string NodeTypeName
         {
-            get { return _row[CswNbt2DImportTables.ImportRelationships.nodetypename].ToString(); }
+            get { return _row[CswNbt2DImportTables.ImportDefRelationships.nodetypename].ToString(); }
         }
         public string RelationshipName
         {
-            get { return _row[CswNbt2DImportTables.ImportRelationships.relationship].ToString(); }
+            get { return _row[CswNbt2DImportTables.ImportDefRelationships.relationship].ToString(); }
         }
         public Int32 Instance
         {
-            get { return CswConvert.ToInt32( _row[CswNbt2DImportTables.ImportRelationships.instance] ); }
+            get { return CswConvert.ToInt32( _row[CswNbt2DImportTables.ImportDefRelationships.instance] ); }
         }
 
         public CswNbtMetaDataNodeType NodeType

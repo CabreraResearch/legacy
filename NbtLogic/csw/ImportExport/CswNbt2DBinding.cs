@@ -27,31 +27,31 @@ namespace ChemSW.Nbt.ImportExport
 
         public Int32 ImportDefinitionId
         {
-            get { return CswConvert.ToInt32( _row[CswNbt2DImportTables.ImportBindings.importdefinitionid] ); }
+            get { return CswConvert.ToInt32( _row[CswNbt2DImportTables.ImportDefBindings.importdefinitionid] ); }
         }
         public Int32 ImportBindingId
         {
-            get { return CswConvert.ToInt32( _row[CswNbt2DImportTables.ImportBindings.importbindingid] ); }
+            get { return CswConvert.ToInt32( _row[CswNbt2DImportTables.ImportDefBindings.importbindingid] ); }
         }
         public string SourceColumnName
         {
-            get { return _row[CswNbt2DImportTables.ImportBindings.sourcecolumnname].ToString(); }
+            get { return _row[CswNbt2DImportTables.ImportDefBindings.sourcecolumnname].ToString(); }
         }
         public string DestNodeTypeName
         {
-            get { return _row[CswNbt2DImportTables.ImportBindings.destnodetypename].ToString(); }
+            get { return _row[CswNbt2DImportTables.ImportDefBindings.destnodetypename].ToString(); }
         }
         public string DestPropName
         {
-            get { return _row[CswNbt2DImportTables.ImportBindings.destpropname].ToString(); }
+            get { return _row[CswNbt2DImportTables.ImportDefBindings.destpropname].ToString(); }
         }
         public string DestSubFieldName
         {
-            get { return _row[CswNbt2DImportTables.ImportBindings.destsubfield].ToString(); }
+            get { return _row[CswNbt2DImportTables.ImportDefBindings.destsubfield].ToString(); }
         }
         public Int32 Instance
         {
-            get { return CswConvert.ToInt32( _row[CswNbt2DImportTables.ImportBindings.instance] ); }
+            get { return CswConvert.ToInt32( _row[CswNbt2DImportTables.ImportDefBindings.instance] ); }
         }
 
         public string ImportDataColumnName

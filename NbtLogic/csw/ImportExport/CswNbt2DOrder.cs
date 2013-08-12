@@ -20,23 +20,23 @@ namespace ChemSW.Nbt.ImportExport
 
         public Int32 ImportOrderId
         {
-            get { return CswConvert.ToInt32( _row[CswNbt2DImportTables.ImportOrder.importorderid] ); }
+            get { return CswConvert.ToInt32( _row[CswNbt2DImportTables.ImportDefOrder.importorderid] ); }
         }
         public Int32 ImportDefinitionId
         {
-            get { return CswConvert.ToInt32( _row[CswNbt2DImportTables.ImportOrder.importdefinitionid] ); }
+            get { return CswConvert.ToInt32( _row[CswNbt2DImportTables.ImportDefOrder.importdefinitionid] ); }
         }
         public Int32 Order
         {
-            get { return CswConvert.ToInt32( _row[CswNbt2DImportTables.ImportOrder.importorder] ); }
+            get { return CswConvert.ToInt32( _row[CswNbt2DImportTables.ImportDefOrder.importorder] ); }
         }
         public string NodeTypeName
         {
-            get { return _row[CswNbt2DImportTables.ImportOrder.nodetypename].ToString(); }
+            get { return _row[CswNbt2DImportTables.ImportDefOrder.nodetypename].ToString(); }
         }
         public Int32 Instance
         {
-            get { return CswConvert.ToInt32( _row[CswNbt2DImportTables.ImportOrder.instance] ); }
+            get { return CswConvert.ToInt32( _row[CswNbt2DImportTables.ImportDefOrder.instance] ); }
         }
 
         public CswNbtMetaDataNodeType NodeType
