@@ -37,6 +37,7 @@ namespace ChemSW.Nbt.Schema
             _upgradeGHSNTP();
             _upgradeTaskNTPs();
             _upgradeSizeNTPs();
+            _upgradeEquipmentTypeNTP();
         }
 
         #region ObjectClassProps
@@ -295,6 +296,17 @@ namespace ChemSW.Nbt.Schema
                 FkValue = MaterialOCP.PropId,
                 ValuePropId = SupplierOCP.PropId,
                 ValuePropType = CswEnumNbtViewPropIdType.ObjectClassPropId.ToString()
+            } );
+        }
+
+        private void _upgradeEquipmentTypeNTP()
+        {
+            CswNbtMetaDataObjectClass EquipmentTypeOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.EquipmentTypeClass );
+            _addOCP( EquipmentTypeOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+            {
+                PropName = CswNbtObjClassEquipmentType.PropertyName.TypeName,
+                FieldType = CswEnumNbtFieldType.Text,
+                IsRequired = true
             } );
         }
 
