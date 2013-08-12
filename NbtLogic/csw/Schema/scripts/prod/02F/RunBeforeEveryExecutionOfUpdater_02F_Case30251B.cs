@@ -239,9 +239,9 @@ namespace ChemSW.Nbt.Schema
                 FieldType = CswEnumNbtFieldType.PropertyReference,
                 IsFk = true,
                 FkType = CswEnumNbtViewPropIdType.ObjectClassPropId.ToString(),
-                FkValue = UserPhoneOCP.PropId,
-                ValuePropId = TechnicianOCP.PropId,
-                ValuePropType = CswEnumNbtViewPropIdType.ObjectClassPropId.ToString()
+                FkValue = TechnicianOCP.PropId,
+                ValuePropType = CswEnumNbtViewPropIdType.ObjectClassPropId.ToString(),
+                ValuePropId = UserPhoneOCP.PropId
             } );
             _addOCP( TaskOC, new CswNbtWcfMetaDataModel.ObjectClassProp
             {
