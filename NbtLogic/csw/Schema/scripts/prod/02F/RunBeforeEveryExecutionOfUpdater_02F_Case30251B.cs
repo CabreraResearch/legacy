@@ -36,6 +36,7 @@ namespace ChemSW.Nbt.Schema
             _upgradeFeedbackNTP();
             _upgradeGHSNTP();
             _upgradeTaskNTPs();
+            _upgradeSizeNTPs();
         }
 
         #region ObjectClassProps
@@ -252,6 +253,48 @@ namespace ChemSW.Nbt.Schema
             {
                 PropName = CswNbtObjClassTask.PropertyName.UpperLimit,
                 FieldType = CswEnumNbtFieldType.Number
+            } );
+        }
+
+        private void _upgradeSizeNTPs()
+        {
+            CswNbtMetaDataObjectClass SizeOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.SizeClass );
+            CswCommaDelimitedString ContainerTypeOptions = new CswCommaDelimitedString
+            {
+                "Aboveground Tank [A]",
+                "Bag [J]",
+                "Belowground Tank [B]",
+                "Box [K]",
+                "Can [F]",
+                "Carboy [G]",
+                "Cylinder [L]",
+                "Fiberdrum [I]",
+                "Glass Bottle or Jug [M]",
+                "Plastic [N]",
+                "Plastic or Non-Metal Drum [E]",
+                "Steel Drum [D]",
+                "Tank Inside Building [C]",
+                "Tank Wagon [P]",
+                "Tote Bin [O]"
+            };
+            _addOCP( SizeOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+            {
+                PropName = CswNbtObjClassSize.PropertyName.ContainerType,
+                FieldType = CswEnumNbtFieldType.List,
+                ListOptions = ContainerTypeOptions.ToString()
+            } );
+            CswNbtMetaDataObjectClass ChemicalOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass );
+            CswNbtMetaDataObjectClassProp SupplierOCP = ChemicalOC.getObjectClassProp( CswNbtObjClassChemical.PropertyName.Supplier );
+            CswNbtMetaDataObjectClassProp MaterialOCP = SizeOC.getObjectClassProp( CswNbtObjClassSize.PropertyName.Material );
+            _addOCP( SizeOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+            {
+                PropName = CswNbtObjClassSize.PropertyName.Supplier,
+                FieldType = CswEnumNbtFieldType.PropertyReference,
+                IsFk = true,
+                FkType = CswEnumNbtViewPropIdType.ObjectClassPropId.ToString(),
+                FkValue = MaterialOCP.PropId,
+                ValuePropId = SupplierOCP.PropId,
+                ValuePropType = CswEnumNbtViewPropIdType.ObjectClassPropId.ToString()
             } );
         }
 

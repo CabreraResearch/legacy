@@ -16,6 +16,8 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Dispensable = "Dispensable";
             public const string CatalogNo = "Catalog No";
             public const string UnitCount = "Unit Count";
+            public const string ContainerType = "Container Type";
+            public const string Supplier = "Supplier";
         }
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
@@ -114,6 +116,8 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropLogical Dispensable { get { return _CswNbtNode.Properties[PropertyName.Dispensable]; } }
         public CswNbtNodePropText CatalogNo { get { return _CswNbtNode.Properties[PropertyName.CatalogNo]; } }
         public CswNbtNodePropNumber UnitCount { get { return _CswNbtNode.Properties[PropertyName.UnitCount]; } }
+        public CswNbtNodePropList ContainerType { get { return _CswNbtNode.Properties[PropertyName.ContainerType]; } }
+        public CswNbtNodePropPropertyReference Supplier { get { return _CswNbtNode.Properties[PropertyName.Supplier]; } }
 
         #endregion
 
