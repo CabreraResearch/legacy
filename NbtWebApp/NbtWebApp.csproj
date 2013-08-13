@@ -104,6 +104,9 @@
     <Compile Include="Services\Containers.svc.cs">
       <DependentUpon>Containers.svc</DependentUpon>
     </Compile>
+    <Compile Include="Services\Import.svc.cs">
+      <DependentUpon>Import.svc</DependentUpon>
+    </Compile>
     <Compile Include="Services\Properties.svc.cs">
       <DependentUpon>Properties.svc</DependentUpon>
     </Compile>
@@ -204,6 +207,7 @@
     <Compile Include="WebSvc\Logic\CISPro\CswNbtWebServiceRequesting.cs" />
     <Compile Include="WebSvc\Logic\DemoData\CswNbtDemoDataRequests.cs" />
     <Compile Include="WebSvc\Logic\DemoData\CswNbtDemoDataReturn.cs" />
+    <Compile Include="WebSvc\Logic\Import\CswNbtWebServiceImport.cs" />
     <Compile Include="WebSvc\Logic\Menus\CswEnumNbtMainMenuActions.cs" />
     <Compile Include="WebSvc\Logic\DemoData\CswNbtDemoDataManager.cs" />
     <Compile Include="WebSvc\Logic\Menus\CswNbtWebServiceSearchMenu.cs" />
@@ -771,6 +775,7 @@
     <Content Include="Scripts\mousetrap.min.js" />
     <Content Include="Scripts\q.js" />
     <Content Include="Scripts\q.min.js" />
+    <Content Include="Services\Import.svc" />
     <Content Include="Services\Properties.svc" />
     <Content Include="Services\Balances.svc" />
     <Content Include="Services\Search.svc" />
