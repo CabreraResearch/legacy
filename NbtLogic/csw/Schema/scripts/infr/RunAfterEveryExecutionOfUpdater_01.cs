@@ -39,12 +39,12 @@ namespace ChemSW.Nbt.Schema
 
         public override string ScriptName
         {
-            get { throw new NotImplementedException(); }
+            get { return "RunAfter_PostScript"; }
         }
 
         public override bool AlwaysRun
         {
-            get { throw new NotImplementedException(); }
+            get { return true; }
         }
 
         public static string Title = "Post-Script";

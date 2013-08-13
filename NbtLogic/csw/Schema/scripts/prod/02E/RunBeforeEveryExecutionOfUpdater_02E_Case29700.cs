@@ -1,4 +1,3 @@
-using System;
 using System.Data;
 using ChemSW.DB;
 using ChemSW.Nbt.csw.Dev;
@@ -30,12 +29,12 @@ namespace ChemSW.Nbt.Schema
 
         public override string ScriptName
         {
-            get { throw new NotImplementedException(); }
+            get { return "02E_Case29700"; }
         }
 
         public override bool AlwaysRun
         {
-            get { throw new NotImplementedException(); }
+            get { return false; }
         }
 
         /// <summary>
