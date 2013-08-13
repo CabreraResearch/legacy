@@ -35,7 +35,7 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClassProp AvailableWorkUnitsOCP = UserOC.getObjectClassProp( CswNbtObjClassUser.PropertyName.AvailableWorkUnits );
             if( null == AvailableWorkUnitsOCP )
             {
-                _CswNbtSchemaModTrnsctn.createObjectClassProp( UserOC, new CswNbtWcfMetaDataModel.ObjectClassProp( UserOC )
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( UserOC, new CswNbtWcfMetaDataModel.ObjectClassProp()
                     {
                         PropName = CswNbtObjClassUser.PropertyName.AvailableWorkUnits,
                         FieldType = CswEnumNbtFieldType.MultiList

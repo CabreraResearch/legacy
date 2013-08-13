@@ -711,10 +711,41 @@ select * from (
             CswNbtMetaDataObjectClass WorkUnitOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.WorkUnitClass );
             foreach( var workUnit in WorkUnitOC.getNodeIdAndNames( false, false ) )
             {
-                opts[workUnit.Value] = workUnit.Key.ToString();
+                opts[workUnit.Key.ToString()] = workUnit.Value;
             }
 
             return opts;
+        }
+
+        /// <summary>
+        /// Gets the Default Work Unit or if that Node does not exist the first found Work Unit (not null safe!)
+        /// </summary>
+        /// <returns></returns>
+        public CswPrimaryKey GetFirstAvailableWorkUnitNodeId()
+        {
+            CswPrimaryKey ret = null;
+
+            CswNbtMetaDataObjectClass WorkUnitOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.WorkUnitClass );
+            CswPrimaryKey first = null;
+            foreach( var workUnit in WorkUnitOC.getNodeIdAndNames( false, false ) )
+            {
+                if( workUnit.Value == "Default Work Unit" )
+                {
+                    ret = workUnit.Key;
+                }
+
+                if( null == first )
+                {
+                    first = workUnit.Key;
+                }
+            }
+
+            if( null == ret )
+            {
+                ret = first;
+            }
+
+            return ret;
         }
 
     }//CswNbtObjClassUser
