@@ -45,6 +45,7 @@ namespace ChemSW.Nbt.Schema
             _upgradeLocationNTP();
             _upgradeContainerNTPs();
             _upgradeInventoryGroupNTPs();
+            _upgradeChemicalNTP();
         }
 
         #region Vendor
@@ -510,6 +511,24 @@ namespace ChemSW.Nbt.Schema
         }
 
         #endregion InventoryGroup
+
+        #region Chemical
+
+        private void _upgradeChemicalNTP()
+        {
+            CswNbtMetaDataObjectClass ChemicalOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass );
+            CswNbtMetaDataObjectClass LQNoOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.LQNoClass );
+            _addOCP( ChemicalOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+            {
+                PropName = CswNbtObjClassChemical.PropertyName.LQNo,
+                FieldType = CswEnumNbtFieldType.Relationship,
+                IsFk = true,
+                FkType = CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(),
+                FkValue = LQNoOC.ObjectClassId
+            } );
+        }
+
+        #endregion Chemical
 
         #region Private
 
