@@ -289,6 +289,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
 
             UsernameProperty.SetOnPropChange( OnUserNamePropChange );
+            AvailableWorkUnits.InitOptions = InitAvailableWorkUnitsOptions;
 
             // BZ 6941, 8288
             // Set the Default View to use the selected User, rather than the logged in User
@@ -706,6 +707,12 @@ select * from (
         public Dictionary<string, string> InitAvailableWorkUnitsOptions()
         {
             Dictionary<string, string> opts = new Dictionary<string, string>();
+
+            CswNbtMetaDataObjectClass WorkUnitOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.WorkUnitClass );
+            foreach( var workUnit in WorkUnitOC.getNodeIdAndNames( false, false ) )
+            {
+                opts[workUnit.Value] = workUnit.Key.ToString();
+            }
 
             return opts;
         }
