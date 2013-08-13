@@ -256,19 +256,30 @@ namespace ChemSW.Nbt.ObjClasses
 
         }
 
+        private void _updateCartCounts( bool IsDelete = false )
+        {
+            if( false == Node.IsTemp )
+            {
+                int Incrementer = 1;
+                if( IsDelete )
+                {
+                    Incrementer = -1;
+                }
+                if( _IsFavorite )
+                {
+                    UserCache.CartCounts.FavoriteRequestItems += Incrementer;
+                    UserCache.update( _CswNbtResources );
+                }
+                if( _IsRecurring )
+                {
+                    UserCache.CartCounts.RecurringRequestItems += Incrementer;
+                    UserCache.update( _CswNbtResources );
+                }
+            }
+        }
         public override void beforePropertySetDeleteNode()
         {
-            CswNbtObjClassUser.Cache UserCache = CswNbtObjClassUser.getCurrentUserCache( _CswNbtResources );
-            if( _IsFavorite )
-            {
-                UserCache.CartCounts.FavoriteRequestItems -= 1;
-                UserCache.update( _CswNbtResources );
-            }
-            if ( _IsRecurring )
-            {
-                UserCache.CartCounts.RecurringRequestItems -= 1;
-                UserCache.update( _CswNbtResources );
-            }
+            _updateCartCounts( IsDelete: true );
         }
 
         /// <summary>
@@ -672,9 +683,7 @@ namespace ChemSW.Nbt.ObjClasses
                     NextReorderDate.setHidden( value : false, SaveToDb : true );
                     Name.setHidden( value : true, SaveToDb : true );
 
-                    CswNbtObjClassUser.Cache UserCache = CswNbtObjClassUser.getCurrentUserCache( _CswNbtResources );
-                    UserCache.CartCounts.RecurringRequestItems += 1;
-                    UserCache.update( _CswNbtResources );
+                    _updateCartCounts();
                 }
                 else if( false == _IsFavorite )
                 {
@@ -707,9 +716,7 @@ namespace ChemSW.Nbt.ObjClasses
                     RecurringFrequency.setHidden( value : true, SaveToDb : true );
                     Name.setHidden( value : false, SaveToDb : true );
 
-                    CswNbtObjClassUser.Cache UserCache = CswNbtObjClassUser.getCurrentUserCache( _CswNbtResources );
-                    UserCache.CartCounts.FavoriteRequestItems += 1;
-                    UserCache.update( _CswNbtResources );
+                    _updateCartCounts();
                 }
                 else if( false == _IsRecurring )
                 {

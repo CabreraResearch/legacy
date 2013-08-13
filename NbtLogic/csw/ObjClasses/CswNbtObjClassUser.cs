@@ -6,14 +6,11 @@ using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 using ChemSW.Security;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
-using System.IO;
 using System.Runtime.Serialization;
-using System.Runtime.Serialization.Json;
 using System.Text.RegularExpressions;
 
 namespace ChemSW.Nbt.ObjClasses
@@ -538,7 +535,8 @@ namespace ChemSW.Nbt.ObjClasses
         [DataContract]
         public class Cache
         {
-            private readonly CswNbtResources _Resources;
+            private CswNbtObjClassUser _CurrentUser = null;
+            private CswNbtResources _Resources = null;
             public Cache( CswNbtResources Resources )
             {
                 _Resources = Resources;
@@ -591,41 +589,40 @@ namespace ChemSW.Nbt.ObjClasses
 
             public void update( CswNbtResources Resources )
             {
-                if ( null != Resources )
+                _Resources = _Resources ?? Resources;
+                if ( null != _Resources )
                 {
-                    CswNbtObjClassUser CurrentUser = Resources.Nodes[Resources.CurrentNbtUser.UserId];
-                    if ( null != CurrentUser )
+                    _CurrentUser = _CurrentUser ?? _Resources.Nodes[_Resources.CurrentNbtUser.UserId];
+                    if ( null != _CurrentUser )
                     {
-                        CurrentUser.CurrentCache = this;
-                        CurrentUser.postChanges( ForceUpdate: false );
+                        _CurrentUser.CurrentCache = this;
+                        _CurrentUser.postChanges( ForceUpdate: false );
                     }
                 }
             }
         }
 
+        private Cache _CurrentCache;
         public Cache CurrentCache
         {
             get
             {
-                return getCurrentUserCache( _CswNbtResources );
+                return _CurrentCache ?? ( _CurrentCache = getCurrentUserCache( _CswNbtResources ) );
             }
             set
             {
-                Cache Cache = value;
-                string Memo = JsonConvert.SerializeObject( Cache );
+                _CurrentCache = value;
+                string Memo = CswSerialize<Cache>.ToString( _CurrentCache );
                 CachedData.Text = Memo;
             }
         }
 
         public static Cache getCurrentUserCache( CswNbtResources Resources )
         {
-            //return ( (CswNbtObjClassUser) Resources.CurrentNbtUser ).CurrentCache;
             Cache Ret = new Cache( Resources );
             if ( false == string.IsNullOrEmpty( Resources.CurrentNbtUser.CachedData ) )
             {
-                DataContractJsonSerializer Dcjs = new DataContractJsonSerializer( typeof( Cache ) );
-                Stream MemoStream = CswConvert.ToStream( Resources.CurrentNbtUser.CachedData );
-                Ret = (Cache) Dcjs.ReadObject( MemoStream );
+                Ret = CswSerialize<Cache>.ToObject( Resources.CurrentNbtUser.CachedData );
             }
             return Ret;
         }

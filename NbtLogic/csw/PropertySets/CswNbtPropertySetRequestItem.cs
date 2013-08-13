@@ -15,7 +15,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Object Class property names
         /// </summary>
-        public new class PropertyName: CswNbtObjClass.PropertyName
+        public new class PropertyName : CswNbtObjClass.PropertyName
         {
             /// <summary>
             /// Relationship(<see cref="CswNbtNodePropRelationship"/> ) to the Inventory Group (<see cref="CswNbtObjClassInventoryGroup"/>) from which the Request Item will be Fulfilled.
@@ -138,17 +138,17 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Copy the Request Item
         /// </summary>
-        public CswNbtPropertySetRequestItem copyNode(bool PostChanges = true, bool ClearRequest = true)
+        public CswNbtPropertySetRequestItem copyNode( bool PostChanges = true, bool ClearRequest = true )
         {
             CswNbtPropertySetRequestItem RetCopy = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswEnumNbtMakeNodeOperation.DoNothing );
             RetCopy.Node.copyPropertyValues( Node );
             RetCopy.Status.Value = Statuses.Pending;
-            if( ClearRequest )
+            if ( ClearRequest )
             {
                 RetCopy.Request.RelatedNodeId = null;
             }
             _toggleReadOnlyProps( false, RetCopy );
-            if( PostChanges )
+            if ( PostChanges )
             {
                 RetCopy.postChanges( true );
             }
@@ -277,7 +277,7 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 CswNbtActRequesting RequestAct = new CswNbtActRequesting( _CswNbtResources );
                 CswNbtObjClassRequest CurrentRequest = RequestAct.getCurrentRequestNode();
-                if( null != CurrentRequest )
+                if ( null != CurrentRequest )
                 {
                     // In sched rule(s), no Current Cart will exist
                     Request.RelatedNodeId = CurrentRequest.NodeId;
@@ -300,7 +300,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             beforePropertySetWriteNode( IsCopy, OverrideUniqueValidation );
             _setDefaultValues();
-            
+
             Description.StaticText = setRequestDescription();
             CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
         }//beforeWriteNode()
@@ -314,18 +314,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
         {
-            CswNbtObjClassUser.Cache UserCache = CswNbtObjClassUser.getCurrentUserCache( _CswNbtResources );
-            switch( Status.Value )
-            {
-                case Statuses.Pending:
-                    UserCache.CartCounts.PendingRequestItems -= 1;
-                    UserCache.update( _CswNbtResources );
-                    break;
-                case Statuses.Submitted:
-                    UserCache.CartCounts.SubmittedRequestItems -= 1;
-                    UserCache.update( _CswNbtResources );
-                    break;
-            }
+            _updateCartCounts( IsDelete: true );
             beforePropertySetDeleteNode();
             CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes );
 
@@ -407,9 +396,46 @@ namespace ChemSW.Nbt.ObjClasses
 
             return Ret;
         }
+
         #endregion
 
         #region Property Set specific properties
+
+        private CswNbtObjClassUser.Cache _UserCache = null;
+        public CswNbtObjClassUser.Cache UserCache { get { return _UserCache ?? ( _UserCache = CswNbtObjClassUser.getCurrentUserCache( _CswNbtResources ) ); } }
+
+        private void _updateCartCounts( bool IsDelete = false )
+        {
+            if ( false == Node.IsTemp )
+            {
+                int Incrementer = 1;
+                if ( IsDelete )
+                {
+                    Incrementer = -1;
+                }
+
+                switch ( Status.Value )
+                {
+                    case Statuses.Pending:
+                        UserCache.CartCounts.PendingRequestItems += Incrementer;
+                        UserCache.update( _CswNbtResources );
+                        break;
+                    case Statuses.Submitted:
+                        UserCache.CartCounts.SubmittedRequestItems += Incrementer;
+                        UserCache.update( _CswNbtResources );
+                        break;
+                }
+
+                //If the Item is moving from Pending to something else
+                string LastStatus = Status.GetOriginalPropRowValue();
+                if ( Status.Value != Statuses.Pending &&
+                    LastStatus == Statuses.Pending )
+                {
+                    UserCache.CartCounts.PendingRequestItems -= 1;
+                    UserCache.update( _CswNbtResources );
+                }
+            }
+        }
 
         public CswNbtNodePropButton Fulfill { get { return _CswNbtNode.Properties[PropertyName.Fulfill]; } }
         public CswNbtNodePropList Status { get { return _CswNbtNode.Properties[PropertyName.Status]; } }
@@ -427,16 +453,9 @@ namespace ChemSW.Nbt.ObjClasses
             ExternalOrderNumber.setHidden( value: ( Status.Value == Statuses.Pending ), SaveToDb: true );
             Type.setHidden( value: ( Status.Value == Statuses.Pending ), SaveToDb: true );
 
-            CswNbtObjClassUser.Cache UserCache = CswNbtObjClassUser.getCurrentUserCache( _CswNbtResources );
             switch ( Status.Value )
             {
-                case Statuses.Pending:
-                    UserCache.CartCounts.PendingRequestItems += 1;
-                    UserCache.update( _CswNbtResources );
-                    break;
                 case Statuses.Submitted:
-                    UserCache.CartCounts.SubmittedRequestItems += 1;
-                    UserCache.update( _CswNbtResources );
                     toggleReadOnlyProps( true, this );
                     break;
                 case Statuses.Cancelled: //This fallthrough is intentional
@@ -451,18 +470,7 @@ namespace ChemSW.Nbt.ObjClasses
                     break;
             }
 
-            if( Status.Text != Statuses.Pending )
-            {
-                string LastStatus = Status.GetOriginalPropRowValue();
-                switch ( LastStatus )
-                {
-                    case Statuses.Pending:
-                        UserCache.CartCounts.PendingRequestItems -= 1;
-                        UserCache.update( _CswNbtResources );
-                        break;
-                }
-            }            
-            
+            _updateCartCounts();
 
             onStatusPropChange( Prop );
 
