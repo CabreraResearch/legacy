@@ -228,7 +228,7 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 clearFailedLoginCount();
             }
-
+            CachedData.setHidden( value: true, SaveToDb: true );
             // BZ 9170
             _CswNbtResources.ConfigVbls.setConfigVariableValue( "cache_lastupdated", DateTime.Now.ToString() );
 
