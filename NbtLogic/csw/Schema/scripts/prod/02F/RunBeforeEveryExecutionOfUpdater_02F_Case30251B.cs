@@ -43,6 +43,7 @@ namespace ChemSW.Nbt.Schema
             _upgradeRegulatoryListNTP();
             _upgradePrinterNTP();
             _upgradeLocationNTP();
+            _upgradeContainerNTPs();
         }
 
         #region Vendor
@@ -480,6 +481,18 @@ namespace ChemSW.Nbt.Schema
         }
 
         #endregion Location
+
+        #region Container
+
+        private void _upgradeContainerNTPs()
+        {
+            CswNbtMetaDataObjectClass ContainerOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerClass );
+            _createGridOCPFromNTP( ContainerOC, CswNbtObjClassContainer.PropertyName.ContainerDispenseTransactions );
+            _createGridOCPFromNTP( ContainerOC, CswNbtObjClassContainer.PropertyName.Documents );
+            _createGridOCPFromNTP( ContainerOC, CswNbtObjClassContainer.PropertyName.SubmittedRequests );
+        }
+
+        #endregion Container
 
         #region Private
 
