@@ -49,6 +49,7 @@ namespace ChemSW.Nbt.Schema
             _upgradeMaterialSetOCNTPs();
             _upgradeNonChemicalNTP();
             _upgradeEquipmentAssemblyNTPs();
+            _upgradeEquipmentNTPs();
         }
 
         #region Vendor
@@ -726,6 +727,172 @@ namespace ChemSW.Nbt.Schema
         }
 
         #endregion EquipmentAssembly
+
+        #region Equipment
+
+        private void _upgradeEquipmentNTPs()
+        {
+            CswNbtMetaDataObjectClass EquipmentOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.EquipmentClass );
+            CswCommaDelimitedString ConditionOptions = new CswCommaDelimitedString
+            {
+                "New", 
+                "Refurbished",
+                "Used"
+            };
+            _addOCP( EquipmentOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+            {
+                PropName = CswNbtObjClassEquipment.PropertyName.Condition,
+                FieldType = CswEnumNbtFieldType.List,
+                ListOptions = ConditionOptions.ToString()
+            } );
+            _addOCP( EquipmentOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+            {
+                PropName = CswNbtObjClassEquipment.PropertyName.ContractNo,
+                FieldType = CswEnumNbtFieldType.Text
+            } );
+            _addOCP( EquipmentOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+            {
+                PropName = CswNbtObjClassEquipment.PropertyName.Description,
+                FieldType = CswEnumNbtFieldType.Memo
+            } );
+            _addOCP( EquipmentOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+            {
+                PropName = CswNbtObjClassEquipment.PropertyName.HasServiceContract,
+                FieldType = CswEnumNbtFieldType.Logical
+            } );
+            _addOCP( EquipmentOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+            {
+                PropName = CswNbtObjClassEquipment.PropertyName.MTBF,
+                FieldType = CswEnumNbtFieldType.MTBF
+            } );
+            _addOCP( EquipmentOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+            {
+                PropName = CswNbtObjClassEquipment.PropertyName.ManualStoredAt,
+                FieldType = CswEnumNbtFieldType.Text
+            } );
+            _addOCP( EquipmentOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+            {
+                PropName = CswNbtObjClassEquipment.PropertyName.Manufacturer,
+                FieldType = CswEnumNbtFieldType.Text
+            } );
+            _addOCP( EquipmentOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+            {
+                PropName = CswNbtObjClassEquipment.PropertyName.Model,
+                FieldType = CswEnumNbtFieldType.Text
+            } );
+            _addOCP( EquipmentOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+            {
+                PropName = CswNbtObjClassEquipment.PropertyName.Notes,
+                FieldType = CswEnumNbtFieldType.Memo
+            } );
+            _addOCP( EquipmentOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+            {
+                PropName = CswNbtObjClassEquipment.PropertyName.OutOn,
+                FieldType = CswEnumNbtFieldType.DateTime
+            } );
+            _addOCP( EquipmentOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+            {
+                PropName = CswNbtObjClassEquipment.PropertyName.Picture,
+                FieldType = CswEnumNbtFieldType.Image
+            } );
+            _addOCP( EquipmentOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+            {
+                PropName = CswNbtObjClassEquipment.PropertyName.PropertyNo,
+                FieldType = CswEnumNbtFieldType.Text
+            } );
+            _addOCP( EquipmentOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+            {
+                PropName = CswNbtObjClassEquipment.PropertyName.Purchased,
+                FieldType = CswEnumNbtFieldType.DateTime
+            } );
+            _addOCP( EquipmentOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+            {
+                PropName = CswNbtObjClassEquipment.PropertyName.Received,
+                FieldType = CswEnumNbtFieldType.DateTime
+            } );
+            _addOCP( EquipmentOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+            {
+                PropName = CswNbtObjClassEquipment.PropertyName.SerialNo,
+                FieldType = CswEnumNbtFieldType.Text
+            } );
+            _addOCP( EquipmentOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+            {
+                PropName = CswNbtObjClassEquipment.PropertyName.ServiceCost,
+                FieldType = CswEnumNbtFieldType.Text
+            } );
+            _addOCP( EquipmentOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+            {
+                PropName = CswNbtObjClassEquipment.PropertyName.ServiceEndsOn,
+                FieldType = CswEnumNbtFieldType.DateTime
+            } );
+            _addOCP( EquipmentOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+            {
+                PropName = CswNbtObjClassEquipment.PropertyName.ServicePhone,
+                FieldType = CswEnumNbtFieldType.Text
+            } );
+            CswNbtMetaDataObjectClass VendorOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.VendorClass );
+            _addOCP( EquipmentOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+            {
+                PropName = CswNbtObjClassEquipment.PropertyName.ServiceVendor,
+                FieldType = CswEnumNbtFieldType.Relationship,
+                IsFk = true,
+                FkType = CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(),
+                FkValue = VendorOC.ObjectClassId
+            } );
+            _addOCP( EquipmentOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+            {
+                PropName = CswNbtObjClassEquipment.PropertyName.StartingCost,
+                FieldType = CswEnumNbtFieldType.Text
+            } );
+            _addOCP( EquipmentOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+            {
+                PropName = CswNbtObjClassEquipment.PropertyName.Vendor,
+                FieldType = CswEnumNbtFieldType.Relationship,
+                IsFk = true,
+                FkType = CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(),
+                FkValue = VendorOC.ObjectClassId
+            } );
+            CswNbtMetaDataObjectClass DepartmentOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.DepartmentClass );
+            _addOCP( EquipmentOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+            {
+                PropName = CswNbtObjClassEquipment.PropertyName.Department,
+                FieldType = CswEnumNbtFieldType.Relationship,
+                IsFk = true,
+                FkType = CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(),
+                FkValue = DepartmentOC.ObjectClassId
+            } );
+            _createGridOCPFromNTP( EquipmentOC, CswNbtObjClassEquipment.PropertyName.Documents );
+            _createGridOCPFromNTP( EquipmentOC, CswNbtObjClassEquipment.PropertyName.Problem );
+            _addOCP( EquipmentOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+            {
+                PropName = CswNbtObjClassEquipment.PropertyName.Responsible,
+                FieldType = CswEnumNbtFieldType.Text
+            } );
+            _createGridOCPFromNTP( EquipmentOC, CswNbtObjClassEquipment.PropertyName.Schedule );
+            _createGridOCPFromNTP( EquipmentOC, CswNbtObjClassEquipment.PropertyName.Task );
+            CswNbtMetaDataObjectClass UserOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.UserClass );
+            CswNbtMetaDataObjectClassProp UserOCP = _addOCP( EquipmentOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+            {
+                PropName = CswNbtObjClassEquipment.PropertyName.User,
+                FieldType = CswEnumNbtFieldType.Relationship,
+                IsFk = true,
+                FkType = CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(),
+                FkValue = UserOC.ObjectClassId
+            } );
+            CswNbtMetaDataObjectClassProp PhoneOCP = UserOC.getObjectClassProp( CswNbtObjClassUser.PropertyName.Phone );
+            _addOCP( EquipmentOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+            {
+                PropName = CswNbtObjClassEquipment.PropertyName.UserPhone,
+                FieldType = CswEnumNbtFieldType.PropertyReference,
+                IsFk = true,
+                FkType = CswEnumNbtViewPropIdType.ObjectClassPropId.ToString(),
+                FkValue = UserOCP.PropId,
+                ValuePropId = PhoneOCP.PropId,
+                ValuePropType = CswEnumNbtViewPropIdType.ObjectClassPropId.ToString()
+            } );
+        }
+
+        #endregion Equipment
 
         #region Private
 
