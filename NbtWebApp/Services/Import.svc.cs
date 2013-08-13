@@ -52,7 +52,7 @@ namespace NbtWebApp
 
 
         [OperationContract]
-        [WebInvoke( Method = "POST", UriTemplate = "uploadImportData?propid={propid}&blobdataid={blobdataid}&caption={caption}" )]
+        [WebInvoke( Method = "POST", UriTemplate = "uploadImportData?defname={ImportDefName}&overwrite={Overwrite}" )]
         [Description( "Upload Import Data" )]
         [FaultContract( typeof( FaultException ) )]
         public CswNbtWebServiceImport.ImportDataReturn uploadImportData( string ImportDefName, bool Overwrite )
