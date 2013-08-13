@@ -38,9 +38,12 @@ namespace ChemSW.Nbt.Schema
             _upgradeTaskNTPs();
             _upgradeSizeNTPs();
             _upgradeEquipmentTypeNTP();
+            _upgradeProblemNTPs();
         }
 
         #region ObjectClassProps
+
+        #region Vendor
 
         private void _upgradeVendorNTPs()
         {
@@ -97,6 +100,10 @@ namespace ChemSW.Nbt.Schema
             } );
         }
 
+        #endregion Vendor
+
+        #region Feedback
+
         private void _upgradeFeedbackNTP()
         {
             CswNbtMetaDataObjectClass FeedbackOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.FeedbackClass );
@@ -106,6 +113,10 @@ namespace ChemSW.Nbt.Schema
                 FieldType = CswEnumNbtFieldType.File
             } );
         }
+
+        #endregion Feedback
+
+        #region GHS
 
         private void _upgradeGHSNTP()
         {
@@ -138,6 +149,10 @@ namespace ChemSW.Nbt.Schema
                 ListOptions = ClassificationOptions.ToString()
             } );
         }
+
+        #endregion GHS
+
+        #region Task
 
         private void _upgradeTaskNTPs()
         {
@@ -241,8 +256,8 @@ namespace ChemSW.Nbt.Schema
                 FieldType = CswEnumNbtFieldType.PropertyReference,
                 IsFk = true,
                 FkType = CswEnumNbtViewPropIdType.ObjectClassPropId.ToString(),
-                FkValue = UserPhoneOCP.PropId,
-                ValuePropId = TechnicianOCP.PropId,
+                FkValue = TechnicianOCP.PropId,
+                ValuePropId = UserPhoneOCP.PropId,
                 ValuePropType = CswEnumNbtViewPropIdType.ObjectClassPropId.ToString()
             } );
             _addOCP( TaskOC, new CswNbtWcfMetaDataModel.ObjectClassProp
@@ -256,6 +271,10 @@ namespace ChemSW.Nbt.Schema
                 FieldType = CswEnumNbtFieldType.Number
             } );
         }
+
+        #endregion Task
+
+        #region Size
 
         private void _upgradeSizeNTPs()
         {
@@ -299,6 +318,10 @@ namespace ChemSW.Nbt.Schema
             } );
         }
 
+        #endregion Size
+
+        #region EquipmentType
+
         private void _upgradeEquipmentTypeNTP()
         {
             CswNbtMetaDataObjectClass EquipmentTypeOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.EquipmentTypeClass );
@@ -309,6 +332,112 @@ namespace ChemSW.Nbt.Schema
                 IsRequired = true
             } );
         }
+
+        #endregion EquipmentType
+
+        #region Problem
+
+        private void _upgradeProblemNTPs()
+        {
+            CswNbtMetaDataObjectClass ProblemOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.ProblemClass );
+            CswNbtMetaDataObjectClass DepartmentOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.DepartmentClass );
+            _addOCP( ProblemOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+            {
+                PropName = CswNbtObjClassProblem.PropertyName.Department,
+                FieldType = CswEnumNbtFieldType.Relationship,
+                IsFk = true,
+                FkType = CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(),
+                FkValue = DepartmentOC.ObjectClassId
+            } );
+            _addOCP( ProblemOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+            {
+                PropName = CswNbtObjClassProblem.PropertyName.LaborCost,
+                FieldType = CswEnumNbtFieldType.Text
+            } );
+            _addOCP( ProblemOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+            {
+                PropName = CswNbtObjClassProblem.PropertyName.OtherCost,
+                FieldType = CswEnumNbtFieldType.Text
+            } );
+            _addOCP( ProblemOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+            {
+                PropName = CswNbtObjClassProblem.PropertyName.OtherCostName,
+                FieldType = CswEnumNbtFieldType.Text
+            } );
+            _addOCP( ProblemOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+            {
+                PropName = CswNbtObjClassProblem.PropertyName.PartsCost,
+                FieldType = CswEnumNbtFieldType.Text
+            } );
+            _addOCP( ProblemOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+            {
+                PropName = CswNbtObjClassProblem.PropertyName.Problem,
+                FieldType = CswEnumNbtFieldType.Memo
+            } );
+            CswNbtMetaDataObjectClass UserOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.UserClass );
+            CswNbtMetaDataObjectClassProp UserPhoneOCP = UserOC.getObjectClassProp( CswNbtObjClassUser.PropertyName.Phone );
+            CswNbtMetaDataObjectClassProp ReportedByOCP = ProblemOC.getObjectClassProp( CswNbtObjClassProblem.PropertyName.ReportedBy );
+            _addOCP( ProblemOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+            {
+                PropName = CswNbtObjClassProblem.PropertyName.ReporterPhone,
+                FieldType = CswEnumNbtFieldType.PropertyReference,
+                IsFk = true,
+                FkType = CswEnumNbtViewPropIdType.ObjectClassPropId.ToString(),
+                FkValue = ReportedByOCP.PropId,
+                ValuePropId = UserPhoneOCP.PropId,
+                ValuePropType = CswEnumNbtViewPropIdType.ObjectClassPropId.ToString()
+            } );
+            _addOCP( ProblemOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+            {
+                PropName = CswNbtObjClassProblem.PropertyName.Resolution,
+                FieldType = CswEnumNbtFieldType.Memo
+            } );
+            _addOCP( ProblemOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+            {
+                PropName = CswNbtObjClassProblem.PropertyName.StartDate,
+                FieldType = CswEnumNbtFieldType.DateTime
+            } );
+            _addOCP( ProblemOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+            {
+                PropName = CswNbtObjClassProblem.PropertyName.Summary,
+                FieldType = CswEnumNbtFieldType.Text
+            } );            
+            CswNbtMetaDataObjectClassProp TechnicianOCP = _addOCP( ProblemOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+            {
+                PropName = CswNbtObjClassProblem.PropertyName.Technician,
+                FieldType = CswEnumNbtFieldType.Relationship,
+                IsFk = true,
+                FkType = CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(),
+                FkValue = UserOC.ObjectClassId
+            } );            
+            _addOCP( ProblemOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+            {
+                PropName = CswNbtObjClassProblem.PropertyName.TechnicianPhone,
+                FieldType = CswEnumNbtFieldType.PropertyReference,
+                IsFk = true,
+                FkType = CswEnumNbtViewPropIdType.ObjectClassPropId.ToString(),
+                FkValue = TechnicianOCP.PropId,
+                ValuePropId = UserPhoneOCP.PropId,
+                ValuePropType = CswEnumNbtViewPropIdType.ObjectClassPropId.ToString()
+            } );
+            _addOCP( ProblemOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+            {
+                PropName = CswNbtObjClassProblem.PropertyName.TravelCost,
+                FieldType = CswEnumNbtFieldType.Text
+            } );
+            _addOCP( ProblemOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+            {
+                PropName = CswNbtObjClassProblem.PropertyName.UnderWarranty,
+                FieldType = CswEnumNbtFieldType.Logical
+            } );
+            _addOCP( ProblemOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+            {
+                PropName = CswNbtObjClassProblem.PropertyName.WorkOrderPrinted,
+                FieldType = CswEnumNbtFieldType.Logical
+            } );
+        }
+
+        #endregion Problem
 
         private CswNbtMetaDataObjectClassProp _addOCP( CswNbtMetaDataObjectClass OC, CswNbtWcfMetaDataModel.ObjectClassProp PropDef )
         {
