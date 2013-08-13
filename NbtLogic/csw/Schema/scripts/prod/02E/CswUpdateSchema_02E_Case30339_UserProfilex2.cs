@@ -27,12 +27,12 @@ namespace ChemSW.Nbt.Schema
 
         public override string ScriptName
         {
-            get { throw new NotImplementedException(); }
+            get { return "02E_Case30339_UserProfilex2"; }
         }
 
         public override bool AlwaysRun
         {
-            get { throw new NotImplementedException(); }
+            get { return false; }
         }
 
         public override void update()

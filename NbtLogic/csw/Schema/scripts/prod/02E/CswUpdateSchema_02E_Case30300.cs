@@ -21,12 +21,12 @@ namespace ChemSW.Nbt.Schema
 
         public override string ScriptName
         {
-            get { throw new System.NotImplementedException(); }
+            get { return "02E_Case30300"; }
         }
 
         public override bool AlwaysRun
         {
-            get { throw new System.NotImplementedException(); }
+            get { return false; }
         }
 
         public override void update()

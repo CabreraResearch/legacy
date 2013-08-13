@@ -1,5 +1,4 @@
-﻿using System;
-using ChemSW.Nbt.csw.Dev;
+﻿using ChemSW.Nbt.csw.Dev;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -22,12 +21,12 @@ namespace ChemSW.Nbt.Schema
 
         public override string ScriptName
         {
-            get { throw new NotImplementedException(); }
+            get { return "RunBefore_MakeMissingNodeTypeProps"; }
         }
 
         public override bool AlwaysRun
         {
-            get { throw new NotImplementedException(); }
+            get { return true; }
         }
 
         public override void update()

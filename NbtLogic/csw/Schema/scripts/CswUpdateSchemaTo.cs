@@ -30,7 +30,7 @@ namespace ChemSW.Nbt.Schema
             set { _CswNbtSchemaModTrnsctn = value; }
         }
 
-        //        public abstract CswSchemaVersion SchemaVersion { get; }
+        //public abstract CswSchemaVersion SchemaVersion { get; }
         //public abstract string Description { set; get; }
 
         private string _Description = string.Empty;
@@ -77,6 +77,7 @@ namespace ChemSW.Nbt.Schema
 
         /// <summary>
         /// A unique identifier for this script
+        /// Format: <Release #><Release Letter>_Case<Case #>
         /// </summary>
         public abstract string ScriptName { get; }
 

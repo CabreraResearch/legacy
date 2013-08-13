@@ -38,12 +38,12 @@ namespace ChemSW.Nbt.Schema
 
         public override string ScriptName
         {
-            get { throw new NotImplementedException(); }
+            get { return "RunBefore_PL/SQL Objects"; }
         }
 
         public override bool AlwaysRun
         {
-            get { throw new NotImplementedException(); }
+            get { return true; }
         }
 
         public static string Title = "Pre-Script: PL/SQL Objects";
