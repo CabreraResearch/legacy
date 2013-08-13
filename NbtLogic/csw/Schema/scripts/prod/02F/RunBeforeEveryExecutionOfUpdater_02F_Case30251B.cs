@@ -39,6 +39,7 @@ namespace ChemSW.Nbt.Schema
             _upgradeSizeNTPs();
             _upgradeEquipmentTypeNTP();
             _upgradeProblemNTPs();
+            _upgradeRequestNTP();
         }
 
         #region ObjectClassProps
@@ -438,6 +439,33 @@ namespace ChemSW.Nbt.Schema
         }
 
         #endregion Problem
+
+        #region Request
+
+        private void _upgradeRequestNTP()
+        {
+            CswNbtMetaDataObjectClass RequestOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestClass );
+            CswNbtMetaDataObjectClassProp RequestItemsOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( RequestOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+            {
+                PropName = CswNbtObjClassRequest.PropertyName.RequestItems,
+                FieldType = CswEnumNbtFieldType.Grid
+            } );
+            CswNbtMetaDataNodeType RequestNT = RequestOC.FirstNodeType;
+            if( null != RequestNT )
+            {
+                CswNbtMetaDataNodeTypeProp RequestItemsNTP = RequestNT.getNodeTypeProp( "Request Items" );
+                if( null != RequestItemsNTP )
+                {
+                    CswNbtView RequestItemsView = _CswNbtSchemaModTrnsctn.restoreView( RequestItemsNTP.ViewId );
+                    if( null != RequestItemsView )
+                    {
+                        _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( RequestItemsOCP, CswEnumNbtObjectClassPropAttributes.viewxml, RequestItemsView.ToString() );
+                    }
+                }
+            }
+        }
+
+        #endregion Request
 
         private CswNbtMetaDataObjectClassProp _addOCP( CswNbtMetaDataObjectClass OC, CswNbtWcfMetaDataModel.ObjectClassProp PropDef )
         {
