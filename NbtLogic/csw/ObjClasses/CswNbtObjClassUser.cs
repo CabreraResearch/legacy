@@ -201,6 +201,14 @@ namespace ChemSW.Nbt.ObjClasses
                                           "Current user (" + _CswNbtResources.CurrentUser.Username +
                                           ") attempted to edit the '" + ChemSWAdminUsername + "' user account." );
             }
+
+            if( AvailableWorkUnits.Value.Count == 0 )
+            {
+                CswPrimaryKey pk = GetFirstAvailableWorkUnitNodeId();
+                AvailableWorkUnits.AddValue( pk.ToString() );
+                WorkUnitProperty.RelatedNodeId = pk;
+                WorkUnitProperty.SyncGestalt();
+            }
         }
 
         //beforeWriteNode()
@@ -531,6 +539,13 @@ namespace ChemSW.Nbt.ObjClasses
         public void OnAvailableWorkUnitsChange( CswNbtNodeProp Prop )
         {
             _updateAvailableWorkUnits();
+
+            if( false == AvailableWorkUnits.CheckValue( WorkUnitId.ToString() ) )
+            {
+                CswPrimaryKey pk = CswConvert.ToPrimaryKey( AvailableWorkUnits.Value[0] ); //we're always guarenteed there's at least one
+                WorkUnitProperty.RelatedNodeId = pk;
+                WorkUnitProperty.SyncGestalt();
+            }
         }
 
         #endregion
