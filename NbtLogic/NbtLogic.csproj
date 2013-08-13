@@ -354,6 +354,8 @@
     <Compile Include="csw\Schema\scripts\prod\02E\CswUpdateSchema_02E_Case29847.cs" />
     <Compile Include="csw\Schema\scripts\prod\02E\CswUpdateSchema_02E_Case30222.cs" />
     <Compile Include="csw\Schema\scripts\prod\02E\CswUpdateSchema_02E_Case30014.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02F\RunBeforeEveryExecutionOfUpdater_02F_Case27883.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02F\CswUpdateSchema_02F_Case27883.cs" />
     <Compile Include="csw\Schema\scripts\prod\02F\CswUpdateSchema_02F_Case29438.cs" />
     <Compile Include="csw\Schema\scripts\prod\02F\RunBeforeEveryExecutionOfUpdater_02F_Case30251B.cs" />
     <Compile Include="csw\Schema\scripts\prod\02F\RunBeforeEveryExecutionOfUpdater_02F_Case30251.cs" />

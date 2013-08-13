@@ -1,3 +1,8 @@
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Data;
+using System.Text.RegularExpressions;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
@@ -6,19 +11,14 @@ using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 using ChemSW.Security;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Data;
-using System.Text.RegularExpressions;
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassUser : CswNbtObjClass, ICswNbtUser
+    public class CswNbtObjClassUser: CswNbtObjClass, ICswNbtUser
     {
         public const string ChemSWAdminUsername = CswAuthenticator.ChemSWAdminUsername;
 
-        public new sealed class PropertyName : CswNbtObjClass.PropertyName
+        public new sealed class PropertyName: CswNbtObjClass.PropertyName
         {
             public const string AccountLocked = "AccountLocked";
             public const string Archived = "Archived";
@@ -45,6 +45,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Username = "Username";
             public const string DefaultBalance = "Default Balance";
             public const string WorkUnit = "Work Unit";
+            public const string AvailableWorkUnits = "Available Work Units";
         }
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
@@ -64,7 +65,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                if ( __RoleNode == null )
+                if( __RoleNode == null )
                 {
                     _initRole();
                 }
@@ -80,7 +81,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                if ( __RoleNodeObjClass == null )
+                if( __RoleNodeObjClass == null )
                 {
                     _initRole();
                 }
@@ -92,10 +93,10 @@ namespace ChemSW.Nbt.ObjClasses
 
         private void _initRole()
         {
-            if ( Node.NodeId != null )
+            if( Node.NodeId != null )
             {
                 __RoleNode = _CswNbtResources.Nodes[RoleId];
-                if ( __RoleNode != null )
+                if( __RoleNode != null )
                 {
                     __RoleNodeObjClass = (CswNbtObjClassRole) __RoleNode;
                 }
@@ -166,7 +167,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static implicit operator CswNbtObjClassUser( CswNbtNode Node )
         {
             CswNbtObjClassUser ret = null;
-            if ( null != Node && _Validate( Node, CswEnumNbtObjectClass.UserClass ) )
+            if( null != Node && _Validate( Node, CswEnumNbtObjectClass.UserClass ) )
             {
                 ret = (CswNbtObjClassUser) Node.ObjClass;
             }
@@ -177,7 +178,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
-            if ( _unableToWriteNodeInvalidUserName() )
+            if( _unableToWriteNodeInvalidUserName() )
             {
                 throw new CswDniException( CswEnumErrorType.Warning, "Username must contain alphanumeric characters only.",
                                           "Username contains invalid characters: " + this.Username );
@@ -185,13 +186,13 @@ namespace ChemSW.Nbt.ObjClasses
 
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
 
-            if ( UsernameProperty.Text != string.Empty ) // case 25616
+            if( UsernameProperty.Text != string.Empty ) // case 25616
             {
-                UsernameProperty.setReadOnly( value: true, SaveToDb: true ); // BZ 5906
+                UsernameProperty.setReadOnly( value : true, SaveToDb : true ); // BZ 5906
             }
 
             // case 22512
-            if ( Username == ChemSWAdminUsername &&
+            if( Username == ChemSWAdminUsername &&
                 _CswNbtResources.CurrentNbtUser != null &&
                 _CswNbtResources.CurrentNbtUser.Username != ChemSWAdminUsername &&
                 false == ( _CswNbtResources.CurrentNbtUser is CswNbtSystemUser ) )
@@ -217,7 +218,7 @@ namespace ChemSW.Nbt.ObjClasses
         public override void afterWriteNode()
         {
             //bz # 6555
-            if ( AccountLocked.Checked != CswEnumTristate.True && AccountLocked.WasModified )
+            if( AccountLocked.Checked != CswEnumTristate.True && AccountLocked.WasModified )
             {
                 clearFailedLoginCount();
             }
@@ -235,7 +236,7 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes );
 
             //prevent user from deleting their own user
-            if ( _CswNbtNode.NodeId == _CswNbtResources.CurrentUser.UserId )
+            if( _CswNbtNode.NodeId == _CswNbtResources.CurrentUser.UserId )
             {
                 throw ( new CswDniException( CswEnumErrorType.Warning, "You can not delete your own user account.",
                                            "Current user (" + _CswNbtResources.CurrentUser.Username +
@@ -244,7 +245,7 @@ namespace ChemSW.Nbt.ObjClasses
 
             // case 22635 - prevent deleting chemsw admin user
             CswNbtNodePropWrapper UsernamePropWrapper = Node.Properties[PropertyName.Username];
-            if (
+            if(
                 UsernamePropWrapper.GetOriginalPropRowValue(
                     UsernamePropWrapper.NodeTypeProp.getFieldTypeRule().SubFields.Default.Column ) == ChemSWAdminUsername &&
                 false == ( _CswNbtResources.CurrentNbtUser is CswNbtSystemUser ) )
@@ -255,12 +256,12 @@ namespace ChemSW.Nbt.ObjClasses
             }
 
             CswPrimaryKey RoleId = Role.RelatedNodeId;
-            if ( RoleId != null )
+            if( RoleId != null )
             {
                 CswNbtNode RoleNode = _CswNbtResources.Nodes[RoleId];
 
                 //prevent user from deleting admin if they are not an admin
-                if ( _RoleNodeObjClass.Administrator.Checked == CswEnumTristate.True &&
+                if( _RoleNodeObjClass.Administrator.Checked == CswEnumTristate.True &&
                     _CswNbtResources.CurrentNbtUser.IsAdministrator() != true )
                 {
                     throw ( new CswDniException( CswEnumErrorType.Warning,
@@ -296,13 +297,13 @@ namespace ChemSW.Nbt.ObjClasses
 
             // BZ 8288
             // Favorite Actions options should derive from Role's Action Permissions
-            if ( _RoleNode != null )
+            if( _RoleNode != null )
             {
                 CswCommaDelimitedString NewYValues = new CswCommaDelimitedString();
 
-                foreach ( CswNbtAction Action in _CswNbtResources.Actions )
+                foreach( CswNbtAction Action in _CswNbtResources.Actions )
                 {
-                    if ( _CswNbtResources.Permit.can( Action, this ) && Action.ShowInList )
+                    if( _CswNbtResources.Permit.can( Action, this ) && Action.ShowInList )
                     {
                         NewYValues.Add( Action.DisplayName.ToString() );
                     }
@@ -313,15 +314,15 @@ namespace ChemSW.Nbt.ObjClasses
 
 
             //BZ 9933
-            if ( _CswNbtResources.CurrentNbtUser == null || !_CswNbtResources.CurrentNbtUser.IsAdministrator() )
+            if( _CswNbtResources.CurrentNbtUser == null || !_CswNbtResources.CurrentNbtUser.IsAdministrator() )
             {
-                this.FailedLoginCount.setHidden( value: true, SaveToDb: false );
-                this.AccountLocked.setHidden( value: true, SaveToDb: false );
+                this.FailedLoginCount.setHidden( value : true, SaveToDb : false );
+                this.AccountLocked.setHidden( value : true, SaveToDb : false );
             }
 
 
             //case 27793: these are the properties that a user cannot edit -- not even his own
-            if ( ( null == _CswNbtResources.CurrentNbtUser ) ||
+            if( ( null == _CswNbtResources.CurrentNbtUser ) ||
                 ( false == _CswNbtResources.CurrentNbtUser.IsAdministrator() ) )
             {
 
@@ -329,7 +330,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
 
             //case 27793: Prevent non-adminsitrators from editing paswords, except their own
-            if ( IsPasswordReadyOnly )
+            if( IsPasswordReadyOnly )
             {
                 this.PasswordProperty.setReadOnly( true, false );
             }
@@ -357,7 +358,7 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 bool ReturnVal = false;
 
-                if ( ( null == _CswNbtResources.CurrentNbtUser ) || ( ( this.NodeId != _CswNbtResources.CurrentNbtUser.UserId ) && ( false == _CswNbtResources.CurrentNbtUser.IsAdministrator() ) ) )
+                if( ( null == _CswNbtResources.CurrentNbtUser ) || ( ( this.NodeId != _CswNbtResources.CurrentNbtUser.UserId ) && ( false == _CswNbtResources.CurrentNbtUser.IsAdministrator() ) ) )
                 {
                     ReturnVal = true;
                 }
@@ -374,14 +375,14 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtView view = ParentRelationship.View;
             CswNbtMetaDataObjectClass userOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.UserClass );
             CswNbtMetaDataObjectClassProp archivedOCP = userOC.getObjectClassProp( PropertyName.Archived );
-            view.AddViewPropertyAndFilter( ParentRelationship, archivedOCP, FilterMode: CswEnumNbtFilterMode.NotEquals, Value: CswEnumTristate.True.ToString() );
+            view.AddViewPropertyAndFilter( ParentRelationship, archivedOCP, FilterMode : CswEnumNbtFilterMode.NotEquals, Value : CswEnumTristate.True.ToString() );
 
             _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
         }
 
         protected override bool onButtonClick( NbtButtonData ButtonData )
         {
-            if ( null != ButtonData && null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
+            if( null != ButtonData && null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
             return true;
         }
 
@@ -400,17 +401,17 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropRelationship Role { get { return ( _CswNbtNode.Properties[PropertyName.Role] ); } }
         private void onRolePropChange( CswNbtNodeProp NodeProp )
         {
-            if ( null != _CswNbtResources.CurrentNbtUser &&
+            if( null != _CswNbtResources.CurrentNbtUser &&
                 CswTools.IsPrimaryKey( Role.RelatedNodeId ) &&
                 Role.RelatedNodeId.PrimaryKey != CswConvert.ToInt32( Role.GetOriginalPropRowValue( CswEnumNbtPropColumn.Field1_FK ) ) )
             {
-                if ( false == _CswNbtResources.CurrentNbtUser.IsAdministrator() )
+                if( false == _CswNbtResources.CurrentNbtUser.IsAdministrator() )
                 {
                     throw new CswDniException( CswEnumErrorType.Warning, "Only Administrators can change user roles",
                                                "Current user (" + _CswNbtResources.CurrentUser.Username +
                                                ") attempted to edit a user role." );
                 }
-                if ( this.Username != ChemSWAdminUsername &&
+                if( this.Username != ChemSWAdminUsername &&
                     ( (CswNbtObjClassRole) _CswNbtResources.Nodes[Role.RelatedNodeId] ).Name.Text ==
                     CswNbtObjClassRole.ChemSWAdminRoleName )
                 {
@@ -443,7 +444,7 @@ namespace ChemSW.Nbt.ObjClasses
             get
             {
                 string ret = DateFormatProperty.Value;
-                if ( ret == string.Empty )
+                if( ret == string.Empty )
                 {
                     ret = CswDateTime.DefaultDateFormat.ToString();
                 }
@@ -453,7 +454,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropList DateFormatProperty { get { return ( _CswNbtNode.Properties[PropertyName.DateFormat] ); } }
         private void onDateFormatPropChange( CswNbtNodeProp NodeProp )
         {
-            if ( false == string.IsNullOrEmpty( DateFormatProperty.Value ) &&
+            if( false == string.IsNullOrEmpty( DateFormatProperty.Value ) &&
                 CswResources.UnknownEnum == (CswEnumDateFormat) DateFormatProperty.Value )
             {
                 string SupportedFormats = "'" + CswEnumDateFormat.Mdyyyy + "', ";
@@ -469,7 +470,7 @@ namespace ChemSW.Nbt.ObjClasses
             get
             {
                 string ret = TimeFormatProperty.Value;
-                if ( ret == string.Empty )
+                if( ret == string.Empty )
                 {
                     ret = CswDateTime.DefaultTimeFormat.ToString();
                 }
@@ -479,7 +480,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropList TimeFormatProperty { get { return ( _CswNbtNode.Properties[PropertyName.TimeFormat] ); } }
         private void onTimeFormatPropChange( CswNbtNodeProp NodeProp )
         {
-            if ( false == string.IsNullOrEmpty( TimeFormatProperty.Value ) &&
+            if( false == string.IsNullOrEmpty( TimeFormatProperty.Value ) &&
                 CswResources.UnknownEnum == (CswEnumTimeFormat) TimeFormatProperty.Value )
             {
                 string SupportedFormats = "'" + CswEnumTimeFormat.Hmmss + "', ";
@@ -496,7 +497,7 @@ namespace ChemSW.Nbt.ObjClasses
             get
             {
                 Int32 ret = CswConvert.ToInt32( PageSizeProperty.Value );
-                if ( ret <= 0 ) ret = 10;
+                if( ret <= 0 ) ret = 10;
                 return ret;
             }
         }
@@ -504,7 +505,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswPrimaryKey DefaultLocationId { get { return DefaultLocationProperty.SelectedNodeId; } }
         public CswNbtNodePropRelationship DefaultPrinterProperty { get { return _CswNbtNode.Properties[PropertyName.DefaultPrinter]; } }
         public CswPrimaryKey DefaultPrinterId { get { return DefaultPrinterProperty.RelatedNodeId; } }
-        public CswNbtNodePropRelationship DefaultBalanceProperty { get { return _CswNbtNode.Properties[PropertyName.DefaultBalance];  } }
+        public CswNbtNodePropRelationship DefaultBalanceProperty { get { return _CswNbtNode.Properties[PropertyName.DefaultBalance]; } }
         public CswPrimaryKey DefaultBalanceId { get { return DefaultBalanceProperty.RelatedNodeId; } }
         public CswNbtNodePropRelationship WorkUnitProperty { get { return _CswNbtNode.Properties[PropertyName.WorkUnit]; } }
         public CswPrimaryKey WorkUnitId { get { return WorkUnitProperty.RelatedNodeId; } }
@@ -519,11 +520,13 @@ namespace ChemSW.Nbt.ObjClasses
 
         private void OnUserNamePropChange( CswNbtNodeProp Prop )
         {
-            if ( false == Prop.Empty )
+            if( false == Prop.Empty )
             {
                 Prop.setReadOnly( true, true );
             }
         }
+
+        public CswNbtNodePropMultiList AvailableWorkUnits { get { return _CswNbtNode.Properties[PropertyName.AvailableWorkUnits]; } }
 
 
         #endregion
@@ -532,8 +535,8 @@ namespace ChemSW.Nbt.ObjClasses
         public int getFailedLoginCount()
         {
             double LoginCount = FailedLoginCount.Value;
-            if ( double.IsNaN( LoginCount ) ) LoginCount = 0;
-            if ( LoginCount < 0 ) LoginCount = 0;
+            if( double.IsNaN( LoginCount ) ) LoginCount = 0;
+            if( LoginCount < 0 ) LoginCount = 0;
             return CswConvert.ToInt32( LoginCount );
         }
 
@@ -544,7 +547,7 @@ namespace ChemSW.Nbt.ObjClasses
 
             this.FailedLoginCount.Value = Convert.ToDouble( failures );
 
-            if ( failures >= CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( "failedloginlimit" ) ) )
+            if( failures >= CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( "failedloginlimit" ) ) )
             {
                 this.AccountLocked.Checked = CswEnumTristate.True;
             }
@@ -575,7 +578,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                if ( null == _NodePermissions )
+                if( null == _NodePermissions )
                 {
                     _NodePermissions = new Dictionary<CswPrimaryKey, CswNbtPropertySetPermission>();
                     _updateNodePermissions();
@@ -590,12 +593,12 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtPropertySetPermission getPermissionForGroup( CswPrimaryKey PermissionGroupId )
         {
             CswNbtPropertySetPermission PermissionNode = null;
-            if ( null == _NodePermissions )
+            if( null == _NodePermissions )
             {
                 _NodePermissions = new Dictionary<CswPrimaryKey, CswNbtPropertySetPermission>();
                 _updateNodePermissions();
             }
-            if ( _NodePermissions.ContainsKey( PermissionGroupId ) )
+            if( _NodePermissions.ContainsKey( PermissionGroupId ) )
             {
                 PermissionNode = _NodePermissions[PermissionGroupId];
             }
@@ -606,7 +609,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         private void _updateNodePermissions()
         {
-            if ( null == _NodePermissions )
+            if( null == _NodePermissions )
             {
                 _NodePermissions = new Dictionary<CswPrimaryKey, CswNbtPropertySetPermission>();
             }
@@ -614,13 +617,13 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 _NodePermissions.Clear();
             }
-            if ( CswTools.IsPrimaryKey( WorkUnitId ) && CswTools.IsPrimaryKey( RoleId ) )
+            if( CswTools.IsPrimaryKey( WorkUnitId ) && CswTools.IsPrimaryKey( RoleId ) )
             {
                 Collection<CswPrimaryKey> UserPermissions = getUserPermissions( RoleId.PrimaryKey, WorkUnitId.PrimaryKey );
-                foreach ( CswPrimaryKey PermissionId in UserPermissions )
+                foreach( CswPrimaryKey PermissionId in UserPermissions )
                 {
                     CswNbtPropertySetPermission PermNode = _CswNbtResources.Nodes[PermissionId];
-                    if ( null != PermNode )
+                    if( null != PermNode )
                     {
                         _NodePermissions.Add( PermNode.PermissionGroup.RelatedNodeId, PermNode );
                     }
@@ -689,15 +692,22 @@ select * from (
             DataTable DataTable = Query.getTable();
             Collection<CswPrimaryKey> UserPermissions = new Collection<CswPrimaryKey>();
             Int32 PermGroupId = 0;
-            foreach ( DataRow Row in DataTable.Rows )
+            foreach( DataRow Row in DataTable.Rows )
             {
-                if ( PermGroupId != CswConvert.ToInt32( Row["userpermgroup"].ToString() ) )
+                if( PermGroupId != CswConvert.ToInt32( Row["userpermgroup"].ToString() ) )
                 {
                     PermGroupId = CswConvert.ToInt32( Row["userpermgroup"].ToString() );
                     UserPermissions.Add( new CswPrimaryKey( "nodes", CswConvert.ToInt32( Row["nodeid"] ) ) );
                 }
             }
             return UserPermissions;
+        }
+
+        public Dictionary<string, string> InitAvailableWorkUnitsOptions()
+        {
+            Dictionary<string, string> opts = new Dictionary<string, string>();
+
+            return opts;
         }
 
     }//CswNbtObjClassUser
