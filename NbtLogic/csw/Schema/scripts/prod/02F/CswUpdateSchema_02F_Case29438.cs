@@ -24,6 +24,7 @@ namespace ChemSW.Nbt.Schema
         {
             CswNbtMetaDataObjectClass TaskOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.TaskClass );
             CswNbtMetaDataObjectClassProp DueDataOCP = TaskOC.getObjectClassProp( CswNbtObjClassTask.PropertyName.DueDate );
+            CswNbtMetaDataObjectClassProp DoneOnOCP = TaskOC.getObjectClassProp( CswNbtObjClassTask.PropertyName.DoneOn );
             CswNbtMetaDataObjectClassProp CompletedOCP = TaskOC.getObjectClassProp( CswNbtObjClassTask.PropertyName.Completed );
             CswNbtMetaDataObjectClassProp SummaryOCP = TaskOC.getObjectClassProp( CswNbtObjClassTask.PropertyName.Summary );
             CswNbtMetaDataObjectClassProp OwnerOCP = TaskOC.getObjectClassProp( CswNbtObjClassTask.PropertyName.Owner ); //Equipment or Assembly for NTs
@@ -42,9 +43,11 @@ namespace ChemSW.Nbt.Schema
             CswNbtViewRelationship parent = CompletedTasks.AddViewRelationship( TaskOC, true );
 
             CompletedTasks.AddViewProperty( parent, DueDataOCP, 1 );
+            CompletedTasks.AddViewProperty( parent, DoneOnOCP, 2 );
 
-            CswNbtViewProperty completedVP = CompletedTasks.AddViewProperty( parent, CompletedOCP, 2 );
+            CswNbtViewProperty completedVP = CompletedTasks.AddViewProperty( parent, CompletedOCP );
             CompletedTasks.AddViewPropertyFilter( completedVP, Value : true.ToString() );
+            completedVP.ShowInGrid = false;
 
             CompletedTasks.AddViewProperty( parent, SummaryOCP, 3 );
 
