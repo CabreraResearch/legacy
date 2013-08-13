@@ -42,6 +42,7 @@ namespace ChemSW.Nbt.Schema
             _upgradeRequestNTP();
             _upgradeRegulatoryListNTP();
             _upgradePrinterNTP();
+            _upgradeLocationNTP();
         }
 
         #region Vendor
@@ -469,6 +470,16 @@ namespace ChemSW.Nbt.Schema
         }
 
         #endregion Printer
+
+        #region Location
+
+        private void _upgradeLocationNTP()
+        {
+            CswNbtMetaDataObjectClass LocationOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.LocationClass );
+            _createGridOCPFromNTP( LocationOC, CswNbtObjClassLocation.PropertyName.InventoryLevels );
+        }
+
+        #endregion Location
 
         #region Private
 
