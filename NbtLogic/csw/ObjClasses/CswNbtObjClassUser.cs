@@ -201,7 +201,6 @@ namespace ChemSW.Nbt.ObjClasses
                                           "Current user (" + _CswNbtResources.CurrentUser.Username +
                                           ") attempted to edit the '" + ChemSWAdminUsername + "' user account." );
             }
-
         }
 
         //beforeWriteNode()
@@ -289,7 +288,10 @@ namespace ChemSW.Nbt.ObjClasses
         {
 
             UsernameProperty.SetOnPropChange( OnUserNamePropChange );
+            AvailableWorkUnits.SetOnPropChange( OnAvailableWorkUnitsChange );
             AvailableWorkUnits.InitOptions = InitAvailableWorkUnitsOptions;
+
+            _updateAvailableWorkUnits();
 
             // BZ 6941, 8288
             // Set the Default View to use the selected User, rather than the logged in User
@@ -343,8 +345,6 @@ namespace ChemSW.Nbt.ObjClasses
             Role.SetOnPropChange( onRolePropChange );
             DateFormatProperty.SetOnPropChange( onDateFormatPropChange );
             TimeFormatProperty.SetOnPropChange( onTimeFormatPropChange );
-
-            //_CswNbtObjClassDefault.afterPopulateProps();
 
             _CswNbtObjClassDefault.triggerAfterPopulateProps();
 
@@ -528,7 +528,10 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         public CswNbtNodePropMultiList AvailableWorkUnits { get { return _CswNbtNode.Properties[PropertyName.AvailableWorkUnits]; } }
-
+        public void OnAvailableWorkUnitsChange( CswNbtNodeProp Prop )
+        {
+            _updateAvailableWorkUnits();
+        }
 
         #endregion
 
@@ -746,6 +749,25 @@ select * from (
             }
 
             return ret;
+        }
+
+        private void _updateAvailableWorkUnits()
+        {
+            CswNbtView View = _CswNbtResources.ViewSelect.restoreView( WorkUnitProperty.NodeTypeProp.ViewId );
+
+            View.Clear();
+            View.SetVisibility( CswEnumNbtViewVisibility.Property, null, null );
+
+            CswNbtMetaDataObjectClass WorkUnitOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.WorkUnitClass );
+            CswNbtViewRelationship WorkUnitParent = View.AddViewRelationship( WorkUnitOC, false );
+
+            foreach( string WorkUnitNodeId in AvailableWorkUnits.Value )
+            {
+                CswPrimaryKey pk = CswConvert.ToPrimaryKey( WorkUnitNodeId );
+                WorkUnitParent.NodeIdsToFilterIn.Add( pk );
+            }
+
+            WorkUnitProperty.OverrideView( View );
         }
 
     }//CswNbtObjClassUser
