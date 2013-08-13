@@ -14,6 +14,9 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Central = "Central";
             public const string AutomaticCertificateApproval = "Automatic Certificate Approval";
             public const string ManageLocations = "Manage Locations";
+            public const string Description = "Description";
+            public const string Locations = "Locations";
+            public const string Permissions = "Permissions";
         }
 
         public CswEnumNbtObjectClass PermissionClass { get { return CswEnumNbtObjectClass.InventoryGroupPermissionClass; } }
@@ -112,6 +115,9 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropLogical Central { get { return _CswNbtNode.Properties[PropertyName.Central]; } }
         public CswNbtNodePropLogical AutomaticCertificateApproval { get { return _CswNbtNode.Properties[PropertyName.AutomaticCertificateApproval]; } }
         public CswNbtNodePropButton AssignLocation { get { return ( _CswNbtNode.Properties[PropertyName.ManageLocations] ); } }
+        public CswNbtNodePropMemo Description { get { return ( _CswNbtNode.Properties[PropertyName.Description] ); } }
+        public CswNbtNodePropGrid Locations { get { return ( _CswNbtNode.Properties[PropertyName.Locations] ); } }
+        public CswNbtNodePropGrid Permissions { get { return ( _CswNbtNode.Properties[PropertyName.Permissions] ); } }
 
         #endregion
 

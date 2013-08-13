@@ -44,6 +44,7 @@ namespace ChemSW.Nbt.Schema
             _upgradePrinterNTP();
             _upgradeLocationNTP();
             _upgradeContainerNTPs();
+            _upgradeInventoryGroupNTPs();
         }
 
         #region Vendor
@@ -493,6 +494,22 @@ namespace ChemSW.Nbt.Schema
         }
 
         #endregion Container
+
+        #region InventoryGroup
+
+        private void _upgradeInventoryGroupNTPs()
+        {
+            CswNbtMetaDataObjectClass InventoryGroupOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.InventoryGroupClass );
+            _addOCP( InventoryGroupOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+            {
+                PropName = CswNbtObjClassInventoryGroup.PropertyName.Description,
+                FieldType = CswEnumNbtFieldType.Memo
+            } );
+            _createGridOCPFromNTP( InventoryGroupOC, CswNbtObjClassInventoryGroup.PropertyName.Locations );
+            _createGridOCPFromNTP( InventoryGroupOC, CswNbtObjClassInventoryGroup.PropertyName.Permissions );
+        }
+
+        #endregion InventoryGroup
 
         #region Private
 
