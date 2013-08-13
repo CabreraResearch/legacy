@@ -265,6 +265,7 @@
                                             },
                                             allowAdd: true
                                         });
+                                        onSizeChange();
                                         break;
                                     case cswPrivate.config.quantityName:
                                         var buildQtyCtrl = function () {
@@ -361,11 +362,11 @@
                         cswParent.br();
                     };
 
-                    //pre-fill the size select
-                    if (Csw.isNullOrEmpty(cswPrivate.materialId)) {
-                        makeGrid();
-                    } else {
-                        Csw.ajaxWcf.post({
+                    var ready = Csw.promises.all();
+
+                    if (false === Csw.isNullOrEmpty(cswPrivate.materialId)) {
+                        //pre-fill the size select
+                        ready.push(Csw.ajaxWcf.post({
                             urlMethod: 'Nodes/getSizes',
                             data: {
                                 NodeId: cswPrivate.materialId
@@ -374,12 +375,14 @@
                                 response.Nodes.forEach(function (obj) {
                                     cswPrivate.sizeSelectOpts.push({ id: obj.NodeId, value: obj.NodeName, nodelink: obj.NodeLink });
                                 });
-
+                               
+                                cswPrivate.sizeSelectOpts[0].isSelected = true;
                                 cswPrivate.selectedSizeId = cswPrivate.sizeSelectOpts[0].id;
-                                makeGrid();
                             }
-                        });
+                        }));
                     }
+
+                    ready.then(makeGrid);
 
                 }());
 
