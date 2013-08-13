@@ -326,6 +326,7 @@
     <None Include="csw\Schema\scripts\past\02D\CswUpdateSchema_02D_Case29863_UserProfile.cs" />
     <None Include="csw\Schema\scripts\past\02D\RunBeforeEveryExecutionOfUpdater_02D_Case30194.cs" />
     <Compile Include="csw\Schema\scripts\prod\02E\CswUpdateSchema_02E_Case30440.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02E\CswUpdateSchema_02E_Case30445.cs" />
     <Compile Include="csw\Schema\scripts\prod\02E\CswUpdateSchema_02E_Case30300.cs" />
     <Compile Include="csw\Schema\scripts\prod\02E\CswUpdateSchema_02E_Case30339_UserProfilex2.cs" />
     <Compile Include="csw\Schema\scripts\prod\02E\RunBeforeEveryExecutionOfUpdater_02E_Case30347.cs" />
