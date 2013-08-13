@@ -20,6 +20,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Exclusive = "Exclusive";
             public const string ListMode = "List Mode";
             public const string LOLIListCodes = "LOLI List Codes";
+            public const string Chemicals = "Chemicals";
         }
 
         /// <summary>
@@ -185,6 +186,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropLogical Exclusive { get { return _CswNbtNode.Properties[PropertyName.Exclusive]; } }
         public CswNbtNodePropList ListMode { get { return _CswNbtNode.Properties[PropertyName.ListMode]; } }
         public CswNbtNodePropGrid LOLIListCodes { get { return _CswNbtNode.Properties[PropertyName.LOLIListCodes]; } }
+        public CswNbtNodePropGrid Chemicals { get { return _CswNbtNode.Properties[PropertyName.Chemicals]; } }
 
         #endregion
 

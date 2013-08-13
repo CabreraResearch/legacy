@@ -40,9 +40,8 @@ namespace ChemSW.Nbt.Schema
             _upgradeEquipmentTypeNTP();
             _upgradeProblemNTPs();
             _upgradeRequestNTP();
+            _upgradeRegulatoryListNTP();
         }
-
-        #region ObjectClassProps
 
         #region Vendor
 
@@ -445,27 +444,22 @@ namespace ChemSW.Nbt.Schema
         private void _upgradeRequestNTP()
         {
             CswNbtMetaDataObjectClass RequestOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestClass );
-            CswNbtMetaDataObjectClassProp RequestItemsOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( RequestOC, new CswNbtWcfMetaDataModel.ObjectClassProp
-            {
-                PropName = CswNbtObjClassRequest.PropertyName.RequestItems,
-                FieldType = CswEnumNbtFieldType.Grid
-            } );
-            CswNbtMetaDataNodeType RequestNT = RequestOC.FirstNodeType;
-            if( null != RequestNT )
-            {
-                CswNbtMetaDataNodeTypeProp RequestItemsNTP = RequestNT.getNodeTypeProp( "Request Items" );
-                if( null != RequestItemsNTP )
-                {
-                    CswNbtView RequestItemsView = _CswNbtSchemaModTrnsctn.restoreView( RequestItemsNTP.ViewId );
-                    if( null != RequestItemsView )
-                    {
-                        _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( RequestItemsOCP, CswEnumNbtObjectClassPropAttributes.viewxml, RequestItemsView.ToString() );
-                    }
-                }
-            }
+            _createGridOCPFromNTP( RequestOC, CswNbtObjClassRequest.PropertyName.RequestItems );
         }
 
         #endregion Request
+
+        #region RegulatoryList
+
+        private void _upgradeRegulatoryListNTP()
+        {
+            CswNbtMetaDataObjectClass RegulatoryListOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.RegulatoryListClass );
+            _createGridOCPFromNTP( RegulatoryListOC, CswNbtObjClassRegulatoryList.PropertyName.Chemicals );
+        }
+
+        #endregion RegulatoryList
+
+        #region Private
 
         private CswNbtMetaDataObjectClassProp _addOCP( CswNbtMetaDataObjectClass OC, CswNbtWcfMetaDataModel.ObjectClassProp PropDef )
         {
@@ -477,7 +471,29 @@ namespace ChemSW.Nbt.Schema
             return OCP;
         }
 
-        #endregion ObjectClassProps
+        private void _createGridOCPFromNTP( CswNbtMetaDataObjectClass OC, String GridPropName )
+        {
+            CswNbtMetaDataObjectClassProp GridOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( OC, new CswNbtWcfMetaDataModel.ObjectClassProp
+            {
+                PropName = GridPropName,
+                FieldType = CswEnumNbtFieldType.Grid
+            } );
+            CswNbtMetaDataNodeType NT = OC.FirstNodeType;
+            if( null != NT )
+            {
+                CswNbtMetaDataNodeTypeProp GridNTP = NT.getNodeTypeProp( GridPropName );
+                if( null != GridNTP )
+                {
+                    CswNbtView GridView = _CswNbtSchemaModTrnsctn.restoreView( GridNTP.ViewId );
+                    if( null != GridView )
+                    {
+                        _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( GridOCP, CswEnumNbtObjectClassPropAttributes.viewxml, GridView.ToString() );
+                    }
+                }
+            }
+        }
+
+        #endregion Private
 
     }//class RunBeforeEveryExecutionOfUpdater_02F_Case30251B
 }//namespace ChemSW.Nbt.Schema
