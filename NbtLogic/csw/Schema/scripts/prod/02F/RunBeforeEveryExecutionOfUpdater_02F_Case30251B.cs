@@ -46,6 +46,7 @@ namespace ChemSW.Nbt.Schema
             _upgradeContainerNTPs();
             _upgradeInventoryGroupNTPs();
             _upgradeChemicalNTP();
+            _upgradeMaterialSetOCNTPs();
         }
 
         #region Vendor
@@ -529,6 +530,20 @@ namespace ChemSW.Nbt.Schema
         }
 
         #endregion Chemical
+
+        #region Material
+
+        private void _upgradeMaterialSetOCNTPs()
+        {
+            CswNbtMetaDataPropertySet MaterialPS = _CswNbtSchemaModTrnsctn.MetaData.getPropertySet( CswEnumNbtPropertySetName.MaterialSet );
+            foreach( CswNbtMetaDataObjectClass MaterialOC in MaterialPS.getObjectClasses() )
+            {
+                _createGridOCPFromNTP( MaterialOC, CswNbtPropertySetMaterial.PropertyName.Documents );
+                _createGridOCPFromNTP( MaterialOC, CswNbtPropertySetMaterial.PropertyName.Synonyms );
+            }
+        }
+
+        #endregion Material
 
         #region Private
 
