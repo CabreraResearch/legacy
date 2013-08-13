@@ -47,6 +47,7 @@ namespace ChemSW.Nbt.Schema
             _upgradeInventoryGroupNTPs();
             _upgradeChemicalNTP();
             _upgradeMaterialSetOCNTPs();
+            _upgradeNonChemicalNTP();
         }
 
         #region Vendor
@@ -530,6 +531,20 @@ namespace ChemSW.Nbt.Schema
         }
 
         #endregion Chemical
+
+        #region NonChemical
+
+        private void _upgradeNonChemicalNTP()
+        {
+            CswNbtMetaDataObjectClass NonChemicalOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.NonChemicalClass );
+            _addOCP( NonChemicalOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+            {
+                PropName = CswNbtObjClassNonChemical.PropertyName.Picture,
+                FieldType = CswEnumNbtFieldType.Image
+            } );
+        }
+
+        #endregion NonChemical
 
         #region Material
 
