@@ -528,7 +528,7 @@ namespace ChemSW.Nbt.Actions
 
         #region Sets
 
-        public static void resetCartCounts( ICswResources Resources, bool Ret, bool In )
+        public static void resetCartCounts( ICswResources Resources )
         {
             CswNbtResources NbtResources = (CswNbtResources) Resources;
             CswNbtActRequesting ActRequesting = new CswNbtActRequesting( NbtResources );
@@ -541,7 +541,8 @@ namespace ChemSW.Nbt.Actions
             if( null != User )
             {
                 CswNbtObjClassUser.Cache UserCache = User.CurrentCache;
-
+                UserCache.CartCounts = new CswNbtObjClassUser.Cache.Cart();
+                
                 CswNbtView ReqView = new CswNbtView( _CswNbtResources );
                 CswNbtMetaDataObjectClass RequestOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestClass );
                 CswNbtViewRelationship RootVr = ReqView.AddViewRelationship( RequestOc, IncludeDefaultFilters: true );

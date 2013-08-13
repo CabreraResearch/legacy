@@ -123,19 +123,18 @@ namespace NbtWebApp
         [WebInvoke( Method = "POST", UriTemplate = "Cart/reset" )]
         [FaultContract( typeof( FaultException ) )]
         [Description( "Reset the current user's cart counts" )]
-        public bool resetCartCounts( string CartId )
+        public void resetCartCounts( string CartId )
         {
             //delegate has to be static because you can't create an instance yet: you don't have resources until the delegate is actually called
-            
-            var InitDriverType = new CswWebSvcDriver<bool, bool>(
+            CswNbtRequestDataModel.CswRequestReturn Ret = new CswNbtRequestDataModel.CswRequestReturn();
+            var InitDriverType = new CswWebSvcDriver<CswNbtRequestDataModel.CswRequestReturn, string>(
                 CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
-                ReturnObj: true,
-                WebSvcMethodPtr: CswNbtActRequesting.resetCartCounts,
-                ParamObj: true
+                ReturnObj: Ret,
+                WebSvcMethodPtr:( Resources, Obj, ParamObj ) => CswNbtActRequesting.resetCartCounts( Resources ),
+                ParamObj: null
                 );
 
             InitDriverType.run();
-            return true;
         }
 
         [OperationContract()]
