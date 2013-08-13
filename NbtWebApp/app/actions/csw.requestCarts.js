@@ -141,6 +141,11 @@
                 });
             };
 
+            //Case 30082: Should the Cached cart counts get out of sync, instrument a call to reset
+            cswPrivate.resetCart = function () {
+                return Csw.ajaxWcf.post({ urlMethod: 'Requests/Cart/reset' });
+            };
+
             cswPrivate.submitRequest = function () {
                 Csw.ajaxWcf.post({
                     urlMethod: 'Requests/place',

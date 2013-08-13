@@ -77,15 +77,6 @@ namespace ChemSW.Nbt.Actions
 
         public int getCartContentCount()
         {
-            //CswNbtView CartView = getOpenCartsView();
-            //ICswNbtTree Tree = getOpenCartTree( CartView );
-            //Int32 Ret = Tree.getChildNodeCount();
-            //if ( Ret > 0 )
-            //{
-            //    Tree.goToNthChild( 0 );
-            //    Ret = Tree.getChildNodeCount();
-            //}
-            //return Ret;
             return CswNbtObjClassUser.getCurrentUserCache( _CswNbtResources ).CartCounts.PendingRequestItems;
         }
 
@@ -536,6 +527,77 @@ namespace ChemSW.Nbt.Actions
         #endregion Gets
 
         #region Sets
+
+        public static void resetCartCounts( ICswResources Resources, bool Ret, bool In )
+        {
+            CswNbtResources NbtResources = (CswNbtResources) Resources;
+            CswNbtActRequesting ActRequesting = new CswNbtActRequesting( NbtResources );
+            CswNbtObjClassUser ThisUser = NbtResources.Nodes[NbtResources.CurrentNbtUser.UserId];
+            ActRequesting.resetCartCounts( ThisUser );
+        }
+
+        public void resetCartCounts( CswNbtObjClassUser User )
+        {
+            if( null != User )
+            {
+                CswNbtObjClassUser.Cache UserCache = User.CurrentCache;
+
+                CswNbtView ReqView = new CswNbtView( _CswNbtResources );
+                CswNbtMetaDataObjectClass RequestOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestClass );
+                CswNbtViewRelationship RootVr = ReqView.AddViewRelationship( RequestOc, IncludeDefaultFilters: true );
+
+                CswNbtMetaDataObjectClassProp RequestorOcp = RequestOc.getObjectClassProp( CswNbtObjClassRequest.PropertyName.Requestor );
+                ReqView.AddViewPropertyAndFilter( RootVr, RequestorOcp, FilterMode: CswEnumNbtFilterMode.Equals, SubFieldName: CswEnumNbtSubFieldName.NodeID, Value: User.NodeId.PrimaryKey.ToString() );
+
+                foreach( CswEnumNbtObjectClass Member in CswNbtPropertySetRequestItem.Members() )
+                {
+                    CswNbtMetaDataObjectClass MemberOc = _CswNbtResources.MetaData.getObjectClass( Member );
+                    CswNbtMetaDataObjectClassProp RequestOcp = MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Request );
+                    CswNbtViewRelationship RequestItemRel = ReqView.AddViewRelationship( RootVr,
+                        CswEnumNbtViewPropOwnerType.Second,
+                        RequestOcp, IncludeDefaultFilters: true );
+                }
+
+                ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( ReqView, IncludeSystemNodes: false, RequireViewPermissions: false, IncludeHiddenNodes: false );
+                Int32 RequestCount = Tree.getChildNodeCount();
+                if( RequestCount > 0 )
+                {
+                    for( Int32 R = 0; R < RequestCount; R += 1 )
+                    {
+                        Tree.goToNthChild( R );
+                        CswNbtObjClassRequest Request = Tree.getNodeForCurrentPosition();
+                        if( Request.IsFavorite.Checked == CswEnumTristate.True )
+                        {
+                            UserCache.CartCounts.FavoriteRequestItems += Tree.getChildNodeCount();
+                        }
+                        else if( Request.IsRecurring.Checked == CswEnumTristate.True )
+                        {
+                            UserCache.CartCounts.RecurringRequestItems += Tree.getChildNodeCount();
+                        }
+                        else
+                        {
+                            for( Int32 I = 0; I < Tree.getChildNodeCount(); I += 1 )
+                            {
+                                Tree.goToNthChild( I );
+                                CswNbtPropertySetRequestItem RequestItem = Tree.getNodeForCurrentPosition();
+                                if( RequestItem.Status.Text == CswNbtPropertySetRequestItem.Statuses.Pending )
+                                {
+                                    UserCache.CartCounts.PendingRequestItems += 1;
+                                }
+                                else
+                                {
+                                    UserCache.CartCounts.SubmittedRequestItems += 1;
+                                }
+                                Tree.goToParentNode();
+                            }
+                        }
+                        Tree.goToParentNode();
+                    }
+                }
+                User.CurrentCache = UserCache;
+                User.postChanges( ForceUpdate: false );
+            }
+        }
 
         public bool submitRequest( CswPrimaryKey NodeId, string NodeName )
         {

@@ -1,12 +1,13 @@
-﻿using System.ComponentModel;
-using System.ServiceModel;
-using System.ServiceModel.Activation;
-using System.ServiceModel.Web;
-using System.Web;
+﻿using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.WebServices;
 using ChemSW.WebSvc;
 using NbtWebApp.WebSvc.Logic.CISPro;
+using System.ComponentModel;
+using System.ServiceModel;
+using System.ServiceModel.Activation;
+using System.ServiceModel.Web;
+using System.Web;
 
 namespace NbtWebApp
 {
@@ -116,6 +117,25 @@ namespace NbtWebApp
 
             InitDriverType.run();
             return ( Ret );
+        }
+
+        [OperationContract]
+        [WebInvoke( Method = "POST", UriTemplate = "Cart/reset" )]
+        [FaultContract( typeof( FaultException ) )]
+        [Description( "Reset the current user's cart counts" )]
+        public bool resetCartCounts( string CartId )
+        {
+            //delegate has to be static because you can't create an instance yet: you don't have resources until the delegate is actually called
+            
+            var InitDriverType = new CswWebSvcDriver<bool, bool>(
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj: true,
+                WebSvcMethodPtr: CswNbtActRequesting.resetCartCounts,
+                ParamObj: true
+                );
+
+            InitDriverType.run();
+            return true;
         }
 
         [OperationContract()]
