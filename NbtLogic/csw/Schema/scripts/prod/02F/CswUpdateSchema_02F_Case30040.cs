@@ -5,6 +5,7 @@ using System.Data;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.MtSched.Core;
+using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.ImportExport;
 using ChemSW.Nbt.Sched;
 using ChemSW.Nbt.csw.Dev;
@@ -559,6 +560,10 @@ namespace ChemSW.Nbt.Schema
 
             // Add schedule rule
             _CswNbtSchemaModTrnsctn.createScheduledRule( CswEnumNbtScheduleRuleNames.Import, CswEnumRecurrence.NHours, 1 );
+
+            // Add action
+            _CswNbtSchemaModTrnsctn.createAction( CswEnumNbtActionName.Import_Data_From_Excel, true, string.Empty, "System" );
+
         } // update()
 
         private void _importOrder( Int32 Order, string SheetName, string NodeTypeName, Int32 Instance = Int32.MinValue )
