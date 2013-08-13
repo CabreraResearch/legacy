@@ -21,15 +21,15 @@ namespace ChemSW.Nbt.Schema
         public CswTestCase_017_04( CswSchemaVersion CswSchemaVersion, object CswTstCaseRsc )
         {
             _CswSchemaVersion = CswSchemaVersion;
-			_CswTstCaseRsrc_017 = (CswTstCaseRsrc_017) CswTstCaseRsc;
-		}//ctor
+            _CswTstCaseRsrc_017 = (CswTstCaseRsrc_017) CswTstCaseRsc;
+        }//ctor
 
         public override void update()
         {
-			_CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
-			_CswTstCaseRsrc_017.CswNbtSchemaModTrnsctn = _CswNbtSchemaModTrnsctn;
+            _CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
+            _CswTstCaseRsrc_017.CswNbtSchemaModTrnsctn = _CswNbtSchemaModTrnsctn;
 
-			List<PkFkPair> PairList = _CswTstCaseRsrc_017.getPkFkPairs();
+            List<PkFkPair> PairList = _CswTstCaseRsrc_017.getPkFkPairs();
             foreach( PkFkPair CurrentPair in PairList )
             {
                 bool ExceptionWasThrown = false;
@@ -40,11 +40,11 @@ namespace ChemSW.Nbt.Schema
                     CswTableUpdate CswTableUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "CswScmUpdt_TstCse_Constraint_AddMultiple_update", CurrentPair.PkTableName );
                     DataTable PkTableTable = CswTableUpdate.getTable();
 
-                    PkTableTable.Rows[ 0 ].Delete();
+                    PkTableTable.Rows[0].Delete();
                     CswTableUpdate.update( PkTableTable );
                 }//try()
 
-                catch ( Exception Exception )
+                catch( Exception Exception )
                 {
                     if( !_CswTstCaseRsrc.isExceptionRecordDeletionConstraintViolation( Exception ) )
                     {
@@ -53,7 +53,7 @@ namespace ChemSW.Nbt.Schema
                     ExceptionWasThrown = true;
                 }//catch()
 
-                if ( !ExceptionWasThrown )
+                if( !ExceptionWasThrown )
                     throw ( new CswExceptionSchemaUpdate( "No exception was thrown when deliberately trying to elicit a foreign key constraint violation by deleting a record from table " + CurrentPair.PkTableName ) );
 
             }//iterate pairs
@@ -63,7 +63,7 @@ namespace ChemSW.Nbt.Schema
             //Clean up after ourselves (will verify in next script)
             _CswTstCaseRsrc_017.dropPkFkTables();
 
-        
+
         }
 
         public override CswEnumDeveloper Author
@@ -74,6 +74,16 @@ namespace ChemSW.Nbt.Schema
         public override int CaseNo
         {
             get { return 0; }
+        }
+
+        public override string ScriptName
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        public override bool AlwaysRun
+        {
+            get { throw new NotImplementedException(); }
         }
 
         //runTest()

@@ -1,4 +1,5 @@
-﻿using ChemSW.Audit;
+﻿using System;
+using ChemSW.Audit;
 using ChemSW.Core;
 using ChemSW.Nbt.csw.Dev;
 
@@ -17,16 +18,16 @@ namespace ChemSW.Nbt.Schema
         public CswTestCase_020_03( CswSchemaVersion CswSchemaVersion, object CswTstCaseRsc )
         {
             _CswSchemaVersion = CswSchemaVersion;
-			_CswTstCaseRsrc_020 = (CswTstCaseRsrc_020) CswTstCaseRsc;
+            _CswTstCaseRsrc_020 = (CswTstCaseRsrc_020) CswTstCaseRsc;
 
         }//ctor
 
         public override void update()
         {
-			_CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
-			_CswTstCaseRsrc_020.CswNbtSchemaModTrnsctn = _CswNbtSchemaModTrnsctn;
+            _CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
+            _CswTstCaseRsrc_020.CswNbtSchemaModTrnsctn = _CswNbtSchemaModTrnsctn;
 
-            CswAuditMetaData CswAuditMetaData  = new Audit.CswAuditMetaData();
+            CswAuditMetaData CswAuditMetaData = new Audit.CswAuditMetaData();
             string AuditTableName01 = CswAuditMetaData.makeAuditTableName( _CswTstCaseRsrc_020.ArbitraryTableName_01 );
             string AuditTable01PkColumnName = CswTools.makePkColNameFromTableName( AuditTableName01 );
 
@@ -60,6 +61,16 @@ namespace ChemSW.Nbt.Schema
         public override int CaseNo
         {
             get { return 0; }
+        }
+
+        public override string ScriptName
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        public override bool AlwaysRun
+        {
+            get { throw new NotImplementedException(); }
         }
 
         //runTest()

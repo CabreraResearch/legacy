@@ -1,5 +1,4 @@
-using System.Data;
-using ChemSW.DB;
+using System;
 using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
@@ -21,6 +20,16 @@ namespace ChemSW.Nbt.Schema
         public override int CaseNo
         {
             get { return 30347; }
+        }
+
+        public override string ScriptName
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        public override bool AlwaysRun
+        {
+            get { throw new NotImplementedException(); }
         }
 
         /// <summary>

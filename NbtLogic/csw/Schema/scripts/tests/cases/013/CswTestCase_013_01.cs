@@ -16,13 +16,13 @@ namespace ChemSW.Nbt.Schema
         public CswTestCase_013_01( CswSchemaVersion CswSchemaVersion, object CswTstCaseRsc )
         {
             _CswSchemaVersion = CswSchemaVersion;
-			_CswTstCaseRsrc_013 = (CswTstCaseRsrc_013) CswTstCaseRsc;
-		}//ctor
+            _CswTstCaseRsrc_013 = (CswTstCaseRsrc_013) CswTstCaseRsc;
+        }//ctor
 
         public override void update()
         {
-			_CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
-			_CswTstCaseRsrc_013.CswNbtSchemaModTrnsctn = _CswNbtSchemaModTrnsctn;
+            _CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
+            _CswTstCaseRsrc_013.CswNbtSchemaModTrnsctn = _CswNbtSchemaModTrnsctn;
 
             _CswNbtSchemaModTrnsctn.addTable( _CswTstCaseRsrc_013.FakeTestTableName, _CswTstCaseRsrc_013.FakePkColumnName );
             _CswNbtSchemaModTrnsctn.addStringColumn( _CswTstCaseRsrc_013.FakeTestTableName, _CswTstCaseRsrc_013.FakeValColumnName01, "test", false, false, 240 );
@@ -38,6 +38,16 @@ namespace ChemSW.Nbt.Schema
         public override int CaseNo
         {
             get { return 0; }
+        }
+
+        public override string ScriptName
+        {
+            get { throw new System.NotImplementedException(); }
+        }
+
+        public override bool AlwaysRun
+        {
+            get { throw new System.NotImplementedException(); }
         }
 
         //runTest()

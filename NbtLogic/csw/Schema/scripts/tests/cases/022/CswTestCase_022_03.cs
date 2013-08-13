@@ -1,4 +1,5 @@
-﻿using ChemSW.Audit;
+﻿using System;
+using ChemSW.Audit;
 using ChemSW.Nbt.csw.Dev;
 
 namespace ChemSW.Nbt.Schema
@@ -17,19 +18,19 @@ namespace ChemSW.Nbt.Schema
         public CswTestCase_022_03( CswSchemaVersion CswSchemaVersion, object CswTstCaseRsc )
         {
             _CswSchemaVersion = CswSchemaVersion;
-			_CswTstCaseRsrc_022 = (CswTstCaseRsrc_022) CswTstCaseRsc;
+            _CswTstCaseRsrc_022 = (CswTstCaseRsrc_022) CswTstCaseRsc;
 
         }//ctor
 
 
         public override void update()
         {
-			_CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
-			_CswTstCaseRsrc_022.CswNbtSchemaModTrnsctn = _CswNbtSchemaModTrnsctn;
-			
-			CswAuditMetaData CswAuditMetaData = new CswAuditMetaData();
+            _CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
+            _CswTstCaseRsrc_022.CswNbtSchemaModTrnsctn = _CswNbtSchemaModTrnsctn;
+
+            CswAuditMetaData CswAuditMetaData = new CswAuditMetaData();
             _CswTstCaseRsrc.assertColumnIsAbsent( _CswTstCaseRsrc_022.ArbitraryTableName_01, CswAuditMetaData.AuditLevelColName );
-            _CswTstCaseRsrc.assertTableIsAbsent( CswAuditMetaData.makeAuditTableName( _CswTstCaseRsrc_022.ArbitraryTableName_01 ) ); 
+            _CswTstCaseRsrc.assertTableIsAbsent( CswAuditMetaData.makeAuditTableName( _CswTstCaseRsrc_022.ArbitraryTableName_01 ) );
 
         }
 
@@ -41,6 +42,16 @@ namespace ChemSW.Nbt.Schema
         public override int CaseNo
         {
             get { return 0; }
+        }
+
+        public override string ScriptName
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        public override bool AlwaysRun
+        {
+            get { throw new NotImplementedException(); }
         }
 
         //runTest()

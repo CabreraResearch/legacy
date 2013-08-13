@@ -16,13 +16,13 @@ namespace ChemSW.Nbt.Schema
         public CswTestCase_011_02( CswSchemaVersion CswSchemaVersion, object CswTstCaseRsc )
         {
             _CswSchemaVersion = CswSchemaVersion;
-			_CswTstCaseRsrc_011 = (CswTstCaseRsrc_011) CswTstCaseRsc;
-		}//ctor
+            _CswTstCaseRsrc_011 = (CswTstCaseRsrc_011) CswTstCaseRsc;
+        }//ctor
 
         public override void update()
         {
-			_CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
-			_CswTstCaseRsrc_011.CswNbtSchemaModTrnsctn = _CswNbtSchemaModTrnsctn;
+            _CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
+            _CswTstCaseRsrc_011.CswNbtSchemaModTrnsctn = _CswNbtSchemaModTrnsctn;
 
             _CswTstCaseRsrc.fillTableWithArbitraryData( _CswTstCaseRsrc_011.FakeTestTableName, _CswTstCaseRsrc_011.FakeTestColumnName, 20 );
 
@@ -38,6 +38,15 @@ namespace ChemSW.Nbt.Schema
             get { return 0; }
         }
 
+        public override string ScriptName
+        {
+            get { throw new System.NotImplementedException(); }
+        }
+
+        public override bool AlwaysRun
+        {
+            get { throw new System.NotImplementedException(); }
+        }
         //runTest()
 
     }//CswSchemaUpdaterTestCaseDropColumnRollback

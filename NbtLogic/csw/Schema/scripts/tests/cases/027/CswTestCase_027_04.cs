@@ -14,7 +14,7 @@ namespace ChemSW.Nbt.Schema
 
     public class CswTestCase_027_04 : CswUpdateSchemaTo
     {
-        public override string Description { set { ; } get { return ( CswTestCaseRsrc.makeTestCaseDescription( this.GetType().Name, CswTstCaseRsrc_027.Purpose, "CswNbtActUpdatePropertyValue: " + TotalIterations.ToString() + " iterations"  ) ); } }
+        public override string Description { set { ; } get { return ( CswTestCaseRsrc.makeTestCaseDescription( this.GetType().Name, CswTstCaseRsrc_027.Purpose, "CswNbtActUpdatePropertyValue: " + TotalIterations.ToString() + " iterations" ) ); } }
 
         private CswTestCaseRsrc _CswTstCaseRsrc = null;
         private CswTstCaseRsrc_027 _CswTstCaseRsrc_027 = null;
@@ -24,17 +24,17 @@ namespace ChemSW.Nbt.Schema
         public CswTestCase_027_04( CswSchemaVersion CswSchemaVersion, object CswTstCaseRsc )
         {
             _CswSchemaVersion = CswSchemaVersion;
-			_CswTstCaseRsrc_027 = (CswTstCaseRsrc_027) CswTstCaseRsc;
+            _CswTstCaseRsrc_027 = (CswTstCaseRsrc_027) CswTstCaseRsc;
 
         }//ctor
 
-        public Int32 TotalIterations = 100; 
+        public Int32 TotalIterations = 100;
         public override void update()
         {
-			_CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
-			_CswTstCaseRsrc_027.CswNbtSchemaModTrnsctn = _CswNbtSchemaModTrnsctn;
-			
-			// Find which nodes are out of date
+            _CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
+            _CswTstCaseRsrc_027.CswNbtSchemaModTrnsctn = _CswNbtSchemaModTrnsctn;
+
+            // Find which nodes are out of date
             CswStaticSelect OutOfDateNodesQuerySelect = _CswNbtSchemaModTrnsctn.makeCswStaticSelect( "OutOfDateNodes_select", "ValuesToUpdate" );
             DataTable OutOfDateNodes = OutOfDateNodesQuerySelect.getTable( false, false, 0, 25 );
 
@@ -77,7 +77,7 @@ namespace ChemSW.Nbt.Schema
                         _CswNbtSchemaModTrnsctn.CswLogger.reportAppState( Description + ": GCMemory Delta: after " + _CswTstCaseRsrc_027.GCMemoryDelta );
                     }
 
-                    Thread.Sleep( 100 ); 
+                    Thread.Sleep( 100 );
 
                 }//iterate 
 
@@ -94,6 +94,16 @@ namespace ChemSW.Nbt.Schema
         public override int CaseNo
         {
             get { return 0; }
+        }
+
+        public override string ScriptName
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        public override bool AlwaysRun
+        {
+            get { throw new NotImplementedException(); }
         }
 
         //runTest()

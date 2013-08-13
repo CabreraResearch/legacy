@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using ChemSW.Nbt.csw.Dev;
 
 namespace ChemSW.Nbt.Schema
@@ -16,21 +17,21 @@ namespace ChemSW.Nbt.Schema
         public CswTestCase_018_02( CswSchemaVersion CswSchemaVersion, object CswTstCaseRsc )
         {
             _CswSchemaVersion = CswSchemaVersion;
-			_CswTstCaseRsrc_018 = (CswTstCaseRsrc_018) CswTstCaseRsc;
-		}//ctor
+            _CswTstCaseRsrc_018 = (CswTstCaseRsrc_018) CswTstCaseRsc;
+        }//ctor
 
         public override void update()
         {
-			_CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
-			_CswTstCaseRsrc_018.CswNbtSchemaModTrnsctn = _CswNbtSchemaModTrnsctn;
-			
-			List<PkFkPair> PairList = _CswTstCaseRsrc_018.getPkFkPairs();
+            _CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
+            _CswTstCaseRsrc_018.CswNbtSchemaModTrnsctn = _CswNbtSchemaModTrnsctn;
+
+            List<PkFkPair> PairList = _CswTstCaseRsrc_018.getPkFkPairs();
             foreach( PkFkPair CurrentPair in PairList )
             {
                 _CswTstCaseRsrc.fillTableWithArbitraryData( CurrentPair.PkTableName, _CswTstCaseRsrc.getFakeTestColumnName( TestColumnNamesFake.TestColumn01 ), 100 );
                 _CswTstCaseRsrc.addArbitraryForeignKeyRecords( CurrentPair.PkTableName, CurrentPair.FkTableName, CurrentPair.PkTablePkColumnName, _CswTstCaseRsrc.getFakeTestColumnName( TestColumnNamesFake.TestColumn01 ), _CswTstCaseRsrc.getTestNameStem( TestNameStem.TestVal ) );
             }
-        
+
         }
 
         public override CswEnumDeveloper Author
@@ -43,6 +44,15 @@ namespace ChemSW.Nbt.Schema
             get { return 0; }
         }
 
+        public override string ScriptName
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        public override bool AlwaysRun
+        {
+            get { throw new NotImplementedException(); }
+        }
         //runTest()
 
     }//CswSchemaUpdaterTestCaseDropColumnRollback

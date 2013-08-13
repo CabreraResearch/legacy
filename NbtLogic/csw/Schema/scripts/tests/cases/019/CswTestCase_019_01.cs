@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿using System;
+using System.Data;
 using ChemSW.DB;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.csw.Dev;
@@ -18,23 +19,23 @@ namespace ChemSW.Nbt.Schema
         public CswTestCase_019_01( CswSchemaVersion CswSchemaVersion, object CswTstCaseRsc )
         {
             _CswSchemaVersion = CswSchemaVersion;
-			_CswTstCaseRsrc_019 = (CswTstCaseRsrc_019) CswTstCaseRsc;
+            _CswTstCaseRsrc_019 = (CswTstCaseRsrc_019) CswTstCaseRsc;
 
         }//ctor
 
         public override void update()
         {
-			_CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
-			_CswTstCaseRsrc_019.CswNbtSchemaModTrnsctn = _CswNbtSchemaModTrnsctn;
-			
-			_CswTstCaseRsrc_019.makeArbitraryTables();
+            _CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
+            _CswTstCaseRsrc_019.CswNbtSchemaModTrnsctn = _CswNbtSchemaModTrnsctn;
+
+            _CswTstCaseRsrc_019.makeArbitraryTables();
             _CswTstCaseRsrc_019.makeArbitraryTableData();
 
             CswTableSelect CswTableSelect = _CswNbtSchemaModTrnsctn.makeCswTableSelect( Description, _CswTstCaseRsrc_019.ArbitraryTableName_01 );
             DataTable DataTable = CswTableSelect.getTable();
 
             if( DataTable.Rows.Count != _CswTstCaseRsrc_019.TotalTestRows )
-                throw(new CswDniException("Number of rows in table did not match the number of inserted rows") );
+                throw ( new CswDniException( "Number of rows in table did not match the number of inserted rows" ) );
 
             foreach( DataRow CurrentRow in DataTable.Rows )
             {
@@ -56,6 +57,16 @@ namespace ChemSW.Nbt.Schema
         public override int CaseNo
         {
             get { return 0; }
+        }
+
+        public override string ScriptName
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        public override bool AlwaysRun
+        {
+            get { throw new NotImplementedException(); }
         }
 
         //runTest()

@@ -1,4 +1,5 @@
-﻿using ChemSW.Audit;
+﻿using System;
+using ChemSW.Audit;
 using ChemSW.Nbt.csw.Dev;
 
 namespace ChemSW.Nbt.Schema
@@ -16,20 +17,20 @@ namespace ChemSW.Nbt.Schema
         public CswTestCase_021_04( CswSchemaVersion CswSchemaVersion, object CswTstCaseRsc )
         {
             _CswSchemaVersion = CswSchemaVersion;
-			_CswTstCaseRsrc_021 = (CswTstCaseRsrc_021) CswTstCaseRsc;
+            _CswTstCaseRsrc_021 = (CswTstCaseRsrc_021) CswTstCaseRsc;
 
         }//ctor
 
 
         public override void update()
         {
-			_CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
-			_CswTstCaseRsrc_021.CswNbtSchemaModTrnsctn = _CswNbtSchemaModTrnsctn;
-			
-			CswAuditMetaData CswAuditMetaData = new CswAuditMetaData();
+            _CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
+            _CswTstCaseRsrc_021.CswNbtSchemaModTrnsctn = _CswNbtSchemaModTrnsctn;
+
+            CswAuditMetaData CswAuditMetaData = new CswAuditMetaData();
             _CswNbtSchemaModTrnsctn.dropTable( _CswTstCaseRsrc_021.ArbitraryTableName_01 );
             _CswNbtSchemaModTrnsctn.dropTable( CswAuditMetaData.makeAuditTableName( _CswTstCaseRsrc_021.ArbitraryTableName_01 ) );
-            _CswTstCaseRsrc_021.restoreAuditSetting(); 
+            _CswTstCaseRsrc_021.restoreAuditSetting();
         }
 
         public override CswEnumDeveloper Author
@@ -40,6 +41,16 @@ namespace ChemSW.Nbt.Schema
         public override int CaseNo
         {
             get { return 0; }
+        }
+
+        public override string ScriptName
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        public override bool AlwaysRun
+        {
+            get { throw new NotImplementedException(); }
         }
 
         //runTest()

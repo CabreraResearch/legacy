@@ -1,4 +1,5 @@
 ﻿
+using System;
 using ChemSW.Nbt.csw.Dev;
 
 namespace ChemSW.Nbt.Schema
@@ -16,17 +17,17 @@ namespace ChemSW.Nbt.Schema
         public CswTestCase_022_04( CswSchemaVersion CswSchemaVersion, object CswTstCaseRsc )
         {
             _CswSchemaVersion = CswSchemaVersion;
-			_CswTstCaseRsrc_022 = (CswTstCaseRsrc_022) CswTstCaseRsc;
+            _CswTstCaseRsrc_022 = (CswTstCaseRsrc_022) CswTstCaseRsc;
 
         }//ctor
 
 
         public override void update()
         {
-			_CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
-			_CswTstCaseRsrc_022.CswNbtSchemaModTrnsctn = _CswNbtSchemaModTrnsctn;
-			
-			_CswNbtSchemaModTrnsctn.dropTable( _CswTstCaseRsrc_022.ArbitraryTableName_01 );
+            _CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
+            _CswTstCaseRsrc_022.CswNbtSchemaModTrnsctn = _CswNbtSchemaModTrnsctn;
+
+            _CswNbtSchemaModTrnsctn.dropTable( _CswTstCaseRsrc_022.ArbitraryTableName_01 );
         }
 
         public override CswEnumDeveloper Author
@@ -37,6 +38,16 @@ namespace ChemSW.Nbt.Schema
         public override int CaseNo
         {
             get { return 0; }
+        }
+
+        public override string ScriptName
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        public override bool AlwaysRun
+        {
+            get { throw new NotImplementedException(); }
         }
 
         //runTest()

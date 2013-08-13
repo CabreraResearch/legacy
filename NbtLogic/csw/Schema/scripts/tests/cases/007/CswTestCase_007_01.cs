@@ -1,7 +1,7 @@
+using System;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.csw.Dev;
-using System;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -19,25 +19,25 @@ namespace ChemSW.Nbt.Schema
         public CswTestCase_007_01( CswSchemaVersion CswSchemaVersion, object CswTstCaseRsc )
         {
             _CswSchemaVersion = CswSchemaVersion;
-			_CswTstCaseRsrc_007 = (CswTstCaseRsrc_007) CswTstCaseRsc;
-		}//ctor
+            _CswTstCaseRsrc_007 = (CswTstCaseRsrc_007) CswTstCaseRsc;
+        }//ctor
 
         public override void update()
         {
-			_CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
-			_CswTstCaseRsrc_007.CswNbtSchemaModTrnsctn = _CswNbtSchemaModTrnsctn;
-			
-			try
+            _CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
+            _CswTstCaseRsrc_007.CswNbtSchemaModTrnsctn = _CswNbtSchemaModTrnsctn;
+
+            try
             {
-                _CswNbtSchemaModTrnsctn.addColumn( _CswTstCaseRsrc.getFakeTestColumnName( TestColumnNamesFake.TestColumn01 ), CswEnumDataDictionaryColumnType.Value, 20, 0, "foo", "test column", string.Empty, string.Empty, false, false, false, string.Empty, false, CswEnumDataDictionaryPortableDataType.String, false, false, _CswTstCaseRsrc.getRealTestTableName(TestTableNamesReal.DataDictionary), CswEnumDataDictionaryUniqueType.None, false, string.Empty );
+                _CswNbtSchemaModTrnsctn.addColumn( _CswTstCaseRsrc.getFakeTestColumnName( TestColumnNamesFake.TestColumn01 ), CswEnumDataDictionaryColumnType.Value, 20, 0, "foo", "test column", string.Empty, string.Empty, false, false, false, string.Empty, false, CswEnumDataDictionaryPortableDataType.String, false, false, _CswTstCaseRsrc.getRealTestTableName( TestTableNamesReal.DataDictionary ), CswEnumDataDictionaryUniqueType.None, false, string.Empty );
                 _CswNbtSchemaModTrnsctn.addColumn( _CswTstCaseRsrc.getFakeTestColumnName( TestColumnNamesFake.TestColumn02 ), CswEnumDataDictionaryColumnType.Value, 20, 0, "foo", "test column", string.Empty, string.Empty, false, false, false, string.Empty, false, CswEnumDataDictionaryPortableDataType.String, false, false, _CswTstCaseRsrc.getRealTestTableName( TestTableNamesReal.DataDictionary ), CswEnumDataDictionaryUniqueType.None, false, string.Empty );
             }
 
-            catch ( Exception Exception )
+            catch( Exception Exception )
             {
-                throw ( new CswDniException( "An unexpected exception was thrown when adding two columns to data_dictionary:"  + Exception.Message ) );
+                throw ( new CswDniException( "An unexpected exception was thrown when adding two columns to data_dictionary:" + Exception.Message ) );
             }//catch()  
-        
+
         }
 
         public override CswEnumDeveloper Author
@@ -48,6 +48,16 @@ namespace ChemSW.Nbt.Schema
         public override int CaseNo
         {
             get { return 0; }
+        }
+
+        public override string ScriptName
+        {
+            get { throw new System.NotImplementedException(); }
+        }
+
+        public override bool AlwaysRun
+        {
+            get { throw new System.NotImplementedException(); }
         }
 
         //runTest()

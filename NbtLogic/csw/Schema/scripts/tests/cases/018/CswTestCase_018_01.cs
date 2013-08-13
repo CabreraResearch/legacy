@@ -17,15 +17,15 @@ namespace ChemSW.Nbt.Schema
         public CswTestCase_018_01( CswSchemaVersion CswSchemaVersion, object CswTstCaseRsc )
         {
             _CswSchemaVersion = CswSchemaVersion;
-			_CswTstCaseRsrc_018 = (CswTstCaseRsrc_018) CswTstCaseRsc;
-		}//ctor
+            _CswTstCaseRsrc_018 = (CswTstCaseRsrc_018) CswTstCaseRsc;
+        }//ctor
 
         public override void update()
         {
-			_CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
-			_CswTstCaseRsrc_018.CswNbtSchemaModTrnsctn = _CswNbtSchemaModTrnsctn;
+            _CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
+            _CswTstCaseRsrc_018.CswNbtSchemaModTrnsctn = _CswNbtSchemaModTrnsctn;
 
-			_CswTstCaseRsrc_018.makePkFkTables(); 
+            _CswTstCaseRsrc_018.makePkFkTables();
         }
 
         public override CswEnumDeveloper Author
@@ -40,6 +40,16 @@ namespace ChemSW.Nbt.Schema
 
         //runTest()
 
+
+        public override string ScriptName
+        {
+            get { throw new System.NotImplementedException(); }
+        }
+
+        public override bool AlwaysRun
+        {
+            get { throw new System.NotImplementedException(); }
+        }
     }//CswSchemaUpdaterTestCaseDropColumnRollback
 
 }//ChemSW.Nbt.Schema

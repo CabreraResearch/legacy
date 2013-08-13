@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿using System;
+using System.Data;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.MtSched.Core;
@@ -10,7 +11,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update
     /// </summary>
-    public class CswUpdateSchema_02E_Case30360: CswUpdateSchemaTo
+    public class CswUpdateSchema_02E_Case30360 : CswUpdateSchemaTo
     {
         public override CswEnumDeveloper Author
         {
@@ -20,6 +21,16 @@ namespace ChemSW.Nbt.Schema
         public override int CaseNo
         {
             get { return 30360; }
+        }
+
+        public override string ScriptName
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        public override bool AlwaysRun
+        {
+            get { throw new NotImplementedException(); }
         }
 
         public override void update()

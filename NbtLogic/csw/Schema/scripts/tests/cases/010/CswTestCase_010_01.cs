@@ -27,14 +27,14 @@ namespace ChemSW.Nbt.Schema
         public CswTestCase_010_01( CswSchemaVersion CswSchemaVersion, object CswTstCaseRsc )
         {
             _CswSchemaVersion = CswSchemaVersion;
-			_CswTstCaseRsrc_010 = (CswTstCaseRsrc_010) CswTstCaseRsc;
-		}//ctor
+            _CswTstCaseRsrc_010 = (CswTstCaseRsrc_010) CswTstCaseRsc;
+        }//ctor
 
         public override void update()
         {
-			_CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
-			_CswTstCaseRsrc_010.CswNbtSchemaModTrnsctn = _CswNbtSchemaModTrnsctn;
-			//Int32 MaterialsPk = Int32.MinValue;
+            _CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
+            _CswTstCaseRsrc_010.CswNbtSchemaModTrnsctn = _CswNbtSchemaModTrnsctn;
+            //Int32 MaterialsPk = Int32.MinValue;
 
 
             //SETUP: BEGIN *****************************************
@@ -138,6 +138,16 @@ namespace ChemSW.Nbt.Schema
         public override int CaseNo
         {
             get { return 0; }
+        }
+
+        public override string ScriptName
+        {
+            get { throw new System.NotImplementedException(); }
+        }
+
+        public override bool AlwaysRun
+        {
+            get { throw new System.NotImplementedException(); }
         }
 
         //runTest()

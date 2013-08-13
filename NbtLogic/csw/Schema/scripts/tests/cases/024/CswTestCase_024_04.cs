@@ -19,15 +19,15 @@ namespace ChemSW.Nbt.Schema
         public CswTestCase_024_04( CswSchemaVersion CswSchemaVersion, object CswTstCaseRsc )
         {
             _CswSchemaVersion = CswSchemaVersion;
-			_CswTstCaseRsrc_024 = (CswTstCaseRsrc_024) CswTstCaseRsc;
+            _CswTstCaseRsrc_024 = (CswTstCaseRsrc_024) CswTstCaseRsc;
 
         }//ctor
 
 
         public override void update()
         {
-			_CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
-			_CswTstCaseRsrc_024.CswNbtSchemaModTrnsctn = _CswNbtSchemaModTrnsctn;
+            _CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
+            _CswTstCaseRsrc_024.CswNbtSchemaModTrnsctn = _CswNbtSchemaModTrnsctn;
 
             //Records from Update ********************************************************************
             string MisMatchMessage = string.Empty;
@@ -42,7 +42,7 @@ namespace ChemSW.Nbt.Schema
                 throw ( new CswDniException( "Unable to evalutate state of audit table: there are no rows :-( " ) );
             }
 
-            CswAuditMetaData CswAuditMetaData = new CswAuditMetaData(); 
+            CswAuditMetaData CswAuditMetaData = new CswAuditMetaData();
 
             foreach( DataRow CurrentRow in DataTableFromUpdate.Rows )
             {
@@ -88,6 +88,16 @@ namespace ChemSW.Nbt.Schema
 
         //runTest()
 
+
+        public override string ScriptName
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        public override bool AlwaysRun
+        {
+            get { throw new NotImplementedException(); }
+        }
     }//CswSchemaUpdaterTestCaseDropColumnRollback
 
 }//ChemSW.Nbt.Schema

@@ -19,6 +19,16 @@ namespace ChemSW.Nbt.Schema
             get { return 30300; }
         }
 
+        public override string ScriptName
+        {
+            get { throw new System.NotImplementedException(); }
+        }
+
+        public override bool AlwaysRun
+        {
+            get { throw new System.NotImplementedException(); }
+        }
+
         public override void update()
         {
             //case 30300: nbtimporter needs:

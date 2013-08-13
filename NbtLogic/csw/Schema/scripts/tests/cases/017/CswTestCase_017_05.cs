@@ -17,15 +17,15 @@ namespace ChemSW.Nbt.Schema
         public CswTestCase_017_05( CswSchemaVersion CswSchemaVersion, object CswTstCaseRsc )
         {
             _CswSchemaVersion = CswSchemaVersion;
-			_CswTstCaseRsrc_017 = (CswTstCaseRsrc_017) CswTstCaseRsc;
-		}//ctor
+            _CswTstCaseRsrc_017 = (CswTstCaseRsrc_017) CswTstCaseRsc;
+        }//ctor
 
         public override void update()
         {
-			_CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
-			_CswTstCaseRsrc_017.CswNbtSchemaModTrnsctn = _CswNbtSchemaModTrnsctn;
-			
-			List<PkFkPair> PairList = _CswTstCaseRsrc_017.getPkFkPairs();
+            _CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
+            _CswTstCaseRsrc_017.CswNbtSchemaModTrnsctn = _CswNbtSchemaModTrnsctn;
+
+            List<PkFkPair> PairList = _CswTstCaseRsrc_017.getPkFkPairs();
 
             //Verify that we cleaned up after ourselves
             foreach( PkFkPair CurrentPair in PairList )
@@ -44,6 +44,16 @@ namespace ChemSW.Nbt.Schema
         public override int CaseNo
         {
             get { return 0; }
+        }
+
+        public override string ScriptName
+        {
+            get { throw new System.NotImplementedException(); }
+        }
+
+        public override bool AlwaysRun
+        {
+            get { throw new System.NotImplementedException(); }
         }
 
         //runTest()

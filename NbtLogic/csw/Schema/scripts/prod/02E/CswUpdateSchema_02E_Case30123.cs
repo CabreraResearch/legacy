@@ -1,4 +1,5 @@
-﻿using ChemSW.Nbt.csw.Dev;
+﻿using System;
+using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 
@@ -7,7 +8,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update for case 30123
     /// </summary>
-    public class CswUpdateSchema_02E_Case30123: CswUpdateSchemaTo
+    public class CswUpdateSchema_02E_Case30123 : CswUpdateSchemaTo
     {
         public override CswEnumDeveloper Author
         {
@@ -17,6 +18,16 @@ namespace ChemSW.Nbt.Schema
         public override int CaseNo
         {
             get { return 30123; }
+        }
+
+        public override string ScriptName
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        public override bool AlwaysRun
+        {
+            get { throw new NotImplementedException(); }
         }
 
         public override void update()
@@ -39,7 +50,7 @@ namespace ChemSW.Nbt.Schema
                     NodeTypeName = "Balance",
                     Category = "System",
                 } );
-                
+
                 BalanceNT.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassBalance.PropertyName.Name ) );
             }
 

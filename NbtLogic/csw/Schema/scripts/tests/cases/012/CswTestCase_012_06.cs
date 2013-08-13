@@ -19,13 +19,13 @@ namespace ChemSW.Nbt.Schema
         public CswTestCase_012_06( CswSchemaVersion CswSchemaVersion, object CswTstCaseRsc )
         {
             _CswSchemaVersion = CswSchemaVersion;
-			_CswTstCaseRsrc_012 = (CswTstCaseRsrc_012) CswTstCaseRsc;
-		}//ctor
+            _CswTstCaseRsrc_012 = (CswTstCaseRsrc_012) CswTstCaseRsc;
+        }//ctor
 
         public override void update()
         {
-			_CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
-			_CswTstCaseRsrc_012.CswNbtSchemaModTrnsctn = _CswNbtSchemaModTrnsctn;
+            _CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
+            _CswTstCaseRsrc_012.CswNbtSchemaModTrnsctn = _CswNbtSchemaModTrnsctn;
 
             Collection<OrderByClause> OrderByClauses = new Collection<OrderByClause>();
             OrderByClauses.Add( new OrderByClause( _CswTstCaseRsrc_012.FakePkColumnName, CswEnumOrderByType.Ascending ) );
@@ -34,7 +34,7 @@ namespace ChemSW.Nbt.Schema
             CswTableUpdate CswTableUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( Description, _CswTstCaseRsrc_012.FakeTestTableName );
             CswTableUpdate.StorageMode = CswEnumStorageMode.Cached; // causes the rolback behavior we want
             DataTable DataTable = CswTableUpdate.getTable( "where " + _CswTstCaseRsrc_012.FakePkColumnName + "> 0", OrderByClauses );
-            
+
             if( DataTable.Rows[0][_CswTstCaseRsrc_012.FakeValColumnName].ToString() != _CswTstCaseRsrc_012.Val_Row_1 )
                 throw ( new CswDniException( "Row one does not have value " + _CswTstCaseRsrc_012.Val_Row_1 ) );
 
@@ -54,6 +54,16 @@ namespace ChemSW.Nbt.Schema
         public override int CaseNo
         {
             get { return 0; }
+        }
+
+        public override string ScriptName
+        {
+            get { throw new System.NotImplementedException(); }
+        }
+
+        public override bool AlwaysRun
+        {
+            get { throw new System.NotImplementedException(); }
         }
 
         //runTest()

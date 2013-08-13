@@ -1,11 +1,12 @@
-﻿using ChemSW.Nbt.csw.Dev;
+﻿using System;
+using ChemSW.Nbt.csw.Dev;
 
 namespace ChemSW.Nbt.Schema
 {
     /// <summary>
     /// Schema Update for making the missing NodeTypeProps
     /// </summary>
-    public class RunBeforeEveryExecutionOfUpdater_MakeMissingNodeTypeProps: CswUpdateSchemaTo
+    public class RunBeforeEveryExecutionOfUpdater_MakeMissingNodeTypeProps : CswUpdateSchemaTo
     {
         public static string Title = "Pre-Script: MakeMissingNodeTypeProps";
 
@@ -17,6 +18,16 @@ namespace ChemSW.Nbt.Schema
         public override int CaseNo
         {
             get { return 0; }
+        }
+
+        public override string ScriptName
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        public override bool AlwaysRun
+        {
+            get { throw new NotImplementedException(); }
         }
 
         public override void update()

@@ -1,4 +1,5 @@
-﻿using ChemSW.Nbt.csw.Dev;
+﻿using System;
+using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 
@@ -19,6 +20,16 @@ namespace ChemSW.Nbt.Schema
         public override int CaseNo
         {
             get { return 30123; }
+        }
+
+        public override string ScriptName
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        public override bool AlwaysRun
+        {
+            get { throw new NotImplementedException(); }
         }
 
         public override void update()
@@ -135,13 +146,13 @@ namespace ChemSW.Nbt.Schema
                     FieldType = CswEnumNbtFieldType.Text,
                     ServerManaged = true
                 } );
-            
+
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( BalanceOC )
                 {
                     PropName = CswNbtObjClassBalance.PropertyName.Operational,
                     FieldType = CswEnumNbtFieldType.Logical,
                     ServerManaged = true
-                 } );
+                } );
 
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( BalanceOC )
                  {
@@ -187,6 +198,6 @@ namespace ChemSW.Nbt.Schema
         }//addUserDefaultBalanceProp
 
 
-}//class CswUpdateSchema_02C_Case30123
+    }//class CswUpdateSchema_02C_Case30123
 
 }//namespace ChemSW.Nbt.Schema

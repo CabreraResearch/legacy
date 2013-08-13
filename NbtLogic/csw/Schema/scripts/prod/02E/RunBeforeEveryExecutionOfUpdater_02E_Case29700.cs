@@ -1,3 +1,4 @@
+using System;
 using System.Data;
 using ChemSW.DB;
 using ChemSW.Nbt.csw.Dev;
@@ -26,6 +27,16 @@ namespace ChemSW.Nbt.Schema
         }
 
         #endregion Blame Logic
+
+        public override string ScriptName
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        public override bool AlwaysRun
+        {
+            get { throw new NotImplementedException(); }
+        }
 
         /// <summary>
         /// The actual update call

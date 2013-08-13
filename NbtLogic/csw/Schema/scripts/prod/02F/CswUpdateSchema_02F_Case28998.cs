@@ -1,7 +1,8 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
+using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.csw.Dev;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -18,6 +19,16 @@ namespace ChemSW.Nbt.Schema
         public override int CaseNo
         {
             get { return 28998; }
+        }
+
+        public override string ScriptName
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        public override bool AlwaysRun
+        {
+            get { throw new NotImplementedException(); }
         }
 
         public override void update()
@@ -48,20 +59,20 @@ namespace ChemSW.Nbt.Schema
 
                     foreach( CswNbtMetaDataObjectClass Oc in OcsInThisView )
                     {
-                        CswNbtViewRelationship RequestItemRel = 
+                        CswNbtViewRelationship RequestItemRel =
                             GridView.AddViewRelationship
-                            ( 
+                            (
                                 RootRel,
                                 CswEnumNbtViewPropOwnerType.Second,
                                 Oc.getObjectClassProp( CswNbtObjClassRequestContainerDispense.PropertyName.Container ),
-                                false 
+                                false
                             );
-                        CswNbtViewRelationship RequestRel = 
+                        CswNbtViewRelationship RequestRel =
                             GridView.AddViewRelationship
-                            ( 
+                            (
                                 RequestItemRel,
                                 CswEnumNbtViewPropOwnerType.First,
-                                Oc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Request ), false 
+                                Oc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Request ), false
                             );
                         CswNbtViewProperty CompletedVp = GridView.AddViewProperty( RequestRel, RequestOc.getObjectClassProp( CswNbtObjClassRequest.PropertyName.CompletedDate ), 3 );
                         CompletedVp.SortBy = true;

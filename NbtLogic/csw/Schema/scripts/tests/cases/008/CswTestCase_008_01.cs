@@ -17,15 +17,15 @@ namespace ChemSW.Nbt.Schema
         public CswTestCase_008_01( CswSchemaVersion CswSchemaVersion, object CswTstCaseRsc )
         {
             _CswSchemaVersion = CswSchemaVersion;
-			_CswTstCaseRsrc_008 = (CswTstCaseRsrc_008) CswTstCaseRsc;
-		}//ctor
+            _CswTstCaseRsrc_008 = (CswTstCaseRsrc_008) CswTstCaseRsc;
+        }//ctor
 
         public override void update()
         {
-			_CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
-			_CswTstCaseRsrc_008.CswNbtSchemaModTrnsctn = _CswNbtSchemaModTrnsctn;
-			
-			_CswNbtSchemaModTrnsctn.CswDataDictionary.setCurrentColumn( "nodetype_props", "nodetypepropid" );
+            _CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
+            _CswTstCaseRsrc_008.CswNbtSchemaModTrnsctn = _CswNbtSchemaModTrnsctn;
+
+            _CswNbtSchemaModTrnsctn.CswDataDictionary.setCurrentColumn( "nodetype_props", "nodetypepropid" );
 
             Int32 TableColId = _CswNbtSchemaModTrnsctn.CswDataDictionary.TableColId;
 
@@ -44,6 +44,16 @@ namespace ChemSW.Nbt.Schema
         public override int CaseNo
         {
             get { return 0; }
+        }
+
+        public override string ScriptName
+        {
+            get { throw new System.NotImplementedException(); }
+        }
+
+        public override bool AlwaysRun
+        {
+            get { throw new System.NotImplementedException(); }
         }
 
         //runTest()

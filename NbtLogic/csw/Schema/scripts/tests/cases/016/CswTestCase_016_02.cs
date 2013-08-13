@@ -16,16 +16,16 @@ namespace ChemSW.Nbt.Schema
         public CswTestCase_016_02( CswSchemaVersion CswSchemaVersion, object CswTstCaseRsc )
         {
             _CswSchemaVersion = CswSchemaVersion;
-			_CswTstCaseRsrc_016 = (CswTstCaseRsrc_016) CswTstCaseRsc;
-		}//ctor
+            _CswTstCaseRsrc_016 = (CswTstCaseRsrc_016) CswTstCaseRsc;
+        }//ctor
 
         public override void update()
         {
-			_CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
-			_CswTstCaseRsrc_016.CswNbtSchemaModTrnsctn = _CswNbtSchemaModTrnsctn;
+            _CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
+            _CswTstCaseRsrc_016.CswNbtSchemaModTrnsctn = _CswNbtSchemaModTrnsctn;
 
             _CswNbtSchemaModTrnsctn.renameColumn( _CswTstCaseRsrc_016.FakeTestTableName, _CswTstCaseRsrc_016.FakeValColumnName01, _CswTstCaseRsrc_016.FakeValColumnName02 );
-            throw ( new CswDniExceptionIgnoreDeliberately() ); 
+            throw ( new CswDniExceptionIgnoreDeliberately() );
         }
 
         public override CswEnumDeveloper Author
@@ -36,6 +36,16 @@ namespace ChemSW.Nbt.Schema
         public override int CaseNo
         {
             get { return 0; }
+        }
+
+        public override string ScriptName
+        {
+            get { throw new System.NotImplementedException(); }
+        }
+
+        public override bool AlwaysRun
+        {
+            get { throw new System.NotImplementedException(); }
         }
 
         //runTest()

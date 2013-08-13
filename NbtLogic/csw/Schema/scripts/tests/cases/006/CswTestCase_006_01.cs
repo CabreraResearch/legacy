@@ -37,6 +37,16 @@ namespace ChemSW.Nbt.Schema
             get { return 0; }
         }
 
+        public override string ScriptName
+        {
+            get { throw new System.NotImplementedException(); }
+        }
+
+        public override bool AlwaysRun
+        {
+            get { throw new System.NotImplementedException(); }
+        }
+
         //runTest()
 
     }//CswSchemaUpdaterTestCaseDropColumnRollback

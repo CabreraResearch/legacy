@@ -18,19 +18,19 @@ namespace ChemSW.Nbt.Schema
         public CswTestCase_019_02( CswSchemaVersion CswSchemaVersion, object CswTstCaseRsc )
         {
             _CswSchemaVersion = CswSchemaVersion;
-			_CswTstCaseRsrc_019 = (CswTstCaseRsrc_019) CswTstCaseRsc;
+            _CswTstCaseRsrc_019 = (CswTstCaseRsrc_019) CswTstCaseRsc;
         }//ctor
 
         public override void update()
         {
-			_CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
-			_CswTstCaseRsrc_019.CswNbtSchemaModTrnsctn = _CswNbtSchemaModTrnsctn;
-			
-			CswTableSelect CswTableSelect = _CswNbtSchemaModTrnsctn.makeCswTableSelect( Description, _CswTstCaseRsrc_019.ArbitraryTableName_01 );
+            _CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
+            _CswTstCaseRsrc_019.CswNbtSchemaModTrnsctn = _CswNbtSchemaModTrnsctn;
+
+            CswTableSelect CswTableSelect = _CswNbtSchemaModTrnsctn.makeCswTableSelect( Description, _CswTstCaseRsrc_019.ArbitraryTableName_01 );
             DataTable DataTable = CswTableSelect.getTable();
 
             if( DataTable.Rows.Count != _CswTstCaseRsrc_019.TotalTestRows )
-                throw(new CswDniException("Number of rows in table did not match the number of inserted rows") );
+                throw ( new CswDniException( "Number of rows in table did not match the number of inserted rows" ) );
 
             foreach( DataRow CurrentRow in DataTable.Rows )
             {
@@ -54,6 +54,16 @@ namespace ChemSW.Nbt.Schema
 
         //runTest()
 
+
+        public override string ScriptName
+        {
+            get { throw new System.NotImplementedException(); }
+        }
+
+        public override bool AlwaysRun
+        {
+            get { throw new System.NotImplementedException(); }
+        }
     }//CswSchemaUpdaterTestCaseDropColumnRollback
 
 }//ChemSW.Nbt.Schema

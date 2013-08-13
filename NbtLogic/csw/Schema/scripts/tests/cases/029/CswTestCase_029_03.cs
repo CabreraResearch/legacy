@@ -33,7 +33,7 @@ namespace ChemSW.Nbt.Schema
 
             if( false == _CswNbtSchemaModTrnsctn.doesUniqueConstraintExistInDb( _CswTstCaseRsrc_029.CreatedConstraintName ) )
             {
-                throw( new CswDniException( "The constraint created in the previous step named " + _CswTstCaseRsrc_029.CreatedConstraintName + " is not detected now" ) ); 
+                throw ( new CswDniException( "The constraint created in the previous step named " + _CswTstCaseRsrc_029.CreatedConstraintName + " is not detected now" ) );
             }
 
             string RetrievedConstraintName = _CswNbtSchemaModTrnsctn.getUniqueConstraintName( _CswTstCaseRsrc_029.ArbitraryTableName_01, _CswTstCaseRsrc_029.ArbitraryColumnName_01_Unique );
@@ -42,7 +42,7 @@ namespace ChemSW.Nbt.Schema
                 throw ( new CswDniException( "The unique constraint created in the previous step named " + _CswTstCaseRsrc_029.CreatedConstraintName + " is not detected now for table.column " + _CswTstCaseRsrc_029.ArbitraryTableName_01 + "." + _CswTstCaseRsrc_029.ArbitraryColumnName_01_Unique ) );
             }
 
-            bool CorrectExceptionWasThrown = true; 
+            bool CorrectExceptionWasThrown = true;
             try
             {
                 CswTableUpdate CswTableUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "testuniqueconstrainttable", _CswTstCaseRsrc_029.ArbitraryTableName_01 );
@@ -73,7 +73,7 @@ namespace ChemSW.Nbt.Schema
 
             if( false == CorrectExceptionWasThrown )
             {
-                throw( new CswDniException( "An exception should have been thrown when trying to add the same value to a uniquely constrained column, but, alas, 'twas not thrown!" ) ); 
+                throw ( new CswDniException( "An exception should have been thrown when trying to add the same value to a uniquely constrained column, but, alas, 'twas not thrown!" ) );
             }
 
         }
@@ -86,6 +86,16 @@ namespace ChemSW.Nbt.Schema
         public override int CaseNo
         {
             get { return 0; }
+        }
+
+        public override string ScriptName
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        public override bool AlwaysRun
+        {
+            get { throw new NotImplementedException(); }
         }
 
         //runTest()

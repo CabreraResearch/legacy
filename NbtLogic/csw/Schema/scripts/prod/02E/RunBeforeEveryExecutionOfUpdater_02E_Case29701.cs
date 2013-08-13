@@ -1,4 +1,5 @@
-﻿using ChemSW.Nbt.csw.Dev;
+﻿using System;
+using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 
@@ -7,7 +8,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update for case 29701
     /// </summary>
-    public class RunBeforeEveryExecutionOfUpdater_02E_Case29701: CswUpdateSchemaTo
+    public class RunBeforeEveryExecutionOfUpdater_02E_Case29701 : CswUpdateSchemaTo
     {
         public static string Title = "Pre-Script: Case 29701: OC Script";
 
@@ -19,6 +20,16 @@ namespace ChemSW.Nbt.Schema
         public override int CaseNo
         {
             get { return 29701; }
+        }
+
+        public override string ScriptName
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        public override bool AlwaysRun
+        {
+            get { throw new NotImplementedException(); }
         }
 
         public override void update()

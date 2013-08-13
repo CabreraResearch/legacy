@@ -18,18 +18,18 @@ namespace ChemSW.Nbt.Schema
         public CswTestCase_011_03( CswSchemaVersion CswSchemaVersion, object CswTstCaseRsc )
         {
             _CswSchemaVersion = CswSchemaVersion;
-			_CswTstCaseRsrc_011 = (CswTstCaseRsrc_011) CswTstCaseRsc;
-		}//ctor
+            _CswTstCaseRsrc_011 = (CswTstCaseRsrc_011) CswTstCaseRsc;
+        }//ctor
 
         public override void update()
         {
-			_CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
-			_CswTstCaseRsrc_011.CswNbtSchemaModTrnsctn = _CswNbtSchemaModTrnsctn;
-			
-			CswTableUpdate CswUpdateTestTable = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( Description, _CswTstCaseRsrc_011.FakeTestTableName );
+            _CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
+            _CswTstCaseRsrc_011.CswNbtSchemaModTrnsctn = _CswNbtSchemaModTrnsctn;
+
+            CswTableUpdate CswUpdateTestTable = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( Description, _CswTstCaseRsrc_011.FakeTestTableName );
 
             CswUpdateTestTable.StorageMode = CswEnumStorageMode.Cached; // causes the rolback behavior we want
-            DataTable DataTable = CswUpdateTestTable.getEmptyTable(); 
+            DataTable DataTable = CswUpdateTestTable.getEmptyTable();
 
             DataRow DataRow = DataTable.NewRow();
             DataRow[_CswTstCaseRsrc_011.FakeTestColumnName] = "FOO  ";
@@ -49,6 +49,16 @@ namespace ChemSW.Nbt.Schema
         public override int CaseNo
         {
             get { return 0; }
+        }
+
+        public override string ScriptName
+        {
+            get { throw new System.NotImplementedException(); }
+        }
+
+        public override bool AlwaysRun
+        {
+            get { throw new System.NotImplementedException(); }
         }
 
         //runTest()

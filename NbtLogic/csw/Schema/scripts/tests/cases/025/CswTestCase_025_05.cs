@@ -19,15 +19,15 @@ namespace ChemSW.Nbt.Schema
         public CswTestCase_025_05( CswSchemaVersion CswSchemaVersion, object CswTstCaseRsc )
         {
             _CswSchemaVersion = CswSchemaVersion;
-			_CswTstCaseRsrc_025 = (CswTstCaseRsrc_025) CswTstCaseRsc;
+            _CswTstCaseRsrc_025 = (CswTstCaseRsrc_025) CswTstCaseRsc;
 
         }//ctor
 
 
         public override void update()
         {
-			_CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
-			_CswTstCaseRsrc_025.CswNbtSchemaModTrnsctn = _CswNbtSchemaModTrnsctn;
+            _CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
+            _CswTstCaseRsrc_025.CswNbtSchemaModTrnsctn = _CswNbtSchemaModTrnsctn;
 
 
             CswAuditMetaData CswAuditMetaData = new CswAuditMetaData();
@@ -132,6 +132,16 @@ namespace ChemSW.Nbt.Schema
         public override int CaseNo
         {
             get { return 0; }
+        }
+
+        public override string ScriptName
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        public override bool AlwaysRun
+        {
+            get { throw new NotImplementedException(); }
         }
 
         //runTest()

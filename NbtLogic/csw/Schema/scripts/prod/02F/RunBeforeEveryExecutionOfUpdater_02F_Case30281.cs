@@ -1,6 +1,5 @@
-using System.Data;
+using System;
 using ChemSW.Core;
-using ChemSW.DB;
 using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
@@ -13,6 +12,16 @@ namespace ChemSW.Nbt.Schema
     public class RunBeforeEveryExecutionOfUpdater_02F_Case30281 : CswUpdateSchemaTo
     {
         public static string Title = "Pre-Script: Case 30281";
+
+        public override string ScriptName
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        public override bool AlwaysRun
+        {
+            get { throw new NotImplementedException(); }
+        }
 
         #region Blame Logic
 

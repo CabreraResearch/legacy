@@ -15,19 +15,19 @@ namespace ChemSW.Nbt.Schema
 
         private CswTestCaseRsrc _CswTstCaseRsrc = null;
         private CswTstCaseRsrc_003 _CswTstCaseRsrc_003 = null;
- 
+
         private CswSchemaVersion _CswSchemaVersion = null;
         //public override CswSchemaVersion SchemaVersion { get { return ( _CswSchemaVersion ); } }
         public CswTestCase_003_04( CswSchemaVersion CswSchemaVersion, object CswTstCaseRsc )
         {
             _CswSchemaVersion = CswSchemaVersion;
-			_CswTstCaseRsrc_003 = (CswTstCaseRsrc_003) CswTstCaseRsc;
-		}//ctor
+            _CswTstCaseRsrc_003 = (CswTstCaseRsrc_003) CswTstCaseRsc;
+        }//ctor
 
         public override void update()
         {
-			_CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
-			_CswTstCaseRsrc_003.CswNbtSchemaModTrnsctn = _CswNbtSchemaModTrnsctn;
+            _CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
+            _CswTstCaseRsrc_003.CswNbtSchemaModTrnsctn = _CswNbtSchemaModTrnsctn;
 
 
             if( !_CswNbtSchemaModTrnsctn.isColumnDefinedInDataBase( _CswTstCaseRsrc_003.RealTestTableName, _CswTstCaseRsrc_003.RealTestColumnName ) )
@@ -57,7 +57,7 @@ namespace ChemSW.Nbt.Schema
             }
 
 
-            _CswNbtSchemaModTrnsctn.dropTable( _CswTstCaseRsrc_003.FakeTestTableName ); 
+            _CswNbtSchemaModTrnsctn.dropTable( _CswTstCaseRsrc_003.FakeTestTableName );
 
         }
 
@@ -69,6 +69,16 @@ namespace ChemSW.Nbt.Schema
         public override int CaseNo
         {
             get { return 0; }
+        }
+
+        public override string ScriptName
+        {
+            get { throw new System.NotImplementedException(); }
+        }
+
+        public override bool AlwaysRun
+        {
+            get { throw new System.NotImplementedException(); }
         }
 
         //runTest()

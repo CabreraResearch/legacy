@@ -1,4 +1,5 @@
-﻿using ChemSW.Nbt.csw.Dev;
+﻿using System;
+using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
 
 namespace ChemSW.Nbt.Schema
@@ -6,7 +7,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update for case 30014
     /// </summary>
-    public class CswUpdateSchema_02E_Case30014: CswUpdateSchemaTo
+    public class CswUpdateSchema_02E_Case30014 : CswUpdateSchemaTo
     {
         public override CswEnumDeveloper Author
         {
@@ -18,15 +19,25 @@ namespace ChemSW.Nbt.Schema
             get { return 30014; }
         }
 
+        public override string ScriptName
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        public override bool AlwaysRun
+        {
+            get { throw new NotImplementedException(); }
+        }
+
         public override void update()
         {
-            CswNbtMetaDataObjectClass sampleOC  = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( "SampleClass" );
-            CswNbtMetaDataObjectClass testOC    = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( "TestClass" );
-            CswNbtMetaDataObjectClass resultOC  = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( "ResultClass" );
-            CswNbtMetaDataObjectClass paramOC   = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( "ParameterClass" );
+            CswNbtMetaDataObjectClass sampleOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( "SampleClass" );
+            CswNbtMetaDataObjectClass testOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( "TestClass" );
+            CswNbtMetaDataObjectClass resultOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( "ResultClass" );
+            CswNbtMetaDataObjectClass paramOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( "ParameterClass" );
             CswNbtMetaDataObjectClass aliquotOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( "AliquotClass" );
-            CswNbtMetaDataObjectClass bioOC     = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( "BiologicalClass" );
-            
+            CswNbtMetaDataObjectClass bioOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( "BiologicalClass" );
+
             _CswNbtSchemaModTrnsctn.MetaData.DeleteObjectClass( sampleOC );
             _CswNbtSchemaModTrnsctn.MetaData.DeleteObjectClass( testOC );
             _CswNbtSchemaModTrnsctn.MetaData.DeleteObjectClass( resultOC );

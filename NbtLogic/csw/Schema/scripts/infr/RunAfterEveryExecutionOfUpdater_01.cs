@@ -7,7 +7,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Post-schema update script
     /// </summary>
-    public class RunAfterEveryExecutionOfUpdater_01: CswUpdateSchemaTo
+    public class RunAfterEveryExecutionOfUpdater_01 : CswUpdateSchemaTo
     {
         #region Blame Logic
 
@@ -36,6 +36,16 @@ namespace ChemSW.Nbt.Schema
         }
 
         #endregion Blame Logic
+
+        public override string ScriptName
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        public override bool AlwaysRun
+        {
+            get { throw new NotImplementedException(); }
+        }
 
         public static string Title = "Post-Script";
 

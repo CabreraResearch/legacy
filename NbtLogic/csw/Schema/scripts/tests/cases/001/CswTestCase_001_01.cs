@@ -19,8 +19,8 @@ namespace ChemSW.Nbt.Schema
         public CswTestCase_001_01( CswSchemaVersion CswSchemaVersion, object CswTstCaseRsc )
         {
             _CswSchemaVersion = CswSchemaVersion;
-			_CswTstCaseRsrc_001 = (CswTstCaseRsrc_001) CswTstCaseRsc;
-		}//ctor
+            _CswTstCaseRsrc_001 = (CswTstCaseRsrc_001) CswTstCaseRsc;
+        }//ctor
 
         public override CswEnumDeveloper Author
         {
@@ -32,12 +32,22 @@ namespace ChemSW.Nbt.Schema
             get { return 0; }
         }
 
+        public override string ScriptName
+        {
+            get { throw new System.NotImplementedException(); }
+        }
+
+        public override bool AlwaysRun
+        {
+            get { throw new System.NotImplementedException(); }
+        }
+
         public override void update()
         {
-			_CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
-			_CswTstCaseRsrc_001.CswNbtSchemaModTrnsctn = _CswNbtSchemaModTrnsctn;
-			
-			_CswNbtSchemaModTrnsctn.addColumn( _CswTstCaseRsrc_001.TestColumnNameOne, CswEnumDataDictionaryColumnType.Value, 20, 0, "foo", "test column", string.Empty, string.Empty, false, false, false, string.Empty, false, CswEnumDataDictionaryPortableDataType.String, false, false, _CswTstCaseRsrc_001.TestTableName, CswEnumDataDictionaryUniqueType.None, false, string.Empty );
+            _CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
+            _CswTstCaseRsrc_001.CswNbtSchemaModTrnsctn = _CswNbtSchemaModTrnsctn;
+
+            _CswNbtSchemaModTrnsctn.addColumn( _CswTstCaseRsrc_001.TestColumnNameOne, CswEnumDataDictionaryColumnType.Value, 20, 0, "foo", "test column", string.Empty, string.Empty, false, false, false, string.Empty, false, CswEnumDataDictionaryPortableDataType.String, false, false, _CswTstCaseRsrc_001.TestTableName, CswEnumDataDictionaryUniqueType.None, false, string.Empty );
             _CswNbtSchemaModTrnsctn.addColumn( _CswTstCaseRsrc_001.TestColumnNameTwo, CswEnumDataDictionaryColumnType.Value, 20, 0, "foo", "test column", string.Empty, string.Empty, false, false, false, string.Empty, false, CswEnumDataDictionaryPortableDataType.String, false, false, _CswTstCaseRsrc_001.TestTableName, CswEnumDataDictionaryUniqueType.None, false, string.Empty );
 
         }//runTest()

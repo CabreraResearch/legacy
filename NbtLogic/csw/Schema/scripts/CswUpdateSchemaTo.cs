@@ -1,12 +1,12 @@
-﻿using ChemSW.Nbt.csw.Dev;
-using System;
+﻿using System;
+using ChemSW.Nbt.csw.Dev;
 
 namespace ChemSW.Nbt.Schema
 {
     public abstract class CswUpdateSchemaTo
     {
-        public virtual string Title { get { return "Script: Case " + CaseNo;  } }
-        
+        public virtual string Title { get { return "Script: Case " + CaseNo; } }
+
         public class UnitOfBlame
         {
             public UnitOfBlame()
@@ -23,7 +23,7 @@ namespace ChemSW.Nbt.Schema
             public CswEnumDeveloper Developer;
             public Int32 CaseNumber;
         }
-        
+
         protected CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn = null;
         public CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn
         {
@@ -74,6 +74,16 @@ namespace ChemSW.Nbt.Schema
         /// The FogBugz Case number associated with this script
         /// </summary>
         public abstract Int32 CaseNo { get; }
+
+        /// <summary>
+        /// A unique identifier for this script
+        /// </summary>
+        public abstract string ScriptName { get; }
+
+        /// <summary>
+        /// Whether the script should be run always
+        /// </summary>
+        public abstract bool AlwaysRun { get; }
 
         /// <summary>
         /// Get the Case number as a link to FogBugz
