@@ -19,6 +19,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Description = "Description";
             public const string Enabled = "Enabled";
             public const string LastJobRequest = "Last Job Request";
+            public const string Jobs = "Jobs";
         }
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
@@ -97,6 +98,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropMemo Description { get { return _CswNbtNode.Properties[PropertyName.Description]; } }
         public CswNbtNodePropLogical Enabled { get { return _CswNbtNode.Properties[PropertyName.Enabled]; } }
         public CswNbtNodePropDateTime LastJobRequest { get { return _CswNbtNode.Properties[PropertyName.LastJobRequest]; } }
+        public CswNbtNodePropGrid Jobs { get { return _CswNbtNode.Properties[PropertyName.Jobs]; } }
 
         #endregion
 
