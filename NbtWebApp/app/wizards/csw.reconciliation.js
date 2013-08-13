@@ -180,16 +180,16 @@
                         
                         //Pending Actions
                         var pendingActionLabel = locationDatesTable.cell(rowNum, 2).span({ text: 'Pending Actions:' });
-                        var getPendingChangesCount = function() {
+                        var getPendingChangesCount = function () {
                             if (false === Csw.isNullOrEmpty(cswPrivate.state.LocationId)) {
-                            Csw.ajaxWcf.post({
-                                urlMethod: 'Containers/getOutstandingActionsCount',
-                                data: cswPrivate.state,
-                                success: function(ajaxdata) {
-                                    var count = ajaxdata.OutstandingActionsCount;
-                                    pendingActionLabel.text('Pending Actions: ' + count);
-                                }
-                            });
+                                Csw.ajaxWcf.post({
+                                    urlMethod: 'Containers/getOutstandingActionsCount',
+                                    data: cswPrivate.state,
+                                    success: function(ajaxdata) {
+                                        var count = ajaxdata.OutstandingActionsCount;
+                                        pendingActionLabel.text('Pending Actions: ' + count);
+                                    }
+                                });
                             }
                         };
                         getPendingChangesCount();
@@ -672,7 +672,7 @@
             };
 
             cswPrivate.getActionOptions = function (status) {
-                var actionOptions = ['', 'No Action'];
+                var actionOptions = ['', 'Ignore'];
                 if (status === 'Scanned, but already marked Disposed') {
                     actionOptions.push('Undispose');
                 }

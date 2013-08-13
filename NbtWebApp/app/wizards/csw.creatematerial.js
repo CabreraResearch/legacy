@@ -485,8 +485,7 @@
                         nodetypeid: cswPrivate.state.materialType.val,
                         EditMode: Csw.enums.editMode.Temp //This is intentional. We don't want the node accidental upversioned to a real node.
                     },
-                    ReloadTabOnSave: false,
-                    async: false
+                    ReloadTabOnSave: false
                 });
             };
 
@@ -538,8 +537,10 @@
                 var isLastStep = Csw.bool(false === cswPrivate.state.canAddSDS || false === cswPrivate.SDSModuleEnabled);
                 cswPrivate.toggleButton(cswPrivate.buttons.prev, true);
                 cswPrivate.toggleButton(cswPrivate.buttons.cancel, true);
-                cswPrivate.toggleButton(cswPrivate.buttons.finish, isLastStep);
-                cswPrivate.toggleButton(cswPrivate.buttons.next, false === isLastStep);
+                
+                //toggle these once the Sizes grid is loaded
+                cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
+                cswPrivate.toggleButton(cswPrivate.buttons.next, false);
 
                 if (false === cswPrivate.stepThreeComplete) {
                     cswPrivate.sizesDiv = cswPrivate.sizesDiv || cswPrivate.wizard.div(cswPrivate.currentStepNo);
@@ -599,13 +600,15 @@
                             Csw.ajax.post({
                                 urlMethod: 'getSizeLogicalsVisibility',
                                 data: { SizeNodeTypeId: cswPrivate.state.sizeNodeTypeId },
-                                async: false,
                                 success: function (data) {
                                     cswPrivate.showDispensable = Csw.bool(data.showDispensable);
                                     cswPrivate.showQuantityEditable = Csw.bool(data.showQuantityEditable);
+                                    makeSizeGrid();
+                                    
+                                    cswPrivate.toggleButton(cswPrivate.buttons.finish, isLastStep);
+                                    cswPrivate.toggleButton(cswPrivate.buttons.next, false === isLastStep);
                                 }
                             });
-                            makeSizeGrid();
                         },
                         relatedToNodeTypeId: cswPrivate.state.materialType.val,
                         relatedObjectClassPropName: 'Material'
@@ -693,6 +696,7 @@
 
             (function () {
                 Csw.extend(cswPrivate, options, true);
+                
                 cswPrivate.validateState();
                 cswPrivate.currentStepNo = cswPrivate.startingStep;
 
