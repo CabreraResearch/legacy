@@ -404,16 +404,20 @@ namespace ChemSW.Nbt.ObjClasses
         private CswNbtObjClassUser.Cache _UserCache = null;
         public CswNbtObjClassUser.Cache UserCache { get { return _UserCache ?? ( _UserCache = CswNbtObjClassUser.getCurrentUserCache( _CswNbtResources ) ); } }
 
+        private bool HasBeenTouched = false;
         private void _updateCartCounts( bool IsDelete = false )
         {
-            if ( false == Node.IsTemp )
+            //if ( false == Node.IsTemp )
+            //{
+            int Incrementer = 1;
+            if ( IsDelete )
             {
-                int Incrementer = 1;
-                if ( IsDelete )
-                {
-                    Incrementer = -1;
-                }
-
+                Incrementer = -1;
+            }
+            
+            if ( false == HasBeenTouched )
+            {
+                HasBeenTouched = true;
                 switch ( Status.Value )
                 {
                     case Statuses.Pending:
@@ -435,12 +439,15 @@ namespace ChemSW.Nbt.ObjClasses
                     UserCache.update( _CswNbtResources );
                 }
             }
+            //}
         }
 
         public CswNbtNodePropButton Fulfill { get { return _CswNbtNode.Properties[PropertyName.Fulfill]; } }
         public CswNbtNodePropList Status { get { return _CswNbtNode.Properties[PropertyName.Status]; } }
         private void _onStatusPropChange( CswNbtNodeProp Prop )
         {
+            string LastStatus = Status.GetOriginalPropRowValue();
+
             AssignedTo.setHidden( value: ( Status.Value == Statuses.Pending || Status.Value == Statuses.Completed || Status.Value == Statuses.Cancelled ), SaveToDb: true );
             Fulfill.setHidden( value: ( Status.Value == Statuses.Pending || Status.Value == Statuses.Completed || Status.Value == Statuses.Cancelled ), SaveToDb: true );
 

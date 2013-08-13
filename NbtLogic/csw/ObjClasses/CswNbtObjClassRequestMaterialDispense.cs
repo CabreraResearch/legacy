@@ -258,8 +258,8 @@ namespace ChemSW.Nbt.ObjClasses
 
         private void _updateCartCounts( bool IsDelete = false )
         {
-            if( false == Node.IsTemp )
-            {
+            //if( false == Node.IsTemp )
+            //{
                 int Incrementer = 1;
                 if( IsDelete )
                 {
@@ -275,7 +275,7 @@ namespace ChemSW.Nbt.ObjClasses
                     UserCache.CartCounts.RecurringRequestItems += Incrementer;
                     UserCache.update( _CswNbtResources );
                 }
-            }
+            //}
         }
         public override void beforePropertySetDeleteNode()
         {
