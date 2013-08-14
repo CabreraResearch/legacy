@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -7,6 +8,7 @@ namespace ChemSW.Nbt.Schema
     /// </summary>
     public class CswSchemaScriptsProd : ICswSchemaScripts
     {
+        private List<CswSchemaUpdateDriver> _UpdateDriversList = new List<CswSchemaUpdateDriver>();
         private Dictionary<CswSchemaVersion, CswSchemaUpdateDriver> _UpdateDrivers = new Dictionary<CswSchemaVersion, CswSchemaUpdateDriver>();
         public Dictionary<CswSchemaVersion, CswSchemaUpdateDriver> UpdateDrivers { get { return _UpdateDrivers; } }
 
@@ -15,34 +17,26 @@ namespace ChemSW.Nbt.Schema
             // This is where you manually set to the last version of the previous release (the one currently in production)
             _MinimumVersion = new CswSchemaVersion( 2, 'D', 23 );
 
-            // This is where you add new versions.
-            #region EUCALYPTUS
 
-            // Moving Euc before scripts here as Versioned Scripts
+
+            // Euc Before Scripts
             _addVersionedScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02E_Case29700() ) );       //02E-001
             _addVersionedScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02E_Case30123() ) );       //02E-002
             _addVersionedScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02E_Case29701() ) );       //02E-003
             _addVersionedScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02E_Case30347() ) );       //02E-004
 
-            #endregion EUCALYPTUS
 
-            #region FOXGLOVE
+            // Fox Before Scripts
+            _addVersionedScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02F_Case30281() ) );       //02E-005 //02F-001 
+            _addVersionedScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02F_Case30251() ) );       //02E-006 //02F-002 
+            _addVersionedScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02F_Case30251B() ) );      //02E-007 //02F-003 
 
-            // Moving Fox before scripts here as Versioned Scripts
-            _addVersionedScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02F_Case30389() ) );       //02E-005 //02F-000
-            _addVersionedScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02F_Case30281() ) );       //02E-006 //02F-001 
-            _addVersionedScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02F_Case30251() ) );       //02E-007 //02F-002 
-            _addVersionedScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02F_Case30251B() ) );      //02E-008 //02F-003 
-
-            #endregion FOXGLOVE
 
             // This is the MakeMissingNodeTypeProps script. If you have a script which contains OC changes, put it before this script.
-            // TODO: This shouldn't have a version (it shouldn't be counted because it is always run
-            _addVersionedScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_MakeMissingNodeTypeProps() ) );
+            // TODO: This shouldn't have a version (it shouldn't be counted because it is always run)
+            _addVersionedScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_MakeMissingNodeTypeProps() ) ); //02E-008
 
-            // e.g. _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02F_CaseXXXXX() ) );
-            #region EUCALYPTUS
-
+            // Euc Scripts
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02E_Case30014() ) );                        //02E-009
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02E_Case30222() ) );                        //02E-010
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02E_Case29847() ) );                        //02E-011
@@ -51,18 +45,13 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02E_Case30360() ) );                        //02E-014
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02E_Case30339_UserProfilex2() ) );          //02E-015
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02E_Case30300() ) );                        //02E-016 
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02E_Case30360() ) );                        //02E-017
 
-            #endregion EUCALYPTUS
+            // Fox Scripts
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02F_Case30281() ) );                        //02E-017 //02F-004
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02F_Case28998() ) );                        //02E-018 //02F-005
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02F_Case29973() ) );                        //02E-019 //02F-006
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02F_Case29191() ) );                        //02E-020 //02F-007
 
-            #region FOXGLOVE
-
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02F_Case30281() ) );                        //02E-018 //02F-004
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02F_Case28998() ) );                        //02E-019 //02F-005
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02F_Case29973() ) );                        //02E-020 //02F-006
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02F_Case29191() ) );                        //02E-021 //02F-007
-
-            #endregion FOXGLOVE
 
             // This automatically detects the latest version
             _LatestVersion = _MinimumVersion;
@@ -74,7 +63,17 @@ namespace ChemSW.Nbt.Schema
                 }
             }
 
+            // Add the list of CswSchemaUpdateDrivers to a private list
+            foreach( CswSchemaUpdateDriver CurrentDriver in _UpdateDrivers.Values )
+            {
+                _UpdateDriversList.Add( CurrentDriver );
+            }
+
             #region Before Scripts
+
+            // This is a special script - it add a column to the update_scripts table that is _REQUIRED_ for the rest of the update process
+            // to complete successfully. We need to leave this here until the column is in the master (after Foxglove is on production)
+            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02F_Case30389() ), RunBeforeEveryExecutionOfUpdater_02F_Case30389.Title );
 
             // We now only have two before scripts that always run
             _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02SQL() ), RunBeforeEveryExecutionOfUpdater_02SQL.Title );
@@ -142,20 +141,70 @@ namespace ChemSW.Nbt.Schema
             return ret;
         }
 
+        private Int32 _CurrentIdx = Int32.MinValue;
         public CswSchemaUpdateDriver Next( CswNbtResources CswNbtResources )
         {
             CswSchemaUpdateDriver ReturnVal = null;
+            CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn = new CswNbtSchemaModTrnsctn( CswNbtResources );
 
-            CswSchemaVersion myCurrentVersion = CurrentVersion( CswNbtResources );
-            if( myCurrentVersion == MinimumVersion ||
-                ( LatestVersion.CycleIteration == myCurrentVersion.CycleIteration &&
-                    LatestVersion.ReleaseIdentifier == myCurrentVersion.ReleaseIdentifier &&
-                    LatestVersion.ReleaseIteration > myCurrentVersion.ReleaseIteration ) )
+            if( _UpdateDriversList.Count > ( _CurrentIdx + 1 ) )
             {
-                ReturnVal = _UpdateDrivers[TargetVersion( CswNbtResources )];
+                if( Int32.MinValue == _CurrentIdx )
+                {
+                    _CurrentIdx = 0;
+                }
+                else
+                {
+                    _CurrentIdx++;
+                }
+
+                // Now check whether the script has already been run and if it has then get the next script 
+                // and keep checking until we return a script that should be run next
+                //TODO: also check if script says 'alwaysrun'
+                ReturnVal = _UpdateDriversList[_CurrentIdx];
+                ReturnVal.CswNbtSchemaModTrnsctn = CswNbtSchemaModTrnsctn;
+                while( ReturnVal.AlreadyRun() )
+                {
+                    _CurrentIdx++;
+                    ReturnVal = _UpdateDriversList[_CurrentIdx];
+                    ReturnVal.CswNbtSchemaModTrnsctn = CswNbtSchemaModTrnsctn;
+                }
             }
+
+            //CswSchemaVersion myCurrentVersion = CurrentVersion( CswNbtResources );
+            //if( myCurrentVersion == MinimumVersion ||
+            //    ( LatestVersion.CycleIteration == myCurrentVersion.CycleIteration &&
+            //        LatestVersion.ReleaseIdentifier == myCurrentVersion.ReleaseIdentifier &&
+            //        LatestVersion.ReleaseIteration > myCurrentVersion.ReleaseIteration ) )
+            //{
+            //    ReturnVal = _UpdateDrivers[TargetVersion( CswNbtResources )];
+            //}
             return ( ReturnVal );
-        }
+        }//Next()
+
+        //private Int32 _CurrentIdx = Int32.MinValue;
+        //public CswSchemaUpdateDriver Next( CswNbtResources CswNbtResources )
+        //{
+        //    CswSchemaUpdateDriver ReturnVal = null;
+
+
+        //    if( _UpdateDriverList.Count > ( _CurrentIdx + 1 ) )
+        //    {
+        //        if( Int32.MinValue == _CurrentIdx )
+        //        {
+        //            _CurrentIdx = 0;
+        //        }
+        //        else
+        //        {
+        //            _CurrentIdx++;
+        //        }
+
+        //        ReturnVal = _UpdateDriverList[_CurrentIdx];
+        //    }
+
+        //    return ( ReturnVal );
+
+        //}//Next
 
         public CswSchemaUpdateDriver this[CswSchemaVersion CswSchemaVersion]
         {

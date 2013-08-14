@@ -90,7 +90,7 @@ namespace ChemSW.Nbt.Schema
 
             bool ReturnVal = true;
 
-            //            CswNbtResources CswNbtResources = _ResourcesInitHandler( _AccessId );
+            // CswNbtResources CswNbtResources = _ResourcesInitHandler( _AccessId );
             CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn = new CswNbtSchemaModTrnsctn( CswNbtResources );
 
             CswTableUpdate _UpdateHistoryTableUpdate = CswNbtResources.makeCswTableUpdate( "schemaupdater_updatehistory_update", "update_history" );
@@ -114,6 +114,11 @@ namespace ChemSW.Nbt.Schema
             DataRow NewUpdateHistoryRow = _UpdateHistoryTable.NewRow();
             NewUpdateHistoryRow["updatedate"] = DateTime.Now.ToString();
             NewUpdateHistoryRow["version"] = CswSchemaUpdateDriver.SchemaVersion.ToString();
+            //TODO: Uniqueness validation on scriptname
+            if( _UpdateHistoryTable.Columns.Contains( "scriptname" ) )
+            {
+                NewUpdateHistoryRow["scriptname"] = CswSchemaUpdateDriver.ScriptName;
+            }
 
             if( ReturnVal )
             {
@@ -161,8 +166,6 @@ namespace ChemSW.Nbt.Schema
         /// </summary>
         public bool runNextVersionedScript()
         {
-
-
             CswNbtResources CswNbtResources = null;
             _ResourcesInitHandler( _AccessId, ref CswNbtResources );
 

@@ -307,29 +307,32 @@ namespace ChemSW.Nbt.Schema
                 if( UpdateSucceeded )
                 {
                     CswSchemaVersion CurrentVersion = _CswSchemaUpdater.CurrentVersion( CswNbtResources );
-                    while( UpdateSucceeded && !Cancel && CurrentVersion != _CswSchemaUpdater.LatestVersion )
+
+                    // If the version is out of date (Counting the # of scripts in prod shows that there are more than there were before), 
+                    // we want to iterate and run scripts that haven't been run
+                    if( CurrentVersion != _CswSchemaUpdater.LatestVersion )
                     {
-                        SetStatus( "Updating to " + _CswSchemaUpdater.TargetVersion( CswNbtResources ).ToString() );
+                        while( UpdateSucceeded && !Cancel && CurrentVersion != _CswSchemaUpdater.LatestVersion )
+                        {
+                            SetStatus( "Updating to " + _CswSchemaUpdater.TargetVersion( CswNbtResources ) );
 
-                        UpdateSucceeded = _CswSchemaUpdater.runNextVersionedScript();
+                            UpdateSucceeded = _CswSchemaUpdater.runNextVersionedScript();
 
-                        CswNbtResources.AccessId = AccessId; //cases 23787,9751: you have to re-init after the release() that is done in the Updater
-                        CswNbtResources.ClearCache();
+                            CswNbtResources.AccessId = AccessId; //cases 23787,9751: you have to re-init after the release() that is done in the Updater
+                            CswNbtResources.ClearCache();
 
-                        SchemaInfoEventArgs.MinimumSchemaVersion = _CswSchemaUpdater.MinimumVersion;
-                        SchemaInfoEventArgs.LatestSchemaVersion = _CswSchemaUpdater.LatestVersion;
+                            SchemaInfoEventArgs.MinimumSchemaVersion = _CswSchemaUpdater.MinimumVersion;
+                            SchemaInfoEventArgs.LatestSchemaVersion = _CswSchemaUpdater.LatestVersion;
 
-                        CurrentVersion = _CswSchemaUpdater.CurrentVersion( CswNbtResources );
-                        SchemaInfoEventArgs.CurrentSchemaVersion = CurrentVersion;
+                            CurrentVersion = _CswSchemaUpdater.CurrentVersion( CswNbtResources );
+                            SchemaInfoEventArgs.CurrentSchemaVersion = CurrentVersion;
 
-                        _updateHistoryTable( CswNbtResources, SchemaInfoEventArgs );
+                            _updateHistoryTable( CswNbtResources, SchemaInfoEventArgs );
 
-                        if( UpdateSucceeded )
-                            SetStatus( "Update successful" );
-
-
-
-                    }//iterate veresions
+                            if( UpdateSucceeded )
+                                SetStatus( "Update successful" );
+                        }//iterate
+                    }
 
                 }//if pre-process scripts succeded
 

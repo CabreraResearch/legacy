@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Data;
+using ChemSW.DB;
 using ChemSW.Exceptions;
 //using ChemSW.RscAdo;
 
@@ -50,6 +52,31 @@ namespace ChemSW.Nbt.Schema
 
         CswSchemaVersion _CswSchemaVersion = null;
         public CswSchemaVersion SchemaVersion { set { _CswSchemaVersion = value; } get { return ( _CswSchemaVersion ); } }
+
+        /// <summary>
+        /// Returns true if the script has already been run sucessfully.
+        /// </summary>
+        /// <returns></returns>
+        public bool AlreadyRun()
+        {
+            bool Ret = false;
+            CswTableSelect ts = _CswNbtSchemaModTrnsctn.makeCswTableSelect( "HasScriptAlreadyRun", "update_history" );
+            DataTable dt = ts.getTable( "where scriptname = '" + _CswUpdateSchemaTo.ScriptName + "' and log like '%Succeeded'" );
+            if( dt.Rows.Count > 0 )
+            {
+                Ret = true;
+            }
+
+            return Ret;
+        }//AlreadyRun()
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public string ScriptName
+        {
+            get { return _CswUpdateSchemaTo.ScriptName; }
+        }
 
         public void update()
         {
