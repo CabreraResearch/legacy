@@ -28,6 +28,26 @@
             };
             var cswPublic = {};
 
+            cswPrivate.dateFormats = {
+                'M/d/yyyy': /^([1-9]|1[012])\/([1-9]|[12][0-9]|3[01])\/(\d{4})$/,
+                'd-M-yyyy': /^([1-9]|[12][0-9]|3[01])-([1-9]|1[012])-(\d{4})$/,
+                'dd MMM yyyy': /^(0[1-9]|[12][0-9]|3[01]) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) (\d{4})$/i,
+                'yyyy-MM-dd': /^(\d{4})-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/,
+                'yyyy/M/d': /^(\d{4})\/([1-9]|1[012])\/([1-9]|[12][0-9]|3[01])$/,
+            };
+
+            cswPrivate.addValidators = function () {
+                if ( cswPrivate.DateFormat in cswPrivate.dateFormats ) {
+                    var dateExpression = cswPrivate.dateFormats[cswPrivate.DateFormat];
+
+                    $.validator.addMethod('validateDate', function (value, element) {
+                        return (dateExpression.test(cswPublic.val().date));
+                    }, 'Please enter a valid date');
+                    cswPrivate.dateBox.addClass('validateDate');
+                }//if preferredFormat in dateFormats
+            };//function addValidators()
+
+
             (function () {
                 if (options) {
                     Csw.extend(cswPrivate, options);
@@ -109,6 +129,8 @@
                             enabledText: 'Today'
                         });
                     }
+
+                    cswPrivate.addValidators();
                 } // if-else(o.ReadOnly)
             }());
 

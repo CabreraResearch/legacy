@@ -88,7 +88,23 @@
                 });
             };
 
+            //Case 30082: Should the Cached cart counts get out of sync, instrument a call to reset
+            cswPrivate.resetCart = function () {
+                return $.ajax({
+                    type: 'POST',
+                    url: 'Services/Requests/Cart/reset',
+                    xhrFields: {
+                        withCredentials: true
+                    },
+                    dataType: 'json',
+                    contentType: 'application/json; charset=utf-8'
+                });
+            };
+
             cswPrivate.getCartCounts = function () {
+
+                cswPrivate.resetCart(); //Fire this reset immediately to correct any non-toward counts. See case 30496 for improvements against this hack.
+                
                 if (cswPrivate.ajaxii.getCartCounts && cswPrivate.ajaxii.getCartCounts.ajax) {
                     cswPrivate.ajaxii.getCartCounts.abort();
                 }
@@ -140,7 +156,7 @@
                     }
                 });
             };
-
+            
             cswPrivate.submitRequest = function () {
                 Csw.ajaxWcf.post({
                     urlMethod: 'Requests/place',

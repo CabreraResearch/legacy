@@ -167,13 +167,13 @@
             }
 
             var visSelect = Csw.composites.makeViewVisibilitySelect(table, row, 'Available to', {
-                onRenderFinish: function() {
+                onRenderFinish: function () {
                     row += 1;
                     var saveBtn = form.button({
                         name: o.name + '_submit',
                         enabledText: 'Create View',
                         disabledText: 'Creating View',
-                        onClick: function() {
+                        onClick: function () {
                             if (form.$.valid()) {
                                 var createData = {
                                     Visibility: '',
@@ -197,7 +197,7 @@
                                 Csw.ajax.post({
                                     urlMethod: 'createView',
                                     data: createData,
-                                    success: function(data) {
+                                    success: function (data) {
                                         div.$.dialog('close');
                                         Csw.tryExec(o.onAddView, data.newviewid, createData.ViewMode);
                                     },
@@ -214,7 +214,7 @@
                         name: o.name + '_cancel',
                         enabledText: 'Cancel',
                         disabledText: 'Canceling',
-                        onClick: function() {
+                        onClick: function () {
                             div.$.dialog('close');
                         }
                     });
@@ -437,7 +437,6 @@
                     var newNodeTypeName = nodeTypeInp.val();
                     Csw.ajax.post({
                         urlMethod: 'IsNodeTypeNameUnique',
-                        async: false,
                         data: { 'NodeTypeName': newNodeTypeName },
                         success: function () {
                             o.select.option({ value: nodeTypeInp.val() }).propNonDom({ 'data-newNodeType': true });
@@ -451,7 +450,7 @@
                                 category: category
                             });
                         },
-                        error: addBtn.enable
+                        error: function () { addBtn.enable(); }
                     });
                 }
             });
@@ -984,34 +983,6 @@
 
             openDialog(div, 400, 300, null, 'Upload');
         }, // FileUploadDialog
-        //        ImportC3RecordDialog: function (options) {
-        //            var cswDlgPrivate = {
-        //                nodes: {},
-        //                nodenames: [],
-        //                nodeids: [],
-        //                cswnbtnodekeys: [],
-        //                onDeleteNode: null, //function (nodeid, nodekey) { },
-        //                Multi: false,
-        //                nodeTreeCheck: null,
-        //                publishDeleteEvent: true
-        //            };
-
-        //            if (Csw.isNullOrEmpty(options)) {
-        //                Csw.error.throwException(Csw.error.exception('Cannot create an Delete Dialog without options.', '', 'CswDialog.js', 641));
-        //            }
-        //            Csw.extend(cswDlgPrivate, options);
-        //            var cswPublic = {
-        //                div: Csw.literals.div(),
-        //                close: function () {
-        //                    cswPublic.div.$.dialog('close');
-        //                }
-        //            };
-
-        //            cswPublic.div.span({ text: 'To do: Dummy dialog for the time being.' }).br();
-
-        //            openDialog(cswPublic.div, 400, 200, null, 'Import Record');
-
-        //        }, // ImportC3RecordDialog
         C3DetailsDialog: function (options) {
             'use strict';
             var cswPrivate = {

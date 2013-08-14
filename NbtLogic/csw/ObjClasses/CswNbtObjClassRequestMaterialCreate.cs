@@ -1,11 +1,11 @@
-using System;
-using System.Linq;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 using Newtonsoft.Json.Linq;
+using System;
+using System.Linq;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -174,6 +174,10 @@ namespace ChemSW.Nbt.ObjClasses
 
         }
 
+        public override void beforePropertySetDeleteNode()
+        {
+            
+        }
 
         /// <summary>
         /// 

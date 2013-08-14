@@ -125,7 +125,6 @@
             error: function () { },
             complete: function () {},
             overrideError: false,
-            async: true,
             watchGlobal: true,
             removeTimer: true
         };

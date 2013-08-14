@@ -1,8 +1,8 @@
-using System;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 using Newtonsoft.Json.Linq;
+using System;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -151,6 +151,11 @@ namespace ChemSW.Nbt.ObjClasses
         public override void afterPropertySetWriteNode()
         {
 
+        }
+
+        public override void beforePropertySetDeleteNode()
+        {
+            
         }
 
         public override void afterPropertySetPopulateProps()
