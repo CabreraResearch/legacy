@@ -73,7 +73,8 @@
                 nodeTreeCheck: null,
                 onEditView: null,
                 onAfterButtonClick: null,
-                forceReadOnly: false
+                forceReadOnly: false,
+                checkQuota: true
             };
             var cswPublic = {};
 
@@ -756,7 +757,9 @@
                 'use strict';
 
                 cswPrivate.onTearDownProps();
-                if (cswPrivate.tabState.EditMode === Csw.enums.editMode.Add && cswPrivate.tabState.Config === false) {
+                if (cswPrivate.tabState.EditMode === Csw.enums.editMode.Add &&
+                    cswPrivate.tabState.Config === false &&
+                    cswPrivate.checkQuota) {
                     // case 20970 - make sure there's room in the quota
                     cswPrivate.ajax.props = Csw.ajaxWcf.post({
                         watchGlobal: cswPrivate.AjaxWatchGlobal,
