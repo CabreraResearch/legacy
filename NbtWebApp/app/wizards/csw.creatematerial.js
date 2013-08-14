@@ -22,7 +22,7 @@
                     finish: 'finish',
                     cancel: 'cancel'
                 },
-                
+
                 identityDiv: '', additionalPropsDiv: '', sizesDiv: '', AttachSDSDiv: '',
                 materialTypeSelect: null,
                 stepOneComplete: false,
@@ -103,8 +103,8 @@
             };
 
             //#endregion State Functions
-            
-            cswPrivate.isConstituent = function() {
+
+            cswPrivate.isConstituent = function () {
                 var ret = false;
                 if (cswPrivate.materialTypeSelect) {
                     ret = cswPrivate.state.constituentNtIds.contains(cswPrivate.materialTypeSelect.selectedVal());
@@ -137,6 +137,8 @@
             };
 
             cswPrivate.handleStep = function (newStepNo) {
+                cswPrivate.toggleButton(cswPrivate.buttons.next, false); //let each step activate this button if needed
+
                 cswPrivate.setState();
 
                 if (Csw.contains(cswPrivate, 'makeStep' + newStepNo)) {
@@ -155,7 +157,7 @@
                         if (cswPrivate.sizesGrid) {
                             cswPrivate.sizesGrid.thinGrid.$.hide();
                         }
-                        
+
                         var PropsDefinition = {
                             NodeId: cswPrivate.state.materialId,
                             NodeTypeId: cswPrivate.state.materialType.val,
@@ -220,7 +222,7 @@
                     } else {
                         cswPrivate.state.canAddSDS = (Csw.bool(cswPrivate.state.materialType.objclassid === cswPrivate.state.chemicalObjClassId) && false === cswPrivate.isConstituent());
                     }
-                    
+
                     cswPrivate.wizard.toggleStepVisibility(cswPrivate.containersModuleEnabled ? 4 : 3, cswPrivate.state.canAddSDS);
                     if (cswPrivate.containersModuleEnabled) {
                         cswPrivate.wizard.toggleStepVisibility(3, false == cswPrivate.isConstituent());
@@ -357,7 +359,7 @@
                         tbl.cell(3, 1).empty();
                         tbl.cell(3, 2).empty();
                         tbl.cell(3, 3).empty();
-                        
+
                         cswPrivate.supplierLabel = tbl.cell(3, 1).span();
                         cswPrivate.supplierLabel.setLabelText('Supplier: ', true, false);
 
@@ -380,7 +382,6 @@
 
                         cswPrivate.supplierSelect = tbl.cell(3, 2).nodeSelect({
                             name: 'Supplier',
-                            async: false,
                             cssclass: 'required',
                             width: '200px',
                             ajaxData: ajaxData,
@@ -470,7 +471,12 @@
                     cswPrivate.makeAdditionalPropsStep();
                 };
             }());
-            
+
+            cswPrivate.isLastStep = function () {
+                return ((false === cswPrivate.state.canAddSDS || false === cswPrivate.SDSModuleEnabled) &&
+                            (false === cswPrivate.containersModuleEnabled || cswPrivate.isConstituent()));
+            };
+
             cswPrivate.renderProps = function () {
                 if (cswPrivate.tabsAndProps) {
                     cswPrivate.tabsAndProps.tearDown();
@@ -483,20 +489,22 @@
                         nodeid: cswPrivate.state.materialId,
                         ShowAsReport: false,
                         nodetypeid: cswPrivate.state.materialType.val,
-                        EditMode: Csw.enums.editMode.Temp //This is intentional. We don't want the node accidental upversioned to a real node.
+                        EditMode: Csw.enums.editMode.Temp //This is intentional. We don't want the node accidental upversioned to a real node.,
                     },
-                    ReloadTabOnSave: false
+                    ReloadTabOnSave: false,
+                    onInitFinish: function () {
+                        var isLastStep = cswPrivate.isLastStep();
+
+                        cswPrivate.toggleButton(cswPrivate.buttons.prev, true);
+                        cswPrivate.toggleButton(cswPrivate.buttons.cancel, true);
+                        cswPrivate.toggleButton(cswPrivate.buttons.next, false === isLastStep);
+                        cswPrivate.toggleButton(cswPrivate.buttons.finish, isLastStep);
+                    }
                 });
             };
 
             cswPrivate.makeAdditionalPropsStep = function () {
-                var isLastStep = ((false === cswPrivate.state.canAddSDS || false === cswPrivate.SDSModuleEnabled) &&
-                    (false === cswPrivate.containersModuleEnabled || cswPrivate.isConstituent()));
-
-                cswPrivate.toggleButton(cswPrivate.buttons.prev, true);
-                cswPrivate.toggleButton(cswPrivate.buttons.cancel, true);
-                cswPrivate.toggleButton(cswPrivate.buttons.next, false === isLastStep);
-                cswPrivate.toggleButton(cswPrivate.buttons.finish, isLastStep);
+                cswPrivate.toggleButton(cswPrivate.buttons.next, false);
 
                 if (false === cswPrivate.stepTwoComplete) {
                     cswPrivate.additionalPropsDiv = cswPrivate.additionalPropsDiv || cswPrivate.wizard.div(cswPrivate.currentStepNo);
@@ -518,26 +526,35 @@
 
                     cswPrivate.stepTwoComplete = true;
 
+                } else {
+                    var isLastStep = cswPrivate.isLastStep();
+
+                    cswPrivate.toggleButton(cswPrivate.buttons.prev, true);
+                    cswPrivate.toggleButton(cswPrivate.buttons.cancel, true);
+                    cswPrivate.toggleButton(cswPrivate.buttons.next, false === isLastStep);
+                    cswPrivate.toggleButton(cswPrivate.buttons.finish, isLastStep);
                 } // if (false === cswPrivate.stepTwoComplete)
             };
-            
+
             //#endregion Step 2: Additional Properties
 
             //#region Step 3: Size(s)
             cswPrivate.makeStep3 = (function () {
                 cswPrivate.stepThreeComplete = false;
 
-                return function() {
+                return function () {
                     cswPrivate.makeSizesStep();
                 };
             }());
 
             cswPrivate.makeSizesStep = function () {
                 var div, selectDiv;
+
                 var isLastStep = Csw.bool(false === cswPrivate.state.canAddSDS || false === cswPrivate.SDSModuleEnabled);
+                cswPrivate.toggleButton(cswPrivate.buttons.next, false === isLastStep);
                 cswPrivate.toggleButton(cswPrivate.buttons.prev, true);
                 cswPrivate.toggleButton(cswPrivate.buttons.cancel, true);
-                
+
                 //toggle these once the Sizes grid is loaded
                 cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
                 cswPrivate.toggleButton(cswPrivate.buttons.next, false);
@@ -553,73 +570,77 @@
                     });
                     div.br({ number: 1 });
 
+                    var makeSizeSelect = function () {
+
+                        var makeSizeGrid = function () {
+                            cswPrivate.sizesGrid = Csw.wizard.sizesGrid(div, {
+                                name: 'sizesGrid',
+                                sizeRowsToAdd: cswPrivate.state.sizes,
+                                physicalState: cswPrivate.state.physicalState,
+                                sizeNodeTypeId: cswPrivate.state.sizeNodeTypeId,
+                                showQuantityEditable: cswPrivate.showQuantityEditable,
+                                showDispensable: cswPrivate.showDispensable,
+                                showOriginalUoM: cswPrivate.state.showOriginalUoM,
+                                containerlimit: cswPrivate.state.containerlimit
+                            });
+                        };
+                        div.br();
+
+                        var sizeSelect = function (retObj, count) {
+                            cswPrivate.state.sizeNodeTypeId = cswPrivate.sizeSelect.val();
+                            if (count > 1) {
+                                selectDiv.show();
+                            }
+                        };
+
+                        /* Size Select (hidden if only 1 NodeType present) - to get size node type */
+                        selectDiv = div.div();
+                        cswPrivate.sizeSelect = selectDiv.nodeTypeSelect({
+                            name: 'nodeTypeSelect',
+                            useWide: true,
+                            value: cswPrivate.state.sizeNodeTypeId,
+                            labelText: 'Select a Material Size: ',
+                            objectClassName: 'SizeClass',
+                            onSelect: sizeSelect,
+                            onSuccess: function (retObj, count) {
+                                sizeSelect(retObj, count);
+                                Csw.ajax.post({
+                                    urlMethod: 'getSizeLogicalsVisibility',
+                                    data: { SizeNodeTypeId: cswPrivate.state.sizeNodeTypeId },
+                                    success: function (data) {
+                                        cswPrivate.showDispensable = Csw.bool(data.showDispensable);
+                                        cswPrivate.showQuantityEditable = Csw.bool(data.showQuantityEditable);
+                                        makeSizeGrid();
+
+                                        cswPrivate.toggleButton(cswPrivate.buttons.finish, isLastStep);
+                                        cswPrivate.toggleButton(cswPrivate.buttons.next, false === isLastStep);
+                                    }
+                                });
+                            },
+                            relatedToNodeTypeId: cswPrivate.state.materialType.val,
+                            relatedObjectClassPropName: 'Material'
+                        });
+                        selectDiv.hide();
+
+                        /* Populate this with onSuccess of cswPrivate.sizeSelect */
+                        cswPrivate.addSizeNode = {};
+
+                        cswPrivate.stepThreeComplete = true;
+                    };
+
                     //Case 29015 - if the Physical State is null, go get it
                     if (Csw.isNullOrEmpty(cswPrivate.state.physicalState)) {
                         Csw.ajaxWcf.post({
                             urlMethod: 'Materials/getPhysicalState',
                             data: cswPrivate.state.materialId,
-                            async: false,
                             success: function (data) {
                                 cswPrivate.state.physicalState = data.PhysicalState;
+                                makeSizeSelect();
                             }
                         });
+                    } else {
+                        makeSizeSelect();
                     }
-
-                    var makeSizeGrid = function () {
-                        cswPrivate.sizesGrid = Csw.wizard.sizesGrid(div, {
-                            name: 'sizesGrid',
-                            sizeRowsToAdd: cswPrivate.state.sizes,
-                            physicalState: cswPrivate.state.physicalState,
-                            sizeNodeTypeId: cswPrivate.state.sizeNodeTypeId,
-                            showQuantityEditable: cswPrivate.showQuantityEditable,
-                            showDispensable: cswPrivate.showDispensable,
-                            showOriginalUoM: cswPrivate.state.showOriginalUoM,
-                            containerlimit: cswPrivate.state.containerlimit
-                        });
-                    };
-                    div.br();
-
-                    var sizeSelect = function (retObj, count) {
-                        cswPrivate.state.sizeNodeTypeId = cswPrivate.sizeSelect.val();
-                        if (count > 1) {
-                            selectDiv.show();
-                        }
-                    };
-
-                    /* Size Select (hidden if only 1 NodeType present) - to get size node type */
-                    selectDiv = div.div();
-                    cswPrivate.sizeSelect = selectDiv.nodeTypeSelect({
-                        name: 'nodeTypeSelect',
-                        useWide: true,
-                        value: cswPrivate.state.sizeNodeTypeId,
-                        labelText: 'Select a Material Size: ',
-                        objectClassName: 'SizeClass',
-                        onSelect: sizeSelect,
-                        onSuccess: function (retObj, count) {
-                            sizeSelect(retObj, count);
-                            Csw.ajax.post({
-                                urlMethod: 'getSizeLogicalsVisibility',
-                                data: { SizeNodeTypeId: cswPrivate.state.sizeNodeTypeId },
-                                success: function (data) {
-                                    cswPrivate.showDispensable = Csw.bool(data.showDispensable);
-                                    cswPrivate.showQuantityEditable = Csw.bool(data.showQuantityEditable);
-                                    makeSizeGrid();
-                                    
-                                    cswPrivate.toggleButton(cswPrivate.buttons.finish, isLastStep);
-                                    cswPrivate.toggleButton(cswPrivate.buttons.next, false === isLastStep);
-                                }
-                            });
-                        },
-                        relatedToNodeTypeId: cswPrivate.state.materialType.val,
-                        relatedObjectClassPropName: 'Material'
-                    });
-                    selectDiv.hide();
-
-                    /* Populate this with onSuccess of cswPrivate.sizeSelect */
-                    cswPrivate.addSizeNode = {};
-
-                    cswPrivate.stepThreeComplete = true;
-
                 }
             };
             //#endregion Step 3: Size(s)
@@ -696,7 +717,7 @@
 
             (function () {
                 Csw.extend(cswPrivate, options, true);
-                
+
                 cswPrivate.validateState();
                 cswPrivate.currentStepNo = cswPrivate.startingStep;
 
@@ -728,7 +749,7 @@
                         //From step 3: Sizes
                         if (false === Csw.isNullOrEmpty(cswPrivate.sizesGrid)) {
                             var sizes = cswPrivate.sizesGrid.sizes();
-                            Csw.each(sizes, function(size) {
+                            Csw.each(sizes, function (size) {
                                 createMaterialDef.sizeNodes.push(size.sizeValues);
                             });
                             createMaterialDef.deletedSizes = cswPrivate.sizesGrid.deletedSizes();
@@ -763,7 +784,6 @@
                 Csw.ajaxWcf.post({
                     urlMethod: 'Materials/initialize',
                     data: cswPrivate.state.materialId,
-                    async: false,
                     success: function (data) {
                         cswPrivate.supplierViewId = data.SuppliersView.ViewId;
                         cswPrivate.state.materialId = data.TempNode.NodeId;

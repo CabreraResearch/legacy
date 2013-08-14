@@ -107,15 +107,15 @@
             cswPrivate.makeRulesTab = function () {
                 var ol = cswPrivate.prepTab(cswPrivate.rulesTab, 'Rules', 'Select a Customer to review and make any necessary edits to the Scheduled Rules for their schema.');
 
-                cswPrivate.makeCustomerIdSelect(ol.li());
+                cswPrivate.makeCustomerIdSelect(ol.li()).then(function () {
+                    ol.li().br({ number: 2 });
 
-                ol.li().br({ number: 2 });
+                    cswPrivate.makeScheduledRulesGrid(ol.li());
 
-                cswPrivate.makeScheduledRulesGrid(ol.li());
+                    ol.li().br({ number: 2 });
 
-                ol.li().br({ number: 2 });
-
-                cswPrivate.addBtnGroup(ol.li());
+                    cswPrivate.addBtnGroup(ol.li());
+                });
             };
 
             cswPrivate.makeTimelineTab = function () {
@@ -145,9 +145,8 @@
                         }
                     });
 
-                Csw.ajax.post({
+                var ret = Csw.ajax.post({
                     urlMethod: 'getActiveAccessIds',
-                    async: false,
                     success: function (data) {
                         cswPrivate.customerIds = data.customerids;
                         if (cswPrivate.customerIds.length > 1) {
@@ -183,6 +182,7 @@
                 //    }
                 //});
 
+                return ret;
             };
 
             cswPrivate.makeScheduledRulesGrid = function (parentDiv) {
@@ -190,7 +190,7 @@
                 //Case 29587 - always use parentDiv when given (i.e. - when reloading entire tab)
                 //else (when refreshing just the grid), keep cswPrivate.gridDiv 
                 cswPrivate.gridDiv = parentDiv || cswPrivate.gridDiv;
-                
+
 
                 cswPrivate.gridAjax = Csw.ajaxWcf.post({
                     urlMethod: 'Scheduler/get',
@@ -419,7 +419,7 @@
                             title: 'Scheduled Rules',
                             usePaging: true,
                             onRefresh: cswPrivate.makeScheduledRulesGrid,
-                            showActionColumn: false, 
+                            showActionColumn: false,
                             canSelectRow: false,
                             selModel: {
                                 selType: 'cellmodel'

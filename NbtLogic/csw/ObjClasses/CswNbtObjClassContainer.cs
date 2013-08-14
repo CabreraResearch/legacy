@@ -52,6 +52,9 @@ namespace ChemSW.Nbt.ObjClasses
             public const string UseType = "Use Type";
             public const string ViewSDS = "View SDS";
             public const string ViewCofA = "View C of A";
+            public const string ContainerDispenseTransactions = "Container Dispense Transactions";
+            public const string Documents = "Documents";
+            public const string SubmittedRequests = "Submitted Requests";
         }
 
         #endregion Properties
@@ -1210,6 +1213,9 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropList UseType { get { return ( _CswNbtNode.Properties[PropertyName.UseType] ); } }
         public CswNbtNodePropButton ViewSDS { get { return ( _CswNbtNode.Properties[PropertyName.ViewSDS] ); } }
         public CswNbtNodePropButton ViewCofA { get { return ( _CswNbtNode.Properties[PropertyName.ViewCofA] ); } }
+        public CswNbtNodePropGrid ContainerDispenseTransactions { get { return ( _CswNbtNode.Properties[PropertyName.ContainerDispenseTransactions] ); } }
+        public CswNbtNodePropGrid Documents { get { return ( _CswNbtNode.Properties[PropertyName.Documents] ); } }
+        public CswNbtNodePropGrid SubmittedRequests { get { return ( _CswNbtNode.Properties[PropertyName.SubmittedRequests] ); } }
         #endregion
 
 
