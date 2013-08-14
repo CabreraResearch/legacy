@@ -61,7 +61,7 @@ namespace ChemSW.Nbt.Schema
         {
             bool Ret = false;
             CswTableSelect ts = _CswNbtSchemaModTrnsctn.makeCswTableSelect( "HasScriptAlreadyRun", "update_history" );
-            DataTable dt = ts.getTable( "where scriptname = '" + _CswUpdateSchemaTo.ScriptName + "' and log like '%Succeeded'" );
+            DataTable dt = ts.getTable( "where scriptname = '" + _CswUpdateSchemaTo.ScriptName + "' and succeeded = 1" );
             if( dt.Rows.Count > 0 )
             {
                 Ret = true;
@@ -71,7 +71,7 @@ namespace ChemSW.Nbt.Schema
         }//AlreadyRun()
 
         /// <summary>
-        /// 
+        /// Returns _CswUpdateSchemaTo.ScriptName
         /// </summary>
         public string ScriptName
         {

@@ -9,6 +9,16 @@ namespace ChemSW.Nbt.Schema
     {
         public static string Title = "Pre-Script: Case 30389";
 
+        public override string ScriptName
+        {
+            get { return "02F_Case30389"; }
+        }
+
+        public override bool AlwaysRun
+        {
+            get { return false; }
+        }
+
         #region Blame Logic
 
         public override CswEnumDeveloper Author
@@ -21,16 +31,6 @@ namespace ChemSW.Nbt.Schema
             get { return 30389; }
         }
 
-        public override string ScriptName
-        {
-            get { return "02F_Case30389"; }
-        }
-
-        public override bool AlwaysRun
-        {
-            get { return false; }
-        }
-
         #endregion Blame Logic
 
         /// <summary>
@@ -40,10 +40,16 @@ namespace ChemSW.Nbt.Schema
         {
             const string UpdateHistoryTblName = "update_history";
             const string ScriptNameColumn = "scriptname";
+            const string SucceededColumn = "succeeded";
 
-            if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( UpdateHistoryTblName, "scriptname" ) )
+            if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( UpdateHistoryTblName, ScriptNameColumn ) )
             {
                 _CswNbtSchemaModTrnsctn.addStringColumn( UpdateHistoryTblName, ScriptNameColumn, "Unique name associated with this schema script.", false, true, 400 );
+            }
+
+            if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( UpdateHistoryTblName, SucceededColumn ) )
+            {
+                _CswNbtSchemaModTrnsctn.addBooleanColumn( UpdateHistoryTblName, SucceededColumn, "1 if the script ran successfully and 0 otherwise.", false, true );
             }
         }
 

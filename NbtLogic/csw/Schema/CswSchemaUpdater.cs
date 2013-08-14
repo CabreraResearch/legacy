@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 //using ChemSW.RscAdo;
 //using ChemSW.TblDn;
+using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
 
@@ -114,10 +115,15 @@ namespace ChemSW.Nbt.Schema
             DataRow NewUpdateHistoryRow = _UpdateHistoryTable.NewRow();
             NewUpdateHistoryRow["updatedate"] = DateTime.Now.ToString();
             NewUpdateHistoryRow["version"] = CswSchemaUpdateDriver.SchemaVersion.ToString();
-            //TODO: Uniqueness validation on scriptname
+            // TODO: Remove this conditional if after FOXGLOVE is in production
             if( _UpdateHistoryTable.Columns.Contains( "scriptname" ) )
             {
                 NewUpdateHistoryRow["scriptname"] = CswSchemaUpdateDriver.ScriptName;
+            }
+            // TODO: Remove this conditional if after FOXGLOVE is in production
+            if( _UpdateHistoryTable.Columns.Contains( "succeeded" ) )
+            {
+                NewUpdateHistoryRow["succeeded"] = CswConvert.ToDbVal( CswSchemaUpdateDriver.UpdateSucceeded );
             }
 
             if( ReturnVal )
@@ -125,10 +131,6 @@ namespace ChemSW.Nbt.Schema
                 NewUpdateHistoryRow["log"] = CswSchemaUpdateDriver.Message;
 
             }
-            //else if( CswSchemaUpdateDriver.RollbackSucceeded )
-            //{
-            //    NewUpdateHistoryRow["log"] = "Schema rolled back to previous version due to failure: " + CswSchemaUpdateDriver.Message;
-            //}
             else
             {
                 NewUpdateHistoryRow["log"] = "Failed update: " + CswSchemaUpdateDriver.Message;
