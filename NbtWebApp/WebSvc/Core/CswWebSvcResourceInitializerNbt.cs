@@ -1,6 +1,7 @@
 using System.Web;
 using ChemSW.Config;
 using ChemSW.Core;
+using ChemSW.Exceptions;
 using ChemSW.Nbt;
 using ChemSW.Nbt.Actions;
 using ChemSW.Security;
@@ -10,10 +11,15 @@ namespace ChemSW.WebSvc
     public class CswWebSvcResourceInitializerNbt: ICswWebSvcResourceInitializer
     {
         private CswTimer _Timer = new CswTimer();
-        private HttpContext _HttpContext = null;
         private CswWebSvcSessionAuthenticateData.Authentication.Request _AuthenticationRequest;
         private delegate void _OnDeInitDelegate();
         private _OnDeInitDelegate _OnDeInit;
+
+        public HttpContext _HttpContext = null;
+        public HttpContext HttpContext
+        {
+            get { return _HttpContext; }
+        }
 
         private void _setHttpContextOnRequest()
         {
@@ -28,7 +34,7 @@ namespace ChemSW.WebSvc
             _AuthenticationRequest.IpAddress = CswWebSvcCommonMethods.getIpAddress();
         }
 
-        public CswWebSvcResourceInitializerNbt( HttpContext HttpContext, CswWebSvcSessionAuthenticateData.Authentication.Request AuthenticationRequest ) //TODO: add Username/Password
+        public CswWebSvcResourceInitializerNbt( HttpContext HttpContext, CswWebSvcSessionAuthenticateData.Authentication.Request AuthenticationRequest = null ) //TODO: add Username/Password
         {
             _HttpContext = HttpContext;
             _AuthenticationRequest = AuthenticationRequest ?? new CswWebSvcSessionAuthenticateData.Authentication.Request();
@@ -53,8 +59,19 @@ namespace ChemSW.WebSvc
             _CswSessionResourcesNbt = new CswSessionResourcesNbt( _HttpContext.Application, _HttpContext.Request, _HttpContext.Response, _HttpContext, string.Empty, CswEnumSetupMode.NbtWeb );
             _CswNbtResources = _CswSessionResourcesNbt.CswNbtResources;
             _CswNbtResources.beginTransaction();
+
+            if( null != _AuthenticationRequest.RequiredModules )
+            {
+                foreach( string RequiredModule in _AuthenticationRequest.RequiredModules )
+                {
+                    if( false == _CswNbtResources.Modules.IsModuleEnabled( RequiredModule ) )
+                    {
+                        throw new CswDniException( CswEnumErrorType.Warning, "Not all required modules are enabled. Please contact your administrator.", "The " + RequiredModule + " module is required in order to complete this request." );
+                    }
+                }
+            }
             _SessionAuthenticate = new CswNbtSessionAuthenticate( _CswNbtResources, _CswSessionResourcesNbt.CswSessionManager, _AuthenticationRequest );
-            _OnDeInit = new _OnDeInitDelegate( _deInitResources );
+            _OnDeInit =  _deInitResources;
             return ( _CswNbtResources );
 
         }//_initResources() 
@@ -65,7 +82,14 @@ namespace ChemSW.WebSvc
             //We're keeping this logic here, because we don't want to contaminate NbtLogic with the necessary web libraries required to support CswSessionResourcesNbt
             if( null != _AuthenticationRequest && _AuthenticationRequest.IsValid() )
             {
-                Ret = _SessionAuthenticate.authenticate();
+                if( false == CswTools.IsValidUsername( _AuthenticationRequest.CustomerId ) )
+                {
+                    Ret = CswEnumAuthenticationStatus.NonExistentAccessId;
+                }
+                else
+                {
+                    Ret = _SessionAuthenticate.authenticate();
+                }
             }
             else
             {
@@ -73,17 +97,18 @@ namespace ChemSW.WebSvc
             }
 
             //Set audit context
-            if( Ret == CswEnumAuthenticationStatus.Authenticated && null != _CswNbtResources.CurrentNbtUser.Cookies )
+            if( Ret == CswEnumAuthenticationStatus.Authenticated && null != _HttpContext.Request.Cookies )
             {
                 string ContextViewId = string.Empty;
                 string ContextActionName = string.Empty;
-                if( _CswNbtResources.CurrentNbtUser.Cookies.ContainsKey( "csw_currentviewid" ) && null != _CswNbtResources.CurrentNbtUser.Cookies["csw_currentviewid"] )
+                
+                if( null != _HttpContext.Request.Cookies["csw_currentviewid"] )
                 {
-                    ContextViewId = _CswNbtResources.CurrentNbtUser.Cookies["csw_currentviewid"];
+                    ContextViewId = _HttpContext.Request.Cookies["csw_currentviewid"].Value;
                 }
-                if( _CswNbtResources.CurrentNbtUser.Cookies.ContainsKey( "csw_currentactionname" ) && null != _CswNbtResources.CurrentNbtUser.Cookies["csw_currentactionname"] )
+                if( null != _HttpContext.Request.Cookies["csw_currentactionname"] )
                 {
-                    ContextActionName = _CswNbtResources.CurrentNbtUser.Cookies["csw_currentactionname"];
+                    ContextActionName = _HttpContext.Request.Cookies["csw_currentactionname"].Value;
                 }
 
                 if( string.Empty != ContextViewId )

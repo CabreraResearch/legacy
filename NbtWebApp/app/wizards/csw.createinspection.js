@@ -102,7 +102,6 @@
                 if (cswPrivate.checkTargetIsClientSideUnique()) {
                     Csw.ajax.post({
                         urlMethod: 'IsNodeTypeNameUnique',
-                        async: false,
                         data: { 'NodeTypeName': name },
                         success: function (data) {
                             Csw.tryExec(success, data);
@@ -455,7 +454,7 @@
                                                 
                             
                             uploadP.fileUpload({
-                                uploadUrl: Csw.enums.ajaxUrlPrefix + '/previewInspectionFile',
+                                url: Csw.enums.ajaxUrlPrefix + '/previewInspectionFile',
                                 onSuccess: function (data) {
                                     cswPrivate.gridJson = {};
                                     if (Csw.contains(data, 'grid')) {
@@ -612,9 +611,10 @@
                         break;
                     case Csw.enums.wizardSteps_InspectionDesign.step3.step:
                         if (cswPrivate.isNewInspectionDesign()) {
-                            cswPrivate.checkIsNodeTypeNameUnique(cswPrivate.selectedInspectionDesign.name);
+                            cswPrivate.checkIsNodeTypeNameUnique(cswPrivate.selectedInspectionDesign.name, function() {
+                                cswPrivate.makeStepThree(true);
+                            });
                         }
-                        cswPrivate.makeStepThree(true); //we're moving forward
                         break;
                     case Csw.enums.wizardSteps_InspectionDesign.step4.step:
                         cswPrivate.makeStepFour(true); //we're moving forward

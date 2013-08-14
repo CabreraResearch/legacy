@@ -29,7 +29,8 @@
                 cswPrivate.columns = cswPrivate.columns || [{
                     xtype: 'treecolumn', //this is so we know which column will show the tree
                     dataIndex: 'text',
-                    menuDisabled: true
+                    menuDisabled: true,
+                    width: 300
                 }];
 
                 cswPrivate.fields = cswPrivate.fields || [{

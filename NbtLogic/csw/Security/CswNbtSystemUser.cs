@@ -47,6 +47,7 @@ namespace ChemSW.Nbt.Security
 
         public Int32 PasswordPropertyId { get { return Int32.MinValue; } }
         public bool PasswordIsExpired { get { return false; } }
+        public string CachedData { get { return string.Empty; } }
 
         public CswNbtNodePropText UsernameProperty { get { return null; } }
         public CswNbtNodePropPassword PasswordProperty { get { return null; } }
@@ -57,6 +58,7 @@ namespace ChemSW.Nbt.Security
         public CswNbtNodePropRelationship WorkUnitProperty { get { return null; } }
         public CswPrimaryKey DefaultLocationId { get { return null; } }
         public CswPrimaryKey DefaultPrinterId { get { return null; } }
+        public CswPrimaryKey DefaultBalanceId { get { return null; } }
         public CswPrimaryKey WorkUnitId { get { return null; } }
         public CswPrimaryKey JurisdictionId { get { return null; } }
         public string Language { get { return string.Empty; } }

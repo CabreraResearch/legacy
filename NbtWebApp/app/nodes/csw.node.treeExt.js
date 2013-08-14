@@ -22,6 +22,7 @@
                 ExpandAll: false,
                 validateCheckboxes: true,
                 overrideBeforeSelect: false,
+                requireViewPermissions: true,
                 showToggleLink: true,
                 useScrollbars: true,
                 rootVisible: false,
@@ -189,7 +190,8 @@
                         NodeKey: cswPrivate.state.nodeKey,
                         UseCheckboxes: cswPrivate.isMulti,
                         ExpandAll: cswPrivate.ExpandAll,
-                        PropsToShow: cswPrivate.PropsToShow
+                        PropsToShow: cswPrivate.PropsToShow,
+                        RequireViewPermissions: cswPrivate.requireViewPermissions
                     },
                     success: function (data) {
 

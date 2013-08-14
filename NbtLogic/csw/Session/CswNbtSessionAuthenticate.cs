@@ -110,17 +110,24 @@ namespace ChemSW.Nbt
                 //    _CswSessionManager.clearSession();
                 //}
                 CswLicenseManager LicenseManager = new CswLicenseManager( _CswNbtResources );
-                //Int32 PasswordExpiryDays = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( "passwordexpiry_days" ) );
-
-                if( _CswNbtResources.CurrentNbtUser.PasswordIsExpired )
+                if( LicenseManager.MustShowLicense( _CswNbtResources.CurrentUser ) )
+                {
+                    if( LicenseManager.AllowShowLicense( _CswNbtResources.CurrentUser ) )
+                    {
+                        // BZ 8133 - make sure they've seen the License
+                        AuthenticationStatus = CswEnumAuthenticationStatus.ShowLicense;
+                    }
+                    else
+                    {
+                        // case 30086 - prevent login if admin hasn't accepted the license yet
+                        AuthenticationStatus = CswEnumAuthenticationStatus.NoLicense;
+                        _CswSessionManager.clearSession();
+                    }
+                }
+                else if( _CswNbtResources.CurrentNbtUser.PasswordIsExpired )
                 {
                     // BZ 9077 - Password expired
                     AuthenticationStatus = CswEnumAuthenticationStatus.ExpiredPassword;
-                }
-                else if( LicenseManager.MustShowLicense( _CswNbtResources.CurrentUser ) )
-                {
-                    // BZ 8133 - make sure they've seen the License
-                    AuthenticationStatus = CswEnumAuthenticationStatus.ShowLicense;
                 }
             }
 

@@ -1,12 +1,11 @@
-using System;
 using ChemSW.Core;
-using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropertySets;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.ServiceDrivers;
 using ChemSW.Nbt.UnitsOfMeasure;
 using Newtonsoft.Json.Linq;
+using System;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -98,6 +97,11 @@ namespace ChemSW.Nbt.ObjClasses
             /// <para>ServerManaged</para>
             /// </summary>
             public const string TotalMoved = "Total Moved";
+
+            /// <summary>
+            /// The Approval level of this Create Material request
+            /// </summary>
+            public const string ApprovalLevel = "Approval Level";
 
             public static CswCommaDelimitedString MLMCmgTabProps = new CswCommaDelimitedString
             {
@@ -250,6 +254,32 @@ namespace ChemSW.Nbt.ObjClasses
         public override void afterPropertySetWriteNode()
         {
 
+        }
+
+        private void _updateCartCounts( bool IsDelete = false )
+        {
+            //if( false == Node.IsTemp )
+            //{
+                int Incrementer = 1;
+                if( IsDelete )
+                {
+                    Incrementer = -1;
+                }
+                if( _IsFavorite )
+                {
+                    UserCache.CartCounts.FavoriteRequestItems += Incrementer;
+                    UserCache.update( _CswNbtResources );
+                }
+                if( _IsRecurring )
+                {
+                    UserCache.CartCounts.RecurringRequestItems += Incrementer;
+                    UserCache.update( _CswNbtResources );
+                }
+            //}
+        }
+        public override void beforePropertySetDeleteNode()
+        {
+            _updateCartCounts( IsDelete: true );
         }
 
         /// <summary>
@@ -652,6 +682,8 @@ namespace ChemSW.Nbt.ObjClasses
                     RecurringFrequency.setHidden( value : false, SaveToDb : true );
                     NextReorderDate.setHidden( value : false, SaveToDb : true );
                     Name.setHidden( value : true, SaveToDb : true );
+
+                    _updateCartCounts();
                 }
                 else if( false == _IsFavorite )
                 {
@@ -683,6 +715,8 @@ namespace ChemSW.Nbt.ObjClasses
                     NextReorderDate.setHidden( value : true, SaveToDb : true );
                     RecurringFrequency.setHidden( value : true, SaveToDb : true );
                     Name.setHidden( value : false, SaveToDb : true );
+
+                    _updateCartCounts();
                 }
                 else if( false == _IsRecurring )
                 {
@@ -700,6 +734,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             NextReorderDate.DateTimeValue = CswNbtPropertySetSchedulerImpl.getNextDueDate( this.Node, NextReorderDate, RecurringFrequency );
         }
+        public CswNbtNodePropList ApprovalLevel { get { return _CswNbtNode.Properties[PropertyName.ApprovalLevel]; } }
 
         #endregion
     }//CswNbtObjClassRequestMaterialDispense

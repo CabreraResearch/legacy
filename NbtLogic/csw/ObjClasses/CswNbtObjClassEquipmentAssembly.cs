@@ -16,6 +16,35 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Barcode = "Barcode";
             public const string Location = "Location";
             public const string Status = "Status";
+            public const string AssemblyCondition = "Assembly Condition";
+            public const string AssemblyContractNo = "Assembly Contract No";
+            public const string AssemblyDescription = "Assembly Description";
+            public const string AssemblyHasServiceContract = "Assembly Has Service Contract";
+            public const string AssemblyID = "Assembly ID";
+            public const string AssemblyMTBF = "Assembly MTBF";
+            public const string AssemblyManualStoredAt = "Assembly Manual Stored At";
+            public const string AssemblyManufacturer = "Assembly Manufacturer";
+            public const string AssemblyModel = "Assembly Model";
+            public const string AssemblyNotes = "Assembly Notes";
+            public const string AssemblyOutOn = "Assembly Out On";
+            public const string AssemblyPropertyNo = "Assembly Property No";
+            public const string AssemblyPurchased = "Assembly Purchased";
+            public const string AssemblyReceived = "Assembly Received";
+            public const string AssemblySerialNo = "Assembly Serial No";
+            public const string AssemblyServiceCost = "Assembly Service Cost";
+            public const string AssemblyServiceEndsOn = "Assembly Service Ends On";
+            public const string AssemblyServicePhone = "Assembly Service Phone";
+            public const string AssemblyServiceVendor = "Assembly Service Vendor";
+            public const string AssemblyStartingCost = "Assembly Starting Cost";
+            public const string AssemblyVendor = "Assembly Vendor";
+            public const string Department = "Department";
+            public const string Documents = "Documents";
+            public const string Problem = "Problem";
+            public const string Responsible = "Responsible";
+            public const string Scheduling = "Scheduling";
+            public const string Tasks = "Tasks";
+            public const string User = "User";
+            public const string UserPhone = "User Phone";
         }
 
         public static string PartsXValueName = "Uses";
@@ -164,47 +193,62 @@ namespace ChemSW.Nbt.ObjClasses
 
         #endregion
 
+        #region Custom Logic
+
+        public void TransferAssembly( CswNbtObjClassUser NewUser )
+        {
+            Location.SelectedNodeId = NewUser.DefaultLocationId;
+            Location.SyncGestalt();
+            Location.RefreshNodeName();
+
+            UpdateOwner( NewUser );
+        }
+
+        public void UpdateOwner( CswNbtObjClassUser NewUser )
+        {
+            User.RelatedNodeId = NewUser.NodeId;
+            User.SyncGestalt();
+            User.RefreshNodeName();
+        }
+
+        #endregion
+
         #region Object class specific properties
 
-        public CswNbtNodePropRelationship Type
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.Type] );
-            }
-        }
-
-        public CswNbtNodePropLogicalSet AssemblyParts
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.AssemblyParts] );
-            }
-        }
-
-        public CswNbtNodePropBarcode Barcode
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.Barcode] );
-            }
-        }
-
-        public CswNbtNodePropLocation Location
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.Location] );
-            }
-        }
-
-        public CswNbtNodePropList Status
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.Status] );
-            }
-        }
+        public CswNbtNodePropRelationship Type { get { return ( _CswNbtNode.Properties[PropertyName.Type] ); } }
+        public CswNbtNodePropLogicalSet AssemblyParts { get { return ( _CswNbtNode.Properties[PropertyName.AssemblyParts] ); } }
+        public CswNbtNodePropBarcode Barcode { get { return ( _CswNbtNode.Properties[PropertyName.Barcode] ); } }
+        public CswNbtNodePropLocation Location { get { return ( _CswNbtNode.Properties[PropertyName.Location] ); } }
+        public CswNbtNodePropList Status { get { return ( _CswNbtNode.Properties[PropertyName.Status] ); } }
+        public CswNbtNodePropList AssemblyCondition { get { return ( _CswNbtNode.Properties[PropertyName.AssemblyCondition] ); } }
+        public CswNbtNodePropText AssemblyContractNo { get { return ( _CswNbtNode.Properties[PropertyName.AssemblyContractNo] ); } }
+        public CswNbtNodePropMemo AssemblyDescription { get { return ( _CswNbtNode.Properties[PropertyName.AssemblyDescription] ); } }
+        public CswNbtNodePropLogical AssemblyHasServiceContract { get { return ( _CswNbtNode.Properties[PropertyName.AssemblyHasServiceContract] ); } }
+        public CswNbtNodePropText AssemblyID { get { return ( _CswNbtNode.Properties[PropertyName.AssemblyID] ); } }
+        public CswNbtNodePropMTBF AssemblyMTBF { get { return ( _CswNbtNode.Properties[PropertyName.AssemblyMTBF] ); } }
+        public CswNbtNodePropText AssemblyManualStoredAt { get { return ( _CswNbtNode.Properties[PropertyName.AssemblyManualStoredAt] ); } }
+        public CswNbtNodePropText AssemblyManufacturer { get { return ( _CswNbtNode.Properties[PropertyName.AssemblyManufacturer] ); } }
+        public CswNbtNodePropText AssemblyModel { get { return ( _CswNbtNode.Properties[PropertyName.AssemblyModel] ); } }
+        public CswNbtNodePropMemo AssemblyNotes { get { return ( _CswNbtNode.Properties[PropertyName.AssemblyNotes] ); } }
+        public CswNbtNodePropDateTime AssemblyOutOn { get { return ( _CswNbtNode.Properties[PropertyName.AssemblyOutOn] ); } }
+        public CswNbtNodePropText AssemblyPropertyNo { get { return ( _CswNbtNode.Properties[PropertyName.AssemblyPropertyNo] ); } }
+        public CswNbtNodePropDateTime AssemblyPurchased { get { return ( _CswNbtNode.Properties[PropertyName.AssemblyPurchased] ); } }
+        public CswNbtNodePropDateTime AssemblyReceived { get { return ( _CswNbtNode.Properties[PropertyName.AssemblyReceived] ); } }
+        public CswNbtNodePropText AssemblySerialNo { get { return ( _CswNbtNode.Properties[PropertyName.AssemblySerialNo] ); } }
+        public CswNbtNodePropText AssemblyServiceCost { get { return ( _CswNbtNode.Properties[PropertyName.AssemblyServiceCost] ); } }
+        public CswNbtNodePropDateTime AssemblyServiceEndsOn { get { return ( _CswNbtNode.Properties[PropertyName.AssemblyServiceEndsOn] ); } }
+        public CswNbtNodePropText AssemblyServicePhone { get { return ( _CswNbtNode.Properties[PropertyName.AssemblyServicePhone] ); } }
+        public CswNbtNodePropRelationship AssemblyServiceVendor { get { return ( _CswNbtNode.Properties[PropertyName.AssemblyServiceVendor] ); } }
+        public CswNbtNodePropText AssemblyStartingCost { get { return ( _CswNbtNode.Properties[PropertyName.AssemblyStartingCost] ); } }
+        public CswNbtNodePropRelationship AssemblyVendor { get { return ( _CswNbtNode.Properties[PropertyName.AssemblyVendor] ); } }
+        public CswNbtNodePropRelationship Department { get { return ( _CswNbtNode.Properties[PropertyName.Department] ); } }
+        public CswNbtNodePropGrid Documents { get { return ( _CswNbtNode.Properties[PropertyName.Documents] ); } }
+        public CswNbtNodePropGrid Problem { get { return ( _CswNbtNode.Properties[PropertyName.Problem] ); } }
+        public CswNbtNodePropText Responsible { get { return ( _CswNbtNode.Properties[PropertyName.Responsible] ); } }
+        public CswNbtNodePropGrid Scheduling { get { return ( _CswNbtNode.Properties[PropertyName.Scheduling] ); } }
+        public CswNbtNodePropGrid Tasks { get { return ( _CswNbtNode.Properties[PropertyName.Tasks] ); } }
+        public CswNbtNodePropRelationship User { get { return ( _CswNbtNode.Properties[PropertyName.User] ); } }
+        public CswNbtNodePropPropertyReference UserPhone { get { return ( _CswNbtNode.Properties[PropertyName.UserPhone] ); } }
 
         #endregion
     }//CswNbtObjClassEquipmentAssembly

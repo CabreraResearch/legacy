@@ -19,7 +19,6 @@
             (function _preCtor() {
                 cswPrivate.$parent = cswPrivate.$parent || cswParent.$;
                 cswPrivate.name = cswPrivate.name || '';
-                cswPrivate.async = cswPrivate.async; // || true;
                 cswPrivate.nodesUrlMethod = cswPrivate.nodesUrlMethod || 'Nodes/get';
 
                 cswPrivate.labelText = cswPrivate.labelText || null;
@@ -76,6 +75,8 @@
                     cswPrivate.forceSelectedAsOption = false;
                 }
 
+                cswPrivate.ajax = null;
+
                 cswPrivate.selectCellCol = cswPrivate.cellCol + 0;
                 cswPrivate.textCellCol = cswPrivate.cellCol + 1;
                 cswPrivate.editCellCol = cswPrivate.cellCol + 2;
@@ -96,9 +97,8 @@
             
             */
             cswPrivate.getNodes = function () {
-                Csw.ajaxWcf.post({
+                cswPrivate.ajax = Csw.ajaxWcf.post({
                     urlMethod: cswPrivate.nodesUrlMethod,
-                    async: Csw.bool(cswPrivate.async),
                     data: cswPrivate.ajaxData || {
                         NodeTypeId: Csw.number(cswPrivate.nodeTypeId, 0),
                         ObjectClassId: Csw.number(cswPrivate.objectClassId, 0),
@@ -296,7 +296,7 @@
                         value: cswPrivate.selectedNodeId
                     });
 
-                    cswPrivate.table.cell(1, cswPrivate.searchButtonCellCol).buttonExt({
+                    var searchBtn = cswPrivate.table.cell(1, cswPrivate.searchButtonCellCol).buttonExt({
                         icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.magglass),
                         size: 'small',
                         enabledText: "Search",
@@ -315,6 +315,9 @@
                                     cswPrivate.selectedNodeId = nodeObj.nodeid;
                                     cswPrivate.selectedNodeLink = nodeObj.nodelink;
                                     Csw.tryExec(cswPrivate.onSelectNode, nodeObj);
+                                },
+                                onClose: function() {
+                                    searchBtn.enable();
                                 }
                             });
                         }
@@ -357,8 +360,7 @@
                 }
                 if (cswPrivate.select) {
                     Csw.ajaxWcf.post({
-                        urlMethod: 'Nodes/get',
-                        async: false,
+                        urlMethod: cswPrivate.nodesUrlMethod,
                         data: cswPrivate.ajaxData || {
                             RelatedToNodeTypeId: Csw.number(cswPrivate.relatedTo.relatednodetypeid, 0),
                             ViewId: Csw.string(cswPrivate.viewid),
@@ -448,6 +450,7 @@
                             enabledText: 'New',
                             tooltip: { title: 'Add New ' + cswPrivate.name },
                             onClick: function () {
+                                cswPrivate.addImage.enable();
                                 cswPrivate.table.cell(1, cswPrivate.tipCellCol).empty();
                                 if (Csw.number(cswPrivate.nodeTypeId) > 0) {
                                     cswPrivate.openAddNodeDialog(cswPrivate.nodeTypeId);
@@ -488,13 +491,17 @@
             cswPublic.optionsCount = function (excludeEmpty) {
                 var ret = cswPrivate.options.length;
                 if (excludeEmpty) {
-                    Csw.iterate(cswPrivate.options, function(val) {
+                    Csw.iterate(cswPrivate.options, function (val) {
                         if (!val.id || !val.value) {
                             ret -= 1;
                         }
                     });
                 }
                 return ret;
+            };
+
+            cswPublic.getAjax = function() {
+                return cswPrivate.ajax;
             };
 
             //#endregion Public

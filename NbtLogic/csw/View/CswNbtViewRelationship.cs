@@ -1,3 +1,8 @@
+using ChemSW.Core;
+using ChemSW.Exceptions;
+using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.ObjClasses;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -5,11 +10,6 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Xml;
-using ChemSW.Core;
-using ChemSW.Exceptions;
-using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.ObjClasses;
-using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt
 {
@@ -48,7 +48,7 @@ namespace ChemSW.Nbt
             {
                 return ( CswEnumNbtViewAddChildrenSetting.None == AddChildren ) ? false : true; //28663 - If "None" then false, otherwise true
             }
-            private set
+            set //Case 30197: expose setter
             {
                 if( false == value )
                 {

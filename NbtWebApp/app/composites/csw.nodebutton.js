@@ -137,7 +137,7 @@
                             reinit: false,
                             viewid: actionJson.viewid,
                             onDeleteNode: function () {
-                                nodeGrid.grid.reload();
+                                nodeGrid.grid.reload(true);
                                 Csw.tryExec(onRefresh);
                             },
                             onEditNode: function () {
@@ -160,16 +160,16 @@
                                         }
                                     },
                                     onAlterNode: function () {
-                                        cswGrid.reload();
+                                        cswGrid.grid.reload(true);
                                     },
                                     onMultiEdit: function () {
-                                        cswGrid.toggleShowCheckboxes();
+                                        cswGrid.grid.toggleShowCheckboxes();
                                     },
                                     onEditView: function () {
                                         Csw.tryExec(menuDiv.$.dialog('close'));
                                     },
                                     onPrintView: function () {
-                                        cswGrid.print();
+                                        cswGrid.grid.print();
                                     },
                                     Multi: false
                                 };

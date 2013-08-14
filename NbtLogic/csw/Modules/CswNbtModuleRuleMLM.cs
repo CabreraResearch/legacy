@@ -6,7 +6,7 @@ namespace ChemSW.Nbt
     /// <summary>
     /// Represents the CISPro Module
     /// </summary>
-    public class CswNbtModuleRuleMLM : CswNbtModuleRule
+    public class CswNbtModuleRuleMLM: CswNbtModuleRule
     {
         public CswNbtModuleRuleMLM( CswNbtResources CswNbtResources ) :
             base( CswNbtResources )
@@ -32,17 +32,17 @@ namespace ChemSW.Nbt
                     cmgTab = _CswNbtResources.MetaData.makeNewTab( containerNT, "Central Material Group", containerNT.getMaximumTabOrder() + 1 );
                 }
                 CswNbtMetaDataNodeTypeProp lotControlledNTP = containerNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.PropertyName.LotControlled );
-                lotControlledNTP.updateLayout( CswEnumNbtLayoutType.Edit, false, TabId: cmgTab.TabId );
+                lotControlledNTP.updateLayout( CswEnumNbtLayoutType.Edit, false, TabId : cmgTab.TabId );
 
                 CswNbtMetaDataNodeTypeProp requisitionableNTP = containerNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.PropertyName.Requisitionable );
-                requisitionableNTP.updateLayout( CswEnumNbtLayoutType.Edit, false, TabId: cmgTab.TabId );
+                requisitionableNTP.updateLayout( CswEnumNbtLayoutType.Edit, false, TabId : cmgTab.TabId );
 
                 CswNbtMetaDataNodeTypeProp reservedForNTP = containerNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.PropertyName.ReservedFor );
-                reservedForNTP.updateLayout( CswEnumNbtLayoutType.Edit, false, TabId: cmgTab.TabId );
+                reservedForNTP.updateLayout( CswEnumNbtLayoutType.Edit, false, TabId : cmgTab.TabId );
 
                 CswNbtMetaDataNodeTypeProp receiptLotNTP = containerNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.PropertyName.ReceiptLot );
                 CswNbtMetaDataNodeTypeTab firstTab = containerNT.getFirstNodeTypeTab();
-                receiptLotNTP.updateLayout( CswEnumNbtLayoutType.Edit, false, TabId: firstTab.TabId );
+                receiptLotNTP.updateLayout( CswEnumNbtLayoutType.Edit, false, TabId : firstTab.TabId );
             }
 
             //Case 27864 on enable show Material props...
@@ -91,14 +91,18 @@ namespace ChemSW.Nbt
             {
                 CswNbtMetaDataNodeTypeTab firstTab = vendorNT.getFirstNodeTypeTab();
                 CswNbtMetaDataNodeTypeProp vendorTypeNTP = vendorNT.getNodeTypePropByObjectClassProp( CswNbtObjClassVendor.PropertyName.VendorTypeName );
-                vendorTypeNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId: firstTab.TabId );
-                vendorTypeNTP.updateLayout( CswEnumNbtLayoutType.Add, true, TabId: firstTab.TabId );
+                vendorTypeNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId : firstTab.TabId );
+                vendorTypeNTP.updateLayout( CswEnumNbtLayoutType.Add, true, TabId : firstTab.TabId );
 
                 CswNbtMetaDataNodeTypeProp corporateEntityNTP = vendorNT.getNodeTypePropByObjectClassProp( CswNbtObjClassVendor.PropertyName.CorporateEntityName );
-                corporateEntityNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId: firstTab.TabId );
+                corporateEntityNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId : firstTab.TabId );
             }
 
             _toggleMaterialSupplierView( false );
+            _toggleReceiptLotManufacturerView( false );
+
+            _toggleMaterialRequestApprovalLevel( CswEnumNbtObjectClass.RequestMaterialCreateClass, false );
+            _toggleMaterialRequestApprovalLevel( CswEnumNbtObjectClass.RequestMaterialDispenseClass, false );
 
         }
 
@@ -191,6 +195,9 @@ namespace ChemSW.Nbt
             newSupplierPropView.save();
 
             _toggleMaterialSupplierView( true );
+            _toggleReceiptLotManufacturerView( true );
+            _toggleMaterialRequestApprovalLevel( CswEnumNbtObjectClass.RequestMaterialCreateClass, true );
+            _toggleMaterialRequestApprovalLevel( CswEnumNbtObjectClass.RequestMaterialDispenseClass, true );
 
         } // OnDisable()
 
@@ -210,13 +217,56 @@ namespace ChemSW.Nbt
                     {
                         CswNbtMetaDataObjectClassProp vendorTypeOCP = vendorOC.getObjectClassProp( CswNbtObjClassVendor.PropertyName.VendorTypeName );
                         supplierView.AddViewPropertyAndFilter( parent,
-                                                               MetaDataProp: vendorTypeOCP,
-                                                               Value: CswNbtObjClassVendor.VendorTypes.Corporate,
-                                                               FilterMode: CswEnumNbtFilterMode.Equals );
+                                                               MetaDataProp : vendorTypeOCP,
+                                                               Value : CswNbtObjClassVendor.VendorTypes.Corporate,
+                                                               FilterMode : CswEnumNbtFilterMode.Equals );
                     }
                     supplierView.Visibility = CswEnumNbtViewVisibility.Property;
                     supplierView.ViewName = "Supplier";
                     supplierView.save();
+                }
+            }
+        }
+
+        private void _toggleReceiptLotManufacturerView( bool MLMDisabled )
+        {
+            CswNbtMetaDataObjectClass VendorOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.VendorClass );
+            CswNbtMetaDataObjectClass ReceiptLotOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ReceiptLotClass );
+            foreach( CswNbtMetaDataNodeType ReceiptLotNT in ReceiptLotOC.getNodeTypes() )
+            {
+                CswNbtMetaDataNodeTypeProp ManufacturerNTP = ReceiptLotNT.getNodeTypePropByObjectClassProp( CswNbtObjClassReceiptLot.PropertyName.Manufacturer );
+                CswNbtView ManufacturerView = _CswNbtResources.ViewSelect.restoreView( ManufacturerNTP.ViewId );
+                ManufacturerView.Clear();
+                CswNbtViewRelationship Parent = ManufacturerView.AddViewRelationship( VendorOC, true );
+                if( false == MLMDisabled )
+                {
+                    CswNbtMetaDataObjectClassProp VendorTypeOCP = VendorOC.getObjectClassProp( CswNbtObjClassVendor.PropertyName.VendorTypeName );
+                    ManufacturerView.AddViewPropertyAndFilter( Parent,
+                        MetaDataProp: VendorTypeOCP,
+                        Value: CswNbtObjClassVendor.VendorTypes.Manufacturing,
+                        FilterMode: CswEnumNbtFilterMode.Equals );
+                }
+                ManufacturerView.Visibility = CswEnumNbtViewVisibility.Property;
+                ManufacturerView.ViewName = "Manufacturer";
+                ManufacturerView.save();
+            }
+        }
+
+        private void _toggleMaterialRequestApprovalLevel( CswEnumNbtObjectClass ObjClass, bool MLMDisabled )
+        {
+            CswNbtMetaDataObjectClass createMaterialRequestOC = _CswNbtResources.MetaData.getObjectClass( ObjClass );
+            foreach( CswNbtMetaDataNodeType createMaterialRequestNT in createMaterialRequestOC.getNodeTypes() )
+            {
+                CswNbtMetaDataNodeTypeProp approvalLevelNT = createMaterialRequestNT.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialCreate.PropertyName.ApprovalLevel );
+                if( MLMDisabled )
+                {
+                    approvalLevelNT.removeFromAllLayouts();
+                }
+                else
+                {
+                    CswNbtMetaDataNodeTypeTab firstTab = createMaterialRequestNT.getFirstNodeTypeTab();
+                    approvalLevelNT.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId : firstTab.TabId );
+                    approvalLevelNT.updateLayout( CswEnumNbtLayoutType.Add, true );
                 }
             }
         }

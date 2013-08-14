@@ -5,15 +5,15 @@
         Csw.actions.register('scheduledRules', function (cswParent, cswPrivate) {
             'use strict';
 
-            Ext.require([
-                'Ext.selection.CellModel',
-                'Ext.grid.*',
-                'Ext.data.*',
-                'Ext.util.*',
-                'Ext.state.*',
-                'Ext.form.*',
-                'Ext.ux.CheckColumn'
-            ]);
+            //Ext.require([
+            //    'Ext.selection.CellModel',
+            //    'Ext.grid.*',
+            //    'Ext.data.*',
+            //    'Ext.util.*',
+            //    'Ext.state.*',
+            //    'Ext.form.*',
+            //    'Ext.ux.CheckColumn'
+            //]);
 
             //#region _preCtor
 
@@ -107,15 +107,15 @@
             cswPrivate.makeRulesTab = function () {
                 var ol = cswPrivate.prepTab(cswPrivate.rulesTab, 'Rules', 'Select a Customer to review and make any necessary edits to the Scheduled Rules for their schema.');
 
-                cswPrivate.makeCustomerIdSelect(ol.li());
+                cswPrivate.makeCustomerIdSelect(ol.li()).then(function () {
+                    ol.li().br({ number: 2 });
 
-                ol.li().br({ number: 2 });
+                    cswPrivate.makeScheduledRulesGrid(ol.li());
 
-                cswPrivate.makeScheduledRulesGrid(ol.li());
+                    ol.li().br({ number: 2 });
 
-                ol.li().br({ number: 2 });
-
-                cswPrivate.addBtnGroup(ol.li());
+                    cswPrivate.addBtnGroup(ol.li());
+                });
             };
 
             cswPrivate.makeTimelineTab = function () {
@@ -145,9 +145,8 @@
                         }
                     });
 
-                Csw.ajax.post({
+                var ret = Csw.ajax.post({
                     urlMethod: 'getActiveAccessIds',
-                    async: false,
                     success: function (data) {
                         cswPrivate.customerIds = data.customerids;
                         if (cswPrivate.customerIds.length > 1) {
@@ -161,28 +160,29 @@
                     }
                 });
 
-                customerIdTable.cell(1, 3).buttonExt({
-                    name: 'updateRules',
-                    icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.save),
-                    enabledText: 'Save Changes',
-                    disabledText: 'Saving . . . ',
-                    onClick: function () {
-                        var req = Csw.extend({}, cswPrivate.schedulerRequest, true);
-                        req.Grid.columns.forEach(function (col) {
-                            delete col.editable;
-                            delete col.editor;
-                        });
+                //customerIdTable.cell(1, 3).buttonExt({
+                //    name: 'updateRules',
+                //    icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.save),
+                //    enabledText: 'Save Changes',
+                //    disabledText: 'Saving . . . ',
+                //    onClick: function () {
+                //        var req = Csw.extend({}, cswPrivate.schedulerRequest, true);
+                //        req.Grid.columns.forEach(function (col) {
+                //            delete col.editable;
+                //            delete col.editor;
+                //        });
 
-                        Csw.ajaxWcf.post({
-                            urlMethod: 'Scheduler/save',
-                            data: req,
-                            success: function() {
-                                cswPrivate.makeScheduledRulesGrid();
-                            }
-                        });
-                    }
-                });
+                //        Csw.ajaxWcf.post({
+                //            urlMethod: 'Scheduler/save',
+                //            data: req,
+                //            success: function() {
+                //                cswPrivate.makeScheduledRulesGrid();
+                //            }
+                //        });
+                //    }
+                //});
 
+                return ret;
             };
 
             cswPrivate.makeScheduledRulesGrid = function (parentDiv) {
@@ -190,7 +190,7 @@
                 //Case 29587 - always use parentDiv when given (i.e. - when reloading entire tab)
                 //else (when refreshing just the grid), keep cswPrivate.gridDiv 
                 cswPrivate.gridDiv = parentDiv || cswPrivate.gridDiv;
-                
+
 
                 cswPrivate.gridAjax = Csw.ajaxWcf.post({
                     urlMethod: 'Scheduler/get',
@@ -418,10 +418,8 @@
                             width: '95%',
                             title: 'Scheduled Rules',
                             usePaging: true,
-                            onRefresh: function() {
-                                cswPrivate.makeScheduledRulesGrid();
-                            },
-                            showActionColumn: false, 
+                            onRefresh: cswPrivate.makeScheduledRulesGrid,
+                            showActionColumn: false,
                             canSelectRow: false,
                             selModel: {
                                 selType: 'cellmodel'
@@ -446,6 +444,20 @@
                 }
                 cswPrivate.schedulerRequest.Grid.data.items[row.rowIdx][row.field] = row.value;
                 cswPrivate.schedulerRequest.Grid.data.items[row.rowIdx].Row[row.field] = row.value;
+                
+                var req = Csw.extend({}, cswPrivate.schedulerRequest, true);
+                req.Grid.columns.forEach(function (col) {
+                    delete col.editable;
+                    delete col.editor;
+                });
+
+                return Csw.ajaxWcf.post({
+                    urlMethod: 'Scheduler/save',
+                    data: req,
+                    success: function() {
+                        cswPrivate.makeScheduledRulesGrid();
+                    }
+                });
             };
 
             cswPrivate.addBtnGroup = function (el) {

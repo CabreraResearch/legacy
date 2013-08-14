@@ -16,6 +16,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string CompletedDate = "Completed Date";
             public const string IsFavorite = "Is Favorite";
             public const string IsRecurring = "Is Recurring";
+            public const string RequestItems = "Request Items";
         }
 
         public static implicit operator CswNbtObjClassRequest( CswNbtNode Node )
@@ -252,6 +253,12 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get { return _CswNbtNode.Properties[PropertyName.IsRecurring]; }
         }
+
+        public CswNbtNodePropGrid RequestItems
+        {
+            get { return _CswNbtNode.Properties[PropertyName.RequestItems]; }
+        }
+
         private void onIsRecurringChange( CswNbtNodeProp NodeProp )
         {
             if( IsRecurring.WasModified )

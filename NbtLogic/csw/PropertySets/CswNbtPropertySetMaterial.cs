@@ -1,6 +1,3 @@
-using System;
-using System.Collections.ObjectModel;
-using System.Linq;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
@@ -8,6 +5,9 @@ using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 using Newtonsoft.Json.Linq;
+using System;
+using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -32,6 +32,9 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Receive = "Receive";
             public const string C3ProductId = "C3ProductId";
             public const string IsConstituent = "Is Constituent";
+            public const string ContainerExpirationLocked = "Container Expiration Locked";
+            public const string Documents = "Documents";
+            public const string Synonyms = "Synonyms";
         }
 
         public sealed class CswEnumPhysicalState
@@ -140,7 +143,9 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         public abstract void onPropertySetAddDefaultViewFilters( CswNbtViewRelationship ParentRelationship );
 
-        public abstract DateTime getDefaultExpirationDate();
+        public abstract DateTime getDefaultExpirationDate( DateTime InitialDate );
+
+        public abstract void onUpdatePropertyValue();
 
         #endregion Abstract Methods
 
@@ -183,6 +188,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             afterPropertySetPopulateProps();
             ApprovedForReceiving.setReadOnly( false == _CswNbtResources.Permit.can( CswEnumNbtActionName.Material_Approval ), SaveToDb: false );
+            ContainerExpirationLocked.setReadOnly( false == _CswNbtResources.Permit.can( CswEnumNbtActionName.Container_Expiration_Lock ), SaveToDb: false );
             _toggleButtonVisibility();
             _toggleConstituentProps();
             CswNbtObjClassDefault.triggerAfterPopulateProps();
@@ -257,7 +263,7 @@ namespace ChemSW.Nbt.ObjClasses
                             CswNbtActRequesting RequestAct = new CswNbtActRequesting( _CswNbtResources );
 
                             CswNbtPropertySetRequestItem NodeAsPropSet = RequestAct.makeMaterialRequestItem( new CswEnumNbtRequestItemType( CswEnumNbtRequestItemType.Material ), NodeId, ButtonData );
-                            NodeAsPropSet.postChanges( false );
+                           // NodeAsPropSet.postChanges( false );
 
                             ButtonData.Data["requestaction"] = OCPPropName;
                             ButtonData.Data["titleText"] = ButtonData.SelectedText + " for " + TradeName.Text;
@@ -271,7 +277,7 @@ namespace ChemSW.Nbt.ObjClasses
                         {
                             HasPermission = true;
                             CswNbtActReceiving Act = new CswNbtActReceiving( _CswNbtResources, ObjectClass, NodeId );
-
+                            _CswNbtResources.setAuditActionContext( CswEnumNbtActionName.Receiving );
                             CswNbtObjClassContainer Container = Act.makeContainer();
 
                             //Case 29436
@@ -280,7 +286,7 @@ namespace ChemSW.Nbt.ObjClasses
                                 Container.Location.SelectedNodeId = _CswNbtResources.CurrentNbtUser.DefaultLocationId;
                             }
                             Container.Owner.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
-                            DateTime ExpirationDate = getDefaultExpirationDate();
+                            DateTime ExpirationDate = getDefaultExpirationDate( DateTime.Now );
                             if( DateTime.MinValue != ExpirationDate )
                             {
                                 Container.ExpirationDate.DateTimeValue = ExpirationDate;
@@ -423,13 +429,15 @@ namespace ChemSW.Nbt.ObjClasses
         {
             bool canAddCofA = false;
             CswNbtMetaDataObjectClass CofADocOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.CofADocumentClass );
-            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.CofA ) )
+            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.ManufacturerLotInfo ) )
             {
                 CswNbtMetaDataNodeType CofANT = CofADocOC.FirstNodeType;
                 canAddCofA = _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Create, CofANT );
                 if( canAddCofA )
                 {
+                    CswNbtMetaDataObjectClass ReceiptLotOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ReceiptLotClass );
                     ButtonData.Data["state"]["cofaDocTypeId"] = CofANT.NodeTypeId;
+                    ButtonData.Data["state"]["receiptLotTypeId"] = ReceiptLotOC.FirstNodeType.NodeTypeId;
                 }
             }
             ButtonData.Data["state"]["canAddCofA"] = canAddCofA;
@@ -448,6 +456,9 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropButton Request { get { return _CswNbtNode.Properties[PropertyName.Request]; } }
         public CswNbtNodePropText C3ProductId { get { return ( _CswNbtNode.Properties[PropertyName.C3ProductId] ); } }
         public CswNbtNodePropLogical IsConstituent { get { return ( _CswNbtNode.Properties[PropertyName.IsConstituent] ); } }
+        public CswNbtNodePropLogical ContainerExpirationLocked { get { return ( _CswNbtNode.Properties[PropertyName.ContainerExpirationLocked] ); } }
+        public CswNbtNodePropGrid Documents { get { return ( _CswNbtNode.Properties[PropertyName.Documents] ); } }
+        public CswNbtNodePropGrid Synonyms { get { return ( _CswNbtNode.Properties[PropertyName.Synonyms] ); } }
 
         #endregion
 

@@ -59,6 +59,9 @@ namespace NbtWebApp.Services
             [DataMember]
             public string ConstituentNodeTypeIds = string.Empty;
 
+            [DataMember]
+            public Int32 ContainerLimit = 25;
+
             //[DataMember]
             //public Collection<Property> Properties = new Collection<Property>();
 

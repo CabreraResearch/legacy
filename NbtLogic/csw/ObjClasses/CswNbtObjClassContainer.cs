@@ -52,6 +52,9 @@ namespace ChemSW.Nbt.ObjClasses
             public const string UseType = "Use Type";
             public const string ViewSDS = "View SDS";
             public const string ViewCofA = "View C of A";
+            public const string ContainerDispenseTransactions = "Container Dispense Transactions";
+            public const string Documents = "Documents";
+            public const string SubmittedRequests = "Submitted Requests";
         }
 
         #endregion Properties
@@ -143,20 +146,6 @@ namespace ChemSW.Nbt.ObjClasses
                     if( CswEnumTristate.True == NewGroupNode.SyncLocation.Checked && ( this.Location.SelectedNodeId != NewGroupNode.Location.SelectedNodeId ) )
                     {
                         this.ContainerGroup.RelatedNodeId = null;
-                    }
-                }
-            }
-
-            //Review K5183
-            if( ExpirationDate.DateTimeValue == DateTime.MinValue && Material.RelatedNodeId != null )
-            {
-                CswNbtNode MaterialNode = _CswNbtResources.Nodes.GetNode( Material.RelatedNodeId );
-                if( MaterialNode != null )
-                {
-                    CswNbtPropertySetMaterial MaterialNodeAsMaterial = MaterialNode;
-                    if( ExpirationDate.DateTimeValue == DateTime.MinValue )
-                    {
-                        ExpirationDate.DateTimeValue = MaterialNodeAsMaterial.getDefaultExpirationDate();
                     }
                 }
             }
@@ -762,6 +751,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Toggles the ReadOnly state of all non-button properties according to the Disposed state of the Container.
         /// Toggles the Hidden state of all button properties according to Disposed state, permissions and business logic
+        /// Toggles the ReadOnly state of Expiration Date according to the Material's ContainerExpiraionLock value.
         /// </summary>
         private void _toggleAllPropertyStates()
         {
@@ -772,6 +762,11 @@ namespace ChemSW.Nbt.ObjClasses
             _toggleButtonHiddenState( IsDisposed );
             _toggleButtonHiddenStateByPermission();
             _toggleButtonHiddenStateByDocumentRelationship();
+            if( Material.RelatedNodeId != null )
+            {
+                CswNbtPropertySetMaterial MaterialNode = _CswNbtResources.Nodes[Material.RelatedNodeId];
+                ExpirationDate.setReadOnly( MaterialNode.ContainerExpirationLocked.Checked == CswEnumTristate.True, SaveToDb: false );
+            }
         }
         
         /// <summary>
@@ -1218,6 +1213,9 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropList UseType { get { return ( _CswNbtNode.Properties[PropertyName.UseType] ); } }
         public CswNbtNodePropButton ViewSDS { get { return ( _CswNbtNode.Properties[PropertyName.ViewSDS] ); } }
         public CswNbtNodePropButton ViewCofA { get { return ( _CswNbtNode.Properties[PropertyName.ViewCofA] ); } }
+        public CswNbtNodePropGrid ContainerDispenseTransactions { get { return ( _CswNbtNode.Properties[PropertyName.ContainerDispenseTransactions] ); } }
+        public CswNbtNodePropGrid Documents { get { return ( _CswNbtNode.Properties[PropertyName.Documents] ); } }
+        public CswNbtNodePropGrid SubmittedRequests { get { return ( _CswNbtNode.Properties[PropertyName.SubmittedRequests] ); } }
         #endregion
 
 

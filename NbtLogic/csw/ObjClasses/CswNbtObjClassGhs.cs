@@ -12,7 +12,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Object Class property names
         /// </summary>
-        public new sealed class PropertyName: CswNbtObjClass.PropertyName
+        public new sealed class PropertyName : CswNbtObjClass.PropertyName
         {
             public const string Jurisdiction = "Jurisdiction";
             public const string Material = "Material";
@@ -22,6 +22,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string ClassCodesGrid = "Class Codes Grid";
             public const string SignalWord = "Signal Word";
             public const string Pictograms = "Pictograms";
+            public const string Classification = "Classification";
         }
 
         #endregion Enums
@@ -96,6 +97,7 @@ namespace ChemSW.Nbt.ObjClasses
             View.Root.ChildRelationships.Clear();
             if( SelectedPhraseIds.Count > 0 )
             {
+
                 CswNbtViewRelationship PhraseVR = View.AddViewRelationship( GhsPhraseOC, false );
                 foreach( string PhraseId in SelectedPhraseIds )
                 {
@@ -117,7 +119,7 @@ namespace ChemSW.Nbt.ObjClasses
                     }
                 }
             } // if( SelectedPhraseIds.Count > 0 )
-            View.SaveToCache(IncludeInQuickLaunch: false, UpdateCache: true, KeepInQuickLaunch: false);
+            View.SaveToCache( IncludeInQuickLaunch: false, UpdateCache: true, KeepInQuickLaunch: false );
         } // _setupPhraseView()
 
         private Dictionary<string, string> _initGhsPhraseOptions()
@@ -149,6 +151,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropGrid ClassCodesGrid { get { return ( _CswNbtNode.Properties[PropertyName.ClassCodesGrid] ); } }
         public CswNbtNodePropList SignalWord { get { return ( _CswNbtNode.Properties[PropertyName.SignalWord] ); } }
         public CswNbtNodePropImageList Pictograms { get { return ( _CswNbtNode.Properties[PropertyName.Pictograms] ); } }
+        public CswNbtNodePropList Classification { get { return ( _CswNbtNode.Properties[PropertyName.Classification] ); } }
 
         #endregion
 

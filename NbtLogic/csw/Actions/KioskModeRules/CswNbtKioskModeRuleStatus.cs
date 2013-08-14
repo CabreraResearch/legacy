@@ -92,7 +92,6 @@ namespace ChemSW.Nbt.Actions.KioskMode
         private bool _validateStatus( ref OperationData OpData )
         {
             bool ret = false;
-            string foundMatch = "";
             string status = OpData.Field1.Value;
 
             Regex alphNums = new Regex( "[^a-zA-Z0-9]" );
@@ -121,19 +120,18 @@ namespace ChemSW.Nbt.Actions.KioskMode
 
                 foreach( string candidateStatus in statusOptCDS )
                 {
-                    if( String.IsNullOrEmpty( foundMatch ) )
+                    if( false == ret )
                     {
                         if( string.Equals( candidateStatus, status, StringComparison.CurrentCultureIgnoreCase ) )
                         {
-                            foundMatch = candidateStatus;
                             ret = true;
+                            OpData.Field1.Value = candidateStatus;
                         }
                         else
                         {
                             string strippedCandidateStatus = alphNums.Replace( candidateStatus, "" );
                             if( strippedStatus.Equals( strippedCandidateStatus, StringComparison.CurrentCultureIgnoreCase ) )
                             {
-                                foundMatch = candidateStatus;
                                 ret = true;
                                 OpData.Field1.Value = candidateStatus;
                             }
@@ -142,7 +140,7 @@ namespace ChemSW.Nbt.Actions.KioskMode
                 }
             }
 
-            if( String.IsNullOrEmpty( foundMatch ) )
+            if( false == ret )
             {
                 OpData.Field1.ServerValidated = false;
                 OpData.Field1.StatusMsg = status + " is not a valid option for a Status Mode scan.";

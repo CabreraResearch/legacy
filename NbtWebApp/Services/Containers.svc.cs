@@ -40,6 +40,25 @@ namespace NbtWebApp
 
         [OperationContract]
         [WebInvoke( Method = "POST", ResponseFormat = WebMessageFormat.Json )]
+        [Description( "Get the number of ContainerLocation records whose Action has been set, but not applied, for the given Location" )]
+        [FaultContract( typeof( FaultException ) )]
+        public CswNbtWebServiceContainer.ContainerDataReturn getOutstandingActionsCount( ContainerData.ReconciliationRequest Request )
+        {
+            CswNbtWebServiceContainer.ContainerDataReturn Ret = new CswNbtWebServiceContainer.ContainerDataReturn();
+
+            var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceContainer.ContainerDataReturn, ContainerData.ReconciliationRequest>(
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj: Ret,
+                WebSvcMethodPtr: CswNbtWebServiceContainer.getOutstandingActionsCount,
+                ParamObj: Request
+                );
+
+            SvcDriver.run();
+            return ( Ret );
+        }
+
+        [OperationContract]
+        [WebInvoke( Method = "POST", ResponseFormat = WebMessageFormat.Json )]
         [Description( "Get all of the ContainerLocation Statuses along with their Container count and scan percentage for the given Location and timeframe" )]
         [FaultContract( typeof( FaultException ) )]
         public CswNbtWebServiceContainer.ContainerDataReturn getContainerStatistics( ContainerData.ReconciliationRequest Request )
@@ -94,5 +113,26 @@ namespace NbtWebApp
             SvcDriver.run();
             return ( Ret );
         }
+
+        #region Receive Material Wizard
+
+        [OperationContract]
+        [WebInvoke( Method = "POST", UriTemplate = "updateExpirationDate" )]
+        [FaultContract( typeof( FaultException ) )]
+        [Description( "Updates the default Expiration Date on containers to receive based on Receipt Lot's Manufactured Date" )]
+        public CswNbtWebServiceContainer.ReceivingDataReturn updateExpirationDate( ContainerData.ReceiptLotRequest Request )
+        {
+            CswNbtWebServiceContainer.ReceivingDataReturn Ret = new CswNbtWebServiceContainer.ReceivingDataReturn();
+            var GetViewDriverType = new CswWebSvcDriver<CswNbtWebServiceContainer.ReceivingDataReturn, ContainerData.ReceiptLotRequest>(
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj: Ret,
+                WebSvcMethodPtr: CswNbtWebServiceContainer.updateExpirationDate,
+                ParamObj: Request
+                );
+            GetViewDriverType.run();
+            return ( Ret );
+        }
+
+        #endregion Receive Material Wizard
     }
 }

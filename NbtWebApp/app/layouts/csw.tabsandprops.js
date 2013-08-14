@@ -73,7 +73,6 @@
                 nodeTreeCheck: null,
                 onEditView: null,
                 onAfterButtonClick: null,
-                async: true, 
                 forceReadOnly: false
             };
             var cswPublic = {};
@@ -191,7 +190,7 @@
                 cswPrivate.clearTabs();
                 cswPrivate.tabState.checkBoxes = {};
                 Csw.iterate(cswPrivate.ajax, function (call, name) {
-                    call.ajax.abort();
+                    call.abort();
                     delete cswPrivate.ajax[name];
                 });
                 cswPrivate.initAtLeastOne(true);

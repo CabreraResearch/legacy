@@ -30,10 +30,9 @@
                     Csw.error.throwException(Csw.error.exception('Cannot create a Wizard Node Type Select without a parent.', '', 'csw.wizard.nodetypeselect.js', 23));
                 }
 
-                cswPrivate.outerTbl = cswParent.div().hide().table();
-                cswPrivate.outerTbl.cell(1, 1);
-                cswPrivate.label = cswPrivate.outerTbl.cell(1, 2).span({ text: cswPrivate.labelText });
-                cswPublic.select = cswPrivate.outerTbl.cell(1, 3).nodeTypeSelect({
+                cswPrivate.outerTbl = cswParent.div().table({ cellvalign: 'middle' }).hide();
+                cswPrivate.label = cswPrivate.outerTbl.cell(1, 1).span().setLabelText(cswPrivate.labelText, true);
+                cswPublic.select = cswPrivate.outerTbl.cell(1, 2).nodeTypeSelect({
                     name: cswPrivate.name,
                     useWide: true,
                     objectClassName: cswPrivate.objectClassName,

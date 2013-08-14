@@ -45,6 +45,17 @@ namespace ChemSW.Nbt.WebServices
             public ContainerData Data;
         }
 
+        [DataContract]
+        public class ReceivingDataReturn : CswWebSvcReturn
+        {
+            public ReceivingDataReturn()
+            {
+                Data = new ContainerData.ReceivingData();
+            }
+            [DataMember]
+            public ContainerData.ReceivingData Data;
+        }
+
         #endregion DataContract
 
         #region Public
@@ -90,6 +101,8 @@ namespace ChemSW.Nbt.WebServices
             return Ret;
         }
 
+        #region Reconciliation
+
         /// <summary>
         /// Gets both ContainerStatistics and ContainerStatuses data
         /// </summary>
@@ -97,6 +110,15 @@ namespace ChemSW.Nbt.WebServices
         {
             CswNbtActReconciliation _CswNbtActReconciliation = new CswNbtActReconciliation( (CswNbtResources) CswResources );
             Return.Data = _CswNbtActReconciliation.getReconciliationData( Request );
+        }
+
+        /// <summary>
+        /// Gets the number of ContainerLocation records whose Action has been set, but not applied, for the given Location
+        /// </summary>
+        public static void getOutstandingActionsCount( ICswResources CswResources, ContainerDataReturn Return, ContainerData.ReconciliationRequest Request )
+        {
+            CswNbtActReconciliation _CswNbtActReconciliation = new CswNbtActReconciliation( (CswNbtResources) CswResources );
+            Return.Data = _CswNbtActReconciliation.getOutstandingActionsCount( Request );
         }
 
         /// <summary>
@@ -125,6 +147,21 @@ namespace ChemSW.Nbt.WebServices
             CswNbtActReconciliation _CswNbtActReconciliation = new CswNbtActReconciliation( (CswNbtResources) CswResources );
             _CswNbtActReconciliation.saveContainerActions( Request );
         }
+
+        #endregion Reconciliation
+
+        #region Receive Material
+
+        /// <summary>
+        /// Updates the default Expiration Date on containers to receive based on Receipt Lot's Manufactured Date
+        /// </summary>
+        public static void updateExpirationDate( ICswResources CswResources, ReceivingDataReturn Return, ContainerData.ReceiptLotRequest Request )
+        {
+            CswNbtActReceiving _Receiving = new CswNbtActReceiving( (CswNbtResources) CswResources );
+            Return.Data = _Receiving.updateExpirationDate( Request );
+        }
+
+        #endregion Receive Material
 
         #endregion Public
 

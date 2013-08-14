@@ -20,7 +20,7 @@
                 cswPrivate.containernodeid = cswPrivate.containernodeid || '';
 
                 cswParent.empty();
-            } ());
+            }());
 
             cswPrivate.requestName = "";
             cswPrivate.gridOpts = {};
@@ -60,10 +60,9 @@
 
             //#region AJAX methods
 
-            cswPrivate.getCart = function (ActiveTab, TabName) {
+            cswPrivate.getCart = function (ActiveTab, TabName, onSuccess) {
                 Csw.ajaxWcf.get({
                     urlMethod: 'Requests/cart',
-                    async: false,
                     success: function (data) {
                         cswPrivate.state.pendingItemsViewId = data.PendingItemsView.SessionViewId;
                         cswPrivate.state.favoritesListViewId = data.FavoritesView.SessionViewId;
@@ -81,13 +80,33 @@
                         } else {
                             cswPrivate.onTabSelect(cswPrivate.currentTab);
                         }
+
+                        if (onSuccess) {
+                            Csw.tryExec(onSuccess);
+                        }
                     }
                 });
             };
 
+            //Case 30082: Should the Cached cart counts get out of sync, instrument a call to reset
+            cswPrivate.resetCart = function () {
+                return $.ajax({
+                    type: 'POST',
+                    url: 'Services/Requests/Cart/reset',
+                    xhrFields: {
+                        withCredentials: true
+                    },
+                    dataType: 'json',
+                    contentType: 'application/json; charset=utf-8'
+                });
+            };
+
             cswPrivate.getCartCounts = function () {
-                if (cswPrivate.ajaxii.getCartCounts) {
-                    cswPrivate.ajaxii.getCartCounts.ajax.abort();
+
+                cswPrivate.resetCart(); //Fire this reset immediately to correct any non-toward counts. See case 30496 for improvements against this hack.
+                
+                if (cswPrivate.ajaxii.getCartCounts && cswPrivate.ajaxii.getCartCounts.ajax) {
+                    cswPrivate.ajaxii.getCartCounts.abort();
                 }
                 cswPrivate.ajaxii.getCartCounts = Csw.ajaxWcf.get({
                     urlMethod: 'Requests/counts',
@@ -137,7 +156,7 @@
                     }
                 });
             };
-
+            
             cswPrivate.submitRequest = function () {
                 Csw.ajaxWcf.post({
                     urlMethod: 'Requests/place',
@@ -147,8 +166,7 @@
                     },
                     success: function (json) {
                         if (json.Succeeded) {
-                            cswPrivate.getCart(1, "Submitted");
-                            Csw.tryExec(cswPrivate.onSubmit);
+                            cswPrivate.getCart(1, "Submitted", cswPrivate.onSubmit);
                         }
                     }
                 });
@@ -227,28 +245,28 @@
 
             cswPrivate.destroyOtherTabs = function (preserveTabName) {
                 if (preserveTabName !== 'Favorites' && cswPublic.favoritesGrid) {
-                    cswPublic.favoritesGrid.ajax.ajax.abort();
+                    cswPublic.favoritesGrid.ajax.abort();
                     cswPublic.favoritesGrid.destroy();
                     cswPrivate.favoritesTab.csw.empty();
                 }
                 if (preserveTabName !== 'Recurring' && cswPublic.recurringGrid) {
-                    cswPublic.recurringGrid.ajax.ajax.abort();
+                    cswPublic.recurringGrid.ajax.abort();
                     cswPublic.recurringGrid.destroy();
                     cswPrivate.recurringTab.csw.empty();
                 }
                 if (preserveTabName !== 'Submitted' && cswPublic.submittedGrid) {
-                    cswPublic.submittedGrid.ajax.ajax.abort();
+                    cswPublic.submittedGrid.ajax.abort();
                     cswPublic.submittedGrid.destroy();
                     cswPrivate.submittedTab.csw.empty();
                 }
                 if (preserveTabName !== 'Pending' && cswPublic.pendingGrid) {
-                    cswPublic.pendingGrid.ajax.ajax.abort();
+                    cswPublic.pendingGrid.ajax.abort();
                     cswPublic.pendingGrid.destroy();
                     cswPrivate.pendingTab.csw.empty();
                 }
             };
 
-            cswPrivate.tabNames = ['Pending', 'Submitted', 'Recurring', 'Favorites'];          
+            cswPrivate.tabNames = ['Pending', 'Submitted', 'Recurring', 'Favorites'];
 
             cswPrivate.onTabSelect = function (tabName, el, eventObj, callBack) {
                 var newTabName = tabName.split(' ')[0].trim(); //remove the '(#)' part from name
@@ -463,7 +481,7 @@
                 opts.gridId = cswPrivate.name + '_pendingGrid';
                 opts.showCheckboxes = true;
                 opts.title = 'Select any Pending items to save to a Favorite list or to copy to a new Recurring request.';
-                opts.onBeforeSelect = function(record, node) {
+                opts.onBeforeSelect = function (record, node) {
                     var ret = true;
                     if (record.raw.objectclassid != cswPrivate.state.copyableId) {
                         ret = false;
@@ -475,7 +493,7 @@
                     toggleCopyButtons();
                 };
                 opts.reapplyViewReadyOnLayout = true;
-                opts.onSuccess = function() {
+                opts.onSuccess = function () {
                     cswPublic.pendingGrid.iterateRows(function (record, node) {
                         if (record.raw.objectclassid != cswPrivate.state.copyableId) {
                             $(node).find('.x-grid-row-checker').remove();
@@ -759,10 +777,10 @@
 
                 cswPrivate.getCart();
 
-            } ());
+            }());
 
             return cswPublic;
 
             //#endregion _postCtor
         });
-} ());
+}());

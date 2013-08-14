@@ -76,7 +76,7 @@ namespace ChemSW.WebSvc
             Type = newEx.Type;
             Message = newEx.MsgFriendly;
             Detail = newEx.MsgEscoteric + "; ";
-            
+
             if( CswNbtResources != null )
             {
                 if( newEx.Type == CswEnumErrorType.Warning )
@@ -180,7 +180,7 @@ namespace ChemSW.WebSvc
             }
         }
 
-        public static void wAddAuthenticationStatus( CswNbtResources CswNbtResources, CswSessionResourcesNbt CswSessionResources, CswWebSvcReturn SvcReturn, CswEnumAuthenticationStatus AuthenticationStatusIn )
+        public static void wAddAuthenticationStatus( CswNbtResources CswNbtResources, CswSessionResourcesNbt CswSessionResources, CswWebSvcReturn SvcReturn, CswEnumAuthenticationStatus AuthenticationStatusIn, HttpContext HttpContext )
         {
             // ******************************************
             // IT IS VERY IMPORTANT for this function not to require the use of database resources, 
@@ -204,12 +204,12 @@ namespace ChemSW.WebSvc
                         ICswNbtUser CurrentUser = CswNbtResources.CurrentNbtUser;
                         SvcReturn.Authentication.ExpirationReset.UserId = CurrentUser.UserId.ToString();
                         CswNbtNodeKey FakeKey = new CswNbtNodeKey()
-                        {
-                            NodeId = CurrentUser.UserId,
-                            NodeSpecies = CswEnumNbtNodeSpecies.Plain,
-                            NodeTypeId = CurrentUser.UserNodeTypeId,
-                            ObjectClassId = CurrentUser.UserObjectClassId
-                        };
+                            {
+                                NodeId = CurrentUser.UserId,
+                                NodeSpecies = CswEnumNbtNodeSpecies.Plain,
+                                NodeTypeId = CurrentUser.UserNodeTypeId,
+                                ObjectClassId = CurrentUser.UserObjectClassId
+                            };
                         SvcReturn.Authentication.ExpirationReset.UserKey = FakeKey.ToString();
                         CswPropIdAttr PasswordPropIdAttr = new CswPropIdAttr( CurrentUser.UserId, CurrentUser.PasswordPropertyId );
                         SvcReturn.Authentication.ExpirationReset.PasswordId = PasswordPropIdAttr.ToString();
@@ -236,7 +236,18 @@ namespace ChemSW.WebSvc
                     SvcReturn.Logging.LogLevel = LogLevel;
                 }
             }
-        }//_jAuthenticationStatus()
+            HttpCookie AuthStatusCookie = HttpContext.Request.Cookies["CswAuthStatus"];
+            if( null == AuthStatusCookie )
+            {
+                AuthStatusCookie = new HttpCookie( "CswAuthStatus" ) {HttpOnly = true};
+            }
+            if( AuthStatusCookie.Value != AuthenticationStatusIn.ToString() )
+            {
+                AuthStatusCookie.Value = AuthenticationStatusIn;
+                HttpContext.Response.Cookies.Add( AuthStatusCookie );
+            }
+        } // wAddAuthenticationStatus()
+
     } // class CswWebSvcCommonMethods
 
 } // namespace ChemSW.Nbt.WebServices

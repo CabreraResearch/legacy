@@ -12,9 +12,9 @@ namespace ChemSW.Nbt.MetaData
         #region Internals
         private static Dictionary<string, string> _Enums = new Dictionary<string, string>( StringComparer.OrdinalIgnoreCase )
         {
-            { AliquotClass                      , AliquotClass                       },
+            { BalanceClass                      , BalanceClass                       },
+            { BalanceConfigurationClass         , BalanceConfigurationClass          },
             { BatchOpClass                      , BatchOpClass                       },
-            { BiologicalClass                   , BiologicalClass                    },
             { MaterialComponentClass            , MaterialComponentClass             },
             { CofADocumentClass                 , CofADocumentClass                  },
             { CofAMethodClass                   , CofAMethodClass                    },
@@ -23,7 +23,9 @@ namespace ChemSW.Nbt.MetaData
             { ContainerLocationClass            , ContainerLocationClass             },
             { ContainerDispenseTransactionClass , ContainerDispenseTransactionClass  },
             { ContainerGroupClass               , ContainerGroupClass                },
+            { ControlZoneClass                  , ControlZoneClass                   },
             { CustomerClass                     , CustomerClass                      },
+            { DepartmentClass                   , DepartmentClass                    },
             { DocumentClass                     , DocumentClass                      },
             { EnterprisePartClass               , EnterprisePartClass                },
             { EquipmentAssemblyClass            , EquipmentAssemblyClass             },
@@ -43,6 +45,7 @@ namespace ChemSW.Nbt.MetaData
             { InventoryLevelClass               , InventoryLevelClass                },
             { JurisdictionClass                 , JurisdictionClass                  },
             { LocationClass                     , LocationClass                      },
+            { LQNoClass                         , LQNoClass                          },
             { MailReportClass                   , MailReportClass                    },
             { MailReportGroupClass              , MailReportGroupClass               },
             { MailReportGroupPermissionClass    , MailReportGroupPermissionClass     },
@@ -53,7 +56,6 @@ namespace ChemSW.Nbt.MetaData
             { NonChemicalClass                  , NonChemicalClass                   },
             { InspectionTargetClass             , InspectionTargetClass              },
             { InspectionTargetGroupClass        , InspectionTargetGroupClass         },
-            { ParameterClass                    , ParameterClass                     },
             { PrinterClass                      , PrinterClass                       },
             { PrintJobClass                     , PrintJobClass                      },
             { PrintLabelClass                   , PrintLabelClass                    },
@@ -66,22 +68,27 @@ namespace ChemSW.Nbt.MetaData
             { ReportClass                       , ReportClass                        },
             { ReportGroupClass                  , ReportGroupClass                   },
             { ReportGroupPermissionClass        , ReportGroupPermissionClass         },
-            { ResultClass                       , ResultClass                        },
             { RequestClass                      , RequestClass                       },
             { RequestContainerDispenseClass     , RequestContainerDispenseClass      },
             { RequestContainerUpdateClass       , RequestContainerUpdateClass        },
             { RequestMaterialCreateClass        , RequestMaterialCreateClass         },
             { RequestMaterialDispenseClass      , RequestMaterialDispenseClass       },
             { RoleClass                         , RoleClass                          },
-            { SampleClass                       , SampleClass                        },
             { SDSDocumentClass                  , SDSDocumentClass                   },
             { SizeClass                         , SizeClass                          },
             { TaskClass                         , TaskClass                          },
-            { TestClass                         , TestClass                          },
             { UnitOfMeasureClass                , UnitOfMeasureClass                 },
             { UserClass                         , UserClass                          },
             { VendorClass                       , VendorClass                        },
-            { WorkUnitClass                     , WorkUnitClass                      }
+            { WorkUnitClass                     , WorkUnitClass                      },
+
+            //TODO: delete these in Foxglove
+            { AliquotClass                      , AliquotClass                       },
+            { TestClass                         , TestClass                          },
+            { SampleClass                       , SampleClass                        },
+            { ParameterClass                    , ParameterClass                     },
+            { ResultClass                       , ResultClass                        },
+            { BiologicalClass                   , BiologicalClass                    }
         };
         /// <summary>
         /// The string value of the current instance
@@ -134,9 +141,9 @@ namespace ChemSW.Nbt.MetaData
 
         #region Enum members
 
-        public const string AliquotClass = "AliquotClass";
+        public const string BalanceClass = "BalanceClass";
+        public const string BalanceConfigurationClass = "BalanceConfigurationClass";
         public const string BatchOpClass = "BatchOpClass";
-        public const string BiologicalClass = "BiologicalClass";
         public const string CofADocumentClass = "CofADocumentClass";
         public const string CofAMethodClass = "CofAMethodClass";
         public const string CofAMethodTemplateClass = "CofAMethodTemplateClass";
@@ -144,7 +151,9 @@ namespace ChemSW.Nbt.MetaData
         public const string ContainerLocationClass = "ContainerLocationClass";
         public const string ContainerDispenseTransactionClass = "ContainerDispenseTransactionClass";
         public const string ContainerGroupClass = "ContainerGroupClass";
+        public const string ControlZoneClass = "ControlZoneClass";
         public const string CustomerClass = "CustomerClass";
+        public const string DepartmentClass = "DepartmentClass";
         public const string DocumentClass = "DocumentClass";
         public const string EnterprisePartClass = "EnterprisePartClass";
         public const string EquipmentAssemblyClass = "EquipmentAssemblyClass";
@@ -164,6 +173,7 @@ namespace ChemSW.Nbt.MetaData
         public const string InventoryLevelClass = "InventoryLevelClass";
         public const string JurisdictionClass = "JurisdictionClass";
         public const string LocationClass = "LocationClass";
+        public const string LQNoClass = "LQNoClass";
         public const string MailReportClass = "MailReportClass";
         public const string MailReportGroupClass = "MailReportGroupClass";
         public const string MailReportGroupPermissionClass = "MailReportGroupPermissionClass";
@@ -175,7 +185,6 @@ namespace ChemSW.Nbt.MetaData
         public const string NonChemicalClass = "NonChemicalClass";
         public const string InspectionTargetClass = "InspectionTargetClass";
         public const string InspectionTargetGroupClass = "InspectionTargetGroupClass";
-        public const string ParameterClass = "ParameterClass";
         public const string PrinterClass = "PrinterClass";
         public const string PrintJobClass = "PrintJobClass";
         public const string PrintLabelClass = "PrintLabelClass";
@@ -188,23 +197,27 @@ namespace ChemSW.Nbt.MetaData
         public const string ReportClass = "ReportClass";
         public const string ReportGroupClass = "ReportGroupClass";
         public const string ReportGroupPermissionClass = "ReportGroupPermissionClass";
-        public const string ResultClass = "ResultClass";
         public const string RequestClass = "RequestClass";
         public const string RequestContainerDispenseClass = "RequestContainerDispenseClass";
         public const string RequestContainerUpdateClass = "RequestContainerUpdateClass";
         public const string RequestMaterialDispenseClass = "RequestMaterialDispenseClass";
         public const string RequestMaterialCreateClass = "RequestMaterialCreateClass";
         public const string RoleClass = "RoleClass";
-        public const string SampleClass = "SampleClass";
         public const string SDSDocumentClass = "SDSDocumentClass";
         public const string SizeClass = "SizeClass";
         public const string TaskClass = "TaskClass";
-        public const string TestClass = "TestClass";
         public const string UnitOfMeasureClass = "UnitOfMeasureClass";
         public const string UserClass = "UserClass";
         public const string VendorClass = "VendorClass";
         public const string WorkUnitClass = "WorkUnitClass";
 
+        //TODO: delete these in Foxglove
+        public const string AliquotClass = "AliquotClass";
+        public const string TestClass = "TestClass";
+        public const string SampleClass = "SampleClass";
+        public const string ResultClass = "ResultClass";
+        public const string ParameterClass = "ParameterClass";
+        public const string BiologicalClass = "BiologicalClass";
         #endregion Enum members
 
 

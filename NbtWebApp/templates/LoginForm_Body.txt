@@ -74,7 +74,7 @@
                     </table> 
                 </div> 
                 <div id="CswFooterDiv" style="text-align: right">
-                        Your use of this website implies your agreement with our <a target="_blank" href="TermsOfUse.aspx">
+                        Your use of this website implies your agreement with our <a target="_blank" href="TermsOfUse.html">
                         Terms of Use</a>
                 </div>
             </div>

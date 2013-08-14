@@ -358,7 +358,6 @@
 
 
                                 Csw.ajaxWcf.post({
-                                    async: false,
                                     urlMethod: 'ChemCatCentral/importProduct',
                                     data: {
                                         C3ProductId: nodeObj.c3productid,

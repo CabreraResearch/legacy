@@ -33,6 +33,10 @@
     var posY = cswPrivate.origYAccessor();
     var incrPosBy = 30;
 
+    // case 21337 - Prevent showing multiples of these dialogs...
+    var ExistingChangePasswordDialog = false;
+    var ExistingShowLicenseDialog = false;
+
     var afterObjectClassButtonClick = function (action, dialog) {
         'use strict';
         switch (Csw.string(action).toLowerCase()) {
@@ -162,59 +166,63 @@
                 row += 1;
             }
 
-            var visSelect = Csw.composites.makeViewVisibilitySelect(table, row, 'Available to');
-            row += 1;
-            var saveBtn = form.button({
-                name: o.name + '_submit',
-                enabledText: 'Create View',
-                disabledText: 'Creating View',
-                onClick: function () {
-                    if (form.$.valid()) {
-                        var createData = {
-                            Visibility: '',
-                            VisibilityRoleId: '',
-                            VisibilityUserId: ''
-                        };
-                        createData.ViewName = nameTextBox.val();
-                        createData.Category = categoryTextBox.val();
-                        createData.ViewId = o.viewid;
-                        if (Csw.isNullOrEmpty(o.viewmode)) {
-                            createData.ViewMode = displayModeSelect.val();
-                        } else {
-                            createData.ViewMode = o.viewmode;
+            var visSelect = Csw.composites.makeViewVisibilitySelect(table, row, 'Available to', {
+                onRenderFinish: function () {
+                    row += 1;
+                    var saveBtn = form.button({
+                        name: o.name + '_submit',
+                        enabledText: 'Create View',
+                        disabledText: 'Creating View',
+                        onClick: function () {
+                            if (form.$.valid()) {
+                                var createData = {
+                                    Visibility: '',
+                                    VisibilityRoleId: '',
+                                    VisibilityUserId: ''
+                                };
+                                createData.ViewName = nameTextBox.val();
+                                createData.Category = categoryTextBox.val();
+                                createData.ViewId = o.viewid;
+                                if (Csw.isNullOrEmpty(o.viewmode)) {
+                                    createData.ViewMode = displayModeSelect.val();
+                                } else {
+                                    createData.ViewMode = o.viewmode;
+                                }
+
+                                var visValue = visSelect.getSelected();
+                                createData.Visibility = visValue.visibility;
+                                createData.VisibilityRoleId = visValue.roleid;
+                                createData.VisibilityUserId = visValue.userid;
+
+                                Csw.ajax.post({
+                                    urlMethod: 'createView',
+                                    data: createData,
+                                    success: function (data) {
+                                        div.$.dialog('close');
+                                        Csw.tryExec(o.onAddView, data.newviewid, createData.ViewMode);
+                                    },
+                                    error: saveBtn.enable
+                                });
+                            } else {
+                                saveBtn.enable();
+                            }
                         }
+                    });
 
-                        var visValue = visSelect.getSelected();
-                        createData.Visibility = visValue.visibility;
-                        createData.VisibilityRoleId = visValue.roleid;
-                        createData.VisibilityUserId = visValue.userid;
+                    /* Cancel Button */
+                    form.button({
+                        name: o.name + '_cancel',
+                        enabledText: 'Cancel',
+                        disabledText: 'Canceling',
+                        onClick: function () {
+                            div.$.dialog('close');
+                        }
+                    });
 
-                        Csw.ajax.post({
-                            urlMethod: 'createView',
-                            data: createData,
-                            success: function (data) {
-                                div.$.dialog('close');
-                                Csw.tryExec(o.onAddView, data.newviewid, createData.ViewMode);
-                            },
-                            error: saveBtn.enable
-                        });
-                    } else {
-                        saveBtn.enable();
-                    }
+                    openDialog(div, 425, 210, null, 'New View');
                 }
             });
 
-            /* Cancel Button */
-            form.button({
-                name: o.name + '_cancel',
-                enabledText: 'Cancel',
-                disabledText: 'Canceling',
-                onClick: function () {
-                    div.$.dialog('close');
-                }
-            });
-
-            openDialog(div, 425, 210, null, 'New View');
         }, // AddViewDialog
         AddNodeDialog: function (options) {
             'use strict';
@@ -240,7 +248,7 @@
             var cswPublic = {
                 isOpen: true,
                 div: cswPrivate.div.div({ name: cswDlgPrivate.name }),
-                close: function (nodeid, nodekey, nodename, nodelink) {
+                close: function (nodeid, nodekey, tabcount, nodename, nodelink) {
                     if (cswPublic.isOpen) {
                         cswPublic.isOpen = false;
                         cswPublic.tabsAndProps.refresh(null, null); //do not attempt to refresh the properties on add (the dialog is closing)
@@ -429,7 +437,6 @@
                     var newNodeTypeName = nodeTypeInp.val();
                     Csw.ajax.post({
                         urlMethod: 'IsNodeTypeNameUnique',
-                        async: false,
                         data: { 'NodeTypeName': newNodeTypeName },
                         success: function () {
                             o.select.option({ value: nodeTypeInp.val() }).propNonDom({ 'data-newNodeType': true });
@@ -443,7 +450,7 @@
                                 category: category
                             });
                         },
-                        error: addBtn.enable
+                        error: function () { addBtn.enable(); }
                     });
                 }
             });
@@ -832,61 +839,68 @@
 
         ChangePasswordDialog: function (options) {
             'use strict';
-            var cswDlgPrivate = {
-                UserId: '',
-                UserKey: '',
-                PasswordId: '',
-                title: 'Your password has expired.  Please change it now:',
-                onSuccess: function () { }
-            };
-            Csw.extend(cswDlgPrivate, options);
-
-            var doRefresh = true;
-            var cswPublic = {
-                closed: false,
-                div: Csw.literals.div({ ID: window.Ext.id() }), //Case 28799 - we have to differentiate dialog div Ids from each other
-                close: function () {
-                    if (false === cswPublic.closed && doRefresh) {
-                        cswPublic.closed = true;
-                        cswPublic.tabsAndProps.tearDown();
-                        Csw.tryExec(cswDlgPrivate.onClose);
+            var allowClose = false;
+            if (false === ExistingChangePasswordDialog) {
+                ExistingChangePasswordDialog = true;
+                var cswDlgPrivate = {
+                    UserId: '',
+                    UserKey: '',
+                    PasswordId: '',
+                    title: 'Your password has expired.  Please change it now:',
+                    onSuccess: function () {
                     }
-                }
-            };
+                };
+                Csw.extend(cswDlgPrivate, options);
 
-            cswPublic.title = Csw.string(cswDlgPrivate.title);
-
-            cswDlgPrivate.onOpen = function () {
-                var table = cswPublic.div.table({ width: '100%' });
-                var tabCell = table.cell(1, 2);
-
-                cswPublic.tabsAndProps = Csw.layouts.tabsAndProps(tabCell, {
-                    forceReadOnly: cswDlgPrivate.ReadOnly,
-                    Multi: cswDlgPrivate.Multi,
-                    tabState: {
-                        filterToPropId: cswDlgPrivate.PasswordId,
-                        nodeid: cswDlgPrivate.UserId,
-                        nodekey: cswDlgPrivate.UserKey,
-                        isChangePasswordDialog: true     // kludgetastic!  case 29841
-                    },
-                    onSave: function (nodeids, nodekeys, tabcount) {
-                        Csw.clientChanges.unsetChanged();
-                        if (false === cswPublic.closed) {
-                            cswPublic.close();
-                            cswPublic.div.$.dialog('close');
+                var doRefresh = true;
+                var cswPublic = {
+                    closed: false,
+                    div: Csw.literals.div({ ID: window.Ext.id() }), //Case 28799 - we have to differentiate dialog div Ids from each other
+                    close: function () {
+                        if (false === cswPublic.closed && doRefresh) {
+                            cswPublic.closed = true;
+                            cswPublic.tabsAndProps.tearDown();
+                            Csw.tryExec(cswDlgPrivate.onClose);
+                            ExistingChangePasswordDialog = false;
                         }
-                        Csw.tryExec(cswDlgPrivate.onSuccess, nodeids, nodekeys, cswPublic.close);
-                    },
-                    onBeforeTabSelect: function () {
-                        return Csw.clientChanges.manuallyCheckChanges();
-                    },
-                    onPropertyChange: function () {
-                        Csw.clientChanges.setChanged();
                     }
-                }); // tabsandprops
-            }; // onOpen()
+                };
 
-            openDialog(cswPublic.div, 900, 600, cswPublic.close, cswPublic.title, cswDlgPrivate.onOpen);
+                cswPublic.title = Csw.string(cswDlgPrivate.title);
+
+                cswDlgPrivate.onOpen = function () {
+                    var table = cswPublic.div.table({ width: '100%' });
+                    var tabCell = table.cell(1, 2);
+
+                    cswPublic.tabsAndProps = Csw.layouts.tabsAndProps(tabCell, {
+                        forceReadOnly: cswDlgPrivate.ReadOnly,
+                        Multi: cswDlgPrivate.Multi,
+                        tabState: {
+                            filterToPropId: cswDlgPrivate.PasswordId,
+                            nodeid: cswDlgPrivate.UserId,
+                            nodekey: cswDlgPrivate.UserKey,
+                            isChangePasswordDialog: true     // kludgetastic!  case 29841
+                        },
+                        onSave: function (nodeids, nodekeys, tabcount) {
+                            Csw.clientChanges.unsetChanged();
+                            if (false === cswPublic.closed) {
+                                allowClose = true;
+                                cswPublic.close();
+                                cswPublic.div.$.dialog('close');
+                            }
+                            Csw.tryExec(cswDlgPrivate.onSuccess, nodeids, nodekeys, cswPublic.close);
+                        },
+                        onBeforeTabSelect: function () {
+                            return Csw.clientChanges.manuallyCheckChanges();
+                        },
+                        onPropertyChange: function () {
+                            Csw.clientChanges.setChanged();
+                        }
+                    }); // tabsandprops
+                }; // onOpen()
+
+                openDialog(cswPublic.div, 900, 600, cswPublic.close, cswPublic.title, cswDlgPrivate.onOpen, function () { return allowClose; });
+            } // if (false === ExistingChangePasswordDialog)
             return cswPublic;
         }, // ChangePasswordDialog
 
@@ -969,34 +983,6 @@
 
             openDialog(div, 400, 300, null, 'Upload');
         }, // FileUploadDialog
-        //        ImportC3RecordDialog: function (options) {
-        //            var cswDlgPrivate = {
-        //                nodes: {},
-        //                nodenames: [],
-        //                nodeids: [],
-        //                cswnbtnodekeys: [],
-        //                onDeleteNode: null, //function (nodeid, nodekey) { },
-        //                Multi: false,
-        //                nodeTreeCheck: null,
-        //                publishDeleteEvent: true
-        //            };
-
-        //            if (Csw.isNullOrEmpty(options)) {
-        //                Csw.error.throwException(Csw.error.exception('Cannot create an Delete Dialog without options.', '', 'CswDialog.js', 641));
-        //            }
-        //            Csw.extend(cswDlgPrivate, options);
-        //            var cswPublic = {
-        //                div: Csw.literals.div(),
-        //                close: function () {
-        //                    cswPublic.div.$.dialog('close');
-        //                }
-        //            };
-
-        //            cswPublic.div.span({ text: 'To do: Dummy dialog for the time being.' }).br();
-
-        //            openDialog(cswPublic.div, 400, 200, null, 'Import Record');
-
-        //        }, // ImportC3RecordDialog
         C3DetailsDialog: function (options) {
             'use strict';
             var cswPrivate = {
@@ -1140,7 +1126,7 @@
                             showActionColumn: false
                         });
                         table1.cell(6, 1).propDom('colspan', 2);
-                        
+
                         var extraDataGridId = 'c3detailsgrid_extradata';
                         table1.cell(7, 1).grid({
                             name: extraDataGridId,
@@ -1171,7 +1157,7 @@
             openDialog(div, 500, 500, null, cswPrivate.title, onOpen);
 
         }, // C3DetailsDialog
-        
+
 
 
         C3SearchDialog: function (options) {
@@ -1213,7 +1199,7 @@
                 searchTypeSelect = tableInner.cell(1, 2).select({
                     name: 'C3Search_searchTypeSelect',
                     selected: 'Name',
-                    onChange:  function (event) {
+                    onChange: function (event) {
                         if (searchTypeSelect.selectedText() == "Structure") {
                             searchOperatorSelect.removeOption('begins');
                             searchTermField.hide();
@@ -1243,7 +1229,7 @@
                         sourceSelect.setOptions(sourceSelect.makeOptions(data.AvailableDataSources));
                     }
                 });
-                
+
             } //function onOpen() 
 
 
@@ -1268,7 +1254,7 @@
                     }
                 }
             });
-            
+
             var molSearchText = tableInner.cell(2, 1).div({
                 text: "<b>Paste MOL data from clipboard:</b>"
             });
@@ -1283,10 +1269,10 @@
             var displayMolThumbnail = function (data) {
                 molImageCell.empty();
                 if (data.molImgAsBase64String) {
-                        molImageCell.img({
+                    molImageCell.img({
                         src: "data:image/jpeg;base64," + data.molImgAsBase64String
                     });
-                }   
+                }
             };
 
 
@@ -1298,7 +1284,7 @@
                     Csw.getMolImgFromText('', molSearchField.val(), displayMolThumbnail);
                 }
             });
-            
+
 
 
             tableInner.cell(2, 1).propDom('colspan', 3);
@@ -1306,7 +1292,7 @@
             molSearchText.hide();
             molSearchField.hide();
             molImageCell.hide();
-            
+
 
             var enableSearchButton = !(Csw.isNullOrEmpty(searchTermField.val()));
 
@@ -1324,7 +1310,7 @@
                         SearchOperator: searchOperatorSelect.selectedVal(),
                         SourceName: sourceSelect.selectedVal()
                     };
-                    
+
                     if (searchTypeSelect.selectedText() == "Structure") {
                         CswC3SearchParams.Query = $.trim(molSearchField.val());
                     }
@@ -1346,9 +1332,9 @@
             tableOuter.cell(2, 1).div(tableInner);
 
             openDialog(div, 750, 300, null, cswPrivate.title, onOpen);
-            
+
         }, // C3SearchDialog
-        
+
 
 
 
@@ -1379,14 +1365,14 @@
             });
 
             var displayMolThumbnail = function (data) {
-                        table.cell(4, 2).empty();
-                        if (data.molImgAsBase64String) {
-                            molText.val(data.molString);
-                            table.cell(4, 2).img({
-                                labelText: "Query Image",
-                                src: "data:image/jpeg;base64," + data.molImgAsBase64String
-                            });
-                        }
+                table.cell(4, 2).empty();
+                if (data.molImgAsBase64String) {
+                    molText.val(data.molString);
+                    table.cell(4, 2).img({
+                        labelText: "Query Image",
+                        src: "data:image/jpeg;base64," + data.molImgAsBase64String
+                    });
+                }
             };
 
             var currentNodeId = Csw.cookie.get(Csw.cookie.cookieNames.CurrentNodeId);
@@ -1415,7 +1401,7 @@
                             cswPrivate.cell12.text(fileName);
                             molText.val(fileText);
                             Csw.getMolImgFromText('', molText.val(), displayMolThumbnail);
-                            
+
                         }
                     });
                 }
@@ -1544,55 +1530,52 @@
         }, // FileUploadDialog
         ShowLicenseDialog: function (options) {
             'use strict';
-            var o = {
-                GetLicenseUrl: 'getLicense',
-                AcceptLicenseUrl: 'acceptLicense',
-                onAccept: function () { },
-                onDecline: function () { }
-            };
-            if (options) {
-                Csw.extend(o, options);
+            if (false === ExistingShowLicenseDialog) {
+                ExistingShowLicenseDialog = true;
+                var allowClose = false;
+                var o = {
+                    GetLicenseUrl: 'getLicense',
+                    AcceptLicenseUrl: 'acceptLicense',
+                    onAccept: function () {
+                    },
+                    onDecline: function () {
+                    }
+                };
+                if (options) {
+                    Csw.extend(o, options);
+                }
+
+                var div = Csw.literals.div({ align: 'center' });
+                div.append('Service Level Agreement').br();
+                var licenseTextArea = div.textArea({ name: 'license', rows: 30, cols: 80 }).propDom({ disabled: true });
+                div.br();
+
+                Csw.ajax.post({
+                    urlMethod: o.GetLicenseUrl,
+                    success: function (data) {
+                        licenseTextArea.text(data.license);
+                    }
+                });
+
+                var acceptBtn = div.button({
+                    name: 'license_accept',
+                    enabledText: 'I Accept',
+                    disabledText: 'Accepting...',
+                    onClick: function () {
+                        Csw.ajax.post({
+                            urlMethod: o.AcceptLicenseUrl,
+                            success: function () {
+                                allowClose = true;
+                                div.$.dialog('close');
+                                Csw.tryExec(o.onAccept);
+                            },
+                            error: acceptBtn.enable
+                        }); // ajax
+                    } // onClick
+                }); // 
+
+                openDialog(div, 800, 600, function () { ExistingShowLicenseDialog = false; }, 'Terms and Conditions', null, function () { return allowClose; });
             }
-
-            var div = Csw.literals.div({ align: 'center' });
-            div.append('Service Level Agreement').br();
-            var licenseTextArea = div.textArea({ name: 'license', rows: 30, cols: 80 }).propDom({ disabled: true });
-            div.br();
-
-            Csw.ajax.post({
-                urlMethod: o.GetLicenseUrl,
-                success: function (data) {
-                    licenseTextArea.text(data.license);
-                }
-            });
-
-            var acceptBtn = div.button({
-                name: 'license_accept',
-                enabledText: 'I Accept',
-                disabledText: 'Accepting...',
-                onClick: function () {
-                    Csw.ajax.post({
-                        urlMethod: o.AcceptLicenseUrl,
-                        success: function () {
-                            div.$.dialog('close');
-                            Csw.tryExec(o.onAccept);
-                        },
-                        error: acceptBtn.enable
-                    }); // ajax
-                } // onClick
-            }); // 
-
-            div.button({
-                name: 'license_decline',
-                enabledText: 'I Decline',
-                disabledText: 'Declining...',
-                onClick: function () {
-                    div.$.dialog('close');
-                    Csw.tryExec(o.onDecline);
-                }
-            });
-
-            openDialog(div, 800, 600, null, 'Terms and Conditions');
         }, // ShowLicenseDialog
         PrintLabelDialog: function (options) {
             'use strict';
@@ -1765,7 +1748,8 @@
                 title: '',
                 nodetypeid: '',
                 objectclassid: '',
-                onSelectNode: null
+                onSelectNode: null,
+                onClose: function () { }
             };
             if (Csw.isNullOrEmpty(options)) {
                 Csw.error.throwException(Csw.error.exception('Cannot create an Search Dialog without options.', '', 'CswDialog.js', 1013));
@@ -1779,7 +1763,7 @@
                 title: Csw.string(cswDlgPrivate.title, 'Search ' + cswDlgPrivate.propname)
             };
 
-            openDialog(cswPublic.div, 800, 600, null, 'Search ' + cswDlgPrivate.propname);
+            openDialog(cswPublic.div, 800, 600, null, 'Search ' + cswDlgPrivate.propname, cswDlgPrivate.onClose);
 
             cswPublic.search = Csw.composites.universalSearch(cswPublic.div, {
                 name: cswDlgPrivate.name,
@@ -1796,6 +1780,7 @@
                 compactResults: true,
                 extraAction: 'Select',
                 extraActionIcon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.check),
+                universalSearchOnly: true, //No C3 or Structure Search here
                 onExtraAction: function (nodeObj) {
                     cswPublic.close();
                     Csw.tryExec(cswDlgPrivate.onSelectNode, nodeObj);
@@ -2444,9 +2429,10 @@
                 cellpadding: 2
             });
 
+            var groupBySelect;
             if ('Tree' === o.view.ViewMode || 'Grid' === o.view.ViewMode) {
                 selectsTbl.cell(1, 1).text('Group By');
-                var groupBySelect = selectsTbl.cell(1, 2).select({
+                groupBySelect = selectsTbl.cell(1, 2).select({
                     name: 'vieweditor_advancededitrelationship_groupbyselect',
                     values: groupByOpts,
                     onChange: function () { }
@@ -2533,13 +2519,15 @@
                 enabledText: 'Apply',
                 onClick: function () {
                     Csw.tryExec(o.onBeforeRelationshipEdit);
-                    var selectedRelArbId = groupBySelect.selectedVal();
-                    var selectedProp = null;
-                    Csw.each(o.properties, function (prop) {
-                        if (prop.ArbitraryId === selectedRelArbId) {
-                            selectedProp = prop;
-                        }
-                    });
+                    if (groupBySelect) {
+                        var selectedRelArbId = groupBySelect.selectedVal();
+                        var selectedProp = null;
+                        Csw.each(o.properties, function (prop) {
+                            if (prop.ArbitraryId === selectedRelArbId) {
+                                selectedProp = prop;
+                            }
+                        });
+                    }
                     o.findRel(o.relationshipNode.ArbitraryId, function (relToUpdate) {
                         relToUpdate.AllowAdd = allowAddInput.checked();
                         relToUpdate.AllowView = allowViewInput.checked();
@@ -2557,7 +2545,6 @@
                                 relToUpdate.GroupByPropType = selectedProp.Type;
                             }
                             Csw.tryExec(o.onRelationshipEdit, o.view);
-                            div.$.dialog('close');
                         } else if ('Grid' === o.view.ViewMode) {
                             Csw.ajaxWcf.post({
                                 urlMethod: 'ViewEditor/HandleAction',
@@ -2570,11 +2557,11 @@
                                 success: function (response) {
                                     o.view = response.CurrentView;
                                     Csw.tryExec(o.onRelationshipEdit, o.view);
-                                    div.$.dialog('close');
                                 }
                             });
                         }
                     });
+                    div.$.dialog('close');
                 }
             });
 
@@ -2769,7 +2756,7 @@
     };
 
 
-    function openDialog(div, width, height, onClose, title, onOpen) {
+    function openDialog(div, width, height, onClose, title, onOpen, beforeClose) {
         'use strict';
         $('<div id="DialogErrorDiv" style="display: none;"></div>')
             .prependTo(div.$);
@@ -2794,7 +2781,11 @@
             title: title,
             position: [posX, posY],
             beforeClose: function () {
-                return Csw.clientChanges.manuallyCheckChanges();
+                var ret = Csw.clientChanges.manuallyCheckChanges();
+                if (Csw.isFunction(beforeClose)) {
+                    ret = ret && beforeClose();
+                }
+                return ret;
             },
             close: function () {
                 posX -= incrPosBy;

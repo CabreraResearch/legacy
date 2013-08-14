@@ -25,7 +25,7 @@ namespace ChemSW.Nbt.PropertySets
 
         bool _UpdateFutureTasks = false;
 
-        public static DateTime getNextDueDate( CswNbtNode Node, CswNbtNodePropDateTime NodePropNextDueDate, CswNbtNodePropTimeInterval NodePropInterval, bool ForceUpdate = false, bool DeleteFuture = false )
+        public static DateTime getNextDueDate( CswNbtNode Node, CswNbtNodePropDateTime NodePropNextDueDate, CswNbtNodePropTimeInterval NodePropInterval, Int32 WarningDays = 0, bool ForceUpdate = false, bool DeleteFuture = false )
         {
             DateTime Ret = NodePropNextDueDate.DateTimeValue;
             if( NodePropInterval.WasModified ||
@@ -33,12 +33,12 @@ namespace ChemSW.Nbt.PropertySets
                 ForceUpdate || 
                 DeleteFuture )
             {
-                if (NodePropInterval.RateInterval.RateType != CswResources.UnknownEnum)
+                if( NodePropInterval.RateInterval.RateType != CswResources.UnknownEnum )
                 {
-                    //If the first interval is in the future, that's our first duedate
+                    //If the first interval (minus warning days) is in the future, that's our first duedate
                     //else, we take the greater of the current next duedate and today and get the next occurance after that
                     Ret = NodePropInterval.RateInterval.getFirst();
-                    if( Ret <= DateTime.Now )
+                    if( Ret == DateTime.MinValue || Ret.AddDays( WarningDays * -1 ) <= DateTime.Now )
                     {
                         DateTime NextDueDate = NodePropNextDueDate.DateTimeValue;
 
@@ -48,12 +48,7 @@ namespace ChemSW.Nbt.PropertySets
                         {
                             // Next Due Date might be invalid if the interval was altered
                             // This guarantees that we get the next due date after Today 
-                            NextDueDate = DateTime.MinValue;
-                        }
-                        // If, at this point, NextDueDate is greater than Today, we're pushing forward to the next interval
-                        // This is necessary to accommodate Warning Days when creating Tasks
-                        if( CswDateTime.GreaterThanNoMs( DateTime.Now, NextDueDate ) )
-                        {
+                            // This is necessary to accommodate Warning Days when creating Tasks
                             NextDueDate = DateTime.Now;
                         }
 
@@ -73,7 +68,7 @@ namespace ChemSW.Nbt.PropertySets
                 DeleteFuture ||
                 ForceUpdate )
             {
-                DateTime CandidateNextDueDate = getNextDueDate( _CswNbtNode, _Scheduler.NextDueDate, _Scheduler.DueDateInterval, ForceUpdate, DeleteFuture );
+                DateTime CandidateNextDueDate = getNextDueDate( _CswNbtNode, _Scheduler.NextDueDate, _Scheduler.DueDateInterval, CswConvert.ToInt32( _Scheduler.WarningDays.Value ), ForceUpdate, DeleteFuture );
                 if(DateTime.MinValue != CandidateNextDueDate) {
 
                     DateTime FinalDueDate = _Scheduler.FinalDueDate.DateTimeValue;
@@ -82,7 +77,7 @@ namespace ChemSW.Nbt.PropertySets
                     {
                         CandidateNextDueDate = DateTime.MinValue;
                     }
-                } // if( _Scheduler.DueDateInterval.RateInterval.RateType != CswEnumRateIntervalType.Unknown )
+                }
                 _Scheduler.NextDueDate.DateTimeValue = CandidateNextDueDate; 
 
                 _UpdateFutureTasks = DeleteFuture;

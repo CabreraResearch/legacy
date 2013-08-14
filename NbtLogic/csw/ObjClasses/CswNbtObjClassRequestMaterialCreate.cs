@@ -1,25 +1,25 @@
-using System;
-using System.Linq;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 using Newtonsoft.Json.Linq;
+using System;
+using System.Linq;
 
 namespace ChemSW.Nbt.ObjClasses
 {
     /// <summary>
     /// Material Dispense Request Item
     /// </summary>
-    public class CswNbtObjClassRequestMaterialCreate : CswNbtPropertySetRequestItem
+    public class CswNbtObjClassRequestMaterialCreate: CswNbtPropertySetRequestItem
     {
         #region Enums
 
         /// <summary>
         /// Property Names
         /// </summary>
-        public new sealed class PropertyName : CswNbtPropertySetRequestItem.PropertyName
+        public new sealed class PropertyName: CswNbtPropertySetRequestItem.PropertyName
         {
             /// <summary>
             /// The type of the new material 
@@ -40,12 +40,17 @@ namespace ChemSW.Nbt.ObjClasses
             /// The Part No of the new material
             /// </summary>
             public const string NewMaterialPartNo = "New Material Part No";
+
+            /// <summary>
+            /// The Approval level of this Create Material request
+            /// </summary>
+            public const string ApprovalLevel = "Approval Level";
         }
 
         /// <summary>
         /// Types: Bulk or Size
         /// </summary>
-        public new sealed class Types : CswNbtPropertySetRequestItem.Types
+        public new sealed class Types: CswNbtPropertySetRequestItem.Types
         {
             public const string Create = "Request Material Create";
             public static readonly CswCommaDelimitedString Options = new CswCommaDelimitedString { Create };
@@ -54,7 +59,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Statuses
         /// </summary>
-        public new sealed class Statuses : CswNbtPropertySetRequestItem.Statuses
+        public new sealed class Statuses: CswNbtPropertySetRequestItem.Statuses
         {
             public const string Created = "Created";
 
@@ -67,7 +72,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Fulfill menu options
         /// </summary>
-        public new sealed class FulfillMenu : CswNbtPropertySetRequestItem.FulfillMenu
+        public new sealed class FulfillMenu: CswNbtPropertySetRequestItem.FulfillMenu
         {
             public const string Create = "Create Material";
 
@@ -131,11 +136,11 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 CswNbtObjClassRequestMaterialCreate ThisRequest = (CswNbtObjClassRequestMaterialCreate) ItemInstance;
 
-                ThisRequest.Material.setReadOnly( value: IsReadOnly, SaveToDb: true );
-                ThisRequest.NewMaterialType.setReadOnly( value: IsReadOnly, SaveToDb: true );
-                ThisRequest.NewMaterialSupplier.setReadOnly( value: IsReadOnly, SaveToDb: true );
-                ThisRequest.NewMaterialTradename.setReadOnly( value: IsReadOnly, SaveToDb: true );
-                ThisRequest.NewMaterialPartNo.setReadOnly( value: IsReadOnly, SaveToDb: true );
+                ThisRequest.Material.setReadOnly( value : IsReadOnly, SaveToDb : true );
+                ThisRequest.NewMaterialType.setReadOnly( value : IsReadOnly, SaveToDb : true );
+                ThisRequest.NewMaterialSupplier.setReadOnly( value : IsReadOnly, SaveToDb : true );
+                ThisRequest.NewMaterialTradename.setReadOnly( value : IsReadOnly, SaveToDb : true );
+                ThisRequest.NewMaterialPartNo.setReadOnly( value : IsReadOnly, SaveToDb : true );
             }
         }
 
@@ -157,7 +162,7 @@ namespace ChemSW.Nbt.ObjClasses
             _throwIfMaterialExists();
             if( false == Location.Hidden )
             {
-                Location.setHidden( value: true, SaveToDb: true );
+                Location.setHidden( value : true, SaveToDb : true );
             }
         }
 
@@ -169,6 +174,10 @@ namespace ChemSW.Nbt.ObjClasses
 
         }
 
+        public override void beforePropertySetDeleteNode()
+        {
+            
+        }
 
         /// <summary>
         /// 
@@ -195,7 +204,7 @@ namespace ChemSW.Nbt.ObjClasses
                         {
                             case FulfillMenu.Create:
                                 ButtonData.Action = CswEnumNbtButtonAction.nothing;
-                                if( PotentialMaterial().existsInDb( ForceRecalc: true ) )
+                                if( PotentialMaterial().existsInDb( ForceRecalc : true ) )
                                 {
                                     ButtonData.Message = "The requested Material has already been created: " + PotentialMaterial().existingMaterial().Node.NodeLink;
                                 }
@@ -289,7 +298,7 @@ namespace ChemSW.Nbt.ObjClasses
                 false == string.IsNullOrEmpty( NewMaterialTradename.Text ) &&
                 CswTools.IsPrimaryKey( NewMaterialSupplier.RelatedNodeId ) )
             {
-                CswNbtPropertySetMaterial ExistingMaterial = PotentialMaterial().existingMaterial( ForceRecalc: true );
+                CswNbtPropertySetMaterial ExistingMaterial = PotentialMaterial().existingMaterial( ForceRecalc : true );
                 if( null != ExistingMaterial )
                 {
                     throw new CswDniException( CswEnumErrorType.Warning, "The requested Material already exists: " + ExistingMaterial.Node.NodeLink, "The requested Material already exists: " + ExistingMaterial.Node.NodeLink );
@@ -306,7 +315,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         public override void onStatusPropChange( CswNbtNodeProp Prop )
         {
-            Type.setHidden( value: ( Status.Value == Statuses.Pending ), SaveToDb: true );
+            Type.setHidden( value : ( Status.Value == Statuses.Pending ), SaveToDb : true );
 
             switch( Status.Value )
             {
@@ -319,7 +328,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void onTypePropChange( CswNbtNodeProp Prop )
         {
-            Type.setReadOnly( value: true, SaveToDb: true );
+            Type.setReadOnly( value : true, SaveToDb : true );
 
             Fulfill.MenuOptions = FulfillMenu.Options.ToString();
             Fulfill.State = FulfillMenu.Create;
@@ -343,16 +352,17 @@ namespace ChemSW.Nbt.ObjClasses
         {
             if( CswTools.IsPrimaryKey( Material.RelatedNodeId ) )
             {
-                NewMaterialType.setHidden( value: true, SaveToDb: true );
-                NewMaterialTradename.setHidden( value: true, SaveToDb: true );
-                NewMaterialSupplier.setHidden( value: true, SaveToDb: true );
-                NewMaterialPartNo.setHidden( value: true, SaveToDb: true );
+                NewMaterialType.setHidden( value : true, SaveToDb : true );
+                NewMaterialTradename.setHidden( value : true, SaveToDb : true );
+                NewMaterialSupplier.setHidden( value : true, SaveToDb : true );
+                NewMaterialPartNo.setHidden( value : true, SaveToDb : true );
             }
         }
         public CswNbtNodePropNodeTypeSelect NewMaterialType { get { return _CswNbtNode.Properties[PropertyName.NewMaterialType]; } }
         public CswNbtNodePropText NewMaterialTradename { get { return _CswNbtNode.Properties[PropertyName.NewMaterialTradename]; } }
         public CswNbtNodePropText NewMaterialPartNo { get { return _CswNbtNode.Properties[PropertyName.NewMaterialPartNo]; } }
         public CswNbtNodePropRelationship NewMaterialSupplier { get { return _CswNbtNode.Properties[PropertyName.NewMaterialSupplier]; } }
+        public CswNbtNodePropList ApprovalLevel { get { return _CswNbtNode.Properties[PropertyName.ApprovalLevel]; } }
 
         #endregion
     }//CswNbtObjClassRequestMaterialCreate

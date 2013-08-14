@@ -29,7 +29,8 @@
                 restoresearchurl: 'restoreUniversalSearch',
                 sessiondataid: '',
                 searchterm: '',
-                filterHideThreshold: 5 //,
+                filterHideThreshold: 5,
+                universalSearchOnly: false
                 //buttonSingleColumn: '',
                 //buttonMultiColumn: ''
             };
@@ -69,7 +70,7 @@
                 }; // onFilterClick()
 
                 // Nodetype Filter Menu
-                Csw.ajax.post({
+                cswPublic.ready = Csw.ajax.post({
                     urlMethod: 'getNodeTypes',
                     data: {
                         PropertySetName: '',
@@ -124,6 +125,7 @@
                 // Search Menu
                 Csw.ajaxWcf.post({
                     urlMethod: 'Menus/getSearchMenuItems',
+                    data: cswPrivate.universalSearchOnly,
                     success: function (data) {
                         var srchMenuItems = [];
 
@@ -570,13 +572,17 @@
 
             cswPublic.disable = function () {
                 cswPrivate.preFilterSelect.disable();
-                cswPrivate.searchButton.disable();
+                if (cswPrivate.searchButton) {
+                    cswPrivate.searchButton.disable();
+                }
                 cswPrivate.searchinput.disable();
             };
             
             cswPublic.enable = function () {
                 cswPrivate.preFilterSelect.enable();
-                cswPrivate.searchButton.enable();
+                if (cswPrivate.searchButton) {
+                    cswPrivate.searchButton.enable();
+                }
                 cswPrivate.searchinput.enable();
             };
 

@@ -139,7 +139,7 @@ namespace ChemSW.Nbt.Sched
                 FilterMode: CswEnumNbtFilterMode.NotNull );
             ContainerLocationsView.AddViewPropertyAndFilter( ParentRelationship,
                 MetaDataProp: ActionOcp,
-                Value: CswEnumNbtContainerLocationActionOptions.NoAction.ToString(),
+                Value: CswEnumNbtContainerLocationActionOptions.Ignore.ToString(),
                 SubFieldName: CswEnumNbtSubFieldName.Value,
                 FilterMode: CswEnumNbtFilterMode.NotEquals );
             return ContainerLocationsView;
@@ -206,6 +206,15 @@ namespace ChemSW.Nbt.Sched
 
         private void _executeReconciliationAction( CswNbtResources _CswNbtResources, CswNbtObjClassContainerLocation ContainerLocation )
         {
+            CswNbtObjClassUser UserNode = _CswNbtResources.Nodes[ContainerLocation.ActionByUser.RelatedNodeId];
+            // case 30346 - use user's info for audit context
+            if( null != UserNode )
+            {
+                _CswNbtResources.AuditFirstName = UserNode.FirstName;
+                _CswNbtResources.AuditLastName = UserNode.LastName;
+                _CswNbtResources.AuditUsername = UserNode.Username;
+            }
+
             CswNbtObjClassContainer Container = _CswNbtResources.Nodes[ContainerLocation.Container.RelatedNodeId];
             if( null != Container )
             {

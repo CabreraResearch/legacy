@@ -1,8 +1,4 @@
 using System;
-using ChemSW.Core;
-using ChemSW.Exceptions;
-using ChemSW.Nbt.Actions;
-using ChemSW.Nbt.Batch;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 
@@ -60,22 +56,22 @@ namespace ChemSW.Nbt.ObjClasses
 
         public new sealed class PropertyName : CswNbtPropertySetMaterial.PropertyName
         {
-            //NonChemical-specific properties go here
+            public const string Picture = "Picture";
         }
 
         #endregion Enums
 
         #region Inherited Events
 
-        public override void beforePropertySetWriteNode( bool IsCopy, bool OverrideUniqueValidation ) {}
+        public override void beforePropertySetWriteNode( bool IsCopy, bool OverrideUniqueValidation ) { }
 
-        public override void afterPropertySetWriteNode() {}
+        public override void afterPropertySetWriteNode() { }
 
-        public override void beforePropertySetDeleteNode( bool DeleteAllRequiredRelatedNodes = false ) {}
+        public override void beforePropertySetDeleteNode( bool DeleteAllRequiredRelatedNodes = false ) { }
 
-        public override void afterPropertySetDeleteNode() {}
+        public override void afterPropertySetDeleteNode() { }
 
-        public override void afterPropertySetPopulateProps() {}
+        public override void afterPropertySetPopulateProps() { }
 
         public override bool onPropertySetButtonClick( NbtButtonData ButtonData )
         {
@@ -88,14 +84,16 @@ namespace ChemSW.Nbt.ObjClasses
             ButtonData.Data["state"]["canAddSDS"] = false;
         }
 
-        public override void onPropertySetAddDefaultViewFilters( CswNbtViewRelationship ParentRelationship ) {}
+        public override void onPropertySetAddDefaultViewFilters( CswNbtViewRelationship ParentRelationship ) { }
+
+        public override void onUpdatePropertyValue() { }
 
         #endregion Inherited Events
 
         #region Custom Logic
 
         //NonChemical Materials don't have an expiration interval, so their containers won't have an expiration date defined.
-        public override DateTime getDefaultExpirationDate()
+        public override DateTime getDefaultExpirationDate( DateTime InitialDate )
         {
             return DateTime.MinValue;
         }
@@ -104,7 +102,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region ObjectClass-specific properties
 
-        //NonChemcial-specific properties go here
+        public CswNbtNodePropGrid Picture { get { return ( _CswNbtNode.Properties[PropertyName.Picture] ); } }
 
         #endregion ObjectClass-specific properties
 
