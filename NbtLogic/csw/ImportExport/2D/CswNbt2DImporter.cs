@@ -133,7 +133,7 @@ namespace ChemSW.Nbt.ImportExport
                             {
                                 hasData = true;
                             }
-                            ImportRow[CswNbt2DBinding.SafeColName( ExcelColumn.ColumnName )] = ExcelRow[ExcelColumn];
+                            ImportRow[CswNbt2DBinding.SafeColName( ExcelColumn.ColumnName )] = ExcelRow[ExcelColumn].ToString().Trim();
                         }
                         if( hasData == true )
                         {
