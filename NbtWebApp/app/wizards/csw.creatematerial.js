@@ -551,7 +551,6 @@
                 var div, selectDiv;
 
                 var isLastStep = Csw.bool(false === cswPrivate.state.canAddSDS || false === cswPrivate.SDSModuleEnabled);
-                cswPrivate.toggleButton(cswPrivate.buttons.next, false === isLastStep);
                 cswPrivate.toggleButton(cswPrivate.buttons.prev, true);
                 cswPrivate.toggleButton(cswPrivate.buttons.cancel, true);
 
@@ -570,9 +569,9 @@
                     });
                     div.br({ number: 1 });
 
-                    var makeSizeSelect = function () {
+                    var makeSizeSelect = function() {
 
-                        var makeSizeGrid = function () {
+                        var makeSizeGrid = function() {
                             cswPrivate.sizesGrid = Csw.wizard.sizesGrid(div, {
                                 name: 'sizesGrid',
                                 sizeRowsToAdd: cswPrivate.state.sizes,
@@ -586,7 +585,7 @@
                         };
                         div.br();
 
-                        var sizeSelect = function (retObj, count) {
+                        var sizeSelect = function(retObj, count) {
                             cswPrivate.state.sizeNodeTypeId = cswPrivate.sizeSelect.val();
                             if (count > 1) {
                                 selectDiv.show();
@@ -602,12 +601,12 @@
                             labelText: 'Select a Material Size: ',
                             objectClassName: 'SizeClass',
                             onSelect: sizeSelect,
-                            onSuccess: function (retObj, count) {
+                            onSuccess: function(retObj, count) {
                                 sizeSelect(retObj, count);
                                 Csw.ajax.post({
                                     urlMethod: 'getSizeLogicalsVisibility',
                                     data: { SizeNodeTypeId: cswPrivate.state.sizeNodeTypeId },
-                                    success: function (data) {
+                                    success: function(data) {
                                         cswPrivate.showDispensable = Csw.bool(data.showDispensable);
                                         cswPrivate.showQuantityEditable = Csw.bool(data.showQuantityEditable);
                                         makeSizeGrid();
@@ -633,7 +632,7 @@
                         Csw.ajaxWcf.post({
                             urlMethod: 'Materials/getPhysicalState',
                             data: cswPrivate.state.materialId,
-                            success: function (data) {
+                            success: function(data) {
                                 cswPrivate.state.physicalState = data.PhysicalState;
                                 makeSizeSelect();
                             }
@@ -641,6 +640,9 @@
                     } else {
                         makeSizeSelect();
                     }
+                } else {
+                    cswPrivate.toggleButton(cswPrivate.buttons.finish, isLastStep);
+                    cswPrivate.toggleButton(cswPrivate.buttons.next, false === isLastStep);
                 }
             };
             //#endregion Step 3: Size(s)
