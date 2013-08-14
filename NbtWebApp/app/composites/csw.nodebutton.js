@@ -115,13 +115,13 @@
                     default:
                         Csw.layouts.addnode({
                             dialogOptions: {
-                            nodetypeid: actionJson.requestItemNodeTypeId,
-                            propertyData: actionJson.requestItemProps,
-                            text: actionJson.titleText,
-                            onSaveImmediate: function () {
-                                Csw.publish('onAnyNodeButtonClickFinish', true);
-                                Csw.publish(Csw.enums.events.main.refreshHeader);
-                            }
+                                nodetypeid: actionJson.requestItemNodeTypeId,
+                                propertyData: actionJson.requestItemProps,
+                                text: actionJson.titleText,
+                                onSaveImmediate: function () {
+                                    Csw.publish('onAnyNodeButtonClickFinish', true);
+                                    Csw.publish(Csw.enums.events.main.refreshHeader);
+                                }
                             }
                         });
                         break;

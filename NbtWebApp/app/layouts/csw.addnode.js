@@ -8,12 +8,17 @@
             var cswPublic = {};
 
             (function _preCtor() {
-                cswPrivate.name = cswPrivate.name || 'addnode';
-                cswPrivate.dialogOptions = cswPrivate.dialogOptions || 'addnode';
+                cswPrivate.name = cswPrivate.name || 'AddNode';
+                cswPrivate.action = cswPrivate.action || 'AddNode';
+                cswPrivate.dialogOptions = cswPrivate.dialogOptions || {};
             }());
 
             (function _postCtor() {
-                $.CswDialog('AddNodeDialog', cswPrivate.dialogOptions);
+                if (false === Csw.isNullOrEmpty(cswPrivate.action) && cswPrivate.action !== 'AddNode') {
+                    Csw.main.handleAction({ actionname: cswPrivate.action });
+                } else {
+                    $.CswDialog('AddNodeDialog', cswPrivate.dialogOptions);
+                }
             } ());
             
             return cswPublic;

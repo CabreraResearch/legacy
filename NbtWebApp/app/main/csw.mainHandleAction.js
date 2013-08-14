@@ -79,16 +79,16 @@
                                         onAddClick: function (itemData) {
                                             Csw.layouts.addnode({
                                                 dialogOptions: {
-                                                text: itemData.Text,
-                                                nodetypeid: itemData.NodeTypeId,
-                                                relatednodeid: actionData.RelatedNodeId,
-                                                relatednodename: actionData.RelatedNodeName,
-                                                relatednodetypeid: actionData.RelatedNodeTypeId,
-                                                relatedobjectclassid: actionData.RelatedObjectClassId,
-                                                onAddNode: function (nodeid, nodekey) {
-                                                    Csw.main.clear({ all: true });
-                                                    Csw.main.refreshNodesTree({ 'nodeid': nodeid, 'nodekey': nodekey, 'IncludeNodeRequired': true });
-                                                }
+                                                    text: itemData.Text,
+                                                    nodetypeid: itemData.NodeTypeId,
+                                                    relatednodeid: actionData.RelatedNodeId,
+                                                    relatednodename: actionData.RelatedNodeName,
+                                                    relatednodetypeid: actionData.RelatedNodeTypeId,
+                                                    relatedobjectclassid: actionData.RelatedObjectClassId,
+                                                    onAddNode: function (nodeid, nodekey) {
+                                                        Csw.main.clear({ all: true });
+                                                        Csw.main.refreshNodesTree({ 'nodeid': nodeid, 'nodekey': nodekey, 'IncludeNodeRequired': true });
+                                                    }
                                                 }
                                             });
                                         },

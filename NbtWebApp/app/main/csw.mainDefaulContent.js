@@ -64,11 +64,9 @@
             var $a = $li.children('a');
 
             $a.click(function () {
-                if (false === Csw.isNullOrEmpty(o.itemJson.action) && o.itemJson.action !== "AddNode") {
-                    Csw.main.handleAction({ actionname: o.itemJson.action });
-                } else {
-                    Csw.layouts.addnode({
-                        dialogOptions: {
+                Csw.layouts.addnode({
+                    action: o.itemJson.action,
+                    dialogOptions: {
                         text: text,
                         nodetypeid: Csw.string(o.itemJson.nodetypeid),
                         relatednodeid: Csw.string(o.itemJson.relatednodeid), //for Grid Props
@@ -76,9 +74,8 @@
                         relatednodetypeid: Csw.string(o.itemJson.relatednodetypeid), //for NodeTypeSelect
                         relatedobjectclassid: Csw.string(o.itemJson.relatedobjectclassid),
                         onAddNode: o.onAlterNode
-                        }
-                    });
-                }
+                    }
+                });
                 return false;
             });
             return $li;
