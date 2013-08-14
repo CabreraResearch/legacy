@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
-//using ChemSW.RscAdo;
-//using ChemSW.TblDn;
 using ChemSW.Core;
-using ChemSW.Exceptions;
-
 
 namespace ChemSW.Nbt.Schema
 {
     /// <summary>
+    /// NOTE: THIS CLASS IS DEPRECATED
     /// Keeps the schema up-to-date
     /// </summary>
     public class CswSchemaScriptsTest : ICswSchemaScripts
