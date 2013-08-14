@@ -14,8 +14,7 @@
                 cswPrivate.nodetypeid = cswPrivate.nodetypeid || cswPrivate.dialogOptions.nodetypeid;
             }());
 
-            (function _postCtor() {
-                
+            (function _postCtor() {               
                 Csw.ajaxWcf.post({
                     watchGlobal: cswPrivate.AjaxWatchGlobal,
                     urlMethod: 'Quotas/check',
@@ -45,9 +44,14 @@
                                         GetIdentityTab: false,
                                         ForceReadOnly: false
                                     },
-                                    success: function(data) {
-                                        cswPrivate.dialogOptions.propertyData = data;
-                                        $.CswDialog('AddNodeDialog', cswPrivate.dialogOptions);
+                                    success: function(propdata) {
+                                        if (Csw.isNullOrEmpty(propdata.properties)) {
+                                            Csw.main.clear({ all: true });
+                                            Csw.main.refreshNodesTree({ nodeid: propdata.node.nodeid, IncludeNodeRequired: true });
+                                        } else {
+                                            cswPrivate.dialogOptions.propertyData = propdata;
+                                            $.CswDialog('AddNodeDialog', cswPrivate.dialogOptions);
+                                        }
                                     }
                                 });
                             }
@@ -61,4 +65,3 @@
             return cswPublic;
         });
 } ());
-
