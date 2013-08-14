@@ -1,4 +1,3 @@
-using System;
 using ChemSW.Core;
 using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
@@ -15,12 +14,12 @@ namespace ChemSW.Nbt.Schema
 
         public override string ScriptName
         {
-            get { throw new NotImplementedException(); }
+            get { return "02F_Case30251B"; }
         }
 
         public override bool AlwaysRun
         {
-            get { throw new NotImplementedException(); }
+            get { return false; }
         }
 
         #region Blame Logic
