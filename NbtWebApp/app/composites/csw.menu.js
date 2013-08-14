@@ -88,7 +88,8 @@
                                 $.CswDialog('AboutDialog');
                                 break;
                             case 'AddNode':
-                                $.CswDialog('AddNodeDialog', {
+                                Csw.layouts.addnode({
+                                    dialogOptions: {
                                     text: "New " + menuItemName,
                                     nodetypeid: Csw.string(menuItemJson.nodetypeid),
                                     relatednodeid: Csw.string(menuItemJson.relatednodeid), //for Grid Props
@@ -96,6 +97,7 @@
                                     relatednodetypeid: Csw.string(menuItemJson.relatednodetypeid), //for NodeTypeSelect
                                     relatedobjectclassid: Csw.string(menuItemJson.relatedobjectclassid),
                                     onAddNode: cswPrivate.onAlterNode
+                                    }
                                 });
                                 break;
                             case 'AddFeedback':

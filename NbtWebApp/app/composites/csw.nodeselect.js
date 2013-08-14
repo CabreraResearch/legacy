@@ -428,7 +428,8 @@
                 if (false === Csw.isNullOrEmpty(action)) {
                     Csw.main.handleAction({ actionname: action });
                 } else {
-                    $.CswDialog('AddNodeDialog', {
+                    Csw.layouts.addnode({
+                        dialogOptions: {
                         nodetypeid: nodetypeToAdd,
                         objectClassId: cswPrivate.objectClassId,
                         onAddNode: cswPrivate.onAddNodeFunc,
@@ -437,6 +438,7 @@
                         relatednodename: cswPrivate.relatedTo.relatednodename,
                         relatednodetypeid: cswPrivate.relatedTo.relatednodetypeid,
                         relatedobjectclassid: cswPrivate.relatedTo.relatedobjectclassid
+                        }
                     });
                 }
             };

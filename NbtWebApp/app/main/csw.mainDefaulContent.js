@@ -67,7 +67,8 @@
                 if (false === Csw.isNullOrEmpty(o.itemJson.action) && o.itemJson.action !== "AddNode") {
                     Csw.main.handleAction({ actionname: o.itemJson.action });
                 } else {
-                    $.CswDialog('AddNodeDialog', {
+                    Csw.layouts.addnode({
+                        dialogOptions: {
                         text: text,
                         nodetypeid: Csw.string(o.itemJson.nodetypeid),
                         relatednodeid: Csw.string(o.itemJson.relatednodeid), //for Grid Props
@@ -75,6 +76,7 @@
                         relatednodetypeid: Csw.string(o.itemJson.relatednodetypeid), //for NodeTypeSelect
                         relatedobjectclassid: Csw.string(o.itemJson.relatedobjectclassid),
                         onAddNode: o.onAlterNode
+                        }
                     });
                 }
                 return false;

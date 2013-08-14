@@ -15,12 +15,14 @@
                         if (false === Csw.isNullOrEmpty(itemData.ActionName)) {
                             Csw.main.handleAction({ actionname: itemData.ActionName });
                         } else {
-                            $.CswDialog('AddNodeDialog', {
+                            Csw.layouts.addnode({
+                                dialogOptions: {
                                 text: itemData.Text,
                                 nodetypeid: itemData.NodeTypeId,
                                 onAddNode: function (nodeid, nodekey) {
                                     Csw.main.clear({ all: true });
                                     Csw.main.refreshNodesTree({ 'nodeid': nodeid, 'nodekey': nodekey, 'IncludeNodeRequired': true });
+                                }
                                 }
                             });
                         }
@@ -70,7 +72,8 @@
                     if (false === Csw.isNullOrEmpty(itemData.ActionName)) {
                         Csw.main.handleAction({ actionname: itemData.ActionName });
                     } else {
-                        $.CswDialog('AddNodeDialog', {
+                        Csw.layouts.addnode({
+                            dialogOptions: {
                             text: itemData.Text,
                             nodetypeid: itemData.NodeTypeId,
                             relatednodeid: layData.RelatedNodeId,
@@ -80,6 +83,7 @@
                             onAddNode: function (nodeid, nodekey) {
                                 Csw.main.clear({ all: true });
                                 Csw.main.refreshNodesTree({ nodeid: nodeid, nodekey: nodekey, IncludeNodeRequired: true });
+                            }
                             }
                         });
                     }
