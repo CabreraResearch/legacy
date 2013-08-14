@@ -22,10 +22,6 @@ namespace NbtPrintLib
         {
             NbtPublicClient ret = new NbtPublicClient();
             string Url = auth.baseURL;
-            if( false == Url.EndsWith( "NbtPublic.svc" ) )
-            {
-                Url += "NbtPublic.svc";
-            }
             ret.Endpoint.Address = new EndpointAddress( Url );
             ret.Endpoint.Binding = new WebHttpBinding()
             {

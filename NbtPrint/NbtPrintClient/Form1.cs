@@ -216,8 +216,36 @@ namespace NbtPrintClient
             config.logon = tbUsername.Text;
             config.serviceMode = cbServiceMode.Checked;
             config.password = tbPassword.Text;
-            config.url = tbURL.Text;
             config.SaveToReg( Application.UserAppDataRegistry );
+
+            string Url = tbURL.Text;
+            if( false == Url.EndsWith( "NbtPublic.svc" ) )
+            {
+                //the user didn't give us the right endpoint, try to detect the correct one
+
+                //anything that isn't the end will need to at least end with /
+                if( false == Url.EndsWith( "/" ) )
+                {
+                    Url += "/";
+                }
+
+                //if they found the services directory, all that is needed is pointing to NbtPublic
+                if( Url.EndsWith( "Services/" ) )
+                {
+                    Url += "NbtPublic.svc";
+                }
+                //otherwise, it seems most likely that they gave the root of the NBT web app
+                else
+                {
+                    Url += "Services/NbtPublic.svc";
+                }
+
+                //update the url in the UI to the most recent value
+                tbURL.Text = Url;
+            }//if false == Url.EndsWith( "NbtPublic.svc" )
+
+            config.url = Url;
+
             if( config.serviceMode == true )
             {
                 try
