@@ -102,7 +102,11 @@
     <Content Include="app\main\csw.mainHandleImpersonation.js" />
     <Content Include="app\main\csw.mainEvents.js" />
     <Content Include="app\main\csw.mainDivs.js" />
+    <Content Include="app\promises\csw.worker.js" />
+    <Content Include="app\promises\csw.indexedDb.js" />
     <Content Include="app\promises\csw.promise.js" />
+    <Content Include="app\promises\csw.worker.js" />
+    <Content Include="app\workers\ajaxWorker.js" />
     <Content Include="app\proptypes\csw.propTypeChildContents.js" />
     <Content Include="app\nodes\csw.node.treeExt.js" />
     <Content Include="app\proptypes\csw.propTypeCASNo.js" />

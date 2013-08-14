@@ -6,19 +6,31 @@
 
         Csw.main.register('refreshDashboard', function (onSuccess) {
 
-            Csw.main.headerDashboard.empty();
+            //function refreshDash(data) {
+            //    Csw.main.headerDashboard.empty();
             
-            return Csw.ajax.post({
-                urlMethod: 'getDashboard',
-                data: {},
-                success: function (data) {
+            //    var table = Csw.main.headerDashboard.table({
+            //        name: 'DashboardTable'
+            //    });
+            //    table.addClass('DashboardTable');
 
-                    var table = Csw.main.headerDashboard.table({
-                        name: 'DashboardTable'
-                    });
-                    table.addClass('DashboardTable');
+            //    var $tr = table.append('<tr />');
 
-                    var $tr = table.append('<tr />');
+            //    Csw.iterate(data, function (dashId, thisIcon) {
+            //        var cellcontent;
+            //        if (false === Csw.isNullOrEmpty(thisIcon.href)) {
+            //            cellcontent = '<td class="DashboardCell">' +
+            //                '  <a target="_blank" href="' + thisIcon.href + '">' +
+            //                '    <div title="' + thisIcon.text + '" id="' + dashId + '" class="' + dashId + '" />' +
+            //                '  </a>' +
+            //                '</td>';
+            //        } else {
+            //            cellcontent = '<td class="DashboardCell">' +
+            //                '  <div title="' + thisIcon.text + '" id="' + dashId + '" class="' + dashId + '" />' +
+            //                '</td>';
+            //        }
+            //        $tr.append(cellcontent);
+            //    });
 
                     Csw.iterate(data, function (thisIcon, dashId) {
                         var cellcontent;
@@ -36,10 +48,18 @@
                         $tr.append(cellcontent);
                     });
                     
-                    if (onSuccess) { onSuccess(); }
+            //function refreshDashFromCache() {
 
-                } // success{}
-            });
+            //    var dashData = Csw.clientDb.get()
+            //}
+            
+
+
+            //return Csw.ajax.post({
+            //    urlMethod: 'getDashboard',
+            //    data: {},
+            //    success: refreshDash
+            //});
 
         });
 
