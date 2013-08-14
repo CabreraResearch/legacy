@@ -20,14 +20,16 @@ namespace ChemSW.Nbt.WebServices
         {
             CswNbtResources CswNbtResources = (CswNbtResources) CswResources;
             CswNbtImporter Importer = new CswNbtImporter( CswNbtResources );
-            ret.DefinitionNames = Importer.getDefinitionNames();
+            ret.Data = Importer.getDefinitionNames().ToString();
         }
 
         public static void uploadImportData( ICswResources CswResources, ImportDataReturn ret, ImportDataParams parms )
         {
             CswNbtResources CswNbtResources = (CswNbtResources) CswResources;
             CswNbtImporter Importer = new CswNbtImporter( CswNbtResources );
-
+            
+            // Write uploaded file to temp dir
+            CswTempFile myTempFile = new CswTempFile( CswResources );
             Importer.storeData( parms.PostedFile.FileName, parms.ImportDefName, parms.Overwrite );
         }
 
@@ -58,7 +60,7 @@ namespace ChemSW.Nbt.WebServices
         {
             [DataMember( IsRequired = true )]
             [Description( "Collection of import definitions" )]
-            public CswCommaDelimitedString DefinitionNames;
+            public string Data;
         }
 
 

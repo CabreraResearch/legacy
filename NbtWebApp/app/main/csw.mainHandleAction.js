@@ -244,7 +244,7 @@
                     });
                     break;
                 case 'import data from excel':
-                    Csw.nbt.importExcel(Csw.main.centerTopDiv, {
+                    Csw.actions.importExcel(Csw.main.centerTopDiv, {
                         onClose: Csw.main.refreshSelected
                     });
                     break;

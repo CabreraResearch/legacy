@@ -192,30 +192,30 @@
             return (window.name.ajaxCount > 0);
         });
 
-    Csw.ajax.get = Csw.ajax.get ||
-        Csw.ajax.register('get', function (options, type) {
-            /// <summary>
-            ///   Executes Async webservice request for XML
-            /// </summary>
-            /// <param name="options" type="Object">
-            /// <para>A JSON Object</para>
-            /// <para>options.url: WebService URL</para>
-            /// <para>options.data: {field1: value, field2: value}</para>
-            /// <para>options.success: function () {}</para>
-            /// <para>options.error: function () {}</para>
-            /// </param>
-            /// <param name="type" type="String">XML or JSON (default)</param>
-            /// <return type="Object">Returns the results of the $.ajax() request in an object wrapper.</return>
-            var ret = {},
-                ajaxType = Csw.string(type);
-            if (false === cswPrivate.ajaxBindingsHaveRun) {
-                Csw.tryExec(cswPrivate.bindAjaxEvents);
-            }
-            if (ajaxType.toLowerCase() !== cswPrivate.enums.dataType.xml) {
-                ret = cswPrivate.jsonGet(options);
-            }
-            return ret;
-        });
+//    Csw.ajax.get = Csw.ajax.get ||
+//        Csw.ajax.register('get', function (options, type) {
+//            /// <summary>
+//            ///   Executes Async webservice request for XML
+//            /// </summary>
+//            /// <param name="options" type="Object">
+//            /// <para>A JSON Object</para>
+//            /// <para>options.url: WebService URL</para>
+//            /// <para>options.data: {field1: value, field2: value}</para>
+//            /// <para>options.success: function () {}</para>
+//            /// <para>options.error: function () {}</para>
+//            /// </param>
+//            /// <param name="type" type="String">XML or JSON (default)</param>
+//            /// <return type="Object">Returns the results of the $.ajax() request in an object wrapper.</return>
+//            var ret = {},
+//                ajaxType = Csw.string(type);
+//            if (false === cswPrivate.ajaxBindingsHaveRun) {
+//                Csw.tryExec(cswPrivate.bindAjaxEvents);
+//            }
+//            if (ajaxType.toLowerCase() !== cswPrivate.enums.dataType.xml) {
+//                ret = cswPrivate.jsonGet(options);
+//            }
+//            return ret;
+//        });
 
     Csw.ajax.post = Csw.ajax.post ||
         Csw.ajax.register('post', function (options, type) {
