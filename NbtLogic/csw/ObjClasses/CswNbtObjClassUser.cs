@@ -47,6 +47,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string DefaultBalance = "Default Balance";
             public const string WorkUnit = "Work Unit";
             public const string CachedData = "Cached Data";
+            public const string AvailableWorkUnits = "Available Work Units";
         }
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
@@ -295,6 +296,10 @@ namespace ChemSW.Nbt.ObjClasses
         {
 
             UsernameProperty.SetOnPropChange( OnUserNamePropChange );
+            AvailableWorkUnits.SetOnPropChange( OnAvailableWorkUnitsChange );
+            AvailableWorkUnits.InitOptions = InitAvailableWorkUnitsOptions;
+
+            _updateAvailableWorkUnits();
 
             // BZ 6941, 8288
             // Set the Default View to use the selected User, rather than the logged in User
@@ -531,6 +536,20 @@ namespace ChemSW.Nbt.ObjClasses
                 Prop.setReadOnly( true, true );
             }
         }
+        
+        public CswNbtNodePropMultiList AvailableWorkUnits { get { return _CswNbtNode.Properties[PropertyName.AvailableWorkUnits]; } }
+        public void OnAvailableWorkUnitsChange( CswNbtNodeProp Prop )
+        {
+            _updateAvailableWorkUnits();
+
+            if( false == AvailableWorkUnits.CheckValue( WorkUnitId.ToString() ) )
+            {
+                CswPrimaryKey pk = CswConvert.ToPrimaryKey( AvailableWorkUnits.Value[0] ); //we're always guarenteed there's at least one
+                WorkUnitProperty.RelatedNodeId = pk;
+                WorkUnitProperty.SyncGestalt();
+            }
+        }
+
 
         [DataContract]
         public class Cache
@@ -801,6 +820,70 @@ select * from (
             }
             return UserPermissions;
         }
+        
+        public Dictionary<string, string> InitAvailableWorkUnitsOptions()
+        {
+            Dictionary<string, string> opts = new Dictionary<string, string>();
+
+            CswNbtMetaDataObjectClass WorkUnitOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.WorkUnitClass );
+            foreach( var workUnit in WorkUnitOC.getNodeIdAndNames( false, false ) )
+            {
+                opts[workUnit.Key.ToString()] = workUnit.Value;
+            }
+
+            return opts;
+        }
+
+        /// <summary>
+        /// Gets the Default Work Unit or if that Node does not exist the first found Work Unit (not null safe!)
+        /// </summary>
+        /// <returns></returns>
+        public CswPrimaryKey GetFirstAvailableWorkUnitNodeId()
+        {
+            CswPrimaryKey ret = null;
+
+            CswNbtMetaDataObjectClass WorkUnitOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.WorkUnitClass );
+            CswPrimaryKey first = null;
+            foreach( var workUnit in WorkUnitOC.getNodeIdAndNames( false, false ) )
+            {
+                if( workUnit.Value == "Default Work Unit" )
+                {
+                    ret = workUnit.Key;
+                }
+
+                if( null == first )
+                {
+                    first = workUnit.Key;
+                }
+            }
+
+            if( null == ret )
+            {
+                ret = first;
+            }
+
+            return ret;
+        }
+
+        private void _updateAvailableWorkUnits()
+        {
+            CswNbtView View = _CswNbtResources.ViewSelect.restoreView( WorkUnitProperty.NodeTypeProp.ViewId );
+
+            View.Clear();
+            View.SetVisibility( CswEnumNbtViewVisibility.Property, null, null );
+
+            CswNbtMetaDataObjectClass WorkUnitOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.WorkUnitClass );
+            CswNbtViewRelationship WorkUnitParent = View.AddViewRelationship( WorkUnitOC, false );
+
+            foreach( string WorkUnitNodeId in AvailableWorkUnits.Value )
+            {
+                CswPrimaryKey pk = CswConvert.ToPrimaryKey( WorkUnitNodeId );
+                WorkUnitParent.NodeIdsToFilterIn.Add( pk );
+            }
+
+            WorkUnitProperty.OverrideView( View );
+        }
+
 
     }//CswNbtObjClassUser
 
