@@ -290,6 +290,13 @@ namespace ChemSW.Nbt.Security
             }
         }
 
+        public string CachedData
+        {
+            get
+            {
+                return _UserPropDict[CswNbtObjClassUser.PropertyName.CachedData];
+            }
+        }
     } // CswNbtUser
 
 }//ChemSW.NbtResources

@@ -1,6 +1,3 @@
-using System;
-using System.Collections.ObjectModel;
-using System.Linq;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
@@ -8,6 +5,9 @@ using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 using Newtonsoft.Json.Linq;
+using System;
+using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -263,7 +263,7 @@ namespace ChemSW.Nbt.ObjClasses
                             CswNbtActRequesting RequestAct = new CswNbtActRequesting( _CswNbtResources );
 
                             CswNbtPropertySetRequestItem NodeAsPropSet = RequestAct.makeMaterialRequestItem( new CswEnumNbtRequestItemType( CswEnumNbtRequestItemType.Material ), NodeId, ButtonData );
-                            NodeAsPropSet.postChanges( false );
+                           // NodeAsPropSet.postChanges( false );
 
                             ButtonData.Data["requestaction"] = OCPPropName;
                             ButtonData.Data["titleText"] = ButtonData.SelectedText + " for " + TradeName.Text;

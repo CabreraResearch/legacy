@@ -5,15 +5,15 @@
         Csw.actions.register('scheduledRules', function (cswParent, cswPrivate) {
             'use strict';
 
-            Ext.require([
-                'Ext.selection.CellModel',
-                'Ext.grid.*',
-                'Ext.data.*',
-                'Ext.util.*',
-                'Ext.state.*',
-                'Ext.form.*',
-                'Ext.ux.CheckColumn'
-            ]);
+            //Ext.require([
+            //    'Ext.selection.CellModel',
+            //    'Ext.grid.*',
+            //    'Ext.data.*',
+            //    'Ext.util.*',
+            //    'Ext.state.*',
+            //    'Ext.form.*',
+            //    'Ext.ux.CheckColumn'
+            //]);
 
             //#region _preCtor
 
@@ -160,27 +160,27 @@
                     }
                 });
 
-                customerIdTable.cell(1, 3).buttonExt({
-                    name: 'updateRules',
-                    icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.save),
-                    enabledText: 'Save Changes',
-                    disabledText: 'Saving . . . ',
-                    onClick: function () {
-                        var req = Csw.extend({}, cswPrivate.schedulerRequest, true);
-                        req.Grid.columns.forEach(function (col) {
-                            delete col.editable;
-                            delete col.editor;
-                        });
+                //customerIdTable.cell(1, 3).buttonExt({
+                //    name: 'updateRules',
+                //    icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.save),
+                //    enabledText: 'Save Changes',
+                //    disabledText: 'Saving . . . ',
+                //    onClick: function () {
+                //        var req = Csw.extend({}, cswPrivate.schedulerRequest, true);
+                //        req.Grid.columns.forEach(function (col) {
+                //            delete col.editable;
+                //            delete col.editor;
+                //        });
 
-                        Csw.ajaxWcf.post({
-                            urlMethod: 'Scheduler/save',
-                            data: req,
-                            success: function () {
-                                cswPrivate.makeScheduledRulesGrid();
-                            }
-                        });
-                    }
-                });
+                //        Csw.ajaxWcf.post({
+                //            urlMethod: 'Scheduler/save',
+                //            data: req,
+                //            success: function() {
+                //                cswPrivate.makeScheduledRulesGrid();
+                //            }
+                //        });
+                //    }
+                //});
 
                 return ret;
             };
@@ -418,9 +418,7 @@
                             width: '95%',
                             title: 'Scheduled Rules',
                             usePaging: true,
-                            onRefresh: function () {
-                                cswPrivate.makeScheduledRulesGrid();
-                            },
+                            onRefresh: cswPrivate.makeScheduledRulesGrid,
                             showActionColumn: false,
                             canSelectRow: false,
                             selModel: {
@@ -446,6 +444,20 @@
                 }
                 cswPrivate.schedulerRequest.Grid.data.items[row.rowIdx][row.field] = row.value;
                 cswPrivate.schedulerRequest.Grid.data.items[row.rowIdx].Row[row.field] = row.value;
+                
+                var req = Csw.extend({}, cswPrivate.schedulerRequest, true);
+                req.Grid.columns.forEach(function (col) {
+                    delete col.editable;
+                    delete col.editor;
+                });
+
+                return Csw.ajaxWcf.post({
+                    urlMethod: 'Scheduler/save',
+                    data: req,
+                    success: function() {
+                        cswPrivate.makeScheduledRulesGrid();
+                    }
+                });
             };
 
             cswPrivate.addBtnGroup = function (el) {

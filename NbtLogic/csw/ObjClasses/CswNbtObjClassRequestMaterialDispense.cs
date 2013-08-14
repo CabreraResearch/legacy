@@ -1,4 +1,3 @@
-using System;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropertySets;
@@ -6,6 +5,7 @@ using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.ServiceDrivers;
 using ChemSW.Nbt.UnitsOfMeasure;
 using Newtonsoft.Json.Linq;
+using System;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -254,6 +254,32 @@ namespace ChemSW.Nbt.ObjClasses
         public override void afterPropertySetWriteNode()
         {
 
+        }
+
+        private void _updateCartCounts( bool IsDelete = false )
+        {
+            //if( false == Node.IsTemp )
+            //{
+                int Incrementer = 1;
+                if( IsDelete )
+                {
+                    Incrementer = -1;
+                }
+                if( _IsFavorite )
+                {
+                    UserCache.CartCounts.FavoriteRequestItems += Incrementer;
+                    UserCache.update( _CswNbtResources );
+                }
+                if( _IsRecurring )
+                {
+                    UserCache.CartCounts.RecurringRequestItems += Incrementer;
+                    UserCache.update( _CswNbtResources );
+                }
+            //}
+        }
+        public override void beforePropertySetDeleteNode()
+        {
+            _updateCartCounts( IsDelete: true );
         }
 
         /// <summary>
@@ -656,6 +682,8 @@ namespace ChemSW.Nbt.ObjClasses
                     RecurringFrequency.setHidden( value : false, SaveToDb : true );
                     NextReorderDate.setHidden( value : false, SaveToDb : true );
                     Name.setHidden( value : true, SaveToDb : true );
+
+                    _updateCartCounts();
                 }
                 else if( false == _IsFavorite )
                 {
@@ -687,6 +715,8 @@ namespace ChemSW.Nbt.ObjClasses
                     NextReorderDate.setHidden( value : true, SaveToDb : true );
                     RecurringFrequency.setHidden( value : true, SaveToDb : true );
                     Name.setHidden( value : false, SaveToDb : true );
+
+                    _updateCartCounts();
                 }
                 else if( false == _IsRecurring )
                 {
