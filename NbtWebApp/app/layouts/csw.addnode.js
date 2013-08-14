@@ -27,7 +27,29 @@
                             if (false === Csw.isNullOrEmpty(cswPrivate.action) && cswPrivate.action !== 'AddNode') {
                                 Csw.main.handleAction({ actionname: cswPrivate.action });
                             } else {
-                                $.CswDialog('AddNodeDialog', cswPrivate.dialogOptions);
+                                Csw.ajax.post({
+                                    urlMethod: 'getProps',
+                                    data: {
+                                        EditMode: Csw.enums.editMode.Add,
+                                        TabId: 'Add_tab',
+                                        NodeTypeId: Csw.string(cswPrivate.nodetypeid),
+                                        Date: new Date().toDateString(),
+                                        RelatedNodeId: Csw.string(cswPrivate.dialogOptions.relatednodeid),
+                                        RelatedNodeTypeId: Csw.string(cswPrivate.dialogOptions.relatednodetypeid),
+                                        RelatedObjectClassId: Csw.string(cswPrivate.dialogOptions.relatedobjectclassid),
+                                        NodeId: 'newnode',
+                                        SafeNodeKey: Csw.string(''),
+                                        Multi: false,
+                                        filterToPropId: Csw.string(''),
+                                        ConfigMode: false,
+                                        GetIdentityTab: false,
+                                        ForceReadOnly: false
+                                    },
+                                    success: function(data) {
+                                        cswPrivate.dialogOptions.propertyData = data;
+                                        $.CswDialog('AddNodeDialog', cswPrivate.dialogOptions);
+                                    }
+                                });
                             }
                         } else {
                             $.CswDialog('AlertDialog', data.Message, 'Quota Exceeded', null, 140, 450);
