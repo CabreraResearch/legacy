@@ -55,15 +55,15 @@ namespace NbtPrintLib
         {
             NbtPublicClient NbtClient = _getClient( auth );
 
-            CswNbtWebServiceSessionCswNbtAuthReturn ret = NbtClient.SessionInit( new CswWebSvcSessionAuthenticateDataAuthenticationRequest()
+            try
+            {
+                CswNbtWebServiceSessionCswNbtAuthReturn ret = NbtClient.SessionInit( new CswWebSvcSessionAuthenticateDataAuthenticationRequest()
                 {
                     CustomerId = auth.AccessId,
                     UserName = auth.UserId,
                     Password = auth.Password,
                     IsMobile = true
                 } );
-            try
-            {
                 if( ret.Authentication.AuthenticationStatus == "Authenticated" )
                 {
                     if( null != success )
@@ -115,26 +115,34 @@ namespace NbtPrintLib
             _Authenticate( auth, e,
                            delegate( NbtPublicClient NbtClient ) // Success
                            {
-                               LabelPrinter lblPrn = new LabelPrinter();
-                               lblPrn.LpcName = aprinter.LPCname;
-                               lblPrn.Description = aprinter.Description;
-
-                               CswNbtLabelPrinterReg Ret = NbtClient.LpcRegister( lblPrn );
-
-                               if( Ret.Status.Success )
+                               try
                                {
-                                   e.printer.PrinterKey = Ret.PrinterKey;
-                                   e.printer.Message = "Registered PrinterKey=" + e.printer.PrinterKey;
-                                   e.printer.Succeeded = true;
-                               }
-                               else
-                               {
-                                   e.printer.Message = "Printer \"" + aprinter.LPCname + "\" registration failed. ";
-                                   e.printer.PrinterKey = string.Empty;
-                                   if( Ret.Status.Errors.Length > 0 )
+                                   LabelPrinter lblPrn = new LabelPrinter();
+                                   lblPrn.LpcName = aprinter.LPCname;
+                                   lblPrn.Description = aprinter.Description;
+
+                                   CswNbtLabelPrinterReg Ret = NbtClient.LpcRegister( lblPrn );
+
+                                   if( Ret.Status.Success )
                                    {
-                                       e.printer.Message += Ret.Status.Errors[0].Message;
+                                       e.printer.PrinterKey = Ret.PrinterKey;
+                                       e.printer.Message = "Registered PrinterKey=" + e.printer.PrinterKey;
+                                       e.printer.Succeeded = true;
                                    }
+                                   else
+                                   {
+                                       e.printer.Message = "Printer \"" + aprinter.LPCname + "\" registration failed. ";
+                                       e.printer.PrinterKey = string.Empty;
+                                       if( Ret.Status.Errors.Length > 0 )
+                                       {
+                                           e.printer.Message += Ret.Status.Errors[0].Message;
+                                       }
+                                   }
+                               } //try
+                               catch( Exception Error )
+                               {
+                                   e.Message = "Printer registration failed. Please check server settings.";
+                                   e.printer.Message = "Printer registration failed. Please check server settings.";
                                }
                            }
                         );
