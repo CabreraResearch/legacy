@@ -857,7 +857,7 @@ select * from (
         {
             CswNbtMetaDataObjectClass WorkUnitOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.WorkUnitClass );
             Dictionary<CswPrimaryKey, string> WorkUnits = WorkUnitOC.getNodeIdAndNames( false, false );
-            CswPrimaryKey ret = WorkUnits.FirstOrDefault( entry => entry.Value == "Default Work Unit" ).Key ?? WorkUnits.First().Key;            
+            CswPrimaryKey ret = WorkUnits.OrderBy( entry => entry.Key.PrimaryKey ).First().Key;
             return ret;
         }
 
