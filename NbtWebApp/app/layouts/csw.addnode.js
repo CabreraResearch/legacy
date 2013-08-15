@@ -46,7 +46,6 @@
                                     },
                                     success: function(propdata) {
                                         if (Csw.isNullOrEmpty(propdata.properties)) {
-                                            Csw.main.clear({ all: true });
                                             Csw.main.refreshNodesTree({ nodeid: propdata.node.nodeid, IncludeNodeRequired: true });
                                         } else {
                                             cswPrivate.dialogOptions.propertyData = propdata;
