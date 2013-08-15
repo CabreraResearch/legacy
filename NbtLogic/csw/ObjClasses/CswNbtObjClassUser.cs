@@ -308,6 +308,8 @@ namespace ChemSW.Nbt.ObjClasses
 
             UsernameProperty.SetOnPropChange( OnUserNamePropChange );
             AvailableWorkUnits.SetOnPropChange( OnAvailableWorkUnitsChange );
+            WorkUnitProperty.SetOnPropChange( OnWorkUnitPropertyChange );
+
             AvailableWorkUnits.InitOptions = InitAvailableWorkUnitsOptions;
 
             _updateAvailableWorkUnits();
@@ -528,6 +530,15 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropRelationship DefaultBalanceProperty { get { return _CswNbtNode.Properties[PropertyName.DefaultBalance]; } }
         public CswPrimaryKey DefaultBalanceId { get { return DefaultBalanceProperty.RelatedNodeId; } }
         public CswNbtNodePropRelationship WorkUnitProperty { get { return _CswNbtNode.Properties[PropertyName.WorkUnit]; } }
+        public void OnWorkUnitPropertyChange( CswNbtNodeProp Prop )
+        {
+            if( false == AvailableWorkUnits.CheckValue( WorkUnitId.ToString() ) )
+            {
+                throw new CswDniException( CswEnumErrorType.Warning, WorkUnitProperty.CachedNodeName + " is not an available Work Unit for user " + Username,
+                    _CswNbtResources.CurrentNbtUser.Username + " attempted to assign User: " + Username + " to Work Unit: " + WorkUnitId.ToString() + " when Users available Work Units are: " + AvailableWorkUnits.Value );
+            }
+        }
+
         public CswPrimaryKey WorkUnitId { get { return WorkUnitProperty.RelatedNodeId; } }
         public CswNbtNodePropLogical Archived { get { return _CswNbtNode.Properties[PropertyName.Archived]; } }
         public CswNbtNodePropRelationship JurisdictionProperty { get { return _CswNbtNode.Properties[PropertyName.Jurisdiction]; } }
