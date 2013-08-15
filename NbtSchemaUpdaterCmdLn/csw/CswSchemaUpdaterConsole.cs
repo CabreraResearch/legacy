@@ -468,6 +468,8 @@ namespace ChemSW.Nbt.Schema.CmdLn
 
             if( UpdateSucceeded )
             {
+                // Fill _UpdateDriversToRun
+                CswSchemaUpdater.addVersionedScriptsToRun();
 
                 // refresh current version in case it was altered
                 CswNbtResources.ConfigVbls.refresh();
@@ -543,7 +545,7 @@ namespace ChemSW.Nbt.Schema.CmdLn
                                 Message = UpdateDescription + " failed: " + CswSchemaUpdateThread.Message + _Separator_NuLine;
                             }
 
-                            CswConsoleOutput.write( Message, ForceWrite: true , SuppressAccessId: true );
+                            CswConsoleOutput.write( Message, ForceWrite: true, SuppressAccessId: true );
                         }
 
                         CswNbtResources.ClearCache();

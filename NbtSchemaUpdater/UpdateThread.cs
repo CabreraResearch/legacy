@@ -61,6 +61,7 @@ namespace ChemSW.Nbt.Schema
                     _CswNbtResources.AccessId = AccessId;
                     _CswNbtResources.InitCurrentUser = InitUser;
 
+                    //todo: Do we need to be creating a new SchemScriptsProd each time this method is called?
                     _CswSchemaScriptsProd = new CswSchemaScriptsProd();
                     _CswLogger = _CswNbtResources.CswLogger;
 
@@ -301,6 +302,7 @@ namespace ChemSW.Nbt.Schema
 
                 _CswSchemaUpdater = new CswSchemaUpdater( AccessId, new CswSchemaUpdater.ResourcesInitHandler( _InitSessionResources ), _CswSchemaScriptsProd ); //wait to create updater until resource initiation is thoroughly done
 
+                // RunBeforeScripts -- Run Non Versioned Scripts
                 bool UpdateSucceeded = _runNonVersionScripts( _CswSchemaScriptsProd.RunBeforeScripts, CswNbtResources, SchemaInfoEventArgs );
 
 
@@ -312,6 +314,9 @@ namespace ChemSW.Nbt.Schema
                     // we want to iterate and run scripts that haven't been run
                     if( CurrentVersion != _CswSchemaUpdater.LatestVersion )
                     {
+                        // Fill _UpdateDriversToRun
+                        _CswSchemaUpdater.addVersionedScriptsToRun();
+
                         while( UpdateSucceeded && !Cancel && CurrentVersion != _CswSchemaUpdater.LatestVersion )
                         {
                             SetStatus( "Updating to " + _CswSchemaUpdater.TargetVersion( CswNbtResources ) );
@@ -363,10 +368,6 @@ namespace ChemSW.Nbt.Schema
                 SetStatus( "ERROR: " + ex.Message );
             }
         }//iterate versions
-
-
-
-
 
         #endregion DoUpdate
 

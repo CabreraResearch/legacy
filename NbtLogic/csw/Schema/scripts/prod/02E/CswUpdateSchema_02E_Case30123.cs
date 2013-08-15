@@ -21,7 +21,7 @@ namespace ChemSW.Nbt.Schema
 
         public override string ScriptName
         {
-            get { return "02E_Case30123"; }
+            get { return "02E_Case30123_B"; }
         }
 
         public override bool AlwaysRun

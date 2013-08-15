@@ -78,6 +78,14 @@ namespace ChemSW.Nbt.Schema
             get { return _CswUpdateSchemaTo.ScriptName; }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        public bool AlwaysRun
+        {
+            get { return _CswUpdateSchemaTo.AlwaysRun; }
+        }
+
         public void update()
         {
             try

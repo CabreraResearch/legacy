@@ -114,7 +114,10 @@ namespace ChemSW.Nbt.Schema
 
             DataRow NewUpdateHistoryRow = _UpdateHistoryTable.NewRow();
             NewUpdateHistoryRow["updatedate"] = DateTime.Now.ToString();
-            NewUpdateHistoryRow["version"] = CswSchemaUpdateDriver.SchemaVersion.ToString();
+            if( null != CswSchemaUpdateDriver.SchemaVersion )
+            {
+                NewUpdateHistoryRow["version"] = CswSchemaUpdateDriver.SchemaVersion.ToString();
+            }
             // TODO: Remove this conditional if after FOXGLOVE is in production
             if( _UpdateHistoryTable.Columns.Contains( "scriptname" ) )
             {
@@ -173,11 +176,11 @@ namespace ChemSW.Nbt.Schema
 
             CswSchemaUpdateDriver CurrentUpdateDriver = null;
             bool UpdateSuccessful = true;
+            bool StampVersion = true;
             if( null != ( CurrentUpdateDriver = _CswSchemaScripts.Next( CswNbtResources ) ) )
             {
-
-                UpdateSuccessful = _runScript( CswNbtResources, CurrentUpdateDriver, true );
-
+                if( CurrentUpdateDriver.AlwaysRun ) { StampVersion = false; }
+                UpdateSuccessful = _runScript( CswNbtResources, CurrentUpdateDriver, StampVersion );
 
             } // if update is valid
 
@@ -191,6 +194,14 @@ namespace ChemSW.Nbt.Schema
             {
                 return _CswSchemaScripts.UpdateDrivers;
             }
+        }
+
+        public void addVersionedScriptsToRun()
+        {
+            CswNbtResources CswNbtResources = null;
+            _ResourcesInitHandler( _AccessId, ref CswNbtResources );
+
+            _CswSchemaScripts.addVersionedScriptsToRun( CswNbtResources );
         }
 
 

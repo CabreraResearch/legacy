@@ -192,6 +192,11 @@ namespace ChemSW.Nbt.Schema
             CswNbtResources.CswLogger.reportAppState( "Succesfully ran schema updater test " + CswSchemaUpdateDriver.Description );
         }//stampSchemaVersion()
 
+        public void addVersionedScriptsToRun( CswNbtResources CswNbtResources )
+        {
+            // Not implemented
+        }
+
 
         //#endregion
     }//CswScriptCollections
