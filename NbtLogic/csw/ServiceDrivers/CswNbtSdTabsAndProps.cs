@@ -54,7 +54,6 @@ namespace ChemSW.Nbt.ServiceDrivers
                         NodeTypeId = Prop.NodeTypeId;
                         foreach( CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout EditLayout in Prop.getEditLayouts().Values )
                         {
-                            //_CswNbtResources.Permit.can( CswEnumNbtNodeTypePermission.View, Prop.getNodeType(), false, Tab, _CswNbtResources.CurrentNbtUser, Node.NodeId, Prop )
                             CswNbtMetaDataNodeTypeTab Tab = _CswNbtResources.MetaData.getNodeTypeTab( EditLayout.TabId );
                             if(
                                     ( _ConfigMode || Tab.TabName != CswNbtMetaData.IdentityTabName ) && (
@@ -183,31 +182,22 @@ namespace ChemSW.Nbt.ServiceDrivers
                         RelatedNodePk.FromString( RelatedNodeId );
                         if( Int32.MinValue != RelatedNodePk.PrimaryKey )
                         {
-                            //Int32 RelatedNodeTypePk = CswConvert.ToInt32( RelatedNodeTypeId );
-                            //Int32 RelatedObjectClassPk = CswConvert.ToInt32( RelatedObjectClassId );
                             CswNbtMetaDataNodeType RelatedNT = _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( RelatedNodeTypeId ) );
                             CswNbtMetaDataObjectClass RelatedOC = _CswNbtResources.MetaData.getObjectClass( CswConvert.ToInt32( RelatedObjectClassId ) );
-
-                            //if( Int32.MinValue != RelatedNodeTypePk && Int32.MinValue == RelatedObjectClassPk )
-                            //{
-                            //    CswNbtMetaDataNodeType RelatedNodeType = _CswNbtResources.MetaData.getNodeType( RelatedNodeTypePk );
-                            //    if( null != RelatedNodeType )
-                            //    {
-                            //        RelatedObjectClassPk = RelatedNodeType.ObjectClassId;
-                            //    }
-                            //}
-
-                            //if( Int32.MinValue != RelatedNodeTypePk && Int32.MinValue != RelatedObjectClassPk )
-                            //{
+                            if( null == RelatedNT && null == RelatedOC )
+                            {
+                                CswNbtNode RelatedNode = _CswNbtResources.Nodes[RelatedNodePk];
+                                if( null != RelatedNode )
+                                {
+                                    RelatedNT = RelatedNode.getNodeType();
+                                    RelatedOC = RelatedNode.getObjectClass();
+                                }
+                            }
                             foreach( CswNbtNodePropRelationship Relationship in from _Prop
                                                                                     in Ret.Properties
                                                                                 where _Prop.getFieldTypeValue() == CswEnumNbtFieldType.Relationship &&
                                                                                       ( _Prop.AsRelationship.TargetMatches( RelatedNT ) ||
                                                                                         _Prop.AsRelationship.TargetMatches( RelatedOC ) )
-                                                                                //( _Prop.AsRelationship.TargetType == NbtViewRelatedIdType.NodeTypeId &&
-                                                                                //    _Prop.AsRelationship.TargetId == RelatedNodeTypePk ) ||
-                                                                                // ( _Prop.AsRelationship.TargetType == NbtViewRelatedIdType.ObjectClassId &&
-                                                                                //    _Prop.AsRelationship.TargetId == RelatedObjectClassPk ) )
                                                                                 select _Prop )
                             {
                                 Relationship.RelatedNodeId = RelatedNodePk;
@@ -341,7 +331,6 @@ namespace ChemSW.Nbt.ServiceDrivers
                         {
                             IEnumerable<CswNbtMetaDataNodeTypeProp> FilteredProps = ( from _Prop in CswNbtMetaDataNodeTypeProps
                                                                                       where PropColl != null
-                                                                                      //let Pw = CswNbtNodePropColl[_Prop]
                                                                                       where _showProp( LayoutType, _Prop, FilterPropIdAttr, TabIdPk, Node, HasEditableProps )
                                                                                       select _Prop ).OrderByDescending( Prop => Prop.PropName != "Save" ).ThenBy( Prop => Prop );
 
@@ -387,15 +376,6 @@ namespace ChemSW.Nbt.ServiceDrivers
 
             if( Node != null )
             {
-                // removed for case 21695
-                //// case 21209
-                //if( Node.NodeSpecies == NodeSpecies.Plain )
-                //{
-                //    CswNbtActUpdatePropertyValue PropUpdater = new Actions.CswNbtActUpdatePropertyValue( _CswNbtResources );
-                //    PropUpdater.UpdateNode( Node, true );
-                //    Node.postChanges( false );
-                //}
-
                 // for prop filters, update node prop value but don't save the change
                 JObject PropJson = CswConvert.ToJObject( NewPropJson, true, "NewPropJson" );
 
@@ -407,11 +387,6 @@ namespace ChemSW.Nbt.ServiceDrivers
                 if( Prop.FirstEditLayout != null )
                 {
                     _addProp( PropObj, Node, Prop, Prop.FirstEditLayout.TabId );
-                }
-
-                if( false == string.IsNullOrEmpty( NewPropJson ) )
-                {
-                    //Node.Rollback();
                 }
             }
             if( PropObj.HasValues )
@@ -497,7 +472,6 @@ namespace ChemSW.Nbt.ServiceDrivers
             PropIdAttr = new CswPropIdAttr( NodeId, Prop.PropId );
 
             JObject PropObj = new JObject();
-            //ParentObj["prop_" + PropIdAttr] = PropObj;
             JProperty ret = new JProperty( "prop_" + PropIdAttr, PropObj );
             CswEnumNbtFieldType FieldType = Prop.getFieldTypeValue();
             PropObj["id"] = PropIdAttr.ToString();

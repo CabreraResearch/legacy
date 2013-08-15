@@ -66,7 +66,7 @@
                 return ret;
             };
 
-            cswPrivate.handleMenuItemClick = function (menuItemName, menuItemJson) {
+            cswPrivate.handleMenuItemClick = function (menuItemName, menuItemJson, menuItem) {
                 if (false === Csw.isNullOrEmpty(menuItemJson)) {
 
                     if (false === Csw.isNullOrEmpty(menuItemJson.href)) {
@@ -151,9 +151,16 @@
                                 }
                                 break;
                             case 'Home':
+                                
+                                var enable = function () {
+                                    menuItem.enable();
+                                };
+                                menuItem.disable();
                                 if (Csw.clientChanges.manuallyCheckChanges()) {
                                     isWholePageNavigation = true;
-                                    Csw.goHome();
+                                    Csw.goHome().then(enable);
+                                } else {
+                                    enable();
                                 }
                                 break;
                             case 'Profile':
@@ -267,7 +274,7 @@
                         } else {
                             thisItem.listeners = {
                                 click: function (item, event) {
-                                    cswPrivate.handleMenuItemClick(childItemName, childItem);
+                                    cswPrivate.handleMenuItemClick(childItemName, childItem, item);
                                 }
                             };
                         }
@@ -288,7 +295,7 @@
                     success: function (result) {
 
                         var items = [];
-                        Csw.each(result, function (menuItem, menuItemName) {
+                        Csw.iterate(result, function (menuItem, menuItemName) {
                             if (items.length > 0) {
                                 items.push({ xtype: 'tbseparator' });
                             }
@@ -317,7 +324,7 @@
                                     text: menuItemName,
                                     listeners: {
                                         click: function (item, event) {
-                                            cswPrivate.handleMenuItemClick(menuItemName, menuItem);
+                                            cswPrivate.handleMenuItemClick(menuItemName, menuItem, item);
                                         }
                                     },
                                     cls: 'menuitem'
@@ -359,8 +366,10 @@
     Csw.goHome = Csw.goHome ||
         Csw.register('goHome', function () {
             'use strict';
-            Csw.clientState.clearCurrent();
-            Csw.main.refreshWelcomeLandingPage();
+            var toDo = [];
+            toDo.push(Csw.clientState.clearCurrent());
+            toDo.push(Csw.main.refreshWelcomeLandingPage());
+            return Q.all(toDo);
         });
 
 } ());
