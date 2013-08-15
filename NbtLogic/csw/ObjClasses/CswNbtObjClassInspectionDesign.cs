@@ -491,8 +491,8 @@ namespace ChemSW.Nbt.ObjClasses
                     Node.setReadOnly( value: false, SaveToDb: true );
                     break;
                 case CswEnumNbtInspectionStatus.Pending:
-                    _toggleButtonVisibility( Cancel, IsVisible: true, SaveToDb: true );
-                    _toggleButtonVisibility( Cancel, IsVisible: false == _InspectionState.AnyAnswered, SaveToDb: true );
+                    _toggleButtonVisibility( Finish, IsVisible: true, SaveToDb: true );
+                    _toggleButtonVisibility( SetPreferred, IsVisible: false == _InspectionState.AnyAnswered, SaveToDb: true );
                     _toggleButtonVisibility( Cancel, IsVisible: true, SaveToDb: true );
                     Node.setReadOnly( value: false, SaveToDb: true );
                     break;
