@@ -78,5 +78,28 @@ namespace NbtWebApp
 
             return ret;
         }
+
+
+
+        [OperationContract]
+        [WebInvoke( Method = "GET", ResponseFormat = WebMessageFormat.Json )]
+        [Description( "Get current status of imports" )]
+        [FaultContract( typeof( FaultException ) )]
+        public CswNbtWebServiceImport.ImportStatusReturn getImportStatus()
+        {
+            CswNbtWebServiceImport.ImportStatusReturn ret = new CswNbtWebServiceImport.ImportStatusReturn();
+
+            var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceImport.ImportStatusReturn, object>(
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj: ret,
+                WebSvcMethodPtr: CswNbtWebServiceImport.getImportStatus,
+                ParamObj: null
+                );
+
+            SvcDriver.run();
+
+            return ret;
+        } // getImportStatus()
+
     }
 }

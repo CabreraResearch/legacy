@@ -23,6 +23,22 @@ namespace ChemSW.Nbt.WebServices
             ret.Data = Importer.getDefinitionNames().ToString();
         }
 
+        public static void getImportStatus( ICswResources CswResources, ImportStatusReturn ret, object parms )
+        {
+            CswNbtResources CswNbtResources = (CswNbtResources) CswResources;
+            CswNbtImporter Importer = new CswNbtImporter( CswNbtResources );
+
+            foreach( string ImportDataTableName in Importer.getImportDataTableNames( true ) )
+            {
+                Int32 PendingRows;
+                Int32 ErrorRows;
+                Importer.getCounts( ImportDataTableName, out PendingRows, out ErrorRows );
+
+                ret.Data.PendingCount += PendingRows;
+                ret.Data.ErrorCount += ErrorRows;
+            }
+        }
+
         public static void uploadImportData( ICswResources CswResources, ImportDataReturn ret, ImportDataParams parms )
         {
             CswNbtResources CswNbtResources = (CswNbtResources) CswResources;
@@ -63,6 +79,44 @@ namespace ChemSW.Nbt.WebServices
             [Description( "Collection of import definitions" )]
             public string Data;
         }
+
+        [DataContract]
+        public class ImportStatusReturn : CswWebSvcReturn
+        {
+            public ImportStatusReturn()
+            {
+                Data = new ImportStatusReturnData();
+            }
+
+            [DataMember( IsRequired = true )]
+            [Description( "Import status information" )]
+            public ImportStatusReturnData Data;
+
+            [DataContract]
+            public class ImportStatusReturnData
+            {
+                //    [DataMember( IsRequired = true )]
+                //    [Description( "Name of import definition" )]
+                //    public string ImportDefName;
+
+                //    [DataMember( IsRequired = true )]
+                //    [Description( "Sheet name of source data" )]
+                //    public string SheetName;
+
+                //    [DataMember( IsRequired = true )]
+                //    [Description( "Name of import data Oracle table" )]
+                //    public string ImportDataTableName;
+
+                [DataMember( IsRequired = true )]
+                [Description( "Number of pending rows to process" )]
+                public Int32 PendingCount;
+
+                [DataMember( IsRequired = true )]
+                [Description( "Number of rows in error state" )]
+                public Int32 ErrorCount;
+
+            } // class ImportStatusReturnData
+        } // class ImportStatusReturn
 
 
     } // class CswNbtWebServiceImport
