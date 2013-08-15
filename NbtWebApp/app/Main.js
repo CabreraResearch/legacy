@@ -1,4 +1,5 @@
 /// <reference path="CswApp-vsdoc.js" />
+//Q.longStackSupport = true; //enable "full" stack traces across the entire promise chain. Useful but a memory hog. Only for debugging!
 
 window.initMain = window.initMain || function (undefined) {
 
@@ -78,6 +79,7 @@ window.initMain = window.initMain || function (undefined) {
             onSelect: Csw.main.handleItemSelect,
             onSuccess: onSuccess
         });
+        return Csw.main.mainviewselect.promise;
     });
     
     Csw.main.register('initAll', function (onSuccess) {
@@ -118,10 +120,10 @@ window.initMain = window.initMain || function (undefined) {
         ready.fail(function (err) {
             Csw.debug.error(err);
         });
-        ready.then(function () {
+        ready.then(function() {
             Csw.main.finishInitAll(onSuccess);
-        })
-
+        });
+        return ready;
     });// initAll()
 
     Csw.main.register('finishInitAll', function (onSuccess) {

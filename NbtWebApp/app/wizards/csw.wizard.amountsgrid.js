@@ -252,7 +252,7 @@
                                             addNodeDialogTitle: 'Size',
                                             relatedTo: {
                                                 objectClassName: 'MaterialClass',
-                                                nodeId: cswPrivate.materialId
+                                                relatednodeid: cswPrivate.materialId
                                             },
                                             onChange: function () {
                                                 onSizeChange();

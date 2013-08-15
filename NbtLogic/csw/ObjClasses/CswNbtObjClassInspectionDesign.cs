@@ -13,9 +13,9 @@ namespace ChemSW.Nbt.ObjClasses
     /// <summary>
     /// Inspection Design Object Class
     /// </summary>
-    public class CswNbtObjClassInspectionDesign: CswNbtPropertySetGeneratorTarget
+    public class CswNbtObjClassInspectionDesign : CswNbtPropertySetGeneratorTarget
     {
-        public new sealed class PropertyName: CswNbtPropertySetGeneratorTarget.PropertyName
+        public new sealed class PropertyName : CswNbtPropertySetGeneratorTarget.PropertyName
         {
             /// <summary>
             /// Target == Parent
@@ -121,6 +121,13 @@ namespace ChemSW.Nbt.ObjClasses
                     return Ret;
                 }
             }
+            public bool AnyAnswered
+            {
+                get
+                {
+                    return _Questions.Any( Question => false == string.IsNullOrEmpty( Question.Answer.Trim() ) );
+                }
+            }
         }
 
         private InspectionState _InspectionState;
@@ -162,6 +169,11 @@ namespace ChemSW.Nbt.ObjClasses
                 CswNbtMetaDataNodeType ThisNodeType = _CswNbtResources.MetaData.getNodeType( this.NodeTypeId );
                 Version.Text = ThisNodeType.NodeTypeName + " v" + ThisNodeType.VersionNo.ToString();
             }
+        }
+
+        private void _toggleButtonVisibility( CswNbtNodePropButton Button, bool IsVisible, bool SaveToDb )
+        {
+            Button.setHidden( value: false == IsVisible, SaveToDb: SaveToDb );
         }
 
         #region Inherited Events
@@ -232,15 +244,17 @@ namespace ChemSW.Nbt.ObjClasses
             if( false == _CswNbtResources.Permit.canAnyTab( CswEnumNbtNodeTypePermission.Edit, NodeType ) || Node.Locked )
             {
                 bool SaveToDb = Node.Locked;
-                Finish.setHidden( value : true, SaveToDb : SaveToDb );
-                Cancel.setHidden( value : true, SaveToDb : SaveToDb );
-                SetPreferred.setHidden( value : true, SaveToDb : SaveToDb );
+                _toggleButtonVisibility( Finish, IsVisible: false, SaveToDb: SaveToDb );
+                _toggleButtonVisibility( Cancel, IsVisible: false, SaveToDb: SaveToDb );
+                _toggleButtonVisibility( SetPreferred, IsVisible: false, SaveToDb: SaveToDb );
             }
-            else if (Status.Value == CswEnumNbtInspectionStatus.Overdue || 
+            else if( Status.Value == CswEnumNbtInspectionStatus.Overdue ||
                 Status.Value == CswEnumNbtInspectionStatus.ActionRequired ||
                 Status.Value == CswEnumNbtInspectionStatus.Pending )
             {
-                SetPreferred.setHidden( value : _InspectionState.AllAnswered, SaveToDb : true );
+                bool IsVisible = Status.Value == CswEnumNbtInspectionStatus.Pending && 
+                    false == _InspectionState.AnyAnswered;
+                _toggleButtonVisibility( SetPreferred, IsVisible, SaveToDb: true );
             }
             //// case 26584, 28155
             // removed by case 29095
@@ -303,7 +317,7 @@ namespace ChemSW.Nbt.ObjClasses
                             }
                         }
                         ButtonData.Message = "Unanswered questions have been set to their preferred answer.";
-                        SetPreferred.setHidden( value : true, SaveToDb : true );
+                        _toggleButtonVisibility( SetPreferred, IsVisible: false, SaveToDb: true );
                         ButtonData.Action = CswEnumNbtButtonAction.refresh;
                         break;
                     case CswNbtObjClass.PropertyName.Save:
@@ -453,29 +467,34 @@ namespace ChemSW.Nbt.ObjClasses
                     }
                     else
                     {
-                        Finish.setHidden( true, true );
-                        SetPreferred.setHidden( true, true );
-                        Cancel.setHidden( true, true );
-                        Node.setReadOnly( value : true, SaveToDb : true );
+                        _toggleButtonVisibility( Finish, IsVisible: false, SaveToDb: true );
+                        _toggleButtonVisibility( SetPreferred, IsVisible: false, SaveToDb: true );
+                        _toggleButtonVisibility( Cancel, IsVisible: false, SaveToDb: true );
+                        Node.setReadOnly( value: true, SaveToDb: true );
                     }
                     break;
 
                 case CswEnumNbtInspectionStatus.Cancelled:
                 case CswEnumNbtInspectionStatus.Missed:
                     //InspectionDate.DateTimeValue = DateTime.Now;
-                    Finish.setHidden( true, true );
-                    SetPreferred.setHidden( true, true );
-                    Cancel.setHidden( true, true );
-                    Node.setReadOnly( value : true, SaveToDb : true );
+                    _toggleButtonVisibility( Finish, IsVisible: false, SaveToDb: true );
+                    _toggleButtonVisibility( SetPreferred, IsVisible: false, SaveToDb: true );
+                    _toggleButtonVisibility( Cancel, IsVisible: false, SaveToDb: true );
+                    Node.setReadOnly( value: true, SaveToDb: true );
                     break;
 
                 case CswEnumNbtInspectionStatus.Overdue:
                 case CswEnumNbtInspectionStatus.ActionRequired:
+                    _toggleButtonVisibility( Finish, IsVisible: true, SaveToDb: true );
+                    _toggleButtonVisibility( SetPreferred, IsVisible: false, SaveToDb: true ); 
+                    _toggleButtonVisibility( Cancel, IsVisible: true, SaveToDb: true );
+                    Node.setReadOnly( value: false, SaveToDb: true );
+                    break;
                 case CswEnumNbtInspectionStatus.Pending:
-                    Finish.setHidden( false, true );
-                    SetPreferred.setHidden( false, true );
-                    Cancel.setHidden( false, true );
-                    Node.setReadOnly( value : false, SaveToDb : true );
+                    _toggleButtonVisibility( Finish, IsVisible: true, SaveToDb: true );
+                    _toggleButtonVisibility( SetPreferred, IsVisible: false == _InspectionState.AnyAnswered, SaveToDb: true );
+                    _toggleButtonVisibility( Cancel, IsVisible: true, SaveToDb: true );
+                    Node.setReadOnly( value: false, SaveToDb: true );
                     break;
 
             } // switch( Status.Value )
