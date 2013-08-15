@@ -304,9 +304,9 @@ namespace ChemSW.Nbt
                 CswNbtView view = _CswNbtResources.ViewSelect.restoreView( viewDT.Rows[0]["viewxml"].ToString() );
                 if( null != view )
                 {
-                    // case 28964 - check for redundant existing view
-                    DataTable redundantViewDT = _CswNbtResources.ViewSelect.getView( viewName, SetVisibility, null, null );
-                    if( redundantViewDT.Rows.Count == 0 )
+                    // case 30162 - check for redundant existing views of all visibility types (other than itself)
+                    List<CswNbtView> MatchingViews = _CswNbtResources.ViewSelect.restoreViews( viewName );
+                    if( MatchingViews.Count <= 1 )
                     {
                         view.SetVisibility( SetVisibility, null, null );
                         view.save();
