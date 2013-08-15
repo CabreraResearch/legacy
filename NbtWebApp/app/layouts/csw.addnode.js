@@ -46,7 +46,7 @@
                                     },
                                     success: function(propdata) {
                                         if (Csw.isNullOrEmpty(propdata.properties)) {
-                                            Csw.main.refreshNodesTree({ nodeid: propdata.node.nodeid, IncludeNodeRequired: true });
+                                            cswPrivate.dialogOptions.onAddNode(propdata.node.nodeid, null, propdata.node.nodename, propdata.node.nodelink);
                                         } else {
                                             cswPrivate.dialogOptions.propertyData = propdata;
                                             $.CswDialog('AddNodeDialog', cswPrivate.dialogOptions);
