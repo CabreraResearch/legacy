@@ -27,10 +27,11 @@ namespace ChemSW.Nbt.WebServices
         {
             CswNbtResources CswNbtResources = (CswNbtResources) CswResources;
             CswNbtImporter Importer = new CswNbtImporter( CswNbtResources );
-            
+
             // Write uploaded file to temp dir
             CswTempFile myTempFile = new CswTempFile( CswResources );
-            Importer.storeData( parms.PostedFile.FileName, parms.ImportDefName, parms.Overwrite );
+            string path = myTempFile.saveToTempFile( parms.PostedFile.InputStream, DateTime.Now.Ticks + "_" + parms.PostedFile.FileName );
+            Importer.storeData( path, parms.ImportDefName, parms.Overwrite );
         }
 
         [DataContract]
