@@ -1003,7 +1003,7 @@ namespace ChemSW.Nbt.WebServices
                                     }
                                     else
                                     {
-                                        _CswNbtResources.logMessage( "During the ChemCatCentral import process, product with ProductId " + _ProductToImport.ProductId + " failed to create a fingerprint record because of an invalid atom." );
+                                        _CswNbtResources.logMessage( "Failed to save the MOL file for product with ProductId " + _ProductToImport.ProductId + " during the C3 import process because it contained an invalid atom." );
                                     }
                                 }
                                 break;
