@@ -2,7 +2,7 @@
 
 (function () {
 
-    //Case 30479: gods help you if you need more than viewSelect in the same page at the same time.
+    //Case 30479: gods help you if you need more than landing page in the same page at the same time.
     //until that day, let's self-satisfy our promises.
     var promise = null;
 
