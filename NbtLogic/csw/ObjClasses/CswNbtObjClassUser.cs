@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
+using System.Linq;
 using System.Runtime.Serialization;
 using System.Text.RegularExpressions;
 using ChemSW.Core;
@@ -212,9 +213,12 @@ namespace ChemSW.Nbt.ObjClasses
             if( AvailableWorkUnits.Value.Count == 0 )
             {
                 CswPrimaryKey pk = GetFirstAvailableWorkUnitNodeId();
-                AvailableWorkUnits.AddValue( pk.ToString() );
-                WorkUnitProperty.RelatedNodeId = pk;
-                WorkUnitProperty.SyncGestalt();
+                if( null != pk )
+                {
+                    AvailableWorkUnits.AddValue( pk.ToString() );
+                    WorkUnitProperty.RelatedNodeId = pk;
+                    WorkUnitProperty.SyncGestalt();
+                }
             }
         }
 
@@ -851,28 +855,9 @@ select * from (
         /// <returns></returns>
         public CswPrimaryKey GetFirstAvailableWorkUnitNodeId()
         {
-            CswPrimaryKey ret = null;
-
             CswNbtMetaDataObjectClass WorkUnitOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.WorkUnitClass );
-            CswPrimaryKey first = null;
-            foreach( var workUnit in WorkUnitOC.getNodeIdAndNames( false, false ) )
-            {
-                if( workUnit.Value == "Default Work Unit" )
-                {
-                    ret = workUnit.Key;
-                }
-
-                if( null == first )
-                {
-                    first = workUnit.Key;
-                }
-            }
-
-            if( null == ret )
-            {
-                ret = first;
-            }
-
+            Dictionary<CswPrimaryKey, string> WorkUnits = WorkUnitOC.getNodeIdAndNames( false, false );
+            CswPrimaryKey ret = WorkUnits.FirstOrDefault( entry => entry.Value == "Default Work Unit" ).Key ?? WorkUnits.First().Key;            
             return ret;
         }
 
