@@ -314,6 +314,7 @@ namespace NbtPrintClient
         {
             //we are polling the service
             CheckForPrintJob();
+            RefreshPrinterList();
         }
 
         private void CheckClientMode()
@@ -381,6 +382,8 @@ namespace NbtPrintClient
             if( lbPrinterList.SelectedIndex > -1 )
             {
                 PrinterSetup psd = new PrinterSetup();
+                psd.Controls["tbLPCname"].Enabled = false;
+                psd.Controls["tbDescript"].Enabled = false;
                 if( psd.EditPrinter( config.printers[lbPrinterList.SelectedIndex], config.printers ) )
                 {
                     SaveSettings();

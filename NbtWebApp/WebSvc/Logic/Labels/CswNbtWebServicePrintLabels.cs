@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Linq;
 using System.Runtime.Serialization;
 using System.Text.RegularExpressions;
 using ChemSW.Config;
@@ -675,6 +674,9 @@ namespace ChemSW.Nbt.WebServices
                             Return.LabelCount = 0;
                             Return.RemainingJobCount = 0;
                         }
+
+                        Return.PrinterName = Printer.Name.Text;
+
                     } // if( null != PrinterOC && null != PrintJobOC )
                     else
                     {

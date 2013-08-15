@@ -248,6 +248,7 @@ namespace NbtPrintLib
                                {
                                    e.Succeeded = true;
                                    e.Job = Ret;
+                                   aprinter.LPCname = Ret.PrinterName;
                                }
                                else
                                {
