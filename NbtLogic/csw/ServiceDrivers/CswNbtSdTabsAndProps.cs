@@ -187,8 +187,11 @@ namespace ChemSW.Nbt.ServiceDrivers
                             if( null == RelatedNT && null == RelatedOC )
                             {
                                 CswNbtNode RelatedNode = _CswNbtResources.Nodes[RelatedNodePk];
-                                RelatedNT = RelatedNode.getNodeType();
-                                RelatedOC = RelatedNode.getObjectClass();
+                                if( null != RelatedNode )
+                                {
+                                    RelatedNT = RelatedNode.getNodeType();
+                                    RelatedOC = RelatedNode.getObjectClass();
+                                }
                             }
                             foreach( CswNbtNodePropRelationship Relationship in from _Prop
                                                                                     in Ret.Properties
