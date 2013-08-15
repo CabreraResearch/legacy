@@ -440,7 +440,7 @@ namespace ChemSW.Nbt.Actions
             }
             else if( false == Ret.HasSpace )
             {
-                Ret.Message = "You have used all of your purchased quota(" + Ret.CurrentCount + " of your " + Ret.QuotaLimit + " for " + Ret.NodeType + "), and must purchase additional quota space in order to add more.";
+                Ret.Message = "You have used all of your purchased quota (" + Ret.CurrentCount + " of your " + Ret.QuotaLimit + " for " + Ret.NodeType + "), and must purchase additional quota space in order to add more.";
             }
 
             return Ret;
@@ -469,7 +469,7 @@ namespace ChemSW.Nbt.Actions
             }
             if( false == Ret.HasSpace )
             {
-                Ret.Message = "You have used all of your purchased quota("  + Ret.CurrentCount + " of your " + Ret.QuotaLimit + " for " + Ret.ObjectClass + "), and must purchase additional quota space in order to add more.";
+                Ret.Message = "You have used all of your purchased quota ("  + Ret.CurrentCount + " of your " + Ret.QuotaLimit + " for " + Ret.ObjectClass + "), and must purchase additional quota space in order to add more.";
             }
 
             return Ret;

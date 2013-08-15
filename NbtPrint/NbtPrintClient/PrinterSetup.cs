@@ -29,6 +29,7 @@ namespace NbtPrintClient
         private void _InitRegisterUI( CswPrintJobServiceThread.RegisterEventArgs e )
         {
             button1.Enabled = true;
+            button1.Text = "OK";
 
             myPrinter.Succeeded = e.printer.Succeeded;
             myPrinter.Message = e.printer.Message;
@@ -53,13 +54,21 @@ namespace NbtPrintClient
             }
             if( e.printer.Succeeded != true )
             {
-                if( string.IsNullOrEmpty( myPrinter.Message ) )
-                {
-                    myPrinter.Message = "Printer registration service failed without an error from the server.";
+                if( false == string.IsNullOrEmpty( myPrinter.Message ) ) {
+                    //prefer an error specific to the printer registration if one exists
+                    MessageBox.Show( myPrinter.Message, "Registration Failed", MessageBoxButtons.OK, MessageBoxIcon.Exclamation );
                 }
-                MessageBox.Show( myPrinter.Message, "Registration Failed", MessageBoxButtons.OK, MessageBoxIcon.Exclamation );
-            }
-        }
+                else if( false == string.IsNullOrEmpty( e.Message ) ) {
+                    //if there was no printer error, check for a general authentication error
+                    MessageBox.Show( e.Message, "Registration Failed", MessageBoxButtons.OK, MessageBoxIcon.Exclamation );
+                }
+                else {
+                    MessageBox.Show( "Printer registration service failed without an error from the server.", "Registration Failed", MessageBoxButtons.OK, MessageBoxIcon.Exclamation );
+                }
+
+            }//if e.printer.Succeeded != true
+
+        }//private void _InitRegisterUI
 
         private void SetupForm( PrinterSetupData aprinter, PrinterSetupDataCollection thePrinters, bool editing )
         {

@@ -329,13 +329,11 @@ namespace ChemSW.Nbt.ServiceDrivers
                         }
                         bool HasEditableProps = false == ForceReadOnly && TabHasAnyEditableProp;
 
-                        //Blast from the Case 8494 past: we have to do this server-side now
                         if( _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Add && false == HasEditableProps )
                         {
+                            //Case 29531 - There are no props on the Add layout, so just save the node - the client will skip the add dialog
                             Node.IsTemp = false;
                             Node.postChanges( ForceUpdate : false );
-                            _CswNbtResources.EditMode = CswEnumNbtNodeEditMode.EditInPopup;
-                            Ret = getProps( Node, NodeType.getFirstNodeTypeTab().TabId.ToString(), FilterPropIdAttr, CswEnumNbtLayoutType.Edit, ForceReadOnly );
                         }
                         else
                         {

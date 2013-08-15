@@ -23,7 +23,8 @@ namespace ChemSW.Nbt.Sched
                                                                        { Reconciliation                , Reconciliation                 },
                                                                        { TierII                        , TierII                         },
                                                                        { CAFImport                     , CAFImport                      },
-                                                                       { NodeCounts                    , NodeCounts                     }
+                                                                       { NodeCounts                    , NodeCounts                     },
+                                                                       { ValidateAccessIds             , ValidateAccessIds              },
                                                                    };
         /// <summary>
         /// The string value of the current instance
@@ -94,6 +95,7 @@ namespace ChemSW.Nbt.Sched
         public const string ExtChemDataSync = "ExtChemDataSync";
         public const string PurgeSessionData = "PurgeSessionData";
         public const string NodeCounts = "NodeCounts";
+        public const string ValidateAccessIds = "ValidateAccessIds";
 
         #endregion Enum members
 

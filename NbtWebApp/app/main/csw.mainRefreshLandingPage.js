@@ -12,18 +12,17 @@
                     Title: '',
                     onLinkClick: Csw.main.handleItemSelect,
                     onAddClick: function (itemData) {
-                        if (false === Csw.isNullOrEmpty(itemData.ActionName)) {
-                            Csw.main.handleAction({ actionname: itemData.ActionName });
-                        } else {
-                            $.CswDialog('AddNodeDialog', {
+                        Csw.layouts.addnode({
+                            action: itemData.ActionName,
+                            dialogOptions: {
                                 text: itemData.Text,
                                 nodetypeid: itemData.NodeTypeId,
                                 onAddNode: function (nodeid, nodekey) {
                                     Csw.main.clear({ all: true });
                                     Csw.main.refreshNodesTree({ 'nodeid': nodeid, 'nodekey': nodekey, 'IncludeNodeRequired': true });
                                 }
-                            });
-                        }
+                            }
+                        });
                     },
                     onTabClick: function (itemData) {
                         Csw.cookie.set(Csw.cookie.cookieNames.CurrentTabId, itemData.TabId);
@@ -70,10 +69,9 @@
                 ObjectClassId: layData.RelatedObjectClassId,
                 onLinkClick: Csw.main.handleItemSelect,
                 onAddClick: function (itemData) {
-                    if (false === Csw.isNullOrEmpty(itemData.ActionName)) {
-                        Csw.main.handleAction({ actionname: itemData.ActionName });
-                    } else {
-                        $.CswDialog('AddNodeDialog', {
+                    Csw.layouts.addnode({
+                        action: itemData.ActionName,
+                        dialogOptions: {
                             text: itemData.Text,
                             nodetypeid: itemData.NodeTypeId,
                             relatednodeid: layData.RelatedNodeId,
@@ -84,8 +82,8 @@
                                 Csw.main.clear({ all: true });
                                 Csw.main.refreshNodesTree({ nodeid: nodeid, nodekey: nodekey, IncludeNodeRequired: true });
                             }
-                        });
-                    }
+                        }
+                    });
                 },
                 onTabClick: function (itemData) {
                     Csw.cookie.set(Csw.cookie.cookieNames.CurrentTabId, itemData.TabId);

@@ -63,6 +63,9 @@
     <None Include="app.config">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Service References\NbtPublic\NbtPrintLib.NbtPublic.CswNbtBalanceReturn.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
     <None Include="Service References\NbtPublic\NbtPrintLib.NbtPublic.CswNbtLabelEpl.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
@@ -78,6 +81,17 @@
     <None Include="Service References\NbtPublic\NbtPrintLib.NbtPublic.CswNbtWebServiceSessionCswNbtAuthReturn.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadataStorage Include="Service References\NbtPublic\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\NbtPublic\configuration91.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\NbtPublic\configuration.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
     <None Include="Service References\NbtPublic\NbtPublic.wsdl" />
     <None Include="Service References\NbtPublic\NbtPublic.xsd">
       <SubType>Designer</SubType>
@@ -104,20 +118,9 @@
     <None Include="Service References\NbtPublic\NbtPublic7.xsd">
       <SubType>Designer</SubType>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <WCFMetadataStorage Include="Service References\NbtPublic\" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Service References\NbtPublic\NbtPublic.disco" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Service References\NbtPublic\configuration91.svcinfo" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Service References\NbtPublic\configuration.svcinfo" />
-  </ItemGroup>
-  <ItemGroup>
+    <None Include="Service References\NbtPublic\NbtPublic8.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Service References\NbtPublic\Reference.svcmap">
       <Generator>WCF Proxy Generator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
@@ -128,6 +131,9 @@
       <Project>{9498738D-42C2-4BBF-875B-846918A8821B}</Project>
       <Name>CswCore</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\NbtPublic\NbtPublic.disco" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

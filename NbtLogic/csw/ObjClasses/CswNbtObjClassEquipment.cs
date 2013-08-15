@@ -278,11 +278,9 @@ namespace ChemSW.Nbt.ObjClasses
 
         public void UpdateOwner( CswNbtObjClassUser NewUser )
         {
-            //TODO: make "User" prop an OCP
-            CswNbtMetaDataNodeTypeProp UserNTP = NodeType.getNodeTypeProp( "User" );
-            CswNbtNodePropRelationship UserProp = _CswNbtNode.Properties[UserNTP].AsRelationship;
-            UserProp.RelatedNodeId = NewUser.UserId;
-            UserProp.RefreshNodeName();
+            User.RelatedNodeId = NewUser.NodeId;
+            User.RefreshNodeName();
+            User.SyncGestalt();
         }
 
     }//CswNbtObjClassEquipment

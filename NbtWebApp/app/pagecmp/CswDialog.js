@@ -286,7 +286,8 @@
                     },
                     onInitFinish: function () {
                         //openDialog(cswPublic.div, 800, 600, null, cswPublic.title);
-                    }
+                    },
+                    checkQuota: false //Case 29531 - quota has already been checked by layouts.addnode
                 });
             };
             openDialog(cswPublic.div, 800, 600, cswPublic.close, cswPublic.title, cswDlgPrivate.onOpen);
@@ -2029,7 +2030,7 @@
                 align: 'center'
             });
 
-            div.br();
+            div.br({ number: 2 });
 
             var divBody = div.div();
 
