@@ -841,7 +841,7 @@ select * from (
             Dictionary<string, string> opts = new Dictionary<string, string>();
 
             CswNbtMetaDataObjectClass WorkUnitOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.WorkUnitClass );
-            foreach( var workUnit in WorkUnitOC.getNodeIdAndNames( false, false ) )
+            foreach( KeyValuePair<CswPrimaryKey, string> workUnit in WorkUnitOC.getNodeIdAndNames( false, false ) )
             {
                 opts[workUnit.Key.ToString()] = workUnit.Value;
             }
