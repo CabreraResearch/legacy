@@ -129,7 +129,8 @@
                                 break;
                             case 'CopyNode':
                                 if (Csw.clientChanges.manuallyCheckChanges()) {
-                                    $.CswDialog('CopyNodeDialog', {
+                                    Csw.layouts.copynode({
+                                        copyType: Csw.string(menuItemJson.copytype),
                                         nodename: nodename,
                                         nodeid: nodeid,
                                         nodetypeid: nodetypeid,
