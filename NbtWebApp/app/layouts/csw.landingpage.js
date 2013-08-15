@@ -2,6 +2,10 @@
 
 (function () {
 
+    //Case 30479: gods help you if you need more than viewSelect in the same page at the same time.
+    //until that day, let's self-satisfy our promises.
+    var promise = null;
+
     Csw.layouts.landingpage = Csw.layouts.landingpage ||
         Csw.layouts.register('landingpage', function (cswParent, options) {
             'use strict';
@@ -45,7 +49,10 @@
             var cswPublic = {};
 
             (function () {
-                Csw.ajaxWcf.post({
+                if (promise) {
+                    promise.abort();
+                }
+                promise = Csw.ajaxWcf.post({
                     urlMethod: 'LandingPages/getItems',
                     data: cswPrivate.landingPageRequestData,
                     success: function (ajaxdata) {
@@ -109,7 +116,7 @@
                             }
                         });
 
-                        Csw.each(cswPrivate.data.LandingPageItems, function (landingPageItem) {
+                        Csw.iterate(cswPrivate.data.LandingPageItems, function (landingPageItem) {
                             var thisItem = landingPageItem;
                             if (false === Csw.isNullOrEmpty(thisItem)) {
                                 var cellSet = cswPrivate.layoutTable.cellSet(thisItem.DisplayRow, thisItem.DisplayCol);
@@ -175,7 +182,7 @@
                     text: cswPrivate.Title
                 });
                 var actionLinkRow = 2;
-                Csw.each(cswPrivate.landingPageRequestData.ActionLinks, function (ActionLink) {
+                Csw.iterate(cswPrivate.landingPageRequestData.ActionLinks, function (ActionLink) {
                     if (false === Csw.isNullOrEmpty(ActionLink)) {
                         cswPrivate.landingPageTitle = cswPrivate.actionLinkTable.cell(actionLinkRow, 1).a({
                             text: ActionLink.Text,
@@ -251,6 +258,7 @@
             };
 
             cswPrivate.removeItem = function (removedata) {
+                var promise = true;
                 var textCell = removedata.cellSet[2][1],
                     landingpageid,
                     dataJson;
@@ -260,7 +268,7 @@
                         dataJson = {
                             LandingPageId: landingpageid
                         };
-                        Csw.ajaxWcf.post({
+                        promise = Csw.ajaxWcf.post({
                             urlMethod: 'LandingPages/deleteItem',
                             data: dataJson,
                             success: function () {
@@ -269,6 +277,7 @@
                         });
                     }
                 }
+                return promise;
             };
 
             cswPrivate.getAddItemForm = function (parentDiv, addOptions) {
@@ -402,13 +411,13 @@
                 cswPrivate.addItemForm[cswPrivate.select.button].control = cswPrivate.addItemForm.table.cell(cswPrivate.select.button, 2).select({
                     name: 'landingpage_buttonsel'
                 }).hide();
-                Csw.ajax.post({
+                return Csw.ajax.post({
                     urlMethod: 'getObjectClassButtons',
                     data: {
                         ObjectClassId: Csw.string(cswPrivate.ObjectClassId)
                     },
                     success: function (data) {
-                        Csw.each(data, function (thisButton) {
+                        Csw.iterate(data, function (thisButton) {
                             if (Csw.contains(thisButton, 'id') && Csw.contains(thisButton, 'name')) {
                                 cswPrivate.addItemForm[cswPrivate.select.button].control.option({
                                     value: thisButton.id,
@@ -513,6 +522,8 @@
                     cswPrivate.addItemForm[type].control.hide();
                 }
             };
+
+            cswPublic.promise = promise;
 
             return cswPublic;
         });
