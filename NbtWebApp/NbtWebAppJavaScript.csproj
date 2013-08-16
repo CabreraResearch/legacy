@@ -82,6 +82,9 @@
     <Content Include="app\composites\csw.quickTip.js" />
     <Content Include="app\composites\csw.tabselect.js" />
     <Content Include="app\core\csw.domNode.js" />
+    <Content Include="app\db\csw.dbTable.js" />
+    <Content Include="app\db\csw.dbInsert.js" />
+    <Content Include="app\db\csw.dbIndex.js" />
     <Content Include="app\layouts\csw.addnode.js" />
     <Content Include="app\literals\csw.fieldset.js" />
     <Content Include="app\layouts\csw.landingpage.js" />
@@ -104,10 +107,8 @@
     <Content Include="app\main\csw.mainEvents.js" />
     <Content Include="app\main\csw.mainDivs.js" />
     <Content Include="app\promises\csw.spinners.js" />
-    <Content Include="app\promises\csw.worker.js" />
-    <Content Include="app\promises\csw.indexedDb.js" />
+    <Content Include="app\db\csw.db.js" />
     <Content Include="app\promises\csw.promise.js" />
-    <Content Include="app\promises\csw.worker.js" />
     <Content Include="app\proptypes\csw.propTypeChildContents.js" />
     <Content Include="app\nodes\csw.node.treeExt.js" />
     <Content Include="app\proptypes\csw.propTypeCASNo.js" />
@@ -151,6 +152,7 @@
     <Content Include="app\proptypes\csw.propTypeUserSelect.js" />
     <Content Include="app\proptypes\csw.propTypeViewPickList.js" />
     <Content Include="app\proptypes\csw.propTypeViewReference.js" />
+    <Content Include="app\tools\csw.functional.js" />
     <Content Include="app\tools\csw.ext.js" />
     <Content Include="app\tools\csw.validation.js" />
     <Content Include="app\view\csw.vieweditor.js" />
@@ -159,7 +161,7 @@
     <Content Include="app\wizards\csw.reconciliation.js" />
     <Content Include="app\types\csw.casno.js" />
     <Content Include="app\wizards\_template.js" />
-    <Content Include="app\workers\csw.worker.js" />
+    <Content Include="app\promises\csw.workerXHR.js" />
     <Content Include="Content\jquery.multiselect.css" />
     <Content Include="Content\jquery.multiselect.filter.css" />
     <Content Include="Content\shCore.css" />

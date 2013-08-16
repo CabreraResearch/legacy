@@ -18,6 +18,7 @@ module.exports.app = [
     'app/view/**.js',
     'app/wizards/**.js',
     'app/workers/**.js',
+    'app/db/**.js',
     'app/Main.js'
 ];
 
