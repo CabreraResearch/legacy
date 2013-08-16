@@ -45,6 +45,8 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02F_Case28998() ) );                        //02E-017 //02F-005
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02F_Case29973() ) );                        //02E-018 //02F-006
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02F_Case29191() ) );                        //02E-019 //02F-007
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02F_CaseXXXXX() ) );                        //02E-019 //02F-008
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02F_CaseXXXXX() ) );                        //02E-019 //02F-009
 
             // This automatically detects the latest version
             _LatestVersion = _MinimumVersion;
@@ -151,15 +153,6 @@ namespace ChemSW.Nbt.Schema
                 ReturnVal = CurrentItem.Value;
             }
 
-            //CswSchemaVersion myCurrentVersion = CurrentVersion( CswNbtResources );
-            //if( myCurrentVersion == MinimumVersion ||
-            //    ( LatestVersion.CycleIteration == myCurrentVersion.CycleIteration &&
-            //        LatestVersion.ReleaseIdentifier == myCurrentVersion.ReleaseIdentifier &&
-            //        LatestVersion.ReleaseIteration > myCurrentVersion.ReleaseIteration ) )
-            //{
-            //    ReturnVal = _UpdateDriversToRun[TargetVersion( CswNbtResources )];
-            //}
-
             return ReturnVal;
         }//Next()
 
@@ -254,7 +247,10 @@ namespace ChemSW.Nbt.Schema
             {
                 CswSchemaUpdateDriver.SchemaVersion = _makeNextSchemaVersion();
                 CswSchemaUpdateDriver.Description = CswSchemaUpdateDriver.SchemaVersion.ToString(); //we do this in prod scripts because test scripts have a different dispensation for description
-                _UpdateDrivers.Add( CswSchemaUpdateDriver.SchemaVersion, CswSchemaUpdateDriver );
+                if( false == _doesScriptWithNameAlreadyExist( CswSchemaUpdateDriver ) )
+                {
+                    _UpdateDrivers.Add( CswSchemaUpdateDriver.SchemaVersion, CswSchemaUpdateDriver );
+                }
             }
             else
             {
@@ -262,6 +258,11 @@ namespace ChemSW.Nbt.Schema
                 CswSchemaUpdateDriver.Description = "Run Always Script: " + CswSchemaUpdateDriver.ScriptName;
                 _UpdateDrivers.Add( CswSchemaUpdateDriver.SchemaVersion, CswSchemaUpdateDriver );
             }
+        }
+
+        private bool _doesScriptWithNameAlreadyExist( CswSchemaUpdateDriver CswSchemaUpdateDriver )
+        {
+            return _UpdateDrivers.Values.Any( UpdateDriver => UpdateDriver.ScriptName == CswSchemaUpdateDriver.ScriptName );
         }
 
         #endregion
