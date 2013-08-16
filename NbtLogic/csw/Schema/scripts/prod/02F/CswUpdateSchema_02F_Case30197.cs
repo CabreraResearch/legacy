@@ -19,8 +19,8 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
-            if( _CswNbtSchemaModTrnsctn.isMaster() )
-            {
+            //if( _CswNbtSchemaModTrnsctn.isMaster() )
+            //{
                 foreach( CswNbtView View in _CswNbtSchemaModTrnsctn.restoreViews( "Inventory Levels" ) )
                 {
                     if( View.ViewMode == CswEnumNbtViewRenderingMode.Grid && 
@@ -33,7 +33,7 @@ namespace ChemSW.Nbt.Schema
                         View.save();
                     }
                 }
-            }
+            //}
         } // update()
 
     }

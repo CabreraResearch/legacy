@@ -15,7 +15,6 @@
                     PropsUrlMethod: 'getProps',
                     MovePropUrlMethod: 'moveProp',
                     RemovePropUrlMethod: 'removeProp',
-                    SavePropUrlMethod: 'saveProps',
                     CopyPropValuesUrlMethod: 'copyPropValues',
                     NodePreviewUrlMethod: 'getNodePreview'
                 },
@@ -73,7 +72,8 @@
                 nodeTreeCheck: null,
                 onEditView: null,
                 onAfterButtonClick: null,
-                forceReadOnly: false
+                forceReadOnly: false,
+                checkQuota: true
             };
             var cswPublic = {};
 
@@ -756,7 +756,9 @@
                 'use strict';
 
                 cswPrivate.onTearDownProps();
-                if (cswPrivate.tabState.EditMode === Csw.enums.editMode.Add && cswPrivate.tabState.Config === false) {
+                if (cswPrivate.tabState.EditMode === Csw.enums.editMode.Add &&
+                    cswPrivate.tabState.Config === false &&
+                    cswPrivate.checkQuota) {
                     // case 20970 - make sure there's room in the quota
                     cswPrivate.ajax.props = Csw.ajaxWcf.post({
                         watchGlobal: cswPrivate.AjaxWatchGlobal,
@@ -894,14 +896,8 @@
                         cswPrivate.toggleConfigIcon(false === cswPrivate.isMultiEdit());
                     }
 
-                    /* case 8494 */
-                    //if (!cswPrivate.tabState.Config && !cswPrivate.atLeastOne.Saveable && cswPrivate.tabState.EditMode === Csw.enums.editMode.Add) {
-
-                    //    cswPublic.save(tabid);
-                    //} else {
-                        Csw.tryExec(cswPrivate.onInitFinish, cswPrivate.atLeastOne.Property);
-                        Csw.tryExec(onSuccess);
-                    //}
+                    Csw.tryExec(cswPrivate.onInitFinish, cswPrivate.atLeastOne.Property);
+                    Csw.tryExec(onSuccess);
                 }
 
                 if (cswPrivate.tabState.Config || // case 28274 - always refresh prop data if in config mode

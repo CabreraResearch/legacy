@@ -1156,20 +1156,19 @@ namespace ChemSW.Nbt.Security
             }
             if( false == ( User is CswNbtSystemUser ) )
             {
-                hasPermission = false;
                 if( null != User && CswTools.IsPrimaryKey( PermissionGroupId ) )
                 {
                     CswNbtPropertySetPermission PermNode = User.getPermissionForGroup( PermissionGroupId );
-                    if( null != PermNode &&
-                        ( ( Permission == CswEnumNbtNodeTypePermission.View && PermNode.View.Checked == CswEnumTristate.True ) ||
-                        PermNode.Edit.Checked == CswEnumTristate.True ) )//edit implies edit, create, and delete
+                    if( null != PermNode )
                     {
-                        hasPermission = true;
+                        hasPermission = ( ( Permission == CswEnumNbtNodeTypePermission.View && PermNode.View.Checked == CswEnumTristate.True ) ||
+                                          PermNode.Edit.Checked == CswEnumTristate.True ); //edit implies edit, create, and delete
                     }
-                }
-                else
-                {
-                    hasPermission = true;
+                    else if( null != _CswNbtResources.Nodes[PermissionGroupId] )
+                    {
+                        // case 30477 - Only revoke permissions if the group's nodetype is enabled and the node is valid
+                        hasPermission = false;
+                    }
                 }
             }
             return hasPermission;

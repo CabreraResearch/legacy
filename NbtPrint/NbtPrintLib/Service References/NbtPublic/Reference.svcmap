@@ -18,20 +18,21 @@
     <ServiceContractMappings />
   </ClientOptions>
   <MetadataSources>
-    <MetadataSource Address="http://nbtdaily.chemswlive.com/QaNbt/Services/NbtPublic.svc" Protocol="http" SourceId="1" />
+    <MetadataSource Address="http://localhost/NbtDev/Services/NbtPublic.svc" Protocol="http" SourceId="1" />
   </MetadataSources>
   <Metadata>
-    <MetadataFile FileName="NbtPublic.wsdl" MetadataType="Wsdl" ID="f41c0ef7-c928-4357-88f8-12a84937b7be" SourceId="1" SourceUrl="http://nbtdaily.chemswlive.com/QaNbt/Services/NbtPublic.svc?wsdl" />
-    <MetadataFile FileName="NbtPublic.xsd" MetadataType="Schema" ID="42c0f60b-552c-4f95-a7a4-c0596d5bd758" SourceId="1" SourceUrl="http://nbtdaily.chemswlive.com/QaNbt/Services/NbtPublic.svc?xsd=xsd4" />
-    <MetadataFile FileName="NbtPublic1.xsd" MetadataType="Schema" ID="63456c08-6c0d-452e-88b4-204861b1528a" SourceId="1" SourceUrl="http://nbtdaily.chemswlive.com/QaNbt/Services/NbtPublic.svc?xsd=xsd3" />
-    <MetadataFile FileName="NbtPublic2.xsd" MetadataType="Schema" ID="eca6e235-1005-4da9-a72a-c42666911748" SourceId="1" SourceUrl="http://nbtdaily.chemswlive.com/QaNbt/Services/NbtPublic.svc?xsd=xsd5" />
-    <MetadataFile FileName="NbtPublic3.xsd" MetadataType="Schema" ID="008fefeb-212a-46fc-9926-f1754048260e" SourceId="1" SourceUrl="http://nbtdaily.chemswlive.com/QaNbt/Services/NbtPublic.svc?xsd=xsd7" />
-    <MetadataFile FileName="NbtPublic4.xsd" MetadataType="Schema" ID="8406be1e-0cd1-45d2-99ac-897e1aa13dd5" SourceId="1" SourceUrl="http://nbtdaily.chemswlive.com/QaNbt/Services/NbtPublic.svc?xsd=xsd6" />
-    <MetadataFile FileName="NbtPublic5.xsd" MetadataType="Schema" ID="77c7ac27-a5e9-46b3-92f4-cf60458e48ae" SourceId="1" SourceUrl="http://nbtdaily.chemswlive.com/QaNbt/Services/NbtPublic.svc?xsd=xsd2" />
-    <MetadataFile FileName="NbtPublic6.xsd" MetadataType="Schema" ID="9288afb3-54eb-4bdd-a67b-6bb1bcab4cb1" SourceId="1" SourceUrl="http://nbtdaily.chemswlive.com/QaNbt/Services/NbtPublic.svc?xsd=xsd1" />
-    <MetadataFile FileName="NbtPublic.disco" MetadataType="Disco" ID="9601e62c-406a-415b-bd68-e9cc6f773b60" SourceId="1" SourceUrl="http://nbtdaily.chemswlive.com/QaNbt/Services/NbtPublic.svc?disco" />
-    <MetadataFile FileName="NbtPublic1.wsdl" MetadataType="Wsdl" ID="19a3fef3-65b1-49ed-af63-680b8de62c30" SourceId="1" SourceUrl="http://nbtdaily.chemswlive.com/QaNbt/Services/NbtPublic.svc?wsdl=wsdl0" />
-    <MetadataFile FileName="NbtPublic7.xsd" MetadataType="Schema" ID="749cc1d0-1583-4562-b6ea-ab467d416563" SourceId="1" SourceUrl="http://nbtdaily.chemswlive.com/QaNbt/Services/NbtPublic.svc?xsd=xsd0" />
+    <MetadataFile FileName="NbtPublic.xsd" MetadataType="Schema" ID="d7315723-f127-439f-ad80-61612f8d2700" SourceId="1" SourceUrl="http://localhost/NbtDev/Services/NbtPublic.svc?xsd=xsd7" />
+    <MetadataFile FileName="NbtPublic1.xsd" MetadataType="Schema" ID="2eafda22-60fc-4b10-a33a-926e419e7a62" SourceId="1" SourceUrl="http://localhost/NbtDev/Services/NbtPublic.svc?xsd=xsd4" />
+    <MetadataFile FileName="NbtPublic2.xsd" MetadataType="Schema" ID="afaf77de-5b0e-4ecb-bb41-45f9fa55b5a5" SourceId="1" SourceUrl="http://localhost/NbtDev/Services/NbtPublic.svc?xsd=xsd5" />
+    <MetadataFile FileName="NbtPublic3.xsd" MetadataType="Schema" ID="2cec7231-22c3-4b71-8342-11c4faa08850" SourceId="1" SourceUrl="http://localhost/NbtDev/Services/NbtPublic.svc?xsd=xsd2" />
+    <MetadataFile FileName="NbtPublic4.xsd" MetadataType="Schema" ID="224313fc-304b-4f2f-abc2-680f5805ec95" SourceId="1" SourceUrl="http://localhost/NbtDev/Services/NbtPublic.svc?xsd=xsd8" />
+    <MetadataFile FileName="NbtPublic5.xsd" MetadataType="Schema" ID="a093b84a-ea05-479c-baa5-9b609cfe3437" SourceId="1" SourceUrl="http://localhost/NbtDev/Services/NbtPublic.svc?xsd=xsd0" />
+    <MetadataFile FileName="NbtPublic.wsdl" MetadataType="Wsdl" ID="f621273a-f479-41ed-86e3-fc88e87a5a2f" SourceId="1" SourceUrl="http://localhost/NbtDev/Services/NbtPublic.svc?wsdl=wsdl0" />
+    <MetadataFile FileName="NbtPublic6.xsd" MetadataType="Schema" ID="dbaa692a-3fca-47f0-a3c9-8d5e9a1e8c88" SourceId="1" SourceUrl="http://localhost/NbtDev/Services/NbtPublic.svc?xsd=xsd3" />
+    <MetadataFile FileName="NbtPublic.disco" MetadataType="Disco" ID="140c8355-c1d4-445a-91bb-12ac555d6fa4" SourceId="1" SourceUrl="http://localhost/NbtDev/Services/NbtPublic.svc?disco" />
+    <MetadataFile FileName="NbtPublic1.wsdl" MetadataType="Wsdl" ID="a02e0773-1e9e-4509-9c1b-85b913a57d9e" SourceId="1" SourceUrl="http://localhost/NbtDev/Services/NbtPublic.svc?wsdl" />
+    <MetadataFile FileName="NbtPublic7.xsd" MetadataType="Schema" ID="5ec0d98d-bb00-47b1-9cd8-5f58a9877563" SourceId="1" SourceUrl="http://localhost/NbtDev/Services/NbtPublic.svc?xsd=xsd6" />
+    <MetadataFile FileName="NbtPublic8.xsd" MetadataType="Schema" ID="938a388f-8123-486f-ac96-0e93baecc511" SourceId="1" SourceUrl="http://localhost/NbtDev/Services/NbtPublic.svc?xsd=xsd1" />
   </Metadata>
   <Extensions>
     <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />

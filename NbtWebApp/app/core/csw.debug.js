@@ -8,11 +8,11 @@
         prepMsg: function (msg) {
             var ret = {};
             var data = msg || { };
-            if (window.internetExplorerVersionNo > -1) {
+            
                 if (false === Csw.isPlainObject(data)) {
                     data = { message: Csw.string(data) }; 
                 } 
-            }
+            
             ret.customerid = ret.customerid || Csw.clientSession.currentAccessId();
             ret.username = ret.username || Csw.clientSession.currentUserName();
             ret.sessionid = ret.sessionid || Csw.clientSession.currentSessionId();
@@ -220,10 +220,8 @@
             cswPrivate.tryExecSwallow(
                 function toConsole() {
                     name = name || '';
-                    if (window.internetExplorerVersionNo === -1) {
                         console.profile(name);
                     }
-                }
             );
         }
     };
@@ -234,10 +232,8 @@
             cswPrivate.tryExecSwallow(
                 function toConsole() {
                     name = name || '';
-                    if (window.internetExplorerVersionNo === -1) {
                         console.profileEnd(name);
                     }
-                }
             );
         }
     };
