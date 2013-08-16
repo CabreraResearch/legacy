@@ -7,7 +7,7 @@ namespace ChemSW.Nbt.Schema
     /// </summary>
     public class RunBeforeEveryExecutionOfUpdater_MakeMissingNodeTypeProps : CswUpdateSchemaTo
     {
-        public static string Title = "Pre-Script: MakeMissingNodeTypeProps";
+        public static string Title = "Run Always: MakeMissingNodeTypeProps";
 
         public override CswEnumDeveloper Author
         {
@@ -21,7 +21,7 @@ namespace ChemSW.Nbt.Schema
 
         public override string ScriptName
         {
-            get { return "RunBefore_MakeMissingNodeTypeProps"; }
+            get { return "MakeMissingNodeTypeProps"; }
         }
 
         public override bool AlwaysRun

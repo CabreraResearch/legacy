@@ -319,7 +319,7 @@ namespace ChemSW.Nbt.Schema
 
                         while( UpdateSucceeded && !Cancel && CurrentVersion != _CswSchemaUpdater.LatestVersion )
                         {
-                            SetStatus( "Updating to " + _CswSchemaUpdater.TargetVersion( CswNbtResources ) );
+                            //SetStatus( "Updating to " + _CswSchemaUpdater.TargetVersion( CswNbtResources ) );
 
                             UpdateSucceeded = _CswSchemaUpdater.runNextVersionedScript();
 
@@ -335,7 +335,7 @@ namespace ChemSW.Nbt.Schema
                             _updateHistoryTable( CswNbtResources, SchemaInfoEventArgs );
 
                             if( UpdateSucceeded )
-                                SetStatus( "Update successful" );
+                                SetStatus( "Update successful: " + _CswSchemaUpdater.getDriver().SchemaVersion + ": " + _CswSchemaUpdater.getDriver().Description );
                         }//iterate
                     }
 

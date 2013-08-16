@@ -228,7 +228,7 @@ namespace ChemSW.Nbt.Schema
                         //NextSchemaVersion.ReleaseIteration = NextSchemaVersion.ReleaseIteration + _UpdateDriversToRun.Keys.Count;
                         NextSchemaVersion.ReleaseIteration = NextSchemaVersion.ReleaseIteration + _getCountOfRunOnceScripts( _UpdateDriversToRun );
                         Pair.Value.SchemaVersion = NextSchemaVersion;
-                        Pair.Value.Description = Pair.Value.SchemaVersion.ToString();
+                        Pair.Value.Description = Pair.Value.ScriptName;
                     }
                     _UpdateDriversToRun.Add( Pair.Value.SchemaVersion, Pair.Value );
 

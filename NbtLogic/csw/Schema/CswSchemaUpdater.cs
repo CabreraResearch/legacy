@@ -84,6 +84,12 @@ namespace ChemSW.Nbt.Schema
             return ( _CswSchemaScripts[CswSchemaVersion] );
         }//getDriver()
 
+        private CswSchemaUpdateDriver _CurrentUpdateDriver;
+        public CswSchemaUpdateDriver getDriver()
+        {
+            return ( _CurrentUpdateDriver );
+        }
+
 
         //case 26617: removing otiose instance of CswNbtResources resolved catastrophic memory leak
         private bool _runScript( CswNbtResources CswNbtResources, CswSchemaUpdateDriver CswSchemaUpdateDriver, bool StampVersion )
@@ -114,10 +120,8 @@ namespace ChemSW.Nbt.Schema
 
             DataRow NewUpdateHistoryRow = _UpdateHistoryTable.NewRow();
             NewUpdateHistoryRow["updatedate"] = DateTime.Now.ToString();
-            if( null != CswSchemaUpdateDriver.SchemaVersion )
-            {
-                NewUpdateHistoryRow["version"] = CswSchemaUpdateDriver.SchemaVersion.ToString();
-            }
+            NewUpdateHistoryRow["version"] = CswSchemaUpdateDriver.SchemaVersion.ToString();
+
             // TODO: Remove this conditional if after FOXGLOVE is in production
             if( _UpdateHistoryTable.Columns.Contains( "scriptname" ) )
             {
@@ -165,7 +169,6 @@ namespace ChemSW.Nbt.Schema
             return ( _runScript( CswNbtResources, CswSchemaUpdateDriver, false ) );
         }//UpdateArbitraryScript
 
-
         /// <summary>
         /// Update the schema to the next version
         /// </summary>
@@ -179,6 +182,7 @@ namespace ChemSW.Nbt.Schema
             bool StampVersion = true;
             if( null != ( CurrentUpdateDriver = _CswSchemaScripts.Next( CswNbtResources ) ) )
             {
+                _CurrentUpdateDriver = CurrentUpdateDriver;
                 if( CurrentUpdateDriver.AlwaysRun ) { StampVersion = false; }
                 UpdateSuccessful = _runScript( CswNbtResources, CurrentUpdateDriver, StampVersion );
 
