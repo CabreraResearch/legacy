@@ -236,6 +236,32 @@ namespace ChemSW.Nbt.Schema
 
             #endregion
 
+            #region SDS
+
+            foreach( CswNbtMetaDataNodeType ChemicalNT in ChemicalOC.getNodeTypes() )
+            {
+                foreach( CswNbtMetaDataNodeTypeTab Tab in ChemicalNT.getNodeTypeTabs() )
+                {
+                    if( Tab.TabOrder >= 3 )
+                        Tab.TabOrder += 1;
+                }
+                CswNbtMetaDataNodeTypeTab HazardsTab = ChemicalNT.getNodeTypeTab( "Hazards" ) ?? _CswNbtSchemaModTrnsctn.MetaData.makeNewTab( ChemicalNT, "Hazards", 3 );
+                _CswNbtSchemaModTrnsctn.Modules.AddPropToTab( ChemicalNT.NodeTypeId, "Assigned SDS", HazardsTab, 1, 1 );
+                _CswNbtSchemaModTrnsctn.Modules.AddPropToTab( ChemicalNT.NodeTypeId, "View SDS", ChemicalNT.getIdentityTab(), 3, 2 );
+            }
+
+            //Show the following Container properties...
+            //   View SDS
+            if( _CswNbtSchemaModTrnsctn.Modules.IsModuleEnabled( CswEnumNbtModuleName.Containers ) )
+            {
+                foreach( CswNbtMetaDataNodeType ContainerNT in ContainerOC.getNodeTypes() )
+                {
+                    _CswNbtSchemaModTrnsctn.Modules.AddPropToTab( ContainerNT.NodeTypeId, "View SDS", ContainerNT.getIdentityTab(), 1, 2 );
+                }
+            }
+
+            #endregion
+
         } // update()
 
 
