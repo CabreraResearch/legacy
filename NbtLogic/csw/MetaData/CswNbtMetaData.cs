@@ -699,6 +699,9 @@ namespace ChemSW.Nbt.MetaData
             InsertedNodeTypesRow["enabled"] = CswConvert.ToDbVal( true );
             InsertedNodeTypesRow["searchdeferpropid"] = CswConvert.ToDbVal( NtModel.SearchDeferNodeTypePropId );    // see below for inheritance from object classes
             InsertedNodeTypesRow["nodecount"] = 0;
+
+            InsertedNodeTypesRow["oraviewname"] = CswTools.MakeOracleCompliantIdentifier( NtModel.NodeTypeName );
+
             NodeTypesTable.Rows.Add( InsertedNodeTypesRow );
 
             Int32 NodeTypeId = CswConvert.ToInt32( InsertedNodeTypesRow["nodetypeid"] );
@@ -1048,6 +1051,13 @@ namespace ChemSW.Nbt.MetaData
             InsertedRow["multi"] = CswConvert.ToDbVal( NtpModel.Multi );
             InsertedRow["readonly"] = CswConvert.ToDbVal( NtpModel.ReadOnly );
             InsertedRow["isunique"] = CswConvert.ToDbVal( NtpModel.IsUnique );
+
+            //note: if we are using numbering, we will perform this on the setter for prop.questionno
+            if( NtpModel.UseNumbering == false )
+            {
+                InsertedRow["oraviewcolname"] = CswTools.MakeOracleCompliantIdentifier( NtpModel.PropName );
+            }
+
 
             //Do actual update
             NodeTypePropsTable.Rows.Add( InsertedRow );
