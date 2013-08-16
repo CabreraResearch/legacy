@@ -425,10 +425,9 @@
             };
 
             cswPrivate.openAddNodeDialog = function (nodetypeToAdd, action) {
-                if (false === Csw.isNullOrEmpty(action)) {
-                    Csw.main.handleAction({ actionname: action });
-                } else {
-                    $.CswDialog('AddNodeDialog', {
+                Csw.layouts.addnode({
+                    action: action,
+                    dialogOptions: {
                         nodetypeid: nodetypeToAdd,
                         objectClassId: cswPrivate.objectClassId,
                         onAddNode: cswPrivate.onAddNodeFunc,
@@ -437,8 +436,8 @@
                         relatednodename: cswPrivate.relatedTo.relatednodename,
                         relatednodetypeid: cswPrivate.relatedTo.relatednodetypeid,
                         relatedobjectclassid: cswPrivate.relatedTo.relatedobjectclassid
-                    });
-                }
+                    }
+                });
             };
 
             cswPrivate.makeAddImage = function () {

@@ -7,23 +7,22 @@
         Csw.main.refreshWelcomeLandingPage = function () {
             Csw.main.universalsearch.enable();
             return Csw.main.setLandingPage(function () {
-                Csw.layouts.landingpage(Csw.main.centerBottomDiv, {
+                return Csw.layouts.landingpage(Csw.main.centerBottomDiv, {
                     name: 'welcomeLandingPage',
                     Title: '',
                     onLinkClick: Csw.main.handleItemSelect,
                     onAddClick: function (itemData) {
-                        if (false === Csw.isNullOrEmpty(itemData.ActionName)) {
-                            Csw.main.handleAction({ actionname: itemData.ActionName });
-                        } else {
-                            $.CswDialog('AddNodeDialog', {
+                        Csw.layouts.addnode({
+                            action: itemData.ActionName,
+                            dialogOptions: {
                                 text: itemData.Text,
                                 nodetypeid: itemData.NodeTypeId,
                                 onAddNode: function (nodeid, nodekey) {
                                     Csw.main.clear({ all: true });
                                     Csw.main.refreshNodesTree({ 'nodeid': nodeid, 'nodekey': nodekey, 'IncludeNodeRequired': true });
                                 }
-                            });
-                        }
+                            }
+                        });
                     },
                     onTabClick: function (itemData) {
                         Csw.cookie.set(Csw.cookie.cookieNames.CurrentTabId, itemData.TabId);
@@ -38,14 +37,17 @@
         };
 
         Csw.main.register('setLandingPage', function (loadLandingPage) {
-            Csw.main.clear({ all: true });
-            loadLandingPage();
-            Csw.main.refreshMainMenu();
-            return Csw.main.refreshViewSelect();
+            var toDo = [];
+            toDo.push(Csw.main.clear({ all: true }));
+            toDo.push(loadLandingPage());
+            toDo.push(Csw.main.refreshMainMenu());
+            toDo.push(Csw.main.refreshViewSelect());
+            return Q.all(toDo);
         });
 
         Csw.main.register('refreshLandingPage', function (eventObj, opts) {
-            Csw.main.clear({ all: true });
+            var toDo = [];
+            toDo.push(Csw.main.clear({ all: true }));
             var layData = {
                 ActionId: '',
                 RelatedObjectClassId: '',
@@ -57,20 +59,19 @@
             };
             Csw.extend(layData, opts);
 
-            Csw.main.refreshMainMenu();
-            Csw.main.refreshViewSelect();
+            toDo.push(Csw.main.refreshMainMenu());
+            toDo.push(Csw.main.refreshViewSelect());
 
-            return Csw.layouts.landingpage(Csw.main.centerBottomDiv, {
+            var lp = Csw.layouts.landingpage(Csw.main.centerBottomDiv, {
                 name: layData.name,
                 Title: layData.Title,
                 ActionId: layData.ActionId,
                 ObjectClassId: layData.RelatedObjectClassId,
                 onLinkClick: Csw.main.handleItemSelect,
                 onAddClick: function (itemData) {
-                    if (false === Csw.isNullOrEmpty(itemData.ActionName)) {
-                        Csw.main.handleAction({ actionname: itemData.ActionName });
-                    } else {
-                        $.CswDialog('AddNodeDialog', {
+                    Csw.layouts.addnode({
+                        action: itemData.ActionName,
+                        dialogOptions: {
                             text: itemData.Text,
                             nodetypeid: itemData.NodeTypeId,
                             relatednodeid: layData.RelatedNodeId,
@@ -81,8 +82,8 @@
                                 Csw.main.clear({ all: true });
                                 Csw.main.refreshNodesTree({ nodeid: nodeid, nodekey: nodekey, IncludeNodeRequired: true });
                             }
-                        });
-                    }
+                        }
+                    });
                 },
                 onTabClick: function (itemData) {
                     Csw.cookie.set(Csw.cookie.cookieNames.CurrentTabId, itemData.TabId);
@@ -107,6 +108,9 @@
                 },
                 isConfigurable: layData.isConfigurable
             });
+            toDo.push(lp.promise);
+            
+            return Q.all(toDo);
         });
         Csw.subscribe('refreshLandingPage', Csw.main.refreshLandingPage);
 
