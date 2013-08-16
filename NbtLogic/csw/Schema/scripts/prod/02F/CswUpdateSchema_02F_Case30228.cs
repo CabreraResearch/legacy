@@ -46,7 +46,7 @@ namespace ChemSW.Nbt.Schema
                 if( null != UserJurisdictionNTP )
                 {
                     UserJurisdictionNTP.updateLayout( CswEnumNbtLayoutType.Add, false );
-                    UserJurisdictionNTP.updateLayout( CswEnumNbtLayoutType.Edit, DoMove: false, TabId: UserNT.getFirstNodeTypeTab().TabId );
+                    UserJurisdictionNTP.updateLayout( CswEnumNbtLayoutType.Edit, DoMove : false, TabId : UserNT.getFirstNodeTypeTab().TabId );
                 }
             }
 
@@ -95,6 +95,46 @@ namespace ChemSW.Nbt.Schema
 
                     _CswNbtSchemaModTrnsctn.Modules.AddPropToTab( materialNT.NodeTypeId, CswNbtObjClassChemical.PropertyName.StorageCompatibility, "Hazards" );
                 }
+            }
+
+            #endregion
+
+            #region Fire Code
+
+            CswNbtMetaDataObjectClass LocationOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.LocationClass );
+            foreach( int LocationNTId in LocationOC.getNodeTypeIds() )
+            {
+                _CswNbtSchemaModTrnsctn.Modules.AddPropToFirstTab( LocationNTId, CswNbtObjClassLocation.PropertyName.ControlZone );
+
+                CswNbtMetaDataNodeTypeProp CtrlZoneNTP = _CswNbtSchemaModTrnsctn.MetaData.getNodeTypeProp( LocationNTId, CswNbtObjClassLocation.PropertyName.ControlZone );
+                _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Add, LocationNTId, CtrlZoneNTP, false );
+            }
+
+            CswNbtMetaDataObjectClass ChemicalOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass );
+            foreach( CswNbtMetaDataNodeType ChemicalNT in _CswNbtSchemaModTrnsctn.MetaData.getNodeTypes( ChemicalOC.ObjectClassId ) )
+            {
+                foreach( CswNbtMetaDataNodeTypeTab Tab in ChemicalNT.getNodeTypeTabs() )
+                {
+                    if( Tab.TabOrder >= 4 )
+                        Tab.TabOrder += 1;
+                }
+                CswNbtMetaDataNodeTypeTab HazardsTab = ChemicalNT.getNodeTypeTab( "Hazards" );
+                if( null == HazardsTab )
+                {
+                    HazardsTab = _CswNbtSchemaModTrnsctn.MetaData.makeNewTab( ChemicalNT, "Hazards", 4 );
+                }
+                _CswNbtSchemaModTrnsctn.Modules.AddPropToTab( ChemicalNT.NodeTypeId, "Material Type", HazardsTab, 4, 2, "Fire Reporting" );
+                _CswNbtSchemaModTrnsctn.Modules.AddPropToTab( ChemicalNT.NodeTypeId, "Special Flags", HazardsTab, 5, 2, "Fire Reporting" );
+                _CswNbtSchemaModTrnsctn.Modules.AddPropToTab( ChemicalNT.NodeTypeId, "Hazard Categories", HazardsTab, 6, 2, "Fire Reporting" );
+                _CswNbtSchemaModTrnsctn.Modules.AddPropToTab( ChemicalNT.NodeTypeId, "Hazard Classes", HazardsTab, 7, 2, "Fire Reporting" );
+            }
+
+            CswNbtMetaDataObjectClass ContainerOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerClass );
+            foreach( int ContainerNTId in ContainerOC.getNodeTypeIds() )
+            {
+                _CswNbtSchemaModTrnsctn.Modules.AddPropToTab( ContainerNTId, "Storage Pressure", "Fire Code" );
+                _CswNbtSchemaModTrnsctn.Modules.AddPropToTab( ContainerNTId, "Storage Temperature", "Fire Code" );
+                _CswNbtSchemaModTrnsctn.Modules.AddPropToTab( ContainerNTId, "Use Type", "Fire Code" );
             }
 
             #endregion
