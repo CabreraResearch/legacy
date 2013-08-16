@@ -27,6 +27,9 @@ namespace ChemSW.Nbt.Schema
             {
                 CswNbtMetaDataNodeTypeProp LocationNTP = SiteNT.getNodeTypePropByObjectClassProp( CswNbtObjClassLocation.PropertyName.Location );
 
+                LocationNTP.ReadOnly = true;
+                LocationNTP.removeFromAllLayouts();
+
                 CswNbtView SitesView = _CswNbtSchemaModTrnsctn.makeNewView( "Sites Location Not Null", CswEnumNbtViewVisibility.Hidden );
 
                 CswNbtViewRelationship parent = SitesView.AddViewRelationship( SiteNT, false );
