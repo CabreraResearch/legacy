@@ -306,6 +306,9 @@
                 case 'Ignore':
                     Csw.tryExec(o.success());
                     break;
+                case 'AlreadyLoggedIn':
+                    $.CswDialog('LogoutExistingSessionsDialog', {});
+                    break;
                 default:
                     txt = 'An error occurred';
                     break;
