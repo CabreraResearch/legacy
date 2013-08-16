@@ -29,6 +29,7 @@ namespace ChemSW.Nbt.Schema
 
                 LocationNTP.ReadOnly = true;
                 LocationNTP.removeFromAllLayouts();
+                LocationNTP.Hidden = true;
 
                 CswNbtView SitesView = _CswNbtSchemaModTrnsctn.makeNewView( "Sites Location Not Null", CswEnumNbtViewVisibility.Hidden );
 
