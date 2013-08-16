@@ -17,6 +17,7 @@ module.exports.app = [
     'app/proptypes/**.js',
     'app/view/**.js',
     'app/wizards/**.js',
+    'app/workers/**.js',
     'app/Main.js'
 ];
 

@@ -103,11 +103,11 @@
     <Content Include="app\main\csw.mainHandleImpersonation.js" />
     <Content Include="app\main\csw.mainEvents.js" />
     <Content Include="app\main\csw.mainDivs.js" />
+    <Content Include="app\promises\csw.spinners.js" />
     <Content Include="app\promises\csw.worker.js" />
     <Content Include="app\promises\csw.indexedDb.js" />
     <Content Include="app\promises\csw.promise.js" />
     <Content Include="app\promises\csw.worker.js" />
-    <Content Include="app\workers\ajaxWorker.js" />
     <Content Include="app\proptypes\csw.propTypeChildContents.js" />
     <Content Include="app\nodes\csw.node.treeExt.js" />
     <Content Include="app\proptypes\csw.propTypeCASNo.js" />
@@ -159,6 +159,7 @@
     <Content Include="app\wizards\csw.reconciliation.js" />
     <Content Include="app\types\csw.casno.js" />
     <Content Include="app\wizards\_template.js" />
+    <Content Include="app\workers\csw.worker.js" />
     <Content Include="Content\jquery.multiselect.css" />
     <Content Include="Content\jquery.multiselect.filter.css" />
     <Content Include="Content\shCore.css" />
@@ -1121,6 +1122,7 @@
     <Content Include="app\tools\csw.pubsub.js" />
     <Content Include="css\csw.vieweditor.css" />
     <Content Include="templates\MainForm_End.txt" />
+    <Content Include="webworkers\ajaxWorker.js" />
     <None Include="Csw2\templates\scripts.tmpl" />
     <None Include="Csw2\templates\header.tmpl" />
     <None Include="Csw2\templates\end.tmpl" />
