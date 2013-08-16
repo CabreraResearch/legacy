@@ -164,7 +164,100 @@ namespace ChemSW.Nbt.Schema
 
             #endregion
 
+            #region MLM
+
+            CswNbtMetaDataObjectClass containerOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerClass );
+            foreach( CswNbtMetaDataNodeType containerNT in containerOC.getNodeTypes() )
+            {
+                CswNbtMetaDataNodeTypeTab cmgTab = containerNT.getNodeTypeTab( "Central Material Group" );
+                if( null == cmgTab )
+                {
+                    cmgTab = _CswNbtSchemaModTrnsctn.MetaData.makeNewTab( containerNT, "Central Material Group", containerNT.getMaximumTabOrder() + 1 );
+                }
+                CswNbtMetaDataNodeTypeProp lotControlledNTP = containerNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.PropertyName.LotControlled );
+                lotControlledNTP.updateLayout( CswEnumNbtLayoutType.Edit, false, TabId : cmgTab.TabId );
+
+                CswNbtMetaDataNodeTypeProp requisitionableNTP = containerNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.PropertyName.Requisitionable );
+                requisitionableNTP.updateLayout( CswEnumNbtLayoutType.Edit, false, TabId : cmgTab.TabId );
+
+                CswNbtMetaDataNodeTypeProp reservedForNTP = containerNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.PropertyName.ReservedFor );
+                reservedForNTP.updateLayout( CswEnumNbtLayoutType.Edit, false, TabId : cmgTab.TabId );
+
+                CswNbtMetaDataNodeTypeProp receiptLotNTP = containerNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.PropertyName.ReceiptLot );
+                CswNbtMetaDataNodeTypeTab firstTab = containerNT.getFirstNodeTypeTab();
+                receiptLotNTP.updateLayout( CswEnumNbtLayoutType.Edit, false, TabId : firstTab.TabId );
+            }
+
+            CswNbtMetaDataObjectClass RequestMatDispOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestMaterialDispenseClass );
+            foreach( CswNbtMetaDataNodeType NodeType in RequestMatDispOc.getLatestVersionNodeTypes() )
+            {
+                CswNbtMetaDataNodeTypeTab CmgTab = NodeType.getNodeTypeTab( "Central Material Group" )
+                    ?? _CswNbtSchemaModTrnsctn.MetaData.makeNewTab( NodeType, "Central Material Group", NodeType.getNextTabOrder() );
+
+                CswNbtMetaDataNodeTypeProp RofNtp = NodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.RecurringFrequency );
+                RofNtp.updateLayout( CswEnumNbtLayoutType.Edit, true, CmgTab.TabId );
+                CswNbtMetaDataNodeTypeProp NrdNtp = NodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.NextReorderDate );
+                NrdNtp.updateLayout( CswEnumNbtLayoutType.Edit, RofNtp, true );
+
+                CswNbtMetaDataNodeTypeProp LastNtp = NrdNtp;
+                foreach( string CmgTabProp in CswNbtObjClassRequestMaterialDispense.PropertyName.MLMCmgTabProps )
+                {
+                    CswNbtMetaDataNodeTypeProp CmgNtp = NodeType.getNodeTypePropByObjectClassProp( CmgTabProp );
+                    CmgNtp.updateLayout( CswEnumNbtLayoutType.Edit, LastNtp, true );
+                    LastNtp = CmgNtp;
+                }
+
+                CswNbtMetaDataNodeTypeTab ReceiveTab = NodeType.getNodeTypeTab( "Receive" ) 
+                    ?? _CswNbtSchemaModTrnsctn.MetaData.makeNewTab( NodeType, "Receive", NodeType.getNextTabOrder() );
+                foreach( string ReceiveTabProp in CswNbtObjClassRequestMaterialDispense.PropertyName.MLMReceiveTabProps )
+                {
+                    CswNbtMetaDataNodeTypeProp ReceiveNtp = NodeType.getNodeTypePropByObjectClassProp( ReceiveTabProp );
+                    ReceiveNtp.updateLayout( CswEnumNbtLayoutType.Edit, true, ReceiveTab.TabId );
+                }
+            }
+
+            //Case 28339
+            //   Show Vendor.VendorType and CorporateEntity
+            //   Add a filter to Material.Supplier where VendorType = 'Coporate'
+            CswNbtMetaDataObjectClass vendorOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.VendorClass );
+            foreach( CswNbtMetaDataNodeType vendorNT in vendorOC.getNodeTypes() )
+            {
+                CswNbtMetaDataNodeTypeTab firstTab = vendorNT.getFirstNodeTypeTab();
+                CswNbtMetaDataNodeTypeProp vendorTypeNTP = vendorNT.getNodeTypePropByObjectClassProp( CswNbtObjClassVendor.PropertyName.VendorTypeName );
+                vendorTypeNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId : firstTab.TabId );
+                vendorTypeNTP.updateLayout( CswEnumNbtLayoutType.Add, true, TabId : firstTab.TabId );
+
+                CswNbtMetaDataNodeTypeProp corporateEntityNTP = vendorNT.getNodeTypePropByObjectClassProp( CswNbtObjClassVendor.PropertyName.CorporateEntityName );
+                corporateEntityNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId : firstTab.TabId );
+            }
+
+            _toggleMaterialRequestApprovalLevel( CswEnumNbtObjectClass.RequestMaterialCreateClass, true );
+            _toggleMaterialRequestApprovalLevel( CswEnumNbtObjectClass.RequestMaterialDispenseClass, true );
+
+            #endregion
+
         } // update()
+
+
+        //From MLM module
+        private void _toggleMaterialRequestApprovalLevel( CswEnumNbtObjectClass ObjClass, bool MLMDisabled )
+        {
+            CswNbtMetaDataObjectClass createMaterialRequestOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( ObjClass );
+            foreach( CswNbtMetaDataNodeType createMaterialRequestNT in createMaterialRequestOC.getNodeTypes() )
+            {
+                CswNbtMetaDataNodeTypeProp approvalLevelNT = createMaterialRequestNT.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialCreate.PropertyName.ApprovalLevel );
+                if( MLMDisabled )
+                {
+                    approvalLevelNT.removeFromAllLayouts();
+                }
+                else
+                {
+                    CswNbtMetaDataNodeTypeTab firstTab = createMaterialRequestNT.getFirstNodeTypeTab();
+                    approvalLevelNT.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId : firstTab.TabId );
+                    approvalLevelNT.updateLayout( CswEnumNbtLayoutType.Add, true );
+                }
+            }
+        }
 
     }
 
