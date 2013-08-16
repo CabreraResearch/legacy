@@ -129,6 +129,10 @@ namespace ChemSW.Nbt
                     // BZ 9077 - Password expired
                     AuthenticationStatus = CswEnumAuthenticationStatus.ExpiredPassword;
                 }
+                else if( 1 < _CswNbtResources.CswSessionManager.SessionsList.getSessionCountForUser( _CswNbtResources.AccessId, _AuthenticationRequest.UserName ) )
+                {
+                    AuthenticationStatus = CswEnumAuthenticationStatus.AlreadyLoggedIn;
+                }
             }
 
             return AuthenticationStatus;
