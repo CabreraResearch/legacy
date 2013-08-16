@@ -71,6 +71,7 @@
             }
         };
         
+        //Collect the methods into an API:
         ret.add('connect', connect);
         ret.add('disconnect', disconnect);
         ret.add('getDb', function () { return ret.IDB; });
@@ -104,6 +105,9 @@
         select.add('from', function () {
             return Csw.fun.shiftRight(Csw.db.select.from, ret, arguments, this);
         });
+
+        //Connect to the DB automatically
+        ret.connect(name, version);
 
         return ret;
     };
