@@ -71,7 +71,6 @@
             }
         };
         
-        
         ret.add('connect', connect);
         ret.add('disconnect', disconnect);
         ret.add('getDb', function () { return ret.IDB; });
@@ -90,11 +89,21 @@
                 return Csw.fun.shiftRight(Csw.db.index.create, ret, arguments, this);
             }
         });
+        
         ret.add('insert', function () {
             return Csw.fun.shiftRight(Csw.db.insert, ret, arguments, this);
         });
+
+        var select = Csw.object();
+        ret.add('select', select);
         
+        select.add('all', function () {
+            return Csw.fun.shiftRight(Csw.db.select.all, ret, arguments, this);
+        });
         
+        select.add('from', function () {
+            return Csw.fun.shiftRight(Csw.db.select.from, ret, arguments, this);
+        });
 
         return ret;
     };
