@@ -31,14 +31,17 @@
                     enabledText: 'Copy',
                     disabledText: 'Copying',
                     onClick: function () {
-                        Csw.copyNode({
-                            nodeid: cswPrivate.nodeid,
-                            nodekey: Csw.string(cswPrivate.nodekey, cswPrivate.nodekey[0]),
-                            onSuccess: function (nodeid, nodekey) {
-                                cswPrivate.onCopyNode(nodeid, nodekey);
+                        Csw.ajax.post({
+                            urlMethod: 'CopyNode',
+                            data: {
+                                NodeId: cswPrivate.nodeid,
+                                NodeKey: Csw.string(cswPrivate.nodekey, cswPrivate.nodekey[0])
+                            },
+                            success: function (result) {
+                                cswPrivate.onCopyNode(result.NewNodeId);
                                 copyDialog.close();
                             },
-                            onError: function () {
+                            error: function () {
                                 copyBtn.enable();
                             }
                         });
@@ -64,8 +67,13 @@
                     },
                     success: function (data) {
                         if (data && data.HasSpace) {
-                            //TODO - if copyType is not null, make a call to getCopyData and execute main.handleAction - else:
-                            cswPrivate.copyNodeDialog.open();
+                            if (false === Csw.isNullOrEmpty(cswPrivate.copyType)) {
+                                //TODO - make a call to getCopyData and execute main.handleAction
+                                //Csw.publish(Csw.enums.events.main.handleAction, data);
+                                Csw.main.handleAction({ actionname: cswPrivate.copyType });
+                            } else {
+                                cswPrivate.copyNodeDialog.open();
+                            }
                         } else {
                             $.CswDialog('AlertDialog', data.Message, 'Quota Exceeded', null, 140, 450);
                         }
