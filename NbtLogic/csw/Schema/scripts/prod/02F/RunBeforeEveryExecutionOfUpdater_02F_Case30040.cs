@@ -79,6 +79,16 @@ namespace ChemSW.Nbt.Schema
                 _CswNbtSchemaModTrnsctn.addBooleanColumn( Tablename, CswNbtImportTables.ImportDataMap.overwrite, "When importing, whether to overwrite existing nodes", false, true );
                 _CswNbtSchemaModTrnsctn.addBooleanColumn( Tablename, CswNbtImportTables.ImportDataMap.completed, "If true, the import is completed", false, true );
             }
+            if( false == _CswNbtSchemaModTrnsctn.isTableDefined( CswNbtImportTables.ImportDataJob.TableName ) )
+            {
+                string Tablename = CswNbtImportTables.ImportDataJob.TableName;
+                _CswNbtSchemaModTrnsctn.addTable( Tablename, CswNbtImportTables.ImportDataJob.PkColumnName );
+                _CswNbtSchemaModTrnsctn.addStringColumn( Tablename, CswNbtImportTables.ImportDataJob.filename, "Name of original excel file", false, true, 50 );
+                _CswNbtSchemaModTrnsctn.addDateColumn( Tablename, CswNbtImportTables.ImportDataJob.datestarted, "Date import started", false, false );
+                _CswNbtSchemaModTrnsctn.addDateColumn( Tablename, CswNbtImportTables.ImportDataJob.dateended, "Date import ended", false, false );
+                _CswNbtSchemaModTrnsctn.addForeignKeyColumn( Tablename, CswNbtImportTables.ImportDataJob.userid, "FK to user who uploaded the job", false, true, "nodes", "nodeid" );
+            }
+
         } // update()
 
     }//class RunBeforeEveryExecutionOfUpdater_02F_Case30040

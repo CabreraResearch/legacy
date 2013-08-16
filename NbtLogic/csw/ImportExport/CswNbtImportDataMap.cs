@@ -16,7 +16,7 @@ namespace ChemSW.Nbt.ImportExport
 
         public CswNbtImportDataMap( CswNbtResources CswNbtResources, string ImportDataTableName )
         {
-            CswTableUpdate ImportDataMapSelect = CswNbtResources.makeCswTableUpdate( "Importer_DataMap_Update", CswNbtImportTables.ImportDataMap.TableName );
+            CswTableSelect ImportDataMapSelect = CswNbtResources.makeCswTableSelect( "Importer_DataMap_Update", CswNbtImportTables.ImportDataMap.TableName );
             DataTable ImportDataMapTable = ImportDataMapSelect.getTable( "where " + CswNbtImportTables.ImportDataMap.datatablename + " = '" + ImportDataTableName + "'" );
             if( ImportDataMapTable.Rows.Count > 0 )
             {

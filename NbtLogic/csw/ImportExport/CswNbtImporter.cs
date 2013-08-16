@@ -78,10 +78,21 @@ namespace ChemSW.Nbt.ImportExport
         /// <summary>
         /// Stores data in temporary Oracle tables
         /// </summary>
-        public StringCollection storeData( string DataFilePath, string ImportDefinitionName, bool Overwrite )
+        public StringCollection storeData( string FileName, string FullFilePath, string ImportDefinitionName, bool Overwrite )
         {
             StringCollection ret = new StringCollection();
-            DataSet ExcelDataSet = _readExcel( DataFilePath );
+            DataSet ExcelDataSet = _readExcel( FullFilePath );
+
+            // Store the job reference in import_data_job
+            CswTableUpdate ImportDataJobUpdate = _CswNbtResources.makeCswTableUpdate( "Importer_DataMap_Insert", CswNbtImportTables.ImportDataMap.TableName );
+            DataTable ImportDataJobTable = ImportDataJobUpdate.getEmptyTable();
+            DataRow DataJobRow = ImportDataJobTable.NewRow();
+            DataJobRow[CswNbtImportTables.ImportDataJob.filename] = FileName;
+            DataJobRow[CswNbtImportTables.ImportDataJob.userid] = _CswNbtResources.CurrentNbtUser.UserId.PrimaryKey;
+            DataJobRow[CswNbtImportTables.ImportDataJob.datestarted] = CswConvert.ToDbVal( DateTime.Now );
+            ImportDataJobTable.Rows.Add( DataJobRow );
+            ImportDataJobUpdate.update( ImportDataJobTable );
+
             foreach( DataTable ExcelDataTable in ExcelDataSet.Tables )
             {
                 string SheetName = ExcelDataTable.TableName;
@@ -172,7 +183,7 @@ namespace ChemSW.Nbt.ImportExport
             }
             return ret;
         } // getDefinitions()
-        
+
         /// <summary>
         /// Returns import data table names, in import order
         /// </summary>

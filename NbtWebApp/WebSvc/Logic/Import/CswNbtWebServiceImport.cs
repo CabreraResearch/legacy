@@ -47,7 +47,7 @@ namespace ChemSW.Nbt.WebServices
             // Write uploaded file to temp dir
             CswTempFile myTempFile = new CswTempFile( CswResources );
             string path = myTempFile.saveToTempFile( parms.PostedFile.InputStream, DateTime.Now.Ticks + "_" + parms.PostedFile.FileName );
-            Importer.storeData( path, parms.ImportDefName, parms.Overwrite );
+            Importer.storeData( parms.PostedFile.FileName, path, parms.ImportDefName, parms.Overwrite );
         }
 
         [DataContract]

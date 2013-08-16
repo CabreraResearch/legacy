@@ -66,6 +66,18 @@ namespace ChemSW.Nbt.ImportExport
             public const string completed = "completed";
         }
 
+        public class ImportDataJob
+        {
+            public const string TableName = "import_data_job";
+            public const string PkColumnName = importdatajobid;
+
+            public const string importdatajobid = "importdatajobid";
+            public const string filename = "filename";
+            public const string datestarted = "datestarted";
+            public const string dateended = "dateended";
+            public const string userid = "userid";
+        }
+
         public class ImportDataN
         {
             public const string TableNamePrefix = "import_data";

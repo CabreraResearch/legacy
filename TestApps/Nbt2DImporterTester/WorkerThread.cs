@@ -71,7 +71,7 @@ namespace Nbt2DImporterTester
         {
             _CswNbtResources.AccessId = AccessId;
 
-            StringCollection ImportDataTableNames = _Importer.storeData( DataFilePath, ImportDefinitionName, true );
+            StringCollection ImportDataTableNames = _Importer.storeData( "", DataFilePath, ImportDefinitionName, true );
             OnStoreDataFinish( ImportDataTableNames );
 
             _CswNbtResources.commitTransaction();
