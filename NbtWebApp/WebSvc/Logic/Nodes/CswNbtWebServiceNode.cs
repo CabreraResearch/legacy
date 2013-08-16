@@ -1,6 +1,7 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Data;
+using System.Runtime.Serialization;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
@@ -12,6 +13,7 @@ using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.ServiceDrivers;
 using ChemSW.Nbt.Statistics;
 using NbtWebApp;
+using NbtWebApp.WebSvc.Returns;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.WebServices
@@ -39,35 +41,79 @@ namespace ChemSW.Nbt.WebServices
             return _NodeSd.CopyNode( NodePk );
         }
 
-        public static void getMaterialCopyData( ICswResources _CswResources, CswNbtWebServiceC3Search.CswNbtC3CreateMaterialReturn Data, string NodeId )
+        [DataContract]
+        public class CopyDataRequest
+        {
+            [DataMember]
+            public string NodeId = string.Empty;
+
+            [DataMember]
+            public string CopyType = string.Empty;
+        }
+
+        [DataContract]
+        public class CopyDataReturn : CswWebSvcReturn
+        {
+            public CopyDataReturn()
+            {
+                Data = new CopyTypeData();
+            }
+
+            [DataMember]
+            public CopyTypeData Data;
+
+            [DataContract]
+            public class CopyTypeData
+            {
+                //If we get any more copy types in the future, add their Response objects here 
+                //(and make sure they're named the same as the expected CopyType/CswEnumNbtActionName value)
+                public CopyTypeData()
+                {
+                    Create_Material = new CswNbtWebServiceC3Search.C3CreateMaterialResponse();
+                }
+                [DataMember]
+                public CswNbtWebServiceC3Search.C3CreateMaterialResponse Create_Material;
+            }
+        }
+
+        public static void getCopyData( ICswResources _CswResources, CopyDataReturn Copy, CopyDataRequest Request )
         {
             CswNbtResources _CswNbtResources = ( CswNbtResources ) _CswResources;
-            CswPrimaryKey OriginalNodeId = CswConvert.ToPrimaryKey( NodeId );
-            if( CswTools.IsPrimaryKey( OriginalNodeId ) )
+            //If we get any more copy types in the future, extract them out into their own classes and instantiate them via factory
+            if( Request.CopyType == CswEnumNbtActionName.Create_Material )
             {
-                CswNbtPropertySetMaterial OriginalMaterial = _CswNbtResources.Nodes.GetNode( OriginalNodeId );
-                if( null != OriginalMaterial )
+                CswPrimaryKey OriginalNodeId = CswConvert.ToPrimaryKey( Request.NodeId );
+                if( CswTools.IsPrimaryKey( OriginalNodeId ) )
                 {
-                    CswNbtPropertySetMaterial MaterialCopy = OriginalMaterial.CopyNode();
-                    Data.Data.actionname = CswEnumNbtActionName.Create_Material;
-                    Data.Data.state = new CswNbtWebServiceC3Search.C3CreateMaterialResponse.State();
-                    Data.Data.state.materialId = MaterialCopy.NodeId.ToString();
-                    Data.Data.state.materialType = new CswNbtWebServiceC3Search.C3CreateMaterialResponse.State.MaterialType
+                    CswNbtPropertySetMaterial OriginalMaterial = _CswNbtResources.Nodes.GetNode( OriginalNodeId );
+                    if( null != OriginalMaterial )
                     {
-                        name = MaterialCopy.NodeType.NodeTypeName,
-                        val = CswConvert.ToInt32( MaterialCopy.NodeTypeId )
-                    };
-                    Data.Data.state.materialId = MaterialCopy.NodeId.ToString();
-
-                    Data.Data.state.tradeName = OriginalMaterial.TradeName.Text;
-                    Data.Data.state.partNo = OriginalMaterial.PartNumber.Text;
-                    Data.Data.state.supplier = new CswNbtWebServiceC3Search.C3CreateMaterialResponse.State.Supplier
-                    {
-                        name = OriginalMaterial.Supplier.CachedNodeName,
-                        val = OriginalMaterial.Supplier.RelatedNodeId.ToString()
-                    };
-
-                    Data.Data.state.sizes = new Collection<CswNbtWebServiceC3Search.C3CreateMaterialResponse.State.SizeRecord>();
+                        CswNbtPropertySetMaterial MaterialCopy = OriginalMaterial.CopyNode();
+                        //TODO - Case 29176 - make copies of all the original material's components, symonyms, and GHS, and return the nodeids
+                        //TODO - in a collection.  At the end of the wizard, go through each of the nodeids and promote them from temp status
+                        Copy.Data.Create_Material = new CswNbtWebServiceC3Search.C3CreateMaterialResponse
+                        {
+                            actionname = CswEnumNbtActionName.Create_Material, 
+                            state = new CswNbtWebServiceC3Search.C3CreateMaterialResponse.State
+                            {
+                                materialId = MaterialCopy.NodeId.ToString(), 
+                                materialType = new CswNbtWebServiceC3Search.C3CreateMaterialResponse.State.MaterialType
+                                {
+                                    name = MaterialCopy.NodeType.NodeTypeName,
+                                    val = CswConvert.ToInt32( MaterialCopy.NodeTypeId )
+                                },
+                                tradeName = OriginalMaterial.TradeName.Text,
+                                partNo = OriginalMaterial.PartNumber.Text,
+                                supplier = new CswNbtWebServiceC3Search.C3CreateMaterialResponse.State.Supplier
+                                {
+                                    name = OriginalMaterial.Supplier.CachedNodeName,
+                                    val = OriginalMaterial.Supplier.RelatedNodeId.ToString()
+                                },
+                                sizes = new Collection<CswNbtWebServiceC3Search.C3CreateMaterialResponse.State.SizeRecord>()
+                            }
+                        };
+                        //TODO - Case 29176 - Sizes and SDS
+                    }
                 }
             }
         }

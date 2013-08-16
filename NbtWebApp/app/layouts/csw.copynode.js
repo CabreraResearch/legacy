@@ -68,13 +68,14 @@
                     success: function (data) {
                         if (data && data.HasSpace) {
                             if (false === Csw.isNullOrEmpty(cswPrivate.copyType)) {
-                                //This assumes the only copyType we have right now is CreateMaterial
-                                //TODO - If we ever make a new one, update this ajax method accordingly
                                 Csw.ajaxWcf.post({
-                                    urlMethod: 'Nodes/getMaterialCopyData',
-                                    data: cswPrivate.nodeid,
+                                    urlMethod: 'Nodes/getCopyData',
+                                    data: {
+                                        NodeId: cswPrivate.nodeid,
+                                        CopyType: cswPrivate.copyType
+                                    },
                                     success: function (data) {
-                                        Csw.main.handleAction(data);
+                                        Csw.main.handleAction(data[cswPrivate.copyType]);
                                     }
                                 });
                             } else {

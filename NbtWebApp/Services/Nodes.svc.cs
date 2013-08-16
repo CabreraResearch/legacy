@@ -82,17 +82,17 @@ namespace NbtWebApp
 
         [OperationContract]
         [WebInvoke( Method = "POST" )]
-        [Description( "Get the data required to copy a Material node" )]
+        [Description( "Get the data needed to copy a node through an action" )]
         [FaultContract( typeof( FaultException ) )]
-        public CswNbtWebServiceC3Search.CswNbtC3CreateMaterialReturn getMaterialCopyData( string CopyType )
+        public CswNbtWebServiceNode.CopyDataReturn getCopyData( CswNbtWebServiceNode.CopyDataRequest Request )
         {
-            CswNbtWebServiceC3Search.CswNbtC3CreateMaterialReturn Ret = new CswNbtWebServiceC3Search.CswNbtC3CreateMaterialReturn();
+            CswNbtWebServiceNode.CopyDataReturn Ret = new CswNbtWebServiceNode.CopyDataReturn();
 
-            var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceC3Search.CswNbtC3CreateMaterialReturn, string>(
+            var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceNode.CopyDataReturn, CswNbtWebServiceNode.CopyDataRequest>(
                 CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context ),
                 ReturnObj: Ret,
-                WebSvcMethodPtr: CswNbtWebServiceNode.getMaterialCopyData,
-                ParamObj: CopyType
+                WebSvcMethodPtr: CswNbtWebServiceNode.getCopyData,
+                ParamObj: Request
                 );
 
             SvcDriver.run();
