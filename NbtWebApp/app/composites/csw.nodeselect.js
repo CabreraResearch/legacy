@@ -427,16 +427,14 @@
             cswPrivate.openAddNodeDialog = function (nodetypeToAdd, action) {
                 Csw.layouts.addnode({
                     action: action,
-                    dialogOptions: {
-                        nodetypeid: nodetypeToAdd,
-                        objectClassId: cswPrivate.objectClassId,
-                        onAddNode: cswPrivate.onAddNodeFunc,
-                        text: 'Add New ' + cswPrivate.name,
-                        relatednodeid: cswPrivate.relatedTo.relatednodeid,
-                        relatednodename: cswPrivate.relatedTo.relatednodename,
-                        relatednodetypeid: cswPrivate.relatedTo.relatednodetypeid,
-                        relatedobjectclassid: cswPrivate.relatedTo.relatedobjectclassid
-                    }
+                    nodetypeid: nodetypeToAdd,
+                    objectClassId: cswPrivate.objectClassId,
+                    onAddNode: cswPrivate.onAddNodeFunc,
+                    title: 'Add New ' + cswPrivate.name,
+                    relatednodeid: cswPrivate.relatedTo.relatednodeid,
+                    relatednodename: cswPrivate.relatedTo.relatednodename,
+                    relatednodetypeid: cswPrivate.relatedTo.relatednodetypeid,
+                    relatedobjectclassid: cswPrivate.relatedTo.relatedobjectclassid
                 });
             };
 

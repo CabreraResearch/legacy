@@ -14,13 +14,11 @@
                     onAddClick: function (itemData) {
                         Csw.layouts.addnode({
                             action: itemData.ActionName,
-                            dialogOptions: {
-                                text: itemData.Text,
-                                nodetypeid: itemData.NodeTypeId,
-                                onAddNode: function (nodeid, nodekey) {
-                                    Csw.main.clear({ all: true });
-                                    Csw.main.refreshNodesTree({ 'nodeid': nodeid, 'nodekey': nodekey, 'IncludeNodeRequired': true });
-                                }
+                            title: itemData.Text,
+                            nodetypeid: itemData.NodeTypeId,
+                            onAddNode: function (nodeid, nodekey) {
+                                Csw.main.clear({ all: true });
+                                Csw.main.refreshNodesTree({ 'nodeid': nodeid, 'nodekey': nodekey, 'IncludeNodeRequired': true });
                             }
                         });
                     },
@@ -71,17 +69,15 @@
                 onAddClick: function (itemData) {
                     Csw.layouts.addnode({
                         action: itemData.ActionName,
-                        dialogOptions: {
-                            text: itemData.Text,
-                            nodetypeid: itemData.NodeTypeId,
-                            relatednodeid: layData.RelatedNodeId,
-                            relatednodename: layData.RelatedNodeName,
-                            relatednodetypeid: layData.RelatedNodeTypeId,
-                            relatedobjectclassid: layData.RelatedObjectClassId,
-                            onAddNode: function (nodeid, nodekey) {
-                                Csw.main.clear({ all: true });
-                                Csw.main.refreshNodesTree({ nodeid: nodeid, nodekey: nodekey, IncludeNodeRequired: true });
-                            }
+                        title: itemData.Text,
+                        nodetypeid: itemData.NodeTypeId,
+                        relatednodeid: layData.RelatedNodeId,
+                        relatednodename: layData.RelatedNodeName,
+                        relatednodetypeid: layData.RelatedNodeTypeId,
+                        relatedobjectclassid: layData.RelatedObjectClassId,
+                        onAddNode: function (nodeid, nodekey) {
+                            Csw.main.clear({ all: true });
+                            Csw.main.refreshNodesTree({ nodeid: nodeid, nodekey: nodekey, IncludeNodeRequired: true });
                         }
                     });
                 },

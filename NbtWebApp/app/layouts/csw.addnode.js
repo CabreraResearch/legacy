@@ -10,13 +10,63 @@
             (function _preCtor() {
                 cswPrivate.name = cswPrivate.name || 'AddNode';
                 cswPrivate.action = cswPrivate.action || 'AddNode';
-                cswPrivate.dialogOptions = cswPrivate.dialogOptions || {};
-                cswPrivate.nodetypeid = cswPrivate.nodetypeid || cswPrivate.dialogOptions.nodetypeid;
+                cswPrivate.title = cswPrivate.title || 'Add';
+                cswPrivate.nodeid = cswPrivate.nodeid || '';
+                cswPrivate.nodetypeid = cswPrivate.nodetypeid || '';
+                cswPrivate.objectClassId = cswPrivate.objectClassId || '';
+                cswPrivate.relatednodeid = cswPrivate.relatednodeid || '';
+                cswPrivate.relatednodename = cswPrivate.relatednodename || '';
+                cswPrivate.relatednodetypeid = cswPrivate.relatednodetypeid || '';
+                cswPrivate.relatedobjectclassid = cswPrivate.relatedobjectclassid || '';
+                cswPrivate.propertyData = cswPrivate.propertyData || {};
+                cswPrivate.onAddNode = cswPrivate.onAddNode || function () { };
+                cswPrivate.onSaveImmediate = cswPrivate.onSaveImmediate || function () { };
+            }());
+            
+            cswPrivate.addNodeDialog = (function () {
+                'use strict';
+
+                var addDialog = Csw.layouts.dialog({
+                    title: cswPrivate.title,
+                    width: 800,
+                    height: 600,
+                    onOpen: function() {
+                        if (cswPrivate.propertyData && cswPrivate.propertyData.node) {
+                            cswPrivate.nodeid = cswPrivate.propertyData.node.nodeid;
+                        }
+                        cswPublic.tabsAndProps = Csw.layouts.tabsAndProps(addDialog.div, {
+                            name: 'tabsAndProps',
+                            tabState: {
+                                propertyData: cswPrivate.propertyData,
+                                ShowAsReport: false,
+                                nodeid: cswPrivate.nodeid,
+                                nodetypeid: cswPrivate.nodetypeid,
+                                objectClassId: cswPrivate.objectClassId,
+                                relatednodeid: cswPrivate.relatednodeid,
+                                relatednodename: cswPrivate.relatednodename,
+                                relatednodetypeid: cswPrivate.relatednodetypeid,
+                                relatedobjectclassid: cswPrivate.relatedobjectclassid,
+                                EditMode: Csw.enums.editMode.Add
+                            },
+                            ReloadTabOnSave: false,
+                            onSave: function (nodeid, nodekey, tabcount, nodename, nodelink) {
+                                cswPublic.tabsAndProps.tearDown();
+                                if (nodeid || nodekey) {
+                                    Csw.tryExec(cswPrivate.onAddNode, nodeid, nodekey, nodename, nodelink);
+                                }
+                                Csw.tryExec(cswPrivate.onSaveImmediate);
+                                addDialog.close();
+                            },
+                            checkQuota: false //Case 29531 - quota has already been checked by layouts.addnode
+                        });
+                    }
+                });
+
+                return addDialog;
             }());
 
             (function _postCtor() {               
                 Csw.ajaxWcf.post({
-                    watchGlobal: cswPrivate.AjaxWatchGlobal,
                     urlMethod: 'Quotas/check',
                     data: {
                         NodeTypeId: Csw.number(cswPrivate.nodetypeid, 0)
@@ -33,9 +83,9 @@
                                         TabId: 'Add_tab',
                                         NodeTypeId: Csw.string(cswPrivate.nodetypeid),
                                         Date: new Date().toDateString(),
-                                        RelatedNodeId: Csw.string(cswPrivate.dialogOptions.relatednodeid),
-                                        RelatedNodeTypeId: Csw.string(cswPrivate.dialogOptions.relatednodetypeid),
-                                        RelatedObjectClassId: Csw.string(cswPrivate.dialogOptions.relatedobjectclassid),
+                                        RelatedNodeId: Csw.string(cswPrivate.relatednodeid),
+                                        RelatedNodeTypeId: Csw.string(cswPrivate.relatednodetypeid),
+                                        RelatedObjectClassId: Csw.string(cswPrivate.relatedobjectclassid),
                                         NodeId: 'newnode',
                                         SafeNodeKey: Csw.string(''),
                                         Multi: false,
@@ -46,10 +96,10 @@
                                     },
                                     success: function(propdata) {
                                         if (Csw.isNullOrEmpty(propdata.properties)) {
-                                            cswPrivate.dialogOptions.onAddNode(propdata.node.nodeid, null, propdata.node.nodename, propdata.node.nodelink);
+                                            cswPrivate.onAddNode(propdata.node.nodeid, null, propdata.node.nodename, propdata.node.nodelink);
                                         } else {
-                                            cswPrivate.dialogOptions.propertyData = propdata;
-                                            $.CswDialog('AddNodeDialog', cswPrivate.dialogOptions);
+                                            cswPrivate.propertyData = propdata;
+                                            cswPrivate.addNodeDialog.open();
                                         }
                                     }
                                 });

@@ -89,15 +89,13 @@
                                 break;
                             case 'AddNode':
                                 Csw.layouts.addnode({
-                                    dialogOptions: {
-                                        text: "New " + menuItemName,
-                                        nodetypeid: Csw.string(menuItemJson.nodetypeid),
-                                        relatednodeid: Csw.string(menuItemJson.relatednodeid), //for Grid Props
-                                        relatednodename: Csw.string(menuItemJson.relatednodename), //for Grid Props
-                                        relatednodetypeid: Csw.string(menuItemJson.relatednodetypeid), //for NodeTypeSelect
-                                        relatedobjectclassid: Csw.string(menuItemJson.relatedobjectclassid),
-                                        onAddNode: cswPrivate.onAlterNode
-                                    }
+                                    title: 'Add New ' + menuItemName,
+                                    nodetypeid: Csw.string(menuItemJson.nodetypeid),
+                                    relatednodeid: Csw.string(menuItemJson.relatednodeid), //for Grid Props
+                                    relatednodename: Csw.string(menuItemJson.relatednodename), //for Grid Props
+                                    relatednodetypeid: Csw.string(menuItemJson.relatednodetypeid), //for NodeTypeSelect
+                                    relatedobjectclassid: Csw.string(menuItemJson.relatedobjectclassid),
+                                    onAddNode: cswPrivate.onAlterNode
                                 });
                                 break;
                             case 'AddFeedback':

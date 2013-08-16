@@ -66,15 +66,13 @@
             $a.click(function () {
                 Csw.layouts.addnode({
                     action: o.itemJson.action,
-                    dialogOptions: {
-                        text: text,
-                        nodetypeid: Csw.string(o.itemJson.nodetypeid),
-                        relatednodeid: Csw.string(o.itemJson.relatednodeid), //for Grid Props
-                        relatednodename: Csw.string(o.itemJson.relatednodename), //for Grid Props
-                        relatednodetypeid: Csw.string(o.itemJson.relatednodetypeid), //for NodeTypeSelect
-                        relatedobjectclassid: Csw.string(o.itemJson.relatedobjectclassid),
-                        onAddNode: o.onAlterNode
-                    }
+                    title: 'Add New ' + text,
+                    nodetypeid: Csw.string(o.itemJson.nodetypeid),
+                    relatednodeid: Csw.string(o.itemJson.relatednodeid), //for Grid Props
+                    relatednodename: Csw.string(o.itemJson.relatednodename), //for Grid Props
+                    relatednodetypeid: Csw.string(o.itemJson.relatednodetypeid), //for NodeTypeSelect
+                    relatedobjectclassid: Csw.string(o.itemJson.relatedobjectclassid),
+                    onAddNode: o.onAlterNode
                 });
                 return false;
             });
