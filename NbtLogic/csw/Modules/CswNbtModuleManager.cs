@@ -446,10 +446,18 @@ namespace ChemSW.Nbt
             CswNbtMetaDataNodeTypeProp NodeTypeProp = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypeId, PropName );
             if( null != NodeTypeProp )
             {
-                NodeTypeProp.removeFromAllLayouts();
+                NodeTypeProp.Hidden = true;
             }
         }
 
+        public void ShowProp( int NodeTypeId, string PropName )
+        {
+            CswNbtMetaDataNodeTypeProp NodeTypeProp = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypeId, PropName );
+            if( null != NodeTypeProp )
+            {
+                NodeTypeProp.Hidden = false;
+            }
+        }
 
         public void ToggleReportNodes( string Category, bool Hidden )
         {
@@ -494,7 +502,7 @@ namespace ChemSW.Nbt
             string sql = @"select m2.name from modules m1
                                 join modules m2 on m2.moduleid = m1.prereq
                            where m1.moduleid = :moduleid ";
-            
+
             CswArbitrarySelect modulesAS = _CswNbtResources.makeCswArbitrarySelect( "getPrereq", sql );
             modulesAS.addParameter( "moduleid", moduleId.ToString() );
             DataTable modulesDT = modulesAS.getTable();
@@ -526,7 +534,7 @@ namespace ChemSW.Nbt
                            where m1.prereq = :moduleid ";
 
             CswArbitrarySelect arbSelect = _CswNbtResources.makeCswArbitrarySelect( "ModuleManage.GetChildModules", sql );
-            arbSelect.addParameter("moduleid", moduleId.ToString());
+            arbSelect.addParameter( "moduleid", moduleId.ToString() );
 
             DataTable tbl = arbSelect.getTable();
             foreach( DataRow row in tbl.Rows )

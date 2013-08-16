@@ -52,6 +52,53 @@ namespace ChemSW.Nbt.Schema
 
             #endregion
 
+            #region Containers
+
+            CswNbtMetaDataObjectClass locationOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.LocationClass );
+            foreach( int NodeTypeId in locationOC.getNodeTypeIds() )
+            {
+                _CswNbtSchemaModTrnsctn.Modules.AddPropToTab( NodeTypeId, CswNbtObjClassLocation.PropertyName.Containers, "Containers" );
+                _CswNbtSchemaModTrnsctn.Modules.AddPropToTab( NodeTypeId, "Inventory Levels", "Inventory Levels", 2 );
+                _CswNbtSchemaModTrnsctn.Modules.AddPropToFirstTab( NodeTypeId, CswNbtObjClassLocation.PropertyName.AllowInventory );
+                _CswNbtSchemaModTrnsctn.Modules.AddPropToFirstTab( NodeTypeId, CswNbtObjClassLocation.PropertyName.InventoryGroup );
+                _CswNbtSchemaModTrnsctn.Modules.AddPropToFirstTab( NodeTypeId, CswNbtObjClassLocation.PropertyName.StorageCompatibility );
+
+                CswNbtMetaDataNodeTypeProp AllowInvNTP = _CswNbtSchemaModTrnsctn.MetaData.getNodeTypeProp( NodeTypeId, CswNbtObjClassLocation.PropertyName.AllowInventory );
+                _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Add, NodeTypeId, AllowInvNTP, false );
+
+                CswNbtMetaDataNodeTypeProp InvGrpNTP = _CswNbtSchemaModTrnsctn.MetaData.getNodeTypeProp( NodeTypeId, CswNbtObjClassLocation.PropertyName.InventoryGroup );
+                _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Add, NodeTypeId, InvGrpNTP, false );
+
+                CswNbtMetaDataNodeTypeProp StorageCompatNTP = _CswNbtSchemaModTrnsctn.MetaData.getNodeTypeProp( NodeTypeId, CswNbtObjClassLocation.PropertyName.StorageCompatibility );
+                _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Add, NodeTypeId, StorageCompatNTP, false );
+            }
+
+            CswNbtMetaDataPropertySet MaterialSet = _CswNbtSchemaModTrnsctn.MetaData.getPropertySet( CswEnumNbtPropertySetName.MaterialSet );
+            foreach( CswNbtMetaDataObjectClass materialOC in MaterialSet.getObjectClasses() )
+            {
+                foreach( CswNbtMetaDataNodeType materialNT in _CswNbtSchemaModTrnsctn.MetaData.getNodeTypes( materialOC.ObjectClassId ) )
+                {
+                    string sizesNTPName = materialNT.NodeTypeName + " Sizes";
+                    _CswNbtSchemaModTrnsctn.Modules.AddPropToTab( materialNT.NodeTypeId, sizesNTPName, "Containers", 99 );
+
+                    _CswNbtSchemaModTrnsctn.Modules.AddPropToTab( materialNT.NodeTypeId, "Inventory Levels", "Containers", 99 );
+
+                    string containersNTPName = materialNT.NodeTypeName + " Containers";
+                    _CswNbtSchemaModTrnsctn.Modules.AddPropToTab( materialNT.NodeTypeId, containersNTPName, "Containers", 99 );
+
+                    CswNbtMetaDataNodeTypeTab materialNTT = materialNT.getFirstNodeTypeTab();
+                    _CswNbtSchemaModTrnsctn.Modules.AddPropToTab( materialNT.NodeTypeId, CswNbtObjClassChemical.PropertyName.ApprovedForReceiving, materialNTT );
+
+                    CswNbtMetaDataNodeTypeTab materialIdentityNTT = materialNT.getIdentityTab();
+                    _CswNbtSchemaModTrnsctn.Modules.AddPropToTab( materialNT.NodeTypeId, CswNbtObjClassChemical.PropertyName.Receive, materialIdentityNTT, 2, 2 );
+                    _CswNbtSchemaModTrnsctn.Modules.AddPropToTab( materialNT.NodeTypeId, CswNbtObjClassChemical.PropertyName.Request, materialIdentityNTT, 1, 2 );
+
+                    _CswNbtSchemaModTrnsctn.Modules.AddPropToTab( materialNT.NodeTypeId, CswNbtObjClassChemical.PropertyName.StorageCompatibility, "Hazards" );
+                }
+            }
+
+            #endregion
+
         } // update()
 
     }
