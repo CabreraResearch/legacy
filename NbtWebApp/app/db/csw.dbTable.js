@@ -15,7 +15,7 @@
      * @param tablePkColumnName {String} The name of the column, property or path to property to use as the primary key (e.g. 'customerid' or 'store.orders.customerid').
      * @param autoIncrement {Boolean} [autoIncrement=true] True if the pk index should auto increment
      */
-    var createTableImpl = function (promise, dbManager, tableName, tablePkColumnName, autoIncrement) {
+    var createTableImpl = function (deferred, dbManager, tableName, tablePkColumnName, autoIncrement) {
         dbManager.schemaScripts.push(
             /** @param db {IDBDatabase} An IDBDatabase instance*/
             function (db) {
@@ -24,16 +24,16 @@
                         keyPath: tablePkColumnName,
                         autoIncrement: false !== autoIncrement
                     });
-                    dbManager.schema.add(tableName, table);
-                    promise.resolve(table);
+                    dbManager.tables.add(tableName, table);
+                    deferred.resolve(table);
                 }
                 catch (e) {
                     console.log(e, e.stack);
-                    promise.reject(new Error('Could not create a new table', e));
+                    deferred.reject(new Error('Could not create a new table', e));
                 }
-                return dbManager.schema[tableName];
+                return dbManager.tables[tableName];
             });
-        return promise;
+        return deferred.promise;
     };
 
     /*
@@ -46,7 +46,7 @@
      */
     var createTable = function (dbManager, tableName, tablePkColumnName, autoIncrement) {
         var deferred = Q.defer();
-        return createTableImpl(deferred.promise, dbManager, tableName, tablePkColumnName, autoIncrement);
+        return createTableImpl(deferred, dbManager, tableName, tablePkColumnName, autoIncrement);
     };
 
     Csw.db.table.register('create', createTable);
@@ -58,22 +58,22 @@
      * @param dbManager {Csw.db.Manager} A DB Manager instance     
      * @param tableName {String} The name of the table (aka Object Store) to drop
      */
-    var dropTableImpl = function (promise, dbManager, tableName) {
+    var dropTableImpl = function (deferred, dbManager, tableName) {
         dbManager.schemaScripts.push(
             /** @param db {IDBDatabase} An IDBDatabase instance*/
             function (db) {
                 try {
                     db.deleteObjectStore(tableName);
                     delete dbManager.schema[tableName];
-                    promise.resolve();
+                    deferred.resolve();
                 }
                 catch (e) {
                     console.log(e, e.stack);
-                    promise.reject(new Error('Could not create a new table', e));
+                    deferred.reject(new Error('Could not create a new table', e));
                 }
                 return true;
             });
-        return promise;
+        return deferred.promise;
     };
 
     /*
@@ -84,7 +84,7 @@
      */
     var dropTable = function (dbManager, tableName) {
         var deferred = Q.defer();
-        return dropTableImpl(deferred.promise, dbManager, tableName);
+        return dropTableImpl(deferred, dbManager, tableName);
     };
 
     Csw.db.table.register('drop', dropTable);

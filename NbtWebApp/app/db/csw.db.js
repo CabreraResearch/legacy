@@ -7,19 +7,22 @@
     /*
      * Instance a DB Manager class which abstracts the mechanics for connecting to and selecting from an IndexedDb database
     */
-    var dbManager = function () {
-        var name, version, db, connectPromise, upgradeIsRequired = false;
+    var dbManager = function (name, version) {
+        var ret = Csw.object();
+        ret.add('promises', Csw.object());
+        
+        var isNewConnectionRequired = false;
         var schemaScripts = [];
 
         /*
          * Initiate a promise to connect to a database. When that connection is established, the promise will be resolved.
         */
         var connect = function (dbName, dbVersion, dbOnUpgrade) {
-            upgradeIsRequired = (!connectPromise || dbName !== name || dbVersion !== version);
-            if (upgradeIsRequired) {
+            isNewConnectionRequired = (!ret.promises.connect || dbName !== name || dbVersion !== version);
+            if (isNewConnectionRequired) {
                 var deferred = Q.defer();
 
-                connectPromise = deferred.promise;
+                ret.promises.connect = deferred.promise;
 
                 version = dbVersion || 1;
                 name = dbName;
@@ -28,56 +31,54 @@
                 var request = window.indexedDB.open(name, version);
 
                 request.onblocked = function (event) {
-                    db.close();
+                    ret.IDB.close();
                     alert("A new version of this page is ready. Please reload!");
                 };
 
                 request.onerror = function (event) {
                     deferred.reject(new Error("Database error: " + event.target.errorCode));
-                    if (db) {
-                        db.close();
+                    if (ret.IDB) {
+                        ret.IDB.close();
                     }
                 };
                 request.onsuccess = function (event) {
-                    db = request.result;
-                    deferred.resolve(db);
+                    ret.IDB = ret.IDB || request.result;
+                    deferred.resolve(ret.IDB);
                 };
                 request.onupgradeneeded = function (event) {
+                    ret.IDB = ret.IDB || request.result;
                     if (schemaScripts.length > 0) {
                         Csw.iterate(schemaScripts, function (script) {
                             //debugger;
-                            script(db);
+                            script(ret.IDB);
                         });
                     }
-                    dbOnUpgrade(db);
+                    dbOnUpgrade(ret.IDB);
                 };
             }
-            return connectPromise;
+            return ret.promises.connect;
         };
 
         /*
          * Disconnect from a database
         */
         var disconnect = function () {
-            if (connectPromise.isFulfilled()) {
-                db.close();
+            if (ret.promises.connect.isFulfilled()) {
+                ret.IDB.close();
             }
-            else if (db) {
-                connectPromise.done(db.close);
+            else if (ret.IDB) {
+                ret.promises.connect.done(ret.IDB.close);
             }
         };
         
-        var ret = Csw.object();
+        
         ret.add('connect', connect);
         ret.add('disconnect', disconnect);
-        ret.add('getDb', function () { return db; });
+        ret.add('getDb', function () { return ret.IDB; });
 
         ret.add('schemaScripts', schemaScripts);
         ret.add('tables', Csw.object());
-
-        ret.add('promises', Csw.object());
-        ret.promises.add('connect', connectPromise);
-
+        
         ret.add('ddl', {
             createTable: function (tableName, tablePkColumnName, autoIncrement) {
                 return Csw.fun.shiftRight(Csw.db.table.create, ret, arguments, this);
@@ -92,6 +93,9 @@
         ret.add('insert', function () {
             return Csw.fun.shiftRight(Csw.db.insert, ret, arguments, this);
         });
+        
+        
+
         return ret;
     };
 

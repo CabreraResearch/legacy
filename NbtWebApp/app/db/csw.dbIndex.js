@@ -4,6 +4,8 @@
 (function () {
     'use strict';
     
+    Csw.db.register('index', Csw.makeNameSpace());
+
     /*
       * Private implementation method to create a new index.
       * TODO: This (and other) DDL ops assumes that version management is handled elsewhere. Probably need to come up with a scipt-to-version mapper.
@@ -14,7 +16,7 @@
       * @param isUnique {Boolean} [isUnique=false] True if a unique constraint should be applied on the property
      */
     var createIndexImpl = function (dbManager, tableName, columnName, indexName, isUnique) {
-        var table = dbManager.schema[tableName];
+        var table = dbManager.tables[tableName];
         return table.createIndex(columnName, indexName || columnName + 'Idx', {
             unique: true === isUnique
         });
@@ -42,7 +44,7 @@
                 console.log(e, e.stack);
                 deferred.reject(new Error('Could not create a new index', e));
             }
-            return dbManager.schema[tableName];
+            return dbManager.tables[tableName];
         });
         return deferred.promise;
     };
