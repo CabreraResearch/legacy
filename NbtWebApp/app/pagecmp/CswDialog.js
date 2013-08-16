@@ -37,32 +37,6 @@
     var ExistingChangePasswordDialog = false;
     var ExistingShowLicenseDialog = false;
 
-    var afterObjectClassButtonClick = function (action, dialog) {
-        'use strict';
-        switch (Csw.string(action).toLowerCase()) {
-            case Csw.enums.nbtButtonAction.dispense:
-                Csw.tryExec(dialog.close);
-                break;
-            case Csw.enums.nbtButtonAction.reauthenticate:
-                Csw.tryExec(dialog.close);
-                break;
-            case Csw.enums.nbtButtonAction.receive:
-                Csw.tryExec(dialog.close);
-                break;
-            case Csw.enums.nbtButtonAction.refresh:
-                Csw.tryExec(dialog.close);
-                break;
-            case Csw.enums.nbtButtonAction.popup:
-                break;
-            case Csw.enums.nbtButtonAction.request:
-                break;
-            case Csw.enums.nbtButtonAction.loadView:
-                Csw.tryExec(dialog.close);
-                break;
-            case Csw.enums.nbtButtonAction.editprop:
-                break;
-        }
-    };
     var methods = {
 
         //#region Specialized
@@ -686,86 +660,6 @@
             openDialog(cswPublic.div, 900, 600, cswPublic.close, title, cswDlgPrivate.onOpen);
             return cswPublic;
         }, // EditNodeDialog
-        CopyNodeDialog: function (options) {
-            'use strict';
-            var cswDlgPrivate = {
-                'nodename': '',
-                'nodeid': '',
-                'nodetypeid': '',
-                'nodekey': '',
-                'onCopyNode': function () { }
-            };
-
-            if (Csw.isNullOrEmpty(options)) {
-                Csw.error.throwException(Csw.error.exception('Cannot create an Copy Dialog without options.', '', 'CswDialog.js', 177));
-            }
-            Csw.extend(cswDlgPrivate, options);
-            var cswPublic = {
-                div: Csw.literals.div({
-                    name: 'CopyNodeDialogDiv'
-                }),
-                close: function () {
-                    cswPublic.div.$.dialog('close');
-                }
-            };
-
-            // Prevent copy if quota is reached
-            var tbl = cswPublic.div.table({
-                name: 'CopyNodeDialogDiv_table'
-            });
-            var cell11 = tbl.cell(1, 1).propDom('colspan', '2');
-            var cell21 = tbl.cell(2, 1);
-            var cell22 = tbl.cell(2, 2);
-
-            Csw.ajaxWcf.post({
-                urlMethod: 'Quotas/check',
-                data: {
-                    NodeTypeId: Csw.string(cswDlgPrivate.nodetypeid),
-                    NodeKey: Csw.string(cswDlgPrivate.nodekey)
-                },
-                success: function (data) {
-                    if (Csw.bool(data.HasSpace)) {
-
-                        cell11.append('Copying: ' + cswDlgPrivate.nodename);
-                        cell11.br({ number: 2 });
-
-                        var copyBtn = cell21.button({
-                            name: 'copynode_submit',
-                            enabledText: 'Copy',
-                            disabledText: 'Copying',
-                            onClick: function () {
-                                Csw.copyNode({
-                                    'nodeid': cswDlgPrivate.nodeid,
-                                    'nodekey': Csw.string(cswDlgPrivate.nodekey, cswDlgPrivate.nodekey[0]),
-                                    'onSuccess': function (nodeid, nodekey) {
-                                        cswPublic.close();
-                                        cswDlgPrivate.onCopyNode(nodeid, nodekey);
-                                    },
-                                    'onError': function () {
-                                        copyBtn.enable();
-                                    }
-                                });
-                            }
-                        });
-
-                    } else {
-                        cell11.append('You have used all of your purchased quota, and must purchase additional quota space in order to add more.');
-                    } // if-else (Csw.bool(data.result)) {
-                } // success()
-            }); // ajax
-
-            /* Cancel Button */
-            cell22.button({
-                name: 'copynode_cancel',
-                enabledText: 'Cancel',
-                disabledText: 'Canceling',
-                onClick: function () {
-                    cswPublic.close();
-                }
-            });
-            openDialog(cswPublic.div, 400, 300, null, 'Confirm Copy');
-            return cswPublic;
-        }, // CopyNodeDialog       
         DeleteNodeDialog: function (options) {
             'use strict';
             var cswDlgPrivate = {
