@@ -47,6 +47,7 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02F_Case30197() ) );                    //02E-019 //02F-008
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02F_Case30417() ) );                    //02E-020 //02F-009
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02F_Case27883() ) );                    //02E-021 //02F-010
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02F_Case27495() ) );                    //02E-022 //02F-011
 
 
             #endregion FOXGLOVE
