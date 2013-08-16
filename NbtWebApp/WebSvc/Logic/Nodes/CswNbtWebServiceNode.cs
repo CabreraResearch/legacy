@@ -4,6 +4,7 @@ using System.Data;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
+using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.Batch;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
@@ -17,6 +18,8 @@ namespace ChemSW.Nbt.WebServices
 {
     public class CswNbtWebServiceNode
     {
+        #region Properties and ctor
+
         private readonly CswNbtResources _CswNbtResources;
         private readonly CswNbtStatisticsEvents _CswNbtStatisticsEvents;
         private readonly CswNbtSdNode _NodeSd;
@@ -27,10 +30,51 @@ namespace ChemSW.Nbt.WebServices
             _NodeSd = new CswNbtSdNode( _CswNbtResources, _CswNbtStatisticsEvents );
         }
 
+        #endregion Properties and ctor
+
+        #region Copy
+
         public CswPrimaryKey CopyNode( CswPrimaryKey NodePk )
         {
             return _NodeSd.CopyNode( NodePk );
         }
+
+        public static void getMaterialCopyData( ICswResources _CswResources, CswNbtWebServiceC3Search.CswNbtC3CreateMaterialReturn Data, string NodeId )
+        {
+            CswNbtResources _CswNbtResources = ( CswNbtResources ) _CswResources;
+            CswPrimaryKey OriginalNodeId = CswConvert.ToPrimaryKey( NodeId );
+            if( CswTools.IsPrimaryKey( OriginalNodeId ) )
+            {
+                CswNbtPropertySetMaterial OriginalMaterial = _CswNbtResources.Nodes.GetNode( OriginalNodeId );
+                if( null != OriginalMaterial )
+                {
+                    CswNbtPropertySetMaterial MaterialCopy = OriginalMaterial.CopyNode();
+                    Data.Data.actionname = CswEnumNbtActionName.Create_Material;
+                    Data.Data.state = new CswNbtWebServiceC3Search.C3CreateMaterialResponse.State();
+                    Data.Data.state.materialId = MaterialCopy.NodeId.ToString();
+                    Data.Data.state.materialType = new CswNbtWebServiceC3Search.C3CreateMaterialResponse.State.MaterialType
+                    {
+                        name = MaterialCopy.NodeType.NodeTypeName,
+                        val = CswConvert.ToInt32( MaterialCopy.NodeTypeId )
+                    };
+                    Data.Data.state.materialId = MaterialCopy.NodeId.ToString();
+
+                    Data.Data.state.tradeName = OriginalMaterial.TradeName.Text;
+                    Data.Data.state.partNo = OriginalMaterial.PartNumber.Text;
+                    Data.Data.state.supplier = new CswNbtWebServiceC3Search.C3CreateMaterialResponse.State.Supplier
+                    {
+                        name = OriginalMaterial.Supplier.CachedNodeName,
+                        val = OriginalMaterial.Supplier.RelatedNodeId.ToString()
+                    };
+
+                    Data.Data.state.sizes = new Collection<CswNbtWebServiceC3Search.C3CreateMaterialResponse.State.SizeRecord>();
+                }
+            }
+        }
+
+        #endregion Copy
+
+        #region Delete
 
         public JObject DeleteNodes( string[] NodePks, string[] NodeKeys )
         {
@@ -94,11 +138,6 @@ namespace ChemSW.Nbt.WebServices
         public bool DeleteNode( CswPrimaryKey NodePk, out string DeletedNodeName, bool DeleteAllRequiredRelatedNodes = false )
         {
             return _NodeSd.DeleteNode( NodePk, out DeletedNodeName, DeleteAllRequiredRelatedNodes );
-        }
-
-        public JObject doObjectClassButtonClick( CswPropIdAttr PropId, string SelectedText, string TabIds, JObject ReturnProps, string NodeIds, string PropIds )
-        {
-            return _NodeSd.doObjectClassButtonClick( PropId, SelectedText, TabIds, ReturnProps, NodeIds, PropIds );
         }
 
         private JObject _makeDeletedNodeText( CswNbtMetaDataNodeType NodeType, string NodeName, Int32 NodeId, CswNbtNode Node = null )
@@ -314,6 +353,15 @@ namespace ChemSW.Nbt.WebServices
             return Ret;
         }
 
+        #endregion Delete
+
+        public JObject doObjectClassButtonClick( CswPropIdAttr PropId, string SelectedText, string TabIds, JObject ReturnProps, string NodeIds, string PropIds )
+        {
+            return _NodeSd.doObjectClassButtonClick( PropId, SelectedText, TabIds, ReturnProps, NodeIds, PropIds );
+        }
+
+        #region Add
+
         /// <summary>
         /// Create a new node
         /// </summary>
@@ -327,6 +375,10 @@ namespace ChemSW.Nbt.WebServices
             _NodeSd.addSingleNodeProp( Node, PropObj, Tab );
 
         } // _applyPropJson
+
+        #endregion Add
+
+        #region Get
 
         public JObject getQuantityFromSize( CswPrimaryKey SizeId, string Action )
         {
@@ -413,6 +465,8 @@ namespace ChemSW.Nbt.WebServices
                 }
             }
         }
+
+        #endregion Get
 
     } // class CswNbtWebServiceNode
 

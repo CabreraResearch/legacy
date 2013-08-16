@@ -99,6 +99,14 @@ namespace ChemSW.Nbt.ObjClasses
             return Ret;
         }
 
+        public override CswNbtNode CopyNode()
+        {
+            CswNbtNode CopiedNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswEnumNbtMakeNodeOperation.MakeTemp );
+            CopiedNode.copyPropertyValues( Node );
+            CopiedNode.postChanges( true, true );
+            return CopiedNode;
+        }
+
         #endregion Base
 
         #region Abstract Methods

@@ -78,5 +78,25 @@ namespace NbtWebApp
             GetViewDriverType.run();
             return ( Ret );
         }
+
+
+        [OperationContract]
+        [WebInvoke( Method = "POST" )]
+        [Description( "Get the data required to copy a Material node" )]
+        [FaultContract( typeof( FaultException ) )]
+        public CswNbtWebServiceC3Search.CswNbtC3CreateMaterialReturn getMaterialCopyData( string CopyType )
+        {
+            CswNbtWebServiceC3Search.CswNbtC3CreateMaterialReturn Ret = new CswNbtWebServiceC3Search.CswNbtC3CreateMaterialReturn();
+
+            var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceC3Search.CswNbtC3CreateMaterialReturn, string>(
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context ),
+                ReturnObj: Ret,
+                WebSvcMethodPtr: CswNbtWebServiceNode.getMaterialCopyData,
+                ParamObj: CopyType
+                );
+
+            SvcDriver.run();
+            return ( Ret );
+        }
     }
 }
