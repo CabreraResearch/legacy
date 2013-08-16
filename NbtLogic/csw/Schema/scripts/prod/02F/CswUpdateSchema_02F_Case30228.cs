@@ -139,6 +139,31 @@ namespace ChemSW.Nbt.Schema
 
             #endregion
 
+            #region Manufacturer Lot Info
+
+            CswNbtMetaDataObjectClass ReceiptLotOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.ReceiptLotClass );
+            foreach( CswNbtMetaDataNodeType ReceiptLotNT in ReceiptLotOC.getNodeTypes() )
+            {
+                CswNbtMetaDataNodeTypeProp ManufacturerNTP = _CswNbtSchemaModTrnsctn.MetaData.getNodeTypeProp( ReceiptLotNT.NodeTypeId, CswNbtObjClassReceiptLot.PropertyName.Manufacturer );
+                _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, ReceiptLotNT.NodeTypeId, ManufacturerNTP, true, ReceiptLotNT.getFirstNodeTypeTab().TabId, 7, 1 );
+                _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Add, ReceiptLotNT.NodeTypeId, ManufacturerNTP, true );
+                CswNbtMetaDataNodeTypeProp ManufacturerLotNoNTP = _CswNbtSchemaModTrnsctn.MetaData.getNodeTypeProp( ReceiptLotNT.NodeTypeId, CswNbtObjClassReceiptLot.PropertyName.ManufacturerLotNo );
+                _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, ReceiptLotNT.NodeTypeId, ManufacturerLotNoNTP, true, ReceiptLotNT.getFirstNodeTypeTab().TabId, 8, 1 );
+                _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Add, ReceiptLotNT.NodeTypeId, ManufacturerLotNoNTP, true );
+                CswNbtMetaDataNodeTypeProp ManufacturedDateNTP = _CswNbtSchemaModTrnsctn.MetaData.getNodeTypeProp( ReceiptLotNT.NodeTypeId, CswNbtObjClassReceiptLot.PropertyName.ManufacturedDate );
+                _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, ReceiptLotNT.NodeTypeId, ManufacturedDateNTP, true, ReceiptLotNT.getFirstNodeTypeTab().TabId, 9, 1 );
+                _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Add, ReceiptLotNT.NodeTypeId, ManufacturedDateNTP, true );
+                _CswNbtSchemaModTrnsctn.Modules.AddPropToTab( ReceiptLotNT.NodeTypeId, CswNbtObjClassReceiptLot.PropertyName.AssignedCofA, ReceiptLotNT.getFirstNodeTypeTab(), 10, 1 );
+                _CswNbtSchemaModTrnsctn.Modules.AddPropToTab( ReceiptLotNT.NodeTypeId, CswNbtObjClassReceiptLot.PropertyName.ViewCofA, ReceiptLotNT.getIdentityTab(), 1, 1 );
+            }
+
+            foreach( CswNbtMetaDataNodeType ContainerNT in ContainerOC.getNodeTypes() )
+            {
+                _CswNbtSchemaModTrnsctn.Modules.AddPropToTab( ContainerNT.NodeTypeId, "View C of A", ContainerNT.getIdentityTab(), 1, 3 );
+            }
+
+            #endregion
+
         } // update()
 
     }
