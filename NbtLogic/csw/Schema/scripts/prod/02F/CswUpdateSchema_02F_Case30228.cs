@@ -2,6 +2,8 @@
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt.csw.Dev;
+using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -35,6 +37,20 @@ namespace ChemSW.Nbt.Schema
 
             #endregion
 
+            #region CISPro
+
+            CswNbtMetaDataObjectClass UserOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.UserClass );
+            foreach( CswNbtMetaDataNodeType UserNT in UserOC.getNodeTypes() )
+            {
+                CswNbtMetaDataNodeTypeProp UserJurisdictionNTP = UserNT.getNodeTypePropByObjectClassProp( CswNbtObjClassUser.PropertyName.Jurisdiction );
+                if( null != UserJurisdictionNTP )
+                {
+                    UserJurisdictionNTP.updateLayout( CswEnumNbtLayoutType.Add, false );
+                    UserJurisdictionNTP.updateLayout( CswEnumNbtLayoutType.Edit, DoMove: false, TabId: UserNT.getFirstNodeTypeTab().TabId );
+                }
+            }
+
+            #endregion
 
         } // update()
 
