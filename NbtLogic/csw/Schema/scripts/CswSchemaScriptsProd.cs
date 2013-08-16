@@ -31,6 +31,7 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02E_Case30300() ) );                    //02E-008 
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02E_Case30440() ) );                    //02E-009
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02E_Case30445() ) );                    //02E-010 
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02E_Case30484() ) );                    //02E-011 
             
             #endregion EUCALYPTUS
 
