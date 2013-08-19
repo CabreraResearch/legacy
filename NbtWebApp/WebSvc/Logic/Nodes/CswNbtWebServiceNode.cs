@@ -223,6 +223,10 @@ namespace ChemSW.Nbt.WebServices
                                     CswNbtObjClassSDSDocument SDSCopy = SDSDoc.CopyNode();
                                     SDSCopy.Owner.RelatedNodeId = MaterialCopy.NodeId;
                                     SDSCopy.postChanges( false );
+                                    if( i == 0 )
+                                    {
+                                        Copy.Data.Create_Material.state.sdsDocId = SDSCopy.NodeId.ToString();
+                                    }
                                     SDSTree.goToParentNode();
                                 }
 
