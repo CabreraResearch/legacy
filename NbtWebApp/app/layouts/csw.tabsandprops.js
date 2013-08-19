@@ -39,8 +39,6 @@
                     showSaveButton: true,
                     relatednodeid: '',
                     relatednodename: '',
-                    relatednodetypeid: '',
-                    relatedobjectclassid: '',
                     tabNo: 0,
                     nodetypeid: 0,
                     objectClassId: 0
@@ -273,14 +271,11 @@
                         EditMode: cswPrivate.tabState.EditMode,
                         NodeId: cswPublic.getNodeId(),
                         SafeNodeKey: cswPublic.getNodeKey(),
-                        //NodeTypeId: Csw.string(cswPrivate.tabState.nodetypeid),
                         Date: Csw.string(cswPrivate.tabState.date, new Date().toDateString()),
                         Multi: Csw.bool(cswPrivate.tabState.Multi),
                         filterToPropId: Csw.string(cswPrivate.tabState.filterToPropId),
                         ConfigMode: cswPrivate.tabState.Config,
-                        RelatedNodeId: Csw.string(cswPrivate.tabState.relatednodeid),
-                        RelatedNodeTypeId: Csw.string(cswPrivate.tabState.relatednodetypeid),
-                        RelatedObjectClassId: Csw.string(cswPrivate.tabState.relatedobjectclassid)
+                        RelatedNodeId: Csw.string(cswPrivate.tabState.relatednodeid)
                     },
                     success: function (data) {
                         cswPrivate.IdentityTab = data.properties;
@@ -917,8 +912,6 @@
                             filterToPropId: Csw.string(cswPrivate.tabState.filterToPropId),
                             ConfigMode: cswPrivate.tabState.Config,
                             RelatedNodeId: Csw.string(cswPrivate.tabState.relatednodeid),
-                            RelatedNodeTypeId: Csw.string(cswPrivate.tabState.relatednodetypeid),
-                            RelatedObjectClassId: Csw.string(cswPrivate.tabState.relatedobjectclassid),
                             GetIdentityTab: Csw.bool(Csw.isNullOrEmpty(cswPrivate.IdentityTab)),
                             ForceReadOnly: cswPrivate.forceReadOnly 
                         },

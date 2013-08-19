@@ -16,8 +16,6 @@
                 cswPrivate.objectClassId = cswPrivate.objectClassId || '';
                 cswPrivate.relatednodeid = cswPrivate.relatednodeid || '';
                 cswPrivate.relatednodename = cswPrivate.relatednodename || '';
-                cswPrivate.relatednodetypeid = cswPrivate.relatednodetypeid || '';
-                cswPrivate.relatedobjectclassid = cswPrivate.relatedobjectclassid || '';
                 cswPrivate.propertyData = cswPrivate.propertyData || {};
                 cswPrivate.onAddNode = cswPrivate.onAddNode || function () { };
                 cswPrivate.onSaveImmediate = cswPrivate.onSaveImmediate || function () { };
@@ -43,9 +41,6 @@
                                 nodetypeid: cswPrivate.nodetypeid,
                                 objectClassId: cswPrivate.objectClassId,
                                 relatednodeid: cswPrivate.relatednodeid,
-                                relatednodename: cswPrivate.relatednodename,
-                                relatednodetypeid: cswPrivate.relatednodetypeid,
-                                relatedobjectclassid: cswPrivate.relatedobjectclassid,
                                 EditMode: Csw.enums.editMode.Add
                             },
                             ReloadTabOnSave: false,
@@ -84,8 +79,6 @@
                                         NodeTypeId: Csw.string(cswPrivate.nodetypeid),
                                         Date: new Date().toDateString(),
                                         RelatedNodeId: Csw.string(cswPrivate.relatednodeid),
-                                        RelatedNodeTypeId: Csw.string(cswPrivate.relatednodetypeid),
-                                        RelatedObjectClassId: Csw.string(cswPrivate.relatedobjectclassid),
                                         NodeId: 'newnode',
                                         SafeNodeKey: Csw.string(''),
                                         Multi: false,

@@ -50,7 +50,6 @@
                 ActionId: '',
                 RelatedObjectClassId: '',
                 RelatedNodeName: '',
-                RelatedNodeTypeId: '',
                 isConfigurable: false,
                 Title: '',
                 name: 'CswLandingPage'
@@ -72,9 +71,6 @@
                         title: itemData.Text,
                         nodetypeid: itemData.NodeTypeId,
                         relatednodeid: layData.RelatedNodeId,
-                        relatednodename: layData.RelatedNodeName,
-                        relatednodetypeid: layData.RelatedNodeTypeId,
-                        relatedobjectclassid: layData.RelatedObjectClassId,
                         onAddNode: function (nodeid, nodekey) {
                             Csw.main.clear({ all: true });
                             Csw.main.refreshNodesTree({ nodeid: nodeid, nodekey: nodekey, IncludeNodeRequired: true });

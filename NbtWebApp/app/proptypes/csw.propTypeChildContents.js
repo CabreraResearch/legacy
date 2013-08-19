@@ -54,7 +54,6 @@
                 nsOptions.onAfterAdd = cswPrivate.loadNode;
                 nsOptions.relatedTo = {};
                 nsOptions.relatedTo.relatednodeid = nodeProperty.tabState.nodeid;
-                nsOptions.relatedTo.relatednodetypeid = nodeProperty.tabState.nodetypeid;
                 nsOptions.relatedTo.relatednodename = nodeProperty.tabState.nodename;
                 nsOptions.isRequired = nodeProperty.isRequired();
                 nsOptions.isMulti = nodeProperty.isMulti();
