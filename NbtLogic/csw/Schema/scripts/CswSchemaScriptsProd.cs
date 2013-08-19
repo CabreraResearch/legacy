@@ -32,7 +32,8 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02E_Case30440() ) );                    //02E-009
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02E_Case30445() ) );                    //02E-010 
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02E_Case30484() ) );                    //02E-011 
-            
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02E_Case30500() ) );                    //02E-012 
+
             #endregion EUCALYPTUS
 
             // This automatically detects the latest version
