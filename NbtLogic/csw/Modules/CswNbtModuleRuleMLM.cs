@@ -26,12 +26,6 @@ namespace ChemSW.Nbt
             CswNbtMetaDataObjectClass containerOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerClass );
             foreach( CswNbtMetaDataNodeType containerNT in containerOC.getNodeTypes() )
             {
-                //CswNbtMetaDataNodeTypeTab cmgTab = containerNT.getNodeTypeTab( "Central Material Group" );
-                //if( null == cmgTab )
-                //{
-                //    cmgTab = _CswNbtResources.MetaData.makeNewTab( containerNT, "Central Material Group", containerNT.getMaximumTabOrder() + 1 );
-                //}
-
                 _CswNbtResources.Modules.ShowProp( containerNT.NodeTypeId, CswNbtObjClassContainer.PropertyName.LotControlled );
                 _CswNbtResources.Modules.ShowProp( containerNT.NodeTypeId, CswNbtObjClassContainer.PropertyName.Requisitionable );
                 _CswNbtResources.Modules.ShowProp( containerNT.NodeTypeId, CswNbtObjClassContainer.PropertyName.ReservedFor );
@@ -99,9 +93,6 @@ namespace ChemSW.Nbt
                 _CswNbtResources.Modules.HideProp( containerNT.NodeTypeId, CswNbtObjClassContainer.PropertyName.Requisitionable );
                 _CswNbtResources.Modules.HideProp( containerNT.NodeTypeId, CswNbtObjClassContainer.PropertyName.ReservedFor );
                 _CswNbtResources.Modules.HideProp( containerNT.NodeTypeId, CswNbtObjClassContainer.PropertyName.ReceiptLot );
-
-                //CswNbtMetaDataNodeTypeTab cmgTab = containerNT.getNodeTypeTab( "Central Material Group" );
-                //_CswNbtResources.MetaData.DeleteNodeTypeTab( cmgTab );
             }
 
             CswNbtMetaDataObjectClass RequestMatDispOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestMaterialDispenseClass );
@@ -112,21 +103,10 @@ namespace ChemSW.Nbt
                     _CswNbtResources.Modules.HideProp( NodeType.NodeTypeId, CmgTabProp );
                 }
 
-                //CswNbtMetaDataNodeTypeTab CmgTab = NodeType.getNodeTypeTab( "Central Material Group" );
-                //if( null != CmgTab )
-                //{
-                //    _CswNbtResources.MetaData.DeleteNodeTypeTab( CmgTab );
-                //}
-
                 foreach( string ReceiveTabProp in CswNbtObjClassRequestMaterialDispense.PropertyName.MLMReceiveTabProps )
                 {
                     _CswNbtResources.Modules.HideProp( NodeType.NodeTypeId, ReceiveTabProp );
                 }
-                //CswNbtMetaDataNodeTypeTab ReceiveTab = NodeType.getNodeTypeTab( "Receive" );
-                //if( null != ReceiveTab )
-                //{
-                //    _CswNbtResources.MetaData.DeleteNodeTypeTab( ReceiveTab );
-                //}
 
                 //These layout moves are intentional
                 CswNbtMetaDataNodeTypeProp RofNtp = NodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.RecurringFrequency );
