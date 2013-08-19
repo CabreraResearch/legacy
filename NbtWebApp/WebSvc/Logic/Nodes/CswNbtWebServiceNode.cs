@@ -206,6 +206,30 @@ namespace ChemSW.Nbt.WebServices
                         }
 
                         #endregion Synonyms
+
+                        if( MaterialCopy.ObjectClass.ObjectClass == CswEnumNbtObjectClass.ChemicalClass )
+                        {
+                            if( CswEnumTristate.False == MaterialCopy.IsConstituent.Checked )
+                            {
+                                #region SDS
+
+                                CswNbtView SDSView = CswNbtObjClassSDSDocument.getAssignedSDSDocumentsView( _CswNbtResources, OriginalMaterial.NodeId );
+                                ICswNbtTree SDSTree = _CswNbtResources.Trees.getTreeFromView( SDSView, false, false, false );
+                                SDSTree.goToNthChild( 0 );
+                                for( int i = 0; i < SDSTree.getChildNodeCount(); i++ )
+                                {
+                                    SDSTree.goToNthChild( i );
+                                    CswNbtObjClassSDSDocument SDSDoc = SDSTree.getNodeForCurrentPosition();
+                                    CswNbtObjClassSDSDocument SDSCopy = SDSDoc.CopyNode();
+                                    SDSCopy.Owner.RelatedNodeId = MaterialCopy.NodeId;
+                                    SDSCopy.postChanges( false );
+                                    SDSTree.goToParentNode();
+                                }
+
+                                #endregion SDS
+
+                            }
+                        }
                     }
                 }
             }
