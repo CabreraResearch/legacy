@@ -4,7 +4,6 @@ using System.Data;
 using System.Runtime.Serialization;
 using ChemSW.Core;
 using ChemSW.DB;
-using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.Batch;
 using ChemSW.Nbt.MetaData;
@@ -80,6 +79,8 @@ namespace ChemSW.Nbt.WebServices
         {
             CswNbtResources _CswNbtResources = ( CswNbtResources ) _CswResources;
             //If we get any more copy types in the future, extract them out into their own classes and instantiate them via factory
+            #region Create_Material Copy Data
+
             if( Request.CopyType == CswEnumNbtActionName.Create_Material )
             {
                 CswPrimaryKey OriginalNodeId = CswConvert.ToPrimaryKey( Request.NodeId );
@@ -88,9 +89,9 @@ namespace ChemSW.Nbt.WebServices
                     CswNbtPropertySetMaterial OriginalMaterial = _CswNbtResources.Nodes.GetNode( OriginalNodeId );
                     if( null != OriginalMaterial )
                     {
+                        #region Material Properties
+
                         CswNbtPropertySetMaterial MaterialCopy = OriginalMaterial.CopyNode();
-                        //TODO - Case 29176 - make copies of all the original material's components, symonyms, and GHS, and return the nodeids
-                        //TODO - in a collection.  At the end of the wizard, go through each of the nodeids and promote them from temp status
                         Copy.Data.Create_Material = new CswNbtWebServiceC3Search.C3CreateMaterialResponse
                         {
                             actionname = CswEnumNbtActionName.Create_Material, 
@@ -109,13 +110,84 @@ namespace ChemSW.Nbt.WebServices
                                     name = OriginalMaterial.Supplier.CachedNodeName,
                                     val = OriginalMaterial.Supplier.RelatedNodeId.ToString()
                                 },
-                                sizes = new Collection<CswNbtWebServiceC3Search.C3CreateMaterialResponse.State.SizeRecord>()
+                                sizes = new Collection<CswNbtWebServiceC3Search.C3CreateMaterialResponse.State.SizeRecord>(),
+                                showOriginalUoM = false
                             }
                         };
-                        //TODO - Case 29176 - Sizes and SDS
+
+                        #endregion Material Properties
+
+                        #region Sizes
+
+                        CswNbtMetaDataObjectClass SizeOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.SizeClass );
+                        CswNbtMetaDataObjectClassProp MaterialOCP = SizeOC.getObjectClassProp( CswNbtObjClassSize.PropertyName.Material );
+                        CswNbtView SizesView = new CswNbtView( _CswNbtResources )
+                        {
+                            ViewName = "MaterialCopySizes"
+                        };
+                        CswNbtViewRelationship SizeVR = SizesView.AddViewRelationship( SizeOC, false );
+                        SizesView.AddViewPropertyAndFilter( SizeVR, MaterialOCP, OriginalMaterial.NodeId.PrimaryKey.ToString(), CswEnumNbtSubFieldName.NodeID );
+                        ICswNbtTree SizesTree = _CswNbtResources.Trees.getTreeFromView( SizesView, false, false, false );
+                        for( int i = 0; i < SizesTree.getChildNodeCount(); i++ )
+                        {
+                            SizesTree.goToNthChild( i );
+                            CswNbtObjClassSize SizeNode = SizesTree.getNodeForCurrentPosition();
+                            CswNbtObjClassSize SizeCopy = SizeNode.CopyNode();
+                            SizeCopy.Material.RelatedNodeId = MaterialCopy.NodeId;
+                            SizeCopy.InitialQuantity.UnitId = SizeNode.InitialQuantity.UnitId;
+                            SizeCopy.InitialQuantity.Quantity = SizeNode.InitialQuantity.Quantity;
+                            SizeCopy.CatalogNo.Text = SizeNode.CatalogNo.Text;
+                            SizeCopy.postChanges( false );
+                            Copy.Data.Create_Material.state.sizes.Add( new CswNbtWebServiceC3Search.C3CreateMaterialResponse.State.SizeRecord
+                            {
+                                nodeId = new CswNbtWebServiceC3Search.C3CreateMaterialResponse.State.SizeRecord.SizeData
+                                {
+                                    value = SizeNode.NodeId.ToString(),
+                                    readOnly = true,
+                                    hidden = true
+                                },
+                                unitCount = new CswNbtWebServiceC3Search.C3CreateMaterialResponse.State.SizeRecord.SizeData
+                                {
+                                    value = CswConvert.ToString( SizeNode.UnitCount.Value ),
+                                    readOnly = true,
+                                    hidden = false
+                                },
+                                quantity = new CswNbtWebServiceC3Search.C3CreateMaterialResponse.State.SizeRecord.SizeData
+                                {
+                                    value = CswConvert.ToString( SizeNode.InitialQuantity.Quantity ),
+                                    readOnly = true,
+                                    hidden = false
+                                },
+                                uom = new CswNbtWebServiceC3Search.C3CreateMaterialResponse.State.SizeRecord.SizeData
+                                {
+                                    value = SizeNode.InitialQuantity.CachedUnitName,
+                                    readOnly = false == string.IsNullOrEmpty( SizeNode.InitialQuantity.CachedUnitName ),
+                                    hidden = false
+                                },
+                                catalogNo = new CswNbtWebServiceC3Search.C3CreateMaterialResponse.State.SizeRecord.SizeData
+                                {
+                                    value = SizeNode.CatalogNo.Text,
+                                    readOnly = true,
+                                    hidden = false
+                                },
+                                quantityEditable = new CswNbtWebServiceC3Search.C3CreateMaterialResponse.State.SizeRecord.SizeData
+                                {
+                                    value = "checked"
+                                },
+                                dispensible = new CswNbtWebServiceC3Search.C3CreateMaterialResponse.State.SizeRecord.SizeData
+                                {
+                                    value = "checked"
+                                }
+                            });
+                            SizesTree.goToParentNode();
+                        }
+
+                        #endregion Sizes
                     }
                 }
             }
+
+            #endregion Create_Material Copy Data
         }
 
         #endregion Copy
