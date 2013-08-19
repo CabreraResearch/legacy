@@ -65,9 +65,9 @@ namespace ChemSW.Nbt.ImportExport
         /// <summary>
         /// Stores data in temporary Oracle tables
         /// </summary>
-        public StringCollection storeData( string FileName, string FullFilePath, string ImportDefinitionName, bool Overwrite )
+        public Int32 storeData( string FileName, string FullFilePath, string ImportDefinitionName, bool Overwrite )
         {
-            StringCollection ret = new StringCollection();
+            //StringCollection ret = new StringCollection();
             DataSet ExcelDataSet = _readExcel( FullFilePath );
 
             // Store the job reference in import_data_job
@@ -78,6 +78,7 @@ namespace ChemSW.Nbt.ImportExport
             DataJobRow[CswNbtImportTables.ImportDataJob.userid] = _CswNbtResources.CurrentNbtUser.UserId.PrimaryKey;
             DataJobRow[CswNbtImportTables.ImportDataJob.datestarted] = CswConvert.ToDbVal( DateTime.Now );
             ImportDataJobTable.Rows.Add( DataJobRow );
+            Int32 JobId = CswConvert.ToInt32( DataJobRow[CswNbtImportTables.ImportDataJob.importdatajobid] );
             ImportDataJobUpdate.update( ImportDataJobTable );
 
             foreach( DataTable ExcelDataTable in ExcelDataSet.Tables )
@@ -109,7 +110,7 @@ namespace ChemSW.Nbt.ImportExport
                 _CswNbtResources.commitTransaction();
                 _CswNbtResources.beginTransaction();
 
-                ret.Add( ImportDataTableName );
+                //ret.Add( ImportDataTableName );
 
                 // Store the sheet reference in import_data_map
                 CswTableUpdate ImportDataMapUpdate = _CswNbtResources.makeCswTableUpdate( "Importer_DataMap_Insert", CswNbtImportTables.ImportDataMap.TableName );
@@ -117,6 +118,7 @@ namespace ChemSW.Nbt.ImportExport
                 DataRow DataMapRow = ImportDataMapTable.NewRow();
                 DataMapRow[CswNbtImportTables.ImportDataMap.datatablename] = ImportDataTableName;
                 DataMapRow[CswNbtImportTables.ImportDataMap.importdefid] = Definition.ImportDefinitionId;
+                DataMapRow[CswNbtImportTables.ImportDataMap.importdatajobid] = JobId;
                 DataMapRow[CswNbtImportTables.ImportDataMap.overwrite] = CswConvert.ToDbVal( Overwrite );
                 DataMapRow[CswNbtImportTables.ImportDataMap.completed] = CswConvert.ToDbVal( false );
                 ImportDataMapTable.Rows.Add( DataMapRow );
@@ -151,7 +153,8 @@ namespace ChemSW.Nbt.ImportExport
             _CswNbtResources.commitTransaction();
             _CswNbtResources.beginTransaction();
 
-            return ret;
+            //return ret;
+            return JobId;
         } // storeData()
 
         /// <summary>

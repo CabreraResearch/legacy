@@ -20,7 +20,7 @@ namespace ChemSW.Nbt.ImportExport
 
         public CswNbtImportDataJob( CswNbtResources CswNbtResources, Int32 ImportJobId )
         {
-            CswTableSelect JobSelect = _CswNbtResources.makeCswTableSelect( "CswNbtImportDataJob_select", CswNbtImportTables.ImportDataJob.TableName );
+            CswTableSelect JobSelect = CswNbtResources.makeCswTableSelect( "CswNbtImportDataJob_select", CswNbtImportTables.ImportDataJob.TableName );
             DataTable JobDataTable = JobSelect.getTable( CswNbtImportTables.ImportDataJob.PkColumnName, ImportJobId );
             if( JobDataTable.Rows.Count > 0 )
             {
@@ -37,14 +37,17 @@ namespace ChemSW.Nbt.ImportExport
         {
             _CswNbtResources = CswNbtResources;
             _row = DataJobRow;
+            _UserNode = _CswNbtResources.Nodes[new CswPrimaryKey( "nodes", UserId )];
         }
 
+        
 
         [DataMember]
         [Description( "Primary Key" )]
         public Int32 ImportDataJobId
         {
             get { return CswConvert.ToInt32( _row[CswNbtImportTables.ImportDataJob.importdatajobid] ); }
+            private set { }
         }
 
         [DataMember]
@@ -52,6 +55,7 @@ namespace ChemSW.Nbt.ImportExport
         public string FileName
         {
             get { return _row[CswNbtImportTables.ImportDataJob.filename].ToString(); }
+            private set { }
         }
 
         [DataMember]
@@ -59,6 +63,7 @@ namespace ChemSW.Nbt.ImportExport
         public DateTime DateStarted
         {
             get { return CswConvert.ToDateTime( _row[CswNbtImportTables.ImportDataJob.datestarted] ); }
+            private set { }
         }
 
         [DataMember]
@@ -66,6 +71,7 @@ namespace ChemSW.Nbt.ImportExport
         public DateTime DateEnded
         {
             get { return CswConvert.ToDateTime( _row[CswNbtImportTables.ImportDataJob.dateended] ); }
+            private set { }
         }
 
         [DataMember]
@@ -73,7 +79,10 @@ namespace ChemSW.Nbt.ImportExport
         public Int32 UserId
         {
             get { return CswConvert.ToInt32( _row[CswNbtImportTables.ImportDataJob.userid] ); }
+            private set { }
         }
+
+        private CswNbtObjClassUser _UserNode;
 
         [DataMember]
         [Description( "Username of User responsible for import" )]
@@ -82,13 +91,13 @@ namespace ChemSW.Nbt.ImportExport
             get
             {
                 string ret = string.Empty;
-                CswNbtObjClassUser UserNode = _CswNbtResources.Nodes[new CswPrimaryKey( "nodes", UserId )];
-                if( null != UserNode )
+                if( null != _UserNode )
                 {
-                    ret = UserNode.Username;
+                    ret = _UserNode.Username;
                 }
                 return ret;
             }
+            private set { }
         } // UserName
 
         private Collection<CswNbtImportDataMap> _Maps = null;
@@ -110,36 +119,36 @@ namespace ChemSW.Nbt.ImportExport
             }
         }
 
-        public void getStatus( out Int32 RowsPending,
+        public void getStatus( out Int32 RowsDone,
                                out Int32 RowsTotal,
                                out Int32 RowsError,
-                               out Int32 ItemsPending,
+                               out Int32 ItemsDone,
                                out Int32 ItemsTotal )
         {
-            RowsPending = 0;
+            RowsDone = 0;
             RowsTotal = 0;
             RowsError = 0;
-            ItemsPending = 0;
+            ItemsDone = 0;
             ItemsTotal = 0;
 
             foreach( CswNbtImportDataMap Map in Maps )
             {
-                Int32 thisRowsPending = 0;
+                Int32 thisRowsDone = 0;
                 Int32 thisRowsTotal = 0;
                 Int32 thisRowsError = 0;
-                Int32 thisItemsPending = 0;
+                Int32 thisItemsDone = 0;
                 Int32 thisItemsTotal = 0;
 
-                Map.getStatus( out thisRowsPending,
+                Map.getStatus( out thisRowsDone,
                                out thisRowsTotal,
                                out thisRowsError,
-                               out thisItemsPending,
+                               out thisItemsDone,
                                out thisItemsTotal );
 
-                RowsPending += thisRowsPending;
+                RowsDone += thisRowsDone;
                 RowsTotal += thisRowsTotal;
                 RowsError += thisRowsError;
-                ItemsPending += thisItemsPending;
+                ItemsDone += thisItemsDone;
                 ItemsTotal += thisItemsTotal;
             }
         } // getStatus()

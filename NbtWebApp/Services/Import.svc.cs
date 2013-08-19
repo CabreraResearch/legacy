@@ -100,10 +100,10 @@ namespace NbtWebApp
 
 
         [OperationContract]
-        [WebInvoke( Method = "GET", ResponseFormat = WebMessageFormat.Json )]
+        [WebInvoke( Method = "POST", ResponseFormat = WebMessageFormat.Json )]
         [Description( "Get current status of imports" )]
         [FaultContract( typeof( FaultException ) )]
-        public CswNbtImportWcf.ImportStatusReturn getImportStatus()
+        public CswNbtImportWcf.ImportStatusReturn getImportStatus( CswNbtImportWcf.ImportStatusRequest parms )
         {
             CswNbtImportWcf.ImportStatusReturn ret = new CswNbtImportWcf.ImportStatusReturn();
 
@@ -111,7 +111,7 @@ namespace NbtWebApp
                 CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, AuthRequest ),
                 ReturnObj: ret,
                 WebSvcMethodPtr: CswNbtWebServiceImport.getImportStatus,
-                ParamObj: null
+                ParamObj: parms
                 );
 
             SvcDriver.run();

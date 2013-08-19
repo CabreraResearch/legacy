@@ -11,83 +11,136 @@
                 title: 'Import Data From Excel',
                 $parent: null,
                 onClose: null,
+                selectedJobId: 0
             };
             if (options) Csw.extend(cswPrivate, options);
             var cswPublic = {};
 
 
-            // Init
-            (function() {
-                var div = cswParent.div({
-                    suffix: 'div'
-                });
-                cswPublic.table = div.table({
-                    cellpadding: 2
-                });
+            cswPrivate.loadStatus = function (job) {
+                cswPrivate.selectedJobId = job.ImportDataJobId;
 
-                cswPublic.table.cell(1, 1)
-                    .propDom('colspan', 2)
-                    .addClass('LoginTitle')
-                    .text(cswPrivate.title);
+                Csw.ajaxWcf.post({
+                    urlMethod: 'Import/getImportStatus',
+                    data: {
+                        JobId: job.ImportDataJobId
+                    },
+                    success: function (data) {
 
-                cswPublic.table.cell(2, 1).br();
+                        var jobTable = cswPublic.statusTable.cell(2, 1)
+                            .empty()
+                            .propDom('colspan', 2)
+                            .table({
+                                FirstCellRightAlign: true,
+                                cellpadding: 2
+                            });
 
-                // 'Current Stats' table
+                        var itemPercent = Math.round(Csw.number(data.ItemsDone) / Csw.number(data.ItemsTotal) * 100, 2);
+                        var rowPercent = Math.round(Csw.number(data.RowsDone) / Csw.number(data.RowsTotal) * 100, 2);
+
+                        jobTable.cell(1, 1).text('Items Finished:');
+                        jobTable.cell(1, 2)
+                            .css({ fontWeight: 'bold' })
+                            .text(data.ItemsDone + " of " + data.ItemsTotal + " (" + itemPercent + "%)");
+
+                        jobTable.cell(2, 1).text('Rows Finished:');
+                        jobTable.cell(2, 2)
+                            .css({ fontWeight: 'bold' })
+                            .text(data.RowsDone + " of " + data.RowsTotal + " (" + rowPercent + "%)");
+
+                        jobTable.cell(3, 1).text('Error Rows:');
+                        jobTable.cell(3, 2)
+                            .css({ fontWeight: 'bold' })
+                            .text(data.RowsError);
+
+                    } // success()
+                }); // get()
+            }; // loadStatus()
+
+
+            cswPrivate.makeStatusTable = function () {
                 cswPublic.table.cell(3, 1)
                     .text('Current Status')
                     .css({ textAlign: 'center', fontWeight: 'bold' });
 
-                cswPublic.statusTable = cswPublic.table.cell(4, 1).table({
-                    FirstCellRightAlign: true,
-                    cellpadding: 2
-                });
-                
-                
-                Csw.ajaxWcf.get({
-                    urlMethod:'Import/getImportStatus',
-                    success: function(data) {
-                        cswPublic.statusTable.cell(1, 1).text('Pending Rows:');
-                        cswPublic.statusTable.cell(1, 2)
-                            .css({ fontWeight: 'bold' })
-                            .text(data.PendingCount);
+                cswPublic.statusTable = cswPublic.table.cell(4, 1)
+                    .empty()
+                    .table({
+                        FirstCellRightAlign: true,
+                        cellpadding: 2
+                    });
 
-                        cswPublic.statusTable.cell(2, 1).text('Error Rows:');
-                        cswPublic.statusTable.cell(2, 2)
-                            .css({ fontWeight: 'bold' })
-                            .text(data.ErrorCount);
+                cswPublic.statusTable.cell(1, 1).text('Job:');
+                cswPrivate.selJob = cswPublic.statusTable.cell(1, 2).select({
+                    name: 'selJob',
+                    onChange: function (newval) {
+                        Csw.iterate(cswPrivate.jobs, function (job) {
+                            if (Csw.number(job.ImportDataJobId) === Csw.number(newval)) {
+                                cswPrivate.loadStatus(job);
+                            }
+                        });
+                    }
+                }); // select()
+
+                Csw.ajaxWcf.get({
+                    urlMethod: 'Import/getImportJobs',
+                    success: function (data) {
+                        var first = true;
+                        cswPrivate.jobs = data;
+                        if (data.length > 0) {
+                            debugger;
+                            Csw.iterate(data, function (job) {
+                                var isSelected = ((cswPrivate.selectedJobId === 0 && first) ||
+                                                  (Csw.number(job.ImportDataJobId) === Csw.number(cswPrivate.selectedJobId)));
+                                cswPrivate.selJob.addOption({
+                                    value: job.ImportDataJobId,
+                                    display: job.FileName,
+                                    isSelected: isSelected
+                                });
+                                if(isSelected) {
+                                    cswPrivate.selJob.val(job.ImportDataJobId);
+                                    cswPrivate.loadStatus(job);
+                                }
+                                first = false;
+                            });
+                        } else {
+                            cswPublic.statusTable.cell(1, 2).text('No Jobs').css({ fontStyle: 'italic' });
+                        }
                     }
                 });
+            }; // makeStatusTable()
 
 
-                
-                // 'Upload New' table
+            cswPrivate.makeUploadTable = function () {
                 cswPublic.table.cell(3, 2)
                     .text('Upload a New Data File')
                     .css({ textAlign: 'center', fontWeight: 'bold' });
 
-                cswPublic.uploadTable = cswPublic.table.cell(4, 2).table({
-                    FirstCellRightAlign: true,
-                    cellpadding: 2
-                });
+                cswPublic.uploadTable = cswPublic.table.cell(4, 2)
+                    .empty()
+                    .table({
+                        FirstCellRightAlign: true,
+                        cellpadding: 2
+                    });
 
                 cswPublic.uploadTable.cell(1, 1).text('Import Definition:');
                 cswPrivate.selDefName = cswPublic.uploadTable.cell(1, 2).select({ name: 'selDefName' });
 
                 Csw.ajaxWcf.get({
-                    urlMethod:'Import/getImportDefs',
-                    success: function(data) {
-                        Csw.iterate(data.split(','), function(defname) {
+                    urlMethod: 'Import/getImportDefs',
+                    success: function (data) {
+                        Csw.iterate(data.split(','), function (defname) {
                             cswPrivate.selDefName.addOption({ value: defname, display: defname });
                         });
                     }
                 });
 
-                cswPublic.uploadTable.cell(2, 1).text( 'Overwrite:' );
+                cswPublic.uploadTable.cell(2, 1).text('Overwrite:');
                 cswPrivate.cbOverwrite = cswPublic.uploadTable.cell(2, 2).input({
-                        name: 'cbOverwrite',
-                        type: Csw.enums.inputTypes.checkbox,
-                        checked: true
-                    });
+                    name: 'cbOverwrite',
+                    type: Csw.enums.inputTypes.checkbox,
+                    checked: true
+                });
 
                 cswPublic.uploadTable.cell(3, 1).text('Excel Data File (.xlsx):');
                 cswPublic.uploadTable.cell(3, 2).buttonExt({
@@ -105,10 +158,34 @@
                             },
                             forceIframeTransport: true,
                             dataType: 'iframe',
-                            onSuccess: function (response) {}
+                            onSuccess: function (response) {
+                                cswPrivate.selectedJobId = response.jobid;
+                                cswPrivate.makeStatusTable();
+                            }
                         });
                     }
                 });
+            }; // makeUploadTable()
+
+
+            // Init
+            (function () {
+                var div = cswParent.div({
+                    suffix: 'div'
+                });
+                cswPublic.table = div.table({
+                    cellpadding: 2
+                });
+
+                cswPublic.table.cell(1, 1)
+                    .propDom('colspan', 2)
+                    .addClass('LoginTitle')
+                    .text(cswPrivate.title);
+
+                cswPublic.table.cell(2, 1).br();
+
+                cswPrivate.makeStatusTable();
+                cswPrivate.makeUploadTable();
 
             })(); // init
 

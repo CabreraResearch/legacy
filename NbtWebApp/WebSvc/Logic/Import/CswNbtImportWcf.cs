@@ -45,6 +45,9 @@ namespace ChemSW.Nbt.WebServices
         [DataContract]
         public class ImportDataReturn : CswWebSvcReturn
         {
+            [DataMember( IsRequired = true )]
+            [Description( "Job Id" )]
+            public Int32 JobId;
         }
 
         [DataContract]
@@ -85,16 +88,16 @@ namespace ChemSW.Nbt.WebServices
             public class ImportStatusReturnData
             {
                 [DataMember( IsRequired = true )]
-                [Description( "Number of pending items to process" )]
-                public Int32 ItemsPending;
+                [Description( "Number of pending items processed" )]
+                public Int32 ItemsDone;
 
                 [DataMember( IsRequired = true )]
                 [Description( "Total number of items to process" )]
                 public Int32 ItemsTotal;
 
                 [DataMember( IsRequired = true )]
-                [Description( "Number of pending rows to process" )]
-                public Int32 RowsPending;
+                [Description( "Number of pending rows processed" )]
+                public Int32 RowsDone;
 
                 [DataMember( IsRequired = true )]
                 [Description( "Number of rows in error state" )]

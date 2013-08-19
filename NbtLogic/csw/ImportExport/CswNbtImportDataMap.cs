@@ -64,16 +64,16 @@ namespace ChemSW.Nbt.ImportExport
             get { return CswConvert.ToBoolean( _row[CswNbtImportTables.ImportDataMap.completed] ); }
         }
 
-        public void getStatus( out Int32 RowsPending,
+        public void getStatus( out Int32 RowsDone,
                                out Int32 RowsTotal,
                                out Int32 RowsError,
-                               out Int32 ItemsPending,
+                               out Int32 ItemsDone,
                                out Int32 ItemsTotal )
         {
-            RowsPending = 0;
+            RowsDone = 0;
             RowsTotal = 0;
             RowsError = 0;
-            ItemsPending = 0;
+            ItemsDone = 0;
             ItemsTotal = 0;
 
             if( false == string.IsNullOrEmpty( ImportDataTableName ) && _CswNbtResources.isTableDefinedInDataBase( ImportDataTableName ) )
@@ -82,23 +82,22 @@ namespace ChemSW.Nbt.ImportExport
                 CswNbtImportDef BindingDef = new CswNbtImportDef( _CswNbtResources, ImportDefinitionId );
                 if( null != BindingDef && BindingDef.ImportOrder.Count > 0 )
                 {
-                    // RowsPending
+                    // RowsDone
                     string RowsPendingWhereClause = string.Empty;
                     foreach( CswNbtImportDefOrder Order in BindingDef.ImportOrder.Values )
                     {
                         if( string.Empty != RowsPendingWhereClause )
                         {
-                            RowsPendingWhereClause += " or ";
+                            RowsPendingWhereClause += " and ";
                         }
-                        RowsPendingWhereClause += Order.PkColName + " is null";
+                        RowsPendingWhereClause += Order.PkColName + " is not null";
                     }
-                    RowsPending = ImportDataSelect.getRecordCount( "where " + CswNbtImportTables.ImportDataN.error + " = '" + CswConvert.ToDbVal( false ) + "' and (" + RowsPendingWhereClause + ") " );
+                    RowsDone = ImportDataSelect.getRecordCount( "where " + CswNbtImportTables.ImportDataN.error + " = '" + CswConvert.ToDbVal( false ) + "' and (" + RowsPendingWhereClause + ") " );
 
                     // ItemsPending
-                    ItemsPending = 0;
                     foreach( CswNbtImportDefOrder Order in BindingDef.ImportOrder.Values )
                     {
-                        ItemsPending += ImportDataSelect.getRecordCount( "where " + CswNbtImportTables.ImportDataN.error + " = '" + CswConvert.ToDbVal( false ) + "' and " + Order.PkColName + " is null " );
+                        ItemsDone += ImportDataSelect.getRecordCount( "where " + CswNbtImportTables.ImportDataN.error + " = '" + CswConvert.ToDbVal( false ) + "' and " + Order.PkColName + " is not null " );
                     }
 
                     // And the rest

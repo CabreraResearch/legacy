@@ -91,12 +91,21 @@
                                errors.push(thiserr);
                            }
                         });
+                        var data = {};
+                        $.each($(jqXHR.result).find('body').children().children(), function(i, xmlnode) {
+                            if (xmlnode.nodeName !== "AUTHENTICATION" &&
+                                xmlnode.nodeName !== "LOGGING" &&
+                                xmlnode.nodeName !== "PERFORMANCE" &&
+                                xmlnode.nodeName !== "STATUS") {
+                                data[xmlnode.nodeName.toLowerCase()] = $(xmlnode).text();
+                            }
+                        });
                         if (false === succeeded) {
                             var lastErr = errors.length - 1;
                             Csw.error.showError(errors[lastErr], '');
                             Csw.tryExec(cswPrivate.onError, errors[lastErr]);
                         } else {
-                            Csw.tryExec(cswPrivate.onSuccess, {});
+                            Csw.tryExec(cswPrivate.onSuccess, data);
                         }
                     }
                 });

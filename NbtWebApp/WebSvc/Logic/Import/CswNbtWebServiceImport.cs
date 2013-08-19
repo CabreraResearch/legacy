@@ -41,10 +41,10 @@ namespace ChemSW.Nbt.WebServices
             if( Int32.MinValue != parms.JobId )
             {
                 CswNbtImportDataJob Job = new CswNbtImportDataJob( CswNbtResources, parms.JobId );
-                Job.getStatus( out ret.Data.RowsPending,
+                Job.getStatus( out ret.Data.RowsDone,
                                out ret.Data.RowsTotal,
                                out ret.Data.RowsError,
-                               out ret.Data.ItemsPending,
+                               out ret.Data.ItemsDone,
                                out ret.Data.ItemsTotal );
             }
         }
@@ -57,7 +57,7 @@ namespace ChemSW.Nbt.WebServices
             // Write uploaded file to temp dir
             CswTempFile myTempFile = new CswTempFile( CswResources );
             string path = myTempFile.saveToTempFile( parms.PostedFile.InputStream, DateTime.Now.Ticks + "_" + parms.PostedFile.FileName );
-            Importer.storeData( parms.PostedFile.FileName, path, parms.ImportDefName, parms.Overwrite );
+            ret.JobId = Importer.storeData( parms.PostedFile.FileName, path, parms.ImportDefName, parms.Overwrite );
         }
 
     } // class CswNbtWebServiceImport
