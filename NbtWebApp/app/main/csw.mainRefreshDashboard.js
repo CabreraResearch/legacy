@@ -40,9 +40,7 @@
             }
 
             var chain = Csw.getCachedWebServiceCall('getDashboard')
-                .then(function(data) {
-                    return doRefresh(data);
-                })
+                .then(doRefresh)
                 .then(function() {
                     return Csw.ajax.post({
                         urlMethod: 'getDashboard',

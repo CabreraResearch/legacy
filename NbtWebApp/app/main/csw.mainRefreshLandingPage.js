@@ -6,34 +6,39 @@
 
         Csw.main.refreshWelcomeLandingPage = function () {
             Csw.main.universalsearch.enable();
-            return Csw.main.setLandingPage(function () {
+            var doLoadLandingPage = function() {
                 return Csw.layouts.landingpage(Csw.main.centerBottomDiv, {
                     name: 'welcomeLandingPage',
                     Title: '',
+
                     onLinkClick: Csw.main.handleItemSelect,
-                    onAddClick: function (itemData) {
+                    onAddClick: function(itemData) {
                         Csw.layouts.addnode({
                             action: itemData.ActionName,
                             dialogOptions: {
                                 text: itemData.Text,
                                 nodetypeid: itemData.NodeTypeId,
-                                onAddNode: function (nodeid, nodekey) {
+                                onAddNode: function(nodeid, nodekey) {
                                     Csw.main.clear({ all: true });
                                     Csw.main.refreshNodesTree({ 'nodeid': nodeid, 'nodekey': nodekey, 'IncludeNodeRequired': true });
                                 }
                             }
                         });
                     },
-                    onTabClick: function (itemData) {
+                    onTabClick: function(itemData) {
                         Csw.cookie.set(Csw.cookie.cookieNames.CurrentTabId, itemData.TabId);
                         Csw.main.handleItemSelect(itemData);
                     },
                     onAddComponent: Csw.main.refreshWelcomeLandingPage,
+
+                    isLoadedFromCacheFirst: true,
+
                     landingPageRequestData: {
                         RoleId: ''
                     }
                 });
-            });
+            };
+            return Csw.main.setLandingPage(doLoadLandingPage);
         };
 
         Csw.main.register('setLandingPage', function (loadLandingPage) {
