@@ -25,7 +25,8 @@ namespace ChemSW.Nbt.Sched
                                                                        { TierII                        , TierII                         },
                                                                        { UpdtInspection                , UpdtInspection                 },
                                                                        { UpdtMTBF                      , UpdtMTBF                       },
-                                                                       { UpdtPropVals                  , UpdtPropVals                   }
+                                                                       { UpdtPropVals                  , UpdtPropVals                   },
+                                                                       { ValidateAccessIds             , ValidateAccessIds              }
                                                                    };
         /// <summary>
         /// The string value of the current instance
@@ -97,6 +98,7 @@ namespace ChemSW.Nbt.Sched
         public const string UpdtInspection = "UpdtInspection";
         public const string UpdtPropVals = "UpdtPropVals";
         public const string UpdtMTBF = "UpdtMTBF";
+        public const string ValidateAccessIds = "ValidateAccessIds";
 
         #endregion Enum members
 

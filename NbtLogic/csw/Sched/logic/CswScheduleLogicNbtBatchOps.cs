@@ -54,7 +54,7 @@ namespace ChemSW.Nbt.Sched
 
                 catch( Exception Exception )
                 {
-                    _CswScheduleLogicDetail.StatusMessage = "CswScheduleLogicNbtGenNode::GetUpdatedItems() exception: " + Exception.Message + "; " + Exception.StackTrace;
+                    _CswScheduleLogicDetail.StatusMessage = "CswScheduleLogicNbtBatchOps::GetUpdatedItems() exception: " + Exception.Message + "; " + Exception.StackTrace;
                     CswNbtResources.logError( new CswDniException( _CswScheduleLogicDetail.StatusMessage ) );
                     _LogicRunStatus = CswEnumScheduleLogicRunStatus.Failed;
                 }//catch

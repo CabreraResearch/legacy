@@ -4,6 +4,10 @@
 (function () {
     "use strict";
 
+    //Case 30479: gods help you if you need more than viewSelect in the same page at the same time.
+    //until that day, let's self-satisfy our promises.
+    var promise = null;
+
     Csw.composites.viewSelect = Csw.composites.viewSelect ||
         Csw.composites.register('viewSelect', function (cswParent, params) {
 
@@ -47,7 +51,7 @@
                 var tbl = showntbl;
                 morediv.moreLink.hide();
 
-                Csw.each(catobj.items, function (itemobj, itemname) {
+                Csw.iterate(catobj.items, function (itemobj, itemname) {
                     if (row > cswPrivate.hidethreshold && tbl === showntbl) {
                         row = 1;
                         tbl = hiddentbl;
@@ -100,9 +104,12 @@
                 Csw.tryExec(cswPrivate.onSelect, itemobj);
             }; // cswPrivate.handleSelect()
 
-
+            var toDo = [];
+            
             // Constructor
-            (function () {
+            (function ctor() {
+                toDo.push(ctor);
+                
                 cswPrivate.div = cswParent.div();
                 cswPublic = Csw.dom({}, cswPrivate.div);
 
@@ -119,17 +126,24 @@
 
                 Csw.extend(cswPublic, cswPrivate.comboBox);
 
-                cswPrivate.ajax = Csw.ajaxWcf.post({
+                if (promise) {
+                    promise.abort();
+                }
+                promise = Csw.ajaxWcf.post({
                     urlMethod: cswPrivate.viewMethod,
                     data: {
                         IsSearchable: cswPrivate.issearchable,
                         IncludeRecent: cswPrivate.includeRecent
-                    },
-                    success: function (data) {
-                        Csw.each(data.categories, cswPrivate.addCategory);
-                        Csw.tryExec(cswPrivate.onSuccess);
                     }
                 });
+                
+                promise.then(function (ret) {
+                    Csw.iterate(ret.Data.categories, cswPrivate.addCategory);
+                    return Csw.tryExec(cswPrivate.onSuccess);
+                });
+
+                toDo.push(promise);
+                return promise;
             })();
 
 
@@ -143,6 +157,8 @@
 
             cswPublic.val = cswPublic.value;
             
+            cswPublic.promise = Q.all(toDo);
+
             return cswPublic;
         });
 })();
