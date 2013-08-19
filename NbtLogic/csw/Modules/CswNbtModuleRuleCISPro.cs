@@ -20,11 +20,7 @@ namespace ChemSW.Nbt
             foreach( CswNbtMetaDataNodeType UserNT in UserOC.getNodeTypes() )
             {
                 CswNbtMetaDataNodeTypeProp UserJurisdictionNTP = UserNT.getNodeTypePropByObjectClassProp( CswNbtObjClassUser.PropertyName.Jurisdiction );
-                if( null != UserJurisdictionNTP )
-                {
-                    UserJurisdictionNTP.updateLayout( CswEnumNbtLayoutType.Add, false );
-                    UserJurisdictionNTP.updateLayout( CswEnumNbtLayoutType.Edit, DoMove: false, TabId: UserNT.getFirstNodeTypeTab().TabId );
-                }
+                UserJurisdictionNTP.Hidden = false;
             }
 
             //Case 27862 - show...
@@ -51,7 +47,7 @@ namespace ChemSW.Nbt
             foreach( CswNbtMetaDataNodeType UserNT in UserOC.getNodeTypes() )
             {
                 CswNbtMetaDataNodeTypeProp UserJurisdictionNTP = UserNT.getNodeTypePropByObjectClassProp( CswNbtObjClassUser.PropertyName.Jurisdiction );
-                UserJurisdictionNTP.removeFromAllLayouts();
+                UserJurisdictionNTP.Hidden = true;
             }
 
             //Case 27862 - hide...
