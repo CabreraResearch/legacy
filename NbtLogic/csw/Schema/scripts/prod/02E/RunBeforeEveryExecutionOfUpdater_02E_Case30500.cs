@@ -5,8 +5,11 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update
     /// </summary>
-    public class CswUpdateSchema_02E_Case30500 : CswUpdateSchemaTo
+    public class RunBeforeEveryExecutionOfUpdater_02E_Case30500 : CswUpdateSchemaTo
     {
+
+        public static string Title = "Pre-Script: Case 30500";
+
         public override CswEnumDeveloper Author
         {
             get { return CswEnumDeveloper.CM; }
