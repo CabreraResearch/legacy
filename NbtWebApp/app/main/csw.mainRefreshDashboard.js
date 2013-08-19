@@ -44,6 +44,7 @@
                 .then(function() {
                     return Csw.ajax.post({
                         urlMethod: 'getDashboard',
+                        watchGlobal: false,
                         success: function(data) {
                             doRefresh(data);
                             Csw.setCachedWebServiceCall('getDashboard', data);
