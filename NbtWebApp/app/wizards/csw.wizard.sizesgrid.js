@@ -381,15 +381,14 @@
 
                         cswParent.br();
 
+                        if (cswPrivate.sizeRowsToAdd.length > 0) {
+                            cswPrivate.addPreExistingRows();
+                        }
+
                     });
 
                 }()); //_pre()
-
-                (function _post() {
-                    if (cswPrivate.sizeRowsToAdd.length > 0) {
-                        cswPrivate.addPreExistingRows();
-                    }
-                }());
+                
             });
 
             return cswPublic;
