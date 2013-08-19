@@ -228,6 +228,29 @@ namespace ChemSW.Nbt.WebServices
 
                                 #endregion SDS
 
+                                #region Components
+
+                                CswNbtMetaDataObjectClass MaterialComponentOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.MaterialComponentClass );
+                                CswNbtMetaDataObjectClassProp CompMaterialOCP = MaterialComponentOC.getObjectClassProp( CswNbtObjClassMaterialComponent.PropertyName.Mixture );
+                                CswNbtView ComponentsView = new CswNbtView( _CswNbtResources )
+                                {
+                                    ViewName = "MaterialCopyComponents"
+                                };
+                                CswNbtViewRelationship ComponentsVR = ComponentsView.AddViewRelationship( MaterialComponentOC, false );
+                                ComponentsView.AddViewPropertyAndFilter( ComponentsVR, CompMaterialOCP, OriginalMaterial.NodeId.PrimaryKey.ToString(), CswEnumNbtSubFieldName.NodeID );
+                                ICswNbtTree ComponentsTree = _CswNbtResources.Trees.getTreeFromView( ComponentsView, false, false, false );
+                                for( int i = 0; i < ComponentsTree.getChildNodeCount(); i++ )
+                                {
+                                    ComponentsTree.goToNthChild( i );
+                                    CswNbtObjClassMaterialComponent ComponentNode = ComponentsTree.getNodeForCurrentPosition();
+                                    CswNbtObjClassMaterialComponent ComponentCopy = ComponentNode.CopyNode();
+                                    ComponentCopy.Mixture.RelatedNodeId = MaterialCopy.NodeId;
+                                    ComponentCopy.Constituent.RelatedNodeId = ComponentNode.Constituent.RelatedNodeId;
+                                    ComponentCopy.postChanges( false );
+                                    ComponentsTree.goToParentNode();
+                                }
+
+                                #endregion Components
                             }
                         }
                     }
