@@ -3,6 +3,11 @@
 
 (function () {
     'use strict';
+   
+    var onError = function (eventObj) {
+        Csw.debug.error(eventObj.target.error);
+        return new Error(eventObj.target.error);
+    };
     
     /*
     * Private implementation method to insert new records into a table
@@ -13,28 +18,29 @@
     var insertImpl = function (dbManager, tableName, records) {
         var deferred = Q.defer();
         var doInsert = function () {
-            var transaction = dbManager.getDb().transaction([tableName], 'readwrite');
+            try {
+                var transaction = dbManager.getDb().transaction([tableName], 'readwrite');
 
-            var objectStore = transaction.objectStore(tableName);
-            Csw.iterate(records, function (rec) {
-                objectStore.add(rec);
-            });
+                var objectStore = transaction.objectStore(tableName);
+                Csw.iterate(records, function (rec) {
+                    objectStore.add(rec);
+                });
+
+            }
+            catch (e) {
+                console.log(e, e.stack);
+                deferred.reject(new Error('Could not insert records', e));
+            }
 
             return deferred.resolve(true);
         };
-        try {
-            dbManager.promises.connect.then(doInsert);
-        }
-        catch (e) {
-            console.log(e, e.stack);
-            deferred.reject(new Error('Could not insert records', e));
-        }
 
+        dbManager.promises.connect.then(doInsert);
         return deferred.promise;
     };
 
     /*
-     * Private implementation method to insert new records into a table
+     * Public implementation method to insert new records into a table
      * @param dbManager {Csw.db.Manager} A DB Manager instance
      * @param tableName {String} The name of the table to insert into
      * @param records {Array} An Array of records (objects) to insert into the db

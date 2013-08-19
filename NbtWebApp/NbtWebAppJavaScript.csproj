@@ -82,6 +82,7 @@
     <Content Include="app\composites\csw.quickTip.js" />
     <Content Include="app\composites\csw.tabselect.js" />
     <Content Include="app\core\csw.domNode.js" />
+    <Content Include="app\db\csw.dbUpdate.js" />
     <Content Include="app\db\csw.dbSelect.js" />
     <Content Include="app\db\csw.dbTable.js" />
     <Content Include="app\db\csw.dbInsert.js" />
