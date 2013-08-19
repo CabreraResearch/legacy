@@ -37,22 +37,59 @@
 
                         var itemPercent = Math.round(Csw.number(data.ItemsDone) / Csw.number(data.ItemsTotal) * 100, 2);
                         var rowPercent = Math.round(Csw.number(data.RowsDone) / Csw.number(data.RowsTotal) * 100, 2);
+                        var jobrow = 1;
 
-                        jobTable.cell(1, 1).text('Items Finished:');
-                        jobTable.cell(1, 2)
+                        // kludge until we have a general way to solve this                        
+                        function DateWCF(datestr) {
+                            if (false === Csw.isNullOrEmpty(datestr)) {
+                                var m = datestr.match(/\/Date\(([0-9]+)(?:.*)\)\//);
+                                if (null !== m) {
+                                    var d = new Date(parseInt(m[1]));
+                                    return d.getMonth() + '/' + d.getDate() + '/' + d.getFullYear() + " " +
+                                           d.getHours() + ':' + ('0' + d.getMinutes()).slice(-2) + ':' + ('0' + d.getSeconds()).slice(-2);
+                                }
+                            } else {
+                                return "";
+                            }
+                        };
+                 
+                        jobTable.cell(jobrow, 1).text('Uploaded By:');
+                        jobTable.cell(jobrow, 2)
+                            .css({ fontWeight: 'bold' })
+                            .text(job.UserName);
+                        jobrow++;
+
+
+                        jobTable.cell(jobrow, 1).text('Date Started:');
+                        jobTable.cell(jobrow, 2)
+                            .css({ fontWeight: 'bold' })
+                            .text(DateWCF(job.DateStarted));
+                        jobrow++;
+
+                        jobTable.cell(jobrow, 1).text('Date Ended:');
+                        jobTable.cell(jobrow, 2)
+                            .css({ fontWeight: 'bold' })
+                            .text(DateWCF(job.DateEnded));
+                        jobrow++;
+
+                        jobTable.cell(jobrow, 1).text('Items Finished:');
+                        jobTable.cell(jobrow, 2)
                             .css({ fontWeight: 'bold' })
                             .text(data.ItemsDone + " of " + data.ItemsTotal + " (" + itemPercent + "%)");
-
-                        jobTable.cell(2, 1).text('Rows Finished:');
-                        jobTable.cell(2, 2)
+                        jobrow++;
+                        
+                        jobTable.cell(jobrow, 1).text('Rows Finished:');
+                        jobTable.cell(jobrow, 2)
                             .css({ fontWeight: 'bold' })
                             .text(data.RowsDone + " of " + data.RowsTotal + " (" + rowPercent + "%)");
-
-                        jobTable.cell(3, 1).text('Error Rows:');
-                        jobTable.cell(3, 2)
+                        jobrow++;
+                        
+                        jobTable.cell(jobrow, 1).text('Error Rows:');
+                        jobTable.cell(jobrow, 2)
                             .css({ fontWeight: 'bold' })
                             .text(data.RowsError);
-
+                        jobrow++;
+                        
                     } // success()
                 }); // get()
             }; // loadStatus()
@@ -88,7 +125,6 @@
                         var first = true;
                         cswPrivate.jobs = data;
                         if (data.length > 0) {
-                            debugger;
                             Csw.iterate(data, function (job) {
                                 var isSelected = ((cswPrivate.selectedJobId === 0 && first) ||
                                                   (Csw.number(job.ImportDataJobId) === Csw.number(cswPrivate.selectedJobId)));
@@ -113,11 +149,14 @@
 
             cswPrivate.makeUploadTable = function () {
                 cswPublic.table.cell(3, 2)
+                    .css({ paddingLeft: '100px' })
                     .text('Upload a New Data File')
-                    .css({ textAlign: 'center', fontWeight: 'bold' });
+                    .css({ textAlign: 'center', 
+                           fontWeight: 'bold' });
 
                 cswPublic.uploadTable = cswPublic.table.cell(4, 2)
                     .empty()
+                    .css({ paddingLeft: '100px' })
                     .table({
                         FirstCellRightAlign: true,
                         cellpadding: 2

@@ -37,10 +37,16 @@ namespace ChemSW.Nbt.ImportExport
         {
             _CswNbtResources = CswNbtResources;
             _row = DataJobRow;
-            _UserNode = _CswNbtResources.Nodes[new CswPrimaryKey( "nodes", UserId )];
+
+            // We have to do this up front in order to serialize UserName
+            UserName = string.Empty;
+            CswNbtObjClassUser UserNode = _CswNbtResources.Nodes[new CswPrimaryKey( "nodes", UserId )];
+            if( null != UserNode )
+            {
+                UserName = UserNode.Username;
+            }
         }
 
-        
 
         [DataMember]
         [Description( "Primary Key" )]
@@ -82,23 +88,9 @@ namespace ChemSW.Nbt.ImportExport
             private set { }
         }
 
-        private CswNbtObjClassUser _UserNode;
-
         [DataMember]
         [Description( "Username of User responsible for import" )]
-        public string UserName
-        {
-            get
-            {
-                string ret = string.Empty;
-                if( null != _UserNode )
-                {
-                    ret = _UserNode.Username;
-                }
-                return ret;
-            }
-            private set { }
-        } // UserName
+        public string UserName;
 
         private Collection<CswNbtImportDataMap> _Maps = null;
         public Collection<CswNbtImportDataMap> Maps
