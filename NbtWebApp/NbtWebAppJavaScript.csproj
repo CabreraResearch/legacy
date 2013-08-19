@@ -153,6 +153,7 @@
     <Content Include="app\proptypes\csw.propTypeUserSelect.js" />
     <Content Include="app\proptypes\csw.propTypeViewPickList.js" />
     <Content Include="app\proptypes\csw.propTypeViewReference.js" />
+    <Content Include="app\tools\csw.clientCache.js" />
     <Content Include="app\tools\csw.functional.js" />
     <Content Include="app\tools\csw.ext.js" />
     <Content Include="app\tools\csw.validation.js" />
