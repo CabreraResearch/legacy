@@ -6,40 +6,54 @@
 
         Csw.main.register('refreshDashboard', function (onSuccess) {
 
-            Csw.main.headerDashboard.empty();
-            
-            return Csw.ajax.post({
-                urlMethod: 'getDashboard',
-                data: {},
-                success: function (data) {
+            function doRefresh(data) {
+                data = data || [];
+                Csw.main.headerDashboard.empty();
 
-                    var table = Csw.main.headerDashboard.table({
-                        name: 'DashboardTable'
-                    });
-                    table.addClass('DashboardTable');
+                var table = Csw.main.headerDashboard.table({
+                    name: 'DashboardTable'
+                });
+                table.addClass('DashboardTable');
 
-                    var $tr = table.append('<tr />');
+                var $tr = table.append('<tr />');
 
-                    Csw.iterate(data, function (thisIcon, dashId) {
-                        var cellcontent;
-                        if (false === Csw.isNullOrEmpty(thisIcon.href)) {
-                            cellcontent = '<td class="DashboardCell">' +
-                                '  <a target="_blank" href="' + thisIcon.href + '">' +
-                                '    <div title="' + thisIcon.text + '" id="' + dashId + '" class="' + dashId + '" />' +
-                                '  </a>' +
-                                '</td>';
-                        } else {
-                            cellcontent = '<td class="DashboardCell">' +
-                                '  <div title="' + thisIcon.text + '" id="' + dashId + '" class="' + dashId + '" />' +
-                                '</td>';
+                Csw.iterate(data, function (thisIcon, dashId) {
+                    var cellcontent;
+                    if (false === Csw.isNullOrEmpty(thisIcon.href)) {
+                        cellcontent = '<td class="DashboardCell">' +
+                            '  <a target="_blank" href="' + thisIcon.href + '">' +
+                            '    <div title="' + thisIcon.text + '" id="' + dashId + '" class="' + dashId + '" />' +
+                            '  </a>' +
+                            '</td>';
+                    } else {
+                        cellcontent = '<td class="DashboardCell">' +
+                            '  <div title="' + thisIcon.text + '" id="' + dashId + '" class="' + dashId + '" />' +
+                            '</td>';
+                    }
+                    $tr.append(cellcontent);
+                });
+
+                if (onSuccess) {
+                    onSuccess();
+                }
+                return true;
+            }
+
+            var chain = Csw.getCachedWebServiceCall('getDashboard')
+                .then(function(data) {
+                    return doRefresh(data);
+                })
+                .then(function() {
+                    return Csw.ajax.post({
+                        urlMethod: 'getDashboard',
+                        success: function(data) {
+                            doRefresh(data);
+                            Csw.setCachedWebServiceCall('getDashboard', data);
                         }
-                        $tr.append(cellcontent);
                     });
-                    
-                    if (onSuccess) { onSuccess(); }
+                });
 
-                } // success{}
-            });
+            return chain;
 
         });
 

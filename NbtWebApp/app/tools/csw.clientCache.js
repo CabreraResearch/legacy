@@ -4,33 +4,39 @@
 (function () {
     'use strict';
 
-    /**
-     * All paramaters are required
-    */
-    var validate = function (customerId, userName, webServiceName) {
-        if (!customerId) {
-            throw new Error('Customer ID is required.');
-        }
-        if (!userName) {
-            throw new Error('User Name is required.');
-        }
-        if (!webServiceName) {
-            throw new Error('Web Service Name is required.');
-        }
-    };
-    
-    /**
-     * Make a cached call for insert
-    */
-    var makeCachedCall = function (customerId, userName, webServiceName, data) {
-        validate(customerId, userName, webServiceName);
-        return { message: { dateTime: new Date(), cache: { customerId: customerId, userName: userName, webServiceName: webServiceName }, data: data } };
-    };
-
     //Wait until Main is loaded before initing
     Csw.main.onReady.then(function () {
 
         var cacheDbMgr = null;
+        var thisCustomerId = Csw.clientSession.currentAccessId();
+        var thisUserName = Csw.clientSession.currentUserName();
+
+        /**
+         * All paramaters are required
+        */
+        var validate = function (customerId, userName, webServiceName) {
+            thisCustomerId = customerId || (thisCustomerId = Csw.clientSession.currentAccessId());
+            thisUserName = userName || (thisUserName = Csw.clientSession.currentUserName());
+
+            if (!thisCustomerId) {
+                throw new Error('Customer ID is required.');
+            }
+            if (!thisUserName) {
+                throw new Error('User Name is required.');
+            }
+            if (!webServiceName) {
+                throw new Error('Web Service Name is required.');
+            }
+        };
+
+        /**
+         * Make a cached call for insert
+        */
+        var makeCachedCall = function (webServiceName, data) {
+            return { message: { dateTime: new Date(), cache: { customerId: thisCustomerId, userName: thisUserName, webServiceName: webServiceName }, data: data } };
+        };
+
+
         if (window.Modernizr.indexeddb) {
             //Until we need to manage versions, there is only 1. Versioning either happens on creation, or it doesn't.
 
@@ -49,7 +55,7 @@
             //cacheDbMgr.insert('CachedData', { message: { dateTime: new Date(), cache: { customerId: 'qa', userName: 'bill', webServiceName: 'getWatermark' }, data: { a: 1, b: 2, c: 3 } } });
         }
 
-        var getCachedWebServiceCall = function(customerId, userName, webServiceName) {
+        var getCachedWebServiceCall = function (webServiceName, customerId, userName) {
             var deferred = Q.defer();
             var ret;
             if (null == cacheDbMgr) {
@@ -57,24 +63,34 @@
                 ret = deferred.promise;
             } else {
                 validate(customerId, userName, webServiceName);
-                ret = cacheDbMgr.select.from('CachedData', 'uniqueCalls', [webServiceName, userName, customerId]);
+                var promise = cacheDbMgr.select.from('CachedData', 'uniqueCalls', [webServiceName, thisUserName, thisCustomerId]);
+                ret = promise.then(function (data) {
+                    //This is a bit of a dance, but promises are promises.
+                    //We want the return promise to massage the data into the right object, 
+                    //so what is one more promise between friends?
+                    if (data && data.length > 0) {
+                        return data[0].data;
+                    }
+                });
             }
             return ret;
         };
 
         Csw.register('getCachedWebServiceCall', getCachedWebServiceCall);
-        
-        var setCachedWebServiceCall = function(customerId, userName, webServiceName, data) {
+
+        var setCachedWebServiceCall = function (webServiceName, data, customerId, userName) {
             var deferred = Q.defer();
+
             var ret;
             if (null == cacheDbMgr) {
                 deferred.resolve(Csw.object());
                 ret = deferred.promise;
             } else {
-                ret = cacheDbMgr.update('CachedData', 'uniqueCalls', [webServiceName, userName, customerId], data);
-                ret.then(function(updatedRows) {
+                validate(customerId, userName, webServiceName);
+                ret = cacheDbMgr.update('CachedData', 'uniqueCalls', [webServiceName, thisUserName, thisCustomerId], { data: data });
+                ret.then(function (updatedRows) {
                     if (!updatedRows || updatedRows.length === 0) {
-                        var cachedCall = makeCachedCall(customerId, userName, webServiceName);
+                        var cachedCall = makeCachedCall(webServiceName, data);
                         return cacheDbMgr.insert('CachedData', cachedCall);
                     }
                 });
@@ -84,4 +100,4 @@
 
         Csw.register('setCachedWebServiceCall', setCachedWebServiceCall);
     });
-} ());
+}());
