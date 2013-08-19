@@ -62,7 +62,7 @@ namespace ChemSW.Nbt.Schema
                     _CswNbtResources.InitCurrentUser = InitUser;
 
                     //todo: Do we need to be creating a new SchemScriptsProd each time this method is called?
-                    _CswSchemaScriptsProd = new CswSchemaScriptsProd();
+                    _CswSchemaScriptsProd = new CswSchemaScriptsProd( _CswNbtResources );
                     _CswLogger = _CswNbtResources.CswLogger;
 
 
@@ -310,34 +310,28 @@ namespace ChemSW.Nbt.Schema
                 {
                     CswSchemaVersion CurrentVersion = _CswSchemaUpdater.CurrentVersion( CswNbtResources );
 
-                    // If the version is out of date (Counting the # of scripts in prod shows that there are more than there were before), 
-                    // we want to iterate and run scripts that haven't been run
-                    if( CurrentVersion != _CswSchemaUpdater.LatestVersion )
+                    _CswSchemaUpdater.addVersionedScriptsToRun();
+
+                    while( UpdateSucceeded && !Cancel && CurrentVersion != _CswSchemaUpdater.LatestVersion )
                     {
-                        // Fill _UpdateDriversToRun
-                        _CswSchemaUpdater.addVersionedScriptsToRun();
+                        //SetStatus( "Updating to " + _CswSchemaUpdater.TargetVersion( CswNbtResources ) );
 
-                        while( UpdateSucceeded && !Cancel && CurrentVersion != _CswSchemaUpdater.LatestVersion )
-                        {
-                            //SetStatus( "Updating to " + _CswSchemaUpdater.TargetVersion( CswNbtResources ) );
+                        UpdateSucceeded = _CswSchemaUpdater.runNextVersionedScript();
 
-                            UpdateSucceeded = _CswSchemaUpdater.runNextVersionedScript();
+                        CswNbtResources.AccessId = AccessId; //cases 23787,9751: you have to re-init after the release() that is done in the Updater
+                        CswNbtResources.ClearCache();
 
-                            CswNbtResources.AccessId = AccessId; //cases 23787,9751: you have to re-init after the release() that is done in the Updater
-                            CswNbtResources.ClearCache();
+                        SchemaInfoEventArgs.MinimumSchemaVersion = _CswSchemaUpdater.MinimumVersion;
+                        SchemaInfoEventArgs.LatestSchemaVersion = _CswSchemaUpdater.LatestVersion;
 
-                            SchemaInfoEventArgs.MinimumSchemaVersion = _CswSchemaUpdater.MinimumVersion;
-                            SchemaInfoEventArgs.LatestSchemaVersion = _CswSchemaUpdater.LatestVersion;
+                        CurrentVersion = _CswSchemaUpdater.CurrentVersion( CswNbtResources );
+                        SchemaInfoEventArgs.CurrentSchemaVersion = CurrentVersion;
 
-                            CurrentVersion = _CswSchemaUpdater.CurrentVersion( CswNbtResources );
-                            SchemaInfoEventArgs.CurrentSchemaVersion = CurrentVersion;
+                        _updateHistoryTable( CswNbtResources, SchemaInfoEventArgs );
 
-                            _updateHistoryTable( CswNbtResources, SchemaInfoEventArgs );
-
-                            if( UpdateSucceeded )
-                                SetStatus( "Update successful: " + _CswSchemaUpdater.getDriver().SchemaVersion + ": " + _CswSchemaUpdater.getDriver().Description );
-                        }//iterate
-                    }
+                        if( UpdateSucceeded )
+                            SetStatus( "Update successful: " + _CswSchemaUpdater.getDriver().SchemaVersion + ": " + _CswSchemaUpdater.getDriver().Description );
+                    }//iterate
 
                 }//if pre-process scripts succeded
 

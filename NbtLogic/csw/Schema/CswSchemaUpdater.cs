@@ -57,11 +57,11 @@ namespace ChemSW.Nbt.Schema
         /// The highest schema version number defined in the updater
         /// </summary>
         public CswSchemaVersion LatestVersion { get { return ( _CswSchemaScripts.LatestVersion ); } }
+
         /// <summary>
         /// The minimum version required to use this updater
         /// </summary>
         public CswSchemaVersion MinimumVersion { get { return ( _CswSchemaScripts.MinimumVersion ); } }
-
 
         public CswSchemaVersion CurrentVersion( CswNbtResources CswNbtResources )
         {
@@ -90,6 +90,13 @@ namespace ChemSW.Nbt.Schema
             return ( _CurrentUpdateDriver );
         }
 
+        public List<CswSchemaVersion> SchemaVersions
+        {
+            get
+            {
+                return new List<CswSchemaVersion>( UpdateDriversToRun.Keys );
+            }
+        }
 
         //case 26617: removing otiose instance of CswNbtResources resolved catastrophic memory leak
         private bool _runScript( CswNbtResources CswNbtResources, CswSchemaUpdateDriver CswSchemaUpdateDriver, bool StampVersion )
@@ -158,8 +165,6 @@ namespace ChemSW.Nbt.Schema
 
         }//_runScript()
 
-
-
         public bool runArbitraryScript( CswSchemaUpdateDriver CswSchemaUpdateDriver )
         {
 
@@ -200,6 +205,14 @@ namespace ChemSW.Nbt.Schema
             }
         }
 
+        public Dictionary<CswSchemaVersion, CswSchemaUpdateDriver> UpdateDriversToRun
+        {
+            get
+            {
+                return _CswSchemaScripts.UpdateDriversToRun;
+            }
+        }
+
         public void addVersionedScriptsToRun()
         {
             CswNbtResources CswNbtResources = null;
@@ -207,8 +220,6 @@ namespace ChemSW.Nbt.Schema
 
             _CswSchemaScripts.addVersionedScriptsToRun( CswNbtResources );
         }
-
-
 
     }//CswSchemaUpdater
 
