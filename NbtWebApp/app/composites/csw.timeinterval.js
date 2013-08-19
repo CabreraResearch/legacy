@@ -19,6 +19,7 @@
                     startingyear: '',
                     hours: '',
                     weeklyday: '',
+                    weeklyfrequency: '',
                     monthlyfrequency: '',
                     monthlydate: '',
                     monthlyweek: '',
@@ -26,7 +27,8 @@
                     yearlydate: {
                         date: '',
                         dateformat: ''
-                    }
+                    },
+                    yearlyfrequency: '',
                 },
                 Multi: false,
                 ReadOnly: false,
@@ -231,12 +233,29 @@
 
 
             cswPrivate.makeWeeklyDiv = function (parent) {
-                var weeklyTable, startingDatePicker;
+                var weeklyTable, startingDatePicker, everySpan, weeklyRateSelect,
+                    frequency = ChemSW.makeSequentialArray(1, 24);
 
                 cswPrivate.divWeekly = parent.div({
                     name: cswPrivate.name + '_divweekly',
                     cssclass: 'CswFieldTypeTimeInterval_Div'
                 });
+                
+                // Weekly Frequency
+                everySpan = cswPrivate.divWeekly.span();
+                everySpan.append('Every ');
+                weeklyRateSelect = everySpan.select({
+                    name: cswPrivate.name + '_weekly_rate',
+                    onChange: function () {
+                        cswPublic.rateInterval.weeklyfrequency = weeklyRateSelect.val();
+                        Csw.tryExec(cswPrivate.onChange);
+                    },
+                    values: frequency,
+                    selected: Csw.number(cswPublic.rateInterval.weeklyfrequency)
+                });
+                everySpan.append(' Week(s)');
+
+                cswPrivate.divWeekly.br();
 
                 // Weekday picker
                 weeklyTable = cswPrivate.divWeekly.table({
@@ -393,14 +412,31 @@
             }; // makeMonthlyDiv
 
             cswPrivate.makeYearlyDiv = function (parent) {
-                var yearPicker;
+                var yearPicker, everySpan, yearlyRateSelect,
+                    frequency = Csw.makeSequentialArray(1, 5);
 
                 cswPrivate.divYearly = parent.div({
                     name: cswPrivate.name + '_divyearly',
                     cssclass: 'CswFieldTypeTimeInterval_Div'
                 });
 
-                cswPrivate.divYearly.append('Every Year, Starting On: ').br();
+
+                // Yearly Frequency
+                everySpan = cswPrivate.divYearly.span();
+                everySpan.append('Every ');
+                yearlyRateSelect = everySpan.select({
+                    name: cswPrivate.name + '_yearly_rate',
+                    onChange: function () {
+                        cswPublic.rateInterval.yearlyfrequency = yearlyRateSelect.val();
+                        Csw.tryExec(cswPrivate.onChange);
+                    },
+                    values: frequency,
+                    selected: Csw.number(cswPublic.rateInterval.yearlyfrequency)
+                });
+                everySpan.append(' Year(s) on:');
+
+                cswPrivate.divYearly.br();
+                
 
                 yearPicker = cswPrivate.divYearly.dateTimePicker({
                     name: cswPrivate.name + '_yearly_sd',
