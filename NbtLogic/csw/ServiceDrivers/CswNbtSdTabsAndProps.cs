@@ -54,7 +54,6 @@ namespace ChemSW.Nbt.ServiceDrivers
                         NodeTypeId = Prop.NodeTypeId;
                         foreach( CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout EditLayout in Prop.getEditLayouts().Values )
                         {
-                            //_CswNbtResources.Permit.can( CswEnumNbtNodeTypePermission.View, Prop.getNodeType(), false, Tab, _CswNbtResources.CurrentNbtUser, Node.NodeId, Prop )
                             CswNbtMetaDataNodeTypeTab Tab = _CswNbtResources.MetaData.getNodeTypeTab( EditLayout.TabId );
                             if(
                                     ( _ConfigMode || Tab.TabName != CswNbtMetaData.IdentityTabName ) && (
@@ -83,10 +82,10 @@ namespace ChemSW.Nbt.ServiceDrivers
                                                                         (
                                                                             _CswNbtResources.Permit.canTab( CswEnumNbtNodeTypePermission.View, Node.getNodeType(), _Tab ) ||
                                                                             _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.View, Node.getNodeType() )
-                                                                        ) 
+                                                                        )
                                                                         &&
                                                                         (
-                                                                            //Case 29843: Exlude "empty" tabs from the UI
+                                                                  //Case 29843: Exlude "empty" tabs from the UI
                                                                             _ConfigMode || _Tab.HasProps
                                                                         )
                                                                     ) )
@@ -183,35 +182,26 @@ namespace ChemSW.Nbt.ServiceDrivers
                         RelatedNodePk.FromString( RelatedNodeId );
                         if( Int32.MinValue != RelatedNodePk.PrimaryKey )
                         {
-                            //Int32 RelatedNodeTypePk = CswConvert.ToInt32( RelatedNodeTypeId );
-                            //Int32 RelatedObjectClassPk = CswConvert.ToInt32( RelatedObjectClassId );
                             CswNbtMetaDataNodeType RelatedNT = _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( RelatedNodeTypeId ) );
                             CswNbtMetaDataObjectClass RelatedOC = _CswNbtResources.MetaData.getObjectClass( CswConvert.ToInt32( RelatedObjectClassId ) );
-
-                            //if( Int32.MinValue != RelatedNodeTypePk && Int32.MinValue == RelatedObjectClassPk )
-                            //{
-                            //    CswNbtMetaDataNodeType RelatedNodeType = _CswNbtResources.MetaData.getNodeType( RelatedNodeTypePk );
-                            //    if( null != RelatedNodeType )
-                            //    {
-                            //        RelatedObjectClassPk = RelatedNodeType.ObjectClassId;
-                            //    }
-                            //}
-
-                            //if( Int32.MinValue != RelatedNodeTypePk && Int32.MinValue != RelatedObjectClassPk )
-                            //{
+                            if( null == RelatedNT && null == RelatedOC )
+                            {
+                                CswNbtNode RelatedNode = _CswNbtResources.Nodes[RelatedNodePk];
+                                if( null != RelatedNode )
+                                {
+                                    RelatedNT = RelatedNode.getNodeType();
+                                    RelatedOC = RelatedNode.getObjectClass();
+                                }
+                            }
                             foreach( CswNbtNodePropRelationship Relationship in from _Prop
                                                                                     in Ret.Properties
                                                                                 where _Prop.getFieldTypeValue() == CswEnumNbtFieldType.Relationship &&
                                                                                       ( _Prop.AsRelationship.TargetMatches( RelatedNT ) ||
                                                                                         _Prop.AsRelationship.TargetMatches( RelatedOC ) )
-                                                                                //( _Prop.AsRelationship.TargetType == NbtViewRelatedIdType.NodeTypeId &&
-                                                                                //    _Prop.AsRelationship.TargetId == RelatedNodeTypePk ) ||
-                                                                                // ( _Prop.AsRelationship.TargetType == NbtViewRelatedIdType.ObjectClassId &&
-                                                                                //    _Prop.AsRelationship.TargetId == RelatedObjectClassPk ) )
                                                                                 select _Prop )
                             {
                                 Relationship.RelatedNodeId = RelatedNodePk;
-                                Ret.postChanges( ForceUpdate: false );
+                                Ret.postChanges( ForceUpdate : false );
                             }
                         } // if( Int32.MinValue != RelatedNodePk.PrimaryKey )
                     }
@@ -319,7 +309,7 @@ namespace ChemSW.Nbt.ServiceDrivers
 
                         IEnumerable<CswNbtMetaDataNodeTypeProp> CswNbtMetaDataNodeTypeProps = Props as CswNbtMetaDataNodeTypeProp[] ?? Props.ToArray();
                         bool TabHasAnyEditableProp = CswNbtMetaDataNodeTypeProps.Any( Prop => Prop.IsSaveable );
-                        
+
                         CswNbtMetaDataNodeTypeTab IdentityTab = Node.getNodeType().getIdentityTab();
                         if( TabIdPk != IdentityTab.TabId )
                         {
@@ -329,21 +319,18 @@ namespace ChemSW.Nbt.ServiceDrivers
                         }
                         bool HasEditableProps = false == ForceReadOnly && TabHasAnyEditableProp;
 
-                        //Blast from the Case 8494 past: we have to do this server-side now
                         if( _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Add && false == HasEditableProps )
                         {
+                            //Case 29531 - There are no props on the Add layout, so just save the node - the client will skip the add dialog
                             Node.IsTemp = false;
-                            Node.postChanges( ForceUpdate: false );
-                            _CswNbtResources.EditMode = CswEnumNbtNodeEditMode.EditInPopup;
-                            Ret = getProps( Node, NodeType.getFirstNodeTypeTab().TabId.ToString(), FilterPropIdAttr, CswEnumNbtLayoutType.Edit, ForceReadOnly );
+                            Node.postChanges( ForceUpdate : false );
                         }
                         else
                         {
                             IEnumerable<CswNbtMetaDataNodeTypeProp> FilteredProps = ( from _Prop in CswNbtMetaDataNodeTypeProps
                                                                                       where PropColl != null
-                                                                                      //let Pw = CswNbtNodePropColl[_Prop]
                                                                                       where _showProp( LayoutType, _Prop, FilterPropIdAttr, TabIdPk, Node, HasEditableProps )
-                                                                                      select _Prop );
+                                                                                      select _Prop ).OrderByDescending( Prop => Prop.PropName != "Save" ).ThenBy( Prop => Prop );
 
 
                             foreach( CswNbtMetaDataNodeTypeProp Prop in FilteredProps )
@@ -387,15 +374,6 @@ namespace ChemSW.Nbt.ServiceDrivers
 
             if( Node != null )
             {
-                // removed for case 21695
-                //// case 21209
-                //if( Node.NodeSpecies == NodeSpecies.Plain )
-                //{
-                //    CswNbtActUpdatePropertyValue PropUpdater = new Actions.CswNbtActUpdatePropertyValue( _CswNbtResources );
-                //    PropUpdater.UpdateNode( Node, true );
-                //    Node.postChanges( false );
-                //}
-
                 // for prop filters, update node prop value but don't save the change
                 JObject PropJson = CswConvert.ToJObject( NewPropJson, true, "NewPropJson" );
 
@@ -407,11 +385,6 @@ namespace ChemSW.Nbt.ServiceDrivers
                 if( Prop.FirstEditLayout != null )
                 {
                     _addProp( PropObj, Node, Prop, Prop.FirstEditLayout.TabId );
-                }
-
-                if( false == string.IsNullOrEmpty( NewPropJson ) )
-                {
-                    //Node.Rollback();
                 }
             }
             if( PropObj.HasValues )
@@ -497,7 +470,6 @@ namespace ChemSW.Nbt.ServiceDrivers
             PropIdAttr = new CswPropIdAttr( NodeId, Prop.PropId );
 
             JObject PropObj = new JObject();
-            //ParentObj["prop_" + PropIdAttr] = PropObj;
             JProperty ret = new JProperty( "prop_" + PropIdAttr, PropObj );
             CswEnumNbtFieldType FieldType = Prop.getFieldTypeValue();
             PropObj["id"] = PropIdAttr.ToString();
@@ -512,13 +484,14 @@ namespace ChemSW.Nbt.ServiceDrivers
                 DisplayRow = _CswNbtResources.MetaData.NodeTypeLayout.getCurrentMaxDisplayRow( Prop.NodeTypeId, Layout.TabId, Layout.LayoutType );
                 if( Int32.MinValue != Prop.ObjectClassPropId && null != Prop.getObjectClassProp() && Prop.getObjectClassProp().PropName == CswNbtObjClass.PropertyName.Save )
                 {
-                    DisplayRow = DisplayRow + 1;
+                    DisplayRow = getUniqueRow( DisplayRow + 1, Layout.DisplayColumn, _DisplayRowsAndCols );
                 }
             }
             bool ReadOnly = Prop.IsRequired || ( null != PropWrapper && PropWrapper.TemporarilyRequired );
 
             PropObj["displayrow"] = DisplayRow;
             PropObj["displaycol"] = Layout.DisplayColumn;
+
             PropObj["tabgroup"] = Layout.TabGroup;
             PropObj["required"] = ReadOnly;
             PropObj["copyable"] = Prop.IsCopyable();
@@ -878,7 +851,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                     {
                         CopyToNode.Properties[NodeTypeProp].copy( SourceNode.Properties[NodeTypeProp] );
                     }
-                    CopyToNode.postChanges( ForceUpdate: false );
+                    CopyToNode.postChanges( ForceUpdate : false );
                 } // foreach( string NodeIdStr in CopyNodeIds )
             }
         }

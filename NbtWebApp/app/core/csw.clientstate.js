@@ -10,20 +10,24 @@
         Csw.clientState.register('clearCurrent', function () {
             /// <summary> Clear all current state cookies  </summary>
             /// <returns type="Boolean">Always true</returns>
-            Csw.cookie.set(Csw.cookie.cookieNames.LastViewId, Csw.cookie.get(Csw.cookie.cookieNames.CurrentViewId));
-            Csw.cookie.set(Csw.cookie.cookieNames.LastViewMode, Csw.cookie.get(Csw.cookie.cookieNames.CurrentViewMode));
-            Csw.cookie.set(Csw.cookie.cookieNames.LastActionName, Csw.cookie.get(Csw.cookie.cookieNames.CurrentActionName));
-            Csw.cookie.set(Csw.cookie.cookieNames.LastActionUrl, Csw.cookie.get(Csw.cookie.cookieNames.CurrentActionUrl));
-            //Csw.cookie.set(Csw.cookie.cookieNames.LastReportId, Csw.cookie.get(Csw.cookie.cookieNames.CurrentReportId));
-            Csw.cookie.set(Csw.cookie.cookieNames.LastSearchId, Csw.cookie.get(Csw.cookie.cookieNames.CurrentSearchId));
+            var toDo = [];
+            toDo.push((function() {
+                Csw.cookie.set(Csw.cookie.cookieNames.LastViewId, Csw.cookie.get(Csw.cookie.cookieNames.CurrentViewId));
+                Csw.cookie.set(Csw.cookie.cookieNames.LastViewMode, Csw.cookie.get(Csw.cookie.cookieNames.CurrentViewMode));
+                Csw.cookie.set(Csw.cookie.cookieNames.LastActionName, Csw.cookie.get(Csw.cookie.cookieNames.CurrentActionName));
+                Csw.cookie.set(Csw.cookie.cookieNames.LastActionUrl, Csw.cookie.get(Csw.cookie.cookieNames.CurrentActionUrl));
+                //Csw.cookie.set(Csw.cookie.cookieNames.LastReportId, Csw.cookie.get(Csw.cookie.cookieNames.CurrentReportId));
+                Csw.cookie.set(Csw.cookie.cookieNames.LastSearchId, Csw.cookie.get(Csw.cookie.cookieNames.CurrentSearchId));
 
-            Csw.cookie.clear(Csw.cookie.cookieNames.CurrentViewId);
-            Csw.cookie.clear(Csw.cookie.cookieNames.CurrentViewMode);
-            Csw.cookie.clear(Csw.cookie.cookieNames.CurrentActionName);
-            Csw.cookie.clear(Csw.cookie.cookieNames.CurrentActionUrl);
-            //Csw.cookie.clear(Csw.cookie.cookieNames.CurrentReportId);
-            Csw.cookie.clear(Csw.cookie.cookieNames.CurrentSearchId);
-            return true;
+                Csw.cookie.clear(Csw.cookie.cookieNames.CurrentViewId);
+                Csw.cookie.clear(Csw.cookie.cookieNames.CurrentViewMode);
+                Csw.cookie.clear(Csw.cookie.cookieNames.CurrentActionName);
+                Csw.cookie.clear(Csw.cookie.cookieNames.CurrentActionUrl);
+                //Csw.cookie.clear(Csw.cookie.cookieNames.CurrentReportId);
+                Csw.cookie.clear(Csw.cookie.cookieNames.CurrentSearchId);
+                return true;
+            }()));
+            return Q.all(toDo);
         });
 
     Csw.clientState.clearLast = Csw.clientState.clearLast ||

@@ -1,6 +1,3 @@
-using System;
-using System.Collections.ObjectModel;
-using System.Linq;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
@@ -8,6 +5,9 @@ using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 using Newtonsoft.Json.Linq;
+using System;
+using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -33,6 +33,8 @@ namespace ChemSW.Nbt.ObjClasses
             public const string C3ProductId = "C3ProductId";
             public const string IsConstituent = "Is Constituent";
             public const string ContainerExpirationLocked = "Container Expiration Locked";
+            public const string Documents = "Documents";
+            public const string Synonyms = "Synonyms";
         }
 
         public sealed class CswEnumPhysicalState
@@ -261,7 +263,7 @@ namespace ChemSW.Nbt.ObjClasses
                             CswNbtActRequesting RequestAct = new CswNbtActRequesting( _CswNbtResources );
 
                             CswNbtPropertySetRequestItem NodeAsPropSet = RequestAct.makeMaterialRequestItem( new CswEnumNbtRequestItemType( CswEnumNbtRequestItemType.Material ), NodeId, ButtonData );
-                            NodeAsPropSet.postChanges( false );
+                           // NodeAsPropSet.postChanges( false );
 
                             ButtonData.Data["requestaction"] = OCPPropName;
                             ButtonData.Data["titleText"] = ButtonData.SelectedText + " for " + TradeName.Text;
@@ -455,6 +457,8 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropText C3ProductId { get { return ( _CswNbtNode.Properties[PropertyName.C3ProductId] ); } }
         public CswNbtNodePropLogical IsConstituent { get { return ( _CswNbtNode.Properties[PropertyName.IsConstituent] ); } }
         public CswNbtNodePropLogical ContainerExpirationLocked { get { return ( _CswNbtNode.Properties[PropertyName.ContainerExpirationLocked] ); } }
+        public CswNbtNodePropGrid Documents { get { return ( _CswNbtNode.Properties[PropertyName.Documents] ); } }
+        public CswNbtNodePropGrid Synonyms { get { return ( _CswNbtNode.Properties[PropertyName.Synonyms] ); } }
 
         #endregion
 

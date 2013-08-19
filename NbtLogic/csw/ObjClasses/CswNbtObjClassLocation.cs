@@ -31,6 +31,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string StorageCompatibility = "Storage Compatibility";
             public const string ControlZone = "Control Zone";
             public const string Containers = "Containers";
+            public const string InventoryLevels = "Inventory Levels";
         }
 
 
@@ -167,6 +168,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropImageList StorageCompatibility { get { return ( _CswNbtNode.Properties[PropertyName.StorageCompatibility] ); } }
         public CswNbtNodePropRelationship ControlZone { get { return ( _CswNbtNode.Properties[PropertyName.ControlZone] ); } }
         public CswNbtNodePropGrid Containers { get { return ( _CswNbtNode.Properties[PropertyName.Containers] ); } }
+        public CswNbtNodePropGrid InventoryLevels { get { return ( _CswNbtNode.Properties[PropertyName.InventoryLevels] ); } }
 
         #endregion Object class specific properties
 

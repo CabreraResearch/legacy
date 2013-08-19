@@ -1,12 +1,12 @@
-﻿using ChemSW.Nbt;
-using ChemSW.Nbt.csw.Mobile;
-using ChemSW.WebSvc;
-using NbtWebApp.WebSvc.Logic.Mobile.CISProNbt;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.ServiceModel;
 using System.ServiceModel.Activation;
 using System.ServiceModel.Web;
 using System.Web;
+using ChemSW.Nbt;
+using ChemSW.Nbt.csw.Mobile;
+using ChemSW.WebSvc;
+using NbtWebApp.WebSvc.Logic.Mobile.CISProNbt;
 
 namespace NbtWebApp.Services
 {
@@ -24,6 +24,7 @@ namespace NbtWebApp.Services
             {
                 CswWebSvcSessionAuthenticateData.Authentication.Request Ret = new CswWebSvcSessionAuthenticateData.Authentication.Request();
                 Ret.RequiredModules.Add( CswEnumNbtModuleName.CISPro );
+                Ret.RequiredModules.Add( CswEnumNbtModuleName.Containers );
                 return Ret;
             }
         }

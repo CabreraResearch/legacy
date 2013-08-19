@@ -1,5 +1,6 @@
 using System;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -55,7 +56,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public new sealed class PropertyName : CswNbtPropertySetMaterial.PropertyName
         {
-            //NonChemical-specific properties go here
+            public const string Picture = "Picture";
         }
 
         #endregion Enums
@@ -101,7 +102,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region ObjectClass-specific properties
 
-        //NonChemcial-specific properties go here
+        public CswNbtNodePropGrid Picture { get { return ( _CswNbtNode.Properties[PropertyName.Picture] ); } }
 
         #endregion ObjectClass-specific properties
 
