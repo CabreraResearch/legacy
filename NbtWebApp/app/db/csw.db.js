@@ -95,6 +95,10 @@
             return Csw.fun.shiftRight(Csw.db.insert, ret, arguments, this);
         });
 
+        ret.add('update', function () {
+            return Csw.fun.shiftRight(Csw.db.update, ret, arguments, this);
+        });
+
         var select = Csw.object();
         ret.add('select', select);
         
