@@ -252,6 +252,29 @@ namespace ChemSW.Nbt.WebServices
 
                                 #endregion Components
                             }
+
+                            #region GHS
+
+                            CswNbtMetaDataObjectClass GHSOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.GHSClass );
+                            CswNbtMetaDataObjectClassProp GHSMaterialOCP = GHSOC.getObjectClassProp( CswNbtObjClassGHS.PropertyName.Material );
+                            CswNbtView GHSView = new CswNbtView( _CswNbtResources )
+                            {
+                                ViewName = "MaterialCopyGHS"
+                            };
+                            CswNbtViewRelationship GHSVR = GHSView.AddViewRelationship( GHSOC, false );
+                            GHSView.AddViewPropertyAndFilter( GHSVR, GHSMaterialOCP, OriginalMaterial.NodeId.PrimaryKey.ToString(), CswEnumNbtSubFieldName.NodeID );
+                            ICswNbtTree GHSTree = _CswNbtResources.Trees.getTreeFromView( GHSView, false, false, false );
+                            for( int i = 0; i < GHSTree.getChildNodeCount(); i++ )
+                            {
+                                GHSTree.goToNthChild( i );
+                                CswNbtObjClassGHS GHSNode = GHSTree.getNodeForCurrentPosition();
+                                CswNbtObjClassGHS GHSCopy = GHSNode.CopyNode();
+                                GHSCopy.Material.RelatedNodeId = MaterialCopy.NodeId;
+                                GHSCopy.postChanges( false );
+                                GHSTree.goToParentNode();
+                            }
+
+                            #endregion GHS
                         }
                     }
                 }
