@@ -76,16 +76,21 @@ namespace ChemSW.Nbt.ImportExport
                 DataTable BindingsDataTable = ExcelDataSet.Tables["Bindings$"];
                 DataTable RelationshipsDataTable = ExcelDataSet.Tables["Relationships$"];
 
-                Dictionary<string, Int32> DefIdsBySheetName = CswNbtImportDef.addDefinitionEntries( _CswNbtResources, ImportDefinitionName, OrderDataTable );
-                CswNbtImportDefOrder.addOrderEntries( _CswNbtResources, OrderDataTable, DefIdsBySheetName );
-                CswNbtImportDefBinding.addBindingEntries( _CswNbtResources, BindingsDataTable, DefIdsBySheetName );
-                CswNbtImportDefRelationship.addRelationshipEntries( _CswNbtResources, RelationshipsDataTable, DefIdsBySheetName );
-
+                storeDefinition( OrderDataTable, BindingsDataTable, RelationshipsDataTable, ImportDefinitionName );
             } // if( ExcelDataSet.Tables.Count == 3 )
             else
             {
                 throw new CswDniException( CswEnumErrorType.Error, "Error reading file", "3 sheets not found in uploaded spreadsheet" );
             }
+        }
+
+        public void storeDefinition( DataTable OrderDataTable, DataTable BindingsDataTable, DataTable RelationshipsDataTable, string ImportDefinitionName )
+        {
+            Dictionary<string, Int32> DefIdsBySheetName = CswNbtImportDef.addDefinitionEntries( _CswNbtResources, ImportDefinitionName, OrderDataTable );
+            CswNbtImportDefOrder.addOrderEntries( _CswNbtResources, OrderDataTable, DefIdsBySheetName );
+            CswNbtImportDefBinding.addBindingEntries( _CswNbtResources, BindingsDataTable, DefIdsBySheetName );
+            CswNbtImportDefRelationship.addRelationshipEntries( _CswNbtResources, RelationshipsDataTable, DefIdsBySheetName );
+
         } // storeDefinition()
 
 

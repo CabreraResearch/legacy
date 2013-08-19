@@ -27,55 +27,22 @@ namespace ChemSW.Nbt.Schema
             get { return 30040; }
         }
 
-        private CswTableUpdate _importDefinitionUpdate;
-        private CswTableUpdate _importOrderUpdate;
-        private CswTableUpdate _importBindingsUpdate;
-        private CswTableUpdate _importRelationshipsUpdate;
-        private DataTable _importDefinitionTable;
         private DataTable _importOrderTable;
         private DataTable _importBindingsTable;
         private DataTable _importRelationshipsTable;
 
-        private Dictionary<string, Int32> _importDefIds = new Dictionary<string, Int32>();
+        //private Dictionary<string, Int32> _importDefIds = new Dictionary<string, Int32>();
 
         public override void update()
         {
             // IMCS bindings definitions
-            _importDefinitionUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "30040_import_def_update", CswNbtImportTables.ImportDef.TableName );
-            _importDefinitionTable = _importDefinitionUpdate.getEmptyTable();
-            Int32 i = 1;
-            foreach( string sheetname in new StringCollection()
-                {
-                    "assembly",
-                    "asm_problem",
-                    "asm_schedules",
-                    "asm_tasks",
-                    "equipment",
-                    "eq_problem",
-                    "eq_schedules",
-                    "eq_tasks"
-                } )
-            {
-                DataRow defrow = _importDefinitionTable.NewRow();
-                defrow[CswNbtImportTables.ImportDef.definitionname] = "IMCS";
-                defrow[CswNbtImportTables.ImportDef.sheetname] = sheetname;
-                defrow[CswNbtImportTables.ImportDef.sheetorder] = i;
-                i++;
-                _importDefinitionTable.Rows.Add( defrow );
 
-                _importDefIds.Add( sheetname, CswConvert.ToInt32( defrow[CswNbtImportTables.ImportDef.PkColumnName] ) );
-            } // foreach
-
-            // Set up other import tables
-            _importOrderUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "30040_import_order_update", CswNbtImportTables.ImportDefOrder.TableName );
-            _importBindingsUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "30040_import_bindings_update", CswNbtImportTables.ImportDefBindings.TableName );
-            _importRelationshipsUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "30040_import_relationships_update", CswNbtImportTables.ImportDefRelationships.TableName );
-
-            _importOrderTable = _importOrderUpdate.getEmptyTable();
-            _importBindingsTable = _importBindingsUpdate.getEmptyTable();
-            _importRelationshipsTable = _importRelationshipsUpdate.getEmptyTable();
+            _importOrderTable = CswNbtImportDefOrder.getDataTableForNewOrderEntries();
+            _importBindingsTable = CswNbtImportDefBinding.getDataTableForNewBindingEntries();
+            _importRelationshipsTable = CswNbtImportDefRelationship.getDataTableForNewRelationshipEntries();
 
             // Fill import definition tables with IMCS definitions
+
             #region Order
             _importOrder( 1, "assembly", "Role" );
             _importOrder( 2, "assembly", "User" );
@@ -552,11 +519,8 @@ namespace ChemSW.Nbt.Schema
             _importRelationship( "eq_tasks", "Equipment Task", "Department" );
             #endregion Relationship
 
-            // Post changes
-            _importDefinitionUpdate.update( _importDefinitionTable );
-            _importOrderUpdate.update( _importOrderTable );
-            _importBindingsUpdate.update( _importBindingsTable );
-            _importRelationshipsUpdate.update( _importRelationshipsTable );
+            CswNbtImporter Importer = _CswNbtSchemaModTrnsctn.makeCswNbtImporter();
+            Importer.storeDefinition( _importOrderTable, _importBindingsTable, _importRelationshipsTable, "IMCS" );
 
             // Add schedule rule
             _CswNbtSchemaModTrnsctn.createScheduledRule( CswEnumNbtScheduleRuleNames.Import, CswEnumRecurrence.NHours, 1 );
@@ -571,11 +535,10 @@ namespace ChemSW.Nbt.Schema
             if( false == string.IsNullOrEmpty( NodeTypeName ) )
             {
                 DataRow row = _importOrderTable.NewRow();
-                row[CswNbtImportTables.ImportDefOrder.importdefid] = _importDefIds[SheetName];
-                row[CswNbtImportTables.ImportDefOrder.importorder] = Order;
-                //row[CswNbt2DImportTables.ImportOrder.sourcesheetname] = SheetName;
-                row[CswNbtImportTables.ImportDefOrder.nodetypename] = NodeTypeName;
-                row[CswNbtImportTables.ImportDefOrder.instance] = CswConvert.ToDbVal( Instance );
+                row["sheet"] = SheetName;
+                row["nodetype"] = NodeTypeName;
+                row["order"] = Order;
+                row["instance"] = Instance;
                 _importOrderTable.Rows.Add( row );
             }
         } // _importOrder()
@@ -585,24 +548,22 @@ namespace ChemSW.Nbt.Schema
             if( false == string.IsNullOrEmpty( DestNodeTypeName ) )
             {
                 DataRow row = _importBindingsTable.NewRow();
-                row[CswNbtImportTables.ImportDefBindings.importdefid] = _importDefIds[SheetName];
-                //row[CswNbt2DImportTables.ImportBindings.sourcesheetname] = SheetName;
-                row[CswNbtImportTables.ImportDefBindings.sourcecolumnname] = SourceColumnName;
-                row[CswNbtImportTables.ImportDefBindings.destnodetypename] = DestNodeTypeName;
-                row[CswNbtImportTables.ImportDefBindings.destpropname] = DestPropertyName;
-                row[CswNbtImportTables.ImportDefBindings.destsubfield] = DestSubFieldName;
-                row[CswNbtImportTables.ImportDefBindings.instance] = CswConvert.ToDbVal( Instance );
+                row["sheet"] = SheetName;
+                row["destnodetype"] = DestNodeTypeName;
+                row["destproperty"] = DestPropertyName;
+                row["destsubfield"] = DestSubFieldName;
+                row["sourcecolumnname"] = SourceColumnName;
+                row["instance"] = Instance;
                 _importBindingsTable.Rows.Add( row );
             }
         } // _importBinding()
         private void _importRelationship( string SheetName, string NodetypeName, string RelationshipPropName, Int32 Instance = Int32.MinValue )
         {
             DataRow row = _importRelationshipsTable.NewRow();
-            row[CswNbtImportTables.ImportDefRelationships.importdefid] = _importDefIds[SheetName];
-            //row[CswNbt2DImportTables.ImportRelationships.sourcesheetname] = SheetName;
-            row[CswNbtImportTables.ImportDefRelationships.nodetypename] = NodetypeName;
-            row[CswNbtImportTables.ImportDefRelationships.relationship] = RelationshipPropName;
-            row[CswNbtImportTables.ImportDefRelationships.instance] = CswConvert.ToDbVal( Instance );
+            row["sheet"] = SheetName;
+            row["nodetype"] = NodetypeName;
+            row["relationship"] = RelationshipPropName;
+            row["instance"] = Instance;
             _importRelationshipsTable.Rows.Add( row );
         } // _importRelationship()
 

@@ -112,6 +112,23 @@ namespace ChemSW.Nbt.ImportExport
 
 
         /// <summary>
+        /// Get a DataTable to fill out, for use with addBindingEntries()
+        /// </summary>
+        /// <returns></returns>
+        public static DataTable getDataTableForNewBindingEntries()
+        {
+            DataTable Table = new DataTable();
+            Table.Columns.Add( "sheet" );
+            Table.Columns.Add( "destnodetype" );
+            Table.Columns.Add( "destproperty" );
+            Table.Columns.Add( "destsubfield" );
+            Table.Columns.Add( "sourcecolumnname" );
+            Table.Columns.Add( "instance" );
+            return Table;
+        }
+
+
+        /// <summary>
         /// Add new Binding entries to a definition (for use by CswNbtImporter)
         /// </summary>
         public static void addBindingEntries( CswNbtResources CswNbtResources, DataTable BindingsDataTable, Dictionary<string, Int32> DefIdsBySheetName )

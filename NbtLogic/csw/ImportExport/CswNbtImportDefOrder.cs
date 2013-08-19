@@ -61,6 +61,20 @@ namespace ChemSW.Nbt.ImportExport
         }
 
         /// <summary>
+        /// Get a DataTable to fill out, for use with addOrderEntries()
+        /// </summary>
+        /// <returns></returns>
+        public static DataTable getDataTableForNewOrderEntries()
+        {
+            DataTable Table = new DataTable();
+            Table.Columns.Add( "sheet" );
+            Table.Columns.Add( "nodetype" );
+            Table.Columns.Add( "order" );
+            Table.Columns.Add( "instance" );
+            return Table;
+        }
+
+        /// <summary>
         /// Add new Order entries to a definition (for use by CswNbtImporter)
         /// </summary>
         public static void addOrderEntries( CswNbtResources CswNbtResources, DataTable OrderDataTable, Dictionary<string, Int32> DefIdsBySheetName )

@@ -58,6 +58,21 @@ namespace ChemSW.Nbt.ImportExport
             }
         }
 
+
+        /// <summary>
+        /// Get a DataTable to fill out, for use with addRelationshipEntries()
+        /// </summary>
+        /// <returns></returns>
+        public static DataTable getDataTableForNewRelationshipEntries()
+        {
+            DataTable Table = new DataTable();
+            Table.Columns.Add( "sheet" );
+            Table.Columns.Add( "nodetype" );
+            Table.Columns.Add( "relationship" );
+            Table.Columns.Add( "instance" );
+            return Table;
+        }
+
         /// <summary>
         /// Add new Relationship entries to a definition (for use by CswNbtImporter)
         /// </summary>
