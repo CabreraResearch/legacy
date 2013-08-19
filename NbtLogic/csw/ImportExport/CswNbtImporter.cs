@@ -62,6 +62,33 @@ namespace ChemSW.Nbt.ImportExport
             return ret;
         } // _readExcel()
 
+
+        /// <summary>
+        /// Stores new import definition
+        /// </summary>
+        public void storeDefinition( string FullFilePath, string ImportDefinitionName )
+        {
+            DataSet ExcelDataSet = _readExcel( FullFilePath );
+
+            if( ExcelDataSet.Tables.Count == 3 )
+            {
+                DataTable OrderDataTable = ExcelDataSet.Tables["Order$"];
+                DataTable BindingsDataTable = ExcelDataSet.Tables["Bindings$"];
+                DataTable RelationshipsDataTable = ExcelDataSet.Tables["Relationships$"];
+
+                Dictionary<string, Int32> DefIdsBySheetName = CswNbtImportDef.addDefinitionEntries( _CswNbtResources, ImportDefinitionName, OrderDataTable );
+                CswNbtImportDefOrder.addOrderEntries( _CswNbtResources, OrderDataTable, DefIdsBySheetName );
+                CswNbtImportDefBinding.addBindingEntries( _CswNbtResources, BindingsDataTable, DefIdsBySheetName );
+                CswNbtImportDefRelationship.addRelationshipEntries( _CswNbtResources, RelationshipsDataTable, DefIdsBySheetName );
+
+            } // if( ExcelDataSet.Tables.Count == 3 )
+            else
+            {
+                throw new CswDniException( CswEnumErrorType.Error, "Error reading file", "3 sheets not found in uploaded spreadsheet" );
+            }
+        } // storeDefinition()
+
+
         /// <summary>
         /// Stores data in temporary Oracle tables
         /// </summary>
@@ -578,50 +605,6 @@ namespace ChemSW.Nbt.ImportExport
             }
             return MoreToDo;
         } // ImportRows()
-
-
-        //public void getCounts( string ImportDataTableName, out Int32 PendingRows, out Int32 ErrorRows )
-        //{
-        //    PendingRows = getCountPending( ImportDataTableName );
-        //    ErrorRows = getCountError( ImportDataTableName );
-        //} // getCounts()
-
-
-        //public Int32 getCountPending( string ImportDataTableName )
-        //{
-        //    Int32 PendingRows = 0;
-        //    if( false == string.IsNullOrEmpty( ImportDataTableName ) && _CswNbtResources.isTableDefinedInDataBase( ImportDataTableName ) )
-        //    {
-        //        CswTableSelect ImportDataSelect = _CswNbtResources.makeCswTableSelect( "Importer_Select", ImportDataTableName );
-        //        CswNbtImportDataMap DataMap = new CswNbtImportDataMap( _CswNbtResources, ImportDataTableName );
-        //        CswNbtImportDef BindingDef = new CswNbtImportDef( _CswNbtResources, DataMap.ImportDefinitionId );
-        //        if( null != BindingDef && BindingDef.ImportOrder.Count > 0 )
-        //        {
-        //            string PendingWhereClause = string.Empty;
-        //            foreach( CswNbtImportDefOrder Order in BindingDef.ImportOrder.Values )
-        //            {
-        //                if( string.Empty != PendingWhereClause )
-        //                {
-        //                    PendingWhereClause += " or ";
-        //                }
-        //                PendingWhereClause += Order.PkColName + " is null";
-        //            }
-        //            PendingRows = ImportDataSelect.getRecordCount( "where " + CswNbtImportTables.ImportDataN.error + " = '" + CswConvert.ToDbVal( false ) + "' and (" + PendingWhereClause + ") " );
-        //        } // if( null != BindingDef && BindingDef.ImportOrder.Count > 0 )
-        //    } // if( false == string.IsNullOrEmpty( ImportDataTableName ) && _CswNbtResources.isTableDefinedInDataBase( ImportDataTableName ) )
-        //    return PendingRows;
-        //} // getCountPending()
-
-        //public Int32 getCountError( string ImportDataTableName )
-        //{
-        //    Int32 ErrorRows = 0;
-        //    if( false == string.IsNullOrEmpty( ImportDataTableName ) && _CswNbtResources.isTableDefinedInDataBase( ImportDataTableName ) )
-        //    {
-        //        CswTableSelect ImportDataSelect = _CswNbtResources.makeCswTableSelect( "Importer_Select", ImportDataTableName );
-        //        ErrorRows = ImportDataSelect.getRecordCount( "where error = '" + CswConvert.ToDbVal( true ) + "'" );
-        //    }
-        //    return ErrorRows;
-        //} // getCountError()
 
     } // class CswNbt2DImporter
 } // namespace ChemSW.Nbt.ImportExport

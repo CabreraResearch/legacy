@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using ChemSW.Core;
+using ChemSW.DB;
+using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 
 namespace ChemSW.Nbt.ImportExport
@@ -54,5 +57,49 @@ namespace ChemSW.Nbt.ImportExport
                 return ret;
             }
         }
+
+        /// <summary>
+        /// Add new Relationship entries to a definition (for use by CswNbtImporter)
+        /// </summary>
+        public static void addRelationshipEntries( CswNbtResources CswNbtResources, DataTable RelationshipsDataTable, Dictionary<string, Int32> DefIdsBySheetName )
+        {
+            CswTableUpdate importRelationshipsUpdate = CswNbtResources.makeCswTableUpdate( "storeDefinition_Relationships_update", CswNbtImportTables.ImportDefRelationships.TableName );
+            DataTable importRelationshipsTable = importRelationshipsUpdate.getEmptyTable();
+
+            foreach( DataRow RelRow in RelationshipsDataTable.Rows )
+            {
+                string SheetName = RelRow["sheet"].ToString();
+                if( false == string.IsNullOrEmpty( SheetName ) )
+                {
+                    string NodeTypeName = RelRow["nodetype"].ToString();
+                    CswNbtMetaDataNodeType NodeType = CswNbtResources.MetaData.getNodeType( NodeTypeName );
+                    if( null != NodeType )
+                    {
+                        string RelationshipName = RelRow["relationship"].ToString();
+                        CswNbtMetaDataNodeTypeProp Relationship = NodeType.getNodeTypeProp( RelationshipName );
+                        if( null != Relationship )
+                        {
+                            DataRow row = importRelationshipsTable.NewRow();
+                            row[CswNbtImportTables.ImportDefRelationships.importdefid] = DefIdsBySheetName[SheetName];
+                            row[CswNbtImportTables.ImportDefRelationships.nodetypename] = NodeTypeName;
+                            row[CswNbtImportTables.ImportDefRelationships.relationship] = RelationshipName;
+                            row[CswNbtImportTables.ImportDefRelationships.instance] = CswConvert.ToDbVal( RelRow["instance"].ToString() );
+                            importRelationshipsTable.Rows.Add( row );
+
+                        }
+                        else
+                        {
+                            throw new CswDniException( CswEnumErrorType.Error, "Error reading bindings", "Invalid Relationship defined in 'Relationships' sheet: " + RelRow["relationship"].ToString() + " (nodetype: " + NodeTypeName + ")" );
+                        }
+                    }
+                    else
+                    {
+                        throw new CswDniException( CswEnumErrorType.Error, "Error reading bindings", "Invalid NodeType defined in 'Relationships' sheet: " + NodeTypeName );
+                    }
+                }
+            } // foreach( DataRow RelRow in RelationshipsDataTable.Rows )
+            importRelationshipsUpdate.update( importRelationshipsTable );
+        } // addRelationshipEntries()
+
     } // class CswNbt2DRowRelationship
 } // namespace

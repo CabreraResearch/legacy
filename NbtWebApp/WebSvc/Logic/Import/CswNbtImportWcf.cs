@@ -17,7 +17,7 @@ namespace ChemSW.Nbt.WebServices
     public class CswNbtImportWcf
     {
         [DataContract]
-        public class ImportDataParams
+        public class ImportFileParams
         {
             [DataMember( IsRequired = true )]
             [Description( "Excel file content for import" )]
@@ -27,7 +27,7 @@ namespace ChemSW.Nbt.WebServices
             [Description( "Name of import definition" )]
             public string ImportDefName;
 
-            [DataMember( IsRequired = true )]
+            [DataMember( IsRequired = false )]
             [Description( "True if imported content should overwrite existing content" )]
             public bool Overwrite;
         }
@@ -54,7 +54,7 @@ namespace ChemSW.Nbt.WebServices
         public class ImportDefsReturn : CswWebSvcReturn
         {
             [DataMember( IsRequired = true )]
-            [Description( "Collection of import definitions" )]
+            [Description( "Import definitions" )]
             public string Data;
         }
 

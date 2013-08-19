@@ -49,7 +49,7 @@ namespace ChemSW.Nbt.WebServices
             }
         }
 
-        public static void uploadImportData( ICswResources CswResources, CswNbtImportWcf.ImportDataReturn ret, CswNbtImportWcf.ImportDataParams parms )
+        public static void uploadImportData( ICswResources CswResources, CswNbtImportWcf.ImportDataReturn ret, CswNbtImportWcf.ImportFileParams parms )
         {
             CswNbtResources CswNbtResources = (CswNbtResources) CswResources;
             CswNbtImporter Importer = new CswNbtImporter( CswNbtResources );
@@ -59,6 +59,19 @@ namespace ChemSW.Nbt.WebServices
             string path = myTempFile.saveToTempFile( parms.PostedFile.InputStream, DateTime.Now.Ticks + "_" + parms.PostedFile.FileName );
             ret.JobId = Importer.storeData( parms.PostedFile.FileName, path, parms.ImportDefName, parms.Overwrite );
         }
+
+
+        public static void uploadImportDefinition( ICswResources CswResources, CswWebSvcReturn ret, CswNbtImportWcf.ImportFileParams parms )
+        {
+            CswNbtResources CswNbtResources = (CswNbtResources) CswResources;
+            CswNbtImporter Importer = new CswNbtImporter( CswNbtResources );
+
+            // Write uploaded file to temp dir
+            CswTempFile myTempFile = new CswTempFile( CswResources );
+            string path = myTempFile.saveToTempFile( parms.PostedFile.InputStream, DateTime.Now.Ticks + "_" + parms.PostedFile.FileName );
+            Importer.storeDefinition( path, parms.ImportDefName );
+        }
+
 
     } // class CswNbtWebServiceImport
 

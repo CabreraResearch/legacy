@@ -39,13 +39,13 @@
                         var rowPercent = Math.round(Csw.number(data.RowsDone) / Csw.number(data.RowsTotal) * 100, 2);
                         var jobrow = 1;
 
-                        // kludge until we have a general way to solve this                        
+                        // TODO kludge until we have a general way to solve this (case 30497)
                         function DateWCF(datestr) {
                             if (false === Csw.isNullOrEmpty(datestr)) {
                                 var m = datestr.match(/\/Date\(([0-9]+)(?:.*)\)\//);
                                 if (null !== m) {
                                     var d = new Date(parseInt(m[1]));
-                                    return d.getMonth() + '/' + d.getDate() + '/' + d.getFullYear() + " " +
+                                    return (d.getMonth() + 1) + '/' + d.getDate() + '/' + d.getFullYear() + " " +
                                            d.getHours() + ':' + ('0' + d.getMinutes()).slice(-2) + ':' + ('0' + d.getSeconds()).slice(-2);
                                 }
                             } else {
@@ -147,7 +147,7 @@
             }; // makeStatusTable()
 
 
-            cswPrivate.makeUploadTable = function () {
+            cswPrivate.makeUploadDataTable = function () {
                 cswPublic.table.cell(3, 2)
                     .css({ paddingLeft: '100px' })
                     .text('Upload a New Data File')
@@ -206,6 +206,51 @@
                 });
             }; // makeUploadTable()
 
+            
+            cswPrivate.makeUploadBindingsTable = function () {
+                cswPublic.table.cell(3, 3)
+                    .css({ paddingLeft: '100px' })
+                    .text('Upload a New Bindings Definition')
+                    .css({ textAlign: 'center', 
+                           fontWeight: 'bold' });
+
+                cswPublic.uploadTable = cswPublic.table.cell(4, 3)
+                    .empty()
+                    .css({ paddingLeft: '100px' })
+                    .table({
+                        FirstCellRightAlign: true,
+                        cellpadding: 2
+                    });
+
+                cswPublic.uploadTable.cell(1, 1).text('Import Definition Name:');
+                cswPrivate.txtDefName = cswPublic.uploadTable.cell(1, 2).input({ name: 'txtDefName' });
+
+                cswPublic.uploadTable.cell(3, 1).text('Excel Bindings File (.xlsx):');
+                cswPublic.uploadTable.cell(3, 2).buttonExt({
+                    name: 'uploadnewBindingsBtn',
+                    icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.docimport),
+                    enabledText: 'Upload',
+                    disabledText: 'Upload',
+                    disableOnClick: false,
+                    onClick: function () {
+                        var name = cswPrivate.txtDefName.val();
+                        if (false === Csw.isNullOrEmpty(name)) {
+                            $.CswDialog('FileUploadDialog', {
+                                urlMethod: 'Services/Import/uploadImportDefinition',
+                                params: {
+                                    defname: name
+                                },
+                                forceIframeTransport: true,
+                                dataType: 'iframe',
+                                onSuccess: function(response) {
+                                    cswPrivate.makeUploadDataTable();
+                                    cswPrivate.txtDefName.val('');
+                                }
+                            });
+                        }
+                    }
+                });
+            }; // makeUploadBindingsTable()
 
             // Init
             (function () {
@@ -217,14 +262,15 @@
                 });
 
                 cswPublic.table.cell(1, 1)
-                    .propDom('colspan', 2)
+                    .propDom('colspan', 3)
                     .addClass('LoginTitle')
                     .text(cswPrivate.title);
 
                 cswPublic.table.cell(2, 1).br();
 
                 cswPrivate.makeStatusTable();
-                cswPrivate.makeUploadTable();
+                cswPrivate.makeUploadDataTable();
+                cswPrivate.makeUploadBindingsTable();
 
             })(); // init
 

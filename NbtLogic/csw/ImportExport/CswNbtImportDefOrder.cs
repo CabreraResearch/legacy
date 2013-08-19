@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using ChemSW.Core;
+using ChemSW.DB;
+using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 
 namespace ChemSW.Nbt.ImportExport
@@ -57,5 +59,38 @@ namespace ChemSW.Nbt.ImportExport
                 return ret;
             }
         }
+
+        /// <summary>
+        /// Add new Order entries to a definition (for use by CswNbtImporter)
+        /// </summary>
+        public static void addOrderEntries( CswNbtResources CswNbtResources, DataTable OrderDataTable, Dictionary<string, Int32> DefIdsBySheetName )
+        {
+            CswTableUpdate importOrderUpdate = CswNbtResources.makeCswTableUpdate( "CswNbtImportDefOrder_addOrderEntries_Update", CswNbtImportTables.ImportDefOrder.TableName );
+            DataTable importOrderTable = importOrderUpdate.getEmptyTable();
+            foreach( DataRow OrderRow in OrderDataTable.Rows )
+            {
+                string SheetName = OrderRow["sheet"].ToString();
+                if( false == string.IsNullOrEmpty( SheetName ) )
+                {
+                    string NTName = OrderRow["nodetype"].ToString();
+                    CswNbtMetaDataNodeType NodeType = CswNbtResources.MetaData.getNodeType( NTName );
+                    if( null != NodeType )
+                    {
+                        DataRow row = importOrderTable.NewRow();
+                        row[CswNbtImportTables.ImportDefOrder.importdefid] = DefIdsBySheetName[SheetName];
+                        row[CswNbtImportTables.ImportDefOrder.importorder] = CswConvert.ToDbVal( CswConvert.ToInt32( OrderRow["order"] ) );
+                        row[CswNbtImportTables.ImportDefOrder.nodetypename] = NTName;
+                        row[CswNbtImportTables.ImportDefOrder.instance] = CswConvert.ToDbVal( OrderRow["instance"].ToString() );
+                        importOrderTable.Rows.Add( row );
+                    }
+                    else
+                    {
+                        throw new CswDniException( CswEnumErrorType.Error, "Error reading definition file", "Invalid NodeType defined in 'Order' sheet: " + NTName );
+                    }
+                } // if(false == string.IsNullOrEmpty(SheetName) )
+            } // foreach( DataRow OrderRow in OrderDataTable.Rows )
+            importOrderUpdate.update( importOrderTable );
+        } // addOrderEntries()
+
     }
 }

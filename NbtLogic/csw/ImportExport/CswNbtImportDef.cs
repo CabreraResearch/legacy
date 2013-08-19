@@ -119,5 +119,34 @@ namespace ChemSW.Nbt.ImportExport
                 }
             }
         } // _loadBindings()
+
+
+        public static Dictionary<string, Int32> addDefinitionEntries( CswNbtResources CswNbtResources, string ImportDefinitionName, DataTable OrderDataTable )
+        {
+            Dictionary<string, Int32> ret = new Dictionary<string, Int32>();
+            CswTableUpdate importDefinitionUpdate = CswNbtResources.makeCswTableUpdate( "CswNbtImportDef_addDefinitionEntries_Update", CswNbtImportTables.ImportDef.TableName );
+            DataTable importDefinitionTable = importDefinitionUpdate.getEmptyTable();
+            Int32 i = 1;
+            foreach( DataRow OrderRow in OrderDataTable.Rows )
+            {
+                string SheetName = OrderRow["sheet"].ToString();
+                if( false == string.IsNullOrEmpty( SheetName ) &&
+                    false == ret.ContainsKey( SheetName ) )
+                {
+                    DataRow defrow = importDefinitionTable.NewRow();
+                    defrow[CswNbtImportTables.ImportDef.definitionname] = ImportDefinitionName;
+                    defrow[CswNbtImportTables.ImportDef.sheetname] = SheetName;
+                    defrow[CswNbtImportTables.ImportDef.sheetorder] = i;
+                    i++;
+                    importDefinitionTable.Rows.Add( defrow );
+                    ret.Add( SheetName, CswConvert.ToInt32( defrow[CswNbtImportTables.ImportDef.PkColumnName] ) );
+                }
+            } // foreach
+            importDefinitionUpdate.update( importDefinitionTable );
+            return ret;
+        } // _addDefinitionEntries();
+
+
+
     } // class CswNbt2DDefinition
 } // namespace

@@ -3,6 +3,7 @@ using ChemSW.Nbt;
 using ChemSW.Nbt.ImportExport;
 using ChemSW.Nbt.WebServices;
 using ChemSW.WebSvc;
+using NbtWebApp.WebSvc.Returns;
 using NbtWebAppServices.Response;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -79,15 +80,42 @@ namespace NbtWebApp
 
             if( _Context.Request.Files.Count > 0 )
             {
-                CswNbtImportWcf.ImportDataParams parms = new CswNbtImportWcf.ImportDataParams();
+                CswNbtImportWcf.ImportFileParams parms = new CswNbtImportWcf.ImportFileParams();
                 parms.PostedFile = _Context.Request.Files[0];
                 parms.ImportDefName = ImportDefName;
                 parms.Overwrite = Overwrite;
 
-                var SvcDriver = new CswWebSvcDriver<CswNbtImportWcf.ImportDataReturn, CswNbtImportWcf.ImportDataParams>(
+                var SvcDriver = new CswWebSvcDriver<CswNbtImportWcf.ImportDataReturn, CswNbtImportWcf.ImportFileParams>(
                     CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
                     ReturnObj: ret,
                     WebSvcMethodPtr: CswNbtWebServiceImport.uploadImportData,
+                    ParamObj: parms
+                    );
+
+                SvcDriver.run();
+            }
+
+            return ret;
+        }
+
+        [OperationContract]
+        [WebInvoke( Method = "POST", UriTemplate = "uploadImportDefinition?defname={ImportDefName}" )]
+        [Description( "Upload Import Data" )]
+        [FaultContract( typeof( FaultException ) )]
+        public CswWebSvcReturn uploadImportDefinition( string ImportDefName )
+        {
+            CswWebSvcReturn ret = new CswWebSvcReturn();
+
+            if( _Context.Request.Files.Count > 0 )
+            {
+                CswNbtImportWcf.ImportFileParams parms = new CswNbtImportWcf.ImportFileParams();
+                parms.PostedFile = _Context.Request.Files[0];
+                parms.ImportDefName = ImportDefName;
+
+                var SvcDriver = new CswWebSvcDriver<CswWebSvcReturn, CswNbtImportWcf.ImportFileParams>(
+                    CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                    ReturnObj: ret,
+                    WebSvcMethodPtr: CswNbtWebServiceImport.uploadImportDefinition,
                     ParamObj: parms
                     );
 
