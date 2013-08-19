@@ -1,3 +1,4 @@
+using System;
 using ChemSW.Core;
 using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
@@ -419,7 +420,7 @@ namespace ChemSW.Nbt.Schema
             {
                 PropName = CswNbtObjClassProblem.PropertyName.Summary,
                 FieldType = CswEnumNbtFieldType.Text
-            } );            
+            } );
             CswNbtMetaDataObjectClassProp TechnicianOCP = _addOCP( ProblemOC, new CswNbtWcfMetaDataModel.ObjectClassProp
             {
                 PropName = CswNbtObjClassProblem.PropertyName.Technician,
@@ -427,7 +428,7 @@ namespace ChemSW.Nbt.Schema
                 IsFk = true,
                 FkType = CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(),
                 FkValue = UserOC.ObjectClassId
-            } );            
+            } );
             _addOCP( ProblemOC, new CswNbtWcfMetaDataModel.ObjectClassProp
             {
                 PropName = CswNbtObjClassProblem.PropertyName.TechnicianPhone,

@@ -17,22 +17,32 @@ namespace ChemSW.Nbt.Schema
             get { return 30197; }
         }
 
+        public override string ScriptName
+        {
+            get { return "02F_Case30197"; }
+        }
+
+        public override bool AlwaysRun
+        {
+            get { return false; }
+        }
+
         public override void update()
         {
             //if( _CswNbtSchemaModTrnsctn.isMaster() )
             //{
-                foreach( CswNbtView View in _CswNbtSchemaModTrnsctn.restoreViews( "Inventory Levels" ) )
+            foreach( CswNbtView View in _CswNbtSchemaModTrnsctn.restoreViews( "Inventory Levels" ) )
+            {
+                if( View.ViewMode == CswEnumNbtViewRenderingMode.Grid &&
+                    View.Visibility == CswEnumNbtViewVisibility.Property )
                 {
-                    if( View.ViewMode == CswEnumNbtViewRenderingMode.Grid && 
-                        View.Visibility == CswEnumNbtViewVisibility.Property )
+                    View.Root.eachRelationship( Relationship =>
                     {
-                        View.Root.eachRelationship( Relationship =>
-                        {
-                            Relationship.AllowAdd = true;
-                        }, null );
-                        View.save();
-                    }
+                        Relationship.AllowAdd = true;
+                    }, null );
+                    View.save();
                 }
+            }
             //}
         } // update()
 

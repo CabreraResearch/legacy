@@ -20,6 +20,16 @@ namespace ChemSW.Nbt.Schema
             get { return 30082; }
         }
 
+        public override string ScriptName
+        {
+            get { return "02F_Case30082_UserCache"; }
+        }
+
+        public override bool AlwaysRun
+        {
+            get { return false; }
+        }
+
         public override void update()
         {
             CswNbtMetaDataObjectClass UserOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.UserClass );
@@ -29,7 +39,7 @@ namespace ChemSW.Nbt.Schema
                 Prop.removeFromAllLayouts();
             }
             CswNbtActRequesting ActRequesting = new CswNbtActRequesting( _CswNbtSchemaModTrnsctn.MetaData._CswNbtMetaDataResources.CswNbtResources );
-            foreach ( CswNbtObjClassUser User in UserOc.getNodes( forceReInit: true, includeSystemNodes: false, IncludeDefaultFilters: false, IncludeHiddenNodes: true ) )
+            foreach( CswNbtObjClassUser User in UserOc.getNodes( forceReInit: true, includeSystemNodes: false, IncludeDefaultFilters: false, IncludeHiddenNodes: true ) )
             {
                 ActRequesting.resetCartCounts( User: User );
             }

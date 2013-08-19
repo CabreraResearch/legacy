@@ -11,6 +11,16 @@ namespace ChemSW.Nbt.Schema
     {
         public static string Title = "Pre-Script: Case 30082";
 
+        public override string ScriptName
+        {
+            get { return "02F_Case30082_UserCache"; }
+        }
+
+        public override bool AlwaysRun
+        {
+            get { return false; }
+        }
+
         #region Blame Logic
 
         public override CswEnumDeveloper Author
