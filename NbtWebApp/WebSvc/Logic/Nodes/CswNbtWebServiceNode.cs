@@ -183,6 +183,29 @@ namespace ChemSW.Nbt.WebServices
                         }
 
                         #endregion Sizes
+
+                        #region Synonyms
+
+                        CswNbtMetaDataObjectClass MaterialSynonymOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.MaterialSynonymClass );
+                        CswNbtMetaDataObjectClassProp SynMaterialOCP = MaterialSynonymOC.getObjectClassProp( CswNbtObjClassMaterialSynonym.PropertyName.Material );
+                        CswNbtView SynonymsView = new CswNbtView( _CswNbtResources )
+                        {
+                            ViewName = "MaterialCopySynonyms"
+                        };
+                        CswNbtViewRelationship SynonymsVR = SynonymsView.AddViewRelationship( MaterialSynonymOC, false );
+                        SynonymsView.AddViewPropertyAndFilter( SynonymsVR, SynMaterialOCP, OriginalMaterial.NodeId.PrimaryKey.ToString(), CswEnumNbtSubFieldName.NodeID );
+                        ICswNbtTree SynonymsTree = _CswNbtResources.Trees.getTreeFromView( SynonymsView, false, false, false );
+                        for( int i = 0; i < SynonymsTree.getChildNodeCount(); i++ )
+                        {
+                            SynonymsTree.goToNthChild( i );
+                            CswNbtObjClassMaterialSynonym SynonymNode = SynonymsTree.getNodeForCurrentPosition();
+                            CswNbtObjClassMaterialSynonym SynonymCopy = SynonymNode.CopyNode();
+                            SynonymCopy.Material.RelatedNodeId = MaterialCopy.NodeId;
+                            SynonymCopy.postChanges( false );
+                            SynonymsTree.goToParentNode();
+                        }
+
+                        #endregion Synonyms
                     }
                 }
             }
