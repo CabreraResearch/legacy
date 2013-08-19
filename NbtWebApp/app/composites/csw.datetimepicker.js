@@ -37,14 +37,23 @@
             };
 
             cswPrivate.addValidators = function () {
-                if ( cswPrivate.DateFormat in cswPrivate.dateFormats ) {
+                
+                if ( cswPrivate.DateFormat in cswPrivate.dateFormats && undefined != cswPrivate.dateBox ) {
                     var dateExpression = cswPrivate.dateFormats[cswPrivate.DateFormat];
 
                     $.validator.addMethod('validateDate', function (value, element) {
                         return (dateExpression.test(cswPublic.val().date));
                     }, 'Please enter a valid date');
                     cswPrivate.dateBox.addClass('validateDate');
-                }//if preferredFormat in dateFormats
+                }//if preferredFormat in dateFormats && undefined != cswPrivate.dateBox
+                
+                if (undefined != cswPrivate.timeBox) {
+                    var timeExpression = /^([[1-9]|1[012]):([0-5][0-9]):([0-5][0-9]) (AM|PM)$/;
+                    $.validator.addMethod('validateTime', function (value, element) {
+                        return (timeExpression.test(cswPublic.val().time));
+                    }, 'Please enter a valid time in the format H:MM:SS AM/PM');
+                    cswPrivate.timeBox.addClass('validateTime');
+                }
             };//function addValidators()
 
 
