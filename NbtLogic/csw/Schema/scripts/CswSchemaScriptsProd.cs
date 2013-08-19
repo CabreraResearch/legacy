@@ -41,6 +41,7 @@ namespace ChemSW.Nbt.Schema
 
 
             #endregion
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02F_Case27883() ) );                    //02E-021 //02F-010
 
             // FOXGLOVE 'Before' Scripts
             _addVersionedScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02F_Case30281() ) );           //02F-001 
@@ -95,6 +96,7 @@ namespace ChemSW.Nbt.Schema
             #region Before Scripts
 
             // We now only have two before scripts that always run
+                _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02F_Case27883() ), RunBeforeEveryExecutionOfUpdater_02F_Case27883.Title );
             _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02SQL() ), RunBeforeEveryExecutionOfUpdater_02SQL.Title );
             _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_03() ), RunBeforeEveryExecutionOfUpdater_03.Title );
 
