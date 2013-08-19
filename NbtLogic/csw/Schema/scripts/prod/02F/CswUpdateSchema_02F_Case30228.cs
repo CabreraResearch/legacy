@@ -1,6 +1,4 @@
-﻿using System.Data;
-using ChemSW.Core;
-using ChemSW.DB;
+﻿using ChemSW.Core;
 using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
@@ -27,13 +25,7 @@ namespace ChemSW.Nbt.Schema
 
             #region Update all NTPs "Hidden" column to "false"
 
-            CswTableUpdate nodeTypePropsTU = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "ntp.setHidden", "nodetype_props" );
-            DataTable nodetypePropsDT = nodeTypePropsTU.getTable();
-            foreach( DataRow row in nodetypePropsDT.Rows )
-            {
-                row["hidden"] = CswConvert.ToDbVal( false );
-            }
-            nodeTypePropsTU.update( nodetypePropsDT );
+            _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( "update nodetype_props set hidden = " + CswConvert.ToDbVal( false ) );
 
             #endregion
 
@@ -207,7 +199,7 @@ namespace ChemSW.Nbt.Schema
                     LastNtp = CmgNtp;
                 }
 
-                CswNbtMetaDataNodeTypeTab ReceiveTab = NodeType.getNodeTypeTab( "Receive" ) 
+                CswNbtMetaDataNodeTypeTab ReceiveTab = NodeType.getNodeTypeTab( "Receive" )
                     ?? _CswNbtSchemaModTrnsctn.MetaData.makeNewTab( NodeType, "Receive", NodeType.getNextTabOrder() );
                 foreach( string ReceiveTabProp in CswNbtObjClassRequestMaterialDispense.PropertyName.MLMReceiveTabProps )
                 {
