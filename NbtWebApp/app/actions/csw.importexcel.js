@@ -19,7 +19,8 @@
 
             cswPrivate.loadStatus = function (job) {
                 cswPrivate.selectedJobId = job.ImportDataJobId;
-
+                cswPublic.statusTable.cell(2, 1).empty();
+                
                 Csw.ajaxWcf.post({
                     urlMethod: 'Import/getImportStatus',
                     data: {
@@ -28,7 +29,6 @@
                     success: function (data) {
 
                         var jobTable = cswPublic.statusTable.cell(2, 1)
-                            .empty()
                             .propDom('colspan', 2)
                             .table({
                                 FirstCellRightAlign: true,
@@ -88,6 +88,18 @@
                         jobTable.cell(jobrow, 2)
                             .css({ fontWeight: 'bold' })
                             .text(data.RowsError);
+                        jobrow++;
+
+                        jobTable.cell(jobrow, 2).buttonExt({
+                            name: 'refreshBtn',
+                            icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.refresh),
+                            enabledText: 'Refresh',
+                            disabledText: 'Refresh',
+                            disableOnClick: false,
+                            onClick: function () {
+                                cswPrivate.loadStatus(job);
+                            }        
+                        });
                         jobrow++;
                         
                     } // success()
