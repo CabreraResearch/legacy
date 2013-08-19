@@ -41,7 +41,7 @@ namespace ChemSW.Nbt.Schema
             {
                 string Tablename = CswNbtImportTables.ImportDefOrder.TableName;
                 _CswNbtSchemaModTrnsctn.addTable( Tablename, CswNbtImportTables.ImportDefOrder.PkColumnName );
-                _CswNbtSchemaModTrnsctn.addForeignKeyColumn( Tablename, CswNbtImportTables.ImportDefOrder.importdefid, "FK to import definition", false, true, "import_definition", "importdefinitionid" );
+                _CswNbtSchemaModTrnsctn.addForeignKeyColumn( Tablename, CswNbtImportTables.ImportDefOrder.importdefid, "FK to import definition", false, true, CswNbtImportTables.ImportDef.TableName, CswNbtImportTables.ImportDef.importdefid );
                 _CswNbtSchemaModTrnsctn.addLongColumn( Tablename, CswNbtImportTables.ImportDefOrder.importorder, "Numerical order of import", false, true );
                 //_CswNbtSchemaModTrnsctn.addStringColumn( Tablename, CswNbt2DImportTables.ImportOrder.sourcesheetname, "Name of source sheet", false, true, 50 );
                 _CswNbtSchemaModTrnsctn.addStringColumn( Tablename, CswNbtImportTables.ImportDefOrder.nodetypename, "NodeType Name to import", false, true, 50 );
@@ -51,7 +51,7 @@ namespace ChemSW.Nbt.Schema
             {
                 string Tablename = CswNbtImportTables.ImportDefBindings.TableName;
                 _CswNbtSchemaModTrnsctn.addTable( Tablename, CswNbtImportTables.ImportDefBindings.PkColumnName );
-                _CswNbtSchemaModTrnsctn.addForeignKeyColumn( Tablename, CswNbtImportTables.ImportDefBindings.importdefid, "FK to import definition", false, true, "import_definition", "importdefinitionid" );
+                _CswNbtSchemaModTrnsctn.addForeignKeyColumn( Tablename, CswNbtImportTables.ImportDefBindings.importdefid, "FK to import definition", false, true, CswNbtImportTables.ImportDef.TableName, CswNbtImportTables.ImportDef.importdefid );
                 //_CswNbtSchemaModTrnsctn.addStringColumn( Tablename, CswNbt2DImportTables.ImportBindings.sourcesheetname, "Name of source sheet", false, true, 50 );
                 _CswNbtSchemaModTrnsctn.addStringColumn( Tablename, CswNbtImportTables.ImportDefBindings.sourcecolumnname, "Name of column in source data", false, true, 50 );
                 _CswNbtSchemaModTrnsctn.addStringColumn( Tablename, CswNbtImportTables.ImportDefBindings.destnodetypename, "NodeType Name of property in destination data", false, true, 50 );
@@ -63,7 +63,7 @@ namespace ChemSW.Nbt.Schema
             {
                 string Tablename = CswNbtImportTables.ImportDefRelationships.TableName;
                 _CswNbtSchemaModTrnsctn.addTable( Tablename, CswNbtImportTables.ImportDefRelationships.PkColumnName );
-                _CswNbtSchemaModTrnsctn.addForeignKeyColumn( Tablename, CswNbtImportTables.ImportDefRelationships.importdefid, "FK to import definition", false, true, "import_definition", "importdefinitionid" );
+                _CswNbtSchemaModTrnsctn.addForeignKeyColumn( Tablename, CswNbtImportTables.ImportDefRelationships.importdefid, "FK to import definition", false, true, CswNbtImportTables.ImportDef.TableName, CswNbtImportTables.ImportDef.importdefid );
                 //_CswNbtSchemaModTrnsctn.addStringColumn( Tablename, CswNbt2DImportTables.ImportRelationships.sourcesheetname, "Name of source sheet", false, true, 50 );
                 _CswNbtSchemaModTrnsctn.addStringColumn( Tablename, CswNbtImportTables.ImportDefRelationships.nodetypename, "NodeType Name to import", false, true, 50 );
                 _CswNbtSchemaModTrnsctn.addStringColumn( Tablename, CswNbtImportTables.ImportDefRelationships.relationship, "Property name of relationship property", false, true, 512 );
@@ -73,7 +73,8 @@ namespace ChemSW.Nbt.Schema
             {
                 string Tablename = CswNbtImportTables.ImportDataMap.TableName;
                 _CswNbtSchemaModTrnsctn.addTable( Tablename, CswNbtImportTables.ImportDataMap.PkColumnName );
-                _CswNbtSchemaModTrnsctn.addForeignKeyColumn( Tablename, CswNbtImportTables.ImportDataMap.importdefid, "FK to import definition", false, true, "import_definition", "importdefinitionid" );
+                _CswNbtSchemaModTrnsctn.addForeignKeyColumn( Tablename, CswNbtImportTables.ImportDataMap.importdefid, "FK to import definition", false, true, CswNbtImportTables.ImportDef.TableName, CswNbtImportTables.ImportDef.importdefid );
+                _CswNbtSchemaModTrnsctn.addForeignKeyColumn( Tablename, CswNbtImportTables.ImportDataMap.importdatajobid, "FK to import job", false, true, CswNbtImportTables.ImportDataJob.TableName, CswNbtImportTables.ImportDataJob.importdatajobid );
                 _CswNbtSchemaModTrnsctn.addStringColumn( Tablename, CswNbtImportTables.ImportDataMap.datatablename, "Oracle table name for data", false, true, 50 );
                 //_CswNbtSchemaModTrnsctn.addStringColumn( Tablename, CswNbt2DImportTables.ImportDataMap.sheetname, "Name of source sheet", false, true, 50 );
                 _CswNbtSchemaModTrnsctn.addBooleanColumn( Tablename, CswNbtImportTables.ImportDataMap.overwrite, "When importing, whether to overwrite existing nodes", false, true );

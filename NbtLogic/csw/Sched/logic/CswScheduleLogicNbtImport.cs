@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Data;
+using System.Linq;
 using ChemSW.Config;
 using ChemSW.Core;
 using ChemSW.DB;
@@ -42,7 +43,6 @@ namespace ChemSW.Nbt.Sched
 
         #region State
 
-        private Int32 _LoadCount = 0;
         private StringCollection _DataTableNames = new StringCollection();
 
         #endregion State
@@ -54,17 +54,12 @@ namespace ChemSW.Nbt.Sched
             CswNbtResources CswNbtResources = (CswNbtResources) CswResources;
 
             // Only recalculate load count if it's zero
-            if( _LoadCount <= 0 )
+            if( _DataTableNames.Count == 0 )
             {
                 CswNbtImporter Importer = new CswNbtImporter( CswNbtResources );
                 _DataTableNames = Importer.getImportDataTableNames();
-
-                foreach( string DataTableName in _DataTableNames )
-                {
-                    _LoadCount += Importer.getCountPending( DataTableName );
-                }
             }
-            _CswScheduleLogicDetail.LoadCount = _LoadCount;
+            _CswScheduleLogicDetail.LoadCount = _DataTableNames.Count;
             return _CswScheduleLogicDetail.LoadCount;
         }
 
@@ -85,12 +80,11 @@ namespace ChemSW.Nbt.Sched
                         ImportLimit = 10;  // Default
                     }
 
-                    CswNbtImporter Importer = new CswNbtImporter( CswNbtResources );
                     if( _DataTableNames.Count > 0 )
                     {
+                        CswNbtImporter Importer = new CswNbtImporter( CswNbtResources );
                         Int32 RowsProcessed;
                         bool MoreToDo = Importer.ImportRows( ImportLimit, _DataTableNames[0], out RowsProcessed );
-                        _LoadCount -= RowsProcessed;
                         if( false == MoreToDo )
                         {
                             _DataTableNames.RemoveAt( 0 );
@@ -98,7 +92,6 @@ namespace ChemSW.Nbt.Sched
                     }
                     else
                     {
-                        _LoadCount = 0;
                         _CswScheduleLogicDetail.LoadCount = 0;
                     }
                     _CswScheduleLogicDetail.StatusMessage = "Completed without error";

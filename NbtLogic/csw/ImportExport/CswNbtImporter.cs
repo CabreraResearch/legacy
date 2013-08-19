@@ -84,7 +84,7 @@ namespace ChemSW.Nbt.ImportExport
             DataSet ExcelDataSet = _readExcel( FullFilePath );
 
             // Store the job reference in import_data_job
-            CswTableUpdate ImportDataJobUpdate = _CswNbtResources.makeCswTableUpdate( "Importer_DataMap_Insert", CswNbtImportTables.ImportDataMap.TableName );
+            CswTableUpdate ImportDataJobUpdate = _CswNbtResources.makeCswTableUpdate( "Importer_DataJob_Insert", CswNbtImportTables.ImportDataJob.TableName );
             DataTable ImportDataJobTable = ImportDataJobUpdate.getEmptyTable();
             DataRow DataJobRow = ImportDataJobTable.NewRow();
             DataJobRow[CswNbtImportTables.ImportDataJob.filename] = FileName;
@@ -185,6 +185,23 @@ namespace ChemSW.Nbt.ImportExport
         } // getDefinitions()
 
         /// <summary>
+        /// Returns the set of available Import Jobs
+        /// </summary>
+        public Collection<CswNbtImportDataJob> getJobs()
+        {
+            Collection<CswNbtImportDataJob> ret = new Collection<CswNbtImportDataJob>();
+            CswTableSelect JobSelect = _CswNbtResources.makeCswTableSelect( "getJobs_select", CswNbtImportTables.ImportDataJob.TableName );
+            DataTable JobDataTable = JobSelect.getTable();
+            foreach( DataRow jobrow in JobDataTable.Rows )
+            {
+                ret.Add( new CswNbtImportDataJob( _CswNbtResources, jobrow ) );
+            }
+            return ret;
+        } // getJobs()
+
+
+
+        /// <summary>
         /// Returns import data table names, in import order
         /// </summary>
         /// <param name="IncludeCompleted">If true, also include table names for already completed imports</param>
@@ -192,21 +209,24 @@ namespace ChemSW.Nbt.ImportExport
         {
             StringCollection ret = new StringCollection();
 
-            string sql = "select m." + CswNbtImportTables.ImportDataMap.datatablename +
+            string Sql = @"select m." + CswNbtImportTables.ImportDataMap.datatablename +
                          " from " + CswNbtImportTables.ImportDataMap.TableName + " m " +
-                         " join " + CswNbtImportTables.ImportDef.TableName + " d on (d." + CswNbtImportTables.ImportDef.importdefid + " = m." + CswNbtImportTables.ImportDataMap.importdefid + ")";
+                         " join " + CswNbtImportTables.ImportDataJob.TableName + " j on m." + CswNbtImportTables.ImportDataMap.importdatajobid + " = j." + CswNbtImportTables.ImportDataJob.importdatajobid +
+                         " join " + CswNbtImportTables.ImportDef.TableName + " d on m." + CswNbtImportTables.ImportDataMap.importdefid + " = d." + CswNbtImportTables.ImportDef.importdefid;
             if( false == IncludeCompleted )
             {
-                sql += "where m." + CswNbtImportTables.ImportDataMap.completed + " = '" + CswConvert.ToDbVal( false ) + "'";
+                Sql += "  where " + CswNbtImportTables.ImportDataJob.dateended + " is null";
+                Sql += "    and m." + CswNbtImportTables.ImportDataMap.completed + " = '" + CswConvert.ToDbVal( false ) + "'";
             }
-            sql += "order by d." + CswNbtImportTables.ImportDef.sheetorder + ", m." + CswNbtImportTables.ImportDataMap.PkColumnName;
+            Sql += @"     order by j." + CswNbtImportTables.ImportDataJob.datestarted + ", d." + CswNbtImportTables.ImportDef.sheetorder + ", m." + CswNbtImportTables.ImportDataMap.PkColumnName;
 
-            CswArbitrarySelect ImportDataMapSelect = _CswNbtResources.makeCswArbitrarySelect( "getImportDataTableNames_DataMap_Select", sql );
-            DataTable ImportDataMapTable = ImportDataMapSelect.getTable();
-            foreach( DataRow ImportDataMapRow in ImportDataMapTable.Rows )
+            CswArbitrarySelect ImportDataSelect = _CswNbtResources.makeCswArbitrarySelect( "getImportDataTableNames_Select", Sql );
+            DataTable ImportDataTable = ImportDataSelect.getTable();
+            foreach( DataRow Row in ImportDataTable.Rows )
             {
-                ret.Add( ImportDataMapRow[CswNbtImportTables.ImportDataMap.datatablename].ToString() );
+                ret.Add( CswConvert.ToString( Row[CswNbtImportTables.ImportDataMap.datatablename] ) );
             }
+
             return ret;
         } // getImportDataTableNames()
 
@@ -578,48 +598,48 @@ namespace ChemSW.Nbt.ImportExport
         } // ImportRows()
 
 
-        public void getCounts( string ImportDataTableName, out Int32 PendingRows, out Int32 ErrorRows )
-        {
-            PendingRows = getCountPending( ImportDataTableName );
-            ErrorRows = getCountError( ImportDataTableName );
-        } // getCounts()
+        //public void getCounts( string ImportDataTableName, out Int32 PendingRows, out Int32 ErrorRows )
+        //{
+        //    PendingRows = getCountPending( ImportDataTableName );
+        //    ErrorRows = getCountError( ImportDataTableName );
+        //} // getCounts()
 
 
-        public Int32 getCountPending( string ImportDataTableName )
-        {
-            Int32 PendingRows = 0;
-            if( false == string.IsNullOrEmpty( ImportDataTableName ) && _CswNbtResources.isTableDefinedInDataBase( ImportDataTableName ) )
-            {
-                CswTableSelect ImportDataSelect = _CswNbtResources.makeCswTableSelect( "Importer_Select", ImportDataTableName );
-                CswNbtImportDataMap DataMap = new CswNbtImportDataMap( _CswNbtResources, ImportDataTableName );
-                CswNbtImportDef BindingDef = new CswNbtImportDef( _CswNbtResources, DataMap.ImportDefinitionId );
-                if( null != BindingDef && BindingDef.ImportOrder.Count > 0 )
-                {
-                    string PendingWhereClause = string.Empty;
-                    foreach( CswNbtImportDefOrder Order in BindingDef.ImportOrder.Values )
-                    {
-                        if( string.Empty != PendingWhereClause )
-                        {
-                            PendingWhereClause += " or ";
-                        }
-                        PendingWhereClause += Order.PkColName + " is null";
-                    }
-                    PendingRows = ImportDataSelect.getRecordCount( "where " + CswNbtImportTables.ImportDataN.error + " = '" + CswConvert.ToDbVal( false ) + "' and (" + PendingWhereClause + ") " );
-                } // if( null != BindingDef && BindingDef.ImportOrder.Count > 0 )
-            } // if( false == string.IsNullOrEmpty( ImportDataTableName ) && _CswNbtResources.isTableDefinedInDataBase( ImportDataTableName ) )
-            return PendingRows;
-        } // getCountPending()
+        //public Int32 getCountPending( string ImportDataTableName )
+        //{
+        //    Int32 PendingRows = 0;
+        //    if( false == string.IsNullOrEmpty( ImportDataTableName ) && _CswNbtResources.isTableDefinedInDataBase( ImportDataTableName ) )
+        //    {
+        //        CswTableSelect ImportDataSelect = _CswNbtResources.makeCswTableSelect( "Importer_Select", ImportDataTableName );
+        //        CswNbtImportDataMap DataMap = new CswNbtImportDataMap( _CswNbtResources, ImportDataTableName );
+        //        CswNbtImportDef BindingDef = new CswNbtImportDef( _CswNbtResources, DataMap.ImportDefinitionId );
+        //        if( null != BindingDef && BindingDef.ImportOrder.Count > 0 )
+        //        {
+        //            string PendingWhereClause = string.Empty;
+        //            foreach( CswNbtImportDefOrder Order in BindingDef.ImportOrder.Values )
+        //            {
+        //                if( string.Empty != PendingWhereClause )
+        //                {
+        //                    PendingWhereClause += " or ";
+        //                }
+        //                PendingWhereClause += Order.PkColName + " is null";
+        //            }
+        //            PendingRows = ImportDataSelect.getRecordCount( "where " + CswNbtImportTables.ImportDataN.error + " = '" + CswConvert.ToDbVal( false ) + "' and (" + PendingWhereClause + ") " );
+        //        } // if( null != BindingDef && BindingDef.ImportOrder.Count > 0 )
+        //    } // if( false == string.IsNullOrEmpty( ImportDataTableName ) && _CswNbtResources.isTableDefinedInDataBase( ImportDataTableName ) )
+        //    return PendingRows;
+        //} // getCountPending()
 
-        public Int32 getCountError( string ImportDataTableName )
-        {
-            Int32 ErrorRows = 0;
-            if( false == string.IsNullOrEmpty( ImportDataTableName ) && _CswNbtResources.isTableDefinedInDataBase( ImportDataTableName ) )
-            {
-                CswTableSelect ImportDataSelect = _CswNbtResources.makeCswTableSelect( "Importer_Select", ImportDataTableName );
-                ErrorRows = ImportDataSelect.getRecordCount( "where error = '" + CswConvert.ToDbVal( true ) + "'" );
-            }
-            return ErrorRows;
-        } // getCountError()
+        //public Int32 getCountError( string ImportDataTableName )
+        //{
+        //    Int32 ErrorRows = 0;
+        //    if( false == string.IsNullOrEmpty( ImportDataTableName ) && _CswNbtResources.isTableDefinedInDataBase( ImportDataTableName ) )
+        //    {
+        //        CswTableSelect ImportDataSelect = _CswNbtResources.makeCswTableSelect( "Importer_Select", ImportDataTableName );
+        //        ErrorRows = ImportDataSelect.getRecordCount( "where error = '" + CswConvert.ToDbVal( true ) + "'" );
+        //    }
+        //    return ErrorRows;
+        //} // getCountError()
 
     } // class CswNbt2DImporter
 } // namespace ChemSW.Nbt.ImportExport

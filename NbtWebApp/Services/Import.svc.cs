@@ -35,11 +35,11 @@ namespace NbtWebApp
         [WebInvoke( Method = "GET", ResponseFormat = WebMessageFormat.Json )]
         [Description( "Get possible import definitions" )]
         [FaultContract( typeof( FaultException ) )]
-        public CswNbtWebServiceImport.ImportDefsReturn getImportDefs()
+        public CswNbtImportWcf.ImportDefsReturn getImportDefs()
         {
-            CswNbtWebServiceImport.ImportDefsReturn ret = new CswNbtWebServiceImport.ImportDefsReturn();
+            CswNbtImportWcf.ImportDefsReturn ret = new CswNbtImportWcf.ImportDefsReturn();
 
-            var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceImport.ImportDefsReturn, object>(
+            var SvcDriver = new CswWebSvcDriver<CswNbtImportWcf.ImportDefsReturn, object>(
                 CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, AuthRequest ),
                 ReturnObj: ret,
                 WebSvcMethodPtr: CswNbtWebServiceImport.getImportDefs,
@@ -50,23 +50,41 @@ namespace NbtWebApp
             return ( ret );
         }
 
+        [OperationContract]
+        [WebInvoke( Method = "GET", ResponseFormat = WebMessageFormat.Json )]
+        [Description( "Get existing import jobs" )]
+        [FaultContract( typeof( FaultException ) )]
+        public CswNbtImportWcf.ImportJobsReturn getImportJobs()
+        {
+            CswNbtImportWcf.ImportJobsReturn ret = new CswNbtImportWcf.ImportJobsReturn();
+
+            var SvcDriver = new CswWebSvcDriver<CswNbtImportWcf.ImportJobsReturn, object>(
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, AuthRequest ),
+                ReturnObj: ret,
+                WebSvcMethodPtr: CswNbtWebServiceImport.getImportJobs,
+                ParamObj: null
+                );
+
+            SvcDriver.run();
+            return ( ret );
+        }
 
         [OperationContract]
         [WebInvoke( Method = "POST", UriTemplate = "uploadImportData?defname={ImportDefName}&overwrite={Overwrite}" )]
         [Description( "Upload Import Data" )]
         [FaultContract( typeof( FaultException ) )]
-        public CswNbtWebServiceImport.ImportDataReturn uploadImportData( string ImportDefName, bool Overwrite )
+        public CswNbtImportWcf.ImportDataReturn uploadImportData( string ImportDefName, bool Overwrite )
         {
-            CswNbtWebServiceImport.ImportDataReturn ret = new CswNbtWebServiceImport.ImportDataReturn();
+            CswNbtImportWcf.ImportDataReturn ret = new CswNbtImportWcf.ImportDataReturn();
 
             if( _Context.Request.Files.Count > 0 )
             {
-                CswNbtWebServiceImport.ImportDataParams parms = new CswNbtWebServiceImport.ImportDataParams();
+                CswNbtImportWcf.ImportDataParams parms = new CswNbtImportWcf.ImportDataParams();
                 parms.PostedFile = _Context.Request.Files[0];
                 parms.ImportDefName = ImportDefName;
                 parms.Overwrite = Overwrite;
 
-                var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceImport.ImportDataReturn, CswNbtWebServiceImport.ImportDataParams>(
+                var SvcDriver = new CswWebSvcDriver<CswNbtImportWcf.ImportDataReturn, CswNbtImportWcf.ImportDataParams>(
                     CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
                     ReturnObj: ret,
                     WebSvcMethodPtr: CswNbtWebServiceImport.uploadImportData,
@@ -85,12 +103,12 @@ namespace NbtWebApp
         [WebInvoke( Method = "GET", ResponseFormat = WebMessageFormat.Json )]
         [Description( "Get current status of imports" )]
         [FaultContract( typeof( FaultException ) )]
-        public CswNbtWebServiceImport.ImportStatusReturn getImportStatus()
+        public CswNbtImportWcf.ImportStatusReturn getImportStatus()
         {
-            CswNbtWebServiceImport.ImportStatusReturn ret = new CswNbtWebServiceImport.ImportStatusReturn();
+            CswNbtImportWcf.ImportStatusReturn ret = new CswNbtImportWcf.ImportStatusReturn();
 
-            var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceImport.ImportStatusReturn, object>(
-                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+            var SvcDriver = new CswWebSvcDriver<CswNbtImportWcf.ImportStatusReturn, CswNbtImportWcf.ImportStatusRequest>(
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, AuthRequest ),
                 ReturnObj: ret,
                 WebSvcMethodPtr: CswNbtWebServiceImport.getImportStatus,
                 ParamObj: null

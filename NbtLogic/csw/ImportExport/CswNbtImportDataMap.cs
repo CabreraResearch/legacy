@@ -43,11 +43,14 @@ namespace ChemSW.Nbt.ImportExport
         {
             get { return CswConvert.ToInt32( _row[CswNbtImportTables.ImportDataMap.importdatamapid] ); }
         }
+        public Int32 ImportDataJobId
+        {
+            get { return CswConvert.ToInt32( _row[CswNbtImportTables.ImportDataMap.importdatajobid] ); }
+        }
         public Int32 ImportDefinitionId
         {
             get { return CswConvert.ToInt32( _row[CswNbtImportTables.ImportDataMap.importdefid] ); }
         }
-
         public string ImportDataTableName
         {
             get { return _row[CswNbtImportTables.ImportDataMap.datatablename].ToString(); }
@@ -60,5 +63,51 @@ namespace ChemSW.Nbt.ImportExport
         {
             get { return CswConvert.ToBoolean( _row[CswNbtImportTables.ImportDataMap.completed] ); }
         }
-    }
-}
+
+        public void getStatus( out Int32 RowsPending,
+                               out Int32 RowsTotal,
+                               out Int32 RowsError,
+                               out Int32 ItemsPending,
+                               out Int32 ItemsTotal )
+        {
+            RowsPending = 0;
+            RowsTotal = 0;
+            RowsError = 0;
+            ItemsPending = 0;
+            ItemsTotal = 0;
+
+            if( false == string.IsNullOrEmpty( ImportDataTableName ) && _CswNbtResources.isTableDefinedInDataBase( ImportDataTableName ) )
+            {
+                CswTableSelect ImportDataSelect = _CswNbtResources.makeCswTableSelect( "getStatus_data_select", ImportDataTableName );
+                CswNbtImportDef BindingDef = new CswNbtImportDef( _CswNbtResources, ImportDefinitionId );
+                if( null != BindingDef && BindingDef.ImportOrder.Count > 0 )
+                {
+                    // RowsPending
+                    string RowsPendingWhereClause = string.Empty;
+                    foreach( CswNbtImportDefOrder Order in BindingDef.ImportOrder.Values )
+                    {
+                        if( string.Empty != RowsPendingWhereClause )
+                        {
+                            RowsPendingWhereClause += " or ";
+                        }
+                        RowsPendingWhereClause += Order.PkColName + " is null";
+                    }
+                    RowsPending = ImportDataSelect.getRecordCount( "where " + CswNbtImportTables.ImportDataN.error + " = '" + CswConvert.ToDbVal( false ) + "' and (" + RowsPendingWhereClause + ") " );
+
+                    // ItemsPending
+                    ItemsPending = 0;
+                    foreach( CswNbtImportDefOrder Order in BindingDef.ImportOrder.Values )
+                    {
+                        ItemsPending += ImportDataSelect.getRecordCount( "where " + CswNbtImportTables.ImportDataN.error + " = '" + CswConvert.ToDbVal( false ) + "' and " + Order.PkColName + " is null " );
+                    }
+
+                    // And the rest
+                    RowsTotal = ImportDataSelect.getRecordCount();
+                    RowsError = ImportDataSelect.getRecordCount( "where error = '" + CswConvert.ToDbVal( true ) + "'" );
+                    ItemsTotal = RowsTotal * BindingDef.ImportOrder.Values.Count;
+
+                } // if( null != BindingDef && BindingDef.ImportOrder.Count > 0 )
+            } // if( false == string.IsNullOrEmpty( ImportDataTableName ) && _CswNbtResources.isTableDefinedInDataBase( ImportDataTableName ) )
+        } // getStatus()
+    } // class
+} // namespace

@@ -60,6 +60,7 @@ namespace ChemSW.Nbt.ImportExport
             public const string PkColumnName = importdatamapid;
 
             public const string importdatamapid = "importdatamapid";
+            public const string importdatajobid = "importdatajobid";
             public const string importdefid = "importdefid";
             public const string datatablename = "datatablename";
             public const string overwrite = "overwrite";
