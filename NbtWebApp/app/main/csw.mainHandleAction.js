@@ -222,7 +222,8 @@
                             Csw.main.refreshViewSelect();
                         },
                         selectedViewId: o.ActionOptions.viewid,
-                        startingStep: o.ActionOptions.startingStep
+                        startingStep: o.ActionOptions.startingStep, 
+                        viewmode: o.ActionOptions.viewmode
                     });
                     break;
                 case 'future scheduling':

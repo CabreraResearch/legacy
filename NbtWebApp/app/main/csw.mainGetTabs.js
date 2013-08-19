@@ -2,7 +2,7 @@
 
 (function _initMain() {
 
-    Csw.main.onReady.then(function() {
+    Csw.main.onReady.then(function () {
 
         Csw.main.register('getTabs', function (options) {
             Csw.publish('initPropertyTearDown');
@@ -44,12 +44,12 @@
                     onPropertyChange: function () {
                         Csw.clientChanges.setChanged();
                     },
-                    onEditView: function (viewid) {
+                    onEditView: function (viewid, viewmode) {
                         Csw.main.handleAction({
                             actionname: 'Edit_View',
                             ActionOptions: {
                                 viewid: viewid,
-                                viewmode: Csw.enums.viewMode.grid.name,
+                                viewmode: viewmode || Csw.enums.viewMode.grid.name,
                                 startingStep: 2,
                                 IgnoreReturn: true
                             }
