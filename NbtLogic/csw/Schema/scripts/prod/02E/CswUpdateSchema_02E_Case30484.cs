@@ -26,6 +26,7 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClass InspectionOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.InspectionDesignClass );
             CswNbtMetaDataObjectClassProp StatusOCP = InspectionOC.getObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.Status );
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( StatusOCP, CswEnumNbtObjectClassPropAttributes.readOnly, CswConvert.ToDbVal( true ) );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( StatusOCP, CswEnumNbtObjectClassPropAttributes.isrequired, CswConvert.ToDbVal( true ) );
         } // update()
     } // class
 }//namespace ChemSW.Nbt.Schema
