@@ -194,7 +194,7 @@
                 };
 
                 if (true === cswPrivate.isLoadedFromCacheFirst) {
-                    var chain = Csw.getCachedWebServiceCall(requestURL)
+                    Csw.getCachedWebServiceCall(requestURL)
                         .then(makeLandingPageContent)
                         .then(getAjaxPromise(false).then(function (ret) {
                             return Csw.setCachedWebServiceCall(requestURL, ret.Data);
