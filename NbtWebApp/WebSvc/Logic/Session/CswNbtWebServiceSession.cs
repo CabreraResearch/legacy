@@ -161,13 +161,11 @@ namespace ChemSW.Nbt.WebServices
             string Username = CswNbtResources.CurrentUser.Username;
 
             Collection<string> SessionList = CswNbtResources.CswSessionManager.SessionsList.getSessionIdsForUser( AccessId, Username );
-            CswNbtSessionDataMgr SessionDataMgr = new CswNbtSessionDataMgr( CswNbtResources );
 
             foreach( string SessionId in SessionList )
             {
                 if( SessionId != CswNbtResources.Session.SessionId )
                 {
-                    SessionDataMgr.removeAllSessionData( SessionId );
                     CswNbtResources.CswSessionManager.clearSession( SessionId );
                 }
             }
