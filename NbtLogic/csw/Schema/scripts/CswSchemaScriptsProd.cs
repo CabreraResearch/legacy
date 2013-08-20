@@ -96,16 +96,12 @@ namespace ChemSW.Nbt.Schema
                 _LatestVersion = CurrentVersion( CswNbtResources );
             }
 
-            foreach( CswSchemaVersion Version in _UpdateDrivers.Keys )
+            foreach( KeyValuePair<CswSchemaVersion, CswSchemaUpdateDriver> Pair in _UpdateDrivers.Where( Pair => false == Pair.Value.AlwaysRun ).Where( Pair => _LatestVersion == _MinimumVersion ||
+                                                                                                                    ( _LatestVersion.ReleaseIteration < Pair.Key.ReleaseIteration ) ) )
             {
-                if( false == Version.ToString().Contains( "#" ) )
-                {
-                    if( _LatestVersion == _MinimumVersion || ( _LatestVersion.CycleIteration == Version.CycleIteration && _LatestVersion.ReleaseIdentifier == Version.ReleaseIdentifier && _LatestVersion.ReleaseIteration < Version.ReleaseIteration ) )
-                    {
-                        _LatestVersion = Version;
-                    }
-                }
+                _LatestVersion = Pair.Key;
             }
+
         }//_setLatestVersion()
 
         #region ICswSchemaScripts
@@ -241,16 +237,7 @@ namespace ChemSW.Nbt.Schema
 
         private Int32 _getCountOfRunOnceScripts( Dictionary<CswSchemaVersion, CswSchemaUpdateDriver> Dictionary )
         {
-            Int32 Ret = 0;
-            foreach( var Pair in Dictionary )
-            {
-                if( false == Pair.Key.ToString().Contains( "#" ) )
-                {
-                    Ret++;
-                }
-            }
-
-            return Ret;
+            return Dictionary.Count( Pair => false == Pair.Value.AlwaysRun );
         }
 
         private Dictionary<CswSchemaVersion, CswSchemaUpdateDriver> _UpdateDrivers = new Dictionary<CswSchemaVersion, CswSchemaUpdateDriver>();

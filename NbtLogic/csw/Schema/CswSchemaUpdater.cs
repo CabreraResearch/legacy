@@ -128,27 +128,14 @@ namespace ChemSW.Nbt.Schema
             DataRow NewUpdateHistoryRow = _UpdateHistoryTable.NewRow();
             NewUpdateHistoryRow["updatedate"] = DateTime.Now.ToString();
             NewUpdateHistoryRow["version"] = CswSchemaUpdateDriver.SchemaVersion.ToString();
+            NewUpdateHistoryRow["scriptname"] = CswSchemaUpdateDriver.ScriptName;
+            NewUpdateHistoryRow["succeeded"] = CswConvert.ToDbVal( ReturnVal );
 
-            // TODO: Remove this conditional if after FOXGLOVE is in production
-            if( _UpdateHistoryTable.Columns.Contains( "scriptname" ) )
-            {
-                NewUpdateHistoryRow["scriptname"] = CswSchemaUpdateDriver.ScriptName;
-            }
-            // TODO: Remove this conditional if after FOXGLOVE is in production
-            if( _UpdateHistoryTable.Columns.Contains( "succeeded" ) )
-            {
-                NewUpdateHistoryRow["succeeded"] = CswConvert.ToDbVal( CswSchemaUpdateDriver.UpdateSucceeded );
-            }
-
-            if( ReturnVal )
-            {
-                NewUpdateHistoryRow["log"] = CswSchemaUpdateDriver.Message;
-
-            }
-            else
+            if( false == ReturnVal )
             {
                 NewUpdateHistoryRow["log"] = "Failed update: " + CswSchemaUpdateDriver.Message;
             }
+
             _UpdateHistoryTable.Rows.Add( NewUpdateHistoryRow );
 
             _UpdateHistoryTableUpdate.update( _UpdateHistoryTable );
