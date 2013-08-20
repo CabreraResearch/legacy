@@ -59,7 +59,7 @@ namespace ChemSW.Nbt.WebServices
 
             DataTable blobDataTbl;
             int BlobDataId = CswConvert.ToInt32( Request.Blob.BlobDataId );
-            int PropId = CswConvert.ToInt32( Request.propid );
+            int PropId = _getNodeTypePropIdFromJctNodePropId( NbtResources, CswConvert.ToInt32( Request.propid ) );
             CswNbtMetaDataNodeTypeProp MetaDataProp = NbtResources.MetaData.getNodeTypeProp( PropId );
 
             if( NbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.View, MetaDataProp.getNodeType(), NbtResources.CurrentNbtUser ) )
@@ -318,7 +318,19 @@ namespace ChemSW.Nbt.WebServices
             }
         }
 
-
+        private static int _getNodeTypePropIdFromJctNodePropId( CswNbtResources NbtResources, int JctNodePropId )
+        {
+            int ret = Int32.MinValue;
+            string sql = "select nodetypepropid from jct_nodes_props where jctnodepropid = :jctnodepropid";
+            CswArbitrarySelect arbSelect = NbtResources.makeCswArbitrarySelect( "BinaryData.getNodeTypePropIdFromJctNodePropId", sql );
+            arbSelect.addParameter( "jctnodepropid", JctNodePropId.ToString() );
+            DataTable tbl = arbSelect.getTable();
+            if( tbl.Rows.Count > 0 )
+            {
+                ret = CswConvert.ToInt32( tbl.Rows[0]["nodetypepropid"] );
+            }
+            return ret;
+        }
 
     } // class CswNbtWebServiceBinaryData
 
