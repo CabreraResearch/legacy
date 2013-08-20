@@ -111,7 +111,7 @@
                 toDo.push(ctor);
 
                 var getAjaxPromise = function () {
-                    if (promise) {
+                if (promise && promise.abort) {
                         promise.abort();
                     }
                     promise = Csw.ajaxWcf.post({
@@ -131,24 +131,26 @@
                 };
 
                 var makeSelect = function(data) {
-                    cswParent.empty();
-                    cswPrivate.div = cswParent.div();
-                    cswPublic = Csw.dom({}, cswPrivate.div);
+                    if (data) {
+                        cswParent.empty();
+                        cswPrivate.div = cswParent.div();
+                        cswPublic = Csw.dom({}, cswPrivate.div);
 
-                    cswPrivate.vsdiv = Csw.literals.div();
-                    if (false == Csw.isNullOrEmpty(cswPrivate.maxHeight)) {
-                        cswPrivate.vsdiv.css({ maxHeight: cswPrivate.maxHeight });
+                        cswPrivate.vsdiv = Csw.literals.div();
+                        if (false == Csw.isNullOrEmpty(cswPrivate.maxHeight)) {
+                            cswPrivate.vsdiv.css({ maxHeight: cswPrivate.maxHeight });
+                        }
+                        cswPrivate.comboBox = cswPrivate.div.comboBox({
+                            name: cswPrivate.name + '_combo',
+                            topContent: 'Select a View',
+                            selectContent: cswPrivate.vsdiv.$, /* NO! Refactor to use Csw.literals and more wholesome methods. */
+                            width: '266px'
+                        });
+
+                        Csw.extend(cswPublic, cswPrivate.comboBox);
+
+                        Csw.iterate(data.categories, cswPrivate.addCategory);
                     }
-                    cswPrivate.comboBox = cswPrivate.div.comboBox({
-                        name: cswPrivate.name + '_combo',
-                        topContent: 'Select a View',
-                        selectContent: cswPrivate.vsdiv.$, /* NO! Refactor to use Csw.literals and more wholesome methods. */
-                        width: '266px'
-                    });
-
-                    Csw.extend(cswPublic, cswPrivate.comboBox);
-                    
-                    Csw.iterate(data.categories, cswPrivate.addCategory);
                 };
                 
                 if (true === cswPrivate.useCache) {
@@ -170,21 +172,7 @@
                     getAjaxPromise();
                 }
 
-                //if (promise) {
-                //    promise.abort();
-                //}
-                //promise = Csw.ajaxWcf.post({
-                //    urlMethod: cswPrivate.viewMethod,
-                //    data: {
-                //        IsSearchable: cswPrivate.issearchable,
-                //        IncludeRecent: cswPrivate.includeRecent
-                //    }
-                //});
-                
-                //promise.then(function (ret) {
-                //    Csw.iterate(ret.Data.categories, cswPrivate.addCategory);
-                //    return Csw.tryExec(cswPrivate.onSuccess);
-                //});
+
 
                 toDo.push(promise);
                 return promise;
