@@ -232,6 +232,9 @@ namespace ChemSW.Nbt.ObjClasses
                                         ButtonData.Data["state"]["supplier"]["val"] = PotentialMaterial().SupplierId.ToString();
                                         ButtonData.Data["state"]["supplier"]["name"] = PotentialMaterial().SupplierName;
                                         ButtonData.Data["state"]["partNo"] = NewMaterialPartNo.Text;
+                                        ButtonData.Data["state"]["request"] = new JObject();
+                                        ButtonData.Data["state"]["request"]["requestitemid"] = NodeId.ToString();
+                                        ButtonData.Data["state"]["request"]["materialid"] = ( Material.RelatedNodeId ?? new CswPrimaryKey() ).ToString();
                                     }
                                     else
                                     {
@@ -242,11 +245,7 @@ namespace ChemSW.Nbt.ObjClasses
                                 break;
 
                         } //switch( ButtonData.SelectedText )
-
                         _getNextStatus( ButtonData.SelectedText );
-                        ButtonData.Data["requestitem"] = ButtonData.Data["requestitem"] ?? new JObject();
-                        ButtonData.Data["requestitem"]["requestitemid"] = NodeId.ToString();
-                        ButtonData.Data["requestitem"]["materialid"] = ( Material.RelatedNodeId ?? new CswPrimaryKey() ).ToString();
                         break; //case PropertyName.Fulfill:
                 }
             }

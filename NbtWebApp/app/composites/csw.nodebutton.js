@@ -45,7 +45,6 @@
                 break;
             case Csw.enums.nbtButtonAction.creatematerial:
                 actionJson.actionname = 'create material';
-                actionJson.state.request = actionJson.request;
                 launchAction = true;
                 break;
             case Csw.enums.nbtButtonAction.move:
