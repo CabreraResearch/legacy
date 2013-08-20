@@ -183,25 +183,12 @@
 
                 var requestURL = 'LandingPages/getItems';
 
-                //var getAjaxPromise = function (watchGlobal) {
-                    promise = Csw.ajaxWcf.post({
-                        urlMethod: requestURL,
-                        useCache: Csw.bool(cswPrivate.useCache),
-                        data: cswPrivate.landingPageRequestData,
-                        success: makeLandingPageContent
-                    });
-                //    return promise;
-                //};
-
-                //if (true === cswPrivate.useCache) {
-                //    Csw.getCachedWebServiceCall(requestURL)
-                //        .then(makeLandingPageContent)
-                //        .then(getAjaxPromise(false).then(function (ret) {
-                //            return Csw.setCachedWebServiceCall(requestURL, ret.Data);
-                //        }));
-                //} else {
-                //    getAjaxPromise();
-                //}
+                promise = Csw.ajaxWcf.post({
+                    urlMethod: requestURL,
+                    useCache: Csw.bool(cswPrivate.useCache),
+                    data: cswPrivate.landingPageRequestData,
+                    success: makeLandingPageContent
+                });
             }());
 
             cswPrivate.buildActionLinkTable = function (parentDiv) {
