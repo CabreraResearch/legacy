@@ -349,31 +349,17 @@
                     Csw.tryExec(cswPrivate.onSuccess);
                 };
 
-                var getAjaxPromise = function (watchGlobal) {
-                    if (cswPublic.abort && cswPublic.ajax) {
-                        cswPublic.abort();
-                    }
-                    cswPublic.ajax = Csw.ajax.post({
-                        urlMethod: cswPrivate.ajax.urlMethod,
-                        data: cswPrivate.ajax.data,
-                        watchGlobal: false !== watchGlobal,
-                        success: function(ret) {
-                            makeMenu(ret);
-                            return Csw.setCachedWebServiceCall(cswPrivate.ajax.urlMethod, ret);
-                        }
-                    }); // ajax
-                    cswPublic.abort = cswPublic.ajax.abort;
-                    return cswPublic.ajax;
-                };
-
-                if (true === cswPrivate.useCache) {
-                    Csw.getCachedWebServiceCall(cswPrivate.ajax.urlMethod)
-                        .then(makeMenu)
-                        .then(getAjaxPromise(false));
-                } else {
-                    getAjaxPromise();
+                if (cswPublic.abort && cswPublic.ajax) {
+                    cswPublic.abort();
                 }
+                cswPublic.ajax = Csw.ajax.post({
+                    urlMethod: cswPrivate.ajax.urlMethod,
+                    data: cswPrivate.ajax.data,
+                    useCache: cswPrivate.useCache,
+                    success: makeMenu
+                }); // ajax
 
+                cswPublic.abort = cswPublic.ajax.abort;
 
             }()); // constructor
 
