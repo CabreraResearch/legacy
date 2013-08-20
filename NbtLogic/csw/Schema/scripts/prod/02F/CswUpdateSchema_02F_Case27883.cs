@@ -8,7 +8,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update
     /// </summary>
-    public class CswUpdateSchema_02F_Case27883: CswUpdateSchemaTo
+    public class CswUpdateSchema_02F_Case27883 : CswUpdateSchemaTo
     {
         public override CswEnumDeveloper Author
         {
@@ -20,11 +20,21 @@ namespace ChemSW.Nbt.Schema
             get { return 27993; }
         }
 
+        public override string ScriptName
+        {
+            get { return "02F_Case27883_B"; }
+        }
+
+        public override bool AlwaysRun
+        {
+            get { return false; }
+        }
+
         public override void update()
         {
             //Set the default value for the Available Work Units prop
             CswNbtMetaDataObjectClass UserOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.UserClass );
-            foreach( CswNbtObjClassUser UserNode in UserOC.getNodes( false, true, IncludeHiddenNodes : true ) )
+            foreach( CswNbtObjClassUser UserNode in UserOC.getNodes( false, true, IncludeHiddenNodes: true ) )
             {
                 CswPrimaryKey WorkUnitId = UserNode.WorkUnitId;
                 if( null == WorkUnitId )

@@ -84,17 +84,17 @@ namespace ChemSW.Nbt.Schema
             return ( _CswSchemaScripts[CswSchemaVersion] );
         }//getDriver()
 
-        private CswSchemaUpdateDriver _CurrentUpdateDriver;
-        public CswSchemaUpdateDriver getDriver()
-        {
-            return ( _CurrentUpdateDriver );
-        }
+        //private CswSchemaUpdateDriver _CurrentUpdateDriver;
+        //public CswSchemaUpdateDriver getDriver()
+        //{
+        //    return ( _CurrentUpdateDriver );
+        //}
 
         public List<CswSchemaVersion> SchemaVersions
         {
             get
             {
-                return new List<CswSchemaVersion>( UpdateDriversToRun.Keys );
+                return new List<CswSchemaVersion>( UpdateDrivers.Keys );
             }
         }
 
@@ -187,7 +187,7 @@ namespace ChemSW.Nbt.Schema
             bool StampVersion = true;
             if( null != ( CurrentUpdateDriver = _CswSchemaScripts.Next( CswNbtResources ) ) )
             {
-                _CurrentUpdateDriver = CurrentUpdateDriver;
+                //_CurrentUpdateDriver = CurrentUpdateDriver;
                 if( CurrentUpdateDriver.AlwaysRun ) { StampVersion = false; }
                 UpdateSuccessful = _runScript( CswNbtResources, CurrentUpdateDriver, StampVersion );
 
@@ -205,21 +205,21 @@ namespace ChemSW.Nbt.Schema
             }
         }
 
-        public Dictionary<CswSchemaVersion, CswSchemaUpdateDriver> UpdateDriversToRun
-        {
-            get
-            {
-                return _CswSchemaScripts.UpdateDriversToRun;
-            }
-        }
+        //public Dictionary<CswSchemaVersion, CswSchemaUpdateDriver> UpdateDriversToRun
+        //{
+        //    get
+        //    {
+        //        return _CswSchemaScripts.UpdateDriversToRun;
+        //    }
+        //}
 
-        public void addVersionedScriptsToRun()
-        {
-            CswNbtResources CswNbtResources = null;
-            _ResourcesInitHandler( _AccessId, ref CswNbtResources );
+        //public void addVersionedScriptsToRun()
+        //{
+        //    CswNbtResources CswNbtResources = null;
+        //    _ResourcesInitHandler( _AccessId, ref CswNbtResources );
 
-            _CswSchemaScripts.addVersionedScriptsToRun( CswNbtResources );
-        }
+        //    _CswSchemaScripts.addVersionedScriptsToRun( CswNbtResources );
+        //}
 
     }//CswSchemaUpdater
 

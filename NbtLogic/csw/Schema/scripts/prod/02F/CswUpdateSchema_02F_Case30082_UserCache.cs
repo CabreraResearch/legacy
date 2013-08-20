@@ -22,7 +22,7 @@ namespace ChemSW.Nbt.Schema
 
         public override string ScriptName
         {
-            get { return "02F_Case30082_UserCache"; }
+            get { return "02F_Case30082_UserCache_B"; }
         }
 
         public override bool AlwaysRun

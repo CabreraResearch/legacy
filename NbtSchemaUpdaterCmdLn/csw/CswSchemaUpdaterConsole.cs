@@ -461,9 +461,6 @@ namespace ChemSW.Nbt.Schema.CmdLn
 
             if( UpdateSucceeded )
             {
-                // Fill _UpdateDriversToRun
-                CswSchemaUpdater.addVersionedScriptsToRun();
-
                 CswSchemaVersion CurrentVersion = CswSchemaUpdater.CurrentVersion( CswNbtResources );
                 // refresh current version in case it was altered
                 CswNbtResources.ConfigVbls.refresh();
@@ -471,7 +468,7 @@ namespace ChemSW.Nbt.Schema.CmdLn
 
                 CswConsoleOutput.write( "Updating from " + CurrentVersion.ToString() + " to " + CswSchemaUpdater.LatestVersion.ToString() + _Separator_NuLine + _Separator_NuLine );
 
-                for( int i = 0; ( UpdateSucceeded && ( CurrentVersion != CswSchemaUpdater.LatestVersion && CurrentVersion < CswSchemaUpdater.LatestVersion ) ) || ( i < CswSchemaUpdater.UpdateDriversToRun.Count ); i++ )
+                for( int i = 0; ( UpdateSucceeded && ( CurrentVersion != CswSchemaUpdater.LatestVersion ) ) || ( i < CswSchemaUpdater.UpdateDrivers.Count ); i++ )
                 {
                     if( CurrentVersion < CswSchemaUpdater.MinimumVersion )
                     {

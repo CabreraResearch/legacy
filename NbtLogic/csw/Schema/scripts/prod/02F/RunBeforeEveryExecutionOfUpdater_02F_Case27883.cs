@@ -7,9 +7,19 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Updates the schema for OC changes
     /// </summary>
-    public class RunBeforeEveryExecutionOfUpdater_02F_Case27883: CswUpdateSchemaTo
+    public class RunBeforeEveryExecutionOfUpdater_02F_Case27883 : CswUpdateSchemaTo
     {
         public static string Title = "Pre-Script: Case 27883";
+
+        public override string ScriptName
+        {
+            get { return "02F_Case27883_A"; }
+        }
+
+        public override bool AlwaysRun
+        {
+            get { return false; }
+        }
 
         #region Blame Logic
 
