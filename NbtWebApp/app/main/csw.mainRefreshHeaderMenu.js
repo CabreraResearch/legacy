@@ -19,7 +19,7 @@
                     data: {}
                 },
                 
-                isLoadedFromCacheFirst: true,
+                useCache: true,
 
                 onLogout: function () {
                     return Csw.clientSession.logout();

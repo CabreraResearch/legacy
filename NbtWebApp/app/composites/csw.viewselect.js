@@ -25,7 +25,7 @@
                 fieldSets: {
                     
                 },
-                isLoadedFromCacheFirst: true,
+                useCache: true,
                 div: null
             };
 
@@ -151,11 +151,11 @@
                     Csw.iterate(data.categories, cswPrivate.addCategory);
                 };
                 
-                if (true === cswPrivate.isLoadedFromCacheFirst) {
+                if (true === cswPrivate.useCache) {
                     Csw.getCachedWebServiceCall(cswPrivate.viewMethod)
                         .then(makeSelect)
                         .then(function() {
-                            cswPrivate.isLoadedFromCacheFirst = false;
+                            cswPrivate.useCache = false;
                             return cswParent.viewSelect({
                                 onSelect: cswPrivate.onSelect,
                                 onSuccess: cswPrivate.onSuccess,
@@ -163,7 +163,7 @@
                                 includeRecent: cswPrivate.includeRecent,
                                 hidethreshold: cswPrivate.hidethreshold,
                                 maxHeight: cswPrivate.maxHeight,
-                                isLoadedFromCacheFirst: false
+                                useCache: false
                             });
                         });
                 } else {

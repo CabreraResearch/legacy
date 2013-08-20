@@ -25,7 +25,7 @@
 
                 landingPageRequestData: null,
 
-                isLoadedFromCacheFirst: false,
+                useCache: false,
                 isConfigurable: true,
 
                 addItemForm: {
@@ -177,31 +177,31 @@
             };
 
             (function () {
-                if (promise) {
+                if (promise && promise.abort) {
                     promise.abort();
                 }
 
                 var requestURL = 'LandingPages/getItems';
 
-                var getAjaxPromise = function (watchGlobal) {
+                //var getAjaxPromise = function (watchGlobal) {
                     promise = Csw.ajaxWcf.post({
                         urlMethod: requestURL,
-                        watchGlobal: false !== watchGlobal,
+                        useCache: Csw.bool(cswPrivate.useCache),
                         data: cswPrivate.landingPageRequestData,
                         success: makeLandingPageContent
                     });
-                    return promise;
-                };
+                //    return promise;
+                //};
 
-                if (true === cswPrivate.isLoadedFromCacheFirst) {
-                    Csw.getCachedWebServiceCall(requestURL)
-                        .then(makeLandingPageContent)
-                        .then(getAjaxPromise(false).then(function (ret) {
-                            return Csw.setCachedWebServiceCall(requestURL, ret.Data);
-                        }));
-                } else {
-                    getAjaxPromise();
-                }
+                //if (true === cswPrivate.useCache) {
+                //    Csw.getCachedWebServiceCall(requestURL)
+                //        .then(makeLandingPageContent)
+                //        .then(getAjaxPromise(false).then(function (ret) {
+                //            return Csw.setCachedWebServiceCall(requestURL, ret.Data);
+                //        }));
+                //} else {
+                //    getAjaxPromise();
+                //}
             }());
 
             cswPrivate.buildActionLinkTable = function (parentDiv) {

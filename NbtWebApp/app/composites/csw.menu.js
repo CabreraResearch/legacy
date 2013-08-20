@@ -30,7 +30,7 @@
                 onLoginData: null,
                 onSuccess: null,
 
-                isLoadedFromCacheFirst: false,
+                useCache: false,
 
                 nodeTreeCheck: null,
                 Multi: false,
@@ -366,7 +366,7 @@
                     return cswPublic.ajax;
                 };
 
-                if (true === cswPrivate.isLoadedFromCacheFirst) {
+                if (true === cswPrivate.useCache) {
                     Csw.getCachedWebServiceCall(cswPrivate.ajax.urlMethod)
                         .then(makeMenu)
                         .then(getAjaxPromise(false));
