@@ -6,9 +6,11 @@ using System.IO;
 using System.Runtime.Serialization;
 using ChemSW.Core;
 using ChemSW.DB;
+using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
+using ChemSW.Nbt.Security;
 using ChemSW.StructureSearch;
 
 namespace ChemSW.Nbt.ServiceDrivers
@@ -69,90 +71,101 @@ namespace ChemSW.Nbt.ServiceDrivers
             CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtResources.MetaData.getNodeTypeProp( PropId.NodeTypePropId );
             CswNbtNode Node = _CswNbtResources.Nodes[PropId.NodeId];
             CswNbtNodePropWrapper FileProp = Node.Properties[MetaDataProp];
-            if( Int32.MinValue == FileProp.JctNodePropId )
+
+            if( _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Edit, MetaDataProp.getNodeType(), _CswNbtResources.CurrentNbtUser ) &&
+                _CswNbtResources.Permit.isPropWritable( CswEnumNbtNodeTypePermission.Edit, MetaDataProp, null, FileProp ) )
             {
-                FileProp.makePropRow(); //if we don't have a jct_node_prop row for this prop, we do now
+                if( Int32.MinValue == FileProp.JctNodePropId )
+                {
+                    FileProp.makePropRow(); //if we don't have a jct_node_prop row for this prop, we do now
+                    if( PostChanges )
+                    {
+                        Node.postChanges( true );
+                    }
+                }
+
+                if( FileProp.getFieldType().FieldType == CswEnumNbtFieldType.Image )
+                {
+                    //case 29692: support EXIF image rotation metadata to properly orient photos
+                    bool img_ok = false;
+                    MemoryStream ms = new MemoryStream( BlobData, 0, BlobData.Length );
+                    ms.Write( BlobData, 0, BlobData.Length );
+                    System.Drawing.Image img = null;
+
+                    try
+                    {
+                        img = Image.FromStream( ms, true );
+                        img_ok = true;
+                    }
+                    catch
+                    {
+                    }
+
+                    if( img_ok == true )
+                    {
+                        FixOrientation( ref img );
+                        ImageConverter converter = new ImageConverter();
+                        BlobData = (byte[]) converter.ConvertTo( img, typeof( byte[] ) );
+                    }
+                }
+
+
+
+                //Save the file to blob_data
+                CswTableUpdate BlobUpdate = _CswNbtResources.makeCswTableUpdate( "saveBlob", "blob_data" );
+                string whereClause = "where jctnodepropid = " + FileProp.JctNodePropId;
+                if( Int32.MinValue != BlobDataId )
+                {
+                    whereClause += " and blobdataid = " + BlobDataId;
+                }
+                DataTable BlobTbl = BlobUpdate.getTable( whereClause );
+                if( BlobTbl.Rows.Count > 0 &&
+                    ( Int32.MinValue != BlobDataId ||
+                      FileProp.getFieldTypeValue() == CswEnumNbtFieldType.File ||
+                      FileProp.getFieldTypeValue() == CswEnumNbtFieldType.MOL ) )
+                {
+                    BlobTbl.Rows[0]["blobdata"] = BlobData;
+                    BlobTbl.Rows[0]["contenttype"] = ContentType;
+                    BlobTbl.Rows[0]["filename"] = FileName;
+                    BlobTbl.Rows[0]["auditlevel"] = MetaDataProp.AuditLevel;
+                    BlobDataId = CswConvert.ToInt32( BlobTbl.Rows[0]["blobdataid"] );
+                }
+                else
+                {
+                    DataRow NewRow = BlobTbl.NewRow();
+                    NewRow["jctnodepropid"] = FileProp.JctNodePropId;
+                    NewRow["blobdata"] = BlobData;
+                    NewRow["contenttype"] = ContentType;
+                    NewRow["filename"] = FileName;
+                    NewRow["auditlevel"] = MetaDataProp.AuditLevel;
+                    BlobDataId = CswConvert.ToInt32( NewRow["blobdataid"] );
+                    BlobTbl.Rows.Add( NewRow );
+                }
+                BlobUpdate.update( BlobTbl );
+
+                if( Node.getObjectClass().ObjectClass == CswEnumNbtObjectClass.ReportClass )
+                {
+                    CswNbtObjClassReport Report = Node;
+                    CswFilePath FilePathTools = new CswFilePath( _CswNbtResources );
+                    string ReportPath = FilePathTools.getFullReportFilePath( Report.RPTFile.JctNodePropId.ToString() );
+                    _createReportFile( ReportPath, Report.RPTFile.JctNodePropId, BlobData );
+                }
+
+                SetLastModified( FileProp );
+                FileProp.SyncGestalt();
                 if( PostChanges )
                 {
-                    Node.postChanges( true );
-                }
-            }
-
-            if( FileProp.getFieldType().FieldType == CswEnumNbtFieldType.Image )
-            {
-                //case 29692: support EXIF image rotation metadata to properly orient photos
-                bool img_ok = false;
-                MemoryStream ms = new MemoryStream( BlobData, 0, BlobData.Length );
-                ms.Write( BlobData, 0, BlobData.Length );
-                System.Drawing.Image img = null;
-
-                try
-                {
-                    img = Image.FromStream( ms, true );
-                    img_ok = true;
-                }
-                catch
-                {
+                    Node.postChanges( false );
                 }
 
-                if( img_ok == true )
-                {
-                    FixOrientation( ref img );
-                    ImageConverter converter = new ImageConverter();
-                    BlobData = (byte[]) converter.ConvertTo( img, typeof( byte[] ) );
-                }
-            }
+                Href = CswNbtNodePropBlob.getLink( FileProp.JctNodePropId, PropId.NodeId, BlobDataId );
 
-
-
-            //Save the file to blob_data
-            CswTableUpdate BlobUpdate = _CswNbtResources.makeCswTableUpdate( "saveBlob", "blob_data" );
-            string whereClause = "where jctnodepropid = " + FileProp.JctNodePropId;
-            if( Int32.MinValue != BlobDataId )
-            {
-                whereClause += " and blobdataid = " + BlobDataId;
-            }
-            DataTable BlobTbl = BlobUpdate.getTable( whereClause );
-            if( BlobTbl.Rows.Count > 0 &&
-                ( Int32.MinValue != BlobDataId ||
-                FileProp.getFieldTypeValue() == CswEnumNbtFieldType.File ||
-                FileProp.getFieldTypeValue() == CswEnumNbtFieldType.MOL ) )
-            {
-                BlobTbl.Rows[0]["blobdata"] = BlobData;
-                BlobTbl.Rows[0]["contenttype"] = ContentType;
-                BlobTbl.Rows[0]["filename"] = FileName;
-                BlobTbl.Rows[0]["auditlevel"] = MetaDataProp.AuditLevel;
-                BlobDataId = CswConvert.ToInt32( BlobTbl.Rows[0]["blobdataid"] );
-            }
+            } //canNodeType() && isPropWritable()
             else
             {
-                DataRow NewRow = BlobTbl.NewRow();
-                NewRow["jctnodepropid"] = FileProp.JctNodePropId;
-                NewRow["blobdata"] = BlobData;
-                NewRow["contenttype"] = ContentType;
-                NewRow["filename"] = FileName;
-                NewRow["auditlevel"] = MetaDataProp.AuditLevel;
-                BlobDataId = CswConvert.ToInt32( NewRow["blobdataid"] );
-                BlobTbl.Rows.Add( NewRow );
+                Href = string.Empty; //To satifsy the "ref string Href"
+                throw new CswDniException( CswEnumErrorType.Error, "You do not have sufficient priveledges to save files", "User " + _CswNbtResources.CurrentNbtUser.UserId + " attemped to save blobdata on JctNodeProp " + FileProp.JctNodePropId );
             }
-            BlobUpdate.update( BlobTbl );
-
-            if( Node.getObjectClass().ObjectClass == CswEnumNbtObjectClass.ReportClass )
-            {
-                CswNbtObjClassReport Report = Node;
-                CswFilePath FilePathTools = new CswFilePath( _CswNbtResources );
-                string ReportPath = FilePathTools.getFullReportFilePath( Report.RPTFile.JctNodePropId.ToString() );
-                _createReportFile( ReportPath, Report.RPTFile.JctNodePropId, BlobData );
-            }
-
-            SetLastModified( FileProp );
-            FileProp.SyncGestalt();
-            if( PostChanges )
-            {
-                Node.postChanges( false );
-            }
-
-            Href = CswNbtNodePropBlob.getLink( FileProp.JctNodePropId, PropId.NodeId, BlobDataId );
             return BlobDataId;
         }
 
@@ -326,7 +339,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             int ret = Int32.MinValue;
 
             string sql = @"select blobdataid from blob_data where jctnodepropid = :jctnodepropid ";
-            
+
             CswArbitrarySelect arbSelect = _CswNbtResources.makeCswArbitrarySelect( "getBlobJctNodePropId", sql );
             arbSelect.addParameter( "jctnodepropid", JctNodePropId.ToString() );
 
@@ -362,7 +375,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             BlobAuditSelect.addParameter( "jctnodepropid", JctNodePropId.ToString() );
             if( Int32.MinValue != BlobDataId )
             {
-                BlobAuditSelect.addParameter( "blobdataid", BlobDataId.ToString() );    
+                BlobAuditSelect.addParameter( "blobdataid", BlobDataId.ToString() );
             }
 
             return BlobAuditSelect;
