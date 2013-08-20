@@ -89,7 +89,7 @@
                 Csw.publish(Csw.enums.events.main.clear, { centertop: true, centerbottom: true });
                 /* case 24669 */
                 Csw.cookie.clearAll([Csw.cookie.cookieNames.LogoutPath]);
-                Csw.ajax.post({
+                Csw.ajax.deprecatedWsNbt({
                     urlMethod: 'reauthenticate',
                     data: { PropId: Csw.string(opts.propid) },
                     success: function (result) {
@@ -285,7 +285,7 @@
                         }
 
                         var performOnObjectClassButtonClick = function () {
-                            Csw.ajax.post({
+                            Csw.ajax.deprecatedWsNbt({
                                 urlMethod: 'onObjectClassButtonClick',
                                 data: {
                                     NodeTypePropAttr: cswPrivate.propId,

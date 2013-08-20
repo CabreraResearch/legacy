@@ -71,7 +71,7 @@
                             if (false === Csw.isNullOrEmpty(cswPrivate.action) && cswPrivate.action !== 'AddNode') {
                                 Csw.main.handleAction({ actionname: cswPrivate.action });
                             } else {
-                                Csw.ajax.post({
+                                Csw.ajax.deprecatedWsNbt({
                                     urlMethod: 'getProps',
                                     data: {
                                         EditMode: Csw.enums.editMode.Add,

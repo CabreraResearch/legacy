@@ -348,7 +348,7 @@
                 if (cswPublic.abort && cswPublic.ajax) {
                     cswPublic.abort();
                 }
-                cswPublic.ajax = Csw.ajax.post({
+                cswPublic.ajax = Csw.ajax.deprecatedWsNbt({
                     urlMethod: cswPrivate.ajax.urlMethod,
                     data: cswPrivate.ajax.data,
                     useCache: cswPrivate.useCache,

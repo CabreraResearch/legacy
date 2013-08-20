@@ -432,7 +432,7 @@
                 cswPrivate.addItemForm[cswPrivate.select.button].control = cswPrivate.addItemForm.table.cell(cswPrivate.select.button, 2).select({
                     name: 'landingpage_buttonsel'
                 }).hide();
-                return Csw.ajax.post({
+                return Csw.ajax.deprecatedWsNbt({
                     urlMethod: 'getObjectClassButtons',
                     data: {
                         ObjectClassId: Csw.string(cswPrivate.ObjectClassId)

@@ -44,7 +44,7 @@
                 return refresh(onSuccess, ret);
             }
 
-            return Csw.ajax.post({
+            return Csw.ajax.deprecatedWsNbt({
                 urlMethod: 'getDashboard',
                 watchGlobal: false,
                 useCache: true,

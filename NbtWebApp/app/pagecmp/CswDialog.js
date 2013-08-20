@@ -168,7 +168,7 @@
                                 createData.VisibilityRoleId = visValue.roleid;
                                 createData.VisibilityUserId = visValue.userid;
 
-                                Csw.ajax.post({
+                                Csw.ajax.deprecatedWsNbt({
                                     urlMethod: 'createView',
                                     data: createData,
                                     success: function (data) {
@@ -222,7 +222,7 @@
             cswDlgPrivate.onOpen = function () {
 
                 var state = Csw.clientState.getCurrent();
-                Csw.ajax.post({
+                Csw.ajax.deprecatedWsNbt({
                     urlMethod: "getFeedbackNode",
                     data: {
                         nodetypeid: cswDlgPrivate.nodetypeid,
@@ -244,7 +244,7 @@
                             },
                             ReloadTabOnSave: false,
                             onSave: function (nodeid, nodekey, tabcount, nodename) {
-                                Csw.ajax.post({
+                                Csw.ajax.deprecatedWsNbt({
                                     urlMethod: 'GetFeedbackCaseNumber',
                                     data: { nodeId: nodeid },
                                     success: function (result) {
@@ -312,7 +312,7 @@
                 enabledText: 'Add',
                 onClick: function () {
                     var newNodeTypeName = nodeTypeInp.val();
-                    Csw.ajax.post({
+                    Csw.ajax.deprecatedWsNbt({
                         urlMethod: 'IsNodeTypeNameUnique',
                         data: { 'NodeTypeName': newNodeTypeName },
                         success: function () {
@@ -405,7 +405,7 @@
                         selected: '',
                         values: [],
                         onChange: function () {
-                            Csw.ajax.post({
+                            Csw.ajax.deprecatedWsNbt({
                                 urlMethod: 'addPropertyToLayout',
                                 data: {
                                     PropId: Csw.string(addSelect.val()),
@@ -425,7 +425,7 @@
                         TabId: Csw.string(cswDlgPrivate.tabState.tabid),
                         LayoutType: layoutSelect.val()
                     };
-                    Csw.ajax.post({
+                    Csw.ajax.deprecatedWsNbt({
                         urlMethod: 'getPropertiesForLayoutAdd',
                         data: ajaxdata,
                         success: function (data) {
@@ -704,7 +704,7 @@
         AboutDialog: function () {
             'use strict';
             var div = Csw.literals.div();
-            Csw.ajax.post({
+            Csw.ajax.deprecatedWsNbt({
                 urlMethod: 'getAbout',
                 data: {},
                 success: function (data) {
@@ -1347,7 +1347,7 @@
                 var licenseTextArea = div.textArea({ name: 'license', rows: 30, cols: 80 }).propDom({ disabled: true });
                 div.br();
 
-                Csw.ajax.post({
+                Csw.ajax.deprecatedWsNbt({
                     urlMethod: o.GetLicenseUrl,
                     success: function (data) {
                         licenseTextArea.text(data.license);
@@ -1359,7 +1359,7 @@
                     enabledText: 'I Accept',
                     disabledText: 'Accepting...',
                     onClick: function () {
-                        Csw.ajax.post({
+                        Csw.ajax.deprecatedWsNbt({
                             urlMethod: o.AcceptLicenseUrl,
                             success: function () {
                                 allowClose = true;
@@ -1503,7 +1503,7 @@
             if (options) Csw.extend(o, options);
 
             function onOpen(div) {
-                Csw.ajax.post({
+                Csw.ajax.deprecatedWsNbt({
                     urlMethod: 'getUsers',
                     success: function (data) {
                         if (Csw.bool(data.result)) {

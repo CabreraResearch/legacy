@@ -111,6 +111,7 @@
     <Content Include="app\main\csw.mainHandleImpersonation.js" />
     <Content Include="app\main\csw.mainEvents.js" />
     <Content Include="app\main\csw.mainDivs.js" />
+    <Content Include="app\promises\csw.ajaxDeprecated.js" />
     <Content Include="app\promises\csw.spinners.js" />
     <Content Include="app\db\csw.db.js" />
     <Content Include="app\promises\csw.promise.js" />
@@ -1096,7 +1097,6 @@
     <Content Include="app\composites\csw.imagebutton.js" />
     <Content Include="app\composites\csw.multiselect.js" />
     <Content Include="app\composites\csw.numbertextbox.js" />
-    <Content Include="app\promises\csw.ajax.js" />
     <Content Include="app\types\csw.array.js" />
     <Content Include="app\types\csw.boolean.js" />
     <Content Include="app\core\csw.clientchanges.js" />

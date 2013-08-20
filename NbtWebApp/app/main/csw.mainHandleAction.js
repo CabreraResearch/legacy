@@ -22,7 +22,7 @@
 
             Csw.clientState.setCurrentAction(o.actionname, o.actionurl);
 
-            Csw.ajax.post({
+            Csw.ajax.deprecatedWsNbt({
                 urlMethod: 'SaveActionToQuickLaunch',
                 'data': { 'ActionName': o.actionname }
             });

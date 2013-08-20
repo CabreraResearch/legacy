@@ -85,7 +85,7 @@
                     cswPrivate.toggleButton(cswPrivate.buttons.cancel, false);
                     cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
 
-                    Csw.ajax.post({
+                    Csw.ajax.deprecatedWsNbt({
                         urlMethod: '',
                         data: {},
                         success: function(data) {
@@ -104,7 +104,7 @@
                     cswPrivate.toggleButton(cswPrivate.buttons.cancel, false);
                     cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
 
-                    Csw.ajax.post({
+                    Csw.ajax.deprecatedWsNbt({
                         urlMethod: '',
                         data: {},
                         success: function(data) {
