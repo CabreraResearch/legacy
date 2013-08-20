@@ -896,91 +896,104 @@
                         cellpadding: 5,
                         cellspacing: 5
                     });
-                    
-                    var nameCell = step5Tbl.cell(1, 1).setLabelText('View Name', false, false);
-                    var viewNameInput = step5Tbl.cell(1, 2).input({
-                        name: 'vieweditor_viewname_input',
-                        value: cswPrivate.View.ViewName,
-                        onChange: function () {
-                            handleAttributeChange();
-                        }
-                    });
-                    
-                    var catCell = step5Tbl.cell(2, 1).setLabelText('Category', false, false);
-                    var categoryInput = step5Tbl.cell(2, 2).input({
-                        name: 'vieweditor_category_input',
-                        value: cswPrivate.View.Category,
-                        onChange: function () {
-                            handleAttributeChange();
-                        }
-                    });
-                    
-                    var visibilityTbl = step5Tbl.cell(3, 2).div().table();
-                    var visCell = step5Tbl.cell(3, 1).setLabelText('View Visibility', false, false);
-                    var visibilitySelect = Csw.composites.makeViewVisibilitySelect(visibilityTbl, 1, '', {
-                        visibility: cswPrivate.View.Visibility,
-                        roleid: cswPrivate.View.VisibilityRoleId,
-                        userid: cswPrivate.View.VisibilityUserId,
-                        onChange: function () {
-                            handleAttributeChange();
-                        }
-                    });
-
-                    step5Tbl.cell(4, 1).setLabelText('Display Mode', false, false);
-                    step5Tbl.cell(4, 2).text(cswPrivate.View.ViewMode);
-                    
-                    var widthCell = step5Tbl.cell(5, 1).setLabelText('Width', false, false);
-                    var widthInput = step5Tbl.cell(5, 2).numberTextBox({
-                        name: 'vieweditor_width_input',
-                        value: cswPrivate.View.Width,
-                        MaxValue: 1000,
-                        MinValue: 100,
-                        onChange: function () {
-                            handleAttributeChange();
-                        }
-                    });
-                    
-                    if ("Property" == cswPrivate.View.Visibility) {
-                        nameCell.hide();
-                        viewNameInput.hide();
-                        catCell.hide();
-                        categoryInput.hide();
-                        visCell.hide();
-                        visibilityTbl.hide();
-                    } else {
-                        widthCell.hide();
-                        widthInput.hide();
-                    }
-                    
-                    var handleAttributeChange = function () {
-                        //It's better to send this to the server to modify - in some cases (ex: ViewName) we need DB resources which are not available during the "blackbox" deserialization events
-                        var visibilityData = visibilitySelect.getSelected();
-                        var req = Csw.ajaxWcf.post({
-                            urlMethod: 'ViewEditor/HandleAction',
-                            data: {
-                                NewViewName: viewNameInput.val(),
-                                NewViewCategory: categoryInput.val(),
-                                NewViewWidth: widthInput.val(),
-                                NewViewVisibility: visibilityData.visibility,
-                                NewVisibilityRoleId: visibilityData.roleid,
-                                NewVisbilityUserId: visibilityData.userid,
-                                CurrentView: cswPrivate.View,
-                                StepName: stepNames.ViewAttributes
-                            },
-                            success: function (response) {
-                                cswPrivate.View = response.CurrentView;
-                            }
-                        });
-                        cswPrivate.ajaxReqs[cswPrivate.wizardSteps[cswPrivate.currentStepNo]].push(req);
-                    };
 
                     cswPrivate.buildPreview(cswPrivate.previewDiv, cswPrivate.View);
 
+                    var isAdmin = false;
+                    var ready = Csw.promises.all(
+                        [
+                            Csw.clientSession.isAdministrator({
+                                'Yes': function () { isAdmin = true; }
+                            })
+                        ]);
+
+                    ready.then(function() {
+                        var nameCell = step5Tbl.cell(1, 1).setLabelText('View Name', false, false);
+                        var viewNameInput = step5Tbl.cell(1, 2).input({
+                            name: 'vieweditor_viewname_input',
+                            value: cswPrivate.View.ViewName,
+                            onChange: function() {
+                                handleAttributeChange();
+                            }
+                        });
+
+                        var catCell = step5Tbl.cell(2, 1).setLabelText('Category', false, false);
+                        var categoryInput = step5Tbl.cell(2, 2).input({
+                            name: 'vieweditor_category_input',
+                            value: cswPrivate.View.Category,
+                            onChange: function() {
+                                handleAttributeChange();
+                            }
+                        });
+
+                        var visibilityTbl = step5Tbl.cell(3, 2).div().table();
+                        var visCell = step5Tbl.cell(3, 1).setLabelText('View Visibility', false, false);
+                        var visibilitySelect = Csw.composites.makeViewVisibilitySelect(visibilityTbl, 1, '', {
+                            visibility: cswPrivate.View.Visibility,
+                            roleid: cswPrivate.View.VisibilityRoleId,
+                            userid: cswPrivate.View.VisibilityUserId,
+                            onChange: function() {
+                                handleAttributeChange();
+                            }
+                        });
+                        if (false == isAdmin) {
+                            visibilityTbl.hide();
+                            visCell.hide();
+                        }
+
+                        step5Tbl.cell(4, 1).setLabelText('Display Mode', false, false);
+                        step5Tbl.cell(4, 2).text(cswPrivate.View.ViewMode);
+
+                        var widthCell = step5Tbl.cell(5, 1).setLabelText('Width', false, false);
+                        var widthInput = step5Tbl.cell(5, 2).numberTextBox({
+                            name: 'vieweditor_width_input',
+                            value: cswPrivate.View.Width,
+                            MaxValue: 1000,
+                            MinValue: 100,
+                            onChange: function() {
+                                handleAttributeChange();
+                            }
+                        });
+
+                        if ("Property" == cswPrivate.View.Visibility) {
+                            nameCell.hide();
+                            viewNameInput.hide();
+                            catCell.hide();
+                            categoryInput.hide();
+                            visCell.hide();
+                            visibilityTbl.hide();
+                        } else {
+                            widthCell.hide();
+                            widthInput.hide();
+                        }
+
+                        var handleAttributeChange = function() {
+                            //It's better to send this to the server to modify - in some cases (ex: ViewName) we need DB resources which are not available during the "blackbox" deserialization events
+                            var visibilityData = visibilitySelect.getSelected();
+                            var req = Csw.ajaxWcf.post({
+                                urlMethod: 'ViewEditor/HandleAction',
+                                data: {
+                                    NewViewName: viewNameInput.val(),
+                                    NewViewCategory: categoryInput.val(),
+                                    NewViewWidth: widthInput.val(),
+                                    NewViewVisibility: visibilityData.visibility,
+                                    NewVisibilityRoleId: visibilityData.roleid,
+                                    NewVisbilityUserId: visibilityData.userid,
+                                    CurrentView: cswPrivate.View,
+                                    StepName: stepNames.ViewAttributes
+                                },
+                                success: function(response) {
+                                    cswPrivate.View = response.CurrentView;
+                                }
+                            });
+                            cswPrivate.ajaxReqs[cswPrivate.wizardSteps[cswPrivate.currentStepNo]].push(req);
+                        };
+                    });
                 };
             }());
 
             cswPrivate.makeStep6 = (function () {
-                return function(refreshPreview) {
+                return function (refreshPreview) {
                     cswPrivate.currentStepNo = 6;
                     cswPrivate.toggleButton(cswPrivate.buttons.prev, true);
                     cswPrivate.toggleButton(cswPrivate.buttons.finish, true);
@@ -1010,7 +1023,7 @@
                     step6InnerDiv.buttonExt({
                         enabledText: 'Undo',
                         disabled: (cswPrivate.viewStack.length === 0),
-                        onClick: function() {
+                        onClick: function () {
                             cswPrivate.View = JSON.parse(cswPrivate.viewStack.splice(cswPrivate.viewStack.length - 1, 1)[0]);
                             cswPrivate.makeStep6(true);
                         }
