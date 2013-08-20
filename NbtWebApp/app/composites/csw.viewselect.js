@@ -123,6 +123,7 @@
                         },
                         success: function(ret) {
                             makeSelect(ret);
+                            Csw.setCachedWebServiceCall(cswPrivate.viewMethod, ret);
                             return Csw.tryExec(cswPrivate.onSuccess);
                         }
                     });

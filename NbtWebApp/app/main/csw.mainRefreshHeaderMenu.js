@@ -18,6 +18,9 @@
                     urlMethod: 'getHeaderMenu',
                     data: {}
                 },
+                
+                isLoadedFromCacheFirst: true,
+
                 onLogout: function () {
                     return Csw.clientSession.logout();
                 },

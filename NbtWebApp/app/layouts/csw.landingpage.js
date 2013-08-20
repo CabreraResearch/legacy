@@ -186,7 +186,7 @@
                 var getAjaxPromise = function (watchGlobal) {
                     promise = Csw.ajaxWcf.post({
                         urlMethod: requestURL,
-                        watchGlobal: true !== watchGlobal,
+                        watchGlobal: false !== watchGlobal,
                         data: cswPrivate.landingPageRequestData,
                         success: makeLandingPageContent
                     });

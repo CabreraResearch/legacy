@@ -45,9 +45,9 @@
                     return Csw.ajax.post({
                         urlMethod: 'getDashboard',
                         watchGlobal: false,
-                        success: function(data) {
-                            doRefresh(data);
-                            Csw.setCachedWebServiceCall('getDashboard', data);
+                        success: function(ret) {
+                            doRefresh(ret);
+                            Csw.setCachedWebServiceCall('getDashboard', ret);
                         }
                     });
                 });
