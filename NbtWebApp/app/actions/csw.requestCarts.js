@@ -144,7 +144,7 @@
                     urlMethod: 'Requests/findMaterialCreate',
                     success: function (data) {
                         if (data.NodeTypeId) {
-                            Csw.layouts.addnode({
+                            Csw.dialogs.addnode({
                                 title: 'New Create Material Request',
                                 nodetypeid: data.NodeTypeId,
                                 onAddNode: function () {

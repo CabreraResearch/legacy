@@ -88,7 +88,7 @@
                                 $.CswDialog('AboutDialog');
                                 break;
                             case 'AddNode':
-                                Csw.layouts.addnode({
+                                Csw.dialogs.addnode({
                                     title: 'Add New ' + menuItemName,
                                     nodetypeid: Csw.string(menuItemJson.nodetypeid),
                                     relatednodeid: Csw.string(menuItemJson.relatednodeid), //for Grid Props
@@ -124,7 +124,7 @@
                                 break;
                             case 'CopyNode':
                                 if (Csw.clientChanges.manuallyCheckChanges()) {
-                                    Csw.layouts.copynode({
+                                    Csw.dialogs.copynode({
                                         copyType: Csw.string(menuItemJson.copytype),
                                         nodename: nodename,
                                         nodeid: nodeid,

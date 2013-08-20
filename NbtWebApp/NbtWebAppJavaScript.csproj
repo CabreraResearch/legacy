@@ -82,9 +82,10 @@
     <Content Include="app\composites\csw.quickTip.js" />
     <Content Include="app\composites\csw.tabselect.js" />
     <Content Include="app\core\csw.domNode.js" />
+    <Content Include="app\dialogs\csw.alert.js" />
     <Content Include="app\layouts\csw.dialog.js" />
-    <Content Include="app\layouts\csw.copynode.js" />
-    <Content Include="app\layouts\csw.addnode.js" />
+    <Content Include="app\dialogs\csw.copynode.js" />
+    <Content Include="app\dialogs\csw.addnode.js" />
     <Content Include="app\literals\csw.fieldset.js" />
     <Content Include="app\layouts\csw.landingpage.js" />
     <Content Include="app\literals\_template.js" />

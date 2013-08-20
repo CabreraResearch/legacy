@@ -420,7 +420,7 @@
             };
 
             cswPrivate.openAddNodeDialog = function (nodetypeToAdd, action) {
-                Csw.layouts.addnode({
+                Csw.dialogs.addnode({
                     action: action,
                     nodetypeid: nodetypeToAdd,
                     objectClassId: cswPrivate.objectClassId,

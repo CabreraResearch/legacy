@@ -12,7 +12,7 @@
                     Title: '',
                     onLinkClick: Csw.main.handleItemSelect,
                     onAddClick: function (itemData) {
-                        Csw.layouts.addnode({
+                        Csw.dialogs.addnode({
                             action: itemData.ActionName,
                             title: itemData.Text,
                             nodetypeid: itemData.NodeTypeId,
@@ -66,7 +66,7 @@
                 ObjectClassId: layData.RelatedObjectClassId,
                 onLinkClick: Csw.main.handleItemSelect,
                 onAddClick: function (itemData) {
-                    Csw.layouts.addnode({
+                    Csw.dialogs.addnode({
                         action: itemData.ActionName,
                         title: itemData.Text,
                         nodetypeid: itemData.NodeTypeId,

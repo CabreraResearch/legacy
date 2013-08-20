@@ -278,35 +278,6 @@
             openDialog(cswPublic.div, 800, 600, null, cswPublic.title, cswDlgPrivate.onOpen);
             return cswPublic;
         }, // AddFeedbackDialog
-        AddNodeClientSideDialog: function (options) {
-            'use strict';
-            var o = {
-                name: '',
-                nodetypename: '',
-                title: '',
-                onSuccess: null
-            };
-
-            if (options) {
-                Csw.extend(o, options);
-            }
-
-            var div = Csw.literals.div(),
-                newNode;
-
-            div.append('New ' + o.nodetypename + ': ');
-            newNode = div.input({ name: o.name + '_newNode', type: Csw.enums.inputTypes.text });
-
-            div.button({
-                name: o.objectClassId + '_add',
-                enabledText: 'Add',
-                onClick: function () {
-                    Csw.tryExec(o.onSuccess, newNode.val());
-                    div.$.dialog('close');
-                }
-            });
-            openDialog(div, 300, 200, null, o.title);
-        }, // AddNodeClientSideDialog
         AddNodeTypeDialog: function (options) {
             'use strict';
             var o = {
@@ -1419,7 +1390,10 @@
             var cswPublic = Csw.object();
 
             if (!cswDlgPrivate.nodes || Object.keys(cswDlgPrivate.nodes).length < 1) {
-                $.CswDialog('AlertDialog', 'Nothing has been selected to print. <br>Go back and select an item to print.', 'Empty selection');
+                Csw.dialogs.alert({
+                    title: 'Empty selection',
+                    message: 'Nothing has been selected to print. <br>Go back and select an item to print.'
+                }).open();
             } else {
 
                 cswPublic = {
@@ -1838,39 +1812,6 @@
             openDialog(div, 1000, 500, cswPrivate.onCloseDialog, cswPrivate.title, onOpen);
 
         }, // RelatedToDemoNodesDialog
-
-
-        ErrorDialog: function (error) {
-            'use strict';
-            var div = Csw.literals.div();
-            openDialog(div, 400, 300, null, 'Error');
-            div.$.CswErrorMessage(error);
-        },
-
-        AlertDialog: function (message, title, onClose, height, width, onOpen) {
-            'use strict';
-            var div = Csw.literals.div({
-                name: Csw.string(title, 'an alert dialog').replace(' ', '_'),
-                text: message,
-                align: 'center'
-            });
-
-            div.br({ number: 2 });
-
-            var divBody = div.div();
-
-            div.button({
-                enabledText: 'OK',
-                onClick: function () {
-                    div.$.dialog('close');
-                    Csw.tryExec(onClose);
-                }
-            });
-
-            Csw.tryExec(onOpen, divBody);
-
-            openDialog(div, Csw.number(width, 400), Csw.number(height, 200), null, title);
-        },
         ConfirmDialog: function (message, title, okFunc, cancelFunc) {
             'use strict';
             var div = Csw.literals.div({
@@ -2538,11 +2479,6 @@
 
         //#region Generic
 
-        //		'OpenPopup': function (url) { 
-        //							var popup = window.open(url, null, 'height=600, width=600, status=no, resizable=yes, scrollbars=yes, toolbar=yes,location=no, menubar=yes');
-        //							popup.focus();
-        //							return popup;
-        //						},
         OpenDialog: function (id, url) {
             'use strict';
             var div = Csw.literals.div({ name: id });

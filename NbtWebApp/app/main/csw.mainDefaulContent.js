@@ -64,7 +64,7 @@
             var $a = $li.children('a');
 
             $a.click(function () {
-                Csw.layouts.addnode({
+                Csw.dialogs.addnode({
                     action: o.itemJson.action,
                     title: 'Add New ' + text,
                     nodetypeid: Csw.string(o.itemJson.nodetypeid),

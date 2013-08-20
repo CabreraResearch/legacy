@@ -113,7 +113,7 @@
                         Csw.publish(Csw.enums.events.main.refreshHeader);
                         break;
                     default:
-                        Csw.layouts.addnode({
+                        Csw.dialogs.addnode({
                             nodetypeid: actionJson.requestItemNodeTypeId,
                             propertyData: actionJson.requestItemProps,
                             title: actionJson.titleText,
