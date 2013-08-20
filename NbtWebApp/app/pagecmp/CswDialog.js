@@ -731,7 +731,7 @@
         }, // ChangePasswordDialog
 
 
-        LogoutExistingSessionsDialog: function () {
+        LogoutExistingSessionsDialog: function (onSuccess) {
             'use strict';
 
             var logoutOnClose = true;
@@ -747,26 +747,28 @@
             resetLoginTable.cell(1, 1).propDom('colspan', 2).br({ number: 4 });
             resetLoginTable.cell(1, 1).append('You are already logged in at another location. Would you like to end your previous session and log in from this computer?');
             resetLoginTable.cell(1, 1).br({ number: 4 });
+
             resetLoginTable.cell(2, 1).css('text-align', 'center').button({
-                enabledText: 'Return to Login',
-                onClick: function() {
-                    div.$.dialog('close');
-                }
-            });
-            
-            resetLoginTable.cell(2, 2).css('text-align', 'center').button({
-                enabledText: 'Logout Other Session',
-                onClick: function() {
+                enabledText: 'Yes, Logout Other Sessions',
+                onClick: function () {
                     Csw.ajaxWcf.post({
                         urlMethod: 'Session/endCurrentUserSessions',
                         success: function (data) {
-                            Csw.clientSession.login();
+                            onSuccess();
                             logoutOnClose = false;
                             div.$.dialog('close');
                         }//success
                     });//Csw.ajaxWcf.post
                 }//onClick
             });//resetLoginTable.cell(2, 2).button
+            
+            resetLoginTable.cell(2, 2).css('text-align', 'center').button({
+                enabledText: 'No, Log Me Out',
+                onClick: function() {
+                    div.$.dialog('close');
+                }
+            });
+            
             
             openDialog(div, 600, 400, onClose, 'Logout Existing Sessions');
         }, //LogoutExistingSessionsDialog

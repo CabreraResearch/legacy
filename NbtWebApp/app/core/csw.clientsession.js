@@ -307,7 +307,7 @@
                     Csw.tryExec(o.success());
                     break;
                 case 'AlreadyLoggedIn':
-                    $.CswDialog('LogoutExistingSessionsDialog', {});
+                    $.CswDialog('LogoutExistingSessionsDialog', o.success);
                     break;
                 default:
                     txt = 'An error occurred';
