@@ -31,7 +31,7 @@
                     },
                     onAddComponent: Csw.main.refreshWelcomeLandingPage,
 
-                    isLoadedFromCacheFirst: true,
+                    useCache: true,
 
                     landingPageRequestData: {
                         RoleId: ''
