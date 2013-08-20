@@ -127,21 +127,39 @@ namespace ChemSW.Nbt.WebServices
         public static void clearImage( ICswResources CswResources, NodePropImageReturn Return, BlobDataParams Request )
         {
             CswNbtResources NbtResources = (CswNbtResources) CswResources;
-
-            int BlobDataId = Request.Blob.BlobDataId;
-
-            CswTableUpdate blobDataTS = NbtResources.makeCswTableUpdate( "clearImage", "blob_data" );
-            DataTable blobDataTbl = blobDataTS.getTable( "where blobdataid = " + BlobDataId );
-            foreach( DataRow row in blobDataTbl.Rows )
+            CswPropIdAttr PropId = new CswPropIdAttr( Request.propid );
+            CswNbtNode Node = NbtResources.Nodes[PropId.NodeId];
+            if( null != Node )
             {
-                row.Delete();
+                CswNbtMetaDataNodeTypeProp MetaDataProp = NbtResources.MetaData.getNodeTypeProp( PropId.NodeTypePropId );
+                if( null != MetaDataProp )
+                {
+                    CswNbtNodePropWrapper FileProp = Node.Properties[MetaDataProp];
+                    if( NbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Edit, MetaDataProp.getNodeType(), NbtResources.CurrentNbtUser ) &&
+                        NbtResources.Permit.isPropWritable( CswEnumNbtNodeTypePermission.Edit, MetaDataProp, null, FileProp ) )
+                    {
+
+                        int BlobDataId = Request.Blob.BlobDataId;
+
+                        CswTableUpdate blobDataTS = NbtResources.makeCswTableUpdate( "clearImage", "blob_data" );
+                        DataTable blobDataTbl = blobDataTS.getTable( "where blobdataid = " + BlobDataId );
+                        foreach( DataRow row in blobDataTbl.Rows )
+                        {
+                            row.Delete();
+                        }
+                        blobDataTS.update( blobDataTbl );
+
+                        Request.Blob = new CswNbtSdBlobData.CswNbtBlob();
+                        Request.success = true;
+
+                        getImageProp( CswResources, Return, Request );
+                    }
+                }
             }
-            blobDataTS.update( blobDataTbl );
-
-            Request.Blob = new CswNbtSdBlobData.CswNbtBlob();
-            Request.success = true;
-
-            getImageProp( CswResources, Return, Request );
+            else
+            {
+                throw new CswDniException( CswEnumErrorType.Warning, "You do not have sufficient priveledges to clear this Image property", "User " + NbtResources.CurrentNbtUser.UserId + " attempted to call clearImg without sufficient priviledges." );
+            }
         }
 
         public static void saveCaption( ICswResources CswResources, NodePropImageReturn Return, BlobDataParams Request )
@@ -162,17 +180,31 @@ namespace ChemSW.Nbt.WebServices
         public static void clearBlob( ICswResources CswResources, BlobDataReturn Return, BlobDataParams Request )
         {
             CswNbtResources NbtResources = (CswNbtResources) CswResources;
-
             CswPropIdAttr PropId = new CswPropIdAttr( Request.propid );
+            CswNbtNode Node = NbtResources.Nodes[PropId.NodeId];
+            if( null != Node )
+            {
+                CswNbtMetaDataNodeTypeProp MetaDataProp = NbtResources.MetaData.getNodeTypeProp( PropId.NodeTypePropId );
+                if( null != MetaDataProp )
+                {
+                    CswNbtNodePropWrapper FileProp = Node.Properties[MetaDataProp];
+                    if( NbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Edit, MetaDataProp.getNodeType(), NbtResources.CurrentNbtUser ) &&
+                        NbtResources.Permit.isPropWritable( CswEnumNbtNodeTypePermission.Edit, MetaDataProp, null, FileProp ) )
+                    {
+                        CswNbtSdTabsAndProps tabsandprops = new CswNbtSdTabsAndProps( NbtResources );
+                        tabsandprops.ClearPropValue( Request.propid, true );
 
-            CswNbtSdTabsAndProps tabsandprops = new CswNbtSdTabsAndProps( NbtResources );
-            
-            tabsandprops.ClearPropValue( Request.propid, true );
+                        Request.Blob = new CswNbtSdBlobData.CswNbtBlob();
+                        Request.success = true;
 
-            Request.Blob = new CswNbtSdBlobData.CswNbtBlob();
-            Request.success = true;
-
-            Return.Data = Request;
+                        Return.Data = Request;
+                    }
+                    else
+                    {
+                        throw new CswDniException( CswEnumErrorType.Warning, "You do not have sufficient priveledges to clear this File property", "User " + NbtResources.CurrentNbtUser.UserId + " attempted to call clearBlob without sufficient priviledges." );
+                    }
+                }
+            }
         }
 
         public static void getText( ICswResources CswResources, BlobDataReturn Return, BlobDataParams Request )
@@ -269,7 +301,7 @@ namespace ChemSW.Nbt.WebServices
             if( null != node )
             {
                 CswNbtNodePropWrapper prop = node.Properties[PropIdAttr.NodeTypePropId];
-                
+
                 if( NbtResources.Permit.isPropWritable( CswEnumNbtNodeTypePermission.View, prop.NodeTypeProp, null, prop ) )
                 {
                     if( Int32.MinValue == prop.JctNodePropId )
