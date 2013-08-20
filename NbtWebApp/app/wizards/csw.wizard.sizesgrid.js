@@ -34,7 +34,7 @@
                 var cswPrivate = {
                     name: 'wizardSizesThinGrid',
                     sizeNodeTypeId: null,
-                    sizeRowsToAdd: null,
+                    sizeRowsToAdd: [],
                     physicalState: null,
                     unitsOfMeasure: [],
                     showQuantityEditable: false,
@@ -225,7 +225,7 @@
                             'csw.wizard.sizesgrid.js', 22));
                     }
 
-                    var ajax = Csw.ajax.post({
+                    var ajax = Csw.ajax.deprecatedWsNbt({
                         urlMethod: 'getMaterialUnitsOfMeasure',
                         data: {
                             PhysicalStateValue: cswPrivate.physicalState

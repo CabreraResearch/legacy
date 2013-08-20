@@ -4,38 +4,6 @@
 (function () {
     'use strict';
 
-    var copyNode = function (options) {
-        var o = {
-            nodeid: '',
-            nodekey: '',
-            onSuccess: function () {
-            },
-            onError: function () {
-            }
-        };
-        if (options) {
-            Csw.extend(o, options);
-        }
-
-        var dataJson = {
-            NodePk: o.nodeid
-        };
-
-        Csw.ajax.post({
-            urlMethod: 'CopyNode',
-            data: {
-                NodeId: Csw.string(o.nodeid),
-                NodeKey: Csw.string(o.nodekey)
-            },
-            success: function (result) {
-                o.onSuccess(result.NewNodeId, '');
-            },
-            error: o.onError
-        });
-    };
-    Csw.register('copyNode', copyNode);
-    Csw.copyNode = Csw.copyNode || copyNode;
-
     var deleteNodes = function (options) {
         var o = {
             nodeids: Csw.array(),
@@ -57,7 +25,7 @@
             NodeKeys: o.nodekeys
         };
 
-        Csw.ajax.post({
+        Csw.ajax.deprecatedWsNbt({
             urlMethod: 'DeleteNodes',
             data: jData,
             success: function (data) {

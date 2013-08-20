@@ -188,7 +188,7 @@
 
         var $tree = $(this);
 
-        Csw.ajax.post({
+        Csw.ajax.deprecatedWsNbt({
             urlMethod: o.ViewInfoUrl,
             data: {
                 ViewId: o.viewid,

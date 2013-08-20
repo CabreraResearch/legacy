@@ -100,7 +100,7 @@
 
             cswPrivate.checkIsNodeTypeNameUnique = function (name, success, error) {
                 if (cswPrivate.checkTargetIsClientSideUnique()) {
-                    Csw.ajax.post({
+                    Csw.ajax.deprecatedWsNbt({
                         urlMethod: 'IsNodeTypeNameUnique',
                         data: { 'NodeTypeName': name },
                         success: function (data) {
@@ -664,7 +664,7 @@
                     Category: Csw.string(cswPrivate.categoryName)
                 };
 
-                Csw.ajax.post({
+                Csw.ajax.deprecatedWsNbt({
                     urlMethod: 'finalizeInspectionDesign',
                     data: jsonData,
                     success: function (data) {

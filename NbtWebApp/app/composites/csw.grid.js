@@ -98,7 +98,7 @@
 
             cswPrivate.getData = function (onSuccess) {
                 if (cswPrivate.ajax.urlMethod !== '') {
-                    cswPublic.ajax = Csw.ajax.post({
+                    cswPublic.ajax = Csw.ajax.deprecatedWsNbt({
                         url: cswPrivate.ajax.url,
                         urlMethod: cswPrivate.ajax.urlMethod,
                         data: cswPrivate.ajax.data,

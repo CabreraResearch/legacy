@@ -20,7 +20,7 @@
         Csw.main.watermark = Csw.main.watermark || Csw.main.register('watermark', Csw.domNode({ ID: 'watermark' }));
         
 
-        return Csw.ajax.post({
+        return Csw.ajax.deprecatedWsNbt({
             urlMethod: 'getWatermark',
             success: function (result) {
                 Csw.main.watermark.text(result.watermark || '');

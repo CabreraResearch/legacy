@@ -329,7 +329,7 @@
                     ViewJson: JSON.stringify(o.viewJson)
                 };
 
-                Csw.ajax.post({
+                Csw.ajax.deprecatedWsNbt({
                     urlMethod: 'makeViewPropFilter',
                     data: jsonData,
                     success: function (data) {
@@ -422,7 +422,7 @@
                             viewJson = cswPrivate.viewJson;
                         }
 
-                        Csw.ajax.post({
+                        Csw.ajax.deprecatedWsNbt({
                             urlMethod: 'getViewPropFilterUI',
                             //async: false,
                             data: {

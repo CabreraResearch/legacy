@@ -37,32 +37,6 @@
     var ExistingChangePasswordDialog = false;
     var ExistingShowLicenseDialog = false;
 
-    var afterObjectClassButtonClick = function (action, dialog) {
-        'use strict';
-        switch (Csw.string(action).toLowerCase()) {
-            case Csw.enums.nbtButtonAction.dispense:
-                Csw.tryExec(dialog.close);
-                break;
-            case Csw.enums.nbtButtonAction.reauthenticate:
-                Csw.tryExec(dialog.close);
-                break;
-            case Csw.enums.nbtButtonAction.receive:
-                Csw.tryExec(dialog.close);
-                break;
-            case Csw.enums.nbtButtonAction.refresh:
-                Csw.tryExec(dialog.close);
-                break;
-            case Csw.enums.nbtButtonAction.popup:
-                break;
-            case Csw.enums.nbtButtonAction.request:
-                break;
-            case Csw.enums.nbtButtonAction.loadView:
-                Csw.tryExec(dialog.close);
-                break;
-            case Csw.enums.nbtButtonAction.editprop:
-                break;
-        }
-    };
     var methods = {
 
         //#region Specialized
@@ -194,7 +168,7 @@
                                 createData.VisibilityRoleId = visValue.roleid;
                                 createData.VisibilityUserId = visValue.userid;
 
-                                Csw.ajax.post({
+                                Csw.ajax.deprecatedWsNbt({
                                     urlMethod: 'createView',
                                     data: createData,
                                     success: function (data) {
@@ -224,75 +198,6 @@
             });
 
         }, // AddViewDialog
-        AddNodeDialog: function (options) {
-            'use strict';
-            ///<summary>Creates an Add Node dialog and returns an object represent that dialog.</summary>
-            var cswDlgPrivate = {
-                text: '',
-                nodeid: '',
-                nodetypeid: 0,
-                objectClassId: 0,
-                relatednodeid: '',
-                relatednodename: '',
-                relatednodetypeid: '',
-                relatedobjectclassid: '',
-                onAddNode: function () { },
-                onSaveImmediate: function () { },
-                propertyData: null
-            };
-            if (Csw.isNullOrEmpty(options)) {
-                Csw.error.throwException(Csw.error.exception('Cannot create an Add Dialog without options.', '', 'CswDialog.js', 177));
-            }
-            Csw.extend(cswDlgPrivate, options);
-            cswDlgPrivate.name = cswDlgPrivate.text;
-            var cswPublic = {
-                isOpen: true,
-                div: cswPrivate.div.div({ name: cswDlgPrivate.name }),
-                close: function (nodeid, nodekey, tabcount, nodename, nodelink) {
-                    if (cswPublic.isOpen) {
-                        cswPublic.isOpen = false;
-                        cswPublic.tabsAndProps.refresh(null, null); //do not attempt to refresh the properties on add (the dialog is closing)
-                        cswPublic.tabsAndProps.tearDown();
-                        if (nodeid || nodekey) {
-                            Csw.tryExec(cswDlgPrivate.onAddNode, nodeid, nodekey, nodename, nodelink);
-                        }
-                        Csw.tryExec(cswDlgPrivate.onSaveImmediate);
-                        cswPublic.div.$.dialog('close');
-                    }
-                },
-                title: cswDlgPrivate.text
-            };
-            cswDlgPrivate.onOpen = function () {
-                if (cswDlgPrivate.propertyData && cswDlgPrivate.propertyData.node) {
-                    cswDlgPrivate.nodeid = cswDlgPrivate.propertyData.node.nodeid;
-                }
-                cswPublic.tabsAndProps = Csw.layouts.tabsAndProps(cswPublic.div, {
-                    name: 'tabsAndProps',
-                    tabState: {
-                        propertyData: cswDlgPrivate.propertyData,
-                        ShowAsReport: false,
-                        nodeid: cswDlgPrivate.nodeid,
-                        nodetypeid: cswDlgPrivate.nodetypeid,
-                        objectClassId: cswDlgPrivate.objectClassId,
-                        relatednodeid: cswDlgPrivate.relatednodeid,
-                        relatednodename: cswDlgPrivate.relatednodename,
-                        relatednodetypeid: cswDlgPrivate.relatednodetypeid,
-                        relatedobjectclassid: cswDlgPrivate.relatedobjectclassid,
-                        EditMode: Csw.enums.editMode.Add
-                    },
-                    ReloadTabOnSave: false,
-                    onSave: function (nodeid, nodekey, tabcount, nodename, nodelink) {
-                        cswPublic.close(nodeid, nodekey, tabcount, nodename, nodelink);
-                    },
-                    onInitFinish: function () {
-                        //openDialog(cswPublic.div, 800, 600, null, cswPublic.title);
-                    },
-                    checkQuota: false //Case 29531 - quota has already been checked by layouts.addnode
-                });
-            };
-            openDialog(cswPublic.div, 800, 600, cswPublic.close, cswPublic.title, cswDlgPrivate.onOpen);
-            return cswPublic;
-        },
         AddFeedbackDialog: function (options) {
             'use strict';
             ///<summary>Creates an Add Feedback dialog and returns an object represent that dialog.</summary>
@@ -317,7 +222,7 @@
             cswDlgPrivate.onOpen = function () {
 
                 var state = Csw.clientState.getCurrent();
-                Csw.ajax.post({
+                Csw.ajax.deprecatedWsNbt({
                     urlMethod: "getFeedbackNode",
                     data: {
                         nodetypeid: cswDlgPrivate.nodetypeid,
@@ -339,7 +244,7 @@
                             },
                             ReloadTabOnSave: false,
                             onSave: function (nodeid, nodekey, tabcount, nodename) {
-                                Csw.ajax.post({
+                                Csw.ajax.deprecatedWsNbt({
                                     urlMethod: 'GetFeedbackCaseNumber',
                                     data: { nodeId: nodeid },
                                     success: function (result) {
@@ -373,35 +278,6 @@
             openDialog(cswPublic.div, 800, 600, null, cswPublic.title, cswDlgPrivate.onOpen);
             return cswPublic;
         }, // AddFeedbackDialog
-        AddNodeClientSideDialog: function (options) {
-            'use strict';
-            var o = {
-                name: '',
-                nodetypename: '',
-                title: '',
-                onSuccess: null
-            };
-
-            if (options) {
-                Csw.extend(o, options);
-            }
-
-            var div = Csw.literals.div(),
-                newNode;
-
-            div.append('New ' + o.nodetypename + ': ');
-            newNode = div.input({ name: o.name + '_newNode', type: Csw.enums.inputTypes.text });
-
-            div.button({
-                name: o.objectClassId + '_add',
-                enabledText: 'Add',
-                onClick: function () {
-                    Csw.tryExec(o.onSuccess, newNode.val());
-                    div.$.dialog('close');
-                }
-            });
-            openDialog(div, 300, 200, null, o.title);
-        }, // AddNodeClientSideDialog
         AddNodeTypeDialog: function (options) {
             'use strict';
             var o = {
@@ -436,7 +312,7 @@
                 enabledText: 'Add',
                 onClick: function () {
                     var newNodeTypeName = nodeTypeInp.val();
-                    Csw.ajax.post({
+                    Csw.ajax.deprecatedWsNbt({
                         urlMethod: 'IsNodeTypeNameUnique',
                         data: { 'NodeTypeName': newNodeTypeName },
                         success: function () {
@@ -529,7 +405,7 @@
                         selected: '',
                         values: [],
                         onChange: function () {
-                            Csw.ajax.post({
+                            Csw.ajax.deprecatedWsNbt({
                                 urlMethod: 'addPropertyToLayout',
                                 data: {
                                     PropId: Csw.string(addSelect.val()),
@@ -549,7 +425,7 @@
                         TabId: Csw.string(cswDlgPrivate.tabState.tabid),
                         LayoutType: layoutSelect.val()
                     };
-                    Csw.ajax.post({
+                    Csw.ajax.deprecatedWsNbt({
                         urlMethod: 'getPropertiesForLayoutAdd',
                         data: ajaxdata,
                         success: function (data) {
@@ -686,86 +562,6 @@
             openDialog(cswPublic.div, 900, 600, cswPublic.close, title, cswDlgPrivate.onOpen);
             return cswPublic;
         }, // EditNodeDialog
-        CopyNodeDialog: function (options) {
-            'use strict';
-            var cswDlgPrivate = {
-                'nodename': '',
-                'nodeid': '',
-                'nodetypeid': '',
-                'nodekey': '',
-                'onCopyNode': function () { }
-            };
-
-            if (Csw.isNullOrEmpty(options)) {
-                Csw.error.throwException(Csw.error.exception('Cannot create an Copy Dialog without options.', '', 'CswDialog.js', 177));
-            }
-            Csw.extend(cswDlgPrivate, options);
-            var cswPublic = {
-                div: Csw.literals.div({
-                    name: 'CopyNodeDialogDiv'
-                }),
-                close: function () {
-                    cswPublic.div.$.dialog('close');
-                }
-            };
-
-            // Prevent copy if quota is reached
-            var tbl = cswPublic.div.table({
-                name: 'CopyNodeDialogDiv_table'
-            });
-            var cell11 = tbl.cell(1, 1).propDom('colspan', '2');
-            var cell21 = tbl.cell(2, 1);
-            var cell22 = tbl.cell(2, 2);
-
-            Csw.ajaxWcf.post({
-                urlMethod: 'Quotas/check',
-                data: {
-                    NodeTypeId: Csw.string(cswDlgPrivate.nodetypeid),
-                    NodeKey: Csw.string(cswDlgPrivate.nodekey)
-                },
-                success: function (data) {
-                    if (Csw.bool(data.HasSpace)) {
-
-                        cell11.append('Copying: ' + cswDlgPrivate.nodename);
-                        cell11.br({ number: 2 });
-
-                        var copyBtn = cell21.button({
-                            name: 'copynode_submit',
-                            enabledText: 'Copy',
-                            disabledText: 'Copying',
-                            onClick: function () {
-                                Csw.copyNode({
-                                    'nodeid': cswDlgPrivate.nodeid,
-                                    'nodekey': Csw.string(cswDlgPrivate.nodekey, cswDlgPrivate.nodekey[0]),
-                                    'onSuccess': function (nodeid, nodekey) {
-                                        cswPublic.close();
-                                        cswDlgPrivate.onCopyNode(nodeid, nodekey);
-                                    },
-                                    'onError': function () {
-                                        copyBtn.enable();
-                                    }
-                                });
-                            }
-                        });
-
-                    } else {
-                        cell11.append('You have used all of your purchased quota, and must purchase additional quota space in order to add more.');
-                    } // if-else (Csw.bool(data.result)) {
-                } // success()
-            }); // ajax
-
-            /* Cancel Button */
-            cell22.button({
-                name: 'copynode_cancel',
-                enabledText: 'Cancel',
-                disabledText: 'Canceling',
-                onClick: function () {
-                    cswPublic.close();
-                }
-            });
-            openDialog(cswPublic.div, 400, 300, null, 'Confirm Copy');
-            return cswPublic;
-        }, // CopyNodeDialog       
         DeleteNodeDialog: function (options) {
             'use strict';
             var cswDlgPrivate = {
@@ -908,7 +704,7 @@
         AboutDialog: function () {
             'use strict';
             var div = Csw.literals.div();
-            Csw.ajax.post({
+            Csw.ajax.deprecatedWsNbt({
                 urlMethod: 'getAbout',
                 data: {},
                 success: function (data) {
@@ -1551,7 +1347,7 @@
                 var licenseTextArea = div.textArea({ name: 'license', rows: 30, cols: 80 }).propDom({ disabled: true });
                 div.br();
 
-                Csw.ajax.post({
+                Csw.ajax.deprecatedWsNbt({
                     urlMethod: o.GetLicenseUrl,
                     success: function (data) {
                         licenseTextArea.text(data.license);
@@ -1563,7 +1359,7 @@
                     enabledText: 'I Accept',
                     disabledText: 'Accepting...',
                     onClick: function () {
-                        Csw.ajax.post({
+                        Csw.ajax.deprecatedWsNbt({
                             urlMethod: o.AcceptLicenseUrl,
                             success: function () {
                                 allowClose = true;
@@ -1594,7 +1390,10 @@
             var cswPublic = Csw.object();
 
             if (!cswDlgPrivate.nodes || Object.keys(cswDlgPrivate.nodes).length < 1) {
-                $.CswDialog('AlertDialog', 'Nothing has been selected to print. <br>Go back and select an item to print.', 'Empty selection');
+                Csw.dialogs.alert({
+                    title: 'Empty selection',
+                    message: 'Nothing has been selected to print. <br>Go back and select an item to print.'
+                }).open();
             } else {
 
                 cswPublic = {
@@ -1704,7 +1503,7 @@
             if (options) Csw.extend(o, options);
 
             function onOpen(div) {
-                Csw.ajax.post({
+                Csw.ajax.deprecatedWsNbt({
                     urlMethod: 'getUsers',
                     success: function (data) {
                         if (Csw.bool(data.result)) {
@@ -2013,39 +1812,6 @@
             openDialog(div, 1000, 500, cswPrivate.onCloseDialog, cswPrivate.title, onOpen);
 
         }, // RelatedToDemoNodesDialog
-
-
-        ErrorDialog: function (error) {
-            'use strict';
-            var div = Csw.literals.div();
-            openDialog(div, 400, 300, null, 'Error');
-            div.$.CswErrorMessage(error);
-        },
-
-        AlertDialog: function (message, title, onClose, height, width, onOpen) {
-            'use strict';
-            var div = Csw.literals.div({
-                name: Csw.string(title, 'an alert dialog').replace(' ', '_'),
-                text: message,
-                align: 'center'
-            });
-
-            div.br({ number: 2 });
-
-            var divBody = div.div();
-
-            div.button({
-                enabledText: 'OK',
-                onClick: function () {
-                    div.$.dialog('close');
-                    Csw.tryExec(onClose);
-                }
-            });
-
-            Csw.tryExec(onOpen, divBody);
-
-            openDialog(div, Csw.number(width, 400), Csw.number(height, 200), null, title);
-        },
         ConfirmDialog: function (message, title, okFunc, cancelFunc) {
             'use strict';
             var div = Csw.literals.div({
@@ -2713,11 +2479,6 @@
 
         //#region Generic
 
-        //		'OpenPopup': function (url) { 
-        //							var popup = window.open(url, null, 'height=600, width=600, status=no, resizable=yes, scrollbars=yes, toolbar=yes,location=no, menubar=yes');
-        //							popup.focus();
-        //							return popup;
-        //						},
         OpenDialog: function (id, url) {
             'use strict';
             var div = Csw.literals.div({ name: id });

@@ -121,7 +121,7 @@
                         CopyToViewId: ''
                     };
 
-                    Csw.ajax.post({
+                    Csw.ajax.deprecatedWsNbt({
                         urlMethod: o.CopyViewUrl,
                         data: dataJson,
                         success: function (gridJson) {
@@ -149,7 +149,7 @@
                             ViewId: viewid
                         };
 
-                        Csw.ajax.post({
+                        Csw.ajax.deprecatedWsNbt({
                             urlMethod: o.DeleteViewUrl,
                             data: dataJson,
                             success: function () {
@@ -314,7 +314,7 @@
                 ViewString: ''
             };
 
-            Csw.ajax.post({
+            Csw.ajax.deprecatedWsNbt({
                 urlMethod: o.ViewInfoUrl,
                 data: jsonData,
                 success: function (data) {
@@ -381,7 +381,7 @@
                                         'This will replace the ' + currentViewJson.viewname + ' view with a copy of the ' + copyViewSel.selectedText() + ' view. Are you sure?',
                                         'Copy View Warning',
                                         function _okClick() {
-                                            Csw.ajax.post({
+                                            Csw.ajax.deprecatedWsNbt({
                                                 urlMethod: o.CopyViewUrl,
                                                 data: {
                                                     ViewId: copyViewSel.val(),
@@ -504,7 +504,7 @@
                     ViewJson: JSON.stringify(currentViewJson)
                 };
 
-                Csw.ajax.post({
+                Csw.ajax.deprecatedWsNbt({
                     urlMethod: o.SaveViewUrl,
                     data: jsonData,
                     success: function () {
@@ -526,7 +526,7 @@
                     SelectedViewId: Csw.string(selectedviewid, '')
                 };
 
-                Csw.ajax.post({
+                Csw.ajax.deprecatedWsNbt({
                     urlMethod: o.ViewGridUrl,
                     data: dataJson,
                     success: function (gridJson) {
@@ -735,7 +735,7 @@
                             Type: viewnodejson.secondtype,
                             Id: viewnodejson.secondid
                         };
-                        Csw.ajax.post({
+                        Csw.ajax.deprecatedWsNbt({
                             urlMethod: o.PropNamesUrl,
                             data: jsonData,
                             success: function (data) {
@@ -1142,7 +1142,7 @@
             }
 
             if (stepno === Csw.enums.wizardSteps_ViewEditor.filters.step) {
-                Csw.ajax.post({
+                Csw.ajax.deprecatedWsNbt({
                     urlMethod: o.FiltersUrlMethod,
                     data: {
                         ViewId: _getSelectedViewId(),
@@ -1533,7 +1533,7 @@
                     ViewJson: JSON.stringify(currentViewJson)
                 };
 
-                Csw.ajax.post({
+                Csw.ajax.deprecatedWsNbt({
                     urlMethod: o.ChildOptionsUrl,
                     data: dataJson,
                     success: function (data) {

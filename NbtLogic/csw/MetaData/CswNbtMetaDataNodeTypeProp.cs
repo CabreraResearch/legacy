@@ -630,7 +630,7 @@ namespace ChemSW.Nbt.MetaData
             }
             else
             {
-                ret = ret && ( false == hasFilter() && false == Node.Properties[this].Hidden );
+                ret = ret && ( false == hasFilter() && false == Node.Properties[this].Hidden && false == Hidden );
             }
 
             // 3: Permissions
@@ -701,6 +701,12 @@ namespace ChemSW.Nbt.MetaData
         {
             get { return _NodeTypePropRow["valueproptype"].ToString(); }
             private set { _setAttribute( "valueproptype", value, false ); }
+        }
+
+        public bool Hidden
+        {
+            get { return CswConvert.ToBoolean( _NodeTypePropRow["hidden"] ); }
+            set { _setAttribute( "hidden", value, true ); }
         }
 
         #region FK Matching
