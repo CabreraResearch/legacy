@@ -28,19 +28,19 @@ namespace ChemSW.Nbt.Schema
         /// </summary>
         public override void update()
         {
-            if( _CswNbtSchemaModTrnsctn.isColumnDefined( "object_class", "oraviewname" ) )
+            if( _CswNbtSchemaModTrnsctn.isColumnDefined( "object_class", "oraviewname" ) != true )
             {
                 _CswNbtSchemaModTrnsctn.addStringColumn( "object_class", "oraviewname", "stable oracle dbview name for this object class", false, false, 30 );
             }
-            if( _CswNbtSchemaModTrnsctn.isColumnDefined( "object_class_props", "oraviewcolname" ) )
+            if( _CswNbtSchemaModTrnsctn.isColumnDefined( "object_class_props", "oraviewcolname" ) != true )
             {
                 _CswNbtSchemaModTrnsctn.addStringColumn( "object_class_props", "oraviewcolname", "stable oracle dbview column name for this object class property", false, false, 30 );
             }
-            if( _CswNbtSchemaModTrnsctn.isColumnDefined( "nodetypes", "oraviewname" ) )
+            if( _CswNbtSchemaModTrnsctn.isColumnDefined( "nodetypes", "oraviewname" ) != true )
             {
                 _CswNbtSchemaModTrnsctn.addStringColumn( "nodetypes", "oraviewname", "stable oracle dbview name for this nodetype", false, false, 30 );
             }
-            if( _CswNbtSchemaModTrnsctn.isColumnDefined( "nodetype_props", "oraviewcolname" ) )
+            if( _CswNbtSchemaModTrnsctn.isColumnDefined( "nodetype_props", "oraviewcolname" ) != true )
             {
                 _CswNbtSchemaModTrnsctn.addStringColumn( "nodetype_props", "oraviewcolname", "stable oracle dbview column name for this nodetype property", false, false, 30 );
             }
