@@ -29,6 +29,7 @@ namespace ChemSW.Nbt.ImportExport
         }
 
         public delegate void MessageHandler( string Message );
+
         public MessageHandler OnMessage = delegate( string Message ) { };
 
         private DataSet _readExcel( string FilePath )
@@ -60,7 +61,9 @@ namespace ChemSW.Nbt.ImportExport
                 ret.Tables.Add( ExcelDataTable );
             }
             return ret;
-        } // _readExcel()
+        }
+
+        // _readExcel()
 
 
         /// <summary>
@@ -91,7 +94,9 @@ namespace ChemSW.Nbt.ImportExport
             CswNbtImportDefBinding.addBindingEntries( _CswNbtResources, BindingsDataTable, DefIdsBySheetName );
             CswNbtImportDefRelationship.addRelationshipEntries( _CswNbtResources, RelationshipsDataTable, DefIdsBySheetName );
 
-        } // storeDefinition()
+        }
+
+        // storeDefinition()
 
 
         /// <summary>
@@ -187,7 +192,9 @@ namespace ChemSW.Nbt.ImportExport
 
             //return ret;
             return JobId;
-        } // storeData()
+        }
+
+        // storeData()
 
         /// <summary>
         /// Returns the set of available Import Definition Names
@@ -204,7 +211,9 @@ namespace ChemSW.Nbt.ImportExport
                 ret.Add( defrow[CswNbtImportTables.ImportDef.definitionname].ToString(), false, true );
             }
             return ret;
-        } // getDefinitions()
+        }
+
+        // getDefinitions()
 
         /// <summary>
         /// Returns the set of available Import Jobs
@@ -219,7 +228,9 @@ namespace ChemSW.Nbt.ImportExport
                 ret.Add( new CswNbtImportDataJob( _CswNbtResources, jobrow ) );
             }
             return ret;
-        } // getJobs()
+        }
+
+        // getJobs()
 
 
 
@@ -253,6 +264,37 @@ namespace ChemSW.Nbt.ImportExport
         } // getImportDataTableNames()
 
         /// <summary>
+        /// Import a single row (for CAF imports)
+        /// </summary>
+        /// <returns>Non-null string indicates an error</returns>
+        public string ImportRow( DataRow SourceRow, string ImportDefinitionName, string SheetName, bool Overwrite )
+        {
+            string Error = string.Empty;
+
+            if( false == string.IsNullOrEmpty( ImportDefinitionName ) &&
+                false == string.IsNullOrEmpty( SheetName ) )
+            {
+                CswNbtImportDef BindingDef = new CswNbtImportDef( _CswNbtResources, ImportDefinitionName, SheetName );
+                if( null != BindingDef && ( BindingDef.Bindings.Count > 0 || BindingDef.RowRelationships.Count > 0 ) && BindingDef.ImportOrder.Count > 0 )
+                {
+                    foreach( CswNbtImportDefOrder Order in BindingDef.ImportOrder.Values )
+                    {
+                        _ImportOneRow( SourceRow, BindingDef, Order, Overwrite, null );
+                    }
+                } // if( Bindings.Count > 0 && ImportOrder.count > 0)
+                else
+                {
+                    Error = "No Bindings defined";
+                }
+            } // if( _CswNbtResources.isTableDefinedInDataBase(ImportDataTableName) ) 
+            else
+            {
+                Error = "Null Definition Name or Sheet Name";
+            }
+            return Error;
+        } // ImportRow()
+
+        /// <summary>
         /// Import a number of rows
         /// </summary>
         /// <param name="RowsToImport">Number of rows to import</param>
@@ -268,316 +310,45 @@ namespace ChemSW.Nbt.ImportExport
                 CswNbtImportDataMap DataMap = new CswNbtImportDataMap( _CswNbtResources, ImportDataTableName );
                 CswNbtImportDef BindingDef = new CswNbtImportDef( _CswNbtResources, DataMap.ImportDefinitionId );
 
-                //if( null != BindingDef && BindingDef.Bindings.Count > 0 && BindingDef.ImportOrder.Count > 0 ) //original
-
                 if( null != BindingDef && ( BindingDef.Bindings.Count > 0 || BindingDef.RowRelationships.Count > 0 ) && BindingDef.ImportOrder.Count > 0 ) //dch
                 {
                     foreach( CswNbtImportDefOrder Order in BindingDef.ImportOrder.Values )
                     {
-                        string msgPrefix = Order.NodeType.NodeTypeName + " Import: ";
                         CswTableUpdate ImportDataUpdate = _CswNbtResources.makeCswTableUpdate( "Importer_Update", ImportDataTableName );
 
                         // Fetch the next row to process
-                        bool moreRows = true;
-                        while( moreRows )
+                        DataTable ImportDataTable;
+                        do
                         {
-                            DataTable ImportDataTable = ImportDataUpdate.getTable( "where " + CswNbtImportTables.ImportDataN.error + " = '" + CswConvert.ToDbVal( false ) + "' and " + Order.PkColName + " is null",
-                                                                                   new Collection<OrderByClause> { new OrderByClause( CswNbtImportTables.ImportDataN.importdataid, CswEnumOrderByType.Ascending ) },
-                                                                                   0, 1 );
-                            moreRows = ( ImportDataTable.Rows.Count > 0 );
-                            if( moreRows )
+                            ImportDataTable = ImportDataUpdate.getTable( "where " + CswNbtImportTables.ImportDataN.error + " = '" + CswConvert.ToDbVal( false ) + "' and " + Order.PkColName + " is null",
+                                                                         new Collection<OrderByClause> { new OrderByClause( CswNbtImportTables.ImportDataN.importdataid, CswEnumOrderByType.Ascending ) },
+                                                                         0, 1 );
+                            if( ImportDataTable.Rows.Count > 0 )
                             {
-                                DataRow ImportRow = ImportDataTable.Rows[0];
+                                DataRow Row = ImportDataTable.Rows[0];
+                                string msgPrefix = Order.NodeType.NodeTypeName + " Import (" + Row[CswNbtImportTables.ImportDataN.importdataid].ToString() + "): ";
                                 try
                                 {
-                                    msgPrefix = Order.NodeType.NodeTypeName + " Import (" + ImportRow[CswNbtImportTables.ImportDataN.importdataid].ToString() + "): ";
-                                    CswNbtNode Node = null;
+                                    CswPrimaryKey ImportedNodeId = _ImportOneRow( Row, BindingDef, Order, DataMap.Overwrite, ImportDataUpdate );
 
-                                    IEnumerable<CswNbtImportDefBinding> NodeTypeBindings = BindingDef.Bindings.Where( b => b.DestNodeType == Order.NodeType && b.Instance == Order.Instance );
-                                    IEnumerable<CswNbtImportDefRelationship> RowRelationships = BindingDef.RowRelationships.Where( r => r.NodeType.NodeTypeId == Order.NodeType.NodeTypeId ); //&& r.Instance == Order.Instance );
-                                    IEnumerable<CswNbtImportDefRelationship> UniqueRelationships = RowRelationships.Where( r => r.Relationship.IsUnique() ||
-                                                                                                                                r.Relationship.IsCompoundUnique() ||
-                                                                                                                                Order.NodeType.NameTemplatePropIds.Contains( r.Relationship.FirstPropVersionId ) );
+                                    // Save the nodeid in this row
+                                    Row[Order.PkColName] = CswConvert.ToDbVal( ImportedNodeId.PrimaryKey );
+                                    ImportDataUpdate.update( ImportDataTable );
 
-                                    //IEnumerable<CswNbt2DBinding> RequiredBindings = NodeTypeBindings.Where( b => b.DestProperty.IsRequired );
-                                    //IEnumerable<CswNbt2DBinding> UniqueBindings = NodeTypeBindings.Where( b => ( b.DestProperty.IsUnique() || b.DestProperty.IsCompoundUnique() ) );
-                                    //IEnumerable<CswNbtMetaDataNodeTypeProp> Props = Order.NodeType.getNodeTypeProps();
-                                    //IEnumerable<CswNbtMetaDataNodeTypeProp> RequiredProps = Props.Where( p => p.IsRequired && false == p.HasDefaultValue() );
-                                    IEnumerable<CswNbtImportDefBinding> UniqueBindings = NodeTypeBindings.Where( b => b.DestProperty.IsUnique() ||
-                                                                                                                      b.DestProperty.IsCompoundUnique() ||
-                                                                                                                      Order.NodeType.NameTemplatePropIds.Contains( b.DestProperty.FirstPropVersionId ) );
-                                    //IEnumerable<CswNbtMetaDataNodeTypeProp> UniqueProps = Props.Where( p => UniqueBindings.Any( b => b.DestProperty == p ) );
-
-                                    // Skip rows with null values for all unique properties
-                                    bool allEmpty = true;
-                                    foreach( CswNbtImportDefBinding Binding in UniqueBindings )
-                                    {
-                                        allEmpty = allEmpty && string.IsNullOrEmpty( ImportRow[Binding.ImportDataColumnName].ToString() );
-                                    }
-                                    foreach( CswNbtImportDefRelationship Relation in UniqueRelationships )
-                                    {
-                                        CswNbtImportDefOrder thisTargetOrder = BindingDef.ImportOrder.Values.FirstOrDefault( o => Relation.Relationship.FkMatches( o.NodeType ) && o.Instance == Relation.Instance );
-                                        Int32 Value = CswConvert.ToInt32( ImportRow[thisTargetOrder.PkColName] );
-
-                                        allEmpty = allEmpty && ( Value != Int32.MinValue );
-                                    }
-
-                                    if( false == allEmpty )
-                                    {
-                                        // Find matching nodes using a view on unique properties
-                                        CswNbtView UniqueView = new CswNbtView( _CswNbtResources );
-                                        UniqueView.ViewName = "Check Unique";
-                                        CswNbtViewRelationship NTRel = UniqueView.AddViewRelationship( Order.NodeType, false );
-
-                                        if( UniqueBindings.Any() )
-                                        {
-                                            bool atLeastOneFilter = false;
-                                            foreach( CswNbtImportDefBinding Binding in UniqueBindings )
-                                            {
-                                                string Value = ImportRow[Binding.ImportDataColumnName].ToString();
-                                                if( Value != string.Empty )
-                                                {
-                                                    UniqueView.AddViewPropertyAndFilter( NTRel, Binding.DestProperty,
-                                                                                         Conjunction: CswEnumNbtFilterConjunction.And,
-                                                                                         SubFieldName: Binding.DestSubfield.Name,
-                                                                                         FilterMode: CswEnumNbtFilterMode.Equals,
-                                                                                         Value: Value,
-                                                                                         CaseSensitive: false );
-                                                }
-                                                else
-                                                {
-                                                    UniqueView.AddViewPropertyAndFilter( NTRel, Binding.DestProperty,
-                                                                                         Conjunction: CswEnumNbtFilterConjunction.And,
-                                                                                         SubFieldName: Binding.DestSubfield.Name,
-                                                                                         FilterMode: CswEnumNbtFilterMode.Null );
-                                                }
-                                                atLeastOneFilter = true;
-                                            }
-
-                                            foreach( CswNbtImportDefRelationship Relation in UniqueRelationships )
-                                            {
-                                                CswNbtImportDefOrder thisTargetOrder = BindingDef.ImportOrder.Values.FirstOrDefault( o => Relation.Relationship.FkMatches( o.NodeType ) && o.Instance == Relation.Instance );
-                                                Int32 Value = CswConvert.ToInt32( ImportRow[thisTargetOrder.PkColName] );
-
-                                                if( Value != Int32.MinValue )
-                                                {
-                                                    UniqueView.AddViewPropertyAndFilter( NTRel, Relation.Relationship,
-                                                                                         Conjunction: CswEnumNbtFilterConjunction.And,
-                                                                                         SubFieldName: CswEnumNbtSubFieldName.NodeID,
-                                                                                         FilterMode: CswEnumNbtFilterMode.Equals,
-                                                                                         Value: Value.ToString(),
-                                                                                         CaseSensitive: false );
-                                                }
-                                                else
-                                                {
-                                                    UniqueView.AddViewPropertyAndFilter( NTRel, Relation.Relationship,
-                                                                                         Conjunction: CswEnumNbtFilterConjunction.And,
-                                                                                         SubFieldName: CswEnumNbtSubFieldName.NodeID,
-                                                                                         FilterMode: CswEnumNbtFilterMode.Null );
-                                                }
-                                                atLeastOneFilter = true;
-                                            }
-
-                                            if( atLeastOneFilter )
-                                            {
-                                                ICswNbtTree UniqueTree = _CswNbtResources.Trees.getTreeFromView( UniqueView, false, true, true );
-                                                if( UniqueTree.getChildNodeCount() > 0 )
-                                                {
-                                                    UniqueTree.goToNthChild( 0 );
-                                                    Node = UniqueTree.getNodeForCurrentPosition();
-                                                }
-                                            }
-                                        } // if( UniqueProps.Any() )
-
-                                        bool isNewNode = false;
-                                        if( null == Node )
-                                        {
-                                            // Make a new node
-                                            Node = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( Order.NodeType.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode );
-                                            isNewNode = true;
-
-
-                                            //// Check for non-null values for all required properties
-                                            ////foreach( CswNbt2DBinding Binding in RequiredBindings )
-                                            //foreach( CswNbtMetaDataNodeTypeProp RequiredProp in RequiredProps )
-                                            //{
-                                            //    IEnumerable<CswNbt2DBinding> RequiredBindings = BindingDef.Bindings.byProp( Order.Instance, RequiredProp );
-                                            //    bool hasValue = RequiredBindings.Aggregate( false, ( current, RequiredBinding ) => current || false == string.IsNullOrEmpty( ImportRow[RequiredBinding.ImportDataColumnName].ToString() ) );
-                                            //    if( false == hasValue )
-                                            //    {
-                                            //        throw new Exception( msgPrefix + "Required property value is missing: " + RequiredProp.PropName );
-                                            //    }
-                                            //} // foreach( CswNbtMetaDataNodeTypeProp RequiredProp in RequiredProps )
-
-                                        }
-
-
-                                        // Save the nodeid in this row
-                                        ImportRow[Order.PkColName] = CswConvert.ToDbVal( Node.NodeId.PrimaryKey );
-                                        ImportDataUpdate.update( ImportDataTable );
-
-
-                                        // Import property values
-                                        if( isNewNode || DataMap.Overwrite )
-                                        {
-                                            foreach( CswNbtImportDefBinding Binding in NodeTypeBindings )
-                                            {
-                                                // special case for TimeInterval, specifically for IMCS imports
-                                                if( Binding.DestProperty.getFieldTypeValue() == CswEnumNbtFieldType.TimeInterval )
-                                                {
-                                                    XElement input = XElement.Parse( "<rateintervalvalue>" + ImportRow[Binding.ImportDataColumnName].ToString().ToLower() + "</rateintervalvalue>" );
-                                                    XmlDocument xmlDoc = new XmlDocument();
-                                                    xmlDoc.Load( input.CreateReader() );
-
-                                                    CswRateInterval rateInterval = new CswRateInterval( _CswNbtResources );
-                                                    rateInterval.ReadXml( xmlDoc.DocumentElement );
-
-                                                    ( (CswNbtNodePropTimeInterval) Node.Properties[Binding.DestProperty] ).RateInterval = rateInterval;
-                                                    //Node.Properties[Binding.DestProperty].SetPropRowValue( CswEnumNbtPropColumn.ClobData, rateInterval.ToXmlString() );
-                                                    Node.Properties[Binding.DestProperty].SyncGestalt();
-                                                }
-                                                else if( Binding.DestProperty.getFieldTypeValue() == CswEnumNbtFieldType.NodeTypeSelect )
-                                                {
-
-                                                    CswNbtMetaDataNodeType nt = _CswNbtResources.MetaData.getNodeType( ImportRow[Binding.ImportDataColumnName].ToString() );
-                                                    if( nt != null )
-                                                    {
-                                                        Node.Properties[Binding.DestProperty].AsNodeTypeSelect.SelectedNodeTypeIds = new CswCommaDelimitedString() { nt.NodeTypeId.ToString() };
-                                                    }
-                                                    else
-                                                    {
-                                                        OnMessage( "Skipped invalid nodetype: " + ImportRow[Binding.ImportDataColumnName].ToString() );
-                                                    }
-                                                }
-                                                else
-                                                {
-                                                    Node.Properties[Binding.DestProperty].SetPropRowValue( Binding.DestSubfield.Column, ImportRow[Binding.ImportDataColumnName].ToString() );
-                                                    Node.Properties[Binding.DestProperty].SyncGestalt();
-                                                }
-                                            }
-
-                                            foreach( CswNbtImportDefRelationship RowRelationship in RowRelationships )
-                                            {
-                                                CswNbtImportDefOrder TargetOrder = null;
-
-                                                //if( RowRelationship.Relationship.FKType == NbtViewRelatedIdType.NodeTypeId.ToString() )
-                                                //{
-                                                //    TargetOrder = BindingDef.ImportOrder.Values.FirstOrDefault( o => o.NodeType.NodeTypeId == RowRelationship.Relationship.FKValue && o.Instance == RowRelationship.Instance );
-                                                //}
-                                                //else if( RowRelationship.Relationship.FKType == NbtViewRelatedIdType.ObjectClassId.ToString() )
-                                                //{
-                                                //    TargetOrder = BindingDef.ImportOrder.Values.FirstOrDefault( o => o.NodeType.ObjectClassId == RowRelationship.Relationship.FKValue && o.Instance == RowRelationship.Instance );
-                                                //}
-                                                //else if( RowRelationship.Relationship.FKType == NbtViewRelatedIdType.PropertySetId.ToString() )
-                                                //{
-                                                //    TargetOrder = BindingDef.ImportOrder.Values.FirstOrDefault( o => null != o.NodeType.getObjectClass().getPropertySet() && 
-                                                //                                                                     o.NodeType.getObjectClass().getPropertySet().PropertySetId == RowRelationship.Relationship.FKValue && 
-                                                //                                                                     o.Instance == RowRelationship.Instance );
-                                                //}
-
-                                                TargetOrder = BindingDef.ImportOrder.Values.FirstOrDefault( o => RowRelationship.Relationship.FkMatches( o.NodeType ) && o.Instance == RowRelationship.Instance );
-
-                                                if( null != TargetOrder && null != ImportRow[TargetOrder.PkColName] && CswConvert.ToInt32( ImportRow[TargetOrder.PkColName] ) > 0 )
-                                                {
-                                                    Node.Properties[RowRelationship.Relationship].SetPropRowValue(
-                                                        RowRelationship.Relationship.getFieldTypeRule().SubFields[CswEnumNbtSubFieldName.NodeID].Column,
-                                                        ImportRow[TargetOrder.PkColName]
-                                                        );
-                                                    if( RowRelationship.Relationship.getFieldTypeValue() == CswEnumNbtFieldType.Relationship )
-                                                    {
-                                                        Node.Properties[RowRelationship.Relationship].AsRelationship.RefreshNodeName();
-                                                    }
-                                                    if( RowRelationship.Relationship.getFieldTypeValue() == CswEnumNbtFieldType.Location )
-                                                    {
-                                                        Node.Properties[RowRelationship.Relationship].AsLocation.RefreshNodeName();
-                                                    }
-                                                    /*
-                                                                                                            if( RowRelationship.Relationship.getFieldTypeValue() == CswEnumNbtFieldType.Quantity )
-                                                                                                            {
-                                                                                                                Node.Properties[RowRelationship.Relationship].SetPropRowValue(
-                                                                                                                    RowRelationship.Relationship.getFieldTypeRule().SubFields[CswEnumNbtSubFieldName.Name].Column,
-                                                                                                                    ImportRow[RowRelationship.Relationship.]
-                                                                                                                    );
-                                                                                                            }
-                                                     * */
-                                                    Node.Properties[RowRelationship.Relationship].SyncGestalt();
-                                                }
-                                            } // foreach( CswNbtMetaDataNodeTypeProp Relationship in RowRelationships )
-                                            Node.postChanges( false );
-
-                                            OnMessage( msgPrefix + "Imported " + ( isNewNode ? "New " : "Existing " ) + Node.NodeName + " (" + Node.NodeId.PrimaryKey.ToString() + ")" );
-                                        } // if(isNewNode || Overwrite )
-                                        else
-                                        {
-                                            OnMessage( msgPrefix + "Skipped  " + Node.NodeName + " (" + Node.NodeId.PrimaryKey.ToString() + ")" );
-                                        }
-
-
-                                        // Simplify future imports by saving this nodeid on matching rows
-                                        if( UniqueBindings.Any() )
-                                        {
-                                            // We have to check for repeats amongst all instances
-                                            IEnumerable<CswNbtImportDefOrder> AllInstanceNodeTypeOrders = BindingDef.ImportOrder.Values.Where( o => o.NodeType == Order.NodeType );
-                                            foreach( CswNbtImportDefOrder OtherOrder in AllInstanceNodeTypeOrders )
-                                            {
-                                                string WhereClause = "where " + CswNbtImportTables.ImportDataN.error + " = '" + CswConvert.ToDbVal( false ) + "' and " + OtherOrder.PkColName + " is null";
-                                                foreach( CswNbtImportDefBinding UniqueBinding in UniqueBindings )
-                                                {
-                                                    CswNbtImportDefBinding OtherUniqueBinding = BindingDef.Bindings.byProp( OtherOrder.Instance, UniqueBinding.DestProperty, UniqueBinding.DestSubfield ).FirstOrDefault();
-                                                    if( null != OtherUniqueBinding )
-                                                    {
-                                                        WhereClause += " and lower(" + OtherUniqueBinding.ImportDataColumnName + ") = '" + CswTools.SafeSqlParam( ImportRow[UniqueBinding.ImportDataColumnName].ToString().ToLower() ) + "' ";
-                                                    }
-                                                }
-
-                                                foreach( CswNbtImportDefRelationship Relation in UniqueRelationships )
-                                                {
-                                                    CswNbtImportDefOrder thisTargetOrder = BindingDef.ImportOrder.Values.FirstOrDefault( o => Relation.Relationship.FkMatches( o.NodeType ) && o.Instance == Relation.Instance );
-                                                    Int32 Value = CswConvert.ToInt32( ImportRow[thisTargetOrder.PkColName] );
-
-                                                    if( Value != Int32.MinValue )
-                                                    {
-                                                        WhereClause += " and " + thisTargetOrder.PkColName + "=" + Value.ToString();
-                                                    }
-                                                }
-
-
-
-
-                                                DataTable OtherImportDataTable = ImportDataUpdate.getTable( WhereClause );
-                                                foreach( DataRow OtherImportRow in OtherImportDataTable.Rows )
-                                                {
-                                                    OtherImportRow[OtherOrder.PkColName] = CswConvert.ToDbVal( Node.NodeId.PrimaryKey );
-                                                }
-                                                ImportDataUpdate.update( OtherImportDataTable );
-                                            } // foreach( CswNbt2DOrder OtherOrder in AllInstanceNodeTypeOrders )
-                                        } // if( UniqueBindings.Any() )
-                                    } // if(false == allEmpty)
-                                    else
-                                    {
-                                        OnMessage( msgPrefix + "Skipped.  No property values to import." );
-
-                                        // Set a fake nodeid in this row so we can move on
-                                        ImportRow[Order.PkColName] = CswConvert.ToDbVal( 0 );
-                                        ImportDataUpdate.update( ImportDataTable );
-                                    }
                                 }
                                 catch( Exception ex )
                                 {
                                     // Swallow and store the error on the row
                                     string ErrorMsg = msgPrefix + ex.Message; //+ "\r\n" + ex.StackTrace;
-                                    ImportRow[CswNbtImportTables.ImportDataN.error] = CswConvert.ToDbVal( true );
-                                    ImportRow[CswNbtImportTables.ImportDataN.errorlog] = ErrorMsg;
+                                    Row[CswNbtImportTables.ImportDataN.error] = CswConvert.ToDbVal( true );
+                                    Row[CswNbtImportTables.ImportDataN.errorlog] = ErrorMsg;
                                     ImportDataUpdate.update( ImportDataTable );
                                 }
-                                RowsImported += 1;
-                            } // if(moreRows)
 
-                            if( RowsImported >= RowsToImport )
-                            {
-                                break;
+                                RowsImported += 1;
                             }
-                        } // while( moreRows )
+
+                        } while( ImportDataTable.Rows.Count > 0 && RowsImported < RowsToImport );
 
                         if( RowsImported >= RowsToImport )
                         {
@@ -610,6 +381,282 @@ namespace ChemSW.Nbt.ImportExport
             }
             return MoreToDo;
         } // ImportRows()
+
+        /// <summary>
+        /// Import a single node for a single row
+        /// </summary>
+        /// <returns>NodeId of imported node</returns>
+        private CswPrimaryKey _ImportOneRow( DataRow ImportRow, CswNbtImportDef BindingDef, CswNbtImportDefOrder Order, bool Overwrite, CswTableUpdate ImportDataUpdate )
+        {
+            CswPrimaryKey ImportedNodeId = null;
+            string msgPrefix = Order.NodeType.NodeTypeName + " Import (" + ImportRow[CswNbtImportTables.ImportDataN.importdataid].ToString() + "): ";
+
+            CswNbtNode Node = null;
+
+            IEnumerable<CswNbtImportDefBinding> NodeTypeBindings = BindingDef.Bindings.Where( b => b.DestNodeType == Order.NodeType && b.Instance == Order.Instance );
+            IEnumerable<CswNbtImportDefRelationship> RowRelationships = BindingDef.RowRelationships.Where( r => r.NodeType.NodeTypeId == Order.NodeType.NodeTypeId ); //&& r.Instance == Order.Instance );
+            IEnumerable<CswNbtImportDefRelationship> UniqueRelationships = RowRelationships.Where( r => r.Relationship.IsUnique() ||
+                                                                                                        r.Relationship.IsCompoundUnique() ||
+                                                                                                        Order.NodeType.NameTemplatePropIds.Contains( r.Relationship.FirstPropVersionId ) );
+
+            //IEnumerable<CswNbt2DBinding> RequiredBindings = NodeTypeBindings.Where( b => b.DestProperty.IsRequired );
+            //IEnumerable<CswNbt2DBinding> UniqueBindings = NodeTypeBindings.Where( b => ( b.DestProperty.IsUnique() || b.DestProperty.IsCompoundUnique() ) );
+            //IEnumerable<CswNbtMetaDataNodeTypeProp> Props = Order.NodeType.getNodeTypeProps();
+            //IEnumerable<CswNbtMetaDataNodeTypeProp> RequiredProps = Props.Where( p => p.IsRequired && false == p.HasDefaultValue() );
+            IEnumerable<CswNbtImportDefBinding> UniqueBindings = NodeTypeBindings.Where( b => b.DestProperty.IsUnique() ||
+                                                                                              b.DestProperty.IsCompoundUnique() ||
+                                                                                              Order.NodeType.NameTemplatePropIds.Contains( b.DestProperty.FirstPropVersionId ) );
+            //IEnumerable<CswNbtMetaDataNodeTypeProp> UniqueProps = Props.Where( p => UniqueBindings.Any( b => b.DestProperty == p ) );
+
+            // Skip rows with null values for all unique properties
+            bool allEmpty = true;
+            foreach( CswNbtImportDefBinding Binding in UniqueBindings )
+            {
+                allEmpty = allEmpty && string.IsNullOrEmpty( ImportRow[Binding.ImportDataColumnName].ToString() );
+            }
+            foreach( CswNbtImportDefRelationship Relation in UniqueRelationships )
+            {
+                CswNbtImportDefOrder thisTargetOrder = BindingDef.ImportOrder.Values.FirstOrDefault( o => Relation.Relationship.FkMatches( o.NodeType ) && o.Instance == Relation.Instance );
+                Int32 Value = CswConvert.ToInt32( ImportRow[thisTargetOrder.PkColName] );
+
+                allEmpty = allEmpty && ( Value != Int32.MinValue );
+            }
+
+            if( false == allEmpty )
+            {
+                // Find matching nodes using a view on unique properties
+                CswNbtView UniqueView = new CswNbtView( _CswNbtResources );
+                UniqueView.ViewName = "Check Unique";
+                CswNbtViewRelationship NTRel = UniqueView.AddViewRelationship( Order.NodeType, false );
+
+                if( UniqueBindings.Any() )
+                {
+                    bool atLeastOneFilter = false;
+                    foreach( CswNbtImportDefBinding Binding in UniqueBindings )
+                    {
+                        string Value = ImportRow[Binding.ImportDataColumnName].ToString();
+                        if( Value != string.Empty )
+                        {
+                            UniqueView.AddViewPropertyAndFilter( NTRel, Binding.DestProperty,
+                                                                 Conjunction: CswEnumNbtFilterConjunction.And,
+                                                                 SubFieldName: Binding.DestSubfield.Name,
+                                                                 FilterMode: CswEnumNbtFilterMode.Equals,
+                                                                 Value: Value,
+                                                                 CaseSensitive: false );
+                        }
+                        else
+                        {
+                            UniqueView.AddViewPropertyAndFilter( NTRel, Binding.DestProperty,
+                                                                 Conjunction: CswEnumNbtFilterConjunction.And,
+                                                                 SubFieldName: Binding.DestSubfield.Name,
+                                                                 FilterMode: CswEnumNbtFilterMode.Null );
+                        }
+                        atLeastOneFilter = true;
+                    }
+
+                    foreach( CswNbtImportDefRelationship Relation in UniqueRelationships )
+                    {
+                        CswNbtImportDefOrder thisTargetOrder = BindingDef.ImportOrder.Values.FirstOrDefault( o => Relation.Relationship.FkMatches( o.NodeType ) && o.Instance == Relation.Instance );
+                        Int32 Value = CswConvert.ToInt32( ImportRow[thisTargetOrder.PkColName] );
+
+                        if( Value != Int32.MinValue )
+                        {
+                            UniqueView.AddViewPropertyAndFilter( NTRel, Relation.Relationship,
+                                                                 Conjunction: CswEnumNbtFilterConjunction.And,
+                                                                 SubFieldName: CswEnumNbtSubFieldName.NodeID,
+                                                                 FilterMode: CswEnumNbtFilterMode.Equals,
+                                                                 Value: Value.ToString(),
+                                                                 CaseSensitive: false );
+                        }
+                        else
+                        {
+                            UniqueView.AddViewPropertyAndFilter( NTRel, Relation.Relationship,
+                                                                 Conjunction: CswEnumNbtFilterConjunction.And,
+                                                                 SubFieldName: CswEnumNbtSubFieldName.NodeID,
+                                                                 FilterMode: CswEnumNbtFilterMode.Null );
+                        }
+                        atLeastOneFilter = true;
+                    }
+
+                    if( atLeastOneFilter )
+                    {
+                        ICswNbtTree UniqueTree = _CswNbtResources.Trees.getTreeFromView( UniqueView, false, true, true );
+                        if( UniqueTree.getChildNodeCount() > 0 )
+                        {
+                            UniqueTree.goToNthChild( 0 );
+                            Node = UniqueTree.getNodeForCurrentPosition();
+                        }
+                    }
+                } // if( UniqueProps.Any() )
+
+                bool isNewNode = false;
+                if( null == Node )
+                {
+                    // Make a new node
+                    Node = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( Order.NodeType.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode );
+                    isNewNode = true;
+
+
+                    //// Check for non-null values for all required properties
+                    ////foreach( CswNbt2DBinding Binding in RequiredBindings )
+                    //foreach( CswNbtMetaDataNodeTypeProp RequiredProp in RequiredProps )
+                    //{
+                    //    IEnumerable<CswNbt2DBinding> RequiredBindings = BindingDef.Bindings.byProp( Order.Instance, RequiredProp );
+                    //    bool hasValue = RequiredBindings.Aggregate( false, ( current, RequiredBinding ) => current || false == string.IsNullOrEmpty( ImportRow[RequiredBinding.ImportDataColumnName].ToString() ) );
+                    //    if( false == hasValue )
+                    //    {
+                    //        throw new Exception( msgPrefix + "Required property value is missing: " + RequiredProp.PropName );
+                    //    }
+                    //} // foreach( CswNbtMetaDataNodeTypeProp RequiredProp in RequiredProps )
+
+                }
+
+
+
+                // Import property values
+                if( isNewNode || Overwrite ) //DataMap.Overwrite )
+                {
+                    foreach( CswNbtImportDefBinding Binding in NodeTypeBindings )
+                    {
+                        // special case for TimeInterval, specifically for IMCS imports
+                        if( Binding.DestProperty.getFieldTypeValue() == CswEnumNbtFieldType.TimeInterval )
+                        {
+                            XElement input = XElement.Parse( "<rateintervalvalue>" + ImportRow[Binding.ImportDataColumnName].ToString().ToLower() + "</rateintervalvalue>" );
+                            XmlDocument xmlDoc = new XmlDocument();
+                            xmlDoc.Load( input.CreateReader() );
+
+                            CswRateInterval rateInterval = new CswRateInterval( _CswNbtResources );
+                            rateInterval.ReadXml( xmlDoc.DocumentElement );
+
+                            ( (CswNbtNodePropTimeInterval) Node.Properties[Binding.DestProperty] ).RateInterval = rateInterval;
+                            //Node.Properties[Binding.DestProperty].SetPropRowValue( CswEnumNbtPropColumn.ClobData, rateInterval.ToXmlString() );
+                            Node.Properties[Binding.DestProperty].SyncGestalt();
+                        }
+                        else if( Binding.DestProperty.getFieldTypeValue() == CswEnumNbtFieldType.NodeTypeSelect )
+                        {
+
+                            CswNbtMetaDataNodeType nt = _CswNbtResources.MetaData.getNodeType( ImportRow[Binding.ImportDataColumnName].ToString() );
+                            if( nt != null )
+                            {
+                                Node.Properties[Binding.DestProperty].AsNodeTypeSelect.SelectedNodeTypeIds = new CswCommaDelimitedString() { nt.NodeTypeId.ToString() };
+                            }
+                            else
+                            {
+                                OnMessage( "Skipped invalid nodetype: " + ImportRow[Binding.ImportDataColumnName].ToString() );
+                            }
+                        }
+                        else
+                        {
+                            Node.Properties[Binding.DestProperty].SetPropRowValue( Binding.DestSubfield.Column, ImportRow[Binding.ImportDataColumnName].ToString() );
+                            Node.Properties[Binding.DestProperty].SyncGestalt();
+                        }
+                    }
+
+                    foreach( CswNbtImportDefRelationship RowRelationship in RowRelationships )
+                    {
+                        CswNbtImportDefOrder TargetOrder = null;
+
+                        //if( RowRelationship.Relationship.FKType == NbtViewRelatedIdType.NodeTypeId.ToString() )
+                        //{
+                        //    TargetOrder = BindingDef.ImportOrder.Values.FirstOrDefault( o => o.NodeType.NodeTypeId == RowRelationship.Relationship.FKValue && o.Instance == RowRelationship.Instance );
+                        //}
+                        //else if( RowRelationship.Relationship.FKType == NbtViewRelatedIdType.ObjectClassId.ToString() )
+                        //{
+                        //    TargetOrder = BindingDef.ImportOrder.Values.FirstOrDefault( o => o.NodeType.ObjectClassId == RowRelationship.Relationship.FKValue && o.Instance == RowRelationship.Instance );
+                        //}
+                        //else if( RowRelationship.Relationship.FKType == NbtViewRelatedIdType.PropertySetId.ToString() )
+                        //{
+                        //    TargetOrder = BindingDef.ImportOrder.Values.FirstOrDefault( o => null != o.NodeType.getObjectClass().getPropertySet() && 
+                        //                                                                     o.NodeType.getObjectClass().getPropertySet().PropertySetId == RowRelationship.Relationship.FKValue && 
+                        //                                                                     o.Instance == RowRelationship.Instance );
+                        //}
+
+                        TargetOrder = BindingDef.ImportOrder.Values.FirstOrDefault( o => RowRelationship.Relationship.FkMatches( o.NodeType ) && o.Instance == RowRelationship.Instance );
+
+                        if( null != TargetOrder && null != ImportRow[TargetOrder.PkColName] && CswConvert.ToInt32( ImportRow[TargetOrder.PkColName] ) > 0 )
+                        {
+                            Node.Properties[RowRelationship.Relationship].SetPropRowValue(
+                                RowRelationship.Relationship.getFieldTypeRule().SubFields[CswEnumNbtSubFieldName.NodeID].Column,
+                                ImportRow[TargetOrder.PkColName]
+                                );
+                            if( RowRelationship.Relationship.getFieldTypeValue() == CswEnumNbtFieldType.Relationship )
+                            {
+                                Node.Properties[RowRelationship.Relationship].AsRelationship.RefreshNodeName();
+                            }
+                            if( RowRelationship.Relationship.getFieldTypeValue() == CswEnumNbtFieldType.Location )
+                            {
+                                Node.Properties[RowRelationship.Relationship].AsLocation.RefreshNodeName();
+                            }
+                            /*
+                                                                                                        if( RowRelationship.Relationship.getFieldTypeValue() == CswEnumNbtFieldType.Quantity )
+                                                                                                        {
+                                                                                                            Node.Properties[RowRelationship.Relationship].SetPropRowValue(
+                                                                                                                RowRelationship.Relationship.getFieldTypeRule().SubFields[CswEnumNbtSubFieldName.Name].Column,
+                                                                                                                ImportRow[RowRelationship.Relationship.]
+                                                                                                                );
+                                                                                                        }
+                                                 * */
+                            Node.Properties[RowRelationship.Relationship].SyncGestalt();
+                        }
+                    } // foreach( CswNbtMetaDataNodeTypeProp Relationship in RowRelationships )
+                    Node.postChanges( false );
+
+                    OnMessage( msgPrefix + "Imported " + ( isNewNode ? "New " : "Existing " ) + Node.NodeName + " (" + Node.NodeId.PrimaryKey.ToString() + ")" );
+                } // if(isNewNode || Overwrite )
+                else
+                {
+                    OnMessage( msgPrefix + "Skipped  " + Node.NodeName + " (" + Node.NodeId.PrimaryKey.ToString() + ")" );
+                }
+
+
+                // Simplify future imports by saving this nodeid on matching rows
+                if( UniqueBindings.Any() && null != ImportDataUpdate )
+                {
+                    // We have to check for repeats amongst all instances
+                    IEnumerable<CswNbtImportDefOrder> AllInstanceNodeTypeOrders = BindingDef.ImportOrder.Values.Where( o => o.NodeType == Order.NodeType );
+                    foreach( CswNbtImportDefOrder OtherOrder in AllInstanceNodeTypeOrders )
+                    {
+                        string WhereClause = "where " + CswNbtImportTables.ImportDataN.error + " = '" + CswConvert.ToDbVal( false ) + "' and " + OtherOrder.PkColName + " is null";
+                        foreach( CswNbtImportDefBinding UniqueBinding in UniqueBindings )
+                        {
+                            CswNbtImportDefBinding OtherUniqueBinding = BindingDef.Bindings.byProp( OtherOrder.Instance, UniqueBinding.DestProperty, UniqueBinding.DestSubfield ).FirstOrDefault();
+                            if( null != OtherUniqueBinding )
+                            {
+                                WhereClause += " and lower(" + OtherUniqueBinding.ImportDataColumnName + ") = '" + CswTools.SafeSqlParam( ImportRow[UniqueBinding.ImportDataColumnName].ToString().ToLower() ) + "' ";
+                            }
+                        }
+
+                        foreach( CswNbtImportDefRelationship Relation in UniqueRelationships )
+                        {
+                            CswNbtImportDefOrder thisTargetOrder = BindingDef.ImportOrder.Values.FirstOrDefault( o => Relation.Relationship.FkMatches( o.NodeType ) && o.Instance == Relation.Instance );
+                            Int32 Value = CswConvert.ToInt32( ImportRow[thisTargetOrder.PkColName] );
+
+                            if( Value != Int32.MinValue )
+                            {
+                                WhereClause += " and " + thisTargetOrder.PkColName + "=" + Value.ToString();
+                            }
+                        }
+
+                        DataTable OtherImportDataTable = ImportDataUpdate.getTable( WhereClause );
+                        foreach( DataRow OtherImportRow in OtherImportDataTable.Rows )
+                        {
+                            OtherImportRow[OtherOrder.PkColName] = CswConvert.ToDbVal( Node.NodeId.PrimaryKey );
+                        }
+                        ImportDataUpdate.update( OtherImportDataTable );
+                    } // foreach( CswNbt2DOrder OtherOrder in AllInstanceNodeTypeOrders )
+                } // if( UniqueBindings.Any() )
+            } // if(false == allEmpty)
+            else
+            {
+                OnMessage( msgPrefix + "Skipped.  No property values to import." );
+                // Set a fake nodeid in this row so we can move on
+                //ImportRow[Order.PkColName] = CswConvert.ToDbVal( 0 );
+                //ImportDataUpdate.update( ImportDataTable );
+                ImportedNodeId = new CswPrimaryKey( "nodes", 0 );
+            }
+            return ImportedNodeId;
+        } // _ImportOneRow()
+
 
     } // class CswNbt2DImporter
 } // namespace ChemSW.Nbt.ImportExport

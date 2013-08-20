@@ -19,7 +19,7 @@ namespace ChemSW.Nbt.ImportExport
             // If incoming sheet name has a $, trim it off    
             SheetName = SheetName.TrimEnd( new char[] { '$' } );
 
-            CswTableSelect defSelect = CswNbtResources.makeCswTableSelect( "CswNbt2DDefinition_select", CswNbtImportTables.ImportDef.TableName );
+            CswTableSelect defSelect = CswNbtResources.makeCswTableSelect( "CswNbtImportDef_select", CswNbtImportTables.ImportDef.TableName );
             DataTable defTable = defSelect.getTable( "where lower(" + CswNbtImportTables.ImportDef.definitionname + ") = '" + DefinitionName.ToLower() + "'" +
                                                      "  and lower(" + CswNbtImportTables.ImportDef.sheetname + ") = '" + SheetName.ToLower() + "'" );
             if( defTable.Rows.Count > 0 )
@@ -34,7 +34,7 @@ namespace ChemSW.Nbt.ImportExport
 
         public CswNbtImportDef( CswNbtResources CswNbtResources, Int32 ImportDefinitionId )
         {
-            CswTableSelect defSelect = CswNbtResources.makeCswTableSelect( "CswNbt2DDefinition_select", CswNbtImportTables.ImportDef.TableName );
+            CswTableSelect defSelect = CswNbtResources.makeCswTableSelect( "CswNbtImportDef_select", CswNbtImportTables.ImportDef.TableName );
             DataTable defTable = defSelect.getTable( CswNbtImportTables.ImportDef.importdefid, ImportDefinitionId );
             if( defTable.Rows.Count > 0 )
             {
@@ -60,7 +60,7 @@ namespace ChemSW.Nbt.ImportExport
             }
             else
             {
-                throw new CswDniException( CswEnumErrorType.Error, "Invalid import definition", "CswNbt2DDefinition was passed a null DefinitionRow" );
+                throw new CswDniException( CswEnumErrorType.Error, "Invalid import definition", "CswNbtImportDef was passed a null DefinitionRow" );
             }
             _loadBindings();
         }
@@ -148,5 +148,5 @@ namespace ChemSW.Nbt.ImportExport
 
 
 
-    } // class CswNbt2DDefinition
+    } // class CswNbtImportDef
 } // namespace
