@@ -33,14 +33,14 @@ namespace ChemSW.Nbt.WebServices
         /// <summary>
         /// Returns JObject for all properties in a given tab
         /// </summary>
-        public JObject getProps( string NodeId, string NodeKey, string TabId, Int32 NodeTypeId, CswDateTime Date, string filterToPropId, string RelatedNodeId, string RelatedNodeTypeId, string RelatedObjectClassId, bool ForceReadOnly )
+        public JObject getProps( string NodeId, string NodeKey, string TabId, Int32 NodeTypeId, CswDateTime Date, string filterToPropId, string RelatedNodeId, bool ForceReadOnly )
         {
-            return _TabsPropsSd.getProps( NodeId, NodeKey, TabId, NodeTypeId, Date, filterToPropId, RelatedNodeId, RelatedNodeTypeId, RelatedObjectClassId, ForceReadOnly );
+            return _TabsPropsSd.getProps( NodeId, NodeKey, TabId, NodeTypeId, Date, filterToPropId, RelatedNodeId, ForceReadOnly );
         } // getProps()
 
-        public JObject getIdentityTabProps( CswPrimaryKey NodeId, CswDateTime Date, string filterToPropId, string RelatedNodeId, string RelatedNodeTypeId, string RelatedObjectClassId )
+        public JObject getIdentityTabProps( CswPrimaryKey NodeId, CswDateTime Date, string filterToPropId, string RelatedNodeId )
         {
-            return _TabsPropsSd.getIdentityTabProps( NodeId, Date, filterToPropId, RelatedNodeId, RelatedNodeTypeId, RelatedObjectClassId );
+            return _TabsPropsSd.getIdentityTabProps( NodeId, Date, filterToPropId, RelatedNodeId );
         } // getProps()
 
         /// <summary>
@@ -117,7 +117,7 @@ namespace ChemSW.Nbt.WebServices
                 ParentObj["entries"] = new JObject();
                 foreach( CswNbtViewNode.CswNbtViewAddNodeTypeEntry Entry in Entries )
                 {
-                    ParentObj["entries"][Entry.NodeType.NodeTypeName] = CswNbtWebServiceMainMenu.makeAddMenuItem( Entry.NodeType, new CswPrimaryKey(), string.Empty, string.Empty, string.Empty );
+                    ParentObj["entries"][Entry.NodeType.NodeTypeName] = CswNbtWebServiceMainMenu.makeAddMenuItem( Entry.NodeType, new CswPrimaryKey(), string.Empty );
                 }
             }
             JObject ChildObj = new JObject();

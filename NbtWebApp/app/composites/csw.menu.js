@@ -89,15 +89,10 @@
                                 break;
                             case 'AddNode':
                                 Csw.layouts.addnode({
-                                    dialogOptions: {
-                                        text: "New " + menuItemName,
-                                        nodetypeid: Csw.string(menuItemJson.nodetypeid),
-                                        relatednodeid: Csw.string(menuItemJson.relatednodeid), //for Grid Props
-                                        relatednodename: Csw.string(menuItemJson.relatednodename), //for Grid Props
-                                        relatednodetypeid: Csw.string(menuItemJson.relatednodetypeid), //for NodeTypeSelect
-                                        relatedobjectclassid: Csw.string(menuItemJson.relatedobjectclassid),
-                                        onAddNode: cswPrivate.onAlterNode
-                                    }
+                                    title: 'Add New ' + menuItemName,
+                                    nodetypeid: Csw.string(menuItemJson.nodetypeid),
+                                    relatednodeid: Csw.string(menuItemJson.relatednodeid), //for Grid Props
+                                    onAddNode: cswPrivate.onAlterNode
                                 });
                                 break;
                             case 'AddFeedback':
@@ -129,7 +124,8 @@
                                 break;
                             case 'CopyNode':
                                 if (Csw.clientChanges.manuallyCheckChanges()) {
-                                    $.CswDialog('CopyNodeDialog', {
+                                    Csw.layouts.copynode({
+                                        copyType: Csw.string(menuItemJson.copytype),
                                         nodename: nodename,
                                         nodeid: nodeid,
                                         nodetypeid: nodetypeid,

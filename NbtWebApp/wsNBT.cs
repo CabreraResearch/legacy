@@ -1764,7 +1764,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string getProps( string EditMode, string NodeId, string SafeNodeKey, string TabId, string NodeTypeId, string Date, string filterToPropId, string Multi, string ConfigMode, string RelatedNodeId, string RelatedNodeTypeId, string RelatedObjectClassId, string ForceReadOnly )
+        public string getProps( string EditMode, string NodeId, string SafeNodeKey, string TabId, string NodeTypeId, string Date, string filterToPropId, string Multi, string ConfigMode, string RelatedNodeId, string ForceReadOnly )
         {
             CswTimer GetPropsTimer = new CswTimer();
 
@@ -1787,7 +1787,7 @@ namespace ChemSW.Nbt.WebServices
                     {
                         NodeTypePk = NodeKey.NodeTypeId;
                     }
-                    ReturnVal = ws.getProps( NodeId, SafeNodeKey, TabId, NodeTypePk, InDate, filterToPropId, RelatedNodeId, RelatedNodeTypeId, RelatedObjectClassId, CswConvert.ToBoolean( ForceReadOnly ) );
+                    ReturnVal = ws.getProps( NodeId, SafeNodeKey, TabId, NodeTypePk, InDate, filterToPropId, RelatedNodeId, CswConvert.ToBoolean( ForceReadOnly ) );
                 }
 
                 _deInitResources();
@@ -1808,7 +1808,7 @@ namespace ChemSW.Nbt.WebServices
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
         public string getIdentityTabProps( string EditMode, string NodeId, string SafeNodeKey, //string NodeTypeId, 
-            string Date, string filterToPropId, string Multi, string ConfigMode, string RelatedNodeId, string RelatedNodeTypeId, string RelatedObjectClassId )
+            string Date, string filterToPropId, string Multi, string ConfigMode, string RelatedNodeId )
         {
             JObject ReturnVal = new JObject();
             CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
@@ -1834,7 +1834,7 @@ namespace ChemSW.Nbt.WebServices
                         }
                     }
 
-                    ReturnVal = ws.getIdentityTabProps( RealNodeId, InDate, filterToPropId, RelatedNodeId, RelatedNodeTypeId, RelatedObjectClassId );
+                    ReturnVal = ws.getIdentityTabProps( RealNodeId, InDate, filterToPropId, RelatedNodeId );
                 }
 
                 _deInitResources();

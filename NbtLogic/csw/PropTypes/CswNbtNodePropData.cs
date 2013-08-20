@@ -340,7 +340,7 @@ namespace ChemSW.Nbt.PropTypes
         /// </summary>
         public bool Hidden
         {
-            get { return _HiddenTemporary || _getRowBoolVal( CswEnumNbtPropColumn.Hidden ); }
+            get { return NodeTypeProp.Hidden || _HiddenTemporary || _getRowBoolVal( CswEnumNbtPropColumn.Hidden ); }
         }
         /// <summary>
         /// Mark a Node's property as Hidden. 

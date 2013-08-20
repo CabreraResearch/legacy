@@ -35,8 +35,6 @@
                 cswPrivate.relatedTo = cswPrivate.relatedTo || {};
                 cswPrivate.relatedTo.relatednodeid = cswPrivate.relatedTo.relatednodeid || '';
                 cswPrivate.relatedTo.relatednodename = cswPrivate.relatedTo.relatednodename || '';
-                cswPrivate.relatedTo.relatednodetypeid = cswPrivate.relatedTo.relatednodetypeid || '';
-                cswPrivate.relatedTo.relatedobjectclassid = cswPrivate.relatedTo.relatedobjectclassid || '';
                 cswPrivate.relationshipNodeTypePropId = cswPrivate.relationshipNodeTypePropId || '';
 
                 cswPrivate.cellCol = cswPrivate.cellCol || 1;
@@ -66,9 +64,7 @@
                 cswPrivate.forceSelectedAsOption = true;
                 if (false === Csw.isNullOrEmpty(cswPrivate.relatedTo.relatednodeid) &&
                     Csw.isNullOrEmpty(cswPrivate.selectedNodeId) &&
-                    false === cswPrivate.isMulti &&
-                    (Csw.number(cswPrivate.relatedTo.relatednodetypeid) === Csw.number(cswPrivate.nodeTypeId) ||
-                      Csw.number(cswPrivate.relatedTo.relatedobjectclassid) === Csw.number(cswPrivate.objectClassId))) {
+                    false === cswPrivate.isMulti) {
 
                     cswPrivate.selectedNodeId = cswPrivate.relatedTo.relatednodeid;
                     cswPrivate.selectedName = cswPrivate.relatedTo.relatednodename;
@@ -362,7 +358,6 @@
                     Csw.ajaxWcf.post({
                         urlMethod: cswPrivate.nodesUrlMethod,
                         data: cswPrivate.ajaxData || {
-                            RelatedToNodeTypeId: Csw.number(cswPrivate.relatedTo.relatednodetypeid, 0),
                             ViewId: Csw.string(cswPrivate.viewid),
                             NodeTypeId: Csw.number(cswPrivate.nodeTypeId, 0),
                             ObjectClassId: Csw.number(cswPrivate.objectClassId, 0),
@@ -427,16 +422,11 @@
             cswPrivate.openAddNodeDialog = function (nodetypeToAdd, action) {
                 Csw.layouts.addnode({
                     action: action,
-                    dialogOptions: {
-                        nodetypeid: nodetypeToAdd,
-                        objectClassId: cswPrivate.objectClassId,
-                        onAddNode: cswPrivate.onAddNodeFunc,
-                        text: 'Add New ' + cswPrivate.name,
-                        relatednodeid: cswPrivate.relatedTo.relatednodeid,
-                        relatednodename: cswPrivate.relatedTo.relatednodename,
-                        relatednodetypeid: cswPrivate.relatedTo.relatednodetypeid,
-                        relatedobjectclassid: cswPrivate.relatedTo.relatedobjectclassid
-                    }
+                    nodetypeid: nodetypeToAdd,
+                    objectClassId: cswPrivate.objectClassId,
+                    onAddNode: cswPrivate.onAddNodeFunc,
+                    title: 'Add New ' + cswPrivate.name,
+                    relatednodeid: cswPrivate.relatedTo.relatednodeid
                 });
             };
 
