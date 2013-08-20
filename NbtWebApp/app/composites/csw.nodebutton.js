@@ -115,6 +115,7 @@
                     default:
                         Csw.dialogs.addnode({
                             nodetypeid: actionJson.requestItemNodeTypeId,
+                            relatednodeid: actionJson.relatednodeid,
                             propertyData: actionJson.requestItemProps,
                             title: actionJson.titleText,
                             onSaveImmediate: function () {
