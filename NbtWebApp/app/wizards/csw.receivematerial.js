@@ -444,7 +444,7 @@
                 if (false === Csw.isNullOrEmpty(cswPrivate.receiptLotTabsAndProps)) {
                     container.receiptLotProperties = cswPrivate.receiptLotTabsAndProps.getProps();
                 }
-                Csw.ajax.post({
+                Csw.ajax.deprecatedWsNbt({
                     urlMethod: 'receiveMaterial',
                     data: { ReceiptDefinition: Csw.serialize(container) },
                     success: function (data) {

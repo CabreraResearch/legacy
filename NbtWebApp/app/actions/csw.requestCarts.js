@@ -144,14 +144,12 @@
                     urlMethod: 'Requests/findMaterialCreate',
                     success: function (data) {
                         if (data.NodeTypeId) {
-                            Csw.layouts.addnode({
-                                dialogOptions: {
-                                    text: 'New Create Material Request',
-                                    nodetypeid: data.NodeTypeId,
-                                    onAddNode: function () {
-                                        grid.reload(true);
-                                        cswPrivate.getCartCounts();
-                                    }
+                            Csw.dialogs.addnode({
+                                title: 'New Create Material Request',
+                                nodetypeid: data.NodeTypeId,
+                                onAddNode: function () {
+                                    grid.reload(true);
+                                    cswPrivate.getCartCounts();
                                 }
                             });
                         }

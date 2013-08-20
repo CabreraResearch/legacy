@@ -171,7 +171,7 @@
                         name: 'vieweditor_step1_copyviewbtn',
                         enabledText: 'Copy View',
                         onClick: function () {
-                            Csw.ajax.post({
+                            Csw.ajax.deprecatedWsNbt({
                                 urlMethod: 'copyView',
                                 data: {
                                     ViewId: cswPrivate.selectedViewId,
@@ -195,7 +195,7 @@
                                        'Are you sure you want to delete the selected view?',
                                        'Confirm Intent To Delete',
                                        function _okClick() {
-                                           Csw.ajax.post({
+                                           Csw.ajax.deprecatedWsNbt({
                                                urlMethod: 'deleteView',
                                                data: {
                                                    ViewId: cswPrivate.selectedViewId
@@ -246,7 +246,7 @@
                     });
 
                     var makeViewsGrid = function (all) {
-                        Csw.ajax.post({
+                        Csw.ajax.deprecatedWsNbt({
                             urlMethod: 'getViewGrid',
                             data: {
                                 All: all,

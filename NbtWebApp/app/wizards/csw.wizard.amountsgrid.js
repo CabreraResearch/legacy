@@ -76,7 +76,7 @@
 
                 cswPrivate.getQuantity = function (onSuccess) {
                     if (false === Csw.isNullOrEmpty(cswPrivate.selectedSizeId)) {
-                        Csw.ajax.post({
+                        Csw.ajax.deprecatedWsNbt({
                             urlMethod: 'getQuantity',
                             data: { SizeId: cswPrivate.selectedSizeId, Action: cswPrivate.action },
                             success: function (data) {

@@ -15,7 +15,7 @@
                 Csw.extend(o, options);
             }
 
-            return Csw.ajax.post({
+            return Csw.ajax.deprecatedWsNbt({
                 urlMethod: o.urlMethod,
                 data: {},
                 success: function (data) {

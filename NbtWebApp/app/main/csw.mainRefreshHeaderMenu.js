@@ -18,6 +18,9 @@
                     urlMethod: 'getHeaderMenu',
                     data: {}
                 },
+                
+                useCache: true,
+
                 onLogout: function () {
                     return Csw.clientSession.logout();
                 },
@@ -46,7 +49,7 @@
                     });
                 },
                 onEndImpersonation: function () {
-                    return Csw.ajax.post({
+                    return Csw.ajax.deprecatedWsNbt({
                         urlMethod: 'endImpersonation',
                         success: function (data) {
                             if (Csw.bool(data.result)) {
@@ -61,7 +64,7 @@
                     var sessionid = Csw.cookie.get(Csw.cookie.cookieNames.SessionId);
                     /* case 24669 */
                     Csw.cookie.clearAll();
-                    return Csw.ajax.post({
+                    return Csw.ajax.deprecatedWsNbt({
                         urlMethod: 'nbtManagerReauthenticate',
                         success: function (result) {
                             Csw.clientChanges.unsetChanged();

@@ -97,9 +97,7 @@
 
                     if (false === Csw.isNullOrEmpty(nodeProperty.tabState.relatednodeid) &&
                         Csw.isNullOrEmpty(cswPrivate.selectedNodeId) &&
-                        false === nodeProperty.isMulti() &&
-                        (Csw.number(nodeProperty.tabState.relatednodetypeid) === Csw.number(cswPrivate.nodeTypeId) ||
-                            Csw.number(nodeProperty.tabState.relatedobjectclassid) === Csw.number(cswPrivate.objectClassId))) {
+                        false === nodeProperty.isMulti() ) {
                         cswPrivate.selectedNodeId = nodeProperty.tabState.relatednodeid;
                         cswPrivate.selectedName = nodeProperty.tabState.relatednodename;
                     }

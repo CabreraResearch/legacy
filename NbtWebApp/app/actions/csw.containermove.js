@@ -62,7 +62,7 @@
 
             cswPrivate.initGrid = function () {
 
-                Csw.ajax.post({
+                Csw.ajax.deprecatedWsNbt({
                     urlMethod: 'getDispenseContainerView',
                     data: {
                         RequestItemId: cswPrivate.requestitemid
