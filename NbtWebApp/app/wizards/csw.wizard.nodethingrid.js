@@ -74,7 +74,7 @@
                                         cswPublic.thinGrid.addRows(node);
                                         cswPublic.nodes.push(nodeData);
                                     } else {
-                                        $.CswDialog('AlertDialog', 'This node is already defined. Please define a new, unique node.');
+                                        Csw.dialogs.alert({ message: 'This node is already defined. Please define a new, unique node.' }).open();
                                     }
                                 }
                             });

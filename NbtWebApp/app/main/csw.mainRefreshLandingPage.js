@@ -13,15 +13,13 @@
 
                     onLinkClick: Csw.main.handleItemSelect,
                     onAddClick: function(itemData) {
-                        Csw.layouts.addnode({
+                        Csw.dialogs.addnode({
                             action: itemData.ActionName,
-                            dialogOptions: {
-                                text: itemData.Text,
-                                nodetypeid: itemData.NodeTypeId,
-                                onAddNode: function(nodeid, nodekey) {
-                                    Csw.main.clear({ all: true });
-                                    Csw.main.refreshNodesTree({ 'nodeid': nodeid, 'nodekey': nodekey, 'IncludeNodeRequired': true });
-                                }
+                            title: itemData.Text,
+                            nodetypeid: itemData.NodeTypeId,
+                            onAddNode: function (nodeid, nodekey) {
+                                Csw.main.clear({ all: true });
+                                Csw.main.refreshNodesTree({ 'nodeid': nodeid, 'nodekey': nodekey, 'IncludeNodeRequired': true });
                             }
                         });
                     },
@@ -57,7 +55,6 @@
                 ActionId: '',
                 RelatedObjectClassId: '',
                 RelatedNodeName: '',
-                RelatedNodeTypeId: '',
                 isConfigurable: false,
                 Title: '',
                 name: 'CswLandingPage'
@@ -74,19 +71,14 @@
                 ObjectClassId: layData.RelatedObjectClassId,
                 onLinkClick: Csw.main.handleItemSelect,
                 onAddClick: function (itemData) {
-                    Csw.layouts.addnode({
+                    Csw.dialogs.addnode({
                         action: itemData.ActionName,
-                        dialogOptions: {
-                            text: itemData.Text,
-                            nodetypeid: itemData.NodeTypeId,
-                            relatednodeid: layData.RelatedNodeId,
-                            relatednodename: layData.RelatedNodeName,
-                            relatednodetypeid: layData.RelatedNodeTypeId,
-                            relatedobjectclassid: layData.RelatedObjectClassId,
-                            onAddNode: function (nodeid, nodekey) {
-                                Csw.main.clear({ all: true });
-                                Csw.main.refreshNodesTree({ nodeid: nodeid, nodekey: nodekey, IncludeNodeRequired: true });
-                            }
+                        title: itemData.Text,
+                        nodetypeid: itemData.NodeTypeId,
+                        relatednodeid: layData.RelatedNodeId,
+                        onAddNode: function (nodeid, nodekey) {
+                            Csw.main.clear({ all: true });
+                            Csw.main.refreshNodesTree({ nodeid: nodeid, nodekey: nodekey, IncludeNodeRequired: true });
                         }
                     });
                 },

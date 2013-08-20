@@ -574,7 +574,7 @@
                         var makeSizeGrid = function() {
                             cswPrivate.sizesGrid = Csw.wizard.sizesGrid(div, {
                                 name: 'sizesGrid',
-                                sizeRowsToAdd: cswPrivate.state.sizes,
+                                sizeRowsToAdd: cswPrivate.state.sizes || [],
                                 physicalState: cswPrivate.state.physicalState,
                                 sizeNodeTypeId: cswPrivate.state.sizeNodeTypeId,
                                 showQuantityEditable: cswPrivate.showQuantityEditable,

@@ -34,7 +34,7 @@
                 var cswPrivate = {
                     name: 'wizardSizesThinGrid',
                     sizeNodeTypeId: null,
-                    sizeRowsToAdd: null,
+                    sizeRowsToAdd: [],
                     physicalState: null,
                     unitsOfMeasure: [],
                     showQuantityEditable: false,

@@ -32,7 +32,7 @@
 
             cswPrivate.onBeforeNext = function () {
                 if (cswPrivate.generatorTree.checkedNodes().length === 0) {
-                    $.CswDialog('AlertDialog', 'You must select at least one Generator to continue.');
+                    Csw.dialogs.alert({ message: 'You must select at least one Generator to continue.' }).open();
                     return false;
                 } else {
                     return true;

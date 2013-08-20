@@ -771,8 +771,6 @@ namespace ChemSW.Nbt.Actions
                 //Used for node-specific Add items
                 Ret["RelatedNodeId"] = MaterialNode.NodeId.ToString();
                 Ret["RelatedNodeName"] = MaterialNode.NodeName;
-                Ret["RelatedNodeTypeId"] = MaterialNode.NodeTypeId.ToString();
-                Ret["RelatedObjectClassId"] = MaterialNode.getObjectClassId().ToString();
                 //If (and when) action landing pages are slated to be roleId-specific, remove this line
                 Ret["isConfigurable"] = NbtResources.CurrentNbtUser.IsAdministrator();
                 //Used for viewing new material

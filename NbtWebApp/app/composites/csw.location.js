@@ -13,7 +13,6 @@
                 locationobjectclassid: '',
                 locationnodetypeids: [],
                 relatedmatch: false,
-                relatedobjectclassid: '',
                 nodeid: '',
                 viewid: '',
                 selectedName: '',
@@ -40,10 +39,6 @@
                         cswParent.empty();
 
                         cswPrivate.relatedmatch = (cswPrivate.relatedobjectclassid === cswPrivate.locationobjectclassid);
-                        Csw.each(cswPrivate.locationnodetypeids, function (thisNTid) {
-                            cswPrivate.relatedmatch = (cswPrivate.relatedmatch || thisNTid === cswPrivate.relatednodetypeid);
-                        });
-
                         if (cswPrivate.relatedmatch) {
                             cswPrivate.nodeid = Csw.string(cswPrivate.relatednodeid, cswPrivate.nodeid).trim();
                             cswPrivate.name = Csw.string(cswPrivate.relatednodename, cswPrivate.name).trim();

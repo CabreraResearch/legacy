@@ -86,8 +86,11 @@
     <Content Include="app\db\csw.dbSelect.js" />
     <Content Include="app\db\csw.dbTable.js" />
     <Content Include="app\db\csw.dbInsert.js" />
+    <Content Include="app\dialogs\csw.alert.js" />
+    <Content Include="app\layouts\csw.dialog.js" />
+    <Content Include="app\dialogs\csw.copynode.js" />
+    <Content Include="app\dialogs\csw.addnode.js" />
     <Content Include="app\db\csw.dbIndex.js" />
-    <Content Include="app\layouts\csw.addnode.js" />
     <Content Include="app\literals\csw.fieldset.js" />
     <Content Include="app\layouts\csw.landingpage.js" />
     <Content Include="app\literals\_template.js" />
