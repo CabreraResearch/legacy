@@ -300,9 +300,10 @@ namespace ChemSW.Nbt.WebServices
 
             if( null != node )
             {
+                CswNbtMetaDataNodeType NodeType = node.getNodeType();
                 CswNbtNodePropWrapper prop = node.Properties[PropIdAttr.NodeTypePropId];
 
-                if( NbtResources.Permit.isPropWritable( CswEnumNbtNodeTypePermission.View, prop.NodeTypeProp, null, prop ) )
+                if( NbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.View, NodeType, NbtResources.CurrentNbtUser ) )
                 {
                     if( Int32.MinValue == prop.JctNodePropId )
                     {
@@ -314,6 +315,10 @@ namespace ChemSW.Nbt.WebServices
                     {
                         Return.Data = prop;
                     }
+                }
+                else
+                {
+                    throw new CswDniException( CswEnumErrorType.Warning, "You do not have sufficient priviledges to get this image property", "User " + NbtResources.CurrentNbtUser.UserId + " attempted to call getImageProp on prop " + prop.JctNodePropId );
                 }
             }
         }
