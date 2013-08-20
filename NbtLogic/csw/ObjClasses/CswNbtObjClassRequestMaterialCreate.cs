@@ -3,6 +3,7 @@ using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
+using ChemSW.Nbt.UnitsOfMeasure;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Linq;
@@ -45,6 +46,10 @@ namespace ChemSW.Nbt.ObjClasses
             /// The Approval level of this Create Material request
             /// </summary>
             public const string ApprovalLevel = "Approval Level";
+            /// <summary>
+            /// The Quantity(<see cref="CswNbtNodePropQuantity"/>) to request. 
+            /// </summary>
+            public const string Quantity = "Quantity";
         }
 
         /// <summary>
@@ -141,6 +146,7 @@ namespace ChemSW.Nbt.ObjClasses
                 ThisRequest.NewMaterialSupplier.setReadOnly( value : IsReadOnly, SaveToDb : true );
                 ThisRequest.NewMaterialTradename.setReadOnly( value : IsReadOnly, SaveToDb : true );
                 ThisRequest.NewMaterialPartNo.setReadOnly( value : IsReadOnly, SaveToDb : true );
+                ThisRequest.Quantity.setReadOnly( value: IsReadOnly, SaveToDb: true );
             }
         }
 
@@ -160,10 +166,6 @@ namespace ChemSW.Nbt.ObjClasses
         public override void beforePropertySetWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
             _throwIfMaterialExists();
-            if( false == Location.Hidden )
-            {
-                Location.setHidden( value : true, SaveToDb : true );
-            }
         }
 
         /// <summary>
@@ -184,6 +186,8 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         public override void afterPropertySetPopulateProps()
         {
+            CswNbtUnitViewBuilder Vb = new CswNbtUnitViewBuilder( _CswNbtResources );
+            Vb.getQuantityUnitOfMeasureView( CswNbtPropertySetMaterial.CswEnumPhysicalState.Liquid, Quantity );
             Material.SetOnPropChange( onMaterialPropChange );
         }//afterPopulateProps()
 
@@ -363,6 +367,10 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropText NewMaterialPartNo { get { return _CswNbtNode.Properties[PropertyName.NewMaterialPartNo]; } }
         public CswNbtNodePropRelationship NewMaterialSupplier { get { return _CswNbtNode.Properties[PropertyName.NewMaterialSupplier]; } }
         public CswNbtNodePropList ApprovalLevel { get { return _CswNbtNode.Properties[PropertyName.ApprovalLevel]; } }
+        public CswNbtNodePropQuantity Quantity
+        {
+            get { return _CswNbtNode.Properties[PropertyName.Quantity]; }
+        }
 
         #endregion
     }//CswNbtObjClassRequestMaterialCreate
