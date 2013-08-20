@@ -4,9 +4,11 @@ using System.IO;
 using System.Web;
 using ChemSW.Core;
 using ChemSW.DB;
+using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
+using ChemSW.Nbt.Security;
 using ChemSW.Nbt.ServiceDrivers;
 using NbtWebApp;
 
@@ -57,59 +59,69 @@ namespace ChemSW.Nbt.WebServices
 
             DataTable blobDataTbl;
             int BlobDataId = CswConvert.ToInt32( Request.Blob.BlobDataId );
+            int PropId = CswConvert.ToInt32( Request.propid );
+            CswNbtMetaDataNodeTypeProp MetaDataProp = NbtResources.MetaData.getNodeTypeProp( PropId );
 
-            //Get the file from blob_data
-            if( String.IsNullOrEmpty( Request.date ) )
+            if( NbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.View, MetaDataProp.getNodeType(), NbtResources.CurrentNbtUser ) )
             {
-                CswTableSelect blobDataSelect = NbtResources.makeCswTableSelect( "getBlob", "blob_data" );
-                string whereClause = "where jctnodepropid = " + Request.propid;
-                if( Int32.MinValue != BlobDataId )
+
+                //Get the file from blob_data
+                if( String.IsNullOrEmpty( Request.date ) )
                 {
-                    whereClause += " and blobdataid = " + Request.Blob.BlobDataId;
-                }
-                blobDataTbl = blobDataSelect.getTable( whereClause );
-            }
-            else //get the audited record
-            {
-                int jctnodepropid = CswConvert.ToInt32( Request.propid );
-                CswArbitrarySelect blobDataAuditSelect = CswNbtSdBlobData.GetBlobAuditSelect( NbtResources, Request.date, jctnodepropid, BlobDataId );
-                blobDataTbl = blobDataAuditSelect.getTable();
-            }
-
-            foreach( DataRow row in blobDataTbl.Rows )
-            {
-                Request.data = row["blobdata"] as byte[];
-                Request.Blob.FileName = row["filename"].ToString();
-                Request.Blob.ContentType = row["contenttype"].ToString();
-            }
-
-            if( null == Request.data || Request.data.Length == 0 )
-            {
-                bool UseNTPlaceHolder = CswConvert.ToBoolean( Request.usenodetypeasplaceholder );
-                if( UseNTPlaceHolder )
-                {
-                    CswPrimaryKey NodeId = CswConvert.ToPrimaryKey( Request.nodeid );
-                    CswNbtNode Node = NbtResources.Nodes[NodeId];
-                    if( null != Node )
+                    CswTableSelect blobDataSelect = NbtResources.makeCswTableSelect( "getBlob", "blob_data" );
+                    string whereClause = "where jctnodepropid = " + Request.propid;
+                    if( Int32.MinValue != BlobDataId )
                     {
-                        CswNbtMetaDataNodeType NodeType = Node.getNodeType();
-                        if( null != NodeType && NodeType.IconFileName != string.Empty )
+                        whereClause += " and blobdataid = " + Request.Blob.BlobDataId;
+                    }
+                    blobDataTbl = blobDataSelect.getTable( whereClause );
+                }
+                else //get the audited record
+                {
+                    int jctnodepropid = CswConvert.ToInt32( Request.propid );
+                    CswArbitrarySelect blobDataAuditSelect = CswNbtSdBlobData.GetBlobAuditSelect( NbtResources, Request.date, jctnodepropid, BlobDataId );
+                    blobDataTbl = blobDataAuditSelect.getTable();
+                }
+
+                foreach( DataRow row in blobDataTbl.Rows )
+                {
+                    Request.data = row["blobdata"] as byte[];
+                    Request.Blob.FileName = row["filename"].ToString();
+                    Request.Blob.ContentType = row["contenttype"].ToString();
+                }
+
+                if( null == Request.data || Request.data.Length == 0 )
+                {
+                    bool UseNTPlaceHolder = CswConvert.ToBoolean( Request.usenodetypeasplaceholder );
+                    if( UseNTPlaceHolder )
+                    {
+                        CswPrimaryKey NodeId = CswConvert.ToPrimaryKey( Request.nodeid );
+                        CswNbtNode Node = NbtResources.Nodes[NodeId];
+                        if( null != Node )
                         {
-                            Request.Blob.FileName = NodeType.IconFileName;
-                            Request.Blob.ContentType = "image/png";
-                            Request.data = File.ReadAllBytes( Request.appPath + CswNbtMetaDataObjectClass.IconPrefix100 + NodeType.IconFileName );
+                            CswNbtMetaDataNodeType NodeType = Node.getNodeType();
+                            if( null != NodeType && NodeType.IconFileName != string.Empty )
+                            {
+                                Request.Blob.FileName = NodeType.IconFileName;
+                                Request.Blob.ContentType = "image/png";
+                                Request.data = File.ReadAllBytes( Request.appPath + CswNbtMetaDataObjectClass.IconPrefix100 + NodeType.IconFileName );
+                            }
                         }
                     }
+                    else
+                    {
+                        Request.data = File.ReadAllBytes( Request.appPath + "/Images/icons/300/_placeholder.gif" );
+                        Request.Blob.ContentType = "image/gif";
+                        Request.Blob.FileName = "empty.gif";
+                    }
                 }
-                else
-                {
-                    Request.data = File.ReadAllBytes( Request.appPath + "/Images/icons/300/_placeholder.gif" );
-                    Request.Blob.ContentType = "image/gif";
-                    Request.Blob.FileName = "empty.gif";
-                }
-            }
 
-            Return.Data = Request;
+                Return.Data = Request;
+            } // NbtResources.Permit.canNodeType()
+            else
+            {
+                throw new CswDniException( CswEnumErrorType.Warning, "You do no have sufficient priveledges to fetch this file.", "User " + NbtResources.CurrentNbtUser.UserId + " tried to fetch a file " + PropId + " they do not have permission on." );
+            }
         }
 
         public static void clearImage( ICswResources CswResources, NodePropImageReturn Return, BlobDataParams Request )
@@ -154,6 +166,7 @@ namespace ChemSW.Nbt.WebServices
             CswPropIdAttr PropId = new CswPropIdAttr( Request.propid );
 
             CswNbtSdTabsAndProps tabsandprops = new CswNbtSdTabsAndProps( NbtResources );
+            
             tabsandprops.ClearPropValue( Request.propid, true );
 
             Request.Blob = new CswNbtSdBlobData.CswNbtBlob();
@@ -256,15 +269,19 @@ namespace ChemSW.Nbt.WebServices
             if( null != node )
             {
                 CswNbtNodePropWrapper prop = node.Properties[PropIdAttr.NodeTypePropId];
-                if( Int32.MinValue == prop.JctNodePropId )
+                
+                if( NbtResources.Permit.isPropWritable( CswEnumNbtNodeTypePermission.View, prop.NodeTypeProp, null, prop ) )
                 {
-                    prop.makePropRow(); //if we don't have a jct_node_prop row for this prop, we do now
-                    node.postChanges( true );
-                }
-                prop.AsImage.SetImages( Request.date );
-                if( null != prop )
-                {
-                    Return.Data = prop;
+                    if( Int32.MinValue == prop.JctNodePropId )
+                    {
+                        prop.makePropRow(); //if we don't have a jct_node_prop row for this prop, we do now
+                        node.postChanges( true );
+                    }
+                    prop.AsImage.SetImages( Request.date );
+                    if( null != prop )
+                    {
+                        Return.Data = prop;
+                    }
                 }
             }
         }
