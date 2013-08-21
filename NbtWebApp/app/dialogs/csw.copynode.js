@@ -1,8 +1,8 @@
 /// <reference path="~/app/CswApp-vsdoc.js" />
 (function () { 
 
-    Csw.layouts.copynode = Csw.layouts.copynode ||
-        Csw.layouts.register('copynode', function (cswPrivate) {
+    Csw.dialogs.copynode = Csw.dialogs.copynode ||
+        Csw.dialogs.register('copynode', function (cswPrivate) {
             'use strict';
             
             var cswPublic = {};
@@ -31,7 +31,7 @@
                     enabledText: 'Copy',
                     disabledText: 'Copying',
                     onClick: function () {
-                        Csw.ajax.post({
+                        Csw.ajax.deprecatedWsNbt({
                             urlMethod: 'CopyNode',
                             data: {
                                 NodeId: cswPrivate.nodeid,
@@ -82,7 +82,12 @@
                                 cswPrivate.copyNodeDialog.open();
                             }
                         } else {
-                            $.CswDialog('AlertDialog', data.Message, 'Quota Exceeded', null, 140, 450);
+                            Csw.dialogs.alert({
+                                title: 'Quota Exceeded',
+                                width: 450,
+                                height: 160,
+                                message: data.Message
+                            }).open();
                         }
                     }
                 });

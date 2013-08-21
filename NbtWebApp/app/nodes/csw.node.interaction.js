@@ -25,7 +25,7 @@
             NodeKeys: o.nodekeys
         };
 
-        Csw.ajax.post({
+        Csw.ajax.deprecatedWsNbt({
             urlMethod: 'DeleteNodes',
             data: jData,
             success: function (data) {

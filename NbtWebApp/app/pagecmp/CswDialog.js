@@ -168,7 +168,7 @@
                                 createData.VisibilityRoleId = visValue.roleid;
                                 createData.VisibilityUserId = visValue.userid;
 
-                                Csw.ajax.post({
+                                Csw.ajax.deprecatedWsNbt({
                                     urlMethod: 'createView',
                                     data: createData,
                                     success: function (data) {
@@ -222,7 +222,7 @@
             cswDlgPrivate.onOpen = function () {
 
                 var state = Csw.clientState.getCurrent();
-                Csw.ajax.post({
+                Csw.ajax.deprecatedWsNbt({
                     urlMethod: "getFeedbackNode",
                     data: {
                         nodetypeid: cswDlgPrivate.nodetypeid,
@@ -244,7 +244,7 @@
                             },
                             ReloadTabOnSave: false,
                             onSave: function (nodeid, nodekey, tabcount, nodename) {
-                                Csw.ajax.post({
+                                Csw.ajax.deprecatedWsNbt({
                                     urlMethod: 'GetFeedbackCaseNumber',
                                     data: { nodeId: nodeid },
                                     success: function (result) {
@@ -278,35 +278,6 @@
             openDialog(cswPublic.div, 800, 600, null, cswPublic.title, cswDlgPrivate.onOpen);
             return cswPublic;
         }, // AddFeedbackDialog
-        AddNodeClientSideDialog: function (options) {
-            'use strict';
-            var o = {
-                name: '',
-                nodetypename: '',
-                title: '',
-                onSuccess: null
-            };
-
-            if (options) {
-                Csw.extend(o, options);
-            }
-
-            var div = Csw.literals.div(),
-                newNode;
-
-            div.append('New ' + o.nodetypename + ': ');
-            newNode = div.input({ name: o.name + '_newNode', type: Csw.enums.inputTypes.text });
-
-            div.button({
-                name: o.objectClassId + '_add',
-                enabledText: 'Add',
-                onClick: function () {
-                    Csw.tryExec(o.onSuccess, newNode.val());
-                    div.$.dialog('close');
-                }
-            });
-            openDialog(div, 300, 200, null, o.title);
-        }, // AddNodeClientSideDialog
         AddNodeTypeDialog: function (options) {
             'use strict';
             var o = {
@@ -341,7 +312,7 @@
                 enabledText: 'Add',
                 onClick: function () {
                     var newNodeTypeName = nodeTypeInp.val();
-                    Csw.ajax.post({
+                    Csw.ajax.deprecatedWsNbt({
                         urlMethod: 'IsNodeTypeNameUnique',
                         data: { 'NodeTypeName': newNodeTypeName },
                         success: function () {
@@ -434,7 +405,7 @@
                         selected: '',
                         values: [],
                         onChange: function () {
-                            Csw.ajax.post({
+                            Csw.ajax.deprecatedWsNbt({
                                 urlMethod: 'addPropertyToLayout',
                                 data: {
                                     PropId: Csw.string(addSelect.val()),
@@ -454,7 +425,7 @@
                         TabId: Csw.string(cswDlgPrivate.tabState.tabid),
                         LayoutType: layoutSelect.val()
                     };
-                    Csw.ajax.post({
+                    Csw.ajax.deprecatedWsNbt({
                         urlMethod: 'getPropertiesForLayoutAdd',
                         data: ajaxdata,
                         success: function (data) {
@@ -776,7 +747,7 @@
         AboutDialog: function () {
             'use strict';
             var div = Csw.literals.div();
-            Csw.ajax.post({
+            Csw.ajax.deprecatedWsNbt({
                 urlMethod: 'getAbout',
                 data: {},
                 success: function (data) {
@@ -1419,7 +1390,7 @@
                 var licenseTextArea = div.textArea({ name: 'license', rows: 30, cols: 80 }).propDom({ disabled: true });
                 div.br();
 
-                Csw.ajax.post({
+                Csw.ajax.deprecatedWsNbt({
                     urlMethod: o.GetLicenseUrl,
                     success: function (data) {
                         licenseTextArea.text(data.license);
@@ -1431,7 +1402,7 @@
                     enabledText: 'I Accept',
                     disabledText: 'Accepting...',
                     onClick: function () {
-                        Csw.ajax.post({
+                        Csw.ajax.deprecatedWsNbt({
                             urlMethod: o.AcceptLicenseUrl,
                             success: function () {
                                 allowClose = true;
@@ -1462,7 +1433,10 @@
             var cswPublic = Csw.object();
 
             if (!cswDlgPrivate.nodes || Object.keys(cswDlgPrivate.nodes).length < 1) {
-                $.CswDialog('AlertDialog', 'Nothing has been selected to print. <br>Go back and select an item to print.', 'Empty selection');
+                Csw.dialogs.alert({
+                    title: 'Empty selection',
+                    message: 'Nothing has been selected to print. <br>Go back and select an item to print.'
+                }).open();
             } else {
 
                 cswPublic = {
@@ -1572,7 +1546,7 @@
             if (options) Csw.extend(o, options);
 
             function onOpen(div) {
-                Csw.ajax.post({
+                Csw.ajax.deprecatedWsNbt({
                     urlMethod: 'getUsers',
                     success: function (data) {
                         if (Csw.bool(data.result)) {
@@ -1881,39 +1855,6 @@
             openDialog(div, 1000, 500, cswPrivate.onCloseDialog, cswPrivate.title, onOpen);
 
         }, // RelatedToDemoNodesDialog
-
-
-        ErrorDialog: function (error) {
-            'use strict';
-            var div = Csw.literals.div();
-            openDialog(div, 400, 300, null, 'Error');
-            div.$.CswErrorMessage(error);
-        },
-
-        AlertDialog: function (message, title, onClose, height, width, onOpen) {
-            'use strict';
-            var div = Csw.literals.div({
-                name: Csw.string(title, 'an alert dialog').replace(' ', '_'),
-                text: message,
-                align: 'center'
-            });
-
-            div.br({ number: 2 });
-
-            var divBody = div.div();
-
-            div.button({
-                enabledText: 'OK',
-                onClick: function () {
-                    div.$.dialog('close');
-                    Csw.tryExec(onClose);
-                }
-            });
-
-            Csw.tryExec(onOpen, divBody);
-
-            openDialog(div, Csw.number(width, 400), Csw.number(height, 200), null, title);
-        },
         ConfirmDialog: function (message, title, okFunc, cancelFunc) {
             'use strict';
             var div = Csw.literals.div({
@@ -2581,11 +2522,6 @@
 
         //#region Generic
 
-        //		'OpenPopup': function (url) { 
-        //							var popup = window.open(url, null, 'height=600, width=600, status=no, resizable=yes, scrollbars=yes, toolbar=yes,location=no, menubar=yes');
-        //							popup.focus();
-        //							return popup;
-        //						},
         OpenDialog: function (id, url) {
             'use strict';
             var div = Csw.literals.div({ name: id });

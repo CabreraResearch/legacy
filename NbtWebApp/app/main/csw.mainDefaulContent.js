@@ -12,7 +12,7 @@
             };
             Csw.extend(o, options);
 
-            return  Csw.ajax.post({
+            return  Csw.ajax.deprecatedWsNbt({
                 urlMethod: 'getDefaultContent',
                 data: { ViewId: o.viewid },
                 success: function(data) {
@@ -64,7 +64,7 @@
             var $a = $li.children('a');
 
             $a.click(function () {
-                Csw.layouts.addnode({
+                Csw.dialogs.addnode({
                     action: o.itemJson.action,
                     title: 'Add New ' + text,
                     nodetypeid: Csw.string(o.itemJson.nodetypeid),

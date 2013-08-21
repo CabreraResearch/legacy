@@ -6,13 +6,14 @@
 
         Csw.main.refreshWelcomeLandingPage = function () {
             Csw.main.universalsearch.enable();
-            return Csw.main.setLandingPage(function () {
+            var doLoadLandingPage = function() {
                 return Csw.layouts.landingpage(Csw.main.centerBottomDiv, {
                     name: 'welcomeLandingPage',
                     Title: '',
+
                     onLinkClick: Csw.main.handleItemSelect,
-                    onAddClick: function (itemData) {
-                        Csw.layouts.addnode({
+                    onAddClick: function(itemData) {
+                        Csw.dialogs.addnode({
                             action: itemData.ActionName,
                             title: itemData.Text,
                             nodetypeid: itemData.NodeTypeId,
@@ -22,16 +23,20 @@
                             }
                         });
                     },
-                    onTabClick: function (itemData) {
+                    onTabClick: function(itemData) {
                         Csw.cookie.set(Csw.cookie.cookieNames.CurrentTabId, itemData.TabId);
                         Csw.main.handleItemSelect(itemData);
                     },
                     onAddComponent: Csw.main.refreshWelcomeLandingPage,
+
+                    useCache: true,
+
                     landingPageRequestData: {
                         RoleId: ''
                     }
                 });
-            });
+            };
+            return Csw.main.setLandingPage(doLoadLandingPage);
         };
 
         Csw.main.register('setLandingPage', function (loadLandingPage) {
@@ -66,7 +71,7 @@
                 ObjectClassId: layData.RelatedObjectClassId,
                 onLinkClick: Csw.main.handleItemSelect,
                 onAddClick: function (itemData) {
-                    Csw.layouts.addnode({
+                    Csw.dialogs.addnode({
                         action: itemData.ActionName,
                         title: itemData.Text,
                         nodetypeid: itemData.NodeTypeId,

@@ -1,8 +1,8 @@
 /// <reference path="~/app/CswApp-vsdoc.js" />
 (function () { 
 
-    Csw.layouts.addnode = Csw.layouts.addnode ||
-        Csw.layouts.register('addnode', function (cswPrivate) {
+    Csw.dialogs.addnode = Csw.dialogs.addnode ||
+        Csw.dialogs.register('addnode', function (cswPrivate) {
             'use strict';
             
             var cswPublic = {};
@@ -71,7 +71,7 @@
                             if (false === Csw.isNullOrEmpty(cswPrivate.action) && cswPrivate.action !== 'AddNode') {
                                 Csw.main.handleAction({ actionname: cswPrivate.action });
                             } else {
-                                Csw.ajax.post({
+                                Csw.ajax.deprecatedWsNbt({
                                     urlMethod: 'getProps',
                                     data: {
                                         EditMode: Csw.enums.editMode.Add,
@@ -98,7 +98,12 @@
                                 });
                             }
                         } else {
-                            $.CswDialog('AlertDialog', data.Message, 'Quota Exceeded', null, 140, 450);
+                            Csw.dialogs.alert({
+                                title: 'Quota Exceeded',
+                                width: 450,
+                                height: 160,
+                                message: data.Message
+                            }).open();
                         }
                     }
                 });

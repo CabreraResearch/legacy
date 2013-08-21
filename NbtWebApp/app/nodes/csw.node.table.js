@@ -633,7 +633,7 @@
                     cswPrivate.HandleTableData();
                     Csw.tryExec(onAfterInit);
                 } else {
-                    Csw.ajax.post({
+                    Csw.ajax.deprecatedWsNbt({
                         urlMethod: 'getTableView',
                         data: {
                             ViewId: cswPrivate.viewid,

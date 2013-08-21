@@ -32,7 +32,7 @@
 
             cswPrivate.onBeforeNext = function () {
                 if (cswPrivate.generatorTree.checkedNodes().length === 0) {
-                    $.CswDialog('AlertDialog', 'You must select at least one Generator to continue.');
+                    Csw.dialogs.alert({ message: 'You must select at least one Generator to continue.' }).open();
                     return false;
                 } else {
                     return true;
@@ -56,7 +56,7 @@
                     checkedNodeKeys += thisObj.nodekey;
                 });
 
-                Csw.ajax.post({
+                Csw.ajax.deprecatedWsNbt({
                     urlMethod: cswPrivate.futureurl,
                     data: {
                         SelectedGeneratorNodeKeys: checkedNodeKeys,
@@ -141,7 +141,7 @@
 
                 var cell42 = step1table.cell(4, 2);
 
-                Csw.ajax.post({
+                Csw.ajax.deprecatedWsNbt({
                     urlMethod: cswPrivate.treeurl,
                     data: {},
                     success: function (data) {

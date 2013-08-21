@@ -87,7 +87,7 @@
 
                     Csw.extend(cswPrivate, options, true);
                     if (Csw.isNullOrEmpty(cswPrivate.viewid)) {
-                        Csw.ajax.post({
+                        Csw.ajax.deprecatedWsNbt({
                             urlMethod: 'getLocationView',
                             data: {
                                 NodeId: Csw.string(cswPrivate.nodeid)

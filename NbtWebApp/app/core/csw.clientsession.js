@@ -37,7 +37,7 @@
                 window.clearInterval(cswPrivate.expiretimeInterval);
                 $.CswDialog('ExpireDialog', {
                     onYes: function () {
-                        Csw.ajax.post({
+                        Csw.ajax.deprecatedWsNbt({
                             urlMethod: 'RenewSession',
                             success: function () {
                                 cswPrivate.isAuthenticated = true;
@@ -330,7 +330,7 @@
                 Csw.extend(o, options);
             }
 
-            return Csw.ajax.post({
+            return Csw.ajax.deprecatedWsNbt({
                 urlMethod: 'isAdministrator',
                 success: function (data) {
                     if (Csw.bool(data.Administrator)) {

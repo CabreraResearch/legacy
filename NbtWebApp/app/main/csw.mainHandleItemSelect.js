@@ -83,7 +83,7 @@
                             };
 
                             if (Csw.isNullOrEmpty(o.mode)) {
-                                Csw.ajax.post({
+                                Csw.ajax.deprecatedWsNbt({
                                     url: Csw.enums.ajaxUrlPrefix + 'getViewMode',
                                     data: { ViewId: o.viewid },
                                     success: function (data) {

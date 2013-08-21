@@ -22,7 +22,7 @@
 
             Csw.clientState.setCurrentAction(o.actionname, o.actionurl);
 
-            Csw.ajax.post({
+            Csw.ajax.deprecatedWsNbt({
                 urlMethod: 'SaveActionToQuickLaunch',
                 'data': { 'ActionName': o.actionname }
             });
@@ -77,7 +77,7 @@
                                         ObjectClassId: actionData.RelatedObjectClassId,
                                         onLinkClick: Csw.main.handleItemSelect,
                                         onAddClick: function (itemData) {
-                                            Csw.layouts.addnode({
+                                            Csw.dialogs.addnode({
                                                 title: itemData.Text,
                                                 nodetypeid: itemData.NodeTypeId,
                                                 relatednodeid: actionData.RelatedNodeId,

@@ -275,17 +275,66 @@
             return stopCrawling;
         });
 
-    Csw.object = Csw.object ||
-        Csw.register('object', function (inheritsFrom, properties) {
-            var ret;
-            properties = properties || Object.create(null);
-            if (null === inheritsFrom || typeof inheritsFrom == 'function') {
-                ret = Object.create(inheritsFrom, properties);
-            } else {
-                ret = Object.create(null);
-            }
-            return ret;
+    /**
+     * Add a property to an object
+     * @param obj {Object} an Object onto which to add a property
+     * @param name {String} the property name
+     * @param value {Object} the value of the property. Can be any type.
+     * @param writable {Boolean} [writable=true] True if the property can be modified
+     * @param configurable {Boolean} [configurable=true] True if the property can be removed
+     * @param enumerable {Boolean} [enumerable=true] True if the property can be enumerated and is listed in Object.keys
+    */
+    var property = function (obj, name, value, writable, configurable, enumerable) {
+        if (!obj) {
+            throw new Error('Cannot define a property without an Object.');
+        }
+        if (!(typeof name === 'string')) {
+            throw new Error('Cannot create a property without a valid property name.');
+        }
+
+        var isWritable = (writable !== false);
+        var isConfigurable = (configurable !== false);
+        var isEnumerable = (enumerable !== false);
+
+        Object.defineProperty(obj, name, {
+            value: value,
+            writable: isWritable,
+            configurable: isConfigurable,
+            enumerable: isEnumerable
         });
+
+        return obj;
+    };
+
+    Csw.register('property', property);
+
+    /**
+     * Create an instance of Object
+     * @param properties {Object} [properties={}] properties to define on the Object
+     * @param inheritsFromPrototype {Prototype} [inheritsFromPrototype=null] The prototype to inherit from
+    */
+    var object = function (properties, inheritsFromPrototype) {
+
+        if (!inheritsFromPrototype) {
+            inheritsFromPrototype = null;
+        }
+        if (!properties) {
+            properties = {};
+        }
+        var obj = Object.create(inheritsFromPrototype, properties);
+
+        Csw.property(obj, 'add',
+            /**
+             * Add a property to the object and return it
+            */
+            function (name, val, writable, configurable, enumerable) {
+                return Csw.property(obj, name, val, writable, configurable, enumerable);
+            }, false, false, false);
+
+        return obj;
+    };
+
+    Csw.register('object', object);
 
     Csw.objDeprecated = Csw.objDeprecated ||
         Csw.register('objDeprecated', function (obj) {
@@ -433,13 +482,13 @@
     If your return data contract is something like:
 
     class MyContract{
-	   string prop1;
+       string prop1;
        string prop2;
        MyInnerClass innerClassProp;
     }
 
     class MyInnerClass{
-	   string innerProp1;
+       string innerProp1;
        string innerProp2;
     }
 

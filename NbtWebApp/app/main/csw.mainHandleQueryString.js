@@ -32,7 +32,7 @@
                     });
                 };
                 if (Csw.isNullOrEmpty(qs.viewmode)) {
-                    Csw.ajax.post({
+                    Csw.ajax.deprecatedWsNbt({
                         url: Csw.enums.ajaxUrlPrefix + 'getViewMode',
                         data: { ViewId: qs.viewid },
                         success: function (data) {

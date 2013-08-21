@@ -427,7 +427,7 @@
                     };
 
                     cswPrivate.saveMaterial = function () {
-                        Csw.ajax.post({
+                        Csw.ajax.deprecatedWsNbt({
                             urlMethod: 'saveMaterial',
                             data: {
                                 NodeTypeId: cswPrivate.state.materialType.val,
@@ -604,7 +604,7 @@
                             onSelect: sizeSelect,
                             onSuccess: function(retObj, count) {
                                 sizeSelect(retObj, count);
-                                Csw.ajax.post({
+                                Csw.ajax.deprecatedWsNbt({
                                     urlMethod: 'getSizeLogicalsVisibility',
                                     data: { SizeNodeTypeId: cswPrivate.state.sizeNodeTypeId },
                                     success: function(data) {
@@ -768,7 +768,7 @@
                         return JSON.stringify(createMaterialDef);
                     }
 
-                    Csw.ajax.post({
+                    Csw.ajax.deprecatedWsNbt({
                         urlMethod: 'commitMaterial',
                         data: {
                             MaterialDefinition: getMaterialDefinition()
