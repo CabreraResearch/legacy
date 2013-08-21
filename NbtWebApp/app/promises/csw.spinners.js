@@ -4,23 +4,23 @@
 (function () {
     'use strict';
     
-    Csw.ajax.register('ajaxInProgress', function () {
-        /// <summary> Evaluates whether a pending ajax request is still open. </summary>
-        return (window.CswAjaxCount > 0);
-    });
-
-    window.CswAjaxCount = 0;
+    var ajaxCount = 0;
     var spinning = false;
 
+    Csw.ajax.register('ajaxInProgress', function () {
+        /// <summary> Evaluates whether a pending ajax request is still open. </summary>
+        return (ajaxCount > 0);
+    });
+    
     function toggleSpinner(incrementor) {
-        window.CswAjaxCount += incrementor;
+        ajaxCount += incrementor;
         if (Csw.main.ajaxImage && Csw.main.ajaxSpacer) {
-            if (window.CswAjaxCount > 0 && spinning === false) {
+            if (ajaxCount > 0 && spinning === false) {
                 spinning = true;
                 Csw.main.ajaxImage.show();
                 Csw.main.ajaxSpacer.hide();
             }
-            else if (window.CswAjaxCount === 0 && spinning === true) {
+            else if (ajaxCount === 0 && spinning === true) {
                 spinning = false;
 
                 Csw.main.ajaxImage.hide();
@@ -31,7 +31,7 @@
 
     //Fires when all jQuery AJAX requests have completed
     $(document).ajaxStop(function () {
-        window.CswAjaxCount = 0;
+        ajaxCount = 0;
         toggleSpinner(0);
     });
 
