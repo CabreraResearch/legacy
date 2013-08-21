@@ -164,6 +164,7 @@
     <Content Include="app\tools\csw.ext.js" />
     <Content Include="app\tools\csw.validation.js" />
     <Content Include="app\view\csw.vieweditor.js" />
+    <Content Include="app\actions\csw.importexcel.js" />
     <Content Include="app\wizards\csw.wizard.sizesgrid.js" />
     <Content Include="app\wizards\csw.legacymobile.js" />
     <Content Include="app\wizards\csw.reconciliation.js" />
