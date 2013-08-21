@@ -725,7 +725,7 @@
                     Csw.ajaxWcf.post({
                         urlMethod: 'Session/endCurrentUserSessions',
                         success: function (data) {
-                            onSuccess();
+                            Csw.tryExec(onSuccess);
                             logoutOnClose = false;
                             div.$.dialog('close');
                         }//success
