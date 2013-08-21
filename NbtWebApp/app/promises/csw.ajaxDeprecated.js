@@ -37,6 +37,7 @@
         } else {
 
             var auth = Csw.string(result.AuthenticationStatus, 'Unknown');
+            var text = Csw.string(result.AuthenticationStatusText);
             Csw.clientSession.setExpireTime(Csw.string(result.timeout, ''));
 
             if (false === Csw.isNullOrEmpty(result.timer)) {
@@ -60,11 +61,13 @@
             delete result.LogglyInput;
             delete result.LogLevel;
             delete result.AuthenticationStatus;
+            delete result.AuthenticationStatusText;
             delete result.timeout;
             delete result.timer;
 
             Csw.clientSession.handleAuthenticationStatus({
                 status: auth,
+                txt: text,
                 success: function () {
                     onSuccess(o.url, result, o.useCache, o.success);
                 },

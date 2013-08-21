@@ -23,6 +23,7 @@
             Data: '',
             Authentication: {
                 AuthenticationStatus: 'Unknown',
+                AuthenticationStatusText: '',
                 TimeOut: 0
             },
             Performance: {
@@ -63,6 +64,7 @@
         } else {
 
             var auth = Csw.string(response.Authentication.AuthenticationStatus, 'Unknown');
+            var text = Csw.string(response.Authentication.AuthenticationStatusText);
                 Csw.clientSession.setExpireTime(Csw.string(response.Authentication.TimeOut, ''));
 
             if (false === Csw.isNullOrEmpty(response.Performance)) {
@@ -84,6 +86,7 @@
             
             Csw.clientSession.handleAuthenticationStatus({
                 status: auth,
+                txt: text,
                 success: function () {
                     onSuccess(o.url, response.Data, o.useCache, o.success);
                 },
