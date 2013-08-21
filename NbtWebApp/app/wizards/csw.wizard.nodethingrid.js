@@ -62,7 +62,7 @@
                             var nodeData = {};
                             Csw.extend(nodeData, cswPrivate.tabsAndProps.getProps(), true);
 
-                            Csw.ajax.post({
+                            Csw.ajax.deprecatedWsNbt({
                                 urlMethod: 'nodePropsToArray',
                                 data: {
                                     NodeDefinition: JSON.stringify(nodeData),
@@ -74,7 +74,7 @@
                                         cswPublic.thinGrid.addRows(node);
                                         cswPublic.nodes.push(nodeData);
                                     } else {
-                                        $.CswDialog('AlertDialog', 'This node is already defined. Please define a new, unique node.');
+                                        Csw.dialogs.alert({ message: 'This node is already defined. Please define a new, unique node.' }).open();
                                     }
                                 }
                             });
@@ -85,7 +85,7 @@
                 addNodeLayout();
                 cswPublic.thinGrid = cswPublic.rootDiv.thinGrid({ linkText: '', hasHeader: true });
 
-                Csw.ajax.post({
+                Csw.ajax.deprecatedWsNbt({
                     urlMethod: 'getThinGrid',
                     data: {
                         ViewId: viewid,

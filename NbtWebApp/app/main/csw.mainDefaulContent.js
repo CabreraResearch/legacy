@@ -12,7 +12,7 @@
             };
             Csw.extend(o, options);
 
-            return  Csw.ajax.post({
+            return  Csw.ajax.deprecatedWsNbt({
                 urlMethod: 'getDefaultContent',
                 data: { ViewId: o.viewid },
                 success: function(data) {
@@ -64,17 +64,12 @@
             var $a = $li.children('a');
 
             $a.click(function () {
-                Csw.layouts.addnode({
+                Csw.dialogs.addnode({
                     action: o.itemJson.action,
-                    dialogOptions: {
-                        text: text,
-                        nodetypeid: Csw.string(o.itemJson.nodetypeid),
-                        relatednodeid: Csw.string(o.itemJson.relatednodeid), //for Grid Props
-                        relatednodename: Csw.string(o.itemJson.relatednodename), //for Grid Props
-                        relatednodetypeid: Csw.string(o.itemJson.relatednodetypeid), //for NodeTypeSelect
-                        relatedobjectclassid: Csw.string(o.itemJson.relatedobjectclassid),
-                        onAddNode: o.onAlterNode
-                    }
+                    title: 'Add New ' + text,
+                    nodetypeid: Csw.string(o.itemJson.nodetypeid),
+                    relatednodeid: Csw.string(o.itemJson.relatednodeid),
+                    onAddNode: o.onAlterNode
                 });
                 return false;
             });

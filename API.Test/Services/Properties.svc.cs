@@ -32,9 +32,9 @@ namespace API.Test.Services
         /// Get Properties
         /// </summary>
         [OperationContract]
-        [WebInvoke( Method = "POST", UriTemplate = "/getProps?EditMode={EditMode}&NodeId={NodeId}&SafeNodeKey={SafeNodeKey}&TabId={TabId}&NodeTypeId={NodeTypeId}&Date={Date}&filterToPropId={filterToPropId}&Multi={Multi}&ConfigMode={ConfigMode}&RelatedNodeId={RelatedNodeId}&RelatedNodeTypeId={RelatedNodeTypeId}&RelatedObjectClassId={RelatedObjectClassId}" )]
+        [WebInvoke( Method = "POST", UriTemplate = "/getProps?EditMode={EditMode}&NodeId={NodeId}&SafeNodeKey={SafeNodeKey}&TabId={TabId}&NodeTypeId={NodeTypeId}&Date={Date}&filterToPropId={filterToPropId}&Multi={Multi}&ConfigMode={ConfigMode}&RelatedNodeId={RelatedNodeId}" )]
         [Description( "A thin WCF wrapper around the old wsNBT.getProps method" )]
-        public string getProps( string EditMode, string NodeId, string SafeNodeKey, string TabId, string NodeTypeId, string Date, string filterToPropId, string Multi, string ConfigMode, string RelatedNodeId, string RelatedNodeTypeId, string RelatedObjectClassId )
+        public string getProps( string EditMode, string NodeId, string SafeNodeKey, string TabId, string NodeTypeId, string Date, string filterToPropId, string Multi, string ConfigMode, string RelatedNodeId )
         {
             return "";
         }
@@ -99,9 +99,9 @@ namespace API.Test.Services
         /// Create node
         /// </summary>
         [OperationContract]
-        [WebInvoke( Method = "POST", UriTemplate = "/{NodeTypeName}/{TabName}/{NodeId}?RelatedNodeId={RelatedNodeId}&RelatedNodeTypeId={RelatedNodeTypeId}" )]
+        [WebInvoke( Method = "POST", UriTemplate = "/{NodeTypeName}/{TabName}/{NodeId}?RelatedNodeId={RelatedNodeId}" )]
         [Description( "Edit, in a RESTful WCF world." )]
-        public NodeData get( string NodeTypeName, string TabName, string NodeId, string RelatedNodeId, string RelatedNodeTypeId, NodeData Node )
+        public NodeData get( string NodeTypeName, string TabName, string NodeId, string RelatedNodeId, NodeData Node )
         {
             return Node;
         }

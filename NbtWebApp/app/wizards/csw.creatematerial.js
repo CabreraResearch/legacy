@@ -426,7 +426,7 @@
                     };
 
                     cswPrivate.saveMaterial = function () {
-                        Csw.ajax.post({
+                        Csw.ajax.deprecatedWsNbt({
                             urlMethod: 'saveMaterial',
                             data: {
                                 NodeTypeId: cswPrivate.state.materialType.val,
@@ -574,7 +574,7 @@
                         var makeSizeGrid = function() {
                             cswPrivate.sizesGrid = Csw.wizard.sizesGrid(div, {
                                 name: 'sizesGrid',
-                                sizeRowsToAdd: cswPrivate.state.sizes,
+                                sizeRowsToAdd: cswPrivate.state.sizes || [],
                                 physicalState: cswPrivate.state.physicalState,
                                 sizeNodeTypeId: cswPrivate.state.sizeNodeTypeId,
                                 showQuantityEditable: cswPrivate.showQuantityEditable,
@@ -603,7 +603,7 @@
                             onSelect: sizeSelect,
                             onSuccess: function(retObj, count) {
                                 sizeSelect(retObj, count);
-                                Csw.ajax.post({
+                                Csw.ajax.deprecatedWsNbt({
                                     urlMethod: 'getSizeLogicalsVisibility',
                                     data: { SizeNodeTypeId: cswPrivate.state.sizeNodeTypeId },
                                     success: function(data) {
@@ -767,7 +767,7 @@
                         return JSON.stringify(createMaterialDef);
                     }
 
-                    Csw.ajax.post({
+                    Csw.ajax.deprecatedWsNbt({
                         urlMethod: 'commitMaterial',
                         data: {
                             MaterialDefinition: getMaterialDefinition()

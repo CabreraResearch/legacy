@@ -7,7 +7,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Keeps the schema up-to-date
     /// </summary>
-    public class CswSchemaScriptsProd : ICswSchemaScripts
+    public class CswSchemaScriptsProd: ICswSchemaScripts
     {
         private CswNbtResources _CswNbtResources = null;
 
@@ -43,8 +43,10 @@ namespace ChemSW.Nbt.Schema
 
             #endregion
 
+
             #region MetaData Scripts
 
+            _addVersionedScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02F_Case30228() ) );
             _addVersionedScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02F_Case30281() ) );
             _addVersionedScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02F_Case30251() ) );
             _addVersionedScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02F_Case30251B() ) );
@@ -58,6 +60,7 @@ namespace ChemSW.Nbt.Schema
 
             #region Data Scripts
 
+
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02F_Case30281() ) );
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02F_Case28998() ) );
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02F_Case29973() ) );
@@ -68,6 +71,9 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02F_Case30197() ) );
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02F_Case30417() ) );
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02F_Case27883() ) );
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02F_Case27495() ) );
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02F_Case30228() ) );
+
 
             #endregion Data Scripts
 

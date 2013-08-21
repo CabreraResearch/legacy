@@ -35,7 +35,7 @@
                 row += 1;
 
                 // Sessions table
-                Csw.ajax.post({
+                Csw.ajax.deprecatedWsNbt({
                     urlMethod: o.urlMethod,
                     data: {},
                     success: function (result) {
@@ -73,7 +73,7 @@
             // initTable()
 
             function handleBurn(sessionId) {
-                Csw.ajax.post({
+                Csw.ajax.deprecatedWsNbt({
                     urlMethod: o.endSessionUrlMethod,
                     data: { SessionId: sessionId },
                     success: function () {

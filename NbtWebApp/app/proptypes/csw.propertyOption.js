@@ -25,8 +25,6 @@
                     showSaveButton: true,
                     relatednodeid: '',
                     relatednodename: '',
-                    relatednodetypeid: '',
-                    relatedobjectclassid: '',
                     nodetypeid: ''
                 },
                 fieldtype: '',

@@ -10,6 +10,13 @@
         Csw.error.showError(errorJson);
     }; /* cswPrivate.handleAjaxError() */
 
+    var onSuccess = function(url, data, saveToCache, func) {
+        if (saveToCache) {
+            Csw.setCachedWebServiceCall(url, data);
+        }
+        return Csw.tryExec(func, data);
+    };
+
     cswPrivate.onJsonSuccess = Csw.method(function (o, data, url) {
 
         var response = {
@@ -38,8 +45,6 @@
                 Errors: []
             }
         };
-
-        Csw.publish(Csw.enums.events.ajax.ajaxStop, o.watchGlobal);
         Csw.extend(response, data, true);
         
         if (false === response.Status.Success ||
@@ -80,7 +85,7 @@
             Csw.clientSession.handleAuthenticationStatus({
                 status: auth,
                 success: function () {
-                    Csw.tryExec(o.success, response.Data);
+                    onSuccess(o.url, response.Data, o.useCache, o.success);
                 },
                 failure: o.onloginfail,
                 data: response.Authentication
@@ -89,7 +94,6 @@
     });
 
     cswPrivate.onJsonError = Csw.method(function (xmlHttpRequest, textStatus, param1, o) {
-        Csw.publish(Csw.enums.events.ajax.ajaxStop, o.watchGlobal, xmlHttpRequest, textStatus);
         if (textStatus !== 'abort') {
             Csw.debug.error({
                 'Webservice Request': o.urlMethod,
@@ -126,6 +130,7 @@
             complete: function () {},
             overrideError: false,
             watchGlobal: true,
+            useCache: false,
             removeTimer: true
         };
         Csw.extend(cswInternal, options);
@@ -142,35 +147,47 @@
             }
         }
 
-        Csw.publish(Csw.enums.events.ajax.ajaxStart, cswInternal.watchGlobal);
-        var ajax = $.ajax({
-            type: verb,
-            url: cswInternal.urlMethod,
-            xhrFields: {
-                withCredentials: true
-            },
-            dataType: 'json',
-            contentType: 'application/json; charset=utf-8',
-            //processdata: false,
-            data: cswInternal.data,
-            watchGlobal: cswInternal.watchGlobal
-        });
-        ajax.done(function(data) {
-            cswPrivate.onJsonSuccess(cswInternal, data, document.location + '/' + cswInternal.urlMethod);
-        }); /* success{} */
-        ajax.fail(function(jqXHR, textStatus, errorText) {
-            cswPrivate.onJsonError(jqXHR, textStatus, errorText, {
+        var getAjaxPromise = function(watchGlobal) {
+            var ret = $.ajax({
+                type: verb,
+                url: cswInternal.urlMethod,
+                xhrFields: {
+                    withCredentials: true
+                },
+                dataType: 'json',
+                contentType: 'application/json; charset=utf-8',
+                //processdata: false,
+                data: cswInternal.data,
+                watchGlobal: false !== watchGlobal
+            });
+            ret.done(function(data) {
+                return cswPrivate.onJsonSuccess(cswInternal, data, document.location + '/' + cswInternal.urlMethod);
+            }); /* success{} */
+            ret.fail(function(jqXHR, textStatus, errorText) {
+                return cswPrivate.onJsonError(jqXHR, textStatus, errorText, {
                     data: cswInternal.data,
                     watchGlobal: cswInternal.watchGlobal,
                     urlMethod: document.location + '/' + cswInternal.urlMethod
-                }
-            );
-        });
-        ajax.always(function(xmlHttpRequest, textStatus) {
-            Csw.tryExec(cswInternal.complete, xmlHttpRequest, textStatus);
-        });
+                });
+            });
+            ret.always(function(xmlHttpRequest, textStatus) {
+                return Csw.tryExec(cswInternal.complete, xmlHttpRequest, textStatus);
+            });
+            return Csw.promises.ajax(ret);
+        };
+
+        var promise;
+        if (true === cswInternal.useCache) {
+            promise = Csw.getCachedWebServiceCall(cswInternal.urlMethod)
+                .then(function(ret) {
+                    return onSuccess(cswInternal.urlMethod, ret, false, cswInternal.success);
+                })
+                .then(getAjaxPromise(false));
+        } else {
+            promise = getAjaxPromise(cswInternal.watchGlobal);
+        }
         
-        return Csw.promises.ajax(ajax);
+        return promise;
     }); /* cswPrivate.jsonPost */
 
     Csw.ajaxWcf.post = Csw.ajaxWcf.post ||

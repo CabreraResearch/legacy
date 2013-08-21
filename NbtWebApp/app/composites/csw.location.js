@@ -13,7 +13,6 @@
                 locationobjectclassid: '',
                 locationnodetypeids: [],
                 relatedmatch: false,
-                relatedobjectclassid: '',
                 nodeid: '',
                 viewid: '',
                 selectedName: '',
@@ -40,10 +39,6 @@
                         cswParent.empty();
 
                         cswPrivate.relatedmatch = (cswPrivate.relatedobjectclassid === cswPrivate.locationobjectclassid);
-                        Csw.each(cswPrivate.locationnodetypeids, function (thisNTid) {
-                            cswPrivate.relatedmatch = (cswPrivate.relatedmatch || thisNTid === cswPrivate.relatednodetypeid);
-                        });
-
                         if (cswPrivate.relatedmatch) {
                             cswPrivate.nodeid = Csw.string(cswPrivate.relatednodeid, cswPrivate.nodeid).trim();
                             cswPrivate.name = Csw.string(cswPrivate.relatednodename, cswPrivate.name).trim();
@@ -91,8 +86,9 @@
                     }; //render()
 
                     Csw.extend(cswPrivate, options, true);
+                    cswPrivate.ready = Csw.promises.all();
                     if (Csw.isNullOrEmpty(cswPrivate.viewid)) {
-                        Csw.ajax.post({
+                        cswPrivate.ready.push(Csw.ajax.deprecatedWsNbt({
                             urlMethod: 'getLocationView',
                             data: {
                                 NodeId: Csw.string(cswPrivate.nodeid)
@@ -103,7 +99,7 @@
                                 cswPrivate.path = data.path;
                                 render();
                             }
-                        });
+                        }));
                     } else {
                         render();
                     }
@@ -199,32 +195,34 @@
 
                 //#region final ctor
                 (function _post() {
-                    if (false === cswPrivate.ReadOnly) {
-                        if (cswPrivate.EditMode === Csw.enums.editMode.Add) {
-                            cswPrivate.makeLocationCombo();
-                        } else {
-                            cswPrivate.editCell.icon({
-                                name: cswPrivate.name + '_toggle',
-                                iconType: Csw.enums.iconType.pencil,
-                                hovertext: 'Edit',
-                                size: 16,
-                                isButton: true,
-                                onClick: cswPrivate.makeLocationCombo
-                            }); // imageButton
-                        }
+                    cswPrivate.ready.then(function() {
+                        if (false === cswPrivate.ReadOnly) {
+                            if (cswPrivate.EditMode === Csw.enums.editMode.Add) {
+                                cswPrivate.makeLocationCombo();
+                            } else {
+                                cswPrivate.editCell.icon({
+                                    name: cswPrivate.name + '_toggle',
+                                    iconType: Csw.enums.iconType.pencil,
+                                    hovertext: 'Edit',
+                                    size: 16,
+                                    isButton: true,
+                                    onClick: cswPrivate.makeLocationCombo
+                                }); // imageButton
+                            }
 
-                        cswPrivate.previewCell.css({ width: '24px' });
-                        cswParent.$.hover(function (event) {
-                            Csw.nodeHoverIn(event, {
-                                nodeid: cswPrivate.value,
-                                nodename: cswPrivate.selectedName,
-                                parentDiv: cswPrivate.previewCell,
-                                useAbsolutePosition: false,
-                                rightpad: 0
-                            });
-                        },
-                        function (event) { Csw.nodeHoverOut(event, cswPrivate.value); });
-                    }
+                            cswPrivate.previewCell.css({ width: '24px' });
+                            cswParent.$.hover(function(event) {
+                                Csw.nodeHoverIn(event, {
+                                    nodeid: cswPrivate.value,
+                                    nodename: cswPrivate.selectedName,
+                                    parentDiv: cswPrivate.previewCell,
+                                    useAbsolutePosition: false,
+                                    rightpad: 0
+                                });
+                            },
+                                function(event) { Csw.nodeHoverOut(event, cswPrivate.value); });
+                        }
+                    });
                 }());
                 //#region final ctor
 

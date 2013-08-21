@@ -42,7 +42,7 @@
                 row += 1;
 
                 // Quota table
-                return Csw.ajax.post({
+                return Csw.ajax.deprecatedWsNbt({
                     urlMethod: o.urlMethod,
                     data: {},
                     success: function (result) {
@@ -119,7 +119,7 @@
                         }, false);
                     }, false);
 
-                    Csw.ajax.post({
+                    Csw.ajax.deprecatedWsNbt({
                         urlMethod: o.saveUrlMethod,
                         data: { Quotas: JSON.stringify(quotaJson) },
                         success: function () {

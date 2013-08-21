@@ -55,7 +55,7 @@
                     });
                 }
 
-                Csw.ajax.post({
+                Csw.ajax.deprecatedWsNbt({
                     urlMethod: 'getNodeTypes',
                     data: {
                         PropertySetName: Csw.string(cswPrivate.propertySetName),

@@ -16,8 +16,6 @@
                 onSelect: null,
                 forceFit: true,
                 relatednodeid: '',
-                relatednodetypeid: '',
-                relatedobjectclassid: '',
                 hasMenu: true,
                 readonly: false,
                 height: 200

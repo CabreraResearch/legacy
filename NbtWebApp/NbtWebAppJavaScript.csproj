@@ -82,7 +82,15 @@
     <Content Include="app\composites\csw.quickTip.js" />
     <Content Include="app\composites\csw.tabselect.js" />
     <Content Include="app\core\csw.domNode.js" />
-    <Content Include="app\layouts\csw.addnode.js" />
+    <Content Include="app\db\csw.dbUpdate.js" />
+    <Content Include="app\db\csw.dbSelect.js" />
+    <Content Include="app\db\csw.dbTable.js" />
+    <Content Include="app\db\csw.dbInsert.js" />
+    <Content Include="app\dialogs\csw.alert.js" />
+    <Content Include="app\layouts\csw.dialog.js" />
+    <Content Include="app\dialogs\csw.copynode.js" />
+    <Content Include="app\dialogs\csw.addnode.js" />
+    <Content Include="app\db\csw.dbIndex.js" />
     <Content Include="app\literals\csw.fieldset.js" />
     <Content Include="app\layouts\csw.landingpage.js" />
     <Content Include="app\literals\_template.js" />
@@ -103,11 +111,10 @@
     <Content Include="app\main\csw.mainHandleImpersonation.js" />
     <Content Include="app\main\csw.mainEvents.js" />
     <Content Include="app\main\csw.mainDivs.js" />
-    <Content Include="app\promises\csw.worker.js" />
-    <Content Include="app\promises\csw.indexedDb.js" />
+    <Content Include="app\promises\csw.ajaxDeprecated.js" />
+    <Content Include="app\promises\csw.spinners.js" />
+    <Content Include="app\db\csw.db.js" />
     <Content Include="app\promises\csw.promise.js" />
-    <Content Include="app\promises\csw.worker.js" />
-    <Content Include="app\workers\ajaxWorker.js" />
     <Content Include="app\proptypes\csw.propTypeChildContents.js" />
     <Content Include="app\nodes\csw.node.treeExt.js" />
     <Content Include="app\proptypes\csw.propTypeCASNo.js" />
@@ -151,6 +158,8 @@
     <Content Include="app\proptypes\csw.propTypeUserSelect.js" />
     <Content Include="app\proptypes\csw.propTypeViewPickList.js" />
     <Content Include="app\proptypes\csw.propTypeViewReference.js" />
+    <Content Include="app\tools\csw.clientCache.js" />
+    <Content Include="app\tools\csw.functional.js" />
     <Content Include="app\tools\csw.ext.js" />
     <Content Include="app\tools\csw.validation.js" />
     <Content Include="app\view\csw.vieweditor.js" />
@@ -159,6 +168,7 @@
     <Content Include="app\wizards\csw.reconciliation.js" />
     <Content Include="app\types\csw.casno.js" />
     <Content Include="app\wizards\_template.js" />
+    <Content Include="app\promises\csw.workerXHR.js" />
     <Content Include="Content\jquery.multiselect.css" />
     <Content Include="Content\jquery.multiselect.filter.css" />
     <Content Include="Content\shCore.css" />
@@ -1087,7 +1097,6 @@
     <Content Include="app\composites\csw.imagebutton.js" />
     <Content Include="app\composites\csw.multiselect.js" />
     <Content Include="app\composites\csw.numbertextbox.js" />
-    <Content Include="app\promises\csw.ajax.js" />
     <Content Include="app\types\csw.array.js" />
     <Content Include="app\types\csw.boolean.js" />
     <Content Include="app\core\csw.clientchanges.js" />
@@ -1121,6 +1130,7 @@
     <Content Include="app\tools\csw.pubsub.js" />
     <Content Include="css\csw.vieweditor.css" />
     <Content Include="templates\MainForm_End.txt" />
+    <Content Include="webworkers\ajaxWorker.js" />
     <None Include="Csw2\templates\scripts.tmpl" />
     <None Include="Csw2\templates\header.tmpl" />
     <None Include="Csw2\templates\end.tmpl" />
