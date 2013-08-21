@@ -64,6 +64,7 @@
                 physicalStateModified: false,
                 containersModuleEnabled: true,
                 SDSModuleEnabled: true,
+                AllowSupplierAdd: true,
                 sizesGrid: null
             };
 
@@ -360,13 +361,12 @@
                         cswPrivate.supplierLabel = tbl.cell(3, 1).span();
                         cswPrivate.supplierLabel.setLabelText('Supplier: ', true, false);
 
-                        var allowAddButton = true;
                         var extraOptions = [];
 
                         // If we are importing from C3 with a new supplier, always show the
                         // 'New Supplier Name >>' option instead of the 'New+' button.
                         if (cswPrivate.state.addNewC3Supplier) {
-                            allowAddButton = false;
+                            cswPrivate.AllowSupplierAdd = false;
                             extraOptions.push({ id: '', value: cswPrivate.newSupplierName });
                         }
 
@@ -384,7 +384,7 @@
                             width: '200px',
                             ajaxData: ajaxData,
                             showSelectOnLoad: true,
-                            allowAdd: allowAddButton,
+                            allowAdd: cswPrivate.AllowSupplierAdd,
                             onAfterAdd: changeMaterial,
                             addNodeDialogTitle: 'Vendor',
                             selectedNodeId: cswPrivate.state.supplierId || cswPrivate.state.supplier.val,
@@ -767,6 +767,7 @@
 
                         cswPrivate.containersModuleEnabled = data.ContainersModuleEnabled;
                         cswPrivate.SDSModuleEnabled = data.SDSModuleEnabled;
+                        cswPrivate.AllowSupplierAdd = data.AllowSupplierAdd;
 
                         var stepCount = 0;
                         cswPrivate.wizardSteps = {};
