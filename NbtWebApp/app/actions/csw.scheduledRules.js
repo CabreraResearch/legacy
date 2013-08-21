@@ -179,8 +179,6 @@
                             success: function() {
                                 cswPrivate.makeScheduledRulesGrid();
                             }
-                        }).then(function() {
-                            btn.enable();
                         });
                     }
                 });
