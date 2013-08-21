@@ -33,6 +33,9 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
+            // Scheduled rule for CAFImports
+            _CswNbtSchemaModTrnsctn.createScheduledRule( CswEnumNbtScheduleRuleNames.CAFImport, CswEnumRecurrence.NHours, 1 );
+
             // CAF bindings definitions for Vendors
 
             _importOrderTable = CswNbtImportDefOrder.getDataTableForNewOrderEntries();

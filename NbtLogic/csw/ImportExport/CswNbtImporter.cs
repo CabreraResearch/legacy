@@ -389,7 +389,7 @@ namespace ChemSW.Nbt.ImportExport
         private CswPrimaryKey _ImportOneRow( DataRow ImportRow, CswNbtImportDef BindingDef, CswNbtImportDefOrder Order, bool Overwrite, CswTableUpdate ImportDataUpdate )
         {
             CswPrimaryKey ImportedNodeId = null;
-            string msgPrefix = Order.NodeType.NodeTypeName + " Import (" + ImportRow[CswNbtImportTables.ImportDataN.importdataid].ToString() + "): ";
+            //string msgPrefix = Order.NodeType.NodeTypeName + " Import (" + ImportRow[CswNbtImportTables.ImportDataN.importdataid].ToString() + "): ";
 
             CswNbtNode Node = null;
 
@@ -511,7 +511,7 @@ namespace ChemSW.Nbt.ImportExport
 
                 }
 
-
+                ImportedNodeId = Node.NodeId;
 
                 // Import property values
                 if( isNewNode || Overwrite ) //DataMap.Overwrite )
@@ -601,12 +601,12 @@ namespace ChemSW.Nbt.ImportExport
                     } // foreach( CswNbtMetaDataNodeTypeProp Relationship in RowRelationships )
                     Node.postChanges( false );
 
-                    OnMessage( msgPrefix + "Imported " + ( isNewNode ? "New " : "Existing " ) + Node.NodeName + " (" + Node.NodeId.PrimaryKey.ToString() + ")" );
+                    //OnMessage( msgPrefix + "Imported " + ( isNewNode ? "New " : "Existing " ) + Node.NodeName + " (" + Node.NodeId.PrimaryKey.ToString() + ")" );
                 } // if(isNewNode || Overwrite )
-                else
-                {
-                    OnMessage( msgPrefix + "Skipped  " + Node.NodeName + " (" + Node.NodeId.PrimaryKey.ToString() + ")" );
-                }
+                //else
+                //{
+                //    OnMessage( msgPrefix + "Skipped  " + Node.NodeName + " (" + Node.NodeId.PrimaryKey.ToString() + ")" );
+                //}
 
 
                 // Simplify future imports by saving this nodeid on matching rows
@@ -648,7 +648,7 @@ namespace ChemSW.Nbt.ImportExport
             } // if(false == allEmpty)
             else
             {
-                OnMessage( msgPrefix + "Skipped.  No property values to import." );
+                //OnMessage( msgPrefix + "Skipped.  No property values to import." );
                 // Set a fake nodeid in this row so we can move on
                 //ImportRow[Order.PkColName] = CswConvert.ToDbVal( 0 );
                 //ImportDataUpdate.update( ImportDataTable );
