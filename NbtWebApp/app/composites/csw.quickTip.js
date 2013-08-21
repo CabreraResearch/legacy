@@ -28,7 +28,8 @@
                     anchor: 'left',
                     bodyStyle: {
                         background: '#ffff00'
-                    }
+                    },
+                    onBeforeClose: null
                 };
                 Csw.extend(cswPrivate, options);
 
@@ -36,8 +37,11 @@
 
             cswPublic.close = function () {
                 //closes the quicktip if it was initialized
+                //Note - calling the quickTips close() method here does not trigger the 'beforeclose' listener
                 if (cswPrivate.tip) {
+                    Csw.tryExec(cswPrivate.onBeforeClose);
                     cswPrivate.tip.close();
+                    cswPrivate.tip = null;
                 }
             };
 
@@ -58,7 +62,13 @@
                             autoHide: cswPrivate.autoHide,
                             closable: cswPrivate.closable,
                             anchor: cswPrivate.anchor,
-                            bodyStyle: cswPrivate.bodyStyle
+                            bodyStyle: cswPrivate.bodyStyle,
+                            listeners: {
+                                beforeclose: function () {
+                                    Csw.tryExec(cswPrivate.onBeforeClose);
+                                    return true;
+                                }
+                            }
                         });
                     } catch(e) {
                         Csw.debug.error('Failed to create Ext.tip.ToolTip in csw.quickTip');
