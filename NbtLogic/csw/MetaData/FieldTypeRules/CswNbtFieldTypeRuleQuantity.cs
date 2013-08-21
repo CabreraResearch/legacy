@@ -196,6 +196,11 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             return RetView;
         }
 
+        public string getHelpText()
+        {
+            return string.Empty;
+        }
+
     }//ICswNbtFieldTypeRule
 
 }//namespace ChemSW.Nbt.MetaData

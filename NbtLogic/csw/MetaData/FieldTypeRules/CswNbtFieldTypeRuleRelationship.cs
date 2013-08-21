@@ -217,6 +217,11 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             }
         }
 
+        public string getHelpText()
+        {
+            return string.Empty;
+        }
+
     }//CswNbtFieldTypeRuleRelationship
 
 }//namespace ChemSW.Nbt.MetaData
