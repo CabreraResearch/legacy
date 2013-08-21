@@ -5,7 +5,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update for making the missing NodeTypeProps
     /// </summary>
-    public class RunBeforeEveryExecutionOfUpdater_MakeMissingNodeTypeProps : CswUpdateSchemaTo
+    public class RunAlways_MakeMissingNodeTypePropsProps : CswUpdateSchemaTo
     {
         public static string Title = "Run Always: MakeMissingNodeTypeProps";
 

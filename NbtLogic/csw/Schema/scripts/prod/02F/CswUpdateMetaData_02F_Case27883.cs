@@ -7,7 +7,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Updates the schema for OC changes
     /// </summary>
-    public class RunBeforeEveryExecutionOfUpdater_02F_Case27883 : CswUpdateSchemaTo
+    public class CswUpdateMetaData_02F_Case27883 : CswUpdateSchemaTo
     {
         public static string Title = "Pre-Script: Case 27883";
 

@@ -45,20 +45,22 @@ namespace ChemSW.Nbt.Schema
 
             #region MetaData Scripts
 
-            _addVersionedScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02F_Case30228() ) );
-            _addVersionedScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02F_Case30281() ) );
-            _addVersionedScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02F_Case30251() ) );
-            _addVersionedScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02F_Case30251B() ) );
-            _addVersionedScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02F_Case30082_UserCache() ) );
-            _addVersionedScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02F_Case27883() ) );
+            // e.g. _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateMetaData_02F_CaseXXXXX() ) );
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateMetaData_02F_Case30228() ) );
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateMetaData_02F_Case30281() ) );
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateMetaData_02F_Case30251() ) );
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateMetaData_02F_Case30251B() ) );
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateMetaData_02F_Case30082_UserCache() ) );
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateMetaData_02F_Case27883() ) );
 
             #endregion MetaData Scripts
 
             // This is the MakeMissingNodeTypeProps script. If you have a script which contains OC changes, put it before this script.
-            _addVersionedScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_MakeMissingNodeTypeProps() ) );
+            _addVersionedScript( new CswSchemaUpdateDriver( new RunAlways_MakeMissingNodeTypePropsProps() ) );
 
             #region Data Scripts
 
+            // e.g. _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02F_CaseXXXXX() ) );
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02F_Case30281() ) );
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02F_Case28998() ) );
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02F_Case29973() ) );
