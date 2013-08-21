@@ -503,7 +503,7 @@
             //#region _postCtor
 
             (function _relationship() {
-                if (false === cswPrivate.isClickable) { //case 28180 - relationships not clickable from audit history grid
+                if (false === cswPrivate.isClickable) {
                     cswPrivate.nodeTextCell = cswPrivate.table.cell(1, cswPrivate.textCellCol);
                     cswPrivate.nodeText = cswPrivate.nodeTextCell.span({
                         text: cswPrivate.selectedName
@@ -520,7 +520,7 @@
                     }
                 } // if-else (o.ReadOnly) {
 
-                if (false !== cswPrivate.usePreview) {
+                if (false !== cswPrivate.usePreview && cswPrivate.isClickable) {
                     cswPrivate.table.cell(1, cswPrivate.previewCellCol).css({ width: '24px' });
                     cswPublic.$.hover(
                         function (event) {
