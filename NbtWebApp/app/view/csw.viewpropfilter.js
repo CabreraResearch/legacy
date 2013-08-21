@@ -223,7 +223,7 @@
                                 cswPrivate.selectedValue = Csw.string(cswPrivate.valueControl.val().date);
                             }
                         });
-                        
+
                         cswPrivate.renderHelpBtn();
 
                         // LIST
@@ -281,30 +281,26 @@
                     if (cswPrivate.filterModeControl.val() === 'Null' || cswPrivate.filterModeControl.val() === 'NotNull') {
                         cswPrivate.valueControl.hide();
                         cswPrivate.selectedValue = '';
-                        if (cswPrivate.helpButton) {
-                            cswPrivate.helpButton.hide();
+                        if (cswPrivate.helpIcon) {
+                            cswPrivate.helpIcon.hide();
                         }
                     }
                 } // if(cswPrivate.readOnly)
             }; // makeFilterValueControl()
 
-            cswPrivate.renderHelpBtn = function() {
+            cswPrivate.renderHelpBtn = function () {
                 if (false === Csw.isNullOrEmpty(cswPrivate.propsData.helptext)) {
-                    cswPrivate.helpButton = cswPrivate.helpDiv.buttonExt({
-                        name: 'helpButton',
-                        hasText: false,
-                        //disableOnClick: false,
-                        icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.questionmark),
-                        onClick: function() {
-                            cswPrivate.tip = cswPrivate.helpButton.quickTip({
-                                anchor: 'bottom',
-                                autoHide: false,
-                                html: cswPrivate.propsData.helptext,
-                                onBeforeClose: function() {
-                                    cswPrivate.tip = null;
-                                    cswPrivate.helpButton.enable();
-                                },
-                            });
+                    cswPrivate.helpIcon = cswPrivate.helpDiv.icon({
+                        iconType: Csw.enums.iconType.questionmark,
+                        isButton: true,
+                        onHoverOver: function () {
+                            if (!cswPrivate.tip) {
+                                cswPrivate.tip = cswPrivate.helpIcon.quickTip({
+                                    anchor: 'bottom',
+                                    autoHide: false,
+                                    html: cswPrivate.propsData.helptext
+                                });
+                            }
                         }
                     });
                 }
@@ -373,7 +369,7 @@
                 });
             }; // makefilter()
 
-            cswPublic.closeTip = function() {
+            cswPublic.closeTip = function () {
                 if (cswPrivate.tip) {
                     cswPrivate.tip.close();
                 }
