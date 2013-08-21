@@ -355,6 +355,19 @@ namespace ChemSW.Nbt.ImportExport
                             break;
                         }
                     } // foreach( CswNbtMetaDataNodeType NodeType in _ImportOrder.Values )
+
+                    if( RowsImported == 0 )
+                    {
+                        DataMap.Completed = true;
+
+                        // If all datamaps are completed, set dateended on job
+                        CswNbtImportDataJob Job = new CswNbtImportDataJob(_CswNbtResources, DataMap.ImportDataJobId);
+                        if( null == Job.Maps.FirstOrDefault( map => map.Completed == false ) )
+                        {
+                            Job.DateEnded = DateTime.Now;
+                        }
+                    }
+
                 } // if( Bindings.Count > 0 && ImportOrder.count > 0)
                 else
                 {
@@ -366,20 +379,7 @@ namespace ChemSW.Nbt.ImportExport
                 throw new Exception( "Invalid Source Table: " + ImportDataTableName );
             }
 
-            bool MoreToDo = ( RowsImported != 0 );
-
-            if( false == MoreToDo )
-            {
-                // Set 'completed' = true
-                CswTableUpdate ImportDataMapUpdate = _CswNbtResources.makeCswTableUpdate( "ImportRows_DataMap_Update", CswNbtImportTables.ImportDataMap.TableName );
-                DataTable ImportDataMapTable = ImportDataMapUpdate.getTable( "where " + CswNbtImportTables.ImportDataMap.datatablename + " = '" + ImportDataTableName + "'" );
-                if( ImportDataMapTable.Rows.Count > 0 )
-                {
-                    ImportDataMapTable.Rows[0][CswNbtImportTables.ImportDataMap.completed] = CswConvert.ToDbVal( true );
-                    ImportDataMapUpdate.update( ImportDataMapTable );
-                }
-            }
-            return MoreToDo;
+            return ( RowsImported != 0 );
         } // ImportRows()
 
         /// <summary>

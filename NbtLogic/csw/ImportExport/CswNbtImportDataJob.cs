@@ -77,7 +77,16 @@ namespace ChemSW.Nbt.ImportExport
         public DateTime DateEnded
         {
             get { return CswConvert.ToDateTime( _row[CswNbtImportTables.ImportDataJob.dateended] ); }
-            private set { }
+            set 
+            {
+                CswTableUpdate ImportDataJobUpdate = _CswNbtResources.makeCswTableUpdate( "Importer_DataJob_Update", CswNbtImportTables.ImportDataJob.TableName );
+                DataTable ImportDataJobTable = ImportDataJobUpdate.getTable( CswNbtImportTables.ImportDataJob.PkColumnName, this.ImportDataJobId );
+                if( ImportDataJobTable.Rows.Count > 0 )
+                {
+                    ImportDataJobTable.Rows[0][CswNbtImportTables.ImportDataJob.dateended] = CswConvert.ToDbVal( value );
+                    ImportDataJobUpdate.update( ImportDataJobTable );
+                }
+            }
         }
 
         [DataMember]

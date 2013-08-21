@@ -16,7 +16,7 @@ namespace ChemSW.Nbt.ImportExport
 
         public CswNbtImportDataMap( CswNbtResources CswNbtResources, string ImportDataTableName )
         {
-            CswTableSelect ImportDataMapSelect = CswNbtResources.makeCswTableSelect( "Importer_DataMap_Update", CswNbtImportTables.ImportDataMap.TableName );
+            CswTableSelect ImportDataMapSelect = CswNbtResources.makeCswTableSelect( "Importer_DataMap_Select", CswNbtImportTables.ImportDataMap.TableName );
             DataTable ImportDataMapTable = ImportDataMapSelect.getTable( "where " + CswNbtImportTables.ImportDataMap.datatablename + " = '" + ImportDataTableName + "'" );
             if( ImportDataMapTable.Rows.Count > 0 )
             {
@@ -62,6 +62,16 @@ namespace ChemSW.Nbt.ImportExport
         public bool Completed
         {
             get { return CswConvert.ToBoolean( _row[CswNbtImportTables.ImportDataMap.completed] ); }
+            set
+            {
+                CswTableUpdate ImportDataMapUpdate = _CswNbtResources.makeCswTableUpdate( "Importer_DataMap_Update", CswNbtImportTables.ImportDataMap.TableName );
+                DataTable ImportDataMapTable = ImportDataMapUpdate.getTable( CswNbtImportTables.ImportDataMap.PkColumnName, this.ImportDataMapId );
+                if( ImportDataMapTable.Rows.Count > 0 )
+                {
+                    ImportDataMapTable.Rows[0][CswNbtImportTables.ImportDataMap.completed] = CswConvert.ToDbVal( value );
+                    ImportDataMapUpdate.update( ImportDataMapTable );
+                }
+            }
         }
 
         public void getStatus( out Int32 RowsDone,
