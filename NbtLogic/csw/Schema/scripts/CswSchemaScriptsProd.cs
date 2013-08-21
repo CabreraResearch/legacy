@@ -7,7 +7,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Keeps the schema up-to-date
     /// </summary>
-    public class CswSchemaScriptsProd: ICswSchemaScripts
+    public class CswSchemaScriptsProd : ICswSchemaScripts
     {
         private CswNbtResources _CswNbtResources = null;
 
@@ -43,7 +43,6 @@ namespace ChemSW.Nbt.Schema
 
             #endregion
 
-
             #region MetaData Scripts
 
             _addVersionedScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02F_Case30228() ) );
@@ -59,7 +58,6 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_MakeMissingNodeTypeProps() ) );
 
             #region Data Scripts
-
 
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02F_Case30281() ) );
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02F_Case28998() ) );
