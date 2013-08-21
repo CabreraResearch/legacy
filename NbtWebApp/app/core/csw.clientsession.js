@@ -160,6 +160,18 @@
         }
         Csw.tryExec(cswPrivate.onAuthenticate, cswPrivate.UserName);
         Csw.cookie.set(Csw.cookie.cookieNames.UserDefaults, JSON.stringify(data));
+
+        if (data.SchemaData) {
+            if (false == data.SchemaData.CorrectVersion) {
+                var errorobj = {
+                    'type': data.SchemaData.ErrorMessage.Type,
+                    'message': data.SchemaData.ErrorMessage.Message,
+                    'detail': data.SchemaData.ErrorMessage.Detail,
+                    'display': true
+                };
+                Csw.error.showError(errorobj);
+            }
+        }
     };
 
     Csw.clientSession.login = Csw.clientSession.login ||
@@ -300,7 +312,11 @@
                     Csw.tryExec(o.success);
                     break;
                 case 'ShowLicense':
-                    $.CswDialog('ShowLicenseDialog', {});
+                    $.CswDialog('ShowLicenseDialog', {onAccept: function() {
+                        if (false == Csw.isNullOrEmpty(cswPrivate.SchemaStatus)) {
+                            Csw.error.showError(cswPrivate.SchemaStatus.ErrorObj);
+                        }
+                    }});
                     Csw.tryExec(o.success);
                     break;
                 case 'Ignore':

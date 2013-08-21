@@ -1,8 +1,10 @@
 using System;
 using System.Runtime.Serialization;
 using ChemSW.Core;
+using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.Schema;
 using ChemSW.WebSvc;
 using NbtWebApp.WebSvc.Returns;
 
@@ -35,6 +37,15 @@ namespace ChemSW.Nbt.WebServices
             public CswNbtUserDefaultsData Data;
         }
 
+        [DataContract]
+        public class SchemaDetails
+        {
+            [DataMember]
+            public bool CorrectVersion;
+            [DataMember]
+            public CswWebSvcReturnBase.ErrorMessage ErrorMessage;
+        }
+
         /// <summary>
         /// Return Object for Login Data
         /// </summary>
@@ -52,6 +63,10 @@ namespace ChemSW.Nbt.WebServices
         [DataContract]
         public class CswNbtUserDefaultsData : CswWebSvcReturnBase.Data
         {
+            public CswNbtUserDefaultsData()
+            {
+                SchemaData = new SchemaDetails();
+            }
             [DataMember]
             public string DefaultLocationId;
             [DataMember]
@@ -66,8 +81,35 @@ namespace ChemSW.Nbt.WebServices
             public string DateFormat;
             [DataMember]
             public string TimeFormat;
+            [DataMember]
+            public SchemaDetails SchemaData;
         }
 
+        private static SchemaDetails _checkSchemaVersion( CswNbtResources CswNbtResources )
+        {
+            SchemaDetails Ret = new SchemaDetails(); ;
+
+            CswSchemaScriptsProd CswSchemaScriptsProd = new CswSchemaScriptsProd( CswNbtResources );
+
+            CswSchemaVersion CurrentVersion = CswSchemaScriptsProd.CurrentVersion( CswNbtResources );
+            CswSchemaVersion LatestVersion = CswSchemaScriptsProd.LatestVersion;
+
+            if( CurrentVersion < LatestVersion )
+            {
+                Ret.CorrectVersion = false;
+                CswWebSvcReturnBase.ErrorMessage Error = new CswWebSvcReturnBase.ErrorMessage();
+                Error.Type = CswEnumErrorType.Error;
+                Error.Message = "The current schema is not updated to the latest version. The application may not work correctly. Please contact your adminstrator.";
+                Error.Detail = "The current schema is at version " + CurrentVersion + " and the latest version is version " + LatestVersion + ".";
+                Ret.ErrorMessage = Error;
+            }
+            else
+            {
+                Ret.CorrectVersion = true;
+            }
+
+            return Ret;
+        }
 
         public static void getDefaults( ICswResources CswResources, CswNbtAuthReturn Ret, CswWebSvcSessionAuthenticateData.Authentication.Request Request )
         {
@@ -94,6 +136,9 @@ namespace ChemSW.Nbt.WebServices
             }
             Ret.Data.DateFormat = NbtResources.CurrentNbtUser.DateFormat;
             Ret.Data.TimeFormat = NbtResources.CurrentNbtUser.TimeFormat;
+
+            SchemaDetails SchemaDetails = _checkSchemaVersion( NbtResources );
+            Ret.Data.SchemaData = SchemaDetails;
         }
 
         public static void doNothing( ICswResources CswResources, object Ret, object Req )
