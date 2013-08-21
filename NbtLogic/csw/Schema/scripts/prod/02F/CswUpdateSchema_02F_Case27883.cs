@@ -25,11 +25,6 @@ namespace ChemSW.Nbt.Schema
             get { return "02F_Case27883_B"; }
         }
 
-        public override bool AlwaysRun
-        {
-            get { return false; }
-        }
-
         public override void update()
         {
             //Set the default value for the Available Work Units prop

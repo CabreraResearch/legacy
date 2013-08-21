@@ -16,11 +16,6 @@ namespace ChemSW.Nbt.Schema
             get { return "02F_Case30082_UserCache_A"; }
         }
 
-        public override bool AlwaysRun
-        {
-            get { return false; }
-        }
-
         #region Blame Logic
 
         public override CswEnumDeveloper Author

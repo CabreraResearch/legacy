@@ -84,7 +84,10 @@ namespace ChemSW.Nbt.Schema
         /// <summary>
         /// Whether the script should be run always
         /// </summary>
-        public abstract bool AlwaysRun { get; }
+        public virtual bool AlwaysRun
+        {
+            get { return false; }
+        }
 
         /// <summary>
         /// Get the Case number as a link to FogBugz

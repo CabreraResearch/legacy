@@ -22,11 +22,6 @@ namespace ChemSW.Nbt.Schema
             get { return "02F_CaseXXXXX"; }
         }
 
-        public override bool AlwaysRun
-        {
-            get { return false; }
-        }
-
         public override void update()
         {
             // This is a placeholder script that does nothing.

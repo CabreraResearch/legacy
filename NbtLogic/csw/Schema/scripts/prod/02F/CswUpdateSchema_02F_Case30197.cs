@@ -22,11 +22,6 @@ namespace ChemSW.Nbt.Schema
             get { return "02F_Case30197"; }
         }
 
-        public override bool AlwaysRun
-        {
-            get { return false; }
-        }
-
         public override void update()
         {
             //if( _CswNbtSchemaModTrnsctn.isMaster() )

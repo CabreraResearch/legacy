@@ -24,11 +24,6 @@ namespace ChemSW.Nbt.Schema
             get { return "02F_Case29542"; }
         }
 
-        public override bool AlwaysRun
-        {
-            get { return false; }
-        }
-
         public override void update()
         {
             CswNbtMetaDataObjectClass RoleOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.RoleClass );

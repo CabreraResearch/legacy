@@ -25,11 +25,6 @@ namespace ChemSW.Nbt.Schema
             get { return "02F_Case30082_UserCache_B"; }
         }
 
-        public override bool AlwaysRun
-        {
-            get { return false; }
-        }
-
         public override void update()
         {
             CswNbtMetaDataObjectClass UserOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.UserClass );

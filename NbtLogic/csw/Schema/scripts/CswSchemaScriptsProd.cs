@@ -73,7 +73,7 @@ namespace ChemSW.Nbt.Schema
 
             #region Before Scripts
 
-            // We now only have two before scripts that always run -- Do not add anymore scripts to this list.
+            // Before scripts that always run.
             _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02SQL() ), RunBeforeEveryExecutionOfUpdater_02SQL.Title );
             _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_03() ), RunBeforeEveryExecutionOfUpdater_03.Title );
 
@@ -81,6 +81,7 @@ namespace ChemSW.Nbt.Schema
 
             #region After Script
 
+            // After scripts that always run.
             _addRunAfterScript( new CswSchemaUpdateDriver( new RunAfterEveryExecutionOfUpdater_01() ), RunAfterEveryExecutionOfUpdater_01.Title );
 
             #endregion After Script
@@ -259,7 +260,6 @@ namespace ChemSW.Nbt.Schema
                 }
                 else
                 {
-                    // TODO: If we end up having more 'RunAlways' scripts in the future, this will need to be altered
                     CswSchemaUpdateDriver.SchemaVersion = new CswSchemaVersion( 0, '#', 0 );
                     CswSchemaUpdateDriver.Description = "Run Always Script: " + CswSchemaUpdateDriver.ScriptName;
                     _UpdateDrivers.Add( CswSchemaUpdateDriver.SchemaVersion, CswSchemaUpdateDriver );

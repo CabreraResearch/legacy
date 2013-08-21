@@ -27,11 +27,6 @@ namespace ChemSW.Nbt.Schema
             get { return "02F_Case30281_B"; }
         }
 
-        public override bool AlwaysRun
-        {
-            get { return false; }
-        }
-
         public override void update()
         {
             _CswNbtSchemaModTrnsctn.createAction( CswEnumNbtActionName.Container_Expiration_Lock, false, String.Empty, "Containers" );
