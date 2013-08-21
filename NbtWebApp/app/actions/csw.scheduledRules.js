@@ -161,7 +161,7 @@
                     }
                 });
 
-                customerIdTable.cell(1, 3).buttonExt({
+                var btn = customerIdTable.cell(1, 3).buttonExt({
                     name: 'updateRules',
                     icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.save),
                     enabledText: 'Save Changes',
@@ -179,6 +179,8 @@
                             success: function() {
                                 cswPrivate.makeScheduledRulesGrid();
                             }
+                        }).then(function() {
+                            btn.enable();
                         });
                     }
                 });
