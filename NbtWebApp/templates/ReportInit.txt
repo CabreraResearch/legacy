@@ -2,10 +2,9 @@
 
         $(document).ready(function () {
 
-            function stopSpinner() {
+            $(document).ajaxStop(function stopSpinner() {
                 $('#spinner').hide();
-            }
-            Csw.subscribe(Csw.enums.events.ajax.globalAjaxStop, stopSpinner);
+            });
 
             var qs = Csw.queryString();
 
@@ -75,9 +74,9 @@
 
         function runReport(reportid, rformat, params) {
 
-            function startSpinner() {
+            $(document).ajaxSend(function startSpinner() {
                 $('#spinner').show();
-            }
+            });
 
             var reportParams = [];
             for (var item in params) {
@@ -89,9 +88,7 @@
             } else if ('crystal' == rformat.toLowerCase()) {
                 postForm(reportid, params, 'report.aspx');
             } else {
-
-                Csw.subscribe(Csw.enums.events.ajax.globalAjaxStart, startSpinner);
-
+                
                 Csw.ajaxWcf.post({
                     urlMethod: 'Reports/report',
                     data: {

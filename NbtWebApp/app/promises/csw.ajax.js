@@ -186,12 +186,6 @@
         return Csw.promises.ajax(ajax);
     });
     
-    Csw.ajax.ajaxInProgress = Csw.ajax.ajaxInProgress ||
-        Csw.ajax.register('ajaxInProgress', function () {
-            /// <summary> Evaluates whether a pending ajax request is still open. </summary>
-            return (window.name.ajaxCount > 0);
-        });
-
     Csw.ajax.get = Csw.ajax.get ||
         Csw.ajax.register('get', function (options, type) {
             /// <summary>
