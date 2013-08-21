@@ -150,10 +150,10 @@
             }
         });
 
-    var onLoginSuccess = function(data) {
+    var onLoginSuccess = function (data) {
         //Csw.cookie.set(Csw.cookie.cookieNames.CustomerId, cswPrivate.AccessId);
         //Csw.clientSession.setUsername(cswPrivate.UserName);
-        
+
         //Case 29617: Once a logout path has been set, do not mutate it.
         if (Csw.isNullOrEmpty(Csw.cookie.get(Csw.cookie.cookieNames.LogoutPath))) {
             Csw.cookie.set(Csw.cookie.cookieNames.LogoutPath, cswPrivate.logoutpath);
@@ -187,17 +187,6 @@
             }); // ajax
         });
 
-    //Csw.clientSession.setUsername = Csw.clientSession.setUsername ||
-    //    Csw.clientSession.register('setUsername', function (username) {
-    //        Csw.cookie.set(Csw.cookie.cookieNames.Username, username);
-    //    });
-    
-    //Csw.clientSession.setAccessId = Csw.clientSession.setAccessId ||
-    //    Csw.clientSession.register('setAccessId', function (accessid) {
-    //        Csw.cookie.set(Csw.cookie.cookieNames.CustomerId, accessid);
-    //    });
-
-
     Csw.clientSession.logout = Csw.clientSession.logout ||
         Csw.clientSession.register('logout', function (options) {
             ///<summary>End the current session.</summary>
@@ -207,7 +196,7 @@
             return Csw.ajaxWcf.post({
                 urlMethod: 'Session/EndWithAuth',
                 data: {},
-                complete: function() {
+                complete: function () {
                     Csw.clientSession.finishLogout();
                 }
             });
@@ -231,6 +220,7 @@
             ///<summary>Each web request will authenticate. Depending on the current authentication status, ajax onSuccess methods may need to change.</summary>
             var o = {
                 status: '',
+                txt: '',
                 success: function () {
                 },
                 failure: function () {
@@ -242,81 +232,34 @@
             };
             Csw.extend(o, options);
 
-            var txt = null;
-            switch (o.status) {
-                case 'Authenticated':
-                    o.success();
-                    break;
-                case 'Archived':
-                    txt = 'Your account is archived. Please see your account administrator.';
-                    break;
-                case 'Deauthenticated':
-                    o.success(); // yes, o.success() is intentional here.
-                    break;
-                case 'Failed':
-                    txt = 'Invalid login.';
-                    break;
-                case 'Locked':
-                    txt = 'Your account is locked.  Please see your account administrator.';
-                    break;
-                case 'Deactivated':
-                    txt = 'Your account is deactivated.  Please see your account administrator.';
-                    break;
-                case 'NoLicense':
-                    txt = 'An administrator must agree to the terms of use before this application can be activated.';
-                    break;
-                case 'ModuleNotEnabled':
-                    txt = 'This feature is not enabled.  Please see your account administrator.';
-                    break;
-                case 'TooManyUsers':
-                    txt = 'Too many users are currently connected.  Try again later.';
-                    break;
-                case 'NonExistentAccessId':
-                    txt = 'Invalid login.';
-                    break;
-                case 'NonExistentSession':
-                    txt = 'Your session has timed out.  Please login again.';
-                    break;
-                case 'Unknown':
-                    txt = 'An Unknown Error Occurred';
-                    break;
-                case 'TimedOut':
-                    txt = 'Your session has timed out.  Please login again.';
-                    break;
-                case 'ExpiredPassword':
-                    $.CswDialog('ChangePasswordDialog', {
-//                        currentNodeId: o.data.ExpirationReset.UserId,
-//                        currentNodeKey: o.data.ExpirationReset.UserKey,
-//                        filterToPropId: o.data.ExpirationReset.PasswordId,
-//                        title: 'Your password has expired.  Please change it now:',
-//                        onEditNode: function () {
-//                            Csw.tryExec(o.success);
-//                        }
-                        UserId: o.data.ExpirationReset.UserId,
-                        UserKey: o.data.ExpirationReset.UserKey,
-                        PasswordId: o.data.ExpirationReset.PasswordId,
-                        onSuccess: function () {}
-                    });
-                    Csw.tryExec(o.success);
-                    break;
-                case 'ShowLicense':
-                    $.CswDialog('ShowLicenseDialog', {});
-                    Csw.tryExec(o.success);
-                    break;
-                case 'Ignore':
-                    Csw.tryExec(o.success());
-                    break;
+            var txt = o.txt;
+            if (o.status === 'Authenticated') {
+                Csw.tryExec(o.success());
+            } else {
+                switch (o.status) {
+                    case 'ExpiredPassword':
+                        $.CswDialog('ChangePasswordDialog', {
+                            UserId: o.data.ExpirationReset.UserId,
+                            UserKey: o.data.ExpirationReset.UserKey,
+                            PasswordId: o.data.ExpirationReset.PasswordId,
+                            onSuccess: function () {
+                            }
+                        });
+                        break;
+                    case 'ShowLicense':
+                        $.CswDialog('ShowLicenseDialog', {});
                 case 'AlreadyLoggedIn':
                     $.CswDialog('LogoutExistingSessionsDialog', o.success);
                     break;
-                default:
-                    txt = 'An error occurred';
-                    break;
-            }
-            if (false === Csw.isNullOrEmpty(txt)) {
-                Csw.tryExec(o.failure, txt, o.status);
-            }
+                        break;
+                }
 
+                if (!txt) {
+                    Csw.tryExec(o.success());
+                } else {
+                    Csw.tryExec(o.failure, txt, o.status);
+                }
+            }
         });
 
     Csw.clientSession.isAdministrator = Csw.clientSession.isAdministrator ||
@@ -352,4 +295,4 @@
             }
             return ret;
         }); // userDefaults()
-} ());
+}());

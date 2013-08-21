@@ -6,6 +6,7 @@ using ChemSW.Exceptions;
 using ChemSW.Log;
 using ChemSW.MtSched.Core;
 using ChemSW.Nbt.Actions;
+using ChemSW.Nbt.ImportExport;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
@@ -1742,6 +1743,11 @@ namespace ChemSW.Nbt.Schema
         //    return( _search.Results() ); 
 
         //}//doSearch()
+
+        public CswNbtImporter makeCswNbtImporter()
+        {
+            return new CswNbtImporter( _CswNbtResources );
+        }
 
 
     }//class CswNbtSchemaModTrnsctn

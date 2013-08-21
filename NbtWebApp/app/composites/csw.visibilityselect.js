@@ -133,7 +133,10 @@
                                 });
 
                                 cswPrivate.toggle(cswPrivate.visibility);
-                            } // yes
+                            }, // yes
+                            'No': function () {
+                                cswPrivate.onRenderFinish();
+                            }
                         }); // IsAdministrator     
                     }
                 });
