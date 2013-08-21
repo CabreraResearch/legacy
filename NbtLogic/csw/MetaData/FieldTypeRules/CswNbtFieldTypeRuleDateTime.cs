@@ -77,7 +77,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
         public string getHelpText()
         {
-            return string.Empty;
+            return "Enter \"today\" follow by a \"+\" or \"-\" and then a number to use todays date plus/minus the number of days specified";
         }
 
     }//CswNbtFieldTypeRuleDateTime
