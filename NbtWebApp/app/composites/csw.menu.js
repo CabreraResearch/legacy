@@ -5,6 +5,157 @@
 (function () {
     'use strict';
 
+    var menuAction = Csw.object();
+    menuAction.add('About', function () { $.CswDialog('AboutDialog'); });
+    menuAction.add('AddNode', function (privateScope, menuItemName, menuItemJson, menuItem) {
+        Csw.dialogs.addnode({
+            title: 'Add New ' + menuItemName,
+            nodetypeid: Csw.string(menuItemJson.nodetypeid),
+            relatednodeid: Csw.string(menuItemJson.relatednodeid), //for Grid Props
+            onAddNode: privateScope.onAlterNode
+        });
+    });
+    menuAction.add('AddFeedback', function (privateScope, menuItemName, menuItemJson, menuItem) {
+        $.CswDialog('AddFeedbackDialog', {
+            text: menuItemName,
+            nodetypeid: Csw.string(menuItemJson.nodetypeid),
+            onAddNode: privateScope.onAlterNode
+        });
+    });
+    menuAction.add('Clear Cache', function (privateScope, menuItemName, menuItemJson, menuItem) {
+        if (Csw.clientChanges.manuallyCheckChanges()) {
+            window.location.reload(true);
+        }
+    });
+    menuAction.add('DeleteNode', function (privateScope, menuItemName, menuItemJson, menuItem) {
+        Csw.clientChanges.unsetChanged();
+        $.CswDialog('DeleteNodeDialog', {
+            nodes: privateScope.getSelectedNodes(menuItemJson),
+            onDeleteNode: privateScope.onAlterNode,
+            nodeTreeCheck: privateScope.nodeTreeCheck,
+            Multi: privateScope.Multi
+        });
+    });
+    menuAction.add('editview', function (privateScope, menuItemName, menuItemJson, menuItem) {
+        if (Csw.clientChanges.manuallyCheckChanges()) {
+            Csw.tryExec(privateScope.onEditView, Csw.string(menuItemJson.viewid));
+            return true;  //isWholePageNavigation
+        }
+    });
+    menuAction.add('CopyNode', function (privateScope, menuItemName, menuItemJson, menuItem) {
+        if (Csw.clientChanges.manuallyCheckChanges()) {
+            Csw.dialogs.copynode({
+                copyType: Csw.string(menuItemJson.copytype),
+                nodename: Csw.string(menuItemJson.nodename),
+                nodeid: Csw.string(menuItemJson.nodeid),
+                nodetypeid: Csw.string(menuItemJson.nodetypeid),
+                onCopyNode: privateScope.onAlterNode
+            });
+        }
+    });
+    menuAction.add('PrintView', function (privateScope, menuItemName, menuItemJson, menuItem) { Csw.tryExec(privateScope.onPrintView); });
+    menuAction.add('PrintLabel', function (privateScope, menuItemName, menuItemJson, menuItem) {
+        $.CswDialog('PrintLabelDialog', {
+            nodes: privateScope.getSelectedNodes(menuItemJson),
+            nodetypeid: Csw.string(menuItemJson.nodetypeid)
+        });
+    });
+    menuAction.add('Logout', function (privateScope, menuItemName, menuItemJson, menuItem) {
+        if (Csw.clientChanges.manuallyCheckChanges()) {
+            Csw.tryExec(privateScope.onLogout);
+            return true;  //isWholePageNavigation
+        }
+    });
+    menuAction.add('Home', function (privateScope, menuItemName, menuItemJson, menuItem) {
+        var enable = function () {
+            menuItem.enable();
+        };
+        menuItem.disable();
+        if (Csw.clientChanges.manuallyCheckChanges()) {
+            Csw.goHome().then(enable);
+            return true;  //isWholePageNavigation
+        } else {
+            enable();
+        }
+    });
+    menuAction.add('Profile', function (privateScope, menuItemName, menuItemJson, menuItem) {
+        $.CswDialog('EditNodeDialog', {
+            currentNodeId: menuItemJson.userid,
+            filterToPropId: '',
+            title: 'User Profile',
+            onEditNode: null // function (nodeid, nodekey) { }
+        });
+    });
+    menuAction.add('multiedit', function (privateScope, menuItemName, menuItemJson, menuItem) { Csw.tryExec(privateScope.onMultiEdit); });
+    menuAction.add('SaveViewAs', function (privateScope, menuItemName, menuItemJson, menuItem) {
+        $.CswDialog('AddViewDialog', {
+            viewid: Csw.string(menuItemJson.viewid),
+            viewmode: Csw.string(menuItemJson.viewmode),
+            onAddView: privateScope.onSaveView
+        });
+    });
+    menuAction.add('Quotas', function (privateScope, menuItemName, menuItemJson, menuItem) {
+        if (Csw.clientChanges.manuallyCheckChanges()) {
+            Csw.tryExec(privateScope.onQuotas);
+            return true;  //isWholePageNavigation
+        }
+    });
+    menuAction.add('Manage Locations', function (privateScope, menuItemName, menuItemJson, menuItem) {
+        if (Csw.clientChanges.manuallyCheckChanges()) {
+            Csw.tryExec(privateScope.onQuotas);
+            return true;  //isWholePageNavigation
+        }
+    });
+    menuAction.add('Delete Demo Data', function (privateScope, menuItemName, menuItemJson, menuItem) {
+        if (Csw.clientChanges.manuallyCheckChanges()) {
+            Csw.tryExec(privateScope.onQuotas);
+            return true;  //isWholePageNavigation
+        }
+    });
+    menuAction.add('Modules', function (privateScope, menuItemName, menuItemJson, menuItem) {
+        if (Csw.clientChanges.manuallyCheckChanges()) {
+            Csw.tryExec(privateScope.onModules);
+            return true;  //isWholePageNavigation
+        }
+    });
+    menuAction.add('Sessions', function (privateScope, menuItemName, menuItemJson, menuItem) {
+        if (Csw.clientChanges.manuallyCheckChanges()) {
+            Csw.tryExec(privateScope.onSessions);
+            return true;  //isWholePageNavigation
+        }
+    });
+    menuAction.add('Subscriptions', function (privateScope, menuItemName, menuItemJson, menuItem) {
+        if (Csw.clientChanges.manuallyCheckChanges()) {
+            Csw.tryExec(privateScope.onSubscriptions);
+            return true;  //isWholePageNavigation
+        }
+    });
+    menuAction.add('Impersonate', function (privateScope, menuItemName, menuItemJson, menuItem) {
+        if (Csw.clientChanges.manuallyCheckChanges()) {
+            $.CswDialog('ImpersonateDialog', { onImpersonate: privateScope.onImpersonate });
+        }
+    });
+    menuAction.add('Submit_Request', function (privateScope, menuItemName, menuItemJson, menuItem) {
+        if (Csw.clientChanges.manuallyCheckChanges()) {
+            Csw.tryExec(privateScope.onSubmitRequest);
+            return true;  //isWholePageNavigation
+        }
+    });
+    menuAction.add('Login Data', function (privateScope, menuItemName, menuItemJson, menuItem) {
+        if (Csw.clientChanges.manuallyCheckChanges()) {
+            Csw.tryExec(privateScope.onLoginData);
+            return true;  //isWholePageNavigation
+        }
+    });
+    menuAction.add('NbtManager', function (privateScope, menuItemName, menuItemJson, menuItem) {
+        if (Csw.clientChanges.manuallyCheckChanges()) {
+            Csw.tryExec(privateScope.onReturnToNbtManager);
+        }
+    });
+    menuAction.add('default', function (privateScope, menuItemName, menuItemJson, menuItem) {
+        Csw.main.handleAction({ actionname: menuItemJson.action });
+    });
+
     Csw.composites.menu = Csw.composites.menu ||
         Csw.composites.register('menu', function (cswParent, options) {
 
@@ -67,158 +218,7 @@
                 }
                 return ret;
             };
-
-            var menuAction = Csw.object();
-            menuAction.add('About', function () { $.CswDialog('AboutDialog'); });
-            menuAction.add('AddNode', function (menuItemName, menuItemJson, menuItem) {
-                Csw.dialogs.addnode({
-                    title: 'Add New ' + menuItemName,
-                    nodetypeid: Csw.string(menuItemJson.nodetypeid),
-                    relatednodeid: Csw.string(menuItemJson.relatednodeid), //for Grid Props
-                    onAddNode: cswPrivate.onAlterNode
-                });
-            });
-            menuAction.add('AddFeedback', function (menuItemName, menuItemJson, menuItem) {
-                $.CswDialog('AddFeedbackDialog', {
-                    text: menuItemName,
-                    nodetypeid: Csw.string(menuItemJson.nodetypeid),
-                    onAddNode: cswPrivate.onAlterNode
-                });
-            });
-            menuAction.add('Clear Cache', function (menuItemName, menuItemJson, menuItem) {
-                if (Csw.clientChanges.manuallyCheckChanges()) {
-                    window.location.reload(true);
-                }
-            });
-            menuAction.add('DeleteNode', function (menuItemName, menuItemJson, menuItem) {
-                Csw.clientChanges.unsetChanged();
-                $.CswDialog('DeleteNodeDialog', {
-                    nodes: cswPrivate.getSelectedNodes(menuItemJson),
-                    onDeleteNode: cswPrivate.onAlterNode,
-                    nodeTreeCheck: cswPrivate.nodeTreeCheck,
-                    Multi: cswPrivate.Multi
-                });
-            });
-            menuAction.add('editview', function (menuItemName, menuItemJson, menuItem) {
-                if (Csw.clientChanges.manuallyCheckChanges()) {
-                    Csw.tryExec(cswPrivate.onEditView, Csw.string(menuItemJson.viewid));
-                    return true;  //isWholePageNavigation
-                }
-            });
-            menuAction.add('CopyNode', function (menuItemName, menuItemJson, menuItem) {
-                if (Csw.clientChanges.manuallyCheckChanges()) {
-                    Csw.dialogs.copynode({
-                        copyType: Csw.string(menuItemJson.copytype),
-                        nodename: Csw.string(menuItemJson.nodename),
-                        nodeid: Csw.string(menuItemJson.nodeid),
-                        nodetypeid: Csw.string(menuItemJson.nodetypeid),
-                        onCopyNode: cswPrivate.onAlterNode
-                    });
-                }
-            });
-            menuAction.add('PrintView', function (menuItemName, menuItemJson, menuItem) { Csw.tryExec(cswPrivate.onPrintView); });
-            menuAction.add('PrintLabel', function (menuItemName, menuItemJson, menuItem) {
-                $.CswDialog('PrintLabelDialog', {
-                    nodes: cswPrivate.getSelectedNodes(menuItemJson),
-                    nodetypeid: Csw.string(menuItemJson.nodetypeid)
-                });
-            });
-            menuAction.add('Logout', function (menuItemName, menuItemJson, menuItem) {
-                if (Csw.clientChanges.manuallyCheckChanges()) {
-                    Csw.tryExec(cswPrivate.onLogout);
-                    return true;  //isWholePageNavigation
-                }
-            });
-            menuAction.add('Home', function (menuItemName, menuItemJson, menuItem) {
-                var enable = function () {
-                    menuItem.enable();
-                };
-                menuItem.disable();
-                if (Csw.clientChanges.manuallyCheckChanges()) {
-                    Csw.goHome().then(enable);
-                    return true;  //isWholePageNavigation
-                } else {
-                    enable();
-                }
-            });
-            menuAction.add('Profile', function (menuItemName, menuItemJson, menuItem) {
-                $.CswDialog('EditNodeDialog', {
-                    currentNodeId: menuItemJson.userid,
-                    filterToPropId: '',
-                    title: 'User Profile',
-                    onEditNode: null // function (nodeid, nodekey) { }
-                });
-            });
-            menuAction.add('multiedit', function (menuItemName, menuItemJson, menuItem) { Csw.tryExec(cswPrivate.onMultiEdit); });
-            menuAction.add('SaveViewAs', function (menuItemName, menuItemJson, menuItem) {
-                $.CswDialog('AddViewDialog', {
-                    viewid: Csw.string(menuItemJson.viewid),
-                    viewmode: Csw.string(menuItemJson.viewmode),
-                    onAddView: cswPrivate.onSaveView
-                });
-            });
-            menuAction.add('Quotas', function (menuItemName, menuItemJson, menuItem) {
-                if (Csw.clientChanges.manuallyCheckChanges()) {
-                    Csw.tryExec(cswPrivate.onQuotas);
-                    return true;  //isWholePageNavigation
-                }
-            });
-            menuAction.add('Manage Locations', function (menuItemName, menuItemJson, menuItem) {
-                if (Csw.clientChanges.manuallyCheckChanges()) {
-                    Csw.tryExec(cswPrivate.onQuotas);
-                    return true;  //isWholePageNavigation
-                }
-            });
-            menuAction.add('Delete Demo Data', function (menuItemName, menuItemJson, menuItem) {
-                if (Csw.clientChanges.manuallyCheckChanges()) {
-                    Csw.tryExec(cswPrivate.onQuotas);
-                    return true;  //isWholePageNavigation
-                }
-            });
-            menuAction.add('Modules', function (menuItemName, menuItemJson, menuItem) {
-                if (Csw.clientChanges.manuallyCheckChanges()) {
-                    Csw.tryExec(cswPrivate.onModules);
-                    return true;  //isWholePageNavigation
-                }
-            });
-            menuAction.add('Sessions', function (menuItemName, menuItemJson, menuItem) {
-                if (Csw.clientChanges.manuallyCheckChanges()) {
-                    Csw.tryExec(cswPrivate.onSessions);
-                    return true;  //isWholePageNavigation
-                }
-            });
-            menuAction.add('Subscriptions', function (menuItemName, menuItemJson, menuItem) {
-                if (Csw.clientChanges.manuallyCheckChanges()) {
-                    Csw.tryExec(cswPrivate.onSubscriptions);
-                    return true;  //isWholePageNavigation
-                }
-            });
-            menuAction.add('Impersonate', function (menuItemName, menuItemJson, menuItem) {
-                if (Csw.clientChanges.manuallyCheckChanges()) {
-                    $.CswDialog('ImpersonateDialog', { onImpersonate: cswPrivate.onImpersonate });
-                }
-            });
-            menuAction.add('Submit_Request', function (menuItemName, menuItemJson, menuItem) {
-                if (Csw.clientChanges.manuallyCheckChanges()) {
-                    Csw.tryExec(cswPrivate.onSubmitRequest);
-                    return true;  //isWholePageNavigation
-                }
-            });
-            menuAction.add('Login Data', function (menuItemName, menuItemJson, menuItem) {
-                if (Csw.clientChanges.manuallyCheckChanges()) {
-                    Csw.tryExec(cswPrivate.onLoginData);
-                    return true;  //isWholePageNavigation
-                }
-            });
-            menuAction.add('NbtManager', function (menuItemName, menuItemJson, menuItem) {
-                if (Csw.clientChanges.manuallyCheckChanges()) {
-                    Csw.tryExec(cswPrivate.onReturnToNbtManager);
-                }
-            });
-            menuAction.add('default', function (menuItemName, menuItemJson, menuItem) {
-                Csw.main.handleAction({ actionname: menuItemJson.action });
-            });
-
+            
             cswPrivate.handleMenuItemClick = function (menuItemName, menuItemJson, menuItem) {
                 if (false === Csw.isNullOrEmpty(menuItemJson)) {
 
@@ -231,7 +231,7 @@
                     } else if (false === Csw.isNullOrEmpty(menuItemJson.action)) {
 
                         menuItemJson.action = menuItemJson.action || 'default';
-                        var isWholePageNavigation = menuAction[menuItemJson.action](menuItemName, menuItemJson, menuItem);
+                        var isWholePageNavigation = menuAction[menuItemJson.action](cswPrivate, menuItemName, menuItemJson, menuItem);
                         
                         if (isWholePageNavigation === true) {
                             //If we're changing the contents of the entire page, make sure all dangling events are torn down
