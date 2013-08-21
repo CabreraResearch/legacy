@@ -7,6 +7,11 @@
     var ajaxCount = 0;
     var spinning = false;
 
+    Csw.ajax.register('ajaxInProgress', function () {
+        /// <summary> Evaluates whether a pending ajax request is still open. </summary>
+        return (ajaxCount > 0);
+    });
+    
     function toggleSpinner(incrementor) {
         ajaxCount += incrementor;
         if (Csw.main.ajaxImage && Csw.main.ajaxSpacer) {

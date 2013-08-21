@@ -266,8 +266,8 @@ namespace ChemSW.Nbt.Schema
                 IsFk = true,
                 FkType = CswEnumNbtViewPropIdType.ObjectClassPropId.ToString(),
                 FkValue = TechnicianOCP.PropId,
-                ValuePropId = UserPhoneOCP.PropId,
-                ValuePropType = CswEnumNbtViewPropIdType.ObjectClassPropId.ToString()
+                ValuePropType = CswEnumNbtViewPropIdType.ObjectClassPropId.ToString(),
+                ValuePropId = UserPhoneOCP.PropId
             } );
             _addOCP( TaskOC, new CswNbtWcfMetaDataModel.ObjectClassProp
             {

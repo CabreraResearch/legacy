@@ -20,14 +20,11 @@
     });
 
     Csw.promises.register('all', function (initArray) {
-
         var reqs = initArray || [];
         var promise = Q.all(reqs);
-
         promise.push = function (item) {
             reqs.push(item);
         };
-
         return promise;
     });
 

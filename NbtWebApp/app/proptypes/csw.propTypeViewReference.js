@@ -44,7 +44,7 @@
                             size: 16,
                             isButton: true,
                             onClick: function() {
-                                nodeProperty.onEditView(cswPrivate.viewId);
+                                nodeProperty.onEditView(cswPrivate.viewId, cswPrivate.viewMode);
                             }
                         });
                     }
