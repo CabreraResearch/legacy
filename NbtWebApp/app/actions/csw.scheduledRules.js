@@ -145,7 +145,7 @@
                         }
                     });
 
-                var ret = Csw.ajax.post({
+                var ret = Csw.ajax.deprecatedWsNbt({
                     urlMethod: 'getActiveAccessIds',
                     success: function (data) {
                         cswPrivate.customerIds = data.customerids;

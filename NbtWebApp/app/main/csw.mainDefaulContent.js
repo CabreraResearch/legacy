@@ -12,7 +12,7 @@
             };
             Csw.extend(o, options);
 
-            return  Csw.ajax.post({
+            return  Csw.ajax.deprecatedWsNbt({
                 urlMethod: 'getDefaultContent',
                 data: { ViewId: o.viewid },
                 success: function(data) {

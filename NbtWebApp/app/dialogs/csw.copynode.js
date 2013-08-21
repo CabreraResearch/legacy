@@ -31,7 +31,7 @@
                     enabledText: 'Copy',
                     disabledText: 'Copying',
                     onClick: function () {
-                        Csw.ajax.post({
+                        Csw.ajax.deprecatedWsNbt({
                             urlMethod: 'CopyNode',
                             data: {
                                 NodeId: cswPrivate.nodeid,

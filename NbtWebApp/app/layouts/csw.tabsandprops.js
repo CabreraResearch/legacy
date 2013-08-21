@@ -264,7 +264,7 @@
             };
 
             cswPrivate.makeIdentityTab = function () {
-                cswPrivate.ajax.tabs = Csw.ajax.post({
+                cswPrivate.ajax.tabs = Csw.ajax.deprecatedWsNbt({
                     watchGlobal: cswPrivate.AjaxWatchGlobal,
                     urlMethod: 'getIdentityTabProps',
                     data: {
@@ -369,7 +369,7 @@
 
                 } else {
 
-                    cswPrivate.ajax.tabs = Csw.ajax.post({
+                    cswPrivate.ajax.tabs = Csw.ajax.deprecatedWsNbt({
                         watchGlobal: cswPrivate.AjaxWatchGlobal,
                         urlMethod: cswPrivate.urls.TabsUrlMethod,
                         data: {
@@ -639,7 +639,7 @@
             cswPrivate.onRemove = function (tabid, onRemoveData) {
                 'use strict';
                 var propid = onRemoveData.cellSet[1][1].data('propId');
-                cswPrivate.ajax.layoutRemove = Csw.ajax.post({
+                cswPrivate.ajax.layoutRemove = Csw.ajax.deprecatedWsNbt({
                     watchGlobal: cswPrivate.AjaxWatchGlobal,
                     urlMethod: cswPrivate.urls.RemovePropUrlMethod,
                     data: { PropId: propid, EditMode: cswPrivate.tabState.EditMode, TabId: tabid },
@@ -681,7 +681,7 @@
                         EditMode: cswPrivate.tabState.EditMode
                     };
 
-                    cswPrivate.ajax.layoutMove = Csw.ajax.post({
+                    cswPrivate.ajax.layoutMove = Csw.ajax.deprecatedWsNbt({
                         watchGlobal: cswPrivate.AjaxWatchGlobal,
                         urlMethod: cswPrivate.urls.MovePropUrlMethod,
                         data: dataJson
@@ -898,7 +898,7 @@
                 if (cswPrivate.tabState.Config || // case 28274 - always refresh prop data if in config mode
                     Csw.isNullOrEmpty(cswPrivate.tabState.propertyData)) {
 
-                    cswPrivate.ajax.propsImpl = Csw.ajax.post({
+                    cswPrivate.ajax.propsImpl = Csw.ajax.deprecatedWsNbt({
                         watchGlobal: cswPrivate.AjaxWatchGlobal,
                         urlMethod: cswPrivate.urls.PropsUrlMethod,
                         data: {
@@ -1141,7 +1141,7 @@
                             NewPropJson: JSON.stringify(singlePropData)
                         };
 
-                        cswPrivate.ajax.subProps = Csw.ajax.post({
+                        cswPrivate.ajax.subProps = Csw.ajax.deprecatedWsNbt({
                             watchGlobal: cswPrivate.AjaxWatchGlobal,
                             urlMethod: cswPrivate.urls.SinglePropUrlMethod,
                             data: jsonData,

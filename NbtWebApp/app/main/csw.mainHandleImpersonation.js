@@ -35,7 +35,7 @@
 
         Csw.main.register('handleImpersonation', function (userid, username, onSuccess) {
             //var u = Csw.cookie.get(Csw.cookie.cookieNames.Username);
-            return Csw.ajax.post({
+            return Csw.ajax.deprecatedWsNbt({
                 urlMethod: 'impersonate',
                 data: { UserId: userid },
                 success: function (data) {

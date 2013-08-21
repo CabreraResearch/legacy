@@ -195,7 +195,7 @@
                             };
 
                             var makeContainerGrid = function () {
-                                Csw.ajax.post({
+                                Csw.ajax.deprecatedWsNbt({
                                     urlMethod: 'getDispenseContainerView',
                                     data: {
                                         RequestItemId: cswPrivate.state.requestItemId
@@ -594,7 +594,7 @@
                                 containerNo = 1;
                             }
                             if (quantity.unitid !== cswPrivate.state.unitId) {
-                                var req = Csw.ajax.post({
+                                var req = Csw.ajax.deprecatedWsNbt({
                                     urlMethod: 'convertUnit',
                                     data: {
                                         ValueToConvert: Csw.number(quantity.quantity, 0),
@@ -662,7 +662,7 @@
                                     Csw.isNullOrEmpty(cswPrivate.state.location) ||
                                     Csw.isNullOrEmpty(cswPrivate.state.containerNodeTypeId)) {
 
-                                    Csw.ajax.post({
+                                    Csw.ajax.deprecatedWsNbt({
                                         urlMethod: 'getDispenseSourceContainerData',
                                         data: {
                                             ContainerId: cswPrivate.state.sourceContainerNodeId
@@ -733,7 +733,7 @@
                             RequestItemId: Csw.string(cswPrivate.state.requestItemId)
                         };
 
-                        Csw.ajax.post({
+                        Csw.ajax.deprecatedWsNbt({
                             urlMethod: 'finalizeDispenseContainer',
                             data: jsonData,
                             success: function (data) {

@@ -62,7 +62,7 @@
                             var nodeData = {};
                             Csw.extend(nodeData, cswPrivate.tabsAndProps.getProps(), true);
 
-                            Csw.ajax.post({
+                            Csw.ajax.deprecatedWsNbt({
                                 urlMethod: 'nodePropsToArray',
                                 data: {
                                     NodeDefinition: JSON.stringify(nodeData),
@@ -85,7 +85,7 @@
                 addNodeLayout();
                 cswPublic.thinGrid = cswPublic.rootDiv.thinGrid({ linkText: '', hasHeader: true });
 
-                Csw.ajax.post({
+                Csw.ajax.deprecatedWsNbt({
                     urlMethod: 'getThinGrid',
                     data: {
                         ViewId: viewid,

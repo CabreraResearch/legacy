@@ -14,7 +14,6 @@
                     data: {}
                 },
                 width: 240,
-                //onClick: null,  // function(itemName, itemJson)
 
                 // Menu item handlers
                 onLogout: null, // function () { },
@@ -30,6 +29,9 @@
                 onImpersonate: null,
                 onLoginData: null,
                 onSuccess: null,
+
+                useCache: false,
+
                 nodeTreeCheck: null,
                 Multi: false,
                 viewMode: 'Tree'
@@ -149,7 +151,7 @@
                                 }
                                 break;
                             case 'Home':
-                                
+
                                 var enable = function () {
                                     menuItem.enable();
                                 };
@@ -285,77 +287,77 @@
             //constructor
             (function () {
                 Csw.extend(cswPrivate, options);
-                cswParent.empty();
-                
-                cswPublic.ajax = Csw.ajax.post({
+
+                var makeMenu = function (menuItems) {
+                    cswParent.empty();
+                    if (cswPublic.menu) {
+                        cswPublic.menu.destroy();
+                    }
+                    var items = [];
+                    Csw.iterate(menuItems, function (menuItem, menuItemName) {
+                        if (items.length > 0) {
+                            items.push({ xtype: 'tbseparator' });
+                        }
+
+                        var thisItem = {};
+                        if (Csw.bool(menuItem.haschildren)) {
+                            // Child items
+                            thisItem = {
+                                xtype: 'splitbutton',
+                                text: menuItemName,
+                                menu: { items: [] },
+                                listeners: {
+                                    click: function (button, event) {
+                                        button.showMenu(); // open the menu on click, not just on arrowclick
+                                    }
+                                },
+                                cls: 'menuitem'
+                            }; // thisItem
+
+                            thisItem.menu.items = cswPrivate.parseMenuItems(menuItem);
+                        } // if (Csw.bool(menuItem.haschildren))
+                        else {
+                            // Root Items
+                            thisItem = {
+                                xtype: 'button',
+                                text: menuItemName,
+                                listeners: {
+                                    click: function (item, event) {
+                                        cswPrivate.handleMenuItemClick(menuItemName, menuItem, item);
+                                    }
+                                },
+                                cls: 'menuitem'
+                            };
+                        }
+                        items.push(thisItem);
+                    }); // each
+
+                    if (Csw.isElementInDom(cswParent.getId())) {
+                        cswPublic.menu = window.Ext.create('Ext.toolbar.Toolbar', {
+                            id: cswPrivate.ID + 'toolbar',
+                            renderTo: cswParent.getId(),
+                            width: cswPrivate.width,
+                            items: items,
+                            cls: 'menutoolbar'
+                        }); // toolbar
+                    }
+
+                    Csw.tryExec(cswPrivate.onSuccess);
+                };
+
+                if (cswPublic.abort && cswPublic.ajax) {
+                    cswPublic.abort();
+                }
+                cswPublic.ajax = Csw.ajax.deprecatedWsNbt({
                     urlMethod: cswPrivate.ajax.urlMethod,
                     data: cswPrivate.ajax.data,
-                    success: function (result) {
-
-                        var items = [];
-                        Csw.iterate(result, function (menuItem, menuItemName) {
-                            if (items.length > 0) {
-                                items.push({ xtype: 'tbseparator' });
-                            }
-
-                            var thisItem = {};
-                            if (Csw.bool(menuItem.haschildren)) {
-                                // Child items
-                                thisItem = {
-                                    xtype: 'splitbutton',
-                                    text: menuItemName,
-                                    menu: { items: [] },
-                                    listeners: {
-                                        click: function (button, event) {
-                                            button.showMenu(); // open the menu on click, not just on arrowclick
-                                        }
-                                    },
-                                    cls: 'menuitem'
-                                }; // thisItem
-
-                                thisItem.menu.items = cswPrivate.parseMenuItems(menuItem);
-                            } // if (Csw.bool(menuItem.haschildren))
-                            else {
-                                // Root Items
-                                thisItem = {
-                                    xtype: 'button',
-                                    text: menuItemName,
-                                    listeners: {
-                                        click: function (item, event) {
-                                            cswPrivate.handleMenuItemClick(menuItemName, menuItem, item);
-                                        }
-                                    },
-                                    cls: 'menuitem'
-                                };
-                            }
-                            items.push(thisItem);
-                        }); // each
-
-                        if (Csw.isElementInDom(cswParent.getId())) {
-                            try {
-                                cswPublic.menu = window.Ext.create('Ext.toolbar.Toolbar', {
-                                    id: cswPrivate.ID + 'toolbar',
-                                    renderTo: cswParent.getId(),
-                                    width: cswPrivate.width,
-                                    items: items,
-                                    cls: 'menutoolbar'
-                                }); // toolbar
-                            } catch (e) {
-                                Csw.debug.error('Failed to create Ext.toolbar.Toolbar in csw.menu');
-                                Csw.debug.error(e);
-                            }
-                        } else {
-                            cswPublic.menu = window.Ext.create('Ext.toolbar.Toolbar');
-                        }
-                        //}                   
-                        Csw.tryExec(cswPrivate.onSuccess);
-                    }       //success
+                    useCache: cswPrivate.useCache,
+                    success: makeMenu
                 }); // ajax
 
                 cswPublic.abort = cswPublic.ajax.abort;
 
-
-            } ()); // constructor
+            }()); // constructor
 
             return cswPublic;
         });
@@ -370,4 +372,4 @@
             return Q.all(toDo);
         });
 
-} ());
+}());

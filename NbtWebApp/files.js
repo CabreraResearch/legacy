@@ -18,6 +18,8 @@ module.exports.app = [
     'app/proptypes/**.js',
     'app/view/**.js',
     'app/wizards/**.js',
+    'app/workers/**.js',
+    'app/db/**.js',
     'app/Main.js'
 ];
 
@@ -53,7 +55,8 @@ module.exports.vendorMin = [
     'vendor/ext-done.js',
     'vendor/jquery.flot.js',
     'vendor/extjs-4.1.0/ux/**/*.js',
-    'Scripts/Q.min.js'
+    'Scripts/Q.min.js',
+    'vendor/IndexedDBShim.min.js'
 ];
 
 module.exports.vendor = [
@@ -78,7 +81,8 @@ module.exports.vendor = [
     'vendor/ext-done.js',
     'vendor/jquery.flot.js',
     'vendor/extjs-4.1.0/ux/**/*.js',
-    'Scripts/q.js'
+    'Scripts/q.js',
+    'vendor/IndexedDBShim.min.js'
 ];
 
 module.exports.images = [
