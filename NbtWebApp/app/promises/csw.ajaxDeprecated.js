@@ -158,11 +158,6 @@
 
 
 
-    Csw.ajax.register('ajaxInProgress', function () {
-        /// <summary> Evaluates whether a pending ajax request is still open. </summary>
-        return (window.name.ajaxCount > 0);
-    });
-
 
     Csw.ajax.register('deprecatedWsNbt', function (options) {
         /// <summary> Executes Async webservice request. </summary>

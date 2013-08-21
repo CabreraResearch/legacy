@@ -149,7 +149,7 @@
                 cswInternal.data = Csw.serialize(cswInternal.data);
             }
         }
-
+        
         var getAjaxPromise = function(watchGlobal) {
             var ret = $.ajax({
                 type: verb,

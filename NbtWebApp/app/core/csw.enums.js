@@ -72,13 +72,6 @@
     Csw.enums.events = Csw.enums.events ||
         Csw.enums.register('events', {
             CswNodeDelete: 'CswNodeDelete',
-            ajax: {
-                ajaxStart: 'ajaxStart',
-                ajaxStop: 'ajaxStop',
-                globalAjaxStart: 'globalAjaxStart',
-                globalAjaxStop: 'globalAjaxStop'
-            },
-            domready: 'DOM_Ready',
             Submit_Request: 'Submit_Request',
             objectClassButtonClick: 'objectClassButtonClick',
             afterObjectClassButtonClick: 'afterObjectClassButtonClick',

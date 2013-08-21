@@ -115,6 +115,7 @@
     <Content Include="app\promises\csw.spinners.js" />
     <Content Include="app\db\csw.db.js" />
     <Content Include="app\promises\csw.promise.js" />
+    <Content Include="app\promises\csw.spinners.js" />
     <Content Include="app\proptypes\csw.propTypeChildContents.js" />
     <Content Include="app\nodes\csw.node.treeExt.js" />
     <Content Include="app\proptypes\csw.propTypeCASNo.js" />
