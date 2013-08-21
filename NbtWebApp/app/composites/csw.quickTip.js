@@ -34,12 +34,19 @@
 
             }());
 
+            cswPublic.close = function () {
+                //closes the quicktip if it was initialized
+                if (cswPrivate.tip) {
+                    cswPrivate.tip.close();
+                }
+            };
+
             (function _post() {                                             
                 'use strict';
                 
                 if (Csw.isElementInDom(cswParent.getId())) {
                     try {
-                        window.Ext.create('Ext.tip.ToolTip', {
+                        cswPrivate.tip = window.Ext.create('Ext.tip.ToolTip', {
                             //Case 28232: if this is tied to a button (for example), id will not be guaranteed to be unique for every tip.
                             //id: cswPrivate.ID + 'tooltip',
                             target: cswParent.getId(),
