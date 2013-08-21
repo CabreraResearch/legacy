@@ -136,7 +136,7 @@
                             });
                         });
                                     
-                        Csw.ajax.post({
+                        Csw.ajax.deprecatedWsNbt({
                             urlMethod: cswPrivate.applyMethod,
                             data: { 
                                 ViewId: cswPrivate.viewid, 
@@ -160,7 +160,7 @@
                                 .addClass('viewfilters')
                                 .hide();
 
-                Csw.ajax.post({
+                Csw.ajax.deprecatedWsNbt({
                     urlMethod: cswPrivate.filtersMethod,
                     data: {
                         ViewId: cswPrivate.viewid,

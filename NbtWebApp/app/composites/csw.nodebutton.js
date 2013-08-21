@@ -89,7 +89,7 @@
                 Csw.publish(Csw.enums.events.main.clear, { centertop: true, centerbottom: true });
                 /* case 24669 */
                 Csw.cookie.clearAll([Csw.cookie.cookieNames.LogoutPath]);
-                Csw.ajax.post({
+                Csw.ajax.deprecatedWsNbt({
                     urlMethod: 'reauthenticate',
                     data: { PropId: Csw.string(opts.propid) },
                     success: function (result) {
@@ -113,15 +113,13 @@
                         Csw.publish(Csw.enums.events.main.refreshHeader);
                         break;
                     default:
-                        Csw.layouts.addnode({
-                            dialogOptions: {
-                                nodetypeid: actionJson.requestItemNodeTypeId,
-                                propertyData: actionJson.requestItemProps,
-                                text: actionJson.titleText,
-                                onSaveImmediate: function () {
-                                    Csw.publish('onAnyNodeButtonClickFinish', true);
-                                    Csw.publish(Csw.enums.events.main.refreshHeader);
-                                }
+                        Csw.dialogs.addnode({
+                            nodetypeid: actionJson.requestItemNodeTypeId,
+                            propertyData: actionJson.requestItemProps,
+                            title: actionJson.titleText,
+                            onSaveImmediate: function () {
+                                Csw.publish('onAnyNodeButtonClickFinish', true);
+                                Csw.publish(Csw.enums.events.main.refreshHeader);
                             }
                         });
                         break;
@@ -287,7 +285,7 @@
                         }
 
                         var performOnObjectClassButtonClick = function () {
-                            Csw.ajax.post({
+                            Csw.ajax.deprecatedWsNbt({
                                 urlMethod: 'onObjectClassButtonClick',
                                 data: {
                                     NodeTypePropAttr: cswPrivate.propId,

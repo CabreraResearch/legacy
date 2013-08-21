@@ -1,3 +1,10 @@
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Data;
+using System.Linq;
+using System.Runtime.Serialization;
+using System.Xml;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
@@ -6,13 +13,6 @@ using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 using ChemSW.Nbt.ServiceDrivers;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Data;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.Xml;
 
 namespace ChemSW.Nbt.MetaData
 {
@@ -24,14 +24,14 @@ namespace ChemSW.Nbt.MetaData
             CswEnumNbtNodeTypePropAttributes ReturnVal = CswResources.UnknownEnum;
             AttributeName = AttributeName.Replace( "_", "" );
             ReturnVal = AttributeName;
-            
+
             return ( ReturnVal );
         }
 
         public static String getCswEnumNbtNodeTypePropAttributesAsString( CswEnumNbtNodeTypePropAttributes Attribute )
         {
             String ReturnVal = String.Empty;
-            if (Attribute != CswResources.UnknownEnum)
+            if( Attribute != CswResources.UnknownEnum )
                 ReturnVal = Attribute.ToString().Replace( "_", "" );
             return ( ReturnVal );
         }
@@ -316,10 +316,10 @@ namespace ChemSW.Nbt.MetaData
                     CswNbtSdDbQueries.Column Relationship = new CswNbtSdDbQueries.Column();
                     //if( this.FKType == CswEnumNbtViewRelatedIdType.NodeTypeId.ToString() )
                     //{
-                        
+
                     //} else if
                     //{
-                        
+
                     //}
 
                     Relationship.Name = PropName + " Fk";
@@ -329,7 +329,7 @@ namespace ChemSW.Nbt.MetaData
                 }
                 else if( this.getFieldType().FieldType == CswEnumNbtFieldType.Location )
                 {
-                    
+
                 }
                 else
                 {
@@ -604,7 +604,7 @@ namespace ChemSW.Nbt.MetaData
             }
             else
             {
-                ret = ret && ( false == hasFilter() && false == Node.Properties[this].Hidden );
+                ret = ret && ( false == hasFilter() && false == Node.Properties[this].Hidden && false == Hidden );
             }
 
             // 3: Permissions
@@ -675,6 +675,12 @@ namespace ChemSW.Nbt.MetaData
         {
             get { return _NodeTypePropRow["valueproptype"].ToString(); }
             private set { _setAttribute( "valueproptype", value, false ); }
+        }
+
+        public bool Hidden
+        {
+            get { return CswConvert.ToBoolean( _NodeTypePropRow["hidden"] ); }
+            set { _setAttribute( "hidden", value, true ); }
         }
 
         #region FK Matching

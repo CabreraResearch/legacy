@@ -40,7 +40,7 @@ namespace ChemSW.Nbt.MetaData
                 set
                 {
                     _FieldType = value;
-                    if ( FieldType == CswEnumNbtFieldType.Location )
+                    if( FieldType == CswEnumNbtFieldType.Location )
                     {
                         IsFk = true;
                         FkType = CswEnumNbtViewRelatedIdType.ObjectClassId.ToString();
@@ -60,7 +60,7 @@ namespace ChemSW.Nbt.MetaData
                 get { return _IsRequired; }
                 set
                 {
-                    if ( false == string.IsNullOrEmpty( Filter ) && value )
+                    if( false == string.IsNullOrEmpty( Filter ) && value )
                     {
                         throw new CswDniException( CswEnumErrorType.Error, "Conditional properties cannot be required", "Attempted to require a conditional property " + PropName );
                     }
@@ -116,7 +116,7 @@ namespace ChemSW.Nbt.MetaData
                 get { return _filter; }
                 set
                 {
-                    if ( false == string.IsNullOrEmpty( value ) && IsRequired )
+                    if( false == string.IsNullOrEmpty( value ) && IsRequired )
                     {
                         throw new CswDniException( CswEnumErrorType.Error, "Required properties cannot be conditional", "Attempted to assign a filter to required property " + PropName );
                     }
@@ -149,7 +149,7 @@ namespace ChemSW.Nbt.MetaData
 
             public NodeType( CswNbtMetaDataObjectClass NbtObjectClass )
             {
-                if ( null == NbtObjectClass )
+                if( null == NbtObjectClass )
                 {
                     throw new CswDniException( CswEnumErrorType.Error, "Cannot create a NodeType DataContract without a valid Object Class", "Attempted to instance CswNbtWcfMetaDataModel.NodeType with a null ObjectClass." );
                 }
@@ -182,15 +182,15 @@ namespace ChemSW.Nbt.MetaData
         {
             private void _init( CswNbtMetaDataNodeType NbtNodeType, CswNbtMetaDataFieldType NbtFieldType, string NbtPropName )
             {
-                if ( null == NbtNodeType )
+                if( null == NbtNodeType )
                 {
                     throw new CswDniException( CswEnumErrorType.Error, "Cannot create a NodeTypeProp DataContract without a valid Node Type", "Attempted to instance CswNbtWcfMetaDataModel.NodeTypeProp with a null NodeType." );
                 }
-                if ( null == NbtFieldType )
+                if( null == NbtFieldType )
                 {
                     throw new CswDniException( CswEnumErrorType.Error, "Cannot create a NodeTypeProp DataContract without a valid Field Type", "Attempted to instance CswNbtWcfMetaDataModel.NodeTypeProp with a null FieldType." );
                 }
-                if ( string.IsNullOrEmpty( NbtPropName ) )
+                if( string.IsNullOrEmpty( NbtPropName ) )
                 {
                     throw new CswDniException( CswEnumErrorType.Warning, "Property Name is required", "Attempted to create a new nodetype prop with a null propname" );
                 }
@@ -200,7 +200,7 @@ namespace ChemSW.Nbt.MetaData
                 PropName = NbtPropName;
                 UseNumbering = ( NodeType.getObjectClass().ObjectClass == CswEnumNbtObjectClass.InspectionDesignClass &&
                                 FieldType.FieldType == CswEnumNbtFieldType.Question );
-                if ( FieldType.FieldType == CswEnumNbtFieldType.NodeTypeSelect )
+                if( FieldType.FieldType == CswEnumNbtFieldType.NodeTypeSelect )
                 {
                     Multi = CswEnumTristate.False;
                 }
@@ -246,6 +246,8 @@ namespace ChemSW.Nbt.MetaData
             public bool IsUnique;
             [DataMember]
             public bool IsCompoundUnique;
+            [DataMember]
+            public bool Hidden;
             //[DataMember]
             //public bool ServerManaged;
             //[DataMember]

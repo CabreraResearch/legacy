@@ -1,9 +1,10 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Data;
+using System.Runtime.Serialization;
 using ChemSW.Core;
 using ChemSW.DB;
-using ChemSW.Exceptions;
+using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.Batch;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
@@ -11,12 +12,15 @@ using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.ServiceDrivers;
 using ChemSW.Nbt.Statistics;
 using NbtWebApp;
+using NbtWebApp.WebSvc.Returns;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.WebServices
 {
     public class CswNbtWebServiceNode
     {
+        #region Properties and ctor
+
         private readonly CswNbtResources _CswNbtResources;
         private readonly CswNbtStatisticsEvents _CswNbtStatisticsEvents;
         private readonly CswNbtSdNode _NodeSd;
@@ -27,10 +31,265 @@ namespace ChemSW.Nbt.WebServices
             _NodeSd = new CswNbtSdNode( _CswNbtResources, _CswNbtStatisticsEvents );
         }
 
+        #endregion Properties and ctor
+
+        #region Copy
+
         public CswPrimaryKey CopyNode( CswPrimaryKey NodePk )
         {
             return _NodeSd.CopyNode( NodePk );
         }
+
+        [DataContract]
+        public class CopyDataRequest
+        {
+            [DataMember]
+            public string NodeId = string.Empty;
+
+            [DataMember]
+            public string CopyType = string.Empty;
+        }
+
+        [DataContract]
+        public class CopyDataReturn : CswWebSvcReturn
+        {
+            public CopyDataReturn()
+            {
+                Data = new CopyTypeData();
+            }
+
+            [DataMember]
+            public CopyTypeData Data;
+
+            [DataContract]
+            public class CopyTypeData
+            {
+                //If we get any more copy types in the future, add their Response objects here 
+                //(and make sure they're named the same as the expected CopyType/CswEnumNbtActionName value)
+                public CopyTypeData()
+                {
+                    Create_Material = new CswNbtWebServiceC3Search.C3CreateMaterialResponse();
+                }
+                [DataMember]
+                public CswNbtWebServiceC3Search.C3CreateMaterialResponse Create_Material;
+            }
+        }
+
+        public static void getCopyData( ICswResources _CswResources, CopyDataReturn Copy, CopyDataRequest Request )
+        {
+            CswNbtResources _CswNbtResources = ( CswNbtResources ) _CswResources;
+            //If we get any more copy types in the future, extract them out into their own classes and instantiate them via factory
+            #region Create_Material Copy Data
+
+            if( Request.CopyType == CswEnumNbtActionName.Create_Material )
+            {
+                CswPrimaryKey OriginalNodeId = CswConvert.ToPrimaryKey( Request.NodeId );
+                if( CswTools.IsPrimaryKey( OriginalNodeId ) )
+                {
+                    CswNbtPropertySetMaterial OriginalMaterial = _CswNbtResources.Nodes.GetNode( OriginalNodeId );
+                    if( null != OriginalMaterial )
+                    {
+                        #region Material Properties
+
+                        CswNbtPropertySetMaterial MaterialCopy = OriginalMaterial.CopyNode();
+                        Copy.Data.Create_Material = new CswNbtWebServiceC3Search.C3CreateMaterialResponse
+                        {
+                            actionname = CswEnumNbtActionName.Create_Material, 
+                            state = new CswNbtWebServiceC3Search.C3CreateMaterialResponse.State
+                            {
+                                materialId = MaterialCopy.NodeId.ToString(), 
+                                materialType = new CswNbtWebServiceC3Search.C3CreateMaterialResponse.State.MaterialType
+                                {
+                                    name = MaterialCopy.NodeType.NodeTypeName,
+                                    val = CswConvert.ToInt32( MaterialCopy.NodeTypeId )
+                                },
+                                tradeName = OriginalMaterial.TradeName.Text,
+                                partNo = OriginalMaterial.PartNumber.Text,
+                                supplier = new CswNbtWebServiceC3Search.C3CreateMaterialResponse.State.Supplier
+                                {
+                                    name = OriginalMaterial.Supplier.CachedNodeName,
+                                    val = OriginalMaterial.Supplier.RelatedNodeId.ToString()
+                                },
+                                sizes = new Collection<CswNbtWebServiceC3Search.C3CreateMaterialResponse.State.SizeRecord>(),
+                                showOriginalUoM = false
+                            }
+                        };
+
+                        #endregion Material Properties
+
+                        #region Sizes
+
+                        CswNbtMetaDataObjectClass SizeOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.SizeClass );
+                        CswNbtMetaDataObjectClassProp MaterialOCP = SizeOC.getObjectClassProp( CswNbtObjClassSize.PropertyName.Material );
+                        CswNbtView SizesView = new CswNbtView( _CswNbtResources )
+                        {
+                            ViewName = "MaterialCopySizes"
+                        };
+                        CswNbtViewRelationship SizeVR = SizesView.AddViewRelationship( SizeOC, false );
+                        SizesView.AddViewPropertyAndFilter( SizeVR, MaterialOCP, OriginalMaterial.NodeId.PrimaryKey.ToString(), CswEnumNbtSubFieldName.NodeID );
+                        ICswNbtTree SizesTree = _CswNbtResources.Trees.getTreeFromView( SizesView, false, false, false );
+                        for( int i = 0; i < SizesTree.getChildNodeCount(); i++ )
+                        {
+                            SizesTree.goToNthChild( i );
+                            CswNbtObjClassSize SizeNode = SizesTree.getNodeForCurrentPosition();
+                            CswNbtObjClassSize SizeCopy = SizeNode.CopyNode();
+                            SizeCopy.Material.RelatedNodeId = MaterialCopy.NodeId;
+                            SizeCopy.InitialQuantity.UnitId = SizeNode.InitialQuantity.UnitId;
+                            SizeCopy.InitialQuantity.Quantity = SizeNode.InitialQuantity.Quantity;
+                            SizeCopy.CatalogNo.Text = SizeNode.CatalogNo.Text;
+                            SizeCopy.postChanges( false );
+                            Copy.Data.Create_Material.state.sizes.Add( new CswNbtWebServiceC3Search.C3CreateMaterialResponse.State.SizeRecord
+                            {
+                                nodeId = new CswNbtWebServiceC3Search.C3CreateMaterialResponse.State.SizeRecord.SizeData
+                                {
+                                    value = SizeNode.NodeId.ToString(),
+                                    readOnly = true,
+                                    hidden = true
+                                },
+                                unitCount = new CswNbtWebServiceC3Search.C3CreateMaterialResponse.State.SizeRecord.SizeData
+                                {
+                                    value = CswConvert.ToString( SizeNode.UnitCount.Value ),
+                                    readOnly = true,
+                                    hidden = false
+                                },
+                                quantity = new CswNbtWebServiceC3Search.C3CreateMaterialResponse.State.SizeRecord.SizeData
+                                {
+                                    value = CswConvert.ToString( SizeNode.InitialQuantity.Quantity ),
+                                    readOnly = true,
+                                    hidden = false
+                                },
+                                uom = new CswNbtWebServiceC3Search.C3CreateMaterialResponse.State.SizeRecord.SizeData
+                                {
+                                    value = SizeNode.InitialQuantity.CachedUnitName,
+                                    readOnly = false == string.IsNullOrEmpty( SizeNode.InitialQuantity.CachedUnitName ),
+                                    hidden = false
+                                },
+                                catalogNo = new CswNbtWebServiceC3Search.C3CreateMaterialResponse.State.SizeRecord.SizeData
+                                {
+                                    value = SizeNode.CatalogNo.Text,
+                                    readOnly = true,
+                                    hidden = false
+                                },
+                                quantityEditable = new CswNbtWebServiceC3Search.C3CreateMaterialResponse.State.SizeRecord.SizeData
+                                {
+                                    value = "checked"
+                                },
+                                dispensible = new CswNbtWebServiceC3Search.C3CreateMaterialResponse.State.SizeRecord.SizeData
+                                {
+                                    value = "checked"
+                                }
+                            });
+                            SizesTree.goToParentNode();
+                        }
+
+                        #endregion Sizes
+
+                        #region Synonyms
+
+                        CswNbtMetaDataObjectClass MaterialSynonymOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.MaterialSynonymClass );
+                        CswNbtMetaDataObjectClassProp SynMaterialOCP = MaterialSynonymOC.getObjectClassProp( CswNbtObjClassMaterialSynonym.PropertyName.Material );
+                        CswNbtView SynonymsView = new CswNbtView( _CswNbtResources )
+                        {
+                            ViewName = "MaterialCopySynonyms"
+                        };
+                        CswNbtViewRelationship SynonymsVR = SynonymsView.AddViewRelationship( MaterialSynonymOC, false );
+                        SynonymsView.AddViewPropertyAndFilter( SynonymsVR, SynMaterialOCP, OriginalMaterial.NodeId.PrimaryKey.ToString(), CswEnumNbtSubFieldName.NodeID );
+                        ICswNbtTree SynonymsTree = _CswNbtResources.Trees.getTreeFromView( SynonymsView, false, false, false );
+                        for( int i = 0; i < SynonymsTree.getChildNodeCount(); i++ )
+                        {
+                            SynonymsTree.goToNthChild( i );
+                            CswNbtObjClassMaterialSynonym SynonymNode = SynonymsTree.getNodeForCurrentPosition();
+                            CswNbtObjClassMaterialSynonym SynonymCopy = SynonymNode.CopyNode();
+                            SynonymCopy.Material.RelatedNodeId = MaterialCopy.NodeId;
+                            SynonymCopy.postChanges( false );
+                            SynonymsTree.goToParentNode();
+                        }
+
+                        #endregion Synonyms
+
+                        if( MaterialCopy.ObjectClass.ObjectClass == CswEnumNbtObjectClass.ChemicalClass )
+                        {
+                            if( CswEnumTristate.False == MaterialCopy.IsConstituent.Checked )
+                            {
+                                #region SDS
+
+                                CswNbtView SDSView = CswNbtObjClassSDSDocument.getAssignedSDSDocumentsView( _CswNbtResources, OriginalMaterial.NodeId );
+                                ICswNbtTree SDSTree = _CswNbtResources.Trees.getTreeFromView( SDSView, false, false, false );
+                                SDSTree.goToNthChild( 0 );
+                                for( int i = 0; i < SDSTree.getChildNodeCount(); i++ )
+                                {
+                                    SDSTree.goToNthChild( i );
+                                    CswNbtObjClassSDSDocument SDSDoc = SDSTree.getNodeForCurrentPosition();
+                                    CswNbtObjClassSDSDocument SDSCopy = SDSDoc.CopyNode();
+                                    SDSCopy.Owner.RelatedNodeId = MaterialCopy.NodeId;
+                                    SDSCopy.postChanges( false );
+                                    if( i == 0 )
+                                    {
+                                        Copy.Data.Create_Material.state.sdsDocId = SDSCopy.NodeId.ToString();
+                                    }
+                                    SDSTree.goToParentNode();
+                                }
+
+                                #endregion SDS
+
+                                #region Components
+
+                                CswNbtMetaDataObjectClass MaterialComponentOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.MaterialComponentClass );
+                                CswNbtMetaDataObjectClassProp CompMaterialOCP = MaterialComponentOC.getObjectClassProp( CswNbtObjClassMaterialComponent.PropertyName.Mixture );
+                                CswNbtView ComponentsView = new CswNbtView( _CswNbtResources )
+                                {
+                                    ViewName = "MaterialCopyComponents"
+                                };
+                                CswNbtViewRelationship ComponentsVR = ComponentsView.AddViewRelationship( MaterialComponentOC, false );
+                                ComponentsView.AddViewPropertyAndFilter( ComponentsVR, CompMaterialOCP, OriginalMaterial.NodeId.PrimaryKey.ToString(), CswEnumNbtSubFieldName.NodeID );
+                                ICswNbtTree ComponentsTree = _CswNbtResources.Trees.getTreeFromView( ComponentsView, false, false, false );
+                                for( int i = 0; i < ComponentsTree.getChildNodeCount(); i++ )
+                                {
+                                    ComponentsTree.goToNthChild( i );
+                                    CswNbtObjClassMaterialComponent ComponentNode = ComponentsTree.getNodeForCurrentPosition();
+                                    CswNbtObjClassMaterialComponent ComponentCopy = ComponentNode.CopyNode();
+                                    ComponentCopy.Mixture.RelatedNodeId = MaterialCopy.NodeId;
+                                    ComponentCopy.Constituent.RelatedNodeId = ComponentNode.Constituent.RelatedNodeId;
+                                    ComponentCopy.postChanges( false );
+                                    ComponentsTree.goToParentNode();
+                                }
+
+                                #endregion Components
+                            }
+
+                            #region GHS
+
+                            CswNbtMetaDataObjectClass GHSOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.GHSClass );
+                            CswNbtMetaDataObjectClassProp GHSMaterialOCP = GHSOC.getObjectClassProp( CswNbtObjClassGHS.PropertyName.Material );
+                            CswNbtView GHSView = new CswNbtView( _CswNbtResources )
+                            {
+                                ViewName = "MaterialCopyGHS"
+                            };
+                            CswNbtViewRelationship GHSVR = GHSView.AddViewRelationship( GHSOC, false );
+                            GHSView.AddViewPropertyAndFilter( GHSVR, GHSMaterialOCP, OriginalMaterial.NodeId.PrimaryKey.ToString(), CswEnumNbtSubFieldName.NodeID );
+                            ICswNbtTree GHSTree = _CswNbtResources.Trees.getTreeFromView( GHSView, false, false, false );
+                            for( int i = 0; i < GHSTree.getChildNodeCount(); i++ )
+                            {
+                                GHSTree.goToNthChild( i );
+                                CswNbtObjClassGHS GHSNode = GHSTree.getNodeForCurrentPosition();
+                                CswNbtObjClassGHS GHSCopy = GHSNode.CopyNode();
+                                GHSCopy.Material.RelatedNodeId = MaterialCopy.NodeId;
+                                GHSCopy.postChanges( false );
+                                GHSTree.goToParentNode();
+                            }
+
+                            #endregion GHS
+                        }
+                    }
+                }
+            }
+
+            #endregion Create_Material Copy Data
+        }
+
+        #endregion Copy
+
+        #region Delete
 
         public JObject DeleteNodes( string[] NodePks, string[] NodeKeys )
         {
@@ -94,11 +353,6 @@ namespace ChemSW.Nbt.WebServices
         public bool DeleteNode( CswPrimaryKey NodePk, out string DeletedNodeName, bool DeleteAllRequiredRelatedNodes = false )
         {
             return _NodeSd.DeleteNode( NodePk, out DeletedNodeName, DeleteAllRequiredRelatedNodes );
-        }
-
-        public JObject doObjectClassButtonClick( CswPropIdAttr PropId, string SelectedText, string TabIds, JObject ReturnProps, string NodeIds, string PropIds )
-        {
-            return _NodeSd.doObjectClassButtonClick( PropId, SelectedText, TabIds, ReturnProps, NodeIds, PropIds );
         }
 
         private JObject _makeDeletedNodeText( CswNbtMetaDataNodeType NodeType, string NodeName, Int32 NodeId, CswNbtNode Node = null )
@@ -314,6 +568,15 @@ namespace ChemSW.Nbt.WebServices
             return Ret;
         }
 
+        #endregion Delete
+
+        public JObject doObjectClassButtonClick( CswPropIdAttr PropId, string SelectedText, string TabIds, JObject ReturnProps, string NodeIds, string PropIds )
+        {
+            return _NodeSd.doObjectClassButtonClick( PropId, SelectedText, TabIds, ReturnProps, NodeIds, PropIds );
+        }
+
+        #region Add
+
         /// <summary>
         /// Create a new node
         /// </summary>
@@ -327,6 +590,10 @@ namespace ChemSW.Nbt.WebServices
             _NodeSd.addSingleNodeProp( Node, PropObj, Tab );
 
         } // _applyPropJson
+
+        #endregion Add
+
+        #region Get
 
         public JObject getQuantityFromSize( CswPrimaryKey SizeId, string Action )
         {
@@ -413,6 +680,8 @@ namespace ChemSW.Nbt.WebServices
                 }
             }
         }
+
+        #endregion Get
 
     } // class CswNbtWebServiceNode
 

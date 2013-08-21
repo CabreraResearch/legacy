@@ -31,7 +31,7 @@
                     Csw.tryExec(cswPrivate.onSelect, cswPublic.val());
                 });
 
-                Csw.ajax.post({
+                Csw.ajax.deprecatedWsNbt({
                     urlMethod: 'getNodeTypeTabs',
                     data: {
                         NodeTypeName: Csw.string(cswPrivate.nodeTypeName),

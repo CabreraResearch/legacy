@@ -23,7 +23,7 @@
                 }());
 
                 cswPrivate.onSubmitClick = function() {
-                    Csw.ajax.post({
+                    Csw.ajax.deprecatedWsNbt({
                         urlMethod: '',
                         data: {},
                         success: function(json) {
@@ -35,7 +35,7 @@
                 };
 
                 cswPrivate.onCancelClick = function() {
-                    Csw.ajax.post({
+                    Csw.ajax.deprecatedWsNbt({
                         urlMethod: '',
                         data: {},
                         success: function(json) {

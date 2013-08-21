@@ -6,34 +6,37 @@
 
         Csw.main.refreshWelcomeLandingPage = function () {
             Csw.main.universalsearch.enable();
-            return Csw.main.setLandingPage(function () {
+            var doLoadLandingPage = function() {
                 return Csw.layouts.landingpage(Csw.main.centerBottomDiv, {
                     name: 'welcomeLandingPage',
                     Title: '',
+
                     onLinkClick: Csw.main.handleItemSelect,
-                    onAddClick: function (itemData) {
-                        Csw.layouts.addnode({
+                    onAddClick: function(itemData) {
+                        Csw.dialogs.addnode({
                             action: itemData.ActionName,
-                            dialogOptions: {
-                                text: itemData.Text,
-                                nodetypeid: itemData.NodeTypeId,
-                                onAddNode: function (nodeid, nodekey) {
-                                    Csw.main.clear({ all: true });
-                                    Csw.main.refreshNodesTree({ 'nodeid': nodeid, 'nodekey': nodekey, 'IncludeNodeRequired': true });
-                                }
+                            title: itemData.Text,
+                            nodetypeid: itemData.NodeTypeId,
+                            onAddNode: function (nodeid, nodekey) {
+                                Csw.main.clear({ all: true });
+                                Csw.main.refreshNodesTree({ 'nodeid': nodeid, 'nodekey': nodekey, 'IncludeNodeRequired': true });
                             }
                         });
                     },
-                    onTabClick: function (itemData) {
+                    onTabClick: function(itemData) {
                         Csw.cookie.set(Csw.cookie.cookieNames.CurrentTabId, itemData.TabId);
                         Csw.main.handleItemSelect(itemData);
                     },
                     onAddComponent: Csw.main.refreshWelcomeLandingPage,
+
+                    useCache: true,
+
                     landingPageRequestData: {
                         RoleId: ''
                     }
                 });
-            });
+            };
+            return Csw.main.setLandingPage(doLoadLandingPage);
         };
 
         Csw.main.register('setLandingPage', function (loadLandingPage) {
@@ -52,7 +55,6 @@
                 ActionId: '',
                 RelatedObjectClassId: '',
                 RelatedNodeName: '',
-                RelatedNodeTypeId: '',
                 isConfigurable: false,
                 Title: '',
                 name: 'CswLandingPage'
@@ -69,19 +71,14 @@
                 ObjectClassId: layData.RelatedObjectClassId,
                 onLinkClick: Csw.main.handleItemSelect,
                 onAddClick: function (itemData) {
-                    Csw.layouts.addnode({
+                    Csw.dialogs.addnode({
                         action: itemData.ActionName,
-                        dialogOptions: {
-                            text: itemData.Text,
-                            nodetypeid: itemData.NodeTypeId,
-                            relatednodeid: layData.RelatedNodeId,
-                            relatednodename: layData.RelatedNodeName,
-                            relatednodetypeid: layData.RelatedNodeTypeId,
-                            relatedobjectclassid: layData.RelatedObjectClassId,
-                            onAddNode: function (nodeid, nodekey) {
-                                Csw.main.clear({ all: true });
-                                Csw.main.refreshNodesTree({ nodeid: nodeid, nodekey: nodekey, IncludeNodeRequired: true });
-                            }
+                        title: itemData.Text,
+                        nodetypeid: itemData.NodeTypeId,
+                        relatednodeid: layData.RelatedNodeId,
+                        onAddNode: function (nodeid, nodekey) {
+                            Csw.main.clear({ all: true });
+                            Csw.main.refreshNodesTree({ nodeid: nodeid, nodekey: nodekey, IncludeNodeRequired: true });
                         }
                     });
                 },

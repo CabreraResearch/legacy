@@ -61,8 +61,6 @@ namespace ChemSW.Nbt.WebServices
 
             CswPrimaryKey RelatedNodeId = new CswPrimaryKey();
             string RelatedNodeName = string.Empty;
-            string RelatedNodeTypeId = string.Empty;
-            string RelatedObjectClassId = string.Empty;
             CswNbtNode Node = null;
 
             if( false == String.IsNullOrEmpty( SafeNodeKey ) )
@@ -79,8 +77,6 @@ namespace ChemSW.Nbt.WebServices
             {
                 RelatedNodeId = Node.NodeId;
                 RelatedNodeName = Node.NodeName;
-                RelatedNodeTypeId = Node.NodeTypeId.ToString();
-                RelatedObjectClassId = Node.getObjectClassId().ToString();
             }
 
             // MORE
@@ -98,7 +94,7 @@ namespace ChemSW.Nbt.WebServices
                         CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
                         if( null != NodeType && _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Create, NodeType ) && NodeType.getObjectClass().CanAdd )
                         {
-                            AddObj[NodeType.NodeTypeName] = makeAddMenuItem( NodeType, RelatedNodeId, RelatedNodeName, RelatedNodeTypeId, RelatedObjectClassId );
+                            AddObj[NodeType.NodeTypeName] = makeAddMenuItem( NodeType, RelatedNodeId, RelatedNodeName );
                             AddObj["haschildren"] = true;
                             Ret["Add"] = AddObj;
                         }
@@ -128,8 +124,6 @@ namespace ChemSW.Nbt.WebServices
                                     {
                                         RelatedNodeId = Node.NodeId;
                                         RelatedNodeName = Node.NodeName;
-                                        RelatedNodeTypeId = Node.NodeTypeId.ToString();
-                                        RelatedObjectClassId = Node.getObjectClassId().ToString();
                                     }
                                 }
                             }
@@ -140,7 +134,7 @@ namespace ChemSW.Nbt.WebServices
                         }
                         foreach( JProperty AddNodeType in ParentNode.AllowedChildNodeTypes( LimitToFirstLevelRelationships )
                             .Select( Entry => new JProperty( Entry.NodeType.NodeTypeName,
-                                                             makeAddMenuItem( Entry.NodeType, RelatedNodeId, RelatedNodeName, RelatedNodeTypeId, RelatedObjectClassId ) ) ) )
+                                                             makeAddMenuItem( Entry.NodeType, RelatedNodeId, RelatedNodeName ) ) ) )
                         {
                             AddObj.Add( AddNodeType );
                         }
@@ -166,6 +160,7 @@ namespace ChemSW.Nbt.WebServices
                         if( false == Node.getNodeType().IsUniqueAndRequired( ref BadPropertyName ) )
                         {
                             MoreObj["Copy"] = new JObject();
+                            MoreObj["Copy"]["copytype"] = _getActionType( Node.getNodeType() );
                             MoreObj["Copy"]["action"] = CswEnumNbtMainMenuActions.CopyNode.ToString();
                             MoreObj["Copy"]["nodeid"] = Node.NodeId.ToString();
                             MoreObj["Copy"]["nodename"] = Node.NodeName;
@@ -337,7 +332,7 @@ namespace ChemSW.Nbt.WebServices
             return Ret;
         } // getMenu()
 
-        public static JObject makeAddMenuItem( CswNbtMetaDataNodeType NodeType, CswPrimaryKey RelatedNodeId, string RelatedNodeName, string RelatedNodeTypeId, string RelatedObjectClassId )
+        public static JObject makeAddMenuItem( CswNbtMetaDataNodeType NodeType, CswPrimaryKey RelatedNodeId, string RelatedNodeName )
         {
             JObject Ret = new JObject();
             Ret["text"] = default( string );
@@ -347,7 +342,24 @@ namespace ChemSW.Nbt.WebServices
                 Ret["text"] = NodeType.NodeTypeName;
                 Ret["nodetypeid"] = NodeType.NodeTypeId;
                 Ret["icon"] = CswNbtMetaDataObjectClass.IconPrefix16 + NodeType.IconFileName;
+                Ret["action"] = _getActionType( NodeType );
+                if( String.IsNullOrEmpty( Ret["action"].ToString() ) )
+                {
+                    Ret["relatednodeid"] = default( string );
+                    if( null != RelatedNodeId && Int32.MinValue != RelatedNodeId.PrimaryKey )
+                    {
+                        Ret["relatednodeid"] = RelatedNodeId.ToString();
+                    }
+                    Ret["relatednodename"] = RelatedNodeName;
+                    Ret["action"] = CswEnumNbtMainMenuActions.AddNode.ToString();
+                }
             }
+            return Ret;
+        } // makeAddMenuItem()
+
+        private static string _getActionType( CswNbtMetaDataNodeType NodeType )
+        {
+            string ActionType;
             switch( NodeType.getObjectClass().ObjectClass )
             {
                 //Not yet an elegant way to handle Receiving from Add menu
@@ -356,24 +368,14 @@ namespace ChemSW.Nbt.WebServices
                 //    break;
                 case CswEnumNbtObjectClass.ChemicalClass:
                 case CswEnumNbtObjectClass.NonChemicalClass:
-                    Ret["action"] = CswEnumNbtActionName.Create_Material.ToString();
+                    ActionType = CswEnumNbtActionName.Create_Material;
                     break;
                 default:
-                    Ret["relatednodeid"] = default( string );
-                    if( null != RelatedNodeId && Int32.MinValue != RelatedNodeId.PrimaryKey )
-                    {
-                        Ret["relatednodeid"] = RelatedNodeId.ToString();
-                    }
-
-                    Ret["relatednodename"] = RelatedNodeName;
-                    Ret["relatednodetypeid"] = RelatedNodeTypeId;
-                    Ret["relatedobjectclassid"] = RelatedObjectClassId;
-                    Ret["action"] = CswEnumNbtMainMenuActions.AddNode.ToString();
+                    ActionType = String.Empty;
                     break;
             }
-            return Ret;
-        } // makeAddMenuItem()
-
+            return ActionType;
+        }
 
     } // class CswNbtWebServiceMainMenu
 } // namespace ChemSW.Nbt.WebServices
