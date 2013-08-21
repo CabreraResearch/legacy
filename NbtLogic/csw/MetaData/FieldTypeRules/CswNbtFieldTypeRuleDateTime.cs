@@ -77,7 +77,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
         public string getHelpText()
         {
-            return "Enter \"today\" follow by a \"+\" or \"-\" and then a number to use todays date plus/minus the number of days specified";
+            return "Click \"today\" to use the current date.</br></br>Enter \"today+N\" to use a date N days in the future, where N is any number.</br></br>Enter \"today-N\" to use a date N days in the past, where N is any number.";
         }
 
     }//CswNbtFieldTypeRuleDateTime
