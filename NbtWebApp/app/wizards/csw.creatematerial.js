@@ -733,7 +733,7 @@
                         };
 
                         //From step 0: request, materialid
-                        createMaterialDef.request = cswPrivate.state.request || cswPrivate.request;
+                        createMaterialDef.request = cswPrivate.state.request;
                         createMaterialDef.materialId = cswPrivate.state.materialId;
 
                         //From step 1: materialtype, tradename, supplier, partno
