@@ -70,7 +70,7 @@
                         if (data && data.HasSpace) {
                             if (false === Csw.isNullOrEmpty(cswPrivate.action) && cswPrivate.action !== 'AddNode') {
                                 Csw.main.handleAction({ actionname: cswPrivate.action });
-                            } else {
+                            } else if (Csw.isNullOrEmpty(cswPrivate.propertyData)) {
                                 Csw.ajax.deprecatedWsNbt({
                                     urlMethod: 'getProps',
                                     data: {
@@ -96,6 +96,8 @@
                                         }
                                     }
                                 });
+                            } else {
+                                cswPrivate.addNodeDialog.open();
                             }
                         } else {
                             Csw.dialogs.alert({
