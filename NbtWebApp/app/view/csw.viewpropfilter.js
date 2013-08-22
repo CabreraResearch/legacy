@@ -298,7 +298,10 @@
                                 cswPrivate.tip = cswPrivate.helpIcon.quickTip({
                                     anchor: 'bottom',
                                     autoHide: false,
-                                    html: cswPrivate.propsData.helptext
+                                    html: cswPrivate.propsData.helptext,
+                                    onBeforeClose: function () {
+                                        cswPrivate.tip = null;
+                                    }
                                 });
                             }
                         }

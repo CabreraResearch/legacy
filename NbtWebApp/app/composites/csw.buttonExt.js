@@ -50,7 +50,7 @@
             (function _preCtor() {
                 Csw.extend(cswPrivate, options, true);
                 cswPublic.div = cswParent.div({ cssclass: 'cswInline' });
-            } ());
+            }());
 
 
             cswPublic.show = Csw.method(function () {
@@ -106,6 +106,14 @@
                 return cswPublic;
             });
 
+            cswPublic.destroy = Csw.method(function () {
+                /// <summary>
+                /// Removes the button
+                /// </summary>
+                cswPublic.button.destroy();
+                cswPublic.button = null;
+            });
+
             (function _postCtor() {
                 switch (Csw.string(cswPrivate.size, 'medium').toLowerCase()) {
                     case 'medium':
@@ -125,8 +133,8 @@
                     icon = cswPrivate.path + cswPrivate.icon + '.png';
                 }
 
-                var onClick = Csw.method(function(btn, extEvent) {
-                    var doEnable = function() {
+                var onClick = Csw.method(function (btn, extEvent) {
+                    var doEnable = function () {
                         if (cswPublic && cswPublic.enable && cswPublic.button && cswPublic.button.setText) {
                             if (false === Csw.ajax.ajaxInProgress()) {
                                 cswPublic.enable();
@@ -167,8 +175,8 @@
                         scale: Csw.string(cswPrivate.size, 'medium'),
                         disabled: cswPrivate.disabled,
                         listeners: {
-                            mouseover: function() { Csw.tryExec(cswPrivate.onHoverIn); },
-                            mouseout: function() { Csw.tryExec(cswPrivate.onHoverOut); }
+                            mouseover: function () { Csw.tryExec(cswPrivate.onHoverIn); },
+                            mouseout: function () { Csw.tryExec(cswPrivate.onHoverOut); }
                         }
                     });
                 }
@@ -178,11 +186,11 @@
                     window.Ext.QuickTips.init();
                 }
 
-            } ());
+            }());
 
             return cswPublic;
 
         });
 
-} ());
+}());
 
