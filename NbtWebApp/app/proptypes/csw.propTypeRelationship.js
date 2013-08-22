@@ -64,7 +64,8 @@
                 optsNodeSelect.isRequired = nodeProperty.isRequired();
                 optsNodeSelect.isMulti = nodeProperty.isMulti();
                 optsNodeSelect.isReadOnly = nodeProperty.isReadOnly();
-                optsNodeSelect.isClickable = nodeProperty.tabState.EditMode !== Csw.enums.editMode.AuditHistoryInPopup; //case 28180 - relationships not clickable from audit history popup
+                //case 28180 - relationships not clickable from audit history popup (Case 30496 - or when viewing As Report)
+                optsNodeSelect.isClickable = nodeProperty.tabState.EditMode !== Csw.enums.editMode.AuditHistoryInPopup && nodeProperty.tabState.EditMode !== Csw.enums.editMode.PrintReport;
 
                 optsNodeSelect.doGetNodes = false;
 

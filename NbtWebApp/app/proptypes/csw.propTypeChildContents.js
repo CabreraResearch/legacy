@@ -14,7 +14,9 @@
                 var cswPrivate = Csw.object();
 
                 cswPrivate.loadNode = function (nodeid) {
-                    editLink.show();
+                    if (false === Csw.isNullOrEmpty(editLink)) {
+                        editLink.show();
+                    }
                     cswPrivate.childContentsDiv.empty();
 
                     Csw.layouts.tabsAndProps(cswPrivate.childContentsDiv, {
@@ -22,7 +24,7 @@
                         tabState: {
                             ShowAsReport: false,
                             nodeid: nodeid,
-                            EditMode: Csw.enums.editMode.Edit,
+                            EditMode: nsOptions.isClickable ? Csw.enums.editMode.Edit : Csw.enums.editMode.PrintReport,
                             ReadOnly: true,
                             showSaveButton: false
                         },
@@ -59,30 +61,33 @@
                 nsOptions.isRequired = nodeProperty.isRequired();
                 nsOptions.isMulti = nodeProperty.isMulti();
                 nsOptions.isReadOnly = false; // nodeProperty.isReadOnly();
-                nsOptions.isClickable = nodeProperty.tabState.EditMode !== Csw.enums.editMode.AuditHistoryInPopup; //case 28180 - relationships not clickable from audit history popup
+                //case 28180 - relationships not clickable from audit history popup (Case 30496 - or when viewing As Report)
+                nsOptions.isClickable = nodeProperty.tabState.EditMode !== Csw.enums.editMode.AuditHistoryInPopup && nodeProperty.tabState.EditMode !== Csw.enums.editMode.PrintReport;
 
                 nsOptions.doGetNodes = false;
                 nsOptions.showSelectOnLoad = true;
 
                 var nodeSelect = nodeProperty.propDivTbl.cell(1, 1).nodeSelect(nsOptions);
 
-                var editLink = nodeProperty.propDivTbl.cell(1, 2).buttonExt({
-                    name: 'childContentsEdit',
-                    icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.pencil),
-                    size: 'small',
-                    enabledText: 'Edit Selected',
-                    onClick: function() {
-                        var nodeid = nodeSelect.selectedNodeId();
-                        $.CswDialog('EditNodeDialog', {
-                            currentNodeId: nodeid,
-                            nodenames: [nodeSelect.selectedName()],
-                            onEditNode: function() {
-                                // refresh
-                                cswPrivate.loadNode(nodeid);
-                            }
-                        }); // CswDialog
-                    } // onClick
-                }); // link
+                if (nsOptions.isClickable) {
+                    var editLink = nodeProperty.propDivTbl.cell(1, 2).buttonExt({
+                        name: 'childContentsEdit',
+                        icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.pencil),
+                        size: 'small',
+                        enabledText: 'Edit Selected',
+                        onClick: function() {
+                            var nodeid = nodeSelect.selectedNodeId();
+                            $.CswDialog('EditNodeDialog', {
+                                currentNodeId: nodeid,
+                                nodenames: [nodeSelect.selectedName()],
+                                onEditNode: function() {
+                                    // refresh
+                                    cswPrivate.loadNode(nodeid);
+                                }
+                            }); // CswDialog
+                        } // onClick
+                    }); // link
+                }
                 cswPrivate.childContentsDiv = nodeProperty.propDiv.div();
 
                 if (false === Csw.isNullOrEmpty(nsOptions.selectedNodeId)) {
