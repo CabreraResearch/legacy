@@ -192,10 +192,10 @@
                             div.$.dialog('close');
                         }
                     });
-
-                    openDialog(div, 425, 210, null, 'New View');
                 }
             });
+
+            openDialog(div, 425, 210, null, 'New View');
 
         }, // AddViewDialog
         AddFeedbackDialog: function (options) {
