@@ -241,6 +241,11 @@
                         }
                     });
                     break;
+                case 'import data from excel':
+                    Csw.actions.importExcel(Csw.main.centerTopDiv, {
+                        onClose: Csw.main.refreshSelected
+                    });
+                    break;
                 case 'login data':
                     Csw.actions.logindata(Csw.main.centerTopDiv, {
                         onCancel: function () {

@@ -9,22 +9,24 @@ namespace ChemSW.Nbt.Sched
         #region Internals
         private static Dictionary<string, string> _Enums = new Dictionary<string, string>( StringComparer.OrdinalIgnoreCase )
                                                                    {
-                                                                       { UpdtPropVals                  , UpdtPropVals                   },
-                                                                       { UpdtMTBF                      , UpdtMTBF                       },
-                                                                       { UpdtInspection                , UpdtInspection                 },
+                                                                       { BatchOp                       , BatchOp                        },
+                                                                       { CAFImport                     , CAFImport                      },
+                                                                       { ContainerReconciliationActions, ContainerReconciliationActions },
+                                                                       { DisableChemSwAdmin            , DisableChemSwAdmin             },
+                                                                       { ExpiredContainers             , ExpiredContainers              },
+                                                                       { GenEmailRpt                   , GenEmailRpt                    },
                                                                        { GenNode                       , GenNode                        },
                                                                        { GenRequest                    , GenRequest                     },
-                                                                       { GenEmailRpt                   , GenEmailRpt                    },
-                                                                       { DisableChemSwAdmin            , DisableChemSwAdmin             },
-                                                                       { BatchOp                       , BatchOp                        },
-                                                                       { ExpiredContainers             , ExpiredContainers              },
+                                                                       { Import                        , Import                         },
                                                                        { MolFingerprints               , MolFingerprints                },
-                                                                       { ContainerReconciliationActions, ContainerReconciliationActions },
+                                                                       { NodeCounts                    , NodeCounts                     },
+                                                                       { PurgeSessionData              , PurgeSessionData               },
                                                                        { Reconciliation                , Reconciliation                 },
                                                                        { TierII                        , TierII                         },
-                                                                       { CAFImport                     , CAFImport                      },
-                                                                       { NodeCounts                    , NodeCounts                     },
-                                                                       { ValidateAccessIds             , ValidateAccessIds              },
+                                                                       { UpdtInspection                , UpdtInspection                 },
+                                                                       { UpdtMTBF                      , UpdtMTBF                       },
+                                                                       { UpdtPropVals                  , UpdtPropVals                   },
+                                                                       { ValidateAccessIds             , ValidateAccessIds              }
                                                                    };
         /// <summary>
         /// The string value of the current instance
@@ -78,23 +80,24 @@ namespace ChemSW.Nbt.Sched
         #region Enum members
 
 
-        public const string UpdtPropVals = "UpdtPropVals";
-        public const string UpdtMTBF = "UpdtMTBF";
-        public const string UpdtInspection = "UpdtInspection";
+        public const string BatchOp = "BatchOp";
+        public const string CAFImport = "CAFImport";
+        public const string ContainerReconciliationActions = "ContainerReconciliationActions";
+        public const string DisableChemSwAdmin = "DisableChemSwAdmin";
+        public const string ExpiredContainers = "ExpiredContainers";
+        public const string ExtChemDataSync = "ExtChemDataSync";
+        public const string GenEmailRpt = "GenEmailRpt";
         public const string GenNode = "GenNode";
         public const string GenRequest = "GenRequest";
-        public const string GenEmailRpt = "GenEmailRpt";
-        public const string DisableChemSwAdmin = "DisableChemSwAdmin";
-        public const string BatchOp = "BatchOp";
-        public const string ExpiredContainers = "ExpiredContainers";
+        public const string Import = "Import";
         public const string MolFingerprints = "MolFingerprints";
-        public const string ContainerReconciliationActions = "ContainerReconciliationActions";
+        public const string NodeCounts = "NodeCounts";
+        public const string PurgeSessionData = "PurgeSessionData";
         public const string Reconciliation = "Reconciliation";
         public const string TierII = "TierII";
-        public const string CAFImport = "CAFImport";
-        public const string ExtChemDataSync = "ExtChemDataSync";
-        public const string PurgeSessionData = "PurgeSessionData";
-        public const string NodeCounts = "NodeCounts";
+        public const string UpdtInspection = "UpdtInspection";
+        public const string UpdtPropVals = "UpdtPropVals";
+        public const string UpdtMTBF = "UpdtMTBF";
         public const string ValidateAccessIds = "ValidateAccessIds";
 
         #endregion Enum members

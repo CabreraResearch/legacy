@@ -133,6 +133,7 @@ namespace ChemSW.WebSvc
             if( SvcReturn != null )
             {
                 SvcReturn["AuthenticationStatus"] = AuthenticationStatusIn.ToString();
+                SvcReturn["AuthenticationStatusText"] = CswEnumAuthenticationStatus.EuphamizedText[AuthenticationStatusIn];
                 if( false == IsMobile )
                 {
                     SvcReturn["server"] = Environment.MachineName;

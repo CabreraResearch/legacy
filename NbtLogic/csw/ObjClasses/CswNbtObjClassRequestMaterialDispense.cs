@@ -287,6 +287,13 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         public override void afterPropertySetPopulateProps()
         {
+            CswNbtNode MaterialNode = _CswNbtResources.Nodes.GetNode( Material.RelatedNodeId );
+            if( MaterialNode != null )
+            {
+                Material.setReadOnly( value: true, SaveToDb: true );
+                CswNbtUnitViewBuilder Vb = new CswNbtUnitViewBuilder( _CswNbtResources );
+                Vb.setQuantityUnitOfMeasureView( MaterialNode, Quantity );
+            }
             Quantity.SetOnPropChange( onQuantityPropChange );
             TotalDispensed.SetOnPropChange( onTotalDispensedPropChange );
             Material.SetOnPropChange( onMaterialPropChange );
