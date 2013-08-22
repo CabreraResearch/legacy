@@ -252,7 +252,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
         public string getHelpText()
         {
-            return "Enter \"me\" to use your primary key as the search term";
+            return "Enter \"me\" to use the current user as the search term";
         }
 
     }//ICswNbtFieldTypeRule
