@@ -761,7 +761,7 @@
                                     cswPrivate.propSelect.remove();
                                     if (cswPrivate.propFilterTbl) {
                                         cswPrivate.propFilterTbl.remove();
-                                        cswPrivate.addFilterBtn.destroy();
+                                        cswPrivate.addFilterBtn.remove();
                                     }
                                 }
                                 if (filterSelect.selectedText() !== 'Add Filter On...') {
@@ -770,7 +770,7 @@
                                         onChange: function () {
                                             if (cswPrivate.propFilterTbl) {
                                                 cswPrivate.propFilterTbl.remove();
-                                                cswPrivate.addFilterBtn.destroy();
+                                                cswPrivate.addFilterBtn.remove();
                                                 cswPrivate.currentFilter.closeTip();
                                             }
                                             if (cswPrivate.propSelect.selectedText() !== 'Select...') {

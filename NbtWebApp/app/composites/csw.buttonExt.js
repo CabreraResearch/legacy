@@ -107,14 +107,6 @@
                 return cswPublic;
             });
 
-            cswPublic.destroy = Csw.method(function () {
-                /// <summary>
-                /// Removes the button
-                /// </summary>
-                cswPublic.button.destroy();
-                cswPublic.button = null;
-            });
-
             (function _postCtor() {
                 switch (Csw.string(cswPrivate.size, 'medium').toLowerCase()) {
                     case 'medium':
