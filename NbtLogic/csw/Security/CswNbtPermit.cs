@@ -700,45 +700,48 @@ namespace ChemSW.Nbt.Security
 
         private bool _isPropWritableImpl( CswNbtMetaDataNodeTypeTab MetaDataTab, CswNbtMetaDataNodeTypeProp MetaDataProp, CswNbtNodePropWrapper NodePropWrapper )
         {
-            bool ret = false;
+            bool ret = true;
 
-            if( _CswNbtPermitInfo.NoExceptionCases || (null == MetaDataTab || canTab( _CswNbtPermitInfo.NodeTypePermission, _CswNbtPermitInfo.NodeType, MetaDataTab ) ) )
+            if( false == _CswNbtPermitInfo.NoExceptionCases &&  null != MetaDataTab && false == canTab( _CswNbtPermitInfo.NodeTypePermission, _CswNbtPermitInfo.NodeType, MetaDataTab ) ) 
             {
-                if( _CswNbtPermitInfo.NodeTypePermission != CswEnumNbtNodeTypePermission.View )
-                {
-                    if( false == MetaDataProp.ServerManaged )
-                    {
-                        //buttons are always clickable. Otherwise, check if the prop is set to readonly and that we're not displaying it to add a new node
-                        //Note: as per case 29095, the admin override for read only props now lives in CswNbtSdTabsAndProps
-                        if( MetaDataProp.getFieldType().FieldType == CswEnumNbtFieldType.Button ||
-                            (
-                                ( ( false == MetaDataProp.ReadOnly ) && ( null == NodePropWrapper || ( false == NodePropWrapper.ReadOnly && false == NodePropWrapper.Node.ReadOnly ) ) ) ||
-                                ( MetaDataProp.IsRequired && _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Add && null != MetaDataProp.getAddLayout() )
-                            )
-                            )
-                        {
-                            ret = true;
-                        }
-                        else
-                        {
-                            _CswNbtResources.CswLogger.reportAppState( "The property " + MetaDataProp.PropName + " (" + MetaDataProp.PropId + ") has been displayed as non-editable because this property is set to read only.", "ReadOnlyConditions" );
-                        }
-
-                    } //if ( false == MetaDataProp.ServerManaged )
-                    else
-                    {
-                        _CswNbtResources.CswLogger.reportAppState( "The property " + MetaDataProp.PropName + " (" + MetaDataProp.PropId + ") has been displayed as non-editable because this property is server managed.", "ReadOnlyConditions" );
-                    }
-                } //if ( _CswNbtPermitInfo.NodeTypePermission != CswEnumNbtNodeTypePermission.View )
-                else
-                {
-                    _CswNbtResources.CswLogger.reportAppState( "The property " + MetaDataProp.PropName + " (" + MetaDataProp.PropId + ") has been displayed as non-editable because the viewer does not have edit permissions on nodetype " + MetaDataProp.NodeTypeId + ".", "ReadOnlyConditions" );
-                }
-            }// if _CswNbtPermitInfo.NoExceptionCases
-            else
-            {
+                ret = false;
                 _CswNbtResources.CswLogger.reportAppState( "The property " + MetaDataProp.PropName + " (" + MetaDataProp.PropId + ") has been displayed as non-editable because the viewer cannot see tab " + MetaDataTab.TabId + ".", "ReadOnlyConditions" );
             }
+            else if( _CswNbtPermitInfo.NodeTypePermission == CswEnumNbtNodeTypePermission.View )
+            {
+                ret = false;
+                _CswNbtResources.CswLogger.reportAppState( "The property " + MetaDataProp.PropName + " (" + MetaDataProp.PropId + ") has been displayed as non-editable because the viewer does not have edit permissions on nodetype " + MetaDataProp.NodeTypeId + ".", "ReadOnlyConditions" );
+            }
+            else if( MetaDataProp.ServerManaged )
+            {
+                ret = false;
+                _CswNbtResources.CswLogger.reportAppState( "The property " + MetaDataProp.PropName + " (" + MetaDataProp.PropId + ") has been displayed as non-editable because this property is server managed.", "ReadOnlyConditions" );
+            }
+            else if( MetaDataProp.getFieldType().FieldType != CswEnumNbtFieldType.Button )
+            {
+                if( false == ( MetaDataProp.IsRequired && _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Add && null != MetaDataProp.getAddLayout() ) )
+                {
+                    if( MetaDataProp.ReadOnly )
+                    {
+                        ret = false;
+                        _CswNbtResources.CswLogger.reportAppState( "The property " + MetaDataProp.PropName + " (" + MetaDataProp.PropId + ") has been displayed as non-editable because this property is read only.", "ReadOnlyConditions" );
+                    }
+                    else if( null != NodePropWrapper )
+                    {
+                        if( NodePropWrapper.ReadOnly )
+                        {
+                            ret = false;
+                            _CswNbtResources.CswLogger.reportAppState( "The property " + MetaDataProp.PropName + " (" + MetaDataProp.PropId + ") has been displayed as non-editable because this property's nodepropwrapper is read only.", "ReadOnlyConditions" );
+                        }
+                        else if( NodePropWrapper.Node.ReadOnly )
+                        {
+                            ret = false;
+                            _CswNbtResources.CswLogger.reportAppState( "The property " + MetaDataProp.PropName + " (" + MetaDataProp.PropId + ") has been displayed as non-editable because this property's nodepropwrapper's node is read only.", "ReadOnlyConditions" );
+                        }
+                    }//else if( null != NodePropWrapper )
+                }//if( false == ( MetaDataProp.IsRequired && _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Add && null != MetaDataProp.getAddLayout() ) 
+            }//else if MetaDataProp.getFieldType().FieldType != CswEnumNbtFieldType.Button
+
 
             return ret;
 
