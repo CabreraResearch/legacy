@@ -66,7 +66,7 @@
 
                 function dayChange(val, checkbox) {
                     var day = cswPrivate.weekDayDef[val - 1];
-                    if (p.useRadio) {
+                    if (p.useRadio || cswPublic.rateInterval.weeklyfrequency > 1) {
                         p.selectedWeekDays = [];
                     }
                     if (checkbox.checked()) {
@@ -97,7 +97,7 @@
 
                 for (i = 1; i <= 7; i += 1) {
                     type = Csw.enums.inputTypes.checkbox;
-                    if (p.useRadio) {
+                    if (p.useRadio || cswPublic.rateInterval.weeklyfrequency > 1) {
                         type = Csw.enums.inputTypes.radio;
                     }
                     pickerTable.cell(2, i)
@@ -249,6 +249,19 @@
                     onChange: function () {
                         cswPublic.rateInterval.weeklyfrequency = weeklyRateSelect.val();
                         Csw.tryExec(cswPrivate.onChange);
+
+                        weeklyTable.cell(1, 2).empty();
+                        
+                        cswPrivate.makeWeekDayPicker({
+                            parent: weeklyTable.cell(1, 2),
+                            IDPrefix: cswPrivate.name + 'weeklyday',
+                            selectedWeekDays: cswPublic.rateInterval.weeklyday.split(','),
+                            useRadio: false,
+                            onChange: function (selecteddays) {
+                                cswPublic.rateInterval.weeklyday = selecteddays.join(',');
+                                Csw.tryExec(cswPrivate.onChange);
+                            }
+                        });
                     },
                     values: frequency,
                     selected: Csw.number(cswPublic.rateInterval.weeklyfrequency)
