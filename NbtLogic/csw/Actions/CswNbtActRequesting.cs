@@ -717,11 +717,14 @@ namespace ChemSW.Nbt.Actions
         /// </summary>
         public CswNbtPropertySetRequestItem makeMaterialRequestItem( CswEnumNbtRequestItemType Item, CswPrimaryKey MaterialId, CswNbtObjClass.NbtButtonData ButtonData )
         {
+            CswNbtPropertySetRequestItem RetAsRequestItem = null;
             CswNbtMetaDataObjectClass ItemOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestMaterialDispenseClass );
             CswNbtMetaDataNodeType RequestItemNt = ItemOc.getNodeTypes().FirstOrDefault();
             CswNbtSdTabsAndProps PropsAction = new CswNbtSdTabsAndProps( _CswNbtResources );
-
-            CswNbtPropertySetRequestItem RetAsRequestItem = PropsAction.getAddNode( RequestItemNt );
+            if( null != RequestItemNt )
+            {
+                RetAsRequestItem = PropsAction.getAddNode( RequestItemNt.NodeTypeId, MaterialId.ToString() );
+            }
             if ( null == RetAsRequestItem )
             {
                 throw new CswDniException( CswEnumErrorType.Error, "Could not generate a new request item.", "Failed to create a new Request Item node." );
@@ -740,7 +743,6 @@ namespace ChemSW.Nbt.Actions
                     RetAsRequestItem.Location.CachedPath = DefaultAsLocation.Location.CachedPath;
                 }
             }
-            RetAsRequestItem.Material.RelatedNodeId = MaterialId;
             switch ( ButtonData.SelectedText )
             {
                 case CswNbtPropertySetMaterial.CswEnumRequestOption.Bulk:
