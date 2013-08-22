@@ -49,7 +49,8 @@
 
             (function _preCtor() {
                 Csw.extend(cswPrivate, options, true);
-                cswPublic.div = cswParent.div({ cssclass: 'cswInline' });
+                var div = cswParent.div({ cssclass: 'cswInline' });
+                cswPublic = Csw.dom(div);
             }());
 
 
@@ -163,10 +164,10 @@
                     window.Mousetrap.bind('enter', cswPrivate.onClickInternal);
                 }
 
-                if (Csw.isElementInDom(cswPublic.div.getId())) {
+                if (Csw.isElementInDom(cswPublic.getId())) {
                     cswPublic.button = window.Ext.create('Ext.Button', {
                         id: cswPrivate.ID + 'button',
-                        renderTo: cswPublic.div.getId(),
+                        renderTo: cswPublic.getId(),
                         text: Csw.string(cswPrivate.enabledText),
                         width: cswPrivate.width,
                         handler: cswPrivate.onClickInternal,
