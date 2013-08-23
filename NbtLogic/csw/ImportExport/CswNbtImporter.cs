@@ -17,7 +17,7 @@ using ChemSW.Nbt.Schema;
 
 namespace ChemSW.Nbt.ImportExport
 {
-    public class CswNbtImporter
+    public partial class CswNbtImporter
     {
         private readonly CswNbtResources _CswNbtResources;
         private readonly CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;
