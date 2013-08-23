@@ -16,11 +16,11 @@
         <Directory Id="TARGETDIR" Name="SourceDir">
             <Directory Id="ProgramFilesFolder">
                 <Directory Id="ChemSW" Name="ChemSW">
-                    <Directory Id="INSTALLDIR" Name="Balance Reader Client" FileSource="..\BalanceReaderClient\bin\Release">
+                    <Directory Id="INSTALLDIR" Name="Balance Reader Client" FileSource="$(var.BalanceReaderClient.TargetDir)">
                         
                         <Component Id="ClientInstall" Guid="2453EEFA-578E-48BB-AAFB-78BB03D2D034">
-                            <File Id="ClientExe" Name="BalanceReaderClient.exe" KeyPath="yes" />
-                            <File Id="ClientConfig" Name="BalanceReaderClient.exe.config" />
+                            <File Id="ClientExe" Name="$(var.BalanceReaderClient.TargetFileName)" KeyPath="yes" />
+                            <File Id="ClientConfig" Name="$(var.BalanceReaderClient.TargetFileName).config" />
                             <Shortcut Id="DesktopShortcut" Directory="DesktopFolder" Name="Balance Reader Client" Advertise="yes" Icon="balance.ico" />
                             <RemoveFile Id="PurgeClientFolder" Name="*.*" On="uninstall" />
                         </Component>
@@ -40,7 +40,8 @@
         </Feature>
 
 
-        <UIRef Id="WixUI_Minimal" />
+        <Property Id="WIXUI_INSTALLDIR" Value="INSTALLDIR" />
+        <UIRef Id="WixUI_InstallDir" />
         <UIRef Id="WixUI_ErrorProgressText" />
         <WixVariable Id="WixUILicenseRtf" Value="eula.rtf"/>
         
