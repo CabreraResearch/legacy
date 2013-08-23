@@ -64,14 +64,14 @@
                         cswPrivate.progressBar.updateText('Upload Complete');
                         
                         // jqXHR.result is XML format, not JSON, because of iframe craziness.  So we can't use it like this.
-                        //var data = Csw.extend(jqXHR.result);
-                        //if (jqXHR.result && false === Csw.isNullOrEmpty(jqXHR.result.data)) {
-                        //    Csw.extend(data, jqXHR.result.data);
-                        //}
-                        //if (Csw.isNullOrEmpty(data)) {
-                        //    Csw.extend(data, jqXHR.data);
-                        //}
-                        //Csw.tryExec(cswPrivate.onSuccess, data);
+                        var data = Csw.extend(jqXHR.result);
+                        if (jqXHR.result && false === Csw.isNullOrEmpty(jqXHR.result.data)) {
+                            Csw.extend(data, jqXHR.result.data);
+                        }
+                        if (Csw.isNullOrEmpty(data)) {
+                            Csw.extend(data, jqXHR.data);
+                        }
+                        Csw.tryExec(cswPrivate.onSuccess, data); //use Csw.getPropFromIFrame to extract data (see ImageGallery for example)
                         
                         // COMMENCE KLUDGE to detect errors from return context
                         var succeeded;
@@ -91,15 +91,7 @@
                                errors.push(thiserr);
                            }
                         });
-                        var data = {};
-                        $.each($(jqXHR.result).find('body').children().children(), function(i, xmlnode) {
-                            if (xmlnode.nodeName !== "AUTHENTICATION" &&
-                                xmlnode.nodeName !== "LOGGING" &&
-                                xmlnode.nodeName !== "PERFORMANCE" &&
-                                xmlnode.nodeName !== "STATUS") {
-                                data[xmlnode.nodeName.toLowerCase()] = $(xmlnode).text();
-                            }
-                        });
+
                         if (false === succeeded) {
                             var lastErr = errors.length - 1;
                             Csw.error.showError(errors[lastErr], '');
