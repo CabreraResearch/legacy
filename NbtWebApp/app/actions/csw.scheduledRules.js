@@ -419,6 +419,7 @@
                             title: 'Scheduled Rules',
                             usePaging: true,
                             onRefresh: function () {
+                                //Case 30547 - grid.onRefresh passes in a default parameter to the callback. Insulating makeScheduledRulesGrid() will save us from that
                                 cswPrivate.makeScheduledRulesGrid();
                             },
                             showActionColumn: false,
