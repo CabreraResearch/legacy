@@ -19,6 +19,13 @@ namespace ChemSW.Nbt.csw.Schema
         private string _SourceTableName;
         private Int32 _ImportOrder;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="SchemaModTrnsctn"></param>
+        /// <param name="ImportOrder"></param>
+        /// <param name="SourceTableName"></param>
+        /// <param name="DestNodeTypeName"></param>
         public CswNbtSchemaUpdateImportMgr( CswNbtSchemaModTrnsctn SchemaModTrnsctn, Int32 ImportOrder, string SourceTableName, string DestNodeTypeName )
         {
             this.SchemaModTrnsctn = SchemaModTrnsctn;
@@ -80,7 +87,7 @@ namespace ChemSW.Nbt.csw.Schema
         {
             string ExceptionText = string.Empty;
             CafDbLink = CafDbLink ?? CswScheduleLogicNbtCAFImport.CAFDbLink;
-                                                     
+
             if( SchemaModTrnsctn.IsDbLinkConnectionHealthy( CafDbLink, ref ExceptionText ) )
             {
                 CswNbtImporter Importer = SchemaModTrnsctn.makeCswNbtImporter();
@@ -90,7 +97,7 @@ namespace ChemSW.Nbt.csw.Schema
                 importBinding( SourceTablePkColumnName, LegacyID, "" );
 
                 //Save the bindings in the DB
-                Importer.storeDefinition( _importOrderTable, _importBindingsTable, _importRelationshipsTable, CafDbLink );
+                Importer.storeDefinition( _importOrderTable, _importBindingsTable, _importRelationshipsTable, "CAF" );
 
                 //Optional extension to where clause. Logical deletes already excluded.
                 WhereClause = WhereClause ?? string.Empty;
@@ -98,7 +105,7 @@ namespace ChemSW.Nbt.csw.Schema
                 {
                     WhereClause = " and " + WhereClause;
                 }
-                
+
                 //Populate the import queue
                 string SqlText = "insert into nbtimportqueue@" + CafDbLink + " ( nbtimportqueueid, state, itempk, tablename, priority, errorlog ) " +
                                  @" select seq_nbtimportqueueid.nextval@" + CafDbLink + ", 'N', " + SourceTablePkColumnName + ", '" + _SourceTableName + "',0, '' from " + _SourceTableName + "@" + CafDbLink + " where deleted='0' " + WhereClause;

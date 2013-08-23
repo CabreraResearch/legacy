@@ -12,7 +12,7 @@ namespace ChemSW.Nbt.Sched
     public class CswScheduleLogicNbtCAFImport : ICswScheduleLogic
     {
         public const string CAFDbLink = "CAF";
-        
+
         public string RuleName
         {
             get { return ( CswEnumNbtScheduleRuleNames.CAFImport ); }
@@ -56,7 +56,7 @@ namespace ChemSW.Nbt.Sched
                 {
                     const string QueueTableName = "nbtimportqueue";
                     const string QueuePkName = "nbtimportqueueid";
-                    
+
                     Int32 NumberToProcess = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumConfigurationVariableNames.NodesProcessedPerCycle ) );
                     string Sql = "select * from " + QueueTableName + "@" + CAFDbLink + " where state = 'N'";
                     CswArbitrarySelect QueueSelect = _CswNbtResources.makeCswArbitrarySelect( "cafimport_queue_select", Sql );
@@ -66,7 +66,7 @@ namespace ChemSW.Nbt.Sched
                     foreach( DataRow QueueRow in QueueTable.Rows )
                     {
                         // LOB problem here
-                        string CurrentTblNamePkCol = Importer.getRemoteDataDictionaryPkColumnName( CswConvert.ToString( QueueRow[ "tablename" ] ), CAFDbLink );
+                        string CurrentTblNamePkCol = Importer.getRemoteDataDictionaryPkColumnName( CswConvert.ToString( QueueRow["tablename"] ), CAFDbLink );
                         if( string.IsNullOrEmpty( CurrentTblNamePkCol ) )
                         {
                             throw new Exception( "Could not find pkcolumn in data_dictionary for table " + QueueRow["tablename"].ToString() );
