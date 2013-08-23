@@ -103,6 +103,7 @@
     <Content Include="app\main\csw.mainEvents.js" />
     <Content Include="app\main\csw.mainDivs.js" />
     <Content Include="app\promises\csw.promise.js" />
+    <Content Include="app\promises\csw.spinners.js" />
     <Content Include="app\proptypes\csw.propTypeChildContents.js" />
     <Content Include="app\nodes\csw.node.treeExt.js" />
     <Content Include="app\proptypes\csw.propTypeCASNo.js" />

@@ -718,7 +718,7 @@ namespace ChemSW.Nbt.Security
                       MetaDataProp.getFieldType().FieldType == CswEnumNbtFieldType.Button ||
                       (
                 //This prop is not readonly OR
-                          ( ( false == MetaDataProp.ReadOnly ) && ( ( null == NodePropWrapper ) || ( false == NodePropWrapper.ReadOnly ) ) ) ||
+                          ( ( false == MetaDataProp.ReadOnly ) && ( null == NodePropWrapper || ( false == NodePropWrapper.ReadOnly && false == NodePropWrapper.Node.ReadOnly ) ) ) ||
                 //The prop is required AND readonly AND we're creating a new node
                 //This was removed as part of Case 27984, and I think it was a mistake
                           ( MetaDataProp.IsRequired && _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Add && null != MetaDataProp.getAddLayout() )
@@ -1156,20 +1156,19 @@ namespace ChemSW.Nbt.Security
             }
             if( false == ( User is CswNbtSystemUser ) )
             {
-                hasPermission = false;
                 if( null != User && CswTools.IsPrimaryKey( PermissionGroupId ) )
                 {
                     CswNbtPropertySetPermission PermNode = User.getPermissionForGroup( PermissionGroupId );
-                    if( null != PermNode &&
-                        ( ( Permission == CswEnumNbtNodeTypePermission.View && PermNode.View.Checked == CswEnumTristate.True ) ||
-                        PermNode.Edit.Checked == CswEnumTristate.True ) )//edit implies edit, create, and delete
+                    if( null != PermNode )
                     {
-                        hasPermission = true;
+                        hasPermission = ( ( Permission == CswEnumNbtNodeTypePermission.View && PermNode.View.Checked == CswEnumTristate.True ) ||
+                                          PermNode.Edit.Checked == CswEnumTristate.True ); //edit implies edit, create, and delete
                     }
-                }
-                else
-                {
-                    hasPermission = true;
+                    else if( null != _CswNbtResources.Nodes[PermissionGroupId] )
+                    {
+                        // case 30477 - Only revoke permissions if the group's nodetype is enabled and the node is valid
+                        hasPermission = false;
+                    }
                 }
             }
             return hasPermission;

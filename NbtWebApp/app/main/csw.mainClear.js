@@ -8,7 +8,7 @@
             ///<summary>Clears the contents of the page.</summary>
             ///<param name="options">An object representing the elements to clear: all, left, right, centertop, centerbottom.</param>
             //if (debugOn()) Csw.debug.log('Main.clear()');
-
+            
             var o = {
                 left: false,
                 right: false,
@@ -35,6 +35,7 @@
             if (o.all) {
                 Csw.main.mainMenuDiv.empty();
             }
+            return true;
         });
 
         Csw.subscribe(Csw.enums.events.main.clear, function (eventObj, opts) {

@@ -38,8 +38,6 @@
                 Errors: []
             }
         };
-
-        Csw.publish(Csw.enums.events.ajax.ajaxStop, o.watchGlobal);
         Csw.extend(response, data, true);
         
         if (false === response.Status.Success ||
@@ -89,7 +87,6 @@
     });
 
     cswPrivate.onJsonError = Csw.method(function (xmlHttpRequest, textStatus, param1, o) {
-        Csw.publish(Csw.enums.events.ajax.ajaxStop, o.watchGlobal, xmlHttpRequest, textStatus);
         if (textStatus !== 'abort') {
             Csw.debug.error({
                 'Webservice Request': o.urlMethod,
@@ -142,8 +139,7 @@
                 cswInternal.data = Csw.serialize(cswInternal.data);
             }
         }
-
-        Csw.publish(Csw.enums.events.ajax.ajaxStart, cswInternal.watchGlobal);
+        
         var ajax = $.ajax({
             type: verb,
             url: cswInternal.urlMethod,

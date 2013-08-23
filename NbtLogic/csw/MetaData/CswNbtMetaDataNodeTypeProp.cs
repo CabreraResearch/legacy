@@ -1,3 +1,10 @@
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Data;
+using System.Linq;
+using System.Runtime.Serialization;
+using System.Xml;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
@@ -6,13 +13,6 @@ using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 using ChemSW.Nbt.ServiceDrivers;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Data;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.Xml;
 
 namespace ChemSW.Nbt.MetaData
 {
@@ -1653,7 +1653,7 @@ namespace ChemSW.Nbt.MetaData
         public int CompareTo( CswNbtMetaDataNodeTypeProp OtherNodeTypeProp )
         {
             int ret = 0;
-            if( null != FirstEditLayout )
+            if( null != FirstEditLayout && null != OtherNodeTypeProp.FirstEditLayout )
             {
                 if( FirstEditLayout.DisplayRow == OtherNodeTypeProp.FirstEditLayout.DisplayRow )
                 {

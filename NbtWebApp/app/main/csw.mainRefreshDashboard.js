@@ -20,7 +20,7 @@
 
                     var $tr = table.append('<tr />');
 
-                    Csw.iterate(data, function (dashId, thisIcon) {
+                    Csw.iterate(data, function (thisIcon, dashId) {
                         var cellcontent;
                         if (false === Csw.isNullOrEmpty(thisIcon.href)) {
                             cellcontent = '<td class="DashboardCell">' +

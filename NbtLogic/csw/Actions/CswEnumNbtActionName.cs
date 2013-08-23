@@ -36,7 +36,7 @@ namespace ChemSW.Nbt.Actions
                                                                  {   HMIS_Reporting,HMIS_Reporting},
                                                                  {   Kiosk_Mode,Kiosk_Mode},
                                                                  {   Tier_II_Reporting,Tier_II_Reporting},
-                                                                 {   Material_Approval,Manage_Locations},
+                                                                 {   Material_Approval,Material_Approval},
                                                                  {   Login_Data, Login_Data},
                                                                  {   Manage_Locations,Manage_Locations},
                                                                  {   Delete_Demo_Data, Delete_Demo_Data}

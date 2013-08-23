@@ -144,8 +144,8 @@ namespace ChemSW.Nbt.Actions
 
         public TierIIData getTierIIData( TierIIData.TierIIDataRequest Request )
         {
-            BaseUnit = _setBaseUnit( "kg", "Unit (Weight)" );
-            CswNbtObjClassUnitOfMeasure PoundsUnit = _setBaseUnit( "lb", "Unit (Weight)" );
+            BaseUnit = _setBaseUnit( "kg", "Unit_Weight" );
+            CswNbtObjClassUnitOfMeasure PoundsUnit = _setBaseUnit( "lb", "Unit_Weight" );
             CswNbtUnitConversion Conversion = ( BaseUnit != null && PoundsUnit != null ) ?
                 new CswNbtUnitConversion( _CswNbtResources, BaseUnit.NodeId, PoundsUnit.NodeId ) : 
                 new CswNbtUnitConversion();

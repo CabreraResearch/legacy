@@ -170,24 +170,28 @@
                             onChange: function (locationId, locationName) {
                                 cswPrivate.state.LocationId = locationId;
                                 cswPrivate.state.LocationName = locationName;
+                                cswPrivate.toggleButton(cswPrivate.buttons.next, false === Csw.isNullOrEmpty(locationId));
                                 cswPrivate.reinitSteps(2);
                                 getPendingChangesCount();
                             }
                         });
                         cswPrivate.state.LocationId = locationControl.val();
                         cswPrivate.state.LocationName = locationControl.selectedName();
+                        cswPrivate.toggleButton(cswPrivate.buttons.next, false === Csw.isNullOrEmpty(cswPrivate.state.LocationId));
                         
                         //Pending Actions
                         var pendingActionLabel = locationDatesTable.cell(rowNum, 2).span({ text: 'Pending Actions:' });
-                        var getPendingChangesCount = function() {
-                            Csw.ajaxWcf.post({
-                                urlMethod: 'Containers/getOutstandingActionsCount',
-                                data: cswPrivate.state,
-                                success: function(ajaxdata) {
-                                    var count = ajaxdata.OutstandingActionsCount;
-                                    pendingActionLabel.text('Pending Actions: ' + count);
-                                }
-                            });
+                        var getPendingChangesCount = function () {
+                            if (false === Csw.isNullOrEmpty(cswPrivate.state.LocationId)) {
+                                Csw.ajaxWcf.post({
+                                    urlMethod: 'Containers/getOutstandingActionsCount',
+                                    data: cswPrivate.state,
+                                    success: function(ajaxdata) {
+                                        var count = ajaxdata.OutstandingActionsCount;
+                                        pendingActionLabel.text('Pending Actions: ' + count);
+                                    }
+                                });
+                            }
                         };
                         getPendingChangesCount();
                         rowNum++;
@@ -669,7 +673,7 @@
             };
 
             cswPrivate.getActionOptions = function (status) {
-                var actionOptions = ['', 'No Action'];
+                var actionOptions = ['', 'Ignore'];
                 if (status === 'Scanned, but already marked Disposed') {
                     actionOptions.push('Undispose');
                 }
