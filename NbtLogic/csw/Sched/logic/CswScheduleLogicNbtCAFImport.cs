@@ -1,10 +1,10 @@
 using System;
 using System.Data;
+using ChemSW.Config;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
 using ChemSW.MtSched.Core;
-using ChemSW.Config;
 using ChemSW.Nbt.ImportExport;
 
 namespace ChemSW.Nbt.Sched
@@ -65,8 +65,20 @@ namespace ChemSW.Nbt.Sched
                     foreach( DataRow QueueRow in QueueTable.Rows )
                     {
                         // LOB problem here
-                        // also need to fix looking up the pkcolname ("vendorid")
-                        string ItemSql = "select * from " + QueueRow["tablename"].ToString() + "@" + LinkName + " where vendorid = " + QueueRow["itempk"].ToString();
+                        string CurrentTblNamePkCol = "";
+                        string PkColumnSql = "select columnname from data_dictionary@CAFLINK where tablename = '" + QueueRow["tablename"].ToString() + "' and columntype = 'pk'";
+                        CswArbitrarySelect PkColumnSelect = _CswNbtResources.makeCswArbitrarySelect( "cafimport_pkcolumn_select", PkColumnSql );
+                        DataTable PkColumnTable = PkColumnSelect.getTable();
+                        if( PkColumnTable.Rows.Count > 0 )
+                        {
+                            CurrentTblNamePkCol = PkColumnTable.Rows[0]["columnname"].ToString();
+                        }
+                        else
+                        {
+                            throw new Exception( "Could not find pkcolumn in data_dictionary for table " + QueueRow["tablename"].ToString() );
+                        }
+
+                        string ItemSql = "select * from " + QueueRow["tablename"].ToString() + "@" + LinkName + " where " + CurrentTblNamePkCol + " = " + QueueRow["itempk"].ToString();
                         CswArbitrarySelect ItemSelect = _CswNbtResources.makeCswArbitrarySelect( "cafimport_queue_select", ItemSql );
                         DataTable ItemTable = ItemSelect.getTable();
                         foreach( DataRow ItemRow in ItemTable.Rows )
@@ -88,7 +100,7 @@ namespace ChemSW.Nbt.Sched
                                                                                   " where " + QueuePkName + " = " + QueueRow[QueuePkName] );
                             }
                         }
-                    }
+                    }//foreach( DataRow QueueRow in QueueTable.Rows )
                     _CswScheduleLogicDetail.StatusMessage = "Completed without error";
                     _LogicRunStatus = CswEnumScheduleLogicRunStatus.Succeeded; //last line
 
