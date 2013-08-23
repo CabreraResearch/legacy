@@ -44,19 +44,33 @@
             cswPrivate.addValidators = function () {
                 
                 if ( cswPrivate.DateFormat in cswPrivate.dateFormats && undefined != cswPrivate.dateBox ) {
-                    var dateExpression = cswPrivate.dateFormats[cswPrivate.DateFormat];
-
                     $.validator.addMethod('validateDate', function (value, element) {
-                        return (dateExpression.test(cswPublic.val().date));
-                    }, 'Please enter a valid date in the format ' + cswPrivate.DateFormat);
+                        
+                        var ret = true;
+                        
+                        if (cswPrivate.isRequired || false == Csw.isNullOrEmpty(cswPrivate.dateBox.val())) {
+                            var dateExpression = cswPrivate.dateFormats[cswPrivate.DateFormat];
+                            ret = dateExpression.test(cswPublic.val().date);
+                        }
+
+                        return ret;
+                        
+                    }, 'Please select a valid date');
                     cswPrivate.dateBox.addClass('validateDate');
                 }//if preferredFormat in dateFormats && undefined != cswPrivate.dateBox
 
                 if (cswPrivate.TimeFormat in cswPrivate.timeFormats && undefined != cswPrivate.timeBox) {
-                    var timeExpression = cswPrivate.timeFormats[cswPrivate.TimeFormat];
-                    
                     $.validator.addMethod('validateTime', function (value, element) {
-                        return (timeExpression.test(cswPublic.val().time));
+
+                        var ret = true;
+                        
+                        if (cswPrivate.isRequired || false == Csw.isNullOrEmpty(cswPrivate.timeBox.val())) {
+                            var timeExpression = cswPrivate.timeFormats[cswPrivate.TimeFormat];
+                            ret = timeExpression.test(cswPublic.val().time);
+                        }
+
+                        return ret;
+                        
                     }, 'Please enter a valid time in the format ' + cswPrivate.TimeFormat);
                     cswPrivate.timeBox.addClass('validateTime');
                 }//if cswPrivate.TimeFormat in cswPrivate.timeFormats && undefined != cswPrivate.timeBox
