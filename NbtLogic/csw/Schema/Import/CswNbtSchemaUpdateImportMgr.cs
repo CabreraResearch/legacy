@@ -84,7 +84,7 @@ namespace ChemSW.Nbt.csw.Schema
             string SourceTablePkColumnName = Importer.getRemoteDataDictionaryPkColumnName( _SourceTableName, CafDbLink );
             
             string SqlText = "insert into nbtimportqueue@" + CafDbLink + " ( nbtimportqueueid, state, itempk, tablename, priority, errorlog ) " +
-                @" select seq_nbtimportqueueid.nextval@" + CafDbLink + ", 'N', " + SourceTablePkColumnName + ", '" + _SourceTableName + "',0, '' from " + _SourceTableName + "@" + CafDbLink;
+                @" select seq_nbtimportqueueid.nextval@" + CafDbLink + ", 'N', " + SourceTablePkColumnName + ", '" + _SourceTableName + "',0, '' from " + _SourceTableName + "@" + CafDbLink + " where deleted='0'";
 
             SchemaModTrnsctn.execArbitraryPlatformNeutralSql( SqlText );
         }
