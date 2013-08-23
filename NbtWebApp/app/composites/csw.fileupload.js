@@ -71,7 +71,6 @@
                         if (Csw.isNullOrEmpty(data)) {
                             Csw.extend(data, jqXHR.data);
                         }
-                        Csw.tryExec(cswPrivate.onSuccess, data); //use Csw.getPropFromIFrame to extract data (see ImageGallery for example)
                         
                         // COMMENCE KLUDGE to detect errors from return context
                         var succeeded;
@@ -97,7 +96,7 @@
                             Csw.error.showError(errors[lastErr], '');
                             Csw.tryExec(cswPrivate.onError, errors[lastErr]);
                         } else {
-                            Csw.tryExec(cswPrivate.onSuccess, data);
+                            Csw.tryExec(cswPrivate.onSuccess, data); //use Csw.getPropFromIFrame to extract data (see ImageGallery for example)
                         }
                     }
                 });
