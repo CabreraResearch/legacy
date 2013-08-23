@@ -217,6 +217,11 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             }
         }
 
+        public string getHelpText()
+        {
+            return "Enter \"me\" to use the current user as the search term";
+        }
+
     }//CswNbtFieldTypeRuleRelationship
 
 }//namespace ChemSW.Nbt.MetaData

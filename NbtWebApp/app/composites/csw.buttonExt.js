@@ -49,8 +49,9 @@
 
             (function _preCtor() {
                 Csw.extend(cswPrivate, options, true);
-                cswPublic = cswParent.div({ cssclass: 'cswInline' });
-            } ());
+                var div = cswParent.div({ cssclass: 'cswInline' });
+                cswPublic = Csw.dom(div);
+            }());
 
 
             cswPublic.show = Csw.method(function () {
@@ -125,8 +126,8 @@
                     icon = cswPrivate.path + cswPrivate.icon + '.png';
                 }
 
-                var onClick = Csw.method(function(btn, extEvent) {
-                    var doEnable = function() {
+                var onClick = Csw.method(function (btn, extEvent) {
+                    var doEnable = function () {
                         if (cswPublic && cswPublic.enable && cswPublic.button && cswPublic.button.setText) {
                             if (false === Csw.ajax.ajaxInProgress()) {
                                 cswPublic.enable();
@@ -167,8 +168,8 @@
                         scale: Csw.string(cswPrivate.size, 'medium'),
                         disabled: cswPrivate.disabled,
                         listeners: {
-                            mouseover: function() { Csw.tryExec(cswPrivate.onHoverIn); },
-                            mouseout: function() { Csw.tryExec(cswPrivate.onHoverOut); }
+                            mouseover: function () { Csw.tryExec(cswPrivate.onHoverIn); },
+                            mouseout: function () { Csw.tryExec(cswPrivate.onHoverOut); }
                         }
                     });
                 }
@@ -178,11 +179,11 @@
                     window.Ext.QuickTips.init();
                 }
 
-            } ());
+            }());
 
             return cswPublic;
 
         });
 
-} ());
+}());
 

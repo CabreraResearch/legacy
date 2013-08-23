@@ -75,6 +75,11 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldTypeRuleDefault.afterCreateNodeTypeProp( NodeTypeProp );
         }
 
+        public string getHelpText()
+        {
+            return "Click \"today\" to use the current date.</br></br>Enter \"today+N\" to use a date N days in the future, where N is any number.</br></br>Enter \"today-N\" to use a date N days in the past, where N is any number.";
+        }
+
     }//CswNbtFieldTypeRuleDateTime
 
 }//namespace ChemSW.Nbt.MetaData
