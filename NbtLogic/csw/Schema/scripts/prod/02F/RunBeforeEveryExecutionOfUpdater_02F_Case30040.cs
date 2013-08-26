@@ -12,8 +12,7 @@ namespace ChemSW.Nbt.Schema
     /// </summary>
     public class RunBeforeEveryExecutionOfUpdater_02F_Case30040 : CswUpdateSchemaTo
     {
-        public static string Title = "Pre-Script: Case 30040";
-
+        public override string Title { get { return "Pre-Script: Case 30040"; } }
         public override CswEnumDeveloper Author
         {
             get { return CswEnumDeveloper.SS; }

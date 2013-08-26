@@ -5,8 +5,8 @@ namespace ChemSW.Nbt.Schema
 {
     public abstract class CswUpdateSchemaTo
     {
-        public virtual string Title { get { return "Script: Case " + CaseNo;  } }
-        
+        public virtual string Title { get { return "Script: Case " + CaseNo; } }
+
         public class UnitOfBlame
         {
             public UnitOfBlame()
@@ -23,7 +23,7 @@ namespace ChemSW.Nbt.Schema
             public CswEnumDeveloper Developer;
             public Int32 CaseNumber;
         }
-        
+
         protected CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn = null;
         public CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn
         {
@@ -38,7 +38,22 @@ namespace ChemSW.Nbt.Schema
         public virtual string Description
         {
             set { _Description = value; }
-            get { return ( _Description + " - " + Title ); }
+            get
+            {
+                string Ret = _Description;
+                if( string.IsNullOrEmpty( Ret ) ||
+                    ( CaseNo > 0 &&
+                      false == Ret.Contains( "Case " + CaseNo ) &&
+                      false == Ret.Contains( Title ) ) )
+                {
+                    if( false == string.IsNullOrEmpty( Ret ) )
+                    {
+                        Ret += " - ";
+                    }
+                    Ret += Title;
+                }
+                return Ret;
+            }
         }
 
         /// <summary>

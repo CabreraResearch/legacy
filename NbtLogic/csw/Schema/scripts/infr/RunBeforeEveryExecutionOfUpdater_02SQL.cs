@@ -36,8 +36,7 @@ namespace ChemSW.Nbt.Schema
 
         #endregion Blame Logic
 
-        public static string Title = "Pre-Script: PL/SQL Objects";
-
+        public override string Title { get { return "Pre-Script: 02: PL/SQL Objects"; } }
         public override void update()
         {
             #region Views
