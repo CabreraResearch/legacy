@@ -58,7 +58,7 @@ namespace ChemSW.Nbt.Schema
             get
             {
                 Int32 ReturnVal = 30000;
-                if ( _CswNbtResources.SetupVbls.doesSettingExist( CswEnumSetupVariableNames.UpdtShellWaitMsec ) )
+                if( _CswNbtResources.SetupVbls.doesSettingExist( CswEnumSetupVariableNames.UpdtShellWaitMsec ) )
                 {
                     ReturnVal = CswConvert.ToInt32( _CswNbtResources.SetupVbls.readSetting( CswEnumSetupVariableNames.UpdtShellWaitMsec ) );
                 }
@@ -888,18 +888,25 @@ namespace ChemSW.Nbt.Schema
                 //TODO - Come back some day and make this dundant-proof
                 //if we ever have to shift scripts around to accomodate DDL, these helper methods will not be so helpful
                 CswTableUpdate RulesUpdate = makeCswTableUpdate( "SchemaModTrnsctn_ScheduledRuleUpdate", "scheduledrules" );
-                DataTable RuleTable = RulesUpdate.getEmptyTable();
-                DataRow NewRuleRow = RuleTable.NewRow();
-                NewRuleRow["recurrence"] = CswConvert.ToDbVal( Recurrence.ToString() );
-                NewRuleRow["interval"] = CswConvert.ToDbVal( Interval );
-                NewRuleRow["maxruntimems"] = CswConvert.ToDbVal( 300000 );
-                NewRuleRow["reprobatethreshold"] = CswConvert.ToDbVal( 3 );
-                NewRuleRow["disabled"] = CswConvert.ToDbVal( false );
-                NewRuleRow["rulename"] = CswConvert.ToDbVal( RuleName.ToString() );
-                RuleTable.Rows.Add( NewRuleRow );
+                DataTable RuleTable = RulesUpdate.getTable( WhereClause: "lower(rulename)='" + RuleName.ToString().ToLower() + "'" );
+                if( 0 == RuleTable.Rows.Count )
+                {
+                    DataRow NewRuleRow = RuleTable.NewRow();
+                    NewRuleRow["recurrence"] = CswConvert.ToDbVal( Recurrence.ToString() );
+                    NewRuleRow["interval"] = CswConvert.ToDbVal( Interval );
+                    NewRuleRow["maxruntimems"] = CswConvert.ToDbVal( 300000 );
+                    NewRuleRow["reprobatethreshold"] = CswConvert.ToDbVal( 3 );
+                    NewRuleRow["disabled"] = CswConvert.ToDbVal( false );
+                    NewRuleRow["rulename"] = CswConvert.ToDbVal( RuleName.ToString() );
+                    RuleTable.Rows.Add( NewRuleRow );
 
-                RetRuleId = CswConvert.ToInt32( NewRuleRow["scheduledruleid"] );
-                RulesUpdate.update( RuleTable );
+                    RetRuleId = CswConvert.ToInt32( NewRuleRow["scheduledruleid"] );
+                    RulesUpdate.update( RuleTable );
+                }
+                else
+                {
+                    this.logError( "Scheduled Rule name {" + RuleName + "} already exists." );
+                }
             }
             return RetRuleId;
         }
@@ -1576,10 +1583,10 @@ namespace ChemSW.Nbt.Schema
 
         public void getNextSchemaDumpFileInfo( ref string PhysicalDirectoryPath, ref string NameOfCurrentDump )
         {
-            if ( _CswNbtResources.SetupVbls.doesSettingExist( CswEnumSetupVariableNames.DumpFileDirectoryId ) )
+            if( _CswNbtResources.SetupVbls.doesSettingExist( CswEnumSetupVariableNames.DumpFileDirectoryId ) )
             {
                 string StatusMsg = string.Empty;
-                if ( false == _CswNbtResources.getNextSchemaDumpFileInfo( _CswNbtResources.SetupVbls[CswEnumSetupVariableNames.DumpFileDirectoryId], ref PhysicalDirectoryPath, ref NameOfCurrentDump, ref StatusMsg ) )
+                if( false == _CswNbtResources.getNextSchemaDumpFileInfo( _CswNbtResources.SetupVbls[CswEnumSetupVariableNames.DumpFileDirectoryId], ref PhysicalDirectoryPath, ref NameOfCurrentDump, ref StatusMsg ) )
                 {
                     throw ( new CswDniException( "Unable to take retrieve dump file information: " + StatusMsg ) );
                 }
@@ -1593,9 +1600,9 @@ namespace ChemSW.Nbt.Schema
 
         public void takeADump( ref string DumpFileName, ref string StatusMessage )
         {
-            if ( _CswNbtResources.SetupVbls.doesSettingExist( CswEnumSetupVariableNames.DumpFileDirectoryId ) )
+            if( _CswNbtResources.SetupVbls.doesSettingExist( CswEnumSetupVariableNames.DumpFileDirectoryId ) )
             {
-                if ( false == _CswNbtResources.takeADump( _CswNbtResources.SetupVbls[CswEnumSetupVariableNames.DumpFileDirectoryId], ref DumpFileName, ref StatusMessage ) )
+                if( false == _CswNbtResources.takeADump( _CswNbtResources.SetupVbls[CswEnumSetupVariableNames.DumpFileDirectoryId], ref DumpFileName, ref StatusMessage ) )
                 {
                     throw ( new CswDniException( "Unable to take a dump: " + StatusMessage ) );
                 }
