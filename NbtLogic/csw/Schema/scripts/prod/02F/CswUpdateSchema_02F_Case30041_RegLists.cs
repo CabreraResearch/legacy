@@ -23,9 +23,6 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
-            // Scheduled rule for CAFImports
-            _CswNbtSchemaModTrnsctn.createScheduledRule( CswEnumNbtScheduleRuleNames.CAFImport, CswEnumRecurrence.NHours, 1 );
-
             {
                 CswNbtSchemaUpdateImportMgr ImpMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, 1, "regulatory_lists", "Regulatory List" );
 

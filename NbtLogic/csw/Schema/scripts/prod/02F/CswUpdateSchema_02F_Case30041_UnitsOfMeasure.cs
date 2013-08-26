@@ -1,8 +1,6 @@
-﻿using ChemSW.MtSched.Core;
-using ChemSW.Nbt.csw.Dev;
+﻿using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.csw.Schema;
 using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.Sched;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -23,8 +21,6 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
-            // Scheduled rule for CAFImports
-            _CswNbtSchemaModTrnsctn.createScheduledRule( CswEnumNbtScheduleRuleNames.CAFImport, CswEnumRecurrence.NHours, 1 );
             {
                 CswNbtSchemaUpdateImportMgr UnitMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, 1, "units_of_measure", "Unit_Each" );
 
