@@ -234,7 +234,7 @@ namespace ChemSW.Nbt.Schema
         {
             CswSchemaUpdateDriver CswSchemaUpdateDriver = new CswSchemaUpdateDriver( UpdateTo );
             CswSchemaUpdateDriver.SchemaVersion = new CswSchemaVersion( 0, '#', _RunBeforeScripts.Count );
-            CswSchemaUpdateDriver.Description = Description ?? CswSchemaUpdateDriver.Title;
+            CswSchemaUpdateDriver.Description += Description ?? string.Empty;
             if( false == _RunBeforeScripts.Contains( CswSchemaUpdateDriver ) )
             {
                 _RunBeforeScripts.Add( CswSchemaUpdateDriver );
@@ -245,7 +245,7 @@ namespace ChemSW.Nbt.Schema
         {
             CswSchemaUpdateDriver CswSchemaUpdateDriver = new CswSchemaUpdateDriver(UpdateTo);
             CswSchemaUpdateDriver.SchemaVersion = new CswSchemaVersion( 99, '#', _RunAfterScripts.Count );
-            CswSchemaUpdateDriver.Description = Description ?? CswSchemaUpdateDriver.Title;
+            CswSchemaUpdateDriver.Description += Description ?? string.Empty;
             if( false == _RunAfterScripts.Contains( CswSchemaUpdateDriver ) )
             {
                 _RunAfterScripts.Add( CswSchemaUpdateDriver );
