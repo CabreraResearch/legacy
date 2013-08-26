@@ -74,19 +74,27 @@ namespace ChemSW.Nbt.csw.Schema
             row["instance"] = Instance;
             _importRelationshipsTable.Rows.Add( row );
         } // _importRelationship()
-        
+
         public void finalize( string CafDbLink = null )
         {
+            string ExceptionText = string.Empty;
             CafDbLink = CafDbLink ?? CswScheduleLogicNbtCAFImport.CAFDbLink;
-            CswNbtImporter Importer = SchemaModTrnsctn.makeCswNbtImporter();
-            Importer.storeDefinition( _importOrderTable, _importBindingsTable, _importRelationshipsTable, CafDbLink );
+            if( SchemaModTrnsctn.IsDbLinkConnectionHealthy( CafDbLink, ref ExceptionText ) )
+            {
+                CswNbtImporter Importer = SchemaModTrnsctn.makeCswNbtImporter();
+                Importer.storeDefinition( _importOrderTable, _importBindingsTable, _importRelationshipsTable, CafDbLink );
 
-            string SourceTablePkColumnName = Importer.getRemoteDataDictionaryPkColumnName( _SourceTableName, CafDbLink );
-            
-            string SqlText = "insert into nbtimportqueue@" + CafDbLink + " ( nbtimportqueueid, state, itempk, tablename, priority, errorlog ) " +
-                @" select seq_nbtimportqueueid.nextval@" + CafDbLink + ", 'N', " + SourceTablePkColumnName + ", '" + _SourceTableName + "',0, '' from " + _SourceTableName + "@" + CafDbLink + " where deleted='0'";
+                string SourceTablePkColumnName = Importer.getRemoteDataDictionaryPkColumnName( _SourceTableName, CafDbLink );
 
-            SchemaModTrnsctn.execArbitraryPlatformNeutralSql( SqlText );
+                string SqlText = "insert into nbtimportqueue@" + CafDbLink + " ( nbtimportqueueid, state, itempk, tablename, priority, errorlog ) " +
+                                 @" select seq_nbtimportqueueid.nextval@" + CafDbLink + ", 'N', " + SourceTablePkColumnName + ", '" + _SourceTableName + "',0, '' from " + _SourceTableName + "@" + CafDbLink + " where deleted='0'";
+
+                SchemaModTrnsctn.execArbitraryPlatformNeutralSql( SqlText );
+            }
+            else
+            {
+                SchemaModTrnsctn.logError( ExceptionText );
+            }
         }
     }
 

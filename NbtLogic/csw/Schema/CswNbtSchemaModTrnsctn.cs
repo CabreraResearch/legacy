@@ -1,4 +1,12 @@
-﻿using ChemSW.Audit;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Data;
+using System.Diagnostics;
+using System.IO;
+using System.Threading;
+using System.Windows.Forms;
+using ChemSW.Audit;
 using ChemSW.Config;
 using ChemSW.Core;
 using ChemSW.DB;
@@ -15,14 +23,6 @@ using ChemSW.Nbt.Search;
 using ChemSW.Nbt.Security;
 using ChemSW.Nbt.ServiceDrivers;
 using ChemSW.RscAdo;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Data;
-using System.Diagnostics;
-using System.IO;
-using System.Threading;
-using System.Windows.Forms;
 
 
 namespace ChemSW.Nbt.Schema
@@ -217,8 +217,6 @@ namespace ChemSW.Nbt.Schema
         /// <returns></returns>
         public Int32 execArbitraryPlatformNeutralSqlInItsOwnTransaction( string SqlText ) { return ( _CswNbtResources.CswResources.execArbitraryPlatformNeutralSqlInItsOwnTransaction( SqlText ) ); }
 
-
-
         /// <summary>
         /// Executes arbitrary sql.  It's your job to make sure it's platform neutral.
         /// You should *strongly* consider using CswArbitrarySelect, CswTableSelect, or CswTableUpdate instead of this.
@@ -277,6 +275,7 @@ namespace ChemSW.Nbt.Schema
             _CswDdl.removeSequence( SequenceName );
         }
 
+        public bool IsDbLinkConnectionHealthy( string DbLink, ref string ErrorMessage ) { return ( _CswNbtResources.CswResources.IsDbLinkConnectionHealthy( DbLink, ref ErrorMessage ) ); }
 
         public void makeConstraint( string ReferencingTableName, string ReferencingColumnName, string ReferencedTableName, string ReferencedColumnName, bool AddDdData )
         {
