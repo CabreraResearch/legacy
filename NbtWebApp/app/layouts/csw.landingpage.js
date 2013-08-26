@@ -54,7 +54,7 @@
 
             var makeLandingPageContent = function (lpData) {
                 if (lpData) {
-                   
+
                     cswPrivate.data = {
                         LandingPageItems: [{
                             LandingPageId: '',
@@ -81,7 +81,7 @@
                             'font-size': '1.2em'
                         });
                     div.hide();
-                    
+
                     var table = div.table({
                         name: 'landingpage_tbl',
                         align: 'center',
@@ -97,7 +97,7 @@
                         cellpadding: 10,
                         align: 'center',
                         width: null,
-                        onSwap: function(ev, onSwapData) {
+                        onSwap: function (ev, onSwapData) {
                             cswPrivate.onSwap(onSwapData);
                         },
                         showConfigButton: cswPrivate.isConfigurable,
@@ -105,18 +105,18 @@
                         showExpandColButton: cswPrivate.isConfigurable,
                         showAddButton: cswPrivate.isConfigurable,
                         showRemoveButton: cswPrivate.isConfigurable,
-                        onAddClick: function() {
+                        onAddClick: function () {
                             $.CswDialog('AddLandingPageItemDialog', {
                                 form: cswPrivate.getAddItemForm,
                                 onAdd: cswPrivate.onAddComponent
                             });
                         },
-                        onRemove: function(ev, onRemoveData) {
+                        onRemove: function (ev, onRemoveData) {
                             cswPrivate.removeItem(onRemoveData);
                         }
                     });
 
-                    Csw.iterate(cswPrivate.data.LandingPageItems, function(landingPageItem) {
+                    Csw.iterate(cswPrivate.data.LandingPageItems, function (landingPageItem) {
                         var thisItem = landingPageItem;
                         if (false === Csw.isNullOrEmpty(thisItem)) {
                             var cellSet = layoutTable.cellSet(thisItem.DisplayRow, thisItem.DisplayCol);
@@ -167,7 +167,7 @@
                             landingPageHidden.data('landingpageid', thisItem.LandingPageId);
                         }
                     });
-                    
+
                     if (lastLandingPage) {
                         lastLandingPage.remove();
                     }
@@ -348,12 +348,15 @@
                     name: 'landingpage_viewsel',
                     maxHeight: '275px',
                     includeRecent: false,
+                    useCache: false,
                     onSelect: function (itemobj) {
                         cswPrivate.selectedViewItemType = itemobj.type;
                         cswPrivate.selectedItemPK = itemobj.itemid;
                     }
                 });
-                cswPrivate.addItemForm[cswPrivate.select.view].control.$.hide();
+                cswPrivate.addItemForm[cswPrivate.select.view].control.promise.then(function () {
+                    cswPrivate.addItemForm[cswPrivate.select.view].control.hide();
+                });
             };
 
             cswPrivate.makeNodeTypeControl = function (onCtrlRender) {

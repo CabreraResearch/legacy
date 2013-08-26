@@ -210,7 +210,7 @@
                             forceIframeTransport: true,
                             dataType: 'iframe',
                             onSuccess: function (response) {
-                                cswPrivate.selectedJobId = response.jobid;
+                                cswPrivate.selectedJobId = Csw.number(Csw.getPropFromIFrame(response, 'jobid', false), Csw.int32MinVal);
                                 cswPrivate.makeStatusTable();
                             }
                         });
