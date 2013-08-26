@@ -9,6 +9,7 @@ namespace ChemSW.Nbt.csw.Schema
     class CswNbtSchemaUpdateImportMgr
     {
         public CswNbtSchemaModTrnsctn SchemaModTrnsctn;
+        public const string LegacyID = "Legacy ID";
 
         private DataTable _importOrderTable;
         private DataTable _importBindingsTable;
@@ -75,20 +76,32 @@ namespace ChemSW.Nbt.csw.Schema
             _importRelationshipsTable.Rows.Add( row );
         } // _importRelationship()
 
-        public void finalize( string CafDbLink = null )
+        public void finalize( string CafDbLink = null, string WhereClause = null )
         {
             string ExceptionText = string.Empty;
             CafDbLink = CafDbLink ?? CswScheduleLogicNbtCAFImport.CAFDbLink;
+                                                     
             if( SchemaModTrnsctn.IsDbLinkConnectionHealthy( CafDbLink, ref ExceptionText ) )
             {
                 CswNbtImporter Importer = SchemaModTrnsctn.makeCswNbtImporter();
+
+                //Add the Legacy ID before storing the definition
+                string SourceTablePkColumnName = Importer.getRemoteDataDictionaryPkColumnName( _SourceTableName, CafDbLink );
+                importBinding( SourceTablePkColumnName, LegacyID, "" );
+
+                //Save the bindings in the DB
                 Importer.storeDefinition( _importOrderTable, _importBindingsTable, _importRelationshipsTable, CafDbLink );
 
-                string SourceTablePkColumnName = Importer.getRemoteDataDictionaryPkColumnName( _SourceTableName, CafDbLink );
-
+                //Optional extension to where clause. Logical deletes already excluded.
+                WhereClause = WhereClause ?? string.Empty;
+                if( false == string.IsNullOrEmpty( WhereClause ) && false == WhereClause.Trim().StartsWith( "and" ) )
+                {
+                    WhereClause = " and " + WhereClause;
+                }
+                
+                //Populate the import queue
                 string SqlText = "insert into nbtimportqueue@" + CafDbLink + " ( nbtimportqueueid, state, itempk, tablename, priority, errorlog ) " +
-                                 @" select seq_nbtimportqueueid.nextval@" + CafDbLink + ", 'N', " + SourceTablePkColumnName + ", '" + _SourceTableName + "',0, '' from " + _SourceTableName + "@" + CafDbLink + " where deleted='0'";
-
+                                 @" select seq_nbtimportqueueid.nextval@" + CafDbLink + ", 'N', " + SourceTablePkColumnName + ", '" + _SourceTableName + "',0, '' from " + _SourceTableName + "@" + CafDbLink + " where deleted='0' " + WhereClause;
                 SchemaModTrnsctn.execArbitraryPlatformNeutralSql( SqlText );
             }
             else

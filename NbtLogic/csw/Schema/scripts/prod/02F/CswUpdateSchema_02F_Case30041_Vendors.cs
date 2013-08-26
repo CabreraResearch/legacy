@@ -8,6 +8,7 @@ using ChemSW.MtSched.Core;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.csw.Schema;
 using ChemSW.Nbt.ImportExport;
+using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Sched;
 using ChemSW.Nbt.csw.Dev;
 
@@ -38,17 +39,16 @@ namespace ChemSW.Nbt.Schema
             CswNbtSchemaUpdateImportMgr ImpMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, 1, "vendors", "Vendor" );                                                
 
             // Binding
-            ImpMgr.importBinding( "accountno", "Account No", "" );
-            ImpMgr.importBinding( "city", "City", "" );
-            ImpMgr.importBinding( "contactname", "Contact Name", "" );
-            ImpMgr.importBinding( "fax", "Fax", "" );
-            ImpMgr.importBinding( "phone", "Phone", "" );
-            ImpMgr.importBinding( "state", "State", "" );
-            ImpMgr.importBinding( "street1", "Street1", "" );
-            ImpMgr.importBinding( "street2", "Street2", "" );
-            ImpMgr.importBinding( "vendorid", "Legacy Id", "" );
-            ImpMgr.importBinding( "vendorname", "Vendor Name", "" );
-            ImpMgr.importBinding( "zip", "Zip", "" );
+            ImpMgr.importBinding( "accountno", CswNbtObjClassVendor.PropertyName.AccountNo, "" );
+            ImpMgr.importBinding( "city", CswNbtObjClassVendor.PropertyName.City, "" );
+            ImpMgr.importBinding( "contactname", CswNbtObjClassVendor.PropertyName.ContactName, "" );
+            ImpMgr.importBinding( "fax", CswNbtObjClassVendor.PropertyName.Fax, "" );
+            ImpMgr.importBinding( "phone", CswNbtObjClassVendor.PropertyName.Phone, "" );
+            ImpMgr.importBinding( "state", CswNbtObjClassVendor.PropertyName.State, "" );
+            ImpMgr.importBinding( "street1", CswNbtObjClassVendor.PropertyName.Street1, "" );
+            ImpMgr.importBinding( "street2", CswNbtObjClassVendor.PropertyName.Street2, "" );
+            ImpMgr.importBinding( "vendorname", CswNbtObjClassVendor.PropertyName.VendorName, "" );
+            ImpMgr.importBinding( "zip", CswNbtObjClassVendor.PropertyName.Zip, "" );
 
             // Relationship
             // none
