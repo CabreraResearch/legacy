@@ -285,7 +285,7 @@ namespace ChemSW.Nbt.MetaData
                 {
                     if( UseNumbering && QuestionNo != Int32.MinValue )
                     {
-                        _NodeTypePropRow["oraviewcolname"] = CswTools.MakeOracleCompliantIdentifier( FullQuestionNo );
+                        _NodeTypePropRow["oraviewcolname"] = CswTools.MakeOracleCompliantIdentifier( FullQuestionNo.Replace( ".", "x" ) );
                     }
                     else
                     {

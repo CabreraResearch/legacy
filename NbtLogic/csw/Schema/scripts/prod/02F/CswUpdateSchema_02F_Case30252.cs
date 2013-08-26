@@ -2,6 +2,7 @@
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt.csw.Dev;
+using ChemSW.Nbt.MetaData;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -90,7 +91,16 @@ namespace ChemSW.Nbt.Schema
                     }
                     else
                     {
-                        r2["oraviewcolname"] = CswConvert.ToDbVal( CswTools.MakeOracleCompliantIdentifier( r2["propname"].ToString() ) );
+                        //questions do not use the propname...
+                        CswNbtMetaDataNodeTypeProp ntp = _CswNbtSchemaModTrnsctn.MetaData.getNodeTypeProp( CswConvert.ToInt32( r2["nodetypepropid"] ) );
+                        if( ntp.getFieldType().FieldType == CswEnumNbtFieldType.Question )
+                        {
+                            r2["oraviewcolname"] = CswConvert.ToDbVal( CswTools.MakeOracleCompliantIdentifier( ntp.FullQuestionNo.Replace( ".", "x" ) ) );
+                        }
+                        else
+                        {
+                            r2["oraviewcolname"] = CswConvert.ToDbVal( CswTools.MakeOracleCompliantIdentifier( r2["propname"].ToString() ) );
+                        }
                     }
                 }
             }
