@@ -888,7 +888,7 @@ namespace ChemSW.Nbt.Schema
                 //TODO - Come back some day and make this dundant-proof
                 //if we ever have to shift scripts around to accomodate DDL, these helper methods will not be so helpful
                 CswTableUpdate RulesUpdate = makeCswTableUpdate( "SchemaModTrnsctn_ScheduledRuleUpdate", "scheduledrules" );
-                DataTable RuleTable = RulesUpdate.getTable( WhereClause: "lower(rulename)='" + RuleName.ToString().ToLower() + "'" );
+                DataTable RuleTable = RulesUpdate.getTable( WhereClause: " where lower(rulename)='" + RuleName.ToString().ToLower() + "' " );
                 if( 0 == RuleTable.Rows.Count )
                 {
                     DataRow NewRuleRow = RuleTable.NewRow();

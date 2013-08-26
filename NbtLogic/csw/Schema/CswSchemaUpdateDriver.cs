@@ -42,8 +42,6 @@ namespace ChemSW.Nbt.Schema
             {
                 _CswUpdateSchemaTo.Description = value;
             }
-
-
             get
             {
                 return ( _CswUpdateSchemaTo.Description );
