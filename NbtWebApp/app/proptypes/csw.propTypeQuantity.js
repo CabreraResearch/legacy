@@ -10,12 +10,12 @@
             var cswPublic = {
                 
             };
+            
+            var cswPrivate = Csw.object();
 
             //The render function to be executed as a callback
             var render = function() {
                 'use strict';
-                var cswPrivate = Csw.object();
-
                 cswPrivate.selectedName = nodeProperty.propData.values.name;
                 cswPrivate.cellCol = 1;
                 cswPrivate.nodeid = nodeProperty.propData.values.nodeid;
@@ -116,7 +116,11 @@
             nodeProperty.bindRender(render);
 
             //Bind an unrender callback to terminate any outstanding ajax requests, if any. See propTypeGrid.
-            //nodeProperty.unBindRender();
+            nodeProperty.unBindRender(function () {
+                // Case 30546: Fixed validation bug
+                // See explanation in csw.quantity.js
+                cswPrivate.quntCtrl.remove();
+            });
 
             return true;
         });

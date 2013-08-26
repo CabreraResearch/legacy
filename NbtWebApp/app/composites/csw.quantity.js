@@ -43,9 +43,11 @@
                 cswPrivate.onNumberChange = options.onNumberChange || function () { };
                 cswPrivate.onQuantityChange = options.onQuantityChange || function () { };
 
+                cswPrivate.validatorMethods = {};
+
                 cswPublic = cswParent.div();
                 cswPrivate.table = cswPublic.table();
-            } ());
+            }());
             //#endregion _preCtor
 
             //#region Control Construction
@@ -106,27 +108,44 @@
                 }
             };
 
+            /// Add validators
             cswPrivate.addValidators = function () {
-                $.validator.addMethod('validateInteger', function (value, element) {
+
+                // cswPrivate.validatorMethods.validateInteger
+                cswPrivate.validatorMethods.validateInteger = function () {
                     return (cswPrivate.precision != 0 || Csw.validateInteger(cswPrivate.numberTextBox.val()));
+                };
+                $.validator.addMethod('validateInteger', function (value, element) {
+                    return Csw.tryExec(cswPrivate.validatorMethods.validateInteger);
                 }, 'Value must be a whole number');
                 cswPrivate.numberTextBox.addClass('validateInteger');
 
-                $.validator.addMethod('validateIntegerGreaterThanZero', function (value, element) {
+                // cswPrivate.validatorMethods.validateIntegerGreaterThanZero
+                cswPrivate.validatorMethods.validateIntegerGreaterThanZero = function () {
                     return (Csw.validateIntegerGreaterThanZero(cswPrivate.numberTextBox.val()));
+                };
+                $.validator.addMethod('validateIntegerGreaterThanZero', function (value, element) {
+                    return Csw.tryExec(cswPrivate.validatorMethods.validateIntegerGreaterThanZero);
                 }, 'Value must be a non-zero, positive number');
                 cswPrivate.numberTextBox.addClass('validateIntegerGreaterThanZero');
 
-                $.validator.addMethod('validateUnitPresent', function (value, element) {
+                // cswPrivate.validatorMethods.validateUnitPresent
+                cswPrivate.validatorMethods.validateUnitPresent = function () {
                     return (false === Csw.isNullOrEmpty(cswPrivate.selectBox.val()) || Csw.isNullOrEmpty(cswPrivate.numberTextBox.val()));
+                };
+                $.validator.addMethod('validateUnitPresent', function (value, element) {
+                    return Csw.tryExec(cswPrivate.validatorMethods.validateUnitPresent);
                 }, 'Unit must be selected if Quantity is present.');
                 cswPrivate.selectBox.addClass('validateUnitPresent');
 
+                // cswPrivate.validatorMethods.validateQuantityPresent
                 if (false === cswPrivate.quantityoptional) {
                     cswPrivate.numberTextBox.required(cswPrivate.isRequired);
-
-                    $.validator.addMethod('validateQuantityPresent', function (value, element) {
+                    cswPrivate.validatorMethods.validateQuantityPresent = function () {
                         return (false === Csw.isNullOrEmpty(cswPrivate.numberTextBox.val()) || Csw.isNullOrEmpty(cswPrivate.selectBox.val()));
+                    };
+                    $.validator.addMethod('validateQuantityPresent', function (value, element) {
+                        return Csw.tryExec(cswPrivate.validatorMethods.validateQuantityPresent);
                     }, 'Quantity must have a value if Unit is selected.');
                     cswPrivate.selectBox.addClass('validateQuantityPresent');
                 }
@@ -172,6 +191,18 @@
                 return cswPrivate.selectedNodeId;
             };
 
+            cswPublic.remove = function () {
+            	/// <summary>
+                /// Case 30546: This is a temporary kludge to fix the validation issue.
+                /// The 'validateQuantityPresent' validator method was referring to the cached version
+                /// of the quantity control. This method makes it such that when it tries to validate that
+                /// cached control, we fake that it is valid.
+            	/// </summary>
+                cswPrivate.validatorMethods.validateQuantityPresent = function() {
+                    return true;
+                };
+            };
+
             cswPublic.refresh = function (data) {
                 cswPrivate.quantity = data.value;
                 cswPrivate.nodeid = data.nodeid;
@@ -198,14 +229,14 @@
                 } else {
                     cswPrivate.makeControl();
                 }
-            } ());
+            }());
 
             //#endregion _postCtor
 
             return cswPublic;
 
         });
-} ());
+}());
 
 //            var cswPrivate = {};
 
