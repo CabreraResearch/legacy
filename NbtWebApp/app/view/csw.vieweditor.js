@@ -771,12 +771,13 @@
                                             if (cswPrivate.propFilterTbl) {
                                                 cswPrivate.propFilterTbl.remove();
                                                 cswPrivate.addFilterBtn.remove();
+                                                cswPrivate.currentFilter.closeTip();
                                             }
                                             if (cswPrivate.propSelect.selectedText() !== 'Select...') {
                                                 cswPrivate.propFilterTbl = cswPrivate.filterSelectDiv.table();
                                                 var selectedProp = properties[cswPrivate.propSelect.selectedVal()];
 
-                                                var currentFilter = Csw.nbt.viewPropFilter({
+                                                cswPrivate.currentFilter = Csw.nbt.viewPropFilter({
                                                     name: 'vieweditor_filter_' + selectedProp.ArbitraryId,
                                                     parent: cswPrivate.propFilterTbl,
                                                     viewJson: cswPrivate.viewJson,
@@ -791,7 +792,7 @@
                                                     name: 'vieweditor_applyfilter_btn',
                                                     enabledText: 'Apply Filter',
                                                     onClick: function () {
-                                                        var filterData = currentFilter.getFilterJson();
+                                                        var filterData = cswPrivate.currentFilter.getFilterJson();
                                                         var ajaxData = {
                                                             CurrentView: cswPrivate.View,
                                                             Property: selectedProp,

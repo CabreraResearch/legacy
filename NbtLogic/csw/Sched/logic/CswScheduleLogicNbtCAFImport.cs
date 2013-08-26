@@ -1,16 +1,18 @@
 using System;
 using System.Data;
+using ChemSW.Config;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
 using ChemSW.MtSched.Core;
-using ChemSW.Config;
 using ChemSW.Nbt.ImportExport;
 
 namespace ChemSW.Nbt.Sched
 {
     public class CswScheduleLogicNbtCAFImport : ICswScheduleLogic
     {
+        public const string CAFDbLink = "CAFLINK";
+        
         public string RuleName
         {
             get { return ( CswEnumNbtScheduleRuleNames.CAFImport ); }
@@ -36,7 +38,7 @@ namespace ChemSW.Nbt.Sched
 
         public Int32 getLoadCount( ICswResources CswResources )
         {
-            string Sql = "select count(*) cnt from nbtimportqueue@CAFLINK where state = 'N'";
+            string Sql = "select count(*) cnt from nbtimportqueue@" + CAFDbLink + " where state = 'N'";
             CswArbitrarySelect QueueCountSelect = CswResources.makeCswArbitrarySelect( "cafimport_queue_count", Sql );
             DataTable QueueCountTable = QueueCountSelect.getTable();
             _CswScheduleLogicDetail.LoadCount = CswConvert.ToInt32( QueueCountTable.Rows[0]["cnt"] );
@@ -54,10 +56,9 @@ namespace ChemSW.Nbt.Sched
                 {
                     const string QueueTableName = "nbtimportqueue";
                     const string QueuePkName = "nbtimportqueueid";
-                    const string LinkName = "CAFLINK";
-
+                    
                     Int32 NumberToProcess = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumConfigurationVariableNames.NodesProcessedPerCycle ) );
-                    string Sql = "select * from " + QueueTableName + "@" + LinkName + " where state = 'N'";
+                    string Sql = "select * from " + QueueTableName + "@" + CAFDbLink + " where state = 'N'";
                     CswArbitrarySelect QueueSelect = _CswNbtResources.makeCswArbitrarySelect( "cafimport_queue_select", Sql );
                     DataTable QueueTable = QueueSelect.getTable( 0, NumberToProcess, false, true );
 
@@ -65,8 +66,13 @@ namespace ChemSW.Nbt.Sched
                     foreach( DataRow QueueRow in QueueTable.Rows )
                     {
                         // LOB problem here
-                        // also need to fix looking up the pkcolname ("vendorid")
-                        string ItemSql = "select * from " + QueueRow["tablename"].ToString() + "@" + LinkName + " where vendorid = " + QueueRow["itempk"].ToString();
+                        string CurrentTblNamePkCol = Importer.getRemoteDataDictionaryPkColumnName( CswConvert.ToString( QueueRow[ "tablename" ] ), CAFDbLink );
+                        if( string.IsNullOrEmpty( CurrentTblNamePkCol ) )
+                        {
+                            throw new Exception( "Could not find pkcolumn in data_dictionary for table " + QueueRow["tablename"].ToString() );
+                        }
+
+                        string ItemSql = "select * from " + QueueRow["tablename"] + "@" + CAFDbLink + " where " + CurrentTblNamePkCol + " = " + QueueRow["itempk"];
                         CswArbitrarySelect ItemSelect = _CswNbtResources.makeCswArbitrarySelect( "cafimport_queue_select", ItemSql );
                         DataTable ItemTable = ItemSelect.getTable();
                         foreach( DataRow ItemRow in ItemTable.Rows )
@@ -75,20 +81,20 @@ namespace ChemSW.Nbt.Sched
                             if( string.IsNullOrEmpty( Error ) )
                             {
                                 // record success
-                                _CswNbtResources.execArbitraryPlatformNeutralSql( "update " + QueueTableName + "@" + LinkName +
+                                _CswNbtResources.execArbitraryPlatformNeutralSql( "update " + QueueTableName + "@" + CAFDbLink +
                                                                                   "   set state = 'D' " +
                                                                                   " where " + QueuePkName + " = " + QueueRow[QueuePkName] );
                             }
                             else
                             {
                                 // record the error on nbtimportqueue
-                                _CswNbtResources.execArbitraryPlatformNeutralSql( "update " + QueueTableName + "@" + LinkName +
+                                _CswNbtResources.execArbitraryPlatformNeutralSql( "update " + QueueTableName + "@" + CAFDbLink +
                                                                                   "   set state = 'E', " +
                                                                                   "       errorlog = '" + CswTools.SafeSqlParam( Error ) + "' " +
                                                                                   " where " + QueuePkName + " = " + QueueRow[QueuePkName] );
                             }
                         }
-                    }
+                    }//foreach( DataRow QueueRow in QueueTable.Rows )
                     _CswScheduleLogicDetail.StatusMessage = "Completed without error";
                     _LogicRunStatus = CswEnumScheduleLogicRunStatus.Succeeded; //last line
 

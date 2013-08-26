@@ -84,6 +84,11 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldTypeRuleDefault.afterCreateNodeTypeProp( NodeTypeProp );
         }
 
+        public string getHelpText()
+        {
+            return string.Empty;
+        }
+
     }//CswNbtFieldTypeRuleImage
 
 }//namespace ChemSW.Nbt.MetaData

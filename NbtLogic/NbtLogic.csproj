@@ -105,6 +105,7 @@
     <Compile Include="csw\CswEnumNbtConfigurationVariables.cs" />
     <Compile Include="csw\ImportExport\CswNbtImportDataJob.cs" />
     <Compile Include="csw\ImportExport\CswNbtImportDataMap.cs" />
+    <Compile Include="csw\ImportExport\CswNbtImporterDataDictionary.cs" />
     <Compile Include="csw\ImportExport\CswNbtImportTables.cs" />
     <Compile Include="csw\ImportExport\CswNbtImportDefBindingCollection.cs" />
     <Compile Include="csw\ImportExport\CswNbtImportDefRelationship.cs" />
@@ -300,6 +301,7 @@
     <None Include="csw\Schema\scripts\past\02C\CswUpdateSchema_02C_Case29563.cs" />
     <None Include="csw\Schema\scripts\past\02C\CswUpdateSchema_02C_Case29717.cs" />
     <None Include="csw\Schema\scripts\past\02C\CswUpdateSchema_02C_Case29428.cs" />
+    <Compile Include="csw\Schema\Import\CswNbtSchemaUpdateImportMgr.cs" />
     <Compile Include="csw\Schema\Layout\CswNbtSchemaUpdateLayoutMgrHlprImpl.cs" />
     <Compile Include="csw\Schema\Layout\CswNbtSchemaUpdateLayoutMgr.cs" />
     <Compile Include="csw\Schema\Layout\ICswNbtSchemaUpdateLayoutMgrHlpr.cs" />
@@ -330,7 +332,7 @@
     <Compile Include="csw\Schema\scripts\prod\02E\CswUpdateSchema_02E_Case30440.cs" />
     <Compile Include="csw\Schema\scripts\prod\02E\CswUpdateSchema_02E_Case30445.cs" />
     <Compile Include="csw\Schema\scripts\prod\02E\CswUpdateSchema_02E_Case30300.cs" />
-    <Compile Include="csw\Schema\scripts\prod\02F\CswUpdateSchema_02F_Case30041.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02F\CswUpdateSchema_02F_Case30041_Vendors.cs" />
     <Compile Include="csw\Schema\scripts\prod\02F\CswUpdateSchema_02F_Case30040.cs" />
     <Compile Include="csw\Schema\scripts\prod\02E\CswUpdateSchema_02E_Case30339_UserProfilex2.cs" />
     <Compile Include="csw\Schema\scripts\prod\02F\RunBeforeEveryExecutionOfUpdater_02F_Case30040.cs" />
@@ -359,6 +361,7 @@
     <Compile Include="csw\Schema\scripts\prod\02E\CswUpdateSchema_02E_Case30222.cs" />
     <Compile Include="csw\Schema\scripts\prod\02E\CswUpdateSchema_02E_Case30014.cs" />
     <Compile Include="csw\Schema\scripts\prod\02F\CswUpdateSchema_02F_Case29992.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02F\CswUpdateSchema_02F_Case29402.cs" />
     <Compile Include="csw\Schema\scripts\prod\02F\RunBeforeEveryExecutionOfUpdater_02F_Case29992.cs" />
     <Compile Include="csw\Schema\scripts\prod\02F\CswUpdateSchema_02F_Case30228.cs" />
     <Compile Include="csw\Schema\scripts\prod\02F\RunBeforeEveryExecutionOfUpdater_02F_Case30228.cs" />
