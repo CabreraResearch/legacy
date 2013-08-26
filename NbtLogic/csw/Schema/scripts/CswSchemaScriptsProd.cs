@@ -67,46 +67,46 @@ namespace ChemSW.Nbt.Schema
                 _LatestVersion = Version;
             }
 
-            //#region Before Scripts
+            #region Before Scripts
 
-            ////This script needs to go first
-            //_addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02F_Case30228() ), RunBeforeEveryExecutionOfUpdater_02F_Case30228.Title );
+            //This script needs to go first
+            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02F_Case30228() ), RunBeforeEveryExecutionOfUpdater_02F_Case30228.Title );
 
-            //#region EUCALYPTUS Run Before Scripts
+            #region EUCALYPTUS Run Before Scripts
 
-            //_addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02E_Case30500() ), RunBeforeEveryExecutionOfUpdater_02E_Case30500.Title );
-            //_addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02E_Case29700() ), RunBeforeEveryExecutionOfUpdater_02E_Case29700.Title );
-            //_addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02E_Case30123() ), RunBeforeEveryExecutionOfUpdater_02E_Case30123.Title );
-            //_addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02E_Case29701() ), RunBeforeEveryExecutionOfUpdater_02E_Case29701.Title );
-            //_addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02E_Case30347() ), RunBeforeEveryExecutionOfUpdater_02E_Case30347.Title );
+            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02E_Case30500() ), RunBeforeEveryExecutionOfUpdater_02E_Case30500.Title );
+            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02E_Case29700() ), RunBeforeEveryExecutionOfUpdater_02E_Case29700.Title );
+            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02E_Case30123() ), RunBeforeEveryExecutionOfUpdater_02E_Case30123.Title );
+            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02E_Case29701() ), RunBeforeEveryExecutionOfUpdater_02E_Case29701.Title );
+            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02E_Case30347() ), RunBeforeEveryExecutionOfUpdater_02E_Case30347.Title );
 
-            //#endregion EUCALYPTUS Run Before Scripts
+            #endregion EUCALYPTUS Run Before Scripts
 
-            //#region FOXGLOVE Run Before Scripts
+            #region FOXGLOVE Run Before Scripts
 
-            //_addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02F_Case30281() ), RunBeforeEveryExecutionOfUpdater_02F_Case30281.Title );
-            //_addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02F_Case30251() ), RunBeforeEveryExecutionOfUpdater_02F_Case30251.Title );
-            //_addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02F_Case30251B() ), RunBeforeEveryExecutionOfUpdater_02F_Case30251B.Title );
-            //_addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02F_Case30082_UserCache() ), RunBeforeEveryExecutionOfUpdater_02F_Case30082_UserCache.Title );
-            //_addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02F_Case27883() ), RunBeforeEveryExecutionOfUpdater_02F_Case27883.Title );
-            //_addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02F_Case30040() ), RunBeforeEveryExecutionOfUpdater_02F_Case30040.Title );
-            //_addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02F_Case29992() ), RunBeforeEveryExecutionOfUpdater_02F_Case29992.Title );
+            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02F_Case30281() ), RunBeforeEveryExecutionOfUpdater_02F_Case30281.Title );
+            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02F_Case30251() ), RunBeforeEveryExecutionOfUpdater_02F_Case30251.Title );
+            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02F_Case30251B() ), RunBeforeEveryExecutionOfUpdater_02F_Case30251B.Title );
+            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02F_Case30082_UserCache() ), RunBeforeEveryExecutionOfUpdater_02F_Case30082_UserCache.Title );
+            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02F_Case27883() ), RunBeforeEveryExecutionOfUpdater_02F_Case27883.Title );
+            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02F_Case30040() ), RunBeforeEveryExecutionOfUpdater_02F_Case30040.Title );
+            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02F_Case29992() ), RunBeforeEveryExecutionOfUpdater_02F_Case29992.Title );
 
-            //#endregion FOXGLOVE Run Before Scripts
-
-
-            //_addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_MakeMissingNodeTypeProps() ), RunBeforeEveryExecutionOfUpdater_MakeMissingNodeTypeProps.Title );
-            //_addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02SQL() ), RunBeforeEveryExecutionOfUpdater_02SQL.Title );
-            //_addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_03() ), RunBeforeEveryExecutionOfUpdater_03.Title );
+            #endregion FOXGLOVE Run Before Scripts
 
 
-            //#endregion Before Scripts
+            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_MakeMissingNodeTypeProps() ), RunBeforeEveryExecutionOfUpdater_MakeMissingNodeTypeProps.Title );
+            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02SQL() ), RunBeforeEveryExecutionOfUpdater_02SQL.Title );
+            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_03() ), RunBeforeEveryExecutionOfUpdater_03.Title );
 
-            //#region After Scripts
 
-            //_addRunAfterScript( new CswSchemaUpdateDriver( new RunAfterEveryExecutionOfUpdater_01() ), RunAfterEveryExecutionOfUpdater_01.Title );
+            #endregion Before Scripts
 
-            //#endregion After Scripts
+            #region After Scripts
+
+            _addRunAfterScript( new CswSchemaUpdateDriver( new RunAfterEveryExecutionOfUpdater_01() ), RunAfterEveryExecutionOfUpdater_01.Title );
+
+            #endregion After Scripts
 
         }//ctor
 
