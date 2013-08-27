@@ -36,6 +36,10 @@
     var getCachedWebServiceCall = function (webServiceName, customerId, userName) {
         var deferred = Q.defer();
         var ret;
+
+        customerId = customerId || thisCustomerId;
+        userName = userName || thisUserName;
+
         if (null == cacheDbMgr) {
             deferred.resolve(Csw.object());
             ret = deferred.promise;
@@ -62,8 +66,8 @@
     var setCachedWebServiceCall = function (webServiceName, data, customerId, userName) {
         var deferred = Q.defer();
 
-        Csw.debug.log('Set: ' + webServiceName);
-        Csw.debug.log(data);
+        customerId = customerId || thisCustomerId;
+        userName = userName || thisUserName;
 
         var ret;
         if (null == cacheDbMgr) {
