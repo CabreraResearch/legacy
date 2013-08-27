@@ -1061,7 +1061,6 @@
     <Content Include="app\nodes\csw.node.tree.js" />
     <Content Include="app\Main.js" />
     <Content Include="app\wizards\csw.createinspection.js" />
-    <Content Include="app\literals\CswInput.js" />
     <Content Include="app\nodes\csw.node.grid.js" />
     <Content Include="app\pagecmp\CswDialog.js" />
     <Content Include="app\pagecmp\CswErrorMessage.js" />
