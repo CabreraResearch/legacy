@@ -24,7 +24,8 @@
                 onLinkClick: null,
                 isControl: false,
                 hasHeader: false, /* Ignore the header row for now, by default */
-                rowCount: 0
+                rowCount: 0,
+                readonly: false
             };
             var cswPublic = {};
 
@@ -45,10 +46,14 @@
                 else {
                     strLinkText += ' (' + cswPrivate.rowCount + ' defined)';
                 }
-                cswPrivate.table.cell(1, 1).a({
-                    text: strLinkText,
-                    onClick: cswPrivate.onLinkClick
-                });
+                if (false === cswPrivate.readonly) {
+                    cswPrivate.table.cell(1, 1).a({
+                        text: strLinkText,
+                        onClick: cswPrivate.onLinkClick
+                    });
+                } else {
+                    cswPrivate.table.cell(1, 1).span({ text: strLinkText });
+                }
 
             } ());
 

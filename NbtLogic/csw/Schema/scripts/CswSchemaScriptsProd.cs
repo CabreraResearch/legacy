@@ -78,6 +78,7 @@ namespace ChemSW.Nbt.Schema
             _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02E_Case30123() );
             _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02E_Case29701() );
             _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02E_Case30347() );
+            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02E_Case30549() ), RunBeforeEveryExecutionOfUpdater_02E_Case30549.Title );
 
             #endregion EUCALYPTUS Run Before Scripts
 

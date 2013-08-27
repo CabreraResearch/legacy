@@ -96,6 +96,10 @@ namespace ChemSW.Nbt.Actions
                                                              ContainerLocationNode.Status.Value,
                                                              ContainerLocationNode.Type.Value );
                                 }
+                                else
+                                {
+                                    _incrementContainerCount( Data.ContainerStatistics, CswEnumNbtContainerLocationStatusOptions.NotScanned.ToString() );
+                                }
                             }
                             else
                             {
@@ -136,34 +140,28 @@ namespace ChemSW.Nbt.Actions
                         {
                             ContainerData.ReconciliationStatuses ContainerStatus = new ContainerData.ReconciliationStatuses();
                             ContainersTree.goToNthChild( j );
-                            CswNbtNode ContainerNode = ContainersTree.getNodeForCurrentPosition();//TODO - revert to CswObjClassContainer when Case 27520 is resolved
+                            CswNbtNode ContainerNode = ContainersTree.getNodeForCurrentPosition();//In this case, instancing the base node is faster
                             ContainerStatus.ContainerId = ContainerNode.NodeId.ToString();
                             ContainerStatus.ContainerBarcode = ContainerNode.Properties[CswNbtObjClassContainer.PropertyName.Barcode].AsBarcode.Barcode;
                             ContainerStatus.LocationId = LocationId.ToString();
-                            bool isEnabled = false;
+                            ContainerStatus.ContainerStatus = CswEnumNbtContainerLocationStatusOptions.NotScanned.ToString();
                             if( ContainersTree.getChildNodeCount() > 0 )//ContainerLocation Nodes
                             {
                                 CswNbtObjClassContainerLocation ContainerLocationNode = _getMostRelevantContainerLocation();
-                                if( null != ContainerLocationNode && _isTypeEnabled( ContainerLocationNode.Type.Value, Request ) )
+                                if( null != ContainerLocationNode )
                                 {
                                     ContainerStatus.ContainerLocationId = ContainerLocationNode.NodeId.ToString();
-                                    ContainerStatus.ContainerStatus = ContainerLocationNode.Status.Value;
                                     ContainerStatus.ScanDate = ContainerLocationNode.ScanDate.DateTimeValue.Date.ToShortDateString();
                                     ContainerStatus.Action = ContainerLocationNode.Action.Value;
                                     ContainerStatus.ActionApplied = ContainerLocationNode.ActionApplied.Checked.ToString();
-                                    isEnabled = true;
+                                    if( _isTypeEnabled( ContainerLocationNode.Type.Value, Request ) )
+                                    {
+                                        ContainerStatus.ContainerStatus = ContainerLocationNode.Status.Value;
+                                    }
                                 }
                             }
-                            else
-                            {
-                                ContainerStatus.ContainerStatus = CswEnumNbtContainerLocationStatusOptions.NotScanned.ToString();
-                                isEnabled = true;
-                            }
                             ContainerStatus.ActionOptions = _getActionOptions( ContainerStatus.ContainerStatus );
-                            if( isEnabled )
-                            {
-                                Data.ContainerStatuses.Add(ContainerStatus);
-                            }
+                            Data.ContainerStatuses.Add( ContainerStatus );
                             ContainersTree.goToParentNode();
                         }
                     }
