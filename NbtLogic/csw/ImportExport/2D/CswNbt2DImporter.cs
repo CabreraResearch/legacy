@@ -497,7 +497,7 @@ namespace ChemSW.Nbt.ImportExport
                                                         }
                                                     }
                                                     else if( ( Binding.DestProperty.getFieldTypeValue() == CswEnumNbtFieldType.Quantity &&
-                                                                Binding.DestSubfield.Column.ToString().ToLower() == "name" )
+                                                                Binding.DestSubfield.Name.ToString().ToLower() == "name" )
                                                         || Binding.DestProperty.getFieldTypeValue() == CswEnumNbtFieldType.Relationship )
                                                     {
                                                         CswCommaDelimitedString inClause = new CswCommaDelimitedString();
