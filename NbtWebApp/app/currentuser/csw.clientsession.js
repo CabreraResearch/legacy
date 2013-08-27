@@ -272,6 +272,7 @@
 
             return Csw.ajax.deprecatedWsNbt({
                 urlMethod: 'isAdministrator',
+                useCache: true,
                 success: function (data) {
                     if (Csw.bool(data.Administrator)) {
                         Csw.tryExec(o.Yes);
@@ -282,14 +283,4 @@
             });
         }); // isAdministrator()
 
-
-    Csw.clientSession.userDefaults = Csw.clientSession.userDefaults ||
-        Csw.clientSession.register('userDefaults', function () {
-            var ret = {};
-            var userDefaults = Csw.cookie.get(Csw.cookie.cookieNames.UserDefaults);
-            if (false === Csw.isNullOrEmpty(userDefaults)) {
-                ret = JSON.parse(userDefaults);
-            }
-            return ret;
-        }); // userDefaults()
 }());
