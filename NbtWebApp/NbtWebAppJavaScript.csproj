@@ -1071,7 +1071,6 @@
     <Content Include="app\tools\csw.querystring.js" />
     <Content Include="app\events\csw.onenter.js" />
     <Content Include="app\view\CswViewContentTree.js" />
-    <Content Include="app\view\CswViewEditor.js" />
     <Content Include="app\view\CswViewPropFilter.js" />
     <Content Include="app\ChemSW.js" />
     <Content Include="app\composites\csw.thingrid.js" />
