@@ -87,8 +87,8 @@
     //Wait until Main is loaded before initing
     Csw.main.onReady.then(function () {
 
-        thisCustomerId = Csw.clientSession.currentAccessId();
-        thisUserName = Csw.clientSession.currentUserName();
+        thisCustomerId = Csw.clientSession.currentAccessId() || 'offline';
+        thisUserName = Csw.clientSession.currentUserName() || 'offline';
         
         if (window.Modernizr.indexeddb) {
             //Until we need to manage versions, there is only 1. Versioning either happens on connection, or it doesn't.
