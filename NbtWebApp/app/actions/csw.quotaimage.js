@@ -17,9 +17,12 @@
 
             return Csw.ajax.deprecatedWsNbt({
                 urlMethod: o.urlMethod,
+                useCache: true,
                 data: {},
                 success: function (data) {
-                    var percentUsed = Csw.number(data.result, 0);
+                    data = data || {};
+                    var result = data.result || 0;
+                    var percentUsed = Csw.number(result, 0);
                     var image = '';
                     cswParent.empty();
                     if (data.showquota) {
