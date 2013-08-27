@@ -10,16 +10,10 @@
         Csw.error.showError(errorJson);
     }; /* cswPrivate.handleAjaxError() */
 
-    var compare = function(obj1, obj2) {
-        var string1 = Csw.serialize(obj1).trim().replace(' ', '');
-        var string2 = Csw.serialize(obj2).trim().replace(' ', '');
-        return string1 === string2;
-    };
-
     var onSuccess = function(url, data, saveToCache, func, cachedResponse) {
         var doExecFunc = true;
         if (saveToCache) {
-            if (cachedResponse && compare(data, cachedResponse)) {
+            if (cachedResponse && Csw.compare(data, cachedResponse)) {
                 doExecFunc = false;
             } else {
             Csw.setCachedWebServiceCall(url, data);

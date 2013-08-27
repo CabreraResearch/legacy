@@ -10,12 +10,20 @@
     cswPrivate.handleAjaxError = function (errorJson) {
         Csw.error.showError(errorJson);
     }; /* cswPrivate.handleAjaxError() */
-
-    var onSuccess = function (url, data, saveToCache, func) {
+    
+    var onSuccess = function (url, data, saveToCache, func, cachedResponse) {
+        var doExecFunc = true;
         if (saveToCache) {
-            Csw.setCachedWebServiceCall(url, data);
+            if (cachedResponse && Csw.compare(data, cachedResponse)) {
+                doExecFunc = false;
+            } else {
+                Csw.setCachedWebServiceCall(url, data);
+            }
         }
-        return Csw.tryExec(func, data);
+
+        if (doExecFunc) {
+            return Csw.tryExec(func, data);
+        }
     };
 
 
