@@ -21,8 +21,28 @@ namespace ChemSW.Nbt.Schema
             get { return 30252; }
         }
 
+
+        private void AddRow( DataTable dt, int ft, string propcolname, string subfieldname, string reportable, string is_default )
+        {
+            DataRow dr = dt.NewRow();
+            dr["fieldtypeid"] = ft;
+            dr["propcolname"] = propcolname;
+            dr["subfieldname"] = subfieldname;
+            dr["reportable"] = reportable;
+            dr["is_default"] = is_default;
+            dt.Rows.Add( dr );
+        }
+
         public override void update()
         {
+
+            CswTableUpdate ftsTbl = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "field_types_subfields_upd", "field_types_subfields" );
+            DataTable ftsDataTbl = ftsTbl.getTable();
+
+            AddRow( ftsDataTbl, _CswNbtSchemaModTrnsctn.MetaData.getFieldType( CswEnumNbtFieldType.CASNo ).FieldTypeId, "gestalt", "", "1", "1" );
+            ftsTbl.update( ftsDataTbl );
+
+
             //iterate objectclasses and set their viewname
             CswTableUpdate UpdObClass = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "objclassUpd", "object_class" ); //for each objectclass
             CswCommaDelimitedString cols = new CswCommaDelimitedString();

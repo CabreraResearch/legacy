@@ -1,13 +1,15 @@
 ﻿
 using System;
+using System.Collections.Generic;
 using ChemSW.Nbt.csw.Dev;
+using ChemSW.RscAdo;
 
 namespace ChemSW.Nbt.Schema
 {
     /// <summary>
     /// Post-schema update script
     /// </summary>
-    public class RunAfterEveryExecutionOfUpdater_01: CswUpdateSchemaTo
+    public class RunAfterEveryExecutionOfUpdater_01 : CswUpdateSchemaTo
     {
         #region Blame Logic
 
@@ -50,7 +52,16 @@ namespace ChemSW.Nbt.Schema
             _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( "update scheduledrules set reprobate=0,totalroguecount=0,failedcount=0" );
             _resetBlame();
 
+            _acceptBlame( CswEnumDeveloper.DH, 30252 );
+
+            List<CswStoredProcParam> Params = new List<CswStoredProcParam>();
+            _CswNbtSchemaModTrnsctn.execStoredProc( "CREATEALLNTVIEWS", Params );
+
+
+
             _CswNbtSchemaModTrnsctn.Modules.TriggerModuleEventHandlers();
+
+
         }//Update()
 
     }//class RunAfterEveryExecutionOfUpdater_01
