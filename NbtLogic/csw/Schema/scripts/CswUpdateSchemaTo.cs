@@ -1,5 +1,5 @@
-﻿using ChemSW.Nbt.csw.Dev;
-using System;
+﻿using System;
+using ChemSW.Nbt.csw.Dev;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -38,7 +38,7 @@ namespace ChemSW.Nbt.Schema
         public virtual string Description
         {
             set { _Description = value; }
-            get { return ( _Description ); }
+            get { return ( _Description + " - " + Title ); }
         }
 
         /// <summary>

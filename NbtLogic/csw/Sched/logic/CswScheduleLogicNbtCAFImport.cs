@@ -11,7 +11,7 @@ namespace ChemSW.Nbt.Sched
 {
     public class CswScheduleLogicNbtCAFImport : ICswScheduleLogic
     {
-        public const string CAFDbLink = "CAFLINK";
+        public const string CAFDbLink = "CAF";
         
         public string RuleName
         {
