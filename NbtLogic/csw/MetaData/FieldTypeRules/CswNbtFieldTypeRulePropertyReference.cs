@@ -250,6 +250,11 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldTypeRuleDefault.afterCreateNodeTypeProp( NodeTypeProp );
         }
 
+        public string getHelpText()
+        {
+            return "Enter \"me\" to use the current user as the search term";
+        }
+
     }//ICswNbtFieldTypeRule
 
 }//namespace ChemSW.Nbt.MetaData

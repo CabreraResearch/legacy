@@ -194,6 +194,7 @@ namespace ChemSW.Nbt.Logic
                 ParentObj["defaultconjunction"] = CswEnumNbtFilterConjunction.And.ToString();
                 ParentObj["defaultsubfield"] = ViewBuilderProp.FieldTypeRule.SubFields.Default.Name.ToString();
                 ParentObj["defaultfiltermode"] = ViewBuilderProp.FieldTypeRule.SubFields.Default.DefaultFilterMode.ToString();
+                ParentObj["helptext"] = ViewBuilderProp.FieldTypeRule.getHelpText();
 
                 ParentObj["subfields"] = new JObject();
 

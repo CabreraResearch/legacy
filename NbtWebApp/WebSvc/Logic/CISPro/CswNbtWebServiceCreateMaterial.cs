@@ -73,6 +73,13 @@ namespace ChemSW.Nbt.WebServices
                 {
                     Response.Data.SuppliersView.SessionViewId = SupplierView.SessionViewId;
                 }
+                Response.Data.AllowSupplierAdd = true;
+                CswNbtMetaDataObjectClass VendorOC = NbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.VendorClass );
+                CswNbtMetaDataNodeType VendorNT = VendorOC.FirstNodeType;
+                if( null != VendorNT )
+                {
+                    Response.Data.AllowSupplierAdd = NbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Create, VendorNT );
+                }
 
                 //Alert wizard to active modules
                 bool ContainersEnabled = NbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Containers );

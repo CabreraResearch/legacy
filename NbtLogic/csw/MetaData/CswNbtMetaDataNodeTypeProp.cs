@@ -1689,7 +1689,7 @@ namespace ChemSW.Nbt.MetaData
         public int CompareTo( CswNbtMetaDataNodeTypeProp OtherNodeTypeProp )
         {
             int ret = 0;
-            if( null != FirstEditLayout )
+            if( null != FirstEditLayout && null != OtherNodeTypeProp.FirstEditLayout )
             {
                 if( FirstEditLayout.DisplayRow == OtherNodeTypeProp.FirstEditLayout.DisplayRow )
                 {

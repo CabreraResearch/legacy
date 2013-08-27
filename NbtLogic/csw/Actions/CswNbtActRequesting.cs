@@ -190,7 +190,6 @@ namespace ChemSW.Nbt.Actions
                                                     "No Request NodeType could be found." );
                     }
                     _CurrentRequestNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( RequestNt.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode );
-                    _CurrentRequestNode.postChanges( true );
                 }
             }
             return _CurrentRequestNode;
@@ -716,72 +715,50 @@ namespace ChemSW.Nbt.Actions
         /// <summary>
         /// Instance a new request item according to Object Class rules. Note: this does not get the properties.
         /// </summary>
-        public CswNbtPropertySetRequestItem makeMaterialRequestItem( CswEnumNbtRequestItemType Item, CswPrimaryKey NodeId, CswNbtObjClass.NbtButtonData ButtonData, CswNbtMetaDataObjectClass ItemOc = null )
+        public CswNbtPropertySetRequestItem makeMaterialRequestItem( CswEnumNbtRequestItemType Item, CswPrimaryKey MaterialId, CswNbtObjClass.NbtButtonData ButtonData )
         {
             CswNbtPropertySetRequestItem RetAsRequestItem = null;
-            if ( null == ItemOc )
+            CswNbtMetaDataObjectClass ItemOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestMaterialDispenseClass );
+            CswNbtMetaDataNodeType RequestItemNt = ItemOc.getNodeTypes().FirstOrDefault();
+            CswNbtSdTabsAndProps PropsAction = new CswNbtSdTabsAndProps( _CswNbtResources );
+            if( null != RequestItemNt )
             {
-                //TODO: This will need to be conditional when Material Create is added
-                ItemOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestMaterialDispenseClass );
+                RetAsRequestItem = PropsAction.getAddNode( RequestItemNt.NodeTypeId, MaterialId.ToString() );
             }
-
-            if ( null != ItemOc )
+            if ( null == RetAsRequestItem )
             {
-                CswNbtMetaDataNodeType RequestItemNt = ItemOc.getNodeTypes().FirstOrDefault();
-                CswNbtSdTabsAndProps PropsAction = new CswNbtSdTabsAndProps( _CswNbtResources );
-
-                RetAsRequestItem = PropsAction.getAddNode( RequestItemNt );
-                if ( null == RetAsRequestItem )
+                throw new CswDniException( CswEnumErrorType.Error, "Could not generate a new request item.", "Failed to create a new Request Item node." );
+            }
+            if( null == RetAsRequestItem.Request.RelatedNodeId )
+            {
+                RetAsRequestItem.Request.RelatedNodeId = getCurrentRequestNodeId();
+            }
+            if ( null != _ThisUser.DefaultLocationId )
+            {
+                CswNbtObjClassLocation DefaultAsLocation = _CswNbtResources.Nodes.GetNode( _ThisUser.DefaultLocationId );
+                if ( null != DefaultAsLocation )
                 {
-                    throw new CswDniException( CswEnumErrorType.Error, "Could not generate a new request item.", "Failed to create a new Request Item node." );
+                    RetAsRequestItem.Location.SelectedNodeId = _ThisUser.DefaultLocationId;
+                    RetAsRequestItem.Location.CachedNodeName = DefaultAsLocation.Location.CachedNodeName;
+                    RetAsRequestItem.Location.CachedPath = DefaultAsLocation.Location.CachedPath;
                 }
-                if ( null != getCurrentRequestNodeId() )
-                {
+            }
+            switch ( ButtonData.SelectedText )
+            {
+                case CswNbtPropertySetMaterial.CswEnumRequestOption.Bulk:
+                    RetAsRequestItem.Type.Value = CswNbtObjClassRequestMaterialDispense.Types.Bulk;
+                    break;
+
+                case CswNbtPropertySetMaterial.CswEnumRequestOption.Size:
+                    RetAsRequestItem.Type.Value = CswNbtObjClassRequestMaterialDispense.Types.Size;
                     CswNbtObjClassRequestMaterialDispense RetAsMatDisp = CswNbtObjClassRequestMaterialDispense.fromPropertySet( RetAsRequestItem );
-                    RetAsMatDisp.Request.RelatedNodeId = getCurrentRequestNodeId();
-
-                    if ( null != _ThisUser.DefaultLocationId )
-                    {
-                        CswNbtObjClassLocation DefaultAsLocation = _CswNbtResources.Nodes.GetNode( _ThisUser.DefaultLocationId );
-                        if ( null != DefaultAsLocation )
-                        {
-                            RetAsMatDisp.Location.SelectedNodeId = _ThisUser.DefaultLocationId;
-                            RetAsMatDisp.Location.CachedNodeName = DefaultAsLocation.Location.CachedNodeName;
-                            RetAsMatDisp.Location.CachedPath = DefaultAsLocation.Location.CachedPath;
-                        }
-                    }
-
-                    RetAsMatDisp.Material.RelatedNodeId = NodeId;
-
-                    switch ( ButtonData.SelectedText )
-                    {
-                        case CswNbtPropertySetMaterial.CswEnumRequestOption.Bulk:
-                            CswNbtNode MaterialNode = _CswNbtResources.Nodes[NodeId];
-                            RetAsMatDisp.Type.Value = CswNbtObjClassRequestMaterialDispense.Types.Bulk;
-                            Debug.Assert( null != MaterialNode, "RequestItem created without a valid Material." );
-                            if ( null != MaterialNode )
-                            {
-                                CswNbtUnitViewBuilder Vb = new CswNbtUnitViewBuilder( _CswNbtResources );
-                                Vb.setQuantityUnitOfMeasureView( MaterialNode, RetAsMatDisp.Quantity );
-                            }
-                            break;
-
-                        case CswNbtPropertySetMaterial.CswEnumRequestOption.Size:
-                            RetAsMatDisp.Type.Value = CswNbtObjClassRequestMaterialDispense.Types.Size;
-                            _setRequestItemSizesView( RetAsMatDisp.Size.View.ViewId, RetAsMatDisp.Material.RelatedNodeId );
-                            break;
-                    }
-                }
+                    _setRequestItemSizesView( RetAsMatDisp.Size.View.ViewId, RetAsMatDisp.Material.RelatedNodeId );
+                    break;
             }
             return RetAsRequestItem;
         }
 
-
-
-
         #endregion Sets
-
-
 
         #endregion Public methods and props
 

@@ -14,6 +14,7 @@ using ChemSW.Exceptions;
 using ChemSW.Log;
 using ChemSW.MtSched.Core;
 using ChemSW.Nbt.Actions;
+using ChemSW.Nbt.ImportExport;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
@@ -216,8 +217,6 @@ namespace ChemSW.Nbt.Schema
         /// <returns></returns>
         public Int32 execArbitraryPlatformNeutralSqlInItsOwnTransaction( string SqlText ) { return ( _CswNbtResources.CswResources.execArbitraryPlatformNeutralSqlInItsOwnTransaction( SqlText ) ); }
 
-
-
         /// <summary>
         /// Executes arbitrary sql.  It's your job to make sure it's platform neutral.
         /// You should *strongly* consider using CswArbitrarySelect, CswTableSelect, or CswTableUpdate instead of this.
@@ -276,6 +275,7 @@ namespace ChemSW.Nbt.Schema
             _CswDdl.removeSequence( SequenceName );
         }
 
+        public bool IsDbLinkConnectionHealthy( string DbLink, ref string ErrorMessage ) { return ( _CswNbtResources.CswResources.IsDbLinkConnectionHealthy( DbLink, ref ErrorMessage ) ); }
 
         public void makeConstraint( string ReferencingTableName, string ReferencingColumnName, string ReferencedTableName, string ReferencedColumnName, bool AddDdData )
         {
@@ -888,18 +888,25 @@ namespace ChemSW.Nbt.Schema
                 //TODO - Come back some day and make this dundant-proof
                 //if we ever have to shift scripts around to accomodate DDL, these helper methods will not be so helpful
                 CswTableUpdate RulesUpdate = makeCswTableUpdate( "SchemaModTrnsctn_ScheduledRuleUpdate", "scheduledrules" );
-                DataTable RuleTable = RulesUpdate.getEmptyTable();
-                DataRow NewRuleRow = RuleTable.NewRow();
-                NewRuleRow["recurrence"] = CswConvert.ToDbVal( Recurrence.ToString() );
-                NewRuleRow["interval"] = CswConvert.ToDbVal( Interval );
-                NewRuleRow["maxruntimems"] = CswConvert.ToDbVal( 300000 );
-                NewRuleRow["reprobatethreshold"] = CswConvert.ToDbVal( 3 );
-                NewRuleRow["disabled"] = CswConvert.ToDbVal( false );
-                NewRuleRow["rulename"] = CswConvert.ToDbVal( RuleName.ToString() );
-                RuleTable.Rows.Add( NewRuleRow );
+                DataTable RuleTable = RulesUpdate.getTable( WhereClause: " where lower(rulename)='" + RuleName.ToString().ToLower() + "' " );
+                if( 0 == RuleTable.Rows.Count )
+                {
+                    DataRow NewRuleRow = RuleTable.NewRow();
+                    NewRuleRow["recurrence"] = CswConvert.ToDbVal( Recurrence.ToString() );
+                    NewRuleRow["interval"] = CswConvert.ToDbVal( Interval );
+                    NewRuleRow["maxruntimems"] = CswConvert.ToDbVal( 300000 );
+                    NewRuleRow["reprobatethreshold"] = CswConvert.ToDbVal( 3 );
+                    NewRuleRow["disabled"] = CswConvert.ToDbVal( false );
+                    NewRuleRow["rulename"] = CswConvert.ToDbVal( RuleName.ToString() );
+                    RuleTable.Rows.Add( NewRuleRow );
 
-                RetRuleId = CswConvert.ToInt32( NewRuleRow["scheduledruleid"] );
-                RulesUpdate.update( RuleTable );
+                    RetRuleId = CswConvert.ToInt32( NewRuleRow["scheduledruleid"] );
+                    RulesUpdate.update( RuleTable );
+                }
+                else
+                {
+                    this.logError( "Scheduled Rule name {" + RuleName + "} already exists." );
+                }
             }
             return RetRuleId;
         }
@@ -1748,6 +1755,11 @@ namespace ChemSW.Nbt.Schema
         //    return( _search.Results() ); 
 
         //}//doSearch()
+
+        public CswNbtImporter makeCswNbtImporter()
+        {
+            return new CswNbtImporter( _CswNbtResources );
+        }
 
 
     }//class CswNbtSchemaModTrnsctn
