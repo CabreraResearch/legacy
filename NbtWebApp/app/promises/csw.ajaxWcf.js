@@ -10,11 +10,25 @@
         Csw.error.showError(errorJson);
     }; /* cswPrivate.handleAjaxError() */
 
-    var onSuccess = function(url, data, saveToCache, func) {
+    var compare = function(obj1, obj2) {
+        var string1 = Csw.serialize(obj1).trim().replace(' ', '');
+        var string2 = Csw.serialize(obj2).trim().replace(' ', '');
+        return string1 === string2;
+    };
+
+    var onSuccess = function(url, data, saveToCache, func, cachedResponse) {
+        var doExecFunc = true;
         if (saveToCache) {
+            if (cachedResponse && compare(data, cachedResponse)) {
+                doExecFunc = false;
+            } else {
             Csw.setCachedWebServiceCall(url, data);
         }
+        }
+
+        if (doExecFunc) {
         return Csw.tryExec(func, data);
+        }
     };
 
     cswPrivate.onJsonSuccess = Csw.method(function (o, data, url) {
@@ -88,7 +102,7 @@
                 status: auth,
                 txt: text,
                 success: function () {
-                    onSuccess(o.url, response.Data, o.useCache, o.success);
+                    onSuccess(o.url, response.Data, o.useCache, o.success, o.cachedResponse);
                 },
                 failure: o.onloginfail,
                 data: response.Authentication
@@ -183,6 +197,7 @@
         if (true === cswInternal.useCache) {
             promise = Csw.getCachedWebServiceCall(cswInternal.urlMethod)
                 .then(function(ret) {
+                    cswInternal.cachedResponse = ret;
                     return onSuccess(cswInternal.urlMethod, ret, false, cswInternal.success);
                 })
                 .then(getAjaxPromise(false));
