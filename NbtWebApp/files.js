@@ -6,6 +6,7 @@ module.exports.app = [
     'app/types/**.js',
     'app/tools/**.js',
     'app/promises/**.js',
+    'app/currentuser/**.js',
     'app/core/**.js',
     'app/events/**.js',
     'app/literals/**.js',
