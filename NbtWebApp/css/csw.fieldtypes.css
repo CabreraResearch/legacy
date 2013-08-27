@@ -79,8 +79,10 @@
 }
 .CswFieldTypeNFPA_whitetext
 {
-    font-size: 1.2em;
-    padding-left: 0px;
+    position: relative;
+    top: 9px;
+    right: 2px;
+    font-size: 1.3em;
 }
 
 .CswFieldTypeNFPA_redLinear
