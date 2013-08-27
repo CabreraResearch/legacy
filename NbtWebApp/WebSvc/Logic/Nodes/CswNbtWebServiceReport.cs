@@ -1,10 +1,3 @@
-using ChemSW.Core;
-using ChemSW.DB;
-using ChemSW.Exceptions;
-using ChemSW.Nbt.Grid;
-using ChemSW.Nbt.ObjClasses;
-using NbtWebApp.WebSvc.Returns;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -13,6 +6,13 @@ using System.Data;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Web;
+using ChemSW.Core;
+using ChemSW.DB;
+using ChemSW.Exceptions;
+using ChemSW.Nbt.Grid;
+using ChemSW.Nbt.ObjClasses;
+using NbtWebApp.WebSvc.Returns;
+using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -159,9 +159,15 @@ namespace ChemSW.Nbt.WebServices
                             rptDataTbl.TableName = reportNode.ReportName.Text;
                         }
                     }
+                    catch( CswSqlException CswException )
+                    {
+                        CswDniException NewException = new CswDniException( CswEnumErrorType.Warning, "SQL Execution failed with error: " + CswException.OracleError, "Could not execute SQL: {" + CswException.Sql + "}", CswException );
+                        //CswException.Add( NewException );
+                        throw NewException;
+                    }
                     catch( Exception Ex )
                     {
-                        throw new CswDniException( CswEnumErrorType.Warning, "Invalid parameters to the SQL query.", "Could not execute SQL: {" + ReportSql + "}", Ex );
+                        throw new CswDniException( CswEnumErrorType.Warning, "Invalid SQL.", "Could not execute SQL: {" + ReportSql + "}", Ex );
                     }
                 }
                 else
