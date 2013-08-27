@@ -33,6 +33,9 @@ namespace NbtWebApp.Services
             public View SuppliersView = new View();
 
             [DataMember]
+            public bool AllowSupplierAdd = true;
+
+            [DataMember]
             public Collection<CswNbtNode.Node> SizeNodes = new Collection<CswNbtNode.Node>();
 
             [DataMember]
