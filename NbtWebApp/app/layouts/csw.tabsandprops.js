@@ -499,7 +499,11 @@
             };
 
             cswPublic.isFormValid = function () {
-                return cswPrivate.form.isFormValid() && cswPrivate.identityForm.isFormValid();
+                return cswPublic.isTabsAndPropsInDom() && cswPrivate.form.isFormValid() && cswPrivate.identityForm.isFormValid();
+            };
+
+            cswPublic.isTabsAndPropsInDom = function() {
+                return cswParent && cswParent.getId && Csw.isElementInDom(cswParent.getId());
             };
 
             //#endregion Validator
@@ -1166,14 +1170,18 @@
             cswPublic.refresh = function (propData, refreshData) {
                 Csw.publish('onAnyNodeButtonClickFinish', true);
                 Csw.tryExec(cswPrivate.onSave, cswPublic.getNodeId(), cswPublic.getNodeKey(), cswPrivate.tabcnt, cswPrivate.tabState.nodename, cswPrivate.tabState.nodelink);
-                if (refreshData) {
-                    cswPrivate.onTearDownProps();
-                    Csw.tryExec(cswPrivate.Refresh, refreshData);
-                }
-                if (propData) {
-                    cswPrivate.onTearDownProps();
-                    cswPrivate.tabState.propertyData = propData;
-                    cswPrivate.getPropsImpl(cswPrivate.tabState.tabid);
+                if (cswPublic.isTabsAndPropsInDom()) {
+                    if (refreshData) {
+                        cswPrivate.onTearDownProps();
+                        Csw.tryExec(cswPrivate.Refresh, refreshData);
+                    }
+                    if (propData) {
+                        cswPrivate.onTearDownProps();
+                        cswPrivate.tabState.propertyData = propData;
+                        cswPrivate.getPropsImpl(cswPrivate.tabState.tabid);
+                    }
+                } else {
+                    cswPrivate.onTearDown();
                 }
             };
 

@@ -74,8 +74,10 @@
                         TableCssClass: 'CswFieldTypeQuestion_table',
                         CellCssClass: 'CSwFieldTypeQuestion_cell'
                     });
-
-                    var label = table.cell(1, 1).label({
+                    //Answer Row
+                    var answerTable = table.cell(1, 1).table();
+                    answerTable.css('width', '250px');
+                    var label = answerTable.cell(1, 1).label({
                         text: cswPrivate.answer + '   ',
                         cssclass: 'CswFieldTypeQuestion_answer'
                     });
@@ -84,30 +86,33 @@
                             src: "Images\\newicons\\18\\warning.png"
                         });
                     }
-                    var answerCell = table.cell(2, 1).div({ cssclass: 'CSwFieldTypeQuestion_cell CSwFieldTypeQuestion_cellHighlight' });
-                    answerCell.css('width', '250px');
-                    answerCell.append('Answer: ' + cswPrivate.answer + ' ');
+                    var answerCell = answerTable.cell(1, 2).div({ cssclass: 'CSwFieldTypeQuestion_cell' });
+                    answerCell.css('text-align', 'right');
                     if (cswPrivate.dateAnswered !== '') {
                         answerCell.append(' (' + cswPrivate.dateAnswered + ')');
                     }
+                    //Corrective Action Row
                     var correctiveActionPresent = false;
                     if (false == Csw.isNullOrEmpty(cswPrivate.correctiveAction)) {
-                        var correctiveActionCell = table.cell(3, 1).div({ cssclass: 'CSwFieldTypeQuestion_cell' });
+                        var correctiveActionCell = table.cell(3, 1).div({ cssclass: 'CSwFieldTypeQuestion_cell CSwFieldTypeQuestion_cellHighlight' });
                         correctiveActionCell.append('Corrective Action: ' + cswPrivate.correctiveAction);
                         correctiveActionPresent = true;
                         if (cswPrivate.dateCorrected !== '') {
                             correctiveActionCell.append(' (' + cswPrivate.dateCorrected + ')');
                         }
                     }
+                    //Comments Row
                     var commentsCell;
-                    if (correctiveActionPresent) {
-                        commentsCell = table.cell(4, 1).div({ cssclass: 'CSwFieldTypeQuestion_cell CSwFieldTypeQuestion_cellHighlight' });
-                    } else {
-                        commentsCell = table.cell(4, 1).span({ cssclass: 'CSwFieldTypeQuestion_cell' });
+                    if (false == Csw.isNullOrEmpty(cswPrivate.comments)) {
+                        if (correctiveActionPresent) {
+                            commentsCell = table.cell(4, 1).span({ cssclass: 'CSwFieldTypeQuestion_cell' });
+                        } else {
+                            commentsCell = table.cell(4, 1).div({ cssclass: 'CSwFieldTypeQuestion_cell CSwFieldTypeQuestion_cellHighlight' });
+                        }
+                        commentsCell.append('Comments: ' + cswPrivate.comments);
                     }
-                    commentsCell.append('Comments: ' + cswPrivate.comments);
 
-                } else {
+            } else {
                     table = nodeProperty.propDiv.table({
                         FirstCellRightAlign: true
                     });

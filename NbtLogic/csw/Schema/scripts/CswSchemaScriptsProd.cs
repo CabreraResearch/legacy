@@ -53,6 +53,7 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswUpdateSchema_02F_Case29402() );                    //02E-027 //02F-016
             _addVersionedScript( new CswUpdateSchema_02F_Case30041_UnitsOfMeasure() );     //02E-028 //02F-017
             _addVersionedScript( new CswUpdateSchema_02F_Case30041_RolesUsers() );         //02E-029 //02F-018
+            _addVersionedScript( new CswUpdateSchema_02F_Case30041_ScheduledRuleImport() );//02E-030 //02F-019
 
             #endregion FOXGLOVE
 
@@ -78,6 +79,7 @@ namespace ChemSW.Nbt.Schema
             _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02E_Case30123() );
             _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02E_Case29701() );
             _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02E_Case30347() );
+            _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02E_Case30549() );
 
             #endregion EUCALYPTUS Run Before Scripts
 

@@ -1503,7 +1503,7 @@
                     isRequired: true,
                     showSelectOnLoad: true,
                     isMulti: false,
-                    selectedNodeId: Csw.clientSession.userDefaults().DefaultPrinterId,
+                    selectedNodeId: Csw.currentUser.defaults().DefaultPrinterId,
                     onSuccess: function () {
                         if (printerSel.optionsCount() === 0) {
                             printerSel.hide();

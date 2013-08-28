@@ -1,8 +1,6 @@
-﻿using ChemSW.MtSched.Core;
-using ChemSW.Nbt.csw.Dev;
+﻿using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.csw.Schema;
 using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.Sched;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -54,17 +52,17 @@ namespace ChemSW.Nbt.Schema
 
                 /*
                    defaultlocationid, 
-                   defaultprinterid, 
-                   deleted, 
+                   
+                   
                    +disabled, 
                    homeinventorygroupid, 
-                   mystarturl, 
+                   
                    +namefirst, 
                    +namelast, 
                    +navrows, 
                    +password, 
-                   password_date, 
-                   password_old, 
+                   
+                   
                    roleid, 
                    +userid, 
                    +username, 
@@ -73,16 +71,16 @@ namespace ChemSW.Nbt.Schema
                    +failedlogincount, 
                    +email, 
                    +phone, 
-                   title, 
-                   issystemuser, 
-                   welcomeredirect, 
-                   hidehints, 
-                   defaultcategoryid, 
-                   auditflag, 
-                   nodeviewid, 
+                   
+                   // exclude these: issystemuser, 
+                   
+                   
+                   
+                   
+                   
                    +defaultlanguage, 
-                   licenseagreementanddate, 
-                   supervisorid, 
+                   
+                   ?? pending TDU investigation supervisorid, 
                    +employeeid
              
                     */

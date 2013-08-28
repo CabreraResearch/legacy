@@ -138,26 +138,33 @@ Csw.actions.logindata = Csw.actions.template ||
                     //Grid Fields and Columns
                     var LoginGridColumns = [];
                     var LoginGridFields = [];
-                    var addColumn = function (colName, displayName) {
-                        LoginGridColumns.push({
+                    var addColumn = function (colName, displayName, type) {
+                        type = type || 'string';
+
+                        var column = {
                             dataIndex: colName,
                             filterable: true,
                             header: displayName,
                             id: 'login_' + colName
-                        });
+                        };
+                        if (type === 'date') {
+                            column.xtype = 'datecolumn';
+                            column.format = Csw.currentUser.dateFormat() + ' ' + Csw.currentUser.timeFormat();
+                        }
+                        LoginGridColumns.push(column);
                         LoginGridFields.push({
                             name: colName,
-                            type: 'string',
+                            type: type,
                             useNull: true
                         });
                     };
                     
                     addColumn('username', 'Username');
                     addColumn('ipaddress', 'IP Address');
-                    addColumn('logindate', 'Login Date');
+                    addColumn('logindate', 'Login Date', 'date');
                     addColumn('loginstatus', 'Login Status');
                     addColumn('failurereason', 'Failure Reason');
-                    addColumn('failedlogincount', 'Failed Login Count');
+                    addColumn('failedlogincount', 'Failed Login Count', 'number');
 
                     //Grid Control
                     var LoginGridId = 'LoginGrid';

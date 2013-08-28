@@ -6,17 +6,6 @@
 
     var cswPrivate = {};
 
-    cswPrivate.handleAjaxError = function (errorJson) {
-        Csw.error.showError(errorJson);
-    }; /* cswPrivate.handleAjaxError() */
-
-    var onSuccess = function(url, data, saveToCache, func) {
-        if (saveToCache) {
-            Csw.setCachedWebServiceCall(url, data);
-        }
-        return Csw.tryExec(func, data);
-    };
-
     cswPrivate.onJsonSuccess = Csw.method(function (o, data, url) {
 
         var response = {
@@ -52,12 +41,12 @@
             response.Status.Errors.length > 0) {
             var lastErr = response.Status.Errors.length - 1;
             if (false === o.overrideError) {
-                cswPrivate.handleAjaxError({
+                Csw.ajaxCore.handleError({
                     display: response.Status.Errors[lastErr].Display,
                     type: response.Status.Errors[lastErr].Type,
                     message: response.Status.Errors[lastErr].Message,
                     detail: response.Status.Errors[lastErr].Detail
-                    }, '');
+                    });
                 
             }
             Csw.tryExec(o.error, response.Status.Errors[lastErr]);
@@ -88,7 +77,7 @@
                 status: auth,
                 txt: text,
                 success: function () {
-                    onSuccess(o.url, response.Data, o.useCache, o.success);
+                    Csw.ajaxCore.onSuccess(url, response.Data, o.useCache, o.success, o.cachedResponse);
                 },
                 failure: o.onloginfail,
                 data: response.Authentication
@@ -164,7 +153,7 @@
                 watchGlobal: false !== watchGlobal
             });
             ret.done(function(data) {
-                return cswPrivate.onJsonSuccess(cswInternal, data, document.location + '/' + cswInternal.urlMethod);
+                return cswPrivate.onJsonSuccess(cswInternal, data, cswInternal.urlMethod);
             }); /* success{} */
             ret.fail(function(jqXHR, textStatus, errorText) {
                 return cswPrivate.onJsonError(jqXHR, textStatus, errorText, {
@@ -183,7 +172,8 @@
         if (true === cswInternal.useCache) {
             promise = Csw.getCachedWebServiceCall(cswInternal.urlMethod)
                 .then(function(ret) {
-                    return onSuccess(cswInternal.urlMethod, ret, false, cswInternal.success);
+                    cswInternal.cachedResponse = ret;
+                    return Csw.ajaxCore.onSuccess(cswInternal.urlMethod, cswInternal.cachedResponse, false, cswInternal.success, cswInternal.cachedResponse);
                 })
                 .then(getAjaxPromise(false));
         } else {

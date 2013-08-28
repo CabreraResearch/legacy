@@ -111,26 +111,6 @@
             return (Csw.contains(name, obj) && Csw.bool(obj[name]));
         });
 
-    Csw.tryParseObjByIdx = Csw.tryParseObjByIdx ||
-        Csw.register('tryParseObjByIdx', function (object, index, defaultStr) {
-            /// <summary> Attempts to fetch the value at an array index. Null-safe.</summary>
-            /// <param name="object" type="Object"> Object or array to parse </param>
-            /// <param name="index" type="String"> Index or property to find </param>
-            /// <param name="defaultStr" type="String"> Optional. String to use instead of '' if index does not exist. </param>
-            /// <returns type="String">Parsed string</returns>
-            'use strict';
-            var ret = '';
-            if (false === Csw.isNullOrEmpty(defaultStr)) {
-                ret = defaultStr;
-            }
-            if (Csw.contains(object, index)) {
-                if (false === Csw.isNullOrUndefined(object[index])) {
-                    ret = object[index];
-                }
-            }
-            return ret;
-        });
-
     Csw.contains = Csw.contains ||
         Csw.register('contains', function (object, index) {
             /// <summary>Determines whether an object or an array contains a property or index. Null-safe.</summary>
@@ -146,36 +126,6 @@
                 if (false === ret && object.hasOwnProperty(index)) {
                     ret = true;
                 }
-            }
-            return ret;
-        });
-
-    Csw.renameProperty = Csw.renameProperty ||
-        Csw.register('renameProperty', function (obj, oldName, newName) {
-            /// <summary>Renames a property on a Object literal</summary>
-            /// <param name="obj" type="Object"> Object containing property </param>
-            /// <param name="oldName" type="String"> Current property name </param>
-            /// <param name="newName" type="String"> New property name </param>
-            /// <returns type="Object"> The modified object </returns>
-            'use strict';
-            if (false === Csw.isNullOrUndefined(obj) && Csw.contains(obj, oldName)) {
-                obj[newName] = obj[oldName];
-                delete obj[oldName];
-            }
-            return obj;
-        });
-
-    Csw.foundMatch = Csw.foundMatch ||
-        Csw.register('foundMatch', function (anObj, prop, value) {
-            /// <summary>Determines whether a prop/value match can be found on a property</summary>
-            /// <param name="anObj" type="Object"> Object containing property </param>
-            /// <param name="prop" type="String"> Property name </param>
-            /// <param name="value" type="Object"> Value to match </param>
-            /// <returns type="Boolean"> True if succeeded </returns>
-            'use strict';
-            var ret = false;
-            if (false === Csw.isNullOrEmpty(anObj) && Csw.contains(anObj, prop) && anObj[prop] === value) {
-                ret = true;
             }
             return ret;
         });
@@ -336,73 +286,16 @@
 
     Csw.register('object', object);
 
-    Csw.objDeprecated = Csw.objDeprecated ||
-        Csw.register('objDeprecated', function (obj) {
-            /// <summary>Find an object in a JSON object.</summary>
-            /// <param name="obj" type="Object"> Object to search </param>
-            /// <returns type="Object"></returns>
-            'use strict';
-            var thisObj = obj || {};
-            var currentObj = null;
-            var parentObj = thisObj;
-            var currentKey;
-            //var parentKey = null;
+    /**
+     * Compares two objects, serialized to strings, stripped of whitespace
+    */
+    var compare = function (obj1, obj2) {
+        var string1 = Csw.serialize(obj1).trim().replace(' ', '');
+        var string2 = Csw.serialize(obj2).trim().replace(' ', '');
+        return string1 === string2;
+    };
 
-            function find(key, value) {
-                /// <summary>Find a property's parent</summary>
-                /// <param name="key" type="String"> Property name to match. </param>
-                /// <param name="value" type="Object"> Property value to match </param>
-                /// <returns type="Object"> Returns the value of the 'property' property which contains a matching key/value prop. </returns>
-                'use strict';
-                var ret = false;
-                if (Csw.foundMatch(thisObj, key, value)) {
-                    ret = thisObj;
-                    currentObj = ret;
-                    parentObj = ret;
-                    currentKey = key;
-                }
-                if (false === ret) {
-                    var onSuccess = function (childObj, childKey, parObj) {
-                        var found = false;
-                        if (Csw.foundMatch(childObj, key, value)) {
-                            ret = childObj;
-                            currentObj = ret;
-                            parentObj = parObj;
-                            currentKey = childKey;
-                            found = true;
-                        }
-                        return found;
-                    };
-                    Csw.eachRecursive(thisObj, onSuccess, true);
-                }
-                return ret;
-            }
-
-            function remove(key, value) {
-                'use strict';
-                var onSuccess = function (childObj, childKey, parObj) {
-                    var deleted = false;
-                    if (Csw.foundMatch(childObj, key, value)) {
-                        deleted = true;
-                        delete parObj[childKey];
-                        currentKey = null;
-                        currentObj = null;
-                        //parentObj = parentObj;
-                    }
-                    return deleted;
-                };
-                return Csw.eachRecursive(thisObj, onSuccess, true);
-            }
-
-            return {
-                find: find,
-                remove: remove,
-                obj: thisObj,
-                parentObj: parentObj,
-                currentObj: currentObj,
-                currentKey: currentObj
-            };
-        });
+    Csw.register('compare', compare);
 
     Csw.clone = Csw.clone ||
         Csw.register('clone', function (data) {

@@ -121,13 +121,6 @@ namespace ChemSW.Nbt.ObjClasses
                     return Ret;
                 }
             }
-            public bool AnyAnswered
-            {
-                get
-                {
-                    return _Questions.Any( Question => false == string.IsNullOrEmpty( Question.Answer.Trim() ) );
-                }
-            }
         }
 
         private InspectionState _InspectionState;
@@ -252,8 +245,7 @@ namespace ChemSW.Nbt.ObjClasses
                 Status.Value == CswEnumNbtInspectionStatus.ActionRequired ||
                 Status.Value == CswEnumNbtInspectionStatus.Pending )
             {
-                bool IsVisible = Status.Value == CswEnumNbtInspectionStatus.Pending && 
-                    false == _InspectionState.AnyAnswered;
+                bool IsVisible = Status.Value == CswEnumNbtInspectionStatus.Pending && false == _InspectionState.AllAnswered;
                 _toggleButtonVisibility( SetPreferred, IsVisible, SaveToDb: true );
             }
             //// case 26584, 28155
@@ -308,15 +300,17 @@ namespace ChemSW.Nbt.ObjClasses
 
                     case PropertyName.SetPreferred:
                         CswNbtPropEnmrtrFiltered QuestionsFlt = Node.Properties[(CswEnumNbtFieldType) CswEnumNbtFieldType.Question];
+                        int NumOfQuestionsSetToPreferredAnswer = 0;
                         foreach( CswNbtNodePropWrapper PropWrapper in QuestionsFlt )
                         {
                             CswNbtNodePropQuestion QuestionProp = PropWrapper;  // don't refactor this into the foreach.  it doesn't work. case 28300.
                             if( string.IsNullOrEmpty( QuestionProp.Answer.Trim() ) )
                             {
                                 QuestionProp.Answer = QuestionProp.PreferredAnswer;
+                                NumOfQuestionsSetToPreferredAnswer++;
                             }
                         }
-                        ButtonData.Message = "Unanswered questions have been set to their preferred answer.";
+                        ButtonData.Message = NumOfQuestionsSetToPreferredAnswer + " unanswered questions have been set to their preferred answer.";
                         _toggleButtonVisibility( SetPreferred, IsVisible: false, SaveToDb: true );
                         ButtonData.Action = CswEnumNbtButtonAction.refresh;
                         break;
@@ -492,7 +486,7 @@ namespace ChemSW.Nbt.ObjClasses
                     break;
                 case CswEnumNbtInspectionStatus.Pending:
                     _toggleButtonVisibility( Finish, IsVisible: true, SaveToDb: true );
-                    _toggleButtonVisibility( SetPreferred, IsVisible: false == _InspectionState.AnyAnswered, SaveToDb: true );
+                    _toggleButtonVisibility( SetPreferred, IsVisible: true, SaveToDb: true );
                     _toggleButtonVisibility( Cancel, IsVisible: true, SaveToDb: true );
                     Node.setReadOnly( value: false, SaveToDb: true );
                     break;

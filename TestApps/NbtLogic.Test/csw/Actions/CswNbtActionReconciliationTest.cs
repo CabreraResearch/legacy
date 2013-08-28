@@ -76,6 +76,36 @@ namespace ChemSW.Nbt.Test.Actions
         }
 
         /// <summary>
+        /// Given a location that has one Container and one ContainerLocation in the given timeframe,
+        /// given that the Type of the given ContainerLocation is not enabled,
+        /// assert that the returned ContainerStatus data has a ContainerStatus value of NotScanned
+        /// </summary>
+        [Test]
+        public void getContainerStatusesTestTypeDisabled()
+        {
+            CswPrimaryKey LocationId = TestData.Nodes.createLocationNode().NodeId;
+            TestData.Nodes.createContainerLocationNode( LocationId: LocationId );
+            ContainerData.ReconciliationRequest Request = new ContainerData.ReconciliationRequest
+            {
+                StartDate = DateTime.Now.AddDays( -1 ).ToString(),
+                EndDate = DateTime.Now.AddSeconds( 1 ).ToString(),
+                LocationId = LocationId.ToString(),
+                IncludeChildLocations = false,
+                ContainerLocationTypes = new Collection<ContainerData.ReconciliationTypes>
+                {
+                    new ContainerData.ReconciliationTypes
+                    {
+                        Enabled=true, 
+                        Type= CswEnumNbtContainerLocationTypeOptions.Scan.ToString()
+                    }
+                }
+            };
+            ContainerData Data = ReconciliationAction.getContainerStatuses( Request );
+            Assert.AreEqual( 1, Data.ContainerStatuses.Count );
+            Assert.AreEqual( CswEnumNbtContainerLocationStatusOptions.NotScanned.ToString(), Data.ContainerStatuses[0].ContainerStatus );
+        }
+
+        /// <summary>
         /// Given a location that has one Container that did not exist in the given timeframe,
         /// assert that the no ContainerStatus data is returned
         /// </summary>
@@ -254,6 +284,45 @@ namespace ChemSW.Nbt.Test.Actions
                 else
                 {
                     Assert.AreEqual( 0, Stat.ContainerCount );
+                }
+            }
+        }
+
+        /// <summary>
+        /// Given a location that has one Container and one ContainerLocation in the given timeframe,
+        /// given that the Type of the given ContainerLocation is not enabled,
+        /// assert that the returned ContainerStatistics data has a ContainerStatus value of NotScanned
+        /// </summary>
+        [Test]
+        public void getContainerStatisticsTestTypeDisabled()
+        {
+            CswPrimaryKey LocationId = TestData.Nodes.createLocationNode().NodeId;
+            TestData.Nodes.createContainerLocationNode( LocationId: LocationId );
+            ContainerData.ReconciliationRequest Request = new ContainerData.ReconciliationRequest
+            {
+                StartDate = DateTime.Now.AddDays( -1 ).ToString(),
+                EndDate = DateTime.Now.AddSeconds( 1 ).ToString(),
+                LocationId = LocationId.ToString(),
+                IncludeChildLocations = false,
+                ContainerLocationTypes = new Collection<ContainerData.ReconciliationTypes>
+                {
+                    new ContainerData.ReconciliationTypes
+                    {
+                        Enabled=true, 
+                        Type= CswEnumNbtContainerLocationTypeOptions.Scan.ToString()
+                    }
+                }
+            };
+            ContainerData Data = ReconciliationAction.getContainerStatistics( Request );
+            foreach( ContainerData.ReconciliationStatistics Stat in Data.ContainerStatistics )
+            {
+                if( Stat.Status == CswEnumNbtContainerLocationStatusOptions.NotScanned.ToString() )
+                {
+                    Assert.AreEqual( 1, Stat.ContainerCount, "There should have been one NotScanned container." );
+                }
+                else
+                {
+                    Assert.AreEqual( 0, Stat.ContainerCount, "Status " + Stat.Status + " should have been empty." );
                 }
             }
         }

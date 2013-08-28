@@ -63,10 +63,16 @@ namespace ChemSW.Nbt.WebServices
             public string JurisdictionId;
             [DataMember]
             public string WorkUnitId;
-            [DataMember]
-            public string DateFormat;
-            [DataMember]
-            public string TimeFormat;
+
+            [DataMember( Name = "DateFormat" )]
+            public string DateFormatDn;
+            [DataMember( Name = "TimeFormat" )]
+            public string TimeFormatDn;
+
+            [DataMember( Name = "JS Date Format" )]
+            public string DateFormatJs;
+            [DataMember( Name = "JS Time Format" )]
+            public string TimeFormatJs;
         }
 
 
@@ -93,8 +99,10 @@ namespace ChemSW.Nbt.WebServices
             {
                 Ret.Data.WorkUnitId = NbtResources.CurrentNbtUser.WorkUnitId.ToString();
             }
-            Ret.Data.DateFormat = NbtResources.CurrentNbtUser.DateFormat;
-            Ret.Data.TimeFormat = NbtResources.CurrentNbtUser.TimeFormat;
+            Ret.Data.DateFormatDn = NbtResources.CurrentNbtUser.DateFormat;
+            Ret.Data.TimeFormatDn = NbtResources.CurrentNbtUser.TimeFormat;
+            Ret.Data.DateFormatJs = CswTools.ConvertNetToPHP( NbtResources.CurrentNbtUser.DateFormat );
+            Ret.Data.TimeFormatJs = CswTools.ConvertNetToPHP( NbtResources.CurrentNbtUser.TimeFormat );
         }
 
         public static void doNothing( ICswResources CswResources, object Ret, object Req )
@@ -143,7 +151,7 @@ namespace ChemSW.Nbt.WebServices
         /// </summary>
         public static void getLoginData( ICswResources CswResources, LoginDataReturn Return, LoginData.LoginDataRequest Request )
         {
-            CswNbtResources _CswNbtResources = ( CswNbtResources ) CswResources;
+            CswNbtResources _CswNbtResources = (CswNbtResources) CswResources;
             if( _CswNbtResources.CurrentNbtUser.IsAdministrator() )
             {
                 CswNbtActLoginData _CswNbtActLoginData = new CswNbtActLoginData( _CswNbtResources );

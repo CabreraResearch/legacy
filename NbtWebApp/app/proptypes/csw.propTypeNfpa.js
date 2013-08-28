@@ -57,13 +57,13 @@
                     cswPrivate.whiteDiv = cswPrivate.table.cell(2, 2)
                         .div({ cssclass: 'CswFieldTypeNFPA_cell CswFieldTypeNFPA_white' + cswPrivate.displayMode })
                         .div({ cssclass: 'CswFieldTypeNFPA_text CswFieldTypeNFPA_whitetext CswFieldTypeNFPA_textRotated' });
-                } else {
-                    cswPrivate.redDiv = cswPrivate.table.cell(1, 1)
-                        .div({ cssclass: 'CswFieldTypeNFPA_cell CswFieldTypeNFPA_red' + cswPrivate.displayMode })
-                        .div({ cssclass: 'CswFieldTypeNFPA_text' });
-
-                    cswPrivate.blueDiv = cswPrivate.table.cell(1, 2)
+                } else {                   
+                    cswPrivate.blueDiv = cswPrivate.table.cell(1, 1)
                         .div({ cssclass: 'CswFieldTypeNFPA_cell CswFieldTypeNFPA_blue' + cswPrivate.displayMode })
+                        .div({ cssclass: 'CswFieldTypeNFPA_text' });
+                    
+                    cswPrivate.redDiv = cswPrivate.table.cell(1, 2)
+                        .div({ cssclass: 'CswFieldTypeNFPA_cell CswFieldTypeNFPA_red' + cswPrivate.displayMode })
                         .div({ cssclass: 'CswFieldTypeNFPA_text' });
 
                     cswPrivate.yellowDiv = cswPrivate.table.cell(1, 3)
@@ -131,27 +131,15 @@
                     cswPrivate.editTable = table.cell(1, 2).table({
                         FirstCellRightAlign: true
                     });
-
-                    cswPrivate.editTable.cell(1, 1).text('Flammability');
-                    cswPrivate.editTable.cell(2, 1).text('Reactivity');
-                    if (cswPrivate.displayMode === Csw.enums.NFPADisplayMode.Diamond) {
-                        cswPrivate.editTable.cell(2, 1).text('Reactivity');
-                        cswPrivate.editTable.cell(3, 1).text('Health');
-                    } else {
-                        cswPrivate.editTable.cell(2, 1).text('Health');
-                        cswPrivate.editTable.cell(3, 1).text('Reactivity');
-                    }
+                    cswPrivate.editTable.cell(1, 1).text('Health');
+                    cswPrivate.editTable.cell(2, 1).text('Flammability');
+                    cswPrivate.editTable.cell(3, 1).text('Reactivity');
                     if (false === cswPrivate.hideSpecial) {
                         cswPrivate.editTable.cell(4, 1).text('Special');
                     }
-                    cswPrivate.makeSelect(cswPrivate.editTable.cell(1, 2), 'red', cswPrivate.red, cswPrivate.redDiv, null);
-                    if (cswPrivate.displayMode === Csw.enums.NFPADisplayMode.Diamond) {
-                        cswPrivate.makeSelect(cswPrivate.editTable.cell(2, 2), 'yellow', cswPrivate.yellow, cswPrivate.yellowDiv, null);
-                        cswPrivate.makeSelect(cswPrivate.editTable.cell(3, 2), 'blue', cswPrivate.blue, cswPrivate.blueDiv, null);
-                    } else {
-                        cswPrivate.makeSelect(cswPrivate.editTable.cell(2, 2), 'blue', cswPrivate.blue, cswPrivate.blueDiv, null);
-                        cswPrivate.makeSelect(cswPrivate.editTable.cell(3, 2), 'yellow', cswPrivate.yellow, cswPrivate.yellowDiv, null);
-                    }
+                    cswPrivate.makeSelect(cswPrivate.editTable.cell(1, 2), 'blue', cswPrivate.blue, cswPrivate.blueDiv, null);
+                    cswPrivate.makeSelect(cswPrivate.editTable.cell(2, 2), 'red', cswPrivate.red, cswPrivate.redDiv, null);
+                    cswPrivate.makeSelect(cswPrivate.editTable.cell(3, 2), 'yellow', cswPrivate.yellow, cswPrivate.yellowDiv, null);
                     if (false === cswPrivate.hideSpecial) {
                         cswPrivate.makeSelect(cswPrivate.editTable.cell(4, 2), 'white', cswPrivate.white, cswPrivate.whiteDiv, cswPrivate.whiteVals);
                     }

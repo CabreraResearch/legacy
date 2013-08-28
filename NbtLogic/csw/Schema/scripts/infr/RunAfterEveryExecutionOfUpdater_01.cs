@@ -37,8 +37,7 @@ namespace ChemSW.Nbt.Schema
 
         #endregion Blame Logic
 
-        public static string Title = "Post-Script";
-
+        public override string Title { get { return "Post-Script: Reset Enabled NodeTypes | Re-enable Scheduled Rules | Trigger all Module Events"; } }
         public override void update()
         {
             _acceptBlame( CswEnumDeveloper.SS, 26029 );
