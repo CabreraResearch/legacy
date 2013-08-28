@@ -101,7 +101,7 @@ namespace ChemSW.Nbt.Test.Security
 
             TestData.Nodes.createUserNode( "gooduser", "goodpw1!", isLocked: CswEnumTristate.True );
 
-            CswEnumAuthenticationStatus Expected = CswEnumAuthenticationStatus.Failed;
+            CswEnumAuthenticationStatus Expected = CswEnumAuthenticationStatus.Locked;
             ICswUser User;
             AuthenticationRequest.AuthenticationStatus = CswEnumAuthenticationStatus.Failed;
             AuthenticationRequest.AuthenticationStatus = _SchemaAuthenticator.AuthenticateWithSchema( _CswEncryption, AuthenticationRequest, out User );
@@ -118,7 +118,7 @@ namespace ChemSW.Nbt.Test.Security
 
             TestData.Nodes.createUserNode( "gooduser", "goodpw1!", isArchived: CswEnumTristate.True );
 
-            CswEnumAuthenticationStatus Expected = CswEnumAuthenticationStatus.Failed;
+            CswEnumAuthenticationStatus Expected = CswEnumAuthenticationStatus.Archived;
             ICswUser User;
             AuthenticationRequest.AuthenticationStatus = CswEnumAuthenticationStatus.Failed;
             AuthenticationRequest.AuthenticationStatus = _SchemaAuthenticator.AuthenticateWithSchema( _CswEncryption, AuthenticationRequest, out User );
