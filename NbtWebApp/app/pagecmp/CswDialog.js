@@ -943,12 +943,12 @@
                             { header: 'Unit Count', dataIndex: 'case_qty' },
                             { header: 'Initial Quantity', dataIndex: 'pkg_qty' },
                             {
-                                header: 'UOM', dataIndex: 'pkg_qty_uom', renderer: function (val, meta, record) {
-                                    if (Csw.isNullOrEmpty(val)) {
-                                        return '[ ' + record.data.c3_uom + ' ]';
-                                    } else {
+                                header: 'UOM', dataIndex: 'c3_uom', renderer: function (val, meta, record) {
+                                    //if (Csw.isNullOrEmpty(val)) {
+                                    //    return '[ ' + record.data.c3_uom + ' ]';
+                                    //} else {
                                         return val;
-                                    }
+                                    //}
                                 }
                             },
                             { header: 'Catalog No', dataIndex: 'catalog_no' }
