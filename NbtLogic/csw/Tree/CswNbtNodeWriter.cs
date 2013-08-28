@@ -60,7 +60,7 @@ namespace ChemSW.Nbt
             return ( ReturnVal );
         }
 
-        public void makeNewNodeEntry( CswNbtNode Node, bool PostToDatabase, bool IsCopy, bool OverrideUniqueValidation )
+        public void makeNewNodeEntry( CswNbtNode Node )
         {
             // case 20970
             CswNbtActQuotas Quotas = new CswNbtActQuotas( _CswNbtResources );
@@ -70,17 +70,13 @@ namespace ChemSW.Nbt
                 Node.Locked = true;
             }
 
-            getWriterImpl( Node.NodeTypeId ).makeNewNodeEntry( Node, PostToDatabase );
+            getWriterImpl( Node.NodeTypeId ).makeNewNodeEntry( Node, true );
             //setDefaultPropertyValues( Node );
 
             // case 22591 - make empty rows for every property
-            if( PostToDatabase )
+            foreach( CswNbtNodePropWrapper PropWrapper in Node.Properties )
             {
-                foreach( CswNbtNodePropWrapper PropWrapper in Node.Properties )
-                {
-                    PropWrapper.makePropRow();
-                }
-                Node.postChanges( true, IsCopy, OverrideUniqueValidation );
+                PropWrapper.makePropRow();
             }
         }//makeNewNodeEntry()
 
@@ -94,10 +90,10 @@ namespace ChemSW.Nbt
                 //the db, after which it will have a node id
                 if( null == Node.NodeId )
                 {
-                    makeNewNodeEntry( Node, true, IsCopy, OverrideUniqueValidation );
+                    makeNewNodeEntry( Node );
                     //setDefaultPropertyValues( Node );
                 }
-                
+
                 //propcoll knows whether or not he's got new 
                 //values to update (presumably)
 

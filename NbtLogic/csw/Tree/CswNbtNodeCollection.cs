@@ -435,7 +435,7 @@ namespace ChemSW.Nbt
             Node.fillFromNodeTypeId( NodeTypeId );
             Node.IsTemp = IsTemp;
 
-            _CswNbtNodeFactory.CswNbtNodeWriter.makeNewNodeEntry( Node, PostToDatabase: true, IsCopy: false, OverrideUniqueValidation: OverrideUniqueValidation );
+            _CswNbtNodeFactory.CswNbtNodeWriter.makeNewNodeEntry( Node );
             _CswNbtNodeFactory.CswNbtNodeWriter.setDefaultPropertyValues( Node );
 
             if( null != OnAfterMakeNode )
