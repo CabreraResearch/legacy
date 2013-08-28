@@ -56,6 +56,7 @@ namespace ChemSW.Nbt.Schema
 
             List<CswStoredProcParam> Params = new List<CswStoredProcParam>();
             _CswNbtSchemaModTrnsctn.execStoredProc( "CREATEALLNTVIEWS", Params );
+            _resetBlame();
 
 
 
