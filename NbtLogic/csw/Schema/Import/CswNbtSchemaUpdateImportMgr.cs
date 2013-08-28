@@ -49,7 +49,7 @@ namespace ChemSW.Nbt.csw.Schema
 
             _SourceTableName = SourceTableName;
             _DestNodeTypeName = DestNodeTypeName;
-            _ImportOrder = _Order["SourceTableName"];
+            _ImportOrder = _Order[SourceTableName];
             //TODO: Provide error messsage/throw exception if the sourcetablename isn't in the dictionary
             //"Could not find the SourceTableName " + SourceTableName + " in the _Order dictionary."
 
@@ -101,7 +101,7 @@ namespace ChemSW.Nbt.csw.Schema
         public void finalize( string CafDbLink = null, string WhereClause = null, string DefinitionName = null )
         {
             string ExceptionText = string.Empty;
-            string State = CswScheduleLogicNbtCAFImport.State.New.ToString();
+            string State = CswScheduleLogicNbtCAFImport.State.N.ToString();
             CafDbLink = CafDbLink ?? CswScheduleLogicNbtCAFImport.CAFDbLink;
             DefinitionName = DefinitionName ?? CswScheduleLogicNbtCAFImport.DefinitionName;
 
