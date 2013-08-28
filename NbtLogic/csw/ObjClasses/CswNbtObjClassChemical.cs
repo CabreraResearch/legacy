@@ -237,8 +237,13 @@ namespace ChemSW.Nbt.ObjClasses
         public override void onUpdatePropertyValue()
         {
             RefreshRegulatoryListMembers();
-            syncFireDbData();
-            syncPCIDData();
+            // We only want to trigger the syncing of FireDb/PCID
+            // if we are running the ExtChemDataSyncRule.
+            if( Node.PendingUpdate )
+            {
+                syncFireDbData();
+                syncPCIDData();
+            }
         }
 
         #endregion Inherited Events
