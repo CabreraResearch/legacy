@@ -58,10 +58,6 @@ namespace NbtWebApp
         {
             Session Session = new Session();
             Session.End();
-            //CswWebSvcResourceInitializerNbt Resource = new CswWebSvcResourceInitializerNbt( _Context, null );
-            //Resource.initResources();
-            //Resource.deauthenticate();
-            //Resource.deInitResources();
         }
 
         #endregion Session
