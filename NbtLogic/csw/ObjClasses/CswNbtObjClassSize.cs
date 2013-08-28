@@ -58,6 +58,7 @@ namespace ChemSW.Nbt.ObjClasses
                     Material.RelatedNodeId = pk;
                 }
             }
+            _setUnits();//Case 30571 - set available quantity units on the add layout
             if( CswEnumTristate.False == this.QuantityEditable.Checked && false == CswTools.IsDouble( this.InitialQuantity.Quantity ) )
             {
                 throw new CswDniException( CswEnumErrorType.Warning, "Cannot have a null Initial Quantity if Quantity Editable is unchecked.", "Cannot have a null Initial Quantity if Quantity Editable is unchecked." );
@@ -84,15 +85,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         protected override void afterPopulateProps()
         {
-            //case 25759 - set initialQuantity unittype view based on related material physical state
-            //Case 29579 - this needs to be done whenever the Size node is referenced (to overwrite the view of the last Size node)
-            CswNbtNode MaterialNode = _CswNbtResources.Nodes.GetNode( Material.RelatedNodeId );
-            if( MaterialNode != null )
-            {
-                Material.setReadOnly( value: true, SaveToDb: true );
-                CswNbtUnitViewBuilder Vb = new CswNbtUnitViewBuilder( _CswNbtResources );
-                Vb.setQuantityUnitOfMeasureView( MaterialNode, InitialQuantity );
-            }
+            _setUnits();//Case 29579 - set available quantity units on the edit layout
             _CswNbtObjClassDefault.triggerAfterPopulateProps();
         }//afterPopulateProps()
 
@@ -138,6 +131,17 @@ namespace ChemSW.Nbt.ObjClasses
             }
             
             return isMaterialID;
+        }
+
+        private void _setUnits()
+        {
+            CswNbtNode MaterialNode = _CswNbtResources.Nodes.GetNode( Material.RelatedNodeId );
+            if( MaterialNode != null )
+            {
+                Material.setReadOnly( value: true, SaveToDb: true );
+                CswNbtUnitViewBuilder Vb = new CswNbtUnitViewBuilder( _CswNbtResources );
+                Vb.setQuantityUnitOfMeasureView( MaterialNode, InitialQuantity );
+            }
         }
 
         #endregion

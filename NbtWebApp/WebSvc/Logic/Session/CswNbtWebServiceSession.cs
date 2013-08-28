@@ -1,4 +1,5 @@
 using System;
+using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
 using ChemSW.Core;
 using ChemSW.Nbt.Actions;
@@ -157,6 +158,29 @@ namespace ChemSW.Nbt.WebServices
                 Return.Data = _CswNbtActLoginData.getLoginData( Request );
             }
         }
+
+        /// <summary>
+        /// Ends all other sessions owned by the current user
+        /// </summary>
+        public static void endCurrentUserSessions( ICswResources CswResources, object Return, object Request )
+        {
+            CswNbtResources CswNbtResources = (CswNbtResources) CswResources;
+            string AccessId = CswNbtResources.AccessId;
+            string Username = CswNbtResources.CurrentUser.Username;
+
+            Collection<string> SessionList = CswNbtResources.CswSessionManager.SessionsList.getSessionIdsForUser( AccessId, Username );
+
+            foreach( string SessionId in SessionList )
+            {
+                if( SessionId != CswNbtResources.Session.SessionId )
+                {
+                    CswNbtResources.CswSessionManager.clearSession( SessionId );
+                }
+            }
+
+        }//getCurrentUserSessions
+
+
     } // class CswNbtWebServiceSession
 
 } // namespace ChemSW.Nbt.WebServices

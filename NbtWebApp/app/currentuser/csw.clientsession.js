@@ -249,6 +249,9 @@
                     case 'ShowLicense':
                         $.CswDialog('ShowLicenseDialog', {});
                         break;
+                    case 'AlreadyLoggedIn':
+                        $.CswDialog('LogoutExistingSessionsDialog', o.success);
+                        break;
                 }
 
                 if (!txt) {

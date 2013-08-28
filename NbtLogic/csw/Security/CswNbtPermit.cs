@@ -1,13 +1,12 @@
-﻿using System.Data;
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.PropertySets;
 using ChemSW.Nbt.PropTypes;
-using System;
-using System.Collections.Generic;
 
 namespace ChemSW.Nbt.Security
 {
@@ -701,31 +700,50 @@ namespace ChemSW.Nbt.Security
 
         private bool _isPropWritableImpl( CswNbtMetaDataNodeTypeTab MetaDataTab, CswNbtMetaDataNodeTypeProp MetaDataProp, CswNbtNodePropWrapper NodePropWrapper )
         {
-            bool ret = _CswNbtPermitInfo.NoExceptionCases;
+            bool ret = true;
 
-            ret = ret || ( null == MetaDataTab || canTab( _CswNbtPermitInfo.NodeTypePermission, _CswNbtPermitInfo.NodeType, MetaDataTab ) );
+            if( false == _CswNbtPermitInfo.NoExceptionCases &&  null != MetaDataTab && false == canTab( _CswNbtPermitInfo.NodeTypePermission, _CswNbtPermitInfo.NodeType, MetaDataTab ) ) 
+            {
+                ret = false;
+                _CswNbtResources.CswLogger.reportAppState( "The property " + MetaDataProp.PropName + " (" + MetaDataProp.PropId + ") has been displayed as non-editable because the viewer cannot see tab " + MetaDataTab.TabId + ".", "ReadOnlyConditions" );
+            }
+            else if( _CswNbtPermitInfo.NodeTypePermission == CswEnumNbtNodeTypePermission.View )
+            {
+                ret = false;
+                _CswNbtResources.CswLogger.reportAppState( "The property " + MetaDataProp.PropName + " (" + MetaDataProp.PropId + ") has been displayed as non-editable because the viewer does not have edit permissions on nodetype " + MetaDataProp.NodeTypeId + ".", "ReadOnlyConditions" );
+            }
+            else if( MetaDataProp.ServerManaged )
+            {
+                ret = false;
+                _CswNbtResources.CswLogger.reportAppState( "The property " + MetaDataProp.PropName + " (" + MetaDataProp.PropId + ") has been displayed as non-editable because this property is server managed.", "ReadOnlyConditions" );
+            }
+            else if( MetaDataProp.getFieldType().FieldType != CswEnumNbtFieldType.Button )
+            {
+                if( false == ( MetaDataProp.IsRequired && _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Add && null != MetaDataProp.getAddLayout() ) )
+                {
+                    if( MetaDataProp.ReadOnly )
+                    {
+                        ret = false;
+                        _CswNbtResources.CswLogger.reportAppState( "The property " + MetaDataProp.PropName + " (" + MetaDataProp.PropId + ") has been displayed as non-editable because this property is read only.", "ReadOnlyConditions" );
+                    }
+                    else if( null != NodePropWrapper )
+                    {
+                        if( NodePropWrapper.ReadOnly )
+                        {
+                            ret = false;
+                            _CswNbtResources.CswLogger.reportAppState( "The property " + MetaDataProp.PropName + " (" + MetaDataProp.PropId + ") has been displayed as non-editable because this property's nodepropwrapper is read only.", "ReadOnlyConditions" );
+                        }
+                        else if( NodePropWrapper.Node.ReadOnly )
+                        {
+                            ret = false;
+                            _CswNbtResources.CswLogger.reportAppState( "The property " + MetaDataProp.PropName + " (" + MetaDataProp.PropId + ") has been displayed as non-editable because this property's nodepropwrapper's node is read only.", "ReadOnlyConditions" );
+                        }
+                    }//else if( null != NodePropWrapper )
+                }//if( false == ( MetaDataProp.IsRequired && _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Add && null != MetaDataProp.getAddLayout() ) 
+            }//else if MetaDataProp.getFieldType().FieldType != CswEnumNbtFieldType.Button
 
-            ret = ret &&
-                // We've requested an Editable state
-                  ( _CswNbtPermitInfo.NodeTypePermission != CswEnumNbtNodeTypePermission.View ) &&
-                // No one can write to servermanaged props
-                  ( false == MetaDataProp.ServerManaged ) &&
-                  (
-                // Anyone but an admin cannot write to read-only props  
-                // but see case 29095; this is now handled in CswNbtSdTabsAndProps
-                //( ( null != _CswNbtPermitInfo.User ) && ( _CswNbtPermitInfo.User.IsAdministrator() ) ) ||
-                //Buttons are always "writable"  
-                      MetaDataProp.getFieldType().FieldType == CswEnumNbtFieldType.Button ||
-                      (
-                //This prop is not readonly OR
-                          ( ( false == MetaDataProp.ReadOnly ) && ( null == NodePropWrapper || ( false == NodePropWrapper.ReadOnly && false == NodePropWrapper.Node.ReadOnly ) ) ) ||
-                //The prop is required AND readonly AND we're creating a new node
-                //This was removed as part of Case 27984, and I think it was a mistake
-                          ( MetaDataProp.IsRequired && _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Add && null != MetaDataProp.getAddLayout() )
-                      )
-                  );
 
-            return ( ret );
+            return ret;
 
         }//_isPropWritableImpl()
 
@@ -784,47 +802,32 @@ namespace ChemSW.Nbt.Security
         {
             bool ret = true;
 
-            //the case in which it is a problem that we check nodetype permissions: 
-            //  node type level permissions are off, but a tab has edit permission. 
-            //  this is called from CswNbtSdTabsAndProps::makePropJson(). So here, canNodeType() 
-            // gives us false, which means that the readOnly() status below does not get checked. 
-            // Here's a case where it's better to balkanize these methods and let the caller 
-            // decide how to piece them together. 
             //ret = canNodeType( NodeTypePermission, _CswNbtPermitInfo.NodeType, _CswNbtPermitInfo.User );
+              // the case in which it is a problem that we check nodetype permissions: 
+              // node type level permissions are off, but a tab has edit permission. 
+              // this is called from CswNbtSdTabsAndProps::makePropJson(). So here, canNodeType() 
+              // gives us false, which means that the readOnly() status below does not get checked. 
+              // Here's a case where it's better to balkanize these methods and let the caller 
+              // decide how to piece them together. 
 
-            if( ret && ( null != _CswNbtPermitInfo.NodePrimeKey && Int32.MinValue != _CswNbtPermitInfo.NodePrimeKey.PrimaryKey ) )
+            if( null != _CswNbtPermitInfo.NodePrimeKey && Int32.MinValue != _CswNbtPermitInfo.NodePrimeKey.PrimaryKey )
             {
                 // Prevent users from deleting themselves or their own roles
-                if( ret &&
-                    _CswNbtPermitInfo.NodeTypePermission == CswEnumNbtNodeTypePermission.Delete &&
-                    ( ( _CswNbtPermitInfo.NodePrimeKey == _CswNbtPermitInfo.User.UserId ||
-                        _CswNbtPermitInfo.NodePrimeKey == _CswNbtPermitInfo.User.RoleId ) ) )
+                if( _CswNbtPermitInfo.NodeTypePermission == CswEnumNbtNodeTypePermission.Delete &&
+                    ( ( _CswNbtPermitInfo.NodePrimeKey == _CswNbtPermitInfo.User.UserId || 
+                        _CswNbtPermitInfo.NodePrimeKey == _CswNbtPermitInfo.User.RoleId ) )
+                  )
                 {
                     ret = false;
+                    _CswNbtResources.CswLogger.reportAppState( "The node " + _CswNbtPermitInfo.Node.NodeName + " (" + _CswNbtPermitInfo.NodePrimeKey + ") has been displayed as non-editable because the viewer cannot delete their own user/role.", "ReadOnlyConditions" );
                 }
 
-                //// case 24510
-                //CswNbtNode Node = _CswNbtResources.Nodes[_CswNbtPermitInfo.NodePrimeKey];
-                //if( null != Node )
-                //{
-                //    if( Node.ObjClass is ICswNbtPermissionTarget )
-                //    {
-                //        ICswNbtPermissionTarget TargetNode = CswNbtPropSetCaster.AsPermissionTarget( Node );
-                //        CswPrimaryKey PermissionGroupId = TargetNode.getPermissionGroupId();
-                //        ret = ret && _CswNbtResources.Permit.canNode( _CswNbtPermitInfo.NodeTypePermission, PermissionGroupId, _CswNbtPermitInfo.User );
-                //    }
-                //    if( _CswNbtPermitInfo.NodeTypePermission == CswEnumNbtNodeTypePermission.Edit )
-                //    {
-                //        // see case 29095; this is now handled in CswNbtSdTabsAndProps
-                //        //ret = ret && ( _CswNbtPermitInfo.User.IsAdministrator() || false == Node.ReadOnly );
-                //        ret = ret && ( false == Node.ReadOnly );
-                //    }
-                //}
 
                 CswPrimaryKey PermissionGroupId = getPermissionGroupId( _CswNbtPermitInfo.NodePrimeKey );
-                if( CswTools.IsPrimaryKey( PermissionGroupId ) )
+                if( CswTools.IsPrimaryKey( PermissionGroupId ) && false == _CswNbtResources.Permit.canNode( _CswNbtPermitInfo.NodeTypePermission, PermissionGroupId, _CswNbtPermitInfo.User ) )
                 {
-                    ret = ret && _CswNbtResources.Permit.canNode( _CswNbtPermitInfo.NodeTypePermission, PermissionGroupId, _CswNbtPermitInfo.User );
+                    ret = false;
+                    _CswNbtResources.CswLogger.reportAppState( "The node " + _CswNbtPermitInfo.Node.NodeName + " (" + _CswNbtPermitInfo.NodePrimeKey + ") has been displayed as non-editable because the viewer does not belong to permission group " + PermissionGroupId + ".", "ReadOnlyConditions" );
                 }
 
             }//if NodeId is not null

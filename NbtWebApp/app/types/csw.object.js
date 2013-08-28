@@ -314,7 +314,7 @@
             'use strict';
             var ret = '';
             Csw.tryExec(function () { ret = JSON.stringify(data); });
-            return ret;
+            return ret || '';
         });
 
     Csw.deserialize = Csw.deserialize ||
