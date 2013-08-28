@@ -1,4 +1,5 @@
 /// <reference path="~/app/CswApp-vsdoc.js" />
+
 (function () {
 Csw.actions.logindata = Csw.actions.template ||
     Csw.actions.register('logindata', function (cswParent, options) {
@@ -30,26 +31,32 @@ Csw.actions.logindata = Csw.actions.template ||
         };
         
         cswPrivate.getCurrentDate = function (monthIndex) {
-            var monthOffset = Csw.isNullOrEmpty(monthIndex) ? 1 : monthIndex;
-            var today = new Date();
-            var dd = today.getDate();
-            var mm = today.getMonth() + monthOffset; //January is 0!
-            if (mm === 0) {
-                mm = 12;
-            }
-            var yyyy = today.getFullYear();
-            if (dd < 10) {
-                dd = '0' + dd;
-            }
-            if (mm < 10) {
-                mm = '0' + mm;
-            }
-            today = mm + '/' + dd + '/' + yyyy;
-            return today;
+            //var monthOffset = Csw.isNullOrEmpty(monthIndex) ? 1 : monthIndex;
+            //var today = new Date();
+            //var dd = today.getDate();
+            //var mm = today.getMonth() + monthOffset; //January is 0!
+            //if (mm === 0) {
+            //    mm = 12;
+            //}
+            //var yyyy = today.getFullYear();
+            //if (dd < 10) {
+            //    dd = '0' + dd;
+            //}
+            //if (mm < 10) {
+            //    mm = '0' + mm;
+            //}
+            //today = mm + '/' + dd + '/' + yyyy;
+            //return today;
+            return moment().format('L');
         };
 
         cswPrivate.getLastMonth = function() {
-            return cswPrivate.getCurrentDate(0);
+            //return cswPrivate.getCurrentDate(0);
+            return moment().subtract('months', 1).format('L');
+        };
+
+        cswPrivate.getYesterday = function () {
+            return moment().subtract('days', 1).format('L');
         };
 
         cswPrivate.updateGrid = function() {
@@ -66,7 +73,7 @@ Csw.actions.logindata = Csw.actions.template ||
             cswPrivate.controlTbl.cell(1, 1).span({ text: 'Start Date:' }).addClass('propertylabel');
             var startDatePicker = cswPrivate.controlTbl.cell(1, 2).dateTimePicker({
                 name: 'startDate',
-                Date: cswPrivate.getLastMonth(),
+                Date: cswPrivate.getYesterday(),
                 isRequired: true,
                 maxDate: cswPrivate.getCurrentDate(),
                 onChange: function () {
