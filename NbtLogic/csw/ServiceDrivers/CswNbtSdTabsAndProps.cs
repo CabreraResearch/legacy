@@ -182,19 +182,19 @@ namespace ChemSW.Nbt.ServiceDrivers
                         RelatedNodePk.FromString( RelatedNodeId );
                         if( Int32.MinValue != RelatedNodePk.PrimaryKey )
                         {
-                                CswNbtNode RelatedNode = _CswNbtResources.Nodes[RelatedNodePk];
-                                if( null != RelatedNode )
-                                {
-                            foreach( CswNbtNodePropRelationship Relationship in from _Prop
+                            CswNbtNode RelatedNode = _CswNbtResources.Nodes[RelatedNodePk];
+                            if( null != RelatedNode )
+                            {
+                                foreach( CswNbtNodePropRelationship Relationship in from _Prop
                                                                                     in Ret.Properties
                                                                                 where _Prop.getFieldTypeValue() == CswEnumNbtFieldType.Relationship &&
                                                                                           ( _Prop.AsRelationship.TargetMatches( RelatedNode.getNodeType() ) ||
                                                                                             _Prop.AsRelationship.TargetMatches( RelatedNode.getObjectClass() ) )
                                                                                 select _Prop )
-                            {
-                                Relationship.RelatedNodeId = RelatedNodePk;
-                                Ret.postChanges( ForceUpdate : false );
-                            }
+                                {
+                                    Relationship.RelatedNodeId = RelatedNodePk;
+                                    Ret.postChanges( ForceUpdate : false );
+                                }
                             }
                         } // if( Int32.MinValue != RelatedNodePk.PrimaryKey )
                     }
