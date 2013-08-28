@@ -293,15 +293,26 @@ namespace ChemSW.Nbt.MetaData
 
             if( changed )
             {
-                foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in this.getNodeTypeProps() )
+                _setNodeTypePropFilters( FilterProp, FilterString );
+            }
+        }
+
+        public void setNodeTypePropFilters()
+        {
+            CswNbtMetaDataObjectClassProp FilterProp = _CswNbtMetaDataResources.CswNbtMetaData.getObjectClassProp( FilterObjectClassPropId );
+            _setNodeTypePropFilters( FilterProp, getFilterString() );
+        }
+
+        private void _setNodeTypePropFilters( CswNbtMetaDataObjectClassProp FilterProp, string FilterString )
+        {
+            foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in this.getNodeTypeProps() )
+            {
+                if( FilterProp != null )
                 {
-                    if( FilterProp != null )
+                    CswNbtMetaDataNodeTypeProp FilterPropNodeTypeProp = FilterProp.getNodeTypeProps().FirstOrDefault();
+                    if( null != FilterPropNodeTypeProp )
                     {
-                        CswNbtMetaDataNodeTypeProp FilterPropNodeTypeProp = FilterProp.getNodeTypeProps().FirstOrDefault();
-                        if( null != FilterPropNodeTypeProp )
-                        {
-                            NodeTypeProp.setFilter( FilterPropNodeTypeProp, FilterString );
-                        }
+                        NodeTypeProp.setFilter( FilterPropNodeTypeProp, FilterString );
                     }
                 }
             }

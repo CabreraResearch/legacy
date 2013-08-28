@@ -976,7 +976,6 @@ namespace ChemSW.Nbt.Schema
                     ObjectClassPropUpdate.update( UpdateTable );
                     MetaData.refreshAll();
                     RetProp = OcpModel.ObjectClass.getObjectClassProp( OcpModel.PropName );
-                    RetProp.setNodeTypePropFK();
                 }
             }
             return RetProp;
