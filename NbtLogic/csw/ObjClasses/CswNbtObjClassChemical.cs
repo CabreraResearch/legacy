@@ -384,26 +384,13 @@ namespace ChemSW.Nbt.ObjClasses
 
                         #region Hazard Classes
 
-                        CswCommaDelimitedString CurrentHazardClasses = new CswCommaDelimitedString();
-                        CurrentHazardClasses = this.HazardClasses.Value;
-                        CswCommaDelimitedString UpdatedHazardClasses = new CswCommaDelimitedString();
-
                         foreach( CswC3ExtChemData.FireDB.UfcHazardClass UfcHazardClass in C3ExtChemData.ExtensionData1.FireDbData.UfcHazardClasses )
                         {
-                            if( false == CurrentHazardClasses.Contains( UfcHazardClass.HazardClass ) )
+                            if( false == HazardClasses.CheckValue( UfcHazardClass.HazardClass ) )
                             {
-                                UpdatedHazardClasses.Add( UfcHazardClass.HazardClass );
+                                HazardClasses.AddValue( UfcHazardClass.HazardClass );
                             }
                         }
-
-                        // Add the original hazard classes to the new list
-                        foreach( string HazardClass in CurrentHazardClasses )
-                        {
-                            UpdatedHazardClasses.Add( HazardClass );
-                        }
-
-                        // Set the value of the property to the new list
-                        this.HazardClasses.Value = UpdatedHazardClasses;
 
                         #endregion
 
@@ -421,28 +408,15 @@ namespace ChemSW.Nbt.ObjClasses
 
                         #region Hazard Categories
 
-                        CswCommaDelimitedString CurrentHazardCategories = new CswCommaDelimitedString();
-                        CurrentHazardCategories = this.HazardCategories.Value;
-                        CswCommaDelimitedString UpdatedHazardCategories = new CswCommaDelimitedString();
-
                         foreach( CswC3ExtChemData.FireDB.HazardCategoryClass HazardCategoryClass in C3ExtChemData.ExtensionData1.FireDbData.HazardCategories )
                         {
                             // First convert c3 hazard category to nbt equivalent
                             string ConvertHazardCategory = _convertHazardCategory( HazardCategoryClass.HazardCategory );
-                            if( false == CurrentHazardClasses.Contains( ConvertHazardCategory ) )
+                            if( false == HazardCategories.CheckValue( ConvertHazardCategory ) )
                             {
-                                UpdatedHazardCategories.Add( ConvertHazardCategory );
+                                HazardCategories.AddValue( ConvertHazardCategory );
                             }
                         }
-
-                        // Add the original hazard categories to the new list
-                        foreach( string HazardCategory in CurrentHazardCategories )
-                        {
-                            UpdatedHazardCategories.Add( HazardCategory );
-                        }
-
-                        // Set the value of the property to the new list
-                        this.HazardCategories.Value = UpdatedHazardCategories;
 
                         #endregion
 
