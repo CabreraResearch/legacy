@@ -348,6 +348,17 @@ namespace ChemSW.Nbt.MetaData
             private set { _ObjectClassPropRow["fkvalue"] = value; }
         }
 
+        public void setNodeTypePropFK()
+        {
+            if( IsFK && false == String.IsNullOrEmpty( FKType ) && Int32.MinValue != FKValue )
+            {
+                foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in this.getNodeTypeProps() )
+                {
+                    NodeTypeProp.SetFK( FKType, FKValue, ValuePropType, ValuePropId );
+                }
+            }
+        }
+
         public Int32 ValuePropId
         {
             get { return CswConvert.ToInt32( _ObjectClassPropRow["valuepropid"] ); }
