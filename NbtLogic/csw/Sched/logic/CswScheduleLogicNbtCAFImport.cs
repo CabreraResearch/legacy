@@ -11,7 +11,15 @@ namespace ChemSW.Nbt.Sched
 {
     public class CswScheduleLogicNbtCAFImport : ICswScheduleLogic
     {
-        public const string CAFDbLink = "CAF";
+        public const string CAFDbLink = "CAFLINK";
+        public const string DefinitionName = "CAF";
+        public enum State
+        {
+            New,
+            Done,
+            Update,
+            Error
+        }
 
         public string RuleName
         {
@@ -38,7 +46,7 @@ namespace ChemSW.Nbt.Sched
 
         public Int32 getLoadCount( ICswResources CswResources )
         {
-            string Sql = "select count(*) cnt from nbtimportqueue@" + CAFDbLink + " where state = 'N'";
+            string Sql = "select count(*) cnt from nbtimportqueue@" + CAFDbLink + " where state = '" + State.New + "'";
             CswArbitrarySelect QueueCountSelect = CswResources.makeCswArbitrarySelect( "cafimport_queue_count", Sql );
             DataTable QueueCountTable = QueueCountSelect.getTable();
             _CswScheduleLogicDetail.LoadCount = CswConvert.ToInt32( QueueCountTable.Rows[0]["cnt"] );
@@ -58,7 +66,7 @@ namespace ChemSW.Nbt.Sched
                     const string QueuePkName = "nbtimportqueueid";
 
                     Int32 NumberToProcess = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumConfigurationVariableNames.NodesProcessedPerCycle ) );
-                    string Sql = "select * from " + QueueTableName + "@" + CAFDbLink + " where state = 'N'";
+                    string Sql = "select * from " + QueueTableName + "@" + CAFDbLink + " where state = '" + State.New + "'";
                     CswArbitrarySelect QueueSelect = _CswNbtResources.makeCswArbitrarySelect( "cafimport_queue_select", Sql );
                     DataTable QueueTable = QueueSelect.getTable( 0, NumberToProcess, false, true );
 
@@ -77,19 +85,19 @@ namespace ChemSW.Nbt.Sched
                         DataTable ItemTable = ItemSelect.getTable();
                         foreach( DataRow ItemRow in ItemTable.Rows )
                         {
-                            string Error = Importer.ImportRow( ItemRow, "CAF", QueueRow["tablename"].ToString(), true );
+                            string Error = Importer.ImportRow( ItemRow, DefinitionName, QueueRow["tablename"].ToString(), true );
                             if( string.IsNullOrEmpty( Error ) )
                             {
                                 // record success
                                 _CswNbtResources.execArbitraryPlatformNeutralSql( "update " + QueueTableName + "@" + CAFDbLink +
-                                                                                  "   set state = 'D' " +
+                                                                                  "   set state = '" + State.Done + "' " +
                                                                                   " where " + QueuePkName + " = " + QueueRow[QueuePkName] );
                             }
                             else
                             {
                                 // record the error on nbtimportqueue
                                 _CswNbtResources.execArbitraryPlatformNeutralSql( "update " + QueueTableName + "@" + CAFDbLink +
-                                                                                  "   set state = 'E', " +
+                                                                                  "   set state = '" + State.Error + "', " +
                                                                                   "       errorlog = '" + CswTools.SafeSqlParam( Error ) + "' " +
                                                                                   " where " + QueuePkName + " = " + QueueRow[QueuePkName] );
                             }
