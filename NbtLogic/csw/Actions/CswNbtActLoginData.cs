@@ -160,13 +160,19 @@ namespace ChemSW.Nbt.Actions
 
         private DataTable _getLoginRecords( LoginData.LoginDataRequest Request )
         {
+            Int32 RowLimit = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumNbtConfigurationVariables.treeview_resultlimit.ToString() ) );
+            RowLimit = ( RowLimit > 0 ) ? RowLimit : 250;
+
             String WhereClauseTemplate = @"where logindate >= {0} and logindate < {1} + 1";
             String WhereClause = String.Format( WhereClauseTemplate,
                 _CswNbtResources.getDbNativeDate( DateTime.Parse( Request.StartDate ) ),
                 _CswNbtResources.getDbNativeDate( DateTime.Parse( Request.EndDate ) )
             );
+            
             CswTableSelect LoginDataSelect = _CswNbtResources.makeCswTableSelect( "Login_Data Select", "login_data" );
-            DataTable TargetTable = LoginDataSelect.getTable( WhereClause );
+            DataTable TargetTable = LoginDataSelect.getTable( WhereClause: WhereClause, PageLowerBoundExclusive: 0, PageUpperBoundInclusive: RowLimit, 
+                //Yuck.
+                RequireOneRow: false, OrderByColumns: null, FilterColumn: null, FilterValue: Int32.MinValue, SelectColumns: null  );
             return TargetTable;
         }
 
