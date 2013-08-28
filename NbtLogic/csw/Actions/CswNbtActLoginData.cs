@@ -5,6 +5,7 @@ using System.Runtime.Serialization;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Security;
+using ChemSW.WebSvc;
 
 namespace ChemSW.Nbt.Actions
 {
@@ -24,6 +25,25 @@ namespace ChemSW.Nbt.Actions
         [DataContract]
         public class Login
         {
+            /// <summary>
+            /// Default ctr for WCF
+            /// </summary>
+            public Login()
+            {
+                
+            }
+
+            /// <summary>
+            /// Init Login Data with the current Authentication Request
+            /// </summary>
+            public Login( CswWebSvcSessionAuthenticateData.Authentication.Request Request )
+            {
+                AuthenticationRequest = Request;
+                Username = AuthenticationRequest.UserName;
+                IPAddress = AuthenticationRequest.IpAddress;
+                setStatus( Request.AuthenticationStatus );
+            }
+
             [DataMember]
             public String Username = String.Empty;
             [DataMember]
@@ -37,8 +57,11 @@ namespace ChemSW.Nbt.Actions
             [DataMember]
             public Int32 FailedLoginCount = 0;
 
-            public void setStatus( CswEnumAuthenticationStatus Status )
+            public CswWebSvcSessionAuthenticateData.Authentication.Request AuthenticationRequest;
+
+            private void setStatus( CswEnumAuthenticationStatus Status )
             {
+                LoginStatus = "Failed";
                 switch( Status )
                 {
                     case CswEnumAuthenticationStatus.TooManyUsers:

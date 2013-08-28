@@ -42,6 +42,7 @@ namespace NbtWebApp
         [Description( "Initiate a new session" )]
         public CswNbtWebServiceSession.CswNbtAuthReturn SessionInit( CswWebSvcSessionAuthenticateData.Authentication.Request Request )
         {
+            Request.Parameters = Request.Parameters ?? new CswWebSvcSessionAuthenticateData.Authentication.Parameters();
             Request.Parameters.IsIncludedInLoginData = false;
             Session Session = new Session();
             return Session.Init( Request );

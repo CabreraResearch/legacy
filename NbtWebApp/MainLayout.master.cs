@@ -11,6 +11,7 @@ using ChemSW.Nbt.Schema;
 using ChemSW.NbtWebControls;
 using ChemSW.Security;
 using ChemSW.Session;
+using ChemSW.WebSvc;
 using Telerik.Web.UI;
 
 namespace ChemSW.Nbt.WebPages
@@ -635,9 +636,9 @@ namespace ChemSW.Nbt.WebPages
         public void LogMessage( string Message ) { Master.LogMessage( Message ); }
         public void LogTimerResult( string Message, string TimerResult ) { Master.LogTimerResult( Message, TimerResult ); }
         public CswNbtResources CswNbtResources { get { return Master.CswNbtResources; } }
-        public CswEnumAuthenticationStatus Authenticate( string username, string password )
+        public CswEnumAuthenticationStatus Authenticate( CswWebSvcSessionAuthenticateData.Authentication.Request AuthenticationRequest )
         {
-            return ( Master.Authenticate( username, password ) );
+            return ( Master.Authenticate( AuthenticationRequest ) );
         }
         public void Logout() { Master.Logout(); }
         public void HandleAddNode( CswNbtNode Node ) { Master.HandleAddNode( Node ); }
