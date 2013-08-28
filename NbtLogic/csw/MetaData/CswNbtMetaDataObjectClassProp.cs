@@ -1,3 +1,4 @@
+using System.Linq;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
@@ -290,14 +291,20 @@ namespace ChemSW.Nbt.MetaData
                 _ObjectClassPropRow["filter"] = CswConvert.ToDbVal( FilterString );
             }
 
-            //if( changed )
-            //{
-            //    foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in this.getNodeTypeProps() )
-            //    {
-
-            //    }
-
-            //}
+            if( changed )
+            {
+                foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in this.getNodeTypeProps() )
+                {
+                    if( FilterProp != null )
+                    {
+                        CswNbtMetaDataNodeTypeProp FilterPropNodeTypeProp = FilterProp.getNodeTypeProps().FirstOrDefault();
+                        if( null != FilterPropNodeTypeProp )
+                        {
+                            NodeTypeProp.setFilter( FilterPropNodeTypeProp, FilterString );
+                        }
+                    }
+                }
+            }
         }
 
         public CswEnumNbtPropertySelectMode Multi
