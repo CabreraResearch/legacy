@@ -101,9 +101,11 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtNode CopyNode()
         {
-            CswNbtNode CopiedNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswEnumNbtMakeNodeOperation.MakeTemp );
-            CopiedNode.copyPropertyValues( Node );
-            CopiedNode.postChanges( true, true );
+            CswNbtNode CopiedNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, delegate( CswNbtNode NewNode )
+                {
+                    NewNode.copyPropertyValues( Node );
+                    //CopiedNode.postChanges( true, true );
+                } );
             return CopiedNode;
         }
 

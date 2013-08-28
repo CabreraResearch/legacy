@@ -165,7 +165,7 @@ namespace ChemSW.Nbt.Actions
                                         {
                                             AsContainer = InitialContainerNode;
                                             AsContainer.IsTemp = false;
-                                            if( false == CswTools.IsPrimaryKey(AsContainer.Location.SelectedNodeId) )
+                                            if( false == CswTools.IsPrimaryKey( AsContainer.Location.SelectedNodeId ) )
                                             {
                                                 throw new CswDniException( CswEnumErrorType.Warning, "You cannot Receive a Container without picking a Location.", "You cannot Receive a Container without picking a Location." );
                                             }
@@ -275,20 +275,27 @@ namespace ChemSW.Nbt.Actions
 
         private CswNbtNode _makeReceiptLot( CswPrimaryKey MaterialId, CswPrimaryKey RequestId, JObject ReceiptObj, DateTime ExpirationDate )
         {
+            CswNbtNodeCollection.AfterMakeNode AfterReceiptLot = delegate( CswNbtNode NewNode )
+                {
+                    CswNbtObjClassReceiptLot thisReceiptLot = NewNode;
+                    thisReceiptLot.Material.RelatedNodeId = MaterialId;
+                    thisReceiptLot.RequestItem.RelatedNodeId = RequestId;
+                    thisReceiptLot.ExpirationDate.DateTimeValue = ExpirationDate;
+                    //ReceiptLot.postChanges( false );
+                };
+
             CswNbtObjClassReceiptLot ReceiptLot = _CswNbtResources.Nodes[CswConvert.ToString( ReceiptObj["receiptLotId"] )];
             if( null != ReceiptLot )
             {
                 _CswNbtSdTabsAndProps.saveProps( ReceiptLot.NodeId, Int32.MinValue, (JObject) ReceiptObj["receiptLotProperties"], ReceiptLot.NodeTypeId, null, IsIdentityTab: false );
+                AfterReceiptLot( ReceiptLot.Node );
+                ReceiptLot.postChanges( false );
             }
             else
             {
                 CswNbtMetaDataObjectClass ReceiptLotClass = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ReceiptLotClass );
-                ReceiptLot = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( ReceiptLotClass.FirstNodeType.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode );
+                ReceiptLot = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( ReceiptLotClass.FirstNodeType.NodeTypeId, AfterReceiptLot );
             }
-            ReceiptLot.Material.RelatedNodeId = MaterialId;
-            ReceiptLot.RequestItem.RelatedNodeId = RequestId;
-            ReceiptLot.ExpirationDate.DateTimeValue = ExpirationDate;
-            ReceiptLot.postChanges( false );
             _attachCofA( ReceiptLot.NodeId, ReceiptObj );
             return ReceiptLot.Node;
         }

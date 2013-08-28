@@ -750,7 +750,7 @@ namespace ChemSW.Nbt.WebServices
                             {
                                 CswNbtObjClassDocument NewSDSDocumentNode = NewNode;
                                 NewSDSDocumentNode.Title.Text = "SDS: " + MaterialNode.TradeName.Text;
-                                NewSDSDocumentNode.FileType.Value = CswNbtObjClassDocument.FileTypes.Link;
+                                NewSDSDocumentNode.FileType.Value = CswNbtPropertySetDocument.CswEnumDocumentFileTypes.Link;
                                 NewSDSDocumentNode.Link.Href = MsdsUrl;
                                 NewSDSDocumentNode.Link.Text = MsdsUrl;
                                 NewSDSDocumentNode.Owner.RelatedNodeId = MaterialNode.NodeId;

@@ -134,7 +134,7 @@ namespace ChemSW.Nbt.Test
             return ret;
         }
 
-        internal CswNbtNode createMaterialNode( string NodeTypeName = "Chemical", string State = "Liquid", double SpecificGravity = 1.0, 
+        internal CswNbtNode createMaterialNode( string NodeTypeName = "Chemical", string State = "Liquid", double SpecificGravity = 1.0,
             string PPE = "", string Hazards = "", string SpecialFlags = "", string CASNo = "12-34-0", CswEnumTristate IsTierII = null )
         {
             IsTierII = IsTierII ?? CswEnumTristate.True;
@@ -158,7 +158,7 @@ namespace ChemSW.Nbt.Test
                         MaterialNode.postChanges( true );
                         _setMultiListValue( MaterialNode.Node, SpecialFlags, "Special Flags" );
 
-                       MaterialNode.CasNo.Text = CASNo;
+                        MaterialNode.CasNo.Text = CASNo;
                         MaterialNode.IsTierII.Checked = IsTierII;
                     }
                     //MaterialNode.postChanges( true );
@@ -172,20 +172,20 @@ namespace ChemSW.Nbt.Test
         {
             CswNbtNode ControlZoneNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( _getNodeTypeId( "Control Zone" ), delegate( CswNbtNode NewNode )
                {
-                    CswNbtMetaDataNodeTypeProp NameNTP = _CswNbtResources.MetaData.getNodeTypeProp( NewNode.NodeTypeId, "Name" );
-                    NewNode.Properties[NameNTP].AsText.Text = Name;
-                    CswNbtMetaDataObjectClass FCEASOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.FireClassExemptAmountSetClass );
-                    foreach( CswNbtObjClassFireClassExemptAmountSet DefaultFireClassSet in FCEASOC.getNodes( false, false ) )
-                    {
-                        if( DefaultFireClassSet.SetName.Text == FireClassSetName )
-                        {
-                            CswNbtMetaDataNodeTypeProp FCSNNTP = _CswNbtResources.MetaData.getNodeTypeProp( NewNode.NodeTypeId, "Fire Class Set Name" );
-                            NewNode.Properties[FCSNNTP].AsRelationship.RelatedNodeId = DefaultFireClassSet.NodeId;
-                            break;
-                        }
-                    }
-                    //ControlZoneNode.postChanges( true );
-                } );
+                   CswNbtMetaDataNodeTypeProp NameNTP = _CswNbtResources.MetaData.getNodeTypeProp( NewNode.NodeTypeId, "Name" );
+                   NewNode.Properties[NameNTP].AsText.Text = Name;
+                   CswNbtMetaDataObjectClass FCEASOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.FireClassExemptAmountSetClass );
+                   foreach( CswNbtObjClassFireClassExemptAmountSet DefaultFireClassSet in FCEASOC.getNodes( false, false ) )
+                   {
+                       if( DefaultFireClassSet.SetName.Text == FireClassSetName )
+                       {
+                           CswNbtMetaDataNodeTypeProp FCSNNTP = _CswNbtResources.MetaData.getNodeTypeProp( NewNode.NodeTypeId, "Fire Class Set Name" );
+                           NewNode.Properties[FCSNNTP].AsRelationship.RelatedNodeId = DefaultFireClassSet.NodeId;
+                           break;
+                       }
+                   }
+                   //ControlZoneNode.postChanges( true );
+               } );
             _finalize();
 
             return ControlZoneNode;
@@ -216,27 +216,31 @@ namespace ChemSW.Nbt.Test
 
         internal CswNbtNode createGeneratorNode( CswEnumRateIntervalType IntervalType, String NodeTypeName = "Equipment Schedule", int WarningDays = 0, SortedList Days = null, DateTime? StartDate = null )
         {
-            CswNbtObjClassGenerator GeneratorNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( _getNodeTypeId( NodeTypeName ), CswEnumNbtMakeNodeOperation.WriteNode );
-            CswRateInterval RateInt = new CswRateInterval( _CswNbtResources );
-            DateTime StDate = StartDate != null ? ( DateTime ) StartDate : new DateTime( 2012, 1, 15 );
-            if( IntervalType == CswEnumRateIntervalType.WeeklyByDay )
-            {
-                if( null == Days )
+            CswNbtNode ret = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( _getNodeTypeId( NodeTypeName ), delegate( CswNbtNode NewNode )
                 {
-                    Days = new SortedList { { DayOfWeek.Monday, DayOfWeek.Monday } };
-                }
-                RateInt.setWeeklyByDay( Days, StDate );
-            }
-            else if( IntervalType == CswEnumRateIntervalType.MonthlyByDate )
-            {
-                RateInt.setMonthlyByDate( 1, StDate.Day, StDate.Month, StDate.Year );
-            }
-            GeneratorNode.DueDateInterval.RateInterval = RateInt;
-            GeneratorNode.WarningDays.Value = WarningDays;
-            GeneratorNode.postChanges( ForceUpdate: false );
+                    CswNbtObjClassGenerator GeneratorNode = NewNode;
+                    CswRateInterval RateInt = new CswRateInterval( _CswNbtResources );
+                    DateTime StDate = StartDate != null ? (DateTime) StartDate : new DateTime( 2012, 1, 15 );
+                    if( IntervalType == CswEnumRateIntervalType.WeeklyByDay )
+                    {
+                        if( null == Days )
+                        {
+                            Days = new SortedList { { DayOfWeek.Monday, DayOfWeek.Monday } };
+                        }
+                        RateInt.setWeeklyByDay( Days, StDate );
+                    }
+                    else if( IntervalType == CswEnumRateIntervalType.MonthlyByDate )
+                    {
+                        RateInt.setMonthlyByDate( 1, StDate.Day, StDate.Month, StDate.Year );
+                    }
+                    GeneratorNode.DueDateInterval.RateInterval = RateInt;
+                    GeneratorNode.WarningDays.Value = WarningDays;
+                    //GeneratorNode.postChanges( ForceUpdate: false );
+                } );
+
             _finalize();
 
-            return GeneratorNode.Node;
+            return ret;
         }
 
         #endregion
@@ -261,7 +265,7 @@ namespace ChemSW.Nbt.Test
             return NodeType.NodeTypeId;
         }
 
-        private void _setMultiListValue(CswNbtNode Node, String MultiListValue, String MultiListPropName)
+        private void _setMultiListValue( CswNbtNode Node, String MultiListValue, String MultiListPropName )
         {
             CswCommaDelimitedString MultiListString = new CswCommaDelimitedString();
             MultiListString.FromString( MultiListValue );

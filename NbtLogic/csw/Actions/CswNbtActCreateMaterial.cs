@@ -489,25 +489,28 @@ namespace ChemSW.Nbt.Actions
                 CswNbtMetaDataNodeType RequestMaterialDispenseNT = RequestMaterialDispenseOC.FirstNodeType;
                 if( null != RequestMaterialDispenseNT )
                 {
-                    CswNbtObjClassRequestMaterialDispense RequestDispense = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( RequestMaterialDispenseNT.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode );
-                    RequestDispense.Request.RelatedNodeId = RequestCreate.Request.RelatedNodeId;
-                    RequestDispense.Location.SelectedNodeId = RequestCreate.Location.SelectedNodeId;
-                    RequestDispense.Location.CachedNodeName = RequestCreate.Location.CachedNodeName;
-                    RequestDispense.Location.CachedPath = RequestCreate.Location.CachedPath;
-                    RequestDispense.Quantity.Quantity = RequestCreate.Quantity.Quantity;
-                    RequestDispense.Quantity.UnitId = RequestCreate.Quantity.UnitId;
-                    RequestDispense.Material.RelatedNodeId = MaterialId;
-                    RequestDispense.InventoryGroup.RelatedNodeId = RequestCreate.InventoryGroup.RelatedNodeId;
-                    RequestDispense.ExternalOrderNumber.Text = RequestCreate.ExternalOrderNumber.Text;
-                    RequestDispense.Requestor.RelatedNodeId = RequestCreate.Requestor.RelatedNodeId;
-                    RequestDispense.RequestedFor.RelatedNodeId = RequestCreate.RequestedFor.RelatedNodeId;
-                    RequestDispense.Comments.CommentsJson = RequestCreate.Comments.CommentsJson;
-                    RequestDispense.NeededBy.DateTimeValue = RequestCreate.NeededBy.DateTimeValue;
-                    RequestDispense.Priority.Value = RequestCreate.Priority.Value;
-                    RequestDispense.Status.Value = CswNbtObjClassRequestMaterialDispense.Statuses.Submitted;
-                    RequestDispense.Type.Value = CswNbtObjClassRequestMaterialDispense.Types.Bulk;
-                    RequestDispense.setRequestDescription();
-                    RequestDispense.postChanges( false );
+                    _CswNbtResources.Nodes.makeNodeFromNodeTypeId( RequestMaterialDispenseNT.NodeTypeId, delegate( CswNbtNode NewNode )
+                        {
+                            CswNbtObjClassRequestMaterialDispense RequestDispense = NewNode;
+                            RequestDispense.Request.RelatedNodeId = RequestCreate.Request.RelatedNodeId;
+                            RequestDispense.Location.SelectedNodeId = RequestCreate.Location.SelectedNodeId;
+                            RequestDispense.Location.CachedNodeName = RequestCreate.Location.CachedNodeName;
+                            RequestDispense.Location.CachedPath = RequestCreate.Location.CachedPath;
+                            RequestDispense.Quantity.Quantity = RequestCreate.Quantity.Quantity;
+                            RequestDispense.Quantity.UnitId = RequestCreate.Quantity.UnitId;
+                            RequestDispense.Material.RelatedNodeId = MaterialId;
+                            RequestDispense.InventoryGroup.RelatedNodeId = RequestCreate.InventoryGroup.RelatedNodeId;
+                            RequestDispense.ExternalOrderNumber.Text = RequestCreate.ExternalOrderNumber.Text;
+                            RequestDispense.Requestor.RelatedNodeId = RequestCreate.Requestor.RelatedNodeId;
+                            RequestDispense.RequestedFor.RelatedNodeId = RequestCreate.RequestedFor.RelatedNodeId;
+                            RequestDispense.Comments.CommentsJson = RequestCreate.Comments.CommentsJson;
+                            RequestDispense.NeededBy.DateTimeValue = RequestCreate.NeededBy.DateTimeValue;
+                            RequestDispense.Priority.Value = RequestCreate.Priority.Value;
+                            RequestDispense.Status.Value = CswNbtObjClassRequestMaterialDispense.Statuses.Submitted;
+                            RequestDispense.Type.Value = CswNbtObjClassRequestMaterialDispense.Types.Bulk;
+                            RequestDispense.setRequestDescription();
+                            //RequestDispense.postChanges( false );
+                        } );
                 }
             }
         }

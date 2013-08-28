@@ -160,7 +160,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             return Ret;
         }
 
-        public CswNbtNode getAddNode( Int32 NodeTypeId, string RelatedNodeId, CswEnumNbtMakeNodeOperation NodeOp = null )
+        public CswNbtNode getAddNode( Int32 NodeTypeId, string RelatedNodeId )
         {
             CswNbtNode Ret = null;
             CswNbtMetaDataNodeType NodeType = null;

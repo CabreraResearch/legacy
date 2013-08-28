@@ -182,7 +182,7 @@ namespace ChemSW.Nbt.Actions
                                         onBeforeInsertNode( NewNode );
                                     }
                                     NodesCreated += 1;
-                                    NewNode.Node.PendingUpdate = true;
+                                    NewNode.PendingUpdate = true;
                                     //NewNode.postChanges( true );
                                 } );
                         }
