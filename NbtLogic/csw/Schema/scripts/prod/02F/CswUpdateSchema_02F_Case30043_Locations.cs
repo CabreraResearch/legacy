@@ -23,7 +23,7 @@ namespace ChemSW.Nbt.Schema
             // Case 30043 - CAF Migration: Sites/Locations/Work Units
 
             #region CAF binding definitions for Locations
-            CswNbtSchemaUpdateImportMgr ImportMgr_Locations = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, 3, "locations_level1", "Building" );
+            CswNbtSchemaUpdateImportMgr ImportMgr_Locations = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "locations_level1", "Building" );
 
             // Binding 
             ImportMgr_Locations.importBinding( "locationlevel1name", "Name", "", null, null, 2 );

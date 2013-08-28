@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using ChemSW.Nbt.ImportExport;
 using ChemSW.Nbt.Sched;
@@ -11,6 +12,24 @@ namespace ChemSW.Nbt.csw.Schema
         public CswNbtSchemaModTrnsctn SchemaModTrnsctn;
         public const string LegacyID = "Legacy ID";
 
+        private Dictionary<string, Int32> _Order = new Dictionary<string, int>
+            {
+                //{SourceTableName, ImportOrder}
+                {"cispro_controlzones", 1},
+                {"sites", 2},
+                {"locations", 3},
+                {"business_units", 4},
+                {"work_units", 5},
+                {"inventory_groups", 6},
+                {"units_of_measure", 7},
+                {"vendors", 8},
+                {"roles", 9},
+                {"users", 10},
+                {"regulatory_lists", 11},
+                {"regulated_casnos", 12}
+            };
+
+
         private DataTable _importOrderTable;
         private DataTable _importBindingsTable;
         private DataTable _importRelationshipsTable;
@@ -19,7 +38,8 @@ namespace ChemSW.Nbt.csw.Schema
         private string _SourceTableName;
         private Int32 _ImportOrder;
 
-        public CswNbtSchemaUpdateImportMgr( CswNbtSchemaModTrnsctn SchemaModTrnsctn, Int32 ImportOrder, string SourceTableName, string DestNodeTypeName )
+        //public CswNbtSchemaUpdateImportMgr( CswNbtSchemaModTrnsctn SchemaModTrnsctn, Int32 ImportOrder, string SourceTableName, string DestNodeTypeName )
+        public CswNbtSchemaUpdateImportMgr( CswNbtSchemaModTrnsctn SchemaModTrnsctn, string SourceTableName, string DestNodeTypeName )
         {
             this.SchemaModTrnsctn = SchemaModTrnsctn;
 
@@ -27,9 +47,11 @@ namespace ChemSW.Nbt.csw.Schema
             _importBindingsTable = CswNbtImportDefBinding.getDataTableForNewBindingEntries();
             _importRelationshipsTable = CswNbtImportDefRelationship.getDataTableForNewRelationshipEntries();
 
-            _ImportOrder = ImportOrder;
             _SourceTableName = SourceTableName;
             _DestNodeTypeName = DestNodeTypeName;
+            _ImportOrder = _Order["SourceTableName"];
+            //TODO: Provide error messsage/throw exception if the sourcetablename isn't in the dictionary
+            //"Could not find the SourceTableName " + SourceTableName + " in the _Order dictionary."
 
             _importOrder( _ImportOrder, _SourceTableName, _DestNodeTypeName );
         }//ctor

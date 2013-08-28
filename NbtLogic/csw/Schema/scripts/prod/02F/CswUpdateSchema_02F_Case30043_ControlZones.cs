@@ -23,7 +23,7 @@ namespace ChemSW.Nbt.Schema
             // Case 30043 - CAF Migration: Sites/Locations/Work Units
 
             #region CAF binding definitions for Control Zones
-            CswNbtSchemaUpdateImportMgr ImportMgr_ControlZones = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, 1, "cispro_controlzones", "Control Zone" );
+            CswNbtSchemaUpdateImportMgr ImportMgr_ControlZones = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "cispro_controlzones", "Control Zone" );
 
             // Binding
             ImportMgr_ControlZones.importBinding( "controlzoneid", "Legacy Id", "", "cispro_controlzones", "Control Zone", 1 );
