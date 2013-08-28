@@ -36,10 +36,11 @@ namespace ChemSW.Nbt.csw.Schema
 
         private string _DestNodeTypeName;
         private string _SourceTableName;
+        private string _ViewName;
         private Int32 _ImportOrder;
 
         //public CswNbtSchemaUpdateImportMgr( CswNbtSchemaModTrnsctn SchemaModTrnsctn, Int32 ImportOrder, string SourceTableName, string DestNodeTypeName )
-        public CswNbtSchemaUpdateImportMgr( CswNbtSchemaModTrnsctn SchemaModTrnsctn, string SourceTableName, string DestNodeTypeName )
+        public CswNbtSchemaUpdateImportMgr( CswNbtSchemaModTrnsctn SchemaModTrnsctn, string SourceTableName, string DestNodeTypeName, string ViewName = "" )
         {
             this.SchemaModTrnsctn = SchemaModTrnsctn;
 
@@ -49,6 +50,7 @@ namespace ChemSW.Nbt.csw.Schema
 
             _SourceTableName = SourceTableName;
             _DestNodeTypeName = DestNodeTypeName;
+            _ViewName = ViewName;
             _ImportOrder = _Order[SourceTableName];
             //TODO: Provide error messsage/throw exception if the sourcetablename isn't in the dictionary
             //"Could not find the SourceTableName " + SourceTableName + " in the _Order dictionary."
@@ -124,8 +126,8 @@ namespace ChemSW.Nbt.csw.Schema
                 }
 
                 //Populate the import queue
-                string SqlText = "insert into nbtimportqueue@" + CafDbLink + " ( nbtimportqueueid, state, itempk, tablename, priority, errorlog ) " +
-                                 @" select seq_nbtimportqueueid.nextval@" + CafDbLink + ", '" + State + "', " + SourceTablePkColumnName + ", '" + _SourceTableName + "',0, '' from " + _SourceTableName + "@" + CafDbLink + " where deleted='0' " + WhereClause;
+                string SqlText = "insert into nbtimportqueue@" + CafDbLink + " ( nbtimportqueueid, state, itempk, tablename, priority, errorlog, viewname ) " +
+                                 @" select seq_nbtimportqueueid.nextval@" + CafDbLink + ", '" + State + "', " + SourceTablePkColumnName + ", '" + _SourceTableName + "',0, '', '" + _ViewName + "' from " + _SourceTableName + "@" + CafDbLink + " where deleted='0' " + WhereClause;
                 SchemaModTrnsctn.execArbitraryPlatformNeutralSql( SqlText );
             }
             else

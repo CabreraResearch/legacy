@@ -576,6 +576,33 @@ namespace ChemSW.Nbt.ImportExport
                                 }
                             }
 
+                            //Create a view to search NBT for the node of nodetype X with legacy id X. if it matches then we use that.
+                            if( false == string.IsNullOrEmpty( ImportRow[Binding.SourceColumnName].ToString() ) )
+                            {
+                                CswNbtView View = new CswNbtView( _CswNbtResources );
+                                View.ViewName = "Relationships View";
+
+                                CswNbtMetaDataNodeType CurrentNodeType =
+                                    _CswNbtResources.MetaData.getNodeType( Binding.DestProperty.FKValue );
+                                CswNbtMetaDataNodeTypeProp LegacyIdNTP = CurrentNodeType.getNodeTypeProp( "Legacy Id" );
+
+                                CswNbtViewRelationship ParentRelationship = View.AddViewRelationship( CurrentNodeType,
+                                                                                                     false );
+                                View.AddViewPropertyAndFilter( ParentViewRelationship: ParentRelationship,
+                                                              MetaDataProp: LegacyIdNTP,
+                                                              Conjunction: CswEnumNbtFilterConjunction.And,
+                                                              SubFieldName: CswEnumNbtSubFieldName.Value,
+                                                              FilterMode: CswEnumNbtFilterMode.Equals,
+                                                              Value: ImportRow[Binding.SourceColumnName].ToString() );
+
+                                ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, false, true, true );
+                                if( Tree.getChildNodeCount() > 0 )
+                                {
+                                    Tree.goToNthChild( 0 );
+                                    Node.Properties[Binding.DestProperty].AsRelationship.RelatedNodeId = Tree.getNodeIdForCurrentPosition();
+                                }
+                            }
+
                             string sql = "select min(nodeid) nodeid from nodes where nodetypeid in (" + inClause.ToString() +
                                 ") and lower(nodename)='" + ImportRow[Binding.ImportDataColumnName].ToString().ToLower() + "'";
                             CswArbitrarySelect relNodeSel = _CswNbtResources.makeCswArbitrarySelect( "getRelatedNode", sql );
