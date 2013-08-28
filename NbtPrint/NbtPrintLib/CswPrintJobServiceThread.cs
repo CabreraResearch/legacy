@@ -58,16 +58,17 @@ namespace NbtPrintLib
         private void _Authenticate( NbtAuth auth, ServiceThreadEventArgs e, AuthSuccessHandler success )
         {
             NbtPublicClient NbtClient = _getClient( auth );
-
-            CswNbtWebServiceSessionCswNbtAuthReturn ret = NbtClient.SessionInit( new CswWebSvcSessionAuthenticateDataAuthenticationRequest()
+            
+            try
+            {
+                CswNbtWebServiceSessionCswNbtAuthReturn ret = NbtClient.SessionInit( new CswWebSvcSessionAuthenticateDataAuthenticationRequest()
                 {
                     CustomerId = auth.AccessId,
                     UserName = auth.UserId,
                     Password = auth.Password,
                     IsMobile = true
                 } );
-            try
-            {
+
                 if( ret.Authentication.AuthenticationStatus == "Authenticated" )
                 {
                     if( null != success )
