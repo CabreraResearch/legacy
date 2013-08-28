@@ -7,6 +7,7 @@ using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.WebServices;
 using ChemSW.Security;
 using ChemSW.WebSvc;
+using NbtWebApp.WebSvc.Returns;
 
 namespace NbtWebApp
 {
@@ -115,6 +116,25 @@ namespace NbtWebApp
                 );
             SvcDriver.run();
             return ( Ret );
+        }
+
+        [OperationContract]
+        [WebInvoke( Method = "POST" )]
+        [Description( "End all active sessions for the current user" )]
+        [FaultContract( typeof( FaultException ) )]
+        public CswWebSvcReturn endCurrentUserSessions()
+        {
+            CswWebSvcReturn Ret = new CswWebSvcReturn();
+
+            var SvcDriver = new CswWebSvcDriver<CswWebSvcReturn, object>(
+                CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj : Ret,
+                WebSvcMethodPtr : CswNbtWebServiceSession.endCurrentUserSessions,
+                ParamObj : null
+        );
+            SvcDriver.run();
+            return Ret;
+
         }
     }
 }

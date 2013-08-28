@@ -701,6 +701,49 @@
             return cswPublic;
         }, // ChangePasswordDialog
 
+
+        LogoutExistingSessionsDialog: function (onSuccess) {
+            'use strict';
+
+            var logoutOnClose = true;
+
+            var onClose = function() {
+                if (logoutOnClose) {
+                    Csw.clientSession.logout();
+                }
+            };
+
+            var div = Csw.literals.div().css({});
+            var resetLoginTable = div.table({width: '80%', align: 'center'});
+            resetLoginTable.cell(1, 1).propDom('colspan', 2).br({ number: 4 });
+            resetLoginTable.cell(1, 1).append('You are already logged in at another location. Would you like to end your previous session and log in from this computer?');
+            resetLoginTable.cell(1, 1).br({ number: 4 });
+
+            resetLoginTable.cell(2, 1).css('text-align', 'center').button({
+                enabledText: 'Yes, Logout Other Sessions',
+                onClick: function () {
+                    Csw.ajaxWcf.post({
+                        urlMethod: 'Session/endCurrentUserSessions',
+                        success: function (data) {
+                            Csw.tryExec(onSuccess);
+                            logoutOnClose = false;
+                            div.$.dialog('close');
+                        }//success
+                    });//Csw.ajaxWcf.post
+                }//onClick
+            });//resetLoginTable.cell(2, 2).button
+            
+            resetLoginTable.cell(2, 2).css('text-align', 'center').button({
+                enabledText: 'No, Log Me Out',
+                onClick: function() {
+                    div.$.dialog('close');
+                }
+            });
+            
+            
+            openDialog(div, 600, 400, onClose, 'Logout Existing Sessions');
+        }, //LogoutExistingSessionsDialog
+
         AboutDialog: function () {
             'use strict';
             var div = Csw.literals.div();
