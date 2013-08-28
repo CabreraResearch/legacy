@@ -30,7 +30,7 @@ namespace NbtWebApp
          */
 
         private HttpContext _Context = HttpContext.Current;
-        
+
         #region Session
 
         /// <summary>
@@ -42,18 +42,9 @@ namespace NbtWebApp
         [Description( "Initiate a new session" )]
         public CswNbtWebServiceSession.CswNbtAuthReturn SessionInit( CswWebSvcSessionAuthenticateData.Authentication.Request Request )
         {
-            //delegate has to be static because you can't create an instance yet: you don't have resources until the delegate is actually called
-            CswNbtWebServiceSession.CswNbtAuthReturn Ret = new CswNbtWebServiceSession.CswNbtAuthReturn();
-            var InitDriverType = new CswWebSvcDriver<CswNbtWebServiceSession.CswNbtAuthReturn, CswWebSvcSessionAuthenticateData.Authentication.Request>(
-                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, Request ),
-                ReturnObj: Ret,
-                WebSvcMethodPtr: CswNbtWebServiceSession.getDefaults,
-                ParamObj: Request
-                );
-
-            InitDriverType.run();
-            return ( Ret );
-
+            Request.Parameters.IsIncludedInLoginData = false;
+            Session Session = new Session();
+            return Session.Init( Request );
         }
 
         /// <summary>
@@ -64,12 +55,14 @@ namespace NbtWebApp
         [Description( "Terminate the current session" )]
         public void SessionEnd()
         {
-            CswWebSvcResourceInitializerNbt Resource = new CswWebSvcResourceInitializerNbt( _Context, null );
-            Resource.initResources();
-            Resource.deauthenticate();
-            Resource.deInitResources();
+            Session Session = new Session();
+            Session.End();
+            //CswWebSvcResourceInitializerNbt Resource = new CswWebSvcResourceInitializerNbt( _Context, null );
+            //Resource.initResources();
+            //Resource.deauthenticate();
+            //Resource.deInitResources();
         }
-        
+
         #endregion Session
 
         #region Print Labels
@@ -95,7 +88,7 @@ namespace NbtWebApp
             SvcDriver.run();
             return ( Ret );
         }
-        
+
         /// <summary>
         /// Retrieve the next job for a label printer
         /// </summary>
@@ -180,10 +173,10 @@ namespace NbtWebApp
             CswNbtBalanceReturn Ret = new CswNbtBalanceReturn();
 
             var SvcDriver = new CswWebSvcDriver<CswNbtBalanceReturn, SerialBalance>(
-                CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
-                ReturnObj : Ret,
-                WebSvcMethodPtr : CswNbtWebServiceSerialBalance.UpdateBalanceData,
-                ParamObj : Request
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj: Ret,
+                WebSvcMethodPtr: CswNbtWebServiceSerialBalance.UpdateBalanceData,
+                ParamObj: Request
                 );
 
             SvcDriver.run();
@@ -203,10 +196,10 @@ namespace NbtWebApp
             CswNbtBalanceReturn Ret = new CswNbtBalanceReturn();
             object Request = null;
             var SvcDriver = new CswWebSvcDriver<CswNbtBalanceReturn, object>(
-                CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
-                ReturnObj : Ret,
-                WebSvcMethodPtr : CswNbtWebServiceSerialBalance.listBalanceConfigurations,
-                ParamObj : Request
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj: Ret,
+                WebSvcMethodPtr: CswNbtWebServiceSerialBalance.listBalanceConfigurations,
+                ParamObj: Request
                 );
 
             SvcDriver.run();
@@ -223,16 +216,16 @@ namespace NbtWebApp
         [WebInvoke( Method = "POST", ResponseFormat = WebMessageFormat.Json )]
         [Description( "update or create a new balance configuration on the server" )]
         [FaultContract( typeof( FaultException ) )]
-        public CswNbtBalanceReturn registerBalanceConfiguration(BalanceConfiguration Request)
+        public CswNbtBalanceReturn registerBalanceConfiguration( BalanceConfiguration Request )
         {
             //delegate has to be static because you can't create an instance yet: you don't have resources until the delegate is actually called
             CswNbtBalanceReturn Ret = new CswNbtBalanceReturn();
 
             var SvcDriver = new CswWebSvcDriver<CswNbtBalanceReturn, BalanceConfiguration>(
-                CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
-                ReturnObj : Ret,
-                WebSvcMethodPtr : CswNbtWebServiceSerialBalance.registerBalanceConfiguration,
-                ParamObj : Request
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj: Ret,
+                WebSvcMethodPtr: CswNbtWebServiceSerialBalance.registerBalanceConfiguration,
+                ParamObj: Request
                 );
 
             SvcDriver.run();
