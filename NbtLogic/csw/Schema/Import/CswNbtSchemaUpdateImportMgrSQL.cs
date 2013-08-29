@@ -54,16 +54,16 @@ namespace ChemSW.Nbt.csw.Schema
                                 BEGIN
   
                                 IF INSERTING THEN
-                                    INSERT INTO nbtimportqueue VALUES (seq_nbtimportqueueid.NEXTVAL, 'I', :new." + SourceTablePkColumnName + ", '" + SourceTable + "', '', '');" + " " +
+                                    INSERT INTO nbtimportqueue VALUES (seq_nbtimportqueueid.NEXTVAL, 'I', :new." + SourceTablePkColumnName + ", '" + _SourceTableName + "', '', '');" + " " +
     
                              @" ELSIF DELETING THEN
-                                    INSERT INTO nbtimportqueue VALUES (seq_nbtimportqueueid.NEXTVAL, 'D', :old." + SourceTablePkColumnName + ", '" + SourceTable + "', '', '');" + " " +
+                                    INSERT INTO nbtimportqueue VALUES (seq_nbtimportqueueid.NEXTVAL, 'D', :old." + SourceTablePkColumnName + ", '" + _SourceTableName + "', '', '');" + " " +
   
                              @" ELSE
                                     IF :old.deleted = '0' THEN
-                                        INSERT INTO nbtimportqueue VALUES (seq_nbtimportqueueid.NEXTVAL, 'D', :old." + SourceTablePkColumnName + ", '" + SourceTable + "', '', '');" + " " +
+                                        INSERT INTO nbtimportqueue VALUES (seq_nbtimportqueueid.NEXTVAL, 'D', :old." + SourceTablePkColumnName + ", '" + _SourceTableName + "', '', '');" + " " +
                              @"     ELSE
-                                        INSERT INTO nbtimportqueue VALUES (seq_nbtimportqueueid.NEXTVAL, 'U', :old." + SourceTablePkColumnName + ", '" + SourceTable + "', '', '');" + " " +
+                                        INSERT INTO nbtimportqueue VALUES (seq_nbtimportqueueid.NEXTVAL, 'U', :old." + SourceTablePkColumnName + ", '" + _SourceTableName + "', '', '');" + " " +
                              @"     END IF
     
                                 END IF;
