@@ -194,7 +194,7 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.afterCreateNode();
         }//afterCreateNode()
 
-        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
+        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation, bool Creating )
         {
             if( _unableToWriteNodeInvalidUserName() )
             {
@@ -202,7 +202,7 @@ namespace ChemSW.Nbt.ObjClasses
                                           "Username contains invalid characters: " + this.Username );
             }
 
-            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
+            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation, Creating );
 
             if( UsernameProperty.Text != string.Empty ) // case 25616
             {
@@ -243,7 +243,7 @@ namespace ChemSW.Nbt.ObjClasses
                  ( this.AccountLocked.WasModified && this.AccountLocked.Checked == CswEnumTristate.False ) );
         }
 
-        public override void afterWriteNode()
+        public override void afterWriteNode( bool Creating )
         {
             //bz # 6555
             if( AccountLocked.Checked != CswEnumTristate.True && AccountLocked.WasModified )
@@ -254,7 +254,7 @@ namespace ChemSW.Nbt.ObjClasses
             // BZ 9170
             _CswNbtResources.ConfigVbls.setConfigVariableValue( "cache_lastupdated", DateTime.Now.ToString() );
 
-            _CswNbtObjClassDefault.afterWriteNode();
+            _CswNbtObjClassDefault.afterWriteNode( Creating );
         }
 
         //afterWriteNode()

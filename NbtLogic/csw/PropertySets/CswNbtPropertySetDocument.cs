@@ -173,7 +173,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
+        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation, bool Creating )
         {
             beforePropertySetWriteNode( IsCopy, OverrideUniqueValidation );
 
@@ -184,13 +184,13 @@ namespace ChemSW.Nbt.ObjClasses
                 LastModifiedOn.DateTimeValue = DateTime.Now;
             }
 
-            CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
+            CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation, Creating );
         }
 
-        public override void afterWriteNode()
+        public override void afterWriteNode( bool Creating )
         {
             afterPropertySetWriteNode();
-            CswNbtObjClassDefault.afterWriteNode();
+            CswNbtObjClassDefault.afterWriteNode( Creating );
         }
 
         public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )

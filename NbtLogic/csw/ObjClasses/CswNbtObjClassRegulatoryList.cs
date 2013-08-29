@@ -80,7 +80,7 @@ namespace ChemSW.Nbt.ObjClasses
         }//afterCreateNode()
 
 
-        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
+        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation, bool Creating )
         {
             // Set which node grid is displayed
             switch( ListMode.Value )
@@ -98,14 +98,14 @@ namespace ChemSW.Nbt.ObjClasses
             // We don't want users to be able to edit this property after the node is created
             ListMode.setReadOnly( true, true );
 
-            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
+            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation, Creating );
         }
 
         //beforeWriteNode()
 
-        public override void afterWriteNode()
+        public override void afterWriteNode( bool Creating )
         {
-            _CswNbtObjClassDefault.afterWriteNode();
+            _CswNbtObjClassDefault.afterWriteNode( Creating );
         }//afterWriteNode()
 
         public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )

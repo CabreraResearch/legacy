@@ -46,7 +46,7 @@ namespace ChemSW.Nbt.ObjClasses
                         }
                         else
                         {
-                            Ret = _CswNbtResources.Permit.canAnyTab( CswEnumNbtNodeTypePermission.Edit, this.NodeType, NodeId : NodeId );
+                            Ret = _CswNbtResources.Permit.canAnyTab( CswEnumNbtNodeTypePermission.Edit, this.NodeType, NodeId: NodeId );
                         }
                         break;
                 }
@@ -75,8 +75,8 @@ namespace ChemSW.Nbt.ObjClasses
         public abstract CswNbtMetaDataObjectClass ObjectClass { get; }
         public abstract void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation );
         public abstract void afterCreateNode();
-        public abstract void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation );
-        public abstract void afterWriteNode();
+        public abstract void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation, bool Creating );
+        public abstract void afterWriteNode( bool Creating );
         public abstract void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false );
         public abstract void afterDeleteNode();
 
@@ -165,7 +165,7 @@ namespace ChemSW.Nbt.ObjClasses
                 {
                     ButtonData.Action = CswEnumNbtButtonAction.refreshonadd;
                 }
-                
+
                 //4: If this is the Save property, we're done; else execute the click event
                 if( null != ButtonData.NodeTypeProp && ButtonData.NodeTypeProp.IsSaveProp )
                 {

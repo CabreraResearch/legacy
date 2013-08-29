@@ -56,7 +56,7 @@ namespace ChemSW.Nbt.ObjClasses
         }//afterCreateNode()
 
 
-        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
+        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation, bool Creating )
         {
             if( null != Mixture.RelatedNodeId )
             {
@@ -71,16 +71,16 @@ namespace ChemSW.Nbt.ObjClasses
                     "Material Components must be added from a Chemical.",
                     "Mixture is a server managed property and in this context no material can be discerned to set as the Mixture." );
             }
-            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
+            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation, Creating );
         }//beforeWriteNode()
 
-        public override void afterWriteNode()
+        public override void afterWriteNode( bool Creating )
         {
             if( Mixture.WasModified || Constituent.WasModified )
             {
                 _recalculateRegListMembership();
             }
-            _CswNbtObjClassDefault.afterWriteNode();
+            _CswNbtObjClassDefault.afterWriteNode( Creating );
         }//afterWriteNode()
 
         public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )

@@ -307,19 +307,19 @@ namespace ChemSW.Nbt.ObjClasses
         {
         }
 
-        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
+        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation, bool Creating )
         {
             beforePropertySetWriteNode( IsCopy, OverrideUniqueValidation );
             _setDefaultValues();
 
             Description.StaticText = setRequestDescription();
-            CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
+            CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation, Creating );
         }//beforeWriteNode()
 
-        public override void afterWriteNode()
+        public override void afterWriteNode( bool Creating )
         {
             afterPropertySetWriteNode();
-            CswNbtObjClassDefault.afterWriteNode();
+            CswNbtObjClassDefault.afterWriteNode( Creating );
         }//afterWriteNode()
 
 

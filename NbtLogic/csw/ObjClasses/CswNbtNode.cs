@@ -417,7 +417,7 @@ namespace ChemSW.Nbt.ObjClasses
 
                 if( null != _CswNbtObjClass )
                 {
-                    _CswNbtObjClass.beforeWriteNode( IsCopy, OverrideUniqueValidation );
+                    _CswNbtObjClass.beforeWriteNode( IsCopy, OverrideUniqueValidation, Creating );
                 }
 
                 OnRequestWriteNode( this, ForceUpdate, IsCopy, OverrideUniqueValidation );
@@ -428,7 +428,7 @@ namespace ChemSW.Nbt.ObjClasses
                 }
                 if( null != _CswNbtObjClass )
                 {
-                    _CswNbtObjClass.afterWriteNode();
+                    _CswNbtObjClass.afterWriteNode(Creating);
                 }
 
                 _NodeModificationState = CswEnumNbtNodeModificationState.Posted;

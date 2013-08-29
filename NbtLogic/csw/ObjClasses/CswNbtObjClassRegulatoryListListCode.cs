@@ -57,7 +57,7 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.afterCreateNode();
         }//afterCreateNode()
 
-        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
+        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation, bool Creating )
         {
             // Set the value of the LOLIListCode property
             if( LOLIListCode.Empty && false == string.IsNullOrEmpty( LOLIListName.Value ) )
@@ -66,13 +66,13 @@ namespace ChemSW.Nbt.ObjClasses
                 LOLIListCode.SyncGestalt();
             }
 
-            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
+            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation, Creating );
         }//beforeWriteNode()
 
-        public override void afterWriteNode()
+        public override void afterWriteNode( bool Creating )
         {
             _setChemicalsPendingUpdate(); // TODO: Move to afterCreateNode() when Design Mode is done
-            _CswNbtObjClassDefault.afterWriteNode();
+            _CswNbtObjClassDefault.afterWriteNode( Creating );
         }//afterWriteNode()
 
         public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
