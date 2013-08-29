@@ -1025,6 +1025,7 @@
     <Content Include="vendor\jsTree.v.1.0rc2\_lib\jquery.hotkeys.js" />
     <Content Include="vendor\jsTree.v.1.0rc2\_lib\jquery.js" />
     <Content Include="vendor\loggly-0.1.0.js" />
+    <Content Include="vendor\moment.min.js" />
     <Content Include="vendor\shBrushSql.js" />
     <Content Include="vendor\shCore.js" />
     <Content Include="vendor\xstats\.gitattributes" />

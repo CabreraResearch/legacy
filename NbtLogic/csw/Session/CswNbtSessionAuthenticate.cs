@@ -95,7 +95,7 @@ namespace ChemSW.Nbt
 
             if( AuthenticationStatus == CswEnumAuthenticationStatus.Unknown )
             {
-                AuthenticationStatus = _CswSessionManager.beginSession( _AuthenticationRequest.UserName, _AuthenticationRequest.Password, _AuthenticationRequest.IpAddress, _AuthenticationRequest.IsMobile );
+                AuthenticationStatus = _CswSessionManager.beginSession( _AuthenticationRequest );
             }
 
             // case 21211
