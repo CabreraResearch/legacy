@@ -2,11 +2,11 @@ CREATE OR REPLACE TRIGGER TRG_IMPRT_sites AFTER INSERT OR DELETE OR UPDATE OF si
                                 BEGIN
   
                                 IF INSERTING THEN
-                                    INSERT INTO nbtimportqueue VALUES (seq_nbtimportqueueid.NEXTVAL, 'I', :new.siteid, 'sites@CAFLINK', '', '');  ELSIF DELETING THEN
-                                    INSERT INTO nbtimportqueue VALUES (seq_nbtimportqueueid.NEXTVAL, 'D', :old.siteid, 'sites@CAFLINK', '', '');  ELSE
+                                    INSERT INTO nbtimportqueue VALUES (seq_nbtimportqueueid.NEXTVAL, 'I', :new.siteid, 'sites', '', '');  ELSIF DELETING THEN
+                                    INSERT INTO nbtimportqueue VALUES (seq_nbtimportqueueid.NEXTVAL, 'D', :old.siteid, 'sites', '', '');  ELSE
                                     IF :old.deleted = '0' THEN
-                                        INSERT INTO nbtimportqueue VALUES (seq_nbtimportqueueid.NEXTVAL, 'D', :old.siteid, 'sites@CAFLINK', '', '');      ELSE
-                                        INSERT INTO nbtimportqueue VALUES (seq_nbtimportqueueid.NEXTVAL, 'U', :old.siteid, 'sites@CAFLINK', '', '');      END IF
+                                        INSERT INTO nbtimportqueue VALUES (seq_nbtimportqueueid.NEXTVAL, 'D', :old.siteid, 'sites', '', '');      ELSE
+                                        INSERT INTO nbtimportqueue VALUES (seq_nbtimportqueueid.NEXTVAL, 'U', :old.siteid, 'sites', '', '');      END IF
     
                                 END IF;
   

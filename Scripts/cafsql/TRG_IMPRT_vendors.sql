@@ -2,11 +2,11 @@ CREATE OR REPLACE TRIGGER TRG_IMPRT_vendors AFTER INSERT OR DELETE OR UPDATE OF 
                                 BEGIN
   
                                 IF INSERTING THEN
-                                    INSERT INTO nbtimportqueue VALUES (seq_nbtimportqueueid.NEXTVAL, 'I', :new.vendorid, 'vendors@CAFLINK', '', '');  ELSIF DELETING THEN
-                                    INSERT INTO nbtimportqueue VALUES (seq_nbtimportqueueid.NEXTVAL, 'D', :old.vendorid, 'vendors@CAFLINK', '', '');  ELSE
+                                    INSERT INTO nbtimportqueue VALUES (seq_nbtimportqueueid.NEXTVAL, 'I', :new.vendorid, 'vendors', '', '');  ELSIF DELETING THEN
+                                    INSERT INTO nbtimportqueue VALUES (seq_nbtimportqueueid.NEXTVAL, 'D', :old.vendorid, 'vendors', '', '');  ELSE
                                     IF :old.deleted = '0' THEN
-                                        INSERT INTO nbtimportqueue VALUES (seq_nbtimportqueueid.NEXTVAL, 'D', :old.vendorid, 'vendors@CAFLINK', '', '');      ELSE
-                                        INSERT INTO nbtimportqueue VALUES (seq_nbtimportqueueid.NEXTVAL, 'U', :old.vendorid, 'vendors@CAFLINK', '', '');      END IF
+                                        INSERT INTO nbtimportqueue VALUES (seq_nbtimportqueueid.NEXTVAL, 'D', :old.vendorid, 'vendors', '', '');      ELSE
+                                        INSERT INTO nbtimportqueue VALUES (seq_nbtimportqueueid.NEXTVAL, 'U', :old.vendorid, 'vendors', '', '');      END IF
     
                                 END IF;
   

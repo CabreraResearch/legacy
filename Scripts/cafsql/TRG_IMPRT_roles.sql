@@ -2,11 +2,11 @@ CREATE OR REPLACE TRIGGER TRG_IMPRT_roles AFTER INSERT OR DELETE OR UPDATE OF ro
                                 BEGIN
   
                                 IF INSERTING THEN
-                                    INSERT INTO nbtimportqueue VALUES (seq_nbtimportqueueid.NEXTVAL, 'I', :new.roleid, 'roles@CAFLINK', '', '');  ELSIF DELETING THEN
-                                    INSERT INTO nbtimportqueue VALUES (seq_nbtimportqueueid.NEXTVAL, 'D', :old.roleid, 'roles@CAFLINK', '', '');  ELSE
+                                    INSERT INTO nbtimportqueue VALUES (seq_nbtimportqueueid.NEXTVAL, 'I', :new.roleid, 'roles', '', '');  ELSIF DELETING THEN
+                                    INSERT INTO nbtimportqueue VALUES (seq_nbtimportqueueid.NEXTVAL, 'D', :old.roleid, 'roles', '', '');  ELSE
                                     IF :old.deleted = '0' THEN
-                                        INSERT INTO nbtimportqueue VALUES (seq_nbtimportqueueid.NEXTVAL, 'D', :old.roleid, 'roles@CAFLINK', '', '');      ELSE
-                                        INSERT INTO nbtimportqueue VALUES (seq_nbtimportqueueid.NEXTVAL, 'U', :old.roleid, 'roles@CAFLINK', '', '');      END IF
+                                        INSERT INTO nbtimportqueue VALUES (seq_nbtimportqueueid.NEXTVAL, 'D', :old.roleid, 'roles', '', '');      ELSE
+                                        INSERT INTO nbtimportqueue VALUES (seq_nbtimportqueueid.NEXTVAL, 'U', :old.roleid, 'roles', '', '');      END IF
     
                                 END IF;
   
