@@ -89,6 +89,7 @@ namespace ChemSW.Nbt.Schema
 
             #region FOXGLOVE Run Before Scripts
 
+            _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02F_Case30041_NbtImportQueue() ); //Validate the Nbt Import Queue table first
             _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02F_Case30281() );
             _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02F_Case30251() );
             _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02F_Case30251B() );
