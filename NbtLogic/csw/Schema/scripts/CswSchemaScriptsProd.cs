@@ -92,6 +92,7 @@ namespace ChemSW.Nbt.Schema
             _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02F_Case27883() );
             _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02F_Case30040() );
             _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02F_Case29992() );
+            _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02F_Case30529() );
 
             #endregion FOXGLOVE Run Before Scripts
 
