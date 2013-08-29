@@ -443,7 +443,7 @@ namespace ChemSW.Nbt
                 OnAfterMakeNode( Node );
             }
 
-            Node.postChanges( true, false, OverrideUniqueValidation );
+            Node.postChanges( ForceUpdate: true, IsCopy: false, OverrideUniqueValidation: OverrideUniqueValidation, IsCreate: true );
 
             //if( Node.NodeId != Int32.MinValue )
             //{
