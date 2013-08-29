@@ -21,21 +21,16 @@ namespace ChemSW.Nbt.Schema
         public override void update()
         {
             // Case 30043 - CAF Migration: Sites/Locations/Work Units
-
-            #region CAF binding definitions for Sites
-            CswNbtSchemaUpdateImportMgr ImportMgr_Sites = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "sites", "Site" );
+            CswNbtSchemaUpdateImportMgr importMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "sites", "Site", "sites_view" );
 
             // Binding 
-            ImportMgr_Sites.importBinding( "siteid", "Legacy Id", "", "sites", "Site" );
-            ImportMgr_Sites.importBinding( "sitename", "Name", "", "sites", "Site" );
-            ImportMgr_Sites.importBinding( "sitecode", "Location Code", "", "sites", "Site" );
+            importMgr.importBinding( "sitename", "Name", "" );
+            importMgr.importBinding( "sitecode", "Location Code", "" );
+            importMgr.importBinding( "controlzoneid", "Control Zone", "" );
 
             // Relationship
-            ImportMgr_Sites.importRelationship( "sites", "Site", "Control Zone", 1 );
 
-            ImportMgr_Sites.finalize();
-
-            #endregion
+            importMgr.finalize();
 
         } // update()
 

@@ -21,21 +21,16 @@ namespace ChemSW.Nbt.Schema
         public override void update()
         {
             // Case 30043 - CAF Migration: Sites/Locations/Work Units
-
-            #region CAF binding definitions for Control Zones
             CswNbtSchemaUpdateImportMgr ImportMgr_ControlZones = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "cispro_controlzones", "Control Zone" );
 
             // Binding
-            ImportMgr_ControlZones.importBinding( "controlzoneid", "Legacy Id", "", "cispro_controlzones", "Control Zone", 1 );
-            ImportMgr_ControlZones.importBinding( "controlzonename", "Name", "", "cispro_controlzones", "Control Zone", 1 );
-            ImportMgr_ControlZones.importBinding( "exemptqtyfactor", "MAQ Offset %", "", "cispro_controlzones", "Control Zone", 1 );
+            ImportMgr_ControlZones.importBinding( "controlzonename", "Name", "" );
+            ImportMgr_ControlZones.importBinding( "exemptqtyfactor", "MAQ Offset %", "" );
 
             // Relationship
             //none
 
             ImportMgr_ControlZones.finalize();
-
-            #endregion
 
         } // update()
 
