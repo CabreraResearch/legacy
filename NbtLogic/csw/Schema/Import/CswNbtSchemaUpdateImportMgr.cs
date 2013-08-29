@@ -103,7 +103,7 @@ namespace ChemSW.Nbt.csw.Schema
         public void finalize( string CafDbLink = null, string WhereClause = null, string DefinitionName = null )
         {
             string ExceptionText = string.Empty;
-            string State = CswScheduleLogicNbtCAFImport.State.N.ToString();
+            string State = CswScheduleLogicNbtCAFImport.State.I.ToString();
             CafDbLink = CafDbLink ?? CswScheduleLogicNbtCAFImport.CAFDbLink;
             DefinitionName = DefinitionName ?? CswScheduleLogicNbtCAFImport.DefinitionName;
 
