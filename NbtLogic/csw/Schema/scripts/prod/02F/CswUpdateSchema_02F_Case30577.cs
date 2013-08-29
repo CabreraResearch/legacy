@@ -25,7 +25,7 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClass ChemicalOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass );
             CswNbtMetaDataObjectClassProp MaterialTypeOCP = ChemicalOC.getObjectClassProp( CswNbtObjClassChemical.PropertyName.MaterialType );
 
-            
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( MaterialTypeOCP, CswEnumNbtObjectClassPropAttributes.isrequired, false );
 
             foreach( CswNbtMetaDataNodeTypeProp MaterialTypeNTP in MaterialTypeOCP.getNodeTypeProps() )
             {
