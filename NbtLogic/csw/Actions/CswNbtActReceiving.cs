@@ -165,6 +165,33 @@ namespace ChemSW.Nbt.Actions
                                     {
                                         // This includes the initial Container node that was created at the start of the receive wizard.
                                         // This is done so we can create Dispense Transaction and Location records, and persist custom barcodes.
+                                        
+
+                                        CswNbtNodeCollection.AfterMakeNode After = delegate( CswNbtNode NewNode )
+                                            {
+                                                CswNbtObjClassContainer thisContainer = NewNode;
+                                                if( Barcodes.Count <= NoContainers && false == string.IsNullOrEmpty( Barcodes[C] ) )
+                                                {
+                                                    thisContainer.Barcode.setBarcodeValueOverride( Barcodes[C], false );
+                                                }
+                                                thisContainer.Size.RelatedNodeId = SizeId;
+                                                thisContainer.Material.RelatedNodeId = MaterialId;
+                                                if( AsSize.QuantityEditable.Checked != CswEnumTristate.True )
+                                                {
+                                                    QuantityValue = AsSize.InitialQuantity.Quantity;
+                                                    UnitId = AsSize.InitialQuantity.UnitId;
+                                                }
+                                                if( null == thisContainer.Quantity.UnitId || Int32.MinValue == thisContainer.Quantity.UnitId.PrimaryKey )
+                                                {
+                                                    thisContainer.Quantity.UnitId = UnitId;
+                                                }
+                                                thisContainer.DispenseIn( CswEnumNbtContainerDispenseType.Receive, QuantityValue, UnitId, RequestId );
+                                                thisContainer.Disposed.Checked = CswEnumTristate.False;
+                                                thisContainer.Undispose.setHidden( value: true, SaveToDb: true );
+                                                thisContainer.ReceiptLot.RelatedNodeId = ReceiptLot.NodeId;
+                                                //thisContainer.postChanges( true );
+                                            };
+
                                         CswNbtObjClassContainer AsContainer;
                                         if( C == 0 && index == 0 )
                                         {
@@ -178,35 +205,17 @@ namespace ChemSW.Nbt.Actions
                                             {
                                                 throw new CswDniException( CswEnumErrorType.Warning, "You do not have Inventory Group permission to receive Containers into this Location: " + AsContainer.Location.CachedPath, "You do not have Inventory Group permission to receive Containers into this Location: " + AsContainer.Location.CachedPath );
                                             }
+                                            After( AsContainer.Node );
+                                            AsContainer.postChanges( false );
                                         }
                                         else
                                         {
                                             CswNbtNodeKey ContainerNodeKey;
-                                            AsContainer = _CswNbtSdTabsAndProps.addNode( ContainerNt, null, ContainerAddProps, out ContainerNodeKey );
+                                            AsContainer = _CswNbtSdTabsAndProps.addNode( ContainerNt, null, ContainerAddProps, out ContainerNodeKey, After );
                                         }
 
                                         if( null != AsContainer )
                                         {
-                                            if( Barcodes.Count <= NoContainers && false == string.IsNullOrEmpty( Barcodes[C] ) )
-                                            {
-                                                AsContainer.Barcode.setBarcodeValueOverride( Barcodes[C], false );
-                                            }
-                                            AsContainer.Size.RelatedNodeId = SizeId;
-                                            AsContainer.Material.RelatedNodeId = MaterialId;
-                                            if( AsSize.QuantityEditable.Checked != CswEnumTristate.True )
-                                            {
-                                                QuantityValue = AsSize.InitialQuantity.Quantity;
-                                                UnitId = AsSize.InitialQuantity.UnitId;
-                                            }
-                                            if( null == AsContainer.Quantity.UnitId || Int32.MinValue == AsContainer.Quantity.UnitId.PrimaryKey )
-                                            {
-                                                AsContainer.Quantity.UnitId = UnitId;
-                                            }
-                                            AsContainer.DispenseIn( CswEnumNbtContainerDispenseType.Receive, QuantityValue, UnitId, RequestId );
-                                            AsContainer.Disposed.Checked = CswEnumTristate.False;
-                                            AsContainer.Undispose.setHidden( value: true, SaveToDb: true );
-                                            AsContainer.ReceiptLot.RelatedNodeId = ReceiptLot.NodeId;
-                                            AsContainer.postChanges( true );
                                             ContainerIds.Add( AsContainer.NodeId );
 
                                             JObject BarcodeNode = new JObject();
