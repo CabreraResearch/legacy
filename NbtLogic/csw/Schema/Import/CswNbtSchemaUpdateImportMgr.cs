@@ -17,16 +17,19 @@ namespace ChemSW.Nbt.csw.Schema
                 //{SourceTableName, ImportOrder}
                 {"cispro_controlzones", 1},
                 {"sites", 2},
-                {"locations", 3},
-                {"business_units", 4},
-                {"work_units", 5},
-                {"inventory_groups", 6},
-                {"units_of_measure", 7},
-                {"vendors", 8},
-                {"roles", 9},
-                {"users", 10},
-                {"regulatory_lists", 11},
-                {"regulated_casnos", 12}
+                {"work_units", 3},
+                {"inventory_groups", 4},
+                {"locations_level1", 5},
+                {"locations_level2", 6},
+                {"locations_level3", 7},
+                {"locations_level4", 8},
+                {"locations_level5", 9}
+                //{"units_of_measure", 6},
+                //{"vendors", 7},
+                //{"roles", 8},
+                //{"users", 9},
+                //{"regulatory_lists", 10},
+                //{"regulated_casnos", 11}
             };
 
 
@@ -39,7 +42,6 @@ namespace ChemSW.Nbt.csw.Schema
         private string _ViewName;
         private Int32 _ImportOrder;
 
-        //public CswNbtSchemaUpdateImportMgr( CswNbtSchemaModTrnsctn SchemaModTrnsctn, Int32 ImportOrder, string SourceTableName, string DestNodeTypeName )
         public CswNbtSchemaUpdateImportMgr( CswNbtSchemaModTrnsctn SchemaModTrnsctn, string SourceTableName, string DestNodeTypeName, string ViewName = "" )
         {
             this.SchemaModTrnsctn = SchemaModTrnsctn;
