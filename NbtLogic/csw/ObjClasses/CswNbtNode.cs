@@ -61,7 +61,7 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         public delegate void OnSetNodeIdHandler( CswNbtNode Node, CswPrimaryKey OldNodeId, CswPrimaryKey NewNodeId );
-        public delegate void OnRequestWriteNodeHandler( CswNbtNode Node, bool ForceUpdate, bool IsCopy, bool OverrideUniqueValidation );
+        public delegate void OnRequestWriteNodeHandler( CswNbtNode Node, bool ForceUpdate, bool IsCopy, bool OverrideUniqueValidation, bool Creating );
         public delegate void OnRequestDeleteNodeHandler( CswNbtNode Node );
         public delegate void OnRequestFillHandler( CswNbtNode Node, DateTime Date );
         public delegate void OnRequestFillFromNodeTypeIdHandler( CswNbtNode Node, Int32 NodeTypeId );
@@ -420,7 +420,7 @@ namespace ChemSW.Nbt.ObjClasses
                     _CswNbtObjClass.beforeWriteNode( IsCopy, OverrideUniqueValidation, Creating );
                 }
 
-                OnRequestWriteNode( this, ForceUpdate, IsCopy, OverrideUniqueValidation );
+                OnRequestWriteNode( this, ForceUpdate, IsCopy, OverrideUniqueValidation, Creating );
 
                 if( Creating )
                 {

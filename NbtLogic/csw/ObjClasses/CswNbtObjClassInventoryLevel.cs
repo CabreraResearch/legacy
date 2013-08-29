@@ -144,7 +144,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public CswNbtNodePropList Type { get { return _CswNbtNode.Properties[PropertyName.Type]; } }
         public CswNbtNodePropQuantity Level { get { return _CswNbtNode.Properties[PropertyName.Level]; } }
-        private void OnLevelPropChange( CswNbtNodeProp Prop )
+        private void OnLevelPropChange( CswNbtNodeProp Prop, bool Creating )
         {
             if( Level.UnitId != CurrentQuantity.UnitId )
             {
@@ -154,7 +154,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
         public CswNbtNodePropRelationship Material { get { return _CswNbtNode.Properties[PropertyName.Material]; } }
-        private void OnMaterialPropChange( CswNbtNodeProp Prop )
+        private void OnMaterialPropChange( CswNbtNodeProp Prop, bool Creating )
         {
             if( CswTools.IsPrimaryKey( Material.RelatedNodeId ) )
             {
@@ -169,7 +169,7 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         public CswNbtNodePropLocation Location { get { return _CswNbtNode.Properties[PropertyName.Location]; } }
-        private void OnLocationPropChange( CswNbtNodeProp Prop )
+        private void OnLocationPropChange( CswNbtNodeProp Prop, bool Creating )
         {
             CurrentQuantity.Quantity = _LevelMgr.getCurrentInventoryLevel( this );
         }
@@ -178,7 +178,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropUserSelect Subscribe { get { return _CswNbtNode.Properties[PropertyName.Subscribe]; } }
         public CswNbtNodePropList Status { get { return _CswNbtNode.Properties[PropertyName.Status]; } }
         public CswNbtNodePropQuantity CurrentQuantity { get { return _CswNbtNode.Properties[PropertyName.CurrentQuantity]; } }
-        private void OnCurrrentQuantityPropChange( CswNbtNodeProp Prop )
+        private void OnCurrrentQuantityPropChange( CswNbtNodeProp Prop, bool Creating )
         {
             if( _LevelMgr.isLevelPastThreshhold( this ) )
             {

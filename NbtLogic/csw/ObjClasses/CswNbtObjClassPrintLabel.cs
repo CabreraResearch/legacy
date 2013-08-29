@@ -135,7 +135,7 @@ namespace ChemSW.Nbt.ObjClasses
                     SelectedNodeTypeIds.Contains( NodeType.getNodeTypeLatestVersion().NodeTypeId ) );
             }
         }
-        private void OnNodeTypesPropChange( CswNbtNodeProp NodeProp )
+        private void OnNodeTypesPropChange( CswNbtNodeProp NodeProp, bool Creating )
         {
             updateLabels( _CswNbtResources );
         }

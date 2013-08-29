@@ -984,7 +984,7 @@ namespace ChemSW.Nbt.ObjClasses
         #region Object class specific properties
 
         public CswNbtNodePropList PhysicalState { get { return _CswNbtNode.Properties[PropertyName.PhysicalState]; } }
-        private void _onPhysicalStatePropChange( CswNbtNodeProp prop )
+        private void _onPhysicalStatePropChange( CswNbtNodeProp prop, bool Creating )
         {
             if( false == String.IsNullOrEmpty( PhysicalState.Value ) )
             {
@@ -1001,7 +1001,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropQuantity ExpirationInterval { get { return ( _CswNbtNode.Properties[PropertyName.ExpirationInterval] ); } }
         public CswNbtNodePropCASNo CasNo { get { return ( _CswNbtNode.Properties[PropertyName.CasNo] ); } }
 
-        private void _onCasNoPropChange( CswNbtNodeProp Prop )
+        private void _onCasNoPropChange( CswNbtNodeProp Prop, bool Creating )
         {
             if( CasNo.GetOriginalPropRowValue() != CasNo.Text )
             {

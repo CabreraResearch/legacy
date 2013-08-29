@@ -105,7 +105,7 @@ namespace ChemSW.Nbt.ObjClasses
         
         public CswNbtNodePropCASNo CASNo { get { return _CswNbtNode.Properties[PropertyName.CASNo]; } }
 
-        public void _CasNo_OnChange( CswNbtNodeProp Prop )
+        public void _CasNo_OnChange( CswNbtNodeProp Prop, bool Creating )
         {
             string error;
             if( false == CASNo.Validate( out error ) )

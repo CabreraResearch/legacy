@@ -151,7 +151,7 @@ namespace ChemSW.Nbt.ObjClasses
         #region Object class specific properties
 
         public CswNbtNodePropMemo AddCASNumbers { get { return _CswNbtNode.Properties[PropertyName.AddCASNumbers]; } }
-        private void _AddCASNumbers_OnChange( CswNbtNodeProp Prop )
+        private void _AddCASNumbers_OnChange( CswNbtNodeProp Prop, bool Creating )
         {
             if( false == string.IsNullOrEmpty( AddCASNumbers.Text ) )
             {

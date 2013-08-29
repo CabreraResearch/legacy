@@ -80,7 +80,7 @@ namespace ChemSW.Nbt
             }
         }//makeNewNodeEntry()
 
-        public void write( CswNbtNode Node, bool ForceSave, bool IsCopy, bool OverrideUniqueValidation )
+        public void write( CswNbtNode Node, bool ForceSave, bool IsCopy, bool OverrideUniqueValidation, bool Creating )
         {
             if( CswEnumNbtNodeSpecies.Plain == Node.NodeSpecies &&
                 ( ForceSave || CswEnumNbtNodeModificationState.Modified == Node.ModificationState ) )
@@ -99,7 +99,7 @@ namespace ChemSW.Nbt
 
                 //bz # 5878
                 //Node.Properties.ManageTransaction = _ManageTransaction;
-                Node.Properties.update( Node, IsCopy, OverrideUniqueValidation );
+                Node.Properties.update( Node, IsCopy, OverrideUniqueValidation, Creating );
 
                 //set nodename with updated prop values
                 _synchNodeName( Node );

@@ -123,7 +123,7 @@ namespace ChemSW.Nbt.PropTypes
             return Succeeded;
         }
 
-        override public void onBeforeUpdateNodePropRow( CswNbtNode Node, bool IsCopy, bool OverrideUniqueValidation )
+        override public void onBeforeUpdateNodePropRow( CswNbtNode Node, bool IsCopy, bool OverrideUniqueValidation, bool Creating )
         {
             //if( _CswNbtMetaDataNodeTypeProp.FieldType.FieldType != CswEnumNbtFieldType.Barcode )
             //{
@@ -134,7 +134,7 @@ namespace ChemSW.Nbt.PropTypes
             // Automatically generate a value.  This will not overwrite existing values.
             setBarcodeValue();
 
-            base.onBeforeUpdateNodePropRow( Node, IsCopy, OverrideUniqueValidation );
+            base.onBeforeUpdateNodePropRow( Node, IsCopy, OverrideUniqueValidation, Creating );
         }//onBeforeUpdateNodePropRow()
 
         public override void Copy( CswNbtNodePropData Source )

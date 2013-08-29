@@ -142,7 +142,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get { return _CswNbtNode.Properties[PropertyName.RequestItem]; }
         }
-        private void OnRequestItemPropChange( CswNbtNodeProp Prop )
+        private void OnRequestItemPropChange( CswNbtNodeProp Prop, bool Creating )
         {
             if( null != RequestItem.RelatedNodeId &&
                 Int32.MinValue != RequestItem.RelatedNodeId.PrimaryKey )

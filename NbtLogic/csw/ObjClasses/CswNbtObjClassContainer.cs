@@ -1018,13 +1018,13 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         public CswNbtNodePropBarcode Barcode { get { return ( _CswNbtNode.Properties[PropertyName.Barcode] ); } }
-        private void OnBarcodePropChange( CswNbtNodeProp Prop )
+        private void OnBarcodePropChange( CswNbtNodeProp Prop, bool Creating )
         {
             Barcode.setReadOnly( value: false == string.IsNullOrEmpty( Barcode.Barcode ), SaveToDb: true );
         }
 
         public CswNbtNodePropLocation Location { get { return ( _CswNbtNode.Properties[PropertyName.Location] ); } }
-        private void OnLocationPropChange( CswNbtNodeProp Prop )
+        private void OnLocationPropChange( CswNbtNodeProp Prop, bool Creating )
         {
             // This method is being called multiple times so this was added
             if( CswTools.IsPrimaryKey( Location.SelectedNodeId ) && ( Location.GetOriginalPropRowValue() != Location.SelectedNodeId.ToString() ) )
@@ -1086,7 +1086,7 @@ namespace ChemSW.Nbt.ObjClasses
         }
         public CswNbtNodePropDateTime LocationVerified { get { return ( _CswNbtNode.Properties[PropertyName.LocationVerified] ); } }
         public CswNbtNodePropRelationship Material { get { return ( _CswNbtNode.Properties[PropertyName.Material] ); } }
-        private void OnMaterialPropChange( CswNbtNodeProp Prop )
+        private void OnMaterialPropChange( CswNbtNodeProp Prop, bool Creating )
         {
             //This will be affected by the brute force call to _toggleAllPropertyStates();
             if( Material.RelatedNodeId != null )
@@ -1097,7 +1097,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropList Status { get { return ( _CswNbtNode.Properties[PropertyName.Status] ); } }
         public CswNbtNodePropLogical Missing { get { return ( _CswNbtNode.Properties[PropertyName.Missing] ); } }
         public CswNbtNodePropLogical Disposed { get { return ( _CswNbtNode.Properties[PropertyName.Disposed] ); } }
-        private void OnDisposePropChange( CswNbtNodeProp Prop )
+        private void OnDisposePropChange( CswNbtNodeProp Prop, bool Creating )
         {
             //Dispose.setHidden( value : Disposed.Checked == CswEnumTristate.True, SaveToDb : true );
             _toggleAllPropertyStates();
@@ -1108,7 +1108,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
         public CswNbtNodePropRelationship SourceContainer { get { return ( _CswNbtNode.Properties[PropertyName.SourceContainer] ); } }
-        private void OnSourceContainerChange( CswNbtNodeProp Prop )
+        private void OnSourceContainerChange( CswNbtNodeProp Prop, bool Creating )
         {
             //This isn't a button and so should not be affected by the brute force call to _toggleAllPropertyStates();
             if( null != SourceContainer.RelatedNodeId && Int32.MinValue != SourceContainer.RelatedNodeId.PrimaryKey )
@@ -1121,7 +1121,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
         public CswNbtNodePropQuantity Quantity { get { return ( _CswNbtNode.Properties[PropertyName.Quantity] ); } }
-        private void OnQuantityPropChange( CswNbtNodeProp Prop )
+        private void OnQuantityPropChange( CswNbtNodeProp Prop, bool Creating )
         {
             if( false == _InventoryLevelModified )
             {
@@ -1147,7 +1147,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropDateTime ExpirationDate { get { return ( _CswNbtNode.Properties[PropertyName.ExpirationDate] ); } }
 
         public CswNbtNodePropRelationship Size { get { return ( _CswNbtNode.Properties[PropertyName.Size] ); } }
-        private void OnSizePropChange( CswNbtNodeProp Prop )
+        private void OnSizePropChange( CswNbtNodeProp Prop, bool Creating )
         {
             //This will be affected by the brute force call to _toggleAllPropertyStates();
             if( CswTools.IsPrimaryKey( Size.RelatedNodeId ) )
@@ -1162,7 +1162,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropButton Dispose { get { return ( _CswNbtNode.Properties[PropertyName.Dispose] ); } }
         public CswNbtNodePropButton Undispose { get { return ( _CswNbtNode.Properties[PropertyName.Undispose] ); } }
         public CswNbtNodePropRelationship Owner { get { return ( _CswNbtNode.Properties[PropertyName.Owner] ); } }
-        private void OnOwnerPropChange( CswNbtNodeProp Prop ) //case 28514
+        private void OnOwnerPropChange( CswNbtNodeProp Prop, bool Creating ) //case 28514
         {
             // Case 28800 - Fixes received container's location always defaulting to current user
             if( CswTools.IsPrimaryKey( Owner.RelatedNodeId ) && ( Owner.GetOriginalPropRowValue() != Owner.Gestalt ) )
@@ -1191,7 +1191,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropButton ContainerFamily { get { return ( _CswNbtNode.Properties[PropertyName.ContainerFamily] ); } }
         public CswNbtNodePropRelationship ReceiptLot { get { return ( _CswNbtNode.Properties[PropertyName.ReceiptLot] ); } }
         public CswNbtNodePropLogical LotControlled { get { return ( _CswNbtNode.Properties[PropertyName.LotControlled] ); } }
-        private void OnLotControlledPropChange( CswNbtNodeProp Prop )
+        private void OnLotControlledPropChange( CswNbtNodeProp Prop, bool Creating )
         {
             if( LotControlled.Checked == CswEnumTristate.True )
             {

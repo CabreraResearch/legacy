@@ -113,7 +113,7 @@ namespace ChemSW.Nbt.ObjClasses
 
 
         public CswNbtNodePropRelationship RegulatoryList { get { return _CswNbtNode.Properties[PropertyName.RegulatoryList]; } }
-        public void _RegulatoryList_OnChange( CswNbtNodeProp Prop )
+        public void _RegulatoryList_OnChange( CswNbtNodeProp Prop, bool Creating )
         {
             if( null != RegulatoryList.RelatedNodeId &&
                 RegulatoryList.RelatedNodeId.PrimaryKey != CswConvert.ToInt32( RegulatoryList.GetOriginalPropRowValue( CswEnumNbtSubFieldName.NodeID ) ) )

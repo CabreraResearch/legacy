@@ -323,7 +323,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         public CswNbtNodePropRelationship PermissionGroup { get { return _CswNbtNode.Properties[PropertyName.PermissionGroup]; } }
         public CswNbtNodePropRelationship WorkUnit { get { return _CswNbtNode.Properties[PropertyName.WorkUnit]; } }
-        private void OnWorkUnitPropChange( CswNbtNodeProp NodeProp )
+        private void OnWorkUnitPropChange( CswNbtNodeProp NodeProp, bool Creating )
         {
             if( null == WorkUnit.RelatedNodeId )
             {
@@ -331,7 +331,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
         public CswNbtNodePropLogical ApplyToAllWorkUnits { get { return _CswNbtNode.Properties[PropertyName.ApplyToAllWorkUnits]; } }
-        private void OnApplyToAllWorkUnitsPropChange( CswNbtNodeProp NodeProp )
+        private void OnApplyToAllWorkUnitsPropChange( CswNbtNodeProp NodeProp, bool Creating )
         {
             if( ApplyToAllWorkUnits.Checked == CswEnumTristate.True )
             {
@@ -344,7 +344,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
         public CswNbtNodePropRelationship Role { get { return _CswNbtNode.Properties[PropertyName.Role]; } }
-        private void OnRolePropChange( CswNbtNodeProp NodeProp )
+        private void OnRolePropChange( CswNbtNodeProp NodeProp, bool Creating )
         {
             if( null == Role.RelatedNodeId )
             {
@@ -352,7 +352,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
         public CswNbtNodePropLogical ApplyToAllRoles { get { return _CswNbtNode.Properties[PropertyName.ApplyToAllRoles]; } }
-        private void OnApplyToAllRolesPropChange( CswNbtNodeProp NodeProp )
+        private void OnApplyToAllRolesPropChange( CswNbtNodeProp NodeProp, bool Creating )
         {
             if( ApplyToAllRoles.Checked == CswEnumTristate.True )
             {

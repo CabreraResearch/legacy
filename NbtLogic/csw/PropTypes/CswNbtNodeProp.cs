@@ -61,7 +61,7 @@ namespace ChemSW.Nbt.PropTypes
 
         }//generic
 
-        public delegate void OnPropChangeHandler( CswNbtNodeProp Prop );
+        public delegate void OnPropChangeHandler( CswNbtNodeProp Prop, bool Creating );
         public OnPropChangeHandler OnPropChange;
 
         public void SetOnPropChange( OnPropChangeHandler ChangeHandler )
@@ -269,7 +269,7 @@ namespace ChemSW.Nbt.PropTypes
         /// </summary>
         /// <param name="IsCopy">True if the update is part of a Copy operation</param>
         /// <param name="OverrideUniqueValidation"></param>
-        virtual public void onBeforeUpdateNodePropRow( CswNbtNode Node, bool IsCopy, bool OverrideUniqueValidation )
+        virtual public void onBeforeUpdateNodePropRow( CswNbtNode Node, bool IsCopy, bool OverrideUniqueValidation, bool Creating )
         {
             if( false == Node.Properties[this.NodeTypeProp].Empty ) //case 26546 - we allow unique properties to be empty
             {
@@ -334,7 +334,7 @@ namespace ChemSW.Nbt.PropTypes
                 // We fire this here so that it only fires once per row, not once per subfield.  See case 27241.
                 if( null != OnPropChange )
                 {
-                    OnPropChange( this );
+                    OnPropChange( this, Creating );
                 }
             }
 

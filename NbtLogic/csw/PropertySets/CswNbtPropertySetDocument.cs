@@ -235,12 +235,12 @@ namespace ChemSW.Nbt.ObjClasses
 
         public CswNbtNodePropText Title { get { return _CswNbtNode.Properties[PropertyName.Title]; } }
         public CswNbtNodePropDateTime AcquiredDate { get { return _CswNbtNode.Properties[PropertyName.AcquiredDate]; } }
-        private void OnAcquiredDatePropChange( CswNbtNodeProp NodeProp )
+        private void OnAcquiredDatePropChange( CswNbtNodeProp NodeProp, bool Creating )
         {
             ArchiveDate.setHidden( value : true, SaveToDb : true );
         }
         public CswNbtNodePropBlob File { get { return _CswNbtNode.Properties[PropertyName.File]; } }
-        private void OnFilePropChange( CswNbtNodeProp NodeProp )
+        private void OnFilePropChange( CswNbtNodeProp NodeProp, bool Creating )
         {
             if( AcquiredDate.DateTimeValue == DateTime.MinValue &&
                 false == string.IsNullOrEmpty( File.FileName ) )
@@ -249,7 +249,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
         public CswNbtNodePropLink Link { get { return _CswNbtNode.Properties[PropertyName.Link]; } }
-        private void OnLinkPropChange( CswNbtNodeProp NodeProp )
+        private void OnLinkPropChange( CswNbtNodeProp NodeProp, bool Creating )
         {
             if( AcquiredDate.DateTimeValue == DateTime.MinValue &&
                 false == string.IsNullOrEmpty( Link.Href ) )
@@ -258,7 +258,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
         public CswNbtNodePropList FileType { get { return _CswNbtNode.Properties[PropertyName.FileType]; } }
-        private void OnFileTypePropChange( CswNbtNodeProp NodeProp )
+        private void OnFileTypePropChange( CswNbtNodeProp NodeProp, bool Creating )
         {
             //case 28755 - clear the File/Link prop, depending on what the FileType was changed to
             CswNbtNodePropWrapper wrapper;
@@ -274,7 +274,7 @@ namespace ChemSW.Nbt.ObjClasses
             wrapper.ClearValue();
         }
         public CswNbtNodePropRelationship Owner { get { return _CswNbtNode.Properties[PropertyName.Owner]; } }
-        private void OnOwnerPropChange( CswNbtNodeProp NodeProp )
+        private void OnOwnerPropChange( CswNbtNodeProp NodeProp, bool Creating )
         {
             if( CswTools.IsPrimaryKey( Owner.RelatedNodeId ) )
             {
@@ -282,7 +282,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
         public CswNbtNodePropLogical Archived { get { return _CswNbtNode.Properties[PropertyName.Archived]; } }
-        private void OnArchivedPropChange( CswNbtNodeProp NodeProp )
+        private void OnArchivedPropChange( CswNbtNodeProp NodeProp, bool Creating )
         {
             ArchiveDate.setHidden( value : Archived.Checked != CswEnumTristate.True, SaveToDb : true );
             string ArchivedTitleSuffix = " (Archived)";

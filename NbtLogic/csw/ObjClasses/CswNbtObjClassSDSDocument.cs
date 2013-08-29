@@ -308,12 +308,12 @@ namespace ChemSW.Nbt.ObjClasses
         #region Object class specific properties
 
         public CswNbtNodePropList Language { get { return _CswNbtNode.Properties[PropertyName.Language]; } }
-        private void OnLanguagePropChange( CswNbtNodeProp NodeProp )
+        private void OnLanguagePropChange( CswNbtNodeProp NodeProp, bool Creating )
         {
             archiveMatchingDocs();
         }
         public CswNbtNodePropList Format { get { return _CswNbtNode.Properties[PropertyName.Format]; } }
-        private void OnFormatPropChange( CswNbtNodeProp NodeProp )
+        private void OnFormatPropChange( CswNbtNodeProp NodeProp, bool Creating )
         {
             archiveMatchingDocs();
         }

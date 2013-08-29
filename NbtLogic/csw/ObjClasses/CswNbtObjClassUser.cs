@@ -431,7 +431,7 @@ namespace ChemSW.Nbt.ObjClasses
         public Int32 RoleTimeout { get { return CswConvert.ToInt32( _RoleNodeObjClass.Timeout.Value ); } }
 
         public CswNbtNodePropRelationship Role { get { return ( _CswNbtNode.Properties[PropertyName.Role] ); } }
-        private void onRolePropChange( CswNbtNodeProp NodeProp )
+        private void onRolePropChange( CswNbtNodeProp NodeProp, bool Creating )
         {
             if( null != _CswNbtResources.CurrentNbtUser &&
                 CswTools.IsPrimaryKey( Role.RelatedNodeId ) &&
@@ -484,7 +484,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
         public CswNbtNodePropList DateFormatProperty { get { return ( _CswNbtNode.Properties[PropertyName.DateFormat] ); } }
-        private void onDateFormatPropChange( CswNbtNodeProp NodeProp )
+        private void onDateFormatPropChange( CswNbtNodeProp NodeProp, bool Creating )
         {
             if( false == string.IsNullOrEmpty( DateFormatProperty.Value ) &&
                 CswResources.UnknownEnum == (CswEnumDateFormat) DateFormatProperty.Value )
@@ -510,7 +510,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
         public CswNbtNodePropList TimeFormatProperty { get { return ( _CswNbtNode.Properties[PropertyName.TimeFormat] ); } }
-        private void onTimeFormatPropChange( CswNbtNodeProp NodeProp )
+        private void onTimeFormatPropChange( CswNbtNodeProp NodeProp, bool Creating )
         {
             if( false == string.IsNullOrEmpty( TimeFormatProperty.Value ) &&
                 CswResources.UnknownEnum == (CswEnumTimeFormat) TimeFormatProperty.Value )
@@ -540,7 +540,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropRelationship DefaultBalanceProperty { get { return _CswNbtNode.Properties[PropertyName.DefaultBalance]; } }
         public CswPrimaryKey DefaultBalanceId { get { return DefaultBalanceProperty.RelatedNodeId; } }
         public CswNbtNodePropRelationship WorkUnitProperty { get { return _CswNbtNode.Properties[PropertyName.WorkUnit]; } }
-        public void OnWorkUnitPropertyChange( CswNbtNodeProp Prop )
+        public void OnWorkUnitPropertyChange( CswNbtNodeProp Prop, bool Creating )
         {
             if( false == AvailableWorkUnits.CheckValue( WorkUnitId.ToString() ) )
             {
@@ -559,7 +559,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropText Phone { get { return _CswNbtNode.Properties[PropertyName.Phone]; } }
         public CswNbtNodePropText EmployeeId { get { return _CswNbtNode.Properties[PropertyName.EmployeeId]; } }
 
-        private void OnUserNamePropChange( CswNbtNodeProp Prop )
+        private void OnUserNamePropChange( CswNbtNodeProp Prop, bool Creating )
         {
             if( false == Prop.Empty )
             {
@@ -568,7 +568,7 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         public CswNbtNodePropMultiList AvailableWorkUnits { get { return _CswNbtNode.Properties[PropertyName.AvailableWorkUnits]; } }
-        public void OnAvailableWorkUnitsChange( CswNbtNodeProp Prop )
+        public void OnAvailableWorkUnitsChange( CswNbtNodeProp Prop, bool Creating )
         {
             _updateAvailableWorkUnits();
 

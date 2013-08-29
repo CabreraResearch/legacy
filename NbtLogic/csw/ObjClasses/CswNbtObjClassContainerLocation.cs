@@ -165,7 +165,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get { return _CswNbtNode.Properties[PropertyName.ContainerScan]; }
         }
-        private void OnContainerScanPropChange( CswNbtNodeProp Prop )
+        private void OnContainerScanPropChange( CswNbtNodeProp Prop, bool Creating )
         {
             if( null != ContainerScan.Text )
             {
@@ -194,7 +194,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get { return _CswNbtNode.Properties[PropertyName.LocationScan]; }
         }
-        private void OnLocationScanPropChange( CswNbtNodeProp Prop )
+        private void OnLocationScanPropChange( CswNbtNodeProp Prop, bool Creating )
         {
             if( null != LocationScan.Text )
             {

@@ -189,7 +189,7 @@ namespace ChemSW.Nbt.ObjClasses
         #region Object class specific properties
 
         public CswNbtNodePropTimeInterval DueDateInterval { get { return ( _CswNbtNode.Properties[PropertyName.DueDateInterval] ); } }
-        public void OnDueDateIntervalChange( CswNbtNodeProp Prop )
+        public void OnDueDateIntervalChange( CswNbtNodeProp Prop, bool Creating )
         {
             if( DueDateInterval.RateInterval.RateType == CswEnumRateIntervalType.Hourly )
             {
@@ -202,7 +202,7 @@ namespace ChemSW.Nbt.ObjClasses
         } // OnDueDateIntervalChange
         public CswNbtNodePropLogical Enabled { get { return ( _CswNbtNode.Properties[PropertyName.Enabled] ); } }
         public CswNbtNodePropList Event { get { return ( _CswNbtNode.Properties[PropertyName.Event] ); } }
-        private void onEventPropChange( CswNbtNodeProp Prop )
+        private void onEventPropChange( CswNbtNodeProp Prop, bool Creating )
         {
             if( string.IsNullOrEmpty( Event.Value ) && Type.Value == TypeOptionView )
             {
@@ -219,7 +219,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropUserSelect Recipients { get { return ( _CswNbtNode.Properties[PropertyName.Recipients] ); } }
         public CswNbtNodePropRelationship Report { get { return ( _CswNbtNode.Properties[PropertyName.Report] ); } }
         public CswNbtNodePropViewReference ReportView { get { return ( _CswNbtNode.Properties[PropertyName.ReportView] ); } }
-        public void OnReportViewChange( CswNbtNodeProp Prop )
+        public void OnReportViewChange( CswNbtNodeProp Prop, bool Creating )
         {
             // case 28844 - Change view visibility from 'Property' to 'Hidden', so grids will run correctly
             // This will only trigger when the viewid is first set.
@@ -232,7 +232,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropDateTime RunTime { get { return ( _CswNbtNode.Properties[PropertyName.RunTime] ); } }
         public CswNbtNodePropNodeTypeSelect TargetType { get { return ( _CswNbtNode.Properties[PropertyName.TargetType] ); } }
         public CswNbtNodePropList Type { get { return ( _CswNbtNode.Properties[PropertyName.Type] ); } }
-        public void OnTypePropChange( CswNbtNodeProp Prop )
+        public void OnTypePropChange( CswNbtNodeProp Prop, bool Creating )
         {
             if( Type.Value == TypeOptionView )
             {

@@ -273,7 +273,7 @@ namespace ChemSW.Nbt.ObjClasses
                 return ( _CswNbtNode.Properties[PropertyName.CompanyID] );
             }
         }
-        private void OnCompanyIdPropChange( CswNbtNodeProp NodeProp )
+        private void OnCompanyIdPropChange( CswNbtNodeProp NodeProp, bool Creating )
         {
             if ( false == CswTools.IsValidUsername( CompanyID.Text ) )
             {

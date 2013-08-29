@@ -207,7 +207,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get { return _CswNbtNode.Properties[PropertyName.Name]; }
         }
-        private void onNamePropChange( CswNbtNodeProp NodeProp )
+        private void onNamePropChange( CswNbtNodeProp NodeProp, bool Creating )
         {
             if( Name.WasModified &&
                 string.IsNullOrEmpty( Name.Text ) &&
@@ -222,7 +222,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get { return _CswNbtNode.Properties[PropertyName.SubmittedDate]; }
         }
-        private void onSubmittedDatePropChange( CswNbtNodeProp NodeProp )
+        private void onSubmittedDatePropChange( CswNbtNodeProp NodeProp, bool Creating )
         {
             if( SubmittedDate.DateTimeValue != DateTime.MinValue )
             {
@@ -270,7 +270,7 @@ namespace ChemSW.Nbt.ObjClasses
             get { return _CswNbtNode.Properties[PropertyName.RequestItems]; }
         }
 
-        private void onIsRecurringChange( CswNbtNodeProp NodeProp )
+        private void onIsRecurringChange( CswNbtNodeProp NodeProp, bool Creating )
         {
             if( IsRecurring.WasModified )
             {
@@ -296,7 +296,7 @@ namespace ChemSW.Nbt.ObjClasses
                 CompletedDate.setHidden( value : false, SaveToDb : true );
             }
         }
-        private void onIsFavortiteChange( CswNbtNodeProp NodeProp )
+        private void onIsFavortiteChange( CswNbtNodeProp NodeProp, bool Creating )
         {
             if( IsFavorite.WasModified )
             {

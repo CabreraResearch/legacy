@@ -197,7 +197,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropText Name { get { return ( _CswNbtNode.Properties[PropertyName.Name] ); } }
         public CswNbtNodePropText BaseUnit { get { return ( _CswNbtNode.Properties[PropertyName.BaseUnit] ); } }
         public CswNbtNodePropScientific ConversionFactor { get { return ( _CswNbtNode.Properties[PropertyName.ConversionFactor] ); } }
-        private void OnConversionFactorPropChange( CswNbtNodeProp Prop )
+        private void OnConversionFactorPropChange( CswNbtNodeProp Prop, bool Creating )
         {
             _validateConversionFactor();
         }
@@ -205,7 +205,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropList UnitType { get { return ( _CswNbtNode.Properties[PropertyName.UnitType] ); } }
         public CswNbtNodePropStatic UnitConversion { get { return ( _CswNbtNode.Properties[PropertyName.UnitConversion] ); } }
         public CswNbtNodePropMemo Aliases { get { return ( _CswNbtNode.Properties[PropertyName.Aliases] ); } }
-        private void onAliasesPropChange( CswNbtNodeProp Prop )
+        private void onAliasesPropChange( CswNbtNodeProp Prop, bool Creating )
         {
             _validateAliasUniqueness();
         }

@@ -428,7 +428,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         public CswNbtNodePropText Name { get { return ( _CswNbtNode.Properties[PropertyName.Name] ); } }
 
-        private void OnIsFutureChange( CswNbtNodeProp NodeProp )
+        private void OnIsFutureChange( CswNbtNodeProp NodeProp, bool Creating )
         {
             if( false == _genFutureNodesHasRun ) //redundant--for readability
             {
@@ -437,7 +437,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-        private void OnGeneratorChange( CswNbtNodeProp NodeProp )
+        private void OnGeneratorChange( CswNbtNodeProp NodeProp, bool Creating )
         {
             if( false == _genFutureNodesHasRun ) //redundant--for readability
             {
@@ -459,7 +459,7 @@ namespace ChemSW.Nbt.ObjClasses
             get { return ( _CswNbtNode.Properties[PropertyName.Status] ); }
         }
 
-        private void OnStatusPropChange( CswNbtNodeProp NodeProp )
+        private void OnStatusPropChange( CswNbtNodeProp NodeProp, bool Creating )
         {
             switch( Status.Value )
             {

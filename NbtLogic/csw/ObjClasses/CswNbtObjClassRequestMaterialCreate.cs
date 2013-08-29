@@ -324,7 +324,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// 
         /// </summary>
-        public override void onStatusPropChange( CswNbtNodeProp Prop )
+        public override void onStatusPropChange( CswNbtNodeProp Prop, bool Creating )
         {
             Type.setHidden( value : ( Status.Value == Statuses.Pending ), SaveToDb : true );
 
@@ -337,7 +337,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-        public override void onTypePropChange( CswNbtNodeProp Prop )
+        public override void onTypePropChange( CswNbtNodeProp Prop, bool Creating )
         {
             Type.setReadOnly( value : true, SaveToDb : true );
 
@@ -345,7 +345,7 @@ namespace ChemSW.Nbt.ObjClasses
             Fulfill.State = FulfillMenu.Create;
         }
 
-        public override void onRequestPropChange( CswNbtNodeProp Prop )
+        public override void onRequestPropChange( CswNbtNodeProp Prop, bool Creating )
         {
 
         }
@@ -359,7 +359,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Object class specific properties
 
-        private void onMaterialPropChange( CswNbtNodeProp NodeProp )
+        private void onMaterialPropChange( CswNbtNodeProp NodeProp, bool Creating )
         {
             if( CswTools.IsPrimaryKey( Material.RelatedNodeId ) )
             {

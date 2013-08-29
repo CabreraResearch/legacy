@@ -117,7 +117,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropNumber Percentage { get { return ( _CswNbtNode.Properties[PropertyName.Percentage] ); } }
 
         public CswNbtNodePropRelationship Mixture { get { return ( _CswNbtNode.Properties[PropertyName.Mixture] ); } }
-        private void OnMixturePropChange( CswNbtNodeProp Prop )
+        private void OnMixturePropChange( CswNbtNodeProp Prop, bool Creating )
         {
             if( null != Mixture.RelatedNodeId )
             {
