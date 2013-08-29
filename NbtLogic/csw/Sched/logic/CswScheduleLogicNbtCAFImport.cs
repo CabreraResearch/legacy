@@ -73,8 +73,7 @@ namespace ChemSW.Nbt.Sched
                     const string QueuePkName = "nbtimportqueueid";
 
                     Int32 NumberToProcess = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumConfigurationVariableNames.NodesProcessedPerCycle ) );
-                    //string Sql = "select * from " + QueueTableName + "@" + CAFDbLink + " where state = '" + State.New + "'";
-                    string Sql = "select * from " + QueueTableName + "@" + CAFDbLink + " where state = '" + State.I + "' or state = '" + State.U + "' order by decode (state, 'N', 1, 'U', 2) asc";
+                    string Sql = "select * from " + QueueTableName + "@" + CAFDbLink + " where state = '" + State.I + "' or state = '" + State.U + "' order by decode (state, '" + State.I + "', 1, '" + State.U + "', 2) asc";
 
                     CswArbitrarySelect QueueSelect = _CswNbtResources.makeCswArbitrarySelect( "cafimport_queue_select", Sql );
                     DataTable QueueTable = QueueSelect.getTable( 0, NumberToProcess, false, true );
