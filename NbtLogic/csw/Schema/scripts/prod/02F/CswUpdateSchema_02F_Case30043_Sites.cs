@@ -1,5 +1,6 @@
 ﻿using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.csw.Schema;
+using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -24,9 +25,9 @@ namespace ChemSW.Nbt.Schema
             CswNbtSchemaUpdateImportMgr importMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "sites", "Site", "sites_view" );
 
             // Binding 
-            importMgr.importBinding( "sitename", "Name", "" );
-            importMgr.importBinding( "sitecode", "Location Code", "" );
-            importMgr.importBinding( "controlzoneid", "Control Zone", "" );
+            importMgr.importBinding( "sitename", CswNbtObjClassLocation.PropertyName.Name, "" );
+            importMgr.importBinding( "sitecode", CswNbtObjClassLocation.PropertyName.LocationCode, "" );
+            importMgr.importBinding( "controlzoneid", CswNbtObjClassLocation.PropertyName.ControlZone, "" );
 
             // Relationship
 
