@@ -1,7 +1,4 @@
-<tr>
-                    <td id="Td5" class="PageTable_LeftColumn" rowspan="6">
-                        <img src="Images/pagelayout/blank.gif" alt="X" width="1" height="450" />
-                    </td>
+                <tr>
                     <td id="HeaderTable_BottomMenu" class="HeaderTable_BottomMenu" colspan="2">
                         <table cellpadding="0" cellspacing="0" width="100%">
                             <tr>
@@ -26,8 +23,6 @@
                                 </td>
                             </tr>
                         </table>
-                    </td>
-                    <td id="Td6" class="PageTable_RightColumn" rowspan="6">
                     </td>
                 </tr>
                 <tr>
@@ -65,15 +60,9 @@
                     </td>
                 </tr>
 
- <tr>
-                            <td id="PageTable_BottomLeftCorner" class="PageTable_BottomLeftCorner"></td>
-                            <td colspan="1" id="PageTable_BottomRowLeft" class="PageTable_BottomRowLeft"></td>
-                            <td id="PageTable_BottomRowRight" class="PageTable_BottomRowRight"></td>
-                            <td id="PageTable_BottomRightCorner" class="PageTable_BottomRightCorner"></td>
-                        </tr>
                     </table> 
                 </div> 
-                <div id="CswFooterDiv" style="text-align: right">
+                <div id="CswFooterDiv" class="TermsOfUse">
                         Your use of this website implies your agreement with our <a target="_blank" href="TermsOfUse.html">
                         Terms of Use</a>
                 </div>

@@ -1,11 +1,16 @@
-﻿body
+﻿html,form {
+    height: 100%;    
+}
+
+body
 {
     color: #000000;
-    background-color: #ebebeb;
+    background-color: #F8F9FB;
 
     font-family: verdana;
     font-size: 12px;
     margin: 0px 0px 0px 0px;
+    height: 100%;
 }
 body a
 {
@@ -26,17 +31,24 @@ ul li div {
 }
 
 
+.StandardMasterContentDiv
+{
+    min-height: 100%;
+    position: relative;
+}
+
 
 .OuterDiv
 {
-    text-align: center;
+   text-align: center;
+   padding-bottom: 12px;
 }
 
 .PageTable
 {
     text-align: left;
     background-color: #f8f9fb;
-    margin: 10px 10px 5px 10px;
+    /*margin: 10px 10px 5px 10px;*/
 }
 
 .HeaderTable_LeftBorder
@@ -63,7 +75,7 @@ ul li div {
 {
     background-color: #d8e9fa;
     border-bottom: 1px solid #cddded;
-    padding: 0px 10px 0px 0px;
+    padding: 3px;
     height: 32px;
     width: 270px;
     /*
@@ -77,6 +89,7 @@ ul li div {
     height: 30px;
     width: 100%;
     border-bottom: 1px solid #cddded;
+    padding: 3px;
 }
 
 .HeaderTable_RightMenu
@@ -88,6 +101,7 @@ ul li div {
 {
     background-color: #f8f9fb;
     height: 36px;
+    padding: 5px;
 }
 
 .PageTable_LeftColumn
@@ -101,15 +115,18 @@ ul li div {
     background-repeat: no-repeat;
     vertical-align: top;
     width: 270px;
+    padding: 5px;
 }
 .PageTable_LeftCellNoBg
 {
     width: 270px;
+    padding: 5px;
 }
 .PageTable_RightCell
 {
     vertical-align: top;
     width: 2000px;
+    padding: 5px;
 }
 
 .PageTable_RightColumn
@@ -856,10 +873,6 @@ ul li div {
     color: #003366;
 }
 
-.StandardMasterContentDiv
-{
-}
-
 .TabScrollItem
 {
     color: #ddeeff;
@@ -1431,3 +1444,9 @@ ul li div {
     background-color: #ffffff !Important;
 }
 
+.TermsOfUse {
+    position: absolute;
+    bottom: 2px;
+    right: 1px;
+    height: 12px;
+}
