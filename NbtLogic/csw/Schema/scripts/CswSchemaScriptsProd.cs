@@ -71,42 +71,42 @@ namespace ChemSW.Nbt.Schema
                 _LatestVersion = Version;
             }
 
-            //#region Before Scripts
+            #region Before Scripts
 
-            ////This script needs to go first
-            //_addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02F_Case30228() );
+            //This script needs to go first
+            _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02F_Case30228() );
 
-            //#region EUCALYPTUS Run Before Scripts
+            #region EUCALYPTUS Run Before Scripts
 
-            //_addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02E_Case30500() );
-            //_addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02E_Case29700() );
-            //_addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02E_Case30123() );
-            //_addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02E_Case29701() );
-            //_addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02E_Case30347() );
-            //_addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02E_Case30549() );
+            _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02E_Case30500() );
+            _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02E_Case29700() );
+            _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02E_Case30123() );
+            _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02E_Case29701() );
+            _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02E_Case30347() );
+            _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02E_Case30549() );
 
-            //#endregion EUCALYPTUS Run Before Scripts
+            #endregion EUCALYPTUS Run Before Scripts
 
-            //#region FOXGLOVE Run Before Scripts
+            #region FOXGLOVE Run Before Scripts
 
-            //_addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02F_Case30041_NbtImportQueue() ); //Validate the Nbt Import Queue table first
-            //_addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02F_Case30281() );
-            //_addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02F_Case30251() );
-            //_addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02F_Case30251B() );
-            //_addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02F_Case30082_UserCache() );
-            //_addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02F_Case27883() );
-            //_addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02F_Case30040() );
-            //_addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02F_Case29992() );
+            _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02F_Case30041_NbtImportQueue() ); //Validate the Nbt Import Queue table first
+            _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02F_Case30281() );
+            _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02F_Case30251() );
+            _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02F_Case30251B() );
+            _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02F_Case30082_UserCache() );
+            _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02F_Case27883() );
+            _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02F_Case30040() );
+            _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02F_Case29992() );
 
-            //#endregion FOXGLOVE Run Before Scripts
-
-
-            //_addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_MakeMissingNodeTypeProps() );
-            //_addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02SQL() );
-            //_addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_03() );
+            #endregion FOXGLOVE Run Before Scripts
 
 
-            //#endregion Before Scripts
+            _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_MakeMissingNodeTypeProps() );
+            _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02SQL() );
+            _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_03() );
+
+
+            #endregion Before Scripts
 
             #region After Scripts
 
