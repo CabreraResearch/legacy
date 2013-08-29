@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+
+    <Product Id="2D70FC5F-E123-446C-BFD8-885863487B68" Name="NBT Print Client" Language="1033" Version="1.0.0.0" Manufacturer="ChemSW Inc." UpgradeCode="56D3BC68-E2AE-4AA8-80DE-73064AE6AC92">
+        <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
+
+        <Icon Id="print.ico" SourceFile="$(var.NbtPrintClient.ProjectDir)\print.ico" />
+        <Property Id="ARPPRODUCTICON">print.ico</Property>
+
+
+        <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+
+
+        <MediaTemplate EmbedCab="yes" />
+
+        <Directory Id="TARGETDIR" Name="SourceDir">
+            <Directory Id="ProgramFilesFolder">
+                <Directory Id="ChemSW" Name="ChemSW">
+                    <Directory Id="INSTALLDIR" Name="NBT Print Client" FileSource="$(var.NbtPrintClient.TargetDir)">
+
+                        <Component Id="ClientInstall" Guid="954BCA0E-250D-491E-8709-C084B31DDF3D">
+                            <File Id="ClientExe" Name="$(var.NbtPrintClient.TargetFileName)" KeyPath="yes" />
+                            <File Id="ClientConfig" Name="$(var.NbtPrintClient.TargetFileName).config" />
+                            <File Id="CswCoreDll" Name="CswCore.dll" />
+                            <File Id="PrintLibDll" Name="NbtPrintLib.dll" />
+                            <Shortcut Id="DesktopShortcut" Directory="DesktopFolder" Name="NBT Print Client" Advertise="yes" Icon="print.ico" />
+                            <RemoveFile Id="PurgeClientFolder" Name="*.*" On="uninstall" />
+                        </Component>
+
+                    </Directory>
+                </Directory>
+            </Directory>
+
+            <Directory Id="DesktopFolder" Name="Desktop" />
+
+        </Directory>
+
+
+
+        <Feature Id="CompleteInstallation" Level="1">
+            <ComponentRef Id="ClientInstall" />
+        </Feature>
+
+
+        <Property Id="WIXUI_INSTALLDIR" Value="INSTALLDIR" />
+        <UIRef Id="WixUI_InstallDir" />
+        <UIRef Id="WixUI_ErrorProgressText" />
+        <WixVariable Id="WixUILicenseRtf" Value="eula.rtf"/>
+
+    </Product>
+</Wix>

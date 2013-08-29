@@ -1123,6 +1123,11 @@ namespace ChemSW.Nbt.MetaData
             _setFilter( FilterProp, FilterString );
         }
 
+        public void setFilter( CswNbtMetaDataNodeTypeProp FilterProp, string FilterString )
+        {
+            _setFilter( FilterProp, FilterString );
+        }
+
         public void setFilter( Int32 FilterNodeTypePropId, string FilterString )
         {
             CswNbtMetaDataNodeTypeProp FilterProp = _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeProp( FilterNodeTypePropId );

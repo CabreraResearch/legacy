@@ -493,16 +493,15 @@
 
             //#region Validator
 
-
             cswPublic.validator = function() {
                 return cswPrivate.form.validator;
             };
 
             cswPublic.isFormValid = function () {
-                return cswPublic.isTabsAndPropsInDom() && cswPrivate.form.isFormValid() && cswPrivate.identityForm.isFormValid();
+                return cswPrivate.isInDom() && cswPrivate.form.isFormValid() && cswPrivate.identityForm.isFormValid();
             };
 
-            cswPublic.isTabsAndPropsInDom = function() {
+            cswPrivate.isInDom = function() {
                 return cswParent && cswParent.getId && Csw.isElementInDom(cswParent.getId());
             };
 
@@ -1170,7 +1169,7 @@
             cswPublic.refresh = function (propData, refreshData) {
                 Csw.publish('onAnyNodeButtonClickFinish', true);
                 Csw.tryExec(cswPrivate.onSave, cswPublic.getNodeId(), cswPublic.getNodeKey(), cswPrivate.tabcnt, cswPrivate.tabState.nodename, cswPrivate.tabState.nodelink);
-                if (cswPublic.isTabsAndPropsInDom()) {
+                if (cswPrivate.isInDom()) {
                     if (refreshData) {
                         cswPrivate.onTearDownProps();
                         Csw.tryExec(cswPrivate.Refresh, refreshData);

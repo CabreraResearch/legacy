@@ -95,7 +95,7 @@ namespace ChemSW.Nbt
 
             if( AuthenticationStatus == CswEnumAuthenticationStatus.Unknown )
             {
-                AuthenticationStatus = _CswSessionManager.beginSession( _AuthenticationRequest.UserName, _AuthenticationRequest.Password, _AuthenticationRequest.IpAddress, _AuthenticationRequest.IsMobile );
+                AuthenticationStatus = _CswSessionManager.beginSession( _AuthenticationRequest );
             }
 
             // case 21211
@@ -128,6 +128,11 @@ namespace ChemSW.Nbt
                 {
                     // BZ 9077 - Password expired
                     AuthenticationStatus = CswEnumAuthenticationStatus.ExpiredPassword;
+                }
+                else if( 1 < _CswNbtResources.CswSessionManager.SessionsList.getSessionCountForUser( _CswNbtResources.AccessId, _AuthenticationRequest.UserName ) 
+                      && false == _AuthenticationRequest.IsMobile )
+                {
+                    AuthenticationStatus = CswEnumAuthenticationStatus.AlreadyLoggedIn;
                 }
             }
 
