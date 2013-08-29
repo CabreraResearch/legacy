@@ -94,10 +94,12 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
         {
+            _CswNbtObjClassDefault.beforeCreateNode( IsCopy,OverrideUniqueValidation );
         }
 
         public override void afterCreateNode()
         {
+            _CswNbtObjClassDefault.afterCreateNode();
         }
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
@@ -1058,7 +1060,10 @@ namespace ChemSW.Nbt.ObjClasses
                             _InventoryLevelModified = Mgr.addToCurrentQuantity( Quantity.Quantity, Quantity.UnitId, Reason, Material.RelatedNodeId, Location.SelectedNodeId );
                         }
                     }
-                    _updateRequestItems( CswNbtObjClassRequestContainerUpdate.Types.Move );
+                    if( false == _CswNbtObjClassDefault.IsCreate )
+                    {
+                        _updateRequestItems( CswNbtObjClassRequestContainerUpdate.Types.Move );
+                    }
                 }
                 if( null != Location.SelectedNodeId )
                 {
