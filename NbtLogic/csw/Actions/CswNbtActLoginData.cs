@@ -5,6 +5,7 @@ using System.Runtime.Serialization;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Security;
+using ChemSW.WebSvc;
 
 namespace ChemSW.Nbt.Actions
 {
@@ -24,6 +25,25 @@ namespace ChemSW.Nbt.Actions
         [DataContract]
         public class Login
         {
+            /// <summary>
+            /// Default ctr for WCF
+            /// </summary>
+            public Login()
+            {
+                
+            }
+
+            /// <summary>
+            /// Init Login Data with the current Authentication Request
+            /// </summary>
+            public Login( CswWebSvcSessionAuthenticateData.Authentication.Request Request )
+            {
+                AuthenticationRequest = Request;
+                Username = AuthenticationRequest.UserName;
+                IPAddress = AuthenticationRequest.IpAddress;
+                setStatus( Request.AuthenticationStatus );
+            }
+
             [DataMember]
             public String Username = String.Empty;
             [DataMember]
@@ -37,8 +57,11 @@ namespace ChemSW.Nbt.Actions
             [DataMember]
             public Int32 FailedLoginCount = 0;
 
-            public void setStatus( CswEnumAuthenticationStatus Status )
+            public CswWebSvcSessionAuthenticateData.Authentication.Request AuthenticationRequest;
+
+            private void setStatus( CswEnumAuthenticationStatus Status )
             {
+                LoginStatus = "Failed";
                 switch( Status )
                 {
                     case CswEnumAuthenticationStatus.TooManyUsers:
@@ -114,17 +137,21 @@ namespace ChemSW.Nbt.Actions
 
         public void postLoginData( LoginData.Login LoginRecord )
         {
-            CswTableUpdate LoginData = _CswNbtResources.makeCswTableUpdate( "Login Data Insert", "login_data" );
-            DataTable LoginDataTable = LoginData.getTable();
-            DataRow LoginRow = LoginDataTable.NewRow();
-            LoginRow["username"] = LoginRecord.Username;
-            LoginRow["ipaddress"] = LoginRecord.IPAddress;
-            LoginRow["logindate"] = LoginRecord.LoginDate;
-            LoginRow["loginstatus"] = LoginRecord.LoginStatus;
-            LoginRow["failurereason"] = LoginRecord.FailureReason;
-            LoginRow["failedlogincount"] = LoginRecord.FailedLoginCount;
-            LoginDataTable.Rows.Add( LoginRow );
-            LoginData.update( LoginDataTable );
+            if( null == LoginRecord.AuthenticationRequest.Parameters ||
+                false != LoginRecord.AuthenticationRequest.Parameters.IsIncludedInLoginData )
+            {
+                CswTableUpdate LoginData = _CswNbtResources.makeCswTableUpdate( "Login Data Insert", "login_data" );
+                DataTable LoginDataTable = LoginData.getTable();
+                DataRow LoginRow = LoginDataTable.NewRow();
+                LoginRow[ "username" ] = LoginRecord.Username;
+                LoginRow[ "ipaddress" ] = LoginRecord.IPAddress;
+                LoginRow[ "logindate" ] = LoginRecord.LoginDate;
+                LoginRow[ "loginstatus" ] = LoginRecord.LoginStatus;
+                LoginRow[ "failurereason" ] = LoginRecord.FailureReason;
+                LoginRow[ "failedlogincount" ] = LoginRecord.FailedLoginCount;
+                LoginDataTable.Rows.Add( LoginRow );
+                LoginData.update( LoginDataTable );
+            }
         }
 
         #endregion Public Methods
@@ -133,13 +160,19 @@ namespace ChemSW.Nbt.Actions
 
         private DataTable _getLoginRecords( LoginData.LoginDataRequest Request )
         {
+            Int32 RowLimit = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumNbtConfigurationVariables.treeview_resultlimit.ToString() ) );
+            RowLimit = ( RowLimit > 0 ) ? RowLimit : 250;
+
             String WhereClauseTemplate = @"where logindate >= {0} and logindate < {1} + 1";
             String WhereClause = String.Format( WhereClauseTemplate,
                 _CswNbtResources.getDbNativeDate( DateTime.Parse( Request.StartDate ) ),
                 _CswNbtResources.getDbNativeDate( DateTime.Parse( Request.EndDate ) )
             );
+            
             CswTableSelect LoginDataSelect = _CswNbtResources.makeCswTableSelect( "Login_Data Select", "login_data" );
-            DataTable TargetTable = LoginDataSelect.getTable( WhereClause );
+            DataTable TargetTable = LoginDataSelect.getTable( WhereClause: WhereClause, PageLowerBoundExclusive: 0, PageUpperBoundInclusive: RowLimit, 
+                //Yuck.
+                RequireOneRow: false, OrderByColumns: null, FilterColumn: null, FilterValue: Int32.MinValue, SelectColumns: null  );
             return TargetTable;
         }
 

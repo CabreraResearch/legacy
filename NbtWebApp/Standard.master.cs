@@ -9,6 +9,7 @@ using ChemSW.Nbt.ObjClasses;
 using ChemSW.NbtWebControls;
 using ChemSW.Security;
 using ChemSW.Session;
+using ChemSW.WebSvc;
 using Telerik.Web.UI;
 
 namespace ChemSW.Nbt.WebPages
@@ -24,9 +25,9 @@ namespace ChemSW.Nbt.WebPages
         public string AccessId { get { return Master.AccessId; } set { Master.AccessId = value; } }
 
         public bool IsAuthenticated() { return Master.IsAuthenticated(); }
-        public CswEnumAuthenticationStatus Authenticate( string username, string password )
+        public CswEnumAuthenticationStatus Authenticate( CswWebSvcSessionAuthenticateData.Authentication.Request AuthenticationRequest )
         {
-            return ( Master.Authenticate( username, password ) );
+            return ( Master.Authenticate( AuthenticationRequest ) );
         }
         public CswSessions SessionList
         {

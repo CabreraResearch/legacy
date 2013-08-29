@@ -1,3 +1,4 @@
+using System.Linq;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
@@ -290,14 +291,31 @@ namespace ChemSW.Nbt.MetaData
                 _ObjectClassPropRow["filter"] = CswConvert.ToDbVal( FilterString );
             }
 
-            //if( changed )
-            //{
-            //    foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in this.getNodeTypeProps() )
-            //    {
+            if( changed )
+            {
+                _setNodeTypePropFilters( FilterProp, FilterString );
+            }
+        }
 
-            //    }
+        public void setNodeTypePropFilters()
+        {
+            CswNbtMetaDataObjectClassProp FilterProp = _CswNbtMetaDataResources.CswNbtMetaData.getObjectClassProp( FilterObjectClassPropId );
+            _setNodeTypePropFilters( FilterProp, getFilterString() );
+        }
 
-            //}
+        private void _setNodeTypePropFilters( CswNbtMetaDataObjectClassProp FilterProp, string FilterString )
+        {
+            foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in this.getNodeTypeProps() )
+            {
+                if( FilterProp != null )
+                {
+                    CswNbtMetaDataNodeTypeProp FilterPropNodeTypeProp = FilterProp.getNodeTypeProps().FirstOrDefault();
+                    if( null != FilterPropNodeTypeProp )
+                    {
+                        NodeTypeProp.setFilter( FilterPropNodeTypeProp, FilterString );
+                    }
+                }
+            }
         }
 
         public CswEnumNbtPropertySelectMode Multi
@@ -339,6 +357,17 @@ namespace ChemSW.Nbt.MetaData
                     return Int32.MinValue;
             }
             private set { _ObjectClassPropRow["fkvalue"] = value; }
+        }
+
+        public void setNodeTypePropFK()
+        {
+            if( IsFK && false == String.IsNullOrEmpty( FKType ) && Int32.MinValue != FKValue )
+            {
+                foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in this.getNodeTypeProps() )
+                {
+                    NodeTypeProp.SetFK( FKType, FKValue, ValuePropType, ValuePropId );
+                }
+            }
         }
 
         public Int32 ValuePropId

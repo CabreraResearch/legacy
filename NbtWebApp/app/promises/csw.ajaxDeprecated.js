@@ -7,31 +7,14 @@
     var cswPrivate = {
     };
 
-    cswPrivate.handleAjaxError = function (errorJson) {
-        Csw.error.showError(errorJson);
-    }; /* cswPrivate.handleAjaxError() */
-
-    var onSuccess = function (url, data, saveToCache, func) {
-        if (saveToCache) {
-            Csw.setCachedWebServiceCall(url, data);
-        }
-        return Csw.tryExec(func, data);
-    };
-
-
     cswPrivate.onJsonSuccess = Csw.method(function (o, data, url) {
         var result = data;
         if (data.d) {
             result = $.parseJSON(data.d);
         }
-        if (result.error !== undefined) {
+        if (result.error) {
             if (false === o.overrideError) {
-                cswPrivate.handleAjaxError({
-                    display: result.error.display,
-                    type: result.error.type,
-                    message: result.error.message,
-                    detail: result.error.detail
-                }, '');
+                Csw.ajaxCore.handleError(result.error);
             }
             Csw.tryExec(o.error, result.error);
         } else {
@@ -69,7 +52,7 @@
                 status: auth,
                 txt: text,
                 success: function () {
-                    onSuccess(o.url, result, o.useCache, o.success);
+                    Csw.ajaxCore.onSuccess(url, result, o.useCache, o.success, o.cachedResponse);
                 },
                 failure: o.onloginfail,
                 usernodeid: result.nodeid,
@@ -112,14 +95,13 @@
         };
         Csw.extend(cswInternal, options);
 
-        cswInternal.url = Csw.string(cswInternal.url, cswInternal.urlPrefix + cswInternal.urlMethod);
+        cswInternal.url = cswInternal.url || cswInternal.urlMethod;
         cswInternal.startTime = new Date();
 
         var getAjaxPromise = function (watchGlobal) {
             var ret = $.ajax({
                 type: 'POST',
-                urlPrefix: Csw.enums.ajaxUrlPrefix,
-                url: cswInternal.url,
+                url: Csw.enums.ajaxUrlPrefix + cswInternal.url,
                 xhrFields: {
                     withCredentials: true
                 },
@@ -142,9 +124,10 @@
 
         var promise;
         if (true === cswInternal.useCache) {
-            promise = Csw.getCachedWebServiceCall(cswInternal.urlMethod)
+            promise = Csw.getCachedWebServiceCall(cswInternal.url)
                 .then(function (ret) {
-                    return onSuccess(cswInternal.urlMethod, ret, false, cswInternal.success);
+                    cswInternal.cachedResponse = ret;
+                    return Csw.ajaxCore.onSuccess(cswInternal.url, cswInternal.cachedResponse, false, cswInternal.success, cswInternal.cachedResponse);
                 })
                 .then(getAjaxPromise(false));
         } else {

@@ -82,6 +82,7 @@
     <Content Include="app\composites\csw.quickTip.js" />
     <Content Include="app\composites\csw.tabselect.js" />
     <Content Include="app\core\csw.domNode.js" />
+    <Content Include="app\currentuser\csw.defaults.js" />
     <Content Include="app\db\csw.dbUpdate.js" />
     <Content Include="app\db\csw.dbSelect.js" />
     <Content Include="app\db\csw.dbTable.js" />
@@ -111,6 +112,7 @@
     <Content Include="app\main\csw.mainHandleImpersonation.js" />
     <Content Include="app\main\csw.mainEvents.js" />
     <Content Include="app\main\csw.mainDivs.js" />
+    <Content Include="app\promises\csw.ajaxCore.js" />
     <Content Include="app\promises\csw.ajaxDeprecated.js" />
     <Content Include="app\promises\csw.spinners.js" />
     <Content Include="app\db\csw.db.js" />
@@ -1023,6 +1025,7 @@
     <Content Include="vendor\jsTree.v.1.0rc2\_lib\jquery.hotkeys.js" />
     <Content Include="vendor\jsTree.v.1.0rc2\_lib\jquery.js" />
     <Content Include="vendor\loggly-0.1.0.js" />
+    <Content Include="vendor\moment.min.js" />
     <Content Include="vendor\shBrushSql.js" />
     <Content Include="vendor\shCore.js" />
     <Content Include="vendor\xstats\.gitattributes" />
@@ -1061,7 +1064,6 @@
     <Content Include="app\nodes\csw.node.tree.js" />
     <Content Include="app\Main.js" />
     <Content Include="app\wizards\csw.createinspection.js" />
-    <Content Include="app\literals\CswInput.js" />
     <Content Include="app\nodes\csw.node.grid.js" />
     <Content Include="app\pagecmp\CswDialog.js" />
     <Content Include="app\pagecmp\CswErrorMessage.js" />
@@ -1071,7 +1073,6 @@
     <Content Include="app\tools\csw.querystring.js" />
     <Content Include="app\events\csw.onenter.js" />
     <Content Include="app\view\CswViewContentTree.js" />
-    <Content Include="app\view\CswViewEditor.js" />
     <Content Include="app\view\CswViewPropFilter.js" />
     <Content Include="app\ChemSW.js" />
     <Content Include="app\composites\csw.thingrid.js" />
@@ -1101,9 +1102,9 @@
     <Content Include="app\composites\csw.numbertextbox.js" />
     <Content Include="app\types\csw.array.js" />
     <Content Include="app\types\csw.boolean.js" />
-    <Content Include="app\core\csw.clientchanges.js" />
-    <Content Include="app\core\csw.clientsession.js" />
-    <Content Include="app\core\csw.clientstate.js" />
+    <Content Include="app\currentuser\csw.clientchanges.js" />
+    <Content Include="app\currentuser\csw.clientsession.js" />
+    <Content Include="app\currentuser\csw.clientstate.js" />
     <Content Include="app\types\csw.date.js" />
     <Content Include="app\core\csw.debug.js" />
     <Content Include="app\core\csw.enums.js" />

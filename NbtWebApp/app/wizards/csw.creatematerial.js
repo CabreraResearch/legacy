@@ -318,6 +318,7 @@
                             propertySetName: 'MaterialSet',
                             value: cswPrivate.state.materialType.val || cswPrivate.state.materialNodeTypeId,
                             selectedName: 'Chemical',
+                            filterToPermission: 'Create',
                             onChange: changeMaterial,
                             onSuccess: changeMaterial,
                             isRequired: true

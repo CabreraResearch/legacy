@@ -53,11 +53,12 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswUpdateSchema_02F_Case29402() );                    //02E-027 //02F-016
             _addVersionedScript( new CswUpdateSchema_02F_Case30041_UnitsOfMeasure() );     //02E-028 //02F-017
             _addVersionedScript( new CswUpdateSchema_02F_Case30041_RolesUsers() );         //02E-029 //02F-018
-            _addVersionedScript( new CswUpdateSchema_02F_Case30043_ControlZones() );       //02E-030 //02F-019
-            _addVersionedScript( new CswUpdateSchema_02F_Case30043_Sites() );              //02E-031 //02F-020
-            _addVersionedScript( new CswUpdateSchema_02F_Case30043_WorkUnits() );          //02E-032 //02F-021
-            _addVersionedScript( new CswUpdateSchema_02F_Case30043_InventoryGroups() );    //02E-033 //02F-022
-            //_addVersionedScript( new CswUpdateSchema_02F_Case30043_Locations() );          //02E-034 //02F-023
+            _addVersionedScript( new CswUpdateSchema_02F_Case30041_ScheduledRuleImport() );//02E-030 //02F-019
+            _addVersionedScript( new CswUpdateSchema_02F_Case30043_ControlZones() );       //02E-031 //02F-020
+            _addVersionedScript( new CswUpdateSchema_02F_Case30043_Sites() );              //02E-032 //02F-021
+            _addVersionedScript( new CswUpdateSchema_02F_Case30043_WorkUnits() );          //02E-033 //02F-022
+            _addVersionedScript( new CswUpdateSchema_02F_Case30043_InventoryGroups() );    //02E-034 //02F-023
+            //_addVersionedScript( new CswUpdateSchema_02F_Case30043_Locations() );          //02E-035 //02F-024
 
 
             #endregion FOXGLOVE

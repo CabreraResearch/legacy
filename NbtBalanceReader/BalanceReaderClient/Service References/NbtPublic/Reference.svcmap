@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="5f157c1e-9e04-452b-a173-cb7fde9f96fe" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
+  <ClientOptions>
+    <GenerateAsynchronousMethods>false</GenerateAsynchronousMethods>
+    <GenerateTaskBasedAsynchronousMethod>true</GenerateTaskBasedAsynchronousMethod>
+    <EnableDataBinding>true</EnableDataBinding>
+    <ExcludedTypes />
+    <ImportXmlTypes>false</ImportXmlTypes>
+    <GenerateInternalTypes>false</GenerateInternalTypes>
+    <GenerateMessageContracts>false</GenerateMessageContracts>
+    <NamespaceMappings />
+    <CollectionMappings />
+    <GenerateSerializableTypes>true</GenerateSerializableTypes>
+    <Serializer>Auto</Serializer>
+    <UseSerializerForFaults>true</UseSerializerForFaults>
+    <ReferenceAllAssemblies>true</ReferenceAllAssemblies>
+    <ReferencedAssemblies />
+    <ReferencedDataContractTypes />
+    <ServiceContractMappings />
+  </ClientOptions>
+  <MetadataSources>
+    <MetadataSource Address="http://localhost/NbtWebApp/Services/NbtPublic.svc" Protocol="http" SourceId="1" />
+  </MetadataSources>
+  <Metadata>
+    <MetadataFile FileName="NbtPublic.wsdl" MetadataType="Wsdl" ID="d66f0ed1-cc2f-4842-9521-17db73efb1af" SourceId="1" SourceUrl="http://localhost/NbtWebApp/Services/NbtPublic.svc?wsdl=wsdl0" />
+    <MetadataFile FileName="NbtPublic.xsd" MetadataType="Schema" ID="375d3026-8841-4763-a643-2c13b2b09089" SourceId="1" SourceUrl="http://localhost/NbtWebApp/Services/NbtPublic.svc?xsd=xsd5" />
+    <MetadataFile FileName="NbtPublic1.xsd" MetadataType="Schema" ID="f1995e6d-47d5-4ccf-bea3-81cbf87962d1" SourceId="1" SourceUrl="http://localhost/NbtWebApp/Services/NbtPublic.svc?xsd=xsd2" />
+    <MetadataFile FileName="NbtPublic2.xsd" MetadataType="Schema" ID="db4962f8-bb6a-4d7e-8417-6f3246e641e6" SourceId="1" SourceUrl="http://localhost/NbtWebApp/Services/NbtPublic.svc?xsd=xsd3" />
+    <MetadataFile FileName="NbtPublic3.xsd" MetadataType="Schema" ID="7ae16aca-8e1e-4c30-b7f2-da3d7b8a5301" SourceId="1" SourceUrl="http://localhost/NbtWebApp/Services/NbtPublic.svc?xsd=xsd0" />
+    <MetadataFile FileName="NbtPublic4.xsd" MetadataType="Schema" ID="7f80ab92-15a9-4c4c-8407-0104151fc316" SourceId="1" SourceUrl="http://localhost/NbtWebApp/Services/NbtPublic.svc?xsd=xsd1" />
+    <MetadataFile FileName="NbtPublic5.xsd" MetadataType="Schema" ID="676b7f45-e5a7-4f57-90f7-59d54858168d" SourceId="1" SourceUrl="http://localhost/NbtWebApp/Services/NbtPublic.svc?xsd=xsd6" />
+    <MetadataFile FileName="NbtPublic.disco" MetadataType="Disco" ID="44821707-1df6-4057-b143-56c87c036ec0" SourceId="1" SourceUrl="http://localhost/NbtWebApp/Services/NbtPublic.svc?disco" />
+    <MetadataFile FileName="NbtPublic6.xsd" MetadataType="Schema" ID="9203e2d1-934d-481e-8770-1eaf9477fbbd" SourceId="1" SourceUrl="http://localhost/NbtWebApp/Services/NbtPublic.svc?xsd=xsd4" />
+    <MetadataFile FileName="NbtPublic1.wsdl" MetadataType="Wsdl" ID="9c8ed53e-569e-4ebb-be59-401da4c49beb" SourceId="1" SourceUrl="http://localhost/NbtWebApp/Services/NbtPublic.svc?wsdl" />
+    <MetadataFile FileName="NbtPublic8.xsd" MetadataType="Schema" ID="3d1fff98-50be-4e3d-98b1-93a5bc3bdaf1" SourceId="1" SourceUrl="http://localhost/NbtWebApp/Services/NbtPublic.svc?xsd=xsd8" />
+    <MetadataFile FileName="NbtPublic7.xsd" MetadataType="Schema" ID="ff5b9e7e-1716-409e-b372-af6e12ccb287" SourceId="1" SourceUrl="http://localhost/NbtWebApp/Services/NbtPublic.svc?xsd=xsd7" />
+  </Metadata>
+  <Extensions>
+    <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />
+    <ExtensionFile FileName="configuration.svcinfo" Name="configuration.svcinfo" />
+  </Extensions>
+</ReferenceGroup>

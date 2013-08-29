@@ -232,13 +232,13 @@ namespace ChemSW.Nbt.WebServices
         } // _doCswAdminAuthenticate()
 
         // Authenticates and sets up resources for an accessid and user
-        private CswEnumAuthenticationStatus _authenticate( string AccessId, string UserName, string Password, bool IsMobile )
+        private CswEnumAuthenticationStatus _authenticate( CswWebSvcSessionAuthenticateData.Authentication.Request AuthenticationRequest )
         {
             CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
 
             try
             {
-                string ParsedAccessId = AccessId.ToLower().Trim();
+                string ParsedAccessId = AuthenticationRequest.CustomerId.ToLower().Trim();
                 if( !string.IsNullOrEmpty( ParsedAccessId ) )
                 {
                     _CswSessionResources.CswSessionManager.setAccessId( ParsedAccessId );
@@ -262,7 +262,8 @@ namespace ChemSW.Nbt.WebServices
 
             if( AuthenticationStatus == CswEnumAuthenticationStatus.Unknown )
             {
-                AuthenticationStatus = _CswSessionResources.CswSessionManager.beginSession( UserName, Password, CswWebSvcCommonMethods.getIpAddress(), IsMobile );
+                AuthenticationRequest.IpAddress = CswWebSvcCommonMethods.getIpAddress();
+                AuthenticationStatus = _CswSessionResources.CswSessionManager.beginSession( AuthenticationRequest );
             }
 
             // case 21211
@@ -295,6 +296,10 @@ namespace ChemSW.Nbt.WebServices
                 {
                     // BZ 9077 - Password expired
                     AuthenticationStatus = CswEnumAuthenticationStatus.ExpiredPassword;
+                }
+                else if( 1 < _CswNbtResources.CswSessionManager.SessionsList.getSessionCountForUser( _CswNbtResources.AccessId, _CswNbtResources.CurrentUser.Username ) )
+                {
+                    AuthenticationStatus = CswEnumAuthenticationStatus.AlreadyLoggedIn;
                 }
             }
 
@@ -334,8 +339,12 @@ namespace ChemSW.Nbt.WebServices
             {
                 _initResources();
 
-                bool IsMobile = CswConvert.ToBoolean( ForMobile );
-                CswEnumAuthenticationStatus AuthenticationStatus = _authenticate( AccessId, UserName, Password, IsMobile );
+                CswWebSvcSessionAuthenticateData.Authentication.Request AuthenticationRequest = new CswWebSvcSessionAuthenticateData.Authentication.Request();
+                AuthenticationRequest.CustomerId = AccessId;
+                AuthenticationRequest.UserName = UserName;
+                AuthenticationRequest.Password = Password;
+                AuthenticationRequest.IsMobile = CswConvert.ToBoolean( ForMobile );
+                CswEnumAuthenticationStatus AuthenticationStatus = _authenticate( AuthenticationRequest );
 
                 if( AuthenticationStatus == CswEnumAuthenticationStatus.ExpiredPassword )
                 {

@@ -1098,6 +1098,8 @@ namespace ChemSW.Nbt.MetaData
             if( NtpModel.ObjectClassPropToCopy != null )
             {
                 CopyNodeTypePropDefaultValueFromObjectClassProp( NtpModel.ObjectClassPropToCopy, NewProp );
+                NtpModel.ObjectClassPropToCopy.setNodeTypePropFK();
+                NtpModel.ObjectClassPropToCopy.setNodeTypePropFilters();
             }
 
             if( OnMakeNewNodeTypeProp != null )
