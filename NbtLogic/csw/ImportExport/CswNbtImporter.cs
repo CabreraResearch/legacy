@@ -754,14 +754,18 @@ namespace ChemSW.Nbt.ImportExport
             // TODO: Why does this always return an empty row?
             if( relNodeTbl.Rows.Count > 0 )
             {
-                CswPrimaryKey pk = new CswPrimaryKey( "nodes", CswConvert.ToInt32( relNodeTbl.Rows[0]["nodeid"] ) );
-                if( Binding.DestProperty.getFieldTypeValue() == CswEnumNbtFieldType.Quantity )
+                // Because the sql query is using 'min' it will always return a row; we only want the row if it has a value
+                if( false == string.IsNullOrEmpty( relNodeTbl.Rows[0].ToString() ) )
                 {
-                    Node.Properties[Binding.DestProperty].AsQuantity.UnitId = pk;
-                }
-                else
-                {
-                    Node.Properties[Binding.DestProperty].AsRelationship.RelatedNodeId = pk;
+                    CswPrimaryKey pk = new CswPrimaryKey( "nodes", CswConvert.ToInt32( relNodeTbl.Rows[0]["nodeid"] ) );
+                    if( Binding.DestProperty.getFieldTypeValue() == CswEnumNbtFieldType.Quantity )
+                    {
+                        Node.Properties[Binding.DestProperty].AsQuantity.UnitId = pk;
+                    }
+                    else
+                    {
+                        Node.Properties[Binding.DestProperty].AsRelationship.RelatedNodeId = pk;
+                    }
                 }
             }
             else
