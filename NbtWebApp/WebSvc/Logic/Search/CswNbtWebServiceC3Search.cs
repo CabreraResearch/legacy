@@ -384,23 +384,22 @@ namespace ChemSW.Nbt.WebServices
                     ImportManager C3Import = new ImportManager( _CswNbtResources, C3ProductDetails );
 
                     // Create the temporary material node
-                    CswNbtPropertySetMaterial C3ProductTempNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeToBeImported.NodeTypeId, IsTemp: true );
+                    CswNbtPropertySetMaterial C3ProductTempNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeToBeImported.NodeTypeId, IsTemp: true, OnAfterMakeNode: delegate( CswNbtNode NewNode )
+                        {
+                            //Set the c3productid property
+                            ( (CswNbtPropertySetMaterial) NewNode ).C3ProductId.Text = C3ProductDetails.ProductId.ToString();
+                            // Add props to the tempnode
+                            C3Import.addNodeTypeProps( NewNode );
 
-                    //Set the c3productid property
-                    C3ProductTempNode.C3ProductId.Text = C3ProductDetails.ProductId.ToString();
-
-                    // Add props to the tempnode
-                    C3Import.addNodeTypeProps( C3ProductTempNode.Node );
-
-                    // Sync Hazard Classes and PCID data if C3ProductTempNode is of type Chemical
-                    if( C3ProductTempNode.ObjectClass.ObjectClass == CswEnumNbtObjectClass.ChemicalClass )
-                    {
-                        CswNbtObjClassChemical ChemicalNode = C3ProductTempNode.Node;
-                        ChemicalNode.syncFireDbData();
-                        ChemicalNode.syncPCIDData();
-                    }
-
-                    C3ProductTempNode.postChanges( false );
+                            // Sync Hazard Classes and PCID data if C3ProductTempNode is of type Chemical
+                            if( NewNode.getObjectClass().ObjectClass == CswEnumNbtObjectClass.ChemicalClass )
+                            {
+                                CswNbtObjClassChemical ChemicalNode = NewNode;
+                                ChemicalNode.syncFireDbData();
+                                ChemicalNode.syncPCIDData();
+                            }
+                            //C3ProductTempNode.postChanges( false );
+                        } );
 
                     // Get or create a vendor node
                     C3CreateMaterialResponse.State.Supplier Supplier = C3Import.createVendorNode( C3ProductDetails.SupplierName );
@@ -746,7 +745,7 @@ namespace ChemSW.Nbt.WebServices
                     CswNbtMetaDataNodeType SDSDocumentNT = SDSDocClass.FirstNodeType;
                     if( null != SDSDocumentNT )
                     {
-                        CswNbtObjClassDocument NewDoc = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( SDSDocumentNT.NodeTypeId, IsTemp: true, OnAfterMakeNode: delegate( CswNbtNode NewNode )
+                        CswNbtObjClassDocument NewDoc = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( SDSDocumentNT.NodeTypeId, OnAfterMakeNode: delegate( CswNbtNode NewNode )
                             {
                                 CswNbtObjClassDocument NewSDSDocumentNode = NewNode;
                                 NewSDSDocumentNode.Title.Text = "SDS: " + MaterialNode.TradeName.Text;
@@ -754,7 +753,7 @@ namespace ChemSW.Nbt.WebServices
                                 NewSDSDocumentNode.Link.Href = MsdsUrl;
                                 NewSDSDocumentNode.Link.Text = MsdsUrl;
                                 NewSDSDocumentNode.Owner.RelatedNodeId = MaterialNode.NodeId;
-                                NewSDSDocumentNode.IsTemp = false;
+                                //NewSDSDocumentNode.IsTemp = false;
                                 //NewSDSDocumentNode.postChanges( true );
                             } );
 
@@ -853,13 +852,14 @@ namespace ChemSW.Nbt.WebServices
                     for( int index = 0; index < _SizesToImport.Count; index++ )
                     {
                         CswC3Product.Size CurrentSize = _SizesToImport[index];
-                        CswNbtObjClassSize sizeNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( SizeNT.NodeTypeId, delegate(CswNbtNode NewNode) { 
-                                // Don't forget to send in the index so that the correct values get added to the NTPs
-                                addNodeTypeProps( NewNode, index );
-                                ((CswNbtObjClassSize) NewNode).Material.RelatedNodeId = MaterialNode.NodeId;
-                                //sizeNode.IsTemp = false;
-                                //sizeNode.postChanges( true );
-                        });
+                        CswNbtObjClassSize sizeNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( SizeNT.NodeTypeId, delegate( CswNbtNode NewNode )
+                        {
+                            // Don't forget to send in the index so that the correct values get added to the NTPs
+                            addNodeTypeProps( NewNode, index );
+                            ( (CswNbtObjClassSize) NewNode ).Material.RelatedNodeId = MaterialNode.NodeId;
+                            //sizeNode.IsTemp = false;
+                            //sizeNode.postChanges( true );
+                        } );
 
                         //Set the return object
                         C3CreateMaterialResponse.State.SizeRecord Size = new C3CreateMaterialResponse.State.SizeRecord();
