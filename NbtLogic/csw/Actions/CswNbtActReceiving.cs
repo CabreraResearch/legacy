@@ -51,24 +51,29 @@ namespace ChemSW.Nbt.Actions
         /// <summary>
         /// Instance a new container according to Object Class rules. Note: this does not get the properties.
         /// </summary>
-        public CswNbtObjClassContainer makeContainer( CswNbtMetaDataNodeType ContainerNt = null )
+        public CswNbtObjClassContainer makeContainer( CswNbtNodeCollection.AfterMakeNode After )
         {
-            CswNbtObjClassContainer RetAsContainer = null;
+            CswNbtObjClassContainer ret = null;
 
-            ContainerNt = ContainerNt ?? _ContainerOc.getLatestVersionNodeTypes().FirstOrDefault();
+            CswNbtMetaDataNodeType ContainerNt = _ContainerOc.getLatestVersionNodeTypes().FirstOrDefault();
             if( null != ContainerNt )
             {
-                RetAsContainer = _CswNbtSdTabsAndProps.getAddNode( ContainerNt );
-                if( null == RetAsContainer )
+                CswNbtNodeCollection.AfterMakeNode After2 = delegate( CswNbtNode NewNode )
+                    {
+                        CswNbtObjClassContainer RetAsContainer = NewNode;
+                        RetAsContainer.Material.RelatedNodeId = _MaterialId;
+                        RetAsContainer.Material.setHidden( value: true, SaveToDb: false );
+                        RetAsContainer.Size.setHidden( value: true, SaveToDb: false );
+                        After( NewNode );
+                    };
+                ret = _CswNbtSdTabsAndProps.getAddNode( ContainerNt, After2 );
+                if( null == ret )
                 {
                     throw new CswDniException( CswEnumErrorType.Error, "Could not create a new container.", "Failed to create a new Container node." );
                 }
-                RetAsContainer.Material.RelatedNodeId = _MaterialId;
-                RetAsContainer.Material.setHidden( value: true, SaveToDb: false );
-                RetAsContainer.Size.setHidden( value: true, SaveToDb: false );
             }
-            return RetAsContainer;
-        }
+            return ret;
+        } // makeContainer()
 
         /// <summary>
         /// Get the Add Layout properties for a container

@@ -296,20 +296,24 @@ namespace ChemSW.Nbt.ObjClasses
                             HasPermission = true;
                             CswNbtActReceiving Act = new CswNbtActReceiving( _CswNbtResources, ObjectClass, NodeId );
                             _CswNbtResources.setAuditActionContext( CswEnumNbtActionName.Receiving );
-                            CswNbtObjClassContainer Container = Act.makeContainer();
 
-                            //Case 29436
-                            if( Container.isLocationInAccessibleInventoryGroup( _CswNbtResources.CurrentNbtUser.DefaultLocationId ) )
-                            {
-                                Container.Location.SelectedNodeId = _CswNbtResources.CurrentNbtUser.DefaultLocationId;
-                            }
-                            Container.Owner.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
-                            DateTime ExpirationDate = getDefaultExpirationDate( DateTime.Now );
-                            if( DateTime.MinValue != ExpirationDate )
-                            {
-                                Container.ExpirationDate.DateTimeValue = ExpirationDate;
-                            }
-                            Container.postChanges( false );
+                            CswNbtNodeCollection.AfterMakeNode After = delegate( CswNbtNode NewNode )
+                                {
+                                    CswNbtObjClassContainer newContainer = NewNode;
+                                    //Case 29436
+                                    if( newContainer.isLocationInAccessibleInventoryGroup( _CswNbtResources.CurrentNbtUser.DefaultLocationId ) )
+                                    {
+                                        newContainer.Location.SelectedNodeId = _CswNbtResources.CurrentNbtUser.DefaultLocationId;
+                                    }
+                                    newContainer.Owner.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
+                                    DateTime ExpirationDate = getDefaultExpirationDate( DateTime.Now );
+                                    if( DateTime.MinValue != ExpirationDate )
+                                    {
+                                        newContainer.ExpirationDate.DateTimeValue = ExpirationDate;
+                                    }
+                                    //Container.postChanges( false );
+                                };
+                            CswNbtObjClassContainer Container = Act.makeContainer( After );
 
                             ButtonData.Data["state"] = new JObject();
                             ButtonData.Data["state"]["materialId"] = NodeId.ToString();
