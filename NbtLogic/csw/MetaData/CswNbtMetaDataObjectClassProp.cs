@@ -309,10 +309,12 @@ namespace ChemSW.Nbt.MetaData
             {
                 if( FilterProp != null )
                 {
-                    CswNbtMetaDataNodeTypeProp FilterPropNodeTypeProp = FilterProp.getNodeTypeProps().FirstOrDefault();
-                    if( null != FilterPropNodeTypeProp )
+                    foreach( CswNbtMetaDataNodeTypeProp FilterPropNodeTypeProp in FilterProp.getNodeTypeProps() )
                     {
-                        NodeTypeProp.setFilter( FilterPropNodeTypeProp, FilterString );
+                        if( FilterPropNodeTypeProp.NodeTypeId == NodeTypeProp.NodeTypeId )
+                        {
+                            NodeTypeProp.setFilter( FilterPropNodeTypeProp, FilterString );
+                        }
                     }
                 }
             }
