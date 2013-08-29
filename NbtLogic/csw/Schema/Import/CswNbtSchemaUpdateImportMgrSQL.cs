@@ -1,4 +1,6 @@
 ﻿
+using System.IO;
+using System.Windows.Forms;
 using ChemSW.Nbt.Sched;
 
 namespace ChemSW.Nbt.csw.Schema
@@ -26,35 +28,58 @@ namespace ChemSW.Nbt.csw.Schema
             SchemaModTrnsctn.execArbitraryPlatformNeutralSql( SqlText );
         }
 
-        private string TriggerName { get { return ( "TRG_IMPRT_" + _SourceTableName ).Substring( 0, 30 ); } }
+        private string TriggerName
+        {
+            get
+            {
+                string Ret = "TRG_IMPRT_" + _SourceTableName;
+                if( Ret.Length > 30 )
+                {
+                    Ret = Ret.Substring( 0, 30 );
+                }
+                return Ret;
+            }
+        }
+
         private void _createTriggerOnImportTable()
         {
 
+#if DEBUG
+
             _SourceColumns.Add( "deleted", IsUnique: true );
             string ColumnNames = _SourceColumns.ToString();
-            string Trigger = @"CREATE OR REPLACE TRIGGER " + TriggerName +
-                             @"AFTER INSERT OR DELETE OR UPDATE OF " + ColumnNames + " ON " + SourceTable +
+            string Trigger = @"CREATE OR REPLACE TRIGGER " + TriggerName + " " +
+                             @"AFTER INSERT OR DELETE OR UPDATE OF " + ColumnNames + " ON " + SourceTable + " " +
                              @"FOR EACH ROW 
                                 BEGIN
   
                                 IF INSERTING THEN
-                                    INSERT INTO nbtimportqueue VALUES (seq_nbtimportqueueid.NEXTVAL, 'I', :new." + SourceTablePkColumnName + ", '" + SourceTable + "', '', '');" +
+                                    INSERT INTO nbtimportqueue VALUES (seq_nbtimportqueueid.NEXTVAL, 'I', :new." + SourceTablePkColumnName + ", '" + SourceTable + "', '', '');" + " " +
     
                              @" ELSIF DELETING THEN
-                                    INSERT INTO nbtimportqueue VALUES (seq_nbtimportqueueid.NEXTVAL, 'D', :old." + SourceTablePkColumnName + ", '" + SourceTable + "', '', '');" +
+                                    INSERT INTO nbtimportqueue VALUES (seq_nbtimportqueueid.NEXTVAL, 'D', :old." + SourceTablePkColumnName + ", '" + SourceTable + "', '', '');" + " " +
   
                              @" ELSE
                                     IF :old.deleted = '0' THEN
-                                        INSERT INTO nbtimportqueue VALUES (seq_nbtimportqueueid.NEXTVAL, 'D', :old." + SourceTablePkColumnName + ", '" + SourceTable + "', '', '');" +
+                                        INSERT INTO nbtimportqueue VALUES (seq_nbtimportqueueid.NEXTVAL, 'D', :old." + SourceTablePkColumnName + ", '" + SourceTable + "', '', '');" + " " +
                              @"     ELSE
-                                        INSERT INTO nbtimportqueue VALUES (seq_nbtimportqueueid.NEXTVAL, 'U', :old." + SourceTablePkColumnName + ", '" + SourceTable + "', '', '');" +
+                                        INSERT INTO nbtimportqueue VALUES (seq_nbtimportqueueid.NEXTVAL, 'U', :old." + SourceTablePkColumnName + ", '" + SourceTable + "', '', '');" + " " +
                              @"     END IF
     
                                 END IF;
   
                                 END;";
 
-            SchemaModTrnsctn.execArbitraryPlatformNeutralSql( Trigger );
+            //string Ddl = "execDdl@" + _CAFDbLink + "(" + Trigger + ")";
+            //SchemaModTrnsctn.execStoredProc( "execDdl@" + _CAFDbLink, new List<CswStoredProcParam>() {new CswStoredProcParam( "ddlOp", Trigger, CswEnumDataDictionaryPortableDataType.String )} );
+
+            using( StreamWriter TriggerStream = new StreamWriter( Application.StartupPath + "..\\..\\..\\..\\Scripts\\cafsql\\" + TriggerName + ".sql" ) )
+            {
+                TriggerStream.Write( Trigger );
+            }
+
+#endif
+
         }
 
 
