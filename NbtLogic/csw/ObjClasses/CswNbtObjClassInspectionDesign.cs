@@ -245,7 +245,8 @@ namespace ChemSW.Nbt.ObjClasses
                 Status.Value == CswEnumNbtInspectionStatus.ActionRequired ||
                 Status.Value == CswEnumNbtInspectionStatus.Pending )
             {
-                bool IsVisible = Status.Value == CswEnumNbtInspectionStatus.Pending && false == _InspectionState.AllAnswered;
+                bool IsVisible = ( Status.Value == CswEnumNbtInspectionStatus.Pending || Status.Value == CswEnumNbtInspectionStatus.Overdue ) 
+                    && false == _InspectionState.AllAnswered;
                 _toggleButtonVisibility( SetPreferred, IsVisible, SaveToDb: true );
             }
             //// case 26584, 28155
@@ -476,14 +477,13 @@ namespace ChemSW.Nbt.ObjClasses
                     _toggleButtonVisibility( Cancel, IsVisible: false, SaveToDb: true );
                     Node.setReadOnly( value: true, SaveToDb: true );
                     break;
-
-                case CswEnumNbtInspectionStatus.Overdue:
                 case CswEnumNbtInspectionStatus.ActionRequired:
                     _toggleButtonVisibility( Finish, IsVisible: true, SaveToDb: true );
                     _toggleButtonVisibility( SetPreferred, IsVisible: false, SaveToDb: true ); 
                     _toggleButtonVisibility( Cancel, IsVisible: true, SaveToDb: true );
                     Node.setReadOnly( value: false, SaveToDb: true );
                     break;
+                case CswEnumNbtInspectionStatus.Overdue:
                 case CswEnumNbtInspectionStatus.Pending:
                     _toggleButtonVisibility( Finish, IsVisible: true, SaveToDb: true );
                     _toggleButtonVisibility( SetPreferred, IsVisible: true, SaveToDb: true );

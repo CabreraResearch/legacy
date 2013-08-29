@@ -343,6 +343,9 @@
 
             var actionName = Csw.string(o.actionname).replace(/_/g, ' ').trim().toLowerCase();
             actionName = actionName || 'default';
+            if (!actionHandler[actionName]) {
+                actionName = 'default';
+            }
             return actionHandler[actionName](o);
         });
 
