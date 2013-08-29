@@ -108,13 +108,13 @@ namespace ChemSW.Nbt.ChemCatCentral {
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(string[]))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(ChemSW.Nbt.ChemCatCentral.SampleFaultException))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(ChemSW.Nbt.ChemCatCentral.FaultCode))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ChemSW.WebSvc.CswWebSvcSessionAuthenticateData.Authentication.Response))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ChemSW.WebSvc.CswWebSvcSessionAuthenticateData.Authentication.Response.Expired))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ChemSW.WebSvc.CswWebSvcReturnBase.Logging))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ChemSW.WebSvc.CswWebSvcReturnBase.Performance))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ChemSW.WebSvc.CswWebSvcReturnBase.Status))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ChemSW.WebSvc.CswWebSvcReturnBase.ErrorMessage[]))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ChemSW.WebSvc.CswWebSvcReturnBase.ErrorMessage))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ChemSW.Nbt.ChemCatCentral.CswWebSvcSessionAuthenticateDataAuthenticationResponse))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ChemSW.Nbt.ChemCatCentral.CswWebSvcSessionAuthenticateDataAuthenticationResponse.Expired))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ChemSW.Nbt.ChemCatCentral.CswWebSvcReturnBaseLogging))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ChemSW.Nbt.ChemCatCentral.CswWebSvcReturnBasePerformance))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ChemSW.Nbt.ChemCatCentral.CswWebSvcReturnBaseStatus))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ChemSW.Nbt.ChemCatCentral.CswWebSvcReturnBaseErrorMessage[]))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ChemSW.Nbt.ChemCatCentral.CswWebSvcReturnBaseErrorMessage))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(ChemSW.Nbt.ChemCatCentral.CswC3LoliData[]))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(ChemSW.Nbt.ChemCatCentral.CswC3LoliData))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(ChemSW.Nbt.ChemCatCentral.CswRetObjSearchResults))]
@@ -127,6 +127,11 @@ namespace ChemSW.Nbt.ChemCatCentral {
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(ChemSW.Nbt.ChemCatCentral.CswC3ExtChemData[]))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(ChemSW.Nbt.ChemCatCentral.CswC3ExtChemData))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(ChemSW.Nbt.ChemCatCentral.CswC3ExtChemData.ExtensionDataClass))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ChemSW.Nbt.ChemCatCentral.CswC3ExtChemData.FireDB))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ChemSW.Nbt.ChemCatCentral.CswC3ExtChemData.FireDB.HazardCategoryClass[]))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ChemSW.Nbt.ChemCatCentral.CswC3ExtChemData.FireDB.HazardCategoryClass))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ChemSW.Nbt.ChemCatCentral.CswC3ExtChemData.FireDB.UfcHazardClass[]))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ChemSW.Nbt.ChemCatCentral.CswC3ExtChemData.FireDB.UfcHazardClass))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(ChemSW.Nbt.ChemCatCentral.CswC3ExtChemData.PCID))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(ChemSW.Nbt.ChemCatCentral.CswC3ExtChemData.PCID.AdditionalProperty[]))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(ChemSW.Nbt.ChemCatCentral.CswC3ExtChemData.PCID.AdditionalProperty))]
@@ -135,8 +140,6 @@ namespace ChemSW.Nbt.ChemCatCentral {
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(ChemSW.Nbt.ChemCatCentral.CswC3ExtChemData.PCID.PPEClass))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(ChemSW.Nbt.ChemCatCentral.CswC3ExtChemData.PCID.RegulatoryList[]))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(ChemSW.Nbt.ChemCatCentral.CswC3ExtChemData.PCID.RegulatoryList))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ChemSW.Nbt.ChemCatCentral.CswC3ExtChemData.UfcHazardClass[]))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ChemSW.Nbt.ChemCatCentral.CswC3ExtChemData.UfcHazardClass))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(ChemSW.Nbt.ChemCatCentral.CswC3QAResponseImportSet[]))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(ChemSW.Nbt.ChemCatCentral.CswC3QAResponseImportSet))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(ChemSW.Nbt.ChemCatCentral.CswC3AdminResponseC3User[]))]
@@ -362,6 +365,563 @@ namespace ChemSW.Nbt.ChemCatCentral {
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="CswWebSvcSessionAuthenticateData.Authentication.Response", Namespace="http://schemas.datacontract.org/2004/07/ChemSW.WebSvc")]
+    [System.SerializableAttribute()]
+    public partial class CswWebSvcSessionAuthenticateDataAuthenticationResponse : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
+        
+        [System.NonSerializedAttribute()]
+        private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string AuthenticationStatusField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private ChemSW.Nbt.ChemCatCentral.CswWebSvcSessionAuthenticateDataAuthenticationResponse.Expired ExpirationResetField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string TimeOutField;
+        
+        [global::System.ComponentModel.BrowsableAttribute(false)]
+        public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
+            get {
+                return this.extensionDataField;
+            }
+            set {
+                this.extensionDataField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string AuthenticationStatus {
+            get {
+                return this.AuthenticationStatusField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.AuthenticationStatusField, value) != true)) {
+                    this.AuthenticationStatusField = value;
+                    this.RaisePropertyChanged("AuthenticationStatus");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ChemSW.Nbt.ChemCatCentral.CswWebSvcSessionAuthenticateDataAuthenticationResponse.Expired ExpirationReset {
+            get {
+                return this.ExpirationResetField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.ExpirationResetField, value) != true)) {
+                    this.ExpirationResetField = value;
+                    this.RaisePropertyChanged("ExpirationReset");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string TimeOut {
+            get {
+                return this.TimeOutField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.TimeOutField, value) != true)) {
+                    this.TimeOutField = value;
+                    this.RaisePropertyChanged("TimeOut");
+                }
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+        
+        [System.Diagnostics.DebuggerStepThroughAttribute()]
+        [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+        [System.Runtime.Serialization.DataContractAttribute(Name="CswWebSvcSessionAuthenticateData.Authentication.Response.Expired", Namespace="http://schemas.datacontract.org/2004/07/ChemSW.WebSvc")]
+        [System.SerializableAttribute()]
+        public partial class Expired : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
+            
+            [System.NonSerializedAttribute()]
+            private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
+            
+            [System.Runtime.Serialization.OptionalFieldAttribute()]
+            private string NewPasswordField;
+            
+            [System.Runtime.Serialization.OptionalFieldAttribute()]
+            private string PasswordIdField;
+            
+            [System.Runtime.Serialization.OptionalFieldAttribute()]
+            private string UserIdField;
+            
+            [System.Runtime.Serialization.OptionalFieldAttribute()]
+            private string UserKeyField;
+            
+            public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
+                get {
+                    return this.extensionDataField;
+                }
+                set {
+                    this.extensionDataField = value;
+                }
+            }
+            
+            [System.Runtime.Serialization.DataMemberAttribute()]
+            public string NewPassword {
+                get {
+                    return this.NewPasswordField;
+                }
+                set {
+                    if ((object.ReferenceEquals(this.NewPasswordField, value) != true)) {
+                        this.NewPasswordField = value;
+                        this.RaisePropertyChanged("NewPassword");
+                    }
+                }
+            }
+            
+            [System.Runtime.Serialization.DataMemberAttribute()]
+            public string PasswordId {
+                get {
+                    return this.PasswordIdField;
+                }
+                set {
+                    if ((object.ReferenceEquals(this.PasswordIdField, value) != true)) {
+                        this.PasswordIdField = value;
+                        this.RaisePropertyChanged("PasswordId");
+                    }
+                }
+            }
+            
+            [System.Runtime.Serialization.DataMemberAttribute()]
+            public string UserId {
+                get {
+                    return this.UserIdField;
+                }
+                set {
+                    if ((object.ReferenceEquals(this.UserIdField, value) != true)) {
+                        this.UserIdField = value;
+                        this.RaisePropertyChanged("UserId");
+                    }
+                }
+            }
+            
+            [System.Runtime.Serialization.DataMemberAttribute()]
+            public string UserKey {
+                get {
+                    return this.UserKeyField;
+                }
+                set {
+                    if ((object.ReferenceEquals(this.UserKeyField, value) != true)) {
+                        this.UserKeyField = value;
+                        this.RaisePropertyChanged("UserKey");
+                    }
+                }
+            }
+            
+            public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+            
+            protected void RaisePropertyChanged(string propertyName) {
+                System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+                if ((propertyChanged != null)) {
+                    propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+                }
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="CswWebSvcReturnBase.Logging", Namespace="http://schemas.datacontract.org/2004/07/ChemSW.WebSvc")]
+    [System.SerializableAttribute()]
+    public partial class CswWebSvcReturnBaseLogging : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
+        
+        [System.NonSerializedAttribute()]
+        private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string CustomerIdField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string LogLevelField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string LogglyInputField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string ServerField;
+        
+        [global::System.ComponentModel.BrowsableAttribute(false)]
+        public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
+            get {
+                return this.extensionDataField;
+            }
+            set {
+                this.extensionDataField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string CustomerId {
+            get {
+                return this.CustomerIdField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.CustomerIdField, value) != true)) {
+                    this.CustomerIdField = value;
+                    this.RaisePropertyChanged("CustomerId");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string LogLevel {
+            get {
+                return this.LogLevelField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.LogLevelField, value) != true)) {
+                    this.LogLevelField = value;
+                    this.RaisePropertyChanged("LogLevel");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string LogglyInput {
+            get {
+                return this.LogglyInputField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.LogglyInputField, value) != true)) {
+                    this.LogglyInputField = value;
+                    this.RaisePropertyChanged("LogglyInput");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string Server {
+            get {
+                return this.ServerField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.ServerField, value) != true)) {
+                    this.ServerField = value;
+                    this.RaisePropertyChanged("Server");
+                }
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="CswWebSvcReturnBase.Performance", Namespace="http://schemas.datacontract.org/2004/07/ChemSW.WebSvc")]
+    [System.SerializableAttribute()]
+    public partial class CswWebSvcReturnBasePerformance : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
+        
+        [System.NonSerializedAttribute()]
+        private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private double DbCommitField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private double DbDeinitField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private double DbInitField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private double DbQueryField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private double ServerInitField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private double ServerTotalField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private double TreeLoaderSqlField;
+        
+        [global::System.ComponentModel.BrowsableAttribute(false)]
+        public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
+            get {
+                return this.extensionDataField;
+            }
+            set {
+                this.extensionDataField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public double DbCommit {
+            get {
+                return this.DbCommitField;
+            }
+            set {
+                if ((this.DbCommitField.Equals(value) != true)) {
+                    this.DbCommitField = value;
+                    this.RaisePropertyChanged("DbCommit");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public double DbDeinit {
+            get {
+                return this.DbDeinitField;
+            }
+            set {
+                if ((this.DbDeinitField.Equals(value) != true)) {
+                    this.DbDeinitField = value;
+                    this.RaisePropertyChanged("DbDeinit");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public double DbInit {
+            get {
+                return this.DbInitField;
+            }
+            set {
+                if ((this.DbInitField.Equals(value) != true)) {
+                    this.DbInitField = value;
+                    this.RaisePropertyChanged("DbInit");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public double DbQuery {
+            get {
+                return this.DbQueryField;
+            }
+            set {
+                if ((this.DbQueryField.Equals(value) != true)) {
+                    this.DbQueryField = value;
+                    this.RaisePropertyChanged("DbQuery");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public double ServerInit {
+            get {
+                return this.ServerInitField;
+            }
+            set {
+                if ((this.ServerInitField.Equals(value) != true)) {
+                    this.ServerInitField = value;
+                    this.RaisePropertyChanged("ServerInit");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public double ServerTotal {
+            get {
+                return this.ServerTotalField;
+            }
+            set {
+                if ((this.ServerTotalField.Equals(value) != true)) {
+                    this.ServerTotalField = value;
+                    this.RaisePropertyChanged("ServerTotal");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public double TreeLoaderSql {
+            get {
+                return this.TreeLoaderSqlField;
+            }
+            set {
+                if ((this.TreeLoaderSqlField.Equals(value) != true)) {
+                    this.TreeLoaderSqlField = value;
+                    this.RaisePropertyChanged("TreeLoaderSql");
+                }
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="CswWebSvcReturnBase.Status", Namespace="http://schemas.datacontract.org/2004/07/ChemSW.WebSvc")]
+    [System.SerializableAttribute()]
+    public partial class CswWebSvcReturnBaseStatus : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
+        
+        [System.NonSerializedAttribute()]
+        private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private ChemSW.Nbt.ChemCatCentral.CswWebSvcReturnBaseErrorMessage[] ErrorsField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private bool SuccessField;
+        
+        [global::System.ComponentModel.BrowsableAttribute(false)]
+        public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
+            get {
+                return this.extensionDataField;
+            }
+            set {
+                this.extensionDataField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ChemSW.Nbt.ChemCatCentral.CswWebSvcReturnBaseErrorMessage[] Errors {
+            get {
+                return this.ErrorsField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.ErrorsField, value) != true)) {
+                    this.ErrorsField = value;
+                    this.RaisePropertyChanged("Errors");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public bool Success {
+            get {
+                return this.SuccessField;
+            }
+            set {
+                if ((this.SuccessField.Equals(value) != true)) {
+                    this.SuccessField = value;
+                    this.RaisePropertyChanged("Success");
+                }
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="CswWebSvcReturnBase.ErrorMessage", Namespace="http://schemas.datacontract.org/2004/07/ChemSW.WebSvc")]
+    [System.SerializableAttribute()]
+    public partial class CswWebSvcReturnBaseErrorMessage : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
+        
+        [System.NonSerializedAttribute()]
+        private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string DetailField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string MessageField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private bool ShowErrorField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string TypeField;
+        
+        [global::System.ComponentModel.BrowsableAttribute(false)]
+        public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
+            get {
+                return this.extensionDataField;
+            }
+            set {
+                this.extensionDataField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string Detail {
+            get {
+                return this.DetailField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.DetailField, value) != true)) {
+                    this.DetailField = value;
+                    this.RaisePropertyChanged("Detail");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string Message {
+            get {
+                return this.MessageField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.MessageField, value) != true)) {
+                    this.MessageField = value;
+                    this.RaisePropertyChanged("Message");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public bool ShowError {
+            get {
+                return this.ShowErrorField;
+            }
+            set {
+                if ((this.ShowErrorField.Equals(value) != true)) {
+                    this.ShowErrorField = value;
+                    this.RaisePropertyChanged("ShowError");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string Type {
+            get {
+                return this.TypeField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.TypeField, value) != true)) {
+                    this.TypeField = value;
+                    this.RaisePropertyChanged("Type");
+                }
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
     [System.Runtime.Serialization.DataContractAttribute(Name="CswC3LoliData", Namespace="http://schemas.datacontract.org/2004/07/c3WebServii.Csw.Core")]
     [System.SerializableAttribute()]
     public partial class CswC3LoliData : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
@@ -482,7 +1042,7 @@ namespace ChemSW.Nbt.ChemCatCentral {
         private bool AuthenticatedField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private ChemSW.WebSvc.CswWebSvcSessionAuthenticateData.Authentication.Response AuthenticationField;
+        private ChemSW.Nbt.ChemCatCentral.CswWebSvcSessionAuthenticateDataAuthenticationResponse AuthenticationField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
         private string[] AvailableDataSourcesField;
@@ -509,7 +1069,7 @@ namespace ChemSW.Nbt.ChemCatCentral {
         private string LastLOLIImportDateField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private ChemSW.WebSvc.CswWebSvcReturnBase.Logging LoggingField;
+        private ChemSW.Nbt.ChemCatCentral.CswWebSvcReturnBaseLogging LoggingField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
         private ChemSW.Nbt.ChemCatCentral.CswC3LoliData[] LoliDataResultsField;
@@ -518,7 +1078,7 @@ namespace ChemSW.Nbt.ChemCatCentral {
         private string MessageField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private ChemSW.WebSvc.CswWebSvcReturnBase.Performance PerformanceField;
+        private ChemSW.Nbt.ChemCatCentral.CswWebSvcReturnBasePerformance PerformanceField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
         private string RoleField;
@@ -527,7 +1087,7 @@ namespace ChemSW.Nbt.ChemCatCentral {
         private string SearchResultLimitField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private ChemSW.WebSvc.CswWebSvcReturnBase.Status StatusField;
+        private ChemSW.Nbt.ChemCatCentral.CswWebSvcReturnBaseStatus StatusField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
         private ChemSW.Nbt.ChemCatCentral.CswC3AdminResponseC3User[] UsersField;
@@ -556,7 +1116,7 @@ namespace ChemSW.Nbt.ChemCatCentral {
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public ChemSW.WebSvc.CswWebSvcSessionAuthenticateData.Authentication.Response Authentication {
+        public ChemSW.Nbt.ChemCatCentral.CswWebSvcSessionAuthenticateDataAuthenticationResponse Authentication {
             get {
                 return this.AuthenticationField;
             }
@@ -673,7 +1233,7 @@ namespace ChemSW.Nbt.ChemCatCentral {
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public ChemSW.WebSvc.CswWebSvcReturnBase.Logging Logging {
+        public ChemSW.Nbt.ChemCatCentral.CswWebSvcReturnBaseLogging Logging {
             get {
                 return this.LoggingField;
             }
@@ -712,7 +1272,7 @@ namespace ChemSW.Nbt.ChemCatCentral {
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public ChemSW.WebSvc.CswWebSvcReturnBase.Performance Performance {
+        public ChemSW.Nbt.ChemCatCentral.CswWebSvcReturnBasePerformance Performance {
             get {
                 return this.PerformanceField;
             }
@@ -751,7 +1311,7 @@ namespace ChemSW.Nbt.ChemCatCentral {
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public ChemSW.WebSvc.CswWebSvcReturnBase.Status Status {
+        public ChemSW.Nbt.ChemCatCentral.CswWebSvcReturnBaseStatus Status {
             get {
                 return this.StatusField;
             }
@@ -1453,10 +2013,10 @@ namespace ChemSW.Nbt.ChemCatCentral {
             private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
             
             [System.Runtime.Serialization.OptionalFieldAttribute()]
-            private ChemSW.Nbt.ChemCatCentral.CswC3ExtChemData.PCID PcidDataField;
+            private ChemSW.Nbt.ChemCatCentral.CswC3ExtChemData.FireDB FireDbDataField;
             
             [System.Runtime.Serialization.OptionalFieldAttribute()]
-            private ChemSW.Nbt.ChemCatCentral.CswC3ExtChemData.UfcHazardClass[] UfcHazardClassesField;
+            private ChemSW.Nbt.ChemCatCentral.CswC3ExtChemData.PCID PcidDataField;
             
             public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
                 get {
@@ -1464,6 +2024,19 @@ namespace ChemSW.Nbt.ChemCatCentral {
                 }
                 set {
                     this.extensionDataField = value;
+                }
+            }
+            
+            [System.Runtime.Serialization.DataMemberAttribute()]
+            public ChemSW.Nbt.ChemCatCentral.CswC3ExtChemData.FireDB FireDbData {
+                get {
+                    return this.FireDbDataField;
+                }
+                set {
+                    if ((object.ReferenceEquals(this.FireDbDataField, value) != true)) {
+                        this.FireDbDataField = value;
+                        this.RaisePropertyChanged("FireDbData");
+                    }
                 }
             }
             
@@ -1480,8 +2053,87 @@ namespace ChemSW.Nbt.ChemCatCentral {
                 }
             }
             
+            public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+            
+            protected void RaisePropertyChanged(string propertyName) {
+                System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+                if ((propertyChanged != null)) {
+                    propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+                }
+            }
+        }
+        
+        [System.Diagnostics.DebuggerStepThroughAttribute()]
+        [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+        [System.Runtime.Serialization.DataContractAttribute(Name="CswC3ExtChemData.FireDB", Namespace="http://schemas.datacontract.org/2004/07/c3WebServii.WebServices")]
+        [System.SerializableAttribute()]
+        public partial class FireDB : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
+            
+            [System.NonSerializedAttribute()]
+            private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
+            
+            [System.Runtime.Serialization.OptionalFieldAttribute()]
+            private string EhsListField;
+            
+            [System.Runtime.Serialization.OptionalFieldAttribute()]
+            private ChemSW.Nbt.ChemCatCentral.CswC3ExtChemData.FireDB.HazardCategoryClass[] HazardCategoriesField;
+            
+            [System.Runtime.Serialization.OptionalFieldAttribute()]
+            private string MaterialTypeField;
+            
+            [System.Runtime.Serialization.OptionalFieldAttribute()]
+            private ChemSW.Nbt.ChemCatCentral.CswC3ExtChemData.FireDB.UfcHazardClass[] UfcHazardClassesField;
+            
+            public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
+                get {
+                    return this.extensionDataField;
+                }
+                set {
+                    this.extensionDataField = value;
+                }
+            }
+            
             [System.Runtime.Serialization.DataMemberAttribute()]
-            public ChemSW.Nbt.ChemCatCentral.CswC3ExtChemData.UfcHazardClass[] UfcHazardClasses {
+            public string EhsList {
+                get {
+                    return this.EhsListField;
+                }
+                set {
+                    if ((object.ReferenceEquals(this.EhsListField, value) != true)) {
+                        this.EhsListField = value;
+                        this.RaisePropertyChanged("EhsList");
+                    }
+                }
+            }
+            
+            [System.Runtime.Serialization.DataMemberAttribute()]
+            public ChemSW.Nbt.ChemCatCentral.CswC3ExtChemData.FireDB.HazardCategoryClass[] HazardCategories {
+                get {
+                    return this.HazardCategoriesField;
+                }
+                set {
+                    if ((object.ReferenceEquals(this.HazardCategoriesField, value) != true)) {
+                        this.HazardCategoriesField = value;
+                        this.RaisePropertyChanged("HazardCategories");
+                    }
+                }
+            }
+            
+            [System.Runtime.Serialization.DataMemberAttribute()]
+            public string MaterialType {
+                get {
+                    return this.MaterialTypeField;
+                }
+                set {
+                    if ((object.ReferenceEquals(this.MaterialTypeField, value) != true)) {
+                        this.MaterialTypeField = value;
+                        this.RaisePropertyChanged("MaterialType");
+                    }
+                }
+            }
+            
+            [System.Runtime.Serialization.DataMemberAttribute()]
+            public ChemSW.Nbt.ChemCatCentral.CswC3ExtChemData.FireDB.UfcHazardClass[] UfcHazardClasses {
                 get {
                     return this.UfcHazardClassesField;
                 }
@@ -1499,6 +2151,94 @@ namespace ChemSW.Nbt.ChemCatCentral {
                 System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
                 if ((propertyChanged != null)) {
                     propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+                }
+            }
+            
+            [System.Diagnostics.DebuggerStepThroughAttribute()]
+            [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+            [System.Runtime.Serialization.DataContractAttribute(Name="CswC3ExtChemData.FireDB.HazardCategoryClass", Namespace="http://schemas.datacontract.org/2004/07/c3WebServii.WebServices")]
+            [System.SerializableAttribute()]
+            public partial class HazardCategoryClass : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
+                
+                [System.NonSerializedAttribute()]
+                private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
+                
+                [System.Runtime.Serialization.OptionalFieldAttribute()]
+                private string HazardCategoryField;
+                
+                public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
+                    get {
+                        return this.extensionDataField;
+                    }
+                    set {
+                        this.extensionDataField = value;
+                    }
+                }
+                
+                [System.Runtime.Serialization.DataMemberAttribute()]
+                public string HazardCategory {
+                    get {
+                        return this.HazardCategoryField;
+                    }
+                    set {
+                        if ((object.ReferenceEquals(this.HazardCategoryField, value) != true)) {
+                            this.HazardCategoryField = value;
+                            this.RaisePropertyChanged("HazardCategory");
+                        }
+                    }
+                }
+                
+                public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+                
+                protected void RaisePropertyChanged(string propertyName) {
+                    System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+                    if ((propertyChanged != null)) {
+                        propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+                    }
+                }
+            }
+            
+            [System.Diagnostics.DebuggerStepThroughAttribute()]
+            [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+            [System.Runtime.Serialization.DataContractAttribute(Name="CswC3ExtChemData.FireDB.UfcHazardClass", Namespace="http://schemas.datacontract.org/2004/07/c3WebServii.WebServices")]
+            [System.SerializableAttribute()]
+            public partial class UfcHazardClass : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
+                
+                [System.NonSerializedAttribute()]
+                private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
+                
+                [System.Runtime.Serialization.OptionalFieldAttribute()]
+                private string HazardClassField;
+                
+                public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
+                    get {
+                        return this.extensionDataField;
+                    }
+                    set {
+                        this.extensionDataField = value;
+                    }
+                }
+                
+                [System.Runtime.Serialization.DataMemberAttribute()]
+                public string HazardClass {
+                    get {
+                        return this.HazardClassField;
+                    }
+                    set {
+                        if ((object.ReferenceEquals(this.HazardClassField, value) != true)) {
+                            this.HazardClassField = value;
+                            this.RaisePropertyChanged("HazardClass");
+                        }
+                    }
+                }
+                
+                public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+                
+                protected void RaisePropertyChanged(string propertyName) {
+                    System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+                    if ((propertyChanged != null)) {
+                        propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+                    }
                 }
             }
         }
@@ -1863,50 +2603,6 @@ namespace ChemSW.Nbt.ChemCatCentral {
                     if ((propertyChanged != null)) {
                         propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
                     }
-                }
-            }
-        }
-        
-        [System.Diagnostics.DebuggerStepThroughAttribute()]
-        [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-        [System.Runtime.Serialization.DataContractAttribute(Name="CswC3ExtChemData.UfcHazardClass", Namespace="http://schemas.datacontract.org/2004/07/c3WebServii.WebServices")]
-        [System.SerializableAttribute()]
-        public partial class UfcHazardClass : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
-            
-            [System.NonSerializedAttribute()]
-            private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
-            
-            [System.Runtime.Serialization.OptionalFieldAttribute()]
-            private string HazardClassField;
-            
-            public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
-                get {
-                    return this.extensionDataField;
-                }
-                set {
-                    this.extensionDataField = value;
-                }
-            }
-            
-            [System.Runtime.Serialization.DataMemberAttribute()]
-            public string HazardClass {
-                get {
-                    return this.HazardClassField;
-                }
-                set {
-                    if ((object.ReferenceEquals(this.HazardClassField, value) != true)) {
-                        this.HazardClassField = value;
-                        this.RaisePropertyChanged("HazardClass");
-                    }
-                }
-            }
-            
-            public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
-            
-            protected void RaisePropertyChanged(string propertyName) {
-                System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
-                if ((propertyChanged != null)) {
-                    propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
                 }
             }
         }

@@ -22,7 +22,7 @@ namespace ChemSW.Nbt.Schema
         public override void update()
         {
             {
-                CswNbtSchemaUpdateImportMgr RoleImpMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, 1, "roles", "Role" );
+                CswNbtSchemaUpdateImportMgr RoleImpMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "roles", "Role" );
 
                 RoleImpMgr.importBinding( "roledescription", CswNbtObjClassRole.PropertyName.Description, "" );
                 RoleImpMgr.importBinding( "rolename", CswNbtObjClassRole.PropertyName.Name, "" );
@@ -32,7 +32,7 @@ namespace ChemSW.Nbt.Schema
                 RoleImpMgr.finalize();
             }
             {
-                CswNbtSchemaUpdateImportMgr UserImpMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, 2, "users", "User" );
+                CswNbtSchemaUpdateImportMgr UserImpMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "users", "User" );
                 UserImpMgr.importBinding( "disabled", CswNbtObjClassUser.PropertyName.Archived, "" );
                 UserImpMgr.importBinding( "namefirst", CswNbtObjClassUser.PropertyName.FirstName, "" );
                 UserImpMgr.importBinding( "namelast", CswNbtObjClassUser.PropertyName.LastName, "" );
@@ -87,7 +87,7 @@ namespace ChemSW.Nbt.Schema
 
                 UserImpMgr.finalize( WhereClause: " issystemuser != '1' " );
             }
-            
+
 
         } // update()
 

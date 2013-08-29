@@ -24,7 +24,7 @@ namespace ChemSW.Nbt.Schema
         public override void update()
         {
             {
-                CswNbtSchemaUpdateImportMgr ImpMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, 1, "regulatory_lists", "Regulatory List" );
+                CswNbtSchemaUpdateImportMgr ImpMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "regulatory_lists", "Regulatory List" );
 
                 ImpMgr.importBinding( "displayname", CswNbtObjClassRegulatoryList.PropertyName.Name, "" );
                 ImpMgr.importBinding( "listmode", CswNbtObjClassRegulatoryList.PropertyName.ListMode, "" );
@@ -33,7 +33,7 @@ namespace ChemSW.Nbt.Schema
             }
 
             {
-                CswNbtSchemaUpdateImportMgr ImpMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, 1, "regulated_casnos", "Regulatory List CAS" );
+                CswNbtSchemaUpdateImportMgr ImpMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "regulated_casnos", "Regulatory List CAS" );
 
                 ImpMgr.importBinding( "casno", CswNbtObjClassRegulatoryListCasNo.PropertyName.CASNo, "" );
                 //TODO: Add reg list relationship
