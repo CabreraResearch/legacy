@@ -333,6 +333,8 @@
     <Compile Include="csw\Schema\scripts\prod\02E\CswUpdateSchema_02E_Case30440.cs" />
     <Compile Include="csw\Schema\scripts\prod\02E\CswUpdateSchema_02E_Case30445.cs" />
     <Compile Include="csw\Schema\scripts\prod\02E\CswUpdateSchema_02E_Case30300.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02F\CswUpdateSchema_02F_Case30043_InventoryGroups.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02F\CswUpdateSchema_02F_Case30043_WorkUnits.cs" />
     <Compile Include="csw\Schema\scripts\prod\02F\CswUpdateSchema_02F_Case30041_RegLists.cs" />
     <Compile Include="csw\Schema\scripts\prod\02F\CswUpdateSchema_02F_Case30041_UnitsOfMeasure.cs" />
     <Compile Include="csw\Schema\scripts\prod\02F\CswUpdateSchema_02F_Case30041_Vendors.cs" />
