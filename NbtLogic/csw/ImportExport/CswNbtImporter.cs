@@ -507,7 +507,7 @@ namespace ChemSW.Nbt.ImportExport
 
                 ImportedNodeId = Node.NodeId;
 
-                
+
                 // Simplify future imports by saving this nodeid on matching rows
                 if( UniqueBindings.Any() && null != ImportDataUpdate )
                 {
@@ -559,7 +559,7 @@ namespace ChemSW.Nbt.ImportExport
 
         private void _importPropertyValues( CswNbtImportDef BindingDef, IEnumerable<CswNbtImportDefBinding> NodeTypeBindings, IEnumerable<CswNbtImportDefRelationship> RowRelationships, DataRow ImportRow, CswNbtNode Node )
         {
-                    // Iterate each binding 
+            // Iterate each binding 
             foreach( CswNbtImportDefBinding Binding in NodeTypeBindings )
             {
                 // Special case for TimeInterval, specifically for IMCS imports
@@ -576,7 +576,7 @@ namespace ChemSW.Nbt.ImportExport
                     //Node.Properties[Binding.DestProperty].SetPropRowValue( CswEnumNbtPropColumn.ClobData, rateInterval.ToXmlString() );
                     Node.Properties[Binding.DestProperty].SyncGestalt();
                 }
-                        // NodeTypeSelect
+                // NodeTypeSelect
                 else if( Binding.DestProperty.getFieldTypeValue() == CswEnumNbtFieldType.NodeTypeSelect )
                 {
                     CswNbtMetaDataNodeType nt = _CswNbtResources.MetaData.getNodeType( ImportRow[Binding.ImportDataColumnName].ToString() );
@@ -593,51 +593,51 @@ namespace ChemSW.Nbt.ImportExport
                 else if( ( Binding.DestProperty.getFieldTypeValue() == CswEnumNbtFieldType.Quantity &&
                            Binding.DestSubfield.Column.ToString().ToLower() == "name" )
                          || Binding.DestProperty.getFieldTypeValue() == CswEnumNbtFieldType.Relationship )
+                {
+                    CswCommaDelimitedString inClause = new CswCommaDelimitedString();
+                    if( Binding.DestProperty.FKType == CswEnumNbtViewRelatedIdType.NodeTypeId.ToString() )
+                    {
+                        inClause.Add( Binding.DestProperty.FKValue.ToString() );
+                    }
+                    else if( Binding.DestProperty.FKType == CswEnumNbtViewRelatedIdType.ObjectClassId.ToString() )
+                    {
+                        CswNbtMetaDataObjectClass oc = _CswNbtResources.MetaData.getObjectClass( Binding.DestProperty.FKValue );
+                        foreach( CswNbtMetaDataNodeType nt in oc.getNodeTypes() )
                         {
-                            CswCommaDelimitedString inClause = new CswCommaDelimitedString();
-                            if( Binding.DestProperty.FKType == CswEnumNbtViewRelatedIdType.NodeTypeId.ToString() )
+                            inClause.Add( nt.NodeTypeId.ToString() );
+                        }
+                    }
+                    else if( Binding.DestProperty.FKType == CswEnumNbtViewRelatedIdType.PropertySetId.ToString() )
+                    {
+                        CswNbtMetaDataPropertySet ps = _CswNbtResources.MetaData.getPropertySet( Binding.DestProperty.FKValue );
+                        foreach( CswNbtMetaDataObjectClass oc in ps.getObjectClasses() )
+                        {
+                            foreach( CswNbtMetaDataNodeType nt in oc.getNodeTypes() )
                             {
-                                inClause.Add( Binding.DestProperty.FKValue.ToString() );
+                                inClause.Add( nt.NodeTypeId.ToString() );
                             }
-                            else if( Binding.DestProperty.FKType == CswEnumNbtViewRelatedIdType.ObjectClassId.ToString() )
-                            {
-                                CswNbtMetaDataObjectClass oc = _CswNbtResources.MetaData.getObjectClass( Binding.DestProperty.FKValue );
-                                foreach( CswNbtMetaDataNodeType nt in oc.getNodeTypes() )
-                                {
-                                    inClause.Add( nt.NodeTypeId.ToString() );
-                                }
-                            }
-                            else if( Binding.DestProperty.FKType == CswEnumNbtViewRelatedIdType.PropertySetId.ToString() )
-                            {
-                                CswNbtMetaDataPropertySet ps = _CswNbtResources.MetaData.getPropertySet( Binding.DestProperty.FKValue );
-                                foreach( CswNbtMetaDataObjectClass oc in ps.getObjectClasses() )
-                                {
-                                    foreach( CswNbtMetaDataNodeType nt in oc.getNodeTypes() )
-                                    {
-                                        inClause.Add( nt.NodeTypeId.ToString() );
-                                    }
-                                }
-                            }
+                        }
+                    }
 
-                            // First we use a view to search on the Legacy Id and if it returns no results then we search on the Name
-                            ICswNbtTree Tree = _relationshipSearchViaLegacyId( ImportRow, Binding );
-                            Int32 TreeCount = 0;
-                            if( null != Tree )
-                            {
-                                TreeCount = Tree.getChildNodeCount();
-                            }
+                    // First we use a view to search on the Legacy Id and if it returns no results then we search on the Name
+                    ICswNbtTree Tree = _relationshipSearchViaLegacyId( ImportRow, Binding );
+                    Int32 TreeCount = 0;
+                    if( null != Tree )
+                    {
+                        TreeCount = Tree.getChildNodeCount();
+                    }
 
-                            // It is possible that this could return more than 1?
-                            if( TreeCount > 0 )
-                            {
-                                Tree.goToNthChild( 0 );
-                                Node.Properties[Binding.DestProperty].AsRelationship.RelatedNodeId = Tree.getNodeIdForCurrentPosition();
-                                Node.Properties[Binding.DestProperty].SyncGestalt();
-                            }
-                            else
-                            {
-                                // Alternatively, we try to search based on the Name property
-                                _relationshipSearchViaName( Node, inClause, ImportRow, Binding );
+                    // It is possible that this could return more than 1?
+                    if( TreeCount > 0 )
+                    {
+                        Tree.goToNthChild( 0 );
+                        Node.Properties[Binding.DestProperty].AsRelationship.RelatedNodeId = Tree.getNodeIdForCurrentPosition();
+                        Node.Properties[Binding.DestProperty].SyncGestalt();
+                    }
+                    else
+                    {
+                        // Alternatively, we try to search based on the Name property
+                        _relationshipSearchViaName( Node, inClause, ImportRow, Binding );
                     }
                 }
                 else
@@ -646,8 +646,6 @@ namespace ChemSW.Nbt.ImportExport
                     Node.Properties[Binding.DestProperty].SyncGestalt();
                 }
             }
-
-                    #region CswNbtImportDefRelationship
 
             foreach( CswNbtImportDefRelationship RowRelationship in RowRelationships )
             {
