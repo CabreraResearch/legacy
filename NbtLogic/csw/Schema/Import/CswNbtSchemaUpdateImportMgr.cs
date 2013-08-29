@@ -60,6 +60,8 @@ namespace ChemSW.Nbt.csw.Schema
             DestNodeTypeName = DestNodeTypeName ?? _DestNodeTypeName;
             if( CswAll.AreStrings( SheetName, DestNodeTypeName, DestPropertyName, SourceColumnName ) )
             {
+                _SourceColumns.Add( SourceColumnName, AllowNullOrEmpty: false, IsUnique: true );
+                
                 DataRow row = _importBindingsTable.NewRow();
                 row["sheet"] = SheetName;
                 row["destnodetype"] = DestNodeTypeName;
@@ -83,6 +85,28 @@ namespace ChemSW.Nbt.csw.Schema
                 _importRelationshipsTable.Rows.Add( row );
             }
         } // _importRelationship()
+
+        /*
+         CREATE OR REPLACE TRIGGER TRIG_IMPORT_VENDORS 
+AFTER INSERT OR DELETE OR UPDATE OF ACCOUNTNO,CITY,CONTACTNAME,DELETED,EMAIL,FAX,PHONE,STATE,STREET1,STREET2,VENDORID,VENDORNAME,ZIP,COUNTRY ON VENDORS 
+FOR EACH ROW 
+BEGIN
+  
+  IF INSERTING THEN
+    INSERT INTO nbtimportqueue VALUES (seq_nbtimportqueueid.NEXTVAL, 'I', :new.vendorid, 'vendors', '', '');
+    
+  ELSIF DELETING THEN
+    INSERT INTO nbtimportqueue VALUES (seq_nbtimportqueueid.NEXTVAL, 'D', :old.vendorid, 'vendors', '', '');
+  
+  ELSE
+    INSERT INTO nbtimportqueue VALUES (seq_nbtimportqueueid.NEXTVAL, 'U', :old.vendorid, 'vendors', '', '');
+    
+  END IF;
+  
+END;
+         
+         
+         */
 
         public void finalize( string CafDbLink = null, string WhereClause = null )
         {
