@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using ChemSW.Core;
 using ChemSW.Nbt.ImportExport;
@@ -12,17 +13,37 @@ namespace ChemSW.Nbt.csw.Schema
         public CswNbtSchemaModTrnsctn SchemaModTrnsctn;
         public const string LegacyID = "Legacy ID";
 
+        private Dictionary<string, Int32> _Order = new Dictionary<string, int>
+            {
+                //{SourceTableName, ImportOrder}
+                {"cispro_controlzones", 1},
+                {"sites", 2},
+                {"locations", 3},
+                {"business_units", 4},
+                {"work_units", 5},
+                {"inventory_groups", 6},
+                {"units_of_measure", 7},
+                {"vendors", 8},
+                {"roles", 9},
+                {"users", 10},
+                {"regulatory_lists", 11},
+                {"regulated_casnos", 12}
+            };
+
+
         private DataTable _importOrderTable;
         private DataTable _importBindingsTable;
         private DataTable _importRelationshipsTable;
 
         private string _DestNodeTypeName;
         private string _SourceTableName;
+        private string _ViewName;
         private Int32 _ImportOrder;
 
         private CswCommaDelimitedString _SourceColumns;
 
-        public CswNbtSchemaUpdateImportMgr( CswNbtSchemaModTrnsctn SchemaModTrnsctn, Int32 ImportOrder, string SourceTableName, string DestNodeTypeName )
+        //public CswNbtSchemaUpdateImportMgr( CswNbtSchemaModTrnsctn SchemaModTrnsctn, Int32 ImportOrder, string SourceTableName, string DestNodeTypeName )
+        public CswNbtSchemaUpdateImportMgr( CswNbtSchemaModTrnsctn SchemaModTrnsctn, string SourceTableName, string DestNodeTypeName, string ViewName = "" )
         {
             this.SchemaModTrnsctn = SchemaModTrnsctn;
 
@@ -30,14 +51,17 @@ namespace ChemSW.Nbt.csw.Schema
             _importBindingsTable = CswNbtImportDefBinding.getDataTableForNewBindingEntries();
             _importRelationshipsTable = CswNbtImportDefRelationship.getDataTableForNewRelationshipEntries();
 
-            _ImportOrder = ImportOrder;
             _SourceTableName = SourceTableName;
             _DestNodeTypeName = DestNodeTypeName;
+            _ViewName = ViewName;
+            _ImportOrder = _Order[SourceTableName];
+            //TODO: Provide error messsage/throw exception if the sourcetablename isn't in the dictionary
+            //"Could not find the SourceTableName " + SourceTableName + " in the _Order dictionary."
 
             _SourceColumns = new CswCommaDelimitedString();
 
             _importOrder( _ImportOrder, _SourceTableName, _DestNodeTypeName );
-        }
+        }//ctor
 
         private void _importOrder( Int32 Order, string SheetName = null, string NodeTypeName = null, Int32 Instance = Int32.MinValue )
         {
@@ -86,32 +110,13 @@ namespace ChemSW.Nbt.csw.Schema
             }
         } // _importRelationship()
 
-        /*
-         CREATE OR REPLACE TRIGGER TRIG_IMPORT_VENDORS 
-AFTER INSERT OR DELETE OR UPDATE OF ACCOUNTNO,CITY,CONTACTNAME,DELETED,EMAIL,FAX,PHONE,STATE,STREET1,STREET2,VENDORID,VENDORNAME,ZIP,COUNTRY ON VENDORS 
-FOR EACH ROW 
-BEGIN
-  
-  IF INSERTING THEN
-    INSERT INTO nbtimportqueue VALUES (seq_nbtimportqueueid.NEXTVAL, 'I', :new.vendorid, 'vendors', '', '');
-    
-  ELSIF DELETING THEN
-    INSERT INTO nbtimportqueue VALUES (seq_nbtimportqueueid.NEXTVAL, 'D', :old.vendorid, 'vendors', '', '');
-  
-  ELSE
-    INSERT INTO nbtimportqueue VALUES (seq_nbtimportqueueid.NEXTVAL, 'U', :old.vendorid, 'vendors', '', '');
-    
-  END IF;
-  
-END;
+        public void finalize( string CafDbLink = null, string WhereClause = null, string DefinitionName = null )
          
-         
-         */
-
-        public void finalize( string CafDbLink = null, string WhereClause = null )
         {
             string ExceptionText = string.Empty;
+            string State = CswScheduleLogicNbtCAFImport.State.N.ToString();
             CafDbLink = CafDbLink ?? CswScheduleLogicNbtCAFImport.CAFDbLink;
+            DefinitionName = DefinitionName ?? CswScheduleLogicNbtCAFImport.DefinitionName;
 
             if( SchemaModTrnsctn.IsDbLinkConnectionHealthy( CafDbLink, ref ExceptionText ) )
             {
@@ -122,7 +127,7 @@ END;
                 importBinding( SourceTablePkColumnName, LegacyID, "" );
 
                 //Save the bindings in the DB
-                Importer.storeDefinition( _importOrderTable, _importBindingsTable, _importRelationshipsTable, CafDbLink );
+                Importer.storeDefinition( _importOrderTable, _importBindingsTable, _importRelationshipsTable, DefinitionName );
 
                 //Optional extension to where clause. Logical deletes already excluded.
                 WhereClause = WhereClause ?? string.Empty;
@@ -132,8 +137,8 @@ END;
                 }
 
                 //Populate the import queue
-                string SqlText = "insert into nbtimportqueue@" + CafDbLink + " ( nbtimportqueueid, state, itempk, tablename, priority, errorlog ) " +
-                                 @" select seq_nbtimportqueueid.nextval@" + CafDbLink + ", 'N', " + SourceTablePkColumnName + ", '" + _SourceTableName + "',0, '' from " + _SourceTableName + "@" + CafDbLink + " where deleted='0' " + WhereClause;
+                string SqlText = "insert into nbtimportqueue@" + CafDbLink + " ( nbtimportqueueid, state, itempk, tablename, priority, errorlog, viewname ) " +
+                                 @" select seq_nbtimportqueueid.nextval@" + CafDbLink + ", '" + State + "', " + SourceTablePkColumnName + ", '" + _SourceTableName + "',0, '', '" + _ViewName + "' from " + _SourceTableName + "@" + CafDbLink + " where deleted='0' " + WhereClause;
                 SchemaModTrnsctn.execArbitraryPlatformNeutralSql( SqlText );
             }
             else

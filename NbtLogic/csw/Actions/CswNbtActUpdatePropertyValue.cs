@@ -24,7 +24,7 @@ namespace ChemSW.Nbt.Actions
             // Case 30126
             if( null != Node.getObjectClass().getPropertySet() )
             {
-                if( Node.getObjectClass().getPropertySet().Name == CswEnumNbtPropertySetName.MaterialSet )
+                if( ( Node.PendingUpdate || ForceUpdate ) && Node.getObjectClass().getPropertySet().Name == CswEnumNbtPropertySetName.MaterialSet )
                 {
                     ( (CswNbtPropertySetMaterial) Node ).onUpdatePropertyValue();
                 }
