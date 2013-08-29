@@ -23,7 +23,7 @@ namespace ChemSW.Nbt.Schema
         {
             // Case 30043 - CAF Migration: Sites/Locations/Work Units
 
-            // View code
+            // View creation script
             //select w.*, s.sitename || ' ' || b.businessunitname as workunitname from work_units w
             //left outer join business_units b on (b.businessunitid = w.businessunitid)
             //left outer join sites s on (s.siteid = w.siteid)
