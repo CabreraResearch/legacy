@@ -262,7 +262,7 @@
                             });
                         },
                     }).css('padding', '3px');
-                    cswPrivate.toggleAddBtn();
+                    cswPrivate.addBtn.hide(); //case 30570: button will start hidden until cswPrivate.toggleAddBtn() is called later in page load 
 
                     if (cswPrivate.maxImages > 1) {
                         cswPrivate.thumbsTbl = cswPrivate.container.table({
@@ -317,7 +317,7 @@
                                         }
                                     );
                                     colNo++;
-                                });
+                                });//Csw.iterate(images, function (image) {
 
                                 cswPrivate.toggleAddBtn();
                                 if (imgThumbsNode.Ext) {
@@ -340,9 +340,9 @@
                                     callback: renderThumbnails
                                 });
                             }
-                        }
-                    }
-                };
+                        }//if (images.length > 1 && cswPrivate.maxImages > 1)
+                    }//if (cswPrivate.thumbsTbl)
+                };//cswPrivate.makeThumbnails()
 
                 cswPrivate.makeGallery(cswPrivate.images);
 

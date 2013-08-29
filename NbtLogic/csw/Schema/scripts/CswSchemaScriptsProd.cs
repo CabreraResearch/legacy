@@ -56,6 +56,8 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswUpdateSchema_02F_Case30041_ScheduledRuleImport() );//02E-030 //02F-019
             _addVersionedScript( new CswUpdateSchema_02F_Case30043_ControlZones() );       //02E-030 //02F-019
             _addVersionedScript( new CswUpdateSchema_02F_Case30043_Sites() );              //02E-031 //02F-020
+            _addVersionedScript( new CswUpdateSchema_02F_Case29984()  );                   //02E-031 //02F-020
+            _addVersionedScript( new CswUpdateSchema_02F_Case30577() );                    //02E-032 //02F-021
             _addVersionedScript( new CswUpdateSchema_02F_Case30043_Locations() );          //02E-032 //02F-021
 
 
@@ -97,6 +99,7 @@ namespace ChemSW.Nbt.Schema
             _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02F_Case27883() );
             _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02F_Case30040() );
             _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02F_Case29992() );
+            _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02F_Case30529() );
 
             #endregion FOXGLOVE Run Before Scripts
 
