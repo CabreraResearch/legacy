@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Data;
+using ChemSW.Core;
 using ChemSW.Nbt.ImportExport;
 using ChemSW.Nbt.Sched;
 using ChemSW.Nbt.Schema;
 
 namespace ChemSW.Nbt.csw.Schema
 {
-    class CswNbtSchemaUpdateImportMgr
+    partial class CswNbtSchemaUpdateImportMgr
     {
         public CswNbtSchemaModTrnsctn SchemaModTrnsctn;
         public const string LegacyID = "Legacy ID";
@@ -18,6 +19,8 @@ namespace ChemSW.Nbt.csw.Schema
         private string _DestNodeTypeName;
         private string _SourceTableName;
         private Int32 _ImportOrder;
+
+        private CswCommaDelimitedString _SourceColumns;
 
         public CswNbtSchemaUpdateImportMgr( CswNbtSchemaModTrnsctn SchemaModTrnsctn, Int32 ImportOrder, string SourceTableName, string DestNodeTypeName )
         {
@@ -31,6 +34,8 @@ namespace ChemSW.Nbt.csw.Schema
             _SourceTableName = SourceTableName;
             _DestNodeTypeName = DestNodeTypeName;
 
+            _SourceColumns = new CswCommaDelimitedString();
+
             _importOrder( _ImportOrder, _SourceTableName, _DestNodeTypeName );
         }
 
@@ -38,7 +43,7 @@ namespace ChemSW.Nbt.csw.Schema
         {
             SheetName = SheetName ?? _SourceTableName;
             NodeTypeName = NodeTypeName ?? _DestNodeTypeName;
-            if( false == string.IsNullOrEmpty( NodeTypeName ) )
+            if( CswAll.AreStrings( SheetName, NodeTypeName ) )
             {
                 DataRow row = _importOrderTable.NewRow();
                 row["sheet"] = SheetName;
@@ -53,7 +58,7 @@ namespace ChemSW.Nbt.csw.Schema
         {
             SheetName = SheetName ?? _SourceTableName;
             DestNodeTypeName = DestNodeTypeName ?? _DestNodeTypeName;
-            if( false == string.IsNullOrEmpty( DestNodeTypeName ) )
+            if( CswAll.AreStrings( SheetName, DestNodeTypeName, DestPropertyName, SourceColumnName ) )
             {
                 DataRow row = _importBindingsTable.NewRow();
                 row["sheet"] = SheetName;
@@ -68,19 +73,22 @@ namespace ChemSW.Nbt.csw.Schema
 
         public void importRelationship( string SheetName, string NodetypeName, string RelationshipPropName, Int32 Instance = Int32.MinValue )
         {
-            DataRow row = _importRelationshipsTable.NewRow();
-            row["sheet"] = SheetName;
-            row["nodetype"] = NodetypeName;
-            row["relationship"] = RelationshipPropName;
-            row["instance"] = Instance;
-            _importRelationshipsTable.Rows.Add( row );
+            if( CswAll.AreStrings( SheetName, NodetypeName, RelationshipPropName ) )
+            {
+                DataRow row = _importRelationshipsTable.NewRow();
+                row[ "sheet" ] = SheetName;
+                row[ "nodetype" ] = NodetypeName;
+                row[ "relationship" ] = RelationshipPropName;
+                row[ "instance" ] = Instance;
+                _importRelationshipsTable.Rows.Add( row );
+            }
         } // _importRelationship()
 
         public void finalize( string CafDbLink = null, string WhereClause = null )
         {
             string ExceptionText = string.Empty;
             CafDbLink = CafDbLink ?? CswScheduleLogicNbtCAFImport.CAFDbLink;
-                                                     
+
             if( SchemaModTrnsctn.IsDbLinkConnectionHealthy( CafDbLink, ref ExceptionText ) )
             {
                 CswNbtImporter Importer = SchemaModTrnsctn.makeCswNbtImporter();
@@ -98,7 +106,7 @@ namespace ChemSW.Nbt.csw.Schema
                 {
                     WhereClause = " and " + WhereClause;
                 }
-                
+
                 //Populate the import queue
                 string SqlText = "insert into nbtimportqueue@" + CafDbLink + " ( nbtimportqueueid, state, itempk, tablename, priority, errorlog ) " +
                                  @" select seq_nbtimportqueueid.nextval@" + CafDbLink + ", 'N', " + SourceTablePkColumnName + ", '" + _SourceTableName + "',0, '' from " + _SourceTableName + "@" + CafDbLink + " where deleted='0' " + WhereClause;
