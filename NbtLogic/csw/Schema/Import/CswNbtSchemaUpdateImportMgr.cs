@@ -40,27 +40,40 @@ namespace ChemSW.Nbt.csw.Schema
         private string _ViewName;
         private Int32 _ImportOrder;
 
+        private string _CAFDbLink;
+        private CswNbtImporter _NbtImporter;
+
         private CswCommaDelimitedString _SourceColumns;
 
         //public CswNbtSchemaUpdateImportMgr( CswNbtSchemaModTrnsctn SchemaModTrnsctn, Int32 ImportOrder, string SourceTableName, string DestNodeTypeName )
-        public CswNbtSchemaUpdateImportMgr( CswNbtSchemaModTrnsctn SchemaModTrnsctn, string SourceTableName, string DestNodeTypeName, string ViewName = "" )
+        public CswNbtSchemaUpdateImportMgr( CswNbtSchemaModTrnsctn SchemaModTrnsctn, string SourceTableName, string DestNodeTypeName, string ViewName = "", string CafDbLink = null )
         {
-            this.SchemaModTrnsctn = SchemaModTrnsctn;
+            string ExceptionText = string.Empty;
+            _CAFDbLink = CafDbLink ?? CswScheduleLogicNbtCAFImport.CAFDbLink;
+            if( SchemaModTrnsctn.IsDbLinkConnectionHealthy( _CAFDbLink, ref ExceptionText ) )
+            {
+                _NbtImporter = SchemaModTrnsctn.makeCswNbtImporter();
+                this.SchemaModTrnsctn = SchemaModTrnsctn;
 
-            _importOrderTable = CswNbtImportDefOrder.getDataTableForNewOrderEntries();
-            _importBindingsTable = CswNbtImportDefBinding.getDataTableForNewBindingEntries();
-            _importRelationshipsTable = CswNbtImportDefRelationship.getDataTableForNewRelationshipEntries();
+                _importOrderTable = CswNbtImportDefOrder.getDataTableForNewOrderEntries();
+                _importBindingsTable = CswNbtImportDefBinding.getDataTableForNewBindingEntries();
+                _importRelationshipsTable = CswNbtImportDefRelationship.getDataTableForNewRelationshipEntries();
 
-            _SourceTableName = SourceTableName;
-            _DestNodeTypeName = DestNodeTypeName;
-            _ViewName = ViewName;
-            _ImportOrder = _Order[SourceTableName];
-            //TODO: Provide error messsage/throw exception if the sourcetablename isn't in the dictionary
-            //"Could not find the SourceTableName " + SourceTableName + " in the _Order dictionary."
+                _SourceTableName = SourceTableName;
+                _DestNodeTypeName = DestNodeTypeName;
+                _ViewName = ViewName;
+                _ImportOrder = _Order[SourceTableName];
+                //TODO: Provide error messsage/throw exception if the sourcetablename isn't in the dictionary
+                //"Could not find the SourceTableName " + SourceTableName + " in the _Order dictionary."
 
-            _SourceColumns = new CswCommaDelimitedString();
+                _SourceColumns = new CswCommaDelimitedString();
 
-            _importOrder( _ImportOrder, _SourceTableName, _DestNodeTypeName );
+                _importOrder( _ImportOrder, _SourceTableName, _DestNodeTypeName );
+            }
+            else
+            {
+                SchemaModTrnsctn.logError( ExceptionText );
+            }
         }//ctor
 
         private void _importOrder( Int32 Order, string SheetName = null, string NodeTypeName = null, Int32 Instance = Int32.MinValue )
@@ -80,70 +93,70 @@ namespace ChemSW.Nbt.csw.Schema
 
         public void importBinding( string SourceColumnName, string DestPropertyName, string DestSubFieldName, string SheetName = null, string DestNodeTypeName = null, Int32 Instance = Int32.MinValue )
         {
-            SheetName = SheetName ?? _SourceTableName;
-            DestNodeTypeName = DestNodeTypeName ?? _DestNodeTypeName;
-            if( CswAll.AreStrings( SheetName, DestNodeTypeName, DestPropertyName, SourceColumnName ) )
+            if( null != _NbtImporter )
             {
-                _SourceColumns.Add( SourceColumnName, AllowNullOrEmpty: false, IsUnique: true );
-                
-                DataRow row = _importBindingsTable.NewRow();
-                row["sheet"] = SheetName;
-                row["destnodetype"] = DestNodeTypeName;
-                row["destproperty"] = DestPropertyName;
-                row["destsubfield"] = DestSubFieldName;
-                row["sourcecolumnname"] = SourceColumnName;
-                row["instance"] = Instance;
-                _importBindingsTable.Rows.Add( row );
+                SheetName = SheetName ?? _SourceTableName;
+                DestNodeTypeName = DestNodeTypeName ?? _DestNodeTypeName;
+                if( CswAll.AreStrings( SheetName, DestNodeTypeName, DestPropertyName, SourceColumnName ) )
+                {
+                    _SourceColumns.Add( SourceColumnName, AllowNullOrEmpty: false, IsUnique: true );
+
+                    DataRow row = _importBindingsTable.NewRow();
+                    row["sheet"] = SheetName;
+                    row["destnodetype"] = DestNodeTypeName;
+                    row["destproperty"] = DestPropertyName;
+                    row["destsubfield"] = DestSubFieldName;
+                    row["sourcecolumnname"] = SourceColumnName;
+                    row["instance"] = Instance;
+                    _importBindingsTable.Rows.Add( row );
+                }
             }
         } // _importBinding()
 
         public void importRelationship( string SheetName, string NodetypeName, string RelationshipPropName, Int32 Instance = Int32.MinValue )
         {
-            if( CswAll.AreStrings( SheetName, NodetypeName, RelationshipPropName ) )
+            if( null != _NbtImporter )
             {
-                DataRow row = _importRelationshipsTable.NewRow();
-                row[ "sheet" ] = SheetName;
-                row[ "nodetype" ] = NodetypeName;
-                row[ "relationship" ] = RelationshipPropName;
-                row[ "instance" ] = Instance;
-                _importRelationshipsTable.Rows.Add( row );
+                if( CswAll.AreStrings( SheetName, NodetypeName, RelationshipPropName ) )
+                {
+                    DataRow row = _importRelationshipsTable.NewRow();
+                    row["sheet"] = SheetName;
+                    row["nodetype"] = NodetypeName;
+                    row["relationship"] = RelationshipPropName;
+                    row["instance"] = Instance;
+                    _importRelationshipsTable.Rows.Add( row );
+                }
             }
         } // _importRelationship()
 
-        public void finalize( string CafDbLink = null, string WhereClause = null, string DefinitionName = null )
-         
+        private string SourceTablePkColumnName
         {
-            string ExceptionText = string.Empty;
-            string State = CswScheduleLogicNbtCAFImport.State.N.ToString();
-            CafDbLink = CafDbLink ?? CswScheduleLogicNbtCAFImport.CAFDbLink;
-            DefinitionName = DefinitionName ?? CswScheduleLogicNbtCAFImport.DefinitionName;
-
-            if( SchemaModTrnsctn.IsDbLinkConnectionHealthy( CafDbLink, ref ExceptionText ) )
+            get
             {
-                CswNbtImporter Importer = SchemaModTrnsctn.makeCswNbtImporter();
+                string Ret = null;
+                if( null != _NbtImporter )
+                {
+                    Ret = _NbtImporter.getRemoteDataDictionaryPkColumnName( _SourceTableName, _CAFDbLink );
+                }
+                return Ret;
+            }
+        }
+
+        public void finalize( string WhereClause = null, string DefinitionName = null )
+        {
+            if( null != _NbtImporter )
+            {
+                DefinitionName = DefinitionName ?? CswScheduleLogicNbtCAFImport.DefinitionName;
 
                 //Add the Legacy ID before storing the definition
-                string SourceTablePkColumnName = Importer.getRemoteDataDictionaryPkColumnName( _SourceTableName, CafDbLink );
                 importBinding( SourceTablePkColumnName, LegacyID, "" );
 
                 //Save the bindings in the DB
-                Importer.storeDefinition( _importOrderTable, _importBindingsTable, _importRelationshipsTable, DefinitionName );
+                _NbtImporter.storeDefinition( _importOrderTable, _importBindingsTable, _importRelationshipsTable, DefinitionName );
 
-                //Optional extension to where clause. Logical deletes already excluded.
-                WhereClause = WhereClause ?? string.Empty;
-                if( false == string.IsNullOrEmpty( WhereClause ) && false == WhereClause.Trim().StartsWith( "and" ) )
-                {
-                    WhereClause = " and " + WhereClause;
-                }
+                _populateImportQueueTable( WhereClause );
 
-                //Populate the import queue
-                string SqlText = "insert into nbtimportqueue@" + CafDbLink + " ( nbtimportqueueid, state, itempk, tablename, priority, errorlog, viewname ) " +
-                                 @" select seq_nbtimportqueueid.nextval@" + CafDbLink + ", '" + State + "', " + SourceTablePkColumnName + ", '" + _SourceTableName + "',0, '', '" + _ViewName + "' from " + _SourceTableName + "@" + CafDbLink + " where deleted='0' " + WhereClause;
-                SchemaModTrnsctn.execArbitraryPlatformNeutralSql( SqlText );
-            }
-            else
-            {
-                SchemaModTrnsctn.logError( ExceptionText );
+                _createTriggerOnImportTable();
             }
         }
     }
