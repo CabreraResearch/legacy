@@ -62,8 +62,9 @@ namespace ChemSW.Nbt.ObjClasses
                             }
                         }
                     }
-
-                    if( false == Creating )
+                    
+                    // case 30350 - this is very expensive for multiple nodes, and unnecessary on create.  So skip it.
+                    if( false == Creating ) 
                     {
                         // 3. mark any property references to this property on other nodes as pending update
                         if( CswTools.IsPrimaryKey( CurrentProp.NodeId ) )
