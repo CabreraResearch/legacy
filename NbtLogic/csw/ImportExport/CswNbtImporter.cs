@@ -518,9 +518,10 @@ namespace ChemSW.Nbt.ImportExport
                 // Import property values
                 if( isNewNode || Overwrite ) //DataMap.Overwrite )
                 {
+                    // Iterate each binding 
                     foreach( CswNbtImportDefBinding Binding in NodeTypeBindings )
                     {
-                        // special case for TimeInterval, specifically for IMCS imports
+                        // Special case for TimeInterval, specifically for IMCS imports
                         if( Binding.DestProperty.getFieldTypeValue() == CswEnumNbtFieldType.TimeInterval )
                         {
                             XElement input = XElement.Parse( "<rateintervalvalue>" + ImportRow[Binding.ImportDataColumnName].ToString().ToLower() + "</rateintervalvalue>" );
@@ -534,9 +535,9 @@ namespace ChemSW.Nbt.ImportExport
                             //Node.Properties[Binding.DestProperty].SetPropRowValue( CswEnumNbtPropColumn.ClobData, rateInterval.ToXmlString() );
                             Node.Properties[Binding.DestProperty].SyncGestalt();
                         }
+                        // NodeTypeSelect
                         else if( Binding.DestProperty.getFieldTypeValue() == CswEnumNbtFieldType.NodeTypeSelect )
                         {
-
                             CswNbtMetaDataNodeType nt = _CswNbtResources.MetaData.getNodeType( ImportRow[Binding.ImportDataColumnName].ToString() );
                             if( nt != null )
                             {
@@ -547,9 +548,8 @@ namespace ChemSW.Nbt.ImportExport
                                 OnMessage( "Skipped invalid nodetype: " + ImportRow[Binding.ImportDataColumnName].ToString() );
                             }
                         }
-                        else if( ( Binding.DestProperty.getFieldTypeValue() == CswEnumNbtFieldType.Quantity &&
-                                    Binding.DestSubfield.Column.ToString().ToLower() == "name" )
-                            || Binding.DestProperty.getFieldTypeValue() == CswEnumNbtFieldType.Relationship )
+                        // Quantity or Relationship
+                        else if( ( Binding.DestProperty.getFieldTypeValue() == CswEnumNbtFieldType.Quantity && Binding.DestSubfield.Column.ToString().ToLower() == "name" ) || Binding.DestProperty.getFieldTypeValue() == CswEnumNbtFieldType.Relationship )
                         {
                             CswCommaDelimitedString inClause = new CswCommaDelimitedString();
                             if( Binding.DestProperty.FKType == CswEnumNbtViewRelatedIdType.NodeTypeId.ToString() )
@@ -576,52 +576,25 @@ namespace ChemSW.Nbt.ImportExport
                                 }
                             }
 
-                            //Create a view to search NBT for the node of nodetype X with legacy id X. if it matches then we use that.
-                            if( false == string.IsNullOrEmpty( ImportRow[Binding.SourceColumnName].ToString() ) )
+                            // First we use a view to search on the Legacy Id and if it returns no results then we search on the Name
+                            ICswNbtTree Tree = _relationshipSearchViaLegacyId( ImportRow, Binding );
+                            Int32 TreeCount = 0;
+                            if( null != Tree )
                             {
-                                CswNbtView View = new CswNbtView( _CswNbtResources );
-                                View.ViewName = "Relationships View";
-
-                                CswNbtMetaDataNodeType CurrentNodeType =
-                                    _CswNbtResources.MetaData.getNodeType( Binding.DestProperty.FKValue );
-                                CswNbtMetaDataNodeTypeProp LegacyIdNTP = CurrentNodeType.getNodeTypeProp( "Legacy Id" );
-
-                                CswNbtViewRelationship ParentRelationship = View.AddViewRelationship( CurrentNodeType,
-                                                                                                     false );
-                                View.AddViewPropertyAndFilter( ParentViewRelationship: ParentRelationship,
-                                                              MetaDataProp: LegacyIdNTP,
-                                                              Conjunction: CswEnumNbtFilterConjunction.And,
-                                                              SubFieldName: CswEnumNbtSubFieldName.Value,
-                                                              FilterMode: CswEnumNbtFilterMode.Equals,
-                                                              Value: ImportRow[Binding.SourceColumnName].ToString() );
-
-                                ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, false, true, true );
-                                if( Tree.getChildNodeCount() > 0 )
-                                {
-                                    Tree.goToNthChild( 0 );
-                                    Node.Properties[Binding.DestProperty].AsRelationship.RelatedNodeId = Tree.getNodeIdForCurrentPosition();
-                                }
+                                TreeCount = Tree.getChildNodeCount();
                             }
 
-                            string sql = "select min(nodeid) nodeid from nodes where nodetypeid in (" + inClause.ToString() +
-                                ") and lower(nodename)='" + ImportRow[Binding.ImportDataColumnName].ToString().ToLower() + "'";
-                            CswArbitrarySelect relNodeSel = _CswNbtResources.makeCswArbitrarySelect( "getRelatedNode", sql );
-                            DataTable relNodeTbl = relNodeSel.getTable();
-                            if( relNodeTbl.Rows.Count > 0 )
+                            // It is possible that this could return more than 1?
+                            if( TreeCount > 0 )
                             {
-                                CswPrimaryKey pk = new CswPrimaryKey( "nodes", CswConvert.ToInt32( relNodeTbl.Rows[0]["nodeid"] ) );
-                                if( Binding.DestProperty.getFieldTypeValue() == CswEnumNbtFieldType.Quantity )
-                                {
-                                    Node.Properties[Binding.DestProperty].AsQuantity.UnitId = pk;
-                                }
-                                else
-                                {
-                                    Node.Properties[Binding.DestProperty].AsRelationship.RelatedNodeId = pk;
-                                }
+                                Tree.goToNthChild( 0 );
+                                Node.Properties[Binding.DestProperty].AsRelationship.RelatedNodeId = Tree.getNodeIdForCurrentPosition();
+                                Node.Properties[Binding.DestProperty].SyncGestalt();
                             }
                             else
                             {
-                                OnMessage( "No matching " + Binding.DestNodeType.NodeTypeName + " for " + ImportRow[Binding.ImportDataColumnName].ToString() );
+                                // Alternatively, we try to search based on the Name property
+                                _relationshipSearchViaName( Node, inClause, ImportRow, Binding );
                             }
                         }
                         else
@@ -630,6 +603,8 @@ namespace ChemSW.Nbt.ImportExport
                             Node.Properties[Binding.DestProperty].SyncGestalt();
                         }
                     }
+
+                    #region CswNbtImportDefRelationship
 
                     foreach( CswNbtImportDefRelationship RowRelationship in RowRelationships )
                     {
@@ -678,6 +653,9 @@ namespace ChemSW.Nbt.ImportExport
                             Node.Properties[RowRelationship.Relationship].SyncGestalt();
                         }
                     } // foreach( CswNbtMetaDataNodeTypeProp Relationship in RowRelationships )
+
+                    #endregion
+
                     Node.postChanges( false );
 
                     //OnMessage( msgPrefix + "Imported " + ( isNewNode ? "New " : "Existing " ) + Node.NodeName + " (" + Node.NodeId.PrimaryKey.ToString() + ")" );
@@ -735,6 +713,63 @@ namespace ChemSW.Nbt.ImportExport
             }
             return ImportedNodeId;
         } // _ImportOneRow()
+
+        private ICswNbtTree _relationshipSearchViaLegacyId( DataRow ImportRow, CswNbtImportDefBinding Binding )
+        {
+            ICswNbtTree Ret = null;
+
+            // We only want to search for a related node if the row has a relationship
+            if( false == string.IsNullOrEmpty( ImportRow[Binding.SourceColumnName].ToString() ) )
+            {
+                CswNbtView View = new CswNbtView( _CswNbtResources );
+                View.ViewName = "Relationships View";
+
+                CswNbtMetaDataNodeType CurrentNodeType =
+                    _CswNbtResources.MetaData.getNodeType( Binding.DestProperty.FKValue );
+                CswNbtMetaDataNodeTypeProp LegacyIdNTP = CurrentNodeType.getNodeTypeProp( "Legacy Id" );
+
+                CswNbtViewRelationship ParentRelationship = View.AddViewRelationship( CurrentNodeType,
+                                                                                     false );
+                View.AddViewPropertyAndFilter( ParentViewRelationship: ParentRelationship,
+                                              MetaDataProp: LegacyIdNTP,
+                                              Conjunction: CswEnumNbtFilterConjunction.And,
+                                              SubFieldName: CswEnumNbtSubFieldName.Value,
+                                              FilterMode: CswEnumNbtFilterMode.Equals,
+                                              Value: ImportRow[Binding.SourceColumnName].ToString() );
+
+                Ret = _CswNbtResources.Trees.getTreeFromView( View, false, true, true );
+            }
+
+            return Ret;
+        }
+
+        private void _relationshipSearchViaName( CswNbtNode Node, CswCommaDelimitedString inClause, DataRow ImportRow, CswNbtImportDefBinding Binding )
+        {
+            string sql = "select min(nodeid) nodeid from nodes where nodetypeid in ("
+                                   + inClause.ToString()
+                                   + ") and lower(nodename)='"
+                                   + ImportRow[Binding.ImportDataColumnName].ToString().ToLower() + "'";
+            CswArbitrarySelect relNodeSel = _CswNbtResources.makeCswArbitrarySelect( "getRelatedNode", sql );
+            DataTable relNodeTbl = relNodeSel.getTable();
+            // TODO: Why does this always return an empty row?
+            if( relNodeTbl.Rows.Count > 0 )
+            {
+                CswPrimaryKey pk = new CswPrimaryKey( "nodes", CswConvert.ToInt32( relNodeTbl.Rows[0]["nodeid"] ) );
+                if( Binding.DestProperty.getFieldTypeValue() == CswEnumNbtFieldType.Quantity )
+                {
+                    Node.Properties[Binding.DestProperty].AsQuantity.UnitId = pk;
+                }
+                else
+                {
+                    Node.Properties[Binding.DestProperty].AsRelationship.RelatedNodeId = pk;
+                }
+            }
+            else
+            {
+                OnMessage( "No matching " + Binding.DestNodeType.NodeTypeName + " for " +
+                          ImportRow[Binding.ImportDataColumnName] );
+            }
+        }
 
 
     } // class CswNbt2DImporter
