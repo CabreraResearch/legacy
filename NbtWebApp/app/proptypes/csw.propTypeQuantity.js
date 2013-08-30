@@ -117,7 +117,7 @@
             nodeProperty.unBindRender(function () {
                 // Case 30546: Fixed validation bug
                 // See explanation in csw.quantity.js
-                if (false === nodeProperty.isReadOnly()) {
+                if (cswPrivate.quntCtrl && cswPrivate.quntCtrl.remove) {
                     cswPrivate.quntCtrl.remove();
                 }
             });
