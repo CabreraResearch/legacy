@@ -230,8 +230,8 @@
 
                     } else if (false === Csw.isNullOrEmpty(menuItemJson.action)) {
 
-                        menuItemJson.action = menuItemJson.action || 'default';
-                        var isWholePageNavigation = menuAction[menuItemJson.action](cswPrivate, menuItemName, menuItemJson, menuItem);
+                        var action = menuAction[menuItemJson.action] ? menuItemJson.action : 'default';
+                        var isWholePageNavigation = menuAction[action](cswPrivate, menuItemName, menuItemJson, menuItem);
                         
                         if (isWholePageNavigation === true) {
                             //If we're changing the contents of the entire page, make sure all dangling events are torn down
