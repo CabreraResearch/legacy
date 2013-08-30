@@ -41,12 +41,12 @@ namespace ChemSW.Nbt.csw.Security
         public void LogAuthenticationAttempt( CswNbtObjClassUser UserNode, CswWebSvcSessionAuthenticateData.Authentication.Request AuthenticationRequest )
         {
             Int32 FailedLoginCount = null != UserNode ? UserNode.getFailedLoginCount() : 0;
-            if( AuthenticationRequest.AuthenticationStatus != CswEnumAuthenticationStatus.TooManyUsers )
-            {
-                AuthenticationRequest.AuthenticationStatus = UserNode == null ? (CswEnumAuthenticationStatus) CswEnumAuthenticationStatus.Unknown : AuthenticationRequest.AuthenticationStatus;
-            }
+            //if( AuthenticationRequest.AuthenticationStatus != CswEnumAuthenticationStatus.TooManyUsers )
+            //{
+            //    AuthenticationRequest.AuthenticationStatus = UserNode == null ? (CswEnumAuthenticationStatus) CswEnumAuthenticationStatus.Unknown : AuthenticationRequest.AuthenticationStatus;
+            //}
 
-            LoginData.Login LoginRecord = new LoginData.Login(AuthenticationRequest)
+            LoginData.Login LoginRecord = new LoginData.Login(AuthenticationRequest, UserNode )
             {
                 LoginDate = DateTime.Now.ToString(),
                 FailedLoginCount = FailedLoginCount

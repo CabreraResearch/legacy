@@ -4,6 +4,7 @@ using System.Data;
 using System.Runtime.Serialization;
 using ChemSW.Core;
 using ChemSW.DB;
+using ChemSW.Nbt.ObjClasses;
 using ChemSW.Security;
 using ChemSW.WebSvc;
 
@@ -36,12 +37,12 @@ namespace ChemSW.Nbt.Actions
             /// <summary>
             /// Init Login Data with the current Authentication Request
             /// </summary>
-            public Login( CswWebSvcSessionAuthenticateData.Authentication.Request Request )
+            public Login( CswWebSvcSessionAuthenticateData.Authentication.Request Request, CswNbtObjClassUser User = null )
             {
                 AuthenticationRequest = Request;
                 Username = AuthenticationRequest.UserName;
                 IPAddress = AuthenticationRequest.IpAddress;
-                setStatus( Request.AuthenticationStatus );
+                setStatus( Request.AuthenticationStatus, User = null );
             }
 
             [DataMember]
@@ -55,11 +56,11 @@ namespace ChemSW.Nbt.Actions
             [DataMember]
             public String FailureReason = String.Empty;
             [DataMember]
-            public Int32 FailedLoginCount = 0;
+            public Int32 FailedLoginCount = 0;  
 
             public CswWebSvcSessionAuthenticateData.Authentication.Request AuthenticationRequest;
 
-            private void setStatus( CswEnumAuthenticationStatus Status )
+            private void setStatus( CswEnumAuthenticationStatus Status, CswNbtObjClassUser User = null )
             {
                 LoginStatus = "Failed";
                 switch( Status )
@@ -71,7 +72,14 @@ namespace ChemSW.Nbt.Actions
                         FailureReason = "Account Archived";
                         break;
                     case CswEnumAuthenticationStatus.Failed:
-                        FailureReason = "Bad Password";
+                        if( null == User )
+                        {
+                            FailureReason = "Unknown Username";
+                        }
+                        else
+                        {
+                            FailureReason = "Bad Password";
+                        }
                         break;
                     case CswEnumAuthenticationStatus.Locked:
                         FailureReason = "Account Locked";
