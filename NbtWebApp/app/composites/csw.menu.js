@@ -62,6 +62,7 @@
     });
     menuAction.add('Logout', function (privateScope, menuItemName, menuItemJson, menuItem) {
         if (Csw.clientChanges.manuallyCheckChanges()) {
+            Csw.ajax.abortAll();
             Csw.tryExec(privateScope.onLogout);
             return true;  //isWholePageNavigation
         }
@@ -71,6 +72,7 @@
             menuItem.enable();
         };
         if (Csw.clientChanges.manuallyCheckChanges()) {
+            Csw.ajax.abortAll();
             menuItem.disable();
             Csw.goHome(enable).then(enable);
             return true;  //isWholePageNavigation
