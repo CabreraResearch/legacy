@@ -117,7 +117,7 @@ namespace ChemSW.Nbt.Test
 
         internal CswNbtNode createUnitOfMeasureNode( string NodeTypeName, string Name, double ConversionFactorBase, int ConversionFactorExponent, CswEnumTristate Fractional )
         {
-            CswNbtNode ret = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( _getNodeTypeId( "Unit (" + NodeTypeName + ")" ), delegate( CswNbtNode NewNode )
+            CswNbtNode ret = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( _getNodeTypeId( "Unit_" + NodeTypeName ), delegate( CswNbtNode NewNode )
                 {
                     CswNbtObjClassUnitOfMeasure UnitOfMeasureNode = NewNode;
                     UnitOfMeasureNode.Name.Text = Name + "Test";
@@ -145,6 +145,8 @@ namespace ChemSW.Nbt.Test
                     if( CswTools.IsDouble( SpecificGravity ) )
                         MaterialNode.SpecificGravity.Value = SpecificGravity;
                     MaterialNode.PhysicalState.Value = State;
+                    MaterialNode.TradeName.Text = "Fake Chemical " + Sequence;
+                    MaterialNode.PartNumber.Text = "ABC00" + Sequence;
                     if( NodeTypeName == "Chemical" )
                     {
                         if( false == String.IsNullOrEmpty( PPE ) )
