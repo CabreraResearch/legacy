@@ -1,7 +1,4 @@
                         <tr>
-                            <td id="Td5" class="PageTable_LeftColumn">
-                                <img src="Images/pagelayout/blank.gif" alt="X" width="1" height="450"/>
-                            </td>
 
                             <td id="Td7" class="PageTable_CenterCell" colspan="2" valign="top">
                                 <br/>
@@ -104,5 +101,4 @@
 
                             </td>
 
-                            <td id="Td6" class="PageTable_RightColumn"></td>
                         </tr>
