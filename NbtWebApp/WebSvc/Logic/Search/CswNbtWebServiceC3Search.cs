@@ -966,7 +966,7 @@ namespace ChemSW.Nbt.WebServices
                         {
                             case CswEnumNbtFieldType.Quantity:
                                 string sizeGestalt = string.Empty;
-                                CswNbtObjClassUnitOfMeasure unitOfMeasure = null;
+                                //CswNbtObjClassUnitOfMeasure unitOfMeasure = null;
 
                                 // If the UoM wasn't able to be mapped on the C3 side, then
                                 // we use the original chemcatcentral UoM.
