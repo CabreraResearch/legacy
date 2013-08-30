@@ -71,10 +71,10 @@
             menuItem.enable();
         };
         if (Csw.clientChanges.manuallyCheckChanges()) {
-              menuItem.disable();
-              Csw.goHome(enable).then(enable);
-              return true;  //isWholePageNavigation
-        } 
+            menuItem.disable();
+            Csw.goHome(enable).then(enable);
+            return true;  //isWholePageNavigation
+        }
     });
     menuAction.add('Profile', function (privateScope, menuItemName, menuItemJson, menuItem) {
         $.CswDialog('EditNodeDialog', {
@@ -131,6 +131,12 @@
     menuAction.add('Impersonate', function (privateScope, menuItemName, menuItemJson, menuItem) {
         if (Csw.clientChanges.manuallyCheckChanges()) {
             $.CswDialog('ImpersonateDialog', { onImpersonate: privateScope.onImpersonate });
+        }
+    });
+    menuAction.add('EndImpersonation', function (privateScope, menuItemName, menuItemJson, menuItem) {
+        if (Csw.clientChanges.manuallyCheckChanges()) {
+            Csw.tryExec(privateScope.onEndImpersonation);
+            return true; //isWholePageNavigation
         }
     });
     menuAction.add('Submit_Request', function (privateScope, menuItemName, menuItemJson, menuItem) {
@@ -216,7 +222,7 @@
                 }
                 return ret;
             };
-            
+
             cswPrivate.handleMenuItemClick = function (menuItemName, menuItemJson, menuItem) {
                 if (false === Csw.isNullOrEmpty(menuItemJson)) {
 
@@ -231,7 +237,7 @@
                         var action = menuAction[menuItemJson.action] ? menuItemJson.action : 'default';
                         var isWholePageNavigation = menuAction[action](cswPrivate, menuItemName, menuItemJson, menuItem);
 
-                        
+
                         if (isWholePageNavigation === true) {
                             //If we're changing the contents of the entire page, make sure all dangling events are torn down
                             Csw.publish('initGlobalEventTeardown');
