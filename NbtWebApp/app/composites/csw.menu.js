@@ -158,7 +158,7 @@
                                 menuItem.disable();
                                 if (Csw.clientChanges.manuallyCheckChanges()) {
                                     isWholePageNavigation = true;
-                                    Csw.goHome().then(enable);
+                                    Csw.goHome(enable).then(enable);
                                 } else {
                                     enable();
                                 }
@@ -364,12 +364,12 @@
 
 
     Csw.goHome = Csw.goHome ||
-        Csw.register('goHome', function () {
+        Csw.register('goHome', function (onError) {
             'use strict';
             var toDo = [];
             toDo.push(Csw.clientState.clearCurrent());
             toDo.push(Csw.main.refreshWelcomeLandingPage());
-            return Q.all(toDo);
+            return Q.all(toDo).fail(onError);
         });
 
 } ());
