@@ -66,7 +66,7 @@
                     if (cswPrivate.isButton && cswPrivate.state != Csw.enums.iconState.disabled) {
                         cswPublic.bind('mouseover', function () {
                             cswPublic.css(cswPrivate.offsetCss(Csw.enums.iconState.hover));
-                            Csw.tryExec(cswPrivate.onHoverOver());
+                            Csw.tryExec(cswPrivate.onHoverOver);
                         });
                         cswPublic.bind('mouseout', function () {
                             cswPublic.css(cswPrivate.offsetCss(cswPrivate.state));

@@ -199,6 +199,14 @@ namespace ChemSW.Nbt.ObjClasses
             get { return _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestMaterialDispenseClass ); }
         }
 
+        public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
+        {
+        }
+
+        public override void afterCreateNode()
+        {
+        }
+
         #endregion Base
 
         #region Inherited Events
@@ -441,7 +449,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// 
         /// </summary>
-        public override void onStatusPropChange( CswNbtNodeProp Prop )
+        public override void onStatusPropChange( CswNbtNodeProp Prop, bool Creating )
         {
             if( Status.WasModified && Status.Value != NonRequestableStatus )
             {
@@ -521,7 +529,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-        public override void onTypePropChange( CswNbtNodeProp Prop )
+        public override void onTypePropChange( CswNbtNodeProp Prop, bool Creating )
         {
             switch( Type.Value )
             {
@@ -548,7 +556,7 @@ namespace ChemSW.Nbt.ObjClasses
             Type.setReadOnly( value : true, SaveToDb : true );
         }
 
-        public override void onRequestPropChange( CswNbtNodeProp Prop )
+        public override void onRequestPropChange( CswNbtNodeProp Prop, bool Creating )
         {
             IsFavorite.RecalculateReferenceValue();
         }
@@ -589,7 +597,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get { return _CswNbtNode.Properties[PropertyName.Quantity]; }
         }
-        private void onQuantityPropChange( CswNbtNodeProp Prop )
+        private void onQuantityPropChange( CswNbtNodeProp Prop, bool Creating )
         {
             if( CswTools.IsPrimaryKey( Quantity.UnitId ) && TotalDispensed.UnitId != Quantity.UnitId )
             {
@@ -607,7 +615,7 @@ namespace ChemSW.Nbt.ObjClasses
             get { return _CswNbtNode.Properties[PropertyName.Count]; }
         }
 
-        private void onMaterialPropChange( CswNbtNodeProp Prop )
+        private void onMaterialPropChange( CswNbtNodeProp Prop, bool Creating )
         {
             if( CswTools.IsPrimaryKey( Material.RelatedNodeId ) )
             {
@@ -621,7 +629,7 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         public CswNbtNodePropQuantity TotalDispensed { get { return _CswNbtNode.Properties[PropertyName.TotalDispensed]; } }
-        private void onTotalDispensedPropChange( CswNbtNodeProp Prop )
+        private void onTotalDispensedPropChange( CswNbtNodeProp Prop, bool Creating )
         {
             if( Type.Value == Types.Bulk &&
                 Status.Value != Statuses.Pending &&
@@ -641,7 +649,7 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         public CswNbtNodePropNumber TotalMoved { get { return _CswNbtNode.Properties[PropertyName.TotalMoved]; } }
-        private void onTotalMovedPropChange( CswNbtNodeProp Prop )
+        private void onTotalMovedPropChange( CswNbtNodeProp Prop, bool Creating )
         {
             if( Type.Value == Types.Size &&
                 TotalMoved.Value >= Count.Value )
@@ -674,7 +682,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropLogical Batch { get { return _CswNbtNode.Properties[PropertyName.Batch]; } }
         public CswNbtNodePropLogical IsRecurring { get { return _CswNbtNode.Properties[PropertyName.IsRecurring]; } }
         private bool _IsRecurring { get { return CswEnumTristate.True == IsRecurring.Checked; } } //&& _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.MLM ); } }
-        private void onIsRecurringChange( CswNbtNodeProp NodeProp )
+        private void onIsRecurringChange( CswNbtNodeProp NodeProp, bool Creating )
         {
             if( IsRecurring.WasModified )
             {
@@ -708,7 +716,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropLogical GoodsReceived { get { return _CswNbtNode.Properties[PropertyName.GoodsReceived]; } }
         public CswNbtNodePropPropertyReference IsFavorite { get { return _CswNbtNode.Properties[PropertyName.IsFavorite]; } }
         private bool _IsFavorite { get { return CswConvert.ToBoolean( IsFavorite.Gestalt ); } }
-        private void onIsFavoritePropChange( CswNbtNodeProp NodeProp )
+        private void onIsFavoritePropChange( CswNbtNodeProp NodeProp, bool Creating )
         {
             if( IsFavorite.WasModified )
             {
@@ -737,7 +745,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropRelationship ReceiptLotToDispense { get { return _CswNbtNode.Properties[PropertyName.ReceiptLotToDispense]; } }
         public CswNbtNodePropRelationship Level { get { return _CswNbtNode.Properties[PropertyName.Level]; } }
         public CswNbtNodePropTimeInterval RecurringFrequency { get { return _CswNbtNode.Properties[PropertyName.RecurringFrequency]; } }
-        private void onRecurringFrequencyPropChange( CswNbtNodeProp NodeProp )
+        private void onRecurringFrequencyPropChange( CswNbtNodeProp NodeProp, bool Creating )
         {
             NextReorderDate.DateTimeValue = CswNbtPropertySetSchedulerImpl.getNextDueDate( this.Node, NextReorderDate, RecurringFrequency );
         }

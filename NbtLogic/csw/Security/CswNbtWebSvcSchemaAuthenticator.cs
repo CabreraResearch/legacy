@@ -5,6 +5,7 @@ using ChemSW.Encryption;
 using ChemSW.Nbt.csw.Security;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Security;
+using ChemSW.WebSvc;
 
 namespace ChemSW.Nbt.Security
 {
@@ -22,27 +23,27 @@ namespace ChemSW.Nbt.Security
             return new CswNbtUser( _CswNbtResources, UserName );
         }
 
-        public CswEnumAuthenticationStatus AuthenticateWithSchema( CswEncryption CswEncryption, string username, string password, string IPAddress, CswEnumAuthenticationStatus AuthStatus, out ICswUser AuthenticatedUser )
+        public CswEnumAuthenticationStatus AuthenticateWithSchema( CswEncryption CswEncryption, CswWebSvcSessionAuthenticateData.Authentication.Request AuthenticationRequest, out ICswUser AuthenticatedUser )
         {
             CswNbtSchemaAuthenticationLogic AuthenticationLogic = new CswNbtSchemaAuthenticationLogic( _CswNbtResources );
             CswNbtObjClassUser UserNode = null;
-            if( AuthStatus != CswEnumAuthenticationStatus.TooManyUsers )
+            if( AuthenticationRequest.AuthenticationStatus != CswEnumAuthenticationStatus.TooManyUsers )
             {
-                UserNode = _authorizeUser( CswEncryption, username, password );
-                AuthStatus = AuthenticationLogic.GetAuthStatus( UserNode );
+                UserNode = _authorizeUser( CswEncryption, AuthenticationRequest );
+                AuthenticationRequest.AuthenticationStatus = AuthenticationLogic.GetAuthStatus( UserNode );
             }
-            AuthenticationLogic.LogAuthenticationAttempt( UserNode, username, IPAddress, AuthStatus );
+            AuthenticationLogic.LogAuthenticationAttempt( UserNode, AuthenticationRequest );
             AuthenticatedUser = UserNode;
-            return AuthStatus;
+            return AuthenticationRequest.AuthenticationStatus;
         }
 
-        private CswNbtObjClassUser _authorizeUser( CswEncryption CswEncryption, string username, string password )
+        private CswNbtObjClassUser _authorizeUser( CswEncryption CswEncryption, CswWebSvcSessionAuthenticateData.Authentication.Request AuthenticationRequest )
         {
             CswNbtObjClassUser ret = null;
-            CswNbtObjClassUser UserNode = _CswNbtResources.Nodes.makeUserNodeFromUsername( username, RequireViewPermissions : false );
+            CswNbtObjClassUser UserNode = _CswNbtResources.Nodes.makeUserNodeFromUsername( AuthenticationRequest.UserName, RequireViewPermissions : false );
             if( UserNode != null && false == UserNode.IsArchived() && false == UserNode.IsAccountLocked() )
             {
-                CswAuthorizationToken token = _authenticate( username, password );
+                CswAuthorizationToken token = _authenticate( AuthenticationRequest );
                 if( null != token )
                 {
                     if( token.Authorized )
@@ -77,7 +78,7 @@ namespace ChemSW.Nbt.Security
             return ret;
         }
 
-        private CswAuthorizationToken _authenticate( string username, string password )
+        private CswAuthorizationToken _authenticate( CswWebSvcSessionAuthenticateData.Authentication.Request AuthenticationRequest )
         {
             CswAuthorizationToken Token = null;
 
@@ -85,7 +86,7 @@ namespace ChemSW.Nbt.Security
             EndpointAddress AuthorizationEndpoint = new EndpointAddress( _CswNbtResources.SetupVbls[CswEnumSetupVariableNames.WebSvcAuthorizationPath] );
             var AuthorizationChannelFactory = new ChannelFactory<ICswAuthorizationWebSvc>( AuthorizationBinding, AuthorizationEndpoint );
             ICswAuthorizationWebSvc Service = AuthorizationChannelFactory.CreateChannel();
-            Token = Service.Get( username, password );
+            Token = Service.Get( AuthenticationRequest );
             return Token;
         }
 

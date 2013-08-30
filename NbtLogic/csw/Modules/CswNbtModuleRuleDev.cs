@@ -17,7 +17,7 @@ namespace ChemSW.Nbt
         public override CswEnumNbtModuleName ModuleName { get { return CswEnumNbtModuleName.Dev; } }
         protected override void OnEnable()
         {
-#if DEBUG 
+#if DEBUG
             if( _CswNbtResources.ConfigVbls.doesConfigVarExist( CswEnumConfigurationVariableNames.Logging_Level ) )
             {
                 _CswNbtResources.ConfigVbls.setConfigVariableValue( CswEnumConfigurationVariableNames.Logging_Level.ToString(), "Info" );
@@ -97,8 +97,8 @@ namespace ChemSW.Nbt
                 FieldTypeView.save();
 
 
-                CswNbtNode Node1 = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( FieldTypeNt.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode );
-                CswNbtNode Node2 = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( FieldTypeNt.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode );
+                CswNbtNode Node1 = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( FieldTypeNt.NodeTypeId );
+                CswNbtNode Node2 = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( FieldTypeNt.NodeTypeId );
                 Node1.IsDemo = true;
                 Node1.postChanges( ForceUpdate: false );
                 Node2.IsDemo = true;
@@ -123,12 +123,14 @@ namespace ChemSW.Nbt
 
                 foreach( string AccessId in _CswNbtResources.CswDbCfgInfo.AccessIds )
                 {
-                    CswNbtObjClassCustomer Cust = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( CustomerNt.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode );
-                    Cust.CompanyID.Text = AccessId;
-                    Cust.postChanges( ForceUpdate: false );
+                    _CswNbtResources.Nodes.makeNodeFromNodeTypeId( CustomerNt.NodeTypeId, delegate( CswNbtNode NewNode )
+                        {
+                            ( (CswNbtObjClassCustomer) NewNode ).CompanyID.Text = AccessId;
+                            //Cust.postChanges( ForceUpdate: false );
+                        } );
                 }
             }
-        
+
 #endif
         }
         protected override void OnDisable()

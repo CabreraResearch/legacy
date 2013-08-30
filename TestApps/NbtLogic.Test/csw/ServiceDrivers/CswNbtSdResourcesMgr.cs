@@ -13,7 +13,7 @@ namespace ChemSW.Nbt.Test.ServiceDrivers
     {
 
         private readonly CswNbtResources _CswNbtResources;
-        
+
         public CswNbtSdResourcesMgr( CswNbtResources CswNbtResources )
         {
             _CswNbtResources = CswNbtResources;
@@ -30,7 +30,7 @@ namespace ChemSW.Nbt.Test.ServiceDrivers
         {
             ICswUser Ret = null;
             if( null != NbtResources &&
-                false == string.IsNullOrEmpty( UserName ) && 
+                false == string.IsNullOrEmpty( UserName ) &&
                 null != Role )
             {
                 //ICswResources IResources = Resources;
@@ -39,15 +39,18 @@ namespace ChemSW.Nbt.Test.ServiceDrivers
                 CswNbtMetaDataNodeType UserNt = UserOc.getLatestVersionNodeTypes().FirstOrDefault();
                 if( null != UserNt )
                 {
-                    CswNbtObjClassUser NewUser = NbtResources.Nodes.makeNodeFromNodeTypeId( UserNt.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode, OverrideUniqueValidation : true );
-                    NewUser.UsernameProperty.Text = UserName;
-                    NewUser.Role.RelatedNodeId = Role.NodeId;
-                    NewUser.PasswordProperty.Password = Password;
-                    NewUser.postChanges( ForceUpdate: false );
-                    
+                    Ret = (CswNbtObjClassUser) NbtResources.Nodes.makeNodeFromNodeTypeId( UserNt.NodeTypeId, OverrideUniqueValidation: true, OnAfterMakeNode: delegate( CswNbtNode NewNode )
+                        {
+                            CswNbtObjClassUser NewUser = NewNode;
+                            NewUser.UsernameProperty.Text = UserName;
+                            NewUser.Role.RelatedNodeId = Role.NodeId;
+                            NewUser.PasswordProperty.Password = Password;
+                            NewUser.postChanges( ForceUpdate: false );
+                        } );
+
                     _finalize( NbtResources );
-                    
-                    Ret = NewUser;
+
+                    //Ret = NewUser;
                 }
             }
             if( null == Ret )
@@ -65,7 +68,7 @@ namespace ChemSW.Nbt.Test.ServiceDrivers
             {
                 CswNbtObjClassUser NewUser = NbtResources.Nodes.makeUserNodeFromUsername( UserName );
                 Ret = NewUser;
-                
+
             }
             if( null == Ret )
             {
@@ -133,15 +136,16 @@ namespace ChemSW.Nbt.Test.ServiceDrivers
                 CswNbtMetaDataNodeType RoleNt = RoleOc.getLatestVersionNodeTypes().FirstOrDefault();
                 if( null != RoleNt )
                 {
-                    CswNbtObjClassRole Role = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( RoleNt.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode, OverrideUniqueValidation: true );
-                    Role.Name.Text = RoleName;
-                    Role.postChanges( ForceUpdate: false );
-                    
+                    CswNbtObjClassRole Role = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( RoleNt.NodeTypeId, OverrideUniqueValidation: true, OnAfterMakeNode: delegate( CswNbtNode NewNode )
+                        {
+                            ( (CswNbtObjClassRole) NewNode ).Name.Text = RoleName;
+                            //Role.postChanges( ForceUpdate: false );
+                        } );
                     _finalize( _CswNbtResources );
-                    
+
                     Ret = Role.NodeId;
                 }
-                
+
             }
             return Ret;
         }

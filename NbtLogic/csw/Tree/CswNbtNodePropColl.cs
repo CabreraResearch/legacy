@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
 using ChemSW.Core;
@@ -12,11 +13,12 @@ using ChemSW.Nbt.PropTypes;
 namespace ChemSW.Nbt
 {
 
-    public class CswNbtNodePropColl: IEnumerable, IEnumerable<CswNbtNodePropWrapper>
+    public class CswNbtNodePropColl : IEnumerable<CswNbtNodePropWrapper>
     {
-        private ArrayList _Props = new ArrayList();
+        private Collection<CswNbtNodePropWrapper> _Props = new Collection<CswNbtNodePropWrapper>();
         private Dictionary<Int32, Int32> _PropsIndexByFirstVersionPropId = new Dictionary<Int32, Int32>();
         private Dictionary<Int32, Int32> _PropsIndexByNodeTypePropId = new Dictionary<Int32, Int32>();
+        private Dictionary<string, Int32> _PropsIndexByObjectClassPropName = new Dictionary<string, Int32>();
         private CswNbtMetaDataNodeType _NodeType { get { return _CswNbtResources.MetaData.getNodeType( _NodeTypeId ); } }
         private CswNbtResources _CswNbtResources = null;
         private CswNbtNode _CswNbtNode = null;
@@ -159,6 +161,7 @@ namespace ChemSW.Nbt
 
             _PropsIndexByFirstVersionPropId.Clear();
             _PropsIndexByNodeTypePropId.Clear();
+            _PropsIndexByObjectClassPropName.Clear();
 
             if( _CswNbtNodePropCollDataNative != null )
                 _CswNbtNodePropCollDataNative.PropsTable.Clear();
@@ -284,9 +287,15 @@ namespace ChemSW.Nbt
                 //    AddedProp.ensureEmptyVal();
                 //}
 
-                int PropsIdx = _Props.Add( AddedProp );
+                _Props.Add( AddedProp );
+                Int32 PropsIdx = _Props.Count - 1;
                 _PropsIndexByFirstVersionPropId.Add( MetaDataProp.FirstPropVersionId, PropsIdx );
                 _PropsIndexByNodeTypePropId.Add( MetaDataProp.PropId, PropsIdx );
+                string ObjectClassPropName = MetaDataProp.getObjectClassPropName();
+                if( false == string.IsNullOrEmpty( ObjectClassPropName ) )
+                {
+                    _PropsIndexByObjectClassPropName.Add( ObjectClassPropName, PropsIdx );
+                }
                 AddedProp.onNodePropRowFilled();
             }
 
@@ -323,7 +332,7 @@ namespace ChemSW.Nbt
         }//_refreshProps()
 
 
-        public void update( bool IsCopy, bool OverrideUniqueValidation )
+        public void update( CswNbtNode Node, bool IsCopy, bool OverrideUniqueValidation, bool Creating )
         {
             // Do BeforeUpdateNodePropRow on each row
 
@@ -342,7 +351,7 @@ namespace ChemSW.Nbt
 
                 //if( null != CswNbtMetaDataNodeTypeProp )
                 //    this[CswNbtMetaDataNodeTypeProp].onBeforeUpdateNodePropRow( IsCopy, OverrideUniqueValidation );
-                this[CswConvert.ToInt32( CurrentRow["nodetypepropid"] )].onBeforeUpdateNodePropRow( IsCopy, OverrideUniqueValidation );
+                this[CswConvert.ToInt32( CurrentRow["nodetypepropid"] )].onBeforeUpdateNodePropRow( Node, IsCopy, OverrideUniqueValidation, Creating );
             }
 
             // Do the Update
@@ -354,17 +363,11 @@ namespace ChemSW.Nbt
         {
             get
             {
-                CswNbtNodePropWrapper ReturnVal = null;
-                CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtResources.MetaData.getNodeTypePropByObjectClassProp( _NodeTypeId, ObjectClassPropName );
-                if( null != MetaDataProp )
+                if( false == _PropsIndexByObjectClassPropName.ContainsKey( ObjectClassPropName ) )
                 {
-                    ReturnVal = this[MetaDataProp];
+                    throw new CswDniException( CswEnumErrorType.Error, "Invalid Property", "There is no property with this objectclasspropname: " + ObjectClassPropName + " on nodetypeid " + _NodeTypeId.ToString() );
                 }
-                else
-                {
-                    throw new CswDniException( CswEnumErrorType.Error, "Invalid Property", "CswNbtNodePropColl[] for node [" + _NodePk.ToString() + "] could not find object class prop: " + ObjectClassPropName );
-                }
-                return ReturnVal;
+                return _Props[_PropsIndexByObjectClassPropName[ObjectClassPropName]];
             }
         }// this[ string ObjectClassPropName ]
 
@@ -380,7 +383,7 @@ namespace ChemSW.Nbt
                 if( false == _PropsIndexByFirstVersionPropId.ContainsKey( NodeTypeProp.FirstPropVersionId ) )
                     throw new CswDniException( CswEnumErrorType.Error, "Invalid Property", "There is no property with this firstpropversionid " + NodeTypeProp.FirstPropVersionId.ToString() + " on nodetypeid " + _NodeTypeId.ToString() );
 
-                return ( _Props[CswConvert.ToInt32( _PropsIndexByFirstVersionPropId[NodeTypeProp.FirstPropVersionId] )] as CswNbtNodePropWrapper );
+                return _Props[_PropsIndexByFirstVersionPropId[NodeTypeProp.FirstPropVersionId]];
             }//get
 
         }//this[NodeTypeProp]
@@ -389,7 +392,7 @@ namespace ChemSW.Nbt
         {
             get
             {
-                return ( _Props[_PropsIndexByNodeTypePropId[NodeTypePropId]] as CswNbtNodePropWrapper );
+                return _Props[_PropsIndexByNodeTypePropId[NodeTypePropId]];
             }//get
 
         }//this[NodeTypeProp]
@@ -407,12 +410,12 @@ namespace ChemSW.Nbt
 
         IEnumerator<CswNbtNodePropWrapper> IEnumerable<CswNbtNodePropWrapper>.GetEnumerator()
         {
-            return _Props.Cast<CswNbtNodePropWrapper>().GetEnumerator();
+            return _Props.GetEnumerator();
         }
 
         public IEnumerator GetEnumerator()
         {
-            return new CswEnmrtrGeneric( _Props );
+            return _Props.GetEnumerator();
         }
 
 

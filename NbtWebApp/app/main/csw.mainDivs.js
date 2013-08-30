@@ -22,8 +22,10 @@
 
         return Csw.ajax.deprecatedWsNbt({
             urlMethod: 'getWatermark',
+            useCache: true,
             success: function (result) {
-                Csw.main.watermark.text(result.watermark || '');
+                var watermark = (result) ? result.watermark || '' : '';
+                Csw.main.watermark.text(watermark);
             }
         });
 

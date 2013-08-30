@@ -1,8 +1,6 @@
-﻿using ChemSW.MtSched.Core;
-using ChemSW.Nbt.csw.Dev;
+﻿using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.csw.Schema;
 using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.Sched;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -23,13 +21,8 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
-            // Scheduled rule for CAFImports
-            // NOTE: Only do this once!
-            _CswNbtSchemaModTrnsctn.createScheduledRule( CswEnumNbtScheduleRuleNames.CAFImport, CswEnumRecurrence.NHours, 1 );
-
             // CAF bindings definitions for Vendors
-
-            CswNbtSchemaUpdateImportMgr ImpMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, 1, "vendors", "Vendor" );                                                
+            CswNbtSchemaUpdateImportMgr ImpMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "vendors", "Vendor" );
 
             // Binding
             ImpMgr.importBinding( "accountno", CswNbtObjClassVendor.PropertyName.AccountNo, "" );

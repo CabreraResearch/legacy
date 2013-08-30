@@ -168,17 +168,17 @@
                         scale: Csw.string(cswPrivate.size, 'medium'),
                         disabled: cswPrivate.disabled,
                         listeners: {
-                            mouseover: function () { Csw.tryExec(cswPrivate.onHoverIn); },
-                            mouseout: function () { Csw.tryExec(cswPrivate.onHoverOut); }
+                            mouseover: function() { Csw.tryExec(cswPrivate.onHoverIn); },
+                            mouseout: function() { Csw.tryExec(cswPrivate.onHoverOut); }
                         }
                     });
-                }
-                if (false === Csw.isNullOrEmpty(cswPrivate.tooltip.title)) {
-                    cswPrivate.tooltip.target = cswPublic.button.getId();
-                    window.Ext.create('Ext.tip.ToolTip', cswPrivate.tooltip);
-                    window.Ext.QuickTips.init();
-                }
 
+                    if (false === Csw.isNullOrEmpty(cswPrivate.tooltip.title)) {
+                        cswPrivate.tooltip.target = cswPublic.button.getId();
+                        window.Ext.create('Ext.tip.ToolTip', cswPrivate.tooltip);
+                        window.Ext.QuickTips.init();
+                    }
+                }
             }());
 
             return cswPublic;

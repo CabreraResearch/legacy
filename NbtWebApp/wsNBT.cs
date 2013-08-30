@@ -232,13 +232,13 @@ namespace ChemSW.Nbt.WebServices
         } // _doCswAdminAuthenticate()
 
         // Authenticates and sets up resources for an accessid and user
-        private CswEnumAuthenticationStatus _authenticate( string AccessId, string UserName, string Password, bool IsMobile )
+        private CswEnumAuthenticationStatus _authenticate( CswWebSvcSessionAuthenticateData.Authentication.Request AuthenticationRequest )
         {
             CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
 
             try
             {
-                string ParsedAccessId = AccessId.ToLower().Trim();
+                string ParsedAccessId = AuthenticationRequest.CustomerId.ToLower().Trim();
                 if( !string.IsNullOrEmpty( ParsedAccessId ) )
                 {
                     _CswSessionResources.CswSessionManager.setAccessId( ParsedAccessId );
@@ -262,7 +262,8 @@ namespace ChemSW.Nbt.WebServices
 
             if( AuthenticationStatus == CswEnumAuthenticationStatus.Unknown )
             {
-                AuthenticationStatus = _CswSessionResources.CswSessionManager.beginSession( UserName, Password, CswWebSvcCommonMethods.getIpAddress(), IsMobile );
+                AuthenticationRequest.IpAddress = CswWebSvcCommonMethods.getIpAddress();
+                AuthenticationStatus = _CswSessionResources.CswSessionManager.beginSession( AuthenticationRequest );
             }
 
             // case 21211
@@ -295,6 +296,10 @@ namespace ChemSW.Nbt.WebServices
                 {
                     // BZ 9077 - Password expired
                     AuthenticationStatus = CswEnumAuthenticationStatus.ExpiredPassword;
+                }
+                else if( 1 < _CswNbtResources.CswSessionManager.SessionsList.getSessionCountForUser( _CswNbtResources.AccessId, _CswNbtResources.CurrentUser.Username ) )
+                {
+                    AuthenticationStatus = CswEnumAuthenticationStatus.AlreadyLoggedIn;
                 }
             }
 
@@ -334,8 +339,12 @@ namespace ChemSW.Nbt.WebServices
             {
                 _initResources();
 
-                bool IsMobile = CswConvert.ToBoolean( ForMobile );
-                CswEnumAuthenticationStatus AuthenticationStatus = _authenticate( AccessId, UserName, Password, IsMobile );
+                CswWebSvcSessionAuthenticateData.Authentication.Request AuthenticationRequest = new CswWebSvcSessionAuthenticateData.Authentication.Request();
+                AuthenticationRequest.CustomerId = AccessId;
+                AuthenticationRequest.UserName = UserName;
+                AuthenticationRequest.Password = Password;
+                AuthenticationRequest.IsMobile = CswConvert.ToBoolean( ForMobile );
+                CswEnumAuthenticationStatus AuthenticationStatus = _authenticate( AuthenticationRequest );
 
                 if( AuthenticationStatus == CswEnumAuthenticationStatus.ExpiredPassword )
                 {
@@ -2967,35 +2976,40 @@ namespace ChemSW.Nbt.WebServices
                 CswNbtSdTabsAndProps tabsandprops = new CswNbtSdTabsAndProps( _CswNbtResources );
 
                 CswNbtMetaDataNodeType feedbackNT = _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( nodetypeid ) );
-                CswNbtObjClassFeedback newFeedbackNode = tabsandprops.getAddNode( feedbackNT );
 
-                //if we have an action this is all we want/need/care about
-                if( false == String.IsNullOrEmpty( actionname ) )
-                {
-                    newFeedbackNode.Action.Text = actionname.Replace( "%20", " " );
-                }
-                else //if we DONT have an action, we want the info required to load a view
-                {
-                    if( false == String.IsNullOrEmpty( viewid ) )
+                CswNbtNodeCollection.AfterMakeNode After = delegate( CswNbtNode NewNode )
                     {
-                        CswNbtViewId CurrentViewId = new CswNbtViewId( viewid );
+                        CswNbtObjClassFeedback newFeedbackNode = NewNode;
+                        //if we have an action this is all we want/need/care about
+                        if( false == String.IsNullOrEmpty( actionname ) )
+                        {
+                            newFeedbackNode.Action.Text = actionname.Replace( "%20", " " );
+                        }
+                        else //if we DONT have an action, we want the info required to load a view
+                        {
+                            if( false == String.IsNullOrEmpty( viewid ) )
+                            {
+                                CswNbtViewId CurrentViewId = new CswNbtViewId( viewid );
 
-                        CswNbtView cookieView = _getView( viewid ); //this view doesn't exist in the the DB, which is why we save it below
+                                CswNbtView cookieView = _getView( viewid ); //this view doesn't exist in the the DB, which is why we save it below
 
-                        CswNbtView view = _CswNbtResources.ViewSelect.restoreView( newFeedbackNode.View.ViewId ); //WARNING!!!! calling View.ViewId creates a ViewId if there isn't one!
-                        view.LoadXml( cookieView.ToXml() );
-                        view.ViewId = newFeedbackNode.View.ViewId; //correct view.ViewId because of above problem.
-                        view.ViewName = cookieView.ViewName; //same as above, but name
-                        view.Visibility = CswEnumNbtViewVisibility.Hidden; // see case 26799
-                        view.save();
-                    }
-                    newFeedbackNode.SelectedNodeId.Text = selectednodeid;
-                    newFeedbackNode.CurrentViewMode.Text = viewmode;
-                }
-                newFeedbackNode.postChanges( false );
+                                CswNbtView view = _CswNbtResources.ViewSelect.restoreView( newFeedbackNode.View.ViewId ); //WARNING!!!! calling View.ViewId creates a ViewId if there isn't one!
+                                view.LoadXml( cookieView.ToXml() );
+                                view.ViewId = newFeedbackNode.View.ViewId; //correct view.ViewId because of above problem.
+                                view.ViewName = cookieView.ViewName; //same as above, but name
+                                view.Visibility = CswEnumNbtViewVisibility.Hidden; // see case 26799
+                                view.save();
+                            }
+                            newFeedbackNode.SelectedNodeId.Text = selectednodeid;
+                            newFeedbackNode.CurrentViewMode.Text = viewmode;
+                        }
+                        //newFeedbackNode.postChanges( false );
+                    };
 
-                ReturnVal["propdata"] = tabsandprops.getProps( newFeedbackNode.Node, "", null, CswEnumNbtLayoutType.Add ); //DO I REALLY BREAK THIS?
-                ReturnVal["nodeid"] = newFeedbackNode.NodeId.ToString();
+                CswNbtObjClassFeedback ret = tabsandprops.getAddNode( feedbackNT, After );
+
+                ReturnVal["propdata"] = tabsandprops.getProps( ret.Node, "", null, CswEnumNbtLayoutType.Add ); //DO I REALLY BREAK THIS?
+                ReturnVal["nodeid"] = ret.NodeId.ToString();
 
                 _deInitResources();
             }

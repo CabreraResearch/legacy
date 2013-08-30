@@ -306,7 +306,7 @@
                                         });
 
                                         //check if user has a default balance. If so, change the behavior of clicking the button
-                                        var userDefaultBalance = Csw.clientSession.userDefaults().DefaultBalanceId;
+                                        var userDefaultBalance = Csw.currentUser.defaults().DefaultBalanceId;
 
                                         if (null != userDefaultBalance) {
                                             Csw.ajaxWcf.post({

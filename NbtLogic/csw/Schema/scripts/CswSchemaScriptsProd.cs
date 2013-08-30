@@ -54,6 +54,13 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswUpdateSchema_02F_Case30041_UnitsOfMeasure() );     //02E-028 //02F-017
             _addVersionedScript( new CswUpdateSchema_02F_Case30041_RolesUsers() );         //02E-029 //02F-018
             _addVersionedScript( new CswUpdateSchema_02F_Case30252() );                    //02E-019 //02F-008
+            _addVersionedScript( new CswUpdateSchema_02F_Case30041_ScheduledRuleImport() );//02E-030 //02F-019
+            _addVersionedScript( new CswUpdateSchema_02F_Case30043_ControlZones() );       //02E-030 //02F-019
+            _addVersionedScript( new CswUpdateSchema_02F_Case30043_Sites() );              //02E-031 //02F-020
+            _addVersionedScript( new CswUpdateSchema_02F_Case29984()  );                   //02E-031 //02F-020
+            _addVersionedScript( new CswUpdateSchema_02F_Case30577() );                    //02E-032 //02F-021
+            _addVersionedScript( new CswUpdateSchema_02F_Case30043_Locations() );          //02E-032 //02F-021
+
 
             #endregion FOXGLOVE
 
@@ -89,6 +96,7 @@ namespace ChemSW.Nbt.Schema
             #region FOXGLOVE Run Before Scripts
 
 
+            _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02F_Case30041_NbtImportQueue() ); //Validate the Nbt Import Queue table first
             _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02F_Case30281() );
             _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02F_Case30251() );
             _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02F_Case30251B() );
@@ -96,6 +104,7 @@ namespace ChemSW.Nbt.Schema
             _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02F_Case27883() );
             _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02F_Case30040() );
             _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02F_Case29992() );
+            _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02F_Case30529() );
 
             #endregion FOXGLOVE Run Before Scripts
 
@@ -225,7 +234,7 @@ namespace ChemSW.Nbt.Schema
                 return ( _RunBeforeScripts );
             }
         }
-        
+
         private List<CswSchemaUpdateDriver> _RunAfterScripts = new List<CswSchemaUpdateDriver>();
         public List<CswSchemaUpdateDriver> RunAfterScripts
         {
@@ -249,7 +258,7 @@ namespace ChemSW.Nbt.Schema
 
         private void _addRunAfterScript( CswUpdateSchemaTo UpdateTo, string Description = null )
         {
-            CswSchemaUpdateDriver CswSchemaUpdateDriver = new CswSchemaUpdateDriver(UpdateTo);
+            CswSchemaUpdateDriver CswSchemaUpdateDriver = new CswSchemaUpdateDriver( UpdateTo );
             CswSchemaUpdateDriver.SchemaVersion = new CswSchemaVersion( 99, '#', _RunAfterScripts.Count );
             CswSchemaUpdateDriver.Description += Description ?? string.Empty;
             if( false == _RunAfterScripts.Contains( CswSchemaUpdateDriver ) )

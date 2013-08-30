@@ -58,17 +58,28 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
+        public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
+        {
+            _CswNbtObjClassDefault.beforeCreateNode( IsCopy, OverrideUniqueValidation );
+        }//beforeCreateNode()
+
+        public override void afterCreateNode()
+        {
+            _CswNbtObjClassDefault.afterCreateNode();
+        }//afterCreateNode()
+
+
+        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation, bool Creating )
         {
             _setDefaultValues();
-            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
+            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation, Creating );
         }
 
         //beforeWriteNode()
 
-        public override void afterWriteNode()
+        public override void afterWriteNode( bool Creating )
         {
-            _CswNbtObjClassDefault.afterWriteNode();
+            _CswNbtObjClassDefault.afterWriteNode( Creating );
         }
 
         //afterWriteNode()
@@ -196,7 +207,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get { return _CswNbtNode.Properties[PropertyName.Name]; }
         }
-        private void onNamePropChange( CswNbtNodeProp NodeProp )
+        private void onNamePropChange( CswNbtNodeProp NodeProp, bool Creating )
         {
             if( Name.WasModified &&
                 string.IsNullOrEmpty( Name.Text ) &&
@@ -211,7 +222,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get { return _CswNbtNode.Properties[PropertyName.SubmittedDate]; }
         }
-        private void onSubmittedDatePropChange( CswNbtNodeProp NodeProp )
+        private void onSubmittedDatePropChange( CswNbtNodeProp NodeProp, bool Creating )
         {
             if( SubmittedDate.DateTimeValue != DateTime.MinValue )
             {
@@ -259,7 +270,7 @@ namespace ChemSW.Nbt.ObjClasses
             get { return _CswNbtNode.Properties[PropertyName.RequestItems]; }
         }
 
-        private void onIsRecurringChange( CswNbtNodeProp NodeProp )
+        private void onIsRecurringChange( CswNbtNodeProp NodeProp, bool Creating )
         {
             if( IsRecurring.WasModified )
             {
@@ -285,7 +296,7 @@ namespace ChemSW.Nbt.ObjClasses
                 CompletedDate.setHidden( value : false, SaveToDb : true );
             }
         }
-        private void onIsFavortiteChange( CswNbtNodeProp NodeProp )
+        private void onIsFavortiteChange( CswNbtNodeProp NodeProp, bool Creating )
         {
             if( IsFavorite.WasModified )
             {

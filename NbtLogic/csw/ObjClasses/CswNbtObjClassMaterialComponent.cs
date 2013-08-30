@@ -45,7 +45,18 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
+        public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
+        {
+            _CswNbtObjClassDefault.beforeCreateNode( IsCopy, OverrideUniqueValidation );
+        }//beforeCreateNode()
+
+        public override void afterCreateNode()
+        {
+            _CswNbtObjClassDefault.afterCreateNode();
+        }//afterCreateNode()
+
+
+        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation, bool Creating )
         {
             if( null != Mixture.RelatedNodeId )
             {
@@ -60,16 +71,16 @@ namespace ChemSW.Nbt.ObjClasses
                     "Material Components must be added from a Chemical.",
                     "Mixture is a server managed property and in this context no material can be discerned to set as the Mixture." );
             }
-            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
+            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation, Creating );
         }//beforeWriteNode()
 
-        public override void afterWriteNode()
+        public override void afterWriteNode( bool Creating )
         {
             if( Mixture.WasModified || Constituent.WasModified )
             {
                 _recalculateRegListMembership();
             }
-            _CswNbtObjClassDefault.afterWriteNode();
+            _CswNbtObjClassDefault.afterWriteNode( Creating );
         }//afterWriteNode()
 
         public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
@@ -106,7 +117,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropNumber Percentage { get { return ( _CswNbtNode.Properties[PropertyName.Percentage] ); } }
 
         public CswNbtNodePropRelationship Mixture { get { return ( _CswNbtNode.Properties[PropertyName.Mixture] ); } }
-        private void OnMixturePropChange( CswNbtNodeProp Prop )
+        private void OnMixturePropChange( CswNbtNodeProp Prop, bool Creating )
         {
             if( null != Mixture.RelatedNodeId )
             {

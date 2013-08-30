@@ -46,9 +46,12 @@ namespace ChemSW.Nbt.Schema
                 CswNbtMetaDataNodeType WorkUnitNT = WorkUnitOC.FirstNodeType;
                 if( null != WorkUnitNT )
                 {
-                    DefaultWorkUnit = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( WorkUnitNT.NodeTypeId, CswEnumNbtMakeNodeOperation.DoNothing );
-                    DefaultWorkUnit.Name.Text = "Default Work Unit";
-                    DefaultWorkUnit.postChanges( false );
+                    _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( WorkUnitNT.NodeTypeId, delegate( CswNbtNode NewNode )
+                        {
+                            DefaultWorkUnit = NewNode;
+                            DefaultWorkUnit.Name.Text = "Default Work Unit";
+                            //DefaultWorkUnit.postChanges( false );
+                        } );
                 }
             }
             if( null != DefaultWorkUnit )
