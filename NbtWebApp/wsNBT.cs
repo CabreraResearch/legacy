@@ -143,7 +143,7 @@ namespace ChemSW.Nbt.WebServices
                 {
 
                     SortedList<string, CswSessionsListEntry> SessionList = _CswSessionResources.CswSessionManager.SessionsList.AllSessions;
-                    foreach( CswSessionsListEntry Entry in SessionList.Values )
+                    foreach( CswSessionsListEntry Entry in from _Entry in SessionList.Values orderby  _Entry.TimeoutDate select _Entry )
                     {
                         // Filter to the administrator's access id only
                         if( Entry.AccessId == _CswNbtResources.AccessId || _CswNbtResources.CurrentNbtUser.Username == CswNbtObjClassUser.ChemSWAdminUsername )
