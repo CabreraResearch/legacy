@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using ChemSW.Nbt.ImportExport;
 using ChemSW.Nbt.Sched;
 using ChemSW.Nbt.Schema;
@@ -115,7 +116,10 @@ namespace ChemSW.Nbt.csw.Schema
 
                 //Add the Legacy ID before storing the definition
                 string SourceTablePkColumnName = Importer.getRemoteDataDictionaryPkColumnName( _SourceTableName, CafDbLink );
-                importBinding( SourceTablePkColumnName, LegacyID, "" );
+
+                // We check to see if someone already added the Legacy Id
+                bool AlreadyExists = _importBindingsTable.Rows.Cast<DataRow>().Any( Row => Row["destproperty"].ToString() == LegacyID );
+                if( false == AlreadyExists ) { importBinding( SourceTablePkColumnName, LegacyID, "" ); }
 
                 //Save the bindings in the DB
                 Importer.storeDefinition( _importOrderTable, _importBindingsTable, _importRelationshipsTable, DefinitionName );
