@@ -67,13 +67,5 @@
                         Terms of Use</a>
                 </div>
             </div>
-            <br />
-            <br />
-            <br />
-        
-</form> 
-
-        
-        
-       
+      
     

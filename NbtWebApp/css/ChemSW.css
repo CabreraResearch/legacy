@@ -1,7 +1,8 @@
-﻿html,form {
-    height: 100%;    
+﻿html {
+    height: 100%;
+    padding: 0px;
+    margin: 0px;
 }
-
 body
 {
     color: #000000;
@@ -9,8 +10,9 @@ body
 
     font-family: verdana;
     font-size: 12px;
-    margin: 0px 0px 0px 0px;
     height: 100%;
+    padding: 0px; 
+    margin: 0px;
 }
 body a
 {
@@ -35,6 +37,8 @@ ul li div {
 {
     min-height: 100%;
     position: relative;
+    padding: 0px;
+    margin: 0px;
 }
 
 
