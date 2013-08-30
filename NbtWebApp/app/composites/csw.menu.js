@@ -72,8 +72,8 @@
         };
         if (Csw.clientChanges.manuallyCheckChanges()) {
               menuItem.disable();
-              isWholePageNavigation = true;
               Csw.goHome(enable).then(enable);
+              return true;  //isWholePageNavigation
         } 
     });
     menuAction.add('Profile', function (privateScope, menuItemName, menuItemJson, menuItem) {
