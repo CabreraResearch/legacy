@@ -1,19 +1,19 @@
 using System.Linq;
-using ChemSW.Core;
-using ChemSW.Exceptions;
-using ChemSW.Nbt.MetaData.FieldTypeRules;
-using ChemSW.Nbt.PropTypes;
-using ChemSW.Nbt.ServiceDrivers;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Runtime.Serialization;
+using ChemSW.Core;
+using ChemSW.Exceptions;
+using ChemSW.Nbt.MetaData.FieldTypeRules;
+using ChemSW.Nbt.PropTypes;
+using ChemSW.Nbt.ServiceDrivers;
 
 namespace ChemSW.Nbt.MetaData
 {
     [DataContract]
-    public class CswNbtMetaDataObjectClassProp: ICswNbtMetaDataObject, ICswNbtMetaDataProp, IEquatable<CswNbtMetaDataObjectClassProp>
+    public class CswNbtMetaDataObjectClassProp : ICswNbtMetaDataObject, ICswNbtMetaDataProp, IEquatable<CswNbtMetaDataObjectClassProp>
     {
         public static CswEnumNbtObjectClassPropAttributes getObjectClassPropAttributesFromString( string AttributeName )
         {
@@ -25,7 +25,7 @@ namespace ChemSW.Nbt.MetaData
         public static String getObjectClassPropAttributesAsString( CswEnumNbtObjectClassPropAttributes Attribute )
         {
             String ReturnVal = String.Empty;
-            if (Attribute != CswResources.UnknownEnum )
+            if( Attribute != CswResources.UnknownEnum )
                 ReturnVal = Attribute.ToString();
             return ( ReturnVal );
         }
@@ -112,8 +112,23 @@ namespace ChemSW.Nbt.MetaData
 
                 return Ret;
             }
-            private set { var KeepSerializerHappy = value; }
+            private set
+            {
+                var KeepSerializerHappy = value;
+            }
         }
+
+        [DataMember( Name = "ViewName" )]
+        public string DbViewColumnName
+        {
+
+            get
+            {
+                return CswConvert.ToString( _ObjectClassPropRow["oraviewcolname"] );
+            }
+
+        }
+
 
         public string PropNameWithQuestionNo
         {
@@ -206,7 +221,7 @@ namespace ChemSW.Nbt.MetaData
                 //    OnEditNodeTypePropOrder( this );
             }
         }
-        
+
         /// <summary>
         /// Default filter delimiter
         /// </summary>
@@ -535,7 +550,7 @@ namespace ChemSW.Nbt.MetaData
             bool ret = false;
             if( this.getFieldTypeValue() == CswEnumNbtFieldType.Relationship )
             {
-               CswNbtMetaDataObjectClass UserOC = _CswNbtMetaDataResources.CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.UserClass );
+                CswNbtMetaDataObjectClass UserOC = _CswNbtMetaDataResources.CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.UserClass );
                 ret = FkMatches( UserOC );
             }
             return ret;

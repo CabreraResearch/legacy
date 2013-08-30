@@ -10,7 +10,7 @@ using ChemSW.Nbt.ObjClasses;
 namespace ChemSW.Nbt.MetaData
 {
     [DataContract]
-    public class CswNbtMetaDataObjectClass: ICswNbtMetaDataObject, ICswNbtMetaDataDefinitionObject, IEquatable<CswNbtMetaDataObjectClass>
+    public class CswNbtMetaDataObjectClass : ICswNbtMetaDataObject, ICswNbtMetaDataDefinitionObject, IEquatable<CswNbtMetaDataObjectClass>
     {
         public const string IconPrefix16 = "Images/newicons/16/";
         public const string IconPrefix18 = "Images/newicons/18/";
@@ -68,8 +68,14 @@ namespace ChemSW.Nbt.MetaData
         [DataMember( Name = "ViewName" )]
         public string DbViewName
         {
-            get { return "OC" + ObjectClassName.ToUpper(); }
-            private set { var KeepSerializerHappy = value; }
+            //get { return "OC" + ObjectClassName.ToUpper(); }
+            //private set { var KeepSerializerHappy = value; }
+
+            get
+            {
+                return CswConvert.ToString( _ObjectClassRow["oraviewname"] );
+            }
+
         }
 
         public CswEnumNbtObjectClass ObjectClass
