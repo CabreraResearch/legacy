@@ -70,13 +70,11 @@
         var enable = function () {
             menuItem.enable();
         };
-        menuItem.disable();
         if (Csw.clientChanges.manuallyCheckChanges()) {
-            Csw.goHome().then(enable);
-            return true;  //isWholePageNavigation
-        } else {
-            enable();
-        }
+              menuItem.disable();
+              isWholePageNavigation = true;
+              Csw.goHome(enable).then(enable);
+        } 
     });
     menuAction.add('Profile', function (privateScope, menuItemName, menuItemJson, menuItem) {
         $.CswDialog('EditNodeDialog', {
@@ -232,6 +230,7 @@
 
                         var action = menuAction[menuItemJson.action] ? menuItemJson.action : 'default';
                         var isWholePageNavigation = menuAction[action](cswPrivate, menuItemName, menuItemJson, menuItem);
+
                         
                         if (isWholePageNavigation === true) {
                             //If we're changing the contents of the entire page, make sure all dangling events are torn down
@@ -347,12 +346,12 @@
 
 
     Csw.goHome = Csw.goHome ||
-        Csw.register('goHome', function () {
+        Csw.register('goHome', function (onError) {
             'use strict';
             var toDo = [];
             toDo.push(Csw.clientState.clearCurrent());
             toDo.push(Csw.main.refreshWelcomeLandingPage());
-            return Q.all(toDo);
+            return Q.all(toDo).fail(onError);
         });
 
 }());
