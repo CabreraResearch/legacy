@@ -15,7 +15,7 @@ using ChemSW.Nbt.Security;
 namespace ChemSW.Nbt.MetaData
 {
     [DataContract]
-    public class CswNbtMetaDataNodeType: ICswNbtMetaDataObject, ICswNbtMetaDataDefinitionObject, IEquatable<CswNbtMetaDataNodeType>, IComparable
+    public class CswNbtMetaDataNodeType : ICswNbtMetaDataObject, ICswNbtMetaDataDefinitionObject, IEquatable<CswNbtMetaDataNodeType>, IComparable
     {
         private CswNbtMetaDataResources _CswNbtMetaDataResources;
         private DataRow _NodeTypeRow;
@@ -107,8 +107,14 @@ namespace ChemSW.Nbt.MetaData
         [DataMember( Name = "ViewName" )]
         public string DbViewName
         {
-            get { return "NT" + NodeTypeName.ToUpper(); }
-            private set { var KeepSerializerHappy = value; }
+            //get { return "NT" + NodeTypeName.ToUpper(); }
+            //private set { var KeepSerializerHappy = value; }
+
+            get
+            {
+                return CswConvert.ToString( _NodeTypeRow["oraviewname"] );
+            }
+
         }
 
         public string Category
@@ -381,7 +387,7 @@ namespace ChemSW.Nbt.MetaData
             foreach( CswNbtMetaDataNodeTypeTab Tab in _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeTabs( NodeTypeId ) )
             {
                 if( _CswNbtMetaDataResources.CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.View, Tab.getNodeType() ) ||
-                    _CswNbtMetaDataResources.CswNbtResources.Permit.canTab( CswEnumNbtNodeTypePermission.View, this, NodeTypeTab : Tab ) )
+                    _CswNbtMetaDataResources.CswNbtResources.Permit.canTab( CswEnumNbtNodeTypePermission.View, this, NodeTypeTab: Tab ) )
                 {
                     yield return Tab;
                 }
