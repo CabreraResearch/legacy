@@ -77,7 +77,7 @@ namespace ChemSW.Nbt.Schema
             #region Before Scripts
 
             //dch 30252 FOXGLOVE, but metadata changes so before EUC changes
-            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02F_Case30252() ), RunBeforeEveryExecutionOfUpdater_02F_Case30252.Title );
+            _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02F_Case30252() );
             //This script needs to go first
             _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02F_Case30228() );
 
