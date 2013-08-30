@@ -502,7 +502,7 @@
             };
 
             cswPrivate.isInDom = function() {
-                return cswParent && cswParent.getId && Csw.isElementInDom(cswParent.getId());
+                return cswParent && cswParent[0] && cswParent[0].id && Csw.isElementInDom(cswParent[0].id);
             };
 
             //#endregion Validator
