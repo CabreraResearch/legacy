@@ -151,17 +151,14 @@
                                 }
                                 break;
                             case 'Home':
-                                
                                 var enable = function () {
                                     menuItem.enable();
                                 };
-                                menuItem.disable();
                                 if (Csw.clientChanges.manuallyCheckChanges()) {
+                                    menuItem.disable();
                                     isWholePageNavigation = true;
                                     Csw.goHome(enable).then(enable);
-                                } else {
-                                    enable();
-                                }
+                                } 
                                 break;
                             case 'Profile':
                                 $.CswDialog('EditNodeDialog', {
