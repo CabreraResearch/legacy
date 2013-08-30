@@ -53,6 +53,7 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswUpdateSchema_02F_Case29402() );                    //02E-027 //02F-016
             _addVersionedScript( new CswUpdateSchema_02F_Case30041_UnitsOfMeasure() );     //02E-028 //02F-017
             _addVersionedScript( new CswUpdateSchema_02F_Case30041_RolesUsers() );         //02E-029 //02F-018
+            _addVersionedScript( new CswUpdateSchema_02F_Case30252() );                    //02E-019 //02F-008
             _addVersionedScript( new CswUpdateSchema_02F_Case30041_ScheduledRuleImport() );//02E-030 //02F-019
             _addVersionedScript( new CswUpdateSchema_02F_Case30043_ControlZones() );       //02E-030 //02F-019
             _addVersionedScript( new CswUpdateSchema_02F_Case30043_Sites() );              //02E-031 //02F-020
@@ -75,8 +76,11 @@ namespace ChemSW.Nbt.Schema
 
             #region Before Scripts
 
+            //dch 30252 FOXGLOVE, but metadata changes so before EUC changes
+            _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02F_Case30252() );
             //This script needs to go first
             _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02F_Case30228() );
+
 
             #region EUCALYPTUS Run Before Scripts
 
@@ -90,6 +94,7 @@ namespace ChemSW.Nbt.Schema
             #endregion EUCALYPTUS Run Before Scripts
 
             #region FOXGLOVE Run Before Scripts
+
 
             _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02F_Case30041_NbtImportQueue() ); //Validate the Nbt Import Queue table first
             _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02F_Case30281() );

@@ -114,7 +114,6 @@
     <Content Include="app\main\csw.mainDivs.js" />
     <Content Include="app\promises\csw.ajaxCore.js" />
     <Content Include="app\promises\csw.ajaxDeprecated.js" />
-    <Content Include="app\promises\csw.spinners.js" />
     <Content Include="app\db\csw.db.js" />
     <Content Include="app\promises\csw.promise.js" />
     <Content Include="app\promises\csw.spinners.js" />
