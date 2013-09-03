@@ -14,24 +14,7 @@ namespace ChemSW.Nbt.Schema
         public CswSchemaScriptsProd()
         {
             // This is where you manually set to the last version of the previous release (the one currently in production)
-            _MinimumVersion = new CswSchemaVersion( 2, 'D', 23 );
-
-            // This is where you add new versions.
-            #region EUCALYPTUS
-
-            _addVersionedScript( new CswUpdateSchema_02E_Case30014() );                    //02E-001
-            _addVersionedScript( new CswUpdateSchema_02E_Case30222() );                    //02E-002
-            _addVersionedScript( new CswUpdateSchema_02E_Case29847() );                    //02E-003
-            _addVersionedScript( new CswUpdateSchema_02E_Case30123() );                    //02E-004
-            _addVersionedScript( new CswUpdateSchema_02E_Case30370() );                    //02E-005
-            _addVersionedScript( new CswUpdateSchema_02E_Case30360() );                    //02E-006
-            _addVersionedScript( new CswUpdateSchema_02E_Case30339_UserProfilex2() );      //02E-007
-            _addVersionedScript( new CswUpdateSchema_02E_Case30300() );                    //02E-008 
-            _addVersionedScript( new CswUpdateSchema_02E_Case30440() );                    //02E-009
-            _addVersionedScript( new CswUpdateSchema_02E_Case30445() );                    //02E-010
-            _addVersionedScript( new CswUpdateSchema_02E_Case30484() );                    //02E-011  
-
-            #endregion EUCALYPTUS
+            _MinimumVersion = new CswSchemaVersion( 2, 'E', 11 );
 
             #region FOXGLOVE
 
@@ -81,20 +64,7 @@ namespace ChemSW.Nbt.Schema
             //This script needs to go first
             _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02F_Case30228() );
 
-
-            #region EUCALYPTUS Run Before Scripts
-
-            _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02E_Case30500() );
-            _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02E_Case29700() );
-            _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02E_Case30123() );
-            _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02E_Case29701() );
-            _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02E_Case30347() );
-            _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02E_Case30549() );
-
-            #endregion EUCALYPTUS Run Before Scripts
-
             #region FOXGLOVE Run Before Scripts
-
 
             _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02F_Case30041_NbtImportQueue() ); //Validate the Nbt Import Queue table first
             _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02F_Case30281() );
@@ -108,11 +78,9 @@ namespace ChemSW.Nbt.Schema
 
             #endregion FOXGLOVE Run Before Scripts
 
-
             _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_MakeMissingNodeTypeProps() );
             _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02SQL() );
             _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_03() );
-
 
             #endregion Before Scripts
 
