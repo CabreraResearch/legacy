@@ -42,7 +42,7 @@ namespace ChemSW.Nbt.Actions
                 AuthenticationRequest = Request;
                 Username = AuthenticationRequest.UserName;
                 IPAddress = AuthenticationRequest.IpAddress;
-                setStatus( Request.AuthenticationStatus, User = null );
+                setStatus( Request.AuthenticationStatus, User );
             }
 
             [DataMember]
@@ -62,34 +62,11 @@ namespace ChemSW.Nbt.Actions
 
             private void setStatus( CswEnumAuthenticationStatus Status, CswNbtObjClassUser User = null )
             {
-                LoginStatus = "Failed";
-                switch( Status )
+                LoginStatus = Status == CswEnumAuthenticationStatus.Authenticated ? "Success" : "Failed";
+                FailureReason = CswEnumAuthenticationStatus.EuphamizedText[Status];
+                if( Status == CswEnumAuthenticationStatus.Failed )
                 {
-                    case CswEnumAuthenticationStatus.TooManyUsers:
-                        FailureReason = "Too Many Users";
-                        break;
-                    case CswEnumAuthenticationStatus.Archived:
-                        FailureReason = "Account Archived";
-                        break;
-                    case CswEnumAuthenticationStatus.Failed:
-                        if( null == User )
-                        {
-                            FailureReason = "Unknown Username";
-                        }
-                        else
-                        {
-                            FailureReason = "Bad Password";
-                        }
-                        break;
-                    case CswEnumAuthenticationStatus.Locked:
-                        FailureReason = "Account Locked";
-                        break;
-                    case CswEnumAuthenticationStatus.Unknown:
-                        FailureReason = "Unknown Username";
-                        break;
-                    case CswEnumAuthenticationStatus.Authenticated:
-                        LoginStatus = "Success";
-                        break;
+                    FailureReason = null == User ? "Unknown Username" : "Bad Password";
                 }
             }
         }
