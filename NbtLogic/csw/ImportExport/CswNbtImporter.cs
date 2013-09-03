@@ -647,7 +647,7 @@ namespace ChemSW.Nbt.ImportExport
                 }
             }
 
-                    #region CswNbtImportDefRelationship
+            #region CswNbtImportDefRelationship
 
             foreach( CswNbtImportDefRelationship RowRelationship in RowRelationships )
             {
@@ -697,70 +697,9 @@ namespace ChemSW.Nbt.ImportExport
                 }
             } // foreach( CswNbtMetaDataNodeTypeProp Relationship in RowRelationships )
         } // _importPropertyValues()
-                    #endregion
+            #endregion
 
 
-
-        private ICswNbtTree _relationshipSearchViaLegacyId( DataRow ImportRow, CswNbtImportDefBinding Binding )
-        {
-            ICswNbtTree Ret = null;
-
-            // We only want to search for a related node if the row has a relationship
-            if( false == string.IsNullOrEmpty( ImportRow[Binding.SourceColumnName].ToString() ) )
-            {
-                CswNbtView View = new CswNbtView( _CswNbtResources );
-                View.ViewName = "Relationships View";
-
-                CswNbtMetaDataNodeType CurrentNodeType =
-                    _CswNbtResources.MetaData.getNodeType( Binding.DestProperty.FKValue );
-                CswNbtMetaDataNodeTypeProp LegacyIdNTP = CurrentNodeType.getNodeTypeProp( "Legacy Id" );
-
-                CswNbtViewRelationship ParentRelationship = View.AddViewRelationship( CurrentNodeType,
-                                                                                     false );
-                View.AddViewPropertyAndFilter( ParentViewRelationship: ParentRelationship,
-                                              MetaDataProp: LegacyIdNTP,
-                                              Conjunction: CswEnumNbtFilterConjunction.And,
-                                              SubFieldName: CswEnumNbtSubFieldName.Value,
-                                              FilterMode: CswEnumNbtFilterMode.Equals,
-                                              Value: ImportRow[Binding.SourceColumnName].ToString() );
-
-                Ret = _CswNbtResources.Trees.getTreeFromView( View, false, true, true );
-            }
-
-            return Ret;
-        }
-
-        private void _relationshipSearchViaName( CswNbtNode Node, CswCommaDelimitedString inClause, DataRow ImportRow, CswNbtImportDefBinding Binding )
-        {
-            string sql = "select min(nodeid) nodeid from nodes where nodetypeid in ("
-                                   + inClause.ToString()
-                                   + ") and lower(nodename)='"
-                                   + ImportRow[Binding.ImportDataColumnName].ToString().ToLower() + "'";
-            CswArbitrarySelect relNodeSel = _CswNbtResources.makeCswArbitrarySelect( "getRelatedNode", sql );
-            DataTable relNodeTbl = relNodeSel.getTable();
-            // TODO: Why does this always return an empty row?
-            if( relNodeTbl.Rows.Count > 0 )
-            {
-                // Because the sql query is using 'min' it will always return a row; we only want the row if it has a value
-                if( false == string.IsNullOrEmpty( relNodeTbl.Rows[0].ToString() ) )
-                {
-                    CswPrimaryKey pk = new CswPrimaryKey( "nodes", CswConvert.ToInt32( relNodeTbl.Rows[0]["nodeid"] ) );
-                    if( Binding.DestProperty.getFieldTypeValue() == CswEnumNbtFieldType.Quantity )
-                    {
-                        Node.Properties[Binding.DestProperty].AsQuantity.UnitId = pk;
-                    }
-                    else
-                    {
-                        Node.Properties[Binding.DestProperty].AsRelationship.RelatedNodeId = pk;
-                    }
-                }
-            }
-            else
-            {
-                OnMessage( "No matching " + Binding.DestNodeType.NodeTypeName + " for " +
-                          ImportRow[Binding.ImportDataColumnName] );
-            }
-        }
 
         private ICswNbtTree _relationshipSearchViaLegacyId( DataRow ImportRow, CswNbtImportDefBinding Binding )
         {
