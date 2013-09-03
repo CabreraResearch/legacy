@@ -44,8 +44,11 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswUpdateSchema_02F_Case30577() );                    //02E-032 //02F-021
             _addVersionedScript( new CswUpdateSchema_02F_Case30043_Locations() );          //02E-032 //02F-021
 
-
             #endregion FOXGLOVE
+
+            #region GINKGO
+
+            #endregion GINKGO
 
             // This automatically detects the latest version
             _LatestVersion = _MinimumVersion;
@@ -77,6 +80,10 @@ namespace ChemSW.Nbt.Schema
             _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02F_Case30529() );
 
             #endregion FOXGLOVE Run Before Scripts
+
+            #region GINKGO Run Before Scripts
+
+            #endregion GINKGO Run Before Scripts
 
             _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_MakeMissingNodeTypeProps() );
             _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02SQL() );
