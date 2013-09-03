@@ -55,12 +55,16 @@
 
 
             cswPublic.show = Csw.method(function () {
-                cswPrivate.button.show();
+                if (cswPrivate.button) {
+                    cswPrivate.button.show();
+                }
                 return cswPublic;
             });
 
             cswPublic.hide = Csw.method(function () {
-                cswPrivate.button.hide();
+                if (cswPrivate.button) {
+                    cswPrivate.button.hide();
+                }
                 return cswPublic;
             });
 
