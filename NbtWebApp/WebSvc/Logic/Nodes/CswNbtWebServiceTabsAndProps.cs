@@ -74,9 +74,9 @@ namespace ChemSW.Nbt.WebServices
             return _TabsPropsSd.removeProp( PropIdAttr, TabId );
         } // removeProp()
 
-        public CswNbtNode addNode( CswNbtMetaDataNodeType NodeType, JObject PropsObj, out CswNbtNodeKey RetNbtNodeKey, CswNbtView View = null, CswNbtMetaDataNodeTypeTab NodeTypeTab = null )
+        public CswNbtNode addNode( CswNbtMetaDataNodeType NodeType, JObject PropsObj, out CswNbtNodeKey RetNbtNodeKey, CswNbtNodeCollection.AfterMakeNode After, CswNbtView View = null, CswNbtMetaDataNodeTypeTab NodeTypeTab = null )
         {
-            return _TabsPropsSd.addNode( NodeType, PropsObj, out RetNbtNodeKey, View, NodeTypeTab );
+            return _TabsPropsSd.addNode( NodeType, PropsObj, out RetNbtNodeKey, After, View, NodeTypeTab );
         }
 
         public JObject saveProps( CswPrimaryKey NodePk, Int32 TabId, JObject NewPropsJson, Int32 NodeTypeId, CswNbtView View, bool IsIdentityTab, bool RemoveTempStatus )

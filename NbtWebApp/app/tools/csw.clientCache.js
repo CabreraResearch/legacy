@@ -50,9 +50,6 @@
                 //This is a bit of a dance, but promises are promises.
                 //We want the return promise to massage the data into the right object, 
                 //so what is one more promise between friends?
-                Csw.debug.log('Get: ' + webServiceName);
-                Csw.debug.log(data);
-
                 if (data && data.length > 0) {
                     return data[0].data;
                 }

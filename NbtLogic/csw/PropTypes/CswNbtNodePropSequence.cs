@@ -109,7 +109,7 @@ namespace ChemSW.Nbt.PropTypes
             get { return Gestalt; }
         }
 
-        override public void onBeforeUpdateNodePropRow( bool IsCopy, bool OverrideUniqueValidation )
+        override public void onBeforeUpdateNodePropRow( CswNbtNode Node, bool IsCopy, bool OverrideUniqueValidation, bool Creating )
         {
             //if( _CswNbtMetaDataNodeTypeProp.FieldType.FieldType != CswEnumNbtFieldType.Sequence )
             //{
@@ -120,7 +120,7 @@ namespace ChemSW.Nbt.PropTypes
             // Automatically generate a value.  This will not overwrite existing values.
             setSequenceValue();
 
-            base.onBeforeUpdateNodePropRow( IsCopy, OverrideUniqueValidation );
+            base.onBeforeUpdateNodePropRow( Node, IsCopy, OverrideUniqueValidation, Creating );
         }//onBeforeUpdateNodePropRow()
 
         public override void Copy( CswNbtNodePropData Source )

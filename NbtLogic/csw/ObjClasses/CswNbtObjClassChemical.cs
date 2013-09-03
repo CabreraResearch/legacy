@@ -36,6 +36,14 @@ namespace ChemSW.Nbt.ObjClasses
             return ret;
         }
 
+        public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
+        {
+        }
+
+        public override void afterCreateNode()
+        {
+        }
+
         /// <summary>
         /// Object Class
         /// </summary>
@@ -986,12 +994,15 @@ namespace ChemSW.Nbt.ObjClasses
                                                                                              false == isRegulatoryListSuppressed( reglistid ) ) )
                     {
                         // add new reg list member node
-                        CswNbtObjClassRegulatoryListMember newMemberNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( RegListMemberNT.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode );
-                        newMemberNode.SetByChemical = true;  // since this node creation was automatically determined
-                        newMemberNode.Chemical.RelatedNodeId = this.NodeId;
-                        newMemberNode.RegulatoryList.RelatedNodeId = reglistid;
-                        //newMemberNode.Show.Checked = CswEnumTristate.True;
-                        newMemberNode.postChanges( false );
+                        _CswNbtResources.Nodes.makeNodeFromNodeTypeId( RegListMemberNT.NodeTypeId, delegate( CswNbtNode NewNode )
+                            {
+                                CswNbtObjClassRegulatoryListMember newMemberNode = NewNode;
+                                newMemberNode.SetByChemical = true; // since this node creation was automatically determined
+                                newMemberNode.Chemical.RelatedNodeId = this.NodeId;
+                                newMemberNode.RegulatoryList.RelatedNodeId = reglistid;
+                                //newMemberNode.Show.Checked = CswEnumTristate.True;
+                                //newMemberNode.postChanges( false );
+                            } );
                     }
                     // If a current member entry exists, but the reg list doesn't match, delete it (unless it is a user override)
                     foreach( RegListEntry reglistentry in myRegLists.Where( entry => false == matchingRegLists.Any( reglistid => entry.RegulatoryListId == reglistid ) &&
@@ -1034,7 +1045,7 @@ namespace ChemSW.Nbt.ObjClasses
         #region Object class specific properties
 
         public CswNbtNodePropList PhysicalState { get { return _CswNbtNode.Properties[PropertyName.PhysicalState]; } }
-        private void _onPhysicalStatePropChange( CswNbtNodeProp prop )
+        private void _onPhysicalStatePropChange( CswNbtNodeProp prop, bool Creating )
         {
             if( false == String.IsNullOrEmpty( PhysicalState.Value ) )
             {
@@ -1051,7 +1062,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropQuantity ExpirationInterval { get { return ( _CswNbtNode.Properties[PropertyName.ExpirationInterval] ); } }
         public CswNbtNodePropCASNo CasNo { get { return ( _CswNbtNode.Properties[PropertyName.CasNo] ); } }
 
-        private void _onCasNoPropChange( CswNbtNodeProp Prop )
+        private void _onCasNoPropChange( CswNbtNodeProp Prop, bool Creating )
         {
             if( CasNo.GetOriginalPropRowValue() != CasNo.Text )
             {

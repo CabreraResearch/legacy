@@ -289,9 +289,15 @@
     /**
      * Compares two objects, serialized to strings, stripped of whitespace
     */
-    var compare = function (obj1, obj2) {
-        var string1 = Csw.serialize(obj1).trim().replace(' ', '');
-        var string2 = Csw.serialize(obj2).trim().replace(' ', '');
+    var compare = function(obj1, obj2) {
+        var string1 = '',
+            string2 = '';
+        if (obj1) {
+            string1 = Csw.serialize(obj1).trim().replace(' ', '');
+        }
+        if (obj2) {
+            string2 = Csw.serialize(obj2).trim().replace(' ', '');
+        }
         return string1 === string2;
     };
 

@@ -34,6 +34,14 @@ namespace ChemSW.Nbt.ObjClasses
             get { return _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.NonChemicalClass ); }
         }
 
+        public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
+        {
+        }
+
+        public override void afterCreateNode()
+        {
+        }
+
         /// <summary>
         /// Cast a Request Item PropertySet back to an Object Class
         /// </summary>

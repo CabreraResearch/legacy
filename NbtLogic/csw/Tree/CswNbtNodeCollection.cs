@@ -356,8 +356,8 @@ namespace ChemSW.Nbt
                 }
                 _CswNbtResources.logTimerResult( "CswNbtNodeCollection.makeNode on NodeId (" + HashKey.NodeId.ToString() + ")", Timer.ElapsedDurationInSecondsAsString );
 
-                Node.OnAfterSetNodeId += new CswNbtNode.OnSetNodeIdHandler( OnAfterSetNodeIdHandler );
-                Node.OnRequestDeleteNode += new CswNbtNode.OnRequestDeleteNodeHandler( OnAfterDeleteNode );
+                //Node.OnAfterSetNodeId += new CswNbtNode.OnSetNodeIdHandler( OnAfterSetNodeIdHandler );
+                Node.OnRequestDeleteNode += OnAfterDeleteNode;
             }
             else
             {
@@ -403,47 +403,47 @@ namespace ChemSW.Nbt
         //    return Node;
         //}
 
-        private void OnAfterSetNodeIdHandler( CswNbtNode Node, CswPrimaryKey OldNodeId, CswPrimaryKey NewNodeId )
-        {
-            NodeHash.Remove( new NodeHashKey( OldNodeId, Node.NodeSpecies ) );
-            NodeHash.Add( new NodeHashKey( NewNodeId, Node.NodeSpecies ), Node );
-        }
+        //private void OnAfterSetNodeIdHandler( CswNbtNode Node, CswPrimaryKey OldNodeId, CswPrimaryKey NewNodeId )
+        //{
+        //    NodeHash.Remove( new NodeHashKey( OldNodeId, Node.NodeSpecies ) );
+        //    NodeHash.Add( new NodeHashKey( NewNodeId, Node.NodeSpecies ), Node );
+        //}
 
         private void OnAfterDeleteNode( CswNbtNode Node )
         {
             NodeHash.Remove( new NodeHashKey( Node.NodeId, Node.NodeSpecies ) );
         }
 
+        public delegate void AfterMakeNode( CswNbtNode NewNode );
+
+        // <summary>
+        // 
+        // </summary>
         /// <summary>
         /// Create a new, fresh, empty Node from a node type.  Properties are filled in, but Property Values are not.
         /// </summary>
         /// <param name="NodeTypeId">Primary Key of Nodetype</param>
-        /// <param name="Op">Specifies the action to take with regard to the database</param>
-        /// <param name="OverrideUniqueValidation"></param>
-        public CswNbtNode makeNodeFromNodeTypeId( Int32 NodeTypeId, CswEnumNbtMakeNodeOperation Op, bool OverrideUniqueValidation = false )
+        /// <param name="IsTemp">If true, the node is a temp node, though still saved to the database</param>
+        /// <param name="OnAfterMakeNode">Event that occurs after creating the node but before saving it for the first time</param>
+        /// <param name="OverrideUniqueValidation">If true, allow this node to be created even if it violates uniqueness rules</param>
+        /// <returns>The new node</returns>
+        public CswNbtNode makeNodeFromNodeTypeId( Int32 NodeTypeId, AfterMakeNode OnAfterMakeNode = null, bool IsTemp = false, bool OverrideUniqueValidation = false )
         {
             CswNbtNode Node = _CswNbtNodeFactory.make( CswEnumNbtNodeSpecies.Plain, null, NodeTypeId, NodeHash.Count );
-            Node.OnAfterSetNodeId += new CswNbtNode.OnSetNodeIdHandler( OnAfterSetNodeIdHandler );
-            Node.OnRequestDeleteNode += new CswNbtNode.OnRequestDeleteNodeHandler( OnAfterDeleteNode );
+            //Node.OnAfterSetNodeId += new CswNbtNode.OnSetNodeIdHandler( OnAfterSetNodeIdHandler );
+            Node.OnRequestDeleteNode += OnAfterDeleteNode;
             Node.fillFromNodeTypeId( NodeTypeId );
-            Node.IsTemp = CswEnumNbtMakeNodeOperation.MakeTemp == Op;
+            Node.IsTemp = IsTemp;
 
-            switch( Op )
+            _CswNbtNodeFactory.CswNbtNodeWriter.makeNewNodeEntry( Node );
+            _CswNbtNodeFactory.CswNbtNodeWriter.setDefaultPropertyValues( Node );
+
+            if( null != OnAfterMakeNode )
             {
-                case CswEnumNbtMakeNodeOperation.WriteNode:
-                case CswEnumNbtMakeNodeOperation.MakeTemp:
-                    _CswNbtNodeFactory.CswNbtNodeWriter.setDefaultPropertyValues( Node );
-                    Node.postChanges( true, false, OverrideUniqueValidation );
-                    break;
-                case CswEnumNbtMakeNodeOperation.JustSetPk:
-                    _CswNbtNodeFactory.CswNbtNodeWriter.makeNewNodeEntry( Node, false, false, OverrideUniqueValidation );
-                    //_CswNbtNodeFactory.CswNbtNodeWriter.setDefaultPropertyValues( Node );    
-                    break;
-                case CswEnumNbtMakeNodeOperation.DoNothing:
-                    //right now there are only three enum values; I'm just making this explicit
-                    _CswNbtNodeFactory.CswNbtNodeWriter.setDefaultPropertyValues( Node );
-                    break;
+                OnAfterMakeNode( Node );
             }
+
+            Node.postChanges( ForceUpdate: true, IsCopy: false, OverrideUniqueValidation: OverrideUniqueValidation, IsCreate: true );
 
             //if( Node.NodeId != Int32.MinValue )
             //{

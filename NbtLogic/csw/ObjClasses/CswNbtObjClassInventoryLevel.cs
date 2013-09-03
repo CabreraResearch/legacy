@@ -60,10 +60,11 @@ namespace ChemSW.Nbt.ObjClasses
 
         public CswNbtObjClassInventoryLevel copyNode()
         {
-            CswNbtNode CopyNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswEnumNbtMakeNodeOperation.DoNothing );
-            CopyNode.copyPropertyValues( Node );
-            CswNbtObjClassInventoryLevel RetCopy = CopyNode;
-            RetCopy.postChanges( true );
+            CswNbtObjClassInventoryLevel RetCopy = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, delegate( CswNbtNode CopyNode )
+                {
+                    CopyNode.copyPropertyValues( Node );
+                    //RetCopy.postChanges( true );
+                } );
             return RetCopy;
         }
 
@@ -82,15 +83,26 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
+        public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
         {
-            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
+            _CswNbtObjClassDefault.beforeCreateNode( IsCopy, OverrideUniqueValidation );
+        }//beforeCreateNode()
+
+        public override void afterCreateNode()
+        {
+            _CswNbtObjClassDefault.afterCreateNode();
+        }//afterCreateNode()
+
+
+        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation, bool Creating )
+        {
+            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation, Creating );
 
         }//beforeWriteNode()
 
-        public override void afterWriteNode()
+        public override void afterWriteNode( bool Creating )
         {
-            _CswNbtObjClassDefault.afterWriteNode();
+            _CswNbtObjClassDefault.afterWriteNode( Creating );
         }//afterWriteNode()
 
         public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
@@ -132,7 +144,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public CswNbtNodePropList Type { get { return _CswNbtNode.Properties[PropertyName.Type]; } }
         public CswNbtNodePropQuantity Level { get { return _CswNbtNode.Properties[PropertyName.Level]; } }
-        private void OnLevelPropChange( CswNbtNodeProp Prop )
+        private void OnLevelPropChange( CswNbtNodeProp Prop, bool Creating )
         {
             if( Level.UnitId != CurrentQuantity.UnitId )
             {
@@ -142,7 +154,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
         public CswNbtNodePropRelationship Material { get { return _CswNbtNode.Properties[PropertyName.Material]; } }
-        private void OnMaterialPropChange( CswNbtNodeProp Prop )
+        private void OnMaterialPropChange( CswNbtNodeProp Prop, bool Creating )
         {
             if( CswTools.IsPrimaryKey( Material.RelatedNodeId ) )
             {
@@ -157,7 +169,7 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         public CswNbtNodePropLocation Location { get { return _CswNbtNode.Properties[PropertyName.Location]; } }
-        private void OnLocationPropChange( CswNbtNodeProp Prop )
+        private void OnLocationPropChange( CswNbtNodeProp Prop, bool Creating )
         {
             CurrentQuantity.Quantity = _LevelMgr.getCurrentInventoryLevel( this );
         }
@@ -166,7 +178,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropUserSelect Subscribe { get { return _CswNbtNode.Properties[PropertyName.Subscribe]; } }
         public CswNbtNodePropList Status { get { return _CswNbtNode.Properties[PropertyName.Status]; } }
         public CswNbtNodePropQuantity CurrentQuantity { get { return _CswNbtNode.Properties[PropertyName.CurrentQuantity]; } }
-        private void OnCurrrentQuantityPropChange( CswNbtNodeProp Prop )
+        private void OnCurrrentQuantityPropChange( CswNbtNodeProp Prop, bool Creating )
         {
             if( _LevelMgr.isLevelPastThreshhold( this ) )
             {

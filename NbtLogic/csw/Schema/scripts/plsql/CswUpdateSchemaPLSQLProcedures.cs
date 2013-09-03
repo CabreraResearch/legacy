@@ -10,7 +10,7 @@ namespace ChemSW.Nbt.Schema
     /// </summary>    
     public class CswUpdateSchemaPLSQLProcedures
     {
-        public sealed class Procedures: CswEnum<Procedures>
+        public sealed class Procedures : CswEnum<Procedures>
         {
             #region Properties and ctor
 
@@ -90,6 +90,7 @@ end;" );
         for rec in nts loop
         --dbms_output.put_line('createntview(' || to_char(rec.nodetypeid) || ',' || rec.nodetypename || ')');
         CreateNtView(rec.nodetypeid);
+        CreateNtView2(rec.nodetypeid);
         end loop;
     end CreateAllNtViews;" );
 
@@ -175,6 +176,105 @@ end;" );
     end createNTview;" );
 
             #endregion CREATENTVIEW
+
+            #region CREATENTVIEW2
+
+            public static readonly Procedures CREATENTVIEW2 = new Procedures( CswEnumDeveloper.DH, 0,
+            @"create or replace procedure createNTview2 (ntid in number) is
+        cursor props is
+        select nodetypepropid,oraviewcolname,ft.fieldtype,fts.propcolname,fts.subfieldname,fts.is_default
+        from nodetype_props ntp
+         join field_types ft on ft.fieldtypeid=ntp.fieldtypeid
+         join field_types_subfields fts on fts.fieldtypeid=ft.fieldtypeid
+         where 
+         fts.reportable='1' and fts.is_default='1' and ntp.nodetypeid=ntid 
+         order by ntp.oraviewcolname,fts.is_default desc;
+ 
+        var_sql clob;
+        var_line varchar(2000);
+        viewname varchar2(30);
+        colname varchar2(30);
+    begin
+        --dbms_output.enable(32000);
+
+        
+        --protect against reserved words for viewname
+        select oraviewname into viewname from nodetypes where nodetypeid=ntid;
+        begin
+          execute immediate 'select 1 as ' || viewname || ' from dual' ;
+        exception
+          when OTHERS
+          then viewname := viewname || '1';
+        end;
+
+
+        var_line:='create or replace view ' || viewname || ' as select n.nodeid ';
+       -- dbms_output.put_line('creating ' || viewname || '...');
+        var_sql := var_sql || var_line;
+
+        for rec in props loop
+            --dbms_output.put_line(to_char(pcount) || '|' || safeSqlParam(rec.propname) || '|' || rec.subfieldname || '|' || rec.fieldtype || '|' || rec.objectclass || '|' || rec.nodetypename);
+            colname := rec.oraviewcolname;
+            
+        --protect against reserved words for colname
+            begin
+              execute immediate 'select 1 as ' || colname || ' from dual' ;
+            exception
+              when OTHERS
+              then colname := colname || '1';
+            end;
+            
+                        
+            --the gestalt
+            var_line := ',(select gestalt from vwNpv where nid=n.nodeid and ntpid=' || to_char(rec.nodetypepropid);
+            var_line := var_line || ') ' || colname || chr(13);
+            var_sql := var_sql || var_line;
+            
+            --dbms_output.put_line(var_line);
+            if(rec.fieldtype='Relationship' or rec.fieldtype='Location') then
+              var_line := ',(select field1_fk from vwNpv where nid=n.nodeid and ntpid=' || to_char(rec.nodetypepropid);
+              var_line := var_line || ') ' || substr(colname,1,27) || '_id';            
+              var_sql := var_sql || var_line;
+            elsif(rec.fieldtype='Quantity') then
+              var_line := ',(select field1 from vwNpv where nid=n.nodeid and ntpid=' || to_char(rec.nodetypepropid);
+              var_line := var_line || ') ' || substr(colname,1,26) || '_uom';            
+              var_line := var_line || ',(select field1_numeric from vwNpv where nid=n.nodeid and ntpid=' || to_char(rec.nodetypepropid);
+              var_line := var_line || ') ' || substr(colname,1,26) || '_val';
+              var_line := var_line || ',(select field1_fk from vwNpv where nid=n.nodeid and ntpid=' || to_char(rec.nodetypepropid);
+              var_line := var_line || ') ' || substr(colname,1,24) || '_uomid';              
+              var_sql := var_sql || var_line;
+            elsif(rec.fieldtype='NFPA') then
+              
+              var_line := ',(select field1 from vwNpv where nid=n.nodeid and ntpid=' || to_char(rec.nodetypepropid);
+              var_line := var_line || ') ' || substr(colname,1,27) || '_f';            
+              var_sql := var_sql || var_line;
+              var_line := ',(select field2 from vwNpv where nid=n.nodeid and ntpid=' || to_char(rec.nodetypepropid);
+              var_line := var_line || ') ' || substr(colname,1,27) || '_r';            
+              var_sql := var_sql || var_line;
+              var_line := ',(select field3 from vwNpv where nid=n.nodeid and ntpid=' || to_char(rec.nodetypepropid);
+              var_line := var_line || ') ' || substr(colname,1,27) || '_h';            
+              var_sql := var_sql || var_line;
+              var_line := ',(select field4 from vwNpv where nid=n.nodeid and ntpid=' || to_char(rec.nodetypepropid);
+              var_line := var_line || ') ' || substr(colname,1,27) || '_s';            
+              var_sql := var_sql || var_line;
+              
+            elsif(rec.fieldtype='Question') then
+              var_line := ',(' || to_char(rec.nodetypepropid) || ') ' || colname || '_ntpid';
+              var_sql := var_sql || var_line;            
+            end if;
+            
+        end loop;
+
+          var_line := ' from nodes n where n.nodetypeid=' || to_char(ntid);
+          var_sql := var_sql || var_line;
+         -- dbms_output.put_line(var_sql);
+          execute immediate (var_sql);
+          commit;
+
+    end createNTview2;" );
+
+            #endregion CREATENTVIEW2
+
 
             #region CREATEOCVIEW
 

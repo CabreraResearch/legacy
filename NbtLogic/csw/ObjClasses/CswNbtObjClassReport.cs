@@ -83,7 +83,18 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
+        public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
+        {
+            _CswNbtObjClassDefault.beforeCreateNode( IsCopy, OverrideUniqueValidation );
+        }//beforeCreateNode()
+
+        public override void afterCreateNode()
+        {
+            _CswNbtObjClassDefault.afterCreateNode();
+        }//afterCreateNode()
+
+
+        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation, bool Creating )
         {
 
             string candidate_sql = SQL.Text;
@@ -93,11 +104,11 @@ namespace ChemSW.Nbt.ObjClasses
                 throw ( new CswDniException( "Invalid sql: " + SQL.Text ) );
             }
 
-            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
+            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation, Creating );
 
         }//beforeWriteNode()
 
-        public override void afterWriteNode()
+        public override void afterWriteNode( bool Creating )
         {
             // BZ 10048
             Collection<object> AfterModifyReportEvents = _CswNbtResources.CswEventLinker.Trigger( AfterModifyReportEventName );
@@ -107,7 +118,7 @@ namespace ChemSW.Nbt.ObjClasses
                     ( (AfterModifyReportEventHandler) Handler )();
             }
 
-            _CswNbtObjClassDefault.afterWriteNode();
+            _CswNbtObjClassDefault.afterWriteNode( Creating );
         }//afterWriteNode()
 
         public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )

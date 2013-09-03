@@ -106,6 +106,14 @@ namespace ChemSW.Nbt.ObjClasses
             get { return _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestContainerUpdateClass ); }
         }
 
+        public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
+        {
+        }
+
+        public override void afterCreateNode()
+        {
+        }
+
         #endregion Base
 
         #region Inherited Events
@@ -255,7 +263,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Additional, Request-specific Status change event logic to be called
         /// </summary>
-        public override void onStatusPropChange( CswNbtNodeProp Prop )
+        public override void onStatusPropChange( CswNbtNodeProp Prop, bool Creating )
         {
             Type.setHidden( value: ( Status.Value == Statuses.Pending ), SaveToDb: true );
 
@@ -272,7 +280,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Object class specific properties
 
-        public override void onTypePropChange( CswNbtNodeProp Prop )
+        public override void onTypePropChange( CswNbtNodeProp Prop, bool Creating )
         {
             /* Spec W1010: Location applies to all but Dispose */
             Location.setHidden( value: ( Types.Dispose == Type.Value ), SaveToDb: true );
@@ -291,7 +299,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-        public override void onRequestPropChange( CswNbtNodeProp Prop )
+        public override void onRequestPropChange( CswNbtNodeProp Prop, bool Creating )
         {
         
         }
@@ -305,7 +313,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get { return _CswNbtNode.Properties[PropertyName.Container]; }
         }
-        private void onContainerPropChange( CswNbtNodeProp Prop )
+        private void onContainerPropChange( CswNbtNodeProp Prop, bool Creating )
         {
             if( null != Container.RelatedNodeId )
             {

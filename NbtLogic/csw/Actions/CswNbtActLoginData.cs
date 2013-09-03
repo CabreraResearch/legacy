@@ -4,6 +4,7 @@ using System.Data;
 using System.Runtime.Serialization;
 using ChemSW.Core;
 using ChemSW.DB;
+using ChemSW.Nbt.ObjClasses;
 using ChemSW.Security;
 using ChemSW.WebSvc;
 
@@ -36,12 +37,12 @@ namespace ChemSW.Nbt.Actions
             /// <summary>
             /// Init Login Data with the current Authentication Request
             /// </summary>
-            public Login( CswWebSvcSessionAuthenticateData.Authentication.Request Request )
+            public Login( CswWebSvcSessionAuthenticateData.Authentication.Request Request, CswNbtObjClassUser User = null )
             {
                 AuthenticationRequest = Request;
                 Username = AuthenticationRequest.UserName;
                 IPAddress = AuthenticationRequest.IpAddress;
-                setStatus( Request.AuthenticationStatus );
+                setStatus( Request.AuthenticationStatus, User );
             }
 
             [DataMember]
@@ -55,33 +56,17 @@ namespace ChemSW.Nbt.Actions
             [DataMember]
             public String FailureReason = String.Empty;
             [DataMember]
-            public Int32 FailedLoginCount = 0;
+            public Int32 FailedLoginCount = 0;  
 
             public CswWebSvcSessionAuthenticateData.Authentication.Request AuthenticationRequest;
 
-            private void setStatus( CswEnumAuthenticationStatus Status )
+            private void setStatus( CswEnumAuthenticationStatus Status, CswNbtObjClassUser User = null )
             {
-                LoginStatus = "Failed";
-                switch( Status )
+                LoginStatus = Status == CswEnumAuthenticationStatus.Authenticated ? "Success" : "Failed";
+                FailureReason = CswEnumAuthenticationStatus.EuphamizedText[Status];
+                if( Status == CswEnumAuthenticationStatus.Failed )
                 {
-                    case CswEnumAuthenticationStatus.TooManyUsers:
-                        FailureReason = "Too Many Users";
-                        break;
-                    case CswEnumAuthenticationStatus.Archived:
-                        FailureReason = "Account Archived";
-                        break;
-                    case CswEnumAuthenticationStatus.Failed:
-                        FailureReason = "Bad Password";
-                        break;
-                    case CswEnumAuthenticationStatus.Locked:
-                        FailureReason = "Account Locked";
-                        break;
-                    case CswEnumAuthenticationStatus.Unknown:
-                        FailureReason = "Unknown Username";
-                        break;
-                    case CswEnumAuthenticationStatus.Authenticated:
-                        LoginStatus = "Success";
-                        break;
+                    FailureReason = null == User ? "Unknown Username" : "Bad Password";
                 }
             }
         }

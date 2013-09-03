@@ -55,6 +55,46 @@ namespace ChemSW.Nbt.Test.Security
             AuthenticationRequest.AuthenticationStatus = CswEnumAuthenticationStatus.Failed;
             AuthenticationRequest.AuthenticationStatus = _SchemaAuthenticator.AuthenticateWithSchema( _CswEncryption, AuthenticationRequest, out User );
             Assert.AreEqual( Expected.ToString(), AuthenticationRequest.AuthenticationStatus.ToString(), "User was not authenticated." );
+        } 
+        
+        
+        /// <summary>
+        /// Given a valid username of mixed case and password, authentication passes
+        /// </summary>
+        [Test]
+        public void AuthenticateWithSchemaTest_AuthenticatedMixedCase()
+        {
+            CswWebSvcSessionAuthenticateData.Authentication.Request AuthenticationRequest  = new CswWebSvcSessionAuthenticateData.Authentication.Request();
+            AuthenticationRequest.UserName = "goOdusEr";
+            AuthenticationRequest.Password = "goodpw1!";
+            AuthenticationRequest.IpAddress = "127.0.0.1";
+
+            TestData.Nodes.createUserNode( "GooDuseR", "goodpw1!" );
+            CswEnumAuthenticationStatus Expected = CswEnumAuthenticationStatus.Authenticated;
+            ICswUser User;
+            AuthenticationRequest.AuthenticationStatus = CswEnumAuthenticationStatus.Failed;
+            AuthenticationRequest.AuthenticationStatus = _SchemaAuthenticator.AuthenticateWithSchema( _CswEncryption, AuthenticationRequest, out User );
+            Assert.AreEqual( Expected.ToString(), AuthenticationRequest.AuthenticationStatus.ToString(), "User was not authenticated." );
+        }
+
+        /// <summary>
+        /// Given a valid username of mixed case and password, authentication passes
+        /// </summary>
+        [Test]
+        public void AuthenticateWithSchemaTest_AuthenticatedCustomerIdUpperCase()
+        {
+            CswWebSvcSessionAuthenticateData.Authentication.Request AuthenticationRequest  = new CswWebSvcSessionAuthenticateData.Authentication.Request();
+            AuthenticationRequest.CustomerId = " " + TestData.CswNbtResources.AccessId.ToUpper() + " ";
+            AuthenticationRequest.UserName = "goOdusEr";
+            AuthenticationRequest.Password = "goodpw1!";
+            AuthenticationRequest.IpAddress = "127.0.0.1";
+
+            TestData.Nodes.createUserNode( "GooDuseR", "goodpw1!" );
+            CswEnumAuthenticationStatus Expected = CswEnumAuthenticationStatus.Authenticated;
+            ICswUser User;
+            AuthenticationRequest.AuthenticationStatus = CswEnumAuthenticationStatus.Failed;
+            AuthenticationRequest.AuthenticationStatus = _SchemaAuthenticator.AuthenticateWithSchema( _CswEncryption, AuthenticationRequest, out User );
+            Assert.AreEqual( Expected.ToString(), AuthenticationRequest.AuthenticationStatus.ToString(), "User was not authenticated." );
         }
 
         /// <summary>
@@ -90,6 +130,23 @@ namespace ChemSW.Nbt.Test.Security
             AuthenticationRequest.AuthenticationStatus = _SchemaAuthenticator.AuthenticateWithSchema( _CswEncryption, AuthenticationRequest, out User );
             Assert.AreEqual( Expected.ToString(), AuthenticationRequest.AuthenticationStatus.ToString(), "User did not fail authentication as expected." );
         }
+        
+        /// <summary>
+        /// Given a valid username and invalid password by case sensitivity, authentication fails with a status of Failed
+        /// </summary>
+        [Test]
+        public void AuthenticateWithSchemaTest_FailedBadPasswordMixedCase()
+        {
+            CswWebSvcSessionAuthenticateData.Authentication.Request AuthenticationRequest  = new CswWebSvcSessionAuthenticateData.Authentication.Request { UserName = "gooduser", Password = "goOdpW1!", IpAddress = "127.0.0.1" };
+
+            TestData.Nodes.createUserNode( "gooduser", "goodpw1!" );
+
+            CswEnumAuthenticationStatus Expected = CswEnumAuthenticationStatus.Failed;
+            ICswUser User;
+            AuthenticationRequest.AuthenticationStatus = CswEnumAuthenticationStatus.Failed;
+            AuthenticationRequest.AuthenticationStatus = _SchemaAuthenticator.AuthenticateWithSchema( _CswEncryption, AuthenticationRequest, out User );
+            Assert.AreEqual( Expected.ToString(), AuthenticationRequest.AuthenticationStatus.ToString(), "User did not fail authentication as expected." );
+        }
 
         /// <summary>
         /// Given a valid username and password for a locked User, authentication fails with a status of Locked
@@ -101,7 +158,7 @@ namespace ChemSW.Nbt.Test.Security
 
             TestData.Nodes.createUserNode( "gooduser", "goodpw1!", isLocked: CswEnumTristate.True );
 
-            CswEnumAuthenticationStatus Expected = CswEnumAuthenticationStatus.Failed;
+            CswEnumAuthenticationStatus Expected = CswEnumAuthenticationStatus.Locked;
             ICswUser User;
             AuthenticationRequest.AuthenticationStatus = CswEnumAuthenticationStatus.Failed;
             AuthenticationRequest.AuthenticationStatus = _SchemaAuthenticator.AuthenticateWithSchema( _CswEncryption, AuthenticationRequest, out User );
@@ -118,7 +175,7 @@ namespace ChemSW.Nbt.Test.Security
 
             TestData.Nodes.createUserNode( "gooduser", "goodpw1!", isArchived: CswEnumTristate.True );
 
-            CswEnumAuthenticationStatus Expected = CswEnumAuthenticationStatus.Failed;
+            CswEnumAuthenticationStatus Expected = CswEnumAuthenticationStatus.Archived;
             ICswUser User;
             AuthenticationRequest.AuthenticationStatus = CswEnumAuthenticationStatus.Failed;
             AuthenticationRequest.AuthenticationStatus = _SchemaAuthenticator.AuthenticateWithSchema( _CswEncryption, AuthenticationRequest, out User );

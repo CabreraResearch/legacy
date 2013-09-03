@@ -143,7 +143,7 @@ namespace ChemSW.Nbt.WebServices
                 {
 
                     SortedList<string, CswSessionsListEntry> SessionList = _CswSessionResources.CswSessionManager.SessionsList.AllSessions;
-                    foreach( CswSessionsListEntry Entry in SessionList.Values )
+                    foreach( CswSessionsListEntry Entry in from _Entry in SessionList.Values orderby  _Entry.TimeoutDate select _Entry )
                     {
                         // Filter to the administrator's access id only
                         if( Entry.AccessId == _CswNbtResources.AccessId || _CswNbtResources.CurrentNbtUser.Username == CswNbtObjClassUser.ChemSWAdminUsername )
@@ -2976,35 +2976,40 @@ namespace ChemSW.Nbt.WebServices
                 CswNbtSdTabsAndProps tabsandprops = new CswNbtSdTabsAndProps( _CswNbtResources );
 
                 CswNbtMetaDataNodeType feedbackNT = _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( nodetypeid ) );
-                CswNbtObjClassFeedback newFeedbackNode = tabsandprops.getAddNode( feedbackNT );
 
-                //if we have an action this is all we want/need/care about
-                if( false == String.IsNullOrEmpty( actionname ) )
-                {
-                    newFeedbackNode.Action.Text = actionname.Replace( "%20", " " );
-                }
-                else //if we DONT have an action, we want the info required to load a view
-                {
-                    if( false == String.IsNullOrEmpty( viewid ) )
+                CswNbtNodeCollection.AfterMakeNode After = delegate( CswNbtNode NewNode )
                     {
-                        CswNbtViewId CurrentViewId = new CswNbtViewId( viewid );
+                        CswNbtObjClassFeedback newFeedbackNode = NewNode;
+                        //if we have an action this is all we want/need/care about
+                        if( false == String.IsNullOrEmpty( actionname ) )
+                        {
+                            newFeedbackNode.Action.Text = actionname.Replace( "%20", " " );
+                        }
+                        else //if we DONT have an action, we want the info required to load a view
+                        {
+                            if( false == String.IsNullOrEmpty( viewid ) )
+                            {
+                                CswNbtViewId CurrentViewId = new CswNbtViewId( viewid );
 
-                        CswNbtView cookieView = _getView( viewid ); //this view doesn't exist in the the DB, which is why we save it below
+                                CswNbtView cookieView = _getView( viewid ); //this view doesn't exist in the the DB, which is why we save it below
 
-                        CswNbtView view = _CswNbtResources.ViewSelect.restoreView( newFeedbackNode.View.ViewId ); //WARNING!!!! calling View.ViewId creates a ViewId if there isn't one!
-                        view.LoadXml( cookieView.ToXml() );
-                        view.ViewId = newFeedbackNode.View.ViewId; //correct view.ViewId because of above problem.
-                        view.ViewName = cookieView.ViewName; //same as above, but name
-                        view.Visibility = CswEnumNbtViewVisibility.Hidden; // see case 26799
-                        view.save();
-                    }
-                    newFeedbackNode.SelectedNodeId.Text = selectednodeid;
-                    newFeedbackNode.CurrentViewMode.Text = viewmode;
-                }
-                newFeedbackNode.postChanges( false );
+                                CswNbtView view = _CswNbtResources.ViewSelect.restoreView( newFeedbackNode.View.ViewId ); //WARNING!!!! calling View.ViewId creates a ViewId if there isn't one!
+                                view.LoadXml( cookieView.ToXml() );
+                                view.ViewId = newFeedbackNode.View.ViewId; //correct view.ViewId because of above problem.
+                                view.ViewName = cookieView.ViewName; //same as above, but name
+                                view.Visibility = CswEnumNbtViewVisibility.Hidden; // see case 26799
+                                view.save();
+                            }
+                            newFeedbackNode.SelectedNodeId.Text = selectednodeid;
+                            newFeedbackNode.CurrentViewMode.Text = viewmode;
+                        }
+                        //newFeedbackNode.postChanges( false );
+                    };
 
-                ReturnVal["propdata"] = tabsandprops.getProps( newFeedbackNode.Node, "", null, CswEnumNbtLayoutType.Add ); //DO I REALLY BREAK THIS?
-                ReturnVal["nodeid"] = newFeedbackNode.NodeId.ToString();
+                CswNbtObjClassFeedback ret = tabsandprops.getAddNode( feedbackNT, After );
+
+                ReturnVal["propdata"] = tabsandprops.getProps( ret.Node, "", null, CswEnumNbtLayoutType.Add ); //DO I REALLY BREAK THIS?
+                ReturnVal["nodeid"] = ret.NodeId.ToString();
 
                 _deInitResources();
             }

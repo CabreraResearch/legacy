@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.ObjectModel;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 
@@ -8,7 +9,7 @@ namespace ChemSW.Nbt
     public class CswNbtPropEnmrtrFiltered : IEnumerator
     {
         CswEnumNbtFieldType _FieldType;
-        private ArrayList _PropList;
+        private Collection<CswNbtNodePropWrapper> _PropList;
         int _Position = -1;
 
 
@@ -18,7 +19,7 @@ namespace ChemSW.Nbt
             return ( this );
         }
 
-        public CswNbtPropEnmrtrFiltered( ArrayList PropList, CswEnumNbtFieldType FieldType )
+        public CswNbtPropEnmrtrFiltered( Collection<CswNbtNodePropWrapper> PropList, CswEnumNbtFieldType FieldType )
         {
             _FieldType = FieldType;
             _PropList = PropList;

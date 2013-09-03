@@ -69,7 +69,18 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
+        public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
+        {
+            _CswNbtObjClassDefault.beforeCreateNode( IsCopy, OverrideUniqueValidation );
+        }//beforeCreateNode()
+
+        public override void afterCreateNode()
+        {
+            _CswNbtObjClassDefault.afterCreateNode();
+        }//afterCreateNode()
+
+
+        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation, bool Creating )
         {
             // Set which node grid is displayed
             switch( ListMode.Value )
@@ -87,14 +98,14 @@ namespace ChemSW.Nbt.ObjClasses
             // We don't want users to be able to edit this property after the node is created
             ListMode.setReadOnly( true, true );
 
-            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
+            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation, Creating );
         }
 
         //beforeWriteNode()
 
-        public override void afterWriteNode()
+        public override void afterWriteNode( bool Creating )
         {
-            _CswNbtObjClassDefault.afterWriteNode();
+            _CswNbtObjClassDefault.afterWriteNode( Creating );
         }//afterWriteNode()
 
         public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
@@ -140,7 +151,7 @@ namespace ChemSW.Nbt.ObjClasses
         #region Object class specific properties
 
         public CswNbtNodePropMemo AddCASNumbers { get { return _CswNbtNode.Properties[PropertyName.AddCASNumbers]; } }
-        private void _AddCASNumbers_OnChange( CswNbtNodeProp Prop )
+        private void _AddCASNumbers_OnChange( CswNbtNodeProp Prop, bool Creating )
         {
             if( false == string.IsNullOrEmpty( AddCASNumbers.Text ) )
             {
@@ -169,11 +180,14 @@ namespace ChemSW.Nbt.ObjClasses
                                 //string errormsg;
                                 //CswNbtNodePropCASNo.Validate( CAS, out errormsg );
 
-                                CswNbtObjClassRegulatoryListCasNo newCasNoNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( RegListCasNoNT.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode );
-                                newCasNoNode.CASNo.Text = CAS;
-                                //newCasNoNode.ErrorMessage.Text = errormsg;
-                                newCasNoNode.RegulatoryList.RelatedNodeId = this.NodeId;
-                                newCasNoNode.postChanges( false );
+                                _CswNbtResources.Nodes.makeNodeFromNodeTypeId( RegListCasNoNT.NodeTypeId, delegate( CswNbtNode NewNode )
+                                    {
+                                        CswNbtObjClassRegulatoryListCasNo newCasNoNode = NewNode;
+                                        newCasNoNode.CASNo.Text = CAS;
+                                        //newCasNoNode.ErrorMessage.Text = errormsg;
+                                        newCasNoNode.RegulatoryList.RelatedNodeId = this.NodeId;
+                                        //newCasNoNode.postChanges( false );
+                                    } );
                             }
                         }
                         AddCASNumbers.Text = string.Empty;

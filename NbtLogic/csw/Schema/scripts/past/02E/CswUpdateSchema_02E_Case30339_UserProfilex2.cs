@@ -63,7 +63,7 @@ namespace ChemSW.Nbt.Schema
                 }
 
             }
-            catch ( Exception Ex )
+            catch ( Exception )
             {
                 throw new CswDniException( "User layout update failed." );
             }

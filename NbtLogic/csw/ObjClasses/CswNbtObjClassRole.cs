@@ -57,7 +57,18 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
+        public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
+        {
+            _CswNbtObjClassDefault.beforeCreateNode( IsCopy, OverrideUniqueValidation );
+        }//beforeCreateNode()
+
+        public override void afterCreateNode()
+        {
+            _CswNbtObjClassDefault.afterCreateNode();
+        }//afterCreateNode()
+
+
+        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation, bool Creating )
         {
             // The user cannot change his or her own Administrator privileges.
             if( Administrator.WasModified && 
@@ -158,12 +169,12 @@ namespace ChemSW.Nbt.ObjClasses
                 } // if( ActionPermissions.Value != ActionPermissionsOriginalValue )
             } // if( ActionPermissions.WasModified )
 
-            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
+            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation, Creating );
         }//beforeWriteNode()
 
-        public override void afterWriteNode()
+        public override void afterWriteNode( bool Creating )
         {
-            _CswNbtObjClassDefault.afterWriteNode();
+            _CswNbtObjClassDefault.afterWriteNode( Creating );
 
             // BZ 9170
             _CswNbtResources.ConfigVbls.setConfigVariableValue( "cache_lastupdated", DateTime.Now.ToString() );
