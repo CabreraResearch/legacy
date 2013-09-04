@@ -7,12 +7,12 @@ using ChemSW.Nbt.MetaData;
 
 namespace ChemSW.Nbt.ViewEditor
 {
-    public class CswNbtViewEditorRuleAddToView: CswNbtViewEditorRule
+    public class CswNbtViewEditorRuleAddViewLevels: CswNbtViewEditorRule
     {
-        public CswNbtViewEditorRuleAddToView( CswNbtResources CswNbtResources, CswNbtViewEditorData IncomingRequest )
+        public CswNbtViewEditorRuleAddViewLevels( CswNbtResources CswNbtResources, CswNbtViewEditorData IncomingRequest )
             : base( CswNbtResources, IncomingRequest )
         {
-            RuleName = CswEnumNbtViewEditorRuleName.AddToView;
+            RuleName = CswEnumNbtViewEditorRuleName.AddViewLevels;
         }
 
         public override CswNbtViewEditorData GetStepData()
