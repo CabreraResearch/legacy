@@ -133,6 +133,12 @@
             $.CswDialog('ImpersonateDialog', { onImpersonate: privateScope.onImpersonate });
         }
     });
+    menuAction.add('EndImpersonation', function(privateScope, menuItemName, menuItemJson, menuItem) {
+        if (Csw.clientChanges.manuallyCheckChanges()) {
+            Csw.tryExec(privateScope.onEndImpersonation);
+            return true; //
+        }
+    })
     menuAction.add('Submit_Request', function (privateScope, menuItemName, menuItemJson, menuItem) {
         if (Csw.clientChanges.manuallyCheckChanges()) {
             Csw.tryExec(privateScope.onSubmitRequest);

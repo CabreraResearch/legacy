@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using ChemSW.Core;
+using System.Linq;
 using ChemSW.Nbt.ImportExport;
 using ChemSW.Nbt.Sched;
 using ChemSW.Nbt.Schema;
@@ -18,16 +19,19 @@ namespace ChemSW.Nbt.csw.Schema
                 //{SourceTableName, ImportOrder}
                 {"cispro_controlzones", 1},
                 {"sites", 2},
-                {"locations", 3},
-                {"business_units", 4},
-                {"work_units", 5},
-                {"inventory_groups", 6},
-                {"units_of_measure", 7},
-                {"vendors", 8},
-                {"roles", 9},
-                {"users", 10},
-                {"regulatory_lists", 11},
-                {"regulated_casnos", 12}
+                {"work_units", 3},
+                {"inventory_groups", 4},
+                {"locations_level1", 5},
+                {"locations_level2", 6},
+                {"locations_level3", 7},
+                {"locations_level4", 8},
+                {"locations_level5", 9},
+                {"units_of_measure", 10},
+                {"vendors", 11},
+                {"roles", 12},
+                {"users", 13},
+                {"regulatory_lists", 14},
+                {"regulated_casnos", 15}
             };
 
 
@@ -69,7 +73,7 @@ namespace ChemSW.Nbt.csw.Schema
                 _SourceColumns = new CswCommaDelimitedString();
 
                 _importOrder( _ImportOrder, _SourceTableName, _DestNodeTypeName );
-            }
+        }//ctor
             else
             {
                 SchemaModTrnsctn.logError( ExceptionText );
@@ -149,7 +153,10 @@ namespace ChemSW.Nbt.csw.Schema
                 DefinitionName = DefinitionName ?? CswScheduleLogicNbtCAFImport.DefinitionName;
 
                 //Add the Legacy ID before storing the definition
-                importBinding( SourceTablePkColumnName, LegacyID, "" );
+
+                // We check to see if someone already added the Legacy Id
+                bool AlreadyExists = _importBindingsTable.Rows.Cast<DataRow>().Any( Row => Row["destproperty"].ToString() == LegacyID );
+                if( false == AlreadyExists ) { importBinding( SourceTablePkColumnName, LegacyID, "" ); }
 
                 //Save the bindings in the DB
                 _NbtImporter.storeDefinition( _importOrderTable, _importBindingsTable, _importRelationshipsTable, DefinitionName );
