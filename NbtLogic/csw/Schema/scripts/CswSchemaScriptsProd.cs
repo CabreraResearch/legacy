@@ -50,6 +50,9 @@ namespace ChemSW.Nbt.Schema
 
             #region EUCALYPTUS Run Before Scripts
 
+            //DDL
+            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02E_Case30634() ), RunBeforeEveryExecutionOfUpdater_02E_Case30634.Title );
+
             _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02E_Case30500() ), RunBeforeEveryExecutionOfUpdater_02E_Case30500.Title );
             _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02E_Case29700() ), RunBeforeEveryExecutionOfUpdater_02E_Case29700.Title );
             _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02E_Case30123() ), RunBeforeEveryExecutionOfUpdater_02E_Case30123.Title );
