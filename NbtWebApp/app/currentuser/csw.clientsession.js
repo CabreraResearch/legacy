@@ -233,7 +233,6 @@
             Csw.extend(o, options);
 
             var txt = o.txt;
-
             var _next = function() {
                 if (!txt) {
                     Csw.tryExec(o.success());
@@ -243,7 +242,7 @@
             };
 
             if (o.status === 'Authenticated') {
-                Csw.tryExec(o.success());
+                _next();
             } else {
                 switch (o.status) {
                     case 'ExpiredPassword':
@@ -268,6 +267,9 @@
                         break;
                     case 'AlreadyLoggedIn':
                         $.CswDialog('LogoutExistingSessionsDialog', _next);
+                        break;
+                    default:
+                        _next();
                         break;
                 }
 
