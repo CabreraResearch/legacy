@@ -1418,7 +1418,14 @@
                         }); // ajax
                     } // onClick
                 }); // 
-
+                var declineBtn = div.button({
+                    name: 'license_decline',
+                    enabledText: 'I Decline',
+                    disabledText: 'Declining...',
+                    onClick: function () {
+                        Csw.tryExec(o.onDecline);
+                    } // onClick
+                }); // 
                 openDialog(div, 800, 600, function () { ExistingShowLicenseDialog = false; }, 'Terms and Conditions', null, function () { return allowClose; });
             }
         }, // ShowLicenseDialog

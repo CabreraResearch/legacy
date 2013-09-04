@@ -55,17 +55,21 @@
 
 
             cswPublic.show = Csw.method(function () {
-                cswPublic.button.show();
+                if (cswPrivate.button) {
+                    cswPrivate.button.show();
+                }
                 return cswPublic;
             });
 
             cswPublic.hide = Csw.method(function () {
-                cswPublic.button.hide();
+                if (cswPrivate.button) {
+                    cswPrivate.button.hide();
+                }
                 return cswPublic;
             });
 
             cswPublic.addClass = Csw.method(function (cls) {
-                cswPublic.button.addClass(cls);
+                cswPrivate.button.addClass(cls);
                 return cswPublic;
             });
 
@@ -73,22 +77,22 @@
                 /// <summary>Enable the button.</summary>
                 /// <returns type="button">The button object.</returns>
                 cswPrivate.isEnabled = true;
-                cswPublic.button.enable();
-                cswPublic.button.setText(cswPrivate.enabledText);
+                cswPrivate.button.enable();
+                cswPrivate.button.setText(cswPrivate.enabledText);
                 return cswPublic;
             });
 
             cswPublic.isDisabled = Csw.method(function () {
-                return cswPublic.button.isDisabled();
+                return cswPrivate.button.isDisabled();
             });
 
             cswPublic.disable = Csw.method(function () {
                 /// <summary>Disable the button.</summary>
                 /// <returns type="button">The button object.</returns>
                 cswPrivate.isEnabled = false;
-                cswPublic.button.disable();
+                cswPrivate.button.disable();
                 if (false === Csw.isNullOrEmpty(cswPrivate.disabledText)) {
-                    cswPublic.button.setText(cswPrivate.disabledText);
+                    cswPrivate.button.setText(cswPrivate.disabledText);
                 }
                 return cswPublic;
             });
@@ -98,10 +102,10 @@
                 /// <param name="func" type="Function">(Optional) A function to bind to the control.</param>
                 /// <returns type="button">The button object.</returns>
                 if (Csw.isFunction(func)) {
-                    cswPublic.button.click(func);
+                    cswPrivate.button.click(func);
                 } else {
                     if (false == cswPublic.isDisabled()) {
-                        cswPublic.button.fireHandler('click');
+                        cswPrivate.button.fireHandler('click');
                     }
                 }
                 return cswPublic;
@@ -128,10 +132,10 @@
 
                 var onClick = Csw.method(function (btn, extEvent) {
                     var doEnable = function () {
-                        if (cswPublic && cswPublic.enable && cswPublic.button && cswPublic.button.setText) {
+                        if (cswPublic && cswPublic.enable && cswPrivate.button && cswPrivate.button.setText) {
                             if (false === Csw.ajax.ajaxInProgress()) {
                                 cswPublic.enable();
-                                cswPublic.button.setText(cswPrivate.enabledText);
+                                cswPrivate.button.setText(cswPrivate.enabledText);
                             } else {
                                 Csw.defer(doEnable, 500);
                             }
@@ -143,7 +147,7 @@
                         if (cswPrivate.disableOnClick) {
                             cswPublic.disable();
                             if (false === Csw.isNullOrEmpty(cswPrivate.disabledText)) {
-                                cswPublic.button.setText(cswPrivate.disabledText);
+                                cswPrivate.button.setText(cswPrivate.disabledText);
                             }
                             doEnable();
                         }
@@ -157,7 +161,7 @@
                 }
 
                 if (Csw.isElementInDom(cswPublic.getId())) {
-                    cswPublic.button = window.Ext.create('Ext.Button', {
+                    cswPrivate.button = window.Ext.create('Ext.Button', {
                         id: cswPrivate.ID + 'button',
                         renderTo: cswPublic.getId(),
                         text: Csw.string(cswPrivate.enabledText),
@@ -174,7 +178,7 @@
                     });
 
                     if (false === Csw.isNullOrEmpty(cswPrivate.tooltip.title)) {
-                        cswPrivate.tooltip.target = cswPublic.button.getId();
+                        cswPrivate.tooltip.target = cswPrivate.button.getId();
                         window.Ext.create('Ext.tip.ToolTip', cswPrivate.tooltip);
                         window.Ext.QuickTips.init();
                     }
