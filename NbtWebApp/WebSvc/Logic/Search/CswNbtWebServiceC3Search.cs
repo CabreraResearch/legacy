@@ -745,9 +745,10 @@ namespace ChemSW.Nbt.WebServices
                     CswNbtMetaDataNodeType SDSDocumentNT = SDSDocClass.FirstNodeType;
                     if( null != SDSDocumentNT )
                     {
-                        CswNbtObjClassDocument NewDoc = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( SDSDocumentNT.NodeTypeId, OnAfterMakeNode: delegate( CswNbtNode NewNode )
+                        CswNbtObjClassSDSDocument NewDoc = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( SDSDocumentNT.NodeTypeId, OnAfterMakeNode: delegate( CswNbtNode NewNode )
                             {
-                                CswNbtObjClassDocument NewSDSDocumentNode = NewNode;
+                                // This needs to be CswNbtObjClassSDSDocument NOT CswNbtObjClassDocument!
+                                CswNbtObjClassSDSDocument NewSDSDocumentNode = NewNode;
                                 NewSDSDocumentNode.Title.Text = "SDS: " + MaterialNode.TradeName.Text;
                                 NewSDSDocumentNode.FileType.Value = CswNbtPropertySetDocument.CswEnumDocumentFileTypes.Link;
                                 NewSDSDocumentNode.Link.Href = MsdsUrl;
