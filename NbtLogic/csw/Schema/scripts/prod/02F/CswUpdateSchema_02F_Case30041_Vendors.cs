@@ -37,7 +37,7 @@ namespace ChemSW.Nbt.Schema
             ImpMgr.importBinding( "zip", CswNbtObjClassVendor.PropertyName.Zip, "" );
 
             // Relationship
-            // none
+            // Vendor has no relationships
 
             ImpMgr.finalize();
         } // update()
