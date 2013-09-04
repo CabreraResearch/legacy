@@ -233,6 +233,15 @@
             Csw.extend(o, options);
 
             var txt = o.txt;
+
+            var _next = function() {
+                if (!txt) {
+                    Csw.tryExec(o.success());
+                } else {
+                    Csw.tryExec(o.failure, txt, o.status);
+                }
+            };
+
             if (o.status === 'Authenticated') {
                 Csw.tryExec(o.success());
             } else {
@@ -243,22 +252,25 @@
                             UserKey: o.data.ExpirationReset.UserKey,
                             PasswordId: o.data.ExpirationReset.PasswordId,
                             onSuccess: function () {
+                                _next();
                             }
                         });
                         break;
                     case 'ShowLicense':
-                        $.CswDialog('ShowLicenseDialog', {});
+                        $.CswDialog('ShowLicenseDialog', {
+                                onAccept: function() {
+                                    _next();
+                                },
+                                onDecline: function() {
+                                    Csw.clientSession.logout();
+                                }
+                            });
                         break;
                     case 'AlreadyLoggedIn':
-                        $.CswDialog('LogoutExistingSessionsDialog', o.success);
+                        $.CswDialog('LogoutExistingSessionsDialog', _next);
                         break;
                 }
 
-                if (!txt) {
-                    Csw.tryExec(o.success());
-                } else {
-                    Csw.tryExec(o.failure, txt, o.status);
-                }
             }
         });
 
