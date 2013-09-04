@@ -967,8 +967,6 @@ namespace ChemSW.Nbt.WebServices
                         {
                             case CswEnumNbtFieldType.Quantity:
                                 string sizeGestalt = string.Empty;
-                                //CswNbtObjClassUnitOfMeasure unitOfMeasure = null;
-
                                 // If the UoM wasn't able to be mapped on the C3 side, then
                                 // we use the original chemcatcentral UoM.
                                 Tuple<int, string> UnitOfMeasureInfo = null;
@@ -983,7 +981,7 @@ namespace ChemSW.Nbt.WebServices
                                     UnitOfMeasureInfo = _getUnitOfMeasure( UoM );
                                 }
 
-                                if( false == string.IsNullOrEmpty( UnitOfMeasureInfo.Item1.ToString() ) )
+                                if( null != UnitOfMeasureInfo )
                                 {
                                     Node.Properties[NTP].SetPropRowValue( (CswEnumNbtPropColumn) C3Mapping.NBTSubFieldPropColName2, UnitOfMeasureInfo.Item2 );
                                     Node.Properties[NTP].SetPropRowValue( CswEnumNbtPropColumn.Field1_FK, UnitOfMeasureInfo.Item1 );
