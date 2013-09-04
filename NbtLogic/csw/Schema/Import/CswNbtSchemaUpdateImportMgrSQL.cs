@@ -13,7 +13,7 @@ namespace ChemSW.Nbt.csw.Schema
 
         private void _populateImportQueueTable( string WhereClause )
         {
-            string State = CswScheduleLogicNbtCAFImport.State.N.ToString();
+            string State = CswScheduleLogicNbtCAFImport.State.I.ToString();
 
             //Optional extension to where clause. Logical deletes already excluded.
             WhereClause = WhereClause ?? string.Empty;
@@ -55,10 +55,10 @@ namespace ChemSW.Nbt.csw.Schema
   
                                 IF INSERTING THEN
                                     INSERT INTO nbtimportqueue VALUES (seq_nbtimportqueueid.NEXTVAL, 'I', :new." + SourceTablePkColumnName + ", '" + _SourceTableName + "', '', '');" + " " +
-    
+
                              @" ELSIF DELETING THEN
                                     INSERT INTO nbtimportqueue VALUES (seq_nbtimportqueueid.NEXTVAL, 'D', :old." + SourceTablePkColumnName + ", '" + _SourceTableName + "', '', '');" + " " +
-  
+
                              @" ELSE
                                     IF :old.deleted = '0' THEN
                                         INSERT INTO nbtimportqueue VALUES (seq_nbtimportqueueid.NEXTVAL, 'D', :old." + SourceTablePkColumnName + ", '" + _SourceTableName + "', '', '');" + " " +
