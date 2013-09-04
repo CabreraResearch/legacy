@@ -1,5 +1,6 @@
 ﻿using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.csw.Schema;
+using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -21,12 +22,19 @@ namespace ChemSW.Nbt.Schema
         public override void update()
         {
             // Case 30043 - CAF Migration: Sites/Locations/Work Units
+
+            // View creation script
+            //create or replace view sites_view as
+            //select s.*, cz.controlzoneid
+            //from sites s
+            //left outer join cispro_controlzones cz on (cz.siteid = s.siteid);
+
             CswNbtSchemaUpdateImportMgr importMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "sites", "Site", "sites_view" );
 
             // Binding 
-            importMgr.importBinding( "sitename", "Name", "" );
-            importMgr.importBinding( "sitecode", "Location Code", "" );
-            importMgr.importBinding( "controlzoneid", "Control Zone", "" );
+            importMgr.importBinding( "sitename", CswNbtObjClassLocation.PropertyName.Name, "" );
+            importMgr.importBinding( "sitecode", CswNbtObjClassLocation.PropertyName.LocationCode, "" );
+            importMgr.importBinding( "controlzoneid", CswNbtObjClassLocation.PropertyName.ControlZone, "" );
 
             // Relationship
 
