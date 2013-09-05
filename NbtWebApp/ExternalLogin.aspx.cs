@@ -1,5 +1,6 @@
 using System;
 using System.Web.UI.WebControls;
+using ChemSW.Core;
 
 namespace ChemSW.Nbt.WebPages
 {
@@ -33,13 +34,13 @@ namespace ChemSW.Nbt.WebPages
                 JSLiteral.Text = @"
                             $(document).ready(function () {
                                 Csw.clientSession.login({
-                                    AccessId: '" + accessid + @"', 
-                                    UserName: '" + username + @"', 
-                                    Password: '" + password + @"',
+                                    AccessId: '" + CswTools.SafeJavascriptParam( accessid ) + @"', 
+                                    UserName: '" + CswTools.SafeJavascriptParam( username ) + @"', 
+                                    Password: '" + CswTools.SafeJavascriptParam( password ) + @"',
                                     ForMobile: false,
                                     onAuthenticate: function() { window.location = 'Main.html'; },
-                                    onFail: function(error) { window.location = '" + logoutpath + @"?error=' + error; },
-                                    logoutpath: '" + logoutpath + @"'
+                                    onFail: function(error) { window.location = '" + CswTools.SafeJavascriptParam( logoutpath ) + @"?error=' + error; },
+                                    logoutpath: '" + CswTools.SafeJavascriptParam( logoutpath ) + @"'
                                 });
                             });";
                 JSPlaceHolder.Controls.Add( JSLiteral );
