@@ -63,7 +63,7 @@ namespace ChemSW.Nbt
         /// </summary>
         public CswNbtSessionDataMgr SessionDataMgr;
 
-        public CswSessionManager CswSessionManager = null;
+        public CswSessionManager CswSessionManager { get; set; }
 
         /// <summary>
         /// User searches
