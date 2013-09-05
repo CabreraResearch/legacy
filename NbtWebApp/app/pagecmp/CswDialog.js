@@ -924,10 +924,7 @@
                             height: molImageHeight
                         });
                         table1.cell(2, 2).propDom('rowspan', 5);
-
-
-
-
+                        
                         var fields = [];
                         var columns = [];
 
@@ -942,15 +939,7 @@
                         columns = [
                             { header: 'Unit Count', dataIndex: 'case_qty' },
                             { header: 'Initial Quantity', dataIndex: 'pkg_qty' },
-                            {
-                                header: 'UOM', dataIndex: 'c3_uom', renderer: function (val, meta, record) {
-                                    //if (Csw.isNullOrEmpty(val)) {
-                                    //    return '[ ' + record.data.c3_uom + ' ]';
-                                    //} else {
-                                        return val;
-                                    //}
-                                }
-                            },
+                            { header: 'UOM', dataIndex: 'c3_uom' },
                             { header: 'Catalog No', dataIndex: 'catalog_no' }
                         ];
 
