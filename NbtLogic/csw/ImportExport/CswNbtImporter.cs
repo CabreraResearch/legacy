@@ -590,14 +590,16 @@ namespace ChemSW.Nbt.ImportExport
                     }
                 }
                 // Quantity or Relationship
-                else if( ( Binding.DestProperty.getFieldTypeValue() == CswEnumNbtFieldType.Quantity &&
-                           Binding.DestSubfield.Column.ToString().ToLower() == "name" )
-                         || Binding.DestProperty.getFieldTypeValue() == CswEnumNbtFieldType.Relationship )
+                else if( ( Binding.DestProperty.getFieldTypeValue() == CswEnumNbtFieldType.Quantity && Binding.DestSubfield.Column.ToString().ToLower() == "name" )
+                            || Binding.DestProperty.getFieldTypeValue() == CswEnumNbtFieldType.Relationship
+                            || Binding.DestProperty.getFieldTypeValue() == CswEnumNbtFieldType.Location )
                 {
                     CswCommaDelimitedString inClause = new CswCommaDelimitedString();
+                    Dictionary<string, int> FKNodeTypes = new Dictionary<string, int>();
                     if( Binding.DestProperty.FKType == CswEnumNbtViewRelatedIdType.NodeTypeId.ToString() )
                     {
                         inClause.Add( Binding.DestProperty.FKValue.ToString() );
+                        FKNodeTypes.Add( _CswNbtResources.MetaData.getNodeType( Binding.DestProperty.FKValue ).NodeTypeName, Binding.DestProperty.FKValue );
                     }
                     else if( Binding.DestProperty.FKType == CswEnumNbtViewRelatedIdType.ObjectClassId.ToString() )
                     {
@@ -605,6 +607,7 @@ namespace ChemSW.Nbt.ImportExport
                         foreach( CswNbtMetaDataNodeType nt in oc.getNodeTypes() )
                         {
                             inClause.Add( nt.NodeTypeId.ToString() );
+                            FKNodeTypes.Add( nt.NodeTypeName, nt.NodeTypeId );
                         }
                     }
                     else if( Binding.DestProperty.FKType == CswEnumNbtViewRelatedIdType.PropertySetId.ToString() )
@@ -615,12 +618,13 @@ namespace ChemSW.Nbt.ImportExport
                             foreach( CswNbtMetaDataNodeType nt in oc.getNodeTypes() )
                             {
                                 inClause.Add( nt.NodeTypeId.ToString() );
+                                FKNodeTypes.Add( nt.NodeTypeName, nt.NodeTypeId );
                             }
                         }
                     }
 
                     // First we use a view to search on the Legacy Id and if it returns no results then we search on the Name
-                    ICswNbtTree Tree = _relationshipSearchViaLegacyId( ImportRow, Binding );
+                    ICswNbtTree Tree = _relationshipSearchViaLegacyId( ImportRow, Binding, FKNodeTypes, inClause );
                     Int32 TreeCount = 0;
                     if( null != Tree )
                     {
@@ -631,7 +635,16 @@ namespace ChemSW.Nbt.ImportExport
                     if( TreeCount > 0 )
                     {
                         Tree.goToNthChild( 0 );
-                        Node.Properties[Binding.DestProperty].AsRelationship.RelatedNodeId = Tree.getNodeIdForCurrentPosition();
+                        //Node.Properties[Binding.DestProperty].AsRelationship.RelatedNodeId = Tree.getNodeIdForCurrentPosition();
+                        Node.Properties[Binding.DestProperty].SetPropRowValue( Binding.DestProperty.getFieldTypeRule().SubFields[CswEnumNbtSubFieldName.NodeID].Column, Tree.getNodeIdForCurrentPosition().PrimaryKey );
+                        if( Binding.DestProperty.getFieldTypeValue() == CswEnumNbtFieldType.Relationship )
+                        {
+                            Node.Properties[Binding.DestProperty].AsRelationship.RefreshNodeName();
+                        }
+                        if( Binding.DestProperty.getFieldTypeValue() == CswEnumNbtFieldType.Location )
+                        {
+                            Node.Properties[Binding.DestProperty].AsLocation.RefreshNodeName();
+                        }
                         Node.Properties[Binding.DestProperty].SyncGestalt();
                     }
                     else
@@ -646,6 +659,8 @@ namespace ChemSW.Nbt.ImportExport
                     Node.Properties[Binding.DestProperty].SyncGestalt();
                 }
             }
+
+            #region CswNbtImportDefRelationship
 
             foreach( CswNbtImportDefRelationship RowRelationship in RowRelationships )
             {
@@ -695,20 +710,58 @@ namespace ChemSW.Nbt.ImportExport
                 }
             } // foreach( CswNbtMetaDataNodeTypeProp Relationship in RowRelationships )
         } // _importPropertyValues()
+            #endregion
 
 
-        private ICswNbtTree _relationshipSearchViaLegacyId( DataRow ImportRow, CswNbtImportDefBinding Binding )
+
+        private ICswNbtTree _relationshipSearchViaLegacyId( DataRow ImportRow, CswNbtImportDefBinding Binding, Dictionary<string, int> FKNodeTypes, CswCommaDelimitedString NodeTypeIds )
         {
             ICswNbtTree Ret = null;
 
             // We only want to search for a related node if the row has a relationship
             if( false == string.IsNullOrEmpty( ImportRow[Binding.SourceColumnName].ToString() ) )
             {
+                //int NodeTypeId = CswConvert.ToInt32( NodeTypeIds[0] );
+                Int32 NodeTypeId = FKNodeTypes[FKNodeTypes.Keys.First()];
+
                 CswNbtView View = new CswNbtView( _CswNbtResources );
                 View.ViewName = "Relationships View";
 
-                CswNbtMetaDataNodeType CurrentNodeType =
-                    _CswNbtResources.MetaData.getNodeType( Binding.DestProperty.FKValue );
+                // Special case for locations
+                // If relationship property is a location, we perform a check:
+                //  If building, fk => site
+                //  If Room, fk => building
+                //  If Cabinet, fk => Room
+                //  If Shelf, fk => Cabinet
+                //  If Box, fk => Shelf
+                if( Binding.DestProperty.getFieldTypeValue() == CswEnumNbtFieldType.Location )
+                {
+                    switch( Binding.DestNodeTypeName )
+                    {
+                        case "Building":
+                            NodeTypeId = FKNodeTypes["Site"];
+                            break;
+                        case "Room":
+                            NodeTypeId = FKNodeTypes["Building"];
+                            break;
+                        case "Cabinet":
+                            NodeTypeId = FKNodeTypes["Room"];
+                            break;
+                        case "Shelf":
+                            NodeTypeId = FKNodeTypes["Cabinet"];
+                            break;
+                        case "Box":
+                            NodeTypeId = FKNodeTypes["Shelf"];
+                            break;
+                        default:
+                            NodeTypeId = FKNodeTypes[FKNodeTypes.Keys.First()];
+                            break;
+                    }
+                }
+
+                CswNbtMetaDataNodeType CurrentNodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
+                if( null != CurrentNodeType )
+                {
                 CswNbtMetaDataNodeTypeProp LegacyIdNTP = CurrentNodeType.getNodeTypeProp( "Legacy Id" );
 
                 CswNbtViewRelationship ParentRelationship = View.AddViewRelationship( CurrentNodeType,
@@ -722,6 +775,7 @@ namespace ChemSW.Nbt.ImportExport
 
                 Ret = _CswNbtResources.Trees.getTreeFromView( View, false, true, true );
             }
+            }
 
             return Ret;
         }
@@ -734,7 +788,6 @@ namespace ChemSW.Nbt.ImportExport
                                    + ImportRow[Binding.ImportDataColumnName].ToString().ToLower() + "'";
             CswArbitrarySelect relNodeSel = _CswNbtResources.makeCswArbitrarySelect( "getRelatedNode", sql );
             DataTable relNodeTbl = relNodeSel.getTable();
-            // TODO: Why does this always return an empty row?
             if( relNodeTbl.Rows.Count > 0 )
             {
                 // Because the sql query is using 'min' it will always return a row; we only want the row if it has a value

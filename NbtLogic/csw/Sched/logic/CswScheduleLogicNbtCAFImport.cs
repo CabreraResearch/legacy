@@ -13,9 +13,16 @@ namespace ChemSW.Nbt.Sched
     {
         public const string CAFDbLink = "CAFLINK";
         public const string DefinitionName = "CAF";
+
+        /// <summary>
+        /// I: Insert
+        /// U: Update
+        /// D: Delete (Done)
+        /// E: Error
+        /// </summary>
         public enum State
         {
-            N,
+            I,
             D,
             U,
             E
@@ -46,7 +53,7 @@ namespace ChemSW.Nbt.Sched
 
         public Int32 getLoadCount( ICswResources CswResources )
         {
-            string Sql = "select count(*) cnt from nbtimportqueue@" + CAFDbLink + " where state = '" + State.N + "'";
+            string Sql = "select count(*) cnt from nbtimportqueue@" + CAFDbLink + " where state = '" + State.I + "'";
             CswArbitrarySelect QueueCountSelect = CswResources.makeCswArbitrarySelect( "cafimport_queue_count", Sql );
             DataTable QueueCountTable = QueueCountSelect.getTable();
             _CswScheduleLogicDetail.LoadCount = CswConvert.ToInt32( QueueCountTable.Rows[0]["cnt"] );
@@ -66,8 +73,12 @@ namespace ChemSW.Nbt.Sched
                     const string QueuePkName = "nbtimportqueueid";
 
                     Int32 NumberToProcess = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumConfigurationVariableNames.NodesProcessedPerCycle ) );
-                    //string Sql = "select * from " + QueueTableName + "@" + CAFDbLink + " where state = '" + State.New + "'";
-                    string Sql = "select * from " + QueueTableName + "@" + CAFDbLink + " where state = '" + State.N + "' or state = '" + State.U + "' order by decode (state, 'N', 1, 'U', 2) asc";
+                    string Sql = "select * from "
+                        + QueueTableName + "@" + CAFDbLink + " iq"
+                        + " join " + CswNbtImportTables.ImportDef.TableName + " id on (id.sheetname = iq.tablename)"
+                        + " join " + CswNbtImportTables.ImportDefOrder.TableName + " ido on (ido.importdefid = id.importdefid)"
+                        + " where state = '" + State.I + "' or state = '" + State.U
+                        + "' order by decode (state, '" + State.I + "', 1, '" + State.U + "', 2) asc, ido.importorder asc";
 
                     CswArbitrarySelect QueueSelect = _CswNbtResources.makeCswArbitrarySelect( "cafimport_queue_select", Sql );
                     DataTable QueueTable = QueueSelect.getTable( 0, NumberToProcess, false, true );

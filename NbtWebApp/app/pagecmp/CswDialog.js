@@ -707,14 +707,14 @@
 
             var logoutOnClose = true;
 
-            var onClose = function() {
+            var onClose = function () {
                 if (logoutOnClose) {
                     Csw.clientSession.logout();
                 }
             };
 
             var div = Csw.literals.div().css({});
-            var resetLoginTable = div.table({width: '80%', align: 'center'});
+            var resetLoginTable = div.table({ width: '80%', align: 'center' });
             resetLoginTable.cell(1, 1).propDom('colspan', 2).br({ number: 4 });
             resetLoginTable.cell(1, 1).append('You are already logged in at another location. Would you like to end your previous session and log in from this computer?');
             resetLoginTable.cell(1, 1).br({ number: 4 });
@@ -732,15 +732,15 @@
                     });//Csw.ajaxWcf.post
                 }//onClick
             });//resetLoginTable.cell(2, 2).button
-            
+
             resetLoginTable.cell(2, 2).css('text-align', 'center').button({
                 enabledText: 'No, Log Me Out',
-                onClick: function() {
+                onClick: function () {
                     div.$.dialog('close');
                 }
             });
-            
-            
+
+
             openDialog(div, 600, 400, onClose, 'Logout Existing Sessions');
         }, //LogoutExistingSessionsDialog
 
@@ -888,29 +888,32 @@
                         });
 
                         table1.cell(3, 1).div({
-                            text: 'Catalog#: ' + data.ProductDetails.CatalogNo
+                            text: 'Catalog No: ' + data.ProductDetails.CatalogNo
                         });
 
-                        var cell4_hidden = 'hidden';
-                        var producturl = data.ProductDetails.ProductUrl;
-                        if (false === Csw.isNullOrEmpty(producturl)) {
-                            cell4_hidden = 'visible';
+                        // CAS Number
+                        var casnodiv = table1.cell(4, 1).div({
+                            text: 'CAS No: ' + data.ProductDetails.CasNo
+                        });
+                        if (Csw.isNullOrEmpty(data.ProductDetails.CasNo)) {
+                            casnodiv.hide();
                         }
-                        table1.cell(4, 1).div({
-                            text: '<a href=' + producturl + ' target="_blank">Product Website</a>',
-                            styles: { 'visibility': cell4_hidden }
-                        });
 
-                        var cell5_hidden = 'hidden';
-                        var msdsurl = data.ProductDetails.MsdsUrl;
-                        if (false === Csw.isNullOrEmpty(msdsurl)) {
-                            cell5_hidden = 'visible';
+                        // Product Website
+                        var producturldiv = table1.cell(5, 1).div({
+                            text: '<a href=' + data.ProductDetails.ProductUrl + ' target="_blank">Product Website</a>'
+                        });
+                        if (Csw.isNullOrEmpty(data.ProductDetails.ProductUrl)) {
+                            producturldiv.hide();
                         }
-                        table1.cell(5, 1).div({
-                            text: '<a href=' + msdsurl + ' target="_blank">MSDS</a>',
-                            styles: { 'visibility': cell5_hidden }
-                        });
 
+                        // MSDS URL
+                        var msdsurldiv = table1.cell(6, 1).div({
+                            text: '<a href=' + data.ProductDetails.MsdsUrl + ' target="_blank">MSDS</a>'
+                        });
+                        if (Csw.isNullOrEmpty(data.ProductDetails.MsdsUrl)) {
+                            msdsurldiv.hide();
+                        }
 
                         var molImageHeight = 0;
                         if ("" != data.ProductDetails.MolData && "" != data.ProductDetails.MolImage) {
@@ -920,7 +923,9 @@
                             src: 'data:image/jpeg;base64,' + data.ProductDetails.MolImage,
                             height: molImageHeight
                         });
-                        table1.cell(2, 2).propDom('rowspan', 4);
+                        table1.cell(2, 2).propDom('rowspan', 5);
+
+
 
 
                         var fields = [];
@@ -950,7 +955,7 @@
                         ];
 
                         var sizeGridId = 'c3detailsgrid_size';
-                        table1.cell(6, 1).grid({
+                        table1.cell(7, 1).grid({
                             name: sizeGridId,
                             stateId: sizeGridId,
                             title: 'Sizes',
@@ -965,10 +970,10 @@
                             usePaging: false,
                             showActionColumn: false
                         });
-                        table1.cell(6, 1).propDom('colspan', 2);
+                        table1.cell(7, 1).propDom('colspan', 2);
 
                         var extraDataGridId = 'c3detailsgrid_extradata';
-                        table1.cell(7, 1).grid({
+                        table1.cell(8, 1).grid({
                             name: extraDataGridId,
                             stateId: extraDataGridId,
                             title: 'Extra Attributes',
@@ -983,7 +988,7 @@
                             usePaging: false,
                             showActionColumn: false
                         });
-                        table1.cell(7, 1).propDom('colspan', 2);
+                        table1.cell(8, 1).propDom('colspan', 2);
 
 
                     }
@@ -1413,7 +1418,14 @@
                         }); // ajax
                     } // onClick
                 }); // 
-
+                var declineBtn = div.button({
+                    name: 'license_decline',
+                    enabledText: 'I Decline',
+                    disabledText: 'Declining...',
+                    onClick: function () {
+                        Csw.tryExec(o.onDecline);
+                    } // onClick
+                }); // 
                 openDialog(div, 800, 600, function () { ExistingShowLicenseDialog = false; }, 'Terms and Conditions', null, function () { return allowClose; });
             }
         }, // ShowLicenseDialog
