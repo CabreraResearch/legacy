@@ -711,7 +711,6 @@
                 var logoutOnClose = true;
 
                 var onClose = function () {
-                    ExistingMultisessionDialog = false;
                     if (logoutOnClose) {
                         Csw.clientSession.logout();
                     }
@@ -730,10 +729,11 @@
                             urlMethod: 'Session/endCurrentUserSessions',
                             success: function(data) {
                                 Csw.tryExec(onSuccess);
-                                logoutOnClose = false;
-                                div.$.dialog('close');
+                                ExistingMultisessionDialog = false;
                             }//success
                         }); //Csw.ajaxWcf.post
+                        logoutOnClose = false;
+                        div.$.dialog('close');
                     }//onClick
                 }); //resetLoginTable.cell(2, 2).button
 
