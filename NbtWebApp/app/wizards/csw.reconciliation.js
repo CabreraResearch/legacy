@@ -214,7 +214,7 @@
                         locationDatesTable.cell(rowNum, 1).span({ text: 'Start Date:' }).addClass('propertylabel');
                         var startDatePicker = locationDatesTable.cell(rowNum, 2).dateTimePicker({
                             name: 'startDate',
-                            Date: cswPrivate.getCurrentDate(),
+                            Date: cswPrivate.getLastWeek(),
                             isRequired: true,
                             maxDate: cswPrivate.getCurrentDate(),
                             onChange: function () {
@@ -602,21 +602,11 @@
 
             //#region Helper Functions
             cswPrivate.getCurrentDate = function () {
-                if (Csw.isNullOrEmpty(cswPrivate.currentDate)) {
-                    var today = new Date();
-                    var dd = today.getDate();
-                    var mm = today.getMonth() + 1; //January is 0!
-                    var yyyy = today.getFullYear();
-                    if (dd < 10) {
-                        dd = '0' + dd;
-                    }
-                    if (mm < 10) {
-                        mm = '0' + mm;
-                    }
-                    today = mm + '/' + dd + '/' + yyyy;
-                    cswPrivate.currentDate = today;
-                }
-                return cswPrivate.currentDate;
+                return moment().format('L');
+            };
+            
+            cswPrivate.getLastWeek = function () {
+                return moment().subtract('days', 7).format('L');
             };
 
             cswPrivate.makeActionPicklist = function (cellId, record) {
