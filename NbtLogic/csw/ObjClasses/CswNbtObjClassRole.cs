@@ -202,6 +202,40 @@ namespace ChemSW.Nbt.ObjClasses
             //case 28010 - delete all view assigned to this role
             _CswNbtResources.ViewSelect.deleteViewsByRoleId( NodeId );
 
+            //Case 30628 - Delete all PermissionSet nodes assigned to this Role
+            CswNbtView PermissionsView = new CswNbtView( _CswNbtResources );
+            CswNbtMetaDataPropertySet PermissionPS = _CswNbtResources.MetaData.getPropertySet( CswEnumNbtPropertySetName.PermissionSet );
+            CswNbtViewRelationship RootVR = PermissionsView.AddViewRelationship( PermissionPS, false );
+            CswNbtViewPropertyFilter Filter = null;
+            foreach( CswNbtMetaDataObjectClass PermOC in PermissionPS.getObjectClasses() )
+            {
+                if( Filter == null )
+                {
+                    foreach( CswNbtMetaDataNodeType PermNT in PermOC.getNodeTypes() )
+                    {
+                        CswNbtMetaDataNodeTypeProp RoleOCP = PermNT.getNodeTypePropByObjectClassProp( CswNbtPropertySetPermission.PropertyName.Role );
+                        Filter = PermissionsView.AddViewPropertyAndFilter( RootVR,
+                                                                           MetaDataProp: RoleOCP,
+                                                                           Value: NodeId.PrimaryKey.ToString(),
+                                                                           SubFieldName: CswEnumNbtSubFieldName.NodeID,
+                                                                           FilterMode: CswEnumNbtFilterMode.Equals );
+                        break;
+                    }
+                }
+                else
+                {
+                    break;
+                }
+            }
+            ICswNbtTree PermissionsTree = _CswNbtResources.Trees.getTreeFromView( PermissionsView, false, true, true );
+            for( int i = 0; i < PermissionsTree.getChildNodeCount(); i++ )
+            {
+                PermissionsTree.goToNthChild( i );
+                CswNbtNode PermissionNode = PermissionsTree.getNodeForCurrentPosition();
+                PermissionNode.delete();
+                PermissionsTree.goToRoot();
+            }
+
         }//beforeDeleteNode()
 
         public override void afterDeleteNode()
