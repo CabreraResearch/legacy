@@ -148,9 +148,10 @@
 
                     if (cswPrivate.currentStepNo === 2 && cswPrivate.lastStepNo === 1) {
                         if (false === cswPrivate.stepTwoComplete) {
-                            cswPrivate.saveMaterial();
+                            cswPrivate.saveMaterial(cswPrivate['makeStep' + newStepNo]);
+                        } else {
+                            cswPrivate['makeStep' + newStepNo]();
                         }
-                        cswPrivate['makeStep' + newStepNo]();
                     } else if (cswPrivate.currentStepNo === 3 && cswPrivate.lastStepNo === 2) {
                         if (false === cswPrivate.containersModuleEnabled || cswPrivate.isConstituent()) {
                             newStepNo = 4;
@@ -426,7 +427,10 @@
                         }
                     };
 
-                    cswPrivate.saveMaterial = function () {
+                    cswPrivate.saveMaterial = function (onSuccess) {
+                        if (cswPrivate.tabsAndProps) {
+                            cswPrivate.tabsAndProps.tearDown();
+                        }
                         Csw.ajax.deprecatedWsNbt({
                             urlMethod: 'saveMaterial',
                             data: {
@@ -442,6 +446,7 @@
                                 cswPrivate.isDuplicateMaterial = Csw.bool(data.materialexists);
                                 if (cswPrivate.isDuplicateMaterial) {
                                     cswPrivate.toggleButton(cswPrivate.buttons.prev, true, true);
+                                    cswPrivate.stepTwoComplete = false;
                                     foundMaterialLabel = cswPrivate.identityDiv.nodeLink({
                                         text: "A material with these properties already exists with a tradename of " + data.noderef,
                                         name: "materialExistsLabel"
@@ -451,6 +456,7 @@
                                     cswPrivate.state.documentTypeId = data.documenttypeid;
                                     cswPrivate.state.properties = data.properties;
                                     cswPrivate.state.supplier.val = data.supplierid;
+                                    Csw.tryExec(onSuccess);
                                     cswPrivate.renderProps();
                                 }
                             },
@@ -570,9 +576,9 @@
                     });
                     div.br({ number: 1 });
 
-                    var makeSizeSelect = function() {
+                    var makeSizeSelect = function () {
 
-                        var makeSizeGrid = function() {
+                        var makeSizeGrid = function () {
                             cswPrivate.sizesGrid = Csw.wizard.sizesGrid(div, {
                                 name: 'sizesGrid',
                                 sizeRowsToAdd: cswPrivate.state.sizes || [],
@@ -586,7 +592,7 @@
                         };
                         div.br();
 
-                        var sizeSelect = function(retObj, count) {
+                        var sizeSelect = function (retObj, count) {
                             cswPrivate.state.sizeNodeTypeId = cswPrivate.sizeSelect.val();
                             if (count > 1) {
                                 selectDiv.show();
@@ -602,12 +608,12 @@
                             labelText: 'Select a Material Size: ',
                             objectClassName: 'SizeClass',
                             onSelect: sizeSelect,
-                            onSuccess: function(retObj, count) {
+                            onSuccess: function (retObj, count) {
                                 sizeSelect(retObj, count);
                                 Csw.ajax.deprecatedWsNbt({
                                     urlMethod: 'getSizeLogicalsVisibility',
                                     data: { SizeNodeTypeId: cswPrivate.state.sizeNodeTypeId },
-                                    success: function(data) {
+                                    success: function (data) {
                                         cswPrivate.showDispensable = Csw.bool(data.showDispensable);
                                         cswPrivate.showQuantityEditable = Csw.bool(data.showQuantityEditable);
                                         makeSizeGrid();
@@ -633,7 +639,7 @@
                         Csw.ajaxWcf.post({
                             urlMethod: 'Materials/getPhysicalState',
                             data: cswPrivate.state.materialId,
-                            success: function(data) {
+                            success: function (data) {
                                 cswPrivate.state.physicalState = data.PhysicalState;
                                 makeSizeSelect();
                             }
