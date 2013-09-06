@@ -31,7 +31,7 @@
                 state: {
                     LocationId: '',
                     LocationName: '',
-                    IncludeChildLocations: false,
+                    IncludeChildLocations: true,
                     StartDate: '',
                     EndDate: '',
                     ContainerActions: [{
@@ -201,6 +201,7 @@
                             cellvalign: 'middle'
                         });
                         cswPrivate.childLocationsCheckBox = checkBoxTable.cell(1, 1).checkBox({
+                            checked: true,
                             onChange: Csw.method(function () {
                                 cswPrivate.state.IncludeChildLocations = cswPrivate.childLocationsCheckBox.checked();
                                 cswPrivate.reinitSteps(2);
