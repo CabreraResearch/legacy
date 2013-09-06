@@ -16,17 +16,8 @@ namespace ChemSW.Nbt.Schema
             _CswNbtResources = CswNbtResources;
 
             // This is where you manually set to the last version of the previous release (the one currently in production)
-            _MinimumVersion = new CswSchemaVersion( 2, 'E', 12 );
+            _MinimumVersion = new CswSchemaVersion( 2, 'E', 11 );
 
-            #region Eucalyptus
-
-            //// EUCALYPTUS 'Before' Scripts
-            //_addVersionedScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02E_Case29700() ) );       //02E-001
-            //_addVersionedScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02E_Case30123() ) );       //02E-002
-            //_addVersionedScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02E_Case29701() ) );       //02E-003
-            //_addVersionedScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02E_Case30347() ) );       //02E-004
-
-            //// EUCALYPTUS Scripts
             //_addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02E_Case30014() ) );                        //02E-008
             //_addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02E_Case30222() ) );                        //02E-009
             //_addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02E_Case29847() ) );                        //02E-010
@@ -39,9 +30,34 @@ namespace ChemSW.Nbt.Schema
             //_addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02E_Case30445() ) );                        //02E-017
             //_addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02E_Case30360() ) );                        //02E-018
 
+            _addVersionedScript( new CswUpdateSchema_02F_Case30281() );                    //02E-012 //02F-001
+            _addVersionedScript( new CswUpdateSchema_02F_Case28998() );                    //02E-013 //02F-002
+            _addVersionedScript( new CswUpdateSchema_02F_Case29973() );                    //02E-014 //02F-003
+            _addVersionedScript( new CswUpdateSchema_02F_Case29191() );                    //02E-015 //02F-004
+            _addVersionedScript( new CswUpdateSchema_02F_Case29542() );                    //02E-016 //02F-005
+            _addVersionedScript( new CswUpdateSchema_02F_Case29438() );                    //02E-017 //02F-006
+            _addVersionedScript( new CswUpdateSchema_02F_Case30082_UserCache() );          //02E-018 //02F-007
+            _addVersionedScript( new CswUpdateSchema_02F_Case30197() );                    //02E-019 //02F-008
+            _addVersionedScript( new CswUpdateSchema_02F_Case30417() );                    //02E-020 //02F-009
+            _addVersionedScript( new CswUpdateSchema_02F_Case27883() );                    //02E-021 //02F-010
+            _addVersionedScript( new CswUpdateSchema_02F_Case27495() );                    //02E-022 //02F-011
+            _addVersionedScript( new CswUpdateSchema_02F_Case30228() );                    //02E-023 //02F-012
+            _addVersionedScript( new CswUpdateSchema_02F_Case30040() );                    //02E-024 //02F-013
+            _addVersionedScript( new CswUpdateSchema_02F_Case30041_Vendors() );            //02E-025 //02F-014
+            _addVersionedScript( new CswUpdateSchema_02F_Case29992() );                    //02E-026 //02F-015
+            _addVersionedScript( new CswUpdateSchema_02F_Case29402() );                    //02E-027 //02F-016
+            _addVersionedScript( new CswUpdateSchema_02F_Case30041_UnitsOfMeasure() );     //02E-028 //02F-017
+            _addVersionedScript( new CswUpdateSchema_02F_Case30041_RolesUsers() );         //02E-029 //02F-018
+            _addVersionedScript( new CswUpdateSchema_02F_Case30252() );                    //02E-019 //02F-019
+            _addVersionedScript( new CswUpdateSchema_02F_Case30041_ScheduledRuleImport() );//02E-030 //02F-020
+            _addVersionedScript( new CswUpdateSchema_02F_Case30043_ControlZones() );       //02E-030 //02F-021
+            _addVersionedScript( new CswUpdateSchema_02F_Case30043_Sites() );              //02E-031 //02F-022
+            _addVersionedScript( new CswUpdateSchema_02F_Case29984() );                    //02E-031 //02F-023
+            _addVersionedScript( new CswUpdateSchema_02F_Case30577() );                    //02E-032 //02F-024
+            _addVersionedScript( new CswUpdateSchema_02F_Case30043_Locations() );          //02E-032 //02F-025
+            _addVersionedScript( new CswUpdateSchema_02F_Case30043_WorkUnits() );          //02E-034 //02F-026
+            _addVersionedScript( new CswUpdateSchema_02F_Case30043_InventoryGroups() );    //02E-035 //02F-027
 
-
-            #endregion
 
             #region MetaData Scripts
 
@@ -58,9 +74,10 @@ namespace ChemSW.Nbt.Schema
             // This is the MakeMissingNodeTypeProps script. If you have a script which contains OC changes, put it before this script.
             _addVersionedScript( new CswSchemaUpdateDriver( new RunAlways_MakeMissingNodeTypePropsProps() ) );
 
-            #region Data Scripts
+            //dch 30252 FOXGLOVE, but metadata changes so before EUC changes
+            _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02F_Case30252() );
+            _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02F_Case30228() );
 
-            // e.g. _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02F_CaseXXXXX() ) );
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02F_Case30281() ) );
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02F_Case28998() ) );
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02F_Case29973() ) );
@@ -73,28 +90,25 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02F_Case27883() ) );
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02F_Case27495() ) );
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02F_Case30228() ) );
-
-
             #endregion Data Scripts
-
             #region Calculate the Latest Version
 
             _setLatestVersion( CswNbtResources );
+            _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02F_Case27883() );
+            _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02F_Case30040() );
+            _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02F_Case29992() );
+            _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02F_Case30529() );
 
             #endregion Calculate the Latest Version
 
             #region Before Scripts
 
             // Before scripts that always run.
-            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02SQL() ), RunBeforeEveryExecutionOfUpdater_02SQL.Title );
-            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_03() ), RunBeforeEveryExecutionOfUpdater_03.Title );
-
             #endregion Before Scripts
 
             #region After Script
 
             // After scripts that always run.
-            _addRunAfterScript( new CswSchemaUpdateDriver( new RunAfterEveryExecutionOfUpdater_01() ), RunAfterEveryExecutionOfUpdater_01.Title );
 
             #endregion After Script
 
@@ -256,7 +270,7 @@ namespace ChemSW.Nbt.Schema
         private Dictionary<CswSchemaVersion, CswSchemaUpdateDriver> _UpdateDrivers = new Dictionary<CswSchemaVersion, CswSchemaUpdateDriver>();
         public Dictionary<CswSchemaVersion, CswSchemaUpdateDriver> UpdateDrivers { get { return _UpdateDrivers; } }
 
-        private void _addVersionedScript( CswSchemaUpdateDriver CswSchemaUpdateDriver )
+        private void _addVersionedScript( CswUpdateSchemaTo UpdateTo )
         {
             CswSchemaUpdateDriver.CswNbtSchemaModTrnsctn = new CswNbtSchemaModTrnsctn( _CswNbtResources );
             if( false == CswSchemaUpdateDriver.AlreadyRun() || CswSchemaUpdateDriver.AlwaysRun )
@@ -302,16 +316,6 @@ namespace ChemSW.Nbt.Schema
             }
         }
 
-        private void _addRunBeforeScript( CswSchemaUpdateDriver CswSchemaUpdateDriver, string Description )
-        {
-            CswSchemaUpdateDriver.SchemaVersion = new CswSchemaVersion( 0, '#', _RunBeforeScripts.Count );
-            CswSchemaUpdateDriver.Description = Description;
-            if( false == _RunBeforeScripts.Contains( CswSchemaUpdateDriver ) )
-            {
-                _RunBeforeScripts.Add( CswSchemaUpdateDriver );
-            }
-        }
-
         private List<CswSchemaUpdateDriver> _RunAfterScripts = new List<CswSchemaUpdateDriver>();
         public List<CswSchemaUpdateDriver> RunAfterScripts
         {
@@ -322,15 +326,26 @@ namespace ChemSW.Nbt.Schema
 
         }
 
-        private void _addRunAfterScript( CswSchemaUpdateDriver CswSchemaUpdateDriver, string Description )
+        private void _addRunBeforeScript( CswUpdateSchemaTo UpdateTo, string Description = null )
         {
+            CswSchemaUpdateDriver CswSchemaUpdateDriver = new CswSchemaUpdateDriver( UpdateTo );
+            CswSchemaUpdateDriver.SchemaVersion = new CswSchemaVersion( 0, '#', _RunBeforeScripts.Count );
+            CswSchemaUpdateDriver.Description += Description ?? string.Empty;
+            if( false == _RunBeforeScripts.Contains( CswSchemaUpdateDriver ) )
+            {
+                _RunBeforeScripts.Add( CswSchemaUpdateDriver );
+            }
+        }
+
+        private void _addRunAfterScript( CswUpdateSchemaTo UpdateTo, string Description = null )
+        {
+            CswSchemaUpdateDriver CswSchemaUpdateDriver = new CswSchemaUpdateDriver( UpdateTo );
             CswSchemaUpdateDriver.SchemaVersion = new CswSchemaVersion( 99, '#', _RunAfterScripts.Count );
-            CswSchemaUpdateDriver.Description = Description;
+            CswSchemaUpdateDriver.Description += Description ?? string.Empty;
             if( false == _RunAfterScripts.Contains( CswSchemaUpdateDriver ) )
             {
                 _RunAfterScripts.Add( CswSchemaUpdateDriver );
             }
-
         }
 
         #endregion

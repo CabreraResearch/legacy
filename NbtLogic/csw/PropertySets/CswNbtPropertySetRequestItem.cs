@@ -140,18 +140,21 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         public CswNbtPropertySetRequestItem copyNode( bool PostChanges = true, bool ClearRequest = true )
         {
-            CswNbtPropertySetRequestItem RetCopy = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswEnumNbtMakeNodeOperation.DoNothing );
-            RetCopy.Node.copyPropertyValues( Node );
-            RetCopy.Status.Value = Statuses.Pending;
-            if ( ClearRequest )
-            {
-                RetCopy.Request.RelatedNodeId = null;
-            }
-            _toggleReadOnlyProps( false, RetCopy );
-            if ( PostChanges )
-            {
-                RetCopy.postChanges( true );
-            }
+            CswNbtPropertySetRequestItem RetCopy = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, delegate( CswNbtNode NewNode )
+                {
+                    NewNode.copyPropertyValues( Node );
+                    ( (CswNbtPropertySetRequestItem) NewNode ).Status.Value = Statuses.Pending;
+                    if( ClearRequest )
+                    {
+                        ( (CswNbtPropertySetRequestItem) NewNode ).Request.RelatedNodeId = null;
+                    }
+                    _toggleReadOnlyProps( false, NewNode );
+                    //if( PostChanges )
+                    //{
+                    //    RetCopy.postChanges( true );
+                    //}
+                } );
+
             return RetCopy;
         }
 
@@ -180,7 +183,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static implicit operator CswNbtPropertySetRequestItem( CswNbtNode Node )
         {
             CswNbtPropertySetRequestItem ret = null;
-            if ( null != Node && Members().Contains( Node.ObjClass.ObjectClass.ObjectClass ) )
+            if( null != Node && Members().Contains( Node.ObjClass.ObjectClass.ObjectClass ) )
             {
                 ret = (CswNbtPropertySetRequestItem) Node.ObjClass;
             }
@@ -249,17 +252,17 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Status change event for derived classes to implement
         /// </summary>
-        public abstract void onStatusPropChange( CswNbtNodeProp Prop );
+        public abstract void onStatusPropChange( CswNbtNodeProp Prop, bool Creating );
 
         /// <summary>
         /// Type change event for derived classes to implement
         /// </summary>
-        public abstract void onTypePropChange( CswNbtNodeProp Prop );
+        public abstract void onTypePropChange( CswNbtNodeProp Prop, bool Creating );
 
         /// <summary>
         /// Request change event for derived classes to implement
         /// </summary>
-        public abstract void onRequestPropChange( CswNbtNodeProp Prop );
+        public abstract void onRequestPropChange( CswNbtNodeProp Prop, bool Creating );
 
         /// <summary>
         /// Mechanism to add default filters in derived classes
@@ -273,11 +276,11 @@ namespace ChemSW.Nbt.ObjClasses
 
         private void _setDefaultValues()
         {
-            if ( false == CswTools.IsPrimaryKey( Request.RelatedNodeId ) )
+            if( false == CswTools.IsPrimaryKey( Request.RelatedNodeId ) )
             {
                 CswNbtActRequesting RequestAct = new CswNbtActRequesting( _CswNbtResources );
                 CswNbtObjClassRequest CurrentRequest = RequestAct.getCurrentRequestNode();
-                if ( null != CurrentRequest )
+                if( null != CurrentRequest )
                 {
                     // In sched rule(s), no Current Cart will exist
                     Request.RelatedNodeId = CurrentRequest.NodeId;
@@ -285,10 +288,10 @@ namespace ChemSW.Nbt.ObjClasses
                 Request.setReadOnly( value: true, SaveToDb: true );
                 Request.setHidden( value: true, SaveToDb: false );
             }
-            if ( false == CswTools.IsPrimaryKey( Requestor.RelatedNodeId ) )
+            if( false == CswTools.IsPrimaryKey( Requestor.RelatedNodeId ) )
             {
                 CswNbtObjClassRequest ThisRequest = _CswNbtResources.Nodes[Request.RelatedNodeId];
-                if ( null != ThisRequest )
+                if( null != ThisRequest )
                 {
                     Requestor.RelatedNodeId = ThisRequest.Requestor.RelatedNodeId;
                     RequestedFor.RelatedNodeId = ThisRequest.Requestor.RelatedNodeId;
@@ -296,19 +299,27 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
+        public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
+        {
+        }
+
+        public override void afterCreateNode()
+        {
+        }
+
+        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation, bool Creating )
         {
             beforePropertySetWriteNode( IsCopy, OverrideUniqueValidation );
             _setDefaultValues();
 
             Description.StaticText = setRequestDescription();
-            CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
+            CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation, Creating );
         }//beforeWriteNode()
 
-        public override void afterWriteNode()
+        public override void afterWriteNode( bool Creating )
         {
             afterPropertySetWriteNode();
-            CswNbtObjClassDefault.afterWriteNode();
+            CswNbtObjClassDefault.afterWriteNode( Creating );
         }//afterWriteNode()
 
 
@@ -328,13 +339,13 @@ namespace ChemSW.Nbt.ObjClasses
         public void setFulfillVisibility()
         {
             bool HideMenuButton = ( Status.Value == Statuses.Pending );
-            if ( false == HideMenuButton &&
+            if( false == HideMenuButton &&
                 CswTools.IsPrimaryKey( Request.RelatedNodeId ) &&
                 Status.Value != Statuses.Cancelled &&
                 Status.Value != Statuses.Completed )
             {
                 CswNbtObjClassRequest NodeAsRequest = _CswNbtResources.Nodes[Request.RelatedNodeId];
-                if ( null != NodeAsRequest &&
+                if( null != NodeAsRequest &&
                     _CswNbtResources.CurrentNbtUser.UserId == NodeAsRequest.Requestor.RelatedNodeId )
                 {
                     HideMenuButton = true;
@@ -367,13 +378,13 @@ namespace ChemSW.Nbt.ObjClasses
         protected override bool onButtonClick( NbtButtonData ButtonData )
         {
             bool Ret = false;
-            if ( null != ButtonData.NodeTypeProp )
+            if( null != ButtonData.NodeTypeProp )
             {
                 //Remember: Save is an OCP too
-                switch ( ButtonData.NodeTypeProp.getObjectClassPropName() )
+                switch( ButtonData.NodeTypeProp.getObjectClassPropName() )
                 {
                     case PropertyName.Fulfill:
-                        switch ( ButtonData.SelectedText )
+                        switch( ButtonData.SelectedText )
                         {
                             case FulfillMenu.Cancel:
                                 Status.Value = Statuses.Cancelled;
@@ -410,15 +421,15 @@ namespace ChemSW.Nbt.ObjClasses
             //if ( false == Node.IsTemp )
             //{
             int Incrementer = 1;
-            if ( IsDelete )
+            if( IsDelete )
             {
                 Incrementer = -1;
             }
-            
-            if ( false == HasBeenTouched )
+
+            if( false == HasBeenTouched )
             {
                 HasBeenTouched = true;
-                switch ( Status.Value )
+                switch( Status.Value )
                 {
                     case Statuses.Pending:
                         UserCache.CartCounts.PendingRequestItems += Incrementer;
@@ -432,7 +443,7 @@ namespace ChemSW.Nbt.ObjClasses
 
                 //If the Item is moving from Pending to something else
                 string LastStatus = Status.GetOriginalPropRowValue();
-                if ( Status.Value != Statuses.Pending &&
+                if( Status.Value != Statuses.Pending &&
                     LastStatus == Statuses.Pending )
                 {
                     UserCache.CartCounts.PendingRequestItems -= 1;
@@ -444,7 +455,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public CswNbtNodePropButton Fulfill { get { return _CswNbtNode.Properties[PropertyName.Fulfill]; } }
         public CswNbtNodePropList Status { get { return _CswNbtNode.Properties[PropertyName.Status]; } }
-        private void _onStatusPropChange( CswNbtNodeProp Prop )
+        private void _onStatusPropChange( CswNbtNodeProp Prop, bool Creating )
         {
             string LastStatus = Status.GetOriginalPropRowValue();
 
@@ -460,7 +471,7 @@ namespace ChemSW.Nbt.ObjClasses
             ExternalOrderNumber.setHidden( value: ( Status.Value == Statuses.Pending ), SaveToDb: true );
             Type.setHidden( value: ( Status.Value == Statuses.Pending ), SaveToDb: true );
 
-            switch ( Status.Value )
+            switch( Status.Value )
             {
                 case Statuses.Submitted:
                     toggleReadOnlyProps( true, this );
@@ -468,7 +479,7 @@ namespace ChemSW.Nbt.ObjClasses
                 case Statuses.Cancelled: //This fallthrough is intentional
                 case Statuses.Completed:
                     CswNbtObjClassRequest NodeAsRequest = _CswNbtResources.Nodes[Request.RelatedNodeId];
-                    if ( null != NodeAsRequest )
+                    if( null != NodeAsRequest )
                     {
                         NodeAsRequest.setCompletedDate();
                     }
@@ -479,7 +490,7 @@ namespace ChemSW.Nbt.ObjClasses
 
             _updateCartCounts();
 
-            onStatusPropChange( Prop );
+            onStatusPropChange( Prop, Creating );
 
         }
 
@@ -487,16 +498,16 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropDateTime NeededBy { get { return _CswNbtNode.Properties[PropertyName.NeededBy]; } }
 
         public CswNbtNodePropRelationship Request { get { return _CswNbtNode.Properties[PropertyName.Request]; } }
-        private void _onRequestPropChange( CswNbtNodeProp Prop )
+        private void _onRequestPropChange( CswNbtNodeProp Prop, bool Creating )
         {
-            onRequestPropChange( Prop );
+            onRequestPropChange( Prop, Creating );
             Name.RecalculateReferenceValue();
         }
 
         public CswNbtNodePropList Type { get { return _CswNbtNode.Properties[PropertyName.Type]; } }
-        private void _onTypePropChange( CswNbtNodeProp Prop )
+        private void _onTypePropChange( CswNbtNodeProp Prop, bool Creating )
         {
-            onTypePropChange( Prop );
+            onTypePropChange( Prop, Creating );
         }
 
         public CswNbtNodePropLocation Location { get { return _CswNbtNode.Properties[PropertyName.Location]; } }

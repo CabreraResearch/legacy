@@ -184,7 +184,17 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
+        public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
+        {
+            _CswNbtObjClassDefault.beforeCreateNode( IsCopy, OverrideUniqueValidation );
+        }//beforeCreateNode()
+
+        public override void afterCreateNode()
+        {
+            _CswNbtObjClassDefault.afterCreateNode();
+        }//afterCreateNode()
+
+        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation, bool Creating )
         {
             if( _unableToWriteNodeInvalidUserName() )
             {
@@ -192,7 +202,7 @@ namespace ChemSW.Nbt.ObjClasses
                                           "Username contains invalid characters: " + this.Username );
             }
 
-            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
+            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation, Creating );
 
             if( UsernameProperty.Text != string.Empty ) // case 25616
             {
@@ -233,7 +243,7 @@ namespace ChemSW.Nbt.ObjClasses
                  ( this.AccountLocked.WasModified && this.AccountLocked.Checked == CswEnumTristate.False ) );
         }
 
-        public override void afterWriteNode()
+        public override void afterWriteNode( bool Creating )
         {
             //bz # 6555
             if( AccountLocked.Checked != CswEnumTristate.True && AccountLocked.WasModified )
@@ -244,7 +254,7 @@ namespace ChemSW.Nbt.ObjClasses
             // BZ 9170
             _CswNbtResources.ConfigVbls.setConfigVariableValue( "cache_lastupdated", DateTime.Now.ToString() );
 
-            _CswNbtObjClassDefault.afterWriteNode();
+            _CswNbtObjClassDefault.afterWriteNode( Creating );
         }
 
         //afterWriteNode()
@@ -421,7 +431,7 @@ namespace ChemSW.Nbt.ObjClasses
         public Int32 RoleTimeout { get { return CswConvert.ToInt32( _RoleNodeObjClass.Timeout.Value ); } }
 
         public CswNbtNodePropRelationship Role { get { return ( _CswNbtNode.Properties[PropertyName.Role] ); } }
-        private void onRolePropChange( CswNbtNodeProp NodeProp )
+        private void onRolePropChange( CswNbtNodeProp NodeProp, bool Creating )
         {
             if( null != _CswNbtResources.CurrentNbtUser &&
                 CswTools.IsPrimaryKey( Role.RelatedNodeId ) &&
@@ -474,7 +484,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
         public CswNbtNodePropList DateFormatProperty { get { return ( _CswNbtNode.Properties[PropertyName.DateFormat] ); } }
-        private void onDateFormatPropChange( CswNbtNodeProp NodeProp )
+        private void onDateFormatPropChange( CswNbtNodeProp NodeProp, bool Creating )
         {
             if( false == string.IsNullOrEmpty( DateFormatProperty.Value ) &&
                 CswResources.UnknownEnum == (CswEnumDateFormat) DateFormatProperty.Value )
@@ -500,7 +510,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
         public CswNbtNodePropList TimeFormatProperty { get { return ( _CswNbtNode.Properties[PropertyName.TimeFormat] ); } }
-        private void onTimeFormatPropChange( CswNbtNodeProp NodeProp )
+        private void onTimeFormatPropChange( CswNbtNodeProp NodeProp, bool Creating )
         {
             if( false == string.IsNullOrEmpty( TimeFormatProperty.Value ) &&
                 CswResources.UnknownEnum == (CswEnumTimeFormat) TimeFormatProperty.Value )
@@ -530,7 +540,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropRelationship DefaultBalanceProperty { get { return _CswNbtNode.Properties[PropertyName.DefaultBalance]; } }
         public CswPrimaryKey DefaultBalanceId { get { return DefaultBalanceProperty.RelatedNodeId; } }
         public CswNbtNodePropRelationship WorkUnitProperty { get { return _CswNbtNode.Properties[PropertyName.WorkUnit]; } }
-        public void OnWorkUnitPropertyChange( CswNbtNodeProp Prop )
+        public void OnWorkUnitPropertyChange( CswNbtNodeProp Prop, bool Creating )
         {
             if( false == AvailableWorkUnits.CheckValue( WorkUnitId.ToString() ) )
             {
@@ -549,7 +559,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropText Phone { get { return _CswNbtNode.Properties[PropertyName.Phone]; } }
         public CswNbtNodePropText EmployeeId { get { return _CswNbtNode.Properties[PropertyName.EmployeeId]; } }
 
-        private void OnUserNamePropChange( CswNbtNodeProp Prop )
+        private void OnUserNamePropChange( CswNbtNodeProp Prop, bool Creating )
         {
             if( false == Prop.Empty )
             {
@@ -558,7 +568,7 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         public CswNbtNodePropMultiList AvailableWorkUnits { get { return _CswNbtNode.Properties[PropertyName.AvailableWorkUnits]; } }
-        public void OnAvailableWorkUnitsChange( CswNbtNodeProp Prop )
+        public void OnAvailableWorkUnitsChange( CswNbtNodeProp Prop, bool Creating )
         {
             _updateAvailableWorkUnits();
 
@@ -852,7 +862,7 @@ select * from (
             Dictionary<string, string> opts = new Dictionary<string, string>();
 
             CswNbtMetaDataObjectClass WorkUnitOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.WorkUnitClass );
-            foreach( KeyValuePair<CswPrimaryKey, string> workUnit in WorkUnitOC.getNodeIdAndNames( false, false ) )
+            foreach( KeyValuePair<CswPrimaryKey, string> workUnit in WorkUnitOC.getNodeIdAndNames( false, false, RequireViewPermissions: false ) )
             {
                 opts[workUnit.Key.ToString()] = workUnit.Value;
             }

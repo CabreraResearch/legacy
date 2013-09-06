@@ -45,8 +45,9 @@ namespace ChemSW.Nbt.Schema
         {
             get { return true; }
         }
+        
+         public override string Title { get { return "Pre-Script: 02: PL/SQL Objects"; } }
 
-        public static string Title = "Pre-Script: PL/SQL Objects";
 
         public override void update()
         {

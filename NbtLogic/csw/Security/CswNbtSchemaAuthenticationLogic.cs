@@ -3,6 +3,7 @@ using System;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Security;
+using ChemSW.WebSvc;
 
 namespace ChemSW.Nbt.csw.Security
 {
@@ -37,25 +38,20 @@ namespace ChemSW.Nbt.csw.Security
             return AuthStatus;
         }
 
-        public void LogAuthenticationAttempt( CswNbtObjClassUser UserNode, String username, String IPAddress, CswEnumAuthenticationStatus AuthStatus )
+        public void LogAuthenticationAttempt( CswNbtObjClassUser UserNode, CswWebSvcSessionAuthenticateData.Authentication.Request AuthenticationRequest )
         {
             Int32 FailedLoginCount = null != UserNode ? UserNode.getFailedLoginCount() : 0;
-            if( AuthStatus != CswEnumAuthenticationStatus.TooManyUsers )
-            {
-                AuthStatus = UserNode == null ? (CswEnumAuthenticationStatus) CswEnumAuthenticationStatus.Unknown : AuthStatus;
-            }
+            //if( AuthenticationRequest.AuthenticationStatus != CswEnumAuthenticationStatus.TooManyUsers )
+            //{
+            //    AuthenticationRequest.AuthenticationStatus = UserNode == null ? (CswEnumAuthenticationStatus) CswEnumAuthenticationStatus.Unknown : AuthenticationRequest.AuthenticationStatus;
+            //}
 
-            LoginData.Login LoginRecord = new LoginData.Login
+            LoginData.Login LoginRecord = new LoginData.Login(AuthenticationRequest, UserNode )
             {
-                Username = username,
-                IPAddress = IPAddress,
                 LoginDate = DateTime.Now.ToString(),
-                LoginStatus = "Failed",
-                FailureReason = "",
                 FailedLoginCount = FailedLoginCount
             };
-
-            LoginRecord.setStatus( AuthStatus );
+           
 
             CswNbtActLoginData _CswNbtActLoginData = new CswNbtActLoginData( _CswNbtResources );
             _CswNbtActLoginData.postLoginData( LoginRecord );

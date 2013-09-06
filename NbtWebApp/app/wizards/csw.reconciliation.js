@@ -178,9 +178,8 @@
                         cswPrivate.state.LocationId = locationControl.val();
                         cswPrivate.state.LocationName = locationControl.selectedName();
                         cswPrivate.toggleButton(cswPrivate.buttons.next, false === Csw.isNullOrEmpty(cswPrivate.state.LocationId));
-                        
                         //Pending Actions
-                        var pendingActionLabel = locationDatesTable.cell(rowNum, 2).span({ text: 'Pending Actions:' });
+                        var pendingActionLabel = locationDatesTable.cell(rowNum, 3).span({ text: 'Pending Actions:' });
                         var getPendingChangesCount = function () {
                             if (false === Csw.isNullOrEmpty(cswPrivate.state.LocationId)) {
                                 Csw.ajaxWcf.post({

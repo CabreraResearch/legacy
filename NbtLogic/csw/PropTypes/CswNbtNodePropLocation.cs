@@ -407,7 +407,14 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void SyncGestalt()
         {
-            _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, CachedPath );
+            //case 30152: Though we require CachedPath to be non-empty, a top level path is just a placeholder and users shouldn't see it
+            string GestaltPath = CachedPath;
+            if( GestaltPath == GetTopLevelName( _CswNbtResources ) )
+            {
+                GestaltPath = "";
+            }
+
+            _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, GestaltPath );
         }
 
     }//CswNbtNodePropLocation

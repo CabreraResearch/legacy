@@ -6,12 +6,12 @@
 
     Csw.composites.quickTip = Csw.composites.quickTip ||
         Csw.composites.register('quickTip', Csw.method(function (cswParent, options) {
-        	/// <summary>
-        	/// Create a Quick Tip adjacent to an element. The defaults work well. Tinker with care. 
-        	/// </summary>
-        	/// <returns type=""></returns>
+            /// <summary>
+            /// Create a Quick Tip adjacent to an element. The defaults work well. Tinker with care. 
+            /// </summary>
+            /// <returns type=""></returns>
             'use strict';
-            
+
             var cswPublic = {};
             var cswPrivate = {};
 
@@ -28,35 +28,48 @@
                     anchor: 'left',
                     bodyStyle: {
                         background: '#ffff00'
-                    }
+                    },
+                    onBeforeClose: null
                 };
                 Csw.extend(cswPrivate, options);
 
             }());
 
-            (function _post() {                                             
+            cswPublic.close = function () {
+                //closes the quicktip if it was initialized
+                //Note - calling the quickTips close() method here does not trigger the 'beforeclose' listener
+                if (cswPrivate.tip) {
+                    Csw.tryExec(cswPrivate.onBeforeClose);
+                    cswPrivate.tip.close();
+                    cswPrivate.tip.destroy();
+                    cswPrivate.tip = null;
+                }
+            };
+
+            (function _post() {
                 'use strict';
-                
+
                 if (Csw.isElementInDom(cswParent.getId())) {
-                    try {
-                        window.Ext.create('Ext.tip.ToolTip', {
-                            //Case 28232: if this is tied to a button (for example), id will not be guaranteed to be unique for every tip.
-                            //id: cswPrivate.ID + 'tooltip',
-                            target: cswParent.getId(),
-                            html: cswPrivate.html,
-                            autoShow: cswPrivate.autoShow,
-                            autoScroll: cswPrivate.autoScroll,
-                            dismissDelay: cswPrivate.dismissDelay,
-                            focusOnToFront: cswPrivate.focusOnToFront,
-                            autoHide: cswPrivate.autoHide,
-                            closable: cswPrivate.closable,
-                            anchor: cswPrivate.anchor,
-                            bodyStyle: cswPrivate.bodyStyle
-                        });
-                    } catch(e) {
-                        Csw.debug.error('Failed to create Ext.tip.ToolTip in csw.quickTip');
-                        Csw.debug.error(e);
-                    }
+                    cswPrivate.tip = window.Ext.create('Ext.tip.ToolTip', {
+                        //Case 28232: if this is tied to a button (for example), id will not be guaranteed to be unique for every tip.
+                        //id: cswPrivate.ID + 'tooltip',
+                        target: cswParent.getId(),
+                        html: cswPrivate.html,
+                        autoShow: cswPrivate.autoShow,
+                        autoScroll: cswPrivate.autoScroll,
+                        dismissDelay: cswPrivate.dismissDelay,
+                        focusOnToFront: cswPrivate.focusOnToFront,
+                        autoHide: cswPrivate.autoHide,
+                        closable: cswPrivate.closable,
+                        anchor: cswPrivate.anchor,
+                        bodyStyle: cswPrivate.bodyStyle,
+                        listeners: {
+                            beforeclose: function () {
+                                Csw.tryExec(cswPrivate.onBeforeClose);
+                                return true;
+                            }
+                        }
+                    });
                 }
             }());
 

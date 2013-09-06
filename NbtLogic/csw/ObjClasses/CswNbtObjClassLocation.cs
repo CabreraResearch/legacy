@@ -64,7 +64,18 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
+        public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
+        {
+            _CswNbtObjClassDefault.beforeCreateNode( IsCopy, OverrideUniqueValidation );
+        }//beforeCreateNode()
+
+        public override void afterCreateNode()
+        {
+            _CswNbtObjClassDefault.afterCreateNode();
+        }//afterCreateNode()
+
+
+        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation, bool Creating )
         {
             if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.CISPro ) &&
                 Location.WasModified &&
@@ -99,12 +110,12 @@ namespace ChemSW.Nbt.ObjClasses
                 Location.SyncGestalt();
             }
 
-            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
+            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation, Creating );
         }//beforeWriteNode()
 
-        public override void afterWriteNode()
+        public override void afterWriteNode( bool Creating )
         {
-            _CswNbtObjClassDefault.afterWriteNode();
+            _CswNbtObjClassDefault.afterWriteNode( Creating );
         }//afterWriteNode()
 
         public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
@@ -151,7 +162,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropList ChildLocationType { get { return ( _CswNbtNode.Properties[PropertyName.ChildLocationType] ); } }
         public CswNbtNodePropList LocationTemplate { get { return ( _CswNbtNode.Properties[PropertyName.LocationTemplate] ); } }
         public CswNbtNodePropLocation Location { get { return ( _CswNbtNode.Properties[PropertyName.Location] ); } }
-        private void OnLocationPropChange( CswNbtNodeProp Prop )
+        private void OnLocationPropChange( CswNbtNodeProp Prop, bool Creating )
         {
             Int32 ParentLevel = Location.CachedFullPath.Split( new string[] { CswNbtNodePropLocation.PathDelimiter }, StringSplitOptions.RemoveEmptyEntries ).Count();
             Int32 MaxLevel = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumNbtConfigurationVariables.loc_max_depth.ToString() ) );

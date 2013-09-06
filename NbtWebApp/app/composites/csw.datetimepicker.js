@@ -36,15 +36,45 @@
                 'yyyy/M/d': /^(\d{4})\/([1-9]|1[012])\/([1-9]|[12][0-9]|3[01])$/,
             };
 
-            cswPrivate.addValidators = function () {
-                if ( cswPrivate.DateFormat in cswPrivate.dateFormats ) {
-                    var dateExpression = cswPrivate.dateFormats[cswPrivate.DateFormat];
+            cswPrivate.timeFormats = {
+                'h:mm:ss tt': /^([1-9]|1[012]):([0-5][0-9]):([0-5][0-9]) (AM|PM)$/,
+                'H:mm:ss': /^(1?[0-9]|2[0123]):([0-5][0-9]):([0-5][0-9])$/
+            };
 
+            cswPrivate.addValidators = function () {
+                
+                if ( cswPrivate.DateFormat in cswPrivate.dateFormats && undefined != cswPrivate.dateBox ) {
                     $.validator.addMethod('validateDate', function (value, element) {
-                        return (dateExpression.test(cswPublic.val().date));
-                    }, 'Please enter a valid date');
+                        
+                        var ret = true;
+                        
+                        if (cswPrivate.isRequired || false == Csw.isNullOrEmpty(cswPrivate.dateBox.val())) {
+                            var dateExpression = cswPrivate.dateFormats[cswPrivate.DateFormat];
+                            ret = dateExpression.test(cswPublic.val().date);
+                        }
+
+                        return ret;
+                        
+                    }, 'Please select a valid date');
                     cswPrivate.dateBox.addClass('validateDate');
-                }//if preferredFormat in dateFormats
+                }//if preferredFormat in dateFormats && undefined != cswPrivate.dateBox
+
+                if (cswPrivate.TimeFormat in cswPrivate.timeFormats && undefined != cswPrivate.timeBox) {
+                    $.validator.addMethod('validateTime', function (value, element) {
+
+                        var ret = true;
+                        
+                        if (cswPrivate.isRequired || false == Csw.isNullOrEmpty(cswPrivate.timeBox.val())) {
+                            var timeExpression = cswPrivate.timeFormats[cswPrivate.TimeFormat];
+                            ret = timeExpression.test(cswPublic.val().time);
+                        }
+
+                        return ret;
+                        
+                    }, 'Please enter a valid time in the format ' + cswPrivate.TimeFormat);
+                    cswPrivate.timeBox.addClass('validateTime');
+                }//if cswPrivate.TimeFormat in cswPrivate.timeFormats && undefined != cswPrivate.timeBox
+
             };//function addValidators()
 
 

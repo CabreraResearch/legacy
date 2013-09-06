@@ -13,13 +13,13 @@ namespace ChemSW.Nbt.ViewEditor
         {
             CswNbtViewEditorRule Ret = null;
 
-            if( RuleName.Equals( CswEnumNbtViewEditorRuleName.BuildView._Name ) )
+            if( RuleName.Equals( CswEnumNbtViewEditorRuleName.FirstViewLevel._Name ) )
             {
-                Ret = new CswNbtViewEditorRuleBuildView( CswNbtResources, Request );
+                Ret = new CswNbtViewEditorRuleFirstViewLevel( CswNbtResources, Request );
             }
-            else if( RuleName.Equals( CswEnumNbtViewEditorRuleName.AddToView._Name ) )
+            else if( RuleName.Equals( CswEnumNbtViewEditorRuleName.AddViewLevels._Name ) )
             {
-                Ret = new CswNbtViewEditorRuleAddToView( CswNbtResources, Request );
+                Ret = new CswNbtViewEditorRuleAddViewLevels( CswNbtResources, Request );
             }
             else if( RuleName.Equals( CswEnumNbtViewEditorRuleName.SetFilters._Name ) )
             {

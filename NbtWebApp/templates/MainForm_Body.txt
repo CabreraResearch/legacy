@@ -1,9 +1,5 @@
                         
                         <tr>
-                            <td id="Td5" class="PageTable_LeftColumn" rowspan="5">
-                                <img src="Images/pagelayout/blank.gif" alt="X" width="1" height="450"/>
-                            </td>
-
                             <td id="HeaderTable_BottomMenu" class="HeaderTable_BottomMenu" colspan="2">
                                 <table cellpadding="0" cellspacing="0" width="100%">
                                     <tr>
@@ -17,8 +13,6 @@
                                     </tr>
                                 </table>
                             </td>
-
-                            <td id="Td6" class="PageTable_RightColumn" rowspan="5"></td>
                         </tr>
 
                         <tr>

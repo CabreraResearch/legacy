@@ -17,8 +17,8 @@
                 wizard: null,
                 wizardSteps: {
                     1: 'Choose a View',
-                    2: 'Build a View',
-                    3: 'Add to View',
+                    2: 'First View Level',
+                    3: 'Add View Levels',
                     4: 'Set Filters',
                     5: 'View Attributes',
                     6: 'Fine Tuning (Advanced)'
@@ -41,8 +41,8 @@
                 viewmode: 'Grid',
 
                 ajaxReqs: {
-                    'Build a View': [],
-                    'Add to View': [],
+                    'First View Level': [],
+                    'Add View Levels': [],
                     'Set Filters': [],
                     'View Attributes': [],
                     'Fine Tuning (Advanced)': []
@@ -55,8 +55,8 @@
 
             var stepNames = Csw.object();
             Object.defineProperties(stepNames, {
-                BuildView: { value: 'Build a View' },
-                AddToView: { value: 'Add to View' },
+                BuildView: { value: 'First View Level' },
+                AddToView: { value: 'Add View Levels' },
                 SetFilters: { value: 'Set Filters' },
                 ViewAttributes: { value: 'View Attributes' },
                 FineTuning: { value: 'Fine Tuning (Advanced)' }
@@ -336,7 +336,11 @@
                             },
                             success: function (response) {
                                 cswPrivate.View = response.CurrentView;
-                                step2Desc.text("What do you want in your " + cswPrivate.View.ViewMode + "?");
+                                if ('Tree' === cswPrivate.View.ViewMode) {
+                                    step2Desc.text("What do you want at the top of your tree?");
+                                } else {
+                                    step2Desc.text("What do you want in your " + cswPrivate.View.ViewMode + "?");
+                                }
                                 cswPrivate.toggleButton(cswPrivate.buttons.prev, true);
                                 cswPrivate.toggleButton(cswPrivate.buttons.finish, true);
                                 cswPrivate.toggleButton(cswPrivate.buttons.next, true);
@@ -771,12 +775,13 @@
                                             if (cswPrivate.propFilterTbl) {
                                                 cswPrivate.propFilterTbl.remove();
                                                 cswPrivate.addFilterBtn.remove();
+                                                cswPrivate.currentFilter.closeTip();
                                             }
                                             if (cswPrivate.propSelect.selectedText() !== 'Select...') {
                                                 cswPrivate.propFilterTbl = cswPrivate.filterSelectDiv.table();
                                                 var selectedProp = properties[cswPrivate.propSelect.selectedVal()];
 
-                                                var currentFilter = Csw.nbt.viewPropFilter({
+                                                cswPrivate.currentFilter = Csw.nbt.viewPropFilter({
                                                     name: 'vieweditor_filter_' + selectedProp.ArbitraryId,
                                                     parent: cswPrivate.propFilterTbl,
                                                     viewJson: cswPrivate.viewJson,
@@ -791,7 +796,7 @@
                                                     name: 'vieweditor_applyfilter_btn',
                                                     enabledText: 'Apply Filter',
                                                     onClick: function () {
-                                                        var filterData = currentFilter.getFilterJson();
+                                                        var filterData = cswPrivate.currentFilter.getFilterJson();
                                                         var ajaxData = {
                                                             CurrentView: cswPrivate.View,
                                                             Property: selectedProp,
@@ -907,12 +912,12 @@
                             })
                         ]);
 
-                    ready.then(function() {
+                    ready.then(function () {
                         var nameCell = step5Tbl.cell(1, 1).setLabelText('View Name', false, false);
                         var viewNameInput = step5Tbl.cell(1, 2).input({
                             name: 'vieweditor_viewname_input',
                             value: cswPrivate.View.ViewName,
-                            onChange: function() {
+                            onChange: function () {
                                 handleAttributeChange();
                             }
                         });
@@ -921,7 +926,7 @@
                         var categoryInput = step5Tbl.cell(2, 2).input({
                             name: 'vieweditor_category_input',
                             value: cswPrivate.View.Category,
-                            onChange: function() {
+                            onChange: function () {
                                 handleAttributeChange();
                             }
                         });
@@ -932,7 +937,7 @@
                             visibility: cswPrivate.View.Visibility,
                             roleid: cswPrivate.View.VisibilityRoleId,
                             userid: cswPrivate.View.VisibilityUserId,
-                            onChange: function() {
+                            onChange: function () {
                                 handleAttributeChange();
                             }
                         });
@@ -950,7 +955,7 @@
                             value: cswPrivate.View.Width,
                             MaxValue: 1000,
                             MinValue: 100,
-                            onChange: function() {
+                            onChange: function () {
                                 handleAttributeChange();
                             }
                         });
@@ -967,7 +972,7 @@
                             widthInput.hide();
                         }
 
-                        var handleAttributeChange = function() {
+                        var handleAttributeChange = function () {
                             //It's better to send this to the server to modify - in some cases (ex: ViewName) we need DB resources which are not available during the "blackbox" deserialization events
                             var visibilityData = visibilitySelect.getSelected();
                             var req = Csw.ajaxWcf.post({
@@ -982,7 +987,7 @@
                                     CurrentView: cswPrivate.View,
                                     StepName: stepNames.ViewAttributes
                                 },
-                                success: function(response) {
+                                success: function (response) {
                                     cswPrivate.View = response.CurrentView;
                                 }
                             });

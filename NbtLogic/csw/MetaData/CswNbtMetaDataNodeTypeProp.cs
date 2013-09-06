@@ -17,7 +17,7 @@ using ChemSW.Nbt.ServiceDrivers;
 namespace ChemSW.Nbt.MetaData
 {
     [DataContract]
-    public class CswNbtMetaDataNodeTypeProp: ICswNbtMetaDataObject, ICswNbtMetaDataProp, IEquatable<CswNbtMetaDataNodeTypeProp>, IComparable
+    public class CswNbtMetaDataNodeTypeProp : ICswNbtMetaDataObject, ICswNbtMetaDataProp, IEquatable<CswNbtMetaDataNodeTypeProp>, IComparable
     {
         public static CswEnumNbtNodeTypePropAttributes getCswEnumNbtNodeTypePropAttributesFromString( string AttributeName )
         {
@@ -275,6 +275,23 @@ namespace ChemSW.Nbt.MetaData
                 {
                     throw new CswDniException( CswEnumErrorType.Warning, "Property Name must be unique per nodetype", "Attempted to save a propname which is equal to a propname of another property in this nodetype" );
                 }
+
+                //use objectclasspropname if we have it
+                if( this.ObjectClassPropId != Int32.MinValue )
+                {
+                    _NodeTypePropRow["oraviewcolname"] = this.getObjectClassProp().DbViewColumnName;
+                }
+                else
+                {
+                    if( UseNumbering && QuestionNo != Int32.MinValue )
+                    {
+                        _NodeTypePropRow["oraviewcolname"] = CswTools.MakeOracleCompliantIdentifier( FullQuestionNo.Replace( ".", "x" ) );
+                    }
+                    else
+                    {
+                        _NodeTypePropRow["oraviewcolname"] = CswTools.MakeOracleCompliantIdentifier( value );
+                    }
+                }
                 _setAttribute( "propname", value, true );
 
                 if( _CswNbtMetaDataResources.CswNbtMetaData.OnEditNodeTypePropName != null )
@@ -340,6 +357,15 @@ namespace ChemSW.Nbt.MetaData
             }
             private set { var KeepSerializerHappy = value; }
         }
+        [DataMember( Name = "ViewName" )]
+        public string DbViewColumnName
+        {
+            get
+            {
+                return CswConvert.ToString( _NodeTypePropRow["oraviewcolname"] );
+            }
+
+        }
 
         /// <summary>
         /// Set the ViewId for Relationships.  Editing this does not cause versioning.
@@ -384,7 +410,7 @@ namespace ChemSW.Nbt.MetaData
                         //If the prop isn't on the Add layout, Add it.
                         if( false == ExistsOnLayout( CswEnumNbtLayoutType.Add ) )
                         {
-                            updateLayout( CswEnumNbtLayoutType.Add, TabId : Int32.MinValue, TabGroup : string.Empty, DisplayRow : Int32.MinValue, DisplayColumn : Int32.MinValue, DoMove : false );
+                            updateLayout( CswEnumNbtLayoutType.Add, TabId: Int32.MinValue, TabGroup: string.Empty, DisplayRow: Int32.MinValue, DisplayColumn: Int32.MinValue, DoMove: false );
                         }
                     }
                 }
@@ -999,7 +1025,11 @@ namespace ChemSW.Nbt.MetaData
         public Int32 QuestionNo
         {
             get { return CswConvert.ToInt32( _NodeTypePropRow["questionno"] ); }
-            set { _DataRow["questionno"] = CswConvert.ToDbVal( value ); }
+            set
+            {
+                _DataRow["questionno"] = CswConvert.ToDbVal( value );
+                _DataRow["oraviewcolname"] = CswTools.MakeOracleCompliantIdentifier( FullQuestionNo );
+            }
         }
 
         // This should not trigger versioning
@@ -1120,6 +1150,11 @@ namespace ChemSW.Nbt.MetaData
         public void setFilter( CswNbtMetaDataNodeTypeProp FilterProp, CswNbtSubField SubField, CswEnumNbtFilterMode FilterMode, object FilterValue )
         {
             string FilterString = SubField.Column.ToString() + FilterDelimiter + FilterMode + FilterDelimiter + FilterValue;
+            _setFilter( FilterProp, FilterString );
+        }
+
+        public void setFilter( CswNbtMetaDataNodeTypeProp FilterProp, string FilterString )
+        {
             _setFilter( FilterProp, FilterString );
         }
 
@@ -1659,7 +1694,7 @@ namespace ChemSW.Nbt.MetaData
         public int CompareTo( CswNbtMetaDataNodeTypeProp OtherNodeTypeProp )
         {
             int ret = 0;
-            if( null != FirstEditLayout )
+            if( null != FirstEditLayout && null != OtherNodeTypeProp.FirstEditLayout )
             {
                 if( FirstEditLayout.DisplayRow == OtherNodeTypeProp.FirstEditLayout.DisplayRow )
                 {

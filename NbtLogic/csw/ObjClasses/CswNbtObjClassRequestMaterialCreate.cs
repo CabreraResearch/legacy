@@ -3,6 +3,7 @@ using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
+using ChemSW.Nbt.UnitsOfMeasure;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Linq;
@@ -45,6 +46,10 @@ namespace ChemSW.Nbt.ObjClasses
             /// The Approval level of this Create Material request
             /// </summary>
             public const string ApprovalLevel = "Approval Level";
+            /// <summary>
+            /// The Quantity(<see cref="CswNbtNodePropQuantity"/>) to request. 
+            /// </summary>
+            public const string Quantity = "Quantity";
         }
 
         /// <summary>
@@ -123,6 +128,14 @@ namespace ChemSW.Nbt.ObjClasses
             get { return _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestMaterialCreateClass ); }
         }
 
+        public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
+        {
+        }
+
+        public override void afterCreateNode()
+        {
+        }
+
         #endregion Base
 
         #region Inherited Events
@@ -141,6 +154,7 @@ namespace ChemSW.Nbt.ObjClasses
                 ThisRequest.NewMaterialSupplier.setReadOnly( value : IsReadOnly, SaveToDb : true );
                 ThisRequest.NewMaterialTradename.setReadOnly( value : IsReadOnly, SaveToDb : true );
                 ThisRequest.NewMaterialPartNo.setReadOnly( value : IsReadOnly, SaveToDb : true );
+                ThisRequest.Quantity.setReadOnly( value: IsReadOnly, SaveToDb: true );
             }
         }
 
@@ -160,10 +174,6 @@ namespace ChemSW.Nbt.ObjClasses
         public override void beforePropertySetWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
             _throwIfMaterialExists();
-            if( false == Location.Hidden )
-            {
-                Location.setHidden( value : true, SaveToDb : true );
-            }
         }
 
         /// <summary>
@@ -184,6 +194,8 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         public override void afterPropertySetPopulateProps()
         {
+            CswNbtUnitViewBuilder Vb = new CswNbtUnitViewBuilder( _CswNbtResources );
+            Vb.getQuantityUnitOfMeasureView( CswNbtPropertySetMaterial.CswEnumPhysicalState.Liquid, Quantity );
             Material.SetOnPropChange( onMaterialPropChange );
         }//afterPopulateProps()
 
@@ -228,6 +240,9 @@ namespace ChemSW.Nbt.ObjClasses
                                         ButtonData.Data["state"]["supplier"]["val"] = PotentialMaterial().SupplierId.ToString();
                                         ButtonData.Data["state"]["supplier"]["name"] = PotentialMaterial().SupplierName;
                                         ButtonData.Data["state"]["partNo"] = NewMaterialPartNo.Text;
+                                        ButtonData.Data["state"]["request"] = new JObject();
+                                        ButtonData.Data["state"]["request"]["requestitemid"] = NodeId.ToString();
+                                        ButtonData.Data["state"]["request"]["materialid"] = ( Material.RelatedNodeId ?? new CswPrimaryKey() ).ToString();
                                     }
                                     else
                                     {
@@ -238,11 +253,7 @@ namespace ChemSW.Nbt.ObjClasses
                                 break;
 
                         } //switch( ButtonData.SelectedText )
-
                         _getNextStatus( ButtonData.SelectedText );
-                        ButtonData.Data["requestitem"] = ButtonData.Data["requestitem"] ?? new JObject();
-                        ButtonData.Data["requestitem"]["requestitemid"] = NodeId.ToString();
-                        ButtonData.Data["requestitem"]["materialid"] = ( Material.RelatedNodeId ?? new CswPrimaryKey() ).ToString();
                         break; //case PropertyName.Fulfill:
                 }
             }
@@ -313,7 +324,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// 
         /// </summary>
-        public override void onStatusPropChange( CswNbtNodeProp Prop )
+        public override void onStatusPropChange( CswNbtNodeProp Prop, bool Creating )
         {
             Type.setHidden( value : ( Status.Value == Statuses.Pending ), SaveToDb : true );
 
@@ -326,7 +337,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-        public override void onTypePropChange( CswNbtNodeProp Prop )
+        public override void onTypePropChange( CswNbtNodeProp Prop, bool Creating )
         {
             Type.setReadOnly( value : true, SaveToDb : true );
 
@@ -334,7 +345,7 @@ namespace ChemSW.Nbt.ObjClasses
             Fulfill.State = FulfillMenu.Create;
         }
 
-        public override void onRequestPropChange( CswNbtNodeProp Prop )
+        public override void onRequestPropChange( CswNbtNodeProp Prop, bool Creating )
         {
 
         }
@@ -348,7 +359,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Object class specific properties
 
-        private void onMaterialPropChange( CswNbtNodeProp NodeProp )
+        private void onMaterialPropChange( CswNbtNodeProp NodeProp, bool Creating )
         {
             if( CswTools.IsPrimaryKey( Material.RelatedNodeId ) )
             {
@@ -363,6 +374,10 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropText NewMaterialPartNo { get { return _CswNbtNode.Properties[PropertyName.NewMaterialPartNo]; } }
         public CswNbtNodePropRelationship NewMaterialSupplier { get { return _CswNbtNode.Properties[PropertyName.NewMaterialSupplier]; } }
         public CswNbtNodePropList ApprovalLevel { get { return _CswNbtNode.Properties[PropertyName.ApprovalLevel]; } }
+        public CswNbtNodePropQuantity Quantity
+        {
+            get { return _CswNbtNode.Properties[PropertyName.Quantity]; }
+        }
 
         #endregion
     }//CswNbtObjClassRequestMaterialCreate

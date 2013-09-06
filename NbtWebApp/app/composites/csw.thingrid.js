@@ -42,7 +42,7 @@
                 makeAddRow: null,
                 onAdd: null,
                 onDelete: null,
-
+                readonly: false
             };
             var cswPublic = {};
 
@@ -248,11 +248,15 @@
                 }
                 cswPublic.addRows(cswPrivate.rows);
                 if (cswPrivate.linkText && cswPrivate.onLinkClick) {
-                    cswPrivate.table.cell(cswPrivate.rowCount, 1).a({
-                        text: cswPrivate.linkText,
-                        onClick: cswPrivate.onLinkClick
-                    });
-                    cswPrivate.rowCount += 1;
+                    if (false === cswPrivate.readonly) {
+                        cswPrivate.table.cell(cswPrivate.rowCount, 1).a({
+                            text: cswPrivate.linkText,
+                            onClick: cswPrivate.onLinkClick
+                        });
+                        cswPrivate.rowCount += 1;
+                    } else if (cswPrivate.rowCount === 0) {
+                        cswPrivate.table.cell(cswPrivate.rowCount, 1).span({ text: 'N/A' });
+                    }
                 }
                 if (cswPrivate.showEmptyRow) {
                     Csw.tryExec(cswPrivate.onAdd, cswPrivate.rowCount);

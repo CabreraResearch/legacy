@@ -65,6 +65,7 @@
                 physicalStateModified: false,
                 containersModuleEnabled: true,
                 SDSModuleEnabled: true,
+                AllowSupplierAdd: true,
                 sizesGrid: null
             };
 
@@ -317,6 +318,7 @@
                             propertySetName: 'MaterialSet',
                             value: cswPrivate.state.materialType.val || cswPrivate.state.materialNodeTypeId,
                             selectedName: 'Chemical',
+                            filterToPermission: 'Create',
                             onChange: changeMaterial,
                             onSuccess: changeMaterial,
                             isRequired: true
@@ -363,13 +365,12 @@
                         cswPrivate.supplierLabel = tbl.cell(3, 1).span();
                         cswPrivate.supplierLabel.setLabelText('Supplier: ', true, false);
 
-                        var allowAddButton = true;
                         var extraOptions = [];
 
                         // If we are importing from C3 with a new supplier, always show the
                         // 'New Supplier Name >>' option instead of the 'New+' button.
                         if (cswPrivate.state.addNewC3Supplier) {
-                            allowAddButton = false;
+                            cswPrivate.AllowSupplierAdd = false;
                             extraOptions.push({ id: '', value: cswPrivate.newSupplierName });
                         }
 
@@ -386,7 +387,7 @@
                             width: '200px',
                             ajaxData: ajaxData,
                             showSelectOnLoad: true,
-                            allowAdd: allowAddButton,
+                            allowAdd: cswPrivate.AllowSupplierAdd,
                             onAfterAdd: changeMaterial,
                             addNodeDialogTitle: 'Vendor',
                             selectedNodeId: cswPrivate.state.supplierId || cswPrivate.state.supplier.val,
@@ -732,7 +733,7 @@
                         };
 
                         //From step 0: request, materialid
-                        createMaterialDef.request = cswPrivate.state.request || cswPrivate.request;
+                        createMaterialDef.request = cswPrivate.state.request;
                         createMaterialDef.materialId = cswPrivate.state.materialId;
 
                         //From step 1: materialtype, tradename, supplier, partno
@@ -796,6 +797,7 @@
 
                         cswPrivate.containersModuleEnabled = data.ContainersModuleEnabled;
                         cswPrivate.SDSModuleEnabled = data.SDSModuleEnabled;
+                        cswPrivate.AllowSupplierAdd = data.AllowSupplierAdd;
 
                         var stepCount = 0;
                         cswPrivate.wizardSteps = {};

@@ -48,16 +48,21 @@
 
                 function onClick() {
                     var doEnable = function () {
-                        cswPublic.enable();
-                        Csw.unsubscribe(Csw.enums.events.ajax.globalAjaxStop, null, doEnable);
+                        if (cswPublic && cswPublic.enable && cswPublic.button && cswPublic.button.setText) {
+                            if (false === Csw.ajax.ajaxInProgress()) {
+                                cswPublic.enable();
+                            } else {
+                                Csw.defer(doEnable, 500);
+                            }
+                        }
                     };
                     /* Case 25810 */
                     if (cswPrivate.isEnabled) {
-                        if (cswPrivate.disableOnClick && false === Csw.ajax.ajaxInProgress()) {
-                            cswPublic.disable();
-                            Csw.subscribe(Csw.enums.events.ajax.globalAjaxStop, doEnable);
-                        }
                         Csw.tryExec(internalOnClick, arguments);
+                        if (cswPrivate.disableOnClick) {
+                            cswPublic.disable();
+                            doEnable();
+                        }
                     }
                 }
 

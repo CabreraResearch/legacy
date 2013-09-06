@@ -1,4 +1,4 @@
-/// <reference path="~/app/CswApp-vsdoc.js" />
+/*global Csw,Ext,$,window */
 
 
 (function () {
@@ -23,7 +23,7 @@
                 hidethreshold: 5,
                 maxHeight: '',
                 fieldSets: {
-                    
+
                 },
                 useCache: true,
                 div: null
@@ -100,18 +100,18 @@
                 cswPrivate.div.data('selectedType', itemobj.type);
                 cswPrivate.div.data('selectedName', itemobj.name);
                 cswPrivate.div.data('selectedValue', itemobj.itemid);
-                
+
                 Csw.tryExec(cswPrivate.onSelect, itemobj);
             }; // cswPrivate.handleSelect()
 
             var toDo = [];
-            
+
             // Constructor
             (function ctor() {
                 toDo.push(ctor);
 
                 var getAjaxPromise = function () {
-                if (promise && promise.abort) {
+                    if (promise && promise.abort) {
                         promise.abort();
                     }
                     promise = Csw.ajaxWcf.post({
@@ -121,16 +121,18 @@
                             IsSearchable: cswPrivate.issearchable,
                             IncludeRecent: cswPrivate.includeRecent
                         },
-                        success: function(ret) {
-                            makeSelect(ret);
-                            Csw.setCachedWebServiceCall(cswPrivate.viewMethod, ret);
-                            return Csw.tryExec(cswPrivate.onSuccess);
+                        success: function (ret) {
+                            if (!Csw.compare(ret, cswPrivate.data)) {
+                                makeSelect(ret);
+                                Csw.setCachedWebServiceCall('Services/' + cswPrivate.viewMethod, ret);
+                                return Csw.tryExec(cswPrivate.onSuccess);
+                            }
                         }
                     });
                     return promise;
                 };
 
-                var makeSelect = function(data) {
+                var makeSelect = function (data) {
                     if (data) {
                         cswParent.empty();
                         cswPrivate.div = cswParent.div();
@@ -151,12 +153,13 @@
 
                         Csw.iterate(data.categories, cswPrivate.addCategory);
                     }
+                    return data;
                 };
-                
+
                 if (true === cswPrivate.useCache) {
-                    Csw.getCachedWebServiceCall(cswPrivate.viewMethod)
+                    Csw.getCachedWebServiceCall('Services/' + cswPrivate.viewMethod)
                         .then(makeSelect)
-                        .then(function() {
+                        .then(function (data) {
                             cswPrivate.useCache = false;
                             return cswParent.viewSelect({
                                 onSelect: cswPrivate.onSelect,
@@ -165,14 +168,14 @@
                                 includeRecent: cswPrivate.includeRecent,
                                 hidethreshold: cswPrivate.hidethreshold,
                                 maxHeight: cswPrivate.maxHeight,
-                                useCache: false
+                                useCache: false,
+                                data: data
                             });
                         });
                 } else {
                     getAjaxPromise();
                 }
-
-
+                //getAjaxPromise();
 
                 toDo.push(promise);
                 return promise;
@@ -187,8 +190,16 @@
                 };
             };
 
+            cswPublic.hide = function () {
+                cswPrivate.comboBox.hide();
+            };
+
+            cswPublic.show = function () {
+                cswPrivate.comboBox.show();
+            };
+
             cswPublic.val = cswPublic.value;
-            
+
             cswPublic.promise = Q.all(toDo);
 
             return cswPublic;

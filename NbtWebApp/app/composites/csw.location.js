@@ -23,6 +23,7 @@
                 ReadOnly: false,
                 isRequired: false,
                 onChange: null,
+                overrideSelectedLocation: true,
                 EditMode: Csw.enums.editMode.Edit,
                 value: ''
             };
@@ -180,6 +181,7 @@
                         useScrollbars: false,
                         rootVisible: true,
                         requireViewPermissions: false,
+                        forceSelected: cswPrivate.overrideSelectedLocation,
                         useHover: (cswPrivate.EditMode !== Csw.enums.editMode.Add), // case 28849
                         state: {
                             viewId: cswPrivate.viewid,

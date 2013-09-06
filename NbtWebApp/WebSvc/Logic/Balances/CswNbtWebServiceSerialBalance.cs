@@ -15,7 +15,7 @@ namespace ChemSW.Nbt.WebServices
     [DataContract]
     public class CswNbtBalanceReturn : CswWebSvcReturn
     {
-        [DataMember] 
+        [DataMember]
         public CswNbtBalanceData Data;
 
         public CswNbtBalanceReturn()
@@ -27,10 +27,10 @@ namespace ChemSW.Nbt.WebServices
     [DataContract]
     public class CswNbtBalanceData
     {
-        [DataMember] 
+        [DataMember]
         public Collection<SerialBalance> BalanceList;
 
-        [DataMember] 
+        [DataMember]
         public Collection<BalanceConfiguration> ConfigurationList;
     }
 
@@ -42,53 +42,57 @@ namespace ChemSW.Nbt.WebServices
 
         public static void UpdateBalanceData( ICswResources CswResources, CswNbtBalanceReturn Return, SerialBalance Request )
         {
-            
+
             CswNbtResources NbtResources = (CswNbtResources) CswResources;
-            
+
             CswNbtMetaDataObjectClass BalanceOC = NbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.BalanceClass );
             if( null != BalanceOC )
             {
-                    CswNbtMetaDataObjectClassProp BalanceNameOCP = BalanceOC.getObjectClassProp( CswNbtObjClassBalance.PropertyName.Name );
+                CswNbtMetaDataObjectClassProp BalanceNameOCP = BalanceOC.getObjectClassProp( CswNbtObjClassBalance.PropertyName.Name );
 
-                    CswNbtView ExistingBalancesView = new CswNbtView( NbtResources );
-                    ExistingBalancesView.ViewName = "Existing Balances";
-                    CswNbtViewRelationship BalanceRel = ExistingBalancesView.AddViewRelationship( BalanceOC, false );
-                    ExistingBalancesView.AddViewPropertyAndFilter( BalanceRel, BalanceNameOCP,
-                                                                   Value: Request.NbtName,
-                                                                   FilterMode: CswEnumNbtFilterMode.Equals );
-                    ICswNbtTree ExistingBalancesTree = NbtResources.Trees.getTreeFromView( ExistingBalancesView, false, true, true );
+                CswNbtView ExistingBalancesView = new CswNbtView( NbtResources );
+                ExistingBalancesView.ViewName = "Existing Balances";
+                CswNbtViewRelationship BalanceRel = ExistingBalancesView.AddViewRelationship( BalanceOC, false );
+                ExistingBalancesView.AddViewPropertyAndFilter( BalanceRel, BalanceNameOCP,
+                                                               Value: Request.NbtName,
+                                                               FilterMode: CswEnumNbtFilterMode.Equals );
+                ICswNbtTree ExistingBalancesTree = NbtResources.Trees.getTreeFromView( ExistingBalancesView, false, true, true );
 
-                    CswNbtObjClassBalance Balance;
+                CswNbtObjClassBalance Balance;
 
-                    if( ExistingBalancesTree.getChildNodeCount() == 0 )
+                CswNbtNodeCollection.AfterMakeNode AfterBalance = delegate( CswNbtNode NewNode )
                     {
-                        //there is no balance with this name yet. Make a new one.
-                        CswNbtMetaDataNodeType BalanceNT = BalanceOC.FirstNodeType;
-                        Balance = NbtResources.Nodes.makeNodeFromNodeTypeId( BalanceNT.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode );
-                        Balance.Name.Text = Request.NbtName;
-                    }
-                    else
-                    {
-                        //this balance already exists, grab a reference to it.
-                        ExistingBalancesTree.goToNthChild( 0 );
-                        Balance = ExistingBalancesTree.getCurrentNode();
-                    }
+                        CswNbtObjClassBalance thisBalance = NewNode;
+                        thisBalance.Name.Text = Request.NbtName;
+                        thisBalance.Quantity.Quantity = Request.CurrentWeight;
+                        thisBalance.LastActive.DateTimeValue = DateTime.Now;
+                        thisBalance.Device.Text = Request.DeviceDescription;
+                        thisBalance.Manufacturer.Text = Request.Manufacturer;
+                        thisBalance.Operational.Checked = CswConvert.ToTristate( Request.Operational );
+                        thisBalance.BalanceConfiguration.RelatedNodeId = _findConfigurationWithName( NbtResources, Request.Configuration ).NodeId;
 
-                    Balance.Quantity.Quantity = Request.CurrentWeight;
-                    Balance.LastActive.DateTimeValue = DateTime.Now;
-                    Balance.Device.Text = Request.DeviceDescription;
-                    Balance.Manufacturer.Text = Request.Manufacturer;
-                    Balance.Operational.Checked = CswConvert.ToTristate( Request.Operational ) ;
-                    Balance.BalanceConfiguration.RelatedNodeId = _findConfigurationWithName( NbtResources, Request.Configuration ).NodeId;
+                        CswNbtObjClassUnitOfMeasure Unit = _mapUnitToNode( NbtResources, Request.UnitOfMeasurement );
 
-                    CswNbtObjClassUnitOfMeasure Unit = _mapUnitToNode( NbtResources, Request.UnitOfMeasurement );
+                        if( null != Unit )
+                        {
+                            thisBalance.Quantity.UnitId = Unit.NodeId;
+                        }
+                    };
 
-                    if( null != Unit )
-                    {
-                        Balance.Quantity.UnitId = Unit.NodeId;
-                    }
-
-                Balance.postChanges( false );
+                if( ExistingBalancesTree.getChildNodeCount() == 0 )
+                {
+                    //there is no balance with this name yet. Make a new one.
+                    CswNbtMetaDataNodeType BalanceNT = BalanceOC.FirstNodeType;
+                    Balance = NbtResources.Nodes.makeNodeFromNodeTypeId( BalanceNT.NodeTypeId, AfterBalance );
+                }
+                else
+                {
+                    //this balance already exists, grab a reference to it.
+                    ExistingBalancesTree.goToNthChild( 0 );
+                    Balance = ExistingBalancesTree.getCurrentNode();
+                    AfterBalance(Balance.Node);
+                    Balance.postChanges( false );
+                }
 
             }//if ( null != BalanceOC )
 
@@ -111,17 +115,17 @@ namespace ChemSW.Nbt.WebServices
                 CswNbtViewRelationship BalanceRel = ExistingBalancesView.AddViewRelationship( BalanceOC, true );
                 //only add to the list of returned balances if it has had an announcement in the last 11 minutes
                 ExistingBalancesView.AddViewPropertyAndFilter( BalanceRel, BalanceOC.getObjectClassProp( CswNbtObjClassBalance.PropertyName.LastActive ),
-                                        SubFieldName : CswEnumNbtSubFieldName.Value,
-                                        Value : DateTime.Now.Subtract( TimeSpan.FromMinutes( 11 ) ).ToString(),
-                                        FilterMode : CswEnumNbtFilterMode.GreaterThan );
+                                        SubFieldName: CswEnumNbtSubFieldName.Value,
+                                        Value: DateTime.Now.Subtract( TimeSpan.FromMinutes( 11 ) ).ToString(),
+                                        FilterMode: CswEnumNbtFilterMode.GreaterThan );
 
                 //only add to the list of returned balances if it is Operational
                 ExistingBalancesView.AddViewPropertyAndFilter( BalanceRel, BalanceOC.getObjectClassProp( CswNbtObjClassBalance.PropertyName.Operational ),
-                                        SubFieldName : CswEnumNbtSubFieldName.Checked,
-                                        Value : CswEnumTristate.True,
-                                        FilterMode : CswEnumNbtFilterMode.Equals );
+                                        SubFieldName: CswEnumNbtSubFieldName.Checked,
+                                        Value: CswEnumTristate.True,
+                                        FilterMode: CswEnumNbtFilterMode.Equals );
 
-                ExistingBalancesView.AddViewPropertyAndFilter( BalanceRel, BalanceOC.getObjectClassProp(  CswNbtObjClassBalance.PropertyName.Quantity ),
+                ExistingBalancesView.AddViewPropertyAndFilter( BalanceRel, BalanceOC.getObjectClassProp( CswNbtObjClassBalance.PropertyName.Quantity ),
                                         SubFieldName: CswEnumNbtSubFieldName.Value,
                                         Value: "0",
                                         FilterMode: CswEnumNbtFilterMode.NotEquals );
@@ -206,27 +210,28 @@ namespace ChemSW.Nbt.WebServices
 
 
 
-        private static CswNbtObjClassBalanceConfiguration _findConfigurationWithName(CswNbtResources NbtResources, string Name)
+        private static CswNbtObjClassBalanceConfiguration _findConfigurationWithName( CswNbtResources NbtResources, string Name )
         {
             CswNbtObjClassBalanceConfiguration Ret = null;
 
             CswNbtMetaDataObjectClass BalanceConfigurationOC = NbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.BalanceConfigurationClass );
             CswNbtMetaDataObjectClassProp ConfigNameOCP = BalanceConfigurationOC.getObjectClassProp( CswNbtObjClassBalanceConfiguration.PropertyName.Name );
 
-                CswNbtView ExistingConfigsView = new CswNbtView( NbtResources );
-                ExistingConfigsView.ViewName = "Balance Configurations";
-                CswNbtViewRelationship ConfigNameRel = ExistingConfigsView.AddViewRelationship( BalanceConfigurationOC, false );
-                ExistingConfigsView.AddViewPropertyAndFilter( ConfigNameRel, ConfigNameOCP,
-                                                               Value : Name,
-                                                               FilterMode : CswEnumNbtFilterMode.Equals );
-                ICswNbtTree ExistingConfigsTree = NbtResources.Trees.getTreeFromView( ExistingConfigsView, false, true, true );
+            CswNbtView ExistingConfigsView = new CswNbtView( NbtResources );
+            ExistingConfigsView.ViewName = "Balance Configurations";
+            CswNbtViewRelationship ConfigNameRel = ExistingConfigsView.AddViewRelationship( BalanceConfigurationOC, false );
+            ExistingConfigsView.AddViewPropertyAndFilter( ConfigNameRel, ConfigNameOCP,
+                                                           Value: Name,
+                                                           FilterMode: CswEnumNbtFilterMode.Equals );
+            ICswNbtTree ExistingConfigsTree = NbtResources.Trees.getTreeFromView( ExistingConfigsView, false, true, true );
 
-                
-                if( ExistingConfigsTree.getChildNodeCount() > 0 ) {
-                    //this configuration exists, grab a reference to it.
-                    ExistingConfigsTree.goToNthChild( 0 );
-                    Ret = ExistingConfigsTree.getCurrentNode();
-                }
+
+            if( ExistingConfigsTree.getChildNodeCount() > 0 )
+            {
+                //this configuration exists, grab a reference to it.
+                ExistingConfigsTree.goToNthChild( 0 );
+                Ret = ExistingConfigsTree.getCurrentNode();
+            }
 
             return Ret;
         }
@@ -243,34 +248,38 @@ namespace ChemSW.Nbt.WebServices
                 Return.Data.ConfigurationList = new Collection<BalanceConfiguration>();
 
                 CswNbtObjClassBalanceConfiguration BalanceConfiguration = _findConfigurationWithName( NbtResources, Request.Name );
+
+                CswNbtNodeCollection.AfterMakeNode AfterBalanceConfig = delegate( CswNbtNode NewNode )
+                    {
+                        CswNbtObjClassBalanceConfiguration thisBalanceConfig = NewNode;
+                        thisBalanceConfig.Name.Text = Request.Name;
+                        thisBalanceConfig.RequestFormat.Text = Request.RequestFormat;
+                        thisBalanceConfig.ResponseFormat.Text = Request.ResponseFormat;
+                        thisBalanceConfig.BaudRate.Value = Request.BaudRate;
+                        thisBalanceConfig.ParityBit.Text = Request.ParityBit;
+                        thisBalanceConfig.DataBits.Value = Request.DataBits;
+                        thisBalanceConfig.StopBits.Text = Request.StopBits;
+                        thisBalanceConfig.Handshake.Text = Request.Handshake;
+                    };
                 
+
                 if( null == BalanceConfiguration )
                 {
                     //there is no configuration with this name yet. Make a new one.
                     CswNbtMetaDataNodeType ConfigNT = BalanceConfigurationOC.FirstNodeType;
-                    BalanceConfiguration = NbtResources.Nodes.makeNodeFromNodeTypeId( ConfigNT.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode );
-                    BalanceConfiguration.Name.Text = Request.Name;
+                    BalanceConfiguration = NbtResources.Nodes.makeNodeFromNodeTypeId( ConfigNT.NodeTypeId, AfterBalanceConfig );
                 }
-
-                BalanceConfiguration.RequestFormat.Text = Request.RequestFormat;
-                BalanceConfiguration.ResponseFormat.Text = Request.ResponseFormat;
-                BalanceConfiguration.BaudRate.Value = Request.BaudRate;
-                BalanceConfiguration.ParityBit.Text = Request.ParityBit;
-                BalanceConfiguration.DataBits.Value = Request.DataBits;
-                BalanceConfiguration.StopBits.Text = Request.StopBits;
-                BalanceConfiguration.Handshake.Text = Request.Handshake;
-
-
-
-                BalanceConfiguration.postChanges( false );
+                else
+                {
+                    AfterBalanceConfig( BalanceConfiguration.Node );
+                    BalanceConfiguration.postChanges( false );
+                }
 
                 Return.Data.ConfigurationList.Add( Request );
 
             }//if ( null != BalanceConfigurationOC )
 
-
-            
-        }
+        } // registerBalanceConfiguration()
 
 
 
@@ -285,7 +294,7 @@ namespace ChemSW.Nbt.WebServices
 
 
             CswNbtObjClassBalance Balance = NbtResources.Nodes[BalanceKey];
-            
+
             Return.Data.BalanceList.Add( new SerialBalance
             {
                 NbtName = Balance.Name.Text,
@@ -308,18 +317,18 @@ namespace ChemSW.Nbt.WebServices
 
             CswNbtMetaDataObjectClassProp NameOCP = UnitsOfMeasureOC.getObjectClassProp( CswNbtObjClassUnitOfMeasure.PropertyName.Name );
             MatchingUOMsView.AddViewPropertyAndFilter( ParentRelationship,
-                                                       MetaDataProp : NameOCP,
-                                                       Value : UnitName,
-                                                       SubFieldName : CswEnumNbtSubFieldName.Text,
-                                                       FilterMode : CswEnumNbtFilterMode.Equals );
+                                                       MetaDataProp: NameOCP,
+                                                       Value: UnitName,
+                                                       SubFieldName: CswEnumNbtSubFieldName.Text,
+                                                       FilterMode: CswEnumNbtFilterMode.Equals );
 
             CswNbtMetaDataObjectClassProp AliasesOCP = UnitsOfMeasureOC.getObjectClassProp( CswNbtObjClassUnitOfMeasure.PropertyName.Aliases );
             MatchingUOMsView.AddViewPropertyAndFilter( ParentRelationship,
-                                                       MetaDataProp : AliasesOCP,
-                                                       Value : UnitName,
-                                                       SubFieldName : CswEnumNbtSubFieldName.Text,
-                                                       FilterMode : CswEnumNbtFilterMode.Contains,
-                                                       Conjunction : CswEnumNbtFilterConjunction.Or );
+                                                       MetaDataProp: AliasesOCP,
+                                                       Value: UnitName,
+                                                       SubFieldName: CswEnumNbtSubFieldName.Text,
+                                                       FilterMode: CswEnumNbtFilterMode.Contains,
+                                                       Conjunction: CswEnumNbtFilterConjunction.Or );
 
             // Get and iterate the Tree
             ICswNbtTree MatchingUOMsTree = NbtResources.Trees.getTreeFromView( MatchingUOMsView, false, false, true );

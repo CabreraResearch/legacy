@@ -74,7 +74,7 @@
                     columns: data.Columns,
                     fields: data.Fields,
                     selectedId: data.SelectedId,
-                    forceSelected: data.forceSelected,
+                    forceSelected: cswPrivate.forceSelected || data.forceSelected,
                     onSelect: cswPrivate.handleSelectNode,
                     beforeSelect: cswPrivate.onBeforeSelectNode,
                     allowMultiSelection: cswPrivate.allowMultiSelection,

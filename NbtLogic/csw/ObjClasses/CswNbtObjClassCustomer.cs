@@ -79,16 +79,27 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
+        public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
+        {
+            _CswNbtObjClassDefault.beforeCreateNode( IsCopy, OverrideUniqueValidation );
+        }//beforeCreateNode()
+
+        public override void afterCreateNode()
+        {
+            _CswNbtObjClassDefault.afterCreateNode();
+        }//afterCreateNode()
+
+
+        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation, bool Creating )
         {
             _checkForConfigFileUpdate();
-            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
+            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation, Creating );
         }
 
-        public override void afterWriteNode()
+        public override void afterWriteNode( bool Creating )
         {
             _doConfigFileUpdate();
-            _CswNbtObjClassDefault.afterWriteNode();
+            _CswNbtObjClassDefault.afterWriteNode( Creating );
         } // afterWriteNode()
 
         bool UpdateConfigFile = false;
@@ -262,7 +273,7 @@ namespace ChemSW.Nbt.ObjClasses
                 return ( _CswNbtNode.Properties[PropertyName.CompanyID] );
             }
         }
-        private void OnCompanyIdPropChange( CswNbtNodeProp NodeProp )
+        private void OnCompanyIdPropChange( CswNbtNodeProp NodeProp, bool Creating )
         {
             if ( false == CswTools.IsValidUsername( CompanyID.Text ) )
             {

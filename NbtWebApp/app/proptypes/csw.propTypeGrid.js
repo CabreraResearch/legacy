@@ -71,14 +71,16 @@
                             nodeGrid.grid.reload(true);
                         };
                     }());
-                    Csw.nbt.viewFilters({
-                        name: nodeProperty.name + '_viewfilters',
-                        parent: filterDiv,
-                        viewid: viewid,
-                        onEditFilters: function(newviewid) {
-                            cswPrivate.makeFullGrid(newviewid, newDiv, inDialog);
-                        } // onEditFilters
-                    }); // viewFilters
+                    if (nodeProperty.tabState.EditMode !== Csw.enums.editMode.PrintReport) {
+                        Csw.nbt.viewFilters({
+                            name: nodeProperty.name + '_viewfilters',
+                            parent: filterDiv,
+                            viewid: viewid,
+                            onEditFilters: function(newviewid) {
+                                cswPrivate.makeFullGrid(newviewid, newDiv, inDialog);
+                            } // onEditFilters
+                        }); // viewFilters
+                    }
 
                     var gridOpts = {
                         name: nodeProperty.name + '_fieldtypegrid',
@@ -117,6 +119,7 @@
                             nodeProperty.propDiv.thinGrid({
                                 rows: data.rows,
                                 hasHeader: cswPrivate.hasHeader,
+                                readonly: nodeProperty.tabState.EditMode === Csw.enums.editMode.PrintReport,
                                 onLinkClick: function() {
                                     $.CswDialog('OpenEmptyDialog', {
                                             title: nodeProperty.tabState.nodename + ' ' + nodeProperty.propData.name,
@@ -145,6 +148,7 @@
                             nodeProperty.propDiv.linkGrid({
                                 rowCount: data.rowCount,
                                 linkText: '',
+                                readonly: nodeProperty.tabState.EditMode === Csw.enums.editMode.PrintReport,
                                 onLinkClick: function() {
                                     $.CswDialog('OpenEmptyDialog', {
                                             title: nodeProperty.propData.name,

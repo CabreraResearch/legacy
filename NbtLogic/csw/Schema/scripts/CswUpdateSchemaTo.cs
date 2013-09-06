@@ -38,7 +38,22 @@ namespace ChemSW.Nbt.Schema
         public virtual string Description
         {
             set { _Description = value; }
-            get { return ( _Description ); }
+            get
+            {
+                string Ret = _Description;
+                if( string.IsNullOrEmpty( Ret ) ||
+                    ( CaseNo > 0 &&
+                      false == Ret.Contains( "Case " + CaseNo ) &&
+                      false == Ret.Contains( Title ) ) )
+                {
+                    if( false == string.IsNullOrEmpty( Ret ) )
+                    {
+                        Ret += " - ";
+                    }
+                    Ret += Title;
+                }
+                return Ret;
+            }
         }
 
         /// <summary>

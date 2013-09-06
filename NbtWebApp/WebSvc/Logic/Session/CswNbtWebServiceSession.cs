@@ -1,4 +1,5 @@
 using System;
+using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
 using ChemSW.Core;
 using ChemSW.Exceptions;
@@ -78,11 +79,17 @@ namespace ChemSW.Nbt.WebServices
             [DataMember]
             public string WorkUnitId;
             [DataMember]
-            public string DateFormat;
-            [DataMember]
-            public string TimeFormat;
-            [DataMember]
             public SchemaDetails SchemaData;
+
+            [DataMember( Name = "DateFormat" )]
+            public string DateFormatDn;
+            [DataMember( Name = "TimeFormat" )]
+            public string TimeFormatDn;
+
+            [DataMember( Name = "JS Date Format" )]
+            public string DateFormatJs;
+            [DataMember( Name = "JS Time Format" )]
+            public string TimeFormatJs;
         }
 
         private static SchemaDetails _checkSchemaVersion( CswNbtResources CswNbtResources )
@@ -134,9 +141,10 @@ namespace ChemSW.Nbt.WebServices
             {
                 Ret.Data.WorkUnitId = NbtResources.CurrentNbtUser.WorkUnitId.ToString();
             }
-            Ret.Data.DateFormat = NbtResources.CurrentNbtUser.DateFormat;
-            Ret.Data.TimeFormat = NbtResources.CurrentNbtUser.TimeFormat;
-
+            Ret.Data.DateFormatDn = NbtResources.CurrentNbtUser.DateFormat;
+            Ret.Data.TimeFormatDn = NbtResources.CurrentNbtUser.TimeFormat;
+            Ret.Data.DateFormatJs = CswTools.ConvertNetToPHP( NbtResources.CurrentNbtUser.DateFormat );
+            Ret.Data.TimeFormatJs = CswTools.ConvertNetToPHP( NbtResources.CurrentNbtUser.TimeFormat );
             SchemaDetails SchemaDetails = _checkSchemaVersion( NbtResources );
             Ret.Data.SchemaData = SchemaDetails;
         }
@@ -187,13 +195,36 @@ namespace ChemSW.Nbt.WebServices
         /// </summary>
         public static void getLoginData( ICswResources CswResources, LoginDataReturn Return, LoginData.LoginDataRequest Request )
         {
-            CswNbtResources _CswNbtResources = ( CswNbtResources ) CswResources;
+            CswNbtResources _CswNbtResources = (CswNbtResources) CswResources;
             if( _CswNbtResources.CurrentNbtUser.IsAdministrator() )
             {
                 CswNbtActLoginData _CswNbtActLoginData = new CswNbtActLoginData( _CswNbtResources );
                 Return.Data = _CswNbtActLoginData.getLoginData( Request );
             }
         }
+
+        /// <summary>
+        /// Ends all other sessions owned by the current user
+        /// </summary>
+        public static void endCurrentUserSessions( ICswResources CswResources, object Return, object Request )
+        {
+            CswNbtResources CswNbtResources = (CswNbtResources) CswResources;
+            string AccessId = CswNbtResources.AccessId;
+            string Username = CswNbtResources.CurrentUser.Username;
+
+            Collection<string> SessionList = CswNbtResources.CswSessionManager.SessionsList.getSessionIdsForUser( AccessId, Username );
+
+            foreach( string SessionId in SessionList )
+            {
+                if( SessionId != CswNbtResources.Session.SessionId )
+                {
+                    CswNbtResources.CswSessionManager.clearSession( SessionId );
+                }
+            }
+
+        }//getCurrentUserSessions
+
+
     } // class CswNbtWebServiceSession
 
 } // namespace ChemSW.Nbt.WebServices
