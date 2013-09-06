@@ -91,7 +91,8 @@
         thisCustomerId = Csw.clientSession.currentAccessId() || 'offline';
         thisUserName = Csw.clientSession.currentUserName() || 'offline';
         
-        if (window.Modernizr.indexeddb) {
+        if (window.Modernizr.indexeddb
+            && false === navigator.userAgent.contains("MSIE 10.0")) { //case 26431: brutal hack to get around IE 10's partial IndexedDB implementation
             //Until we need to manage versions, there is only 1. Versioning either happens on connection, or it doesn't.
 
             cacheDbMgr = Csw.db.dbManager('CswLive', 1);
