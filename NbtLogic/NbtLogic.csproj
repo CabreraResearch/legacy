@@ -452,9 +452,9 @@
     <Compile Include="csw\View\ViewEditor\CswNbtViewEditorRuleFineTuning.cs" />
     <Compile Include="csw\View\ViewEditor\CswNbtViewEditorRuleViewAttributes.cs" />
     <Compile Include="csw\View\ViewEditor\CswNbtViewEditorRuleSetFilters.cs" />
-    <Compile Include="csw\View\ViewEditor\CswNbtViewEditorRuleAddToView.cs" />
+    <Compile Include="csw\View\ViewEditor\CswNbtViewEditorRuleAddViewLevels.cs" />
     <Compile Include="csw\View\ViewEditor\CswNbtViewEditorRule.cs" />
-    <Compile Include="csw\View\ViewEditor\CswNbtViewEditorRuleBuildView.cs" />
+    <Compile Include="csw\View\ViewEditor\CswNbtViewEditorRuleFirstViewLevel.cs" />
     <Compile Include="csw\View\ViewEditor\CswEnumNbtViewEditorRuleName.cs" />
     <Compile Include="csw\View\ViewEditor\CswNbtViewEditorRuleFactory.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
