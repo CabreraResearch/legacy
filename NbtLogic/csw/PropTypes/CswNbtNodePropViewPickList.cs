@@ -155,7 +155,10 @@ namespace ChemSW.Nbt.PropTypes
                     //    if( ViewTable != null && ViewTable.Rows.Count > 0 )
                     //        CachedViewNames.Add( ViewTable.Rows[0]["viewname"].ToString() );
                     CswNbtView ThisView = _CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( CswConvert.ToInt32( SelectedViewIds[0] ) ) );
-                    CachedViewNames.Add( ThisView.ViewName );
+                    if( null != ThisView )
+                    {
+                        CachedViewNames.Add( ThisView.ViewName );
+                    }
                 }
                 else
                 {
@@ -165,8 +168,11 @@ namespace ChemSW.Nbt.PropTypes
                         //DataTable ViewTable = _CswNbtResources.ViewSelect.getView( CswConvert.ToInt32( SelectedViewIds[0] ) );
                         //if( ViewTable != null && ViewTable.Rows.Count > 0 )
                         //    CachedViewNames.Add( ViewTable.Rows[0]["viewname"].ToString() );
-                        CswNbtView ThisView = _CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( CswConvert.ToInt32( SelectedViewIds[0] ) ) );
-                        CachedViewNames.Add( ThisView.ViewName );
+                        CswNbtView ThisView = _CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( ViewId ) );
+                        if( null != ThisView )
+                        {
+                            CachedViewNames.Add( ThisView.ViewName );
+                        }
                     } // foreach( Int32 ViewId in SelectedViewIdCollection )
 
                 } // if-else( SelectMode != PropertySelectMode.Multiple && CswConvert.ToInt32( SelectedViewIds[0] ) > 0 )
