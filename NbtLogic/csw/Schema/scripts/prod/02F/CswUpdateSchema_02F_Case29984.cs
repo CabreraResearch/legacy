@@ -76,10 +76,10 @@ namespace ChemSW.Nbt.Schema
                 {
                     CswNbtMetaDataNodeTypeProp DocumentsNTP = MaterialNT.getNodeTypePropByObjectClassProp( CswNbtPropertySetMaterial.PropertyName.Documents );
                     CswNbtMetaDataNodeType MaterialDocumentNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Material Document" );
-                    CswNbtMetaDataObjectClass DocumentOC = MaterialDocumentNT.getObjectClass();
                     
                     if( null != MaterialDocumentNT )
                     {
+                        CswNbtMetaDataObjectClass DocumentOC = MaterialDocumentNT.getObjectClass();
                         CswNbtMetaDataNodeTypeProp[] propsToAdd =
                             {
                                 MaterialDocumentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.Title )
