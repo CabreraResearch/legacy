@@ -86,7 +86,10 @@ namespace ChemSW.Nbt.Schema
                             };
 
                         CswNbtView DocumentsView = _CswNbtSchemaModTrnsctn.restoreView( DocumentsNTP.ViewId );
-                        _addPropertiesToView( DocumentsView, DocumentsView.Root.ChildRelationships, DocumentOC, MaterialDocumentNT, propsToAdd );
+                        if( null != DocumentsView )
+                        {
+                            _addPropertiesToView( DocumentsView, DocumentsView.Root.ChildRelationships, DocumentOC, MaterialDocumentNT, propsToAdd );
+                        }
                     }
                 }
             }
@@ -103,17 +106,20 @@ namespace ChemSW.Nbt.Schema
             {
                 CswNbtView View = _CswNbtSchemaModTrnsctn.ViewSelect.restoreView( ViewName, CswEnumNbtViewVisibility.Property );
 
-                CswNbtMetaDataObjectClass ContainerOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerClass );
-                CswNbtMetaDataNodeType ContainerNT = ContainerOC.FirstNodeType;
-
-                if( null != ContainerNT )
+                if( null != View )
                 {
-                    CswNbtMetaDataNodeTypeProp[] propsToAdd =
-                        {
-                            ContainerNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.PropertyName.ExpirationDate )
-                        };
+                    CswNbtMetaDataObjectClass ContainerOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerClass );
+                    CswNbtMetaDataNodeType ContainerNT = ContainerOC.FirstNodeType;
 
-                    _addPropertiesToView( View, View.Root.ChildRelationships, ContainerOC, ContainerNT, propsToAdd );
+                    if( null != ContainerNT )
+                    {
+                        CswNbtMetaDataNodeTypeProp[] propsToAdd =
+                            {
+                                ContainerNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.PropertyName.ExpirationDate )
+                            };
+
+                        _addPropertiesToView( View, View.Root.ChildRelationships, ContainerOC, ContainerNT, propsToAdd );
+                    }
                 }
             }
         }
