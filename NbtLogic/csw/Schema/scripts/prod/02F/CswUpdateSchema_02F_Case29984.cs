@@ -77,15 +77,17 @@ namespace ChemSW.Nbt.Schema
                     CswNbtMetaDataNodeTypeProp DocumentsNTP = MaterialNT.getNodeTypePropByObjectClassProp( CswNbtPropertySetMaterial.PropertyName.Documents );
                     CswNbtMetaDataNodeType MaterialDocumentNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Material Document" );
                     CswNbtMetaDataObjectClass DocumentOC = MaterialDocumentNT.getObjectClass();
-
-                    CswNbtMetaDataNodeTypeProp[] propsToAdd =
-                        {
-                            MaterialDocumentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.Title )
-                        };
-
-                    CswNbtView DocumentsView = _CswNbtSchemaModTrnsctn.restoreView( DocumentsNTP.ViewId );
-                    _addPropertiesToView( DocumentsView, DocumentsView.Root.ChildRelationships,  DocumentOC, MaterialDocumentNT, propsToAdd );
                     
+                    if( null != MaterialDocumentNT )
+                    {
+                        CswNbtMetaDataNodeTypeProp[] propsToAdd =
+                            {
+                                MaterialDocumentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.Title )
+                            };
+
+                        CswNbtView DocumentsView = _CswNbtSchemaModTrnsctn.restoreView( DocumentsNTP.ViewId );
+                        _addPropertiesToView( DocumentsView, DocumentsView.Root.ChildRelationships, DocumentOC, MaterialDocumentNT, propsToAdd );
+                    }
                 }
             }
         }
@@ -104,13 +106,15 @@ namespace ChemSW.Nbt.Schema
                 CswNbtMetaDataObjectClass ContainerOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerClass );
                 CswNbtMetaDataNodeType ContainerNT = ContainerOC.FirstNodeType;
 
-                CswNbtMetaDataNodeTypeProp[] propsToAdd =
-                    {
-                        ContainerNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.PropertyName.ExpirationDate )
-                    };
+                if( null != ContainerNT )
+                {
+                    CswNbtMetaDataNodeTypeProp[] propsToAdd =
+                        {
+                            ContainerNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.PropertyName.ExpirationDate )
+                        };
 
-                _addPropertiesToView( View, View.Root.ChildRelationships, ContainerOC, ContainerNT, propsToAdd );
-
+                    _addPropertiesToView( View, View.Root.ChildRelationships, ContainerOC, ContainerNT, propsToAdd );
+                }
             }
         }
 
