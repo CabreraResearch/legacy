@@ -203,38 +203,7 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtResources.ViewSelect.deleteViewsByRoleId( NodeId );
 
             //Case 30628 - Delete all PermissionSet nodes assigned to this Role
-            CswNbtView PermissionsView = new CswNbtView( _CswNbtResources );
-            CswNbtMetaDataPropertySet PermissionPS = _CswNbtResources.MetaData.getPropertySet( CswEnumNbtPropertySetName.PermissionSet );
-            CswNbtViewRelationship RootVR = PermissionsView.AddViewRelationship( PermissionPS, false );
-            CswNbtViewPropertyFilter Filter = null;
-            foreach( CswNbtMetaDataObjectClass PermOC in PermissionPS.getObjectClasses() )
-            {
-                if( Filter == null )
-                {
-                    foreach( CswNbtMetaDataNodeType PermNT in PermOC.getNodeTypes() )
-                    {
-                        CswNbtMetaDataNodeTypeProp RoleOCP = PermNT.getNodeTypePropByObjectClassProp( CswNbtPropertySetPermission.PropertyName.Role );
-                        Filter = PermissionsView.AddViewPropertyAndFilter( RootVR,
-                                                                           MetaDataProp: RoleOCP,
-                                                                           Value: NodeId.PrimaryKey.ToString(),
-                                                                           SubFieldName: CswEnumNbtSubFieldName.NodeID,
-                                                                           FilterMode: CswEnumNbtFilterMode.Equals );
-                        break;
-                    }
-                }
-                else
-                {
-                    break;
-                }
-            }
-            ICswNbtTree PermissionsTree = _CswNbtResources.Trees.getTreeFromView( PermissionsView, false, true, true );
-            for( int i = 0; i < PermissionsTree.getChildNodeCount(); i++ )
-            {
-                PermissionsTree.goToNthChild( i );
-                CswNbtNode PermissionNode = PermissionsTree.getNodeForCurrentPosition();
-                PermissionNode.delete();
-                PermissionsTree.goToRoot();
-            }
+            _deleteRelatedPermissionNodes();
 
         }//beforeDeleteNode()
 
@@ -278,6 +247,34 @@ namespace ChemSW.Nbt.ObjClasses
             return Action.DisplayName;
         }
 
+        protected override void afterPopulateProps()
+        {
+            NodeTypePermissions.InitOptions = InitNodeTypePermissionOptions;
+            ActionPermissions.InitOptions = InitActionPermissionOptions;
+
+            //case 27793: only an administrator can edit nodes
+            if( ( null == _CswNbtResources.CurrentNbtUser ) || ( false == _CswNbtResources.CurrentNbtUser.IsAdministrator() ) )
+            {
+                this.Node.setReadOnly( true, false );
+            }
+
+            _CswNbtObjClassDefault.triggerAfterPopulateProps();
+        }//afterPopulateProps()
+
+        public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
+        {
+            _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
+        }
+
+        protected override bool onButtonClick( NbtButtonData ButtonData )
+        {
+            if( null != ButtonData && null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
+            return true;
+        }
+
+        #endregion Inherited Events
+
+        #region Private Helper Methods
 
         private Dictionary<string, string> InitNodeTypePermissionOptions()
         {
@@ -286,7 +283,7 @@ namespace ChemSW.Nbt.ObjClasses
             Dictionary<string, string> NodeTypeOptions = new Dictionary<string, string>();
             foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.getNodeTypesLatestVersion() )
             {
-                foreach( CswEnumNbtNodeTypePermission Permission in  CswEnumNbtNodeTypePermission.Members )
+                foreach( CswEnumNbtNodeTypePermission Permission in CswEnumNbtNodeTypePermission.Members )
                 {
                     string Key = MakeNodeTypePermissionValue( NodeType.FirstVersionNodeTypeId, Permission );
                     string Value = MakeNodeTypePermissionText( NodeType.NodeTypeName, Permission );
@@ -319,36 +316,43 @@ namespace ChemSW.Nbt.ObjClasses
             return ActionOptions;
         } // InitActionPermissionOptions()
 
-        protected override void afterPopulateProps()
+        private void _deleteRelatedPermissionNodes()
         {
-            NodeTypePermissions.InitOptions = InitNodeTypePermissionOptions;
-            ActionPermissions.InitOptions = InitActionPermissionOptions;
-
-            //case 27793: only an administrator can edit nodes
-            if( ( null == _CswNbtResources.CurrentNbtUser ) || ( false == _CswNbtResources.CurrentNbtUser.IsAdministrator() ) )
+            CswNbtView PermissionsView = new CswNbtView( _CswNbtResources );
+            CswNbtMetaDataPropertySet PermissionPS = _CswNbtResources.MetaData.getPropertySet( CswEnumNbtPropertySetName.PermissionSet );
+            CswNbtViewRelationship RootVR = PermissionsView.AddViewRelationship( PermissionPS, false );
+            CswNbtViewPropertyFilter Filter = null;
+            foreach( CswNbtMetaDataObjectClass PermOC in PermissionPS.getObjectClasses() )
             {
-                this.Node.setReadOnly( true, false );
+                if( Filter == null )
+                {
+                    CswNbtMetaDataNodeType PermNT = PermOC.FirstNodeType;
+                    if( null != PermNT )
+                    {
+                        CswNbtMetaDataNodeTypeProp RoleOCP = PermNT.getNodeTypePropByObjectClassProp( CswNbtPropertySetPermission.PropertyName.Role );
+                        Filter = PermissionsView.AddViewPropertyAndFilter( RootVR,
+                                                                           MetaDataProp: RoleOCP,
+                                                                           Value: NodeId.PrimaryKey.ToString(),
+                                                                           SubFieldName: CswEnumNbtSubFieldName.NodeID,
+                                                                           FilterMode: CswEnumNbtFilterMode.Equals );
+                    }
+                }
+                else
+                {
+                    break;
+                }
             }
-
-
-
-            _CswNbtObjClassDefault.triggerAfterPopulateProps();
-        }//afterPopulateProps()
-
-        public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
-        {
-            _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
+            ICswNbtTree PermissionsTree = _CswNbtResources.Trees.getTreeFromView( PermissionsView, false, true, true );
+            for( int i = 0; i < PermissionsTree.getChildNodeCount(); i++ )
+            {
+                PermissionsTree.goToNthChild( i );
+                CswNbtNode PermissionNode = PermissionsTree.getNodeForCurrentPosition();
+                PermissionNode.delete();
+                PermissionsTree.goToRoot();
+            }
         }
 
-        protected override bool onButtonClick( NbtButtonData ButtonData )
-        {
-
-
-
-            if( null != ButtonData && null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
-            return true;
-        }
-        #endregion
+        #endregion Private Helper Methods
 
         #region Object class specific properties
 
@@ -359,8 +363,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropNumber Timeout { get { return ( _CswNbtNode.Properties[PropertyName.Timeout] ); } }
         public CswNbtNodePropText Name { get { return ( _CswNbtNode.Properties[PropertyName.Name] ); } }
 
-        #endregion
-
+        #endregion Object class specific properties
 
     }//CswNbtObjClassRole
 
