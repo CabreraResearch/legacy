@@ -94,7 +94,7 @@ namespace ChemSW.Nbt.WebServices
 
         private static SchemaDetails _checkSchemaVersion( CswNbtResources CswNbtResources )
         {
-            SchemaDetails Ret = new SchemaDetails(); ;
+            SchemaDetails Ret = new SchemaDetails();
 
             CswSchemaScriptsProd CswSchemaScriptsProd = new CswSchemaScriptsProd( CswNbtResources );
 

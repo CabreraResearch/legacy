@@ -245,7 +245,7 @@
             Csw.extend(o, options);
 
             var txt = o.txt;
-            var _next = function() {
+            var _next = function () {
                 if (!txt) {
                     Csw.tryExec(o.success());
                 } else {
@@ -255,6 +255,7 @@
 
             if (o.status === 'Authenticated') {
                 _next();
+
             } else {
                 switch (o.status) {
                     case 'ExpiredPassword':
@@ -269,16 +270,13 @@
                         break;
                     case 'ShowLicense':
                         $.CswDialog('ShowLicenseDialog', {
-                                onAccept: function() {
-                                if (false == Csw.isNullOrEmpty(cswPrivate.SchemaStatus)) {
-                            Csw.error.showError(cswPrivate.SchemaStatus.ErrorObj);
-                        }
-                                    _next();
-                                },
-                                onDecline: function() {
-                                    Csw.clientSession.logout();
-                                }
-                            });
+                            onAccept: function () {
+                                _next();
+                            },
+                            onDecline: function () {
+                                Csw.clientSession.logout();
+                            }
+                        });
                         break;
                     case 'AlreadyLoggedIn':
                         $.CswDialog('LogoutExistingSessionsDialog', _next);
