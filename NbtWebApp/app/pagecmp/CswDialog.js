@@ -727,13 +727,13 @@
                     onClick: function() {
                         Csw.ajaxWcf.post({
                             urlMethod: 'Session/endCurrentUserSessions',
-                            success: function(data) {
+                            complete: function(data) {
+                                logoutOnClose = false;
+                                div.$.dialog('close');
                                 Csw.tryExec(onSuccess);
                                 ExistingMultisessionDialog = false;
                             }//success
                         }); //Csw.ajaxWcf.post
-                        logoutOnClose = false;
-                        div.$.dialog('close');
                     }//onClick
                 }); //resetLoginTable.cell(2, 2).button
 
