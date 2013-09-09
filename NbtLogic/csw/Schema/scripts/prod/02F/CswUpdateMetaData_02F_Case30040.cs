@@ -12,7 +12,7 @@ namespace ChemSW.Nbt.Schema
 
         public override string ScriptName
         {
-            get { return "02F_Case30040"; }
+            get { return "02F_Case30040_MetaData"; }
         }
 
         #region Blame Logic

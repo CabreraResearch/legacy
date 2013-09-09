@@ -22,7 +22,7 @@ namespace ChemSW.Nbt.Schema
 
         public override string ScriptName
         {
-            get { return "02F_Case30082_UserCache_B"; }
+            get { return "02F_Case30082_UserCache"; }
         }
 
         public override void update()
