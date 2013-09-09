@@ -250,7 +250,7 @@
                         rowNum++;
                         //TypeSelect
                         cswPrivate.state.ContainerLocationTypes = [
-                            { Type: 'Scan', Enabled: true },
+                            { Type: 'Reconcile Scans', Enabled: true },
                             { Type: 'Receipt', Enabled: false },
                             { Type: 'Move', Enabled: false },
                             { Type: 'Dispense', Enabled: false },
@@ -271,7 +271,7 @@
                                 checked: type.Enabled,
                                 onChange: Csw.method(function () {
                                     cswPrivate.state.ContainerLocationTypes[key].Enabled = cswPrivate.typeCheckBox[key].checked();
-                                    if (cswPrivate.state.ContainerLocationTypes[key].Type != 'Scan') {
+                                    if (cswPrivate.state.ContainerLocationTypes[key].Type != 'Reconcile Scans') {
                                         if (cswPrivate.state.ContainerLocationTypes[key].Enabled) {
                                             cswPrivate.touchesIncluded++;
                                         } else {

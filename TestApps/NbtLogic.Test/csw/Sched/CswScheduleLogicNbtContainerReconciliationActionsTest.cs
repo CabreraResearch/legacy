@@ -170,7 +170,7 @@ namespace ChemSW.Nbt.Test.Sched
                 ContainerNode.Node,
                 CswEnumNbtContainerLocationActionOptions.MoveToLocation.ToString(),
                 LocationId: ContainerLocationLocId,
-                Type: CswEnumNbtContainerLocationTypeOptions.Scan.ToString() );
+                Type: CswEnumNbtContainerLocationTypeOptions.ReconcileScans.ToString() );
             Assert.AreNotEqual( ContainerLocationNode.Location.SelectedNodeId, ContainerNode.Location.SelectedNodeId );
             Assert.AreEqual( CswEnumNbtContainerLocationStatusOptions.WrongLocation.ToString(), ContainerLocationNode.Status.Value );
 
@@ -201,7 +201,7 @@ namespace ChemSW.Nbt.Test.Sched
                 ContainerNode.Node,
                 CswEnumNbtContainerLocationActionOptions.MoveToLocation.ToString(),
                 LocationId: ContainerLocationLocId,
-                Type: CswEnumNbtContainerLocationTypeOptions.Scan.ToString() );
+                Type: CswEnumNbtContainerLocationTypeOptions.ReconcileScans.ToString() );
             Assert.AreNotEqual( ContainerLocationNode.Location.SelectedNodeId, ContainerNode.Location.SelectedNodeId );
             Assert.AreEqual( CswEnumNbtContainerLocationStatusOptions.DisposedAtWrongLocation.ToString(), ContainerLocationNode.Status.Value );
 
@@ -233,7 +233,7 @@ namespace ChemSW.Nbt.Test.Sched
                 ContainerNode.Node,
                 CswEnumNbtContainerLocationActionOptions.UndisposeAndMove.ToString(),
                 LocationId: ContainerLocationLocId,
-                Type: CswEnumNbtContainerLocationTypeOptions.Scan.ToString() );
+                Type: CswEnumNbtContainerLocationTypeOptions.ReconcileScans.ToString() );
             Assert.AreNotEqual( ContainerLocationNode.Location.SelectedNodeId, ContainerNode.Location.SelectedNodeId );
             Assert.AreEqual( CswEnumNbtContainerLocationStatusOptions.DisposedAtWrongLocation.ToString(), ContainerLocationNode.Status.Value );
 

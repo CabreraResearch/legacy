@@ -302,7 +302,7 @@ namespace ChemSW.Nbt.Actions
                 if( null == ContainerLocationNode )
                 {
                     ContainerLocationNode = ContainersTree.getNodeForCurrentPosition();
-                    if( ContainerLocationNode.Type.Value == CswEnumNbtContainerLocationTypeOptions.Scan.ToString() )
+                    if( ContainerLocationNode.Type.Value == CswEnumNbtContainerLocationTypeOptions.ReconcileScans.ToString() )
                     {
                         ContainersTree.goToParentNode();
                         break;
@@ -311,8 +311,8 @@ namespace ChemSW.Nbt.Actions
                 else
                 {
                     CswNbtObjClassContainerLocation TempContainerLocationNode = ContainersTree.getNodeForCurrentPosition();
-                    if( TempContainerLocationNode.Type.Value == CswEnumNbtContainerLocationTypeOptions.Scan.ToString() &&
-                        ContainerLocationNode.Type.Value != CswEnumNbtContainerLocationTypeOptions.Scan.ToString() )
+                    if( TempContainerLocationNode.Type.Value == CswEnumNbtContainerLocationTypeOptions.ReconcileScans.ToString() &&
+                        ContainerLocationNode.Type.Value != CswEnumNbtContainerLocationTypeOptions.ReconcileScans.ToString() )
                     {
                         ContainerLocationNode = TempContainerLocationNode;
                         ContainersTree.goToParentNode();
@@ -344,7 +344,7 @@ namespace ChemSW.Nbt.Actions
                 if( Stat.Status == Status )
                 {
                     Stat.ContainerCount += 1;
-                    if( Type == CswEnumNbtContainerLocationTypeOptions.Scan.ToString() )
+                    if( Type == CswEnumNbtContainerLocationTypeOptions.ReconcileScans.ToString() )
                     {
                         Stat.AmountScanned += 1;
                     }

@@ -12,7 +12,7 @@ namespace ChemSW.Nbt.ObjClasses
             CswEnumNbtContainerLocationTypeOptions ret = Parse( str );
             return ret ?? Missing;
         }
-        public static readonly CswEnumNbtContainerLocationTypeOptions Scan = new CswEnumNbtContainerLocationTypeOptions( "Scan" );
+        public static readonly CswEnumNbtContainerLocationTypeOptions ReconcileScans = new CswEnumNbtContainerLocationTypeOptions( "Reconcile Scans" );
         public static readonly CswEnumNbtContainerLocationTypeOptions Receipt = new CswEnumNbtContainerLocationTypeOptions( "Receipt" );
         public static readonly CswEnumNbtContainerLocationTypeOptions Move = new CswEnumNbtContainerLocationTypeOptions( "Move" );
         public static readonly CswEnumNbtContainerLocationTypeOptions Dispense = new CswEnumNbtContainerLocationTypeOptions( "Dispense" );

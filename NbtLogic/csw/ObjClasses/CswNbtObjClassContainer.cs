@@ -515,7 +515,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         /// <summary>
         /// Create a new ContainerLocation node. 
-        /// *Note: The NewLocationBarcode and ContainerBarcode parameters are necessary only if the Type = Scan. They
+        /// *Note: The NewLocationBarcode and ContainerBarcode parameters are necessary only if the Type = ReconcileScans. They
         /// are currently only used for the reconcile data from the CISPro/NBT CORE mobile app.
         /// </summary>
         /// <param name="Type"></param>
@@ -533,7 +533,7 @@ namespace ChemSW.Nbt.ObjClasses
                        ContLocNode.Container.RelatedNodeId = NodeId;
                        if( null != Location )
                        {
-                           if( Type != CswEnumNbtContainerLocationTypeOptions.Scan )
+                           if( Type != CswEnumNbtContainerLocationTypeOptions.ReconcileScans )
                            {
                                ContLocNode.Location.SelectedNodeId = Location.SelectedNodeId;
                                ContLocNode.Location.CachedNodeName = Location.CachedNodeName;
