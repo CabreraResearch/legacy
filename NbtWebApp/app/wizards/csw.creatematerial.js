@@ -447,10 +447,7 @@
                                 if (cswPrivate.isDuplicateMaterial) {
                                     cswPrivate.toggleButton(cswPrivate.buttons.prev, true, true);
                                     cswPrivate.stepTwoComplete = false;
-                                    foundMaterialLabel = cswPrivate.identityDiv.nodeLink({
-                                        text: "A material with these properties already exists with a tradename of " + data.noderef,
-                                        name: "materialExistsLabel"
-                                    });
+                                    Csw.error.showError(Csw.error.makeErrorObj(Csw.enums.errorType.warning.name, "A material with these properties already exists with a tradename of " + data.noderef));
                                 } else {
                                     cswPrivate.state.materialId = data.materialid;
                                     cswPrivate.state.documentTypeId = data.documenttypeid;
