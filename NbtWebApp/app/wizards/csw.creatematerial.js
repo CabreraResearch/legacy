@@ -428,6 +428,7 @@
                     };
 
                     cswPrivate.saveMaterial = function (onSuccess) {
+                        cswPrivate.toggleButton(cswPrivate.buttons.prev, false, false);
                         if (cswPrivate.tabsAndProps) {
                             cswPrivate.tabsAndProps.tearDown();
                         }
