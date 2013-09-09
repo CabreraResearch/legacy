@@ -173,7 +173,8 @@
                                 cswPrivate.toggleButton(cswPrivate.buttons.next, false === Csw.isNullOrEmpty(locationId));
                                 cswPrivate.reinitSteps(2);
                                 getPendingChangesCount();
-                            }
+                            },
+                            useDefaultLocation: false
                         });
                         cswPrivate.state.LocationId = locationControl.val();
                         cswPrivate.state.LocationName = locationControl.selectedName();

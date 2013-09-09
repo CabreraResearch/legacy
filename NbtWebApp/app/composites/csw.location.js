@@ -24,6 +24,7 @@
                 isRequired: false,
                 onChange: null,
                 overrideSelectedLocation: true,
+                useDefaultLocation: true,
                 EditMode: Csw.enums.editMode.Edit,
                 value: ''
             };
@@ -96,8 +97,10 @@
                             },
                             success: function (data) {
                                 cswPrivate.viewid = data.viewid;
-                                cswPrivate.nodeid = data.nodeid;
-                                cswPrivate.path = data.path;
+                                if (cswPrivate.useDefaultLocation) {
+                                    cswPrivate.nodeid = data.nodeid;
+                                    cswPrivate.path = data.path;
+                                }
                                 render();
                             }
                         }));
