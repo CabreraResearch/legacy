@@ -102,7 +102,7 @@
             cacheDbMgr.ddl.createIndex('CachedData', 'customerId', 'cache.customerId');
             cacheDbMgr.ddl.createIndex('CachedData', 'dateTimeId', 'dateTime');
             cacheDbMgr.ddl.createIndex('CachedData', 'userNameId', 'cache.userName');
-            cacheDbMgr.ddl.createIndex('CachedData', 'webServiceNameId', 'cache.webServiceName');
+            cacheDbMgr.ddl.createIndex('CachedData', 'webServiceNameId', 'cache.webServiceName'); 
             cacheDbMgr.ddl.createIndex('CachedData', 'uniqueCalls', ['cache.webServiceName', 'cache.userName', 'cache.customerId'], true);
 
             //Insert some demo data

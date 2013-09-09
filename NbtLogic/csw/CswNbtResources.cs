@@ -63,8 +63,6 @@ namespace ChemSW.Nbt
         /// </summary>
         public CswNbtSessionDataMgr SessionDataMgr;
 
-        public CswSessionManager CswSessionManager { get; set; }
-
         /// <summary>
         /// User searches
         /// </summary>
@@ -730,6 +728,13 @@ namespace ChemSW.Nbt
         /// Our collection of current sessions
         /// </summary>
         public CswSessionAttrs Session { get { return _CswResources.Session; } }
+        /// <summary>
+        /// Provides additional methods for working with session data
+        /// </summary>
+        public CswSessionManager CswSessionManager { 
+            get { return _CswResources.CswSessionManager; }
+            set { _CswResources.CswSessionManager = value; }
+        }
         /// <summary>
         /// Reading of values located in the configuration_variables table
         /// </summary>
