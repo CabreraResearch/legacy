@@ -251,10 +251,7 @@
                         //TypeSelect
                         cswPrivate.state.ContainerLocationTypes = [
                             { Type: 'Reconcile Scans', Enabled: true },
-                            { Type: 'Move', Enabled: false },
-                            { Type: 'Dispense', Enabled: false },
-                            { Type: 'Dispose', Enabled: false },
-                            { Type: 'Undispose', Enabled: false }
+                            { Type: 'Moves, Dispenses, Disposals/Undisposals', Enabled: false }
                         ];
                         locationDatesTable.cell(rowNum, 1).span({ text: 'Type:' }).addClass('propertylabel');
                         var typeSelectTable = locationDatesTable.cell(rowNum, 2).table({
@@ -349,7 +346,7 @@
                                     if (row.Status === 'Not Scanned') {
                                         StatusMetricsGridData.push({});
                                     }
-                                    if (cswPrivate.touchesIncluded > 0 || row.Status !== 'Received, Moved, Dispensed, or Disposed') {
+                                    if (cswPrivate.touchesIncluded > 0 || row.Status !== 'Moved, Dispensed, or Disposed/Undisposed') {
                                         StatusMetricsGridData.push({
                                             status: row.Status,
                                             numofcontainers: row.ContainerCount,
@@ -691,7 +688,7 @@
                 var optionsToFilter = [];
                 Csw.each(cswPrivate.data.ContainerStatistics, function (row) {
                     if (false === filterOutCorrect ||
-                        (row.Status !== 'Scanned Correct' && row.Status !== 'Received, Moved, Dispensed, or Disposed')) {
+                        (row.Status !== 'Scanned Correct' && row.Status !== 'Moved, Dispensed, or Disposed/Undisposed')) {
                         optionsToFilter.push(row.Status);
                     }
                 });

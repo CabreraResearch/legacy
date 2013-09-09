@@ -329,7 +329,12 @@ namespace ChemSW.Nbt.Actions
             bool Enabled = false;
             foreach( ContainerData.ReconciliationTypes ContainerLocationType in Request.ContainerLocationTypes )
             {
-                if( Type == ContainerLocationType.Type )
+                if( Type == ContainerLocationType.Type ||
+                    ( ContainerLocationType.Type == CswEnumNbtContainerLocationTypeOptions.Touch.ToString() &&
+                      ( Type == CswEnumNbtContainerLocationTypeOptions.Move.ToString() ||
+                        Type == CswEnumNbtContainerLocationTypeOptions.Dispense.ToString()  ||
+                        Type == CswEnumNbtContainerLocationTypeOptions.Dispose.ToString()  ||
+                        Type == CswEnumNbtContainerLocationTypeOptions.Undispose.ToString() ) ) )
                 {
                     Enabled = ContainerLocationType.Enabled;
                 }
