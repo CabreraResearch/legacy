@@ -76,16 +76,21 @@ namespace ChemSW.Nbt.Schema
                 {
                     CswNbtMetaDataNodeTypeProp DocumentsNTP = MaterialNT.getNodeTypePropByObjectClassProp( CswNbtPropertySetMaterial.PropertyName.Documents );
                     CswNbtMetaDataNodeType MaterialDocumentNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Material Document" );
-                    CswNbtMetaDataObjectClass DocumentOC = MaterialDocumentNT.getObjectClass();
-
-                    CswNbtMetaDataNodeTypeProp[] propsToAdd =
-                        {
-                            MaterialDocumentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.Title )
-                        };
-
-                    CswNbtView DocumentsView = _CswNbtSchemaModTrnsctn.restoreView( DocumentsNTP.ViewId );
-                    _addPropertiesToView( DocumentsView, DocumentsView.Root.ChildRelationships,  DocumentOC, MaterialDocumentNT, propsToAdd );
                     
+                    if( null != MaterialDocumentNT )
+                    {
+                        CswNbtMetaDataObjectClass DocumentOC = MaterialDocumentNT.getObjectClass();
+                        CswNbtMetaDataNodeTypeProp[] propsToAdd =
+                            {
+                                MaterialDocumentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.Title )
+                            };
+
+                        CswNbtView DocumentsView = _CswNbtSchemaModTrnsctn.restoreView( DocumentsNTP.ViewId );
+                        if( null != DocumentsView )
+                        {
+                            _addPropertiesToView( DocumentsView, DocumentsView.Root.ChildRelationships, DocumentOC, MaterialDocumentNT, propsToAdd );
+                        }
+                    }
                 }
             }
         }
@@ -101,16 +106,21 @@ namespace ChemSW.Nbt.Schema
             {
                 CswNbtView View = _CswNbtSchemaModTrnsctn.ViewSelect.restoreView( ViewName, CswEnumNbtViewVisibility.Property );
 
-                CswNbtMetaDataObjectClass ContainerOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerClass );
-                CswNbtMetaDataNodeType ContainerNT = ContainerOC.FirstNodeType;
+                if( null != View )
+                {
+                    CswNbtMetaDataObjectClass ContainerOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerClass );
+                    CswNbtMetaDataNodeType ContainerNT = ContainerOC.FirstNodeType;
 
-                CswNbtMetaDataNodeTypeProp[] propsToAdd =
+                    if( null != ContainerNT )
                     {
-                        ContainerNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.PropertyName.ExpirationDate )
-                    };
+                        CswNbtMetaDataNodeTypeProp[] propsToAdd =
+                            {
+                                ContainerNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.PropertyName.ExpirationDate )
+                            };
 
-                _addPropertiesToView( View, View.Root.ChildRelationships, ContainerOC, ContainerNT, propsToAdd );
-
+                        _addPropertiesToView( View, View.Root.ChildRelationships, ContainerOC, ContainerNT, propsToAdd );
+                    }
+                }
             }
         }
 
