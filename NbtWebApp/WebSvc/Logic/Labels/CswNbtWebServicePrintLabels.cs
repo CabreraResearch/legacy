@@ -508,7 +508,7 @@ namespace ChemSW.Nbt.WebServices
                             else if( TemplateName.StartsWith( "NBTGHSPICTOS:" ) || ( TemplateName.Equals( "NBTGHSPICTOS" ) ) )   // Ignore NBTGHSPICTOS_2
                             {
                                 // pictos
-                                Int32 Scale = 100;
+                                Int32 Scale = 300;
                                 bool NoBorder = false;
                                 if( TemplateName.StartsWith( "NBTGHSPICTOS:" ) )
                                 {
@@ -519,10 +519,10 @@ namespace ChemSW.Nbt.WebServices
                                     {
                                         if( GHSParam.StartsWith( "scale" ) )
                                         {
-                                            Scale = CswConvert.ToInt32( GHSParam.Substring( "scale".Length ) );
-                                            if( Scale < 0 )
+                                            Int32 NewScale = CswConvert.ToInt32( GHSParam.Substring( "scale".Length ) );
+                                            if( NewScale > 0 )
                                             {
-                                                Scale = 100;
+                                                Scale = NewScale;
                                             }
                                         }
                                         if( GHSParam == "noborder" )
