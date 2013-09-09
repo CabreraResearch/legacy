@@ -251,12 +251,10 @@
                         //TypeSelect
                         cswPrivate.state.ContainerLocationTypes = [
                             { Type: 'Reconcile Scans', Enabled: true },
-                            { Type: 'Receipt', Enabled: false },
                             { Type: 'Move', Enabled: false },
                             { Type: 'Dispense', Enabled: false },
                             { Type: 'Dispose', Enabled: false },
-                            { Type: 'Undispose', Enabled: false },
-                            { Type: 'Missing', Enabled: false }
+                            { Type: 'Undispose', Enabled: false }
                         ];
                         locationDatesTable.cell(rowNum, 1).span({ text: 'Type:' }).addClass('propertylabel');
                         var typeSelectTable = locationDatesTable.cell(rowNum, 2).table({
