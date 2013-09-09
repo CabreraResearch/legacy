@@ -11,7 +11,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Updates the schema for OC changes
     /// </summary>
-    public class RunBeforeEveryExecutionOfUpdater_02F_Case29992 : CswUpdateSchemaTo
+    public class CswUpdateMetaData_02F_Case29992 : CswUpdateSchemaTo
     {
         public override string Title { get { return "Pre-Script: Case 29992"; } }
         #region Blame Logic
@@ -24,6 +24,11 @@ namespace ChemSW.Nbt.Schema
         public override int CaseNo
         {
             get { return 29992; }
+        }
+
+        public override string ScriptName
+        {
+            get { throw new NotImplementedException(); }
         }
 
         #endregion Blame Logic

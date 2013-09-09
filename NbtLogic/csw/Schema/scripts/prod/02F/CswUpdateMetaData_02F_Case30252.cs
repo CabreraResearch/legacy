@@ -5,9 +5,14 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Updates the schema for OC changes
     /// </summary>
-    public class RunBeforeEveryExecutionOfUpdater_02F_Case30252 : CswUpdateSchemaTo
+    public class CswUpdateMetaData_02F_Case30252 : CswUpdateSchemaTo
     {
-        public static string Title = "Pre-Script: Case 30252";
+        public override string Title { get { return "Pre-Script: Case 30252: MetaData Changes"; } }
+
+        public override string ScriptName
+        {
+            get { return "02F_Case30252"; }
+        }
 
         #region Blame Logic
 

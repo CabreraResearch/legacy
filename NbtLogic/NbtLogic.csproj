@@ -336,7 +336,7 @@
     <None Include="csw\Schema\scripts\past\02E\CswUpdateSchema_02E_Case30445.cs" />
     <None Include="csw\Schema\scripts\past\02E\CswUpdateSchema_02E_Case30300.cs" />
     <Compile Include="csw\Schema\scripts\prod\02F\CswUpdateSchema_02F_Case29984.cs" />
-    <Compile Include="csw\Schema\scripts\prod\02F\RunBeforeEveryExecutionOfUpdater_02F_Case30529.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02F\CswUpdateMetaData_02F_Case30529.cs" />
     <Compile Include="csw\Schema\scripts\prod\02F\CswUpdateSchema_02F_Case30041_ScheduledRuleImport.cs" />
     <Compile Include="csw\Schema\scripts\prod\02F\CswUpdateSchema_02F_Case30043_InventoryGroups.cs" />
     <Compile Include="csw\Schema\scripts\prod\02F\CswUpdateSchema_02F_Case30043_WorkUnits.cs" />
@@ -350,7 +350,7 @@
     <Compile Include="csw\Schema\scripts\prod\02F\CswUpdateSchema_02F_Case30577.cs" />
     <Compile Include="csw\Schema\scripts\prod\02F\CswUpdateSchema_02F_Case30043_Sites.cs" />
     <Compile Include="csw\Schema\scripts\prod\02F\CswUpdateSchema_02F_Case30043_ControlZones.cs" />
-    <Compile Include="csw\Schema\scripts\prod\02F\RunBeforeEveryExecutionOfUpdater_02F_Case30040.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02F\CswUpdateMetaData_02F_Case30040.cs" />
     <None Include="csw\Schema\scripts\past\02E\RunBeforeEveryExecutionOfUpdater_02E_Case30347.cs" />
     <None Include="csw\Schema\scripts\past\02E\CswUpdateSchema_02E_Case30360.cs" />
     <None Include="csw\Schema\scripts\past\02E\CswUpdateSchema_02E_Case30370.cs" />
@@ -375,11 +375,11 @@
     <None Include="csw\Schema\scripts\past\02E\CswUpdateSchema_02E_Case29847.cs" />
     <None Include="csw\Schema\scripts\past\02E\CswUpdateSchema_02E_Case30222.cs" />
     <None Include="csw\Schema\scripts\past\02E\CswUpdateSchema_02E_Case30014.cs" />
-    <Compile Include="csw\Schema\scripts\prod\02F\RunBeforeEveryExecutionOfUpdater_02F_Case30252.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02F\CswUpdateMetaData_02F_Case30252.cs" />
     <Compile Include="csw\Schema\scripts\prod\02F\CswUpdateSchema_02F_Case30252.cs" />
     <Compile Include="csw\Schema\scripts\prod\02F\CswUpdateSchema_02F_Case29992.cs" />
     <Compile Include="csw\Schema\scripts\prod\02F\CswUpdateSchema_02F_Case29402.cs" />
-    <Compile Include="csw\Schema\scripts\prod\02F\RunBeforeEveryExecutionOfUpdater_02F_Case29992.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02F\CswUpdateMetaData_02F_Case29992.cs" />
     <Compile Include="csw\Schema\scripts\prod\02F\CswUpdateSchema_02F_Case30228.cs" />
     <Compile Include="csw\Schema\scripts\prod\02F\CswUpdateMetaData_02F_Case30228.cs" />
     <Compile Include="csw\Schema\scripts\prod\02F\CswUpdateSchema_02F_Case27495.cs" />
@@ -420,7 +420,7 @@
     <None Include="csw\Schema\scripts\past\02E\RunBeforeEveryExecutionOfUpdater_02E_Case29701.cs" />
     <None Include="csw\Schema\scripts\past\02E\RunBeforeEveryExecutionOfUpdater_02E_Case29700.cs" />
     <Compile Include="csw\Schema\scripts\prod\02F\CswUpdateMetaData_02F_Case30281.cs" />
-    <Compile Include="csw\Schema\scripts\prod\02F\RunBeforeEveryExecutionOfUpdater_02F_Case30041_NbtImportQueue.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02F\CswUpdateMetaData_02F_Case30041_NbtImportQueue.cs" />
     <Compile Include="csw\Security\CswNbtWebSvcSchemaAuthenticator.cs" />
     <Compile Include="csw\Security\CswNbtSchemaAuthenticationLogic.cs" />
     <Compile Include="csw\Security\CswNbtSchemaAuthenticatorFactory.cs" />

@@ -20,15 +20,20 @@ namespace ChemSW.Nbt.Schema
             get { return 29402; }
         }
 
+        public override string ScriptName
+        {
+            get { return "02F_Case29402"; }
+        }
+
         public override void update()
         {
             HashSet<CswNbtViewId> SeenViewIds = new HashSet<CswNbtViewId>();
 
-            CswNbtMetaDataObjectClass ChemicalOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass(CswEnumNbtObjectClass.ChemicalClass);
+            CswNbtMetaDataObjectClass ChemicalOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass );
             CswNbtMetaDataObjectClass MaterialComponentOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.MaterialComponentClass );
             CswNbtMetaDataObjectClassProp ConstituentOCP = MaterialComponentOC.getObjectClassProp( CswNbtObjClassMaterialComponent.PropertyName.Constituent );
             CswNbtMetaDataObjectClassProp MixtureOCP = MaterialComponentOC.getObjectClassProp( CswNbtObjClassMaterialComponent.PropertyName.Mixture );
-            CswNbtMetaDataObjectClassProp PercentageOCP = MaterialComponentOC.getObjectClassProp( CswNbtObjClassMaterialComponent.PropertyName.Percentage);
+            CswNbtMetaDataObjectClassProp PercentageOCP = MaterialComponentOC.getObjectClassProp( CswNbtObjClassMaterialComponent.PropertyName.Percentage );
 
             CswNbtMetaDataNodeType ConstituentNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Constituent" );
             if( null != ConstituentNT )

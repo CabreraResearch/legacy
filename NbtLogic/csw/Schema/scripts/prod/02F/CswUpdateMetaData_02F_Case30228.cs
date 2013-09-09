@@ -7,7 +7,12 @@ namespace ChemSW.Nbt.Schema
     /// </summary>
     public class CswUpdateMetaData_02F_Case30228 : CswUpdateSchemaTo
     {
-        public static string Title = "Pre-Script: Case 30228";
+        public override string Title { get { return "Pre-Script: Case 30228: MetaData Changes"; } }
+
+        public override string ScriptName
+        {
+            get { return "02F_Case30228"; }
+        }
 
         #region Blame Logic
 
@@ -19,11 +24,6 @@ namespace ChemSW.Nbt.Schema
         public override int CaseNo
         {
             get { return 30228; }
-        }
-
-        public override string ScriptName
-        {
-            get { return "02F_Case30228"; }
         }
 
         #endregion Blame Logic

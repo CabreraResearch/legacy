@@ -22,6 +22,11 @@ namespace ChemSW.Nbt.Schema
             get { return 29984; }
         }
 
+        public override string ScriptName
+        {
+            get { throw new System.NotImplementedException(); }
+        }
+
         public override void update()
         {
             _addMaterialComponentPermissions();
@@ -29,9 +34,6 @@ namespace ChemSW.Nbt.Schema
             _addExpirationDateToContainersView();
 
         } // update()
-
-
-
 
         private void _addMaterialComponentPermissions()
         {
@@ -41,7 +43,7 @@ namespace ChemSW.Nbt.Schema
                 CswNbtMetaDataNodeType MaterialComponentNT = MaterialComponentOC.getNodeTypes().FirstOrDefault();
                 if( null != MaterialComponentNT )
                 {
-                    string[] FullPermissionRoles = {"CISPro_Admin", "CISPro_General", "CISPro_Receiver", "CISPro_Request_Fulfiller", "Administrator"};
+                    string[] FullPermissionRoles = { "CISPro_Admin", "CISPro_General", "CISPro_Receiver", "CISPro_Request_Fulfiller", "Administrator" };
 
                     CswEnumNbtNodeTypePermission[] AllPermissions =
                         {
@@ -63,10 +65,6 @@ namespace ChemSW.Nbt.Schema
             }//if( null != MaterialComponentOC )
         }//_addMaterialComponentPermissions()
 
-
-
-
-
         private void _addTitleToDocumentsView()
         {
             CswNbtMetaDataPropertySet MaterialPS = _CswNbtSchemaModTrnsctn.MetaData.getPropertySet( CswEnumNbtPropertySetName.MaterialSet );
@@ -84,18 +82,15 @@ namespace ChemSW.Nbt.Schema
                         };
 
                     CswNbtView DocumentsView = _CswNbtSchemaModTrnsctn.restoreView( DocumentsNTP.ViewId );
-                    _addPropertiesToView( DocumentsView, DocumentsView.Root.ChildRelationships,  DocumentOC, MaterialDocumentNT, propsToAdd );
-                    
+                    _addPropertiesToView( DocumentsView, DocumentsView.Root.ChildRelationships, DocumentOC, MaterialDocumentNT, propsToAdd );
+
                 }
             }
         }
 
-
-
-
         private void _addExpirationDateToContainersView()
         {
-            string[] ViewsToUpdate = {"Chemical Containers", "Biological Containers", "Supply Containers"};
+            string[] ViewsToUpdate = { "Chemical Containers", "Biological Containers", "Supply Containers" };
 
             foreach( string ViewName in ViewsToUpdate )
             {
@@ -113,10 +108,6 @@ namespace ChemSW.Nbt.Schema
 
             }
         }
-
-
-
-
 
         private void _addPropertiesToView( CswNbtView View, Collection<CswNbtViewRelationship> Relationships, CswNbtMetaDataObjectClass relatedOC, CswNbtMetaDataNodeType relatedNT, CswNbtMetaDataNodeTypeProp[] propsToAdd )
         {

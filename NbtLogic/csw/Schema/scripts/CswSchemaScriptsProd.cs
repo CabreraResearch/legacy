@@ -18,17 +18,28 @@ namespace ChemSW.Nbt.Schema
             // This is where you manually set to the last version of the previous release (the one currently in production)
             _MinimumVersion = new CswSchemaVersion( 2, 'E', 11 );
 
-            //_addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02E_Case30014() ) );                        //02E-008
-            //_addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02E_Case30222() ) );                        //02E-009
-            //_addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02E_Case29847() ) );                        //02E-010
-            //_addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02E_Case30123() ) );                        //02E-011
-            //_addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02E_Case30370() ) );                        //02E-012
-            //_addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02E_Case30360() ) );                        //02E-013
-            //_addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02E_Case30339_UserProfilex2() ) );          //02E-014
-            //_addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02E_Case30300() ) );                        //02E-015
-            //_addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02E_Case30440() ) );                        //02E-016
-            //_addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02E_Case30445() ) );                        //02E-017
-            //_addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02E_Case30360() ) );                        //02E-018
+            #region MetaData Scripts
+
+            //dch 30252 FOXGLOVE, but metadata changes so before EUC changes
+            _addRunBeforeScript( new CswUpdateMetaData_02F_Case30252() );
+            _addRunBeforeScript( new CswUpdateMetaData_02F_Case30228() );
+
+            _addRunBeforeScript( new CswUpdateMetaData_02F_Case30041_NbtImportQueue() ); //Validate the Nbt Import Queue table first
+            _addRunBeforeScript( new CswUpdateMetaData_02F_Case30281() );
+            _addRunBeforeScript( new CswUpdateMetaData_02F_Case30251() );
+            _addRunBeforeScript( new CswUpdateMetaData_02F_Case30251B() );
+            _addRunBeforeScript( new CswUpdateMetaData_02F_Case30082_UserCache() );
+            _addRunBeforeScript( new CswUpdateMetaData_02F_Case27883() );
+            _addRunBeforeScript( new CswUpdateMetaData_02F_Case30040() );
+            _addRunBeforeScript( new CswUpdateMetaData_02F_Case29992() );
+            _addRunBeforeScript( new CswUpdateMetaData_02F_Case30529() );
+
+            #endregion
+
+            // This is the MakeMissingNodeTypeProps script. If you have a script which contains OC changes, put it before this script.
+            _addVersionedScript( new RunAlways_MakeMissingNodeTypePropsProps() );
+
+            #region Data Scripts
 
             _addVersionedScript( new CswUpdateSchema_02F_Case30281() );                    //02E-012 //02F-001
             _addVersionedScript( new CswUpdateSchema_02F_Case28998() );                    //02E-013 //02F-002
@@ -58,57 +69,25 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswUpdateSchema_02F_Case30043_WorkUnits() );          //02E-034 //02F-026
             _addVersionedScript( new CswUpdateSchema_02F_Case30043_InventoryGroups() );    //02E-035 //02F-027
 
-
-            #region MetaData Scripts
-
-            // e.g. _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateMetaData_02F_CaseXXXXX() ) );
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateMetaData_02F_Case30228() ) );
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateMetaData_02F_Case30281() ) );
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateMetaData_02F_Case30251() ) );
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateMetaData_02F_Case30251B() ) );
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateMetaData_02F_Case30082_UserCache() ) );
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateMetaData_02F_Case27883() ) );
-
-            #endregion MetaData Scripts
-
-            // This is the MakeMissingNodeTypeProps script. If you have a script which contains OC changes, put it before this script.
-            _addVersionedScript( new CswSchemaUpdateDriver( new RunAlways_MakeMissingNodeTypePropsProps() ) );
-
-            //dch 30252 FOXGLOVE, but metadata changes so before EUC changes
-            _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02F_Case30252() );
-            _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02F_Case30228() );
-
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02F_Case30281() ) );
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02F_Case28998() ) );
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02F_Case29973() ) );
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02F_Case29191() ) );
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02F_Case29542() ) );
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02F_Case29438() ) );
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02F_Case30082_UserCache() ) );
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02F_Case30197() ) );
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02F_Case30417() ) );
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02F_Case27883() ) );
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02F_Case27495() ) );
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02F_Case30228() ) );
             #endregion Data Scripts
+
             #region Calculate the Latest Version
 
             _setLatestVersion( CswNbtResources );
-            _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02F_Case27883() );
-            _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02F_Case30040() );
-            _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02F_Case29992() );
-            _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02F_Case30529() );
 
             #endregion Calculate the Latest Version
 
             #region Before Scripts
 
             // Before scripts that always run.
+            _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02SQL() );
+            _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_03() );
             #endregion Before Scripts
 
             #region After Script
 
             // After scripts that always run.
+            _addRunAfterScript( new RunAfterEveryExecutionOfUpdater_01() );
 
             #endregion After Script
 
@@ -272,6 +251,9 @@ namespace ChemSW.Nbt.Schema
 
         private void _addVersionedScript( CswUpdateSchemaTo UpdateTo )
         {
+            // Instance the UpdateDriver
+            CswSchemaUpdateDriver CswSchemaUpdateDriver = new CswSchemaUpdateDriver( UpdateTo );
+
             CswSchemaUpdateDriver.CswNbtSchemaModTrnsctn = new CswNbtSchemaModTrnsctn( _CswNbtResources );
             if( false == CswSchemaUpdateDriver.AlreadyRun() || CswSchemaUpdateDriver.AlwaysRun )
             {

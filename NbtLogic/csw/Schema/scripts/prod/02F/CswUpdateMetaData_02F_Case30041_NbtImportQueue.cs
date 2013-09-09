@@ -11,7 +11,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Updates the schema for OC changes
     /// </summary>
-    public class RunBeforeEveryExecutionOfUpdater_02F_Case30041_NbtImportQueue : CswUpdateSchemaTo
+    public class CswUpdateMetaData_02F_Case30041_NbtImportQueue : CswUpdateSchemaTo
     {
         public override string Title { get { return "Pre-Script: Case 30041: DDL for NbtImportQueue"; } }
         #region Blame Logic
@@ -24,6 +24,11 @@ namespace ChemSW.Nbt.Schema
         public override int CaseNo
         {
             get { return 30041; }
+        }
+
+        public override string ScriptName
+        {
+            get { return ""; }
         }
 
         #endregion Blame Logic

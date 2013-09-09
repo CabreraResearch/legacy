@@ -7,17 +7,7 @@ namespace ChemSW.Nbt.Schema
     /// </summary>
     public class RunAlways_MakeMissingNodeTypePropsProps : CswUpdateSchemaTo
     {
-        public static string Title = "Run Always: MakeMissingNodeTypeProps";
-
-        public override CswEnumDeveloper Author
-        {
-            get { return CswEnumDeveloper.NBT; }
-        }
-
-        public override int CaseNo
-        {
-            get { return 0; }
-        }
+        public override string Title { get { return "Run Always: MakeMissingNodeTypeProps"; } }
 
         public override string ScriptName
         {
@@ -29,14 +19,26 @@ namespace ChemSW.Nbt.Schema
             get { return true; }
         }
 
+        #region Blame Logic
+
+        public override CswEnumDeveloper Author
+        {
+            get { return CswEnumDeveloper.NBT; }
+        }
+
+        public override int CaseNo
+        {
+            get { return 0; }
+        }
+
+        #endregion
+
         public override void update()
         {
-
             //This script must always come after the RunBefore Milestone scripts
             _CswNbtSchemaModTrnsctn.MetaData.makeMissingNodeTypeProps();
 
         } // update()
-
 
     }//class CswUpdateSchema_02C_MakeMissingNodeTypeProps
 

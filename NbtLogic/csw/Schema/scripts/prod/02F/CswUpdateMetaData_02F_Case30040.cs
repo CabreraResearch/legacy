@@ -10,7 +10,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Updates the schema for OC changes
     /// </summary>
-    public class RunBeforeEveryExecutionOfUpdater_02F_Case30040 : CswUpdateSchemaTo
+    public class CswUpdateMetaData_02F_Case30040 : CswUpdateSchemaTo
     {
         public override string Title { get { return "Pre-Script: Case 30040"; } }
         public override CswEnumDeveloper Author
@@ -21,6 +21,11 @@ namespace ChemSW.Nbt.Schema
         public override int CaseNo
         {
             get { return 30040; }
+        }
+
+        public override string ScriptName
+        {
+            get { throw new System.NotImplementedException(); }
         }
 
         /// <summary>
