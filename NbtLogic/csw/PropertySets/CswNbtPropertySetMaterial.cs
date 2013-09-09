@@ -105,7 +105,7 @@ namespace ChemSW.Nbt.ObjClasses
                 {
                     NewNode.copyPropertyValues( Node );
                     //CopiedNode.postChanges( true, true );
-                } );
+                }, IsTemp: true );
             return CopiedNode;
         }
 
