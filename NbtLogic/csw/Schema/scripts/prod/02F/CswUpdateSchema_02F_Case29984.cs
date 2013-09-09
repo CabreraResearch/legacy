@@ -24,7 +24,7 @@ namespace ChemSW.Nbt.Schema
 
         public override string ScriptName
         {
-            get { throw new System.NotImplementedException(); }
+            get { return "02F_Case29984"; }
         }
 
         public override void update()

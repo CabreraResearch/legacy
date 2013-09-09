@@ -1,9 +1,5 @@
-using System.Data;
-using ChemSW.DB;
-using ChemSW.Nbt.ImportExport;
 using ChemSW.Nbt.csw.Dev;
-using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.ImportExport;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -13,6 +9,14 @@ namespace ChemSW.Nbt.Schema
     public class CswUpdateMetaData_02F_Case30040 : CswUpdateSchemaTo
     {
         public override string Title { get { return "Pre-Script: Case 30040"; } }
+
+        public override string ScriptName
+        {
+            get { return "02F_Case30040"; }
+        }
+
+        #region Blame Logic
+
         public override CswEnumDeveloper Author
         {
             get { return CswEnumDeveloper.SS; }
@@ -23,10 +27,7 @@ namespace ChemSW.Nbt.Schema
             get { return 30040; }
         }
 
-        public override string ScriptName
-        {
-            get { throw new System.NotImplementedException(); }
-        }
+        #endregion
 
         /// <summary>
         /// The actual update call

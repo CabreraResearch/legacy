@@ -14,6 +14,12 @@ namespace ChemSW.Nbt.Schema
     public class CswUpdateMetaData_02F_Case30041_NbtImportQueue : CswUpdateSchemaTo
     {
         public override string Title { get { return "Pre-Script: Case 30041: DDL for NbtImportQueue"; } }
+
+        public override string ScriptName
+        {
+            get { return ""; }
+        }
+
         #region Blame Logic
 
         public override CswEnumDeveloper Author
@@ -26,11 +32,6 @@ namespace ChemSW.Nbt.Schema
             get { return 30041; }
         }
 
-        public override string ScriptName
-        {
-            get { return ""; }
-        }
-
         #endregion Blame Logic
 
         /// <summary>
@@ -41,7 +42,7 @@ namespace ChemSW.Nbt.Schema
             string ExceptionText = string.Empty;
             if( _CswNbtSchemaModTrnsctn.IsDbLinkConnectionHealthy( CswScheduleLogicNbtCAFImport.CAFDbLink, ref ExceptionText ) )
             {
-                
+
                 CswArbitrarySelect ArbTableSelect = _CswNbtSchemaModTrnsctn.makeCswArbitrarySelect( "nbtimportqueue_table_check", "select table_name from user_tables@" + CswScheduleLogicNbtCAFImport.CAFDbLink + " where lower(table_name)='nbtimportqueue'" );
                 DataTable CafTable = ArbTableSelect.getTable();
                 if( CafTable.Rows.Count == 0 )
@@ -56,12 +57,12 @@ namespace ChemSW.Nbt.Schema
                     CswCommaDelimitedString ActualColumns = new CswCommaDelimitedString();
                     foreach( DataRow Row in CafColumns.Rows )
                     {
-                        string ColumnName = CswConvert.ToString( Row[ "col" ] );
+                        string ColumnName = CswConvert.ToString( Row["col"] );
                         ActualColumns.Add( ColumnName );
                     }
 
                     CswCommaDelimitedString FailedOnColumns = new CswCommaDelimitedString();
-                    CswCommaDelimitedString ExpectedColumns = new CswCommaDelimitedString() {"nbtimportqueueid", "state", "itempk", "tablename", "priority", "errorlog", "viewname" };
+                    CswCommaDelimitedString ExpectedColumns = new CswCommaDelimitedString() { "nbtimportqueueid", "state", "itempk", "tablename", "priority", "errorlog", "viewname" };
                     foreach( string ExpectedColumn in ExpectedColumns.Where( ExpectedColumn => false == ActualColumns.Contains( ExpectedColumn ) ) )
                     {
                         FailedOnColumns.Add( ExpectedColumn );
@@ -69,7 +70,7 @@ namespace ChemSW.Nbt.Schema
 
                     if( FailedOnColumns.Count > 0 )
                     {
-                        throw new CswDniException("The nbtimportqueue is expected to contain these columns {" + ExpectedColumns.ToString() + "}, but the following columns were missing {" + FailedOnColumns.ToString() + "}." );
+                        throw new CswDniException( "The nbtimportqueue is expected to contain these columns {" + ExpectedColumns.ToString() + "}, but the following columns were missing {" + FailedOnColumns.ToString() + "}." );
                     }
 
                 }

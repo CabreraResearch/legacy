@@ -1,7 +1,3 @@
-using System;
-using System.Data;
-using ChemSW.Core;
-using ChemSW.DB;
 using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
@@ -14,6 +10,12 @@ namespace ChemSW.Nbt.Schema
     public class CswUpdateMetaData_02F_Case29992 : CswUpdateSchemaTo
     {
         public override string Title { get { return "Pre-Script: Case 29992"; } }
+
+        public override string ScriptName
+        {
+            get { return "02F_Case29992"; }
+        }
+
         #region Blame Logic
 
         public override CswEnumDeveloper Author
@@ -24,11 +26,6 @@ namespace ChemSW.Nbt.Schema
         public override int CaseNo
         {
             get { return 29992; }
-        }
-
-        public override string ScriptName
-        {
-            get { throw new NotImplementedException(); }
         }
 
         #endregion Blame Logic
@@ -42,7 +39,7 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClassProp QuantityOCP = RequestMaterialCreateOC.getObjectClassProp( CswNbtObjClassRequestMaterialCreate.PropertyName.Quantity );
             if( null == QuantityOCP )
             {
-                _CswNbtSchemaModTrnsctn.createObjectClassProp( RequestMaterialCreateOC, 
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( RequestMaterialCreateOC,
                     new CswNbtWcfMetaDataModel.ObjectClassProp
                     {
                         PropName = CswNbtObjClassRequestMaterialCreate.PropertyName.Quantity,

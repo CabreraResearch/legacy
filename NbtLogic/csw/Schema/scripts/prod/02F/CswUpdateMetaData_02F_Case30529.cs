@@ -10,6 +10,12 @@ namespace ChemSW.Nbt.Schema
     public class CswUpdateMetaData_02F_Case30529 : CswUpdateSchemaTo
     {
         public override string Title { get { return "Pre-Script: Case 30529"; } }
+
+        public override string ScriptName
+        {
+            get { return "02F_Case30529"; }
+        }
+
         #region Blame Logic
 
         public override CswEnumDeveloper Author
@@ -20,11 +26,6 @@ namespace ChemSW.Nbt.Schema
         public override int CaseNo
         {
             get { return 30529; }
-        }
-
-        public override string ScriptName
-        {
-            get { throw new System.NotImplementedException(); }
         }
 
         #endregion Blame Logic
