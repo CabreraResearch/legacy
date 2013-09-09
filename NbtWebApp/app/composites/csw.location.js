@@ -100,6 +100,9 @@
                                 if (cswPrivate.useDefaultLocation) {
                                     cswPrivate.nodeid = data.nodeid;
                                     cswPrivate.path = data.path;
+                                } else {
+                                    //Case 30243 - If we're not using DefaultLocation, use root every time instead (yuck)
+                                    Csw.clientDb.setItem('CswTree_Top_LastSelectedPath', Csw.enums.nodeTree_DefaultSelect.root.name);
                                 }
                                 render();
                             }
