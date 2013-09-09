@@ -21,18 +21,17 @@ namespace ChemSW.Nbt.Schema
             #region MetaData Scripts
 
             //dch 30252 FOXGLOVE, but metadata changes so before EUC changes
-            _addRunBeforeScript( new CswUpdateMetaData_02F_Case30252() );
-            _addRunBeforeScript( new CswUpdateMetaData_02F_Case30228() );
-
-            _addRunBeforeScript( new CswUpdateMetaData_02F_Case30041_NbtImportQueue() ); //Validate the Nbt Import Queue table first
-            _addRunBeforeScript( new CswUpdateMetaData_02F_Case30281() );
-            _addRunBeforeScript( new CswUpdateMetaData_02F_Case30251() );
-            _addRunBeforeScript( new CswUpdateMetaData_02F_Case30251B() );
-            _addRunBeforeScript( new CswUpdateMetaData_02F_Case30082_UserCache() );
-            _addRunBeforeScript( new CswUpdateMetaData_02F_Case27883() );
-            _addRunBeforeScript( new CswUpdateMetaData_02F_Case30040() );
-            _addRunBeforeScript( new CswUpdateMetaData_02F_Case29992() );
-            _addRunBeforeScript( new CswUpdateMetaData_02F_Case30529() );
+            _addVersionedScript( new CswUpdateMetaData_02F_Case30252() );
+            _addVersionedScript( new CswUpdateMetaData_02F_Case30228() );
+            _addVersionedScript( new CswUpdateMetaData_02F_Case30041_NbtImportQueue() ); //Validate the Nbt Import Queue table first
+            _addVersionedScript( new CswUpdateMetaData_02F_Case30281() );
+            _addVersionedScript( new CswUpdateMetaData_02F_Case30251() );
+            _addVersionedScript( new CswUpdateMetaData_02F_Case30251B() );
+            _addVersionedScript( new CswUpdateMetaData_02F_Case30082_UserCache() );
+            _addVersionedScript( new CswUpdateMetaData_02F_Case27883() );
+            _addVersionedScript( new CswUpdateMetaData_02F_Case30040() );
+            _addVersionedScript( new CswUpdateMetaData_02F_Case29992() );
+            _addVersionedScript( new CswUpdateMetaData_02F_Case30529() );
 
             #endregion
 
@@ -41,34 +40,34 @@ namespace ChemSW.Nbt.Schema
 
             #region Data Scripts
 
-            _addVersionedScript( new CswUpdateSchema_02F_Case30281() );                    //02E-012 //02F-001
-            _addVersionedScript( new CswUpdateSchema_02F_Case28998() );                    //02E-013 //02F-002
-            _addVersionedScript( new CswUpdateSchema_02F_Case29973() );                    //02E-014 //02F-003
-            _addVersionedScript( new CswUpdateSchema_02F_Case29191() );                    //02E-015 //02F-004
-            _addVersionedScript( new CswUpdateSchema_02F_Case29542() );                    //02E-016 //02F-005
-            _addVersionedScript( new CswUpdateSchema_02F_Case29438() );                    //02E-017 //02F-006
-            _addVersionedScript( new CswUpdateSchema_02F_Case30082_UserCache() );          //02E-018 //02F-007
-            _addVersionedScript( new CswUpdateSchema_02F_Case30197() );                    //02E-019 //02F-008
-            _addVersionedScript( new CswUpdateSchema_02F_Case30417() );                    //02E-020 //02F-009
-            _addVersionedScript( new CswUpdateSchema_02F_Case27883() );                    //02E-021 //02F-010
-            _addVersionedScript( new CswUpdateSchema_02F_Case27495() );                    //02E-022 //02F-011
-            _addVersionedScript( new CswUpdateSchema_02F_Case30228() );                    //02E-023 //02F-012
-            _addVersionedScript( new CswUpdateSchema_02F_Case30040() );                    //02E-024 //02F-013
-            _addVersionedScript( new CswUpdateSchema_02F_Case30041_Vendors() );            //02E-025 //02F-014
-            _addVersionedScript( new CswUpdateSchema_02F_Case29992() );                    //02E-026 //02F-015
-            _addVersionedScript( new CswUpdateSchema_02F_Case29402() );                    //02E-027 //02F-016
-            _addVersionedScript( new CswUpdateSchema_02F_Case30041_UnitsOfMeasure() );     //02E-028 //02F-017
-            _addVersionedScript( new CswUpdateSchema_02F_Case30041_RolesUsers() );         //02E-029 //02F-018
-            _addVersionedScript( new CswUpdateSchema_02F_Case30252() );                    //02E-019 //02F-019
-            _addVersionedScript( new CswUpdateSchema_02F_Case30041_ScheduledRuleImport() );//02E-030 //02F-020
-            _addVersionedScript( new CswUpdateSchema_02F_Case30043_ControlZones() );       //02E-030 //02F-021
-            _addVersionedScript( new CswUpdateSchema_02F_Case30043_Sites() );              //02E-031 //02F-022
-            _addVersionedScript( new CswUpdateSchema_02F_Case29984() );                    //02E-031 //02F-023
-            _addVersionedScript( new CswUpdateSchema_02F_Case30577() );                    //02E-032 //02F-024
-            _addVersionedScript( new CswUpdateSchema_02F_Case30043_Locations() );          //02E-032 //02F-025
-            _addVersionedScript( new CswUpdateSchema_02F_Case30043_WorkUnits() );          //02E-034 //02F-026
-            _addVersionedScript( new CswUpdateSchema_02F_Case30043_InventoryGroups() );    //02E-035 //02F-027
-            _addVersionedScript( new CswUpdateSchema_02F_Case30647() );                    //02E-036 //02F-028
+            _addVersionedScript( new CswUpdateSchema_02F_Case30281() );
+            _addVersionedScript( new CswUpdateSchema_02F_Case28998() );
+            _addVersionedScript( new CswUpdateSchema_02F_Case29973() );
+            _addVersionedScript( new CswUpdateSchema_02F_Case29191() );
+            _addVersionedScript( new CswUpdateSchema_02F_Case29542() );
+            _addVersionedScript( new CswUpdateSchema_02F_Case29438() );
+            _addVersionedScript( new CswUpdateSchema_02F_Case30082_UserCache() );
+            _addVersionedScript( new CswUpdateSchema_02F_Case30197() );
+            _addVersionedScript( new CswUpdateSchema_02F_Case30417() );
+            _addVersionedScript( new CswUpdateSchema_02F_Case27883() );
+            _addVersionedScript( new CswUpdateSchema_02F_Case27495() );
+            _addVersionedScript( new CswUpdateSchema_02F_Case30228() );
+            _addVersionedScript( new CswUpdateSchema_02F_Case30040() );
+            _addVersionedScript( new CswUpdateSchema_02F_Case30041_Vendors() );
+            _addVersionedScript( new CswUpdateSchema_02F_Case29992() );
+            _addVersionedScript( new CswUpdateSchema_02F_Case29402() );
+            _addVersionedScript( new CswUpdateSchema_02F_Case30041_UnitsOfMeasure() );
+            _addVersionedScript( new CswUpdateSchema_02F_Case30041_RolesUsers() );
+            _addVersionedScript( new CswUpdateSchema_02F_Case30252() );
+            _addVersionedScript( new CswUpdateSchema_02F_Case30041_ScheduledRuleImport() );
+            _addVersionedScript( new CswUpdateSchema_02F_Case30043_ControlZones() );
+            _addVersionedScript( new CswUpdateSchema_02F_Case30043_Sites() );
+            _addVersionedScript( new CswUpdateSchema_02F_Case29984() );
+            _addVersionedScript( new CswUpdateSchema_02F_Case30577() );
+            _addVersionedScript( new CswUpdateSchema_02F_Case30043_Locations() );
+            _addVersionedScript( new CswUpdateSchema_02F_Case30043_WorkUnits() );
+            _addVersionedScript( new CswUpdateSchema_02F_Case30043_InventoryGroups() );
+            _addVersionedScript( new CswUpdateSchema_02F_Case30647() );
 
             #endregion Data Scripts
 
