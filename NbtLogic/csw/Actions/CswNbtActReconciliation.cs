@@ -53,6 +53,7 @@ namespace ChemSW.Nbt.Actions
                                 CswNbtObjClassContainerLocation ContainerLocationNode = _getMostRelevantContainerLocation();
                                 if( null != ContainerLocationNode && 
                                     false == String.IsNullOrEmpty( ContainerLocationNode.Action.Value ) && 
+                                    ContainerLocationNode.Action.Value != CswEnumNbtContainerLocationTypeOptions.Ignore.ToString() &&
                                     ContainerLocationNode.ActionApplied.Checked != CswEnumTristate.True )
                                 {
                                     Data.OutstandingActionsCount++;
@@ -410,7 +411,6 @@ namespace ChemSW.Nbt.Actions
                         else if( Type == CswEnumNbtContainerLocationTypeOptions.Ignore )
                         {
                             ContLocNode.Action.Value = CswEnumNbtContainerLocationActionOptions.Ignore.ToString();
-                            ContLocNode.ActionApplied.Checked = CswEnumTristate.True;
                         }
                         ContLocNode.ActionByUser.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId; 
                         ContLocNode.ScanDate.DateTimeValue = DateTime.Now;
