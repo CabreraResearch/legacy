@@ -99,6 +99,9 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterCreateNode()
         {
+            // originally case 27330, moved here by case 30647
+            Size.setReadOnly( value: true, SaveToDb: true );
+
             _CswNbtObjClassDefault.afterCreateNode();
         }
 
@@ -1149,12 +1152,12 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropRelationship Size { get { return ( _CswNbtNode.Properties[PropertyName.Size] ); } }
         private void OnSizePropChange( CswNbtNodeProp Prop, bool Creating )
         {
-            //This will be affected by the brute force call to _toggleAllPropertyStates();
-            if( CswTools.IsPrimaryKey( Size.RelatedNodeId ) )
-            {
-                Size.setReadOnly( value: true, SaveToDb: true );
-                Size.setHidden( value: true, SaveToDb: true );
-            }
+            ////This will be affected by the brute force call to _toggleAllPropertyStates();
+            //if( CswTools.IsPrimaryKey( Size.RelatedNodeId ) )
+            //{
+            //    Size.setReadOnly( value: true, SaveToDb: true );
+            //    Size.setHidden( value: true, SaveToDb: true );
+            //}
         }
 
         public CswNbtNodePropButton Request { get { return ( _CswNbtNode.Properties[PropertyName.Request] ); } }
