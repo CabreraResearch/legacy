@@ -762,19 +762,19 @@ namespace ChemSW.Nbt.ImportExport
                 CswNbtMetaDataNodeType CurrentNodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
                 if( null != CurrentNodeType )
                 {
-                CswNbtMetaDataNodeTypeProp LegacyIdNTP = CurrentNodeType.getNodeTypeProp( "Legacy Id" );
+                    CswNbtMetaDataNodeTypeProp LegacyIdNTP = CurrentNodeType.getNodeTypeProp( "Legacy Id" );
 
-                CswNbtViewRelationship ParentRelationship = View.AddViewRelationship( CurrentNodeType,
-                                                                                     false );
-                View.AddViewPropertyAndFilter( ParentViewRelationship: ParentRelationship,
-                                              MetaDataProp: LegacyIdNTP,
-                                              Conjunction: CswEnumNbtFilterConjunction.And,
-                                              SubFieldName: CswEnumNbtSubFieldName.Value,
-                                              FilterMode: CswEnumNbtFilterMode.Equals,
-                                              Value: ImportRow[Binding.SourceColumnName].ToString() );
+                    CswNbtViewRelationship ParentRelationship = View.AddViewRelationship( CurrentNodeType,
+                                                                                         false );
+                    View.AddViewPropertyAndFilter( ParentViewRelationship: ParentRelationship,
+                                                  MetaDataProp: LegacyIdNTP,
+                                                  Conjunction: CswEnumNbtFilterConjunction.And,
+                                                  SubFieldName: CswEnumNbtSubFieldName.Value,
+                                                  FilterMode: CswEnumNbtFilterMode.Equals,
+                                                  Value: ImportRow[Binding.SourceColumnName].ToString() );
 
-                Ret = _CswNbtResources.Trees.getTreeFromView( View, false, true, true );
-            }
+                    Ret = _CswNbtResources.Trees.getTreeFromView( View, false, true, true );
+                }
             }
 
             return Ret;
@@ -791,7 +791,7 @@ namespace ChemSW.Nbt.ImportExport
             if( relNodeTbl.Rows.Count > 0 )
             {
                 // Because the sql query is using 'min' it will always return a row; we only want the row if it has a value
-                if( false == string.IsNullOrEmpty( relNodeTbl.Rows[0].ToString() ) )
+                if( false == string.IsNullOrEmpty( relNodeTbl.Rows[0][0].ToString() ) )
                 {
                     CswPrimaryKey pk = new CswPrimaryKey( "nodes", CswConvert.ToInt32( relNodeTbl.Rows[0]["nodeid"] ) );
                     if( Binding.DestProperty.getFieldTypeValue() == CswEnumNbtFieldType.Quantity )

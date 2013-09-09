@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using ChemSW.Core;
 using System.Linq;
+using ChemSW.Core;
 using ChemSW.Nbt.ImportExport;
 using ChemSW.Nbt.Sched;
 using ChemSW.Nbt.Schema;
@@ -73,7 +73,7 @@ namespace ChemSW.Nbt.csw.Schema
                 _SourceColumns = new CswCommaDelimitedString();
 
                 _importOrder( _ImportOrder, _SourceTableName, _DestNodeTypeName );
-        }//ctor
+            }
             else
             {
                 SchemaModTrnsctn.logError( ExceptionText );
@@ -153,7 +153,6 @@ namespace ChemSW.Nbt.csw.Schema
                 DefinitionName = DefinitionName ?? CswScheduleLogicNbtCAFImport.DefinitionName;
 
                 //Add the Legacy ID before storing the definition
-
                 // We check to see if someone already added the Legacy Id
                 bool AlreadyExists = _importBindingsTable.Rows.Cast<DataRow>().Any( Row => Row["destproperty"].ToString() == LegacyID );
                 if( false == AlreadyExists ) { importBinding( SourceTablePkColumnName, LegacyID, "" ); }
@@ -165,8 +164,6 @@ namespace ChemSW.Nbt.csw.Schema
 
                 _createTriggerOnImportTable();
             }
-        }
+        }//finalize()
     }
-
-
 }
