@@ -48,6 +48,10 @@ namespace ChemSW.Nbt.Actions
             [DataMember]
             public String ContainerBarcode = String.Empty;
             [DataMember]
+            public String PriorLocation = String.Empty;
+            [DataMember]
+            public String ScannedLocation = String.Empty;
+            [DataMember]
             public String LocationId = String.Empty;
             [DataMember]
             public String ContainerLocationId = String.Empty;
@@ -58,7 +62,7 @@ namespace ChemSW.Nbt.Actions
             [DataMember]
             public String Action = String.Empty;
             [DataMember]
-            public String ActionApplied = String.Empty;
+            public String Completed = String.Empty;
             [DataMember]
             public Collection<String> ActionOptions;
         }

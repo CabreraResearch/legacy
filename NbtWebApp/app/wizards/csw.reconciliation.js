@@ -426,12 +426,14 @@
                                 cswPrivate.data.ContainerStatuses = [{
                                     ContainerId: '',
                                     ContainerBarcode: '',
+                                    PriorLocation: '',
+                                    ScannedLocation: '',
                                     LocationId: '',
                                     ContainerLocationId: '',
                                     ContainerStatus: '',
                                     ScanDate: '',
                                     Action: '',
-                                    ActionApplied: '',
+                                    Completed: '',
                                     ActionOptions: []
                                 }];
                                 Csw.extend(cswPrivate.data.ContainerStatuses, ajaxdata.ContainerStatuses);
@@ -457,9 +459,10 @@
                                 addColumn('containerid', 'Container Id', true);
                                 addColumn('locationid', 'Location Id', true);
                                 addColumn('containerlocationid', 'ContainerLocation Id', true);
-                                addColumn('actionapplied', 'Action Applied', true);
                                 addColumn('actionoptions', 'Action Options', true);
                                 addColumn('containerbarcode', 'Container Barcode', false);
+                                addColumn('priorlocation', 'Prior Location', false);
+                                addColumn('scannedlocation', 'Scanned Location', false);
                                 var StatusOptions = [];
                                 Csw.each(cswPrivate.data.ContainerStatistics, function (row) {
                                     StatusOptions.push(row.Status);
@@ -470,22 +473,23 @@
                                 });
                                 addColumn('scandate', 'Last Scan Date', false);
                                 addColumn('currentaction', 'Current Action', true);
-                                if (cswPrivate.isCurrent) {
-                                    var actionControlCol = {
-                                        header: 'Action',
-                                        dataIndex: 'action',
-                                        xtype: 'actioncolumn',
-                                        renderer: function (value, metaData, record, rowIndex, colIndex, store, view) {
-                                            var cell1Id = cswPrivate.name + 'action' + rowIndex + colIndex + '1';
-                                            var ret = '<table id="gridActionColumn' + cell1Id + '" cellpadding="0"><tr>';
-                                            ret += '<td id="' + cell1Id + '" style="width: 26px;"/>';
-                                            ret += '</tr></table>';
-                                            cswPrivate.makeActionPicklist(cell1Id, record);
-                                            return ret;
-                                        }
-                                    };
-                                    ContainersGridColumns.push(actionControlCol);
-                                }
+
+                                var actionControlCol = {
+                                    header: 'Action',
+                                    dataIndex: 'action',
+                                    xtype: 'actioncolumn',
+                                    renderer: function (value, metaData, record, rowIndex, colIndex, store, view) {
+                                        var cell1Id = cswPrivate.name + 'action' + rowIndex + colIndex + '1';
+                                        var ret = '<table id="gridActionColumn' + cell1Id + '" cellpadding="0"><tr>';
+                                        ret += '<td id="' + cell1Id + '" style="width: 26px;"/>';
+                                        ret += '</tr></table>';
+                                        cswPrivate.makeActionPicklist(cell1Id, record);
+                                        return ret;
+                                    }
+                                };
+                                ContainersGridColumns.push(actionControlCol);
+
+                                addColumn('completed', 'Completed', false);
 
                                 var ContainersGridData = [];
                                 Csw.each(cswPrivate.data.ContainerStatuses, function (row) {
@@ -493,8 +497,10 @@
                                         containerid: row.ContainerId,
                                         locationid: row.LocationId,
                                         containerlocationid: row.ContainerLocationId,
-                                        actionapplied: row.ActionApplied,
+                                        completed: row.Completed,
                                         containerbarcode: row.ContainerBarcode,
+                                        priorlocation: row.PriorLocation,
+                                        scannedlocation: row.ScannedLocation,
                                         status: row.ContainerStatus,
                                         scandate: row.ScanDate,
                                         actionoptions: row.ActionOptions.join(','),
@@ -629,7 +635,7 @@
                             cswPrivate.addActionChange(record.data, actionSelect.val());
                         }
                     });
-                    if (Csw.bool(record.data.actionapplied) === true) {
+                    if (Csw.bool(record.data.completed) === true || false === cswPrivate.isCurrent) {
                         actionSelect.disable();
                     }
                     if (Csw.isNullOrEmpty(record.data.actionoptions)) {
