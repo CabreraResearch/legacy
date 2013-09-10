@@ -33,6 +33,7 @@ namespace ChemSW.Nbt.PropTypes
             }
             _IntervalSubField = ( (CswNbtFieldTypeRuleTimeInterval) _FieldTypeRule ).IntervalSubField;
             _StartDateSubField = ( (CswNbtFieldTypeRuleTimeInterval) _FieldTypeRule ).StartDateSubField;
+            _ClobDataSubField = ( (CswNbtFieldTypeRuleTimeInterval) _FieldTypeRule ).ClobDataSubField;
 
             // Associate subfields with methods on this object, for SetSubFieldValue()
             _SubFieldMethods.Add( _IntervalSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => RateInterval, x => RateInterval.ReadJson( CswConvert.ToJObject( x ) ) ) );
@@ -41,6 +42,7 @@ namespace ChemSW.Nbt.PropTypes
 
         private CswNbtSubField _IntervalSubField;
         private CswNbtSubField _StartDateSubField;
+        private CswNbtSubField _ClobDataSubField;
 
         override public bool Empty
         {
@@ -60,10 +62,11 @@ namespace ChemSW.Nbt.PropTypes
             set
             {
                 _RateInterval = value;
-                SetPropRowValue( _IntervalSubField.Column, value.ToString() );
-                SetPropRowValue( _StartDateSubField.Column, value.getFirst() );
+                SetPropRowValue( _IntervalSubField, value.ToString() );
+                SetPropRowValue( _StartDateSubField, value.getFirst() );
                 Gestalt = value.ToString();
-                ClobData = value.ToXmlString();
+                //ClobData = value.ToXmlString();
+                SetPropRowValue( _ClobDataSubField, value.ToXmlString() );
             }
         }
 
@@ -133,7 +136,7 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void SyncGestalt()
         {
-            SetPropRowValue( CswEnumNbtPropColumn.Gestalt, RateInterval.ToString() );
+            SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, RateInterval.ToString() );
         }
 
     }//CswNbtNodeProp

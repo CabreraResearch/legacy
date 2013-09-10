@@ -50,7 +50,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                string StringVal = GetPropRowValue( _StartDateTimeSubField.Column );
+                string StringVal = GetPropRowValue( _StartDateTimeSubField );
                 DateTime ReturnVal = DateTime.MinValue;
                 if( StringVal != string.Empty )
                     ReturnVal = Convert.ToDateTime( StringVal );
@@ -58,7 +58,7 @@ namespace ChemSW.Nbt.PropTypes
             }
             set
             {
-                SetPropRowValue( _StartDateTimeSubField.Column, value );
+                SetPropRowValue( _StartDateTimeSubField, value );
             }
         }//StartDateTime
 
@@ -66,11 +66,11 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return GetPropRowValue( _UnitsSubField.Column );
+                return GetPropRowValue( _UnitsSubField );
             }
             set
             {
-                SetPropRowValue( _UnitsSubField.Column, value );
+                SetPropRowValue( _UnitsSubField, value );
             }
         }//Units
 
@@ -92,14 +92,14 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 double ret = Double.NaN;
-                string StringVal = GetPropRowValue( _ValueSubField.Column );
+                string StringVal = GetPropRowValue( _ValueSubField );
                 if( CswTools.IsFloat( StringVal ) )
                     ret = Convert.ToDouble( StringVal );
                 return ret;
             }
             set
             {
-                SetPropRowValue( _ValueSubField.Column, value );
+                SetPropRowValue( _ValueSubField, value );
                 if( value != Double.NaN )
                     Gestalt = value.ToString() + " " + Units.ToString();
                 else
@@ -234,7 +234,7 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void SyncGestalt()
         {
-            SetPropRowValue( CswEnumNbtPropColumn.Gestalt, CachedValue.ToString() + " " + Units.ToString() );
+            SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, CachedValue.ToString() + " " + Units.ToString() );
         }
 
     }//CswNbtNodePropMTBF

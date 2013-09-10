@@ -133,7 +133,7 @@ namespace ChemSW.Nbt.ObjClasses
             // Case 28206: Setting Location of Container based on Container Group
             // Note: If the Location and Container Group are both set on a Container,
             // then the Container Group location overrides the user set location.
-            if( this.ContainerGroup.WasModified &&
+            if( this.ContainerGroup.getAnySubFieldModified() &&
                 this.ContainerGroup.RelatedNodeId != null &&
                 ( this.ContainerGroup.GetOriginalPropRowValue( CswEnumNbtSubFieldName.NodeID ) != this.ContainerGroup.RelatedNodeId.PrimaryKey.ToString() ) )
             {
@@ -148,7 +148,7 @@ namespace ChemSW.Nbt.ObjClasses
                     }
                 }
             }
-            else if( this.Location.WasModified &&
+            else if( this.Location.getAnySubFieldModified() &&
                      this.Location.SelectedNodeId != null &&
                      ( this.Location.GetOriginalPropRowValue( CswEnumNbtSubFieldName.NodeID ) != this.Location.SelectedNodeId.PrimaryKey.ToString() ) )
             {

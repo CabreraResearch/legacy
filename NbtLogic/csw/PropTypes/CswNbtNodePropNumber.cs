@@ -40,7 +40,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                string StringValue = GetPropRowValue( _ValueSubField.Column );
+                string StringValue = GetPropRowValue( _ValueSubField );
                 if( CswTools.IsFloat( StringValue ) )
                     return Convert.ToDouble( StringValue );
                 else
@@ -50,7 +50,7 @@ namespace ChemSW.Nbt.PropTypes
             {
                 if( Double.IsNaN( value ) )
                 {
-                    SetPropRowValue( _ValueSubField.Column, Double.NaN );
+                    SetPropRowValue( _ValueSubField, Double.NaN );
                     Gestalt = string.Empty;
                 }
                 else
@@ -60,7 +60,7 @@ namespace ChemSW.Nbt.PropTypes
                     if( Precision > Int32.MinValue )
                         RoundedValue = Math.Round( value, Precision, MidpointRounding.AwayFromZero );
 
-                    SetPropRowValue( _ValueSubField.Column, RoundedValue );
+                    SetPropRowValue( _ValueSubField, RoundedValue );
                     SyncGestalt();
                 }
             }
@@ -154,7 +154,7 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void SyncGestalt()
         {
-            SetPropRowValue( CswEnumNbtPropColumn.Gestalt, Value.ToString() );
+            SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, Value.ToString() );
         }
     }//CswNbtNodeProp
 

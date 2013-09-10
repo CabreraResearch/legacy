@@ -240,14 +240,14 @@ namespace ChemSW.Nbt.MetaData
             if( null != ObjectClassProp )
             {
                 SubFieldName = SubFieldName ?? ObjectClassProp.getFieldTypeRule().SubFields.Default.Name;
-                ObjectClassProp.DefaultValue.SetPropRowValue( ObjectClassProp.getFieldTypeRule().SubFields[SubFieldName].Column, Value );
+                ObjectClassProp.DefaultValue.SetPropRowValue( SubFieldName, ObjectClassProp.getFieldTypeRule().SubFields[SubFieldName].Column, Value );
                 // We're going to regret this day
-                ObjectClassProp.DefaultValue.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, Value );
+                ObjectClassProp.DefaultValue.SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, Value );
 
                 foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in ObjectClassProp.getNodeTypeProps() )
                 {
                     //NodeTypeProp.DefaultValue.SetPropRowValue( ObjectClassProp.getFieldTypeRule().SubFields[SubFieldName].Column, Value );
-                    //NodeTypeProp.DefaultValue.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, Value );
+                    //NodeTypeProp.DefaultValue.SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, Value );
                     NodeTypeProp.DefaultValue.SetSubFieldValue( SubFieldName, Value );
                 }
             }
@@ -258,7 +258,7 @@ namespace ChemSW.Nbt.MetaData
         /// </summary>
         public void UpdateObjectClassProp( CswNbtMetaDataObjectClassProp ObjectClassProp, CswEnumNbtObjectClassPropAttributes Attribute, object Value )
         {
-            if (Attribute != CswResources.UnknownEnum)
+            if( Attribute != CswResources.UnknownEnum )
             {
                 string AttributeName = CswNbtMetaDataObjectClassProp.getObjectClassPropAttributesAsString( Attribute );
                 object DBValue = CswConvert.ToDbVal( Value );
@@ -275,7 +275,7 @@ namespace ChemSW.Nbt.MetaData
                     foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in ObjectClassProp.getNodeTypeProps() )
                     {
                         CswEnumNbtNodeTypePropAttributes NodeTypeAttribute = AttributeName;
-                        
+
                         if( NodeTypeAttribute != CswResources.UnknownEnum )
                         {
                             NodeTypeProp._DataRow[AttributeName] = DBValue;

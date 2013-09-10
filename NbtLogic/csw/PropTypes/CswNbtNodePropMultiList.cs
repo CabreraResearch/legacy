@@ -79,7 +79,7 @@ namespace ChemSW.Nbt.PropTypes
                 if( _Value == null )
                 {
                     _Value = new CswCommaDelimitedString();
-                    _Value.FromString( GetPropRowValue( _ValueSubField.Column ) );
+                    _Value.FromString( GetPropRowValue( _ValueSubField ) );
                 }
                 return _Value;
             }
@@ -87,7 +87,7 @@ namespace ChemSW.Nbt.PropTypes
             {
                 _Value = value;
                 string ValString = value.ToString();
-                SetPropRowValue( _ValueSubField.Column, ValString );
+                SetPropRowValue( _ValueSubField, ValString );
                 SyncGestalt();
             }
         }
@@ -187,7 +187,7 @@ namespace ChemSW.Nbt.PropTypes
                     NewGestalt.Add( Options[Key] );
                 }
             }
-            SetPropRowValue( CswEnumNbtPropColumn.Gestalt, NewGestalt.ToString() );
+            SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, NewGestalt.ToString() );
         } // _setGestalt()
 
         public static string OptionTextField = "Text";

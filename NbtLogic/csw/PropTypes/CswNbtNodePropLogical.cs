@@ -39,18 +39,18 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return CswConvert.ToTristate( GetPropRowValue( _CheckedSubField.Column ) );
+                return CswConvert.ToTristate( GetPropRowValue( _CheckedSubField ) );
             }
             set
             {
                 object val = CswConvert.ToDbVal( value );
                 if( val != DBNull.Value )
                 {
-                    SetPropRowValue( _CheckedSubField.Column, val );
+                    SetPropRowValue( _CheckedSubField, val );
                 }
                 else
                 {
-                    SetPropRowValue( _CheckedSubField.Column, string.Empty );
+                    SetPropRowValue( _CheckedSubField, string.Empty );
                 }
                 Gestalt = toLogicalGestalt( value );
             }
@@ -103,7 +103,7 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void SyncGestalt()
         {
-            SetPropRowValue( CswEnumNbtPropColumn.Gestalt, toLogicalGestalt( Checked ) );
+            SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, toLogicalGestalt( Checked ) );
         }
     }//CswNbtNodeProp
 

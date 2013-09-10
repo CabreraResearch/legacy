@@ -52,7 +52,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                if( null == _Images || WasModified )
+                if( null == _Images || getAnySubFieldModified() )
                 {
                     _Images = new Collection<CswNbtSdBlobData.CswNbtBlob>();
                     if( null != _CswNbtResources ) //WCF getters must always be null safe
@@ -161,7 +161,7 @@ namespace ChemSW.Nbt.PropTypes
             {
                 imageNames.Add(Image.FileName);
             }
-            SetPropRowValue( CswEnumNbtPropColumn.Gestalt, imageNames.ToString() );
+            SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, imageNames.ToString() );
         }
     }
 

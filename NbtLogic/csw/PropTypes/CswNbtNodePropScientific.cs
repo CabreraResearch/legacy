@@ -45,11 +45,11 @@ namespace ChemSW.Nbt.PropTypes
             {
                 if( Exponent != Int32.MinValue && Exponent != 0 )
                 {
-                    SetPropRowValue( CswEnumNbtPropColumn.Gestalt, Base.ToString() + "E" + Exponent.ToString() );
+                    SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, Base.ToString() + "E" + Exponent.ToString() );
                 }
                 else
                 {
-                    SetPropRowValue( CswEnumNbtPropColumn.Gestalt, Base.ToString() );
+                    SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, Base.ToString() );
                 }
             }
         }
@@ -75,12 +75,12 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                string StringValue = GetPropRowValue( _BaseSubField.Column );
+                string StringValue = GetPropRowValue( _BaseSubField );
                 return CswConvert.ToDouble( StringValue );
             }
             set
             {
-                SetPropRowValue( _BaseSubField.Column, value );
+                SetPropRowValue( _BaseSubField, value );
                 if( false == Double.IsNaN( value ) && Exponent == Int32.MinValue )
                 {
                     Exponent = 0;
@@ -93,7 +93,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                string StringValue = GetPropRowValue( _ExponentSubField.Column );
+                string StringValue = GetPropRowValue( _ExponentSubField );
                 return CswConvert.ToInt32( StringValue );
             }
             set
@@ -103,7 +103,7 @@ namespace ChemSW.Nbt.PropTypes
                 {
                     ExpValue = 0;
                 }
-                SetPropRowValue( _ExponentSubField.Column, ExpValue );
+                SetPropRowValue( _ExponentSubField, ExpValue );
                 SyncGestalt();
             }
         } // Exponent

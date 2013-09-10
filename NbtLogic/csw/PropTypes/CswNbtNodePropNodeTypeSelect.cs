@@ -58,7 +58,7 @@ namespace ChemSW.Nbt.PropTypes
                 if( _SelectedNodeTypeIds == null )
                 {
                     _SelectedNodeTypeIds = new CswCommaDelimitedString();
-                    _SelectedNodeTypeIds.FromString( GetPropRowValue( _SelectedNodeTypeIdsSubField.Column ) );
+                    _SelectedNodeTypeIds.FromString( GetPropRowValue( _SelectedNodeTypeIdsSubField ) );
                     _SelectedNodeTypeIds.OnChange += new CswDelimitedString.DelimitedStringChangeHandler( _SelectedNodeTypeIds_OnChange );
                 }
                 return _SelectedNodeTypeIds;
@@ -74,7 +74,7 @@ namespace ChemSW.Nbt.PropTypes
         // This event handler allows us to save changes made directly to _SelectedNodeTypeIds (like .Add() )
         private void _SelectedNodeTypeIds_OnChange()
         {
-            if( SetPropRowValue( _SelectedNodeTypeIdsSubField.Column, _SelectedNodeTypeIds.ToString() ) )
+            if( SetPropRowValue( _SelectedNodeTypeIdsSubField, _SelectedNodeTypeIds.ToString() ) )
             {
                 // BZ 10094 - this caused Notification names to populate in the background, which was confusing
                 // PendingUpdate = true;
@@ -276,7 +276,7 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void SyncGestalt()
         {
-            SetPropRowValue( CswEnumNbtPropColumn.Gestalt, SelectedNodeTypeNames().ToString() );
+            SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, SelectedNodeTypeNames().ToString() );
         }
 
     }//CswNbtNodePropNodeTypeSelect

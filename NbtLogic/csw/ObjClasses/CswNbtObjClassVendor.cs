@@ -81,7 +81,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation, bool Creating )
         {
-            if( VendorType.WasModified || CorporateIdentity.WasModified )
+            if( VendorType.getAnySubFieldModified() || CorporateIdentity.getAnySubFieldModified() )
             {
                 //For each Corporate Entity, there can only be one vendortype of Corporate aka Highlander attribute
                 if( false == VendorType.Empty && false == CorporateIdentity.Empty )

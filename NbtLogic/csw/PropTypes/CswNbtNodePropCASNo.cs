@@ -43,11 +43,11 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return GetPropRowValue( _TextSubField.Column );
+                return GetPropRowValue( _TextSubField );
             }
             set
             {
-                SetPropRowValue( _TextSubField.Column, value );
+                SetPropRowValue( _TextSubField, value );
                 Gestalt = value;
             }
         }
@@ -140,7 +140,7 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void SyncGestalt()
         {
-            SetPropRowValue( CswEnumNbtPropColumn.Gestalt, Text );
+            SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, Text );
         }
     }//CswNbtNodePropText
 

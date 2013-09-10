@@ -45,18 +45,18 @@ namespace ChemSW.Nbt.PropTypes
                 //if( StringValue != string.Empty )
                 //    ReturnVal = Convert.ToDateTime( StringValue );
                 //return ( ReturnVal.Date );
-                return GetPropRowValueDate( _DateValueSubField.Column );
+                return GetPropRowValueDate( _DateValueSubField );
             }
 
             set
             {
                 if( DateTime.MinValue != value )
                 {
-                    SetPropRowValue( _DateValueSubField.Column, value );
+                    SetPropRowValue( _DateValueSubField, value );
                 }
                 else
                 {
-                    SetPropRowValue( _DateValueSubField.Column, DateTime.MinValue );
+                    SetPropRowValue( _DateValueSubField, DateTime.MinValue );
                 }
                 SyncGestalt();
             }
@@ -71,13 +71,13 @@ namespace ChemSW.Nbt.PropTypes
                 switch( DisplayMode )
                 {
                     case CswEnumNbtDateDisplayMode.Date:
-                        SetPropRowValue( CswEnumNbtPropColumn.Gestalt, Value.ToShortDateString() );
+                        SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, Value.ToShortDateString() );
                         break;
                     case CswEnumNbtDateDisplayMode.Time:
-                        SetPropRowValue( CswEnumNbtPropColumn.Gestalt, Value.ToLongTimeString() );
+                        SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, Value.ToLongTimeString() );
                         break;
                     case CswEnumNbtDateDisplayMode.DateTime:
-                        SetPropRowValue( CswEnumNbtPropColumn.Gestalt, Value.ToShortDateString() + " " + Value.ToLongTimeString() );
+                        SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, Value.ToShortDateString() + " " + Value.ToLongTimeString() );
                         break;
                 }
             }

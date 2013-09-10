@@ -105,7 +105,7 @@ namespace ChemSW.Nbt
                 bool ReturnVal = false;
                 foreach( CswNbtNodePropWrapper CurrentProp in _Props )
                 {
-                    if( CurrentProp.WasModified )
+                    if( CurrentProp.getAnySubFieldModified() )
                     {
                         ReturnVal = true;
                         break;
@@ -117,31 +117,31 @@ namespace ChemSW.Nbt
         }//Modified
 
 
-        public bool SuspendModifyTracking
-        {
-            get
-            {
-                bool ReturnVal = false;
-                foreach( CswNbtNodePropWrapper CurrentProp in _Props )
-                {
-                    if( CurrentProp.SuspendModifyTracking )
-                    {
-                        ReturnVal = true;
-                        break;
-                    }//
-                }//iterate props
+        //public bool SuspendModifyTracking
+        //{
+        //    get
+        //    {
+        //        bool ReturnVal = false;
+        //        foreach( CswNbtNodePropWrapper CurrentProp in _Props )
+        //        {
+        //            if( CurrentProp.SuspendModifyTracking )
+        //            {
+        //                ReturnVal = true;
+        //                break;
+        //            }//
+        //        }//iterate props
 
-                return ( ReturnVal );
-            }
+        //        return ( ReturnVal );
+        //    }
 
-            set
-            {
-                foreach( CswNbtNodePropWrapper CurrentProp in _Props )
-                {
-                    CurrentProp.SuspendModifyTracking = value;
-                }//iterate props
-            }//
-        }//SuspendModifyTracking
+        //    set
+        //    {
+        //        foreach( CswNbtNodePropWrapper CurrentProp in _Props )
+        //        {
+        //            CurrentProp.SuspendModifyTracking = value;
+        //        }//iterate props
+        //    }//
+        //}//SuspendModifyTracking
 
         public bool CreatedFromNodeTypeId = false;
 
@@ -150,7 +150,8 @@ namespace ChemSW.Nbt
         {
             foreach( CswNbtNodePropWrapper CurrentProp in _Props )
             {
-                CurrentProp.clearModifiedFlag();
+                //CurrentProp.clearModifiedFlag();
+                CurrentProp.clearSubFieldModifiedFlags();
             }//iterate props
 
         }//_clearModifiedFlag()
@@ -309,7 +310,7 @@ namespace ChemSW.Nbt
                 _CswNbtNode.ObjClass.triggerAfterPopulateProps();
             }
 
-            SuspendModifyTracking = false;
+            //SuspendModifyTracking = false;
         }//_populateProps()
 
 

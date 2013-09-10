@@ -42,11 +42,11 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return GetPropRowValue( _TextSubField.Column );
+                return GetPropRowValue( _TextSubField );
             }
             set
             {
-                SetPropRowValue( _TextSubField.Column, value );
+                SetPropRowValue( _TextSubField, value );
             }
         }
 

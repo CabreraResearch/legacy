@@ -47,7 +47,7 @@ namespace ChemSW.Nbt.PropTypes
         //{
         //    get
         //    {
-        //        return ( _CswNbtNodeProp.WasModified );
+        //        return ( _CswNbtNodeProp.getAnySubFieldModified() );
         //    }
 
         //}//WasModified
@@ -152,11 +152,11 @@ namespace ChemSW.Nbt.PropTypes
         /// <param name="value">True to hide, false to show</param>
         /// <param name="SaveToDb">If true and the value is different from the value in the database, write this to jct_nodes_props</param>
         public void setHidden( bool value, bool SaveToDb ) { _CswNbtNodePropData.setHidden( value, SaveToDb ); }
-        public string Field1 { get { return ( _CswNbtNodePropData.Field1 ); } set { _CswNbtNodePropData.Field1 = value; } }
-        public string Field2 { get { return ( _CswNbtNodePropData.Field2 ); } set { _CswNbtNodePropData.Field2 = value; } }
-        public string Field3 { get { return ( _CswNbtNodePropData.Field3 ); } set { _CswNbtNodePropData.Field3 = value; } }
-        public string Field4 { get { return ( _CswNbtNodePropData.Field4 ); } set { _CswNbtNodePropData.Field4 = value; } }
-        public string Field5 { get { return ( _CswNbtNodePropData.Field5 ); } set { _CswNbtNodePropData.Field5 = value; } }
+        public string Field1 { get { return ( _CswNbtNodePropData.Field1 ); } } //set { _CswNbtNodePropData.Field1 = value; } }
+        public string Field2 { get { return ( _CswNbtNodePropData.Field2 ); } } //set { _CswNbtNodePropData.Field2 = value; } }
+        public string Field3 { get { return ( _CswNbtNodePropData.Field3 ); } } //set { _CswNbtNodePropData.Field3 = value; } }
+        public string Field4 { get { return ( _CswNbtNodePropData.Field4 ); } } //set { _CswNbtNodePropData.Field4 = value; } }
+        public string Field5 { get { return ( _CswNbtNodePropData.Field5 ); } } //set { _CswNbtNodePropData.Field5 = value; } }
         public bool Required { get { return ( _CswNbtNodeProp.Required ); } }
         /// <summary>
         /// Determines whether to treat the property as required, temporarily
@@ -165,7 +165,7 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropWrapper DefaultValue { get { return ( _CswNbtNodeProp.DefaultValue ); } }
         public bool HasDefaultValue() { return ( _CswNbtNodeProp.HasDefaultValue() ); }
 
-        public bool PendingUpdate { get { return ( _CswNbtNodePropData.PendingUpdate ); } set { _CswNbtNodePropData.PendingUpdate = value; } }
+        public bool PendingUpdate { get { return ( _CswNbtNodePropData.PendingUpdate ); } } // set { _CswNbtNodePropData.PendingUpdate = value; } }
 
         public void ClearValue() { _CswNbtNodePropData.ClearValue(); }
         public void ClearBlob() { _CswNbtNodePropData.ClearBlob(); }

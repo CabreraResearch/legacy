@@ -71,7 +71,7 @@ namespace ChemSW.Nbt.ObjClasses
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation, bool Creating )
         {
             // The user cannot change his or her own Administrator privileges.
-            if( Administrator.WasModified && 
+            if( Administrator.getAnySubFieldModified() && 
                 Administrator.Checked != CswConvert.ToTristate(Administrator.GetOriginalPropRowValue()) &&
                 _CswNbtResources.CurrentUser.RoleId == _CswNbtNode.NodeId )
             {
@@ -90,7 +90,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
 
             // case 22437
-            if( ActionPermissions.WasModified )
+            if( ActionPermissions.getAnySubFieldModified() )
             {
                 // case 25444 - was it *really* modified?
                 CswNbtNodePropWrapper ActionPermissionsPropWrapper = Node.Properties[PropertyName.ActionPermissions];
@@ -167,7 +167,7 @@ namespace ChemSW.Nbt.ObjClasses
                         } // if( true == _CswNbtResources.Permit.can( Action, this ) )
                     } // foreach( string ActionNameString in ActionPermissions.YValues )
                 } // if( ActionPermissions.Value != ActionPermissionsOriginalValue )
-            } // if( ActionPermissions.WasModified )
+            } // if( ActionPermissions.getAnySubFieldModified() )
 
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation, Creating );
         }//beforeWriteNode()

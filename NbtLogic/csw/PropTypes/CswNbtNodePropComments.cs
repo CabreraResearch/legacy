@@ -56,7 +56,7 @@ namespace ChemSW.Nbt.PropTypes
                 
                 try
                 {
-                    string Json = GetPropRowValue( _CommentSubField.Column );
+                    string Json = GetPropRowValue( _CommentSubField );
                     if( false == string.IsNullOrEmpty( Json ) )
                     {
                         Ret = CswConvert.ToJArray( Json );
@@ -75,7 +75,7 @@ namespace ChemSW.Nbt.PropTypes
             }
             set
             {
-                SetPropRowValue( _CommentSubField.Column, value.ToString() );
+                SetPropRowValue( _CommentSubField, value.ToString() );
             }
         }
 
@@ -191,7 +191,7 @@ namespace ChemSW.Nbt.PropTypes
                 string dateSubmitted = lastComment["datetime"].ToString();
                 string message = lastComment["message"].ToString();
 
-                SetPropRowValue( CswEnumNbtPropColumn.Gestalt, commenter + " on " + dateSubmitted.ToString() + ": " + message );
+                SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, commenter + " on " + dateSubmitted.ToString() + ": " + message );
             }
         }
 

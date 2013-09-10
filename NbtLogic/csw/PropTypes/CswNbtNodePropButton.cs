@@ -106,14 +106,14 @@ namespace ChemSW.Nbt.PropTypes
         /// </summary>
         public string MenuOptions
         {
-            get { return GetPropRowValue( _MenuOptionsSubField.Column ); }
-            set { SetPropRowValue( _MenuOptionsSubField.Column, value ); }
+            get { return GetPropRowValue( _MenuOptionsSubField ); }
+            set { SetPropRowValue( _MenuOptionsSubField, value ); }
         }
 
         public string State
         {
-            get { return GetPropRowValue( _StateSubField.Column ); }
-            set { SetPropRowValue( _StateSubField.Column, value ); }
+            get { return GetPropRowValue( _StateSubField ); }
+            set { SetPropRowValue( _StateSubField, value ); }
         }
 
         private bool isThisTheSaveButton()
@@ -134,7 +134,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                string Ret = GetPropRowValue( _DisplayNameSubField.Column );
+                string Ret = GetPropRowValue( _DisplayNameSubField );
                 if( string.IsNullOrEmpty( Ret ) )
                 {
                     if( isThisTheSaveButton() )
@@ -145,13 +145,13 @@ namespace ChemSW.Nbt.PropTypes
                     {
                         Ret = Text;
                     }
-                    SetPropRowValue( _DisplayNameSubField.Column, Ret );
+                    SetPropRowValue( _DisplayNameSubField, Ret );
                 }
                 return Ret;
             }
             set
             {
-                SetPropRowValue( _DisplayNameSubField.Column, value );
+                SetPropRowValue( _DisplayNameSubField, value );
             }
         }
 
@@ -160,7 +160,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                string Ret = GetPropRowValue( _IconSubField.Column );
+                string Ret = GetPropRowValue( _IconSubField );
                 if( string.IsNullOrEmpty( Ret ) && isThisTheSaveButton() )
                 {
                     Ret = "save";
@@ -168,7 +168,7 @@ namespace ChemSW.Nbt.PropTypes
                 }
                 return Ret;
             }
-            set { SetPropRowValue( _IconSubField.Column, value ); }
+            set { SetPropRowValue( _IconSubField, value ); }
         }
 
         public override string ValueForNameTemplate

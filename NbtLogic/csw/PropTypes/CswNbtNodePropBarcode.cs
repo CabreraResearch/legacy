@@ -49,7 +49,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return GetPropRowValue( _BarcodeSubField.Column );
+                return GetPropRowValue( _BarcodeSubField );
             }
         }//Barcode
 
@@ -57,7 +57,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return CswConvert.ToInt32( GetPropRowValue( _SequenceNumberSubField.Column ) );
+                return CswConvert.ToInt32( GetPropRowValue( _SequenceNumberSubField ) );
             }
         }//SequenceNumber
 
@@ -87,7 +87,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             // Fix missing sequence number
             Int32 ThisSeqValue = _SequenceValue.deformatSequence( Barcode );
-            SetPropRowValue( _SequenceNumberSubField.Column, ThisSeqValue );
+            SetPropRowValue( _SequenceNumberSubField, ThisSeqValue );
         }
 
         /// <summary>
@@ -99,9 +99,9 @@ namespace ChemSW.Nbt.PropTypes
         /// (set true if the value was not just generated from the sequence)</param>
         public bool setBarcodeValueOverride( string SeqValue, bool ResetSequence )
         {
-            bool Succeeded = SetPropRowValue( _BarcodeSubField.Column, SeqValue );
+            bool Succeeded = SetPropRowValue( _BarcodeSubField, SeqValue );
             Int32 ThisSeqValue = _SequenceValue.deformatSequence( SeqValue );
-            Succeeded = ( Succeeded && SetPropRowValue( _SequenceNumberSubField.Column, ThisSeqValue ) );
+            Succeeded = ( Succeeded && SetPropRowValue( _SequenceNumberSubField, ThisSeqValue ) );
             Gestalt = SeqValue;
 
             if( ResetSequence )
@@ -172,7 +172,7 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void SyncGestalt()
         {
-            SetPropRowValue( CswEnumNbtPropColumn.Gestalt, Barcode );
+            SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, Barcode );
         }
     }//CswNbtNodePropQuantity
 

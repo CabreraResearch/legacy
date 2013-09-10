@@ -57,7 +57,7 @@ namespace ChemSW.Nbt.PropTypes
                 {
                     _SelectedViewIds = new CswCommaDelimitedString();
                     _SelectedViewIds.OnChange += new CswDelimitedString.DelimitedStringChangeHandler( _SelectedViewIds_OnChange );
-                    _SelectedViewIds.FromString( GetPropRowValue( _SelectedViewIdsSubField.Column ) );
+                    _SelectedViewIds.FromString( GetPropRowValue( _SelectedViewIdsSubField ) );
                 }
                 return _SelectedViewIds;
             }
@@ -72,7 +72,7 @@ namespace ChemSW.Nbt.PropTypes
         // This event handler allows us to save changes made directly to _SelectedNodeTypeIds (like .Add() )
         void _SelectedViewIds_OnChange()
         {
-            if( SetPropRowValue( _SelectedViewIdsSubField.Column, _SelectedViewIds.ToString() ) )
+            if( SetPropRowValue( _SelectedViewIdsSubField, _SelectedViewIds.ToString() ) )
                 PendingUpdate = true;
         }
 
@@ -112,7 +112,7 @@ namespace ChemSW.Nbt.PropTypes
                 {
                     _CachedViewNames = new CswCommaDelimitedString();
                     _CachedViewNames.OnChange += new CswDelimitedString.DelimitedStringChangeHandler( _CachedViewNames_OnChange );
-                    _CachedViewNames.FromString( GetPropRowValue( _CachedViewNameSubField.Column ) );
+                    _CachedViewNames.FromString( GetPropRowValue( _CachedViewNameSubField ) );
                 }
                 return _CachedViewNames;
             }
@@ -127,7 +127,7 @@ namespace ChemSW.Nbt.PropTypes
         // This event handler allows us to save changes made directly to _SelectedNodeTypeIds (like .Add() )
         void _CachedViewNames_OnChange()
         {
-            SetPropRowValue( _CachedViewNameSubField.Column, _CachedViewNames.ToString() );
+            SetPropRowValue( _CachedViewNameSubField, _CachedViewNames.ToString() );
         }
 
         public void RefreshViewName()

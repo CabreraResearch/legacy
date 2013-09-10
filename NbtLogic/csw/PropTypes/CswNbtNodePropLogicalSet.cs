@@ -40,9 +40,11 @@ namespace ChemSW.Nbt.PropTypes
                 LogicalSetXmlDoc.LoadXml( ClobData );
             }
 
-            // No subfields
+            _ClobDataSubField = ( (CswNbtFieldTypeRuleLogicalSet) _FieldTypeRule ).ClobDataSubField;
 
         }//ctor
+
+        private CswNbtSubField _ClobDataSubField;
 
         private void ResetXml()
         {
@@ -91,7 +93,7 @@ namespace ChemSW.Nbt.PropTypes
         /// </summary>
         public void Save()
         {
-            ClobData = LogicalSetXmlDoc.InnerXml.ToString();
+            SetPropRowValue( _ClobDataSubField, LogicalSetXmlDoc.InnerXml.ToString() );
             SyncGestalt();
             //PendingUpdate = true;
         }
@@ -129,7 +131,7 @@ namespace ChemSW.Nbt.PropTypes
                     CheckedNames += ThisCheckedNames;
                 }
             }
-            SetPropRowValue( CswEnumNbtPropColumn.Gestalt, CheckedNames );
+            SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, CheckedNames );
             PendingUpdate = SetPendingUpdate;
         }
 

@@ -49,7 +49,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return GetPropRowValue( _EncryptedPasswordSubField.Column );
+                return GetPropRowValue( _EncryptedPasswordSubField );
             }
             set
             {
@@ -70,7 +70,7 @@ namespace ChemSW.Nbt.PropTypes
                     }
                 }
 
-                if( SetPropRowValue( _EncryptedPasswordSubField.Column, value ) )
+                if( SetPropRowValue( _EncryptedPasswordSubField, value ) )
                 {
                     SyncGestalt();
                     ChangedDate = DateTime.Now;
@@ -87,15 +87,15 @@ namespace ChemSW.Nbt.PropTypes
                 //if( StringValue != string.Empty )
                 //    ReturnVal = Convert.ToDateTime( StringValue );
                 //return ( ReturnVal.Date );
-                return GetPropRowValueDate( _ChangedDateSubField.Column );
+                return GetPropRowValueDate( _ChangedDateSubField );
             }
 
             set
             {
                 if( DateTime.MinValue != value )
-                    SetPropRowValue( _ChangedDateSubField.Column, value );
+                    SetPropRowValue( _ChangedDateSubField, value );
                 else
-                    SetPropRowValue( _ChangedDateSubField.Column, DBNull.Value );
+                    SetPropRowValue( _ChangedDateSubField, DBNull.Value );
             }
         }
 
@@ -240,7 +240,7 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void SyncGestalt()
         {
-            SetPropRowValue( CswEnumNbtPropColumn.Gestalt, EncryptedPassword );
+            SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, EncryptedPassword );
         }
     }//CswNbtNodePropPassword
 

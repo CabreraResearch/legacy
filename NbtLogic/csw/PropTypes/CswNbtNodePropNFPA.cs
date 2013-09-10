@@ -51,11 +51,11 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return GetPropRowValue( _RedSubField.Column );
+                return GetPropRowValue( _RedSubField );
             }
             set
             {
-                SetPropRowValue( _RedSubField.Column, value );
+                SetPropRowValue( _RedSubField, value );
                 SyncGestalt();
             }
         }
@@ -63,11 +63,11 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return GetPropRowValue( _YellowSubField.Column );
+                return GetPropRowValue( _YellowSubField );
             }
             set
             {
-                SetPropRowValue( _YellowSubField.Column, value );
+                SetPropRowValue( _YellowSubField, value );
                 SyncGestalt();
             }
         }
@@ -75,11 +75,11 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return GetPropRowValue( _BlueSubField.Column );
+                return GetPropRowValue( _BlueSubField );
             }
             set
             {
-                SetPropRowValue( _BlueSubField.Column, value );
+                SetPropRowValue( _BlueSubField, value );
                 SyncGestalt();
             }
         }
@@ -87,11 +87,11 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return GetPropRowValue( _WhiteSubField.Column );
+                return GetPropRowValue( _WhiteSubField );
             }
             set
             {
-                SetPropRowValue( _WhiteSubField.Column, value );
+                SetPropRowValue( _WhiteSubField, value );
                 SyncGestalt();
             }
         }
@@ -126,7 +126,7 @@ namespace ChemSW.Nbt.PropTypes
                 newGestalt += ", Special: " + White;
             }
 
-            SetPropRowValue( CswEnumNbtPropColumn.Gestalt, newGestalt );
+            SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, newGestalt );
         }
 
         public override string ValueForNameTemplate

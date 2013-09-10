@@ -39,7 +39,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                string PossibleValue = GetPropRowValue( _TextSubField.Column );
+                string PossibleValue = GetPropRowValue( _TextSubField );
                 if( PossibleValue != string.Empty )
                     return PossibleValue;
                 else
@@ -49,12 +49,12 @@ namespace ChemSW.Nbt.PropTypes
             {
                 if( value != _CswNbtMetaDataNodeTypeProp.StaticText )
                 {
-                    SetPropRowValue( _TextSubField.Column, value );
+                    SetPropRowValue( _TextSubField, value );
                     Gestalt = value;
                 }
                 else
                 {
-                    SetPropRowValue( _TextSubField.Column, string.Empty );
+                    SetPropRowValue( _TextSubField, string.Empty );
                     Gestalt = string.Empty;
                 }
             }
@@ -118,7 +118,7 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void SyncGestalt()
         {
-            SetPropRowValue( CswEnumNbtPropColumn.Gestalt, StaticText );
+            SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, StaticText );
         }
     }//CswNbtNodePropStatic
 

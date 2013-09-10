@@ -98,7 +98,7 @@ namespace ChemSW.Nbt.PropTypes
         //{
         //    get
         //    {
-        //        return ( _CswNbtNodePropData.WasModified );
+        //        return ( _CswNbtNodePropData.getAnySubFieldModified() );
         //    }
 
         //}//WasModified
@@ -177,7 +177,7 @@ namespace ChemSW.Nbt.PropTypes
         public string Gestalt
         {
             get { return _CswNbtNodePropData.Gestalt; }
-            set { _CswNbtNodePropData.Gestalt = value; }
+            set { _CswNbtNodePropData.SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, value ); }
         }
 
         /// <summary>
@@ -286,31 +286,35 @@ namespace ChemSW.Nbt.PropTypes
         /// <summary>
         /// Property Value: Field1
         /// </summary>
-        protected string Field1 { get { return ( _CswNbtNodePropData.Field1 ); } set { _CswNbtNodePropData.Field1 = value; } }
+        protected string Field1 { get { return ( _CswNbtNodePropData.Field1 ); } } // set { _CswNbtNodePropData.Field1 = value; } }
         /// <summary>
         /// Property Value: Field2
         /// </summary>
-        protected string Field2 { get { return ( _CswNbtNodePropData.Field2 ); } set { _CswNbtNodePropData.Field2 = value; } }
+        protected string Field2 { get { return ( _CswNbtNodePropData.Field2 ); } } //set { _CswNbtNodePropData.Field2 = value; } }
         /// <summary>
         /// Property Value: Field3
         /// </summary>
-        protected string Field3 { get { return ( _CswNbtNodePropData.Field3 ); } set { _CswNbtNodePropData.Field3 = value; } }
+        protected string Field3 { get { return ( _CswNbtNodePropData.Field3 ); } } //set { _CswNbtNodePropData.Field3 = value; } }
         /// <summary>
         /// Property Value: Field4
         /// </summary>
-        protected string Field4 { get { return ( _CswNbtNodePropData.Field4 ); } set { _CswNbtNodePropData.Field4 = value; } }
+        protected string Field4 { get { return ( _CswNbtNodePropData.Field4 ); } } //set { _CswNbtNodePropData.Field4 = value; } }
         /// <summary>
         /// Property Value: Field5
         /// </summary>
-        protected string Field5 { get { return ( _CswNbtNodePropData.Field5 ); } set { _CswNbtNodePropData.Field5 = value; } }
+        protected string Field5 { get { return ( _CswNbtNodePropData.Field5 ); } } //set { _CswNbtNodePropData.Field5 = value; } }
         /// <summary>
         /// Property Value: Field5
         /// </summary>
-        protected string ClobData { get { return ( _CswNbtNodePropData.ClobData ); } set { _CswNbtNodePropData.ClobData = value; } }
+        protected string ClobData { get { return ( _CswNbtNodePropData.ClobData ); } } //set { _CswNbtNodePropData.ClobData = value; } }
         /// <summary>
         /// If true, the property value needs to be updated by the Scheduler
         /// </summary>
-        public bool PendingUpdate { get { return ( _CswNbtNodePropData.PendingUpdate ); } set { _CswNbtNodePropData.PendingUpdate = value; } }
+        public bool PendingUpdate
+        {
+            get { return ( _CswNbtNodePropData.PendingUpdate ); } //set { _CswNbtNodePropData.PendingUpdate = value; } }
+            set { _CswNbtNodePropData.SetPropRowValue( CswEnumNbtSubFieldName.PendingUpdate, CswEnumNbtPropColumn.PendingUpdate, value ); }
+        }
 
         /// <summary>
         /// Property value used in name template
@@ -327,7 +331,7 @@ namespace ChemSW.Nbt.PropTypes
             if( false == Node.Properties[this.NodeTypeProp].Empty ) //case 26546 - we allow unique properties to be empty
             {
                 //bz # 6686
-                if( IsUnique() && getAnySubFieldModified() && !OverrideUniqueValidation)
+                if( IsUnique() && getAnySubFieldModified() && !OverrideUniqueValidation )
                 {
                     CswNbtView CswNbtView = new CswNbtView( _CswNbtResources );
                     CswNbtView.ViewName = "Other Nodes, for Property Uniqueness";
@@ -376,15 +380,14 @@ namespace ChemSW.Nbt.PropTypes
             } //if empty
 
             // case 25780 - copy first 512 characters of gestalt to gestaltsearch
-            //if( _CswNbtNodePropData.WasModified )
-            if( getSubFieldModified( CswEnumNbtSubFieldName.Gestalt ) )
+            if( _CswNbtNodePropData.getAnySubFieldModified() )
             {
                 string GestaltSearchValue = _CswNbtNodePropData.Gestalt;
                 if( GestaltSearchValue.Length > 512 )
                 {
                     GestaltSearchValue = GestaltSearchValue.Substring( 0, 512 );
                 }
-                SetPropRowValue(  CswEnumNbtSubFieldName.GestaltSearch, CswEnumNbtPropColumn.GestaltSearch, GestaltSearchValue );
+                SetPropRowValue( CswEnumNbtSubFieldName.GestaltSearch, CswEnumNbtPropColumn.GestaltSearch, GestaltSearchValue );
 
                 // We fire this here so that it only fires once per row, not once per subfield.  See case 27241.
                 if( null != OnPropChange )
@@ -395,18 +398,24 @@ namespace ChemSW.Nbt.PropTypes
 
         }
 
+        protected bool SetPropRowValue( CswNbtSubField SubField, object value, bool IsNonModifying = false )
+        {
+            return _CswNbtNodePropData.SetPropRowValue( SubField, value, IsNonModifying );
+        }
+
         protected bool SetPropRowValue( CswEnumNbtSubFieldName SubFieldName, CswEnumNbtPropColumn column, object value, bool IsNonModifying = false )
         {
             return _CswNbtNodePropData.SetPropRowValue( SubFieldName, column, value, IsNonModifying );
         }
 
-        protected string GetPropRowValue( CswEnumNbtPropColumn column )
+        protected string GetPropRowValue( CswNbtSubField SubField )
         {
-            return _CswNbtNodePropData.GetPropRowValue( column );
+            return _CswNbtNodePropData.GetPropRowValue( SubField );
         }
-        protected DateTime GetPropRowValueDate( CswEnumNbtPropColumn column )
+
+        protected DateTime GetPropRowValueDate( CswNbtSubField SubField )
         {
-            return _CswNbtNodePropData.GetPropRowValueDate( column );
+            return _CswNbtNodePropData.GetPropRowValueDate( SubField );
         }
 
 

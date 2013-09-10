@@ -55,7 +55,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return ( GetPropRowValue( _NodeIdSubField.Column ) == Int32.MinValue.ToString() );
+                return ( GetPropRowValue( _NodeIdSubField ) == Int32.MinValue.ToString() );
             }
         }
 
@@ -64,7 +64,7 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 CswPrimaryKey ret = null;
-                string StringVal = GetPropRowValue( _NodeIdSubField.Column );
+                string StringVal = GetPropRowValue( _NodeIdSubField );
                 if( CswTools.IsInteger( StringVal ) )
                 {
                     Int32 Val = CswConvert.ToInt32( StringVal );
@@ -81,7 +81,7 @@ namespace ChemSW.Nbt.PropTypes
                     NewValue = value.PrimaryKey;
                 }
 
-                if( SetPropRowValue( _NodeIdSubField.Column, NewValue ) )
+                if( SetPropRowValue( _NodeIdSubField, NewValue ) )
                 {
                     RefreshNodeName();
                     PendingUpdate = true;
@@ -92,7 +92,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                string NodeName = GetPropRowValue( _NameSubField.Column );
+                string NodeName = GetPropRowValue( _NameSubField );
                 if( string.IsNullOrEmpty( NodeName ) )
                 {
                     NodeName = RefreshNodeName();
@@ -101,7 +101,7 @@ namespace ChemSW.Nbt.PropTypes
             }
             set
             {
-                SetPropRowValue( _NameSubField.Column, value, IsNonModifying: true );
+                SetPropRowValue( _NameSubField, value, IsNonModifying: true );
             }
         }
 
@@ -109,11 +109,11 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return GetPropRowValue( _PathSubField.Column );
+                return GetPropRowValue( _PathSubField );
             }
             set
             {
-                SetPropRowValue( _PathSubField.Column, value, IsNonModifying: true );
+                SetPropRowValue( _PathSubField, value, IsNonModifying: true );
                 SyncGestalt();
             }
         }
@@ -127,11 +127,11 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return GetPropRowValue( _BarcodeSubField.Column );
+                return GetPropRowValue( _BarcodeSubField );
             }
             set
             {
-                SetPropRowValue( _BarcodeSubField.Column, value, IsNonModifying: true );
+                SetPropRowValue( _BarcodeSubField, value, IsNonModifying: true );
             }
         }
 
@@ -141,7 +141,7 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 Int32 ret = Int32.MinValue;
-                string StringVal = GetPropRowValue( _RowSubField.Column );
+                string StringVal = GetPropRowValue( _RowSubField );
                 if( CswTools.IsInteger( StringVal ) )
                 {
                     ret = CswConvert.ToInt32( StringVal );
@@ -150,7 +150,7 @@ namespace ChemSW.Nbt.PropTypes
             }
             set
             {
-                if( SetPropRowValue( _RowSubField.Column, value, IsNonModifying: true ) )
+                if( SetPropRowValue( _RowSubField, value, IsNonModifying: true ) )
                 {
                     PendingUpdate = true;
                 }
@@ -163,7 +163,7 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 Int32 ret = Int32.MinValue;
-                string StringVal = GetPropRowValue( _ColumnSubField.Column );
+                string StringVal = GetPropRowValue( _ColumnSubField );
                 if( CswTools.IsInteger( StringVal ) )
                 {
                     ret = CswConvert.ToInt32( StringVal );
@@ -172,7 +172,7 @@ namespace ChemSW.Nbt.PropTypes
             }
             set
             {
-                SetPropRowValue( _ColumnSubField.Column, value, IsNonModifying: true );
+                SetPropRowValue( _ColumnSubField, value, IsNonModifying: true );
                 {
                     PendingUpdate = true;
                 }
@@ -411,7 +411,7 @@ namespace ChemSW.Nbt.PropTypes
                 GestaltPath = "";
             }
 
-            SetPropRowValue( CswEnumNbtPropColumn.Gestalt, GestaltPath );
+            SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, GestaltPath );
         }
 
     }//CswNbtNodePropLocation

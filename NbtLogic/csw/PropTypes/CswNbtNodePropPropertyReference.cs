@@ -55,20 +55,20 @@ namespace ChemSW.Nbt.PropTypes
             {
                 NewGestalt = PropRefVal + "-" + SeqVal;
             }
-            SetPropRowValue( CswEnumNbtPropColumn.Gestalt, NewGestalt );
+            SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, NewGestalt );
         }
 
         public string CachedValue
         {
             get
             {
-                return GetPropRowValue( _CachedValueSubField.Column );
+                return GetPropRowValue( _CachedValueSubField );
             }
         }
 
         public void ClearCachedValue()
         {
-            SetPropRowValue( _CachedValueSubField.Column, DBNull.Value );
+            SetPropRowValue( _CachedValueSubField, DBNull.Value );
         }
 
         #endregion Generic Properties
@@ -138,7 +138,7 @@ namespace ChemSW.Nbt.PropTypes
                 }
             } // if (RelationshipId > 0 && RelatedPropId > 0)
 
-            SetPropRowValue( _CachedValueSubField.Column, Value );
+            SetPropRowValue( _CachedValueSubField, Value );
             _setGestalt( Value, Sequence );
             PendingUpdate = false;
 
@@ -172,7 +172,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return GetPropRowValue( _SequenceSubField.Column );
+                return GetPropRowValue( _SequenceSubField );
             }
         }
 
@@ -180,7 +180,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return GetPropRowValue( _SequenceNumberSubField.Column );
+                return GetPropRowValue( _SequenceNumberSubField );
             }
         }
 
@@ -218,9 +218,9 @@ namespace ChemSW.Nbt.PropTypes
         {
             if( UseSequence )
             {
-                SetPropRowValue( _SequenceSubField.Column, SeqValue );
+                SetPropRowValue( _SequenceSubField, SeqValue );
                 Int32 ThisSeqValue = _SequenceValue.deformatSequence( SeqValue );
-                SetPropRowValue( _SequenceNumberSubField.Column, ThisSeqValue );
+                SetPropRowValue( _SequenceNumberSubField, ThisSeqValue );
                 _setGestalt( CachedValue, SeqValue );
 
                 if( ResetSequence )

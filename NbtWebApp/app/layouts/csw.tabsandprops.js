@@ -1149,7 +1149,7 @@
                             urlMethod: cswPrivate.urls.SinglePropUrlMethod,
                             data: jsonData,
                             success: function (data) {
-                                singlePropData.wasmodified = true;
+                                singlePropData.getAnySubFieldModified() = true;
                                 singlePropData.subprops = data.subprops;
 
                                 // keep the fact that the parent property was modified

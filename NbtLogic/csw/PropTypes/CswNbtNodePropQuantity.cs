@@ -123,7 +123,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                string Value = GetPropRowValue( _QuantitySubField.Column );
+                string Value = GetPropRowValue( _QuantitySubField );
                 if( CswTools.IsFloat( Value ) )
                     return Convert.ToDouble( Value );
                 else
@@ -140,7 +140,7 @@ namespace ChemSW.Nbt.PropTypes
                     {
                         throw new CswDniException( CswEnumErrorType.Warning, "Cannot save a Quantity without a value if the Property is required.", "Attempted to save the Quantity of a Quantity with an invalid number." );
                     }
-                    SetPropRowValue( _QuantitySubField.Column, Double.NaN );
+                    SetPropRowValue( _QuantitySubField, Double.NaN );
                 }
                 else
                 {
@@ -150,7 +150,7 @@ namespace ChemSW.Nbt.PropTypes
                         PrecisionString += "#";
                     }
                     StringVal = Math.Round( value, Precision, MidpointRounding.AwayFromZero ).ToString( "0." + PrecisionString );
-                    SetPropRowValue( _QuantitySubField.Column, StringVal );
+                    SetPropRowValue( _QuantitySubField, StringVal );
                 }
                 SyncGestalt();
             }
@@ -160,13 +160,13 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return GetPropRowValue( _UnitNameSubField.Column );
+                return GetPropRowValue( _UnitNameSubField );
             }
             set
             {
-                if( value != GetPropRowValue( _UnitNameSubField.Column ) )
+                if( value != GetPropRowValue( _UnitNameSubField ) )
                 {
-                    SetPropRowValue( _UnitNameSubField.Column, value );
+                    SetPropRowValue( _UnitNameSubField, value );
                     SyncGestalt();
                 }
             }
@@ -189,7 +189,7 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 CswPrimaryKey ret = null;
-                string StringVal = GetPropRowValue( _UnitIdSubField.Column );
+                string StringVal = GetPropRowValue( _UnitIdSubField );
                 if( CswTools.IsInteger( StringVal ) )
                     ret = new CswPrimaryKey( TargetTableName, CswConvert.ToInt32( StringVal ) );
                 return ret;
@@ -204,7 +204,7 @@ namespace ChemSW.Nbt.PropTypes
                     }
                     if( UnitId != value )
                     {
-                        SetPropRowValue( _UnitIdSubField.Column, value.PrimaryKey );
+                        SetPropRowValue( _UnitIdSubField, value.PrimaryKey );
                         CswNbtNode RelatedNode = _CswNbtResources.Nodes[value];
                         if( null != RelatedNode )
                         {
@@ -218,10 +218,10 @@ namespace ChemSW.Nbt.PropTypes
                     {
                         throw new CswDniException( CswEnumErrorType.Warning, "Cannot save a Quantity without a Unit if the Property is required.", "Attempted to save a Quantity with an invalid UnitId." );
                     }
-                    SetPropRowValue( _UnitIdSubField.Column, Int32.MinValue );
+                    SetPropRowValue( _UnitIdSubField, Int32.MinValue );
                 }
 
-                if( WasModified )
+                if( getSubFieldModified( _UnitIdSubField.Name ) )
                 {
                     PendingUpdate = true;
                 }
@@ -330,8 +330,8 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void SyncGestalt()
         {
-            string GestaltValue = GetPropRowValue( _QuantitySubField.Column ) + " " + GetPropRowValue( _UnitNameSubField.Column );
-            SetPropRowValue( CswEnumNbtPropColumn.Gestalt, GestaltValue );
+            string GestaltValue = GetPropRowValue( _QuantitySubField ) + " " + GetPropRowValue( _UnitNameSubField );
+            SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, GestaltValue );
         }
 
         #endregion

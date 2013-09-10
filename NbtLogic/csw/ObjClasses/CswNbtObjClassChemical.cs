@@ -104,7 +104,7 @@ namespace ChemSW.Nbt.ObjClasses
             ViewSDS.State = PropertyName.ViewSDS;
             ViewSDS.MenuOptions = PropertyName.ViewSDS + ",View All";
 
-            //if( CasNo.WasModified && _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.RegulatoryLists ) && false == IsCopy )
+            //if( CasNo.getAnySubFieldModified() && _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.RegulatoryLists ) && false == IsCopy )
             //{
             //    CswCommaDelimitedString ParentMaterials = new CswCommaDelimitedString();
             //    getParentMaterials( ref ParentMaterials );
@@ -1074,7 +1074,7 @@ namespace ChemSW.Nbt.ObjClasses
                     syncPCIDData();
                 }
 
-                if( CasNo.WasModified && _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.RegulatoryLists ) )
+                if( CasNo.getAnySubFieldModified() && _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.RegulatoryLists ) )
                 {
                     RefreshRegulatoryListMembers();
                 }
