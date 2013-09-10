@@ -1191,8 +1191,9 @@
       <Name>StructureSearch</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
     <Folder Include="csw\Schema\scripts\prod\02G\" />
+  </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
