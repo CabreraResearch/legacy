@@ -23,12 +23,11 @@ namespace ChemSW.Nbt.Schema
 
         public override string ScriptName
         {
-            get { throw new System.NotImplementedException(); }
+            get { return "02F_Case30661"; }
         }
 
         public override void update()
         {
-            // This is a placeholder script that does nothing.
             if( _CswNbtSchemaModTrnsctn.isMaster() )
             {
                 CswTableUpdate TableUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "DisableCAFImportRule_30661", "scheduledrules" );
