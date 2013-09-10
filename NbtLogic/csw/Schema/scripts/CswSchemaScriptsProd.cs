@@ -39,6 +39,7 @@ namespace ChemSW.Nbt.Schema
             #region GINGKO
 
             _addVersionedScript( new CswUpdateMetaData_02G_Case30611() );
+            _addVersionedScript( new CswUpdateMetaData_02G_Case27846() );
 
             #endregion GINGKO
 
