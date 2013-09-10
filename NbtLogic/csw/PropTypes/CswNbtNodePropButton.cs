@@ -145,7 +145,7 @@ namespace ChemSW.Nbt.PropTypes
                     {
                         Ret = Text;
                     }
-                    SetPropRowValue( _DisplayNameSubField, Ret );
+                    //SetPropRowValue( _DisplayNameSubField, Ret );
                 }
                 return Ret;
             }
@@ -164,7 +164,7 @@ namespace ChemSW.Nbt.PropTypes
                 if( string.IsNullOrEmpty( Ret ) && isThisTheSaveButton() )
                 {
                     Ret = "save";
-                    Icon = Ret;
+                    //Icon = Ret;
                 }
                 return Ret;
             }

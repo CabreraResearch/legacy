@@ -46,7 +46,12 @@ namespace ChemSW.Nbt.PropTypes
         /// </summary>
         public bool SetPropRowValue( CswNbtSubField SubField, object value, bool IsNonModifying = false )
         {
-            return SetPropRowValue( SubField.Name, SubField.Column, value, IsNonModifying );
+            bool ret = false;
+            if( null != SubField )
+            {
+                SetPropRowValue( SubField.Name, SubField.Column, value, IsNonModifying );
+            }
+            return ret;
         }
 
         /// <summary>
@@ -480,6 +485,7 @@ namespace ChemSW.Nbt.PropTypes
         public string Field5 { get { return ( _getRowStringVal( CswEnumNbtPropColumn.Field5 ) ); } }
         public bool PendingUpdate { get { return _getRowBoolVal( CswEnumNbtPropColumn.PendingUpdate ); } }
         public string Gestalt { get { return ( _getRowStringVal( CswEnumNbtPropColumn.Gestalt ) ); } }
+        public string GestaltSearch { get { return ( _getRowStringVal( CswEnumNbtPropColumn.GestaltSearch ) ); } }
         public string ClobData { get { return ( _getRowStringVal( CswEnumNbtPropColumn.ClobData ) ); } }
 
         public Int32 JctNodePropId
@@ -500,48 +506,44 @@ namespace ChemSW.Nbt.PropTypes
 
         public void copy( CswNbtNodePropData Source )
         {
-            //Implementing FieldType specific behavior here. Blame Steve.
-            if( null != Source.NodeTypeProp && Source.NodeTypeProp.getFieldTypeValue() == CswEnumNbtFieldType.ViewReference )
+            foreach( CswNbtSubField SubField in NodeTypeProp.getFieldTypeRule().SubFields )
             {
-                CswNbtView View = _CswNbtResources.ViewSelect.restoreView( Source.NodeTypeProp.DefaultValue.AsViewReference.ViewId );
-                CswNbtView ViewCopy = new CswNbtView( _CswNbtResources );
-                ViewCopy.saveNew( View.ViewName, View.Visibility, View.VisibilityRoleId, View.VisibilityUserId, View );
-                //ViewCopy.save();
-                //this.Field1_Fk = ViewCopy.ViewId.get();
-                SetPropRowValue( CswEnumNbtSubFieldName.ViewID, CswEnumNbtPropColumn.Field1_FK, ViewCopy.ViewId.get() );
-            }
-            else
-            {
-                SetPropRowValue( CswEnumNbtSubFieldName.Unknown, CswEnumNbtPropColumn.Field1_FK, Source.Field1_Fk );
-            }
+                if( SubField.Column == CswEnumNbtPropColumn.Field1_FK )
+                {
+                    //Implementing FieldType specific behavior here. Blame Steve.
+                    if( null != Source.NodeTypeProp && Source.NodeTypeProp.getFieldTypeValue() == CswEnumNbtFieldType.ViewReference )
+                    {
+                        CswNbtView View = _CswNbtResources.ViewSelect.restoreView( Source.NodeTypeProp.DefaultValue.AsViewReference.ViewId );
+                        CswNbtView ViewCopy = new CswNbtView( _CswNbtResources );
+                        ViewCopy.saveNew( View.ViewName, View.Visibility, View.VisibilityRoleId, View.VisibilityUserId, View );
+                        SetPropRowValue( CswEnumNbtSubFieldName.ViewID, CswEnumNbtPropColumn.Field1_FK, ViewCopy.ViewId.get() );
+                    }
+                    else
+                    {
+                        SetPropRowValue( SubField, Source.Field1_Fk );
+                    }
+                } // if( SubField.Column == CswEnumNbtPropColumn.Field1_FK )
+                else
+                {
+                    SetPropRowValue( SubField, Source.GetPropRowValue( SubField ) );
+                }
+            } // foreach( CswNbtSubField SubField in NodeTypeProp.getFieldTypeRule().SubFields )
 
-            SetPropRowValue( CswEnumNbtSubFieldName.Unknown, CswEnumNbtPropColumn.Field1, Source.Field1 );
-            SetPropRowValue( CswEnumNbtSubFieldName.Unknown, CswEnumNbtPropColumn.Field2, Source.Field2 );
-            SetPropRowValue( CswEnumNbtSubFieldName.Unknown, CswEnumNbtPropColumn.Field3, Source.Field3 );
-            SetPropRowValue( CswEnumNbtSubFieldName.Unknown, CswEnumNbtPropColumn.Field4, Source.Field4 );
-            SetPropRowValue( CswEnumNbtSubFieldName.Unknown, CswEnumNbtPropColumn.Field5, Source.Field5 );
-            SetPropRowValue( CswEnumNbtSubFieldName.Unknown, CswEnumNbtPropColumn.Field1_Date, Source.Field1_Date );
-            SetPropRowValue( CswEnumNbtSubFieldName.Unknown, CswEnumNbtPropColumn.Field2_Date, Source.Field2_Date );
-            SetPropRowValue( CswEnumNbtSubFieldName.Unknown, CswEnumNbtPropColumn.Field1_Numeric, Source.Field1_Numeric );
-            SetPropRowValue( CswEnumNbtSubFieldName.Unknown, CswEnumNbtPropColumn.Field2_Numeric, Source.Field2_Numeric );
+            // Also copy Gestalt, which usually isn't listed as a subfield
             SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, Source.Gestalt );
-            SetPropRowValue( CswEnumNbtSubFieldName.Unknown, CswEnumNbtPropColumn.ClobData, Source.ClobData );
+            SetPropRowValue( CswEnumNbtSubFieldName.GestaltSearch, CswEnumNbtPropColumn.GestaltSearch, Source.GestaltSearch );
         }
 
         public void ClearValue()
         {
-            SetPropRowValue( CswEnumNbtSubFieldName.Unknown, CswEnumNbtPropColumn.Field1, string.Empty );
-            SetPropRowValue( CswEnumNbtSubFieldName.Unknown, CswEnumNbtPropColumn.Field2, string.Empty );
-            SetPropRowValue( CswEnumNbtSubFieldName.Unknown, CswEnumNbtPropColumn.Field3, string.Empty );
-            SetPropRowValue( CswEnumNbtSubFieldName.Unknown, CswEnumNbtPropColumn.Field4, string.Empty );
-            SetPropRowValue( CswEnumNbtSubFieldName.Unknown, CswEnumNbtPropColumn.Field5, string.Empty );
-            SetPropRowValue( CswEnumNbtSubFieldName.Unknown, CswEnumNbtPropColumn.Field1_FK, Int32.MinValue );
-            SetPropRowValue( CswEnumNbtSubFieldName.Unknown, CswEnumNbtPropColumn.Field1_Date, DateTime.MinValue );
-            SetPropRowValue( CswEnumNbtSubFieldName.Unknown, CswEnumNbtPropColumn.Field2_Date, DateTime.MinValue );
-            SetPropRowValue( CswEnumNbtSubFieldName.Unknown, CswEnumNbtPropColumn.Field1_Numeric, Double.NaN );
-            SetPropRowValue( CswEnumNbtSubFieldName.Unknown, CswEnumNbtPropColumn.Field2_Numeric, Double.NaN );
+            foreach( CswNbtSubField SubField in NodeTypeProp.getFieldTypeRule().SubFields )
+            {
+                SetPropRowValue( SubField, string.Empty );
+            }
+
+            // Also clear Gestalt, which usually isn't listed as a subfield
             SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, string.Empty );
-            SetPropRowValue( CswEnumNbtSubFieldName.Unknown, CswEnumNbtPropColumn.ClobData, string.Empty );
+            SetPropRowValue( CswEnumNbtSubFieldName.GestaltSearch, CswEnumNbtPropColumn.GestaltSearch, string.Empty );
         }
 
         public void ClearBlob()

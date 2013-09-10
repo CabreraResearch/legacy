@@ -220,11 +220,6 @@ namespace ChemSW.Nbt.PropTypes
                 {
                     SetPropRowValue( _NodeIDSubField, Int32.MinValue );
                 }
-
-                if( getSubFieldModified( _NodeIDSubField.Name ) )
-                {
-                    PendingUpdate = true;
-                }
             }
         }
 
