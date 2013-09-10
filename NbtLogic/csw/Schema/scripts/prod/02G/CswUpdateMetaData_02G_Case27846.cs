@@ -27,7 +27,7 @@ namespace ChemSW.Nbt.Schema
 
         public override int CaseNo
         {
-            get { return 30611; }
+            get { return 27846; }
         }
 
         #endregion Blame Logic
