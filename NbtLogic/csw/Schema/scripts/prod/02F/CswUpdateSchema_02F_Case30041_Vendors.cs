@@ -19,6 +19,11 @@ namespace ChemSW.Nbt.Schema
             get { return 30041; }
         }
 
+        public override string ScriptName
+        {
+            get { return "02F_Case30041_Vendors"; }
+        }
+
         public override void update()
         {
             // CAF bindings definitions for Vendors
@@ -37,7 +42,7 @@ namespace ChemSW.Nbt.Schema
             ImpMgr.importBinding( "zip", CswNbtObjClassVendor.PropertyName.Zip, "" );
 
             // Relationship
-            // none
+            // Vendor has no relationships
 
             ImpMgr.finalize();
         } // update()

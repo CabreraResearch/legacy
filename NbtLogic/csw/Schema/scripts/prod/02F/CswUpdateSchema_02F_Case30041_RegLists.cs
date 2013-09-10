@@ -1,8 +1,6 @@
-﻿using ChemSW.MtSched.Core;
-using ChemSW.Nbt.csw.Dev;
+﻿using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.csw.Schema;
 using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.Sched;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -19,6 +17,11 @@ namespace ChemSW.Nbt.Schema
         public override int CaseNo
         {
             get { return 30041; }
+        }
+
+        public override string ScriptName
+        {
+            get { return "02F_Case30041_RegLists"; }
         }
 
         public override void update()

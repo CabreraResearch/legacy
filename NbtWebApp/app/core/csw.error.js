@@ -28,6 +28,7 @@
             /// <param name="esotericMsg" type="String"> A verbose message for developers.</param>
             ///<returns type="Boolean">True</returns>
             var e = {
+                'name': '',
                 'type': '',
                 'message': friendlyMsg,
                 'detail': esotericMsg,
@@ -45,7 +46,7 @@
             }
 
             if ($errorsdiv.length > 0 && Csw.bool(e.display)) {
-                $errorsdiv.CswErrorMessage({ 'type': e.type, 'message': e.message, 'detail': e.detail });
+                $errorsdiv.CswErrorMessage({ 'name': e.name, 'type': e.type, 'message': e.message, 'detail': e.detail });
             } 
             Csw.debug.error(e.message + '; ' + e.detail);
             return true;

@@ -160,6 +160,18 @@
         }
         Csw.tryExec(cswPrivate.onAuthenticate, cswPrivate.UserName);
         Csw.cookie.set(Csw.cookie.cookieNames.UserDefaults, JSON.stringify(data));
+
+        if (data.SchemaData) {
+            if (false == data.SchemaData.CorrectVersion) {
+                var errorobj = {
+                    'type': data.SchemaData.ErrorMessage.Type,
+                    'message': data.SchemaData.ErrorMessage.Message,
+                    'detail': data.SchemaData.ErrorMessage.Detail,
+                    'display': true
+                };
+                Csw.error.showError(errorobj);
+            }
+        }
     };
 
     Csw.clientSession.login = Csw.clientSession.login ||
@@ -233,7 +245,7 @@
             Csw.extend(o, options);
 
             var txt = o.txt;
-            var _next = function() {
+            var _next = function () {
                 if (!txt) {
                     Csw.tryExec(o.success());
                 } else {
@@ -243,6 +255,7 @@
 
             if (o.status === 'Authenticated') {
                 _next();
+
             } else {
                 switch (o.status) {
                     case 'ExpiredPassword':
@@ -257,13 +270,13 @@
                         break;
                     case 'ShowLicense':
                         $.CswDialog('ShowLicenseDialog', {
-                                onAccept: function() {
-                                    _next();
-                                },
-                                onDecline: function() {
-                                    Csw.clientSession.logout();
-                                }
-                            });
+                            onAccept: function () {
+                                _next();
+                            },
+                            onDecline: function () {
+                                Csw.clientSession.logout();
+                            }
+                        });
                         break;
                     case 'AlreadyLoggedIn':
                         $.CswDialog('LogoutExistingSessionsDialog', _next);

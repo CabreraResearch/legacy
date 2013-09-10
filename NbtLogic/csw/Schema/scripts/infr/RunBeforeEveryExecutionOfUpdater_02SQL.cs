@@ -36,12 +36,24 @@ namespace ChemSW.Nbt.Schema
 
         #endregion Blame Logic
 
-        public override string Title { get { return "Pre-Script: 02: PL/SQL Objects"; } }
+        public override string ScriptName
+        {
+            get { return "RunBefore_PL/SQL Objects"; }
+        }
+
+        public override bool AlwaysRun
+        {
+            get { return true; }
+        }
+        
+         public override string Title { get { return "Pre-Script: 02: PL/SQL Objects"; } }
+
+
         public override void update()
         {
             #region Views
 
-            foreach ( CswUpdateSchemaPLSQLViews.Views View in CswUpdateSchemaPLSQLViews.Views._All )
+            foreach( CswUpdateSchemaPLSQLViews.Views View in CswUpdateSchemaPLSQLViews.Views._All )
             {
                 _acceptBlame( View._Dev, View._CaseNo );
                 _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( View.ToString() );
@@ -49,7 +61,7 @@ namespace ChemSW.Nbt.Schema
             }
 
             #endregion Views
-            
+
             #region Synonyms
 
             //Add Synonyms here
@@ -64,10 +76,10 @@ namespace ChemSW.Nbt.Schema
 
             #region Functions
 
-            foreach (CswUpdateSchemaPLSQLFunctions.Functions Function in CswUpdateSchemaPLSQLFunctions.Functions._All)
+            foreach( CswUpdateSchemaPLSQLFunctions.Functions Function in CswUpdateSchemaPLSQLFunctions.Functions._All )
             {
-                _acceptBlame(Function._Dev, Function._CaseNo);
-                _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql(Function.ToString());
+                _acceptBlame( Function._Dev, Function._CaseNo );
+                _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( Function.ToString() );
                 _resetBlame();
             }
 
@@ -75,7 +87,7 @@ namespace ChemSW.Nbt.Schema
 
             #region Procedures
 
-            foreach ( CswUpdateSchemaPLSQLProcedures.Procedures Procedure in CswUpdateSchemaPLSQLProcedures.Procedures._All )
+            foreach( CswUpdateSchemaPLSQLProcedures.Procedures Procedure in CswUpdateSchemaPLSQLProcedures.Procedures._All )
             {
                 _acceptBlame( Procedure._Dev, Procedure._CaseNo );
                 _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( Procedure.ToString() );
@@ -92,7 +104,7 @@ namespace ChemSW.Nbt.Schema
 
             #region Drop Types
 
-            foreach ( CswUpdateSchemaPLSQLTypes.NestedTables NestedTable in CswUpdateSchemaPLSQLTypes.NestedTables._All )
+            foreach( CswUpdateSchemaPLSQLTypes.NestedTables NestedTable in CswUpdateSchemaPLSQLTypes.NestedTables._All )
             {
                 _acceptBlame( NestedTable._Dev, NestedTable._CaseNo );
                 _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql(
@@ -108,7 +120,7 @@ namespace ChemSW.Nbt.Schema
                 _resetBlame();
             }
 
-            foreach ( CswUpdateSchemaPLSQLTypes.TypeHeaders TypeHeader in CswUpdateSchemaPLSQLTypes.TypeHeaders._All )
+            foreach( CswUpdateSchemaPLSQLTypes.TypeHeaders TypeHeader in CswUpdateSchemaPLSQLTypes.TypeHeaders._All )
             {
                 _acceptBlame( TypeHeader._Dev, TypeHeader._CaseNo );
                 _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql(
@@ -128,7 +140,7 @@ namespace ChemSW.Nbt.Schema
 
             #region Type Headers
 
-            foreach  (CswUpdateSchemaPLSQLTypes.TypeHeaders TypeHeader in CswUpdateSchemaPLSQLTypes.TypeHeaders._All )
+            foreach( CswUpdateSchemaPLSQLTypes.TypeHeaders TypeHeader in CswUpdateSchemaPLSQLTypes.TypeHeaders._All )
             {
                 _acceptBlame( TypeHeader._Dev, TypeHeader._CaseNo );
                 _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( TypeHeader.ToString() );
@@ -145,7 +157,7 @@ namespace ChemSW.Nbt.Schema
 
             #region Nested Tables
 
-            foreach ( CswUpdateSchemaPLSQLTypes.NestedTables NestedTable in CswUpdateSchemaPLSQLTypes.NestedTables._All )
+            foreach( CswUpdateSchemaPLSQLTypes.NestedTables NestedTable in CswUpdateSchemaPLSQLTypes.NestedTables._All )
             {
                 _acceptBlame( NestedTable._Dev, NestedTable._CaseNo );
                 _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( NestedTable.ToString() );
@@ -158,7 +170,7 @@ namespace ChemSW.Nbt.Schema
 
             #region Package Headers
 
-            foreach ( CswUpdateSchemaPLSQLPackages.PackageHeaders PackageHead in CswUpdateSchemaPLSQLPackages.PackageHeaders._All )
+            foreach( CswUpdateSchemaPLSQLPackages.PackageHeaders PackageHead in CswUpdateSchemaPLSQLPackages.PackageHeaders._All )
             {
                 _acceptBlame( PackageHead._Dev, PackageHead._CaseNo );
                 _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( PackageHead.ToString() );
@@ -169,7 +181,7 @@ namespace ChemSW.Nbt.Schema
 
             #region Package Bodies
 
-            foreach ( CswUpdateSchemaPLSQLPackages.PackageBodies PackageBodies in CswUpdateSchemaPLSQLPackages.PackageBodies._All )
+            foreach( CswUpdateSchemaPLSQLPackages.PackageBodies PackageBodies in CswUpdateSchemaPLSQLPackages.PackageBodies._All )
             {
                 _acceptBlame( PackageBodies._Dev, PackageBodies._CaseNo );
                 _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( PackageBodies.ToString() );

@@ -8,7 +8,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update
     /// </summary>
-    public class CswUpdateSchema_02F_Case29438: CswUpdateSchemaTo
+    public class CswUpdateSchema_02F_Case29438 : CswUpdateSchemaTo
     {
         public override CswEnumDeveloper Author
         {
@@ -18,6 +18,11 @@ namespace ChemSW.Nbt.Schema
         public override int CaseNo
         {
             get { return 29438; }
+        }
+
+        public override string ScriptName
+        {
+            get { return "02F_Case29438"; }
         }
 
         public override void update()
@@ -46,7 +51,7 @@ namespace ChemSW.Nbt.Schema
             CompletedTasks.AddViewProperty( parent, DoneOnOCP, 2 );
 
             CswNbtViewProperty completedVP = CompletedTasks.AddViewProperty( parent, CompletedOCP );
-            CompletedTasks.AddViewPropertyFilter( completedVP, Value : true.ToString() );
+            CompletedTasks.AddViewPropertyFilter( completedVP, Value: true.ToString() );
             completedVP.ShowInGrid = false;
 
             CompletedTasks.AddViewProperty( parent, SummaryOCP, 3 );

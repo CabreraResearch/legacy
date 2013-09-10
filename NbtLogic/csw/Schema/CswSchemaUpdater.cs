@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 //using ChemSW.RscAdo;
 //using ChemSW.TblDn;
+using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
 
@@ -56,11 +57,11 @@ namespace ChemSW.Nbt.Schema
         /// The highest schema version number defined in the updater
         /// </summary>
         public CswSchemaVersion LatestVersion { get { return ( _CswSchemaScripts.LatestVersion ); } }
+
         /// <summary>
         /// The minimum version required to use this updater
         /// </summary>
         public CswSchemaVersion MinimumVersion { get { return ( _CswSchemaScripts.MinimumVersion ); } }
-
 
         public CswSchemaVersion CurrentVersion( CswNbtResources CswNbtResources )
         {
@@ -83,6 +84,19 @@ namespace ChemSW.Nbt.Schema
             return ( _CswSchemaScripts[CswSchemaVersion] );
         }//getDriver()
 
+        //private CswSchemaUpdateDriver _CurrentUpdateDriver;
+        //public CswSchemaUpdateDriver getDriver()
+        //{
+        //    return ( _CurrentUpdateDriver );
+        //}
+
+        public List<CswSchemaVersion> SchemaVersions
+        {
+            get
+            {
+                return new List<CswSchemaVersion>( UpdateDrivers.Keys );
+            }
+        }
 
         //case 26617: removing otiose instance of CswNbtResources resolved catastrophic memory leak
         private bool _runScript( CswNbtResources CswNbtResources, CswSchemaUpdateDriver CswSchemaUpdateDriver, bool StampVersion )
@@ -90,7 +104,7 @@ namespace ChemSW.Nbt.Schema
 
             bool ReturnVal = true;
 
-            //            CswNbtResources CswNbtResources = _ResourcesInitHandler( _AccessId );
+            // CswNbtResources CswNbtResources = _ResourcesInitHandler( _AccessId );
             CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn = new CswNbtSchemaModTrnsctn( CswNbtResources );
 
             CswTableUpdate _UpdateHistoryTableUpdate = CswNbtResources.makeCswTableUpdate( "schemaupdater_updatehistory_update", "update_history" );
@@ -114,20 +128,14 @@ namespace ChemSW.Nbt.Schema
             DataRow NewUpdateHistoryRow = _UpdateHistoryTable.NewRow();
             NewUpdateHistoryRow["updatedate"] = DateTime.Now.ToString();
             NewUpdateHistoryRow["version"] = CswSchemaUpdateDriver.SchemaVersion.ToString();
+            NewUpdateHistoryRow["scriptname"] = CswSchemaUpdateDriver.ScriptName;
+            NewUpdateHistoryRow["succeeded"] = CswConvert.ToDbVal( ReturnVal );
 
-            if( ReturnVal )
-            {
-                NewUpdateHistoryRow["log"] = CswSchemaUpdateDriver.Message;
-
-            }
-            //else if( CswSchemaUpdateDriver.RollbackSucceeded )
-            //{
-            //    NewUpdateHistoryRow["log"] = "Schema rolled back to previous version due to failure: " + CswSchemaUpdateDriver.Message;
-            //}
-            else
+            if( false == ReturnVal )
             {
                 NewUpdateHistoryRow["log"] = "Failed update: " + CswSchemaUpdateDriver.Message;
             }
+
             _UpdateHistoryTable.Rows.Add( NewUpdateHistoryRow );
 
             _UpdateHistoryTableUpdate.update( _UpdateHistoryTable );
@@ -144,8 +152,6 @@ namespace ChemSW.Nbt.Schema
 
         }//_runScript()
 
-
-
         public bool runArbitraryScript( CswSchemaUpdateDriver CswSchemaUpdateDriver )
         {
 
@@ -155,24 +161,22 @@ namespace ChemSW.Nbt.Schema
             return ( _runScript( CswNbtResources, CswSchemaUpdateDriver, false ) );
         }//UpdateArbitraryScript
 
-
         /// <summary>
         /// Update the schema to the next version
         /// </summary>
         public bool runNextVersionedScript()
         {
-
-
             CswNbtResources CswNbtResources = null;
             _ResourcesInitHandler( _AccessId, ref CswNbtResources );
 
             CswSchemaUpdateDriver CurrentUpdateDriver = null;
             bool UpdateSuccessful = true;
+            bool StampVersion = true;
             if( null != ( CurrentUpdateDriver = _CswSchemaScripts.Next( CswNbtResources ) ) )
             {
-
-                UpdateSuccessful = _runScript( CswNbtResources, CurrentUpdateDriver, true );
-
+                //_CurrentUpdateDriver = CurrentUpdateDriver;
+                if( CurrentUpdateDriver.AlwaysRun ) { StampVersion = false; }
+                UpdateSuccessful = _runScript( CswNbtResources, CurrentUpdateDriver, StampVersion );
 
             } // if update is valid
 
@@ -188,7 +192,21 @@ namespace ChemSW.Nbt.Schema
             }
         }
 
+        //public Dictionary<CswSchemaVersion, CswSchemaUpdateDriver> UpdateDriversToRun
+        //{
+        //    get
+        //    {
+        //        return _CswSchemaScripts.UpdateDriversToRun;
+        //    }
+        //}
 
+        //public void addVersionedScriptsToRun()
+        //{
+        //    CswNbtResources CswNbtResources = null;
+        //    _ResourcesInitHandler( _AccessId, ref CswNbtResources );
+
+        //    _CswSchemaScripts.addVersionedScriptsToRun( CswNbtResources );
+        //}
 
     }//CswSchemaUpdater
 

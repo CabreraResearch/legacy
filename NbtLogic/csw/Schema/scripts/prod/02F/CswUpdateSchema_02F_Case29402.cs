@@ -20,14 +20,20 @@ namespace ChemSW.Nbt.Schema
             get { return 29402; }
         }
 
+        public override string ScriptName
+        {
+            get { return "02F_Case29402"; }
+        }
+
         public override void update()
         {
             HashSet<CswNbtViewId> SeenViewIds = new HashSet<CswNbtViewId>();
 
-            CswNbtMetaDataObjectClass ChemicalOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass(CswEnumNbtObjectClass.ChemicalClass);
+            CswNbtMetaDataObjectClass ChemicalOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass );
             CswNbtMetaDataObjectClass MaterialComponentOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.MaterialComponentClass );
             CswNbtMetaDataObjectClassProp ConstituentOCP = MaterialComponentOC.getObjectClassProp( CswNbtObjClassMaterialComponent.PropertyName.Constituent );
-            CswNbtMetaDataObjectClassProp PercentageOCP = MaterialComponentOC.getObjectClassProp( CswNbtObjClassMaterialComponent.PropertyName.Percentage);
+            CswNbtMetaDataObjectClassProp MixtureOCP = MaterialComponentOC.getObjectClassProp( CswNbtObjClassMaterialComponent.PropertyName.Mixture );
+            CswNbtMetaDataObjectClassProp PercentageOCP = MaterialComponentOC.getObjectClassProp( CswNbtObjClassMaterialComponent.PropertyName.Percentage );
 
             CswNbtMetaDataNodeType ConstituentNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Constituent" );
             if( null != ConstituentNT )
@@ -42,10 +48,10 @@ namespace ChemSW.Nbt.Schema
                         if( false == SeenViewIds.Contains( ConstituentNTP.ViewId ) )
                         {
                             CswNbtView ConstituentsPropView = _CswNbtSchemaModTrnsctn.ViewSelect.restoreView( ConstituentNTP.ViewId );
-                            CswNbtViewRelationship MaterialComponentRelationship = ConstituentsPropView.Root.ChildRelationships[0].ChildRelationships[0]; //Intentionally get the 2nd lvl parent
-                            MaterialComponentRelationship.Properties.Clear();
-                            MaterialComponentRelationship.ChildRelationships.Clear();
+                            ConstituentsPropView.Root.ChildRelationships.Clear();
 
+                            CswNbtViewRelationship ChemicalParent = ConstituentsPropView.AddViewRelationship( ChemicalOC, false );
+                            CswNbtViewRelationship MaterialComponentRelationship = ConstituentsPropView.AddViewRelationship( ChemicalParent, CswEnumNbtViewPropOwnerType.Second, MixtureOCP, true );
                             ConstituentsPropView.AddViewProperty( MaterialComponentRelationship, ConstituentOCP, 1 );
 
                             CswNbtViewRelationship ConstituentRelationship = ConstituentsPropView.AddViewRelationship( MaterialComponentRelationship, CswEnumNbtViewPropOwnerType.First, ConstituentOCP, false );

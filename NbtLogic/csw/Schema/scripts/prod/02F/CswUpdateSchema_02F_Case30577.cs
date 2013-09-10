@@ -7,7 +7,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update
     /// </summary>
-    public class CswUpdateSchema_02F_Case30577: CswUpdateSchemaTo
+    public class CswUpdateSchema_02F_Case30577 : CswUpdateSchemaTo
     {
         public override CswEnumDeveloper Author
         {
@@ -17,6 +17,11 @@ namespace ChemSW.Nbt.Schema
         public override int CaseNo
         {
             get { return 30577; }
+        }
+
+        public override string ScriptName
+        {
+            get { return "02F_Case30577"; }
         }
 
         public override void update()
@@ -30,7 +35,7 @@ namespace ChemSW.Nbt.Schema
             foreach( CswNbtMetaDataNodeTypeProp MaterialTypeNTP in MaterialTypeOCP.getNodeTypeProps() )
             {
                 MaterialTypeNTP.IsRequired = false;
-                
+
             }
 
             _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( MaterialTypeOCP, string.Empty );
