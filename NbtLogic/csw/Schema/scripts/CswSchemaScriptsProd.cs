@@ -20,10 +20,16 @@ namespace ChemSW.Nbt.Schema
 
             #region MetaData Scripts
 
-            #region FOXGLOVE 
+            #region DDL
 
             _addVersionedScript( new CswUpdateMetaData_02F_Case30252() );
             _addVersionedScript( new CswUpdateMetaData_02F_Case30228() );
+            _addVersionedScript( new CswUpdateMetaData_02G_Case30557() );
+
+            #endregion DDL
+
+            #region FOXGLOVE
+            
             _addVersionedScript( new CswUpdateMetaData_02F_Case30041_NbtImportQueue() ); //Validate the Nbt Import Queue table first
             _addVersionedScript( new CswUpdateMetaData_02F_Case30281() );
             _addVersionedScript( new CswUpdateMetaData_02F_Case30251() );

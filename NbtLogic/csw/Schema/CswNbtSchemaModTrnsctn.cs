@@ -1394,6 +1394,17 @@ namespace ChemSW.Nbt.Schema
         }
 
         /// <summary>
+        /// Convenience function for adding a new number column to the database schema
+        /// </summary>
+        public void addNumberColumn( string tablename, string columnname, string description, bool logicaldelete, bool required,
+                                   string LowerRangeValue = "", bool LowerRangeValueInclusive = false, string UpperRangeValue = "", bool UpperRangeValueInclusive = false )
+        {
+            addColumn( columnname, CswEnumDataDictionaryColumnType.Value, Int32.MinValue, Int32.MinValue, string.Empty, description, string.Empty, string.Empty,
+                       false, false, logicaldelete, LowerRangeValue, LowerRangeValueInclusive, CswEnumDataDictionaryPortableDataType.Number, false,
+                       required, tablename, CswEnumDataDictionaryUniqueType.None, UpperRangeValueInclusive, UpperRangeValue );
+        }
+
+        /// <summary>
         /// Convenience function for adding a new double column to the database schema
         /// </summary>
         public void addDoubleColumn( string tablename, string columnname, string description, bool logicaldelete, bool required, Int32 DblPrecision )
