@@ -38,40 +38,74 @@ namespace ChemSW.Nbt.PropTypes
 
         }//refresh
 
-        public void clearModifiedFlag()
+        //public void clearModifiedFlag()
+        //{
+        //    _CswNbtNodeProp.clearModifiedFlag();
+        //}//clearModifiedFlag()
+
+        //public bool WasModified
+        //{
+        //    get
+        //    {
+        //        return ( _CswNbtNodeProp.WasModified );
+        //    }
+
+        //}//WasModified
+
+        //public bool WasModifiedForNotification
+        //{
+        //    get
+        //    {
+        //        return ( _CswNbtNodeProp.WasModifiedForNotification );
+        //    }
+
+        //}//WasModifiedForNotification
+
+        //public bool SuspendModifyTracking
+        //{
+        //    set
+        //    {
+        //        _CswNbtNodeProp.SuspendModifyTracking = value;
+        //    }
+        //    get
+        //    {
+        //        return ( _CswNbtNodeProp.SuspendModifyTracking );
+        //    }
+        //}//SuspendModifyTracking
+
+
+        /// <summary>
+        /// Returns true if the subfield was modified
+        /// </summary>
+        public bool getSubFieldModified( CswEnumNbtSubFieldName SubFieldName )
         {
-            _CswNbtNodeProp.clearModifiedFlag();
-        }//clearModifiedFlag()
+            return _CswNbtNodePropData.getSubFieldModified( SubFieldName );
+        }
 
-        public bool WasModified
+        /// <summary>
+        /// Returns true if any subfield was modified
+        /// </summary>
+        public bool getAnySubFieldModified( bool IncludePendingUpdate = false )
         {
-            get
-            {
-                return ( _CswNbtNodeProp.WasModified );
-            }
+            return _CswNbtNodePropData.getAnySubFieldModified( IncludePendingUpdate );
+        }
 
-        }//WasModified
-
-        public bool WasModifiedForNotification
+        /// <summary>
+        /// Sets a subfield to have been modified
+        /// </summary>
+        public void setSubFieldModified( CswEnumNbtSubFieldName SubFieldName, bool Modified = true )
         {
-            get
-            {
-                return ( _CswNbtNodeProp.WasModifiedForNotification );
-            }
+            _CswNbtNodePropData.setSubFieldModified( SubFieldName, Modified );
+        }
 
-        }//WasModifiedForNotification
-
-        public bool SuspendModifyTracking
+        /// <summary>
+        /// Clears all subfield modified flags
+        /// </summary>
+        public void clearSubFieldModifiedFlags()
         {
-            set
-            {
-                _CswNbtNodeProp.SuspendModifyTracking = value;
-            }
-            get
-            {
-                return ( _CswNbtNodeProp.SuspendModifyTracking );
-            }
-        }//SuspendModifyTracking
+            _CswNbtNodePropData.clearSubFieldModifiedFlags();
+        }
+
 
         public string Gestalt { get { return ( _CswNbtNodeProp.Gestalt ); } }
         public string ClobData { get { return ( _CswNbtNodePropData.ClobData ); } }

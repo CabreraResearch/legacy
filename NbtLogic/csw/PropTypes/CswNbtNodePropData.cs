@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
+using System.Linq;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
@@ -44,7 +46,7 @@ namespace ChemSW.Nbt.PropTypes
         /// <param name="column">Target column</param>
         /// <param name="value">New value</param>
         /// <returns>True if any changes were made</returns>
-        public bool SetPropRowValue( CswEnumNbtPropColumn column, object value, bool IsNonModifying = false )
+        public bool SetPropRowValue( CswEnumNbtSubFieldName SubFieldName, CswEnumNbtPropColumn column, object value, bool IsNonModifying = false )
         {
             bool ret = false;
             object dbval;
@@ -79,10 +81,12 @@ namespace ChemSW.Nbt.PropTypes
                     _PropRow[column.ToString()] = CswConvert.ToDbVal( value );
                     if( false == IsNonModifying )
                     {
-                        WasModified = true;
-                        // don't mark modified if all we're doing is changing PendingUpdate
-                        // see case 27652
-                        WasModifiedForNotification = ( column != CswEnumNbtPropColumn.PendingUpdate );
+                        //WasModified = true;
+                        setSubFieldModified( SubFieldName );
+                        // don't need this anymore as of case 29002
+                        //// don't mark modified if all we're doing is changing PendingUpdate
+                        //// see case 27652
+                        ////WasModifiedForNotification = ( column != CswEnumNbtPropColumn.PendingUpdate );
                     }
                     ret = true;
                 }
@@ -124,54 +128,94 @@ namespace ChemSW.Nbt.PropTypes
             _PropsTable = NewValueRow.Table;
         }//refresh
 
-        private bool _WasModified = false;
-        private bool _WasModifiedForNotification = false;
-        private CswNbtResources _CswNbtResources;
+        //private bool _WasModified = false;
+        //private bool _WasModifiedForNotification = false;
+        //private CswNbtResources _CswNbtResources;
 
-        public bool WasModified
-        {
-            private set
-            {
-                if( !SuspendModifyTracking )
-                {
-                    // We never set it false, so that modifying Field1 but not modifying Field2 will not accidentally clear the modification flag.
-                    // Use clearModifiedFlag() to clear it on purpose.
-                    if( value )
-                    {
-                        _WasModified = true;
-                    }
-                }
-            }
-            get
-            {
-                return ( _WasModified );
-            }
-        }//WasModified
+        //public bool WasModified
+        //{
+        //    private set
+        //    {
+        //        if( !SuspendModifyTracking )
+        //        {
+        //            // We never set it false, so that modifying Field1 but not modifying Field2 will not accidentally clear the modification flag.
+        //            // Use clearModifiedFlag() to clear it on purpose.
+        //            if( value )
+        //            {
+        //                _WasModified = true;
+        //            }
+        //        }
+        //    }
+        //    get
+        //    {
+        //        return ( _WasModified );
+        //    }
+        //}//WasModified
 
-        public bool WasModifiedForNotification
-        {
-            private set
-            {
-                if( !SuspendModifyTracking )
-                {
-                    // We never set it false, so that modifying Field1 but not modifying Field2 will not accidentally clear the modification flag.
-                    // Use clearModifiedFlag() to clear it on purpose.
-                    if( value )
-                    {
-                        _WasModifiedForNotification = true;
-                    }
-                }
-            }
-            get
-            {
-                return ( _WasModifiedForNotification );
-            }
-        }//WasModifiedForNotification
+        //public bool WasModifiedForNotification
+        //{
+        //    private set
+        //    {
+        //        if( !SuspendModifyTracking )
+        //        {
+        //            // We never set it false, so that modifying Field1 but not modifying Field2 will not accidentally clear the modification flag.
+        //            // Use clearModifiedFlag() to clear it on purpose.
+        //            if( value )
+        //            {
+        //                _WasModifiedForNotification = true;
+        //            }
+        //        }
+        //    }
+        //    get
+        //    {
+        //        return ( _WasModifiedForNotification );
+        //    }
+        //}//WasModifiedForNotification
 
-        public void clearModifiedFlag()
+        //public void clearModifiedFlag()
+        //{
+        //    _WasModified = false;
+        //    _WasModifiedForNotification = false;
+        //}
+        private Dictionary<CswEnumNbtSubFieldName, bool> _SubFieldsModified = new Dictionary<CswEnumNbtSubFieldName, bool>();
+
+        /// <summary>
+        /// Returns true if the subfield was modified
+        /// </summary>
+        public bool getSubFieldModified( CswEnumNbtSubFieldName SubFieldName )
         {
-            _WasModified = false;
-            _WasModifiedForNotification = false;
+            bool ret = false;
+            if( _SubFieldsModified.ContainsKey( SubFieldName ) )
+            {
+                ret = _SubFieldsModified[SubFieldName];
+            }
+            return ret;
+        }
+
+
+        /// <summary>
+        /// Returns true if any subfield was modified
+        /// </summary>
+        public bool getAnySubFieldModified( bool IncludePendingUpdate = false )
+        {
+            return _SubFieldsModified.Any( kvp => ( IncludePendingUpdate || kvp.Key != CswEnumNbtSubFieldName.PendingUpdate ) &&
+                                                  kvp.Value == true );
+        }
+
+        /// <summary>
+        /// Sets a subfield to have been modified
+        /// </summary>
+        public void setSubFieldModified( CswEnumNbtSubFieldName SubFieldName, bool Modified = true )
+        {
+            _SubFieldsModified[SubFieldName] = Modified;
+        }
+
+        /// <summary>
+        /// Clears all subfield modified flags
+        /// </summary>
+        public void clearSubFieldModifiedFlags()
+        {
+            _SubFieldsModified = new Dictionary<CswEnumNbtSubFieldName, bool>();
         }
 
         public string OtherPropGestalt( Int32 NodeTypePropId )
@@ -185,20 +229,20 @@ namespace ChemSW.Nbt.PropTypes
         }
 
 
-        //default val is true so that as props are initially
-        //populated they are not triggering the modify [sic.] flag
-        private bool _SuspendModifyTracking = true;
-        public bool SuspendModifyTracking
-        {
-            set
-            {
-                _SuspendModifyTracking = value;
-            }
-            get
-            {
-                return ( _SuspendModifyTracking );
-            }//
-        }//SuspendModifyTracking
+        ////default val is true so that as props are initially
+        ////populated they are not triggering the modify [sic.] flag
+        //private bool _SuspendModifyTracking = true;
+        //public bool SuspendModifyTracking
+        //{
+        //    set
+        //    {
+        //        _SuspendModifyTracking = value;
+        //    }
+        //    get
+        //    {
+        //        return ( _SuspendModifyTracking );
+        //    }//
+        //}//SuspendModifyTracking
 
         private string _getRowStringVal( CswEnumNbtPropColumn ColumnName )
         {

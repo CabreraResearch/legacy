@@ -77,63 +77,98 @@ namespace ChemSW.Nbt.PropTypes
             OnPropChange = ChangeHandler;
         }
 
-        /// <summary>
-        /// Sets the property to non-modified.  Changes made between the last save and this call are lost.
-        /// </summary>
-        public void clearModifiedFlag()
-        {
-            _CswNbtNodePropData.clearModifiedFlag();
-        }//clearModifiedFlag()
+        ///// <summary>
+        ///// Sets the property to non-modified.  Changes made between the last save and this call are lost.
+        ///// </summary>
+        //public void clearModifiedFlag()
+        //{
+        //    _CswNbtNodePropData.clearModifiedFlag();
+        //}//clearModifiedFlag()
+
+
+        ///// <summary>
+        ///// True if the value was modified or not.  Cannot be set.
+        ///// </summary>
+        ///// <remark>
+        ///// You don't want to put a setter here. We want CswNbtNodePropData
+        ///// to be entirely in charge of the meaning of "WasModified";
+        ///// Use clearModifyFlag() if you want to do a reset
+        ///// </remark>
+        //public bool WasModified
+        //{
+        //    get
+        //    {
+        //        return ( _CswNbtNodePropData.WasModified );
+        //    }
+
+        //}//WasModified
+
+        ///// <summary>
+        ///// True if the value was modified or not in such a way as to signal a Notification.  Cannot be set.
+        ///// </summary>
+        ///// <remark>
+        ///// You don't want to put a setter here. We want CswNbtNodePropData
+        ///// to be entirely in charge of the meaning of "WasModifiedForNotification";
+        ///// Use clearModifyFlag() if you want to do a reset
+        ///// </remark>
+        //public bool WasModifiedForNotification
+        //{
+        //    get
+        //    {
+        //        return ( _CswNbtNodePropData.WasModifiedForNotification );
+        //    }
+
+        //}//WasModifiedForNotification
+
+        ///// <summary>
+        ///// True prevents the ModifiedFlag from changing
+        ///// </summary>
+        //public bool SuspendModifyTracking
+        //{
+        //    set
+        //    {
+        //        _CswNbtNodePropData.SuspendModifyTracking = value;
+        //    }
+        //    get
+        //    {
+        //        return ( _CswNbtNodePropData.SuspendModifyTracking );
+        //    }//
+        //}//SuspendModifyTracking
 
 
         /// <summary>
-        /// True if the value was modified or not.  Cannot be set.
+        /// Returns true if the subfield was modified
         /// </summary>
-        /// <remark>
-        /// You don't want to put a setter here. We want CswNbtNodePropData
-        /// to be entirely in charge of the meaning of "WasModified";
-        /// Use clearModifyFlag() if you want to do a reset
-        /// </remark>
-        public bool WasModified
+        public bool getSubFieldModified( CswEnumNbtSubFieldName SubFieldName )
         {
-            get
-            {
-                return ( _CswNbtNodePropData.WasModified );
-            }
-
-        }//WasModified
+            return _CswNbtNodePropData.getSubFieldModified( SubFieldName );
+        }
 
         /// <summary>
-        /// True if the value was modified or not in such a way as to signal a Notification.  Cannot be set.
+        /// Returns true if any subfield was modified
         /// </summary>
-        /// <remark>
-        /// You don't want to put a setter here. We want CswNbtNodePropData
-        /// to be entirely in charge of the meaning of "WasModifiedForNotification";
-        /// Use clearModifyFlag() if you want to do a reset
-        /// </remark>
-        public bool WasModifiedForNotification
+        public bool getAnySubFieldModified( bool IncludePendingUpdate = false )
         {
-            get
-            {
-                return ( _CswNbtNodePropData.WasModifiedForNotification );
-            }
-
-        }//WasModifiedForNotification
+            return _CswNbtNodePropData.getAnySubFieldModified( IncludePendingUpdate );
+        }
 
         /// <summary>
-        /// True prevents the ModifiedFlag from changing
+        /// Sets a subfield to have been modified
         /// </summary>
-        public bool SuspendModifyTracking
+        public void setSubFieldModified( CswEnumNbtSubFieldName SubFieldName, bool Modified = true )
         {
-            set
-            {
-                _CswNbtNodePropData.SuspendModifyTracking = value;
-            }
-            get
-            {
-                return ( _CswNbtNodePropData.SuspendModifyTracking );
-            }//
-        }//SuspendModifyTracking
+            _CswNbtNodePropData.setSubFieldModified( SubFieldName, Modified );
+        }
+
+        /// <summary>
+        /// Clears all subfield modified flags
+        /// </summary>
+        public void clearSubFieldModifiedFlags()
+        {
+            _CswNbtNodePropData.clearSubFieldModifiedFlags();
+        }
+
+
 
         /// <summary>
         /// Text value for property
@@ -207,8 +242,8 @@ namespace ChemSW.Nbt.PropTypes
         /// <summary>
         /// True if the property must have a value (Temporarily)
         /// </summary>
-        public bool TemporarilyRequired { get { return _CswNbtNodePropData.TemporarilyRequired; } set { _CswNbtNodePropData.TemporarilyRequired = value; } } 
-        
+        public bool TemporarilyRequired { get { return _CswNbtNodePropData.TemporarilyRequired; } set { _CswNbtNodePropData.TemporarilyRequired = value; } }
+
         /// <summary>
         /// The default value of the property
         /// </summary>
@@ -292,7 +327,7 @@ namespace ChemSW.Nbt.PropTypes
             if( false == Node.Properties[this.NodeTypeProp].Empty ) //case 26546 - we allow unique properties to be empty
             {
                 //bz # 6686
-                if( IsUnique() && WasModified && !OverrideUniqueValidation )
+                if( IsUnique() && getAnySubFieldModified() && !OverrideUniqueValidation)
                 {
                     CswNbtView CswNbtView = new CswNbtView( _CswNbtResources );
                     CswNbtView.ViewName = "Other Nodes, for Property Uniqueness";
@@ -332,7 +367,8 @@ namespace ChemSW.Nbt.PropTypes
                         {
                             // BZ 9987 - Clear the value
                             this._CswNbtNodePropData.ClearValue();
-                            this.clearModifiedFlag();
+                            //this.clearModifiedFlag();
+                            this.clearSubFieldModifiedFlags();
                         }
                     }
 
@@ -340,14 +376,15 @@ namespace ChemSW.Nbt.PropTypes
             } //if empty
 
             // case 25780 - copy first 512 characters of gestalt to gestaltsearch
-            if( _CswNbtNodePropData.WasModified )
+            //if( _CswNbtNodePropData.WasModified )
+            if( getSubFieldModified( CswEnumNbtSubFieldName.Gestalt ) )
             {
                 string GestaltSearchValue = _CswNbtNodePropData.Gestalt;
                 if( GestaltSearchValue.Length > 512 )
                 {
                     GestaltSearchValue = GestaltSearchValue.Substring( 0, 512 );
                 }
-                SetPropRowValue( CswEnumNbtPropColumn.GestaltSearch, GestaltSearchValue );
+                SetPropRowValue(  CswEnumNbtSubFieldName.GestaltSearch, CswEnumNbtPropColumn.GestaltSearch, GestaltSearchValue );
 
                 // We fire this here so that it only fires once per row, not once per subfield.  See case 27241.
                 if( null != OnPropChange )
@@ -358,9 +395,9 @@ namespace ChemSW.Nbt.PropTypes
 
         }
 
-        protected bool SetPropRowValue( CswEnumNbtPropColumn column, object value, bool IsNonModifying = false )
+        protected bool SetPropRowValue( CswEnumNbtSubFieldName SubFieldName, CswEnumNbtPropColumn column, object value, bool IsNonModifying = false )
         {
-            return _CswNbtNodePropData.SetPropRowValue( column, value, IsNonModifying );
+            return _CswNbtNodePropData.SetPropRowValue( SubFieldName, column, value, IsNonModifying );
         }
 
         protected string GetPropRowValue( CswEnumNbtPropColumn column )
