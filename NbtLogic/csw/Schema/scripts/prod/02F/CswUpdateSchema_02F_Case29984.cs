@@ -74,7 +74,7 @@ namespace ChemSW.Nbt.Schema
                 {
                     CswNbtMetaDataNodeTypeProp DocumentsNTP = MaterialNT.getNodeTypePropByObjectClassProp( CswNbtPropertySetMaterial.PropertyName.Documents );
                     CswNbtMetaDataNodeType MaterialDocumentNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Material Document" );
-                    
+
                     if( null != MaterialDocumentNT )
                     {
                         CswNbtMetaDataObjectClass DocumentOC = MaterialDocumentNT.getObjectClass();

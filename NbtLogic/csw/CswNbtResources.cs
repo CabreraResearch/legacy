@@ -25,7 +25,7 @@ namespace ChemSW.Nbt
     /// <summary>
     /// A collection of useful resources for NBT business logic.
     /// </summary>
-    public class CswNbtResources: ICswResources
+    public class CswNbtResources : ICswResources
     {
         /// <summary>
         /// The MD5 seed used for NBT
@@ -593,23 +593,23 @@ namespace ChemSW.Nbt
             MailReportsView.ViewName = "runMailReportEventsView";
             CswNbtViewRelationship Rel1 = MailReportsView.AddViewRelationship( MailReportOC, false );
             // Nodetype matches
-            MailReportsView.AddViewPropertyAndFilter( ParentViewRelationship : Rel1,
-                                                      MetaDataProp : TargetTypeOCP,
-                                                      FilterMode : CswEnumNbtFilterMode.Contains,
-                                                      Value : TargetNodeType.FirstVersionNodeTypeId.ToString() );
+            MailReportsView.AddViewPropertyAndFilter( ParentViewRelationship: Rel1,
+                                                      MetaDataProp: TargetTypeOCP,
+                                                      FilterMode: CswEnumNbtFilterMode.Contains,
+                                                      Value: TargetNodeType.FirstVersionNodeTypeId.ToString() );
             // Event matches
-            MailReportsView.AddViewPropertyAndFilter( ParentViewRelationship : Rel1,
-                                                      MetaDataProp : EventOCP,
-                                                      FilterMode : CswEnumNbtFilterMode.Equals,
-                                                      Value : EventOpt.ToString() );
+            MailReportsView.AddViewPropertyAndFilter( ParentViewRelationship: Rel1,
+                                                      MetaDataProp: EventOCP,
+                                                      FilterMode: CswEnumNbtFilterMode.Equals,
+                                                      Value: EventOpt.ToString() );
             // Enabled
-            MailReportsView.AddViewPropertyAndFilter( ParentViewRelationship : Rel1,
-                                                      MetaDataProp : EnabledOCP,
-                                                      FilterMode : CswEnumNbtFilterMode.Equals,
-                                                      Value : CswEnumTristate.True.ToString() );
+            MailReportsView.AddViewPropertyAndFilter( ParentViewRelationship: Rel1,
+                                                      MetaDataProp: EnabledOCP,
+                                                      FilterMode: CswEnumNbtFilterMode.Equals,
+                                                      Value: CswEnumTristate.True.ToString() );
             // Can't check the view, because it depends on the user
             // But check for a matching property value being altered
-            ICswNbtTree MailReportsTree = Trees.getTreeFromView( MailReportsView, RequireViewPermissions : false, IncludeSystemNodes : true, IncludeHiddenNodes : false );
+            ICswNbtTree MailReportsTree = Trees.getTreeFromView( MailReportsView, RequireViewPermissions: false, IncludeSystemNodes: true, IncludeHiddenNodes: false );
             for( Int32 i = 0; i < MailReportsTree.getChildNodeCount(); i++ )
             {
                 MailReportsTree.goToNthChild( i );
@@ -731,7 +731,8 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Provides additional methods for working with session data
         /// </summary>
-        public CswSessionManager CswSessionManager { 
+        public CswSessionManager CswSessionManager
+        {
             get { return _CswResources.CswSessionManager; }
             set { _CswResources.CswSessionManager = value; }
         }
