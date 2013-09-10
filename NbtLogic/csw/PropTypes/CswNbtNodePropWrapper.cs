@@ -85,11 +85,18 @@ namespace ChemSW.Nbt.PropTypes
         /// <summary>
         /// Get the Current state of the Property's value using the fieldtype rule's default subfield
         /// </summary>
-        public string GetPropRowValue() { return GetPropRowValue( NodeTypeProp.getFieldTypeRule().SubFields.Default.Column ); }
+        public string GetSubFieldValue()
+        {
+            return GetSubFieldValue( NodeTypeProp.getFieldTypeRule().SubFields.Default );
+        }
+
         /// <summary>
         /// Get the Current state of the Property's value using a specific subfield
         /// </summary>
-        public string GetPropRowValue( CswEnumNbtPropColumn Column ) { return GetPropRowValue( Column ); }
+        public string GetSubFieldValue( CswNbtSubField SubField )
+        {
+            return _CswNbtNodeProp.GetSubFieldValue( SubField.Name ).ToString();
+        }
 
         /// <summary>
         /// Get the Prior state of the Property's value using the fieldtype rule's default subfield

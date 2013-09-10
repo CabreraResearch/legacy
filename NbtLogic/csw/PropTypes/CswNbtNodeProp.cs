@@ -422,6 +422,27 @@ namespace ChemSW.Nbt.PropTypes
             }
         } // SetSubFieldValue
 
+        
+        /// <summary>
+        /// Get the value for a subfield
+        /// </summary>
+        public object GetSubFieldValue( CswEnumNbtSubFieldName SubFieldName )
+        {
+            object ret = null;
+            foreach( CswNbtSubField SubFieldKey in _SubFieldMethods.Keys )
+            {
+                if( SubFieldName == SubFieldKey.Name )
+                {
+                    // This calls the appropriate set; method in the CswNbtNodeProp* class
+                    if( null != _SubFieldMethods[SubFieldKey].Item1 )
+                    {
+                        ret =_SubFieldMethods[SubFieldKey].Item1();
+                    }
+                }
+            }
+            return ret;
+        } // GetSubFieldValue
+
         /// <summary>
         /// Returns the original value of the provided column for this property
         /// </summary>

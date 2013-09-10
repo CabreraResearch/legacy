@@ -411,8 +411,8 @@ namespace ChemSW.NbtSchemaDiff
                         {
                             //string LeftValue = LeftPropWrapper.GetPropRowValue( ( (CswEnumNbtPropColumn) Enum.Parse( typeof( CswEnumNbtPropColumn ), Subfield.Column ) ) );
                             //string RightValue = RightPropWrapper.GetPropRowValue( ( (CswEnumNbtPropColumn) Enum.Parse( typeof( CswEnumNbtPropColumn ), Subfield.Column ) ) );
-                            string LeftValue = LeftPropWrapper.GetPropRowValue( Subfield.Column );
-                            string RightValue = RightPropWrapper.GetPropRowValue( Subfield.Column );
+                            string LeftValue = LeftPropWrapper.GetSubFieldValue( Subfield );
+                            string RightValue = RightPropWrapper.GetSubFieldValue( Subfield );
 
                             if( !ShowDiffsOnlyCheckBox.Checked || LeftValue != RightValue )
                             {
