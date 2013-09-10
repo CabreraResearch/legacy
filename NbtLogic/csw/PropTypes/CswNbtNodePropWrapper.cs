@@ -38,42 +38,6 @@ namespace ChemSW.Nbt.PropTypes
 
         }//refresh
 
-        //public void clearModifiedFlag()
-        //{
-        //    _CswNbtNodeProp.clearModifiedFlag();
-        //}//clearModifiedFlag()
-
-        //public bool WasModified
-        //{
-        //    get
-        //    {
-        //        return ( _CswNbtNodeProp.getAnySubFieldModified() );
-        //    }
-
-        //}//WasModified
-
-        //public bool WasModifiedForNotification
-        //{
-        //    get
-        //    {
-        //        return ( _CswNbtNodeProp.WasModifiedForNotification );
-        //    }
-
-        //}//WasModifiedForNotification
-
-        //public bool SuspendModifyTracking
-        //{
-        //    set
-        //    {
-        //        _CswNbtNodeProp.SuspendModifyTracking = value;
-        //    }
-        //    get
-        //    {
-        //        return ( _CswNbtNodeProp.SuspendModifyTracking );
-        //    }
-        //}//SuspendModifyTracking
-
-
         /// <summary>
         /// Returns true if the subfield was modified
         /// </summary>

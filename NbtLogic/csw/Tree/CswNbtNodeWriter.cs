@@ -128,7 +128,7 @@ namespace ChemSW.Nbt
                 Prop.NodeId = Node.NodeId;
                 // Only set values for unmodified properties
                 // This is important for nodes created through workflows
-                if( !Prop.getAnySubFieldModified() )
+                if( false == Prop.getAnySubFieldModified() )
                 {
                     Prop.SetDefaultValue();
                 }

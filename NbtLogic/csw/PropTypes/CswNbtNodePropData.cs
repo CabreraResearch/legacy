@@ -89,14 +89,9 @@ namespace ChemSW.Nbt.PropTypes
                 if( false == ( CswConvert.ToDbVal( _PropRow[column.ToString()] ).Equals( dbval ) ) )
                 {
                     _PropRow[column.ToString()] = CswConvert.ToDbVal( value );
-                    if( false == IsNonModifying )
+                    if( false == IsNonModifying && SubFieldName != CswEnumNbtSubFieldName.Unknown )
                     {
-                        //WasModified = true;
                         setSubFieldModified( SubFieldName );
-                        // don't need this anymore as of case 29002
-                        //// don't mark modified if all we're doing is changing PendingUpdate
-                        //// see case 27652
-                        ////WasModifiedForNotification = ( column != CswEnumNbtPropColumn.PendingUpdate );
                     }
                     ret = true;
                 }
@@ -140,54 +135,6 @@ namespace ChemSW.Nbt.PropTypes
             _PropsTable = NewValueRow.Table;
         }//refresh
 
-        //private bool _WasModified = false;
-        //private bool _WasModifiedForNotification = false;
-
-        //public bool WasModified
-        //{
-        //    private set
-        //    {
-        //        if( !SuspendModifyTracking )
-        //        {
-        //            // We never set it false, so that modifying Field1 but not modifying Field2 will not accidentally clear the modification flag.
-        //            // Use clearModifiedFlag() to clear it on purpose.
-        //            if( value )
-        //            {
-        //                _WasModified = true;
-        //            }
-        //        }
-        //    }
-        //    get
-        //    {
-        //        return ( _WasModified );
-        //    }
-        //}//WasModified
-
-        //public bool WasModifiedForNotification
-        //{
-        //    private set
-        //    {
-        //        if( !SuspendModifyTracking )
-        //        {
-        //            // We never set it false, so that modifying Field1 but not modifying Field2 will not accidentally clear the modification flag.
-        //            // Use clearModifiedFlag() to clear it on purpose.
-        //            if( value )
-        //            {
-        //                _WasModifiedForNotification = true;
-        //            }
-        //        }
-        //    }
-        //    get
-        //    {
-        //        return ( _WasModifiedForNotification );
-        //    }
-        //}//WasModifiedForNotification
-
-        //public void clearModifiedFlag()
-        //{
-        //    _WasModified = false;
-        //    _WasModifiedForNotification = false;
-        //}
         private Dictionary<CswEnumNbtSubFieldName, bool> _SubFieldsModified = new Dictionary<CswEnumNbtSubFieldName, bool>();
 
         /// <summary>
@@ -238,22 +185,6 @@ namespace ChemSW.Nbt.PropTypes
             }
             return string.Empty;
         }
-
-
-        ////default val is true so that as props are initially
-        ////populated they are not triggering the modify [sic.] flag
-        //private bool _SuspendModifyTracking = true;
-        //public bool SuspendModifyTracking
-        //{
-        //    set
-        //    {
-        //        _SuspendModifyTracking = value;
-        //    }
-        //    get
-        //    {
-        //        return ( _SuspendModifyTracking );
-        //    }//
-        //}//SuspendModifyTracking
 
         private string _getRowStringVal( CswEnumNbtPropColumn ColumnName )
         {
@@ -537,83 +468,19 @@ namespace ChemSW.Nbt.PropTypes
             return ret;
         }
 
-        public string Field1
-        {
-            get { return ( _getRowStringVal( CswEnumNbtPropColumn.Field1 ) ); }
-            //set { SetPropRowValue( CswEnumNbtPropColumn.Field1, value ); }
-        }
-
-        public Int32 Field1_Fk
-        {
-            get { return _getRowIntVal( CswEnumNbtPropColumn.Field1_FK ); }
-            //set { SetPropRowValue( CswEnumNbtPropColumn.Field1_FK, value ); }
-        }
-
-        public Double Field1_Numeric
-        {
-            get { return _getRowDoubleVal( CswEnumNbtPropColumn.Field1_Numeric ); }
-            //set { SetPropRowValue( CswEnumNbtPropColumn.Field1_Numeric, value ); }
-        }
-
-        public DateTime Field1_Date
-        {
-            get { return _getRowDateVal( CswEnumNbtPropColumn.Field1_Date ); }
-            //set { SetPropRowValue( CswEnumNbtPropColumn.Field1_Date, value ); }
-        }
-
-        public string Field2
-        {
-            get { return ( _getRowStringVal( CswEnumNbtPropColumn.Field2 ) ); }
-            //set { SetPropRowValue( CswEnumNbtPropColumn.Field2, value ); }
-        }
-
-        public DateTime Field2_Date
-        {
-            get { return _getRowDateVal( CswEnumNbtPropColumn.Field2_Date ); }
-            //set { SetPropRowValue( CswEnumNbtPropColumn.Field2_Date, value ); }
-        }
-
-        public Double Field2_Numeric
-        {
-            get { return _getRowDoubleVal( CswEnumNbtPropColumn.Field2_Numeric ); }
-            //set { SetPropRowValue( CswEnumNbtPropColumn.Field2_Numeric, value ); }
-        }
-
-        public string Field3
-        {
-            get { return ( _getRowStringVal( CswEnumNbtPropColumn.Field3 ) ); }
-            //set { SetPropRowValue( CswEnumNbtPropColumn.Field3, value ); }
-        }
-
-        public string Field4
-        {
-            get { return ( _getRowStringVal( CswEnumNbtPropColumn.Field4 ) ); }
-            //set { SetPropRowValue( CswEnumNbtPropColumn.Field4, value ); }
-        }
-
-        public string Field5
-        {
-            get { return ( _getRowStringVal( CswEnumNbtPropColumn.Field5 ) ); }
-            //set { SetPropRowValue( CswEnumNbtPropColumn.Field5, value ); }
-        }
-
-        public bool PendingUpdate
-        {
-            get { return _getRowBoolVal( CswEnumNbtPropColumn.PendingUpdate ); }
-            //set { SetPropRowValue( CswEnumNbtPropColumn.PendingUpdate, value ); }
-        }
-
-        public string Gestalt
-        {
-            get { return ( _getRowStringVal( CswEnumNbtPropColumn.Gestalt ) ); }
-            //set { SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, value ); }
-        }
-
-        public string ClobData
-        {
-            get { return ( _getRowStringVal( CswEnumNbtPropColumn.ClobData ) ); }
-            //set { SetPropRowValue( CswEnumNbtPropColumn.ClobData, value ); }
-        }
+        public string Field1 { get { return ( _getRowStringVal( CswEnumNbtPropColumn.Field1 ) ); } }
+        public Int32 Field1_Fk { get { return _getRowIntVal( CswEnumNbtPropColumn.Field1_FK ); } }
+        public Double Field1_Numeric { get { return _getRowDoubleVal( CswEnumNbtPropColumn.Field1_Numeric ); } }
+        public DateTime Field1_Date { get { return _getRowDateVal( CswEnumNbtPropColumn.Field1_Date ); } }
+        public string Field2 { get { return ( _getRowStringVal( CswEnumNbtPropColumn.Field2 ) ); } }
+        public DateTime Field2_Date { get { return _getRowDateVal( CswEnumNbtPropColumn.Field2_Date ); } }
+        public Double Field2_Numeric { get { return _getRowDoubleVal( CswEnumNbtPropColumn.Field2_Numeric ); } }
+        public string Field3 { get { return ( _getRowStringVal( CswEnumNbtPropColumn.Field3 ) ); } }
+        public string Field4 { get { return ( _getRowStringVal( CswEnumNbtPropColumn.Field4 ) ); } }
+        public string Field5 { get { return ( _getRowStringVal( CswEnumNbtPropColumn.Field5 ) ); } }
+        public bool PendingUpdate { get { return _getRowBoolVal( CswEnumNbtPropColumn.PendingUpdate ); } }
+        public string Gestalt { get { return ( _getRowStringVal( CswEnumNbtPropColumn.Gestalt ) ); } }
+        public string ClobData { get { return ( _getRowStringVal( CswEnumNbtPropColumn.ClobData ) ); } }
 
         public Int32 JctNodePropId
         {
@@ -675,23 +542,6 @@ namespace ChemSW.Nbt.PropTypes
             SetPropRowValue( CswEnumNbtSubFieldName.Unknown, CswEnumNbtPropColumn.Field2_Numeric, Double.NaN );
             SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, string.Empty );
             SetPropRowValue( CswEnumNbtSubFieldName.Unknown, CswEnumNbtPropColumn.ClobData, string.Empty );
-
-            //this.Field1 = string.Empty;
-            //this.Field2 = string.Empty;
-            //this.Field3 = string.Empty;
-            //this.Field4 = string.Empty;
-            //this.Field5 = string.Empty;
-            //this.Field1_Fk = Int32.MinValue;
-            //this.Field1_Date = DateTime.MinValue;
-            //this.Field2_Date = DateTime.MinValue;
-            //this.Field1_Numeric = Double.NaN;
-            //this.Field2_Numeric = Double.NaN;
-            //this.Gestalt = string.Empty;
-            //this.ClobData = string.Empty;
-
-            //WasModified = true;
-            //WasModifiedForNotification = true;
-            setSubFieldModified( CswEnumNbtSubFieldName.Gestalt );
         }
 
         public void ClearBlob()
