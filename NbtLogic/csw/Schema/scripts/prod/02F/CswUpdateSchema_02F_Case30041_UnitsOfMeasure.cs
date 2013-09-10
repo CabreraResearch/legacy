@@ -19,6 +19,11 @@ namespace ChemSW.Nbt.Schema
             get { return 30041; }
         }
 
+        public override string ScriptName
+        {
+            get { return "02F_Case30041_UnitsOfMeasure"; }
+        }
+
         public override void update()
         {
             {

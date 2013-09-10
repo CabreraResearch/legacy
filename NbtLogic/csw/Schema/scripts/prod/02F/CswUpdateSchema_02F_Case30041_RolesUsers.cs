@@ -19,19 +19,28 @@ namespace ChemSW.Nbt.Schema
             get { return 30041; }
         }
 
+        public override string ScriptName
+        {
+            get { return "02F_Case30041_RolesUsers"; }
+        }
+
         public override void update()
         {
             {
                 CswNbtSchemaUpdateImportMgr RoleImpMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "roles", "Role" );
 
+                // Bindings
                 RoleImpMgr.importBinding( "roledescription", CswNbtObjClassRole.PropertyName.Description, "" );
                 RoleImpMgr.importBinding( "rolename", CswNbtObjClassRole.PropertyName.Name, "" );
                 RoleImpMgr.importBinding( "timeout", CswNbtObjClassRole.PropertyName.Timeout, "" );
-                RoleImpMgr.importBinding( "roleid", "Legacy ID", "" );
+
+                // Relationships
+                // none
 
                 RoleImpMgr.finalize();
             }
             {
+                // Bindings
                 CswNbtSchemaUpdateImportMgr UserImpMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "users", "User" );
                 UserImpMgr.importBinding( "disabled", CswNbtObjClassUser.PropertyName.Archived, "" );
                 UserImpMgr.importBinding( "namefirst", CswNbtObjClassUser.PropertyName.FirstName, "" );
@@ -46,48 +55,40 @@ namespace ChemSW.Nbt.Schema
                 UserImpMgr.importBinding( "phone", CswNbtObjClassUser.PropertyName.Phone, "" );
                 UserImpMgr.importBinding( "username", CswNbtObjClassUser.PropertyName.Username, "" );
 
-                UserImpMgr.importBinding( "userid", "Legacy ID", "" );
+                // Relationships
+                UserImpMgr.importBinding( "defaultlocationid", CswNbtObjClassUser.PropertyName.DefaultLocation, "" );
+                //UserImpMgr.importBinding( "homeinventorygroupid", CswNbtObjClassUser.PropertyName. );
+                UserImpMgr.importBinding( "roleid", CswNbtObjClassUser.PropertyName.Role, "" );
+                UserImpMgr.importBinding( "workunitid", CswNbtObjClassUser.PropertyName.WorkUnit, "" );
+
 
                 //TODO: complete relationships
 
                 /*
-                   defaultlocationid, 
-                   
-                   
+                   +defaultlocationid, 
                    +disabled, 
-                   homeinventorygroupid, 
-                   
+                   homeinventorygroupid, - We dont' have an inventory group property on Users  
                    +namefirst, 
                    +namelast, 
                    +navrows, 
-                   +password, 
-                   
-                   
-                   roleid, 
+                   +password,
+                   +roleid, 
                    +userid, 
                    +username, 
-                   workunitid, 
+                   +workunitid, 
                    +locked, 
                    +failedlogincount, 
                    +email, 
                    +phone, 
-                   
-                   // exclude these: issystemuser, 
-                   
-                   
-                   
-                   
-                   
-                   +defaultlanguage, 
-                   
+                   +defaultlanguage,                   
                    ?? pending TDU investigation supervisorid, 
                    +employeeid
              
-                    */
+                */
 
+                // Exclude issystemuser
                 UserImpMgr.finalize( WhereClause: " issystemuser != '1' " );
             }
-
 
         } // update()
 

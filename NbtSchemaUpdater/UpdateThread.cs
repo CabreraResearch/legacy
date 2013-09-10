@@ -61,9 +61,7 @@ namespace ChemSW.Nbt.Schema
                     _CswNbtResources.AccessId = AccessId;
                     _CswNbtResources.InitCurrentUser = InitUser;
 
-                    _CswSchemaScriptsProd = new CswSchemaScriptsProd();
                     _CswLogger = _CswNbtResources.CswLogger;
-
 
                     CswNbtResourcesOut = _CswNbtResources;
                 }
@@ -215,6 +213,9 @@ namespace ChemSW.Nbt.Schema
 
                 SchemaInfoEventArgs e = new SchemaInfoEventArgs();
 
+                // Initialize CswSchemaScriptsProd -- we must do this here so that database resources are also initialized
+                _CswSchemaScriptsProd = new CswSchemaScriptsProd( _CswNbtResources );
+
                 _CswSchemaUpdater = new CswSchemaUpdater( AccessId, new CswSchemaUpdater.ResourcesInitHandler( _InitSessionResources ), _CswSchemaScriptsProd );
                 e.MinimumSchemaVersion = _CswSchemaUpdater.MinimumVersion;
                 e.LatestSchemaVersion = _CswSchemaUpdater.LatestVersion;
@@ -301,15 +302,17 @@ namespace ChemSW.Nbt.Schema
 
                 _CswSchemaUpdater = new CswSchemaUpdater( AccessId, new CswSchemaUpdater.ResourcesInitHandler( _InitSessionResources ), _CswSchemaScriptsProd ); //wait to create updater until resource initiation is thoroughly done
 
+                // RunBeforeScripts -- Run Non Versioned Scripts
                 bool UpdateSucceeded = _runNonVersionScripts( _CswSchemaScriptsProd.RunBeforeScripts, CswNbtResources, SchemaInfoEventArgs );
-
 
                 if( UpdateSucceeded )
                 {
                     CswSchemaVersion CurrentVersion = _CswSchemaUpdater.CurrentVersion( CswNbtResources );
-                    while( UpdateSucceeded && !Cancel && CurrentVersion != _CswSchemaUpdater.LatestVersion )
+
+                    for( int i = 0; ( UpdateSucceeded && !Cancel && ( CurrentVersion != _CswSchemaUpdater.LatestVersion ) ) || ( i < _CswSchemaUpdater.UpdateDrivers.Count ); i++ )
                     {
-                        SetStatus( "Updating to " + _CswSchemaUpdater.TargetVersion( CswNbtResources ).ToString() );
+                        CswSchemaVersion UpdateToVersion = _CswSchemaUpdater.SchemaVersions[i];
+                        SetStatus( "Updating to " + UpdateToVersion );
 
                         UpdateSucceeded = _CswSchemaUpdater.runNextVersionedScript();
 
@@ -325,11 +328,8 @@ namespace ChemSW.Nbt.Schema
                         _updateHistoryTable( CswNbtResources, SchemaInfoEventArgs );
 
                         if( UpdateSucceeded )
-                            SetStatus( "Update successful" );
-
-
-
-                    }//iterate veresions
+                            SetStatus( "Update successful: " + _CswSchemaUpdater.getDriver( UpdateToVersion ).SchemaVersion + ": " + _CswSchemaUpdater.getDriver( UpdateToVersion ).Description );
+                    }//iterate
 
                 }//if pre-process scripts succeded
 
@@ -360,10 +360,6 @@ namespace ChemSW.Nbt.Schema
                 SetStatus( "ERROR: " + ex.Message );
             }
         }//iterate versions
-
-
-
-
 
         #endregion DoUpdate
 

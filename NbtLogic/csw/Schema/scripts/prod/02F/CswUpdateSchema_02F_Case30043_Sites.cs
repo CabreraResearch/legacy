@@ -19,6 +19,11 @@ namespace ChemSW.Nbt.Schema
             get { return 30043; }
         }
 
+        public override string ScriptName
+        {
+            get { return "02F_Case30043_Sites"; }
+        }
+
         public override void update()
         {
             // Case 30043 - CAF Migration: Sites/Locations/Work Units
