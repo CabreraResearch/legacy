@@ -753,6 +753,7 @@ namespace ChemSW.Nbt.ObjClasses
                         {
                             ContDispTransNode.DestinationContainer.RelatedNodeId = DestinationContainer.NodeId;
                         }
+                        ContDispTransNode.Dispenser.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
                         ContDispTransNode.QuantityDispensed.Quantity = Amount;
                         ContDispTransNode.QuantityDispensed.UnitId = UnitId;
                         ContDispTransNode.Type.Value = DispenseType.ToString();
