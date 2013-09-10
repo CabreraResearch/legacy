@@ -70,7 +70,7 @@ namespace ChemSW.Nbt.PropTypes
                 if( _SelectedUserIds == null )
                 {
                     _SelectedUserIds = new CswCommaDelimitedString();
-                    _SelectedUserIds.FromString( _CswNbtNodePropData.GetPropRowValue( _SelectedUserIdsSubField.Column ) );
+                    _SelectedUserIds.FromString( GetPropRowValue( _SelectedUserIdsSubField.Column ) );
                     _SelectedUserIds.OnChange += _SelectedUserIds_OnChange;
                 }
                 //removed archived or invalid users
@@ -109,7 +109,7 @@ namespace ChemSW.Nbt.PropTypes
         // This event handler allows us to save changes made directly to _SelectedNodeTypeIds (like .Add() )
         private void _SelectedUserIds_OnChange()
         {
-            if( _CswNbtNodePropData.SetPropRowValue( _SelectedUserIdsSubField.Column, _SelectedUserIds.ToString() ) )
+            if( SetPropRowValue( _SelectedUserIdsSubField.Column, _SelectedUserIds.ToString() ) )
             {
                 PendingUpdate = true;
             }
@@ -333,7 +333,7 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void SyncGestalt()
         {
-            _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, SelectedUserNames().ToString() );
+            SetPropRowValue( CswEnumNbtPropColumn.Gestalt, SelectedUserNames().ToString() );
         }
 
     }//CswNbtNodePropUserSelect

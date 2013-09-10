@@ -40,8 +40,8 @@ namespace ChemSW.Nbt.PropTypes
             //TODO: check if there is any blob data here - if there are no blob_data rows for this prop, return true
             get
             {
-                //return ( string.Empty == _CswNbtNodePropData.GetPropRowValue( _FileNameSubField.Column ) ||
-                //          string.Empty == _CswNbtNodePropData.GetPropRowValue( _ContentTypeSubField.Column ) );
+                //return ( string.Empty == GetPropRowValue( _FileNameSubField.Column ) ||
+                //          string.Empty == GetPropRowValue( _ContentTypeSubField.Column ) );
                 return Images.Count > 0;
             }
         }
@@ -171,7 +171,7 @@ namespace ChemSW.Nbt.PropTypes
             {
                 imageNames.Add(Image.FileName);
             }
-            _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, imageNames.ToString() );
+            SetPropRowValue( CswEnumNbtPropColumn.Gestalt, imageNames.ToString() );
         }
     }
 

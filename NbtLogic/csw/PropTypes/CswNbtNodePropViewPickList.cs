@@ -65,7 +65,7 @@ namespace ChemSW.Nbt.PropTypes
                 {
                     _SelectedViewIds = new CswCommaDelimitedString();
                     _SelectedViewIds.OnChange += new CswDelimitedString.DelimitedStringChangeHandler( _SelectedViewIds_OnChange );
-                    _SelectedViewIds.FromString( _CswNbtNodePropData.GetPropRowValue( _SelectedViewIdsSubField.Column ) );
+                    _SelectedViewIds.FromString( GetPropRowValue( _SelectedViewIdsSubField.Column ) );
                 }
                 return _SelectedViewIds;
             }
@@ -80,7 +80,7 @@ namespace ChemSW.Nbt.PropTypes
         // This event handler allows us to save changes made directly to _SelectedNodeTypeIds (like .Add() )
         void _SelectedViewIds_OnChange()
         {
-            if( _CswNbtNodePropData.SetPropRowValue( _SelectedViewIdsSubField.Column, _SelectedViewIds.ToString() ) )
+            if( SetPropRowValue( _SelectedViewIdsSubField.Column, _SelectedViewIds.ToString() ) )
                 PendingUpdate = true;
         }
 
@@ -120,7 +120,7 @@ namespace ChemSW.Nbt.PropTypes
                 {
                     _CachedViewNames = new CswCommaDelimitedString();
                     _CachedViewNames.OnChange += new CswDelimitedString.DelimitedStringChangeHandler( _CachedViewNames_OnChange );
-                    _CachedViewNames.FromString( _CswNbtNodePropData.GetPropRowValue( _CachedViewNameSubField.Column ) );
+                    _CachedViewNames.FromString( GetPropRowValue( _CachedViewNameSubField.Column ) );
                 }
                 return _CachedViewNames;
             }
@@ -135,7 +135,7 @@ namespace ChemSW.Nbt.PropTypes
         // This event handler allows us to save changes made directly to _SelectedNodeTypeIds (like .Add() )
         void _CachedViewNames_OnChange()
         {
-            _CswNbtNodePropData.SetPropRowValue( _CachedViewNameSubField.Column, _CachedViewNames.ToString() );
+            SetPropRowValue( _CachedViewNameSubField.Column, _CachedViewNames.ToString() );
         }
 
         public void RefreshViewName()

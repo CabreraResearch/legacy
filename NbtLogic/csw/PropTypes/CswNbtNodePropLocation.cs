@@ -55,7 +55,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return ( _CswNbtNodePropData.GetPropRowValue( _NodeIdSubField.Column ) == Int32.MinValue.ToString() );
+                return ( GetPropRowValue( _NodeIdSubField.Column ) == Int32.MinValue.ToString() );
             }
         }
 
@@ -74,7 +74,7 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 CswPrimaryKey ret = null;
-                string StringVal = _CswNbtNodePropData.GetPropRowValue( _NodeIdSubField.Column );
+                string StringVal = GetPropRowValue( _NodeIdSubField.Column );
                 if( CswTools.IsInteger( StringVal ) )
                 {
                     Int32 Val = CswConvert.ToInt32( StringVal );
@@ -91,7 +91,7 @@ namespace ChemSW.Nbt.PropTypes
                     NewValue = value.PrimaryKey;
                 }
 
-                if( _CswNbtNodePropData.SetPropRowValue( _NodeIdSubField.Column, NewValue ) )
+                if( SetPropRowValue( _NodeIdSubField.Column, NewValue ) )
                 {
                     RefreshNodeName();
                     PendingUpdate = true;
@@ -102,7 +102,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                string NodeName = _CswNbtNodePropData.GetPropRowValue( _NameSubField.Column );
+                string NodeName = GetPropRowValue( _NameSubField.Column );
                 if( string.IsNullOrEmpty( NodeName ) )
                 {
                     NodeName = RefreshNodeName();
@@ -111,7 +111,7 @@ namespace ChemSW.Nbt.PropTypes
             }
             set
             {
-                _CswNbtNodePropData.SetPropRowValue( _NameSubField.Column, value, IsNonModifying: true );
+                SetPropRowValue( _NameSubField.Column, value, IsNonModifying: true );
             }
         }
 
@@ -119,11 +119,11 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return _CswNbtNodePropData.GetPropRowValue( _PathSubField.Column );
+                return GetPropRowValue( _PathSubField.Column );
             }
             set
             {
-                _CswNbtNodePropData.SetPropRowValue( _PathSubField.Column, value, IsNonModifying: true );
+                SetPropRowValue( _PathSubField.Column, value, IsNonModifying: true );
                 SyncGestalt();
             }
         }
@@ -137,11 +137,11 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return _CswNbtNodePropData.GetPropRowValue( _BarcodeSubField.Column );
+                return GetPropRowValue( _BarcodeSubField.Column );
             }
             set
             {
-                _CswNbtNodePropData.SetPropRowValue( _BarcodeSubField.Column, value, IsNonModifying: true );
+                SetPropRowValue( _BarcodeSubField.Column, value, IsNonModifying: true );
             }
         }
 
@@ -151,7 +151,7 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 Int32 ret = Int32.MinValue;
-                string StringVal = _CswNbtNodePropData.GetPropRowValue( _RowSubField.Column );
+                string StringVal = GetPropRowValue( _RowSubField.Column );
                 if( CswTools.IsInteger( StringVal ) )
                 {
                     ret = CswConvert.ToInt32( StringVal );
@@ -160,7 +160,7 @@ namespace ChemSW.Nbt.PropTypes
             }
             set
             {
-                if( _CswNbtNodePropData.SetPropRowValue( _RowSubField.Column, value, IsNonModifying: true ) )
+                if( SetPropRowValue( _RowSubField.Column, value, IsNonModifying: true ) )
                 {
                     PendingUpdate = true;
                 }
@@ -173,7 +173,7 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 Int32 ret = Int32.MinValue;
-                string StringVal = _CswNbtNodePropData.GetPropRowValue( _ColumnSubField.Column );
+                string StringVal = GetPropRowValue( _ColumnSubField.Column );
                 if( CswTools.IsInteger( StringVal ) )
                 {
                     ret = CswConvert.ToInt32( StringVal );
@@ -182,7 +182,7 @@ namespace ChemSW.Nbt.PropTypes
             }
             set
             {
-                _CswNbtNodePropData.SetPropRowValue( _ColumnSubField.Column, value, IsNonModifying: true );
+                SetPropRowValue( _ColumnSubField.Column, value, IsNonModifying: true );
                 {
                     PendingUpdate = true;
                 }
@@ -421,7 +421,7 @@ namespace ChemSW.Nbt.PropTypes
                 GestaltPath = "";
             }
 
-            _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, GestaltPath );
+            SetPropRowValue( CswEnumNbtPropColumn.Gestalt, GestaltPath );
         }
 
     }//CswNbtNodePropLocation

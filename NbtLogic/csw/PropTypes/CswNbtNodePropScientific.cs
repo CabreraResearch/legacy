@@ -55,11 +55,11 @@ namespace ChemSW.Nbt.PropTypes
             {
                 if( Exponent != Int32.MinValue && Exponent != 0 )
                 {
-                    _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, Base.ToString() + "E" + Exponent.ToString() );
+                    SetPropRowValue( CswEnumNbtPropColumn.Gestalt, Base.ToString() + "E" + Exponent.ToString() );
                 }
                 else
                 {
-                    _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, Base.ToString() );
+                    SetPropRowValue( CswEnumNbtPropColumn.Gestalt, Base.ToString() );
                 }
             }
         }
@@ -85,12 +85,12 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                string StringValue = _CswNbtNodePropData.GetPropRowValue( _BaseSubField.Column );
+                string StringValue = GetPropRowValue( _BaseSubField.Column );
                 return CswConvert.ToDouble( StringValue );
             }
             set
             {
-                _CswNbtNodePropData.SetPropRowValue( _BaseSubField.Column, value );
+                SetPropRowValue( _BaseSubField.Column, value );
                 if( false == Double.IsNaN( value ) && Exponent == Int32.MinValue )
                 {
                     Exponent = 0;
@@ -103,7 +103,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                string StringValue = _CswNbtNodePropData.GetPropRowValue( _ExponentSubField.Column );
+                string StringValue = GetPropRowValue( _ExponentSubField.Column );
                 return CswConvert.ToInt32( StringValue );
             }
             set
@@ -113,7 +113,7 @@ namespace ChemSW.Nbt.PropTypes
                 {
                     ExpValue = 0;
                 }
-                _CswNbtNodePropData.SetPropRowValue( _ExponentSubField.Column, ExpValue );
+                SetPropRowValue( _ExponentSubField.Column, ExpValue );
                 SyncGestalt();
             }
         } // Exponent

@@ -59,7 +59,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return _CswNbtNodePropData.GetPropRowValue( _EncryptedPasswordSubField.Column );
+                return GetPropRowValue( _EncryptedPasswordSubField.Column );
             }
             set
             {
@@ -80,7 +80,7 @@ namespace ChemSW.Nbt.PropTypes
                     }
                 }
 
-                if( _CswNbtNodePropData.SetPropRowValue( _EncryptedPasswordSubField.Column, value ) )
+                if( SetPropRowValue( _EncryptedPasswordSubField.Column, value ) )
                 {
                     SyncGestalt();
                     ChangedDate = DateTime.Now;
@@ -92,20 +92,20 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                //string StringValue = _CswNbtNodePropData.GetPropRowValue( _ChangedDateSubField.Column );
+                //string StringValue = GetPropRowValue( _ChangedDateSubField.Column );
                 //DateTime ReturnVal = DateTime.MinValue;
                 //if( StringValue != string.Empty )
                 //    ReturnVal = Convert.ToDateTime( StringValue );
                 //return ( ReturnVal.Date );
-                return _CswNbtNodePropData.GetPropRowValueDate( _ChangedDateSubField.Column );
+                return GetPropRowValueDate( _ChangedDateSubField.Column );
             }
 
             set
             {
                 if( DateTime.MinValue != value )
-                    _CswNbtNodePropData.SetPropRowValue( _ChangedDateSubField.Column, value );
+                    SetPropRowValue( _ChangedDateSubField.Column, value );
                 else
-                    _CswNbtNodePropData.SetPropRowValue( _ChangedDateSubField.Column, DBNull.Value );
+                    SetPropRowValue( _ChangedDateSubField.Column, DBNull.Value );
             }
         }
 
@@ -250,7 +250,7 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void SyncGestalt()
         {
-            _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, EncryptedPassword );
+            SetPropRowValue( CswEnumNbtPropColumn.Gestalt, EncryptedPassword );
         }
     }//CswNbtNodePropPassword
 

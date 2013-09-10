@@ -106,14 +106,14 @@ namespace ChemSW.Nbt.PropTypes
         /// </summary>
         public string MenuOptions
         {
-            get { return _CswNbtNodePropData.GetPropRowValue( _MenuOptionsSubField.Column ); }
-            set { _CswNbtNodePropData.SetPropRowValue( _MenuOptionsSubField.Column, value ); }
+            get { return GetPropRowValue( _MenuOptionsSubField.Column ); }
+            set { SetPropRowValue( _MenuOptionsSubField.Column, value ); }
         }
 
         public string State
         {
-            get { return _CswNbtNodePropData.GetPropRowValue( _StateSubField.Column ); }
-            set { _CswNbtNodePropData.SetPropRowValue( _StateSubField.Column, value ); }
+            get { return GetPropRowValue( _StateSubField.Column ); }
+            set { SetPropRowValue( _StateSubField.Column, value ); }
         }
 
         private bool isThisTheSaveButton()
@@ -134,7 +134,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                string Ret = _CswNbtNodePropData.GetPropRowValue( _DisplayNameSubField.Column );
+                string Ret = GetPropRowValue( _DisplayNameSubField.Column );
                 if( string.IsNullOrEmpty( Ret ) )
                 {
                     if( isThisTheSaveButton() )
@@ -145,13 +145,13 @@ namespace ChemSW.Nbt.PropTypes
                     {
                         Ret = Text;
                     }
-                    _CswNbtNodePropData.SetPropRowValue( _DisplayNameSubField.Column, Ret );
+                    SetPropRowValue( _DisplayNameSubField.Column, Ret );
                 }
                 return Ret;
             }
             set
             {
-                _CswNbtNodePropData.SetPropRowValue( _DisplayNameSubField.Column, value );
+                SetPropRowValue( _DisplayNameSubField.Column, value );
             }
         }
 
@@ -160,7 +160,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                string Ret = _CswNbtNodePropData.GetPropRowValue( _IconSubField.Column );
+                string Ret = GetPropRowValue( _IconSubField.Column );
                 if( string.IsNullOrEmpty( Ret ) && isThisTheSaveButton() )
                 {
                     Ret = "save";
@@ -168,7 +168,7 @@ namespace ChemSW.Nbt.PropTypes
                 }
                 return Ret;
             }
-            set { _CswNbtNodePropData.SetPropRowValue( _IconSubField.Column, value ); }
+            set { SetPropRowValue( _IconSubField.Column, value ); }
         }
 
 

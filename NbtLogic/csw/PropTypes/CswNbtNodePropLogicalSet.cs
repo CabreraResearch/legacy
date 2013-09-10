@@ -140,7 +140,7 @@ namespace ChemSW.Nbt.PropTypes
                     CheckedNames += ThisCheckedNames;
                 }
             }
-            _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, CheckedNames );
+            SetPropRowValue( CswEnumNbtPropColumn.Gestalt, CheckedNames );
             PendingUpdate = SetPendingUpdate;
         }
 

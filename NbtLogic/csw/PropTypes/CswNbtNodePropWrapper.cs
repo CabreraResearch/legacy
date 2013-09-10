@@ -91,7 +91,7 @@ namespace ChemSW.Nbt.PropTypes
         /// <summary>
         /// Get the Current state of the Property's value using a specific subfield
         /// </summary>
-        public string GetPropRowValue( CswEnumNbtPropColumn Column ) { return _CswNbtNodePropData.GetPropRowValue( Column ); }
+        public string GetPropRowValue( CswEnumNbtPropColumn Column ) { return GetPropRowValue( Column ); }
 
         /// <summary>
         /// Get the Prior state of the Property's value using the fieldtype rule's default subfield
@@ -101,7 +101,7 @@ namespace ChemSW.Nbt.PropTypes
         /// Get the Prior state of the Property's value using a specific subfield
         /// </summary>
         public string GetOriginalPropRowValue( CswEnumNbtPropColumn Column ) { return _CswNbtNodePropData.GetOriginalPropRowValue( Column ); }
-        //public void SetPropRowValue( CswEnumNbtPropColumn Column, object value ) { _CswNbtNodePropData.SetPropRowValue( Column, value ); }
+        //public void SetPropRowValue( CswEnumNbtPropColumn Column, object value ) { SetPropRowValue( Column, value ); }
         public void makePropRow() { _CswNbtNodePropData.makePropRow(); }
 
         public string PropName { get { return ( _CswNbtNodeProp.PropName ); } }

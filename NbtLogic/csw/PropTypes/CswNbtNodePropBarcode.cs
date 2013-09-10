@@ -57,7 +57,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return _CswNbtNodePropData.GetPropRowValue( _BarcodeSubField.Column );
+                return GetPropRowValue( _BarcodeSubField.Column );
             }
         }//Barcode
 
@@ -65,7 +65,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return CswConvert.ToInt32( _CswNbtNodePropData.GetPropRowValue( _SequenceNumberSubField.Column ) );
+                return CswConvert.ToInt32( GetPropRowValue( _SequenceNumberSubField.Column ) );
             }
         }//SequenceNumber
 
@@ -95,7 +95,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             // Fix missing sequence number
             Int32 ThisSeqValue = _SequenceValue.deformatSequence( Barcode );
-            _CswNbtNodePropData.SetPropRowValue( _SequenceNumberSubField.Column, ThisSeqValue );
+            SetPropRowValue( _SequenceNumberSubField.Column, ThisSeqValue );
         }
 
         /// <summary>
@@ -107,9 +107,9 @@ namespace ChemSW.Nbt.PropTypes
         /// (set true if the value was not just generated from the sequence)</param>
         public bool setBarcodeValueOverride( string SeqValue, bool ResetSequence )
         {
-            bool Succeeded = _CswNbtNodePropData.SetPropRowValue( _BarcodeSubField.Column, SeqValue );
+            bool Succeeded = SetPropRowValue( _BarcodeSubField.Column, SeqValue );
             Int32 ThisSeqValue = _SequenceValue.deformatSequence( SeqValue );
-            Succeeded = ( Succeeded && _CswNbtNodePropData.SetPropRowValue( _SequenceNumberSubField.Column, ThisSeqValue ) );
+            Succeeded = ( Succeeded && SetPropRowValue( _SequenceNumberSubField.Column, ThisSeqValue ) );
             _CswNbtNodePropData.Gestalt = SeqValue;
 
             if( ResetSequence )
@@ -180,7 +180,7 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void SyncGestalt()
         {
-            _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, Barcode );
+            SetPropRowValue( CswEnumNbtPropColumn.Gestalt, Barcode );
         }
     }//CswNbtNodePropQuantity
 

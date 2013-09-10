@@ -200,7 +200,7 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 CswPrimaryKey ret = null;
-                string StringVal = _CswNbtNodePropData.GetPropRowValue( _NodeIDSubField.Column );
+                string StringVal = GetPropRowValue( _NodeIDSubField.Column );
                 if( CswTools.IsInteger( StringVal ) )
                     ret = new CswPrimaryKey( TargetTableName, CswConvert.ToInt32( StringVal ) );
                 return ret;
@@ -219,7 +219,7 @@ namespace ChemSW.Nbt.PropTypes
                     }
                     if( RelatedNodeId != PotentialKey )
                     {
-                        _CswNbtNodePropData.SetPropRowValue( _NodeIDSubField.Column, PotentialKey.PrimaryKey );
+                        SetPropRowValue( _NodeIDSubField.Column, PotentialKey.PrimaryKey );
                         CswNbtNode RelatedNode = _CswNbtResources.Nodes[value];
                         if( null != RelatedNode )
                         {
@@ -229,7 +229,7 @@ namespace ChemSW.Nbt.PropTypes
                 }
                 else
                 {
-                    _CswNbtNodePropData.SetPropRowValue( _NodeIDSubField.Column, Int32.MinValue );
+                    SetPropRowValue( _NodeIDSubField.Column, Int32.MinValue );
                 }
 
                 if( WasModified )
@@ -243,13 +243,13 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return _CswNbtNodePropData.GetPropRowValue( _NameSubField.Column );
+                return GetPropRowValue( _NameSubField.Column );
             }
             set
             {
-                if( value != _CswNbtNodePropData.GetPropRowValue( _NameSubField.Column ) )
+                if( value != GetPropRowValue( _NameSubField.Column ) )
                 {
-                    _CswNbtNodePropData.SetPropRowValue( _NameSubField.Column, value, IsNonModifying: true );
+                    SetPropRowValue( _NameSubField.Column, value, IsNonModifying: true );
                     _CswNbtNodePropData.Gestalt = value;
                 }
             }
@@ -577,7 +577,7 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void SyncGestalt()
         {
-            _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, CachedNodeName );
+            SetPropRowValue( CswEnumNbtPropColumn.Gestalt, CachedNodeName );
         }
 
     }//CswNbtNodePropRelationship

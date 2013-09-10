@@ -60,7 +60,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                string StringVal = _CswNbtNodePropData.GetPropRowValue( _StartDateTimeSubField.Column );
+                string StringVal = GetPropRowValue( _StartDateTimeSubField.Column );
                 DateTime ReturnVal = DateTime.MinValue;
                 if( StringVal != string.Empty )
                     ReturnVal = Convert.ToDateTime( StringVal );
@@ -68,7 +68,7 @@ namespace ChemSW.Nbt.PropTypes
             }
             set
             {
-                _CswNbtNodePropData.SetPropRowValue( _StartDateTimeSubField.Column, value );
+                SetPropRowValue( _StartDateTimeSubField.Column, value );
             }
         }//StartDateTime
 
@@ -76,11 +76,11 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return _CswNbtNodePropData.GetPropRowValue( _UnitsSubField.Column );
+                return GetPropRowValue( _UnitsSubField.Column );
             }
             set
             {
-                _CswNbtNodePropData.SetPropRowValue( _UnitsSubField.Column, value );
+                SetPropRowValue( _UnitsSubField.Column, value );
             }
         }//Units
 
@@ -102,14 +102,14 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 double ret = Double.NaN;
-                string StringVal = _CswNbtNodePropData.GetPropRowValue( _ValueSubField.Column );
+                string StringVal = GetPropRowValue( _ValueSubField.Column );
                 if( CswTools.IsFloat( StringVal ) )
                     ret = Convert.ToDouble( StringVal );
                 return ret;
             }
             set
             {
-                _CswNbtNodePropData.SetPropRowValue( _ValueSubField.Column, value );
+                SetPropRowValue( _ValueSubField.Column, value );
                 if( value != Double.NaN )
                     _CswNbtNodePropData.Gestalt = value.ToString() + " " + Units.ToString();
                 else
@@ -244,7 +244,7 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void SyncGestalt()
         {
-            _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, CachedValue.ToString() + " " + Units.ToString() );
+            SetPropRowValue( CswEnumNbtPropColumn.Gestalt, CachedValue.ToString() + " " + Units.ToString() );
         }
 
     }//CswNbtNodePropMTBF

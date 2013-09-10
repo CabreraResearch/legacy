@@ -77,10 +77,10 @@ namespace ChemSW.Nbt.PropTypes
         /// </summary>
         public string Answer
         {
-            get { return _CswNbtNodePropData.GetPropRowValue( _AnswerSubField.Column ); }
+            get { return GetPropRowValue( _AnswerSubField.Column ); }
             set
             {
-                if( value != _CswNbtNodePropData.GetPropRowValue( _AnswerSubField.Column ) )
+                if( value != GetPropRowValue( _AnswerSubField.Column ) )
                 {
                     string AnswerVal = value.Trim();
 
@@ -98,7 +98,7 @@ namespace ChemSW.Nbt.PropTypes
                         UpdateDateAnswered = DateTime.MinValue;
                     }
                     DateAnswered = UpdateDateAnswered;
-                    _CswNbtNodePropData.SetPropRowValue( _AnswerSubField.Column, AnswerVal );
+                    SetPropRowValue( _AnswerSubField.Column, AnswerVal );
                     IsCompliant = TestIsCompliant();
 
                     SyncGestalt();
@@ -111,10 +111,10 @@ namespace ChemSW.Nbt.PropTypes
         /// </summary>
         public String CorrectiveAction
         {
-            get { return _CswNbtNodePropData.GetPropRowValue( _CorrectiveActionSubField.Column ); }
+            get { return GetPropRowValue( _CorrectiveActionSubField.Column ); }
             set
             {
-                if( value != _CswNbtNodePropData.GetPropRowValue( _CorrectiveActionSubField.Column ) )
+                if( value != GetPropRowValue( _CorrectiveActionSubField.Column ) )
                 {
                     DateTime UpdateDateCorrected = DateTime.MinValue;
 
@@ -125,7 +125,7 @@ namespace ChemSW.Nbt.PropTypes
                     }
 
                     DateCorrected = UpdateDateCorrected;
-                    _CswNbtNodePropData.SetPropRowValue( _CorrectiveActionSubField.Column, val );
+                    SetPropRowValue( _CorrectiveActionSubField.Column, val );
                     IsCompliant = TestIsCompliant();
                 }
             }
@@ -152,11 +152,11 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return CswConvert.ToBoolean( _CswNbtNodePropData.GetPropRowValue( _IsCompliantSubField.Column ) );
+                return CswConvert.ToBoolean( GetPropRowValue( _IsCompliantSubField.Column ) );
             }
             set
             {
-                _CswNbtNodePropData.SetPropRowValue( _IsCompliantSubField.Column, value );
+                SetPropRowValue( _IsCompliantSubField.Column, value );
             }
         }
 
@@ -180,10 +180,10 @@ namespace ChemSW.Nbt.PropTypes
         /// </summary>
         public DateTime DateAnswered
         {
-            get { return _CswNbtNodePropData.GetPropRowValueDate( _DateAnsweredSubField.Column ); }
+            get { return GetPropRowValueDate( _DateAnsweredSubField.Column ); }
             set
             {
-                _CswNbtNodePropData.SetPropRowValue( _DateAnsweredSubField.Column, value );
+                SetPropRowValue( _DateAnsweredSubField.Column, value );
             }
         }
 
@@ -192,10 +192,10 @@ namespace ChemSW.Nbt.PropTypes
         /// </summary>
         public DateTime DateCorrected
         {
-            get { return _CswNbtNodePropData.GetPropRowValueDate( _DateCorrectedSubField.Column ); }
+            get { return GetPropRowValueDate( _DateCorrectedSubField.Column ); }
             set
             {
-                _CswNbtNodePropData.SetPropRowValue( _DateCorrectedSubField.Column, value );
+                SetPropRowValue( _DateCorrectedSubField.Column, value );
             }
         }
 
@@ -204,8 +204,8 @@ namespace ChemSW.Nbt.PropTypes
         /// </summary>
         public string Comments
         {
-            get { return _CswNbtNodePropData.GetPropRowValue( _CommentsSubField.Column ); }
-            set { _CswNbtNodePropData.SetPropRowValue( _CommentsSubField.Column, value ); }
+            get { return GetPropRowValue( _CommentsSubField.Column ); }
+            set { SetPropRowValue( _CommentsSubField.Column, value ); }
         }
 
         /// <summary>
@@ -213,16 +213,16 @@ namespace ChemSW.Nbt.PropTypes
         /// </summary>
         //public bool IsCompliant
         //{
-        //    get { return CswConvert.ToBoolean( _CswNbtNodePropData.GetPropRowValue( _IsCompliantSubField.Column ) ); }
+        //    get { return CswConvert.ToBoolean( GetPropRowValue( _IsCompliantSubField.Column ) ); }
         //    private set
         //    {
-        //        _CswNbtNodePropData.SetPropRowValue( _IsCompliantSubField.Column, value );
+        //        SetPropRowValue( _IsCompliantSubField.Column, value );
         //    }
         //}
 
         public override void SyncGestalt()
         {
-            _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, Answer );
+            SetPropRowValue( CswEnumNbtPropColumn.Gestalt, Answer );
         }
 
         //Begin NTP attributes

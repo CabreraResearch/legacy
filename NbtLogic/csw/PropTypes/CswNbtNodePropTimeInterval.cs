@@ -69,8 +69,8 @@ namespace ChemSW.Nbt.PropTypes
             set
             {
                 _RateInterval = value;
-                _CswNbtNodePropData.SetPropRowValue( _IntervalSubField.Column, value.ToString() );
-                _CswNbtNodePropData.SetPropRowValue( _StartDateSubField.Column, value.getFirst() );
+                SetPropRowValue( _IntervalSubField.Column, value.ToString() );
+                SetPropRowValue( _StartDateSubField.Column, value.getFirst() );
                 _CswNbtNodePropData.Gestalt = value.ToString();
                 _CswNbtNodePropData.ClobData = value.ToXmlString();
             }
@@ -142,7 +142,7 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void SyncGestalt()
         {
-            _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, RateInterval.ToString() );
+            SetPropRowValue( CswEnumNbtPropColumn.Gestalt, RateInterval.ToString() );
         }
 
     }//CswNbtNodeProp

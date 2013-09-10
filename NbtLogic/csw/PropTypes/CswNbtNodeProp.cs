@@ -337,7 +337,7 @@ namespace ChemSW.Nbt.PropTypes
                 {
                     GestaltSearchValue = GestaltSearchValue.Substring( 0, 512 );
                 }
-                _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.GestaltSearch, GestaltSearchValue );
+                SetPropRowValue( CswEnumNbtPropColumn.GestaltSearch, GestaltSearchValue );
 
                 // We fire this here so that it only fires once per row, not once per subfield.  See case 27241.
                 if( null != OnPropChange )
@@ -347,6 +347,21 @@ namespace ChemSW.Nbt.PropTypes
             }
 
         }
+
+        protected bool SetPropRowValue( CswEnumNbtPropColumn column, object value, bool IsNonModifying = false )
+        {
+            return _CswNbtNodePropData.SetPropRowValue( column, value, IsNonModifying );
+        }
+
+        protected string GetPropRowValue( CswEnumNbtPropColumn column )
+        {
+            return _CswNbtNodePropData.GetPropRowValue( column );
+        }
+        protected DateTime GetPropRowValueDate( CswEnumNbtPropColumn column )
+        {
+            return _CswNbtNodePropData.GetPropRowValueDate( column );
+        }
+
 
         /// <summary>
         /// Event which fires when the property value is retrieved from the database

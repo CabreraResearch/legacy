@@ -56,7 +56,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return _CswNbtNodePropData.GetPropRowValue( _SequenceSubField.Column );
+                return GetPropRowValue( _SequenceSubField.Column );
             }
         }//Sequence
 
@@ -64,7 +64,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return _CswNbtNodePropData.GetPropRowValue( _SequenceNumberSubField.Column );
+                return GetPropRowValue( _SequenceNumberSubField.Column );
             }
         }//Sequence
 
@@ -89,9 +89,9 @@ namespace ChemSW.Nbt.PropTypes
         /// (set true if the value was not just generated from the sequence)</param>
         public void setSequenceValueOverride( string SeqValue, bool ResetSequence )
         {
-            _CswNbtNodePropData.SetPropRowValue( _SequenceSubField.Column, SeqValue );
+            SetPropRowValue( _SequenceSubField.Column, SeqValue );
             Int32 ThisSeqValue = _SequenceValue.deformatSequence( SeqValue );
-            _CswNbtNodePropData.SetPropRowValue( _SequenceNumberSubField.Column, ThisSeqValue );
+            SetPropRowValue( _SequenceNumberSubField.Column, ThisSeqValue );
             _CswNbtNodePropData.Gestalt = SeqValue;
 
             if( ResetSequence )
@@ -158,7 +158,7 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void SyncGestalt()
         {
-            _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, SequenceNumber );
+            SetPropRowValue( CswEnumNbtPropColumn.Gestalt, SequenceNumber );
         }
     }//CswNbtNodeProp
 

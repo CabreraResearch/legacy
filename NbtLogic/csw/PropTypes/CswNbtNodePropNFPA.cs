@@ -61,11 +61,11 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return _CswNbtNodePropData.GetPropRowValue( _RedSubField.Column );
+                return GetPropRowValue( _RedSubField.Column );
             }
             set
             {
-                _CswNbtNodePropData.SetPropRowValue( _RedSubField.Column, value );
+                SetPropRowValue( _RedSubField.Column, value );
                 SyncGestalt();
             }
         }
@@ -73,11 +73,11 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return _CswNbtNodePropData.GetPropRowValue( _YellowSubField.Column );
+                return GetPropRowValue( _YellowSubField.Column );
             }
             set
             {
-                _CswNbtNodePropData.SetPropRowValue( _YellowSubField.Column, value );
+                SetPropRowValue( _YellowSubField.Column, value );
                 SyncGestalt();
             }
         }
@@ -85,11 +85,11 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return _CswNbtNodePropData.GetPropRowValue( _BlueSubField.Column );
+                return GetPropRowValue( _BlueSubField.Column );
             }
             set
             {
-                _CswNbtNodePropData.SetPropRowValue( _BlueSubField.Column, value );
+                SetPropRowValue( _BlueSubField.Column, value );
                 SyncGestalt();
             }
         }
@@ -97,11 +97,11 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return _CswNbtNodePropData.GetPropRowValue( _WhiteSubField.Column );
+                return GetPropRowValue( _WhiteSubField.Column );
             }
             set
             {
-                _CswNbtNodePropData.SetPropRowValue( _WhiteSubField.Column, value );
+                SetPropRowValue( _WhiteSubField.Column, value );
                 SyncGestalt();
             }
         }
@@ -136,7 +136,7 @@ namespace ChemSW.Nbt.PropTypes
                 newGestalt += ", Special: " + White;
             }
 
-            _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, newGestalt );
+            SetPropRowValue( CswEnumNbtPropColumn.Gestalt, newGestalt );
         }
 
         public override string ValueForNameTemplate

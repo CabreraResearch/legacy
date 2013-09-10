@@ -56,23 +56,23 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                //string StringValue = _CswNbtNodePropData.GetPropRowValue( _DateValueSubField.Column );
+                //string StringValue = GetPropRowValue( _DateValueSubField.Column );
                 //DateTime ReturnVal = DateTime.MinValue;
                 //if( StringValue != string.Empty )
                 //    ReturnVal = Convert.ToDateTime( StringValue );
                 //return ( ReturnVal.Date );
-                return _CswNbtNodePropData.GetPropRowValueDate( _DateValueSubField.Column );
+                return GetPropRowValueDate( _DateValueSubField.Column );
             }
 
             set
             {
                 if( DateTime.MinValue != value )
                 {
-                    _CswNbtNodePropData.SetPropRowValue( _DateValueSubField.Column, value );
+                    SetPropRowValue( _DateValueSubField.Column, value );
                 }
                 else
                 {
-                    _CswNbtNodePropData.SetPropRowValue( _DateValueSubField.Column, DateTime.MinValue );
+                    SetPropRowValue( _DateValueSubField.Column, DateTime.MinValue );
                 }
                 SyncGestalt();
             }
@@ -87,13 +87,13 @@ namespace ChemSW.Nbt.PropTypes
                 switch( DisplayMode )
                 {
                     case CswEnumNbtDateDisplayMode.Date:
-                        _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, Value.ToShortDateString() );
+                        SetPropRowValue( CswEnumNbtPropColumn.Gestalt, Value.ToShortDateString() );
                         break;
                     case CswEnumNbtDateDisplayMode.Time:
-                        _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, Value.ToLongTimeString() );
+                        SetPropRowValue( CswEnumNbtPropColumn.Gestalt, Value.ToLongTimeString() );
                         break;
                     case CswEnumNbtDateDisplayMode.DateTime:
-                        _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, Value.ToShortDateString() + " " + Value.ToLongTimeString() );
+                        SetPropRowValue( CswEnumNbtPropColumn.Gestalt, Value.ToShortDateString() + " " + Value.ToLongTimeString() );
                         break;
                 }
             }

@@ -81,11 +81,11 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return _CswNbtNodePropData.GetPropRowValue( _ContentTypeSubField.Column );
+                return GetPropRowValue( _ContentTypeSubField.Column );
             }
             set
             {
-                _CswNbtNodePropData.SetPropRowValue( _ContentTypeSubField.Column, value );
+                SetPropRowValue( _ContentTypeSubField.Column, value );
             }
         }
 
@@ -94,17 +94,17 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return _CswNbtNodePropData.GetPropRowValueDate( _DateModifiedSubField.Column );
+                return GetPropRowValueDate( _DateModifiedSubField.Column );
             }
             set
             {
                 if( DateTime.MinValue != value )
                 {
-                    _CswNbtNodePropData.SetPropRowValue( _DateModifiedSubField.Column, value );
+                    SetPropRowValue( _DateModifiedSubField.Column, value );
                 }
                 else
                 {
-                    _CswNbtNodePropData.SetPropRowValue( _DateModifiedSubField.Column, DateTime.MinValue );
+                    SetPropRowValue( _DateModifiedSubField.Column, DateTime.MinValue );
                 }
             }
         } // DateModified
@@ -156,7 +156,7 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void SyncGestalt()
         {
-            _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, FileName );
+            SetPropRowValue( CswEnumNbtPropColumn.Gestalt, FileName );
         }
 
     }

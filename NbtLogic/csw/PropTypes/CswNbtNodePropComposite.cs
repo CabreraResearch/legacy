@@ -49,7 +49,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return _CswNbtNodePropData.GetPropRowValue( _CachedValueSubField.Column );
+                return GetPropRowValue( _CachedValueSubField.Column );
             }
         }
 
@@ -71,7 +71,7 @@ namespace ChemSW.Nbt.PropTypes
         public string RecalculateCompositeValue()
         {
             string Value = CswNbtMetaData.TemplateValueToDisplayValue( _CswNbtResources.MetaData.getNodeTypeProps( _CswNbtMetaDataNodeTypeProp.NodeTypeId ), TemplateValue, _CswNbtNodePropData );
-            _CswNbtNodePropData.SetPropRowValue( _CachedValueSubField.Column, Value );
+            SetPropRowValue( _CachedValueSubField.Column, Value );
             _CswNbtNodePropData.Gestalt = Value;
             _CswNbtNodePropData.PendingUpdate = false;
             return Value;
@@ -95,7 +95,7 @@ namespace ChemSW.Nbt.PropTypes
         public override void SyncGestalt()
         {
             string gestaltVal = CswNbtMetaData.TemplateValueToDisplayValue( _CswNbtResources.MetaData.getNodeTypeProps( _CswNbtMetaDataNodeTypeProp.NodeTypeId ), TemplateValue, _CswNbtNodePropData );
-            _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, gestaltVal );
+            SetPropRowValue( CswEnumNbtPropColumn.Gestalt, gestaltVal );
         }
     }//CswNbtNodePropComposite
 

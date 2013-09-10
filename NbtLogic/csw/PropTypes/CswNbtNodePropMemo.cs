@@ -42,7 +42,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return _CswNbtNodePropData.GetPropRowValue( _TextSubField.Column );
+                return GetPropRowValue( _TextSubField.Column );
             }
 
         }//Gestalt
@@ -51,11 +51,11 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return _CswNbtNodePropData.GetPropRowValue( _TextSubField.Column );
+                return GetPropRowValue( _TextSubField.Column );
             }
             set
             {
-                _CswNbtNodePropData.SetPropRowValue( _TextSubField.Column, value );
+                SetPropRowValue( _TextSubField.Column, value );
             }
         }
 

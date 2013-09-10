@@ -60,15 +60,15 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                Int32 ret = CswConvert.ToInt32( _CswNbtNodePropData.GetPropRowValue( _ViewIdSubField.Column ) );
+                Int32 ret = CswConvert.ToInt32( GetPropRowValue( _ViewIdSubField.Column ) );
                 if( ret == Int32.MinValue ) //&& NodeId != null )
                 {
                     // make a new view
                     CswNbtView NewView = new CswNbtView( _CswNbtResources );
                     NewView.saveNew( PropName, CswEnumNbtViewVisibility.Property, null, null, null );
                     //NewView.save();
-                    _CswNbtNodePropData.SetPropRowValue( _ViewIdSubField.Column, NewView.ViewId.get() );
-                    _CswNbtNodePropData.SetPropRowValue( _CachedViewNameSubField.Column, PropName );
+                    SetPropRowValue( _ViewIdSubField.Column, NewView.ViewId.get() );
+                    SetPropRowValue( _CachedViewNameSubField.Column, PropName );
 
                     // Case 20194. KLUGE Alert!!!
                     CswNbtNode node = _CswNbtResources.Nodes.GetNode( _CswNbtNodePropData.NodeId );
@@ -76,11 +76,11 @@ namespace ChemSW.Nbt.PropTypes
                         node.postChanges( false );
                 }
 
-                return new CswNbtViewId( CswConvert.ToInt32( _CswNbtNodePropData.GetPropRowValue( _ViewIdSubField.Column ) ) );
+                return new CswNbtViewId( CswConvert.ToInt32( GetPropRowValue( _ViewIdSubField.Column ) ) );
             }
             private set
             {
-                if( _CswNbtNodePropData.SetPropRowValue( _ViewIdSubField.Column, value.get() ) )
+                if( SetPropRowValue( _ViewIdSubField.Column, value.get() ) )
                     PendingUpdate = true;
             }
         }
@@ -92,11 +92,11 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return _CswNbtNodePropData.GetPropRowValue( _CachedViewNameSubField.Column );
+                return GetPropRowValue( _CachedViewNameSubField.Column );
             }
             set
             {
-                _CswNbtNodePropData.SetPropRowValue( _CachedViewNameSubField.Column, value );
+                SetPropRowValue( _CachedViewNameSubField.Column, value );
             }
         }
 

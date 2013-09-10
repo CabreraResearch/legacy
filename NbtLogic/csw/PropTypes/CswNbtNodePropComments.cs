@@ -42,7 +42,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return _CswNbtNodePropData.GetPropRowValue( CswEnumNbtPropColumn.Gestalt );
+                return GetPropRowValue( CswEnumNbtPropColumn.Gestalt );
             }
 
         }//Gestalt
@@ -66,7 +66,7 @@ namespace ChemSW.Nbt.PropTypes
                 
                 try
                 {
-                    string Json = _CswNbtNodePropData.GetPropRowValue( _CommentSubField.Column );
+                    string Json = GetPropRowValue( _CommentSubField.Column );
                     if( false == string.IsNullOrEmpty( Json ) )
                     {
                         Ret = CswConvert.ToJArray( Json );
@@ -85,7 +85,7 @@ namespace ChemSW.Nbt.PropTypes
             }
             set
             {
-                _CswNbtNodePropData.SetPropRowValue( _CommentSubField.Column, value.ToString() );
+                SetPropRowValue( _CommentSubField.Column, value.ToString() );
             }
         }
 
@@ -201,7 +201,7 @@ namespace ChemSW.Nbt.PropTypes
                 string dateSubmitted = lastComment["datetime"].ToString();
                 string message = lastComment["message"].ToString();
 
-                _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, commenter + " on " + dateSubmitted.ToString() + ": " + message );
+                SetPropRowValue( CswEnumNbtPropColumn.Gestalt, commenter + " on " + dateSubmitted.ToString() + ": " + message );
             }
         }
 

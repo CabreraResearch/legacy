@@ -166,7 +166,7 @@ namespace ChemSW.Nbt.PropTypes
             {
                 return ( _WasModifiedForNotification );
             }
-        }//WasModified
+        }//WasModifiedForNotification
 
         public void clearModifiedFlag()
         {
