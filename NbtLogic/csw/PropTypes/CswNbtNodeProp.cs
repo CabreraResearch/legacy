@@ -21,7 +21,7 @@ namespace ChemSW.Nbt.PropTypes
         /// <summary>
         /// Database interaction layer
         /// </summary>
-        protected CswNbtNodePropData _CswNbtNodePropData = null;
+        private CswNbtNodePropData _CswNbtNodePropData = null;
         /// <summary>
         /// Reference to the CswNbtResources object
         /// </summary>
@@ -138,7 +138,13 @@ namespace ChemSW.Nbt.PropTypes
         /// <summary>
         /// Text value for property
         /// </summary>
-        public abstract string Gestalt { get; }
+        //public abstract string Gestalt { get; }
+        public string Gestalt
+        {
+            get { return _CswNbtNodePropData.Gestalt; }
+            set { _CswNbtNodePropData.Gestalt = value; }
+        }
+
         /// <summary>
         /// Returns whether the property value is empty
         /// </summary>
@@ -262,6 +268,10 @@ namespace ChemSW.Nbt.PropTypes
         /// Property Value: Field5
         /// </summary>
         protected string Field5 { get { return ( _CswNbtNodePropData.Field5 ); } set { _CswNbtNodePropData.Field5 = value; } }
+        /// <summary>
+        /// Property Value: Field5
+        /// </summary>
+        protected string ClobData { get { return ( _CswNbtNodePropData.ClobData ); } set { _CswNbtNodePropData.ClobData = value; } }
         /// <summary>
         /// If true, the property value needs to be updated by the Scheduler
         /// </summary>
@@ -434,6 +444,11 @@ namespace ChemSW.Nbt.PropTypes
         }
 
         public abstract void SyncGestalt();
+
+        public string OtherPropGestalt( Int32 NodeTypePropId )
+        {
+            return _CswNbtNodePropData.OtherPropGestalt( NodeTypePropId );
+        }
 
         #region Xml Operations
 

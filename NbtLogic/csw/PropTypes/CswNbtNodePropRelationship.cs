@@ -50,17 +50,6 @@ namespace ChemSW.Nbt.PropTypes
             }//
         }
 
-
-        override public string Gestalt
-        {
-            get
-            {
-                return _CswNbtNodePropData.Gestalt;
-            }//
-
-        }//Gestalt
-
-
         private CswNbtView _View = null;
         public CswNbtView View
         {
@@ -250,7 +239,7 @@ namespace ChemSW.Nbt.PropTypes
                 if( value != GetPropRowValue( _NameSubField.Column ) )
                 {
                     SetPropRowValue( _NameSubField.Column, value, IsNonModifying: true );
-                    _CswNbtNodePropData.Gestalt = value;
+                    Gestalt = value;
                 }
             }
         }

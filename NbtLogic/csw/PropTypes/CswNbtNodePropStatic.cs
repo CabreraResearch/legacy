@@ -34,16 +34,7 @@ namespace ChemSW.Nbt.PropTypes
                 return ( 0 == Gestalt.Length );
             }//
         }
-
-
-        override public string Gestalt
-        {
-            get
-            {
-                return _CswNbtNodePropData.Gestalt;
-            }
-        }//Gestalt
-
+        
         public string StaticText
         {
             get
@@ -59,12 +50,12 @@ namespace ChemSW.Nbt.PropTypes
                 if( value != _CswNbtMetaDataNodeTypeProp.StaticText )
                 {
                     SetPropRowValue( _TextSubField.Column, value );
-                    _CswNbtNodePropData.Gestalt = value;
+                    Gestalt = value;
                 }
                 else
                 {
                     SetPropRowValue( _TextSubField.Column, string.Empty );
-                    _CswNbtNodePropData.Gestalt = string.Empty;
+                    Gestalt = string.Empty;
                 }
             }
         }

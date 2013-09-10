@@ -45,14 +45,6 @@ namespace ChemSW.Nbt.PropTypes
             }
         }//Empty
 
-        override public string Gestalt
-        {
-            get
-            {
-                return _CswNbtNodePropData.Gestalt;
-            }
-        }//Gestalt
-
         private CswCommaDelimitedString _SelectedViewIds = null;
         /// <summary>
         /// Comma-separated list of Selected ViewIds

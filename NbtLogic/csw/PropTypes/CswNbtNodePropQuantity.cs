@@ -53,16 +53,7 @@ namespace ChemSW.Nbt.PropTypes
                 return Required && QuantityOptional ? false == CswTools.IsDouble( Quantity ) : 0 == Gestalt.Length;
             }
         }
-
-
-        override public string Gestalt
-        {
-            get
-            {
-                return _CswNbtNodePropData.Gestalt;
-            }
-        }//Gestalt
-
+        
         public Int32 Precision
         {
             get

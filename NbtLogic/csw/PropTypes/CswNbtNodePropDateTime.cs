@@ -36,22 +36,6 @@ namespace ChemSW.Nbt.PropTypes
             }//
         }
 
-
-        override public string Gestalt
-        {
-            get
-            {
-                //if( DateTimeValue != DateTime.MinValue )
-                //    return DateTimeValue.ToShortDateString();
-                //else
-                //    return String.Empty;
-                SyncGestalt();
-                return _CswNbtNodePropData.Gestalt;
-            }//
-
-        }//Gestalt
-
-
         public DateTime DateTimeValue
         {
             get
@@ -99,7 +83,7 @@ namespace ChemSW.Nbt.PropTypes
             }
             else
             {
-                _CswNbtNodePropData.Gestalt = string.Empty;
+                Gestalt = string.Empty;
             }
         } // _setGestalt()
 

@@ -35,16 +35,6 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
-
-        override public string Gestalt
-        {
-            get
-            {
-                return _CswNbtNodePropData.Gestalt;
-            }
-
-        }//Gestalt
-
         public CswEnumTristate Checked
         {
             get
@@ -62,7 +52,7 @@ namespace ChemSW.Nbt.PropTypes
                 {
                     SetPropRowValue( _CheckedSubField.Column, string.Empty );
                 }
-                _CswNbtNodePropData.Gestalt = toLogicalGestalt( value );
+                Gestalt = toLogicalGestalt( value );
             }
         }
 

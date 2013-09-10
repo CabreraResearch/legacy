@@ -36,16 +36,6 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
-
-        override public string Gestalt
-        {
-            get
-            {
-                return _CswNbtNodePropData.Gestalt;
-            }//
-
-        }//Gestalt
-
         public double Value
         {
             get
@@ -61,7 +51,7 @@ namespace ChemSW.Nbt.PropTypes
                 if( Double.IsNaN( value ) )
                 {
                     SetPropRowValue( _ValueSubField.Column, Double.NaN );
-                    _CswNbtNodePropData.Gestalt = string.Empty;
+                    Gestalt = string.Empty;
                 }
                 else
                 {

@@ -37,16 +37,6 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
-
-        override public string Gestalt
-        {
-            get
-            {
-                return GetPropRowValue( CswEnumNbtPropColumn.Gestalt );
-            }
-
-        }//Gestalt
-
         /// <summary>
         /// Gets the last comment
         /// </summary>

@@ -42,16 +42,6 @@ namespace ChemSW.Nbt.PropTypes
             }
         }//Empty
 
-
-        override public string Gestalt
-        {
-            get
-            {
-                return _CswNbtNodePropData.Gestalt;
-            }//get
-
-        }//Gestalt
-
         public string Sequence
         {
             get
@@ -92,7 +82,7 @@ namespace ChemSW.Nbt.PropTypes
             SetPropRowValue( _SequenceSubField.Column, SeqValue );
             Int32 ThisSeqValue = _SequenceValue.deformatSequence( SeqValue );
             SetPropRowValue( _SequenceNumberSubField.Column, ThisSeqValue );
-            _CswNbtNodePropData.Gestalt = SeqValue;
+            Gestalt = SeqValue;
 
             if( ResetSequence )
             {

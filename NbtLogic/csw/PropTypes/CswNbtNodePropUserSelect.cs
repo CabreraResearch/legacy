@@ -45,18 +45,6 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
-        /// <summary>
-        /// Text value of property
-        /// </summary>
-        override public string Gestalt
-        {
-            get
-            {
-                return _CswNbtNodePropData.Gestalt;
-            }
-
-        }//Gestalt
-
         public static char delimiter = ',';
 
         /// <summary>
@@ -173,7 +161,7 @@ namespace ChemSW.Nbt.PropTypes
         /// </summary>
         public void RefreshSelectedUserNames()
         {
-            _CswNbtNodePropData.Gestalt = SelectedUserNames().ToString();
+            Gestalt = SelectedUserNames().ToString();
             PendingUpdate = false;
         }
 

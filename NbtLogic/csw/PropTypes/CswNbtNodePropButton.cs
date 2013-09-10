@@ -171,17 +171,6 @@ namespace ChemSW.Nbt.PropTypes
             set { SetPropRowValue( _IconSubField.Column, value ); }
         }
 
-
-
-        override public string Gestalt
-        {
-            get
-            {
-                return _CswNbtNodePropData.Gestalt;
-            }
-
-        }//Gestalt
-
         public override string ValueForNameTemplate
         {
             get { return Gestalt; }

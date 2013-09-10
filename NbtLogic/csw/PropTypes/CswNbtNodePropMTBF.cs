@@ -46,16 +46,6 @@ namespace ChemSW.Nbt.PropTypes
             }//
         }
 
-        override public string Gestalt
-        {
-            get
-            {
-                return _CswNbtNodePropData.Gestalt;
-            }
-
-        }//Gestalt
-
-
         public DateTime StartDateTime
         {
             get
@@ -111,9 +101,9 @@ namespace ChemSW.Nbt.PropTypes
             {
                 SetPropRowValue( _ValueSubField.Column, value );
                 if( value != Double.NaN )
-                    _CswNbtNodePropData.Gestalt = value.ToString() + " " + Units.ToString();
+                    Gestalt = value.ToString() + " " + Units.ToString();
                 else
-                    _CswNbtNodePropData.Gestalt = string.Empty;
+                    Gestalt = string.Empty;
             }
         }
 

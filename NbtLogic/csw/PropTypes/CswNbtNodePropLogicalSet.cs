@@ -37,7 +37,7 @@ namespace ChemSW.Nbt.PropTypes
             else
             {
                 LogicalSetXmlDoc = new XmlDocument();
-                LogicalSetXmlDoc.LoadXml( _CswNbtNodePropData.ClobData );
+                LogicalSetXmlDoc.LoadXml( ClobData );
             }
 
             // No subfields
@@ -58,18 +58,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return ( 0 == _CswNbtNodePropData.ClobData.Length );
-            }
-        }
-
-        /// <summary>
-        /// String representation of checked values
-        /// </summary>
-        override public string Gestalt
-        {
-            get
-            {
-                return _CswNbtNodePropData.Gestalt;
+                return ( 0 == ClobData.Length );
             }
         }
 
@@ -102,7 +91,7 @@ namespace ChemSW.Nbt.PropTypes
         /// </summary>
         public void Save()
         {
-            _CswNbtNodePropData.ClobData = LogicalSetXmlDoc.InnerXml.ToString();
+            ClobData = LogicalSetXmlDoc.InnerXml.ToString();
             SyncGestalt();
             //PendingUpdate = true;
         }

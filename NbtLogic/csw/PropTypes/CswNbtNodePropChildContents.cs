@@ -34,14 +34,6 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
-        override public string Gestalt
-        {
-            get
-            {
-                return _CswNbtNodePropData.Gestalt;
-            }
-        }
-
         public override string ValueForNameTemplate
         {
             get { return Gestalt; }

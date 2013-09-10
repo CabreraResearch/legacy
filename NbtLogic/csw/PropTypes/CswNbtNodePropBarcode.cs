@@ -44,15 +44,7 @@ namespace ChemSW.Nbt.PropTypes
                 return ( 0 == Gestalt.Length );
             }
         }//Empty
-
-        override public string Gestalt
-        {
-            get
-            {
-                return _CswNbtNodePropData.Gestalt;
-            }
-        }//Gestalt
-
+        
         public string Barcode
         {
             get
@@ -110,7 +102,7 @@ namespace ChemSW.Nbt.PropTypes
             bool Succeeded = SetPropRowValue( _BarcodeSubField.Column, SeqValue );
             Int32 ThisSeqValue = _SequenceValue.deformatSequence( SeqValue );
             Succeeded = ( Succeeded && SetPropRowValue( _SequenceNumberSubField.Column, ThisSeqValue ) );
-            _CswNbtNodePropData.Gestalt = SeqValue;
+            Gestalt = SeqValue;
 
             if( ResetSequence )
             {

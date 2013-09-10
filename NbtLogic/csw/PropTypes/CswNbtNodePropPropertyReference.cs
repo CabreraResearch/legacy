@@ -48,14 +48,6 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
-        override public string Gestalt
-        {
-            get
-            {
-                return _CswNbtNodePropData.Gestalt;
-            }
-        }
-
         private void _setGestalt( string PropRefVal, string SeqVal )
         {
             string NewGestalt = PropRefVal;
@@ -148,7 +140,7 @@ namespace ChemSW.Nbt.PropTypes
 
             SetPropRowValue( _CachedValueSubField.Column, Value );
             _setGestalt( Value, Sequence );
-            _CswNbtNodePropData.PendingUpdate = false;
+            PendingUpdate = false;
 
             return Value;
         }

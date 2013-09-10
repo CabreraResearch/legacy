@@ -61,15 +61,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get { return ( 0 == AllowedAnswers.Count ); }
         }
-
-        /// <summary>
-        /// Text value of property
-        /// </summary>
-        override public string Gestalt
-        {
-            get { return _CswNbtNodePropData.Gestalt; }
-        }
-
+        
         private bool _IsValidNode { get { return ( null != NodeId && Int32.MinValue != NodeId.PrimaryKey ); } }
 
         /// <summary>

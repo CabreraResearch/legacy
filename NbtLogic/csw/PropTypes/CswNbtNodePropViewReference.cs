@@ -44,15 +44,6 @@ namespace ChemSW.Nbt.PropTypes
         }//Empty
 
 
-        override public string Gestalt
-        {
-            get
-            {
-                return _CswNbtNodePropData.Gestalt;
-            }
-        }//Gestalt
-
-
         /// <summary>
         /// ViewId for referenced view
         /// </summary>
@@ -71,7 +62,7 @@ namespace ChemSW.Nbt.PropTypes
                     SetPropRowValue( _CachedViewNameSubField.Column, PropName );
 
                     // Case 20194. KLUGE Alert!!!
-                    CswNbtNode node = _CswNbtResources.Nodes.GetNode( _CswNbtNodePropData.NodeId );
+                    CswNbtNode node = _CswNbtResources.Nodes.GetNode( NodeId );
                     if( null != node )
                         node.postChanges( false );
                 }

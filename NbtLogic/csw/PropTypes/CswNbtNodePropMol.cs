@@ -39,15 +39,6 @@ namespace ChemSW.Nbt.PropTypes
         }
 
 
-        override public string Gestalt
-        {
-            get
-            {
-                return _CswNbtNodePropData.Gestalt;
-            }
-
-        }//Gestalt
-
         public string Mol
         {
             get
@@ -57,7 +48,7 @@ namespace ChemSW.Nbt.PropTypes
             set
             {
                 SetPropRowValue( _MolSubField.Column, value );
-                _CswNbtNodePropData.Gestalt = value;
+                Gestalt = value;
             }
         }
 

@@ -39,16 +39,6 @@ namespace ChemSW.Nbt.PropTypes
             }//
         }
 
-
-        override public string Gestalt
-        {
-            get
-            {
-                return _CswNbtNodePropData.Gestalt;
-            }//
-
-        }//Gestalt
-
         /// <summary>
         /// The Delimiter used to concatenate all selected options
         /// </summary>

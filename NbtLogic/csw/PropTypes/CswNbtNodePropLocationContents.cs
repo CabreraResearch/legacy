@@ -26,11 +26,6 @@ namespace ChemSW.Nbt.PropTypes
             get { return ( 0 == Gestalt.Length ); }
         }
 
-        override public string Gestalt
-        {
-            get { return _CswNbtNodePropData.Gestalt; }
-        }//Gestalt
-
         public override string ValueForNameTemplate
         {
             get { return Gestalt; }

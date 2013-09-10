@@ -49,16 +49,7 @@ namespace ChemSW.Nbt.PropTypes
                 return ( string.IsNullOrEmpty( Gestalt ) );
             }
         }
-
-
-        override public string Gestalt
-        {
-            get
-            {
-                return _CswNbtNodePropData.Gestalt;
-            }
-        }
-
+        
         private CswRateInterval _RateInterval;
         public CswRateInterval RateInterval
         {
@@ -71,8 +62,8 @@ namespace ChemSW.Nbt.PropTypes
                 _RateInterval = value;
                 SetPropRowValue( _IntervalSubField.Column, value.ToString() );
                 SetPropRowValue( _StartDateSubField.Column, value.getFirst() );
-                _CswNbtNodePropData.Gestalt = value.ToString();
-                _CswNbtNodePropData.ClobData = value.ToXmlString();
+                Gestalt = value.ToString();
+                ClobData = value.ToXmlString();
             }
         }
 

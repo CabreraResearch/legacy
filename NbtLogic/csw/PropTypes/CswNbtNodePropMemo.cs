@@ -38,15 +38,6 @@ namespace ChemSW.Nbt.PropTypes
         }
 
 
-        override public string Gestalt
-        {
-            get
-            {
-                return GetPropRowValue( _TextSubField.Column );
-            }
-
-        }//Gestalt
-
         public string Text
         {
             get
