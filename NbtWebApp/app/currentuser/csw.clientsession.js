@@ -160,6 +160,18 @@
         }
         Csw.tryExec(cswPrivate.onAuthenticate, cswPrivate.UserName);
         Csw.cookie.set(Csw.cookie.cookieNames.UserDefaults, JSON.stringify(data));
+
+        if (data.SchemaData) {
+            if (false == data.SchemaData.CorrectVersion) {
+                var errorobj = {
+                    'type': data.SchemaData.ErrorMessage.Type,
+                    'message': data.SchemaData.ErrorMessage.Message,
+                    'detail': data.SchemaData.ErrorMessage.Detail,
+                    'display': true
+                };
+                Csw.error.showError(errorobj);
+            }
+        }
     };
 
     Csw.clientSession.login = Csw.clientSession.login ||
@@ -233,8 +245,17 @@
             Csw.extend(o, options);
 
             var txt = o.txt;
+            var _next = function () {
+                if (!txt) {
+                    Csw.tryExec(o.success());
+                } else {
+                    Csw.tryExec(o.failure, txt, o.status);
+                }
+            };
+
             if (o.status === 'Authenticated') {
-                Csw.tryExec(o.success());
+                _next();
+
             } else {
                 switch (o.status) {
                     case 'ExpiredPassword':
@@ -243,22 +264,28 @@
                             UserKey: o.data.ExpirationReset.UserKey,
                             PasswordId: o.data.ExpirationReset.PasswordId,
                             onSuccess: function () {
+                                _next();
                             }
                         });
                         break;
                     case 'ShowLicense':
-                        $.CswDialog('ShowLicenseDialog', {});
+                        $.CswDialog('ShowLicenseDialog', {
+                            onAccept: function () {
+                                _next();
+                            },
+                            onDecline: function () {
+                                Csw.clientSession.logout();
+                            }
+                        });
                         break;
                     case 'AlreadyLoggedIn':
-                        $.CswDialog('LogoutExistingSessionsDialog', o.success);
+                        $.CswDialog('LogoutExistingSessionsDialog', _next);
+                        break;
+                    default:
+                        _next();
                         break;
                 }
 
-                if (!txt) {
-                    Csw.tryExec(o.success());
-                } else {
-                    Csw.tryExec(o.failure, txt, o.status);
-                }
             }
         });
 

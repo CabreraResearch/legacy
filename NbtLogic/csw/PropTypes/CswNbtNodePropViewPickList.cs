@@ -26,11 +26,6 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropViewPickList( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtNode Node )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node )
         {
-            //if( _CswNbtMetaDataNodeTypeProp.FieldType.FieldType != CswEnumNbtFieldType.ViewPickList )
-            //{
-            //    throw ( new CswDniException( ErrorType.Error, "A data consistency problem occurred",
-            //                                "CswNbtNodePropViewPickList() was created on a property with fieldtype: " + _CswNbtMetaDataNodeTypeProp.FieldType.FieldType ) );
-            //}
             _FieldTypeRule = (CswNbtFieldTypeRuleViewPickList) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
             _SelectedViewIdsSubField = _FieldTypeRule.SelectedViewIdsSubField;
             _CachedViewNameSubField = _FieldTypeRule.CachedViewNameSubField;
@@ -48,7 +43,6 @@ namespace ChemSW.Nbt.PropTypes
             }
         }//Empty
 
-
         override public string Gestalt
         {
             get
@@ -56,7 +50,6 @@ namespace ChemSW.Nbt.PropTypes
                 return _CswNbtNodePropData.Gestalt;
             }
         }//Gestalt
-
 
         private CswCommaDelimitedString _SelectedViewIds = null;
         /// <summary>
@@ -145,31 +138,29 @@ namespace ChemSW.Nbt.PropTypes
 
         public void RefreshViewName()
         {
-            //bz # 8758
             CachedViewNames.Clear();
             if( SelectedViewIds.Count > 0 )
             {
                 if( SelectMode != CswEnumNbtPropertySelectMode.Multiple && CswConvert.ToInt32( SelectedViewIds[0] ) > 0 )
                 {
-                    //    DataTable ViewTable = _CswNbtResources.ViewSelect.getView( CswConvert.ToInt32( SelectedViewIds[0] ) );
-                    //    if( ViewTable != null && ViewTable.Rows.Count > 0 )
-                    //        CachedViewNames.Add( ViewTable.Rows[0]["viewname"].ToString() );
                     CswNbtView ThisView = _CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( CswConvert.ToInt32( SelectedViewIds[0] ) ) );
-                    CachedViewNames.Add( ThisView.ViewName );
+                    if( null != ThisView )
+                    {
+                        CachedViewNames.Add( ThisView.ViewName );
+                    }
                 }
                 else
                 {
                     Collection<Int32> SelectedViewIdCollection = SelectedViewIds.ToIntCollection();
                     foreach( Int32 ViewId in SelectedViewIdCollection )
                     {
-                        //DataTable ViewTable = _CswNbtResources.ViewSelect.getView( CswConvert.ToInt32( SelectedViewIds[0] ) );
-                        //if( ViewTable != null && ViewTable.Rows.Count > 0 )
-                        //    CachedViewNames.Add( ViewTable.Rows[0]["viewname"].ToString() );
-                        CswNbtView ThisView = _CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( CswConvert.ToInt32( SelectedViewIds[0] ) ) );
-                        CachedViewNames.Add( ThisView.ViewName );
+                        CswNbtView ThisView = _CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( ViewId ) );
+                        if( null != ThisView )
+                        {
+                            CachedViewNames.Add( ThisView.ViewName );
+                        }
                     } // foreach( Int32 ViewId in SelectedViewIdCollection )
-
-                } // if-else( SelectMode != PropertySelectMode.Multiple && CswConvert.ToInt32( SelectedViewIds[0] ) > 0 )
+                }
             } // if( SelectedViewIds.Count > 0 )
 
             this.PendingUpdate = false;
@@ -207,8 +198,7 @@ namespace ChemSW.Nbt.PropTypes
                     }
                     else
                     {
-                        // else 
-                        // Creating a new user, don't pick a default view (BZ 7055)
+                        // We're creating a new user, don't pick a default view
                         _Views = new Dictionary<CswNbtViewId, CswNbtView>();
                     }
                 }
@@ -223,7 +213,6 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-
                 Dictionary<CswNbtViewId, CswNbtView> _SelectedViews = new Dictionary<CswNbtViewId, CswNbtView>();
                 if( NodeId != null )
                 {
@@ -239,7 +228,6 @@ namespace ChemSW.Nbt.PropTypes
         public const string NameColumn = "label";
         public const string KeyColumn = "key";
         public const string ValueColumn = "value";
-
         public const string ElemName_Options = "options";
 
         public DataTable ViewsForCBA()
@@ -249,21 +237,11 @@ namespace ChemSW.Nbt.PropTypes
             _ViewsForCBA.Columns.Add( NameColumn, typeof( string ) );
             _ViewsForCBA.Columns.Add( ValueColumn, typeof( bool ) );
 
-            //if( SelectMode != PropertySelectMode.Multiple && !Required )
-            //{
-            //    DataRow NoneRow = _ViewsForCBA.NewRow();
-            //    NoneRow[NameColumn] = "[none]";
-            //    NoneRow[KeyColumn] = CswConvert.ToDbVal( Int32.MinValue );
-            //    NoneRow[ValueColumn] = ( SelectedViewIds.Count == 0 );
-            //    _ViewsForCBA.Rows.Add( NoneRow );
-            //}
-
             foreach( CswNbtView ThisView in Views.Values )
             {
                 DataRow NewViewRow = _ViewsForCBA.NewRow();
                 NewViewRow[NameColumn] = ThisView.ViewName;
                 NewViewRow[KeyColumn] = ThisView.ViewId.get();
-                //NewViewRow[ValueColumn] = ( searchstr.IndexOf( CswNbtNodePropViewPickList.delimiter.ToString() + ViewRow["nodeviewid"].ToString() + CswNbtNodePropViewPickList.delimiter.ToString() ) >= 0 );
                 NewViewRow[ValueColumn] = ( ( SelectedViewIds.Contains( ThisView.ViewId.get() ) ) ||
                                           ( ( Views.Values.First() == ThisView ) && Required && SelectedViewIds.Count == 0 ) );
                 _ViewsForCBA.Rows.Add( NewViewRow );
@@ -276,14 +254,11 @@ namespace ChemSW.Nbt.PropTypes
             get { return Gestalt; }
         }
 
-
-
         public override void ToJSON( JObject ParentObject )
         {
             ParentObject[_SelectedViewIdsSubField.ToXmlNodeName()] = SelectedViewIds.ToString();
             ParentObject["selectmode"] = SelectMode.ToString();
             ParentObject[_CachedViewNameSubField.ToXmlNodeName()] = CachedViewNames.ToString();
-
             ParentObject[ElemName_Options] = new JObject();
 
             CswCheckBoxArrayOptions CBAOptions = new CswCheckBoxArrayOptions();

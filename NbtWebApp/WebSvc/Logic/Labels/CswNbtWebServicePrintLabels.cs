@@ -348,7 +348,7 @@ namespace ChemSW.Nbt.WebServices
             return headerLen;
         }
 
-        private static string _getGhsPictosForLabel( CswNbtResources NbtResources, CswNbtObjClassContainer Node )
+        private static string _getGhsPictosForLabel( CswNbtResources NbtResources, CswNbtObjClassContainer Node, Int32 Scale, bool NoBorder )
         {
             string ret = string.Empty;
 
@@ -358,9 +358,17 @@ namespace ChemSW.Nbt.WebServices
                 CswDelimitedString ImageUrls = GHSNode.Pictograms.Value;
                 foreach( string ImageUrl in ImageUrls )
                 {
+                    string RealImageUrl = ImageUrl.Replace( ".jpg", "" );
+                    RealImageUrl = RealImageUrl.Replace( "ghs/", "ghs/" + Scale.ToString() + "/" );
+                    if( NoBorder )
+                    {
+                        RealImageUrl += "_nobrd";
+                    }
+                    RealImageUrl += ".bmp";
+
                     // use the EPL command GWx_orig,y_orig,width_bytes,height_bits,[byte array data]
                     // image must be BMP
-                    byte[] rawimage = File.ReadAllBytes( CswFilePath.getConfigurationFilePath( CswEnumSetupMode.NbtWeb ) + "\\..\\" + ImageUrl.Replace( ".jpg", ".bmp" ) );
+                    byte[] rawimage = File.ReadAllBytes( CswFilePath.getConfigurationFilePath( CswEnumSetupMode.NbtWeb ) + "/../" + RealImageUrl );
                     Int32 headerLen = _fourBytesToInt32( rawimage, 10 ); // BMP format has a variable length header block
                     Int32 heightPixels = _fourBytesToInt32( rawimage, 18 );
                     Int32 widthBytes = _fourBytesToInt32( rawimage, 22 ) / 8;
@@ -497,10 +505,33 @@ namespace ChemSW.Nbt.WebServices
                                 // C - phrases and codes
                                 TemplateValue = _getGhsValueForLabel( NbtResources, Node, ShowCodes: true, ShowPhrases: true );
                             }
-                            else if( TemplateName.Equals( "NBTGHSPICTOS" ) )
+                            else if( TemplateName.StartsWith( "NBTGHSPICTOS:" ) || ( TemplateName.Equals( "NBTGHSPICTOS" ) ) )   // Ignore NBTGHSPICTOS_2
                             {
                                 // pictos
-                                TemplateValue = _getGhsPictosForLabel( NbtResources, Node );
+                                Int32 Scale = 300;
+                                bool NoBorder = false;
+                                if( TemplateName.StartsWith( "NBTGHSPICTOS:" ) )
+                                {
+                                    // decode parameters
+                                    CswCommaDelimitedString GHSParams = new CswCommaDelimitedString();
+                                    GHSParams.FromString( TemplateName.Substring( TemplateName.IndexOf( ':' ) + 1 ).ToLower().Trim() );
+                                    foreach( string GHSParam in GHSParams )
+                                    {
+                                        if( GHSParam.StartsWith( "scale" ) )
+                                        {
+                                            Int32 NewScale = CswConvert.ToInt32( GHSParam.Substring( "scale".Length ) );
+                                            if( NewScale > 0 )
+                                            {
+                                                Scale = NewScale;
+                                            }
+                                        }
+                                        if( GHSParam == "noborder" )
+                                        {
+                                            NoBorder = true;
+                                        }
+                                    } // foreach( string GHSParam in GHSParams )
+                                } // if( TemplateName.StartsWith( "NBTGHSPICTOS:" ) )
+                                TemplateValue = _getGhsPictosForLabel( NbtResources, Node, Scale, NoBorder );
                             }
                         }
                         else

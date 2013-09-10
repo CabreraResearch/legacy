@@ -21,6 +21,11 @@ namespace ChemSW.Nbt.Schema
             get { return 30252; }
         }
 
+        public override string ScriptName
+        {
+            get { return "02F_Case30252"; }
+        }
+
 
         private void AddRow( DataTable dt, int ft, string propcolname, string subfieldname, string reportable, string is_default )
         {

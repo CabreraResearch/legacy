@@ -19,6 +19,11 @@ namespace ChemSW.Nbt.Schema
             get { return 29191; }
         }
 
+        public override string ScriptName
+        {
+            get { return "02F_Case29191"; }
+        }
+
         public override void update()
         {
             // We need to correct the spelling of 'baled' to 'bailed' on one specific FireClassExemptAmount Node

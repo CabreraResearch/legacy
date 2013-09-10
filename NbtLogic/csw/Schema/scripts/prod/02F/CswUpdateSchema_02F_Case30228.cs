@@ -8,7 +8,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update
     /// </summary>
-    public class CswUpdateSchema_02F_Case30228: CswUpdateSchemaTo
+    public class CswUpdateSchema_02F_Case30228 : CswUpdateSchemaTo
     {
         public override CswEnumDeveloper Author
         {
@@ -18,6 +18,11 @@ namespace ChemSW.Nbt.Schema
         public override int CaseNo
         {
             get { return 30228; }
+        }
+
+        public override string ScriptName
+        {
+            get { return "02F_Case30228"; }
         }
 
         public override void update()
@@ -38,7 +43,7 @@ namespace ChemSW.Nbt.Schema
                 if( null != UserJurisdictionNTP )
                 {
                     UserJurisdictionNTP.updateLayout( CswEnumNbtLayoutType.Add, false );
-                    UserJurisdictionNTP.updateLayout( CswEnumNbtLayoutType.Edit, DoMove : false, TabId : UserNT.getFirstNodeTypeTab().TabId );
+                    UserJurisdictionNTP.updateLayout( CswEnumNbtLayoutType.Edit, DoMove: false, TabId: UserNT.getFirstNodeTypeTab().TabId );
                 }
             }
 
@@ -167,17 +172,17 @@ namespace ChemSW.Nbt.Schema
                     cmgTab = _CswNbtSchemaModTrnsctn.MetaData.makeNewTab( containerNT, "Central Material Group", containerNT.getMaximumTabOrder() + 1 );
                 }
                 CswNbtMetaDataNodeTypeProp lotControlledNTP = containerNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.PropertyName.LotControlled );
-                lotControlledNTP.updateLayout( CswEnumNbtLayoutType.Edit, false, TabId : cmgTab.TabId );
+                lotControlledNTP.updateLayout( CswEnumNbtLayoutType.Edit, false, TabId: cmgTab.TabId );
 
                 CswNbtMetaDataNodeTypeProp requisitionableNTP = containerNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.PropertyName.Requisitionable );
-                requisitionableNTP.updateLayout( CswEnumNbtLayoutType.Edit, false, TabId : cmgTab.TabId );
+                requisitionableNTP.updateLayout( CswEnumNbtLayoutType.Edit, false, TabId: cmgTab.TabId );
 
                 CswNbtMetaDataNodeTypeProp reservedForNTP = containerNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.PropertyName.ReservedFor );
-                reservedForNTP.updateLayout( CswEnumNbtLayoutType.Edit, false, TabId : cmgTab.TabId );
+                reservedForNTP.updateLayout( CswEnumNbtLayoutType.Edit, false, TabId: cmgTab.TabId );
 
                 CswNbtMetaDataNodeTypeProp receiptLotNTP = containerNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.PropertyName.ReceiptLot );
                 CswNbtMetaDataNodeTypeTab firstTab = containerNT.getFirstNodeTypeTab();
-                receiptLotNTP.updateLayout( CswEnumNbtLayoutType.Edit, false, TabId : firstTab.TabId );
+                receiptLotNTP.updateLayout( CswEnumNbtLayoutType.Edit, false, TabId: firstTab.TabId );
             }
 
             CswNbtMetaDataObjectClass RequestMatDispOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestMaterialDispenseClass );
@@ -216,11 +221,11 @@ namespace ChemSW.Nbt.Schema
             {
                 CswNbtMetaDataNodeTypeTab firstTab = vendorNT.getFirstNodeTypeTab();
                 CswNbtMetaDataNodeTypeProp vendorTypeNTP = vendorNT.getNodeTypePropByObjectClassProp( CswNbtObjClassVendor.PropertyName.VendorTypeName );
-                vendorTypeNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId : firstTab.TabId );
-                vendorTypeNTP.updateLayout( CswEnumNbtLayoutType.Add, true, TabId : firstTab.TabId );
+                vendorTypeNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId: firstTab.TabId );
+                vendorTypeNTP.updateLayout( CswEnumNbtLayoutType.Add, true, TabId: firstTab.TabId );
 
                 CswNbtMetaDataNodeTypeProp corporateEntityNTP = vendorNT.getNodeTypePropByObjectClassProp( CswNbtObjClassVendor.PropertyName.CorporateEntityName );
-                corporateEntityNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId : firstTab.TabId );
+                corporateEntityNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId: firstTab.TabId );
             }
 
             _toggleMaterialRequestApprovalLevel( CswEnumNbtObjectClass.RequestMaterialCreateClass, false );
@@ -271,7 +276,7 @@ namespace ChemSW.Nbt.Schema
                 else
                 {
                     CswNbtMetaDataNodeTypeTab firstTab = createMaterialRequestNT.getFirstNodeTypeTab();
-                    approvalLevelNT.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId : firstTab.TabId );
+                    approvalLevelNT.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId: firstTab.TabId );
                     approvalLevelNT.updateLayout( CswEnumNbtLayoutType.Add, true );
                 }
             }

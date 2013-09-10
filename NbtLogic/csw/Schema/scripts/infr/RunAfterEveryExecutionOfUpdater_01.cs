@@ -39,6 +39,16 @@ namespace ChemSW.Nbt.Schema
 
         #endregion Blame Logic
 
+        public override string ScriptName
+        {
+            get { return "RunAfter_PostScript"; }
+        }
+
+        public override bool AlwaysRun
+        {
+            get { return true; }
+        }
+
         public override string Title { get { return "Post-Script: Reset Enabled NodeTypes | Re-enable Scheduled Rules | Trigger all Module Events"; } }
         public override void update()
         {
