@@ -14,7 +14,7 @@ namespace ChemSW.Nbt.Schema
             // this should always be here, and always be last, and always in its own script
             // see case 21989 and 26011
             _CswNbtSchemaModTrnsctn.makeMissingAuditTablesAndColumns();
-        } 
+        }
 
         public override CswEnumDeveloper Author
         {
@@ -24,6 +24,16 @@ namespace ChemSW.Nbt.Schema
         public override int CaseNo
         {
             get { return 21989; }
+        }
+
+        public override string ScriptName
+        {
+            get { return "RunBefore_AuditColumns"; }
+        }
+
+        public override bool AlwaysRun
+        {
+            get { return true; }
         }
 
         //Update()

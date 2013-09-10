@@ -110,6 +110,16 @@ namespace ChemSW.Nbt.ObjClasses
             if( null != ButtonData && null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
             return true;
         }
+
+        public override CswNbtNode CopyNode()
+        {
+            CswNbtNode CopiedNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, delegate( CswNbtNode NewNode )
+            {
+                NewNode.copyPropertyValues( Node );
+                //CopiedNode.postChanges( true, true );
+            }, IsTemp: true );
+            return CopiedNode;
+        }
         #endregion
 
         #region Object class specific properties

@@ -30,7 +30,7 @@ namespace ChemSW.Nbt.Schema
             set { _CswNbtSchemaModTrnsctn = value; }
         }
 
-        //        public abstract CswSchemaVersion SchemaVersion { get; }
+        //public abstract CswSchemaVersion SchemaVersion { get; }
         //public abstract string Description { set; get; }
 
         private string _Description = string.Empty;
@@ -89,6 +89,20 @@ namespace ChemSW.Nbt.Schema
         /// The FogBugz Case number associated with this script
         /// </summary>
         public abstract Int32 CaseNo { get; }
+
+        /// <summary>
+        /// A unique identifier for this script
+        /// Format: <Release #><Release Letter>_Case<Case #>
+        /// </summary>
+        public abstract string ScriptName { get; }
+
+        /// <summary>
+        /// Whether the script should be run always
+        /// </summary>
+        public virtual bool AlwaysRun
+        {
+            get { return false; }
+        }
 
         /// <summary>
         /// Get the Case number as a link to FogBugz

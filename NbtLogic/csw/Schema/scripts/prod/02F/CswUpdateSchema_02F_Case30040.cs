@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Data;
-using ChemSW.Core;
-using ChemSW.DB;
 using ChemSW.MtSched.Core;
 using ChemSW.Nbt.Actions;
+using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.ImportExport;
 using ChemSW.Nbt.Sched;
-using ChemSW.Nbt.csw.Dev;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -25,6 +21,11 @@ namespace ChemSW.Nbt.Schema
         public override int CaseNo
         {
             get { return 30040; }
+        }
+
+        public override string ScriptName
+        {
+            get { return "02F_Case30040"; }
         }
 
         private DataTable _importOrderTable;

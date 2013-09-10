@@ -7,7 +7,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update
     /// </summary>
-    public class CswUpdateSchema_02F_Case27495: CswUpdateSchemaTo
+    public class CswUpdateSchema_02F_Case27495 : CswUpdateSchemaTo
     {
         public override CswEnumDeveloper Author
         {
@@ -17,6 +17,11 @@ namespace ChemSW.Nbt.Schema
         public override int CaseNo
         {
             get { return 27495; }
+        }
+
+        public override string ScriptName
+        {
+            get { return "02F_Case27495"; }
         }
 
         public override void update()
@@ -35,8 +40,8 @@ namespace ChemSW.Nbt.Schema
 
                 CswNbtViewRelationship parent = SitesView.AddViewRelationship( SiteNT, false );
                 SitesView.AddViewPropertyAndFilter( parent, LocationNTP,
-                                                    SubFieldName : CswEnumNbtSubFieldName.NodeID,
-                                                    FilterMode : CswEnumNbtFilterMode.NotNull );
+                                                    SubFieldName: CswEnumNbtSubFieldName.NodeID,
+                                                    FilterMode: CswEnumNbtFilterMode.NotNull );
 
                 ICswNbtTree tree = _CswNbtSchemaModTrnsctn.getTreeFromView( SitesView, true );
                 for( int i = 0; i < tree.getChildNodeCount(); i++ )

@@ -686,51 +686,95 @@ namespace ChemSW.Nbt.WebServices
                 public string NBTSubFieldPropColName2 = string.Empty;
             }
 
-            private Tuple<int, string> _getUnitOfMeasure( string unitOfMeasurementName )
+            private Tuple<int, string> _getUnitOfMeasure( string mappedUnitOfMeasure, string origUnitOfMeasure )
             {
                 Tuple<int, string> UnitOfMeasureNodeInfo = null;
 
-                if( false == string.IsNullOrEmpty( unitOfMeasurementName ) )
-                {
-                    // Create the view
-                    CswNbtMetaDataObjectClass UnitsOfMeasureOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.UnitOfMeasureClass );
-                    CswNbtView MatchingUOMsView = new CswNbtView( _CswNbtResources );
-                    CswNbtViewRelationship ParentRelationship = MatchingUOMsView.AddViewRelationship( UnitsOfMeasureOC, false );
+                //if( false == string.IsNullOrEmpty( mappedUnitOfMeasure ) )
+                //{
 
-                    CswNbtMetaDataObjectClassProp NameOCP = UnitsOfMeasureOC.getObjectClassProp( CswNbtObjClassUnitOfMeasure.PropertyName.Name );
-                    MatchingUOMsView.AddViewPropertyAndFilter( ParentRelationship,
+                // Create the view
+                CswNbtMetaDataObjectClass UnitsOfMeasureOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.UnitOfMeasureClass );
+                CswNbtView MatchingUOMsView = new CswNbtView( _CswNbtResources );
+                CswNbtViewRelationship ParentRelationship = MatchingUOMsView.AddViewRelationship( UnitsOfMeasureOC, false );
+
+                CswNbtMetaDataObjectClassProp NameOCP = UnitsOfMeasureOC.getObjectClassProp( CswNbtObjClassUnitOfMeasure.PropertyName.Name );
+                CswNbtMetaDataObjectClassProp AliasesOCP = UnitsOfMeasureOC.getObjectClassProp( CswNbtObjClassUnitOfMeasure.PropertyName.Aliases );
+
+                CswNbtViewPropertyFilter ViewPropertyFilter_Name = MatchingUOMsView.AddViewPropertyAndFilter( ParentRelationship,
                                                                MetaDataProp: NameOCP,
-                                                               Value: unitOfMeasurementName,
+                                                           Value: mappedUnitOfMeasure,
                                                                SubFieldName: CswEnumNbtSubFieldName.Text,
                                                                FilterMode: CswEnumNbtFilterMode.Equals );
 
-                    CswNbtMetaDataObjectClassProp AliasesOCP = UnitsOfMeasureOC.getObjectClassProp( CswNbtObjClassUnitOfMeasure.PropertyName.Aliases );
-                    MatchingUOMsView.AddViewPropertyAndFilter( ParentRelationship,
+
+                CswNbtViewPropertyFilter ViewPropertyFilter_Aliases = MatchingUOMsView.AddViewPropertyAndFilter( ParentRelationship,
                                                                MetaDataProp: AliasesOCP,
-                                                               Value: unitOfMeasurementName,
+                                                           Value: mappedUnitOfMeasure,
                                                                SubFieldName: CswEnumNbtSubFieldName.Text,
                                                                FilterMode: CswEnumNbtFilterMode.Contains,
                                                                Conjunction: CswEnumNbtFilterConjunction.Or );
 
-                    // Get and iterate the Tree
-                    ICswNbtTree MatchingUOMsTree = _CswNbtResources.Trees.getTreeFromView( MatchingUOMsView, false, false, true );
+                // Get and iterate the Tree
+                ICswNbtTree MatchingUOMsTree = _CswNbtResources.Trees.getTreeFromView( MatchingUOMsView, false, false, true );
+                //int Count = MatchingUOMsTree.getChildNodeCount();
+                if( MatchingUOMsTree.getChildNodeCount() == 0 )
+                {
+                    // Run view again using the origUnitOfMeasure
+                    ViewPropertyFilter_Name.Value = origUnitOfMeasure;
+                    ViewPropertyFilter_Aliases.Value = origUnitOfMeasure;
 
-                    int Count = MatchingUOMsTree.getChildNodeCount();
-
-                    for( int i = 0; i < Count; i++ )
+                    MatchingUOMsTree = _CswNbtResources.Trees.getTreeFromView( MatchingUOMsView, false, false, true );
+                    if( MatchingUOMsTree.getChildNodeCount() > 0 )
+                    {
+                        for( int i = 0; i < MatchingUOMsTree.getChildNodeCount(); i++ )
+                        {
+                            MatchingUOMsTree.goToNthChild( i );
+                            UnitOfMeasureNodeInfo =
+                                new Tuple<int, string>( MatchingUOMsTree.getNodeIdForCurrentPosition().PrimaryKey,
+                                                       MatchingUOMsTree.getNodeNameForCurrentPosition() );
+                            MatchingUOMsTree.goToParentNode();
+                        }
+                    }
+                }
+                else
+                {
+                    for( int i = 0; i < MatchingUOMsTree.getChildNodeCount(); i++ )
                     {
                         MatchingUOMsTree.goToNthChild( i );
-                        // UnitOfMeasureNode = MatchingUOMsTree.getNodeForCurrentPosition();
                         UnitOfMeasureNodeInfo = new Tuple<int, string>( MatchingUOMsTree.getNodeIdForCurrentPosition().PrimaryKey,
                                                    MatchingUOMsTree.getNodeNameForCurrentPosition() );
                         MatchingUOMsTree.goToParentNode();
                     }
+                }
 
-                }//if( false == string.IsNullOrEmpty( unitOfMeasurementName ) )
+
+                //}//if( false == string.IsNullOrEmpty( unitOfMeasurementName ) )
 
                 return UnitOfMeasureNodeInfo;
 
             }//_getUnitOfMeasure()
+
+            private void _removeDuplicateSizes()
+            {
+                // Then loop through both and check for duplicates
+                for( int i = 0; i < _ProductToImport.ProductSize.Length; i++ )
+                {
+                    CswC3Product.Size CurrentSize = _ProductToImport.ProductSize[i];
+                    for( int j = ( _SizesToImport.Count - 1 ); j >= 0; j-- )
+                    {
+                        if( j != i )
+                        {
+                            CswC3Product.Size SizeToCompare = _SizesToImport[j];
+                            if( SizeToCompare.pkg_qty == CurrentSize.pkg_qty
+                                && SizeToCompare.catalog_no == CurrentSize.catalog_no )
+                            {
+                                _SizesToImport.RemoveAt( j );
+                            }
+                        }
+                    }
+                }
+            }//_removeDuplicateSizes()
 
             #endregion Private helper methods
 
@@ -745,9 +789,10 @@ namespace ChemSW.Nbt.WebServices
                     CswNbtMetaDataNodeType SDSDocumentNT = SDSDocClass.FirstNodeType;
                     if( null != SDSDocumentNT )
                     {
-                        CswNbtObjClassDocument NewDoc = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( SDSDocumentNT.NodeTypeId, OnAfterMakeNode: delegate( CswNbtNode NewNode )
+                        CswNbtObjClassSDSDocument NewDoc = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( SDSDocumentNT.NodeTypeId, OnAfterMakeNode: delegate( CswNbtNode NewNode )
                             {
-                                CswNbtObjClassDocument NewSDSDocumentNode = NewNode;
+                                // This needs to be CswNbtObjClassSDSDocument NOT CswNbtObjClassDocument!
+                                CswNbtObjClassSDSDocument NewSDSDocumentNode = NewNode;
                                 NewSDSDocumentNode.Title.Text = "SDS: " + MaterialNode.TradeName.Text;
                                 NewSDSDocumentNode.FileType.Value = CswNbtPropertySetDocument.CswEnumDocumentFileTypes.Link;
                                 NewSDSDocumentNode.Link.Href = MsdsUrl;
@@ -811,27 +856,6 @@ namespace ChemSW.Nbt.WebServices
 
                 return Supplier;
             }//createVendorNode()
-
-            private void _removeDuplicateSizes()
-            {
-                // Then loop through both and check for duplicates
-                for( int i = 0; i < _ProductToImport.ProductSize.Length; i++ )
-                {
-                    CswC3Product.Size CurrentSize = _ProductToImport.ProductSize[i];
-                    for( int j = ( _SizesToImport.Count - 1 ); j >= 0; j-- )
-                    {
-                        if( j != i )
-                        {
-                            CswC3Product.Size SizeToCompare = _SizesToImport[j];
-                            if( SizeToCompare.pkg_qty == CurrentSize.pkg_qty
-                                && SizeToCompare.catalog_no == CurrentSize.catalog_no )
-                            {
-                                _SizesToImport.RemoveAt( j );
-                            }
-                        }
-                    }
-                }
-            }
 
             public Collection<C3CreateMaterialResponse.State.SizeRecord> createSizeNodes( CswNbtPropertySetMaterial MaterialNode )
             {
@@ -966,23 +990,11 @@ namespace ChemSW.Nbt.WebServices
                         {
                             case CswEnumNbtFieldType.Quantity:
                                 string sizeGestalt = string.Empty;
-                                //CswNbtObjClassUnitOfMeasure unitOfMeasure = null;
+                                string MappedUoM = _SizesToImport[CurrentIndex].pkg_qty_uom;
+                                string OriginalUoM = _SizesToImport[CurrentIndex].c3_uom;
 
-                                // If the UoM wasn't able to be mapped on the C3 side, then
-                                // we use the original chemcatcentral UoM.
-                                Tuple<int, string> UnitOfMeasureInfo = null;
-                                string UoM = _SizesToImport[CurrentIndex].pkg_qty_uom;
-                                if( false == string.IsNullOrEmpty( UoM ) )
-                                {
-                                    UnitOfMeasureInfo = _getUnitOfMeasure( UoM );
-                                }
-                                else
-                                {
-                                    UoM = _SizesToImport[CurrentIndex].c3_uom;
-                                    UnitOfMeasureInfo = _getUnitOfMeasure( UoM );
-                                }
-
-                                if( false == string.IsNullOrEmpty( UnitOfMeasureInfo.Item1.ToString() ) )
+                                Tuple<int, string> UnitOfMeasureInfo = _getUnitOfMeasure( MappedUoM, OriginalUoM );
+                                if( null != UnitOfMeasureInfo )
                                 {
                                     //Node.Properties[NTP].SetPropRowValue( (CswEnumNbtPropColumn) C3Mapping.NBTSubFieldPropColName2, UnitOfMeasureInfo.Item2 );
                                     //Node.Properties[NTP].SetPropRowValue( CswEnumNbtPropColumn.Field1_FK, UnitOfMeasureInfo.Item1 );
