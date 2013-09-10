@@ -164,6 +164,7 @@
         cswPublic.ajax = cswPublic.ajax || cswPublic.register('ajax', makeNameSpace());
         cswPublic.ajaxWcf = cswPublic.ajaxWcf || cswPublic.register('ajaxWcf', makeNameSpace());
         cswPublic.actions = cswPublic.actions || cswPublic.register('actions', makeNameSpace());
+        cswPublic.browserCompatibility = cswPublic.browserCompatibility || cswPublic.register('browserCompatibility', makeNameSpace());
         cswPublic.clientChanges = cswPublic.clientChanges || cswPublic.register('clientChanges', makeNameSpace());
         cswPublic.clientSession = cswPublic.clientSession || cswPublic.register('clientSession', makeNameSpace());
         cswPublic.clientState = cswPublic.clientState || cswPublic.register('clientState', makeNameSpace());
