@@ -1000,7 +1000,7 @@ namespace ChemSW.Nbt.WebServices
                                     //Node.Properties[NTP].SetPropRowValue( CswEnumNbtPropColumn.Field1_FK, UnitOfMeasureInfo.Item1 );
                                     //sizeGestalt = _SizesToImport[CurrentIndex].pkg_qty + " " + UnitOfMeasureInfo.Item2;
                                     //Node.Properties[NTP].SetPropRowValue( CswEnumNbtPropColumn.Gestalt, sizeGestalt );
-                                    Node.Properties[NTP].AsQuantity.UnitId = UnitOfMeasureInfo.Item1;
+                                    Node.Properties[NTP].AsQuantity.UnitId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( UnitOfMeasureInfo.Item1 ) );
                                     Node.Properties[NTP].AsQuantity.CachedUnitName = UnitOfMeasureInfo.Item2;
                                 }
                                 //else
