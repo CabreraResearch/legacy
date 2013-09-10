@@ -1192,6 +1192,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />
+    <Folder Include="csw\Schema\scripts\prod\02G\" />
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

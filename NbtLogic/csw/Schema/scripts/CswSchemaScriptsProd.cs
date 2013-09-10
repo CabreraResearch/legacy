@@ -37,7 +37,6 @@ namespace ChemSW.Nbt.Schema
 
             // This is the MakeMissingNodeTypeProps script. If you have a script which contains OC changes, put it before this script.
             _addVersionedScript( new RunAlways_MakeMissingNodeTypePropsProps() );
-
             #region Data Scripts
 
             _addVersionedScript( new CswUpdateSchema_02F_Case30281() );
@@ -78,6 +77,10 @@ namespace ChemSW.Nbt.Schema
             #endregion Calculate the Latest Version
 
             #region Before Scripts
+
+            #region GINKGO Run Before Scripts
+
+            #endregion GINKGO Run Before Scripts
 
             // Before scripts that always run.
             _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02SQL() );
