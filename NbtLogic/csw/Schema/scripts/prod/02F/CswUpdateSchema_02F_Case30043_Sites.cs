@@ -43,7 +43,7 @@ namespace ChemSW.Nbt.Schema
 
             // Relationship
 
-            importMgr.finalize();
+            importMgr.finalize( null, null, true );
 
         } // update()
 

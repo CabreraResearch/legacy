@@ -21,17 +21,17 @@ namespace ChemSW.Nbt.csw.Schema
                 {"sites", 2},
                 {"work_units", 3},
                 {"inventory_groups", 4},
-                {"locations_level1", 5},
-                {"locations_level2", 6},
-                {"locations_level3", 7},
-                {"locations_level4", 8},
-                {"locations_level5", 9},
-                {"units_of_measure", 10},
-                {"vendors", 11},
-                {"roles", 12},
-                {"users", 13},
-                {"regulatory_lists", 14},
-                {"regulated_casnos", 15}
+                {"locations", 5}
+                //{"locations_level2", 6},
+                //{"locations_level3", 7},
+                //{"locations_level4", 8},
+                //{"locations_level5", 9},
+                //{"units_of_measure", 10},
+                //{"vendors", 11},
+                //{"roles", 12},
+                //{"users", 13},
+                //{"regulatory_lists", 14},
+                //{"regulated_casnos", 15}
             };
 
 
@@ -146,7 +146,7 @@ namespace ChemSW.Nbt.csw.Schema
             }
         }
 
-        public void finalize( string WhereClause = null, string DefinitionName = null )
+        public void finalize( string WhereClause = null, string DefinitionName = null, bool UseView = false )
         {
             if( null != _NbtImporter )
             {
@@ -160,7 +160,7 @@ namespace ChemSW.Nbt.csw.Schema
                 //Save the bindings in the DB
                 _NbtImporter.storeDefinition( _importOrderTable, _importBindingsTable, _importRelationshipsTable, DefinitionName );
 
-                _populateImportQueueTable( WhereClause );
+                _populateImportQueueTable( WhereClause, UseView );
 
                 _createTriggerOnImportTable();
             }

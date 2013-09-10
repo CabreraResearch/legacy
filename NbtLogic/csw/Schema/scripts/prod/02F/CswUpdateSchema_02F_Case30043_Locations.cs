@@ -34,7 +34,7 @@ namespace ChemSW.Nbt.Schema
                 //join locations_level1 l1 on (l1.locationlevel1id = l.locationlevel1id)
                 //join sites s on (s.siteid = l1.siteid)
 
-                CswNbtSchemaUpdateImportMgr BuildingImpMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "locations_level1", "Building", "locationslevel1_view" );
+                CswNbtSchemaUpdateImportMgr BuildingImpMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "locations", "Building", "locationslevel1_view" );
 
                 BuildingImpMgr.importBinding( "locationlevel1name", CswNbtObjClassLocation.PropertyName.Name, "" );
                 BuildingImpMgr.importBinding( "locationcode", CswNbtObjClassLocation.PropertyName.LocationCode, "" );
@@ -43,6 +43,9 @@ namespace ChemSW.Nbt.Schema
                 BuildingImpMgr.importBinding( "siteid", CswNbtObjClassLocation.PropertyName.Location, "" );
                 BuildingImpMgr.importBinding( "controlzoneid", CswNbtObjClassLocation.PropertyName.ControlZone, "" );
                 BuildingImpMgr.importBinding( "inventorygroupid", CswNbtObjClassLocation.PropertyName.InventoryGroup, "" );
+
+                // Legacy Id
+                BuildingImpMgr.importBinding( "locationid", "Legacy Id", "" );
 
                 // Column names
                 //deleted
@@ -67,80 +70,80 @@ namespace ChemSW.Nbt.Schema
                 //locationlevel1name
                 //siteid   
 
-                BuildingImpMgr.finalize();
+                BuildingImpMgr.finalize( null, null, true );
             }
 
-            {
-                //select l.*, l2.locationlevel2name
-                //from locations l
-                //join locations_level2 l2 on (l2.locationlevel2id = l.locationlevel2id)
+            //{
+            //    //select l.*, l2.locationlevel2name
+            //    //from locations l
+            //    //join locations_level2 l2 on (l2.locationlevel2id = l.locationlevel2id)
 
-                CswNbtSchemaUpdateImportMgr RoomImpMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "locations_level2", "Room", "locationslevel2_view" );
+            //    CswNbtSchemaUpdateImportMgr RoomImpMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "locations_level2", "Room", "locationslevel2_view" );
 
-                RoomImpMgr.importBinding( "locationlevel2name", CswNbtObjClassLocation.PropertyName.Name, "" );
-                RoomImpMgr.importBinding( "locationcode", CswNbtObjClassLocation.PropertyName.LocationCode, "" );
+            //    RoomImpMgr.importBinding( "locationlevel2name", CswNbtObjClassLocation.PropertyName.Name, "" );
+            //    RoomImpMgr.importBinding( "locationcode", CswNbtObjClassLocation.PropertyName.LocationCode, "" );
 
-                // Relationships
-                RoomImpMgr.importBinding( "locationlevel1id", CswNbtObjClassLocation.PropertyName.Location, "" );
-                RoomImpMgr.importBinding( "controlzoneid", CswNbtObjClassLocation.PropertyName.ControlZone, "" );
-                RoomImpMgr.importBinding( "inventorygroupid", CswNbtObjClassLocation.PropertyName.InventoryGroup, "" );
+            //    // Relationships
+            //    RoomImpMgr.importBinding( "locationlevel1id", CswNbtObjClassLocation.PropertyName.Location, "" );
+            //    RoomImpMgr.importBinding( "controlzoneid", CswNbtObjClassLocation.PropertyName.ControlZone, "" );
+            //    RoomImpMgr.importBinding( "inventorygroupid", CswNbtObjClassLocation.PropertyName.InventoryGroup, "" );
 
-                RoomImpMgr.finalize();
-            }
+            //    RoomImpMgr.finalize();
+            //}
 
-            {
-                //select l.*, l3.locationlevel3name
-                //from locations l
-                //join locations_level3 l3 on (l3.locationlevel3id = l.locationlevel3id)
+            //{
+            //    //select l.*, l3.locationlevel3name
+            //    //from locations l
+            //    //join locations_level3 l3 on (l3.locationlevel3id = l.locationlevel3id)
 
-                CswNbtSchemaUpdateImportMgr RoomImpMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "locations_level3", "Cabinet", "locationslevel3_view" );
+            //    CswNbtSchemaUpdateImportMgr RoomImpMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "locations_level3", "Cabinet", "locationslevel3_view" );
 
-                RoomImpMgr.importBinding( "locationlevel3name", CswNbtObjClassLocation.PropertyName.Name, "" );
-                RoomImpMgr.importBinding( "locationcode", CswNbtObjClassLocation.PropertyName.LocationCode, "" );
+            //    RoomImpMgr.importBinding( "locationlevel3name", CswNbtObjClassLocation.PropertyName.Name, "" );
+            //    RoomImpMgr.importBinding( "locationcode", CswNbtObjClassLocation.PropertyName.LocationCode, "" );
 
-                // Relationships
-                RoomImpMgr.importBinding( "locationlevel2id", CswNbtObjClassLocation.PropertyName.Location, "" );
-                RoomImpMgr.importBinding( "controlzoneid", CswNbtObjClassLocation.PropertyName.ControlZone, "" );
-                RoomImpMgr.importBinding( "inventorygroupid", CswNbtObjClassLocation.PropertyName.InventoryGroup, "" );
+            //    // Relationships
+            //    RoomImpMgr.importBinding( "locationlevel2id", CswNbtObjClassLocation.PropertyName.Location, "" );
+            //    RoomImpMgr.importBinding( "controlzoneid", CswNbtObjClassLocation.PropertyName.ControlZone, "" );
+            //    RoomImpMgr.importBinding( "inventorygroupid", CswNbtObjClassLocation.PropertyName.InventoryGroup, "" );
 
-                RoomImpMgr.finalize();
-            }
+            //    RoomImpMgr.finalize();
+            //}
 
-            {
-                //select l.*, l4.locationlevel3name
-                //from locations l
-                //join locations_level4 l4 on (l4.locationlevel4id = l.locationlevel4id)
+            //{
+            //    //select l.*, l4.locationlevel3name
+            //    //from locations l
+            //    //join locations_level4 l4 on (l4.locationlevel4id = l.locationlevel4id)
 
-                CswNbtSchemaUpdateImportMgr RoomImpMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "locations_level4", "Shelf", "locationslevel4_view" );
+            //    CswNbtSchemaUpdateImportMgr RoomImpMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "locations_level4", "Shelf", "locationslevel4_view" );
 
-                RoomImpMgr.importBinding( "locationlevel4name", CswNbtObjClassLocation.PropertyName.Name, "" );
-                RoomImpMgr.importBinding( "locationcode", CswNbtObjClassLocation.PropertyName.LocationCode, "" );
+            //    RoomImpMgr.importBinding( "locationlevel4name", CswNbtObjClassLocation.PropertyName.Name, "" );
+            //    RoomImpMgr.importBinding( "locationcode", CswNbtObjClassLocation.PropertyName.LocationCode, "" );
 
-                // Relationships
-                RoomImpMgr.importBinding( "locationlevel3id", CswNbtObjClassLocation.PropertyName.Location, "" );
-                RoomImpMgr.importBinding( "controlzoneid", CswNbtObjClassLocation.PropertyName.ControlZone, "" );
-                RoomImpMgr.importBinding( "inventorygroupid", CswNbtObjClassLocation.PropertyName.InventoryGroup, "" );
+            //    // Relationships
+            //    RoomImpMgr.importBinding( "locationlevel3id", CswNbtObjClassLocation.PropertyName.Location, "" );
+            //    RoomImpMgr.importBinding( "controlzoneid", CswNbtObjClassLocation.PropertyName.ControlZone, "" );
+            //    RoomImpMgr.importBinding( "inventorygroupid", CswNbtObjClassLocation.PropertyName.InventoryGroup, "" );
 
-                RoomImpMgr.finalize();
-            }
+            //    RoomImpMgr.finalize();
+            //}
 
-            {
-                //select l.*, l5.locationlevel3name
-                //from locations l
-                //join locations_level5 l5 on (l5.locationlevel5id = l.locationlevel5id)
+            //{
+            //    //select l.*, l5.locationlevel3name
+            //    //from locations l
+            //    //join locations_level5 l5 on (l5.locationlevel5id = l.locationlevel5id)
 
-                CswNbtSchemaUpdateImportMgr RoomImpMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "locations_level5", "Box", "locationslevel5_view" );
+            //    CswNbtSchemaUpdateImportMgr RoomImpMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "locations_level5", "Box", "locationslevel5_view" );
 
-                RoomImpMgr.importBinding( "locationlevel5name", CswNbtObjClassLocation.PropertyName.Name, "" );
-                RoomImpMgr.importBinding( "locationcode", CswNbtObjClassLocation.PropertyName.LocationCode, "" );
+            //    RoomImpMgr.importBinding( "locationlevel5name", CswNbtObjClassLocation.PropertyName.Name, "" );
+            //    RoomImpMgr.importBinding( "locationcode", CswNbtObjClassLocation.PropertyName.LocationCode, "" );
 
-                // Relationships
-                RoomImpMgr.importBinding( "locationlevel4id", CswNbtObjClassLocation.PropertyName.Location, "" );
-                RoomImpMgr.importBinding( "controlzoneid", CswNbtObjClassLocation.PropertyName.ControlZone, "" );
-                RoomImpMgr.importBinding( "inventorygroupid", CswNbtObjClassLocation.PropertyName.InventoryGroup, "" );
+            //    // Relationships
+            //    RoomImpMgr.importBinding( "locationlevel4id", CswNbtObjClassLocation.PropertyName.Location, "" );
+            //    RoomImpMgr.importBinding( "controlzoneid", CswNbtObjClassLocation.PropertyName.ControlZone, "" );
+            //    RoomImpMgr.importBinding( "inventorygroupid", CswNbtObjClassLocation.PropertyName.InventoryGroup, "" );
 
-                RoomImpMgr.finalize();
-            }
+            //    RoomImpMgr.finalize();
+            //}
 
         } // update()
 

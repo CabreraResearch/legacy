@@ -10,10 +10,12 @@ namespace ChemSW.Nbt.csw.Schema
         private string ImportTable { get { return "nbtimportqueue@" + _CAFDbLink; } }
         private string ImportSequence { get { return "seq_nbtimportqueueid.nextval@" + _CAFDbLink; } }
         private string SourceTable { get { return _SourceTableName + "@" + _CAFDbLink; } }
+        private string SourceView { get { return _ViewName + "@" + _CAFDbLink; } }
 
-        private void _populateImportQueueTable( string WhereClause )
+        private void _populateImportQueueTable( string WhereClause, bool UseView )
         {
             string State = CswScheduleLogicNbtCAFImport.State.I.ToString();
+            string DataSource = UseView ? SourceView : SourceTable;
 
             //Optional extension to where clause. Logical deletes already excluded.
             WhereClause = WhereClause ?? string.Empty;
@@ -24,7 +26,7 @@ namespace ChemSW.Nbt.csw.Schema
 
             //Populate the import queue
             string SqlText = "insert into " + ImportTable + " ( nbtimportqueueid, state, itempk, tablename, priority, errorlog, viewname ) " +
-                             @" select " + ImportSequence + ", '" + State + "', " + SourceTablePkColumnName + ", '" + _SourceTableName + "',0, '', '" + _ViewName + "' from " + SourceTable + " where deleted='0' " + WhereClause;
+                             @" select " + ImportSequence + ", '" + State + "', " + SourceTablePkColumnName + ", '" + _SourceTableName + "',0, '', '" + _ViewName + "' from " + DataSource + " where deleted='0' " + WhereClause;
             SchemaModTrnsctn.execArbitraryPlatformNeutralSql( SqlText );
         }
 
