@@ -21,6 +21,11 @@ namespace ChemSW.Nbt.Schema
             get { return 30661; }
         }
 
+        public override string ScriptName
+        {
+            get { throw new System.NotImplementedException(); }
+        }
+
         public override void update()
         {
             // This is a placeholder script that does nothing.
