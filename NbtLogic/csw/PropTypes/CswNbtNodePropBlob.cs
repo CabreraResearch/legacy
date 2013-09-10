@@ -26,11 +26,13 @@ namespace ChemSW.Nbt.PropTypes
 
             // Associate subfields with methods on this object, for SetSubFieldValue()
             _SubFieldMethods.Add( _FileNameSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => FileName, x => FileName = CswConvert.ToString(x) ) );
-            _SubFieldMethods.Add( _ContentTypeSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => ContentType, x => ContentType = CswConvert.ToString(x) ) );
+            _SubFieldMethods.Add( _ContentTypeSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => ContentType, x => ContentType = CswConvert.ToString( x ) ) );
+            _SubFieldMethods.Add( _DateModifiedSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => DateModified, x => DateModified = CswConvert.ToDateTime( x ) ) );
         }
 
         private CswNbtSubField _FileNameSubField;
         private CswNbtSubField _ContentTypeSubField;
+        private CswNbtSubField _DateModifiedSubField;
 
         override public bool Empty
         {
@@ -86,6 +88,26 @@ namespace ChemSW.Nbt.PropTypes
                 _CswNbtNodePropData.SetPropRowValue( _ContentTypeSubField.Column, value );
             }
         }
+
+
+        public DateTime DateModified
+        {
+            get
+            {
+                return _CswNbtNodePropData.GetPropRowValueDate( _DateModifiedSubField.Column );
+            }
+            set
+            {
+                if( DateTime.MinValue != value )
+                {
+                    _CswNbtNodePropData.SetPropRowValue( _DateModifiedSubField.Column, value );
+                }
+                else
+                {
+                    _CswNbtNodePropData.SetPropRowValue( _DateModifiedSubField.Column, DateTime.MinValue );
+                }
+            }
+        } // DateModified
 
         public string Href
         {

@@ -31,6 +31,7 @@ namespace ChemSW.Nbt.MetaData
         public static readonly CswEnumNbtSubFieldName CorrectiveAction = new CswEnumNbtSubFieldName( "CorrectiveAction" );
         public static readonly CswEnumNbtSubFieldName DateAnswered = new CswEnumNbtSubFieldName( "DateAnswered" );
         public static readonly CswEnumNbtSubFieldName DateCorrected = new CswEnumNbtSubFieldName( "DateCorrected" );
+        public static readonly CswEnumNbtSubFieldName DateModified = new CswEnumNbtSubFieldName( "DateModified" );
         public static readonly CswEnumNbtSubFieldName Href = new CswEnumNbtSubFieldName( "Href" );
         public static readonly CswEnumNbtSubFieldName Image = new CswEnumNbtSubFieldName( "Image" );
         public static readonly CswEnumNbtSubFieldName Interval = new CswEnumNbtSubFieldName( "Interval" );
