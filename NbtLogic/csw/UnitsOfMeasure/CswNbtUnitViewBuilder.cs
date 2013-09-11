@@ -20,7 +20,9 @@ namespace ChemSW.Nbt.UnitsOfMeasure
             _CswNbtResources = CswNbtResources;
         }
 
-        #endregion
+        #endregion Properties and ctor
+
+        #region Public
 
         public String getPhysicalState( CswNbtPropertySetMaterial MaterialNode )
         {
@@ -100,6 +102,34 @@ namespace ChemSW.Nbt.UnitsOfMeasure
             return Ret;
         }
 
+        /// <summary>
+        /// Get UnitOfMeasure node by name and NodeType
+        /// </summary>
+        /// <param name="UnitName">name of the unit (ex: "kg")</param>
+        /// <param name="NodeTypeName">name of the unit's NodeType (ex: "Unit_Weight")</param>
+        /// <returns></returns>
+        public CswNbtObjClassUnitOfMeasure getUnit( String UnitName, String NodeTypeName )
+        {
+            CswNbtObjClassUnitOfMeasure Unit = null;
+            CswNbtMetaDataNodeType UnitNT = _CswNbtResources.MetaData.getNodeType( NodeTypeName );
+            if( null != UnitNT )
+            {
+                foreach( CswNbtObjClassUnitOfMeasure UnitNode in UnitNT.getNodes( false, false ) )
+                {
+                    if( UnitName == UnitNode.Name.Text )
+                    {
+                        Unit = UnitNode;
+                        break;
+                    }
+                }
+            }
+            return Unit;
+        }
+
+        #endregion Public
+
+        #region Private
+
         private void _populateUnitViewRelationships( CswNbtView UnitView, string PhysicalState, bool ExcludeEach )
         {
             CswNbtMetaDataObjectClass UnitOfMeasureOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.UnitOfMeasureClass );
@@ -149,6 +179,8 @@ namespace ChemSW.Nbt.UnitsOfMeasure
             }
             return matchFound;
         }
+
+        #endregion Private
 
     }
 }

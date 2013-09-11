@@ -63,6 +63,8 @@ namespace ChemSW.Nbt.MetaData
         public static readonly CswEnumNbtSubFieldName Flammability = new CswEnumNbtSubFieldName( "Flammability" );
         public static readonly CswEnumNbtSubFieldName Reactivity = new CswEnumNbtSubFieldName( "Reactivity" );
         public static readonly CswEnumNbtSubFieldName Special = new CswEnumNbtSubFieldName( "Special" );
+        public static readonly CswEnumNbtSubFieldName Val_kg = new CswEnumNbtSubFieldName( "val_kg" );
+        public static readonly CswEnumNbtSubFieldName Val_Liters = new CswEnumNbtSubFieldName( "val_Liters" );
     } // class SubFieldName
 
 }//namespace ChemSW.Nbt.MetaData

@@ -30,6 +30,7 @@ namespace ChemSW.Nbt.MetaData
         public static readonly CswEnumNbtPropColumn Field1_Date = new CswEnumNbtPropColumn( "Field1_Date" );
         public static readonly CswEnumNbtPropColumn Field1_Numeric = new CswEnumNbtPropColumn( "Field1_Numeric" );
         public static readonly CswEnumNbtPropColumn Field2_Numeric = new CswEnumNbtPropColumn( "Field2_Numeric" );
+        public static readonly CswEnumNbtPropColumn Field3_Numeric = new CswEnumNbtPropColumn( "Field3_Numeric" );
         public static readonly CswEnumNbtPropColumn Field2 = new CswEnumNbtPropColumn( "Field2" );
         public static readonly CswEnumNbtPropColumn Field2_Date = new CswEnumNbtPropColumn( "Field2_Date" );
         public static readonly CswEnumNbtPropColumn Field3 = new CswEnumNbtPropColumn( "Field3" );
