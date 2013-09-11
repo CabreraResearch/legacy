@@ -18,10 +18,9 @@ namespace ChemSW.Nbt.csw.Schema
             {
                 //{SourceTableName, ImportOrder}
                 {"cispro_controlzones", 1},
-                {"sites", 2},
-                {"work_units", 3},
-                {"inventory_groups", 4},
-                {"locations", 5}
+                {"work_units", 2},
+                {"inventory_groups", 3},
+                {"locations", 4}
                 //{"locations_level2", 6},
                 //{"locations_level3", 7},
                 //{"locations_level4", 8},
@@ -49,7 +48,6 @@ namespace ChemSW.Nbt.csw.Schema
 
         private CswCommaDelimitedString _SourceColumns;
 
-        //public CswNbtSchemaUpdateImportMgr( CswNbtSchemaModTrnsctn SchemaModTrnsctn, Int32 ImportOrder, string SourceTableName, string DestNodeTypeName )
         public CswNbtSchemaUpdateImportMgr( CswNbtSchemaModTrnsctn SchemaModTrnsctn, string SourceTableName, string DestNodeTypeName, string ViewName = "", string CafDbLink = null )
         {
             string ExceptionText = string.Empty;
@@ -79,6 +77,34 @@ namespace ChemSW.Nbt.csw.Schema
                 SchemaModTrnsctn.logError( ExceptionText );
             }
         }//ctor
+
+        public CswNbtSchemaUpdateImportMgr( CswNbtSchemaModTrnsctn SchemaModTrnsctn, string SourceTableName, List<Tuple<string, Int32>> DestNodeTypesAndInstances, string ViewName = "", string CafDbLink = null )
+        {
+            string ExceptionText = string.Empty;
+            _CAFDbLink = CafDbLink ?? CswScheduleLogicNbtCAFImport.CAFDbLink;
+            if( SchemaModTrnsctn.IsDbLinkConnectionHealthy( _CAFDbLink, ref ExceptionText ) )
+            {
+                _NbtImporter = SchemaModTrnsctn.makeCswNbtImporter();
+                this.SchemaModTrnsctn = SchemaModTrnsctn;
+
+                _importOrderTable = CswNbtImportDefOrder.getDataTableForNewOrderEntries();
+                _importBindingsTable = CswNbtImportDefBinding.getDataTableForNewBindingEntries();
+                _importRelationshipsTable = CswNbtImportDefRelationship.getDataTableForNewRelationshipEntries();
+
+                _SourceTableName = SourceTableName;
+                _ViewName = ViewName;
+                _SourceColumns = new CswCommaDelimitedString();
+
+                for( int i = 0; i < DestNodeTypesAndInstances.Count; i++ )
+                {
+                    _importOrder( i + 1, _SourceTableName, DestNodeTypesAndInstances[i].Item1, DestNodeTypesAndInstances[i].Item2 );
+                }
+            }
+            else
+            {
+                SchemaModTrnsctn.logError( ExceptionText );
+            }
+        }
 
         private void _importOrder( Int32 Order, string SheetName = null, string NodeTypeName = null, Int32 Instance = Int32.MinValue )
         {
