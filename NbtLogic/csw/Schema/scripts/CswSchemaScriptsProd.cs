@@ -95,6 +95,7 @@ namespace ChemSW.Nbt.Schema
 
             _addVersionedScript( new CswUpdateSchema_02G_Case30542() );
             _addVersionedScript( new CswUpdateSchema_02G_Case30557() );
+            _addVersionedScript( new CswUpdateSchema_02G_Case30679() );
 
             #endregion GINGKO
 

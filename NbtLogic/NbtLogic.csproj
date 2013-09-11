@@ -429,6 +429,7 @@
     <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateMetaData_02G_Case27846.cs" />
     <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateMetaData_02G_Case30611.cs" />
     <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateSchema_02G_Case30542.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateSchema_02G_Case30679.cs" />
     <Compile Include="csw\Security\CswNbtWebSvcSchemaAuthenticator.cs" />
     <Compile Include="csw\Security\CswNbtSchemaAuthenticationLogic.cs" />
     <Compile Include="csw\Security\CswNbtSchemaAuthenticatorFactory.cs" />
