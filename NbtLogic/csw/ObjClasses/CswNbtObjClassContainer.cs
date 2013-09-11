@@ -133,7 +133,7 @@ namespace ChemSW.Nbt.ObjClasses
             // Case 28206: Setting Location of Container based on Container Group
             // Note: If the Location and Container Group are both set on a Container,
             // then the Container Group location overrides the user set location.
-            if( this.ContainerGroup.WasModified &&
+            if( this.ContainerGroup.getAnySubFieldModified() &&
                 this.ContainerGroup.RelatedNodeId != null &&
                 ( this.ContainerGroup.GetOriginalPropRowValue( CswEnumNbtSubFieldName.NodeID ) != this.ContainerGroup.RelatedNodeId.PrimaryKey.ToString() ) )
             {
@@ -148,7 +148,7 @@ namespace ChemSW.Nbt.ObjClasses
                     }
                 }
             }
-            else if( this.Location.WasModified &&
+            else if( this.Location.getAnySubFieldModified() &&
                      this.Location.SelectedNodeId != null &&
                      ( this.Location.GetOriginalPropRowValue( CswEnumNbtSubFieldName.NodeID ) != this.Location.SelectedNodeId.PrimaryKey.ToString() ) )
             {
@@ -518,7 +518,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         /// <summary>
         /// Create a new ContainerLocation node. 
-        /// *Note: The NewLocationBarcode and ContainerBarcode parameters are necessary only if the Type = Scan. They
+        /// *Note: The NewLocationBarcode and ContainerBarcode parameters are necessary only if the Type = ReconcileScans. They
         /// are currently only used for the reconcile data from the CISPro/NBT CORE mobile app.
         /// </summary>
         /// <param name="Type"></param>
@@ -536,7 +536,7 @@ namespace ChemSW.Nbt.ObjClasses
                        ContLocNode.Container.RelatedNodeId = NodeId;
                        if( null != Location )
                        {
-                           if( Type != CswEnumNbtContainerLocationTypeOptions.Scan )
+                           if( Type != CswEnumNbtContainerLocationTypeOptions.ReconcileScans )
                            {
                                ContLocNode.Location.SelectedNodeId = Location.SelectedNodeId;
                                ContLocNode.Location.CachedNodeName = Location.CachedNodeName;
@@ -753,6 +753,7 @@ namespace ChemSW.Nbt.ObjClasses
                         {
                             ContDispTransNode.DestinationContainer.RelatedNodeId = DestinationContainer.NodeId;
                         }
+                        ContDispTransNode.Dispenser.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
                         ContDispTransNode.QuantityDispensed.Quantity = Amount;
                         ContDispTransNode.QuantityDispensed.UnitId = UnitId;
                         ContDispTransNode.Type.Value = DispenseType.ToString();

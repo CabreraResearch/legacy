@@ -160,7 +160,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             return Ret;
         }
 
-        public CswNbtNode getAddNode( Int32 NodeTypeId, string RelatedNodeId )
+        public CswNbtNode getAddNode( Int32 NodeTypeId, string RelatedNodeId, CswNbtNodeCollection.AfterMakeNode After )
         {
             CswNbtNode Ret = null;
             CswNbtMetaDataNodeType NodeType = null;
@@ -175,26 +175,32 @@ namespace ChemSW.Nbt.ServiceDrivers
                     }
                     else
                     {
-                        Ret = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, IsTemp: true );
-                        CswPrimaryKey RelatedNodePk = new CswPrimaryKey();
-                        RelatedNodePk.FromString( RelatedNodeId );
-                        if( Int32.MinValue != RelatedNodePk.PrimaryKey )
-                        {
-                            CswNbtNode RelatedNode = _CswNbtResources.Nodes[RelatedNodePk];
-                            if( null != RelatedNode )
+                        Ret = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, IsTemp: true, OnAfterMakeNode: delegate( CswNbtNode NewNode )
                             {
-                                foreach( CswNbtNodePropRelationship Relationship in from _Prop
-                                                                                    in Ret.Properties
-                                                                                where _Prop.getFieldTypeValue() == CswEnumNbtFieldType.Relationship &&
-                                                                                          ( _Prop.AsRelationship.TargetMatches( RelatedNode.getNodeType() ) ||
-                                                                                            _Prop.AsRelationship.TargetMatches( RelatedNode.getObjectClass() ) )
-                                                                                select _Prop )
+                                CswPrimaryKey RelatedNodePk = new CswPrimaryKey();
+                                RelatedNodePk.FromString( RelatedNodeId );
+                                if( Int32.MinValue != RelatedNodePk.PrimaryKey )
                                 {
-                                    Relationship.RelatedNodeId = RelatedNodePk;
-                                    Ret.postChanges( ForceUpdate : false );
+                                    CswNbtNode RelatedNode = _CswNbtResources.Nodes[RelatedNodePk];
+                                    if( null != RelatedNode )
+                                    {
+                                        foreach( CswNbtNodePropRelationship Relationship in from _Prop
+                                                                                                in NewNode.Properties
+                                                                                            where _Prop.getFieldTypeValue() == CswEnumNbtFieldType.Relationship &&
+                                                                                                  ( _Prop.AsRelationship.TargetMatches( RelatedNode.getNodeType() ) ||
+                                                                                                    _Prop.AsRelationship.TargetMatches( RelatedNode.getObjectClass() ) )
+                                                                                            select _Prop )
+                                        {
+                                            Relationship.RelatedNodeId = RelatedNodePk;
+                                            //Ret.postChanges( ForceUpdate: false );
+                                        }
+                                    }
+                                } // if( Int32.MinValue != RelatedNodePk.PrimaryKey )
+                                if( null != After )
+                                {
+                                    After( NewNode );
                                 }
-                            }
-                        } // if( Int32.MinValue != RelatedNodePk.PrimaryKey )
+                            } );
                     }
                 }
             }
@@ -229,7 +235,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                 CswNbtNode Node;
                 if( _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Add && false == CswTools.IsPrimaryKey( CswConvert.ToPrimaryKey( NodeId ) ) )
                 {
-                    Node = getAddNode( NodeTypeId, RelatedNodeId );
+                    Node = getAddNode( NodeTypeId, RelatedNodeId, null );
                 }
                 else
                 {
@@ -314,7 +320,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                         {
                             //Case 29531 - There are no props on the Add layout, so just save the node - the client will skip the add dialog
                             Node.IsTemp = false;
-                            Node.postChanges( ForceUpdate : false );
+                            Node.postChanges( ForceUpdate: false );
                         }
                         else
                         {
@@ -854,7 +860,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                     {
                         CopyToNode.Properties[NodeTypeProp].copy( SourceNode.Properties[NodeTypeProp] );
                     }
-                    CopyToNode.postChanges( ForceUpdate : false );
+                    CopyToNode.postChanges( ForceUpdate: false );
                 } // foreach( string NodeIdStr in CopyNodeIds )
             }
         }

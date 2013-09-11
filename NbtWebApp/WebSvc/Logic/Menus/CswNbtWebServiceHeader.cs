@@ -1,11 +1,3 @@
-using ChemSW.Core;
-using ChemSW.DB;
-using ChemSW.Nbt.Actions;
-using ChemSW.Nbt.ChemCatCentral;
-using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.ObjClasses;
-using ChemSW.Session;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -15,6 +7,14 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using ChemSW.Core;
+using ChemSW.DB;
+using ChemSW.Nbt.Actions;
+using ChemSW.Nbt.ChemCatCentral;
+using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.ObjClasses;
+using ChemSW.Session;
+using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -227,6 +227,8 @@ namespace ChemSW.Nbt.WebServices
             }
             Ret["Help"]["Printing Labels"] = new JObject();
             Ret["Help"]["Printing Labels"]["popup"] = "PrintingLabels.html";
+            Ret["Help"]["Reading Balances"] = new JObject();
+            Ret["Help"]["Reading Balances"]["popup"] = "ReadingBalances.html";
             Ret["Help"]["About"] = new JObject();
             Ret["Help"]["About"]["action"] = "About";
 

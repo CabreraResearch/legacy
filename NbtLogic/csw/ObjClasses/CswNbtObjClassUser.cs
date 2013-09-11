@@ -239,14 +239,14 @@ namespace ChemSW.Nbt.ObjClasses
             return
                 false == String.IsNullOrEmpty( this.UsernameProperty.Text ) &&
                 false == CswTools.IsValidUsername( this.UsernameProperty.Text ) &&
-                ( this.UsernameProperty.WasModified ||
-                 ( this.AccountLocked.WasModified && this.AccountLocked.Checked == CswEnumTristate.False ) );
+                ( this.UsernameProperty.getAnySubFieldModified() ||
+                 ( this.AccountLocked.getAnySubFieldModified() && this.AccountLocked.Checked == CswEnumTristate.False ) );
         }
 
         public override void afterWriteNode( bool Creating )
         {
             //bz # 6555
-            if( AccountLocked.Checked != CswEnumTristate.True && AccountLocked.WasModified )
+            if( AccountLocked.Checked != CswEnumTristate.True && AccountLocked.getAnySubFieldModified() )
             {
                 clearFailedLoginCount();
             }

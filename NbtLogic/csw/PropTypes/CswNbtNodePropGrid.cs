@@ -19,6 +19,7 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropGrid( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtNode Node )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node )
         {
+            // No subfields
         }//generic
 
         override public bool Empty
@@ -28,16 +29,6 @@ namespace ChemSW.Nbt.PropTypes
                 return ( 0 == Gestalt.Length );
             }//
         }
-
-
-        override public string Gestalt
-        {
-            get
-            {
-                return _CswNbtNodePropData.Gestalt;
-            }//
-
-        }//Gestalt
 
         private CswNbtView _View = null;
         public CswNbtView View

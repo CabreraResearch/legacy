@@ -32,6 +32,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string ControlZone = "Control Zone";
             public const string Containers = "Containers";
             public const string InventoryLevels = "Inventory Levels";
+            public const string Responsible = "Responsible";
         }
 
 
@@ -78,7 +79,7 @@ namespace ChemSW.Nbt.ObjClasses
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation, bool Creating )
         {
             if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.CISPro ) &&
-                Location.WasModified &&
+                Location.getAnySubFieldModified() &&
                 _CswNbtResources.EditMode != CswEnumNbtNodeEditMode.Add )
             {
                 CswNbtNodePropWrapper LocationWrapper = Node.Properties[PropertyName.Location];
@@ -188,6 +189,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropRelationship ControlZone { get { return ( _CswNbtNode.Properties[PropertyName.ControlZone] ); } }
         public CswNbtNodePropGrid Containers { get { return ( _CswNbtNode.Properties[PropertyName.Containers] ); } }
         public CswNbtNodePropGrid InventoryLevels { get { return ( _CswNbtNode.Properties[PropertyName.InventoryLevels] ); } }
+        public CswNbtNodePropRelationship Responsible { get { return ( _CswNbtNode.Properties[PropertyName.Responsible] ); } }
 
         #endregion Object class specific properties
 

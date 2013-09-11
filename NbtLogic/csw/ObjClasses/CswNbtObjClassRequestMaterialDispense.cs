@@ -451,7 +451,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         public override void onStatusPropChange( CswNbtNodeProp Prop, bool Creating )
         {
-            if( Status.WasModified && Status.Value != NonRequestableStatus )
+            if( Status.getAnySubFieldModified() && Status.Value != NonRequestableStatus )
             {
                 if( Status.Value == Statuses.Pending )
                 {
@@ -684,7 +684,7 @@ namespace ChemSW.Nbt.ObjClasses
         private bool _IsRecurring { get { return CswEnumTristate.True == IsRecurring.Checked; } } //&& _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.MLM ); } }
         private void onIsRecurringChange( CswNbtNodeProp NodeProp, bool Creating )
         {
-            if( IsRecurring.WasModified )
+            if( IsRecurring.getAnySubFieldModified() )
             {
                 //Both Recurring and Favorites will be 'copied' at some frequency back to genuine Pending Request Items
                 //Support both directions
@@ -718,7 +718,7 @@ namespace ChemSW.Nbt.ObjClasses
         private bool _IsFavorite { get { return CswConvert.ToBoolean( IsFavorite.Gestalt ); } }
         private void onIsFavoritePropChange( CswNbtNodeProp NodeProp, bool Creating )
         {
-            if( IsFavorite.WasModified )
+            if( IsFavorite.getAnySubFieldModified() )
             {
                 //Both Recurring and Favorites will be 'copied' at some frequency back to genuine Pending Request Items
                 _toggleRequestItemPropVisibility();

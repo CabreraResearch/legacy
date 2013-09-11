@@ -102,55 +102,18 @@ namespace ChemSW.Nbt
         {
             get
             {
-                bool ReturnVal = false;
-                foreach( CswNbtNodePropWrapper CurrentProp in _Props )
-                {
-                    if( CurrentProp.WasModified )
-                    {
-                        ReturnVal = true;
-                        break;
-                    }//
-                }//iterate props
-
-                return ( ReturnVal );
-            }//
+                return _Props.Any( CurrentProp => CurrentProp.getAnySubFieldModified( IncludePendingUpdate: true ) );
+            }
         }//Modified
 
-
-        public bool SuspendModifyTracking
-        {
-            get
-            {
-                bool ReturnVal = false;
-                foreach( CswNbtNodePropWrapper CurrentProp in _Props )
-                {
-                    if( CurrentProp.SuspendModifyTracking )
-                    {
-                        ReturnVal = true;
-                        break;
-                    }//
-                }//iterate props
-
-                return ( ReturnVal );
-            }
-
-            set
-            {
-                foreach( CswNbtNodePropWrapper CurrentProp in _Props )
-                {
-                    CurrentProp.SuspendModifyTracking = value;
-                }//iterate props
-            }//
-        }//SuspendModifyTracking
-
         public bool CreatedFromNodeTypeId = false;
-
 
         public void clearModifiedFlag()
         {
             foreach( CswNbtNodePropWrapper CurrentProp in _Props )
             {
-                CurrentProp.clearModifiedFlag();
+                //CurrentProp.clearModifiedFlag();
+                CurrentProp.clearSubFieldModifiedFlags();
             }//iterate props
 
         }//_clearModifiedFlag()
@@ -309,7 +272,7 @@ namespace ChemSW.Nbt
                 _CswNbtNode.ObjClass.triggerAfterPopulateProps();
             }
 
-            SuspendModifyTracking = false;
+            //SuspendModifyTracking = false;
         }//_populateProps()
 
 

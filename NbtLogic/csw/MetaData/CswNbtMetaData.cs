@@ -1900,14 +1900,14 @@ namespace ChemSW.Nbt.MetaData
         /// <summary>
         /// Change a Template Value (with Property IDs) to an instance value (using the values of those properties)
         /// </summary>
-        public static string TemplateValueToDisplayValue( IEnumerable<CswNbtMetaDataNodeTypeProp> PropsCollection, string Template, CswNbtNodePropData PropData )
+        public static string TemplateValueToDisplayValue( IEnumerable<CswNbtMetaDataNodeTypeProp> PropsCollection, string Template, CswNbtNodeProp PropObj )
         {
             string Value = Template;
             foreach( CswNbtMetaDataNodeTypeProp Prop in PropsCollection )
             {
                 if( Value.Contains( MakeTemplateEntry( Prop.PropId.ToString() ) ) )
                 {
-                    Value = Value.Replace( MakeTemplateEntry( Prop.PropId.ToString() ), PropData.OtherPropGestalt( Prop.PropId ) );
+                    Value = Value.Replace( MakeTemplateEntry( Prop.PropId.ToString() ), PropObj.OtherPropGestalt( Prop.PropId ) );
                 }
             }
             return Value;

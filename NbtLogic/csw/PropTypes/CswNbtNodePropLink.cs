@@ -20,12 +20,14 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropLink( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtNode Node )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node )
         {
-            _FieldTypeRule = (CswNbtFieldTypeRuleLink) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
-            _TextSubField = _FieldTypeRule.TextSubField;
-            _HrefSubField = _FieldTypeRule.HrefSubField;
+            _TextSubField = ( (CswNbtFieldTypeRuleLink) _FieldTypeRule ).TextSubField;
+            _HrefSubField = ( (CswNbtFieldTypeRuleLink) _FieldTypeRule ).HrefSubField;
+
+            // Associate subfields with methods on this object, for SetSubFieldValue()
+            _SubFieldMethods.Add( _TextSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Text, x => Text = CswConvert.ToString( x ) ) );
+            _SubFieldMethods.Add( _HrefSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Href, x => Href = CswConvert.ToString( x ) ) );
         }
 
-        private CswNbtFieldTypeRuleLink _FieldTypeRule;
         private CswNbtSubField _TextSubField;
         private CswNbtSubField _HrefSubField;
 
@@ -37,26 +39,16 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
-
-        override public string Gestalt
-        {
-            get
-            {
-                return _CswNbtNodePropData.Gestalt;
-            }
-
-        }//Gestalt
-
         public string Text
         {
             get
             {
-                return _CswNbtNodePropData.GetPropRowValue( _TextSubField.Column );
+                return GetPropRowValue( _TextSubField );
             }
             set
             {
-                _CswNbtNodePropData.SetPropRowValue( _TextSubField.Column, value );
-                _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, value );
+                SetPropRowValue( _TextSubField, value );
+                SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, value );
             }
         }
 
@@ -64,11 +56,11 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return _CswNbtNodePropData.GetPropRowValue( _HrefSubField.Column );
+                return GetPropRowValue( _HrefSubField );
             }
             set
             {
-                _CswNbtNodePropData.SetPropRowValue( _HrefSubField.Column, value );
+                SetPropRowValue( _HrefSubField, value );
             }
         }
 
@@ -147,7 +139,7 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void SyncGestalt()
         {
-            _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, Text );
+            SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, Text );
         }
     }//CswNbtNodeProp
 

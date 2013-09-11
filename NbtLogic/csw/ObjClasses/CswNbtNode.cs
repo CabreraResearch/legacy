@@ -229,11 +229,11 @@ namespace ChemSW.Nbt.ObjClasses
             }//get
         }//Filled
 
-        public bool SuspendModifyTracking
-        {
-            get { return _CswNbtNodePropColl.SuspendModifyTracking; }
-            set { _CswNbtNodePropColl.SuspendModifyTracking = value; }
-        }
+        //public bool SuspendModifyTracking
+        //{
+        //    get { return _CswNbtNodePropColl.SuspendModifyTracking; }
+        //    set { _CswNbtNodePropColl.SuspendModifyTracking = value; }
+        //}
 
         public bool DisableSave = false;
 

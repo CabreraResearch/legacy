@@ -21,13 +21,11 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldResources = CswNbtFieldResources;
             _CswNbtFieldTypeRuleDefault = new CswNbtFieldTypeRuleDefaultImpl( _CswNbtFieldResources );
 
-
-            SelectedUserIdsSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1, CswEnumNbtSubFieldName.NodeID );
+            SelectedUserIdsSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.ClobData, CswEnumNbtSubFieldName.NodeID );
             SelectedUserIdsSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Contains );
             SelectedUserIdsSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotNull );
             SelectedUserIdsSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Null );
             SubFields.add( SelectedUserIdsSubField );
-
         }//ctor
 
         public CswNbtSubField SelectedUserIdsSubField;

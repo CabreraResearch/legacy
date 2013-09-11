@@ -19,18 +19,21 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropMTBF( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtNode Node )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node )
         {
-            _FieldTypeRule = (CswNbtFieldTypeRuleMTBF) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
-            _StartDateTimeSubField = _FieldTypeRule.StartDateTimeSubField;
-            _UnitsSubField = _FieldTypeRule.UnitsSubField;
-            _ValueSubField = _FieldTypeRule.ValueSubField;
+            _StartDateTimeSubField = ( (CswNbtFieldTypeRuleMTBF) _FieldTypeRule ).StartDateTimeSubField;
+            _UnitsSubField = ( (CswNbtFieldTypeRuleMTBF) _FieldTypeRule ).UnitsSubField;
+            _ValueSubField = ( (CswNbtFieldTypeRuleMTBF) _FieldTypeRule ).ValueSubField;
 
             if( string.IsNullOrEmpty( Units ) )
             {
                 Units = "days";
             }
+
+            // Associate subfields with methods on this object, for SetSubFieldValue()
+            _SubFieldMethods.Add( _StartDateTimeSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => StartDateTime, x => StartDateTime = CswConvert.ToDateTime( x ) ) );
+            _SubFieldMethods.Add( _UnitsSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Units, x => Units = CswConvert.ToString( x ) ) );
+            _SubFieldMethods.Add( _ValueSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => CachedValue, x => CachedValue = CswConvert.ToDouble( x ) ) );
         }
 
-        private CswNbtFieldTypeRuleMTBF _FieldTypeRule;
         private CswNbtSubField _StartDateTimeSubField;
         private CswNbtSubField _UnitsSubField;
         private CswNbtSubField _ValueSubField;
@@ -43,21 +46,11 @@ namespace ChemSW.Nbt.PropTypes
             }//
         }
 
-        override public string Gestalt
-        {
-            get
-            {
-                return _CswNbtNodePropData.Gestalt;
-            }
-
-        }//Gestalt
-
-
         public DateTime StartDateTime
         {
             get
             {
-                string StringVal = _CswNbtNodePropData.GetPropRowValue( _StartDateTimeSubField.Column );
+                string StringVal = GetPropRowValue( _StartDateTimeSubField );
                 DateTime ReturnVal = DateTime.MinValue;
                 if( StringVal != string.Empty )
                     ReturnVal = Convert.ToDateTime( StringVal );
@@ -65,7 +58,7 @@ namespace ChemSW.Nbt.PropTypes
             }
             set
             {
-                _CswNbtNodePropData.SetPropRowValue( _StartDateTimeSubField.Column, value );
+                SetPropRowValue( _StartDateTimeSubField, value );
             }
         }//StartDateTime
 
@@ -73,11 +66,11 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return _CswNbtNodePropData.GetPropRowValue( _UnitsSubField.Column );
+                return GetPropRowValue( _UnitsSubField );
             }
             set
             {
-                _CswNbtNodePropData.SetPropRowValue( _UnitsSubField.Column, value );
+                SetPropRowValue( _UnitsSubField, value );
             }
         }//Units
 
@@ -99,18 +92,18 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 double ret = Double.NaN;
-                string StringVal = _CswNbtNodePropData.GetPropRowValue( _ValueSubField.Column );
+                string StringVal = GetPropRowValue( _ValueSubField );
                 if( CswTools.IsFloat( StringVal ) )
                     ret = Convert.ToDouble( StringVal );
                 return ret;
             }
             set
             {
-                _CswNbtNodePropData.SetPropRowValue( _ValueSubField.Column, value );
+                SetPropRowValue( _ValueSubField, value );
                 if( value != Double.NaN )
-                    _CswNbtNodePropData.Gestalt = value.ToString() + " " + Units.ToString();
+                    Gestalt = value.ToString() + " " + Units.ToString();
                 else
-                    _CswNbtNodePropData.Gestalt = string.Empty;
+                    Gestalt = string.Empty;
             }
         }
 
@@ -241,7 +234,7 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void SyncGestalt()
         {
-            _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, CachedValue.ToString() + " " + Units.ToString() );
+            SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, CachedValue.ToString() + " " + Units.ToString() );
         }
 
     }//CswNbtNodePropMTBF

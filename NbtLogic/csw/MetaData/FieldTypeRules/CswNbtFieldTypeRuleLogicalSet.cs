@@ -18,9 +18,15 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             //CheckedSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Equals;
             //SubFields.add( CheckedSubField );
 
+            ClobDataSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.ClobData, CswEnumNbtSubFieldName.Value );
+            ClobDataSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotNull );
+            ClobDataSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Null );
+            SubFields.add( ClobDataSubField );
+
         }//ctor
 
         //public CswNbtSubField CheckedSubField;
+        public CswNbtSubField ClobDataSubField;
 
         public CswNbtSubFieldColl SubFields
         {

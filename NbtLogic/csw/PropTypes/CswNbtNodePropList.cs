@@ -30,6 +30,10 @@ namespace ChemSW.Nbt.PropTypes
                 _SearchThreshold = 100;
             }
 
+            // Associate subfields with methods on this object, for SetSubFieldValue()
+            _SubFieldMethods.Add( _ValueSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Value, x => Value = CswConvert.ToString( x ) ) );
+            _SubFieldMethods.Add( _TextSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Text, null ) );
+
         }//generic
 
         private CswNbtFieldTypeRuleList _FieldTypeRule;
@@ -46,25 +50,15 @@ namespace ChemSW.Nbt.PropTypes
             }//
         }
 
-
-        override public string Gestalt
-        {
-            get
-            {
-                return _CswNbtNodePropData.Gestalt;
-            }//
-
-        }//Gestalt
-
         public string Value
         {
             get
             {
-                return _CswNbtNodePropData.GetPropRowValue( _ValueSubField.Column );
+                return GetPropRowValue( _ValueSubField );
             }
             set
             {
-                _CswNbtNodePropData.SetPropRowValue( _ValueSubField.Column, value );
+                SetPropRowValue( _ValueSubField, value );
                 CswNbtNodeTypePropListOption SelectedOption = Options.FindByValue( value );
                 if( null != SelectedOption )
                 {
@@ -86,12 +80,12 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return _CswNbtNodePropData.GetPropRowValue( _TextSubField.Column );
+                return GetPropRowValue( _TextSubField );
             }
             set
             {
-                _CswNbtNodePropData.SetPropRowValue( _TextSubField.Column, value );
-                _CswNbtNodePropData.Gestalt = value;
+                SetPropRowValue( _TextSubField, value );
+                Gestalt = value;
             }
         }
 
@@ -217,8 +211,8 @@ namespace ChemSW.Nbt.PropTypes
         public override void SyncGestalt()
         {
             //TODO: Check this is the correct logic
-            _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, Text );
-            //_CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, Value );
+            SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, Text );
+            //SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, Value );
         }
     }//CswNbtNodeProp
 

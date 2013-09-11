@@ -40,12 +40,16 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             StartDateSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Null );
             SubFields.add( StartDateSubField );
 
-
+            ClobDataSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.ClobData, CswEnumNbtSubFieldName.Value );
+            ClobDataSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotNull );
+            ClobDataSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Null );
+            SubFields.add( ClobDataSubField );
 
         }//ctor
 
         public CswNbtSubField IntervalSubField;
         public CswNbtSubField StartDateSubField;
+        public CswNbtSubField ClobDataSubField;
 
         public CswNbtSubFieldColl SubFields
         {
