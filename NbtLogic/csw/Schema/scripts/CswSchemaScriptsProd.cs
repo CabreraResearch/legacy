@@ -48,10 +48,14 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswUpdateMetaData_02G_Case27846() );
             _addVersionedScript( new CswUpdateMetaData_02G_Case30542() );
             _addVersionedScript( new CswUpdateMetaData_02G_Case30557B() );
+            _addVersionedScript( new CswUpdateMetaData_02G_Case28493A() );
+
 
             #endregion GINGKO
 
             #endregion MetaData Scripts
+
+            #endregion
 
             // This is the MakeMissingNodeTypeProps script. If you have a script which contains OC changes, put it before this script.
             _addVersionedScript( new RunAlways_MakeMissingNodeTypePropsProps() );
@@ -97,6 +101,7 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswUpdateSchema_02G_Case30557() );
             _addVersionedScript( new CswUpdateSchema_02G_Case30342() );
             _addVersionedScript( new CswUpdateSchema_02G_Case30679() );
+            _addVersionedScript( new CswUpdateSchema_02G_Case28493B() );
 
             #endregion GINGKO
 
@@ -112,6 +117,7 @@ namespace ChemSW.Nbt.Schema
             // Before scripts that always run.
             _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02SQL() );
             _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_03() );
+
             #endregion Before Scripts
 
             #region After Script
