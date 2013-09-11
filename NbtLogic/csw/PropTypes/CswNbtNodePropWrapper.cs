@@ -95,7 +95,7 @@ namespace ChemSW.Nbt.PropTypes
         /// </summary>
         public string GetSubFieldValue( CswNbtSubField SubField )
         {
-            return _CswNbtNodeProp.GetSubFieldValue( SubField.Name ).ToString();
+            return CswConvert.ToString( _CswNbtNodeProp.GetSubFieldValue( SubField.Name ) );
         }
 
         /// <summary>
