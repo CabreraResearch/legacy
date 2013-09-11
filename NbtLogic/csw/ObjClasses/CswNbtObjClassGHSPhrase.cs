@@ -29,6 +29,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Irish = "Irish";
             public const string Italian = "Italian";
             public const string Latvian = "Latvian";
+            public const string Lithuanian = "Lithuanian";
             public const string Maltese = "Maltese";
             public const string Polish = "Polish";
             public const string Portuguese = "Portuguese";
@@ -43,9 +44,9 @@ namespace ChemSW.Nbt.ObjClasses
         {
             public static CswCommaDelimitedString All = new CswCommaDelimitedString
                 {
-                    PropertyName.English,
                     PropertyName.Bulgarian,
                     PropertyName.Spanish,
+                    PropertyName.Chinese,
                     PropertyName.Czech,
                     PropertyName.Danish,
                     PropertyName.German,
@@ -56,6 +57,7 @@ namespace ChemSW.Nbt.ObjClasses
                     PropertyName.Irish,
                     PropertyName.Italian,
                     PropertyName.Latvian,
+                    PropertyName.Lithuanian,
                     PropertyName.Hungarian,
                     PropertyName.Maltese,
                     PropertyName.Dutch,
@@ -171,6 +173,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropText Irish { get { return ( _CswNbtNode.Properties[PropertyName.Irish] ); } }
         public CswNbtNodePropText Italian { get { return ( _CswNbtNode.Properties[PropertyName.Italian] ); } }
         public CswNbtNodePropText Latvian { get { return ( _CswNbtNode.Properties[PropertyName.Latvian] ); } }
+        public CswNbtNodePropText Lithuanian { get { return ( _CswNbtNode.Properties[PropertyName.Lithuanian] ); } }
         public CswNbtNodePropText Maltese { get { return ( _CswNbtNode.Properties[PropertyName.Maltese] ); } }
         public CswNbtNodePropText Polish { get { return ( _CswNbtNode.Properties[PropertyName.Polish] ); } }
         public CswNbtNodePropText Portuguese { get { return ( _CswNbtNode.Properties[PropertyName.Portuguese] ); } }

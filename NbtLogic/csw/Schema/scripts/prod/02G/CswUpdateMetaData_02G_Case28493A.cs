@@ -1,4 +1,5 @@
-﻿using ChemSW.Nbt.csw.Dev;
+﻿using ChemSW.Core;
+using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 
@@ -32,6 +33,8 @@ namespace ChemSW.Nbt.Schema
             {
                 _createLanguageProp( GhsPhraseOC, language );
             }
+            
+            _CswNbtSchemaModTrnsctn.changeColumnDataType( "jct_nodes_props", "field1", CswEnumDataDictionaryPortableDataType.String, 500 );
 
         } // update()
 
@@ -39,10 +42,11 @@ namespace ChemSW.Nbt.Schema
         {
             CswNbtMetaDataObjectClassProp ocp = GhsPhraseOC.getObjectClassProp( OCPropName ) ??
             _CswNbtSchemaModTrnsctn.createObjectClassProp( GhsPhraseOC, new CswNbtWcfMetaDataModel.ObjectClassProp( GhsPhraseOC )
-            {
-                PropName = OCPropName,
-                FieldType = CswEnumNbtFieldType.Text
-            } );
+                {
+                    PropName = OCPropName,
+                    FieldType = CswEnumNbtFieldType.Text
+                } );
+
 
         }
 
