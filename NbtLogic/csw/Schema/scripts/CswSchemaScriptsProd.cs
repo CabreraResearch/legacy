@@ -20,6 +20,8 @@ namespace ChemSW.Nbt.Schema
 
             #region MetaData Scripts
 
+            #region Foxglove
+            
             //dch 30252 FOXGLOVE, but metadata changes so before EUC changes
             _addVersionedScript( new CswUpdateMetaData_02F_Case30252() );
             _addVersionedScript( new CswUpdateMetaData_02F_Case30228() );
@@ -35,8 +37,17 @@ namespace ChemSW.Nbt.Schema
 
             #endregion
 
+            #region Ginko
+            
+            _addVersionedScript( new CswUpdateMetaData_02G_Case28493A() );
+
+            #endregion
+
+            #endregion
+
             // This is the MakeMissingNodeTypeProps script. If you have a script which contains OC changes, put it before this script.
             _addVersionedScript( new RunAlways_MakeMissingNodeTypePropsProps() );
+
             #region Data Scripts
 
             _addVersionedScript( new CswUpdateSchema_02F_Case30281() );
@@ -85,6 +96,7 @@ namespace ChemSW.Nbt.Schema
             // Before scripts that always run.
             _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02SQL() );
             _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_03() );
+
             #endregion Before Scripts
 
             #region After Script
