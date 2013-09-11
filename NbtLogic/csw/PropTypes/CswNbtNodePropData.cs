@@ -404,6 +404,10 @@ namespace ChemSW.Nbt.PropTypes
             {
                 ret = CswConvert.ToString( Field2_Numeric );
             }
+            else if( Column == CswEnumNbtPropColumn.Field3_Numeric )
+            {
+                ret = CswConvert.ToString( Field3_Numeric );
+            }
             else if( Column == CswEnumNbtPropColumn.Field3 )
             {
                 ret = Field3;
@@ -487,6 +491,7 @@ namespace ChemSW.Nbt.PropTypes
         public string Gestalt { get { return ( _getRowStringVal( CswEnumNbtPropColumn.Gestalt ) ); } }
         public string GestaltSearch { get { return ( _getRowStringVal( CswEnumNbtPropColumn.GestaltSearch ) ); } }
         public string ClobData { get { return ( _getRowStringVal( CswEnumNbtPropColumn.ClobData ) ); } }
+        public Double Field3_Numeric { get { return _getRowDoubleVal( CswEnumNbtPropColumn.Field3_Numeric ); } }
 
         public Int32 JctNodePropId
         {

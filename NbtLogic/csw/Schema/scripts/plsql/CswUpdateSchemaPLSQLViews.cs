@@ -51,6 +51,30 @@ order by lower(n.nodename), lower(p.propname)" );
 
             #region VWNTPROPDEFS
 
+            public static readonly Views VwNPV = new Views( CswEnumDeveloper.NBT, 0,
+            @"CREATE OR REPLACE FORCE VIEW NBT.VWNPV (NID, GESTALT, FIELD1_FK, FIELD1_DATE, FIELD2_DATE, FIELD1_NUMERIC, FIELD2_NUMERIC, FIELD3_NUMERIC, FIELD1, FIELD2, FIELD3, FIELD4, FIELD5, CLOBDATA, NTPID)
+            AS
+              SELECT j.nodeid nid,
+                TO_CHAR(j.gestalt) gestalt,
+                field1_fk,
+                field1_date,
+                field2_date,
+                field1_numeric,
+                field2_numeric,
+                field3_numeric,
+                field1,
+                field2,
+                field3,
+                field4,
+                field5,
+                TO_CHAR(clobdata) clobdata,
+                nodetypepropid ntpid
+              FROM jct_nodes_props j" );
+
+            #endregion VWNTPROPDEFS
+
+            #region VWNTPROPDEFS
+
             public static readonly Views VwNtPropDefs = new Views( CswEnumDeveloper.NBT, 0,
             @"create or replace view vwntpropdefs as
             select ntp.nodetypeid,ntp.questionno,ntp.propname,ntp.firstpropversionid nodetypepropid,ft.fieldtype,ft.fieldtypeid,ntp.fktype,ntp.fkvalue,

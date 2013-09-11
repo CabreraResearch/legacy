@@ -24,7 +24,7 @@
                         tabState: {
                             ShowAsReport: false,
                             nodeid: nodeid,
-                            EditMode: nsOptions.isClickable ? Csw.enums.editMode.Edit : Csw.enums.editMode.PrintReport,
+                            EditMode: nsOptions.isClickable ? Csw.enums.editMode.Edit : nodeProperty.tabState.EditMode,
                             ReadOnly: true,
                             showSaveButton: false
                         },
@@ -61,7 +61,10 @@
                 nsOptions.isMulti = nodeProperty.isMulti();
                 nsOptions.isReadOnly = false; // nodeProperty.isReadOnly();
                 //case 28180 - relationships not clickable from audit history popup (Case 30496 - or when viewing As Report)
-                nsOptions.isClickable = nodeProperty.tabState.EditMode !== Csw.enums.editMode.AuditHistoryInPopup && nodeProperty.tabState.EditMode !== Csw.enums.editMode.PrintReport;
+                nsOptions.isClickable =
+                    nodeProperty.tabState.EditMode !== Csw.enums.editMode.AuditHistoryInPopup &&
+                    nodeProperty.tabState.EditMode !== Csw.enums.editMode.PrintReport &&
+                    nodeProperty.tabState.EditMode !== Csw.enums.editMode.Preview;
 
                 nsOptions.doGetNodes = false;
                 nsOptions.showSelectOnLoad = true;
