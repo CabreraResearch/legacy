@@ -6,7 +6,7 @@
     Csw.properties.childContents = Csw.properties.register('childContents',
         function(nodeProperty) {
             'use strict';
-
+           
             //The render function to be executed as a callback
             var render = function() {
                 'use strict';
@@ -57,6 +57,7 @@
                 nsOptions.relatedTo = {};
                 nsOptions.relatedTo.relatednodeid = nodeProperty.tabState.nodeid;
                 nsOptions.relatedTo.relatednodename = nodeProperty.tabState.nodename;
+                nsOptions.denyRelatedAsSelected = true;
                 nsOptions.isRequired = nodeProperty.isRequired();
                 nsOptions.isMulti = nodeProperty.isMulti();
                 nsOptions.isReadOnly = false; // nodeProperty.isReadOnly();
@@ -66,6 +67,7 @@
                 nsOptions.doGetNodes = false;
                 nsOptions.showSelectOnLoad = true;
 
+                debugger;
                 var nodeSelect = nodeProperty.propDivTbl.cell(1, 1).nodeSelect(nsOptions);
 
                 if (nsOptions.isClickable) {
