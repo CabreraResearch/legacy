@@ -2,6 +2,8 @@
 using System.Data;
 using System.Data.OleDb;
 using System.Linq;
+using ChemSW.Config;
+using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
@@ -34,16 +36,15 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClass GHSPhraseOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.GHSPhraseClass );
             Dictionary<string, CswNbtObjClassGHSPhrase> GHSPhrases = _getAllGHSPhrases();
 
-            string FilePath = @"C:\signalwords_hs_ps_en.xlsx"; //TODO: make this relative
+            string FilePath = CswFilePath.getConfigurationFilePath( CswEnumSetupMode.NbtExe ) + "\\" + "signalwords_hs_ps_en.xlsx";
             DataSet GHSLanguageData = _readExcel( FilePath );
 
             //Note - we are ignoring the signal words sheet here
             DataTable HazardStatementsTbl = GHSLanguageData.Tables["'Hazard statements$'"];
             DataTable PrecationaryStatementsTbl = GHSLanguageData.Tables["'Precautionary statements $'"];
-
+            
             _handleData( HazardStatementsTbl, 2, 91, GHSPhrases, GHSPhraseOC.getNodeTypeIds().FirstOrDefault() );
             _handleData( PrecationaryStatementsTbl, 3, 142, GHSPhrases, GHSPhraseOC.getNodeTypeIds().FirstOrDefault() );
-
         }
 
 
