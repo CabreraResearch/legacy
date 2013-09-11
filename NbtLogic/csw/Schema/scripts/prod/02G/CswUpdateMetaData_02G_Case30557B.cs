@@ -40,7 +40,7 @@ namespace ChemSW.Nbt.Schema
             CswNbtFieldTypeRuleQuantity QuantityFTRule = (CswNbtFieldTypeRuleQuantity) _CswNbtSchemaModTrnsctn.MetaData.getFieldTypeRule( CswEnumNbtFieldType.Quantity );
             CswNbtMetaDataFieldType QuantityFT = _CswNbtSchemaModTrnsctn.MetaData.getFieldType( CswEnumNbtFieldType.Quantity );
             //Fix "value" so that we don't get a duplicate with "Value"
-            CswTableUpdate FTSubUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "UserSelectUpdate", "field_types_subfields" );
+            CswTableUpdate FTSubUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "QuantityFTUpdate", "field_types_subfields" );
             DataTable FTSubTable = FTSubUpdate.getTable( "where fieldtypeid = " + QuantityFT.FieldTypeId + " and propcolname = '" + CswEnumNbtPropColumn.Field1_Numeric + "'" );
             if( FTSubTable.Rows.Count > 0 )
             {

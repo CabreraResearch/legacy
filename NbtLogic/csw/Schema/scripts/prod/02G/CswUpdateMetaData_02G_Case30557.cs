@@ -14,7 +14,7 @@ namespace ChemSW.Nbt.Schema
 
         public override string ScriptName
         {
-            get { return "Case_30557"; }
+            get { return "Case_30557DDL"; }
         }
 
         #region Blame Logic
