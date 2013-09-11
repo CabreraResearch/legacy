@@ -50,6 +50,8 @@ namespace ChemSW.Nbt.Schema
 
             #region Data Scripts
 
+            #region Foxglove
+            
             _addVersionedScript( new CswUpdateSchema_02F_Case30281() );
             _addVersionedScript( new CswUpdateSchema_02F_Case28998() );
             _addVersionedScript( new CswUpdateSchema_02F_Case29973() );
@@ -78,6 +80,14 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswUpdateSchema_02F_Case30043_WorkUnits() );
             _addVersionedScript( new CswUpdateSchema_02F_Case30043_InventoryGroups() );
             _addVersionedScript( new CswUpdateSchema_02F_Case30647() );
+
+            #endregion
+
+            #region Ginko
+
+            _addVersionedScript( new CswUpdateSchema_02G_Case28493B() );
+
+            #endregion
 
             #endregion Data Scripts
 
