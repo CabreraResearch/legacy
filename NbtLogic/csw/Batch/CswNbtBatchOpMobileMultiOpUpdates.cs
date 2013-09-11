@@ -403,7 +403,7 @@ namespace ChemSW.Nbt.Batch
             CswNbtObjClassContainer containerNode = _getNodeFromBarcode( barcode, CswEnumNbtObjectClass.ContainerClass, CswNbtObjClassContainer.PropertyName.Barcode );
             if( null != containerNode )
             {
-                containerNode.CreateContainerLocationNode( CswEnumNbtContainerLocationTypeOptions.Scan, newLocationBarcode, barcode );
+                containerNode.CreateContainerLocationNode( CswEnumNbtContainerLocationTypeOptions.ReconcileScans, newLocationBarcode, barcode );
                 containerNode.Location.RefreshNodeName();
                 containerNode.postChanges( false );
             }

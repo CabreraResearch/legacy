@@ -46,7 +46,7 @@ namespace ChemSW.Nbt.Test.ObjClasses
         }
 
         /// <summary>
-        /// Given an undisposed Container and a related ContainerLocation of type Scan with the same location,
+        /// Given an undisposed Container and a related ContainerLocation of type ReconcileScans with the same location,
         /// assert that the ContainerLocation's Status has been set to ScannedCorrect
         /// </summary>
         [Test]
@@ -59,7 +59,7 @@ namespace ChemSW.Nbt.Test.ObjClasses
                 ContainerNode.Node,
                 CswEnumNbtContainerLocationActionOptions.Ignore.ToString(),
                 LocationId: ContainerLocId,
-                Type: CswEnumNbtContainerLocationTypeOptions.Scan.ToString() );
+                Type: CswEnumNbtContainerLocationTypeOptions.ReconcileScans.ToString() );
             Assert.AreEqual( ContainerLocationNode.Location.SelectedNodeId, ContainerNode.Location.SelectedNodeId );
             Assert.AreEqual( CswEnumNbtContainerLocationStatusOptions.ScannedCorrect.ToString(), ContainerLocationNode.Status.Value );
         }
@@ -77,7 +77,7 @@ namespace ChemSW.Nbt.Test.ObjClasses
             CswNbtObjClassContainerLocation ContainerLocationNode = TestData.Nodes.createContainerLocationNode(
                 ContainerNode.Node,
                 CswEnumNbtContainerLocationActionOptions.Ignore.ToString(), 
-                Type: CswEnumNbtContainerLocationTypeOptions.Scan.ToString() );
+                Type: CswEnumNbtContainerLocationTypeOptions.ReconcileScans.ToString() );
             Assert.AreEqual( CswEnumNbtContainerLocationStatusOptions.Missing.ToString(), ContainerLocationNode.Status.Value );
         }
 
@@ -97,7 +97,7 @@ namespace ChemSW.Nbt.Test.ObjClasses
         }
 
         /// <summary>
-        /// Given a disposed Container and a related ContainerLocation of type Scan with the same location,
+        /// Given a disposed Container and a related ContainerLocation of type ReconcileScans with the same location,
         /// assert that the ContainerLocation's Status has been set to Disposed
         /// </summary>
         [Test]
@@ -112,13 +112,13 @@ namespace ChemSW.Nbt.Test.ObjClasses
                 ContainerNode.Node,
                 CswEnumNbtContainerLocationActionOptions.Ignore.ToString(),
                 LocationId: ContainerLocId, 
-                Type: CswEnumNbtContainerLocationTypeOptions.Scan.ToString() );
+                Type: CswEnumNbtContainerLocationTypeOptions.ReconcileScans.ToString() );
             Assert.AreEqual( ContainerLocationNode.Location.SelectedNodeId, ContainerNode.Location.SelectedNodeId );
             Assert.AreEqual( CswEnumNbtContainerLocationStatusOptions.Disposed.ToString(), ContainerLocationNode.Status.Value );
         }
 
         /// <summary>
-        /// Given an undisposed Container and a related ContainerLocation of type Scan with different locations,
+        /// Given an undisposed Container and a related ContainerLocation of type ReconcileScans with different locations,
         /// assert that the ContainerLocation's Status has been set to WrongLocation
         /// </summary>
         [Test]
@@ -131,13 +131,13 @@ namespace ChemSW.Nbt.Test.ObjClasses
                 ContainerNode.Node,
                 CswEnumNbtContainerLocationActionOptions.Ignore.ToString(),
                 LocationId: ContainerLocationLocId,
-                Type: CswEnumNbtContainerLocationTypeOptions.Scan.ToString() );
+                Type: CswEnumNbtContainerLocationTypeOptions.ReconcileScans.ToString() );
             Assert.AreNotEqual( ContainerLocationNode.Location.SelectedNodeId, ContainerNode.Location.SelectedNodeId );
             Assert.AreEqual( CswEnumNbtContainerLocationStatusOptions.WrongLocation.ToString(), ContainerLocationNode.Status.Value );
         }
 
         /// <summary>
-        /// Given a disposed Container and a related ContainerLocation of type Scan with different locations,
+        /// Given a disposed Container and a related ContainerLocation of type ReconcileScans with different locations,
         /// assert that the ContainerLocation's Status has been set to DisposedAtWrongLocation
         /// </summary>
         [Test]
@@ -152,7 +152,7 @@ namespace ChemSW.Nbt.Test.ObjClasses
                 ContainerNode.Node,
                 CswEnumNbtContainerLocationActionOptions.Ignore.ToString(),
                 LocationId: ContainerLocationLocId,
-                Type: CswEnumNbtContainerLocationTypeOptions.Scan.ToString() );
+                Type: CswEnumNbtContainerLocationTypeOptions.ReconcileScans.ToString() );
             Assert.AreNotEqual( ContainerLocationNode.Location.SelectedNodeId, ContainerNode.Location.SelectedNodeId );
             Assert.AreEqual( CswEnumNbtContainerLocationStatusOptions.DisposedAtWrongLocation.ToString(), ContainerLocationNode.Status.Value );
         }
