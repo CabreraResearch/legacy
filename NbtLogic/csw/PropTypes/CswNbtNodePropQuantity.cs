@@ -4,9 +4,11 @@ using System.Collections.ObjectModel;
 using System.Data;
 using ChemSW.Core;
 using ChemSW.Exceptions;
+using ChemSW.Nbt.Conversion;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.UnitsOfMeasure;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.PropTypes
@@ -18,6 +20,8 @@ namespace ChemSW.Nbt.PropTypes
         private CswNbtFieldTypeRuleQuantity _FieldTypeRule;
         private CswNbtSubField _QuantitySubField;
         private CswNbtSubField _UnitNameSubField;
+        private CswNbtSubField _Val_kg_SubField;
+        private CswNbtSubField _Val_Liters_SubField;
         private CswNbtView _View;
         public static implicit operator CswNbtNodePropQuantity( CswNbtNodePropWrapper PropWrapper )
         {
@@ -37,6 +41,8 @@ namespace ChemSW.Nbt.PropTypes
             _QuantitySubField = _FieldTypeRule.QuantitySubField;
             _UnitNameSubField = _FieldTypeRule.UnitNameSubField;
             _UnitIdSubField = _FieldTypeRule.UnitIdSubField;
+            _Val_kg_SubField = _FieldTypeRule.Val_kg_SubField;
+            _Val_Liters_SubField = _FieldTypeRule.Val_Liters_SubField;
         }
 
         #endregion
@@ -159,6 +165,7 @@ namespace ChemSW.Nbt.PropTypes
                     _CswNbtNodePropData.SetPropRowValue( _QuantitySubField.Column, StringVal );
                 }
                 SyncGestalt();
+                SyncConvertedVals();
             }
         }
 
@@ -175,6 +182,38 @@ namespace ChemSW.Nbt.PropTypes
                     _CswNbtNodePropData.SetPropRowValue( _UnitNameSubField.Column, value );
                     SyncGestalt();
                 }
+            }
+        }
+
+        public double Val_kg
+        {
+            get
+            {
+                string Value = _CswNbtNodePropData.GetPropRowValue( _Val_kg_SubField.Column );
+                if( CswTools.IsFloat( Value ) )
+                    return Convert.ToDouble( Value );
+                else
+                    return Double.NaN;
+            }
+            set
+            {
+                _CswNbtNodePropData.SetPropRowValue( _Val_kg_SubField.Column, value );
+            }
+        }
+
+        public double Val_Liters
+        {
+            get
+            {
+                string Value = _CswNbtNodePropData.GetPropRowValue( _Val_Liters_SubField.Column );
+                if( CswTools.IsFloat( Value ) )
+                    return Convert.ToDouble( Value );
+                else
+                    return Double.NaN;
+            }
+            set
+            {
+                _CswNbtNodePropData.SetPropRowValue( _Val_Liters_SubField.Column, value );
             }
         }
 
@@ -230,6 +269,7 @@ namespace ChemSW.Nbt.PropTypes
                 if( WasModified )
                 {
                     PendingUpdate = true;
+                    SyncConvertedVals();
                 }
             }
         }
@@ -239,7 +279,33 @@ namespace ChemSW.Nbt.PropTypes
             get { return Gestalt; }
         }
 
-
+        /// <summary>
+        /// Takes the current Quantity value, converts it to the proper kg and Liters values, and stores it in Val_kg and Val_Liters
+        /// </summary>
+        public void SyncConvertedVals( CswPrimaryKey MaterialId = null )
+        {
+            if( null != UnitId )
+            {
+                CswNbtObjClassUnitOfMeasure CurrentUnit = _CswNbtResources.Nodes[UnitId];
+                if( CurrentUnit.UnitType.Value == CswEnumNbtUnitTypes.Weight.ToString() ||
+                    CurrentUnit.UnitType.Value == CswEnumNbtUnitTypes.Volume.ToString() )
+                {
+                    CswNbtUnitViewBuilder UnitBuilder = new CswNbtUnitViewBuilder( _CswNbtResources );
+                    CswNbtObjClassUnitOfMeasure kgUnit = UnitBuilder.getUnit( "kg", "Unit_Weight" );
+                    CswNbtObjClassUnitOfMeasure LitersUnit = UnitBuilder.getUnit( "Liters", "Unit_Volume" );
+                    if( null != kgUnit && ( CurrentUnit.UnitType.Value == kgUnit.UnitType.Value || MaterialId != null ) )
+                    {
+                        CswNbtUnitConversion Conversion = new CswNbtUnitConversion( _CswNbtResources, UnitId, kgUnit.NodeId, MaterialId );
+                        Val_kg = Conversion.convertUnit( Quantity );
+                    }
+                    if( null != LitersUnit && ( CurrentUnit.UnitType.Value == LitersUnit.UnitType.Value || MaterialId != null ) )
+                    {
+                        CswNbtUnitConversion Conversion = new CswNbtUnitConversion( _CswNbtResources, UnitId, LitersUnit.NodeId, MaterialId );
+                        Val_Liters = Conversion.convertUnit( Quantity );
+                    }
+                }
+            }
+        }
 
         #endregion
 
@@ -349,6 +415,8 @@ namespace ChemSW.Nbt.PropTypes
         public override void ToJSON( JObject ParentObject )
         {
             ParentObject[_QuantitySubField.ToXmlNodeName( true )] = ( !Double.IsNaN( Quantity ) ) ? CswConvert.ToString( Quantity ) : string.Empty;
+            ParentObject[_Val_kg_SubField.ToXmlNodeName( true )] = ( !Double.IsNaN( Quantity ) ) ? CswConvert.ToString( Val_kg ) : string.Empty;
+            ParentObject[_Val_Liters_SubField.ToXmlNodeName( true )] = ( !Double.IsNaN( Quantity ) ) ? CswConvert.ToString( Val_Liters ) : string.Empty;
 
             ParentObject["minvalue"] = MinValue.ToString();
             ParentObject["maxvalue"] = MaxValue.ToString();
@@ -436,6 +504,14 @@ namespace ChemSW.Nbt.PropTypes
             if( null != JObject[_UnitNameSubField.ToXmlNodeName( true )] )
             {
                 CachedUnitName = JObject[_UnitNameSubField.ToXmlNodeName( true )].ToString();
+            }
+            if( null != JObject[_Val_kg_SubField.ToXmlNodeName( true )] )
+            {
+                Val_kg = CswConvert.ToDouble( JObject[_Val_kg_SubField.ToXmlNodeName( true )].ToString() );
+            }
+            if( null != JObject[_Val_Liters_SubField.ToXmlNodeName( true )] )
+            {
+                Val_Liters = CswConvert.ToDouble( JObject[_Val_Liters_SubField.ToXmlNodeName( true )].ToString() );
             }
 
             if( null != JObject[_UnitIdSubField.ToXmlNodeName( true )] )

@@ -689,7 +689,7 @@ namespace ChemSW.Nbt.Schema
             DataRow JctRow = UpdateAsDataTable.NewRow();
             JctRow["fieldtypeid"] = FieldType.FieldTypeId;
             JctRow["propcolname"] = Column.ToString();
-            JctRow["subfieldname"] = SubField.ToString();
+            JctRow["subfieldname"] = SubField.ToString().ToLower();
             JctRow["reportable"] = CswConvert.ToDbVal( IsReportable );
             JctRow["is_default"] = CswConvert.ToDbVal( IsDefault );
             UpdateAsDataTable.Rows.Add( JctRow );

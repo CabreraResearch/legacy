@@ -408,6 +408,10 @@ namespace ChemSW.Nbt.PropTypes
             {
                 ret = CswConvert.ToString( Field2_Numeric );
             }
+            else if( Column == CswEnumNbtPropColumn.Field3_Numeric )
+            {
+                ret = CswConvert.ToString( Field3_Numeric );
+            }
             else if( Column == CswEnumNbtPropColumn.Field3 )
             {
                 ret = Field3;
@@ -512,6 +516,12 @@ namespace ChemSW.Nbt.PropTypes
         {
             get { return _getRowDoubleVal( CswEnumNbtPropColumn.Field2_Numeric ); }
             set { SetPropRowValue( CswEnumNbtPropColumn.Field2_Numeric, value ); }
+        }
+
+        public Double Field3_Numeric
+        {
+            get { return _getRowDoubleVal( CswEnumNbtPropColumn.Field3_Numeric ); }
+            set { SetPropRowValue( CswEnumNbtPropColumn.Field3_Numeric, value ); }
         }
 
         public string Field3
