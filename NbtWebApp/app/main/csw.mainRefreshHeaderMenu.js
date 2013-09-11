@@ -53,6 +53,7 @@
                         urlMethod: 'endImpersonation',
                         success: function (data) {
                             if (Csw.bool(data.result)) {
+                                Csw.ajax.abortAll();
                                 Csw.clientState.clearCurrent();
                                 Csw.window.location(Csw.getGlobalProp('homeUrl'));
                             }
@@ -67,6 +68,7 @@
                     return Csw.ajax.deprecatedWsNbt({
                         urlMethod: 'nbtManagerReauthenticate',
                         success: function (result) {
+                            Csw.ajax.abortAll();
                             Csw.clientChanges.unsetChanged();
                             Csw.publish(Csw.enums.events.main.reauthenticate, { username: result.username, customerid: result.customerid });
                             Csw.window.location('Main.html');
