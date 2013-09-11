@@ -37,6 +37,8 @@ namespace ChemSW.Nbt.PropTypes
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node )
         {
             _QuantitySubField = ( (CswNbtFieldTypeRuleQuantity) _FieldTypeRule ).QuantitySubField;
+            _Val_kg_SubField = ( (CswNbtFieldTypeRuleQuantity) _FieldTypeRule ).Val_kg_SubField;
+            _Val_Liters_SubField = ( (CswNbtFieldTypeRuleQuantity) _FieldTypeRule ).Val_Liters_SubField;
             _UnitNameSubField = ( (CswNbtFieldTypeRuleQuantity) _FieldTypeRule ).UnitNameSubField;
             _UnitIdSubField = ( (CswNbtFieldTypeRuleQuantity) _FieldTypeRule ).UnitIdSubField;
 
@@ -183,7 +185,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                string Value = _CswNbtNodePropData.GetPropRowValue( _Val_kg_SubField.Column );
+                string Value = GetPropRowValue( _Val_kg_SubField );
                 if( CswTools.IsFloat( Value ) )
                     return Convert.ToDouble( Value );
                 else
@@ -191,7 +193,7 @@ namespace ChemSW.Nbt.PropTypes
             }
             set
             {
-                _CswNbtNodePropData.SetPropRowValue( _Val_kg_SubField.Column, value );
+                SetPropRowValue( _Val_kg_SubField, value );
             }
         }
 
@@ -199,7 +201,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                string Value = _CswNbtNodePropData.GetPropRowValue( _Val_Liters_SubField.Column );
+                string Value = GetPropRowValue( _Val_Liters_SubField );
                 if( CswTools.IsFloat( Value ) )
                     return Convert.ToDouble( Value );
                 else
@@ -207,7 +209,7 @@ namespace ChemSW.Nbt.PropTypes
             }
             set
             {
-                _CswNbtNodePropData.SetPropRowValue( _Val_Liters_SubField.Column, value );
+                SetPropRowValue( _Val_Liters_SubField, value );
             }
         }
 

@@ -491,12 +491,7 @@ namespace ChemSW.Nbt.PropTypes
         public string Gestalt { get { return ( _getRowStringVal( CswEnumNbtPropColumn.Gestalt ) ); } }
         public string GestaltSearch { get { return ( _getRowStringVal( CswEnumNbtPropColumn.GestaltSearch ) ); } }
         public string ClobData { get { return ( _getRowStringVal( CswEnumNbtPropColumn.ClobData ) ); } }
-        }
-
-        public Double Field3_Numeric
-        {
-            get { return _getRowDoubleVal( CswEnumNbtPropColumn.Field3_Numeric ); }
-            set { SetPropRowValue( CswEnumNbtPropColumn.Field3_Numeric, value ); }
+        public Double Field3_Numeric { get { return _getRowDoubleVal( CswEnumNbtPropColumn.Field3_Numeric ); } }
 
         public Int32 JctNodePropId
         {
