@@ -114,6 +114,13 @@ namespace ChemSW.Nbt.PropTypes
             return ret;
         } // _getOptions()
 
+        private CswPrimaryKey _SelectedNodeId;
+        public CswPrimaryKey SelectedNodeId
+        {
+            get { return _SelectedNodeId; }
+            set { _SelectedNodeId = value; }
+        }
+
         #endregion Relationship Properties and Functions
 
         #region Serialization
@@ -172,7 +179,7 @@ namespace ChemSW.Nbt.PropTypes
             bool first = true;
             foreach( CswPrimaryKey NodePk in Options.Keys )
             {
-                if( first )
+                if( first  || NodePk == SelectedNodeId )
                 {
                     // Choose first option by default
                     ParentObject["relatednodeid"] = NodePk.ToString();
