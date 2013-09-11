@@ -29,7 +29,8 @@
                 restoresearchurl: 'restoreUniversalSearch',
                 sessiondataid: '',
                 searchterm: '',
-                filterHideThreshold: 5 //,
+                filterHideThreshold: 5,
+                universalSearchOnly: false
                 //buttonSingleColumn: '',
                 //buttonMultiColumn: ''
             };
@@ -69,7 +70,7 @@
                 }; // onFilterClick()
 
                 // Nodetype Filter Menu
-                cswPublic.ready = Csw.ajax.post({
+                cswPublic.ready = Csw.ajax.deprecatedWsNbt({
                     urlMethod: 'getNodeTypes',
                     data: {
                         PropertySetName: '',
@@ -124,6 +125,7 @@
                 // Search Menu
                 Csw.ajaxWcf.post({
                     urlMethod: 'Menus/getSearchMenuItems',
+                    data: cswPrivate.universalSearchOnly,
                     success: function (data) {
                         var srchMenuItems = [];
 
@@ -196,7 +198,7 @@
             cswPrivate.newsearch = function () {
                 Csw.tryExec(cswPrivate.onBeforeSearch);
 
-                Csw.ajax.post({
+                Csw.ajax.deprecatedWsNbt({
                     urlMethod: cswPrivate.newsearchurl,
                     data: {
                         SearchTerm: cswPrivate.searchterm,
@@ -481,7 +483,7 @@
 
             cswPrivate.filter = function (thisFilter, action) {
                 Csw.tryExec(cswPrivate.onBeforeSearch);
-                Csw.ajax.post({
+                Csw.ajax.deprecatedWsNbt({
                     urlMethod: 'filterUniversalSearch',
                     data: {
                         SessionDataId: cswPrivate.sessiondataid,
@@ -494,7 +496,7 @@
 
             cswPrivate.filterNodeType = function (nodetypeid) {
                 Csw.tryExec(cswPrivate.onBeforeSearch);
-                Csw.ajax.post({
+                Csw.ajax.deprecatedWsNbt({
                     urlMethod: 'filterUniversalSearchByNodeType',
                     data: {
                         SessionDataId: cswPrivate.sessiondataid,
@@ -510,7 +512,7 @@
                     category: cswPrivate.data.category || 'Saved Searches',
                     onOk: function (name, category) {
 
-                        Csw.ajax.post({
+                        Csw.ajax.deprecatedWsNbt({
                             urlMethod: 'saveSearch',
                             data: {
                                 SessionDataId: cswPrivate.sessiondataid,
@@ -527,7 +529,7 @@
             }; // save()
 
             cswPrivate.deleteSave = function (searchid) {
-                Csw.ajax.post({
+                Csw.ajax.deprecatedWsNbt({
                     urlMethod: 'deleteSearch',
                     data: {
                         SearchId: searchid
@@ -543,7 +545,7 @@
                 cswPrivate.sessiondataid = searchid;
 
                 Csw.tryExec(cswPrivate.onBeforeSearch);
-                Csw.ajax.post({
+                Csw.ajax.deprecatedWsNbt({
                     urlMethod: cswPrivate.restoresearchurl,
                     data: {
                         SessionDataId: cswPrivate.sessiondataid

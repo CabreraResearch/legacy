@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace ChemSW.Nbt.Schema
@@ -8,73 +9,106 @@ namespace ChemSW.Nbt.Schema
     /// </summary>
     public class CswSchemaScriptsProd : ICswSchemaScripts
     {
-        private Dictionary<CswSchemaVersion, CswSchemaUpdateDriver> _UpdateDrivers = new Dictionary<CswSchemaVersion, CswSchemaUpdateDriver>();
-        public Dictionary<CswSchemaVersion, CswSchemaUpdateDriver> UpdateDrivers { get { return _UpdateDrivers; } }
+        private CswNbtResources _CswNbtResources = null;
 
-        public CswSchemaScriptsProd()
+        public CswSchemaScriptsProd( CswNbtResources CswNbtResources )
         {
+            _CswNbtResources = CswNbtResources;
+
             // This is where you manually set to the last version of the previous release (the one currently in production)
-            _MinimumVersion = new CswSchemaVersion( 2, 'D', 23 );
+            _MinimumVersion = new CswSchemaVersion( 2, 'E', 11 );
 
-            // This is where you add new versions.
+            #region MetaData Scripts
 
-            #region EUCALYPTUS
+            //dch 30252 FOXGLOVE, but metadata changes so before EUC changes
+            _addVersionedScript( new CswUpdateMetaData_02F_Case30252() );
+            _addVersionedScript( new CswUpdateMetaData_02F_Case30228() );
+            _addVersionedScript( new CswUpdateMetaData_02F_Case30041_NbtImportQueue() ); //Validate the Nbt Import Queue table first
+            _addVersionedScript( new CswUpdateMetaData_02F_Case30281() );
+            _addVersionedScript( new CswUpdateMetaData_02F_Case30251() );
+            _addVersionedScript( new CswUpdateMetaData_02F_Case30251B() );
+            _addVersionedScript( new CswUpdateMetaData_02F_Case30082_UserCache() );
+            _addVersionedScript( new CswUpdateMetaData_02F_Case27883() );
+            _addVersionedScript( new CswUpdateMetaData_02F_Case30040() );
+            _addVersionedScript( new CswUpdateMetaData_02F_Case29992() );
+            _addVersionedScript( new CswUpdateMetaData_02F_Case30529() );
 
-            // e.g. _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02E_CaseXXXXX() ) );            //02E-000
+            #endregion
 
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02E_Case30014() ) );                    //02E-001
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02E_Case30222() ) );                    //02E-002
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02E_Case29847() ) );                    //02E-003
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02E_Case30123() ) );                    //02E-004
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02E_Case30370() ) );                    //02E-005
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02E_Case30360() ) );                    //02E-006
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02E_Case30339_UserProfilex2() ) );      //02E-007
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02E_Case30300() ) );                    //02E-008 
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02E_Case30440() ) );                    //02E-009
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02E_Case30445() ) );                    //02E-010 
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02E_Case30484() ) );                    //02E-011 
+            // This is the MakeMissingNodeTypeProps script. If you have a script which contains OC changes, put it before this script.
+            _addVersionedScript( new RunAlways_MakeMissingNodeTypePropsProps() );
 
-            #endregion EUCALYPTUS
+            #region Data Scripts
 
-            // This automatically detects the latest version
-            _LatestVersion = _MinimumVersion;
-            foreach( CswSchemaVersion Version in _UpdateDrivers.Keys.Where( Version => _LatestVersion == _MinimumVersion ||
-                                                                                        ( _LatestVersion.CycleIteration == Version.CycleIteration &&
-                                                                                            _LatestVersion.ReleaseIdentifier == Version.ReleaseIdentifier &&
-                                                                                            _LatestVersion.ReleaseIteration < Version.ReleaseIteration ) ) )
-            {
-                _LatestVersion = Version;
-            }
+            _addVersionedScript( new CswUpdateSchema_02F_Case30281() );
+            _addVersionedScript( new CswUpdateSchema_02F_Case28998() );
+            _addVersionedScript( new CswUpdateSchema_02F_Case29973() );
+            _addVersionedScript( new CswUpdateSchema_02F_Case29191() );
+            _addVersionedScript( new CswUpdateSchema_02F_Case29542() );
+            _addVersionedScript( new CswUpdateSchema_02F_Case29438() );
+            _addVersionedScript( new CswUpdateSchema_02F_Case30082_UserCache() );
+            _addVersionedScript( new CswUpdateSchema_02F_Case30197() );
+            _addVersionedScript( new CswUpdateSchema_02F_Case30417() );
+            _addVersionedScript( new CswUpdateSchema_02F_Case27883() );
+            _addVersionedScript( new CswUpdateSchema_02F_Case27495() );
+            _addVersionedScript( new CswUpdateSchema_02F_Case30228() );
+            _addVersionedScript( new CswUpdateSchema_02F_Case30040() );
+            _addVersionedScript( new CswUpdateSchema_02F_Case30041_Vendors() );
+            _addVersionedScript( new CswUpdateSchema_02F_Case29992() );
+            _addVersionedScript( new CswUpdateSchema_02F_Case29402() );
+            _addVersionedScript( new CswUpdateSchema_02F_Case30041_UnitsOfMeasure() );
+            _addVersionedScript( new CswUpdateSchema_02F_Case30041_RolesUsers() );
+            _addVersionedScript( new CswUpdateSchema_02F_Case30252() );
+            _addVersionedScript( new CswUpdateSchema_02F_Case30041_ScheduledRuleImport() );
+            _addVersionedScript( new CswUpdateSchema_02F_Case30043_ControlZones() );
+            _addVersionedScript( new CswUpdateSchema_02F_Case30043_Sites() );
+            _addVersionedScript( new CswUpdateSchema_02F_Case29984() );
+            _addVersionedScript( new CswUpdateSchema_02F_Case30577() );
+            _addVersionedScript( new CswUpdateSchema_02F_Case30043_Locations() );
+            _addVersionedScript( new CswUpdateSchema_02F_Case30043_WorkUnits() );
+            _addVersionedScript( new CswUpdateSchema_02F_Case30043_InventoryGroups() );
+            _addVersionedScript( new CswUpdateSchema_02F_Case30647() );
+
+            #endregion Data Scripts
+
+            #region Calculate the Latest Version
+
+            _setLatestVersion( CswNbtResources );
+
+            #endregion Calculate the Latest Version
 
             #region Before Scripts
 
-            #region EUCALYPTUS Run Before Scripts
-
-            //DDL
-            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02E_Case30634() ), RunBeforeEveryExecutionOfUpdater_02E_Case30634.Title );
-
-            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02E_Case30500() ), RunBeforeEveryExecutionOfUpdater_02E_Case30500.Title );
-            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02E_Case29700() ), RunBeforeEveryExecutionOfUpdater_02E_Case29700.Title );
-            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02E_Case30123() ), RunBeforeEveryExecutionOfUpdater_02E_Case30123.Title );
-            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02E_Case29701() ), RunBeforeEveryExecutionOfUpdater_02E_Case29701.Title );
-            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02E_Case30347() ), RunBeforeEveryExecutionOfUpdater_02E_Case30347.Title );
-            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02E_Case30549() ), RunBeforeEveryExecutionOfUpdater_02E_Case30549.Title );
-
-            #endregion EUCALYPTUS Run Before Scripts
-
-            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_MakeMissingNodeTypeProps() ), RunBeforeEveryExecutionOfUpdater_MakeMissingNodeTypeProps.Title );
-            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02SQL() ), RunBeforeEveryExecutionOfUpdater_02SQL.Title );
-            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_03() ), RunBeforeEveryExecutionOfUpdater_03.Title );
-
+            // Before scripts that always run.
+            _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02SQL() );
+            _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_03() );
             #endregion Before Scripts
 
-            #region After Scripts
+            #region After Script
 
-            _addRunAfterScript( new CswSchemaUpdateDriver( new RunAfterEveryExecutionOfUpdater_01() ), RunAfterEveryExecutionOfUpdater_01.Title );
+            // After scripts that always run.
+            _addRunAfterScript( new RunAfterEveryExecutionOfUpdater_01() );
 
-            #endregion After Scripts
+            #endregion After Script
 
         }//ctor
+
+        private void _setLatestVersion( CswNbtResources CswNbtResources )
+        {
+            _LatestVersion = _MinimumVersion;
+
+            if( CurrentVersion( CswNbtResources ) != _MinimumVersion )
+            {
+                _LatestVersion = CurrentVersion( CswNbtResources );
+            }
+
+            foreach( KeyValuePair<CswSchemaVersion, CswSchemaUpdateDriver> Pair in _UpdateDrivers.Where( Pair => false == Pair.Value.AlwaysRun ).Where( Pair => _LatestVersion == _MinimumVersion ||
+                                                                                                                    ( _LatestVersion.ReleaseIteration < Pair.Key.ReleaseIteration ) ) )
+            {
+                _LatestVersion = Pair.Key;
+            }
+
+        }//_setLatestVersion()
 
         #region ICswSchemaScripts
 
@@ -106,20 +140,28 @@ namespace ChemSW.Nbt.Schema
             return ret;
         }
 
+        private Int32 _CurrentIdx = Int32.MinValue;
         public CswSchemaUpdateDriver Next( CswNbtResources CswNbtResources )
         {
             CswSchemaUpdateDriver ReturnVal = null;
 
-            CswSchemaVersion myCurrentVersion = CurrentVersion( CswNbtResources );
-            if( myCurrentVersion == MinimumVersion ||
-                ( LatestVersion.CycleIteration == myCurrentVersion.CycleIteration &&
-                    LatestVersion.ReleaseIdentifier == myCurrentVersion.ReleaseIdentifier &&
-                    LatestVersion.ReleaseIteration > myCurrentVersion.ReleaseIteration ) )
+            if( _UpdateDrivers.Count > ( _CurrentIdx + 1 ) )
             {
-                ReturnVal = _UpdateDrivers[TargetVersion( CswNbtResources )];
+                if( Int32.MinValue == _CurrentIdx )
+                {
+                    _CurrentIdx = 0;
+                }
+                else
+                {
+                    _CurrentIdx++;
+                }
+
+                KeyValuePair<CswSchemaVersion, CswSchemaUpdateDriver> CurrentItem = _UpdateDrivers.ElementAt( _CurrentIdx );
+                ReturnVal = CurrentItem.Value;
             }
-            return ( ReturnVal );
-        }
+
+            return ReturnVal;
+        }//Next()
 
         public CswSchemaUpdateDriver this[CswSchemaVersion CswSchemaVersion]
         {
@@ -145,32 +187,102 @@ namespace ChemSW.Nbt.Schema
 
         #region Versioned scripts
 
-        CswSchemaVersion _makeNextSchemaVersion()
+        private CswSchemaVersion _makeNextSchemaVersion()
         {
-            int SuperCycle = _MinimumVersion.CycleIteration;
-            char ReleaseIdentifier = _MinimumVersion.ReleaseIdentifier;
-            if( 'Y' != ReleaseIdentifier )
+            char ReleaseIdentifier = _getNextReleaseIdentifier();
+            int SuperCycle = _getNextSuperCycle( ReleaseIdentifier );
+            int ReleaseIteration = _getReleaseIteration( _CswNbtResources );
+
+            return ( new CswSchemaVersion( SuperCycle, ReleaseIdentifier, _getCountOfRunOnceScripts( _UpdateDrivers ) + ReleaseIteration ) );
+        }//_makeNextSchemaVersion()
+
+        private int _getReleaseIteration( CswNbtResources CswNbtResources )
+        {
+            int Return = 0;
+
+            if( CurrentVersion( CswNbtResources ) == _MinimumVersion )
             {
-                char[] alpha = "ABCDEFGHIJKLMNOPQRSTUVWY".ToCharArray(); //No X or Z
-                List<char> Chars = new List<char>( alpha );
-                int ReleaseIdInt = Chars.IndexOf( ReleaseIdentifier );
-                ReleaseIdInt++;
-                ReleaseIdentifier = Chars[ReleaseIdInt];
+                Return = 1;
             }
             else
             {
-                SuperCycle = _MinimumVersion.CycleIteration + 1;
-                ReleaseIdentifier = 'A';
+                Return = CurrentVersion( CswNbtResources ).ReleaseIteration + 1;
             }
 
-            return ( new CswSchemaVersion( SuperCycle, ReleaseIdentifier, _UpdateDrivers.Keys.Count + 1 ) );
+            return Return;
+        }//_getReleaseIteration()
+
+        private char _getNextReleaseIdentifier()
+        {
+            char Return = _MinimumVersion.ReleaseIdentifier;
+            if( 'Y' != Return )
+            {
+                char[] alpha = "ABCDEFGHIJKLMNOPQRSTUVWY".ToCharArray(); //No X or Z
+                List<char> Chars = new List<char>( alpha );
+                int ReleaseIdInt = Chars.IndexOf( Return );
+                ReleaseIdInt++;
+                Return = Chars[ReleaseIdInt];
+            }
+            else
+            {
+                Return = 'A';
+            }
+
+            return Return;
+        }//_getNextReleaseIdentifier()
+
+        private int _getNextSuperCycle( char ReleaseIdentifier )
+        {
+            int Return = _MinimumVersion.CycleIteration;
+            if( 'Y' == ReleaseIdentifier )
+            {
+                Return = _MinimumVersion.CycleIteration + 1;
+            }
+            return Return;
+        }//_getNextSuperCycle()
+
+        private Int32 _getCountOfRunOnceScripts( Dictionary<CswSchemaVersion, CswSchemaUpdateDriver> Dictionary )
+        {
+            return Dictionary.Count( Pair => false == Pair.Value.AlwaysRun );
         }
 
-        private void _addVersionedScript( CswSchemaUpdateDriver CswSchemaUpdateDriver )
+        private Dictionary<CswSchemaVersion, CswSchemaUpdateDriver> _UpdateDrivers = new Dictionary<CswSchemaVersion, CswSchemaUpdateDriver>();
+        public Dictionary<CswSchemaVersion, CswSchemaUpdateDriver> UpdateDrivers { get { return _UpdateDrivers; } }
+
+        private void _addVersionedScript( CswUpdateSchemaTo UpdateTo )
         {
-            CswSchemaUpdateDriver.SchemaVersion = _makeNextSchemaVersion();
-            CswSchemaUpdateDriver.Description = CswSchemaUpdateDriver.SchemaVersion.ToString(); //we do this in prod scripts because test scripts have a different dispensation for description
-            _UpdateDrivers.Add( CswSchemaUpdateDriver.SchemaVersion, CswSchemaUpdateDriver );
+            // Instance the UpdateDriver
+            CswSchemaUpdateDriver CswSchemaUpdateDriver = new CswSchemaUpdateDriver( UpdateTo );
+
+            CswSchemaUpdateDriver.CswNbtSchemaModTrnsctn = new CswNbtSchemaModTrnsctn( _CswNbtResources );
+            if( false == CswSchemaUpdateDriver.AlreadyRun() || CswSchemaUpdateDriver.AlwaysRun )
+            {
+                if( false == CswSchemaUpdateDriver.AlwaysRun )
+                {
+                    CswSchemaUpdateDriver.SchemaVersion = _makeNextSchemaVersion();
+                    CswSchemaUpdateDriver.Description = CswSchemaUpdateDriver.ScriptName;
+                    if( false == _isDuplicateScript( CswSchemaUpdateDriver ) )
+                    {
+                        _UpdateDrivers.Add( CswSchemaUpdateDriver.SchemaVersion, CswSchemaUpdateDriver );
+                    }
+                }
+                else
+                {
+                    CswSchemaUpdateDriver.SchemaVersion = new CswSchemaVersion( 0, '#', 0 );
+                    CswSchemaUpdateDriver.Description = "Run Always Script: " + CswSchemaUpdateDriver.ScriptName;
+                    _UpdateDrivers.Add( CswSchemaUpdateDriver.SchemaVersion, CswSchemaUpdateDriver );
+                }
+            }
+        }
+
+        /// <summary>
+        /// Returns true if a script with the same ScriptName was already added to _UpdateDrivers
+        /// </summary>
+        /// <param name="CswSchemaUpdateDriver"></param>
+        /// <returns></returns>
+        private bool _isDuplicateScript( CswSchemaUpdateDriver CswSchemaUpdateDriver )
+        {
+            return _UpdateDrivers.Values.Any( UpdateDriver => UpdateDriver.ScriptName == CswSchemaUpdateDriver.ScriptName );
         }
 
         #endregion
@@ -186,16 +298,6 @@ namespace ChemSW.Nbt.Schema
             }
         }
 
-        private void _addRunBeforeScript( CswSchemaUpdateDriver CswSchemaUpdateDriver, string Description )
-        {
-            CswSchemaUpdateDriver.SchemaVersion = new CswSchemaVersion( 0, '#', _RunBeforeScripts.Count );
-            CswSchemaUpdateDriver.Description = Description;
-            if( false == _RunBeforeScripts.Contains( CswSchemaUpdateDriver ) )
-            {
-                _RunBeforeScripts.Add( CswSchemaUpdateDriver );
-            }
-        }
-
         private List<CswSchemaUpdateDriver> _RunAfterScripts = new List<CswSchemaUpdateDriver>();
         public List<CswSchemaUpdateDriver> RunAfterScripts
         {
@@ -205,15 +307,27 @@ namespace ChemSW.Nbt.Schema
             }
 
         }
-        private void _addRunAfterScript( CswSchemaUpdateDriver CswSchemaUpdateDriver, string Description )
+
+        private void _addRunBeforeScript( CswUpdateSchemaTo UpdateTo, string Description = null )
         {
+            CswSchemaUpdateDriver CswSchemaUpdateDriver = new CswSchemaUpdateDriver( UpdateTo );
+            CswSchemaUpdateDriver.SchemaVersion = new CswSchemaVersion( 0, '#', _RunBeforeScripts.Count );
+            CswSchemaUpdateDriver.Description += Description ?? string.Empty;
+            if( false == _RunBeforeScripts.Contains( CswSchemaUpdateDriver ) )
+            {
+                _RunBeforeScripts.Add( CswSchemaUpdateDriver );
+            }
+        }
+
+        private void _addRunAfterScript( CswUpdateSchemaTo UpdateTo, string Description = null )
+        {
+            CswSchemaUpdateDriver CswSchemaUpdateDriver = new CswSchemaUpdateDriver( UpdateTo );
             CswSchemaUpdateDriver.SchemaVersion = new CswSchemaVersion( 99, '#', _RunAfterScripts.Count );
-            CswSchemaUpdateDriver.Description = Description;
+            CswSchemaUpdateDriver.Description += Description ?? string.Empty;
             if( false == _RunAfterScripts.Contains( CswSchemaUpdateDriver ) )
             {
                 _RunAfterScripts.Add( CswSchemaUpdateDriver );
             }
-
         }
 
         #endregion

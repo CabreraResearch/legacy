@@ -1,10 +1,10 @@
+using System.Web;
 using ChemSW.Config;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt;
 using ChemSW.Nbt.Actions;
 using ChemSW.Security;
-using System.Web;
 
 namespace ChemSW.WebSvc
 {
@@ -82,7 +82,14 @@ namespace ChemSW.WebSvc
             //We're keeping this logic here, because we don't want to contaminate NbtLogic with the necessary web libraries required to support CswSessionResourcesNbt
             if( null != _AuthenticationRequest && _AuthenticationRequest.IsValid() )
             {
-                Ret = _SessionAuthenticate.authenticate();
+                if( false == CswTools.IsValidUsername( _AuthenticationRequest.CustomerId ) )
+                {
+                    Ret = CswEnumAuthenticationStatus.NonExistentAccessId;
+                }
+                else
+                {
+                    Ret = _SessionAuthenticate.authenticate();
+                }
             }
             else
             {

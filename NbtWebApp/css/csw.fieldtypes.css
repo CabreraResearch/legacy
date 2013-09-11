@@ -66,7 +66,7 @@
 {
 	font-size: 2em;
 	color: #000000;
-	padding: 10px !important;
+	padding: 10px;
 	font-weight: bold;
 }
 .CswFieldTypeNFPA_textRotated
@@ -79,8 +79,10 @@
 }
 .CswFieldTypeNFPA_whitetext
 {
-    font-size: 1.2em;
-    padding-left: 0px;
+    position: relative;
+    top: 9px;
+    right: 2px;
+    font-size: 1.3em;
 }
 
 .CswFieldTypeNFPA_redLinear
@@ -118,9 +120,9 @@
 .CswFieldTypeNFPA_whitetextLinear
 {
     padding-top: 15px;
-    padding-left: 5px;
+    padding-left: 3px;
     padding-right: 5px;
-    font-size: 1.05em;
+    font-size: 1.2em;
     text-align: center;
 }
 

@@ -16,6 +16,8 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Dispensable = "Dispensable";
             public const string CatalogNo = "Catalog No";
             public const string UnitCount = "Unit Count";
+            public const string ContainerType = "Container Type";
+            public const string Supplier = "Supplier";
         }
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
@@ -46,7 +48,18 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
+        public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
+        {
+            _CswNbtObjClassDefault.beforeCreateNode( IsCopy, OverrideUniqueValidation );
+        }//beforeCreateNode()
+
+        public override void afterCreateNode()
+        {
+            _CswNbtObjClassDefault.afterCreateNode();
+        }//afterCreateNode()
+
+
+        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation, bool Creating )
         {
             if( null != _CswNbtResources.CurrentNbtUser.Cookies && null == Material.RelatedNodeId && _CswNbtResources.CurrentNbtUser.Cookies.ContainsKey( "csw_currentnodeid" ) )
             {
@@ -56,17 +69,18 @@ namespace ChemSW.Nbt.ObjClasses
                     Material.RelatedNodeId = pk;
                 }
             }
+            _setUnits();//Case 30571 - set available quantity units on the add layout
             if( CswEnumTristate.False == this.QuantityEditable.Checked && false == CswTools.IsDouble( this.InitialQuantity.Quantity ) )
             {
                 throw new CswDniException( CswEnumErrorType.Warning, "Cannot have a null Initial Quantity if Quantity Editable is unchecked.", "Cannot have a null Initial Quantity if Quantity Editable is unchecked." );
             }
 
-            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
+            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation, Creating );
         }//beforeWriteNode()
 
-        public override void afterWriteNode()
+        public override void afterWriteNode( bool Creating )
         {
-            _CswNbtObjClassDefault.afterWriteNode();
+            _CswNbtObjClassDefault.afterWriteNode( Creating );
         }//afterWriteNode()
 
         public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
@@ -82,15 +96,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         protected override void afterPopulateProps()
         {
-            //case 25759 - set initialQuantity unittype view based on related material physical state
-            //Case 29579 - this needs to be done whenever the Size node is referenced (to overwrite the view of the last Size node)
-            CswNbtNode MaterialNode = _CswNbtResources.Nodes.GetNode( Material.RelatedNodeId );
-            if( MaterialNode != null )
-            {
-                Material.setReadOnly( value: true, SaveToDb: true );
-                CswNbtUnitViewBuilder Vb = new CswNbtUnitViewBuilder( _CswNbtResources );
-                Vb.setQuantityUnitOfMeasureView( MaterialNode, InitialQuantity );
-            }
+            _setUnits();//Case 29579 - set available quantity units on the edit layout
             _CswNbtObjClassDefault.triggerAfterPopulateProps();
         }//afterPopulateProps()
 
@@ -104,6 +110,16 @@ namespace ChemSW.Nbt.ObjClasses
             if( null != ButtonData && null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
             return true;
         }
+
+        public override CswNbtNode CopyNode()
+        {
+            CswNbtNode CopiedNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, delegate( CswNbtNode NewNode )
+            {
+                NewNode.copyPropertyValues( Node );
+                //CopiedNode.postChanges( true, true );
+            }, IsTemp: true );
+            return CopiedNode;
+        }
         #endregion
 
         #region Object class specific properties
@@ -114,6 +130,8 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropLogical Dispensable { get { return _CswNbtNode.Properties[PropertyName.Dispensable]; } }
         public CswNbtNodePropText CatalogNo { get { return _CswNbtNode.Properties[PropertyName.CatalogNo]; } }
         public CswNbtNodePropNumber UnitCount { get { return _CswNbtNode.Properties[PropertyName.UnitCount]; } }
+        public CswNbtNodePropList ContainerType { get { return _CswNbtNode.Properties[PropertyName.ContainerType]; } }
+        public CswNbtNodePropPropertyReference Supplier { get { return _CswNbtNode.Properties[PropertyName.Supplier]; } }
 
         #endregion
 
@@ -134,6 +152,17 @@ namespace ChemSW.Nbt.ObjClasses
             }
             
             return isMaterialID;
+        }
+
+        private void _setUnits()
+        {
+            CswNbtNode MaterialNode = _CswNbtResources.Nodes.GetNode( Material.RelatedNodeId );
+            if( MaterialNode != null )
+            {
+                Material.setReadOnly( value: true, SaveToDb: true );
+                CswNbtUnitViewBuilder Vb = new CswNbtUnitViewBuilder( _CswNbtResources );
+                Vb.setQuantityUnitOfMeasureView( MaterialNode, InitialQuantity );
+            }
         }
 
         #endregion

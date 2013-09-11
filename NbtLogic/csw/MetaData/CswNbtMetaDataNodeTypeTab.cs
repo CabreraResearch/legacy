@@ -2,13 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
+using System.Linq;
 using System.Xml;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 
 namespace ChemSW.Nbt.MetaData
 {
-    public class CswNbtMetaDataNodeTypeTab : ICswNbtMetaDataObject, IEquatable<CswNbtMetaDataNodeTypeTab>
+    public class CswNbtMetaDataNodeTypeTab: ICswNbtMetaDataObject, IEquatable<CswNbtMetaDataNodeTypeTab>
     {
         private CswNbtMetaDataResources _CswNbtMetaDataResources;
         private DataRow _NodeTypeTabRow;
@@ -42,13 +43,13 @@ namespace ChemSW.Nbt.MetaData
         public Collection<Int32> getNodeTypePropIds() { return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypePropIdsByTab( TabId ); }
         public IEnumerable<CswNbtMetaDataNodeTypeProp> getNodeTypeProps() { return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypePropsByTab( TabId ); }
         public IEnumerable<CswNbtMetaDataNodeTypeProp> getNodeTypePropsByDisplayOrder() { return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypePropsByDisplayOrder( NodeTypeId, TabId ); }
-        
+
         /// <summary>
-        /// True if the Tab has any editable props. All tabs should have a Save button, so the calculation is Property Count is greater than 1.
+        /// True if the Tab has any editable props. All tabs should have a Save button, so the calculation is there is at least one prop that is not hidden and is not the save prop
         /// </summary>
         public bool HasProps
         {
-            get { return getNodeTypePropIds().Count > 1; }
+            get { return getNodeTypeProps().Any( Prop => false == Prop.Hidden && false == Prop.IsSaveProp ); }
         }
 
 

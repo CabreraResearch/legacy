@@ -182,6 +182,9 @@
                         selected: cswPrivate.selectedFilterMode,
                         onChange: function () {
                             cswPrivate.selectedFilterMode = cswPrivate.filterModeControl.val();
+                            if (cswPrivate.tip) {
+                                cswPrivate.tip.close();
+                            }
                             cswPrivate.renderPropFiltRow();
                         }
                     });
@@ -197,6 +200,7 @@
                 var placeholder = cswPrivate.propname;
 
                 cswPrivate.valueCell.empty();
+                cswPrivate.helpDiv.empty();
                 if (cswPrivate.readOnly) {
                     cswPrivate.valueControl = cswPrivate.valueCell.span({
                         name: valueId,
@@ -219,6 +223,9 @@
                                 cswPrivate.selectedValue = Csw.string(cswPrivate.valueControl.val().date);
                             }
                         });
+
+                        cswPrivate.renderHelpBtn();
+
                         // LIST
                     } else if (fieldtype === Csw.enums.subFieldsMap.List.name) {
                         valueOptions.push({ value: '', display: '' });
@@ -267,15 +274,40 @@
                         if (false === Csw.isNullOrEmpty(cswPrivate.$clickOnEnter)) {
                             cswPrivate.valueControl.$.clickOnEnter(cswPrivate.$clickOnEnter);
                         }
+
+                        cswPrivate.renderHelpBtn();
                     }
 
                     if (cswPrivate.filterModeControl.val() === 'Null' || cswPrivate.filterModeControl.val() === 'NotNull') {
                         cswPrivate.valueControl.hide();
                         cswPrivate.selectedValue = '';
+                        if (cswPrivate.helpIcon) {
+                            cswPrivate.helpIcon.hide();
+                        }
                     }
                 } // if(cswPrivate.readOnly)
             }; // makeFilterValueControl()
 
+            cswPrivate.renderHelpBtn = function () {
+                if (false === Csw.isNullOrEmpty(cswPrivate.propsData.helptext)) {
+                    cswPrivate.helpIcon = cswPrivate.helpDiv.icon({
+                        iconType: Csw.enums.iconType.questionmark,
+                        isButton: true,
+                        onHoverOver: function () {
+                            if (!cswPrivate.tip) {
+                                cswPrivate.tip = cswPrivate.helpIcon.quickTip({
+                                    anchor: 'bottom',
+                                    autoHide: false,
+                                    html: cswPrivate.propsData.helptext,
+                                    onBeforeClose: function () {
+                                        cswPrivate.tip = null;
+                                    }
+                                });
+                            }
+                        }
+                    });
+                }
+            };
 
             cswPrivate.renderPropFiltRow = function () {
                 cswPrivate.makeOwnerNameControl();
@@ -329,7 +361,7 @@
                     ViewJson: JSON.stringify(o.viewJson)
                 };
 
-                Csw.ajax.post({
+                Csw.ajax.deprecatedWsNbt({
                     urlMethod: 'makeViewPropFilter',
                     data: jsonData,
                     success: function (data) {
@@ -340,15 +372,11 @@
                 });
             }; // makefilter()
 
-
-            //            cswPublic.bindToButton = function (btn) {
-            //                if (false == Csw.isNullOrEmpty(btn)) {
-            //                    cswPrivate.subfieldControl.$.clickOnEnter(btn.$);
-            //                    cswPrivate.filterModeControl.$.clickOnEnter(btn.$);
-            //                    cswPrivate.valueControl.$.clickOnEnter(btn.$);
-            //                }
-            //                return btn;
-            //            } // bindToButton()
+            cswPublic.closeTip = function () {
+                if (cswPrivate.tip) {
+                    cswPrivate.tip.close();
+                }
+            };
 
             cswPrivate.setInitialValues = function () {
 
@@ -394,6 +422,7 @@
                     cswPrivate.subFieldCell = cswPrivate.table.cell(cswPrivate.propRow, cswPrivate.firstColumn + 3).empty();
                     cswPrivate.filterModeCell = cswPrivate.table.cell(cswPrivate.propRow, cswPrivate.firstColumn + 4).empty();
                     cswPrivate.valueCell = cswPrivate.table.cell(cswPrivate.propRow, cswPrivate.firstColumn + 5).empty();
+                    cswPrivate.helpDiv = cswPrivate.table.cell(cswPrivate.propRow, cswPrivate.firstColumn + 6).div().empty();
 
                     if (false === Csw.bool(cswPrivate.showOwnerName)) {
                         cswPrivate.ownerNameCell.hide();
@@ -422,7 +451,7 @@
                             viewJson = cswPrivate.viewJson;
                         }
 
-                        Csw.ajax.post({
+                        Csw.ajax.deprecatedWsNbt({
                             urlMethod: 'getViewPropFilterUI',
                             //async: false,
                             data: {

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Data;
+using ChemSW.DB;
 using ChemSW.Exceptions;
 //using ChemSW.RscAdo;
 
@@ -34,14 +36,14 @@ namespace ChemSW.Nbt.Schema
             _CswUpdateSchemaTo = CswUpdateSchemaTo;
         }//ctor
 
+        public string Title { get { return _CswUpdateSchemaTo.Title; } }
+
         public string Description
         {
             set
             {
                 _CswUpdateSchemaTo.Description = value;
             }
-
-
             get
             {
                 return ( _CswUpdateSchemaTo.Description );
@@ -50,6 +52,39 @@ namespace ChemSW.Nbt.Schema
 
         CswSchemaVersion _CswSchemaVersion = null;
         public CswSchemaVersion SchemaVersion { set { _CswSchemaVersion = value; } get { return ( _CswSchemaVersion ); } }
+
+        /// <summary>
+        /// Returns true if the script has already been run sucessfully.
+        /// </summary>
+        /// <returns></returns>
+        public bool AlreadyRun()
+        {
+            bool Ret = false;
+            CswTableSelect ts = _CswNbtSchemaModTrnsctn.makeCswTableSelect( "HasScriptAlreadyRun", "update_history" );
+            DataTable dt = ts.getTable( "where scriptname = '" + _CswUpdateSchemaTo.ScriptName + "' and succeeded = 1" );
+            if( dt.Rows.Count > 0 )
+            {
+                Ret = true;
+            }
+
+            return Ret;
+        }//AlreadyRun()
+
+        /// <summary>
+        /// Returns _CswUpdateSchemaTo.ScriptName
+        /// </summary>
+        public string ScriptName
+        {
+            get { return _CswUpdateSchemaTo.ScriptName; }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public bool AlwaysRun
+        {
+            get { return _CswUpdateSchemaTo.AlwaysRun; }
+        }
 
         public void update()
         {

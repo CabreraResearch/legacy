@@ -699,6 +699,9 @@ namespace ChemSW.Nbt.MetaData
             InsertedNodeTypesRow["enabled"] = CswConvert.ToDbVal( true );
             InsertedNodeTypesRow["searchdeferpropid"] = CswConvert.ToDbVal( NtModel.SearchDeferNodeTypePropId );    // see below for inheritance from object classes
             InsertedNodeTypesRow["nodecount"] = 0;
+
+            InsertedNodeTypesRow["oraviewname"] = CswTools.MakeOracleCompliantIdentifier( NtModel.NodeTypeName );
+
             NodeTypesTable.Rows.Add( InsertedNodeTypesRow );
 
             Int32 NodeTypeId = CswConvert.ToInt32( InsertedNodeTypesRow["nodetypeid"] );
@@ -1048,6 +1051,14 @@ namespace ChemSW.Nbt.MetaData
             InsertedRow["multi"] = CswConvert.ToDbVal( NtpModel.Multi );
             InsertedRow["readonly"] = CswConvert.ToDbVal( NtpModel.ReadOnly );
             InsertedRow["isunique"] = CswConvert.ToDbVal( NtpModel.IsUnique );
+            InsertedRow["hidden"] = CswConvert.ToDbVal( NtpModel.Hidden );
+
+            //note: if we are using numbering, we will perform this on the setter for prop.questionno
+            if( NtpModel.UseNumbering == false )
+            {
+                InsertedRow["oraviewcolname"] = CswTools.MakeOracleCompliantIdentifier( NtpModel.PropName );
+            }
+
 
             //Do actual update
             NodeTypePropsTable.Rows.Add( InsertedRow );
@@ -1097,6 +1108,8 @@ namespace ChemSW.Nbt.MetaData
             if( NtpModel.ObjectClassPropToCopy != null )
             {
                 CopyNodeTypePropDefaultValueFromObjectClassProp( NtpModel.ObjectClassPropToCopy, NewProp );
+                NtpModel.ObjectClassPropToCopy.setNodeTypePropFK();
+                NtpModel.ObjectClassPropToCopy.setNodeTypePropFilters();
             }
 
             if( OnMakeNewNodeTypeProp != null )
@@ -1586,11 +1599,10 @@ namespace ChemSW.Nbt.MetaData
             _ResetAllViews = true;
 
             //validate role nodetype permissions
-            foreach( CswNbtNode roleNode in _CswNbtMetaDataResources.CswNbtMetaData.getObjectClass( CswEnumNbtObjectClass.RoleClass ).getNodes( false, true ) )
+            foreach( CswNbtObjClassRole RoleNode in _CswNbtMetaDataResources.CswNbtMetaData.getObjectClass( CswEnumNbtObjectClass.RoleClass ).getNodes( false, true ) )
             {
-                CswNbtObjClassRole nodeAsRole = (CswNbtObjClassRole) roleNode;
-                CswNbtNodePropMultiList prop = (CswNbtNodePropMultiList) nodeAsRole.NodeTypePermissions;
-                prop.ValidateValues();
+                RoleNode.NodeTypePermissions.ValidateValues();
+                RoleNode.postChanges( true );
             }
 
         }//DeleteNodeType()

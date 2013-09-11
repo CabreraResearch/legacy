@@ -48,7 +48,7 @@
                     //Set the width of the combobox to match the longest string returned
                     if (optionsArray.length > 0) {
                         var longestOption = optionsArray.sort(function (a, b) { return b.Text.length - a.Text.length; })[0];
-                        var newWidth = (longestOption.Text.length * 7) + 8;
+                        var newWidth = (longestOption.Text.length * 7) + 15;
                         if (newWidth > comboBoxDefaultWidth) {
                             cswPrivate.select.setWidth(newWidth);
                         }

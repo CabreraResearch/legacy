@@ -24,9 +24,11 @@ namespace ChemSW.Nbt.Sched
             ReturnVal.Add( new CswScheduleLogicNbtGenRequests() );
             ReturnVal.Add( new CswScheduleLogicNbtTierII() );
             ReturnVal.Add( new CswScheduleLogicNbtCAFImport() );
+            ReturnVal.Add( new CswScheduleLogicNbtImport() );
             ReturnVal.Add( new CswScheduleLogicNbtExtChemDataSync() );
             ReturnVal.Add( new CswScheduleLogicNbtPurgeSessionData() );
             ReturnVal.Add( new CswScheduleLogicNbtNodeCounts() );
+            ReturnVal.Add( new CswScheduleLogicNbtValidateAccessIds() );
 
             return ( ReturnVal );
 

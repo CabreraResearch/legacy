@@ -46,7 +46,7 @@ namespace ChemSW.Nbt.ObjClasses
                         }
                         else
                         {
-                            Ret = _CswNbtResources.Permit.canAnyTab( CswEnumNbtNodeTypePermission.Edit, this.NodeType, NodeId : NodeId );
+                            Ret = _CswNbtResources.Permit.canAnyTab( CswEnumNbtNodeTypePermission.Edit, this.NodeType, NodeId: NodeId );
                         }
                         break;
                 }
@@ -73,8 +73,10 @@ namespace ChemSW.Nbt.ObjClasses
         }//postChanges()
 
         public abstract CswNbtMetaDataObjectClass ObjectClass { get; }
-        public abstract void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation );
-        public abstract void afterWriteNode();
+        public abstract void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation );
+        public abstract void afterCreateNode();
+        public abstract void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation, bool Creating );
+        public abstract void afterWriteNode( bool Creating );
         public abstract void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false );
         public abstract void afterDeleteNode();
 
@@ -125,7 +127,7 @@ namespace ChemSW.Nbt.ObjClasses
             if( TabIdAsInt > 0 || ( null != SelectedTab && SelectedTab.HasValues ) )
             {
                 CswNbtSdTabsAndProps Sd = new CswNbtSdTabsAndProps( _CswNbtResources );
-                ButtonData.PropsToReturn = Sd.getProps( NodeId.ToString(), null, TabId, NodeTypeId, null, null, null, null, null, ForceReadOnly: false );
+                ButtonData.PropsToReturn = Sd.getProps( NodeId.ToString(), null, TabId, NodeTypeId, null, null, null, ForceReadOnly: false );
             }
         }
 
@@ -163,7 +165,7 @@ namespace ChemSW.Nbt.ObjClasses
                 {
                     ButtonData.Action = CswEnumNbtButtonAction.refreshonadd;
                 }
-                
+
                 //4: If this is the Save property, we're done; else execute the click event
                 if( null != ButtonData.NodeTypeProp && ButtonData.NodeTypeProp.IsSaveProp )
                 {
@@ -252,9 +254,11 @@ namespace ChemSW.Nbt.ObjClasses
         public abstract void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship );
         public virtual CswNbtNode CopyNode()
         {
-            CswNbtNode CopiedNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswEnumNbtMakeNodeOperation.DoNothing );
-            CopiedNode.copyPropertyValues( Node );
-            CopiedNode.postChanges( true, true );
+            CswNbtNode CopiedNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, delegate( CswNbtNode NewNode )
+                {
+                    NewNode.copyPropertyValues( Node );
+                    //CopiedNode.postChanges( true, true );
+                } );
             return CopiedNode;
         }
 
@@ -344,7 +348,6 @@ namespace ChemSW.Nbt.ObjClasses
             }
             return true;
         }
-
 
     }//CswNbtObjClass
 

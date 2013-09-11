@@ -36,33 +36,8 @@
     // case 21337 - Prevent showing multiples of these dialogs...
     var ExistingChangePasswordDialog = false;
     var ExistingShowLicenseDialog = false;
-
-    var afterObjectClassButtonClick = function (action, dialog) {
-        'use strict';
-        switch (Csw.string(action).toLowerCase()) {
-            case Csw.enums.nbtButtonAction.dispense:
-                Csw.tryExec(dialog.close);
-                break;
-            case Csw.enums.nbtButtonAction.reauthenticate:
-                Csw.tryExec(dialog.close);
-                break;
-            case Csw.enums.nbtButtonAction.receive:
-                Csw.tryExec(dialog.close);
-                break;
-            case Csw.enums.nbtButtonAction.refresh:
-                Csw.tryExec(dialog.close);
-                break;
-            case Csw.enums.nbtButtonAction.popup:
-                break;
-            case Csw.enums.nbtButtonAction.request:
-                break;
-            case Csw.enums.nbtButtonAction.loadView:
-                Csw.tryExec(dialog.close);
-                break;
-            case Csw.enums.nbtButtonAction.editprop:
-                break;
-        }
-    };
+    var ExistingMultisessionDialog = false;
+    
     var methods = {
 
         //#region Specialized
@@ -166,128 +141,64 @@
                 row += 1;
             }
 
-            var visSelect = Csw.composites.makeViewVisibilitySelect(table, row, 'Available to');
-            row += 1;
-            var saveBtn = form.button({
-                name: o.name + '_submit',
-                enabledText: 'Create View',
-                disabledText: 'Creating View',
-                onClick: function () {
-                    if (form.$.valid()) {
-                        var createData = {
-                            Visibility: '',
-                            VisibilityRoleId: '',
-                            VisibilityUserId: ''
-                        };
-                        createData.ViewName = nameTextBox.val();
-                        createData.Category = categoryTextBox.val();
-                        createData.ViewId = o.viewid;
-                        if (Csw.isNullOrEmpty(o.viewmode)) {
-                            createData.ViewMode = displayModeSelect.val();
-                        } else {
-                            createData.ViewMode = o.viewmode;
+            var visSelect = Csw.composites.makeViewVisibilitySelect(table, row, 'Available to', {
+                onRenderFinish: function () {
+                    row += 1;
+                    var saveBtn = form.button({
+                        name: o.name + '_submit',
+                        enabledText: 'Create View',
+                        disabledText: 'Creating View',
+                        onClick: function () {
+                            if (form.$.valid()) {
+                                var createData = {
+                                    Visibility: '',
+                                    VisibilityRoleId: '',
+                                    VisibilityUserId: ''
+                                };
+                                createData.ViewName = nameTextBox.val();
+                                createData.Category = categoryTextBox.val();
+                                createData.ViewId = o.viewid;
+                                if (Csw.isNullOrEmpty(o.viewmode)) {
+                                    createData.ViewMode = displayModeSelect.val();
+                                } else {
+                                    createData.ViewMode = o.viewmode;
+                                }
+
+                                var visValue = visSelect.getSelected();
+                                createData.Visibility = visValue.visibility;
+                                createData.VisibilityRoleId = visValue.roleid;
+                                createData.VisibilityUserId = visValue.userid;
+
+                                Csw.ajax.deprecatedWsNbt({
+                                    urlMethod: 'createView',
+                                    data: createData,
+                                    success: function (data) {
+                                        div.$.dialog('close');
+                                        Csw.tryExec(o.onAddView, data.newviewid, createData.ViewMode);
+                                    },
+                                    error: saveBtn.enable
+                                });
+                            } else {
+                                saveBtn.enable();
+                            }
                         }
+                    });
 
-                        var visValue = visSelect.getSelected();
-                        createData.Visibility = visValue.visibility;
-                        createData.VisibilityRoleId = visValue.roleid;
-                        createData.VisibilityUserId = visValue.userid;
-
-                        Csw.ajax.post({
-                            urlMethod: 'createView',
-                            data: createData,
-                            success: function (data) {
-                                div.$.dialog('close');
-                                Csw.tryExec(o.onAddView, data.newviewid, createData.ViewMode);
-                            },
-                            error: saveBtn.enable
-                        });
-                    } else {
-                        saveBtn.enable();
-                    }
-                }
-            });
-
-            /* Cancel Button */
-            form.button({
-                name: o.name + '_cancel',
-                enabledText: 'Cancel',
-                disabledText: 'Canceling',
-                onClick: function () {
-                    div.$.dialog('close');
+                    /* Cancel Button */
+                    form.button({
+                        name: o.name + '_cancel',
+                        enabledText: 'Cancel',
+                        disabledText: 'Canceling',
+                        onClick: function () {
+                            div.$.dialog('close');
+                        }
+                    });
                 }
             });
 
             openDialog(div, 425, 210, null, 'New View');
+
         }, // AddViewDialog
-        AddNodeDialog: function (options) {
-            'use strict';
-            ///<summary>Creates an Add Node dialog and returns an object represent that dialog.</summary>
-            var cswDlgPrivate = {
-                text: '',
-                nodeid: '',
-                nodetypeid: 0,
-                objectClassId: 0,
-                relatednodeid: '',
-                relatednodename: '',
-                relatednodetypeid: '',
-                relatedobjectclassid: '',
-                onAddNode: function () { },
-                onSaveImmediate: function () { },
-                propertyData: null
-            };
-            if (Csw.isNullOrEmpty(options)) {
-                Csw.error.throwException(Csw.error.exception('Cannot create an Add Dialog without options.', '', 'CswDialog.js', 177));
-            }
-            Csw.extend(cswDlgPrivate, options);
-            cswDlgPrivate.name = cswDlgPrivate.text;
-            var cswPublic = {
-                isOpen: true,
-                div: cswPrivate.div.div({ name: cswDlgPrivate.name }),
-                close: function (nodeid, nodekey, tabcount, nodename, nodelink) {
-                    if (cswPublic.isOpen) {
-                        cswPublic.isOpen = false;
-                        cswPublic.tabsAndProps.refresh(null, null); //do not attempt to refresh the properties on add (the dialog is closing)
-                        cswPublic.tabsAndProps.tearDown();
-                        if (nodeid || nodekey) {
-                            Csw.tryExec(cswDlgPrivate.onAddNode, nodeid, nodekey, nodename, nodelink);
-                        }
-                        Csw.tryExec(cswDlgPrivate.onSaveImmediate);
-                        cswPublic.div.$.dialog('close');
-                    }
-                },
-                title: cswDlgPrivate.text
-            };
-            cswDlgPrivate.onOpen = function () {
-                if (cswDlgPrivate.propertyData && cswDlgPrivate.propertyData.node) {
-                    cswDlgPrivate.nodeid = cswDlgPrivate.propertyData.node.nodeid;
-                }
-                cswPublic.tabsAndProps = Csw.layouts.tabsAndProps(cswPublic.div, {
-                    name: 'tabsAndProps',
-                    tabState: {
-                        propertyData: cswDlgPrivate.propertyData,
-                        ShowAsReport: false,
-                        nodeid: cswDlgPrivate.nodeid,
-                        nodetypeid: cswDlgPrivate.nodetypeid,
-                        objectClassId: cswDlgPrivate.objectClassId,
-                        relatednodeid: cswDlgPrivate.relatednodeid,
-                        relatednodename: cswDlgPrivate.relatednodename,
-                        relatednodetypeid: cswDlgPrivate.relatednodetypeid,
-                        relatedobjectclassid: cswDlgPrivate.relatedobjectclassid,
-                        EditMode: Csw.enums.editMode.Add
-                    },
-                    ReloadTabOnSave: false,
-                    onSave: function (nodeid, nodekey, tabcount, nodename, nodelink) {
-                        cswPublic.close(nodeid, nodekey, tabcount, nodename, nodelink);
-                    },
-                    onInitFinish: function () {
-                        //openDialog(cswPublic.div, 800, 600, null, cswPublic.title);
-                    }
-                });
-            };
-            openDialog(cswPublic.div, 800, 600, cswPublic.close, cswPublic.title, cswDlgPrivate.onOpen);
-            return cswPublic;
-        },
         AddFeedbackDialog: function (options) {
             'use strict';
             ///<summary>Creates an Add Feedback dialog and returns an object represent that dialog.</summary>
@@ -312,7 +223,7 @@
             cswDlgPrivate.onOpen = function () {
 
                 var state = Csw.clientState.getCurrent();
-                Csw.ajax.post({
+                Csw.ajax.deprecatedWsNbt({
                     urlMethod: "getFeedbackNode",
                     data: {
                         nodetypeid: cswDlgPrivate.nodetypeid,
@@ -334,7 +245,7 @@
                             },
                             ReloadTabOnSave: false,
                             onSave: function (nodeid, nodekey, tabcount, nodename) {
-                                Csw.ajax.post({
+                                Csw.ajax.deprecatedWsNbt({
                                     urlMethod: 'GetFeedbackCaseNumber',
                                     data: { nodeId: nodeid },
                                     success: function (result) {
@@ -368,35 +279,6 @@
             openDialog(cswPublic.div, 800, 600, null, cswPublic.title, cswDlgPrivate.onOpen);
             return cswPublic;
         }, // AddFeedbackDialog
-        AddNodeClientSideDialog: function (options) {
-            'use strict';
-            var o = {
-                name: '',
-                nodetypename: '',
-                title: '',
-                onSuccess: null
-            };
-
-            if (options) {
-                Csw.extend(o, options);
-            }
-
-            var div = Csw.literals.div(),
-                newNode;
-
-            div.append('New ' + o.nodetypename + ': ');
-            newNode = div.input({ name: o.name + '_newNode', type: Csw.enums.inputTypes.text });
-
-            div.button({
-                name: o.objectClassId + '_add',
-                enabledText: 'Add',
-                onClick: function () {
-                    Csw.tryExec(o.onSuccess, newNode.val());
-                    div.$.dialog('close');
-                }
-            });
-            openDialog(div, 300, 200, null, o.title);
-        }, // AddNodeClientSideDialog
         AddNodeTypeDialog: function (options) {
             'use strict';
             var o = {
@@ -431,9 +313,8 @@
                 enabledText: 'Add',
                 onClick: function () {
                     var newNodeTypeName = nodeTypeInp.val();
-                    Csw.ajax.post({
+                    Csw.ajax.deprecatedWsNbt({
                         urlMethod: 'IsNodeTypeNameUnique',
-                        async: false,
                         data: { 'NodeTypeName': newNodeTypeName },
                         success: function () {
                             o.select.option({ value: nodeTypeInp.val() }).propNonDom({ 'data-newNodeType': true });
@@ -447,7 +328,7 @@
                                 category: category
                             });
                         },
-                        error: addBtn.enable
+                        error: function () { addBtn.enable(); }
                     });
                 }
             });
@@ -525,7 +406,7 @@
                         selected: '',
                         values: [],
                         onChange: function () {
-                            Csw.ajax.post({
+                            Csw.ajax.deprecatedWsNbt({
                                 urlMethod: 'addPropertyToLayout',
                                 data: {
                                     PropId: Csw.string(addSelect.val()),
@@ -545,7 +426,7 @@
                         TabId: Csw.string(cswDlgPrivate.tabState.tabid),
                         LayoutType: layoutSelect.val()
                     };
-                    Csw.ajax.post({
+                    Csw.ajax.deprecatedWsNbt({
                         urlMethod: 'getPropertiesForLayoutAdd',
                         data: ajaxdata,
                         success: function (data) {
@@ -682,86 +563,6 @@
             openDialog(cswPublic.div, 900, 600, cswPublic.close, title, cswDlgPrivate.onOpen);
             return cswPublic;
         }, // EditNodeDialog
-        CopyNodeDialog: function (options) {
-            'use strict';
-            var cswDlgPrivate = {
-                'nodename': '',
-                'nodeid': '',
-                'nodetypeid': '',
-                'nodekey': '',
-                'onCopyNode': function () { }
-            };
-
-            if (Csw.isNullOrEmpty(options)) {
-                Csw.error.throwException(Csw.error.exception('Cannot create an Copy Dialog without options.', '', 'CswDialog.js', 177));
-            }
-            Csw.extend(cswDlgPrivate, options);
-            var cswPublic = {
-                div: Csw.literals.div({
-                    name: 'CopyNodeDialogDiv'
-                }),
-                close: function () {
-                    cswPublic.div.$.dialog('close');
-                }
-            };
-
-            // Prevent copy if quota is reached
-            var tbl = cswPublic.div.table({
-                name: 'CopyNodeDialogDiv_table'
-            });
-            var cell11 = tbl.cell(1, 1).propDom('colspan', '2');
-            var cell21 = tbl.cell(2, 1);
-            var cell22 = tbl.cell(2, 2);
-
-            Csw.ajaxWcf.post({
-                urlMethod: 'Quotas/check',
-                data: {
-                    NodeTypeId: Csw.string(cswDlgPrivate.nodetypeid),
-                    NodeKey: Csw.string(cswDlgPrivate.nodekey)
-                },
-                success: function (data) {
-                    if (Csw.bool(data.HasSpace)) {
-
-                        cell11.append('Copying: ' + cswDlgPrivate.nodename);
-                        cell11.br({ number: 2 });
-
-                        var copyBtn = cell21.button({
-                            name: 'copynode_submit',
-                            enabledText: 'Copy',
-                            disabledText: 'Copying',
-                            onClick: function () {
-                                Csw.copyNode({
-                                    'nodeid': cswDlgPrivate.nodeid,
-                                    'nodekey': Csw.string(cswDlgPrivate.nodekey, cswDlgPrivate.nodekey[0]),
-                                    'onSuccess': function (nodeid, nodekey) {
-                                        cswPublic.close();
-                                        cswDlgPrivate.onCopyNode(nodeid, nodekey);
-                                    },
-                                    'onError': function () {
-                                        copyBtn.enable();
-                                    }
-                                });
-                            }
-                        });
-
-                    } else {
-                        cell11.append('You have used all of your purchased quota, and must purchase additional quota space in order to add more.');
-                    } // if-else (Csw.bool(data.result)) {
-                } // success()
-            }); // ajax
-
-            /* Cancel Button */
-            cell22.button({
-                name: 'copynode_cancel',
-                enabledText: 'Cancel',
-                disabledText: 'Canceling',
-                onClick: function () {
-                    cswPublic.close();
-                }
-            });
-            openDialog(cswPublic.div, 400, 300, null, 'Confirm Copy');
-            return cswPublic;
-        }, // CopyNodeDialog       
         DeleteNodeDialog: function (options) {
             'use strict';
             var cswDlgPrivate = {
@@ -901,10 +702,57 @@
             return cswPublic;
         }, // ChangePasswordDialog
 
+
+        LogoutExistingSessionsDialog: function (onSuccess) {
+            'use strict';
+
+            if (false === ExistingMultisessionDialog) {
+                ExistingMultisessionDialog = true;
+                var logoutOnClose = true;
+
+            var onClose = function() {
+                    if (logoutOnClose) {
+                        Csw.clientSession.logout();
+                    }
+                };
+
+                var div = Csw.literals.div().css({});
+                var resetLoginTable = div.table({ width: '80%', align: 'center' });
+                resetLoginTable.cell(1, 1).propDom('colspan', 2).br({ number: 4 });
+                resetLoginTable.cell(1, 1).append('You are already logged in at another location. Would you like to end your previous session and log in from this computer?');
+                resetLoginTable.cell(1, 1).br({ number: 4 });
+
+                resetLoginTable.cell(2, 1).css('text-align', 'center').button({
+                    enabledText: 'Yes, Logout Other Sessions',
+                    onClick: function() {
+                        Csw.ajaxWcf.post({
+                            urlMethod: 'Session/endCurrentUserSessions',
+                            complete: function(data) {
+                                logoutOnClose = false;
+                                div.$.dialog('close');
+                                Csw.tryExec(onSuccess);
+                                ExistingMultisessionDialog = false;
+                            }//success
+                        }); //Csw.ajaxWcf.post
+                    }//onClick
+                }); //resetLoginTable.cell(2, 2).button
+
+                resetLoginTable.cell(2, 2).css('text-align', 'center').button({
+                    enabledText: 'No, Log Me Out',
+                    onClick: function() {
+                        div.$.dialog('close');
+                    }
+                });
+
+
+                openDialog(div, 600, 400, onClose, 'Logout Existing Sessions');
+            }
+        }, //LogoutExistingSessionsDialog
+
         AboutDialog: function () {
             'use strict';
             var div = Csw.literals.div();
-            Csw.ajax.post({
+            Csw.ajax.deprecatedWsNbt({
                 urlMethod: 'getAbout',
                 data: {},
                 success: function (data) {
@@ -980,34 +828,6 @@
 
             openDialog(div, 400, 300, null, 'Upload');
         }, // FileUploadDialog
-        //        ImportC3RecordDialog: function (options) {
-        //            var cswDlgPrivate = {
-        //                nodes: {},
-        //                nodenames: [],
-        //                nodeids: [],
-        //                cswnbtnodekeys: [],
-        //                onDeleteNode: null, //function (nodeid, nodekey) { },
-        //                Multi: false,
-        //                nodeTreeCheck: null,
-        //                publishDeleteEvent: true
-        //            };
-
-        //            if (Csw.isNullOrEmpty(options)) {
-        //                Csw.error.throwException(Csw.error.exception('Cannot create an Delete Dialog without options.', '', 'CswDialog.js', 641));
-        //            }
-        //            Csw.extend(cswDlgPrivate, options);
-        //            var cswPublic = {
-        //                div: Csw.literals.div(),
-        //                close: function () {
-        //                    cswPublic.div.$.dialog('close');
-        //                }
-        //            };
-
-        //            cswPublic.div.span({ text: 'To do: Dummy dialog for the time being.' }).br();
-
-        //            openDialog(cswPublic.div, 400, 200, null, 'Import Record');
-
-        //        }, // ImportC3RecordDialog
         C3DetailsDialog: function (options) {
             'use strict';
             var cswPrivate = {
@@ -1073,29 +893,32 @@
                         });
 
                         table1.cell(3, 1).div({
-                            text: 'Catalog#: ' + data.ProductDetails.CatalogNo
+                            text: 'Catalog No: ' + data.ProductDetails.CatalogNo
                         });
 
-                        var cell4_hidden = 'hidden';
-                        var producturl = data.ProductDetails.ProductUrl;
-                        if (false === Csw.isNullOrEmpty(producturl)) {
-                            cell4_hidden = 'visible';
+                        // CAS Number
+                        var casnodiv = table1.cell(4, 1).div({
+                            text: 'CAS No: ' + data.ProductDetails.CasNo
+                        });
+                        if (Csw.isNullOrEmpty(data.ProductDetails.CasNo)) {
+                            casnodiv.hide();
                         }
-                        table1.cell(4, 1).div({
-                            text: '<a href=' + producturl + ' target="_blank">Product Website</a>',
-                            styles: { 'visibility': cell4_hidden }
-                        });
 
-                        var cell5_hidden = 'hidden';
-                        var msdsurl = data.ProductDetails.MsdsUrl;
-                        if (false === Csw.isNullOrEmpty(msdsurl)) {
-                            cell5_hidden = 'visible';
+                        // Product Website
+                        var producturldiv = table1.cell(5, 1).div({
+                            text: '<a href=' + data.ProductDetails.ProductUrl + ' target="_blank">Product Website</a>'
+                        });
+                        if (Csw.isNullOrEmpty(data.ProductDetails.ProductUrl)) {
+                            producturldiv.hide();
                         }
-                        table1.cell(5, 1).div({
-                            text: '<a href=' + msdsurl + ' target="_blank">MSDS</a>',
-                            styles: { 'visibility': cell5_hidden }
-                        });
 
+                        // MSDS URL
+                        var msdsurldiv = table1.cell(6, 1).div({
+                            text: '<a href=' + data.ProductDetails.MsdsUrl + ' target="_blank">MSDS</a>'
+                        });
+                        if (Csw.isNullOrEmpty(data.ProductDetails.MsdsUrl)) {
+                            msdsurldiv.hide();
+                        }
 
                         var molImageHeight = 0;
                         if ("" != data.ProductDetails.MolData && "" != data.ProductDetails.MolImage) {
@@ -1105,9 +928,8 @@
                             src: 'data:image/jpeg;base64,' + data.ProductDetails.MolImage,
                             height: molImageHeight
                         });
-                        table1.cell(2, 2).propDom('rowspan', 4);
-
-
+                        table1.cell(2, 2).propDom('rowspan', 5);
+                        
                         var fields = [];
                         var columns = [];
 
@@ -1122,20 +944,12 @@
                         columns = [
                             { header: 'Unit Count', dataIndex: 'case_qty' },
                             { header: 'Initial Quantity', dataIndex: 'pkg_qty' },
-                            {
-                                header: 'UOM', dataIndex: 'pkg_qty_uom', renderer: function (val, meta, record) {
-                                    if (Csw.isNullOrEmpty(val)) {
-                                        return '[ ' + record.data.c3_uom + ' ]';
-                                    } else {
-                                        return val;
-                                    }
-                                }
-                            },
+                            { header: 'UOM', dataIndex: 'c3_uom' },
                             { header: 'Catalog No', dataIndex: 'catalog_no' }
                         ];
 
                         var sizeGridId = 'c3detailsgrid_size';
-                        table1.cell(6, 1).grid({
+                        table1.cell(7, 1).grid({
                             name: sizeGridId,
                             stateId: sizeGridId,
                             title: 'Sizes',
@@ -1150,10 +964,10 @@
                             usePaging: false,
                             showActionColumn: false
                         });
-                        table1.cell(6, 1).propDom('colspan', 2);
+                        table1.cell(7, 1).propDom('colspan', 2);
 
                         var extraDataGridId = 'c3detailsgrid_extradata';
-                        table1.cell(7, 1).grid({
+                        table1.cell(8, 1).grid({
                             name: extraDataGridId,
                             stateId: extraDataGridId,
                             title: 'Extra Attributes',
@@ -1168,7 +982,7 @@
                             usePaging: false,
                             showActionColumn: false
                         });
-                        table1.cell(7, 1).propDom('colspan', 2);
+                        table1.cell(8, 1).propDom('colspan', 2);
 
 
                     }
@@ -1575,7 +1389,7 @@
                 var licenseTextArea = div.textArea({ name: 'license', rows: 30, cols: 80 }).propDom({ disabled: true });
                 div.br();
 
-                Csw.ajax.post({
+                Csw.ajax.deprecatedWsNbt({
                     urlMethod: o.GetLicenseUrl,
                     success: function (data) {
                         licenseTextArea.text(data.license);
@@ -1587,7 +1401,7 @@
                     enabledText: 'I Accept',
                     disabledText: 'Accepting...',
                     onClick: function () {
-                        Csw.ajax.post({
+                        Csw.ajax.deprecatedWsNbt({
                             urlMethod: o.AcceptLicenseUrl,
                             success: function () {
                                 allowClose = true;
@@ -1598,7 +1412,14 @@
                         }); // ajax
                     } // onClick
                 }); // 
-
+                var declineBtn = div.button({
+                    name: 'license_decline',
+                    enabledText: 'I Decline',
+                    disabledText: 'Declining...',
+                    onClick: function () {
+                        Csw.tryExec(o.onDecline);
+                    } // onClick
+                }); // 
                 openDialog(div, 800, 600, function () { ExistingShowLicenseDialog = false; }, 'Terms and Conditions', null, function () { return allowClose; });
             }
         }, // ShowLicenseDialog
@@ -1618,7 +1439,10 @@
             var cswPublic = Csw.object();
 
             if (!cswDlgPrivate.nodes || Object.keys(cswDlgPrivate.nodes).length < 1) {
-                $.CswDialog('AlertDialog', 'Nothing has been selected to print. <br>Go back and select an item to print.', 'Empty selection');
+                Csw.dialogs.alert({
+                    title: 'Empty selection',
+                    message: 'Nothing has been selected to print. <br>Go back and select an item to print.'
+                }).open();
             } else {
 
                 cswPublic = {
@@ -1685,7 +1509,7 @@
                     isRequired: true,
                     showSelectOnLoad: true,
                     isMulti: false,
-                    selectedNodeId: Csw.clientSession.userDefaults().DefaultPrinterId,
+                    selectedNodeId: Csw.currentUser.defaults().DefaultPrinterId,
                     onSuccess: function () {
                         if (printerSel.optionsCount() === 0) {
                             printerSel.hide();
@@ -1728,7 +1552,7 @@
             if (options) Csw.extend(o, options);
 
             function onOpen(div) {
-                Csw.ajax.post({
+                Csw.ajax.deprecatedWsNbt({
                     urlMethod: 'getUsers',
                     success: function (data) {
                         if (Csw.bool(data.result)) {
@@ -1773,7 +1597,8 @@
                 title: '',
                 nodetypeid: '',
                 objectclassid: '',
-                onSelectNode: null
+                onSelectNode: null,
+                onClose: function () { }
             };
             if (Csw.isNullOrEmpty(options)) {
                 Csw.error.throwException(Csw.error.exception('Cannot create an Search Dialog without options.', '', 'CswDialog.js', 1013));
@@ -1787,7 +1612,7 @@
                 title: Csw.string(cswDlgPrivate.title, 'Search ' + cswDlgPrivate.propname)
             };
 
-            openDialog(cswPublic.div, 800, 600, null, 'Search ' + cswDlgPrivate.propname);
+            openDialog(cswPublic.div, 800, 600, null, 'Search ' + cswDlgPrivate.propname, cswDlgPrivate.onClose);
 
             cswPublic.search = Csw.composites.universalSearch(cswPublic.div, {
                 name: cswDlgPrivate.name,
@@ -1804,6 +1629,7 @@
                 compactResults: true,
                 extraAction: 'Select',
                 extraActionIcon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.check),
+                universalSearchOnly: true, //No C3 or Structure Search here
                 onExtraAction: function (nodeObj) {
                     cswPublic.close();
                     Csw.tryExec(cswDlgPrivate.onSelectNode, nodeObj);
@@ -2035,39 +1861,6 @@
             openDialog(div, 1000, 500, cswPrivate.onCloseDialog, cswPrivate.title, onOpen);
 
         }, // RelatedToDemoNodesDialog
-
-
-        ErrorDialog: function (error) {
-            'use strict';
-            var div = Csw.literals.div();
-            openDialog(div, 400, 300, null, 'Error');
-            div.$.CswErrorMessage(error);
-        },
-
-        AlertDialog: function (message, title, onClose, height, width, onOpen) {
-            'use strict';
-            var div = Csw.literals.div({
-                name: Csw.string(title, 'an alert dialog').replace(' ', '_'),
-                text: message,
-                align: 'center'
-            });
-
-            div.br();
-
-            var divBody = div.div();
-
-            div.button({
-                enabledText: 'OK',
-                onClick: function () {
-                    div.$.dialog('close');
-                    Csw.tryExec(onClose);
-                }
-            });
-
-            Csw.tryExec(onOpen, divBody);
-
-            openDialog(div, Csw.number(width, 400), Csw.number(height, 200), null, title);
-        },
         ConfirmDialog: function (message, title, okFunc, cancelFunc) {
             'use strict';
             var div = Csw.literals.div({
@@ -2545,7 +2338,7 @@
                     if (groupBySelect) {
                         var selectedRelArbId = groupBySelect.selectedVal();
                         var selectedProp = null;
-                        Csw.each(o.properties, function(prop) {
+                        Csw.each(o.properties, function (prop) {
                             if (prop.ArbitraryId === selectedRelArbId) {
                                 selectedProp = prop;
                             }
@@ -2735,11 +2528,6 @@
 
         //#region Generic
 
-        //		'OpenPopup': function (url) { 
-        //							var popup = window.open(url, null, 'height=600, width=600, status=no, resizable=yes, scrollbars=yes, toolbar=yes,location=no, menubar=yes');
-        //							popup.focus();
-        //							return popup;
-        //						},
         OpenDialog: function (id, url) {
             'use strict';
             var div = Csw.literals.div({ name: id });

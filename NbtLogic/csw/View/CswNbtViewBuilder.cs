@@ -194,6 +194,7 @@ namespace ChemSW.Nbt.Logic
                 ParentObj["defaultconjunction"] = CswEnumNbtFilterConjunction.And.ToString();
                 ParentObj["defaultsubfield"] = ViewBuilderProp.FieldTypeRule.SubFields.Default.Name.ToString();
                 ParentObj["defaultfiltermode"] = ViewBuilderProp.FieldTypeRule.SubFields.Default.DefaultFilterMode.ToString();
+                ParentObj["helptext"] = ViewBuilderProp.FieldTypeRule.getHelpText();
 
                 ParentObj["subfields"] = new JObject();
 
@@ -599,11 +600,7 @@ namespace ChemSW.Nbt.Logic
             if( ViewProperty.Type == CswEnumNbtViewPropType.NodeTypePropId &&
                 null != ViewProperty.NodeTypeProp )
             {
-                CswNbtMetaDataNodeType nt = ViewProperty.NodeTypeProp.getNodeType();
-                if( null != nt )
-                {
-                    OwnerName = nt.NodeTypeName;
-                }
+                OwnerName = _getOwnerName( ViewProperty );
                 FieldType = ViewProperty.NodeTypeProp.getFieldTypeValue();
                 ListOptions.FromString( ViewProperty.NodeTypeProp.ListOptions );
                 RelatedIdType = CswEnumNbtViewRelatedIdType.NodeTypeId;
@@ -667,6 +664,31 @@ namespace ChemSW.Nbt.Logic
                 }
             }
         } // setObjectClassPropListOptions()
+
+        private string _getOwnerName( CswNbtViewProperty ViewProperty )
+        {
+            string ret = string.Empty;
+
+            CswNbtViewRelationship parent = (CswNbtViewRelationship) ViewProperty.Parent;
+            CswEnumNbtViewRelatedIdType ownerType = parent.getOwnerType();
+            if( ownerType == CswEnumNbtViewRelatedIdType.NodeTypeId )
+            {
+                CswNbtMetaDataNodeType ntOwner = parent.getNodeTypeOwner();
+                ret = ntOwner.NodeTypeName;
+            }
+            else if( ownerType == CswEnumNbtViewRelatedIdType.ObjectClassId )
+            {
+                CswNbtMetaDataObjectClass ocOwner = parent.getObjClassOwner();
+                ret = ocOwner.ObjectClass.ToString();
+            }
+            else
+            {
+                CswNbtMetaDataPropertySet psOwner = parent.getPropSetOwner();
+                ret = psOwner.Name;
+            }
+
+            return ret;
+        }
 
     }// CswViewBuilderProp
     #endregion CswViewBuilderProp Class

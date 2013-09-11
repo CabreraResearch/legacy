@@ -45,7 +45,6 @@
                 break;
             case Csw.enums.nbtButtonAction.creatematerial:
                 actionJson.actionname = 'create material';
-                actionJson.state.request = actionJson.request;
                 launchAction = true;
                 break;
             case Csw.enums.nbtButtonAction.move:
@@ -89,7 +88,7 @@
                 Csw.publish(Csw.enums.events.main.clear, { centertop: true, centerbottom: true });
                 /* case 24669 */
                 Csw.cookie.clearAll([Csw.cookie.cookieNames.LogoutPath]);
-                Csw.ajax.post({
+                Csw.ajax.deprecatedWsNbt({
                     urlMethod: 'reauthenticate',
                     data: { PropId: Csw.string(opts.propid) },
                     success: function (result) {
@@ -113,10 +112,11 @@
                         Csw.publish(Csw.enums.events.main.refreshHeader);
                         break;
                     default:
-                        $.CswDialog('AddNodeDialog', {
+                        Csw.dialogs.addnode({
                             nodetypeid: actionJson.requestItemNodeTypeId,
+                            relatednodeid: actionJson.relatednodeid,
                             propertyData: actionJson.requestItemProps,
-                            text: actionJson.titleText,
+                            title: actionJson.titleText,
                             onSaveImmediate: function () {
                                 Csw.publish('onAnyNodeButtonClickFinish', true);
                                 Csw.publish(Csw.enums.events.main.refreshHeader);
@@ -285,7 +285,7 @@
                         }
 
                         var performOnObjectClassButtonClick = function () {
-                            Csw.ajax.post({
+                            Csw.ajax.deprecatedWsNbt({
                                 urlMethod: 'onObjectClassButtonClick',
                                 data: {
                                     NodeTypePropAttr: cswPrivate.propId,

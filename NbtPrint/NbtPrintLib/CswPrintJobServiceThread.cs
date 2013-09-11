@@ -22,10 +22,6 @@ namespace NbtPrintLib
         {
             NbtPublicClient ret = new NbtPublicClient();
             string Url = auth.baseURL;
-            if( false == Url.EndsWith( "NbtPublic.svc" ) )
-            {
-                Url += "NbtPublic.svc";
-            }
             ret.Endpoint.Address = new EndpointAddress( Url );
             ret.Endpoint.Binding = new WebHttpBinding()
             {
@@ -68,7 +64,6 @@ namespace NbtPrintLib
                     Password = auth.Password,
                     IsMobile = true
                 } );
-
                 if( ret.Authentication.AuthenticationStatus == "Authenticated" )
                 {
                     if( null != success )
@@ -120,26 +115,34 @@ namespace NbtPrintLib
             _Authenticate( auth, e,
                            delegate( NbtPublicClient NbtClient ) // Success
                            {
-                               LabelPrinter lblPrn = new LabelPrinter();
-                               lblPrn.LpcName = aprinter.LPCname;
-                               lblPrn.Description = aprinter.Description;
-
-                               CswNbtLabelPrinterReg Ret = NbtClient.LpcRegister( lblPrn );
-
-                               if( Ret.Status.Success )
+                               try
                                {
-                                   e.printer.PrinterKey = Ret.PrinterKey;
-                                   e.printer.Message = "Registered PrinterKey=" + e.printer.PrinterKey;
-                                   e.printer.Succeeded = true;
-                               }
-                               else
-                               {
-                                   e.printer.Message = "Printer \"" + aprinter.LPCname + "\" registration failed. ";
-                                   e.printer.PrinterKey = string.Empty;
-                                   if( Ret.Status.Errors.Length > 0 )
+                                   LabelPrinter lblPrn = new LabelPrinter();
+                                   lblPrn.LpcName = aprinter.LPCname;
+                                   lblPrn.Description = aprinter.Description;
+
+                                   CswNbtLabelPrinterReg Ret = NbtClient.LpcRegister( lblPrn );
+
+                                   if( Ret.Status.Success )
                                    {
-                                       e.printer.Message += Ret.Status.Errors[0].Message;
+                                       e.printer.PrinterKey = Ret.PrinterKey;
+                                       e.printer.Message = "Registered PrinterKey=" + e.printer.PrinterKey;
+                                       e.printer.Succeeded = true;
                                    }
+                                   else
+                                   {
+                                       e.printer.Message = "Printer \"" + aprinter.LPCname + "\" registration failed. ";
+                                       e.printer.PrinterKey = string.Empty;
+                                       if( Ret.Status.Errors.Length > 0 )
+                                       {
+                                           e.printer.Message += Ret.Status.Errors[0].Message;
+                                       }
+                                   }
+                               } //try
+                               catch( Exception Error )
+                               {
+                                   e.Message = "Printer registration failed. Please check server settings.";
+                                   e.printer.Message = "Printer registration failed. Please check server settings.";
                                }
                            }
                         );
@@ -245,6 +248,7 @@ namespace NbtPrintLib
                                {
                                    e.Succeeded = true;
                                    e.Job = Ret;
+                                   aprinter.LPCname = Ret.PrinterName;
                                }
                                else
                                {

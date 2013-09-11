@@ -1,12 +1,12 @@
-﻿using ChemSW.Nbt.csw.Dev;
-using System;
+﻿using System;
+using ChemSW.Nbt.csw.Dev;
 
 namespace ChemSW.Nbt.Schema
 {
     public abstract class CswUpdateSchemaTo
     {
-        public virtual string Title { get { return "Script: Case " + CaseNo;  } }
-        
+        public virtual string Title { get { return "Script: Case " + CaseNo; } }
+
         public class UnitOfBlame
         {
             public UnitOfBlame()
@@ -23,14 +23,14 @@ namespace ChemSW.Nbt.Schema
             public CswEnumDeveloper Developer;
             public Int32 CaseNumber;
         }
-        
+
         protected CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn = null;
         public CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn
         {
             set { _CswNbtSchemaModTrnsctn = value; }
         }
 
-        //        public abstract CswSchemaVersion SchemaVersion { get; }
+        //public abstract CswSchemaVersion SchemaVersion { get; }
         //public abstract string Description { set; get; }
 
         private string _Description = string.Empty;
@@ -38,7 +38,22 @@ namespace ChemSW.Nbt.Schema
         public virtual string Description
         {
             set { _Description = value; }
-            get { return ( _Description ); }
+            get
+            {
+                string Ret = _Description;
+                if( string.IsNullOrEmpty( Ret ) ||
+                    ( CaseNo > 0 &&
+                      false == Ret.Contains( "Case " + CaseNo ) &&
+                      false == Ret.Contains( Title ) ) )
+                {
+                    if( false == string.IsNullOrEmpty( Ret ) )
+                    {
+                        Ret += " - ";
+                    }
+                    Ret += Title;
+                }
+                return Ret;
+            }
         }
 
         /// <summary>
@@ -74,6 +89,20 @@ namespace ChemSW.Nbt.Schema
         /// The FogBugz Case number associated with this script
         /// </summary>
         public abstract Int32 CaseNo { get; }
+
+        /// <summary>
+        /// A unique identifier for this script
+        /// Format: <Release #><Release Letter>_Case<Case #>
+        /// </summary>
+        public abstract string ScriptName { get; }
+
+        /// <summary>
+        /// Whether the script should be run always
+        /// </summary>
+        public virtual bool AlwaysRun
+        {
+            get { return false; }
+        }
 
         /// <summary>
         /// Get the Case number as a link to FogBugz

@@ -54,6 +54,11 @@ module.exports = function (grunt) {
                      'templates/MainIncludes.txt', 'templates/MainEnd.txt'],
                 dest: 'release/print.tmpl',
             },
+            balance: { //ReadingBalances.html
+                src: ['templates/MainHeader.txt', 'templates/MainForm_Start.txt', 'templates/BalanceForm_Body.txt', 'templates/MainForm_End.txt',
+                     'templates/MainIncludes.txt', 'templates/MainEnd.txt'],
+                dest: 'release/balance.tmpl',
+            },
             prod: { //Main.html
                 src: ['templates/MainHeader.txt', 'templates/MainForm_Start.txt', 'templates/MainForm_Body.txt', 'templates/MainForm_End.txt',
                      'templates/MainIncludes.txt', 'templates/MainInit.txt', 'templates/MainEnd.txt'],
@@ -83,14 +88,6 @@ module.exports = function (grunt) {
                 src: cswAppCssFiles,
                 dest: '<%= buildPrefix %>.css'
             }
-        },
-
-        docco: {
-            src: cswAppJsFiles,
-            options: {
-                output: 'docs/'
-            }
-
         },
 
         htmlminifier: {
@@ -193,6 +190,10 @@ module.exports = function (grunt) {
                 src: 'release/print.tmpl',
                 dest: 'PrintingLabels.html',
             },
+            balance: {
+                src: 'release/balance.tmpl',
+                dest: 'ReadingBalances.html',
+            },
             prod: {
                 src: 'release/main.tmpl',
                 dest: 'Main.html',
@@ -276,6 +277,7 @@ module.exports = function (grunt) {
         grunt.task.run('toHtml:prod:nodereport'); //Generate the NodeReport HTML file from the template
         grunt.task.run('toHtml:prod:report'); //Generate the Report HTML file from the template
         grunt.task.run('toHtml:prod:print'); //Generate the PrintingLabels HTML file from the template
+        grunt.task.run('toHtml:prod:balance');//Generate the ReadingBalances HTML file from the template
         grunt.task.run('toHtml:prod:pManifest'); //Generate the appcache from the manifest template
     });
 
@@ -287,6 +289,7 @@ module.exports = function (grunt) {
             grunt.task.run('toHtml:dev:nodereport'); //Generate the NodeReport HTML file from the template
             grunt.task.run('toHtml:dev:report'); //Generate the Report HTML file from the template
             grunt.task.run('toHtml:dev:print'); //Generate the PrintingLabels HTML file from the template
+            grunt.task.run('toHtml:dev:balance');//Generate the ReadingBalances HTML file from the template
             grunt.task.run('toHtml:dev:test'); //Generate the Unit Tests HTML file from the template
         }
         grunt.task.run('toHtml:dev:dManifest'); //Generate the appcache from the manifest template

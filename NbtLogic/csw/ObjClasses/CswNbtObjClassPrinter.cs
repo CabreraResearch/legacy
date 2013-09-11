@@ -19,6 +19,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Description = "Description";
             public const string Enabled = "Enabled";
             public const string LastJobRequest = "Last Job Request";
+            public const string Jobs = "Jobs";
         }
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
@@ -49,14 +50,24 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
+        public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
         {
-            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
+            _CswNbtObjClassDefault.beforeCreateNode( IsCopy, OverrideUniqueValidation );
+        }//beforeCreateNode()
+
+        public override void afterCreateNode()
+        {
+            _CswNbtObjClassDefault.afterCreateNode();
+        }//afterCreateNode()
+
+        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation, bool Creating )
+        {
+            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation, Creating );
         }//beforeWriteNode()
 
-        public override void afterWriteNode()
+        public override void afterWriteNode( bool Creating )
         {
-            _CswNbtObjClassDefault.afterWriteNode();
+            _CswNbtObjClassDefault.afterWriteNode( Creating );
         }//afterWriteNode()
 
         public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
@@ -97,6 +108,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropMemo Description { get { return _CswNbtNode.Properties[PropertyName.Description]; } }
         public CswNbtNodePropLogical Enabled { get { return _CswNbtNode.Properties[PropertyName.Enabled]; } }
         public CswNbtNodePropDateTime LastJobRequest { get { return _CswNbtNode.Properties[PropertyName.LastJobRequest]; } }
+        public CswNbtNodePropGrid Jobs { get { return _CswNbtNode.Properties[PropertyName.Jobs]; } }
 
         #endregion
 

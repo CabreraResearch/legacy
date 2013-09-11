@@ -14,6 +14,9 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Central = "Central";
             public const string AutomaticCertificateApproval = "Automatic Certificate Approval";
             public const string ManageLocations = "Manage Locations";
+            public const string Description = "Description";
+            public const string Locations = "Locations";
+            public const string Permissions = "Permissions";
         }
 
         public CswEnumNbtObjectClass PermissionClass { get { return CswEnumNbtObjectClass.InventoryGroupPermissionClass; } }
@@ -47,19 +50,31 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
+
+        public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
+        {
+            _CswNbtObjClassDefault.beforeCreateNode( IsCopy, OverrideUniqueValidation );
+        }//beforeCreateNode()
+
+        public override void afterCreateNode()
+        {
+            _CswNbtObjClassDefault.afterCreateNode();
+        }//afterCreateNode()
+
+
+        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation, bool Creating )
         {
             string OldName = Name.GetOriginalPropRowValue();
             if( string.IsNullOrEmpty( OldName ) && false == IsTemp )
             {
                 CswNbtPropertySetPermission.createDefaultWildcardPermission( _CswNbtResources, PermissionClass, NodeId );
             }
-            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
+            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation, Creating );
         }//beforeWriteNode()
 
-        public override void afterWriteNode()
+        public override void afterWriteNode( bool Creating )
         {
-            _CswNbtObjClassDefault.afterWriteNode();
+            _CswNbtObjClassDefault.afterWriteNode( Creating );
         }//afterWriteNode()
 
         public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
@@ -113,6 +128,9 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropLogical Central { get { return _CswNbtNode.Properties[PropertyName.Central]; } }
         public CswNbtNodePropLogical AutomaticCertificateApproval { get { return _CswNbtNode.Properties[PropertyName.AutomaticCertificateApproval]; } }
         public CswNbtNodePropButton AssignLocation { get { return ( _CswNbtNode.Properties[PropertyName.ManageLocations] ); } }
+        public CswNbtNodePropMemo Description { get { return ( _CswNbtNode.Properties[PropertyName.Description] ); } }
+        public CswNbtNodePropGrid Locations { get { return ( _CswNbtNode.Properties[PropertyName.Locations] ); } }
+        public CswNbtNodePropGrid Permissions { get { return ( _CswNbtNode.Properties[PropertyName.Permissions] ); } }
 
         #endregion
 

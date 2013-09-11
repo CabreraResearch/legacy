@@ -56,9 +56,7 @@
 
                 optsNodeSelect.relatedTo = {};
                 optsNodeSelect.relatedTo.relatednodeid = nodeProperty.tabState.relatednodeid;
-                optsNodeSelect.relatedTo.relatednodetypeid = nodeProperty.tabState.relatednodetypeid;
                 optsNodeSelect.relatedTo.relatednodename = nodeProperty.tabState.relatednodename;
-                optsNodeSelect.relatedTo.relatedobjectclassid = nodeProperty.tabState.relatedobjectclassid;
                 optsNodeSelect.relationshipNodeTypePropId = nodeProperty.propid;
 
                 optsNodeSelect.isRequired = nodeProperty.isRequired();

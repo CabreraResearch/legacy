@@ -1,4 +1,12 @@
-﻿using ChemSW.Audit;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Data;
+using System.Diagnostics;
+using System.IO;
+using System.Threading;
+using System.Windows.Forms;
+using ChemSW.Audit;
 using ChemSW.Config;
 using ChemSW.Core;
 using ChemSW.DB;
@@ -6,6 +14,7 @@ using ChemSW.Exceptions;
 using ChemSW.Log;
 using ChemSW.MtSched.Core;
 using ChemSW.Nbt.Actions;
+using ChemSW.Nbt.ImportExport;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
@@ -14,14 +23,6 @@ using ChemSW.Nbt.Search;
 using ChemSW.Nbt.Security;
 using ChemSW.Nbt.ServiceDrivers;
 using ChemSW.RscAdo;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Data;
-using System.Diagnostics;
-using System.IO;
-using System.Threading;
-using System.Windows.Forms;
 
 
 namespace ChemSW.Nbt.Schema
@@ -57,7 +58,7 @@ namespace ChemSW.Nbt.Schema
             get
             {
                 Int32 ReturnVal = 30000;
-                if ( _CswNbtResources.SetupVbls.doesSettingExist( CswEnumSetupVariableNames.UpdtShellWaitMsec ) )
+                if( _CswNbtResources.SetupVbls.doesSettingExist( CswEnumSetupVariableNames.UpdtShellWaitMsec ) )
                 {
                     ReturnVal = CswConvert.ToInt32( _CswNbtResources.SetupVbls.readSetting( CswEnumSetupVariableNames.UpdtShellWaitMsec ) );
                 }
@@ -216,8 +217,6 @@ namespace ChemSW.Nbt.Schema
         /// <returns></returns>
         public Int32 execArbitraryPlatformNeutralSqlInItsOwnTransaction( string SqlText ) { return ( _CswNbtResources.CswResources.execArbitraryPlatformNeutralSqlInItsOwnTransaction( SqlText ) ); }
 
-
-
         /// <summary>
         /// Executes arbitrary sql.  It's your job to make sure it's platform neutral.
         /// You should *strongly* consider using CswArbitrarySelect, CswTableSelect, or CswTableUpdate instead of this.
@@ -276,6 +275,7 @@ namespace ChemSW.Nbt.Schema
             _CswDdl.removeSequence( SequenceName );
         }
 
+        public bool IsDbLinkConnectionHealthy( string DbLink, ref string ErrorMessage ) { return ( _CswNbtResources.CswResources.IsDbLinkConnectionHealthy( DbLink, ref ErrorMessage ) ); }
 
         public void makeConstraint( string ReferencingTableName, string ReferencingColumnName, string ReferencedTableName, string ReferencedColumnName, bool AddDdData )
         {
@@ -888,18 +888,25 @@ namespace ChemSW.Nbt.Schema
                 //TODO - Come back some day and make this dundant-proof
                 //if we ever have to shift scripts around to accomodate DDL, these helper methods will not be so helpful
                 CswTableUpdate RulesUpdate = makeCswTableUpdate( "SchemaModTrnsctn_ScheduledRuleUpdate", "scheduledrules" );
-                DataTable RuleTable = RulesUpdate.getEmptyTable();
-                DataRow NewRuleRow = RuleTable.NewRow();
-                NewRuleRow["recurrence"] = CswConvert.ToDbVal( Recurrence.ToString() );
-                NewRuleRow["interval"] = CswConvert.ToDbVal( Interval );
-                NewRuleRow["maxruntimems"] = CswConvert.ToDbVal( 300000 );
-                NewRuleRow["reprobatethreshold"] = CswConvert.ToDbVal( 3 );
-                NewRuleRow["disabled"] = CswConvert.ToDbVal( false );
-                NewRuleRow["rulename"] = CswConvert.ToDbVal( RuleName.ToString() );
-                RuleTable.Rows.Add( NewRuleRow );
+                DataTable RuleTable = RulesUpdate.getTable( WhereClause: " where lower(rulename)='" + RuleName.ToString().ToLower() + "' " );
+                if( 0 == RuleTable.Rows.Count )
+                {
+                    DataRow NewRuleRow = RuleTable.NewRow();
+                    NewRuleRow["recurrence"] = CswConvert.ToDbVal( Recurrence.ToString() );
+                    NewRuleRow["interval"] = CswConvert.ToDbVal( Interval );
+                    NewRuleRow["maxruntimems"] = CswConvert.ToDbVal( 300000 );
+                    NewRuleRow["reprobatethreshold"] = CswConvert.ToDbVal( 3 );
+                    NewRuleRow["disabled"] = CswConvert.ToDbVal( false );
+                    NewRuleRow["rulename"] = CswConvert.ToDbVal( RuleName.ToString() );
+                    RuleTable.Rows.Add( NewRuleRow );
 
-                RetRuleId = CswConvert.ToInt32( NewRuleRow["scheduledruleid"] );
-                RulesUpdate.update( RuleTable );
+                    RetRuleId = CswConvert.ToInt32( NewRuleRow["scheduledruleid"] );
+                    RulesUpdate.update( RuleTable );
+                }
+                else
+                {
+                    this.logError( "Scheduled Rule name {" + RuleName + "} already exists." );
+                }
             }
             return RetRuleId;
         }
@@ -924,6 +931,9 @@ namespace ChemSW.Nbt.Schema
                 NewOCRow["iconfilename"] = IconFileName;
                 NewOCRow["auditlevel"] = CswConvert.ToDbVal( AuditLevel );
                 NewOCRow["nodecount"] = 0;
+
+                NewOCRow["oraviewname"] = CswTools.MakeOracleCompliantIdentifier( ObjectClass.ToString() );
+
                 NewObjectClassTable.Rows.Add( NewOCRow );
                 Int32 NewObjectClassId = CswConvert.ToInt32( NewOCRow["objectclassid"] );
                 ObjectClassTableUpdate.update( NewObjectClassTable );
@@ -1324,6 +1334,9 @@ namespace ChemSW.Nbt.Schema
             OCPRow[CswEnumNbtObjectClassPropAttributes.filter.ToString()] = OcpModel.Filter;
             OCPRow[CswEnumNbtObjectClassPropAttributes.filterpropid.ToString()] = CswConvert.ToDbVal( OcpModel.FilterPropId );
             OCPRow[CswEnumNbtObjectClassPropAttributes.auditlevel.ToString()] = CswConvert.ToDbVal( OcpModel.AuditLevel );
+
+            OCPRow["oraviewcolname"] = CswTools.MakeOracleCompliantIdentifier( OcpModel.PropName );
+
             ObjectClassPropsTable.Rows.Add( OCPRow );
         }
 
@@ -1576,10 +1589,10 @@ namespace ChemSW.Nbt.Schema
 
         public void getNextSchemaDumpFileInfo( ref string PhysicalDirectoryPath, ref string NameOfCurrentDump )
         {
-            if ( _CswNbtResources.SetupVbls.doesSettingExist( CswEnumSetupVariableNames.DumpFileDirectoryId ) )
+            if( _CswNbtResources.SetupVbls.doesSettingExist( CswEnumSetupVariableNames.DumpFileDirectoryId ) )
             {
                 string StatusMsg = string.Empty;
-                if ( false == _CswNbtResources.getNextSchemaDumpFileInfo( _CswNbtResources.SetupVbls[CswEnumSetupVariableNames.DumpFileDirectoryId], ref PhysicalDirectoryPath, ref NameOfCurrentDump, ref StatusMsg ) )
+                if( false == _CswNbtResources.getNextSchemaDumpFileInfo( _CswNbtResources.SetupVbls[CswEnumSetupVariableNames.DumpFileDirectoryId], ref PhysicalDirectoryPath, ref NameOfCurrentDump, ref StatusMsg ) )
                 {
                     throw ( new CswDniException( "Unable to take retrieve dump file information: " + StatusMsg ) );
                 }
@@ -1593,9 +1606,9 @@ namespace ChemSW.Nbt.Schema
 
         public void takeADump( ref string DumpFileName, ref string StatusMessage )
         {
-            if ( _CswNbtResources.SetupVbls.doesSettingExist( CswEnumSetupVariableNames.DumpFileDirectoryId ) )
+            if( _CswNbtResources.SetupVbls.doesSettingExist( CswEnumSetupVariableNames.DumpFileDirectoryId ) )
             {
-                if ( false == _CswNbtResources.takeADump( _CswNbtResources.SetupVbls[CswEnumSetupVariableNames.DumpFileDirectoryId], ref DumpFileName, ref StatusMessage ) )
+                if( false == _CswNbtResources.takeADump( _CswNbtResources.SetupVbls[CswEnumSetupVariableNames.DumpFileDirectoryId], ref DumpFileName, ref StatusMessage ) )
                 {
                     throw ( new CswDniException( "Unable to take a dump: " + StatusMessage ) );
                 }
@@ -1742,6 +1755,11 @@ namespace ChemSW.Nbt.Schema
         //    return( _search.Results() ); 
 
         //}//doSearch()
+
+        public CswNbtImporter makeCswNbtImporter()
+        {
+            return new CswNbtImporter( _CswNbtResources );
+        }
 
 
     }//class CswNbtSchemaModTrnsctn

@@ -88,10 +88,15 @@ namespace ChemSW.Nbt.UnitsOfMeasure
         /// <summary>
         /// Build a Unit View for a Quantity property using a PhysicalState
         /// </summary>
-        public CswNbtView getQuantityUnitOfMeasureView( string PhysicalState )
+        public CswNbtView getQuantityUnitOfMeasureView( string PhysicalState, CswNbtNodePropQuantity Size = null )
         {
-            CswNbtView Ret = new CswNbtView( _CswNbtResources );
+            CswNbtView Ret = Size == null ? new CswNbtView( _CswNbtResources ) : Size.View;
+            Ret.Root.ChildRelationships.Clear();
             _populateUnitViewRelationships( Ret, PhysicalState, false );
+            if( null != Size )
+            {
+                Size.View.save();
+            }
             return Ret;
         }
 

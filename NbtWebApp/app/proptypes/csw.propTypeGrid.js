@@ -108,7 +108,7 @@
 
                 cswPrivate.makeSmallGrid = function() {
                     'use strict';
-                    var smallAjax = Csw.ajax.post({
+                    var smallAjax = Csw.ajax.deprecatedWsNbt({
                         urlMethod: 'getThinGrid',
                         data: {
                             ViewId: cswPrivate.viewid,
@@ -138,7 +138,7 @@
 
                 cswPrivate.makeLinkGrid = function() {
                     'use strict';
-                    var linkAjax = Csw.ajax.post({
+                    var linkAjax = Csw.ajax.deprecatedWsNbt({
                         urlMethod: 'getGridRowCount',
                         data: {
                             ViewId: cswPrivate.viewid,

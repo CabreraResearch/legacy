@@ -13,7 +13,6 @@
                 locationobjectclassid: '',
                 locationnodetypeids: [],
                 relatedmatch: false,
-                relatedobjectclassid: '',
                 nodeid: '',
                 viewid: '',
                 selectedName: '',
@@ -37,11 +36,61 @@
 
                 //#region init ctor
                 (function _pre() {
+                    var render = function () {
+                        cswParent.empty();
+
+                        cswPrivate.relatedmatch = (cswPrivate.relatedobjectclassid === cswPrivate.locationobjectclassid);
+                        if (cswPrivate.relatedmatch) {
+                            cswPrivate.nodeid = Csw.string(cswPrivate.relatednodeid, cswPrivate.nodeid).trim();
+                            cswPrivate.name = Csw.string(cswPrivate.relatednodename, cswPrivate.name).trim();
+                            cswPrivate.path = Csw.string(cswPrivate.relatednodename, cswPrivate.path).trim();
+                        } else {
+                            cswPrivate.nodeid = Csw.string(cswPrivate.nodeid).trim();
+                            cswPrivate.name = Csw.string(cswPrivate.name).trim();
+                            cswPrivate.path = Csw.string(cswPrivate.path).trim();
+                        }
+                        cswPrivate.viewid = Csw.string(cswPrivate.viewid).trim();
+                        cswPrivate.value = cswPrivate.nodeid;
+                        cswPublic.table = cswParent.table({ TableCssClass: 'cswInline' });
+
+                        cswPrivate.pathCell = cswPublic.table.cell(1, 1);
+                        cswPrivate.selectCell = cswPublic.table.cell(1, 2);
+                        cswPrivate.editCell = cswPublic.table.cell(1, 3);
+                        cswPrivate.previewCell = cswPublic.table.cell(1, 4);
+                        cswPrivate.validateCell = cswPublic.table.cell(1, 5);
+
+                        if (cswPrivate.isRequired) {
+                            cswPrivate.checkBox = cswPrivate.validateCell.div().input().hide();
+                            cswPrivate.checkBox.required(true);
+                            cswPrivate.checkBox.addClass('validateLocation');
+                            if (false === Csw.isNullOrEmpty(cswPrivate.nodeid)) {
+                                cswPrivate.checkBox.val(true);
+                            } else {
+                                cswPrivate.checkBox.val(false);
+                            }
+                            $.validator.addMethod('validateLocation', function () {
+                                return Csw.bool(cswPrivate.checkBox.val());
+                            }, 'Location is required.');
+
+                        }
+
+                        cswPrivate.pathCell.text(cswPrivate.path);
+
+                        cswPrivate.selectDiv = cswPrivate.selectCell.div({
+                            cssclass: 'locationselect',
+                            value: cswPrivate.nodeid,
+                            onChange: function () {
+                                cswPrivate.selectDiv.val();
+                            }
+                        });
+                        cswPrivate.selectCell.hide();
+                    }; //render()
+
                     Csw.extend(cswPrivate, options, true);
+                    cswPrivate.ready = Csw.promises.all();
                     if (Csw.isNullOrEmpty(cswPrivate.viewid)) {
-                        Csw.ajax.post({
+                        cswPrivate.ready.push(Csw.ajax.deprecatedWsNbt({
                             urlMethod: 'getLocationView',
-                            async: false,
                             data: {
                                 NodeId: Csw.string(cswPrivate.nodeid)
                             },
@@ -49,61 +98,14 @@
                                 cswPrivate.viewid = data.viewid;
                                 cswPrivate.nodeid = data.nodeid;
                                 cswPrivate.path = data.path;
+                                render();
                             }
-                        });
-                    }
-                    cswParent.empty();
-
-                    cswPrivate.relatedmatch = (cswPrivate.relatedobjectclassid === cswPrivate.locationobjectclassid);
-                    Csw.each(cswPrivate.locationnodetypeids, function (thisNTid) {
-                        cswPrivate.relatedmatch = (cswPrivate.relatedmatch || thisNTid === cswPrivate.relatednodetypeid);
-                    });
-
-                    if (cswPrivate.relatedmatch) {
-                        cswPrivate.nodeid = Csw.string(cswPrivate.relatednodeid, cswPrivate.nodeid).trim();
-                        cswPrivate.name = Csw.string(cswPrivate.relatednodename, cswPrivate.name).trim();
-                        cswPrivate.path = Csw.string(cswPrivate.relatednodename, cswPrivate.path).trim();
+                        }));
                     } else {
-                        cswPrivate.nodeid = Csw.string(cswPrivate.nodeid).trim();
-                        cswPrivate.name = Csw.string(cswPrivate.name).trim();
-                        cswPrivate.path = Csw.string(cswPrivate.path).trim();
-                    }
-                    cswPrivate.viewid = Csw.string(cswPrivate.viewid).trim();
-                    cswPrivate.value = cswPrivate.nodeid;
-                    cswPublic.table = cswParent.table({ TableCssClass: 'cswInline' });
-
-                    cswPrivate.pathCell = cswPublic.table.cell(1, 1);
-                    cswPrivate.selectCell = cswPublic.table.cell(1, 2);
-                    cswPrivate.editCell = cswPublic.table.cell(1, 3);
-                    cswPrivate.previewCell = cswPublic.table.cell(1, 4);
-                    cswPrivate.validateCell = cswPublic.table.cell(1, 5);
-
-                    if (cswPrivate.isRequired) {
-                        cswPrivate.checkBox = cswPrivate.validateCell.div().input().hide();
-                        cswPrivate.checkBox.required(true);
-                        cswPrivate.checkBox.addClass('validateLocation');
-                        if (false === Csw.isNullOrEmpty(cswPrivate.nodeid)) {
-                            cswPrivate.checkBox.val(true);
-                        } else {
-                            cswPrivate.checkBox.val(false);
-                        }
-                        $.validator.addMethod('validateLocation', function () {
-                            return Csw.bool(cswPrivate.checkBox.val());
-                        }, 'Location is required.');
-
+                        render();
                     }
 
-                    cswPrivate.pathCell.text(cswPrivate.path);
-
-                    cswPrivate.selectDiv = cswPrivate.selectCell.div({
-                        cssclass: 'locationselect',
-                        value: cswPrivate.nodeid,
-                        onChange: function () {
-                            cswPrivate.selectDiv.val();
-                        }
-                    });
-                    cswPrivate.selectCell.hide();
-                } ());
+                }());
                 //#endregion init ctor
 
                 //#region cswPrivate/cswPublic methods and props
@@ -156,10 +158,10 @@
                             };
                         })()
                     });
-                    
+
                     cswPublic.locationTree = Csw.nbt.nodeTreeExt(cswPublic.comboBox.pickList, {
                         name: cswPrivate.name,
-                        onBeforeSelectNode: function(treeNode) {
+                        onBeforeSelectNode: function (treeNode) {
                             var ret = true;
                             if (cswPrivate.isRequired) {
                                 if (!treeNode.raw || Csw.isNullOrEmpty(treeNode.raw.nodeid)) {
@@ -172,7 +174,7 @@
                             }
                             return ret;
                         },
-                        onSelectNode: function(node) {
+                        onSelectNode: function (node) {
                             Csw.tryExec(cswPrivate.onTreeSelect, node);
                         },
                         showToggleLink: false,
@@ -195,33 +197,35 @@
 
                 //#region final ctor
                 (function _post() {
-                    if (false === cswPrivate.ReadOnly) {
-                        if (cswPrivate.EditMode === Csw.enums.editMode.Add) {
-                            cswPrivate.makeLocationCombo();
-                        } else {
-                            cswPrivate.editCell.icon({
-                                name: cswPrivate.name + '_toggle',
-                                iconType: Csw.enums.iconType.pencil,
-                                hovertext: 'Edit',
-                                size: 16,
-                                isButton: true,
-                                onClick: cswPrivate.makeLocationCombo
-                            }); // imageButton
-                        }
+                    cswPrivate.ready.then(function() {
+                        if (false === cswPrivate.ReadOnly) {
+                            if (cswPrivate.EditMode === Csw.enums.editMode.Add) {
+                                cswPrivate.makeLocationCombo();
+                            } else {
+                                cswPrivate.editCell.icon({
+                                    name: cswPrivate.name + '_toggle',
+                                    iconType: Csw.enums.iconType.pencil,
+                                    hovertext: 'Edit',
+                                    size: 16,
+                                    isButton: true,
+                                    onClick: cswPrivate.makeLocationCombo
+                                }); // imageButton
+                            }
 
-                        cswPrivate.previewCell.css({ width: '24px' });
-                        cswParent.$.hover(function (event) {
-                            Csw.nodeHoverIn(event, {
-                                nodeid: cswPrivate.value,
-                                nodename: cswPrivate.selectedName,
-                                parentDiv: cswPrivate.previewCell,
-                                useAbsolutePosition: false,
-                                rightpad: 0
-                            });
-                        },
-                        function (event) { Csw.nodeHoverOut(event, cswPrivate.value); });
-                    }
-                } ());
+                            cswPrivate.previewCell.css({ width: '24px' });
+                            cswParent.$.hover(function(event) {
+                                Csw.nodeHoverIn(event, {
+                                    nodeid: cswPrivate.value,
+                                    nodename: cswPrivate.selectedName,
+                                    parentDiv: cswPrivate.previewCell,
+                                    useAbsolutePosition: false,
+                                    rightpad: 0
+                                });
+                            },
+                                function(event) { Csw.nodeHoverOut(event, cswPrivate.value); });
+                        }
+                    });
+                }());
                 //#region final ctor
 
             });
@@ -230,6 +234,6 @@
             return cswPublic;
         });
 
-} ());
+}());
 
 

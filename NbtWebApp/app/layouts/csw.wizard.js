@@ -92,7 +92,7 @@
 
                 /* Title Cell */
                 cswPublic.table.cell(1, 1).text(cswPrivate.Title)
-                    .propDom('colspan', 2)
+                    .propDom('colspan', 3)
                     .addClass('CswWizard_TitleCell');
 
                 indexCell = cswPublic.table.cell(2, 1)
@@ -101,6 +101,10 @@
 
                 stepsCell = cswPublic.table.cell(2, 2)
                     .addClass('CswWizard_StepsCell');
+
+                cswPrivate.staticCell = cswPublic.table.cell(2, 3);
+                cswPrivate.staticCell.css({ 'background-color': '#ddeeff' });
+                cswPrivate.staticDiv = cswPrivate.staticCell.div();
 
                 for (s = 1; s <= cswPrivate.StepCount; s += 1) {
                     steptitle = cswPrivate.Steps[s];
@@ -117,14 +121,15 @@
                     cswPrivate.stepDivs[s] = cswPrivate.stepRootSpans[s].div({ suffix: s + '_content' });
                 }
 
-                cswPrivate.btnGroup = cswPublic.table.cell(3, 1).buttonGroup({
+                cswPrivate.btnGroupCell = cswPublic.table.cell(3, 1).propDom('colspan', 3);
+                cswPrivate.btnGroup = cswPrivate.btnGroupCell.buttonGroup({
                     buttons: {
                         previous: {
                             onclick: function () {
                                 var currentStepNo = cswPrivate.getCurrentStepNo();
                                 var priorStepNo = currentStepNo - 1;
                                 if (false === cswPrivate.onBeforePrevious || Csw.tryExec(cswPrivate.onBeforePrevious, currentStepNo)) {
-                                    while (cswPrivate.stepDivLinks[priorStepNo].$.is(':hidden') && priorStepNo > cswPrivate.StartingStep ) {
+                                    while (cswPrivate.stepDivLinks[priorStepNo].$.is(':hidden') && priorStepNo > cswPrivate.StartingStep) {
                                         priorStepNo--;
                                     }
                                     cswPrivate.selectStep(priorStepNo);
@@ -138,7 +143,7 @@
                                     var currentStepNo = cswPrivate.getCurrentStepNo();
                                     var nextStepNo = currentStepNo + 1;
                                     if (false === cswPrivate.onBeforeNext || Csw.tryExec(cswPrivate.onBeforeNext, currentStepNo)) {
-                                        while (cswPrivate.stepDivLinks[nextStepNo].$.is(':hidden') && nextStepNo < cswPrivate.StepCount ) {
+                                        while (cswPrivate.stepDivLinks[nextStepNo].$.is(':hidden') && nextStepNo < cswPrivate.StepCount) {
                                             nextStepNo++;
                                         }
                                         cswPrivate.selectStep(nextStepNo);
@@ -169,7 +174,7 @@
                     Csw.tryExec(cswPrivate.onNext, cswPrivate.SelectedStep);
                 }
 
-            } ());
+            }());
 
             cswPublic.div = function (stepno) {
                 var ret = null;
@@ -196,7 +201,28 @@
                 }
             };
 
+            cswPublic.staticDiv = function () {
+                cswPrivate.staticDiv.css({
+                    'border': '1px solid #99ccff',
+                    'padding': '10px',
+                    'height': '360px',
+                    'margin': '10px 10px 0px 0px',
+                    'background': '#ffffff',
+                    'overflow': 'auto'
+                });
+                return cswPrivate.staticDiv;
+            };
+
+            cswPublic.hideStaticDiv = function() {
+                cswPrivate.staticDiv.css({
+                    'border': 'transparent',
+                    'padding': '0px',
+                    'margin': '0px 0px 0px 0px',
+                    'background': '#ffffff',
+                });
+            };
+
             return cswPublic;
         });
-} ());
+}());
 

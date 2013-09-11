@@ -15,7 +15,6 @@
                     PropsUrlMethod: 'getProps',
                     MovePropUrlMethod: 'moveProp',
                     RemovePropUrlMethod: 'removeProp',
-                    SavePropUrlMethod: 'saveProps',
                     CopyPropValuesUrlMethod: 'copyPropValues',
                     NodePreviewUrlMethod: 'getNodePreview'
                 },
@@ -40,8 +39,6 @@
                     showSaveButton: true,
                     relatednodeid: '',
                     relatednodename: '',
-                    relatednodetypeid: '',
-                    relatedobjectclassid: '',
                     tabNo: 0,
                     nodetypeid: 0,
                     objectClassId: 0
@@ -73,8 +70,8 @@
                 nodeTreeCheck: null,
                 onEditView: null,
                 onAfterButtonClick: null,
-                async: true, 
-                forceReadOnly: false
+                forceReadOnly: false,
+                checkQuota: true
             };
             var cswPublic = {};
 
@@ -267,21 +264,18 @@
             };
 
             cswPrivate.makeIdentityTab = function () {
-                cswPrivate.ajax.tabs = Csw.ajax.post({
+                cswPrivate.ajax.tabs = Csw.ajax.deprecatedWsNbt({
                     watchGlobal: cswPrivate.AjaxWatchGlobal,
                     urlMethod: 'getIdentityTabProps',
                     data: {
                         EditMode: cswPrivate.tabState.EditMode,
                         NodeId: cswPublic.getNodeId(),
                         SafeNodeKey: cswPublic.getNodeKey(),
-                        //NodeTypeId: Csw.string(cswPrivate.tabState.nodetypeid),
                         Date: Csw.string(cswPrivate.tabState.date, new Date().toDateString()),
                         Multi: Csw.bool(cswPrivate.tabState.Multi),
                         filterToPropId: Csw.string(cswPrivate.tabState.filterToPropId),
                         ConfigMode: cswPrivate.tabState.Config,
-                        RelatedNodeId: Csw.string(cswPrivate.tabState.relatednodeid),
-                        RelatedNodeTypeId: Csw.string(cswPrivate.tabState.relatednodetypeid),
-                        RelatedObjectClassId: Csw.string(cswPrivate.tabState.relatedobjectclassid)
+                        RelatedNodeId: Csw.string(cswPrivate.tabState.relatednodeid)
                     },
                     success: function (data) {
                         cswPrivate.IdentityTab = data.properties;
@@ -375,7 +369,7 @@
 
                 } else {
 
-                    cswPrivate.ajax.tabs = Csw.ajax.post({
+                    cswPrivate.ajax.tabs = Csw.ajax.deprecatedWsNbt({
                         watchGlobal: cswPrivate.AjaxWatchGlobal,
                         urlMethod: cswPrivate.urls.TabsUrlMethod,
                         data: {
@@ -499,13 +493,16 @@
 
             //#region Validator
 
-
             cswPublic.validator = function() {
                 return cswPrivate.form.validator;
             };
 
             cswPublic.isFormValid = function () {
-                return cswPrivate.form.isFormValid() && cswPrivate.identityForm.isFormValid();
+                return cswPrivate.isInDom() && cswPrivate.form.isFormValid() && cswPrivate.identityForm.isFormValid();
+            };
+
+            cswPrivate.isInDom = function() {
+                return cswParent && cswParent[0] && cswParent[0].id && Csw.isElementInDom(cswParent[0].id);
             };
 
             //#endregion Validator
@@ -645,7 +642,7 @@
             cswPrivate.onRemove = function (tabid, onRemoveData) {
                 'use strict';
                 var propid = onRemoveData.cellSet[1][1].data('propId');
-                cswPrivate.ajax.layoutRemove = Csw.ajax.post({
+                cswPrivate.ajax.layoutRemove = Csw.ajax.deprecatedWsNbt({
                     watchGlobal: cswPrivate.AjaxWatchGlobal,
                     urlMethod: cswPrivate.urls.RemovePropUrlMethod,
                     data: { PropId: propid, EditMode: cswPrivate.tabState.EditMode, TabId: tabid },
@@ -687,7 +684,7 @@
                         EditMode: cswPrivate.tabState.EditMode
                     };
 
-                    cswPrivate.ajax.layoutMove = Csw.ajax.post({
+                    cswPrivate.ajax.layoutMove = Csw.ajax.deprecatedWsNbt({
                         watchGlobal: cswPrivate.AjaxWatchGlobal,
                         urlMethod: cswPrivate.urls.MovePropUrlMethod,
                         data: dataJson
@@ -757,7 +754,9 @@
                 'use strict';
 
                 cswPrivate.onTearDownProps();
-                if (cswPrivate.tabState.EditMode === Csw.enums.editMode.Add && cswPrivate.tabState.Config === false) {
+                if (cswPrivate.tabState.EditMode === Csw.enums.editMode.Add &&
+                    cswPrivate.tabState.Config === false &&
+                    cswPrivate.checkQuota) {
                     // case 20970 - make sure there's room in the quota
                     cswPrivate.ajax.props = Csw.ajaxWcf.post({
                         watchGlobal: cswPrivate.AjaxWatchGlobal,
@@ -895,20 +894,14 @@
                         cswPrivate.toggleConfigIcon(false === cswPrivate.isMultiEdit());
                     }
 
-                    /* case 8494 */
-                    //if (!cswPrivate.tabState.Config && !cswPrivate.atLeastOne.Saveable && cswPrivate.tabState.EditMode === Csw.enums.editMode.Add) {
-
-                    //    cswPublic.save(tabid);
-                    //} else {
-                        Csw.tryExec(cswPrivate.onInitFinish, cswPrivate.atLeastOne.Property);
-                        Csw.tryExec(onSuccess);
-                    //}
+                    Csw.tryExec(cswPrivate.onInitFinish, cswPrivate.atLeastOne.Property);
+                    Csw.tryExec(onSuccess);
                 }
 
                 if (cswPrivate.tabState.Config || // case 28274 - always refresh prop data if in config mode
                     Csw.isNullOrEmpty(cswPrivate.tabState.propertyData)) {
 
-                    cswPrivate.ajax.propsImpl = Csw.ajax.post({
+                    cswPrivate.ajax.propsImpl = Csw.ajax.deprecatedWsNbt({
                         watchGlobal: cswPrivate.AjaxWatchGlobal,
                         urlMethod: cswPrivate.urls.PropsUrlMethod,
                         data: {
@@ -922,8 +915,6 @@
                             filterToPropId: Csw.string(cswPrivate.tabState.filterToPropId),
                             ConfigMode: cswPrivate.tabState.Config,
                             RelatedNodeId: Csw.string(cswPrivate.tabState.relatednodeid),
-                            RelatedNodeTypeId: Csw.string(cswPrivate.tabState.relatednodetypeid),
-                            RelatedObjectClassId: Csw.string(cswPrivate.tabState.relatedobjectclassid),
                             GetIdentityTab: Csw.bool(Csw.isNullOrEmpty(cswPrivate.IdentityTab)),
                             ForceReadOnly: cswPrivate.forceReadOnly 
                         },
@@ -1153,7 +1144,7 @@
                             NewPropJson: JSON.stringify(singlePropData)
                         };
 
-                        cswPrivate.ajax.subProps = Csw.ajax.post({
+                        cswPrivate.ajax.subProps = Csw.ajax.deprecatedWsNbt({
                             watchGlobal: cswPrivate.AjaxWatchGlobal,
                             urlMethod: cswPrivate.urls.SinglePropUrlMethod,
                             data: jsonData,
@@ -1178,14 +1169,18 @@
             cswPublic.refresh = function (propData, refreshData) {
                 Csw.publish('onAnyNodeButtonClickFinish', true);
                 Csw.tryExec(cswPrivate.onSave, cswPublic.getNodeId(), cswPublic.getNodeKey(), cswPrivate.tabcnt, cswPrivate.tabState.nodename, cswPrivate.tabState.nodelink);
-                if (refreshData) {
-                    cswPrivate.onTearDownProps();
-                    Csw.tryExec(cswPrivate.Refresh, refreshData);
-                }
-                if (propData) {
-                    cswPrivate.onTearDownProps();
-                    cswPrivate.tabState.propertyData = propData;
-                    cswPrivate.getPropsImpl(cswPrivate.tabState.tabid);
+                if (cswPrivate.isInDom()) {
+                    if (refreshData) {
+                        cswPrivate.onTearDownProps();
+                        Csw.tryExec(cswPrivate.Refresh, refreshData);
+                    }
+                    if (propData) {
+                        cswPrivate.onTearDownProps();
+                        cswPrivate.tabState.propertyData = propData;
+                        cswPrivate.getPropsImpl(cswPrivate.tabState.tabid);
+                    }
+                } else {
+                    cswPrivate.onTearDown();
                 }
             };
 

@@ -358,7 +358,6 @@
 
 
                                 Csw.ajaxWcf.post({
-                                    async: false,
                                     urlMethod: 'ChemCatCentral/importProduct',
                                     data: {
                                         C3ProductId: nodeObj.c3productid,
@@ -634,7 +633,7 @@
                     cswPrivate.HandleTableData();
                     Csw.tryExec(onAfterInit);
                 } else {
-                    Csw.ajax.post({
+                    Csw.ajax.deprecatedWsNbt({
                         urlMethod: 'getTableView',
                         data: {
                             ViewId: cswPrivate.viewid,

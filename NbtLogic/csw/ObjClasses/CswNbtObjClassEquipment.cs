@@ -15,6 +15,35 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Status = "Status";
             public const string EquipmentId = "Equipment Id";
             public const string Location = "Location";
+            public const string Condition = "Condition";
+            public const string ContractNo = "Contract No";
+            public const string Department = "Department";
+            public const string Description = "Description";
+            public const string Documents = "Documents";
+            public const string HasServiceContract = "Has Service Contract";
+            public const string MTBF = "MTBF";
+            public const string ManualStoredAt = "Manual Stored At";
+            public const string Manufacturer = "Manufacturer";
+            public const string Model = "Model";
+            public const string Notes = "Notes";
+            public const string OutOn = "Out On";
+            public const string Picture = "Picture";
+            public const string Problem = "Problem";
+            public const string PropertyNo = "Property No";
+            public const string Purchased = "Purchased";
+            public const string Received = "Received";
+            public const string Responsible = "Responsible";
+            public const string Schedule = "Schedule";
+            public const string SerialNo = "Serial No";
+            public const string ServiceCost = "Service Cost";
+            public const string ServiceEndsOn = "Service Ends On";
+            public const string ServicePhone = "Service Phone";
+            public const string ServiceVendor = "Service Vendor";
+            public const string StartingCost = "Starting Cost";
+            public const string Task = "Task";
+            public const string User = "User";
+            public const string UserPhone = "User Phone";
+            public const string Vendor = "Vendor";
         }
 
         public static string PartsXValueName { get { return "Uses"; } }
@@ -47,14 +76,25 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
+        public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
         {
-            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
+            _CswNbtObjClassDefault.beforeCreateNode( IsCopy, OverrideUniqueValidation );
+        }//beforeCreateNode()
+
+        public override void afterCreateNode()
+        {
+            _CswNbtObjClassDefault.afterCreateNode();
+        }//afterCreateNode()
+
+
+        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation, bool Creating )
+        {
+            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation, Creating );
         }//beforeWriteNode()
 
-        public override void afterWriteNode()
+        public override void afterWriteNode( bool Creating )
         {
-            _CswNbtObjClassDefault.afterWriteNode();
+            _CswNbtObjClassDefault.afterWriteNode( Creating );
         }//afterWriteNode()
 
         public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
@@ -108,10 +148,11 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtNode CopyNode()
         {
-            CswNbtNode CopiedEquipmentNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswEnumNbtMakeNodeOperation.DoNothing );
-            CopiedEquipmentNode.copyPropertyValues( Node );
-            CopiedEquipmentNode.postChanges( true, true );
-
+            CswNbtNode CopiedEquipmentNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, delegate( CswNbtNode NewNode )
+                {
+                    NewNode.copyPropertyValues( Node );
+                    //CopiedEquipmentNode.postChanges( true, true );
+                } );
             // Copy all Generators
             CswNbtMetaDataObjectClass GeneratorObjectClass = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.GeneratorClass );
             CswNbtView GeneratorView = new CswNbtView( _CswNbtResources );
@@ -130,10 +171,12 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 GeneratorTree.goToNthChild( c );
                 CswNbtNode OriginalGeneratorNode = GeneratorTree.getNodeForCurrentPosition();
-                CswNbtNode CopiedGeneratorNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( OriginalGeneratorNode.NodeTypeId, CswEnumNbtMakeNodeOperation.DoNothing );
-                CopiedGeneratorNode.copyPropertyValues( OriginalGeneratorNode );
-                ( (CswNbtObjClassGenerator) CopiedGeneratorNode ).Owner.RelatedNodeId = CopiedEquipmentNode.NodeId;
-                CopiedGeneratorNode.postChanges( true, true );
+                _CswNbtResources.Nodes.makeNodeFromNodeTypeId( OriginalGeneratorNode.NodeTypeId, delegate( CswNbtNode NewNode )
+                    {
+                        NewNode.copyPropertyValues( OriginalGeneratorNode );
+                        ( (CswNbtObjClassGenerator) NewNode ).Owner.RelatedNodeId = CopiedEquipmentNode.NodeId;
+                        //CopiedGeneratorNode.postChanges( true, true );
+                    } );
                 GeneratorTree.goToParentNode();
                 c++;
             }
@@ -145,16 +188,43 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Object class specific properties
 
-
         public CswNbtNodePropRelationship Assembly { get { return ( _CswNbtNode.Properties[PropertyName.Assembly] ); } }
         public CswNbtNodePropRelationship Type { get { return ( _CswNbtNode.Properties[PropertyName.Type] ); } }
         public CswNbtNodePropLogicalSet Parts { get { return ( _CswNbtNode.Properties[PropertyName.Parts] ); } }
         public CswNbtNodePropList Status { get { return ( _CswNbtNode.Properties[PropertyName.Status] ); } }
         public CswNbtNodePropBarcode EquipmentId { get { return ( _CswNbtNode.Properties[PropertyName.EquipmentId] ); } }
         public CswNbtNodePropLocation Location { get { return ( _CswNbtNode.Properties[PropertyName.Location] ); } }
+        public CswNbtNodePropList Condition { get { return ( _CswNbtNode.Properties[PropertyName.Condition] ); } }
+        public CswNbtNodePropText ContractNo { get { return ( _CswNbtNode.Properties[PropertyName.ContractNo] ); } }
+        public CswNbtNodePropRelationship Department { get { return ( _CswNbtNode.Properties[PropertyName.Department] ); } }
+        public CswNbtNodePropMemo Description { get { return ( _CswNbtNode.Properties[PropertyName.Description] ); } }
+        public CswNbtNodePropGrid Documents { get { return ( _CswNbtNode.Properties[PropertyName.Documents] ); } }
+        public CswNbtNodePropLogical HasServiceContract { get { return ( _CswNbtNode.Properties[PropertyName.HasServiceContract] ); } }
+        public CswNbtNodePropMTBF MTBF { get { return ( _CswNbtNode.Properties[PropertyName.MTBF] ); } }
+        public CswNbtNodePropText ManualStoredAt { get { return ( _CswNbtNode.Properties[PropertyName.ManualStoredAt] ); } }
+        public CswNbtNodePropText Manufacturer { get { return ( _CswNbtNode.Properties[PropertyName.Manufacturer] ); } }
+        public CswNbtNodePropText Model { get { return ( _CswNbtNode.Properties[PropertyName.Model] ); } }
+        public CswNbtNodePropMemo Notes { get { return ( _CswNbtNode.Properties[PropertyName.Notes] ); } }
+        public CswNbtNodePropDateTime OutOn { get { return ( _CswNbtNode.Properties[PropertyName.OutOn] ); } }
+        public CswNbtNodePropText Picture { get { return ( _CswNbtNode.Properties[PropertyName.Picture] ); } }
+        public CswNbtNodePropGrid Problem { get { return ( _CswNbtNode.Properties[PropertyName.Problem] ); } }
+        public CswNbtNodePropText PropertyNo { get { return ( _CswNbtNode.Properties[PropertyName.PropertyNo] ); } }
+        public CswNbtNodePropDateTime Purchased { get { return ( _CswNbtNode.Properties[PropertyName.Purchased] ); } }
+        public CswNbtNodePropDateTime Received { get { return ( _CswNbtNode.Properties[PropertyName.Received] ); } }
+        public CswNbtNodePropText Responsible { get { return ( _CswNbtNode.Properties[PropertyName.Responsible] ); } }
+        public CswNbtNodePropGrid Schedule { get { return ( _CswNbtNode.Properties[PropertyName.Schedule] ); } }
+        public CswNbtNodePropText SerialNo { get { return ( _CswNbtNode.Properties[PropertyName.SerialNo] ); } }
+        public CswNbtNodePropText ServiceCost { get { return ( _CswNbtNode.Properties[PropertyName.ServiceCost] ); } }
+        public CswNbtNodePropDateTime ServiceEndsOn { get { return ( _CswNbtNode.Properties[PropertyName.ServiceEndsOn] ); } }
+        public CswNbtNodePropText ServicePhone { get { return ( _CswNbtNode.Properties[PropertyName.ServicePhone] ); } }
+        public CswNbtNodePropRelationship ServiceVendor { get { return ( _CswNbtNode.Properties[PropertyName.ServiceVendor] ); } }
+        public CswNbtNodePropText StartingCost { get { return ( _CswNbtNode.Properties[PropertyName.StartingCost] ); } }
+        public CswNbtNodePropGrid Task { get { return ( _CswNbtNode.Properties[PropertyName.Task] ); } }
+        public CswNbtNodePropRelationship User { get { return ( _CswNbtNode.Properties[PropertyName.User] ); } }
+        public CswNbtNodePropPropertyReference UserPhone { get { return ( _CswNbtNode.Properties[PropertyName.UserPhone] ); } }
+        public CswNbtNodePropRelationship Vendor { get { return ( _CswNbtNode.Properties[PropertyName.Vendor] ); } }
 
         #endregion
-
 
         public void SyncEquipmentToAssembly()
         {
@@ -210,6 +280,23 @@ namespace ChemSW.Nbt.ObjClasses
                 }
             }
         } // SynchEquipmentToAssembly()
+
+        public void TransferEquipment( CswNbtObjClassUser NewUser )
+        {
+            Location.SelectedNodeId = NewUser.DefaultLocationId;
+            Location.SyncGestalt();
+            Location.RefreshNodeName();
+
+            UpdateOwner( NewUser );
+        }
+
+        public void UpdateOwner( CswNbtObjClassUser NewUser )
+        {
+            User.RelatedNodeId = NewUser.NodeId;
+            User.RefreshNodeName();
+            User.SyncGestalt();
+        }
+
     }//CswNbtObjClassEquipment
 
 }//namespace ChemSW.Nbt.ObjClasses

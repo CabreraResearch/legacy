@@ -18,6 +18,7 @@ namespace ChemSW.Nbt.csw.Dev
                                                                        { CM, CM },
                                                                        { DH, DH },
                                                                        { MB, MB },
+                                                                       { MO, MO },
                                                                        { PG, PG },
                                                                        { SS, SS }
                                                                    };

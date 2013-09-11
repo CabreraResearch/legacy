@@ -78,8 +78,8 @@ namespace ChemSW.Nbt.Test.Security
             _TestData = new TestData { FinalizeNodes = true };
             _InitMetaData();
 
-            _SprocketNode = _TestData.CswNbtResources.Nodes.makeNodeFromNodeTypeId( _SprocketNt.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode, OverrideUniqueValidation: true );
-            _SprocketNode.postChanges( ForceUpdate: false );
+            _SprocketNode = _TestData.CswNbtResources.Nodes.makeNodeFromNodeTypeId( _SprocketNt.NodeTypeId, OverrideUniqueValidation: true );
+            //_SprocketNode.postChanges( ForceUpdate: false );
         }
 
         [TearDown]

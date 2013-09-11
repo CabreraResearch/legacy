@@ -10,7 +10,7 @@ using ChemSW.Nbt.ObjClasses;
 namespace ChemSW.Nbt.MetaData
 {
     [DataContract]
-    public class CswNbtMetaDataObjectClass: ICswNbtMetaDataObject, ICswNbtMetaDataDefinitionObject, IEquatable<CswNbtMetaDataObjectClass>
+    public class CswNbtMetaDataObjectClass : ICswNbtMetaDataObject, ICswNbtMetaDataDefinitionObject, IEquatable<CswNbtMetaDataObjectClass>
     {
         public const string IconPrefix16 = "Images/newicons/16/";
         public const string IconPrefix18 = "Images/newicons/18/";
@@ -68,8 +68,14 @@ namespace ChemSW.Nbt.MetaData
         [DataMember( Name = "ViewName" )]
         public string DbViewName
         {
-            get { return "OC" + ObjectClassName.ToUpper(); }
-            private set { var KeepSerializerHappy = value; }
+            //get { return "OC" + ObjectClassName.ToUpper(); }
+            //private set { var KeepSerializerHappy = value; }
+
+            get
+            {
+                return CswConvert.ToString( _ObjectClassRow["oraviewname"] );
+            }
+
         }
 
         public CswEnumNbtObjectClass ObjectClass
@@ -199,11 +205,11 @@ namespace ChemSW.Nbt.MetaData
             return Collection;
         } // getNodes()
 
-        public Dictionary<CswPrimaryKey, string> getNodeIdAndNames( bool forceReInit, bool includeSystemNodes, bool includeDefaultFilters = false, bool IncludeHiddenNodes = false )
+        public Dictionary<CswPrimaryKey, string> getNodeIdAndNames( bool forceReInit, bool includeSystemNodes, bool includeDefaultFilters = false, bool IncludeHiddenNodes = false, bool RequireViewPermissions = true )
         {
             Dictionary<CswPrimaryKey, string> Dict = new Dictionary<CswPrimaryKey, string>();
             CswNbtView View = CreateDefaultView( includeDefaultFilters );
-            ICswNbtTree Tree = _CswNbtMetaDataResources.CswNbtResources.Trees.getTreeFromView( _CswNbtMetaDataResources.CswNbtResources.CurrentNbtUser, View, true, includeSystemNodes, IncludeHiddenNodes );
+            ICswNbtTree Tree = _CswNbtMetaDataResources.CswNbtResources.Trees.getTreeFromView( _CswNbtMetaDataResources.CswNbtResources.CurrentNbtUser, View, RequireViewPermissions, includeSystemNodes, IncludeHiddenNodes );
             for( Int32 c = 0; c < Tree.getChildNodeCount(); c++ )
             {
                 Tree.goToNthChild( c );

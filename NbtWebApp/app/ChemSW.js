@@ -1,8 +1,13 @@
 /// <reference path="~/app/CswApp-vsdoc.js" />
 
-(function() {
+(function($) {
 
-    window.internetExplorerVersionNo = window.internetExplorerVersionNo || -1;
+    //Node/WebWorkers don't have window or document. In the Web App, 'this' === 'window' (right this moment); anywhere else, 'this' is the global object.
+    var cswWindow = this;
+    cswWindow.document = cswWindow.document || {};
+    cswWindow.navigator = cswWindow.navigator || {};
+
+    $ = $ || this.$;
 
     /**
         The Csw Namespace object
@@ -11,12 +16,12 @@
         @namespace
         @exports ChemSW Namespace
     */
-    window.ChemSW = window.Csw = (function() {
+    cswWindow.ChemSW = cswWindow.Csw = (function() {
         'use strict';
         var cswPrivate = {
-            document: window.document,
-            navigator: window.navigator,
-            location: window.location,
+            document: cswWindow.document,
+            navigator: cswWindow.navigator,
+            location: cswWindow.location,
             $: $,
             homeUrl: 'Main.html',
             methods: ['register'],
@@ -165,6 +170,7 @@
         cswPublic.clientDb = cswPublic.clientDb || cswPublic.register('clientDb', makeNameSpace());
         cswPublic.composites = cswPublic.composites || cswPublic.register('composites', makeNameSpace());
         cswPublic.cookie = cswPublic.cookie || cswPublic.register('cookie', makeNameSpace());
+        cswPublic.dialogs = cswPublic.dialogs || cswPublic.register('dialogs', makeNameSpace());
         cswPublic.enums = cswPublic.enums || cswPublic.register('enums', makeNameSpace());
         cswPublic.error = cswPublic.error || cswPublic.register('error', makeNameSpace());
         cswPublic.layouts = cswPublic.layouts || cswPublic.register('layouts', makeNameSpace());

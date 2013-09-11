@@ -16,6 +16,21 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Closed = "Closed";
             public const string ReportedBy = "Reported By";
             public const string Failure = "Failure";
+            public const string Department = "Department";
+            public const string LaborCost = "Labor Cost";
+            public const string OtherCost = "Other Cost";
+            public const string OtherCostName = "Other Cost Name";
+            public const string PartsCost = "Parts Cost";
+            public const string Problem = "Problem";
+            public const string ReporterPhone = "Reporter Phone";
+            public const string Resolution = "Resolution";
+            public const string StartDate = "Start Date";
+            public const string Summary = "Summary";
+            public const string Technician = "Technician";
+            public const string TechnicianPhone = "Technician Phone";
+            public const string TravelCost = "Travel Cost";
+            public const string UnderWarranty = "Under Warranty";
+            public const string WorkOrderPrinted = "Work Order Printed";
         }
 
 
@@ -75,18 +90,28 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
+        public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
+        {
+            _CswNbtObjClassDefault.beforeCreateNode( IsCopy, OverrideUniqueValidation );
+        }//beforeCreateNode()
+
+        public override void afterCreateNode()
+        {
+            _CswNbtObjClassDefault.afterCreateNode();
+        }//afterCreateNode()
+
+        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation, bool Creating )
         {
             _checkClosed();
             _setDefaultValues();
-            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
+            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation, Creating );
         }//beforeWriteNode()
 
 
 
-        public override void afterWriteNode()
+        public override void afterWriteNode( bool Creating )
         {
-            _CswNbtObjClassDefault.afterWriteNode();
+            _CswNbtObjClassDefault.afterWriteNode( Creating );
         }//afterWriteNode()
 
         public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
@@ -168,6 +193,22 @@ namespace ChemSW.Nbt.ObjClasses
 
         public CswNbtNodePropDateTime DateClosed { get { return ( _CswNbtNode.Properties[PropertyName.DateClosed] ); } }
         public CswNbtNodePropLogical Failure { get { return ( _CswNbtNode.Properties[PropertyName.Failure] ); } }
+
+        public CswNbtNodePropRelationship Department { get { return ( _CswNbtNode.Properties[PropertyName.Department] ); } }
+        public CswNbtNodePropText LaborCost { get { return ( _CswNbtNode.Properties[PropertyName.LaborCost] ); } }
+        public CswNbtNodePropText OtherCost { get { return ( _CswNbtNode.Properties[PropertyName.OtherCost] ); } }
+        public CswNbtNodePropText OtherCostName { get { return ( _CswNbtNode.Properties[PropertyName.OtherCostName] ); } }
+        public CswNbtNodePropText PartsCost { get { return ( _CswNbtNode.Properties[PropertyName.PartsCost] ); } }
+        public CswNbtNodePropMemo Problem { get { return ( _CswNbtNode.Properties[PropertyName.Problem] ); } }
+        public CswNbtNodePropPropertyReference ReporterPhone { get { return ( _CswNbtNode.Properties[PropertyName.ReporterPhone] ); } }
+        public CswNbtNodePropMemo Resolution { get { return ( _CswNbtNode.Properties[PropertyName.Resolution] ); } }
+        public CswNbtNodePropDateTime StartDate { get { return ( _CswNbtNode.Properties[PropertyName.StartDate] ); } }
+        public CswNbtNodePropText Summary { get { return ( _CswNbtNode.Properties[PropertyName.Summary] ); } }
+        public CswNbtNodePropRelationship Technician { get { return ( _CswNbtNode.Properties[PropertyName.Technician] ); } }
+        public CswNbtNodePropPropertyReference TechnicianPhone { get { return ( _CswNbtNode.Properties[PropertyName.TechnicianPhone] ); } }
+        public CswNbtNodePropText TravelCost { get { return ( _CswNbtNode.Properties[PropertyName.TravelCost] ); } }
+        public CswNbtNodePropLogical UnderWarranty { get { return ( _CswNbtNode.Properties[PropertyName.UnderWarranty] ); } }
+        public CswNbtNodePropLogical WorkOrderPrinted { get { return ( _CswNbtNode.Properties[PropertyName.WorkOrderPrinted] ); } }
 
         #endregion
 

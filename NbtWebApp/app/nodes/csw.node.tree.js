@@ -260,7 +260,7 @@
                 url = cswPrivate.NodeTreeUrl;
             }
 
-            Csw.ajax.post({
+            Csw.ajax.deprecatedWsNbt({
                 urlMethod: url,
                 data: dataParam,
                 stringify: false,

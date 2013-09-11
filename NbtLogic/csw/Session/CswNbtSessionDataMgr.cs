@@ -7,6 +7,7 @@ using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Search;
+using ChemSW.Nbt.Security;
 
 namespace ChemSW.Nbt
 {
@@ -214,7 +215,7 @@ namespace ChemSW.Nbt
             }
 
             DataRow SessionViewRow = _getSessionViewRow( SessionViewTable, View.ViewName, CswEnumNbtSessionDataType.View, IncludeInQuickLaunch, KeepInQuickLaunch );
-            if( UpdateCache )//Overwrite
+            if( UpdateCache && false == ( _CswNbtResources.CurrentNbtUser is CswNbtSystemUser ) )//Overwrite
             {
                 SessionViewRow[SessionDataColumn_ViewId] = CswConvert.ToDbVal( View.ViewId.get() );
                 SessionViewRow[SessionDataColumn_ViewMode] = View.ViewMode.ToString();

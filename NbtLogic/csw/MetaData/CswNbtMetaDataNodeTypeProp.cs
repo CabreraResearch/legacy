@@ -17,21 +17,21 @@ using ChemSW.Nbt.ServiceDrivers;
 namespace ChemSW.Nbt.MetaData
 {
     [DataContract]
-    public class CswNbtMetaDataNodeTypeProp: ICswNbtMetaDataObject, ICswNbtMetaDataProp, IEquatable<CswNbtMetaDataNodeTypeProp>, IComparable
+    public class CswNbtMetaDataNodeTypeProp : ICswNbtMetaDataObject, ICswNbtMetaDataProp, IEquatable<CswNbtMetaDataNodeTypeProp>, IComparable
     {
         public static CswEnumNbtNodeTypePropAttributes getCswEnumNbtNodeTypePropAttributesFromString( string AttributeName )
         {
             CswEnumNbtNodeTypePropAttributes ReturnVal = CswResources.UnknownEnum;
             AttributeName = AttributeName.Replace( "_", "" );
             ReturnVal = AttributeName;
-            
+
             return ( ReturnVal );
         }
 
         public static String getCswEnumNbtNodeTypePropAttributesAsString( CswEnumNbtNodeTypePropAttributes Attribute )
         {
             String ReturnVal = String.Empty;
-            if (Attribute != CswResources.UnknownEnum)
+            if( Attribute != CswResources.UnknownEnum )
                 ReturnVal = Attribute.ToString().Replace( "_", "" );
             return ( ReturnVal );
         }
@@ -275,6 +275,23 @@ namespace ChemSW.Nbt.MetaData
                 {
                     throw new CswDniException( CswEnumErrorType.Warning, "Property Name must be unique per nodetype", "Attempted to save a propname which is equal to a propname of another property in this nodetype" );
                 }
+
+                //use objectclasspropname if we have it
+                if( this.ObjectClassPropId != Int32.MinValue )
+                {
+                    _NodeTypePropRow["oraviewcolname"] = this.getObjectClassProp().DbViewColumnName;
+                }
+                else
+                {
+                    if( UseNumbering && QuestionNo != Int32.MinValue )
+                    {
+                        _NodeTypePropRow["oraviewcolname"] = CswTools.MakeOracleCompliantIdentifier( FullQuestionNo.Replace( ".", "x" ) );
+                    }
+                    else
+                    {
+                        _NodeTypePropRow["oraviewcolname"] = CswTools.MakeOracleCompliantIdentifier( value );
+                    }
+                }
                 _setAttribute( "propname", value, true );
 
                 if( _CswNbtMetaDataResources.CswNbtMetaData.OnEditNodeTypePropName != null )
@@ -316,10 +333,10 @@ namespace ChemSW.Nbt.MetaData
                     CswNbtSdDbQueries.Column Relationship = new CswNbtSdDbQueries.Column();
                     //if( this.FKType == CswEnumNbtViewRelatedIdType.NodeTypeId.ToString() )
                     //{
-                        
+
                     //} else if
                     //{
-                        
+
                     //}
 
                     Relationship.Name = PropName + " Fk";
@@ -329,7 +346,7 @@ namespace ChemSW.Nbt.MetaData
                 }
                 else if( this.getFieldType().FieldType == CswEnumNbtFieldType.Location )
                 {
-                    
+
                 }
                 else
                 {
@@ -339,6 +356,15 @@ namespace ChemSW.Nbt.MetaData
                 return Ret;
             }
             private set { var KeepSerializerHappy = value; }
+        }
+        [DataMember( Name = "ViewName" )]
+        public string DbViewColumnName
+        {
+            get
+            {
+                return CswConvert.ToString( _NodeTypePropRow["oraviewcolname"] );
+            }
+
         }
 
         /// <summary>
@@ -384,7 +410,7 @@ namespace ChemSW.Nbt.MetaData
                         //If the prop isn't on the Add layout, Add it.
                         if( false == ExistsOnLayout( CswEnumNbtLayoutType.Add ) )
                         {
-                            updateLayout( CswEnumNbtLayoutType.Add, TabId : Int32.MinValue, TabGroup : string.Empty, DisplayRow : Int32.MinValue, DisplayColumn : Int32.MinValue, DoMove : false );
+                            updateLayout( CswEnumNbtLayoutType.Add, TabId: Int32.MinValue, TabGroup: string.Empty, DisplayRow: Int32.MinValue, DisplayColumn: Int32.MinValue, DoMove: false );
                         }
                     }
                 }
@@ -604,7 +630,7 @@ namespace ChemSW.Nbt.MetaData
             }
             else
             {
-                ret = ret && ( false == hasFilter() && false == Node.Properties[this].Hidden );
+                ret = ret && ( false == hasFilter() && false == Node.Properties[this].Hidden && false == Hidden );
             }
 
             // 3: Permissions
@@ -675,6 +701,12 @@ namespace ChemSW.Nbt.MetaData
         {
             get { return _NodeTypePropRow["valueproptype"].ToString(); }
             private set { _setAttribute( "valueproptype", value, false ); }
+        }
+
+        public bool Hidden
+        {
+            get { return CswConvert.ToBoolean( _NodeTypePropRow["hidden"] ); }
+            set { _setAttribute( "hidden", value, true ); }
         }
 
         #region FK Matching
@@ -993,7 +1025,11 @@ namespace ChemSW.Nbt.MetaData
         public Int32 QuestionNo
         {
             get { return CswConvert.ToInt32( _NodeTypePropRow["questionno"] ); }
-            set { _DataRow["questionno"] = CswConvert.ToDbVal( value ); }
+            set
+            {
+                _DataRow["questionno"] = CswConvert.ToDbVal( value );
+                _DataRow["oraviewcolname"] = CswTools.MakeOracleCompliantIdentifier( FullQuestionNo );
+            }
         }
 
         // This should not trigger versioning
@@ -1114,6 +1150,11 @@ namespace ChemSW.Nbt.MetaData
         public void setFilter( CswNbtMetaDataNodeTypeProp FilterProp, CswNbtSubField SubField, CswEnumNbtFilterMode FilterMode, object FilterValue )
         {
             string FilterString = SubField.Column.ToString() + FilterDelimiter + FilterMode + FilterDelimiter + FilterValue;
+            _setFilter( FilterProp, FilterString );
+        }
+
+        public void setFilter( CswNbtMetaDataNodeTypeProp FilterProp, string FilterString )
+        {
             _setFilter( FilterProp, FilterString );
         }
 

@@ -21,23 +21,26 @@
                     var parent = Csw.domNode({ ID: 'paramsDiv' });
                     var table = parent.table().css('margin', '5px');
                     var i = 0;
-                    Csw.each(data.reportParams, function (param) {
+                    Csw.iterate(data.reportParams, function (param) {
                         (function () {
                             var paramName = param.name;
-                            var spanCell = table.cell(i + 1, 1).span({ text: paramName }).css('margin', '5px');
-                            params[paramName] = '';
-
-                            var OnChange = function (text) {
-                                params[paramName] = text;
-                            };
-
-                            var inputCell = table.cell(i + 1, 2).input({
-                                value: param.value,
-                                onChange: OnChange,
-                                isRequired: true
-                            }).css('margin', '5px');
-                            i++;
                             params[paramName] = param.value;
+
+                            //If the param is internally managed, don't expose it.
+                            if(data.controlledParams.indexOf(paramName) === -1) {
+                                var spanCell = table.cell(i + 1, 1).span({ text: paramName }).css('margin', '5px');
+
+                                var OnChange = function (text) {
+                                    params[paramName] = text;
+                                };
+
+                                var inputCell = table.cell(i + 1, 2).input({
+                                    value: param.value,
+                                    onChange: OnChange,
+                                    isRequired: true
+                                }).css('margin', '5px');
+                                i++;
+                            }
                         })();
                     });
 

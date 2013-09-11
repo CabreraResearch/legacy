@@ -165,7 +165,7 @@ namespace ChemSW.Nbt.Actions
                     }
                     if( false == existsInDb() && Int32.MinValue != NodeTypeId )
                     {
-                        Ret = _NbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswEnumNbtMakeNodeOperation.MakeTemp );
+                        Ret = _NbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, IsTemp: true );
                         Node = Ret.Node;
                     }
                     else
@@ -257,10 +257,12 @@ namespace ChemSW.Nbt.Actions
                     CswNbtMetaDataNodeType VendorNT = VendorOC.FirstNodeType;
                     if( null != VendorNT )
                     {
-                        CswNbtObjClassVendor NewVendorNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( VendorNT.NodeTypeId, CswEnumNbtMakeNodeOperation.MakeTemp );
-                        NewVendorNode.VendorName.Text = Suppliername;
-                        NewVendorNode.VendorName.SyncGestalt();
-                        NewVendorNode.postChanges( true );
+                        CswNbtObjClassVendor NewVendorNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( VendorNT.NodeTypeId, IsTemp: true, OnAfterMakeNode: delegate( CswNbtNode NewNode )
+                            {
+                                ( (CswNbtObjClassVendor) NewNode ).VendorName.Text = Suppliername;
+                                ( (CswNbtObjClassVendor) NewNode ).VendorName.SyncGestalt();
+                                //NewVendorNode.postChanges( true );
+                            } );
                         //Set the supplierId to the new vendor node
                         SupplierId = NewVendorNode.NodeId.ToString();
                     }
@@ -354,7 +356,7 @@ namespace ChemSW.Nbt.Actions
                 CswNbtMetaDataNodeType ChemicalNT = ChemicalOC.FirstNodeType;
                 if( null != ChemicalNT )
                 {
-                    CswNbtPropertySetMaterial NewMaterialTempNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( ChemicalNT.NodeTypeId, CswEnumNbtMakeNodeOperation.MakeTemp );
+                    CswNbtPropertySetMaterial NewMaterialTempNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( ChemicalNT.NodeTypeId, IsTemp: true );
                     if( null != NewMaterialTempNode )
                     {
                         Ret = NewMaterialTempNode.Node.NodeId;
@@ -455,15 +457,7 @@ namespace ChemSW.Nbt.Actions
                         JObject RequestObj = CswConvert.ToJObject( MaterialObj["request"] );
                         if( RequestObj.HasValues )
                         {
-                            CswNbtObjClassRequestMaterialCreate RequestCreate = _CswNbtResources.Nodes[CswConvert.ToString( RequestObj["requestitemid"] )];
-                            if( null != RequestCreate )
-                            {
-                                RequestCreate.Material.RelatedNodeId = FinalMaterial.Node.NodeId;
-                                RequestCreate.Status.Value = CswNbtObjClassRequestMaterialCreate.Statuses.Created;
-                                RequestCreate.Fulfill.State = CswNbtObjClassRequestMaterialCreate.FulfillMenu.Complete;
-                                RequestCreate.Fulfill.MenuOptions = CswNbtObjClassRequestMaterialCreate.FulfillMenu.Complete;
-                                RequestCreate.postChanges( ForceUpdate: false );
-                            }
+                            _processRequest(CswConvert.ToString( RequestObj["requestitemid"] ), FinalMaterial.Node.NodeId);
                         }
                         CswNbtActReceiving Receiving = new CswNbtActReceiving( _CswNbtResources );
                         Receiving.commitSDSDocNode( NodeAsMaterial.NodeId, MaterialObj );
@@ -478,6 +472,47 @@ namespace ChemSW.Nbt.Actions
                 }
             }
             return Ret;
+        }
+
+        private void _processRequest( String RequestItemId, CswPrimaryKey MaterialId )
+        {
+            CswNbtObjClassRequestMaterialCreate RequestCreate = _CswNbtResources.Nodes[RequestItemId];
+            if( null != RequestCreate )
+            {
+                RequestCreate.Material.RelatedNodeId = MaterialId;
+                RequestCreate.Status.Value = CswNbtObjClassRequestMaterialCreate.Statuses.Created;
+                RequestCreate.Fulfill.State = CswNbtObjClassRequestMaterialCreate.FulfillMenu.Complete;
+                RequestCreate.Fulfill.MenuOptions = CswNbtObjClassRequestMaterialCreate.FulfillMenu.Complete;
+                RequestCreate.postChanges( ForceUpdate: false );
+
+                CswNbtMetaDataObjectClass RequestMaterialDispenseOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestMaterialDispenseClass );
+                CswNbtMetaDataNodeType RequestMaterialDispenseNT = RequestMaterialDispenseOC.FirstNodeType;
+                if( null != RequestMaterialDispenseNT )
+                {
+                    _CswNbtResources.Nodes.makeNodeFromNodeTypeId( RequestMaterialDispenseNT.NodeTypeId, delegate( CswNbtNode NewNode )
+                        {
+                            CswNbtObjClassRequestMaterialDispense RequestDispense = NewNode;
+                            RequestDispense.Request.RelatedNodeId = RequestCreate.Request.RelatedNodeId;
+                            RequestDispense.Location.SelectedNodeId = RequestCreate.Location.SelectedNodeId;
+                            RequestDispense.Location.CachedNodeName = RequestCreate.Location.CachedNodeName;
+                            RequestDispense.Location.CachedPath = RequestCreate.Location.CachedPath;
+                            RequestDispense.Quantity.Quantity = RequestCreate.Quantity.Quantity;
+                            RequestDispense.Quantity.UnitId = RequestCreate.Quantity.UnitId;
+                            RequestDispense.Material.RelatedNodeId = MaterialId;
+                            RequestDispense.InventoryGroup.RelatedNodeId = RequestCreate.InventoryGroup.RelatedNodeId;
+                            RequestDispense.ExternalOrderNumber.Text = RequestCreate.ExternalOrderNumber.Text;
+                            RequestDispense.Requestor.RelatedNodeId = RequestCreate.Requestor.RelatedNodeId;
+                            RequestDispense.RequestedFor.RelatedNodeId = RequestCreate.RequestedFor.RelatedNodeId;
+                            RequestDispense.Comments.CommentsJson = RequestCreate.Comments.CommentsJson;
+                            RequestDispense.NeededBy.DateTimeValue = RequestCreate.NeededBy.DateTimeValue;
+                            RequestDispense.Priority.Value = RequestCreate.Priority.Value;
+                            RequestDispense.Status.Value = CswNbtObjClassRequestMaterialDispense.Statuses.Submitted;
+                            RequestDispense.Type.Value = CswNbtObjClassRequestMaterialDispense.Types.Bulk;
+                            RequestDispense.setRequestDescription();
+                            //RequestDispense.postChanges( false );
+                        } );
+                }
+            }
         }
 
         public JObject saveMaterialProps( CswPrimaryKey NodePk, JObject PropsObj, Int32 NodeTypeId )
@@ -533,7 +568,7 @@ namespace ChemSW.Nbt.Actions
         {
             JObject Ret = new JObject();
 
-            SizeNode = CswNbtResources.Nodes.makeNodeFromNodeTypeId( SizeNodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode, true );
+            SizeNode = CswNbtResources.Nodes.makeNodeFromNodeTypeId( SizeNodeTypeId, OverrideUniqueValidation: true );
             CswPrimaryKey UnitIdPK = CswConvert.ToPrimaryKey( SizeObj["uom"]["id"].ToString() );
             if( null != UnitIdPK )
             {
@@ -771,8 +806,6 @@ namespace ChemSW.Nbt.Actions
                 //Used for node-specific Add items
                 Ret["RelatedNodeId"] = MaterialNode.NodeId.ToString();
                 Ret["RelatedNodeName"] = MaterialNode.NodeName;
-                Ret["RelatedNodeTypeId"] = MaterialNode.NodeTypeId.ToString();
-                Ret["RelatedObjectClassId"] = MaterialNode.getObjectClassId().ToString();
                 //If (and when) action landing pages are slated to be roleId-specific, remove this line
                 Ret["isConfigurable"] = NbtResources.CurrentNbtUser.IsAdministrator();
                 //Used for viewing new material

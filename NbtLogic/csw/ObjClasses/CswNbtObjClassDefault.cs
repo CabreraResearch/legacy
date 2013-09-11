@@ -22,7 +22,15 @@ namespace ChemSW.Nbt.ObjClasses
             get { return _CswNbtResources.MetaData.getObjectClass( CswNbtResources.UnknownEnum ); }
         }
 
-        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
+        public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
+        {
+        }
+
+        public override void afterCreateNode()
+        {
+        }
+
+        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation, bool Creating )
         {
             List<CswNbtNodePropWrapper> CompoundUniqueProps = new List<CswNbtNodePropWrapper>();
             foreach( CswNbtNodePropWrapper CurrentProp in _CswNbtNode.Properties )
@@ -33,9 +41,7 @@ namespace ChemSW.Nbt.ObjClasses
                     // 1. recalculate composite property values which include changed properties on this node
                     foreach( CswNbtNodePropWrapper CompositeProp in _CswNbtNode.Properties[(CswEnumNbtFieldType) CswEnumNbtFieldType.Composite] )
                     {
-                        if(
-                            CompositeProp.AsComposite.TemplateValue.Contains(
-                                CswNbtMetaData.MakeTemplateEntry( CurrentProp.NodeTypePropId.ToString() ) ) )
+                        if( CompositeProp.AsComposite.TemplateValue.Contains( CswNbtMetaData.MakeTemplateEntry( CurrentProp.NodeTypePropId.ToString() ) ) )
                         {
                             CompositeProp.AsComposite.RecalculateCompositeValue();
                         }
@@ -48,23 +54,26 @@ namespace ChemSW.Nbt.ObjClasses
                         {
                             CswNbtNodePropPropertyReference PropRefProp = PropRefPropWrapper.AsPropertyReference;
                             if( ( PropRefProp.RelationshipType == CswEnumNbtViewPropIdType.NodeTypePropId &&
-                                 PropRefProp.RelationshipId == CurrentProp.NodeTypePropId ) ||
+                                  PropRefProp.RelationshipId == CurrentProp.NodeTypePropId ) ||
                                 ( PropRefProp.RelationshipType == CswEnumNbtViewPropIdType.ObjectClassPropId &&
-                                 PropRefProp.RelationshipId == CurrentProp.ObjectClassPropId ) )
+                                  PropRefProp.RelationshipId == CurrentProp.ObjectClassPropId ) )
                             {
                                 PropRefProp.RecalculateReferenceValue();
                             }
                         }
                     }
-
-                    // 3. mark any property references to this property on other nodes as pending update
-                    if( CswTools.IsPrimaryKey( CurrentProp.NodeId ) )
+                    
+                    // case 30350 - this is very expensive for multiple nodes, and unnecessary on create.  So skip it.
+                    if( false == Creating ) 
                     {
-                        //BZ 10239 - Fetch the cached value field name.
-                        CswNbtFieldTypeRulePropertyReference PropRefFTR = (CswNbtFieldTypeRulePropertyReference) _CswNbtResources.MetaData.getFieldTypeRule( CswEnumNbtFieldType.PropertyReference );
-                        CswEnumNbtPropColumn PropRefColumn = PropRefFTR.CachedValueSubField.Column;
+                        // 3. mark any property references to this property on other nodes as pending update
+                        if( CswTools.IsPrimaryKey( CurrentProp.NodeId ) )
+                        {
+                            //BZ 10239 - Fetch the cached value field name.
+                            CswNbtFieldTypeRulePropertyReference PropRefFTR = (CswNbtFieldTypeRulePropertyReference) _CswNbtResources.MetaData.getFieldTypeRule( CswEnumNbtFieldType.PropertyReference );
+                            CswEnumNbtPropColumn PropRefColumn = PropRefFTR.CachedValueSubField.Column;
 
-                        string SQL = @"update jct_nodes_props 
+                            string SQL = @"update jct_nodes_props 
                                       set pendingupdate = '" + CswConvert.ToDbVal( true ) + @"',
                                           " + PropRefColumn.ToString() + @" = ''
                                     where jctnodepropid in (select j.jctnodepropid
@@ -88,17 +97,18 @@ namespace ChemSW.Nbt.ObjClasses
                                                               and ((lower(p.valueproptype) = 'nodetypepropid' and p.valuepropid = " + CurrentProp.NodeTypePropId.ToString() + @") 
                                                                   or (lower(p.valueproptype) = 'objectclasspropid' and p.valuepropid = " + CurrentProp.ObjectClassPropId + @")))";
 
-                        // We're not doing this in a CswTableUpdate because it might be a large operation, 
-                        // and we don't care about auditing for this change.
-                        _CswNbtResources.execArbitraryPlatformNeutralSql( SQL );
-                    }
+                            // We're not doing this in a CswTableUpdate because it might be a large operation, 
+                            // and we don't care about auditing for this change.
+                            _CswNbtResources.execArbitraryPlatformNeutralSql( SQL );
+                        }
 
-                    // 4. For locations, if this node's location changed, we need to update the pathname on the children
-                    if( CurrentProp.getFieldTypeValue() == CswEnumNbtFieldType.Location &&
-                        CswTools.IsPrimaryKey( _CswNbtNode.NodeId ) )
-                    {
-                        _CswNbtResources.CswNbtNodeFactory.CswNbtNodeWriter.updateRelationsToThisNode( _CswNbtNode );
-                    }
+                        // 4. For locations, if this node's location changed, we need to update the pathname on the children
+                        if( CurrentProp.getFieldTypeValue() == CswEnumNbtFieldType.Location &&
+                            CswTools.IsPrimaryKey( _CswNbtNode.NodeId ) )
+                        {
+                            _CswNbtResources.CswNbtNodeFactory.CswNbtNodeWriter.updateRelationsToThisNode( _CswNbtNode );
+                        }
+                    } // if( false == _IsCreate )
 
                     // 5. Prepare for compound unique validation
                     if( CurrentProp.NodeTypeProp.IsCompoundUnique() )
@@ -159,14 +169,14 @@ namespace ChemSW.Nbt.ObjClasses
 
                         string ExotericMessage = "The following properties must have unique values:  " + CompoundUniquePropNames.ToString();
                         string EsotericMessage = "The " + CompoundUniquePropNames.ToString() +
-                            " of node " + NodeId.ToString() + " are the same as for node " + DuplicateValueNode.NodeId.ToString() + ": " + CompoundUniquePropValues.ToString();
+                                                 " of node " + NodeId.ToString() + " are the same as for node " + DuplicateValueNode.NodeId.ToString() + ": " + CompoundUniquePropValues.ToString();
 
                         if( false == _CswNbtNode.IsTemp && false == DuplicateValueNode.IsTemp ) //only throw an error if we're comparing two REAL nodes
                         {
                             throw ( new CswDniException( CswEnumErrorType.Warning, ExotericMessage, EsotericMessage ) );
                         }
 
-                    }//we have a duplicate value situation
+                    } //we have a duplicate value situation
                 }
 
                 else
@@ -177,17 +187,16 @@ namespace ChemSW.Nbt.ObjClasses
                         CurrentPropWrapper.clearModifiedFlag();
                     }
 
-                }//if-else we're not a copy and not overridding
+                } //if-else we're not a copy and not overridding
 
-            }//if we have at leaste one modified compound unique prop
+            } //if we have at leaste one modified compound unique prop
 
             //_synchNodeName();
             // can't do this here, because we miss some of the onBeforeUpdateNodePropRow events
             // we do it in writer now instead
-
         } // beforeWriteNode()
 
-        public override void afterWriteNode()
+        public override void afterWriteNode( bool Creating )
         {
             // BZ 10094 - Notification event
             Collection<CswNbtNodePropWrapper> ModifiedProps = new Collection<CswNbtNodePropWrapper>();

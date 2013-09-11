@@ -6,16 +6,13 @@
 
     var cswPrivate = {};
 
-    cswPrivate.handleAjaxError = function (errorJson) {
-        Csw.error.showError(errorJson);
-    }; /* cswPrivate.handleAjaxError() */
-
     cswPrivate.onJsonSuccess = Csw.method(function (o, data, url) {
 
         var response = {
             Data: '',
             Authentication: {
                 AuthenticationStatus: 'Unknown',
+                AuthenticationStatusText: '',
                 TimeOut: 0
             },
             Performance: {
@@ -44,18 +41,19 @@
             response.Status.Errors.length > 0) {
             var lastErr = response.Status.Errors.length - 1;
             if (false === o.overrideError) {
-                cswPrivate.handleAjaxError({
+                Csw.ajaxCore.handleError({
                     display: response.Status.Errors[lastErr].Display,
                     type: response.Status.Errors[lastErr].Type,
                     message: response.Status.Errors[lastErr].Message,
                     detail: response.Status.Errors[lastErr].Detail
-                    }, '');
+                    });
                 
             }
             Csw.tryExec(o.error, response.Status.Errors[lastErr]);
         } else {
 
             var auth = Csw.string(response.Authentication.AuthenticationStatus, 'Unknown');
+            var text = Csw.string(response.Authentication.AuthenticationStatusText);
                 Csw.clientSession.setExpireTime(Csw.string(response.Authentication.TimeOut, ''));
 
             if (false === Csw.isNullOrEmpty(response.Performance)) {
@@ -77,8 +75,9 @@
             
             Csw.clientSession.handleAuthenticationStatus({
                 status: auth,
+                txt: text,
                 success: function () {
-                    Csw.tryExec(o.success, response.Data);
+                    Csw.ajaxCore.onSuccess(url, response.Data, o.useCache, o.success, o.cachedResponse);
                 },
                 failure: o.onloginfail,
                 data: response.Authentication
@@ -122,8 +121,8 @@
             error: function () { },
             complete: function () {},
             overrideError: false,
-            async: true,
             watchGlobal: true,
+            useCache: false,
             removeTimer: true
         };
         Csw.extend(cswInternal, options);
@@ -140,34 +139,48 @@
             }
         }
         
-        var ajax = $.ajax({
-            type: verb,
-            url: cswInternal.urlMethod,
-            xhrFields: {
-                withCredentials: true
-            },
-            dataType: 'json',
-            contentType: 'application/json; charset=utf-8',
-            //processdata: false,
-            data: cswInternal.data,
-            watchGlobal: cswInternal.watchGlobal
-        });
-        ajax.done(function(data) {
-            cswPrivate.onJsonSuccess(cswInternal, data, document.location + '/' + cswInternal.urlMethod);
-        }); /* success{} */
-        ajax.fail(function(jqXHR, textStatus, errorText) {
-            cswPrivate.onJsonError(jqXHR, textStatus, errorText, {
+        var getAjaxPromise = function(watchGlobal) {
+            var ret = $.ajax({
+                type: verb,
+                url: cswInternal.urlMethod,
+                xhrFields: {
+                    withCredentials: true
+                },
+                dataType: 'json',
+                contentType: 'application/json; charset=utf-8',
+                //processdata: false,
+                data: cswInternal.data,
+                watchGlobal: false !== watchGlobal
+            });
+            ret.done(function(data) {
+                return cswPrivate.onJsonSuccess(cswInternal, data, cswInternal.urlMethod);
+            }); /* success{} */
+            ret.fail(function(jqXHR, textStatus, errorText) {
+                return cswPrivate.onJsonError(jqXHR, textStatus, errorText, {
                     data: cswInternal.data,
                     watchGlobal: cswInternal.watchGlobal,
                     urlMethod: document.location + '/' + cswInternal.urlMethod
-                }
-            );
-        });
-        ajax.always(function(xmlHttpRequest, textStatus) {
-            Csw.tryExec(cswInternal.complete, xmlHttpRequest, textStatus);
-        });
+                });
+            });
+            ret.always(function(xmlHttpRequest, textStatus) {
+                return Csw.tryExec(cswInternal.complete, xmlHttpRequest, textStatus);
+            });
+            return Csw.promises.ajax(ret);
+        };
+
+        var promise;
+        if (true === cswInternal.useCache) {
+            promise = Csw.getCachedWebServiceCall(cswInternal.urlMethod)
+                .then(function(ret) {
+                    cswInternal.cachedResponse = ret;
+                    return Csw.ajaxCore.onSuccess(cswInternal.urlMethod, cswInternal.cachedResponse, false, cswInternal.success, cswInternal.cachedResponse);
+                })
+                .then(getAjaxPromise(false));
+        } else {
+            promise = getAjaxPromise(cswInternal.watchGlobal);
+        }
         
-        return Csw.promises.ajax(ajax);
+        return promise;
     }); /* cswPrivate.jsonPost */
 
     Csw.ajaxWcf.post = Csw.ajaxWcf.post ||

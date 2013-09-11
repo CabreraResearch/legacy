@@ -111,26 +111,6 @@
             return (Csw.contains(name, obj) && Csw.bool(obj[name]));
         });
 
-    Csw.tryParseObjByIdx = Csw.tryParseObjByIdx ||
-        Csw.register('tryParseObjByIdx', function (object, index, defaultStr) {
-            /// <summary> Attempts to fetch the value at an array index. Null-safe.</summary>
-            /// <param name="object" type="Object"> Object or array to parse </param>
-            /// <param name="index" type="String"> Index or property to find </param>
-            /// <param name="defaultStr" type="String"> Optional. String to use instead of '' if index does not exist. </param>
-            /// <returns type="String">Parsed string</returns>
-            'use strict';
-            var ret = '';
-            if (false === Csw.isNullOrEmpty(defaultStr)) {
-                ret = defaultStr;
-            }
-            if (Csw.contains(object, index)) {
-                if (false === Csw.isNullOrUndefined(object[index])) {
-                    ret = object[index];
-                }
-            }
-            return ret;
-        });
-
     Csw.contains = Csw.contains ||
         Csw.register('contains', function (object, index) {
             /// <summary>Determines whether an object or an array contains a property or index. Null-safe.</summary>
@@ -146,36 +126,6 @@
                 if (false === ret && object.hasOwnProperty(index)) {
                     ret = true;
                 }
-            }
-            return ret;
-        });
-
-    Csw.renameProperty = Csw.renameProperty ||
-        Csw.register('renameProperty', function (obj, oldName, newName) {
-            /// <summary>Renames a property on a Object literal</summary>
-            /// <param name="obj" type="Object"> Object containing property </param>
-            /// <param name="oldName" type="String"> Current property name </param>
-            /// <param name="newName" type="String"> New property name </param>
-            /// <returns type="Object"> The modified object </returns>
-            'use strict';
-            if (false === Csw.isNullOrUndefined(obj) && Csw.contains(obj, oldName)) {
-                obj[newName] = obj[oldName];
-                delete obj[oldName];
-            }
-            return obj;
-        });
-
-    Csw.foundMatch = Csw.foundMatch ||
-        Csw.register('foundMatch', function (anObj, prop, value) {
-            /// <summary>Determines whether a prop/value match can be found on a property</summary>
-            /// <param name="anObj" type="Object"> Object containing property </param>
-            /// <param name="prop" type="String"> Property name </param>
-            /// <param name="value" type="Object"> Value to match </param>
-            /// <returns type="Boolean"> True if succeeded </returns>
-            'use strict';
-            var ret = false;
-            if (false === Csw.isNullOrEmpty(anObj) && Csw.contains(anObj, prop) && anObj[prop] === value) {
-                ret = true;
             }
             return ret;
         });
@@ -275,85 +225,83 @@
             return stopCrawling;
         });
 
-    Csw.object = Csw.object ||
-        Csw.register('object', function (inheritsFrom, properties) {
-            var ret;
-            properties = properties || Object.create(null);
-            if (null === inheritsFrom || typeof inheritsFrom == 'function') {
-                ret = Object.create(inheritsFrom, properties);
-            } else {
-                ret = Object.create(null);
-            }
-            return ret;
+    /**
+     * Add a property to an object
+     * @param obj {Object} an Object onto which to add a property
+     * @param name {String} the property name
+     * @param value {Object} the value of the property. Can be any type.
+     * @param writable {Boolean} [writable=true] True if the property can be modified
+     * @param configurable {Boolean} [configurable=true] True if the property can be removed
+     * @param enumerable {Boolean} [enumerable=true] True if the property can be enumerated and is listed in Object.keys
+    */
+    var property = function (obj, name, value, writable, configurable, enumerable) {
+        if (!obj) {
+            throw new Error('Cannot define a property without an Object.');
+        }
+        if (!(typeof name === 'string')) {
+            throw new Error('Cannot create a property without a valid property name.');
+        }
+
+        var isWritable = (writable !== false);
+        var isConfigurable = (configurable !== false);
+        var isEnumerable = (enumerable !== false);
+
+        Object.defineProperty(obj, name, {
+            value: value,
+            writable: isWritable,
+            configurable: isConfigurable,
+            enumerable: isEnumerable
         });
 
-    Csw.objDeprecated = Csw.objDeprecated ||
-        Csw.register('objDeprecated', function (obj) {
-            /// <summary>Find an object in a JSON object.</summary>
-            /// <param name="obj" type="Object"> Object to search </param>
-            /// <returns type="Object"></returns>
-            'use strict';
-            var thisObj = obj || {};
-            var currentObj = null;
-            var parentObj = thisObj;
-            var currentKey;
-            //var parentKey = null;
+        return obj;
+    };
 
-            function find(key, value) {
-                /// <summary>Find a property's parent</summary>
-                /// <param name="key" type="String"> Property name to match. </param>
-                /// <param name="value" type="Object"> Property value to match </param>
-                /// <returns type="Object"> Returns the value of the 'property' property which contains a matching key/value prop. </returns>
-                'use strict';
-                var ret = false;
-                if (Csw.foundMatch(thisObj, key, value)) {
-                    ret = thisObj;
-                    currentObj = ret;
-                    parentObj = ret;
-                    currentKey = key;
-                }
-                if (false === ret) {
-                    var onSuccess = function (childObj, childKey, parObj) {
-                        var found = false;
-                        if (Csw.foundMatch(childObj, key, value)) {
-                            ret = childObj;
-                            currentObj = ret;
-                            parentObj = parObj;
-                            currentKey = childKey;
-                            found = true;
-                        }
-                        return found;
-                    };
-                    Csw.eachRecursive(thisObj, onSuccess, true);
-                }
-                return ret;
-            }
+    Csw.register('property', property);
 
-            function remove(key, value) {
-                'use strict';
-                var onSuccess = function (childObj, childKey, parObj) {
-                    var deleted = false;
-                    if (Csw.foundMatch(childObj, key, value)) {
-                        deleted = true;
-                        delete parObj[childKey];
-                        currentKey = null;
-                        currentObj = null;
-                        //parentObj = parentObj;
-                    }
-                    return deleted;
-                };
-                return Csw.eachRecursive(thisObj, onSuccess, true);
-            }
+    /**
+     * Create an instance of Object
+     * @param properties {Object} [properties={}] properties to define on the Object
+     * @param inheritsFromPrototype {Prototype} [inheritsFromPrototype=null] The prototype to inherit from
+    */
+    var object = function (properties, inheritsFromPrototype) {
 
-            return {
-                find: find,
-                remove: remove,
-                obj: thisObj,
-                parentObj: parentObj,
-                currentObj: currentObj,
-                currentKey: currentObj
-            };
-        });
+        if (!inheritsFromPrototype) {
+            inheritsFromPrototype = null;
+        }
+        if (!properties) {
+            properties = {};
+        }
+        var obj = Object.create(inheritsFromPrototype, properties);
+
+        Csw.property(obj, 'add',
+            /**
+             * Add a property to the object and return it
+            */
+            function (name, val, writable, configurable, enumerable) {
+                return Csw.property(obj, name, val, writable, configurable, enumerable);
+            }, false, false, false);
+
+        return obj;
+    };
+
+    Csw.register('object', object);
+
+    /**
+     * Compares two objects, serialized to strings, stripped of whitespace
+    */
+    var compare = function(obj1, obj2) {
+        var string1 = '',
+            string2 = '';
+        if (obj1) {
+            string1 = Csw.serialize(obj1).trim().replace(' ', '');
+        }
+        if (obj2) {
+            string2 = Csw.serialize(obj2).trim().replace(' ', '');
+        }
+        return string1 === string2;
+    };
+
+    Csw.register('compare', compare);
 
     Csw.clone = Csw.clone ||
         Csw.register('clone', function (data) {
@@ -372,7 +320,7 @@
             'use strict';
             var ret = '';
             Csw.tryExec(function () { ret = JSON.stringify(data); });
-            return ret;
+            return ret || '';
         });
 
     Csw.deserialize = Csw.deserialize ||
@@ -433,13 +381,13 @@
     If your return data contract is something like:
 
     class MyContract{
-	   string prop1;
+       string prop1;
        string prop2;
        MyInnerClass innerClassProp;
     }
 
     class MyInnerClass{
-	   string innerProp1;
+       string innerProp1;
        string innerProp2;
     }
 

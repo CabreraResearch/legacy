@@ -4,19 +4,23 @@ module.exports.app = [
     'app/ChemSW.js',
     'app/main/**.js',
     'app/types/**.js',
+    'app/tools/**.js',
     'app/promises/**.js',
+    'app/currentuser/**.js',
     'app/core/**.js',
     'app/events/**.js',
-    'app/tools/**.js',
     'app/literals/**.js',
     'app/composites/**.js',
     'app/actions/**.js',
     'app/layouts/**.js',
+    'app/dialogs/**.js',
     'app/nodes/**.js',
     'app/pagecmp/**.js',
     'app/proptypes/**.js',
     'app/view/**.js',
     'app/wizards/**.js',
+    'app/workers/**.js',
+    'app/db/**.js',
     'app/Main.js'
 ];
 
@@ -53,6 +57,7 @@ module.exports.vendorMin = [
     'vendor/jquery.flot.js',
     'vendor/extjs-4.1.0/ux/**/*.js',
     'Scripts/Q.min.js',
+    'vendor/IndexedDBShim.min.js',
     'vendor/moment.min.js'
 ];
 
@@ -79,6 +84,7 @@ module.exports.vendor = [
     'vendor/jquery.flot.js',
     'vendor/extjs-4.1.0/ux/**/*.js',
     'Scripts/q.js',
+    'vendor/IndexedDBShim.min.js',
     'vendor/moment.min.js'
 ];
 

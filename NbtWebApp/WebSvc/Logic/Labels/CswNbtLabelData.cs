@@ -202,7 +202,14 @@ namespace NbtWebApp.WebSvc.Logic.Labels
         [DataMember( IsRequired = false )]
         [Description( "Remaining job count" )]
         public int RemainingJobCount = 0;
-         
+
+        /// <summary>
+        /// Current name of printer assigned this job
+        /// </summary>
+        [DataMember( IsRequired = false )] 
+        [Description( "Current name of printer assigned this job" )] 
+        public string PrinterName = string.Empty;
+
     }
 
     /// <summary>

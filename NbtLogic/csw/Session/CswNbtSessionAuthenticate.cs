@@ -1,5 +1,6 @@
 using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
+using ChemSW.Nbt.ObjClasses;
 using ChemSW.Security;
 using ChemSW.Session;
 using ChemSW.WebSvc;
@@ -128,6 +129,12 @@ namespace ChemSW.Nbt
                 {
                     // BZ 9077 - Password expired
                     AuthenticationStatus = CswEnumAuthenticationStatus.ExpiredPassword;
+                }
+                else if( 1 < _CswNbtResources.CswSessionManager.SessionsList.getSessionCountForUser( _CswNbtResources.AccessId, _AuthenticationRequest.UserName ) 
+                      && false == _AuthenticationRequest.IsMobile
+                      && CswNbtObjClassUser.ChemSWAdminUsername  != _CswNbtResources.CurrentUser.Username )
+                {
+                    AuthenticationStatus = CswEnumAuthenticationStatus.AlreadyLoggedIn;
                 }
             }
 

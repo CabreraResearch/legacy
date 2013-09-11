@@ -25,7 +25,7 @@ namespace ChemSW.Nbt
     /// <summary>
     /// A collection of useful resources for NBT business logic.
     /// </summary>
-    public class CswNbtResources: ICswResources
+    public class CswNbtResources : ICswResources
     {
         /// <summary>
         /// The MD5 seed used for NBT
@@ -62,8 +62,6 @@ namespace ChemSW.Nbt
         /// Provides a means to get session data
         /// </summary>
         public CswNbtSessionDataMgr SessionDataMgr;
-
-        public CswSessionManager CswSessionManager = null;
 
         /// <summary>
         /// User searches
@@ -595,23 +593,23 @@ namespace ChemSW.Nbt
             MailReportsView.ViewName = "runMailReportEventsView";
             CswNbtViewRelationship Rel1 = MailReportsView.AddViewRelationship( MailReportOC, false );
             // Nodetype matches
-            MailReportsView.AddViewPropertyAndFilter( ParentViewRelationship : Rel1,
-                                                      MetaDataProp : TargetTypeOCP,
-                                                      FilterMode : CswEnumNbtFilterMode.Contains,
-                                                      Value : TargetNodeType.FirstVersionNodeTypeId.ToString() );
+            MailReportsView.AddViewPropertyAndFilter( ParentViewRelationship: Rel1,
+                                                      MetaDataProp: TargetTypeOCP,
+                                                      FilterMode: CswEnumNbtFilterMode.Contains,
+                                                      Value: TargetNodeType.FirstVersionNodeTypeId.ToString() );
             // Event matches
-            MailReportsView.AddViewPropertyAndFilter( ParentViewRelationship : Rel1,
-                                                      MetaDataProp : EventOCP,
-                                                      FilterMode : CswEnumNbtFilterMode.Equals,
-                                                      Value : EventOpt.ToString() );
+            MailReportsView.AddViewPropertyAndFilter( ParentViewRelationship: Rel1,
+                                                      MetaDataProp: EventOCP,
+                                                      FilterMode: CswEnumNbtFilterMode.Equals,
+                                                      Value: EventOpt.ToString() );
             // Enabled
-            MailReportsView.AddViewPropertyAndFilter( ParentViewRelationship : Rel1,
-                                                      MetaDataProp : EnabledOCP,
-                                                      FilterMode : CswEnumNbtFilterMode.Equals,
-                                                      Value : CswEnumTristate.True.ToString() );
+            MailReportsView.AddViewPropertyAndFilter( ParentViewRelationship: Rel1,
+                                                      MetaDataProp: EnabledOCP,
+                                                      FilterMode: CswEnumNbtFilterMode.Equals,
+                                                      Value: CswEnumTristate.True.ToString() );
             // Can't check the view, because it depends on the user
             // But check for a matching property value being altered
-            ICswNbtTree MailReportsTree = Trees.getTreeFromView( MailReportsView, RequireViewPermissions : false, IncludeSystemNodes : true, IncludeHiddenNodes : false );
+            ICswNbtTree MailReportsTree = Trees.getTreeFromView( MailReportsView, RequireViewPermissions: false, IncludeSystemNodes: true, IncludeHiddenNodes: false );
             for( Int32 i = 0; i < MailReportsTree.getChildNodeCount(); i++ )
             {
                 MailReportsTree.goToNthChild( i );
@@ -730,6 +728,14 @@ namespace ChemSW.Nbt
         /// Our collection of current sessions
         /// </summary>
         public CswSessionAttrs Session { get { return _CswResources.Session; } }
+        /// <summary>
+        /// Provides additional methods for working with session data
+        /// </summary>
+        public CswSessionManager CswSessionManager
+        {
+            get { return _CswResources.CswSessionManager; }
+            set { _CswResources.CswSessionManager = value; }
+        }
         /// <summary>
         /// Reading of values located in the configuration_variables table
         /// </summary>
@@ -901,7 +907,17 @@ namespace ChemSW.Nbt
         /// Set the context information for this audit transaction
         /// </summary>
         public string AuditContext { set { _CswResources.AuditContext = value; } }
-
+        /// <summary>
+        /// Set the context information for this audit transaction to the given Action
+        /// </summary>
+        public void setAuditActionContext( CswEnumNbtActionName ContextActionName )
+        {
+            CswNbtAction ContextAction = Actions[ContextActionName];
+            if( ContextAction != null )
+            {
+                AuditContext = CswNbtAction.ActionNameEnumToString( ContextAction.Name ) + " (Action_" + ContextAction.ActionId.ToString() + ")";
+            }
+        }
         /// <summary>
         /// Set the context information for this audit transaction
         /// </summary>

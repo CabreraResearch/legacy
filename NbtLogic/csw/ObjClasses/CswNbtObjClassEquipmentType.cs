@@ -9,6 +9,7 @@ namespace ChemSW.Nbt.ObjClasses
         public new sealed class PropertyName: CswNbtObjClass.PropertyName
         {
             public const string Parts = "Parts";
+            public const string TypeName = "Type Name";
         }
 
 
@@ -40,14 +41,25 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
+        public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
         {
-            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
+            _CswNbtObjClassDefault.beforeCreateNode( IsCopy, OverrideUniqueValidation );
+        }//beforeCreateNode()
+
+        public override void afterCreateNode()
+        {
+            _CswNbtObjClassDefault.afterCreateNode();
+        }//afterCreateNode()
+
+
+        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation, bool Creating )
+        {
+            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation, Creating );
         }//beforeWriteNode()
 
-        public override void afterWriteNode()
+        public override void afterWriteNode( bool Creating )
         {
-            _CswNbtObjClassDefault.afterWriteNode();
+            _CswNbtObjClassDefault.afterWriteNode( Creating );
         }//afterWriteNode()
 
         public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
@@ -83,14 +95,8 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Object class specific properties
 
-
-        public CswNbtNodePropMemo Parts
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.Parts] );
-            }
-        }
+        public CswNbtNodePropMemo Parts { get { return ( _CswNbtNode.Properties[PropertyName.Parts] ); } }
+        public CswNbtNodePropText TypeName { get { return ( _CswNbtNode.Properties[PropertyName.TypeName] ); } }
 
         #endregion
 

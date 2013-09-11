@@ -1,13 +1,15 @@
 ﻿
 using System;
+using System.Collections.Generic;
 using ChemSW.Nbt.csw.Dev;
+using ChemSW.RscAdo;
 
 namespace ChemSW.Nbt.Schema
 {
     /// <summary>
     /// Post-schema update script
     /// </summary>
-    public class RunAfterEveryExecutionOfUpdater_01: CswUpdateSchemaTo
+    public class RunAfterEveryExecutionOfUpdater_01 : CswUpdateSchemaTo
     {
         #region Blame Logic
 
@@ -37,8 +39,17 @@ namespace ChemSW.Nbt.Schema
 
         #endregion Blame Logic
 
-        public static string Title = "Post-Script";
+        public override string ScriptName
+        {
+            get { return "RunAfter_PostScript"; }
+        }
 
+        public override bool AlwaysRun
+        {
+            get { return true; }
+        }
+
+        public override string Title { get { return "Post-Script: Reset Enabled NodeTypes | Re-enable Scheduled Rules | Trigger all Module Events"; } }
         public override void update()
         {
             _acceptBlame( CswEnumDeveloper.SS, 26029 );
@@ -50,7 +61,17 @@ namespace ChemSW.Nbt.Schema
             _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( "update scheduledrules set reprobate=0,totalroguecount=0,failedcount=0" );
             _resetBlame();
 
+            _acceptBlame( CswEnumDeveloper.DH, 30252 );
+
+            List<CswStoredProcParam> Params = new List<CswStoredProcParam>();
+            _CswNbtSchemaModTrnsctn.execStoredProc( "CREATEALLNTVIEWS", Params );
+            _resetBlame();
+
+
+
             _CswNbtSchemaModTrnsctn.Modules.TriggerModuleEventHandlers();
+
+
         }//Update()
 
     }//class RunAfterEveryExecutionOfUpdater_01

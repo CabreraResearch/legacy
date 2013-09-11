@@ -25,7 +25,8 @@
                 visibilitySelect: null,
                 roleSelect: null,
                 userSelect: null,
-                required: false
+                required: false,
+                onRenderFinish: function () { }
             };
             Csw.extend(cswPrivate, options);
 
@@ -68,6 +69,9 @@
                         Csw.clientSession.isAdministrator({
                             'Yes': function () {
 
+                                var reqs = [];
+                                var ready = Q.all(reqs);
+
                                 table.cell(rownum, 1).setLabelText(label, cswPrivate.required, false);
                                 var parentTbl = table.cell(rownum, 2).table();
                                 //var parentId = table.getId();
@@ -86,7 +90,6 @@
                                     //name: parentId + '_visrolesel',
                                     name: 'View Visibility Role',
                                     allowAdd: false,
-                                    async: false,
                                     selectedNodeId: cswPrivate.roleid,
                                     selectedName: cswPrivate.rolename,
                                     isMulti: false,
@@ -100,12 +103,14 @@
                                         Csw.tryExec(cswPrivate.onChange);
                                     }
                                 });
+                                if (cswPrivate.roleSelect.getAjax()) {
+                                    reqs.push(cswPrivate.roleSelect.getAjax());
+                                }
 
                                 cswPrivate.userSelect = parentTbl.cell(1, 4).nodeSelect({
                                     //name: parentId + '_visusersel',
                                     name: 'View Visibility User',
                                     allowAdd: false,
-                                    async: false,
                                     selectedNodeId: cswPrivate.userid,
                                     selectedName: cswPrivate.username,
                                     isMulti: false,
@@ -119,9 +124,19 @@
                                         Csw.tryExec(cswPrivate.onChange);
                                     }
                                 });
+                                if (cswPrivate.userSelect.getAjax()) {
+                                    reqs.push(cswPrivate.userSelect.getAjax());
+                                }
+
+                                ready.then(function () {
+                                    cswPrivate.onRenderFinish();
+                                });
 
                                 cswPrivate.toggle(cswPrivate.visibility);
-                            } // yes
+                            }, // yes
+                            'No': function () {
+                                cswPrivate.onRenderFinish();
+                            }
                         }); // IsAdministrator     
                     }
                 });

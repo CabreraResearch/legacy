@@ -78,5 +78,25 @@ namespace NbtWebApp
             GetViewDriverType.run();
             return ( Ret );
         }
+
+
+        [OperationContract]
+        [WebInvoke( Method = "POST" )]
+        [Description( "Get the data needed to copy a node through an action" )]
+        [FaultContract( typeof( FaultException ) )]
+        public CswNbtWebServiceNode.CopyDataReturn getCopyData( CswNbtWebServiceNode.CopyDataRequest Request )
+        {
+            CswNbtWebServiceNode.CopyDataReturn Ret = new CswNbtWebServiceNode.CopyDataReturn();
+
+            var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceNode.CopyDataReturn, CswNbtWebServiceNode.CopyDataRequest>(
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context ),
+                ReturnObj: Ret,
+                WebSvcMethodPtr: CswNbtWebServiceNode.getCopyData,
+                ParamObj: Request
+                );
+
+            SvcDriver.run();
+            return ( Ret );
+        }
     }
 }

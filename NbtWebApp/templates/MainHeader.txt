@@ -61,8 +61,6 @@
                         onmissing: function() {
                             if(window.confirm("You are using an unsupported version of Internet Explorer. To improve the speed and performance of this application, click OK to install Chrome Frame.")) {
                                 window.open("http://google.com/chromeframe");
-                            } else {
-                                window.internetExplorerVersionNo = 8;
                             }
                         }
                     });
@@ -73,10 +71,5 @@
         </script>
     <![endif]-->
 
-    <!--[if IE 9]>
-        <script>
-            window.internetExplorerVersionNo = 9;
-        </script>
-    <![endif]-->
     <div id="watermark" class="watermark wmcenter wmbottom"></div>
     

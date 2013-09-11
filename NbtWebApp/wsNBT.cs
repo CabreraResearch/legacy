@@ -94,11 +94,7 @@ namespace ChemSW.Nbt.WebServices
                 }
                 else if( ContextActionName != string.Empty )
                 {
-                    CswNbtAction ContextAction = _CswNbtResources.Actions[CswNbtAction.ActionNameStringToEnum( ContextActionName )];
-                    if( ContextAction != null )
-                    {
-                        _CswNbtResources.AuditContext = CswNbtAction.ActionNameEnumToString( ContextAction.Name ) + " (Action_" + ContextAction.ActionId.ToString() + ")";
-                    }
+                    _CswNbtResources.setAuditActionContext( CswNbtAction.ActionNameStringToEnum( ContextActionName ) );
                 }
             }
 
@@ -147,7 +143,7 @@ namespace ChemSW.Nbt.WebServices
                 {
 
                     SortedList<string, CswSessionsListEntry> SessionList = _CswSessionResources.CswSessionManager.SessionsList.AllSessions;
-                    foreach( CswSessionsListEntry Entry in SessionList.Values )
+                    foreach( CswSessionsListEntry Entry in from _Entry in SessionList.Values orderby  _Entry.TimeoutDate select _Entry )
                     {
                         // Filter to the administrator's access id only
                         if( Entry.AccessId == _CswNbtResources.AccessId || _CswNbtResources.CurrentNbtUser.Username == CswNbtObjClassUser.ChemSWAdminUsername )
@@ -300,6 +296,11 @@ namespace ChemSW.Nbt.WebServices
                 {
                     // BZ 9077 - Password expired
                     AuthenticationStatus = CswEnumAuthenticationStatus.ExpiredPassword;
+                }
+                else if( 1 < _CswNbtResources.CswSessionManager.SessionsList.getSessionCountForUser( _CswNbtResources.AccessId, _CswNbtResources.CurrentUser.Username ) 
+                    && CswNbtObjClassUser.ChemSWAdminUsername != _CswNbtResources.CurrentUser.Username )
+                {
+                    AuthenticationStatus = CswEnumAuthenticationStatus.AlreadyLoggedIn;
                 }
             }
 
@@ -1773,7 +1774,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string getProps( string EditMode, string NodeId, string SafeNodeKey, string TabId, string NodeTypeId, string Date, string filterToPropId, string Multi, string ConfigMode, string RelatedNodeId, string RelatedNodeTypeId, string RelatedObjectClassId, string ForceReadOnly )
+        public string getProps( string EditMode, string NodeId, string SafeNodeKey, string TabId, string NodeTypeId, string Date, string filterToPropId, string Multi, string ConfigMode, string RelatedNodeId, string ForceReadOnly )
         {
             CswTimer GetPropsTimer = new CswTimer();
 
@@ -1796,7 +1797,7 @@ namespace ChemSW.Nbt.WebServices
                     {
                         NodeTypePk = NodeKey.NodeTypeId;
                     }
-                    ReturnVal = ws.getProps( NodeId, SafeNodeKey, TabId, NodeTypePk, InDate, filterToPropId, RelatedNodeId, RelatedNodeTypeId, RelatedObjectClassId, CswConvert.ToBoolean( ForceReadOnly ) );
+                    ReturnVal = ws.getProps( NodeId, SafeNodeKey, TabId, NodeTypePk, InDate, filterToPropId, RelatedNodeId, CswConvert.ToBoolean( ForceReadOnly ) );
                 }
 
                 _deInitResources();
@@ -1817,7 +1818,7 @@ namespace ChemSW.Nbt.WebServices
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
         public string getIdentityTabProps( string EditMode, string NodeId, string SafeNodeKey, //string NodeTypeId, 
-            string Date, string filterToPropId, string Multi, string ConfigMode, string RelatedNodeId, string RelatedNodeTypeId, string RelatedObjectClassId )
+            string Date, string filterToPropId, string Multi, string ConfigMode, string RelatedNodeId )
         {
             JObject ReturnVal = new JObject();
             CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
@@ -1843,7 +1844,7 @@ namespace ChemSW.Nbt.WebServices
                         }
                     }
 
-                    ReturnVal = ws.getIdentityTabProps( RealNodeId, InDate, filterToPropId, RelatedNodeId, RelatedNodeTypeId, RelatedObjectClassId );
+                    ReturnVal = ws.getIdentityTabProps( RealNodeId, InDate, filterToPropId, RelatedNodeId );
                 }
 
                 _deInitResources();
@@ -2976,35 +2977,40 @@ namespace ChemSW.Nbt.WebServices
                 CswNbtSdTabsAndProps tabsandprops = new CswNbtSdTabsAndProps( _CswNbtResources );
 
                 CswNbtMetaDataNodeType feedbackNT = _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( nodetypeid ) );
-                CswNbtObjClassFeedback newFeedbackNode = tabsandprops.getAddNode( feedbackNT );
 
-                //if we have an action this is all we want/need/care about
-                if( false == String.IsNullOrEmpty( actionname ) )
-                {
-                    newFeedbackNode.Action.Text = actionname.Replace( "%20", " " );
-                }
-                else //if we DONT have an action, we want the info required to load a view
-                {
-                    if( false == String.IsNullOrEmpty( viewid ) )
+                CswNbtNodeCollection.AfterMakeNode After = delegate( CswNbtNode NewNode )
                     {
-                        CswNbtViewId CurrentViewId = new CswNbtViewId( viewid );
+                        CswNbtObjClassFeedback newFeedbackNode = NewNode;
+                        //if we have an action this is all we want/need/care about
+                        if( false == String.IsNullOrEmpty( actionname ) )
+                        {
+                            newFeedbackNode.Action.Text = actionname.Replace( "%20", " " );
+                        }
+                        else //if we DONT have an action, we want the info required to load a view
+                        {
+                            if( false == String.IsNullOrEmpty( viewid ) )
+                            {
+                                CswNbtViewId CurrentViewId = new CswNbtViewId( viewid );
 
-                        CswNbtView cookieView = _getView( viewid ); //this view doesn't exist in the the DB, which is why we save it below
+                                CswNbtView cookieView = _getView( viewid ); //this view doesn't exist in the the DB, which is why we save it below
 
-                        CswNbtView view = _CswNbtResources.ViewSelect.restoreView( newFeedbackNode.View.ViewId ); //WARNING!!!! calling View.ViewId creates a ViewId if there isn't one!
-                        view.LoadXml( cookieView.ToXml() );
-                        view.ViewId = newFeedbackNode.View.ViewId; //correct view.ViewId because of above problem.
-                        view.ViewName = cookieView.ViewName; //same as above, but name
-                        view.Visibility = CswEnumNbtViewVisibility.Hidden; // see case 26799
-                        view.save();
-                    }
-                    newFeedbackNode.SelectedNodeId.Text = selectednodeid;
-                    newFeedbackNode.CurrentViewMode.Text = viewmode;
-                }
-                newFeedbackNode.postChanges( false );
+                                CswNbtView view = _CswNbtResources.ViewSelect.restoreView( newFeedbackNode.View.ViewId ); //WARNING!!!! calling View.ViewId creates a ViewId if there isn't one!
+                                view.LoadXml( cookieView.ToXml() );
+                                view.ViewId = newFeedbackNode.View.ViewId; //correct view.ViewId because of above problem.
+                                view.ViewName = cookieView.ViewName; //same as above, but name
+                                view.Visibility = CswEnumNbtViewVisibility.Hidden; // see case 26799
+                                view.save();
+                            }
+                            newFeedbackNode.SelectedNodeId.Text = selectednodeid;
+                            newFeedbackNode.CurrentViewMode.Text = viewmode;
+                        }
+                        //newFeedbackNode.postChanges( false );
+                    };
 
-                ReturnVal["propdata"] = tabsandprops.getProps( newFeedbackNode.Node, "", null, CswEnumNbtLayoutType.Add ); //DO I REALLY BREAK THIS?
-                ReturnVal["nodeid"] = newFeedbackNode.NodeId.ToString();
+                CswNbtObjClassFeedback ret = tabsandprops.getAddNode( feedbackNT, After );
+
+                ReturnVal["propdata"] = tabsandprops.getProps( ret.Node, "", null, CswEnumNbtLayoutType.Add ); //DO I REALLY BREAK THIS?
+                ReturnVal["nodeid"] = ret.NodeId.ToString();
 
                 _deInitResources();
             }
@@ -3797,8 +3803,6 @@ namespace ChemSW.Nbt.WebServices
             }
 
             Context.Response.Clear();
-            Context.Response.ContentType = "application/json; charset=utf-8";
-            Context.Response.AddHeader( "content-disposition", "attachment; filename=export.json" );
             Context.Response.Flush();
             Context.Response.Write( ReturnVal.ToString() );
         } // finalizeInspectionDesign()

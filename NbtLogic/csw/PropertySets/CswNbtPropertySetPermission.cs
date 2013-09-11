@@ -151,17 +151,17 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
+        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation, bool Creating )
         {
             beforePropertySetWriteNode( IsCopy, OverrideUniqueValidation );
             _validateCompoundUniqueness();
-            CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
+            CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation, Creating );
         }
 
-        public override void afterWriteNode()
+        public override void afterWriteNode( bool Creating )
         {
             afterPropertySetWriteNode();
-            CswNbtObjClassDefault.afterWriteNode();
+            CswNbtObjClassDefault.afterWriteNode( Creating );
         }
 
         public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
@@ -283,14 +283,17 @@ namespace ChemSW.Nbt.ObjClasses
                 CswNbtMetaDataNodeType PermissionNT = PermissionOC.FirstNodeType;
                 if( null != PermissionNT )
                 {
-                    CswNbtPropertySetPermission WildCardPermission = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( PermissionNT.NodeTypeId, CswEnumNbtMakeNodeOperation.DoNothing );
-                    WildCardPermission.ApplyToAllRoles.Checked = CswEnumTristate.True;
-                    WildCardPermission.ApplyToAllWorkUnits.Checked = CswEnumTristate.True;
-                    WildCardPermission.PermissionGroup.RelatedNodeId = GroupId;
-                    WildCardPermission.View.Checked = CswEnumTristate.True;
-                    WildCardPermission.Edit.Checked = CswEnumTristate.True;
-                    WildCardPermission.setWildCardValues();
-                    WildCardPermission.postChanges( false );
+                    _CswNbtResources.Nodes.makeNodeFromNodeTypeId( PermissionNT.NodeTypeId, delegate( CswNbtNode NewNode )
+                        {
+                            CswNbtPropertySetPermission WildCardPermission = NewNode;
+                            WildCardPermission.ApplyToAllRoles.Checked = CswEnumTristate.True;
+                            WildCardPermission.ApplyToAllWorkUnits.Checked = CswEnumTristate.True;
+                            WildCardPermission.PermissionGroup.RelatedNodeId = GroupId;
+                            WildCardPermission.View.Checked = CswEnumTristate.True;
+                            WildCardPermission.Edit.Checked = CswEnumTristate.True;
+                            WildCardPermission.setWildCardValues();
+                            //WildCardPermission.postChanges( false );
+                        } );
                 }
             }
         }
@@ -320,7 +323,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         public CswNbtNodePropRelationship PermissionGroup { get { return _CswNbtNode.Properties[PropertyName.PermissionGroup]; } }
         public CswNbtNodePropRelationship WorkUnit { get { return _CswNbtNode.Properties[PropertyName.WorkUnit]; } }
-        private void OnWorkUnitPropChange( CswNbtNodeProp NodeProp )
+        private void OnWorkUnitPropChange( CswNbtNodeProp NodeProp, bool Creating )
         {
             if( null == WorkUnit.RelatedNodeId )
             {
@@ -328,7 +331,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
         public CswNbtNodePropLogical ApplyToAllWorkUnits { get { return _CswNbtNode.Properties[PropertyName.ApplyToAllWorkUnits]; } }
-        private void OnApplyToAllWorkUnitsPropChange( CswNbtNodeProp NodeProp )
+        private void OnApplyToAllWorkUnitsPropChange( CswNbtNodeProp NodeProp, bool Creating )
         {
             if( ApplyToAllWorkUnits.Checked == CswEnumTristate.True )
             {
@@ -341,7 +344,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
         public CswNbtNodePropRelationship Role { get { return _CswNbtNode.Properties[PropertyName.Role]; } }
-        private void OnRolePropChange( CswNbtNodeProp NodeProp )
+        private void OnRolePropChange( CswNbtNodeProp NodeProp, bool Creating )
         {
             if( null == Role.RelatedNodeId )
             {
@@ -349,7 +352,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
         public CswNbtNodePropLogical ApplyToAllRoles { get { return _CswNbtNode.Properties[PropertyName.ApplyToAllRoles]; } }
-        private void OnApplyToAllRolesPropChange( CswNbtNodeProp NodeProp )
+        private void OnApplyToAllRolesPropChange( CswNbtNodeProp NodeProp, bool Creating )
         {
             if( ApplyToAllRoles.Checked == CswEnumTristate.True )
             {

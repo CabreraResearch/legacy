@@ -1,10 +1,11 @@
-using System;
-using System.Collections.ObjectModel;
 using ChemSW.Core;
+using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 using ChemSW.Security;
+using System;
+using System.Collections.ObjectModel;
 
 
 namespace ChemSW.Nbt.ObjClasses
@@ -78,16 +79,27 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
+        public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
+        {
+            _CswNbtObjClassDefault.beforeCreateNode( IsCopy, OverrideUniqueValidation );
+        }//beforeCreateNode()
+
+        public override void afterCreateNode()
+        {
+            _CswNbtObjClassDefault.afterCreateNode();
+        }//afterCreateNode()
+
+
+        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation, bool Creating )
         {
             _checkForConfigFileUpdate();
-            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
+            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation, Creating );
         }
 
-        public override void afterWriteNode()
+        public override void afterWriteNode( bool Creating )
         {
             _doConfigFileUpdate();
-            _CswNbtObjClassDefault.afterWriteNode();
+            _CswNbtObjClassDefault.afterWriteNode( Creating );
         } // afterWriteNode()
 
         bool UpdateConfigFile = false;
@@ -195,7 +207,15 @@ namespace ChemSW.Nbt.ObjClasses
                 }
 
                 this.SchemaVersion.StaticText = OtherSchemaVersion;
+
+                //case 29751
+                if( CompanyID.Text == _CswNbtResources.AccessId )
+                {
+                    Login.setHidden( true, false );
+                }
             }
+
+            CompanyID.SetOnPropChange( OnCompanyIdPropChange );
 
             _CswNbtObjClassDefault.triggerAfterPopulateProps();
         }//afterPopulateProps()
@@ -253,6 +273,14 @@ namespace ChemSW.Nbt.ObjClasses
                 return ( _CswNbtNode.Properties[PropertyName.CompanyID] );
             }
         }
+        private void OnCompanyIdPropChange( CswNbtNodeProp NodeProp, bool Creating )
+        {
+            if ( false == CswTools.IsValidUsername( CompanyID.Text ) )
+            {
+                throw new CswDniException( CswEnumErrorType.Warning, "The suppplied CustomerId is not in a valid format.", "CustomerId: {" + CompanyID.Text + "} is not well-formed." );
+            }
+        }
+
         public CswNbtNodePropNumber UserCount
         {
             get

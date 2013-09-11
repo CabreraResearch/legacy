@@ -8,6 +8,8 @@ namespace ChemSW.Nbt.ObjClasses
 {
     public class CswNbtObjClassFeedback : CswNbtObjClass
     {
+        #region Enums
+
         public new sealed class PropertyName: CswNbtObjClass.PropertyName
         {
             public const string Author = "Author";
@@ -23,6 +25,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Category = "Category";
             public const string CaseNumber = "Case Number";
             public const string CurrentViewMode = "Current View Mode";
+            public const string Document = "Document";
         }
 
         public sealed class Statuses
@@ -38,6 +41,10 @@ namespace ChemSW.Nbt.ObjClasses
                     AwaitingAuthorResponse
                 };
         }
+
+        #endregion Enums
+
+        #region ctor
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
@@ -66,9 +73,22 @@ namespace ChemSW.Nbt.ObjClasses
             return ret;
         }
 
+        #endregion ctor
+
         #region Inherited Events
 
-        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
+        public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
+        {
+            _CswNbtObjClassDefault.beforeCreateNode( IsCopy, OverrideUniqueValidation );
+        }//beforeCreateNode()
+
+        public override void afterCreateNode()
+        {
+            _CswNbtObjClassDefault.afterCreateNode();
+        }//afterCreateNode()
+
+
+        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation, bool Creating )
         {
             if( null == Author.RelatedNodeId && DateTime.MinValue == DateSubmitted.DateTimeValue )
             {
@@ -76,12 +96,12 @@ namespace ChemSW.Nbt.ObjClasses
                 DateSubmitted.DateTimeValue = DateTime.Now;
             }
 
-            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
+            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation, Creating );
         }//beforeWriteNode()
 
-        public override void afterWriteNode()
+        public override void afterWriteNode( bool Creating )
         {
-            _CswNbtObjClassDefault.afterWriteNode();
+            _CswNbtObjClassDefault.afterWriteNode( Creating );
         }//afterWriteNode()
 
         public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
@@ -167,127 +187,22 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Object class specific properties
 
-        public CswNbtNodePropRelationship Author
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.Author] );
-            }
-        }
-
-        public CswNbtNodePropDateTime DateSubmitted
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.DateSubmitted] );
-            }
-        }
-
-        public CswNbtNodePropText Subject
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.Subject] );
-            }
-        }
-
-        public CswNbtNodePropMemo Summary
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.Summary] );
-            }
-        }
-
-        public CswNbtNodePropComments Discussion
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.Discussion] );
-            }
-        }
-
-        public CswNbtNodePropButton LoadUserContext
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.LoadUserContext] );
-            }
-        }
-
-        public CswNbtNodePropText SelectedNodeId
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.SelectedNodeID] );
-            }
-        }
-
-        public CswNbtNodePropText Action
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.Action] );
-            }
-        }
-
-        public CswNbtNodePropViewReference View //formerly CswNbtNodePropViewPickList
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.View] );
-            }
-        }
-
-        public CswNbtNodePropList Status
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.Status] );
-            }
-        }
-
-        public CswNbtNodePropList Category
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.Category] );
-            }
-        }
-
-        public CswNbtNodePropSequence CaseNumber
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.CaseNumber] );
-            }
-        }
-
-        public CswNbtNodePropText CurrentViewMode
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.CurrentViewMode] );
-            }
-        }
+        public CswNbtNodePropRelationship Author { get { return ( _CswNbtNode.Properties[PropertyName.Author] ); } }
+        public CswNbtNodePropDateTime DateSubmitted { get { return ( _CswNbtNode.Properties[PropertyName.DateSubmitted] ); } }
+        public CswNbtNodePropText Subject { get { return ( _CswNbtNode.Properties[PropertyName.Subject] ); } }
+        public CswNbtNodePropMemo Summary { get { return ( _CswNbtNode.Properties[PropertyName.Summary] ); } }
+        public CswNbtNodePropComments Discussion { get { return ( _CswNbtNode.Properties[PropertyName.Discussion] ); } }
+        public CswNbtNodePropButton LoadUserContext { get { return ( _CswNbtNode.Properties[PropertyName.LoadUserContext] ); } }
+        public CswNbtNodePropText SelectedNodeId { get { return ( _CswNbtNode.Properties[PropertyName.SelectedNodeID] ); } }
+        public CswNbtNodePropText Action { get { return ( _CswNbtNode.Properties[PropertyName.Action] ); } }
+        public CswNbtNodePropViewReference View { get { return ( _CswNbtNode.Properties[PropertyName.View] ); } }
+        public CswNbtNodePropList Status { get { return ( _CswNbtNode.Properties[PropertyName.Status] ); } }
+        public CswNbtNodePropList Category { get { return ( _CswNbtNode.Properties[PropertyName.Category] ); } }
+        public CswNbtNodePropSequence CaseNumber { get { return ( _CswNbtNode.Properties[PropertyName.CaseNumber] ); } }
+        public CswNbtNodePropText CurrentViewMode { get { return ( _CswNbtNode.Properties[PropertyName.CurrentViewMode] ); } }
+        public CswNbtNodePropBlob Document { get { return ( _CswNbtNode.Properties[PropertyName.Document] ); } }
 
         #endregion
-
-        private CswNbtView _getView( string ViewId )
-        {
-            CswNbtView View = null;
-            if( CswNbtViewId.isViewIdString( ViewId ) )
-            {
-                CswNbtViewId realViewid = new CswNbtViewId( ViewId );
-                View = _CswNbtResources.ViewSelect.restoreView( realViewid );
-            }
-            else if( CswNbtSessionDataId.isSessionDataIdString( ViewId ) )
-            {
-                CswNbtSessionDataId SessionViewid = new CswNbtSessionDataId( ViewId );
-                View = _CswNbtResources.ViewSelect.getSessionView( SessionViewid );
-            }
-            return View;
-        } // _getView()
 
     }//CswNbtObjClassFeedback
 

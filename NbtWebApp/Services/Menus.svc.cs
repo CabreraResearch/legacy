@@ -25,15 +25,15 @@ namespace NbtWebApp
         [WebInvoke( Method = "POST", UriTemplate = "getSearchMenuItems" )]
         [Description( "" )]
         [FaultContract( typeof( FaultException ) )]
-        public CswNbtWebServiceSearchMenu.CswNbtSearchMenuReturn getSearchMenuItems()
+        public CswNbtWebServiceSearchMenu.CswNbtSearchMenuReturn getSearchMenuItems( bool UniversalSearchOnly )
         {
             CswNbtWebServiceSearchMenu.CswNbtSearchMenuReturn Ret = new CswNbtWebServiceSearchMenu.CswNbtSearchMenuReturn();
 
-            var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceSearchMenu.CswNbtSearchMenuReturn, object>(
+            var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceSearchMenu.CswNbtSearchMenuReturn, bool>(
                 CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
                 ReturnObj: Ret,
                 WebSvcMethodPtr: CswNbtWebServiceSearchMenu.GetSearchMenuItems,
-                ParamObj: null
+                ParamObj : UniversalSearchOnly
                 );
 
             SvcDriver.run();

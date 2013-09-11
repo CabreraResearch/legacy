@@ -17,8 +17,8 @@
                 wizard: null,
                 wizardSteps: {
                     1: 'Choose a View',
-                    2: 'Build a View',
-                    3: 'Add to View',
+                    2: 'First View Level',
+                    3: 'Add View Levels',
                     4: 'Set Filters',
                     5: 'View Attributes',
                     6: 'Fine Tuning (Advanced)'
@@ -38,10 +38,11 @@
                 stepSixComplete: false,
                 selectedViewId: '',
                 viewStack: [],
+                viewmode: 'Grid',
 
                 ajaxReqs: {
-                    'Build a View': [],
-                    'Add to View': [],
+                    'First View Level': [],
+                    'Add View Levels': [],
                     'Set Filters': [],
                     'View Attributes': [],
                     'Fine Tuning (Advanced)': []
@@ -54,8 +55,8 @@
 
             var stepNames = Csw.object();
             Object.defineProperties(stepNames, {
-                BuildView: { value: 'Build a View' },
-                AddToView: { value: 'Add to View' },
+                BuildView: { value: 'First View Level' },
+                AddToView: { value: 'Add View Levels' },
                 SetFilters: { value: 'Set Filters' },
                 ViewAttributes: { value: 'View Attributes' },
                 FineTuning: { value: 'Fine Tuning (Advanced)' }
@@ -96,9 +97,16 @@
             cswPrivate.handleStep = function (newStepNo) {
                 cswPrivate.abortAjaxReqs();
                 if (1 === newStepNo) {
+                    if (cswPrivate.previousStep === 2) {
+                        cswPrivate.previewDiv.empty();
+                        cswPrivate.wizard.hideStaticDiv();
+                    }
                     cswPrivate.makeStep1(false);
                 } else if (2 === newStepNo) {
-                    var refreshPreview = cswPrivate.previousStep === 1;
+                    var refreshPreview = cswPrivate.previousStep !== 3;
+                    if (cswPrivate.previousStep !== 3) {
+                        cswPrivate.previewDiv = cswPrivate.wizard.staticDiv();
+                    }
                     cswPrivate.makeStep2(refreshPreview);
                 } else if (3 === newStepNo) {
                     cswPrivate.makeStep3(false);
@@ -163,7 +171,7 @@
                         name: 'vieweditor_step1_copyviewbtn',
                         enabledText: 'Copy View',
                         onClick: function () {
-                            Csw.ajax.post({
+                            Csw.ajax.deprecatedWsNbt({
                                 urlMethod: 'copyView',
                                 data: {
                                     ViewId: cswPrivate.selectedViewId,
@@ -187,7 +195,7 @@
                                        'Are you sure you want to delete the selected view?',
                                        'Confirm Intent To Delete',
                                        function _okClick() {
-                                           Csw.ajax.post({
+                                           Csw.ajax.deprecatedWsNbt({
                                                urlMethod: 'deleteView',
                                                data: {
                                                    ViewId: cswPrivate.selectedViewId
@@ -214,6 +222,7 @@
                     buttonsTbl.cell(1, 3).buttonExt({
                         name: 'vieweditor_step1_createviewbtn',
                         enabledText: 'Create New View',
+                        disableOnClick: false,
                         onClick: function () {
                             $.CswDialog('AddViewDialog', {
                                 onAddView: function (newViewId, viewMode) {
@@ -237,7 +246,7 @@
                     });
 
                     var makeViewsGrid = function (all) {
-                        Csw.ajax.post({
+                        Csw.ajax.deprecatedWsNbt({
                             urlMethod: 'getViewGrid',
                             data: {
                                 All: all,
@@ -260,6 +269,7 @@
                                     canSelectRow: true,
                                     onSelect: function (row) {
                                         cswPrivate.selectedViewId = row.viewid;
+                                        cswPrivate.viewmode = row.viewmode;
                                         deleteViewBtn.enable();
                                         copyViewBtn.enable();
                                         cswPrivate.toggleButton(cswPrivate.buttons.next, true);
@@ -293,9 +303,11 @@
                     cswPrivate.currentStepNo = 2;
                     cswPrivate.toggleButton(cswPrivate.buttons.next, false); //only enable Next once we finished getting the view
 
+                    cswPrivate.stepwidth = (cswPrivate.viewmode === 'Grid' || cswPrivate.viewmode === 'Table') ? '500px' : '300px';
+
                     cswPrivate.step2Div = cswPrivate.step2Div || cswPrivate.wizard.div(cswPrivate.currentStepNo);
                     cswPrivate.step2Div.css({
-                        'width': '100%'
+                        'width': cswPrivate.stepwidth
                     });
                     cswPrivate.step2Div.empty();
 
@@ -305,23 +317,12 @@
                     });
                     cswPrivate.step2Div.br({ number: 3 });
 
-                    var step2Tbl = cswPrivate.step2Div.table({
-                        cellpadding: 1,
-                        cellspacing: 1
+                    var propsOuterDiv = cswPrivate.step2Div.div();
+                    propsOuterDiv.css({
+                        'width': '300px'
                     });
 
-                    var propsCell = step2Tbl.cell(1, 1).css({
-                        'width': '60%'
-                    });
-                    var propsScrollable = propsCell.div();
-                    var propsDiv = propsScrollable.div().css({
-                        height: '270px'
-                    });
-                    var previewCell = step2Tbl.cell(1, 2).css({
-                        'padding-left': '40px',
-                        'border-left': '1px solid #A7D3FF'
-                    });
-                    var previewDiv = previewCell.div().css({
+                    var propsDiv = propsOuterDiv.div().css({
                         height: '270px'
                     });
 
@@ -335,7 +336,11 @@
                             },
                             success: function (response) {
                                 cswPrivate.View = response.CurrentView;
-                                step2Desc.text("What do you want in your " + cswPrivate.View.ViewMode + "?");
+                                if ('Tree' === cswPrivate.View.ViewMode) {
+                                    step2Desc.text("What do you want at the top of your tree?");
+                                } else {
+                                    step2Desc.text("What do you want in your " + cswPrivate.View.ViewMode + "?");
+                                }
                                 cswPrivate.toggleButton(cswPrivate.buttons.prev, true);
                                 cswPrivate.toggleButton(cswPrivate.buttons.finish, true);
                                 cswPrivate.toggleButton(cswPrivate.buttons.next, true);
@@ -385,7 +390,7 @@
                                     }
                                 });
                                 relSelect.setOptions(selectOpts, true);
-                                cswPrivate.buildPreview(previewDiv, cswPrivate.View, null, refreshPreview);
+                                cswPrivate.buildPreview(cswPrivate.previewDiv, cswPrivate.View, null, refreshPreview);
 
                                 cswPrivate.makeCells = function () {
                                     var row = 1;
@@ -430,7 +435,7 @@
 
                     cswPrivate.step3Div = cswPrivate.step3Div || cswPrivate.wizard.div(cswPrivate.currentStepNo);
                     cswPrivate.step3Div.css({
-                        'width': '100%'
+                        'width': cswPrivate.stepwidth
                     });
                     cswPrivate.step3Div.empty();
 
@@ -440,25 +445,13 @@
                     });
                     cswPrivate.step3Div.br({ number: 3 });
 
-                    var step3Tbl = cswPrivate.step3Div.table({
-                        cellpadding: 1,
-                        cellspacing: 1
+                    var step3OuterDiv = cswPrivate.step3Div.div().css({
+                        'width': '300px'
                     });
-
-                    var propsCell = step3Tbl.cell(1, 1).css({
-                        'width': '60%'
+                    var propsDiv = step3OuterDiv.div().css({
+                        'overflow-x': 'visible',
+                        'height': '270px',
                     });
-                    var propsScrollable = propsCell.css({
-                        'overflow': 'auto'
-                    });
-                    var propsDiv = propsScrollable.div().css({
-                        'height': '270px'
-                    });
-                    var previewCell = step3Tbl.cell(1, 2).css({
-                        'padding-left': '40px',
-                        'border-left': '1px solid #A7D3FF'
-                    });
-                    var previewDiv = previewCell.div();
 
                     cswPrivate.getStep3Data = function () {
                         var req = Csw.ajaxWcf.post({
@@ -537,7 +530,7 @@
                                         cswPrivate.secondRelationships[secondRel.ArbitraryId] = secondRel;
                                     });
 
-                                    cswPrivate.buildPreview(previewDiv, cswPrivate.View, cswPrivate.onColumnReorder, refreshPreview); //this will update the order of the props in the view);
+                                    cswPrivate.buildPreview(cswPrivate.previewDiv, cswPrivate.View, cswPrivate.onColumnReorder, refreshPreview); //this will update the order of the props in the view);
 
                                     cswPrivate.makePropsTbl = function () {
                                         var row = 2;
@@ -651,13 +644,13 @@
                                         propsDiv.br({ number: 2 });
                                     });
 
-                                    cswPrivate.buildPreview(previewDiv, cswPrivate.View, null, refreshPreview);
+                                    cswPrivate.buildPreview(cswPrivate.previewDiv, cswPrivate.View, null, refreshPreview);
                                 } else if ('List' === cswPrivate.View.ViewMode) {
                                     propsDiv.text('Create a Tree view to add relationships below the root level.').css({
                                         'font-style': 'italic',
                                         'margin-right': '15px'
                                     });
-                                    cswPrivate.buildPreview(previewDiv, cswPrivate.View);
+                                    cswPrivate.buildPreview(cswPrivate.previewDiv, cswPrivate.View);
                                 }
                             }
                         });
@@ -676,7 +669,7 @@
 
                     cswPrivate.step4Div = cswPrivate.step4Div || cswPrivate.wizard.div(cswPrivate.currentStepNo);
                     cswPrivate.step4Div.css({
-                        'width': '100%'
+                        'width': cswPrivate.stepwidth
                     });
                     cswPrivate.step4Div.empty();
 
@@ -686,31 +679,18 @@
                     });
                     cswPrivate.step4Div.br({ number: 3 });
 
-                    var step4Tbl = cswPrivate.step4Div.table({
-                        cellpadding: 1,
-                        cellspacing: 1
+                    var step4OuterDiv = cswPrivate.step4Div.div().css({
+                        'width': '300px'
+                    });
+                    var step4InnerDiv = step4OuterDiv.div().css({
+                        'overflow-x': 'visible',
+                        'height': '270px'
                     });
 
-                    var propsCell = step4Tbl.cell(1, 1).css({
-                        'width': '60%'
-                    });
-
-                    propsCell.br({ number: 2 });
-                    var propsScrollable = propsCell.div().css({
-                        'overflow': 'auto'
-                    });
-                    var filtersDiv = propsScrollable.div().css({
-                        height: '230px'
-                    });
-                    var filtersTbl = filtersDiv.table({
+                    var filtersTbl = step4InnerDiv.table({
                         cellpadding: 4,
                         cellspacing: 4
                     });
-                    var previewCell = step4Tbl.cell(1, 2).css({
-                        'padding-left': '40px',
-                        'border-left': '1px solid #A7D3FF'
-                    });
-                    var previewDiv = previewCell.div();
 
                     cswPrivate.relationships = {};
                     var getStep4Data = function () {
@@ -777,7 +757,7 @@
                             row++;
                         });
 
-                        cswPrivate.filterSelectDiv = filtersDiv.div();
+                        cswPrivate.filterSelectDiv = step4InnerDiv.div().css('padding-bottom', '40px');
                         var filterSelect = cswPrivate.filterSelectDiv.select({
                             name: 'vieweditor_filter_relSelect',
                             onChange: function () {
@@ -795,12 +775,13 @@
                                             if (cswPrivate.propFilterTbl) {
                                                 cswPrivate.propFilterTbl.remove();
                                                 cswPrivate.addFilterBtn.remove();
+                                                cswPrivate.currentFilter.closeTip();
                                             }
                                             if (cswPrivate.propSelect.selectedText() !== 'Select...') {
                                                 cswPrivate.propFilterTbl = cswPrivate.filterSelectDiv.table();
                                                 var selectedProp = properties[cswPrivate.propSelect.selectedVal()];
 
-                                                var currentFilter = Csw.nbt.viewPropFilter({
+                                                cswPrivate.currentFilter = Csw.nbt.viewPropFilter({
                                                     name: 'vieweditor_filter_' + selectedProp.ArbitraryId,
                                                     parent: cswPrivate.propFilterTbl,
                                                     viewJson: cswPrivate.viewJson,
@@ -815,7 +796,7 @@
                                                     name: 'vieweditor_applyfilter_btn',
                                                     enabledText: 'Apply Filter',
                                                     onClick: function () {
-                                                        var filterData = currentFilter.getFilterJson();
+                                                        var filterData = cswPrivate.currentFilter.getFilterJson();
                                                         var ajaxData = {
                                                             CurrentView: cswPrivate.View,
                                                             Property: selectedProp,
@@ -880,7 +861,7 @@
                         });
                         filterSelect.setOptions(selectOpts, false);
 
-                        cswPrivate.buildPreview(previewDiv, cswPrivate.View, null, refreshPreviewIn);
+                        cswPrivate.buildPreview(cswPrivate.previewDiv, cswPrivate.View, null, refreshPreviewIn);
                     };
 
                     getStep4Data();
@@ -898,7 +879,7 @@
                     cswPrivate.viewStack = []; //clear the view stack from step 6
                     cswPrivate.step5Div = cswPrivate.step5Div || cswPrivate.wizard.div(cswPrivate.currentStepNo);
                     cswPrivate.step5Div.css({
-                        'width': '100%'
+                        'width': cswPrivate.stepwidth
                     });
                     cswPrivate.step5Div.empty();
 
@@ -908,104 +889,111 @@
                     });
                     cswPrivate.step5Div.br({ number: 3 });
 
-                    var step5Tbl = cswPrivate.step5Div.table({
-                        cellpadding: 1,
-                        cellspacing: 1
+                    var step5OuterDiv = cswPrivate.step5Div.div().css({
+                        'width': '500px'
+                    });
+                    var step5InnerDiv = step5OuterDiv.div().css({
+                        'overflow-x': 'visible',
+                        'height': '270px'
                     });
 
-                    var attrCell = step5Tbl.cell(1, 1).css({
-                        'width': '60%'
-                    });
-                    var attributesTbl = attrCell.div().table({
+                    var step5Tbl = step5InnerDiv.table({
                         cellpadding: 5,
                         cellspacing: 5
                     });
 
-                    var nameCell = attributesTbl.cell(1, 1).setLabelText('View Name', false, false);
-                    var viewNameInput = attributesTbl.cell(1, 2).input({
-                        name: 'vieweditor_viewname_input',
-                        value: cswPrivate.View.ViewName,
-                        onChange: function () {
-                            handleAttributeChange();
-                        }
-                    });
+                    cswPrivate.buildPreview(cswPrivate.previewDiv, cswPrivate.View);
 
-                    var catCell = attributesTbl.cell(2, 1).setLabelText('Category', false, false);
-                    var categoryInput = attributesTbl.cell(2, 2).input({
-                        name: 'vieweditor_category_input',
-                        value: cswPrivate.View.Category,
-                        onChange: function () {
-                            handleAttributeChange();
-                        }
-                    });
+                    var isAdmin = false;
+                    var ready = Csw.promises.all(
+                        [
+                            Csw.clientSession.isAdministrator({
+                                'Yes': function () { isAdmin = true; }
+                            })
+                        ]);
 
-                    var visibilityTbl = attributesTbl.cell(3, 2).div().table();
-                    var visCell = attributesTbl.cell(3, 1).setLabelText('View Visibility', false, false);
-                    var visibilitySelect = Csw.composites.makeViewVisibilitySelect(visibilityTbl, 1, '', {
-                        visibility: cswPrivate.View.Visibility,
-                        roleid: cswPrivate.View.VisibilityRoleId,
-                        userid: cswPrivate.View.VisibilityUserId,
-                        onChange: function () {
-                            handleAttributeChange();
-                        }
-                    });
-
-                    attributesTbl.cell(4, 1).setLabelText('Display Mode', false, false);
-                    attributesTbl.cell(4, 2).text(cswPrivate.View.ViewMode);
-
-                    var widthCell = attributesTbl.cell(5, 1).setLabelText('Width', false, false);
-                    var widthInput = attributesTbl.cell(5, 2).numberTextBox({
-                        name: 'vieweditor_width_input',
-                        value: cswPrivate.View.Width,
-                        MaxValue: 1000,
-                        MinValue: 100,
-                        onChange: function () {
-                            handleAttributeChange();
-                        }
-                    });
-
-                    if ("Property" == cswPrivate.View.Visibility) {
-                        nameCell.hide();
-                        viewNameInput.hide();
-                        catCell.hide();
-                        categoryInput.hide();
-                        visCell.hide();
-                        visibilityTbl.hide();
-                    } else {
-                        widthCell.hide();
-                        widthInput.hide();
-                    }
-
-
-                    var handleAttributeChange = function () {
-                        //It's better to send this to the server to modify - in some cases (ex: ViewName) we need DB resources which are not available during the "blackbox" deserialization events
-                        var visibilityData = visibilitySelect.getSelected();
-                        var req = Csw.ajaxWcf.post({
-                            urlMethod: 'ViewEditor/HandleAction',
-                            data: {
-                                NewViewName: viewNameInput.val(),
-                                NewViewCategory: categoryInput.val(),
-                                NewViewWidth: widthInput.val(),
-                                NewViewVisibility: visibilityData.visibility,
-                                NewVisibilityRoleId: visibilityData.roleid,
-                                NewVisbilityUserId: visibilityData.userid,
-                                CurrentView: cswPrivate.View,
-                                StepName: stepNames.ViewAttributes
-                            },
-                            success: function (response) {
-                                cswPrivate.View = response.CurrentView;
+                    ready.then(function () {
+                        var nameCell = step5Tbl.cell(1, 1).setLabelText('View Name', false, false);
+                        var viewNameInput = step5Tbl.cell(1, 2).input({
+                            name: 'vieweditor_viewname_input',
+                            value: cswPrivate.View.ViewName,
+                            onChange: function () {
+                                handleAttributeChange();
                             }
                         });
-                        cswPrivate.ajaxReqs[cswPrivate.wizardSteps[cswPrivate.currentStepNo]].push(req);
-                    };
 
-                    var previewCell = step5Tbl.cell(1, 2).css({
-                        'padding-left': '40px',
-                        'border-left': '1px solid #A7D3FF'
+                        var catCell = step5Tbl.cell(2, 1).setLabelText('Category', false, false);
+                        var categoryInput = step5Tbl.cell(2, 2).input({
+                            name: 'vieweditor_category_input',
+                            value: cswPrivate.View.Category,
+                            onChange: function () {
+                                handleAttributeChange();
+                            }
+                        });
+
+                        var visibilityTbl = step5Tbl.cell(3, 2).div().table();
+                        var visCell = step5Tbl.cell(3, 1).setLabelText('View Visibility', false, false);
+                        var visibilitySelect = Csw.composites.makeViewVisibilitySelect(visibilityTbl, 1, '', {
+                            visibility: cswPrivate.View.Visibility,
+                            roleid: cswPrivate.View.VisibilityRoleId,
+                            userid: cswPrivate.View.VisibilityUserId,
+                            onChange: function () {
+                                handleAttributeChange();
+                            }
+                        });
+                        if (false == isAdmin) {
+                            visibilityTbl.hide();
+                            visCell.hide();
+                        }
+
+                        step5Tbl.cell(4, 1).setLabelText('Display Mode', false, false);
+                        step5Tbl.cell(4, 2).text(cswPrivate.View.ViewMode);
+
+                        var widthCell = step5Tbl.cell(5, 1).setLabelText('Width', false, false);
+                        var widthInput = step5Tbl.cell(5, 2).numberTextBox({
+                            name: 'vieweditor_width_input',
+                            value: cswPrivate.View.Width,
+                            MaxValue: 1000,
+                            MinValue: 100,
+                            onChange: function () {
+                                handleAttributeChange();
+                            }
+                        });
+
+                        if ("Property" == cswPrivate.View.Visibility) {
+                            nameCell.hide();
+                            viewNameInput.hide();
+                            catCell.hide();
+                            categoryInput.hide();
+                            visCell.hide();
+                            visibilityTbl.hide();
+                        } else {
+                            widthCell.hide();
+                            widthInput.hide();
+                        }
+
+                        var handleAttributeChange = function () {
+                            //It's better to send this to the server to modify - in some cases (ex: ViewName) we need DB resources which are not available during the "blackbox" deserialization events
+                            var visibilityData = visibilitySelect.getSelected();
+                            var req = Csw.ajaxWcf.post({
+                                urlMethod: 'ViewEditor/HandleAction',
+                                data: {
+                                    NewViewName: viewNameInput.val(),
+                                    NewViewCategory: categoryInput.val(),
+                                    NewViewWidth: widthInput.val(),
+                                    NewViewVisibility: visibilityData.visibility,
+                                    NewVisibilityRoleId: visibilityData.roleid,
+                                    NewVisbilityUserId: visibilityData.userid,
+                                    CurrentView: cswPrivate.View,
+                                    StepName: stepNames.ViewAttributes
+                                },
+                                success: function (response) {
+                                    cswPrivate.View = response.CurrentView;
+                                }
+                            });
+                            cswPrivate.ajaxReqs[cswPrivate.wizardSteps[cswPrivate.currentStepNo]].push(req);
+                        };
                     });
-                    var previewDiv = previewCell.div();
-                    cswPrivate.buildPreview(previewDiv, cswPrivate.View);
-
                 };
             }());
 
@@ -1018,7 +1006,7 @@
 
                     cswPrivate.step6Div = cswPrivate.step6Div || cswPrivate.wizard.div(cswPrivate.currentStepNo);
                     cswPrivate.step6Div.css({
-                        'width': '100%'
+                        'width': cswPrivate.stepwidth
                     });
                     cswPrivate.step6Div.empty();
 
@@ -1028,16 +1016,16 @@
                     });
                     cswPrivate.step6Div.br({ number: 3 });
 
-                    cswPrivate.step6Tbl = cswPrivate.step6Div.table({
-                        cellpadding: 1,
-                        cellspacing: 1
+                    var step6OuterDiv = cswPrivate.step6Div.div().css({
+                        'width': '300px'
+                    });
+                    var step6InnerDiv = step6OuterDiv.div().css({
+                        'overflow-x': 'visible',
+                        'height': '270px'
                     });
 
-                    var contentCell = cswPrivate.step6Tbl.cell(1, 1).css({
-                        'width': '60%'
-                    });
-                    var viewContentDiv = contentCell.div();
-                    cswPrivate.step6Div.buttonExt({
+                    var viewContentDiv = step6InnerDiv.div().css('padding-bottom', '40px');
+                    step6InnerDiv.buttonExt({
                         enabledText: 'Undo',
                         disabled: (cswPrivate.viewStack.length === 0),
                         onClick: function () {
@@ -1045,11 +1033,7 @@
                             cswPrivate.makeStep6(true);
                         }
                     });
-                    var previewCell = cswPrivate.step6Tbl.cell(1, 2).css({
-                        'padding-left': '40px',
-                        'border-left': '1px solid #A7D3FF'
-                    });
-                    var previewDiv = previewCell.div();
+                    step6InnerDiv.br({ number: 3 });
 
                     Csw.ajaxWcf.post({
                         urlMethod: 'ViewEditor/GetStepData',
@@ -1083,7 +1067,7 @@
                         }
                     });
 
-                    cswPrivate.buildPreview(previewDiv, cswPrivate.View, null, refreshPreview);
+                    cswPrivate.buildPreview(cswPrivate.previewDiv, cswPrivate.View, null, refreshPreview);
 
                     var onNodeClick = function (arbitraryId) {
                         Csw.ajaxWcf.post({
@@ -1161,11 +1145,11 @@
 
             cswPrivate.buildPreview = function (previewDiv, view, afterRender, forceRefresh) {
                 var renderGrid = function () {
-                    previewDiv.empty();
-                    var txtDiv = previewDiv.div();
-                    txtDiv.setLabelText('Preview: ', false, false);
-                    previewDiv.br({ number: 2 });
                     if (cswPrivate.View.ViewMode === 'Grid' || cswPrivate.View.ViewMode === 'Table') {
+                        previewDiv.empty();
+                        var txtDiv = previewDiv.div();
+                        txtDiv.setLabelText('Preview: ', false, false);
+                        previewDiv.br({ number: 2 });
                         if (cswPrivate.previewGrid) {
                             cswPrivate.previewGrid.remove(); //if we don't remove, we got wacky column behavior
                         }
@@ -1208,12 +1192,10 @@
                                 renderGrid();
                             }
                         });
-                    } else {
-                        renderGrid();
                     }
                 } else if ('Tree' === view.ViewMode || 'List' === view.ViewMode) {
-                    previewDiv.empty();
                     if (forceRefresh || !cswPrivate.treePreviewData) {
+                        previewDiv.empty();
                         cswPrivate.previewTree = Csw.nbt.nodeTreeExt(previewDiv, {
                             urlMethod: 'ViewEditor/GetPreviewTree',
                             initWithView: cswPrivate.View,
@@ -1232,22 +1214,6 @@
                                 cswPrivate.treePreviewData = cswPrivate.previewTree.getTreeData();
                             }
                         });
-                    } else {
-                        cswPrivate.previewTree = Csw.nbt.nodeTreeExt(previewDiv, {
-                            urlMethod: '',
-                            showToggleLink: false,
-                            ExpandAll: true,
-                            useHover: false,
-                            height: '250px',
-                            width: 270,
-                            state: {
-                                viewId: cswPrivate.View.ViewId,
-                                viewMode: cswPrivate.View.ViewMode,
-                                includeInQuickLaunch: false,
-                                includeNodeRequired: false
-                            }
-                        });
-                        cswPrivate.previewTree.makeTree(Csw.clone(cswPrivate.treePreviewData));
                     }
                 }
             };

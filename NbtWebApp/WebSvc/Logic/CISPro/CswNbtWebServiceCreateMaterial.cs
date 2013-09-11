@@ -124,6 +124,7 @@ namespace ChemSW.Nbt.WebServices
                                 StepName = "Size(s)"
                             };
                         Response.Data.Steps.Add( Sizes );
+                        Response.Data.ContainerLimit = CswConvert.ToInt32( NbtResources.ConfigVbls.getConfigVariableValue( CswEnumNbtConfigurationVariables.container_receipt_limit.ToString() ) );
                         StepNo++;
                     }
                 }

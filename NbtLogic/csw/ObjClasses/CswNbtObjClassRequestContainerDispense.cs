@@ -1,10 +1,10 @@
-using System;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.UnitsOfMeasure;
 using Newtonsoft.Json.Linq;
+using System;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -135,6 +135,14 @@ namespace ChemSW.Nbt.ObjClasses
             get { return _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestContainerDispenseClass ); }
         }
 
+        public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
+        {
+        }
+
+        public override void afterCreateNode()
+        {
+        }
+
         #endregion Base
 
         #region Inherited Events
@@ -191,6 +199,11 @@ namespace ChemSW.Nbt.ObjClasses
         public override void afterPropertySetWriteNode()
         {
 
+        }
+
+        public override void beforePropertySetDeleteNode()
+        {
+            
         }
 
         /// <summary>
@@ -311,7 +324,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Request-specific Status property change events
         /// </summary>
-        public override void onStatusPropChange( CswNbtNodeProp Prop )
+        public override void onStatusPropChange( CswNbtNodeProp Prop, bool Creating )
         {
             TotalDispensed.setHidden( value: ( Status.Value == Statuses.Pending ), SaveToDb: true );
             Size.setHidden( value: true, SaveToDb: true );
@@ -326,13 +339,13 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-        public override void onTypePropChange( CswNbtNodeProp Prop )
+        public override void onTypePropChange( CswNbtNodeProp Prop, bool Creating )
         {
             Fulfill.MenuOptions = FulfillMenu.Options.ToString();
             Fulfill.State = FulfillMenu.Dispense;
         }
 
-        public override void onRequestPropChange( CswNbtNodeProp Prop )
+        public override void onRequestPropChange( CswNbtNodeProp Prop, bool Creating )
         {
 
         }
@@ -350,7 +363,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get { return _CswNbtNode.Properties[PropertyName.Quantity]; }
         }
-        private void onQuantityPropChange( CswNbtNodeProp Prop )
+        private void onQuantityPropChange( CswNbtNodeProp Prop, bool Creating )
         {
             if( TotalDispensed.Precision != Quantity.Precision )
             {
@@ -368,7 +381,7 @@ namespace ChemSW.Nbt.ObjClasses
             get { return _CswNbtNode.Properties[PropertyName.Size]; }
         }
 
-        private void onMaterialPropChange( CswNbtNodeProp Prop )
+        private void onMaterialPropChange( CswNbtNodeProp Prop, bool Creating )
         {
             if( CswTools.IsPrimaryKey( Material.RelatedNodeId ) )
             {
@@ -384,7 +397,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get { return _CswNbtNode.Properties[PropertyName.Container]; }
         }
-        private void onContainerPropChange( CswNbtNodeProp Prop )
+        private void onContainerPropChange( CswNbtNodeProp Prop, bool Creating )
         {
             if( null != Container.RelatedNodeId )
             {
@@ -401,7 +414,7 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         public CswNbtNodePropQuantity TotalDispensed { get { return _CswNbtNode.Properties[PropertyName.TotalDispensed]; } }
-        private void onTotalDispensedPropChange( CswNbtNodeProp Prop )
+        private void onTotalDispensedPropChange( CswNbtNodeProp Prop, bool Creating )
         {
             if( Status.Value != Statuses.Pending &&
                 Status.Value != Statuses.Cancelled &&
