@@ -24,6 +24,7 @@
                             <Shortcut Id="DesktopShortcut" Directory="DesktopFolder" Name="ChemSW Balance Reader Client" Advertise="yes" Icon="balance.ico" />
                             <Shortcut Id="ApplicationStartMenuShortcut" Directory="ApplicationProgramsFolder" Name="ChemSW Balance Reader Client" Advertise="yes" Icon="balance.ico"/>
                             <RemoveFile Id="PurgeClientFolder" Name="*.*" On="uninstall" />
+                            <RemoveFolder Id="RemoveStartMenuShortcut" Directory="ApplicationProgramsFolder" On="uninstall" />
                         </Component>
                         
                     </Directory>
