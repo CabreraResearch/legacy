@@ -19,10 +19,12 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropLogical( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtNode Node )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node )
         {
-            _FieldTypeRule = (CswNbtFieldTypeRuleLogical) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
-            _CheckedSubField = _FieldTypeRule.CheckedSubField;
+            _CheckedSubField = ( (CswNbtFieldTypeRuleLogical) _FieldTypeRule ).CheckedSubField;
+
+            // Associate subfields with methods on this object, for SetSubFieldValue()
+            _SubFieldMethods.Add( _CheckedSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Checked, x => Checked = CswConvert.ToTristate( x ) ) );
         }
-        private CswNbtFieldTypeRuleLogical _FieldTypeRule;
+
         private CswNbtSubField _CheckedSubField;
 
         override public bool Empty
@@ -33,34 +35,24 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
-
-        override public string Gestalt
-        {
-            get
-            {
-                return _CswNbtNodePropData.Gestalt;
-            }
-
-        }//Gestalt
-
         public CswEnumTristate Checked
         {
             get
             {
-                return CswConvert.ToTristate( _CswNbtNodePropData.GetPropRowValue( _CheckedSubField.Column ) );
+                return CswConvert.ToTristate( GetPropRowValue( _CheckedSubField ) );
             }
             set
             {
                 object val = CswConvert.ToDbVal( value );
                 if( val != DBNull.Value )
                 {
-                    _CswNbtNodePropData.SetPropRowValue( _CheckedSubField.Column, val );
+                    SetPropRowValue( _CheckedSubField, val );
                 }
                 else
                 {
-                    _CswNbtNodePropData.SetPropRowValue( _CheckedSubField.Column, string.Empty );
+                    SetPropRowValue( _CheckedSubField, string.Empty );
                 }
-                _CswNbtNodePropData.Gestalt = toLogicalGestalt( value );
+                Gestalt = toLogicalGestalt( value );
             }
         }
 
@@ -111,7 +103,7 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void SyncGestalt()
         {
-            _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, toLogicalGestalt( Checked ) );
+            SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, toLogicalGestalt( Checked ) );
         }
     }//CswNbtNodeProp
 

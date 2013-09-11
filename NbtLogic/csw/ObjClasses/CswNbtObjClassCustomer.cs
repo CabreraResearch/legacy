@@ -105,7 +105,7 @@ namespace ChemSW.Nbt.ObjClasses
         bool UpdateConfigFile = false;
         private void _checkForConfigFileUpdate()
         {
-            if( ( Deactivated.WasModified || IPFilterRegex.WasModified || UserCount.WasModified ) && _CompanyIDDefined() )
+            if( ( Deactivated.getAnySubFieldModified() || IPFilterRegex.getAnySubFieldModified() || UserCount.getAnySubFieldModified() ) && _CompanyIDDefined() )
             {
                 UpdateConfigFile = true;
             }

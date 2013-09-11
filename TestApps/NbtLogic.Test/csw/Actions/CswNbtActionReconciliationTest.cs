@@ -96,7 +96,7 @@ namespace ChemSW.Nbt.Test.Actions
                     new ContainerData.ReconciliationTypes
                     {
                         Enabled=true, 
-                        Type= CswEnumNbtContainerLocationTypeOptions.Scan.ToString()
+                        Type= CswEnumNbtContainerLocationTypeOptions.ReconcileScans.ToString()
                     }
                 }
             };
@@ -203,7 +203,7 @@ namespace ChemSW.Nbt.Test.Actions
 
         /// <summary>
         /// Given a location that has one Container with two ContainerLocations in the given timeframe,
-        /// given that the first ContainerLocation is of Type Scan and the second is not,
+        /// given that the first ContainerLocation is of Type ReconcileScans and the second is not,
         /// assert that the returned ContainerStatus data has a ContainerStatus value of ScannedCorrect
         /// </summary>
         [Test]
@@ -214,7 +214,7 @@ namespace ChemSW.Nbt.Test.Actions
             TestData.Nodes.createContainerLocationNode( ContainerNode.Node,
                 LocationId: LocationId,
                 ContainerScan: ContainerNode.Barcode.Barcode,
-                Type: CswEnumNbtContainerLocationTypeOptions.Scan.ToString() );
+                Type: CswEnumNbtContainerLocationTypeOptions.ReconcileScans.ToString() );
             TestData.Nodes.createContainerLocationNode( ContainerNode.Node,
                 LocationId: LocationId,
                 Type: CswEnumNbtContainerLocationTypeOptions.Dispense.ToString() );
@@ -309,7 +309,7 @@ namespace ChemSW.Nbt.Test.Actions
                     new ContainerData.ReconciliationTypes
                     {
                         Enabled=true, 
-                        Type= CswEnumNbtContainerLocationTypeOptions.Scan.ToString()
+                        Type= CswEnumNbtContainerLocationTypeOptions.ReconcileScans.ToString()
                     }
                 }
             };
@@ -374,7 +374,7 @@ namespace ChemSW.Nbt.Test.Actions
             TestData.Nodes.createContainerLocationNode( ContainerNode.Node, 
                 LocationId: LocationId, 
                 ContainerScan: ContainerNode.Barcode.Barcode, 
-                Type: CswEnumNbtContainerLocationTypeOptions.Scan.ToString() );
+                Type: CswEnumNbtContainerLocationTypeOptions.ReconcileScans.ToString() );
             ContainerData.ReconciliationRequest Request = new ContainerData.ReconciliationRequest
             {
                 StartDate = DateTime.Now.AddDays( -1 ).ToString(),
@@ -399,7 +399,7 @@ namespace ChemSW.Nbt.Test.Actions
 
         /// <summary>
         /// Given a location that has one Container with two ContainerLocations in the given timeframe,
-        /// given that the first ContainerLocation is of Type Scan and the second is not,
+        /// given that the first ContainerLocation is of Type ReconcileScans and the second is not,
         /// assert that both the returned data's NotScanned and Received/Dispensed/Disposed/etc 
         /// ContainerStatus row's ContainerCount value = 0
         /// </summary>
@@ -411,7 +411,7 @@ namespace ChemSW.Nbt.Test.Actions
             TestData.Nodes.createContainerLocationNode( ContainerNode.Node,
                 LocationId: LocationId,
                 ContainerScan: ContainerNode.Barcode.Barcode,
-                Type: CswEnumNbtContainerLocationTypeOptions.Scan.ToString() );
+                Type: CswEnumNbtContainerLocationTypeOptions.ReconcileScans.ToString() );
             TestData.Nodes.createContainerLocationNode( ContainerNode.Node, 
                 LocationId: LocationId, 
                 Type: CswEnumNbtContainerLocationTypeOptions.Dispense.ToString() );

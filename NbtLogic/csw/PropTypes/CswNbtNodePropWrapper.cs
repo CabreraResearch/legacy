@@ -38,40 +38,38 @@ namespace ChemSW.Nbt.PropTypes
 
         }//refresh
 
-        public void clearModifiedFlag()
+        /// <summary>
+        /// Returns true if the subfield was modified
+        /// </summary>
+        public bool getSubFieldModified( CswEnumNbtSubFieldName SubFieldName )
         {
-            _CswNbtNodeProp.clearModifiedFlag();
-        }//clearModifiedFlag()
+            return _CswNbtNodePropData.getSubFieldModified( SubFieldName );
+        }
 
-        public bool WasModified
+        /// <summary>
+        /// Returns true if any subfield was modified
+        /// </summary>
+        public bool getAnySubFieldModified( bool IncludePendingUpdate = false )
         {
-            get
-            {
-                return ( _CswNbtNodeProp.WasModified );
-            }
+            return _CswNbtNodePropData.getAnySubFieldModified( IncludePendingUpdate );
+        }
 
-        }//WasModified
-
-        public bool WasModifiedForNotification
+        /// <summary>
+        /// Sets a subfield to have been modified
+        /// </summary>
+        public void setSubFieldModified( CswEnumNbtSubFieldName SubFieldName, bool Modified = true )
         {
-            get
-            {
-                return ( _CswNbtNodeProp.WasModifiedForNotification );
-            }
+            _CswNbtNodePropData.setSubFieldModified( SubFieldName, Modified );
+        }
 
-        }//WasModifiedForNotification
-
-        public bool SuspendModifyTracking
+        /// <summary>
+        /// Clears all subfield modified flags
+        /// </summary>
+        public void clearSubFieldModifiedFlags()
         {
-            set
-            {
-                _CswNbtNodeProp.SuspendModifyTracking = value;
-            }
-            get
-            {
-                return ( _CswNbtNodeProp.SuspendModifyTracking );
-            }
-        }//SuspendModifyTracking
+            _CswNbtNodePropData.clearSubFieldModifiedFlags();
+        }
+
 
         public string Gestalt { get { return ( _CswNbtNodeProp.Gestalt ); } }
         public string ClobData { get { return ( _CswNbtNodePropData.ClobData ); } }
@@ -87,11 +85,18 @@ namespace ChemSW.Nbt.PropTypes
         /// <summary>
         /// Get the Current state of the Property's value using the fieldtype rule's default subfield
         /// </summary>
-        public string GetPropRowValue() { return GetPropRowValue( NodeTypeProp.getFieldTypeRule().SubFields.Default.Column ); }
+        public string GetSubFieldValue()
+        {
+            return GetSubFieldValue( NodeTypeProp.getFieldTypeRule().SubFields.Default );
+        }
+
         /// <summary>
         /// Get the Current state of the Property's value using a specific subfield
         /// </summary>
-        public string GetPropRowValue( CswEnumNbtPropColumn Column ) { return _CswNbtNodePropData.GetPropRowValue( Column ); }
+        public string GetSubFieldValue( CswNbtSubField SubField )
+        {
+            return _CswNbtNodeProp.GetSubFieldValue( SubField.Name ).ToString();
+        }
 
         /// <summary>
         /// Get the Prior state of the Property's value using the fieldtype rule's default subfield
@@ -101,7 +106,7 @@ namespace ChemSW.Nbt.PropTypes
         /// Get the Prior state of the Property's value using a specific subfield
         /// </summary>
         public string GetOriginalPropRowValue( CswEnumNbtPropColumn Column ) { return _CswNbtNodePropData.GetOriginalPropRowValue( Column ); }
-        public void SetPropRowValue( CswEnumNbtPropColumn Column, object value ) { _CswNbtNodePropData.SetPropRowValue( Column, value ); }
+        //public void SetPropRowValue( CswEnumNbtPropColumn Column, object value ) { SetPropRowValue( Column, value ); }
         public void makePropRow() { _CswNbtNodePropData.makePropRow(); }
 
         public string PropName { get { return ( _CswNbtNodeProp.PropName ); } }
@@ -118,11 +123,11 @@ namespace ChemSW.Nbt.PropTypes
         /// <param name="value">True to hide, false to show</param>
         /// <param name="SaveToDb">If true and the value is different from the value in the database, write this to jct_nodes_props</param>
         public void setHidden( bool value, bool SaveToDb ) { _CswNbtNodePropData.setHidden( value, SaveToDb ); }
-        public string Field1 { get { return ( _CswNbtNodePropData.Field1 ); } set { _CswNbtNodePropData.Field1 = value; } }
-        public string Field2 { get { return ( _CswNbtNodePropData.Field2 ); } set { _CswNbtNodePropData.Field2 = value; } }
-        public string Field3 { get { return ( _CswNbtNodePropData.Field3 ); } set { _CswNbtNodePropData.Field3 = value; } }
-        public string Field4 { get { return ( _CswNbtNodePropData.Field4 ); } set { _CswNbtNodePropData.Field4 = value; } }
-        public string Field5 { get { return ( _CswNbtNodePropData.Field5 ); } set { _CswNbtNodePropData.Field5 = value; } }
+        public string Field1 { get { return ( _CswNbtNodePropData.Field1 ); } } //set { _CswNbtNodePropData.Field1 = value; } }
+        public string Field2 { get { return ( _CswNbtNodePropData.Field2 ); } } //set { _CswNbtNodePropData.Field2 = value; } }
+        public string Field3 { get { return ( _CswNbtNodePropData.Field3 ); } } //set { _CswNbtNodePropData.Field3 = value; } }
+        public string Field4 { get { return ( _CswNbtNodePropData.Field4 ); } } //set { _CswNbtNodePropData.Field4 = value; } }
+        public string Field5 { get { return ( _CswNbtNodePropData.Field5 ); } } //set { _CswNbtNodePropData.Field5 = value; } }
         public bool Required { get { return ( _CswNbtNodeProp.Required ); } }
         /// <summary>
         /// Determines whether to treat the property as required, temporarily
@@ -131,7 +136,7 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropWrapper DefaultValue { get { return ( _CswNbtNodeProp.DefaultValue ); } }
         public bool HasDefaultValue() { return ( _CswNbtNodeProp.HasDefaultValue() ); }
 
-        public bool PendingUpdate { get { return ( _CswNbtNodePropData.PendingUpdate ); } set { _CswNbtNodePropData.PendingUpdate = value; } }
+        public bool PendingUpdate { get { return ( _CswNbtNodePropData.PendingUpdate ); } } // set { _CswNbtNodePropData.PendingUpdate = value; } }
 
         public void ClearValue() { _CswNbtNodePropData.ClearValue(); }
         public void ClearBlob() { _CswNbtNodePropData.ClearBlob(); }
@@ -354,6 +359,22 @@ namespace ChemSW.Nbt.PropTypes
         public void SyncGestalt()
         {
             _CswNbtNodeProp.SyncGestalt();
+        }
+
+        /// <summary>
+        /// Set the value for a subfield, triggering the logic associated with that subfield on the fieldtype
+        /// </summary>
+        public void SetSubFieldValue( CswEnumNbtSubFieldName SubFieldName, object value )
+        {
+            _CswNbtNodeProp.SetSubFieldValue( SubFieldName, value );
+        }
+
+        /// <summary>
+        /// Set the value for a subfield, triggering the logic associated with that subfield on the fieldtype
+        /// </summary>
+        public void SetSubFieldValue( CswNbtSubField SubField, object value )
+        {
+            _CswNbtNodeProp.SetSubFieldValue( SubField.Name, value );
         }
 
         public CswNbtNodePropBarcode AsBarcode

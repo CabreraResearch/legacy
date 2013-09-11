@@ -20,11 +20,16 @@ namespace ChemSW.Nbt.Schema
 
             #region MetaData Scripts
 
-            #region Foxglove
-            
-            //dch 30252 FOXGLOVE, but metadata changes so before EUC changes
+            #region DDL
+
             _addVersionedScript( new CswUpdateMetaData_02F_Case30252() );
             _addVersionedScript( new CswUpdateMetaData_02F_Case30228() );
+            _addVersionedScript( new CswUpdateMetaData_02G_Case30557() );
+
+            #endregion DDL
+
+            #region FOXGLOVE
+            
             _addVersionedScript( new CswUpdateMetaData_02F_Case30041_NbtImportQueue() ); //Validate the Nbt Import Queue table first
             _addVersionedScript( new CswUpdateMetaData_02F_Case30281() );
             _addVersionedScript( new CswUpdateMetaData_02F_Case30251() );
@@ -35,13 +40,20 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswUpdateMetaData_02F_Case29992() );
             _addVersionedScript( new CswUpdateMetaData_02F_Case30529() );
 
-            #endregion
+            #endregion FOXGLOVE
 
-            #region Ginko
-            
+            #region GINGKO
+
+            _addVersionedScript( new CswUpdateMetaData_02G_Case30611() );
+            _addVersionedScript( new CswUpdateMetaData_02G_Case27846() );
+            _addVersionedScript( new CswUpdateMetaData_02G_Case30542() );
+            _addVersionedScript( new CswUpdateMetaData_02G_Case30557B() );
             _addVersionedScript( new CswUpdateMetaData_02G_Case28493A() );
 
-            #endregion
+
+            #endregion GINGKO
+
+            #endregion MetaData Scripts
 
             #endregion
 
@@ -50,8 +62,8 @@ namespace ChemSW.Nbt.Schema
 
             #region Data Scripts
 
-            #region Foxglove
-            
+            #region FOXGLOVE
+
             _addVersionedScript( new CswUpdateSchema_02F_Case30281() );
             _addVersionedScript( new CswUpdateSchema_02F_Case28998() );
             _addVersionedScript( new CswUpdateSchema_02F_Case29973() );
@@ -81,13 +93,16 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswUpdateSchema_02F_Case30043_InventoryGroups() );
             _addVersionedScript( new CswUpdateSchema_02F_Case30647() );
 
-            #endregion
+            #endregion FOXGLOVE
 
-            #region Ginko
+            #region GINGKO
 
+            _addVersionedScript( new CswUpdateSchema_02G_Case30542() );
+            _addVersionedScript( new CswUpdateSchema_02G_Case30557() );
+            _addVersionedScript( new CswUpdateSchema_02G_Case30679() );
             _addVersionedScript( new CswUpdateSchema_02G_Case28493B() );
 
-            #endregion
+            #endregion GINGKO
 
             #endregion Data Scripts
 
@@ -98,11 +113,6 @@ namespace ChemSW.Nbt.Schema
             #endregion Calculate the Latest Version
 
             #region Before Scripts
-
-            #region GINKGO Run Before Scripts
-
-            #endregion GINKGO Run Before Scripts
-
             // Before scripts that always run.
             _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02SQL() );
             _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_03() );
@@ -110,10 +120,8 @@ namespace ChemSW.Nbt.Schema
             #endregion Before Scripts
 
             #region After Script
-
             // After scripts that always run.
             _addRunAfterScript( new RunAfterEveryExecutionOfUpdater_01() );
-
             #endregion After Script
 
         }//ctor

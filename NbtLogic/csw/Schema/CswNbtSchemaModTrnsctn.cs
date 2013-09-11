@@ -689,7 +689,7 @@ namespace ChemSW.Nbt.Schema
             DataRow JctRow = UpdateAsDataTable.NewRow();
             JctRow["fieldtypeid"] = FieldType.FieldTypeId;
             JctRow["propcolname"] = Column.ToString();
-            JctRow["subfieldname"] = SubField.ToString();
+            JctRow["subfieldname"] = SubField.ToString().ToLower();
             JctRow["reportable"] = CswConvert.ToDbVal( IsReportable );
             JctRow["is_default"] = CswConvert.ToDbVal( IsDefault );
             UpdateAsDataTable.Rows.Add( JctRow );
@@ -1390,6 +1390,17 @@ namespace ChemSW.Nbt.Schema
         {
             addColumn( columnname, CswEnumDataDictionaryColumnType.Value, Int32.MinValue, Int32.MinValue, string.Empty, description, string.Empty, string.Empty,
                        false, false, logicaldelete, LowerRangeValue, LowerRangeValueInclusive, CswEnumDataDictionaryPortableDataType.Long, false,
+                       required, tablename, CswEnumDataDictionaryUniqueType.None, UpperRangeValueInclusive, UpperRangeValue );
+        }
+
+        /// <summary>
+        /// Convenience function for adding a new number column to the database schema
+        /// </summary>
+        public void addNumberColumn( string tablename, string columnname, string description, bool logicaldelete, bool required,
+                                   string LowerRangeValue = "", bool LowerRangeValueInclusive = false, string UpperRangeValue = "", bool UpperRangeValueInclusive = false )
+        {
+            addColumn( columnname, CswEnumDataDictionaryColumnType.Value, Int32.MinValue, Int32.MinValue, string.Empty, description, string.Empty, string.Empty,
+                       false, false, logicaldelete, LowerRangeValue, LowerRangeValueInclusive, CswEnumDataDictionaryPortableDataType.Number, false,
                        required, tablename, CswEnumDataDictionaryUniqueType.None, UpperRangeValueInclusive, UpperRangeValue );
         }
 

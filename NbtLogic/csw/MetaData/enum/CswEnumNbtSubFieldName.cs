@@ -31,6 +31,10 @@ namespace ChemSW.Nbt.MetaData
         public static readonly CswEnumNbtSubFieldName CorrectiveAction = new CswEnumNbtSubFieldName( "CorrectiveAction" );
         public static readonly CswEnumNbtSubFieldName DateAnswered = new CswEnumNbtSubFieldName( "DateAnswered" );
         public static readonly CswEnumNbtSubFieldName DateCorrected = new CswEnumNbtSubFieldName( "DateCorrected" );
+        public static readonly CswEnumNbtSubFieldName DateModified = new CswEnumNbtSubFieldName( "DateModified" );
+        public static readonly CswEnumNbtSubFieldName Gestalt = new CswEnumNbtSubFieldName( "Gestalt" );
+        public static readonly CswEnumNbtSubFieldName GestaltSearch = new CswEnumNbtSubFieldName( "GestaltSearch" );
+        public static readonly CswEnumNbtSubFieldName Hidden = new CswEnumNbtSubFieldName( "Hidden" );
         public static readonly CswEnumNbtSubFieldName Href = new CswEnumNbtSubFieldName( "Href" );
         public static readonly CswEnumNbtSubFieldName Image = new CswEnumNbtSubFieldName( "Image" );
         public static readonly CswEnumNbtSubFieldName Interval = new CswEnumNbtSubFieldName( "Interval" );
@@ -42,6 +46,8 @@ namespace ChemSW.Nbt.MetaData
         public static readonly CswEnumNbtSubFieldName Number = new CswEnumNbtSubFieldName( "Number" );
         public static readonly CswEnumNbtSubFieldName Password = new CswEnumNbtSubFieldName( "Password" );
         public static readonly CswEnumNbtSubFieldName Path = new CswEnumNbtSubFieldName( "Path" );
+        public static readonly CswEnumNbtSubFieldName PendingUpdate = new CswEnumNbtSubFieldName( "PendingUpdate" );
+        public static readonly CswEnumNbtSubFieldName ReadOnly = new CswEnumNbtSubFieldName( "ReadOnly" );
         public static readonly CswEnumNbtSubFieldName Required = new CswEnumNbtSubFieldName( "Required" );
         public static readonly CswEnumNbtSubFieldName Row = new CswEnumNbtSubFieldName( "Row" );
         public static readonly CswEnumNbtSubFieldName Sequence = new CswEnumNbtSubFieldName( "Sequence" );
@@ -57,6 +63,8 @@ namespace ChemSW.Nbt.MetaData
         public static readonly CswEnumNbtSubFieldName Flammability = new CswEnumNbtSubFieldName( "Flammability" );
         public static readonly CswEnumNbtSubFieldName Reactivity = new CswEnumNbtSubFieldName( "Reactivity" );
         public static readonly CswEnumNbtSubFieldName Special = new CswEnumNbtSubFieldName( "Special" );
+        public static readonly CswEnumNbtSubFieldName Val_kg = new CswEnumNbtSubFieldName( "val_kg" );
+        public static readonly CswEnumNbtSubFieldName Val_Liters = new CswEnumNbtSubFieldName( "val_Liters" );
     } // class SubFieldName
 
 }//namespace ChemSW.Nbt.MetaData

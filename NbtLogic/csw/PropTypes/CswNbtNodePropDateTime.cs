@@ -20,10 +20,12 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropDateTime( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtNode Node )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node )
         {
-            _FieldTypeRule = (CswNbtFieldTypeRuleDateTime) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
-            _DateValueSubField = _FieldTypeRule.DateValueSubField;
-        }//generic
-        private CswNbtFieldTypeRuleDateTime _FieldTypeRule;
+            _DateValueSubField = ( (CswNbtFieldTypeRuleDateTime) _FieldTypeRule ).DateValueSubField;
+
+            // Associate subfields with methods on this object, for SetSubFieldValue()
+            _SubFieldMethods.Add( _DateValueSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => DateTimeValue, x => DateTimeValue = CswConvert.ToDateTime( x ) ) );
+        }
+
         private CswNbtSubField _DateValueSubField;
 
         override public bool Empty
@@ -34,43 +36,27 @@ namespace ChemSW.Nbt.PropTypes
             }//
         }
 
-
-        override public string Gestalt
-        {
-            get
-            {
-                //if( DateTimeValue != DateTime.MinValue )
-                //    return DateTimeValue.ToShortDateString();
-                //else
-                //    return String.Empty;
-                SyncGestalt();
-                return _CswNbtNodePropData.Gestalt;
-            }//
-
-        }//Gestalt
-
-
         public DateTime DateTimeValue
         {
             get
             {
-                //string StringValue = _CswNbtNodePropData.GetPropRowValue( _DateValueSubField.Column );
+                //string StringValue = GetPropRowValue( _DateValueSubField.Column );
                 //DateTime ReturnVal = DateTime.MinValue;
                 //if( StringValue != string.Empty )
                 //    ReturnVal = Convert.ToDateTime( StringValue );
                 //return ( ReturnVal.Date );
-                return _CswNbtNodePropData.GetPropRowValueDate( _DateValueSubField.Column );
+                return GetPropRowValueDate( _DateValueSubField );
             }
 
             set
             {
                 if( DateTime.MinValue != value )
                 {
-                    _CswNbtNodePropData.SetPropRowValue( _DateValueSubField.Column, value );
+                    SetPropRowValue( _DateValueSubField, value );
                 }
                 else
                 {
-                    _CswNbtNodePropData.SetPropRowValue( _DateValueSubField.Column, DateTime.MinValue );
+                    SetPropRowValue( _DateValueSubField, DateTime.MinValue );
                 }
                 SyncGestalt();
             }
@@ -85,19 +71,19 @@ namespace ChemSW.Nbt.PropTypes
                 switch( DisplayMode )
                 {
                     case CswEnumNbtDateDisplayMode.Date:
-                        _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, Value.ToShortDateString() );
+                        SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, Value.ToShortDateString() );
                         break;
                     case CswEnumNbtDateDisplayMode.Time:
-                        _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, Value.ToLongTimeString() );
+                        SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, Value.ToLongTimeString() );
                         break;
                     case CswEnumNbtDateDisplayMode.DateTime:
-                        _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, Value.ToShortDateString() + " " + Value.ToLongTimeString() );
+                        SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, Value.ToShortDateString() + " " + Value.ToLongTimeString() );
                         break;
                 }
             }
             else
             {
-                _CswNbtNodePropData.Gestalt = string.Empty;
+                Gestalt = string.Empty;
             }
         } // _setGestalt()
 

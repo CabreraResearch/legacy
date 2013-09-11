@@ -56,7 +56,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             {
                 SubField = SubFields.Default;
             }
-            string StringValueToCheck = PropertyValueToCheck.GetPropRowValue( SubField.Column );
+            string StringValueToCheck = PropertyValueToCheck.GetSubFieldValue( SubField );
             CswEnumNbtFilterMode FilterMode;
             //case 27670 - in order to reserve the right for compound unique props to be empty, it has to be explicitly stated when creating the ForCompundUnique view
             if( EnforceNullEntries && String.IsNullOrEmpty( StringValueToCheck ) )

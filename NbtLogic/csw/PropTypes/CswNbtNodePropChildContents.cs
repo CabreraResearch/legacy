@@ -13,9 +13,6 @@ namespace ChemSW.Nbt.PropTypes
 {
     public class CswNbtNodePropChildContents : CswNbtNodeProp
     {
-        private CswNbtFieldTypeRuleChildContents _FieldTypeRule;
-        private CswNbtNode _Node;
-
         public static implicit operator CswNbtNodePropChildContents( CswNbtNodePropWrapper PropWrapper )
         {
             return PropWrapper.AsChildContents;
@@ -24,9 +21,7 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropChildContents( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtNode Node )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node )
         {
-            _Node = Node;
-
-            _FieldTypeRule = (CswNbtFieldTypeRuleChildContents) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
+            // No subfields
         }
 
         #region Generic Properties
@@ -39,18 +34,11 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
-        override public string Gestalt
-        {
-            get
-            {
-                return _CswNbtNodePropData.Gestalt;
-            }
-        }
-
         public override string ValueForNameTemplate
         {
             get { return Gestalt; }
         }
+
 
         public override void SyncGestalt()
         {

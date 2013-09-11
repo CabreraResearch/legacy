@@ -24,6 +24,7 @@
                 isRequired: false,
                 onChange: null,
                 overrideSelectedLocation: true,
+                useDefaultLocation: true,
                 EditMode: Csw.enums.editMode.Edit,
                 value: ''
             };
@@ -96,8 +97,13 @@
                             },
                             success: function (data) {
                                 cswPrivate.viewid = data.viewid;
-                                cswPrivate.nodeid = data.nodeid;
-                                cswPrivate.path = data.path;
+                                if (cswPrivate.useDefaultLocation) {
+                                    cswPrivate.nodeid = data.nodeid;
+                                    cswPrivate.path = data.path;
+                                } else {
+                                    //Case 30243 - If we're not using DefaultLocation, use root every time instead (yuck)
+                                    Csw.clientDb.setItem('CswTree_Top_LastSelectedPath', Csw.enums.nodeTree_DefaultSelect.root.name);
+                                }
                                 render();
                             }
                         }));

@@ -19,10 +19,12 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropComposite( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtNode Node )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node )
         {
-            _FieldTypeRule = (CswNbtFieldTypeRuleComposite) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
-            _CachedValueSubField = _FieldTypeRule.CachedValueSubField;
+            _CachedValueSubField = ( (CswNbtFieldTypeRuleComposite) _FieldTypeRule ).CachedValueSubField;
+
+            // Associate subfields with methods on this object, for SetSubFieldValue()
+            _SubFieldMethods.Add( _CachedValueSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => CachedValue, null ) );
         }
-        private CswNbtFieldTypeRuleComposite _FieldTypeRule;
+
         private CswNbtSubField _CachedValueSubField;
 
         override public bool Empty
@@ -33,21 +35,11 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
-
-        override public string Gestalt
-        {
-            get
-            {
-                return _CswNbtNodePropData.Gestalt;
-            }
-
-        }
-
         public string CachedValue
         {
             get
             {
-                return _CswNbtNodePropData.GetPropRowValue( _CachedValueSubField.Column );
+                return GetPropRowValue( _CachedValueSubField );
             }
         }
 
@@ -68,10 +60,10 @@ namespace ChemSW.Nbt.PropTypes
 
         public string RecalculateCompositeValue()
         {
-            string Value = CswNbtMetaData.TemplateValueToDisplayValue( _CswNbtResources.MetaData.getNodeTypeProps( _CswNbtMetaDataNodeTypeProp.NodeTypeId ), TemplateValue, _CswNbtNodePropData );
-            _CswNbtNodePropData.SetPropRowValue( _CachedValueSubField.Column, Value );
-            _CswNbtNodePropData.Gestalt = Value;
-            _CswNbtNodePropData.PendingUpdate = false;
+            string Value = CswNbtMetaData.TemplateValueToDisplayValue( _CswNbtResources.MetaData.getNodeTypeProps( _CswNbtMetaDataNodeTypeProp.NodeTypeId ), TemplateValue, this );
+            SetPropRowValue( _CachedValueSubField, Value );
+            Gestalt = Value;
+            PendingUpdate = false;
             return Value;
         }
 
@@ -89,11 +81,11 @@ namespace ChemSW.Nbt.PropTypes
         {
             PendingUpdate = true;
         }
-
+        
         public override void SyncGestalt()
         {
-            string gestaltVal = CswNbtMetaData.TemplateValueToDisplayValue( _CswNbtResources.MetaData.getNodeTypeProps( _CswNbtMetaDataNodeTypeProp.NodeTypeId ), TemplateValue, _CswNbtNodePropData );
-            _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, gestaltVal );
+            string gestaltVal = CswNbtMetaData.TemplateValueToDisplayValue( _CswNbtResources.MetaData.getNodeTypeProps( _CswNbtMetaDataNodeTypeProp.NodeTypeId ), TemplateValue, this );
+            SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, gestaltVal );
         }
     }//CswNbtNodePropComposite
 

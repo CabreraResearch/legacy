@@ -118,7 +118,7 @@ namespace ChemSW.Nbt.ObjClasses
         private void _setStatus()
         {
             CswEnumNbtContainerLocationStatusOptions ContLocStatus = CswEnumNbtContainerLocationStatusOptions.Correct;
-            if( Type.Value == CswEnumNbtContainerLocationTypeOptions.Scan.ToString() )
+            if( Type.Value == CswEnumNbtContainerLocationTypeOptions.ReconcileScans.ToString() )
             {
                 ContLocStatus = CswEnumNbtContainerLocationStatusOptions.ScannedCorrect;
                 CswNbtObjClassContainer ContainerNode = _CswNbtResources.Nodes.GetNode( Container.RelatedNodeId );

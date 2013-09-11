@@ -19,19 +19,16 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropSequence( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtNode Node )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node )
         {
-            //if( _CswNbtMetaDataNodeTypeProp.FieldType.FieldType != CswEnumNbtFieldType.Sequence )
-            //{
-            //    throw ( new CswDniException( ErrorType.Error, "A data consistency problem occurred",
-            //                                "CswNbtNodePropSequence() was created on a property with fieldtype: " + _CswNbtMetaDataNodeTypeProp.FieldType.FieldType ) );
-            //}
-            _FieldTypeRule = (CswNbtFieldTypeRuleSequence) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
-            _SequenceSubField = _FieldTypeRule.SequenceSubField;
-            _SequenceNumberSubField = _FieldTypeRule.SequenceNumberSubField;
+            _SequenceSubField = ( (CswNbtFieldTypeRuleSequence) _FieldTypeRule ).SequenceSubField;
+            _SequenceNumberSubField = ( (CswNbtFieldTypeRuleSequence) _FieldTypeRule ).SequenceNumberSubField;
 
             _SequenceValue = new CswNbtSequenceValue( _CswNbtMetaDataNodeTypeProp.PropId, _CswNbtResources );
+
+            // Associate subfields with methods on this object, for SetSubFieldValue()
+            _SubFieldMethods.Add( _SequenceSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Sequence, x => setSequenceValueOverride( CswConvert.ToString( x ), true ) ) );
+            _SubFieldMethods.Add( _SequenceNumberSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => SequenceNumber, null ) );
         }
 
-        private CswNbtFieldTypeRuleSequence _FieldTypeRule;
         private CswNbtSequenceValue _SequenceValue;
         private CswNbtSubField _SequenceSubField;
         private CswNbtSubField _SequenceNumberSubField;
@@ -45,21 +42,11 @@ namespace ChemSW.Nbt.PropTypes
             }
         }//Empty
 
-
-        override public string Gestalt
-        {
-            get
-            {
-                return _CswNbtNodePropData.Gestalt;
-            }//get
-
-        }//Gestalt
-
         public string Sequence
         {
             get
             {
-                return _CswNbtNodePropData.GetPropRowValue( _SequenceSubField.Column );
+                return GetPropRowValue( _SequenceSubField );
             }
         }//Sequence
 
@@ -67,7 +54,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return _CswNbtNodePropData.GetPropRowValue( _SequenceNumberSubField.Column );
+                return GetPropRowValue( _SequenceNumberSubField );
             }
         }//Sequence
 
@@ -92,10 +79,10 @@ namespace ChemSW.Nbt.PropTypes
         /// (set true if the value was not just generated from the sequence)</param>
         public void setSequenceValueOverride( string SeqValue, bool ResetSequence )
         {
-            _CswNbtNodePropData.SetPropRowValue( _SequenceSubField.Column, SeqValue );
+            SetPropRowValue( _SequenceSubField, SeqValue );
             Int32 ThisSeqValue = _SequenceValue.deformatSequence( SeqValue );
-            _CswNbtNodePropData.SetPropRowValue( _SequenceNumberSubField.Column, ThisSeqValue );
-            _CswNbtNodePropData.Gestalt = SeqValue;
+            SetPropRowValue( _SequenceNumberSubField, ThisSeqValue );
+            Gestalt = SeqValue;
 
             if( ResetSequence )
             {
@@ -161,7 +148,7 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void SyncGestalt()
         {
-            _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, SequenceNumber );
+            SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, SequenceNumber );
         }
     }//CswNbtNodeProp
 

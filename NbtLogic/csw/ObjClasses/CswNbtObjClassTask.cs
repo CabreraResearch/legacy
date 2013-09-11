@@ -92,7 +92,7 @@ namespace ChemSW.Nbt.ObjClasses
             if( !_CswNbtNode.New && ( CswEnumNbtNodeModificationState.Modified == _CswNbtNode.ModificationState ) )
             {
                 //if someone set the flag deliberately don't mess with it
-                if( !_CswNbtNode.Properties[PropertyName.IsFuture].WasModified )
+                if( !_CswNbtNode.Properties[PropertyName.IsFuture].getAnySubFieldModified() )
                 {
                     _CswNbtNode.Properties[PropertyName.IsFuture].AsLogical.Checked = CswEnumTristate.False;
                 }

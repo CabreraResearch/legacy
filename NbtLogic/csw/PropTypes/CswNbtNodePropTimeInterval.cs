@@ -10,7 +10,7 @@ using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.PropTypes
 {
-    public class CswNbtNodePropTimeInterval: CswNbtNodeProp
+    public class CswNbtNodePropTimeInterval : CswNbtNodeProp
     {
         public static implicit operator CswNbtNodePropTimeInterval( CswNbtNodePropWrapper PropWrapper )
         {
@@ -31,13 +31,18 @@ namespace ChemSW.Nbt.PropTypes
             {
                 _RateInterval = new CswRateInterval( _CswNbtResources );
             }
-            _FieldTypeRule = (CswNbtFieldTypeRuleTimeInterval) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
-            _IntervalSubField = _FieldTypeRule.IntervalSubField;
-            _StartDateSubField = _FieldTypeRule.StartDateSubField;
+            _IntervalSubField = ( (CswNbtFieldTypeRuleTimeInterval) _FieldTypeRule ).IntervalSubField;
+            _StartDateSubField = ( (CswNbtFieldTypeRuleTimeInterval) _FieldTypeRule ).StartDateSubField;
+            _ClobDataSubField = ( (CswNbtFieldTypeRuleTimeInterval) _FieldTypeRule ).ClobDataSubField;
+
+            // Associate subfields with methods on this object, for SetSubFieldValue()
+            _SubFieldMethods.Add( _IntervalSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => RateInterval, x => RateInterval.ReadJson( CswConvert.ToJObject( x ) ) ) );
+            _SubFieldMethods.Add( _StartDateSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => getStartDate(), null ) );
         }
-        private CswNbtFieldTypeRuleTimeInterval _FieldTypeRule;
+
         private CswNbtSubField _IntervalSubField;
         private CswNbtSubField _StartDateSubField;
+        private CswNbtSubField _ClobDataSubField;
 
         override public bool Empty
         {
@@ -46,16 +51,7 @@ namespace ChemSW.Nbt.PropTypes
                 return ( string.IsNullOrEmpty( Gestalt ) );
             }
         }
-
-
-        override public string Gestalt
-        {
-            get
-            {
-                return _CswNbtNodePropData.Gestalt;
-            }
-        }
-
+        
         private CswRateInterval _RateInterval;
         public CswRateInterval RateInterval
         {
@@ -66,10 +62,11 @@ namespace ChemSW.Nbt.PropTypes
             set
             {
                 _RateInterval = value;
-                _CswNbtNodePropData.SetPropRowValue( _IntervalSubField.Column, value.ToString() );
-                _CswNbtNodePropData.SetPropRowValue( _StartDateSubField.Column, value.getFirst() );
-                _CswNbtNodePropData.Gestalt = value.ToString();
-                _CswNbtNodePropData.ClobData = value.ToXmlString();
+                SetPropRowValue( _IntervalSubField, value.ToString() );
+                SetPropRowValue( _StartDateSubField, value.getFirst() );
+                Gestalt = value.ToString();
+                //ClobData = value.ToXmlString();
+                SetPropRowValue( _ClobDataSubField, value.ToXmlString() );
             }
         }
 
@@ -139,7 +136,7 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void SyncGestalt()
         {
-            _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, RateInterval.ToString() );
+            SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, RateInterval.ToString() );
         }
 
     }//CswNbtNodeProp

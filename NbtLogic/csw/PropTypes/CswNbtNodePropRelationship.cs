@@ -12,7 +12,7 @@ using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.PropTypes
 {
-    public class CswNbtNodePropRelationship: CswNbtNodeProp
+    public class CswNbtNodePropRelationship : CswNbtNodeProp
     {
         public static implicit operator CswNbtNodePropRelationship( CswNbtNodePropWrapper PropWrapper )
         {
@@ -22,9 +22,8 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropRelationship( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtNode Node )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node )
         {
-            _FieldTypeRule = (CswNbtFieldTypeRuleRelationship) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
-            _NameSubField = _FieldTypeRule.NameSubField;
-            _NodeIDSubField = _FieldTypeRule.NodeIDSubField;
+            _NameSubField = ( (CswNbtFieldTypeRuleRelationship) _FieldTypeRule ).NameSubField;
+            _NodeIDSubField = ( (CswNbtFieldTypeRuleRelationship) _FieldTypeRule ).NodeIDSubField;
 
             // case 25956
             _SearchThreshold = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumNbtConfigurationVariables.relationshipoptionlimit.ToString() ) );
@@ -32,8 +31,12 @@ namespace ChemSW.Nbt.PropTypes
             {
                 _SearchThreshold = 100;
             }
+
+            // Associate subfields with methods on this object, for SetSubFieldValue()
+            _SubFieldMethods.Add( _NameSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => CachedNodeName, x => CachedNodeName = CswConvert.ToString( x ) ) );
+            _SubFieldMethods.Add( _NodeIDSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => RelatedNodeId, x => RelatedNodeId = CswConvert.ToPrimaryKey( x ) ) );
         }
-        private CswNbtFieldTypeRuleRelationship _FieldTypeRule;
+
         private CswNbtSubField _NameSubField;
         private CswNbtSubField _NodeIDSubField;
 
@@ -46,17 +49,6 @@ namespace ChemSW.Nbt.PropTypes
                 return ( RelatedNodeId == null || Int32.MinValue == RelatedNodeId.PrimaryKey );
             }//
         }
-
-
-        override public string Gestalt
-        {
-            get
-            {
-                return _CswNbtNodePropData.Gestalt;
-            }//
-
-        }//Gestalt
-
 
         private CswNbtView _View = null;
         public CswNbtView View
@@ -197,7 +189,7 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 CswPrimaryKey ret = null;
-                string StringVal = _CswNbtNodePropData.GetPropRowValue( _NodeIDSubField.Column );
+                string StringVal = GetPropRowValue( _NodeIDSubField );
                 if( CswTools.IsInteger( StringVal ) )
                     ret = new CswPrimaryKey( TargetTableName, CswConvert.ToInt32( StringVal ) );
                 return ret;
@@ -216,7 +208,7 @@ namespace ChemSW.Nbt.PropTypes
                     }
                     if( RelatedNodeId != PotentialKey )
                     {
-                        _CswNbtNodePropData.SetPropRowValue( _NodeIDSubField.Column, PotentialKey.PrimaryKey );
+                        SetPropRowValue( _NodeIDSubField, PotentialKey.PrimaryKey );
                         CswNbtNode RelatedNode = _CswNbtResources.Nodes[value];
                         if( null != RelatedNode )
                         {
@@ -226,12 +218,7 @@ namespace ChemSW.Nbt.PropTypes
                 }
                 else
                 {
-                    _CswNbtNodePropData.SetPropRowValue( _NodeIDSubField.Column, Int32.MinValue );
-                }
-
-                if( WasModified )
-                {
-                    PendingUpdate = true;
+                    SetPropRowValue( _NodeIDSubField, Int32.MinValue );
                 }
             }
         }
@@ -240,14 +227,14 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return _CswNbtNodePropData.GetPropRowValue( _NameSubField.Column );
+                return GetPropRowValue( _NameSubField );
             }
             set
             {
-                if( value != _CswNbtNodePropData.GetPropRowValue( _NameSubField.Column ) )
+                if( value != GetPropRowValue( _NameSubField ) )
                 {
-                    _CswNbtNodePropData.SetPropRowValue( _NameSubField.Column, value, IsNonModifying : true );
-                    _CswNbtNodePropData.Gestalt = value;
+                    SetPropRowValue( _NameSubField, value, IsNonModifying: true );
+                    Gestalt = value;
                 }
             }
         }
@@ -574,7 +561,7 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void SyncGestalt()
         {
-            _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, CachedNodeName );
+            SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, CachedNodeName );
         }
 
     }//CswNbtNodePropRelationship

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using ChemSW.Core;
 using ChemSW.Nbt.Conversion;
 using ChemSW.Nbt.MetaData;
@@ -14,7 +13,7 @@ namespace ChemSW.Nbt.ObjClasses
     {
         #region Static Properties
 
-        public new sealed class PropertyName: CswNbtObjClass.PropertyName
+        public new sealed class PropertyName : CswNbtObjClass.PropertyName
         {
             public const string SourceContainer = "Source Container";
             public const string DestinationContainer = "Destination Container";
@@ -23,9 +22,10 @@ namespace ChemSW.Nbt.ObjClasses
             public const string DispensedDate = "Dispensed Date";
             public const string RemainingSourceContainerQuantity = "Remaining Source Container Quantity";
             public const string RequestItem = "Request Item";
+            public const string Dispenser = "Dispenser";
         }
 
-        #endregion
+        #endregion Static Properties
 
         #region ctor
 
@@ -55,7 +55,7 @@ namespace ChemSW.Nbt.ObjClasses
             return ret;
         }
 
-        #endregion
+        #endregion ctor
 
         #region Inherited Events
 
@@ -68,7 +68,6 @@ namespace ChemSW.Nbt.ObjClasses
         {
             _CswNbtObjClassDefault.afterCreateNode();
         }//afterCreateNode()
-
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation, bool Creating )
         {
@@ -85,7 +84,6 @@ namespace ChemSW.Nbt.ObjClasses
         public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
         {
             _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes );
-
         }//beforeDeleteNode()
 
         public override void afterDeleteNode()
@@ -110,38 +108,18 @@ namespace ChemSW.Nbt.ObjClasses
             return true;
         }
 
-        #endregion
+        #endregion Inherited Events
 
         #region Object class specific properties
 
-        public CswNbtNodePropRelationship SourceContainer
-        {
-            get { return _CswNbtNode.Properties[PropertyName.SourceContainer]; }
-        }
-        public CswNbtNodePropRelationship DestinationContainer
-        {
-            get { return _CswNbtNode.Properties[PropertyName.DestinationContainer]; }
-        }
-        public CswNbtNodePropQuantity QuantityDispensed
-        {
-            get { return _CswNbtNode.Properties[PropertyName.QuantityDispensed]; }
-        }
-        public CswNbtNodePropList Type
-        {
-            get { return _CswNbtNode.Properties[PropertyName.Type]; }
-        }
-        public CswNbtNodePropDateTime DispensedDate
-        {
-            get { return _CswNbtNode.Properties[PropertyName.DispensedDate]; }
-        }
-        public CswNbtNodePropQuantity RemainingSourceContainerQuantity
-        {
-            get { return _CswNbtNode.Properties[PropertyName.RemainingSourceContainerQuantity]; }
-        }
-        public CswNbtNodePropRelationship RequestItem
-        {
-            get { return _CswNbtNode.Properties[PropertyName.RequestItem]; }
-        }
+        public CswNbtNodePropRelationship SourceContainer { get { return _CswNbtNode.Properties[PropertyName.SourceContainer]; } }
+        public CswNbtNodePropRelationship DestinationContainer { get { return _CswNbtNode.Properties[PropertyName.DestinationContainer]; } }
+        public CswNbtNodePropQuantity QuantityDispensed { get { return _CswNbtNode.Properties[PropertyName.QuantityDispensed]; } }
+        public CswNbtNodePropList Type { get { return _CswNbtNode.Properties[PropertyName.Type]; } }
+        public CswNbtNodePropDateTime DispensedDate { get { return _CswNbtNode.Properties[PropertyName.DispensedDate]; } }
+        public CswNbtNodePropQuantity RemainingSourceContainerQuantity { get { return _CswNbtNode.Properties[PropertyName.RemainingSourceContainerQuantity]; } }
+        public CswNbtNodePropRelationship Dispenser { get { return _CswNbtNode.Properties[PropertyName.Dispenser]; } }
+        public CswNbtNodePropRelationship RequestItem { get { return _CswNbtNode.Properties[PropertyName.RequestItem]; } }
         private void OnRequestItemPropChange( CswNbtNodeProp Prop, bool Creating )
         {
             if( null != RequestItem.RelatedNodeId &&
@@ -195,7 +173,6 @@ namespace ChemSW.Nbt.ObjClasses
                             NodeAsMd.setNextStatus( CswNbtObjClassRequestMaterialDispense.Statuses.Received );
                         }
 
-
                         NodeAsPropSet.postChanges( true );
                     }
                 }
@@ -206,4 +183,3 @@ namespace ChemSW.Nbt.ObjClasses
     }//CswNbtObjClassContainerDispenseTransaction
 
 }//namespace ChemSW.Nbt.ObjClasses
-
