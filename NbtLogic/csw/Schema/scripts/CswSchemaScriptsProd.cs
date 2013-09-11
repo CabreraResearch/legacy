@@ -22,14 +22,19 @@ namespace ChemSW.Nbt.Schema
 
             #region DDL
 
+            #region FOXGLOVE
             _addVersionedScript( new CswUpdateMetaData_02F_Case30252() );
             _addVersionedScript( new CswUpdateMetaData_02F_Case30228() );
+            #endregion FOXGLOVE
+            
+            #region GINKGO
             _addVersionedScript( new CswUpdateMetaData_02G_Case30557() );
-
+            #endregion GINKGO
+            
             #endregion DDL
 
             #region FOXGLOVE
-            
+
             _addVersionedScript( new CswUpdateMetaData_02F_Case30041_NbtImportQueue() ); //Validate the Nbt Import Queue table first
             _addVersionedScript( new CswUpdateMetaData_02F_Case30281() );
             _addVersionedScript( new CswUpdateMetaData_02F_Case30251() );
@@ -42,14 +47,14 @@ namespace ChemSW.Nbt.Schema
 
             #endregion FOXGLOVE
 
-            #region GINGKO
+            #region GINKGO
 
             _addVersionedScript( new CswUpdateMetaData_02G_Case30611() );
             _addVersionedScript( new CswUpdateMetaData_02G_Case27846() );
             _addVersionedScript( new CswUpdateMetaData_02G_Case30542() );
             _addVersionedScript( new CswUpdateMetaData_02G_Case30557B() );
-
-            #endregion GINGKO
+            
+            #endregion GINKGO
 
             #endregion MetaData Scripts
 
@@ -96,6 +101,7 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswUpdateSchema_02G_Case30542() );
             _addVersionedScript( new CswUpdateSchema_02G_Case30557() );
             _addVersionedScript( new CswUpdateSchema_02G_Case30679() );
+            _addVersionedScript( new CswUpdateSchema_02G_Case30473() );
 
             #endregion GINGKO
 
