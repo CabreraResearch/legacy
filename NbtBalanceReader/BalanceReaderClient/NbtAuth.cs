@@ -38,6 +38,7 @@ namespace BalanceReaderClient
             try
             {
                 string EndpointUrl = _formatUrl(baseURL);
+                useSSL = ( EndpointUrl.ToLower().IndexOf( "https:" ) > -1 );
                 NbtClient.Endpoint.Address = new EndpointAddress( EndpointUrl );
                 NbtClient.Endpoint.Binding = new WebHttpBinding
                     {
