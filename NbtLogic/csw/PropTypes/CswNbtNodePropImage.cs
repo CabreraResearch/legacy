@@ -52,7 +52,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                if( null == _Images || getAnySubFieldModified() )
+                if( null == _Images || wasAnySubFieldModified() )
                 {
                     _Images = new Collection<CswNbtSdBlobData.CswNbtBlob>();
                     if( null != _CswNbtResources ) //WCF getters must always be null safe

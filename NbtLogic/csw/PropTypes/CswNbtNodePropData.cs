@@ -145,7 +145,7 @@ namespace ChemSW.Nbt.PropTypes
         /// <summary>
         /// Returns true if the subfield was modified
         /// </summary>
-        public bool getSubFieldModified( CswEnumNbtSubFieldName SubFieldName )
+        public bool wasSubFieldModified( CswEnumNbtSubFieldName SubFieldName )
         {
             bool ret = false;
             if( _SubFieldsModified.ContainsKey( SubFieldName ) )
@@ -159,7 +159,7 @@ namespace ChemSW.Nbt.PropTypes
         /// <summary>
         /// Returns true if any subfield was modified
         /// </summary>
-        public bool getAnySubFieldModified( bool IncludePendingUpdate = false )
+        public bool wasAnySubFieldModified( bool IncludePendingUpdate = false )
         {
             return _SubFieldsModified.Any( kvp => ( IncludePendingUpdate || kvp.Key != CswEnumNbtSubFieldName.PendingUpdate ) &&
                                                   kvp.Value == true );
