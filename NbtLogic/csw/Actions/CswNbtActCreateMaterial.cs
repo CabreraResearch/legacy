@@ -183,6 +183,26 @@ namespace ChemSW.Nbt.Actions
                 Ret.Supplier.RelatedNodeId = SupplierId;
                 Ret.ApprovedForReceiving.Checked = CswConvert.ToTristate( _NbtResources.Permit.can( CswEnumNbtActionName.Material_Approval ) );
 
+                if( RemoveTempStatus && Ret.ObjectClass.ObjectClass == CswEnumNbtObjectClass.ChemicalClass )
+                {
+                    // Case 30677 - Create GHS based on User's Jurisdiction
+                    CswNbtObjClassUser User = _NbtResources.Nodes[_NbtResources.CurrentNbtUser.UserId];
+                    if( null != User && null != User.JurisdictionId )
+                    {
+                        CswNbtMetaDataObjectClass GHSOC = _NbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.GHSClass );
+                        CswNbtMetaDataNodeType GHSNT = GHSOC.FirstNodeType;
+                        if( null != GHSNT )
+                        {
+                            _NbtResources.Nodes.makeNodeFromNodeTypeId( GHSNT.NodeTypeId, delegate( CswNbtNode NewNode )
+                            {
+                                CswNbtObjClassGHS GHS = NewNode;
+                                GHS.Material.RelatedNodeId = Ret.NodeId;
+                                GHS.Jurisdiction.RelatedNodeId = User.JurisdictionId;
+                            });
+                        }
+                    }
+                }
+                
                 Ret.IsTemp = ( false == RemoveTempStatus );
                 Ret.postChanges( ForceUpdate: false );
 
