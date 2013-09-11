@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
     
-    <Product Id="DBD4C819-8FCC-419C-AAD1-CA4379B62CE3" Name="NBT Balance Reader Client" Language="1033" Version="1.0.0.0" Manufacturer="ChemSW Inc." UpgradeCode="375a957f-72ca-4950-94b2-88a27941fcee">
+    <Product Id="DBD4C819-8FCC-419C-AAD1-CA4379B62CE3" Name="ChemSW Balance Reader Client" Language="1033" Version="1.0.1.0" Manufacturer="ChemSW Inc." UpgradeCode="375a957f-72ca-4950-94b2-88a27941fcee">
         <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
         
         <Icon Id="balance.ico" SourceFile="balance.ico" />
@@ -21,7 +21,8 @@
                         <Component Id="ClientInstall" Guid="2453EEFA-578E-48BB-AAFB-78BB03D2D034">
                             <File Id="ClientExe" Name="$(var.BalanceReaderClient.TargetFileName)" KeyPath="yes" />
                             <File Id="ClientConfig" Name="$(var.BalanceReaderClient.TargetFileName).config" />
-                            <Shortcut Id="DesktopShortcut" Directory="DesktopFolder" Name="Balance Reader Client" Advertise="yes" Icon="balance.ico" />
+                            <Shortcut Id="DesktopShortcut" Directory="DesktopFolder" Name="ChemSW Balance Reader Client" Advertise="yes" Icon="balance.ico" />
+                            <Shortcut Id="ApplicationStartMenuShortcut" Directory="ApplicationProgramsFolder" Name="ChemSW Balance Reader Client" Advertise="yes" Icon="balance.ico"/>
                             <RemoveFile Id="PurgeClientFolder" Name="*.*" On="uninstall" />
                         </Component>
                         
@@ -31,6 +32,10 @@
 
             <Directory Id="DesktopFolder" Name="Desktop" />
 
+            <Directory Id="ProgramMenuFolder">
+                <Directory Id="ApplicationProgramsFolder" Name="ChemSW" />
+            </Directory>
+            
         </Directory>
 
 

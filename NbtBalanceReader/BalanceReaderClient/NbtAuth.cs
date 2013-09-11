@@ -37,12 +37,7 @@ namespace BalanceReaderClient
             NbtPublicClient NbtClient = new NbtPublicClient();
             try
             {
-                string EndpointUrl = baseURL;
-                if( false == EndpointUrl.EndsWith( "NbtPublic.svc" ) )
-                {//if they did not end the address with the svc, it's most likely they supplied the root for the NBT install
-                    EndpointUrl += "/Services/NbtPublic.svc";
-                }
-
+                string EndpointUrl = _formatUrl(baseURL);
                 NbtClient.Endpoint.Address = new EndpointAddress( EndpointUrl );
                 NbtClient.Endpoint.Binding = new WebHttpBinding
                     {
@@ -97,7 +92,35 @@ namespace BalanceReaderClient
             PerformAction( CompletionCallback );
 
         }
-        
+
+
+        private string _formatUrl( string Url )
+        {
+            if( false == Url.EndsWith( "NbtPublic.svc" ) )
+            {
+                //the user didn't give us the right endpoint, try to detect the correct one
+
+                //anything that isn't the end will need to at least end with /
+                if( false == Url.EndsWith( "/" ) )
+                {
+                    Url += "/";
+                }
+
+                //if they found the services directory, all that is needed is pointing to NbtPublic
+                if( Url.EndsWith( "Services/" ) )
+                {
+                    Url += "NbtPublic.svc";
+                }
+                //otherwise, it seems most likely that they gave the root of the NBT web app
+                else
+                {
+                    Url += "Services/NbtPublic.svc";
+                }
+
+            }//if false == Url.EndsWith( "NbtPublic.svc" )
+
+            return Url;
+        }
 
 
     }//class NbtAuth
