@@ -36,7 +36,7 @@ namespace ChemSW.Nbt.Schema
                     if( SiteNode.Name.Text == "Site 1" )
                     {
                         SiteNode.IsDemo = false;
-                        //SiteNode.Name.Text = "Default Site"; //Sitename cannot be changed do to unique constraint.
+                        SiteNode.Name.Text = "Default Site"; //Sitename cannot be changed do to unique constraint.
                         SiteNode.postChanges( ForceUpdate: false );
                         break;
                     }
