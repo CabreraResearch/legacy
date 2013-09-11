@@ -18,7 +18,7 @@
                 cswPrivate.options = nodeProperty.propData.values.options;
                 cswPrivate.propid = nodeProperty.propData.id;
                 cswPrivate.isRequired = nodeProperty.propData.required;
-                cswPrivate.getAnySubFieldModified() = nodeProperty.propData.wasmodified;
+                cswPrivate.wasmodified = nodeProperty.propData.wasmodified;
                 //cswPrivate.fieldtype = nodeProperty.propData.fieldtype;
 
                 cswPrivate.table = nodeProperty.propDiv.table({ TableCssClass: 'cswInline' });

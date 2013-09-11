@@ -55,7 +55,7 @@
                 Csw.extend(cswPublic, cswPrivate);
                 cswPublic.name = cswPublic.propData.id;
 
-                cswPublic.propData.getAnySubFieldModified() = false;
+                cswPublic.propData.wasmodified = false;
 
                 cswPublic.eventName = 'onChange' + cswPublic.fieldtype + '_' + cswPublic.propid;
                 cswPublic.onPropChangeBroadcast = function(callBack) {
@@ -66,7 +66,7 @@
 
                 cswPublic.broadcastPropChange = function(val) {
                     //Csw.clientChanges.setChanged();
-                    cswPublic.propData.getAnySubFieldModified() = true;
+                    cswPublic.propData.wasmodified = true;
                     cswPublic.onChange();
                     Csw.properties.publish(cswPublic.eventName, val);
                 };
