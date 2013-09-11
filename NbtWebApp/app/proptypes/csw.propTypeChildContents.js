@@ -67,7 +67,6 @@
                 nsOptions.doGetNodes = false;
                 nsOptions.showSelectOnLoad = true;
 
-                debugger;
                 var nodeSelect = nodeProperty.propDivTbl.cell(1, 1).nodeSelect(nsOptions);
 
                 if (nsOptions.isClickable) {
