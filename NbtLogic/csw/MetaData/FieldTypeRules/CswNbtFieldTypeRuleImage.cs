@@ -16,27 +16,27 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldResources = CswNbtFieldResources;
             _CswNbtFieldTypeRuleDefault = new CswNbtFieldTypeRuleDefaultImpl( _CswNbtFieldResources );
 
-            FileNameSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1, CswEnumNbtSubFieldName.Name );
-            FileNameSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Begins );
-            FileNameSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Contains );
-            FileNameSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotContains );
-            FileNameSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Ends );
-            FileNameSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Equals );
-            FileNameSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotEquals );
-            FileNameSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotNull );
-            FileNameSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Null );
-            SubFields.add( FileNameSubField );
+            //FileNameSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1, CswEnumNbtSubFieldName.Name );
+            //FileNameSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Begins );
+            //FileNameSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Contains );
+            //FileNameSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotContains );
+            //FileNameSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Ends );
+            //FileNameSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Equals );
+            //FileNameSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotEquals );
+            //FileNameSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotNull );
+            //FileNameSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Null );
+            //SubFields.add( FileNameSubField );
 
-            ContentTypeSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field2, CswEnumNbtSubFieldName.ContentType );
-            ContentTypeSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Begins );
-            ContentTypeSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Contains );
-            ContentTypeSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotContains );
-            ContentTypeSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Ends );
-            ContentTypeSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Equals );
-            ContentTypeSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotEquals );
-            ContentTypeSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotNull );
-            ContentTypeSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Null );
-            SubFields.add( ContentTypeSubField );
+            //ContentTypeSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field2, CswEnumNbtSubFieldName.ContentType );
+            //ContentTypeSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Begins );
+            //ContentTypeSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Contains );
+            //ContentTypeSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotContains );
+            //ContentTypeSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Ends );
+            //ContentTypeSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Equals );
+            //ContentTypeSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotEquals );
+            //ContentTypeSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotNull );
+            //ContentTypeSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Null );
+            //SubFields.add( ContentTypeSubField );
 
             //SubFields.add( CswEnumNbtPropColumn.Field1, CswEnumNbtSubFieldName.Image );
             //SubFields[CswEnumNbtSubFieldName.Image].SupportedFilterModes.Add( CswEnumNbtFilterMode.NotNull |
@@ -44,8 +44,8 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
         }//ctor
 
-        public CswNbtSubField FileNameSubField;
-        public CswNbtSubField ContentTypeSubField;
+        //public CswNbtSubField FileNameSubField;
+        //public CswNbtSubField ContentTypeSubField;
         //public CswNbtSubField BlobSubField;
 
         public CswNbtSubFieldColl SubFields

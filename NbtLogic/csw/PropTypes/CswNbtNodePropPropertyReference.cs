@@ -12,13 +12,11 @@ namespace ChemSW.Nbt.PropTypes
 {
     public class CswNbtNodePropPropertyReference : CswNbtNodeProp
     {
-        private CswNbtFieldTypeRulePropertyReference _FieldTypeRule;
         private CswNbtSubField _CachedValueSubField;
 
         private CswNbtSequenceValue _SequenceValue;
         private CswNbtSubField _SequenceSubField;
         private CswNbtSubField _SequenceNumberSubField;
-        private CswNbtNode _Node;
 
         public static implicit operator CswNbtNodePropPropertyReference( CswNbtNodePropWrapper PropWrapper )
         {
@@ -28,14 +26,16 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropPropertyReference( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtNode Node )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node )
         {
-            _Node = Node;
+            _CachedValueSubField = ( (CswNbtFieldTypeRulePropertyReference) _FieldTypeRule ).CachedValueSubField;
+            _SequenceSubField = ( (CswNbtFieldTypeRulePropertyReference) _FieldTypeRule ).SequenceSubField;
+            _SequenceNumberSubField = ( (CswNbtFieldTypeRulePropertyReference) _FieldTypeRule ).SequenceNumberSubField;
 
-            _FieldTypeRule = (CswNbtFieldTypeRulePropertyReference) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
-            _CachedValueSubField = _FieldTypeRule.CachedValueSubField;
-
-            _SequenceSubField = _FieldTypeRule.SequenceSubField;
-            _SequenceNumberSubField = _FieldTypeRule.SequenceNumberSubField;
             _SequenceValue = new CswNbtSequenceValue( _CswNbtMetaDataNodeTypeProp.PropId, _CswNbtResources );
+
+            // Associate subfields with methods on this object, for SetSubFieldValue()
+            _SubFieldMethods.Add( _CachedValueSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => CachedValue, null ) );
+            _SubFieldMethods.Add( _SequenceSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Sequence, x => setSequenceValueOverride( CswConvert.ToString( x ), true ) ) );
+            _SubFieldMethods.Add( _SequenceNumberSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => SequenceNumber, null ) );
         }
 
         #region Generic Properties
@@ -48,14 +48,6 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
-        override public string Gestalt
-        {
-            get
-            {
-                return _CswNbtNodePropData.Gestalt;
-            }
-        }
-
         private void _setGestalt( string PropRefVal, string SeqVal )
         {
             string NewGestalt = PropRefVal;
@@ -63,20 +55,20 @@ namespace ChemSW.Nbt.PropTypes
             {
                 NewGestalt = PropRefVal + "-" + SeqVal;
             }
-            _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, NewGestalt );
+            SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, NewGestalt );
         }
 
         public string CachedValue
         {
             get
             {
-                return _CswNbtNodePropData.GetPropRowValue( _CachedValueSubField.Column );
+                return GetPropRowValue( _CachedValueSubField );
             }
         }
 
         public void ClearCachedValue()
         {
-            _CswNbtNodePropData.SetPropRowValue( _CachedValueSubField.Column, DBNull.Value );
+            SetPropRowValue( _CachedValueSubField, DBNull.Value );
         }
 
         #endregion Generic Properties
@@ -146,9 +138,9 @@ namespace ChemSW.Nbt.PropTypes
                 }
             } // if (RelationshipId > 0 && RelatedPropId > 0)
 
-            _CswNbtNodePropData.SetPropRowValue( _CachedValueSubField.Column, Value );
+            SetPropRowValue( _CachedValueSubField, Value );
             _setGestalt( Value, Sequence );
-            _CswNbtNodePropData.PendingUpdate = false;
+            PendingUpdate = false;
 
             return Value;
         }
@@ -180,7 +172,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return _CswNbtNodePropData.GetPropRowValue( _SequenceSubField.Column );
+                return GetPropRowValue( _SequenceSubField );
             }
         }
 
@@ -188,7 +180,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return _CswNbtNodePropData.GetPropRowValue( _SequenceNumberSubField.Column );
+                return GetPropRowValue( _SequenceNumberSubField );
             }
         }
 
@@ -226,9 +218,9 @@ namespace ChemSW.Nbt.PropTypes
         {
             if( UseSequence )
             {
-                _CswNbtNodePropData.SetPropRowValue( _SequenceSubField.Column, SeqValue );
+                SetPropRowValue( _SequenceSubField, SeqValue );
                 Int32 ThisSeqValue = _SequenceValue.deformatSequence( SeqValue );
-                _CswNbtNodePropData.SetPropRowValue( _SequenceNumberSubField.Column, ThisSeqValue );
+                SetPropRowValue( _SequenceNumberSubField, ThisSeqValue );
                 _setGestalt( CachedValue, SeqValue );
 
                 if( ResetSequence )

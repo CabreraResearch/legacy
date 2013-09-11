@@ -177,7 +177,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             beforePropertySetWriteNode( IsCopy, OverrideUniqueValidation );
 
-            if( _CswNbtNode.Properties.Any( Prop => Prop.WasModified ) && false == IsTemp && false == _CswNbtResources.CurrentNbtUser is CswNbtSystemUser )
+            if( _CswNbtNode.Properties.Any( Prop => Prop.getAnySubFieldModified() ) && false == IsTemp && false == _CswNbtResources.CurrentNbtUser is CswNbtSystemUser )
             {
                 LastModifiedBy.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
                 LastModifiedBy.SyncGestalt();

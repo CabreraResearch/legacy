@@ -8,6 +8,7 @@ using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
@@ -355,7 +356,8 @@ namespace ChemSW.Nbt.ServiceDrivers
 
         public void SetLastModified( CswNbtNodePropWrapper BlobProp )
         {
-            BlobProp.SetPropRowValue( CswEnumNbtPropColumn.Field2_Date, DateTime.Now );
+            //BlobProp.SetPropRowValue( CswEnumNbtPropColumn.Field2_Date, DateTime.Now );
+            BlobProp.SetSubFieldValue( CswEnumNbtSubFieldName.DateModified, DateTime.Now );
         }
 
         public static CswArbitrarySelect GetBlobAuditSelect( CswNbtResources NbtResources, string Date, int JctNodePropId, int BlobDataId = Int32.MinValue )

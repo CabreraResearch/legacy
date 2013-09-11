@@ -20,10 +20,12 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropComments( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtNode Node )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node )
         {
-            _FieldTypeRule = (CswNbtFieldTypeRuleComments) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
-            _CommentSubField = _FieldTypeRule.CommentSubField;
+            _CommentSubField = ( (CswNbtFieldTypeRuleComments) _FieldTypeRule ).CommentSubField;
+
+            // Associate subfields with methods on this object, for SetSubFieldValue()
+            _SubFieldMethods.Add( _CommentSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => CommentsJson, x => CommentsJson = CswConvert.ToJArray(x) ) ); // not sure if this should be AddComment()
         }
-        private CswNbtFieldTypeRuleComments _FieldTypeRule;
+
         private CswNbtSubField _CommentSubField;
 
 
@@ -34,16 +36,6 @@ namespace ChemSW.Nbt.PropTypes
                 return ( 0 == Gestalt.Length );
             }
         }
-
-
-        override public string Gestalt
-        {
-            get
-            {
-                return _CswNbtNodePropData.GetPropRowValue( CswEnumNbtPropColumn.Gestalt );
-            }
-
-        }//Gestalt
 
         /// <summary>
         /// Gets the last comment
@@ -64,7 +56,7 @@ namespace ChemSW.Nbt.PropTypes
                 
                 try
                 {
-                    string Json = _CswNbtNodePropData.GetPropRowValue( _CommentSubField.Column );
+                    string Json = GetPropRowValue( _CommentSubField );
                     if( false == string.IsNullOrEmpty( Json ) )
                     {
                         Ret = CswConvert.ToJArray( Json );
@@ -83,7 +75,7 @@ namespace ChemSW.Nbt.PropTypes
             }
             set
             {
-                _CswNbtNodePropData.SetPropRowValue( _CommentSubField.Column, value.ToString() );
+                SetPropRowValue( _CommentSubField, value.ToString() );
             }
         }
 
@@ -199,7 +191,7 @@ namespace ChemSW.Nbt.PropTypes
                 string dateSubmitted = lastComment["datetime"].ToString();
                 string message = lastComment["message"].ToString();
 
-                _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, commenter + " on " + dateSubmitted.ToString() + ": " + message );
+                SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, commenter + " on " + dateSubmitted.ToString() + ": " + message );
             }
         }
 

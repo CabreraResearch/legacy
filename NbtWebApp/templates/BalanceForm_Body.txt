@@ -1,0 +1,57 @@
+
+                        <tr>
+
+                            <td id="Td7" class="PageTable_CenterCell" colspan="2" valign="top">
+                                <br/>
+                                    
+                                <table>
+                                    <tr>
+                                        <td>
+                                            <img  height="30" src="Images/newicons/100/harddrive.png"/>
+                                        </td>
+                                        <td>
+                                            <h1>Reading Balances</h1>
+                                        </td>
+                                    </tr>
+                                </table>
+                                <br/>
+
+                                            <p><strong>For most users, this program only needs to be installed on the Windows computer where the serial balance is physically connected.</strong></p>
+                                            <p>
+                                                The ChemSW NBT platform uses a Windows program to poll electronic balances connected to local machines by serial port. The Balance Reader Client (BRC) program makes this balance available for reading to any user logged into the ChemSW Live platform. As long as this program is left running on the balance's computer, it is possible to read the weight on this balance from any computer connected to ChemSW Live.
+											
+                                            </p>
+                                            <h2>Installing the ChemSW Balance Reader Client</h2>
+                                            <p>
+                                                <h3>#1- <a href="NbtBalanceReader/BalanceReaderClient.zip">Download the BRC Installation ZIP here</a>.</h3>
+                                                <ul>
+                                                    <li>You may receive an installation security warning from your browser, click OK/Accept.</li>
+                                                    <li>Locate the downloaded ZIP (archive) and extract it, then run BalanceReaderClientSetup.msi.</li>
+                                                    <li>Follow the Installer instructions and choose Everyone for easiest use</li>
+                                                </ul>
+                                                <br/><img src="NbtBalanceReader/pic1.png"/> 
+                                            </p>
+                                            <p>
+                                                
+                                                <h3>#2- Run the ChemSW Balance Reader Client from your desktop by clicking the icon</h3>
+                                                <br/><img src="NbtBalanceReader/pic2.png"/>
+                                            </p>
+                                            <p>    
+                                                <h3>#3 - On the Setup tab, provide <em>login credentials</em> for ChemSW Live.</h3>
+                                                <br/><img src="NbtBalanceReader/pic3.png"/>
+                                            </p>
+                                            <p>                                        
+                                                <h3>#4 - Switch to the Configurations tab. A list of balance templates which have been created by your ChemSW Live account should appear in the grid here.</h3>
+                                                <br/><img src="NbtBalanceReader/pic4.png"/> <br />If you need to add a new definition, fill out the values in the bottom half of the window and click 'Save Template'. Consult your balance's user manual to find the appropriate specifications for your balance.
+                                            </p>
+                                            <p>                                        
+                                                <h3>#5 - Switch to the Hardware tab. The devices acessible by serial port should appear in the grid. For each balance for which you want to transfer data to NBT, click the NBT name cell for that row and enter a unique identifier for this balance. Then, select the appropriate balance template from the drop down menu to communicate with this balance. Finally, toggle the enabled checkbox.</h3>
+                                                <br/><img src="NbtBalanceReader/pic5.png"/><br/>If reading from the balance was successful, the --- in the "Current Weight" column should update to show the weight on the balance.
+												<br /><br /> <h3>You are done!</h3> 
+                                            </p>
+
+									
+
+                            </td>
+
+                        </tr>

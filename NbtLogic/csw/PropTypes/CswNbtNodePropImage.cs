@@ -13,7 +13,7 @@ using Newtonsoft.Json.Linq;
 namespace ChemSW.Nbt.PropTypes
 {
     [DataContract]
-    public class CswNbtNodePropImage: CswNbtNodeProp
+    public class CswNbtNodePropImage : CswNbtNodeProp
     {
         public static implicit operator CswNbtNodePropImage( CswNbtNodePropWrapper PropWrapper )
         {
@@ -27,33 +27,24 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropImage( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtNode Node )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node )
         {
-            _FieldTypeRule = (CswNbtFieldTypeRuleImage) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
-            _FileNameSubField = _FieldTypeRule.FileNameSubField;
-            _ContentTypeSubField = _FieldTypeRule.ContentTypeSubField;
+            //_FileNameSubField = ( (CswNbtFieldTypeRuleImage) _FieldTypeRule ).FileNameSubField;
+            //_ContentTypeSubField = ( (CswNbtFieldTypeRuleImage) _FieldTypeRule ).ContentTypeSubField;
+
+            // No subfields
         }
-        private CswNbtFieldTypeRuleImage _FieldTypeRule;
-        private CswNbtSubField _FileNameSubField;
-        private CswNbtSubField _ContentTypeSubField;
+        //private CswNbtSubField _FileNameSubField;
+        //private CswNbtSubField _ContentTypeSubField;
 
         override public bool Empty
         {
             //TODO: check if there is any blob data here - if there are no blob_data rows for this prop, return true
             get
             {
-                return ( string.Empty == _CswNbtNodePropData.GetPropRowValue( _FileNameSubField.Column ) ||
-                         string.Empty == _CswNbtNodePropData.GetPropRowValue( _ContentTypeSubField.Column ) );
+                //return ( string.Empty == GetPropRowValue( _FileNameSubField.Column ) ||
+                //          string.Empty == GetPropRowValue( _ContentTypeSubField.Column ) );
+                return Images.Count > 0;
             }
         }
-
-
-        override public string Gestalt
-        {
-            get
-            {
-                return _CswNbtNodePropData.Gestalt;
-            }
-
-        }//Gestalt
 
         private Collection<CswNbtSdBlobData.CswNbtBlob> _Images = null;
         [DataMember]
@@ -61,7 +52,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                if( null == _Images || WasModified )
+                if( null == _Images || getAnySubFieldModified() )
                 {
                     _Images = new Collection<CswNbtSdBlobData.CswNbtBlob>();
                     if( null != _CswNbtResources ) //WCF getters must always be null safe
@@ -170,7 +161,7 @@ namespace ChemSW.Nbt.PropTypes
             {
                 imageNames.Add(Image.FileName);
             }
-            _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, imageNames.ToString() );
+            SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, imageNames.ToString() );
         }
     }
 

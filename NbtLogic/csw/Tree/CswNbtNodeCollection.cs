@@ -214,14 +214,14 @@ namespace ChemSW.Nbt
                     SQLQuery += " (select nodeid, 'nodes' tablename ";
                     SQLQuery += "    from jct_nodes_props ";
                     SQLQuery += "   where nodetypepropid = " + MetaDataProp.PropId.ToString() + " ";
-                    SQLQuery += "     and " + SubField.Column.ToString() + " = '" + PropWrapper.GetPropRowValue( SubField.Column ) + "') ";
+                    SQLQuery += "     and " + SubField.Column.ToString() + " = '" + PropWrapper.GetSubFieldValue( SubField ) + "') ";
                 }
                 else
                 {
                     string PrimeKeyCol = _CswNbtResources.DataDictionary.getPrimeKeyColumn( SubField.RelationalTable );
                     SQLQuery += " (select " + PrimeKeyCol + " nodeid, '" + SubField.RelationalTable + "' tablename ";
                     SQLQuery += "    from " + SubField.RelationalTable + " ";
-                    SQLQuery += "   where " + SubField.RelationalColumn + " = '" + PropWrapper.GetPropRowValue( SubField.Column ) + "') ";
+                    SQLQuery += "   where " + SubField.RelationalColumn + " = '" + PropWrapper.GetSubFieldValue( SubField ) + "') ";
                 }
             }
             SQLQuery = "select nodeid, tablename from " + SQLQuery;

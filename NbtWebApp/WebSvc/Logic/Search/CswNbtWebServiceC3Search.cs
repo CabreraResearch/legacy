@@ -996,31 +996,35 @@ namespace ChemSW.Nbt.WebServices
                                 Tuple<int, string> UnitOfMeasureInfo = _getUnitOfMeasure( MappedUoM, OriginalUoM );
                                 if( null != UnitOfMeasureInfo )
                                 {
-                                    Node.Properties[NTP].SetPropRowValue( (CswEnumNbtPropColumn) C3Mapping.NBTSubFieldPropColName2, UnitOfMeasureInfo.Item2 );
-                                    Node.Properties[NTP].SetPropRowValue( CswEnumNbtPropColumn.Field1_FK, UnitOfMeasureInfo.Item1 );
-                                    sizeGestalt = _SizesToImport[CurrentIndex].pkg_qty + " " + UnitOfMeasureInfo.Item2;
-                                    Node.Properties[NTP].SetPropRowValue( CswEnumNbtPropColumn.Gestalt, sizeGestalt );
+                                    //Node.Properties[NTP].SetPropRowValue( (CswEnumNbtPropColumn) C3Mapping.NBTSubFieldPropColName2, UnitOfMeasureInfo.Item2 );
+                                    //Node.Properties[NTP].SetPropRowValue( CswEnumNbtPropColumn.Field1_FK, UnitOfMeasureInfo.Item1 );
+                                    //sizeGestalt = _SizesToImport[CurrentIndex].pkg_qty + " " + UnitOfMeasureInfo.Item2;
+                                    //Node.Properties[NTP].SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, sizeGestalt );
+                                    Node.Properties[NTP].AsQuantity.UnitId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( UnitOfMeasureInfo.Item1 ) );
+                                    Node.Properties[NTP].AsQuantity.CachedUnitName = UnitOfMeasureInfo.Item2;
                                 }
-                                else
-                                {
-                                    sizeGestalt = _SizesToImport[CurrentIndex].pkg_qty;
-                                    Node.Properties[NTP].SetPropRowValue( CswEnumNbtPropColumn.Gestalt, sizeGestalt );
-                                }
-                                Node.Properties[NTP].SetPropRowValue( (CswEnumNbtPropColumn) C3Mapping.NBTSubFieldPropColName, _SizesToImport[CurrentIndex].pkg_qty );
+                                //else
+                                //{
+                                //    sizeGestalt = _SizesToImport[CurrentIndex].pkg_qty;
+                                //    Node.Properties[NTP].SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, sizeGestalt );
+                                //}
+                                //Node.Properties[NTP].SetPropRowValue( (CswEnumNbtPropColumn) C3Mapping.NBTSubFieldPropColName, _SizesToImport[CurrentIndex].pkg_qty );
+                                Node.Properties[NTP].AsQuantity.Quantity = CswConvert.ToDouble( _SizesToImport[CurrentIndex].pkg_qty );
 
                                 // Assumption: We are working with a node that is of NodeType Size
                                 if( NodeType.NodeTypeName == "Size" )
                                 {
                                     // Set the Unit Count
-                                    CswNbtMetaDataNodeTypeProp UnitCountNTP = NodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassSize.PropertyName.UnitCount );
-                                    Node.Properties[UnitCountNTP].SetPropRowValue( (CswEnumNbtPropColumn) C3Mapping.NBTSubFieldPropColName, _SizesToImport[CurrentIndex].case_qty );
-                                    Node.Properties[UnitCountNTP].SetPropRowValue( CswEnumNbtPropColumn.Gestalt, _SizesToImport[CurrentIndex].case_qty );
-
+                                    //CswNbtMetaDataNodeTypeProp UnitCountNTP = NodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassSize.PropertyName.UnitCount );
+                                    //Node.Properties[UnitCountNTP].SetPropRowValue( (CswEnumNbtPropColumn) C3Mapping.NBTSubFieldPropColName, _SizesToImport[CurrentIndex].case_qty );
+                                    //Node.Properties[UnitCountNTP].SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, _SizesToImport[CurrentIndex].case_qty );
+                                    ( (CswNbtObjClassSize) Node ).UnitCount.Value = CswConvert.ToDouble( _SizesToImport[CurrentIndex].case_qty );
                                     // Set the Catalog No
                                     // This needs to be here because each size has a unique catalogno
-                                    CswNbtMetaDataNodeTypeProp CatalogNoNTP = NodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassSize.PropertyName.CatalogNo );
-                                    Node.Properties[CatalogNoNTP].SetPropRowValue( (CswEnumNbtPropColumn) C3Mapping.NBTSubFieldPropColName2, _SizesToImport[CurrentIndex].catalog_no );
-                                    Node.Properties[CatalogNoNTP].SetPropRowValue( CswEnumNbtPropColumn.Gestalt, _SizesToImport[CurrentIndex].catalog_no );
+                                    //CswNbtMetaDataNodeTypeProp CatalogNoNTP = NodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassSize.PropertyName.CatalogNo );
+                                    //Node.Properties[CatalogNoNTP].SetPropRowValue( (CswEnumNbtPropColumn) C3Mapping.NBTSubFieldPropColName2, _SizesToImport[CurrentIndex].catalog_no );
+                                    //Node.Properties[CatalogNoNTP].SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, _SizesToImport[CurrentIndex].catalog_no );
+                                    ( (CswNbtObjClassSize) Node ).CatalogNo.Text = _SizesToImport[CurrentIndex].catalog_no;
                                 }
 
                                 break;
@@ -1046,8 +1050,13 @@ namespace ChemSW.Nbt.WebServices
                                 }
                                 break;
                             default:
-                                Node.Properties[NTP].SetPropRowValue( (CswEnumNbtPropColumn) C3Mapping.NBTSubFieldPropColName, C3Mapping.C3ProductPropertyValue );
-                                Node.Properties[NTP].SetPropRowValue( CswEnumNbtPropColumn.Gestalt, C3Mapping.C3ProductPropertyValue );
+                                //Node.Properties[NTP].SetPropRowValue( (CswEnumNbtPropColumn) C3Mapping.NBTSubFieldPropColName, C3Mapping.C3ProductPropertyValue );
+                                //Node.Properties[NTP].SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, C3Mapping.C3ProductPropertyValue );
+                                CswNbtSubField sf = NTP.getFieldTypeRule().SubFields[(CswEnumNbtPropColumn) C3Mapping.NBTSubFieldPropColName];
+                                if( null != sf )
+                                {
+                                    Node.Properties[NTP].SetSubFieldValue( sf, C3Mapping.C3ProductPropertyValue );
+                                }
                                 break;
                         }
                     }//if( null != Node.Properties[NTP] && _Mappings.ContainsKey( NTP.PropName ) )

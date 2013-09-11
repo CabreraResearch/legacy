@@ -101,7 +101,7 @@ namespace ChemSW.Nbt.ObjClasses
             _setDefaultValues();
 
             //Case 24572
-            updateNextDueDate( ForceUpdate: false, DeleteFutureNodes: ( TargetType.WasModified || ParentType.WasModified ) );
+            updateNextDueDate( ForceUpdate: false, DeleteFutureNodes: ( TargetType.getAnySubFieldModified() || ParentType.getAnySubFieldModified() ) );
 
             // case 28352
             Int32 max = DueDateInterval.getMaximumWarningDays();
@@ -241,7 +241,7 @@ namespace ChemSW.Nbt.ObjClasses
                 Collection<CswNbtMetaDataNodeType> MatchingInspectionTargetNts = new Collection<CswNbtMetaDataNodeType>();
 
                 //parent is selectable and is inspection and owner is valid and (parent untouched or empty)
-                bool SetDefaultParentType = ( ( false == ParentType.WasModified ||
+                bool SetDefaultParentType = ( ( false == ParentType.getAnySubFieldModified() ||
                                                 ParentType.SelectedNodeTypeIds.Count == 0 ) &&
                                                 null != OwnerNode &&
                                                 OwnerNode.getObjectClass().ObjectClass == CswEnumNbtObjectClass.InspectionTargetGroupClass &&
@@ -275,7 +275,7 @@ namespace ChemSW.Nbt.ObjClasses
                 } // if( SetDefaultTargetType )
 
                 //target is selectable and (parent or target not empty) and (target untouched or empty)
-                bool SetDefaultTargetType = ( ( false == TargetType.WasModified ||
+                bool SetDefaultTargetType = ( ( false == TargetType.getAnySubFieldModified() ||
                                             TargetType.SelectedNodeTypeIds.Count == 0 ) &&
                                           TargetType.SelectMode != CswEnumNbtPropertySelectMode.Blank &&
                                           ( MatchingInspectionTargetNts.Count > 0 ||
@@ -404,7 +404,7 @@ namespace ChemSW.Nbt.ObjClasses
                         }
                     }
                 }
-                if( InvalidNodeTypes.Count > 0 && false == Owner.WasModified )
+                if( InvalidNodeTypes.Count > 0 && false == Owner.getAnySubFieldModified() )
                 {
                     throw new CswDniException( CswEnumErrorType.Warning,
                         "Unable to add the following " + TargetType.PropName + " options because they do not belong to " + Owner.CachedNodeName + 
@@ -471,7 +471,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropRelationship Owner { get { return ( _CswNbtNode.Properties[PropertyName.Owner] ); } }
         private void onOwnerPropChange( CswNbtNodeProp NodeProp, bool Creating )
         {
-            if( Owner.WasModified )
+            if( Owner.getAnySubFieldModified() )
             {
                 _trySetNodeTypeSelectDefaultValues();
             }
@@ -502,7 +502,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropNodeTypeSelect ParentType { get { return ( _CswNbtNode.Properties[PropertyName.ParentType] ); } }
         private void onParentTypePropChange( CswNbtNodeProp NodeProp, bool Creating )
         {
-            if( ParentType.WasModified )
+            if( ParentType.getAnySubFieldModified() )
             {
                 
             }

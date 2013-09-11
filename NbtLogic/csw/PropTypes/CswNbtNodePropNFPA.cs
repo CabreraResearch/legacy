@@ -21,13 +21,18 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropNFPA( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtNode Node )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node )
         {
-            _FieldTypeRule = (CswNbtFieldTypeRuleNFPA) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
-            _RedSubField = _FieldTypeRule.RedSubField;
-            _YellowSubField = _FieldTypeRule.YellowSubField;
-            _BlueSubField = _FieldTypeRule.BlueSubField;
-            _WhiteSubField = _FieldTypeRule.WhiteSubField;
+            _RedSubField = ( (CswNbtFieldTypeRuleNFPA) _FieldTypeRule ).RedSubField;
+            _YellowSubField = ( (CswNbtFieldTypeRuleNFPA) _FieldTypeRule ).YellowSubField;
+            _BlueSubField = ( (CswNbtFieldTypeRuleNFPA) _FieldTypeRule ).BlueSubField;
+            _WhiteSubField = ( (CswNbtFieldTypeRuleNFPA) _FieldTypeRule ).WhiteSubField;
+
+            // Associate subfields with methods on this object, for SetSubFieldValue()
+            _SubFieldMethods.Add( _RedSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Red, x => Red = CswConvert.ToString(x) ) );
+            _SubFieldMethods.Add( _YellowSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Yellow, x => Yellow = CswConvert.ToString(x) ) );
+            _SubFieldMethods.Add( _BlueSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Blue, x => Blue = CswConvert.ToString(x) ) );
+            _SubFieldMethods.Add( _WhiteSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => White, x => White = CswConvert.ToString(x) ) );
         }
-        private CswNbtFieldTypeRuleNFPA _FieldTypeRule;
+
         private CswNbtSubField _RedSubField;
         private CswNbtSubField _YellowSubField;
         private CswNbtSubField _BlueSubField;
@@ -42,25 +47,15 @@ namespace ChemSW.Nbt.PropTypes
             }//
         }
 
-
-        override public string Gestalt
-        {
-            get
-            {
-                return _CswNbtNodePropData.Gestalt;
-            }//
-
-        }//Gestalt
-
         public string Red
         {
             get
             {
-                return _CswNbtNodePropData.GetPropRowValue( _RedSubField.Column );
+                return GetPropRowValue( _RedSubField );
             }
             set
             {
-                _CswNbtNodePropData.SetPropRowValue( _RedSubField.Column, value );
+                SetPropRowValue( _RedSubField, value );
                 SyncGestalt();
             }
         }
@@ -68,11 +63,11 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return _CswNbtNodePropData.GetPropRowValue( _YellowSubField.Column );
+                return GetPropRowValue( _YellowSubField );
             }
             set
             {
-                _CswNbtNodePropData.SetPropRowValue( _YellowSubField.Column, value );
+                SetPropRowValue( _YellowSubField, value );
                 SyncGestalt();
             }
         }
@@ -80,11 +75,11 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return _CswNbtNodePropData.GetPropRowValue( _BlueSubField.Column );
+                return GetPropRowValue( _BlueSubField );
             }
             set
             {
-                _CswNbtNodePropData.SetPropRowValue( _BlueSubField.Column, value );
+                SetPropRowValue( _BlueSubField, value );
                 SyncGestalt();
             }
         }
@@ -92,11 +87,11 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return _CswNbtNodePropData.GetPropRowValue( _WhiteSubField.Column );
+                return GetPropRowValue( _WhiteSubField );
             }
             set
             {
-                _CswNbtNodePropData.SetPropRowValue( _WhiteSubField.Column, value );
+                SetPropRowValue( _WhiteSubField, value );
                 SyncGestalt();
             }
         }
@@ -131,7 +126,7 @@ namespace ChemSW.Nbt.PropTypes
                 newGestalt += ", Special: " + White;
             }
 
-            _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, newGestalt );
+            SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, newGestalt );
         }
 
         public override string ValueForNameTemplate

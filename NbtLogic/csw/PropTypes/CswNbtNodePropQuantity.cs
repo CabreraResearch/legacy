@@ -17,18 +17,17 @@ namespace ChemSW.Nbt.PropTypes
     {
         #region Private Variables
 
-        private CswNbtFieldTypeRuleQuantity _FieldTypeRule;
         private CswNbtSubField _QuantitySubField;
         private CswNbtSubField _UnitNameSubField;
+        private CswNbtSubField _UnitIdSubField;
         private CswNbtSubField _Val_kg_SubField;
         private CswNbtSubField _Val_Liters_SubField;
         private CswNbtView _View;
+
         public static implicit operator CswNbtNodePropQuantity( CswNbtNodePropWrapper PropWrapper )
         {
             return PropWrapper.AsQuantity;
         }
-
-        private CswNbtSubField _UnitIdSubField;
 
         #endregion
 
@@ -37,12 +36,16 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropQuantity( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtNode Node )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node )
         {
-            _FieldTypeRule = (CswNbtFieldTypeRuleQuantity) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
-            _QuantitySubField = _FieldTypeRule.QuantitySubField;
-            _UnitNameSubField = _FieldTypeRule.UnitNameSubField;
-            _UnitIdSubField = _FieldTypeRule.UnitIdSubField;
-            _Val_kg_SubField = _FieldTypeRule.Val_kg_SubField;
-            _Val_Liters_SubField = _FieldTypeRule.Val_Liters_SubField;
+            _QuantitySubField = ( (CswNbtFieldTypeRuleQuantity) _FieldTypeRule ).QuantitySubField;
+            _UnitNameSubField = ( (CswNbtFieldTypeRuleQuantity) _FieldTypeRule ).UnitNameSubField;
+            _UnitIdSubField = ( (CswNbtFieldTypeRuleQuantity) _FieldTypeRule ).UnitIdSubField;
+
+            // Associate subfields with methods on this object, for SetSubFieldValue()
+            _SubFieldMethods.Add( _QuantitySubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Quantity, x => Quantity = CswConvert.ToDouble( x ) ) );
+            _SubFieldMethods.Add( _Val_kg_SubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Quantity, x => Quantity = CswConvert.ToDouble( x ) ) );
+            _SubFieldMethods.Add( _Val_Liters_SubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Quantity, x => Quantity = CswConvert.ToDouble( x ) ) );
+            _SubFieldMethods.Add( _UnitNameSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => CachedUnitName, x => CachedUnitName = CswConvert.ToString( x ) ) );
+            _SubFieldMethods.Add( _UnitIdSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => UnitId, x => UnitId = CswConvert.ToPrimaryKey( x ) ) );
         }
 
         #endregion
@@ -56,16 +59,7 @@ namespace ChemSW.Nbt.PropTypes
                 return Required && QuantityOptional ? false == CswTools.IsDouble( Quantity ) : 0 == Gestalt.Length;
             }
         }
-
-
-        override public string Gestalt
-        {
-            get
-            {
-                return _CswNbtNodePropData.Gestalt;
-            }
-        }//Gestalt
-
+        
         public Int32 Precision
         {
             get
@@ -135,7 +129,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                string Value = _CswNbtNodePropData.GetPropRowValue( _QuantitySubField.Column );
+                string Value = GetPropRowValue( _QuantitySubField );
                 if( CswTools.IsFloat( Value ) )
                     return Convert.ToDouble( Value );
                 else
@@ -152,7 +146,7 @@ namespace ChemSW.Nbt.PropTypes
                     {
                         throw new CswDniException( CswEnumErrorType.Warning, "Cannot save a Quantity without a value if the Property is required.", "Attempted to save the Quantity of a Quantity with an invalid number." );
                     }
-                    _CswNbtNodePropData.SetPropRowValue( _QuantitySubField.Column, Double.NaN );
+                    SetPropRowValue( _QuantitySubField, Double.NaN );
                 }
                 else
                 {
@@ -162,7 +156,7 @@ namespace ChemSW.Nbt.PropTypes
                         PrecisionString += "#";
                     }
                     StringVal = Math.Round( value, Precision, MidpointRounding.AwayFromZero ).ToString( "0." + PrecisionString );
-                    _CswNbtNodePropData.SetPropRowValue( _QuantitySubField.Column, StringVal );
+                    SetPropRowValue( _QuantitySubField, StringVal );
                 }
                 SyncGestalt();
                 SyncConvertedVals();
@@ -173,13 +167,13 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return _CswNbtNodePropData.GetPropRowValue( _UnitNameSubField.Column );
+                return GetPropRowValue( _UnitNameSubField );
             }
             set
             {
-                if( value != _CswNbtNodePropData.GetPropRowValue( _UnitNameSubField.Column ) )
+                if( value != GetPropRowValue( _UnitNameSubField ) )
                 {
-                    _CswNbtNodePropData.SetPropRowValue( _UnitNameSubField.Column, value );
+                    SetPropRowValue( _UnitNameSubField, value );
                     SyncGestalt();
                 }
             }
@@ -234,7 +228,7 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 CswPrimaryKey ret = null;
-                string StringVal = _CswNbtNodePropData.GetPropRowValue( _UnitIdSubField.Column );
+                string StringVal = GetPropRowValue( _UnitIdSubField );
                 if( CswTools.IsInteger( StringVal ) )
                     ret = new CswPrimaryKey( TargetTableName, CswConvert.ToInt32( StringVal ) );
                 return ret;
@@ -249,7 +243,7 @@ namespace ChemSW.Nbt.PropTypes
                     }
                     if( UnitId != value )
                     {
-                        _CswNbtNodePropData.SetPropRowValue( _UnitIdSubField.Column, value.PrimaryKey );
+                        SetPropRowValue( _UnitIdSubField, value.PrimaryKey );
                         CswNbtNode RelatedNode = _CswNbtResources.Nodes[value];
                         if( null != RelatedNode )
                         {
@@ -263,10 +257,10 @@ namespace ChemSW.Nbt.PropTypes
                     {
                         throw new CswDniException( CswEnumErrorType.Warning, "Cannot save a Quantity without a Unit if the Property is required.", "Attempted to save a Quantity with an invalid UnitId." );
                     }
-                    _CswNbtNodePropData.SetPropRowValue( _UnitIdSubField.Column, Int32.MinValue );
+                    SetPropRowValue( _UnitIdSubField, Int32.MinValue );
                 }
 
-                if( WasModified )
+                if( getSubFieldModified( _UnitIdSubField.Name ) )
                 {
                     PendingUpdate = true;
                     SyncConvertedVals();
@@ -402,8 +396,8 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void SyncGestalt()
         {
-            string GestaltValue = _CswNbtNodePropData.GetPropRowValue( _QuantitySubField.Column ) + " " + _CswNbtNodePropData.GetPropRowValue( _UnitNameSubField.Column );
-            _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, GestaltValue );
+            string GestaltValue = GetPropRowValue( _QuantitySubField ) + " " + GetPropRowValue( _UnitNameSubField );
+            SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, GestaltValue );
         }
 
         #endregion

@@ -21,13 +21,19 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropBlob( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtNode Node )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node )
         {
-            _FieldTypeRule = (CswNbtFieldTypeRuleBlob) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
-            _FileNameSubField = _FieldTypeRule.FileNameSubField;
-            _ContentTypeSubField = _FieldTypeRule.ContentTypeSubField;
+            _FileNameSubField = ( (CswNbtFieldTypeRuleBlob) _FieldTypeRule ).FileNameSubField;
+            _ContentTypeSubField = ( (CswNbtFieldTypeRuleBlob) _FieldTypeRule ).ContentTypeSubField;
+            _DateModifiedSubField = ( (CswNbtFieldTypeRuleBlob) _FieldTypeRule ).DateModifiedSubField;
+
+            // Associate subfields with methods on this object, for SetSubFieldValue()
+            _SubFieldMethods.Add( _FileNameSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => FileName, x => FileName = CswConvert.ToString(x) ) );
+            _SubFieldMethods.Add( _ContentTypeSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => ContentType, x => ContentType = CswConvert.ToString( x ) ) );
+            _SubFieldMethods.Add( _DateModifiedSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => DateModified, x => DateModified = CswConvert.ToDateTime( x ) ) );
         }
-        private CswNbtFieldTypeRuleBlob _FieldTypeRule;
+
         private CswNbtSubField _FileNameSubField;
         private CswNbtSubField _ContentTypeSubField;
+        private CswNbtSubField _DateModifiedSubField;
 
         override public bool Empty
         {
@@ -36,16 +42,6 @@ namespace ChemSW.Nbt.PropTypes
                 return ( 0 == FileName.Length );
             }
         }
-
-
-        override public string Gestalt
-        {
-            get
-            {
-                return _CswNbtNodePropData.Gestalt;
-            }
-
-        }//Gestalt
 
         //public byte[] BlobData
         //{
@@ -76,13 +72,33 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return _CswNbtNodePropData.GetPropRowValue( _ContentTypeSubField.Column );
+                return GetPropRowValue( _ContentTypeSubField );
             }
             set
             {
-                _CswNbtNodePropData.SetPropRowValue( _ContentTypeSubField.Column, value );
+                SetPropRowValue( _ContentTypeSubField, value );
             }
         }
+
+
+        public DateTime DateModified
+        {
+            get
+            {
+                return GetPropRowValueDate( _DateModifiedSubField );
+            }
+            set
+            {
+                if( DateTime.MinValue != value )
+                {
+                    SetPropRowValue( _DateModifiedSubField, value );
+                }
+                else
+                {
+                    SetPropRowValue( _DateModifiedSubField, DateTime.MinValue );
+                }
+            }
+        } // DateModified
 
         public string Href
         {
@@ -131,7 +147,7 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void SyncGestalt()
         {
-            _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, FileName );
+            SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, FileName );
         }
 
     }
