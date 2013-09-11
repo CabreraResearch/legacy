@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace ChemSW.Nbt.Schema
@@ -7,7 +8,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Keeps the schema up-to-date
     /// </summary>
-    public class CswSchemaScriptsProd : ICswSchemaScripts
+    public class CswSchemaScriptsProd
     {
         private CswNbtResources _CswNbtResources = null;
 
@@ -18,94 +19,45 @@ namespace ChemSW.Nbt.Schema
             // This is where you manually set to the last version of the previous release (the one currently in production)
             _MinimumVersion = new CswSchemaVersion( 2, 'E', 11 );
 
-            #region MetaData Scripts
+            #region Populate Scripts
 
-            #region DDL
+            Collection<ICswSchemaScripts> AllScripts = new Collection<ICswSchemaScripts>()
+                {
+                    new CswSchemaScriptsFoxglove(),
+                    new CswSchemaScriptsGinkgo()
+                    // Add new milestone script collections here
+                };
 
-            #region FOXGLOVE
-            _addVersionedScript( new CswUpdateMetaData_02F_Case30252() );
-            _addVersionedScript( new CswUpdateMetaData_02F_Case30228() );
-            #endregion FOXGLOVE
-            
-            #region GINKGO
-            _addVersionedScript( new CswUpdateMetaData_02G_Case30557() );
-            #endregion GINKGO
-            
-            #endregion DDL
-
-            #region FOXGLOVE
-
-            _addVersionedScript( new CswUpdateMetaData_02F_Case30041_NbtImportQueue() ); //Validate the Nbt Import Queue table first
-            _addVersionedScript( new CswUpdateMetaData_02F_Case30281() );
-            _addVersionedScript( new CswUpdateMetaData_02F_Case30251() );
-            _addVersionedScript( new CswUpdateMetaData_02F_Case30251B() );
-            _addVersionedScript( new CswUpdateMetaData_02F_Case30082_UserCache() );
-            _addVersionedScript( new CswUpdateMetaData_02F_Case27883() );
-            _addVersionedScript( new CswUpdateMetaData_02F_Case30040() );
-            _addVersionedScript( new CswUpdateMetaData_02F_Case29992() );
-            _addVersionedScript( new CswUpdateMetaData_02F_Case30529() );
-
-            #endregion FOXGLOVE
-
-            #region GINKGO
-
-            _addVersionedScript( new CswUpdateMetaData_02G_Case30611() );
-            _addVersionedScript( new CswUpdateMetaData_02G_Case27846() );
-            _addVersionedScript( new CswUpdateMetaData_02G_Case30542() );
-            _addVersionedScript( new CswUpdateMetaData_02G_Case30557B() );
-            
-            #endregion GINKGO
-
-            #endregion MetaData Scripts
+            // DDL
+            foreach( ICswSchemaScripts ScriptColl in AllScripts )
+            {
+                foreach( CswUpdateSchemaTo Script in ScriptColl._DDLScripts() )
+                {
+                    _addVersionedScript( Script );
+                }
+            }
+            // MetaData
+            foreach( ICswSchemaScripts ScriptColl in AllScripts )
+            {
+                foreach( CswUpdateSchemaTo Script in ScriptColl._MetaDataScripts() )
+                {
+                    _addVersionedScript( Script );
+                }
+            }
 
             // This is the MakeMissingNodeTypeProps script. If you have a script which contains OC changes, put it before this script.
             _addVersionedScript( new RunAlways_MakeMissingNodeTypePropsProps() );
 
-            #region Data Scripts
+            // Schema
+            foreach( ICswSchemaScripts ScriptColl in AllScripts )
+            {
+                foreach( CswUpdateSchemaTo Script in ScriptColl._SchemaScripts() )
+                {
+                    _addVersionedScript( Script );
+                }
+            }
 
-            #region FOXGLOVE
-
-            _addVersionedScript( new CswUpdateSchema_02F_Case30281() );
-            _addVersionedScript( new CswUpdateSchema_02F_Case28998() );
-            _addVersionedScript( new CswUpdateSchema_02F_Case29973() );
-            _addVersionedScript( new CswUpdateSchema_02F_Case29191() );
-            _addVersionedScript( new CswUpdateSchema_02F_Case29542() );
-            _addVersionedScript( new CswUpdateSchema_02F_Case29438() );
-            _addVersionedScript( new CswUpdateSchema_02F_Case30082_UserCache() );
-            _addVersionedScript( new CswUpdateSchema_02F_Case30197() );
-            _addVersionedScript( new CswUpdateSchema_02F_Case30417() );
-            _addVersionedScript( new CswUpdateSchema_02F_Case27883() );
-            _addVersionedScript( new CswUpdateSchema_02F_Case27495() );
-            _addVersionedScript( new CswUpdateSchema_02F_Case30228() );
-            _addVersionedScript( new CswUpdateSchema_02F_Case30040() );
-            _addVersionedScript( new CswUpdateSchema_02F_Case30041_Vendors() );
-            _addVersionedScript( new CswUpdateSchema_02F_Case29992() );
-            _addVersionedScript( new CswUpdateSchema_02F_Case29402() );
-            _addVersionedScript( new CswUpdateSchema_02F_Case30041_UnitsOfMeasure() );
-            _addVersionedScript( new CswUpdateSchema_02F_Case30041_RolesUsers() );
-            _addVersionedScript( new CswUpdateSchema_02F_Case30252() );
-            _addVersionedScript( new CswUpdateSchema_02F_Case30041_ScheduledRuleImport() );
-            _addVersionedScript( new CswUpdateSchema_02F_Case30043_ControlZones() );
-            _addVersionedScript( new CswUpdateSchema_02F_Case30043_Sites() );
-            _addVersionedScript( new CswUpdateSchema_02F_Case29984() );
-            _addVersionedScript( new CswUpdateSchema_02F_Case30577() );
-            _addVersionedScript( new CswUpdateSchema_02F_Case30043_Locations() );
-            _addVersionedScript( new CswUpdateSchema_02F_Case30043_WorkUnits() );
-            _addVersionedScript( new CswUpdateSchema_02F_Case30043_InventoryGroups() );
-            _addVersionedScript( new CswUpdateSchema_02F_Case30647() );
-
-            #endregion FOXGLOVE
-
-            #region GINGKO
-
-            _addVersionedScript( new CswUpdateSchema_02G_Case30542() );
-            _addVersionedScript( new CswUpdateSchema_02G_Case30557() );
-            _addVersionedScript( new CswUpdateSchema_02G_Case30679() );
-            _addVersionedScript( new CswUpdateSchema_02G_Case30473() );
-
-            #endregion GINGKO
-
-            #endregion Data Scripts
+            #endregion Populate Scripts
 
             #region Calculate the Latest Version
 
