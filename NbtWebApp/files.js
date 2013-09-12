@@ -58,7 +58,9 @@ module.exports.vendorMin = [
     'vendor/extjs-4.1.0/ux/**/*.js',
     'Scripts/Q.min.js',
     'vendor/IndexedDBShim.min.js',
-    'vendor/moment.min.js'
+    'vendor/moment.min.js',
+    'vendor/arbor-v0.92/arbor.js',
+    'vendor/arbor-v0.92/arbor-tween.js'
 ];
 
 module.exports.vendor = [
@@ -85,7 +87,9 @@ module.exports.vendor = [
     'vendor/extjs-4.1.0/ux/**/*.js',
     'Scripts/q.js',
     'vendor/IndexedDBShim.min.js',
-    'vendor/moment.min.js'
+    'vendor/moment.min.js',
+    'vendor/arbor-v0.92/arbor.js',
+    'vendor/arbor-v0.92/arbor-tween.js'
 ];
 
 module.exports.images = [

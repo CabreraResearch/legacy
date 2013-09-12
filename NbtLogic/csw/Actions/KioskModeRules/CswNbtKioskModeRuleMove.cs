@@ -64,7 +64,7 @@ namespace ChemSW.Nbt.Actions.KioskMode
                 itemToMove.Properties[locationPropName].AsLocation.SyncGestalt();
                 itemToMove.Properties[locationPropName].AsLocation.RefreshNodeName();
                 itemToMove.postChanges( false );
-                OpData.Log.Add( DateTime.Now + " - Moved " + itemType + " " + OpData.Field2.Value + " to " + locationToMoveTo.Name.Text + " (" + OpData.Field1.Value + ")" );
+                OpData.Log.Add( DateTime.Now + " - Moved " + itemType + " " + OpData.Field2.Value + " to " + locationToMoveTo.Location.Gestalt + " > " + locationToMoveTo.Name.Text + " (" + OpData.Field1.Value + ")" );
                 base.CommitOperation( ref OpData );
             }
             else
@@ -100,7 +100,7 @@ namespace ChemSW.Nbt.Actions.KioskMode
                 tree.goToNthChild( 0 );
                 CswNbtMetaDataObjectClassProp propLoc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.LocationClass ).getObjectClassProp( CswNbtObjClassLocation.PropertyName.Location );
                 CswNbtObjClassLocation anode = tree.getCurrentNode();
-                OpData.Field1.SecondValue = "(" + anode.Location.Gestalt + "," + tree.getNodeNameForCurrentPosition() + ")";
+                OpData.Field1.SecondValue = "(" + anode.Location.Gestalt + " > " + tree.getNodeNameForCurrentPosition() + ")";
                 ret = true;
             }
             else
