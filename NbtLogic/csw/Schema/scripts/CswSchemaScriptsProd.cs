@@ -32,6 +32,7 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswUpdateMetaData_02F_Case30040() );
             _addVersionedScript( new CswUpdateMetaData_02F_Case29992() );
             _addVersionedScript( new CswUpdateMetaData_02F_Case30529() );
+            _addVersionedScript( new CswUpdateMetaData_02F_Case30697() );
 
             #endregion
 
