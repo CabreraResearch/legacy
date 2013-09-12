@@ -623,7 +623,11 @@ namespace ChemSW.Nbt.ImportExport
                         }
                     }
 
+                    //TODO: Go straight to else case if subfield on binding is not nodeid (if we are using name then we wouldn't want to mess with legacy id)
+
                     // First we use a view to search on the Legacy Id and if it returns no results then we search on the Name
+                    //return bool if fails
+
                     ICswNbtTree Tree = _relationshipSearchViaLegacyId( ImportRow, Binding, FKNodeTypes, inClause );
                     Int32 TreeCount = 0;
                     if( null != Tree )
@@ -666,22 +670,14 @@ namespace ChemSW.Nbt.ImportExport
             {
                 CswNbtImportDefOrder TargetOrder = null;
 
-                //if( RowRelationship.Relationship.FKType == NbtViewRelatedIdType.NodeTypeId.ToString() )
-                //{
-                //    TargetOrder = BindingDef.ImportOrder.Values.FirstOrDefault( o => o.NodeType.NodeTypeId == RowRelationship.Relationship.FKValue && o.Instance == RowRelationship.Instance );
-                //}
-                //else if( RowRelationship.Relationship.FKType == NbtViewRelatedIdType.ObjectClassId.ToString() )
-                //{
-                //    TargetOrder = BindingDef.ImportOrder.Values.FirstOrDefault( o => o.NodeType.ObjectClassId == RowRelationship.Relationship.FKValue && o.Instance == RowRelationship.Instance );
-                //}
-                //else if( RowRelationship.Relationship.FKType == NbtViewRelatedIdType.PropertySetId.ToString() )
-                //{
-                //    TargetOrder = BindingDef.ImportOrder.Values.FirstOrDefault( o => null != o.NodeType.getObjectClass().getPropertySet() && 
-                //                                                                     o.NodeType.getObjectClass().getPropertySet().PropertySetId == RowRelationship.Relationship.FKValue && 
-                //                                                                     o.Instance == RowRelationship.Instance );
-                //}
+                // if we have a source row column then we dont need the target order - we have the column and we have the legacy id.
+                // if we don't have a source row column name, REMEMBER that we are getting a NODEID and not a legacy id.
+
+                //ImportRow[RowRelationship.SourceRelColumnName]
 
                 TargetOrder = BindingDef.ImportOrder.Values.FirstOrDefault( o => RowRelationship.Relationship.FkMatches( o.NodeType ) && o.Instance == RowRelationship.Instance );
+
+
 
                 if( null != TargetOrder && null != ImportRow[TargetOrder.PkColName] && CswConvert.ToInt32( ImportRow[TargetOrder.PkColName] ) > 0 )
                 {
@@ -697,22 +693,14 @@ namespace ChemSW.Nbt.ImportExport
                     {
                         Node.Properties[RowRelationship.Relationship].AsLocation.RefreshNodeName();
                     }
-                    /*
-                                                                                            if( RowRelationship.Relationship.getFieldTypeValue() == CswEnumNbtFieldType.Quantity )
-                                                                                            {
-                                                                                                Node.Properties[RowRelationship.Relationship].SetPropRowValue(
-                                                                                                    RowRelationship.Relationship.getFieldTypeRule().SubFields[CswEnumNbtSubFieldName.Name].Column,
-                                                                                                    ImportRow[RowRelationship.Relationship.]
-                                                                                                    );
-                                                                                            }
-                                     * */
+
                     Node.Properties[RowRelationship.Relationship].SyncGestalt();
                 }
             } // foreach( CswNbtMetaDataNodeTypeProp Relationship in RowRelationships )
+
+            #endregion CswNbtImportDefRelationship
+
         } // _importPropertyValues()
-            #endregion
-
-
 
         private ICswNbtTree _relationshipSearchViaLegacyId( DataRow ImportRow, CswNbtImportDefBinding Binding, Dictionary<string, int> FKNodeTypes, CswCommaDelimitedString NodeTypeIds )
         {

@@ -5,7 +5,6 @@ using System.Data;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
-using ChemSW.Nbt.MetaData;
 
 namespace ChemSW.Nbt.ImportExport
 {
@@ -130,13 +129,18 @@ namespace ChemSW.Nbt.ImportExport
             foreach( DataRow OrderRow in OrderDataTable.Rows )
             {
                 string SheetName = OrderRow["sheet"].ToString();
+                Int32 SheetOrder = Int32.MinValue;
+                if( OrderRow.Table.Columns.Contains( "sheetorder" ) )
+                {
+                    SheetOrder = CswConvert.ToInt32( OrderRow["sheetorder"] );
+                }
                 if( false == string.IsNullOrEmpty( SheetName ) &&
                     false == ret.ContainsKey( SheetName ) )
                 {
                     DataRow defrow = importDefinitionTable.NewRow();
                     defrow[CswNbtImportTables.ImportDef.definitionname] = ImportDefinitionName;
                     defrow[CswNbtImportTables.ImportDef.sheetname] = SheetName;
-                    defrow[CswNbtImportTables.ImportDef.sheetorder] = i;
+                    defrow[CswNbtImportTables.ImportDef.sheetorder] = Int32.MinValue != SheetOrder ? SheetOrder : i;
                     i++;
                     importDefinitionTable.Rows.Add( defrow );
                     ret.Add( SheetName, CswConvert.ToInt32( defrow[CswNbtImportTables.ImportDef.PkColumnName] ) );

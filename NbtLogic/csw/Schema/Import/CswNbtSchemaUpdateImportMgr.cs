@@ -14,23 +14,19 @@ namespace ChemSW.Nbt.csw.Schema
         public CswNbtSchemaModTrnsctn SchemaModTrnsctn;
         public const string LegacyID = "Legacy ID";
 
-        private Dictionary<string, Int32> _Order = new Dictionary<string, int>
+        private Dictionary<string, Int32> _SheetOrder = new Dictionary<string, int>
             {
-                //{SourceTableName, ImportOrder}
+                //{SourceTableName (SheetName), Order}
                 {"cispro_controlzones", 1},
                 {"work_units", 2},
                 {"inventory_groups", 3},
                 {"locations", 4}
-                //{"locations_level2", 6},
-                //{"locations_level3", 7},
-                //{"locations_level4", 8},
-                //{"locations_level5", 9},
-                //{"units_of_measure", 10},
-                //{"vendors", 11},
-                //{"roles", 12},
-                //{"users", 13},
-                //{"regulatory_lists", 14},
-                //{"regulated_casnos", 15}
+                //{"units_of_measure", 5},
+                //{"vendors", 6},
+                //{"roles", 7},
+                //{"users", 8},
+                //{"regulatory_lists", 9},
+                //{"regulated_casnos", 10}
             };
 
 
@@ -48,7 +44,7 @@ namespace ChemSW.Nbt.csw.Schema
 
         private CswCommaDelimitedString _SourceColumns;
 
-        public CswNbtSchemaUpdateImportMgr( CswNbtSchemaModTrnsctn SchemaModTrnsctn, string SourceTableName, string DestNodeTypeName, string ViewName = "", string CafDbLink = null )
+        public CswNbtSchemaUpdateImportMgr( CswNbtSchemaModTrnsctn SchemaModTrnsctn, string SourceTableName, string DestNodeTypeName, string ViewName = "", string CafDbLink = null, Int32 ImportOrder = 1 )
         {
             string ExceptionText = string.Empty;
             _CAFDbLink = CafDbLink ?? CswScheduleLogicNbtCAFImport.CAFDbLink;
@@ -64,13 +60,10 @@ namespace ChemSW.Nbt.csw.Schema
                 _SourceTableName = SourceTableName;
                 _DestNodeTypeName = DestNodeTypeName;
                 _ViewName = ViewName;
-                _ImportOrder = _Order[SourceTableName];
-                //TODO: Provide error messsage/throw exception if the sourcetablename isn't in the dictionary
-                //"Could not find the SourceTableName " + SourceTableName + " in the _Order dictionary."
-
+                _ImportOrder = ImportOrder;
                 _SourceColumns = new CswCommaDelimitedString();
 
-                _importOrder( _ImportOrder, _SourceTableName, _DestNodeTypeName );
+                _importOrder( _ImportOrder, _DestNodeTypeName );
             }
             else
             {
@@ -97,7 +90,7 @@ namespace ChemSW.Nbt.csw.Schema
 
                 for( int i = 0; i < DestNodeTypesAndInstances.Count; i++ )
                 {
-                    _importOrder( i + 1, _SourceTableName, DestNodeTypesAndInstances[i].Item1, DestNodeTypesAndInstances[i].Item2 );
+                    _importOrder( i + 1, DestNodeTypesAndInstances[i].Item1, DestNodeTypesAndInstances[i].Item2 );
                 }
             }
             else
@@ -106,17 +99,17 @@ namespace ChemSW.Nbt.csw.Schema
             }
         }
 
-        private void _importOrder( Int32 Order, string SheetName = null, string NodeTypeName = null, Int32 Instance = Int32.MinValue )
+        private void _importOrder( Int32 Order, string NodeTypeName = null, Int32 Instance = Int32.MinValue )
         {
-            SheetName = SheetName ?? _SourceTableName;
             NodeTypeName = NodeTypeName ?? _DestNodeTypeName;
-            if( CswAll.AreStrings( SheetName, NodeTypeName ) )
+            if( CswAll.AreStrings( _SourceTableName, NodeTypeName ) )
             {
                 DataRow row = _importOrderTable.NewRow();
-                row["sheet"] = SheetName;
+                row["sheet"] = _SourceTableName;
                 row["nodetype"] = NodeTypeName;
                 row["order"] = Order;
                 row["instance"] = Instance;
+                row["sheetorder"] = _SheetOrder[_SourceTableName];
                 _importOrderTable.Rows.Add( row );
             }
         } // _importOrder()
@@ -143,7 +136,7 @@ namespace ChemSW.Nbt.csw.Schema
             }
         } // _importBinding()
 
-        public void importRelationship( string SheetName, string NodetypeName, string RelationshipPropName, Int32 Instance = Int32.MinValue )
+        public void importRelationship( string SheetName, string NodetypeName, string RelationshipPropName, Int32 Instance = Int32.MinValue, string SourceRelColumnName = "" )
         {
             if( null != _NbtImporter )
             {
@@ -154,6 +147,7 @@ namespace ChemSW.Nbt.csw.Schema
                     row["nodetype"] = NodetypeName;
                     row["relationship"] = RelationshipPropName;
                     row["instance"] = Instance;
+                    row["sourcerelcolumnname"] = SourceRelColumnName;
                     _importRelationshipsTable.Rows.Add( row );
                 }
             }
