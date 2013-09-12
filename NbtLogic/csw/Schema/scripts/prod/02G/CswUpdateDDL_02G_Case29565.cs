@@ -31,8 +31,13 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
-            // Inspect shadow tables for missing columns
             CswAuditMetaData CswAuditMetaData = new CswAuditMetaData();
+
+            // part 4, add audittransaction.datetime
+            _CswNbtSchemaModTrnsctn.addDateColumn( CswAuditMetaData.AuditTransactionTableName, "auditdate", "DateTime of audit transaction", false, true );
+
+
+            // Inspect shadow tables for missing columns
             foreach( string TableName in _CswNbtSchemaModTrnsctn.CswDataDictionary.getTableNames( IncludeAudit: false ) )
             {
                 if( _CswNbtSchemaModTrnsctn.isTableAuditable( TableName ) )
