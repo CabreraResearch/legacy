@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
+﻿using System.Collections.ObjectModel;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -39,7 +36,8 @@ namespace ChemSW.Nbt.Schema
                     new CswUpdateSchema_02G_Case30679(),
                     new CswUpdateSchema_02G_Case30473(),
                     new CswUpdateSchema_02G_Case30342(),
-                    new CswUpdateSchema_02G_Case28493B()
+                    new CswUpdateSchema_02G_Case28493B()           ,
+                    new CswUpdateSchema_02G_Case30383()
                 };
         } // _SchemaScripts()
 

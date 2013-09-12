@@ -749,10 +749,10 @@ namespace ChemSW.Nbt.Actions
                     {
                         RetAsRequestItem.Request.RelatedNodeId = getCurrentRequestNodeId();
                     }
-                    if( null == RetAsRequestItem.Material.RelatedNodeId )
-                    {
-                        RetAsRequestItem.Material.RelatedNodeId = MaterialId;
-                    }
+                    //if( null == RetAsRequestItem.Material.RelatedNodeId )
+                    //{
+                    //    RetAsRequestItem.Material.RelatedNodeId = MaterialId;
+                    //}
                     if( null != _ThisUser.DefaultLocationId )
                     {
                         CswNbtObjClassLocation DefaultAsLocation = _CswNbtResources.Nodes.GetNode( _ThisUser.DefaultLocationId );
@@ -768,7 +768,7 @@ namespace ChemSW.Nbt.Actions
                         case CswNbtPropertySetMaterial.CswEnumRequestOption.Size:
                             RetAsRequestItem.Type.Value = CswNbtObjClassRequestMaterialDispense.Types.Size;
                             CswNbtObjClassRequestMaterialDispense RetAsMatDisp = CswNbtObjClassRequestMaterialDispense.fromPropertySet( RetAsRequestItem );
-                            _setRequestItemSizesView( RetAsMatDisp.Size.View.ViewId, RetAsMatDisp.Material.RelatedNodeId );
+                            _setRequestItemSizesView( RetAsMatDisp.Size.View.ViewId, MaterialId );
                             break;
 
                         default: //Request or Bulk
