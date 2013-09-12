@@ -1486,13 +1486,13 @@
       <Project>{434091FB-F487-4787-8BDB-58C2336B73C2}</Project>
       <Name>CswCommon</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\Common\CswCommon\StructureSearch\StructureSearch.csproj">
+      <Project>{e9156c9a-605e-4f21-8bb1-0970da055ff0}</Project>
+      <Name>StructureSearch</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\Common\CswWebControls\CswWebControls.csproj">
       <Project>{1617E93A-A9DD-46D5-A607-7A36DF91C2D1}</Project>
       <Name>CswWebControls</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\Common\StructureSearch\StructureSearch\StructureSearch.csproj">
-      <Project>{E9156C9A-605E-4F21-8BB1-0970DA055FF0}</Project>
-      <Name>StructureSearch</Name>
     </ProjectReference>
     <ProjectReference Include="..\NbtLogic\NbtLogic.csproj">
       <Project>{7E8253CA-37B0-4CE1-AA9C-8C3086AFD974}</Project>
