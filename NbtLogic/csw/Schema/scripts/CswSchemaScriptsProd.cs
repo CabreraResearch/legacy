@@ -55,8 +55,6 @@ namespace ChemSW.Nbt.Schema
 
             #endregion MetaData Scripts
 
-            #endregion
-
             // This is the MakeMissingNodeTypeProps script. If you have a script which contains OC changes, put it before this script.
             _addVersionedScript( new RunAlways_MakeMissingNodeTypePropsProps() );
 
