@@ -416,17 +416,14 @@ namespace ChemSW.Nbt
 
         public delegate void AfterMakeNode( CswNbtNode NewNode );
 
-        // <summary>
-        // 
-        // </summary>
         /// <summary>
-        /// Create a new, fresh, empty Node from a node type.  Properties are filled in, but Property Values are not.
+        /// Create a new, fresh, empty Node from a node type.  Properties are filled in, but Property Values are not. !!POSTS CHANGES!!
         /// </summary>
         /// <param name="NodeTypeId">Primary Key of Nodetype</param>
         /// <param name="IsTemp">If true, the node is a temp node, though still saved to the database</param>
         /// <param name="OnAfterMakeNode">Event that occurs after creating the node but before saving it for the first time</param>
         /// <param name="OverrideUniqueValidation">If true, allow this node to be created even if it violates uniqueness rules</param>
-        /// <returns>The new node</returns>
+        /// <returns>The new node. !!POSTS CHANGES!!</returns>
         public CswNbtNode makeNodeFromNodeTypeId( Int32 NodeTypeId, AfterMakeNode OnAfterMakeNode = null, bool IsTemp = false, bool OverrideUniqueValidation = false )
         {
             CswNbtNode Node = _CswNbtNodeFactory.make( CswEnumNbtNodeSpecies.Plain, null, NodeTypeId, NodeHash.Count );
