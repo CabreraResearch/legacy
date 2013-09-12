@@ -337,6 +337,7 @@
     <None Include="csw\Schema\scripts\past\02E\CswUpdateSchema_02E_Case30300.cs" />
     <Compile Include="csw\Schema\scripts\ICswSchemaScripts.cs" />
     <Compile Include="csw\Schema\scripts\prod\02F\CswSchemaScriptsFoxglove.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateDDL_02G_Case29565.cs" />
     <Compile Include="csw\Schema\scripts\prod\02G\CswSchemaScriptsGinkgo.cs" />
     <Compile Include="csw\Schema\scripts\prod\02F\CswUpdateSchema_02F_Case30647.cs" />
     <Compile Include="csw\Schema\scripts\prod\02F\CswUpdateSchema_02F_Case29984.cs" />
