@@ -147,6 +147,7 @@ namespace ChemSW.Nbt.ServiceDrivers
         /// <summary>
         /// Create a new node according to NodeTypeId. Does not post changes after calling makeNodeFromNodeTypeId.
         /// </summary>
+        public CswNbtNode getAddNode( Int32 NodeTypeId, string RelatedNodeId, CswNbtNodeCollection.AfterMakeNode After )
         {
             CswNbtNode Ret = null;
             CswNbtMetaDataNodeType NodeType = null;
@@ -162,27 +163,34 @@ namespace ChemSW.Nbt.ServiceDrivers
                     else
                     {
                         Ret = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, IsTemp: true, OnAfterMakeNode: delegate( CswNbtNode NewNode )
+                        {
+                            if( null != After )
+                            {
+                                After( NewNode );
+                            }
+                        } );
                         CswPrimaryKey RelatedNodePk = CswConvert.ToPrimaryKey( RelatedNodeId );
-                               
-                        CswNbtNode RelatedNode = _CswNbtResources.Nodes[RelatedNodePk];
+
+                        CswNbtNode RelatedNode = _CswNbtResources.Nodes[ RelatedNodePk ];
                         if( null != RelatedNode )
                         {
                             foreach( CswNbtNodePropRelationship Relationship in from _Prop
-                                                                                in Ret.Properties
-                                                                                            where _Prop.getFieldTypeValue() == CswEnumNbtFieldType.Relationship &&
-                                                                                                  ( _Prop.AsRelationship.TargetMatches( RelatedNode.getNodeType() ) ||
-                                                                                                    _Prop.AsRelationship.TargetMatches( RelatedNode.getObjectClass() ) )
-                                                                                            select _Prop )
+                                in Ret.Properties
+                                where _Prop.getFieldTypeValue() == CswEnumNbtFieldType.Relationship &&
+                                      ( _Prop.AsRelationship.TargetMatches( RelatedNode.getNodeType() ) ||
+                                        _Prop.AsRelationship.TargetMatches( RelatedNode.getObjectClass() ) )
+                                select _Prop )
                             {
                                 Relationship.RelatedNodeId = RelatedNodePk;
                             }
                         }
                         // if( Int32.MinValue != RelatedNodePk.PrimaryKey )
-                                if( null != After )
-                                {
-                                    After( NewNode );
-                                }
-                            } );
+
+                    }
+
+                }
+            }
+            return Ret;
         }
 
         /// <summary>
@@ -208,9 +216,9 @@ namespace ChemSW.Nbt.ServiceDrivers
         /// <summary>
         /// Create a new node according to NodeTypeId. Posts changes.
         /// </summary>
-        public CswNbtNode getAddNodeAndPostChanges( Int32 NodeTypeId, string RelatedNodeId )
+        public CswNbtNode getAddNodeAndPostChanges( Int32 NodeTypeId, string RelatedNodeId, CswNbtNodeCollection.AfterMakeNode After )
         {
-            CswNbtNode Ret = getAddNode( NodeTypeId, RelatedNodeId );
+            CswNbtNode Ret = getAddNode( NodeTypeId, RelatedNodeId, After );
             if( null != Ret )
             {
                 Ret.postChanges( ForceUpdate: false );
