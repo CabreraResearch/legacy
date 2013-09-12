@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CswCommon", "..\..\Common\CswCommon\CswCommon.csproj", "{434091FB-F487-4787-8BDB-58C2336B73C2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CswWebControls", "..\..\Common\CswWebControls\CswWebControls.csproj", "{1617E93A-A9DD-46D5-A607-7A36DF91C2D1}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NbtLogic", "NbtLogic\NbtLogic.csproj", "{7E8253CA-37B0-4CE1-AA9C-8C3086AFD974}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NbtSchedService", "NbtSchedService\NbtSchedService.csproj", "{BEB21D68-DED7-43B7-8BAB-70F95B98F58A}"
@@ -51,6 +49,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "API.Test", "TestApps\API.Te
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StructureSearch", "..\..\Common\CswCommon\StructureSearch\StructureSearch.csproj", "{E9156C9A-605E-4F21-8BB1-0970DA055FF0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CswWebControls", "..\..\Common\CswCommon\CswWebControls\CswWebControls.csproj", "{1617E93A-A9DD-46D5-A607-7A36DF91C2D1}"
+EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = Nbt.vsmdi
@@ -64,10 +64,6 @@ Global
 		{434091FB-F487-4787-8BDB-58C2336B73C2}.Debug|x64.Build.0 = Debug|x64
 		{434091FB-F487-4787-8BDB-58C2336B73C2}.Release|x64.ActiveCfg = Release|x64
 		{434091FB-F487-4787-8BDB-58C2336B73C2}.Release|x64.Build.0 = Release|x64
-		{1617E93A-A9DD-46D5-A607-7A36DF91C2D1}.Debug|x64.ActiveCfg = Debug|x64
-		{1617E93A-A9DD-46D5-A607-7A36DF91C2D1}.Debug|x64.Build.0 = Debug|x64
-		{1617E93A-A9DD-46D5-A607-7A36DF91C2D1}.Release|x64.ActiveCfg = Release|x64
-		{1617E93A-A9DD-46D5-A607-7A36DF91C2D1}.Release|x64.Build.0 = Release|x64
 		{7E8253CA-37B0-4CE1-AA9C-8C3086AFD974}.Debug|x64.ActiveCfg = Debug|x64
 		{7E8253CA-37B0-4CE1-AA9C-8C3086AFD974}.Debug|x64.Build.0 = Debug|x64
 		{7E8253CA-37B0-4CE1-AA9C-8C3086AFD974}.Release|x64.ActiveCfg = Release|x64
@@ -127,13 +123,17 @@ Global
 		{E9156C9A-605E-4F21-8BB1-0970DA055FF0}.Debug|x64.Build.0 = Debug|x64
 		{E9156C9A-605E-4F21-8BB1-0970DA055FF0}.Release|x64.ActiveCfg = Release|x64
 		{E9156C9A-605E-4F21-8BB1-0970DA055FF0}.Release|x64.Build.0 = Release|x64
+		{1617E93A-A9DD-46D5-A607-7A36DF91C2D1}.Debug|x64.ActiveCfg = Debug|x64
+		{1617E93A-A9DD-46D5-A607-7A36DF91C2D1}.Debug|x64.Build.0 = Debug|x64
+		{1617E93A-A9DD-46D5-A607-7A36DF91C2D1}.Release|x64.ActiveCfg = Release|x64
+		{1617E93A-A9DD-46D5-A607-7A36DF91C2D1}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{4AD32EDB-E47A-4CA8-910A-85C5994530B3} = {B0BE6B91-45A3-4EF1-BE1F-1B8D2BA04EC0}
 		{C02FA49B-3DD6-492D-BA16-620C86E5CEC0} = {B0BE6B91-45A3-4EF1-BE1F-1B8D2BA04EC0}
+		{4AD32EDB-E47A-4CA8-910A-85C5994530B3} = {B0BE6B91-45A3-4EF1-BE1F-1B8D2BA04EC0}
 		{ADC03106-C782-42E3-A00D-F3715C173FD5} = {B0BE6B91-45A3-4EF1-BE1F-1B8D2BA04EC0}
 		{A082F357-1745-4578-AF1F-517BC6EF4007} = {B0BE6B91-45A3-4EF1-BE1F-1B8D2BA04EC0}
 		{B9AA98D2-572B-4C3B-98D2-A0D0A524E961} = {B0BE6B91-45A3-4EF1-BE1F-1B8D2BA04EC0}
