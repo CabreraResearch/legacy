@@ -146,7 +146,6 @@ namespace ChemSW.Nbt.Schema
                                bool Required, string tablename, CswEnumDataDictionaryUniqueType uniquetype, bool uperrangevalueinclusive, string upperrangevalue )
         {
             _verifyOrCreateTableForColumnOp( tablename );
-
             _DdlOps[tablename].addColumn( columnname, columntype, datatypesize, dblprecision,
                                           defaultvalue, description, foreignkeycolumn, foreignkeytable, constrainfkref, isview,
                                           logicaldelete, lowerrangevalue, lowerrangevalueinclusive, portabledatatype, ReadOnly,
@@ -157,6 +156,7 @@ namespace ChemSW.Nbt.Schema
             if( _CswNbtResources.CswResources.isTableAuditable( tablename ) && false == isview )
             {
                 string audittablename = _CswAuditMetaData.makeAuditTableName( tablename );
+                _verifyOrCreateTableForColumnOp( audittablename );
                 _DdlOps[audittablename].addColumn( columnname, columntype, datatypesize, dblprecision,
                                                    "", description, "", "", false, isview,
                                                    false, "", false, portabledatatype, false,
@@ -181,7 +181,6 @@ namespace ChemSW.Nbt.Schema
         public void renameColumn( string TableName, string OriginalColumnName, string NewColumnName )
         {
             _verifyOrCreateTableForColumnOp( TableName );
-
             _DdlOps[TableName].renameColumn( OriginalColumnName, NewColumnName );
             _DdlOps[TableName].apply();
 
@@ -189,6 +188,7 @@ namespace ChemSW.Nbt.Schema
             if( _CswNbtResources.CswResources.isTableAuditable( TableName ) )
             {
                 string audittablename = _CswAuditMetaData.makeAuditTableName( TableName );
+                _verifyOrCreateTableForColumnOp( audittablename );
                 _DdlOps[audittablename].renameColumn( OriginalColumnName, NewColumnName );
                 _DdlOps[audittablename].apply();
             }
