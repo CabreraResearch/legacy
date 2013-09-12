@@ -573,7 +573,6 @@ namespace ChemSW.Nbt.ImportExport
                     rateInterval.ReadXml( xmlDoc.DocumentElement );
 
                     ( (CswNbtNodePropTimeInterval) Node.Properties[Binding.DestProperty] ).RateInterval = rateInterval;
-                    //Node.Properties[Binding.DestProperty].SetPropRowValue( CswEnumNbtPropColumn.ClobData, rateInterval.ToXmlString() );
                     Node.Properties[Binding.DestProperty].SyncGestalt();
                 }
                 // NodeTypeSelect
@@ -623,84 +622,141 @@ namespace ChemSW.Nbt.ImportExport
                         }
                     }
 
-                    //TODO: Go straight to else case if subfield on binding is not nodeid (if we are using name then we wouldn't want to mess with legacy id)
-
-                    // First we use a view to search on the Legacy Id and if it returns no results then we search on the Name
-                    //return bool if fails
-
-                    ICswNbtTree Tree = _relationshipSearchViaLegacyId( ImportRow, Binding, FKNodeTypes, inClause );
-                    Int32 TreeCount = 0;
-                    if( null != Tree )
+                    // If the subfield isn't set to NodeID, then we don't need to look up the Legacy Id
+                    bool MatchedOnLegacyId = false;
+                    if( Binding.DestSubFieldName == CswEnumNbtSubFieldName.NodeID.ToString() )
                     {
-                        TreeCount = Tree.getChildNodeCount();
+                        // First we use a view to search on the Legacy Id and if it returns no results then we search on the Name
+                        MatchedOnLegacyId = _relationshipSearchViaLegacyId( Node,
+                                                                           ImportRow[Binding.SourceColumnName].ToString(),
+                                                                           Binding.DestProperty.getFieldTypeValue(),
+                                                                           Binding.DestNodeTypeName,
+                                                                           Binding.DestProperty,
+                                                                           FKNodeTypes );
                     }
-
-                    // It is possible that this could return more than 1?
-                    if( TreeCount > 0 )
-                    {
-                        Tree.goToNthChild( 0 );
-                        //Node.Properties[Binding.DestProperty].AsRelationship.RelatedNodeId = Tree.getNodeIdForCurrentPosition();
-                        Node.Properties[Binding.DestProperty].SetPropRowValue( Binding.DestProperty.getFieldTypeRule().SubFields[CswEnumNbtSubFieldName.NodeID].Column, Tree.getNodeIdForCurrentPosition().PrimaryKey );
-                        if( Binding.DestProperty.getFieldTypeValue() == CswEnumNbtFieldType.Relationship )
-                        {
-                            Node.Properties[Binding.DestProperty].AsRelationship.RefreshNodeName();
-                        }
-                        if( Binding.DestProperty.getFieldTypeValue() == CswEnumNbtFieldType.Location )
-                        {
-                            Node.Properties[Binding.DestProperty].AsLocation.RefreshNodeName();
-                        }
-                        Node.Properties[Binding.DestProperty].SyncGestalt();
-                    }
-                    else
+                    if( false == MatchedOnLegacyId )
                     {
                         // Alternatively, we try to search based on the Name property
                         _relationshipSearchViaName( Node, inClause, ImportRow, Binding );
                     }
+
                 }
                 else
                 {
                     Node.Properties[Binding.DestProperty].SetPropRowValue( Binding.DestSubfield.Column, ImportRow[Binding.ImportDataColumnName].ToString() );
                     Node.Properties[Binding.DestProperty].SyncGestalt();
                 }
-            }
+            }//foreach( CswNbtImportDefBinding Binding in NodeTypeBindings )
 
             #region CswNbtImportDefRelationship
 
             foreach( CswNbtImportDefRelationship RowRelationship in RowRelationships )
             {
-                CswNbtImportDefOrder TargetOrder = null;
+                CswNbtImportDefOrder TargetOrder = BindingDef.ImportOrder.Values.FirstOrDefault( o => RowRelationship.Relationship.FkMatches( o.NodeType ) && o.Instance == RowRelationship.Instance );
 
-                // if we have a source row column then we dont need the target order - we have the column and we have the legacy id.
-                // if we don't have a source row column name, REMEMBER that we are getting a NODEID and not a legacy id.
-
-                //ImportRow[RowRelationship.SourceRelColumnName]
-
-                TargetOrder = BindingDef.ImportOrder.Values.FirstOrDefault( o => RowRelationship.Relationship.FkMatches( o.NodeType ) && o.Instance == RowRelationship.Instance );
-
-
-
-                if( null != TargetOrder && null != ImportRow[TargetOrder.PkColName] && CswConvert.ToInt32( ImportRow[TargetOrder.PkColName] ) > 0 )
+                // If we have a value for the SourceRelColumnName
+                if( false == string.IsNullOrEmpty( ImportRow[RowRelationship.SourceRelColumnName].ToString() ) )
                 {
-                    Node.Properties[RowRelationship.Relationship].SetPropRowValue(
-                        RowRelationship.Relationship.getFieldTypeRule().SubFields[CswEnumNbtSubFieldName.NodeID].Column,
-                        ImportRow[TargetOrder.PkColName]
-                        );
-                    if( RowRelationship.Relationship.getFieldTypeValue() == CswEnumNbtFieldType.Relationship )
+                    // In this case, we are matching on Legacy Id
+                    // If the value in the column isn't null and it is actually an integer value (A legacy id)
+                    if( null != ImportRow[RowRelationship.SourceRelColumnName] && CswConvert.ToInt32( ImportRow[RowRelationship.SourceRelColumnName] ) > 0 )
                     {
-                        Node.Properties[RowRelationship.Relationship].AsRelationship.RefreshNodeName();
+                        // We need to search for a node with a legacy id = ImportRow[RowRelationship.SourceRelColumnName]
+                        Dictionary<string, int> FKNodeTypes = new Dictionary<string, int>();
+                        FKNodeTypes.Add( TargetOrder.NodeType.NodeTypeName, TargetOrder.NodeType.NodeTypeId );
+                        _relationshipSearchViaLegacyId( Node,
+                                                        ImportRow[RowRelationship.SourceRelColumnName].ToString(),
+                                                        RowRelationship.Relationship.getFieldTypeValue(),
+                                                        RowRelationship.NodeTypeName,
+                                                        RowRelationship.Relationship,
+                                                        FKNodeTypes );
                     }
-                    if( RowRelationship.Relationship.getFieldTypeValue() == CswEnumNbtFieldType.Location )
-                    {
-                        Node.Properties[RowRelationship.Relationship].AsLocation.RefreshNodeName();
-                    }
+                }
+                else
+                {
+                    // In this case, we are matching on NodeId
 
-                    Node.Properties[RowRelationship.Relationship].SyncGestalt();
+                    if( null != TargetOrder && null != ImportRow[TargetOrder.PkColName] && CswConvert.ToInt32( ImportRow[TargetOrder.PkColName] ) > 0 )
+                    {
+                        Node.Properties[RowRelationship.Relationship].SetPropRowValue(
+                            RowRelationship.Relationship.getFieldTypeRule().SubFields[CswEnumNbtSubFieldName.NodeID].Column,
+                            ImportRow[TargetOrder.PkColName]
+                            );
+                        if( RowRelationship.Relationship.getFieldTypeValue() == CswEnumNbtFieldType.Relationship )
+                        {
+                            Node.Properties[RowRelationship.Relationship].AsRelationship.RefreshNodeName();
+                        }
+                        if( RowRelationship.Relationship.getFieldTypeValue() == CswEnumNbtFieldType.Location )
+                        {
+                            Node.Properties[RowRelationship.Relationship].AsLocation.RefreshNodeName();
+                        }
+
+                        Node.Properties[RowRelationship.Relationship].SyncGestalt();
+                    }
                 }
             } // foreach( CswNbtMetaDataNodeTypeProp Relationship in RowRelationships )
 
             #endregion CswNbtImportDefRelationship
 
         } // _importPropertyValues()
+
+
+        // This should actually set the value if there is one and return true if it was set and false if not
+        //private bool _relationshipSearchViaLegacyId( CswNbtNode Node, string LegacyId, CswNbtImportDefBinding Binding, Dictionary<string, int> FKNodeTypes )
+        private bool _relationshipSearchViaLegacyId( CswNbtNode Node, string LegacyId, CswEnumNbtFieldType FieldType, string DestNodeTypeName, CswNbtMetaDataNodeTypeProp NodeTypeProp, Dictionary<string, int> FKNodeTypes )
+        {
+            bool Ret = false;
+
+            if( false == string.IsNullOrEmpty( LegacyId ) )
+            {
+                // TODO: Create view using relationship target (PS, OC, NT)
+                Int32 NodeTypeId = FKNodeTypes[FKNodeTypes.Keys.First()];
+
+                CswNbtView View = new CswNbtView( _CswNbtResources );
+                View.ViewName = "MatchingLegacyId_View";
+
+                CswNbtMetaDataNodeType CurrentNodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
+                if( null != CurrentNodeType )
+                {
+                    CswNbtMetaDataNodeTypeProp LegacyIdNTP = CurrentNodeType.getNodeTypeProp( "Legacy Id" );
+                    CswNbtViewRelationship ParentRelationship = View.AddViewRelationship( CurrentNodeType, false );
+                    View.AddViewPropertyAndFilter( ParentViewRelationship: ParentRelationship,
+                                                  MetaDataProp: LegacyIdNTP,
+                                                  Conjunction: CswEnumNbtFilterConjunction.And,
+                                                  SubFieldName: CswEnumNbtSubFieldName.Value,
+                                                  FilterMode: CswEnumNbtFilterMode.Equals,
+                                                  Value: LegacyId );
+
+                    ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, false, true, true );
+                    if( Tree.getChildNodeCount() > 0 )
+                    {
+                        // Get the Node
+                        Tree.goToNthChild( 0 );
+
+                        // Set the relationship property to the nodeid of the found node
+                        Node.Properties[NodeTypeProp].SetPropRowValue( NodeTypeProp.getFieldTypeRule().SubFields[CswEnumNbtSubFieldName.NodeID].Column, Tree.getNodeIdForCurrentPosition().PrimaryKey );
+
+                        // Refresh
+                        if( FieldType == CswEnumNbtFieldType.Relationship )
+                        {
+                            Node.Properties[NodeTypeProp].AsRelationship.RefreshNodeName();
+                        }
+                        if( FieldType == CswEnumNbtFieldType.Location )
+                        {
+                            Node.Properties[NodeTypeProp].AsLocation.RefreshNodeName();
+                        }
+                        Node.Properties[NodeTypeProp].SyncGestalt();
+
+                        Ret = true;
+
+                    }//if (Tree.getChildNodeCount() > 0)
+
+                }//if( null != CurrentNodeType )
+
+            }//if( false == string.IsNullOrEmpty( LegacyId ) )
+
+            return Ret;
+        }
 
         private ICswNbtTree _relationshipSearchViaLegacyId( DataRow ImportRow, CswNbtImportDefBinding Binding, Dictionary<string, int> FKNodeTypes, CswCommaDelimitedString NodeTypeIds )
         {
