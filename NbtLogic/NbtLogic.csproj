@@ -426,6 +426,7 @@
     <None Include="csw\Schema\scripts\past\02E\RunBeforeEveryExecutionOfUpdater_02E_Case29700.cs" />
     <Compile Include="csw\Schema\scripts\prod\02F\CswUpdateMetaData_02F_Case30281.cs" />
     <Compile Include="csw\Schema\scripts\prod\02F\CswUpdateMetaData_02F_Case30041_NbtImportQueue.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateSchema_02G_Case30561.cs" />
     <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateSchema_02G_Case30473.cs" />
     <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateMetaData_02G_Case28493A.cs" />
     <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateSchema_02G_Case28493B.cs" />
