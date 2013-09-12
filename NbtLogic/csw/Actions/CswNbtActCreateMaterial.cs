@@ -434,7 +434,7 @@ namespace ChemSW.Nbt.Actions
                         if( CswTools.IsPrimaryKey( VendorNodePk ) )
                         {
                             CswNbtObjClassVendor VendorNode = _CswNbtResources.Nodes.GetNode( VendorNodePk );
-                            if( null != VendorNode )
+                            if( null != VendorNode && VendorNode.IsTemp )
                             {
                                 VendorNode.IsTemp = false;
                                 VendorNode.postChanges( false );
