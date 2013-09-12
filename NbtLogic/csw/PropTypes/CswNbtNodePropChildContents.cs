@@ -83,6 +83,9 @@ namespace ChemSW.Nbt.PropTypes
             return RelationshipProp;
         } // _getRelationshipProp()
 
+        public delegate CswPrimaryKey SetSelectedHandler();
+        public SetSelectedHandler SetSelected = null;
+
         private Dictionary<CswPrimaryKey, string> _getOptions()
         {
             Dictionary<CswPrimaryKey, string> ret = new Dictionary<CswPrimaryKey, string>();
@@ -169,10 +172,15 @@ namespace ChemSW.Nbt.PropTypes
             ParentObject["relatednodename"] = string.Empty;
 
             Dictionary<CswPrimaryKey, string> Options = _getOptions();
+            CswPrimaryKey SelectedNodeId = null;
+            if( null != SetSelected )
+            {
+                SelectedNodeId = SetSelected();
+            }
             bool first = true;
             foreach( CswPrimaryKey NodePk in Options.Keys )
             {
-                if( first )
+                if( first || ( null != NodePk && NodePk == SelectedNodeId ) )
                 {
                     // Choose first option by default
                     ParentObject["relatednodeid"] = NodePk.ToString();

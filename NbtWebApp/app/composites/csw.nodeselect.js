@@ -62,15 +62,16 @@
 
                 // Default to selected node as relationship value for new nodes being added
                 cswPrivate.forceSelectedAsOption = true;
-                if (false === Csw.isNullOrEmpty(cswPrivate.relatedTo.relatednodeid) &&
-                    Csw.isNullOrEmpty(cswPrivate.selectedNodeId) &&
-                    false === cswPrivate.isMulti) {
+                if (false === cswPrivate.denyRelatedAsSelected) { // case 30646
+                    if (false === Csw.isNullOrEmpty(cswPrivate.relatedTo.relatednodeid) &&
+                        Csw.isNullOrEmpty(cswPrivate.selectedNodeId) &&
+                        false === cswPrivate.isMulti) {
 
-                    cswPrivate.selectedNodeId = cswPrivate.relatedTo.relatednodeid;
-                    cswPrivate.selectedName = cswPrivate.relatedTo.relatednodename;
-                    cswPrivate.forceSelectedAsOption = false;
+                        cswPrivate.selectedNodeId = cswPrivate.relatedTo.relatednodeid;
+                        cswPrivate.selectedName = cswPrivate.relatedTo.relatednodename;
+                        cswPrivate.forceSelectedAsOption = false;
+                    }
                 }
-
                 cswPrivate.ajax = null;
 
                 cswPrivate.selectCellCol = cswPrivate.cellCol + 0;

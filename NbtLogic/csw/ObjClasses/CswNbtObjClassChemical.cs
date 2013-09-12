@@ -140,6 +140,28 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 AssignedSDS.setHidden( true, false );
             }
+            Jurisdiction.SetSelected = delegate()
+            {
+                CswPrimaryKey SelectedNodeId = null;
+                CswNbtObjClassUser User = _CswNbtResources.Nodes[_CswNbtResources.CurrentNbtUser.UserId];
+                if( null != User && null != User.JurisdictionId )
+                {
+                    CswNbtMetaDataObjectClass GHSOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.GHSClass );
+                    CswNbtMetaDataObjectClassProp JurisdictionOCP = GHSOC.getObjectClassProp( CswNbtObjClassGHS.PropertyName.Jurisdiction );
+                    CswNbtMetaDataObjectClassProp MaterialOCP = GHSOC.getObjectClassProp( CswNbtObjClassGHS.PropertyName.Material );
+                    CswNbtView JurisdictionsView = new CswNbtView( _CswNbtResources );
+                    CswNbtViewRelationship RootVR = JurisdictionsView.AddViewRelationship( GHSOC, false );
+                    JurisdictionsView.AddViewPropertyAndFilter( RootVR, JurisdictionOCP, CswEnumNbtFilterConjunction.And, User.JurisdictionId.PrimaryKey.ToString(), CswEnumNbtSubFieldName.NodeID, FilterMode: CswEnumNbtFilterMode.Equals );
+                    JurisdictionsView.AddViewPropertyAndFilter( RootVR, MaterialOCP, CswEnumNbtFilterConjunction.And, NodeId.PrimaryKey.ToString(), CswEnumNbtSubFieldName.NodeID, FilterMode: CswEnumNbtFilterMode.Equals );
+                    ICswNbtTree JurisdictionsTree = _CswNbtResources.Trees.getTreeFromView( JurisdictionsView, false, false, false );
+                    if( JurisdictionsTree.getChildNodeCount() > 0 )
+                    {
+                        JurisdictionsTree.goToNthChild( 0 );
+                        SelectedNodeId = JurisdictionsTree.getNodeIdForCurrentPosition();
+                    }
+                }
+                return SelectedNodeId;
+            };
             PhysicalState.SetOnPropChange( _onPhysicalStatePropChange );
             CasNo.SetOnPropChange( _onCasNoPropChange );
         }
@@ -1074,7 +1096,7 @@ namespace ChemSW.Nbt.ObjClasses
                     syncPCIDData();
                 }
 
-                if( CasNo.getAnySubFieldModified() && _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.RegulatoryLists ) )
+                if( CasNo.wasAnySubFieldModified() && _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.RegulatoryLists ) )
                 {
                     RefreshRegulatoryListMembers();
                 }

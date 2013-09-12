@@ -169,9 +169,9 @@ namespace ChemSW.Nbt.Schema.CmdLn
             bool ReturnVal = true;
 
             // Do the update on the current accessid
-            ICswSchemaScripts CswSchemaScripts = null;
-            if( _UserArgs.ContainsKey( _ArgKey.Mode ) && _ArgVal_Test == _UserArgs[_ArgKey.Mode] )
-            {
+            CswSchemaScriptsProd CswSchemaScripts = null;
+            //if( _UserArgs.ContainsKey( _ArgKey.Mode ) && _ArgVal_Test == _UserArgs[_ArgKey.Mode] )
+            //{
                 //// Use test cases
                 //Int32 StartAtTestCase = 0;
                 //if( _UserArgs.ContainsKey( _ArgKey.StartAtTestCase ) )
@@ -193,12 +193,12 @@ namespace ChemSW.Nbt.Schema.CmdLn
                 //    TestCasesToIgnore = CswCommaDelimitedString.ToList<string>();
                 //}
                 //CswSchemaScripts = new CswSchemaScriptsTest( StartAtTestCase, EndAtTestCase, TestCasesToIgnore );
-            }
-            else
-            {
+            //}
+            //else
+            //{
                 // Use production scripts
                 CswSchemaScripts = new CswSchemaScriptsProd( CswNbtResources );
-            }
+            //}
 
             CswSchemaUpdater CswSchemaUpdater = new CswSchemaUpdater( CurrentAccessId, ResourcesInitHandler, CswSchemaScripts );
 

@@ -79,7 +79,7 @@ namespace ChemSW.Nbt.ObjClasses
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation, bool Creating )
         {
             if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.CISPro ) &&
-                Location.getAnySubFieldModified() &&
+                Location.wasAnySubFieldModified() &&
                 _CswNbtResources.EditMode != CswEnumNbtNodeEditMode.Add )
             {
                 CswNbtNodePropWrapper LocationWrapper = Node.Properties[PropertyName.Location];
