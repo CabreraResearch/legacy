@@ -1096,7 +1096,7 @@ namespace ChemSW.Nbt.ObjClasses
                     syncPCIDData();
                 }
 
-                if( CasNo.getAnySubFieldModified() && _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.RegulatoryLists ) )
+                if( CasNo.wasAnySubFieldModified() && _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.RegulatoryLists ) )
                 {
                     RefreshRegulatoryListMembers();
                 }

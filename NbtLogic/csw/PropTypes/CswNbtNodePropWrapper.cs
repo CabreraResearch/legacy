@@ -41,17 +41,17 @@ namespace ChemSW.Nbt.PropTypes
         /// <summary>
         /// Returns true if the subfield was modified
         /// </summary>
-        public bool getSubFieldModified( CswEnumNbtSubFieldName SubFieldName )
+        public bool wasSubFieldModified( CswEnumNbtSubFieldName SubFieldName )
         {
-            return _CswNbtNodePropData.getSubFieldModified( SubFieldName );
+            return _CswNbtNodePropData.wasSubFieldModified( SubFieldName );
         }
 
         /// <summary>
         /// Returns true if any subfield was modified
         /// </summary>
-        public bool getAnySubFieldModified( bool IncludePendingUpdate = false )
+        public bool wasAnySubFieldModified( bool IncludePendingUpdate = false )
         {
-            return _CswNbtNodePropData.getAnySubFieldModified( IncludePendingUpdate );
+            return _CswNbtNodePropData.wasAnySubFieldModified( IncludePendingUpdate );
         }
 
         /// <summary>
@@ -95,7 +95,12 @@ namespace ChemSW.Nbt.PropTypes
         /// </summary>
         public string GetSubFieldValue( CswNbtSubField SubField )
         {
-            return CswConvert.ToString( _CswNbtNodeProp.GetSubFieldValue( SubField.Name ) );
+            string ret = string.Empty;
+            if( null != SubField )
+            {
+                ret = CswConvert.ToString( _CswNbtNodeProp.GetSubFieldValue( SubField.Name ) );
+            }
+            return ret;
         }
 
         /// <summary>

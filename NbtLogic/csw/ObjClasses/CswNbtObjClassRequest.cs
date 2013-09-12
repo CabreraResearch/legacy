@@ -209,7 +209,7 @@ namespace ChemSW.Nbt.ObjClasses
         }
         private void onNamePropChange( CswNbtNodeProp NodeProp, bool Creating )
         {
-            if( Name.getAnySubFieldModified() &&
+            if( Name.wasAnySubFieldModified() &&
                 string.IsNullOrEmpty( Name.Text ) &&
                 false == string.IsNullOrEmpty( Name.GetOriginalPropRowValue() ) && 
                 false == _IsFakeNode )
@@ -272,7 +272,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         private void onIsRecurringChange( CswNbtNodeProp NodeProp, bool Creating )
         {
-            if( IsRecurring.getAnySubFieldModified() )
+            if( IsRecurring.wasAnySubFieldModified() )
             {
                 _toggleProps();
             }
@@ -298,7 +298,7 @@ namespace ChemSW.Nbt.ObjClasses
         }
         private void onIsFavortiteChange( CswNbtNodeProp NodeProp, bool Creating )
         {
-            if( IsFavorite.getAnySubFieldModified() )
+            if( IsFavorite.wasAnySubFieldModified() )
             {
                 _toggleProps();
             }

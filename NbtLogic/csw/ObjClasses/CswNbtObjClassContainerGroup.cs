@@ -61,7 +61,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation, bool Creating )
         {
-            if( CswEnumTristate.True == this.SyncLocation.Checked && ( this.Location.getAnySubFieldModified() || this.SyncLocation.getAnySubFieldModified() ) )
+            if( CswEnumTristate.True == this.SyncLocation.Checked && ( this.Location.wasAnySubFieldModified() || this.SyncLocation.wasAnySubFieldModified() ) )
             {
                 _setContainerLocations();
             }
