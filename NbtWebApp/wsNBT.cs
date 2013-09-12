@@ -3007,7 +3007,7 @@ namespace ChemSW.Nbt.WebServices
                         //newFeedbackNode.postChanges( false );
                     };
 
-                CswNbtObjClassFeedback ret = tabsandprops.getAddNode( feedbackNT, After );
+                CswNbtObjClassFeedback ret = tabsandprops.getAddNodeAndPostChanges( feedbackNT, After );
 
                 ReturnVal["propdata"] = tabsandprops.getProps( ret.Node, "", null, CswEnumNbtLayoutType.Add ); //DO I REALLY BREAK THIS?
                 ReturnVal["nodeid"] = ret.NodeId.ToString();

@@ -1,3 +1,7 @@
+using System;
+using System.Diagnostics;
+using System.Linq;
+using System.Runtime.Serialization;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
@@ -7,10 +11,6 @@ using ChemSW.Nbt.Security;
 using ChemSW.Nbt.ServiceDrivers;
 using ChemSW.Nbt.UnitsOfMeasure;
 using Newtonsoft.Json.Linq;
-using System;
-using System.Diagnostics;
-using System.Linq;
-using System.Runtime.Serialization;
 
 
 namespace ChemSW.Nbt.Actions
@@ -711,7 +711,7 @@ namespace ChemSW.Nbt.Actions
                         }
                     }; // AfterMakeNode
 
-                ret = PropsAction.getAddNode( RequestItemNt, After );
+                ret = PropsAction.getAddNodeAndPostChanges( RequestItemNt, After );
                 if( null == ret )
                 {
                     throw new CswDniException( CswEnumErrorType.Error, "Could not generate a new request item.", "Failed to create a new Request Item node." );
@@ -755,17 +755,17 @@ namespace ChemSW.Nbt.Actions
                         }
                         switch( ButtonData.SelectedText )
                         {
-                            case CswNbtPropertySetMaterial.CswEnumRequestOption.Bulk:
-                                RetAsRequestItem.Type.Value = CswNbtObjClassRequestMaterialDispense.Types.Bulk;
-                                break;
-
                             case CswNbtPropertySetMaterial.CswEnumRequestOption.Size:
                                 RetAsRequestItem.Type.Value = CswNbtObjClassRequestMaterialDispense.Types.Size;
                                 CswNbtObjClassRequestMaterialDispense RetAsMatDisp = CswNbtObjClassRequestMaterialDispense.fromPropertySet( RetAsRequestItem );
                                 _setRequestItemSizesView( RetAsMatDisp.Size.View.ViewId, RetAsMatDisp.Material.RelatedNodeId );
                                 break;
+                
+                default: //Request or Bulk
+                    RetAsRequestItem.Type.Value = CswNbtObjClassRequestMaterialDispense.Types.Bulk;
+                    break;
                         }
-                    } );
+            RetAsRequestItem.postChanges( ForceUpdate: false );
             }
             return Ret;
         }

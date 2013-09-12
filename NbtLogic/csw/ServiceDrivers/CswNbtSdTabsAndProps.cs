@@ -143,7 +143,52 @@ namespace ChemSW.Nbt.ServiceDrivers
             ParentObj[RealTabOrder]["canEditLayout"] = CanEditLayout;
         }
 
-        public CswNbtNode getAddNode( CswNbtMetaDataNodeType NodeType, CswNbtNodeCollection.AfterMakeNode After )
+
+        /// <summary>
+        /// Create a new node according to NodeTypeId. Does not post changes after calling makeNodeFromNodeTypeId.
+        /// </summary>
+        {
+            CswNbtNode Ret = null;
+            CswNbtMetaDataNodeType NodeType = null;
+            if( NodeTypeId != Int32.MinValue )
+            {
+                NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
+                if( null != NodeType )
+                {
+                    if( false == _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Create, NodeType ) )
+                    {
+                        throw new CswDniException( CswEnumErrorType.Warning, "Insufficient permission to create a new " + NodeType.NodeTypeName, "User " + _CswNbtResources.CurrentNbtUser.Username + " does not have Create permission for " + NodeType.NodeTypeName );
+                    }
+                    else
+                    {
+                        Ret = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, IsTemp: true, OnAfterMakeNode: delegate( CswNbtNode NewNode )
+                        CswPrimaryKey RelatedNodePk = CswConvert.ToPrimaryKey( RelatedNodeId );
+                               
+                        CswNbtNode RelatedNode = _CswNbtResources.Nodes[RelatedNodePk];
+                        if( null != RelatedNode )
+                        {
+                            foreach( CswNbtNodePropRelationship Relationship in from _Prop
+                                                                                in Ret.Properties
+                                                                                            where _Prop.getFieldTypeValue() == CswEnumNbtFieldType.Relationship &&
+                                                                                                  ( _Prop.AsRelationship.TargetMatches( RelatedNode.getNodeType() ) ||
+                                                                                                    _Prop.AsRelationship.TargetMatches( RelatedNode.getObjectClass() ) )
+                                                                                            select _Prop )
+                            {
+                                Relationship.RelatedNodeId = RelatedNodePk;
+                            }
+                        }
+                        // if( Int32.MinValue != RelatedNodePk.PrimaryKey )
+                                if( null != After )
+                                {
+                                    After( NewNode );
+                                }
+                            } );
+        }
+
+        /// <summary>
+        /// Create a new node according to NodeType. Posts changes.
+        /// </summary>
+        public CswNbtNode getAddNodeAndPostChanges( CswNbtMetaDataNodeType NodeType, CswNbtNodeCollection.AfterMakeNode After )
         {
             CswNbtNode Ret = null;
             if( null != NodeType )
@@ -160,49 +205,15 @@ namespace ChemSW.Nbt.ServiceDrivers
             return Ret;
         }
 
-        public CswNbtNode getAddNode( Int32 NodeTypeId, string RelatedNodeId, CswNbtNodeCollection.AfterMakeNode After )
+        /// <summary>
+        /// Create a new node according to NodeTypeId. Posts changes.
+        /// </summary>
+        public CswNbtNode getAddNodeAndPostChanges( Int32 NodeTypeId, string RelatedNodeId )
         {
-            CswNbtNode Ret = null;
-            CswNbtMetaDataNodeType NodeType = null;
-            if( NodeTypeId != Int32.MinValue )
+            CswNbtNode Ret = getAddNode( NodeTypeId, RelatedNodeId );
+            if( null != Ret )
             {
-                NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
-                if( null != NodeType )
-                {
-                    if( false == _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Create, NodeType ) )
-                    {
-                        throw new CswDniException( CswEnumErrorType.Warning, "Insufficient permission to create a new " + NodeType.NodeTypeName, "User " + _CswNbtResources.CurrentNbtUser.Username + " does not have Create permission for " + NodeType.NodeTypeName );
-                    }
-                    else
-                    {
-                        Ret = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, IsTemp: true, OnAfterMakeNode: delegate( CswNbtNode NewNode )
-                            {
-                                CswPrimaryKey RelatedNodePk = new CswPrimaryKey();
-                                RelatedNodePk.FromString( RelatedNodeId );
-                                if( Int32.MinValue != RelatedNodePk.PrimaryKey )
-                                {
-                                    CswNbtNode RelatedNode = _CswNbtResources.Nodes[RelatedNodePk];
-                                    if( null != RelatedNode )
-                                    {
-                                        foreach( CswNbtNodePropRelationship Relationship in from _Prop
-                                                                                                in NewNode.Properties
-                                                                                            where _Prop.getFieldTypeValue() == CswEnumNbtFieldType.Relationship &&
-                                                                                                  ( _Prop.AsRelationship.TargetMatches( RelatedNode.getNodeType() ) ||
-                                                                                                    _Prop.AsRelationship.TargetMatches( RelatedNode.getObjectClass() ) )
-                                                                                            select _Prop )
-                                        {
-                                            Relationship.RelatedNodeId = RelatedNodePk;
-                                            //Ret.postChanges( ForceUpdate: false );
-                                        }
-                                    }
-                                } // if( Int32.MinValue != RelatedNodePk.PrimaryKey )
-                                if( null != After )
-                                {
-                                    After( NewNode );
-                                }
-                            } );
-                    }
-                }
+                Ret.postChanges( ForceUpdate: false );
             }
             return Ret;
         }
@@ -235,7 +246,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                 CswNbtNode Node;
                 if( _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Add && false == CswTools.IsPrimaryKey( CswConvert.ToPrimaryKey( NodeId ) ) )
                 {
-                    Node = getAddNode( NodeTypeId, RelatedNodeId, null );
+                    Node = getAddNodeAndPostChanges( NodeTypeId, RelatedNodeId, null );
                 }
                 else
                 {

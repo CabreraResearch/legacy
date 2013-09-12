@@ -66,7 +66,7 @@ namespace ChemSW.Nbt.Actions
                         RetAsContainer.Size.setHidden( value: true, SaveToDb: false );
                         After( NewNode );
                     };
-                ret = _CswNbtSdTabsAndProps.getAddNode( ContainerNt, After2 );
+                ret = _CswNbtSdTabsAndProps.getAddNodeAndPostChanges( ContainerNt, After2 );
                 if( null == ret )
                 {
                     throw new CswDniException( CswEnumErrorType.Error, "Could not create a new container.", "Failed to create a new Container node." );
