@@ -62,6 +62,7 @@
     });
     menuAction.add('Logout', function (privateScope, menuItemName, menuItemJson, menuItem) {
         if (Csw.clientChanges.manuallyCheckChanges()) {
+            Csw.ajax.abortAll();
             Csw.tryExec(privateScope.onLogout);
             return true;  //isWholePageNavigation
         }
@@ -71,10 +72,11 @@
             menuItem.enable();
         };
         if (Csw.clientChanges.manuallyCheckChanges()) {
-              menuItem.disable();
-              Csw.goHome(enable).then(enable);
-              return true;  //isWholePageNavigation
-        } 
+            Csw.ajax.abortAll();
+            menuItem.disable();
+            Csw.goHome(enable).then(enable);
+            return true;  //isWholePageNavigation
+        }
     });
     menuAction.add('Profile', function (privateScope, menuItemName, menuItemJson, menuItem) {
         $.CswDialog('EditNodeDialog', {
@@ -133,12 +135,12 @@
             $.CswDialog('ImpersonateDialog', { onImpersonate: privateScope.onImpersonate });
         }
     });
-    menuAction.add('EndImpersonation', function(privateScope, menuItemName, menuItemJson, menuItem) {
+    menuAction.add('EndImpersonation', function (privateScope, menuItemName, menuItemJson, menuItem) {
         if (Csw.clientChanges.manuallyCheckChanges()) {
             Csw.tryExec(privateScope.onEndImpersonation);
-            return true; //
+            return true; //isWholePageNavigation
         }
-    })
+    });
     menuAction.add('Submit_Request', function (privateScope, menuItemName, menuItemJson, menuItem) {
         if (Csw.clientChanges.manuallyCheckChanges()) {
             Csw.tryExec(privateScope.onSubmitRequest);
@@ -222,7 +224,7 @@
                 }
                 return ret;
             };
-            
+
             cswPrivate.handleMenuItemClick = function (menuItemName, menuItemJson, menuItem) {
                 if (false === Csw.isNullOrEmpty(menuItemJson)) {
 
@@ -237,7 +239,7 @@
                         var action = menuAction[menuItemJson.action] ? menuItemJson.action : 'default';
                         var isWholePageNavigation = menuAction[action](cswPrivate, menuItemName, menuItemJson, menuItem);
 
-                        
+
                         if (isWholePageNavigation === true) {
                             //If we're changing the contents of the entire page, make sure all dangling events are torn down
                             Csw.publish('initGlobalEventTeardown');

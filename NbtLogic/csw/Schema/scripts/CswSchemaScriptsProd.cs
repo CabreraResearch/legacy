@@ -27,6 +27,8 @@ namespace ChemSW.Nbt.Schema
                     new CswSchemaScriptsGinkgo()
                     // Add new milestone script collections here
                 };
+            _addVersionedScript( new CswUpdateMetaData_02G_Case28493A() );
+
 
             // DDL
             foreach( ICswSchemaScripts ScriptColl in AllScripts )
@@ -56,6 +58,8 @@ namespace ChemSW.Nbt.Schema
                     _addVersionedScript( Script );
                 }
             }
+            _addVersionedScript( new CswUpdateSchema_02G_Case30342() );
+            _addVersionedScript( new CswUpdateSchema_02G_Case28493B() );
 
             #endregion Populate Scripts
 
@@ -69,6 +73,7 @@ namespace ChemSW.Nbt.Schema
             // Before scripts that always run.
             _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02SQL() );
             _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_03() );
+
             #endregion Before Scripts
 
             #region After Script
