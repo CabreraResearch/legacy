@@ -262,7 +262,7 @@ namespace ChemSW.Nbt.PropTypes
                     SetPropRowValue( _UnitIdSubField, Int32.MinValue );
                 }
 
-                if( getSubFieldModified( _UnitIdSubField.Name ) )
+                if( wasSubFieldModified( _UnitIdSubField.Name ) )
                 {
                     PendingUpdate = true;
                     SyncConvertedVals();

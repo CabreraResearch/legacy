@@ -35,7 +35,7 @@ namespace ChemSW.Nbt.ObjClasses
             List<CswNbtNodePropWrapper> CompoundUniqueProps = new List<CswNbtNodePropWrapper>();
             foreach( CswNbtNodePropWrapper CurrentProp in _CswNbtNode.Properties )
             {
-                if( CurrentProp.getAnySubFieldModified() )
+                if( CurrentProp.wasAnySubFieldModified() )
                 {
                     // When a property changes, we need to:
                     // 1. recalculate composite property values which include changed properties on this node
@@ -202,7 +202,7 @@ namespace ChemSW.Nbt.ObjClasses
             Collection<CswNbtNodePropWrapper> ModifiedProps = new Collection<CswNbtNodePropWrapper>();
             foreach( CswNbtNodePropWrapper CurrentProp in _CswNbtNode.Properties )
             {
-                if( CurrentProp.getAnySubFieldModified( IncludePendingUpdate: false ) )
+                if( CurrentProp.wasAnySubFieldModified( IncludePendingUpdate: false ) )
                 {
                     ModifiedProps.Add( CurrentProp );
                 }

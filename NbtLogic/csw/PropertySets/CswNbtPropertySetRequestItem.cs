@@ -458,8 +458,8 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropList Status { get { return _CswNbtNode.Properties[PropertyName.Status]; } }
         private void _onStatusPropChange( CswNbtNodeProp Prop, bool Creating )
         {
-            if( Status.getSubFieldModified( CswEnumNbtSubFieldName.Value ) ||
-                Status.getSubFieldModified( CswEnumNbtSubFieldName.Text ) )
+            if( Status.wasSubFieldModified( CswEnumNbtSubFieldName.Value ) ||
+                Status.wasSubFieldModified( CswEnumNbtSubFieldName.Text ) )
             {
                 AssignedTo.setHidden( value: ( Status.Value == Statuses.Pending || Status.Value == Statuses.Completed || Status.Value == Statuses.Cancelled ), SaveToDb: true );
                 Fulfill.setHidden( value: ( Status.Value == Statuses.Pending || Status.Value == Statuses.Completed || Status.Value == Statuses.Cancelled ), SaveToDb: true );

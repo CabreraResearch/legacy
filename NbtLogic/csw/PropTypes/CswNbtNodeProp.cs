@@ -80,17 +80,17 @@ namespace ChemSW.Nbt.PropTypes
         /// <summary>
         /// Returns true if the subfield was modified
         /// </summary>
-        public bool getSubFieldModified( CswEnumNbtSubFieldName SubFieldName )
+        public bool wasSubFieldModified( CswEnumNbtSubFieldName SubFieldName )
         {
-            return _CswNbtNodePropData.getSubFieldModified( SubFieldName );
+            return _CswNbtNodePropData.wasSubFieldModified( SubFieldName );
         }
 
         /// <summary>
         /// Returns true if any subfield was modified
         /// </summary>
-        public bool getAnySubFieldModified( bool IncludePendingUpdate = false )
+        public bool wasAnySubFieldModified( bool IncludePendingUpdate = false )
         {
-            return _CswNbtNodePropData.getAnySubFieldModified( IncludePendingUpdate );
+            return _CswNbtNodePropData.wasAnySubFieldModified( IncludePendingUpdate );
         }
 
         /// <summary>
@@ -272,7 +272,7 @@ namespace ChemSW.Nbt.PropTypes
             if( false == Node.Properties[this.NodeTypeProp].Empty ) //case 26546 - we allow unique properties to be empty
             {
                 //bz # 6686
-                if( IsUnique() && getAnySubFieldModified() && !OverrideUniqueValidation )
+                if( IsUnique() && wasAnySubFieldModified() && !OverrideUniqueValidation )
                 {
                     CswNbtView CswNbtView = new CswNbtView( _CswNbtResources );
                     CswNbtView.ViewName = "Other Nodes, for Property Uniqueness";
@@ -321,7 +321,7 @@ namespace ChemSW.Nbt.PropTypes
             } //if empty
 
             // case 25780 - copy first 512 characters of gestalt to gestaltsearch
-            if( _CswNbtNodePropData.getAnySubFieldModified() )
+            if( _CswNbtNodePropData.wasAnySubFieldModified() )
             {
                 string GestaltSearchValue = _CswNbtNodePropData.Gestalt;
                 if( GestaltSearchValue.Length > 512 )

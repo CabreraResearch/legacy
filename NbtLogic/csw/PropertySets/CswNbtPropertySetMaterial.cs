@@ -176,7 +176,7 @@ namespace ChemSW.Nbt.ObjClasses
             Request.MenuOptions = CswEnumRequestOption.Options.ToString();
             Request.State = CswEnumRequestOption.Size;
 
-            if( ApprovedForReceiving.getAnySubFieldModified() )
+            if( ApprovedForReceiving.wasAnySubFieldModified() )
             {
                 Receive.setHidden( value: ApprovedForReceiving.Checked != CswEnumTristate.True, SaveToDb: true );
             }

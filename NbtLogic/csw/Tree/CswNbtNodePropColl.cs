@@ -102,7 +102,7 @@ namespace ChemSW.Nbt
         {
             get
             {
-                return _Props.Any( CurrentProp => CurrentProp.getAnySubFieldModified( IncludePendingUpdate: true ) );
+                return _Props.Any( CurrentProp => CurrentProp.wasAnySubFieldModified( IncludePendingUpdate: true ) );
             }
         }//Modified
 

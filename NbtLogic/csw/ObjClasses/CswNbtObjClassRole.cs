@@ -71,7 +71,7 @@ namespace ChemSW.Nbt.ObjClasses
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation, bool Creating )
         {
             // The user cannot change his or her own Administrator privileges.
-            if( Administrator.getAnySubFieldModified() && 
+            if( Administrator.wasAnySubFieldModified() && 
                 Administrator.Checked != CswConvert.ToTristate(Administrator.GetOriginalPropRowValue()) &&
                 _CswNbtResources.CurrentUser.RoleId == _CswNbtNode.NodeId )
             {
@@ -90,7 +90,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
 
             // case 22437
-            if( ActionPermissions.getAnySubFieldModified() )
+            if( ActionPermissions.wasAnySubFieldModified() )
             {
                 // case 25444 - was it *really* modified?
                 CswNbtNodePropWrapper ActionPermissionsPropWrapper = Node.Properties[PropertyName.ActionPermissions];
