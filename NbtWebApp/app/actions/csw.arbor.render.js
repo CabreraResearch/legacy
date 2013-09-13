@@ -41,11 +41,11 @@
                         //    ctx.stroke();
                         //}
 
-                        ctx.drawImage($('#' + node.data.icon)[0], Math.round(pt.x) - 20, Math.round(pt.y) - 20, 35, 35);
+                        ctx.drawImage($('#' + node.data.iconId)[0], Math.round(pt.x) - 10, Math.round(pt.y) - 10, 16, 16);
 
-                        ctx.font = "15px Arial";
+                        ctx.font = "10px Arial";
                         ctx.fillStyle = 'blue';
-                        ctx.fillText(node.name, Math.round(pt.x) - 40, Math.round(pt.y) + 30);
+                        ctx.fillText(node.data.Label, Math.round(pt.x) - 40, Math.round(pt.y) + 20);
 
                     });
                 },

@@ -18,6 +18,7 @@
                     cswPrivate.onCancel = cswPrivate.onCancel || function _onCancel() {
                     };
 
+                    cswPrivate.startingNodeId = cswPrivate.startingNodeId;
                     cswPrivate.sys = null;
                     cswPrivate.extPanel = null;
 
@@ -62,11 +63,30 @@
                     cswPrivate.sys = arbor.ParticleSystem(50, 300, 0.7);
                     cswPrivate.sys.parameters({ gravity: true });
 
-                    //TODO: add nodes/edges to system here
-                    var nodes = [];
-                    var edges = [];
+                    Csw.ajaxWcf.post({
+                        urlMethod: "Explorer/Initialize",
+                        data: 'nodes_2', //cswPrivate.startingNodeId
+                        success: function (response) {
 
-                    cswPrivate.sys.renderer = Csw.ArborRenderer(cswPrivate.extPanel.items.items[2].items.items[0].el.dom.id, nodes, edges);
+                            var i = 3;
+                            Csw.iterate(response.Nodes, function (arborNode) {
+                                var secretCell = cswPrivate.actionTbl.cell(1, i);
+                                var img = secretCell.img({
+                                    src: arborNode.Data.Icon
+                                }).hide();
+                                arborNode.Data.iconId = img.getId();
+                                i++;
+
+                                cswPrivate.sys.addNode(arborNode.NodeId, arborNode.Data);
+                            });
+
+                            Csw.iterate(response.Edges, function (arborEdge) {
+                                cswPrivate.sys.addEdge(arborEdge.OwnerNodeId, arborEdge.TargetNodeId, arborEdge.Data);
+                            });
+
+                            cswPrivate.sys.renderer = Csw.ArborRenderer(cswPrivate.extPanel.items.items[2].items.items[0].el.dom.id, response.Nodes, response.Edges);
+                        }
+                    });
                 };
 
                 (function _postCtor() {
