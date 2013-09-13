@@ -289,6 +289,12 @@ namespace BalanceReaderClient
                     }
 
                 } //if( "Authenticated" == StatusText )
+                //really annoying edge case first time program is loaded
+                else if( "Object reference not set to an instance of an object." == StatusText || "Invalid URI: The format of the URI could not be determined." == StatusText )
+                {
+                    ConnectionResultsOutput.Invoke( (Action) ( () => { ConnectionResultsOutput.Text += "Please provide connection details for ChemSW Live.\r\n"; } ) );
+                    tabControl1.BeginInvoke( (Action) ( () => { tabControl1.SelectedTab = NBTTab; } ) );
+                }
                 else
                 {
                      ConnectionResultsOutput.Invoke( (Action) ( () => { ConnectionResultsOutput.Text += "Connection Error: " + StatusText + "\r\n"; } ) );
@@ -646,6 +652,11 @@ namespace BalanceReaderClient
                 templateExpressionBox.ReadOnly = false;
                 templateExpressionBox.BackColor = Color.White;
             }
+        }
+
+        private void Form1_Load( object sender, EventArgs e )
+        {
+
         }//exampleResponseSelected()
 
 

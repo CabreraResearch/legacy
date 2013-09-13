@@ -367,13 +367,13 @@ namespace ChemSW.Nbt.Schema
 
         public void makeTableAuditable( string TableName )
         {
-            if( _CswAuditMetaData.shouldBeAudited( TableName ) && ( false == _CswNbtResources.CswResources.DataDictionary.isColumnDefined( TableName, _CswAuditMetaData.AuditLevelColName ) ) )
-            {
-                addStringColumn( TableName, _CswAuditMetaData.AuditLevelColName, _CswAuditMetaData.AuditLevelColDescription, false, _CswAuditMetaData.AuditLevelColIsRequired, _CswAuditMetaData.AuditLevelColLength );
-            }
-
             if( _CswAuditMetaData.shouldBeAudited( TableName ) )
             {
+                if( false == _CswNbtResources.CswResources.DataDictionary.isColumnDefined( TableName, _CswAuditMetaData.AuditLevelColName ) )
+                {
+                    addStringColumn( TableName, _CswAuditMetaData.AuditLevelColName, _CswAuditMetaData.AuditLevelColDescription, false, _CswAuditMetaData.AuditLevelColIsRequired, _CswAuditMetaData.AuditLevelColLength );
+                }
+
                 string AuditTableName = _CswAuditMetaData.makeAuditTableName( TableName );
 
                 //create the audit table if necessary
