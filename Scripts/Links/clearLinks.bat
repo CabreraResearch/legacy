@@ -15,18 +15,13 @@ GOTO End
 
 :Run
 
-call %1\Nbt\Nbt\Scripts\Links\clear_one_link %1 \Common\CswLogService\CswLogService\bin
+call %1\Nbt\Nbt\Scripts\Links\clear_one_link %1 \Common\CswCommon\CswLogService\CswLogService\bin
 call %1\Nbt\Nbt\Scripts\Links\clear_one_link %1 \Nbt\Nbt\NbtSchedService\bin
-call %1\Nbt\Nbt\Scripts\Links\clear_one_link %1 \Nbt\Nbt\NbtSchemaImporter\bin
 call %1\Nbt\Nbt\Scripts\Links\clear_one_link %1 \Nbt\Nbt\NbtSchemaUpdater\bin
 call %1\Nbt\Nbt\Scripts\Links\clear_one_link %1 \Nbt\Nbt\NbtSchemaUpdaterCmdLn\bin
 call %1\Nbt\Nbt\Scripts\Links\clear_one_link %1 \Nbt\Nbt\NbtWebApp
-call %1\Nbt\Nbt\Scripts\Links\clear_one_link %1 \Nbt\Nbt\NbtWcfServices
 call %1\Nbt\Nbt\Scripts\Links\clear_one_link %1 \Nbt\Nbt\TestApps\SchedulerGuiTestMt\bin
-
-@REM Symbolic links won't work for these paths. Manually copy the files you need.
-@REM call %1\Nbt\Nbt\Scripts\Links\clear_one_link "C:\Program Files (x86)\Microsoft Visual Studio 11.0" \Common7\IDE\CommonExtensions\Microsoft
-@REM call %1\Nbt\Nbt\Scripts\Links\clear_one_link "C:\Program Files (x86)" \JetBrains\ReSharper\v7.1\bin"
-
+call %1\Nbt\Nbt\Scripts\Links\clear_one_link %1 \Nbt\Nbt\TestApps\CswCommon.Test\bin
+call %1\Nbt\Nbt\Scripts\Links\clear_one_link %1 \Nbt\Nbt\TestApps\NbtLogic.Test\bin
 
 :End
