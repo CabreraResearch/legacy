@@ -152,7 +152,6 @@ namespace ChemSW.Nbt.ServiceDrivers
                     FieldType != CswEnumNbtFieldType.File &&
                     FieldType != CswEnumNbtFieldType.Image &&
                     FieldType != CswEnumNbtFieldType.ImageList &&
-                    FieldType != CswEnumNbtFieldType.LocationContents &&
                     FieldType != CswEnumNbtFieldType.LogicalSet &&
                     FieldType != CswEnumNbtFieldType.MOL &&
                     FieldType != CswEnumNbtFieldType.MTBF &&

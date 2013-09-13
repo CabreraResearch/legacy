@@ -93,7 +93,6 @@ namespace ChemSW.Nbt.MetaData
             return ( FieldType == CswEnumNbtFieldType.Composite ||
                      FieldType == CswEnumNbtFieldType.External ||
                      FieldType == CswEnumNbtFieldType.Grid ||
-                     FieldType == CswEnumNbtFieldType.LocationContents ||
                      FieldType == CswEnumNbtFieldType.PropertyReference ||
                      FieldType == CswEnumNbtFieldType.Static );
         }
@@ -126,7 +125,6 @@ namespace ChemSW.Nbt.MetaData
         public bool ShowLabel()
         {
             return ( FieldType != CswEnumNbtFieldType.Grid &&
-                     FieldType != CswEnumNbtFieldType.LocationContents &&
                      FieldType != CswEnumNbtFieldType.Static );
         }
 

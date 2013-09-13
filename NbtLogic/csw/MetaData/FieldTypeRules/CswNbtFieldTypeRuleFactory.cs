@@ -72,10 +72,6 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                     ReturnVal = new CswNbtFieldTypeRuleLocation( CswNbtFieldResources );
                     break;
 
-                case CswEnumNbtFieldType.LocationContents:
-                    ReturnVal = new CswNbtFieldTypeRuleLocationContents( CswNbtFieldResources );
-                    break;
-
                 case CswEnumNbtFieldType.Logical:
                     ReturnVal = new CswNbtFieldTypeRuleLogical( CswNbtFieldResources );
                     break;
