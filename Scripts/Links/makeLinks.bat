@@ -15,12 +15,7 @@ GOTO End
 
 :Run
 
-call %1\Nbt\Nbt\Scripts\Links\make_one_link %1 \Nbt\Nbt\NbtSchedService\bin
-call %1\Nbt\Nbt\Scripts\Links\make_one_link %1 \Nbt\Nbt\NbtSchemaUpdater\bin
-call %1\Nbt\Nbt\Scripts\Links\make_one_link %1 \Nbt\Nbt\NbtSchemaUpdaterCmdLn\bin
+call %1\Nbt\Nbt\Scripts\Links\make_one_link %1 \Nbt\Nbt\bin
 call %1\Nbt\Nbt\Scripts\Links\make_one_link %1 \Nbt\Nbt\NbtWebApp
-call %1\Nbt\Nbt\Scripts\Links\make_one_link %1 \Nbt\Nbt\TestApps\SchedulerGuiTestMt\bin
-call %1\Nbt\Nbt\Scripts\Links\make_one_link %1 \Nbt\Nbt\TestApps\CswCommon.Test\bin
-call %1\Nbt\Nbt\Scripts\Links\make_one_link %1 \Nbt\Nbt\TestApps\NbtLogic.Test\bin
 
 :End

@@ -52,3 +52,6 @@ syntax: regexp
 .*\.orig
 .*\.vsp
 .*\.psess
+bin/.*\.XML
+bin/Debug/*
+bin/Release/*
