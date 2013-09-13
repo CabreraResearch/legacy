@@ -102,10 +102,16 @@ select * from (
 
                 if( null != ReportGroupNT )
                 {
-                    SystemReportGroup = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( ReportGroupNT.NodeTypeId, IsTemp: true );
-                    SystemReportGroup.IsTemp = false; //hack around logic in beforeWriteNode
-                    SystemReportGroup.Name.Text = Name;
-                    SystemReportGroup.postChanges( false );
+                    _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( 
+                        ReportGroupNT.NodeTypeId, 
+                        IsTemp: true, 
+                        OnAfterMakeNode: ( CswNbtNode ) =>
+                            {
+                                SystemReportGroup = CswNbtNode;
+                                SystemReportGroup.IsTemp = false; //hack around logic in beforeWriteNode
+                                SystemReportGroup.Name.Text = Name;
+                            }
+                        );
 
                 }
             }
@@ -122,18 +128,19 @@ select * from (
 
             if( null != ReportNT )
             {
+                _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( 
+                    ReportNT.NodeTypeId,
+                    OnAfterMakeNode: ( CswNbtNode ) =>
+                        {
+                            CswNbtObjClassReport ReportNode = CswNbtNode;
+                            ReportNode.ReportName.Text = ReportName;
+                            ReportNode.Category.Text = Category;
+                            ReportNode.ReportGroup.RelatedNodeId = Group.NodeId;
+                            ReportNode.SQL.Text = Query;
 
-                CswNbtObjClassReport ReportNode = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( ReportNT.NodeTypeId );
-                
-                ReportNode.ReportName.Text = ReportName;
-                ReportNode.Category.Text = Category;
-                ReportNode.ReportGroup.RelatedNodeId = Group.NodeId;
-                ReportNode.SQL.Text = Query;
-
-                _uploadBlobData( ReportNode, Filename );
-
-                ReportNode.postChanges( false );
-
+                            _uploadBlobData( ReportNode, Filename );
+                        }
+                    );
             }
         }
 
