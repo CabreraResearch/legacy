@@ -45,19 +45,22 @@ namespace ChemSW.Nbt.Schema
                     _addVersionedScript( Script );
                 }
             }
-
             // This is the MakeMissingNodeTypeProps script. If you have a script which contains OC changes, put it before this script.
             _addVersionedScript( new RunAlways_MakeMissingNodeTypePropsProps() );
 
-            // Schema
-            foreach( ICswSchemaScripts ScriptColl in AllScripts )
+            #region GINKGO
+
+            #endregion GINKGO
+
+            // This automatically detects the latest version
+            _LatestVersion = _MinimumVersion;
+            foreach( CswSchemaVersion Version in _UpdateDrivers.Keys.Where( Version => _LatestVersion == _MinimumVersion ||
+                                                                                        ( _LatestVersion.CycleIteration == Version.CycleIteration &&
+                                                                                            _LatestVersion.ReleaseIdentifier == Version.ReleaseIdentifier &&
+                                                                                            _LatestVersion.ReleaseIteration < Version.ReleaseIteration ) ) )
             {
-                foreach( CswUpdateSchemaTo Script in ScriptColl._SchemaScripts() )
-                {
-                    _addVersionedScript( Script );
-                }
+                _LatestVersion = Version;
             }
-            _addVersionedScript( new CswUpdateSchema_02G_Case30561() );
 
             #endregion Populate Scripts
 
@@ -66,6 +69,10 @@ namespace ChemSW.Nbt.Schema
             _setLatestVersion( CswNbtResources );
 
             #endregion Calculate the Latest Version
+
+            #region GINKGO Run Before Scripts
+
+            #endregion GINKGO Run Before Scripts
 
             #region Before Scripts
             // Before scripts that always run.
