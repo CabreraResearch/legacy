@@ -92,7 +92,6 @@
     <Compile Include="csw\FieldTypes\CswLink.cs" />
     <Compile Include="csw\FieldTypes\CswList.cs" />
     <Compile Include="csw\FieldTypes\CswLocation.cs" />
-    <Compile Include="csw\FieldTypes\CswLocationContents.cs" />
     <Compile Include="csw\FieldTypes\CswLogical.cs" />
     <Compile Include="csw\FieldTypes\CswLogicalSet.cs" />
     <Compile Include="csw\FieldTypes\CswMemo.cs" />
