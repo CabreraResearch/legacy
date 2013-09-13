@@ -61,7 +61,6 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswUpdateSchema_02F_Case30252() );
             _addVersionedScript( new CswUpdateSchema_02F_Case30041_ScheduledRuleImport() );
             _addVersionedScript( new CswUpdateSchema_02F_Case30043_ControlZones() );
-            //_addVersionedScript( new CswUpdateSchema_02F_Case30043_Sites() );
             _addVersionedScript( new CswUpdateSchema_02F_Case29984() );
             _addVersionedScript( new CswUpdateSchema_02F_Case30577() );
             _addVersionedScript( new CswUpdateSchema_02F_Case30043_Locations() );
@@ -69,6 +68,7 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswUpdateSchema_02F_Case30043_InventoryGroups() );
             _addVersionedScript( new CswUpdateSchema_02F_Case30647() );
             _addVersionedScript( new CswUpdateSchema_02F_Case30661() );
+            _addVersionedScript( new CswUpdateSchema_02F_Case30706() );
 
             #endregion Data Scripts
 
