@@ -50,7 +50,7 @@
 
                 },
                 forms: {
-                    
+
                 },
                 IdentityTab: null,
                 tabContentDiv: null,
@@ -77,7 +77,7 @@
 
             (function () {
                 var tabid = '', first = true;
-                Object.defineProperties(cswPrivate.tabState, { 
+                Object.defineProperties(cswPrivate.tabState, {
                     tabid: {
                         get: function () {
                             return tabid;
@@ -87,7 +87,7 @@
                                 throw new Error('Tabid must be a string or a number');
                             }
                             if (false === first && tabid !== val) { //after tabid is defined once, nuke subsequent changes.
-                                cswPrivate.tabState.resetPropertyData(); 
+                                cswPrivate.tabState.resetPropertyData();
                             }
                             first = false;
                             cswPrivate.tabState.tabIds.add(val);
@@ -95,7 +95,7 @@
                         }
                     },
                     resetPropertyData: {
-                        value: function() {
+                        value: function () {
                             //Case 29533: Nuke propertyData when we change nodes/tabs. Outstanding references will be fine.
                             cswPrivate.tabState.propertyData = Csw.object();
                             cswPrivate.tabState.tabIds = Csw.delimitedString();
@@ -168,7 +168,7 @@
              * Publish the render event to trigger the property display
             */
             cswPrivate.onRenderProps = function (tabid) {
-                
+
                 Csw.publish('render_' + cswPublic.getNodeId() + '_' + tabid);
             };
 
@@ -322,11 +322,11 @@
                 });
             };
 
-            cswPublic.getEditMode = function() {
+            cswPublic.getEditMode = function () {
                 return Csw.string(cswPrivate.tabState.EditMode, 'Edit');
             };
 
-            cswPrivate.getPkForLastTab = function() {
+            cswPrivate.getPkForLastTab = function () {
                 var viewName = Csw.clientDb.getItem('CswViewId_' + cswPrivate.tabState.viewid);
                 if (!viewName) {
                     viewName = cswPrivate.tabState.viewid;
@@ -335,7 +335,7 @@
                 return ret;
             };
 
-            cswPrivate.getLastSelectedTab = function() {
+            cswPrivate.getLastSelectedTab = function () {
                 var ret = null;
                 var tryRet = Csw.clientDb.getItem(cswPrivate.getPkForLastTab());
                 if (tryRet) {
@@ -347,7 +347,7 @@
                 return ret;
             };
 
-            cswPrivate.setLastSelectedTab = function(tabno, tabid) {
+            cswPrivate.setLastSelectedTab = function (tabno, tabid) {
                 if (tabno >= 0 && tabid) {
                     var lastTab = tabno + ',' + tabid;
                     Csw.clientDb.setItem(cswPrivate.getPkForLastTab(), lastTab);
@@ -386,7 +386,7 @@
                         success: function (data) {
 
                             cswPrivate.tabState.nodetypeid = Csw.number(data.node.nodetypeid, 0);
-                            
+
                             if (Object.keys(data).length <= 0 || Object.keys(data.tabs).length <= 0) {
                                 Csw.error.throwException('Cannot create a property layout without at least one tab.', 'csw.tabsandprops.js');
                             }
@@ -493,7 +493,7 @@
 
             //#region Validator
 
-            cswPublic.validator = function() {
+            cswPublic.validator = function () {
                 return cswPrivate.form.validator;
             };
 
@@ -501,7 +501,7 @@
                 return cswPrivate.isInDom() && cswPrivate.form.isFormValid() && cswPrivate.identityForm.isFormValid();
             };
 
-            cswPrivate.isInDom = function() {
+            cswPrivate.isInDom = function () {
                 return cswParent && cswParent[0] && cswParent[0].id && Csw.isElementInDom(cswParent[0].id);
             };
 
@@ -529,7 +529,7 @@
                 /// <summary>
                 /// True if Multi Edit is enabled
                 /// </summary>
-                return (cswPrivate.tabState.EditMode === Csw.enums.editMode.Edit || cswPrivate.tabState.EditMode === Csw.enums.editMode.EditInPopup || cswPrivate.tabState.EditMode === Csw.enums.editMode.Temp ) && cswPrivate.Multi  ;
+                return (cswPrivate.tabState.EditMode === Csw.enums.editMode.Edit || cswPrivate.tabState.EditMode === Csw.enums.editMode.EditInPopup || cswPrivate.tabState.EditMode === Csw.enums.editMode.Temp) && cswPrivate.Multi;
             };
 
             cswPrivate.setNode = function (node) {
@@ -580,7 +580,7 @@
                 cswPrivate.tabState.selectedPropIds.remove(propid);
             };
 
-            cswPrivate.addTabId = function(tabId) {
+            cswPrivate.addTabId = function (tabId) {
                 cswPrivate.tabState.tabIds.addToFront(tabId);
             };
 
@@ -621,7 +621,7 @@
 
                 return propJson;
             };
-            
+
             cswPublic.getProps = function () {
                 /// <summary>
                 /// Get all of the properties for the current tab (NOT including the identity tab)
@@ -630,8 +630,8 @@
                 /// </summary>
                 return cswPrivate.tabState.propertyData;
             };
-            
-            cswPublic.getTabIds = function() {
+
+            cswPublic.getTabIds = function () {
                 return cswPrivate.tabState.tabIds.string();
             };
 
@@ -916,7 +916,7 @@
                             ConfigMode: cswPrivate.tabState.Config,
                             RelatedNodeId: Csw.string(cswPrivate.tabState.relatednodeid),
                             GetIdentityTab: Csw.bool(Csw.isNullOrEmpty(cswPrivate.IdentityTab)),
-                            ForceReadOnly: cswPrivate.forceReadOnly 
+                            ForceReadOnly: cswPrivate.forceReadOnly
                         },
                         success: function (data) {
                             if (Csw.isNullOrEmpty(data) && cswPrivate.tabState.EditMode === Csw.enums.editMode.Edit) {
@@ -1090,7 +1090,7 @@
                 'use strict';
                 propCell.empty();
                 if (cswPrivate.canDisplayProp(propData, configMode)) {
-                    
+
                     var fieldOpt = Csw.nbt.propertyOption({
                         isMulti: cswPrivate.isMultiEdit,
                         fieldtype: propData.fieldtype,
@@ -1161,11 +1161,11 @@
                     }
                 }, 150);
             }; // _updateSubProps()
-            
+
             //#endregion Properties
 
             //#region commit
-            
+
             cswPublic.refresh = function (propData, refreshData) {
                 Csw.publish('onAnyNodeButtonClickFinish', true);
                 Csw.tryExec(cswPrivate.onSave, cswPublic.getNodeId(), cswPublic.getNodeKey(), cswPrivate.tabcnt, cswPrivate.tabState.nodename, cswPrivate.tabState.nodelink);
@@ -1199,6 +1199,14 @@
                         align: 'right'
                     });
                     cswPrivate.linkDiv.empty();
+
+                    //TODO: make this conditional based on action permissions
+                    /*cswPrivate.linkDiv.a({
+                        text: 'Explore',
+                        onClick: function () {
+                            Csw.publish(Csw.enums.events.main.handleAction, { actionname: 'explorer' });
+                        }
+                    });*/
 
                     cswPrivate.linkDiv.a({
                         text: 'As Report',

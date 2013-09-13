@@ -316,6 +316,12 @@
                 });
             });
             actionHandler.add('default', defaultAct);
+
+            actionHandler.add('explorer', function(o) {
+                return Csw.actions.explorer(Csw.main.centerTopDiv, {
+                    onCancel: onCancel
+                });
+            });
         }()); //buildActHandler
         
         Csw.subscribe(Csw.enums.events.main.handleAction, function (eventObj, opts) {
