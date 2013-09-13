@@ -66,6 +66,10 @@ namespace ChemSW.Nbt.Security
                         {
                             UserNode.EmailProperty.Text = token.Email;
                         }
+                        if( null != token.CostCode )
+                        {
+                            UserNode.CostCode.Text = token.CostCode;
+                        }
                         UserNode.postChanges( false );
                         ret = UserNode;
                     }

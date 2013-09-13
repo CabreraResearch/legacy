@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
+﻿using System.Collections.ObjectModel;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -27,7 +24,8 @@ namespace ChemSW.Nbt.Schema
                     new CswUpdateMetaData_02G_Case27846(),
                     new CswUpdateMetaData_02G_Case30542(),
                     new CswUpdateMetaData_02G_Case30557B(),
-                    new CswUpdateMetaData_02G_Case28493A()
+                    new CswUpdateMetaData_02G_Case28493A(),
+                    new CswUpdateMetaData_02G_Case30666()
                 };
         } // _MetaDataScripts()
 
@@ -41,6 +39,7 @@ namespace ChemSW.Nbt.Schema
                     new CswUpdateSchema_02G_Case30473(),
                     new CswUpdateSchema_02G_Case30342(),
                     new CswUpdateSchema_02G_Case28493B(),
+                    new CswUpdateSchema_02G_Case30383(),
                     new CswUpdateSchema_02G_Case29565B()
                 };
         } // _SchemaScripts()

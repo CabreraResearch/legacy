@@ -49,6 +49,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string WorkUnit = "Work Unit";
             public const string CachedData = "Cached Data";
             public const string AvailableWorkUnits = "Available Work Units";
+            public const string CostCode = "Cost Code";
         }
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
@@ -580,6 +581,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
+        public CswNbtNodePropText CostCode { get { return _CswNbtNode.Properties[PropertyName.CostCode]; } }
 
         [DataContract]
         public class Cache
