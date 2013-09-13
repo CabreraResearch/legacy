@@ -29,7 +29,7 @@ namespace ChemSW.Nbt.csw.Schema
                 //{"regulated_casnos", 10}
             };
 
-
+        private DataTable _importDefTable;
         private DataTable _importOrderTable;
         private DataTable _importBindingsTable;
         private DataTable _importRelationshipsTable;
@@ -53,6 +53,7 @@ namespace ChemSW.Nbt.csw.Schema
                 _NbtImporter = SchemaModTrnsctn.makeCswNbtImporter();
                 this.SchemaModTrnsctn = SchemaModTrnsctn;
 
+                _importDefTable = CswNbtImportDef.getDataTableForNewOrderEntries();
                 _importOrderTable = CswNbtImportDefOrder.getDataTableForNewOrderEntries();
                 _importBindingsTable = CswNbtImportDefBinding.getDataTableForNewBindingEntries();
                 _importRelationshipsTable = CswNbtImportDefRelationship.getDataTableForNewRelationshipEntries();
@@ -64,6 +65,7 @@ namespace ChemSW.Nbt.csw.Schema
                 _SourceColumns = new CswCommaDelimitedString();
 
                 _importOrder( _ImportOrder, _DestNodeTypeName );
+                _importDef();
             }
             else
             {
@@ -80,6 +82,7 @@ namespace ChemSW.Nbt.csw.Schema
                 _NbtImporter = SchemaModTrnsctn.makeCswNbtImporter();
                 this.SchemaModTrnsctn = SchemaModTrnsctn;
 
+                _importDefTable = CswNbtImportDef.getDataTableForNewOrderEntries();
                 _importOrderTable = CswNbtImportDefOrder.getDataTableForNewOrderEntries();
                 _importBindingsTable = CswNbtImportDefBinding.getDataTableForNewBindingEntries();
                 _importRelationshipsTable = CswNbtImportDefRelationship.getDataTableForNewRelationshipEntries();
@@ -92,11 +95,21 @@ namespace ChemSW.Nbt.csw.Schema
                 {
                     _importOrder( i + 1, DestNodeTypesAndInstances[i].Item1, DestNodeTypesAndInstances[i].Item2 );
                 }
+
+                _importDef();
             }
             else
             {
                 SchemaModTrnsctn.logError( ExceptionText );
             }
+        }
+
+        private void _importDef()
+        {
+            DataRow row = _importDefTable.NewRow();
+            row["sheet"] = _SourceTableName;
+            row["sheetorder"] = _SheetOrder[_SourceTableName];
+            _importDefTable.Rows.Add( row );
         }
 
         private void _importOrder( Int32 Order, string NodeTypeName = null, Int32 Instance = Int32.MinValue )
@@ -109,7 +122,6 @@ namespace ChemSW.Nbt.csw.Schema
                 row["nodetype"] = NodeTypeName;
                 row["order"] = Order;
                 row["instance"] = Instance;
-                row["sheetorder"] = _SheetOrder[_SourceTableName];
                 _importOrderTable.Rows.Add( row );
             }
         } // _importOrder()
@@ -178,7 +190,7 @@ namespace ChemSW.Nbt.csw.Schema
                 if( false == AlreadyExists ) { importBinding( SourceTablePkColumnName, LegacyID, "" ); }
 
                 //Save the bindings in the DB
-                _NbtImporter.storeDefinition( _importOrderTable, _importBindingsTable, _importRelationshipsTable, DefinitionName );
+                _NbtImporter.storeDefinition( _importOrderTable, _importBindingsTable, _importRelationshipsTable, DefinitionName, _importDefTable );
 
                 _populateImportQueueTable( WhereClause, UseView );
 

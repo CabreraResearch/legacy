@@ -60,7 +60,7 @@ namespace ChemSW.Nbt.Schema
             //_addVersionedScript( new CswUpdateSchema_02F_Case30041_RolesUsers() );
             _addVersionedScript( new CswUpdateSchema_02F_Case30252() );
             _addVersionedScript( new CswUpdateSchema_02F_Case30041_ScheduledRuleImport() );
-            //_addVersionedScript( new CswUpdateSchema_02F_Case30043_ControlZones() );
+            _addVersionedScript( new CswUpdateSchema_02F_Case30043_ControlZones() );
             //_addVersionedScript( new CswUpdateSchema_02F_Case30043_Sites() );
             _addVersionedScript( new CswUpdateSchema_02F_Case29984() );
             _addVersionedScript( new CswUpdateSchema_02F_Case30577() );

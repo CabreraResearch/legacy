@@ -85,6 +85,13 @@ namespace ChemSW.Nbt.ImportExport
         public SortedList<Int32, CswNbtImportDefOrder> ImportOrder = new SortedList<int, CswNbtImportDefOrder>();
         public Collection<CswNbtImportDefRelationship> RowRelationships = new Collection<CswNbtImportDefRelationship>();
 
+        public static DataTable getDataTableForNewOrderEntries()
+        {
+            DataTable Table = new DataTable();
+            Table.Columns.Add( "sheet" );
+            Table.Columns.Add( "sheetorder" );
+            return Table;
+        }
 
         /// <summary>
         /// Loads import definition bindings from the database
@@ -120,20 +127,26 @@ namespace ChemSW.Nbt.ImportExport
         } // _loadBindings()
 
 
-        public static Dictionary<string, Int32> addDefinitionEntries( CswNbtResources CswNbtResources, string ImportDefinitionName, DataTable OrderDataTable )
+        public static Dictionary<string, Int32> addDefinitionEntries( CswNbtResources CswNbtResources, string ImportDefinitionName, DataTable OrderDataTable, DataTable DefDataTable )
         {
             Dictionary<string, Int32> ret = new Dictionary<string, Int32>();
             CswTableUpdate importDefinitionUpdate = CswNbtResources.makeCswTableUpdate( "CswNbtImportDef_addDefinitionEntries_Update", CswNbtImportTables.ImportDef.TableName );
             DataTable importDefinitionTable = importDefinitionUpdate.getEmptyTable();
             Int32 i = 1;
+
+            // First we get the sheet and sheetorder
+            string SheetName = string.Empty;
+            Int32 SheetOrder = Int32.MinValue;
+
+            if( null != DefDataTable )
+            {
+                SheetName = DefDataTable.Rows[0]["sheet"].ToString();
+                SheetOrder = CswConvert.ToInt32( DefDataTable.Rows[0]["sheetorder"] );
+            }
+
             foreach( DataRow OrderRow in OrderDataTable.Rows )
             {
-                string SheetName = OrderRow["sheet"].ToString();
-                Int32 SheetOrder = Int32.MinValue;
-                if( OrderRow.Table.Columns.Contains( "sheetorder" ) )
-                {
-                    SheetOrder = CswConvert.ToInt32( OrderRow["sheetorder"] );
-                }
+                SheetName = OrderRow["sheet"].ToString();
                 if( false == string.IsNullOrEmpty( SheetName ) &&
                     false == ret.ContainsKey( SheetName ) )
                 {

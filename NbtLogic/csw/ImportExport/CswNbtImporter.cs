@@ -87,9 +87,9 @@ namespace ChemSW.Nbt.ImportExport
             }
         }
 
-        public void storeDefinition( DataTable OrderDataTable, DataTable BindingsDataTable, DataTable RelationshipsDataTable, string ImportDefinitionName )
+        public void storeDefinition( DataTable OrderDataTable, DataTable BindingsDataTable, DataTable RelationshipsDataTable, string ImportDefinitionName, DataTable DefDataTable = null )
         {
-            Dictionary<string, Int32> DefIdsBySheetName = CswNbtImportDef.addDefinitionEntries( _CswNbtResources, ImportDefinitionName, OrderDataTable );
+            Dictionary<string, Int32> DefIdsBySheetName = CswNbtImportDef.addDefinitionEntries( _CswNbtResources, ImportDefinitionName, OrderDataTable, DefDataTable );
             CswNbtImportDefOrder.addOrderEntries( _CswNbtResources, OrderDataTable, DefIdsBySheetName );
             CswNbtImportDefBinding.addBindingEntries( _CswNbtResources, BindingsDataTable, DefIdsBySheetName );
             CswNbtImportDefRelationship.addRelationshipEntries( _CswNbtResources, RelationshipsDataTable, DefIdsBySheetName );
@@ -417,7 +417,8 @@ namespace ChemSW.Nbt.ImportExport
             foreach( CswNbtImportDefRelationship Relation in UniqueRelationships )
             {
                 CswNbtImportDefOrder thisTargetOrder = BindingDef.ImportOrder.Values.FirstOrDefault( o => Relation.Relationship.FkMatches( o.NodeType ) && o.Instance == Relation.Instance );
-                Int32 Value = CswConvert.ToInt32( ImportRow[thisTargetOrder.PkColName] );
+                Int32 Value = Int32.MinValue;
+                Value = CswConvert.ToInt32( false == string.IsNullOrEmpty( ImportRow[Relation.SourceRelColumnName].ToString() ) ? ImportRow[Relation.SourceRelColumnName] : ImportRow[thisTargetOrder.PkColName] );
 
                 allEmpty = allEmpty && ( Value != Int32.MinValue );
             }
@@ -457,7 +458,8 @@ namespace ChemSW.Nbt.ImportExport
                     foreach( CswNbtImportDefRelationship Relation in UniqueRelationships )
                     {
                         CswNbtImportDefOrder thisTargetOrder = BindingDef.ImportOrder.Values.FirstOrDefault( o => Relation.Relationship.FkMatches( o.NodeType ) && o.Instance == Relation.Instance );
-                        Int32 Value = CswConvert.ToInt32( ImportRow[thisTargetOrder.PkColName] );
+                        //Int32 Value = CswConvert.ToInt32( ImportRow[thisTargetOrder.PkColName] );
+                        Int32 Value = CswConvert.ToInt32( false == string.IsNullOrEmpty( ImportRow[Relation.SourceRelColumnName].ToString() ) ? ImportRow[Relation.SourceRelColumnName] : ImportRow[thisTargetOrder.PkColName] );
 
                         if( Value != Int32.MinValue )
                         {
@@ -528,7 +530,8 @@ namespace ChemSW.Nbt.ImportExport
                         foreach( CswNbtImportDefRelationship Relation in UniqueRelationships )
                         {
                             CswNbtImportDefOrder thisTargetOrder = BindingDef.ImportOrder.Values.FirstOrDefault( o => Relation.Relationship.FkMatches( o.NodeType ) && o.Instance == Relation.Instance );
-                            Int32 Value = CswConvert.ToInt32( ImportRow[thisTargetOrder.PkColName] );
+                            //Int32 Value = CswConvert.ToInt32( ImportRow[thisTargetOrder.PkColName] );
+                            Int32 Value = CswConvert.ToInt32( false == string.IsNullOrEmpty( ImportRow[Relation.SourceRelColumnName].ToString() ) ? ImportRow[Relation.SourceRelColumnName] : ImportRow[thisTargetOrder.PkColName] );
 
                             if( Value != Int32.MinValue )
                             {
@@ -675,7 +678,6 @@ namespace ChemSW.Nbt.ImportExport
                 else
                 {
                     // In this case, we are matching on NodeId
-
                     if( null != TargetOrder && null != ImportRow[TargetOrder.PkColName] && CswConvert.ToInt32( ImportRow[TargetOrder.PkColName] ) > 0 )
                     {
                         Node.Properties[RowRelationship.Relationship].SetPropRowValue(
@@ -754,72 +756,6 @@ namespace ChemSW.Nbt.ImportExport
                 }//if( null != CurrentNodeType )
 
             }//if( false == string.IsNullOrEmpty( LegacyId ) )
-
-            return Ret;
-        }
-
-        private ICswNbtTree _relationshipSearchViaLegacyId( DataRow ImportRow, CswNbtImportDefBinding Binding, Dictionary<string, int> FKNodeTypes, CswCommaDelimitedString NodeTypeIds )
-        {
-            ICswNbtTree Ret = null;
-
-            // We only want to search for a related node if the row has a relationship
-            if( false == string.IsNullOrEmpty( ImportRow[Binding.SourceColumnName].ToString() ) )
-            {
-                //int NodeTypeId = CswConvert.ToInt32( NodeTypeIds[0] );
-                Int32 NodeTypeId = FKNodeTypes[FKNodeTypes.Keys.First()];
-
-                CswNbtView View = new CswNbtView( _CswNbtResources );
-                View.ViewName = "Relationships View";
-
-                // Special case for locations
-                // If relationship property is a location, we perform a check:
-                //  If building, fk => site
-                //  If Room, fk => building
-                //  If Cabinet, fk => Room
-                //  If Shelf, fk => Cabinet
-                //  If Box, fk => Shelf
-                if( Binding.DestProperty.getFieldTypeValue() == CswEnumNbtFieldType.Location )
-                {
-                    switch( Binding.DestNodeTypeName )
-                    {
-                        case "Building":
-                            NodeTypeId = FKNodeTypes["Site"];
-                            break;
-                        case "Room":
-                            NodeTypeId = FKNodeTypes["Building"];
-                            break;
-                        case "Cabinet":
-                            NodeTypeId = FKNodeTypes["Room"];
-                            break;
-                        case "Shelf":
-                            NodeTypeId = FKNodeTypes["Cabinet"];
-                            break;
-                        case "Box":
-                            NodeTypeId = FKNodeTypes["Shelf"];
-                            break;
-                        default:
-                            NodeTypeId = FKNodeTypes[FKNodeTypes.Keys.First()];
-                            break;
-                    }
-                }
-
-                CswNbtMetaDataNodeType CurrentNodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
-                if( null != CurrentNodeType )
-                {
-                    CswNbtMetaDataNodeTypeProp LegacyIdNTP = CurrentNodeType.getNodeTypeProp( "Legacy Id" );
-
-                    CswNbtViewRelationship ParentRelationship = View.AddViewRelationship( CurrentNodeType,
-                                                                                         false );
-                    View.AddViewPropertyAndFilter( ParentViewRelationship: ParentRelationship,
-                                                  MetaDataProp: LegacyIdNTP,
-                                                  Conjunction: CswEnumNbtFilterConjunction.And,
-                                                  SubFieldName: CswEnumNbtSubFieldName.Value,
-                                                  FilterMode: CswEnumNbtFilterMode.Equals,
-                                                  Value: ImportRow[Binding.SourceColumnName].ToString() );
-
-                    Ret = _CswNbtResources.Trees.getTreeFromView( View, false, true, true );
-                }
-            }
 
             return Ret;
         }

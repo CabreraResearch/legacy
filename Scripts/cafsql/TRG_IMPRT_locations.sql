@@ -1,4 +1,4 @@
-CREATE OR REPLACE TRIGGER TRG_IMPRT_locations AFTER INSERT OR DELETE OR UPDATE OF sitename,sitecode,siteid,locationlevel1name,locationcode,locationid,locationlevel2name,locationlevel3name,locationlevel4name,locationlevel5name,deleted ON locations@CAFLINK FOR EACH ROW 
+CREATE OR REPLACE TRIGGER TRG_IMPRT_locations AFTER INSERT OR DELETE OR UPDATE OF sitename,sitecode,siteid,controlzoneid,locationlevel1name,locationcode,locationid,inventorygroupid,locationlevel2name,locationlevel3name,locationlevel4name,locationlevel5name,deleted ON locations@CAFLINK FOR EACH ROW 
                                 BEGIN
   
                                 IF INSERTING THEN
