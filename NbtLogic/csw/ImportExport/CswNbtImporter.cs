@@ -407,18 +407,9 @@ namespace ChemSW.Nbt.ImportExport
                                                                                               b.DestProperty.IsCompoundUnique() ||
                                                                                               Order.NodeType.NameTemplatePropIds.Contains( b.DestProperty.FirstPropVersionId ) );
 
-            //Get the LegacyId value
-            string LegacyId = string.Empty;
-            foreach( CswNbtImportDefBinding Binding in NodeTypeBindings )
-            {
-                if( Binding.DestPropName == "Legacy ID" )
-                {
-                    LegacyId = ImportRow[Binding.ImportDataColumnName].ToString();
-                }
-            }
-
-            // Skip rows with null values for all unique properties
             bool allEmpty = true;
+            // Skip rows with null values for all unique properties
+
             foreach( CswNbtImportDefBinding Binding in UniqueBindings )
             {
                 allEmpty = allEmpty && string.IsNullOrEmpty( ImportRow[Binding.ImportDataColumnName].ToString() );
@@ -430,6 +421,20 @@ namespace ChemSW.Nbt.ImportExport
                 Value = null != ImportRow[Relation.SourceRelColumnName] ? CswConvert.ToInt32( ImportRow[Relation.SourceRelColumnName] ) : CswConvert.ToInt32( ImportRow[thisTargetOrder.PkColName] );
 
                 allEmpty = allEmpty && ( Value != Int32.MinValue );
+            }
+
+            string LegacyId = string.Empty;
+            foreach( CswNbtImportDefBinding Binding in NodeTypeBindings )
+            {
+                if( Binding.DestPropName == "Legacy ID" )
+                {
+                    LegacyId = ImportRow[Binding.ImportDataColumnName].ToString();
+                }
+            }
+
+            if( string.IsNullOrEmpty( LegacyId ) && BindingDef.DefinitionName == "CAF" )
+            {
+                allEmpty = true;
             }
 
             if( false == allEmpty )
