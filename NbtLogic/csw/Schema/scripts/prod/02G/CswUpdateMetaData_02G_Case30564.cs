@@ -31,6 +31,23 @@ namespace ChemSW.Nbt.Schema
         public override void update()
         {
             // Farewell LocationContents, I hardly knew ye
+            
+            // delete box's LocationContents property and Contents tab
+            CswNbtMetaDataNodeType BoxNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Box" );
+            if( null != BoxNT )
+            {
+                CswNbtMetaDataNodeTypeProp BoxLocationContentsNTP = BoxNT.getNodeTypeProp( "LocationContents" );
+                if( null != BoxLocationContentsNTP )
+                {
+                    _CswNbtSchemaModTrnsctn.MetaData.DeleteNodeTypeProp( BoxLocationContentsNTP );
+                }
+
+                CswNbtMetaDataNodeTypeTab BoxContentsNTT = BoxNT.getNodeTypeTab( "Contents" );
+                if( null != BoxContentsNTT )
+                {
+                    _CswNbtSchemaModTrnsctn.MetaData.DeleteNodeTypeTab( BoxContentsNTT );
+                }
+            }
 
             // field_types_subfields
             {
