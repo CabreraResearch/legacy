@@ -38,8 +38,9 @@ namespace ChemSW.Nbt.Schema
 
             CswNbtObjClassReportGroup SystemReportGroup = _createReportGroup("System Reports");
 
-
-            string SqlQuery = @"
+            if( null != SystemReportGroup )
+            {
+                string SqlQuery = @"
 select * from (
     select barcode ucode,username,firstname,lastname,firstname || ' ' || lastname as fullname from user1
 ) x
@@ -47,12 +48,12 @@ where lower(fullname) like lower('%{FullNameContains}%')
 order by lower(fullname)
 ";
 
-            _createReport( "User Codes", "System Reports", SystemReportGroup, SqlQuery, "users.rpt" );
+                _createReport( "User Codes", "System Reports", SystemReportGroup, SqlQuery, "users.rpt" );
 
 
 
 
-            SqlQuery = @"
+                SqlQuery = @"
 select lscode,location,name,Location || ' > ' || name pathname, type from (
     select barcode lscode,name,location,'building' type from building
     union
@@ -64,12 +65,12 @@ select lscode,location,name,Location || ' > ' || name pathname, type from (
 order by lower(location),lower(name)
 ";
 
-            _createReport( "Location Codes", "System Reports", SystemReportGroup, SqlQuery, "locations.rpt" );
+                _createReport( "Location Codes", "System Reports", SystemReportGroup, SqlQuery, "locations.rpt" );
 
 
 
 
-            SqlQuery = @"
+                SqlQuery = @"
 select * from (
     select 'DISPOSE' as val from dual
     union 
@@ -83,8 +84,9 @@ select * from (
 ) x order by val
 ";
 
-            _createReport( "Kiosk Mode", "System Reports", SystemReportGroup, SqlQuery, "kiosk.rpt" );
+                _createReport( "Kiosk Mode", "System Reports", SystemReportGroup, SqlQuery, "kiosk.rpt" );
 
+            }
         } // update()
 
 
