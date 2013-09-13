@@ -1197,8 +1197,8 @@
       <Project>{434091FB-F487-4787-8BDB-58C2336B73C2}</Project>
       <Name>CswCommon</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\Common\StructureSearch\StructureSearch\StructureSearch.csproj">
-      <Project>{E9156C9A-605E-4F21-8BB1-0970DA055FF0}</Project>
+    <ProjectReference Include="..\..\..\Common\CswCommon\StructureSearch\StructureSearch.csproj">
+      <Project>{e9156c9a-605e-4f21-8bb1-0970da055ff0}</Project>
       <Name>StructureSearch</Name>
     </ProjectReference>
   </ItemGroup>

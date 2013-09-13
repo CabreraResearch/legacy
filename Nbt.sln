@@ -45,11 +45,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StructureSearch", "..\..\Co
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CswWebControls", "..\..\Common\CswCommon\CswWebControls\CswWebControls.csproj", "{1617E93A-A9DD-46D5-A607-7A36DF91C2D1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CswLogService", "..\..\Common\CswCommon\CswLogService\CswLogService\CswLogService.csproj", "{799B613A-C722-43C2-8D3F-61CE81384C74}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogServiceGuiTest", "..\..\Common\CswCommon\CswLogService\TestApps\LogServiceGuiTest\LogServiceGuiTest.csproj", "{73F2E35A-7D81-4909-A3A8-5AB3AB8D718A}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CswConfigUX", "..\..\Common\CswCommon\CswConfigUX\CswConfigUX.csproj", "{98F36404-A146-4D04-9320-51076E4E21DC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogServiceGuiTest", "..\..\Common\CswCommon\TestApps\LogServiceGuiTest\LogServiceGuiTest.csproj", "{73F2E35A-7D81-4909-A3A8-5AB3AB8D718A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CswLogService", "..\..\Common\CswCommon\CswLogService\CswLogService.csproj", "{799B613A-C722-43C2-8D3F-61CE81384C74}"
 EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
@@ -107,7 +107,6 @@ Global
 		{A05B9ACC-2992-4F9D-9E99-5734E96610F5}.Debug|x64.ActiveCfg = Debug|x64
 		{A05B9ACC-2992-4F9D-9E99-5734E96610F5}.Debug|x64.Build.0 = Debug|x64
 		{A05B9ACC-2992-4F9D-9E99-5734E96610F5}.Release|x64.ActiveCfg = Release|x64
-		{A05B9ACC-2992-4F9D-9E99-5734E96610F5}.Release|x64.Build.0 = Release|x64
 		{E9156C9A-605E-4F21-8BB1-0970DA055FF0}.Debug|x64.ActiveCfg = Debug|x64
 		{E9156C9A-605E-4F21-8BB1-0970DA055FF0}.Debug|x64.Build.0 = Debug|x64
 		{E9156C9A-605E-4F21-8BB1-0970DA055FF0}.Release|x64.ActiveCfg = Release|x64
@@ -116,18 +115,17 @@ Global
 		{1617E93A-A9DD-46D5-A607-7A36DF91C2D1}.Debug|x64.Build.0 = Debug|x64
 		{1617E93A-A9DD-46D5-A607-7A36DF91C2D1}.Release|x64.ActiveCfg = Release|x64
 		{1617E93A-A9DD-46D5-A607-7A36DF91C2D1}.Release|x64.Build.0 = Release|x64
-		{799B613A-C722-43C2-8D3F-61CE81384C74}.Debug|x64.ActiveCfg = Debug|x64
-		{799B613A-C722-43C2-8D3F-61CE81384C74}.Debug|x64.Build.0 = Debug|x64
-		{799B613A-C722-43C2-8D3F-61CE81384C74}.Release|x64.ActiveCfg = Release|x64
-		{799B613A-C722-43C2-8D3F-61CE81384C74}.Release|x64.Build.0 = Release|x64
-		{73F2E35A-7D81-4909-A3A8-5AB3AB8D718A}.Debug|x64.ActiveCfg = Debug|x64
-		{73F2E35A-7D81-4909-A3A8-5AB3AB8D718A}.Debug|x64.Build.0 = Debug|x64
-		{73F2E35A-7D81-4909-A3A8-5AB3AB8D718A}.Release|x64.ActiveCfg = Release|x64
-		{73F2E35A-7D81-4909-A3A8-5AB3AB8D718A}.Release|x64.Build.0 = Release|x64
 		{98F36404-A146-4D04-9320-51076E4E21DC}.Debug|x64.ActiveCfg = Debug|x64
 		{98F36404-A146-4D04-9320-51076E4E21DC}.Debug|x64.Build.0 = Debug|x64
 		{98F36404-A146-4D04-9320-51076E4E21DC}.Release|x64.ActiveCfg = Release|x64
 		{98F36404-A146-4D04-9320-51076E4E21DC}.Release|x64.Build.0 = Release|x64
+		{73F2E35A-7D81-4909-A3A8-5AB3AB8D718A}.Debug|x64.ActiveCfg = Debug|x64
+		{73F2E35A-7D81-4909-A3A8-5AB3AB8D718A}.Debug|x64.Build.0 = Debug|x64
+		{73F2E35A-7D81-4909-A3A8-5AB3AB8D718A}.Release|x64.ActiveCfg = Release|x64
+		{799B613A-C722-43C2-8D3F-61CE81384C74}.Debug|x64.ActiveCfg = Debug|x64
+		{799B613A-C722-43C2-8D3F-61CE81384C74}.Debug|x64.Build.0 = Debug|x64
+		{799B613A-C722-43C2-8D3F-61CE81384C74}.Release|x64.ActiveCfg = Release|x64
+		{799B613A-C722-43C2-8D3F-61CE81384C74}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
