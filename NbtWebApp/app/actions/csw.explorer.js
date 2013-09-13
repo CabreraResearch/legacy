@@ -65,9 +65,8 @@
 
                     Csw.ajaxWcf.post({
                         urlMethod: "Explorer/Initialize",
-                        data: 'nodes_2', //cswPrivate.startingNodeId
+                        data: cswPrivate.startingNodeId,
                         success: function (response) {
-
                             var i = 3;
                             Csw.iterate(response.Nodes, function (arborNode) {
                                 var secretCell = cswPrivate.actionTbl.cell(1, i);

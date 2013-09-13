@@ -319,6 +319,7 @@
 
             actionHandler.add('explorer', function(o) {
                 return Csw.actions.explorer(Csw.main.centerTopDiv, {
+                    startingNodeId: o.ActionOptions.startingNodeId,
                     onCancel: onCancel
                 });
             });

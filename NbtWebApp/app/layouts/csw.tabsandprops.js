@@ -1204,7 +1204,12 @@
                     /*cswPrivate.linkDiv.a({
                         text: 'Explore',
                         onClick: function () {
-                            Csw.publish(Csw.enums.events.main.handleAction, { actionname: 'explorer' });
+                            Csw.publish(Csw.enums.events.main.handleAction, {
+                                actionname: 'explorer',
+                                ActionOptions: {
+                                    startingNodeId: cswPublic.getNodeId()
+                                }
+                            });
                         }
                     });*/
 
