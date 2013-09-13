@@ -24,6 +24,9 @@
             
             cswPrivate.getButtonType = function () {
                 var ret;
+                if (cswPrivate.isRequired && 'true' !== cswPrivate.value && 'false' != cswPrivate.value) {
+                    cswPrivate.value = 'false';
+                }
                 switch (cswPrivate.value) {
                     case 'true':
                         ret = Csw.enums.imageButton_ButtonType.CheckboxTrue;
