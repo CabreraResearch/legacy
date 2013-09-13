@@ -22,7 +22,7 @@ IF NOT EXIST etc mkdir etc
 cd etc
 IF EXIST CswDbCfgInfo.xml del CswDbCfgInfo.xml
 IF EXIST CswSetupVariables.json del CswSetupVariables.json
-mklink CswDbCfgInfo.xml %1\Common\CswCommon\CswConfigUX\bin\etc\CswDbCfgInfo.xml
-mklink CswSetupVariables.json %1\Common\CswCommon\CswConfigUX\bin\etc\CswSetupVariables.json
+mklink CswDbCfgInfo.xml %1\Common\CswCommon\bin\etc\CswDbCfgInfo.xml
+mklink CswSetupVariables.json %1\Common\CswCommon\bin\etc\CswSetupVariables.json
 
 :End
