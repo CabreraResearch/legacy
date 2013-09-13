@@ -439,6 +439,7 @@
     <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateMetaData_02G_Case27846.cs" />
     <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateMetaData_02G_Case30611.cs" />
     <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateSchema_02G_Case30542.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateSchema_02G_Case30610.cs" />
     <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateSchema_02G_Case30679.cs" />
     <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateSchema_02G_Case30383.cs" />
     <Compile Include="csw\Security\CswNbtWebSvcSchemaAuthenticator.cs" />
@@ -1209,7 +1210,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />
-    <Folder Include="csw\Schema\scripts\prod\02G\" />
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
