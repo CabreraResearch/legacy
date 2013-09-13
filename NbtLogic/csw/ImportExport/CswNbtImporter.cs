@@ -403,14 +403,19 @@ namespace ChemSW.Nbt.ImportExport
                                                                                                         r.Relationship.IsCompoundUnique() ||
                                                                                                         Order.NodeType.NameTemplatePropIds.Contains( r.Relationship.FirstPropVersionId ) );
 
-            //IEnumerable<CswNbt2DBinding> RequiredBindings = NodeTypeBindings.Where( b => b.DestProperty.IsRequired );
-            //IEnumerable<CswNbt2DBinding> UniqueBindings = NodeTypeBindings.Where( b => ( b.DestProperty.IsUnique() || b.DestProperty.IsCompoundUnique() ) );
-            //IEnumerable<CswNbtMetaDataNodeTypeProp> Props = Order.NodeType.getNodeTypeProps();
-            //IEnumerable<CswNbtMetaDataNodeTypeProp> RequiredProps = Props.Where( p => p.IsRequired && false == p.HasDefaultValue() );
             IEnumerable<CswNbtImportDefBinding> UniqueBindings = NodeTypeBindings.Where( b => b.DestProperty.IsUnique() ||
                                                                                               b.DestProperty.IsCompoundUnique() ||
                                                                                               Order.NodeType.NameTemplatePropIds.Contains( b.DestProperty.FirstPropVersionId ) );
-            //IEnumerable<CswNbtMetaDataNodeTypeProp> UniqueProps = Props.Where( p => UniqueBindings.Any( b => b.DestProperty == p ) );
+
+            //Get the LegacyId value
+            string LegacyId = string.Empty;
+            foreach( CswNbtImportDefBinding Binding in NodeTypeBindings )
+            {
+                if( Binding.DestPropName == "Legacy ID" )
+                {
+                    LegacyId = ImportRow[Binding.ImportDataColumnName].ToString();
+                }
+            }
 
             // Skip rows with null values for all unique properties
             bool allEmpty = true;
@@ -429,75 +434,106 @@ namespace ChemSW.Nbt.ImportExport
 
             if( false == allEmpty )
             {
-                // Find matching nodes using a view on unique properties
-                CswNbtView UniqueView = new CswNbtView( _CswNbtResources );
-                UniqueView.ViewName = "Check Unique";
-                CswNbtViewRelationship NTRel = UniqueView.AddViewRelationship( Order.NodeType, false );
+                //Check for matching nodes using a view on legacy id
+                CswNbtView LegacyIdView = new CswNbtView( _CswNbtResources );
+                LegacyIdView.ViewName = "Check Legacy Id";
+                CswNbtViewRelationship NTRel1 = LegacyIdView.AddViewRelationship( Order.NodeType, false );
 
-                if( UniqueBindings.Any() )
+                CswNbtMetaDataNodeTypeProp LegacyIdNTP = Order.NodeType.getNodeTypeProp( "Legacy Id" );
+                LegacyIdView.AddViewPropertyAndFilter( ParentViewRelationship: NTRel1, MetaDataProp: LegacyIdNTP,
+                                                      Value: LegacyId,
+                                                      SubFieldName: CswEnumNbtSubFieldName.Value, CaseSensitive: false );
+
+                ICswNbtTree LegacyIdTree = _CswNbtResources.Trees.getTreeFromView( LegacyIdView, false, true, true );
+                if( LegacyIdTree.getChildNodeCount() > 0 )
                 {
-                    bool atLeastOneFilter = false;
-                    foreach( CswNbtImportDefBinding Binding in UniqueBindings )
+                    LegacyIdTree.goToNthChild( 0 );
+                    Node = LegacyIdTree.getNodeForCurrentPosition();
+                    if( Overwrite )
                     {
-                        string Value = ImportRow[Binding.ImportDataColumnName].ToString();
-                        if( Value != string.Empty )
-                        {
-                            UniqueView.AddViewPropertyAndFilter( NTRel, Binding.DestProperty,
-                                                                 Conjunction: CswEnumNbtFilterConjunction.And,
-                                                                 SubFieldName: Binding.DestSubfield.Name,
-                                                                 FilterMode: CswEnumNbtFilterMode.Equals,
-                                                                 Value: Value,
-                                                                 CaseSensitive: false );
-                        }
-                        else
-                        {
-                            UniqueView.AddViewPropertyAndFilter( NTRel, Binding.DestProperty,
-                                                                 Conjunction: CswEnumNbtFilterConjunction.And,
-                                                                 SubFieldName: Binding.DestSubfield.Name,
-                                                                 FilterMode: CswEnumNbtFilterMode.Null );
-                        }
-                        atLeastOneFilter = true;
+                        _importPropertyValues( BindingDef, NodeTypeBindings, RowRelationships, ImportRow, Node );
+                        Node.postChanges( false );
                     }
+                }
+                else
+                {
 
-                    foreach( CswNbtImportDefRelationship Relation in UniqueRelationships )
+                    // Find matching nodes using a view on unique properties
+                    CswNbtView UniqueView = new CswNbtView( _CswNbtResources );
+                    UniqueView.ViewName = "Check Unique";
+                    CswNbtViewRelationship NTRel = UniqueView.AddViewRelationship( Order.NodeType, false );
+
+                    if( UniqueBindings.Any() )
                     {
-                        CswNbtImportDefOrder thisTargetOrder = BindingDef.ImportOrder.Values.FirstOrDefault( o => Relation.Relationship.FkMatches( o.NodeType ) && o.Instance == Relation.Instance );
-                        Int32 Value = null != ImportRow[Relation.SourceRelColumnName] ? CswConvert.ToInt32( ImportRow[Relation.SourceRelColumnName] ) : CswConvert.ToInt32( ImportRow[thisTargetOrder.PkColName] );
-
-                        if( Value != Int32.MinValue )
+                        bool atLeastOneFilter = false;
+                        foreach( CswNbtImportDefBinding Binding in UniqueBindings )
                         {
-                            UniqueView.AddViewPropertyAndFilter( NTRel, Relation.Relationship,
-                                                                 Conjunction: CswEnumNbtFilterConjunction.And,
-                                                                 SubFieldName: CswEnumNbtSubFieldName.NodeID,
-                                                                 FilterMode: CswEnumNbtFilterMode.Equals,
-                                                                 Value: Value.ToString(),
-                                                                 CaseSensitive: false );
-                        }
-                        else
-                        {
-                            UniqueView.AddViewPropertyAndFilter( NTRel, Relation.Relationship,
-                                                                 Conjunction: CswEnumNbtFilterConjunction.And,
-                                                                 SubFieldName: CswEnumNbtSubFieldName.NodeID,
-                                                                 FilterMode: CswEnumNbtFilterMode.Null );
-                        }
-                        atLeastOneFilter = true;
-                    }
-
-                    if( atLeastOneFilter )
-                    {
-                        ICswNbtTree UniqueTree = _CswNbtResources.Trees.getTreeFromView( UniqueView, false, true, true );
-                        if( UniqueTree.getChildNodeCount() > 0 )
-                        {
-                            UniqueTree.goToNthChild( 0 );
-                            Node = UniqueTree.getNodeForCurrentPosition();
-                            if( Overwrite )
+                            string Value = ImportRow[Binding.ImportDataColumnName].ToString();
+                            if( Value != string.Empty )
                             {
-                                _importPropertyValues( BindingDef, NodeTypeBindings, RowRelationships, ImportRow, Node );
-                                Node.postChanges( false );
+                                UniqueView.AddViewPropertyAndFilter( NTRel, Binding.DestProperty,
+                                                                    Conjunction: CswEnumNbtFilterConjunction.And,
+                                                                    SubFieldName: Binding.DestSubfield.Name,
+                                                                    FilterMode: CswEnumNbtFilterMode.Equals,
+                                                                    Value: Value,
+                                                                    CaseSensitive: false );
+                            }
+                            else
+                            {
+                                UniqueView.AddViewPropertyAndFilter( NTRel, Binding.DestProperty,
+                                                                    Conjunction: CswEnumNbtFilterConjunction.And,
+                                                                    SubFieldName: Binding.DestSubfield.Name,
+                                                                    FilterMode: CswEnumNbtFilterMode.Null );
+                            }
+                            atLeastOneFilter = true;
+                        }
+
+                        foreach( CswNbtImportDefRelationship Relation in UniqueRelationships )
+                        {
+                            CswNbtImportDefOrder thisTargetOrder =
+                                BindingDef.ImportOrder.Values.FirstOrDefault(
+                                    o => Relation.Relationship.FkMatches( o.NodeType ) && o.Instance == Relation.Instance );
+                            Int32 Value = null != ImportRow[Relation.SourceRelColumnName]
+                                              ? CswConvert.ToInt32( ImportRow[Relation.SourceRelColumnName] )
+                                              : CswConvert.ToInt32( ImportRow[thisTargetOrder.PkColName] );
+
+                            if( Value != Int32.MinValue )
+                            {
+                                UniqueView.AddViewPropertyAndFilter( NTRel, Relation.Relationship,
+                                                                    Conjunction: CswEnumNbtFilterConjunction.And,
+                                                                    SubFieldName: CswEnumNbtSubFieldName.NodeID,
+                                                                    FilterMode: CswEnumNbtFilterMode.Equals,
+                                                                    Value: Value.ToString(),
+                                                                    CaseSensitive: false );
+                            }
+                            else
+                            {
+                                UniqueView.AddViewPropertyAndFilter( NTRel, Relation.Relationship,
+                                                                    Conjunction: CswEnumNbtFilterConjunction.And,
+                                                                    SubFieldName: CswEnumNbtSubFieldName.NodeID,
+                                                                    FilterMode: CswEnumNbtFilterMode.Null );
+                            }
+                            atLeastOneFilter = true;
+                        }
+
+                        if( atLeastOneFilter )
+                        {
+                            ICswNbtTree UniqueTree = _CswNbtResources.Trees.getTreeFromView( UniqueView, false, true,
+                                                                                            true );
+                            if( UniqueTree.getChildNodeCount() > 0 )
+                            {
+                                UniqueTree.goToNthChild( 0 );
+                                Node = UniqueTree.getNodeForCurrentPosition();
+                                if( Overwrite )
+                                {
+                                    _importPropertyValues( BindingDef, NodeTypeBindings, RowRelationships, ImportRow,
+                                                          Node );
+                                    Node.postChanges( false );
+                                }
                             }
                         }
-                    }
-                } // if( UniqueProps.Any() )
+                    } // if( UniqueProps.Any() )
+                }
 
                 if( null == Node )
                 {
