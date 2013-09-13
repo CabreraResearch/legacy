@@ -14,25 +14,26 @@
                 var cswPrivate = Csw.object();
 
                 cswPrivate.loadNode = function (nodeid) {
-                    if (false === Csw.isNullOrEmpty(editLink)) {
-                        editLink.show();
-                    }
                     cswPrivate.childContentsDiv.empty();
-
-                    Csw.layouts.tabsAndProps(cswPrivate.childContentsDiv, {
-                        name: 'tabsAndProps',
-                        tabState: {
-                            ShowAsReport: false,
-                            nodeid: nodeid,
-                            EditMode: nsOptions.isClickable ? Csw.enums.editMode.Edit : nodeProperty.tabState.EditMode,
-                            ReadOnly: true,
-                            showSaveButton: false
-                        },
-                        showTitle: false,
-                        onInitFinish: function () {
-                        },
-                        forceReadOnly: true
-                    });
+                    if (false === nodeProperty.tabState.Config) {
+                        if (false === Csw.isNullOrEmpty(editLink)) {
+                            editLink.show();
+                        }
+                        Csw.layouts.tabsAndProps(cswPrivate.childContentsDiv, {
+                            name: 'tabsAndProps',
+                            tabState: {
+                                ShowAsReport: false,
+                                nodeid: nodeid,
+                                EditMode: nsOptions.isClickable ? Csw.enums.editMode.Edit : nodeProperty.tabState.EditMode,
+                                ReadOnly: true,
+                                showSaveButton: false
+                            },
+                            showTitle: false,
+                            onInitFinish: function() {
+                            },
+                            forceReadOnly: true
+                        });
+                    }
                 }; // loadNode()
 
                 nodeProperty.propDivTbl = nodeProperty.propDiv.table();
@@ -62,10 +63,10 @@
                 nsOptions.isMulti = nodeProperty.isMulti();
                 nsOptions.isReadOnly = false; // nodeProperty.isReadOnly();
                 //case 28180 - relationships not clickable from audit history popup (Case 30496 - or when viewing As Report)
-                nsOptions.isClickable =
-                    nodeProperty.tabState.EditMode !== Csw.enums.editMode.AuditHistoryInPopup &&
-                    nodeProperty.tabState.EditMode !== Csw.enums.editMode.PrintReport &&
-                    nodeProperty.tabState.EditMode !== Csw.enums.editMode.Preview;
+                nsOptions.isClickable = (nodeProperty.tabState.EditMode !== Csw.enums.editMode.AuditHistoryInPopup &&
+                                         nodeProperty.tabState.EditMode !== Csw.enums.editMode.PrintReport &&
+                                         nodeProperty.tabState.EditMode !== Csw.enums.editMode.Preview &&
+                                         false === nodeProperty.tabState.Config);
 
                 nsOptions.doGetNodes = false;
                 nsOptions.showSelectOnLoad = true;
@@ -96,7 +97,9 @@
                 if (false === Csw.isNullOrEmpty(nsOptions.selectedNodeId)) {
                     cswPrivate.loadNode(nsOptions.selectedNodeId);
                 } else {
-                    editLink.hide();
+                    if (false === Csw.isNullOrEmpty(editLink)) {
+                        editLink.hide();
+                    }
                 }
             }; // render()
             
