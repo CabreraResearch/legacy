@@ -59,10 +59,10 @@
 
                         cswPrivate.progressBar.wait();
                     },
-                    done: function (e, jqXHR) {
+                    done: function(e, jqXHR) {
                         cswPrivate.progressBar.reset();
                         cswPrivate.progressBar.updateText('Upload Complete');
-                        
+
                         // jqXHR.result is XML format, not JSON, because of iframe craziness.  So we can't use it like this.
                         var data = Csw.extend(jqXHR.result);
                         if (jqXHR.result && false === Csw.isNullOrEmpty(jqXHR.result.data)) {
@@ -71,10 +71,22 @@
                         if (Csw.isNullOrEmpty(data)) {
                             Csw.extend(data, jqXHR.data);
                         }
-                        
+
                         // COMMENCE KLUDGE to detect errors from return context
                         var succeeded;
                         var errors = [];
+                        // Fatal server errors (like file too large)
+                        if ($(jqXHR.result).find('span').children('h2').children('i').text() === 'Maximum request length exceeded.') {
+                            succeeded = false;
+                            errors.push({
+                                display: true,
+                                type: 'Error',
+                                message: 'Error: File exceeds maximum size',
+                                detail: 'Server Error: Maximum request length exceeded.',
+                            });
+                        }
+
+                        // Csw-handled errors
                         $.each($(jqXHR.result).find('Status').children(), function(i, xmlnode) {
                            if (xmlnode.nodeName == "A:SUCCESS") {
                                succeeded = Csw.bool($(xmlnode).text());
