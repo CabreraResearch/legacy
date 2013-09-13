@@ -393,7 +393,11 @@ namespace ChemSW.Nbt.ImportExport
 
             CswNbtNode Node = null;
 
-            IEnumerable<CswNbtImportDefBinding> NodeTypeBindings = BindingDef.Bindings.Where( b => b.DestNodeType == Order.NodeType && b.Instance == Order.Instance );
+            IEnumerable<CswNbtImportDefBinding> NodeTypeBindings = BindingDef.Bindings.Where(
+                delegate( CswNbtImportDefBinding b )
+                {
+                    return b.DestNodeType == Order.NodeType && b.Instance == Order.Instance;
+                } );
             IEnumerable<CswNbtImportDefRelationship> RowRelationships = BindingDef.RowRelationships.Where( r => r.NodeType.NodeTypeId == Order.NodeType.NodeTypeId ); //&& r.Instance == Order.Instance );
             IEnumerable<CswNbtImportDefRelationship> UniqueRelationships = RowRelationships.Where( r => r.Relationship.IsUnique() ||
                                                                                                         r.Relationship.IsCompoundUnique() ||
@@ -418,7 +422,7 @@ namespace ChemSW.Nbt.ImportExport
             {
                 CswNbtImportDefOrder thisTargetOrder = BindingDef.ImportOrder.Values.FirstOrDefault( o => Relation.Relationship.FkMatches( o.NodeType ) && o.Instance == Relation.Instance );
                 Int32 Value = Int32.MinValue;
-                Value = CswConvert.ToInt32( false == string.IsNullOrEmpty( ImportRow[Relation.SourceRelColumnName].ToString() ) ? ImportRow[Relation.SourceRelColumnName] : ImportRow[thisTargetOrder.PkColName] );
+                Value = null != ImportRow[Relation.SourceRelColumnName] ? CswConvert.ToInt32( ImportRow[Relation.SourceRelColumnName] ) : CswConvert.ToInt32( ImportRow[thisTargetOrder.PkColName] );
 
                 allEmpty = allEmpty && ( Value != Int32.MinValue );
             }
@@ -458,8 +462,7 @@ namespace ChemSW.Nbt.ImportExport
                     foreach( CswNbtImportDefRelationship Relation in UniqueRelationships )
                     {
                         CswNbtImportDefOrder thisTargetOrder = BindingDef.ImportOrder.Values.FirstOrDefault( o => Relation.Relationship.FkMatches( o.NodeType ) && o.Instance == Relation.Instance );
-                        //Int32 Value = CswConvert.ToInt32( ImportRow[thisTargetOrder.PkColName] );
-                        Int32 Value = CswConvert.ToInt32( false == string.IsNullOrEmpty( ImportRow[Relation.SourceRelColumnName].ToString() ) ? ImportRow[Relation.SourceRelColumnName] : ImportRow[thisTargetOrder.PkColName] );
+                        Int32 Value = null != ImportRow[Relation.SourceRelColumnName] ? CswConvert.ToInt32( ImportRow[Relation.SourceRelColumnName] ) : CswConvert.ToInt32( ImportRow[thisTargetOrder.PkColName] );
 
                         if( Value != Int32.MinValue )
                         {
@@ -531,7 +534,8 @@ namespace ChemSW.Nbt.ImportExport
                         {
                             CswNbtImportDefOrder thisTargetOrder = BindingDef.ImportOrder.Values.FirstOrDefault( o => Relation.Relationship.FkMatches( o.NodeType ) && o.Instance == Relation.Instance );
                             //Int32 Value = CswConvert.ToInt32( ImportRow[thisTargetOrder.PkColName] );
-                            Int32 Value = CswConvert.ToInt32( false == string.IsNullOrEmpty( ImportRow[Relation.SourceRelColumnName].ToString() ) ? ImportRow[Relation.SourceRelColumnName] : ImportRow[thisTargetOrder.PkColName] );
+                            //Int32 Value = CswConvert.ToInt32( false == string.IsNullOrEmpty( ImportRow[Relation.SourceRelColumnName].ToString() ) ? ImportRow[Relation.SourceRelColumnName] : ImportRow[thisTargetOrder.PkColName] );
+                            Int32 Value = null != ImportRow[Relation.SourceRelColumnName] ? CswConvert.ToInt32( ImportRow[Relation.SourceRelColumnName] ) : CswConvert.ToInt32( ImportRow[thisTargetOrder.PkColName] );
 
                             if( Value != Int32.MinValue )
                             {
@@ -658,11 +662,11 @@ namespace ChemSW.Nbt.ImportExport
                 CswNbtImportDefOrder TargetOrder = BindingDef.ImportOrder.Values.FirstOrDefault( o => RowRelationship.Relationship.FkMatches( o.NodeType ) && o.Instance == RowRelationship.Instance );
 
                 // If we have a value for the SourceRelColumnName
-                if( false == string.IsNullOrEmpty( ImportRow[RowRelationship.SourceRelColumnName].ToString() ) )
+                if( null != ImportRow[RowRelationship.SourceRelColumnName] )
                 {
                     // In this case, we are matching on Legacy Id
                     // If the value in the column isn't null and it is actually an integer value (A legacy id)
-                    if( null != ImportRow[RowRelationship.SourceRelColumnName] && CswConvert.ToInt32( ImportRow[RowRelationship.SourceRelColumnName] ) > 0 )
+                    if( false == string.IsNullOrEmpty( ImportRow[RowRelationship.SourceRelColumnName].ToString() ) && CswConvert.ToInt32( ImportRow[RowRelationship.SourceRelColumnName] ) > 0 )
                     {
                         // We need to search for a node with a legacy id = ImportRow[RowRelationship.SourceRelColumnName]
                         Dictionary<string, int> FKNodeTypes = new Dictionary<string, int>();
