@@ -77,7 +77,7 @@ namespace ChemSW.Nbt.Actions.KioskMode
         [DataMember( Name = "NodeId" )]
         public string NodeIdStr
         {
-            get { return _NodeId.ToString(); }
+            get { return ( null != _NodeId ) ? _NodeId.ToString() : string.Empty; }
             set { _NodeId = CswConvert.ToPrimaryKey( value ); }
         }
 
