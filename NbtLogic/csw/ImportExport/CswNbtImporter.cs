@@ -642,11 +642,10 @@ namespace ChemSW.Nbt.ImportExport
                             || Binding.DestProperty.getFieldTypeValue() == CswEnumNbtFieldType.Location )
                 {
                     CswCommaDelimitedString inClause = new CswCommaDelimitedString();
-                    Dictionary<string, int> FKNodeTypes = new Dictionary<string, int>();
+
                     if( Binding.DestProperty.FKType == CswEnumNbtViewRelatedIdType.NodeTypeId.ToString() )
                     {
                         inClause.Add( Binding.DestProperty.FKValue.ToString() );
-                        FKNodeTypes.Add( _CswNbtResources.MetaData.getNodeType( Binding.DestProperty.FKValue ).NodeTypeName, Binding.DestProperty.FKValue );
                     }
                     else if( Binding.DestProperty.FKType == CswEnumNbtViewRelatedIdType.ObjectClassId.ToString() )
                     {
@@ -654,7 +653,6 @@ namespace ChemSW.Nbt.ImportExport
                         foreach( CswNbtMetaDataNodeType nt in oc.getNodeTypes() )
                         {
                             inClause.Add( nt.NodeTypeId.ToString() );
-                            FKNodeTypes.Add( nt.NodeTypeName, nt.NodeTypeId );
                         }
                     }
                     else if( Binding.DestProperty.FKType == CswEnumNbtViewRelatedIdType.PropertySetId.ToString() )
@@ -665,7 +663,6 @@ namespace ChemSW.Nbt.ImportExport
                             foreach( CswNbtMetaDataNodeType nt in oc.getNodeTypes() )
                             {
                                 inClause.Add( nt.NodeTypeId.ToString() );
-                                FKNodeTypes.Add( nt.NodeTypeName, nt.NodeTypeId );
                             }
                         }
                     }
@@ -679,8 +676,7 @@ namespace ChemSW.Nbt.ImportExport
                                                                            ImportRow[Binding.SourceColumnName].ToString(),
                                                                            Binding.DestProperty.getFieldTypeValue(),
                                                                            Binding.DestNodeTypeName,
-                                                                           Binding.DestProperty,
-                                                                           FKNodeTypes );
+                                                                           Binding.DestProperty );
                     }
                     if( false == MatchedOnLegacyId )
                     {
@@ -716,8 +712,7 @@ namespace ChemSW.Nbt.ImportExport
                                                         ImportRow[RowRelationship.SourceRelColumnName].ToString(),
                                                         RowRelationship.Relationship.getFieldTypeValue(),
                                                         RowRelationship.NodeTypeName,
-                                                        RowRelationship.Relationship,
-                                                        FKNodeTypes );
+                                                        RowRelationship.Relationship );
                     }
                 }
                 else
@@ -750,55 +745,72 @@ namespace ChemSW.Nbt.ImportExport
 
         // This should actually set the value if there is one and return true if it was set and false if not
         //private bool _relationshipSearchViaLegacyId( CswNbtNode Node, string LegacyId, CswNbtImportDefBinding Binding, Dictionary<string, int> FKNodeTypes )
-        private bool _relationshipSearchViaLegacyId( CswNbtNode Node, string LegacyId, CswEnumNbtFieldType FieldType, string DestNodeTypeName, CswNbtMetaDataNodeTypeProp NodeTypeProp, Dictionary<string, int> FKNodeTypes )
+        private bool _relationshipSearchViaLegacyId( CswNbtNode Node, string LegacyId, CswEnumNbtFieldType FieldType, string DestNodeTypeName, CswNbtMetaDataNodeTypeProp NodeTypeProp )
         {
             bool Ret = false;
 
             if( false == string.IsNullOrEmpty( LegacyId ) )
             {
-                // TODO: Create view using relationship target (PS, OC, NT)
-                Int32 NodeTypeId = FKNodeTypes[FKNodeTypes.Keys.First()];
-
                 CswNbtView View = new CswNbtView( _CswNbtResources );
                 View.ViewName = "MatchingLegacyId_View";
 
-                CswNbtMetaDataNodeType CurrentNodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
-                if( null != CurrentNodeType )
+                CswNbtViewRelationship ParentRelationship = null;
+                ICswNbtMetaDataProp MetaDataProp = null;
+
+                switch( NodeTypeProp.FKType )
                 {
-                    CswNbtMetaDataNodeTypeProp LegacyIdNTP = CurrentNodeType.getNodeTypeProp( "Legacy Id" );
-                    CswNbtViewRelationship ParentRelationship = View.AddViewRelationship( CurrentNodeType, false );
-                    View.AddViewPropertyAndFilter( ParentViewRelationship: ParentRelationship,
-                                                  MetaDataProp: LegacyIdNTP,
-                                                  Conjunction: CswEnumNbtFilterConjunction.And,
-                                                  SubFieldName: CswEnumNbtSubFieldName.Value,
-                                                  FilterMode: CswEnumNbtFilterMode.Equals,
-                                                  Value: LegacyId );
+                    case "PropertySetId":
+                        CswNbtMetaDataPropertySet PropertySet = _CswNbtResources.MetaData.getPropertySet( NodeTypeProp.FKValue );
+                        MetaDataProp =
+                            PropertySet.getObjectClasses()
+                                       .FirstOrDefault()
+                                       .getNodeTypes()
+                                       .FirstOrDefault()
+                                       .getNodeTypeProp( "Legacy Id" );
+                        ParentRelationship = View.AddViewRelationship( PropertySet, false );
+                        break;
+                    case "ObjectClassId":
+                        CswNbtMetaDataObjectClass ObjectClass = _CswNbtResources.MetaData.getObjectClass( NodeTypeProp.FKValue );
+                        MetaDataProp = ObjectClass.getNodeTypes().FirstOrDefault().getNodeTypeProp( "Legacy Id" );
+                        ParentRelationship = View.AddViewRelationship( ObjectClass, false );
+                        break;
+                    case "NodeTypeId":
+                        CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeProp.FKValue );
+                        MetaDataProp = NodeType.getNodeTypeProp( "Legacy Id" );
+                        ParentRelationship = View.AddViewRelationship( NodeType, false );
+                        break;
+                }
 
-                    ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, false, true, true );
-                    if( Tree.getChildNodeCount() > 0 )
+                View.AddViewPropertyAndFilter( ParentViewRelationship: ParentRelationship,
+                                              MetaDataProp: MetaDataProp,
+                                              Conjunction: CswEnumNbtFilterConjunction.And,
+                                              SubFieldName: CswEnumNbtSubFieldName.Value,
+                                              FilterMode: CswEnumNbtFilterMode.Equals,
+                                              Value: LegacyId );
+
+                ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, false, true, true );
+                if( Tree.getChildNodeCount() > 0 )
+                {
+                    // Get the Node
+                    Tree.goToNthChild( 0 );
+
+                    // Set the relationship property to the nodeid of the found node
+                    Node.Properties[NodeTypeProp].SetPropRowValue( NodeTypeProp.getFieldTypeRule().SubFields[CswEnumNbtSubFieldName.NodeID].Column, Tree.getNodeIdForCurrentPosition().PrimaryKey );
+
+                    // Refresh
+                    if( FieldType == CswEnumNbtFieldType.Relationship )
                     {
-                        // Get the Node
-                        Tree.goToNthChild( 0 );
+                        Node.Properties[NodeTypeProp].AsRelationship.RefreshNodeName();
+                    }
+                    if( FieldType == CswEnumNbtFieldType.Location )
+                    {
+                        Node.Properties[NodeTypeProp].AsLocation.RefreshNodeName();
+                    }
+                    Node.Properties[NodeTypeProp].SyncGestalt();
 
-                        // Set the relationship property to the nodeid of the found node
-                        Node.Properties[NodeTypeProp].SetPropRowValue( NodeTypeProp.getFieldTypeRule().SubFields[CswEnumNbtSubFieldName.NodeID].Column, Tree.getNodeIdForCurrentPosition().PrimaryKey );
+                    Ret = true;
 
-                        // Refresh
-                        if( FieldType == CswEnumNbtFieldType.Relationship )
-                        {
-                            Node.Properties[NodeTypeProp].AsRelationship.RefreshNodeName();
-                        }
-                        if( FieldType == CswEnumNbtFieldType.Location )
-                        {
-                            Node.Properties[NodeTypeProp].AsLocation.RefreshNodeName();
-                        }
-                        Node.Properties[NodeTypeProp].SyncGestalt();
-
-                        Ret = true;
-
-                    }//if (Tree.getChildNodeCount() > 0)
-
-                }//if( null != CurrentNodeType )
+                }//if (Tree.getChildNodeCount() > 0)
 
             }//if( false == string.IsNullOrEmpty( LegacyId ) )
 
