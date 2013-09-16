@@ -13,7 +13,7 @@ namespace ChemSW.Nbt.Schema
 
         public override string ScriptName
         {
-            get { return "Location's Inventory Group = Required"; }
+            get { return "Locations Inventory Group = Required"; }
         }
 
         #region Blame Logic
