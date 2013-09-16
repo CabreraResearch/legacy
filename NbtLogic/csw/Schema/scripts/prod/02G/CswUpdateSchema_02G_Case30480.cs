@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Linq;
 using ChemSW.Core;
 using ChemSW.Nbt.csw.Dev;
@@ -33,6 +34,7 @@ namespace ChemSW.Nbt.Schema
         public override void update()
         {
             CswNbtMetaDataObjectClass InventoryGroupOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.InventoryGroupClass );
+            CswNbtMetaDataObjectClass InventoryGroupPermissisonOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.InventoryGroupPermissionClass );
 
             //1: Get Default Inventory Group
             CswNbtObjClassInventoryGroup DefaultInventoryGroup = null;
@@ -73,7 +75,6 @@ namespace ChemSW.Nbt.Schema
 
                 //4: Ensure at least one Inventory Group Permission exists
                 {
-                    CswNbtMetaDataObjectClass InventoryGroupPermissisonOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.InventoryGroupPermissionClass );
                     CswNbtView IgPermitView = _CswNbtSchemaModTrnsctn.makeView();
                     IgPermitView.AddViewRelationship( InventoryGroupPermissisonOc, IncludeDefaultFilters: false );
                     ICswNbtTree Tree = _CswNbtSchemaModTrnsctn.getTreeFromView( IgPermitView, IncludeSystemNodes: false );
@@ -117,22 +118,34 @@ namespace ChemSW.Nbt.Schema
                             }
                         }
                     }
-                    CswNbtObjClassRole ChemSwAdmin = _CswNbtSchemaModTrnsctn.Nodes.makeRoleNodeFromRoleName( CswNbtObjClassRole.ChemSWAdminRoleName );
-                    foreach( CswNbtMetaDataNodeType InventoryGroupNT in InventoryGroupOc.getNodeTypes() )
-                    {
-                        CswEnumNbtNodeTypePermission[] NtPermissions = {CswEnumNbtNodeTypePermission.Create, CswEnumNbtNodeTypePermission.Edit, CswEnumNbtNodeTypePermission.View, CswEnumNbtNodeTypePermission.Delete};
-                        CswEnumNbtNodeTypeTabPermission[] NtTabPermissions = {CswEnumNbtNodeTypeTabPermission.Edit, CswEnumNbtNodeTypeTabPermission.View};
 
+                    CswEnumNbtNodeTypePermission[] NtPermissions = { CswEnumNbtNodeTypePermission.Create, CswEnumNbtNodeTypePermission.Edit, CswEnumNbtNodeTypePermission.View, CswEnumNbtNodeTypePermission.Delete };
+                    CswEnumNbtNodeTypeTabPermission[] NtTabPermissions = { CswEnumNbtNodeTypeTabPermission.Edit, CswEnumNbtNodeTypeTabPermission.View };
+                    CswNbtObjClassRole ChemSwAdmin = _CswNbtSchemaModTrnsctn.Nodes.makeRoleNodeFromRoleName( CswNbtObjClassRole.ChemSWAdminRoleName );
+                    
+                    Func<CswNbtMetaDataNodeType,bool> SetPerms = ( NodeType ) =>
+                    {
                         foreach( CswNbtObjClassRole Role in Roles )
                         {
-                            _CswNbtSchemaModTrnsctn.Permit.set( NtPermissions, InventoryGroupNT, Role, false );
-                            foreach( CswNbtMetaDataNodeTypeTab Tab in InventoryGroupNT.getNodeTypeTabs() )
+                            _CswNbtSchemaModTrnsctn.Permit.set( NtPermissions, NodeType, Role, false );
+                            foreach( CswNbtMetaDataNodeTypeTab Tab in NodeType.getNodeTypeTabs() )
                             {
                                 _CswNbtSchemaModTrnsctn.Permit.set( NtTabPermissions, Tab, Role, false );
                             }
                         }
 
-                        _CswNbtSchemaModTrnsctn.Permit.set( NtPermissions, InventoryGroupNT, ChemSwAdmin, true );
+                        _CswNbtSchemaModTrnsctn.Permit.set( NtPermissions, NodeType, ChemSwAdmin, true );
+                        return false;
+                    };
+                    
+                    foreach( CswNbtMetaDataNodeType InventoryGroupNT in InventoryGroupOc.getNodeTypes() )
+                    {
+                        SetPerms( InventoryGroupNT );
+                    }
+
+                    foreach( CswNbtMetaDataNodeType InventoryGroupPermNT in InventoryGroupPermissisonOc.getNodeTypes() )
+                    {
+                        SetPerms( InventoryGroupPermNT );
                     }
                 }
             }
