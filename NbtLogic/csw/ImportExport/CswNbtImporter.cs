@@ -677,7 +677,6 @@ namespace ChemSW.Nbt.ImportExport
                     // If the subfield isn't set to NodeID, then we don't need to look up the Legacy Id
                     bool MatchedOnLegacyId = false;
                     if( Binding.DestSubFieldName == CswEnumNbtSubFieldName.NodeID.ToString() )
-                        Node.Properties[Binding.DestProperty].SetSubFieldValue( CswEnumNbtSubFieldName.NodeID, Tree.getNodeIdForCurrentPosition().PrimaryKey );
                     {
                         // First we use a view to search on the Legacy Id and if it returns no results then we search on the Name
                         MatchedOnLegacyId = _relationshipSearchViaLegacyId( Node,
@@ -695,8 +694,6 @@ namespace ChemSW.Nbt.ImportExport
                 }
                 else
                 {
-                    //Node.Properties[Binding.DestProperty].SetPropRowValue( Binding.DestSubfield.Column, ImportRow[Binding.ImportDataColumnName].ToString() );
-                    //Node.Properties[Binding.DestProperty].SyncGestalt();
                     Node.Properties[Binding.DestProperty].SetSubFieldValue( Binding.DestSubfield, ImportRow[Binding.ImportDataColumnName].ToString() );
                 }
             }//foreach( CswNbtImportDefBinding Binding in NodeTypeBindings )
@@ -729,11 +726,11 @@ namespace ChemSW.Nbt.ImportExport
                     // In this case, we are matching on NodeId
                     if( null != TargetOrder && null != ImportRow[TargetOrder.PkColName] && CswConvert.ToInt32( ImportRow[TargetOrder.PkColName] ) > 0 )
                     {
-                    //Node.Properties[RowRelationship.Relationship].SetPropRowValue(
-                    //    RowRelationship.Relationship.getFieldTypeRule().SubFields[CswEnumNbtSubFieldName.NodeID].Column,
-                    //    ImportRow[TargetOrder.PkColName]
-                    //    );
-                    Node.Properties[RowRelationship.Relationship].SetSubFieldValue( CswEnumNbtSubFieldName.NodeID, ImportRow[TargetOrder.PkColName] );
+                        //Node.Properties[RowRelationship.Relationship].SetPropRowValue(
+                        //    RowRelationship.Relationship.getFieldTypeRule().SubFields[CswEnumNbtSubFieldName.NodeID].Column,
+                        //    ImportRow[TargetOrder.PkColName]
+                        //    );
+                        Node.Properties[RowRelationship.Relationship].SetSubFieldValue( CswEnumNbtSubFieldName.NodeID, ImportRow[TargetOrder.PkColName] );
 
                         if( RowRelationship.Relationship.getFieldTypeValue() == CswEnumNbtFieldType.Relationship )
                         {
@@ -806,7 +803,7 @@ namespace ChemSW.Nbt.ImportExport
                     Tree.goToNthChild( 0 );
 
                     // Set the relationship property to the nodeid of the found node
-                    Node.Properties[NodeTypeProp].SetPropRowValue( NodeTypeProp.getFieldTypeRule().SubFields[CswEnumNbtSubFieldName.NodeID].Column, Tree.getNodeIdForCurrentPosition().PrimaryKey );
+                    Node.Properties[NodeTypeProp].SetSubFieldValue( CswEnumNbtSubFieldName.NodeID, Tree.getNodeIdForCurrentPosition().PrimaryKey );
 
                     // Refresh
                     if( FieldType == CswEnumNbtFieldType.Relationship )
