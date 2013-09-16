@@ -1,5 +1,6 @@
 ﻿using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.csw.Schema;
+using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.Schema
@@ -54,15 +55,12 @@ namespace ChemSW.Nbt.Schema
                 UserImpMgr.importBinding( "defaultlanguage", CswNbtObjClassUser.PropertyName.Language, "" );
                 UserImpMgr.importBinding( "phone", CswNbtObjClassUser.PropertyName.Phone, "" );
                 UserImpMgr.importBinding( "username", CswNbtObjClassUser.PropertyName.Username, "" );
+                //UserImpMgr.importBinding( "workunitid", CswNbtObjClassUser.PropertyName.AvailableWorkUnits, "" );
 
                 // Relationships
-                UserImpMgr.importBinding( "defaultlocationid", CswNbtObjClassUser.PropertyName.DefaultLocation, "" );
-                //UserImpMgr.importBinding( "homeinventorygroupid", CswNbtObjClassUser.PropertyName. );
-                UserImpMgr.importBinding( "roleid", CswNbtObjClassUser.PropertyName.Role, "" );
-                UserImpMgr.importBinding( "workunitid", CswNbtObjClassUser.PropertyName.WorkUnit, "" );
-
-
-                //TODO: complete relationships
+                UserImpMgr.importBinding( "defaultlocationid", CswNbtObjClassUser.PropertyName.DefaultLocation, CswEnumNbtSubFieldName.NodeID.ToString() );
+                UserImpMgr.importBinding( "roleid", CswNbtObjClassUser.PropertyName.Role, CswEnumNbtSubFieldName.NodeID.ToString() );
+                //UserImpMgr.importBinding( "workunitid", CswNbtObjClassUser.PropertyName.WorkUnit, CswEnumNbtSubFieldName.NodeID.ToString() );
 
                 /*
                    +defaultlocationid, 
