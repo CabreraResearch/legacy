@@ -20,13 +20,13 @@ namespace ChemSW.Nbt.csw.Schema
                 {"cispro_controlzones", 1},
                 {"work_units", 2},
                 {"inventory_groups", 3},
-                {"locations", 4}
-                //{"units_of_measure", 5},
-                //{"vendors", 6},
-                //{"roles", 7},
-                //{"users", 8},
-                //{"regulatory_lists", 9},
-                //{"regulated_casnos", 10}
+                {"locations", 4},
+                {"units_of_measure", 5},
+                {"vendors", 6},
+                {"roles", 7},
+                {"users", 8},
+                {"regulatory_lists", 9},
+                {"regulated_casnos", 10}
             };
 
         private DataTable _importDefTable;

@@ -56,6 +56,7 @@ namespace ChemSW.Nbt.Schema
             LocationsMgr.importBinding( "sitecode", CswNbtObjClassLocation.PropertyName.LocationCode, "", LocationSheetName, SiteNTName, 1 );
             LocationsMgr.importBinding( "siteid", "Legacy ID", "", LocationSheetName, SiteNTName, 1 );
             LocationsMgr.importBinding( "controlzoneid", CswNbtObjClassLocation.PropertyName.ControlZone, CswEnumNbtSubFieldName.NodeID.ToString(), LocationSheetName, SiteNTName, 1 );
+            LocationsMgr.importBinding( "allowinventory", CswNbtObjClassLocation.PropertyName.AllowInventory, "", LocationSheetName, SiteNTName, 1 );
             #endregion
 
             #region Building
@@ -64,6 +65,7 @@ namespace ChemSW.Nbt.Schema
             LocationsMgr.importBinding( "buildingid", "Legacy ID", "", LocationSheetName, BuildingNTName, 2 );
             LocationsMgr.importBinding( "inventorygroupid", CswNbtObjClassLocation.PropertyName.InventoryGroup, CswEnumNbtSubFieldName.NodeID.ToString(), LocationSheetName, BuildingNTName, 2 );
             LocationsMgr.importBinding( "controlzoneid", CswNbtObjClassLocation.PropertyName.ControlZone, CswEnumNbtSubFieldName.NodeID.ToString(), LocationSheetName, BuildingNTName, 2 );
+            LocationsMgr.importBinding( "allowinventory", CswNbtObjClassLocation.PropertyName.AllowInventory, "", LocationSheetName, BuildingNTName, 2 );
             #endregion
 
             #region Room
@@ -72,6 +74,7 @@ namespace ChemSW.Nbt.Schema
             LocationsMgr.importBinding( "roomid", "Legacy ID", "", LocationSheetName, RoomNTName, 3 );
             LocationsMgr.importBinding( "inventorygroupid", CswNbtObjClassLocation.PropertyName.InventoryGroup, CswEnumNbtSubFieldName.NodeID.ToString(), LocationSheetName, RoomNTName, 3 );
             LocationsMgr.importBinding( "controlzoneid", CswNbtObjClassLocation.PropertyName.ControlZone, CswEnumNbtSubFieldName.NodeID.ToString(), LocationSheetName, RoomNTName, 3 );
+            LocationsMgr.importBinding( "allowinventory", CswNbtObjClassLocation.PropertyName.AllowInventory, "", LocationSheetName, RoomNTName, 3 );
             #endregion
 
             #region Cabinet
@@ -80,6 +83,7 @@ namespace ChemSW.Nbt.Schema
             LocationsMgr.importBinding( "cabinetid", "Legacy ID", "", LocationSheetName, CabinetNTName, 4 );
             LocationsMgr.importBinding( "inventorygroupid", CswNbtObjClassLocation.PropertyName.InventoryGroup, CswEnumNbtSubFieldName.NodeID.ToString(), LocationSheetName, CabinetNTName, 4 );
             LocationsMgr.importBinding( "controlzoneid", CswNbtObjClassLocation.PropertyName.ControlZone, CswEnumNbtSubFieldName.NodeID.ToString(), LocationSheetName, CabinetNTName, 4 );
+            LocationsMgr.importBinding( "allowinventory", CswNbtObjClassLocation.PropertyName.AllowInventory, "", LocationSheetName, CabinetNTName, 4 );
             #endregion
 
             #region Shelf
@@ -88,6 +92,7 @@ namespace ChemSW.Nbt.Schema
             LocationsMgr.importBinding( "shelfid", "Legacy ID", "", LocationSheetName, ShelfNTName, 5 );
             LocationsMgr.importBinding( "inventorygroupid", CswNbtObjClassLocation.PropertyName.InventoryGroup, CswEnumNbtSubFieldName.NodeID.ToString(), LocationSheetName, ShelfNTName, 5 );
             LocationsMgr.importBinding( "controlzoneid", CswNbtObjClassLocation.PropertyName.ControlZone, CswEnumNbtSubFieldName.NodeID.ToString(), LocationSheetName, ShelfNTName, 5 );
+            LocationsMgr.importBinding( "allowinventory", CswNbtObjClassLocation.PropertyName.AllowInventory, "", LocationSheetName, ShelfNTName, 5 );
             #endregion
 
             #region Box
@@ -96,6 +101,7 @@ namespace ChemSW.Nbt.Schema
             LocationsMgr.importBinding( "boxid", "Legacy ID", "", LocationSheetName, BoxNTName, 6 );
             LocationsMgr.importBinding( "inventorygroupid", CswNbtObjClassLocation.PropertyName.InventoryGroup, CswEnumNbtSubFieldName.NodeID.ToString(), LocationSheetName, BoxNTName, 6 );
             LocationsMgr.importBinding( "controlzoneid", CswNbtObjClassLocation.PropertyName.ControlZone, CswEnumNbtSubFieldName.NodeID.ToString(), LocationSheetName, BoxNTName, 6 );
+            LocationsMgr.importBinding( "allowinventory", CswNbtObjClassLocation.PropertyName.AllowInventory, "", LocationSheetName, BoxNTName, 6 );
             #endregion
 
             //Relationships
