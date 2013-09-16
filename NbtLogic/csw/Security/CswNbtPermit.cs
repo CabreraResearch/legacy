@@ -1164,7 +1164,9 @@ namespace ChemSW.Nbt.Security
                 {
                     CswNbtPropertySetPermission PermNode = User.getPermissionForGroup( PermissionGroupId );
                     //Case 30480: Only use InventoryGroupPermission if checking against Containers
-                    if( null == NodeType || ( NodeType.getObjectClass().ObjectClass != CswEnumNbtObjectClass.ContainerClass && PermNode.ObjectClass.ObjectClass != CswEnumNbtObjectClass.InventoryGroupPermissionClass ) )
+                    if( null == NodeType ||
+                        PermNode.ObjectClass.ObjectClass != CswEnumNbtObjectClass.InventoryGroupPermissionClass ||
+                        NodeType.getObjectClass().ObjectClass == CswEnumNbtObjectClass.ContainerClass )
                     {
                         if( null != PermNode )
                         {
