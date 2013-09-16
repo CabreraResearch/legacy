@@ -8,8 +8,8 @@ using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.Conversion;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
-using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.PropertySets;
+using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 using ChemSW.Nbt.ServiceDrivers;
 using ChemSW.Nbt.UnitsOfMeasure;
@@ -270,6 +270,18 @@ namespace ChemSW.Nbt.ObjClasses
                         {
                             CswNbtActRequesting RequestAct = new CswNbtActRequesting( _CswNbtResources );
                             HasPermission = true;
+                            if( false == CswEnumNbtContainerRequestMenu.Options.Contains(ButtonData.SelectedText, CaseSensitive: false) )
+                            {
+                                //Case 30718: Default Option Text "Dispense" != "Request Dispense"
+                                if( ButtonData.SelectedText == "Dispense" )
+                                {
+                                    ButtonData.SelectedText = CswEnumNbtContainerRequestMenu.Dispense;
+                                }
+                                else
+                                {
+                                    throw new CswDniException( "Could not find matching Container Button Action for " + ButtonData.SelectedText );
+                                }
+                            }
 
                             CswNbtPropertySetRequestItem NodeAsPropSet = RequestAct.makeContainerRequestItem( this, ButtonData );
 
