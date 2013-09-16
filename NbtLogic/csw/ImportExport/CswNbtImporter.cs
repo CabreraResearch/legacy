@@ -279,7 +279,14 @@ namespace ChemSW.Nbt.ImportExport
                 {
                     foreach( CswNbtImportDefOrder Order in BindingDef.ImportOrder.Values )
                     {
-                        _ImportOneRow( SourceRow, BindingDef, Order, Overwrite, null );
+                        try
+                        {
+                            _ImportOneRow( SourceRow, BindingDef, Order, Overwrite, null );
+                        }
+                        catch( Exception e )
+                        {
+                            Error = "Failed to import row: " + e.Message;
+                        }
                     }
                 } // if( Bindings.Count > 0 && ImportOrder.count > 0)
                 else
