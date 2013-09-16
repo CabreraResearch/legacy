@@ -55,7 +55,7 @@ namespace ChemSW.Nbt.Schema
                 UserImpMgr.importBinding( "defaultlanguage", CswNbtObjClassUser.PropertyName.Language, "" );
                 UserImpMgr.importBinding( "phone", CswNbtObjClassUser.PropertyName.Phone, "" );
                 UserImpMgr.importBinding( "username", CswNbtObjClassUser.PropertyName.Username, "" );
-                UserImpMgr.importBinding( "workunitid", CswNbtObjClassUser.PropertyName.AvailableWorkUnits, "" );
+                //UserImpMgr.importBinding( "workunitid", CswNbtObjClassUser.PropertyName.AvailableWorkUnits, "" );
 
                 // Relationships
                 UserImpMgr.importBinding( "defaultlocationid", CswNbtObjClassUser.PropertyName.DefaultLocation, CswEnumNbtSubFieldName.NodeID.ToString() );
