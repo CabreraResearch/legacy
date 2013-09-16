@@ -775,9 +775,7 @@ namespace ChemSW.Nbt.Actions
                             RetAsRequestItem.Type.Value = CswNbtObjClassRequestMaterialDispense.Types.Bulk;
                             break;
                     }
-                    RetAsRequestItem.postChanges( ForceUpdate: false );
                 } );
-
             }
             return Ret;
         }

@@ -2076,25 +2076,6 @@ namespace ChemSW.Nbt.WebPages
                             EditPropPlaceHolder.Controls.Add( LocationFkValue );
                             break;
 
-                        case CswEnumNbtFieldType.LocationContents:
-                            TableRow LCViewXmlRow = makeEditPropTableRow( EditPropPlaceHolder );
-                            ( (Literal) LCViewXmlRow.Cells[0].Controls[0] ).Text = "View:";
-                            CswNbtView LCView = Master.CswNbtResources.ViewSelect.restoreView( SelectedNodeTypeProp.ViewId );
-
-                            CswViewStructureTree LCViewTree = new CswViewStructureTree( Master.CswNbtResources );
-                            LCViewTree.ID = "LCViewTree";
-                            LCViewTree.OnError += new CswErrorHandler( Master.HandleError );
-                            LCViewTree.reinitTreeFromView( LCView, null, null, CswViewStructureTree.ViewTreeSelectType.None );
-                            LCViewXmlRow.Cells[1].Controls.Add( LCViewTree );
-
-                            Button EditLCViewButton = new Button();
-                            EditLCViewButton.ID = "EditLCViewButton";
-                            EditLCViewButton.CssClass = "Button";
-                            EditLCViewButton.OnClientClick = "window.location='Main.html?action=Edit_View&startingStep=2&IgnoreReturn=1&viewid=" + LCView.ViewId + "';";
-                            EditLCViewButton.Text = "Edit View";
-                            LCViewXmlRow.Cells[1].Controls.Add( EditLCViewButton );
-                            break;
-
                         case CswEnumNbtFieldType.LogicalSet:
                             TableRow LSRowsRow = makeEditPropTableRow( EditPropPlaceHolder );
                             ( (Literal) LSRowsRow.Cells[0].Controls[0] ).Text = "Rows:";
@@ -2987,7 +2968,6 @@ namespace ChemSW.Nbt.WebPages
                         FieldType.FieldType != CswEnumNbtFieldType.File &&
                         FieldType.FieldType != CswEnumNbtFieldType.Grid &&
                         FieldType.FieldType != CswEnumNbtFieldType.Image &&
-                        FieldType.FieldType != CswEnumNbtFieldType.LocationContents &&
                         FieldType.FieldType != CswEnumNbtFieldType.PropertyReference &&
                         FieldType.FieldType != CswEnumNbtFieldType.Static &&
                         FieldType.FieldType != CswEnumNbtFieldType.Composite &&
@@ -3009,7 +2989,6 @@ namespace ChemSW.Nbt.WebPages
                     //    FieldType.FieldType != CswEnumNbtFieldType.File &&
                     //    FieldType.FieldType != CswEnumNbtFieldType.Grid &&
                     //    FieldType.FieldType != CswEnumNbtFieldType.Image &&
-                    //    FieldType.FieldType != CswEnumNbtFieldType.LocationContents &&
                     //    FieldType.FieldType != CswEnumNbtFieldType.PropertyReference &&
                     //    FieldType.FieldType != CswEnumNbtFieldType.Composite &&
                     //    FieldType.FieldType != CswEnumNbtFieldType.MOL )

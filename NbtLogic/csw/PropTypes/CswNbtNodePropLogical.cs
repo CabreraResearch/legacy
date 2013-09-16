@@ -39,7 +39,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return CswConvert.ToTristate( GetPropRowValue( _CheckedSubField ) );
+                return CswConvert.ToTristate( GetPropRowValue( _CheckedSubField ), Required );
             }
             set
             {
@@ -84,20 +84,20 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
-            ParentObject[_CheckedSubField.ToXmlNodeName( true )] = Checked.ToString().ToLower();
             ParentObject[CswEnumNbtSubFieldName.Required.ToString()] = Required;
+            ParentObject[_CheckedSubField.ToXmlNodeName( true )] = Checked.ToString().ToLower();
         }
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            Checked = CswConvert.ToTristate( PropRow[_CheckedSubField.ToXmlNodeName()] );
+            Checked = CswConvert.ToTristate( PropRow[_CheckedSubField.ToXmlNodeName()], Required );
         }
 
         public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
             if( null != JObject[_CheckedSubField.ToXmlNodeName( true )] )
             {
-                Checked = CswConvert.ToTristate( JObject[_CheckedSubField.ToXmlNodeName( true )].ToString() );
+                Checked = CswConvert.ToTristate( JObject[_CheckedSubField.ToXmlNodeName( true )].ToString(), Required );
             }
         }
 

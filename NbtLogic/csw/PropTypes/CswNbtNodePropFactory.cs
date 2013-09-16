@@ -83,9 +83,6 @@ namespace ChemSW.Nbt.PropTypes
                 case CswEnumNbtFieldType.Location:
                     InnerProperty = new CswNbtNodePropLocation( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node );
                     break;
-                case CswEnumNbtFieldType.LocationContents:
-                    InnerProperty = new CswNbtNodePropLocationContents( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node );
-                    break;
                 case CswEnumNbtFieldType.Logical:
                     InnerProperty = new CswNbtNodePropLogical( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node );
                     break;
