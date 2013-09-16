@@ -40,7 +40,7 @@ namespace ChemSW.Nbt.Actions.KioskMode
 
         public override void CommitOperation( ref OperationData OpData )
         {
-            CswNbtObjClassContainer containerToDispose = _getNodeByBarcode( CswEnumNbtObjectClass.ContainerClass, OpData.Field1.Value, false );
+            CswNbtObjClassContainer containerToDispose = _CswNbtResources.Nodes[OpData.Field1.NodeId];
             if( _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Edit, containerToDispose.NodeType ) && _CswNbtResources.Permit.can( CswEnumNbtActionName.DisposeContainer ) )
             {
                 if( CswEnumTristate.True == containerToDispose.Disposed.Checked )
@@ -75,6 +75,8 @@ namespace ChemSW.Nbt.Actions.KioskMode
             ICswNbtTree tree = _getTree( CswEnumNbtObjectClass.ContainerClass, OpData.Field1.Value, false );
             if( tree.getChildNodeCount() > 0 )
             {
+                tree.goToNthChild( 0 );
+                OpData.Field1.NodeIdStr = tree.getNodeIdForCurrentPosition().ToString();
                 ret = true;
             }
             else
