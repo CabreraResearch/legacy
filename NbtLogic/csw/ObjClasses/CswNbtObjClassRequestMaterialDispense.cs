@@ -1,3 +1,4 @@
+using System;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropertySets;
@@ -5,7 +6,6 @@ using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.ServiceDrivers;
 using ChemSW.Nbt.UnitsOfMeasure;
 using Newtonsoft.Json.Linq;
-using System;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -538,7 +538,7 @@ namespace ChemSW.Nbt.ObjClasses
                     Fulfill.State = FulfillMenu.Move;
                     Quantity.clearQuantity( ForceClear : true );
                     break;
-                case Types.Bulk:
+                default: //Bulk
                     Fulfill.MenuOptions = FulfillMenu.Options.Remove( FulfillMenu.Move ).ToString();
                     Fulfill.State = FulfillMenu.Dispense;
                     Size.clearRelationship();

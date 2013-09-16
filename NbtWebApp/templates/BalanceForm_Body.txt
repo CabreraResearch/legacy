@@ -46,11 +46,49 @@
                                             </p>
                                             <p>                                        
                                                 <h3>#5 - Switch to the Hardware tab. The devices acessible by serial port should appear in the grid. For each balance for which you want to transfer data to NBT, click the NBT name cell for that row and enter a unique identifier for this balance. Then, select the appropriate balance template from the drop down menu to communicate with this balance. Finally, toggle the enabled checkbox.</h3>
-                                                <br/><img src="NbtBalanceReader/pic5.png"/><br/>If reading from the balance was successful, the --- in the "Current Weight" column should update to show the weight on the balance.
+                                                <br/><img src="NbtBalanceReader/pic5.png"/><br/>If reading from the balance was successful, the --- in the "Current Weight" column should update to show the weight on the balance. At this point, a new "Balance" will automatically appear and be searchable from ChemSW Live.
 												<br /><br /> <h3>You are done!</h3> 
                                             </p>
 
+									<br />
+									<br />
 									
+									<h2>Using Balances in ChemSW Live</h2>
+                                            <p>
+                                                <h3>Setting a Default Balance</h3>
+                                                <br />
+												If you wish for a balance to be automatically displayed when dispensing a container, you may set that balance as your personal default in ChemSW Live. To do so:												
+                                            </p>
+											<p> <h4>#1 - Open the Profile tab of the User popup by clicking 'Preferences > Profile' on the header navigation menu</h4>
+											<br /><img src="NbtBalanceReader/pic6.png"/>
+											</p>
+											<p> <h4>#2 - Click the 'Edit' button next to the 'Default Balance' tab, then select your balance from the picklist of currently active balances</h4>
+											<br /><img src="NbtBalanceReader/pic7.png"/>
+											</p>
+											<p> <h4>#3 - Press the 'Save Changes' button to update your default balance</h4>
+											 <br /><strong>Note: Your new preferences may not take effect until the next time you log in.</strong>
+											</p>
+											<br />
+											<br />
+											
+											<p>
+												<h3>Reading a Balance While Dispensing a Container</h3>
+												<br />
+												To read from a balance while dispensing a container, begin by using the Dispense this Container button normally from the Dispense tab of any Container.
+												<br /><img src="NbtBalanceReader/pic8.png"/>
+											</p>
+											<p><h4>#1 - Progress through dispensing normally by selecting your dispense type</h4>
+											<br /><img src="NbtBalanceReader/pic9.png"/>
+											</p>
+											<p><h4>#2 - During the 'Select Amount(s)' step, click the expand arrow of the 'Read From Balance' button to see a list of all active balances</h4>
+											<br /><img src="NbtBalanceReader/pic10.png"/>
+											<br />Note: only balances which have sent their weight to ChemSW Live in the last ten minutes will be displayed in this list
+											</p>
+											<p><h4>#3 - Choose a balance to set the quantity fields with the balance's current measurement.</h4>
+											<br /><img src="NbtBalanceReader/pic11.png"/>
+											<br />Note: Once you have selected a balance, the text of the button will update to the name of the balance you have selected. You may click the main area of the button to read from the same balance again.
+											
+											
 
                             </td>
 

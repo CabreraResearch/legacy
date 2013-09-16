@@ -32,14 +32,6 @@
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.HardwareTab = new System.Windows.Forms.TabPage();
             this.HardwareGrid = new System.Windows.Forms.DataGridView();
-            this.COM = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.FriendlyName = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.NBTName = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Configuration = new System.Windows.Forms.DataGridViewComboBoxColumn();
-            this.Enabled = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.StableOnly = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.DriftThreshold = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.CurrentWeight = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.refreshHardwareButton = new System.Windows.Forms.Button();
             this.updatePollingButton = new System.Windows.Forms.Button();
             this.pollingFrequencyField = new System.Windows.Forms.NumericUpDown();
@@ -87,6 +79,14 @@
             this.AccessIdField = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.form1BindingSource = new System.Windows.Forms.BindingSource(this.components);
+            this.COM = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.FriendlyName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.NBTName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Configuration = new System.Windows.Forms.DataGridViewComboBoxColumn();
+            this.Enabled = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.StableOnly = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.DriftThreshold = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.CurrentWeight = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.tabControl1.SuspendLayout();
             this.HardwareTab.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.HardwareGrid)).BeginInit();
@@ -146,66 +146,6 @@
             this.HardwareGrid.RowHeadersVisible = false;
             this.HardwareGrid.Size = new System.Drawing.Size(745, 214);
             this.HardwareGrid.TabIndex = 4;
-            // 
-            // COM
-            // 
-            this.COM.HeaderText = "COM";
-            this.COM.Name = "COM";
-            this.COM.ReadOnly = true;
-            this.COM.Visible = false;
-            // 
-            // FriendlyName
-            // 
-            this.FriendlyName.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
-            this.FriendlyName.HeaderText = "Device";
-            this.FriendlyName.Name = "FriendlyName";
-            this.FriendlyName.ReadOnly = true;
-            this.FriendlyName.Width = 66;
-            // 
-            // NBTName
-            // 
-            this.NBTName.FillWeight = 191.6933F;
-            this.NBTName.HeaderText = "NBT Name";
-            this.NBTName.Name = "NBTName";
-            // 
-            // Configuration
-            // 
-            this.Configuration.DisplayStyle = System.Windows.Forms.DataGridViewComboBoxDisplayStyle.ComboBox;
-            this.Configuration.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.Configuration.HeaderText = "Configuration";
-            this.Configuration.Name = "Configuration";
-            // 
-            // Enabled
-            // 
-            this.Enabled.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
-            this.Enabled.FillWeight = 44F;
-            this.Enabled.HeaderText = "Enabled";
-            this.Enabled.Name = "Enabled";
-            this.Enabled.Width = 52;
-            // 
-            // StableOnly
-            // 
-            this.StableOnly.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
-            this.StableOnly.FillWeight = 44F;
-            this.StableOnly.HeaderText = "Stable Reads";
-            this.StableOnly.Name = "StableOnly";
-            this.StableOnly.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.StableOnly.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
-            this.StableOnly.ToolTipText = "Only send data to NBT on a stable measurement";
-            this.StableOnly.Width = 88;
-            // 
-            // DriftThreshold
-            // 
-            this.DriftThreshold.FillWeight = 49.32624F;
-            this.DriftThreshold.HeaderText = "Drift Threshold";
-            this.DriftThreshold.Name = "DriftThreshold";
-            // 
-            // CurrentWeight
-            // 
-            this.CurrentWeight.FillWeight = 68.83578F;
-            this.CurrentWeight.HeaderText = "Current Weight";
-            this.CurrentWeight.Name = "CurrentWeight";
-            this.CurrentWeight.ReadOnly = true;
             // 
             // refreshHardwareButton
             // 
@@ -671,6 +611,66 @@
             // 
             this.form1BindingSource.DataSource = typeof(BalanceReaderClient.Form1);
             // 
+            // COM
+            // 
+            this.COM.HeaderText = "COM";
+            this.COM.Name = "COM";
+            this.COM.ReadOnly = true;
+            this.COM.Visible = false;
+            // 
+            // FriendlyName
+            // 
+            this.FriendlyName.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
+            this.FriendlyName.HeaderText = "Device";
+            this.FriendlyName.Name = "FriendlyName";
+            this.FriendlyName.ReadOnly = true;
+            this.FriendlyName.Width = 66;
+            // 
+            // NBTName
+            // 
+            this.NBTName.FillWeight = 191.6933F;
+            this.NBTName.HeaderText = "ChemSW Live Name *";
+            this.NBTName.Name = "NBTName";
+            // 
+            // Configuration
+            // 
+            this.Configuration.DisplayStyle = System.Windows.Forms.DataGridViewComboBoxDisplayStyle.ComboBox;
+            this.Configuration.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.Configuration.HeaderText = "Configuration *";
+            this.Configuration.Name = "Configuration";
+            // 
+            // Enabled
+            // 
+            this.Enabled.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
+            this.Enabled.FillWeight = 44F;
+            this.Enabled.HeaderText = "Enabled";
+            this.Enabled.Name = "Enabled";
+            this.Enabled.Width = 52;
+            // 
+            // StableOnly
+            // 
+            this.StableOnly.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
+            this.StableOnly.FillWeight = 44F;
+            this.StableOnly.HeaderText = "Stable Reads";
+            this.StableOnly.Name = "StableOnly";
+            this.StableOnly.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.StableOnly.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
+            this.StableOnly.ToolTipText = "Only send data to NBT on a stable measurement";
+            this.StableOnly.Width = 96;
+            // 
+            // DriftThreshold
+            // 
+            this.DriftThreshold.FillWeight = 49.32624F;
+            this.DriftThreshold.HeaderText = "Drift Threshold";
+            this.DriftThreshold.Name = "DriftThreshold";
+            // 
+            // CurrentWeight
+            // 
+            this.CurrentWeight.FillWeight = 68.83578F;
+            this.CurrentWeight.HeaderText = "Current Weight";
+            this.CurrentWeight.Name = "CurrentWeight";
+            this.CurrentWeight.ReadOnly = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -678,7 +678,7 @@
             this.ClientSize = new System.Drawing.Size(774, 455);
             this.Controls.Add(this.tabControl1);
             this.Name = "Form1";
-            this.Text = "Balance Reader Client v1.0.1";
+            this.Text = "Balance Reader Client v1.0.2";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.tabControl1.ResumeLayout(false);
             this.HardwareTab.ResumeLayout(false);
