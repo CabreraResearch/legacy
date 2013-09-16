@@ -237,6 +237,15 @@ namespace ChemSW.Nbt.PropTypes
             SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, CachedValue.ToString() + " " + Units.ToString() );
         }
 
+        public override bool onBeforeSetDefault()
+        {
+            if( DefaultToToday )
+            {
+                StartDateTime = DateTime.Now;
+            }
+            return false;
+        }
+
     }//CswNbtNodePropMTBF
 
 }//namespace ChemSW.Nbt.PropTypes
