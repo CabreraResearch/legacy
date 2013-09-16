@@ -1,0 +1,137 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using ChemSW.Core;
+using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.MetaData.FieldTypeRules;
+using ChemSW.Nbt.ObjClasses;
+using Newtonsoft.Json.Linq;
+
+namespace ChemSW.Nbt.PropTypes
+{
+
+
+    public class CswNbtNodePropFormula: CswNbtNodeProp
+    {
+
+        public static implicit operator CswNbtNodePropFormula( CswNbtNodePropWrapper PropWrapper )
+        {
+            return PropWrapper.AsFormula;
+        }
+
+        public CswNbtNodePropFormula( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtNode Node )
+            : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node )
+        {
+            _RawFormulaTextSubfield = ( (CswNbtFieldTypeRuleText) _FieldTypeRule ).TextSubField;
+
+            // Associate subfields with methods on this object, for SetSubFieldValue()
+            _SubFieldMethods.Add( _RawFormulaTextSubfield, new Tuple<Func<dynamic>, Action<dynamic>>( () => Text, x => Text = CswConvert.ToString( x ) ) );
+        }
+
+        private CswNbtSubField _RawFormulaTextSubfield;
+
+        override public bool Empty
+        {
+            get
+            {
+                return ( 0 == Gestalt.Length );
+            }//
+        }
+
+        public string Text
+        {
+            get
+            {
+                return GetPropRowValue( _RawFormulaTextSubfield );
+            }
+            set
+            {
+                SetPropRowValue( _RawFormulaTextSubfield, value );
+                Gestalt = value;
+            }
+        }
+        public Int32 Size
+        {
+            get
+            {
+                Int32 Ret = CswConvert.ToInt32( _CswNbtMetaDataNodeTypeProp.Attribute1 );
+                if( Ret <= 0 )
+                {
+                    Ret = 25;
+                }
+                return Ret;
+            }
+            //set
+            //{
+            //    _CswNbtMetaDataNodeTypeProp.Length = value;
+            //}
+        }
+
+        public Int32 MaxLength
+        {
+            get
+            {
+                Int32 Ret = CswConvert.ToInt32( _CswNbtMetaDataNodeTypeProp.Attribute2 );
+                if( Ret <= 0 )
+                {
+                    Ret = 255;
+                }
+                return Ret;
+            }
+        }
+
+        public string RegEx
+        {
+            get
+            {
+                return ( _CswNbtMetaDataNodeTypeProp.Attribute3 );
+            }
+        }
+
+        public string RegExMsg
+        {
+            get
+            {
+                return ( _CswNbtMetaDataNodeTypeProp.Attribute4 );
+            }
+        }
+
+
+        public override string ValueForNameTemplate
+        {
+            get { return Gestalt; }
+        }
+
+
+        //private string _ElemName_Value = "Value";
+
+        public override void ToJSON( JObject ParentObject )
+        {
+            ParentObject[_RawFormulaTextSubfield.ToXmlNodeName( true )] = Text;
+            ParentObject["size"] = Size;
+            ParentObject["maxlength"] = MaxLength;
+            ParentObject["regex"] = RegEx;
+            ParentObject["regexmsg"] = RegExMsg;
+        }
+
+        public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
+        {
+            Text = CswTools.XmlRealAttributeName( PropRow[_RawFormulaTextSubfield.ToXmlNodeName()].ToString() );
+        }
+
+        public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
+        {
+            if( null != JObject[_RawFormulaTextSubfield.ToXmlNodeName( true )] )
+            {
+                Text = JObject[_RawFormulaTextSubfield.ToXmlNodeName( true )].ToString();
+            }
+        }
+
+        public override void SyncGestalt()
+        {
+            SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, Text );
+        }
+
+    }//CswNbtNodePropText
+
+}//namespace ChemSW.Nbt.PropTypes

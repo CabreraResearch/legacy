@@ -189,6 +189,7 @@
     <Compile Include="csw\PropTypes\CswEnumNbtIdRefState.cs" />
     <Compile Include="csw\PropTypes\CswEnumNbtNFPADisplayMode.cs" />
     <Compile Include="csw\PropTypes\CswEnumNbtGridPropMode.cs" />
+    <Compile Include="csw\PropTypes\CswNbtNodePropFormula.cs" />
     <Compile Include="csw\Sched\core\CswEnumNbtScheduleRuleNames.cs" />
     <Compile Include="csw\Sched\logic\CswScheduleLogicNbtImport.cs" />
     <Compile Include="csw\Sched\logic\CswScheduleLogicNbtNodeCounts.cs" />
