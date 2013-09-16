@@ -73,7 +73,6 @@ namespace ChemSW.Nbt.Schema
 
                 //4: Ensure at least one Inventory Group Permission exists
                 {
-
                     CswNbtMetaDataObjectClass InventoryGroupPermissisonOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.InventoryGroupPermissionClass );
                     CswNbtView IgPermitView = _CswNbtSchemaModTrnsctn.makeView();
                     IgPermitView.AddViewRelationship( InventoryGroupPermissisonOc, IncludeDefaultFilters: false );
@@ -137,9 +136,6 @@ namespace ChemSW.Nbt.Schema
                     }
                 }
             }
-
-           
-
         }
     }
 }
