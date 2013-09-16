@@ -521,17 +521,7 @@ namespace ChemSW.Nbt.PropTypes
                 return ( (CswNbtNodePropLocation) _CswNbtNodeProp );
             }
         }//Location
-
-        public CswNbtNodePropLocationContents AsLocationContents
-        {
-            get
-            {
-                if( !( _CswNbtNodeProp is CswNbtNodePropLocationContents ) )
-                    throw ( new CswDniException( _makeTypeErrorMessage( typeof( CswNbtNodePropLocationContents ) ) ) );
-                return ( (CswNbtNodePropLocationContents) _CswNbtNodeProp );
-            }
-        }//LocationContents
-
+        
         public CswNbtNodePropLogical AsLogical
         {
             get

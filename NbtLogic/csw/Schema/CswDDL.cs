@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using ChemSW.Audit;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
@@ -143,19 +144,28 @@ namespace ChemSW.Nbt.Schema
                                string defaultvalue, string description, string foreignkeycolumn, string foreignkeytable, bool constrainfkref, bool isview,
                                bool logicaldelete, string lowerrangevalue, bool lowerrangevalueinclusive, CswEnumDataDictionaryPortableDataType portabledatatype, bool ReadOnly,
                                bool Required, string tablename, CswEnumDataDictionaryUniqueType uniquetype, bool uperrangevalueinclusive, string upperrangevalue )
-        //Int32 NodeTypePropId, string SubFieldName )
         {
             _verifyOrCreateTableForColumnOp( tablename );
-
             _DdlOps[tablename].addColumn( columnname, columntype, datatypesize, dblprecision,
                                           defaultvalue, description, foreignkeycolumn, foreignkeytable, constrainfkref, isview,
                                           logicaldelete, lowerrangevalue, lowerrangevalueinclusive, portabledatatype, ReadOnly,
-                                          Required, uniquetype, uperrangevalueinclusive, upperrangevalue ); //, NodeTypePropId, SubFieldName );
-
+                                          Required, uniquetype, uperrangevalueinclusive, upperrangevalue );
             _DdlOps[tablename].apply();
 
-
+            // case 29565 - also add new column to shadow table
+            if( _CswNbtResources.CswResources.isTableAuditable( tablename ) && false == isview )
+            {
+                string audittablename = _CswAuditMetaData.makeAuditTableName( tablename );
+                _verifyOrCreateTableForColumnOp( audittablename );
+                _DdlOps[audittablename].addColumn( columnname, columntype, datatypesize, dblprecision,
+                                                   "", description, "", "", false, isview,
+                                                   false, "", false, portabledatatype, false,
+                                                   false, audittablename, false, "" );
+                _DdlOps[audittablename].apply();
+            }
         }//addColumn()
+
+        private CswAuditMetaData _CswAuditMetaData = new CswAuditMetaData();
 
         public void dropColumn( string TableName, string ColumnName )
         {
@@ -171,11 +181,17 @@ namespace ChemSW.Nbt.Schema
         public void renameColumn( string TableName, string OriginalColumnName, string NewColumnName )
         {
             _verifyOrCreateTableForColumnOp( TableName );
-
             _DdlOps[TableName].renameColumn( OriginalColumnName, NewColumnName );
-
             _DdlOps[TableName].apply();
 
+            // case 29565 - also rename the column in the shadow table
+            if( _CswNbtResources.CswResources.isTableAuditable( TableName ) )
+            {
+                string audittablename = _CswAuditMetaData.makeAuditTableName( TableName );
+                _verifyOrCreateTableForColumnOp( audittablename );
+                _DdlOps[audittablename].renameColumn( OriginalColumnName, NewColumnName );
+                _DdlOps[audittablename].apply();
+            }
         }//renameColumn() 
 
 

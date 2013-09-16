@@ -123,10 +123,6 @@ namespace ChemSW.NbtWebControls.FieldTypes
                     Control = new CswLocation( CswNbtResources, MetaDataProp, EditMode );
                     break;
 
-                case CswEnumNbtFieldType.LocationContents:
-                    Control = new CswLocationContents( CswNbtResources, MetaDataProp, EditMode );
-                    break;
-
                 case CswEnumNbtFieldType.Logical:
                     Control = new CswLogical( CswNbtResources, MetaDataProp, EditMode );
                     break;
