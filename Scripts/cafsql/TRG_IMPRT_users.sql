@@ -1,4 +1,4 @@
-CREATE OR REPLACE TRIGGER TRG_IMPRT_users AFTER INSERT OR DELETE OR UPDATE OF disabled,namefirst,namelast,password,email,employeeid,navrows,locked,failedlogincount,defaultlanguage,phone,username,workunitid,defaultlocationid,roleid,userid,deleted ON users@CAFLINK FOR EACH ROW 
+CREATE OR REPLACE TRIGGER TRG_IMPRT_users AFTER INSERT OR DELETE OR UPDATE OF disabled,namefirst,namelast,password,email,employeeid,navrows,locked,failedlogincount,defaultlanguage,phone,username,defaultlocationid,roleid,workunitid,userid,deleted ON users@CAFLINK FOR EACH ROW 
                                 BEGIN
   
                                 IF INSERTING THEN

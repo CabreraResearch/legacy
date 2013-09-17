@@ -220,15 +220,9 @@ namespace ChemSW.Nbt.ObjClasses
                                           ") attempted to edit the '" + ChemSWAdminUsername + "' user account." );
             }
 
-            if( AvailableWorkUnits.Value.Count == 0 )
+            if( AvailableWorkUnits.Value.Count == 0 && null != WorkUnitProperty.RelatedNodeId )
             {
-                CswPrimaryKey pk = GetFirstAvailableWorkUnitNodeId();
-                if( null != pk )
-                {
-                    AvailableWorkUnits.AddValue( pk.ToString() );
-                    WorkUnitProperty.RelatedNodeId = pk;
-                    WorkUnitProperty.SyncGestalt();
-                }
+                AvailableWorkUnits.AddValue( WorkUnitProperty.RelatedNodeId.ToString() );
             }
         }
 
@@ -549,11 +543,11 @@ namespace ChemSW.Nbt.ObjClasses
                                               " when Users available Work Units are: " + AvailableWorkUnits.Value );
                 }
                 // We add the work unit to the list and then check it!
-                _updateAvailableWorkUnits();
-
                 AvailableWorkUnits.AddValue( WorkUnitId.ToString() );
                 WorkUnitProperty.RelatedNodeId = WorkUnitId;
                 WorkUnitProperty.SyncGestalt();
+
+                _updateAvailableWorkUnits();
             }
         }
 
