@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
+﻿using System.Collections.ObjectModel;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -60,7 +57,6 @@ namespace ChemSW.Nbt.Schema
                     new CswUpdateSchema_02F_Case30252(),
                     new CswUpdateSchema_02F_Case30041_ScheduledRuleImport(),
                     new CswUpdateSchema_02F_Case30043_ControlZones(),
-                    new CswUpdateSchema_02F_Case30043_Sites(),
                     new CswUpdateSchema_02F_Case29984(),
                     new CswUpdateSchema_02F_Case30577(),
                     new CswUpdateSchema_02F_Case30043_Locations(),

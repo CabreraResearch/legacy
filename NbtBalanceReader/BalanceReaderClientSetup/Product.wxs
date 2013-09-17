@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
     
-    <Product Id="DBD4C819-8FCC-419C-AAD1-CA4379B62CE3" Name="ChemSW Balance Reader Client" Language="1033" Version="1.0.1.0" Manufacturer="ChemSW Inc." UpgradeCode="375a957f-72ca-4950-94b2-88a27941fcee">
+    <Product Id="DBD4C819-8FCC-419C-AAD1-CA4379B62CE3" Name="ChemSW Balance Reader Client" Language="1033" Version="1.0.2.0" Manufacturer="ChemSW Inc." UpgradeCode="375a957f-72ca-4950-94b2-88a27941fcee">
         <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
         
         <Icon Id="balance.ico" SourceFile="balance.ico" />
