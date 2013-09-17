@@ -189,7 +189,7 @@ namespace ChemSW.Nbt.PropTypes
                 FormattedFormula = FormattedFormula + new string(ChemicalCompound);
 
              //append trailing characters, with periods converted to big middle dots
-                FormattedFormula = FormattedFormula + FormulaGroups[3].ToString().Replace( '.', (char) 0x25cf );
+                FormattedFormula = FormattedFormula + FormulaGroups[3].ToString().Trim().Replace( '.', (char) 0x25cf );
 
              //move on to the next compoud in the formula
                 Formula = FormulaGroups[4].ToString();
