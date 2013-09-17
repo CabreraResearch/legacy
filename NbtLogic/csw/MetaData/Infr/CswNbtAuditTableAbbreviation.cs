@@ -50,5 +50,10 @@ namespace ChemSW.Nbt
             return "AuditLookup_" + getAbbreviation( AuditTableName );
         }
 
+        public static string getAuditLookupFunctionNameForRealTable( string RealTableName )
+        {
+            CswAuditMetaData CswAuditMetaData = new CswAuditMetaData();
+            return getAuditLookupFunctionName( CswAuditMetaData.makeAuditTableName( RealTableName ) );
+        }
     }
 }
