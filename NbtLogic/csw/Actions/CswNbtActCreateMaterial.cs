@@ -434,7 +434,7 @@ namespace ChemSW.Nbt.Actions
                         if( CswTools.IsPrimaryKey( VendorNodePk ) )
                         {
                             CswNbtObjClassVendor VendorNode = _CswNbtResources.Nodes.GetNode( VendorNodePk );
-                            if( null != VendorNode )
+                            if( null != VendorNode && VendorNode.IsTemp )
                             {
                                 VendorNode.IsTemp = false;
                                 VendorNode.postChanges( false );
@@ -568,26 +568,21 @@ namespace ChemSW.Nbt.Actions
         {
             JObject Ret = new JObject();
 
-            SizeNode = CswNbtResources.Nodes.makeNodeFromNodeTypeId( SizeNodeTypeId, OverrideUniqueValidation: true );
             CswPrimaryKey UnitIdPK = CswConvert.ToPrimaryKey( SizeObj["uom"]["id"].ToString() );
-            if( null != UnitIdPK )
+            if( null != UnitIdPK
+                && ( CswEnumTristate.True == CswConvert.ToTristate( SizeObj["quantityEditable"]["value"] ) )
+                && ( CswEnumTristate.True == CswConvert.ToTristate( SizeObj["quantityEditable"]["value"] ) ) )
             {
-                CswNbtObjClassSize NodeAsSize = (CswNbtObjClassSize) SizeNode;
-                NodeAsSize.InitialQuantity.Quantity = CswConvert.ToDouble( SizeObj["quantity"]["value"] );
-                NodeAsSize.InitialQuantity.UnitId = UnitIdPK;
-                NodeAsSize.CatalogNo.Text = SizeObj["catalogNo"]["value"].ToString();
-                NodeAsSize.QuantityEditable.Checked = CswConvert.ToTristate( SizeObj["quantityEditable"]["value"] );
-                NodeAsSize.Dispensable.Checked = CswConvert.ToTristate( SizeObj["dispensible"]["value"] );
-                NodeAsSize.UnitCount.Value = CswConvert.ToDouble( SizeObj["unitCount"]["value"] );
-
-                if( CswEnumTristate.False == NodeAsSize.QuantityEditable.Checked && false == CswTools.IsDouble( NodeAsSize.InitialQuantity.Quantity ) )
-                {
-                    SizeNode = null; //Case 27665 - instead of throwing a serverside warning, just throw out the size
-                }
-                else if( WriteNode )
-                {
-                    SizeNode.postChanges( true );
-                }
+                SizeNode = CswNbtResources.Nodes.makeNodeFromNodeTypeId( SizeNodeTypeId, OverrideUniqueValidation: false, OnAfterMakeNode: delegate( CswNbtNode NewNode )
+                    {
+                        CswNbtObjClassSize NodeAsSize = (CswNbtObjClassSize) NewNode;
+                        NodeAsSize.InitialQuantity.Quantity = CswConvert.ToDouble( SizeObj["quantity"]["value"] );
+                        NodeAsSize.InitialQuantity.UnitId = UnitIdPK;
+                        NodeAsSize.CatalogNo.Text = SizeObj["catalogNo"]["value"].ToString();
+                        NodeAsSize.QuantityEditable.Checked = CswConvert.ToTristate( SizeObj["quantityEditable"]["value"] );
+                        NodeAsSize.Dispensable.Checked = CswConvert.ToTristate( SizeObj["dispensible"]["value"] );
+                        NodeAsSize.UnitCount.Value = CswConvert.ToDouble( SizeObj["unitCount"]["value"] );
+                    } );
             }
             else
             {

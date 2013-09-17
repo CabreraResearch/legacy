@@ -227,6 +227,12 @@
                         //of the methods we're listening to here, called 2nd, 
                         //still nothing to see in the DOM
                         grid.filters.createFilters();
+                        //Case 30602: http://www.sencha.com/forum/showthread.php?208042-Remove-Refresh-Button-from-Ext.PagingToolbar
+                        try {
+                            this.down('#refresh').hide();
+                        } catch(e) {
+                            Csw.debug.error('Could not hide grid refresh button');
+                        }
                     },
                     viewready: function () {
                         //of the methods we're listening to here, called 4th. Will also trigger afterlayout.

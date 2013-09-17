@@ -104,6 +104,9 @@
     <Compile Include="Services\Containers.svc.cs">
       <DependentUpon>Containers.svc</DependentUpon>
     </Compile>
+    <Compile Include="Services\Explorer.svc.cs">
+      <DependentUpon>Explorer.svc</DependentUpon>
+    </Compile>
     <Compile Include="Services\Import.svc.cs">
       <DependentUpon>Import.svc</DependentUpon>
     </Compile>
@@ -195,6 +198,10 @@
       <DependentUpon>Views.svc</DependentUpon>
     </Compile>
     <Compile Include="WebSvc\Core\CswWebSvcError.cs" />
+    <Compile Include="WebSvc\Logic\Actions\Explorer\CswNbtArborEdge.cs" />
+    <Compile Include="WebSvc\Logic\Actions\Explorer\CswNbtArborGraph.cs" />
+    <Compile Include="WebSvc\Logic\Actions\Explorer\CswNbtArborNode.cs" />
+    <Compile Include="WebSvc\Logic\Actions\Explorer\CswNbtWebServiceNodeExplorer.cs" />
     <Compile Include="WebSvc\Logic\Balances\CswNbtBalanceData.cs" />
     <Compile Include="WebSvc\Logic\Balances\CswNbtWebServiceSerialBalance.cs" />
     <Compile Include="WebSvc\Logic\CISPro\CswNbtWebServiceLocationsCis.cs" />
@@ -776,6 +783,7 @@
     <Content Include="Scripts\mousetrap.min.js" />
     <Content Include="Scripts\q.js" />
     <Content Include="Scripts\q.min.js" />
+    <Content Include="Services\Explorer.svc" />
     <Content Include="Services\Import.svc" />
     <Content Include="Services\Properties.svc" />
     <Content Include="Services\Balances.svc" />

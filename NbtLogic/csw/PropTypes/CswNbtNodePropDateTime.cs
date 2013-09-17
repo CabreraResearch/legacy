@@ -1,11 +1,11 @@
+using System;
+using System.Collections.Generic;
+using System.Data;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
 using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
-using System.Data;
 
 namespace ChemSW.Nbt.PropTypes
 {
@@ -86,6 +86,15 @@ namespace ChemSW.Nbt.PropTypes
                 Gestalt = string.Empty;
             }
         } // _setGestalt()
+
+        public override bool onBeforeSetDefault()
+        {
+            if( DefaultToToday )
+            {
+                DateTimeValue = DateTime.Now;
+            }
+            return false;
+        }
 
         public bool DefaultToToday
         {

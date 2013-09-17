@@ -7,6 +7,7 @@ using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.MetaData.FieldTypeRules;
 
 namespace ChemSW.Nbt.PropTypes
 {
@@ -302,6 +303,12 @@ namespace ChemSW.Nbt.PropTypes
             }
         } //NodeTypeProp
 
+        public CswEnumNbtFieldType getFieldTypeValue()
+        {
+            CswEnumNbtFieldType Ret = ( null != NodeTypeProp ) ? NodeTypeProp.getFieldTypeValue() : _CswNbtResources.MetaData.getObjectClassProp( _ObjectClassPropId ).getFieldTypeValue();
+            return Ret;
+        }
+
         private bool _ReadOnlyTemporary = false;
 
         /// <summary>
@@ -511,12 +518,15 @@ namespace ChemSW.Nbt.PropTypes
 
         public void copy( CswNbtNodePropData Source )
         {
-            foreach( CswNbtSubField SubField in NodeTypeProp.getFieldTypeRule().SubFields )
+            CswEnumNbtFieldType FieldType = Source.getFieldTypeValue();
+            ICswNbtFieldTypeRule FieldTypeRule = _CswNbtResources.MetaData.getFieldTypeRule( FieldType );
+
+            foreach( CswNbtSubField SubField in FieldTypeRule.SubFields )
             {
                 if( SubField.Column == CswEnumNbtPropColumn.Field1_FK )
                 {
                     //Implementing FieldType specific behavior here. Blame Steve.
-                    if( null != Source.NodeTypeProp && Source.NodeTypeProp.getFieldTypeValue() == CswEnumNbtFieldType.ViewReference )
+                    if( FieldType == CswEnumNbtFieldType.ViewReference )
                     {
                         CswNbtView View = _CswNbtResources.ViewSelect.restoreView( Source.NodeTypeProp.DefaultValue.AsViewReference.ViewId );
                         CswNbtView ViewCopy = new CswNbtView( _CswNbtResources );

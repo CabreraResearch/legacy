@@ -39,6 +39,10 @@ namespace ChemSW.Nbt.ImportExport
         {
             get { return CswConvert.ToInt32( _row[CswNbtImportTables.ImportDefRelationships.instance] ); }
         }
+        public string SourceRelColumnName
+        {
+            get { return _row[CswNbtImportTables.ImportDefRelationships.sourcerelcolumnname].ToString(); }
+        }
 
         public CswNbtMetaDataNodeType NodeType
         {
@@ -70,6 +74,7 @@ namespace ChemSW.Nbt.ImportExport
             Table.Columns.Add( "nodetype" );
             Table.Columns.Add( "relationship" );
             Table.Columns.Add( "instance" );
+            Table.Columns.Add( "sourcerelcolumnname" );
             return Table;
         }
 
@@ -99,6 +104,10 @@ namespace ChemSW.Nbt.ImportExport
                             row[CswNbtImportTables.ImportDefRelationships.nodetypename] = NodeTypeName;
                             row[CswNbtImportTables.ImportDefRelationships.relationship] = RelationshipName;
                             row[CswNbtImportTables.ImportDefRelationships.instance] = CswConvert.ToDbVal( RelRow["instance"].ToString() );
+                            if( RelRow.Table.Columns.Contains( "sourcerelcolumnname" ) )
+                            {
+                                row[CswNbtImportTables.ImportDefRelationships.sourcerelcolumnname] = RelRow["sourcerelcolumnname"].ToString();
+                            }
                             importRelationshipsTable.Rows.Add( row );
 
                         }
