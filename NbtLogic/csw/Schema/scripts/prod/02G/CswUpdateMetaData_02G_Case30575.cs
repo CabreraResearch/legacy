@@ -37,7 +37,7 @@ namespace ChemSW.Nbt.Schema
         {
             CswNbtMetaDataObjectClass EquipmentType = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.EquipmentTypeClass );
             CswNbtMetaDataObjectClassProp NameOCP = EquipmentType.getObjectClassProp( CswNbtObjClassEquipmentType.PropertyName.TypeName );
-            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( NameOCP, CswEnumNbtObjectClassPropAttributes.isrequired, true );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( NameOCP, CswEnumNbtObjectClassPropAttributes.isunique, true );
         }
     }
 }
