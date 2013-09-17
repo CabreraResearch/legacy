@@ -21,31 +21,17 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
-            Dictionary<string, string> AuditTables = new Dictionary<string, string>()
-                {
-                    {"bda", "blob_data_audit"},
-                    {"jnpa", "jct_nodes_props_audit"},
-                    {"laa", "license_accept_audit"},
-                    {"na", "nodes_audit"},
-                    {"nta", "nodetypes_audit"},
-                    {"ntpa", "nodetype_props_audit"},
-                    {"ntta", "nodetype_tabset_audit"},
-                    {"nva", "node_views_audit"},
-                    {"oca", "object_class_audit"},
-                    {"ocpa", "object_class_props_audit"}
-                };
-
-            foreach( string Abbrev in AuditTables.Keys )
+            foreach( string Abbrev in CswNbtAuditTableAbbreviation.Abbreviations )
             {
                 ICswDataDictionaryReader DataDictionary = _CswNbtSchemaModTrnsctn.CswDataDictionary;
                 CswAuditMetaData CswAuditMetaData = new CswAuditMetaData();
-                string AuditTable = AuditTables[Abbrev];
+                string AuditTable = CswNbtAuditTableAbbreviation.getAuditTableName( Abbrev );
                 string RealTable = CswAuditMetaData.makeNameOfAuditedTable( AuditTable );
                 string RealTablePk = DataDictionary.getPrimeKeyColumn( RealTable );
 
                 string ObjectType = "CSW_" + Abbrev + @"_OBJ_TYPE";
                 string TableType = "CSW_" + Abbrev + @"_TABLE_TYPE";
-                string FuncName = "AuditLookup_" + Abbrev;
+                string FuncName = CswNbtAuditTableAbbreviation.getAuditLookupFunctionName( AuditTable );
 
                 CswCommaDelimitedString Columns = new CswCommaDelimitedString();
                 CswCommaDelimitedString ObjectTypeColumns = new CswCommaDelimitedString();
