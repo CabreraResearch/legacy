@@ -103,6 +103,14 @@
                     return Csw.composites.dateTimePicker(cswParent, opts);
                 };
 
+                cswParent.formula = function(opts) {
+                    /// <summary>Creates a Csw.formula on this element</summary>
+                    /// <param name="opts">Options to define the formula</param>
+                    /// <returns type="Csw.composites.formula">A Csw.composites.formula</returns>
+                    opts = cswPrivate.controlPreProcessing(opts, 'formula');
+                    return Csw.composites.formula(cswParent, opts);
+                };
+                
                 cswParent.fileUpload = function (opts) {
                     /// <summary> Creates a Csw.fileUpload on this element</summary>
                     /// <param name="opts" type="Object">Options to define the fileUpload.</param>
