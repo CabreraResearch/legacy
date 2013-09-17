@@ -55,17 +55,16 @@ namespace ChemSW.Nbt.Schema
                 UserImpMgr.importBinding( "defaultlanguage", CswNbtObjClassUser.PropertyName.Language, "" );
                 UserImpMgr.importBinding( "phone", CswNbtObjClassUser.PropertyName.Phone, "" );
                 UserImpMgr.importBinding( "username", CswNbtObjClassUser.PropertyName.Username, "" );
-                //UserImpMgr.importBinding( "workunitid", CswNbtObjClassUser.PropertyName.AvailableWorkUnits, "" );
 
                 // Relationships
                 UserImpMgr.importBinding( "defaultlocationid", CswNbtObjClassUser.PropertyName.DefaultLocation, CswEnumNbtSubFieldName.NodeID.ToString() );
                 UserImpMgr.importBinding( "roleid", CswNbtObjClassUser.PropertyName.Role, CswEnumNbtSubFieldName.NodeID.ToString() );
-                //UserImpMgr.importBinding( "workunitid", CswNbtObjClassUser.PropertyName.WorkUnit, CswEnumNbtSubFieldName.NodeID.ToString() );
+                UserImpMgr.importBinding( "workunitid", CswNbtObjClassUser.PropertyName.WorkUnit, CswEnumNbtSubFieldName.NodeID.ToString() );
 
                 /*
                    +defaultlocationid, 
                    +disabled, 
-                   homeinventorygroupid, - We dont' have an inventory group property on Users  
+                   homeinventorygroupid, - We dont' have an inventory group property on Users
                    +namefirst, 
                    +namelast, 
                    +navrows, 
@@ -78,7 +77,7 @@ namespace ChemSW.Nbt.Schema
                    +failedlogincount, 
                    +email, 
                    +phone, 
-                   +defaultlanguage,                   
+                   +defaultlanguage,
                    ?? pending TDU investigation supervisorid, 
                    +employeeid
              
