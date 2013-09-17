@@ -73,6 +73,7 @@ namespace ChemSW.Nbt.Schema
                 _CswNbtSchemaModTrnsctn.addStringColumn( Tablename, CswNbtImportTables.ImportDefRelationships.nodetypename, "NodeType Name to import", false, true, 50 );
                 _CswNbtSchemaModTrnsctn.addStringColumn( Tablename, CswNbtImportTables.ImportDefRelationships.relationship, "Property name of relationship property", false, true, 512 );
                 _CswNbtSchemaModTrnsctn.addLongColumn( Tablename, CswNbtImportTables.ImportDefRelationships.instance, "Instance for mapping imported relationships", false, true );
+                _CswNbtSchemaModTrnsctn.addStringColumn( Tablename, CswNbtImportTables.ImportDefRelationships.sourcerelcolumnname, "Source column name of the source FK", false, false, 512 );
             }
             if( false == _CswNbtSchemaModTrnsctn.isTableDefined( CswNbtImportTables.ImportDataMap.TableName ) )
             {

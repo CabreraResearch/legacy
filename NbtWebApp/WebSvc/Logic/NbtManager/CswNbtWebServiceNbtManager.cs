@@ -170,31 +170,31 @@ namespace ChemSW.Nbt.WebServices
         {
             try
             {
-            CswNbtResources NbtResources = (CswNbtResources) CswResources;
+                CswNbtResources NbtResources = (CswNbtResources) CswResources;
 
                 //Here we are using the web reference for the schedule service,
                 //overwriting the app.config endpoint uri with the one defined in SetupVbls.
                 //The CswSchedSvcAdminEndPointClient::getRules() method will return a collection of objects,
                 //each of which represents a scheduled rule for the accessid specified as in CswSchedSvcParams. 
                 //You can find the server side of this connection in /CswCommon/Csw/MtSched/port
-            CswSchedSvcAdminEndPointClient SchedSvcRef = new CswSchedSvcAdminEndPointClient();
-            EndpointAddress URI = new EndpointAddress( CswResources.SetupVbls["SchedServiceUri"] );
-            SchedSvcRef.Endpoint.Address = URI;
-            CswSchedSvcParams CswSchedSvcParams = new CswSchedSvcParams();
-            CswSchedSvcParams.CustomerId = AccessId;
+                CswSchedSvcAdminEndPointClient SchedSvcRef = new CswSchedSvcAdminEndPointClient();
+                EndpointAddress URI = new EndpointAddress( CswResources.SetupVbls["SchedServiceUri"] );
+                SchedSvcRef.Endpoint.Address = URI;
+                CswSchedSvcParams CswSchedSvcParams = new CswSchedSvcParams();
+                CswSchedSvcParams.CustomerId = AccessId;
                 CswSchedSvcReturn svcReturn = SchedSvcRef.getRules( CswSchedSvcParams );
 
-            if( null != svcReturn )
-            {
-                _addScheduledRulesGrid( NbtResources, svcReturn.Data, Return );
-            }
-            Return.Data.CustomerId = AccessId;
+                if( null != svcReturn )
+                {
+                    _addScheduledRulesGrid( NbtResources, svcReturn.Data, Return );
+                }
+                Return.Data.CustomerId = AccessId;
             }
             catch( Exception ex )
             {
                 throw new CswDniException( CswEnumErrorType.Error, "Could not find the Schedule Service.  Check to make sure the service is running and that the endpoint url is configured correctly.", ex.Message, ex );
             }
-            
+
         }//getScheduledRulesGrid()
 
         public static void updateAllScheduledRules( ICswResources CswResources, CswNbtScheduledRulesReturn Return, CswNbtScheduledRulesReturn.Ret Request )
