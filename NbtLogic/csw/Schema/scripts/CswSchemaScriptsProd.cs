@@ -27,6 +27,7 @@ namespace ChemSW.Nbt.Schema
                     new CswSchemaScriptsGinkgo()
                     // Add new milestone script collections here
                 };
+            _addVersionedScript( new CswUpdateMetaData_02F_Case30697() );
 
 
             // DDL
@@ -58,6 +59,8 @@ namespace ChemSW.Nbt.Schema
                 }
             }
             _addVersionedScript( new CswUpdateSchema_02G_Case30561() );
+            _addVersionedScript( new CswUpdateSchema_02F_Case30661() );
+            _addVersionedScript( new CswUpdateSchema_02F_Case30706() );
 
             #endregion Populate Scripts
 

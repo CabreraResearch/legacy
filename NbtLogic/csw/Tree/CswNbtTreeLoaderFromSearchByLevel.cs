@@ -85,7 +85,7 @@ namespace ChemSW.Nbt
 
                         // donb't include properties in search results to which the user has no permissions
                         if( false == RequireViewPermissions ||
-                            ( _canViewNode( ThisPermGrpId ) &&
+                            ( _canViewNode( ThisPermGrpId, ThisNodeType ) &&
                               ( Int32.MinValue == ThisNTPId || _canViewProp( ThisNTPId, ThisPermGrpId ) ) ) )
                         {
                             // Handle property multiplexing
@@ -133,12 +133,12 @@ namespace ChemSW.Nbt
             }
         } // load()
 
-        private bool _canViewNode( CswPrimaryKey PermissionGroupId )
+        private bool _canViewNode( CswPrimaryKey PermissionGroupId, CswNbtMetaDataNodeType NodeType )
         {
             bool canView = true;
             if( null != PermissionGroupId )
             {
-                canView = _CswNbtResources.Permit.canNode( CswEnumNbtNodeTypePermission.View, PermissionGroupId, _CswNbtResources.CurrentNbtUser );
+                canView = _CswNbtResources.Permit.canNode( CswEnumNbtNodeTypePermission.View, PermissionGroupId, _CswNbtResources.CurrentNbtUser, NodeType );
             }
             return canView;
         }

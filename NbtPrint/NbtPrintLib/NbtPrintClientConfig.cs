@@ -35,17 +35,20 @@ namespace NbtPrintLib
             }
             printers.SaveToReg( printers, akey );
 
-            rootKey.SetValue( "accessid", accessid );
-            rootKey.SetValue( "logon", logon );
-            rootKey.SetValue( "serviceMode", serviceMode.ToString() );
+            if( false == string.IsNullOrEmpty( accessid ) )
+                rootKey.SetValue( "accessid", accessid );
+            if( false == string.IsNullOrEmpty( logon ) )
+                rootKey.SetValue( "logon", logon );
+            if( false == string.IsNullOrEmpty( serviceMode.ToString() ) )
+                rootKey.SetValue( "serviceMode", serviceMode.ToString() );
+
             String pwd = password;
             if( pwd.Length > 0 )
             {
                 pwd = _CswEncryption.encrypt( pwd );
+                rootKey.SetValue( "password", pwd, Microsoft.Win32.RegistryValueKind.String );
             }
-
-            rootKey.SetValue( "password", pwd, Microsoft.Win32.RegistryValueKind.String );
-            if( url == string.Empty )
+            if( string.IsNullOrEmpty( url ) )
             {
                 url = "https://imcslive.chemswlive.com/Services/"; //the default server
             }
