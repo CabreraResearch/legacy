@@ -65,6 +65,9 @@ namespace ChemSW.Nbt.PropTypes
                 case CswEnumNbtFieldType.File:
                     InnerProperty = new CswNbtNodePropBlob( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node );
                     break;
+                case CswEnumNbtFieldType.Formula:
+                    InnerProperty = new CswNbtNodePropFormula( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node );
+                    break;
                 case CswEnumNbtFieldType.Grid:
                     InnerProperty = new CswNbtNodePropGrid( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node );
                     break;
