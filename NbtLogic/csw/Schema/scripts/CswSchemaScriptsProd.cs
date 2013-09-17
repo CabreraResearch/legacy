@@ -69,6 +69,7 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswUpdateSchema_02F_Case30043_InventoryGroups() );
             _addVersionedScript( new CswUpdateSchema_02F_Case30647() );
             _addVersionedScript( new CswUpdateSchema_02F_Case30661() );
+            _addVersionedScript( new CswUpdateSchema_02F_Case30700() );
             _addVersionedScript( new CswUpdateSchema_02F_Case30706() );
 
             #endregion Data Scripts

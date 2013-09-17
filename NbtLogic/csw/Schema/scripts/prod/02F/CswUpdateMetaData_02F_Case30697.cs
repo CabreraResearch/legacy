@@ -30,6 +30,26 @@ namespace ChemSW.Nbt.Schema
                 _CswNbtSchemaModTrnsctn.addBooleanColumn( "nodetype_props_audit", "hidden", "Is this NodeTypeProp hidden", false, true );
             }
 
+            if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "object_class_audit", "oraviewname" ) )
+            {
+                _CswNbtSchemaModTrnsctn.addStringColumn( "object_class_audit", "oraviewname", "stable oracle dbview name for this object class", false, false, 30 );
+            }
+
+            if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "object_class_props_audit", "oraviewcolname" ) )
+            {
+                _CswNbtSchemaModTrnsctn.addStringColumn( "object_class_props_audit", "oraviewcolname", "stable oracle dbview column name for this object class property", false, false, 30 );
+            }
+
+            if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "nodetypes_audit", "oraviewname" ) )
+            {
+                _CswNbtSchemaModTrnsctn.addStringColumn( "nodetypes_audit", "oraviewname", "stable oracle dbview name for this nodetype", false, false, 30 );
+            }
+
+            if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "nodetype_props_audit", "oraviewcolname" ) != true )
+            {
+                _CswNbtSchemaModTrnsctn.addStringColumn( "nodetype_props_audit", "oraviewcolname", "stable oracle dbview column name for this nodetype property", false, false, 30 );
+            }
+
         } // update()
 
     }
