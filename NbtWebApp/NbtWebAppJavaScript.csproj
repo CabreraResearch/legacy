@@ -379,7 +379,7 @@
     <Content Include="Csw2\app\js\core\tools\property.js" />
     <Content Include="Csw2\app\js\core\tools\shims.js" />
     <Content Include="Csw2\app\js\core\tools\uuid.js" />
-    <Content Include="Csw2\app\js\initChildNameSpaces.js" />
+    <Content Include="app\CswInit.js" />
     <Content Include="Csw2\app\js\legos\data\dataloader\dataLoaderAjax.js" />
     <Content Include="Csw2\app\js\legos\data\dataloader\dataLoaderFaker.js" />
     <Content Include="Csw2\app\js\legos\data\dataloader\dataLoaderMemory.js" />
@@ -423,7 +423,7 @@
     <Content Include="Csw2\app\js\legos\ui\structures\sheet\subscribers\show.js" />
     <Content Include="Csw2\app\js\legos\ui\structures\sheet\subscribers\_sheetSubscribers.js" />
     <Content Include="Csw2\app\js\legos\ui\structures\sheet\sheet.js" />
-    <Content Include="Csw2\app\js\nameSpace.js" />
+    <Content Include="app\Csw.js" />
     <Content Include="Csw2\app\robots.txt" />
     <Content Include="Csw2\files.js" />
     <Content Include="Csw2\Gruntfile.js" />
@@ -465,7 +465,6 @@
     <Content Include="etc\far.exe" />
     <Content Include="app\composites\csw.radiobutton.js" />
     <Content Include="app\composites\csw.buttonExt.js" />
-    <Content Include="app\literals\csw.applet.js" />
     <Content Include="app\composites\csw.location.js" />
     <Content Include="app\actions\csw.subscriptions.js" />
     <Content Include="app\composites\csw.menubutton.js" />
@@ -1077,7 +1076,7 @@
     <Content Include="app\events\csw.onenter.js" />
     <Content Include="app\view\CswViewContentTree.js" />
     <Content Include="app\view\CswViewPropFilter.js" />
-    <Content Include="app\ChemSW.js" />
+    <None Include="app\ChemSW.bak" />
     <Content Include="app\composites\csw.thingrid.js" />
     <Content Include="app\literals\csw.p.js" />
     <Content Include="app\literals\csw.textarea.js" />

@@ -5,96 +5,96 @@
 (function () {
     'use strict';
 
-    Csw.composites.menuButton = Csw.composites.menuButton ||
-        Csw.composites.register('menuButton', function (cswParent, options) {
 
-            var cswPrivate = {
-                name: '',
-                menuOptions: [], // ['Menu Item 1', 'Menu Item 2'],
-                menu: [],
-                size: 'small',
-                selectedText: '',
-                onClick: null,
-                state: '',
-                width: '100px',
-                disabled: false,
-                icon: '',
-                propId: ''
-            };
-            var cswPublic = {};
-            var _menuLoaded = false;
+    Csw.composites.register('menuButton', function (cswParent, options) {
 
-            cswPrivate.handleMenuItemClick = Csw.method(function (selectedOption) {
-                if (false === Csw.isString(selectedOption)) {
-                    selectedOption = cswPrivate.selectedText;
-                }
-                cswPublic.selectedOption = selectedOption;
-                Csw.tryExec(cswPrivate.onClick, selectedOption);
-            }); // handleMenuItemClick()
+        var cswPrivate = {
+            name: '',
+            menuOptions: [], // ['Menu Item 1', 'Menu Item 2'],
+            menu: [],
+            size: 'small',
+            selectedText: '',
+            onClick: null,
+            state: '',
+            width: '100px',
+            disabled: false,
+            icon: '',
+            propId: ''
+        };
+        var cswPublic = {};
+        var _menuLoaded = false;
 
-            //constructor
-            (function () {
-                Csw.extend(cswPrivate, options);
+        cswPrivate.handleMenuItemClick = Csw.method(function (selectedOption) {
+            if (false === Csw.isString(selectedOption)) {
+                selectedOption = cswPrivate.selectedText;
+            }
+            cswPublic.selectedOption = selectedOption;
+            Csw.tryExec(cswPrivate.onClick, selectedOption);
+        }); // handleMenuItemClick()
 
-                cswParent.empty();
-                cswPublic = cswParent.div();
+        //constructor
+        (function () {
+            Csw.extend(cswPrivate, options);
 
-                if (cswPrivate.menuOptions.length === 0 && cswPrivate.menu.length === 0) {
-                    cswPrivate.menu.push({ /*dummy menu, the menu will be populated via a webservice call */ });
-                } else {
-                    Csw.each(cswPrivate.menuOptions, function (val, key) {
-                        //http://docs.sencha.com/ext-js/4-1/#!/api/Ext.button.Button-event-click
-                        cswPrivate.menu.push({ text: val, handler: function () { Csw.tryExec(cswPrivate.handleMenuItemClick, val); } });
-                    });
-                    _menuLoaded = true;
-                }
-                var btnMenu = new window.Ext.menu.Menu({ items: cswPrivate.menu });
+            cswParent.empty();
+            cswPublic = cswParent.div();
 
-                if (Csw.isElementInDom(cswPublic.getId())) {
-                    cswPublic.menu = window.Ext.create('Ext.button.Split', {
-                        id: cswPublic.getId() + 'splitmenu',
-                        renderTo: cswPublic.getId(),
-                        icon: cswPrivate.icon,
-                        text: cswPrivate.selectedText,
-                        handler: cswPrivate.handleMenuItemClick,
-                        scale: Csw.string(cswPrivate.size, 'medium'),
-                        width: cswPrivate.width,
-                        menu: btnMenu,
-                        disabled: cswPrivate.disabled,
-                        arrowHandler: function () {
-                            if (false === _menuLoaded) {
-                                btnMenu.remove(0); //remove the dummy item
+            if (cswPrivate.menuOptions.length === 0 && cswPrivate.menu.length === 0) {
+                cswPrivate.menu.push({ /*dummy menu, the menu will be populated via a webservice call */ });
+            } else {
+                Csw.each(cswPrivate.menuOptions, function (val, key) {
+                    //http://docs.sencha.com/ext-js/4-1/#!/api/Ext.button.Button-event-click
+                    cswPrivate.menu.push({ text: val, handler: function () { Csw.tryExec(cswPrivate.handleMenuItemClick, val); } });
+                });
+                _menuLoaded = true;
+            }
+            var btnMenu = new window.Ext.menu.Menu({ items: cswPrivate.menu });
 
-                                Csw.ajaxWcf.post({
-                                    urlMethod: 'Properties/GetButtonOpts',
-                                    data: cswPrivate.propId,
-                                    success: function (response) {
-                                        Csw.each(response.Opts, function (opt) {
-                                            btnMenu.add({ text: opt, handler: function () { Csw.tryExec(cswPrivate.handleMenuItemClick, opt); } });
-                                        });
-                                        _menuLoaded = true;
-                                    }
-                                });
+            if (Csw.isElementInDom(cswPublic.getId())) {
+                cswPublic.menu = window.Ext.create('Ext.button.Split', {
+                    id: cswPublic.getId() + 'splitmenu',
+                    renderTo: cswPublic.getId(),
+                    icon: cswPrivate.icon,
+                    text: cswPrivate.selectedText,
+                    handler: cswPrivate.handleMenuItemClick,
+                    scale: Csw.string(cswPrivate.size, 'medium'),
+                    width: cswPrivate.width,
+                    menu: btnMenu,
+                    disabled: cswPrivate.disabled,
+                    arrowHandler: function () {
+                        if (false === _menuLoaded) {
+                            btnMenu.remove(0); //remove the dummy item
 
-                            }
+                            Csw.ajaxWcf.post({
+                                urlMethod: 'Properties/GetButtonOpts',
+                                data: cswPrivate.propId,
+                                success: function (response) {
+                                    Csw.each(response.Opts, function (opt) {
+                                        btnMenu.add({ text: opt, handler: function () { Csw.tryExec(cswPrivate.handleMenuItemClick, opt); } });
+                                    });
+                                    _menuLoaded = true;
+                                }
+                            });
+
                         }
-                    });
-                } else {
-                    cswPublic.menu = window.Ext.create('Ext.button.Split');
-                }
+                    }
+                });
+            } else {
+                cswPublic.menu = window.Ext.create('Ext.button.Split');
+            }
 
-            }()); // constructor
+        }()); // constructor
 
-            cswPublic.disable = function () {
-                cswPublic.menu.disable();
-            };
+        cswPublic.disable = function () {
+            cswPublic.menu.disable();
+        };
 
-            cswPublic.enable = function () {
-                cswPublic.menu.enable();
-            };
+        cswPublic.enable = function () {
+            cswPublic.menu.enable();
+        };
 
-            return cswPublic;
-        });
+        return cswPublic;
+    });
 
 
 

@@ -3,51 +3,51 @@
 
     if (false) { //remove this when you're ready to use the template
 
-        Csw.literals.template = Csw.literals.template ||
-            Csw.literals.register('template', function (cswPrivate) {
 
-                //#region Variables
-                
-                var cswPublic = { };
+        Csw.literals.register('template', function (cswPrivate) {
 
-                //#endregion Variables
+            //#region Variables
 
-                //#region Pre-ctor
-                (function _pre() {
-                    //set default values on cswPrivate if none are supplied
-                    cswPrivate.name = cswPrivate.name || 'No name';
-                    cswPrivate.$parent = cswPrivate.$parent || {};
-                }());
-                
-                //#endregion Pre-ctor
-               
+            var cswPublic = {};
 
-                //#region Define Class Members
+            //#endregion Variables
 
-                //cswPrivate.method = function() {};
+            //#region Pre-ctor
+            (function _pre() {
+                //set default values on cswPrivate if none are supplied
+                cswPrivate.name = cswPrivate.name || 'No name';
+                cswPrivate.$parent = cswPrivate.$parent || {};
+            }());
 
-                //cswPublic.method = function() {};
-                
-                //#endregion Define Class Members
-                
+            //#endregion Pre-ctor
 
-                //#region Post-ctor
 
-                (function _post() {
-                    
-                    var $html = $('<html />');
+            //#region Define Class Members
 
-                    Csw.literals.factory($html, cswPublic);
-                    cswPrivate.$parent.append(cswPublic.$);
+            //cswPrivate.method = function() {};
 
-                }());
+            //cswPublic.method = function() {};
 
-                //#endregion Post-ctor
+            //#endregion Define Class Members
 
-                return cswPublic;
-            });
+
+            //#region Post-ctor
+
+            (function _post() {
+
+                var $html = $('<html />');
+
+                Csw.literals.factory($html, cswPublic);
+                cswPrivate.$parent.append(cswPublic.$);
+
+            }());
+
+            //#endregion Post-ctor
+
+            return cswPublic;
+        });
 
     } //if(false)
 
 
-} ());
+}());

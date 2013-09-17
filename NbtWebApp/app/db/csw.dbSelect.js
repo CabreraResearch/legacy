@@ -4,8 +4,6 @@
 (function () {
     'use strict';
     
-    Csw.db.register('select', Csw.makeNameSpace());
-
     var onError = function (eventObj) {
         Csw.debug.error(eventObj.target.error);
         return new Error(eventObj.target.error);

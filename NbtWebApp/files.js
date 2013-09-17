@@ -1,7 +1,8 @@
 ﻿
 
 module.exports.app = [
-    'app/ChemSW.js',
+    'app/Csw.js',
+    'app/CswInit.js',
     'app/main/**.js',
     'app/types/**.js',
     'app/tools/**.js',
