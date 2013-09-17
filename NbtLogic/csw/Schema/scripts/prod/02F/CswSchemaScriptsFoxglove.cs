@@ -5,14 +5,15 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Keeps the schema up-to-date
     /// </summary>
-    public class CswSchemaScriptsFoxglove : ICswSchemaScripts
+    public class CswSchemaScriptsFoxglove: ICswSchemaScripts
     {
         public Collection<CswUpdateSchemaTo> _DDLScripts()
         {
             return new Collection<CswUpdateSchemaTo>()
                 {
                     new CswUpdateMetaData_02F_Case30252(),
-                    new CswUpdateMetaData_02F_Case30228()
+                    new CswUpdateMetaData_02F_Case30228(),
+                    new CswUpdateMetaData_02F_Case30697()
                 };
         } // _DDLScripts()
 
@@ -62,7 +63,9 @@ namespace ChemSW.Nbt.Schema
                     new CswUpdateSchema_02F_Case30043_Locations(),
                     new CswUpdateSchema_02F_Case30043_WorkUnits(),
                     new CswUpdateSchema_02F_Case30043_InventoryGroups(),
-                    new CswUpdateSchema_02F_Case30647()
+                    new CswUpdateSchema_02F_Case30647(),
+                    new CswUpdateSchema_02F_Case30661(),
+                    new CswUpdateSchema_02F_Case30706()
                 };
         } // _SchemaScripts()
 

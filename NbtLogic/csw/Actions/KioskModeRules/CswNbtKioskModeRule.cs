@@ -31,6 +31,7 @@ namespace ChemSW.Nbt.Actions.KioskMode
 
         public virtual void CommitOperation( ref OperationData OpData )
         {
+            OpData.Field2.NodeIdStr = string.Empty;
             OpData.Field2.Value = string.Empty;
             OpData.Field2.SecondValue = string.Empty;
             OpData.Field2.ServerValidated = false;

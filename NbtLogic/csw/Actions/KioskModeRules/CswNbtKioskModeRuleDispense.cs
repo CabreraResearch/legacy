@@ -41,7 +41,7 @@ namespace ChemSW.Nbt.Actions.KioskMode
 
         public override void CommitOperation( ref OperationData OpData )
         {
-            CswNbtObjClassContainer containerToDispense = _getNodeByBarcode( CswEnumNbtObjectClass.ContainerClass, OpData.Field1.Value, false );
+            CswNbtObjClassContainer containerToDispense = _CswNbtResources.Nodes[OpData.Field1.NodeId];
             if( _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Edit, containerToDispense.NodeType ) && _CswNbtResources.Permit.can( CswEnumNbtActionName.DispenseContainer ) )
             {
                 double quantityToDispense = CswConvert.ToDouble( OpData.Field2.Value );
@@ -103,7 +103,11 @@ namespace ChemSW.Nbt.Actions.KioskMode
                             OpData.Field1.StatusMsg = "Cannot perform " + OpData.Mode + " operation on disposed Container " + OpData.Field1.Value;
                             OpData.Log.Add( DateTime.Now + " - ERROR: " + OpData.Field1.StatusMsg );
                         }
-                        ret = ( false == disposed );
+                        if( false == disposed )
+                        {
+                            OpData.Field1.NodeIdStr = tree.getNodeIdForCurrentPosition().ToString();
+                            ret = true;
+                        }
                     }
                     else if( treeNodeProp.PropName.Equals( CswNbtObjClassContainer.PropertyName.Quantity ) )
                     {

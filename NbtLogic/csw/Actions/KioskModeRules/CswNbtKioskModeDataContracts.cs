@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
+using ChemSW.Core;
 
 namespace ChemSW.Nbt.Actions.KioskMode
 {
@@ -71,5 +72,18 @@ namespace ChemSW.Nbt.Actions.KioskMode
         public string FoundObjClass;
         [DataMember]
         public bool Active = false;
+
+        private CswPrimaryKey _NodeId;
+        [DataMember( Name = "NodeId" )]
+        public string NodeIdStr
+        {
+            get { return ( null != _NodeId ) ? _NodeId.ToString() : string.Empty; }
+            set { _NodeId = CswConvert.ToPrimaryKey( value ); }
+        }
+
+        public CswPrimaryKey NodeId
+        {
+            get { return _NodeId; }
+        }
     }
 }

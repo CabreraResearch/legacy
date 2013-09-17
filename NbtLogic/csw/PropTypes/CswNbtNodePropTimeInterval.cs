@@ -21,16 +21,8 @@ namespace ChemSW.Nbt.PropTypes
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node )
         {
             //_RateInterval = new CswRateInterval(CswNbtNodePropData.Gestalt);   //this should be backwards compatible...
-            if( CswNbtNodePropData.ClobData.ToString() != string.Empty )
-            {
-                XmlDocument XmlDoc = new XmlDocument();
-                XmlDoc.LoadXml( CswNbtNodePropData.ClobData.ToString() );
-                _RateInterval = new CswRateInterval( _CswNbtResources, XmlDoc.FirstChild );
-            }
-            else
-            {
-                _RateInterval = new CswRateInterval( _CswNbtResources );
-            }
+            _init( CswNbtNodePropData.ClobData );
+
             _IntervalSubField = ( (CswNbtFieldTypeRuleTimeInterval) _FieldTypeRule ).IntervalSubField;
             _StartDateSubField = ( (CswNbtFieldTypeRuleTimeInterval) _FieldTypeRule ).StartDateSubField;
             _ClobDataSubField = ( (CswNbtFieldTypeRuleTimeInterval) _FieldTypeRule ).ClobDataSubField;
@@ -43,6 +35,20 @@ namespace ChemSW.Nbt.PropTypes
         private CswNbtSubField _IntervalSubField;
         private CswNbtSubField _StartDateSubField;
         private CswNbtSubField _ClobDataSubField;
+
+        private void _init( string clobData )
+        {
+            if( ClobData != string.Empty )
+            {
+                XmlDocument XmlDoc = new XmlDocument();
+                XmlDoc.LoadXml( clobData );
+                _RateInterval = new CswRateInterval( _CswNbtResources, XmlDoc.FirstChild );
+            }
+            else
+            {
+                _RateInterval = new CswRateInterval( _CswNbtResources );
+            }
+        }
 
         override public bool Empty
         {
@@ -137,6 +143,11 @@ namespace ChemSW.Nbt.PropTypes
         public override void SyncGestalt()
         {
             SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, RateInterval.ToString() );
+        }
+
+        public override void onAfterSetDefault()
+        {
+            _init( ClobData );
         }
 
     }//CswNbtNodeProp
