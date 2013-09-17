@@ -24,7 +24,7 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropFormula( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtNode Node )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node )
         {
-            _RawFormulaTextSubfield = ( (CswNbtFieldTypeRuleText) _FieldTypeRule ).TextSubField;
+            _RawFormulaTextSubfield = ( (CswNbtFieldTypeRuleFormula) _FieldTypeRule ).TextSubField;
 
             // Associate subfields with methods on this object, for SetSubFieldValue()
             _SubFieldMethods.Add( _RawFormulaTextSubfield, new Tuple<Func<dynamic>, Action<dynamic>>( () => Text, x => Text = CswConvert.ToString( x ) ) );
@@ -143,7 +143,7 @@ namespace ChemSW.Nbt.PropTypes
         private string _parseChemicalFormula( string Formula )
         {
             string FormattedFormula = "";
-            Regex FormulaExpression = new Regex( "(\\d*)([a-zA-Z\\d]+)([ \\.]*)(.*)" );
+            Regex FormulaExpression = new Regex( "(\\d*)([a-zA-Z\\d]+)([ .]*)(.*)" );
 
          //borrow a dictionary of elements from structure search
             PeriodicTable PT = new PeriodicTable();
@@ -164,7 +164,7 @@ namespace ChemSW.Nbt.PropTypes
 
                  //convert numbers to subscript versions of themselves
                     if( '0' <= Letter && Letter <= '9' )
-                        ChemicalCompound[i] = (char) ( Letter + 0x2080 );
+                        ChemicalCompound[i] = (char) ( Letter + 0x2050 );
 
                  //determine the proper case for non-element letters
                     else if( false == PT.ElementExists( Letter.ToString() ) && 'A' <= Letter && Letter <= 'Z' )
@@ -172,13 +172,13 @@ namespace ChemSW.Nbt.PropTypes
                         char LastLetter = i > 0 ? ChemicalCompound[i - 1] : '\0';
                         char NextLetter = i < ChemicalCompound.Length - 1 ? ChemicalCompound[i + 1] : '\0';
 
-                     //if the last letter with this one lowercased make an element, needed for cases like Ba
-                        if( PT.ElementExists( "" + LastLetter + (char) ( Letter + 0x0020 ) ) )
-                            ChemicalCompound[i] = (char) ( Letter + 0x0020 );
-                     //if this letter and the next one lowercased make an element, needed for cases like HgRb
-                        else if( PT.ElementExists( "" + Letter + (char) ( NextLetter + 0x0020 ) ) )
+                     //if the last letter plus this one lowercased make an element and the next is not already lowered
+                        if( NextLetter != Char.ToLower(NextLetter) && PT.ElementExists( "" + LastLetter + Char.ToLower( Letter ) ))
+                            ChemicalCompound[i] = Char.ToLower( Letter );
+                     //if this letter plus the next one lowercased make an element
+                        else if( PT.ElementExists( "" + Letter + Char.ToLower( NextLetter) )) 
                         {
-                            ChemicalCompound[i + 1] = (char) ( NextLetter + 0x0020 );
+                            ChemicalCompound[i + 1] = Char.ToLower( NextLetter );
                             i = i + 1;
                         }
 
