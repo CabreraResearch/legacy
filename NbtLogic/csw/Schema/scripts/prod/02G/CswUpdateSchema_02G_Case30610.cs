@@ -102,11 +102,13 @@ select * from (
 
                 if( null != ReportGroupNT )
                 {
-                   SystemReportGroup = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( ReportGroupNT.NodeTypeId, IsTemp: true );
-                    SystemReportGroup.IsTemp = false; //hack around logic in beforeWriteNode
-                    SystemReportGroup.Name.Text = Name;
+                   SystemReportGroup = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( ReportGroupNT.NodeTypeId, 
+                       OnAfterMakeNode: ( CswNbtNode ) =>
+                           {
+                               CswNbtObjClassReportGroup NewNode = CswNbtNode;
+                               NewNode.Name.Text = Name;
+                           });
 
-                    SystemReportGroup.postChanges( false );
 
                 }
             }
