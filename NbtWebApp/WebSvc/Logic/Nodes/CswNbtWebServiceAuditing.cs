@@ -21,12 +21,7 @@ namespace ChemSW.Nbt.WebServices
             JObject ret = new JObject();
             if( Node != null )
             {
-                string SQL = @"with props as (select nodetypepropid, propname, recordcreated, fieldtypeid
-                                         from nodetype_props_audit
-                                       union
-                                       select nodetypepropid, propname, sysdate as recordcreated, fieldtypeid
-                                         from nodetype_props_audit)
-                        select ja.recordcreated as ChangeDate ";
+                string SQL = @"select ja.recordcreated as ChangeDate ";
                 if( !JustDateColumn )
                 {
                     SQL += @", x.transactionusername as Username,
@@ -38,14 +33,7 @@ namespace ChemSW.Nbt.WebServices
                 }
                 SQL += @" from jct_nodes_props_audit ja
                           join audit_transactions x on ja.audittransactionid = x.audittransactionid
-                          join props np 
-                            on (np.nodetypepropid = ja.nodetypepropid 
-                            and ja.recordcreated > np.recordcreated
-                            and np.recordcreated = (select max(p.recordcreated) maxreccreated 
-                                                   from props p 
-                                                  where p.nodetypepropid = ja.nodetypepropid 
-                                                    and p.recordcreated < ja.recordcreated 
-                                                  group by p.nodetypepropid))
+                          join TABLE(AuditLookup_NTPA(ja.recordcreated,ja.nodetypepropid)) np on (np.nodetypepropid = ja.nodetypepropid)
                           join field_types ft on ft.fieldtypeid = np.fieldtypeid
                          where ja.nodeid = :nodeid
                            and x.transactionusername not in (:sysusernames)
