@@ -127,7 +127,7 @@ namespace ChemSW.Nbt.ObjClasses
             if( TabIdAsInt > 0 || ( null != SelectedTab && SelectedTab.HasValues ) )
             {
                 CswNbtSdTabsAndProps Sd = new CswNbtSdTabsAndProps( _CswNbtResources );
-                ButtonData.PropsToReturn = Sd.getProps( NodeId.ToString(), null, TabId, NodeTypeId, null, null, null, ForceReadOnly: false );
+                ButtonData.PropsToReturn = Sd.getProps( NodeId.ToString(), null, TabId, NodeTypeId, null, null, ForceReadOnly: false );
             }
         }
 

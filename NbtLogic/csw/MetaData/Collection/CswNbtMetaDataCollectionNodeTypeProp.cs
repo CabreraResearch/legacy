@@ -140,7 +140,7 @@ namespace ChemSW.Nbt.MetaData
                                                                                                     where firstpropversionid = " + NodeTypeProp.FirstPropVersionId.ToString() + ")" );
         }
 
-        public IEnumerable<CswNbtMetaDataNodeTypeProp> getLayoutProps( Int32 NodeTypeId, Int32 TabId, CswEnumNbtLayoutType LayoutType, bool PropsInLayout = true )
+        public IEnumerable<CswNbtMetaDataNodeTypeProp> getLayoutProps( Int32 NodeTypeId, Int32 TabId, CswEnumNbtLayoutType LayoutType, CswDateTime Date, bool PropsInLayout = true )
         {
             string NodeTypeIdStr = NodeTypeId.ToString();
             string WhereClause = "where nodetypeid = '" + NodeTypeIdStr + "' ";
@@ -163,7 +163,7 @@ namespace ChemSW.Nbt.MetaData
             }
             WhereClause += ")";
 
-            return _CollImpl.getWhere( WhereClause ).Cast<CswNbtMetaDataNodeTypeProp>();
+            return _CollImpl.getWhere( WhereClause, Date ).Cast<CswNbtMetaDataNodeTypeProp>();
 
         } // getPropsInLayout()
 

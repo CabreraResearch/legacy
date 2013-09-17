@@ -94,7 +94,7 @@ namespace ChemSW.Nbt.MetaData
                 _Cache.Remove( NodeTypeId );
             }
         } // clearLayout()
-        
+
         /// <summary>
         /// Returns a dictionary of layout by tab
         /// </summary>
@@ -356,18 +356,18 @@ namespace ChemSW.Nbt.MetaData
 
             return ( from Layout in _Cache[NodeTypeId]
                      where Layout.LayoutType == LayoutType && Layout.DisplayRow != Int32.MaxValue
-                     select Layout.DisplayRow ).Concat( new[] {0} ).Max();
+                     select Layout.DisplayRow ).Concat( new[] { 0 } ).Max();
 
         } // getCurrentMaxDisplayRow()
 
-        public IEnumerable<CswNbtMetaDataNodeTypeProp> getPropsInLayout( Int32 NodeTypeId, Int32 TabId, CswEnumNbtLayoutType LayoutType )
+        public IEnumerable<CswNbtMetaDataNodeTypeProp> getPropsInLayout( Int32 NodeTypeId, Int32 TabId, CswEnumNbtLayoutType LayoutType, CswDateTime Date = null )
         {
-            return _CswNbtMetaDataResources.NodeTypePropsCollection.getLayoutProps( NodeTypeId, TabId, LayoutType );
+            return _CswNbtMetaDataResources.NodeTypePropsCollection.getLayoutProps( NodeTypeId, TabId, LayoutType, Date );
         } // getPropsInLayout()
 
-        public IEnumerable<CswNbtMetaDataNodeTypeProp> getPropsNotInLayout( CswNbtMetaDataNodeType NodeType, Int32 TabId, CswEnumNbtLayoutType LayoutType )
+        public IEnumerable<CswNbtMetaDataNodeTypeProp> getPropsNotInLayout( CswNbtMetaDataNodeType NodeType, Int32 TabId, CswEnumNbtLayoutType LayoutType, CswDateTime Date = null )
         {
-            return _CswNbtMetaDataResources.NodeTypePropsCollection.getLayoutProps( NodeType.NodeTypeId, TabId, LayoutType, false );
+            return _CswNbtMetaDataResources.NodeTypePropsCollection.getLayoutProps( NodeType.NodeTypeId, TabId, LayoutType, Date, false );
         } // getPropsNotInLayout()
 
     } // public class CswNbtMetaDataNodeTypeLayout : ICswNbtMetaDataObject

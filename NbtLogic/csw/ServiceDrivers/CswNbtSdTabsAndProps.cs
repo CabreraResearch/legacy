@@ -229,7 +229,7 @@ namespace ChemSW.Nbt.ServiceDrivers
         /// <summary>
         /// Fetch or create a node, and return a JObject for all properties in a given tab
         /// </summary>
-        public JObject getProps( string NodeId, string NodeKey, string TabId, Int32 NodeTypeId, CswDateTime Date, string filterToPropId, string RelatedNodeId, bool ForceReadOnly )
+        public JObject getProps( string NodeId, string NodeKey, string TabId, Int32 NodeTypeId, string filterToPropId, string RelatedNodeId, bool ForceReadOnly, CswDateTime Date = null )
         {
             JObject Ret = new JObject();
 
@@ -260,7 +260,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                 {
                     Node = _CswNbtResources.getNode( NodeId, NodeKey, Date );
                 }
-                return getProps( Node, TabId, FilterPropIdAttr, LayoutType, ForceReadOnly );
+                return getProps( Node, TabId, FilterPropIdAttr, LayoutType, ForceReadOnly, Date );
 
             } // if-else( TabId.StartsWith( HistoryTabPrefix ) )
             return Ret;
@@ -269,7 +269,7 @@ namespace ChemSW.Nbt.ServiceDrivers
         /// <summary>
         /// Fetch or create a node, and return a JObject for all properties in the identity tab
         /// </summary>
-        public JObject getIdentityTabProps( CswPrimaryKey NodeId, CswDateTime Date, string filterToPropId, string RelatedNodeId )
+        public JObject getIdentityTabProps( CswPrimaryKey NodeId, string filterToPropId, string RelatedNodeId, CswDateTime Date = null )
         {
             JObject Ret = new JObject();
 
@@ -278,7 +278,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             if( null != NodeType )
             {
                 CswNbtMetaDataNodeTypeTab IdentityTab = NodeType.getIdentityTab();
-                Ret = getProps( NodeId.ToString(), null, IdentityTab.TabId.ToString(), NodeType.NodeTypeId, Date, filterToPropId, RelatedNodeId, false );
+                Ret = getProps( NodeId.ToString(), null, IdentityTab.TabId.ToString(), NodeType.NodeTypeId, filterToPropId, RelatedNodeId, false, Date );
                 Ret["tab"] = new JObject();
                 Ret["tab"]["tabid"] = IdentityTab.TabId;
             }
@@ -288,7 +288,7 @@ namespace ChemSW.Nbt.ServiceDrivers
         /// <summary>
         /// Get props of a Node instance
         /// </summary>
-        public JObject getProps( CswNbtNode Node, string TabId, CswPropIdAttr FilterPropIdAttr, CswEnumNbtLayoutType LayoutType, bool ForceReadOnly = false )
+        public JObject getProps( CswNbtNode Node, string TabId, CswPropIdAttr FilterPropIdAttr, CswEnumNbtLayoutType LayoutType, bool ForceReadOnly = false, CswDateTime Date = null )
         {
             JObject Ret = new JObject();
             Ret["node"] = new JObject();
@@ -316,7 +316,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                 else
                 {
                     Int32 TabIdPk = CswConvert.ToInt32( TabId );
-                    IEnumerable<CswNbtMetaDataNodeTypeProp> Props = _CswNbtResources.MetaData.NodeTypeLayout.getPropsInLayout( Node.NodeTypeId, TabIdPk, LayoutType );
+                    IEnumerable<CswNbtMetaDataNodeTypeProp> Props = _CswNbtResources.MetaData.NodeTypeLayout.getPropsInLayout( Node.NodeTypeId, TabIdPk, LayoutType, Date );
 
                     if( _CswNbtResources.EditMode != CswEnumNbtNodeEditMode.Add ||
                         _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Create, NodeType ) )
@@ -329,7 +329,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                         CswNbtMetaDataNodeTypeTab IdentityTab = Node.getNodeType().getIdentityTab();
                         if( TabIdPk != IdentityTab.TabId )
                         {
-                            IEnumerable<CswNbtMetaDataNodeTypeProp> IdentityProps = _CswNbtResources.MetaData.NodeTypeLayout.getPropsInLayout( Node.NodeTypeId, IdentityTab.TabId, LayoutType );
+                            IEnumerable<CswNbtMetaDataNodeTypeProp> IdentityProps = _CswNbtResources.MetaData.NodeTypeLayout.getPropsInLayout( Node.NodeTypeId, IdentityTab.TabId, LayoutType, Date );
                             IEnumerable<CswNbtMetaDataNodeTypeProp> IdentityTabProps = Props as CswNbtMetaDataNodeTypeProp[] ?? IdentityProps.ToArray();
                             TabHasAnyEditableProp = TabHasAnyEditableProp || IdentityTabProps.Any( Prop => Prop.IsSaveable );
                         }
