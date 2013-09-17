@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Text.RegularExpressions;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.StructureSearch;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.PropTypes
@@ -108,6 +110,7 @@ namespace ChemSW.Nbt.PropTypes
         public override void ToJSON( JObject ParentObject )
         {
             ParentObject[_RawFormulaTextSubfield.ToXmlNodeName( true )] = Text;
+            ParentObject["formattedText"] = _parseChemicalFormula( Text );
             ParentObject["size"] = Size;
             ParentObject["maxlength"] = MaxLength;
             ParentObject["regex"] = RegEx;
@@ -131,6 +134,73 @@ namespace ChemSW.Nbt.PropTypes
         {
             SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, Text );
         }
+
+        /// <summary>
+        /// Build a version of the chemical formula which includes subscripting and converted chemical names
+        /// </summary>
+        /// <param name="Formula">The raw ASCII formula to parse</param>
+        /// <returns>a unicode string representing the prettified formula</returns>
+        private string _parseChemicalFormula( string Formula )
+        {
+            string FormattedFormula = "";
+            Regex FormulaExpression = new Regex( "(\\d*)([a-zA-Z\\d]+)([ \\.]*)(.*)" );
+
+         //borrow a dictionary of elements from structure search
+            PeriodicTable PT = new PeriodicTable();
+
+
+            while( false == string.IsNullOrEmpty( Formula ) )
+            {
+                GroupCollection FormulaGroups = FormulaExpression.Match( Formula ).Groups;
+
+             //append prefix numbers without changing them
+                FormattedFormula = FormattedFormula + FormulaGroups[1];
+
+             //iterate through the characters of the current compound from left to right
+                char[] ChemicalCompound = FormulaGroups[2].ToString().ToCharArray();
+                for( int i = 0; i < ChemicalCompound.Length; i++ )
+                {
+                    char Letter = ChemicalCompound[i];
+
+                 //convert numbers to subscript versions of themselves
+                    if( '0' <= Letter && Letter <= '9' )
+                        ChemicalCompound[i] = (char) ( Letter + 0x2080 );
+
+                 //determine the proper case for non-element letters
+                    else if( false == PT.ElementExists( Letter.ToString() ) && 'A' <= Letter && Letter <= 'Z' )
+                    {
+                        char LastLetter = i > 0 ? ChemicalCompound[i - 1] : '\0';
+                        char NextLetter = i < ChemicalCompound.Length - 1 ? ChemicalCompound[i + 1] : '\0';
+
+                     //if the last letter with this one lowercased make an element, needed for cases like Ba
+                        if( PT.ElementExists( "" + LastLetter + (char) ( Letter + 0x0020 ) ) )
+                            ChemicalCompound[i] = (char) ( Letter + 0x0020 );
+                     //if this letter and the next one lowercased make an element, needed for cases like HgRb
+                        else if( PT.ElementExists( "" + Letter + (char) ( NextLetter + 0x0020 ) ) )
+                        {
+                            ChemicalCompound[i + 1] = (char) ( NextLetter + 0x0020 );
+                            i = i + 1;
+                        }
+
+                    }//else if( false == PT.ElementExists( Letter.ToString() ) && 'A' <= Letter && Letter <= 'Z' )
+                }//for( int i = 0; i < ChemicalCompound.Length; i++ )
+
+             //append the prettified compound
+                FormattedFormula = FormattedFormula + new string(ChemicalCompound);
+
+             //append trailing characters, with periods converted to big middle dots
+                FormattedFormula = FormattedFormula + FormulaGroups[3].ToString().Replace( '.', (char) 0x25cf );
+
+             //move on to the next compoud in the formula
+                Formula = FormulaGroups[4].ToString();
+
+            }//while( false == string.IsNullOrEmpty( Formula ) )
+
+
+
+            return FormattedFormula;
+
+        }//_parseChemicalFormula
 
     }//CswNbtNodePropText
 
