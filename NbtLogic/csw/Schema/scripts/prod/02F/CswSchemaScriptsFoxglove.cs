@@ -5,7 +5,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Keeps the schema up-to-date
     /// </summary>
-    public class CswSchemaScriptsFoxglove: ICswSchemaScripts
+    public class CswSchemaScriptsFoxglove : ICswSchemaScripts
     {
         public Collection<CswUpdateSchemaTo> _DDLScripts()
         {
@@ -65,7 +65,8 @@ namespace ChemSW.Nbt.Schema
                     new CswUpdateSchema_02F_Case30043_InventoryGroups(),
                     new CswUpdateSchema_02F_Case30647(),
                     new CswUpdateSchema_02F_Case30661(),
-                    new CswUpdateSchema_02F_Case30706()
+                    new CswUpdateSchema_02F_Case30706(),
+                    new CswUpdateSchema_02F_Case30700()
                 };
         } // _SchemaScripts()
 
