@@ -174,7 +174,7 @@
                                 var updateBalanceInterface = function (balanceData) {
                                     cswPublic.rows[rowid].qtyControl.setQtyVal(balanceData.CurrentWeight);
 
-                                    Csw.each(cswPublic.rows[rowid].qtyControl.options, function (option) {
+                                    Csw.each(cswPrivate.quantity.options, function (option) {
                                         if (balanceData.UnitOfMeasurement == option.value) {
                                             cswPublic.rows[rowid].qtyControl.setUnitVal(option.id);
                                         }

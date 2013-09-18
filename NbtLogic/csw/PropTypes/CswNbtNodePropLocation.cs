@@ -414,5 +414,19 @@ namespace ChemSW.Nbt.PropTypes
             SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, GestaltPath );
         }
 
+        public override bool onBeforeSetDefault()
+        {
+            // This will default to Top.  Setting the Parent might change this later.
+            SelectedNodeId = null;
+
+            // case 24438 - Use user's default location
+            if( _CswNbtResources.CurrentNbtUser != null &&
+                _CswNbtResources.CurrentNbtUser.DefaultLocationId != null )
+            {
+                SelectedNodeId = _CswNbtResources.CurrentNbtUser.DefaultLocationId;
+            }
+            return true;
+        }
+
     }//CswNbtNodePropLocation
 }//namespace ChemSW.Nbt.PropTypes

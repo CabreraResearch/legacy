@@ -3,10 +3,8 @@
 (function _impersonation() {
 
     Csw.main.onReady.then(function() {
-        
-        Csw.subscribe(Csw.enums.events.RestoreViewContext, Csw.main.loadImpersonation);
 
-        Csw.main.register('loadImpersonation', function (eventObj, actionData) {
+        function loadImpersonation(eventObj, actionData) {
             if (false === Csw.isNullOrEmpty(actionData.userid)) {
                 return Csw.main.handleImpersonation(actionData.userid, actionData.username, function () {
                     Csw.main.initAll(function () {
@@ -30,7 +28,11 @@
                     type: actionData.type
                 });
             }
-        });
+        }
+        
+        Csw.subscribe(Csw.enums.events.RestoreViewContext, loadImpersonation);
+        
+        Csw.main.register('loadImpersonation', loadImpersonation);
         
 
         Csw.main.register('handleImpersonation', function (userid, username, onSuccess) {

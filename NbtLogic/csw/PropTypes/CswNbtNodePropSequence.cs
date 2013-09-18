@@ -150,6 +150,12 @@ namespace ChemSW.Nbt.PropTypes
         {
             SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, SequenceNumber );
         }
+
+        public override bool onBeforeSetDefault()
+        {
+            return DefaultValue.AsSequence.Sequence != CswNbtNodePropBarcode.AutoSignal;
+        }
+
     }//CswNbtNodeProp
 
 }//namespace ChemSW.Nbt.PropTypes

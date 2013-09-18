@@ -62,6 +62,7 @@
     <DocumentationFile>bin\NbtJavaScript.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
+    <Content Include="app\actions\csw.explorer.js" />
     <Content Include="app\actions\csw.deletedemodata.js" />
     <Content Include="app\actions\csw.managelocations.js" />
     <Content Include="app\actions\csw.logindata.js" />
@@ -69,6 +70,7 @@
     <Content Include="app\actions\csw.tierIIReporting.js" />
     <Content Include="app\actions\csw.hmisReporting.js" />
     <Content Include="app\actions\csw.kioskmode.js" />
+    <Content Include="app\actions\csw.arbor.render.js" />
     <Content Include="app\actions\_template.js" />
     <Content Include="app\composites\csw.imagegallery.js" />
     <Content Include="app\composites\csw.molimage.js" />

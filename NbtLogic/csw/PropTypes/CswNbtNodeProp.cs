@@ -422,7 +422,7 @@ namespace ChemSW.Nbt.PropTypes
             }
         } // SetSubFieldValue
 
-        
+
         /// <summary>
         /// Get the value for a subfield
         /// </summary>
@@ -436,7 +436,7 @@ namespace ChemSW.Nbt.PropTypes
                     // This calls the appropriate set; method in the CswNbtNodeProp* class
                     if( null != _SubFieldMethods[SubFieldKey].Item1 )
                     {
-                        ret =_SubFieldMethods[SubFieldKey].Item1();
+                        ret = _SubFieldMethods[SubFieldKey].Item1();
                     }
                 }
             }
@@ -457,6 +457,20 @@ namespace ChemSW.Nbt.PropTypes
         {
             return _CswNbtNodePropData.OtherPropGestalt( NodeTypePropId );
         }
+
+        /// <summary>
+        /// Executed before the default values are set for a property
+        /// </summary>
+        /// <returns>Whether or not the data should be copied from the default value row</returns>
+        public virtual bool onBeforeSetDefault()
+        {
+            return true;
+        }
+
+        /// <summary>
+        /// Executed after the default values are set for a property
+        /// </summary>
+        public virtual void onAfterSetDefault() { }
 
         #region Xml Operations
 
