@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 using ChemSW.Nbt.csw.Dev;
 using ChemSW.RscAdo;
@@ -49,7 +48,7 @@ namespace ChemSW.Nbt.Schema
             get { return true; }
         }
 
-        public override string Title { get { return "Post-Script: Reset Enabled NodeTypes | Re-enable Scheduled Rules | Trigger all Module Events"; } }
+        public override string Title { get { return "Post-Script: Reset Enabled NodeTypes | Re-enable Scheduled Rules | Clear Session Data | Trigger all Module Events"; } }
         public override void update()
         {
             _acceptBlame( CswEnumDeveloper.SS, 26029 );
@@ -67,7 +66,10 @@ namespace ChemSW.Nbt.Schema
             _CswNbtSchemaModTrnsctn.execStoredProc( "CREATEALLNTVIEWS", Params );
             _resetBlame();
 
-
+            _acceptBlame(CswEnumDeveloper.MB, 30700);
+            _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( "truncate table sessionlist" );
+            _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( "truncate table session_data" );
+            _resetBlame();
 
             _CswNbtSchemaModTrnsctn.Modules.TriggerModuleEventHandlers();
 
