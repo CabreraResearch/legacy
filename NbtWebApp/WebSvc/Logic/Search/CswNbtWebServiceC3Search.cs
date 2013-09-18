@@ -187,6 +187,7 @@ namespace ChemSW.Nbt.WebServices
                 [DataContract]
                 public class SizeRecord
                 {
+                    // TODO: Discuss removing this with Brendan as he uses it in getCopyData() in CswNbtWebServiceNode.cs
                     [DataMember]
                     public SizeData nodeId = null;
 
@@ -405,7 +406,7 @@ namespace ChemSW.Nbt.WebServices
                     C3CreateMaterialResponse.State.Supplier Supplier = C3Import.createVendorNode( C3ProductDetails.SupplierName );
 
                     // Create size node(s)
-                    Collection<C3CreateMaterialResponse.State.SizeRecord> ProductSizes = C3Import.createSizeNodes( C3ProductTempNode );
+                    Collection<C3CreateMaterialResponse.State.SizeRecord> ProductSizes = C3Import.constructSizeObjects();
 
                     // Create synonyms node(s)
                     C3Import.createMaterialSynonyms( C3ProductTempNode );
@@ -857,99 +858,79 @@ namespace ChemSW.Nbt.WebServices
                 return Supplier;
             }//createVendorNode()
 
-            public Collection<C3CreateMaterialResponse.State.SizeRecord> createSizeNodes( CswNbtPropertySetMaterial MaterialNode )
+            public Collection<C3CreateMaterialResponse.State.SizeRecord> constructSizeObjects()
             {
                 // Return object
                 Collection<C3CreateMaterialResponse.State.SizeRecord> ProductSizes = new Collection<C3CreateMaterialResponse.State.SizeRecord>();
 
-                CswNbtMetaDataNodeType SizeNT = _CswNbtResources.MetaData.getNodeType( "Size" );
-                if( null != SizeNT )
+                // First set the sizes to import to the original set of sizes
+                _SizesToImport = _ProductToImport.ProductSize.ToList();
+
+                // If we have more than 1 size there is a possibility we will have duplicates
+                if( _SizesToImport.Count > 1 )
                 {
-                    // First set the sizes to import to the original set of sizes
-                    _SizesToImport = _ProductToImport.ProductSize.ToList();
+                    _removeDuplicateSizes();
+                }
 
-                    // If we have more than 1 size there is a possibility we will have duplicates
-                    if( _SizesToImport.Count > 1 )
+                foreach( CswC3Product.Size CurrentSize in _SizesToImport )
+                {
+                    //Set the return object
+                    C3CreateMaterialResponse.State.SizeRecord Size = new C3CreateMaterialResponse.State.SizeRecord();
+
+                    //unitCount
+                    C3CreateMaterialResponse.State.SizeRecord.SizeData UnitCount = new C3CreateMaterialResponse.State.SizeRecord.SizeData();
+                    UnitCount.value = CswConvert.ToString( CurrentSize.case_qty );
+                    UnitCount.readOnly = true;
+                    UnitCount.hidden = false;
+                    Size.unitCount = UnitCount;
+
+                    //initialQuantity
+                    C3CreateMaterialResponse.State.SizeRecord.SizeData InitialQuantity = new C3CreateMaterialResponse.State.SizeRecord.SizeData();
+                    InitialQuantity.value = CswConvert.ToString( CurrentSize.pkg_qty );
+                    InitialQuantity.readOnly = true;
+                    InitialQuantity.hidden = false;
+                    Size.quantity = InitialQuantity;
+
+                    //newUoM
+                    C3CreateMaterialResponse.State.SizeRecord.SizeData NewUoM = new C3CreateMaterialResponse.State.SizeRecord.SizeData();
+
+                    Tuple<int, string> UnitOfMeasureInfo = _getUnitOfMeasure( CurrentSize.pkg_qty_uom, CurrentSize.c3_uom );
+
+                    if( null != UnitOfMeasureInfo )
                     {
-                        _removeDuplicateSizes();
+                        NewUoM.value = UnitOfMeasureInfo.Item2;
                     }
-                    for( int index = 0; index < _SizesToImport.Count; index++ )
-                    {
-                        CswC3Product.Size CurrentSize = _SizesToImport[index];
-                        CswNbtObjClassSize sizeNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( SizeNT.NodeTypeId, delegate( CswNbtNode NewNode )
-                        {
-                            // Don't forget to send in the index so that the correct values get added to the NTPs
-                            addNodeTypeProps( NewNode, index );
-                            ( (CswNbtObjClassSize) NewNode ).Material.RelatedNodeId = MaterialNode.NodeId;
-                            //sizeNode.IsTemp = false;
-                            //sizeNode.postChanges( true );
-                        } );
 
-                        //Set the return object
-                        C3CreateMaterialResponse.State.SizeRecord Size = new C3CreateMaterialResponse.State.SizeRecord();
+                    NewUoM.readOnly = !string.IsNullOrEmpty( NewUoM.value );
+                    NewUoM.hidden = false;
+                    Size.uom = NewUoM;
 
-                        //sizeNodeId
-                        C3CreateMaterialResponse.State.SizeRecord.SizeData SizeNodeId = new C3CreateMaterialResponse.State.SizeRecord.SizeData();
-                        SizeNodeId.value = sizeNode.NodeId.ToString();
-                        SizeNodeId.readOnly = true;
-                        SizeNodeId.hidden = true;
-                        Size.nodeId = SizeNodeId;
+                    //originalUoM
+                    C3CreateMaterialResponse.State.SizeRecord.SizeData OriginalUoM = new C3CreateMaterialResponse.State.SizeRecord.SizeData();
+                    OriginalUoM.value = CurrentSize.c3_uom;
+                    OriginalUoM.readOnly = true;
+                    OriginalUoM.hidden = false;
+                    Size.origUom = OriginalUoM;
 
-                        //unitCount
-                        C3CreateMaterialResponse.State.SizeRecord.SizeData UnitCount = new C3CreateMaterialResponse.State.SizeRecord.SizeData();
-                        UnitCount.value = CswConvert.ToString( sizeNode.UnitCount.Value );
-                        UnitCount.readOnly = true;
-                        UnitCount.hidden = false;
-                        Size.unitCount = UnitCount;
+                    //catalogNo
+                    C3CreateMaterialResponse.State.SizeRecord.SizeData CatalogNo = new C3CreateMaterialResponse.State.SizeRecord.SizeData();
+                    CatalogNo.value = CurrentSize.catalog_no;
+                    CatalogNo.readOnly = true;
+                    CatalogNo.hidden = false;
+                    Size.catalogNo = CatalogNo;
 
-                        //initialQuantity
-                        C3CreateMaterialResponse.State.SizeRecord.SizeData InitialQuantity = new C3CreateMaterialResponse.State.SizeRecord.SizeData();
-                        InitialQuantity.value = CswConvert.ToString( sizeNode.InitialQuantity.Quantity );
-                        InitialQuantity.readOnly = true;
-                        InitialQuantity.hidden = false;
-                        Size.quantity = InitialQuantity;
+                    //quantityEditable
+                    C3CreateMaterialResponse.State.SizeRecord.SizeData QuantityEditable = new C3CreateMaterialResponse.State.SizeRecord.SizeData();
+                    QuantityEditable.value = "checked";
+                    Size.quantityEditable = QuantityEditable;
 
-                        //newUoM
-                        C3CreateMaterialResponse.State.SizeRecord.SizeData NewUoM = new C3CreateMaterialResponse.State.SizeRecord.SizeData();
-                        NewUoM.value = sizeNode.InitialQuantity.CachedUnitName;
-                        if( string.IsNullOrEmpty( NewUoM.value ) )
-                        {
-                            NewUoM.readOnly = false;
-                        }
-                        else
-                        {
-                            NewUoM.readOnly = true;
-                        }
-                        NewUoM.hidden = false;
-                        Size.uom = NewUoM;
+                    //dispensible
+                    C3CreateMaterialResponse.State.SizeRecord.SizeData Dispensible = new C3CreateMaterialResponse.State.SizeRecord.SizeData();
+                    Dispensible.value = "checked";
+                    Size.dispensible = Dispensible;
 
-                        //originalUoM
-                        C3CreateMaterialResponse.State.SizeRecord.SizeData OriginalUoM = new C3CreateMaterialResponse.State.SizeRecord.SizeData();
-                        OriginalUoM.value = CurrentSize.c3_uom;
-                        OriginalUoM.readOnly = true;
-                        OriginalUoM.hidden = false;
-                        Size.origUom = OriginalUoM;
-
-                        //catalogNo
-                        C3CreateMaterialResponse.State.SizeRecord.SizeData CatalogNo = new C3CreateMaterialResponse.State.SizeRecord.SizeData();
-                        CatalogNo.value = sizeNode.CatalogNo.Text;
-                        CatalogNo.readOnly = true;
-                        CatalogNo.hidden = false;
-                        Size.catalogNo = CatalogNo;
-
-                        //quantityEditable
-                        C3CreateMaterialResponse.State.SizeRecord.SizeData QuantityEditable = new C3CreateMaterialResponse.State.SizeRecord.SizeData();
-                        QuantityEditable.value = "checked";
-                        Size.quantityEditable = QuantityEditable;
-
-                        //dispensible
-                        C3CreateMaterialResponse.State.SizeRecord.SizeData Dispensible = new C3CreateMaterialResponse.State.SizeRecord.SizeData();
-                        Dispensible.value = "checked";
-                        Size.dispensible = Dispensible;
-
-                        ProductSizes.Add( Size );
-                    }
-                } // if( null != SizeNT )
+                    ProductSizes.Add( Size );
+                }
 
                 return ProductSizes;
             }//createSizeNodes()
