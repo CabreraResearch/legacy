@@ -52,28 +52,24 @@ namespace ChemSW.Nbt.Schema
 
                 string TableTypeSql = @"CREATE OR REPLACE TYPE " + TableType + " AS TABLE OF " + ObjectType + ";";
 
-                string MainQuery = @"select " + Columns.ToString( false ) + @", recordcreated
-                                          from " + AuditTable + @" a
-                                         where a.recordcreated = (select max(recordcreated)
-                                                                       from " + AuditTable + @" a2
-                                                                      where a2.recordcreated <= AsOfDate
-                                                                        and a2." + RealTablePk + @" = a." + RealTablePk + @")";
-
                 string FuncSql = @"create or replace function " + FuncName + @" (AsOfDate in Date) return " + TableType + @" is
                                       ResultTable " + TableType + @";
-                                      CURSOR audit1 RETURN " + ObjectType + @" is(" + MainQuery + @");
+                                      CURSOR audit1 is(select " + ObjectType + @"(" + Columns.ToString( false ) + @",recordcreated)
+                                                         from " + AuditTable + @" a
+                                                        where a.recordcreated = (select max(recordcreated)
+                                                                                   from " + AuditTable + @" a2
+                                                                                  where a2.recordcreated <= AsOfDate
+                                                                                    and a2." + RealTablePk + @" = a." + RealTablePk + @"));
                                     begin
 
                                       open audit1;
-                                      if audit1%notfound then
+                                      fetch audit1 bulk collect into ResultTable;
+
+                                      if audit1%rowcount <= 0 then
                                         SELECT " + ObjectType + @"(" + Columns.ToString( false ) + @",recordcreated) BULK COLLECT
                                           INTO ResultTable
                                           FROM (select " + Columns.ToString( false ) + @", sysdate as recordcreated 
-                                                  from " + RealTable + @" where " + RealTablePk + @" = PrimaryKey);
-                                      else
-                                        SELECT " + ObjectType + @"(" + Columns.ToString( false ) + @",recordcreated) BULK COLLECT
-                                          INTO ResultTable
-                                          FROM (" + MainQuery + @") p;
+                                                  from " + RealTable + @");
                                       end if;
 
                                       RETURN ResultTable;
