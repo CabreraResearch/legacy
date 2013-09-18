@@ -747,7 +747,7 @@
         /// <param name="$context" type="jQuery"> Optional context to limit the search </param>
         /// <returns type="jQuery">jQuery object, empty if no match found.</returns>
         var $ret = $('');
-        var document = Csw.getGlobalProp('document');
+        
         if (false === Csw.isNullOrEmpty(elementId)) {
             try {
                 if (arguments.length === 2 && false === Csw.isNullOrEmpty($context)) {

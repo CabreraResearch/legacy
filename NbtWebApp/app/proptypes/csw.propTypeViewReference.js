@@ -32,7 +32,7 @@
                         Csw.cookie.clear(Csw.cookie.cookieNames.CurrentNodeId);
                         Csw.cookie.clear(Csw.cookie.cookieNames.CurrentNodeKey);
 
-                        Csw.window.location(Csw.getGlobalProp('homeUrl'));
+                        Csw.window.location(Csw.clientDb.getItem('homeUrl'));
                     }
                 });
                 if (false === nodeProperty.isReadOnly()) {

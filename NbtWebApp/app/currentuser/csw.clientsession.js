@@ -136,7 +136,7 @@
         if (false === Csw.isNullOrEmpty(cswPrivate.logoutpath)) {
             Csw.window.location(cswPrivate.logoutpath);
         } else {
-            Csw.window.location(Csw.getGlobalProp('homeUrl'));
+            Csw.window.location(Csw.clientDb.getItem('homeUrl'));
         }
     });
 
