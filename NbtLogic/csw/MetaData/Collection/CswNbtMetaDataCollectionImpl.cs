@@ -11,11 +11,9 @@ namespace ChemSW.Nbt.MetaData
     {
         private CswNbtMetaDataResources _CswNbtMetaDataResources;
         private CswTableSelect _TableSelect;
-        private CswTableSelect _TableSelectAudit;
         private CswTableUpdate _TableUpdate;
         private string _PkColumnName;
         private string _NameColumnName;
-        private string _AuditPkColumnName;
 
         public delegate ICswNbtMetaDataObject MakeMetaDataObjectHandler( CswNbtMetaDataResources CswNbtMetaDataResources, DataRow Row );
         private MakeMetaDataObjectHandler _MetaDataObjectMaker = null;
@@ -282,11 +280,9 @@ namespace ChemSW.Nbt.MetaData
             }
             else
             {
-                string Sql = "select a.* " +
-                             "  from " + _TableSelect.TableName + " t " +
-                             "  join TABLE(" + CswNbtAuditTableAbbreviation.getAuditLookupFunctionNameForRealTable( _TableSelect.TableName ) +
-                             "(" + _CswNbtMetaDataResources.CswNbtResources.getDbNativeDate( Date.ToDateTime() ) + ", t." + _PkColumnName + ")) a" +
-                             "    on (t." + _PkColumnName + " = a." + _PkColumnName + ")" +
+                string Sql = "select * " +
+                             "  from TABLE(" + CswNbtAuditTableAbbreviation.getAuditLookupFunctionNameForRealTable( _TableSelect.TableName ) +
+                             "(" + _CswNbtMetaDataResources.CswNbtResources.getDbNativeDate( Date.ToDateTime() ) + ")) " + _TableSelect.TableName + " " +
                              Where;
                 addModuleWhereClause( ref Sql );
 

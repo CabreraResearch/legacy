@@ -52,16 +52,16 @@ namespace ChemSW.Nbt.Schema
 
                 string TableTypeSql = @"CREATE OR REPLACE TYPE " + TableType + " AS TABLE OF " + ObjectType + ";";
 
-                string FuncSql = @"create or replace function " + FuncName + @" (AsOfDate in Date, PrimaryKey in Number) return " + TableType + @" is
+                string MainQuery = @"select " + Columns.ToString( false ) + @", recordcreated
+                                          from " + AuditTable + @" a
+                                         where a.recordcreated = (select max(recordcreated)
+                                                                       from " + AuditTable + @" a2
+                                                                      where a2.recordcreated <= AsOfDate
+                                                                        and a2." + RealTablePk + @" = a." + RealTablePk + @")";
+
+                string FuncSql = @"create or replace function " + FuncName + @" (AsOfDate in Date) return " + TableType + @" is
                                       ResultTable " + TableType + @";
-                                      CURSOR audit1 RETURN " + ObjectType + @" is(
-                                        select " + Columns.ToString( false ) + @", recordcreated
-                                          from " + AuditTable + @"
-                                         where " + RealTablePk + @" = PrimaryKey
-                                           and recordcreated = (select max(recordcreated)
-                                                                       from " + AuditTable + @"
-                                                                      where recordcreated <= AsOfDate
-                                                                        and " + RealTablePk + @" = PrimaryKey));
+                                      CURSOR audit1 RETURN " + ObjectType + @" is(" + MainQuery + @");
                                     begin
 
                                       open audit1;
@@ -73,13 +73,7 @@ namespace ChemSW.Nbt.Schema
                                       else
                                         SELECT " + ObjectType + @"(" + Columns.ToString( false ) + @",recordcreated) BULK COLLECT
                                           INTO ResultTable
-                                          FROM (select " + Columns.ToString( false ) + @", recordcreated
-                                                  from " + AuditTable + @"
-                                                 where " + RealTablePk + @" = PrimaryKey
-                                                   and recordcreated = (select max(recordcreated)
-                                                                          from " + AuditTable + @"
-                                                                         where recordcreated <= AsOfDate
-                                                                           and " + RealTablePk + @" = PrimaryKey)) p;
+                                          FROM (" + MainQuery + @") p;
                                       end if;
 
                                       RETURN ResultTable;

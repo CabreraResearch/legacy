@@ -33,8 +33,8 @@ namespace ChemSW.Nbt.WebServices
                 }
                 SQL += @" from jct_nodes_props_audit ja
                           join audit_transactions x on ja.audittransactionid = x.audittransactionid
-                          join TABLE(" + CswNbtAuditTableAbbreviation.getAuditLookupFunctionName( "nodetype_props_audit" ) +
-                                    @"(ja.recordcreated,ja.nodetypepropid)) np on (np.nodetypepropid = ja.nodetypepropid))
+                          join TABLE(" + CswNbtAuditTableAbbreviation.getAuditLookupFunctionNameForRealTable( "nodetype_props" ) +
+                                    @"(ja.recordcreated)) np on (np.nodetypepropid = ja.nodetypepropid)
                           join field_types ft on ft.fieldtypeid = np.fieldtypeid
                          where ja.nodeid = :nodeid
                            and x.transactionusername not in (:sysusernames)
