@@ -68,11 +68,11 @@ namespace ChemSW.Nbt.MetaData
         }
 
         private Dictionary<Int32, ICswNbtMetaDataObject> _Cache = new Dictionary<Int32, ICswNbtMetaDataObject>();
-        private ICswNbtMetaDataObject _makeObj( DataRow Row )
+        private ICswNbtMetaDataObject _makeObj( DataRow Row, bool useCache = true )
         {
             ICswNbtMetaDataObject ret = null;
             Int32 PkValue = CswConvert.ToInt32( Row[_PkColumnName] );
-            if( _Cache.ContainsKey( PkValue ) )
+            if( useCache && _Cache.ContainsKey( PkValue ) )
             {
                 // In order to guarantee only one reference per row, use the existing reference
                 // and, to prevent dirty writes, remove the row
@@ -82,13 +82,16 @@ namespace ChemSW.Nbt.MetaData
             else
             {
                 ret = _MetaDataObjectMaker( _CswNbtMetaDataResources, Row );
-                _Cache[PkValue] = ret;
+                if( useCache )
+                {
+                    _Cache[PkValue] = ret;
+                }
             }
             return ret;
         }
 
 
-        private Collection<ICswNbtMetaDataObject> _makeObjs( DataTable Table )
+        private Collection<ICswNbtMetaDataObject> _makeObjs( DataTable Table, bool useCache = true )
         {
             Collection<ICswNbtMetaDataObject> Coll = new Collection<ICswNbtMetaDataObject>();
             Collection<DataRow> RowsToIterate = new Collection<DataRow>();
@@ -99,7 +102,7 @@ namespace ChemSW.Nbt.MetaData
             }
             foreach( DataRow Row in RowsToIterate )
             {
-                Coll.Add( _makeObj( Row ) );
+                Coll.Add( _makeObj( Row, useCache ) );
             }
             return Coll;
         } // _makeObjs()
@@ -281,14 +284,13 @@ namespace ChemSW.Nbt.MetaData
             else
             {
                 string Sql = "select * " +
-                             "  from TABLE(" + CswNbtAuditTableAbbreviation.getAuditLookupFunctionNameForRealTable( _TableSelect.TableName ) +
-                             "(" + _CswNbtMetaDataResources.CswNbtResources.getDbNativeDate( Date.ToDateTime() ) + ")) " + _TableSelect.TableName + " " +
+                             "  from " + CswNbtAuditTableAbbreviation.getAuditTableSql( _CswNbtMetaDataResources.CswNbtResources, _TableSelect.TableName, Date ) + " " + _TableSelect.TableName + " " +
                              Where;
                 addModuleWhereClause( ref Sql );
 
                 CswArbitrarySelect AuditSelect = _CswNbtMetaDataResources.CswNbtResources.makeCswArbitrarySelect( "MetaDataCollectionImpl_getWhere_audit_select", Sql );
                 DataTable Table = AuditSelect.getTable();
-                ret = _makeObjs( Table );
+                ret = _makeObjs( Table, useCache: false );
             }
             return ret;
         } // getWhere(Where,Date)
