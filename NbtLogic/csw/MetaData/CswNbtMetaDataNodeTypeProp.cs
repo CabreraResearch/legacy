@@ -816,6 +816,7 @@ namespace ChemSW.Nbt.MetaData
             set
             {
                 _setAttribute( CswEnumNbtNodeTypePropAttributes.auditlevel.ToString(), value.ToString(), false );
+                _CswNbtMetaDataResources.CswNbtMetaData.NodeTypeLayout.updateLayoutAuditLevel( this, value );
             }
         }
 

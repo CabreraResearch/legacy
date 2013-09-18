@@ -181,6 +181,7 @@ namespace ChemSW.Nbt.MetaData
                 Row["layouttype"] = LayoutType.ToString();
                 Row["nodetypeid"] = CswConvert.ToDbVal( NodeTypeId );
                 Row["nodetypepropid"] = CswConvert.ToDbVal( NtProp.PropId );
+                Row["auditlevel"] = CswConvert.ToDbVal( NtProp.AuditLevel ); // layout audit goes with property audit
 
                 if( LayoutType == CswEnumNbtLayoutType.Edit )
                 {
@@ -370,5 +371,16 @@ namespace ChemSW.Nbt.MetaData
             return _CswNbtMetaDataResources.NodeTypePropsCollection.getLayoutProps( NodeType.NodeTypeId, TabId, LayoutType, Date, false );
         } // getPropsNotInLayout()
 
+        public void updateLayoutAuditLevel( CswNbtMetaDataNodeTypeProp NtProp, string AuditLevel )
+        {
+            CswTableUpdate LayoutUpdate = _CswNbtMetaDataResources.CswNbtResources.makeCswTableUpdate( "updatePropAuditLevel_Update", "nodetype_layout" );
+            string WhereClause = "where nodetypepropid = " + NtProp.PropId.ToString();
+            DataTable LayoutTable = LayoutUpdate.getTable( WhereClause );
+            foreach( DataRow Row in LayoutTable.Rows )
+            {
+                Row["auditlevel"] = AuditLevel;
+            }
+            LayoutUpdate.update( LayoutTable );
+        }
     } // public class CswNbtMetaDataNodeTypeLayout : ICswNbtMetaDataObject
 } // namespace ChemSW.Nbt.MetaData
