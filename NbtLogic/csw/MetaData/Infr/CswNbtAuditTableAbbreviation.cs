@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using ChemSW.Audit;
+using ChemSW.Core;
 
 namespace ChemSW.Nbt
 {
@@ -18,6 +19,7 @@ namespace ChemSW.Nbt
                 {"na", "nodes_audit"},
                 {"nta", "nodetypes_audit"},
                 {"ntpa", "nodetype_props_audit"},
+                {"ntla", "nodetype_layout_audit"},
                 {"ntta", "nodetype_tabset_audit"},
                 {"nva", "node_views_audit"},
                 {"oca", "object_class_audit"},
@@ -26,7 +28,7 @@ namespace ChemSW.Nbt
 
         public static ICollection<string> Abbreviations
         {
-            get { return _AuditTables.Keys; } 
+            get { return _AuditTables.Keys; }
         }
 
         public static string getAbbreviation( string AuditTableName )
@@ -54,6 +56,12 @@ namespace ChemSW.Nbt
         {
             CswAuditMetaData CswAuditMetaData = new CswAuditMetaData();
             return getAuditLookupFunctionName( CswAuditMetaData.makeAuditTableName( RealTableName ) );
+        }
+
+        public static string getAuditTableSql( CswNbtResources CswNbtResources, string RealTableName, CswDateTime Date )
+        {
+            return "TABLE(" + getAuditLookupFunctionNameForRealTable( RealTableName ) +
+                   "(" + CswNbtResources.getDbNativeDate( Date.ToDateTime() ) + "))";
         }
     }
 }
