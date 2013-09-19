@@ -72,6 +72,8 @@
     <Content Include="app\actions\csw.kioskmode.js" />
     <Content Include="app\actions\csw.arbor.render.js" />
     <Content Include="app\actions\_template.js" />
+    <Content Include="app\composites\csw.buttonSplit.js" />
+    <Content Include="app\composites\csw.formula.js" />
     <Content Include="app\composites\csw.imagegallery.js" />
     <Content Include="app\composites\csw.molimage.js" />
     <Content Include="app\composites\csw.timeline.js" />
@@ -96,6 +98,7 @@
     <Content Include="app\db\csw.dbIndex.js" />
     <Content Include="app\literals\csw.fieldset.js" />
     <Content Include="app\layouts\csw.landingpage.js" />
+    <Content Include="app\literals\csw.svg.js" />
     <Content Include="app\literals\_template.js" />
     <Content Include="app\main\csw.mainRefreshDashboard.js" />
     <Content Include="app\main\csw.mainClear.js" />
@@ -122,6 +125,7 @@
     <Content Include="app\proptypes\csw.propTypeChildContents.js" />
     <Content Include="app\nodes\csw.node.treeExt.js" />
     <Content Include="app\proptypes\csw.propTypeCASNo.js" />
+    <Content Include="app\proptypes\csw.propTypeFormula.js" />
     <Content Include="app\proptypes\_propTypeTemplate.js" />
     <Content Include="app\promises\csw.ajaxWcf.js" />
     <Content Include="app\nodes\csw.node.table.js" />
@@ -162,6 +166,7 @@
     <Content Include="app\proptypes\csw.propTypeUserSelect.js" />
     <Content Include="app\proptypes\csw.propTypeViewPickList.js" />
     <Content Include="app\proptypes\csw.propTypeViewReference.js" />
+    <Content Include="app\tools\csw.browserCompatibility.js" />
     <Content Include="app\tools\csw.clientCache.js" />
     <Content Include="app\tools\csw.functional.js" />
     <Content Include="app\tools\csw.ext.js" />
