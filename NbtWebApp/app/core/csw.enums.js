@@ -432,6 +432,7 @@
             }
         },
         File: { name: 'File', subfields: {} },
+            Formula: { name: 'Formula', subfields: {} },
         Grid: { name: 'Grid', subfields: {} },
         Image: { name: 'Image', subfields: {} },
         ImageList: { name: 'ImageList', subfields: {} },

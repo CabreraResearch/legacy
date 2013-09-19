@@ -212,6 +212,13 @@
             return cswPrivate.makeControlForChaining(opts, 'span');
         };
 
+            cswPublic.svg = function (opts) {
+                /// <summary> Creates a Csw.svg on this element</summary>
+                /// <param name="opts" type="Object">Options to define the svg.</param>
+                /// <returns type="Csw.literals.img">A Csw.literals.svg</returns>
+                return cswPrivate.makeControlForChaining(opts, 'svg');
+            };
+
         /* Case 25125: This literal is deprecated. Use composite instead. */
         cswPublic.table = function (opts) {
             /// <summary> (Deprecated) Creates a Csw.table on this element</summary>

@@ -59,6 +59,7 @@
                 case 'P':
                 case 'SELECT':
                 case 'SPAN':
+                        case 'SVG':
                 case 'TABLE':
                 case 'TEXTAREA':
                 case 'UL':

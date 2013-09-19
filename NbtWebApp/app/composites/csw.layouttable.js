@@ -323,7 +323,7 @@
         cswPublic.addCellSetAttributes = function (cellSet, attributes) {
 
             function applyAttributes(cell) {
-                if (false === Csw.isNullOrEmpty(attributes)) {
+                    if (false === Csw.isNullOrEmpty(cell) && false === Csw.isNullOrEmpty(attributes)) {
                     cell.data(attributes);
                 }
             }

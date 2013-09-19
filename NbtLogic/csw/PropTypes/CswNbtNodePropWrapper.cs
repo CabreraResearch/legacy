@@ -418,6 +418,16 @@ namespace ChemSW.Nbt.PropTypes
             }
         }//DateTime
 
+        public CswNbtNodePropFormula AsFormula
+        {
+            get
+            {
+                if( false == ( _CswNbtNodeProp is CswNbtNodePropFormula ) )
+                    throw ( new CswDniException( _makeTypeErrorMessage( typeof( CswNbtNodePropFormula ) ) ) );
+                return ( (CswNbtNodePropFormula) _CswNbtNodeProp );
+            }
+        }//Formula
+
         public CswNbtNodePropGrid AsGrid
         {
             get
