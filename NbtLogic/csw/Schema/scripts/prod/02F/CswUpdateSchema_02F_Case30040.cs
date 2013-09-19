@@ -48,8 +48,7 @@ namespace ChemSW.Nbt.Schema
             _importOrder( 1, "assembly", "Role" );
             _importOrder( 2, "assembly", "User" );
             _importOrder( 3, "assembly", "Department" );
-            _importOrder( 4, "assembly", "Building", 1 );
-            _importOrder( 5, "assembly", "Room", 2 );
+            _importOrder( 4, "assembly", "Building" );
             _importOrder( 6, "assembly", "Vendor", 1 );
             _importOrder( 7, "assembly", "Vendor", 2 );
             _importOrder( 8, "assembly", "Equipment Type" );
@@ -72,8 +71,7 @@ namespace ChemSW.Nbt.Schema
             _importOrder( 25, "equipment", "Role" );
             _importOrder( 26, "equipment", "User" );
             _importOrder( 27, "equipment", "Department" );
-            _importOrder( 28, "equipment", "Building", 1 );
-            _importOrder( 29, "equipment", "Room", 2 );
+            _importOrder( 28, "equipment", "Building" );
             _importOrder( 30, "equipment", "Vendor", 1 );
             _importOrder( 31, "equipment", "Vendor", 2 );
             _importOrder( 32, "equipment", "Equipment Type" );
@@ -99,8 +97,7 @@ namespace ChemSW.Nbt.Schema
             #region Binding
             _importBinding( "assembly", "nodetype", "", "", "" );
             _importBinding( "assembly", "departmentname", "Department", "Department Name", "" );
-            _importBinding( "assembly", "location", "Room", "Name", "", 2 );
-            _importBinding( "assembly", "building", "Building", "Name", "", 1 );
+            _importBinding( "assembly", "location", "Building", "Name", "" );
             _importBinding( "assembly", "equiptypename", "Equipment Type", "Type Name", "" );
             _importBinding( "assembly", "assemblyid", "Assembly", "Assembly ID", "" );
             _importBinding( "assembly", "propertyno", "Assembly", "Assembly Property No", "" );
@@ -194,7 +191,7 @@ namespace ChemSW.Nbt.Schema
             _importBinding( "asm_schedules", "ReportedBy", "", "", "" );
             _importBinding( "asm_schedules", "UserName", "", "", "" );
             _importBinding( "asm_schedules", "DeptName", "Department", "Department Name", "" );
-            _importBinding( "asm_schedules", "StartedOn", "", "", "" );
+            _importBinding( "asm_schedules", "StartedOn", "Assembly Schedule", "Next Due Date", "" );
             _importBinding( "asm_schedules", "EndedOn", "", "", "" );
             _importBinding( "asm_schedules", "Description", "Assembly Schedule", "Description", "" );
             _importBinding( "asm_schedules", "Completion", "", "", "" );
@@ -285,8 +282,7 @@ namespace ChemSW.Nbt.Schema
 
             _importBinding( "equipment", "nodetype", "", "", "" );
             _importBinding( "equipment", "departmentname", "Department", "Department Name", "" );
-            _importBinding( "equipment", "building", "Building", "Name", "", 1 );
-            _importBinding( "equipment", "location", "Room", "Name", "", 2 );
+            _importBinding( "equipment", "location", "Building", "Name", "" );
             _importBinding( "equipment", "equiptypename", "Equipment Type", "Type Name", "" );
             _importBinding( "equipment", "eid", "Equipment", "Equipment ID", "" );
             _importBinding( "equipment", "assemblyid", "Assembly", "Assembly ID", "" );
@@ -381,7 +377,7 @@ namespace ChemSW.Nbt.Schema
             _importBinding( "eq_schedules", "ReportedBy", "", "", "" );
             _importBinding( "eq_schedules", "UserName", "", "", "" );
             _importBinding( "eq_schedules", "DeptName", "Department", "Department Name", "" );
-            _importBinding( "eq_schedules", "StartedOn", "", "", "" );
+            _importBinding( "eq_schedules", "StartedOn", "Equipment Schedule", "Next Due Date", "" );
             _importBinding( "eq_schedules", "EndedOn", "", "", "" );
             _importBinding( "eq_schedules", "Description", "Equipment Schedule", "Description", "" );
             _importBinding( "eq_schedules", "Completion", "", "", "" );
@@ -476,8 +472,7 @@ namespace ChemSW.Nbt.Schema
             _importRelationship( "assembly", "Assembly", "Department" );
             _importRelationship( "assembly", "Assembly", "User" );
             _importRelationship( "assembly", "Assembly", "Assembly Type" );
-            _importRelationship( "assembly", "Room", "Location", 1 );
-            _importRelationship( "assembly", "Assembly", "Location", 2 );
+            _importRelationship( "assembly", "Assembly", "Location" );
             _importRelationship( "assembly", "Assembly", "Assembly Vendor", 1 );
             _importRelationship( "assembly", "Assembly", "Assembly Service Vendor", 2 );
             _importRelationship( "asm_problem", "User", "Role" );
@@ -504,8 +499,7 @@ namespace ChemSW.Nbt.Schema
             _importRelationship( "equipment", "Equipment", "User" );
             _importRelationship( "equipment", "Equipment", "Type" );
             _importRelationship( "equipment", "Equipment", "Assembly" );
-            _importRelationship( "equipment", "Equipment", "Location", 2 );
-            _importRelationship( "equipment", "Room", "Location", 1 );
+            _importRelationship( "equipment", "Equipment", "Location" );
             _importRelationship( "eq_problem", "User", "Role" );
             _importRelationship( "eq_problem", "Equipment Problem", "Department" );
             _importRelationship( "eq_problem", "Equipment Problem", "Equipment" );
