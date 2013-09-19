@@ -1,6 +1,4 @@
-﻿using System;
-using ChemSW.Nbt.MetaData;
-
+﻿
 namespace ChemSW.Nbt.ImportExport
 {
     public class CswNbtImportTables
@@ -15,7 +13,7 @@ namespace ChemSW.Nbt.ImportExport
             public const string sheetname = "sheetname";
             public const string sheetorder = "sheetorder";
         }
-        
+
         public class ImportDefOrder
         {
             public const string TableName = "import_def_order";
@@ -52,6 +50,7 @@ namespace ChemSW.Nbt.ImportExport
             public const string nodetypename = "nodetypename";
             public const string relationship = "relationship";
             public const string instance = "instance";
+            public const string sourcerelcolumnname = "sourcerelcolumnname";
         }
 
         public class ImportDataMap
