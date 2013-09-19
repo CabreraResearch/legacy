@@ -1,6 +1,6 @@
 -- Create nbtimportqueue table
 create table nbtimportqueue (
-  nbtimportqueueid number(12) NOT NULL PRIMARY KEY,
+	nbtimportqueueid number(12) NOT NULL PRIMARY KEY,
   state varchar(1),
   itempk number(12) NOT NULL,
   tablename varchar(50) NOT NULL,
