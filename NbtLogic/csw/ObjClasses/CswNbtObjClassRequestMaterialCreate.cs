@@ -1,3 +1,5 @@
+using System;
+using System.Linq;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
@@ -5,22 +7,20 @@ using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.UnitsOfMeasure;
 using Newtonsoft.Json.Linq;
-using System;
-using System.Linq;
 
 namespace ChemSW.Nbt.ObjClasses
 {
     /// <summary>
     /// Material Dispense Request Item
     /// </summary>
-    public class CswNbtObjClassRequestMaterialCreate: CswNbtPropertySetRequestItem
+    public class CswNbtObjClassRequestMaterialCreate : CswNbtPropertySetRequestItem
     {
         #region Enums
 
         /// <summary>
         /// Property Names
         /// </summary>
-        public new sealed class PropertyName: CswNbtPropertySetRequestItem.PropertyName
+        public new sealed class PropertyName : CswNbtPropertySetRequestItem.PropertyName
         {
             /// <summary>
             /// The type of the new material 
@@ -55,7 +55,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Types: Bulk or Size
         /// </summary>
-        public new sealed class Types: CswNbtPropertySetRequestItem.Types
+        public new sealed class Types : CswNbtPropertySetRequestItem.Types
         {
             public const string Create = "Request Material Create";
             public static readonly CswCommaDelimitedString Options = new CswCommaDelimitedString { Create };
@@ -64,7 +64,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Statuses
         /// </summary>
-        public new sealed class Statuses: CswNbtPropertySetRequestItem.Statuses
+        public new sealed class Statuses : CswNbtPropertySetRequestItem.Statuses
         {
             public const string Created = "Created";
 
@@ -77,7 +77,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Fulfill menu options
         /// </summary>
-        public new sealed class FulfillMenu: CswNbtPropertySetRequestItem.FulfillMenu
+        public new sealed class FulfillMenu : CswNbtPropertySetRequestItem.FulfillMenu
         {
             public const string Create = "Create Material";
 
@@ -149,11 +149,11 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 CswNbtObjClassRequestMaterialCreate ThisRequest = (CswNbtObjClassRequestMaterialCreate) ItemInstance;
 
-                ThisRequest.Material.setReadOnly( value : IsReadOnly, SaveToDb : true );
-                ThisRequest.NewMaterialType.setReadOnly( value : IsReadOnly, SaveToDb : true );
-                ThisRequest.NewMaterialSupplier.setReadOnly( value : IsReadOnly, SaveToDb : true );
-                ThisRequest.NewMaterialTradename.setReadOnly( value : IsReadOnly, SaveToDb : true );
-                ThisRequest.NewMaterialPartNo.setReadOnly( value : IsReadOnly, SaveToDb : true );
+                ThisRequest.Material.setReadOnly( value: IsReadOnly, SaveToDb: true );
+                ThisRequest.NewMaterialType.setReadOnly( value: IsReadOnly, SaveToDb: true );
+                ThisRequest.NewMaterialSupplier.setReadOnly( value: IsReadOnly, SaveToDb: true );
+                ThisRequest.NewMaterialTradename.setReadOnly( value: IsReadOnly, SaveToDb: true );
+                ThisRequest.NewMaterialPartNo.setReadOnly( value: IsReadOnly, SaveToDb: true );
                 ThisRequest.Quantity.setReadOnly( value: IsReadOnly, SaveToDb: true );
             }
         }
@@ -186,7 +186,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void beforePropertySetDeleteNode()
         {
-            
+
         }
 
         /// <summary>
@@ -212,47 +212,105 @@ namespace ChemSW.Nbt.ObjClasses
                     case PropertyName.Fulfill:
                         //If we do this here, we'll override the Actions for other options managed by the Property Set
                         //ButtonData.Action = NbtButtonAction.nothing;
-                        switch( ButtonData.SelectedText )
+                        
+                        //Case 30722: The default selected text is "Fulfill": "Create" is the drop-down text.
+                        // See also Case 30748 for future exploration.
+                        //switch( ButtonData.SelectedText )     { case FulfillMenu.Create:
+                        ButtonData.Action = CswEnumNbtButtonAction.nothing;
+                        if( PotentialMaterial().existsInDb( ForceRecalc: true ) )
                         {
-                            case FulfillMenu.Create:
-                                ButtonData.Action = CswEnumNbtButtonAction.nothing;
-                                if( PotentialMaterial().existsInDb( ForceRecalc : true ) )
-                                {
-                                    ButtonData.Message = "The requested Material has already been created: " + PotentialMaterial().existingMaterial().Node.NodeLink;
-                                }
-                                else
-                                {
-                                    CswNbtPropertySetMaterial NewMaterial = PotentialMaterial().commit(); //See Case 28310. We do not want to upversion this node. The Create Material Wizard will do that for us.
-                                    bool Success = null != NewMaterial;
-                                    if( Success )
-                                    {
-                                        ButtonData.Action = CswEnumNbtButtonAction.creatematerial;
-                                        Material.RelatedNodeId = NewMaterial.NodeId;
-                                        Fulfill.State = FulfillMenu.Create;
+                            ButtonData.Message = "The requested Material has already been created: " + PotentialMaterial().existingMaterial().Node.NodeLink;
+                        }
+                        else
+                        {
+                            CswNbtPropertySetMaterial NewMaterial = PotentialMaterial().commit(); //See Case 28310. We do not want to upversion this node. The Create Material Wizard will do that for us.
+                            bool Success = null != NewMaterial;
+                            if( Success )
+                            {
+                                ButtonData.Action = CswEnumNbtButtonAction.creatematerial;
+                                Material.RelatedNodeId = NewMaterial.NodeId;
+                                Fulfill.State = FulfillMenu.Create;
 
-                                        ButtonData.Data["state"] = new JObject();
-                                        ButtonData.Data["state"]["materialType"] = new JObject();
-                                        ButtonData.Data["state"]["materialType"]["name"] = PotentialMaterial().NodeTypeName;
-                                        ButtonData.Data["state"]["materialType"]["val"] = PotentialMaterial().NodeTypeId;
-                                        ButtonData.Data["state"]["materialId"] = NewMaterial.NodeId.ToString();
-                                        ButtonData.Data["state"]["tradeName"] = PotentialMaterial().TradeName;
-                                        ButtonData.Data["state"]["supplier"] = new JObject();
-                                        ButtonData.Data["state"]["supplier"]["val"] = PotentialMaterial().SupplierId.ToString();
-                                        ButtonData.Data["state"]["supplier"]["name"] = PotentialMaterial().SupplierName;
-                                        ButtonData.Data["state"]["partNo"] = NewMaterialPartNo.Text;
-                                        ButtonData.Data["state"]["request"] = new JObject();
-                                        ButtonData.Data["state"]["request"]["requestitemid"] = NodeId.ToString();
-                                        ButtonData.Data["state"]["request"]["materialid"] = ( Material.RelatedNodeId ?? new CswPrimaryKey() ).ToString();
-                                    }
-                                    else
-                                    {
-                                        ButtonData.Message = "The requested Material cannot not be created.";
-                                    }
-                                    ButtonData.Data["success"] = Success;
-                                }
-                                break;
+                                ButtonData.Data["state"] = new JObject();
+                                ButtonData.Data["state"]["materialType"] = new JObject();
+                                ButtonData.Data["state"]["materialType"]["name"] = PotentialMaterial().NodeTypeName;
+                                ButtonData.Data["state"]["materialType"]["val"] = PotentialMaterial().NodeTypeId;
+                                ButtonData.Data["state"]["materialId"] = NewMaterial.NodeId.ToString();
+                                ButtonData.Data["state"]["tradeName"] = PotentialMaterial().TradeName;
+                                ButtonData.Data["state"]["supplier"] = new JObject();
+                                ButtonData.Data["state"]["supplier"]["val"] = PotentialMaterial().SupplierId.ToString();
+                                ButtonData.Data["state"]["supplier"]["name"] = PotentialMaterial().SupplierName;
+                                ButtonData.Data["state"]["partNo"] = NewMaterialPartNo.Text;
 
-                        } //switch( ButtonData.SelectedText )
+                                if( CswTools.IsDouble( Quantity.Quantity ) && CswTools.IsPrimaryKey( Quantity.UnitId ) )
+                                {
+                                    //Begin kludge
+                                    CswNbtMetaDataObjectClass SizeOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.SizeClass );
+                                    Int32 SizeNodeTypeId = SizeOc.getLatestVersionNodeTypes().FirstOrDefault().NodeTypeId;
+                                    ButtonData.Data[ "state" ][ "sizeNodeTypeId" ] = SizeNodeTypeId;
+
+                                    JArray Sizes = (JArray) ( ButtonData.Data[ "state" ][ "sizes" ] = new JArray() );
+                                    JObject Size = new JObject();
+                                    Sizes.Add( Size );
+                                    {
+                                        JObject nodeId = (JObject) ( Size[ "nodeId" ] = new JObject() );
+                                        nodeId[ "value" ] = string.Empty;
+                                        nodeId[ "readOnly" ] = true;
+                                        nodeId[ "hidden" ] = true;
+                                    }
+                                    {
+                                        JObject nodeTypeId = (JObject) ( Size[ "nodeTypeId" ] = new JObject() );
+                                        nodeTypeId[ "value" ] = SizeNodeTypeId;
+                                        nodeTypeId[ "readOnly" ] = true;
+                                        nodeTypeId[ "hidden" ] = true;
+                                    }
+                                    {
+                                        JObject unitCount = (JObject) ( Size[ "unitCount" ] = new JObject() );
+                                        unitCount[ "value" ] = 1;
+                                        unitCount[ "readOnly" ] = false;
+                                        unitCount[ "hidden" ] = false;
+                                    }
+                                    {
+                                        JObject quantity = (JObject) ( Size[ "quantity" ] = new JObject() );
+                                        quantity[ "value" ] = Quantity.Quantity;
+                                        quantity[ "readOnly" ] = false;
+                                        quantity[ "hidden" ] = false;
+                                    }
+                                    {
+                                        JObject uom = (JObject) ( Size[ "uom" ] = new JObject() );
+                                        uom[ "value" ] = Quantity.CachedUnitName;
+                                        uom[ "readOnly" ] = false;
+                                        uom[ "hidden" ] = false;
+                                    }
+                                    {
+                                        JObject catalogNo = (JObject) ( Size["catalogNo"] = new JObject() );
+                                        catalogNo[ "value" ] = string.Empty;
+                                        catalogNo[ "readOnly" ] = false;
+                                        catalogNo[ "hidden" ] = false;
+                                    }
+                                    {
+                                        JObject quantityEditable = (JObject) ( Size[ "quantityEditable" ] = new JObject() );
+                                        quantityEditable[ "value" ] = "checked";
+                                    }
+                                    {
+                                        JObject dispensible = (JObject) ( Size[ "dispensible" ] = new JObject() );
+                                        dispensible[ "value" ] = "checked";
+                                    }
+
+                                    //End kludge
+                                }
+                                ButtonData.Data["state"]["request"] = new JObject();
+                                ButtonData.Data["state"]["request"]["requestitemid"] = NodeId.ToString();
+                                ButtonData.Data["state"]["request"]["materialid"] = ( Material.RelatedNodeId ?? new CswPrimaryKey() ).ToString();
+                            }
+                            else
+                            {
+                                ButtonData.Message = "The requested Material cannot not be created.";
+                            }
+                            ButtonData.Data["success"] = Success;
+                        }
+
+                        //break; } //switch( ButtonData.SelectedText )
                         _getNextStatus( ButtonData.SelectedText );
                         break; //case PropertyName.Fulfill:
                 }
@@ -309,7 +367,7 @@ namespace ChemSW.Nbt.ObjClasses
                 false == string.IsNullOrEmpty( NewMaterialTradename.Text ) &&
                 CswTools.IsPrimaryKey( NewMaterialSupplier.RelatedNodeId ) )
             {
-                CswNbtPropertySetMaterial ExistingMaterial = PotentialMaterial().existingMaterial( ForceRecalc : true );
+                CswNbtPropertySetMaterial ExistingMaterial = PotentialMaterial().existingMaterial( ForceRecalc: true );
                 if( null != ExistingMaterial )
                 {
                     throw new CswDniException( CswEnumErrorType.Warning, "The requested Material already exists: " + ExistingMaterial.Node.NodeLink, "The requested Material already exists: " + ExistingMaterial.Node.NodeLink );
@@ -326,7 +384,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         public override void onStatusPropChange( CswNbtNodeProp Prop, bool Creating )
         {
-            Type.setHidden( value : ( Status.Value == Statuses.Pending ), SaveToDb : true );
+            Type.setHidden( value: ( Status.Value == Statuses.Pending ), SaveToDb: true );
 
             switch( Status.Value )
             {
@@ -339,7 +397,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void onTypePropChange( CswNbtNodeProp Prop, bool Creating )
         {
-            Type.setReadOnly( value : true, SaveToDb : true );
+            Type.setReadOnly( value: true, SaveToDb: true );
 
             Fulfill.MenuOptions = FulfillMenu.Options.ToString();
             Fulfill.State = FulfillMenu.Create;
@@ -363,10 +421,10 @@ namespace ChemSW.Nbt.ObjClasses
         {
             if( CswTools.IsPrimaryKey( Material.RelatedNodeId ) )
             {
-                NewMaterialType.setHidden( value : true, SaveToDb : true );
-                NewMaterialTradename.setHidden( value : true, SaveToDb : true );
-                NewMaterialSupplier.setHidden( value : true, SaveToDb : true );
-                NewMaterialPartNo.setHidden( value : true, SaveToDb : true );
+                NewMaterialType.setHidden( value: true, SaveToDb: true );
+                NewMaterialTradename.setHidden( value: true, SaveToDb: true );
+                NewMaterialSupplier.setHidden( value: true, SaveToDb: true );
+                NewMaterialPartNo.setHidden( value: true, SaveToDb: true );
             }
         }
         public CswNbtNodePropNodeTypeSelect NewMaterialType { get { return _CswNbtNode.Properties[PropertyName.NewMaterialType]; } }
