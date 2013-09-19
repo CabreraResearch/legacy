@@ -192,6 +192,9 @@ namespace ChemSW.Nbt.WebServices
                     public SizeData nodeId = null;
 
                     [DataMember]
+                    public SizeData nodeTypeId = null;
+
+                    [DataMember]
                     public SizeData unitCount = null;
 
                     [DataMember]
@@ -863,6 +866,10 @@ namespace ChemSW.Nbt.WebServices
                 // Return object
                 Collection<C3CreateMaterialResponse.State.SizeRecord> ProductSizes = new Collection<C3CreateMaterialResponse.State.SizeRecord>();
 
+                // Get the Size NodeTypeId
+                CswNbtMetaDataObjectClass SizeOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.SizeClass );
+                string SizeNTId = CswConvert.ToString( SizeOC.getNodeTypeIds().FirstOrDefault() );
+
                 // First set the sizes to import to the original set of sizes
                 _SizesToImport = _ProductToImport.ProductSize.ToList();
 
@@ -876,6 +883,13 @@ namespace ChemSW.Nbt.WebServices
                 {
                     //Set the return object
                     C3CreateMaterialResponse.State.SizeRecord Size = new C3CreateMaterialResponse.State.SizeRecord();
+
+                    //nodeTypeId
+                    C3CreateMaterialResponse.State.SizeRecord.SizeData NodeTypeId = new C3CreateMaterialResponse.State.SizeRecord.SizeData();
+                    NodeTypeId.value = SizeNTId;
+                    NodeTypeId.readOnly = true;
+                    NodeTypeId.hidden = true;
+                    Size.nodeTypeId = NodeTypeId;
 
                     //unitCount
                     C3CreateMaterialResponse.State.SizeRecord.SizeData UnitCount = new C3CreateMaterialResponse.State.SizeRecord.SizeData();
@@ -921,12 +935,12 @@ namespace ChemSW.Nbt.WebServices
 
                     //quantityEditable
                     C3CreateMaterialResponse.State.SizeRecord.SizeData QuantityEditable = new C3CreateMaterialResponse.State.SizeRecord.SizeData();
-                    QuantityEditable.value = "checked";
+                    QuantityEditable.value = CswEnumTristate.True;
                     Size.quantityEditable = QuantityEditable;
 
                     //dispensible
                     C3CreateMaterialResponse.State.SizeRecord.SizeData Dispensible = new C3CreateMaterialResponse.State.SizeRecord.SizeData();
-                    Dispensible.value = "checked";
+                    Dispensible.value = CswEnumTristate.True;
                     Size.dispensible = Dispensible;
 
                     ProductSizes.Add( Size );
