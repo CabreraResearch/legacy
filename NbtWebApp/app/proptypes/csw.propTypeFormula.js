@@ -1,6 +1,6 @@
 ﻿(function () {
     'use strict';
-    Csw.properties.formula = Csw.properties.register('formula',
+    Csw.properties.register('formula',
         function (nodeProperty) {
             'use strict';
             var cswPrivate = {};

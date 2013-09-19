@@ -130,7 +130,7 @@
     n$.makeSubNameSpace('ajax');
     n$.makeSubNameSpace('ajaxCore');
     n$.makeSubNameSpace('ajaxWcf');
-    n$.makeSubNameSpace('browserCompatability');
+    n$.makeSubNameSpace('browserCompatibility');
     n$.makeSubNameSpace('clientChanges');
     n$.makeSubNameSpace('clientSession');
     n$.makeSubNameSpace('clientState');
