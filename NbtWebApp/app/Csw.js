@@ -212,7 +212,7 @@
 
                     return new Class(spacename);
                 };
-        cswPublic.browserCompatibility = cswPublic.browserCompatibility || cswPublic.register('browserCompatibility', makeNameSpace());
+        
 
                 //Create the root of the tree as the current namespace
                 NsTree[Csw] = {};
