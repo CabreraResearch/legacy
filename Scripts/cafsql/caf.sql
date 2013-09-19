@@ -16,9 +16,6 @@ create unique index unqidx_nbtimportqueue on NBTIMPORTQUEUE (state, itempk, tabl
 create sequence seq_nbtimportqueueid start with 1 increment by 1;
 commit;
 
--- Create triggers for all tables
--- [Note: use the sql that CF is already creating?]
-
 -- Create views ( these are in order of creation)
 -- Locations level 1
 create or replace view locationslevel1_view as

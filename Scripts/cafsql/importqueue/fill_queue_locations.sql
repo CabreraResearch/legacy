@@ -1,0 +1,1 @@
+insert into nbtimportqueue@CAFLINK ( nbtimportqueueid, state, itempk, tablename, priority, errorlog, viewname )  select seq_nbtimportqueueid.nextval@CAFLINK, 'I', locationid, 'locations',0, '', 'locations_view' from locations_view@CAFLINK where deleted='0' 
