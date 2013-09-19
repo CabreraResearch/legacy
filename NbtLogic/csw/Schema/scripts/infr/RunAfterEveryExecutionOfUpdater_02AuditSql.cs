@@ -27,6 +27,7 @@ namespace ChemSW.Nbt.Schema
                 CswAuditMetaData CswAuditMetaData = new CswAuditMetaData();
                 string AuditTable = CswNbtAuditTableAbbreviation.getAuditTableName( Abbrev );
                 string RealTable = CswAuditMetaData.makeNameOfAuditedTable( AuditTable );
+                string AuditTablePk = DataDictionary.getPrimeKeyColumn( AuditTable );
                 string RealTablePk = DataDictionary.getPrimeKeyColumn( RealTable );
 
                 string ObjectType = "CSW_" + Abbrev + @"_OBJ_TYPE";
@@ -54,23 +55,22 @@ namespace ChemSW.Nbt.Schema
 
                 string FuncSql = @"create or replace function " + FuncName + @" (AsOfDate in Date) return " + TableType + @" is
                                       ResultTable " + TableType + @";
-                                      CURSOR audit1 is(select " + ObjectType + @"(" + Columns.ToString( false ) + @",recordcreated)
-                                                         from " + AuditTable + @" a
-                                                        where a.recordcreated = (select max(recordcreated)
-                                                                                   from " + AuditTable + @" a2
-                                                                                  where a2.recordcreated <= AsOfDate
-                                                                                    and a2." + RealTablePk + @" = a." + RealTablePk + @"));
                                     begin
 
-                                      open audit1;
-                                      fetch audit1 bulk collect into ResultTable;
-
-                                      if audit1%rowcount <= 0 then
-                                        SELECT " + ObjectType + @"(" + Columns.ToString( false ) + @",recordcreated) BULK COLLECT
-                                          INTO ResultTable
-                                          FROM (select " + Columns.ToString( false ) + @", sysdate as recordcreated 
-                                                  from " + RealTable + @");
-                                      end if;
+                                        with audit1 as (select " + AuditTablePk + @", " + RealTablePk + @"
+                                              from " + AuditTable + @" a
+                                             where a.recordcreated = (select max(recordcreated)
+                                                                                   from " + AuditTable + @" a2
+                                                                                  where a2.recordcreated <= AsOfDate
+                                                                                    and a2." + RealTablePk + @" = a." + RealTablePk + @"))
+                                        select " + ObjectType + @"(" + Columns.ToString( false ) + @",recordcreated) BULK COLLECT into ResultTable
+                                        from (select " + Columns.ToString( false ) + @", recordcreated 
+                                                from " + AuditTable + @"
+                                               where " + AuditTablePk + @" in (select " + AuditTablePk + @" from audit1)
+                                             union all
+                                              select " + Columns.ToString( false ) + @", sysdate as recordcreated 
+                                                from " + RealTable + @" 
+                                               where " + RealTablePk + @" not in (select " + RealTablePk + @" from audit1));
 
                                       RETURN ResultTable;
 
