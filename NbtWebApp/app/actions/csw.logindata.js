@@ -1,10 +1,10 @@
 /// <reference path="~/app/CswApp-vsdoc.js" />
 
 (function () {
-Csw.actions.logindata = Csw.actions.template ||
+
     Csw.actions.register('logindata', function (cswParent, options) {
         'use strict';
-        
+
         var cswPublic = {};
         var cswPrivate = {
             name: 'View Login Data'
@@ -15,7 +15,7 @@ Csw.actions.logindata = Csw.actions.template ||
         if (Csw.isNullOrEmpty(cswParent)) {
             Csw.error.throwException('Cannot create an action without a valid Csw Parent object.', 'Csw.actions.logindata', 'csw.logindata.js', 10);
         }
-        
+
         //#region _preCtor
         (function _preCtor() {
             cswPrivate.onCancel = cswPrivate.onCancel || function () { };
@@ -26,10 +26,10 @@ Csw.actions.logindata = Csw.actions.template ||
         //#endregion _preCtor
 
         //#region Action Functions
-        cswPrivate.onCancelClick = function() {
+        cswPrivate.onCancelClick = function () {
             Csw.tryExec(cswPrivate.onCancel);
         };
-        
+
         cswPrivate.getCurrentDate = function (monthIndex) {
             //var monthOffset = Csw.isNullOrEmpty(monthIndex) ? 1 : monthIndex;
             //var today = new Date();
@@ -50,7 +50,7 @@ Csw.actions.logindata = Csw.actions.template ||
             return moment().format('L');
         };
 
-        cswPrivate.getLastMonth = function() {
+        cswPrivate.getLastMonth = function () {
             //return cswPrivate.getCurrentDate(0);
             return moment().subtract('months', 1).format('L');
         };
@@ -59,16 +59,16 @@ Csw.actions.logindata = Csw.actions.template ||
             return moment().subtract('days', 1).format('L');
         };
 
-        cswPrivate.updateGrid = function() {
+        cswPrivate.updateGrid = function () {
             cswPrivate.loadGrid({
                 StartDate: cswPrivate.StartDate,
                 EndDate: cswPrivate.EndDate
             });
         };
         //#endregion Action Functions
-        
+
         //#region Setup Controls
-        cswPrivate.createSetupControls = function() {
+        cswPrivate.createSetupControls = function () {
             //StartDate
             cswPrivate.controlTbl.cell(1, 1).span({ text: 'Start Date:' }).addClass('propertylabel');
             var startDatePicker = cswPrivate.controlTbl.cell(1, 2).dateTimePicker({
@@ -107,7 +107,7 @@ Csw.actions.logindata = Csw.actions.template ||
             cswPrivate.updateGrid();
         };
         //#endregion Setup Controls
-        
+
         //#region Grid Control
         cswPrivate.loadGrid = function (loginRequestData) {
             Csw.ajaxWcf.post({
@@ -165,7 +165,7 @@ Csw.actions.logindata = Csw.actions.template ||
                             useNull: true
                         });
                     };
-                    
+
                     addColumn('username', 'Username');
                     addColumn('ipaddress', 'IP Address');
                     addColumn('logindate', 'Login Date', 'date');
@@ -206,7 +206,7 @@ Csw.actions.logindata = Csw.actions.template ||
                 onCancel: cswPrivate.onCancelClick,
                 hasButtonGroup: true
             });
-            
+
             cswPrivate.controlTbl = cswPrivate.action.actionDiv.table({
                 name: cswPrivate.name + '_control_tbl',
                 cellpadding: '5px',
@@ -215,7 +215,7 @@ Csw.actions.logindata = Csw.actions.template ||
                 width: '50%',
                 FirstCellRightAlign: true
             });
-            
+
             cswPrivate.gridTbl = cswPrivate.action.actionDiv.table({
                 name: cswPrivate.name + '_control_tbl',
                 cellpadding: '5px',
@@ -228,7 +228,7 @@ Csw.actions.logindata = Csw.actions.template ||
             cswPrivate.createSetupControls();
         }());
         //#endregion _postCtor
-        
+
         return cswPublic;
     });
 }());

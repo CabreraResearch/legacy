@@ -3,55 +3,55 @@
 
 (function () {
 
-    Csw.composites.moreDiv = Csw.composites.moreDiv ||
-        Csw.composites.register('moreDiv', function (cswParent, options) {
-            'use strict';
-            var cswPrivate = {
-                name: '',
-                moretext: 'more',
-                lesstext: 'less'
-            };
-            if (options) {
-                Csw.extend(cswPrivate, options);
-            }
 
-            var cswPublic;
+    Csw.composites.register('moreDiv', function (cswParent, options) {
+        'use strict';
+        var cswPrivate = {
+            name: '',
+            moretext: 'more',
+            lesstext: 'less'
+        };
+        if (options) {
+            Csw.extend(cswPrivate, options);
+        }
 
-            cswPrivate.moreDiv = cswParent.div();
-            cswPublic = Csw.dom({}, cswPrivate.moreDiv);
+        var cswPublic;
 
-            cswPublic.shownDiv = cswPrivate.moreDiv.div();
+        cswPrivate.moreDiv = cswParent.div();
+        cswPublic = Csw.dom({}, cswPrivate.moreDiv);
 
-            cswPublic.hiddenDiv = cswPrivate.moreDiv.div().hide();
+        cswPublic.shownDiv = cswPrivate.moreDiv.div();
 
-            cswPublic.moreLink = cswPrivate.moreDiv.a({
-                text: cswPrivate.moretext,
-                cssclass: 'morelink',
-                onClick: function () {
-                    if (cswPublic.moreLink.toggleState === Csw.enums.toggleState.on) {
-                        cswPublic.showHidden();
-                    } else {
-                        cswPublic.hideHidden();
-                    }
-                    return false;
-                } // onClick()
-            });
+        cswPublic.hiddenDiv = cswPrivate.moreDiv.div().hide();
 
-            cswPublic.showHidden = function() {
-                if (false === Csw.isNullOrEmpty(cswPrivate.lesstext)) {
-                    cswPublic.moreLink.text(cswPrivate.lesstext);
+        cswPublic.moreLink = cswPrivate.moreDiv.a({
+            text: cswPrivate.moretext,
+            cssclass: 'morelink',
+            onClick: function () {
+                if (cswPublic.moreLink.toggleState === Csw.enums.toggleState.on) {
+                    cswPublic.showHidden();
                 } else {
-                    cswPublic.moreLink.hide();
+                    cswPublic.hideHidden();
                 }
-                cswPublic.hiddenDiv.show();
-            };
-
-            cswPublic.hideHidden = function() {
-                cswPublic.moreLink.text(cswPrivate.moretext);
-                cswPublic.hiddenDiv.hide();
-            };
-
-            return cswPublic;
+                return false;
+            } // onClick()
         });
 
-} ());
+        cswPublic.showHidden = function () {
+            if (false === Csw.isNullOrEmpty(cswPrivate.lesstext)) {
+                cswPublic.moreLink.text(cswPrivate.lesstext);
+            } else {
+                cswPublic.moreLink.hide();
+            }
+            cswPublic.hiddenDiv.show();
+        };
+
+        cswPublic.hideHidden = function () {
+            cswPublic.moreLink.text(cswPrivate.moretext);
+            cswPublic.hiddenDiv.hide();
+        };
+
+        return cswPublic;
+    });
+
+}());

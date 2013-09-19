@@ -3,16 +3,16 @@
 
 (function () {
     'use strict';
-    
-    Csw.nbt.propertyOption = Csw.nbt.register('propertyOption',
-        function(cswPrivate, cswParent) {
+
+    Csw.nbt.register('propertyOption',
+        function (cswPrivate, cswParent) {
             /// <summary>Extends an Object with properties specific to NBT FieldTypes (for the purpose of Intellisense)</summary>
             /// <returns type="Csw.nbt.propertyOption">An Object represent a CswNbtNodeProp</returns> 
             'use strict';
 
             var cswPublic = {
                 name: '',
-                isMulti: function() {
+                isMulti: function () {
                 },
                 tabid: '',
                 identityTabId: '',
@@ -37,14 +37,14 @@
                     required: false,
                     values: {}
                 },
-                onChange: function() {
-                    
+                onChange: function () {
+
                 },
-                onReload: function() {
+                onReload: function () {
                 },    // if a control needs to reload the tab
-                onEditView: function() {
+                onEditView: function () {
                 },
-                onAfterButtonClick: function() {
+                onAfterButtonClick: function () {
                 }
             };
 
@@ -58,13 +58,13 @@
                 cswPublic.propData.wasmodified = false;
 
                 cswPublic.eventName = 'onChange' + cswPublic.fieldtype + '_' + cswPublic.propid;
-                cswPublic.onPropChangeBroadcast = function(callBack) {
-                    Csw.properties.subscribe(cswPublic.eventName, function(eventObj, val) {
+                cswPublic.onPropChangeBroadcast = function (callBack) {
+                    Csw.properties.subscribe(cswPublic.eventName, function (eventObj, val) {
                         callBack(val);
                     });
                 };
 
-                cswPublic.broadcastPropChange = function(val) {
+                cswPublic.broadcastPropChange = function (val) {
                     //Csw.clientChanges.setChanged();
                     cswPublic.propData.wasmodified = true;
                     cswPublic.onChange();
@@ -73,11 +73,11 @@
 
             }());
 
-            cswPublic.isReport = function() {
+            cswPublic.isReport = function () {
                 return Csw.enums.editMode.PrintReport === cswPublic.tabState.EditMode;
             };
 
-            cswPublic.isDisabled = function() {
+            cswPublic.isDisabled = function () {
                 return (cswPublic.isReport() ||
                     Csw.enums.editMode.Preview === cswPublic.tabState.EditMode ||
                     Csw.enums.editMode.AuditHistoryInPopup === cswPublic.tabState.EditMode ||
@@ -85,32 +85,32 @@
                 );
             };
 
-            cswPublic.isReadOnly = function() {
+            cswPublic.isReadOnly = function () {
                 return Csw.bool(cswPublic.tabState.ReadOnly) ||
                     Csw.bool(cswPublic.tabState.Config) ||
                     cswPublic.isDisabled() ||
                     Csw.bool(cswPublic.propData.readonly);
             };
 
-            cswPublic.canOverride = function() {
+            cswPublic.canOverride = function () {
                 return Csw.bool(cswPublic.propData.canoverride);
             };
 
-            cswPublic.isRequired = function() {
+            cswPublic.isRequired = function () {
                 return Csw.bool(cswPublic.propData.required);
             };
 
-            cswPublic.isMulti = function() {
+            cswPublic.isMulti = function () {
                 return Csw.tryExec(cswPrivate.isMulti);
             };
 
-           cswPublic.bindRender = function(callBack) {
+            cswPublic.bindRender = function (callBack) {
                 /// <summary>
                 /// Subscribe to the render and teardown events
                 /// </summary>
 
                 'use strict';
-                cswPrivate.tearDown = function() {
+                cswPrivate.tearDown = function () {
                     /// <summary>
                     /// Unbind all properties on this node's layout from the 
                     /// </summary>
@@ -124,9 +124,9 @@
                     Csw.tryExec(cswPrivate.tearDownCallback);
                 };
 
-                cswPrivate.renderThisProp = (function() {
+                cswPrivate.renderThisProp = (function () {
                     'use strict';
-                    var renderMe = function() {
+                    var renderMe = function () {
                         cswPublic.propDiv.empty();
                         Csw.tryExec(callBack, cswPublic);
 
@@ -138,7 +138,7 @@
                                 tooltip: {
                                     title: 'Administrative Override'
                                 },
-                                onClick: function() {
+                                onClick: function () {
                                     cswPublic.propData.readonly = false;
                                     renderMe();
                                 }
@@ -148,7 +148,7 @@
                     return renderMe;
                 }());
 
-                cswPrivate.renderer = function() {
+                cswPrivate.renderer = function () {
                     /// <summary>
                     /// Execute the render callback method on publish
                     /// </summary>
@@ -170,7 +170,7 @@
                 });
             }
 
-            cswPublic.unBindRender = function(callback) {
+            cswPublic.unBindRender = function (callback) {
                 /// <summary>
                 /// This is where you would define a callback to assign to the tearDown events
                 /// </summary>
@@ -180,6 +180,6 @@
             return cswPublic;
         });
 
-} ());
+}());
 
 

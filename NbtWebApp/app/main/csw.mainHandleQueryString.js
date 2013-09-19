@@ -14,7 +14,7 @@
                     if (Csw.isNullOrEmpty(Csw.cookie.get(Csw.cookie.cookieNames.LogoutPath))) {
                         Csw.cookie.set(Csw.cookie.cookieNames.LogoutPath, 'Dev.html');
                     }
-                    Csw.setGlobalProp('homeUrl', 'Dev.html');
+                    Csw.clientDb.setItem('homeUrl', 'Dev.html');
                 }
             }
 

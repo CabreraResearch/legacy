@@ -22,6 +22,11 @@ namespace ChemSW.Nbt.Schema
             get { return "02F_CaseXXXXX"; }
         }
 
+        public override string Title
+        {
+            get { return "Placeholder Script"; }
+        }
+
         public override void update()
         {
             // This is a placeholder script that does nothing.

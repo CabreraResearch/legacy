@@ -3,66 +3,66 @@
 
 (function () {
 
-    Csw.actions.modules = Csw.actions.modules ||
-        Csw.actions.register('modules', function (cswParent, options) {
-            'use strict';
-            var cswPrivate = {
-                name: 'action_modules',
-                modules: {},
-                onModuleChange: null // function() {}
-            };
-            if (options) Csw.extend(cswPrivate, options);
 
-            cswPrivate.update = function (module) {
-                Csw.ajaxWcf.post({
-                    urlMethod: 'Modules/HandleModule',
-                    data: module,
-                    success: function (response) {
-                        cswPrivate.render(response);
-                        Csw.tryExec(cswPrivate.onModuleChange);
-                    }
-                });
-            };
+    Csw.actions.register('modules', function (cswParent, options) {
+        'use strict';
+        var cswPrivate = {
+            name: 'action_modules',
+            modules: {},
+            onModuleChange: null // function() {}
+        };
+        if (options) Csw.extend(cswPrivate, options);
 
-            cswPrivate.render = function (response) {
-                cswPrivate.modules = {};
-                cswPrivate.div.empty();
-                cswPrivate.div.css({
-                    width: '500px'
-                });
-                
-                var modulesTree = cswParent.tree({
-                    root: response.Modules,
-                    expandAll: true,
-                    title: 'Modules',
-                    useCheckboxes: true,
-                    rootVisible: false,
-                    forceSelected: false,
-                    width: 700,
-                    height: 700,
-                    onAfterCheckNode: function (node) {
-                        modulesTree.tree.destroy();
-                        cswPrivate.update(node.raw);
-                    }
-                });
-            };
+        cswPrivate.update = function (module) {
+            Csw.ajaxWcf.post({
+                urlMethod: 'Modules/HandleModule',
+                data: module,
+                success: function (response) {
+                    cswPrivate.render(response);
+                    Csw.tryExec(cswPrivate.onModuleChange);
+                }
+            });
+        };
 
-            // constructor
-            cswPrivate.init = function () {
+        cswPrivate.render = function (response) {
+            cswPrivate.modules = {};
+            cswPrivate.div.empty();
+            cswPrivate.div.css({
+                width: '500px'
+            });
 
-                cswParent.$.empty();
+            var modulesTree = cswParent.tree({
+                root: response.Modules,
+                expandAll: true,
+                title: 'Modules',
+                useCheckboxes: true,
+                rootVisible: false,
+                forceSelected: false,
+                width: 700,
+                height: 700,
+                onAfterCheckNode: function (node) {
+                    modulesTree.tree.destroy();
+                    cswPrivate.update(node.raw);
+                }
+            });
+        };
 
-                cswPrivate.div = cswParent.div();
+        // constructor
+        cswPrivate.init = function () {
 
-                return Csw.ajaxWcf.post({
-                    urlMethod: 'Modules/Initialize',
-                    success: function (response) {
-                        cswPrivate.render(response);
-                    }
-                });
-            }; // cswPrivate.init()
+            cswParent.$.empty();
 
-            return cswPrivate.init();
+            cswPrivate.div = cswParent.div();
 
-        }); // register()
+            return Csw.ajaxWcf.post({
+                urlMethod: 'Modules/Initialize',
+                success: function (response) {
+                    cswPrivate.render(response);
+                }
+            });
+        }; // cswPrivate.init()
+
+        return cswPrivate.init();
+
+    }); // register()
 }());

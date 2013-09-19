@@ -3,64 +3,63 @@
 
 (function () {
     'use strict';
-    Csw.properties.sequence = Csw.properties.register('sequence',
-        function(nodeProperty) {
+    Csw.properties.register('sequence', function (nodeProperty) {
+        'use strict';
+
+        //The render function to be executed as a callback
+        var render = function () {
             'use strict';
-            
-            //The render function to be executed as a callback
-            var render = function() {
-                'use strict';
-                var cswPrivate = Csw.object();
-                
-                cswPrivate.value = nodeProperty.propData.values.sequence;
+            var cswPrivate = Csw.object();
 
-                nodeProperty.onPropChangeBroadcast(function (val) {
-                    if (cswPrivate.value !== val) {
-                        cswPrivate.value = val;
-                        updateProp(val);
-                    }
-                });
+            cswPrivate.value = nodeProperty.propData.values.sequence;
 
-                var updateProp = function (val) {
-                    nodeProperty.propData.values.sequence = val;
-                    if (sequence) {
-                        sequence.val(val);
-                    }
-                    if (span) {
-                        span.remove();
-                        span = nodeProperty.propDiv.span({ text: cswPrivate.value });
-                    }
-                };
-
-                if (nodeProperty.isReadOnly() || nodeProperty.isMulti()) {
-                    var span = nodeProperty.propDiv.span({ text: cswPrivate.value });
-                } else {
-                    var sequence = nodeProperty.propDiv.input({
-                        name: nodeProperty.name,
-                        type: Csw.enums.inputTypes.text,
-                        cssclass: 'textinput',
-                        onChange: function(val) {
-                            cswPrivate.value = val;
-                            nodeProperty.propData.values.sequence = val;
-                            nodeProperty.broadcastPropChange(val);
-                        },
-                        value: cswPrivate.value,
-                        isRequired: nodeProperty.isRequired()
-                    });
-
-                    sequence.required(nodeProperty.isRequired());
+            nodeProperty.onPropChangeBroadcast(function (val) {
+                if (cswPrivate.value !== val) {
+                    cswPrivate.value = val;
+                    updateProp(val);
                 }
+            });
 
+            var updateProp = function (val) {
+                nodeProperty.propData.values.sequence = val;
+                if (sequence) {
+                    sequence.val(val);
+                }
+                if (span) {
+                    span.remove();
+                    span = nodeProperty.propDiv.span({ text: cswPrivate.value });
+                }
             };
 
-            //Bind the callback to the render event
-            nodeProperty.bindRender(render);
+            if (nodeProperty.isReadOnly() || nodeProperty.isMulti()) {
+                var span = nodeProperty.propDiv.span({ text: cswPrivate.value });
+            } else {
+                var sequence = nodeProperty.propDiv.input({
+                    name: nodeProperty.name,
+                    type: Csw.enums.inputTypes.text,
+                    cssclass: 'textinput',
+                    onChange: function (val) {
+                        cswPrivate.value = val;
+                        nodeProperty.propData.values.sequence = val;
+                        nodeProperty.broadcastPropChange(val);
+                    },
+                    value: cswPrivate.value,
+                    isRequired: nodeProperty.isRequired()
+                });
 
-            //Bind an unrender callback to terminate any outstanding ajax requests, if any. See propTypeGrid.
-            //nodeProperty.unBindRender();
+                sequence.required(nodeProperty.isRequired());
+            }
 
-            return true;
-        });
+        };
+
+        //Bind the callback to the render event
+        nodeProperty.bindRender(render);
+
+        //Bind an unrender callback to terminate any outstanding ajax requests, if any. See propTypeGrid.
+        //nodeProperty.unBindRender();
+
+        return true;
+    });
 
 }());
 

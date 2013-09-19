@@ -21,8 +21,8 @@
                 DbQuery: 0,
                 DbCommit: 0,
                 DbDeinit: 0,
-                TreeLoaderSql: 0, 
-                ServerTotal: 0 
+                TreeLoaderSql: 0,
+                ServerTotal: 0
             },
             Logging: {
                 LogLevel: 'None',
@@ -36,7 +36,7 @@
             }
         };
         Csw.extend(response, data, true);
-        
+
         if (false === response.Status.Success ||
             response.Status.Errors.length > 0) {
             var lastErr = response.Status.Errors.length - 1;
@@ -46,33 +46,33 @@
                     type: response.Status.Errors[lastErr].Type,
                     message: response.Status.Errors[lastErr].Message,
                     detail: response.Status.Errors[lastErr].Detail
-                    });
-                
+                });
+
             }
             Csw.tryExec(o.error, response.Status.Errors[lastErr]);
         } else {
 
             var auth = Csw.string(response.Authentication.AuthenticationStatus, 'Unknown');
             var text = Csw.string(response.Authentication.AuthenticationStatusText);
-                Csw.clientSession.setExpireTime(Csw.string(response.Authentication.TimeOut, ''));
+            Csw.clientSession.setExpireTime(Csw.string(response.Authentication.TimeOut, ''));
 
             if (false === Csw.isNullOrEmpty(response.Performance)) {
                 response.Performance.url = url;
-                
+
                 var endTime = new Date();
                 var etms = Csw.string(endTime.getMilliseconds());
                 while (etms.length < 3) {
                     etms = '0' + etms;
                 }
-                
+
                 response.Performance.TimeStamp = endTime.toLocaleTimeString() + '.' + etms;
                 response.Performance.Client = (endTime - o.startTime);
-                
+
                 Csw.clientSession.setLogglyInput(response.Logging.LogglyInput, response.Logging.LogLevel, response.Logging.Server);
                 Csw.debug.perf(response.Performance);
-                
+
             }
-            
+
             Csw.clientSession.handleAuthenticationStatus({
                 status: auth,
                 txt: text,
@@ -119,18 +119,18 @@
             },
             success: function () { },
             error: function () { },
-            complete: function () {},
+            complete: function () { },
             overrideError: false,
             watchGlobal: true,
             useCache: false,
             removeTimer: true
         };
         Csw.extend(cswInternal, options);
-        
+
         cswInternal.urlMethod = 'Services/' + cswInternal.urlMethod;
         cswInternal.url = Csw.string(cswInternal.url, cswInternal.urlMethod);
         cswInternal.startTime = new Date();
-        if(false === Csw.isNullOrEmpty(cswInternal.data)) {
+        if (false === Csw.isNullOrEmpty(cswInternal.data)) {
             if (verb === 'GET') {
                 cswInternal.data = Csw.params(cswInternal.data);
             }
@@ -138,8 +138,8 @@
                 cswInternal.data = Csw.serialize(cswInternal.data);
             }
         }
-        
-        var getAjaxPromise = function(watchGlobal) {
+
+        var getAjaxPromise = function (watchGlobal) {
             var ret = $.ajax({
                 type: verb,
                 url: cswInternal.urlMethod,
@@ -152,17 +152,17 @@
                 data: cswInternal.data,
                 watchGlobal: false !== watchGlobal
             });
-            ret.done(function(data) {
+            ret.done(function (data) {
                 return cswPrivate.onJsonSuccess(cswInternal, data, cswInternal.urlMethod);
             }); /* success{} */
-            ret.fail(function(jqXHR, textStatus, errorText) {
+            ret.fail(function (jqXHR, textStatus, errorText) {
                 return cswPrivate.onJsonError(jqXHR, textStatus, errorText, {
                     data: cswInternal.data,
                     watchGlobal: cswInternal.watchGlobal,
                     urlMethod: document.location + '/' + cswInternal.urlMethod
                 });
             });
-            ret.always(function(xmlHttpRequest, textStatus) {
+            ret.always(function (xmlHttpRequest, textStatus) {
                 return Csw.tryExec(cswInternal.complete, xmlHttpRequest, textStatus);
             });
             return Csw.promises.ajax(ret);
@@ -171,7 +171,7 @@
         var promise;
         if (true === cswInternal.useCache) {
             promise = Csw.getCachedWebServiceCall(cswInternal.urlMethod)
-                .then(function(ret) {
+                .then(function (ret) {
                     cswInternal.cachedResponse = ret;
                     return Csw.ajaxCore.onSuccess(cswInternal.urlMethod, cswInternal.cachedResponse, false, cswInternal.success, cswInternal.cachedResponse);
                 })
@@ -179,70 +179,67 @@
         } else {
             promise = getAjaxPromise(cswInternal.watchGlobal);
         }
-        
+
         return promise;
     }); /* cswPrivate.jsonPost */
 
-    Csw.ajaxWcf.post = Csw.ajaxWcf.post ||
-        Csw.ajaxWcf.register('post', function (options, type) {
-            /// <summary> Executes Async webservice request using HTTP verb 'POST'. </summary>
-            /// <param name="options" type="Object">
-            /// <para>A JSON Object</para>
-            /// <para>options.url: WebService URL</para>
-            /// <para>options.data: {field1: value, field2: value}</para>
-            /// <para>options.success: function () {}</para>
-            /// <para>options.error: function () {}</para>
-            /// </param>
-            /// <param name="type" type="String">XML or JSON (default)</param>
-            /// <return type="Object">Returns the results of the $.ajax() request in an object wrapper.</return>
-            return cswPrivate.execRequest('POST', options);
-        });
 
-    Csw.ajaxWcf['get'] = Csw.ajaxWcf['get'] ||
-        Csw.ajaxWcf.register('get', function (options, type) {
-            /// <summary> Executes Async webservice request using HTTP verb 'GET'. </summary>
-            /// <param name="options" type="Object">
-            /// <para>A JSON Object</para>
-            /// <para>options.url: WebService URL</para>
-            /// <para>options.data: {field1: value, field2: value}</para>
-            /// <para>options.success: function () {}</para>
-            /// <para>options.error: function () {}</para>
-            /// </param>
-            /// <param name="type" type="String">XML or JSON (default)</param>
-            /// <return type="Object">Returns the results of the $.ajax() request in an object wrapper.</return>
-            return cswPrivate.execRequest('GET', options);
-        });
+    Csw.ajaxWcf.register('post', function (options, type) {
+        /// <summary> Executes Async webservice request using HTTP verb 'POST'. </summary>
+        /// <param name="options" type="Object">
+        /// <para>A JSON Object</para>
+        /// <para>options.url: WebService URL</para>
+        /// <para>options.data: {field1: value, field2: value}</para>
+        /// <para>options.success: function () {}</para>
+        /// <para>options.error: function () {}</para>
+        /// </param>
+        /// <param name="type" type="String">XML or JSON (default)</param>
+        /// <return type="Object">Returns the results of the $.ajax() request in an object wrapper.</return>
+        return cswPrivate.execRequest('POST', options);
+    });
 
-    Csw.ajaxWcf['delete'] = Csw.ajaxWcf['delete'] ||
-        Csw.ajaxWcf.register('delete', function (options, type) {
-            /// <summary> Executes Async webservice request using HTTP verb 'DELETE'. </summary>
-            /// <param name="options" type="Object">
-            /// <para>A JSON Object</para>
-            /// <para>options.url: WebService URL</para>
-            /// <para>options.data: {field1: value, field2: value}</para>
-            /// <para>options.success: function () {}</para>
-            /// <para>options.error: function () {}</para>
-            /// </param>
-            /// <param name="type" type="String">XML or JSON (default)</param>
-            /// <return type="Object">Returns the results of the $.ajax() request in an object wrapper.</return>
-            return cswPrivate.execRequest('DELETE', options);
-        });
-    
-    Csw.ajaxWcf.put = Csw.ajaxWcf.put ||
-        Csw.ajaxWcf.register('put', function (options, type) {
-            /// <summary> Executes Async webservice request using HTTP verb 'PUT'. </summary>
-            /// <param name="options" type="Object">
-            /// <para>A JSON Object</para>
-            /// <para>options.url: WebService URL</para>
-            /// <para>options.data: {field1: value, field2: value}</para>
-            /// <para>options.success: function () {}</para>
-            /// <para>options.error: function () {}</para>
-            /// </param>
-            /// <param name="type" type="String">XML or JSON (default)</param>
-            /// <return type="Object">Returns the results of the $.ajax() request in an object wrapper.</return>
-            return cswPrivate.execRequest('PUT', options);
-        });
+    Csw.ajaxWcf.register('get', function (options, type) {
+        /// <summary> Executes Async webservice request using HTTP verb 'GET'. </summary>
+        /// <param name="options" type="Object">
+        /// <para>A JSON Object</para>
+        /// <para>options.url: WebService URL</para>
+        /// <para>options.data: {field1: value, field2: value}</para>
+        /// <para>options.success: function () {}</para>
+        /// <para>options.error: function () {}</para>
+        /// </param>
+        /// <param name="type" type="String">XML or JSON (default)</param>
+        /// <return type="Object">Returns the results of the $.ajax() request in an object wrapper.</return>
+        return cswPrivate.execRequest('GET', options);
+    });
+
+    Csw.ajaxWcf.register('delete', function (options, type) {
+        /// <summary> Executes Async webservice request using HTTP verb 'DELETE'. </summary>
+        /// <param name="options" type="Object">
+        /// <para>A JSON Object</para>
+        /// <para>options.url: WebService URL</para>
+        /// <para>options.data: {field1: value, field2: value}</para>
+        /// <para>options.success: function () {}</para>
+        /// <para>options.error: function () {}</para>
+        /// </param>
+        /// <param name="type" type="String">XML or JSON (default)</param>
+        /// <return type="Object">Returns the results of the $.ajax() request in an object wrapper.</return>
+        return cswPrivate.execRequest('DELETE', options);
+    });
+
+    Csw.ajaxWcf.register('put', function (options, type) {
+        /// <summary> Executes Async webservice request using HTTP verb 'PUT'. </summary>
+        /// <param name="options" type="Object">
+        /// <para>A JSON Object</para>
+        /// <para>options.url: WebService URL</para>
+        /// <para>options.data: {field1: value, field2: value}</para>
+        /// <para>options.success: function () {}</para>
+        /// <para>options.error: function () {}</para>
+        /// </param>
+        /// <param name="type" type="String">XML or JSON (default)</param>
+        /// <return type="Object">Returns the results of the $.ajax() request in an object wrapper.</return>
+        return cswPrivate.execRequest('PUT', options);
+    });
 
 
 
-} ());
+}());

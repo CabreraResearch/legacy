@@ -115,9 +115,7 @@
 
         return ret;
     };
-
-    Csw.register('db', Csw.makeNameSpace());
-
+    
     Csw.db.register('dbManager', dbManager);
 
    
