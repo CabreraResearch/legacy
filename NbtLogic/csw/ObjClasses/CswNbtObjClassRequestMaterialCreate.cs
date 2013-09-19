@@ -241,6 +241,64 @@ namespace ChemSW.Nbt.ObjClasses
                                 ButtonData.Data["state"]["supplier"]["val"] = PotentialMaterial().SupplierId.ToString();
                                 ButtonData.Data["state"]["supplier"]["name"] = PotentialMaterial().SupplierName;
                                 ButtonData.Data["state"]["partNo"] = NewMaterialPartNo.Text;
+
+                                if( CswTools.IsDouble( Quantity.Quantity ) && CswTools.IsPrimaryKey( Quantity.UnitId ) )
+                                {
+                                    //Begin kludge
+                                    CswNbtMetaDataObjectClass SizeOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.SizeClass );
+                                    Int32 SizeNodeTypeId = SizeOc.getLatestVersionNodeTypes().FirstOrDefault().NodeTypeId;
+                                    ButtonData.Data[ "state" ][ "sizeNodeTypeId" ] = SizeNodeTypeId;
+
+                                    JArray Sizes = (JArray) ( ButtonData.Data[ "state" ][ "sizes" ] = new JArray() );
+                                    JObject Size = new JObject();
+                                    Sizes.Add( Size );
+                                    {
+                                        JObject nodeId = (JObject) ( Size[ "nodeId" ] = new JObject() );
+                                        nodeId[ "value" ] = string.Empty;
+                                        nodeId[ "readOnly" ] = true;
+                                        nodeId[ "hidden" ] = true;
+                                    }
+                                    {
+                                        JObject nodeTypeId = (JObject) ( Size[ "nodeTypeId" ] = new JObject() );
+                                        nodeTypeId[ "value" ] = SizeNodeTypeId;
+                                        nodeTypeId[ "readOnly" ] = true;
+                                        nodeTypeId[ "hidden" ] = true;
+                                    }
+                                    {
+                                        JObject unitCount = (JObject) ( Size[ "unitCount" ] = new JObject() );
+                                        unitCount[ "value" ] = 1;
+                                        unitCount[ "readOnly" ] = false;
+                                        unitCount[ "hidden" ] = false;
+                                    }
+                                    {
+                                        JObject quantity = (JObject) ( Size[ "quantity" ] = new JObject() );
+                                        quantity[ "value" ] = Quantity.Quantity;
+                                        quantity[ "readOnly" ] = false;
+                                        quantity[ "hidden" ] = false;
+                                    }
+                                    {
+                                        JObject uom = (JObject) ( Size[ "uom" ] = new JObject() );
+                                        uom[ "value" ] = Quantity.CachedUnitName;
+                                        uom[ "readOnly" ] = false;
+                                        uom[ "hidden" ] = false;
+                                    }
+                                    {
+                                        JObject catalogNo = (JObject) ( Size["catalogNo"] = new JObject() );
+                                        catalogNo[ "value" ] = string.Empty;
+                                        catalogNo[ "readOnly" ] = false;
+                                        catalogNo[ "hidden" ] = false;
+                                    }
+                                    {
+                                        JObject quantityEditable = (JObject) ( Size[ "quantityEditable" ] = new JObject() );
+                                        quantityEditable[ "value" ] = "checked";
+                                    }
+                                    {
+                                        JObject dispensible = (JObject) ( Size[ "dispensible" ] = new JObject() );
+                                        dispensible[ "value" ] = "checked";
+                                    }
+
+                                    //End kludge
+                                }
                                 ButtonData.Data["state"]["request"] = new JObject();
                                 ButtonData.Data["state"]["request"]["requestitemid"] = NodeId.ToString();
                                 ButtonData.Data["state"]["request"]["materialid"] = ( Material.RelatedNodeId ?? new CswPrimaryKey() ).ToString();
