@@ -1,4 +1,7 @@
-﻿using System.Data;
+﻿using System;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.Data;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt.csw.Dev;
@@ -16,6 +19,13 @@ namespace ChemSW.Nbt.Schema
             get { return CswEnumDeveloper.DH; }
         }
 
+        public override string Title
+        {
+            get
+            {
+                return "Populate OraViewName and OraViewColNames for OCs and NTs.";
+            }
+        }
         public override int CaseNo
         {
             get { return 30252; }
@@ -90,44 +100,74 @@ namespace ChemSW.Nbt.Schema
             //nodetypeprops, only the ones where oraviewcolname is null direct to table
             CswTableUpdate UpdNtProp = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "ntpropUpd", "nodetype_props" ); //for each objectclass
             CswCommaDelimitedString ntcolsp = new CswCommaDelimitedString();
+            ntcolsp.Add( "nodetypeid" );
             ntcolsp.Add( "nodetypepropid" );
             ntcolsp.Add( "objectclasspropid" );
             ntcolsp.Add( "propname" );
             ntcolsp.Add( "oraviewcolname" );
-            DataTable tblUpdNtProp = UpdNtProp.getTable( ntcolsp );
+            //case 30627 -- do ntprivateprops after objectclasprops to get the important unique names first
+            Collection<OrderByClause> OrderBy = new Collection<OrderByClause>() { new OrderByClause( "nodetypeid", CswEnumOrderByType.Ascending ), new OrderByClause( "objectclasspropid", CswEnumOrderByType.Ascending ) };
+            DataTable tblUpdNtProp = UpdNtProp.getTable( ntcolsp, "", Int32.MinValue, "", false, OrderBy );
+
+            StringCollection DefinedProps = new StringCollection();
+            int mynodetypeid = Int32.MinValue;
+
             foreach( DataRow r2 in tblUpdNtProp.Rows )
             {
-                if( CswConvert.ToDbVal( r2["oraviewcolname"] ) != null )
+                if( mynodetypeid.ToString() != r2["nodetypeid"].ToString() )
                 {
-                    DataRow arow = null;
-                    if( CswConvert.ToDbVal( r2["objectclasspropid"] ) != null )
+                    mynodetypeid = CswConvert.ToInt32( r2["nodetypeid"] );
+                    DefinedProps.Clear();
+                }
+
+
+                DataRow arow = null;
+                if( CswConvert.ToDbVal( r2["objectclasspropid"] ) != null )
+                {
+                    DataRow[] foundRows;
+                    string criteria = "objectclasspropid=" + CswConvert.ToInt32( r2["objectclasspropid"] ).ToString();
+                    foundRows = tblUpdObProp.Select( criteria );
+                    if( foundRows.GetLength( 0 ) > 0 )
                     {
-                        DataRow[] foundRows;
-                        string criteria = "objectclasspropid=" + CswConvert.ToInt32( r2["objectclasspropid"] ).ToString();
-                        foundRows = tblUpdObProp.Select( criteria );
-                        if( foundRows.GetLength( 0 ) > 0 )
-                        {
-                            arow = foundRows[0];
-                        }
+                        arow = foundRows[0];
                     }
-                    if( arow != null )
+                }
+                if( arow != null )
+                {
+                    r2["oraviewcolname"] = arow["oraviewcolname"]; //use the objectclassprop oraviewcolname if we have it
+                    DefinedProps.Add( r2["oraviewcolname"].ToString() );
+                }
+                else
+                {
+                    //questions do not use the propname...
+                    CswNbtMetaDataNodeTypeProp ntp = _CswNbtSchemaModTrnsctn.MetaData.getNodeTypeProp( CswConvert.ToInt32( r2["nodetypepropid"] ) );
+                    if( ntp.getFieldType().FieldType == CswEnumNbtFieldType.Question )
                     {
-                        r2["oraviewcolname"] = arow["oraviewcolname"]; //use the objectclassprop oraviewcolname if we have it
+                        r2["oraviewcolname"] = CswConvert.ToDbVal( CswTools.MakeOracleCompliantIdentifier( ntp.FullQuestionNo.Replace( ".", "x" ) ) );
+                        DefinedProps.Add( r2["oraviewcolname"].ToString() );
                     }
                     else
                     {
-                        //questions do not use the propname...
-                        CswNbtMetaDataNodeTypeProp ntp = _CswNbtSchemaModTrnsctn.MetaData.getNodeTypeProp( CswConvert.ToInt32( r2["nodetypepropid"] ) );
-                        if( ntp.getFieldType().FieldType == CswEnumNbtFieldType.Question )
+                        //duplicate check for case 30627
+                        DataRow[] foundRows;
+                        string colname = CswTools.MakeOracleCompliantIdentifier( r2["propname"].ToString() );
+                        int i = 0;
+                        string testcolname = colname;
+                        while( DefinedProps.IndexOf( testcolname ) > -1 )
                         {
-                            r2["oraviewcolname"] = CswConvert.ToDbVal( CswTools.MakeOracleCompliantIdentifier( ntp.FullQuestionNo.Replace( ".", "x" ) ) );
+                            ++i;
+                            if( colname.Length > 29 - i.ToString().Length )
+                            {
+                                testcolname = colname.Substring( 0, 29 - i.ToString().Length );
+                            }
+                            testcolname = colname + i.ToString();
                         }
-                        else
-                        {
-                            r2["oraviewcolname"] = CswConvert.ToDbVal( CswTools.MakeOracleCompliantIdentifier( r2["propname"].ToString() ) );
-                        }
+                        colname = testcolname;
+                        r2["oraviewcolname"] = CswConvert.ToDbVal( colname );
+                        DefinedProps.Add( r2["oraviewcolname"].ToString() );
                     }
                 }
+
             }
             UpdNtProp.update( tblUpdNtProp );
 
