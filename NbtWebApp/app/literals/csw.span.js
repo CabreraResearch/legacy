@@ -36,19 +36,19 @@
             html += '<span ';
             if (options) {
                 Csw.extend(cswPrivate, options);
-            } 
-            
+            }
+
             attr.add('id', cswPrivate.ID);
             attr.add('class', cswPrivate.cssclass);
             spanText = Csw.string(cswPrivate.text, cswPrivate.value);
 
             html += attr.get();
             html += '>';
-            if(cswPrivate.nobr) {
+            if (cswPrivate.nobr) {
                 html += '<nobr>';
             }
             html += spanText;
-            if(cswPrivate.nobr) {
+            if (cswPrivate.nobr) {
                 html += '</nobr>';
             }
             html += '</span>';
@@ -58,12 +58,12 @@
             if (cswPrivate.$parent) {
                 cswPrivate.$parent.append(cswPublic.$);
             }
-        } ());
+        }());
 
         return cswPublic;
     }
     Csw.literals.register('span', span);
-    Csw.literals.span = Csw.literals.span || span;
 
-} ());
+
+}());
 

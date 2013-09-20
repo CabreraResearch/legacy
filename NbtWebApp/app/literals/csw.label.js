@@ -4,74 +4,74 @@
 (function () {
     'use strict';
 
-    Csw.literals.label = Csw.literals.label ||
-        Csw.literals.register('label', function (options) {
-            /// <summary> Create or extend an HTML <label /> and return a Csw.label object
-            ///     &#10;1 - link(options)
-            ///</summary>
-            /// <param name="options" type="Object">
-            /// <para>A JSON Object</para>
-            /// <para>options.$parent: An element to attach to.</para>
-            /// <para>options.ID: An ID for the input.</para>
-            /// <para>options.cssclass: CSS class to asign</para>
-            /// <para>options.text: Text to display</para>
-            /// </param>
-            /// <returns type="Csw.literals.label">A label object</returns>
-            var cswPrivate = {
-                $parent: '',
-                ID: '',
-                cssclass: '',
-                forAttr: '',
-                form: '',
-                text: '',
-                useWide: false,
-                onClick: null, //function () {}
-                isRequired: false
-            };
-            var cswPublic = {};
 
-            (function () {
-                var html = '',
-                    style = Csw.makeStyle(),
-                    attr = Csw.makeAttr();
-                var $label;
+    Csw.literals.register('label', function (options) {
+        /// <summary> Create or extend an HTML <label /> and return a Csw.label object
+        ///     &#10;1 - link(options)
+        ///</summary>
+        /// <param name="options" type="Object">
+        /// <para>A JSON Object</para>
+        /// <para>options.$parent: An element to attach to.</para>
+        /// <para>options.ID: An ID for the input.</para>
+        /// <para>options.cssclass: CSS class to asign</para>
+        /// <para>options.text: Text to display</para>
+        /// </param>
+        /// <returns type="Csw.literals.label">A label object</returns>
+        var cswPrivate = {
+            $parent: '',
+            ID: '',
+            cssclass: '',
+            forAttr: '',
+            form: '',
+            text: '',
+            useWide: false,
+            onClick: null, //function () {}
+            isRequired: false
+        };
+        var cswPublic = {};
 
-                Csw.extend(cswPrivate, options);
-                
-                var cssClass = 'CswLabel ' + cswPrivate.cssclass;
-                
-                html += '<label ';
-                attr.add('id', cswPrivate.ID);
-                attr.add('class', cssClass);
-                attr.add('for', cswPrivate.forAttr);
-                attr.add('form', cswPrivate.form);
+        (function () {
+            var html = '',
+                style = Csw.makeStyle(),
+                attr = Csw.makeAttr();
+            var $label;
 
-                html += attr.get();
-                html += style.get();
+            Csw.extend(cswPrivate, options);
 
-                html += '>';
+            var cssClass = 'CswLabel ' + cswPrivate.cssclass;
 
-                var labelText = cswPrivate.text;
+            html += '<label ';
+            attr.add('id', cswPrivate.ID);
+            attr.add('class', cssClass);
+            attr.add('for', cswPrivate.forAttr);
+            attr.add('form', cswPrivate.form);
 
-                html += Csw.string(labelText, labelText);
+            html += attr.get();
+            html += style.get();
 
-                html += '</label>';
-                $label = $(html);
+            html += '>';
 
-                Csw.literals.factory($label, cswPublic);
-                cswPublic.required(cswPrivate.isRequired, true);
+            var labelText = cswPrivate.text;
 
-                if (Csw.isJQuery(cswPrivate.$parent)) {
-                    cswPrivate.$parent.append(cswPublic.$);
-                }
-            } ());
+            html += Csw.string(labelText, labelText);
 
-            cswPublic.setFor = function (elementId) {
-                cswPublic.propDom('for', elementId);
-            };
+            html += '</label>';
+            $label = $(html);
 
-            return cswPublic;
-        });
+            Csw.literals.factory($label, cswPublic);
+            cswPublic.required(cswPrivate.isRequired, true);
 
-} ());
+            if (Csw.isJQuery(cswPrivate.$parent)) {
+                cswPrivate.$parent.append(cswPublic.$);
+            }
+        }());
+
+        cswPublic.setFor = function (elementId) {
+            cswPublic.propDom('for', elementId);
+        };
+
+        return cswPublic;
+    });
+
+}());
 

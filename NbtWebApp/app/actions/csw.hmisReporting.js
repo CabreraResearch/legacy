@@ -1,18 +1,18 @@
 /// <reference path="~/app/CswApp-vsdoc.js" />
 (function () {
-Csw.actions.hmisReporting = Csw.actions.template ||
+
     Csw.actions.register('hmisReporting', function (cswParent, cswPrivate) {
         'use strict';
         var cswPublic = {};
         if (Csw.isNullOrEmpty(cswParent)) {
             Csw.error.throwException('Cannot create an action without a valid Csw Parent object.', 'Csw.actions.hmisReporting', 'csw.hmisReporting.js', 10);
         }
-        
+
         //#region _preCtor
         (function _preCtor() {
             cswPrivate.name = cswPrivate.name || 'HMIS Reporting';
-            cswPrivate.onCancel = cswPrivate.onCancel || function () {};
-            
+            cswPrivate.onCancel = cswPrivate.onCancel || function () { };
+
             cswPrivate.controlZoneId = cswPrivate.controlZoneId || '';
             cswPrivate.FireClassExemptAmountSet = cswPrivate.FireClassExemptAmountSet || '';
             cswPrivate.Materials = cswPrivate.Materials || [];
@@ -23,13 +23,13 @@ Csw.actions.hmisReporting = Csw.actions.template ||
         //#endregion _preCtor
 
         //#region Action Functions
-        cswPrivate.onCancelClick = function() {
+        cswPrivate.onCancelClick = function () {
             Csw.tryExec(cswPrivate.onCancel);
         };
         //#endregion Action Functions
 
         //#region Control Zone Control
-        cswPrivate.makeControlZoneControl = function () {            
+        cswPrivate.makeControlZoneControl = function () {
             cswPrivate.controlTbl.cell(1, 1).span({ text: 'Select Control Zone: ' }).addClass('propertylabel');
             cswPrivate.controlZoneSelect = cswPrivate.controlTbl.cell(1, 2).nodeSelect({
                 name: 'Control Zone',
@@ -120,7 +120,7 @@ Csw.actions.hmisReporting = Csw.actions.template ||
                     //Grid Fields and Columns
                     var HMISGridColumns = [];
                     var HMISGridFields = [];
-                    var addColumn = function(colName, displayName, summaryType, summaryRenderer) {
+                    var addColumn = function (colName, displayName, summaryType, summaryRenderer) {
                         HMISGridColumns.push({
                             dataIndex: colName,
                             filterable: false,
@@ -135,7 +135,7 @@ Csw.actions.hmisReporting = Csw.actions.template ||
                             useNull: true
                         });
                     };
-                    var addQtyColumn = function(Columns, maqColName, qtyColName, headerDisplay) {
+                    var addQtyColumn = function (Columns, maqColName, qtyColName, headerDisplay) {
                         Columns.push({
                             text: headerDisplay,
                             columns: [{
@@ -145,7 +145,7 @@ Csw.actions.hmisReporting = Csw.actions.template ||
                                 id: 'hmis_' + maqColName,
                                 width: 80,
                                 summaryType: 'max',
-                                summaryRenderer: function(value, summaryData, dataIndex) {
+                                summaryRenderer: function (value, summaryData, dataIndex) {
                                     return value === '' ? '' : value;
                                 }
                             }, {
@@ -168,7 +168,7 @@ Csw.actions.hmisReporting = Csw.actions.template ||
                             useNull: true
                         });
                     };
-                    var addUseTypeColumn = function(useType, headerDisplay, useGas) {
+                    var addUseTypeColumn = function (useType, headerDisplay, useGas) {
                         var Columns = [];
                         addQtyColumn(Columns, useType + 'solidmaq', useType + 'solidqty', 'Solid - lbs');
                         addQtyColumn(Columns, useType + 'liquidmaq', useType + 'liquidqty', 'Liquid - gal (lbs)');
@@ -180,7 +180,7 @@ Csw.actions.hmisReporting = Csw.actions.template ||
                             columns: Columns
                         });
                     };
-                    addColumn('material', 'Material', 'count', function(value, summaryData, dataIndex) {
+                    addColumn('material', 'Material', 'count', function (value, summaryData, dataIndex) {
                         return ((value === 1) ? '(1 Material)' : '(' + value + ' Materials)');
                     });
                     addColumn('hazardclass', 'Hazard Class');
@@ -207,12 +207,12 @@ Csw.actions.hmisReporting = Csw.actions.template ||
                         groupHeaderTpl: '{name}',
                         summaryEnabled: true,
                         printingEnabled: HMISGridData.length > 0,
-                        gridToPrint: function(grid) {
+                        gridToPrint: function (grid) {
                             return cswPrivate.makeSummaryGrid(grid);
                         }
                     };
-                    cswPrivate.CachedHMISData.push({ 
-                        controlZoneId: cswPrivate.controlZoneId, 
+                    cswPrivate.CachedHMISData.push({
+                        controlZoneId: cswPrivate.controlZoneId,
                         gridOptions: cswPrivate.gridOptions
                     });
                     cswPrivate.gridTbl.cell(1, 1).empty();
@@ -233,10 +233,10 @@ Csw.actions.hmisReporting = Csw.actions.template ||
             return cached;
         };
         //#endregion Grid Control
-        
+
         //#region Summary Grid
 
-        cswPrivate.makeSummaryGrid = function(grid) {
+        cswPrivate.makeSummaryGrid = function (grid) {
             var SummaryGridColumns = [];
             var SummaryGridFields = [];
             var SummaryGridData = cswPrivate.buildHazardClassEmptyDataset();
@@ -266,7 +266,7 @@ Csw.actions.hmisReporting = Csw.actions.template ||
                 Csw.each(SummaryGridData, function (row) {
                     if (row.hazardclass === GroupName) {
                         var colIdx = 0;
-                        window.Ext.Array.each(group.childNodes, function(cell) {
+                        window.Ext.Array.each(group.childNodes, function (cell) {
                             if (colIdx > 0) {
                                 var summaryValue = colIdx === 1 ? GroupName : cell.textContent;
                                 if (rowIdx === 0) {
@@ -308,12 +308,12 @@ Csw.actions.hmisReporting = Csw.actions.template ||
             }).hide();
             return summaryGrid;
         };
-        
+
         cswPrivate.buildHazardClassEmptyDataset = function () {
             var EmptyHazardClasses = [];
             Csw.each(cswPrivate.Materials, function (row) {
                 var exists = false;
-                Csw.each(EmptyHazardClasses, function(hazardClass) {
+                Csw.each(EmptyHazardClasses, function (hazardClass) {
                     if (hazardClass.hazardclass === row.HazardCategory + ' ' + row.Class) {
                         exists = true;
                     }
@@ -343,7 +343,7 @@ Csw.actions.hmisReporting = Csw.actions.template ||
             });
             return EmptyHazardClasses;
         };
-        
+
         //#endregion Summary Grid
 
         //#region _postCtor
@@ -355,7 +355,7 @@ Csw.actions.hmisReporting = Csw.actions.template ||
                 onCancel: cswPrivate.onCancelClick,
                 hasButtonGroup: true
             });
-            
+
             cswPrivate.controlTbl = cswPrivate.action.actionDiv.table({
                 name: cswPrivate.name + '_control_tbl',
                 cellpadding: '5px',
@@ -364,7 +364,7 @@ Csw.actions.hmisReporting = Csw.actions.template ||
                 width: '95%',
                 FirstCellRightAlign: true
             });
-            
+
             cswPrivate.gridTbl = cswPrivate.action.actionDiv.table({
                 name: cswPrivate.name + '_control_tbl',
                 cellpadding: '5px',
@@ -385,7 +385,7 @@ Csw.actions.hmisReporting = Csw.actions.template ||
             });
         }());
         //#endregion _postCtor
-        
+
         return cswPublic;
     });
 }());

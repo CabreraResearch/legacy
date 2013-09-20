@@ -15,7 +15,7 @@ namespace ChemSW.Nbt
     /// <summary>
     /// The Nodes Collection, to which all Trees subscribe
     /// </summary>
-    public class CswNbtNodeCollection: IEnumerable
+    public class CswNbtNodeCollection : IEnumerable
     {
         private Hashtable NodeHash;
         private CswNbtResources _CswNbtResources;
@@ -69,7 +69,7 @@ namespace ChemSW.Nbt
         /// <param name="NodeId">Primary Key of Node</param>
         public CswNbtNode this[CswPrimaryKey NodeId]
         {
-            get { return GetNode( NodeId, DateTime.MinValue ); }
+            get { return GetNode( NodeId, null ); }
         }
 
         /// <summary>
@@ -92,15 +92,14 @@ namespace ChemSW.Nbt
             }
         }
 
-        public CswNbtNode GetNode( string NodeId, string NodeKey, CswDateTime Date )
+        public CswNbtNode GetNode( string NodeId, string NodeKey, CswDateTime Date = null )
         {
             CswNbtNode Node = null;
-            Date = Date ?? new CswDateTime( _CswNbtResources.CurrentNbtUser );
             if( !string.IsNullOrEmpty( NodeKey ) )
             {
                 //CswNbtNodeKey RealNodeKey = new CswNbtNodeKey( CswNbtResources, FromSafeJavaScriptParam( NodeKey ) );
                 CswNbtNodeKey RealNodeKey = new CswNbtNodeKey( NodeKey );
-                Node = _CswNbtResources.getNode( RealNodeKey, Date.ToDateTime() );
+                Node = _CswNbtResources.getNode( RealNodeKey, Date );
             }
             else if( !string.IsNullOrEmpty( NodeId ) )
             {
@@ -114,7 +113,7 @@ namespace ChemSW.Nbt
                 {
                     RealNodeId.FromString( NodeId );
                 }
-                Node = _CswNbtResources.getNode( RealNodeId, Date.ToDateTime() );
+                Node = _CswNbtResources.getNode( RealNodeId, Date );
             }
             return Node;
         } // getNode()
@@ -125,13 +124,13 @@ namespace ChemSW.Nbt
         /// <param name="NodeId">Primary Key of Node</param>
         public CswNbtNode GetNode( CswPrimaryKey NodeId )
         {
-            return GetNode( NodeId, Int32.MinValue, CswEnumNbtNodeSpecies.Plain, DateTime.MinValue );
+            return GetNode( NodeId, Int32.MinValue, CswEnumNbtNodeSpecies.Plain, null );
         }
 
         /// <summary>
         /// Fetch a node from the collection.  NodeTypeId is looked up and NodeSpecies.Plain is assumed.  See <see cref="GetNode(CswPrimaryKey, int, CswEnumNbtNodeSpecies, DateTime)"/>
         /// </summary>
-        public CswNbtNode GetNode( CswPrimaryKey NodeId, DateTime Date )
+        public CswNbtNode GetNode( CswPrimaryKey NodeId, CswDateTime Date )
         {
             return GetNode( NodeId, Int32.MinValue, CswEnumNbtNodeSpecies.Plain, Date );
         }
@@ -144,7 +143,7 @@ namespace ChemSW.Nbt
         /// <seealso cref="this[CswPrimaryKey]"/>
         public CswNbtNode GetNode( CswPrimaryKey NodeId, Int32 NodeTypeId )
         {
-            return GetNode( NodeId, NodeTypeId, CswEnumNbtNodeSpecies.Plain, DateTime.MinValue );
+            return GetNode( NodeId, NodeTypeId, CswEnumNbtNodeSpecies.Plain, null );
         }
 
         /// <summary>
@@ -159,7 +158,7 @@ namespace ChemSW.Nbt
                     throw new CswDniException( CswEnumErrorType.Error, "Invalid Node", "CswNbtNodeCollection received a null NodeKey" );
                 if( NodeKey.NodeSpecies != CswEnumNbtNodeSpecies.Plain )
                     throw new CswDniException( CswEnumErrorType.Error, "Invalid Node", "CswNbtNodeCollection cannot fetch Node of species " + NodeKey.NodeSpecies.ToString() );
-                return GetNode( NodeKey.NodeId, NodeKey.NodeTypeId, NodeKey.NodeSpecies, DateTime.MinValue );
+                return GetNode( NodeKey.NodeId, NodeKey.NodeTypeId, NodeKey.NodeSpecies, null );
             }
         }
 
@@ -171,21 +170,21 @@ namespace ChemSW.Nbt
         /// <param name="NodeTypeId">Primary Key of NodeTypeId (only required if NodeId is invalid)</param>
         /// <param name="Species"><see cref="CswEnumNbtNodeSpecies" /></param>
         /// <param name="Date"></param>
-        public CswNbtNode GetNode( CswPrimaryKey NodeId, Int32 NodeTypeId, CswEnumNbtNodeSpecies Species, DateTime Date )
+        public CswNbtNode GetNode( CswPrimaryKey NodeId, Int32 NodeTypeId, CswEnumNbtNodeSpecies Species, CswDateTime Date )
         {
             //bz # 7816: Return NULL rather than throwing
             CswNbtNode Node = null;
             if( NodeId != null && NodeId.PrimaryKey != Int32.MinValue )  // BZ 8753
             {
                 NodeHashKey HashKey = new NodeHashKey( NodeId, Species );
-                if( Date == DateTime.MinValue && NodeHash.ContainsKey( HashKey ) )
+                if( false == CswTools.IsDate( Date ) && NodeHash.ContainsKey( HashKey ) )
                 {
                     Node = (CswNbtNode) NodeHash[HashKey];
                 }
                 else
                 {
                     Node = makeNode( HashKey, NodeTypeId, Date );
-                    if( Date == DateTime.MinValue && null != Node )
+                    if( false == CswTools.IsDate( Date ) && null != Node )
                     {
                         Node = (CswNbtNode) NodeHash[HashKey];
                     }
@@ -255,7 +254,7 @@ namespace ChemSW.Nbt
             NodeHash.Clear();
         }
 
-        private class NodeHashKey: IEquatable<NodeHashKey>
+        private class NodeHashKey : IEquatable<NodeHashKey>
         {
             public CswPrimaryKey NodeId;
             public CswEnumNbtNodeSpecies Species;
@@ -329,11 +328,11 @@ namespace ChemSW.Nbt
         /// <remark>
         /// We need a NodeTypeId because the NodeId is missing from the HashKey if this is a new node we're about to add
         /// </remark>
-        private CswNbtNode makeNode( NodeHashKey HashKey, Int32 NodeTypeId, DateTime Date )
+        private CswNbtNode makeNode( NodeHashKey HashKey, Int32 NodeTypeId, CswDateTime Date )
         {
             CswTimer Timer = new CswTimer();
             //CswNbtNode Node = new CswNbtNode( _CswNbtResources, NodeTypeId, HashKey.Species, NodeHash.Count, _ICswNbtObjClassFactory );
-            CswNbtNode Node = _CswNbtNodeFactory.make( CswEnumNbtNodeSpecies.Plain, HashKey.NodeId, NodeTypeId, NodeHash.Count );
+            CswNbtNode Node = _CswNbtNodeFactory.make( CswEnumNbtNodeSpecies.Plain, HashKey.NodeId, NodeTypeId, NodeHash.Count, Date );
 
             //bz # 5943
             //Node.OnRequestWriteNode = new CswNbtNode.OnRequestWriteNodeHandler( _CswNbtNodeWriter.write );
@@ -426,7 +425,7 @@ namespace ChemSW.Nbt
         /// <returns>The new node. !!POSTS CHANGES!!</returns>
         public CswNbtNode makeNodeFromNodeTypeId( Int32 NodeTypeId, AfterMakeNode OnAfterMakeNode = null, bool IsTemp = false, bool OverrideUniqueValidation = false )
         {
-            CswNbtNode Node = _CswNbtNodeFactory.make( CswEnumNbtNodeSpecies.Plain, null, NodeTypeId, NodeHash.Count );
+            CswNbtNode Node = _CswNbtNodeFactory.make( CswEnumNbtNodeSpecies.Plain, null, NodeTypeId, NodeHash.Count, null );
             //Node.OnAfterSetNodeId += new CswNbtNode.OnSetNodeIdHandler( OnAfterSetNodeIdHandler );
             Node.OnRequestDeleteNode += OnAfterDeleteNode;
             Node.fillFromNodeTypeId( NodeTypeId );
@@ -484,7 +483,7 @@ namespace ChemSW.Nbt
             _CswNbtResources.logTimerResult( "makeUserNodeFromUsername 2", Timer );
 
             // generate the tree
-            ICswNbtTree UserTree = _CswNbtResources.Trees.getTreeFromView( View, RequireViewPermissions, true, IncludeHiddenNodes : true );
+            ICswNbtTree UserTree = _CswNbtResources.Trees.getTreeFromView( View, RequireViewPermissions, true, IncludeHiddenNodes: true );
 
             _CswNbtResources.logTimerResult( "makeUserNodeFromUsername 3", Timer );
 
@@ -529,7 +528,7 @@ namespace ChemSW.Nbt
             CswNbtViewPropertyFilter Filter = View.AddViewPropertyFilter( Prop, CswEnumNbtSubFieldName.Unknown, CswEnumNbtFilterMode.Equals, RoleName, false );
 
             // generate the tree
-            ICswNbtTree UserTree = _CswNbtResources.Trees.getTreeFromView( View, false, true, IncludeHiddenNodes : true );
+            ICswNbtTree UserTree = _CswNbtResources.Trees.getTreeFromView( View, false, true, IncludeHiddenNodes: true );
 
             // get user node
             UserTree.goToRoot();
@@ -558,7 +557,7 @@ namespace ChemSW.Nbt
         }//finalize()
 
         #endregion Database
-        
+
     } // CswNbtNodeCollection()
 } // namespace ChemSW.Nbt
 

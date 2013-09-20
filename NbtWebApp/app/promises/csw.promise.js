@@ -3,9 +3,7 @@
 
 (function () {
     'use strict';
-
-    Csw.register('promises', Csw.makeNameSpace());
-
+    
     /**
      * A promise wrapper around AJAX requests.
     */

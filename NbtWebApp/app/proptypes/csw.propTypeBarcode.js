@@ -3,13 +3,13 @@
 
 (function () {
     'use strict';
-    Csw.properties.barcode = Csw.properties.register('barcode',
-        function(nodeProperty) {
+    Csw.properties.register('barcode',
+        function (nodeProperty) {
             'use strict';
 
             var eventName = 'onChangeBarcode_' + nodeProperty.propid;
             //The render function to be executed as a callback
-            var render = function() {
+            var render = function () {
                 'use strict';
 
                 var cswPrivate = Csw.object();
@@ -46,7 +46,7 @@
                         name: nodeProperty.name,
                         type: Csw.enums.inputTypes.text,
                         cssclass: 'textinput',
-                        onChange: function(barcode) {
+                        onChange: function (barcode) {
                             cswPrivate.value = barcode;
                             nodeProperty.propData.values.barcode = barcode;
                             nodeProperty.broadcastPropChange(barcode);
@@ -63,7 +63,7 @@
                             size: 'small',
                             tooltip: { title: 'Print Barcode Label' },
                             icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.barcode),
-                            onClick: function() {
+                            onClick: function () {
                                 $.CswDialog('PrintLabelDialog', {
                                     nodes: [{
                                         nodeid: nodeProperty.tabState.nodeid,
@@ -81,8 +81,8 @@
 
             //Bind an unrender callback to terminate any outstanding ajax requests, if any. See propTypeGrid.
             //nodeProperty.unBindRender(function() {
-              
+
             return true;
 
         });
-} ());
+}());

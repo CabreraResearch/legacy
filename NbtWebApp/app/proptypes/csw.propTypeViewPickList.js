@@ -2,38 +2,37 @@
 
 (function () {
     'use strict';
-    Csw.properties.viewPickList = Csw.properties.register('viewPickList',
-        function(nodeProperty) {
+    Csw.properties.register('viewPickList', function (nodeProperty) {
+        'use strict';
+
+        //The render function to be executed as a callback
+        var render = function () {
             'use strict';
-            
-            //The render function to be executed as a callback
-            var render = function() {
-                'use strict';
-                var cswPrivate = Csw.object();
-                
-                var cba = nodeProperty.propDiv.checkBoxArray({
-                    name: nodeProperty.name + '_cba',
-                    cols: nodeProperty.propData.values.options.columns,
-                    data: nodeProperty.propData.values.options.data,
-                    UseRadios: (nodeProperty.propData.values.selectmode === 'Single'),
-                    isRequired: nodeProperty.isRequired(),
-                    ReadOnly: nodeProperty.isReadOnly(),
-                    Multi: nodeProperty.isMulti(),
-                    onChange: function() {
-                        //Case 29390: We're already passing by reference; no need to update. No sync for View Picklist.
-                        nodeProperty.broadcastPropChange();
-                    }
-                }); // checkBoxArray
-                cba.required(nodeProperty.isRequired());
-            }; // render()
+            var cswPrivate = Csw.object();
 
-            //Bind the callback to the render event
-            nodeProperty.bindRender(render);
+            var cba = nodeProperty.propDiv.checkBoxArray({
+                name: nodeProperty.name + '_cba',
+                cols: nodeProperty.propData.values.options.columns,
+                data: nodeProperty.propData.values.options.data,
+                UseRadios: (nodeProperty.propData.values.selectmode === 'Single'),
+                isRequired: nodeProperty.isRequired(),
+                ReadOnly: nodeProperty.isReadOnly(),
+                Multi: nodeProperty.isMulti(),
+                onChange: function () {
+                    //Case 29390: We're already passing by reference; no need to update. No sync for View Picklist.
+                    nodeProperty.broadcastPropChange();
+                }
+            }); // checkBoxArray
+            cba.required(nodeProperty.isRequired());
+        }; // render()
 
-            //Bind an unrender callback to terminate any outstanding ajax requests, if any. See propTypeGrid.
-            //nodeProperty.unBindRender();
+        //Bind the callback to the render event
+        nodeProperty.bindRender(render);
 
-            return true;
-        });
+        //Bind an unrender callback to terminate any outstanding ajax requests, if any. See propTypeGrid.
+        //nodeProperty.unBindRender();
+
+        return true;
+    });
 
 }());

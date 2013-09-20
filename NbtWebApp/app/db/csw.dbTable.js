@@ -4,8 +4,6 @@
 (function () {
     'use strict';
     
-    Csw.db.register('table', Csw.makeNameSpace());
-    
     /*
      * Private implementation method to create a new table (aka Object Store). 
      * This works by appending a method to the DB Manager's schema scripts collection, which will be executed on upgrade.

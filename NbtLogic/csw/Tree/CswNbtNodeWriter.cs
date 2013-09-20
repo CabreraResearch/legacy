@@ -99,7 +99,7 @@ namespace ChemSW.Nbt
 
                 //bz # 5878
                 //Node.Properties.ManageTransaction = _ManageTransaction;
-                Node.Properties.update( Node, IsCopy, OverrideUniqueValidation, Creating );
+                Node.Properties.update( Node, IsCopy, OverrideUniqueValidation, Creating, null );
 
                 //set nodename with updated prop values
                 _synchNodeName( Node );
