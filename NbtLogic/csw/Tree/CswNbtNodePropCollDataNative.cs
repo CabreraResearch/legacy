@@ -47,6 +47,7 @@ namespace ChemSW.Nbt
             {
                 if( null == _PropsTable )
                 {
+                    _PropsUpdate = _CswNbtResources.makeCswTableUpdate( "Props_update", "jct_nodes_props" );
                     if( _NodeKey == null )
                     {
                         _PropsTable = _PropsUpdate.getEmptyTable();
@@ -55,7 +56,6 @@ namespace ChemSW.Nbt
                     {
                         if( false == CswTools.IsDate( Date ) )
                         {
-                            _PropsUpdate = _CswNbtResources.makeCswTableUpdate( "Props_update", "jct_nodes_props" );
                             _PropsTable = _PropsUpdate.getTable( "nodeid", _NodeKey.PrimaryKey );
                         }
                         else
