@@ -28,7 +28,7 @@ namespace ChemSW.Nbt.csw.Schema
                 {"regulatory_lists", 9},
                 {"regulated_casnos", 10},
                 {"packages", 11},
-                {"packdetails", 12},
+                {"packdetail", 12},
             };
 
         private DataTable _importDefTable;
