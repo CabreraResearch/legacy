@@ -24,10 +24,11 @@ namespace ChemSW.Nbt.MetaData
 
         private CswNbtMetaDataResources _CswNbtMetaDataResources;
         private DataRow _ObjectClassRow;
-
-        public CswNbtMetaDataObjectClass( CswNbtMetaDataResources CswNbtMetaDataResources, DataRow Row )
+        private CswDateTime _Date;
+        public CswNbtMetaDataObjectClass( CswNbtMetaDataResources CswNbtMetaDataResources, DataRow Row, CswDateTime Date = null)
         {
             _CswNbtMetaDataResources = CswNbtMetaDataResources;
+            _Date = Date;
             Reassign( Row );
         }
 

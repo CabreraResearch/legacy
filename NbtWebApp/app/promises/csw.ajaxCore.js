@@ -3,9 +3,7 @@
 
 (function () {
     'use strict';
-
-    Csw.register('ajaxCore', Csw.makeNameSpace());
-
+    
     var handleAjaxError = function (errorJson) {
         Csw.error.showError(errorJson);
     };

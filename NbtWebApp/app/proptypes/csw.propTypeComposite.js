@@ -3,25 +3,24 @@
 
 (function () {
     'use strict';
-    Csw.properties.composite = Csw.properties.register('composite',
-        function(nodeProperty) {
-            'use strict';
-            
-            //The render function to be executed as a callback
-            var render = function() {
-                var cswPrivate = Csw.object();
+    Csw.properties.register('composite', function (nodeProperty) {
+        'use strict';
 
-                cswPrivate.value = nodeProperty.propData.values.value;
-                nodeProperty.propDiv.append(cswPrivate.value);
-            };
+        //The render function to be executed as a callback
+        var render = function () {
+            var cswPrivate = Csw.object();
 
-            //Bind the callback to the render event
-            nodeProperty.bindRender(render);
+            cswPrivate.value = nodeProperty.propData.values.value;
+            nodeProperty.propDiv.append(cswPrivate.value);
+        };
 
-            //Bind an unrender callback to terminate any outstanding ajax requests, if any. See propTypeGrid.
-            //nodeProperty.unBindRender();
+        //Bind the callback to the render event
+        nodeProperty.bindRender(render);
 
-            return true;
-        });
+        //Bind an unrender callback to terminate any outstanding ajax requests, if any. See propTypeGrid.
+        //nodeProperty.unBindRender();
+
+        return true;
+    });
 
 }());

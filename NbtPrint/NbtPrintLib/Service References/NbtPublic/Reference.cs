@@ -215,6 +215,9 @@ namespace NbtPrintLib.NbtPublic {
         private string AuthenticationStatusField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string AuthenticationStatusTextField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
         private NbtPrintLib.NbtPublic.CswWebSvcSessionAuthenticateDataAuthenticationResponse.Expired ExpirationResetField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
@@ -239,6 +242,19 @@ namespace NbtPrintLib.NbtPublic {
                 if ((object.ReferenceEquals(this.AuthenticationStatusField, value) != true)) {
                     this.AuthenticationStatusField = value;
                     this.RaisePropertyChanged("AuthenticationStatus");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string AuthenticationStatusText {
+            get {
+                return this.AuthenticationStatusTextField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.AuthenticationStatusTextField, value) != true)) {
+                    this.AuthenticationStatusTextField = value;
+                    this.RaisePropertyChanged("AuthenticationStatusText");
                 }
             }
         }
@@ -918,7 +934,16 @@ namespace NbtPrintLib.NbtPublic {
         private string DefaultPrinterIdField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string JSDateFormatField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string JSTimeFormatField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
         private string JurisdictionIdField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private NbtPrintLib.NbtPublic.CswNbtWebServiceSessionSchemaDetails SchemaDataField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
         private string TimeFormatField;
@@ -978,6 +1003,32 @@ namespace NbtPrintLib.NbtPublic {
             }
         }
         
+        [System.Runtime.Serialization.DataMemberAttribute(Name="JS Date Format")]
+        public string JSDateFormat {
+            get {
+                return this.JSDateFormatField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.JSDateFormatField, value) != true)) {
+                    this.JSDateFormatField = value;
+                    this.RaisePropertyChanged("JSDateFormat");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(Name="JS Time Format")]
+        public string JSTimeFormat {
+            get {
+                return this.JSTimeFormatField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.JSTimeFormatField, value) != true)) {
+                    this.JSTimeFormatField = value;
+                    this.RaisePropertyChanged("JSTimeFormat");
+                }
+            }
+        }
+        
         [System.Runtime.Serialization.DataMemberAttribute()]
         public string JurisdictionId {
             get {
@@ -987,6 +1038,19 @@ namespace NbtPrintLib.NbtPublic {
                 if ((object.ReferenceEquals(this.JurisdictionIdField, value) != true)) {
                     this.JurisdictionIdField = value;
                     this.RaisePropertyChanged("JurisdictionId");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public NbtPrintLib.NbtPublic.CswNbtWebServiceSessionSchemaDetails SchemaData {
+            get {
+                return this.SchemaDataField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.SchemaDataField, value) != true)) {
+                    this.SchemaDataField = value;
+                    this.RaisePropertyChanged("SchemaData");
                 }
             }
         }
@@ -1716,6 +1780,67 @@ namespace NbtPrintLib.NbtPublic {
                 if ((this.SucceededField.Equals(value) != true)) {
                     this.SucceededField = value;
                     this.RaisePropertyChanged("Succeeded");
+                }
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="CswNbtWebServiceSession.SchemaDetails", Namespace="http://schemas.datacontract.org/2004/07/ChemSW.Nbt.WebServices")]
+    [System.SerializableAttribute()]
+    public partial class CswNbtWebServiceSessionSchemaDetails : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
+        
+        [System.NonSerializedAttribute()]
+        private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private bool CorrectVersionField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private NbtPrintLib.NbtPublic.CswWebSvcReturnBaseErrorMessage ErrorMessageField;
+        
+        [global::System.ComponentModel.BrowsableAttribute(false)]
+        public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
+            get {
+                return this.extensionDataField;
+            }
+            set {
+                this.extensionDataField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public bool CorrectVersion {
+            get {
+                return this.CorrectVersionField;
+            }
+            set {
+                if ((this.CorrectVersionField.Equals(value) != true)) {
+                    this.CorrectVersionField = value;
+                    this.RaisePropertyChanged("CorrectVersion");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public NbtPrintLib.NbtPublic.CswWebSvcReturnBaseErrorMessage ErrorMessage {
+            get {
+                return this.ErrorMessageField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.ErrorMessageField, value) != true)) {
+                    this.ErrorMessageField = value;
+                    this.RaisePropertyChanged("ErrorMessage");
                 }
             }
         }

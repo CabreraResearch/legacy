@@ -108,29 +108,32 @@ namespace ChemSW.Nbt.PropTypes
         }
 
         private DataTable _PropsTable = null;
+        private CswDateTime _Date;
 
         private CswNbtResources _CswNbtResources;
 
         /// <summary>
         /// Constructor for Node Properties
         /// </summary>
-        public CswNbtNodePropData( CswNbtResources rsc, DataRow PropRow, DataTable PropsTable, CswPrimaryKey NodeId, Int32 PropId )
+        public CswNbtNodePropData( CswNbtResources rsc, DataRow PropRow, DataTable PropsTable, CswPrimaryKey NodeId, Int32 PropId, CswDateTime Date )
         {
             _PropRow = PropRow;
             _NodeId = NodeId;
             _NodeTypePropId = PropId;
             _PropsTable = PropsTable;
+            _Date = Date;
             _CswNbtResources = rsc;
         }//ctor()
 
         /// <summary>
         /// Constructor for Object Class Prop Default Values
         /// </summary>
-        public CswNbtNodePropData( CswNbtResources rsc, DataRow PropRow, DataTable PropsTable, Int32 ObjectClassPropId )
+        public CswNbtNodePropData( CswNbtResources rsc, DataRow PropRow, DataTable PropsTable, Int32 ObjectClassPropId, CswDateTime Date )
         {
             _PropRow = PropRow;
             _ObjectClassPropId = ObjectClassPropId;
             _PropsTable = PropsTable;
+            _Date = Date;
             _CswNbtResources = rsc;
         }//ctor()
 
@@ -299,7 +302,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return _CswNbtResources.MetaData.getNodeTypeProp( _NodeTypePropId );
+                return _CswNbtResources.MetaData.getNodeTypeProp( _NodeTypePropId, _Date );
             }
         } //NodeTypeProp
 

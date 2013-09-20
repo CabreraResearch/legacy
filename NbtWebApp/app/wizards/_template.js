@@ -5,7 +5,6 @@
 
     if (false) { //remove this when you're ready to use the template
 
-        Csw.nbt.template = Csw.nbt.template ||
             Csw.nbt.register('template', function(cswParent, cswPrivate) {
                 'use strict';
 

@@ -49,11 +49,11 @@ window.initMain = window.initMain || function (undefined) {
         };
     }()));
 
-    Csw.main.register('tabsAndProps', null);
-    Csw.main.register('mainMenu', null);
-    Csw.main.register('mainTree', null);
-    Csw.main.register('mainviewselect', null);
-    Csw.main.register('universalsearch', null);
+    Csw.main.tabsAndProps = null;
+    Csw.main.mainMenu = null;
+    Csw.main.mainTree = null;
+    Csw.main.mainviewselect = null;
+    Csw.main.universalsearch = null;
 
     Csw.main.register('setUsername', function () {
         var originalU = Csw.clientSession.originalUserName();

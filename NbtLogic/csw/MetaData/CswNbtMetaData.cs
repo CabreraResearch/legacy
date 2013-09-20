@@ -255,9 +255,9 @@ namespace ChemSW.Nbt.MetaData
         /// <summary>
         /// Returns the CswNbtMetaDataNodeType record by primary key
         /// </summary>
-        public CswNbtMetaDataNodeType getNodeType( Int32 NodeTypeId )
+        public CswNbtMetaDataNodeType getNodeType( Int32 NodeTypeId, CswDateTime Date = null )
         {
-            return _CswNbtMetaDataResources.NodeTypesCollection.getNodeType( NodeTypeId );
+            return _CswNbtMetaDataResources.NodeTypesCollection.getNodeType( NodeTypeId, Date );
         }
 
         /// <summary>
@@ -303,9 +303,9 @@ namespace ChemSW.Nbt.MetaData
         /// <summary>
         /// Fetches a NodeType Property based on the primary key (all nodetypes)
         /// </summary>
-        public CswNbtMetaDataNodeTypeProp getNodeTypeProp( Int32 NodeTypePropId )
+        public CswNbtMetaDataNodeTypeProp getNodeTypeProp( Int32 NodeTypePropId, CswDateTime Date = null )
         {
-            return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypeProp( NodeTypePropId );
+            return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypeProp( NodeTypePropId, Date );
         }
 
         /// <summary>
@@ -319,9 +319,9 @@ namespace ChemSW.Nbt.MetaData
         /// <summary>
         /// Fetches a NodeType Property based on the nodetype and property name
         /// </summary>
-        public CswNbtMetaDataNodeTypeProp getNodeTypeProp( Int32 NodeTypeId, string PropName )
+        public CswNbtMetaDataNodeTypeProp getNodeTypeProp( Int32 NodeTypeId, string PropName, CswDateTime Date = null )
         {
-            return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypeProp( NodeTypeId, PropName );
+            return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypeProp( NodeTypeId, PropName, Date );
         }
 
         public CswNbtMetaDataNodeTypeProp getNodeTypePropLatestVersion( Int32 NodeTypePropId )
@@ -422,9 +422,9 @@ namespace ChemSW.Nbt.MetaData
             return _CswNbtMetaDataResources.NodeTypeTabsCollection.getNodeTypeTabs( NodeTypeId );
         }
 
-        public Collection<Int32> getNodeTypePropIds( Int32 NodeTypeId )
+        public Collection<Int32> getNodeTypePropIds( Int32 NodeTypeId, CswDateTime Date = null )
         {
-            return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypePropIds( NodeTypeId );
+            return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypePropIds( NodeTypeId, Date );
         }
 
         public Int32 getNodeTypePropId( Int32 NodeTypeId, string PropName )
@@ -437,19 +437,19 @@ namespace ChemSW.Nbt.MetaData
             return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypePropIdByObjectClassProp( NodeTypeId, ObjectClassPropName );
         }
 
-        public IEnumerable<CswNbtMetaDataNodeTypeProp> getNodeTypeProps( Int32 NodeTypeId )
+        public IEnumerable<CswNbtMetaDataNodeTypeProp> getNodeTypeProps( Int32 NodeTypeId, CswDateTime Date = null )
         {
-            return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypeProps( NodeTypeId );
+            return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypeProps( NodeTypeId, Date );
         }
 
-        public IEnumerable<CswNbtMetaDataNodeTypeProp> getNodeTypeProps( CswEnumNbtFieldType FieldType )
+        public IEnumerable<CswNbtMetaDataNodeTypeProp> getNodeTypeProps( CswEnumNbtFieldType FieldType, CswDateTime Date = null )
         {
-            return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypeProps( FieldType );
+            return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypeProps( FieldType, Date );
         }
 
-        public IEnumerable<CswNbtMetaDataNodeTypeProp> getNodeTypeProps( Int32 NodeTypeId, CswEnumNbtFieldType FieldType )
+        public IEnumerable<CswNbtMetaDataNodeTypeProp> getNodeTypeProps( Int32 NodeTypeId, CswEnumNbtFieldType FieldType, CswDateTime Date = null )
         {
-            return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypeProps( NodeTypeId, FieldType );
+            return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypeProps( NodeTypeId, FieldType, Date );
         }
 
         public IEnumerable<CswNbtMetaDataPropertySet> getPropertySets()
@@ -1395,7 +1395,7 @@ namespace ChemSW.Nbt.MetaData
                 // Fix layout
                 foreach( CswEnumNbtLayoutType LayoutType in CswEnumNbtLayoutType._All )
                 {
-                    Dictionary<Int32, CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout> OriginalLayouts = NodeTypeLayout.getLayout( LayoutType, NodeTypeProp );
+                    Dictionary<Int32, CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout> OriginalLayouts = NodeTypeLayout.getLayout( LayoutType, NodeTypeProp, null );
                     foreach( CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout OriginalLayout in OriginalLayouts.Values )
                     {
                         if( OriginalLayout != null )

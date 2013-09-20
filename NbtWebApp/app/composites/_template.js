@@ -3,50 +3,50 @@
 
     if (false) { //remove this when you're ready to use the template
 
-        Csw.composites.template = Csw.composites.template ||
-            Csw.composites.register('template', function (cswParent, cswPrivate) {
 
-                //#region Variables
-                
-                var cswPublic = { };
+        Csw.composites.register('template', function (cswParent, cswPrivate) {
 
-                //#endregion Variables
+            //#region Variables
 
-                //#region Pre-ctor
-                (function _pre() {
-                    //set default values on cswPrivate if none are supplied
-                    cswPrivate.name = cswPrivate.name || 'No name';
+            var cswPublic = {};
 
-                    cswParent.empty();
-                    cswPublic = cswParent.div();
+            //#endregion Variables
 
-                }());
-                
-                //#endregion Pre-ctor
-               
+            //#region Pre-ctor
+            (function _pre() {
+                //set default values on cswPrivate if none are supplied
+                cswPrivate.name = cswPrivate.name || 'No name';
 
-                //#region Define Class Members
+                cswParent.empty();
+                cswPublic = cswParent.div();
 
-                //cswPrivate.method = function() {};
+            }());
 
-                //cswPublic.method = function() {};
-                
-                //#endregion Define Class Members
-                
+            //#endregion Pre-ctor
 
-                //#region Post-ctor
 
-                (function _post() {
-                    
+            //#region Define Class Members
 
-                }());
+            //cswPrivate.method = function() {};
 
-                //#endregion Post-ctor
+            //cswPublic.method = function() {};
 
-                return cswPublic;
-            });
+            //#endregion Define Class Members
+
+
+            //#region Post-ctor
+
+            (function _post() {
+
+
+            }());
+
+            //#endregion Post-ctor
+
+            return cswPublic;
+        });
 
     } //if(false)
 
 
-} ());
+}());

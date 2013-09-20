@@ -1,13 +1,13 @@
 /// <reference path="~/app/CswApp-vsdoc.js" />
 (function () {
-Csw.actions.tierIIReporting = Csw.actions.template ||
+
     Csw.actions.register('tierIIReporting', function (cswParent, cswPrivate) {
         'use strict';
         var cswPublic = {};
         if (Csw.isNullOrEmpty(cswParent)) {
             Csw.error.throwException('Cannot create an action without a valid Csw Parent object.', 'Csw.actions.tierIIReporting', 'csw.tierIIReporting.js', 10);
         }
-        
+
         //#region _preCtor
         (function _preCtor() {
             cswPrivate.name = cswPrivate.name || 'Tier II Reporting';
@@ -21,10 +21,10 @@ Csw.actions.tierIIReporting = Csw.actions.template ||
         //#endregion _preCtor
 
         //#region Action Functions
-        cswPrivate.onCancelClick = function() {
+        cswPrivate.onCancelClick = function () {
             Csw.tryExec(cswPrivate.onCancel);
         };
-        
+
         cswPrivate.getCurrentDate = function () {
             if (Csw.isNullOrEmpty(cswPrivate.currentDate)) {
                 var today = new Date();
@@ -43,9 +43,9 @@ Csw.actions.tierIIReporting = Csw.actions.template ||
             return cswPrivate.currentDate;
         };
         //#endregion Action Functions
-        
+
         //#region Setup Controls
-        cswPrivate.createSetupControls = function() {
+        cswPrivate.createSetupControls = function () {
             //Location
             cswPrivate.controlTbl.cell(1, 1).span({ text: 'Location:' }).addClass('propertylabel');
             var locationControl = cswPrivate.controlTbl.cell(1, 2).location({
@@ -100,7 +100,7 @@ Csw.actions.tierIIReporting = Csw.actions.template ||
                 size: 'small',
                 tooltip: { title: 'View Report' },
                 icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.magglass),
-                onClick: function() {
+                onClick: function () {
                     cswPrivate.loadGrid({
                         LocationId: cswPrivate.LocationId,
                         StartDate: cswPrivate.StartDate,
@@ -114,7 +114,7 @@ Csw.actions.tierIIReporting = Csw.actions.template ||
             }
         };
         //#endregion Setup Controls
-        
+
         //#region Grid Control
         cswPrivate.loadGrid = function (tierIIRequestData) {
             Csw.ajaxWcf.post({
@@ -170,7 +170,7 @@ Csw.actions.tierIIReporting = Csw.actions.template ||
                                 Pressures = Pressures + newline + storagecodes.Pressure;
                                 Temperatures = Temperatures + newline + storagecodes.Temperature;
                             });
-                            Csw.each(row.Locations, function(location, key) {
+                            Csw.each(row.Locations, function (location, key) {
                                 var newline = key === 0 ? '' : '<br/>';
                                 Locations = Locations + newline + location.Location;
                             });
@@ -211,7 +211,7 @@ Csw.actions.tierIIReporting = Csw.actions.template ||
                             useNull: true
                         });
                     };
-                    
+
                     addColumn('tradename', 'TradeName');
                     addColumn('casno', 'CAS No');
                     addColumn('materialtype', 'Material<br/>Type');
@@ -234,7 +234,7 @@ Csw.actions.tierIIReporting = Csw.actions.template ||
                     cswPrivate.gridOptions = {
                         name: TierIIGridId,
                         storeId: TierIIGridId,
-                        title: 'Tier II Data for ' + cswPrivate.LocationName 
+                        title: 'Tier II Data for ' + cswPrivate.LocationName
                                 + ' from ' + cswPrivate.StartDate
                                 + ' to ' + cswPrivate.EndDate,
                         stateId: TierIIGridId,
@@ -264,7 +264,7 @@ Csw.actions.tierIIReporting = Csw.actions.template ||
                 onCancel: cswPrivate.onCancelClick,
                 hasButtonGroup: true
             });
-            
+
             cswPrivate.controlTbl = cswPrivate.action.actionDiv.table({
                 name: cswPrivate.name + '_control_tbl',
                 cellpadding: '5px',
@@ -273,7 +273,7 @@ Csw.actions.tierIIReporting = Csw.actions.template ||
                 width: '95%',
                 FirstCellRightAlign: true
             });
-            
+
             cswPrivate.gridTbl = cswPrivate.action.actionDiv.table({
                 name: cswPrivate.name + '_control_tbl',
                 cellpadding: '5px',
@@ -286,7 +286,7 @@ Csw.actions.tierIIReporting = Csw.actions.template ||
             cswPrivate.createSetupControls();
         }());
         //#endregion _postCtor
-        
+
         return cswPublic;
     });
 }());

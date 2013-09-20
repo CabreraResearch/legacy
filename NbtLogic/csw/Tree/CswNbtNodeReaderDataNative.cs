@@ -18,21 +18,22 @@ namespace ChemSW.Nbt
             _CswNbtResources = CswNbtResources;
         }//ctor
 
-        public bool fetchNodeInfo( CswNbtNode CswNbtNode, DateTime Date )
+        public bool fetchNodeInfo( CswNbtNode CswNbtNode, CswDateTime Date )
         {
             bool ReturnVal = false;
-            CswTableSelect NodesTableSelect = null;
             DataTable NodesTable = null;
-            if( Date != DateTime.MinValue )
+            if( CswTools.IsDate( Date ) )
             {
-                NodesTableSelect = _CswNbtResources.makeCswTableSelect( "CswNbtNodeReaderDataNative.fetchNodeInfo_audit", "nodes_audit" );
-                OrderByClause OrderBy = new OrderByClause( "recordcreated", CswEnumOrderByType.Descending );
-                NodesTable = NodesTableSelect.getTable( null, "nodeid", CswNbtNode.NodeId.PrimaryKey, "where recordcreated <= " + _CswNbtResources.getDbNativeDate( Date ), false, new Collection<OrderByClause>() { OrderBy } );
+                //NodesTableSelect = _CswNbtResources.makeCswTableSelect( "CswNbtNodeReaderDataNative.fetchNodeInfo_audit", "nodes_audit" );
+                //OrderByClause OrderBy = new OrderByClause( "recordcreated", CswEnumOrderByType.Descending );
+                //NodesTable = NodesTableSelect.getTable( null, "nodeid", CswNbtNode.NodeId.PrimaryKey, "where recordcreated <= " + _CswNbtResources.getDbNativeDate( Date ), false, new Collection<OrderByClause>() { OrderBy } );
+                string NodesSql = "select * from " + CswNbtAuditTableAbbreviation.getAuditTableSql( _CswNbtResources, "nodes", Date ) + " where nodeid = " + CswNbtNode.NodeId.PrimaryKey;
+                CswArbitrarySelect NodesTableSelect = _CswNbtResources.makeCswArbitrarySelect( "fetchNodeInfo_Select", NodesSql );
+                NodesTable = NodesTableSelect.getTable();
             }
-            // there may be no audit records, so fail into finding the most current record
-            if( NodesTable == null || NodesTable.Rows.Count == 0 )
+            else
             {
-                NodesTableSelect = _CswNbtResources.makeCswTableSelect( "CswNbtNodeReaderDataNative.fetchNodeInfo", "nodes" );
+                CswTableSelect NodesTableSelect = _CswNbtResources.makeCswTableSelect( "CswNbtNodeReaderDataNative.fetchNodeInfo", "nodes" );
                 NodesTable = NodesTableSelect.getTable( "nodeid", CswNbtNode.NodeId.PrimaryKey );
             }
 

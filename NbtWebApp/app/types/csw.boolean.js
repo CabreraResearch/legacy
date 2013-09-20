@@ -41,6 +41,5 @@
     }
 
     Csw.register('bool', bool);
-    Csw.bool = Csw.bool || bool;
 
 } ());

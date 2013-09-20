@@ -7,7 +7,7 @@ using ChemSW.DB;
 namespace ChemSW.Nbt
 {
 
-    public class CswNbtNodePropCollDataNative: ICswNbtNodePropCollData
+    public class CswNbtNodePropCollDataNative : ICswNbtNodePropCollData
     {
         private CswNbtResources _CswNbtResources = null;
         private CswTableUpdate _PropsUpdate = null;
@@ -33,8 +33,8 @@ namespace ChemSW.Nbt
             get { return ( _NodeTypeId ); }
         }
 
-        private DateTime _Date = DateTime.MinValue;
-        public DateTime Date
+        private CswDateTime _Date = null;
+        public CswDateTime Date
         {
             get { return _Date; }
             set { _Date = value; }
@@ -54,42 +54,25 @@ namespace ChemSW.Nbt
                     }
                     else
                     {
-                        _PropsTable = _PropsUpdate.getTable( "nodeid", _NodeKey.PrimaryKey );
-                        if( Date != DateTime.MinValue )
+                        if( false == CswTools.IsDate( Date ) )
                         {
-                            _PropsTable.Columns.Add( "auditchanged" );
-
-                            CswTableSelect PropsAuditSelect = _CswNbtResources.makeCswTableSelect( "Props_update_audit", "jct_nodes_props_audit" );
-                            OrderByClause OrderBy = new OrderByClause( "recordcreated", CswEnumOrderByType.Descending );
-                            DataTable PropsAuditTable = PropsAuditSelect.getTable( null, "nodeid", _NodeKey.PrimaryKey, "where recordcreated <= " + _CswNbtResources.getDbNativeDate( Date.AddSeconds( 1 ) ), false, new Collection<OrderByClause>() { OrderBy } );
-
-                            // reconcile
-                            foreach( DataRow PropRow in _PropsTable.Rows )
+                            _PropsTable = _PropsUpdate.getTable( "nodeid", _NodeKey.PrimaryKey );
+                        }
+                        else
+                        {
+                            string Sql = "select t.*, '' as auditchanged " +
+                                         "  from " + CswNbtAuditTableAbbreviation.getAuditTableSql( _CswNbtResources, "jct_nodes_props", Date ) + " t " +
+                                         " where nodeid = " + _NodeKey.PrimaryKey;
+                            CswArbitrarySelect PropsSelect = _CswNbtResources.makeCswArbitrarySelect( "propcolldata_audit_select", Sql );
+                            _PropsTable = PropsSelect.getTable();
+                            foreach( DataRow AuditRow in _PropsTable.Rows )
                             {
-                                Int32 a = 0;
-                                bool FoundMatch = false;
-                                while( !FoundMatch && a < PropsAuditTable.Rows.Count )
+                                if( CswDateTime.EqualsNoMs( CswConvert.ToDateTime( AuditRow["recordcreated"] ), Date.ToDateTime() ) )
                                 {
-                                    DataRow AuditRow = PropsAuditTable.Rows[a];
-                                    if( CswConvert.ToInt32( AuditRow["jctnodepropid"] ) == CswConvert.ToInt32( PropRow["jctnodepropid"] ) )
-                                    {
-                                        FoundMatch = true;
-                                        if( CswConvert.ToDateTime( AuditRow["recordcreated"] ) == Date )
-                                        {
-                                            PropRow["auditchanged"] = CswConvert.ToDbVal( true );
-                                        }
-                                        foreach( DataColumn Column in PropsTable.Columns )
-                                        {
-                                            if( PropsAuditTable.Columns.Contains( Column.ColumnName ) )
-                                            {
-                                                PropRow[Column.ColumnName] = AuditRow[Column.ColumnName];
-                                            }
-                                        }
-                                    }
-                                    a++;
-                                } // while( !FoundMatch && a < PropsAuditTable.Rows.Count )
-                            } // foreach( DataRow PropRow in _PropsTable.Rows )
-                        } // if( Date != DateTime.MinValue )
+                                    AuditRow["auditchanged"] = CswConvert.ToDbVal( true );
+                                }
+                            }
+                        }
                     } // if-else( _NodeKey == null )
                 } // if( null == _PropsTable )
                 return ( _PropsTable );

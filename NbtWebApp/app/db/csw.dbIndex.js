@@ -4,8 +4,6 @@
 (function () {
     'use strict';
     
-    Csw.db.register('index', Csw.makeNameSpace());
-
     /*
       * Private implementation method to create a new index.
       * TODO: This (and other) DDL ops assumes that version management is handled elsewhere. Probably need to come up with a scipt-to-version mapper.

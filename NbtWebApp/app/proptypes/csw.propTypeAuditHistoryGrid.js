@@ -1,7 +1,7 @@
 /* globals Csw:false, $:false  */
 (function () {
     'use strict';
-    Csw.properties.auditHistoryGrid = Csw.properties.register('auditHistoryGrid',
+    Csw.properties.register('auditHistoryGrid',
         function(nodeProperty) {
 
             //The render function to be executed as a callback

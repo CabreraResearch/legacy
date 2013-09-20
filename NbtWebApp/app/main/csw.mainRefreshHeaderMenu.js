@@ -45,7 +45,7 @@
                 onImpersonate: function (userid, username) {
                     return Csw.main.handleImpersonation(userid, username, function () {
                         Csw.clientState.clearCurrent();
-                        Csw.window.location(Csw.getGlobalProp('homeUrl'));
+                        Csw.window.location(Csw.clientDb.getItem('homeUrl'));
                     });
                 },
                 onEndImpersonation: function () {
@@ -55,7 +55,7 @@
                             if (Csw.bool(data.result)) {
                                 Csw.ajax.abortAll();
                                 Csw.clientState.clearCurrent();
-                                Csw.window.location(Csw.getGlobalProp('homeUrl'));
+                                Csw.window.location(Csw.clientDb.getItem('homeUrl'));
                             }
                         } // success
                     }); // ajax

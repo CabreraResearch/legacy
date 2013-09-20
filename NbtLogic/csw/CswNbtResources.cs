@@ -184,11 +184,11 @@ namespace ChemSW.Nbt
             get { return _CswNbtNodeCollection; }
         }
 
-        public CswNbtNode getNode( CswNbtNodeKey NodeKey, DateTime Date )
+        public CswNbtNode getNode( CswNbtNodeKey NodeKey, CswDateTime Date )
         {
             return _CswNbtNodeCollection.GetNode( NodeKey.NodeId, Date );
         }
-        public CswNbtNode getNode( CswPrimaryKey NodePk, DateTime Date )
+        public CswNbtNode getNode( CswPrimaryKey NodePk, CswDateTime Date )
         {
             return _CswNbtNodeCollection.GetNode( NodePk, Date );
         }
