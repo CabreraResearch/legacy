@@ -22,14 +22,14 @@ namespace ChemSW.Nbt.PropTypes
         //    return _makeNodeProp( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node, Tab, EditMode );
         //}
 
-        public static CswNbtNodePropWrapper makeNodeProp( CswNbtResources CswNbtResources, DataRow PropRow, DataTable PropsTable, CswNbtNode Node, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp )
+        public static CswNbtNodePropWrapper makeNodeProp( CswNbtResources CswNbtResources, DataRow PropRow, DataTable PropsTable, CswNbtNode Node, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswDateTime Date )
         {
             CswPrimaryKey NodeId = null;
             if( null != Node )
             {
                 NodeId = Node.NodeId;
             }
-            CswNbtNodePropData CswNbtNodePropData = new CswNbtNodePropData( CswNbtResources, PropRow, PropsTable, NodeId, CswNbtMetaDataNodeTypeProp.PropId );
+            CswNbtNodePropData CswNbtNodePropData = new CswNbtNodePropData( CswNbtResources, PropRow, PropsTable, NodeId, CswNbtMetaDataNodeTypeProp.PropId, Date );
             return _makeNodeProp( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node );
         }
 

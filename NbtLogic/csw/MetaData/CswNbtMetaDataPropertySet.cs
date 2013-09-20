@@ -27,10 +27,11 @@ namespace ChemSW.Nbt.MetaData
         public string UniqueIdFieldName { get { return MetaDataUniqueType; } }
 
         private readonly CswNbtMetaDataResources _CswNbtMetaDataResources;
-
-        public CswNbtMetaDataPropertySet( CswNbtMetaDataResources Resources, DataRow Row )
+        private CswDateTime _Date;
+        public CswNbtMetaDataPropertySet( CswNbtMetaDataResources Resources, DataRow Row, CswDateTime Date = null )
         {
             _CswNbtMetaDataResources = Resources;
+            _Date = Date;
             Reassign( Row );
         }
 
@@ -52,7 +53,7 @@ namespace ChemSW.Nbt.MetaData
         {
             get { return _UniqueId; }
         }
-        
+
         public string IconFileName
         {
             get { return _DataRow["iconfilename"].ToString(); }

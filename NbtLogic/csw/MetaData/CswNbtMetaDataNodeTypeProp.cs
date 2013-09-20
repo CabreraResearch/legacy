@@ -19,6 +19,8 @@ namespace ChemSW.Nbt.MetaData
     [DataContract]
     public class CswNbtMetaDataNodeTypeProp : ICswNbtMetaDataObject, ICswNbtMetaDataProp, IEquatable<CswNbtMetaDataNodeTypeProp>, IComparable
     {
+        private CswDateTime _Date;
+
         public static CswEnumNbtNodeTypePropAttributes getCswEnumNbtNodeTypePropAttributesFromString( string AttributeName )
         {
             CswEnumNbtNodeTypePropAttributes ReturnVal = CswResources.UnknownEnum;
@@ -38,9 +40,10 @@ namespace ChemSW.Nbt.MetaData
 
         private CswNbtMetaDataResources _CswNbtMetaDataResources;
         private DataRow _NodeTypePropRow;
-        public CswNbtMetaDataNodeTypeProp( CswNbtMetaDataResources CswNbtMetaDataResources, DataRow Row )
+        public CswNbtMetaDataNodeTypeProp( CswNbtMetaDataResources CswNbtMetaDataResources, DataRow Row, CswDateTime Date = null )
         {
             _CswNbtMetaDataResources = CswNbtMetaDataResources;
+            _Date = Date;
             Reassign( Row );
         }
 
@@ -51,7 +54,7 @@ namespace ChemSW.Nbt.MetaData
         /// </summary>
         public CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout getLayout( CswEnumNbtLayoutType LayoutType, Int32 TabId = Int32.MinValue )
         {
-            return _CswNbtMetaDataResources.CswNbtMetaData.NodeTypeLayout.getLayout( LayoutType, this.NodeTypeId, this.PropId, TabId );
+            return _CswNbtMetaDataResources.CswNbtMetaData.NodeTypeLayout.getLayout( LayoutType, this.NodeTypeId, this.PropId, TabId, _Date );
         }
 
         public CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout getEditLayout( Int32 TabId )
@@ -72,7 +75,7 @@ namespace ChemSW.Nbt.MetaData
         }
         public Dictionary<Int32, CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout> getEditLayouts()
         {
-            return _CswNbtMetaDataResources.CswNbtMetaData.NodeTypeLayout.getLayout( CswEnumNbtLayoutType.Edit, this );
+            return _CswNbtMetaDataResources.CswNbtMetaData.NodeTypeLayout.getLayout( CswEnumNbtLayoutType.Edit, this, _Date );
         }
 
         public void updateLayout( CswEnumNbtLayoutType LayoutType, bool DoMove, Int32 TabId = Int32.MinValue, Int32 DisplayRow = Int32.MinValue, Int32 DisplayColumn = Int32.MinValue, string TabGroup = "" )
@@ -850,7 +853,7 @@ namespace ChemSW.Nbt.MetaData
 
                 if( _DefaultValueRow != null )
                 {
-                    _DefaultValue = CswNbtNodePropFactory.makeNodeProp( _CswNbtMetaDataResources.CswNbtResources, _DefaultValueRow, _DefaultValueRow.Table, null, this );
+                    _DefaultValue = CswNbtNodePropFactory.makeNodeProp( _CswNbtMetaDataResources.CswNbtResources, _DefaultValueRow, _DefaultValueRow.Table, null, this, null );
                 }
 
             } // if( _DefaultValue == null )

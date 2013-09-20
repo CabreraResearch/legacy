@@ -15,7 +15,7 @@ namespace ChemSW.Nbt.MetaData
         private string _PkColumnName;
         private string _NameColumnName;
 
-        public delegate ICswNbtMetaDataObject MakeMetaDataObjectHandler( CswNbtMetaDataResources CswNbtMetaDataResources, DataRow Row );
+        public delegate ICswNbtMetaDataObject MakeMetaDataObjectHandler( CswNbtMetaDataResources CswNbtMetaDataResources, DataRow Row, CswDateTime Date );
         private MakeMetaDataObjectHandler _MetaDataObjectMaker = null;
 
 
@@ -68,7 +68,7 @@ namespace ChemSW.Nbt.MetaData
         }
 
         private Dictionary<Int32, ICswNbtMetaDataObject> _Cache = new Dictionary<Int32, ICswNbtMetaDataObject>();
-        private ICswNbtMetaDataObject _makeObj( DataRow Row, bool useCache = true )
+        private ICswNbtMetaDataObject _makeObj( DataRow Row, CswDateTime Date = null, bool useCache = true )
         {
             ICswNbtMetaDataObject ret = null;
             Int32 PkValue = CswConvert.ToInt32( Row[_PkColumnName] );
@@ -81,7 +81,7 @@ namespace ChemSW.Nbt.MetaData
             }
             else
             {
-                ret = _MetaDataObjectMaker( _CswNbtMetaDataResources, Row );
+                ret = _MetaDataObjectMaker( _CswNbtMetaDataResources, Row, Date );
                 if( useCache )
                 {
                     _Cache[PkValue] = ret;
@@ -91,7 +91,7 @@ namespace ChemSW.Nbt.MetaData
         }
 
 
-        private Collection<ICswNbtMetaDataObject> _makeObjs( DataTable Table, bool useCache = true )
+        private Collection<ICswNbtMetaDataObject> _makeObjs( DataTable Table, CswDateTime Date = null, bool useCache = true )
         {
             Collection<ICswNbtMetaDataObject> Coll = new Collection<ICswNbtMetaDataObject>();
             Collection<DataRow> RowsToIterate = new Collection<DataRow>();
@@ -102,7 +102,7 @@ namespace ChemSW.Nbt.MetaData
             }
             foreach( DataRow Row in RowsToIterate )
             {
-                Coll.Add( _makeObj( Row, useCache ) );
+                Coll.Add( _makeObj( Row, Date, useCache ) );
             }
             return Coll;
         } // _makeObjs()
@@ -147,6 +147,12 @@ namespace ChemSW.Nbt.MetaData
             return _Pks;
         } // getPks()
 
+
+        public Collection<Int32> getPks( CswDateTime Date )
+        {
+            return getPks( string.Empty, Date );
+        } // getPks(Where)
+
         private Dictionary<string, Collection<Int32>> _PksWhere = null;
         public Collection<Int32> getPks( string Where )
         {
@@ -172,6 +178,29 @@ namespace ChemSW.Nbt.MetaData
                 _PksWhere[Where] = Coll;
             }
             return _PksWhere[Where];
+        } // getPks(Where)
+
+        public Collection<Int32> getPks( string Where, CswDateTime Date )
+        {
+            Collection<Int32> ret = null;
+            if( false == CswTools.IsDate( Date ) )
+            {
+                ret = getPks( Where );
+            }
+            else
+            {
+                string Sql = "select " + _PkColumnName + " from " + CswNbtAuditTableAbbreviation.getAuditTableSql( _CswNbtMetaDataResources.CswNbtResources, _TableSelect.TableName, Date ) + " " + _TableSelect.TableName + " " + Where;
+                addModuleWhereClause( ref Sql );
+
+                CswArbitrarySelect AuditSelect = _CswNbtMetaDataResources.CswNbtResources.makeCswArbitrarySelect( "MetaDataCollectionImpl_getpks_audit_select", Sql );
+                DataTable Table = AuditSelect.getTable();
+                ret = new Collection<Int32>();
+                foreach( DataRow Row in Table.Rows )
+                {
+                    ret.Add( CswConvert.ToInt32( Row[_PkColumnName] ) );
+                }
+            }
+            return ret;
         } // getPks(Where)
 
         public Int32 getPksFirst( string WhereClause )
@@ -255,6 +284,29 @@ namespace ChemSW.Nbt.MetaData
             return ret;
         } // getByPk()
 
+        public ICswNbtMetaDataObject getByPk( Int32 Pk, CswDateTime Date )
+        {
+            ICswNbtMetaDataObject ret = null;
+            if( false == CswTools.IsDate( Date ) )
+            {
+                ret = getByPk( Pk );
+            }
+            else
+            {
+                string Sql = "select * from " + CswNbtAuditTableAbbreviation.getAuditTableSql( _CswNbtMetaDataResources.CswNbtResources, _TableSelect.TableName, Date ) + " " + _TableSelect.TableName;
+                Sql += " where " + _PkColumnName + " = " + Pk.ToString();
+                addModuleWhereClause( ref Sql );
+
+                CswArbitrarySelect AuditSelect = _CswNbtMetaDataResources.CswNbtResources.makeCswArbitrarySelect( "MetaDataCollectionImpl_getbypk_audit_select", Sql );
+                DataTable Table = AuditSelect.getTable();
+                if( Table.Rows.Count > 0 )
+                {
+                    ret = _makeObj( Table.Rows[0], Date, useCache: false );
+                }
+            }
+            return ret;
+        }
+
         private Dictionary<string, Collection<ICswNbtMetaDataObject>> _getWhere = null;
         public Collection<ICswNbtMetaDataObject> getWhere( string Where )
         {
@@ -277,28 +329,26 @@ namespace ChemSW.Nbt.MetaData
         public Collection<ICswNbtMetaDataObject> getWhere( string Where, CswDateTime Date )
         {
             Collection<ICswNbtMetaDataObject> ret = null;
-            if( null == Date || Date.ToDateTime() == DateTime.MinValue )
+            if( false == CswTools.IsDate( Date ) )
             {
                 ret = getWhere( Where );
             }
             else
             {
-                string Sql = "select * " +
-                             "  from " + CswNbtAuditTableAbbreviation.getAuditTableSql( _CswNbtMetaDataResources.CswNbtResources, _TableSelect.TableName, Date ) + " " + _TableSelect.TableName + " " +
-                             Where;
+                string Sql = "select * from " + CswNbtAuditTableAbbreviation.getAuditTableSql( _CswNbtMetaDataResources.CswNbtResources, _TableSelect.TableName, Date ) + " " + _TableSelect.TableName + " " + Where;
                 addModuleWhereClause( ref Sql );
 
                 CswArbitrarySelect AuditSelect = _CswNbtMetaDataResources.CswNbtResources.makeCswArbitrarySelect( "MetaDataCollectionImpl_getWhere_audit_select", Sql );
                 DataTable Table = AuditSelect.getTable();
-                ret = _makeObjs( Table, useCache: false );
+                ret = _makeObjs( Table, Date, useCache: false );
             }
             return ret;
         } // getWhere(Where,Date)
 
-        public ICswNbtMetaDataObject getWhereFirst( string WhereClause )
+        public ICswNbtMetaDataObject getWhereFirst( string WhereClause, CswDateTime Date = null )
         {
             ICswNbtMetaDataObject ret = null;
-            Collection<ICswNbtMetaDataObject> Coll = getWhere( WhereClause );
+            Collection<ICswNbtMetaDataObject> Coll = getWhere( WhereClause, Date );
             if( Coll.Count > 0 )
             {
                 ret = Coll[0];

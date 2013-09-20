@@ -171,15 +171,15 @@ namespace ChemSW.Nbt.ServiceDrivers
                         } );
                         CswPrimaryKey RelatedNodePk = CswConvert.ToPrimaryKey( RelatedNodeId );
 
-                        CswNbtNode RelatedNode = _CswNbtResources.Nodes[ RelatedNodePk ];
+                        CswNbtNode RelatedNode = _CswNbtResources.Nodes[RelatedNodePk];
                         if( null != RelatedNode )
                         {
                             foreach( CswNbtNodePropRelationship Relationship in from _Prop
                                 in Ret.Properties
-                                where _Prop.getFieldTypeValue() == CswEnumNbtFieldType.Relationship &&
-                                      ( _Prop.AsRelationship.TargetMatches( RelatedNode.getNodeType() ) ||
-                                        _Prop.AsRelationship.TargetMatches( RelatedNode.getObjectClass() ) )
-                                select _Prop )
+                                                                                where _Prop.getFieldTypeValue() == CswEnumNbtFieldType.Relationship &&
+                                                                                      ( _Prop.AsRelationship.TargetMatches( RelatedNode.getNodeType() ) ||
+                                                                                        _Prop.AsRelationship.TargetMatches( RelatedNode.getObjectClass() ) )
+                                                                                select _Prop )
                             {
                                 Relationship.RelatedNodeId = RelatedNodePk;
                             }
@@ -435,7 +435,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                     if( FilterProp.FilterNodeTypePropId == Prop.FirstPropVersionId )
                     {
                         HasSubProps = true;
-                        CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout FilterPropLayout = _CswNbtResources.MetaData.NodeTypeLayout.getLayout( LayoutType, FilterProp.NodeTypeId, FilterProp.PropId, TabId );
+                        CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout FilterPropLayout = FilterProp.getLayout( LayoutType, TabId );
                         JProperty JPFilterProp = makePropJson( Node.NodeId, FilterProp, Node.Properties[FilterProp], FilterPropLayout, ForceReadOnly, Node.Locked );
                         SubPropsObj.Add( JPFilterProp );
                         JObject FilterPropXml = (JObject) JPFilterProp.Value;

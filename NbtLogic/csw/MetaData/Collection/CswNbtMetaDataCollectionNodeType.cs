@@ -34,9 +34,9 @@ namespace ChemSW.Nbt.MetaData
             _CollImpl.clearCache();
         }
 
-        public CswNbtMetaDataNodeType makeNodeType( CswNbtMetaDataResources Resources, DataRow Row )
+        public CswNbtMetaDataNodeType makeNodeType( CswNbtMetaDataResources Resources, DataRow Row, CswDateTime Date )
         {
-            return new CswNbtMetaDataNodeType( Resources, Row );
+            return new CswNbtMetaDataNodeType( Resources, Row, Date );
         }
 
         public Collection<Int32> getNodeTypeIds()
@@ -81,9 +81,9 @@ namespace ChemSW.Nbt.MetaData
             return _getNodeTypesLatestVersion( _CollImpl.getAll() );
         }
 
-        public CswNbtMetaDataNodeType getNodeType( Int32 NodeTypeId )
+        public CswNbtMetaDataNodeType getNodeType( Int32 NodeTypeId, CswDateTime Date = null )
         {
-            return (CswNbtMetaDataNodeType) _CollImpl.getByPk( NodeTypeId );
+            return (CswNbtMetaDataNodeType) _CollImpl.getByPk( NodeTypeId, Date );
         }
 
 

@@ -7,7 +7,7 @@ using ChemSW.DB;
 namespace ChemSW.Nbt
 {
 
-    public class CswNbtNodePropCollDataNative: ICswNbtNodePropCollData
+    public class CswNbtNodePropCollDataNative : ICswNbtNodePropCollData
     {
         private CswNbtResources _CswNbtResources = null;
         private CswTableUpdate _PropsUpdate = null;
@@ -33,8 +33,8 @@ namespace ChemSW.Nbt
             get { return ( _NodeTypeId ); }
         }
 
-        private DateTime _Date = DateTime.MinValue;
-        public DateTime Date
+        private CswDateTime _Date = null;
+        public CswDateTime Date
         {
             get { return _Date; }
             set { _Date = value; }
@@ -55,13 +55,13 @@ namespace ChemSW.Nbt
                     else
                     {
                         _PropsTable = _PropsUpdate.getTable( "nodeid", _NodeKey.PrimaryKey );
-                        if( Date != DateTime.MinValue )
+                        if( CswTools.IsDate( Date ) )
                         {
                             _PropsTable.Columns.Add( "auditchanged" );
 
                             CswTableSelect PropsAuditSelect = _CswNbtResources.makeCswTableSelect( "Props_update_audit", "jct_nodes_props_audit" );
                             OrderByClause OrderBy = new OrderByClause( "recordcreated", CswEnumOrderByType.Descending );
-                            DataTable PropsAuditTable = PropsAuditSelect.getTable( null, "nodeid", _NodeKey.PrimaryKey, "where recordcreated <= " + _CswNbtResources.getDbNativeDate( Date.AddSeconds( 1 ) ), false, new Collection<OrderByClause>() { OrderBy } );
+                            DataTable PropsAuditTable = PropsAuditSelect.getTable( null, "nodeid", _NodeKey.PrimaryKey, "where recordcreated <= " + _CswNbtResources.getDbNativeDate( Date.ToDateTime().AddSeconds( 1 ) ), false, new Collection<OrderByClause>() { OrderBy } );
 
                             // reconcile
                             foreach( DataRow PropRow in _PropsTable.Rows )
