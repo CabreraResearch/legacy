@@ -277,8 +277,8 @@
                          request.node_ids_delete = [];
                          request.view_ids_delete = [];
                         
-                        var itemsToConvert = pools.toConvert.values();
-                        Csw.iterate(itemsToConvert, function (obj) {
+                        //These pools are MAPS! They are designed to be LAZY! Only as a hack for the _lazy_ do they implement a forEach!
+                        pools.toConvert.forEach(function (obj) {
                             if( obj.type == "View" ) {
                                 request.view_ids_convert_to_non_demo.push( obj.id );
                             } else {
@@ -286,8 +286,8 @@
                             }
                         });
 
-                        var itemsToDelete = pools.toDelete.values();
-                        Csw.iterate(itemsToDelete, function (obj) {
+                        //These pools are MAPS! They are designed to be LAZY! Only as a hack for the _lazy_ do they implement a forEach!
+                        pools.toDelete.forEach(function (obj) {
                             if( obj.type == "View" ) {
                                 request.view_ids_delete.push( obj.id );
                             } else {
