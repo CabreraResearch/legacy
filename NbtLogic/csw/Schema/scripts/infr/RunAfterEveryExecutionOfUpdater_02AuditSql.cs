@@ -57,7 +57,7 @@ namespace ChemSW.Nbt.Schema
                                       ResultTable " + TableType + @";
                                     begin
 
-                                        with audit1 as (select " + AuditTablePk + @", " + RealTablePk + @"
+                                        with audit1 as (select " + AuditTablePk + @", " + RealTablePk + @", auditeventtype
                                               from " + AuditTable + @" a
                                              where a.recordcreated = (select max(recordcreated)
                                                                                    from " + AuditTable + @" a2
@@ -67,6 +67,7 @@ namespace ChemSW.Nbt.Schema
                                         from (select " + Columns.ToString( false ) + @", recordcreated 
                                                 from " + AuditTable + @"
                                                where " + AuditTablePk + @" in (select " + AuditTablePk + @" from audit1)
+                                                 and auditeventtype <> 'PhysicalDelete'
                                              union all
                                               select " + Columns.ToString( false ) + @", sysdate as recordcreated 
                                                 from " + RealTable + @" 
