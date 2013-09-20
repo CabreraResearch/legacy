@@ -118,6 +118,9 @@ namespace ChemSW.Nbt.ChemCatCentral {
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(ChemSW.Nbt.ChemCatCentral.CswC3LoliData[]))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(ChemSW.Nbt.ChemCatCentral.CswC3LoliData))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(ChemSW.Nbt.ChemCatCentral.CswRetObjSearchResults))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ChemSW.Nbt.ChemCatCentral.CswC3ServiceLogicGetDataSourcesAvailableDataSources))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ChemSW.Nbt.ChemCatCentral.CswC3ServiceLogicGetDataSourcesDataSource[]))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ChemSW.Nbt.ChemCatCentral.CswC3ServiceLogicGetDataSourcesDataSource))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(ChemSW.Nbt.ChemCatCentral.CswC3Product[]))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(ChemSW.Nbt.ChemCatCentral.CswC3Product))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(ChemSW.Nbt.ChemCatCentral.CswC3Product.Size[]))]
@@ -376,6 +379,9 @@ namespace ChemSW.Nbt.ChemCatCentral {
         private string AuthenticationStatusField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string AuthenticationStatusTextField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
         private ChemSW.Nbt.ChemCatCentral.CswWebSvcSessionAuthenticateDataAuthenticationResponse.Expired ExpirationResetField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
@@ -400,6 +406,19 @@ namespace ChemSW.Nbt.ChemCatCentral {
                 if ((object.ReferenceEquals(this.AuthenticationStatusField, value) != true)) {
                     this.AuthenticationStatusField = value;
                     this.RaisePropertyChanged("AuthenticationStatus");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string AuthenticationStatusText {
+            get {
+                return this.AuthenticationStatusTextField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.AuthenticationStatusTextField, value) != true)) {
+                    this.AuthenticationStatusTextField = value;
+                    this.RaisePropertyChanged("AuthenticationStatusText");
                 }
             }
         }
@@ -1045,7 +1064,7 @@ namespace ChemSW.Nbt.ChemCatCentral {
         private ChemSW.Nbt.ChemCatCentral.CswWebSvcSessionAuthenticateDataAuthenticationResponse AuthenticationField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string[] AvailableDataSourcesField;
+        private ChemSW.Nbt.ChemCatCentral.CswC3ServiceLogicGetDataSourcesAvailableDataSources AvailableDataSourcesField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
         private ChemSW.Nbt.ChemCatCentral.CswC3Product[] CswC3SearchResultsField;
@@ -1129,7 +1148,7 @@ namespace ChemSW.Nbt.ChemCatCentral {
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public string[] AvailableDataSources {
+        public ChemSW.Nbt.ChemCatCentral.CswC3ServiceLogicGetDataSourcesAvailableDataSources AvailableDataSources {
             get {
                 return this.AvailableDataSourcesField;
             }
@@ -1332,6 +1351,112 @@ namespace ChemSW.Nbt.ChemCatCentral {
                 if ((object.ReferenceEquals(this.UsersField, value) != true)) {
                     this.UsersField = value;
                     this.RaisePropertyChanged("Users");
+                }
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="CswC3ServiceLogicGetDataSources.AvailableDataSources", Namespace="http://schemas.datacontract.org/2004/07/c3WebServii.WebServices")]
+    [System.SerializableAttribute()]
+    public partial class CswC3ServiceLogicGetDataSourcesAvailableDataSources : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
+        
+        [System.NonSerializedAttribute()]
+        private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private ChemSW.Nbt.ChemCatCentral.CswC3ServiceLogicGetDataSourcesDataSource[] DataField;
+        
+        [global::System.ComponentModel.BrowsableAttribute(false)]
+        public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
+            get {
+                return this.extensionDataField;
+            }
+            set {
+                this.extensionDataField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ChemSW.Nbt.ChemCatCentral.CswC3ServiceLogicGetDataSourcesDataSource[] Data {
+            get {
+                return this.DataField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.DataField, value) != true)) {
+                    this.DataField = value;
+                    this.RaisePropertyChanged("Data");
+                }
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="CswC3ServiceLogicGetDataSources.DataSource", Namespace="http://schemas.datacontract.org/2004/07/c3WebServii.WebServices")]
+    [System.SerializableAttribute()]
+    public partial class CswC3ServiceLogicGetDataSourcesDataSource : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
+        
+        [System.NonSerializedAttribute()]
+        private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string DataSourceNameField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string ImportDateField;
+        
+        [global::System.ComponentModel.BrowsableAttribute(false)]
+        public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
+            get {
+                return this.extensionDataField;
+            }
+            set {
+                this.extensionDataField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string DataSourceName {
+            get {
+                return this.DataSourceNameField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.DataSourceNameField, value) != true)) {
+                    this.DataSourceNameField = value;
+                    this.RaisePropertyChanged("DataSourceName");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string ImportDate {
+            get {
+                return this.ImportDateField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.ImportDateField, value) != true)) {
+                    this.ImportDateField = value;
+                    this.RaisePropertyChanged("ImportDate");
                 }
             }
         }
