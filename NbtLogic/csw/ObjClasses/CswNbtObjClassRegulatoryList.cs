@@ -190,7 +190,8 @@ namespace ChemSW.Nbt.ObjClasses
                                     } );
                             }
                         }
-                        AddCASNumbers.Text = string.Empty;
+                        
+                        AddCASNumbers.Text = string.Empty; // this makes multi-edit not work, but that's actually desirable.
                     }
                 }
             }
