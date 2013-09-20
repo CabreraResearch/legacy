@@ -54,14 +54,32 @@ namespace ChemSW.Nbt.Schema
             ImpMgr.importBinding( "firecode", CswNbtObjClassChemical.PropertyName.NFPA, CswEnumNbtSubFieldName.Flammability.ToString() );
             ImpMgr.importBinding( "healthcode", CswNbtObjClassChemical.PropertyName.NFPA, CswEnumNbtSubFieldName.Health.ToString() );
             ImpMgr.importBinding( "reactivecode", CswNbtObjClassChemical.PropertyName.NFPA, CswEnumNbtSubFieldName.Reactivity.ToString() );
+            ImpMgr.importBinding( "nfpacode", CswNbtObjClassChemical.PropertyName.NFPA, CswEnumNbtSubFieldName.Special.ToString() );
 
             //Relationships
             ImpMgr.importBinding( "vendorid", CswNbtObjClassChemical.PropertyName.Supplier, CswEnumNbtSubFieldName.NodeID.ToString() );
 
+            //Transformed props
+            ImpMgr.importBinding( "physical_state_trans", CswNbtObjClassChemical.PropertyName.PhysicalState, "" );
+            ImpMgr.importBinding( "nonhazardous3e_trans", CswNbtObjClassChemical.PropertyName.Hazardous, "" );
+            //TODO: find/replace substrings in PPE
 
+            //TODO: lob data
+            //disposal                 -> new prop "Disposal Instructions as memo
+            //struct_pict              -> Structure (mol)
+                                       
+            //TODO: new props          
+            //dot_code                 -> "DOT Code" as list
+            //hazards                  -> "Hazard Info" as memo
+            //einecs                   -> "EINCES" as text?
+            //compressed_gas           -> "Compressed Gas" as bool?
+            //smiles                   -> "SMILES" as text?
+            //openexpireinterval       -> "Open Expire Interval" as time? (same as Expire Interval?)
+            //openexpireintervalunits  -> "Open Expire Interval" as time? (same as Expire Interval?)
+            //creation_date            -> "Legacy Creation Date" as server managed text
+            //creationsiteid           -> "Legacy Creation Site Id" as server managed number
+            //materialvarietyid        -> need more info
 
-            //ImpMgr.importBinding( "expireinterval", CswNbtObjClassChemical.PropertyName.ExpirationInterval, CswEnumNbtSubFieldName.Number.ToString() );
-            //ImpMgr.importBinding( "expireintervalunits", CswNbtObjClassChemical.PropertyName.ExpirationInterval, CswEnumNbtSubFieldName.Name.ToString() );
 
             ImpMgr.finalize( UseView : true );
 
