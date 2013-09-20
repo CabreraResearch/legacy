@@ -2,15 +2,12 @@ using System;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
-using ChemSW.Config;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt.ChemCatCentral;
-using ChemSW.Nbt.ImportExport;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.PropTypes;
-using ChemSW.Nbt.Sched;
 using ChemSW.Nbt.ServiceDrivers;
 using ChemSW.Nbt.UnitsOfMeasure;
 using Newtonsoft.Json.Linq;
@@ -169,88 +166,24 @@ namespace ChemSW.Nbt.ObjClasses
             CasNo.SetOnPropChange( _onCasNoPropChange );
         }
 
-        public const string CAFDbLink = "CAFLINK";
-        public const string DefinitionName = "CAF";
-
         /// <summary>
         /// Abstract override to be called on onButtonClick
         /// </summary>
         public override bool onPropertySetButtonClick( NbtButtonData ButtonData )
         {
-
-            const string QueueTableName = "nbtimportqueue";
-            const string QueuePkName = "nbtimportqueueid";
-
-            Int32 NumberToProcess = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumConfigurationVariableNames.NodesProcessedPerCycle ) );
-            string Sql = "select * from "
-                + QueueTableName + "@" + CAFDbLink + " iq"
-                + " join " + CswNbtImportTables.ImportDef.TableName + " id on (id.sheetname = iq.tablename)"
-                + " where state = '" + CswScheduleLogicNbtCAFImport.State.I + "' or state = '" + CswScheduleLogicNbtCAFImport.State.U
-                + "' order by decode (state, '" + CswScheduleLogicNbtCAFImport.State.I + "', 1, '" + CswScheduleLogicNbtCAFImport.State.U + "', 2) asc, id.sheetorder asc";
-
-            CswArbitrarySelect QueueSelect = _CswNbtResources.makeCswArbitrarySelect( "cafimport_queue_select", Sql );
-            DataTable QueueTable = QueueSelect.getTable( 0, NumberToProcess, false, true );
-
-            CswNbtImporter Importer = new CswNbtImporter( _CswNbtResources );
-            foreach( DataRow QueueRow in QueueTable.Rows )
-            {
-
-                // LOB problem here
-                string CurrentTblNamePkCol = Importer.getRemoteDataDictionaryPkColumnName( CswConvert.ToString( QueueRow["tablename"] ), CAFDbLink );
-                if( string.IsNullOrEmpty( CurrentTblNamePkCol ) )
-                {
-                    throw new Exception( "Could not find pkcolumn in data_dictionary for table " + QueueRow["tablename"].ToString() );
-                }
-
-                string ItemSql = string.Empty;
-                if( string.IsNullOrEmpty( QueueRow["viewname"].ToString() ) )
-                {
-                    ItemSql = "select * from " + QueueRow["tablename"] + "@" + CAFDbLink + " where " +
-                              CurrentTblNamePkCol + " = " + QueueRow["itempk"];
-                }
-                else
-                {
-                    ItemSql = "select * from " + QueueRow["viewname"] + "@" + CAFDbLink + " where " + CurrentTblNamePkCol + " = " + QueueRow["itempk"];
-                }
-
-                CswArbitrarySelect ItemSelect = _CswNbtResources.makeCswArbitrarySelect( "cafimport_queue_select", ItemSql );
-                DataTable ItemTable = ItemSelect.getTable();
-                foreach( DataRow ItemRow in ItemTable.Rows )
-                {
-                    //string TableName = string.IsNullOrEmpty( QueueRow["viewname"].ToString() ) ? QueueRow["tablename"].ToString() : QueueRow["viewname"].ToString();
-                    string TableName = QueueRow["tablename"].ToString();
-                    string Error = Importer.ImportRow( ItemRow, DefinitionName, TableName, true );
-                    if( string.IsNullOrEmpty( Error ) )
-                    {
-                        // record success
-                        _CswNbtResources.execArbitraryPlatformNeutralSql( "update " + QueueTableName + "@" + CAFDbLink +
-                                                                          "   set state = '" + CswScheduleLogicNbtCAFImport.State.D + "' " +
-                                                                          " where " + QueuePkName + " = " + QueueRow[QueuePkName] );
-                    }
-                    else
-                    {
-                        // record the error on nbtimportqueue
-                        _CswNbtResources.execArbitraryPlatformNeutralSql( "update " + QueueTableName + "@" + CAFDbLink +
-                                                                          "   set state = '" + CswScheduleLogicNbtCAFImport.State.E + "', " +
-                                                                          "       errorlog = '" + CswTools.SafeSqlParam( Error ) + "' " +
-                                                                          " where " + QueuePkName + " = " + QueueRow[QueuePkName] );
-                    }
-                }
-            }//foreach( DataRow QueueRow in QueueTable.Rows )
-
             bool HasPermission = true;
-            //if( null != ButtonData.NodeTypeProp )
-            //{
-            //    HasPermission = false;
-            //    string OCPPropName = ButtonData.NodeTypeProp.getObjectClassPropName();
-            //    switch( OCPPropName )
-            //    {
-            //        case PropertyName.ViewSDS:
-            //            HasPermission = true;
-            //            GetMatchingSDSForCurrentUser( ButtonData );
-            //            break;
-            //    }
-            //}
+            if( null != ButtonData.NodeTypeProp )
+            {
+                HasPermission = false;
+                string OCPPropName = ButtonData.NodeTypeProp.getObjectClassPropName();
+                switch( OCPPropName )
+                {
+                    case PropertyName.ViewSDS:
+                        HasPermission = true;
+                        GetMatchingSDSForCurrentUser( ButtonData );
+                        break;
+                }
+            }
             return HasPermission;
         }
 
@@ -267,7 +200,6 @@ namespace ChemSW.Nbt.ObjClasses
                 canAddSDS = null != SDSNodeType;
                 if( canAddSDS )
                 {
-
                     ButtonData.Data["state"]["sdsDocTypeId"] = SDSNodeType.NodeTypeId;
                     CswNbtMetaDataNodeTypeProp AssignedSDSProp = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypeId, "Assigned SDS" );
                     CswNbtMetaDataNodeTypeProp RevisionDateProp = _CswNbtResources.MetaData.getNodeTypeProp( SDSNodeType.NodeTypeId, "Revision Date" );
