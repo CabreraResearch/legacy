@@ -69,7 +69,7 @@
 
         //EMD: GLOBAL VARS FOR CONTROLS
         //*******************************************
-        var pools = Csw.object(null, {
+            var pools = Csw.object({
             toDelete: { value: new Map() },
             toConvert: { value: new Map() },
             init: { value: new Map() }
@@ -276,21 +276,25 @@
                     request.node_ids_delete = [];
                     request.view_ids_delete = [];
 
-                    var itemsToConvert = pools.toConvert.values();
-                    Csw.iterate(itemsToConvert, function (obj) {
-                        if (obj.type == "View") {
-                            request.view_ids_convert_to_non_demo.push(obj.id);
-                        } else {
-                            request.node_ids_convert_to_non_demo.push(obj.id);
-                        }
+                        //These pools are MAPS! They are designed to be LAZY! Only as a hack for the _lazy_ do they implement a forEach!
+                        pools.toConvert.forEach(function (obj) {
+                            if (obj) {
+                                if (obj.type == "View") {
+                                    request.view_ids_convert_to_non_demo.push(obj.id);
+                                } else {
+                                    request.node_ids_convert_to_non_demo.push(obj.id);
+                                }
+                            }
                     });
 
-                    var itemsToDelete = pools.toDelete.values();
-                    Csw.iterate(itemsToDelete, function (obj) {
-                        if (obj.type == "View") {
-                            request.view_ids_delete.push(obj.id);
-                        } else {
-                            request.node_ids_delete.push(obj.id);
+                        //These pools are MAPS! They are designed to be LAZY! Only as a hack for the _lazy_ do they implement a forEach!
+                        pools.toDelete.forEach(function (obj) {
+                            if (obj) {
+                                if (obj.type == "View") {
+                                    request.view_ids_delete.push(obj.id);
+                                } else {
+                                    request.node_ids_delete.push(obj.id);
+                                }
                         }
                     });
 
