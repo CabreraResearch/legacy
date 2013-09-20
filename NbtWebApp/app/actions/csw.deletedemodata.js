@@ -279,19 +279,23 @@
                         
                         //These pools are MAPS! They are designed to be LAZY! Only as a hack for the _lazy_ do they implement a forEach!
                         pools.toConvert.forEach(function (obj) {
-                            if( obj.type == "View" ) {
-                                request.view_ids_convert_to_non_demo.push( obj.id );
-                            } else {
-                                request.node_ids_convert_to_non_demo.push( obj.id );
+                            if (obj) {
+                                if (obj.type == "View") {
+                                    request.view_ids_convert_to_non_demo.push(obj.id);
+                                } else {
+                                    request.node_ids_convert_to_non_demo.push(obj.id);
+                                }
                             }
                         });
 
                         //These pools are MAPS! They are designed to be LAZY! Only as a hack for the _lazy_ do they implement a forEach!
                         pools.toDelete.forEach(function (obj) {
-                            if( obj.type == "View" ) {
-                                request.view_ids_delete.push( obj.id );
-                            } else {
-                                request.node_ids_delete.push( obj.id );
+                            if (obj) {
+                                if (obj.type == "View") {
+                                    request.view_ids_delete.push(obj.id);
+                                } else {
+                                    request.node_ids_delete.push(obj.id);
+                                }
                             }
                         });
                         
