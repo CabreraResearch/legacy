@@ -66,7 +66,7 @@ namespace ChemSW.Nbt
         public static string getAuditTableSql( CswNbtResources CswNbtResources, string RealTableName, DateTime Date )
         {
             return "TABLE(" + getAuditLookupFunctionNameForRealTable( RealTableName ) +
-                   "(" + CswNbtResources.getDbNativeDate( Date ) + "))";
+                   "(" + CswNbtResources.getDbNativeDate( Date.AddSeconds( 1 ) ) + "))";
         }
     }
 }
