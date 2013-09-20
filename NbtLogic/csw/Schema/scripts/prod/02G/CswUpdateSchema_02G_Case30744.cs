@@ -1,4 +1,5 @@
 ﻿using ChemSW.Nbt.csw.Dev;
+using ChemSW.Nbt.csw.Schema;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 
@@ -74,7 +75,19 @@ namespace ChemSW.Nbt.Schema
 
         private void _createImportBindings()
         {
-            
+            CswNbtSchemaUpdateImportMgr sizeImporter = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "packdetail", "Size", "packdetail_view" );
+
+            sizeImporter.importBinding( "packdetailid", "Legacy Id", "" ); //needed because of view
+            sizeImporter.importBinding( "packagedescription", CswNbtObjClassSize.PropertyName.Description, "" );
+            sizeImporter.importBinding( "packageid", CswNbtObjClassSize.PropertyName.Material, CswEnumNbtSubFieldName.NodeID.ToString() );
+            sizeImporter.importBinding( "catalogno", CswNbtObjClassSize.PropertyName.CatalogNo, "" );
+            sizeImporter.importBinding( "capacity", CswNbtObjClassSize.PropertyName.InitialQuantity, "Quantity" );
+            sizeImporter.importBinding( "unitofmeasureid", CswNbtObjClassSize.PropertyName.InitialQuantity, "UnitId" );
+            sizeImporter.importBinding( "dispenseonly", CswNbtObjClassSize.PropertyName.Dispensable, "" );
+            sizeImporter.importBinding( "upc", CswNbtObjClassSize.PropertyName.Barcode, "" );
+            sizeImporter.importBinding( "containertype", CswNbtObjClassSize.PropertyName.ContainerType, "" );
+
+            sizeImporter.finalize(UseView: true);
         }
 
         #endregion

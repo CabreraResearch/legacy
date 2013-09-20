@@ -26,7 +26,8 @@ namespace ChemSW.Nbt.csw.Schema
                 {"roles", 7},
                 {"users", 8},
                 {"regulatory_lists", 9},
-                {"regulated_casnos", 10}
+                {"regulated_casnos", 10},
+                {"packdetails", 12},
             };
 
         private DataTable _importDefTable;
