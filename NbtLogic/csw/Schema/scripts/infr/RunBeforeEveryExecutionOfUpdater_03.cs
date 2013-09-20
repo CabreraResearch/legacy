@@ -1,45 +1,45 @@
 
-using ChemSW.Nbt.csw.Dev;
+//using ChemSW.Nbt.csw.Dev;
 
-namespace ChemSW.Nbt.Schema
-{
-    /// <summary>
-    /// Updates the schema for DDL changes
-    /// </summary>
-    public class RunBeforeEveryExecutionOfUpdater_03 : CswUpdateSchemaTo
-    {
-        public override string Title { get { return "Pre-Script: 03: Audit Columns"; } }
-        public override void update()
-        {
-            // this should always be here, and always be last, and always in its own script
-            // see case 21989 and 26011
-            _CswNbtSchemaModTrnsctn.makeMissingAuditTablesAndColumns();
-        }
+//namespace ChemSW.Nbt.Schema
+//{
+//    /// <summary>
+//    /// Updates the schema for DDL changes
+//    /// </summary>
+//    public class RunBeforeEveryExecutionOfUpdater_03 : CswUpdateSchemaTo
+//    {
+//        public override string Title { get { return "Pre-Script: 03: Audit Columns"; } }
+//        public override void update()
+//        {
+//            // this should always be here, and always be last, and always in its own script
+//            // see case 21989 and 26011
+//            _CswNbtSchemaModTrnsctn.makeMissingAuditTablesAndColumns();
+//        }
 
-        public override CswEnumDeveloper Author
-        {
-            get { return CswEnumDeveloper.NBT; }
-        }
+//        public override CswEnumDeveloper Author
+//        {
+//            get { return CswEnumDeveloper.NBT; }
+//        }
 
-        public override int CaseNo
-        {
-            get { return 21989; }
-        }
+//        public override int CaseNo
+//        {
+//            get { return 21989; }
+//        }
 
-        public override string ScriptName
-        {
-            get { return "RunBefore_AuditColumns"; }
-        }
+//        public override string ScriptName
+//        {
+//            get { return "RunBefore_AuditColumns"; }
+//        }
 
-        public override bool AlwaysRun
-        {
-            get { return true; }
-        }
+//        public override bool AlwaysRun
+//        {
+//            get { return true; }
+//        }
 
-        //Update()
+//        //Update()
 
-    }//class RunBeforeEveryExecutionOfUpdater_03
+//    }//class RunBeforeEveryExecutionOfUpdater_03
 
-}//namespace ChemSW.Nbt.Schema
+//}//namespace ChemSW.Nbt.Schema
 
 

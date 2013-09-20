@@ -1,4 +1,5 @@
 using System;
+using ChemSW.Core;
 using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt
@@ -6,7 +7,7 @@ namespace ChemSW.Nbt
 
     public interface ICswNbtNodeReaderData
     {
-        bool fetchNodeInfo( CswNbtNode CswNbtNode, DateTime Date );
+        bool fetchNodeInfo( CswNbtNode CswNbtNode, CswDateTime Date );
 
     }//CswNbtNodeReader
 

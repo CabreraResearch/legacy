@@ -7,13 +7,15 @@ namespace ChemSW.Nbt.MetaData
     public class CswNbtMetaDataFieldType : ICswNbtMetaDataObject, IEquatable<CswNbtMetaDataFieldType>, IComparable
     {
         private CswNbtMetaDataResources _CswNbtMetaDataResources;
+        private CswDateTime _Date = null;
 
         private DataRow _FieldTypeRow;
         //public ICswNbtFieldTypeRule FieldTypeRule = null;
 
-        public CswNbtMetaDataFieldType( CswNbtMetaDataResources CswNbtMetaDataResources, DataRow Row )
+        public CswNbtMetaDataFieldType( CswNbtMetaDataResources CswNbtMetaDataResources, DataRow Row, CswDateTime Date = null )
         {
             _CswNbtMetaDataResources = CswNbtMetaDataResources;
+            _Date = Date;
 
             Reassign( Row );
 
