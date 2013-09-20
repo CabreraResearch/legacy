@@ -130,14 +130,17 @@
 
     Csw.clientSession.register('finishLogout', function () {
         ///<summary>Complete the logout. Nuke any lingering client-side data.</summary>
-        cswPrivate.logoutpath = cswPrivate.logoutpath || Csw.cookie.get(Csw.cookie.cookieNames.LogoutPath);
+        cswPrivate.logoutpath = cswPrivate.logoutpath ||
+            Csw.cookie.get(Csw.cookie.cookieNames.LogoutPath) ||
+            Csw.clientDb.getItem('homeUrl');
+
+        if (!cswPrivate.logoutpath) {
+            throw new Error('Attempted to Logout, but Logout path was empty.');
+        }
+
         Csw.clientDb.clear();
         Csw.cookie.clearAll();
-        if (false === Csw.isNullOrEmpty(cswPrivate.logoutpath)) {
-            Csw.window.location(cswPrivate.logoutpath);
-        } else {
-            Csw.window.location(Csw.clientDb.getItem('homeUrl'));
-        }
+        Csw.window.location(cswPrivate.logoutpath);
     });
 
     var onLoginSuccess = function (data) {
