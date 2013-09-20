@@ -27,6 +27,7 @@ namespace ChemSW.Nbt.csw.Schema
                 {"users", 8},
                 {"regulatory_lists", 9},
                 {"regulated_casnos", 10},
+                {"packages", 11},
                 {"packdetails", 12},
             };
 
@@ -135,7 +136,7 @@ namespace ChemSW.Nbt.csw.Schema
                 DestNodeTypeName = DestNodeTypeName ?? _DestNodeTypeName;
                 if( CswAll.AreStrings( SheetName, DestNodeTypeName, DestPropertyName, SourceColumnName ) )
                 {
-                    _SourceColumns.Add( SourceColumnName, AllowNullOrEmpty: false, IsUnique: true );
+                    _SourceColumns.Add( SourceColumnName, AllowNullOrEmpty : false, IsUnique : true );
 
                     DataRow row = _importBindingsTable.NewRow();
                     row["sheet"] = SheetName;
