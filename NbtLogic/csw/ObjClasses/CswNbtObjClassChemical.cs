@@ -14,7 +14,7 @@ using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassChemical: CswNbtPropertySetMaterial
+    public class CswNbtObjClassChemical : CswNbtPropertySetMaterial
     {
         #region Base
 
@@ -48,7 +48,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Enums
 
-        public new sealed class PropertyName: CswNbtPropertySetMaterial.PropertyName
+        public new sealed class PropertyName : CswNbtPropertySetMaterial.PropertyName
         {
             public const string PhysicalState = "Physical State";
             public const string SpecificGravity = "Specific Gravity";
@@ -175,53 +175,49 @@ namespace ChemSW.Nbt.ObjClasses
                     if( null != AssignedSDSProp )
                     {
                         CswNbtView AssignedSDSView = _CswNbtResources.ViewSelect.restoreView( AssignedSDSProp.ViewId );
+                        AssignedSDSView = AssignedSDSView.PrepGridView( NodeId );
                         ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( AssignedSDSView, false, false, false );
-                        for( Int32 i = 0; i < Tree.getChildNodeCount(); i++ )
+                        if( Tree.getChildNodeCount() > 0 )
                         {
-                            Tree.goToNthChild( i );
-                            if( Tree.getNodeIdForCurrentPosition() == NodeId )
+                            Tree.goToNthChild( 0 );
+                            JArray SDSDocs = new JArray();
+                            for( Int32 i = 0; i < Tree.getChildNodeCount(); i++ )
                             {
-                                break;
-                            }
-                            Tree.goToParentNode();
-                        }
-                        Int32 NodeCount = Tree.getChildNodeCount();
-                        JArray SDSDocs = new JArray();
-                        if( NodeCount > 0 )
-                        {
-                            if( NodeCount > 0 )
-                            {
-                                for( Int32 i = 0; i < NodeCount; i++ )
-                                {
-                                    Tree.goToNthChild( i );
-                                    JObject Doc = new JObject();
+                                Tree.goToNthChild( i );
+                                JObject Doc = new JObject();
 
-                                    CswNbtObjClassSDSDocument SDSDoc = Tree.getNodeForCurrentPosition();
-                                    if( null != RevisionDateProp )
-                                    {
-                                        DateTime RevisionDate = SDSDoc.Node.Properties[RevisionDateProp].AsDateTime.DateTimeValue;
-                                        Doc["revisiondate"] = RevisionDate == DateTime.MinValue ? "" : RevisionDate.ToShortDateString();
-                                    }
-                                    else
-                                    {
-                                        Doc["revisiondate"] = "";
-                                    }
-                                    if( SDSDoc.FileType.Value.Equals( CswNbtPropertySetDocument.CswEnumDocumentFileTypes.File ) )
-                                    {
-                                        Doc["displaytext"] = SDSDoc.File.FileName;
-                                        Doc["linktext"] = SDSDoc.File.Href;
-                                    }
-                                    else
-                                    {
-                                        Doc["displaytext"] = String.IsNullOrEmpty( SDSDoc.Link.Text ) ? SDSDoc.Link.GetFullURL() : SDSDoc.Link.Text;
-                                        Doc["linktext"] = SDSDoc.Link.GetFullURL();
-                                    }
-                                    SDSDocs.Add( Doc );
-                                    Tree.goToParentNode();
+                                CswNbtObjClassSDSDocument SDSDoc = Tree.getNodeForCurrentPosition();
+                                if( null != RevisionDateProp )
+                                {
+                                    DateTime RevisionDate =
+                                        SDSDoc.Node.Properties[RevisionDateProp].AsDateTime.DateTimeValue;
+                                    Doc["revisiondate"] = RevisionDate == DateTime.MinValue
+                                                              ? ""
+                                                              : RevisionDate.ToShortDateString();
                                 }
+                                else
+                                {
+                                    Doc["revisiondate"] = "";
+                                }
+                                if(
+                                    SDSDoc.FileType.Value.Equals(
+                                        CswNbtPropertySetDocument.CswEnumDocumentFileTypes.File ) )
+                                {
+                                    Doc["displaytext"] = SDSDoc.File.FileName;
+                                    Doc["linktext"] = SDSDoc.File.Href;
+                                }
+                                else
+                                {
+                                    Doc["displaytext"] = String.IsNullOrEmpty( SDSDoc.Link.Text )
+                                                             ? SDSDoc.Link.GetFullURL()
+                                                             : SDSDoc.Link.Text;
+                                    Doc["linktext"] = SDSDoc.Link.GetFullURL();
+                                }
+                                SDSDocs.Add( Doc );
+                                Tree.goToParentNode();
                             }
-                        }
-                        ButtonData.Data["state"]["sdsDocs"] = SDSDocs;
+                            ButtonData.Data["state"]["sdsDocs"] = SDSDocs;
+                        }//if( Tree.getChildNodeCount() > 0 )
                     }
                 }
             }
@@ -299,9 +295,9 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtView componentsView = new CswNbtView( _CswNbtResources );
             CswNbtViewRelationship parent = componentsView.AddViewRelationship( materialComponentOC, false );
             componentsView.AddViewPropertyAndFilter( parent, constituentOCP,
-                Value : NodeId.PrimaryKey.ToString(),
-                FilterMode : CswEnumNbtFilterMode.Equals,
-                SubFieldName : CswEnumNbtSubFieldName.NodeID );
+                Value: NodeId.PrimaryKey.ToString(),
+                FilterMode: CswEnumNbtFilterMode.Equals,
+                SubFieldName: CswEnumNbtSubFieldName.NodeID );
             componentsView.AddViewRelationship( parent, CswEnumNbtViewPropOwnerType.First, mixtureOCP, false );
 
             ICswNbtTree componentsTree = _CswNbtResources.Trees.getTreeFromView( componentsView, false, false, false );
@@ -718,13 +714,13 @@ namespace ChemSW.Nbt.ObjClasses
             //CswNbtViewRelationship CompRel = View.AddViewRelationship( ChemRel, CswEnumNbtViewPropOwnerType.Second, ComponentOC.getObjectClassProp( CswNbtObjClassMaterialComponent.PropertyName.Mixture ), false );
             CswNbtViewRelationship CompRel = View.AddViewRelationship( ComponentOC, false );
             View.AddViewPropertyAndFilter( CompRel, ComponentMixtureOCP,
-                                                    SubFieldName : CswEnumNbtSubFieldName.NodeID,
-                                                    FilterMode : CswEnumNbtFilterMode.Equals,
-                                                    Value : this.NodeId.PrimaryKey.ToString() );
+                                                    SubFieldName: CswEnumNbtSubFieldName.NodeID,
+                                                    FilterMode: CswEnumNbtFilterMode.Equals,
+                                                    Value: this.NodeId.PrimaryKey.ToString() );
             CswNbtViewRelationship ConstRel = View.AddViewRelationship( CompRel, CswEnumNbtViewPropOwnerType.First, ComponentConstituentOCP, false );
             View.AddViewProperty( ConstRel, ChemicalCasNoOCP );
 
-            ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, RequireViewPermissions : false, IncludeSystemNodes : true, IncludeHiddenNodes : true );
+            ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, RequireViewPermissions: false, IncludeSystemNodes: true, IncludeHiddenNodes: true );
             //for( Int32 i = 0; i < Tree.getChildNodeCount(); i++ ) // Chemical
             //{
             //    Tree.goToNthChild( i );
@@ -772,12 +768,12 @@ namespace ChemSW.Nbt.ObjClasses
             //CswNbtViewRelationship CompRel = View.AddViewRelationship( ConstRel, CswEnumNbtViewPropOwnerType.Second, ComponentOC.getObjectClassProp( CswNbtObjClassMaterialComponent.PropertyName.Constituent ), false );
             CswNbtViewRelationship CompRel = View.AddViewRelationship( ComponentOC, false );
             View.AddViewPropertyAndFilter( CompRel, ComponentConstituentOCP,
-                                                    SubFieldName : CswEnumNbtSubFieldName.NodeID,
-                                                    FilterMode : CswEnumNbtFilterMode.Equals,
-                                                    Value : this.NodeId.PrimaryKey.ToString() );
+                                                    SubFieldName: CswEnumNbtSubFieldName.NodeID,
+                                                    FilterMode: CswEnumNbtFilterMode.Equals,
+                                                    Value: this.NodeId.PrimaryKey.ToString() );
             CswNbtViewRelationship ChemRel = View.AddViewRelationship( CompRel, CswEnumNbtViewPropOwnerType.First, ComponentMixtureOCP, false );
 
-            ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, RequireViewPermissions : false, IncludeSystemNodes : true, IncludeHiddenNodes : true );
+            ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, RequireViewPermissions: false, IncludeSystemNodes: true, IncludeHiddenNodes: true );
             //for( Int32 i = 0; i < Tree.getChildNodeCount(); i++ ) // Constituent
             //{
             //    Tree.goToNthChild( i );
@@ -831,15 +827,15 @@ namespace ChemSW.Nbt.ObjClasses
                     CswNbtViewRelationship MemberRel = MemberView.AddViewRelationship( RegListMemberOC, false );
                     MemberView.AddViewProperty( MemberRel, MemberByUserOCP, 1 );
                     MemberView.AddViewPropertyAndFilter( MemberRel, MemberChemicalOCP,
-                                                         SubFieldName : CswEnumNbtSubFieldName.NodeID,
-                                                         FilterMode : CswEnumNbtFilterMode.Equals,
-                                                         Value : this.NodeId.PrimaryKey.ToString(),
-                                                         ShowInGrid : false );
+                                                         SubFieldName: CswEnumNbtSubFieldName.NodeID,
+                                                         FilterMode: CswEnumNbtFilterMode.Equals,
+                                                         Value: this.NodeId.PrimaryKey.ToString(),
+                                                         ShowInGrid: false );
                     CswNbtViewRelationship RegListRel = MemberView.AddViewRelationship( MemberRel, CswEnumNbtViewPropOwnerType.First, RegListMemberOC.getObjectClassProp( CswNbtObjClassRegulatoryListMember.PropertyName.RegulatoryList ), false );
                     MemberView.AddViewProperty( RegListRel, RegListNameOCP );
 
 
-                    ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( MemberView, RequireViewPermissions : false, IncludeSystemNodes : true, IncludeHiddenNodes : true );
+                    ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( MemberView, RequireViewPermissions: false, IncludeSystemNodes: true, IncludeHiddenNodes: true );
                     //for( Int32 i = 0; i < Tree.getChildNodeCount(); i++ ) // Chemical
                     //{
                     //    Tree.goToNthChild( i );
