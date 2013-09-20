@@ -144,3 +144,33 @@ select w.businessunitid,
   from work_units w
   left outer join business_units b on (b.businessunitid = w.businessunitid)
   left outer join sites s on (s.siteid = w.siteid);
+
+---Packdetail
+create or replace view packdetail_view as
+select packdetailid,
+       packagedescription,
+       packageid,
+       catalogno,
+       capacity,
+       unitofmeasureid,
+       dispenseonly,
+       unitcount,
+       upc,
+       CASE containertype
+            when 'A' then 'Aboveground Tank [A]'
+            when 'B' then 'Belowground Tank [B]'
+            when 'C' then 'Tank Inside Building [C]'
+            when 'D' then 'Steel Drum [D]'
+            when 'E' then 'Plastic or Non-Metal Drum [E]'
+            when 'F' then 'Can [F]'
+            when 'G' then 'Carboy [G]'
+            when 'I' then 'Fiberdrum [I]'
+            when 'J' then 'Bag [J]'
+            when 'K' then 'Box [K]'
+            when 'L' then 'Cylinder [L]'
+            when 'M' then 'Glass Bottle or Jug [M]'
+            when 'N' then 'Plastic [N]'
+            when 'O' then 'Tote Bin [O]'
+            when 'P' then 'Tank Wagon [P]'
+       END as containertype
+       from packdetail;
