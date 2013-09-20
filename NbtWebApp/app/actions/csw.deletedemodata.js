@@ -70,7 +70,7 @@
 
             //EMD: GLOBAL VARS FOR CONTROLS
             //*******************************************
-            var pools = Csw.object(null, {
+            var pools = Csw.object({
                 toDelete: { value: new Map() },
                 toConvert: { value: new Map() },
                 init: { value: new Map() }
