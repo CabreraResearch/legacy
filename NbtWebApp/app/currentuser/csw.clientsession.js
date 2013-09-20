@@ -291,10 +291,12 @@
             urlMethod: 'isAdministrator',
             useCache: true,
             success: function (data) {
-                if (Csw.bool(data.Administrator)) {
-                    Csw.tryExec(o.Yes);
-                } else {
-                    Csw.tryExec(o.No);
+                if (data) {
+                    if (Csw.bool(data.Administrator)) {
+                        Csw.tryExec(o.Yes);
+                    } else {
+                        Csw.tryExec(o.No);
+                    }
                 }
             }
         });
