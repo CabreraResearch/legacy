@@ -26,7 +26,7 @@
                 var text = (result) ? result.watermark || '' : '';
                 var watermarkImage = Csw.main.watermark.svg({
                     ID: 'watermark_svg',
-                    width: document.width * .9,
+                    width: $(document).width() * .9,
                 });
                 watermarkImage.text({
                     text: text,

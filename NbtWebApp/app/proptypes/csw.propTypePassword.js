@@ -61,18 +61,20 @@
                     }
                 });
                 if (cswPrivate.isAdmin &&
-                    true !== nodeProperty.tabState.isChangePasswordDialog) {  // kludgetastic!  case 29841
+                    true !== nodeProperty.tabState.isChangePasswordDialog) { // kludgetastic!  case 29841
                     cswPrivate.cell32.text('Expired');
                     cswPrivate.expiredChk = cswPrivate.cell31.input({
                         name: nodeProperty.name + '_exp',
                         type: Csw.enums.inputTypes.checkbox,
                         checked: cswPrivate.isExpired,
-                        onChange: function () {
+                        onChange: function() {
                             var val = cswPrivate.expiredChk.$.is(':checked');
                             nodeProperty.propData.values.expire = val;
                             nodeProperty.broadcastPropChange();
                         }
                     });
+                } else {
+                    nodeProperty.propData.values.expire = false;
                 }
 
                 if (nodeProperty.isRequired() && Csw.isNullOrEmpty(nodeProperty.propData.values.password)) {

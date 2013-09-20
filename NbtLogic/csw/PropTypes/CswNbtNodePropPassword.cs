@@ -201,8 +201,16 @@ namespace ChemSW.Nbt.PropTypes
             ParentObject["passwordlength"] = PasswordLength;
             ParentObject["newpassword"] = string.Empty;
             ParentObject["isexpired"] = IsExpired;
-            ParentObject["expire"] = false;
-            ParentObject["isadmin"] = _CswNbtResources.CurrentNbtUser.IsAdministrator();
+            if( _CswNbtResources.CurrentNbtUser.IsAdministrator() )
+            {
+                ParentObject["expire"] = IsExpired; // case 30227
+                ParentObject["isadmin"] = true;
+            }
+            else
+            {
+                ParentObject["expire"] = false;
+                ParentObject["isadmin"] = false;
+            }
         }
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
@@ -223,9 +231,14 @@ namespace ChemSW.Nbt.PropTypes
             if( null != JObject["expire"] )
             {
                 bool inIsExpired = CswConvert.ToBoolean( JObject["expire"].ToString() );
-                if( inIsExpired && !IsExpired )
+                // case 30227
+                if( inIsExpired ) //&& !IsExpired )  
                 {
                     ChangedDate = DateTime.MinValue;
+                }
+                else
+                {
+                    ChangedDate = DateTime.Now;
                 }
             }
         }
