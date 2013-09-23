@@ -83,6 +83,36 @@
 
     //#endregion Window
 
+    //Firefox 24 kludge
+    if (Map && !Map.prototype.forEach) {
+        Object.defineProperties(Map.prototype, {
+            forEach: {
+                value: function(callback) {
+                    try {
+                        var context = arguments.length > 1 ? arguments[1] : null;
+                        var entireMap = this;
+
+                        var i = this.values();
+
+                        var loop = function(val) {
+                            try {
+                                if (val) {
+                                    callback.call(context, val);
+                                    loop(i.next());
+                                }
+                            } catch(e) {
+                            }
+                        };
+
+                        loop(i.next());
+                    } catch(e) {
+                        
+                    }
+                }
+            }
+        });
+    }
+
 
 }());
 
