@@ -15,7 +15,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>..\bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <DebugType>full</DebugType>
     <PlatformTarget>x64</PlatformTarget>
@@ -29,7 +29,7 @@
     <NoWarn>1591</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>..\bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
@@ -139,8 +139,8 @@
       <Project>{434091FB-F487-4787-8BDB-58C2336B73C2}</Project>
       <Name>CswCommon</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\Common\CswWebControls\CswWebControls.csproj">
-      <Project>{1617E93A-A9DD-46D5-A607-7A36DF91C2D1}</Project>
+    <ProjectReference Include="..\..\..\Common\CswCommon\CswWebControls\CswWebControls.csproj">
+      <Project>{1617e93a-a9dd-46d5-a607-7a36df91c2d1}</Project>
       <Name>CswWebControls</Name>
     </ProjectReference>
     <ProjectReference Include="..\NbtLogic\NbtLogic.csproj">

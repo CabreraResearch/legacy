@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.ObjClasses
@@ -18,6 +19,8 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Material = "Material";
             public const string LabelCodes = "Label Codes";
             public const string ClassCodes = "Class Codes";
+            public const string AddLabelCodes = "Add Label Codes";
+            public const string AddClassCodes = "Add Class Codes";
             public const string LabelCodesGrid = "Label Codes Grid";
             public const string ClassCodesGrid = "Class Codes Grid";
             public const string SignalWord = "Signal Word";
@@ -96,6 +99,9 @@ namespace ChemSW.Nbt.ObjClasses
             _setupPhraseView( LabelCodesGrid.View, LabelCodes.Value );
             _setupPhraseView( ClassCodesGrid.View, ClassCodes.Value );
 
+            AddLabelCodes.SetOnPropChange( OnAddLabelCodesPropChange );
+            AddClassCodes.SetOnPropChange( OnAddClassCodesPropChange );
+
             _CswNbtObjClassDefault.triggerAfterPopulateProps();
         } //afterPopulateProps()
 
@@ -158,6 +164,32 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropRelationship Material { get { return ( _CswNbtNode.Properties[PropertyName.Material] ); } }
         public CswNbtNodePropMultiList LabelCodes { get { return ( _CswNbtNode.Properties[PropertyName.LabelCodes] ); } }
         public CswNbtNodePropMultiList ClassCodes { get { return ( _CswNbtNode.Properties[PropertyName.ClassCodes] ); } }
+        public CswNbtNodePropMemo AddLabelCodes { get { return ( _CswNbtNode.Properties[PropertyName.AddLabelCodes] ); } }
+        private void OnAddLabelCodesPropChange( CswNbtNodeProp Prop, bool Creating )
+        {
+            CswCommaDelimitedString NewGHSLabelCodes = _getGHSCodesFromMemo( AddLabelCodes.Text );
+            foreach( string LabelCode in NewGHSLabelCodes )
+            {
+                if( LabelCodes.Options.ContainsValue( LabelCode ) )
+                {
+                    LabelCodes.AddValue( LabelCodes.Options.FirstOrDefault( x => x.Value == LabelCode ).Key );
+                }
+            }
+            AddLabelCodes.Text = string.Empty;
+        }
+        public CswNbtNodePropMemo AddClassCodes { get { return ( _CswNbtNode.Properties[PropertyName.AddClassCodes] ); } }
+        private void OnAddClassCodesPropChange( CswNbtNodeProp Prop, bool Creating )
+        {
+            CswCommaDelimitedString NewGHSClassCodes = _getGHSCodesFromMemo( AddClassCodes.Text );
+            foreach( string ClassCode in NewGHSClassCodes )
+            {
+                if( ClassCodes.Options.ContainsValue( ClassCode ) )
+                {
+                    ClassCodes.AddValue( ClassCodes.Options.FirstOrDefault( x => x.Value == ClassCode ).Key );
+                }
+            }
+            AddClassCodes.Text = string.Empty;
+        }
         public CswNbtNodePropGrid LabelCodesGrid { get { return ( _CswNbtNode.Properties[PropertyName.LabelCodesGrid] ); } }
         public CswNbtNodePropGrid ClassCodesGrid { get { return ( _CswNbtNode.Properties[PropertyName.ClassCodesGrid] ); } }
         public CswNbtNodePropList SignalWord { get { return ( _CswNbtNode.Properties[PropertyName.SignalWord] ); } }
@@ -166,7 +198,16 @@ namespace ChemSW.Nbt.ObjClasses
 
         #endregion
 
+        private CswCommaDelimitedString _getGHSCodesFromMemo( string NewGHSCodes )
+        {
+            NewGHSCodes = NewGHSCodes.Replace( "\r\n", "," ); // Turn all delimiters into commas
+            NewGHSCodes = NewGHSCodes.Replace( "\n", "," ); // Turn all delimiters into commas
+            NewGHSCodes = NewGHSCodes.Replace( " ", "" ); // Trim whitespace
+            CswCommaDelimitedString NewGHSCodesDelimited = new CswCommaDelimitedString();
+            NewGHSCodesDelimited.FromString( NewGHSCodes, true );
+            return NewGHSCodesDelimited;
+        }
 
-    }//CswNbtObjClassGeneric
+    }//CswNbtObjClassGHS
 
 }//namespace ChemSW.Nbt.ObjClasses
