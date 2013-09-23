@@ -65,8 +65,9 @@ namespace ChemSW.Nbt.Schema
             //TODO: find/replace substrings in PPE
 
             //TODO: lob data
+            ImpMgr.importBinding( "struct_pict", CswNbtObjClassChemical.PropertyName.Structure, "", BlobTableName: "materials", LobDataPkColOverride: "materialid" );
             //disposal                 -> new prop "Disposal Instructions as memo
-            //struct_pict              -> Structure (mol)
+            
                                        
             //TODO: new props          
             //dot_code                 -> "DOT Code" as list

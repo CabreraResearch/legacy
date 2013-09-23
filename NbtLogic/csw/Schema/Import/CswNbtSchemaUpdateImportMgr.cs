@@ -127,7 +127,7 @@ namespace ChemSW.Nbt.csw.Schema
             }
         } // _importOrder()
 
-        public void importBinding( string SourceColumnName, string DestPropertyName, string DestSubFieldName, string SheetName = null, string DestNodeTypeName = null, Int32 Instance = Int32.MinValue )
+        public void importBinding( string SourceColumnName, string DestPropertyName, string DestSubFieldName, string SheetName = null, string DestNodeTypeName = null, Int32 Instance = Int32.MinValue, string BlobTableName = "", string ClobTableName = "", string LobDataPkColOverride = "" )
         {
             if( null != _NbtImporter )
             {
@@ -144,6 +144,9 @@ namespace ChemSW.Nbt.csw.Schema
                     row["destsubfield"] = DestSubFieldName;
                     row["sourcecolumnname"] = SourceColumnName;
                     row["instance"] = Instance;
+                    row["blobtablename"] = BlobTableName;
+                    row["clobtablename"] = ClobTableName;
+                    row["lobdatapkcoloverride"] = LobDataPkColOverride;
                     _importBindingsTable.Rows.Add( row );
                 }
             }
