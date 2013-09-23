@@ -255,8 +255,8 @@
                                 Csw.ajaxWcf.post({
                                     urlMethod: 'Import/startImport',
                                     data: {
-                                        defname: cswPrivate.selDefName.val(),
-                                        overwrite: cswPrivate.cbOverwrite.checked
+                                        ImportDefName: cswPrivate.selDefName.val(),
+                                        Overwrite: cswPrivate.cbOverwrite.checked()
                                     },
                                     success: function (data) {
                                         // show success or show progress

@@ -74,8 +74,7 @@ namespace ChemSW.Nbt.WebServices
             {
                 // Enable the CAFImport rule
                 CswTableUpdate TableUpdate = _CswNbtResources.makeCswTableUpdate( "enableCafImportRule", "scheduledrules" );
-                DataTable DataTable =
-                    TableUpdate.getTable( "where rulename = '" + CswEnumNbtScheduleRuleNames.CAFImport + "'" );
+                DataTable DataTable = TableUpdate.getTable( "where rulename = '" + CswEnumNbtScheduleRuleNames.CAFImport + "'" );
                 if( DataTable.Rows.Count > 0 )
                 {
                     DataTable.Rows[0]["disabled"] = CswConvert.ToDbVal( false );

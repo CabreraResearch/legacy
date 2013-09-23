@@ -141,15 +141,12 @@ namespace NbtWebApp
         } // getImportStatus()
 
         [OperationContract]
-        [WebInvoke( Method = "POST", UriTemplate = "startImport?defname={ImportDefName}" )]
+        [WebInvoke( Method = "POST" )]
         [Description( "Start import" )]
         [FaultContract( typeof( FaultException ) )]
-        public CswWebSvcReturn startImport( string ImportDefName )
+        public CswWebSvcReturn startImport( CswNbtImportWcf.StartImportParams Params )
         {
             CswWebSvcReturn Ret = new CswWebSvcReturn();
-
-            CswNbtImportWcf.StartImportParams Params = new CswNbtImportWcf.StartImportParams();
-            Params.ImportDefName = ImportDefName;
 
             var SvcDriver = new CswWebSvcDriver<CswWebSvcReturn, CswNbtImportWcf.StartImportParams>(
                 CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
