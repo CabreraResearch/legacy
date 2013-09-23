@@ -12,7 +12,7 @@ using ChemSW.Nbt.Security;
 
 namespace ChemSW.Nbt
 {
-    public class CswNbtTreeLoaderFromXmlViewByLevel: CswNbtTreeLoader
+    public class CswNbtTreeLoaderFromXmlViewByLevel : CswNbtTreeLoader
     {
         private CswNbtResources _CswNbtResources = null;
         private CswNbtView _View;
@@ -38,7 +38,7 @@ namespace ChemSW.Nbt
             foreach( CswNbtViewRelationship Relationship in _View.Root.ChildRelationships )
             {
                 bool GroupBySiblings = _View.GroupBySiblings && _View.Root.ChildRelationships.Count > 1;
-                loadRelationshipRecursive( Relationship, RequireViewPermissions, GroupBySiblings, ResultsLimit : ResultsLimit );
+                loadRelationshipRecursive( Relationship, RequireViewPermissions, GroupBySiblings, ResultsLimit: ResultsLimit );
             }
             _CswNbtTree.goToRoot();
 
@@ -58,7 +58,7 @@ namespace ChemSW.Nbt
             {
                 thisResultLimit = ResultsLimit;
             }
-            
+
             if( Relationship.Properties.Count > 0 )
             {
                 thisResultLimit = thisResultLimit * Relationship.Properties.Count;
@@ -263,7 +263,7 @@ namespace ChemSW.Nbt
 
         private string _makeNodeSql( CswNbtViewRelationship Relationship, IEnumerable<CswPrimaryKey> ParentNodeIds = null )
         {
-            string With = string.Empty;
+            CswCommaDelimitedString With = new CswCommaDelimitedString();
             string Select = @"select n.nodeid,
                                      n.nodename, 
                                      n.locked,
@@ -302,7 +302,7 @@ namespace ChemSW.Nbt
             if( Relationship.PropId != Int32.MinValue && null != ParentNodeIds )
             {
                 bool first = true;
-                With += "with parents as (";
+                string parentsWith = "parents as (";
                 foreach( Int32 ParentNodeId in ParentNodeIds.Select( key => key.PrimaryKey ) )
                 {
                     if( first )
@@ -311,11 +311,12 @@ namespace ChemSW.Nbt
                     }
                     else
                     {
-                        With += " union ";
+                        parentsWith += " union ";
                     }
-                    With += "select " + ParentNodeId + " nodeid from dual ";
+                    parentsWith += "select " + ParentNodeId + " nodeid from dual ";
                 }
-                With += ")";
+                parentsWith += ")";
+                With.Add( parentsWith );
 
                 Select += ",parent.parentnodeid ";
 
@@ -492,10 +493,10 @@ namespace ChemSW.Nbt
                     // We match on propname because that's how the view editor works.
                     Select += @" ,props.nodetypepropid, props.objectclasspropid, props.propname, props.objectclasspropname, props.fieldtype ";
 
-                    From += @"  left outer join ( ";
+                    string propsWith = "props as (";
                     if( NTPropsInClause.Count > 0 )
                     {
-                        From += @"  select p2.nodetypeid, p2.nodetypepropid, p2.objectclasspropid, p2.propname, f.fieldtype, ocp2.propname as objectclasspropname
+                        propsWith += @"  select p2.nodetypeid, p2.nodetypepropid, p2.objectclasspropid, p2.propname, f.fieldtype, ocp2.propname as objectclasspropname
                                 from nodetype_props p1
                                 join nodetype_props p2 on (p2.firstpropversionid = p1.firstpropversionid or p1.propname = p2.propname)
                                 left outer join object_class_props ocp2 on p2.objectclasspropid = ocp2.objectclasspropid
@@ -503,18 +504,21 @@ namespace ChemSW.Nbt
                                 where p1.nodetypepropid in (" + NTPropsInClause.ToString() + @")";
                         if( OCPropsInClause.Count > 0 )
                         {
-                            From += @" UNION ALL ";
+                            propsWith += @" UNION ALL ";
                         }
                     }
                     if( OCPropsInClause.Count > 0 )
                     {
-                        From += @" select ntp.nodetypeid, ntp.nodetypepropid, ntp.objectclasspropid, ntp.propname, f.fieldtype, op.propname as objectclasspropname
+                        propsWith += @" select ntp.nodetypeid, ntp.nodetypepropid, ntp.objectclasspropid, ntp.propname, f.fieldtype, op.propname as objectclasspropname
                                 from object_class_props op
                                 join nodetype_props ntp on (ntp.objectclasspropid = op.objectclasspropid or ntp.propname = op.propname)
                                 join field_types f on f.fieldtypeid = ntp.fieldtypeid
                                 where op.objectclasspropid in (" + OCPropsInClause.ToString() + @")";
                     }
-                    From += @"   ) props on (props.nodetypeid = t.nodetypeid)";  // intentional multiplexing
+                    propsWith += @"   )";
+                    With.Add( propsWith );
+
+                    From += " left outer join props on (props.nodetypeid = t.nodetypeid)";  // intentional multiplexing
 
                     // Property Values
                     Select += @" ,propval.jctnodepropid, propval.gestalt, propval.field1, propval.field2, propval.field1_fk, propval.field1_numeric, propval.hidden ";
@@ -587,7 +591,9 @@ namespace ChemSW.Nbt
                                                                   where " + FilterValue + @"))";
 
 
-                                From += "left outer join (" + FilterClause + ") f" + FilterCount.ToString() + " on (f" + FilterCount.ToString() + ".nodeid = n.nodeid)";
+                                With.Add( "filt" + FilterCount.ToString() + " as (" + FilterClause + ")" );
+
+                                From += "left outer join filt" + FilterCount.ToString() + " f" + FilterCount.ToString() + " on (f" + FilterCount.ToString() + ".nodeid = n.nodeid)";
                                 if( Filter.ResultMode == CswEnumNbtFilterResultMode.Disabled )
                                 {
                                     Select += ",f" + FilterCount.ToString() + ".included as included" + Filter.Conjunction.ToString() + FilterCount.ToString();
@@ -658,7 +664,13 @@ namespace ChemSW.Nbt
                 Where += " and n.hidden = '0' ";
             }
             Where += " and n.istemp= '0' ";
-            string ret = With + " " + Select + " " + From + " " + Where + " " + OrderBy;
+
+            string ret = string.Empty;
+            if( With.Count > 0 )
+            {
+                ret = "with " + With.ToString(false);
+            }
+            ret += " " + Select + " " + From + " " + Where + " " + OrderBy;
             return ret;
         } //_makeNodeSql()
 
