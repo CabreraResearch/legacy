@@ -89,7 +89,25 @@
             if ('csv' == rformat.toLowerCase()) {
                 postForm(reportid, params, 'Services/Reports/reportCSV');
             } else if ('crystal' == rformat.toLowerCase()) {
-                postForm(reportid, params, 'report.aspx');
+                //postForm(reportid, params, 'report.aspx');
+                Csw.ajaxWcf.post({
+                    urlMethod: 'Reports/reportCrystal',
+                    data: {
+                        reportFormat: rformat,
+                        nodeId: reportid,
+                        reportParams: reportParams
+                    },
+                    success: function (data) {
+                        var parent = Csw.domNode({ ID: 'rptDiv' });
+                        parent.empty();
+                        if(data.hasResults) {                        
+                            Csw.window.location(data.reportUrl);
+                        } else {
+                            parent.span('There are no rows to display.');
+                        }
+                    }
+                });
+
             } else {
                 
                 Csw.ajaxWcf.post({
