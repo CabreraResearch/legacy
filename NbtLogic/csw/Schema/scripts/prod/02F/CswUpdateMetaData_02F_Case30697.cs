@@ -45,7 +45,7 @@ namespace ChemSW.Nbt.Schema
                 _CswNbtSchemaModTrnsctn.addStringColumn( "nodetypes_audit", "oraviewname", "stable oracle dbview name for this nodetype", false, false, 30 );
             }
 
-            if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "nodetype_props_audit", "oraviewcolname" ) != true )
+            if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "nodetype_props_audit", "oraviewcolname" ) )
             {
                 _CswNbtSchemaModTrnsctn.addStringColumn( "nodetype_props_audit", "oraviewcolname", "stable oracle dbview column name for this nodetype property", false, false, 30 );
             }

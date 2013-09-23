@@ -501,6 +501,9 @@
     <Content Include="test\csw-test.js" />
     <Content Include="test\Faker.js" />
     <Content Include="test\types\csw-object-test.js" />
+    <Content Include="vendor\es6-shim.min.js">
+      <DependentUpon>es6-shim.js</DependentUpon>
+    </Content>
     <Content Include="vendor\ext-done.js" />
     <Content Include="vendor\ext-init.js" />
     <Content Include="vendor\jquery.flot.js" />
@@ -513,7 +516,6 @@
       <DependentUpon>jquery.multiselect.js</DependentUpon>
     </Content>
     <Content Include="vendor\loggly-0.1.0.min.js" />
-    <Content Include="vendor\es6-shim.min.js" />
     <Content Include="vendor\es5-sham.min.js" />
     <Content Include="vendor\es5-sham.js" />
     <Content Include="vendor\es6-shim.js" />
@@ -1139,8 +1141,6 @@
     <None Include="Csw2\templates\test.tmpl" />
     <None Include="package.json" />
     <None Include="README.md" />
-    <None Include="Scripts\additional-methods.min.js.map" />
-    <None Include="Scripts\es5-shim.min.js.map" />
     <None Include="Scripts\jquery-2.0.3.min.map" />
     <None Include="Scripts\mousetrap.min.js.map" />
     <None Include="test\test.tmpl" />
