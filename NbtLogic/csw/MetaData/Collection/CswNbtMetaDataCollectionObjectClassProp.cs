@@ -34,9 +34,9 @@ namespace ChemSW.Nbt.MetaData
             _CollImpl.clearCache();
         }
 
-        public CswNbtMetaDataObjectClassProp makeObjectClassProp( CswNbtMetaDataResources Resources, DataRow Row )
+        public CswNbtMetaDataObjectClassProp makeObjectClassProp( CswNbtMetaDataResources Resources, DataRow Row, CswDateTime Date )
         {
-            return new CswNbtMetaDataObjectClassProp( Resources, Row );
+            return new CswNbtMetaDataObjectClassProp( Resources, Row, Date );
         }
 
         public CswNbtMetaDataObjectClassProp getObjectClassProp( Int32 ObjectClassPropId )
@@ -51,9 +51,9 @@ namespace ChemSW.Nbt.MetaData
         }
         public CswNbtMetaDataObjectClassProp getObjectClassProp( Int32 ObjectClassId, string ObjectClassPropName )
         {
-            return (CswNbtMetaDataObjectClassProp) _CollImpl.getWhereFirst( "where objectclassid = " + ObjectClassId.ToString() + " and lower(propname) = '" + CswTools.SafeSqlParam(ObjectClassPropName.ToLower()) + "'" );
+            return (CswNbtMetaDataObjectClassProp) _CollImpl.getWhereFirst( "where objectclassid = " + ObjectClassId.ToString() + " and lower(propname) = '" + CswTools.SafeSqlParam( ObjectClassPropName.ToLower() ) + "'" );
         }
-        public CswNbtMetaDataObjectClassProp getObjectClassProp( Int32 ObjectClassId, Int32 ObjectClassPropId)
+        public CswNbtMetaDataObjectClassProp getObjectClassProp( Int32 ObjectClassId, Int32 ObjectClassPropId )
         {
             return (CswNbtMetaDataObjectClassProp) _CollImpl.getByPk( ObjectClassPropId );
         }
@@ -91,7 +91,7 @@ namespace ChemSW.Nbt.MetaData
         {
             return _CollImpl.getWhere( "where objectclasspropid in (select objectclasspropid from jct_propertyset_ocprop where propertysetid = " + PropertySetId + ")" ).Cast<CswNbtMetaDataObjectClassProp>();
         }
-        
+
 
         private string _makeModuleWhereClause()
         {

@@ -70,7 +70,7 @@ namespace ChemSW.Nbt
         }
 
 
-        private ICswNbtNodePropCollData getPropCollData( string TableName, DateTime Date )
+        private ICswNbtNodePropCollData getPropCollData( string TableName, CswDateTime Date )
         {
             ICswNbtNodePropCollData ReturnVal = null;
 
@@ -151,7 +151,7 @@ namespace ChemSW.Nbt
 
 
 
-        public void fillFromNodePk( CswPrimaryKey NodePk, Int32 NodeTypeId, DateTime Date )
+        public void fillFromNodePk( CswPrimaryKey NodePk, Int32 NodeTypeId, CswDateTime Date )
         {
             _NodePk = NodePk;
             _NodeTypeId = NodeTypeId;
@@ -163,11 +163,11 @@ namespace ChemSW.Nbt
             {
                 if( getPropCollData( NodePk.TableName, Date ).IsTableEmpty )
                 {
-                    _populateProps();
+                    _populateProps( Date );
                 }
                 else
                 {
-                    _refreshProps();
+                    _refreshProps( Date );
                 }
 
                 _CswNbtResources.logTimerResult( "Fetched node (" + _NodePk.ToString() + ")", Timer.ElapsedDurationInSecondsAsString );
@@ -192,58 +192,21 @@ namespace ChemSW.Nbt
             _clear();
             _NodeTypeId = NodeTypeId;
 
-            //[9:35:54 AM] Phil Glaser: 
-            //CswNbtNodePropColl has semantics for filling props based on a nodetypeid as opposed to a node id. How would I know whether to fill the props based on jct_nodes_props or the native CISPro table given just a nodetypeid?
-            //[9:36:58 AM] Steven Salter: nodetypeid -> collection of nodetypepropids -> objectclasspropid -> data_dictionary.objectclasspropid exists?
-            //[9:37:21 AM] Steven Salter: it differs per prop
-
-            //I am assuming taht what steve describes can be baked into meta data somehow so that 
-            //at this point the CswPrimeKey just has a table name, whcih is all we need here: 
-
-
-            //**************** BEGIN KLUDGE ALERT
-            //string InClause = string.Empty;
-            //foreach ( Int32 CurrentNodeTypePropId in _CswNbtResources.MetaData.getNodeType( NodeTypeId ).NodeTypePropIds )
-            //{
-            //    InClause += CurrentNodeTypePropId.ToString() + ",";
-            //}//
-            //InClause.Remove( InClause.LastIndexOf( "," ) );
-            //CswTableCaddy DataDictionaryCaddy = _CswNbtResources.makeCswTableCaddy( "data_dictionary" );
-            //DataDictionaryCaddy.WhereClause = " where objectclasspropid in (" + InClause + ")";
-            //DataTable DdTable = DataDictionaryCaddy.Table;
-
-
-            //CswPrimaryKey NodePk = null;
-            //if ( DdTable.Rows.Count > 0 )
-            //{
-            //    NodePk = new CswPrimaryKey( DdTable.Rows[ 0 ][ "tablename" ] );
-            //}
-            //else
-            //{
-            //    NodePk = new CswPrimaryKey( DdTable.Rows[ 0 ][ "nodes" ] );
-            //}
-
-
-            //**************** END KLUDGE ALERT
-
-            //this[ NodePk ].NodeTypeId = NodeTypeId;
-            //ICswNbtNodePropCollData PropCollData = getPropCollData( _CswNbtResources.MetaData.getNodeType( NodeTypeId ).TableName, DateTime.MinValue );
-
-            _populateProps(); // null, NodeTypeId );
+            _populateProps( null );
 
             _Filled = true;
 
         }//fillFromNodeTypeId()
 
-        private void _populateProps()// CswPrimaryKey NodePk, Int32 NodeTypeId )
+        private void _populateProps( CswDateTime Date )// CswPrimaryKey NodePk, Int32 NodeTypeId )
         {
-            CswNbtMetaDataNodeType MetaDataNodeType = _CswNbtResources.MetaData.getNodeType( _NodeTypeId );
+            CswNbtMetaDataNodeType MetaDataNodeType = _CswNbtResources.MetaData.getNodeType( _NodeTypeId, Date );
             foreach( CswNbtMetaDataNodeTypeProp MetaDataProp in MetaDataNodeType.getNodeTypeProps() )
             {
-                ICswNbtNodePropCollData PropCollData = getPropCollData( MetaDataNodeType.TableName, DateTime.MinValue );
+                ICswNbtNodePropCollData PropCollData = getPropCollData( MetaDataNodeType.TableName, Date );
                 DataRow PropRow = PropCollData.PropsTable.Rows.Cast<DataRow>().FirstOrDefault( CurrentRow => CurrentRow["nodetypepropid"].ToString() == MetaDataProp.PropId.ToString() );
 
-                CswNbtNodePropWrapper AddedProp = CswNbtNodePropFactory.makeNodeProp( _CswNbtResources, PropRow, PropCollData.PropsTable, _CswNbtNode, MetaDataProp );
+                CswNbtNodePropWrapper AddedProp = CswNbtNodePropFactory.makeNodeProp( _CswNbtResources, PropRow, PropCollData.PropsTable, _CswNbtNode, MetaDataProp, Date );
                 //if( MetaDataProp.FieldType.FieldType == CswEnumNbtFieldType.Barcode ||
                 //    MetaDataProp.FieldType.FieldType == CswEnumNbtFieldType.Sequence )
                 //{
@@ -278,10 +241,10 @@ namespace ChemSW.Nbt
 
         //added for bz # 8287
 
-        private void _refreshProps()// CswPrimaryKey NodePk, Int32 NodeTypeId )
+        private void _refreshProps( CswDateTime Date )// CswPrimaryKey NodePk, Int32 NodeTypeId )
         {
             CswNbtMetaDataNodeType MetaDataNodeType = _CswNbtResources.MetaData.getNodeType( _NodeTypeId );
-            ICswNbtNodePropCollData PropCollData = getPropCollData( MetaDataNodeType.TableName, DateTime.MinValue );
+            ICswNbtNodePropCollData PropCollData = getPropCollData( MetaDataNodeType.TableName, Date );
             PropCollData.refreshTable();
 
             foreach( DataRow CurrentRow in PropCollData.PropsTable.Rows )
@@ -295,11 +258,11 @@ namespace ChemSW.Nbt
         }//_refreshProps()
 
 
-        public void update( CswNbtNode Node, bool IsCopy, bool OverrideUniqueValidation, bool Creating )
+        public void update( CswNbtNode Node, bool IsCopy, bool OverrideUniqueValidation, bool Creating, CswDateTime Date )
         {
             // Do BeforeUpdateNodePropRow on each row
 
-            ICswNbtNodePropCollData PropCollData = getPropCollData( _NodeType.TableName, DateTime.MinValue );
+            ICswNbtNodePropCollData PropCollData = getPropCollData( _NodeType.TableName, Date );
 
             //Case 29857 - we have to use a traditional for-loop here. onBeforeUpdateNodePropRow() can cause new rows in PropCollData.PropsTable to be created
             // see Document.ArchivedDate

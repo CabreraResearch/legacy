@@ -1,4 +1,4 @@
-﻿// Copyright 2009-2012 by contributors, MIT License
+// Copyright 2009-2012 by contributors, MIT License
 // vim: ts=4 sts=4 sw=4 expandtab
 
 // Module systems magic dance
@@ -14,6 +14,24 @@
         definition();
     }
 })(function () {
+
+
+var call = Function.prototype.call;
+var prototypeOfObject = Object.prototype;
+var owns = call.bind(prototypeOfObject.hasOwnProperty);
+
+// If JS engine supports accessors creating shortcuts.
+var defineGetter;
+var defineSetter;
+var lookupGetter;
+var lookupSetter;
+var supportsAccessors;
+if ((supportsAccessors = owns(prototypeOfObject, "__defineGetter__"))) {
+    defineGetter = call.bind(prototypeOfObject.__defineGetter__);
+    defineSetter = call.bind(prototypeOfObject.__defineSetter__);
+    lookupGetter = call.bind(prototypeOfObject.__lookupGetter__);
+    lookupSetter = call.bind(prototypeOfObject.__lookupSetter__);
+}
 
     // ES5 15.2.3.2
     // http://es5.github.com/#x15.2.3.2
@@ -32,13 +50,51 @@
 
     // ES5 15.2.3.3
     // http://es5.github.com/#x15.2.3.3
-    if (!Object.getOwnPropertyDescriptor) {
+
+function doesGetOwnPropertyDescriptorWork(object) {
+    try {
+        object.sentinel = 0;
+        return Object.getOwnPropertyDescriptor(
+                object,
+                "sentinel"
+        ).value === 0;
+    } catch (exception) {
+        // returns falsy
+    }
+}
+
+//check whether getOwnPropertyDescriptor works if it's given. Otherwise,
+//shim partially.
+if (Object.defineProperty) {
+    var getOwnPropertyDescriptorWorksOnObject = 
+        doesGetOwnPropertyDescriptorWork({});
+    var getOwnPropertyDescriptorWorksOnDom = typeof document == "undefined" ||
+    doesGetOwnPropertyDescriptorWork(document.createElement("div"));
+    if (!getOwnPropertyDescriptorWorksOnDom || 
+            !getOwnPropertyDescriptorWorksOnObject
+    ) {
+        var getOwnPropertyDescriptorFallback = Object.getOwnPropertyDescriptor;
+    }
+}
+
+if (!Object.getOwnPropertyDescriptor || getOwnPropertyDescriptorFallback) {
         var ERR_NON_OBJECT = "Object.getOwnPropertyDescriptor called on a non-object: ";
 
         Object.getOwnPropertyDescriptor = function getOwnPropertyDescriptor(object, property) {
             if ((typeof object != "object" && typeof object != "function") || object === null) {
                 throw new TypeError(ERR_NON_OBJECT + object);
             }
+
+        // make a valiant attempt to use the real getOwnPropertyDescriptor
+        // for I8's DOM elements.
+        if (getOwnPropertyDescriptorFallback) {
+            try {
+                return getOwnPropertyDescriptorFallback.call(Object, object, property);
+            } catch (exception) {
+                // try the shim if the real one doesn't work
+            }
+        }
+
             // If object does not owns property return undefined immediately.
             if (!owns(object, property)) {
                 return;
@@ -81,6 +137,7 @@
             // If we got this far we know that object has an own property that is
             // not an accessor so we set it as a value and return descriptor.
             descriptor.value = object[property];
+        descriptor.writable = true;
             return descriptor;
         };
     }
@@ -110,7 +167,7 @@
             // aside from Object.prototype itself. Instead, create a new global
             // object and *steal* its Object.prototype and strip it bare. This is
             // used as the prototype to create nullary objects.
-            createEmpty = (function () {
+        createEmpty = function () {
                 var iframe = document.createElement('iframe');
                 var parent = document.body || document.documentElement;
                 iframe.style.display = 'none';
@@ -130,11 +187,12 @@
 
                 function Empty() { }
                 Empty.prototype = empty;
-
-                return function () {
+            // short-circuit future calls
+            createEmpty = function () {
                     return new Empty();
                 };
-            })();
+            return new Empty();
+        };
         }
 
         Object.create = function create(prototype, properties) {
@@ -244,7 +302,8 @@
                 */
 
                 if (supportsAccessors && (lookupGetter(object, property) ||
-                                          lookupSetter(object, property))) {
+                                      lookupSetter(object, property)))
+            {
                     // As accessors are supported only on engines implementing
                     // `__proto__` we can safely override `__proto__` while defining
                     // a property to make sure that we don't hit an inherited

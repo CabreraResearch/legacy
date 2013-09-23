@@ -4,38 +4,37 @@
 (function () {
     'use strict';
 
-    Csw.openPopup = Csw.openPopup ||
-       Csw.register('openPopup', function (url, title, options) {
-           var cswPrivate = {
-               status: 'no',
-               resizeable: 'yes',
-               scrollbars: 'yes',
-               toolbar: 'yes',
-               location: 'no',
-               menubar: 'yes',
-               height: 600,
-               width: 800
-           };
-           Csw.extend(cswPrivate, options);
-           
-           
-           var popup = window.open(url, Csw.string(title), Csw.params(cswPrivate, ','));
-           popup.focus();
-           return popup;
-       });
+
+    Csw.register('openPopup', function (url, title, options) {
+        var cswPrivate = {
+            status: 'no',
+            resizeable: 'yes',
+            scrollbars: 'yes',
+            toolbar: 'yes',
+            location: 'no',
+            menubar: 'yes',
+            height: 600,
+            width: 800
+        };
+        Csw.extend(cswPrivate, options);
 
 
-    Csw.newWindow = Csw.newWindow ||
-        Csw.register('newWindow', function (url, title, options, callBack) { //onSuccess) {
-            var printWindow, printDoc;
+        var popup = window.open(url, Csw.string(title), Csw.params(cswPrivate, ','));
+        popup.focus();
+        return popup;
+    });
 
-            printWindow = Csw.openPopup(url, title, options);
-            printDoc = printWindow.document;
 
-            Csw.tryExec(callBack);
+    Csw.register('newWindow', function (url, title, options, callBack) { //onSuccess) {
+        var printWindow, printDoc;
 
-            return false;
-        });
+        printWindow = Csw.openPopup(url, title, options);
+        printDoc = printWindow.document;
 
-    
-} ());
+        Csw.tryExec(callBack);
+
+        return false;
+    });
+
+
+}());

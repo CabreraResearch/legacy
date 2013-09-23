@@ -105,7 +105,7 @@ namespace NbtPrintClient
             //find this printer and clear its working flag
             for( int i = 0; i < config.printers.Count; ++i )
             {
-                if( config.printers[i].LPCname == e.printer.LPCname )
+                if( config.printers[i].PrinterKey == e.printer.PrinterKey )
                 {
                     config.printers[i].working = false;
                     i = config.printers.Count + 1;

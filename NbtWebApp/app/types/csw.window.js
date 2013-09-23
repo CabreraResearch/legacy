@@ -57,33 +57,62 @@
                 return storage.hasOwnProperty(sKey);
             }
         };
-    } ());
+    }());
 
-    if (window.Modernizr && window.hasOwnProperty('Modernizr') ) {
-        if(window.Modernizr.hasOwnProperty('localstorage') && false === window.Modernizr.localstorage) {
+    if (window.Modernizr && window.hasOwnProperty('Modernizr')) {
+        if (window.Modernizr.hasOwnProperty('localstorage') && false === window.Modernizr.localstorage) {
             window.localStorage = newLocalStorage;
         }
         if (window.Modernizr.hasOwnProperty('sessionstorage') && false === window.Modernizr.sessionstorage) {
             window.sessionStorage = newLocalStorage;
-        }    
+        }
     }
-    
-    Csw.window.location = Csw.window.location ||
-        Csw.window.register('location', function (path) {
-            if (false === Csw.isNullOrEmpty(path)) {
-                window.location = path;
-            }
-            return window.location;
-        });
 
-    Csw.window.getPath = Csw.window.getPath ||
-        Csw.window.register('getPath', function() {
-            var path = window.location.href;
-            return path.substring(0, path.lastIndexOf("/")) + "/";
-        });
+
+    Csw.window.register('location', function (path) {
+        if (false === Csw.isNullOrEmpty(path)) {
+            window.location = path;
+        }
+        return window.location;
+    });
+
+    Csw.window.register('getPath', function () {
+        var path = window.location.href;
+        return path.substring(0, path.lastIndexOf("/")) + "/";
+    });
 
     //#endregion Window
 
+    //Firefox 24 kludge
+    if (Map && !Map.prototype.forEach) {
+        Object.defineProperties(Map.prototype, {
+            forEach: {
+                value: function(callback) {
+                    try {
+                        var context = arguments.length > 1 ? arguments[1] : null;
+                        var entireMap = this;
 
-} ());
+                        var i = this.values();
+
+                        var loop = function(val) {
+                            try {
+                                if (val) {
+                                    callback.call(context, val);
+                                    loop(i.next());
+                                }
+                            } catch(e) {
+                            }
+                        };
+
+                        loop(i.next());
+                    } catch(e) {
+                        
+                    }
+                }
+            }
+        });
+    }
+
+
+}());
 

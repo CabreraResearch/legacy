@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using ChemSW.Core;
 
 namespace ChemSW.Nbt.MetaData
 {
@@ -32,9 +33,9 @@ namespace ChemSW.Nbt.MetaData
             _CollImpl.clearCache();
         }
 
-        public CswNbtMetaDataPropertySet makePropertySet( CswNbtMetaDataResources Resources, DataRow Row )
+        public CswNbtMetaDataPropertySet makePropertySet( CswNbtMetaDataResources Resources, DataRow Row, CswDateTime Date )
         {
-            return new CswNbtMetaDataPropertySet( Resources, Row );
+            return new CswNbtMetaDataPropertySet( Resources, Row, Date );
         }
 
         public Dictionary<Int32, CswEnumNbtPropertySetName> getObjectClassIds()

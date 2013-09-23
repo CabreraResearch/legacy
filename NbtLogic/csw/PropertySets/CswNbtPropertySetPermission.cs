@@ -228,8 +228,8 @@ namespace ChemSW.Nbt.ObjClasses
                 {
                     MatchingPermissionsView.AddViewPropertyAndFilter( parent,
                     MetaDataProp: WorkUnitOCP,
-                    Value: WorkUnit.CachedNodeName,
-                    SubFieldName: CswEnumNbtSubFieldName.Name,
+                    Value: WorkUnit.RelatedNodeId.PrimaryKey.ToString(),
+                    SubFieldName: CswEnumNbtSubFieldName.NodeID,
                     FilterMode: CswEnumNbtFilterMode.Equals );
                 }
                 if( ApplyToAllRoles.Checked == CswEnumTristate.True )
@@ -244,14 +244,14 @@ namespace ChemSW.Nbt.ObjClasses
                 {
                     MatchingPermissionsView.AddViewPropertyAndFilter( parent,
                     MetaDataProp: RoleOCP,
-                    Value: Role.CachedNodeName,
-                    SubFieldName: CswEnumNbtSubFieldName.Name,
+                    Value: Role.RelatedNodeId.PrimaryKey.ToString(),
+                    SubFieldName: CswEnumNbtSubFieldName.NodeID,
                     FilterMode: CswEnumNbtFilterMode.Equals );
                 }
                 MatchingPermissionsView.AddViewPropertyAndFilter( parent,
                     MetaDataProp: GroupOCP,
-                    Value: PermissionGroup.CachedNodeName,
-                    SubFieldName: CswEnumNbtSubFieldName.Name,
+                    Value: PermissionGroup.RelatedNodeId.PrimaryKey.ToString(),
+                    SubFieldName: CswEnumNbtSubFieldName.NodeID,
                     FilterMode: CswEnumNbtFilterMode.Equals );
                 parent.NodeIdsToFilterOut.Add( this.NodeId );
 

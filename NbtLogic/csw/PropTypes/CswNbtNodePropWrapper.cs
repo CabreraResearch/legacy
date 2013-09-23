@@ -294,7 +294,7 @@ namespace ChemSW.Nbt.PropTypes
         /// </summary>
         public void copy( CswNbtNodePropData Source )
         {
-            _CswNbtNodePropData.copy( Source );
+            _CswNbtNodeProp.Copy( Source );
         }
 
         private string _makeTypeErrorMessage( Type CurrentType )
@@ -417,6 +417,16 @@ namespace ChemSW.Nbt.PropTypes
                 return ( (CswNbtNodePropDateTime) _CswNbtNodeProp );
             }
         }//DateTime
+
+        public CswNbtNodePropFormula AsFormula
+        {
+            get
+            {
+                if( false == ( _CswNbtNodeProp is CswNbtNodePropFormula ) )
+                    throw ( new CswDniException( _makeTypeErrorMessage( typeof( CswNbtNodePropFormula ) ) ) );
+                return ( (CswNbtNodePropFormula) _CswNbtNodeProp );
+            }
+        }//Formula
 
         public CswNbtNodePropGrid AsGrid
         {

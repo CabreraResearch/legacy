@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using ChemSW.Core;
 
 namespace ChemSW.Nbt.MetaData
 {
@@ -34,9 +35,9 @@ namespace ChemSW.Nbt.MetaData
 
 
 
-        public CswNbtMetaDataFieldType makeFieldType( CswNbtMetaDataResources Resources, DataRow Row )
+        public CswNbtMetaDataFieldType makeFieldType( CswNbtMetaDataResources Resources, DataRow Row, CswDateTime Date )
         {
-            return new CswNbtMetaDataFieldType( Resources, Row );
+            return new CswNbtMetaDataFieldType( Resources, Row, Date );
         }
 
         public Dictionary<Int32, CswEnumNbtFieldType> getFieldTypeIds()

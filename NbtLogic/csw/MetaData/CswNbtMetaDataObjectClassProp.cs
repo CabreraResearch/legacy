@@ -32,10 +32,12 @@ namespace ChemSW.Nbt.MetaData
 
         private CswNbtMetaDataResources _CswNbtMetaDataResources;
         private DataRow _ObjectClassPropRow;
+        private CswDateTime _Date;
 
-        public CswNbtMetaDataObjectClassProp( CswNbtMetaDataResources CswNbtMetaDataResources, DataRow Row )
+        public CswNbtMetaDataObjectClassProp( CswNbtMetaDataResources CswNbtMetaDataResources, DataRow Row, CswDateTime Date = null )
         {
             _CswNbtMetaDataResources = CswNbtMetaDataResources;
+            _Date = Date;
             Reassign( Row );
         }
 
@@ -496,7 +498,7 @@ namespace ChemSW.Nbt.MetaData
 
                 if( _DefaultValueRow != null )
                 {
-                    _DefaultValue = new CswNbtNodePropData( _CswNbtMetaDataResources.CswNbtResources, _DefaultValueRow, _DefaultValueRow.Table, ObjectClassPropId );
+                    _DefaultValue = new CswNbtNodePropData( _CswNbtMetaDataResources.CswNbtResources, _DefaultValueRow, _DefaultValueRow.Table, ObjectClassPropId, null );
                 }
 
             } // if( _DefaultValue == null )

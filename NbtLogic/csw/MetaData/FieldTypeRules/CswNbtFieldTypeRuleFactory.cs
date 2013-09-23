@@ -48,6 +48,10 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                     ReturnVal = new CswNbtFieldTypeRuleBlob( CswNbtFieldResources );
                     break;
 
+                case CswEnumNbtFieldType.Formula:
+                    ReturnVal = new CswNbtFieldTypeRuleFormula( CswNbtFieldResources );
+                    break;
+
                 case CswEnumNbtFieldType.Grid:
                     ReturnVal = new CswNbtFieldTypeRuleGrid( CswNbtFieldResources );
                     break;
