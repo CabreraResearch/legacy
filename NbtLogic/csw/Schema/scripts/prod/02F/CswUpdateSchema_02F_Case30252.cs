@@ -149,7 +149,7 @@ namespace ChemSW.Nbt.Schema
                     else
                     {
                         //duplicate check for case 30627
-                        DataRow[] foundRows;
+                        //DataRow[] foundRows;
                         string colname = CswTools.MakeOracleCompliantIdentifier( r2["propname"].ToString() );
                         int i = 0;
                         string testcolname = colname;

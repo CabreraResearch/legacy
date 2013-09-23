@@ -64,7 +64,7 @@ namespace ChemSW.Nbt
         #region Getting Nodes
 
         /// <summary>
-        /// Index of nodes by NodeId.  NodeTypeId is looked up and NodeSpecies.Plain is assumed.  See <see cref="GetNode(CswPrimaryKey, int, CswEnumNbtNodeSpecies, DateTime)"/>
+        /// Index of nodes by NodeId.  NodeTypeId is looked up and NodeSpecies.Plain is assumed.  See <see cref="GetNode(CswPrimaryKey, int, CswEnumNbtNodeSpecies, CswDateTime)"/>
         /// </summary>
         /// <param name="NodeId">Primary Key of Node</param>
         public CswNbtNode this[CswPrimaryKey NodeId]
@@ -73,7 +73,7 @@ namespace ChemSW.Nbt
         }
 
         /// <summary>
-        /// Index of nodes by NodeId.  NodeTypeId is looked up and NodeSpecies.Plain is assumed.  See <see cref="GetNode(CswPrimaryKey, int, CswEnumNbtNodeSpecies, DateTime)"/>
+        /// Index of nodes by NodeId.  NodeTypeId is looked up and NodeSpecies.Plain is assumed.  See <see cref="GetNode(CswPrimaryKey, int, CswEnumNbtNodeSpecies, CswDateTime)"/>
         /// </summary>
         /// <param name="NodeId">String representation of Primary Key of Node</param>
         public CswNbtNode this[string NodePk]
@@ -119,7 +119,7 @@ namespace ChemSW.Nbt
         } // getNode()
 
         /// <summary>
-        /// Fetch a node from the collection.  NodeTypeId is looked up and NodeSpecies.Plain is assumed.  See <see cref="GetNode(CswPrimaryKey, int, CswEnumNbtNodeSpecies, DateTime)"/>
+        /// Fetch a node from the collection.  NodeTypeId is looked up and NodeSpecies.Plain is assumed.  See <see cref="GetNode(CswPrimaryKey, int, CswEnumNbtNodeSpecies, CswDateTime)"/>
         /// </summary>
         /// <param name="NodeId">Primary Key of Node</param>
         public CswNbtNode GetNode( CswPrimaryKey NodeId )
@@ -128,7 +128,7 @@ namespace ChemSW.Nbt
         }
 
         /// <summary>
-        /// Fetch a node from the collection.  NodeTypeId is looked up and NodeSpecies.Plain is assumed.  See <see cref="GetNode(CswPrimaryKey, int, CswEnumNbtNodeSpecies, DateTime)"/>
+        /// Fetch a node from the collection.  NodeTypeId is looked up and NodeSpecies.Plain is assumed.  See <see cref="GetNode(CswPrimaryKey, int, CswEnumNbtNodeSpecies, CswDateTime)"/>
         /// </summary>
         public CswNbtNode GetNode( CswPrimaryKey NodeId, CswDateTime Date )
         {
@@ -136,7 +136,7 @@ namespace ChemSW.Nbt
         }
 
         /// <summary>
-        /// Fetch a node from the collection.  NodeSpecies.Plain is assumed.  See <see cref="GetNode(CswPrimaryKey, int, CswEnumNbtNodeSpecies, DateTime)"/>
+        /// Fetch a node from the collection.  NodeSpecies.Plain is assumed.  See <see cref="GetNode(CswPrimaryKey, int, CswEnumNbtNodeSpecies, CswDateTime)"/>
         /// </summary>
         /// <param name="NodeId">Primary Key of Node (if not provided, make sure NodeTypeId is)</param>
         /// <param name="NodeTypeId">Primary Key of NodeTypeId (only required if NodeId is invalid)</param>
@@ -147,7 +147,7 @@ namespace ChemSW.Nbt
         }
 
         /// <summary>
-        /// Index of nodes by NodeKey.  The NodeId, NodeTypeId and NodeSpecies in the Key are used.  See <see cref="GetNode(CswPrimaryKey, int, CswEnumNbtNodeSpecies, DateTime)"/>
+        /// Index of nodes by NodeKey.  The NodeId, NodeTypeId and NodeSpecies in the Key are used.  See <see cref="GetNode(CswPrimaryKey, int, CswEnumNbtNodeSpecies, CswDateTime)"/>
         /// </summary>
         /// <param name="NodeKey">NodeKey for Node</param>
         public CswNbtNode this[CswNbtNodeKey NodeKey]
