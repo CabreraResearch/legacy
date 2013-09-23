@@ -702,7 +702,7 @@ namespace ChemSW.Nbt.Security
         {
             bool ret = true;
 
-            if( false == _CswNbtPermitInfo.NoExceptionCases &&  null != MetaDataTab && false == canTab( _CswNbtPermitInfo.NodeTypePermission, _CswNbtPermitInfo.NodeType, MetaDataTab ) ) 
+            if( false == _CswNbtPermitInfo.NoExceptionCases && null != MetaDataTab && false == canTab( _CswNbtPermitInfo.NodeTypePermission, _CswNbtPermitInfo.NodeType, MetaDataTab ) )
             {
                 ret = false;
                 _CswNbtResources.CswLogger.reportAppState( "The property " + MetaDataProp.PropName + " (" + MetaDataProp.PropId + ") has been displayed as non-editable because the viewer cannot see tab " + MetaDataTab.TabId + ".", "ReadOnlyConditions" );
@@ -803,18 +803,18 @@ namespace ChemSW.Nbt.Security
             bool ret = true;
 
             //ret = canNodeType( NodeTypePermission, _CswNbtPermitInfo.NodeType, _CswNbtPermitInfo.User );
-              // the case in which it is a problem that we check nodetype permissions: 
-              // node type level permissions are off, but a tab has edit permission. 
-              // this is called from CswNbtSdTabsAndProps::makePropJson(). So here, canNodeType() 
-              // gives us false, which means that the readOnly() status below does not get checked. 
-              // Here's a case where it's better to balkanize these methods and let the caller 
-              // decide how to piece them together. 
+            // the case in which it is a problem that we check nodetype permissions: 
+            // node type level permissions are off, but a tab has edit permission. 
+            // this is called from CswNbtSdTabsAndProps::makePropJson(). So here, canNodeType() 
+            // gives us false, which means that the readOnly() status below does not get checked. 
+            // Here's a case where it's better to balkanize these methods and let the caller 
+            // decide how to piece them together. 
 
             if( null != _CswNbtPermitInfo.NodePrimeKey && Int32.MinValue != _CswNbtPermitInfo.NodePrimeKey.PrimaryKey )
             {
                 // Prevent users from deleting themselves or their own roles
                 if( _CswNbtPermitInfo.NodeTypePermission == CswEnumNbtNodeTypePermission.Delete &&
-                    ( ( _CswNbtPermitInfo.NodePrimeKey == _CswNbtPermitInfo.User.UserId || 
+                    ( ( _CswNbtPermitInfo.NodePrimeKey == _CswNbtPermitInfo.User.UserId ||
                         _CswNbtPermitInfo.NodePrimeKey == _CswNbtPermitInfo.User.RoleId ) )
                   )
                 {
@@ -823,8 +823,8 @@ namespace ChemSW.Nbt.Security
                 }
 
 
-                CswPrimaryKey PermissionGroupId = getPermissionGroupId( _CswNbtPermitInfo.NodePrimeKey );
-                if( CswTools.IsPrimaryKey( PermissionGroupId ) && 
+                CswPrimaryKey PermissionGroupId = getPermissionGroupId( _CswNbtPermitInfo.NodePrimeKey, _CswNbtPermitInfo.NodeType.NodeTypeId );
+                if( CswTools.IsPrimaryKey( PermissionGroupId ) &&
                     false == _CswNbtResources.Permit.canNode( _CswNbtPermitInfo.NodeTypePermission, PermissionGroupId, _CswNbtPermitInfo.User, _CswNbtPermitInfo.NodeType ) )
                 {
                     ret = false;
@@ -836,23 +836,23 @@ namespace ChemSW.Nbt.Security
             return ( ret );
         }//_isNodeWritableImpl()
 
-        private Dictionary<CswPrimaryKey, CswPrimaryKey> _PermissionGroupDict = null;
+        private Dictionary<Int32, Dictionary<CswPrimaryKey, CswPrimaryKey>> _PermissionGroupDict = new Dictionary<Int32, Dictionary<CswPrimaryKey, CswPrimaryKey>>();
 
-        public CswPrimaryKey getPermissionGroupId( CswPrimaryKey NodeId )
+        public CswPrimaryKey getPermissionGroupId( CswPrimaryKey NodeId, Int32 NodeTypeId )
         {
             CswPrimaryKey ret = null;
-            if( null == _PermissionGroupDict )
+            if( false == _PermissionGroupDict.ContainsKey( NodeTypeId ) )
             {
-                _PermissionGroupDict = _initPermissionGroupDict();
+                _PermissionGroupDict[NodeTypeId] = _initPermissionGroupDict( NodeTypeId );
             }
-            if( _PermissionGroupDict.ContainsKey( NodeId ) )
+            if( _PermissionGroupDict[NodeTypeId].ContainsKey( NodeId ) )
             {
-                ret = _PermissionGroupDict[NodeId];
+                ret = _PermissionGroupDict[NodeTypeId][NodeId];
             }
             return ret;
         } // getPermissionGroupId()
 
-        private Dictionary<CswPrimaryKey, CswPrimaryKey> _initPermissionGroupDict()
+        private Dictionary<CswPrimaryKey, CswPrimaryKey> _initPermissionGroupDict( Int32 NodeTypeId )
         {
             Dictionary<CswPrimaryKey, CswPrimaryKey> ret = new Dictionary<CswPrimaryKey, CswPrimaryKey>();
             string SQL = @"with pval as (select j.nodeid, op.propname, j.field1_fk
@@ -866,16 +866,19 @@ namespace ChemSW.Nbt.Security
                                  join nodes loc on (locval.field1_fk = loc.nodeid)
                                  join pval ivgval on (ivgval.nodeid = loc.nodeid and ivgval.propname = 'Inventory Group')
                                  join nodes ivg on (ivgval.field1_fk = ivg.nodeid)
+                                where n.nodetypeid = " + NodeTypeId + @"
                              union
                                select n.nodeid, rg.nodeid permissiongroupid
                                  from nodes n
                                  join pval rgval on (rgval.nodeid = n.nodeid and rgval.propname = 'Report Group')
                                  join nodes rg on (rgval.field1_fk = rg.nodeid)
+                                where n.nodetypeid = " + NodeTypeId + @"
                              union
                                select n.nodeid, mrg.nodeid permissiongroupid
                                  from nodes n
                                  join pval mrgval on (mrgval.nodeid = n.nodeid and mrgval.propname = 'Mail Report Group')
-                                 join nodes mrg on (mrgval.field1_fk = mrg.nodeid)";
+                                 join nodes mrg on (mrgval.field1_fk = mrg.nodeid) 
+                                where n.nodetypeid = " + NodeTypeId + @" ";
             CswArbitrarySelect PermGrpSelect = _CswNbtResources.makeCswArbitrarySelect( "permit_permgrp_select", SQL );
             DataTable PermGrpTable = PermGrpSelect.getTable();
             foreach( DataRow Row in PermGrpTable.Rows )
@@ -1173,7 +1176,7 @@ namespace ChemSW.Nbt.Security
                             hasPermission = ( ( Permission == CswEnumNbtNodeTypePermission.View && PermNode.View.Checked == CswEnumTristate.True ) ||
                                               PermNode.Edit.Checked == CswEnumTristate.True ); //edit implies edit, create, and delete
                         }
-                        else if( null != _CswNbtResources.Nodes[ PermissionGroupId ] )
+                        else if( null != _CswNbtResources.Nodes[PermissionGroupId] )
                         {
                             // case 30477 - Only revoke permissions if the group's nodetype is enabled and the node is valid
                             hasPermission = false;
