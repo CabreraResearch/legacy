@@ -76,7 +76,6 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="csw\Actions\CswNbtActImportFromCAF.cs" />
     <Compile Include="csw\Actions\CswNbtActDeleteDemoData.cs" />
     <Compile Include="csw\Actions\CswEnumNbtActionName.cs" />
     <Compile Include="csw\Actions\CswEnumNbtSystemViewName.cs" />

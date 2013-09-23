@@ -1,16 +1,10 @@
 using System;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.ComponentModel;
-using System.Runtime.Serialization;
-using System.Web;
+using System.Data;
 using ChemSW.Core;
-using ChemSW.Nbt.Actions;
+using ChemSW.DB;
 using ChemSW.Nbt.ImportExport;
-using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.Sched;
 using NbtWebApp.WebSvc.Returns;
-using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -70,6 +64,24 @@ namespace ChemSW.Nbt.WebServices
             CswTempFile myTempFile = new CswTempFile( CswResources );
             string path = myTempFile.saveToTempFile( parms.PostedFile.InputStream, DateTime.Now.Ticks + "_" + parms.PostedFile.FileName );
             Importer.storeDefinition( path, parms.ImportDefName );
+        }
+
+        public static void startCAFImport( ICswResources CswResources, CswWebSvcReturn Ret, CswNbtImportWcf.StartImportParams Params )
+        {
+            CswNbtResources _CswNbtResources = (CswNbtResources) CswResources;
+
+            if( Params.ImportDefName.Equals( "CAF" ) )
+            {
+                // Enable the CAFImport rule
+                CswTableUpdate TableUpdate = _CswNbtResources.makeCswTableUpdate( "enableCafImportRule", "scheduledrules" );
+                DataTable DataTable =
+                    TableUpdate.getTable( "where rulename = '" + CswEnumNbtScheduleRuleNames.CAFImport + "'" );
+                if( DataTable.Rows.Count > 0 )
+                {
+                    DataTable.Rows[0]["disabled"] = CswConvert.ToDbVal( false );
+                    TableUpdate.update( DataTable );
+                }
+            }
         }
 
 
