@@ -111,7 +111,7 @@ namespace ChemSW.Nbt.WebServices
             Int32 NodeTypeCount = 0;
 
             foreach( CswNbtMetaDataNodeType RetNodeType in NodeTypes
-                                                            .Where( _RetNodeType => ( false == Searchable || CswNbtMetaDataObjectClass.NotSearchableValue != _RetNodeType.SearchDeferPropId ) )
+                                                            .Where( _RetNodeType => ( false == Searchable || _RetNodeType.SearchDeferPropId == Int32.MinValue ) )
                                                             .OrderBy( _RetNodeType => _RetNodeType.NodeTypeName ) )
             {
                 bool AddThisNodeType = false;
