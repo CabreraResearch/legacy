@@ -1,0 +1,1 @@
+echo exit | sqlplus caf2/caf2@w2008x64Db @caf.sql

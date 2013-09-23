@@ -34,9 +34,9 @@ namespace ChemSW.Nbt.MetaData
             _CollImpl.clearCache();
         }
 
-        public CswNbtMetaDataNodeTypeTab makeNodeTypeTab( CswNbtMetaDataResources Resources, DataRow Row )
+        public CswNbtMetaDataNodeTypeTab makeNodeTypeTab( CswNbtMetaDataResources Resources, DataRow Row, CswDateTime Date )
         {
-            return new CswNbtMetaDataNodeTypeTab( Resources, Row );
+            return new CswNbtMetaDataNodeTypeTab( Resources, Row, Date );
         }
 
         public CswNbtMetaDataNodeTypeTab getNodeTypeTab( Int32 NodeTypeTabId )

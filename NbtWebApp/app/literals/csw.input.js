@@ -142,7 +142,6 @@
         return cswPublic;
     }
     Csw.literals.register('input', input);
-    Csw.literals.input = Csw.literals.input || input;
 
 }());
 

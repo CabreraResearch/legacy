@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using ChemSW.Core;
+using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.ChemCatCentral;
 using ChemSW.Nbt.MetaData;
@@ -380,7 +381,15 @@ namespace ChemSW.Nbt.WebServices
                                                 CswNbtNodePropButton.AsJSON( NodeTypeProp, PropValues, PropElm.Field2, PropElm.Field1 );
                                                 thisProp.PropData["values"] = PropValues;
                                             }
-                                            thisNode.Props.Add( thisOrder.Order, thisProp );
+                                            if( false == thisNode.Props.ContainsKey( thisOrder.Order ) && false == thisNode.Props.ContainsValue( thisProp ) )
+                                            {
+                                                thisNode.Props.Add( thisOrder.Order, thisProp );
+                                            }
+                                            else
+                                            {
+                                                throw new CswDniException( CswEnumErrorType.Error, "A search result with the same value and position already exists in the result set.",
+                                                   "{" + thisNode.NodeType.NodeTypeName + "} entity {" + thisNode.NodeName + "}, Id: {" + thisNode.NodeId + ", has a duplicate {" + thisProp.FieldType + "} property record for {" + thisProp.PropName + "} PropId: {" + thisProp.NodeTypePropId + "}" );
+                                            }
                                         }
                                     }
                                 } // if( false == PropsToHide.Contains( NodeTypePropId ) )
@@ -465,7 +474,7 @@ namespace ChemSW.Nbt.WebServices
 
                     }
 
-                  //if there is mol data and a generated mol image for this product, override the default icon
+                    //if there is mol data and a generated mol image for this product, override the default icon
                     if( false == String.IsNullOrEmpty( product.MolData ) && false == String.IsNullOrEmpty( product.MolImage ) )
                     {
                         thisNode.ThumbnailUrl = "data:image/jpeg;base64," + product.MolImage;

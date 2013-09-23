@@ -7,6 +7,7 @@ using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.MetaData.FieldTypeRules;
 
 namespace ChemSW.Nbt.PropTypes
 {
@@ -107,29 +108,32 @@ namespace ChemSW.Nbt.PropTypes
         }
 
         private DataTable _PropsTable = null;
+        private CswDateTime _Date;
 
         private CswNbtResources _CswNbtResources;
 
         /// <summary>
         /// Constructor for Node Properties
         /// </summary>
-        public CswNbtNodePropData( CswNbtResources rsc, DataRow PropRow, DataTable PropsTable, CswPrimaryKey NodeId, Int32 PropId )
+        public CswNbtNodePropData( CswNbtResources rsc, DataRow PropRow, DataTable PropsTable, CswPrimaryKey NodeId, Int32 PropId, CswDateTime Date )
         {
             _PropRow = PropRow;
             _NodeId = NodeId;
             _NodeTypePropId = PropId;
             _PropsTable = PropsTable;
+            _Date = Date;
             _CswNbtResources = rsc;
         }//ctor()
 
         /// <summary>
         /// Constructor for Object Class Prop Default Values
         /// </summary>
-        public CswNbtNodePropData( CswNbtResources rsc, DataRow PropRow, DataTable PropsTable, Int32 ObjectClassPropId )
+        public CswNbtNodePropData( CswNbtResources rsc, DataRow PropRow, DataTable PropsTable, Int32 ObjectClassPropId, CswDateTime Date )
         {
             _PropRow = PropRow;
             _ObjectClassPropId = ObjectClassPropId;
             _PropsTable = PropsTable;
+            _Date = Date;
             _CswNbtResources = rsc;
         }//ctor()
 
@@ -298,9 +302,15 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return _CswNbtResources.MetaData.getNodeTypeProp( _NodeTypePropId );
+                return _CswNbtResources.MetaData.getNodeTypeProp( _NodeTypePropId, _Date );
             }
         } //NodeTypeProp
+
+        public CswEnumNbtFieldType getFieldTypeValue()
+        {
+            CswEnumNbtFieldType Ret = ( null != NodeTypeProp ) ? NodeTypeProp.getFieldTypeValue() : _CswNbtResources.MetaData.getObjectClassProp( _ObjectClassPropId ).getFieldTypeValue();
+            return Ret;
+        }
 
         private bool _ReadOnlyTemporary = false;
 
@@ -508,36 +518,6 @@ namespace ChemSW.Nbt.PropTypes
                 return ( ReturnVal );
             }
         }//JctNodePropId prop
-
-        public void copy( CswNbtNodePropData Source )
-        {
-            foreach( CswNbtSubField SubField in NodeTypeProp.getFieldTypeRule().SubFields )
-            {
-                if( SubField.Column == CswEnumNbtPropColumn.Field1_FK )
-                {
-                    //Implementing FieldType specific behavior here. Blame Steve.
-                    if( null != Source.NodeTypeProp && Source.NodeTypeProp.getFieldTypeValue() == CswEnumNbtFieldType.ViewReference )
-                    {
-                        CswNbtView View = _CswNbtResources.ViewSelect.restoreView( Source.NodeTypeProp.DefaultValue.AsViewReference.ViewId );
-                        CswNbtView ViewCopy = new CswNbtView( _CswNbtResources );
-                        ViewCopy.saveNew( View.ViewName, View.Visibility, View.VisibilityRoleId, View.VisibilityUserId, View );
-                        SetPropRowValue( CswEnumNbtSubFieldName.ViewID, CswEnumNbtPropColumn.Field1_FK, ViewCopy.ViewId.get() );
-                    }
-                    else
-                    {
-                        SetPropRowValue( SubField, Source.Field1_Fk );
-                    }
-                } // if( SubField.Column == CswEnumNbtPropColumn.Field1_FK )
-                else
-                {
-                    SetPropRowValue( SubField, Source.GetPropRowValue( SubField ) );
-                }
-            } // foreach( CswNbtSubField SubField in NodeTypeProp.getFieldTypeRule().SubFields )
-
-            // Also copy Gestalt, which usually isn't listed as a subfield
-            SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, Source.Gestalt );
-            SetPropRowValue( CswEnumNbtSubFieldName.GestaltSearch, CswEnumNbtPropColumn.GestaltSearch, Source.GestaltSearch );
-        }
 
         public void ClearValue()
         {

@@ -3,7 +3,7 @@
 
 (function () {
     'use strict';
-    
+
     var getMolImgFromText = function (nodeId, molTxt, onSuccess) {
         /// <summary>
         /// Takes a MOL string and queries the Mol webservice for a thumbnail
@@ -28,6 +28,6 @@
     };
 
     Csw.register('getMolImgFromText', getMolImgFromText);
-    Csw.getMolImgFromText = Csw.getMolImgFromText || getMolImgFromText;
-    
+
+
 }());

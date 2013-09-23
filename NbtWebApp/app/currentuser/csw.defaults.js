@@ -3,9 +3,7 @@
 
 (function _cswClientSession() {
     'use strict';
-
-    Csw.register('currentUser', Csw.makeNameSpace());
-
+    
     var defaults = function () {
         var ret = {};
         var userDefaults = Csw.cookie.get(Csw.cookie.cookieNames.UserDefaults);

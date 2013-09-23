@@ -63,7 +63,7 @@ namespace ChemSW.Nbt.ObjClasses
         public delegate void OnSetNodeIdHandler( CswNbtNode Node, CswPrimaryKey OldNodeId, CswPrimaryKey NewNodeId );
         public delegate void OnRequestWriteNodeHandler( CswNbtNode Node, bool ForceUpdate, bool IsCopy, bool OverrideUniqueValidation, bool Creating );
         public delegate void OnRequestDeleteNodeHandler( CswNbtNode Node );
-        public delegate void OnRequestFillHandler( CswNbtNode Node, DateTime Date );
+        public delegate void OnRequestFillHandler( CswNbtNode Node, CswDateTime Date );
         public delegate void OnRequestFillFromNodeTypeIdHandler( CswNbtNode Node, Int32 NodeTypeId );
         //public event OnSetNodeIdHandler OnAfterSetNodeId = null;
         public event OnRequestWriteNodeHandler OnRequestWriteNode = null;
@@ -91,8 +91,9 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
+        private CswDateTime _Date;
         private CswNbtResources _CswNbtResources;
-        public CswNbtNode( CswNbtResources CswNbtResources, Int32 NodeTypeId, CswEnumNbtNodeSpecies NodeSpecies, CswPrimaryKey NodeId, Int32 UniqueId, bool IsDemo = false )
+        public CswNbtNode( CswNbtResources CswNbtResources, Int32 NodeTypeId, CswEnumNbtNodeSpecies NodeSpecies, CswPrimaryKey NodeId, Int32 UniqueId, CswDateTime Date, bool IsDemo = false )
         {
             _CswNbtResources = CswNbtResources;
             _UniqueId = UniqueId;
@@ -101,6 +102,7 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtNodePropColl = new CswNbtNodePropColl( CswNbtResources, this, null );
             _NodeSpecies = NodeSpecies;
             _IsDemo = IsDemo;
+            _Date = Date;
         }//ctor()
 
         #region Core Properties
@@ -143,7 +145,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-        public bool IsTempModified = false; 
+        public bool IsTempModified = false;
         private bool _IsTemp = false;
         /// <summary>
         /// If true, this is a temporary node
@@ -284,7 +286,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public CswNbtMetaDataNodeType getNodeType()
         {
-            return _CswNbtResources.MetaData.getNodeType( NodeTypeId );
+            return _CswNbtResources.MetaData.getNodeType( NodeTypeId, _Date );
         }
 
         public CswNbtMetaDataNodeType getNodeTypeLatestVersion()
@@ -428,7 +430,7 @@ namespace ChemSW.Nbt.ObjClasses
                 }
                 if( null != _CswNbtObjClass )
                 {
-                    _CswNbtObjClass.afterWriteNode(Creating);
+                    _CswNbtObjClass.afterWriteNode( Creating );
                 }
 
                 _NodeModificationState = CswEnumNbtNodeModificationState.Posted;
@@ -482,7 +484,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         }//delete()
 
-        public void fill( DateTime Date )
+        public void fill( CswDateTime Date )
         {
             if( null == OnRequestFill )
                 throw ( new CswDniException( "There is no fill handler" ) );

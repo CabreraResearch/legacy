@@ -126,6 +126,7 @@
     <Compile Include="csw\MetaData\enum\CswEnumNbtObjectClassPropAttributes.cs" />
     <Compile Include="csw\MetaData\enum\CswEnumNbtPropAction.cs" />
     <Compile Include="csw\MetaData\enum\CswEnumNbtPropertySelectMode.cs" />
+    <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleFormula.cs" />
     <Compile Include="csw\MetaData\Infr\ICswNbtMetaDataObject.cs" />
     <Compile Include="csw\MetaData\enum\CswEnumNbtPropertySet.cs" />
     <Compile Include="csw\MetaData\Collection\CswNbtMetaDataCollectionPropertySet.cs" />
@@ -189,6 +190,7 @@
     <Compile Include="csw\PropTypes\CswEnumNbtIdRefState.cs" />
     <Compile Include="csw\PropTypes\CswEnumNbtNFPADisplayMode.cs" />
     <Compile Include="csw\PropTypes\CswEnumNbtGridPropMode.cs" />
+    <Compile Include="csw\PropTypes\CswNbtNodePropFormula.cs" />
     <Compile Include="csw\Sched\core\CswEnumNbtScheduleRuleNames.cs" />
     <Compile Include="csw\Sched\logic\CswScheduleLogicNbtImport.cs" />
     <Compile Include="csw\Sched\logic\CswScheduleLogicNbtNodeCounts.cs" />
@@ -336,11 +338,28 @@
     <None Include="csw\Schema\scripts\past\02E\CswUpdateSchema_02E_Case30440.cs" />
     <None Include="csw\Schema\scripts\past\02E\CswUpdateSchema_02E_Case30445.cs" />
     <None Include="csw\Schema\scripts\past\02E\CswUpdateSchema_02E_Case30300.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02F\CswUpdateSchema_02F_Case30700.cs" />
     <Compile Include="csw\Schema\scripts\ICswSchemaScripts.cs" />
+    <Compile Include="csw\MetaData\Infr\CswNbtAuditTableAbbreviation.cs" />
+    <Compile Include="csw\Schema\scripts\infr\RunAfterEveryExecutionOfUpdater_02AuditSql.cs" />
     <Compile Include="csw\Schema\scripts\prod\02F\CswSchemaScriptsFoxglove.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateSchema_02G_Case30756.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateSchema_02G_Case30702.cs" />
     <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateSchema_02G_Case30680.cs" />
     <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateMetaData_02G_Case30680.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateDDL_02G_Case30702.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateMetaData_02G_Case30575.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateSchema_02G_Case30301.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateSchema_02G_Case28832.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateSchema_02G_Case29894.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateSchema_02G_Case30480.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateMetaData_02G_Case30480.cs" />
     <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateSchema_02G_Case30379.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02F\CswUpdateMetaData_02F_Case30697.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02F\CswUpdateSchema_02F_Case30706.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02F\CswUpdateSchema_02F_Case30661.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateSchema_02G_Case30564B.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateMetaData_02G_Case30564.cs" />
     <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateSchema_02G_Case29565.cs" />
     <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateMetaData_02G_Case30666.cs" />
     <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateDDL_02G_Case29565.cs" />
@@ -359,7 +378,6 @@
     <Compile Include="csw\Schema\scripts\prod\02F\CswUpdateSchema_02F_Case30041_RolesUsers.cs" />
     <Compile Include="csw\Schema\scripts\prod\02F\CswUpdateSchema_02F_Case30043_Locations.cs" />
     <Compile Include="csw\Schema\scripts\prod\02F\CswUpdateSchema_02F_Case30577.cs" />
-    <Compile Include="csw\Schema\scripts\prod\02F\CswUpdateSchema_02F_Case30043_Sites.cs" />
     <Compile Include="csw\Schema\scripts\prod\02F\CswUpdateSchema_02F_Case30043_ControlZones.cs" />
     <Compile Include="csw\Schema\scripts\prod\02F\CswUpdateMetaData_02F_Case30040.cs" />
     <None Include="csw\Schema\scripts\past\02E\RunBeforeEveryExecutionOfUpdater_02E_Case30347.cs" />
@@ -432,6 +450,7 @@
     <None Include="csw\Schema\scripts\past\02E\RunBeforeEveryExecutionOfUpdater_02E_Case29700.cs" />
     <Compile Include="csw\Schema\scripts\prod\02F\CswUpdateMetaData_02F_Case30281.cs" />
     <Compile Include="csw\Schema\scripts\prod\02F\CswUpdateMetaData_02F_Case30041_NbtImportQueue.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateSchema_02G_CaseXXXXX.cs" />
     <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateSchema_02G_Case30561.cs" />
     <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateSchema_02G_Case30473.cs" />
     <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateMetaData_02G_Case28493A.cs" />
@@ -444,6 +463,7 @@
     <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateMetaData_02G_Case27846.cs" />
     <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateMetaData_02G_Case30611.cs" />
     <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateSchema_02G_Case30542.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateSchema_02G_Case30610.cs" />
     <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateSchema_02G_Case30679.cs" />
     <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateSchema_02G_Case30383.cs" />
     <Compile Include="csw\Security\CswNbtWebSvcSchemaAuthenticator.cs" />
@@ -853,7 +873,6 @@
     <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleLink.cs" />
     <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleList.cs" />
     <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleLocation.cs" />
-    <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleLocationContents.cs" />
     <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleLogical.cs" />
     <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleLogicalSet.cs" />
     <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleMTBF.cs" />
@@ -957,7 +976,6 @@
     <Compile Include="csw\PropTypes\CswNbtNodePropLink.cs" />
     <Compile Include="csw\PropTypes\CswNbtNodePropList.cs" />
     <Compile Include="csw\PropTypes\CswNbtNodePropLocation.cs" />
-    <Compile Include="csw\PropTypes\CswNbtNodePropLocationContents.cs" />
     <Compile Include="csw\PropTypes\CswNbtNodePropLogical.cs" />
     <Compile Include="csw\PropTypes\CswNbtNodePropLogicalSet.cs" />
     <Compile Include="csw\PropTypes\CswNbtNodePropMTBF.cs" />

@@ -15,17 +15,19 @@ namespace ChemSW.Nbt.PropTypes
     /// Base class for all Fieldtype-specific CswNbtNodeProp classes
     /// </summary>
     [DataContract]
-    abstract public class CswNbtNodeProp
+    public abstract class CswNbtNodeProp
     {
 
         /// <summary>
         /// Database interaction layer
         /// </summary>
         private CswNbtNodePropData _CswNbtNodePropData = null;
+
         /// <summary>
         /// Reference to the CswNbtResources object
         /// </summary>
         protected CswNbtResources _CswNbtResources = null;
+
         /// <summary>
         /// Node to which this property value is attached
         /// </summary>
@@ -35,6 +37,7 @@ namespace ChemSW.Nbt.PropTypes
         /// Meta Data for this property
         /// </summary>
         protected CswNbtMetaDataNodeTypeProp _CswNbtMetaDataNodeTypeProp = null;
+
         //public CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp
         //{
         //    get { return _CswNbtMetaDataNodeTypeProp; }
@@ -49,13 +52,16 @@ namespace ChemSW.Nbt.PropTypes
 
 
         //TODO: witout at least one serializable item, this ENTIRE CLASS will try to serialize resulting in a helpfull "error" message. When we WCFify this class we can remove this prop
-        [DataMember]
-        private string ToDo = string.Empty;
+        [DataMember] private string ToDo = string.Empty;
 
         /// <summary>
         /// WCF Default Contructor
         /// </summary>
-        protected CswNbtNodeProp() { }//All WCF Data Contracts MUST have a default constructor
+        protected CswNbtNodeProp()
+        {
+        }
+
+//All WCF Data Contracts MUST have a default constructor
 
         /// <summary>
         /// Constructor
@@ -67,9 +73,12 @@ namespace ChemSW.Nbt.PropTypes
             _CswNbtResources = CswNbtResources;
             _CswNbtMetaDataNodeTypeProp = MetaDataNodeTypeProp;
 
-        }//generic
+        }
+
+//generic
 
         public delegate void OnPropChangeHandler( CswNbtNodeProp Prop, bool Creating );
+
         public OnPropChangeHandler OnPropChange;
 
         public void SetOnPropChange( OnPropChangeHandler ChangeHandler )
@@ -129,81 +138,130 @@ namespace ChemSW.Nbt.PropTypes
         /// <summary>
         /// Name of property
         /// </summary>
-        public string PropName { get { return ( _CswNbtMetaDataNodeTypeProp.PropName ); } }
+        public string PropName
+        {
+            get { return ( _CswNbtMetaDataNodeTypeProp.PropName ); }
+        }
+
         /// <summary>
         /// Primary Key of property
         /// </summary>
-        public Int32 JctNodePropId { get { return ( _CswNbtNodePropData.JctNodePropId ); } }
+        public Int32 JctNodePropId
+        {
+            get { return ( _CswNbtNodePropData.JctNodePropId ); }
+        }
+
         /// <summary>
         /// Primary Key of property's nodetypeprop
         /// </summary>
-        public Int32 NodeTypePropId { get { return ( _CswNbtMetaDataNodeTypeProp.PropId ); } }
+        public Int32 NodeTypePropId
+        {
+            get { return ( _CswNbtMetaDataNodeTypeProp.PropId ); }
+        }
+
         /// <summary>
         /// MetaData class for NodeTypeProp
         /// </summary>
-        public CswNbtMetaDataNodeTypeProp NodeTypeProp { get { return _CswNbtMetaDataNodeTypeProp; } }
+        public CswNbtMetaDataNodeTypeProp NodeTypeProp
+        {
+            get { return _CswNbtMetaDataNodeTypeProp; }
+        }
+
         /// <summary>
         /// Reference to FieldType Meta Data object for this property
         /// </summary>
-        public CswNbtMetaDataFieldType getFieldType() { return ( _CswNbtMetaDataNodeTypeProp.getFieldType() ); }
+        public CswNbtMetaDataFieldType getFieldType()
+        {
+            return ( _CswNbtMetaDataNodeTypeProp.getFieldType() );
+        }
+
         /// <summary>
         /// Reference to FieldType Meta Data object for this property
         /// </summary>
-        public CswEnumNbtFieldType getFieldTypeValue() { return ( _CswNbtMetaDataNodeTypeProp.getFieldTypeValue() ); }
+        public CswEnumNbtFieldType getFieldTypeValue()
+        {
+            return ( _CswNbtMetaDataNodeTypeProp.getFieldTypeValue() );
+        }
+
         /// <summary>
         /// If the property derives from an Object Class Property, the Object Class Property's Primary Key
         /// </summary>
         public Int32 ObjectClassPropId
         {
-            get
-            {
-                return _CswNbtMetaDataNodeTypeProp.ObjectClassPropId;
-            }
+            get { return _CswNbtMetaDataNodeTypeProp.ObjectClassPropId; }
         }
+
         /// <summary>
         /// If the property derives from an Object Class Property, the Object Class Property's name
         /// </summary>
         public string ObjectClassPropName
         {
-            get
-            {
-                return _CswNbtMetaDataNodeTypeProp.getObjectClassPropName();
-            }
+            get { return _CswNbtMetaDataNodeTypeProp.getObjectClassPropName(); }
         }
+
         //public bool IsPropRow( DataRow DataRow ) { return ( _CswNbtNodePropData.Row == DataRow ); }
         /// <summary>
         /// True if the property must must be unique
         /// </summary>
-        public bool IsUnique() { return _CswNbtMetaDataNodeTypeProp.IsUnique(); } //set { _CswNbtMetaDataNodeTypeProp.IsUnique = value; } }
+        public bool IsUnique()
+        {
+            return _CswNbtMetaDataNodeTypeProp.IsUnique();
+        }
+
+        //set { _CswNbtMetaDataNodeTypeProp.IsUnique = value; } }
         /// <summary>
         /// True if the property must have a value
         /// </summary>
-        public bool Required { get { return _CswNbtMetaDataNodeTypeProp.IsRequired; } } //set { _CswNbtMetaDataNodeTypeProp.IsRequired = value; } }
+        public bool Required
+        {
+            get { return _CswNbtMetaDataNodeTypeProp.IsRequired; }
+        }
+
+        //set { _CswNbtMetaDataNodeTypeProp.IsRequired = value; } }
 
         /// <summary>
         /// True if the property must have a value (Temporarily)
         /// </summary>
-        public bool TemporarilyRequired { get { return _CswNbtNodePropData.TemporarilyRequired; } set { _CswNbtNodePropData.TemporarilyRequired = value; } }
+        public bool TemporarilyRequired
+        {
+            get { return _CswNbtNodePropData.TemporarilyRequired; }
+            set { _CswNbtNodePropData.TemporarilyRequired = value; }
+        }
 
         /// <summary>
         /// The default value of the property
         /// </summary>
-        public CswNbtNodePropWrapper DefaultValue { get { return ( _CswNbtMetaDataNodeTypeProp.DefaultValue ); } }
+        public CswNbtNodePropWrapper DefaultValue
+        {
+            get { return ( _CswNbtMetaDataNodeTypeProp.DefaultValue ); }
+        }
+
         /// <summary>
         /// Whether a default value of the property is defined
         /// </summary>
-        public bool HasDefaultValue() { return ( _CswNbtMetaDataNodeTypeProp.HasDefaultValue() ); }
+        public bool HasDefaultValue()
+        {
+            return ( _CswNbtMetaDataNodeTypeProp.HasDefaultValue() );
+        }
 
         /// <summary>
         /// The Node's Primary Key
         /// </summary>
-        public CswPrimaryKey NodeId { get { return ( _CswNbtNodePropData.NodeId ); } } //set { _CswNbtNodePropData.NodeId = value; } }
+        public CswPrimaryKey NodeId
+        {
+            get { return ( _CswNbtNodePropData.NodeId ); }
+        }
+
+        //set { _CswNbtNodePropData.NodeId = value; } }
 
         /// <summary>
         /// True if the property's value cannot be changed by the end user
         /// <para>NOTE: In the case of CswNbtNodePropButton, use Hidden instead.</para>
         /// </summary>
-        public bool ReadOnly { get { return ( _CswNbtNodePropData.ReadOnly ); } }
+        public bool ReadOnly
+        {
+            get { return ( _CswNbtNodePropData.ReadOnly ); }
+        }
 
         /// <summary>
         /// Set whether the property's value can be changed by the end user
@@ -211,43 +269,84 @@ namespace ChemSW.Nbt.PropTypes
         /// </summary>
         /// <param name="value">New value for ReadOnly</param>
         /// <param name="SaveToDb">If true, save this value to the database permanently.  If false, applies only to this request.</param>
-        public void setReadOnly( bool value, bool SaveToDb ) { _CswNbtNodePropData.setReadOnly( value, SaveToDb ); }
+        public void setReadOnly( bool value, bool SaveToDb )
+        {
+            _CswNbtNodePropData.setReadOnly( value, SaveToDb );
+        }
 
 
         /// <summary>
         ///  Determines whether a property displays.
         /// </summary>
-        public bool Hidden { get { return ( _CswNbtNodePropData.Hidden ); } }
+        public bool Hidden
+        {
+            get { return ( _CswNbtNodePropData.Hidden ); }
+        }
+
         /// <summary>
         /// Set whether the property displays.
         /// </summary>
         /// <param name="value">New value for Hidden</param>
         /// <param name="SaveToDb">If true, save this value to the database permanently.  If false, applies only to this request.</param>
-        public void setHidden( bool value, bool SaveToDb ) { _CswNbtNodePropData.setHidden( value, SaveToDb ); }
+        public void setHidden( bool value, bool SaveToDb )
+        {
+            _CswNbtNodePropData.setHidden( value, SaveToDb );
+        }
+
         /// <summary>
         /// Property Value: Field1
         /// </summary>
-        protected string Field1 { get { return ( _CswNbtNodePropData.Field1 ); } } // set { _CswNbtNodePropData.Field1 = value; } }
+        protected string Field1
+        {
+            get { return ( _CswNbtNodePropData.Field1 ); }
+        }
+
+        // set { _CswNbtNodePropData.Field1 = value; } }
         /// <summary>
         /// Property Value: Field2
         /// </summary>
-        protected string Field2 { get { return ( _CswNbtNodePropData.Field2 ); } } //set { _CswNbtNodePropData.Field2 = value; } }
+        protected string Field2
+        {
+            get { return ( _CswNbtNodePropData.Field2 ); }
+        }
+
+        //set { _CswNbtNodePropData.Field2 = value; } }
         /// <summary>
         /// Property Value: Field3
         /// </summary>
-        protected string Field3 { get { return ( _CswNbtNodePropData.Field3 ); } } //set { _CswNbtNodePropData.Field3 = value; } }
+        protected string Field3
+        {
+            get { return ( _CswNbtNodePropData.Field3 ); }
+        }
+
+        //set { _CswNbtNodePropData.Field3 = value; } }
         /// <summary>
         /// Property Value: Field4
         /// </summary>
-        protected string Field4 { get { return ( _CswNbtNodePropData.Field4 ); } } //set { _CswNbtNodePropData.Field4 = value; } }
+        protected string Field4
+        {
+            get { return ( _CswNbtNodePropData.Field4 ); }
+        }
+
+        //set { _CswNbtNodePropData.Field4 = value; } }
         /// <summary>
         /// Property Value: Field5
         /// </summary>
-        protected string Field5 { get { return ( _CswNbtNodePropData.Field5 ); } } //set { _CswNbtNodePropData.Field5 = value; } }
+        protected string Field5
+        {
+            get { return ( _CswNbtNodePropData.Field5 ); }
+        }
+
+        //set { _CswNbtNodePropData.Field5 = value; } }
         /// <summary>
         /// Property Value: Field5
         /// </summary>
-        protected string ClobData { get { return ( _CswNbtNodePropData.ClobData ); } } //set { _CswNbtNodePropData.ClobData = value; } }
+        protected string ClobData
+        {
+            get { return ( _CswNbtNodePropData.ClobData ); }
+        }
+
+        //set { _CswNbtNodePropData.ClobData = value; } }
         /// <summary>
         /// If true, the property value needs to be updated by the Scheduler
         /// </summary>
@@ -267,7 +366,7 @@ namespace ChemSW.Nbt.PropTypes
         /// </summary>
         /// <param name="IsCopy">True if the update is part of a Copy operation</param>
         /// <param name="OverrideUniqueValidation"></param>
-        virtual public void onBeforeUpdateNodePropRow( CswNbtNode Node, bool IsCopy, bool OverrideUniqueValidation, bool Creating )
+        public virtual void onBeforeUpdateNodePropRow( CswNbtNode Node, bool IsCopy, bool OverrideUniqueValidation, bool Creating )
         {
             if( false == Node.Properties[this.NodeTypeProp].Empty ) //case 26546 - we allow unique properties to be empty
             {
@@ -278,7 +377,7 @@ namespace ChemSW.Nbt.PropTypes
                     CswNbtView.ViewName = "Other Nodes, for Property Uniqueness";
 
                     CswNbtViewRelationship ViewRel = null;
-                    if( NodeTypeProp.IsGlobalUnique() )  // BZ 9754
+                    if( NodeTypeProp.IsGlobalUnique() ) // BZ 9754
                         ViewRel = CswNbtView.AddViewRelationship( _CswNbtResources.MetaData.getObjectClassByNodeTypeId( NodeTypeProp.NodeTypeId ), false );
                     else
                         ViewRel = CswNbtView.AddViewRelationship( NodeTypeProp.getNodeType(), false );
@@ -317,7 +416,7 @@ namespace ChemSW.Nbt.PropTypes
                         }
                     }
 
-                }//if IsUnique
+                } //if IsUnique
             } //if empty
 
             // case 25780 - copy first 512 characters of gestalt to gestaltsearch
@@ -363,15 +462,46 @@ namespace ChemSW.Nbt.PropTypes
         /// <summary>
         /// Event which fires when the property value is retrieved from the database
         /// </summary>
-        virtual public void onNodePropRowFilled() { }
+        public virtual void onNodePropRowFilled()
+        {
+        }
 
         /// <summary>
         /// Handles when the property value is copied to another node
         /// </summary>
-        virtual public void Copy( CswNbtNodePropData Source )
+        public virtual void Copy( CswNbtNodePropData Source )
         {
             // Default, just copy the data values
-            _CswNbtNodePropData.copy( Source );
+
+            CswEnumNbtFieldType FieldType = Source.getFieldTypeValue();
+            ICswNbtFieldTypeRule FieldTypeRule = _CswNbtResources.MetaData.getFieldTypeRule( FieldType );
+
+            foreach( CswNbtSubField SubField in FieldTypeRule.SubFields )
+            {
+                if( SubField.Column == CswEnumNbtPropColumn.Field1_FK )
+                {
+                    //Implementing FieldType specific behavior here. Blame Steve.
+                    if( FieldType == CswEnumNbtFieldType.ViewReference )
+                    {
+                        CswNbtView View = _CswNbtResources.ViewSelect.restoreView( Source.NodeTypeProp.DefaultValue.AsViewReference.ViewId );
+                        CswNbtView ViewCopy = new CswNbtView( _CswNbtResources );
+                        ViewCopy.saveNew( View.ViewName, View.Visibility, View.VisibilityRoleId, View.VisibilityUserId, View );
+                        SetSubFieldValue( CswEnumNbtSubFieldName.ViewID, ViewCopy.ViewId.get() );
+                    }
+                    else
+                    {
+                        SetSubFieldValue( SubField.Name, Source.Field1_Fk );
+                    }
+                } // if( SubField.Column == CswEnumNbtPropColumn.Field1_FK )
+                else
+                {
+                    SetSubFieldValue( SubField.Name, Source.GetPropRowValue( SubField ) );
+                }
+            } // foreach( CswNbtSubField SubField in NodeTypeProp.getFieldTypeRule().SubFields )
+
+            // Also copy Gestalt, which usually isn't listed as a subfield
+            SetSubFieldValue(  CswEnumNbtSubFieldName.Gestalt, Source.Gestalt );
+            SetSubFieldValue( CswEnumNbtSubFieldName.GestaltSearch, Source.GestaltSearch );
         }
 
         /// <summary>
@@ -422,7 +552,7 @@ namespace ChemSW.Nbt.PropTypes
             }
         } // SetSubFieldValue
 
-        
+
         /// <summary>
         /// Get the value for a subfield
         /// </summary>
@@ -436,7 +566,7 @@ namespace ChemSW.Nbt.PropTypes
                     // This calls the appropriate set; method in the CswNbtNodeProp* class
                     if( null != _SubFieldMethods[SubFieldKey].Item1 )
                     {
-                        ret =_SubFieldMethods[SubFieldKey].Item1();
+                        ret = _SubFieldMethods[SubFieldKey].Item1();
                     }
                 }
             }
@@ -457,6 +587,20 @@ namespace ChemSW.Nbt.PropTypes
         {
             return _CswNbtNodePropData.OtherPropGestalt( NodeTypePropId );
         }
+
+        /// <summary>
+        /// Executed before the default values are set for a property
+        /// </summary>
+        /// <returns>Whether or not the data should be copied from the default value row</returns>
+        public virtual bool onBeforeSetDefault()
+        {
+            return true;
+        }
+
+        /// <summary>
+        /// Executed after the default values are set for a property
+        /// </summary>
+        public virtual void onAfterSetDefault() { }
 
         #region Xml Operations
 

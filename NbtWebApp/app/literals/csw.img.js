@@ -78,7 +78,7 @@
         return cswPublic;
     }
     Csw.literals.register('img', img);
-    Csw.literals.img = Csw.literals.img || img;
+    
 
 } ());
 

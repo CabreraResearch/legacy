@@ -34,14 +34,14 @@ namespace ChemSW.Nbt.MetaData
             _CollImpl.clearCache();
         }
 
-        public CswNbtMetaDataNodeTypeProp makeNodeTypeProp( CswNbtMetaDataResources Resources, DataRow Row )
+        public CswNbtMetaDataNodeTypeProp makeNodeTypeProp( CswNbtMetaDataResources Resources, DataRow Row, CswDateTime Date = null )
         {
-            return new CswNbtMetaDataNodeTypeProp( Resources, Row );
+            return new CswNbtMetaDataNodeTypeProp( Resources, Row, Date );
         }
 
-        public CswNbtMetaDataNodeTypeProp getNodeTypeProp( Int32 NodeTypePropId )
+        public CswNbtMetaDataNodeTypeProp getNodeTypeProp( Int32 NodeTypePropId, CswDateTime Date = null )
         {
-            return (CswNbtMetaDataNodeTypeProp) _CollImpl.getByPk( NodeTypePropId );
+            return (CswNbtMetaDataNodeTypeProp) _CollImpl.getByPk( NodeTypePropId, Date );
         }
 
         public CswNbtMetaDataNodeTypeProp getNodeTypePropVersion( Int32 NodeTypeId, Int32 NodeTypePropId )
@@ -49,13 +49,13 @@ namespace ChemSW.Nbt.MetaData
             return (CswNbtMetaDataNodeTypeProp) _CollImpl.getWhereFirst( "where nodetypeid = " + NodeTypeId.ToString() + " and firstpropversionid = (select firstpropversionid from nodetype_props where nodetypepropid = " + NodeTypePropId.ToString() + ")" );
         }
 
-        public Collection<Int32> getNodeTypePropIds()
+        public Collection<Int32> getNodeTypePropIds( CswDateTime Date = null )
         {
-            return _CollImpl.getPks();
+            return _CollImpl.getPks( Date );
         }
-        public Collection<Int32> getNodeTypePropIds( Int32 NodeTypeId )
+        public Collection<Int32> getNodeTypePropIds( Int32 NodeTypeId, CswDateTime Date = null )
         {
-            return _CollImpl.getPks( "where nodetypeid = " + NodeTypeId.ToString() );
+            return _CollImpl.getPks( "where nodetypeid = " + NodeTypeId.ToString(), Date );
         }
         public Collection<Int32> getNodeTypePropIdsByTab( Int32 TabId )
         {
@@ -66,18 +66,18 @@ namespace ChemSW.Nbt.MetaData
         {
             return _CollImpl.getWhere( "where objectclasspropid = " + ObjectClassPropId.ToString() ).Cast<CswNbtMetaDataNodeTypeProp>();
         }
-        public IEnumerable<CswNbtMetaDataNodeTypeProp> getNodeTypeProps( Int32 NodeTypeId )
+        public IEnumerable<CswNbtMetaDataNodeTypeProp> getNodeTypeProps( Int32 NodeTypeId, CswDateTime Date = null )
         {
-            return _CollImpl.getWhere( "where nodetypeid = " + NodeTypeId.ToString() ).Cast<CswNbtMetaDataNodeTypeProp>();
+            return _CollImpl.getWhere( "where nodetypeid = " + NodeTypeId.ToString(), Date ).Cast<CswNbtMetaDataNodeTypeProp>();
         }
-        public IEnumerable<CswNbtMetaDataNodeTypeProp> getNodeTypeProps( CswEnumNbtFieldType FieldType )
+        public IEnumerable<CswNbtMetaDataNodeTypeProp> getNodeTypeProps( CswEnumNbtFieldType FieldType, CswDateTime Date = null )
         {
-            return _CollImpl.getWhere( "where fieldtypeid in (select fieldtypeid from field_types where fieldtype = '" + FieldType.ToString() + "')" ).Cast<CswNbtMetaDataNodeTypeProp>();
+            return _CollImpl.getWhere( "where fieldtypeid in (select fieldtypeid from field_types where fieldtype = '" + FieldType.ToString() + "')", Date ).Cast<CswNbtMetaDataNodeTypeProp>();
         }
-        public IEnumerable<CswNbtMetaDataNodeTypeProp> getNodeTypeProps( Int32 NodeTypeId, CswEnumNbtFieldType FieldType )
+        public IEnumerable<CswNbtMetaDataNodeTypeProp> getNodeTypeProps( Int32 NodeTypeId, CswEnumNbtFieldType FieldType, CswDateTime Date = null )
         {
             return _CollImpl.getWhere( "where nodetypeid = " + NodeTypeId.ToString() +
-                                        " and fieldtypeid in (select fieldtypeid from field_types where fieldtype = '" + FieldType.ToString() + "')" ).Cast<CswNbtMetaDataNodeTypeProp>();
+                                        " and fieldtypeid in (select fieldtypeid from field_types where fieldtype = '" + FieldType.ToString() + "')", Date ).Cast<CswNbtMetaDataNodeTypeProp>();
         }
         public IEnumerable<CswNbtMetaDataNodeTypeProp> getNodeTypePropsByTab( Int32 TabId )
         {
@@ -88,32 +88,32 @@ namespace ChemSW.Nbt.MetaData
         {
             return _CswNbtMetaDataResources.CswNbtMetaData.NodeTypeLayout.getPropsInLayout( NodeTypeId, TabId, CswEnumNbtLayoutType.Edit );
         }
-        
-        public CswNbtMetaDataNodeTypeProp getNodeTypeProp( Int32 NodeTypeId, Int32 NodeTypePropId )
+
+        public CswNbtMetaDataNodeTypeProp getNodeTypeProp( Int32 NodeTypeId, Int32 NodeTypePropId, CswDateTime Date = null )
         {
-            return (CswNbtMetaDataNodeTypeProp) _CollImpl.getByPk( NodeTypePropId );
+            return (CswNbtMetaDataNodeTypeProp) _CollImpl.getByPk( NodeTypePropId, Date );
         }
-        
-        public CswNbtMetaDataNodeTypeProp getNodeTypeProp( Int32 NodeTypeId, string NodeTypePropName )
+
+        public CswNbtMetaDataNodeTypeProp getNodeTypeProp( Int32 NodeTypeId, string NodeTypePropName, CswDateTime Date = null )
         {
-            return (CswNbtMetaDataNodeTypeProp) _CollImpl.getWhereFirst( "where nodetypeid = " + NodeTypeId.ToString() + " and lower(propname) = '" + CswTools.SafeSqlParam( NodeTypePropName.ToLower() ) + "'" );
+            return (CswNbtMetaDataNodeTypeProp) _CollImpl.getWhereFirst( "where nodetypeid = " + NodeTypeId.ToString() + " and lower(propname) = '" + CswTools.SafeSqlParam( NodeTypePropName.ToLower() ) + "'", Date );
         }
-        
+
         public CswNbtMetaDataNodeTypeProp getNodeTypePropByObjectClassProp( Int32 NodeTypeId, Int32 ObjectClassPropId )
         {
             return (CswNbtMetaDataNodeTypeProp) _CollImpl.getWhereFirst( "where nodetypeid = " + NodeTypeId.ToString() + " and objectclasspropid = " + ObjectClassPropId.ToString() );
         }
-        
+
         public CswNbtMetaDataNodeTypeProp getNodeTypePropByObjectClassProp( Int32 NodeTypeId, string ObjectClassPropName )
         {
             return (CswNbtMetaDataNodeTypeProp) _CollImpl.getWhereFirst( "where nodetypeid = " + NodeTypeId.ToString() + " and objectclasspropid in (select objectclasspropid from object_class_props where lower(propname) = '" + CswTools.SafeSqlParam( ObjectClassPropName.ToLower() ) + "')" );
         }
-        
+
         public Int32 getNodeTypePropId( Int32 NodeTypeId, string PropName )
         {
             return _CollImpl.getPksFirst( "where nodetypeid = " + NodeTypeId.ToString() + " and lower(propname) = '" + CswTools.SafeSqlParam( PropName.ToLower() ) + "'" );
         }
-        
+
         public Int32 getNodeTypePropIdByObjectClassProp( Int32 NodeTypeId, string ObjectClassPropName )
         {
             return _CollImpl.getPksFirst( "where nodetypeid = " + NodeTypeId.ToString() + " and objectclasspropid in (select objectclasspropid from object_class_props where lower(propname) = '" + CswTools.SafeSqlParam( ObjectClassPropName.ToLower() ) + "')" );
@@ -140,7 +140,7 @@ namespace ChemSW.Nbt.MetaData
                                                                                                     where firstpropversionid = " + NodeTypeProp.FirstPropVersionId.ToString() + ")" );
         }
 
-        public IEnumerable<CswNbtMetaDataNodeTypeProp> getLayoutProps( Int32 NodeTypeId, Int32 TabId, CswEnumNbtLayoutType LayoutType, bool PropsInLayout = true )
+        public IEnumerable<CswNbtMetaDataNodeTypeProp> getLayoutProps( Int32 NodeTypeId, Int32 TabId, CswEnumNbtLayoutType LayoutType, CswDateTime Date, bool PropsInLayout = true )
         {
             string NodeTypeIdStr = NodeTypeId.ToString();
             string WhereClause = "where nodetypeid = '" + NodeTypeIdStr + "' ";
@@ -153,17 +153,24 @@ namespace ChemSW.Nbt.MetaData
             {
                 WhereClause += " not in ";
             }
-            WhereClause += @" (select nodetypepropid 
-                                 from nodetype_layout
-                                where layouttype = '" + LayoutType.ToString() + @"' 
-                                  and nodetypeid = " + NodeTypeIdStr + @" ";
+            WhereClause += " (select nodetypepropid ";
+            if( null == Date || Date.ToDateTime() == DateTime.MinValue )
+            {
+                WhereClause += " from nodetype_layout ";
+            }
+            else
+            {
+                WhereClause += " from " + CswNbtAuditTableAbbreviation.getAuditTableSql( _CswNbtMetaDataResources.CswNbtResources, "nodetype_layout", Date );
+            }
+            WhereClause += " where layouttype = '" + LayoutType.ToString() + "'" +
+                           "   and nodetypeid = " + NodeTypeIdStr + @" ";
             if( LayoutType == CswEnumNbtLayoutType.Edit && TabId != Int32.MinValue )
             {
                 WhereClause += "and nodetypetabsetid = " + TabId.ToString();
             }
             WhereClause += ")";
 
-            return _CollImpl.getWhere( WhereClause ).Cast<CswNbtMetaDataNodeTypeProp>();
+            return _CollImpl.getWhere( WhereClause, Date ).Cast<CswNbtMetaDataNodeTypeProp>();
 
         } // getPropsInLayout()
 
@@ -173,6 +180,6 @@ namespace ChemSW.Nbt.MetaData
             return " nodetype_props.nodetypeid in (select nodetypeid from nodetypes where enabled = '1') ";
         }
 
-        
+
     } // class CswNbtMetaDataCollectionNodeTypeProp
 } // namespace ChemSW.Nbt.MetaData

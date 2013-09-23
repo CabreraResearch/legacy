@@ -294,7 +294,7 @@ namespace ChemSW.Nbt.PropTypes
         /// </summary>
         public void copy( CswNbtNodePropData Source )
         {
-            _CswNbtNodePropData.copy( Source );
+            _CswNbtNodeProp.Copy( Source );
         }
 
         private string _makeTypeErrorMessage( Type CurrentType )
@@ -307,56 +307,12 @@ namespace ChemSW.Nbt.PropTypes
         /// </summary>
         public void SetDefaultValue()
         {
-            bool DoCopy = false;
-            switch( this.getFieldTypeValue() )
-            {
-                case CswEnumNbtFieldType.DateTime:
-                    CswNbtNodePropDateTime PropAsDate = this.AsDateTime;
-                    if( PropAsDate.DefaultToToday )
-                    {
-                        PropAsDate.DateTimeValue = DateTime.Now;
-                    }
-                    break;
-                case CswEnumNbtFieldType.MTBF:
-                    CswNbtNodePropMTBF PropAsMTBF = this.AsMTBF;
-                    if( PropAsMTBF.DefaultToToday )
-                    {
-                        PropAsMTBF.StartDateTime = DateTime.Now;
-                    }
-                    break;
-                case CswEnumNbtFieldType.Location:
-                    // This will default to Top.  Setting the Parent might change this later.
-                    this.AsLocation.SelectedNodeId = null;
-
-                    // case 24438 - Use user's default location
-                    if( _CswNbtResources.CurrentNbtUser != null &&
-                        _CswNbtResources.CurrentNbtUser.DefaultLocationId != null )
-                    {
-                        this.AsLocation.SelectedNodeId = _CswNbtResources.CurrentNbtUser.DefaultLocationId;
-                    }
-
-                    DoCopy = true;
-                    break;
-                case CswEnumNbtFieldType.Barcode:
-                    if( this.DefaultValue.AsBarcode.Barcode != CswNbtNodePropBarcode.AutoSignal )
-                    {
-                        DoCopy = true;
-                    }
-                    break;
-                case CswEnumNbtFieldType.Sequence:
-                    if( this.DefaultValue.AsSequence.Sequence != CswNbtNodePropBarcode.AutoSignal )
-                    {
-                        DoCopy = true;
-                    }
-                    break;
-                default:
-                    DoCopy = true;
-                    break;
-            } // switch( Prop.FieldType.FieldType )
+            bool DoCopy = _CswNbtNodeProp.onBeforeSetDefault();
 
             if( DoCopy && this.HasDefaultValue() )
             {
                 this.copy( this.DefaultValue );
+                _CswNbtNodeProp.onAfterSetDefault();
             }
 
         } // SetDefaultValue()
@@ -462,6 +418,16 @@ namespace ChemSW.Nbt.PropTypes
             }
         }//DateTime
 
+        public CswNbtNodePropFormula AsFormula
+        {
+            get
+            {
+                if( false == ( _CswNbtNodeProp is CswNbtNodePropFormula ) )
+                    throw ( new CswDniException( _makeTypeErrorMessage( typeof( CswNbtNodePropFormula ) ) ) );
+                return ( (CswNbtNodePropFormula) _CswNbtNodeProp );
+            }
+        }//Formula
+
         public CswNbtNodePropGrid AsGrid
         {
             get
@@ -521,16 +487,6 @@ namespace ChemSW.Nbt.PropTypes
                 return ( (CswNbtNodePropLocation) _CswNbtNodeProp );
             }
         }//Location
-
-        public CswNbtNodePropLocationContents AsLocationContents
-        {
-            get
-            {
-                if( !( _CswNbtNodeProp is CswNbtNodePropLocationContents ) )
-                    throw ( new CswDniException( _makeTypeErrorMessage( typeof( CswNbtNodePropLocationContents ) ) ) );
-                return ( (CswNbtNodePropLocationContents) _CswNbtNodeProp );
-            }
-        }//LocationContents
 
         public CswNbtNodePropLogical AsLogical
         {

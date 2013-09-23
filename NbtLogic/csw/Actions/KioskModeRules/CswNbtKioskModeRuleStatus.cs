@@ -44,7 +44,7 @@ namespace ChemSW.Nbt.Actions.KioskMode
 
         public override void CommitOperation( ref OperationData OpData )
         {
-            CswNbtNode item = _getNodeByBarcode( OpData.Field2.FoundObjClass, OpData.Field2.Value, false );
+            CswNbtNode item = _CswNbtResources.Nodes[OpData.Field2.NodeId];
             string statusPropName = "Status";
             switch( OpData.Field2.FoundObjClass )
             {
@@ -177,12 +177,14 @@ namespace ChemSW.Nbt.Actions.KioskMode
                         if( ObjClass == CswEnumNbtObjectClass.EquipmentAssemblyClass )
                         {
                             OpData.Field2.FoundObjClass = CswEnumNbtObjectClass.EquipmentAssemblyClass;
+                            OpData.Field2.NodeIdStr = tree.getNodeIdForCurrentPosition().ToString();
                             ret = true;
                         }
 
                         if( ObjClass == CswEnumNbtObjectClass.EquipmentClass )
                         {
                             OpData.Field2.FoundObjClass = CswEnumNbtObjectClass.EquipmentClass;
+                            OpData.Field2.NodeIdStr = tree.getNodeIdForCurrentPosition().ToString();
                             ret = true;
                         }
                     }

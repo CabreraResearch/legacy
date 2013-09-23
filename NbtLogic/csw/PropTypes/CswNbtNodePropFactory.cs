@@ -22,14 +22,14 @@ namespace ChemSW.Nbt.PropTypes
         //    return _makeNodeProp( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node, Tab, EditMode );
         //}
 
-        public static CswNbtNodePropWrapper makeNodeProp( CswNbtResources CswNbtResources, DataRow PropRow, DataTable PropsTable, CswNbtNode Node, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp )
+        public static CswNbtNodePropWrapper makeNodeProp( CswNbtResources CswNbtResources, DataRow PropRow, DataTable PropsTable, CswNbtNode Node, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswDateTime Date )
         {
             CswPrimaryKey NodeId = null;
             if( null != Node )
             {
                 NodeId = Node.NodeId;
             }
-            CswNbtNodePropData CswNbtNodePropData = new CswNbtNodePropData( CswNbtResources, PropRow, PropsTable, NodeId, CswNbtMetaDataNodeTypeProp.PropId );
+            CswNbtNodePropData CswNbtNodePropData = new CswNbtNodePropData( CswNbtResources, PropRow, PropsTable, NodeId, CswNbtMetaDataNodeTypeProp.PropId, Date );
             return _makeNodeProp( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node );
         }
 
@@ -65,6 +65,9 @@ namespace ChemSW.Nbt.PropTypes
                 case CswEnumNbtFieldType.File:
                     InnerProperty = new CswNbtNodePropBlob( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node );
                     break;
+                case CswEnumNbtFieldType.Formula:
+                    InnerProperty = new CswNbtNodePropFormula( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node );
+                    break;
                 case CswEnumNbtFieldType.Grid:
                     InnerProperty = new CswNbtNodePropGrid( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node );
                     break;
@@ -82,9 +85,6 @@ namespace ChemSW.Nbt.PropTypes
                     break;
                 case CswEnumNbtFieldType.Location:
                     InnerProperty = new CswNbtNodePropLocation( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node );
-                    break;
-                case CswEnumNbtFieldType.LocationContents:
-                    InnerProperty = new CswNbtNodePropLocationContents( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node );
                     break;
                 case CswEnumNbtFieldType.Logical:
                     InnerProperty = new CswNbtNodePropLogical( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node );

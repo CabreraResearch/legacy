@@ -7,13 +7,15 @@ namespace ChemSW.Nbt.MetaData
     public class CswNbtMetaDataFieldType : ICswNbtMetaDataObject, IEquatable<CswNbtMetaDataFieldType>, IComparable
     {
         private CswNbtMetaDataResources _CswNbtMetaDataResources;
+        private CswDateTime _Date = null;
 
         private DataRow _FieldTypeRow;
         //public ICswNbtFieldTypeRule FieldTypeRule = null;
 
-        public CswNbtMetaDataFieldType( CswNbtMetaDataResources CswNbtMetaDataResources, DataRow Row )
+        public CswNbtMetaDataFieldType( CswNbtMetaDataResources CswNbtMetaDataResources, DataRow Row, CswDateTime Date = null )
         {
             _CswNbtMetaDataResources = CswNbtMetaDataResources;
+            _Date = Date;
 
             Reassign( Row );
 
@@ -93,7 +95,6 @@ namespace ChemSW.Nbt.MetaData
             return ( FieldType == CswEnumNbtFieldType.Composite ||
                      FieldType == CswEnumNbtFieldType.External ||
                      FieldType == CswEnumNbtFieldType.Grid ||
-                     FieldType == CswEnumNbtFieldType.LocationContents ||
                      FieldType == CswEnumNbtFieldType.PropertyReference ||
                      FieldType == CswEnumNbtFieldType.Static );
         }
@@ -126,7 +127,6 @@ namespace ChemSW.Nbt.MetaData
         public bool ShowLabel()
         {
             return ( FieldType != CswEnumNbtFieldType.Grid &&
-                     FieldType != CswEnumNbtFieldType.LocationContents &&
                      FieldType != CswEnumNbtFieldType.Static );
         }
 

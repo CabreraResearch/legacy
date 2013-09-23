@@ -209,14 +209,28 @@ namespace BalanceReaderClient
                             {
                                 if( false == _balanceConnection.IsOpen )
                                 {
-                                    _isEnabled = true;
+                                    if( string.IsNullOrEmpty( _balanceData.NbtName ) )
+                                    {
 
-                                    InterfaceRow.Cells["NBTName"].ReadOnly = true;
-                                    InterfaceRow.Cells["NBTName"].Style.BackColor = Color.LightGray;
-                                    InterfaceRow.Cells["Configuration"].ReadOnly = true;
-                                    InterfaceRow.Cells["Configuration"].Style.BackColor = Color.LightGray;
+                                        InterfaceRow.Cells["Enabled"].Value = false;
+                                        InterfaceRow.Cells["NBTName"].Selected = true;
+                                    }
+                                    else if( string.IsNullOrEmpty( _balanceData.Configuration ) )
+                                    {
+                                        InterfaceRow.Cells["Enabled"].Value = false;
+                                        InterfaceRow.Cells["Configuration"].Selected = true;
+                                    }
+                                    else
+                                    {
+                                        _isEnabled = true;
 
-                                    _balanceConnection.Open();
+                                        InterfaceRow.Cells["NBTName"].ReadOnly = true;
+                                        InterfaceRow.Cells["NBTName"].Style.BackColor = Color.LightGray;
+                                        InterfaceRow.Cells["Configuration"].ReadOnly = true;
+                                        InterfaceRow.Cells["Configuration"].Style.BackColor = Color.LightGray;
+
+                                        _balanceConnection.Open();
+                                    }
                                 }
                                 announceBalance();
                             };

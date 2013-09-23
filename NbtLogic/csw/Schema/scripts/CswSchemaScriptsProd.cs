@@ -28,7 +28,6 @@ namespace ChemSW.Nbt.Schema
                     // Add new milestone script collections here
                 };
 
-
             // DDL
             foreach( ICswSchemaScripts ScriptColl in AllScripts )
             {
@@ -57,7 +56,6 @@ namespace ChemSW.Nbt.Schema
                     _addVersionedScript( Script );
                 }
             }
-            _addVersionedScript( new CswUpdateSchema_02G_Case30561() );
 
             #endregion Populate Scripts
 
@@ -70,13 +68,16 @@ namespace ChemSW.Nbt.Schema
             #region Before Scripts
             // Before scripts that always run.
             _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02SQL() );
-            _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_03() );
+            
+            // case 29565 - no longer necessary
+            //_addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_03() );
 
             #endregion Before Scripts
 
             #region After Script
             // After scripts that always run.
             _addRunAfterScript( new RunAfterEveryExecutionOfUpdater_01() );
+            _addRunAfterScript( new RunAfterEveryExecutionOfUpdater_02AuditSql() );
             #endregion After Script
 
         }//ctor

@@ -46,13 +46,11 @@
                             });
                         }
                     });
-                }                 
+                }
             },
             error: o.onError
         });
     };
     Csw.register('deleteNodes', deleteNodes);
-    Csw.deleteNodes = Csw.deleteNodes || deleteNodes;
 
-
-} ());
+}());

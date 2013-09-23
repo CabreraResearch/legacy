@@ -1,7 +1,5 @@
 ﻿(function () {
-
-    Csw.register('workers', Csw.makeNameSpace());
-
+    
     /**
      * Instance a web worker in an independent thread to make an AJAX POST request
      * Returns an object with a promise to fulfill the request

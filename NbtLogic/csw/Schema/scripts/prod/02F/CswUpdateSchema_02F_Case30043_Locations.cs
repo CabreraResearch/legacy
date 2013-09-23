@@ -1,5 +1,8 @@
-﻿using ChemSW.Nbt.csw.Dev;
+﻿using System;
+using System.Collections.Generic;
+using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.csw.Schema;
+using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.Schema
@@ -27,120 +30,92 @@ namespace ChemSW.Nbt.Schema
         public override void update()
         {
             // Case 30043 - CAF Migration: Sites/Locations/Work Units
+            const string SiteNTName = "Site";
+            const string BuildingNTName = "Building";
+            const string RoomNTName = "Room";
+            const string CabinetNTName = "Cabinet";
+            const string ShelfNTName = "Shelf";
+            const string BoxNTName = "Box";
+            const string LocationSheetName = "locations";
 
-            {
-                //select l.*, l1.locationlevel1name, l1.locationlevel1id, s.siteid
-                //from locations l
-                //join locations_level1 l1 on (l1.locationlevel1id = l.locationlevel1id)
-                //join sites s on (s.siteid = l1.siteid)
+            // Import order is based on these
+            List<Tuple<string, Int32>> DestNodeTypesAndInstances = new List<Tuple<string, int>>();
+            DestNodeTypesAndInstances.Add( new Tuple<string, int>( SiteNTName, 1 ) );
+            DestNodeTypesAndInstances.Add( new Tuple<string, int>( BuildingNTName, 2 ) );
+            DestNodeTypesAndInstances.Add( new Tuple<string, int>( RoomNTName, 3 ) );
+            DestNodeTypesAndInstances.Add( new Tuple<string, int>( CabinetNTName, 4 ) );
+            DestNodeTypesAndInstances.Add( new Tuple<string, int>( ShelfNTName, 5 ) );
+            DestNodeTypesAndInstances.Add( new Tuple<string, int>( BoxNTName, 6 ) );
 
-                CswNbtSchemaUpdateImportMgr BuildingImpMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "locations_level1", "Building", "locationslevel1_view" );
+            CswNbtSchemaUpdateImportMgr LocationsMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, LocationSheetName, DestNodeTypesAndInstances, "locations_view" );
 
-                BuildingImpMgr.importBinding( "locationlevel1name", CswNbtObjClassLocation.PropertyName.Name, "" );
-                BuildingImpMgr.importBinding( "locationcode", CswNbtObjClassLocation.PropertyName.LocationCode, "" );
+            // Bindings
 
-                // Relationships
-                BuildingImpMgr.importBinding( "siteid", CswNbtObjClassLocation.PropertyName.Location, "" );
-                BuildingImpMgr.importBinding( "controlzoneid", CswNbtObjClassLocation.PropertyName.ControlZone, "" );
-                BuildingImpMgr.importBinding( "inventorygroupid", CswNbtObjClassLocation.PropertyName.InventoryGroup, "" );
+            #region Site
+            LocationsMgr.importBinding( "sitename", CswNbtObjClassLocation.PropertyName.Name, "", LocationSheetName, SiteNTName, 1 );
+            LocationsMgr.importBinding( "sitecode", CswNbtObjClassLocation.PropertyName.LocationCode, "", LocationSheetName, SiteNTName, 1 );
+            LocationsMgr.importBinding( "siteid", "Legacy ID", "", LocationSheetName, SiteNTName, 1 );
+            LocationsMgr.importBinding( "controlzoneid", CswNbtObjClassLocation.PropertyName.ControlZone, CswEnumNbtSubFieldName.NodeID.ToString(), LocationSheetName, SiteNTName, 1 );
+            LocationsMgr.importBinding( "allowinventory", CswNbtObjClassLocation.PropertyName.AllowInventory, "", LocationSheetName, SiteNTName, 1 );
+            #endregion
 
-                // Column names
-                //deleted
-                //inventorygroupid
-                //istransferlocaiton
-                //locationid
-                //locationlevel1id
-                //locationlevel2id
-                //locationlevel3id
-                //locationlevel4id
-                //locationlevel5id
-                //reqdeliverylocation
-                //selfserveocde
-                //ishomelocation
-                //controlzoneid
-                //descript
-                //pathname
-                //locationisinactive
-                //sglncode
-                //rfid
-                //locationcode
-                //locationlevel1name
-                //siteid   
+            #region Building
+            LocationsMgr.importBinding( "locationlevel1name", CswNbtObjClassLocation.PropertyName.Name, "", LocationSheetName, BuildingNTName, 2 );
+            LocationsMgr.importBinding( "locationcode", CswNbtObjClassLocation.PropertyName.LocationCode, "", LocationSheetName, BuildingNTName, 2 );
+            LocationsMgr.importBinding( "buildingid", "Legacy ID", "", LocationSheetName, BuildingNTName, 2 );
+            LocationsMgr.importBinding( "inventorygroupid", CswNbtObjClassLocation.PropertyName.InventoryGroup, CswEnumNbtSubFieldName.NodeID.ToString(), LocationSheetName, BuildingNTName, 2 );
+            LocationsMgr.importBinding( "controlzoneid", CswNbtObjClassLocation.PropertyName.ControlZone, CswEnumNbtSubFieldName.NodeID.ToString(), LocationSheetName, BuildingNTName, 2 );
+            LocationsMgr.importBinding( "allowinventory", CswNbtObjClassLocation.PropertyName.AllowInventory, "", LocationSheetName, BuildingNTName, 2 );
+            #endregion
 
-                BuildingImpMgr.finalize();
-            }
+            #region Room
+            LocationsMgr.importBinding( "locationlevel2name", CswNbtObjClassLocation.PropertyName.Name, "", LocationSheetName, RoomNTName, 3 );
+            LocationsMgr.importBinding( "locationcode", CswNbtObjClassLocation.PropertyName.LocationCode, "", LocationSheetName, RoomNTName, 3 );
+            LocationsMgr.importBinding( "roomid", "Legacy ID", "", LocationSheetName, RoomNTName, 3 );
+            LocationsMgr.importBinding( "inventorygroupid", CswNbtObjClassLocation.PropertyName.InventoryGroup, CswEnumNbtSubFieldName.NodeID.ToString(), LocationSheetName, RoomNTName, 3 );
+            LocationsMgr.importBinding( "controlzoneid", CswNbtObjClassLocation.PropertyName.ControlZone, CswEnumNbtSubFieldName.NodeID.ToString(), LocationSheetName, RoomNTName, 3 );
+            LocationsMgr.importBinding( "allowinventory", CswNbtObjClassLocation.PropertyName.AllowInventory, "", LocationSheetName, RoomNTName, 3 );
+            #endregion
 
-            {
-                //select l.*, l2.locationlevel2name
-                //from locations l
-                //join locations_level2 l2 on (l2.locationlevel2id = l.locationlevel2id)
+            #region Cabinet
+            LocationsMgr.importBinding( "locationlevel3name", CswNbtObjClassLocation.PropertyName.Name, "", LocationSheetName, CabinetNTName, 4 );
+            LocationsMgr.importBinding( "locationcode", CswNbtObjClassLocation.PropertyName.LocationCode, "", LocationSheetName, CabinetNTName, 4 );
+            LocationsMgr.importBinding( "cabinetid", "Legacy ID", "", LocationSheetName, CabinetNTName, 4 );
+            LocationsMgr.importBinding( "inventorygroupid", CswNbtObjClassLocation.PropertyName.InventoryGroup, CswEnumNbtSubFieldName.NodeID.ToString(), LocationSheetName, CabinetNTName, 4 );
+            LocationsMgr.importBinding( "controlzoneid", CswNbtObjClassLocation.PropertyName.ControlZone, CswEnumNbtSubFieldName.NodeID.ToString(), LocationSheetName, CabinetNTName, 4 );
+            LocationsMgr.importBinding( "allowinventory", CswNbtObjClassLocation.PropertyName.AllowInventory, "", LocationSheetName, CabinetNTName, 4 );
+            #endregion
 
-                CswNbtSchemaUpdateImportMgr RoomImpMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "locations_level2", "Room", "locationslevel2_view" );
+            #region Shelf
+            LocationsMgr.importBinding( "locationlevel4name", CswNbtObjClassLocation.PropertyName.Name, "", LocationSheetName, ShelfNTName, 5 );
+            LocationsMgr.importBinding( "locationcode", CswNbtObjClassLocation.PropertyName.LocationCode, "", LocationSheetName, ShelfNTName, 5 );
+            LocationsMgr.importBinding( "shelfid", "Legacy ID", "", LocationSheetName, ShelfNTName, 5 );
+            LocationsMgr.importBinding( "inventorygroupid", CswNbtObjClassLocation.PropertyName.InventoryGroup, CswEnumNbtSubFieldName.NodeID.ToString(), LocationSheetName, ShelfNTName, 5 );
+            LocationsMgr.importBinding( "controlzoneid", CswNbtObjClassLocation.PropertyName.ControlZone, CswEnumNbtSubFieldName.NodeID.ToString(), LocationSheetName, ShelfNTName, 5 );
+            LocationsMgr.importBinding( "allowinventory", CswNbtObjClassLocation.PropertyName.AllowInventory, "", LocationSheetName, ShelfNTName, 5 );
+            #endregion
 
-                RoomImpMgr.importBinding( "locationlevel2name", CswNbtObjClassLocation.PropertyName.Name, "" );
-                RoomImpMgr.importBinding( "locationcode", CswNbtObjClassLocation.PropertyName.LocationCode, "" );
+            #region Box
+            LocationsMgr.importBinding( "locationlevel5name", CswNbtObjClassLocation.PropertyName.Name, "", LocationSheetName, BoxNTName, 6 );
+            LocationsMgr.importBinding( "locationcode", CswNbtObjClassLocation.PropertyName.LocationCode, "", LocationSheetName, BoxNTName, 6 );
+            LocationsMgr.importBinding( "boxid", "Legacy ID", "", LocationSheetName, BoxNTName, 6 );
+            LocationsMgr.importBinding( "inventorygroupid", CswNbtObjClassLocation.PropertyName.InventoryGroup, CswEnumNbtSubFieldName.NodeID.ToString(), LocationSheetName, BoxNTName, 6 );
+            LocationsMgr.importBinding( "controlzoneid", CswNbtObjClassLocation.PropertyName.ControlZone, CswEnumNbtSubFieldName.NodeID.ToString(), LocationSheetName, BoxNTName, 6 );
+            LocationsMgr.importBinding( "allowinventory", CswNbtObjClassLocation.PropertyName.AllowInventory, "", LocationSheetName, BoxNTName, 6 );
+            #endregion
 
-                // Relationships
-                RoomImpMgr.importBinding( "locationlevel1id", CswNbtObjClassLocation.PropertyName.Location, "" );
-                RoomImpMgr.importBinding( "controlzoneid", CswNbtObjClassLocation.PropertyName.ControlZone, "" );
-                RoomImpMgr.importBinding( "inventorygroupid", CswNbtObjClassLocation.PropertyName.InventoryGroup, "" );
+            //Relationships
+            LocationsMgr.importRelationship( LocationSheetName, BuildingNTName, CswNbtObjClassLocation.PropertyName.Location, 1, "siteid" );
 
-                RoomImpMgr.finalize();
-            }
+            LocationsMgr.importRelationship( LocationSheetName, RoomNTName, CswNbtObjClassLocation.PropertyName.Location, 2, "buildingid" );
 
-            {
-                //select l.*, l3.locationlevel3name
-                //from locations l
-                //join locations_level3 l3 on (l3.locationlevel3id = l.locationlevel3id)
+            LocationsMgr.importRelationship( LocationSheetName, CabinetNTName, CswNbtObjClassLocation.PropertyName.Location, 3, "roomid" );
 
-                CswNbtSchemaUpdateImportMgr RoomImpMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "locations_level3", "Cabinet", "locationslevel3_view" );
+            LocationsMgr.importRelationship( LocationSheetName, ShelfNTName, CswNbtObjClassLocation.PropertyName.Location, 4, "cabinetid" );
 
-                RoomImpMgr.importBinding( "locationlevel3name", CswNbtObjClassLocation.PropertyName.Name, "" );
-                RoomImpMgr.importBinding( "locationcode", CswNbtObjClassLocation.PropertyName.LocationCode, "" );
+            LocationsMgr.importRelationship( LocationSheetName, BoxNTName, CswNbtObjClassLocation.PropertyName.Location, 5, "shelfid" );
 
-                // Relationships
-                RoomImpMgr.importBinding( "locationlevel2id", CswNbtObjClassLocation.PropertyName.Location, "" );
-                RoomImpMgr.importBinding( "controlzoneid", CswNbtObjClassLocation.PropertyName.ControlZone, "" );
-                RoomImpMgr.importBinding( "inventorygroupid", CswNbtObjClassLocation.PropertyName.InventoryGroup, "" );
-
-                RoomImpMgr.finalize();
-            }
-
-            {
-                //select l.*, l4.locationlevel3name
-                //from locations l
-                //join locations_level4 l4 on (l4.locationlevel4id = l.locationlevel4id)
-
-                CswNbtSchemaUpdateImportMgr RoomImpMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "locations_level4", "Shelf", "locationslevel4_view" );
-
-                RoomImpMgr.importBinding( "locationlevel4name", CswNbtObjClassLocation.PropertyName.Name, "" );
-                RoomImpMgr.importBinding( "locationcode", CswNbtObjClassLocation.PropertyName.LocationCode, "" );
-
-                // Relationships
-                RoomImpMgr.importBinding( "locationlevel3id", CswNbtObjClassLocation.PropertyName.Location, "" );
-                RoomImpMgr.importBinding( "controlzoneid", CswNbtObjClassLocation.PropertyName.ControlZone, "" );
-                RoomImpMgr.importBinding( "inventorygroupid", CswNbtObjClassLocation.PropertyName.InventoryGroup, "" );
-
-                RoomImpMgr.finalize();
-            }
-
-            {
-                //select l.*, l5.locationlevel3name
-                //from locations l
-                //join locations_level5 l5 on (l5.locationlevel5id = l.locationlevel5id)
-
-                CswNbtSchemaUpdateImportMgr RoomImpMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "locations_level5", "Box", "locationslevel5_view" );
-
-                RoomImpMgr.importBinding( "locationlevel5name", CswNbtObjClassLocation.PropertyName.Name, "" );
-                RoomImpMgr.importBinding( "locationcode", CswNbtObjClassLocation.PropertyName.LocationCode, "" );
-
-                // Relationships
-                RoomImpMgr.importBinding( "locationlevel4id", CswNbtObjClassLocation.PropertyName.Location, "" );
-                RoomImpMgr.importBinding( "controlzoneid", CswNbtObjClassLocation.PropertyName.ControlZone, "" );
-                RoomImpMgr.importBinding( "inventorygroupid", CswNbtObjClassLocation.PropertyName.InventoryGroup, "" );
-
-                RoomImpMgr.finalize();
-            }
+            LocationsMgr.finalize( null, null, true );
 
         } // update()
 

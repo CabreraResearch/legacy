@@ -5,14 +5,20 @@
 body{
 	margin:0;
 }
-div.watermark{
-	display:block;
-	position:fixed;
-	z-index:1000;
-	font-size: 200px;
-	color: #000000;
-	opacity: 0.05;
-	pointer-events:none;
+div.watermark
+{
+    display: block;
+    position: fixed;
+    z-index: 1000;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
+    overflow: hidden;
+    font-size: 200px;
+    color: #000000;
+    opacity: 0.05;
+    pointer-events: none;
 }
 	div.content > *:first-child,x:-moz-any-link{margin-top:0;}/* ff only */
 	div.watermark,x:-moz-any-link{z-index:auto;}/* ff only */
@@ -23,6 +29,7 @@ div.watermark{
 	div.watermark {
 		position:absolute;
 		left:0;
+	    bottom: 50px;
 		width:99%;
 	}
 

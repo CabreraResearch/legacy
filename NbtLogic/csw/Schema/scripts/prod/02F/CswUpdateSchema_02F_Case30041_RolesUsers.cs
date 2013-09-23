@@ -1,5 +1,6 @@
 ﻿using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.csw.Schema;
+using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.Schema
@@ -56,18 +57,14 @@ namespace ChemSW.Nbt.Schema
                 UserImpMgr.importBinding( "username", CswNbtObjClassUser.PropertyName.Username, "" );
 
                 // Relationships
-                UserImpMgr.importBinding( "defaultlocationid", CswNbtObjClassUser.PropertyName.DefaultLocation, "" );
-                //UserImpMgr.importBinding( "homeinventorygroupid", CswNbtObjClassUser.PropertyName. );
-                UserImpMgr.importBinding( "roleid", CswNbtObjClassUser.PropertyName.Role, "" );
-                UserImpMgr.importBinding( "workunitid", CswNbtObjClassUser.PropertyName.WorkUnit, "" );
-
-
-                //TODO: complete relationships
+                UserImpMgr.importBinding( "defaultlocationid", CswNbtObjClassUser.PropertyName.DefaultLocation, CswEnumNbtSubFieldName.NodeID.ToString() );
+                UserImpMgr.importBinding( "roleid", CswNbtObjClassUser.PropertyName.Role, CswEnumNbtSubFieldName.NodeID.ToString() );
+                UserImpMgr.importBinding( "workunitid", CswNbtObjClassUser.PropertyName.WorkUnit, CswEnumNbtSubFieldName.NodeID.ToString() );
 
                 /*
                    +defaultlocationid, 
                    +disabled, 
-                   homeinventorygroupid, - We dont' have an inventory group property on Users  
+                   homeinventorygroupid, - We dont' have an inventory group property on Users
                    +namefirst, 
                    +namelast, 
                    +navrows, 
@@ -80,7 +77,7 @@ namespace ChemSW.Nbt.Schema
                    +failedlogincount, 
                    +email, 
                    +phone, 
-                   +defaultlanguage,                   
+                   +defaultlanguage,
                    ?? pending TDU investigation supervisorid, 
                    +employeeid
              

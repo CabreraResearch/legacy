@@ -17,13 +17,13 @@ namespace ChemSW.Nbt.MetaData
                 {CswEnumNbtFieldType.DateTime, CswEnumNbtFieldType.DateTime}, //public const string DateTime = "DateTime";
                 {CswEnumNbtFieldType.External, CswEnumNbtFieldType.External}, //public const string External = "External";
                 {CswEnumNbtFieldType.File, CswEnumNbtFieldType.File}, //public const string File = "File";
+                {CswEnumNbtFieldType.Formula, CswEnumNbtFieldType.Formula},
                 {CswEnumNbtFieldType.Grid, CswEnumNbtFieldType.Grid}, //public const string Grid = "Grid";
                 {CswEnumNbtFieldType.Image, CswEnumNbtFieldType.Image}, //public const string Image = "Image";
                 {CswEnumNbtFieldType.ImageList, CswEnumNbtFieldType.ImageList}, //public const string ImageList = "ImageList";
                 {CswEnumNbtFieldType.Link, CswEnumNbtFieldType.Link}, //public const string Link = "Link";
                 {CswEnumNbtFieldType.List, CswEnumNbtFieldType.List}, //public const string List = "List";
                 {CswEnumNbtFieldType.Location, CswEnumNbtFieldType.Location}, //public const string Location = "Location";
-                {CswEnumNbtFieldType.LocationContents, CswEnumNbtFieldType.LocationContents}, //public const string LocationContents = "LocationContents";
                 {CswEnumNbtFieldType.Logical, CswEnumNbtFieldType.Logical}, //public const string Logical = "Logical";
                 {CswEnumNbtFieldType.LogicalSet, CswEnumNbtFieldType.LogicalSet}, //public const string LogicalSet = "LogicalSet";
                 {CswEnumNbtFieldType.Memo, CswEnumNbtFieldType.Memo}, //public const string Memo = "Memo";
@@ -90,13 +90,13 @@ namespace ChemSW.Nbt.MetaData
         public const string DateTime = "DateTime";
         public const string External = "External";
         public const string File = "File";
+        public const string Formula = "Formula";
         public const string Grid = "Grid";
         public const string Image = "Image";
         public const string ImageList = "ImageList";
         public const string Link = "Link";
         public const string List = "List";
         public const string Location = "Location";
-        public const string LocationContents = "LocationContents";
         public const string Logical = "Logical";
         public const string LogicalSet = "LogicalSet";
         public const string Memo = "Memo";
