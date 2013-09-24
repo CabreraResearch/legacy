@@ -188,13 +188,9 @@ namespace ChemSW.Nbt.ObjClasses
 
         protected override void afterPopulateProps()
         {
-            Material.SetOnPropChange( OnMaterialPropChange );
             Dispose.SetOnPropChange( OnDisposePropChange );
             Quantity.SetOnPropChange( OnQuantityPropChange );
             Location.SetOnPropChange( OnLocationPropChange );
-            Size.SetOnPropChange( OnSizePropChange );
-            SourceContainer.SetOnPropChange( OnSourceContainerChange );
-            Barcode.SetOnPropChange( OnBarcodePropChange );
             LotControlled.SetOnPropChange( OnLotControlledPropChange );
             Owner.SetOnPropChange( OnOwnerPropChange ); //case 28514
 
@@ -396,7 +392,6 @@ namespace ChemSW.Nbt.ObjClasses
                 _createContainerTransactionNode( CswEnumNbtContainerDispenseType.Dispose, -this.Quantity.Quantity, this.Quantity.UnitId, SrcContainer: this );
                 this.Quantity.Quantity = 0;
                 this.Disposed.Checked = CswEnumTristate.True;
-                _toggleAllPropertyStates();
                 CreateContainerLocationNode( CswEnumNbtContainerLocationTypeOptions.Dispose );
                 _CswNbtNode.IconFileNameOverride = "x.png";
                 _CswNbtNode.Searchable = false;
@@ -422,7 +417,6 @@ namespace ChemSW.Nbt.ObjClasses
                 }
                 this.Disposed.Checked = CswEnumTristate.False;
 
-                _toggleAllPropertyStates();
                 if( CreateContainerLocation )
                 {
                     CreateContainerLocationNode( CswEnumNbtContainerLocationTypeOptions.Undispose );
@@ -780,146 +774,110 @@ namespace ChemSW.Nbt.ObjClasses
         } // _createContainerTransactionNode
 
         /// <summary>
-        /// Toggles the ReadOnly state of all non-button properties according to the Disposed state of the Container.
-        /// Toggles the Hidden state of all button properties according to Disposed state, permissions and business logic
-        /// Toggles the ReadOnly state of Expiration Date according to the Material's ContainerExpiraionLock value.
+        /// Sets up onBeforeRender events in order to:
+        /// Toggle the ReadOnly state of all non-button properties according to the Disposed state of the Container.
+        /// Toggle the Hidden state of all button properties according to Disposed state, permissions and business logic
+        /// Toggle the ReadOnly state of Expiration Date according to the Material's ContainerExpiraionLock value.
         /// </summary>
+        /// <remarks>
+        /// This is the ONLY place that setReadonly or setHidden should be used!
+        /// </remarks>
         private void _toggleAllPropertyStates()
         {
             //Old comment: //SaveToDb true is necessary to override what's in the db even if it isn't actually saved as part of this request
             //Handle the raw data condition first.
-            bool IsDisposed = ( Disposed.Checked == CswEnumTristate.True );
-            _togglePropertyReadOnlyState( IsDisposed );
-            _toggleButtonHiddenState( IsDisposed );
-            _toggleButtonHiddenStateByPermission();
-            _toggleButtonHiddenStateByDocumentRelationship();
-            if( Material.RelatedNodeId != null )
-            {
-                CswNbtPropertySetMaterial MaterialNode = _CswNbtResources.Nodes[Material.RelatedNodeId];
-                ExpirationDate.setReadOnly( MaterialNode.ContainerExpirationLocked.Checked == CswEnumTristate.True, SaveToDb: false );
-            }
-        }
 
-        /// <summary>
-        /// For use in response to changes to the Disposed state, toggle the persisted (to the database) ReadOnly state of all non-button properties 
-        /// </summary>
-        private void _togglePropertyReadOnlyState( bool IsDisposed ) //case 25814
-        {
             foreach( CswNbtNodePropWrapper prop in _CswNbtNode.Properties )
             {
-                if( prop.getFieldType().FieldType != CswEnumNbtFieldType.Button )
-                {
-                    //Ignore properties whose ReadOnly state is managed by property change events
-                    if( prop.ObjectClassPropName != PropertyName.Material &&
-                        prop.ObjectClassPropName != PropertyName.Size &&
-                        prop.ObjectClassPropName != PropertyName.SourceContainer &&
-                        prop.ObjectClassPropName != PropertyName.Barcode )
+                prop.SetOnBeforeRender( delegate( CswNbtNodeProp p )
                     {
-                        prop.setReadOnly( IsDisposed, SaveToDb: true );
-                    }
-                }
-            }
-        } // _setDisposedReadOnly()
+                        bool IsDisposed = ( Disposed.Checked == CswEnumTristate.True );
+                        CswPrimaryKey InventoryGroupId = getPermissionGroupId();
 
-        /// <summary>
-        /// For use in response to changes to the Disposed state, toggle the persisted (to the database) Hidden state of all button properties 
-        /// </summary>
-        private void _toggleButtonHiddenState( bool IsDisposed ) //case 25814
-        {
-            foreach( CswNbtNodePropWrapper prop in _CswNbtNode.Properties )
-            {
-                if( prop.getFieldType().FieldType == CswEnumNbtFieldType.Button )
-                {
-                    prop.SetOnBeforeRender( delegate( CswNbtNodeProp p )
+                        if( p.getFieldType().FieldType == CswEnumNbtFieldType.Button )
                         {
+                            // BUTTONS
+                            bool isHidden = false;
                             switch( p.ObjectClassPropName )
                             {
                                 case PropertyName.Undispose:
-                                    //Hide the Undispose button when the Container is not disposed
-                                    p.setHidden( value: !IsDisposed, SaveToDb: true );
+                                    isHidden = ( false == canContainer( _CswNbtResources, _CswNbtResources.Actions[CswEnumNbtActionName.UndisposeContainer], InventoryGroupId ) )
+                                               || false == IsDisposed; //Hide the Undispose button when the Container is not disposed
+                                    p.setHidden( value: isHidden, SaveToDb: false );
                                     break;
                                 case PropertyName.Dispose:
-                                    p.setHidden( value: IsDisposed, SaveToDb: true );
+                                    isHidden = ( false == canContainer( _CswNbtResources, _CswNbtResources.Actions[CswEnumNbtActionName.DisposeContainer], InventoryGroupId ) )
+                                               || IsDisposed;
+                                    p.setHidden( value: isHidden, SaveToDb: false );
                                     break;
                                 case PropertyName.Request:
-                                    bool HideRequestButton = ( IsDisposed || ( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.MLM ) &&
-                                                                               Requisitionable.Checked == CswEnumTristate.False ) );
-                                    p.setHidden( value: HideRequestButton, SaveToDb: true );
+                                    isHidden = ( false == canContainer( _CswNbtResources, _CswNbtResources.Actions[CswEnumNbtActionName.Submit_Request], InventoryGroupId ) )
+                                               || IsDisposed
+                                               || ( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.MLM )
+                                                    && Requisitionable.Checked == CswEnumTristate.False );
+                                    p.setHidden( value: isHidden, SaveToDb: false );
+                                    break;
+                                case PropertyName.Dispense:
+                                    isHidden = ( false == canContainer( _CswNbtResources, _CswNbtResources.Actions[CswEnumNbtActionName.DispenseContainer], InventoryGroupId ) )
+                                               || IsDisposed;
+                                    p.setHidden( value: isHidden, SaveToDb: false );
+                                    break;
+                                case PropertyName.ViewSDS:
+                                    CswNbtPropertySetMaterial material = _CswNbtResources.Nodes[Material.RelatedNodeId];
+                                    isHidden = ( null == material
+                                                 || material.ObjectClass.ObjectClass != CswEnumNbtObjectClass.ChemicalClass
+                                                 || false == CswNbtObjClassSDSDocument.materialHasActiveSDS( _CswNbtResources, Material.RelatedNodeId )
+                                                 || _CswNbtResources.MetaData.NodeTypeLayout.getPropsNotInLayout( ( (CswNbtObjClassChemical) material.Node ).NodeType,
+                                                                                                                  Int32.MinValue,
+                                                                                                                  CswEnumNbtLayoutType.Edit )
+                                                                    .Contains( ( (CswNbtObjClassChemical) material.Node ).ViewSDS.NodeTypeProp )
+                                        //       || IsDisposed   actually, this one we can show.
+                                               );
+                                    p.setHidden( value: isHidden, SaveToDb: false );
+                                    break;
+                                case PropertyName.ViewCofA:
+                                    isHidden = ( false == CswNbtObjClassCofADocument.receiptLotHasActiveCofA( _CswNbtResources, ReceiptLot.RelatedNodeId ) );
+                                    p.setHidden( value: isHidden, SaveToDb: false );
                                     break;
                                 default:
-                                    p.setHidden( IsDisposed, SaveToDb: true );
+                                    p.setHidden( value: IsDisposed, SaveToDb: false );
                                     break;
-                            }
-                        } );
-                }
-            }
-        } // _setDisposedReadOnly()
+                            } // switch
+                        } // if( prop.getFieldType().FieldType == CswEnumNbtFieldType.Button )
+                        else
+                        {
+                            // NOT BUTTONS
+                            switch( p.ObjectClassPropName )
+                            {
+                                case PropertyName.Barcode:
+                                    p.setReadOnly( value: false == string.IsNullOrEmpty( Barcode.Barcode ), SaveToDb: true );
+                                    break;
+                                case PropertyName.ExpirationDate:
+                                    if( CswTools.IsPrimaryKey( Material.RelatedNodeId ) )
+                                    {
+                                        CswNbtPropertySetMaterial MaterialNode = _CswNbtResources.Nodes[Material.RelatedNodeId];
+                                        p.setReadOnly( MaterialNode.ContainerExpirationLocked.Checked == CswEnumTristate.True, SaveToDb: false );
+                                    }
+                                    break;
+                                case PropertyName.SourceContainer:
+                                    bool isHidden = ( false == CswTools.IsPrimaryKey( SourceContainer.RelatedNodeId ) );
+                                    p.setHidden( value: isHidden, SaveToDb: true );
+                                    
+                                    if( CswTools.IsPrimaryKey( Material.RelatedNodeId ) )
+                                    {
+                                        SourceContainer.setReadOnly( value: true, SaveToDb: true );
+                                    }
+                                    break;
+                            } // switch
 
-        /// <summary>
-        /// Toggle the ephemeral Hidden state of buttons according to permission
-        /// </summary>
-        private void _toggleButtonHiddenStateByPermission()
-        {
-            CswPrimaryKey InventoryGroupId = getPermissionGroupId();
-            Dispense.SetOnBeforeRender( delegate( CswNbtNodeProp p )
-                {
-                    if( false == canContainer( _CswNbtResources, _CswNbtResources.Actions[CswEnumNbtActionName.DispenseContainer], InventoryGroupId ) )
-                    {
-                        p.setHidden( value: true, SaveToDb: false );
-                    }
-                } );
-            Dispose.SetOnBeforeRender( delegate( CswNbtNodeProp p )
-                {
-                    if( false == canContainer( _CswNbtResources, _CswNbtResources.Actions[CswEnumNbtActionName.DisposeContainer], InventoryGroupId ) )
-                    {
-                        p.setHidden( value: true, SaveToDb: false );
-                    }
-                } );
-            Undispose.SetOnBeforeRender( delegate( CswNbtNodeProp p )
-                {
-                    if( false == canContainer( _CswNbtResources, _CswNbtResources.Actions[CswEnumNbtActionName.UndisposeContainer], InventoryGroupId ) )
-                    {
-                        p.setHidden( value: true, SaveToDb: false );
-                    }
-                } );
-            Request.SetOnBeforeRender( delegate( CswNbtNodeProp p )
-                {
-                    if( false == canContainer( _CswNbtResources, _CswNbtResources.Actions[CswEnumNbtActionName.Submit_Request], InventoryGroupId ) )
-                    {
-                        p.setHidden( value: true, SaveToDb: false );
-                    }
-                } );
-        } // _toggleButtonHiddenStateByPermission()
+                            // This overrides all of the above!
+                            p.setReadOnly( IsDisposed, SaveToDb: true );
 
-        /// <summary>
-        /// Toggle the ephemeral Hidden state of buttons according to Document relationship values
-        /// </summary>
-        private void _toggleButtonHiddenStateByDocumentRelationship()
-        {
-            ViewSDS.SetOnBeforeRender( delegate( CswNbtNodeProp p )
-                {
-                    CswNbtPropertySetMaterial material = _CswNbtResources.Nodes[Material.RelatedNodeId];
-                    if( null != material &&
-                        material.ObjectClass.ObjectClass == CswEnumNbtObjectClass.ChemicalClass &&
-                        CswNbtObjClassSDSDocument.materialHasActiveSDS( _CswNbtResources, Material.RelatedNodeId ) )
-                    {
-                        CswNbtObjClassChemical chemical = material.Node;
-                        bool isHidden = _CswNbtResources.MetaData.NodeTypeLayout.getPropsNotInLayout( chemical.NodeType, Int32.MinValue, CswEnumNbtLayoutType.Edit ).Contains( chemical.ViewSDS.NodeTypeProp );
-                        p.setHidden( value: isHidden, SaveToDb: false );
-                    }
-                    else
-                    {
-                        p.setHidden( value: true, SaveToDb: false );
-                    }
-                } );
-            ViewCofA.SetOnBeforeRender( delegate( CswNbtNodeProp p )
-                {
-                    if( false == CswNbtObjClassCofADocument.receiptLotHasActiveCofA( _CswNbtResources, ReceiptLot.RelatedNodeId ) )
-                    {
-                        p.setHidden( value: true, SaveToDb: false );
-                    }
-                } );
-        }
+                        } // if-else( prop.getFieldType().FieldType == CswEnumNbtFieldType.Button )
+                    } );
+            } // foreach
+        } //_toggleAllPropertyStates()
+
 
         private bool _checkStorageCompatibility()
         {
@@ -1053,11 +1011,6 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         public CswNbtNodePropBarcode Barcode { get { return ( _CswNbtNode.Properties[PropertyName.Barcode] ); } }
-        private void OnBarcodePropChange( CswNbtNodeProp Prop, bool Creating )
-        {
-            Barcode.setReadOnly( value: false == string.IsNullOrEmpty( Barcode.Barcode ), SaveToDb: true );
-        }
-
         public CswNbtNodePropLocation Location { get { return ( _CswNbtNode.Properties[PropertyName.Location] ); } }
         private void OnLocationPropChange( CswNbtNodeProp Prop, bool Creating )
         {
@@ -1121,21 +1074,11 @@ namespace ChemSW.Nbt.ObjClasses
         }
         public CswNbtNodePropDateTime LocationVerified { get { return ( _CswNbtNode.Properties[PropertyName.LocationVerified] ); } }
         public CswNbtNodePropRelationship Material { get { return ( _CswNbtNode.Properties[PropertyName.Material] ); } }
-        private void OnMaterialPropChange( CswNbtNodeProp Prop, bool Creating )
-        {
-            //This will be affected by the brute force call to _toggleAllPropertyStates();
-            if( Material.RelatedNodeId != null )
-            {
-                SourceContainer.setReadOnly( value: true, SaveToDb: true );
-            }
-        }
         public CswNbtNodePropList Status { get { return ( _CswNbtNode.Properties[PropertyName.Status] ); } }
         public CswNbtNodePropLogical Missing { get { return ( _CswNbtNode.Properties[PropertyName.Missing] ); } }
         public CswNbtNodePropLogical Disposed { get { return ( _CswNbtNode.Properties[PropertyName.Disposed] ); } }
         private void OnDisposePropChange( CswNbtNodeProp Prop, bool Creating )
         {
-            //Dispose.setHidden( value : Disposed.Checked == CswEnumTristate.True, SaveToDb : true );
-            _toggleAllPropertyStates();
             if( CswConvert.ToTristate( Disposed.GetOriginalPropRowValue() ) != Disposed.Checked &&
                 Disposed.Checked == CswEnumTristate.True )
             {
@@ -1143,18 +1086,6 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
         public CswNbtNodePropRelationship SourceContainer { get { return ( _CswNbtNode.Properties[PropertyName.SourceContainer] ); } }
-        private void OnSourceContainerChange( CswNbtNodeProp Prop, bool Creating )
-        {
-            //This isn't a button and so should not be affected by the brute force call to _toggleAllPropertyStates();
-            if( null != SourceContainer.RelatedNodeId && Int32.MinValue != SourceContainer.RelatedNodeId.PrimaryKey )
-            {
-                SourceContainer.setHidden( value: false, SaveToDb: true );
-            }
-            else
-            {
-                SourceContainer.setHidden( value: true, SaveToDb: true );
-            }
-        }
         public CswNbtNodePropQuantity Quantity { get { return ( _CswNbtNode.Properties[PropertyName.Quantity] ); } }
         private void OnQuantityPropChange( CswNbtNodeProp Prop, bool Creating )
         {
@@ -1182,16 +1113,6 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropDateTime ExpirationDate { get { return ( _CswNbtNode.Properties[PropertyName.ExpirationDate] ); } }
 
         public CswNbtNodePropRelationship Size { get { return ( _CswNbtNode.Properties[PropertyName.Size] ); } }
-        private void OnSizePropChange( CswNbtNodeProp Prop, bool Creating )
-        {
-            ////This will be affected by the brute force call to _toggleAllPropertyStates();
-            //if( CswTools.IsPrimaryKey( Size.RelatedNodeId ) )
-            //{
-            //    Size.setReadOnly( value: true, SaveToDb: true );
-            //    Size.setHidden( value: true, SaveToDb: true );
-            //}
-        }
-
         public CswNbtNodePropButton Request { get { return ( _CswNbtNode.Properties[PropertyName.Request] ); } }
         public CswNbtNodePropButton Dispense { get { return ( _CswNbtNode.Properties[PropertyName.Dispense] ); } }
         public CswNbtNodePropButton Dispose { get { return ( _CswNbtNode.Properties[PropertyName.Dispose] ); } }
