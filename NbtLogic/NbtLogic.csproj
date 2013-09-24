@@ -16,7 +16,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>..\bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <DebugType>full</DebugType>
     <PlatformTarget>x64</PlatformTarget>
@@ -30,11 +30,11 @@
     <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
     <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
     <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
-    <DocumentationFile>bin\NbtLogic.XML</DocumentationFile>
+    <DocumentationFile>..\bin\NbtLogic.XML</DocumentationFile>
     <NoWarn>1591,1572,1571,1573,1587,1570</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>..\bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
@@ -49,7 +49,7 @@
     <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
     <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
     <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
-    <DocumentationFile>bin\NbtLogic.XML</DocumentationFile>
+    <DocumentationFile>..\bin\NbtLogic.XML</DocumentationFile>
     <NoWarn>1591,1572,1571,1573,1587,1570</NoWarn>
     <WarningLevel>0</WarningLevel>
   </PropertyGroup>
@@ -346,6 +346,8 @@
     <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateSchema_02G_Case30562.cs" />
     <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateSchema_02G_Case30756.cs" />
     <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateSchema_02G_Case30702.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateSchema_02G_Case30680.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateMetaData_02G_Case30680.cs" />
     <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateDDL_02G_Case30702.cs" />
     <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateMetaData_02G_Case30575.cs" />
     <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateSchema_02G_Case30301.cs" />
@@ -1221,12 +1223,8 @@
       <Project>{434091FB-F487-4787-8BDB-58C2336B73C2}</Project>
       <Name>CswCommon</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\Common\StructureSearch\StructureSearch\StructureSearch.csproj">
+    <ProjectReference Include="..\..\..\Common\CswCommon\StructureSearch\StructureSearch.csproj">
       <Project>{e9156c9a-605e-4f21-8bb1-0970da055ff0}</Project>
-      <Name>StructureSearch</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\Common\StructureSearch\StructureSearch\StructureSearch.csproj">
-      <Project>{E9156C9A-605E-4F21-8BB1-0970DA055FF0}</Project>
       <Name>StructureSearch</Name>
     </ProjectReference>
   </ItemGroup>
