@@ -42,7 +42,7 @@ namespace ChemSW.Nbt.Schema
             }
             {
                 // Bindings
-                CswNbtSchemaUpdateImportMgr UserImpMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "users", "User" );
+                CswNbtSchemaUpdateImportMgr UserImpMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "users", "User", ViewName: "Users_View" );
                 UserImpMgr.importBinding( "disabled", CswNbtObjClassUser.PropertyName.Archived, "" );
                 UserImpMgr.importBinding( "namefirst", CswNbtObjClassUser.PropertyName.FirstName, "" );
                 UserImpMgr.importBinding( "namelast", CswNbtObjClassUser.PropertyName.LastName, "" );
