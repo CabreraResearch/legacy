@@ -1,0 +1,1 @@
+insert into nbtimportqueue@CAFLINK ( nbtimportqueueid, state, itempk, tablename, priority, errorlog, viewname )  select seq_nbtimportqueueid.nextval@CAFLINK, 'I', roleid, 'roles',0, '', '' from roles@CAFLINK where deleted='0' 

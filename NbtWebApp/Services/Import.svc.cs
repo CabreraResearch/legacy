@@ -1,16 +1,11 @@
-﻿using System;
-using ChemSW.Nbt;
-using ChemSW.Nbt.ImportExport;
-using ChemSW.Nbt.WebServices;
-using ChemSW.WebSvc;
-using NbtWebApp.WebSvc.Returns;
-using NbtWebAppServices.Response;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.ServiceModel;
 using System.ServiceModel.Activation;
 using System.ServiceModel.Web;
 using System.Web;
+using ChemSW.Nbt.WebServices;
+using ChemSW.WebSvc;
+using NbtWebApp.WebSvc.Returns;
 
 namespace NbtWebApp
 {
@@ -125,8 +120,6 @@ namespace NbtWebApp
             return ret;
         }
 
-
-
         [OperationContract]
         [WebInvoke( Method = "POST", ResponseFormat = WebMessageFormat.Json )]
         [Description( "Get current status of imports" )]
@@ -146,6 +139,26 @@ namespace NbtWebApp
 
             return ret;
         } // getImportStatus()
+
+        [OperationContract]
+        [WebInvoke( Method = "POST" )]
+        [Description( "Start import" )]
+        [FaultContract( typeof( FaultException ) )]
+        public CswWebSvcReturn startImport( CswNbtImportWcf.StartImportParams Params )
+        {
+            CswWebSvcReturn Ret = new CswWebSvcReturn();
+
+            var SvcDriver = new CswWebSvcDriver<CswWebSvcReturn, CswNbtImportWcf.StartImportParams>(
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj: Ret,
+                WebSvcMethodPtr: CswNbtWebServiceImport.startCAFImport,
+                ParamObj: Params
+                );
+
+            SvcDriver.run();
+
+            return Ret;
+        }//startImport()
 
     }
 }
