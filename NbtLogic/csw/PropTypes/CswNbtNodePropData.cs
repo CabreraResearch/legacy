@@ -519,39 +519,6 @@ namespace ChemSW.Nbt.PropTypes
             }
         }//JctNodePropId prop
 
-        public void copy( CswNbtNodePropData Source )
-        {
-            CswEnumNbtFieldType FieldType = Source.getFieldTypeValue();
-            ICswNbtFieldTypeRule FieldTypeRule = _CswNbtResources.MetaData.getFieldTypeRule( FieldType );
-
-            foreach( CswNbtSubField SubField in FieldTypeRule.SubFields )
-            {
-                if( SubField.Column == CswEnumNbtPropColumn.Field1_FK )
-                {
-                    //Implementing FieldType specific behavior here. Blame Steve.
-                    if( FieldType == CswEnumNbtFieldType.ViewReference )
-                    {
-                        CswNbtView View = _CswNbtResources.ViewSelect.restoreView( Source.NodeTypeProp.DefaultValue.AsViewReference.ViewId );
-                        CswNbtView ViewCopy = new CswNbtView( _CswNbtResources );
-                        ViewCopy.saveNew( View.ViewName, View.Visibility, View.VisibilityRoleId, View.VisibilityUserId, View );
-                        SetPropRowValue( CswEnumNbtSubFieldName.ViewID, CswEnumNbtPropColumn.Field1_FK, ViewCopy.ViewId.get() );
-                    }
-                    else
-                    {
-                        SetPropRowValue( SubField, Source.Field1_Fk );
-                    }
-                } // if( SubField.Column == CswEnumNbtPropColumn.Field1_FK )
-                else
-                {
-                    SetPropRowValue( SubField, Source.GetPropRowValue( SubField ) );
-                }
-            } // foreach( CswNbtSubField SubField in NodeTypeProp.getFieldTypeRule().SubFields )
-
-            // Also copy Gestalt, which usually isn't listed as a subfield
-            SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, Source.Gestalt );
-            SetPropRowValue( CswEnumNbtSubFieldName.GestaltSearch, CswEnumNbtPropColumn.GestaltSearch, Source.GestaltSearch );
-        }
-
         public void ClearValue()
         {
             foreach( CswNbtSubField SubField in NodeTypeProp.getFieldTypeRule().SubFields )

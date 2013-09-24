@@ -1,16 +1,10 @@
 using System;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Runtime.Serialization;
 using System.Web;
-using ChemSW.Core;
-using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.ImportExport;
-using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.ObjClasses;
 using NbtWebApp.WebSvc.Returns;
-using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -32,6 +26,17 @@ namespace ChemSW.Nbt.WebServices
             public bool Overwrite;
         }
 
+        [DataContract]
+        public class StartImportParams
+        {
+            [DataMember( IsRequired = true )]
+            [Description( "Name of import definition" )]
+            public string ImportDefName;
+
+            [DataMember( IsRequired = false )]
+            [Description( "True if imported content should overwrite existing content" )]
+            public bool Overwrite;
+        }
 
         [DataContract]
         public class ImportStatusRequest
@@ -66,8 +71,8 @@ namespace ChemSW.Nbt.WebServices
                 Data = new Collection<CswNbtImportDataJob>();
             }
 
-            [DataMember( IsRequired = true )] 
-            [Description( "Collection of import jobs" )] 
+            [DataMember( IsRequired = true )]
+            [Description( "Collection of import jobs" )]
             public Collection<CswNbtImportDataJob> Data;
 
         } // class ImportJobsReturn

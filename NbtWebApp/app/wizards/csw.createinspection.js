@@ -611,9 +611,11 @@
                     break;
                 case Csw.enums.wizardSteps_InspectionDesign.step3.step:
                     if (cswPrivate.isNewInspectionDesign()) {
-                        cswPrivate.checkIsNodeTypeNameUnique(cswPrivate.selectedInspectionDesign.name, function () {
+                        cswPrivate.checkIsNodeTypeNameUnique(cswPrivate.selectedInspectionDesign.name, function() {
                             cswPrivate.makeStepThree(true);
                         });
+                    } else {
+                        cswPrivate.toggleButton(cswPrivate.buttons.next, true, true);
                     }
                     break;
                 case Csw.enums.wizardSteps_InspectionDesign.step4.step:

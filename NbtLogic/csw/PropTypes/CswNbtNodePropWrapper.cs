@@ -294,7 +294,7 @@ namespace ChemSW.Nbt.PropTypes
         /// </summary>
         public void copy( CswNbtNodePropData Source )
         {
-            _CswNbtNodePropData.copy( Source );
+            _CswNbtNodeProp.Copy( Source );
         }
 
         private string _makeTypeErrorMessage( Type CurrentType )

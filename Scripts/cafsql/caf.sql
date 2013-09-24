@@ -1,6 +1,6 @@
 -- Create nbtimportqueue table
 create table nbtimportqueue (
-  nbtimportqueueid number(12) NOT NULL PRIMARY KEY,
+	nbtimportqueueid number(12) NOT NULL PRIMARY KEY,
   state varchar(1),
   itempk number(12) NOT NULL,
   tablename varchar(50) NOT NULL,
@@ -15,9 +15,6 @@ create unique index unqidx_nbtimportqueue on NBTIMPORTQUEUE (state, itempk, tabl
 -- Create pk sequence for nbtimportqueue table
 create sequence seq_nbtimportqueueid start with 1 increment by 1;
 commit;
-
--- Create triggers for all tables
--- [Note: use the sql that CF is already creating?]
 
 -- Create views ( these are in order of creation)
 -- Locations level 1

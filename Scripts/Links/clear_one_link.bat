@@ -18,8 +18,8 @@ GOTO End
 
 echo %1%2
 cd %1%2
-del etc\CswDbCfgInfo.xml
-del etc\CswSetupVbls.xml
-rmdir etc
+IF EXIST etc\CswDbCfgInfo.xml del etc\CswDbCfgInfo.xml
+IF EXIST etc\CswSetupVariables.json del etc\CswSetupVariables.json
+IF EXIST etc rmdir etc
 
 :End

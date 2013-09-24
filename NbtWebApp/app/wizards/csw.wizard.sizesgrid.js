@@ -19,14 +19,10 @@
                     sizeValues: {}
                 }
             },
-            deletedRows: [],
             sizes: function () {
                 return cswPublic.rows;
             },
-            deletedSizes: function () {
-                return cswPublic.deletedRows;
-            },
-            thinGrid: null,
+                thinGrid: null
         };
 
         Csw.tryExec(function () {
@@ -103,7 +99,6 @@
                                     });
                                 } else {
                                     cswPublic.rows[rowid].unitCountCtrl = cswCell.numberTextBox({
-                                            value: Csw.number(sizeValues.unitCount.value),
                                         name: 'sizeUnitCount',
                                         MinValue: 1,
                                         Precision: 0,
@@ -121,7 +116,6 @@
                                     });
                                 } else {
                                     cswPublic.rows[rowid].quantityCtrl = cswCell.numberTextBox({
-                                            value: Csw.number(sizeValues.quantity.value),
                                         name: 'quantityNumberBox',
                                         MinValue: 0,
                                         Precision: '',
@@ -144,7 +138,7 @@
                                     cswPublic.rows[rowid].unitsCtrl = cswCell.select({
                                         name: 'unitsOfMeasureSelect',
                                         values: cswPrivate.unitsOfMeasure,
-                                            selected: sizeValues.uom.value,
+                                            selected: '',
                                         onChange: function (value) {
                                             cswPublic.rows[rowid].sizeValues.uom.value = cswPublic.rows[rowid].unitsCtrl.val();
                                             cswPublic.rows[rowid].sizeValues.uom.id = cswPrivate.getID(cswPublic.rows[rowid].sizeValues.uom.value);
@@ -375,7 +369,6 @@
                             cswPublic.rows[newRowid] = { sizeValues: extractNewAmount(newSize) };
                         },
                         onDelete: function (rowid) {
-                            cswPublic.deletedRows.push(cswPublic.rows[rowid].sizeValues.nodeId.value);
                             delete cswPublic.rows[rowid];
                             cswPublic.rows[rowid] = { sizeValues: {} };
                         }
