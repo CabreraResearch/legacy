@@ -602,10 +602,18 @@ namespace ChemSW.Nbt.PropTypes
         /// </summary>
         public virtual void onAfterSetDefault() { }
 
+        /// <summary>
+        /// Executed before the property is exported to the UI
+        /// </summary>
+        public virtual void onBeforeRender() { }
+
         #region Xml Operations
 
         abstract public void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap );
-        public abstract void ToJSON( JObject ParentObject );
+        public virtual void ToJSON( JObject ParentObject )
+        {
+            onBeforeRender();
+        }
         public abstract void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap );
 
         #endregion Xml Operations
