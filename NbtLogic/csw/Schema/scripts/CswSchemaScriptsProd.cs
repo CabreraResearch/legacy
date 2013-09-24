@@ -56,7 +56,6 @@ namespace ChemSW.Nbt.Schema
                     _addVersionedScript( Script );
                 }
             }
-            _addVersionedScript( new CswUpdateSchema_02F_Case29562() );
 
             #endregion Populate Scripts
 
