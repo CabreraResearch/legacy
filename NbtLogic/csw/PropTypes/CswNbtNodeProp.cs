@@ -82,6 +82,9 @@ namespace ChemSW.Nbt.PropTypes
 
         public OnPropChangeHandler OnPropChange;
 
+        /// <summary>
+        /// Set an event to be executed when the property's value is changed
+        /// </summary>
         public void SetOnPropChange( OnPropChangeHandler ChangeHandler )
         {
             OnPropChange = ChangeHandler;
@@ -606,6 +609,7 @@ namespace ChemSW.Nbt.PropTypes
         public delegate void BeforeRenderHandler( CswNbtNodeProp Prop );
 
         public BeforeRenderHandler onBeforeRender = null;
+
         /// <summary>
         /// Executed before the property is exported to the UI
         /// </summary>
@@ -616,6 +620,15 @@ namespace ChemSW.Nbt.PropTypes
                 onBeforeRender( this );
             }
         }
+
+        /// <summary>
+        /// Set an event to be executed before the property is exported to the UI
+        /// </summary>
+        public void SetOnBeforeRender( BeforeRenderHandler handler )
+        {
+            onBeforeRender = handler;
+        }
+
 
         #region Xml Operations
 

@@ -227,6 +227,22 @@ namespace ChemSW.Nbt.PropTypes
         }
 
         /// <summary>
+        /// Set an event to be executed when the property's value is changed
+        /// </summary>
+        public void SetOnPropChange( CswNbtNodeProp.OnPropChangeHandler ChangeHandler )
+        {
+            _CswNbtNodeProp.SetOnPropChange( ChangeHandler );
+        }
+
+        /// <summary>
+        /// Set an event to be executed before the property is exported to the UI
+        /// </summary>
+        public void SetOnBeforeRender( CswNbtNodeProp.BeforeRenderHandler BeforeRenderHandler )
+        {
+            _CswNbtNodeProp.SetOnBeforeRender( BeforeRenderHandler );
+        }
+
+        /// <summary>
         /// Returns defined Field Type attributes/subfields as XmlDocument class XmlNode
         /// </summary>
         /// <param name="Parent">XmlDocument class XmlNode</param>
