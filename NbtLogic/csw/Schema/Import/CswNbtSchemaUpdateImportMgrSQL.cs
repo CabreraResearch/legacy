@@ -75,7 +75,7 @@ namespace ChemSW.Nbt.csw.Schema
             //string Ddl = "execDdl@" + _CAFDbLink + "(" + Trigger + ")";
             //SchemaModTrnsctn.execStoredProc( "execDdl@" + _CAFDbLink, new List<CswStoredProcParam>() {new CswStoredProcParam( "ddlOp", Trigger, CswEnumDataDictionaryPortableDataType.String )} );
 
-            using( StreamWriter TriggerStream = new StreamWriter( Application.StartupPath + "..\\..\\..\\..\\Scripts\\cafsql\\" + TriggerName + ".sql" ) )
+            using( StreamWriter TriggerStream = new StreamWriter( Application.StartupPath + "..\\..\\..\\Scripts\\cafsql\\" + TriggerName + ".sql" ) )
             {
                 TriggerStream.Write( Trigger );
             }
