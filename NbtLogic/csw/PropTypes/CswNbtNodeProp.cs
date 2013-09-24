@@ -52,7 +52,8 @@ namespace ChemSW.Nbt.PropTypes
 
 
         //TODO: witout at least one serializable item, this ENTIRE CLASS will try to serialize resulting in a helpfull "error" message. When we WCFify this class we can remove this prop
-        [DataMember] private string ToDo = string.Empty;
+        [DataMember]
+        private string ToDo = string.Empty;
 
         /// <summary>
         /// WCF Default Contructor
@@ -61,7 +62,7 @@ namespace ChemSW.Nbt.PropTypes
         {
         }
 
-//All WCF Data Contracts MUST have a default constructor
+        //All WCF Data Contracts MUST have a default constructor
 
         /// <summary>
         /// Constructor
@@ -75,7 +76,7 @@ namespace ChemSW.Nbt.PropTypes
 
         }
 
-//generic
+        //generic
 
         public delegate void OnPropChangeHandler( CswNbtNodeProp Prop, bool Creating );
 
@@ -500,7 +501,7 @@ namespace ChemSW.Nbt.PropTypes
             } // foreach( CswNbtSubField SubField in NodeTypeProp.getFieldTypeRule().SubFields )
 
             // Also copy Gestalt, which usually isn't listed as a subfield
-            SetSubFieldValue(  CswEnumNbtSubFieldName.Gestalt, Source.Gestalt );
+            SetSubFieldValue( CswEnumNbtSubFieldName.Gestalt, Source.Gestalt );
             SetSubFieldValue( CswEnumNbtSubFieldName.GestaltSearch, Source.GestaltSearch );
         }
 
@@ -602,17 +603,26 @@ namespace ChemSW.Nbt.PropTypes
         /// </summary>
         public virtual void onAfterSetDefault() { }
 
+        public delegate void BeforeRenderHandler( CswNbtNodeProp Prop );
+
+        public BeforeRenderHandler onBeforeRender = null;
         /// <summary>
         /// Executed before the property is exported to the UI
         /// </summary>
-        public virtual void onBeforeRender() { }
+        protected virtual void handleBeforeRender()
+        {
+            if( null != onBeforeRender )
+            {
+                onBeforeRender( this );
+            }
+        }
 
         #region Xml Operations
 
         abstract public void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap );
         public virtual void ToJSON( JObject ParentObject )
         {
-            onBeforeRender();
+            handleBeforeRender();
         }
         public abstract void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap );
 
