@@ -613,7 +613,7 @@ namespace ChemSW.Nbt.PropTypes
         /// <summary>
         /// Executed before the property is exported to the UI
         /// </summary>
-        protected virtual void handleBeforeRender()
+        public void TriggerOnBeforeRender()
         {
             if( null != onBeforeRender )
             {
@@ -635,7 +635,7 @@ namespace ChemSW.Nbt.PropTypes
         abstract public void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap );
         public virtual void ToJSON( JObject ParentObject )
         {
-            handleBeforeRender();
+            //TriggerOnBeforeRender();  this is now done in CswNbtSdTabsAndProps
         }
         public abstract void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap );
 

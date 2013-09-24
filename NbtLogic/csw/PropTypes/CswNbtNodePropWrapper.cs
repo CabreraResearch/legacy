@@ -243,6 +243,14 @@ namespace ChemSW.Nbt.PropTypes
         }
 
         /// <summary>
+        /// Trigger an event to be executed before the property is exported to the UI
+        /// </summary>
+        public void TriggerOnBeforeRender()
+        {
+            _CswNbtNodeProp.TriggerOnBeforeRender();
+        }
+
+        /// <summary>
         /// Returns defined Field Type attributes/subfields as XmlDocument class XmlNode
         /// </summary>
         /// <param name="Parent">XmlDocument class XmlNode</param>
