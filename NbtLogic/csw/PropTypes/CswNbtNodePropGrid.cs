@@ -112,6 +112,8 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
+            base.ToJSON( ParentObject );  // FIRST
+
             ParentObject["viewname"] = View.ViewName;
             ParentObject["gridmode"] = GridMode.ToString();
             ParentObject["maxrows"] = MaxRows;

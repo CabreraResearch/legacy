@@ -114,6 +114,8 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
+            base.ToJSON( ParentObject );  // FIRST
+
             ParentObject[_HrefSubField.ToXmlNodeName( true )] = Href;
             ParentObject[_TextSubField.ToXmlNodeName( true )] = Text;
             ParentObject["url"] = GetFullURL( Prefix, Href, Suffix );

@@ -61,7 +61,7 @@ namespace ChemSW.Nbt.PropTypes
                 return Required && QuantityOptional ? false == CswTools.IsDouble( Quantity ) : 0 == Gestalt.Length;
             }
         }
-        
+
         public Int32 Precision
         {
             get
@@ -410,6 +410,8 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
+            base.ToJSON( ParentObject );  // FIRST
+
             ParentObject[_QuantitySubField.ToXmlNodeName( true )] = ( !Double.IsNaN( Quantity ) ) ? CswConvert.ToString( Quantity ) : string.Empty;
             ParentObject[_Val_kg_SubField.ToXmlNodeName( true )] = ( !Double.IsNaN( Quantity ) ) ? CswConvert.ToString( Val_kg ) : string.Empty;
             ParentObject[_Val_Liters_SubField.ToXmlNodeName( true )] = ( !Double.IsNaN( Quantity ) ) ? CswConvert.ToString( Val_Liters ) : string.Empty;

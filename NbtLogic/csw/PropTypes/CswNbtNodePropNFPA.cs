@@ -27,10 +27,10 @@ namespace ChemSW.Nbt.PropTypes
             _WhiteSubField = ( (CswNbtFieldTypeRuleNFPA) _FieldTypeRule ).WhiteSubField;
 
             // Associate subfields with methods on this object, for SetSubFieldValue()
-            _SubFieldMethods.Add( _RedSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Red, x => Red = CswConvert.ToString(x) ) );
-            _SubFieldMethods.Add( _YellowSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Yellow, x => Yellow = CswConvert.ToString(x) ) );
-            _SubFieldMethods.Add( _BlueSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Blue, x => Blue = CswConvert.ToString(x) ) );
-            _SubFieldMethods.Add( _WhiteSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => White, x => White = CswConvert.ToString(x) ) );
+            _SubFieldMethods.Add( _RedSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Red, x => Red = CswConvert.ToString( x ) ) );
+            _SubFieldMethods.Add( _YellowSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Yellow, x => Yellow = CswConvert.ToString( x ) ) );
+            _SubFieldMethods.Add( _BlueSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Blue, x => Blue = CswConvert.ToString( x ) ) );
+            _SubFieldMethods.Add( _WhiteSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => White, x => White = CswConvert.ToString( x ) ) );
         }
 
         private CswNbtSubField _RedSubField;
@@ -136,6 +136,8 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
+            base.ToJSON( ParentObject );  // FIRST
+
             ParentObject[_RedSubField.ToXmlNodeName( true )] = Red;
             ParentObject[_YellowSubField.ToXmlNodeName( true )] = Yellow;
             ParentObject[_BlueSubField.ToXmlNodeName( true )] = Blue;

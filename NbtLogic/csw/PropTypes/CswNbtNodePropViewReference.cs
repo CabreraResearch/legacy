@@ -29,7 +29,7 @@ namespace ChemSW.Nbt.PropTypes
 
             // Associate subfields with methods on this object, for SetSubFieldValue()
             _SubFieldMethods.Add( _ViewIdSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => ViewId, x => ViewId.set( CswConvert.ToInt32( x ) ) ) );
-            _SubFieldMethods.Add( _CachedViewNameSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => CachedViewName, x => CachedViewName = CswConvert.ToString(x) ) );
+            _SubFieldMethods.Add( _CachedViewNameSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => CachedViewName, x => CachedViewName = CswConvert.ToString( x ) ) );
         }
 
         private CswNbtSubField _ViewIdSubField;
@@ -115,6 +115,8 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
+            base.ToJSON( ParentObject );  // FIRST
+         
             CswNbtView View = _CswNbtResources.ViewSelect.restoreView( ViewId );
             if( null != View )
             {

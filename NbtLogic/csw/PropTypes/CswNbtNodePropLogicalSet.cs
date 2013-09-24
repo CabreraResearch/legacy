@@ -330,6 +330,8 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
+            base.ToJSON( ParentObject );  // FIRST
+
             ParentObject[_ElemName_LogicalSetJson] = new JObject();
 
             CswCheckBoxArrayOptions CBAOptions = new CswCheckBoxArrayOptions();

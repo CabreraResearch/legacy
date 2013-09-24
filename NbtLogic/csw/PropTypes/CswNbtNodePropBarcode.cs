@@ -44,7 +44,7 @@ namespace ChemSW.Nbt.PropTypes
                 return ( 0 == Gestalt.Length );
             }
         }//Empty
-        
+
         public string Barcode
         {
             get
@@ -145,6 +145,8 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
+            base.ToJSON( ParentObject );  // FIRST
+
             ParentObject[_SequenceNumberSubField.ToXmlNodeName( true )] = SequenceNumber;
             ParentObject[_BarcodeSubField.ToXmlNodeName( true )] = Barcode;
         }

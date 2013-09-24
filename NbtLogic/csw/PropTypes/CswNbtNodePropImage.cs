@@ -130,6 +130,8 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
+            base.ToJSON( ParentObject );  // FIRST
+
             ParentObject["width"] = ( Width > 0 ) ? Width : 0;
             ParentObject["height"] = ( Height > 0 ) ? Height : 0;
             ParentObject["placeholder"] = "Images/icons/300/_placeholder.gif";
@@ -159,7 +161,7 @@ namespace ChemSW.Nbt.PropTypes
             CswCommaDelimitedString imageNames = new CswCommaDelimitedString();
             foreach( CswNbtSdBlobData.CswNbtBlob Image in Images )
             {
-                imageNames.Add(Image.FileName);
+                imageNames.Add( Image.FileName );
             }
             SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, imageNames.ToString() );
         }

@@ -329,10 +329,10 @@ namespace ChemSW.Nbt.PropTypes
                 //Int32 TargetObjectClassId;
                 //_getIds( NbtResources, _targetType( NbtResources, RelationshipProp ), RelationshipProp.FKValue, out TargetNodeTypeId, out TargetObjectClassId );
 
-                ICswNbtTree CswNbtTree = NbtResources.Trees.getTreeFromView( View : OptionsView,
-                                                                             IncludeSystemNodes : false,
-                                                                             RequireViewPermissions : false,
-                                                                             IncludeHiddenNodes : false );
+                ICswNbtTree CswNbtTree = NbtResources.Trees.getTreeFromView( View: OptionsView,
+                                                                             IncludeSystemNodes: false,
+                                                                             RequireViewPermissions: false,
+                                                                             IncludeHiddenNodes: false );
                 CswEnumNbtViewRelatedIdType targetType = _targetType( NbtResources, _CswNbtMetaDataNodeTypeProp );
                 //_addOptionsRecurse( NbtResources, Options, CswNbtTree, _targetType( NbtResources, RelationshipProp ), RelationshipProp.FKValue ); //, TargetNodeTypeId, TargetObjectClassId );
                 _addOptionsRecurse( NbtResources, Options, CswNbtTree, targetType, FkValue );
@@ -388,6 +388,8 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
+            base.ToJSON( ParentObject );  // FIRST
+
             ParentObject[_NodeIDSubField.ToXmlNodeName( true ).ToLower()] = string.Empty;
             CswNbtNode RelatedNode = null;
             if( CswTools.IsPrimaryKey( RelatedNodeId ) )
