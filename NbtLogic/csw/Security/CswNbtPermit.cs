@@ -855,30 +855,28 @@ namespace ChemSW.Nbt.Security
         private Dictionary<CswPrimaryKey, CswPrimaryKey> _initPermissionGroupDict( Int32 NodeTypeId )
         {
             Dictionary<CswPrimaryKey, CswPrimaryKey> ret = new Dictionary<CswPrimaryKey, CswPrimaryKey>();
+
             string SQL = @"with pval as (select j.nodeid, op.propname, j.field1_fk
-                                               from object_class_props op
-                                               join nodetype_props p on op.objectclasspropid = p.objectclasspropid
-                                               join jct_nodes_props j on j.nodetypepropid = p.nodetypepropid
-                                            )
-                               select n.nodeid, ivg.nodeid permissiongroupid
-                                 from nodes n
-                                 join pval locval on (locval.nodeid = n.nodeid and locval.propname = 'Location')
-                                 join nodes loc on (locval.field1_fk = loc.nodeid)
-                                 join pval ivgval on (ivgval.nodeid = loc.nodeid and ivgval.propname = 'Inventory Group')
-                                 join nodes ivg on (ivgval.field1_fk = ivg.nodeid)
-                                where n.nodetypeid = " + NodeTypeId + @"
-                             union
-                               select n.nodeid, rg.nodeid permissiongroupid
-                                 from nodes n
-                                 join pval rgval on (rgval.nodeid = n.nodeid and rgval.propname = 'Report Group')
-                                 join nodes rg on (rgval.field1_fk = rg.nodeid)
-                                where n.nodetypeid = " + NodeTypeId + @"
-                             union
-                               select n.nodeid, mrg.nodeid permissiongroupid
-                                 from nodes n
-                                 join pval mrgval on (mrgval.nodeid = n.nodeid and mrgval.propname = 'Mail Report Group')
-                                 join nodes mrg on (mrgval.field1_fk = mrg.nodeid) 
-                                where n.nodetypeid = " + NodeTypeId + @" ";
+                                           from object_class_props op
+                                           join nodetype_props p on op.objectclasspropid = p.objectclasspropid
+                                           join jct_nodes_props j on j.nodetypepropid = p.nodetypepropid
+                                          where op.propname in ('Location', 'Inventory Group', 'Report Group', 'Mail Report Group'))
+                           select n.nodeid, ivgval.field1_fk permissiongroupid
+                             from nodes n
+                             join pval locval on (locval.nodeid = n.nodeid and locval.propname = 'Location')
+                             join pval ivgval on (ivgval.nodeid = locval.field1_fk and ivgval.propname = 'Inventory Group')
+                            where n.nodetypeid = " + NodeTypeId + @"
+                        union
+                           select n.nodeid, rgval.field1_fk permissiongroupid
+                             from nodes n
+                             join pval rgval on (rgval.nodeid = n.nodeid and rgval.propname = 'Report Group')
+                            where n.nodetypeid = " + NodeTypeId + @"
+                        union
+                           select n.nodeid, mrgval.field1_fk permissiongroupid
+                             from nodes n
+                             join pval mrgval on (mrgval.nodeid = n.nodeid and mrgval.propname = 'Mail Report Group')
+                            where n.nodetypeid = " + NodeTypeId;
+
             CswArbitrarySelect PermGrpSelect = _CswNbtResources.makeCswArbitrarySelect( "permit_permgrp_select", SQL );
             DataTable PermGrpTable = PermGrpSelect.getTable();
             foreach( DataRow Row in PermGrpTable.Rows )
