@@ -552,10 +552,10 @@ namespace ChemSW.Nbt
 
                             if( FilterSubField.RelationalTable == string.Empty )
                             {
-                                string FilterClause = @"select z.nodeid, '1' as included from nodes z where ";
+                                string FilterClause = string.Empty;// @"select z.nodeid, '1' as included from nodes z where ";
                                 if( Filter.FilterMode == CswEnumNbtFilterMode.Null )
                                 {
-                                    FilterClause += @"(z.nodeid not in (
+                                    FilterClause += @"select z.nodeid, '1' as included from nodes z where (z.nodeid not in (
                                   select jnp.nodeid
                                     from jct_nodes_props jnp
                                     join nodetype_props p on (jnp.nodetypepropid = p.nodetypepropid) ";
@@ -568,15 +568,13 @@ namespace ChemSW.Nbt
                                         FilterClause += @"   join object_class_props op on (p.objectclasspropid = op.objectclasspropid)
                                    where op.objectclasspropid = " + Prop.ObjectClassPropId + @")";
                                     }
-                                    FilterClause += @"     or ";
+                                    FilterClause += @" or z.nodeid in (select n.nodeid from nodes n ";
 
                                 }
                                 else
                                 {
-                                    FilterClause += @"(";
+                                    FilterClause += @"select n.nodeid, '1' as included from nodes n ";
                                 }
-
-                                FilterClause += @" z.nodeid in (select n.nodeid from nodes n ";
 
                                 if( Prop.Type == CswEnumNbtViewPropType.NodeTypePropId )
                                 {
@@ -588,8 +586,11 @@ namespace ChemSW.Nbt
                                                                   join nodetype_props p on (p.objectclasspropid = op.objectclasspropid) ";
                                 }
                                 FilterClause += @"                join jct_nodes_props jnp on (jnp.nodeid = n.nodeid and jnp.nodetypepropid = p.nodetypepropid)
-                                                                  where " + FilterValue + @"))";
-
+                                                                 where " + FilterValue + @"";
+                                if( Filter.FilterMode == CswEnumNbtFilterMode.Null )
+                                {
+                                    FilterClause += "))";
+                                }
 
                                 With.Add( "filt" + FilterCount.ToString() + " as (" + FilterClause + ")" );
 
@@ -668,7 +669,7 @@ namespace ChemSW.Nbt
             string ret = string.Empty;
             if( With.Count > 0 )
             {
-                ret = "with " + With.ToString(false);
+                ret = "with " + With.ToString( false );
             }
             ret += " " + Select + " " + From + " " + Where + " " + OrderBy;
             return ret;
