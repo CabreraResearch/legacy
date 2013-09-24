@@ -823,8 +823,9 @@ namespace ChemSW.Nbt.Security
                 }
 
 
-                CswPrimaryKey PermissionGroupId = getPermissionGroupId( _CswNbtPermitInfo.NodePrimeKey );
-                if( CswTools.IsPrimaryKey( PermissionGroupId ) && false == _CswNbtResources.Permit.canNode( _CswNbtPermitInfo.NodeTypePermission, PermissionGroupId, _CswNbtPermitInfo.User ) )
+                CswPrimaryKey PermissionGroupId = getPermissionGroupId( _CswNbtPermitInfo.NodePrimeKey, _CswNbtPermitInfo.NodeType.NodeTypeId );
+                if( CswTools.IsPrimaryKey( PermissionGroupId ) && 
+                    false == _CswNbtResources.Permit.canNode( _CswNbtPermitInfo.NodeTypePermission, PermissionGroupId, _CswNbtPermitInfo.User ) )
                 {
                     ret = false;
                     _CswNbtResources.CswLogger.reportAppState( "The node " + _CswNbtPermitInfo.Node.NodeName + " (" + _CswNbtPermitInfo.NodePrimeKey + ") has been displayed as non-editable because the viewer does not belong to permission group " + PermissionGroupId + ".", "ReadOnlyConditions" );
