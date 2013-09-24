@@ -181,6 +181,8 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
+            base.ToJSON( ParentObject );  // FIRST
+
             ParentObject[_SelectedNodeTypeIdsSubField.ToXmlNodeName().ToLower()] = SelectedNodeTypeIds.ToString();
             ParentObject["selectmode"] = SelectMode.ToString();
             ParentObject[_ElemName_Options] = new JObject();

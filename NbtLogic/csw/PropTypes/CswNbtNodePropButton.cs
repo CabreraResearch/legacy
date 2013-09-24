@@ -34,10 +34,10 @@ namespace ChemSW.Nbt.PropTypes
             _IconSubField = FieldTypeRule.IconSubField;
 
             // Associate subfields with methods on this object, for SetSubFieldValue()
-            _SubFieldMethods.Add( _StateSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => State, x => State = CswConvert.ToString(x) ) );
-            _SubFieldMethods.Add( _MenuOptionsSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => MenuOptions, x => MenuOptions = CswConvert.ToString(x) ) );
-            _SubFieldMethods.Add( _DisplayNameSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => DisplayName, x => DisplayName = CswConvert.ToString(x) ) );
-            _SubFieldMethods.Add( _IconSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Icon, x => Icon = CswConvert.ToString(x) ) );
+            _SubFieldMethods.Add( _StateSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => State, x => State = CswConvert.ToString( x ) ) );
+            _SubFieldMethods.Add( _MenuOptionsSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => MenuOptions, x => MenuOptions = CswConvert.ToString( x ) ) );
+            _SubFieldMethods.Add( _DisplayNameSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => DisplayName, x => DisplayName = CswConvert.ToString( x ) ) );
+            _SubFieldMethods.Add( _IconSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Icon, x => Icon = CswConvert.ToString( x ) ) );
         }
 
         private CswNbtSubField _StateSubField;
@@ -178,6 +178,8 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
+            base.ToJSON( ParentObject );  // FIRST
+
             //TODO: when Case 27516 is complete, merge these two "JSON" methods
             AsJSON( NodeTypeProp, ParentObject, MenuOptions, State );
             ParentObject["confirmmessage"] = ConfirmationDialogMessage;

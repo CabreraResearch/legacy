@@ -6,7 +6,6 @@ using ChemSW.DB;
 using ChemSW.MtSched.Core;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.Sched
 {
@@ -17,9 +16,9 @@ namespace ChemSW.Nbt.Sched
             string SQL = @"select o.objectclass, t.nodetypename, n.nodeid, p.nodetypepropid, j.jctnodepropid
                              from jct_nodes_props j
                              join nodes n on j.nodeid = n.nodeid
-                             join nodetypes t on n.nodetypeid = t.nodetypeid
-                             join object_class o on t.objectclassid = o.objectclassid
                              join nodetype_props p on p.nodetypepropid = j.nodetypepropid
+                             join nodetypes t on p.nodetypeid = t.nodetypeid
+                             join object_class o on t.objectclassid = o.objectclassid
                             where (j.pendingupdate = '1' or n.pendingupdate = '1')
                               and t.enabled = 1
                             order by n.nodeid, p.nodetypepropid";

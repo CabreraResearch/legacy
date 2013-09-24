@@ -130,5 +130,26 @@ namespace NbtWebApp
             SvcDriver.run();
             return ( Ret );
         }
+
+
+        [OperationContract]
+        [WebInvoke( Method = "POST" )]
+        [Description( "Generate a report" )]
+        [FaultContract( typeof( FaultException ) )]
+        public CswNbtWebServiceReport.CrystalReportReturn reportCrystal( CswNbtWebServiceReport.ReportData Request )
+        {
+            CswNbtWebServiceReport.CrystalReportReturn Ret = new CswNbtWebServiceReport.CrystalReportReturn();
+
+            var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceReport.CrystalReportReturn, CswNbtWebServiceReport.ReportData>(
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj: Ret,
+                WebSvcMethodPtr: CswNbtWebServiceReport.runCrystalReport,
+                ParamObj: Request
+                );
+
+            SvcDriver.run();
+            return ( Ret );
+        }
+
     }
 }

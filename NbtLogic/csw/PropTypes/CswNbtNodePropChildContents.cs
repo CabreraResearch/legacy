@@ -123,6 +123,8 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
+            base.ToJSON( ParentObject );  // FIRST
+
             bool allowAdd = false;
             ParentObject["nodetypeid"] = string.Empty;
             ParentObject["objectclassid"] = string.Empty;

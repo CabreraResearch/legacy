@@ -11,18 +11,17 @@ using ChemSW.DB;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.Grid;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.NbtWebControls.FieldTypes;
+using CrystalDecisions.CrystalReports.Engine;
+using CrystalDecisions.Shared;
 using NbtWebApp.WebSvc.Returns;
 using Newtonsoft.Json.Linq;
+using ExportOptions = CrystalDecisions.Shared.ExportOptions;
 
 namespace ChemSW.Nbt.WebServices
 {
     public class CswNbtWebServiceReport
     {
-        private readonly CswNbtResources _CswNbtResources;
-        private readonly CswNbtNode _reportNode = null;
-
-        private HttpContext _Context = HttpContext.Current;
-
         #region WCF Data Objects
 
         /// <summary>
@@ -77,7 +76,7 @@ namespace ChemSW.Nbt.WebServices
                 [DataMember]
                 public string value = string.Empty;
             }
-            
+
             private Dictionary<string, string> _reportParamsDictionary = null;
             public Dictionary<string, string> ReportParamDictionary
             {
@@ -88,7 +87,7 @@ namespace ChemSW.Nbt.WebServices
                         _reportParamsDictionary = new Dictionary<string, string>();
                         foreach( ReportParam param in reportParams )
                         {
-                            _reportParamsDictionary.Add( param.name,param.value );
+                            _reportParamsDictionary.Add( param.name, param.value );
                         }
                     }
                     return _reportParamsDictionary;
@@ -97,20 +96,30 @@ namespace ChemSW.Nbt.WebServices
 
         }
 
+        /// <summary>
+        /// Return Object for Reports, which inherits from CswWebSvcReturn
+        /// </summary>
+        [DataContract]
+        public class CrystalReportReturn : CswWebSvcReturn
+        {
+            public CrystalReportReturn()
+            {
+                Data = new CrystalReportData();
+            }
+            [DataMember]
+            public CrystalReportData Data;
+        }
+
+        [DataContract]
+        public class CrystalReportData
+        {
+            [DataMember]
+            public string reportUrl = string.Empty;
+            [DataMember]
+            public bool hasResults = false;
+        }
+
         #endregion WCF Data Objects
-
-        public CswNbtWebServiceReport( CswNbtResources CswNbtResources, CswNbtNode reportNode )
-        {
-            _CswNbtResources = CswNbtResources;
-            _reportNode = reportNode;
-        }
-
-        public CswNbtWebServiceReport( CswNbtResources CswNbtResources, CswNbtNode reportNode, HttpContext Context )
-        {
-            _CswNbtResources = CswNbtResources;
-            _reportNode = reportNode;
-            _Context = Context;
-        }
 
         // Need to double " in string values
         private static string _csvSafe( string str )
@@ -216,6 +225,102 @@ namespace ChemSW.Nbt.WebServices
             }
             Return.Data = Request;
         }
+
+
+        #region Crystal
+
+        public static void runCrystalReport( ICswResources CswResources, CswNbtWebServiceReport.CrystalReportReturn Return, CswNbtWebServiceReport.ReportData Request )
+        {
+            CswNbtResources CswNbtResources = (CswNbtResources) CswResources;
+            CswPrimaryKey ReportPk = CswConvert.ToPrimaryKey( Request.nodeId );
+            if( CswTools.IsPrimaryKey( ReportPk ) )
+            {
+                CswNbtObjClassReport ReportNode = CswNbtResources.Nodes.GetNode( ReportPk );
+                if( null != ReportNode )
+                {
+                    //Request.reportParams = FormReportParamsToCollection( HttpContext.Current.Request.Form );
+
+                    string ReportSql = CswNbtObjClassReport.ReplaceReportParams( ReportNode.SQL.Text, Request.ReportParamDictionary );
+                    CswArbitrarySelect ReportSelect = CswNbtResources.makeCswArbitrarySelect( "Report_" + ReportNode.NodeId.ToString() + "_Select", ReportSql );
+                    DataTable ReportTable = ReportSelect.getTable();
+                    if( ReportTable.Rows.Count > 0 )
+                    {
+
+                        // Get the Report Layout File
+                        Int32 JctNodePropId = ReportNode.RPTFile.JctNodePropId;
+                        if( JctNodePropId > 0 )
+                        {
+                            CswFilePath FilePathTools = new CswFilePath( CswNbtResources );
+                            string ReportTempFileName = FilePathTools.getFullReportFilePath( JctNodePropId.ToString() );
+                            if( !File.Exists( ReportTempFileName ) )
+                            {
+                                ( new FileInfo( ReportTempFileName ) ).Directory.Create(); //creates the /rpt directory if it doesn't exist
+
+                                CswTableSelect JctSelect = CswNbtResources.makeCswTableSelect( "getReportLayoutBlob_select", "blob_data" );
+                                JctSelect.AllowBlobColumns = true;
+                                CswCommaDelimitedString SelectColumns = new CswCommaDelimitedString();
+                                SelectColumns.Add( "blobdata" );
+                                DataTable JctTable = JctSelect.getTable( SelectColumns, "jctnodepropid", JctNodePropId, "", true );
+
+                                if( JctTable.Rows.Count > 0 )
+                                {
+                                    if( !JctTable.Rows[0].IsNull( "blobdata" ) )
+                                    {
+                                        byte[] BlobData = JctTable.Rows[0]["blobdata"] as byte[];
+                                        FileStream fs = new FileStream( ReportTempFileName, FileMode.CreateNew );
+                                        BinaryWriter BWriter = new BinaryWriter( fs, System.Text.Encoding.Default );
+                                        BWriter.Write( BlobData );
+                                    }
+                                    else
+                                    {
+                                        throw new CswDniException( CswEnumErrorType.Warning, "Report is missing RPT file", "Report's RPTFile blobdata is null" );
+                                    }
+                                }
+                            }
+                            if( File.Exists( ReportTempFileName ) )
+                            {
+                                Return.Data.reportUrl = _saveCrystalReport( CswNbtResources, ReportTempFileName, ReportNode.ReportName.Text, ReportTable );
+                                Return.Data.hasResults = true;
+                            }
+                        } // if( JctNodePropId > 0 )
+                    } // if(ReportTable.Rows.Count > 0) 
+                    else
+                    {
+                        Return.Data.hasResults = false;
+                    }
+                } // if(null != ReportNode)
+            } // if( CswTools.IsPrimaryKey( ReportId ) )
+        } // LoadReport()
+
+
+        private static string _saveCrystalReport( CswNbtResources CswNbtResources, string ReportTempFileName, string ReportName, DataTable ReportTable )
+        {
+            CswTempFile TempFile = new CswTempFile( CswNbtResources );
+            string DestinationFileName = DateTime.Now.Ticks + "_" + CswTools.SafeFileName( ReportName ) + ".pdf";
+            string DestFilePath, DestWebPath;
+            TempFile.getFullTempFilePath( DestinationFileName, out DestFilePath, out DestWebPath );
+
+            DiskFileDestinationOptions dFileDOpts = new DiskFileDestinationOptions();
+            dFileDOpts.DiskFileName = DestFilePath;
+
+            ReportDocument oRD = new ReportDocument();
+            oRD.Load( ReportTempFileName );
+            oRD.SetDataSource( ReportTable );
+
+            ExportOptions eOpts = new ExportOptions();
+            eOpts = oRD.ExportOptions;
+            eOpts.ExportDestinationType = ExportDestinationType.DiskFile;
+            eOpts.ExportFormatType = ExportFormatType.PortableDocFormat;
+            eOpts.DestinationOptions = dFileDOpts;
+
+            oRD.Export();
+            oRD.Close();
+
+            return DestWebPath;
+        }
+        #endregion Crystal
+
+
 
     } // class CswNbtWebServiceReport
 } // namespace ChemSW.Nbt.WebServices

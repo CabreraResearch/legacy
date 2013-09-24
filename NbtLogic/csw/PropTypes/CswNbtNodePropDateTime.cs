@@ -112,7 +112,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                if (_DisplayMode == CswResources.UnknownEnum)
+                if( _DisplayMode == CswResources.UnknownEnum )
                 {
                     if( _CswNbtMetaDataNodeTypeProp.Extended != string.Empty )
                         _DisplayMode = _CswNbtMetaDataNodeTypeProp.Extended;
@@ -130,6 +130,8 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
+            base.ToJSON( ParentObject );  // FIRST
+
             CswDateTime CswDate = new CswDateTime( _CswNbtResources, DateTimeValue );
             ParentObject[_DateValueSubField.ToXmlNodeName( true )] = CswDate.ToClientAsDateTimeJObject();
             ParentObject["displaymode"] = DisplayMode.ToString();
