@@ -83,7 +83,7 @@ namespace ChemSW.Nbt.Schema
                 */
 
                 // Exclude issystemuser
-                UserImpMgr.finalize( WhereClause: " issystemuser != '1' " );
+                UserImpMgr.finalize( WhereClause: " issystemuser != '1' ", UseView: true );
             }
 
         } // update()
