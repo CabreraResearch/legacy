@@ -33,6 +33,7 @@ namespace ChemSW.Nbt.Schema
         public override void update()
         {
             _CswNbtSchemaModTrnsctn.indexColumn( "jct_nodes_props", "nodetypepropid, field1, field2, field3, field1_numeric, field1_date", "JCT10" );
+            _CswNbtSchemaModTrnsctn.indexColumn( "jct_nodes_props", "nodeid, nodetypepropid, field1, field1_fk", "JCT11" );
 
 
         } // update()
