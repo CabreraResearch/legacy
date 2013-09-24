@@ -226,6 +226,7 @@ namespace ChemSW.Nbt.ObjClasses
                                 Tree.goToParentNode();
                             }
                             ButtonData.Data["state"]["sdsDocs"] = SDSDocs;
+                        }//if( Tree.getChildNodeCount() > 0 )
                         }
                     }
                 }
