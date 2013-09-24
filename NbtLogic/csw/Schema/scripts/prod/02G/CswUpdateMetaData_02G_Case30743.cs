@@ -58,11 +58,15 @@ namespace ChemSW.Nbt.Schema
                     FieldType = CswEnumNbtFieldType.Text
                 } );
 
+            CswNbtMetaDataNodeType TimeUoM_OC = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Unit (Time)" );
             CswNbtMetaDataObjectClassProp OpenExpireIntervalOCP = ChemicalOC.getObjectClassProp( CswNbtObjClassChemical.PropertyName.OpenExpireInterval ) ??
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( ChemicalOC )
                 {
                     PropName = CswNbtObjClassChemical.PropertyName.OpenExpireInterval,
-                    FieldType = CswEnumNbtFieldType.Quantity
+                    FieldType = CswEnumNbtFieldType.Quantity,
+                    IsFk = true,
+                    FkType = "NodeTypeId",
+                    FkValue = TimeUoM_OC.NodeTypeId
                 } );
 
             CswNbtMetaDataObjectClassProp EINECSOCP = ChemicalOC.getObjectClassProp( CswNbtObjClassChemical.PropertyName.EINECS ) ??

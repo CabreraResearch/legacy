@@ -49,6 +49,14 @@ namespace ChemSW.Nbt.Schema
             ImpMgr.importBinding( "storage_conditions", CswNbtObjClassChemical.PropertyName.StorageAndHandling, "" );
             ImpMgr.importBinding( "istier2", CswNbtObjClassChemical.PropertyName.IsTierII, "" );
             ImpMgr.importBinding( "productno", CswNbtObjClassChemical.PropertyName.PartNumber, "" );
+            ImpMgr.importBinding( "einecs", CswNbtObjClassChemical.PropertyName.EINECS, "" );
+            ImpMgr.importBinding( "compressed_gas", CswNbtObjClassChemical.PropertyName.CompressedGas, "" );
+
+            ImpMgr.importBinding( "expireinterval", CswNbtObjClassChemical.PropertyName.ExpirationInterval, CswEnumNbtSubFieldName.Value.ToString() );
+            ImpMgr.importBinding( "expireintervalunits", CswNbtObjClassChemical.PropertyName.ExpirationInterval, CswEnumNbtSubFieldName.Name.ToString() );
+
+            ImpMgr.importBinding( "openexpireinterval", CswNbtObjClassChemical.PropertyName.OpenExpireInterval, CswEnumNbtSubFieldName.Value.ToString() );
+            ImpMgr.importBinding( "openexpireintervalunits", CswNbtObjClassChemical.PropertyName.OpenExpireInterval, CswEnumNbtSubFieldName.Name.ToString() );
 
             //NFPA
             ImpMgr.importBinding( "firecode", CswNbtObjClassChemical.PropertyName.NFPA, CswEnumNbtSubFieldName.Flammability.ToString() );
@@ -64,23 +72,9 @@ namespace ChemSW.Nbt.Schema
             ImpMgr.importBinding( "nonhazardous3e_trans", CswNbtObjClassChemical.PropertyName.Hazardous, "" );
             //TODO: find/replace substrings in PPE
 
-            //TODO: lob data
-            ImpMgr.importBinding( "struct_pict", CswNbtObjClassChemical.PropertyName.Structure, "", BlobTableName: "materials", LobDataPkColOverride: "materialid" );
-            //disposal                 -> new prop "Disposal Instructions as memo
-            
-                                       
-            //TODO: new props          
-            //dot_code                 -> "DOT Code" as list
-            //hazards                  -> "Hazard Info" as memo
-            //einecs                   -> "EINCES" as text?
-            //compressed_gas           -> "Compressed Gas" as bool?
-            //smiles                   -> "SMILES" as text?
-            //openexpireinterval       -> "Open Expire Interval" as time? (same as Expire Interval?)
-            //openexpireintervalunits  -> "Open Expire Interval" as time? (same as Expire Interval?)
-            //creation_date            -> "Legacy Creation Date" as server managed text
-            //creationsiteid           -> "Legacy Creation Site Id" as server managed number
-            //materialvarietyid        -> need more info
-
+            ImpMgr.importBinding( "struct_pict", CswNbtObjClassChemical.PropertyName.Structure, "", BlobTableName : "materials", LobDataPkColOverride : "materialid" );
+            ImpMgr.importBinding( "disposal", CswNbtObjClassChemical.PropertyName.DisposalInstructions, "", BlobTableName : "materials", LobDataPkColOverride : "materialid" );
+            ImpMgr.importBinding( "smiles", CswNbtObjClassChemical.PropertyName.SMILES, "", ClobTableName : "materials", LobDataPkColOverride : "materialid" );
 
             ImpMgr.finalize( UseView : true );
 

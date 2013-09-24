@@ -656,7 +656,7 @@ namespace ChemSW.Nbt.ImportExport
                     }
                 }
                 // Quantity or Relationship
-                else if( ( Binding.DestProperty.getFieldTypeValue() == CswEnumNbtFieldType.Quantity && Binding.DestSubfield.Column.ToString().ToLower() == "name" )
+                else if( ( Binding.DestProperty.getFieldTypeValue() == CswEnumNbtFieldType.Quantity && Binding.DestSubfield.Name.ToString().ToLower() == "name" )
                             || Binding.DestProperty.getFieldTypeValue() == CswEnumNbtFieldType.Relationship
                             || Binding.DestProperty.getFieldTypeValue() == CswEnumNbtFieldType.Location )
                 {
