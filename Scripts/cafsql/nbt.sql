@@ -1,5 +1,5 @@
 -- Create the database link to CAF
--- Change the following:
+	-- Change the following:
 	-- [cafuser]
 	-- [userpwd]
 	-- [database] (this needs to be in single quotes)

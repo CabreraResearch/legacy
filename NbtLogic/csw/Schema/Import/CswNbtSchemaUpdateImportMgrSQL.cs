@@ -27,7 +27,13 @@ namespace ChemSW.Nbt.csw.Schema
             //Populate the import queue
             string SqlText = "insert into " + ImportTable + " ( nbtimportqueueid, state, itempk, tablename, priority, errorlog, viewname ) " +
                              @" select " + ImportSequence + ", '" + State + "', " + SourceTablePkColumnName + ", '" + _SourceTableName + "',0, '', '" + _ViewName + "' from " + DataSource + " where deleted='0' " + WhereClause;
-            SchemaModTrnsctn.execArbitraryPlatformNeutralSql( SqlText );
+            //SchemaModTrnsctn.execArbitraryPlatformNeutralSql( SqlText );
+
+            using( StreamWriter ImportQueueStream = new StreamWriter( Application.StartupPath + "..\\..\\..\\..\\Scripts\\cafsql\\importqueue\\" + "fill_queue_" + _SourceTableName + ".sql" ) )
+            {
+                ImportQueueStream.Write( SqlText );
+            }
+
         }
 
         private string TriggerName
@@ -72,10 +78,7 @@ namespace ChemSW.Nbt.csw.Schema
   
                                 END;";
 
-            //string Ddl = "execDdl@" + _CAFDbLink + "(" + Trigger + ")";
-            //SchemaModTrnsctn.execStoredProc( "execDdl@" + _CAFDbLink, new List<CswStoredProcParam>() {new CswStoredProcParam( "ddlOp", Trigger, CswEnumDataDictionaryPortableDataType.String )} );
-
-            using( StreamWriter TriggerStream = new StreamWriter( Application.StartupPath + "..\\..\\..\\Scripts\\cafsql\\" + TriggerName + ".sql" ) )
+            using( StreamWriter TriggerStream = new StreamWriter( Application.StartupPath + "..\\..\\..\\Scripts\\cafsql\\triggers\\" + TriggerName + ".sql" ) )
             {
                 TriggerStream.Write( Trigger );
             }
@@ -83,8 +86,6 @@ namespace ChemSW.Nbt.csw.Schema
 #endif
 
         }
-
-
 
     }
 }
