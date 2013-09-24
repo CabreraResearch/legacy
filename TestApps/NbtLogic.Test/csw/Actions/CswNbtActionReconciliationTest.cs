@@ -688,7 +688,7 @@ namespace ChemSW.Nbt.Test.Actions
         {
             CswPrimaryKey LocationId = TestData.Nodes.createLocationNode().NodeId;
             CswNbtObjClassContainer ContainerNode = TestData.Nodes.createContainerNode( LocationId: LocationId );
-            TestData.Nodes.createContainerLocationNode( ContainerNode.Node, CswEnumNbtContainerLocationActionOptions.Ignore.ToString(), LocationId: LocationId, ContainerScan: ContainerNode.Barcode.Barcode );
+            TestData.Nodes.createContainerLocationNode( ContainerNode.Node, CswEnumNbtContainerLocationActionOptions.MarkMissing.ToString(), LocationId: LocationId, ContainerScan: ContainerNode.Barcode.Barcode );
             ContainerData.ReconciliationRequest Request = new ContainerData.ReconciliationRequest
             {
                 StartDate = DateTime.Now.AddHours( -1 ).ToString(),
