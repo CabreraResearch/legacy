@@ -29,7 +29,7 @@ namespace ChemSW.Nbt.csw.Schema
                              @" select " + ImportSequence + ", '" + State + "', " + SourceTablePkColumnName + ", '" + _SourceTableName + "',0, '', '" + _ViewName + "' from " + DataSource + " where deleted='0' " + WhereClause;
             //SchemaModTrnsctn.execArbitraryPlatformNeutralSql( SqlText );
 
-            using( StreamWriter ImportQueueStream = new StreamWriter( Application.StartupPath + "..\\..\\..\\..\\Scripts\\cafsql\\importqueue\\" + "fill_queue_" + _SourceTableName + ".sql" ) )
+            using( StreamWriter ImportQueueStream = new StreamWriter( Application.StartupPath + "..\\..\\..\\Scripts\\cafsql\\importqueue\\" + "fill_queue_" + _SourceTableName + ".sql" ) )
             {
                 ImportQueueStream.Write( SqlText );
             }
