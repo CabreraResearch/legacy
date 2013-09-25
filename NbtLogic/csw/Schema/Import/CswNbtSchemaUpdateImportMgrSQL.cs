@@ -25,8 +25,8 @@ namespace ChemSW.Nbt.csw.Schema
             }
 
             //Populate the import queue
-            string SqlText = "insert into " + ImportTable + " ( nbtimportqueueid, state, itempk, tablename, priority, errorlog, viewname ) " +
-                             @" select " + ImportSequence + ", '" + State + "', " + SourceTablePkColumnName + ", '" + _SourceTableName + "',0, '', '" + _ViewName + "' from " + DataSource + " where deleted='0' " + WhereClause;
+            string SqlText = "insert into " + ImportTable + " ( nbtimportqueueid, state, itempk, sheetname, priority, errorlog) " +
+                             @" select " + ImportSequence + ", '" + State + "', " + SourceTablePkColumnName + ", '" + DataSource + "',0, '' from " + DataSource + " where deleted='0' " + WhereClause;
             //SchemaModTrnsctn.execArbitraryPlatformNeutralSql( SqlText );
 
             using( StreamWriter ImportQueueStream = new StreamWriter( Application.StartupPath + "..\\..\\..\\Scripts\\cafsql\\importqueue\\" + "fill_queue_" + _SourceTableName + ".sql" ) )

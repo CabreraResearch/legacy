@@ -46,7 +46,7 @@ namespace ChemSW.Nbt.csw.Schema
 
         private CswCommaDelimitedString _SourceColumns;
 
-        public CswNbtSchemaUpdateImportMgr( CswNbtSchemaModTrnsctn SchemaModTrnsctn, string SourceTableName, string DestNodeTypeName, string ViewName = "", string CafDbLink = null, Int32 ImportOrder = 1 )
+        public CswNbtSchemaUpdateImportMgr( CswNbtSchemaModTrnsctn SchemaModTrnsctn, string SourceTableName, string DestNodeTypeName, string ViewName = "", string SourceColumn = null, string CafDbLink = null, Int32 ImportOrder = 1 )
         {
             string ExceptionText = string.Empty;
             _CAFDbLink = CafDbLink ?? CswScheduleLogicNbtCAFImport.CAFDbLink;
@@ -65,6 +65,7 @@ namespace ChemSW.Nbt.csw.Schema
                 _ViewName = ViewName;
                 _ImportOrder = ImportOrder;
                 _SourceColumns = new CswCommaDelimitedString();
+                SourceTablePkColumnName = SourceColumn;
 
                 _importOrder( _ImportOrder, _DestNodeTypeName );
                 _importDef();
@@ -75,7 +76,7 @@ namespace ChemSW.Nbt.csw.Schema
             }
         }//ctor
 
-        public CswNbtSchemaUpdateImportMgr( CswNbtSchemaModTrnsctn SchemaModTrnsctn, string SourceTableName, List<Tuple<string, Int32>> DestNodeTypesAndInstances, string ViewName = "", string CafDbLink = null )
+        public CswNbtSchemaUpdateImportMgr( CswNbtSchemaModTrnsctn SchemaModTrnsctn, string SourceTableName, List<Tuple<string, Int32>> DestNodeTypesAndInstances, string ViewName = "", string SourceColumn=null, string CafDbLink = null )
         {
             string ExceptionText = string.Empty;
             _CAFDbLink = CafDbLink ?? CswScheduleLogicNbtCAFImport.CAFDbLink;
@@ -92,6 +93,7 @@ namespace ChemSW.Nbt.csw.Schema
                 _SourceTableName = SourceTableName;
                 _ViewName = ViewName;
                 _SourceColumns = new CswCommaDelimitedString();
+                SourceTablePkColumnName = SourceColumn;
 
                 for( int i = 0; i < DestNodeTypesAndInstances.Count; i++ )
                 {
@@ -167,17 +169,24 @@ namespace ChemSW.Nbt.csw.Schema
             }
         } // _importRelationship()
 
+        private string _SourceTablePkColumnName;
         private string SourceTablePkColumnName
         {
             get
             {
                 string Ret = null;
-                if( null != _NbtImporter )
+                if( null != _SourceTablePkColumnName )
+                {
+                    Ret = _SourceTablePkColumnName;
+                }
+                else if( null != _NbtImporter )
                 {
                     Ret = _NbtImporter.getRemoteDataDictionaryPkColumnName( _SourceTableName, _CAFDbLink );
                 }
+
                 return Ret;
             }
+            set { _SourceTablePkColumnName = value;  }
         }
 
         public void finalize( string WhereClause = null, string DefinitionName = null, bool UseView = false )
