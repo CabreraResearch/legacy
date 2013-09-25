@@ -51,6 +51,8 @@ namespace ChemSW.Nbt.Schema
             ImpMgr.importBinding( "productno", CswNbtObjClassChemical.PropertyName.PartNumber, "" );
             ImpMgr.importBinding( "einecs", CswNbtObjClassChemical.PropertyName.EINECS, "" );
             ImpMgr.importBinding( "compressed_gas", CswNbtObjClassChemical.PropertyName.CompressedGas, "" );
+            ImpMgr.importBinding( "dot_code", CswNbtObjClassChemical.PropertyName.DOTCode, "" );
+            ImpMgr.importBinding( "subclassname", CswNbtObjClassChemical.PropertyName.SubclassName, "" );
 
             ImpMgr.importBinding( "expireinterval", CswNbtObjClassChemical.PropertyName.ExpirationInterval, CswEnumNbtSubFieldName.Value.ToString() );
             ImpMgr.importBinding( "expireintervalunits", CswNbtObjClassChemical.PropertyName.ExpirationInterval, CswEnumNbtSubFieldName.Name.ToString() );

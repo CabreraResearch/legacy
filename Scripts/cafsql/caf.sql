@@ -142,7 +142,7 @@ select w.businessunitid,
   left outer join business_units b on (b.businessunitid = w.businessunitid)
   left outer join sites s on (s.siteid = w.siteid);
 
-create or replace view chemicals_view as
+  create or replace view chemicals_view as
 (select v.vendorid,
  p.packageid,
  p.productno,
@@ -230,6 +230,7 @@ m."ISTIER2",
 m."MATERIALVARIETYID",
 m."NONHAZARDOUS3E",
 m."ASSETCREATIONNAME",
+ms.subclassname,
 
 (case m.physical_state
   when 'S' then 'Solid'
