@@ -390,8 +390,8 @@ namespace ChemSW.Nbt.PropTypes
         {
             base.ToJSON( ParentObject );  // FIRST
 
-            ParentObject["options"] = JOptions;
-
+            JArray JOptions = (JArray) ( ParentObject["options"] = new JArray() );
+            
             CswNbtNode RelatedNode = null;
             if( CswTools.IsPrimaryKey( RelatedNodeId ) )
             {
