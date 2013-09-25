@@ -142,7 +142,7 @@ namespace ChemSW.Nbt.WebServices
             JObject ret = new JObject();
             CswNbtResources NbtResources = (CswNbtResources) CswResources;
             
-            DataTable rptDataTbl = _getReportTable( CswResources, Return, reportParams );
+            DataTable rptDataTbl = _getReportTable( CswResources, reportParams );
             
             CswNbtGrid cg = new CswNbtGrid( NbtResources );
             ret = cg.DataTableToJSON( rptDataTbl );
@@ -152,12 +152,12 @@ namespace ChemSW.Nbt.WebServices
 
         public static void runReportCSV( ICswResources CswResources, CswNbtWebServiceReport.ReportReturn Return, CswNbtWebServiceReport.ReportData reportParams )
         {
-            DataTable rptDataTbl = _getReportTable( CswResources, Return, reportParams );
+            DataTable rptDataTbl = _getReportTable( CswResources, reportParams );
             reportParams.stream = wsTools.ReturnCSVStream( rptDataTbl );
             Return.Data = reportParams;
         }
 
-        private static DataTable _getReportTable( ICswResources CswResources, CswNbtWebServiceReport.ReportReturn Return, CswNbtWebServiceReport.ReportData reportParams )
+        private static DataTable _getReportTable( ICswResources CswResources, CswNbtWebServiceReport.ReportData reportParams )
         {
             CswNbtResources NbtResources = (CswNbtResources) CswResources;
             DataTable rptDataTbl = new DataTable();
@@ -175,10 +175,10 @@ namespace ChemSW.Nbt.WebServices
                         ReportSql = CswNbtObjClassReport.ReplaceReportParams( reportNode.SQL.Text, reportParams.ReportParamDictionary );
                         CswArbitrarySelect cswRptSql = NbtResources.makeCswArbitrarySelect( "report_sql", ReportSql );
 
-                        Return.Data.RowLimit = CswConvert.ToInt32( NbtResources.ConfigVbls.getConfigVariableValue( CswEnumNbtConfigurationVariables.sql_report_resultlimit.ToString() ) );
+                        reportParams.RowLimit = CswConvert.ToInt32( NbtResources.ConfigVbls.getConfigVariableValue( CswEnumNbtConfigurationVariables.sql_report_resultlimit.ToString() ) );
                         
                         //Getting 1 more than RowLimit in order to determine if truncation occurred
-                        rptDataTbl = cswRptSql.getTable( PageLowerBoundExclusive: 0, PageUpperBoundInclusive: Return.Data.RowLimit + 1, RequireOneRow: false, UseLogicalDelete: false );
+                        rptDataTbl = cswRptSql.getTable( PageLowerBoundExclusive: 0, PageUpperBoundInclusive: reportParams.RowLimit + 1, RequireOneRow: false, UseLogicalDelete: false );
                         if( string.IsNullOrEmpty( rptDataTbl.TableName ) && null != reportNode )
                         {
                             rptDataTbl.TableName = reportNode.ReportName.Text;
@@ -198,8 +198,8 @@ namespace ChemSW.Nbt.WebServices
                     {
                         if( null != rptDataTbl )
                         {
-                            Return.Data.RowCount = rptDataTbl.Rows.Count;
-                            Return.Data.Truncated = Return.Data.RowCount > Return.Data.RowLimit;
+                            reportParams.RowCount = rptDataTbl.Rows.Count;
+                            reportParams.Truncated = reportParams.RowCount > reportParams.RowLimit;
                         }
                     }
                 }
