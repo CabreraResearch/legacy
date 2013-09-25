@@ -60,7 +60,6 @@ namespace ChemSW.Nbt.Schema
                     new CswUpdateSchema_02G_Case30702(),
                     new CswUpdateSchema_02G_Case30680(),
                     new CswUpdateSchema_02G_Case30562(),
-                    new CswUpdateSchema_02G_Case30702(),
                     new CswUpdateSchema_02G_Case30743(),
                     new CswUpdateSchema_02G_Case30743_Materials()
                 };
