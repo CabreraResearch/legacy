@@ -87,17 +87,17 @@ namespace ChemSW.Nbt.WebServices
                     NodeId.FromString( value );
                 }
             }
-            
+
             [DataMember]
             public string gridJSON = string.Empty;
 
             [DataMember]
             public int RowLimit = Int32.MinValue;
 
-            [DataMember] 
+            [DataMember]
             public int RowCount = Int32.MinValue;
 
-            [DataMember] 
+            [DataMember]
             public bool Truncated = false;
 
             [DataMember]
@@ -184,9 +184,9 @@ namespace ChemSW.Nbt.WebServices
         {
             JObject ret = new JObject();
             CswNbtResources NbtResources = (CswNbtResources) CswResources;
-            
+
             DataTable rptDataTbl = _getReportTable( CswResources, reportParams );
-            
+
             CswNbtGrid cg = new CswNbtGrid( NbtResources );
             ret = cg.DataTableToJSON( rptDataTbl );
             reportParams.gridJSON = ret.ToString();
@@ -203,11 +203,10 @@ namespace ChemSW.Nbt.WebServices
         private static DataTable _getReportTable( ICswResources CswResources, CswNbtWebServiceReport.ReportData reportParams )
         {
             CswNbtResources NbtResources = (CswNbtResources) CswResources;
-            DataTable rptDataTbl = new DataTable();
-            
-            if( CswTools.IsPrimaryKey( reportParams.NodeId ) )
+            DataTable rptDataTbl = null;
+            reportParams.ReportNode = NbtResources.Nodes[reportParams.NodeId];
+            if( null != reportParams.ReportNode )
             {
-                reportParams.ReportNode = NbtResources.Nodes[reportParams.NodeId];
                 if( false == string.IsNullOrEmpty( reportParams.ReportNode.SQL.Text ) )
                 {
                     string ReportSql = "";
@@ -223,7 +222,7 @@ namespace ChemSW.Nbt.WebServices
                         {
                             reportParams.RowCount = 500;
                         }
-                        
+
                         //Getting 1 more than RowLimit in order to determine if truncation occurred
                         rptDataTbl = cswRptSql.getTable( PageLowerBoundExclusive: 0, PageUpperBoundInclusive: reportParams.RowLimit + 1, RequireOneRow: false, UseLogicalDelete: false );
                         if( string.IsNullOrEmpty( rptDataTbl.TableName ) && null != reportParams.ReportNode )
@@ -282,13 +281,13 @@ namespace ChemSW.Nbt.WebServices
         public static void getReportInfo( ICswResources CswResources, CswNbtWebServiceReport.ReportReturn Return, CswNbtWebServiceReport.ReportData reportParams )
         {
             CswNbtResources NBTResources = (CswNbtResources) CswResources;
-            CswNbtObjClassReport reportNode = NBTResources.Nodes[reportParams.NodeId];
-            if( null != reportNode )
+            reportParams.ReportNode = NBTResources.Nodes[reportParams.NodeId];
+            if( null != reportParams.ReportNode )
             {
-                reportParams.doesSupportCrystal = ( false == reportNode.RPTFile.Empty );
+                reportParams.doesSupportCrystal = ( false == reportParams.ReportNode.RPTFile.Empty );
 
                 reportParams.reportParams = new Collection<ReportData.ReportParam>();
-                foreach( var paramPair in reportNode.ExtractReportParams( NBTResources.Nodes[ NBTResources.CurrentNbtUser.UserId ] ) )
+                foreach( var paramPair in reportParams.ReportNode.ExtractReportParams( NBTResources.Nodes[NBTResources.CurrentNbtUser.UserId] ) )
                 {
                     ReportData.ReportParam paramObj = new ReportData.ReportParam();
                     paramObj.name = paramPair.Key;
@@ -330,9 +329,9 @@ namespace ChemSW.Nbt.WebServices
 
                         if( JctTable.Rows.Count > 0 )
                         {
-                            if( !JctTable.Rows[ 0 ].IsNull( "blobdata" ) )
+                            if( !JctTable.Rows[0].IsNull( "blobdata" ) )
                             {
-                                byte[] BlobData = JctTable.Rows[ 0 ][ "blobdata" ] as byte[];
+                                byte[] BlobData = JctTable.Rows[0]["blobdata"] as byte[];
                                 FileStream fs = new FileStream( ReportTempFileName, FileMode.CreateNew );
                                 BinaryWriter BWriter = new BinaryWriter( fs, System.Text.Encoding.Default );
                                 if( BlobData != null )
