@@ -37,7 +37,7 @@
                 },
                 tradeName: '',
                 supplier: { name: '', val: '' },
-                c3supplierName: '',
+                c3SupplierName: '',
                 addNewC3Supplier: false,
                 partNo: '',
                 properties: {},
@@ -327,9 +327,11 @@
                             isRequired: true
                         });
 
+                        var SupplierCtrlTbl = tbl.cell(3, 2).table();
+
                         cswPrivate.makeNewC3SupplierInput = function (visible) {
                             if (!cswPrivate.newC3SupplierInput) {
-                                cswPrivate.newC3SupplierInput = tbl.cell(3, 3).input({
+                                cswPrivate.newC3SupplierInput = SupplierCtrlTbl.cell(1, 1).input({
                                     value: cswPrivate.state.c3SupplierName,
                                     onChange: changeMaterial
                                 });
@@ -345,9 +347,10 @@
 
                         /* Supplier */
                         cswPrivate.makeSupplierCtrl = function (NodeTypeId) {
-                            tbl.cell(3, 1).empty();
-                            tbl.cell(3, 2).empty();
-                            tbl.cell(3, 3).empty();
+
+                            SupplierCtrlTbl.cell(1, 1).empty();
+                            SupplierCtrlTbl.cell(1, 2).empty();
+                            SupplierCtrlTbl.cell(1, 3).empty();
 
                             cswPrivate.supplierLabel = tbl.cell(3, 1).span();
                             cswPrivate.supplierLabel.setLabelText('Supplier: ', true, false);
@@ -368,7 +371,7 @@
                                 ajaxData.ObjectClass = 'VendorClass';
                             }
 
-                            cswPrivate.supplierSelect = tbl.cell(3, 2).nodeSelect({
+                            cswPrivate.supplierSelect = SupplierCtrlTbl.cell(1, 2).nodeSelect({
                                 name: 'Supplier',
                                 cssclass: 'required',
                                 width: '200px',
@@ -378,15 +381,42 @@
                                 onAfterAdd: changeMaterial,
                                 addNodeDialogTitle: 'Vendor',
                                 selectedNodeId: cswPrivate.state.supplierId || cswPrivate.state.supplier.val,
+                                selectedName: cswPrivate.state.supplier.name || '',
+                                selectedNodeLink: cswPrivate.state.supplier.nodelink || '',
                                 onChange: changeMaterial,
+                                onSelectNode: function (nodeObject) {
+                                    if (nodeObject) {
+                                        cswPrivate.state.supplier = {
+                                            name: nodeObject.nodename,
+                                            val: nodeObject.nodeid,
+                                            nodelink: nodeObject.nodelink
+                                        };
+                                        cswPrivate.makeNewC3SupplierInput(false);
+                                    }
+                                },
+                                onRemoveSelectedNode: function () {
+                                    cswPrivate.state.supplier = {
+                                        name: cswPrivate.state.c3SupplierName,
+                                        val: "",
+                                        nodelink: ""
+                                    };
+                                    cswPrivate.makeNewC3SupplierInput(true);
+                                },
                                 isRequired: true,
                                 extraOptions: extraOptions,
-                                onSuccess: function () {
+                                showRemoveIcon: cswPrivate.state.addNewC3Supplier,
+                                onSuccess: function (options, useSearch) {
                                     if (cswPrivate.supplierSelect.selectedText) {
                                         if (cswPrivate.supplierSelect.selectedText() === cswPrivate.newSupplierName) {
                                             cswPrivate.state.c3SupplierName = cswPrivate.state.supplier.name;
                                             cswPrivate.makeNewC3SupplierInput(true);
                                         }
+                                    }
+                                    
+                                    // If we are using search (relationshipoptionlimit < # of options) && we have a new supplier incoming from chemcat
+                                    if (useSearch && cswPrivate.state.addNewC3Supplier) {
+                                        cswPrivate.state.c3SupplierName = cswPrivate.state.supplier.name;
+                                        cswPrivate.makeNewC3SupplierInput(true);
                                     }
                                 }
                             });
