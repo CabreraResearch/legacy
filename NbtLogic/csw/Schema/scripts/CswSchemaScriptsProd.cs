@@ -57,7 +57,6 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswUpdateSchema_02F_Case30041_Vendors() );
             _addVersionedScript( new CswUpdateSchema_02F_Case29992() );
             _addVersionedScript( new CswUpdateSchema_02F_Case29402() );
-            _addVersionedScript( new CswUpdateSchema_02F_Case30041_UnitsOfMeasure() );
             _addVersionedScript( new CswUpdateSchema_02F_Case30041_RolesUsers() );
             _addVersionedScript( new CswUpdateSchema_02F_Case30252() );
             _addVersionedScript( new CswUpdateSchema_02F_Case30041_ScheduledRuleImport() );
