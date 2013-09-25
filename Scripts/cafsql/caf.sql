@@ -3,8 +3,7 @@ create table nbtimportqueue (
 	nbtimportqueueid number(12) NOT NULL PRIMARY KEY,
   state varchar(1),
   itempk number(12) NOT NULL,
-  tablename varchar(50) NOT NULL,
-  viewname varchar(50),
+  sheetname varchar2(50),
   priority number(12),
   errorlog varchar2(2000)
 );
@@ -142,8 +141,10 @@ select w.businessunitid,
   left outer join business_units b on (b.businessunitid = w.businessunitid)
   left outer join sites s on (s.siteid = w.siteid);
 
+--Users
 create or replace view users_view as
 (select "AUDITFLAG","DEFAULTCATEGORYID","DEFAULTLANGUAGE","DEFAULTLOCATIONID","DEFAULTPRINTERID","DELETED","DISABLED","EMAIL","EMPLOYEEID","FAILEDLOGINCOUNT","HIDEHINTS","HOMEINVENTORYGROUPID","ISSYSTEMUSER","LOCKED","MYSTARTURL","NAMEFIRST","NAMELAST","NAVROWS","NODEVIEWID","PASSWORD","PASSWORD_DATE","PHONE","ROLEID","SUPERVISORID","TITLE","USERID","USERNAME","WELCOMEREDIRECT","WORKUNITID" from users);
+
 ---Packdetail
 create or replace view packdetail_view as
 select packdetailid,
