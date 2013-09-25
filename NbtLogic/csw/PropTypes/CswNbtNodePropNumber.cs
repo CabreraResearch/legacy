@@ -127,6 +127,8 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
+            base.ToJSON( ParentObject );  // FIRST
+
             ParentObject[_ValueSubField.ToXmlNodeName( true )] = ( !Double.IsNaN( Value ) ) ? Value.ToString() : string.Empty;
             ParentObject["minvalue"] = MinValue.ToString();
             ParentObject["maxvalue"] = MaxValue.ToString();

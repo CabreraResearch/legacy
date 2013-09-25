@@ -329,10 +329,10 @@ namespace ChemSW.Nbt.PropTypes
                 //Int32 TargetObjectClassId;
                 //_getIds( NbtResources, _targetType( NbtResources, RelationshipProp ), RelationshipProp.FKValue, out TargetNodeTypeId, out TargetObjectClassId );
 
-                ICswNbtTree CswNbtTree = NbtResources.Trees.getTreeFromView( View : OptionsView,
-                                                                             IncludeSystemNodes : false,
-                                                                             RequireViewPermissions : false,
-                                                                             IncludeHiddenNodes : false );
+                ICswNbtTree CswNbtTree = NbtResources.Trees.getTreeFromView( View: OptionsView,
+                                                                             IncludeSystemNodes: false,
+                                                                             RequireViewPermissions: false,
+                                                                             IncludeHiddenNodes: false );
                 CswEnumNbtViewRelatedIdType targetType = _targetType( NbtResources, _CswNbtMetaDataNodeTypeProp );
                 //_addOptionsRecurse( NbtResources, Options, CswNbtTree, _targetType( NbtResources, RelationshipProp ), RelationshipProp.FKValue ); //, TargetNodeTypeId, TargetObjectClassId );
                 _addOptionsRecurse( NbtResources, Options, CswNbtTree, targetType, FkValue );
@@ -388,13 +388,75 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
-            ParentObject[_NodeIDSubField.ToXmlNodeName( true ).ToLower()] = string.Empty;
+            base.ToJSON( ParentObject );  // FIRST
+
+            JArray JOptions = (JArray) ( ParentObject["options"] = new JArray() );
+            
             CswNbtNode RelatedNode = null;
             if( CswTools.IsPrimaryKey( RelatedNodeId ) )
             {
                 ParentObject[_NodeIDSubField.ToXmlNodeName( true ).ToLower()] = RelatedNodeId.ToString();
                 RelatedNode = _CswNbtResources.Nodes[RelatedNodeId];
             }
+
+            bool AllowEdit = _CswNbtResources.Permit.isPropWritable( CswEnumNbtNodeTypePermission.Create, NodeTypeProp, null );
+            if( AllowEdit )
+            {
+                CswPrimaryKey pk = null;
+                if( null != RelatedNode )
+                {
+                    pk = RelatedNode.NodeId;
+                }
+                Dictionary<CswPrimaryKey, string> Options = _getOptions( _CswNbtResources, _CswNbtMetaDataNodeTypeProp.IsRequired, _CswNbtMetaDataNodeTypeProp.FKValue, pk, View );
+                if( Options.Count > _SearchThreshold )
+                {
+                    ParentObject["usesearch"] = true;
+                }
+                else
+                {
+                    Int32 OptionCount = 0;
+                    CswPrimaryKey FirstPk = null;
+                    foreach( CswPrimaryKey NodePk in Options.Keys ) //.Where( NodePk => NodePk != null && NodePk.PrimaryKey != Int32.MinValue ) )
+                    {
+                        if( CswTools.IsPrimaryKey( NodePk ) )
+                        {
+                            OptionCount += 1;
+                            JObject JOption = new JObject();
+                            FirstPk = FirstPk ?? NodePk;
+                            JOption["id"] = NodePk.ToString();
+                            JOption["value"] = Options[NodePk];
+                            JOption["link"] = CswNbtNode.getNodeLink( NodePk, Options[NodePk] );
+                            JOptions.Add( JOption );
+                        }
+                    }
+
+                    //If Required, show empty when no value is selected and if there is more than one option to select from
+                    bool ShowEmptyOption = Required && false == CswTools.IsPrimaryKey( RelatedNodeId ) && 1 < OptionCount;
+                    //If not Required, always show the empty value
+                    ShowEmptyOption = ShowEmptyOption || false == Required;
+
+                    if( ShowEmptyOption )
+                    {
+                        JObject JOption = new JObject();
+                        JOption[ "id" ] = "";
+                        JOption[ "value" ] = "";
+                        JOptions.AddFirst( JOption );
+                    }
+                    else
+                    {
+                        //Case 30030
+                        if( null == RelatedNode && 
+                            Required && 
+                            Options.Count == 1 &&
+                            CswTools.IsPrimaryKey(FirstPk) )
+                        {
+                            RelatedNode = _CswNbtResources.Nodes[ FirstPk ];
+                        }
+                    }
+                }
+            }
+
+            ParentObject[_NodeIDSubField.ToXmlNodeName( true ).ToLower()] = string.Empty;
             ParentObject[_NameSubField.ToXmlNodeName( true ).ToLower()] = CachedNodeName;
 
             ParentObject["nodetypeid"] = 0;
@@ -433,55 +495,8 @@ namespace ChemSW.Nbt.PropTypes
                 ParentObject["relatednodelink"] = RelatedNode.NodeLink;
             }
             ParentObject["viewid"] = View.ViewId.ToString();
-
-            bool AllowEdit = _CswNbtResources.Permit.isPropWritable( CswEnumNbtNodeTypePermission.Create, NodeTypeProp, null );
+            
             ParentObject["usesearch"] = false;
-
-            JArray JOptions = new JArray();
-            ParentObject["options"] = JOptions;
-
-            if( AllowEdit )
-            {
-                CswPrimaryKey pk = null;
-                if( null != RelatedNode )
-                {
-                    pk = RelatedNode.NodeId;
-                }
-                Dictionary<CswPrimaryKey, string> Options = _getOptions( _CswNbtResources, _CswNbtMetaDataNodeTypeProp.IsRequired, _CswNbtMetaDataNodeTypeProp.FKValue, pk, View );
-                if( Options.Count > _SearchThreshold )
-                {
-                    ParentObject["usesearch"] = true;
-                }
-                else
-                {
-                    Int32 OptionCount = 0;
-                    foreach( CswPrimaryKey NodePk in Options.Keys ) //.Where( NodePk => NodePk != null && NodePk.PrimaryKey != Int32.MinValue ) )
-                    {
-                        if( CswTools.IsPrimaryKey( NodePk ) )
-                        {
-                            OptionCount += 1;
-                            JObject JOption = new JObject();
-                            JOption["id"] = NodePk.ToString();
-                            JOption["value"] = Options[NodePk];
-                            JOption["link"] = CswNbtNode.getNodeLink( NodePk, Options[NodePk] );
-                            JOptions.Add( JOption );
-                        }
-                    }
-
-                    //If Required, show empty when no value is selected and if there is more than one option to select from
-                    bool ShowEmptyOption = Required && false == CswTools.IsPrimaryKey( RelatedNodeId ) && 1 < OptionCount;
-                    //If not Required, always show the empty value
-                    ShowEmptyOption = ShowEmptyOption || false == Required;
-
-                    if( ShowEmptyOption )
-                    {
-                        JObject JOption = new JObject();
-                        JOption["id"] = "";
-                        JOption["value"] = "";
-                        JOptions.AddFirst( JOption );
-                    }
-                }
-            }
         } // ToJSON()
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )

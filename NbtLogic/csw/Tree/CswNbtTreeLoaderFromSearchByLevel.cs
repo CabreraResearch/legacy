@@ -249,11 +249,9 @@ namespace ChemSW.Nbt
                                            from object_class_props op
                                            join nodetype_props p on op.objectclasspropid = p.objectclasspropid
                                            join jct_nodes_props j on j.nodetypepropid = p.nodetypepropid
+                                          where op.propname in ('Location', 'Inventory Group', 'Report Group', 'Mail Report Group')
                                         ),
-
-                                permgrp as ( " + _makePermissionGroupSQL() + @"
-                                          ),
-
+                                permgrp as ( " + _makePermissionGroupSQL() + @" ),
                                   srch as ( select n.nodeid,
                                                    n.nodename,
                                                    n.locked,
@@ -339,22 +337,18 @@ namespace ChemSW.Nbt
         //and more performant than grabbing the permission group nodes in a separate query.
         private string _makePermissionGroupSQL()
         {
-            string SQL = @"select n.nodeid, ivg.nodeid permissiongroupid
-                                                 from nodes n
-                                                 join pval locval on (locval.nodeid = n.nodeid and locval.propname = 'Location')
-                                                 join nodes loc on (locval.field1_fk = loc.nodeid)
-                                                 join pval ivgval on (ivgval.nodeid = loc.nodeid and ivgval.propname = 'Inventory Group')
-                                                 join nodes ivg on (ivgval.field1_fk = ivg.nodeid)
-                                             union
-                                             select n.nodeid, rg.nodeid permissiongroupid
-                                                 from nodes n
-                                                 join pval rgval on (rgval.nodeid = n.nodeid and rgval.propname = 'Report Group')
-                                                 join nodes rg on (rgval.field1_fk = rg.nodeid)
-                                             union
-                                             select n.nodeid, mrg.nodeid permissiongroupid
-                                                 from nodes n
-                                                 join pval mrgval on (mrgval.nodeid = n.nodeid and mrgval.propname = 'Mail Report Group')
-                                                 join nodes mrg on (mrgval.field1_fk = mrg.nodeid)";
+            string SQL = @"select n.nodeid, ivgval.field1_fk permissiongroupid
+                             from nodes n
+                             join pval locval on (locval.nodeid = n.nodeid and locval.propname = 'Location')
+                             join pval ivgval on (ivgval.nodeid = locval.field1_fk and ivgval.propname = 'Inventory Group')
+                         union
+                           select n.nodeid, rgval.field1_fk permissiongroupid
+                             from nodes n
+                             join pval rgval on (rgval.nodeid = n.nodeid and rgval.propname = 'Report Group')
+                         union
+                           select n.nodeid, mrgval.field1_fk permissiongroupid
+                             from nodes n
+                             join pval mrgval on (mrgval.nodeid = n.nodeid and mrgval.propname = 'Mail Report Group')";
             return SQL;
         }
 

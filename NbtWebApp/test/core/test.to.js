@@ -168,35 +168,35 @@
     module(n$.name + ".to.number");
 
     test( n$.name + ".to.number(null)", function() {
-        deepEqual( n$.number.isNaN(n$.to.number(null)), true, n$.name + ".to.number converts null to NaN.");
+        deepEqual( n$.Number.isNaN(n$.to.number(null)), true, n$.name + ".to.number converts null to NaN.");
     });
 
     test( n$.name + ".to.number(undefined)", function() {
-        deepEqual( n$.number.isNaN(n$.to.number(undefined)), true, n$.name + ".to.number converts undefined to NaN.");
+        deepEqual( n$.Number.isNaN(n$.to.number(undefined)), true, n$.name + ".to.number converts undefined to NaN.");
     });
 
     test( n$.name + ".to.number(NaN)", function() {
-        deepEqual( n$.number.isNaN(n$.to.number(NaN)), true, n$.name + ".to.number converts NaN to NaN.");
+        deepEqual( n$.Number.isNaN(n$.to.number(NaN)), true, n$.name + ".to.number converts NaN to NaN.");
     });
 
     test( n$.name + ".to.number(Infinity)", function() {
-        deepEqual( n$.number.isNaN(n$.to.number(Infinity)), true, n$.name + ".to.number converts Infinity to NaN.");
+        deepEqual( n$.Number.isNaN(n$.to.number(Infinity)), true, n$.name + ".to.number converts Infinity to NaN.");
     });
 
     test( n$.name + ".to.number(-Infinity)", function() {
-        deepEqual( n$.number.isNaN(n$.to.number(-Infinity)), true, n$.name + ".to.number converts -Infinity to NaN.");
+        deepEqual( n$.Number.isNaN(n$.to.number(-Infinity)), true, n$.name + ".to.number converts -Infinity to NaN.");
     });
 
     test( n$.name + ".to.number({})", function() {
-        deepEqual( n$.number.isNaN(n$.to.number({})), true, n$.name + ".to.number converts {} to NaN.");
+        deepEqual( n$.Number.isNaN(n$.to.number({})), true, n$.name + ".to.number converts {} to NaN.");
     });
 
     test( n$.name + ".to.number([])", function() {
-        deepEqual( n$.number.isNaN(n$.to.number([])), true, n$.name + ".to.number converts [] to NaN.");
+        deepEqual( n$.Number.isNaN(n$.to.number([])), true, n$.name + ".to.number converts [] to NaN.");
     });
 
     test( n$.name + ".to.number(new Date())", function() {
-        deepEqual( n$.number.isNaN(n$.to.number(new Date())), true, n$.name + ".to.number converts new Date() to NaN.");
+        deepEqual( n$.Number.isNaN(n$.to.number(new Date())), true, n$.name + ".to.number converts new Date() to NaN.");
     });
 
     test( n$.name + ".to.number(0)", function() {

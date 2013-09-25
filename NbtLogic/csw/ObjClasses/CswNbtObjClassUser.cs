@@ -16,11 +16,11 @@ using ChemSW.Security;
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassUser : CswNbtObjClass, ICswNbtUser
+    public class CswNbtObjClassUser: CswNbtObjClass, ICswNbtUser
     {
         public const string ChemSWAdminUsername = CswAuthenticator.ChemSWAdminUsername;
 
-        public new sealed class PropertyName : CswNbtObjClass.PropertyName
+        public new sealed class PropertyName: CswNbtObjClass.PropertyName
         {
             public const string AccountLocked = "AccountLocked";
             public const string Archived = "Archived";
@@ -207,7 +207,7 @@ namespace ChemSW.Nbt.ObjClasses
 
             if( UsernameProperty.Text != string.Empty ) // case 25616
             {
-                UsernameProperty.setReadOnly( value: true, SaveToDb: true ); // BZ 5906
+                UsernameProperty.setReadOnly( value : true, SaveToDb : true ); // BZ 5906
             }
 
             // case 22512
@@ -245,7 +245,7 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 clearFailedLoginCount();
             }
-            CachedData.setHidden( value: true, SaveToDb: true );
+            CachedData.setHidden( value : true, SaveToDb : true );
             // BZ 9170
             _CswNbtResources.ConfigVbls.setConfigVariableValue( "cache_lastupdated", DateTime.Now.ToString() );
 
@@ -345,8 +345,8 @@ namespace ChemSW.Nbt.ObjClasses
             //BZ 9933
             if( _CswNbtResources.CurrentNbtUser == null || !_CswNbtResources.CurrentNbtUser.IsAdministrator() )
             {
-                this.FailedLoginCount.setHidden( value: true, SaveToDb: false );
-                this.AccountLocked.setHidden( value: true, SaveToDb: false );
+                this.FailedLoginCount.setHidden( value : true, SaveToDb : false );
+                this.AccountLocked.setHidden( value : true, SaveToDb : false );
             }
 
 
@@ -397,7 +397,7 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtView view = ParentRelationship.View;
             CswNbtMetaDataObjectClass userOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.UserClass );
             CswNbtMetaDataObjectClassProp archivedOCP = userOC.getObjectClassProp( PropertyName.Archived );
-            view.AddViewPropertyAndFilter( ParentRelationship, archivedOCP, FilterMode: CswEnumNbtFilterMode.NotEquals, Value: CswEnumTristate.True.ToString() );
+            view.AddViewPropertyAndFilter( ParentRelationship, archivedOCP, FilterMode : CswEnumNbtFilterMode.NotEquals, Value : CswEnumTristate.True.ToString() );
 
             _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
         }
@@ -532,20 +532,26 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropRelationship WorkUnitProperty { get { return _CswNbtNode.Properties[PropertyName.WorkUnit]; } }
         public void OnWorkUnitPropertyChange( CswNbtNodeProp Prop, bool Creating )
         {
-            if( false == AvailableWorkUnits.CheckValue( WorkUnitId.ToString() ) )
+            CswPrimaryKey UsersWorkUnitId = WorkUnitId;
+            if( null != UsersWorkUnitId )
+            {
+                UsersWorkUnitId = GetFirstAvailableWorkUnitNodeId();
+            }
+
+            if( false == AvailableWorkUnits.CheckValue( UsersWorkUnitId.ToString() ) )
             {
                 if( false == _CswNbtResources.CurrentNbtUser is CswNbtSystemUser )
                 {
                     throw new CswDniException( CswEnumErrorType.Warning,
-                                              WorkUnitProperty.CachedNodeName +
-                                              " is not an available Work Unit for user " + Username,
-                                              _CswNbtResources.CurrentNbtUser.Username + " attempted to assign User: " +
-                                              Username + " to Work Unit: " + WorkUnitId.ToString() +
-                                              " when Users available Work Units are: " + AvailableWorkUnits.Value );
+                                               WorkUnitProperty.CachedNodeName +
+                                               " is not an available Work Unit for user " + Username,
+                                               _CswNbtResources.CurrentNbtUser.Username + " attempted to assign User: " +
+                                               Username + " to Work Unit: " + UsersWorkUnitId +
+                                               " when Users available Work Units are: " + AvailableWorkUnits.Value );
                 }
                 // We add the work unit to the list and then check it!
-                AvailableWorkUnits.AddValue( WorkUnitId.ToString() );
-                WorkUnitProperty.RelatedNodeId = WorkUnitId;
+                AvailableWorkUnits.AddValue( UsersWorkUnitId.ToString() );
+                WorkUnitProperty.RelatedNodeId = UsersWorkUnitId;
                 WorkUnitProperty.SyncGestalt();
 
                 _updateAvailableWorkUnits();
@@ -575,7 +581,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             _updateAvailableWorkUnits();
 
-            if( false == AvailableWorkUnits.CheckValue( WorkUnitId.ToString() ) )
+            if( null == WorkUnitId || false == AvailableWorkUnits.CheckValue( WorkUnitId.ToString() ) )
             {
                 CswPrimaryKey pk = CswConvert.ToPrimaryKey( AvailableWorkUnits.Value[0] ); //we're always guarenteed there's at least one
                 WorkUnitProperty.RelatedNodeId = pk;
@@ -655,7 +661,7 @@ namespace ChemSW.Nbt.ObjClasses
                     if( null != _CurrentUser )
                     {
                         _CurrentUser.CurrentCache = this;
-                        _CurrentUser.postChanges( ForceUpdate: false );
+                        _CurrentUser.postChanges( ForceUpdate : false );
                     }
                 }
             }
@@ -792,52 +798,33 @@ namespace ChemSW.Nbt.ObjClasses
         public Collection<CswPrimaryKey> getUserPermissions( Int32 RolePK, Int32 WorkUnitPK )
         {
             CswNbtMetaDataPropertySet PermissionSet = _CswNbtResources.MetaData.getPropertySet( CswEnumNbtPropertySetName.PermissionSet );
-            #region SQL Query
-            String SQLQuery = @"with pval as
-    (select j.nodeid, j.field1, j.field1_fk, ocp.objectclasspropid from jct_nodes_props j
-    join nodetype_props ntp on j.nodetypepropid = ntp.nodetypepropid
-    join object_class_props ocp on ntp.objectclasspropid = ocp.objectclasspropid),
-    roleocps as
-    (select jpocp.objectclasspropid from jct_propertyset_ocprop jpocp
-    join object_class_props ocp on ocp.objectclasspropid = jpocp.objectclasspropid
-    where jpocp.propertysetid = :permsetid and ocp.propname = :roleocp),
-    workunitocps as
-    (select jpocp.objectclasspropid from jct_propertyset_ocprop jpocp
-    join object_class_props ocp on ocp.objectclasspropid = jpocp.objectclasspropid
-    where jpocp.propertysetid = :permsetid and ocp.propname = :workunitocp),
-    permgrpocps as
-    (select jpocp.objectclasspropid from jct_propertyset_ocprop jpocp
-    join object_class_props ocp on ocp.objectclasspropid = jpocp.objectclasspropid
-    where jpocp.propertysetid = :permsetid and ocp.propname = :permgroupocp),
-    applyrolesocps as
-    (select jpocp.objectclasspropid from jct_propertyset_ocprop jpocp
-    join object_class_props ocp on ocp.objectclasspropid = jpocp.objectclasspropid
-    where jpocp.propertysetid = :permsetid and ocp.propname = :applyallrolesocp),
-    applyworkunitsocps as
-    (select jpocp.objectclasspropid from jct_propertyset_ocprop jpocp
-    join object_class_props ocp on ocp.objectclasspropid = jpocp.objectclasspropid
-    where jpocp.propertysetid = :permsetid and ocp.propname = :applyallworkunitsocp)
-select * from (
-    select n.nodeid,
-    (select p.field1_fk from pval p where p.nodeid = n.nodeid and p.objectclasspropid in (select * from roleocps) ) userrole,
-    (select p.field1_fk from pval p where p.nodeid = n.nodeid and p.objectclasspropid in (select * from workunitocps) ) userworkunit,
-    (select p.field1_fk from pval p where p.nodeid = n.nodeid and p.objectclasspropid in (select * from permgrpocps) ) userpermgroup,
-    (select p.field1 from pval p where p.nodeid = n.nodeid and p.objectclasspropid in (select * from applyrolesocps) ) applyallroles,
-    (select p.field1 from pval p where p.nodeid = n.nodeid and p.objectclasspropid in (select * from applyworkunitsocps) ) applyallworkunits
-    from nodes n
-        join nodetypes nt on n.nodetypeid = nt.nodetypeid
-        join object_class oc on nt.objectclassid = oc.objectclassid
-    where n.nodeid is not null
-        and n.istemp = 0
-        and oc.objectclassid in (select jpsoc.objectclassid from jct_propertyset_objectclass jpsoc where jpsoc.propertysetid = :permsetid )
-    order by userpermgroup, applyallroles, applyallworkunits
-) perms
-    where (perms.userrole = :role or perms.userrole is null) 
-    and (perms.userworkunit = :workunit or perms.userworkunit is null)";
-            #endregion SQL Query
 
+            string SQLQuery = @"with pval as (select j.nodeid, j.field1, j.field1_fk, ocp.objectclasspropid, ocp.propname
+                                                from jct_propertyset_ocprop jpocp
+                                                join object_class_props ocp on ocp.objectclasspropid = jpocp.objectclasspropid
+                                                join nodetype_props ntp on ntp.objectclasspropid = ocp.objectclasspropid
+                                                join jct_nodes_props j on j.nodetypepropid = ntp.nodetypepropid
+                                               where jpocp.propertysetid = :permsetid),
+                                     perms as (select n.nodeid,
+                                                      (select p.field1_fk from pval p where p.nodeid = n.nodeid and propname = :roleocp) userrole,
+                                                      (select p.field1_fk from pval p where p.nodeid = n.nodeid and propname = :workunitocp) userworkunit,
+                                                      (select p.field1_fk from pval p where p.nodeid = n.nodeid and propname = :permgroupocp) userpermgroup,
+                                                      (select p.field1 from pval p where p.nodeid = n.nodeid and propname = :applyallrolesocp) applyallroles,
+                                                      (select p.field1 from pval p where p.nodeid = n.nodeid and propname = :applyallworkunitsocp) applyallworkunits
+                                                 from nodes n
+                                                 join nodetypes nt on n.nodetypeid = nt.nodetypeid
+                                                 join object_class oc on nt.objectclassid = oc.objectclassid
+                                                where n.istemp = 0
+                                                  and oc.objectclassid in (select jpsoc.objectclassid 
+                                                                             from jct_propertyset_objectclass jpsoc 
+                                                                            where jpsoc.propertysetid = :permsetid))
+                                   select * 
+                                     from perms
+                                    where (perms.userrole = :role or perms.userrole is null) 
+                                      and (perms.userworkunit = :workunit or perms.userworkunit is null)
+                                    order by userpermgroup, applyallroles, applyallworkunits";
             CswArbitrarySelect Query = _CswNbtResources.makeCswArbitrarySelect( "getUserPermissions", SQLQuery );
-            #region SQL Params
+            
             Query.addParameter( "roleocp", CswNbtPropertySetPermission.PropertyName.Role );
             Query.addParameter( "workunitocp", CswNbtPropertySetPermission.PropertyName.WorkUnit );
             Query.addParameter( "permgroupocp", CswNbtPropertySetPermission.PropertyName.PermissionGroup );
@@ -846,7 +833,7 @@ select * from (
             Query.addParameter( "permsetid", PermissionSet.PropertySetId.ToString() );
             Query.addParameter( "role", RolePK.ToString() );
             Query.addParameter( "workunit", WorkUnitPK.ToString() );
-            #endregion SQL Params
+
             DataTable DataTable = Query.getTable();
             Collection<CswPrimaryKey> UserPermissions = new Collection<CswPrimaryKey>();
             Int32 PermGroupId = 0;
@@ -866,7 +853,7 @@ select * from (
             Dictionary<string, string> opts = new Dictionary<string, string>();
 
             CswNbtMetaDataObjectClass WorkUnitOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.WorkUnitClass );
-            foreach( KeyValuePair<CswPrimaryKey, string> workUnit in WorkUnitOC.getNodeIdAndNames( false, false, RequireViewPermissions: false ) )
+            foreach( KeyValuePair<CswPrimaryKey, string> workUnit in WorkUnitOC.getNodeIdAndNames( false, false, RequireViewPermissions : false ) )
             {
                 opts[workUnit.Key.ToString()] = workUnit.Value;
             }
@@ -881,7 +868,7 @@ select * from (
         public CswPrimaryKey GetFirstAvailableWorkUnitNodeId()
         {
             CswNbtMetaDataObjectClass WorkUnitOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.WorkUnitClass );
-            Dictionary<CswPrimaryKey, string> WorkUnits = WorkUnitOC.getNodeIdAndNames( false, false, RequireViewPermissions: false );
+            Dictionary<CswPrimaryKey, string> WorkUnits = WorkUnitOC.getNodeIdAndNames( false, false, RequireViewPermissions : false );
             CswPrimaryKey ret = WorkUnits.OrderBy( entry => entry.Key.PrimaryKey ).First().Key;
             return ret;
         }

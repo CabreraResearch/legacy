@@ -84,6 +84,8 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
+            base.ToJSON( ParentObject );  // FIRST
+
             ParentObject[CswEnumNbtSubFieldName.Required.ToString()] = Required;
             ParentObject[_CheckedSubField.ToXmlNodeName( true )] = Checked.ToString().ToLower();
         }

@@ -61,7 +61,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get { return ( 0 == AllowedAnswers.Count ); }
         }
-        
+
         private bool _IsValidNode { get { return ( null != NodeId && Int32.MinValue != NodeId.PrimaryKey ); } }
 
         /// <summary>
@@ -326,6 +326,8 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
+            base.ToJSON( ParentObject );  // FIRST
+
             ParentObject[_AnswerSubField.ToXmlNodeName( true )] = Answer;
             ParentObject[CswEnumNbtSubFieldName.AllowedAnswers.ToString().ToLower()] = AllowedAnswersString;
             ParentObject[CswEnumNbtSubFieldName.CompliantAnswers.ToString().ToLower()] = CompliantAnswersString;

@@ -163,6 +163,8 @@ module.exports = function (grunt) {
             all: {
                 options: {
                     urls: [
+					  //uncomment the following line and comment the line below that to run locally (must build:dev between changes)
+                      //'http://localhost/NbtWebApp/test/Test.html'
                       'https://nbtdaily.chemswlive.com/CiDevUnitTests/test/test.html'
                     ]
                 }

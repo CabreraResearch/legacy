@@ -11,7 +11,7 @@ using Newtonsoft.Json.Linq;
 namespace ChemSW.Nbt.PropTypes
 {
 
-    public class CswNbtNodePropBlob: CswNbtNodeProp
+    public class CswNbtNodePropBlob : CswNbtNodeProp
     {
         public static implicit operator CswNbtNodePropBlob( CswNbtNodePropWrapper PropWrapper )
         {
@@ -26,7 +26,7 @@ namespace ChemSW.Nbt.PropTypes
             _DateModifiedSubField = ( (CswNbtFieldTypeRuleBlob) _FieldTypeRule ).DateModifiedSubField;
 
             // Associate subfields with methods on this object, for SetSubFieldValue()
-            _SubFieldMethods.Add( _FileNameSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => FileName, x => FileName = CswConvert.ToString(x) ) );
+            _SubFieldMethods.Add( _FileNameSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => FileName, x => FileName = CswConvert.ToString( x ) ) );
             _SubFieldMethods.Add( _ContentTypeSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => ContentType, x => ContentType = CswConvert.ToString( x ) ) );
             _SubFieldMethods.Add( _DateModifiedSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => DateModified, x => DateModified = CswConvert.ToDateTime( x ) ) );
         }
@@ -122,6 +122,8 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
+            base.ToJSON( ParentObject );  // FIRST
+
             ParentObject[_ContentTypeSubField.ToXmlNodeName( true )] = ContentType;
             ParentObject[_FileNameSubField.ToXmlNodeName( true )] = FileName;
             ParentObject[CswEnumNbtSubFieldName.Href.ToString().ToLower()] = Href;

@@ -44,8 +44,8 @@ namespace ChemSW.Nbt.PropTypes
 
             // Associate subfields with methods on this object, for SetSubFieldValue()
             _SubFieldMethods.Add( _QuantitySubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Quantity, x => Quantity = CswConvert.ToDouble( x ) ) );
-            _SubFieldMethods.Add( _Val_kg_SubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Quantity, x => Quantity = CswConvert.ToDouble( x ) ) );
-            _SubFieldMethods.Add( _Val_Liters_SubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Quantity, x => Quantity = CswConvert.ToDouble( x ) ) );
+            _SubFieldMethods.Add( _Val_kg_SubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Val_kg, x => Val_kg = CswConvert.ToDouble( x ) ) );
+            _SubFieldMethods.Add( _Val_Liters_SubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Val_Liters, x => Val_Liters = CswConvert.ToDouble( x ) ) );
             _SubFieldMethods.Add( _UnitNameSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => CachedUnitName, x => CachedUnitName = CswConvert.ToString( x ) ) );
             _SubFieldMethods.Add( _UnitIdSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => UnitId, x => UnitId = CswConvert.ToPrimaryKey( x ) ) );
         }
@@ -61,7 +61,7 @@ namespace ChemSW.Nbt.PropTypes
                 return Required && QuantityOptional ? false == CswTools.IsDouble( Quantity ) : 0 == Gestalt.Length;
             }
         }
-        
+
         public Int32 Precision
         {
             get
@@ -410,6 +410,8 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
+            base.ToJSON( ParentObject );  // FIRST
+
             ParentObject[_QuantitySubField.ToXmlNodeName( true )] = ( !Double.IsNaN( Quantity ) ) ? CswConvert.ToString( Quantity ) : string.Empty;
             ParentObject[_Val_kg_SubField.ToXmlNodeName( true )] = ( !Double.IsNaN( Quantity ) ) ? CswConvert.ToString( Val_kg ) : string.Empty;
             ParentObject[_Val_Liters_SubField.ToXmlNodeName( true )] = ( !Double.IsNaN( Quantity ) ) ? CswConvert.ToString( Val_Liters ) : string.Empty;

@@ -255,6 +255,8 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
+            base.ToJSON( ParentObject );  // FIRST
+
             ParentObject[_CachedValueSubField.ToXmlNodeName( true )] = CachedValue;
             ParentObject["useSequence"] = UseSequence.ToString();
             ParentObject[_SequenceSubField.ToXmlNodeName( true )] = Sequence;
