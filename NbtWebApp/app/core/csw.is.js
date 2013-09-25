@@ -47,10 +47,10 @@
     Csw.is.register('number', function(num) {
 
         return (typeof num === 'number' &&
-        false === (Csw.number.isNaN(num) ||
-            false === Csw.number.isFinite(num) ||
-            Csw.number.MAX_VALUE === num ||
-            Csw.number.MIN_VALUE === num));
+        false === (Csw.Number.isNaN(num) ||
+            false === Csw.Number.isFinite(num) ||
+            Csw.Number.MAX_VALUE === num ||
+            Csw.Number.MIN_VALUE === num));
     });
 
     /**
