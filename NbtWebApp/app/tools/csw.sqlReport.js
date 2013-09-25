@@ -100,7 +100,7 @@
                         nodeId: reportid,
                         reportParams: reportParams
                     },
-                    success: function (data) {
+                    success: function(data) {
                         var parent = Csw.domNode({ ID: 'rptDiv' });
                         parent.empty();
                         if (data.hasResults) {
@@ -120,19 +120,26 @@
                         nodeId: reportid,
                         reportParams: reportParams
                     },
-                    success: function (data) {
+                    success: function(data) {
                         var parent = Csw.domNode({ ID: 'rptDiv' });
                         parent.empty();
+
+                        if (true === data.Truncated) {
+                            parent.br();
+                            parent.div({ text: 'Results were truncated at ' + data.RowCount + ' rows.' });
+                        }
+
+                        var gridDiv = parent.div();
 
                         var gridData = JSON.parse(data.gridJSON);
                         gridData.grid.showActionColumn = false;
                         gridData.grid.storeid = reportid;
                         gridData.grid.usePaging = false;
-                        parent.grid(gridData.grid).css('margin', '20px');
+                        gridDiv.grid(gridData.grid).css('margin', '20px');
                     }
                 });
             }
-        }
+        };
     }
 
     Csw.reports.register('init', init);
