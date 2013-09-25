@@ -42,7 +42,7 @@ namespace ChemSW.Nbt.Schema
             }
             {
                 // Bindings
-                CswNbtSchemaUpdateImportMgr UserImpMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "users", "User" );
+                CswNbtSchemaUpdateImportMgr UserImpMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "users", "User", ViewName: "Users_View" );
                 UserImpMgr.importBinding( "disabled", CswNbtObjClassUser.PropertyName.Archived, "" );
                 UserImpMgr.importBinding( "namefirst", CswNbtObjClassUser.PropertyName.FirstName, "" );
                 UserImpMgr.importBinding( "namelast", CswNbtObjClassUser.PropertyName.LastName, "" );
@@ -56,7 +56,6 @@ namespace ChemSW.Nbt.Schema
                 UserImpMgr.importBinding( "phone", CswNbtObjClassUser.PropertyName.Phone, "" );
                 UserImpMgr.importBinding( "username", CswNbtObjClassUser.PropertyName.Username, "" );
 
-                // Relationships
                 UserImpMgr.importBinding( "defaultlocationid", CswNbtObjClassUser.PropertyName.DefaultLocation, CswEnumNbtSubFieldName.NodeID.ToString() );
                 UserImpMgr.importBinding( "roleid", CswNbtObjClassUser.PropertyName.Role, CswEnumNbtSubFieldName.NodeID.ToString() );
                 UserImpMgr.importBinding( "workunitid", CswNbtObjClassUser.PropertyName.WorkUnit, CswEnumNbtSubFieldName.NodeID.ToString() );
@@ -84,7 +83,7 @@ namespace ChemSW.Nbt.Schema
                 */
 
                 // Exclude issystemuser
-                UserImpMgr.finalize( WhereClause: " issystemuser != '1' " );
+                UserImpMgr.finalize( WhereClause: " issystemuser != '1' ", UseView: true );
             }
 
         } // update()

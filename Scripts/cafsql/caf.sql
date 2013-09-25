@@ -1,6 +1,6 @@
 -- Create nbtimportqueue table
 create table nbtimportqueue (
-  nbtimportqueueid number(12) NOT NULL PRIMARY KEY,
+	nbtimportqueueid number(12) NOT NULL PRIMARY KEY,
   state varchar(1),
   itempk number(12) NOT NULL,
   tablename varchar(50) NOT NULL,
@@ -15,9 +15,6 @@ create unique index unqidx_nbtimportqueue on NBTIMPORTQUEUE (state, itempk, tabl
 -- Create pk sequence for nbtimportqueue table
 create sequence seq_nbtimportqueueid start with 1 increment by 1;
 commit;
-
--- Create triggers for all tables
--- [Note: use the sql that CF is already creating?]
 
 -- Create views ( these are in order of creation)
 -- Locations level 1
@@ -144,3 +141,6 @@ select w.businessunitid,
   from work_units w
   left outer join business_units b on (b.businessunitid = w.businessunitid)
   left outer join sites s on (s.siteid = w.siteid);
+
+create or replace view users_view as
+(select "AUDITFLAG","DEFAULTCATEGORYID","DEFAULTLANGUAGE","DEFAULTLOCATIONID","DEFAULTPRINTERID","DELETED","DISABLED","EMAIL","EMPLOYEEID","FAILEDLOGINCOUNT","HIDEHINTS","HOMEINVENTORYGROUPID","ISSYSTEMUSER","LOCKED","MYSTARTURL","NAMEFIRST","NAMELAST","NAVROWS","NODEVIEWID","PASSWORD","PASSWORD_DATE","PHONE","ROLEID","SUPERVISORID","TITLE","USERID","USERNAME","WELCOMEREDIRECT","WORKUNITID" from users);
