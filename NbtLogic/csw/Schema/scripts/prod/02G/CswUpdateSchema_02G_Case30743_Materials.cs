@@ -72,8 +72,9 @@ namespace ChemSW.Nbt.Schema
             //Transformed props
             ImpMgr.importBinding( "physical_state_trans", CswNbtObjClassChemical.PropertyName.PhysicalState, "" );
             ImpMgr.importBinding( "nonhazardous3e_trans", CswNbtObjClassChemical.PropertyName.Hazardous, "" );
-            //TODO: find/replace substrings in PPE
+            ImpMgr.importBinding( "ppe_trans", CswNbtObjClassChemical.PropertyName.PPE, "" );
 
+            //LOBs
             ImpMgr.importBinding( "struct_pict", CswNbtObjClassChemical.PropertyName.Structure, "", BlobTableName : "materials", LobDataPkColOverride : "materialid" );
             ImpMgr.importBinding( "disposal", CswNbtObjClassChemical.PropertyName.DisposalInstructions, "", BlobTableName : "materials", LobDataPkColOverride : "materialid" );
             ImpMgr.importBinding( "smiles", CswNbtObjClassChemical.PropertyName.SMILES, "", ClobTableName : "materials", LobDataPkColOverride : "materialid" );

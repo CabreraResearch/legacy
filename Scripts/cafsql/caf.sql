@@ -142,7 +142,7 @@ select w.businessunitid,
   left outer join business_units b on (b.businessunitid = w.businessunitid)
   left outer join sites s on (s.siteid = w.siteid);
 
-  create or replace view chemicals_view as
+create or replace view chemicals_view as
 (select v.vendorid,
  p.packageid,
  p.productno,
@@ -181,7 +181,8 @@ m."OTHERREFERENCENO",
 m."PH",
 m."PHYSICAL_DESCRIPTION",
 m."PHYSICAL_STATE",
-m."PPE",
+m.ppe,
+replace(replace(replace(m.ppe, 'Eye Protection', 'Goggles'), 'Hand Protection', 'Gloves'), 'Ventilation', 'Fume Hood') as ppe_trans,
 m."REACTIVECODE",
 m."REVIEWSTATUSCHANGEDATE",
 m."REVIEWSTATUSNAME",
