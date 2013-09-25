@@ -176,6 +176,10 @@ namespace ChemSW.Nbt.WebServices
                         CswArbitrarySelect cswRptSql = NbtResources.makeCswArbitrarySelect( "report_sql", ReportSql );
 
                         reportParams.RowLimit = CswConvert.ToInt32( NbtResources.ConfigVbls.getConfigVariableValue( CswEnumNbtConfigurationVariables.sql_report_resultlimit.ToString() ) );
+                        if( 0 >= reportParams.RowCount )
+                        {
+                            reportParams.RowCount = 500;
+                        }
                         
                         //Getting 1 more than RowLimit in order to determine if truncation occurred
                         rptDataTbl = cswRptSql.getTable( PageLowerBoundExclusive: 0, PageUpperBoundInclusive: reportParams.RowLimit + 1, RequireOneRow: false, UseLogicalDelete: false );
@@ -200,6 +204,11 @@ namespace ChemSW.Nbt.WebServices
                         {
                             reportParams.RowCount = rptDataTbl.Rows.Count;
                             reportParams.Truncated = reportParams.RowCount > reportParams.RowLimit;
+                            if( reportParams.Truncated )
+                            {
+                                rptDataTbl.Rows.RemoveAt( reportParams.RowCount - 1 );
+                                reportParams.RowCount -= 1;
+                            }
                         }
                     }
                 }
