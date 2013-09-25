@@ -228,6 +228,9 @@
                 cswPrivate.wizard.toggleStepVisibility(cswPrivate.containersModuleEnabled ? 4 : 3, cswPrivate.state.canAddSDS);
                 if (cswPrivate.containersModuleEnabled) {
                     cswPrivate.wizard.toggleStepVisibility(3, false == cswPrivate.isConstituent());
+                    if (cswPrivate.isConstituent()) {//Case 30132
+                        cswPrivate.sizesGrid = null;
+                    }
                 }
                 if (cswPrivate.supplierSelect) {
                     if (cswPrivate.isConstituent()) {
