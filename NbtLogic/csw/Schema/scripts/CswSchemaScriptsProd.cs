@@ -71,6 +71,7 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswUpdateSchema_02F_Case30661() );
             _addVersionedScript( new CswUpdateSchema_02F_Case30700() );
             _addVersionedScript( new CswUpdateSchema_02F_Case30706() );
+            _addVersionedScript( new CswUpdateSchema_02F_Case29562() );
 
             #endregion Data Scripts
 
