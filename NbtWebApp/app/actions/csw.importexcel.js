@@ -162,13 +162,13 @@
         cswPrivate.makeUploadDataTable = function () {
             cswPublic.table.cell(3, 2)
                 .css({ paddingLeft: '100px' })
-                .text('Upload a New Data File')
-                .css({
-                    textAlign: 'center',
-                    fontWeight: 'bold'
-                });
+                    .text('Start a new import')
+                    .css({
+                        textAlign: 'center',
+                        fontWeight: 'bold'
+                    });
 
-            cswPublic.uploadTable = cswPublic.table.cell(4, 2)
+                cswPublic.uploadDataTable = cswPublic.table.cell(4, 2)
                 .empty()
                 .css({ paddingLeft: '100px' })
                 .table({
@@ -176,8 +176,20 @@
                     cellpadding: 2
                 });
 
-            cswPublic.uploadTable.cell(1, 1).text('Import Definition:');
-            cswPrivate.selDefName = cswPublic.uploadTable.cell(1, 2).select({ name: 'selDefName' });
+                cswPublic.uploadDataTable.cell(1, 1).text('Import Definition:');
+                cswPrivate.selDefName = cswPublic.uploadDataTable.cell(1, 2).select({
+                    name: 'selDefName',
+                    onChange: function () {
+                        if (cswPrivate.selDefName.selectedText() === "CAF") {
+                            cswPrivate.makeUploadDataProps(false);
+                            cswPrivate.makeStartImportProps(true);
+                        } else {
+                            cswPrivate.makeUploadDataProps(true);
+                            cswPrivate.makeStartImportProps(false);
+                        }
+                    }
+                });
+
 
             Csw.ajaxWcf.get({
                 urlMethod: 'Import/getImportDefs',
@@ -188,36 +200,86 @@
                 }
             });
 
-            cswPublic.uploadTable.cell(2, 1).text('Overwrite:');
-            cswPrivate.cbOverwrite = cswPublic.uploadTable.cell(2, 2).input({
+                cswPublic.uploadDataTable.cell(2, 1).text('Overwrite:');
+                cswPrivate.cbOverwrite = cswPublic.uploadDataTable.cell(2, 2).input({
                 name: 'cbOverwrite',
                 type: Csw.enums.inputTypes.checkbox,
                 checked: true
             });
 
-            cswPublic.uploadTable.cell(3, 1).text('Excel Data File (.xlsx):');
-            cswPublic.uploadTable.cell(3, 2).buttonExt({
-                name: 'uploadnewDataBtn',
-                icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.docimport),
-                enabledText: 'Upload',
-                disabledText: 'Upload',
-                disableOnClick: false,
-                onClick: function () {
-                    $.CswDialog('FileUploadDialog', {
-                        urlMethod: 'Services/Import/uploadImportData',
-                        params: {
-                            defname: cswPrivate.selDefName.val(),
-                            overwrite: cswPrivate.cbOverwrite.checked
-                        },
-                        forceIframeTransport: true,
-                        dataType: 'iframe',
-                        onSuccess: function (response) {
-                            cswPrivate.selectedJobId = Csw.number(Csw.getPropFromIFrame(response, 'jobid', false), Csw.int32MinVal);
-                            cswPrivate.makeStatusTable();
-                        }
-                    });
+                cswPrivate.makeUploadDataProps = function (visible) {
+                    if (!cswPrivate.excelDataFileText && !cswPrivate.uploadButton) {
+                        cswPrivate.excelDataFileText = cswPublic.uploadDataTable.cell(3, 1).text('Excel Data File (.xlsx):');
+                        cswPrivate.uploadButton = cswPublic.uploadDataTable.cell(3, 2).buttonExt({
+                            name: 'uploadnewDataBtn',
+                            icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.docimport),
+                            enabledText: 'Upload',
+                            disabledText: 'Upload',
+                            disableOnClick: false,
+                            onClick: function () {
+                                $.CswDialog('FileUploadDialog', {
+                                    urlMethod: 'Services/Import/uploadImportData',
+                                    params: {
+                                        defname: cswPrivate.selDefName.val(),
+                                        overwrite: cswPrivate.cbOverwrite.checked
+                                    },
+                                    forceIframeTransport: true,
+                                    dataType: 'iframe',
+                                    onSuccess: function (response) {
+                                        cswPrivate.selectedJobId = Csw.number(Csw.getPropFromIFrame(response, 'jobid', false), Csw.int32MinVal);
+                                        cswPrivate.makeStatusTable();
+                                    }
+                                });
+                            }
+                        });
+                    }
+
+                    if (visible) {
+                        cswPrivate.excelDataFileText.show();
+                        cswPrivate.uploadButton.show();
+                    } else {
+                        cswPrivate.excelDataFileText.hide();
+                        cswPrivate.uploadButton.hide();
+                    }
+                };//cswPrivate.makeUploadDataProps()
+
+                cswPrivate.makeStartImportProps = function (visible) {
+                    if (!cswPrivate.startImportBtn) {
+                        cswPrivate.startImportBtn = cswPublic.uploadDataTable.cell(3, 3).buttonExt({
+                            name: 'startCAFImportBtn',
+                            icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.star),
+                            enabledText: 'Start',
+                            disabledText: 'Start',
+                            disableOnClick: false,
+                            onClick: function () {
+                                Csw.ajaxWcf.post({
+                                    urlMethod: 'Import/startImport',
+                                    data: {
+                                        ImportDefName: cswPrivate.selDefName.val(),
+                                        Overwrite: cswPrivate.cbOverwrite.checked()
+                                    },
+                                    success: function (data) {
+                                        // show success or show progress
+                                    }
+                                });
+                            }
+                        });
+                    }
+
+                    if (visible) {
+                        cswPrivate.startImportBtn.show();
+                    } else {
+                        cswPrivate.startImportBtn.hide();
+                    }
+
+                };//cswPrivate.makeStartImportProps()
+
+                if (cswPrivate.selDefName.selectedText() != "CAF") {
+                    cswPrivate.makeUploadDataProps(true);
+                } else {
+                    cswPrivate.makeStartImportProps(true);
                 }
-            });
+
         }; // makeUploadTable()
 
 
@@ -225,12 +287,12 @@
             cswPublic.table.cell(3, 3)
                 .css({ paddingLeft: '100px' })
                 .text('Upload a New Bindings Definition')
-                .css({
-                    textAlign: 'center',
-                    fontWeight: 'bold'
-                });
+                    .css({
+                        textAlign: 'center',
+                        fontWeight: 'bold'
+                    });
 
-            cswPublic.uploadTable = cswPublic.table.cell(4, 3)
+                cswPublic.uploadBindingsTable = cswPublic.table.cell(4, 3)
                 .empty()
                 .css({ paddingLeft: '100px' })
                 .table({
@@ -238,11 +300,11 @@
                     cellpadding: 2
                 });
 
-            cswPublic.uploadTable.cell(1, 1).text('Import Definition Name:');
-            cswPrivate.txtDefName = cswPublic.uploadTable.cell(1, 2).input({ name: 'txtDefName' });
+                cswPublic.uploadBindingsTable.cell(1, 1).text('Import Definition Name:');
+                cswPrivate.txtDefName = cswPublic.uploadBindingsTable.cell(1, 2).input({ name: 'txtDefName' });
 
-            cswPublic.uploadTable.cell(3, 1).text('Excel Bindings File (.xlsx):');
-            cswPublic.uploadTable.cell(3, 2).buttonExt({
+                cswPublic.uploadBindingsTable.cell(3, 1).text('Excel Bindings File (.xlsx):');
+                cswPublic.uploadBindingsTable.cell(3, 2).buttonExt({
                 name: 'uploadnewBindingsBtn',
                 icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.docimport),
                 enabledText: 'Upload',
@@ -258,7 +320,7 @@
                             },
                             forceIframeTransport: true,
                             dataType: 'iframe',
-                            onSuccess: function (response) {
+                                onSuccess: function (response) {
                                 cswPrivate.makeUploadDataTable();
                                 cswPrivate.txtDefName.val('');
                             }

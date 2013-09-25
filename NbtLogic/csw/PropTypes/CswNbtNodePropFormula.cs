@@ -13,7 +13,7 @@ namespace ChemSW.Nbt.PropTypes
 {
 
 
-    public class CswNbtNodePropFormula: CswNbtNodeProp
+    public class CswNbtNodePropFormula : CswNbtNodeProp
     {
 
         public static implicit operator CswNbtNodePropFormula( CswNbtNodePropWrapper PropWrapper )
@@ -109,6 +109,8 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
+            base.ToJSON( ParentObject );  // FIRST
+
             ParentObject[_RawFormulaTextSubfield.ToXmlNodeName( true )] = Text;
             ParentObject["formattedText"] = _parseChemicalFormula( Text );
             ParentObject["size"] = Size;
@@ -145,7 +147,7 @@ namespace ChemSW.Nbt.PropTypes
             string FormattedFormula = "";
             Regex FormulaExpression = new Regex( "(\\d*)([a-zA-Z\\d]+)([ .]*)(.*)" );
 
-         //borrow a dictionary of elements from structure search
+            //borrow a dictionary of elements from structure search
             PeriodicTable PT = new PeriodicTable();
 
 
@@ -153,16 +155,16 @@ namespace ChemSW.Nbt.PropTypes
             {
                 GroupCollection FormulaGroups = FormulaExpression.Match( Formula ).Groups;
 
-             //append prefix numbers without changing them
+                //append prefix numbers without changing them
                 FormattedFormula = FormattedFormula + FormulaGroups[1];
 
-             //iterate through the characters of the current compound from left to right
+                //iterate through the characters of the current compound from left to right
                 char[] ChemicalCompound = FormulaGroups[2].ToString().ToCharArray();
                 for( int i = 0; i < ChemicalCompound.Length; i++ )
                 {
                     char Letter = ChemicalCompound[i];
 
-                 //convert numbers to subscript versions of themselves
+                    //convert numbers to subscript versions of themselves
                     if( '0' <= Letter && Letter <= '9' )
                         ChemicalCompound[i] = (char) ( Letter + 0x2050 );
 
@@ -172,11 +174,11 @@ namespace ChemSW.Nbt.PropTypes
                         char LastLetter = i > 0 ? ChemicalCompound[i - 1] : '\0';
                         char NextLetter = i < ChemicalCompound.Length - 1 ? ChemicalCompound[i + 1] : '\0';
 
-                     //if the last letter plus this one lowercased make an element and the next is not already lowered
-                        if( NextLetter != Char.ToLower(NextLetter) && PT.ElementExists( "" + LastLetter + Char.ToLower( Letter ) ))
+                        //if the last letter plus this one lowercased make an element and the next is not already lowered
+                        if( NextLetter != Char.ToLower( NextLetter ) && PT.ElementExists( "" + LastLetter + Char.ToLower( Letter ) ) )
                             ChemicalCompound[i] = Char.ToLower( Letter );
-                     //if this letter plus the next one lowercased make an element
-                        else if( PT.ElementExists( "" + Letter + Char.ToLower( NextLetter) )) 
+                        //if this letter plus the next one lowercased make an element
+                        else if( PT.ElementExists( "" + Letter + Char.ToLower( NextLetter ) ) )
                         {
                             ChemicalCompound[i + 1] = Char.ToLower( NextLetter );
                             i = i + 1;
@@ -185,13 +187,13 @@ namespace ChemSW.Nbt.PropTypes
                     }//else if( false == PT.ElementExists( Letter.ToString() ) && 'A' <= Letter && Letter <= 'Z' )
                 }//for( int i = 0; i < ChemicalCompound.Length; i++ )
 
-             //append the prettified compound
-                FormattedFormula = FormattedFormula + new string(ChemicalCompound);
+                //append the prettified compound
+                FormattedFormula = FormattedFormula + new string( ChemicalCompound );
 
-             //append trailing characters, with periods converted to big middle dots
+                //append trailing characters, with periods converted to big middle dots
                 FormattedFormula = FormattedFormula + FormulaGroups[3].ToString().Trim().Replace( '.', (char) 0x25cf );
 
-             //move on to the next compoud in the formula
+                //move on to the next compoud in the formula
                 Formula = FormulaGroups[4].ToString();
 
             }//while( false == string.IsNullOrEmpty( Formula ) )

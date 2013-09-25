@@ -10,7 +10,7 @@ using Newtonsoft.Json.Linq;
 namespace ChemSW.Nbt.PropTypes
 {
 
-    public class CswNbtNodePropComments: CswNbtNodeProp
+    public class CswNbtNodePropComments : CswNbtNodeProp
     {
         public static implicit operator CswNbtNodePropComments( CswNbtNodePropWrapper PropWrapper )
         {
@@ -23,7 +23,7 @@ namespace ChemSW.Nbt.PropTypes
             _CommentSubField = ( (CswNbtFieldTypeRuleComments) _FieldTypeRule ).CommentSubField;
 
             // Associate subfields with methods on this object, for SetSubFieldValue()
-            _SubFieldMethods.Add( _CommentSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => CommentsJson, x => CommentsJson = CswConvert.ToJArray(x) ) ); // not sure if this should be AddComment()
+            _SubFieldMethods.Add( _CommentSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => CommentsJson, x => CommentsJson = CswConvert.ToJArray( x ) ) ); // not sure if this should be AddComment()
         }
 
         private CswNbtSubField _CommentSubField;
@@ -53,7 +53,7 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 JArray Ret = new JArray();
-                
+
                 try
                 {
                     string Json = GetPropRowValue( _CommentSubField );
@@ -116,6 +116,8 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
+            base.ToJSON( ParentObject );  // FIRST
+
             JArray _CommentsJson = CommentsJson;
             foreach( JObject jr in _CommentsJson )
             {
@@ -186,7 +188,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             if( CommentsJson.Count > 0 )
             {
-                JToken lastComment = CommentsJson[CommentsJson.Count-1];
+                JToken lastComment = CommentsJson[CommentsJson.Count - 1];
                 string commenter = lastComment["commenter"].ToString();
                 string dateSubmitted = lastComment["datetime"].ToString();
                 string message = lastComment["message"].ToString();

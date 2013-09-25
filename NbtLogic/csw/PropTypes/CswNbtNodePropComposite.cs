@@ -69,6 +69,8 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
+            base.ToJSON( ParentObject );  // FIRST
+
             ParentObject[_CachedValueSubField.ToXmlNodeName( true )] = CachedValue;
         }
 
@@ -81,7 +83,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             PendingUpdate = true;
         }
-        
+
         public override void SyncGestalt()
         {
             string gestaltVal = CswNbtMetaData.TemplateValueToDisplayValue( _CswNbtResources.MetaData.getNodeTypeProps( _CswNbtMetaDataNodeTypeProp.NodeTypeId ), TemplateValue, this );

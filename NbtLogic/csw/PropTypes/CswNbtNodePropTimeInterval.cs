@@ -57,7 +57,7 @@ namespace ChemSW.Nbt.PropTypes
                 return ( string.IsNullOrEmpty( Gestalt ) );
             }
         }
-        
+
         private CswRateInterval _RateInterval;
         public CswRateInterval RateInterval
         {
@@ -109,6 +109,8 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
+            base.ToJSON( ParentObject );  // FIRST
+
             JObject IntervalObj = new JObject();
             ParentObject[_IntervalSubField.ToXmlNodeName()] = IntervalObj;
             //IntervalObj["text"] = RateInterval.ToString();

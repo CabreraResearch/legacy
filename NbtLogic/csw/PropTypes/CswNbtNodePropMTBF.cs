@@ -198,6 +198,8 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
+            base.ToJSON( ParentObject );  // FIRST
+
             //ParentObject[_StartDateTimeSubField.ToXmlNodeName( true )] = ( StartDateTime != DateTime.MinValue ) ? StartDateTime.ToShortDateString() : string.Empty;
             CswDateTime CswDate = new CswDateTime( _CswNbtResources, StartDateTime );
             ParentObject.Add( new JProperty( _StartDateTimeSubField.ToXmlNodeName( true ), CswDate.ToClientAsDateTimeJObject() ) );

@@ -22,10 +22,10 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropText( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtNode Node )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node )
         {
-            _TextSubField = ((CswNbtFieldTypeRuleText) _FieldTypeRule).TextSubField;
+            _TextSubField = ( (CswNbtFieldTypeRuleText) _FieldTypeRule ).TextSubField;
 
             // Associate subfields with methods on this object, for SetSubFieldValue()
-            _SubFieldMethods.Add( _TextSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Text, x => Text = CswConvert.ToString(x) ) );
+            _SubFieldMethods.Add( _TextSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Text, x => Text = CswConvert.ToString( x ) ) );
         }
 
         private CswNbtSubField _TextSubField;
@@ -84,7 +84,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return ( _CswNbtMetaDataNodeTypeProp.Attribute3 ); 
+                return ( _CswNbtMetaDataNodeTypeProp.Attribute3 );
             }
         }
 
@@ -92,7 +92,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return ( _CswNbtMetaDataNodeTypeProp.Attribute4 ); 
+                return ( _CswNbtMetaDataNodeTypeProp.Attribute4 );
             }
         }
 
@@ -107,6 +107,8 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
+            base.ToJSON( ParentObject );  // FIRST
+
             ParentObject[_TextSubField.ToXmlNodeName( true )] = Text;
             ParentObject["size"] = Size;
             ParentObject["maxlength"] = MaxLength;
@@ -126,7 +128,7 @@ namespace ChemSW.Nbt.PropTypes
                 Text = JObject[_TextSubField.ToXmlNodeName( true )].ToString();
             }
         }
-        
+
         public override void SyncGestalt()
         {
             SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, Text );

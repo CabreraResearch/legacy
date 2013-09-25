@@ -19,10 +19,10 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropStatic( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtNode Node )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node )
         {
-            _TextSubField = ((CswNbtFieldTypeRuleStatic) _FieldTypeRule).TextSubField;
+            _TextSubField = ( (CswNbtFieldTypeRuleStatic) _FieldTypeRule ).TextSubField;
 
             // Associate subfields with methods on this object, for SetSubFieldValue()
-            _SubFieldMethods.Add( _TextSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => StaticText, x => StaticText = CswConvert.ToString(x) ) );
+            _SubFieldMethods.Add( _TextSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => StaticText, x => StaticText = CswConvert.ToString( x ) ) );
         }
 
         private CswNbtSubField _TextSubField;
@@ -34,7 +34,7 @@ namespace ChemSW.Nbt.PropTypes
                 return ( 0 == Gestalt.Length );
             }//
         }
-        
+
         public string StaticText
         {
             get
@@ -98,6 +98,8 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
+            base.ToJSON( ParentObject );  // FIRST
+
             ParentObject[_TextSubField.ToXmlNodeName( true )] = StaticText;
             ParentObject["rows"] = Rows;
             ParentObject["columns"] = Columns;

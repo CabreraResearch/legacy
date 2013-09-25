@@ -470,7 +470,7 @@ namespace ChemSW.Nbt.Actions
                     inner join object_class_props ocp on ntp.objectclasspropid = ocp.objectclasspropid
                     where ocp.objectclasspropid = :locationpropid
                         and exists (select nodeid from containerids where nodeid = jnp.nodeid))
-            ) where locationid member of csw_number_table(:locationids) and fulllocation is not null";
+            ) where locationid member of csw_number_table(" + LocationIds + @") and fulllocation is not null";
 
             #endregion SQL Query
 
@@ -489,7 +489,6 @@ namespace ChemSW.Nbt.Actions
             TierIILocationsSelect.addParameter( "constituentid", ConstituentProp.PropId.ToString() );
             TierIILocationsSelect.addParameter( "materialid", MaterialId );
             TierIILocationsSelect.addParameter( "locationpropid", LocationProp.PropId.ToString() );
-            TierIILocationsSelect.addParameter( "locationids", LocationIds.ToString() );
             DataTable TargetTable = TierIILocationsSelect.getTable();
             return TargetTable;
         }

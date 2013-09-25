@@ -297,6 +297,12 @@ namespace ChemSW.Nbt.ServiceDrivers
 
             if( Node != null )
             {
+                // case 30765 - this must be done here in order to prepare the property for export to the UI (e.g. setting 'Hidden' correctly)
+                foreach( CswNbtNodePropWrapper Prop in Node.Properties )
+                {
+                    Prop.TriggerOnBeforeRender();
+                }
+
                 if( CswTools.IsPrimaryKey( Node.NodeId ) )
                 {
                     Ret["node"]["nodeid"] = Node.NodeId.ToString();
@@ -390,6 +396,13 @@ namespace ChemSW.Nbt.ServiceDrivers
 
             if( Node != null )
             {
+                // case 30765 - this must be done here in order to prepare the property for export to the UI (e.g. setting 'Hidden' correctly)
+                // We need to do this prop as well as all conditional props
+                foreach( CswNbtNodePropWrapper p in Node.Properties )
+                {
+                    p.TriggerOnBeforeRender();
+                }
+
                 // for prop filters, update node prop value but don't save the change
                 JObject PropJson = CswConvert.ToJObject( NewPropJson, true, "NewPropJson" );
 

@@ -52,7 +52,8 @@ namespace ChemSW.Nbt.PropTypes
 
 
         //TODO: witout at least one serializable item, this ENTIRE CLASS will try to serialize resulting in a helpfull "error" message. When we WCFify this class we can remove this prop
-        [DataMember] private string ToDo = string.Empty;
+        [DataMember]
+        private string ToDo = string.Empty;
 
         /// <summary>
         /// WCF Default Contructor
@@ -61,7 +62,7 @@ namespace ChemSW.Nbt.PropTypes
         {
         }
 
-//All WCF Data Contracts MUST have a default constructor
+        //All WCF Data Contracts MUST have a default constructor
 
         /// <summary>
         /// Constructor
@@ -75,12 +76,15 @@ namespace ChemSW.Nbt.PropTypes
 
         }
 
-//generic
+        //generic
 
         public delegate void OnPropChangeHandler( CswNbtNodeProp Prop, bool Creating );
 
         public OnPropChangeHandler OnPropChange;
 
+        /// <summary>
+        /// Set an event to be executed when the property's value is changed
+        /// </summary>
         public void SetOnPropChange( OnPropChangeHandler ChangeHandler )
         {
             OnPropChange = ChangeHandler;
@@ -500,7 +504,7 @@ namespace ChemSW.Nbt.PropTypes
             } // foreach( CswNbtSubField SubField in NodeTypeProp.getFieldTypeRule().SubFields )
 
             // Also copy Gestalt, which usually isn't listed as a subfield
-            SetSubFieldValue(  CswEnumNbtSubFieldName.Gestalt, Source.Gestalt );
+            SetSubFieldValue( CswEnumNbtSubFieldName.Gestalt, Source.Gestalt );
             SetSubFieldValue( CswEnumNbtSubFieldName.GestaltSearch, Source.GestaltSearch );
         }
 
@@ -602,10 +606,37 @@ namespace ChemSW.Nbt.PropTypes
         /// </summary>
         public virtual void onAfterSetDefault() { }
 
+        public delegate void BeforeRenderHandler( CswNbtNodeProp Prop );
+
+        public BeforeRenderHandler onBeforeRender = null;
+
+        /// <summary>
+        /// Executed before the property is exported to the UI
+        /// </summary>
+        public void TriggerOnBeforeRender()
+        {
+            if( null != onBeforeRender )
+            {
+                onBeforeRender( this );
+            }
+        }
+
+        /// <summary>
+        /// Set an event to be executed before the property is exported to the UI
+        /// </summary>
+        public void SetOnBeforeRender( BeforeRenderHandler handler )
+        {
+            onBeforeRender = handler;
+        }
+
+
         #region Xml Operations
 
         abstract public void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap );
-        public abstract void ToJSON( JObject ParentObject );
+        public virtual void ToJSON( JObject ParentObject )
+        {
+            //TriggerOnBeforeRender();  this is now done in CswNbtSdTabsAndProps
+        }
         public abstract void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap );
 
         #endregion Xml Operations
