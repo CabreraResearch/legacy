@@ -76,8 +76,13 @@ namespace ChemSW.Nbt.Schema
                     FieldType = CswEnumNbtFieldType.Text
                 } );
 
-            //TODO: new props          
-            //dot_code                 -> "DOT Code" as list
+            CswNbtMetaDataObjectClassProp DOTCode = ChemicalOC.getObjectClassProp( CswNbtObjClassChemical.PropertyName.DOTCode ) ??
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( ChemicalOC )
+                    {
+                        PropName = CswNbtObjClassChemical.PropertyName.DOTCode,
+                        FieldType = CswEnumNbtFieldType.Number
+                    } );
+
 
         }
     }

@@ -53,6 +53,20 @@ namespace ChemSW.Nbt.Schema
                 CswNbtMetaDataNodeTypeProp CompGasNTP = ChemicalNT.getNodeTypePropByObjectClassProp( CswNbtObjClassChemical.PropertyName.CompressedGas );
                 CompGasNTP.removeFromAllLayouts();
                 CompGasNTP.updateLayout( CswEnumNbtLayoutType.Edit, AquNTP, true );
+
+                CswNbtMetaDataNodeTypeProp DOTCodeNTP = ChemicalNT.getNodeTypePropByObjectClassProp( CswNbtObjClassChemical.PropertyName.DOTCode );
+                DOTCodeNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
+                DOTCodeNTP.MaxValue = 999; //DOT codes are 3 numbers
+                DOTCodeNTP.MinValue = 0;
+
+                CswNbtMetaDataNodeTypeProp OpenExpireIntervalNTP = ChemicalNT.getNodeTypePropByObjectClassProp( CswNbtObjClassChemical.PropertyName.OpenExpireInterval );
+                OpenExpireIntervalNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
+
+                CswNbtMetaDataNodeTypeProp CompressedGasNTP = ChemicalNT.getNodeTypePropByObjectClassProp( CswNbtObjClassChemical.PropertyName.CompressedGas );
+                CompressedGasNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
+
+                CswNbtMetaDataNodeTypeProp EINECSNTP = ChemicalNT.getNodeTypePropByObjectClassProp( CswNbtObjClassChemical.PropertyName.EINECS );
+                EINECSNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
             }
 
         } // update()

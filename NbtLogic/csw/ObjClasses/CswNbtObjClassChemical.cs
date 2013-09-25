@@ -1135,7 +1135,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropChildContents Jurisdiction { get { return ( _CswNbtNode.Properties[PropertyName.Jurisdiction] ); } }
         public CswNbtNodePropMemo SuppressedRegulatoryLists { get { return ( _CswNbtNode.Properties[PropertyName.SuppressedRegulatoryLists] ); } }
         public CswNbtNodePropRelationship LQNo { get { return ( _CswNbtNode.Properties[PropertyName.LQNo] ); } }
-        public CswNbtNodePropList DOTCode { get { return _CswNbtNode.Properties[PropertyName.DOTCode]; } }
+        public CswNbtNodePropNumber DOTCode { get { return _CswNbtNode.Properties[PropertyName.DOTCode]; } }
         public CswNbtNodePropMemo HazardInfo { get { return _CswNbtNode.Properties[PropertyName.HazardInfo]; } }
         public CswNbtNodePropLogical CompressedGas { get { return _CswNbtNode.Properties[PropertyName.CompressedGas]; } }
         public CswNbtNodePropText SMILES { get { return _CswNbtNode.Properties[PropertyName.SMILES]; } }
