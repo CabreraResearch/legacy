@@ -67,6 +67,9 @@ namespace ChemSW.Nbt.Schema
 
                 CswNbtMetaDataNodeTypeProp EINECSNTP = ChemicalNT.getNodeTypePropByObjectClassProp( CswNbtObjClassChemical.PropertyName.EINECS );
                 EINECSNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
+
+                CswNbtMetaDataNodeTypeProp SubclassNameNTP = ChemicalNT.getNodeTypePropByObjectClassProp( CswNbtObjClassChemical.PropertyName.SubclassName );
+                SubclassNameNTP.removeFromAllLayouts();
             }
 
         } // update()

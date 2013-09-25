@@ -100,6 +100,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string DisposalInstructions = "Disposal Instructions";
             public const string OpenExpireInterval = "Open Expire Interval";
             public const string EINECS = "EINECS";
+            public const string SubclassName = "Subclass Name";
         }
 
         #endregion Enums
@@ -1142,6 +1143,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropMemo DisposalInstructions{ get { return _CswNbtNode.Properties[PropertyName.DisposalInstructions]; } }
         public CswNbtNodePropQuantity OpenExpireInterval { get { return _CswNbtNode.Properties[PropertyName.OpenExpireInterval]; } }
         public CswNbtNodePropText EINECS { get { return _CswNbtNode.Properties[PropertyName.EINECS]; } }
+        public CswNbtNodePropText SubclassName { get { return _CswNbtNode.Properties[PropertyName.SubclassName]; } }
 
         #endregion Object class specific properties
 

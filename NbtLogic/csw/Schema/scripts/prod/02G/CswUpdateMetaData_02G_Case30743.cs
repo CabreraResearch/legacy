@@ -83,6 +83,14 @@ namespace ChemSW.Nbt.Schema
                         FieldType = CswEnumNbtFieldType.Number
                     } );
 
+            CswNbtMetaDataObjectClassProp SubclassName = ChemicalOC.getObjectClassProp( CswNbtObjClassChemical.PropertyName.SubclassName ) ??
+               _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( ChemicalOC )
+               {
+                   PropName = CswNbtObjClassChemical.PropertyName.SubclassName,
+                   FieldType = CswEnumNbtFieldType.Text,
+                   ServerManaged = true
+               } );
+
 
         }
     }
