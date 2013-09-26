@@ -122,12 +122,15 @@ namespace ChemSW.Nbt.ViewEditor
             else if( Request.Action == "AddFilter" )
             {
                 CswNbtViewProperty propNode = (CswNbtViewProperty) CurrentView.FindViewNodeByArbitraryId( Request.PropArbId );
-                CurrentView.AddViewPropertyFilter( propNode,
-                                                   Conjunction : (CswEnumNbtFilterConjunction) Request.FilterConjunction,
-                                                   SubFieldName : (CswEnumNbtSubFieldName) Request.FilterSubfield,
-                                                   FilterMode : (CswEnumNbtFilterMode) Request.FilterMode,
-                                                   Value : Request.FilterValue
-                    );
+                if( false == _hasFilter( propNode ) )
+                {
+                    CurrentView.AddViewPropertyFilter( propNode,
+                                                       Conjunction: (CswEnumNbtFilterConjunction) Request.FilterConjunction,
+                                                       SubFieldName: (CswEnumNbtSubFieldName) Request.FilterSubfield,
+                                                       FilterMode: (CswEnumNbtFilterMode) Request.FilterMode,
+                                                       Value: Request.FilterValue
+                        );
+                }
             }
             else if( Request.Action == "RemoveNode" )
             {
