@@ -579,27 +579,18 @@
                             });
                         }
                     }
-
-                    confirmViewsList = confirmationList.li({
-                        text: 'New Views'
-                    })
-                        .ul({
-                            name: 'confirmationViews'
-                        });
+                    
                     if (cswPrivate.isNewTarget()) {
-                        confirmViewsList.li({
-                            text: '<b>Scheduling: ' + cswPrivate.selectedInspectionTarget + '</b>'
+                        confirmViewsList = confirmationList.li({
+                            text: 'New View'
+                        }).ul({
+                            name: 'confirmationViews'
                         });
                         confirmViewsList.li({
                             text: '<b>Groups: ' + cswPrivate.selectedInspectionTarget + '</b>'
                         });
                     }
-                    confirmViewsList.li({
-                        text: '<b>' + cswPrivate.selectedInspectionDesign.name + ' Inspections: ' + cswPrivate.selectedInspectionTarget + '</b>'
-                    });
-                } /*else {
-                        cswPrivate.toggleButton(cswPrivate.buttons.prev, true, true);
-                    }*/
+                }
             };
         }());
 
@@ -670,31 +661,7 @@
                 urlMethod: 'finalizeInspectionDesign',
                 data: jsonData,
                 success: function (data) {
-                    //Come back and hammer this out
-                    var views = data.views,
-                            values = [];
-
-                    Csw.each(views, function (thisView) {
-                        if (Csw.contains(thisView, 'viewid') &&
-                                Csw.contains(thisView, 'viewname')) {
-                            values.push({
-                                value: thisView.viewid,
-                                display: thisView.viewname
-                            });
-                        }
-                    });
-
-                    $.CswDialog('NavigationSelectDialog', {
-                        name: 'FinishDialog',
-                        title: 'The Inspection Design Wizard Completed Successfully',
-                        navigationText: 'Please select from the following views. Click OK to continue.',
-                        values: values,
-                        onOkClick: function (selectedView) {
-                            var viewId = selectedView.val();
-                            Csw.tryExec(cswPrivate.onFinish, viewId);
-                        }
-                    });
-
+                    Csw.tryExec(cswPrivate.onFinish, data.viewid);
                 },
                 error: function () {
                     cswPrivate.toggleButton(cswPrivate.buttons.cancel, true);

@@ -72,10 +72,7 @@ namespace ChemSW.Nbt.Actions
         private Int32 _DesignNtId = 0;
         private Int32 _TargetNtId = 0;
         private Int32 _GroupNtId = 0;
-        private CswNbtViewId _groupsViewId = null;
-        private CswNbtViewId _inspectionsViewId = null;
-        private CswNbtViewId _schedulingViewId = null;
-
+        
         #region MetaData
 
         /// <summary>
@@ -464,110 +461,14 @@ namespace ChemSW.Nbt.Actions
 
         #region Views
 
-        private void _getClientViewData( CswNbtView View, JObject RetObj )
-        {
-            if( null != View )
-            {
-                RetObj[View.ViewName] = new JObject();
-                RetObj[View.ViewName]["viewname"] = View.ViewName;
-                if( null != View.SessionViewId &&
-                    View.SessionViewId.isSet() )
-                {
-                    RetObj[View.ViewName]["viewid"] = View.SessionViewId.ToString();
-                }
-                else
-                {
-                    RetObj[View.ViewName]["viewid"] = View.ViewId.ToString();
-                }
-            }
-        }
-
         private JObject _createInspectionDesignViews( string Category, CswNbtMetaDataNodeType InspectionDesignNt, CswNbtMetaDataNodeType InspectionTargetNt )
         {
             JObject RetObj = new JObject();
 
-            RetObj["views"] = new JObject();
-
-            //Inspection Scheduling view
-            CswNbtView InspectionSchedulesView = _createInspectionSchedulingView( InspectionDesignNt, Category, InspectionTargetNt );
-            _schedulingViewId = InspectionSchedulesView.ViewId;
-            _getClientViewData( InspectionSchedulesView, ( (JObject) RetObj["views"] ) );
-
             //Inspection Target Group Assignement view
             CswNbtView InspectionTargetGroupAssignmentView = _createInspectionGroupAssignmentView( Category, InspectionTargetNt, InspectionDesignNt );
-            _groupsViewId = InspectionTargetGroupAssignmentView.ViewId;
-            _getClientViewData( InspectionTargetGroupAssignmentView, ( (JObject) RetObj["views"] ) );
-
-            //Target Inspections view
-            CswNbtView TargetInspectionsView = _createTargetInspectionsView( InspectionDesignNt, Category, InspectionTargetNt );
-            _inspectionsViewId = TargetInspectionsView.ViewId;
-            _getClientViewData( TargetInspectionsView, ( (JObject) RetObj["views"] ) );
-
+            RetObj["viewid"] = InspectionTargetGroupAssignmentView.ViewId.ToString();
             return RetObj;
-        }
-
-        private CswNbtView _createInspectionSchedulingView( CswNbtMetaDataNodeType InspectionDesignNt, string Category, CswNbtMetaDataNodeType InspectionTargetNt )
-        {
-            _validateNodeType( InspectionDesignNt, CswEnumNbtObjectClass.InspectionDesignClass );
-            CswNbtView RetView = null;
-            string InspectionSchedulesViewName = "Scheduling: " + InspectionTargetNt.NodeTypeName;
-
-            foreach( CswNbtView SchedulingView in _CswNbtResources.ViewSelect.restoreViews( InspectionSchedulesViewName, _newViewVis, _VisId ) )
-            {
-                RetView = SchedulingView;
-                break;
-            }
-            if( _targetAlreadyExists )
-            {
-                foreach( CswNbtView SchedulingView in _CswNbtResources.ViewSelect.restoreViews( InspectionTargetNt.NodeTypeName, true ) )
-                {
-                    if( SchedulingView.ViewName.Contains( "Scheduling" ) && _isVisibleToCurrentUser( SchedulingView ) )
-                    {
-                        RetView = SchedulingView;
-                        break;
-                    }
-                }
-            }
-            if( null == RetView )
-            {
-                try
-                {
-                    RetView = new CswNbtView( _CswNbtResources );
-                    if( CswEnumNbtViewVisibility.Global == _newViewVis )
-                    {
-                        RetView.saveNew( InspectionSchedulesViewName, _newViewVis, null, null, null );
-                    }
-                    else
-                    {
-                        RetView.saveNew( InspectionSchedulesViewName, _newViewVis, _CurrentUser.RoleId, _CurrentUser.UserId, null );
-                    }
-                    RetView.ViewMode = CswEnumNbtViewRenderingMode.Tree;
-                    RetView.Category = Category;
-
-                    CswNbtMetaDataNodeType GeneratorNt = _CswNbtResources.MetaData.getNodeType( CswNbtObjClassGenerator.InspectionGeneratorNodeTypeName );
-                    _validateNodeType( GeneratorNt, CswEnumNbtObjectClass.GeneratorClass );
-                    CswNbtMetaDataNodeTypeProp GnOwnerNtp = GeneratorNt.getNodeTypePropByObjectClassProp( CswNbtObjClassGenerator.PropertyName.Owner );
-
-                    CswNbtMetaDataNodeTypeProp ItTargetGroupNtp = InspectionTargetNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionTarget.PropertyName.InspectionTargetGroup );
-                    CswNbtMetaDataNodeType InspectionTargetGroupNt = _CswNbtResources.MetaData.getNodeType( ItTargetGroupNtp.FKValue );
-                    _validateNodeType( InspectionTargetGroupNt, CswEnumNbtObjectClass.InspectionTargetGroupClass );
-
-                    /* View:
-                        [Group]
-                            [Schedule]                        
-                    */
-
-                    CswNbtViewRelationship IpGroupRelationship = RetView.AddViewRelationship( InspectionTargetGroupNt, false );
-                    RetView.AddViewRelationship( IpGroupRelationship, CswEnumNbtViewPropOwnerType.Second, GnOwnerNtp, false );
-                    RetView.save();
-                }
-                catch( Exception ex )
-                {
-                    throw new CswDniException( CswEnumErrorType.Error, "Failed to create view: " + InspectionSchedulesViewName, "View creation failed: " + ex.StackTrace, ex );
-                }
-            }
-            RetView.SaveToCache( true );
-            return RetView;
         }
 
         private CswNbtView _createInspectionGroupAssignmentView( string Category, CswNbtMetaDataNodeType InspectionTargetNt, CswNbtMetaDataNodeType InspectionDesignNt )
@@ -595,8 +496,20 @@ namespace ChemSW.Nbt.Actions
                         break;
                     }
                 }
-            }
+                if( null != RetView )
+                {
+                    CswNbtView View = RetView;
+                    RetView.Root.eachRelationship( Relationship =>
+                  {
+                      if( Relationship.SecondMetaDataDefinitionObject().UniqueId == InspectionTargetNt.NodeTypeId )
+                      {
+                          View.AddViewRelationship( Relationship, CswEnumNbtViewPropOwnerType.Second, InspectionDesignNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.Target ), false );
+                      }
 
+                  }, null );
+                }
+            }
+            
             if( null == RetView )
             {
                 try
@@ -614,18 +527,20 @@ namespace ChemSW.Nbt.Actions
                     RetView.Category = Category;
 
                     /* View:
-                        [Group]
-                            [Target]
+                     *   [Group]
+                     *       [Target]
+                     *          [Inspectin Design] 
                     */
                     CswNbtViewRelationship IpGroupRelationship = RetView.AddViewRelationship( InspectionTargetGroupNt, false );
-                    RetView.AddViewRelationship( IpGroupRelationship, CswEnumNbtViewPropOwnerType.Second, ItTargetGroupNtp, false );
-                    RetView.save();
+                    CswNbtViewRelationship IpTargetRelationship = RetView.AddViewRelationship( IpGroupRelationship, CswEnumNbtViewPropOwnerType.Second, ItTargetGroupNtp, false );
+                    RetView.AddViewRelationship( IpTargetRelationship, CswEnumNbtViewPropOwnerType.Second, InspectionDesignNt.getNodeTypePropByObjectClassProp(CswNbtObjClassInspectionDesign.PropertyName.Target), false );
                 }
                 catch( Exception ex )
                 {
                     throw new CswDniException( CswEnumErrorType.Error, "Failed to create view: " + GroupAssignmentViewName, "View creation failed: " + ex.StackTrace, ex );
                 }
             }
+            RetView.save();
             RetView.SaveToCache( true );
             return RetView;
         }
@@ -678,56 +593,6 @@ namespace ChemSW.Nbt.Actions
                     }
                 }
             }
-        }
-
-        private CswNbtView _createTargetInspectionsView( CswNbtMetaDataNodeType InspectionDesignNt, string Category, CswNbtMetaDataNodeType InspectionTargetNt )
-        {
-            _validateNodeType( InspectionDesignNt, CswEnumNbtObjectClass.InspectionDesignClass );
-            _validateNodeType( InspectionTargetNt, CswEnumNbtObjectClass.InspectionTargetClass );
-
-            CswNbtView RetView = null;
-            string InspectionTargetViewName = InspectionDesignNt.NodeTypeName + " Inspections: " + InspectionTargetNt.NodeTypeName;
-            foreach( CswNbtView SchedulingView in _CswNbtResources.ViewSelect.restoreViews( InspectionTargetViewName, _newViewVis, _VisId ) )
-            {
-                RetView = SchedulingView;
-                break;
-            }
-
-            if( null == RetView )
-            {
-                try
-                {
-                    RetView = new CswNbtView( _CswNbtResources );
-                    if( CswEnumNbtViewVisibility.Global == _newViewVis )
-                    {
-                        RetView.saveNew( InspectionTargetViewName, _newViewVis, null, null, null );
-                    }
-                    else
-                    {
-                        RetView.saveNew( InspectionTargetViewName, _newViewVis, _CurrentUser.RoleId, _CurrentUser.UserId, null );
-                    }
-
-                    RetView.ViewMode = CswEnumNbtViewRenderingMode.Tree;
-                    RetView.Category = Category;
-
-                    CswNbtMetaDataNodeTypeProp ItTargetNtp = InspectionDesignNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.Target );
-
-                    /* View:
-                        [Target]
-                            [Inspection]                        
-                    */
-
-                    CswNbtViewRelationship TargetRelationship = RetView.AddViewRelationship( InspectionTargetNt, false );
-                    RetView.AddViewRelationship( TargetRelationship, CswEnumNbtViewPropOwnerType.Second, ItTargetNtp, false );
-                    RetView.save();
-                }
-                catch( Exception ex )
-                {
-                    throw new CswDniException( CswEnumErrorType.Error, "Failed to create view: " + InspectionTargetViewName, "View creation failed", ex );
-                }
-            }
-            RetView.SaveToCache( true );
-            return RetView;
         }
 
         private CswNbtView _createAllInspectionPointsGridView( CswNbtMetaDataNodeType InspectionGroupNt, CswNbtMetaDataNodeType InspectionTargetNt, string Category, CswEnumNbtViewRenderingMode ViewMode,
@@ -858,10 +723,7 @@ namespace ChemSW.Nbt.Actions
         public Int32 DesignNtId { get { return ( _DesignNtId ); } }
         public Int32 TargetNtId { get { return ( _TargetNtId ); } }
         public Int32 GroupNtId { get { return ( _GroupNtId ); } }
-        public CswNbtViewId GroupsViewId { get { return ( _groupsViewId ); } }
-        public CswNbtViewId InspectionsViewId { get { return ( _inspectionsViewId ); } }
-        public CswNbtViewId SchedulingViewId { get { return ( _schedulingViewId ); } }
-
+        
         private CswCommaDelimitedString _UniqueQuestions = new CswCommaDelimitedString();
 
         public DataTable prepareDataTable( DataTable UploadDataTable )
