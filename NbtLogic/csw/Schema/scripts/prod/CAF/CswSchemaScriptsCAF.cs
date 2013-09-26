@@ -33,6 +33,7 @@ namespace ChemSW.Nbt.Schema
                     new CswUpdateSchema_02F_Case30043_Locations(),
                     new CswUpdateSchema_02F_Case30043_WorkUnits(),
                     new CswUpdateSchema_02F_Case30043_InventoryGroups(),
+                    new CswUpdateSchema_02G_Case30017(),
                     new CswUpdateSchema_02G_Case30743_Materials()
                 };
         } // _SchemaScripts()
