@@ -392,50 +392,51 @@ namespace ChemSW.Nbt
                     if( null != Prop.MetaDataProp )
                     {
                         CswEnumNbtPropColumn SubFieldColumn = Prop.MetaDataProp.getFieldTypeRule().SubFields.Default.Column;
+                        string aliasName = "mssqlorder" + sortAlias;
+                        Select += ",(select ";
                         if( SubFieldColumn == CswEnumNbtPropColumn.Field1_Numeric ||
                                 SubFieldColumn == CswEnumNbtPropColumn.Field1_Date ||
                                 SubFieldColumn == CswEnumNbtPropColumn.Field2_Numeric ||
                                 SubFieldColumn == CswEnumNbtPropColumn.Field2_Date )
                         {
-                            Select += ", j" + sortAlias + "." + SubFieldColumn.ToString() + " mssqlorder" + sortAlias;
+                            Select += SubFieldColumn.ToString();
                         }
                         else
                         {
-                            Select += ",lower(j" + sortAlias + "." + SubFieldColumn.ToString() + ") mssqlorder" + sortAlias;
+                            Select += "lower(j" + sortAlias + "." + SubFieldColumn.ToString() + ")";
                         }
+                        Select += " from jct_nodes_props where nodeid = n.nodeid and ";
+                        if( Prop.Type == CswEnumNbtViewPropType.NodeTypePropId )
+                        {
+                            Select += "nodetypepropid = " + Prop.NodeTypePropId;
+                        }
+                        else
+                        {
+                            Select += "nodetypepropid in (select nodetypepropid from nodetype_props where objectclasspropid = " + Prop.ObjectClassPropId + ")";
+                        }
+                        Select += ") as " + aliasName;
 
                         // Case 10533
                         if( SubFieldColumn == CswEnumNbtPropColumn.Gestalt ||
                                 SubFieldColumn == CswEnumNbtPropColumn.ClobData )
                         {
-                            OrderByString = "lower(to_char(j" + sortAlias + "." + SubFieldColumn.ToString() + "))";
+                            OrderByString = "lower(to_char(" + aliasName + "))";
                         }
                         else if( SubFieldColumn == CswEnumNbtPropColumn.Field1_Numeric ||
                                     SubFieldColumn == CswEnumNbtPropColumn.Field1_Date ||
                                     SubFieldColumn == CswEnumNbtPropColumn.Field2_Numeric ||
                                     SubFieldColumn == CswEnumNbtPropColumn.Field2_Date )
                         {
-                            OrderByString = "j" + sortAlias + "." + SubFieldColumn.ToString();
+                            OrderByString = aliasName;
                         }
                         else
                         {
-                            OrderByString = "lower(j" + sortAlias + "." + SubFieldColumn.ToString() + ")";
+                            OrderByString = "lower(" + aliasName + ")";
                         }
 
                         if( Prop.SortMethod == CswEnumNbtViewPropertySortMethod.Descending )
                         {
                             OrderByString += " desc";
-                        }
-
-                        From += " left outer join jct_nodes_props j" + sortAlias + " ";
-                        From += "   on (j" + sortAlias + ".nodeid = n.nodeid and ";
-                        if( Prop.Type == CswEnumNbtViewPropType.NodeTypePropId )
-                        {
-                            From += " j" + sortAlias + ".nodetypepropid = " + Prop.NodeTypePropId + ") ";
-                        }
-                        else
-                        {
-                            From += " j" + sortAlias + ".nodetypepropid in (select nodetypepropid from nodetype_props where objectclasspropid = " + Prop.ObjectClassPropId + ")) ";
                         }
 
                         Int32 OrderByOrder = Prop.Order;
