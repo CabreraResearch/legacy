@@ -37,7 +37,7 @@ namespace ChemSW.Nbt.Schema
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( ObjectClass )
                     {
                         PropName = CswNbtObjClass.PropertyName.LegacyId,
-                        FieldType = CswEnumNbtFieldType.Text
+                        FieldType = CswEnumNbtFieldType.Number
                     } );
             }
 

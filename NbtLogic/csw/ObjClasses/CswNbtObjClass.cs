@@ -277,11 +277,11 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-        public virtual CswNbtNodePropText LegacyId
+        public virtual CswNbtNodePropNumber LegacyId
         {
             get
             {
-                CswNbtNodePropText Ret = Node.Properties[PropertyName.LegacyId];
+                CswNbtNodePropNumber Ret = Node.Properties[PropertyName.LegacyId];
                 return Ret;
             }
         }
