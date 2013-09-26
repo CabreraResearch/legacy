@@ -343,6 +343,7 @@
     <Compile Include="csw\MetaData\Infr\CswNbtAuditTableAbbreviation.cs" />
     <Compile Include="csw\Schema\scripts\infr\RunAfterEveryExecutionOfUpdater_02AuditSql.cs" />
     <Compile Include="csw\Schema\scripts\prod\02F\CswSchemaScriptsFoxglove.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateSchema_02G_Case29283.cs" />
     <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateDDL_02G_Case30778.cs" />
     <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateSchema_02G_Case30562.cs" />
     <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateSchema_02G_Case30756.cs" />

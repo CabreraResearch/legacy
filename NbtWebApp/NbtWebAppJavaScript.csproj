@@ -166,6 +166,7 @@
     <Content Include="app\proptypes\csw.propTypeUserSelect.js" />
     <Content Include="app\proptypes\csw.propTypeViewPickList.js" />
     <Content Include="app\proptypes\csw.propTypeViewReference.js" />
+    <Content Include="app\tools\csw.sqlReport.js" />
     <Content Include="app\tools\csw.browserCompatibility.js" />
     <Content Include="app\tools\csw.clientCache.js" />
     <Content Include="app\tools\csw.functional.js" />
@@ -391,7 +392,6 @@
     </Content>
     <Content Include="vendor\arbor-v0.92\arbor-tween.js" />
     <Content Include="vendor\arbor-v0.92\arbor.js" />
-
     <Content Include="vendor\ext-done.js" />
     <Content Include="vendor\ext-init.js" />
     <Content Include="vendor\jquery.flot.js" />

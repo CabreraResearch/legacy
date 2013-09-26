@@ -93,7 +93,7 @@ namespace NbtWebApp
 
             CswNbtWebServiceReport.ReportReturn Ret = new CswNbtWebServiceReport.ReportReturn();
             CswNbtWebServiceReport.ReportData Request = new CswNbtWebServiceReport.ReportData();
-            Request.nodeId = formData["reportid"];
+            Request.nodeIdStr = formData["reportid"];
             Request.reportFormat = formData["reportFormat"];
             formData.Remove( "reportid" );
             formData.Remove( "reportFormat" );

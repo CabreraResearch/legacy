@@ -5,16 +5,16 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update
     /// </summary>
-    public class CswUpdateSchema_02G_CaseXXXXX : CswUpdateSchemaTo
+    public class CswUpdateSchema_02G_Case29283 : CswUpdateSchemaTo
     {
         public override CswEnumDeveloper Author
         {
-            get { return CswEnumDeveloper.NBT; }
+            get { return CswEnumDeveloper.CF; }
         }
 
         public override int CaseNo
-        {                
-            get { return 0; }
+        {
+            get { return 29283; }
         }
 
         public override string ScriptName
@@ -24,12 +24,12 @@ namespace ChemSW.Nbt.Schema
 
         public override string Title
         {
-            get { return "Placeholder Script"; }
+            get { return "Row Limits on SQL Reports"; }
         }
 
         public override void update()
         {
-            // This is a placeholder script that does nothing.
+            _CswNbtSchemaModTrnsctn.createConfigurationVariable( CswEnumNbtConfigurationVariables.sql_report_resultlimit, "Result Limit for SQL Reports", "500", IsSystem: false );
         } // update()
 
     }
