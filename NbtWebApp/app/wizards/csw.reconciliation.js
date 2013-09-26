@@ -519,11 +519,6 @@
                                 usePaging: false,
                                 showActionColumn: false,
                                 canSelectRow: false,
-                                onLoad: null,
-                                onEdit: null,
-                                onDelete: null,
-                                onSelect: null,
-                                onDeselect: null,
                                 height: 200,
                                 forcefit: true,
                                 width: '100%',
@@ -535,18 +530,24 @@
                             //Containers Grid
                             cswPrivate.makeContainersGrid(Step3Table.cell(1, 1), true);
                             //Filter Correct Containers Checkbox
-                            var filterCorrectTable = Step3Table.cell(2, 1).table({ cellvalign: 'center' });
+                            Step3Table.cell(2, 1).br({ number: 2 });
+                            
+                            var filterCorrectTable = Step3Table.cell(3, 1).table({ cellvalign: 'center' });
                             var filterCorrectCheckbox = filterCorrectTable.cell(1, 1).checkBox({
                                 checked: true,
                                 onChange: Csw.method(function () {
+                                    filterCorrectCheckbox.disable();
+                                    Csw.defer(function() {
+                                        filterCorrectCheckbox.enable();
+                                    }, 1000);
                                     cswPrivate.makeContainersGrid(Step3Table.cell(1, 1), filterCorrectCheckbox.checked());
                                 })
                             });
                             filterCorrectTable.cell(1, 2).span({ text: ' Filter out Correct Containers' });
-                            Step3Table.cell(3, 1).br();
+                            Step3Table.cell(4, 1).br();
                             if (cswPrivate.isCurrent) {
                                 //Set Action in Bulk
-                                var bulkActionTable = Step3Table.cell(4, 1).table({ cellvalign: 'center' });
+                                var bulkActionTable = Step3Table.cell(5, 1).table({ cellvalign: 'center' });
                                 bulkActionTable.cell(1, 1).span({ text: 'Set Action of all Containers with Status&nbsp;' });
                                 var statusOptions = [];
                                 Csw.each(cswPrivate.data.ContainerStatistics, function (row) {

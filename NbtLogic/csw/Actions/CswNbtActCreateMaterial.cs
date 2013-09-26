@@ -566,9 +566,7 @@ namespace ChemSW.Nbt.Actions
             JObject Ret = new JObject();
 
             CswPrimaryKey UnitIdPK = CswConvert.ToPrimaryKey( SizeObj["uom"]["id"].ToString() );
-            if( null != UnitIdPK
-                && ( CswEnumTristate.True == CswConvert.ToTristate( SizeObj["quantityEditable"]["value"] ) )
-                && ( CswEnumTristate.True == CswConvert.ToTristate( SizeObj["quantityEditable"]["value"] ) ) )
+            if( null != UnitIdPK )
             {
                 SizeNode = CswNbtResources.Nodes.makeNodeFromNodeTypeId( SizeNodeTypeId, OverrideUniqueValidation: false, OnAfterMakeNode: delegate( CswNbtNode NewNode )
                     {

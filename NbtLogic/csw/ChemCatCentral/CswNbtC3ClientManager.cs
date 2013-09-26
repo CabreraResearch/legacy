@@ -86,6 +86,22 @@ namespace ChemSW.Nbt.ChemCatCentral
             return CurrentVersion;
         }
 
+        public CswC3ServiceLogicGetDataSourcesDataSource[] getDataSourceDates()
+        {
+            CswC3ServiceLogicGetDataSourcesDataSource[] DataSourceDates = null;
+
+            ChemCatCentral.SearchClient C3Service = initializeC3Client();
+            C3Service.isAlive();
+            CswRetObjSearchResults DataSources = C3Service.getDataSourceDates( _CswC3Params );
+
+            if( null != DataSources.DataSourceDates )
+            {
+                DataSourceDates = DataSources.DataSourceDates.Data;
+            }
+
+            return DataSourceDates;
+        }
+
         public string getLastExtChemDataImportDate( SearchClient SearchClient )
         {
             string Ret = string.Empty;

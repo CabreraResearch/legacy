@@ -144,3 +144,112 @@ select w.businessunitid,
 
 create or replace view users_view as
 (select "AUDITFLAG","DEFAULTCATEGORYID","DEFAULTLANGUAGE","DEFAULTLOCATIONID","DEFAULTPRINTERID","DELETED","DISABLED","EMAIL","EMPLOYEEID","FAILEDLOGINCOUNT","HIDEHINTS","HOMEINVENTORYGROUPID","ISSYSTEMUSER","LOCKED","MYSTARTURL","NAMEFIRST","NAMELAST","NAVROWS","NODEVIEWID","PASSWORD","PASSWORD_DATE","PHONE","ROLEID","SUPERVISORID","TITLE","USERID","USERNAME","WELCOMEREDIRECT","WORKUNITID" from users);
+
+create or replace view chemicals_view as
+(select v.vendorid,
+ p.packageid,
+ p.productno,
+ m."AQUEOUS_SOLUBILITY",
+m."BOILING_POINT",
+m."CASNO",
+m."COLOR",
+m."COMPRESSED_GAS",
+m."CREATIONDATE",
+m."CREATIONSITEID",
+m."DELETED",
+m."DOT_CODE",
+m."EXPIREINTERVAL",
+m."EXPIREINTERVALUNITS",
+m."EXPOSURE_LIMITS",
+m."FIRECODE",
+m."FLASH_POINT",
+m."FORMULA",
+m."HAZARDS",
+m."HEALTHCODE",
+m."INVENTORYREQUIRED",
+m."KEYWORDS",
+m."LOB_TYPE",
+m."MANUFACTURER",
+m."MATERIAL_FINISH",
+m."MATERIAL_SIZEVOL",
+m."MATERIAL_TYPE",
+m."MATERIAL_USE",
+m."MATERIALID",
+m."MATERIALNAME",
+m."MATERIALSUBCLASSID",
+m."MELTING_POINT",
+m."MODEL",
+m."MOLECULAR_WEIGHT",
+m."OTHERREFERENCENO",
+m."PH",
+m."PHYSICAL_DESCRIPTION",
+m."PHYSICAL_STATE",
+m.ppe,
+replace(replace(replace(m.ppe, 'Eye Protection', 'Goggles'), 'Hand Protection', 'Gloves'), 'Ventilation', 'Fume Hood') as ppe_trans,
+m."REACTIVECODE",
+m."REVIEWSTATUSCHANGEDATE",
+m."REVIEWSTATUSNAME",
+m."SPEC_NO",
+m."SPECIFIC_CODE",
+m."SPECIFIC_GRAVITY",
+m."SPECIFICCODE",
+m."VAPOR_DENSITY",
+m."VAPOR_PRESSURE",
+m."KEEPATSTATUS",
+m."TARGET_ORGANS",
+m."CREATIONUSERID",
+m."AUDITFLAG",
+m."CREATIONWORKUNITID",
+m."EINECS",
+m."CONST_UBA_CODE",
+m."CONST_COLOR_INDEX",
+m."CONST_SIMPLE_NAME",
+m."CONST_CHEM_GROUP",
+m."CONST_INGRED_CLASS",
+m."CONST_CHEM_REACT",
+m."LASTUPDATED",
+m."OPENEXPIREINTERVAL",
+m."OPENEXPIREINTERVALUNITS",
+m."CONST_FEMA_NO",
+m."CONST_COE_NO",
+m."PRODUCTTYPE",
+m."PRODUCTBRAND",
+m."PRODUCTCATEGORY",
+m."NFPACODE",
+m."CONST_MAT_FUNCTION",
+m."HAS_ACTIVITY",
+m."REFNO",
+m."TYPE",
+m."SPECIES",
+m."VARIETY",
+m."GOI",
+m."TRANSGENIC",
+m."VECTORS",
+m."BIOSAFETY",
+m."CONST_MAT_ORIGIN",
+m."REVIEWSTATUSTYPE",
+m."STORAGE_CONDITIONS",
+m."PENDINGUPDATE",
+m."ISTIER2",
+m."MATERIALVARIETYID",
+m."NONHAZARDOUS3E",
+m."ASSETCREATIONNAME",
+ms.subclassname,
+
+(case m.physical_state
+  when 'S' then 'Solid'
+  when 'L' then 'Liquid'
+  when 'G' then 'Gas'
+end) as physical_state_trans,
+
+(case m.nonhazardous3e
+  when '1' then '0'
+  when '0' then '1'
+end) as nonhazardous3e_trans
+
+from materials m
+             join packages p on p.materialid = m.materialid
+             join vendors v on p.supplierid = v.vendorid
+             join materials_subclass ms on ms.materialsubclassid = m.materialsubclassid
+             join materials_class mc on mc.materialclassid = ms.materialclassid
+     where m.deleted = 0 and p.deleted = 0 and mc.classname = 'CHEMICAL');

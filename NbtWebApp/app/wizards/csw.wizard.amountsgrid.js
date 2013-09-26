@@ -7,16 +7,7 @@
         'use strict';
         ///<summary>Creates an amounts thin grid with an Add form.</summary>
         var cswPublic = {
-            rows: {
-                rowid: {
-                    containerNoControl: {},
-                    sizeControl: {},
-                    qtyControl: {},
-                    barcodeControl: {},
-                    balanceControl: {},
-                    quantityValues: {}
-                }
-            },
+            rows: {},
             quantities: function () {
                 var qtyVals = [];
                 Csw.each(cswPublic.rows, function (row) {
