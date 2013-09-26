@@ -363,6 +363,16 @@ namespace ChemSW.Nbt.ViewEditor
             Return.Step4.ViewJson = TempView.ToJson().ToString();
         }
 
+        protected bool _hasFilter( CswNbtViewProperty ViewProp )
+        {
+            return ViewProp.Filters.Any( Filter =>
+                Filter.Value == Request.FilterValue &&
+                Filter.Conjunction == (CswEnumNbtFilterConjunction) Request.FilterConjunction &&
+                Filter.FilterMode == (CswEnumNbtFilterMode) Request.FilterMode &&
+                Filter.SubfieldName == (CswEnumNbtSubFieldName) Request.FilterSubfield
+                );
+        }
+
         #region Get Related
 
         protected Collection<CswNbtViewRelationship> getViewChildRelationshipOptions( CswNbtView View, string ArbitraryId )
