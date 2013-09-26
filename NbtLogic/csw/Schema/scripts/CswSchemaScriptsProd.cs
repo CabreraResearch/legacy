@@ -23,7 +23,6 @@ namespace ChemSW.Nbt.Schema
             //dch 30252 FOXGLOVE, but metadata changes so before EUC changes
             _addVersionedScript( new CswUpdateMetaData_02F_Case30252() );
             _addVersionedScript( new CswUpdateMetaData_02F_Case30228() );
-            _addVersionedScript( new CswUpdateMetaData_02F_Case30041_NbtImportQueue() ); //Validate the Nbt Import Queue table first
             _addVersionedScript( new CswUpdateMetaData_02F_Case30281() );
             _addVersionedScript( new CswUpdateMetaData_02F_Case30251() );
             _addVersionedScript( new CswUpdateMetaData_02F_Case30251B() );
@@ -54,18 +53,12 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswUpdateSchema_02F_Case27495() );
             _addVersionedScript( new CswUpdateSchema_02F_Case30228() );
             _addVersionedScript( new CswUpdateSchema_02F_Case30040() );
-            _addVersionedScript( new CswUpdateSchema_02F_Case30041_Vendors() );
             _addVersionedScript( new CswUpdateSchema_02F_Case29992() );
             _addVersionedScript( new CswUpdateSchema_02F_Case29402() );
-            _addVersionedScript( new CswUpdateSchema_02F_Case30041_RolesUsers() );
             _addVersionedScript( new CswUpdateSchema_02F_Case30252() );
             _addVersionedScript( new CswUpdateSchema_02F_Case30041_ScheduledRuleImport() );
-            _addVersionedScript( new CswUpdateSchema_02F_Case30043_ControlZones() );
             _addVersionedScript( new CswUpdateSchema_02F_Case29984() );
             _addVersionedScript( new CswUpdateSchema_02F_Case30577() );
-            _addVersionedScript( new CswUpdateSchema_02F_Case30043_Locations() );
-            _addVersionedScript( new CswUpdateSchema_02F_Case30043_WorkUnits() );
-            _addVersionedScript( new CswUpdateSchema_02F_Case30043_InventoryGroups() );
             _addVersionedScript( new CswUpdateSchema_02F_Case30647() );
             _addVersionedScript( new CswUpdateSchema_02F_Case30661() );
             _addVersionedScript( new CswUpdateSchema_02F_Case30700() );
