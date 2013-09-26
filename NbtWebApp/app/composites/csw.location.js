@@ -38,7 +38,7 @@
                 (function _pre() {
                     var render = function () {
                         cswParent.empty();
-
+                        
                         cswPrivate.relatedmatch = (cswPrivate.relatedobjectclassid === cswPrivate.locationobjectclassid);
                         if (cswPrivate.relatedmatch) {
                             cswPrivate.nodeid = Csw.string(cswPrivate.relatednodeid, cswPrivate.nodeid).trim();
@@ -96,6 +96,9 @@
                             },
                             success: function (data) {
                                 cswPrivate.viewid = data.viewid;
+                                if (cswPrivate.nodeid !== data.nodeid) {
+                                    Csw.tryExec(cswPrivate.onChange, data.nodeid, data.path);
+                                }
                                 cswPrivate.nodeid = data.nodeid;
                                 cswPrivate.path = data.path;
                                 render();
