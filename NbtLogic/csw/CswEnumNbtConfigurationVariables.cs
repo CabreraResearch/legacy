@@ -133,7 +133,10 @@ namespace ChemSW.Nbt
         /// <summary>
         /// The name of the root level item on location views
         /// </summary>
-        LocationViewRootName
+        LocationViewRootName,
+
+        sql_report_resultlimit
+
     };
 
 }

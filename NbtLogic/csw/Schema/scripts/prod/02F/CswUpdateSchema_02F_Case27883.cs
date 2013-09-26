@@ -17,7 +17,7 @@ namespace ChemSW.Nbt.Schema
 
         public override int CaseNo
         {
-            get { return 27993; }
+            get { return 27883; }
         }
 
         public override string ScriptName
