@@ -21,7 +21,6 @@ namespace ChemSW.Nbt.Schema
         {
             return new Collection<CswUpdateSchemaTo>()
                 {
-                    new CswUpdateMetaData_02F_Case30041_NbtImportQueue(), //Validate the Nbt Import Queue table first
                     new CswUpdateMetaData_02F_Case30281(),
                     new CswUpdateMetaData_02F_Case30251(),
                     new CswUpdateMetaData_02F_Case30251B(),
@@ -50,19 +49,12 @@ namespace ChemSW.Nbt.Schema
                     new CswUpdateSchema_02F_Case27495(),
                     new CswUpdateSchema_02F_Case30228(),
                     new CswUpdateSchema_02F_Case30040(),
-                    new CswUpdateSchema_02F_Case30041_Vendors(),
                     new CswUpdateSchema_02F_Case29992(),
                     new CswUpdateSchema_02F_Case29402(),
-                    new CswUpdateSchema_02F_Case30041_UnitsOfMeasure(),
-                    new CswUpdateSchema_02F_Case30041_RolesUsers(),
                     new CswUpdateSchema_02F_Case30252(),
                     new CswUpdateSchema_02F_Case30041_ScheduledRuleImport(),
-                    new CswUpdateSchema_02F_Case30043_ControlZones(),
                     new CswUpdateSchema_02F_Case29984(),
                     new CswUpdateSchema_02F_Case30577(),
-                    new CswUpdateSchema_02F_Case30043_Locations(),
-                    new CswUpdateSchema_02F_Case30043_WorkUnits(),
-                    new CswUpdateSchema_02F_Case30043_InventoryGroups(),
                     new CswUpdateSchema_02F_Case30647(),
                     new CswUpdateSchema_02F_Case30661(),
                     new CswUpdateSchema_02F_Case30706(),

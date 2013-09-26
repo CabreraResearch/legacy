@@ -24,8 +24,9 @@ namespace ChemSW.Nbt.Schema
             Collection<ICswSchemaScripts> AllScripts = new Collection<ICswSchemaScripts>()
                 {
                     new CswSchemaScriptsFoxglove(),
-                    new CswSchemaScriptsGinkgo()
+                    new CswSchemaScriptsGinkgo(),
                     // Add new milestone script collections here
+                    //new CswSchemaScriptsCAF() // This runs the CAF scripts - you can comment it out if you don't need it
                 };
 
             // DDL
@@ -68,7 +69,7 @@ namespace ChemSW.Nbt.Schema
             #region Before Scripts
             // Before scripts that always run.
             _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02SQL() );
-            
+
             // case 29565 - no longer necessary
             //_addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_03() );
 
