@@ -24,6 +24,7 @@
             stepDivs: [],
             stepRootSpans: [],
             stepDivLinks: [],
+            stepVisibility: [],
             currentStepNo: 1,
             state: {
 
@@ -112,6 +113,7 @@
                     cssclass: 'CswWizard_StepLinkDiv',
                     text: s + '.&nbsp;' + steptitle
                 }).propNonDom({ stepno: s });
+                cswPrivate.stepVisibility[s] = true;
 
                 cswPrivate.stepRootSpans[s] = stepsCell.div({ cssclass: 'CswWizard_StepDiv', suffix: s });
 
@@ -195,10 +197,16 @@
             if (false === Csw.isNullOrEmpty(cswPrivate.stepDivLinks[stepno])) {
                 if (show) {
                     cswPrivate.stepDivLinks[stepno].show();
+                    cswPrivate.stepVisibility[stepno] = true;
                 } else {
                     cswPrivate.stepDivLinks[stepno].hide();
+                    cswPrivate.stepVisibility[stepno] = false;
                 }
             }
+        };
+        
+        cswPublic.isStepVisible = function (stepno) {
+            return cswPrivate.stepVisibility[stepno];
         };
 
         cswPublic.staticDiv = function () {

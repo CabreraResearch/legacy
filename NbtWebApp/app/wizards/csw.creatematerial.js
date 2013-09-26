@@ -131,11 +131,13 @@
             var wizardSteps = {};
             cswPrivate.stepFunc = {};
             cswPrivate.onStepChange = {};
+            cswPrivate.onStepCleanup = {};
             cswPrivate.stepCount = 0;
             var setWizardStep = function (wizardStep) {
                 cswPrivate.stepCount++;
                 cswPrivate.stepFunc[cswPrivate.stepCount] = wizardStep.makeStep;
                 cswPrivate.onStepChange[cswPrivate.stepCount] = wizardStep.onStepChange;
+                cswPrivate.onStepCleanup[cswPrivate.stepCount] = wizardStep.onStepCleanup;
                 wizardStep.stepNo = cswPrivate.stepCount;
                 wizardSteps[cswPrivate.stepCount] = wizardStep.stepName;
             };
@@ -163,20 +165,15 @@
         };
 
         cswPrivate.handleStep = function (newStepNo) {
+            var onStepChangeSuccess = function() {
+                cswPrivate.stepFunc[cswPrivate.currentStepNo](cswPrivate.currentStepNo);
+            };
             cswPrivate.toggleButton(cswPrivate.buttons.next, false); //let each step activate this button if needed
             cswPrivate.setState();
             if (Csw.contains(cswPrivate.stepFunc, newStepNo)) {
-                if (false === Csw.isNullOrEmpty(cswPrivate.onStepChange[cswPrivate.currentStepNo])) {
-                    cswPrivate.onStepChange[cswPrivate.currentStepNo](cswPrivate.currentStepNo);
-                }
                 cswPrivate.lastStepNo = cswPrivate.currentStepNo;
                 cswPrivate.currentStepNo = newStepNo;
-
-                if (cswPrivate.currentStepNo === 3 && cswPrivate.lastStepNo === 2) {
-                    //This functionality has been moved to Step 2's onStepChange event
-                } else {
-                    cswPrivate.stepFunc[newStepNo](newStepNo);
-                }
+                cswPrivate.onStepChange[cswPrivate.lastStepNo](cswPrivate.lastStepNo, onStepChangeSuccess);
             }
         };
         
@@ -201,7 +198,7 @@
                                 val: cswPrivate.materialTypeSelect.val()
                             };
                             cswPrivate.state.physicalState = ''; //Case 29015
-                            cswPrivate.step3Complete = false;//TODO - fix
+                            cswPrivate['step' + cswPrivate.makeSizesStep.stepNo + 'Complete'] = false;
                         }
                         // Note: When importing from ChemCatCentral, the materialTypeSelect is null because
                         // the Material Type is rendered as readOnly. Hence, we need to account for this when
@@ -214,12 +211,9 @@
                             cswPrivate.state.canAddSDS = (Csw.bool(cswPrivate.state.materialType.objclassid === cswPrivate.state.chemicalObjClassId) && false === cswPrivate.isConstituent());
                         }
 
-                        cswPrivate.wizard.toggleStepVisibility(cswPrivate.containersModuleEnabled ? 4 : 3, cswPrivate.state.canAddSDS);
+                        cswPrivate.wizard.toggleStepVisibility(cswPrivate.makeAttachSDSStep.stepNo, cswPrivate.state.canAddSDS);
                         if (cswPrivate.containersModuleEnabled) {
-                            cswPrivate.wizard.toggleStepVisibility(3, false == cswPrivate.isConstituent());
-                            if (cswPrivate.isConstituent()) {//Case 30132
-                                cswPrivate.sizesGrid = null;
-                            }
+                            cswPrivate.wizard.toggleStepVisibility(cswPrivate.makeSizesStep.stepNo, false == cswPrivate.isConstituent());
                         }
                         if (cswPrivate.supplierSelect) {
                             if (cswPrivate.isConstituent()) {
@@ -319,7 +313,7 @@
                         }
                         // need this for refresh
                         if (cswPrivate.containersModuleEnabled) {
-                            cswPrivate.wizard.toggleStepVisibility(3, false == cswPrivate.isConstituent());
+                            cswPrivate.wizard.toggleStepVisibility(cswPrivate.makeSizesStep.stepNo, false == cswPrivate.isConstituent());
                         }
 
                         /* Tradename */
@@ -414,11 +408,12 @@
                     }
                 };
             }()),
-            onStepChange: function () {
+            onStepChange: function (StepNo, onStepChangeSuccess) {
                 var nextStep = cswPrivate.makeIdentityStep.stepNo + 1;
                 if (false === cswPrivate['step' + nextStep + 'Complete']) {
                     cswPrivate.saveMaterial(cswPrivate.stepFunc[nextStep](nextStep), nextStep);
                 }
+                onStepChangeSuccess();
             }
         };
         
@@ -441,7 +436,6 @@
                     cswPrivate.isDuplicateMaterial = Csw.bool(data.materialexists);
                     if (cswPrivate.isDuplicateMaterial) {
                         cswPrivate.toggleButton(cswPrivate.buttons.prev, true, true);
-                        //cswPrivate.stepTwoComplete = false;
                         cswPrivate['step' + StepNo + 'Complete'] = false;
                         Csw.error.showError(Csw.error.makeErrorObj(Csw.enums.errorType.warning.name, "A material with these properties already exists with a tradename of " + data.noderef));
                     } else {
@@ -491,7 +485,7 @@
                     }
                 };
             }()),
-            onStepChange: function (StepNo) {
+            onStepChange: function (StepNo, onStepChangeSuccess) {
                 if (cswPrivate.sizesGrid) {
                     cswPrivate.sizesGrid.thinGrid.$.hide();
                 }
@@ -511,7 +505,7 @@
                             cswPrivate.reinitSteps(3);
                             cswPrivate.state.physicalState = data.Properties.PhysicalState || '';
                         }
-                        cswPrivate.stepFunc[StepNo+1](StepNo+1);
+                        onStepChangeSuccess();
                         if (cswPrivate.sizesGrid) {
                             cswPrivate.sizesGrid.thinGrid.$.show();
                         }
@@ -646,7 +640,13 @@
                         cswPrivate.toggleButton(cswPrivate.buttons.next, false === isLastStep);
                     }
                 };
-            }())
+            }()),
+            onStepChange: function (StepNo, onStepChangeSuccess) {
+                onStepChangeSuccess();
+            },
+            onStepCleanup: function (StepNo) {
+                cswPrivate.sizesGrid = null;
+            }
         };
         //#endregion Step: Size(s)
 
@@ -701,7 +701,10 @@
                         cswPrivate['step' + StepNo + 'Complete'] = true;
                     }
                 };
-            }())
+            }()),
+            onStepChange: function (StepNo, onStepChangeSuccess) {
+                onStepChangeSuccess();
+            }
         };
         //#endregion Step: Attach SDS
         
@@ -731,17 +734,25 @@
                 }
 
                 //From step 3: Sizes
-                if (false === Csw.isNullOrEmpty(cswPrivate.sizesGrid)) {
-                    var sizes = cswPrivate.sizesGrid.sizes();
-                    Csw.each(sizes, function (size) {
-                        createMaterialDef.sizeNodes.push(size.sizeValues);
-                    });
+                if (cswPrivate.wizard.isStepVisible(cswPrivate.makeSizesStep.stepNo)) {
+                    if (false === Csw.isNullOrEmpty(cswPrivate.sizesGrid)) {
+                        var sizes = cswPrivate.sizesGrid.sizes();
+                        Csw.each(sizes, function(size) {
+                            createMaterialDef.sizeNodes.push(size.sizeValues);
+                        });
+                    }
+                } else {
+                    Csw.tryExec(cswPrivate.makeSizesStep.onStepCleanup);
                 }
 
                 //From step 4: material document
-                createMaterialDef.sdsDocId = cswPrivate.state.sdsDocId;
-                if (false === Csw.isNullOrEmpty(cswPrivate.documentTabsAndProps)) {
-                    createMaterialDef.sdsDocProperties = cswPrivate.documentTabsAndProps.getProps();
+                if (cswPrivate.wizard.isStepVisible(cswPrivate.makeAttachSDSStep.stepNo)) {
+                    createMaterialDef.sdsDocId = cswPrivate.state.sdsDocId;
+                    if (false === Csw.isNullOrEmpty(cswPrivate.documentTabsAndProps)) {
+                        createMaterialDef.sdsDocProperties = cswPrivate.documentTabsAndProps.getProps();
+                    }
+                } else {
+                    Csw.tryExec(cswPrivate.makeAttachSDSStep.onStepCleanup);
                 }
 
                 // Return the created object
@@ -814,7 +825,7 @@
 
                     // This checks the step visibility on refresh and on C3 import.
                     cswPrivate.state.canAddSDS = Csw.bool(cswPrivate.state.materialType.objclassid === cswPrivate.state.chemicalObjClassId);
-                    cswPrivate.wizard.toggleStepVisibility(cswPrivate.containersModuleEnabled ? 4 : 3, cswPrivate.state.canAddSDS);
+                    cswPrivate.wizard.toggleStepVisibility(cswPrivate.makeAttachSDSStep.stepNo, cswPrivate.state.canAddSDS);
 
                     //cswPrivate.makeStep1();
                     cswPrivate.stepFunc[1](1);
