@@ -10,6 +10,7 @@ namespace ChemSW.Nbt.Schema
         public Collection<CswUpdateSchemaTo> _DDLScripts()
         {
             return new Collection<CswUpdateSchemaTo>() { };
+                    new CswUpdateDDL_02G_Case30737()
         } // _DDLScripts()
 
         public Collection<CswUpdateSchemaTo> _MetaDataScripts()
@@ -17,6 +18,7 @@ namespace ChemSW.Nbt.Schema
             return new Collection<CswUpdateSchemaTo>()
                 {
                     new CswUpdateMetaData_02F_Case30041_NbtImportQueue(), //Validate the Nbt Import Queue table first
+
                 };
         } // _MetaDataScripts()
 
@@ -32,6 +34,8 @@ namespace ChemSW.Nbt.Schema
                     new CswUpdateSchema_02F_Case30043_Locations(),
                     new CswUpdateSchema_02F_Case30043_WorkUnits(),
                     new CswUpdateSchema_02F_Case30043_InventoryGroups()
+
+                    new CswUpdateSchema_02G_Case30743_Materials()
                 };
         } // _SchemaScripts()
 

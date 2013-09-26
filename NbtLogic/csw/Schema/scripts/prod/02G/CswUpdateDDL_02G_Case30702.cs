@@ -1,9 +1,4 @@
-using System.Data;
-using ChemSW.Audit;
-using ChemSW.DB;
 using ChemSW.Nbt.csw.Dev;
-using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.Schema
 {
