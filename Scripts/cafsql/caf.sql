@@ -253,3 +253,45 @@ from materials m
              join materials_subclass ms on ms.materialsubclassid = m.materialsubclassid
              join materials_class mc on mc.materialclassid = ms.materialclassid
      where m.deleted = 0 and p.deleted = 0 and mc.classname = 'CHEMICAL');
+	 
+	 
+create or replace view sds_view as(
+	select * from (select 
+  d.documentid,
+  d.packageid,
+  d.acquisitiondate,
+  d.captureddate,
+  d.content_type,
+  d.deleted,
+  d.description,
+  d.docisexternal,
+  d.doctype,
+  d.fileextension,
+  d.filename,
+  d.language,
+  d.materialid
+ from documents d 
+ where d.packageid is not null and doctype = 'MSDS'
+ 
+union all
+ 
+select 
+  d2.documentid,
+  p.packageid,
+  d2.acquisitiondate,
+  d2.captureddate,
+  d2.content_type,
+  d2.deleted,
+  d2.description,
+  d2.docisexternal,
+  d2.doctype,
+  d2.fileextension,
+  d2.filename,
+  d2.language,
+  d2.materialid
+ from documents d2 
+       join materials m on m.materialid = d2.materialid
+       join packages p on m.materialid = p.packageid
+       where d2.packageid is null and doctype = 'MSDS'
+)
+)
