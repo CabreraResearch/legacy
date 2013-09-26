@@ -446,30 +446,34 @@ namespace ChemSW.Nbt.ImportExport
 
             if( false == allEmpty )
             {
-                //Check for matching nodes using a view on legacy id
-                CswNbtView LegacyIdView = new CswNbtView( _CswNbtResources );
-                LegacyIdView.ViewName = "Check Legacy Id";
-                CswNbtViewRelationship NTRel1 = LegacyIdView.AddViewRelationship( Order.NodeType, false );
-
-                CswNbtMetaDataNodeTypeProp LegacyIdNTP = Order.NodeType.getNodeTypeProp( "Legacy Id" );
-                LegacyIdView.AddViewPropertyAndFilter( ParentViewRelationship: NTRel1, MetaDataProp: LegacyIdNTP,
-                                                      Value: LegacyId,
-                                                      SubFieldName: CswEnumNbtSubFieldName.Value, CaseSensitive: false );
-
-                ICswNbtTree LegacyIdTree = _CswNbtResources.Trees.getTreeFromView( LegacyIdView, false, true, true );
-                if( LegacyIdTree.getChildNodeCount() > 0 )
+                bool foundMatch = false;
+                if( false == string.IsNullOrEmpty( LegacyId ) ) //Check for matching nodes using a view on legacy id
                 {
-                    LegacyIdTree.goToNthChild( 0 );
-                    Node = LegacyIdTree.getNodeForCurrentPosition();
-                    if( Overwrite )
+                    CswNbtView LegacyIdView = new CswNbtView( _CswNbtResources );
+                    LegacyIdView.ViewName = "Check Legacy Id";
+                    CswNbtViewRelationship NTRel1 = LegacyIdView.AddViewRelationship( Order.NodeType, false );
+
+                    CswNbtMetaDataNodeTypeProp LegacyIdNTP = Order.NodeType.getNodeTypeProp( "Legacy Id" );
+                    LegacyIdView.AddViewPropertyAndFilter( ParentViewRelationship: NTRel1, MetaDataProp: LegacyIdNTP,
+                                                           Value: LegacyId,
+                                                           SubFieldName: CswEnumNbtSubFieldName.Value, CaseSensitive: false );
+
+                    ICswNbtTree LegacyIdTree = _CswNbtResources.Trees.getTreeFromView( LegacyIdView, false, true, true );
+                    if( LegacyIdTree.getChildNodeCount() > 0 )
                     {
-                        _importPropertyValues( BindingDef, NodeTypeBindings, RowRelationships, ImportRow, Node );
-                        Node.postChanges( false );
+                        LegacyIdTree.goToNthChild( 0 );
+                        Node = LegacyIdTree.getNodeForCurrentPosition();
+                        if( Overwrite )
+                        {
+                            _importPropertyValues( BindingDef, NodeTypeBindings, RowRelationships, ImportRow, Node );
+                            Node.postChanges( false );
+                        }
+                        foundMatch = true;
                     }
                 }
-                else
-                {
 
+                if( false == foundMatch )
+                {
                     // Find matching nodes using a view on unique properties
                     CswNbtView UniqueView = new CswNbtView( _CswNbtResources );
                     UniqueView.ViewName = "Check Unique";
@@ -484,18 +488,18 @@ namespace ChemSW.Nbt.ImportExport
                             if( Value != string.Empty )
                             {
                                 UniqueView.AddViewPropertyAndFilter( NTRel, Binding.DestProperty,
-                                                                    Conjunction: CswEnumNbtFilterConjunction.And,
-                                                                    SubFieldName: Binding.DestSubfield.Name,
-                                                                    FilterMode: CswEnumNbtFilterMode.Equals,
-                                                                    Value: Value,
-                                                                    CaseSensitive: false );
+                                                                     Conjunction: CswEnumNbtFilterConjunction.And,
+                                                                     SubFieldName: Binding.DestSubfield.Name,
+                                                                     FilterMode: CswEnumNbtFilterMode.Equals,
+                                                                     Value: Value,
+                                                                     CaseSensitive: false );
                             }
                             else
                             {
                                 UniqueView.AddViewPropertyAndFilter( NTRel, Binding.DestProperty,
-                                                                    Conjunction: CswEnumNbtFilterConjunction.And,
-                                                                    SubFieldName: Binding.DestSubfield.Name,
-                                                                    FilterMode: CswEnumNbtFilterMode.Null );
+                                                                     Conjunction: CswEnumNbtFilterConjunction.And,
+                                                                     SubFieldName: Binding.DestSubfield.Name,
+                                                                     FilterMode: CswEnumNbtFilterMode.Null );
                             }
                             atLeastOneFilter = true;
                         }
@@ -512,18 +516,18 @@ namespace ChemSW.Nbt.ImportExport
                             if( Value != Int32.MinValue )
                             {
                                 UniqueView.AddViewPropertyAndFilter( NTRel, Relation.Relationship,
-                                                                    Conjunction: CswEnumNbtFilterConjunction.And,
-                                                                    SubFieldName: CswEnumNbtSubFieldName.NodeID,
-                                                                    FilterMode: CswEnumNbtFilterMode.Equals,
-                                                                    Value: Value.ToString(),
-                                                                    CaseSensitive: false );
+                                                                     Conjunction: CswEnumNbtFilterConjunction.And,
+                                                                     SubFieldName: CswEnumNbtSubFieldName.NodeID,
+                                                                     FilterMode: CswEnumNbtFilterMode.Equals,
+                                                                     Value: Value.ToString(),
+                                                                     CaseSensitive: false );
                             }
                             else
                             {
                                 UniqueView.AddViewPropertyAndFilter( NTRel, Relation.Relationship,
-                                                                    Conjunction: CswEnumNbtFilterConjunction.And,
-                                                                    SubFieldName: CswEnumNbtSubFieldName.NodeID,
-                                                                    FilterMode: CswEnumNbtFilterMode.Null );
+                                                                     Conjunction: CswEnumNbtFilterConjunction.And,
+                                                                     SubFieldName: CswEnumNbtSubFieldName.NodeID,
+                                                                     FilterMode: CswEnumNbtFilterMode.Null );
                             }
                             atLeastOneFilter = true;
                         }
@@ -531,7 +535,7 @@ namespace ChemSW.Nbt.ImportExport
                         if( atLeastOneFilter )
                         {
                             ICswNbtTree UniqueTree = _CswNbtResources.Trees.getTreeFromView( UniqueView, false, true,
-                                                                                            true );
+                                                                                             true );
                             if( UniqueTree.getChildNodeCount() > 0 )
                             {
                                 UniqueTree.goToNthChild( 0 );
@@ -539,9 +543,10 @@ namespace ChemSW.Nbt.ImportExport
                                 if( Overwrite )
                                 {
                                     _importPropertyValues( BindingDef, NodeTypeBindings, RowRelationships, ImportRow,
-                                                          Node );
+                                                           Node );
                                     Node.postChanges( false );
                                 }
+                                foundMatch = true;
                             }
                         }
                     } // if( UniqueProps.Any() )
@@ -706,7 +711,8 @@ namespace ChemSW.Nbt.ImportExport
                 CswNbtImportDefOrder TargetOrder = BindingDef.ImportOrder.Values.FirstOrDefault( o => RowRelationship.Relationship.FkMatches( o.NodeType ) && o.Instance == RowRelationship.Instance );
 
                 // If we have a value for the SourceRelColumnName
-                if( null != ImportRow[RowRelationship.SourceRelColumnName] )
+                if( false == string.IsNullOrEmpty( RowRelationship.SourceRelColumnName ) &&
+                    null != ImportRow[RowRelationship.SourceRelColumnName] )
                 {
                     // In this case, we are matching on Legacy Id
                     // If the value in the column isn't null and it is actually an integer value (A legacy id)
