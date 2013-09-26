@@ -104,7 +104,7 @@
 
             cswPublic.removeOption = function(valueToRemove) {
                 cswPrivate.values.splice(cswPrivate.values.indexOf(valueToRemove), 1); //removes the item from the list
-                var selectControl = document.getElementById(cswPrivate.ID);
+                var selectControl = cswPublic[0];
                 for (var i = 0; i < selectControl.length; i++) {
                     if (selectControl.options[i].value === valueToRemove) {
                         selectControl.remove(i);
