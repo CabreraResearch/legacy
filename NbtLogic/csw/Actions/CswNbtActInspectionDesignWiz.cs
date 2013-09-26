@@ -389,11 +389,32 @@ namespace ChemSW.Nbt.Actions
             _CswNbtResources.MetaData.makeNewProp( InspectionTargetGroupNt, CswEnumNbtFieldType.Text, "Description", InspectionTargetGroupNt.getFirstNodeTypeTab().TabId );
 
             //Inspection Target Group has a tab to host a grid view of Inspection Targets
-            CswNbtMetaDataNodeTypeTab ItgLocationsTab = _CswNbtResources.MetaData.makeNewTab( InspectionTargetGroupNt, InspectionTargetName + " Locations", 2 );
-            CswNbtMetaDataNodeTypeProp ItgLocationsNtp = _CswNbtResources.MetaData.makeNewProp( InspectionTargetGroupNt, CswEnumNbtFieldType.Grid, InspectionTargetName + " Locations", ItgLocationsTab.TabId );
-            CswNbtView ItgInspectionPointsGridView = _createAllInspectionPointsGridView( InspectionTargetGroupNt, RetInspectionTargetNt, string.Empty, CswEnumNbtViewRenderingMode.Grid, InspectionTargetName + " Grid Prop View" );
-            ItgLocationsNtp.ViewId = ItgInspectionPointsGridView.ViewId;
-            ItgLocationsNtp.removeFromLayout( CswEnumNbtLayoutType.Add );
+            {
+                CswNbtMetaDataNodeTypeTab ItgLocationsTab = _CswNbtResources.MetaData.makeNewTab( InspectionTargetGroupNt, InspectionTargetName + " Locations", 3 );
+                CswNbtMetaDataNodeTypeProp ItgLocationsNtp = _CswNbtResources.MetaData.makeNewProp( InspectionTargetGroupNt, CswEnumNbtFieldType.Grid, InspectionTargetName + " Locations", ItgLocationsTab.TabId );
+                CswNbtView ItgInspectionPointsGridView = _createAllInspectionPointsGridView( InspectionTargetGroupNt, RetInspectionTargetNt, string.Empty, CswEnumNbtViewRenderingMode.Grid, InspectionTargetName + " Grid Prop View" );
+                ItgLocationsNtp.ViewId = ItgInspectionPointsGridView.ViewId;
+                ItgLocationsNtp.removeFromLayout( CswEnumNbtLayoutType.Add );
+            }
+            {
+                CswNbtMetaDataNodeTypeTab ItgSchedulesTab = _CswNbtResources.MetaData.makeNewTab( InspectionTargetGroupNt, InspectionTargetName + " Schedules", 2 );
+                CswNbtMetaDataNodeTypeProp ItgSchedulesNtp = _CswNbtResources.MetaData.makeNewProp( InspectionTargetGroupNt, CswEnumNbtFieldType.Grid, InspectionTargetName + " Schedules", ItgSchedulesTab.TabId );
+                CswNbtView ItgSchedulesView = new CswNbtView( _CswNbtResources );
+                ItgSchedulesView.saveNew( InspectionTargetName + " Schedules", CswEnumNbtViewVisibility.Property );
+                ItgSchedulesView.NbtViewMode = CswEnumNbtViewRenderingMode.Grid.ToString();
+
+                CswNbtViewRelationship Rel = ItgSchedulesView.AddViewRelationship( InspectionTargetGroupNt, IncludeDefaultFilters: true );
+                CswNbtViewRelationship SchedRel = ItgSchedulesView.AddViewRelationship( Rel, CswEnumNbtViewPropOwnerType.Second, GeneratorNt.getNodeTypePropByObjectClassProp(CswNbtObjClassGenerator.PropertyName.Owner ), IncludeDefaultFilters: true );
+                ItgSchedulesView.AddViewProperty( SchedRel, GeneratorNt.getNodeTypePropByObjectClassProp( CswNbtObjClassGenerator.PropertyName.Description ) );
+                ItgSchedulesView.AddViewProperty( SchedRel, GeneratorNt.getNodeTypePropByObjectClassProp( CswNbtObjClassGenerator.PropertyName.NextDueDate ) );
+                ItgSchedulesView.AddViewProperty( SchedRel, GeneratorNt.getNodeTypePropByObjectClassProp( CswNbtObjClassGenerator.PropertyName.RunStatus ) );
+                ItgSchedulesView.AddViewProperty( SchedRel, GeneratorNt.getNodeTypePropByObjectClassProp( CswNbtObjClassGenerator.PropertyName.RunTime ) );
+                
+                ItgSchedulesView.save();
+                ItgSchedulesNtp.ViewId = ItgSchedulesView.ViewId;
+                ItgSchedulesNtp.removeFromLayout( CswEnumNbtLayoutType.Add );
+            }
+
             #endregion Set InspectionTargetGroup Props and Tabs
 
             return RetInspectionTargetNt;
