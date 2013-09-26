@@ -187,10 +187,6 @@ namespace ChemSW.Nbt.WebServices
                 [DataContract]
                 public class SizeRecord
                 {
-                    // TODO: Discuss removing this with Brendan as he uses it in getCopyData() in CswNbtWebServiceNode.cs
-                    [DataMember]
-                    public SizeData nodeId = null;
-
                     [DataMember]
                     public SizeData nodeTypeId = null;
 
