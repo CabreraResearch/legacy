@@ -118,15 +118,15 @@ namespace ChemSW.Nbt.ChemCatCentral {
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(ChemSW.Nbt.ChemCatCentral.CswC3LoliData[]))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(ChemSW.Nbt.ChemCatCentral.CswC3LoliData))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(ChemSW.Nbt.ChemCatCentral.CswRetObjSearchResults))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ChemSW.Nbt.ChemCatCentral.CswC3ServiceLogicGetDataSourcesAvailableDataSources))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ChemSW.Nbt.ChemCatCentral.CswC3ServiceLogicGetDataSourcesDataSource[]))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ChemSW.Nbt.ChemCatCentral.CswC3ServiceLogicGetDataSourcesDataSource))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(ChemSW.Nbt.ChemCatCentral.CswC3Product[]))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(ChemSW.Nbt.ChemCatCentral.CswC3Product))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(ChemSW.Nbt.ChemCatCentral.CswC3Product.Size[]))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(ChemSW.Nbt.ChemCatCentral.CswC3Product.Size))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(ChemSW.Nbt.ChemCatCentral.CswC3Product.TemplateSlctdExtData[]))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(ChemSW.Nbt.ChemCatCentral.CswC3Product.TemplateSlctdExtData))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ChemSW.Nbt.ChemCatCentral.CswC3ServiceLogicGetDataSourcesDataSourceDates))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ChemSW.Nbt.ChemCatCentral.CswC3ServiceLogicGetDataSourcesDataSource[]))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ChemSW.Nbt.ChemCatCentral.CswC3ServiceLogicGetDataSourcesDataSource))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(ChemSW.Nbt.ChemCatCentral.CswC3ExtChemData[]))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(ChemSW.Nbt.ChemCatCentral.CswC3ExtChemData))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(ChemSW.Nbt.ChemCatCentral.CswC3ExtChemData.ExtensionDataClass))]
@@ -1064,10 +1064,13 @@ namespace ChemSW.Nbt.ChemCatCentral {
         private ChemSW.Nbt.ChemCatCentral.CswWebSvcSessionAuthenticateDataAuthenticationResponse AuthenticationField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private ChemSW.Nbt.ChemCatCentral.CswC3ServiceLogicGetDataSourcesAvailableDataSources AvailableDataSourcesField;
+        private string[] AvailableDataSourcesField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
         private ChemSW.Nbt.ChemCatCentral.CswC3Product[] CswC3SearchResultsField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private ChemSW.Nbt.ChemCatCentral.CswC3ServiceLogicGetDataSourcesDataSourceDates DataSourceDatesField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
         private string DataSourcesField;
@@ -1148,7 +1151,7 @@ namespace ChemSW.Nbt.ChemCatCentral {
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public ChemSW.Nbt.ChemCatCentral.CswC3ServiceLogicGetDataSourcesAvailableDataSources AvailableDataSources {
+        public string[] AvailableDataSources {
             get {
                 return this.AvailableDataSourcesField;
             }
@@ -1169,6 +1172,19 @@ namespace ChemSW.Nbt.ChemCatCentral {
                 if ((object.ReferenceEquals(this.CswC3SearchResultsField, value) != true)) {
                     this.CswC3SearchResultsField = value;
                     this.RaisePropertyChanged("CswC3SearchResults");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ChemSW.Nbt.ChemCatCentral.CswC3ServiceLogicGetDataSourcesDataSourceDates DataSourceDates {
+            get {
+                return this.DataSourceDatesField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.DataSourceDatesField, value) != true)) {
+                    this.DataSourceDatesField = value;
+                    this.RaisePropertyChanged("DataSourceDates");
                 }
             }
         }
@@ -1351,112 +1367,6 @@ namespace ChemSW.Nbt.ChemCatCentral {
                 if ((object.ReferenceEquals(this.UsersField, value) != true)) {
                     this.UsersField = value;
                     this.RaisePropertyChanged("Users");
-                }
-            }
-        }
-        
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
-        
-        protected void RaisePropertyChanged(string propertyName) {
-            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
-            if ((propertyChanged != null)) {
-                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
-            }
-        }
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="CswC3ServiceLogicGetDataSources.AvailableDataSources", Namespace="http://schemas.datacontract.org/2004/07/c3WebServii.WebServices")]
-    [System.SerializableAttribute()]
-    public partial class CswC3ServiceLogicGetDataSourcesAvailableDataSources : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
-        
-        [System.NonSerializedAttribute()]
-        private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private ChemSW.Nbt.ChemCatCentral.CswC3ServiceLogicGetDataSourcesDataSource[] DataField;
-        
-        [global::System.ComponentModel.BrowsableAttribute(false)]
-        public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
-            get {
-                return this.extensionDataField;
-            }
-            set {
-                this.extensionDataField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public ChemSW.Nbt.ChemCatCentral.CswC3ServiceLogicGetDataSourcesDataSource[] Data {
-            get {
-                return this.DataField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.DataField, value) != true)) {
-                    this.DataField = value;
-                    this.RaisePropertyChanged("Data");
-                }
-            }
-        }
-        
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
-        
-        protected void RaisePropertyChanged(string propertyName) {
-            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
-            if ((propertyChanged != null)) {
-                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
-            }
-        }
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="CswC3ServiceLogicGetDataSources.DataSource", Namespace="http://schemas.datacontract.org/2004/07/c3WebServii.WebServices")]
-    [System.SerializableAttribute()]
-    public partial class CswC3ServiceLogicGetDataSourcesDataSource : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
-        
-        [System.NonSerializedAttribute()]
-        private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string DataSourceNameField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string ImportDateField;
-        
-        [global::System.ComponentModel.BrowsableAttribute(false)]
-        public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
-            get {
-                return this.extensionDataField;
-            }
-            set {
-                this.extensionDataField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string DataSourceName {
-            get {
-                return this.DataSourceNameField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.DataSourceNameField, value) != true)) {
-                    this.DataSourceNameField = value;
-                    this.RaisePropertyChanged("DataSourceName");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string ImportDate {
-            get {
-                return this.ImportDateField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.ImportDateField, value) != true)) {
-                    this.ImportDateField = value;
-                    this.RaisePropertyChanged("ImportDate");
                 }
             }
         }
@@ -2000,6 +1910,128 @@ namespace ChemSW.Nbt.ChemCatCentral {
                 if ((propertyChanged != null)) {
                     propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
                 }
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="CswC3ServiceLogicGetDataSources.DataSourceDates", Namespace="http://schemas.datacontract.org/2004/07/c3WebServii.WebServices")]
+    [System.SerializableAttribute()]
+    public partial class CswC3ServiceLogicGetDataSourcesDataSourceDates : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
+        
+        [System.NonSerializedAttribute()]
+        private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private ChemSW.Nbt.ChemCatCentral.CswC3ServiceLogicGetDataSourcesDataSource[] DataField;
+        
+        [global::System.ComponentModel.BrowsableAttribute(false)]
+        public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
+            get {
+                return this.extensionDataField;
+            }
+            set {
+                this.extensionDataField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ChemSW.Nbt.ChemCatCentral.CswC3ServiceLogicGetDataSourcesDataSource[] Data {
+            get {
+                return this.DataField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.DataField, value) != true)) {
+                    this.DataField = value;
+                    this.RaisePropertyChanged("Data");
+                }
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="CswC3ServiceLogicGetDataSources.DataSource", Namespace="http://schemas.datacontract.org/2004/07/c3WebServii.WebServices")]
+    [System.SerializableAttribute()]
+    public partial class CswC3ServiceLogicGetDataSourcesDataSource : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
+        
+        [System.NonSerializedAttribute()]
+        private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string DataSourceNameField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string DataTypeField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string ImportDateField;
+        
+        [global::System.ComponentModel.BrowsableAttribute(false)]
+        public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
+            get {
+                return this.extensionDataField;
+            }
+            set {
+                this.extensionDataField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string DataSourceName {
+            get {
+                return this.DataSourceNameField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.DataSourceNameField, value) != true)) {
+                    this.DataSourceNameField = value;
+                    this.RaisePropertyChanged("DataSourceName");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string DataType {
+            get {
+                return this.DataTypeField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.DataTypeField, value) != true)) {
+                    this.DataTypeField = value;
+                    this.RaisePropertyChanged("DataType");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string ImportDate {
+            get {
+                return this.ImportDateField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.ImportDateField, value) != true)) {
+                    this.ImportDateField = value;
+                    this.RaisePropertyChanged("ImportDate");
+                }
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
             }
         }
     }
@@ -3406,6 +3438,10 @@ namespace ChemSW.Nbt.ChemCatCentral {
         [System.ServiceModel.FaultContractAttribute(typeof(ChemSW.Nbt.ChemCatCentral.SampleFaultException), Action="http://tempuri.org/Search/getDataSourcesSampleFaultExceptionFault", Name="SampleFaultException", Namespace="http://schemas.datacontract.org/2004/07/c3WebServii")]
         ChemSW.Nbt.ChemCatCentral.CswRetObjSearchResults getDataSources(ChemSW.Nbt.ChemCatCentral.CswC3Params CswC3Params);
         
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/Search/getDataSourceDates", ReplyAction="http://tempuri.org/Search/getDataSourceDatesResponse")]
+        [System.ServiceModel.FaultContractAttribute(typeof(ChemSW.Nbt.ChemCatCentral.SampleFaultException), Action="http://tempuri.org/Search/getDataSourceDatesSampleFaultExceptionFault", Name="SampleFaultException", Namespace="http://schemas.datacontract.org/2004/07/c3WebServii")]
+        ChemSW.Nbt.ChemCatCentral.CswRetObjSearchResults getDataSourceDates(ChemSW.Nbt.ChemCatCentral.CswC3Params CswC3Params);
+        
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/Search/getProductDetails", ReplyAction="http://tempuri.org/Search/getProductDetailsResponse")]
         [System.ServiceModel.FaultContractAttribute(typeof(ChemSW.Nbt.ChemCatCentral.SampleFaultException), Action="http://tempuri.org/Search/getProductDetailsSampleFaultExceptionFault", Name="SampleFaultException", Namespace="http://schemas.datacontract.org/2004/07/c3WebServii")]
         ChemSW.Nbt.ChemCatCentral.CswRetObjSearchResults getProductDetails(ChemSW.Nbt.ChemCatCentral.CswC3SearchParams CswC3SearchParams);
@@ -3508,6 +3544,10 @@ namespace ChemSW.Nbt.ChemCatCentral {
         
         public ChemSW.Nbt.ChemCatCentral.CswRetObjSearchResults getDataSources(ChemSW.Nbt.ChemCatCentral.CswC3Params CswC3Params) {
             return base.Channel.getDataSources(CswC3Params);
+        }
+        
+        public ChemSW.Nbt.ChemCatCentral.CswRetObjSearchResults getDataSourceDates(ChemSW.Nbt.ChemCatCentral.CswC3Params CswC3Params) {
+            return base.Channel.getDataSourceDates(CswC3Params);
         }
         
         public ChemSW.Nbt.ChemCatCentral.CswRetObjSearchResults getProductDetails(ChemSW.Nbt.ChemCatCentral.CswC3SearchParams CswC3SearchParams) {

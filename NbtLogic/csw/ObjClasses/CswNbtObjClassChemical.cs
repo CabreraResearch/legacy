@@ -1117,7 +1117,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropNFPA NFPA { get { return ( _CswNbtNode.Properties[PropertyName.NFPA] ); } }
         public CswNbtNodePropMultiList PPE { get { return ( _CswNbtNode.Properties[PropertyName.PPE] ); } }
         public CswNbtNodePropLogical Hazardous { get { return ( _CswNbtNode.Properties[PropertyName.Hazardous] ); } }
-        public CswNbtNodePropText Formula { get { return ( _CswNbtNode.Properties[PropertyName.Formula] ); } }
+        public CswNbtNodePropFormula Formula { get { return ( _CswNbtNode.Properties[PropertyName.Formula] ); } }
         public CswNbtNodePropMol Structure { get { return ( _CswNbtNode.Properties[PropertyName.Structure] ); } }
         public CswNbtNodePropMemo PhysicalDescription { get { return ( _CswNbtNode.Properties[PropertyName.PhysicalDescription] ); } }
         public CswNbtNodePropText MolecularWeight { get { return ( _CswNbtNode.Properties[PropertyName.MolecularWeight] ); } }
