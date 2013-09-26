@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using ChemSW.Core;
@@ -265,6 +264,7 @@ namespace ChemSW.Nbt.ObjClasses
         public abstract class PropertyName
         {
             public const string Save = "Save";
+            public const string LegacyId = "Legacy Id";
         }
 
         public virtual CswNbtNodePropButton Save
@@ -273,6 +273,15 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 CswNbtNodePropButton Ret = Node.Properties[PropertyName.Save];
 
+                return Ret;
+            }
+        }
+
+        public virtual CswNbtNodePropText LegacyId
+        {
+            get
+            {
+                CswNbtNodePropText Ret = Node.Properties[PropertyName.LegacyId];
                 return Ret;
             }
         }

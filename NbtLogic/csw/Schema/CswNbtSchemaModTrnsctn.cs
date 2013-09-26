@@ -947,6 +947,13 @@ namespace ChemSW.Nbt.Schema
                     Extended = CswNbtNodePropButton.ButtonMode.button
                 } );
 
+                // Case 30813
+                createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( NewObjectClass )
+                {
+                    PropName = CswNbtObjClass.PropertyName.LegacyId,
+                    FieldType = CswEnumNbtFieldType.Text
+                } );
+
             }
             return NewObjectClass;
         }
