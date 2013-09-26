@@ -53,7 +53,6 @@ namespace ChemSW.Nbt.Schema
                     new CswUpdateSchema_02F_Case30041_Vendors(),
                     new CswUpdateSchema_02F_Case29992(),
                     new CswUpdateSchema_02F_Case29402(),
-                    new CswUpdateSchema_02F_Case30041_UnitsOfMeasure(),
                     new CswUpdateSchema_02F_Case30041_RolesUsers(),
                     new CswUpdateSchema_02F_Case30252(),
                     new CswUpdateSchema_02F_Case30041_ScheduledRuleImport(),
