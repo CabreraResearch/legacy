@@ -26,7 +26,8 @@ namespace ChemSW.Nbt.csw.Schema
                 {"roles", 7},
                 {"users", 8},
                 {"regulatory_lists", 9},
-                {"regulated_casnos", 10}
+                {"regulated_casnos", 10},
+                {"packages", 11}
             };
 
         private DataTable _importDefTable;
@@ -126,7 +127,7 @@ namespace ChemSW.Nbt.csw.Schema
             }
         } // _importOrder()
 
-        public void importBinding( string SourceColumnName, string DestPropertyName, string DestSubFieldName, string SheetName = null, string DestNodeTypeName = null, Int32 Instance = Int32.MinValue )
+        public void importBinding( string SourceColumnName, string DestPropertyName, string DestSubFieldName, string SheetName = null, string DestNodeTypeName = null, Int32 Instance = Int32.MinValue, string BlobTableName = "", string ClobTableName = "", string LobDataPkColOverride = "" )
         {
             if( null != _NbtImporter )
             {
@@ -134,7 +135,7 @@ namespace ChemSW.Nbt.csw.Schema
                 DestNodeTypeName = DestNodeTypeName ?? _DestNodeTypeName;
                 if( CswAll.AreStrings( SheetName, DestNodeTypeName, DestPropertyName, SourceColumnName ) )
                 {
-                    _SourceColumns.Add( SourceColumnName, AllowNullOrEmpty: false, IsUnique: true );
+                    _SourceColumns.Add( SourceColumnName, AllowNullOrEmpty : false, IsUnique : true );
 
                     DataRow row = _importBindingsTable.NewRow();
                     row["sheet"] = SheetName;
@@ -143,6 +144,9 @@ namespace ChemSW.Nbt.csw.Schema
                     row["destsubfield"] = DestSubFieldName;
                     row["sourcecolumnname"] = SourceColumnName;
                     row["instance"] = Instance;
+                    row["blobtablename"] = BlobTableName;
+                    row["clobtablename"] = ClobTableName;
+                    row["lobdatapkcoloverride"] = LobDataPkColOverride;
                     _importBindingsTable.Rows.Add( row );
                 }
             }

@@ -67,6 +67,21 @@ namespace ChemSW.Nbt.ImportExport
             get { return SafeColName( SourceColumnName ); }
         }
 
+        public string SourceBlobTableName
+        {
+            get { return _row[CswNbtImportTables.ImportDefBindings.blobtablename].ToString(); }
+        }
+
+        public string SourceClobTableName
+        {
+            get { return _row[CswNbtImportTables.ImportDefBindings.clobtablename].ToString(); }
+        }
+
+        public string SourceLobDataPkColOverride
+        {
+            get { return _row[CswNbtImportTables.ImportDefBindings.lobdatapkcoloverride].ToString(); }
+        }
+
         public static string SafeColName( string ColName )
         {
             string ret = ColName;
@@ -110,7 +125,6 @@ namespace ChemSW.Nbt.ImportExport
             }
         }
 
-
         /// <summary>
         /// Get a DataTable to fill out, for use with addBindingEntries()
         /// </summary>
@@ -124,6 +138,9 @@ namespace ChemSW.Nbt.ImportExport
             Table.Columns.Add( "destsubfield" );
             Table.Columns.Add( "sourcecolumnname" );
             Table.Columns.Add( "instance" );
+            Table.Columns.Add( "clobtablename" );
+            Table.Columns.Add( "blobtablename" );
+            Table.Columns.Add( "lobdatapkcoloverride" );
             return Table;
         }
 
@@ -167,6 +184,9 @@ namespace ChemSW.Nbt.ImportExport
                                 row[CswNbtImportTables.ImportDefBindings.destpropname] = DestNTPName;
                                 row[CswNbtImportTables.ImportDefBindings.destsubfield] = DestSubFieldName;
                                 row[CswNbtImportTables.ImportDefBindings.instance] = CswConvert.ToDbVal( BindingRow["instance"].ToString() );
+                                row[CswNbtImportTables.ImportDefBindings.blobtablename] = BindingRow[CswNbtImportTables.ImportDefBindings.blobtablename].ToString();
+                                row[CswNbtImportTables.ImportDefBindings.clobtablename] = BindingRow[CswNbtImportTables.ImportDefBindings.clobtablename].ToString();
+                                row[CswNbtImportTables.ImportDefBindings.lobdatapkcoloverride] = BindingRow[CswNbtImportTables.ImportDefBindings.lobdatapkcoloverride].ToString();
                                 importBindingsTable.Rows.Add( row );
                             }
                             else
