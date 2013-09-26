@@ -182,7 +182,7 @@ namespace ChemSW.Nbt.csw.Schema
             }
         }
 
-        public void finalize( string WhereClause = null, string DefinitionName = null, bool UseView = false )
+        public void finalize( string DefinitionName = null )
         {
             if( null != _NbtImporter )
             {
@@ -196,9 +196,8 @@ namespace ChemSW.Nbt.csw.Schema
                 //Save the bindings in the DB
                 _NbtImporter.storeDefinition( _importOrderTable, _importBindingsTable, _importRelationshipsTable, DefinitionName, _importDefTable );
 
-                _populateImportQueueTable( WhereClause, UseView );
-
-                _createTriggerOnImportTable();
+                //_populateImportQueueTable( WhereClause, UseView );
+                //_createTriggerOnImportTable();
             }
         }//finalize()
     }

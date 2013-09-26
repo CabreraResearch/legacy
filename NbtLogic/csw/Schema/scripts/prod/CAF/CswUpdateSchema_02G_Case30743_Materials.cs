@@ -8,7 +8,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update
     /// </summary>
-    public class CswUpdateSchema_02G_Case30743_Materials: CswUpdateSchemaTo
+    public class CswUpdateSchema_02G_Case30743_Materials : CswUpdateSchemaTo
     {
         public override string Title { get { return "Setup Materials import bindings"; } }
 
@@ -24,13 +24,13 @@ namespace ChemSW.Nbt.Schema
 
         public override string ScriptName
         {
-            get { return "Case30743_Materials"; }
+            get { return "02G_Case30743_Materials"; }
         }
 
         public override void update()
         {
             // CAF bindings definitions for Vendors
-            CswNbtSchemaUpdateImportMgr ImpMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "packages", "Chemical", ViewName : "Chemicals_View" ); //PACKAGES not MATERIALS (intentional)
+            CswNbtSchemaUpdateImportMgr ImpMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "packages", "Chemical", ViewName: "Chemicals_View" ); //PACKAGES not MATERIALS (intentional)
 
             //Simple Props
             ImpMgr.importBinding( "aqueous_solubility", CswNbtObjClassChemical.PropertyName.AqueousSolubility, "" );
@@ -75,11 +75,11 @@ namespace ChemSW.Nbt.Schema
             ImpMgr.importBinding( "ppe_trans", CswNbtObjClassChemical.PropertyName.PPE, "" );
 
             //LOBs
-            ImpMgr.importBinding( "struct_pict", CswNbtObjClassChemical.PropertyName.Structure, "", BlobTableName : "materials", LobDataPkColOverride : "materialid" );
-            ImpMgr.importBinding( "disposal", CswNbtObjClassChemical.PropertyName.DisposalInstructions, "", BlobTableName : "materials", LobDataPkColOverride : "materialid" );
-            ImpMgr.importBinding( "smiles", CswNbtObjClassChemical.PropertyName.SMILES, "", ClobTableName : "materials", LobDataPkColOverride : "materialid" );
+            ImpMgr.importBinding( "struct_pict", CswNbtObjClassChemical.PropertyName.Structure, "", BlobTableName: "materials", LobDataPkColOverride: "materialid" );
+            ImpMgr.importBinding( "disposal", CswNbtObjClassChemical.PropertyName.DisposalInstructions, "", BlobTableName: "materials", LobDataPkColOverride: "materialid" );
+            ImpMgr.importBinding( "smiles", CswNbtObjClassChemical.PropertyName.SMILES, "", ClobTableName: "materials", LobDataPkColOverride: "materialid" );
 
-            ImpMgr.finalize( UseView : true );
+            ImpMgr.finalize();
 
         }
     }

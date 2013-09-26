@@ -305,7 +305,6 @@
     <None Include="csw\Schema\scripts\past\02C\CswUpdateSchema_02C_Case29717.cs" />
     <None Include="csw\Schema\scripts\past\02C\CswUpdateSchema_02C_Case29428.cs" />
     <Compile Include="csw\Schema\Import\CswNbtSchemaUpdateImportMgr.cs" />
-    <Compile Include="csw\Schema\Import\CswNbtSchemaUpdateImportMgrSQL.cs" />
     <Compile Include="csw\Schema\Layout\CswNbtSchemaUpdateLayoutMgrHlprImpl.cs" />
     <Compile Include="csw\Schema\Layout\CswNbtSchemaUpdateLayoutMgr.cs" />
     <Compile Include="csw\Schema\Layout\ICswNbtSchemaUpdateLayoutMgrHlpr.cs" />

@@ -27,12 +27,12 @@ namespace ChemSW.Nbt.Schema
         public override void update()
         {
             {
-                CswNbtSchemaUpdateImportMgr ImpMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "regulatory_lists", "Regulatory List" );
+                CswNbtSchemaUpdateImportMgr ImpMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "regulatory_lists", "Regulatory List", "reglists_view" );
 
                 ImpMgr.importBinding( "displayname", CswNbtObjClassRegulatoryList.PropertyName.Name, "" );
                 ImpMgr.importBinding( "listmode", CswNbtObjClassRegulatoryList.PropertyName.ListMode, "" );
 
-                ImpMgr.finalize( WhereClause: " lower(listmode)='cispro' " );
+                ImpMgr.finalize();
             }
 
             {
