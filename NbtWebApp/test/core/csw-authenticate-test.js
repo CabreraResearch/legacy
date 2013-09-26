@@ -15,7 +15,7 @@ asyncTest("Validate AJAX authentication failure - no info", function () {
             start();
         },
 		error: function (error) {
-			var err = error;
+			var err = error;//For Debugging
 		}
     });
 });
@@ -32,7 +32,7 @@ asyncTest("Validate AJAX authentication failure - no Customer Id", function () {
             start();
         },
 		error: function (error) {
-			var err = error;
+			var err = error;//For Debugging
 		}
     });
 });
@@ -49,7 +49,7 @@ asyncTest("Validate AJAX authentication failure - no Customer Id or Username", f
             start();
         },
 		error: function (error) {
-			var err = error;
+			var err = error;//For Debugging
 		}
     });
 });
@@ -66,7 +66,7 @@ asyncTest("Validate AJAX authentication failure - no Username or Password", func
             start();
         },
 		error: function (error) {
-			var err = error.responseText;
+			var err = error;//For Debugging
 		}
     });
 });
