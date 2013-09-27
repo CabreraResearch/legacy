@@ -215,7 +215,8 @@ m."OTHERREFERENCENO",
 m."PH",
 m."PHYSICAL_DESCRIPTION",
 m."PHYSICAL_STATE",
-m."PPE",
+m.ppe,
+replace(replace(replace(m.ppe, 'Eye Protection', 'Goggles'), 'Hand Protection', 'Gloves'), 'Ventilation', 'Fume Hood') as ppe_trans,
 m."REACTIVECODE",
 m."REVIEWSTATUSCHANGEDATE",
 m."REVIEWSTATUSNAME",
@@ -264,6 +265,7 @@ m."ISTIER2",
 m."MATERIALVARIETYID",
 m."NONHAZARDOUS3E",
 m."ASSETCREATIONNAME",
+ms.subclassname,
 
 (case m.physical_state
   when 'S' then 'Solid'
