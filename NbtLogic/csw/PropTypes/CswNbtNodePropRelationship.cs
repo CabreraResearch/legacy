@@ -455,10 +455,7 @@ namespace ChemSW.Nbt.PropTypes
                     }
                 }
             }
-
-            ParentObject[_NodeIDSubField.ToXmlNodeName( true ).ToLower()] = string.Empty;
-            ParentObject[_NameSubField.ToXmlNodeName( true ).ToLower()] = CachedNodeName;
-
+            
             ParentObject["nodetypeid"] = 0;
             ParentObject["objectclassid"] = 0;
             ParentObject["propertysetid"] = 0;
@@ -487,10 +484,14 @@ namespace ChemSW.Nbt.PropTypes
             }
             ParentObject["allowadd"] = AllowAdd;
 
+            ParentObject[_NodeIDSubField.ToXmlNodeName( true ).ToLower()] = string.Empty;
+            ParentObject[_NameSubField.ToXmlNodeName( true ).ToLower()] = CachedNodeName;
             ParentObject["relatednodeid"] = string.Empty;
             ParentObject["relatednodelink"] = string.Empty;
             if( null != RelatedNode )
             {
+                ParentObject[_NodeIDSubField.ToXmlNodeName( true ).ToLower()] = RelatedNode.NodeId.ToString();
+                ParentObject[_NameSubField.ToXmlNodeName( true ).ToLower()] = RelatedNode.NodeName;
                 ParentObject["relatednodeid"] = RelatedNode.NodeId.ToString();
                 ParentObject["relatednodelink"] = RelatedNode.NodeLink;
             }

@@ -234,6 +234,23 @@ namespace ChemSW.Nbt.ObjClasses
             }
         } //beforeDeleteNode()
 
+        private void hideButtonProp( CswNbtNodeProp ButtonProp )
+        {
+            if( false == _CswNbtResources.Permit.canAnyTab( CswEnumNbtNodeTypePermission.Edit, NodeType ) || Node.Locked )
+            {
+                ButtonProp.setHidden( value: false, SaveToDb: Node.Locked );
+            }
+            else if( ButtonProp.PropName == PropertyName.SetPreferred &&
+                ( Status.Value == CswEnumNbtInspectionStatus.Overdue ||
+              Status.Value == CswEnumNbtInspectionStatus.ActionRequired ||
+              Status.Value == CswEnumNbtInspectionStatus.Pending ) )
+            {
+                bool IsVisible = ( Status.Value == CswEnumNbtInspectionStatus.Pending || Status.Value == CswEnumNbtInspectionStatus.Overdue )
+                    && false == _InspectionState.AllAnswered;
+                ButtonProp.setHidden( value: false == IsVisible, SaveToDb: Node.Locked );
+            }
+        }
+
         public override void afterPropertySetPopulateProps()
         {
             foreach( CswNbtNodePropWrapper PropWrapper in Node.Properties[(CswEnumNbtFieldType) CswEnumNbtFieldType.Question] )
@@ -242,24 +259,9 @@ namespace ChemSW.Nbt.ObjClasses
                 QuestionProp.IsActionRequired = ( Status.Value == CswEnumNbtInspectionStatus.ActionRequired ); // case 25035
             }
 
-            if( false == _CswNbtResources.Permit.canAnyTab( CswEnumNbtNodeTypePermission.Edit, NodeType ) || Node.Locked )
-            {
-                bool SaveToDb = Node.Locked;
-                _toggleButtonVisibility( Finish, IsVisible: false, SaveToDb: SaveToDb );
-                _toggleButtonVisibility( Cancel, IsVisible: false, SaveToDb: SaveToDb );
-                _toggleButtonVisibility( SetPreferred, IsVisible: false, SaveToDb: SaveToDb );
-            }
-            else if( Status.Value == CswEnumNbtInspectionStatus.Overdue ||
-                Status.Value == CswEnumNbtInspectionStatus.ActionRequired ||
-                Status.Value == CswEnumNbtInspectionStatus.Pending )
-            {
-                bool IsVisible = ( Status.Value == CswEnumNbtInspectionStatus.Pending || Status.Value == CswEnumNbtInspectionStatus.Overdue ) 
-                    && false == _InspectionState.AllAnswered;
-                _toggleButtonVisibility( SetPreferred, IsVisible, SaveToDb: true );
-            }
-            //// case 26584, 28155
-            // removed by case 29095
-            //Status.setReadOnly( value : false == _CswNbtResources.CurrentNbtUser.IsAdministrator(), SaveToDb : false );
+            Finish.SetOnBeforeRender( hideButtonProp );
+            Cancel.SetOnBeforeRender( hideButtonProp );
+            SetPreferred.SetOnBeforeRender( hideButtonProp );
 
             Generator.SetOnPropChange( OnGeneratorChange );
             IsFuture.SetOnPropChange( OnIsFutureChange );
