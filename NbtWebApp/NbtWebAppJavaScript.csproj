@@ -386,6 +386,7 @@
     <Content Include="test\core\csw-authenticate-test.js" />
     <Content Include="test\csw-test.js" />
     <Content Include="test\Faker.js" />
+    <Content Include="test\literals\csw.div.test.js" />
     <Content Include="test\types\csw.string.test.js" />
     <Content Include="test\types\csw.number.test.js" />
     <Content Include="test\types\csw.boolean.test.js" />
