@@ -31,6 +31,7 @@ namespace ChemSW.Nbt.csw.Schema
                 {"each_view", 12},
                 {"chemicals_view", 13},
                 {"packdetail_view", 14},
+                {"sds_view", 15},
             };
 
         private DataTable _importDefTable;

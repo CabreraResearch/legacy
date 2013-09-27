@@ -38,7 +38,7 @@ namespace ChemSW.Nbt.Schema
             ImpMgr.importBinding( "captureddate", CswNbtObjClassSDSDocument.PropertyName.RevisionDate, "" );
 
             //relationships
-            ImpMgr.importBinding( "packageid", CswNbtObjClassSDSDocument.PropertyName.Owner, "" );
+            ImpMgr.importBinding( "packageid", "Material", "" ); //SDS Document NTP "Owner" is changed to "Material"
 
             //transformed props
             ImpMgr.importBinding( "language_trans", CswNbtObjClassSDSDocument.PropertyName.Language, "" );
