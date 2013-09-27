@@ -189,7 +189,7 @@
 
 
         cswPrivate.makeHourlyDiv = function (parent) {
-            var hourOptions = ChemSW.makeSequentialArray(1, 24),
+            var hourOptions = Csw.makeSequentialArray(1, 24),
                 hoursSelect, startingDatePicker;
 
             cswPrivate.divHourly = parent.div({
@@ -234,7 +234,7 @@
 
         cswPrivate.makeWeeklyDiv = function (parent) {
             var weeklyTable, startingDatePicker, everySpan, weeklyRateSelect,
-                frequency = ChemSW.makeSequentialArray(1, 24);
+                frequency = Csw.makeSequentialArray(1, 24);
 
             cswPrivate.divWeekly = parent.div({
                 name: cswPrivate.name + '_divweekly',
@@ -311,11 +311,11 @@
             var monthlyRateSelect, monthlyDateSelect, monthlyWeekSelect, startingMonthSelect, startingYearSelect,
                 everySpan,
                 monthlyRadioId = cswPrivate.name + '_monthly',
-                daysInMonth = ChemSW.makeSequentialArray(1, 31),
-                monthsInYear = ChemSW.makeSequentialArray(1, 12),
+                daysInMonth = Csw.makeSequentialArray(1, 31),
+                monthsInYear = Csw.makeSequentialArray(1, 12),
                 year = cswPrivate.now.getFullYear(),
-                yearsToAllow = ChemSW.makeSequentialArray(year - 10, year + 10),
-                frequency = ChemSW.makeSequentialArray(1, 60),
+                yearsToAllow = Csw.makeSequentialArray(year - 10, year + 10),
+                frequency = Csw.makeSequentialArray(1, 60),
                 weeksInMonth = [
                     { value: 1, display: 'First:' },
                     { value: 2, display: 'Second:' },
