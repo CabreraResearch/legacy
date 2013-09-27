@@ -36,7 +36,7 @@ namespace ChemSW.Nbt.Schema
             const string CabinetNTName = "Cabinet";
             const string ShelfNTName = "Shelf";
             const string BoxNTName = "Box";
-            const string LocationSheetName = "locations";
+            const string LocationSheetName = "locations_view";
 
             // Import order is based on these
             List<Tuple<string, Int32>> DestNodeTypesAndInstances = new List<Tuple<string, int>>();
@@ -47,7 +47,7 @@ namespace ChemSW.Nbt.Schema
             DestNodeTypesAndInstances.Add( new Tuple<string, int>( ShelfNTName, 5 ) );
             DestNodeTypesAndInstances.Add( new Tuple<string, int>( BoxNTName, 6 ) );
 
-            CswNbtSchemaUpdateImportMgr LocationsMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, LocationSheetName, DestNodeTypesAndInstances, "locations_view" );
+            CswNbtSchemaUpdateImportMgr LocationsMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "locations", DestNodeTypesAndInstances, "locations_view" );
 
             // Bindings
 

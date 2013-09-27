@@ -95,6 +95,8 @@
         };
         Csw.extend(cswInternal, options);
 
+        cswInternal.useCache = cswInternal.useCache && Csw.cacheExists();
+
         cswInternal.url = cswInternal.url || cswInternal.urlMethod;
         cswInternal.startTime = new Date();
 

@@ -386,7 +386,12 @@
     <Content Include="test\core\csw-authenticate-test.js" />
     <Content Include="test\csw-test.js" />
     <Content Include="test\Faker.js" />
-    <Content Include="test\types\csw-object-test.js" />
+    <Content Include="test\types\csw.string.test.js" />
+    <Content Include="test\types\csw.number.test.js" />
+    <Content Include="test\types\csw.boolean.test.js" />
+    <Content Include="test\types\csw.array.test.js" />
+    <Content Include="test\types\csw.casno.test.js" />
+    <Content Include="test\types\csw.object.test.js" />
     <Content Include="vendor\es6-shim.min.js">
       <DependentUpon>es6-shim.js</DependentUpon>
     </Content>

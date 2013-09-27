@@ -4,7 +4,7 @@
 
 var cswObject = Object.create(null);
 
-module("CswObject", {
+module('CswObject', {
     setup: function() {
         var somePeople = [];
         while (somePeople.length < 1000) {
@@ -17,7 +17,7 @@ module("CswObject", {
         });
     }
 });
-test("ChemSW Iterator functions as it should.", function () {
+test('Csw.iterate functions as it should.', function () {
 
     var peopleCount = 0;
     Csw.iterate(cswObject.people, function(person) {
