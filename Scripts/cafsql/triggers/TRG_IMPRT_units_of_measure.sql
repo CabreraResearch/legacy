@@ -1,4 +1,4 @@
-CREATE OR REPLACE TRIGGER TRG_IMPRT_units_of_measure AFTER INSERT OR DELETE OR UPDATE OF unitofmeasurename,convertfromkg_base,unittype,unitofmeasureid,deleted ON units_of_measure@CAFLINK FOR EACH ROW 
+CREATE OR REPLACE TRIGGER TRG_IMPRT_units_of_measure AFTER INSERT OR DELETE OR UPDATE OF unitofmeasurename,conversionfactor,unittype,unitofmeasureid,deleted ON units_of_measure@CAFLINK FOR EACH ROW 
                                 BEGIN
   
                                 IF INSERTING THEN

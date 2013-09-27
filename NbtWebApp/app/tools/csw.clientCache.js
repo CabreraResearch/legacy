@@ -85,6 +85,15 @@
 
     Csw.register('setCachedWebServiceCall', setCachedWebServiceCall);
 
+
+    var cacheExists = function() {
+        return cacheDbMgr != undefined;
+    };
+
+    Csw.register('cacheExists', cacheExists);
+    
+
+
     //Wait until Main is loaded before initing
     Csw.main.onReady.then(function () {
 

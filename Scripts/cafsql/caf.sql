@@ -3,8 +3,7 @@ create table nbtimportqueue (
 	nbtimportqueueid number(12) NOT NULL PRIMARY KEY,
   state varchar(1),
   itempk number(12) NOT NULL,
-  tablename varchar(50) NOT NULL,
-  viewname varchar(50),
+  sheetname varchar2(50),
   priority number(12),
   errorlog varchar2(2000)
 );
@@ -141,10 +140,42 @@ select w.businessunitid,
   from work_units w
   left outer join business_units b on (b.businessunitid = w.businessunitid)
   left outer join sites s on (s.siteid = w.siteid);
-
+--Users
 create or replace view users_view as
 (select "AUDITFLAG","DEFAULTCATEGORYID","DEFAULTLANGUAGE","DEFAULTLOCATIONID","DEFAULTPRINTERID","DELETED","DISABLED","EMAIL","EMPLOYEEID","FAILEDLOGINCOUNT","HIDEHINTS","HOMEINVENTORYGROUPID","ISSYSTEMUSER","LOCKED","MYSTARTURL","NAMEFIRST","NAMELAST","NAVROWS","NODEVIEWID","PASSWORD","PASSWORD_DATE","PHONE","ROLEID","SUPERVISORID","TITLE","USERID","USERNAME","WELCOMEREDIRECT","WORKUNITID" from users where issystemuser != 1);
 
+---Packdetail
+create or replace view packdetail_view as
+select packdetailid,
+       packagedescription,
+       packageid,
+       catalogno,
+       capacity,
+       unitofmeasureid,
+       deleted,
+       dispenseonly,
+       unitcount,
+       upc,
+       CASE containertype
+            when 'A' then 'Aboveground Tank [A]'
+            when 'B' then 'Belowground Tank [B]'
+            when 'C' then 'Tank Inside Building [C]'
+            when 'D' then 'Steel Drum [D]'
+            when 'E' then 'Plastic or Non-Metal Drum [E]'
+            when 'F' then 'Can [F]'
+            when 'G' then 'Carboy [G]'
+            when 'I' then 'Fiberdrum [I]'
+            when 'J' then 'Bag [J]'
+            when 'K' then 'Box [K]'
+            when 'L' then 'Cylinder [L]'
+            when 'M' then 'Glass Bottle or Jug [M]'
+            when 'N' then 'Plastic [N]'
+            when 'O' then 'Tote Bin [O]'
+            when 'P' then 'Tank Wagon [P]'
+       END as containertype
+       from packdetail;
+
+--Chemicals
 create or replace view chemicals_view as
 (select v.vendorid,
  p.packageid,
@@ -184,8 +215,7 @@ m."OTHERREFERENCENO",
 m."PH",
 m."PHYSICAL_DESCRIPTION",
 m."PHYSICAL_STATE",
-m.ppe,
-replace(replace(replace(m.ppe, 'Eye Protection', 'Goggles'), 'Hand Protection', 'Gloves'), 'Ventilation', 'Fume Hood') as ppe_trans,
+m."PPE",
 m."REACTIVECODE",
 m."REVIEWSTATUSCHANGEDATE",
 m."REVIEWSTATUSNAME",
@@ -234,7 +264,6 @@ m."ISTIER2",
 m."MATERIALVARIETYID",
 m."NONHAZARDOUS3E",
 m."ASSETCREATIONNAME",
-ms.subclassname,
 
 (case m.physical_state
   when 'S' then 'Solid'
@@ -254,9 +283,35 @@ from materials m
              join materials_class mc on mc.materialclassid = ms.materialclassid
      where m.deleted = 0 and p.deleted = 0 and mc.classname = 'CHEMICAL');
 	 
-	 
-create or replace view reglists_view as
-(select "DELETED","DISPLAYNAME","LISTMODE","MATCHTYPE","REGLISTCODE","REGULATORYLISTID" from regulatory_lists where lower(listmode) = 'cispro');
+---Weight
+create or replace view weight_view as
+select unitofmeasurename,
+       unittype,
+       convertfromkgs_base as conversionfactor,
+       deleted,
+       unitofmeasureid
+from units_of_measure
+where lower(unittype)='weight';
+
+---Volume
+create or replace view volume_view as
+select unitofmeasurename,
+       unittype,
+       convertfromliters_base as conversionfactor,
+       deleted,
+       unitofmeasureid
+from units_of_measure
+where lower(unittype)='volume';
+
+---Each
+create or replace view each_view as
+select unitofmeasurename,
+       unittype,
+       convertfromeaches_base as conversionfactor,
+       deleted,
+       unitofmeasureid
+from units_of_measure
+where lower(unittype)='each';
 
 create or replace view sds_view as(
   select * from (select 
