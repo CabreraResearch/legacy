@@ -25,7 +25,7 @@ rem | apply triggers to tables
 for /f %%a in ('dir /b ^"triggers\') do ( 
     echo Applying %%a to database...
 	echo.
-	sqlplus -s -l %CAFUser%/%CAFPass%@%CAFDatabase% @"triggers\%%a"
+	echo exit | sqlplus -s -l %CAFUser%/%CAFPass%@%CAFDatabase% @"triggers\%%a"
 	echo.
 	echo.
 )
@@ -35,7 +35,7 @@ rem | fill nbtimportqueue
 for /f %%a in ('dir /b ^"importqueue\') do (
     echo Applying %%a to database...
 	echo.
-	sqlplus -s -l %CAFUser%/%CAFPass%@%CAFDatabase% @"importqueue\%%a"
+	echo exit | sqlplus -s -l %CAFUser%/%CAFPass%@%CAFDatabase% @"importqueue\%%a"
 	echo.
 	echo.  
 )

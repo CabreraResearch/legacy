@@ -75,7 +75,7 @@ namespace ChemSW.Nbt.Sched
                     Int32 NumberToProcess = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumConfigurationVariableNames.NodesProcessedPerCycle ) );
                     string Sql = "select * from "
                         + QueueTableName + "@" + CAFDbLink + " iq"
-                        + " join " + CswNbtImportTables.ImportDef.TableName + " id on (id.sheetname = iq.tablename)"
+                        + " join " + CswNbtImportTables.ImportDef.TableName + " id on (id.sheetname = iq.sheetname )"
                         + " where state = '" + State.I + "' or state = '" + State.U
                         + "' order by decode (state, '" + State.I + "', 1, '" + State.U + "', 2) asc, id.sheetorder asc";
 
@@ -86,7 +86,7 @@ namespace ChemSW.Nbt.Sched
                     foreach( DataRow QueueRow in QueueTable.Rows )
                     {
                         // LOB problem here
-                        string CurrentTblNamePkCol = Importer.getRemoteDataDictionaryPkColumnName( CswConvert.ToString( QueueRow["tablename"] ), CAFDbLink );
+                        string CurrentTblNamePkCol = (string) QueueRow["pkcolumnname"];
                         if( string.IsNullOrEmpty( CurrentTblNamePkCol ) )
                         {
                             throw new Exception( "Could not find pkcolumn in data_dictionary for table " + QueueRow["tablename"].ToString() );
@@ -107,9 +107,8 @@ namespace ChemSW.Nbt.Sched
                         DataTable ItemTable = ItemSelect.getTable();
                         foreach( DataRow ItemRow in ItemTable.Rows )
                         {
-                            //string TableName = string.IsNullOrEmpty( QueueRow["viewname"].ToString() ) ? QueueRow["tablename"].ToString() : QueueRow["viewname"].ToString();
-                            string TableName = QueueRow["tablename"].ToString();
-                            string Error = Importer.ImportRow( ItemRow, DefinitionName, TableName, true );
+                            string SheetName = QueueRow["sheetname"].ToString();
+                            string Error = Importer.ImportRow( ItemRow, DefinitionName, SheetName, true );
                             if( string.IsNullOrEmpty( Error ) )
                             {
                                 // record success

@@ -342,6 +342,7 @@
     <Compile Include="csw\MetaData\Infr\CswNbtAuditTableAbbreviation.cs" />
     <Compile Include="csw\Schema\scripts\infr\RunAfterEveryExecutionOfUpdater_02AuditSql.cs" />
     <Compile Include="csw\Schema\scripts\prod\02F\CswSchemaScriptsFoxglove.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateDDL_02G_Case30771.cs" />
     <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateMetaData_02G_Case30813.cs" />
     <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateSchema_02G_Case30793.cs" />
     <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateSchema_02G_Case30017.cs" />
@@ -353,6 +354,7 @@
     <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateSchema_02G_Case30756.cs" />
     <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateSchema_02G_Case30680.cs" />
     <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateMetaData_02G_Case30680.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CAF\CswUpdateSchema_02G_Case30744_PackDetail.cs" />
     <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateDDL_02G_Case30702.cs" />
     <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateSchema_02G_Case30702.cs" />
     <Compile Include="csw\Schema\scripts\prod\CAF\CswUpdateSchema_02G_Case30743_Materials.cs" />
