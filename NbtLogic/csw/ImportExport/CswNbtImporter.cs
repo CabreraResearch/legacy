@@ -15,6 +15,7 @@ using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Schema;
+using ChemSW.Nbt.ServiceDrivers;
 
 namespace ChemSW.Nbt.ImportExport
 {
@@ -641,6 +642,14 @@ namespace ChemSW.Nbt.ImportExport
 
                     ( (CswNbtNodePropTimeInterval) Node.Properties[Binding.DestProperty] ).RateInterval = rateInterval;
                     Node.Properties[Binding.DestProperty].SyncGestalt();
+                }
+                else if( Binding.DestProperty.getFieldTypeValue() == CswEnumNbtFieldType.File )
+                {
+                    CswNbtSdBlobData sdBlobData = new CswNbtSdBlobData( _CswNbtResources );
+                    int BlobDataId = sdBlobData.GetBlobDataId( Node.Properties[Binding.DestProperty].JctNodePropId );
+                    CswPropIdAttr propAttr = new CswPropIdAttr( Node, Binding.DestProperty );
+                    string href;
+                    sdBlobData.saveFile( propAttr.ToString(), BlobData, "ContentTypeHere", "FileNameHere", out href, BlobDataId, false );
                 }
                 // NodeTypeSelect
                 else if( Binding.DestProperty.getFieldTypeValue() == CswEnumNbtFieldType.NodeTypeSelect )
