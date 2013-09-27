@@ -619,6 +619,9 @@ namespace ChemSW.Nbt.ImportExport
 
         private void _importPropertyValues( CswNbtImportDef BindingDef, IEnumerable<CswNbtImportDefBinding> NodeTypeBindings, IEnumerable<CswNbtImportDefRelationship> RowRelationships, DataRow ImportRow, CswNbtNode Node )
         {
+            // case 30821
+            Node.IsDemo = false;
+
             // Iterate each binding 
             foreach( CswNbtImportDefBinding Binding in NodeTypeBindings )
             {
