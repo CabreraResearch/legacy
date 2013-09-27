@@ -1,4 +1,5 @@
 ﻿using System;
+using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Search;
@@ -129,7 +130,8 @@ namespace ChemSW.Nbt.Actions.KioskMode
 
             CswNbtSearch search = new CswNbtSearch( _CswNbtResources )
             {
-                SearchTerm = OpData.Field2.Value
+                SearchTerm = OpData.Field2.Value,
+                SearchType = CswEnumSqlLikeMode.Equals
             };
             ICswNbtTree tree = search.Results();
 
