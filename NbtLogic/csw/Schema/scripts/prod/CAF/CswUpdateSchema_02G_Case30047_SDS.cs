@@ -1,5 +1,6 @@
 ﻿using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.csw.Schema;
+using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.Schema
@@ -29,11 +30,29 @@ namespace ChemSW.Nbt.Schema
         public override void update()
         {
             // CAF bindings definitions for Vendors
-            CswNbtSchemaUpdateImportMgr ImpMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "documents", "SDS Document", ViewName : "sds_view" ); //PACKAGES not MATERIALS (intentional)
+            CswNbtSchemaUpdateImportMgr ImpMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "documents", "SDS Document", ViewName : "sds_view" );
 
+            //simple props
             ImpMgr.importBinding( "acquisitiondate", CswNbtObjClassSDSDocument.PropertyName.AcquiredDate, "" );
+            ImpMgr.importBinding( "description", CswNbtObjClassSDSDocument.PropertyName.Title, "" );
+            ImpMgr.importBinding( "captureddate", CswNbtObjClassSDSDocument.PropertyName.RevisionDate, "" );
 
-            ImpMgr.finalize( UseView : true );
+            //relationships
+            ImpMgr.importBinding( "packageid", CswNbtObjClassSDSDocument.PropertyName.Owner, "" );
+
+            //transformed props
+            ImpMgr.importBinding( "language_trans", CswNbtObjClassSDSDocument.PropertyName.Language, "" );
+            ImpMgr.importBinding( "fileextention_trans", CswNbtObjClassSDSDocument.PropertyName.FileType, "" );
+
+            //file specific bindings
+            ImpMgr.importBinding( "content_type", CswNbtObjClassSDSDocument.PropertyName.File, CswEnumNbtSubFieldName.ContentType.ToString() );
+            ImpMgr.importBinding( "filename", CswNbtObjClassSDSDocument.PropertyName.File, CswEnumNbtSubFieldName.Name.ToString() );
+
+            //Link and BlobData are stored in the same column, we're going to import it twice and let the "FileType" property dictate what is shown
+            ImpMgr.importBinding( "document", CswNbtObjClassSDSDocument.PropertyName.File, CswEnumNbtSubFieldName.Blob.ToString(), BlobTableName : "documents", LobDataPkColOverride : "documentid" );
+            ImpMgr.importBinding( "document", CswNbtObjClassSDSDocument.PropertyName.Link, CswEnumNbtSubFieldName.Href.ToString(), BlobTableName : "documents", LobDataPkColOverride : "documentid" );
+
+            ImpMgr.finalize();
 
         }
     }

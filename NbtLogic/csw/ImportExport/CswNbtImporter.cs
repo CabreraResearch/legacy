@@ -643,13 +643,30 @@ namespace ChemSW.Nbt.ImportExport
                     ( (CswNbtNodePropTimeInterval) Node.Properties[Binding.DestProperty] ).RateInterval = rateInterval;
                     Node.Properties[Binding.DestProperty].SyncGestalt();
                 }
-                else if( Binding.DestProperty.getFieldTypeValue() == CswEnumNbtFieldType.File )
+                else if( Binding.DestProperty.getFieldTypeValue() == CswEnumNbtFieldType.File && Binding.DestSubFieldName != CswEnumNbtSubFieldName.Href.ToString() )
                 {
                     CswNbtSdBlobData sdBlobData = new CswNbtSdBlobData( _CswNbtResources );
                     int BlobDataId = sdBlobData.GetBlobDataId( Node.Properties[Binding.DestProperty].JctNodePropId );
-                    CswPropIdAttr propAttr = new CswPropIdAttr( Node, Binding.DestProperty );
-                    string href;
-                    sdBlobData.saveFile( propAttr.ToString(), BlobData, "ContentTypeHere", "FileNameHere", out href, BlobDataId, false );
+
+                    CswTableUpdate blobDataTblUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "importer.fileimport", "blob_data" );
+
+                    DataTable blobDataTbl = ( Int32.MinValue != BlobDataId ?  blobDataTblUpdate.getTable( "where blobdataid = " + BlobDataId ) : blobDataTblUpdate.getEmptyTable());
+                    DataRow blobDataRow = ( blobDataTbl.Rows.Count > 0 ?blobDataTbl.Rows[0] : blobDataTbl.NewRow() );
+
+                    if( CswEnumNbtSubFieldName.Name.ToString() == Binding.DestSubFieldName )
+                    {
+                        blobDataRow["filename"] = PropertyData;
+                    }
+                    else if( CswEnumNbtSubFieldName.ContentType.ToString() == Binding.DestSubFieldName )
+                    {
+                        blobDataRow["contenttype"] = PropertyData;
+                    }
+                    else if( CswEnumNbtSubFieldName.Blob.ToString() == Binding.DestSubFieldName )
+                    {
+                        blobDataRow["blobdata"] = BlobData;
+                    }
+
+                    blobDataTblUpdate.update( blobDataTbl );
                 }
                 // NodeTypeSelect
                 else if( Binding.DestProperty.getFieldTypeValue() == CswEnumNbtFieldType.NodeTypeSelect )

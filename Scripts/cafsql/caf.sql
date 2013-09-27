@@ -259,7 +259,7 @@ create or replace view reglists_view as
 (select "DELETED","DISPLAYNAME","LISTMODE","MATCHTYPE","REGLISTCODE","REGULATORYLISTID" from regulatory_lists where lower(listmode) = 'cispro');
 
 create or replace view sds_view as(
-	select * from (select 
+  select * from (select 
   d.documentid,
   d.packageid,
   d.acquisitiondate,
@@ -272,9 +272,28 @@ create or replace view sds_view as(
   d.fileextension,
   d.filename,
   d.language,
-  d.materialid
+  d.materialid,
+  
+  (case d.fileextension
+        when 'URL' then 'Link'
+        else 'File'
+   end) as fileextension_trans,
+   
+   (case d.language
+   when 'english'    then 'en'
+   when 'french'     then 'fr'
+   when 'german'     then 'de'
+   when 'danish'     then 'da'
+   when 'dutch'      then 'nl'
+   when 'spanish'    then 'es'
+   when 'italian'    then 'it'
+   when 'chinese'    then 'zh'
+   when 'portuguese' then 'pt'
+   when 'USA/en'     then 'en'
+  end) as language_trans
+  
  from documents d 
- where d.packageid is not null and doctype = 'MSDS'
+ where d.packageid is not null and doctype = 'MSDS' and d.deleted = 0
  
 union all
  
@@ -291,10 +310,29 @@ select
   d2.fileextension,
   d2.filename,
   d2.language,
-  d2.materialid
+  d2.materialid,
+  
+  (case d2.fileextension
+   when 'URL' then 'Link'
+   else 'File'
+  end) as fileextension_trans,
+   
+  (case d2.language
+   when 'english'    then 'en'
+   when 'french'     then 'fr'
+   when 'german'     then 'de'
+   when 'danish'     then 'da'
+   when 'dutch'      then 'nl'
+   when 'spanish'    then 'es'
+   when 'italian'    then 'it'
+   when 'chinese'    then 'zh'
+   when 'portuguese' then 'pt'
+   when 'USA/en'     then 'en'
+  end) as language_trans
+  
  from documents d2 
        join materials m on m.materialid = d2.materialid
        join packages p on m.materialid = p.packageid
-       where d2.packageid is null and doctype = 'MSDS'
+       where d2.packageid is null and doctype = 'MSDS' and d2.deleted = 0
 )
 )
