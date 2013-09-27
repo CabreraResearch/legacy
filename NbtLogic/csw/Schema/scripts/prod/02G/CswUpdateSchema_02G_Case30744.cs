@@ -81,8 +81,8 @@ namespace ChemSW.Nbt.Schema
             sizeImporter.importBinding( "packagedescription", CswNbtObjClassSize.PropertyName.Description, "" );
             sizeImporter.importBinding( "packageid", CswNbtObjClassSize.PropertyName.Material, CswEnumNbtSubFieldName.NodeID.ToString() );
             sizeImporter.importBinding( "catalogno", CswNbtObjClassSize.PropertyName.CatalogNo, "" );
-            sizeImporter.importBinding( "capacity", CswNbtObjClassSize.PropertyName.InitialQuantity, "Quantity" );
-            sizeImporter.importBinding( "unitofmeasureid", CswNbtObjClassSize.PropertyName.InitialQuantity, "UnitId" );
+            sizeImporter.importBinding( "capacity", CswNbtObjClassSize.PropertyName.InitialQuantity, CswEnumNbtSubFieldName.Value.ToString() );
+            sizeImporter.importBinding( "unitofmeasureid", CswNbtObjClassSize.PropertyName.InitialQuantity, CswEnumNbtSubFieldName.NodeID.ToString() );
             sizeImporter.importBinding( "dispenseonly", CswNbtObjClassSize.PropertyName.Dispensable, "" );
             sizeImporter.importBinding( "upc", CswNbtObjClassSize.PropertyName.Barcode, "" );
             sizeImporter.importBinding( "containertype", CswNbtObjClassSize.PropertyName.ContainerType, "" );
