@@ -33,7 +33,7 @@ namespace ChemSW.Nbt.Schema
                 UnitMgr.importBinding( "convertfromeaches_base", CswNbtObjClassUnitOfMeasure.PropertyName.ConversionFactor, "" );
                 UnitMgr.importBinding( "unittype", CswNbtObjClassUnitOfMeasure.PropertyName.UnitType, "" );
 
-                UnitMgr.finalize( WhereClause: " lower(unittype)='each' " );
+                UnitMgr.finalize();
 
             }
             {
@@ -43,7 +43,7 @@ namespace ChemSW.Nbt.Schema
                 UnitMgr.importBinding( "convertfromliters_base", CswNbtObjClassUnitOfMeasure.PropertyName.ConversionFactor, "" );
                 UnitMgr.importBinding( "unittype", CswNbtObjClassUnitOfMeasure.PropertyName.UnitType, "" );
 
-                UnitMgr.finalize( WhereClause: " lower(unittype)='volume' " );
+                UnitMgr.finalize();
             }
             {
                 CswNbtSchemaUpdateImportMgr UnitMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "units_of_measure", "Unit_Weight" );
@@ -52,7 +52,7 @@ namespace ChemSW.Nbt.Schema
                 UnitMgr.importBinding( "convertfromkg_base", CswNbtObjClassUnitOfMeasure.PropertyName.ConversionFactor, "" );
                 UnitMgr.importBinding( "unittype", CswNbtObjClassUnitOfMeasure.PropertyName.UnitType, "" );
 
-                UnitMgr.finalize( WhereClause: " lower(unittype)='weight' " );
+                UnitMgr.finalize();
             }
 
         } // update()

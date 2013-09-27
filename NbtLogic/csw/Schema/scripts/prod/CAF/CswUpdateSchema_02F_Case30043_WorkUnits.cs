@@ -41,7 +41,7 @@ namespace ChemSW.Nbt.Schema
             // Relationship
             //none
 
-            importMgr.finalize( null, null, true );
+            importMgr.finalize();
 
             // Columns in work_units table
             //deleted
