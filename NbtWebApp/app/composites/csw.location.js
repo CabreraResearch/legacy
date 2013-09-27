@@ -40,8 +40,7 @@
                 var render = function () {
                     cswParent.empty();
                         
-                    cswPrivate.relatedmatch = (cswPrivate.relatedobjectclassid === cswPrivate.locationobjectclassid);
-                    if (cswPrivate.relatedmatch) {
+                    if (cswPrivate.relatednodeid) {
                         cswPrivate.nodeid = Csw.string(cswPrivate.relatednodeid, cswPrivate.nodeid).trim();
                         cswPrivate.name = Csw.string(cswPrivate.relatednodename, cswPrivate.name).trim();
                         cswPrivate.path = Csw.string(cswPrivate.relatednodename, cswPrivate.path).trim();
