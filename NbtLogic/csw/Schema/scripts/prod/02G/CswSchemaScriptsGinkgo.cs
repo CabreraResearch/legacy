@@ -33,7 +33,8 @@ namespace ChemSW.Nbt.Schema
                     new CswUpdateMetaData_02G_Case30480(),
                     new CswUpdateMetaData_02G_Case30575(),
                     new CswUpdateMetaData_02G_Case30680(),
-                    new CswUpdateMetaData_02G_Case30743()
+                    new CswUpdateMetaData_02G_Case30743(),
+                    new CswUpdateMetaData_02G_Case30813()
                 };
         } // _MetaDataScripts()
 
