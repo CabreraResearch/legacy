@@ -152,6 +152,7 @@
     n$.makeSubNameSpace('nbt');
     n$.makeSubNameSpace('promises');
     n$.makeSubNameSpace('properties');
+    n$.makeSubNameSpace('reports');
     n$.makeSubNameSpace('window');
     n$.makeSubNameSpace('wizard');
     n$.makeSubNameSpace('workers');

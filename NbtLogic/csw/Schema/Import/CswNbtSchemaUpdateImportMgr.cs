@@ -24,7 +24,7 @@ namespace ChemSW.Nbt.csw.Schema
                 {"vendors", 5},
                 {"roles", 6},
                 {"users_view", 7},
-                {"regulatory_lists", 8},
+                {"reglists_view", 8},
                 {"regulated_casnos", 9},
                 {"weight_view", 10},
                 {"volume_view", 11},
@@ -155,7 +155,7 @@ namespace ChemSW.Nbt.csw.Schema
             }
         } // _importOrder()
 
-        public void importBinding( string SourceColumnName, string DestPropertyName, string DestSubFieldName, string SheetName = null, string DestNodeTypeName = null, Int32 Instance = Int32.MinValue )
+        public void importBinding( string SourceColumnName, string DestPropertyName, string DestSubFieldName, string SheetName = null, string DestNodeTypeName = null, Int32 Instance = Int32.MinValue, string BlobTableName = "", string ClobTableName = "", string LobDataPkColOverride = "" )
         {
             if( null != _NbtImporter )
             {
@@ -172,6 +172,9 @@ namespace ChemSW.Nbt.csw.Schema
                     row["destsubfield"] = DestSubFieldName;
                     row["sourcecolumnname"] = SourceColumnName;
                     row["instance"] = Instance;
+                    row["blobtablename"] = BlobTableName;
+                    row["clobtablename"] = ClobTableName;
+                    row["lobdatapkcoloverride"] = LobDataPkColOverride;
                     _importBindingsTable.Rows.Add( row );
                 }
             }
@@ -214,7 +217,7 @@ namespace ChemSW.Nbt.csw.Schema
             set { _SourceTablePkColumnName = value;  }
         }
 
-        public void finalize( string WhereClause = null, string DefinitionName = null, bool UseView = false )
+        public void finalize( string DefinitionName = null )
         {
             if( null != _NbtImporter )
             {
@@ -228,9 +231,8 @@ namespace ChemSW.Nbt.csw.Schema
                 //Save the bindings in the DB
                 _NbtImporter.storeDefinition( _importOrderTable, _importBindingsTable, _importRelationshipsTable, DefinitionName, _importDefTable );
 
-                _populateImportQueueTable( WhereClause, UseView );
-
-                _createTriggerOnImportTable();
+                //_populateImportQueueTable( WhereClause, UseView );
+                //_createTriggerOnImportTable();
             }
         }//finalize()
     }

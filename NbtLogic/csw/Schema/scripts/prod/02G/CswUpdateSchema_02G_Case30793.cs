@@ -5,16 +5,16 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update
     /// </summary>
-    public class CswUpdateSchema_02G_CaseXXXXX : CswUpdateSchemaTo
+    public class CswUpdateSchema_02G_Case30793 : CswUpdateSchemaTo
     {
         public override CswEnumDeveloper Author
         {
-            get { return CswEnumDeveloper.NBT; }
+            get { return CswEnumDeveloper.SS; }
         }
 
         public override int CaseNo
         {                
-            get { return 0; }
+            get { return 30793; }
         }
 
         public override string ScriptName
@@ -24,14 +24,16 @@ namespace ChemSW.Nbt.Schema
 
         public override string Title
         {
-            get { return "Placeholder Script"; }
+            get { return "Update JCT10 index"; }
         }
 
         public override void update()
         {
-            // This is a placeholder script that does nothing.
+
+            _CswNbtSchemaModTrnsctn.updateIndex( "jct_nodes_props", "nodeid, nodetypepropid, field1, field2, field3, field1_numeric, field1_date, hidden","JCT10" );
+
         } // update()
 
-    }
+    } // class CswUpdateSchema_02G_Case30793
 
 }//namespace ChemSW.Nbt.Schema

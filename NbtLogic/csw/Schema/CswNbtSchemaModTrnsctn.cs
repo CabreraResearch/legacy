@@ -323,6 +323,7 @@ namespace ChemSW.Nbt.Schema
         public bool isLogicalDeleteTable( string TableName ) { return ( _CswNbtResources.isLogicalDeleteTable( TableName ) ); }
 
         public void indexColumn( string TableName, string ColumnName, string IndexNameIn = null ) { _CswNbtResources.CswResources.indexColumn( TableName, ColumnName, IndexNameIn ); }
+        public void updateIndex( string TableName, string ColumnName, string IndexName ) { _CswNbtResources.CswResources.updateIndex( TableName, ColumnName, IndexName ); }
 
         public DataTable getAllViews() { return _CswNbtResources.ViewSelect.getAllViews(); }
 
@@ -945,6 +946,13 @@ namespace ChemSW.Nbt.Schema
                     PropName = CswNbtObjClass.PropertyName.Save,
                     FieldType = CswEnumNbtFieldType.Button,
                     Extended = CswNbtNodePropButton.ButtonMode.button
+                } );
+
+                // Case 30813
+                createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( NewObjectClass )
+                {
+                    PropName = CswNbtObjClass.PropertyName.LegacyId,
+                    FieldType = CswEnumNbtFieldType.Number
                 } );
 
             }

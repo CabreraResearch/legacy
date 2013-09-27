@@ -132,17 +132,11 @@ namespace ChemSW.Nbt.WebServices
                         {
                             SizesTree.goToNthChild( i );
                             CswNbtObjClassSize SizeNode = SizesTree.getNodeForCurrentPosition();
-                            CswNbtObjClassSize SizeCopy = SizeNode.CopyNode();
-                            SizeCopy.Material.RelatedNodeId = MaterialCopy.NodeId;
-                            SizeCopy.InitialQuantity.UnitId = SizeNode.InitialQuantity.UnitId;
-                            SizeCopy.InitialQuantity.Quantity = SizeNode.InitialQuantity.Quantity;
-                            SizeCopy.CatalogNo.Text = SizeNode.CatalogNo.Text;
-                            SizeCopy.postChanges( false );
                             Copy.Data.Create_Material.state.sizes.Add( new CswNbtWebServiceC3Search.C3CreateMaterialResponse.State.SizeRecord
                             {
-                                nodeId = new CswNbtWebServiceC3Search.C3CreateMaterialResponse.State.SizeRecord.SizeData
+                                nodeTypeId = new CswNbtWebServiceC3Search.C3CreateMaterialResponse.State.SizeRecord.SizeData
                                 {
-                                    value = SizeNode.NodeId.ToString(),
+                                    value = SizeNode.NodeTypeId.ToString(),
                                     readOnly = true,
                                     hidden = true
                                 },
@@ -172,11 +166,11 @@ namespace ChemSW.Nbt.WebServices
                                 },
                                 quantityEditable = new CswNbtWebServiceC3Search.C3CreateMaterialResponse.State.SizeRecord.SizeData
                                 {
-                                    value = "checked"
+                                    value = SizeNode.QuantityEditable.Checked,
                                 },
                                 dispensible = new CswNbtWebServiceC3Search.C3CreateMaterialResponse.State.SizeRecord.SizeData
                                 {
-                                    value = "checked"
+                                    value = SizeNode.Dispensable.Checked
                                 }
                             });
                             SizesTree.goToParentNode();

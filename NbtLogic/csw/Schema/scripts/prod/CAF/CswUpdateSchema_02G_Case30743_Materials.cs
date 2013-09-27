@@ -8,7 +8,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update
     /// </summary>
-    public class CswUpdateSchema_02G_Case30743_Materials: CswUpdateSchemaTo
+    public class CswUpdateSchema_02G_Case30743_Materials : CswUpdateSchemaTo
     {
         public override string Title { get { return "Setup Materials import bindings"; } }
 
@@ -24,13 +24,13 @@ namespace ChemSW.Nbt.Schema
 
         public override string ScriptName
         {
-            get { return "Case30743_Materials"; }
+            get { return "02G_Case30743_Materials"; }
         }
 
         public override void update()
         {
             // CAF bindings definitions for Vendors
-            CswNbtSchemaUpdateImportMgr ImpMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "packages", "Chemical", ViewName : "Chemicals_View" ); //PACKAGES not MATERIALS (intentional)
+            CswNbtSchemaUpdateImportMgr ImpMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "packages", "Chemical", ViewName: "Chemicals_View" ); //PACKAGES not MATERIALS (intentional)
 
             //Simple Props
             ImpMgr.importBinding( "aqueous_solubility", CswNbtObjClassChemical.PropertyName.AqueousSolubility, "" );
@@ -49,6 +49,16 @@ namespace ChemSW.Nbt.Schema
             ImpMgr.importBinding( "storage_conditions", CswNbtObjClassChemical.PropertyName.StorageAndHandling, "" );
             ImpMgr.importBinding( "istier2", CswNbtObjClassChemical.PropertyName.IsTierII, "" );
             ImpMgr.importBinding( "productno", CswNbtObjClassChemical.PropertyName.PartNumber, "" );
+            ImpMgr.importBinding( "einecs", CswNbtObjClassChemical.PropertyName.EINECS, "" );
+            ImpMgr.importBinding( "compressed_gas", CswNbtObjClassChemical.PropertyName.CompressedGas, "" );
+            ImpMgr.importBinding( "dot_code", CswNbtObjClassChemical.PropertyName.DOTCode, "" );
+            ImpMgr.importBinding( "subclassname", CswNbtObjClassChemical.PropertyName.SubclassName, "" );
+
+            ImpMgr.importBinding( "expireinterval", CswNbtObjClassChemical.PropertyName.ExpirationInterval, CswEnumNbtSubFieldName.Value.ToString() );
+            ImpMgr.importBinding( "expireintervalunits", CswNbtObjClassChemical.PropertyName.ExpirationInterval, CswEnumNbtSubFieldName.Name.ToString() );
+
+            ImpMgr.importBinding( "openexpireinterval", CswNbtObjClassChemical.PropertyName.OpenExpireInterval, CswEnumNbtSubFieldName.Value.ToString() );
+            ImpMgr.importBinding( "openexpireintervalunits", CswNbtObjClassChemical.PropertyName.OpenExpireInterval, CswEnumNbtSubFieldName.Name.ToString() );
 
             //NFPA
             ImpMgr.importBinding( "firecode", CswNbtObjClassChemical.PropertyName.NFPA, CswEnumNbtSubFieldName.Flammability.ToString() );
@@ -62,26 +72,14 @@ namespace ChemSW.Nbt.Schema
             //Transformed props
             ImpMgr.importBinding( "physical_state_trans", CswNbtObjClassChemical.PropertyName.PhysicalState, "" );
             ImpMgr.importBinding( "nonhazardous3e_trans", CswNbtObjClassChemical.PropertyName.Hazardous, "" );
-            //TODO: find/replace substrings in PPE
+            ImpMgr.importBinding( "ppe_trans", CswNbtObjClassChemical.PropertyName.PPE, "" );
 
-            //TODO: lob data
-            //disposal                 -> new prop "Disposal Instructions as memo
-            //struct_pict              -> Structure (mol)
-                                       
-            //TODO: new props          
-            //dot_code                 -> "DOT Code" as list
-            //hazards                  -> "Hazard Info" as memo
-            //einecs                   -> "EINCES" as text?
-            //compressed_gas           -> "Compressed Gas" as bool?
-            //smiles                   -> "SMILES" as text?
-            //openexpireinterval       -> "Open Expire Interval" as time? (same as Expire Interval?)
-            //openexpireintervalunits  -> "Open Expire Interval" as time? (same as Expire Interval?)
-            //creation_date            -> "Legacy Creation Date" as server managed text
-            //creationsiteid           -> "Legacy Creation Site Id" as server managed number
-            //materialvarietyid        -> need more info
+            //LOBs
+            ImpMgr.importBinding( "struct_pict", CswNbtObjClassChemical.PropertyName.Structure, "", BlobTableName: "materials", LobDataPkColOverride: "materialid" );
+            ImpMgr.importBinding( "disposal", CswNbtObjClassChemical.PropertyName.DisposalInstructions, "", BlobTableName: "materials", LobDataPkColOverride: "materialid" );
+            ImpMgr.importBinding( "smiles", CswNbtObjClassChemical.PropertyName.SMILES, "", ClobTableName: "materials", LobDataPkColOverride: "materialid" );
 
-
-            ImpMgr.finalize( UseView : true );
+            ImpMgr.finalize();
 
         }
     }

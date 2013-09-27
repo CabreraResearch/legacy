@@ -17,7 +17,7 @@ namespace ChemSW.Nbt.Schema
 
         public override string ScriptName
         {
-            get { return ""; }
+            get { return "02F_Case30041_NbtImportQueue"; }
         }
 
         #region Blame Logic

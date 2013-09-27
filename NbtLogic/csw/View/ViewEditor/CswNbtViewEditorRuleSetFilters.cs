@@ -70,13 +70,16 @@ namespace ChemSW.Nbt.ViewEditor
                     if( parent.SecondId == relationship.SecondId )
                     {
                         CswNbtViewProperty viewProp = relationship.Properties.FirstOrDefault( vp => vp.Name == Request.Property.Name );
-                        if( null != viewProp && false == _hasFilter( viewProp ) )
+                        if( null != viewProp )
                         {
-                            CurrentView.AddViewPropertyFilter( viewProp,
-                                                               Conjunction : (CswEnumNbtFilterConjunction) Request.FilterConjunction,
-                                                               SubFieldName : (CswEnumNbtSubFieldName) Request.FilterSubfield,
-                                                               FilterMode : (CswEnumNbtFilterMode) Request.FilterMode,
-                                                               Value : Request.FilterValue );
+                            if( false == _hasFilter( viewProp ) )
+                            {
+                                CurrentView.AddViewPropertyFilter( viewProp,
+                                                                   Conjunction : (CswEnumNbtFilterConjunction) Request.FilterConjunction,
+                                                                   SubFieldName : (CswEnumNbtSubFieldName) Request.FilterSubfield,
+                                                                   FilterMode : (CswEnumNbtFilterMode) Request.FilterMode,
+                                                                   Value : Request.FilterValue );
+                            }
                         }
                         else
                         {
@@ -197,16 +200,6 @@ namespace ChemSW.Nbt.ViewEditor
                 }
             };
             View.Root.eachRelationship( null, eachProp );
-        }
-
-        private bool _hasFilter( CswNbtViewProperty ViewProp )
-        {
-            return ViewProp.Filters.Any( Filter =>
-                Filter.Value == Request.FilterValue &&
-                Filter.Conjunction == (CswEnumNbtFilterConjunction) Request.FilterConjunction &&
-                Filter.FilterMode == (CswEnumNbtFilterMode) Request.FilterMode &&
-                Filter.SubfieldName == (CswEnumNbtSubFieldName) Request.FilterSubfield
-                );
         }
 
         private string _getRelationshipOwnerName( CswNbtViewRelationship Relationship )

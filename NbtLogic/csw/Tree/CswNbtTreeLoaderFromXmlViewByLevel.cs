@@ -392,50 +392,51 @@ namespace ChemSW.Nbt
                     if( null != Prop.MetaDataProp )
                     {
                         CswEnumNbtPropColumn SubFieldColumn = Prop.MetaDataProp.getFieldTypeRule().SubFields.Default.Column;
+                        string aliasName = "mssqlorder" + sortAlias;
+                        Select += ",(select ";
                         if( SubFieldColumn == CswEnumNbtPropColumn.Field1_Numeric ||
                                 SubFieldColumn == CswEnumNbtPropColumn.Field1_Date ||
                                 SubFieldColumn == CswEnumNbtPropColumn.Field2_Numeric ||
                                 SubFieldColumn == CswEnumNbtPropColumn.Field2_Date )
                         {
-                            Select += ", j" + sortAlias + "." + SubFieldColumn.ToString() + " mssqlorder" + sortAlias;
+                            Select += SubFieldColumn.ToString();
                         }
                         else
                         {
-                            Select += ",lower(j" + sortAlias + "." + SubFieldColumn.ToString() + ") mssqlorder" + sortAlias;
+                            Select += "lower(j" + sortAlias + "." + SubFieldColumn.ToString() + ")";
                         }
+                        Select += " from jct_nodes_props where nodeid = n.nodeid and ";
+                        if( Prop.Type == CswEnumNbtViewPropType.NodeTypePropId )
+                        {
+                            Select += "nodetypepropid = " + Prop.NodeTypePropId;
+                        }
+                        else
+                        {
+                            Select += "nodetypepropid in (select nodetypepropid from nodetype_props where objectclasspropid = " + Prop.ObjectClassPropId + ")";
+                        }
+                        Select += ") as " + aliasName;
 
                         // Case 10533
                         if( SubFieldColumn == CswEnumNbtPropColumn.Gestalt ||
                                 SubFieldColumn == CswEnumNbtPropColumn.ClobData )
                         {
-                            OrderByString = "lower(to_char(j" + sortAlias + "." + SubFieldColumn.ToString() + "))";
+                            OrderByString = "lower(to_char(" + aliasName + "))";
                         }
                         else if( SubFieldColumn == CswEnumNbtPropColumn.Field1_Numeric ||
                                     SubFieldColumn == CswEnumNbtPropColumn.Field1_Date ||
                                     SubFieldColumn == CswEnumNbtPropColumn.Field2_Numeric ||
                                     SubFieldColumn == CswEnumNbtPropColumn.Field2_Date )
                         {
-                            OrderByString = "j" + sortAlias + "." + SubFieldColumn.ToString();
+                            OrderByString = aliasName;
                         }
                         else
                         {
-                            OrderByString = "lower(j" + sortAlias + "." + SubFieldColumn.ToString() + ")";
+                            OrderByString = "lower(" + aliasName + ")";
                         }
 
                         if( Prop.SortMethod == CswEnumNbtViewPropertySortMethod.Descending )
                         {
                             OrderByString += " desc";
-                        }
-
-                        From += " left outer join jct_nodes_props j" + sortAlias + " ";
-                        From += "   on (j" + sortAlias + ".nodeid = n.nodeid and ";
-                        if( Prop.Type == CswEnumNbtViewPropType.NodeTypePropId )
-                        {
-                            From += " j" + sortAlias + ".nodetypepropid = " + Prop.NodeTypePropId + ") ";
-                        }
-                        else
-                        {
-                            From += " j" + sortAlias + ".nodetypepropid in (select nodetypepropid from nodetype_props where objectclasspropid = " + Prop.ObjectClassPropId + ")) ";
                         }
 
                         Int32 OrderByOrder = Prop.Order;
@@ -555,10 +556,31 @@ namespace ChemSW.Nbt
                                 string FilterClause = string.Empty;// @"select z.nodeid, '1' as included from nodes z where ";
                                 if( Filter.FilterMode == CswEnumNbtFilterMode.Null )
                                 {
-                                    FilterClause += @"select z.nodeid, '1' as included from nodes z where (z.nodeid not in (
-                                  select jnp.nodeid
-                                    from jct_nodes_props jnp
-                                    join nodetype_props p on (jnp.nodetypepropid = p.nodetypepropid) ";
+                                    FilterClause += @"select z.nodeid, '1' as included 
+                                                        from nodes z ";
+                                    if( Relationship.SecondType == CswEnumNbtViewRelatedIdType.NodeTypeId )
+                                    {
+                                        FilterClause += @" join nodetypes t on z.nodetypeid = t.nodetypeid
+                                                          where (t.firstversionid = " + Relationship.SecondId + ") ";
+                                    }
+                                    else if( Relationship.SecondType == CswEnumNbtViewRelatedIdType.ObjectClassId )
+                                    {
+                                        FilterClause += @" join nodetypes t on z.nodetypeid = t.nodetypeid
+                                                           join object_class o on t.objectclassid = o.objectclassid
+                                                          where (o.objectclassid = " + Relationship.SecondId + ") ";
+                                    }
+                                    else if( Relationship.SecondType == CswEnumNbtViewRelatedIdType.PropertySetId )
+                                    {
+                                        FilterClause += @" join nodetypes t on z.nodetypeid = t.nodetypeid
+                                                           join object_class o on t.objectclassid = o.objectclassid
+                                                           join jct_propertyset_objectclass jpo on (o.objectclassid = jpo.objectclassid) 
+                                                           join property_set ps on (jpo.propertysetid = ps.propertysetid) 
+                                                          where (ps.propertysetid = " + Relationship.SecondId + ") ";
+                                    }
+                                    FilterClause += @"      and (z.nodeid not in (
+                                                           select jnp.nodeid
+                                                             from jct_nodes_props jnp
+                                                             join nodetype_props p on (jnp.nodetypepropid = p.nodetypepropid) ";
                                     if( Prop.Type == CswEnumNbtViewPropType.NodeTypePropId )
                                     {
                                         FilterClause += @"  where (lower(p.propname) = '" + CswTools.SafeSqlParam( Prop.NodeTypeProp.PropName.ToLower() ) + @"')) ";
@@ -566,7 +588,7 @@ namespace ChemSW.Nbt
                                     else
                                     {
                                         FilterClause += @"   join object_class_props op on (p.objectclasspropid = op.objectclasspropid)
-                                   where op.objectclasspropid = " + Prop.ObjectClassPropId + @")";
+                                                            where op.objectclasspropid = " + Prop.ObjectClassPropId + @")";
                                     }
                                     FilterClause += @" or z.nodeid in (select n.nodeid from nodes n ";
 
@@ -585,8 +607,29 @@ namespace ChemSW.Nbt
                                     FilterClause += @"            join object_class_props op on (op.objectclasspropid = " + Prop.ObjectClassPropId + @")
                                                                   join nodetype_props p on (p.objectclasspropid = op.objectclasspropid) ";
                                 }
-                                FilterClause += @"                join jct_nodes_props jnp on (jnp.nodeid = n.nodeid and jnp.nodetypepropid = p.nodetypepropid)
-                                                                 where " + FilterValue + @"";
+                                FilterClause += @"                join jct_nodes_props jnp on (jnp.nodeid = n.nodeid and jnp.nodetypepropid = p.nodetypepropid) ";
+                                
+                                if( Relationship.SecondType == CswEnumNbtViewRelatedIdType.NodeTypeId )
+                                {
+                                    FilterClause += @" join nodetypes t on n.nodetypeid = t.nodetypeid
+                                                        where (t.firstversionid = " + Relationship.SecondId + ") ";
+                                }
+                                else if( Relationship.SecondType == CswEnumNbtViewRelatedIdType.ObjectClassId )
+                                {
+                                    FilterClause += @" join nodetypes t on n.nodetypeid = t.nodetypeid
+                                                        join object_class o on t.objectclassid = o.objectclassid
+                                                        where (o.objectclassid = " + Relationship.SecondId + ") ";
+                                }
+                                else if( Relationship.SecondType == CswEnumNbtViewRelatedIdType.PropertySetId )
+                                {
+                                    FilterClause += @" join nodetypes t on n.nodetypeid = t.nodetypeid
+                                                        join object_class o on t.objectclassid = o.objectclassid
+                                                        join jct_propertyset_objectclass jpo on (o.objectclassid = jpo.objectclassid) 
+                                                        join property_set ps on (jpo.propertysetid = ps.propertysetid) 
+                                                        where (ps.propertysetid = " + Relationship.SecondId + ") ";
+                                }
+
+                                FilterClause += @" and " + FilterValue + @"";
                                 if( Filter.FilterMode == CswEnumNbtFilterMode.Null )
                                 {
                                     FilterClause += "))";

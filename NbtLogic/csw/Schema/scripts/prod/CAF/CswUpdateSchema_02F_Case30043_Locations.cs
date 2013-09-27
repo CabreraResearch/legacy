@@ -115,7 +115,7 @@ namespace ChemSW.Nbt.Schema
 
             LocationsMgr.importRelationship( LocationSheetName, BoxNTName, CswNbtObjClassLocation.PropertyName.Location, 5, "shelfid" );
 
-            LocationsMgr.finalize( null, null, true );
+            LocationsMgr.finalize();
 
         } // update()
 

@@ -187,10 +187,6 @@ namespace ChemSW.Nbt.WebServices
                 [DataContract]
                 public class SizeRecord
                 {
-                    // TODO: Discuss removing this with Brendan as he uses it in getCopyData() in CswNbtWebServiceNode.cs
-                    [DataMember]
-                    public SizeData nodeId = null;
-
                     [DataMember]
                     public SizeData nodeTypeId = null;
 
@@ -275,29 +271,21 @@ namespace ChemSW.Nbt.WebServices
 
             //Create the "All Sources" option
             CswCommaDelimitedString AllSources = new CswCommaDelimitedString();
-            for( int i = 0; i < SourcesList.AvailableDataSources.Data.Count(); i++ )
-            {
-                string dsName = SourcesList.AvailableDataSources.Data[i].DataSourceName;
-                AllSources.Add( dsName );
-                DataSource dS = new DataSource();
-                dS.value = dsName;
-                dS.display = dsName;
-                AvailableDataSources.Add( dS );
-            }
-            //AllSources.FromArray( SourcesList.AvailableDataSources );
+            AllSources.FromArray( SourcesList.AvailableDataSources );
 
             DataSource allSourcesDs = new DataSource();
             allSourcesDs.value = AllSources.ToString();
             allSourcesDs.display = "All Sources";
             AvailableDataSources.Add( allSourcesDs );
+
             //Add available data source options
-            //foreach( string DataSource in SourcesList.AvailableDataSources )
-            //{
-            //    DataSource dS = new DataSource();
-            //    dS.value = DataSource;
-            //    dS.display = DataSource;
-            //    AvailableDataSources.Add( dS );
-            //}
+            foreach( string DataSource in SourcesList.AvailableDataSources )
+            {
+                DataSource dS = new DataSource();
+                dS.value = DataSource;
+                dS.display = DataSource;
+                AvailableDataSources.Add( dS );
+            }
 
             Return.Data.AvailableDataSources = AvailableDataSources;
 

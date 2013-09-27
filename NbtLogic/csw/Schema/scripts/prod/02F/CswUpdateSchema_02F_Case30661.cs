@@ -11,6 +11,8 @@ namespace ChemSW.Nbt.Schema
     /// </summary>
     public class CswUpdateSchema_02F_Case30661 : CswUpdateSchemaTo
     {
+        public override string Title { get { return "Disable CAFImport rule"; } }
+
         public override CswEnumDeveloper Author
         {
             get { return CswEnumDeveloper.CM; }
