@@ -411,8 +411,11 @@ namespace ChemSW.Nbt.ImportExport
                                                                                                         Order.NodeType.NameTemplatePropIds.Contains( r.Relationship.FirstPropVersionId ) );
 
             IEnumerable<CswNbtImportDefBinding> UniqueBindings = NodeTypeBindings.Where( b => b.DestProperty.IsUnique() ||
-                                                                                              b.DestProperty.IsCompoundUnique() ||
-                                                                                              Order.NodeType.NameTemplatePropIds.Contains( b.DestProperty.FirstPropVersionId ) );
+                                                                                              b.DestProperty.IsCompoundUnique() );
+            if( false == UniqueBindings.Any() ) // case 30821
+            {
+                UniqueBindings = NodeTypeBindings.Where( b => Order.NodeType.NameTemplatePropIds.Contains( b.DestProperty.FirstPropVersionId ) );
+            }
 
             bool allEmpty = true;
             // Skip rows with null values for all unique properties
