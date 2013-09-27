@@ -62,7 +62,7 @@ namespace ChemSW.Nbt.Schema
                     }
 
                     CswCommaDelimitedString FailedOnColumns = new CswCommaDelimitedString();
-                    CswCommaDelimitedString ExpectedColumns = new CswCommaDelimitedString() { "nbtimportqueueid", "state", "itempk", "tablename", "priority", "errorlog", "viewname" };
+                    CswCommaDelimitedString ExpectedColumns = new CswCommaDelimitedString() { "nbtimportqueueid", "state", "itempk", "priority", "errorlog", "sheetname" };
                     foreach( string ExpectedColumn in ExpectedColumns.Where( ExpectedColumn => false == ActualColumns.Contains( ExpectedColumn ) ) )
                     {
                         FailedOnColumns.Add( ExpectedColumn );

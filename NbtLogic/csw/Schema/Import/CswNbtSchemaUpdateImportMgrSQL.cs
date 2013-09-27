@@ -15,7 +15,8 @@ namespace ChemSW.Nbt.csw.Schema
         private void _populateImportQueueTable( string WhereClause, bool UseView )
         {
             string State = CswScheduleLogicNbtCAFImport.State.I.ToString();
-            string DataSource = UseView ? SourceView : SourceTable;
+            string DataSource = UseView ? _ViewName : _SourceTableName;
+            
 
             //Optional extension to where clause. Logical deletes already excluded.
             WhereClause = WhereClause ?? string.Empty;
@@ -26,10 +27,10 @@ namespace ChemSW.Nbt.csw.Schema
 
             //Populate the import queue
             string SqlText = "insert into " + ImportTable + " ( nbtimportqueueid, state, itempk, sheetname, priority, errorlog) " +
-                             @" select " + ImportSequence + ", '" + State + "', " + SourceTablePkColumnName + ", '" + DataSource + "',0, '' from " + DataSource + " where deleted='0' " + WhereClause;
+                             @" select " + ImportSequence + ", '" + State + "', " + SourceTablePkColumnName + ", '" + DataSource + "',0, '' from " + DataSource + "@" + _CAFDbLink + " where deleted='0' " + WhereClause + ";";
             //SchemaModTrnsctn.execArbitraryPlatformNeutralSql( SqlText );
 
-            using( StreamWriter ImportQueueStream = new StreamWriter( Application.StartupPath + "..\\..\\..\\Scripts\\cafsql\\importqueue\\" + "fill_queue_" + _SourceTableName + ".sql" ) )
+            using( StreamWriter ImportQueueStream = new StreamWriter( Application.StartupPath + "..\\..\\..\\Scripts\\cafsql\\importqueue\\" + "fill_queue_" + DataSource + ".sql" ) )
             {
                 ImportQueueStream.Write( SqlText );
             }

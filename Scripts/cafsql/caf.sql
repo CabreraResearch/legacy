@@ -283,3 +283,33 @@ from materials m
              join materials_subclass ms on ms.materialsubclassid = m.materialsubclassid
              join materials_class mc on mc.materialclassid = ms.materialclassid
      where m.deleted = 0 and p.deleted = 0 and mc.classname = 'CHEMICAL');
+	 
+---Weight
+create or replace view weight_view as
+select unitofmeasurename,
+       unittype,
+       convertfromkgs_base as conversionfactor,
+       deleted,
+       unitofmeasureid
+from units_of_measure
+where lower(unittype)='weight';
+
+---Volume
+create or replace view volume_view as
+select unitofmeasurename,
+       unittype,
+       convertfromliters_base as conversionfactor,
+       deleted,
+       unitofmeasureid
+from units_of_measure
+where lower(unittype)='volume';
+
+---Each
+create or replace view each_view as
+select unitofmeasurename,
+       unittype,
+       convertfromeaches_base as conversionfactor,
+       deleted,
+       unitofmeasureid
+from units_of_measure
+where lower(unittype)='each';
