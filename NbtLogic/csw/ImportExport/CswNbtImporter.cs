@@ -509,9 +509,8 @@ namespace ChemSW.Nbt.ImportExport
 
                         foreach( CswNbtImportDefRelationship Relation in UniqueRelationships )
                         {
-                            CswNbtImportDefOrder thisTargetOrder =
-                                BindingDef.ImportOrder.Values.FirstOrDefault(
-                                    o => Relation.Relationship.FkMatches( o.NodeType ) && o.Instance == Relation.Instance );
+                            CswNbtImportDefOrder thisTargetOrder = BindingDef.ImportOrder.Values.FirstOrDefault( o => Relation.Relationship.FkMatches( o.NodeType ) &&
+                                                                                                                      o.Instance == Relation.Instance );
                             Int32 Value = null != ImportRow[Relation.SourceRelColumnName]
                                               ? CswConvert.ToInt32( ImportRow[Relation.SourceRelColumnName] )
                                               : CswConvert.ToInt32( ImportRow[thisTargetOrder.PkColName] );
@@ -537,16 +536,14 @@ namespace ChemSW.Nbt.ImportExport
 
                         if( atLeastOneFilter )
                         {
-                            ICswNbtTree UniqueTree = _CswNbtResources.Trees.getTreeFromView( UniqueView, false, true,
-                                                                                             true );
+                            ICswNbtTree UniqueTree = _CswNbtResources.Trees.getTreeFromView( UniqueView, false, true, true );
                             if( UniqueTree.getChildNodeCount() > 0 )
                             {
                                 UniqueTree.goToNthChild( 0 );
                                 Node = UniqueTree.getNodeForCurrentPosition();
                                 if( Overwrite )
                                 {
-                                    _importPropertyValues( BindingDef, NodeTypeBindings, RowRelationships, ImportRow,
-                                                           Node );
+                                    _importPropertyValues( BindingDef, NodeTypeBindings, RowRelationships, ImportRow, Node );
                                     Node.postChanges( false );
                                 }
                                 foundMatch = true;
