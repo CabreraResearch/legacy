@@ -182,6 +182,9 @@ namespace ChemSW.Nbt.WebServices
 
                     [DataMember]
                     public string val = string.Empty;
+
+                    [DataMember]
+                    public string nodelink = string.Empty;
                 }
 
                 [DataContract]
@@ -402,7 +405,7 @@ namespace ChemSW.Nbt.WebServices
                         } );
 
                     // Get or create a vendor node
-                    C3CreateMaterialResponse.State.Supplier Supplier = C3Import.createVendorNode( C3ProductDetails.SupplierName );
+                    C3CreateMaterialResponse.State.Supplier Supplier = C3Import.constructVendorObject( C3ProductDetails.SupplierName );
 
                     // Create size node(s)
                     Collection<C3CreateMaterialResponse.State.SizeRecord> ProductSizes = C3Import.constructSizeObjects();
@@ -799,11 +802,11 @@ namespace ChemSW.Nbt.WebServices
             }
 
             /// <summary>
-            /// Creates a new Vendor node if the vendor doesn't already exist otherwise uses the pre-existing Vendor node.
+            /// 
             /// </summary>
             /// <param name="VendorName"></param>
-            /// <returns>A C3CreateMaterialResponse.State.Supplier object with the Vendor name and Vendor nodeid set.</returns>
-            public C3CreateMaterialResponse.State.Supplier createVendorNode( string VendorName )
+            /// <returns></returns>
+            public C3CreateMaterialResponse.State.Supplier constructVendorObject( string VendorName )
             {
                 C3CreateMaterialResponse.State.Supplier Supplier = new C3CreateMaterialResponse.State.Supplier();
 
@@ -830,16 +833,17 @@ namespace ChemSW.Nbt.WebServices
                 if( VendorsTree.getChildNodeCount() > 0 )
                 {
                     VendorsTree.goToNthChild( 0 );
-
-                    // Add to the return object
-                    Supplier.name = VendorsTree.getNodeNameForCurrentPosition();
-                    Supplier.val = VendorsTree.getNodeIdForCurrentPosition().ToString();
+                    CswNbtObjClassVendor VendorNode = VendorsTree.getNodeForCurrentPosition();
+                    Supplier.name = CswConvert.ToString( VendorNode.VendorName );
+                    Supplier.val = CswConvert.ToString( VendorNode.NodeId );
+                    Supplier.nodelink = CswConvert.ToString( VendorNode.Node.NodeLink );
                 }
                 else
                 {
                     // Don't create a new node just return an empty value in the return object - Case 28687
                     Supplier.name = VendorName;
                     Supplier.val = string.Empty;
+                    Supplier.nodelink = string.Empty;
                 }
 
                 return Supplier;
