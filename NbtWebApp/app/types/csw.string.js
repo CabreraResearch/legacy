@@ -120,11 +120,14 @@
                 /// </summary>
                 var isCaseSensitive = Csw.bool(caseSensitive);
                 str = Csw.string(str).trim();
-                if (false === isCaseSensitive) {
-                    str = str.toLowerCase();
-                }
                 var match = cswPublic.array.filter(function (matStr) {
-                    return ((isCaseSensitive && Csw.string(matStr).trim() === str) || Csw.string(matStr).trim().toLowerCase() === str);
+                    var isMatch;
+                    if (isCaseSensitive) {
+                        isMatch = Csw.string(matStr).trim() === str;
+                    } else {
+                        isMatch = Csw.string(matStr).trim().toLowerCase() === str.toLowerCase();
+                    }
+                    return isMatch;
                 });
                 return match.length > 0;
             },

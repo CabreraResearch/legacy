@@ -120,14 +120,14 @@
             }, 'Value must be a whole number');
             cswPrivate.numberTextBox.addClass('validateInteger');
 
-            // cswPrivate.validatorMethods.validateIntegerGreaterThanZero
-            cswPrivate.validatorMethods.validateIntegerGreaterThanZero = function () {
-                return (Csw.validateIntegerGreaterThanZero(cswPrivate.numberTextBox.val()));
+            // cswPrivate.validatorMethods.validateGreaterThanZero
+            cswPrivate.validatorMethods.validateGreaterThanZero = function () {
+                return (Csw.validateGreaterThanZero(cswPrivate.numberTextBox.val()));
             };
-            $.validator.addMethod('validateIntegerGreaterThanZero', function (value, element) {
-                return Csw.tryExec(cswPrivate.validatorMethods.validateIntegerGreaterThanZero);
+            $.validator.addMethod('validateGreaterThanZero', function (value, element) {
+                return Csw.tryExec(cswPrivate.validatorMethods.validateGreaterThanZero);
             }, 'Value must be a non-zero, positive number');
-            cswPrivate.numberTextBox.addClass('validateIntegerGreaterThanZero');
+            cswPrivate.numberTextBox.addClass('validateGreaterThanZero');
 
             // cswPrivate.validatorMethods.validateUnitPresent
             cswPrivate.validatorMethods.validateUnitPresent = function () {

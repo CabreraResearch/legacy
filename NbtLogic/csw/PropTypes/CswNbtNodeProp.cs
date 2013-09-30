@@ -426,7 +426,7 @@ namespace ChemSW.Nbt.PropTypes
             // case 25780 - copy first 512 characters of gestalt to gestaltsearch
             if( _CswNbtNodePropData.wasAnySubFieldModified() )
             {
-                string GestaltSearchValue = _CswNbtNodePropData.Gestalt;
+                string GestaltSearchValue = _CswNbtNodePropData.Gestalt.ToLower();
                 if( GestaltSearchValue.Length > 512 )
                 {
                     GestaltSearchValue = GestaltSearchValue.Substring( 0, 512 );

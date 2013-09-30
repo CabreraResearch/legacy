@@ -1,1 +1,1 @@
-insert into nbtimportqueue@CAFLINK ( nbtimportqueueid, state, itempk, tablename, priority, errorlog, viewname )  select seq_nbtimportqueueid.nextval@CAFLINK, 'I', unitofmeasureid, 'units_of_measure',0, '', '' from units_of_measure@CAFLINK where deleted='0'  and  lower(unittype)='weight' 
+insert into nbtimportqueue@CAFLINK ( nbtimportqueueid, state, itempk, sheetname, priority, errorlog)  select seq_nbtimportqueueid.nextval@CAFLINK, 'I', unitofmeasureid, 'weight_view',0, '' from weight_view@CAFLINK where deleted='0' 

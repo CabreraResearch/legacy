@@ -60,7 +60,7 @@
         /// <param name="str" type="Object"> String or object to test </param>
         /// <returns type="Boolean" />
         var ret = false;
-        if (isNumber(obj) && false === Csw.isNullOrEmpty(obj)) {
+        if (isNumber(number(obj)) && false === Csw.isNullOrEmpty(obj)) {
             var num = +obj;
             if (false === isNaN(num)) {
                 ret = true;
@@ -126,11 +126,11 @@
     }
     Csw.register('validateInteger', validateInteger);
 
-    function validateIntegerGreaterThanZero(value) {
+    function validateGreaterThanZero(value) {
         var regex = /^(\d*(\.|)\d*)$/g;
-        return (regex.test(value));
+        return ((regex.test(value) && number(value) > 0) || value === null);
     }
-    Csw.register('validateIntegerGreaterThanZero', validateIntegerGreaterThanZero);
+    Csw.register('validateGreaterThanZero', validateGreaterThanZero);
 
     function getMaxValueForPrecision(precision, maxPrecision) {
         var i,
@@ -148,6 +148,7 @@
     }
     Csw.register('getMaxValueForPrecision', getMaxValueForPrecision);
 
+    //Validates the character length of the string-ified number
     function validateMaxLength(value, maxLength) {
         return (value.length <= maxLength);
     }
