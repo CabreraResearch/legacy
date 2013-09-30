@@ -650,8 +650,18 @@ namespace ChemSW.Nbt.ImportExport
 
                     CswTableUpdate blobDataTblUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "importer.fileimport", "blob_data" );
 
-                    DataTable blobDataTbl = ( Int32.MinValue != BlobDataId ?  blobDataTblUpdate.getTable( "where blobdataid = " + BlobDataId ) : blobDataTblUpdate.getEmptyTable());
-                    DataRow blobDataRow = ( blobDataTbl.Rows.Count > 0 ?blobDataTbl.Rows[0] : blobDataTbl.NewRow() );
+                    DataTable blobDataTbl = ( Int32.MinValue != BlobDataId ? blobDataTblUpdate.getTable( "where blobdataid = " + BlobDataId ) : blobDataTblUpdate.getEmptyTable() );
+                    DataRow blobDataRow = null;
+                    if( blobDataTbl.Rows.Count > 0 )
+                    {
+                        blobDataRow = blobDataTbl.Rows[0];
+                    }
+                    else
+                    {
+                        blobDataRow = blobDataTbl.NewRow();
+                        blobDataRow["jctnodepropid"] = Node.Properties[Binding.DestProperty].JctNodePropId;
+                        blobDataTbl.Rows.Add( blobDataRow );
+                    }
 
                     if( CswEnumNbtSubFieldName.Name.ToString() == Binding.DestSubFieldName )
                     {

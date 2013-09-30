@@ -38,11 +38,11 @@ namespace ChemSW.Nbt.Schema
             ImpMgr.importBinding( "captureddate", CswNbtObjClassSDSDocument.PropertyName.RevisionDate, "" );
 
             //relationships
-            ImpMgr.importBinding( "packageid", "Material", "" ); //SDS Document NTP "Owner" is changed to "Material"
+            ImpMgr.importBinding( "packageid", "Material", CswEnumNbtSubFieldName.NodeID.ToString() ); //SDS Document NTP "Owner" is changed to "Material"
 
             //transformed props
             ImpMgr.importBinding( "language_trans", CswNbtObjClassSDSDocument.PropertyName.Language, "" );
-            ImpMgr.importBinding( "fileextention_trans", CswNbtObjClassSDSDocument.PropertyName.FileType, "" );
+            ImpMgr.importBinding( "fileextension_trans", CswNbtObjClassSDSDocument.PropertyName.FileType, "" );
 
             //file specific bindings
             ImpMgr.importBinding( "content_type", CswNbtObjClassSDSDocument.PropertyName.File, CswEnumNbtSubFieldName.ContentType.ToString() );
