@@ -51,7 +51,7 @@ namespace ChemSW.Nbt.Schema
             ImpMgr.importBinding( "document", CswNbtObjClassDocument.PropertyName.Link, CswEnumNbtSubFieldName.Href.ToString(), BlobTableName : "documents", LobDataPkColOverride : "documentid" );
 
             //Use the url as the text that displays for links
-            ImpMgr.importBinding( "document", CswNbtObjClassDocument.PropertyName.Link, CswEnumNbtSubFieldName.Text.ToString(), BlobTableName : "documents", LobDataPkColOverride : "documentid" );
+            ImpMgr.importBinding( "description", CswNbtObjClassDocument.PropertyName.Link, CswEnumNbtSubFieldName.Text.ToString(), BlobTableName : "documents", LobDataPkColOverride : "documentid" );
 
             //Legacy Id for documents is "<documentid>_<packageid>" (ex: "123_343")
             ImpMgr.importBinding( "legacyid", "Legacy Id", "" );
