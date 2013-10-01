@@ -31,7 +31,7 @@
                 break;
             case Csw.enums.nbtButtonAction.refreshonadd:
                 if (tabsAndProps) {
-                    tabsAndProps.refresh(null, null); //do not attempt to refresh the properties on add (the dialog is closing)
+                    tabsAndProps.refreshOnAdd(opts.data.savedprops.node);
                     tabsAndProps.tearDown();
                     Csw.tryExec(onRefresh);
                 } else {
