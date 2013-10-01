@@ -92,7 +92,7 @@
 
         //#endregion State Functions
 
-        cswPrivate.isConstituent = function() {
+        cswPrivate.isConstituent = function () {
             var ret = false;
             if (cswPrivate.materialTypeSelect) {
                 ret = cswPrivate.state.constituentNtIds.contains(cswPrivate.materialTypeSelect.selectedVal());
@@ -165,7 +165,7 @@
         };
 
         cswPrivate.handleStep = function (newStepNo) {
-            var onStepChangeSuccess = function() {
+            var onStepChangeSuccess = function () {
                 cswPrivate.stepFunc[cswPrivate.currentStepNo](cswPrivate.currentStepNo);
             };
             cswPrivate.toggleButton(cswPrivate.buttons.next, false); //let each step activate this button if needed
@@ -176,7 +176,7 @@
                 cswPrivate.onStepChange[cswPrivate.lastStepNo](cswPrivate.lastStepNo, onStepChangeSuccess);
             }
         };
-        
+
         cswPrivate.isLastStep = function () {
             return ((false === cswPrivate.state.canAddSDS || false === cswPrivate.SDSModuleEnabled) &&
                         (false === cswPrivate.containersModuleEnabled || cswPrivate.isConstituent()));
@@ -233,9 +233,9 @@
                                         val: cswPrivate.supplierSelect.val()
                                     };
                                     if (cswPrivate.supplierSelect.selectedText() === cswPrivate.newSupplierName) {
-                                        cswPrivate.makeNewC3SupplierInput(true);
+                                        cswPrivate.makeNewC3SupplierInput(true, 1, 1);
                                     } else {
-                                        cswPrivate.makeNewC3SupplierInput(false);
+                                        cswPrivate.makeNewC3SupplierInput(false, 1, 1);
                                     }
                                 }
                             }
@@ -329,9 +329,9 @@
 
                         var SupplierCtrlTbl = tbl.cell(3, 2).table();
 
-                        cswPrivate.makeNewC3SupplierInput = function (visible) {
+                        cswPrivate.makeNewC3SupplierInput = function (visible, row, column) {
                             if (!cswPrivate.newC3SupplierInput) {
-                                cswPrivate.newC3SupplierInput = SupplierCtrlTbl.cell(1, 1).input({
+                                cswPrivate.newC3SupplierInput = SupplierCtrlTbl.cell(row, column).input({
                                     value: cswPrivate.state.c3SupplierName,
                                     onChange: changeMaterial
                                 });
@@ -385,13 +385,14 @@
                                 selectedNodeLink: cswPrivate.state.supplier.nodelink || '',
                                 onChange: changeMaterial,
                                 onSelectNode: function (nodeObject) {
-                                    if (nodeObject) {
+                                    // We only want to perform this logic if we get the 'Search' option
+                                    if (nodeObject && cswPrivate.useSearch) {
                                         cswPrivate.state.supplier = {
                                             name: nodeObject.nodename,
                                             val: nodeObject.nodeid,
                                             nodelink: nodeObject.nodelink
                                         };
-                                        cswPrivate.makeNewC3SupplierInput(false);
+                                        cswPrivate.makeNewC3SupplierInput(false, 1, 1);
                                     }
                                 },
                                 onRemoveSelectedNode: function () {
@@ -400,7 +401,7 @@
                                         val: "",
                                         nodelink: ""
                                     };
-                                    cswPrivate.makeNewC3SupplierInput(true);
+                                    cswPrivate.makeNewC3SupplierInput(true, 1, 1);
                                 },
                                 isRequired: true,
                                 extraOptions: extraOptions,
@@ -409,14 +410,15 @@
                                     if (cswPrivate.supplierSelect.selectedText) {
                                         if (cswPrivate.supplierSelect.selectedText() === cswPrivate.newSupplierName) {
                                             cswPrivate.state.c3SupplierName = cswPrivate.state.supplier.name;
-                                            cswPrivate.makeNewC3SupplierInput(true);
+                                            cswPrivate.makeNewC3SupplierInput(true, 1, 3);
                                         }
                                     }
-                                    
+
                                     // If we are using search (relationshipoptionlimit < # of options) && we have a new supplier incoming from chemcat
                                     if (useSearch && cswPrivate.state.addNewC3Supplier) {
+                                        cswPrivate.useSearch = useSearch;
                                         cswPrivate.state.c3SupplierName = cswPrivate.state.supplier.name;
-                                        cswPrivate.makeNewC3SupplierInput(true);
+                                        cswPrivate.makeNewC3SupplierInput(true, 1, 1);
                                     }
                                 }
                             });
@@ -446,7 +448,7 @@
                 onStepChangeSuccess();
             }
         };
-        
+
         cswPrivate.saveMaterial = function (onSuccess, StepNo) {
             cswPrivate.toggleButton(cswPrivate.buttons.prev, false, false);
             if (cswPrivate.tabsAndProps) {
@@ -737,7 +739,7 @@
             }
         };
         //#endregion Step: Attach SDS
-        
+
         //#region Finish
         cswPrivate.finalize = function () {
             function getMaterialDefinition() {
@@ -767,7 +769,7 @@
                 if (cswPrivate.wizard.isStepVisible(cswPrivate.makeSizesStep.stepNo)) {
                     if (false === Csw.isNullOrEmpty(cswPrivate.sizesGrid)) {
                         var sizes = cswPrivate.sizesGrid.sizes();
-                        Csw.each(sizes, function(size) {
+                        Csw.each(sizes, function (size) {
                             createMaterialDef.sizeNodes.push(size.sizeValues);
                         });
                     }
