@@ -92,7 +92,7 @@ namespace ChemSW.Nbt.Search
             {
                 if( string.IsNullOrEmpty( _Name ) )
                 {
-                    _Name = "Searched for: " + SearchTerm;
+                    _Name = "Searched for: " + SearchType + " " + SearchTerm;
                 }
                 return _Name;
             }
