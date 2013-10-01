@@ -33,13 +33,32 @@ namespace ChemSW.Nbt.Schema
         {
             // Page Size should have a min of 5 and a max of 50
             CswNbtMetaDataObjectClass UserOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.UserClass );
-
             CswNbtMetaDataObjectClassProp PageSizeOCP = UserOC.getObjectClassProp( CswNbtObjClassUser.PropertyName.PageSize );
 
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( PageSizeOCP, CswEnumNbtObjectClassPropAttributes.numberminvalue, 5 );
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( PageSizeOCP, CswEnumNbtObjectClassPropAttributes.numbermaxvalue, 50 );
-        } // update()
 
+            // Update existing data
+            CswNbtMetaDataNodeType UserNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "User" );
+            if( null != UserNT )
+            {
+                CswNbtMetaDataNodeTypeProp PageSizeNTP = UserNT.getNodeTypePropByObjectClassProp( PageSizeOCP );
+                if( null != PageSizeNTP )
+                {
+                    foreach( CswNbtNode UserNode in UserNT.getNodes( false, true ) )
+                    {
+                        if( UserNode.Properties[PageSizeNTP].AsNumber.Value < 5 )
+                        {
+                            UserNode.Properties[PageSizeNTP].AsNumber.Value = 5;
+                        }
+                        else if( UserNode.Properties[PageSizeNTP].AsNumber.Value > 50 )
+                        {
+                            UserNode.Properties[PageSizeNTP].AsNumber.Value = 50;
+                        }
+                    }
+                }
+            }
+        } // update()
     }
 
 }//namespace ChemSW.Nbt.Schema
