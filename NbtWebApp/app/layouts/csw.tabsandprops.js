@@ -1184,6 +1184,13 @@
             }
         };
 
+        cswPublic.refreshOnAdd = function(nodeState) {
+            Csw.publish('onAnyNodeButtonClickFinish', true);
+            Csw.tryExec(cswPrivate.onSave, cswPublic.getNodeId(), cswPublic.getNodeKey(), cswPrivate.tabcnt, nodeState.nodename, nodeState.nodelink);
+            if (false == cswPrivate.isInDom()) {
+                cswPrivate.onTearDown();
+            }
+        };
         //#endregion commit
 
         cswPrivate.refreshLinkDiv = function () {

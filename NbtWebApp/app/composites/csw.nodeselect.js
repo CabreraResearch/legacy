@@ -376,6 +376,11 @@
             }
             if (cswPrivate.hiddenValue) {
                 cswPrivate.hiddenValue.val(nodeid);
+                Csw.tryExec(cswPrivate.onSelectNode, {
+                    nodeid: nodeid,
+                    nodename: nodename,
+                    nodelink: nodelink
+                });
             }
             if (cswPrivate.select) {
                 Csw.ajaxWcf.post({
