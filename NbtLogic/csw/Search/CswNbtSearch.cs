@@ -92,7 +92,7 @@ namespace ChemSW.Nbt.Search
             {
                 if( string.IsNullOrEmpty( _Name ) )
                 {
-                    _Name = "Searched for: " + SearchTerm;
+                    _Name = "Searched for: " + SearchType + " " + SearchTerm;
                 }
                 return _Name;
             }
@@ -369,7 +369,7 @@ namespace ChemSW.Nbt.Search
                                                                                       where firstpropversionid = (select firstpropversionid 
                                                                                                                     from nodetype_props 
                                                                                                                    where nodetypepropid = " + NodeTypePropFirstVersionId.ToString() + @" ))
-                                                              and gestalt " + FilterStr + @") ";
+                                                              and gestaltsearch " + FilterStr + @") ";
                     }
                 } // else if( Filter.Type == CswNbtSearchFilterType.propval )
             } // foreach( CswNbtSearchFilter Filter in FiltersApplied )
