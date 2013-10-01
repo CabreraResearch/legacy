@@ -1,8 +1,8 @@
 -- Create nbtimportqueue table
 create table nbtimportqueue (
-	nbtimportqueueid number(12) NOT NULL PRIMARY KEY,
+  nbtimportqueueid number(12) NOT NULL PRIMARY KEY,
   state varchar(1),
-  itempk number(12) NOT NULL,
+  itempk varchar(255) NOT NULL,
   sheetname varchar2(50),
   priority number(12),
   errorlog varchar2(2000)
@@ -14,6 +14,8 @@ create unique index unqidx_nbtimportqueue on NBTIMPORTQUEUE (state, itempk, tabl
 -- Create pk sequence for nbtimportqueue table
 create sequence seq_nbtimportqueueid start with 1 increment by 1;
 commit;
+
+
 
 -- Create views ( these are in order of creation)
 -- Locations level 1
@@ -392,4 +394,86 @@ select
        join packages p on m.materialid = p.packageid
        where d2.packageid is null and doctype = 'MSDS' and d2.deleted = 0
 )
+);
+
+create or replace view docs_view as
+(
+  (select
+  d.documentid,
+  d.packageid,
+  d.acquisitiondate,
+  d.captureddate,
+  d.content_type,
+  d.deleted,
+  d.description,
+  d.docisexternal,
+  d.doctype,
+  d.fileextension,
+  d.filename,
+  d.language,
+  d.materialid,
+  d.documentid || '_' || d.packageid as legacyid,
+
+  (case d.fileextension
+        when 'URL' then 'Link'
+        else 'File'
+   end) as fileextension_trans,
+
+   (case d.language
+   when 'english'    then 'en'
+   when 'french'     then 'fr'
+   when 'german'     then 'de'
+   when 'danish'     then 'da'
+   when 'dutch'      then 'nl'
+   when 'spanish'    then 'es'
+   when 'italian'    then 'it'
+   when 'chinese'    then 'zh'
+   when 'portuguese' then 'pt'
+   when 'USA/en'     then 'en'
+  end) as language_trans
+
+ from documents d
+ where d.packageid is not null and doctype = 'DOC' and d.deleted = 0
+
+union all
+
+select
+  d2.documentid,
+  p.packageid,
+  d2.acquisitiondate,
+  d2.captureddate,
+  d2.content_type,
+  d2.deleted,
+  d2.description,
+  d2.docisexternal,
+  d2.doctype,
+  d2.fileextension,
+  d2.filename,
+  d2.language,
+  d2.materialid,
+  d2.documentid || '_' || p.packageid as legacyid,
+
+  (case d2.fileextension
+   when 'URL' then 'Link'
+   else 'File'
+  end) as fileextension_trans,
+
+  (case d2.language
+   when 'english'    then 'en'
+   when 'french'     then 'fr'
+   when 'german'     then 'de'
+   when 'danish'     then 'da'
+   when 'dutch'      then 'nl'
+   when 'spanish'    then 'es'
+   when 'italian'    then 'it'
+   when 'chinese'    then 'zh'
+   when 'portuguese' then 'pt'
+   when 'USA/en'     then 'en'
+  end) as language_trans
+
+ from documents d2
+       join materials m on m.materialid = d2.materialid
+       join packages p on m.materialid = p.packageid
+       where d2.packageid is null and doctype = 'DOC' and d2.deleted = 0
 )
+);

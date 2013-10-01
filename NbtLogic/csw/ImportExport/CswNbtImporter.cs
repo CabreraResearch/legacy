@@ -456,7 +456,7 @@ namespace ChemSW.Nbt.ImportExport
                 CswNbtMetaDataNodeTypeProp LegacyIdNTP = Order.NodeType.getNodeTypeProp( "Legacy Id" );
                 LegacyIdView.AddViewPropertyAndFilter( ParentViewRelationship : NTRel1, MetaDataProp : LegacyIdNTP,
                                                       Value : LegacyId,
-                                                      SubFieldName : CswEnumNbtSubFieldName.Value, CaseSensitive : false );
+                                                      SubFieldName : CswEnumNbtSubFieldName.Text, CaseSensitive : false );
 
                 ICswNbtTree LegacyIdTree = _CswNbtResources.Trees.getTreeFromView( LegacyIdView, false, true, true );
                 if( LegacyIdTree.getChildNodeCount() > 0 )
@@ -841,7 +841,7 @@ namespace ChemSW.Nbt.ImportExport
                 View.AddViewPropertyAndFilter( ParentViewRelationship : ParentRelationship,
                                               MetaDataProp : MetaDataProp,
                                               Conjunction : CswEnumNbtFilterConjunction.And,
-                                              SubFieldName : CswEnumNbtSubFieldName.Value,
+                                              SubFieldName : CswEnumNbtSubFieldName.Text,
                                               FilterMode : CswEnumNbtFilterMode.Equals,
                                               Value : LegacyId );
 

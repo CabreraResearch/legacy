@@ -32,6 +32,7 @@ namespace ChemSW.Nbt.csw.Schema
                 {"chemicals_view", 13},
                 {"packdetail_view", 14},
                 {"sds_view", 15},
+                {"docs_view", 15}
             };
 
         private DataTable _importDefTable;
@@ -98,7 +99,7 @@ namespace ChemSW.Nbt.csw.Schema
             }
         }//ctor
 
-        public CswNbtSchemaUpdateImportMgr( CswNbtSchemaModTrnsctn SchemaModTrnsctn, string SourceTableName, List<Tuple<string, Int32>> DestNodeTypesAndInstances, string ViewName = "", string SourceColumn="", string Sheet = "", string CafDbLink = null )
+        public CswNbtSchemaUpdateImportMgr( CswNbtSchemaModTrnsctn SchemaModTrnsctn, string SourceTableName, List<Tuple<string, Int32>> DestNodeTypesAndInstances, string ViewName = "", string SourceColumn = "", string Sheet = "", string CafDbLink = null )
         {
             string ExceptionText = string.Empty;
             _CAFDbLink = CafDbLink ?? CswScheduleLogicNbtCAFImport.CAFDbLink;
@@ -204,7 +205,7 @@ namespace ChemSW.Nbt.csw.Schema
             get
             {
                 string Ret = null;
-                if( false == string.IsNullOrEmpty(_SourceTablePkColumnName) )
+                if( false == string.IsNullOrEmpty( _SourceTablePkColumnName ) )
                 {
                     Ret = _SourceTablePkColumnName;
                 }
@@ -215,7 +216,7 @@ namespace ChemSW.Nbt.csw.Schema
 
                 return Ret;
             }
-            set { _SourceTablePkColumnName = value;  }
+            set { _SourceTablePkColumnName = value; }
         }
 
         public void finalize( string DefinitionName = null )
