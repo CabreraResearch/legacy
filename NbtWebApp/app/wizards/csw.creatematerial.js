@@ -239,7 +239,7 @@
                                     }
                                 }
                             }
-                        }
+                        }//if (cswPrivate.supplierSelect)
                         if (cswPrivate.tradeNameInput &&
                             cswPrivate.state.tradeName !== cswPrivate.tradeNameInput.val()) {
                             cswPrivate.state.tradeName = cswPrivate.tradeNameInput.val();
@@ -257,12 +257,16 @@
                                 }
                             }
                         }
-                        if (cswPrivate.newC3SupplierInput && cswPrivate.supplierSelect.selectedText) {
+                        if (cswPrivate.newC3SupplierInput) {
                             if (cswPrivate.isConstituent()) {
                                 cswPrivate.newC3SupplierInput.hide();
                             } else {
-                                if (cswPrivate.supplierSelect.selectedText() === cswPrivate.newSupplierName) {
+                                if (cswPrivate.supplierSelect.selectedText && cswPrivate.supplierSelect.selectedText() === cswPrivate.newSupplierName) {
                                     cswPrivate.newC3SupplierInput.show();
+                                    cswPrivate.state.supplier = { name: cswPrivate.newC3SupplierInput.val(), val: '' };
+                                    cswPrivate.state.c3SupplierName = cswPrivate.newC3SupplierInput.val();
+                                } else {
+                                    // 'Search' case
                                     cswPrivate.state.supplier = { name: cswPrivate.newC3SupplierInput.val(), val: '' };
                                     cswPrivate.state.c3SupplierName = cswPrivate.newC3SupplierInput.val();
                                 }
