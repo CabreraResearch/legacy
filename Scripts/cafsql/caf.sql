@@ -332,6 +332,7 @@ create or replace view sds_view as(
   d.filename,
   d.language,
   d.materialid,
+  d.documentid || '_' || d.packageid as legacyid,
   
   (case d.fileextension
         when 'URL' then 'Link'
@@ -370,6 +371,7 @@ select
   d2.filename,
   d2.language,
   d2.materialid,
+  d2.documentid || '_' || p.packageid as legacyid,
   
   (case d2.fileextension
    when 'URL' then 'Link'
