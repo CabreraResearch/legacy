@@ -15,6 +15,7 @@ using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Schema;
+using ChemSW.Nbt.ServiceDrivers;
 
 namespace ChemSW.Nbt.ImportExport
 {
@@ -460,7 +461,7 @@ namespace ChemSW.Nbt.ImportExport
                     CswNbtMetaDataNodeTypeProp LegacyIdNTP = Order.NodeType.getNodeTypeProp( "Legacy Id" );
                     LegacyIdView.AddViewPropertyAndFilter( ParentViewRelationship: NTRel1, MetaDataProp: LegacyIdNTP,
                                                            Value: LegacyId,
-                                                           SubFieldName: CswEnumNbtSubFieldName.Value, CaseSensitive: false );
+                                                      SubFieldName : CswEnumNbtSubFieldName.Text, CaseSensitive : false );
 
                     ICswNbtTree LegacyIdTree = _CswNbtResources.Trees.getTreeFromView( LegacyIdView, false, true, true );
                     if( LegacyIdTree.getChildNodeCount() > 0 )
@@ -650,6 +651,41 @@ namespace ChemSW.Nbt.ImportExport
                     ( (CswNbtNodePropTimeInterval) Node.Properties[Binding.DestProperty] ).RateInterval = rateInterval;
                     Node.Properties[Binding.DestProperty].SyncGestalt();
                 }
+                else if( Binding.DestProperty.getFieldTypeValue() == CswEnumNbtFieldType.File && Binding.DestSubFieldName != CswEnumNbtSubFieldName.Href.ToString() )
+                {
+                    CswNbtSdBlobData sdBlobData = new CswNbtSdBlobData( _CswNbtResources );
+                    int BlobDataId = sdBlobData.GetBlobDataId( Node.Properties[Binding.DestProperty].JctNodePropId );
+
+                    CswTableUpdate blobDataTblUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "importer.fileimport", "blob_data" );
+
+                    DataTable blobDataTbl = ( Int32.MinValue != BlobDataId ? blobDataTblUpdate.getTable( "where blobdataid = " + BlobDataId ) : blobDataTblUpdate.getEmptyTable() );
+                    DataRow blobDataRow = null;
+                    if( blobDataTbl.Rows.Count > 0 )
+                    {
+                        blobDataRow = blobDataTbl.Rows[0];
+                    }
+                    else
+                    {
+                        blobDataRow = blobDataTbl.NewRow();
+                        blobDataRow["jctnodepropid"] = Node.Properties[Binding.DestProperty].JctNodePropId;
+                        blobDataTbl.Rows.Add( blobDataRow );
+                    }
+
+                    if( CswEnumNbtSubFieldName.Name.ToString() == Binding.DestSubFieldName )
+                    {
+                        blobDataRow["filename"] = PropertyData;
+                    }
+                    else if( CswEnumNbtSubFieldName.ContentType.ToString() == Binding.DestSubFieldName )
+                    {
+                        blobDataRow["contenttype"] = PropertyData;
+                    }
+                    else if( CswEnumNbtSubFieldName.Blob.ToString() == Binding.DestSubFieldName )
+                    {
+                        blobDataRow["blobdata"] = BlobData;
+                    }
+
+                    blobDataTblUpdate.update( blobDataTbl );
+                }
                 // NodeTypeSelect
                 else if( Binding.DestProperty.getFieldTypeValue() == CswEnumNbtFieldType.NodeTypeSelect )
                 {
@@ -814,7 +850,7 @@ namespace ChemSW.Nbt.ImportExport
                 View.AddViewPropertyAndFilter( ParentViewRelationship : ParentRelationship,
                                               MetaDataProp : MetaDataProp,
                                               Conjunction : CswEnumNbtFilterConjunction.And,
-                                              SubFieldName : CswEnumNbtSubFieldName.Value,
+                                              SubFieldName : CswEnumNbtSubFieldName.Text,
                                               FilterMode : CswEnumNbtFilterMode.Equals,
                                               Value : LegacyId );
 
