@@ -45,7 +45,7 @@ namespace ChemSW.Nbt.Search
         /// </summary>
         [DataMember]
         public CswPrimaryKey SearchId;
-        
+
         /// <summary>
         /// Primary key of user who owns this search
         /// </summary>
@@ -63,7 +63,13 @@ namespace ChemSW.Nbt.Search
         /// </summary>
         [DataMember]
         public string SearchTerm;
-        
+
+        /// <summary>
+        /// Type of search
+        /// </summary>
+        [DataMember]
+        public CswEnumSqlLikeMode SearchType = CswEnumSqlLikeMode.Begins;
+
         /// <summary>
         /// Set of filters applied to search
         /// </summary>
@@ -86,7 +92,7 @@ namespace ChemSW.Nbt.Search
             {
                 if( string.IsNullOrEmpty( _Name ) )
                 {
-                    _Name = "Searched for: " + SearchTerm;
+                    _Name = "Searched for: " + SearchType + " " + SearchTerm;
                 }
                 return _Name;
             }
@@ -94,12 +100,16 @@ namespace ChemSW.Nbt.Search
         }
 
         #endregion Search Data
-        
+
         #region Serialization
 
         public void FromJObject( JObject SearchObj )
         {
             SearchTerm = SearchObj["searchterm"].ToString();
+            if( null != SearchObj["searchtype"] )
+            {
+                SearchType = (CswEnumSqlLikeMode) SearchObj["searchtype"].ToString();
+            }
             if( null != SearchObj["name"] )
             {
                 Name = SearchObj["name"].ToString();
@@ -117,7 +127,7 @@ namespace ChemSW.Nbt.Search
                 SessionDataId = new CswNbtSessionDataId( SearchObj["sessiondataid"].ToString() );
             }
             JArray FiltersArr = (JArray) SearchObj["filtersapplied"];
-            foreach(JObject FilterObj in FiltersArr)
+            foreach( JObject FilterObj in FiltersArr )
             {
                 addFilter( FilterObj );
             }
@@ -128,6 +138,7 @@ namespace ChemSW.Nbt.Search
             JObject SearchObj = new JObject();
             SearchObj["name"] = Name;
             SearchObj["searchterm"] = SearchTerm;
+            SearchObj["searchtype"] = SearchType.ToString();
             SearchObj["category"] = Category;
             if( null != SearchId )
             {
@@ -137,8 +148,8 @@ namespace ChemSW.Nbt.Search
             {
                 SearchObj["sessiondataid"] = SessionDataId.ToString();
             }
-            JArray FiltersArr =  new JArray();
-            foreach(CswNbtSearchFilter Filter in FiltersApplied)
+            JArray FiltersArr = new JArray();
+            foreach( CswNbtSearchFilter Filter in FiltersApplied )
             {
                 FiltersArr.Add( Filter.ToJObject() );
             }
@@ -358,12 +369,12 @@ namespace ChemSW.Nbt.Search
                                                                                       where firstpropversionid = (select firstpropversionid 
                                                                                                                     from nodetype_props 
                                                                                                                    where nodetypepropid = " + NodeTypePropFirstVersionId.ToString() + @" ))
-                                                              and gestalt " + FilterStr + @") ";
+                                                              and gestaltsearch " + FilterStr + @") ";
                     }
                 } // else if( Filter.Type == CswNbtSearchFilterType.propval )
             } // foreach( CswNbtSearchFilter Filter in FiltersApplied )
 
-            ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromSearch( SearchTerm, WhereClause, true, false, false );
+            ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromSearch( SearchTerm, SearchType, WhereClause, true, false, false );
             return Tree;
         } // Results()
 
@@ -493,7 +504,7 @@ namespace ChemSW.Nbt.Search
                         // Sort by count descending, then alphabetically by gestalt
                         Dictionary<string, Int32> sortedDict = ( from entry
                                                                      in PropCounts[NodeTypePropId]
-                                                                 orderby entry.Value descending , entry.Key ascending
+                                                                 orderby entry.Value descending, entry.Key ascending
                                                                  select entry
                                                                ).ToDictionary( pair => pair.Key, pair => pair.Value );
                         foreach( string Value in sortedDict.Keys )

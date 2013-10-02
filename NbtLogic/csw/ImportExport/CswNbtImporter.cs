@@ -413,8 +413,11 @@ namespace ChemSW.Nbt.ImportExport
                                                                                                         Order.NodeType.NameTemplatePropIds.Contains( r.Relationship.FirstPropVersionId ) );
 
             IEnumerable<CswNbtImportDefBinding> UniqueBindings = NodeTypeBindings.Where( b => b.DestProperty.IsUnique() ||
-                                                                                              b.DestProperty.IsCompoundUnique() ||
-                                                                                              Order.NodeType.NameTemplatePropIds.Contains( b.DestProperty.FirstPropVersionId ) );
+                                                                                              b.DestProperty.IsCompoundUnique() );
+            if( false == UniqueBindings.Any() ) // case 30821
+            {
+                UniqueBindings = NodeTypeBindings.Where( b => Order.NodeType.NameTemplatePropIds.Contains( b.DestProperty.FirstPropVersionId ) );
+            }
 
             bool allEmpty = true;
             // Skip rows with null values for all unique properties
@@ -448,30 +451,34 @@ namespace ChemSW.Nbt.ImportExport
 
             if( false == allEmpty )
             {
-                //Check for matching nodes using a view on legacy id
-                CswNbtView LegacyIdView = new CswNbtView( _CswNbtResources );
-                LegacyIdView.ViewName = "Check Legacy Id";
-                CswNbtViewRelationship NTRel1 = LegacyIdView.AddViewRelationship( Order.NodeType, false );
+                bool foundMatch = false;
+                if( false == string.IsNullOrEmpty( LegacyId ) ) //Check for matching nodes using a view on legacy id
+                {
+                    CswNbtView LegacyIdView = new CswNbtView( _CswNbtResources );
+                    LegacyIdView.ViewName = "Check Legacy Id";
+                    CswNbtViewRelationship NTRel1 = LegacyIdView.AddViewRelationship( Order.NodeType, false );
 
-                CswNbtMetaDataNodeTypeProp LegacyIdNTP = Order.NodeType.getNodeTypeProp( "Legacy Id" );
-                LegacyIdView.AddViewPropertyAndFilter( ParentViewRelationship : NTRel1, MetaDataProp : LegacyIdNTP,
-                                                      Value : LegacyId,
+                    CswNbtMetaDataNodeTypeProp LegacyIdNTP = Order.NodeType.getNodeTypeProp( "Legacy Id" );
+                    LegacyIdView.AddViewPropertyAndFilter( ParentViewRelationship: NTRel1, MetaDataProp: LegacyIdNTP,
+                                                           Value: LegacyId,
                                                       SubFieldName : CswEnumNbtSubFieldName.Text, CaseSensitive : false );
 
-                ICswNbtTree LegacyIdTree = _CswNbtResources.Trees.getTreeFromView( LegacyIdView, false, true, true );
-                if( LegacyIdTree.getChildNodeCount() > 0 )
-                {
-                    LegacyIdTree.goToNthChild( 0 );
-                    Node = LegacyIdTree.getNodeForCurrentPosition();
-                    if( Overwrite )
+                    ICswNbtTree LegacyIdTree = _CswNbtResources.Trees.getTreeFromView( LegacyIdView, false, true, true );
+                    if( LegacyIdTree.getChildNodeCount() > 0 )
                     {
-                        _importPropertyValues( BindingDef, NodeTypeBindings, RowRelationships, ImportRow, Node );
-                        Node.postChanges( false );
+                        LegacyIdTree.goToNthChild( 0 );
+                        Node = LegacyIdTree.getNodeForCurrentPosition();
+                        if( Overwrite )
+                        {
+                            _importPropertyValues( BindingDef, NodeTypeBindings, RowRelationships, ImportRow, Node );
+                            Node.postChanges( false );
+                        }
+                        foundMatch = true;
                     }
                 }
-                else
-                {
 
+                if( false == foundMatch )
+                {
                     // Find matching nodes using a view on unique properties
                     CswNbtView UniqueView = new CswNbtView( _CswNbtResources );
                     UniqueView.ViewName = "Check Unique";
@@ -486,27 +493,26 @@ namespace ChemSW.Nbt.ImportExport
                             if( Value != string.Empty )
                             {
                                 UniqueView.AddViewPropertyAndFilter( NTRel, Binding.DestProperty,
-                                                                    Conjunction : CswEnumNbtFilterConjunction.And,
-                                                                    SubFieldName : Binding.DestSubfield.Name,
-                                                                    FilterMode : CswEnumNbtFilterMode.Equals,
-                                                                    Value : Value,
-                                                                    CaseSensitive : false );
+                                                                     Conjunction: CswEnumNbtFilterConjunction.And,
+                                                                     SubFieldName: Binding.DestSubfield.Name,
+                                                                     FilterMode: CswEnumNbtFilterMode.Equals,
+                                                                     Value: Value,
+                                                                     CaseSensitive: false );
                             }
                             else
                             {
                                 UniqueView.AddViewPropertyAndFilter( NTRel, Binding.DestProperty,
-                                                                    Conjunction : CswEnumNbtFilterConjunction.And,
-                                                                    SubFieldName : Binding.DestSubfield.Name,
-                                                                    FilterMode : CswEnumNbtFilterMode.Null );
+                                                                     Conjunction: CswEnumNbtFilterConjunction.And,
+                                                                     SubFieldName: Binding.DestSubfield.Name,
+                                                                     FilterMode: CswEnumNbtFilterMode.Null );
                             }
                             atLeastOneFilter = true;
                         }
 
                         foreach( CswNbtImportDefRelationship Relation in UniqueRelationships )
                         {
-                            CswNbtImportDefOrder thisTargetOrder =
-                                BindingDef.ImportOrder.Values.FirstOrDefault(
-                                    o => Relation.Relationship.FkMatches( o.NodeType ) && o.Instance == Relation.Instance );
+                            CswNbtImportDefOrder thisTargetOrder = BindingDef.ImportOrder.Values.FirstOrDefault( o => Relation.Relationship.FkMatches( o.NodeType ) &&
+                                                                                                                      o.Instance == Relation.Instance );
                             Int32 Value = null != ImportRow[Relation.SourceRelColumnName]
                                               ? CswConvert.ToInt32( ImportRow[Relation.SourceRelColumnName] )
                                               : CswConvert.ToInt32( ImportRow[thisTargetOrder.PkColName] );
@@ -514,36 +520,35 @@ namespace ChemSW.Nbt.ImportExport
                             if( Value != Int32.MinValue )
                             {
                                 UniqueView.AddViewPropertyAndFilter( NTRel, Relation.Relationship,
-                                                                    Conjunction : CswEnumNbtFilterConjunction.And,
-                                                                    SubFieldName : CswEnumNbtSubFieldName.NodeID,
-                                                                    FilterMode : CswEnumNbtFilterMode.Equals,
-                                                                    Value : Value.ToString(),
-                                                                    CaseSensitive : false );
+                                                                     Conjunction: CswEnumNbtFilterConjunction.And,
+                                                                     SubFieldName: CswEnumNbtSubFieldName.NodeID,
+                                                                     FilterMode: CswEnumNbtFilterMode.Equals,
+                                                                     Value: Value.ToString(),
+                                                                     CaseSensitive: false );
                             }
                             else
                             {
                                 UniqueView.AddViewPropertyAndFilter( NTRel, Relation.Relationship,
-                                                                    Conjunction : CswEnumNbtFilterConjunction.And,
-                                                                    SubFieldName : CswEnumNbtSubFieldName.NodeID,
-                                                                    FilterMode : CswEnumNbtFilterMode.Null );
+                                                                     Conjunction: CswEnumNbtFilterConjunction.And,
+                                                                     SubFieldName: CswEnumNbtSubFieldName.NodeID,
+                                                                     FilterMode: CswEnumNbtFilterMode.Null );
                             }
                             atLeastOneFilter = true;
                         }
 
                         if( atLeastOneFilter )
                         {
-                            ICswNbtTree UniqueTree = _CswNbtResources.Trees.getTreeFromView( UniqueView, false, true,
-                                                                                            true );
+                            ICswNbtTree UniqueTree = _CswNbtResources.Trees.getTreeFromView( UniqueView, false, true, true );
                             if( UniqueTree.getChildNodeCount() > 0 )
                             {
                                 UniqueTree.goToNthChild( 0 );
                                 Node = UniqueTree.getNodeForCurrentPosition();
                                 if( Overwrite )
                                 {
-                                    _importPropertyValues( BindingDef, NodeTypeBindings, RowRelationships, ImportRow,
-                                                          Node );
+                                    _importPropertyValues( BindingDef, NodeTypeBindings, RowRelationships, ImportRow, Node );
                                     Node.postChanges( false );
                                 }
+                                foundMatch = true;
                             }
                         }
                     } // if( UniqueProps.Any() )
@@ -616,6 +621,9 @@ namespace ChemSW.Nbt.ImportExport
 
         private void _importPropertyValues( CswNbtImportDef BindingDef, IEnumerable<CswNbtImportDefBinding> NodeTypeBindings, IEnumerable<CswNbtImportDefRelationship> RowRelationships, DataRow ImportRow, CswNbtNode Node )
         {
+            // case 30821
+            Node.IsDemo = false;
+
             // Iterate each binding 
             foreach( CswNbtImportDefBinding Binding in NodeTypeBindings )
             {
@@ -754,7 +762,8 @@ namespace ChemSW.Nbt.ImportExport
                 CswNbtImportDefOrder TargetOrder = BindingDef.ImportOrder.Values.FirstOrDefault( o => RowRelationship.Relationship.FkMatches( o.NodeType ) && o.Instance == RowRelationship.Instance );
 
                 // If we have a value for the SourceRelColumnName
-                if( null != ImportRow[RowRelationship.SourceRelColumnName] )
+                if( false == string.IsNullOrEmpty( RowRelationship.SourceRelColumnName ) &&
+                    null != ImportRow[RowRelationship.SourceRelColumnName] )
                 {
                     // In this case, we are matching on Legacy Id
                     // If the value in the column isn't null and it is actually an integer value (A legacy id)

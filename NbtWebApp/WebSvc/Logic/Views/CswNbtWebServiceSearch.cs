@@ -84,17 +84,18 @@ namespace ChemSW.Nbt.WebServices
 
         #region UniversalSearch
 
-        public JObject doUniversalSearch( string SearchTerm, Int32 NodeTypeId, Int32 ObjectClassId )
+        public JObject doUniversalSearch( string SearchTerm, CswEnumSqlLikeMode SearchType, Int32 NodeTypeId, Int32 ObjectClassId )
         {
-            CswNbtSearch Search = getSearch( SearchTerm, NodeTypeId, ObjectClassId );
+            CswNbtSearch Search = getSearch( SearchTerm, SearchType, NodeTypeId, ObjectClassId );
             return _finishUniversalSearch( Search );
         }
 
-        public CswNbtSearch getSearch( string SearchTerm, Int32 NodeTypeId, Int32 ObjectClassId )
+        public CswNbtSearch getSearch( string SearchTerm, CswEnumSqlLikeMode SearchType, Int32 NodeTypeId, Int32 ObjectClassId )
         {
             CswNbtSearch Search = new CswNbtSearch( _CswNbtResources )
             {
-                SearchTerm = SearchTerm
+                SearchTerm = SearchTerm,
+                SearchType = SearchType
             };
             if( Int32.MinValue != NodeTypeId )
             {

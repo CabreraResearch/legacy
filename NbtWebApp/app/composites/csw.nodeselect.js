@@ -57,6 +57,9 @@
             cswPrivate.options = cswPrivate.options || [];
             cswPrivate.extraOptions = cswPrivate.extraOptions || [];
 
+            // Case 30408
+            cswPrivate.showRemoveIcon = cswPrivate.showRemoveIcon || false;
+
             cswPublic = cswParent.div({ cssclass: 'cswInline' });
             cswPrivate.table = cswPublic.table();
 
@@ -79,7 +82,8 @@
             cswPrivate.editCellCol = cswPrivate.cellCol + 2;
             cswPrivate.nodeTypeCellCol = cswPrivate.cellCol + 3;
             cswPrivate.searchCellCol = cswPrivate.cellCol + 0;
-            cswPrivate.searchButtonCellCol = cswPrivate.cellCol + 1;
+            cswPrivate.searchButtonCellCol = cswPrivate.cellCol + 2;
+            cswPrivate.removeSelCellCol = cswPrivate.cellCol + 1;
             cswPrivate.addCellCol = cswPrivate.cellCol + 4;
             cswPrivate.tipCellCol = cswPrivate.cellCol + 5;
             cswPrivate.previewCellCol = cswPrivate.cellCol + 6;
@@ -169,7 +173,7 @@
             } else {
                 cswPrivate.makeSelect();
             }
-            Csw.tryExec(cswPrivate.onSuccess, cswPrivate.options);
+            Csw.tryExec(cswPrivate.onSuccess, cswPrivate.options, cswPrivate.useSearch);
         };
 
         cswPrivate.bindSelectMethods = function () {
@@ -308,6 +312,24 @@
                                 cswPrivate.nameSpan.nodeLink({
                                     text: nodeObj.nodelink + '&nbsp;'
                                 });
+
+                                // We use the remove icon during C3 imports - Case 30408
+                                if (cswPrivate.showRemoveIcon) {
+                                    cswPrivate.removeIcon = cswPrivate.table.cell(1, cswPrivate.removeSelCellCol).icon({
+                                        hovertext: 'Remove selected',
+                                        isButton: true,
+                                        iconType: Csw.enums.iconType.x,
+                                        onClick: function() {
+                                            cswPrivate.nameSpan.empty();
+                                            cswPrivate.hiddenValue.val("");
+                                            cswPrivate.selectedNodeId = "";
+                                            cswPrivate.selectedNodeLink = "";
+                                            cswPrivate.removeIcon.hide();
+                                            Csw.tryExec(cswPrivate.onRemoveSelectedNode);
+                                        }
+                                    });
+                                }
+
                                 cswPrivate.hiddenValue.val(nodeObj.nodeid);
                                 cswPrivate.selectedNodeId = nodeObj.nodeid;
                                 cswPrivate.selectedNodeLink = nodeObj.nodelink;
@@ -354,6 +376,11 @@
             }
             if (cswPrivate.hiddenValue) {
                 cswPrivate.hiddenValue.val(nodeid);
+                Csw.tryExec(cswPrivate.onSelectNode, {
+                    nodeid: nodeid,
+                    nodename: nodename,
+                    nodelink: nodelink
+                });
             }
             if (cswPrivate.select) {
                 Csw.ajaxWcf.post({
@@ -417,7 +444,7 @@
                     }
                 });
                 cswPrivate.toggleOptions(true);
-            }
+            }//if(cswPrivate.select)
         };
 
         cswPrivate.openAddNodeDialog = function (nodetypeToAdd, action) {

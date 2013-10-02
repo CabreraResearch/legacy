@@ -29,6 +29,7 @@
             restoresearchurl: 'restoreUniversalSearch',
             sessiondataid: '',
             searchterm: '',
+            searchtype: 'Begins',
             filterHideThreshold: 5,
             universalSearchOnly: false
             //buttonSingleColumn: '',
@@ -151,7 +152,7 @@
                         text: selectedText,
                         icon: selectedIcon,
                         width: (selectedText.length * 8) + 16,
-                        renderTo: cswtable.cell(1, 3).getId(),
+                        renderTo: cswtable.cell(1, 4).getId(),
                         handler: Csw.method(srchOnClick),
                         menu: {
                             items: srchMenuItems
@@ -184,7 +185,27 @@
                 }
                 return ret;
             };
-            cswPrivate.searchinput = cswtable.cell(1, 2).input({
+
+            // Make search type selector
+            cswPrivate.onSearchTypeSelect = function (val) {
+                cswPrivate.searchtype = val;
+                cswPrivate.searchTypeSelect.setText(val);
+            };
+            cswPrivate.searchTypeSelect = window.Ext.create('Ext.SplitButton', {
+                text: cswPrivate.searchtype,
+                renderTo: cswtable.cell(1, 2).getId(),
+                width: 70,
+                menu: {
+                    items: [
+                        { text: 'Begins', handler: Csw.method(function () { return cswPrivate.onSearchTypeSelect('Begins'); }) },
+                        { text: 'Contains', handler: Csw.method(function () { return cswPrivate.onSearchTypeSelect('Contains'); }) },
+                        { text: 'Ends', handler: Csw.method(function () { return cswPrivate.onSearchTypeSelect('Ends'); }) },
+                        { text: 'Equals', handler: Csw.method(function () { return cswPrivate.onSearchTypeSelect('Equals'); }) }
+                    ],
+                }
+            }); // toolbar
+
+            cswPrivate.searchinput = cswtable.cell(1, 3).input({
                 type: Csw.enums.inputTypes.search,
                 width: cswPrivate.searchbox_width,
                 cssclass: 'mousetrap',
@@ -202,6 +223,7 @@
                 urlMethod: cswPrivate.newsearchurl,
                 data: {
                     SearchTerm: cswPrivate.searchterm,
+                    SearchType: cswPrivate.searchtype,
                     NodeTypeId: cswPrivate.nodetypeid,
                     ObjectClassId: cswPrivate.objectclassid
                 },
@@ -576,6 +598,7 @@
                 cswPrivate.searchButton.disable();
             }
             cswPrivate.searchinput.disable();
+            cswPrivate.searchTypeSelect.disable();
         };
 
         cswPublic.enable = function () {
@@ -584,6 +607,7 @@
                 cswPrivate.searchButton.enable();
             }
             cswPrivate.searchinput.enable();
+            cswPrivate.searchTypeSelect.enable();
         };
 
         return cswPublic;
