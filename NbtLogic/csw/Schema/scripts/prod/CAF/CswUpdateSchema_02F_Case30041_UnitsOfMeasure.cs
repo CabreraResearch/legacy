@@ -30,7 +30,7 @@ namespace ChemSW.Nbt.Schema
                 CswNbtSchemaUpdateImportMgr UnitMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "units_of_measure", ViewName: "each_view", SourceColumn: "unitofmeasureid", DestNodeTypeName: "Unit_Each" );
 
                 UnitMgr.importBinding( "unitofmeasurename", CswNbtObjClassUnitOfMeasure.PropertyName.Name, "" );
-                UnitMgr.importBinding( "convertfromeaches_base", CswNbtObjClassUnitOfMeasure.PropertyName.ConversionFactor, "" );
+                UnitMgr.importBinding( "conversionfactor", CswNbtObjClassUnitOfMeasure.PropertyName.ConversionFactor, "" );
                 UnitMgr.importBinding( "unittype", CswNbtObjClassUnitOfMeasure.PropertyName.UnitType, "" );
 
                 UnitMgr.finalize();
@@ -40,7 +40,7 @@ namespace ChemSW.Nbt.Schema
                 CswNbtSchemaUpdateImportMgr UnitMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "units_of_measure", ViewName: "volume_view", SourceColumn: "unitofmeasureid", DestNodeTypeName: "Unit_Volume" );
 
                 UnitMgr.importBinding( "unitofmeasurename", CswNbtObjClassUnitOfMeasure.PropertyName.Name, "" );
-                UnitMgr.importBinding( "convertfromliters_base", CswNbtObjClassUnitOfMeasure.PropertyName.ConversionFactor, "" );
+                UnitMgr.importBinding( "conversionfactor", CswNbtObjClassUnitOfMeasure.PropertyName.ConversionFactor, "" );
                 UnitMgr.importBinding( "unittype", CswNbtObjClassUnitOfMeasure.PropertyName.UnitType, "" );
 
                 UnitMgr.finalize();
@@ -49,7 +49,7 @@ namespace ChemSW.Nbt.Schema
                 CswNbtSchemaUpdateImportMgr UnitMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "units_of_measure", ViewName: "weight_view", SourceColumn: "unitofmeasureid", DestNodeTypeName: "Unit_Weight");
 
                 UnitMgr.importBinding( "unitofmeasurename", CswNbtObjClassUnitOfMeasure.PropertyName.Name, "" );
-                UnitMgr.importBinding( "convertfromkg_base", CswNbtObjClassUnitOfMeasure.PropertyName.ConversionFactor, "" );
+                UnitMgr.importBinding( "conversionfactor", CswNbtObjClassUnitOfMeasure.PropertyName.ConversionFactor, "" );
                 UnitMgr.importBinding( "unittype", CswNbtObjClassUnitOfMeasure.PropertyName.UnitType, "" );
 
                 UnitMgr.finalize();

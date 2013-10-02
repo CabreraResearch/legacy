@@ -357,10 +357,12 @@
     <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateSchema_02G_Case30756.cs" />
     <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateSchema_02G_Case30680.cs" />
     <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateMetaData_02G_Case30680.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CAF\CswUpdateSchema_02G_Case30047_Docs.cs" />
     <Compile Include="csw\Schema\scripts\prod\02H\CswSchemaScriptsHickory.cs" />
     <Compile Include="csw\Schema\scripts\prod\CAF\CswUpdateSchema_02G_Case30744_PackDetail.cs" />
     <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateDDL_02G_Case30702.cs" />
     <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateSchema_02G_Case30702.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CAF\CswUpdateSchema_02G_Case30047_SDS.cs" />
     <Compile Include="csw\Schema\scripts\prod\CAF\CswUpdateSchema_02G_Case30743_Materials.cs" />
     <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateDDL_02G_Case30737.cs" />
     <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateMetaData_02G_Case30575.cs" />

@@ -54,7 +54,7 @@ namespace ChemSW.Nbt.Test.ObjClasses
 
         /// <summary>
         /// Given a weekly generator (every Monday) with no warning days,
-        /// when the generator's duedate is explicitly set to today, assert that the NextDueDate is set to next Monday
+        /// when the generator's duedate is explicitly set to today, assert that the NextDueDate is still set to Today (see Case 30812)
         /// </summary>
         [Test]
         public void updateNextDueDateTest_ExplicitSet()
@@ -62,7 +62,7 @@ namespace ChemSW.Nbt.Test.ObjClasses
             CswNbtObjClassGenerator GeneratorNode = TestData.Nodes.createGeneratorNode( CswEnumRateIntervalType.WeeklyByDay );
             GeneratorNode.NextDueDate.DateTimeValue = DateTime.Today;
             GeneratorNode.postChanges( true );
-            Assert.AreEqual( getNextDay( DayOfWeek.Monday ), GeneratorNode.NextDueDate.DateTimeValue );
+            Assert.AreEqual( DateTime.Today, GeneratorNode.NextDueDate.DateTimeValue );
         }
 
         /// <summary>

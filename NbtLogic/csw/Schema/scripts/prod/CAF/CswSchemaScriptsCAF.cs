@@ -37,8 +37,9 @@ namespace ChemSW.Nbt.Schema
                     new CswUpdateSchema_02F_Case30043_WorkUnits(),
                     new CswUpdateSchema_02F_Case30043_InventoryGroups(),
                     new CswUpdateSchema_02G_Case30743_Materials(),
-                    new CswUpdateSchema_02G_Case30743_Materials(),
                     new CswUpdateSchema_02G_Case30744_PackDetail(),
+                    new CswUpdateSchema_02G_Case30047_SDS(),
+                    new CswUpdateSchema_02G_Case30047_Docs()
                 };
         } // _SchemaScripts()
 
