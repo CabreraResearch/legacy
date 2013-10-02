@@ -49,8 +49,8 @@ namespace ChemSW.Nbt.Schema
             ImpMgr.importBinding( "filename", CswNbtObjClassSDSDocument.PropertyName.File, CswEnumNbtSubFieldName.Name.ToString() );
 
             //Link and BlobData are stored in the same column, we're going to import it twice and let the "FileType" property dictate what is shown
-            ImpMgr.importBinding( "document", CswNbtObjClassSDSDocument.PropertyName.File, CswEnumNbtSubFieldName.Blob.ToString(), BlobTableName : "documents", LobDataPkColOverride : "legacyid" );
-            ImpMgr.importBinding( "document", CswNbtObjClassSDSDocument.PropertyName.Link, CswEnumNbtSubFieldName.Href.ToString(), BlobTableName : "documents", LobDataPkColOverride : "legacyid" );
+            ImpMgr.importBinding( "document", CswNbtObjClassSDSDocument.PropertyName.File, CswEnumNbtSubFieldName.Blob.ToString(), BlobTableName : "documents", LobDataPkColOverride : "documentid" );
+            ImpMgr.importBinding( "document", CswNbtObjClassSDSDocument.PropertyName.Link, CswEnumNbtSubFieldName.Href.ToString(), BlobTableName : "documents", LobDataPkColOverride : "documentid" );
 
             //Use the description as the text that displays for links
             ImpMgr.importBinding( "description", CswNbtObjClassSDSDocument.PropertyName.Link, CswEnumNbtSubFieldName.Text.ToString() );
