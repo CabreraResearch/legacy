@@ -47,11 +47,11 @@ namespace ChemSW.Nbt.Schema
             ImpMgr.importBinding( "filename", CswNbtObjClassDocument.PropertyName.File, CswEnumNbtSubFieldName.Name.ToString() );
 
             //Link and BlobData are stored in the same column, we're going to import it twice and let the "FileType" property dictate what is shown
-            ImpMgr.importBinding( "document", CswNbtObjClassDocument.PropertyName.File, CswEnumNbtSubFieldName.Blob.ToString(), BlobTableName : "documents", LobDataPkColOverride : "documentid" );
-            ImpMgr.importBinding( "document", CswNbtObjClassDocument.PropertyName.Link, CswEnumNbtSubFieldName.Href.ToString(), BlobTableName : "documents", LobDataPkColOverride : "documentid" );
+            ImpMgr.importBinding( "document", CswNbtObjClassDocument.PropertyName.File, CswEnumNbtSubFieldName.Blob.ToString(), BlobTableName : "documents", LobDataPkColOverride : "legacyid" );
+            ImpMgr.importBinding( "document", CswNbtObjClassDocument.PropertyName.Link, CswEnumNbtSubFieldName.Href.ToString(), BlobTableName : "documents", LobDataPkColOverride : "legacyid" );
 
             //Use the url as the text that displays for links
-            ImpMgr.importBinding( "description", CswNbtObjClassDocument.PropertyName.Link, CswEnumNbtSubFieldName.Text.ToString(), BlobTableName : "documents", LobDataPkColOverride : "documentid" );
+            ImpMgr.importBinding( "description", CswNbtObjClassDocument.PropertyName.Link, CswEnumNbtSubFieldName.Text.ToString() );
 
             //Legacy Id for documents is "<documentid>_<packageid>" (ex: "123_343")
             ImpMgr.importBinding( "legacyid", "Legacy Id", "" );

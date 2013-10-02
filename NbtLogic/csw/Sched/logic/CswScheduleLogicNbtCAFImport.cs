@@ -96,11 +96,11 @@ namespace ChemSW.Nbt.Sched
                         if( string.IsNullOrEmpty( QueueRow["viewname"].ToString() ) )
                         {
                             ItemSql = "select * from " + QueueRow["tablename"] + "@" + CAFDbLink + " where " +
-                                      CurrentTblNamePkCol + " = " + QueueRow["itempk"];
+                                      CurrentTblNamePkCol + " = '" + QueueRow["itempk"] + "'";
                         }
                         else
                         {
-                            ItemSql = "select * from " + QueueRow["viewname"] + "@" + CAFDbLink + " where " + CurrentTblNamePkCol + " = " + QueueRow["itempk"];
+                            ItemSql = "select * from " + QueueRow["viewname"] + "@" + CAFDbLink + " where " + CurrentTblNamePkCol + " = '" + QueueRow["itempk"] + "'";
                         }
 
                         CswArbitrarySelect ItemSelect = _CswNbtResources.makeCswArbitrarySelect( "cafimport_queue_select", ItemSql );
