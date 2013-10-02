@@ -24,6 +24,7 @@ namespace ChemSW.Nbt.Schema
             Collection<ICswSchemaScripts> AllScripts = new Collection<ICswSchemaScripts>()
                 {
                     new CswSchemaScriptsGinkgo(),
+                    new CswSchemaScriptsHickory(),
                     // Add new milestone script collections here
                     //new CswSchemaScriptsCAF() // This runs the CAF scripts - you can comment it out if you don't need it
                 };
