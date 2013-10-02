@@ -37,7 +37,7 @@ namespace ChemSW.Nbt.Schema
 
                 _CswNbtSchemaModTrnsctn.addStringColumn( "Import_Lob", "tablename", "The name of the table this lob came from", false, true, 100 );
 
-                _CswNbtSchemaModTrnsctn.addStringColumn( "Import_Lob", "cafpk", "The PK of the row this lob came from", false, true, 100 );
+                _CswNbtSchemaModTrnsctn.addNumberColumn( "Import_Lob", "cafpk", "The PK of the row this lob came from", false, true );
             }
 
             if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "import_def_bindings", "blobtablename" ) )
