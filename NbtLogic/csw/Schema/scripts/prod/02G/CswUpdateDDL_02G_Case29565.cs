@@ -1,3 +1,4 @@
+using System;
 using System.Data;
 using ChemSW.Audit;
 using ChemSW.DB;
@@ -38,12 +39,17 @@ namespace ChemSW.Nbt.Schema
 
 
             // Inspect shadow tables for missing columns
+            Int32 n = 1;
             foreach( string TableName in _CswNbtSchemaModTrnsctn.CswDataDictionary.getTableNames( IncludeAudit: false ) )
             {
                 if( _CswNbtSchemaModTrnsctn.isTableAuditable( TableName ) )
                 {
                     // this function will handle finding missing columns and creating them
                     _CswNbtSchemaModTrnsctn.makeTableAuditable( TableName );
+
+                    // case 30839
+                    _CswNbtSchemaModTrnsctn.indexColumn( CswAuditMetaData.makeAuditTableName( TableName ), "audittransactionid, recordcreated", "audit" + n );
+                    n++;
                 }
             }
         } // update()
