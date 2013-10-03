@@ -633,8 +633,8 @@ namespace ChemSW.Nbt.Actions
         private bool _isVisibleToCurrentUser( CswNbtView View )
         {
             return View.Visibility == CswEnumNbtViewVisibility.Global ||
-                     ( View.Visibility == _newViewVis && ( View.VisibilityRoleId.PrimaryKey == _VisId ||
-                                                            View.VisibilityUserId.PrimaryKey == _VisId ) );
+                     ( View.Visibility == _newViewVis && ( CswTools.IsPrimaryKey( View.VisibilityRoleId ) && View.VisibilityRoleId.PrimaryKey == _VisId ||
+                                                           CswTools.IsPrimaryKey( View.VisibilityUserId ) && View.VisibilityUserId.PrimaryKey == _VisId ) );
         }
 
         private CswNbtView _createInspectionsGridView( CswNbtMetaDataNodeType InspectionDesignNt, CswNbtMetaDataNodeType RetInspectionTargetNt )
