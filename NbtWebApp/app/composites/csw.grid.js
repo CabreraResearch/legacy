@@ -82,7 +82,8 @@
 
                 dockedItems: [],
                 sorters: [],
-                stateful: true
+                stateful: true,
+                unhideallgridcols: false
             };
 
             Csw.extend(cswPrivate, options);
@@ -689,6 +690,20 @@
                 cswPublic.extGrid = window.Ext.create('Ext.grid.Panel', gridopts);
             } else {
                 cswPublic.extGrid = window.Ext.create('Ext.panel.Panel');
+            }
+
+            //Case 30531 - if we're coming from the view editor and we're un-grouping a grid, we need to unhide the former groupby column
+            if (cswPrivate.unhideallgridcols) {
+                Csw.each(cswPublic.extGrid.columns, function (extCol) {
+                    //Iterate the columns we got from the server and only unhide the ones we really want to unhide...not what ExtJS wants to hide
+                    Csw.each(cswPrivate.columns, function (internalCol) {
+                        if (internalCol.header === extCol.text && false === Csw.bool(internalCol.hidden) &&
+                            extCol.hidden &&
+                            extCol.text.toUpperCase() !== cswPrivate.groupField.toUpperCase()) {
+                            extCol.setVisible(true);
+                        }
+                    });
+                });
             }
 
             return cswPublic.extGrid;
