@@ -187,7 +187,6 @@ namespace ChemSW.Nbt.Actions
                                                 }
                                                 thisContainer.DispenseIn( CswEnumNbtContainerDispenseType.Receive, QuantityValue, UnitId, RequestId );
                                                 thisContainer.Disposed.Checked = CswEnumTristate.False;
-                                                thisContainer.Undispose.setHidden( value: true, SaveToDb: true );
                                                 thisContainer.ReceiptLot.RelatedNodeId = ReceiptLot.NodeId;
                                                 //thisContainer.postChanges( true );
                                             };
