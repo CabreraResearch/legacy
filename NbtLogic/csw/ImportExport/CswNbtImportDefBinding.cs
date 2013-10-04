@@ -170,12 +170,17 @@ namespace ChemSW.Nbt.ImportExport
                             DestProp = DestNodeType.getNodeTypeProp( DestNTPName );
                             if( null != DestProp )
                             {
-                                CswNbtSubField DestSubfield = DestProp.getFieldTypeRule().SubFields[(CswEnumNbtSubFieldName) BindingRow["destsubfield"].ToString()];
-                                if( DestSubfield == null )
+                                string DestSubFieldStr = BindingRow["destsubfield"].ToString();
+                                if( DestSubFieldStr != CswEnumNbtSubFieldName.Blob.ToString() )
                                 {
-                                    DestSubfield = DestProp.getFieldTypeRule().SubFields.Default;
+                                    CswNbtSubField DestSubfield = DestProp.getFieldTypeRule().SubFields[(CswEnumNbtSubFieldName) BindingRow["destsubfield"].ToString()];
+                                    if( DestSubfield == null )
+                                    {
+                                        DestSubfield = DestProp.getFieldTypeRule().SubFields.Default;
+                                        DestSubFieldStr = DestSubfield.Name.ToString();
+                                    }
                                 }
-                                string DestSubFieldName = DestSubfield.Name.ToString();
+                                string DestSubFieldName = DestSubFieldStr;
 
                                 DataRow row = importBindingsTable.NewRow();
                                 row[CswNbtImportTables.ImportDefBindings.importdefid] = DefIdsBySheetName[SheetName];

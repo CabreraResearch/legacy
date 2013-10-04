@@ -226,12 +226,14 @@
                             } else {
                                 cswPrivate.supplierLabel.show();
                                 cswPrivate.supplierSelect.show();
-                                if (cswPrivate.supplierSelect.selectedText &&
+                                
+                                //NOTE: the following should only run while doing a ChemCatCentral import. 
+                                //If there is no longer a comment ~30 lines above this about materialTypeSelect 
+                                //always being null during C3 imports, this block of logic is highly suspect.
+                                if (undefined == cswPrivate.materialTypeSelect &&
+                                    cswPrivate.supplierSelect.selectedText &&
                                     Csw.string(cswPrivate.state.supplier.val) !== Csw.string(cswPrivate.supplierSelect.val())) {
-                                    cswPrivate.state.supplier = {
-                                        name: cswPrivate.supplierSelect.selectedText(),
-                                        val: cswPrivate.supplierSelect.val()
-                                    };
+                                    
                                     if (cswPrivate.supplierSelect.selectedText() === cswPrivate.newSupplierName) {
                                         cswPrivate.makeNewC3SupplierInput(true, 1, 1);
                                     } else {
@@ -389,14 +391,15 @@
                                 selectedNodeLink: cswPrivate.state.supplier.nodelink || '',
                                 onChange: changeMaterial,
                                 onSelectNode: function (nodeObject) {
-                                    // We only want to perform this logic if we get the 'Search' option
-                                    if (nodeObject && cswPrivate.useSearch) {
+                                    if (nodeObject) {
                                         cswPrivate.state.supplier = {
-                                            name: nodeObject.nodename,
+                                            name: nodeObject.name || nodeObject.nodename,
                                             val: nodeObject.nodeid,
-                                            nodelink: nodeObject.nodelink
+                                            nodelink: nodeObject.relatednodelink || nodeObject.nodelink
                                         };
-                                        cswPrivate.makeNewC3SupplierInput(false, 1, 1);
+                                        if (cswPrivate.useSearch) {
+                                            cswPrivate.makeNewC3SupplierInput(false, 1, 1);
+                                        }
                                     }
                                 },
                                 onRemoveSelectedNode: function () {
