@@ -154,6 +154,36 @@ namespace ChemSW.Nbt.Sched
             _LogicRunStatus = CswEnumScheduleLogicRunStatus.Idle;
         }
 
+        public static string generateImportQueueTableSQL( ICswResources CswResources )
+        {
+            string Ret = string.Empty;
+
+            CswTableSelect ImportDefSelect = CswResources.makeCswTableSelect( "importdef_get_caf_rows", CswNbtImportTables.ImportDef.TableName );
+            DataTable ImportDefTable = ImportDefSelect.getTable( "where " + CswNbtImportTables.ImportDef.definitionname + " = '" + DefinitionName + "'" );
+            foreach( DataRow DefRow in ImportDefTable.Rows )
+            {
+                string CurrentDefRowSql = @"insert into nbtimportqueue@" + CAFDbLink + " (nbtimportqueueid, state, itempk, sheetname, priority, errorlog) "
+                                          + " select seq_nbtimportqueueid.nextval@" + CAFDbLink + ", '"
+                                          + State.I + "', "
+                                          + CswConvert.ToString( DefRow[CswNbtImportTables.ImportDef.pkcolumnname] ) + ", "
+                                          + "'" + CswConvert.ToString( DefRow[CswNbtImportTables.ImportDef.sheetname] ) + "', "
+                                          + "0, "
+                                          + "'' from " + CswConvert.ToString( DefRow[CswNbtImportTables.ImportDef.sheetname] ) + " where deleted = '0';";
+                Ret = Ret + @"\n" + CurrentDefRowSql;
+            }
+
+            return Ret;
+        }
+
+        public static string generateTriggerSQL( ICswResources CswResources )
+        {
+            string Ret = string.Empty;
+
+            // TODO: Finish this after Case 30787 is completed
+
+            return Ret;
+        }
+
     }//CswScheduleLogicNbtCAFImpot
 
 }//namespace ChemSW.Nbt.Sched
