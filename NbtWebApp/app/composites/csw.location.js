@@ -26,7 +26,8 @@
             overrideSelectedLocation: true,
             useDefaultLocation: true,
             EditMode: Csw.enums.editMode.Edit,
-            value: ''
+            value: '',
+            requireAllowInventory: false
         };
 
         var cswPublic = {};
@@ -92,7 +93,8 @@
                     cswPrivate.ready.push(Csw.ajax.deprecatedWsNbt({
                         urlMethod: 'getLocationView',
                         data: {
-                            NodeId: Csw.string(cswPrivate.nodeid)
+                            NodeId: Csw.string(cswPrivate.nodeid),
+                            RequireAllowInventory: cswPrivate.requireAllowInventory
                         },
                         success: function (data) {
                             cswPrivate.viewid = data.viewid;

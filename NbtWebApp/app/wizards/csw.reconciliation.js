@@ -173,7 +173,8 @@
                             cswPrivate.reinitSteps(2);
                             getPendingChangesCount();
                         },
-                        useDefaultLocation: false
+                        useDefaultLocation: false,
+                        requireAllowInventory: true
                     });
                     cswPrivate.state.LocationId = locationControl.val();
                     cswPrivate.state.LocationName = locationControl.selectedName();
