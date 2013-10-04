@@ -14,7 +14,8 @@
                 onAddNode: '',
                 onEditNode: '',
                 onDeleteNode: '',
-                onRefresh: ''
+                onRefresh: '',
+                unhideallgridcols: false
             };
 
             Csw.extend(o, options);
@@ -60,6 +61,7 @@
                 nodeid: o.nodeid,
                 nodekey: o.nodekey,
                 showempty: getEmptyGrid,
+                unhideallgridcols: o.unhideallgridcols,
                 onEditNode: o.onEditNode,
                 onDeleteNode: o.onDeleteNode,
                 onRefresh: o.onRefresh,

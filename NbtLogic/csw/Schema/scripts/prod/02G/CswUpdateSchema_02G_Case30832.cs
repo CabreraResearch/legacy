@@ -11,7 +11,7 @@ namespace ChemSW.Nbt.Schema
     {
         public override CswEnumDeveloper Author
         {
-            get { return CswEnumDeveloper.NBT; }
+            get { return CswEnumDeveloper.CM; }
         }
 
         public override int CaseNo
@@ -31,6 +31,7 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
+
             // Page Size should have a min of 5 and a max of 50
             CswNbtMetaDataObjectClass UserOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.UserClass );
             CswNbtMetaDataObjectClassProp PageSizeOCP = UserOC.getObjectClassProp( CswNbtObjClassUser.PropertyName.PageSize );
@@ -58,6 +59,7 @@ namespace ChemSW.Nbt.Schema
                     }
                 }
             }
+
         } // update()
     }
 

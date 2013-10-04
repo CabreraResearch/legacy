@@ -19,7 +19,8 @@
                 url: '',
                 iconurl: '',
                 nodeid: '',
-                nodekey: ''
+                nodekey: '',
+                unhideallgridcols: false,
             };
             if (options) {
                 Csw.extend(o, options);
@@ -71,7 +72,9 @@
                                 var viewMode = Csw.string(o.mode).toLowerCase();
                                 switch (viewMode) {
                                     case 'grid':
-                                        Csw.main.getViewGrid({ 'viewid': o.itemid, 'nodeid': o.nodeid, 'nodekey': o.nodekey, 'showempty': linkOpt.showempty, 'forsearch': linkOpt.forsearch });
+                                        Csw.main.getViewGrid({
+                                            'viewid': o.itemid, 'nodeid': o.nodeid, 'nodekey': o.nodekey, 'showempty': linkOpt.showempty, 'forsearch': linkOpt.forsearch, 'unhideallgridcols': o.unhideallgridcols
+                                        });
                                         break;
                                     case 'table':
                                         Csw.main.getViewTable({ 'viewid': o.itemid }); //, 'nodeid': o.nodeid, 'nodekey': o.nodekey });

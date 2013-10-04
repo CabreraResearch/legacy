@@ -12,7 +12,7 @@ using ChemSW.Nbt.Security;
 
 namespace ChemSW.Nbt
 {
-    public class CswNbtTreeLoaderFromXmlViewByLevel : CswNbtTreeLoader
+    public class CswNbtTreeLoaderFromXmlViewByLevel: CswNbtTreeLoader
     {
         private CswNbtResources _CswNbtResources = null;
         private CswNbtView _View;
@@ -38,7 +38,7 @@ namespace ChemSW.Nbt
             foreach( CswNbtViewRelationship Relationship in _View.Root.ChildRelationships )
             {
                 bool GroupBySiblings = _View.GroupBySiblings && _View.Root.ChildRelationships.Count > 1;
-                loadRelationshipRecursive( Relationship, RequireViewPermissions, GroupBySiblings, ResultsLimit: ResultsLimit );
+                loadRelationshipRecursive( Relationship, RequireViewPermissions, GroupBySiblings, ResultsLimit : ResultsLimit );
             }
             _CswNbtTree.goToRoot();
 
@@ -403,7 +403,7 @@ namespace ChemSW.Nbt
                         }
                         else
                         {
-                            Select += "lower(j" + sortAlias + "." + SubFieldColumn.ToString() + ")";
+                            Select += "lower(" + SubFieldColumn.ToString() + ")";
                         }
                         Select += " from jct_nodes_props where nodeid = n.nodeid and ";
                         if( Prop.Type == CswEnumNbtViewPropType.NodeTypePropId )
@@ -608,7 +608,7 @@ namespace ChemSW.Nbt
                                                                   join nodetype_props p on (p.objectclasspropid = op.objectclasspropid) ";
                                 }
                                 FilterClause += @"                join jct_nodes_props jnp on (jnp.nodeid = n.nodeid and jnp.nodetypepropid = p.nodetypepropid) ";
-                                
+
                                 if( Relationship.SecondType == CswEnumNbtViewRelatedIdType.NodeTypeId )
                                 {
                                     FilterClause += @" join nodetypes t on n.nodetypeid = t.nodetypeid

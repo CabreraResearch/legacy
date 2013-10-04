@@ -10,7 +10,7 @@ using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.PropTypes
 {
-    public class CswNbtNodePropTimeInterval : CswNbtNodeProp
+    public class CswNbtNodePropTimeInterval: CswNbtNodeProp
     {
         public static implicit operator CswNbtNodePropTimeInterval( CswNbtNodePropWrapper PropWrapper )
         {
@@ -21,6 +21,7 @@ namespace ChemSW.Nbt.PropTypes
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node )
         {
             //_RateInterval = new CswRateInterval(CswNbtNodePropData.Gestalt);   //this should be backwards compatible...
+
             _init( CswNbtNodePropData.ClobData );
 
             _IntervalSubField = ( (CswNbtFieldTypeRuleTimeInterval) _FieldTypeRule ).IntervalSubField;
@@ -28,7 +29,7 @@ namespace ChemSW.Nbt.PropTypes
             _ClobDataSubField = ( (CswNbtFieldTypeRuleTimeInterval) _FieldTypeRule ).ClobDataSubField;
 
             // Associate subfields with methods on this object, for SetSubFieldValue()
-            _SubFieldMethods.Add( _IntervalSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => RateInterval, x => RateInterval.ReadJson( CswConvert.ToJObject( x ) ) ) );
+            _SubFieldMethods.Add( _ClobDataSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => RateInterval, x => _init( x ) ) );
             _SubFieldMethods.Add( _StartDateSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => getStartDate(), null ) );
         }
 
@@ -38,10 +39,11 @@ namespace ChemSW.Nbt.PropTypes
 
         private void _init( string clobData )
         {
-            if( ClobData != string.Empty )
+            string ClobValue = ( false == String.IsNullOrEmpty( clobData ) ? clobData : DefaultValue.ClobData );
+            if( ClobValue != string.Empty ) //The Default Value might be empty
             {
                 XmlDocument XmlDoc = new XmlDocument();
-                XmlDoc.LoadXml( clobData );
+                XmlDoc.LoadXml( ClobValue );
                 _RateInterval = new CswRateInterval( _CswNbtResources, XmlDoc.FirstChild );
             }
             else
