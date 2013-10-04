@@ -175,7 +175,7 @@
                             Csw.clientState.setCurrent(Csw.clientState.getLast());
                             Csw.main.refreshSelected();
                         } else {
-                            Csw.main.handleItemSelect({ itemid: viewid, mode: viewmode });
+                            Csw.main.handleItemSelect({ itemid: viewid, mode: viewmode, unhideallgridcols: true });
                         }
                     },
                     onCancel: function () {

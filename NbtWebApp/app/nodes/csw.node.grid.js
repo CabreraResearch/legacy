@@ -42,7 +42,8 @@
             },
             showCheckboxes: false,
             height: '',
-            includeInQuickLaunch: true
+            includeInQuickLaunch: true,
+            unhideallgridcols: false
         };
 
         Csw.extend(cswPrivate, params);
@@ -70,6 +71,7 @@
             height: cswPrivate.height,
             canSelectRow: cswPrivate.canSelectRow,
             onSelect: cswPrivate.onSelect,
+            unhideallgridcols: cswPrivate.unhideallgridcols,
             onEdit: function (rows) {
                 // this works for both Multi-edit and regular
                 var nodekeys = Csw.delimitedString(),
