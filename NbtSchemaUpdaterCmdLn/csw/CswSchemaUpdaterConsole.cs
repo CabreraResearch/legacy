@@ -172,32 +172,32 @@ namespace ChemSW.Nbt.Schema.CmdLn
             CswSchemaScriptsProd CswSchemaScripts = null;
             //if( _UserArgs.ContainsKey( _ArgKey.Mode ) && _ArgVal_Test == _UserArgs[_ArgKey.Mode] )
             //{
-                //// Use test cases
-                //Int32 StartAtTestCase = 0;
-                //if( _UserArgs.ContainsKey( _ArgKey.StartAtTestCase ) )
-                //{
-                //    StartAtTestCase = CswConvert.ToInt32( _UserArgs[_ArgKey.StartAtTestCase] );
-                //}
+            //// Use test cases
+            //Int32 StartAtTestCase = 0;
+            //if( _UserArgs.ContainsKey( _ArgKey.StartAtTestCase ) )
+            //{
+            //    StartAtTestCase = CswConvert.ToInt32( _UserArgs[_ArgKey.StartAtTestCase] );
+            //}
 
-                //Int32 EndAtTestCase = 0;
-                //if( _UserArgs.ContainsKey( _ArgKey.EndAtTestCase ) )
-                //{
-                //    EndAtTestCase = CswConvert.ToInt32( _UserArgs[_ArgKey.EndAtTestCase] );
-                //}
+            //Int32 EndAtTestCase = 0;
+            //if( _UserArgs.ContainsKey( _ArgKey.EndAtTestCase ) )
+            //{
+            //    EndAtTestCase = CswConvert.ToInt32( _UserArgs[_ArgKey.EndAtTestCase] );
+            //}
 
-                //List<string> TestCasesToIgnore = new List<string>();
-                //if( _UserArgs.ContainsKey( _ArgKey.IgnoreTestCasesCsv ) )
-                //{
-                //    CswCommaDelimitedString CswCommaDelimitedString = new CswCommaDelimitedString();
-                //    CswCommaDelimitedString.FromString( _UserArgs[_ArgKey.IgnoreTestCasesCsv] );
-                //    TestCasesToIgnore = CswCommaDelimitedString.ToList<string>();
-                //}
-                //CswSchemaScripts = new CswSchemaScriptsTest( StartAtTestCase, EndAtTestCase, TestCasesToIgnore );
+            //List<string> TestCasesToIgnore = new List<string>();
+            //if( _UserArgs.ContainsKey( _ArgKey.IgnoreTestCasesCsv ) )
+            //{
+            //    CswCommaDelimitedString CswCommaDelimitedString = new CswCommaDelimitedString();
+            //    CswCommaDelimitedString.FromString( _UserArgs[_ArgKey.IgnoreTestCasesCsv] );
+            //    TestCasesToIgnore = CswCommaDelimitedString.ToList<string>();
+            //}
+            //CswSchemaScripts = new CswSchemaScriptsTest( StartAtTestCase, EndAtTestCase, TestCasesToIgnore );
             //}
             //else
             //{
-                // Use production scripts
-                CswSchemaScripts = new CswSchemaScriptsProd( CswNbtResources );
+            // Use production scripts
+            CswSchemaScripts = new CswSchemaScriptsProd( CswNbtResources );
             //}
 
             CswSchemaUpdater CswSchemaUpdater = new CswSchemaUpdater( CurrentAccessId, ResourcesInitHandler, CswSchemaScripts );
@@ -520,17 +520,16 @@ namespace ChemSW.Nbt.Schema.CmdLn
                         else
                         {
                             string Message = string.Empty;
-                            if( true == SuppressRealTimeProgressTics )
+                            if( false == SuppressRealTimeProgressTics )
                             {
                                 Message = " failed: " + CswSchemaUpdateThread.Message + _Separator_NuLine;
                             }
                             else
                             {
-                                Message = UpdateDescription + " failed: " + CswSchemaUpdateThread.Message +
-                                          _Separator_NuLine;
+                                Message = UpdateDescription + " failed: " + CswSchemaUpdateThread.Message + _Separator_NuLine;
                             }
 
-                            CswConsoleOutput.write( Message, ForceWrite: true, SuppressAccessId: true );
+                            CswConsoleOutput.write( Message, ForceWrite: true, SuppressAccessId: false );
                         }
 
                         CswNbtResources.ClearCache();

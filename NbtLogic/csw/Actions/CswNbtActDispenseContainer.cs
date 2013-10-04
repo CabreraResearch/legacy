@@ -172,7 +172,6 @@ namespace ChemSW.Nbt.Actions
                         ChildContainer.Quantity.UnitId = UnitId;
                         ChildContainer.Disposed.Checked = CswEnumTristate.False;
                         //ChildContainer.postChanges( false );
-                        ChildContainer.Undispose.setHidden( value: true, SaveToDb: true );
                         _ContainersToView.Add( ChildContainer.NodeId );
                     } );
             }

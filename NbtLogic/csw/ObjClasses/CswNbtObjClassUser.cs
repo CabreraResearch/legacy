@@ -187,16 +187,6 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
         {
-            //Case 30817
-            if( CswTools.IsPrimaryKey( WorkUnitId ) &&
-                false == AvailableWorkUnits.CheckValue( WorkUnitId.ToString() ) )
-            {
-                AvailableWorkUnits.AddValue( WorkUnitId.ToString() );
-                WorkUnitProperty.RelatedNodeId = WorkUnitId;
-                WorkUnitProperty.SyncGestalt();
-
-                _updateAvailableWorkUnits();
-            }
             _CswNbtObjClassDefault.beforeCreateNode( IsCopy, OverrideUniqueValidation );
         }//beforeCreateNode()
 
@@ -548,6 +538,7 @@ namespace ChemSW.Nbt.ObjClasses
             if( false == CswTools.IsPrimaryKey( UsersWorkUnitId ) )
             {
                 UsersWorkUnitId = GetFirstAvailableWorkUnitNodeId();
+
             }
 
             if( false == AvailableWorkUnits.CheckValue( UsersWorkUnitId.ToString() ) )
@@ -888,6 +879,15 @@ namespace ChemSW.Nbt.ObjClasses
 
         private void _updateAvailableWorkUnits()
         {
+            //Case 30817 (Case 30843: moved to here from onBeforeCreate)
+            if( CswTools.IsPrimaryKey( WorkUnitId ) &&
+                false == AvailableWorkUnits.CheckValue( WorkUnitId.ToString() ) )
+            {
+                AvailableWorkUnits.AddValue( WorkUnitId.ToString() );
+                WorkUnitProperty.RelatedNodeId = WorkUnitId;
+                WorkUnitProperty.SyncGestalt();
+            }
+
             CswNbtView View = _CswNbtResources.ViewSelect.restoreView( WorkUnitProperty.NodeTypeProp.ViewId );
 
             View.Clear();

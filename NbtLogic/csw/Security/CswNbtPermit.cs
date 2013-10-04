@@ -1164,21 +1164,21 @@ namespace ChemSW.Nbt.Security
                 if( null != User && CswTools.IsPrimaryKey( PermissionGroupId ) )
                 {
                     CswNbtPropertySetPermission PermNode = User.getPermissionForGroup( PermissionGroupId );
-                    //Case 30480: Only use InventoryGroupPermission if checking against Containers
-                    if( null == NodeType ||
-                        PermNode.ObjectClass.ObjectClass != CswEnumNbtObjectClass.InventoryGroupPermissionClass ||
-                        NodeType.getObjectClass().ObjectClass == CswEnumNbtObjectClass.ContainerClass )
+                    if( null != PermNode )
                     {
-                        if( null != PermNode )
+                        //Case 30480: Only use InventoryGroupPermission if checking against Containers
+                        if( null == NodeType ||
+                            PermNode.ObjectClass.ObjectClass != CswEnumNbtObjectClass.InventoryGroupPermissionClass ||
+                            NodeType.getObjectClass().ObjectClass == CswEnumNbtObjectClass.ContainerClass )
                         {
                             hasPermission = ( ( Permission == CswEnumNbtNodeTypePermission.View && PermNode.View.Checked == CswEnumTristate.True ) ||
                                               PermNode.Edit.Checked == CswEnumTristate.True ); //edit implies edit, create, and delete
                         }
-                        else if( null != _CswNbtResources.Nodes[PermissionGroupId] )
-                        {
-                            // case 30477 - Only revoke permissions if the group's nodetype is enabled and the node is valid
-                            hasPermission = false;
-                        }
+                    }
+                    else if( null != _CswNbtResources.Nodes[PermissionGroupId] )
+                    {
+                        // case 30477 - Only revoke permissions if the group's nodetype is enabled and the node is valid
+                        hasPermission = false;
                     }
                 }
             }
