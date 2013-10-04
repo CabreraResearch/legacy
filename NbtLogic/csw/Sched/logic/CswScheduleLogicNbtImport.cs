@@ -1,15 +1,10 @@
 using System;
-using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Data;
-using System.Linq;
 using ChemSW.Config;
 using ChemSW.Core;
-using ChemSW.DB;
 using ChemSW.Exceptions;
 using ChemSW.MtSched.Core;
 using ChemSW.Nbt.ImportExport;
-using ChemSW.RscAdo;
 
 namespace ChemSW.Nbt.Sched
 {

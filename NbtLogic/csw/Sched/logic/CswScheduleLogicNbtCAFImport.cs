@@ -17,14 +17,14 @@ namespace ChemSW.Nbt.Sched
         /// <summary>
         /// I: Insert
         /// U: Update
-        /// D: Delete (Done)
+        /// D: Delete
         /// E: Error
         /// </summary>
         public enum State
         {
             I,
-            D,
             U,
+            D,
             E
         }
 
@@ -53,6 +53,7 @@ namespace ChemSW.Nbt.Sched
 
         public Int32 getLoadCount( ICswResources CswResources )
         {
+            // TODO: Does this SQL need to take State.U into consideration?
             string Sql = "select count(*) cnt from nbtimportqueue@" + CAFDbLink + " where state = '" + State.I + "'";
             CswArbitrarySelect QueueCountSelect = CswResources.makeCswArbitrarySelect( "cafimport_queue_count", Sql );
             DataTable QueueCountTable = QueueCountSelect.getTable();
@@ -85,23 +86,17 @@ namespace ChemSW.Nbt.Sched
                     CswNbtImporter Importer = new CswNbtImporter( _CswNbtResources );
                     foreach( DataRow QueueRow in QueueTable.Rows )
                     {
-                        // LOB problem here
-                        string CurrentTblNamePkCol = (string) QueueRow["pkcolumnname"];
+                        string CurrentTblNamePkCol = CswConvert.ToString( QueueRow["pkcolumnname"] );
                         if( string.IsNullOrEmpty( CurrentTblNamePkCol ) )
                         {
-                            throw new Exception( "Could not find pkcolumn in data_dictionary for table " + QueueRow["tablename"].ToString() );
+                            throw new Exception( "Could not find pkcolumn in data_dictionary for table " + QueueRow["tablename"] );
                         }
 
                         string ItemSql = string.Empty;
-                        if( string.IsNullOrEmpty( QueueRow["viewname"].ToString() ) )
-                        {
-                            ItemSql = "select * from " + QueueRow["tablename"] + "@" + CAFDbLink + " where " +
-                                      CurrentTblNamePkCol + " = '" + QueueRow["itempk"] + "'";
-                        }
-                        else
-                        {
-                            ItemSql = "select * from " + QueueRow["viewname"] + "@" + CAFDbLink + " where " + CurrentTblNamePkCol + " = '" + QueueRow["itempk"] + "'";
-                        }
+                        ItemSql = string.IsNullOrEmpty( QueueRow["viewname"].ToString() ) ? "select * from " + QueueRow["tablename"] + "@" + CAFDbLink +
+                                                                                          " where " + CurrentTblNamePkCol + " = '" + QueueRow["itempk"] +
+                                                                                          "'" : "select * from " + QueueRow["viewname"] + "@" + CAFDbLink +
+                                                                                          " where " + CurrentTblNamePkCol + " = '" + QueueRow["itempk"] + "'";
 
                         CswArbitrarySelect ItemSelect = _CswNbtResources.makeCswArbitrarySelect( "cafimport_queue_select", ItemSql );
                         DataTable ItemTable = ItemSelect.getTable();
@@ -111,14 +106,13 @@ namespace ChemSW.Nbt.Sched
                             string Error = Importer.ImportRow( ItemRow, DefinitionName, SheetName, true );
                             if( string.IsNullOrEmpty( Error ) )
                             {
-                                // record success
-                                _CswNbtResources.execArbitraryPlatformNeutralSql( "update " + QueueTableName + "@" + CAFDbLink +
-                                                                                  "   set state = '" + State.D + "' " +
+                                // record success - delete the record
+                                _CswNbtResources.execArbitraryPlatformNeutralSql( "delete from " + QueueTableName + "@" + CAFDbLink +
                                                                                   " where " + QueuePkName + " = " + QueueRow[QueuePkName] );
                             }
                             else
                             {
-                                // record the error on nbtimportqueue
+                                // record failure - record the error on nbtimportqueue
                                 _CswNbtResources.execArbitraryPlatformNeutralSql( "update " + QueueTableName + "@" + CAFDbLink +
                                                                                   "   set state = '" + State.E + "', " +
                                                                                   "       errorlog = '" + CswTools.SafeSqlParam( Error ) + "' " +
@@ -133,7 +127,6 @@ namespace ChemSW.Nbt.Sched
 
                 catch( Exception Exception )
                 {
-
                     _CswScheduleLogicDetail.StatusMessage = "CswScheduleLogicNbtCAFImport::ImportItems() exception: " + Exception.Message + "; " + Exception.StackTrace;
                     _CswNbtResources.logError( new CswDniException( _CswScheduleLogicDetail.StatusMessage ) );
                     _LogicRunStatus = CswEnumScheduleLogicRunStatus.Failed;
@@ -162,14 +155,17 @@ namespace ChemSW.Nbt.Sched
             DataTable ImportDefTable = ImportDefSelect.getTable( "where " + CswNbtImportTables.ImportDef.definitionname + " = '" + DefinitionName + "'" );
             foreach( DataRow DefRow in ImportDefTable.Rows )
             {
+                string DataSource = CswConvert.ToString( string.IsNullOrEmpty( CswConvert.ToString( DefRow[CswNbtImportTables.ImportDef.viewname] ) ) ? DefRow[CswNbtImportTables.ImportDef.tablename] : DefRow[CswNbtImportTables.ImportDef.viewname] );
                 string CurrentDefRowSql = @"insert into nbtimportqueue@" + CAFDbLink + " (nbtimportqueueid, state, itempk, sheetname, priority, errorlog) "
                                           + " select seq_nbtimportqueueid.nextval@" + CAFDbLink + ", '"
                                           + State.I + "', "
                                           + CswConvert.ToString( DefRow[CswNbtImportTables.ImportDef.pkcolumnname] ) + ", "
                                           + "'" + CswConvert.ToString( DefRow[CswNbtImportTables.ImportDef.sheetname] ) + "', "
                                           + "0, "
-                                          + "'' from " + CswConvert.ToString( DefRow[CswNbtImportTables.ImportDef.sheetname] ) + " where deleted = '0';";
-                Ret = Ret + @"\n" + CurrentDefRowSql;
+                                          + "'' from " + DataSource + "@" + CAFDbLink + " where deleted = '0';";
+                CurrentDefRowSql = CurrentDefRowSql + " commit;";
+
+                Ret = Ret + " " + CurrentDefRowSql;
             }
 
             return Ret;
