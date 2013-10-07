@@ -427,6 +427,7 @@ namespace ChemSW.Nbt.PropTypes
                 }
                 else
                 {
+                    ParentObject["usesearch"] = false;
                     Int32 OptionCount = 0;
                     CswPrimaryKey FirstPk = null;
                     foreach( CswPrimaryKey NodePk in Options.Keys ) //.Where( NodePk => NodePk != null && NodePk.PrimaryKey != Int32.MinValue ) )
@@ -510,7 +511,6 @@ namespace ChemSW.Nbt.PropTypes
             }
             ParentObject["viewid"] = View.ViewId.ToString();
             
-            ParentObject["usesearch"] = false;
         } // ToJSON()
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
