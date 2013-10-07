@@ -145,7 +145,7 @@ namespace ChemSW.Nbt.ObjClasses
         public override void afterPropertySetPopulateProps()
         {
             LabelCodes.InitOptions = _initDsdPhraseOptions;
-
+            LabelCodes.SetOnPropChange( OnLabelCodesChange );
             _setUpDsdPhraseView();
 
             if( false == CswNbtObjClassSDSDocument.materialHasActiveSDS( _CswNbtResources, NodeId ) )
@@ -1090,15 +1090,18 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtView DsdView = LabelCodesGrid.View;
 
             DsdView.Root.ChildRelationships.Clear();
-            CswNbtViewRelationship parent = DsdView.AddViewRelationship( DsdPhraseOC, false );
-            DsdView.AddViewProperty( parent, CodeOCP );
-            DsdView.AddViewProperty( parent, EngOCP );
-
-            foreach( string PhraseId in LabelCodes.Value )
+            if( LabelCodes.Value.Count > 0 )
             {
-                CswPrimaryKey PhrasePk = new CswPrimaryKey();
-                PhrasePk.FromString( PhraseId );
-                parent.NodeIdsToFilterIn.Add( PhrasePk );
+                CswNbtViewRelationship parent = DsdView.AddViewRelationship( DsdPhraseOC, false );
+                DsdView.AddViewProperty( parent, CodeOCP );
+                DsdView.AddViewProperty( parent, EngOCP );
+
+                foreach( string PhraseId in LabelCodes.Value )
+                {
+                    CswPrimaryKey PhrasePk = new CswPrimaryKey();
+                    PhrasePk.FromString( PhraseId );
+                    parent.NodeIdsToFilterIn.Add( PhrasePk );
+                }
             }
 
             DsdView.SaveToCache( false, true );
@@ -1184,6 +1187,14 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropText SubclassName { get { return _CswNbtNode.Properties[PropertyName.SubclassName]; } }
         public CswNbtNodePropImageList Pictograms { get { return _CswNbtNode.Properties[PropertyName.Pictograms]; } }
         public CswNbtNodePropMultiList LabelCodes { get { return _CswNbtNode.Properties[PropertyName.LabelCodes]; } }
+        public void OnLabelCodesChange( CswNbtNodeProp Prop, bool Creating )
+        {
+            if( Creating == false )
+            {
+                _setUpDsdPhraseView();
+            }
+        }
+
         public CswNbtNodePropGrid LabelCodesGrid { get { return _CswNbtNode.Properties[PropertyName.LabelCodesGrid]; } }
 
         #endregion Object class specific properties

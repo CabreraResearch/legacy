@@ -287,7 +287,11 @@ namespace ChemSW.Nbt.Schema
                 LabelCodesNTP.removeFromAllLayouts();
                 LabelCodesNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, DSDTab.TabId );
 
+                CswNbtView LabelCodesView = _CswNbtSchemaModTrnsctn.ViewSelect.restoreView( "DSD Label Codes Property Grid", CswEnumNbtViewVisibility.Property );
+
                 CswNbtMetaDataNodeTypeProp LabelCodesGridNTP = ChemicalNT.getNodeTypePropByObjectClassProp( CswNbtObjClassChemical.PropertyName.LabelCodesGrid );
+                LabelCodesGridNTP.ViewId = LabelCodesView.ViewId;
+                LabelCodesGridNTP.Extended = "Small";
                 LabelCodesGridNTP.removeFromAllLayouts();
                 LabelCodesGridNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, DSDTab.TabId );
             }

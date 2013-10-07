@@ -108,7 +108,7 @@ namespace ChemSW.Nbt.Schema
                         ListOptions = "" //Intentionally empty - will be dynamic
                     } );
 
-            CswNbtView DSDLabelCodesView = _CswNbtSchemaModTrnsctn.makeSafeView( "DSD Label Codes Property Grid", CswEnumNbtViewVisibility.Property );
+            CswNbtView DSDLabelCodesView = _CswNbtSchemaModTrnsctn.makeSafeView( "DSD Label Codes Property Grid", CswEnumNbtViewVisibility.Hidden );
             DSDLabelCodesView.SetViewMode( CswEnumNbtViewRenderingMode.Grid );
             DSDLabelCodesView.AddViewRelationship( DSDPhraseOC, false );
             DSDLabelCodesView.save();
@@ -118,7 +118,8 @@ namespace ChemSW.Nbt.Schema
                 {
                     PropName = CswNbtObjClassChemical.PropertyName.LabelCodesGrid,
                     FieldType = CswEnumNbtFieldType.Grid,
-                    ViewXml = DSDLabelCodesView.ToString()
+                    ViewXml = DSDLabelCodesView.ToString(),
+                    Extended = "Small"
                 } );
 
             #endregion
