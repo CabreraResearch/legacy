@@ -145,7 +145,7 @@ namespace ChemSW.Nbt.PropTypes
         private string _parseChemicalFormula( string Formula )
         {
             string FormattedFormula = "";
-            Regex FormulaExpression = new Regex( "(\\d*)([a-zA-Z\\d]+)([ .]*)(.*)" );
+            Regex FormulaExpression = new Regex( "(\\d*)([a-zA-Z\\d\\[\\]\\(\\)\\-^#=]+)([ .]*)(.*)" );
 
             //borrow a dictionary of elements from structure search
             PeriodicTable PT = new PeriodicTable();
@@ -177,14 +177,14 @@ namespace ChemSW.Nbt.PropTypes
                         //if the last letter plus this one lowercased make an element and the next is not already lowered
                         if( NextLetter != Char.ToLower( NextLetter ) && PT.ElementExists( "" + LastLetter + Char.ToLower( Letter ) ) )
                             ChemicalCompound[i] = Char.ToLower( Letter );
-                        //if this letter plus the next one lowercased make an element
+                            //if this letter plus the next one lowercased make an element
                         else if( PT.ElementExists( "" + Letter + Char.ToLower( NextLetter ) ) )
                         {
                             ChemicalCompound[i + 1] = Char.ToLower( NextLetter );
                             i = i + 1;
                         }
 
-                    }//else if( false == PT.ElementExists( Letter.ToString() ) && 'A' <= Letter && Letter <= 'Z' )
+                    } //else if( false == PT.ElementExists( Letter.ToString() ) && 'A' <= Letter && Letter <= 'Z' )
                 }//for( int i = 0; i < ChemicalCompound.Length; i++ )
 
                 //append the prettified compound

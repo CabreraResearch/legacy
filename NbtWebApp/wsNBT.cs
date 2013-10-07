@@ -2379,7 +2379,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string getLocationView( string NodeId )
+        public string getLocationView( string NodeId, bool RequireAllowInventory )
         {
             JObject ReturnVal = new JObject();
             CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
@@ -2390,7 +2390,7 @@ namespace ChemSW.Nbt.WebServices
                 if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources, _CswNbtStatisticsEvents );
-                    ReturnVal = ws.getLocationView( NodeId );
+                    ReturnVal = ws.getLocationView( NodeId, RequireAllowInventory: RequireAllowInventory );
                 }
                 _deInitResources();
             }
