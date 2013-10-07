@@ -19,6 +19,7 @@ using ChemSW.Security;
 using ChemSW.Session;
 using ChemSW.StructureSearch;
 using ChemSW.TblDn;
+using ChemSW.WebSvc;
 
 namespace ChemSW.Nbt
 {
@@ -92,6 +93,13 @@ namespace ChemSW.Nbt
         /// Provides an interface into the StructureSearch classes
         /// </summary>
         public CswStructureSearchManager StructureSearchManager;
+
+        private Collection<CswWebSvcReturnBase.ErrorMessage> _Messages;
+        public Collection<CswWebSvcReturnBase.ErrorMessage> Messages
+        {
+            get { return _Messages; }
+            set { _Messages = value; }
+        }
 
         /// <summary>
         /// For unique naming and tracking

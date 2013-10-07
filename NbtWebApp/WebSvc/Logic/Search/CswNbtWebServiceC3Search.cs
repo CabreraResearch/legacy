@@ -263,195 +263,213 @@ namespace ChemSW.Nbt.WebServices
         public static void GetAvailableDataSources( ICswResources CswResources, CswNbtC3SearchReturn Return, CswC3Params CswC3Params )
         {
             CswNbtResources _CswNbtResources = (CswNbtResources) CswResources;
+
             CswNbtC3ClientManager CswNbtC3ClientManager = new CswNbtC3ClientManager( _CswNbtResources, CswC3Params );
-            ChemCatCentral.SearchClient C3SearchClient = CswNbtC3ClientManager.initializeC3Client();
-
-            CswRetObjSearchResults SourcesList = C3SearchClient.getDataSources( CswC3Params );
-
-            //todo: catch error when SourcesList returns null
-
-            Collection<DataSource> AvailableDataSources = new Collection<DataSource>();
-
-            //Create the "All Sources" option
-            CswCommaDelimitedString AllSources = new CswCommaDelimitedString();
-            AllSources.FromArray( SourcesList.AvailableDataSources );
-
-            DataSource allSourcesDs = new DataSource();
-            allSourcesDs.value = AllSources.ToString();
-            allSourcesDs.display = "All Sources";
-            AvailableDataSources.Add( allSourcesDs );
-
-            //Add available data source options
-            foreach( string DataSource in SourcesList.AvailableDataSources )
+            SearchClient C3SearchClient = CswNbtC3ClientManager.initializeC3Client();
+            if( null != C3SearchClient )
             {
-                DataSource dS = new DataSource();
-                dS.value = DataSource;
-                dS.display = DataSource;
-                AvailableDataSources.Add( dS );
-            }
+                CswRetObjSearchResults SourcesList = C3SearchClient.getDataSources( CswC3Params );
 
-            Return.Data.AvailableDataSources = AvailableDataSources;
+                //todo: catch error when SourcesList returns null
+
+                Collection<DataSource> AvailableDataSources = new Collection<DataSource>();
+
+                //Create the "All Sources" option
+                CswCommaDelimitedString AllSources = new CswCommaDelimitedString();
+                AllSources.FromArray( SourcesList.AvailableDataSources );
+
+                DataSource allSourcesDs = new DataSource();
+                allSourcesDs.value = AllSources.ToString();
+                allSourcesDs.display = "All Sources";
+                AvailableDataSources.Add( allSourcesDs );
+
+                //Add available data source options
+                foreach( string DataSource in SourcesList.AvailableDataSources )
+                {
+                    DataSource dS = new DataSource();
+                    dS.value = DataSource;
+                    dS.display = DataSource;
+                    AvailableDataSources.Add( dS );
+                }
+
+                Return.Data.AvailableDataSources = AvailableDataSources;
+            }
+            else
+            {
+                // If the C3SearchClient was null, something errored so we provide the message(s) to the Return
+                Return.Status.Messages = CswNbtC3ClientManager.Messages;
+            }
 
         }
 
         public static void GetSearchTypes( ICswResources CswResources, CswNbtC3SearchReturn Return, CswC3Params CswC3Params )
         {
-            CswNbtResources _CswNbtResources = (CswNbtResources) CswResources;
-
-            CswNbtC3ClientManager CswNbtC3ClientManager = new CswNbtC3ClientManager( _CswNbtResources, CswC3Params );
-            ChemCatCentral.SearchClient C3SearchClient = CswNbtC3ClientManager.initializeC3Client();
-
-            List<string> newlist = new List<string>();
-
-            foreach( CswC3SearchParams.SearchFieldType SearchType in Enum.GetValues( typeof( CswC3SearchParams.SearchFieldType ) ) )
-            {
-                newlist.Add( SearchType.ToString() );
-            }
-
-            Return.Data.SearchTypes = newlist;
-
+            List<string> SearchTypes = ( from CswC3SearchParams.SearchFieldType SearchType in Enum.GetValues( typeof( CswC3SearchParams.SearchFieldType ) ) select SearchType.ToString() ).ToList();
+            Return.Data.SearchTypes = SearchTypes;
         }
 
         public static void GetC3ProductDetails( ICswResources CswResources, CswNbtC3SearchReturn Return, CswC3SearchParams CswC3SearchParams )
         {
             CswNbtResources _CswNbtResources = (CswNbtResources) CswResources;
-            CswNbtC3ClientManager CswNbtC3ClientManager = new CswNbtC3ClientManager( _CswNbtResources, CswC3SearchParams );
-            ChemCatCentral.SearchClient C3SearchClient = CswNbtC3ClientManager.initializeC3Client();
 
-            CswRetObjSearchResults SearchResults = C3SearchClient.getProductDetails( CswC3SearchParams );
-            if( SearchResults.CswC3SearchResults.Length > 0 )
+            CswNbtC3ClientManager CswNbtC3ClientManager = new CswNbtC3ClientManager( _CswNbtResources, CswC3SearchParams );
+            SearchClient C3SearchClient = CswNbtC3ClientManager.initializeC3Client();
+            if( null != C3SearchClient )
             {
-                ChemCatCentral.CswC3Product C3ProductDetails = SearchResults.CswC3SearchResults[0];
-                Return.Data.ProductDetails = C3ProductDetails;
+                CswRetObjSearchResults SearchResults = C3SearchClient.getProductDetails( CswC3SearchParams );
+                if( SearchResults.CswC3SearchResults.Length > 0 )
+                {
+                    CswC3Product C3ProductDetails = SearchResults.CswC3SearchResults[0];
+                    Return.Data.ProductDetails = C3ProductDetails;
+                }
+            }
+            else
+            {
+                // If the C3SearchClient was null, something errored so we provide the message(s) to the Return
+                Return.Status.Messages = CswNbtC3ClientManager.Messages;
             }
         }
 
         public static void RunChemCatCentralSearch( ICswResources CswResources, CswNbtC3SearchReturn Return, CswC3SearchParams CswC3SearchParams )
         {
-            JObject ret = new JObject();
-
+            JObject Ret = new JObject();
             CswNbtResources _CswNbtResources = (CswNbtResources) CswResources;
+
             CswNbtC3ClientManager CswNbtC3ClientManager = new CswNbtC3ClientManager( _CswNbtResources, CswC3SearchParams );
-            ChemCatCentral.SearchClient C3SearchClient = CswNbtC3ClientManager.initializeC3Client();
-            CswRetObjSearchResults SearchResults = null;
-
-            try
+            SearchClient C3SearchClient = CswNbtC3ClientManager.initializeC3Client();
+            if( null != C3SearchClient )
             {
-                SearchResults = C3SearchClient.search( CswC3SearchParams );
+                CswRetObjSearchResults SearchResults = null;
+
+                try
+                {
+                    SearchResults = C3SearchClient.search( CswC3SearchParams );
+                }
+                catch( TimeoutException TimeoutException )
+                {
+                    const string WarningMessage = "The search has timed out. Please use more specific search terms.";
+                    throw ( new CswDniException( CswEnumErrorType.Warning, WarningMessage, WarningMessage, TimeoutException ) );
+                }
+
+                CswNbtWebServiceTable wsTable = new CswNbtWebServiceTable( _CswNbtResources, null, Int32.MinValue );
+                Ret["table"] = wsTable.getTable( SearchResults );
+                Ret["filters"] = "";
+                Ret["searchterm"] = CswC3SearchParams.Query;
+                Ret["filtersapplied"] = "";
+                Ret["sessiondataid"] = "";
+                Ret["searchtype"] = "chemcatcentral";
+
+                Return.Data.SearchResults = Ret.ToString();
             }
-            catch( TimeoutException TimeoutException )
+            else
             {
-                const string WarningMessage = "The search has timed out. Please use more specific search terms.";
-                throw ( new CswDniException( CswEnumErrorType.Warning, WarningMessage, WarningMessage, TimeoutException ) );
+                // If the C3SearchClient was null, something errored so we provide the message(s) to the Return
+                Return.Status.Messages = CswNbtC3ClientManager.Messages;
             }
-
-            CswNbtWebServiceTable wsTable = new CswNbtWebServiceTable( _CswNbtResources, null, Int32.MinValue );
-            ret["table"] = wsTable.getTable( SearchResults );
-            ret["filters"] = "";
-            ret["searchterm"] = CswC3SearchParams.Query;
-            ret["filtersapplied"] = "";
-            //Search.SaveToCache( true );
-            ret["sessiondataid"] = "";
-            ret["searchtype"] = "chemcatcentral";
-
-            Return.Data.SearchResults = ret.ToString();
-
         }
 
         public static void importC3Product( ICswResources CswResources, CswNbtC3CreateMaterialReturn Return, CswNbtC3Import.Request Request )
         {
             CswNbtResources _CswNbtResources = (CswNbtResources) CswResources;
+
             CswC3SearchParams CswC3SearchParams = new CswC3SearchParams();
-            ChemCatCentral.CswC3Product C3ProductDetails = new CswC3Product();
+            CswC3Product C3ProductDetails = new CswC3Product();
 
             CswC3SearchParams.Field = "ProductId";
             CswC3SearchParams.Query = CswConvert.ToString( Request.C3ProductId );
 
             CswNbtC3ClientManager CswNbtC3ClientManager = new CswNbtC3ClientManager( _CswNbtResources, CswC3SearchParams );
-            ChemCatCentral.SearchClient C3SearchClient = CswNbtC3ClientManager.initializeC3Client();
-
-            // Perform C3 search to get the product details
-            CswRetObjSearchResults SearchResults = C3SearchClient.getProductDetails( CswC3SearchParams );
-            if( SearchResults.CswC3SearchResults.Length > 0 )
+            SearchClient C3SearchClient = CswNbtC3ClientManager.initializeC3Client();
+            if( null != C3SearchClient )
             {
-                C3ProductDetails = SearchResults.CswC3SearchResults[0];
-            }
-
-            string NodeTypeName = Request.NodeTypeName;
-            if( false == string.IsNullOrEmpty( NodeTypeName ) )
-            {
-                CswNbtMetaDataNodeType NodeTypeToBeImported = _CswNbtResources.MetaData.getNodeType( NodeTypeName );
-                if( null != NodeTypeToBeImported )
+                // Perform C3 search to get the product details
+                CswRetObjSearchResults SearchResults = C3SearchClient.getProductDetails( CswC3SearchParams );
+                if( SearchResults.CswC3SearchResults.Length > 0 )
                 {
-                    // Instance the ImportManger
-                    ImportManager C3Import = new ImportManager( _CswNbtResources, C3ProductDetails );
+                    C3ProductDetails = SearchResults.CswC3SearchResults[0];
+                }
 
-                    // Create the temporary material node
-                    CswNbtPropertySetMaterial C3ProductTempNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeToBeImported.NodeTypeId, IsTemp: true, OnAfterMakeNode: delegate( CswNbtNode NewNode )
-                        {
-                            //Set the c3productid property
-                            ( (CswNbtPropertySetMaterial) NewNode ).C3ProductId.Text = C3ProductDetails.ProductId.ToString();
-                            // Add props to the tempnode
-                            C3Import.addNodeTypeProps( NewNode );
+                string NodeTypeName = Request.NodeTypeName;
+                if( false == string.IsNullOrEmpty( NodeTypeName ) )
+                {
+                    CswNbtMetaDataNodeType NodeTypeToBeImported = _CswNbtResources.MetaData.getNodeType( NodeTypeName );
+                    if( null != NodeTypeToBeImported )
+                    {
+                        // Instance the ImportManger
+                        ImportManager C3Import = new ImportManager( _CswNbtResources, C3ProductDetails );
 
-                            // Sync Hazard Classes and PCID data if C3ProductTempNode is of type Chemical
-                            if( NewNode.getObjectClass().ObjectClass == CswEnumNbtObjectClass.ChemicalClass )
+                        // Create the temporary material node
+                        CswNbtPropertySetMaterial C3ProductTempNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeToBeImported.NodeTypeId, IsTemp: true, OnAfterMakeNode: delegate( CswNbtNode NewNode )
                             {
-                                CswNbtObjClassChemical ChemicalNode = NewNode;
-                                ChemicalNode.syncFireDbData();
-                                ChemicalNode.syncPCIDData();
-                            }
-                            //C3ProductTempNode.postChanges( false );
-                        } );
+                                //Set the c3productid property
+                                ( (CswNbtPropertySetMaterial) NewNode ).C3ProductId.Text = C3ProductDetails.ProductId.ToString();
+                                // Add props to the tempnode
+                                C3Import.addNodeTypeProps( NewNode );
 
-                    // Get or create a vendor node
-                    C3CreateMaterialResponse.State.Supplier Supplier = C3Import.constructVendorObject( C3ProductDetails.SupplierName );
+                                // Sync Hazard Classes and PCID data if C3ProductTempNode is of type Chemical
+                                if( NewNode.getObjectClass().ObjectClass == CswEnumNbtObjectClass.ChemicalClass )
+                                {
+                                    CswNbtObjClassChemical ChemicalNode = NewNode;
+                                    ChemicalNode.syncFireDbData();
+                                    ChemicalNode.syncPCIDData();
+                                }
+                                //C3ProductTempNode.postChanges( false );
+                            } );
 
-                    // Create size node(s)
-                    Collection<C3CreateMaterialResponse.State.SizeRecord> ProductSizes = C3Import.constructSizeObjects();
+                        // Get or create a vendor node
+                        C3CreateMaterialResponse.State.Supplier Supplier = C3Import.constructVendorObject( C3ProductDetails.SupplierName );
 
-                    // Create synonyms node(s)
-                    C3Import.createMaterialSynonyms( C3ProductTempNode );
+                        // Create size node(s)
+                        Collection<C3CreateMaterialResponse.State.SizeRecord> ProductSizes = C3Import.constructSizeObjects();
 
-                    // Create a document node if C3ProductTempNode is of type Chemical
-                    CswPrimaryKey SDSDocumentNodeId = new CswPrimaryKey();
-                    if( C3ProductTempNode.ObjectClass.ObjectClass == CswEnumNbtObjectClass.ChemicalClass )
-                    {
-                        SDSDocumentNodeId = C3Import.createMaterialDocument( C3ProductTempNode );
+                        // Create synonyms node(s)
+                        C3Import.createMaterialSynonyms( C3ProductTempNode );
+
+                        // Create a document node if C3ProductTempNode is of type Chemical
+                        CswPrimaryKey SDSDocumentNodeId = new CswPrimaryKey();
+                        if( C3ProductTempNode.ObjectClass.ObjectClass == CswEnumNbtObjectClass.ChemicalClass )
+                        {
+                            SDSDocumentNodeId = C3Import.createMaterialDocument( C3ProductTempNode );
+                        }
+
+                        #region Return Object
+
+                        Return.Data.success = true;
+                        Return.Data.actionname = "create material";
+
+                        C3CreateMaterialResponse.State.MaterialType MaterialType = new C3CreateMaterialResponse.State.MaterialType();
+                        MaterialType.name = Request.NodeTypeName;
+                        MaterialType.val = CswConvert.ToInt32( Request.NodeTypeId );
+
+                        C3CreateMaterialResponse.State State = new C3CreateMaterialResponse.State();
+                        State.materialId = C3ProductTempNode.NodeId.ToString();
+                        State.tradeName = C3ProductTempNode.TradeName.Text;
+                        State.partNo = C3ProductTempNode.PartNumber.Text;
+                        //State.useExistingTempNode = true;
+                        State.supplier = Supplier;
+                        if( string.IsNullOrEmpty( State.supplier.val ) )
+                        {
+                            State.addNewC3Supplier = true;
+                        }
+                        State.materialType = MaterialType;
+                        State.sizes = ProductSizes;
+                        if( null != SDSDocumentNodeId )
+                        {
+                            State.sdsDocId = SDSDocumentNodeId.ToString();
+                        }
+
+                        Return.Data.state = State;
+
+                        #endregion Return Object
                     }
-
-                    #region Return Object
-
-                    Return.Data.success = true;
-                    Return.Data.actionname = "create material";
-
-                    C3CreateMaterialResponse.State.MaterialType MaterialType = new C3CreateMaterialResponse.State.MaterialType();
-                    MaterialType.name = Request.NodeTypeName;
-                    MaterialType.val = CswConvert.ToInt32( Request.NodeTypeId );
-
-                    C3CreateMaterialResponse.State State = new C3CreateMaterialResponse.State();
-                    State.materialId = C3ProductTempNode.NodeId.ToString();
-                    State.tradeName = C3ProductTempNode.TradeName.Text;
-                    State.partNo = C3ProductTempNode.PartNumber.Text;
-                    //State.useExistingTempNode = true;
-                    State.supplier = Supplier;
-                    if( string.IsNullOrEmpty( State.supplier.val ) )
-                    {
-                        State.addNewC3Supplier = true;
-                    }
-                    State.materialType = MaterialType;
-                    State.sizes = ProductSizes;
-                    if( null != SDSDocumentNodeId )
-                    {
-                        State.sdsDocId = SDSDocumentNodeId.ToString();
-                    }
-
-                    Return.Data.state = State;
-
-                    #endregion Return Object
                 }
             }
-        }
+            else
+            {
+                // If the C3SearchClient was null, something errored so we provide the message(s) to the Return
+                Return.Status.Messages = CswNbtC3ClientManager.Messages;
+            }
+        }//importC3Product()
 
         #region Import Mananger
 
