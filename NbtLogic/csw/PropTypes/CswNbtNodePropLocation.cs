@@ -215,7 +215,7 @@ namespace ChemSW.Nbt.PropTypes
             return ret;
         }
 
-        public static CswNbtView LocationPropertyView( CswNbtResources CswNbtResources, CswNbtMetaDataNodeTypeProp Prop, CswPrimaryKey NodeId = null, Collection<CswPrimaryKey> InventoryGroupIds = null, bool RequireAllowInventory = false )
+        public static CswNbtView LocationPropertyView( CswNbtResources CswNbtResources, CswNbtMetaDataNodeTypeProp Prop, CswPrimaryKey NodeId = null, Collection<CswPrimaryKey> InventoryGroupIds = null )
         {
             CswNbtMetaDataObjectClass ContainerOC = CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerClass );
             CswNbtMetaDataObjectClass UserOC = CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.UserClass );
@@ -229,7 +229,7 @@ namespace ChemSW.Nbt.PropTypes
             Ret.Root.Included = IsLocationNode;
             CswNbtObjClassLocation.makeLocationsTreeView( ref Ret, CswNbtResources,
                                                           NodeIdToFilterOut: NodeId,
-                                                          RequireAllowInventory: RequireAllowInventory || ( CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Containers ) && ( IsContainerNode || IsUserNode ) ),
+                                                          RequireAllowInventory: ( CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Containers ) && ( IsContainerNode || IsUserNode ) ),
                                                           InventoryGroupIds: InventoryGroupIds );
             return Ret;
         }
