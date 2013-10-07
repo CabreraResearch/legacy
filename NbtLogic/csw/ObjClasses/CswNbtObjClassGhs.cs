@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Linq;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.ObjClasses

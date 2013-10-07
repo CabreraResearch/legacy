@@ -2,7 +2,7 @@ using ChemSW.Nbt.MetaData;
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassGHSPhrase: CswNbtPropertySetPhrase
+    public class CswNbtObjClassDSDPhrase: CswNbtPropertySetPhrase
     {
         #region Enums
         /// <summary>
@@ -17,7 +17,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
-        public CswNbtObjClassGHSPhrase( CswNbtResources CswNbtResources, CswNbtNode Node )
+        public CswNbtObjClassDSDPhrase( CswNbtResources CswNbtResources, CswNbtNode Node )
             : base( CswNbtResources, Node )
         {
             _CswNbtObjClassDefault = new CswNbtObjClassDefault( _CswNbtResources, Node );
@@ -25,18 +25,18 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
-            get { return _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.GHSPhraseClass ); }
+            get { return _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.DSDPhraseClass ); }
         }
 
         /// <summary>
-        /// Convert a CswNbtNode to a CswNbtObjClassGHSPhrase
+        /// Convert a CswNbtNode to a CswNbtObjClassDSDPhrase
         /// </summary>
-        public static implicit operator CswNbtObjClassGHSPhrase( CswNbtNode Node )
+        public static implicit operator CswNbtObjClassDSDPhrase( CswNbtNode Node )
         {
-            CswNbtObjClassGHSPhrase ret = null;
-            if( null != Node && _Validate( Node, CswEnumNbtObjectClass.GHSPhraseClass ) )
+            CswNbtObjClassDSDPhrase ret = null;
+            if( null != Node && _Validate( Node, CswEnumNbtObjectClass.DSDPhraseClass ) )
             {
-                ret = (CswNbtObjClassGHSPhrase) Node.ObjClass;
+                ret = (CswNbtObjClassDSDPhrase) Node.ObjClass;
             }
             return ret;
         }
@@ -114,7 +114,6 @@ namespace ChemSW.Nbt.ObjClasses
 
 
         #endregion
-
 
     }//CswNbtObjClassGeneric
 
