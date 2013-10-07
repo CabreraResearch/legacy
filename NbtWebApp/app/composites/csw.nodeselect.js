@@ -74,19 +74,19 @@
                     cswPrivate.selectedName = cswPrivate.relatedTo.relatednodename;
                     cswPrivate.forceSelectedAsOption = false;
                 }
-            }
-            cswPrivate.ajax = null;
 
-            cswPrivate.selectCellCol = cswPrivate.cellCol + 0;
-            cswPrivate.textCellCol = cswPrivate.cellCol + 1;
-            cswPrivate.editCellCol = cswPrivate.cellCol + 3;
-            cswPrivate.nodeTypeCellCol = cswPrivate.cellCol + 4;
-            cswPrivate.searchCellCol = cswPrivate.cellCol + 0;
-            cswPrivate.searchButtonCellCol = cswPrivate.cellCol + 2;
-            cswPrivate.removeSelCellCol = cswPrivate.cellCol + 1;
-            cswPrivate.addCellCol = cswPrivate.cellCol + 5;
-            cswPrivate.tipCellCol = cswPrivate.cellCol + 6;
-            cswPrivate.previewCellCol = cswPrivate.cellCol + 7;
+                cswPrivate.ajax = null;
+
+                cswPrivate.selectCellCol = cswPrivate.cellCol + 0;
+                cswPrivate.textCellCol = cswPrivate.cellCol + 1;
+                cswPrivate.editCellCol = cswPrivate.cellCol + 3;
+                cswPrivate.nodeTypeCellCol = cswPrivate.cellCol + 4;
+                cswPrivate.searchCellCol = cswPrivate.cellCol + 0;
+                cswPrivate.searchButtonCellCol = cswPrivate.cellCol + 2;
+                cswPrivate.removeSelCellCol = cswPrivate.cellCol + 1;
+                cswPrivate.addCellCol = cswPrivate.cellCol + 5;
+                cswPrivate.tipCellCol = cswPrivate.cellCol + 6;
+                cswPrivate.previewCellCol = cswPrivate.cellCol + 7;
 
         }());
 
@@ -295,18 +295,18 @@
                     type: Csw.enums.inputTypes.hidden,
                     value: cswPrivate.selectedNodeId
                 });
-
-
-                cswPrivate.toggleButton = cswPrivate.table.cell(1, cswPrivate.editCellCol).buttonExt({
-                    icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.pencil),
-                    size: 'small',
-                    enabledText: 'Edit',
-                    onClick: function () {
-                        cswPrivate.toggleOptions(true);
-                    }
-                });
                 
-                cswPrivate.searchButton = cswPrivate.table.cell(1, cswPrivate.searchButtonCellCol).buttonExt({
+
+                    cswPrivate.toggleButton = cswPrivate.table.cell(1, cswPrivate.editCellCol).buttonExt({
+                        icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.pencil),
+                        size: 'small',
+                        enabledText: 'Edit',
+                        onClick: function () {
+                            cswPrivate.toggleOptions(true);
+                        }
+                    });
+                
+                    cswPrivate.searchButton = cswPrivate.table.cell(1, cswPrivate.searchButtonCellCol).buttonExt({
                     icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.magglass),
                     size: 'small',
                     enabledText: "Search",
@@ -351,7 +351,7 @@
                     }
                 });
 
-            cswPrivate.toggleOptions(cswPrivate.showSelectOnLoad);
+                cswPrivate.toggleOptions(cswPrivate.showSelectOnLoad);
         };
 
         cswPrivate.toggleOptions = function (on) {
