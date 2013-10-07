@@ -785,72 +785,74 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 _NodePermissions.Clear();
             }
+
+            Collection<CswPrimaryKey> UserPermissions = getUserPermissions();
+            foreach( CswPrimaryKey PermissionId in UserPermissions )
+            {
+                CswNbtPropertySetPermission PermNode = _CswNbtResources.Nodes[PermissionId];
+                if( null != PermNode )
+                {
+                    _NodePermissions.Add( PermNode.PermissionGroup.RelatedNodeId, PermNode );
+                }
+            }
+        }
+
+        public Collection<CswPrimaryKey> getUserPermissions()
+        {
+            Collection<CswPrimaryKey> UserPermissions = new Collection<CswPrimaryKey>();
+
             if( CswTools.IsPrimaryKey( WorkUnitId ) && CswTools.IsPrimaryKey( RoleId ) )
             {
-                Collection<CswPrimaryKey> UserPermissions = getUserPermissions( RoleId.PrimaryKey, WorkUnitId.PrimaryKey );
-                foreach( CswPrimaryKey PermissionId in UserPermissions )
+                CswNbtMetaDataPropertySet PermissionSet = _CswNbtResources.MetaData.getPropertySet( CswEnumNbtPropertySetName.PermissionSet );
+
+                string SQLQuery = @"with pval as (select j.nodeid, j.field1, j.field1_fk, ocp.objectclasspropid, ocp.propname
+                                                    from jct_propertyset_ocprop jpocp
+                                                    join object_class_props ocp on ocp.objectclasspropid = jpocp.objectclasspropid
+                                                    join nodetype_props ntp on ntp.objectclasspropid = ocp.objectclasspropid
+                                                    join jct_nodes_props j on j.nodetypepropid = ntp.nodetypepropid
+                                                   where jpocp.propertysetid = :permsetid),
+                                         perms as (select n.nodeid,
+                                                          (select p.field1_fk from pval p where p.nodeid = n.nodeid and propname = :roleocp) userrole,
+                                                          (select p.field1_fk from pval p where p.nodeid = n.nodeid and propname = :workunitocp) userworkunit,
+                                                          (select p.field1_fk from pval p where p.nodeid = n.nodeid and propname = :permgroupocp) userpermgroup,
+                                                          (select p.field1 from pval p where p.nodeid = n.nodeid and propname = :applyallrolesocp) applyallroles,
+                                                          (select p.field1 from pval p where p.nodeid = n.nodeid and propname = :applyallworkunitsocp) applyallworkunits
+                                                     from nodes n
+                                                     join nodetypes nt on n.nodetypeid = nt.nodetypeid
+                                                     join object_class oc on nt.objectclassid = oc.objectclassid
+                                                    where n.istemp = 0
+                                                      and oc.objectclassid in (select jpsoc.objectclassid 
+                                                                                 from jct_propertyset_objectclass jpsoc 
+                                                                                where jpsoc.propertysetid = :permsetid))
+                                       select * 
+                                         from perms
+                                        where (perms.userrole = :role or perms.userrole is null) 
+                                          and (perms.userworkunit = :workunit or perms.userworkunit is null)
+                                        order by userpermgroup, applyallroles, applyallworkunits";
+                CswArbitrarySelect Query = _CswNbtResources.makeCswArbitrarySelect( "getUserPermissions", SQLQuery );
+
+                Query.addParameter( "roleocp", CswNbtPropertySetPermission.PropertyName.Role );
+                Query.addParameter( "workunitocp", CswNbtPropertySetPermission.PropertyName.WorkUnit );
+                Query.addParameter( "permgroupocp", CswNbtPropertySetPermission.PropertyName.PermissionGroup );
+                Query.addParameter( "applyallrolesocp", CswNbtPropertySetPermission.PropertyName.ApplyToAllRoles );
+                Query.addParameter( "applyallworkunitsocp", CswNbtPropertySetPermission.PropertyName.ApplyToAllWorkUnits );
+                Query.addParameter( "permsetid", PermissionSet.PropertySetId.ToString() );
+                Query.addParameter( "role", RoleId.PrimaryKey.ToString() );
+                Query.addParameter( "workunit", WorkUnitId.PrimaryKey.ToString() );
+
+                DataTable DataTable = Query.getTable();
+                Int32 PermGroupId = 0;
+                foreach( DataRow Row in DataTable.Rows )
                 {
-                    CswNbtPropertySetPermission PermNode = _CswNbtResources.Nodes[PermissionId];
-                    if( null != PermNode )
+                    if( PermGroupId != CswConvert.ToInt32( Row["userpermgroup"].ToString() ) )
                     {
-                        _NodePermissions.Add( PermNode.PermissionGroup.RelatedNodeId, PermNode );
+                        PermGroupId = CswConvert.ToInt32( Row["userpermgroup"].ToString() );
+                        UserPermissions.Add( new CswPrimaryKey( "nodes", CswConvert.ToInt32( Row["nodeid"] ) ) );
                     }
                 }
             }
-        }
-
-        public Collection<CswPrimaryKey> getUserPermissions( Int32 RolePK, Int32 WorkUnitPK )
-        {
-            CswNbtMetaDataPropertySet PermissionSet = _CswNbtResources.MetaData.getPropertySet( CswEnumNbtPropertySetName.PermissionSet );
-
-            string SQLQuery = @"with pval as (select j.nodeid, j.field1, j.field1_fk, ocp.objectclasspropid, ocp.propname
-                                                from jct_propertyset_ocprop jpocp
-                                                join object_class_props ocp on ocp.objectclasspropid = jpocp.objectclasspropid
-                                                join nodetype_props ntp on ntp.objectclasspropid = ocp.objectclasspropid
-                                                join jct_nodes_props j on j.nodetypepropid = ntp.nodetypepropid
-                                               where jpocp.propertysetid = :permsetid),
-                                     perms as (select n.nodeid,
-                                                      (select p.field1_fk from pval p where p.nodeid = n.nodeid and propname = :roleocp) userrole,
-                                                      (select p.field1_fk from pval p where p.nodeid = n.nodeid and propname = :workunitocp) userworkunit,
-                                                      (select p.field1_fk from pval p where p.nodeid = n.nodeid and propname = :permgroupocp) userpermgroup,
-                                                      (select p.field1 from pval p where p.nodeid = n.nodeid and propname = :applyallrolesocp) applyallroles,
-                                                      (select p.field1 from pval p where p.nodeid = n.nodeid and propname = :applyallworkunitsocp) applyallworkunits
-                                                 from nodes n
-                                                 join nodetypes nt on n.nodetypeid = nt.nodetypeid
-                                                 join object_class oc on nt.objectclassid = oc.objectclassid
-                                                where n.istemp = 0
-                                                  and oc.objectclassid in (select jpsoc.objectclassid 
-                                                                             from jct_propertyset_objectclass jpsoc 
-                                                                            where jpsoc.propertysetid = :permsetid))
-                                   select * 
-                                     from perms
-                                    where (perms.userrole = :role or perms.userrole is null) 
-                                      and (perms.userworkunit = :workunit or perms.userworkunit is null)
-                                    order by userpermgroup, applyallroles, applyallworkunits";
-            CswArbitrarySelect Query = _CswNbtResources.makeCswArbitrarySelect( "getUserPermissions", SQLQuery );
-
-            Query.addParameter( "roleocp", CswNbtPropertySetPermission.PropertyName.Role );
-            Query.addParameter( "workunitocp", CswNbtPropertySetPermission.PropertyName.WorkUnit );
-            Query.addParameter( "permgroupocp", CswNbtPropertySetPermission.PropertyName.PermissionGroup );
-            Query.addParameter( "applyallrolesocp", CswNbtPropertySetPermission.PropertyName.ApplyToAllRoles );
-            Query.addParameter( "applyallworkunitsocp", CswNbtPropertySetPermission.PropertyName.ApplyToAllWorkUnits );
-            Query.addParameter( "permsetid", PermissionSet.PropertySetId.ToString() );
-            Query.addParameter( "role", RolePK.ToString() );
-            Query.addParameter( "workunit", WorkUnitPK.ToString() );
-
-            DataTable DataTable = Query.getTable();
-            Collection<CswPrimaryKey> UserPermissions = new Collection<CswPrimaryKey>();
-            Int32 PermGroupId = 0;
-            foreach( DataRow Row in DataTable.Rows )
-            {
-                if( PermGroupId != CswConvert.ToInt32( Row["userpermgroup"].ToString() ) )
-                {
-                    PermGroupId = CswConvert.ToInt32( Row["userpermgroup"].ToString() );
-                    UserPermissions.Add( new CswPrimaryKey( "nodes", CswConvert.ToInt32( Row["nodeid"] ) ) );
-                }
-            }
             return UserPermissions;
-        }
+        } // getUserPermissions()
 
         public Dictionary<string, string> InitAvailableWorkUnitsOptions()
         {
