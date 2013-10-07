@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
@@ -101,6 +102,9 @@ namespace ChemSW.Nbt.ObjClasses
             public const string OpenExpireInterval = "Open Expire Interval";
             public const string EINECS = "EINECS";
             public const string SubclassName = "Subclass Name";
+            public const string Pictograms = "Pictograms";
+            public const string LabelCodes = "Label Codes";
+            public const string LabelCodesGrid = "Labels Codes Grid";
         }
 
         #endregion Enums
@@ -140,6 +144,10 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterPropertySetPopulateProps()
         {
+            LabelCodes.InitOptions = _initDsdPhraseOptions;
+
+            _setUpDsdPhraseView();
+
             if( false == CswNbtObjClassSDSDocument.materialHasActiveSDS( _CswNbtResources, NodeId ) )
             {
                 ViewSDS.setHidden( true, false );
@@ -1066,6 +1074,36 @@ namespace ChemSW.Nbt.ObjClasses
             } // if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.RegulatoryLists ) )
         } // RefreshRegulatoryListMembers()
 
+        private Dictionary<string, string> _initDsdPhraseOptions()
+        {
+            CswNbtMetaDataObjectClass DsdPhraseOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.DSDPhraseClass );
+            Dictionary<CswPrimaryKey, string> Phrases = DsdPhraseOC.getNodeIdAndNames( false, false );
+            return Phrases.Keys.ToDictionary( pk => pk.ToString(), pk => Phrases[pk] );
+        } // _initGhsPhraseOptions()
+
+        private void _setUpDsdPhraseView()
+        {
+            CswNbtMetaDataObjectClass DsdPhraseOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.DSDPhraseClass );
+            CswNbtMetaDataObjectClassProp CodeOCP = DsdPhraseOC.getObjectClassProp( CswNbtObjClassDSDPhrase.PropertyName.Code );
+            CswNbtMetaDataObjectClassProp EngOCP = DsdPhraseOC.getObjectClassProp( CswNbtObjClassDSDPhrase.PropertyName.English );
+
+            CswNbtView DsdView = LabelCodesGrid.View;
+
+            DsdView.Root.ChildRelationships.Clear();
+            CswNbtViewRelationship parent = DsdView.AddViewRelationship( DsdPhraseOC, false );
+            DsdView.AddViewProperty( parent, CodeOCP );
+            DsdView.AddViewProperty( parent, EngOCP );
+
+            foreach( string PhraseId in LabelCodes.Value )
+            {
+                CswPrimaryKey PhrasePk = new CswPrimaryKey();
+                PhrasePk.FromString( PhraseId );
+                parent.NodeIdsToFilterIn.Add( PhrasePk );
+            }
+
+            DsdView.SaveToCache( false, true );
+        }
+
         #endregion Custom Logic
 
         #region Object class specific properties
@@ -1140,10 +1178,13 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropMemo HazardInfo { get { return _CswNbtNode.Properties[PropertyName.HazardInfo]; } }
         public CswNbtNodePropLogical CompressedGas { get { return _CswNbtNode.Properties[PropertyName.CompressedGas]; } }
         public CswNbtNodePropText SMILES { get { return _CswNbtNode.Properties[PropertyName.SMILES]; } }
-        public CswNbtNodePropMemo DisposalInstructions{ get { return _CswNbtNode.Properties[PropertyName.DisposalInstructions]; } }
+        public CswNbtNodePropMemo DisposalInstructions { get { return _CswNbtNode.Properties[PropertyName.DisposalInstructions]; } }
         public CswNbtNodePropQuantity OpenExpireInterval { get { return _CswNbtNode.Properties[PropertyName.OpenExpireInterval]; } }
         public CswNbtNodePropText EINECS { get { return _CswNbtNode.Properties[PropertyName.EINECS]; } }
         public CswNbtNodePropText SubclassName { get { return _CswNbtNode.Properties[PropertyName.SubclassName]; } }
+        public CswNbtNodePropImageList Pictograms { get { return _CswNbtNode.Properties[PropertyName.Pictograms]; } }
+        public CswNbtNodePropMultiList LabelCodes { get { return _CswNbtNode.Properties[PropertyName.LabelCodes]; } }
+        public CswNbtNodePropGrid LabelCodesGrid { get { return _CswNbtNode.Properties[PropertyName.LabelCodesGrid]; } }
 
         #endregion Object class specific properties
 

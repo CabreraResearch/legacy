@@ -28,11 +28,13 @@ namespace ChemSW.Nbt.Schema
 
         public override string Title
         {
-            get { return "Add DSD Phrases"; }
+            get { return "Add DSD Phrases, DSD Tab"; }
         }
 
         public override void update()
         {
+            #region Create SD Phrases
+
             #region Risk Phrases
             Dictionary<string, string> RiskPhrases = new Dictionary<string, string>()
                 {
@@ -247,7 +249,7 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClass DSDPhraseOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.DSDPhraseClass );
             foreach( KeyValuePair<string, string> Phrase in RiskPhrases )
             {
-                _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( DSDPhraseOC.getNodeTypeIds().FirstOrDefault(), OnAfterMakeNode: delegate( CswNbtNode NewNode )
+                _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( DSDPhraseOC.getNodeTypeIds().FirstOrDefault(), OnAfterMakeNode : delegate( CswNbtNode NewNode )
                     {
                         CswNbtObjClassDSDPhrase NewPhrase = NewNode;
                         NewPhrase.Code.Text = Phrase.Key;
@@ -266,6 +268,31 @@ namespace ChemSW.Nbt.Schema
                     NewPhrase.Category.Value = "Safety";
                 } );
             }
+
+            #endregion
+
+            #region DSD Tab
+
+            CswNbtMetaDataObjectClass ChemicalOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass );
+            foreach( CswNbtMetaDataNodeType ChemicalNT in ChemicalOC.getNodeTypes() )
+            {
+                CswNbtMetaDataNodeTypeTab DSDTab = ChemicalNT.getNodeTypeTab( "DSD" ) ??
+                    _CswNbtSchemaModTrnsctn.MetaData.makeNewTab( ChemicalNT, "DSD", ChemicalNT.getMaximumTabOrder() + 1 );
+
+                CswNbtMetaDataNodeTypeProp PictogramsNTP = ChemicalNT.getNodeTypePropByObjectClassProp( CswNbtObjClassChemical.PropertyName.Pictograms );
+                PictogramsNTP.removeFromAllLayouts();
+                PictogramsNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, DSDTab.TabId );
+
+                CswNbtMetaDataNodeTypeProp LabelCodesNTP = ChemicalNT.getNodeTypePropByObjectClassProp( CswNbtObjClassChemical.PropertyName.LabelCodes );
+                LabelCodesNTP.removeFromAllLayouts();
+                LabelCodesNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, DSDTab.TabId );
+
+                CswNbtMetaDataNodeTypeProp LabelCodesGridNTP = ChemicalNT.getNodeTypePropByObjectClassProp( CswNbtObjClassChemical.PropertyName.LabelCodesGrid );
+                LabelCodesGridNTP.removeFromAllLayouts();
+                LabelCodesGridNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, DSDTab.TabId );
+            }
+
+            #endregion
 
         } // update()
 
