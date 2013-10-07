@@ -12,7 +12,8 @@
                     Title: '',
 
                     onLinkClick: Csw.main.handleItemSelect,
-                    onAddClick: function(itemData) {
+                    onAddClick: function (itemData) {
+                        Csw.ajax.abortAll();
                         Csw.dialogs.addnode({
                             action: itemData.ActionName,
                             title: itemData.Text,
