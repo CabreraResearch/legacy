@@ -1005,9 +1005,9 @@ namespace ChemSW.Nbt.ServiceDrivers
         /// </summary>
         /// <param name="SelectedNodeId">Location tree's selected NodeId - if null, uses the User's default location</param>
         /// <returns></returns>
-        public JObject getLocationView( string SelectedNodeId )
+        public JObject getLocationView( string SelectedNodeId, bool RequireAllowInventory )
         {
-            CswNbtView LocationView = CswNbtNodePropLocation.LocationPropertyView( _CswNbtResources, null );
+            CswNbtView LocationView = CswNbtNodePropLocation.LocationPropertyView( _CswNbtResources, null, RequireAllowInventory: RequireAllowInventory );
             LocationView.SaveToCache( false );
             JObject LocationViewId = new JObject();
             LocationViewId["viewid"] = LocationView.SessionViewId.ToString();
