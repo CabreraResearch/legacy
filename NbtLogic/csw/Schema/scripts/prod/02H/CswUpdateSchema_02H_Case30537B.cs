@@ -2,13 +2,14 @@
 using ChemSW.DB;
 using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.Schema
 {
     /// <summary>
     /// Schema Update
     /// </summary>
-    public class CswUpdateSchema_02H_Case30537B : CswUpdateSchemaTo
+    public class CswUpdateSchema_02H_Case30537B: CswUpdateSchemaTo
     {
         public override CswEnumDeveloper Author
         {
@@ -16,7 +17,7 @@ namespace ChemSW.Nbt.Schema
         }
 
         public override int CaseNo
-        {                
+        {
             get { return 30537; }
         }
 
@@ -27,7 +28,7 @@ namespace ChemSW.Nbt.Schema
 
         public override string Title
         {
-            get { return "Create Phrase Property Set"; }
+            get { return "Create Phrase Property Set and DSD NodeType"; }
         }
 
         public override void update()
@@ -37,7 +38,7 @@ namespace ChemSW.Nbt.Schema
             if( null == PhrasePS )
             {
                 PhrasePS = _CswNbtSchemaModTrnsctn.MetaData.makeNewPropertySet( CswEnumNbtPropertySetName.PhraseSet, "warning.png" );
-                
+
                 //Update the DSD and GHS Phrases
                 CswTableUpdate TableUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "updatePhrasePropSets", "jct_propertyset_objectclass" );
 
@@ -51,10 +52,22 @@ namespace ChemSW.Nbt.Schema
                 DSDRow["propertysetid"] = PhrasePS.PropertySetId;
                 DSDRow["objectclassid"] = _CswNbtSchemaModTrnsctn.MetaData.getObjectClassId( CswEnumNbtObjectClass.DSDPhraseClass );
 
-                ObjClassTbl.Rows.Add(GHSRow);
+                ObjClassTbl.Rows.Add( GHSRow );
                 ObjClassTbl.Rows.Add( DSDRow );
 
                 TableUpdate.update( ObjClassTbl );
+            }
+
+            CswNbtMetaDataNodeType DSD_NT = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( CswEnumNbtObjectClass.DSDPhraseClass, "DSD Phrase", "System" );
+            DSD_NT.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( CswNbtPropertySetPhrase.PropertyName.Code ) );
+            foreach( CswNbtMetaDataNodeTypeProp NTP in DSD_NT.getNodeTypeProps() )
+            {
+                if( CswNbtPropertySetPhrase.PropertyName.English != NTP.PropName &&
+                    CswNbtPropertySetPhrase.PropertyName.Code != NTP.PropName &&
+                    CswNbtPropertySetPhrase.PropertyName.Category != NTP.PropName )
+                {
+                    NTP.removeFromLayout( CswEnumNbtLayoutType.Add );
+                }
             }
 
         } // update()

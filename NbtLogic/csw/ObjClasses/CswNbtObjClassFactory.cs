@@ -83,6 +83,10 @@ namespace ChemSW.Nbt.ObjClasses
                     ReturnVal = new CswNbtObjClassDocument( CswNbtResources, Node );
                     break;
 
+                case CswEnumNbtObjectClass.DSDPhraseClass:
+                    ReturnVal = new CswNbtObjClassDSDPhrase( CswNbtResources, Node );
+                    break;
+
                 case CswEnumNbtObjectClass.EnterprisePartClass:
                     ReturnVal = new CswNbtObjClassEnterprisePart( CswNbtResources, Node );
                     break;
