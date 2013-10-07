@@ -1076,35 +1076,43 @@ namespace ChemSW.Nbt.ObjClasses
 
         private Dictionary<string, string> _initDsdPhraseOptions()
         {
-            CswNbtMetaDataObjectClass DsdPhraseOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.DSDPhraseClass );
-            Dictionary<CswPrimaryKey, string> Phrases = DsdPhraseOC.getNodeIdAndNames( false, false );
-            return Phrases.Keys.ToDictionary( pk => pk.ToString(), pk => Phrases[pk] );
+            Dictionary<string, string> Ret = new Dictionary<string, string>();
+            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.DSD ) )
+            {
+                CswNbtMetaDataObjectClass DsdPhraseOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.DSDPhraseClass );
+                Dictionary<CswPrimaryKey, string> Phrases = DsdPhraseOC.getNodeIdAndNames( false, false );
+                Ret = Phrases.Keys.ToDictionary( pk => pk.ToString(), pk => Phrases[pk] );
+            }
+            return Ret;
         } // _initGhsPhraseOptions()
 
         private void _setUpDsdPhraseView()
         {
-            CswNbtMetaDataObjectClass DsdPhraseOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.DSDPhraseClass );
-            CswNbtMetaDataObjectClassProp CodeOCP = DsdPhraseOC.getObjectClassProp( CswNbtObjClassDSDPhrase.PropertyName.Code );
-            CswNbtMetaDataObjectClassProp EngOCP = DsdPhraseOC.getObjectClassProp( CswNbtObjClassDSDPhrase.PropertyName.English );
-
-            CswNbtView DsdView = LabelCodesGrid.View;
-
-            DsdView.Root.ChildRelationships.Clear();
-            if( LabelCodes.Value.Count > 0 )
+            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.DSD ) )
             {
-                CswNbtViewRelationship parent = DsdView.AddViewRelationship( DsdPhraseOC, false );
-                DsdView.AddViewProperty( parent, CodeOCP );
-                DsdView.AddViewProperty( parent, EngOCP );
+                CswNbtMetaDataObjectClass DsdPhraseOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.DSDPhraseClass );
+                CswNbtMetaDataObjectClassProp CodeOCP = DsdPhraseOC.getObjectClassProp( CswNbtObjClassDSDPhrase.PropertyName.Code );
+                CswNbtMetaDataObjectClassProp EngOCP = DsdPhraseOC.getObjectClassProp( CswNbtObjClassDSDPhrase.PropertyName.English );
 
-                foreach( string PhraseId in LabelCodes.Value )
+                CswNbtView DsdView = LabelCodesGrid.View;
+
+                DsdView.Root.ChildRelationships.Clear();
+                if( LabelCodes.Value.Count > 0 )
                 {
-                    CswPrimaryKey PhrasePk = new CswPrimaryKey();
-                    PhrasePk.FromString( PhraseId );
-                    parent.NodeIdsToFilterIn.Add( PhrasePk );
-                }
-            }
+                    CswNbtViewRelationship parent = DsdView.AddViewRelationship( DsdPhraseOC, false );
+                    DsdView.AddViewProperty( parent, CodeOCP );
+                    DsdView.AddViewProperty( parent, EngOCP );
 
-            DsdView.SaveToCache( false, true );
+                    foreach( string PhraseId in LabelCodes.Value )
+                    {
+                        CswPrimaryKey PhrasePk = new CswPrimaryKey();
+                        PhrasePk.FromString( PhraseId );
+                        parent.NodeIdsToFilterIn.Add( PhrasePk );
+                    }
+                }
+
+                DsdView.SaveToCache( false, true );
+            }
         }
 
         #endregion Custom Logic

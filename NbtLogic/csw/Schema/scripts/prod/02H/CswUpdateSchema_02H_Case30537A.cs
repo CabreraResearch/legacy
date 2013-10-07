@@ -87,7 +87,7 @@ namespace ChemSW.Nbt.Schema
 
             CswDelimitedString dsdValues = new CswDelimitedString( '\n' )
                 {
-                    "None","Explosive","Oxidizing","Highly flammable","Extremely flammable","Toxic","Harmful","Irritant","Corrosive","Dangerous for the environment"
+                    "None","Explosive","Oxidizing","Highly flammable","Extremely flammable","Toxic","Very Toxic","Harmful","Irritant","Corrosive","Dangerous for the environment"
                 };
 
             CswNbtMetaDataObjectClassProp PictorgramsOCP = ChemicalOC.getObjectClassProp( CswNbtObjClassChemical.PropertyName.Pictograms ) ??

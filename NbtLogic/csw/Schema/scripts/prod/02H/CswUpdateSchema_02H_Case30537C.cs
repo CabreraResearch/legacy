@@ -28,7 +28,7 @@ namespace ChemSW.Nbt.Schema
 
         public override string Title
         {
-            get { return "Add DSD Phrases, DSD Tab"; }
+            get { return "Add DSD Phrases, DSD Tab, DSD Module"; }
         }
 
         public override void update()
@@ -295,6 +295,14 @@ namespace ChemSW.Nbt.Schema
                 LabelCodesGridNTP.removeFromAllLayouts();
                 LabelCodesGridNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, DSDTab.TabId );
             }
+
+            #endregion
+
+            #region DSD Module
+
+            int dsdModuleId = _CswNbtSchemaModTrnsctn.createModule( "Dangerous Substances Directive", CswEnumNbtModuleName.DSD, false );
+            _CswNbtSchemaModTrnsctn.Modules.CreateModuleDependency( CswEnumNbtModuleName.CISPro, CswEnumNbtModuleName.DSD );
+            _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( dsdModuleId, DSDPhraseOC.ObjectClassId );
 
             #endregion
 
