@@ -27,6 +27,7 @@ namespace ChemSW.Nbt.MetaData
             { CustomerClass                     , CustomerClass                      },
             { DepartmentClass                   , DepartmentClass                    },
             { DocumentClass                     , DocumentClass                      },
+            { DSDPhraseClass                    , DSDPhraseClass                     },
             { EnterprisePartClass               , EnterprisePartClass                },
             { EquipmentAssemblyClass            , EquipmentAssemblyClass             },
             { EquipmentClass                    , EquipmentClass                     },
@@ -155,6 +156,7 @@ namespace ChemSW.Nbt.MetaData
         public const string CustomerClass = "CustomerClass";
         public const string DepartmentClass = "DepartmentClass";
         public const string DocumentClass = "DocumentClass";
+        public const string DSDPhraseClass = "DSDPhraseClass";
         public const string EnterprisePartClass = "EnterprisePartClass";
         public const string EquipmentAssemblyClass = "EquipmentAssemblyClass";
         public const string EquipmentClass = "EquipmentClass";

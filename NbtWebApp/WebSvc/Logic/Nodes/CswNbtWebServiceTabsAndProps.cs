@@ -135,9 +135,9 @@ namespace ChemSW.Nbt.WebServices
             return _TabsPropsSd.getObjectClassButtons( ObjectClassId );
         }
 
-        public JObject getLocationView( string NodeId, bool RequireAllowInventory )
+        public JObject getLocationView( string NodeId )
         {
-            return _TabsPropsSd.getLocationView( NodeId, RequireAllowInventory: RequireAllowInventory );
+            return _TabsPropsSd.getLocationView( NodeId );
         }
 
     } // class CswNbtWebServiceTabsAndProps

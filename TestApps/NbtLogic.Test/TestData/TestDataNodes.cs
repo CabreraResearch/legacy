@@ -34,7 +34,7 @@ namespace ChemSW.Nbt.Test
 
         #region Nodes
 
-        internal CswNbtNode createLocationNode( String LocationType = "Room", String Name = "New Room", CswPrimaryKey ParentLocationId = null, CswPrimaryKey ControlZoneId = null )
+        internal CswNbtNode createLocationNode( String LocationType = "Room", String Name = "New Room", CswPrimaryKey ParentLocationId = null, CswPrimaryKey ControlZoneId = null, bool AllowInventory = true )
         {
             CswNbtNode ret = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( _getNodeTypeId( LocationType ), delegate( CswNbtNode NewNode )
                 {
@@ -49,7 +49,7 @@ namespace ChemSW.Nbt.Test
                     {
                         LocationNode.ControlZone.RelatedNodeId = ControlZoneId;
                     }
-                    //LocationNode.postChanges( true );
+                    LocationNode.AllowInventory.Checked = AllowInventory ? CswEnumTristate.True : CswEnumTristate.False;
                 } );
 
             _finalize();
