@@ -35,38 +35,29 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClass ChemicalOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass );
             foreach( CswNbtMetaDataNodeType ChemicalNT in ChemicalOC.getNodeTypes() )
             {
-                CswNbtMetaDataNodeTypeProp StorageNTP = ChemicalNT.getNodeTypePropByObjectClassProp( CswNbtObjClassChemical.PropertyName.StorageCompatibility );
                 CswNbtMetaDataNodeTypeProp HazardInfoNTP = ChemicalNT.getNodeTypePropByObjectClassProp( CswNbtObjClassChemical.PropertyName.HazardInfo );
                 HazardInfoNTP.removeFromAllLayouts();
-                HazardInfoNTP.updateLayout( CswEnumNbtLayoutType.Edit, StorageNTP, true );
 
                 CswNbtMetaDataNodeTypeProp DisposalNTP = ChemicalNT.getNodeTypePropByObjectClassProp( CswNbtObjClassChemical.PropertyName.DisposalInstructions );
                 DisposalNTP.removeFromAllLayouts();
-                DisposalNTP.updateLayout( CswEnumNbtLayoutType.Edit, HazardInfoNTP, true );
 
-                CswNbtMetaDataNodeTypeProp FormulaNTP = ChemicalNT.getNodeTypePropByObjectClassProp( CswNbtObjClassChemical.PropertyName.Formula );
                 CswNbtMetaDataNodeTypeProp SMILESNTP = ChemicalNT.getNodeTypePropByObjectClassProp( CswNbtObjClassChemical.PropertyName.SMILES );
                 SMILESNTP.removeFromAllLayouts();
-                SMILESNTP.updateLayout( CswEnumNbtLayoutType.Edit, FormulaNTP, true );
 
-                CswNbtMetaDataNodeTypeProp AquNTP = ChemicalNT.getNodeTypePropByObjectClassProp( CswNbtObjClassChemical.PropertyName.AqueousSolubility );
                 CswNbtMetaDataNodeTypeProp CompGasNTP = ChemicalNT.getNodeTypePropByObjectClassProp( CswNbtObjClassChemical.PropertyName.CompressedGas );
                 CompGasNTP.removeFromAllLayouts();
-                CompGasNTP.updateLayout( CswEnumNbtLayoutType.Edit, AquNTP, true );
 
                 CswNbtMetaDataNodeTypeProp DOTCodeNTP = ChemicalNT.getNodeTypePropByObjectClassProp( CswNbtObjClassChemical.PropertyName.DOTCode );
-                DOTCodeNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
+                DOTCodeNTP.removeFromAllLayouts();
                 DOTCodeNTP.MaxValue = 999; //DOT codes are 3 numbers
                 DOTCodeNTP.MinValue = 0;
 
                 CswNbtMetaDataNodeTypeProp OpenExpireIntervalNTP = ChemicalNT.getNodeTypePropByObjectClassProp( CswNbtObjClassChemical.PropertyName.OpenExpireInterval );
-                OpenExpireIntervalNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
+                OpenExpireIntervalNTP.removeFromAllLayouts();
 
-                CswNbtMetaDataNodeTypeProp CompressedGasNTP = ChemicalNT.getNodeTypePropByObjectClassProp( CswNbtObjClassChemical.PropertyName.CompressedGas );
-                CompressedGasNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
 
                 CswNbtMetaDataNodeTypeProp EINECSNTP = ChemicalNT.getNodeTypePropByObjectClassProp( CswNbtObjClassChemical.PropertyName.EINECS );
-                EINECSNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
+                EINECSNTP.removeFromAllLayouts();
 
                 CswNbtMetaDataNodeTypeProp SubclassNameNTP = ChemicalNT.getNodeTypePropByObjectClassProp( CswNbtObjClassChemical.PropertyName.SubclassName );
                 SubclassNameNTP.removeFromAllLayouts();
