@@ -207,12 +207,7 @@ namespace ChemSW.Nbt
                 DataRow PropRow = PropCollData.PropsTable.Rows.Cast<DataRow>().FirstOrDefault( CurrentRow => CurrentRow["nodetypepropid"].ToString() == MetaDataProp.PropId.ToString() );
 
                 CswNbtNodePropWrapper AddedProp = CswNbtNodePropFactory.makeNodeProp( _CswNbtResources, PropRow, PropCollData.PropsTable, _CswNbtNode, MetaDataProp, Date );
-                //if( MetaDataProp.FieldType.FieldType == CswEnumNbtFieldType.Barcode ||
-                //    MetaDataProp.FieldType.FieldType == CswEnumNbtFieldType.Sequence )
-                //{
-                //    AddedProp.ensureEmptyVal();
-                //}
-
+                
                 _Props.Add( AddedProp );
                 Int32 PropsIdx = _Props.Count - 1;
                 _PropsIndexByFirstVersionPropId.Add( MetaDataProp.FirstPropVersionId, PropsIdx );
