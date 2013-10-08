@@ -236,6 +236,7 @@ namespace ChemSW.Nbt.Actions
             }
 
             Ret.ViewName = "Create Material Supplier";
+            //Case 30335 - This is required for MLM to filter to Corporate Vendors
             Ret.SaveToCache( IncludeInQuickLaunch: false );
             return Ret;
         }

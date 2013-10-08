@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Linq;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.ObjClasses
@@ -170,9 +169,9 @@ namespace ChemSW.Nbt.ObjClasses
             CswCommaDelimitedString NewGHSLabelCodes = _getGHSCodesFromMemo( AddLabelCodes.Text );
             foreach( string LabelCode in NewGHSLabelCodes )
             {
-                if( LabelCodes.Options.ContainsValue( LabelCode ) )
+                if( LabelCodes.Options.ContainsValue( LabelCode.Trim().ToUpper() ) )
                 {
-                    LabelCodes.AddValue( LabelCodes.Options.FirstOrDefault( x => x.Value == LabelCode ).Key );
+                    LabelCodes.AddValue( LabelCodes.Options.FirstOrDefault( x => x.Value == LabelCode.Trim().ToUpper() ).Key );
                 }
             }
             AddLabelCodes.Text = string.Empty;
@@ -183,9 +182,9 @@ namespace ChemSW.Nbt.ObjClasses
             CswCommaDelimitedString NewGHSClassCodes = _getGHSCodesFromMemo( AddClassCodes.Text );
             foreach( string ClassCode in NewGHSClassCodes )
             {
-                if( ClassCodes.Options.ContainsValue( ClassCode ) )
+                if( ClassCodes.Options.ContainsValue( ClassCode.Trim().ToUpper() ) )
                 {
-                    ClassCodes.AddValue( ClassCodes.Options.FirstOrDefault( x => x.Value == ClassCode ).Key );
+                    ClassCodes.AddValue( ClassCodes.Options.FirstOrDefault( x => x.Value == ClassCode.Trim().ToUpper() ).Key );
                 }
             }
             AddClassCodes.Text = string.Empty;
