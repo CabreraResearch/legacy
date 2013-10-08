@@ -182,6 +182,7 @@ namespace ChemSW.Nbt.ChemCatCentral
                 Message.Type = CswEnumErrorType.Error;
                 Message.Message = "Unable to connect to ChemCatCentral";
                 Message.Detail = "C3_Username, C3_Password, or C3AccessId value is null.";
+                Message.ShowError = true;
                 Messages.Add( Message );
                 Ret = false;
             }
@@ -210,6 +211,7 @@ namespace ChemSW.Nbt.ChemCatCentral
                 Message.Type = CswEnumErrorType.Error;
                 Message.Message = "Unable to connect to ChemCatCentral";
                 Message.Detail = "C3_Username, C3_Password, or C3AccessId value is null.";
+                Message.ShowError = true;
                 Messages.Add( Message );
                 Ret = false;
             }

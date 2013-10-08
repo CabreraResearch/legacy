@@ -270,26 +270,27 @@ namespace ChemSW.Nbt.WebServices
             {
                 CswRetObjSearchResults SourcesList = C3SearchClient.getDataSources( CswC3Params );
 
-                //todo: catch error when SourcesList returns null
-
                 Collection<DataSource> AvailableDataSources = new Collection<DataSource>();
 
-                //Create the "All Sources" option
-                CswCommaDelimitedString AllSources = new CswCommaDelimitedString();
-                AllSources.FromArray( SourcesList.AvailableDataSources );
-
-                DataSource allSourcesDs = new DataSource();
-                allSourcesDs.value = AllSources.ToString();
-                allSourcesDs.display = "All Sources";
-                AvailableDataSources.Add( allSourcesDs );
-
-                //Add available data source options
-                foreach( string DataSource in SourcesList.AvailableDataSources )
+                if( null != SourcesList )
                 {
-                    DataSource dS = new DataSource();
-                    dS.value = DataSource;
-                    dS.display = DataSource;
-                    AvailableDataSources.Add( dS );
+                    //Create the "All Sources" option
+                    CswCommaDelimitedString AllSources = new CswCommaDelimitedString();
+                    AllSources.FromArray( SourcesList.AvailableDataSources );
+
+                    DataSource allSourcesDs = new DataSource();
+                    allSourcesDs.value = AllSources.ToString();
+                    allSourcesDs.display = "All Sources";
+                    AvailableDataSources.Add( allSourcesDs );
+
+                    //Add available data source options
+                    foreach( string DataSource in SourcesList.AvailableDataSources )
+                    {
+                        DataSource dS = new DataSource();
+                        dS.value = DataSource;
+                        dS.display = DataSource;
+                        AvailableDataSources.Add( dS );
+                    }
                 }
 
                 Return.Data.AvailableDataSources = AvailableDataSources;
