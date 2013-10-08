@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Data;
 using ChemSW.Core;
 using ChemSW.Nbt.ObjClasses;
@@ -268,6 +269,11 @@ namespace ChemSW.Nbt.Security
                 PermissionNode = _NodePermissions[PermissionGroupId];
             }
             return PermissionNode;
+        }
+        public Collection<CswPrimaryKey> getUserPermissions()
+        {
+            CswNbtObjClassUser UserNode = _CswNbtResources.Nodes[UserId];
+            return UserNode.getUserPermissions();
         }
 
         public Int32 PasswordPropertyId
