@@ -7,7 +7,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update
     /// </summary>
-    public class CswUpdateSchema_02H_Case30764 : CswUpdateSchemaTo
+    public class CswUpdateMetaData_02H_Case30764 : CswUpdateSchemaTo
     {
         public override CswEnumDeveloper Author
         {

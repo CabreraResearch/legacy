@@ -7,7 +7,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update
     /// </summary>
-    public class CswUpdateSchema_02H_Case30879 : CswUpdateSchemaTo
+    public class CswUpdateMetaData_02H_Case30879 : CswUpdateSchemaTo
     {
         public override CswEnumDeveloper Author
         {
@@ -15,7 +15,7 @@ namespace ChemSW.Nbt.Schema
         }
 
         public override int CaseNo
-        {                
+        {
             get { return 30879; }
         }
 
@@ -49,7 +49,7 @@ namespace ChemSW.Nbt.Schema
                 if( null != ReceiptLotNoOCP )
                 {
                     int SequenceId = _CswNbtSchemaModTrnsctn.makeSequence( new CswSequenceName( "ReceiptLotNo" ), "RL", "", 6, 1 );
-                    
+
                     foreach( CswNbtMetaDataNodeType ReceiptLotNT in ReceiptLotOC.getNodeTypes() )
                     {
                         ReceiptLotNT.addNameTemplateText( CswNbtObjClassReceiptLot.PropertyName.ReceiptLotNo );
