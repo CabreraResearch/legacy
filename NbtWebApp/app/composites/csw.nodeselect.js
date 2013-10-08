@@ -74,20 +74,21 @@
                     cswPrivate.selectedName = cswPrivate.relatedTo.relatednodename;
                     cswPrivate.forceSelectedAsOption = false;
                 }
-
-                cswPrivate.ajax = null;
-
-                cswPrivate.selectCellCol = cswPrivate.cellCol + 0;
-                cswPrivate.textCellCol = cswPrivate.cellCol + 1;
-                cswPrivate.editCellCol = cswPrivate.cellCol + 3;
-                cswPrivate.nodeTypeCellCol = cswPrivate.cellCol + 4;
-                cswPrivate.searchCellCol = cswPrivate.cellCol + 0;
-                cswPrivate.searchButtonCellCol = cswPrivate.cellCol + 2;
-                cswPrivate.removeSelCellCol = cswPrivate.cellCol + 1;
-                cswPrivate.addCellCol = cswPrivate.cellCol + 5;
-                cswPrivate.tipCellCol = cswPrivate.cellCol + 6;
-                cswPrivate.previewCellCol = cswPrivate.cellCol + 7;
             }
+
+            cswPrivate.ajax = null;
+
+            cswPrivate.selectCellCol = cswPrivate.cellCol + 0;
+            cswPrivate.textCellCol = cswPrivate.cellCol + 1;
+            cswPrivate.editCellCol = cswPrivate.cellCol + 3;
+            cswPrivate.nodeTypeCellCol = cswPrivate.cellCol + 4;
+            cswPrivate.searchCellCol = cswPrivate.cellCol + 0;
+            cswPrivate.searchButtonCellCol = cswPrivate.cellCol + 2;
+            cswPrivate.removeSelCellCol = cswPrivate.cellCol + 1;
+            cswPrivate.addCellCol = cswPrivate.cellCol + 5;
+            cswPrivate.tipCellCol = cswPrivate.cellCol + 6;
+            cswPrivate.previewCellCol = cswPrivate.cellCol + 7;
+            
         }());
 
         //#endregion _preCtor
