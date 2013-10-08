@@ -1,4 +1,5 @@
-﻿using ChemSW.Nbt.csw.Dev;
+﻿using System.Collections.ObjectModel;
+using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 
@@ -34,46 +35,66 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClass ContainerOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerClass );
             if( null != ContainerOC )
             {
-                _CswNbtSchemaModTrnsctn.createObjectClassProp( ContainerOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+                CswNbtMetaDataObjectClassProp HomeLocationOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( ContainerOC, new CswNbtWcfMetaDataModel.ObjectClassProp
                     {
-                        FieldType = CswEnumNbtFieldType.Location,
+                        FieldType = CswEnumNbtFieldType.Relationship,
                         PropName = CswNbtObjClassContainer.PropertyName.HomeLocation,
                         ReadOnly = true,
                     } );
 
-                _CswNbtSchemaModTrnsctn.createObjectClassProp( ContainerOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+                CswNbtMetaDataObjectClassProp ProjectOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( ContainerOC, new CswNbtWcfMetaDataModel.ObjectClassProp
                     {
                         FieldType = CswEnumNbtFieldType.Text,
                         PropName = CswNbtObjClassContainer.PropertyName.Project,
                         ReadOnly = true,
                     } );
                 
-                _CswNbtSchemaModTrnsctn.createObjectClassProp( ContainerOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+                CswNbtMetaDataObjectClassProp TareQuantityOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( ContainerOC, new CswNbtWcfMetaDataModel.ObjectClassProp
                     {
                         FieldType = CswEnumNbtFieldType.Quantity,
                         PropName = CswNbtObjClassContainer.PropertyName.TareQuantity,
                         ReadOnly = true,
                     } );
 
-                _CswNbtSchemaModTrnsctn.createObjectClassProp( ContainerOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+                CswNbtMetaDataObjectClassProp SpecificActivityOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( ContainerOC, new CswNbtWcfMetaDataModel.ObjectClassProp
                     {
                         FieldType = CswEnumNbtFieldType.Text,
                         PropName = CswNbtObjClassContainer.PropertyName.SpecificActivity,
-                        ReadOnly = true
+                        ReadOnly = true,
                     } );
 
-                _CswNbtSchemaModTrnsctn.createObjectClassProp( ContainerOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+                CswNbtMetaDataObjectClassProp ConcentrationOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( ContainerOC, new CswNbtWcfMetaDataModel.ObjectClassProp
                     {
                         FieldType = CswEnumNbtFieldType.Text,
                         PropName = CswNbtObjClassContainer.PropertyName.Concentration,
+                        ReadOnly = true,
                     } );
 
-                _CswNbtSchemaModTrnsctn.createObjectClassProp( ContainerOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+                CswNbtMetaDataObjectClassProp NotesOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( ContainerOC, new CswNbtWcfMetaDataModel.ObjectClassProp
                     {
                         FieldType = CswEnumNbtFieldType.Comments,
                         PropName = CswNbtObjClassContainer.PropertyName.Notes,
+                        ReadOnly = true,
                     } );
 
+
+                _CswNbtSchemaModTrnsctn.MetaData.makeMissingNodeTypeProps(); //in order to cascade hidden status to the nodetype props
+
+                Collection<CswNbtMetaDataObjectClassProp> ObjectClassProps = new Collection<CswNbtMetaDataObjectClassProp>
+                    {
+                        HomeLocationOCP, ProjectOCP, TareQuantityOCP, SpecificActivityOCP, ConcentrationOCP, NotesOCP,
+                    }; 
+
+
+                foreach( CswNbtMetaDataNodeType ContainerNT in ContainerOC.getNodeTypes() )
+                {
+                    foreach( CswNbtMetaDataObjectClassProp ObjectClassProp in ObjectClassProps )
+                    {
+                        CswNbtMetaDataNodeTypeProp NodetypeProp = ContainerNT.getNodeTypePropByObjectClassProp( ObjectClassProp );
+                        NodetypeProp.removeFromAllLayouts();
+                    }
+
+                }
 
             }//if null != ContainerOC
         } // update()

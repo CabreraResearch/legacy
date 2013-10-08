@@ -1196,7 +1196,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropGrid ContainerDispenseTransactions { get { return ( _CswNbtNode.Properties[PropertyName.ContainerDispenseTransactions] ); } }
         public CswNbtNodePropGrid Documents { get { return ( _CswNbtNode.Properties[PropertyName.Documents] ); } }
         public CswNbtNodePropGrid SubmittedRequests { get { return ( _CswNbtNode.Properties[PropertyName.SubmittedRequests] ); } }
-        public CswNbtNodePropLocation HomeLocation { get { return ( _CswNbtNode.Properties[PropertyName.HomeLocation] ); } }
+        public CswNbtNodePropRelationship HomeLocation { get { return ( _CswNbtNode.Properties[PropertyName.HomeLocation] ); } }
         public CswNbtNodePropComments Notes { get { return ( _CswNbtNode.Properties[PropertyName.Notes] ); } }
         public CswNbtNodePropText Project { get { return ( _CswNbtNode.Properties[PropertyName.Project] ); } }
         public CswNbtNodePropText SpecificActivity { get { return ( _CswNbtNode.Properties[PropertyName.SpecificActivity] ); } }
