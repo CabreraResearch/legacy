@@ -260,12 +260,10 @@ namespace ChemSW.Nbt.Actions
                     {
                         CswNbtObjClassVendor NewVendorNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( VendorNT.NodeTypeId, IsTemp: true, OnAfterMakeNode: delegate( CswNbtNode NewNode )
                             {
-                                ( (CswNbtObjClassVendor) NewNode ).VendorName.Text = Suppliername;
-                                ( (CswNbtObjClassVendor) NewNode ).VendorName.SyncGestalt();
-                                if( CorporateSupplier )
-                                {
-                                    ( (CswNbtObjClassVendor) NewNode ).VendorType.Value = CswNbtObjClassVendor.VendorTypes.Corporate;
-                                }
+                                CswNbtObjClassVendor NodeAsVendor = (CswNbtObjClassVendor) NewNode;
+                                NodeAsVendor.VendorName.Text = Suppliername;
+                                NodeAsVendor.VendorName.SyncGestalt();
+                                if( CorporateSupplier ) { NodeAsVendor.VendorType.Value = CswNbtObjClassVendor.VendorTypes.Corporate; }
                             } );
                         //Set the supplierId to the new vendor node
                         SupplierId = NewVendorNode.NodeId.ToString();
