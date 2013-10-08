@@ -113,30 +113,33 @@
 
             // cswPrivate.validatorMethods.validateInteger
             cswPrivate.validatorMethods.validateInteger = function () {
-                return (cswPrivate.precision != 0 || Csw.validateInteger(cswPrivate.numberTextBox.val()));
+                return (cswPrivate.precision != 0 || Csw.validateInteger(cswPrivate.numberTextBox.val())) || false == cswPrivate.isRequired;
             };
-            $.validator.addMethod('validateInteger', function (value, element) {
+            var validateIntegerClassName = 'validateInteger_' + cswPrivate.numberTextBox.getId();
+            $.validator.addMethod(validateIntegerClassName, function (value, element) {
                 return Csw.tryExec(cswPrivate.validatorMethods.validateInteger);
             }, 'Value must be a whole number');
-            cswPrivate.numberTextBox.addClass('validateInteger');
+            cswPrivate.numberTextBox.addClass(validateIntegerClassName);
 
             // cswPrivate.validatorMethods.validateGreaterThanZero
             cswPrivate.validatorMethods.validateGreaterThanZero = function () {
-                return (Csw.validateGreaterThanZero(cswPrivate.numberTextBox.val()));
+                return (Csw.validateGreaterThanZero(cswPrivate.numberTextBox.val()) || false == cswPrivate.isRequired);
             };
-            $.validator.addMethod('validateGreaterThanZero', function (value, element) {
+            var validateGreaterThanZeroClassName = 'validateGreaterThanZero_' + cswPrivate.numberTextBox.val();
+            $.validator.addMethod(validateGreaterThanZeroClassName, function (value, element) {
                 return Csw.tryExec(cswPrivate.validatorMethods.validateGreaterThanZero);
             }, 'Value must be a non-zero, positive number');
-            cswPrivate.numberTextBox.addClass('validateGreaterThanZero');
+            cswPrivate.numberTextBox.addClass(validateGreaterThanZeroClassName);
 
             // cswPrivate.validatorMethods.validateUnitPresent
             cswPrivate.validatorMethods.validateUnitPresent = function () {
                 return (false === Csw.isNullOrEmpty(cswPrivate.selectBox.val()) || Csw.isNullOrEmpty(cswPrivate.numberTextBox.val()));
             };
-            $.validator.addMethod('validateUnitPresent', function (value, element) {
+            var validateUnitPresentClassName = 'validateUnitPresent_' + cswPrivate.selectBox.getId() + '_' + cswPrivate.numberTextBox.getId();
+            $.validator.addMethod(validateUnitPresentClassName, function (value, element) {
                 return Csw.tryExec(cswPrivate.validatorMethods.validateUnitPresent);
             }, 'Unit must be selected if Quantity is present.');
-            cswPrivate.selectBox.addClass('validateUnitPresent');
+            cswPrivate.selectBox.addClass(validateUnitPresentClassName);
 
             // cswPrivate.validatorMethods.validateQuantityPresent
             if (false === cswPrivate.quantityoptional) {
@@ -144,10 +147,11 @@
                 cswPrivate.validatorMethods.validateQuantityPresent = function () {
                     return (false === Csw.isNullOrEmpty(cswPrivate.numberTextBox.val()) || Csw.isNullOrEmpty(cswPrivate.selectBox.val()));
                 };
-                $.validator.addMethod('validateQuantityPresent', function (value, element) {
+                var validateQuantityPresentClassName = 'validateQuantityPresent_' + cswPrivate.selectBox.getId() + '_' + cswPrivate.numberTextBox.getId();
+                $.validator.addMethod(validateQuantityPresentClassName, function (value, element) {
                     return Csw.tryExec(cswPrivate.validatorMethods.validateQuantityPresent);
                 }, 'Quantity must have a value if Unit is selected.');
-                cswPrivate.selectBox.addClass('validateQuantityPresent');
+                cswPrivate.selectBox.addClass(validateQuantityPresentClassName);
             }
         };
         //#endregion Control Construction

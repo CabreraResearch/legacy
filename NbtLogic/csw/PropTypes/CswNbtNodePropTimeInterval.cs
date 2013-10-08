@@ -39,11 +39,11 @@ namespace ChemSW.Nbt.PropTypes
 
         private void _init( string clobData )
         {
-            string ClobValue = ( false == String.IsNullOrEmpty( clobData ) ? clobData : DefaultValue.ClobData );
-            if( ClobValue != string.Empty ) //The Default Value might be empty
+            SetPropRowValue( _ClobDataSubField, clobData );
+            if( clobData != string.Empty ) //The Default Value might be empty
             {
                 XmlDocument XmlDoc = new XmlDocument();
-                XmlDoc.LoadXml( ClobValue );
+                XmlDoc.LoadXml( clobData );
                 _RateInterval = new CswRateInterval( _CswNbtResources, XmlDoc.FirstChild );
             }
             else
