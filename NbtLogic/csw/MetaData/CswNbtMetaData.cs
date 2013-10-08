@@ -1303,6 +1303,8 @@ namespace ChemSW.Nbt.MetaData
             InsertedNodeTypeRow["enabled"] = CswConvert.ToDbVal( true );
             InsertedNodeTypeRow["nodecount"] = 0;
 
+            InsertedNodeTypeRow["oraviewname"] = CswTools.MakeOracleCompliantIdentifier( NewNodeTypeName );
+
             NewNodeTypeTable.Rows.Add( InsertedNodeTypeRow );
             Int32 NewNodeTypeId = CswConvert.ToInt32( InsertedNodeTypeRow["nodetypeid"].ToString() );
             if( IsVersioning )
