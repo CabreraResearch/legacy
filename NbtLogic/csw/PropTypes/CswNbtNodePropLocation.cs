@@ -255,8 +255,6 @@ namespace ChemSW.Nbt.PropTypes
             ParentObject[_NameSubField.ToXmlNodeName( true )] = string.Empty;
             ParentObject[_PathSubField.ToXmlNodeName( true )] = string.Empty;
             ParentObject[_BarcodeSubField.ToXmlNodeName( true )] = string.Empty;
-            //ParentObject[_ColumnSubField.ToXmlNodeName( true )] = ( SelectedColumn != Int32.MinValue ) ? SelectedColumn.ToString() : string.Empty;
-            //ParentObject[_RowSubField.ToXmlNodeName( true )] = ( SelectedRow != Int32.MinValue ) ? SelectedRow.ToString() : string.Empty;
 
             CswNbtNode SelectedNode = _CswNbtResources.Nodes[SelectedNodeId];
             if( null != SelectedNode )
@@ -269,6 +267,7 @@ namespace ChemSW.Nbt.PropTypes
                 ParentObject["selectednodelink"] = SelectedNode.NodeLink;
             }
 
+            //Case 30335 - This is required for Allow Inventory to work properly
             View.SaveToCache( false );
             ParentObject["viewid"] = View.SessionViewId.ToString();
 

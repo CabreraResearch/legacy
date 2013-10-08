@@ -1132,8 +1132,6 @@ namespace ChemSW.Nbt.WebServices
                     CswNbtView View = _getView( ViewId );
                     if( null != View )
                     {
-                        //CswNbtNode Node = wsTools.getNode( _CswNbtResources, NodeId, NodeKey, new CswDateTime( _CswNbtResources ) );
-                        //CswNbtWebServiceTable wsTable = new CswNbtWebServiceTable( _CswNbtResources, _CswNbtStatisticsEvents, View, CswConvert.ToInt32( NodeTypeId ) );
                         CswNbtWebServiceTable wsTable = new CswNbtWebServiceTable( _CswNbtResources, _CswNbtStatisticsEvents, CswConvert.ToInt32( NodeTypeId ) );
                         ReturnVal = wsTable.getTable( View );
                         View.SaveToCache( true );
@@ -1236,10 +1234,7 @@ namespace ChemSW.Nbt.WebServices
                         View.Root.ChildRelationships[0].NodeIdsToFilterIn.Add( NodeId );
 
                         var ws = new CswNbtWebServiceTree( _CswNbtResources, View );
-                        //ReturnVal = ws.getTree( true, null, null, false, false, false, false, true );
                         ReturnVal = ws.runTree( null, null, false, true, "firstchild" );
-                        //CswNbtWebServiceQuickLaunchItems.addToQuickLaunch( View ); //, Session );
-                        //View.SaveToCache( true );
                     }
                 }
 
