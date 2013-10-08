@@ -832,32 +832,52 @@ namespace ChemSW.Nbt.WebServices
 
                 ICswNbtTree VendorsTree = _CswNbtResources.Trees.getTreeFromView( VendorView, false, true, true );
                 bool NewVendor = true;
-                if( VendorsTree.getChildNodeCount() > 0 )
+                bool ExistingVendor = false;
+                int TreeCount = VendorsTree.getChildNodeCount();
+                if( TreeCount > 0 )
                 {
                     NewVendor = false;
-                    VendorsTree.goToNthChild( 0 );
-                    CswNbtObjClassVendor VendorNode = VendorsTree.getNodeForCurrentPosition();
-
-                    if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.MLM ) )
+                    CswNbtObjClassVendor VendorNode = null;
+                    for( int i = 0; i < TreeCount; i++ )
                     {
-                        if( VendorNode.VendorType.Value != CswNbtObjClassVendor.VendorTypes.Corporate )
+                        VendorsTree.goToNthChild( i );
+                        VendorNode = VendorsTree.getNodeForCurrentPosition();
+
+                        if( VendorNode.VendorType.Value == CswNbtObjClassVendor.VendorTypes.Corporate )
                         {
-                            NewVendor = true;
+                            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.MLM ) )
+                            {
+                                Supplier.corporate = true;
+                                ExistingVendor = true;
+                            }
                         }
-                        else
+                        else if( VendorNode.VendorType.Value == CswNbtObjClassVendor.VendorTypes.Sales )
                         {
-                            Supplier.name = CswConvert.ToString( VendorNode.VendorName );
-                            Supplier.val = CswConvert.ToString( VendorNode.NodeId );
-                            Supplier.nodelink = CswConvert.ToString( VendorNode.Node.NodeLink );
-                            Supplier.corporate = true;
+                            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.MLM ) )
+                            {
+                                if( i == TreeCount - 1 )
+                                {
+                                    NewVendor = true;
+                                }
+                                else
+                                {
+                                    VendorsTree.goToParentNode();
+                                }
+                            }
+                            else
+                            {
+                                ExistingVendor = true;
+                                Supplier.corporate = false;
+                            }
                         }
                     }
-                    else
+
+                    if( ExistingVendor )
                     {
-                    Supplier.name = CswConvert.ToString( VendorNode.VendorName );
-                    Supplier.val = CswConvert.ToString( VendorNode.NodeId );
-                    Supplier.nodelink = CswConvert.ToString( VendorNode.Node.NodeLink );
-                }
+                        Supplier.name = CswConvert.ToString( VendorNode.VendorName.Text );
+                        Supplier.val = CswConvert.ToString( VendorNode.NodeId );
+                        Supplier.nodelink = CswConvert.ToString( VendorNode.Node.NodeLink );
+                    }
                 }
 
                 if( NewVendor )
@@ -871,6 +891,7 @@ namespace ChemSW.Nbt.WebServices
                         Supplier.corporate = true;
                     }
                 }
+
 
                 return Supplier;
             }//createVendorNode()

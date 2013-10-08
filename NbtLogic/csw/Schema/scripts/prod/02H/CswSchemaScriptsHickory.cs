@@ -20,6 +20,7 @@ namespace ChemSW.Nbt.Schema
             return new Collection<CswUpdateSchemaTo>()
                 {
                     new CswUpdateSchema_02H_Case30879(),
+                    new CswUpdateSchema_02H_Case30764(),
                 };
         } // _MetaDataScripts()
 
