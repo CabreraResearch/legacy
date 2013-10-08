@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using ChemSW.Core;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
@@ -62,7 +63,8 @@ namespace ChemSW.Nbt.Security
         public CswPrimaryKey WorkUnitId { get { return null; } }
         public CswPrimaryKey JurisdictionId { get { return null; } }
         public string Language { get { return string.Empty; } }
-        public CswNbtPropertySetPermission getPermissionForGroup( CswPrimaryKey PermissionGroupId ){ return null; }
+        public CswNbtPropertySetPermission getPermissionForGroup( CswPrimaryKey PermissionGroupId ) { return null; }
+        public Collection<CswPrimaryKey> getUserPermissions() { return new Collection<CswPrimaryKey>(); }
 
         public Int32 RoleTimeout { get { return Int32.MinValue; } }
 

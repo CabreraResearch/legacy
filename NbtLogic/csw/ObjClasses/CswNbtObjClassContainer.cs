@@ -202,7 +202,7 @@ namespace ChemSW.Nbt.ObjClasses
                 {
                     throw new CswDniException( CswEnumErrorType.Warning, "You do not have Action permission to Receive containers.", "You do not have Action permission to Receive containers." );
                 }
-                Collection<CswPrimaryKey> InventoryGroupIds = CswNbtObjClassInventoryGroupPermission.getInventoryGroupIdsForCurrentUser( _CswNbtResources );
+                Collection<CswPrimaryKey> InventoryGroupIds = _CswNbtResources.CurrentNbtUser.getUserPermissions();
                 if( InventoryGroupIds.Count == 0 )
                 {
                     throw new CswDniException( CswEnumErrorType.Warning, "You do not have Inventory Group permission to Receive containers.", "You do not have Inventory Group permission to Receive containers." );
@@ -862,7 +862,7 @@ namespace ChemSW.Nbt.ObjClasses
                                 case PropertyName.SourceContainer:
                                     bool isHidden = ( false == CswTools.IsPrimaryKey( SourceContainer.RelatedNodeId ) );
                                     p.setHidden( value: isHidden, SaveToDb: true );
-                                    
+
                                     if( CswTools.IsPrimaryKey( Material.RelatedNodeId ) )
                                     {
                                         SourceContainer.setReadOnly( value: true, SaveToDb: true );
@@ -953,9 +953,17 @@ namespace ChemSW.Nbt.ObjClasses
         /// <returns></returns>
         public bool isLocationInAccessibleInventoryGroup( CswPrimaryKey LocationId )
         {
-            Collection<CswPrimaryKey> IgsToWhichCurrentUserHasEdit = CswNbtObjClassInventoryGroupPermission.getInventoryGroupIdsForCurrentUser( _CswNbtResources );
+            bool ret = false;
             CswNbtObjClassLocation ThisLocation = _CswNbtResources.Nodes[LocationId];
-            return null != ThisLocation && IgsToWhichCurrentUserHasEdit.Contains( ThisLocation.InventoryGroup.RelatedNodeId );
+            if( null != ThisLocation )
+            {
+                CswNbtPropertySetPermission PermGrp = _CswNbtResources.CurrentNbtUser.getPermissionForGroup( ThisLocation.InventoryGroup.RelatedNodeId );
+                if( null != PermGrp )
+                {
+                    ret = ( PermGrp.Edit.Checked == CswEnumTristate.True );
+                }
+            }
+            return ret;
         }
 
         #endregion
