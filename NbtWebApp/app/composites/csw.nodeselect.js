@@ -87,7 +87,7 @@
                 cswPrivate.addCellCol = cswPrivate.cellCol + 5;
                 cswPrivate.tipCellCol = cswPrivate.cellCol + 6;
                 cswPrivate.previewCellCol = cswPrivate.cellCol + 7;
-
+            }
         }());
 
         //#endregion _preCtor
