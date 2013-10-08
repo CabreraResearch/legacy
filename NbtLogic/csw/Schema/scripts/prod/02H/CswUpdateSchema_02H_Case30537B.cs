@@ -64,7 +64,7 @@ namespace ChemSW.Nbt.Schema
             {
                 if( CswNbtPropertySetPhrase.PropertyName.English != NTP.PropName &&
                     CswNbtPropertySetPhrase.PropertyName.Code != NTP.PropName &&
-                    CswNbtPropertySetPhrase.PropertyName.Category != NTP.PropName )
+                    CswNbtObjClassDSDPhrase.PropertyName.Category != NTP.PropName )
                 {
                     NTP.removeFromLayout( CswEnumNbtLayoutType.Add );
                 }

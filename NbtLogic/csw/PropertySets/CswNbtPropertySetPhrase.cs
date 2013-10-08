@@ -18,7 +18,6 @@ namespace ChemSW.Nbt.ObjClasses
         public new class PropertyName: CswNbtObjClass.PropertyName
         {
             public const string Code = "Code";
-            public const string Category = "Category";
             public const string English = "English";
             public const string Bulgarian = "Bulgarian";
             public const string Chinese = "Chinese";
@@ -168,7 +167,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             beforePropertySetWriteNode( IsCopy, OverrideUniqueValidation );
 
-            
+
             CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation, Creating );
         }
 
@@ -212,7 +211,6 @@ namespace ChemSW.Nbt.ObjClasses
         #region Property Set specific properties
 
         public CswNbtNodePropText Code { get { return ( _CswNbtNode.Properties[PropertyName.Code] ); } }
-        public CswNbtNodePropList Category { get { return ( _CswNbtNode.Properties[PropertyName.Category] ); } }
         public CswNbtNodePropText English { get { return ( _CswNbtNode.Properties[PropertyName.English] ); } }
         public CswNbtNodePropText Bulgarian { get { return ( _CswNbtNode.Properties[PropertyName.Bulgarian] ); } }
         public CswNbtNodePropText Chinese { get { return ( _CswNbtNode.Properties[PropertyName.Chinese] ); } }
