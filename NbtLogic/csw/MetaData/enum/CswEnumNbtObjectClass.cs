@@ -39,6 +39,7 @@ namespace ChemSW.Nbt.MetaData
             { GenericClass                      , GenericClass                       },
             { GHSClass                          , GHSClass                           },
             { GHSPhraseClass                    , GHSPhraseClass                     },
+            { GHSSignalWordClass                , GHSSignalWordClass                 },
             { InspectionDesignClass             , InspectionDesignClass              },
             { InspectionRouteClass              , InspectionRouteClass               },
             { InventoryGroupClass               , InventoryGroupClass                },
@@ -206,6 +207,7 @@ namespace ChemSW.Nbt.MetaData
         public const string RequestMaterialCreateClass = "RequestMaterialCreateClass";
         public const string RoleClass = "RoleClass";
         public const string SDSDocumentClass = "SDSDocumentClass";
+        public const string GHSSignalWordClass = "GHSSignalWord";
         public const string SizeClass = "SizeClass";
         public const string TaskClass = "TaskClass";
         public const string UnitOfMeasureClass = "UnitOfMeasureClass";
