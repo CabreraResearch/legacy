@@ -3,30 +3,29 @@
 
 (function () {
     'use strict';
-    Csw.properties.propertyReference = Csw.properties.register('propertyReference',
-        function(nodeProperty) {
+    Csw.properties.register('propertyReference', function (nodeProperty) {
+        'use strict';
+
+        //The render function to be executed as a callback
+        var render = function () {
             'use strict';
-            
-            //The render function to be executed as a callback
-            var render = function() {
-                'use strict';
-                
-                /* Static Div */
-                nodeProperty.propDiv.div({
-                    name: nodeProperty.name,
-                    cssclass: 'staticvalue',
-                    text: nodeProperty.propData.gestalt + '&nbsp;&nbsp;'
-                });
-            };
 
-            //Bind the callback to the render event
-            nodeProperty.bindRender(render);
+            /* Static Div */
+            nodeProperty.propDiv.div({
+                name: nodeProperty.name,
+                cssclass: 'staticvalue',
+                text: nodeProperty.propData.gestalt + '&nbsp;&nbsp;'
+            });
+        };
 
-            //Bind an unrender callback to terminate any outstanding ajax requests, if any. See propTypeGrid.
-            //nodeProperty.unBindRender();
+        //Bind the callback to the render event
+        nodeProperty.bindRender(render);
 
-            return true;
-        });
+        //Bind an unrender callback to terminate any outstanding ajax requests, if any. See propTypeGrid.
+        //nodeProperty.unBindRender();
 
-} ());
+        return true;
+    });
+
+}());
 

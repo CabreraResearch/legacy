@@ -20,12 +20,14 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropScientific( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtNode Node )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node )
         {
-            _FieldTypeRule = (CswNbtFieldTypeRuleScientific) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
-            _BaseSubField = _FieldTypeRule.BaseSubField;
-            _ExponentSubField = _FieldTypeRule.ExponentSubField;
+            _BaseSubField = ( (CswNbtFieldTypeRuleScientific) _FieldTypeRule ).BaseSubField;
+            _ExponentSubField = ( (CswNbtFieldTypeRuleScientific) _FieldTypeRule ).ExponentSubField;
+
+            // Associate subfields with methods on this object, for SetSubFieldValue()
+            _SubFieldMethods.Add( _BaseSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Base, x => Base = CswConvert.ToDouble( x ) ) );
+            _SubFieldMethods.Add( _ExponentSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Exponent, x => Exponent = CswConvert.ToInt32( x ) ) );
         }
 
-        private CswNbtFieldTypeRuleScientific _FieldTypeRule;
         private CswNbtSubField _BaseSubField;
         private CswNbtSubField _ExponentSubField;
 
@@ -37,27 +39,17 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
-
-        override public string Gestalt
-        {
-            get
-            {
-                return _CswNbtNodePropData.Gestalt;
-            }//
-
-        }//Gestalt
-
         public override void SyncGestalt()
         {
             if( false == Double.IsNaN( Base ) )
             {
                 if( Exponent != Int32.MinValue && Exponent != 0 )
                 {
-                    _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, Base.ToString() + "E" + Exponent.ToString() );
+                    SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, Base.ToString() + "E" + Exponent.ToString() );
                 }
                 else
                 {
-                    _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, Base.ToString() );
+                    SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, Base.ToString() );
                 }
             }
         }
@@ -83,12 +75,12 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                string StringValue = _CswNbtNodePropData.GetPropRowValue( _BaseSubField.Column );
+                string StringValue = GetPropRowValue( _BaseSubField );
                 return CswConvert.ToDouble( StringValue );
             }
             set
             {
-                _CswNbtNodePropData.SetPropRowValue( _BaseSubField.Column, value );
+                SetPropRowValue( _BaseSubField, value );
                 if( false == Double.IsNaN( value ) && Exponent == Int32.MinValue )
                 {
                     Exponent = 0;
@@ -101,7 +93,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                string StringValue = _CswNbtNodePropData.GetPropRowValue( _ExponentSubField.Column );
+                string StringValue = GetPropRowValue( _ExponentSubField );
                 return CswConvert.ToInt32( StringValue );
             }
             set
@@ -111,7 +103,7 @@ namespace ChemSW.Nbt.PropTypes
                 {
                     ExpValue = 0;
                 }
-                _CswNbtNodePropData.SetPropRowValue( _ExponentSubField.Column, ExpValue );
+                SetPropRowValue( _ExponentSubField, ExpValue );
                 SyncGestalt();
             }
         } // Exponent
@@ -141,6 +133,8 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
+            base.ToJSON( ParentObject );  // FIRST
+
             if( false == Double.IsNaN( Base ) )
             {
                 ParentObject[_BaseSubField.ToXmlNodeName( true )] = Base.ToString();

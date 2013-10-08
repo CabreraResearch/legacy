@@ -15,13 +15,13 @@ namespace ChemSW.Nbt.Schema
     /// </summary>
     public class CswSchemaUpdater
     {
-        private ICswSchemaScripts _CswSchemaScripts = null;
+        private CswSchemaScriptsProd _CswSchemaScripts = null;
         private string _AccessId = string.Empty;
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public CswSchemaUpdater( string AccessId, ResourcesInitHandler ResourcesInitHandler, ICswSchemaScripts CswSchemaScripts )
+        public CswSchemaUpdater( string AccessId, ResourcesInitHandler ResourcesInitHandler, CswSchemaScriptsProd CswSchemaScripts )
         {
             _CswSchemaScripts = CswSchemaScripts;
             _ResourcesInitHandler = ResourcesInitHandler;

@@ -20,10 +20,12 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropNumber( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtNode Node )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node )
         {
-            _FieldTypeRule = (CswNbtFieldTypeRuleNumber) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
-            _ValueSubField = _FieldTypeRule.ValueSubField;
+            _ValueSubField = ( (CswNbtFieldTypeRuleNumber) _FieldTypeRule ).ValueSubField;
+
+            // Associate subfields with methods on this object, for SetSubFieldValue()
+            _SubFieldMethods.Add( _ValueSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Value, x => Value = CswConvert.ToDouble( x ) ) );
         }
-        private CswNbtFieldTypeRuleNumber _FieldTypeRule;
+
         private CswNbtSubField _ValueSubField;
 
         override public bool Empty
@@ -34,21 +36,11 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
-
-        override public string Gestalt
-        {
-            get
-            {
-                return _CswNbtNodePropData.Gestalt;
-            }//
-
-        }//Gestalt
-
         public double Value
         {
             get
             {
-                string StringValue = _CswNbtNodePropData.GetPropRowValue( _ValueSubField.Column );
+                string StringValue = GetPropRowValue( _ValueSubField );
                 if( CswTools.IsFloat( StringValue ) )
                     return Convert.ToDouble( StringValue );
                 else
@@ -58,8 +50,8 @@ namespace ChemSW.Nbt.PropTypes
             {
                 if( Double.IsNaN( value ) )
                 {
-                    _CswNbtNodePropData.SetPropRowValue( _ValueSubField.Column, Double.NaN );
-                    _CswNbtNodePropData.Gestalt = string.Empty;
+                    SetPropRowValue( _ValueSubField, Double.NaN );
+                    Gestalt = string.Empty;
                 }
                 else
                 {
@@ -68,7 +60,7 @@ namespace ChemSW.Nbt.PropTypes
                     if( Precision > Int32.MinValue )
                         RoundedValue = Math.Round( value, Precision, MidpointRounding.AwayFromZero );
 
-                    _CswNbtNodePropData.SetPropRowValue( _ValueSubField.Column, RoundedValue );
+                    SetPropRowValue( _ValueSubField, RoundedValue );
                     SyncGestalt();
                 }
             }
@@ -78,12 +70,12 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-               Int32 Ret =_CswNbtMetaDataNodeTypeProp.NumberPrecision;
-               if( Ret < 0 )
-               {
-                   Ret = 6;
-               } 
-               return Ret;
+                Int32 Ret = _CswNbtMetaDataNodeTypeProp.NumberPrecision;
+                if( Ret < 0 )
+                {
+                    Ret = 6;
+                }
+                return Ret;
             }
         }
 
@@ -135,6 +127,8 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
+            base.ToJSON( ParentObject );  // FIRST
+
             ParentObject[_ValueSubField.ToXmlNodeName( true )] = ( !Double.IsNaN( Value ) ) ? Value.ToString() : string.Empty;
             ParentObject["minvalue"] = MinValue.ToString();
             ParentObject["maxvalue"] = MaxValue.ToString();
@@ -162,7 +156,7 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void SyncGestalt()
         {
-            _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, Value.ToString() );
+            SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, Value.ToString() );
         }
     }//CswNbtNodeProp
 

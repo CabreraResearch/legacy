@@ -26,12 +26,14 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropViewPickList( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtNode Node )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node )
         {
-            _FieldTypeRule = (CswNbtFieldTypeRuleViewPickList) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
-            _SelectedViewIdsSubField = _FieldTypeRule.SelectedViewIdsSubField;
-            _CachedViewNameSubField = _FieldTypeRule.CachedViewNameSubField;
+            _SelectedViewIdsSubField = ( (CswNbtFieldTypeRuleViewPickList) _FieldTypeRule ).SelectedViewIdsSubField;
+            _CachedViewNameSubField = ( (CswNbtFieldTypeRuleViewPickList) _FieldTypeRule ).CachedViewNameSubField;
 
-        }//generic
-        private CswNbtFieldTypeRuleViewPickList _FieldTypeRule;
+            // Associate subfields with methods on this object, for SetSubFieldValue()
+            _SubFieldMethods.Add( _SelectedViewIdsSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => SelectedViewIds, x => SelectedViewIds.FromString( CswConvert.ToString( x ) ) ) );
+            _SubFieldMethods.Add( _CachedViewNameSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => CachedViewNames, x => CachedViewNames.FromString( CswConvert.ToString( x ) ) ) );
+        }
+
         private CswNbtSubField _SelectedViewIdsSubField;
         private CswNbtSubField _CachedViewNameSubField;
 
@@ -42,14 +44,6 @@ namespace ChemSW.Nbt.PropTypes
                 return ( 0 == SelectedViewIds.Count );
             }
         }//Empty
-
-        override public string Gestalt
-        {
-            get
-            {
-                return _CswNbtNodePropData.Gestalt;
-            }
-        }//Gestalt
 
         private CswCommaDelimitedString _SelectedViewIds = null;
         /// <summary>
@@ -63,7 +57,7 @@ namespace ChemSW.Nbt.PropTypes
                 {
                     _SelectedViewIds = new CswCommaDelimitedString();
                     _SelectedViewIds.OnChange += new CswDelimitedString.DelimitedStringChangeHandler( _SelectedViewIds_OnChange );
-                    _SelectedViewIds.FromString( _CswNbtNodePropData.GetPropRowValue( _SelectedViewIdsSubField.Column ) );
+                    _SelectedViewIds.FromString( GetPropRowValue( _SelectedViewIdsSubField ) );
                 }
                 return _SelectedViewIds;
             }
@@ -78,7 +72,7 @@ namespace ChemSW.Nbt.PropTypes
         // This event handler allows us to save changes made directly to _SelectedNodeTypeIds (like .Add() )
         void _SelectedViewIds_OnChange()
         {
-            if( _CswNbtNodePropData.SetPropRowValue( _SelectedViewIdsSubField.Column, _SelectedViewIds.ToString() ) )
+            if( SetPropRowValue( _SelectedViewIdsSubField, _SelectedViewIds.ToString() ) )
                 PendingUpdate = true;
         }
 
@@ -118,7 +112,7 @@ namespace ChemSW.Nbt.PropTypes
                 {
                     _CachedViewNames = new CswCommaDelimitedString();
                     _CachedViewNames.OnChange += new CswDelimitedString.DelimitedStringChangeHandler( _CachedViewNames_OnChange );
-                    _CachedViewNames.FromString( _CswNbtNodePropData.GetPropRowValue( _CachedViewNameSubField.Column ) );
+                    _CachedViewNames.FromString( GetPropRowValue( _CachedViewNameSubField ) );
                 }
                 return _CachedViewNames;
             }
@@ -133,7 +127,7 @@ namespace ChemSW.Nbt.PropTypes
         // This event handler allows us to save changes made directly to _SelectedNodeTypeIds (like .Add() )
         void _CachedViewNames_OnChange()
         {
-            _CswNbtNodePropData.SetPropRowValue( _CachedViewNameSubField.Column, _CachedViewNames.ToString() );
+            SetPropRowValue( _CachedViewNameSubField, _CachedViewNames.ToString() );
         }
 
         public void RefreshViewName()
@@ -256,6 +250,8 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
+            base.ToJSON( ParentObject );  // FIRST
+
             ParentObject[_SelectedViewIdsSubField.ToXmlNodeName()] = SelectedViewIds.ToString();
             ParentObject["selectmode"] = SelectMode.ToString();
             ParentObject[_CachedViewNameSubField.ToXmlNodeName()] = CachedViewNames.ToString();

@@ -1,6 +1,7 @@
 ﻿using ChemSW.DB;
 using System;
 using System.Data;
+using ChemSW.Nbt.MetaData;
 
 namespace ChemSW.Nbt.Actions
 {
@@ -51,7 +52,7 @@ namespace ChemSW.Nbt.Actions
             return _CswNbtResources.SessionDataMgr.saveSessionData( this, IncludeInQuickLaunch, KeepInQuickLaunch );
         }
 
-        public void SetCategory( string Category )
+        public void SetCategory( CswEnumNbtCategory Category )
         {
             CswTableUpdate actionsTU = _CswNbtResources.makeCswTableUpdate( "setActionCategory", "actions" );
             DataTable actionsDT = actionsTU.getTable( "where actionid = " + ActionId );

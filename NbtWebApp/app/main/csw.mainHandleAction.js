@@ -175,7 +175,7 @@
                             Csw.clientState.setCurrent(Csw.clientState.getLast());
                             Csw.main.refreshSelected();
                         } else {
-                            Csw.main.handleItemSelect({ itemid: viewid, mode: viewmode });
+                            Csw.main.handleItemSelect({ itemid: viewid, mode: viewmode, unhideallgridcols: true });
                         }
                     },
                     onCancel: function () {
@@ -316,6 +316,13 @@
                 });
             });
             actionHandler.add('default', defaultAct);
+
+            actionHandler.add('explorer', function(o) {
+                return Csw.actions.explorer(Csw.main.centerTopDiv, {
+                    startingNodeId: o.ActionOptions.startingNodeId,
+                    onCancel: onCancel
+                });
+            });
         }()); //buildActHandler
         
         Csw.subscribe(Csw.enums.events.main.handleAction, function (eventObj, opts) {

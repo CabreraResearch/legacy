@@ -21,31 +21,30 @@ namespace ChemSW.Nbt.WebServices
             JObject ret = new JObject();
             if( Node != null )
             {
-                string SQL = @"select ja.recordcreated as ChangeDate";
+                string SQL = @"select ja.recordcreated as ChangeDate ";
                 if( !JustDateColumn )
                 {
-                    SQL += @", 
-                                  x.transactionusername as Username, 
-                                  x.auditeventname as Context,
-                                  np.propname as Propname,
-                                  ja.gestaltsearch as Value,
-                                  x.audittransactionid as AuditId,
-                                  ft.fieldtype as FieldType";
+                    SQL += @", x.transactionusername as Username,
+                               x.auditeventname as Context,
+                               np.propname as Propname,
+                               ja.gestaltsearch as Value,
+                               x.audittransactionid as AuditId,
+                               ft.fieldtype as FieldType ";
                 }
-                SQL += @"		from jct_nodes_props_audit ja
-
-                                join audit_transactions x on ja.audittransactionid = x.audittransactionid
-                                join nodetype_props np on ja.nodetypepropid = np.nodetypepropid
-                                join field_types ft on ft.fieldtypeid = np.fieldtypeid
-                            where ja.nodeid = :nodeid ";
-
+                SQL += @" from jct_nodes_props_audit ja
+                          join audit_transactions x on ja.audittransactionid = x.audittransactionid
+                          join TABLE(" + CswNbtAuditTableAbbreviation.getAuditLookupFunctionNameForRealTable( "nodetype_props" ) +
+                                    @"(ja.recordcreated)) np on (np.nodetypepropid = ja.nodetypepropid)
+                          join field_types ft on ft.fieldtypeid = np.fieldtypeid
+                         where ja.nodeid = :nodeid
+                           and x.transactionusername not in (:sysusernames)
+                          order by AuditId desc";
 
                 CswCommaDelimitedString sysUserNames = new CswCommaDelimitedString( 0, "'" );
                 foreach( CswEnumSystemUserNames sysUserName in CswEnumSystemUserNames.getValues() )
                 {
                     sysUserNames.Add( sysUserName.ToString() );
                 }
-                SQL += @" and x.transactionusername not in ( :sysusernames ) order by AuditId desc";
 
                 CswArbitrarySelect HistorySelect = _CswNbtResources.makeCswArbitrarySelect( "CswNbtWebServiceAuditing_getAuditHistory_select", SQL );
                 HistorySelect.addParameter( "nodeid", Node.NodeId.PrimaryKey.ToString() );

@@ -99,7 +99,7 @@ namespace ChemSW.Nbt
 
                 //bz # 5878
                 //Node.Properties.ManageTransaction = _ManageTransaction;
-                Node.Properties.update( Node, IsCopy, OverrideUniqueValidation, Creating );
+                Node.Properties.update( Node, IsCopy, OverrideUniqueValidation, Creating, null );
 
                 //set nodename with updated prop values
                 _synchNodeName( Node );
@@ -128,7 +128,7 @@ namespace ChemSW.Nbt
                 Prop.NodeId = Node.NodeId;
                 // Only set values for unmodified properties
                 // This is important for nodes created through workflows
-                if( !Prop.WasModified )
+                if( false == Prop.wasAnySubFieldModified() )
                 {
                     Prop.SetDefaultValue();
                 }

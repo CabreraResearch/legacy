@@ -38,7 +38,7 @@ namespace ChemSW.Nbt.Security
         private CswNbtObjClassUser _authorizeUser( CswEncryption CswEncryption, CswWebSvcSessionAuthenticateData.Authentication.Request AuthenticationRequest )
         {
             CswNbtObjClassUser UserNode = _CswNbtResources.Nodes.makeUserNodeFromUsername( AuthenticationRequest.UserName, RequireViewPermissions : false );
-            if( UserNode != null && false == UserNode.IsArchived() && false == UserNode.IsAccountLocked() )
+            if( UserNode != null )
             {
                 string encryptedpassword = CswEncryption.getMd5Hash( AuthenticationRequest.Password );
                 if( UserNode.EncryptedPassword == encryptedpassword )

@@ -824,8 +824,8 @@ namespace ChemSW.Nbt.Security
 
 
                 CswPrimaryKey PermissionGroupId = getPermissionGroupId( _CswNbtPermitInfo.NodePrimeKey, _CswNbtPermitInfo.NodeType.NodeTypeId );
-                if( CswTools.IsPrimaryKey( PermissionGroupId ) && 
-                    false == _CswNbtResources.Permit.canNode( _CswNbtPermitInfo.NodeTypePermission, PermissionGroupId, _CswNbtPermitInfo.User ) )
+                if( CswTools.IsPrimaryKey( PermissionGroupId ) &&
+                    false == _CswNbtResources.Permit.canNode( _CswNbtPermitInfo.NodeTypePermission, PermissionGroupId, _CswNbtPermitInfo.User, _CswNbtPermitInfo.NodeType ) )
                 {
                     ret = false;
                     _CswNbtResources.CswLogger.reportAppState( "The node " + _CswNbtPermitInfo.Node.NodeName + " (" + _CswNbtPermitInfo.NodePrimeKey + ") has been displayed as non-editable because the viewer does not belong to permission group " + PermissionGroupId + ".", "ReadOnlyConditions" );
@@ -1152,7 +1152,7 @@ namespace ChemSW.Nbt.Security
         /// <param name="Permission">Permission Type (either View or Edit)</param>
         /// <param name="PermissionGroupId">The nodeid of the PermissionGroup with which to check permissions</param>
         /// <param name="User">User for which to check permissions</param>
-        public bool canNode( CswEnumNbtNodeTypePermission Permission, CswPrimaryKey PermissionGroupId, ICswNbtUser User = null )
+        public bool canNode( CswEnumNbtNodeTypePermission Permission, CswPrimaryKey PermissionGroupId, ICswNbtUser User = null, CswNbtMetaDataNodeType NodeType = null )
         {
             bool hasPermission = true;
             if( null == User )
@@ -1166,8 +1166,14 @@ namespace ChemSW.Nbt.Security
                     CswNbtPropertySetPermission PermNode = User.getPermissionForGroup( PermissionGroupId );
                     if( null != PermNode )
                     {
-                        hasPermission = ( ( Permission == CswEnumNbtNodeTypePermission.View && PermNode.View.Checked == CswEnumTristate.True ) ||
-                                          PermNode.Edit.Checked == CswEnumTristate.True ); //edit implies edit, create, and delete
+                        //Case 30480: Only use InventoryGroupPermission if checking against Containers
+                        if( null == NodeType ||
+                            PermNode.ObjectClass.ObjectClass != CswEnumNbtObjectClass.InventoryGroupPermissionClass ||
+                            NodeType.getObjectClass().ObjectClass == CswEnumNbtObjectClass.ContainerClass )
+                        {
+                            hasPermission = ( ( Permission == CswEnumNbtNodeTypePermission.View && PermNode.View.Checked == CswEnumTristate.True ) ||
+                                              PermNode.Edit.Checked == CswEnumTristate.True ); //edit implies edit, create, and delete
+                        }
                     }
                     else if( null != _CswNbtResources.Nodes[PermissionGroupId] )
                     {

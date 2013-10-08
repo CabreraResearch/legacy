@@ -6,7 +6,6 @@
 
     var int32MinVal = -2147483648;
     Csw.register('int32MinVal', int32MinVal);
-    Csw.int32MinVal = Csw.int32MinVal || int32MinVal;
 
     function number(inputNum, defaultNum) {
         /// <summary>
@@ -46,7 +45,6 @@
         return retVal;
     }
     Csw.register('number', number);
-    Csw.number = Csw.number || number;
 
     function isNumber(obj) {
         /// <summary> Returns true if the object is typeof number</summary>
@@ -56,14 +54,13 @@
         return ret;
     }
     Csw.register('isNumber', isNumber);
-    Csw.isNumber = Csw.isNumber || isNumber;
 
     var isNumeric = function (obj) {
         /// <summary> Returns true if the input can be parsed as a Number </summary>
         /// <param name="str" type="Object"> String or object to test </param>
         /// <returns type="Boolean" />
         var ret = false;
-        if (isNumber(obj) && false === Csw.isNullOrEmpty(obj)) {
+        if (isNumber(number(obj)) && false === Csw.isNullOrEmpty(obj)) {
             var num = +obj;
             if (false === isNaN(num)) {
                 ret = true;
@@ -72,7 +69,6 @@
         return ret;
     };
     Csw.register('isNumeric', isNumeric);
-    Csw.isNumeric = Csw.isNumeric || isNumeric;
 
     function validateFloatMinValue(value, minvalue, excludeRangeLimits) {
         var nValue = parseFloat(value);
@@ -89,7 +85,6 @@
         return isValid;
     }
     Csw.register('validateFloatMinValue', validateFloatMinValue);
-    Csw.validateFloatMinValue = Csw.validateFloatMinValue || validateFloatMinValue;
 
     function validateFloatMaxValue(value, maxvalue, excludeRangeLimits) {
         var nValue = parseFloat(value);
@@ -106,7 +101,6 @@
         return isValid;
     }
     Csw.register('validateFloatMaxValue', validateFloatMaxValue);
-    Csw.validateFloatMaxValue = Csw.validateFloatMaxValue || validateFloatMaxValue;
 
     function validateFloatPrecision(value, precision) {
         var isValid = true;
@@ -125,21 +119,18 @@
         return isValid;
     }
     Csw.register('validateFloatPrecision', validateFloatPrecision);
-    Csw.validateFloatPrecision = Csw.validateFloatPrecision || validateFloatPrecision;
 
     function validateInteger(value) {
         var regex = /^\-?\d+$/g;
         return (regex.test(value) || value === null);
     }
     Csw.register('validateInteger', validateInteger);
-    Csw.validateInteger = Csw.validateInteger || validateInteger;
 
-    function validateIntegerGreaterThanZero(value) {
+    function validateGreaterThanZero(value) {
         var regex = /^(\d*(\.|)\d*)$/g;
-        return (regex.test(value));
+        return ((regex.test(value) && number(value) > 0) || value === null);
     }
-    Csw.register('validateIntegerGreaterThanZero', validateIntegerGreaterThanZero);
-    Csw.validateIntegerGreaterThanZero = Csw.validateIntegerGreaterThanZero || validateIntegerGreaterThanZero;
+    Csw.register('validateGreaterThanZero', validateGreaterThanZero);
 
     function getMaxValueForPrecision(precision, maxPrecision) {
         var i,
@@ -156,12 +147,12 @@
         return ret;
     }
     Csw.register('getMaxValueForPrecision', getMaxValueForPrecision);
-    Csw.getMaxValueForPrecision = Csw.getMaxValueForPrecision || getMaxValueForPrecision;
 
+    //Validates the character length of the string-ified number
     function validateMaxLength(value, maxLength) {
         return (value.length <= maxLength);
     }
     Csw.register('validateMaxLength', validateMaxLength);
-    Csw.validateMaxLength = Csw.validateMaxLength || validateMaxLength;
 
-} ());
+
+}());

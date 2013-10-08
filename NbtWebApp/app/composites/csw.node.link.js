@@ -4,68 +4,68 @@
 (function () {
     'use strict';
 
-    Csw.composites.nodeLink = Csw.composites.nodeLink ||
-        Csw.composites.register('nodeLink', function (cswParent, options) {
-            'use strict';
-            var cswPrivate = {
-                name: '',
-                text: '',
-                cssclasstext: '',
-                cssclasslink: '',
-                onClick: null
-            };
-            var cswPublic = {};
 
-            // Look for node references in the text
-            cswPrivate.findNodeRef = function () {
-                var startmarker = '[[';
-                var midmarker = '][';
-                var endmarker = ']]';
-                var msg = cswPrivate.text;
-                var startpos = msg.indexOf(startmarker);
-                var endpos = msg.indexOf(endmarker);
-                while (startpos >= 0) {
-                    cswPrivate.div.append(msg.substr(0, startpos));
+    Csw.composites.register('nodeLink', function (cswParent, options) {
+        'use strict';
+        var cswPrivate = {
+            name: '',
+            text: '',
+            cssclasstext: '',
+            cssclasslink: '',
+            onClick: null
+        };
+        var cswPublic = {};
 
-                    var noderef = msg.substr(startpos, endpos - startpos);
-                    var midpos = noderef.indexOf(midmarker);
-                    var nodeid = noderef.substr(startmarker.length, midpos - startmarker.length);
-                    var nodename = noderef.substr(midpos + midmarker.length, noderef.length - (midpos + midmarker.length));
+        // Look for node references in the text
+        cswPrivate.findNodeRef = function () {
+            var startmarker = '[[';
+            var midmarker = '][';
+            var endmarker = ']]';
+            var msg = cswPrivate.text;
+            var startpos = msg.indexOf(startmarker);
+            var endpos = msg.indexOf(endmarker);
+            while (startpos >= 0) {
+                cswPrivate.div.append(msg.substr(0, startpos));
 
-                    cswPrivate.makeNodeLink(nodeid, nodename);
+                var noderef = msg.substr(startpos, endpos - startpos);
+                var midpos = noderef.indexOf(midmarker);
+                var nodeid = noderef.substr(startmarker.length, midpos - startmarker.length);
+                var nodename = noderef.substr(midpos + midmarker.length, noderef.length - (midpos + midmarker.length));
 
-                    msg = msg.substr(endpos + endmarker.length, msg.length - (endpos + endmarker.length));
-                    startpos = msg.indexOf(startmarker);
-                    endpos = msg.indexOf(endmarker);
-                } // while (startpos > 0)
-                cswPrivate.div.append(msg);
-            }; // findNodeRef()
+                cswPrivate.makeNodeLink(nodeid, nodename);
 
-            cswPrivate.makeNodeLink = function (nodeid, nodename) {
-                cswPrivate.div.a({
-                    name: cswPrivate.name + '_' + nodeid,
-                    text: nodename,
-                    cssclass: cswPrivate.cssclasslink,
-                    onClick: function () {
-                        Csw.tryExec(cswPrivate.onClick);
-                        $.CswDialog('EditNodeDialog', {
-                            currentNodeId: nodeid,
-                            currentNodeKey: '',
-                            nodenames: [nodename]
-                        }); // CswDialog
-                    } // onClick
-                }); // link
-            }; // makeNodeLink()
+                msg = msg.substr(endpos + endmarker.length, msg.length - (endpos + endmarker.length));
+                startpos = msg.indexOf(startmarker);
+                endpos = msg.indexOf(endmarker);
+            } // while (startpos > 0)
+            cswPrivate.div.append(msg);
+        }; // findNodeRef()
 
-            (function () {
-                if (options) Csw.extend(cswPrivate, options);
-                cswPrivate.div = cswParent.div({ cssclass: cswPrivate.cssclasstext });
-                cswPublic = Csw.dom({}, cswPrivate.div);
-                cswPrivate.findNodeRef();
+        cswPrivate.makeNodeLink = function (nodeid, nodename) {
+            cswPrivate.div.a({
+                name: cswPrivate.name + '_' + nodeid,
+                text: nodename,
+                cssclass: cswPrivate.cssclasslink,
+                onClick: function () {
+                    Csw.tryExec(cswPrivate.onClick);
+                    $.CswDialog('EditNodeDialog', {
+                        currentNodeId: nodeid,
+                        currentNodeKey: '',
+                        nodenames: [nodename]
+                    }); // CswDialog
+                } // onClick
+            }); // link
+        }; // makeNodeLink()
 
-            } ());
+        (function () {
+            if (options) Csw.extend(cswPrivate, options);
+            cswPrivate.div = cswParent.div({ cssclass: cswPrivate.cssclasstext });
+            cswPublic = Csw.dom({}, cswPrivate.div);
+            cswPrivate.findNodeRef();
 
-            return cswPublic;
-        });
-} ());
+        }());
+
+        return cswPublic;
+    });
+}());
 

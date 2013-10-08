@@ -13,7 +13,7 @@ namespace ChemSW.Nbt.ObjClasses
             return ret ?? NotScanned;
         }
 
-        public static readonly CswEnumNbtContainerLocationStatusOptions Correct = new CswEnumNbtContainerLocationStatusOptions( "Received, Moved, Dispensed, or Disposed" );
+        public static readonly CswEnumNbtContainerLocationStatusOptions Correct = new CswEnumNbtContainerLocationStatusOptions( "Moved, Dispensed, or Disposed/Undisposed" );
         public static readonly CswEnumNbtContainerLocationStatusOptions ScannedCorrect = new CswEnumNbtContainerLocationStatusOptions( "Scanned Correct" );
         public static readonly CswEnumNbtContainerLocationStatusOptions WrongLocation = new CswEnumNbtContainerLocationStatusOptions( "Scanned at Wrong Location" );
         public static readonly CswEnumNbtContainerLocationStatusOptions Disposed = new CswEnumNbtContainerLocationStatusOptions( "Scanned, but already marked Disposed" );

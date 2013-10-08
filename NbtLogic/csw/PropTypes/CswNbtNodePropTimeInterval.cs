@@ -21,38 +21,42 @@ namespace ChemSW.Nbt.PropTypes
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node )
         {
             //_RateInterval = new CswRateInterval(CswNbtNodePropData.Gestalt);   //this should be backwards compatible...
-            if( CswNbtNodePropData.ClobData.ToString() != string.Empty )
+
+            _init( CswNbtNodePropData.ClobData );
+
+            _IntervalSubField = ( (CswNbtFieldTypeRuleTimeInterval) _FieldTypeRule ).IntervalSubField;
+            _StartDateSubField = ( (CswNbtFieldTypeRuleTimeInterval) _FieldTypeRule ).StartDateSubField;
+            _ClobDataSubField = ( (CswNbtFieldTypeRuleTimeInterval) _FieldTypeRule ).ClobDataSubField;
+
+            // Associate subfields with methods on this object, for SetSubFieldValue()
+            _SubFieldMethods.Add( _ClobDataSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => RateInterval, x => _init( x ) ) );
+            _SubFieldMethods.Add( _StartDateSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => getStartDate(), null ) );
+        }
+
+        private CswNbtSubField _IntervalSubField;
+        private CswNbtSubField _StartDateSubField;
+        private CswNbtSubField _ClobDataSubField;
+
+        private void _init( string clobData )
+        {
+            SetPropRowValue( _ClobDataSubField, clobData );
+            if( clobData != string.Empty ) //The Default Value might be empty
             {
                 XmlDocument XmlDoc = new XmlDocument();
-                XmlDoc.LoadXml( CswNbtNodePropData.ClobData.ToString() );
+                XmlDoc.LoadXml( clobData );
                 _RateInterval = new CswRateInterval( _CswNbtResources, XmlDoc.FirstChild );
             }
             else
             {
                 _RateInterval = new CswRateInterval( _CswNbtResources );
             }
-            _FieldTypeRule = (CswNbtFieldTypeRuleTimeInterval) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
-            _IntervalSubField = _FieldTypeRule.IntervalSubField;
-            _StartDateSubField = _FieldTypeRule.StartDateSubField;
         }
-        private CswNbtFieldTypeRuleTimeInterval _FieldTypeRule;
-        private CswNbtSubField _IntervalSubField;
-        private CswNbtSubField _StartDateSubField;
 
         override public bool Empty
         {
             get
             {
                 return ( string.IsNullOrEmpty( Gestalt ) );
-            }
-        }
-
-
-        override public string Gestalt
-        {
-            get
-            {
-                return _CswNbtNodePropData.Gestalt;
             }
         }
 
@@ -66,10 +70,11 @@ namespace ChemSW.Nbt.PropTypes
             set
             {
                 _RateInterval = value;
-                _CswNbtNodePropData.SetPropRowValue( _IntervalSubField.Column, value.ToString() );
-                _CswNbtNodePropData.SetPropRowValue( _StartDateSubField.Column, value.getFirst() );
-                _CswNbtNodePropData.Gestalt = value.ToString();
-                _CswNbtNodePropData.ClobData = value.ToXmlString();
+                SetPropRowValue( _IntervalSubField, value.ToString() );
+                SetPropRowValue( _StartDateSubField, value.getFirst() );
+                Gestalt = value.ToString();
+                //ClobData = value.ToXmlString();
+                SetPropRowValue( _ClobDataSubField, value.ToXmlString() );
             }
         }
 
@@ -106,6 +111,8 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
+            base.ToJSON( ParentObject );  // FIRST
+
             JObject IntervalObj = new JObject();
             ParentObject[_IntervalSubField.ToXmlNodeName()] = IntervalObj;
             //IntervalObj["text"] = RateInterval.ToString();
@@ -139,7 +146,12 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void SyncGestalt()
         {
-            _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, RateInterval.ToString() );
+            SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, RateInterval.ToString() );
+        }
+
+        public override void onAfterSetDefault()
+        {
+            _init( ClobData );
         }
 
     }//CswNbtNodeProp

@@ -14,6 +14,8 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
         public CswNbtSubField QuantitySubField;
         public CswNbtSubField UnitNameSubField;
         public CswNbtSubField UnitIdSubField;
+        public CswNbtSubField Val_kg_SubField;
+        public CswNbtSubField Val_Liters_SubField;
 
         public CswNbtFieldTypeRuleQuantity( CswNbtFieldResources CswNbtFieldResources )
         {
@@ -49,6 +51,28 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             UnitNameSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotNull );
             UnitNameSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Null );
             SubFields.add( UnitNameSubField );
+
+            Val_kg_SubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field2_Numeric, CswEnumNbtSubFieldName.Val_kg, true );
+            Val_kg_SubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Equals );
+            Val_kg_SubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotEquals );
+            Val_kg_SubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.GreaterThanOrEquals );
+            Val_kg_SubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.GreaterThan );
+            Val_kg_SubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.LessThan );
+            Val_kg_SubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.LessThanOrEquals );
+            Val_kg_SubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotNull );
+            Val_kg_SubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Null );
+            SubFields.add( Val_kg_SubField, true );
+
+            Val_Liters_SubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field3_Numeric, CswEnumNbtSubFieldName.Val_Liters, true );
+            Val_Liters_SubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Equals );
+            Val_Liters_SubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotEquals );
+            Val_Liters_SubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.GreaterThanOrEquals );
+            Val_Liters_SubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.GreaterThan );
+            Val_Liters_SubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.LessThan );
+            Val_Liters_SubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.LessThanOrEquals );
+            Val_Liters_SubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotNull );
+            Val_Liters_SubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Null );
+            SubFields.add( Val_Liters_SubField, true );
 
         }//ctor
 

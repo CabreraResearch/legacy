@@ -5,6 +5,7 @@ using System.Xml;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
 using Newtonsoft.Json.Linq;
 
@@ -36,10 +37,14 @@ namespace ChemSW.Nbt.PropTypes
             else
             {
                 LogicalSetXmlDoc = new XmlDocument();
-                LogicalSetXmlDoc.LoadXml( _CswNbtNodePropData.ClobData );
+                LogicalSetXmlDoc.LoadXml( ClobData );
             }
 
+            _ClobDataSubField = ( (CswNbtFieldTypeRuleLogicalSet) _FieldTypeRule ).ClobDataSubField;
+
         }//ctor
+
+        private CswNbtSubField _ClobDataSubField;
 
         private void ResetXml()
         {
@@ -55,18 +60,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return ( 0 == _CswNbtNodePropData.ClobData.Length );
-            }
-        }
-
-        /// <summary>
-        /// String representation of checked values
-        /// </summary>
-        override public string Gestalt
-        {
-            get
-            {
-                return _CswNbtNodePropData.Gestalt;
+                return ( 0 == ClobData.Length );
             }
         }
 
@@ -99,7 +93,7 @@ namespace ChemSW.Nbt.PropTypes
         /// </summary>
         public void Save()
         {
-            _CswNbtNodePropData.ClobData = LogicalSetXmlDoc.InnerXml.ToString();
+            SetPropRowValue( _ClobDataSubField, LogicalSetXmlDoc.InnerXml.ToString() );
             SyncGestalt();
             //PendingUpdate = true;
         }
@@ -137,7 +131,7 @@ namespace ChemSW.Nbt.PropTypes
                     CheckedNames += ThisCheckedNames;
                 }
             }
-            _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, CheckedNames );
+            SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, CheckedNames );
             PendingUpdate = SetPendingUpdate;
         }
 
@@ -336,6 +330,8 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
+            base.ToJSON( ParentObject );  // FIRST
+
             ParentObject[_ElemName_LogicalSetJson] = new JObject();
 
             CswCheckBoxArrayOptions CBAOptions = new CswCheckBoxArrayOptions();

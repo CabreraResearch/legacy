@@ -253,7 +253,7 @@ namespace ChemSW.Nbt.WebServices
             JProperty ComponentsProp = new JProperty( "components", ComponentObj );
             ret.Add( ComponentsProp );
             string ThisYear = DateTime.Now.Year.ToString();
-           
+
             ArrayList CswAssemblies = new ArrayList();
             CswAssemblies.Add( "NbtWebApp" );
             CswAssemblies.Add( "CswCommon" );
@@ -312,19 +312,50 @@ namespace ChemSW.Nbt.WebServices
             // Add ChemCatCentral version to the About dialog: Case 29380
             if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.C3 ) )
             {
-                CswNbtC3ClientManager C3ClientManager = new CswNbtC3ClientManager( _CswNbtResources );
+                CswC3Params CswC3Params = new CswC3Params();
+                CswNbtC3ClientManager C3ClientManager = new CswNbtC3ClientManager( _CswNbtResources, CswC3Params );
                 if( C3ClientManager.checkC3ServiceReferenceStatus() )
                 {
                     string C3Version = C3ClientManager.getCurrentC3Version();
-                    ComponentObj.Add( new JProperty( "ChemCatCentral",
-                                                   new JObject(
+                    ComponentObj.Add( new JProperty( "ChemCatCentral", new JObject(
                                                        new JProperty( "name", "ChemCatCentral" ),
                                                        new JProperty( "version", Regex.Replace( C3Version, "_", " " ) ),
-                                                       new JProperty( "copyright",
-                                                                     "Copyright &copy; ChemSW, Inc. 2005-" + ThisYear )
-                                                       )
-                                         ) );
-                }
+                                                       new JProperty( "copyright", "Copyright &copy; ChemSW, Inc. 2005-" + ThisYear ) ) ) );
+
+                    // Add the datasource import dates (if they are available to the user and/or the module is enabled
+                    CswC3ServiceLogicGetDataSourcesDataSource[] DataSourceDates = C3ClientManager.getDataSourceDates();
+                    if( null != DataSourceDates )
+                    {
+                        JObject DSDatesObj = new JObject();
+                        foreach( CswC3ServiceLogicGetDataSourcesDataSource ds in DataSourceDates )
+                        {
+                            if( ds.DataType == "Extra Chemical" )
+                            {
+                                switch( ds.DataSourceName )
+                                {
+                                    case "FireDb":
+                                        if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.FireDbSync ) )
+                                        {
+                                            DSDatesObj[ds.DataSourceName] = new JObject( new JProperty( "componentName", ds.DataSourceName ), new JProperty( "value", ds.ImportDate ) );
+                                        }
+                                        break;
+                                    case "PCID":
+                                        if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.PCIDSync ) )
+                                        {
+                                            DSDatesObj[ds.DataSourceName] = new JObject( new JProperty( "componentName", ds.DataSourceName ), new JProperty( "value", ds.ImportDate ) );
+                                        }
+                                        break;
+                                } //switch
+                            }
+                            else
+                            {
+                                DSDatesObj[ds.DataSourceName] = new JObject( new JProperty( "componentName", ds.DataSourceName ), new JProperty( "value", ds.ImportDate ) );
+                            }
+                        }
+                        ret.Add( new JProperty( "dsDates", DSDatesObj ) );
+                    }
+
+                }//if( C3ClientManager.checkC3ServiceReferenceStatus() )
             }
 
 

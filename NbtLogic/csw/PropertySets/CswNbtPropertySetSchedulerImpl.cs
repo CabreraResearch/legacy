@@ -28,7 +28,7 @@ namespace ChemSW.Nbt.PropertySets
         public static DateTime getNextDueDate( CswNbtNode Node, CswNbtNodePropDateTime NodePropNextDueDate, CswNbtNodePropTimeInterval NodePropInterval, Int32 WarningDays = 0, bool ForceUpdate = false, bool DeleteFuture = false )
         {
             DateTime Ret = NodePropNextDueDate.DateTimeValue;
-            if( NodePropInterval.WasModified ||
+            if( NodePropInterval.wasAnySubFieldModified() ||
                 Node.New ||
                 ForceUpdate ||
                 DeleteFuture )
@@ -42,7 +42,7 @@ namespace ChemSW.Nbt.PropertySets
                     {
                         DateTime NextDueDate = NodePropNextDueDate.DateTimeValue;
 
-                        if( NodePropInterval.WasModified ||
+                        if( NodePropInterval.wasAnySubFieldModified() ||
                             Node.New ||
                             DeleteFuture )
                         {
@@ -63,9 +63,9 @@ namespace ChemSW.Nbt.PropertySets
         public void updateNextDueDate( bool ForceUpdate, bool DeleteFuture )
         {
             if( ForceUpdate ||
-                ( false == _Scheduler.NextDueDate.WasModified &&  // case 30812
-                  ( _Scheduler.DueDateInterval.WasModified ||
-                    _Scheduler.FinalDueDate.WasModified ||
+                ( false == _Scheduler.NextDueDate.wasAnySubFieldModified() &&  // case 30812
+                  ( _Scheduler.DueDateInterval.wasAnySubFieldModified() ||
+                    _Scheduler.FinalDueDate.wasAnySubFieldModified() ||
                     _CswNbtNode.New ||
                     DeleteFuture ) ) )
             {

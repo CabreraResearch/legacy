@@ -151,115 +151,129 @@
       </xs:sequence>
     </xs:complexType>
   </xs:element>
+  <xs:element name="getDataSourceDates">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q19="http://schemas.datacontract.org/2004/07/c3WebServii.WebServices" minOccurs="0" name="CswC3Params" nillable="true" type="q19:CswC3Params" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="getDataSourceDatesResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q20="http://schemas.datacontract.org/2004/07/c3WebServii.WebServices" minOccurs="0" name="getDataSourceDatesResult" nillable="true" type="q20:CswRetObjSearchResults" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
   <xs:element name="getProductDetails">
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element xmlns:q19="http://schemas.datacontract.org/2004/07/c3WebServii.WebServices" minOccurs="0" name="CswC3SearchParams" nillable="true" type="q19:CswC3SearchParams" />
-      </xs:sequence>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="getProductDetailsResponse">
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element xmlns:q20="http://schemas.datacontract.org/2004/07/c3WebServii.WebServices" minOccurs="0" name="getProductDetailsResult" nillable="true" type="q20:CswRetObjSearchResults" />
-      </xs:sequence>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="search">
     <xs:complexType>
       <xs:sequence>
         <xs:element xmlns:q21="http://schemas.datacontract.org/2004/07/c3WebServii.WebServices" minOccurs="0" name="CswC3SearchParams" nillable="true" type="q21:CswC3SearchParams" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
-  <xs:element name="searchResponse">
+  <xs:element name="getProductDetailsResponse">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q22="http://schemas.datacontract.org/2004/07/c3WebServii.WebServices" minOccurs="0" name="searchResult" nillable="true" type="q22:CswRetObjSearchResults" />
+        <xs:element xmlns:q22="http://schemas.datacontract.org/2004/07/c3WebServii.WebServices" minOccurs="0" name="getProductDetailsResult" nillable="true" type="q22:CswRetObjSearchResults" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
-  <xs:element name="getExtChemData">
+  <xs:element name="search">
     <xs:complexType>
       <xs:sequence>
         <xs:element xmlns:q23="http://schemas.datacontract.org/2004/07/c3WebServii.WebServices" minOccurs="0" name="CswC3SearchParams" nillable="true" type="q23:CswC3SearchParams" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
+  <xs:element name="searchResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q24="http://schemas.datacontract.org/2004/07/c3WebServii.WebServices" minOccurs="0" name="searchResult" nillable="true" type="q24:CswRetObjSearchResults" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="getExtChemData">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q25="http://schemas.datacontract.org/2004/07/c3WebServii.WebServices" minOccurs="0" name="CswC3SearchParams" nillable="true" type="q25:CswC3SearchParams" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
   <xs:element name="getExtChemDataResponse">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q24="http://schemas.datacontract.org/2004/07/c3WebServii.WebServices" minOccurs="0" name="getExtChemDataResult" nillable="true" type="q24:CswRetObjSearchResults" />
+        <xs:element xmlns:q26="http://schemas.datacontract.org/2004/07/c3WebServii.WebServices" minOccurs="0" name="getExtChemDataResult" nillable="true" type="q26:CswRetObjSearchResults" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
   <xs:element name="getLastExtChemDataImportDate">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q25="http://schemas.datacontract.org/2004/07/c3WebServii.WebServices" minOccurs="0" name="CswC3Params" nillable="true" type="q25:CswC3Params" />
+        <xs:element xmlns:q27="http://schemas.datacontract.org/2004/07/c3WebServii.WebServices" minOccurs="0" name="CswC3Params" nillable="true" type="q27:CswC3Params" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
   <xs:element name="getLastExtChemDataImportDateResponse">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q26="http://schemas.datacontract.org/2004/07/c3WebServii.WebServices" minOccurs="0" name="getLastExtChemDataImportDateResult" nillable="true" type="q26:CswRetObjSearchResults" />
+        <xs:element xmlns:q28="http://schemas.datacontract.org/2004/07/c3WebServii.WebServices" minOccurs="0" name="getLastExtChemDataImportDateResult" nillable="true" type="q28:CswRetObjSearchResults" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
   <xs:element name="getLastLOLIImportDate">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q27="http://schemas.datacontract.org/2004/07/c3WebServii.WebServices" minOccurs="0" name="CswC3Params" nillable="true" type="q27:CswC3Params" />
+        <xs:element xmlns:q29="http://schemas.datacontract.org/2004/07/c3WebServii.WebServices" minOccurs="0" name="CswC3Params" nillable="true" type="q29:CswC3Params" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
   <xs:element name="getLastLOLIImportDateResponse">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q28="http://schemas.datacontract.org/2004/07/c3WebServii.WebServices" minOccurs="0" name="getLastLOLIImportDateResult" nillable="true" type="q28:CswRetObjSearchResults" />
+        <xs:element xmlns:q30="http://schemas.datacontract.org/2004/07/c3WebServii.WebServices" minOccurs="0" name="getLastLOLIImportDateResult" nillable="true" type="q30:CswRetObjSearchResults" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
   <xs:element name="getListCodesByCasNo">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q29="http://schemas.datacontract.org/2004/07/c3WebServii.WebServices" minOccurs="0" name="CswC3SearchParams" nillable="true" type="q29:CswC3SearchParams" />
+        <xs:element xmlns:q31="http://schemas.datacontract.org/2004/07/c3WebServii.WebServices" minOccurs="0" name="CswC3SearchParams" nillable="true" type="q31:CswC3SearchParams" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
   <xs:element name="getListCodesByCasNoResponse">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q30="http://schemas.datacontract.org/2004/07/c3WebServii.WebServices" minOccurs="0" name="getListCodesByCasNoResult" nillable="true" type="q30:CswRetObjSearchResults" />
+        <xs:element xmlns:q32="http://schemas.datacontract.org/2004/07/c3WebServii.WebServices" minOccurs="0" name="getListCodesByCasNoResult" nillable="true" type="q32:CswRetObjSearchResults" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
   <xs:element name="getListCodesByName">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q31="http://schemas.datacontract.org/2004/07/c3WebServii.WebServices" minOccurs="0" name="CswC3SearchParams" nillable="true" type="q31:CswC3SearchParams" />
+        <xs:element xmlns:q33="http://schemas.datacontract.org/2004/07/c3WebServii.WebServices" minOccurs="0" name="CswC3SearchParams" nillable="true" type="q33:CswC3SearchParams" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
   <xs:element name="getListCodesByNameResponse">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q32="http://schemas.datacontract.org/2004/07/c3WebServii.WebServices" minOccurs="0" name="getListCodesByNameResult" nillable="true" type="q32:CswRetObjSearchResults" />
+        <xs:element xmlns:q34="http://schemas.datacontract.org/2004/07/c3WebServii.WebServices" minOccurs="0" name="getListCodesByNameResult" nillable="true" type="q34:CswRetObjSearchResults" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
   <xs:element name="getCasLinkData">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q33="http://schemas.datacontract.org/2004/07/c3WebServii.WebServices" minOccurs="0" name="CswC3SearchParams" nillable="true" type="q33:CswC3SearchParams" />
+        <xs:element xmlns:q35="http://schemas.datacontract.org/2004/07/c3WebServii.WebServices" minOccurs="0" name="CswC3SearchParams" nillable="true" type="q35:CswC3SearchParams" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
   <xs:element name="getCasLinkDataResponse">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q34="http://schemas.datacontract.org/2004/07/c3WebServii.WebServices" minOccurs="0" name="getCasLinkDataResult" nillable="true" type="q34:CswRetObjSearchResults" />
+        <xs:element xmlns:q36="http://schemas.datacontract.org/2004/07/c3WebServii.WebServices" minOccurs="0" name="getCasLinkDataResult" nillable="true" type="q36:CswRetObjSearchResults" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>

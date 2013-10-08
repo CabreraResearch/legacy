@@ -3,8 +3,6 @@
 (function () {
     'use strict';
     
-    Csw.register('fun', Csw.makeNameSpace());
-
     /*
      * Curry Left method
     */

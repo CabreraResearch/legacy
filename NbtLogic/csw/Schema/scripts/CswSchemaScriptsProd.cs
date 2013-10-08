@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace ChemSW.Nbt.Schema
@@ -7,7 +8,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Keeps the schema up-to-date
     /// </summary>
-    public class CswSchemaScriptsProd : ICswSchemaScripts
+    public class CswSchemaScriptsProd
     {
         private CswNbtResources _CswNbtResources = null;
 
@@ -16,56 +17,47 @@ namespace ChemSW.Nbt.Schema
             _CswNbtResources = CswNbtResources;
 
             // This is where you manually set to the last version of the previous release (the one currently in production)
-            _MinimumVersion = new CswSchemaVersion( 2, 'E', 11 );
+            _MinimumVersion = new CswSchemaVersion( 2, 'F', 35 );
 
-            #region MetaData Scripts
+            #region Populate Scripts
 
-            //dch 30252 FOXGLOVE, but metadata changes so before EUC changes
-            _addVersionedScript( new CswUpdateMetaData_02F_Case30252() );
-            _addVersionedScript( new CswUpdateMetaData_02F_Case30228() );
-            _addVersionedScript( new CswUpdateMetaData_02F_Case30281() );
-            _addVersionedScript( new CswUpdateMetaData_02F_Case30251() );
-            _addVersionedScript( new CswUpdateMetaData_02F_Case30251B() );
-            _addVersionedScript( new CswUpdateMetaData_02F_Case30082_UserCache() );
-            _addVersionedScript( new CswUpdateMetaData_02F_Case27883() );
-            _addVersionedScript( new CswUpdateMetaData_02F_Case30040() );
-            _addVersionedScript( new CswUpdateMetaData_02F_Case29992() );
-            _addVersionedScript( new CswUpdateMetaData_02F_Case30529() );
-            _addVersionedScript( new CswUpdateMetaData_02F_Case30697() );
+            Collection<ICswSchemaScripts> AllScripts = new Collection<ICswSchemaScripts>()
+                {
+                    new CswSchemaScriptsGinkgo(),
+                    // Add new milestone script collections here
+                    //new CswSchemaScriptsCAF() // This runs the CAF scripts - you can comment it out if you don't need it
+                };
 
-            #endregion
+            // DDL
+            foreach( ICswSchemaScripts ScriptColl in AllScripts )
+            {
+                foreach( CswUpdateSchemaTo Script in ScriptColl._DDLScripts() )
+                {
+                    _addVersionedScript( Script );
+                }
+            }
+            // MetaData
+            foreach( ICswSchemaScripts ScriptColl in AllScripts )
+            {
+                foreach( CswUpdateSchemaTo Script in ScriptColl._MetaDataScripts() )
+                {
+                    _addVersionedScript( Script );
+                }
+            }
 
             // This is the MakeMissingNodeTypeProps script. If you have a script which contains OC changes, put it before this script.
             _addVersionedScript( new RunAlways_MakeMissingNodeTypePropsProps() );
 
-            #region Data Scripts
+            // Schema
+            foreach( ICswSchemaScripts ScriptColl in AllScripts )
+            {
+                foreach( CswUpdateSchemaTo Script in ScriptColl._SchemaScripts() )
+                {
+                    _addVersionedScript( Script );
+                }
+            }
 
-            _addVersionedScript( new CswUpdateSchema_02F_Case30281() );
-            _addVersionedScript( new CswUpdateSchema_02F_Case28998() );
-            _addVersionedScript( new CswUpdateSchema_02F_Case29973() );
-            _addVersionedScript( new CswUpdateSchema_02F_Case29191() );
-            _addVersionedScript( new CswUpdateSchema_02F_Case29542() );
-            _addVersionedScript( new CswUpdateSchema_02F_Case29438() );
-            _addVersionedScript( new CswUpdateSchema_02F_Case30082_UserCache() );
-            _addVersionedScript( new CswUpdateSchema_02F_Case30197() );
-            _addVersionedScript( new CswUpdateSchema_02F_Case30417() );
-            _addVersionedScript( new CswUpdateSchema_02F_Case27883() );
-            _addVersionedScript( new CswUpdateSchema_02F_Case27495() );
-            _addVersionedScript( new CswUpdateSchema_02F_Case30228() );
-            _addVersionedScript( new CswUpdateSchema_02F_Case30040() );
-            _addVersionedScript( new CswUpdateSchema_02F_Case29992() );
-            _addVersionedScript( new CswUpdateSchema_02F_Case29402() );
-            _addVersionedScript( new CswUpdateSchema_02F_Case30252() );
-            _addVersionedScript( new CswUpdateSchema_02F_Case30041_ScheduledRuleImport() );
-            _addVersionedScript( new CswUpdateSchema_02F_Case29984() );
-            _addVersionedScript( new CswUpdateSchema_02F_Case30577() );
-            _addVersionedScript( new CswUpdateSchema_02F_Case30647() );
-            _addVersionedScript( new CswUpdateSchema_02F_Case30661() );
-            _addVersionedScript( new CswUpdateSchema_02F_Case30700() );
-            _addVersionedScript( new CswUpdateSchema_02F_Case30706() );
-            _addVersionedScript( new CswUpdateSchema_02F_Case29562() );
-
-            #endregion Data Scripts
+            #endregion Populate Scripts
 
             #region Calculate the Latest Version
 
@@ -74,17 +66,18 @@ namespace ChemSW.Nbt.Schema
             #endregion Calculate the Latest Version
 
             #region Before Scripts
-
             // Before scripts that always run.
             _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_02SQL() );
-            _addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_03() );
+
+            // case 29565 - no longer necessary
+            //_addRunBeforeScript( new RunBeforeEveryExecutionOfUpdater_03() );
+
             #endregion Before Scripts
 
             #region After Script
-
             // After scripts that always run.
             _addRunAfterScript( new RunAfterEveryExecutionOfUpdater_01() );
-
+            _addRunAfterScript( new RunAfterEveryExecutionOfUpdater_02AuditSql() );
             #endregion After Script
 
         }//ctor

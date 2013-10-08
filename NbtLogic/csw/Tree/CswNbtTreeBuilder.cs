@@ -1,5 +1,6 @@
 using System;
 using System.Xml.Schema;
+using ChemSW.Core;
 using ChemSW.Nbt.Security;
 
 namespace ChemSW.Nbt
@@ -90,19 +91,19 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Instance a Tree from a Universal Search
         /// </summary>
-        public ICswNbtTree getTreeFromSearch( string SearchTerm, string WhereClause, bool RequireViewPermissions, bool IncludeSystemNodes, bool IncludeHiddenNodes, Int32 PerLevelNodeLimit = Int32.MinValue )
+        public ICswNbtTree getTreeFromSearch( string SearchTerm, CswEnumSqlLikeMode SearchType, string WhereClause, bool RequireViewPermissions, bool IncludeSystemNodes, bool IncludeHiddenNodes, Int32 PerLevelNodeLimit = Int32.MinValue )
         {
-            return getTreeFromSearch( _CswNbtResources.CurrentNbtUser, SearchTerm, WhereClause, RequireViewPermissions, IncludeSystemNodes, IncludeHiddenNodes, PerLevelNodeLimit );
+            return getTreeFromSearch( _CswNbtResources.CurrentNbtUser, SearchTerm, SearchType, WhereClause, RequireViewPermissions, IncludeSystemNodes, IncludeHiddenNodes, PerLevelNodeLimit );
         }
 
         /// <summary>
         /// Instance a Tree from a Universal Search
         /// </summary>
-        public ICswNbtTree getTreeFromSearch( ICswNbtUser RunAsUser, string SearchTerm, string WhereClause, bool RequireViewPermissions, bool IncludeSystemNodes, bool IncludeHiddenNodes, Int32 PerLevelNodeLimit = Int32.MinValue )
+        public ICswNbtTree getTreeFromSearch( ICswNbtUser RunAsUser, string SearchTerm, CswEnumSqlLikeMode SearchType, string WhereClause, bool RequireViewPermissions, bool IncludeSystemNodes, bool IncludeHiddenNodes, Int32 PerLevelNodeLimit = Int32.MinValue )
         {
             ICswNbtTree ReturnVal = _makeTree( true );
 
-            CswNbtTreeLoaderFromSearchByLevel TreeLoader = new CswNbtTreeLoaderFromSearchByLevel( _CswNbtResources, RunAsUser, ReturnVal, SearchTerm, WhereClause, IncludeSystemNodes, IncludeHiddenNodes );
+            CswNbtTreeLoaderFromSearchByLevel TreeLoader = new CswNbtTreeLoaderFromSearchByLevel( _CswNbtResources, RunAsUser, ReturnVal, SearchTerm, SearchType, WhereClause, IncludeSystemNodes, IncludeHiddenNodes );
             TreeLoader.load( RequireViewPermissions, PerLevelNodeLimit );
 
             return ( ReturnVal );

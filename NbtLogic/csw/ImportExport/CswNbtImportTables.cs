@@ -38,6 +38,9 @@ namespace ChemSW.Nbt.ImportExport
             public const string destpropname = "destpropname";
             public const string destsubfield = "destsubfield";
             public const string instance = "instance";
+            public const string clobtablename = "clobtablename";
+            public const string blobtablename = "blobtablename";
+            public const string lobdatapkcoloverride = "lobdatapkcoloverride";
         }
 
         public class ImportDefRelationships

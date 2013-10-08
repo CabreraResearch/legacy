@@ -35,7 +35,7 @@ namespace ChemSW.Nbt.ObjClasses
             List<CswNbtNodePropWrapper> CompoundUniqueProps = new List<CswNbtNodePropWrapper>();
             foreach( CswNbtNodePropWrapper CurrentProp in _CswNbtNode.Properties )
             {
-                if( CurrentProp.WasModified )
+                if( CurrentProp.wasAnySubFieldModified() )
                 {
                     // When a property changes, we need to:
                     // 1. recalculate composite property values which include changed properties on this node
@@ -62,9 +62,9 @@ namespace ChemSW.Nbt.ObjClasses
                             }
                         }
                     }
-                    
+
                     // case 30350 - this is very expensive for multiple nodes, and unnecessary on create.  So skip it.
-                    if( false == Creating ) 
+                    if( false == Creating )
                     {
                         // 3. mark any property references to this property on other nodes as pending update
                         if( CswTools.IsPrimaryKey( CurrentProp.NodeId ) )
@@ -184,7 +184,7 @@ namespace ChemSW.Nbt.ObjClasses
                     foreach( CswNbtNodePropWrapper CurrentPropWrapper in CompoundUniqueProps )
                     {
                         CurrentPropWrapper.ClearValue();
-                        CurrentPropWrapper.clearModifiedFlag();
+                        CurrentPropWrapper.clearSubFieldModifiedFlags();
                     }
 
                 } //if-else we're not a copy and not overridding
@@ -202,7 +202,7 @@ namespace ChemSW.Nbt.ObjClasses
             Collection<CswNbtNodePropWrapper> ModifiedProps = new Collection<CswNbtNodePropWrapper>();
             foreach( CswNbtNodePropWrapper CurrentProp in _CswNbtNode.Properties )
             {
-                if( CurrentProp.WasModifiedForNotification )
+                if( CurrentProp.wasAnySubFieldModified( IncludePendingUpdate: false ) )
                 {
                     ModifiedProps.Add( CurrentProp );
                 }

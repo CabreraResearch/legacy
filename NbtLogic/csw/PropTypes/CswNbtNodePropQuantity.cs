@@ -4,9 +4,11 @@ using System.Collections.ObjectModel;
 using System.Data;
 using ChemSW.Core;
 using ChemSW.Exceptions;
+using ChemSW.Nbt.Conversion;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.UnitsOfMeasure;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.PropTypes
@@ -15,16 +17,17 @@ namespace ChemSW.Nbt.PropTypes
     {
         #region Private Variables
 
-        private CswNbtFieldTypeRuleQuantity _FieldTypeRule;
         private CswNbtSubField _QuantitySubField;
         private CswNbtSubField _UnitNameSubField;
+        private CswNbtSubField _UnitIdSubField;
+        private CswNbtSubField _Val_kg_SubField;
+        private CswNbtSubField _Val_Liters_SubField;
         private CswNbtView _View;
+
         public static implicit operator CswNbtNodePropQuantity( CswNbtNodePropWrapper PropWrapper )
         {
             return PropWrapper.AsQuantity;
         }
-
-        private CswNbtSubField _UnitIdSubField;
 
         #endregion
 
@@ -33,10 +36,18 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropQuantity( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtNode Node )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node )
         {
-            _FieldTypeRule = (CswNbtFieldTypeRuleQuantity) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
-            _QuantitySubField = _FieldTypeRule.QuantitySubField;
-            _UnitNameSubField = _FieldTypeRule.UnitNameSubField;
-            _UnitIdSubField = _FieldTypeRule.UnitIdSubField;
+            _QuantitySubField = ( (CswNbtFieldTypeRuleQuantity) _FieldTypeRule ).QuantitySubField;
+            _Val_kg_SubField = ( (CswNbtFieldTypeRuleQuantity) _FieldTypeRule ).Val_kg_SubField;
+            _Val_Liters_SubField = ( (CswNbtFieldTypeRuleQuantity) _FieldTypeRule ).Val_Liters_SubField;
+            _UnitNameSubField = ( (CswNbtFieldTypeRuleQuantity) _FieldTypeRule ).UnitNameSubField;
+            _UnitIdSubField = ( (CswNbtFieldTypeRuleQuantity) _FieldTypeRule ).UnitIdSubField;
+
+            // Associate subfields with methods on this object, for SetSubFieldValue()
+            _SubFieldMethods.Add( _QuantitySubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Quantity, x => Quantity = CswConvert.ToDouble( x ) ) );
+            _SubFieldMethods.Add( _Val_kg_SubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Val_kg, x => Val_kg = CswConvert.ToDouble( x ) ) );
+            _SubFieldMethods.Add( _Val_Liters_SubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Val_Liters, x => Val_Liters = CswConvert.ToDouble( x ) ) );
+            _SubFieldMethods.Add( _UnitNameSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => CachedUnitName, x => CachedUnitName = CswConvert.ToString( x ) ) );
+            _SubFieldMethods.Add( _UnitIdSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => UnitId, x => UnitId = CswConvert.ToPrimaryKey( x ) ) );
         }
 
         #endregion
@@ -50,15 +61,6 @@ namespace ChemSW.Nbt.PropTypes
                 return Required && QuantityOptional ? false == CswTools.IsDouble( Quantity ) : 0 == Gestalt.Length;
             }
         }
-
-
-        override public string Gestalt
-        {
-            get
-            {
-                return _CswNbtNodePropData.Gestalt;
-            }
-        }//Gestalt
 
         public Int32 Precision
         {
@@ -129,7 +131,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                string Value = _CswNbtNodePropData.GetPropRowValue( _QuantitySubField.Column );
+                string Value = GetPropRowValue( _QuantitySubField );
                 if( CswTools.IsFloat( Value ) )
                     return Convert.ToDouble( Value );
                 else
@@ -146,7 +148,7 @@ namespace ChemSW.Nbt.PropTypes
                     {
                         throw new CswDniException( CswEnumErrorType.Warning, "Cannot save a Quantity without a value if the Property is required.", "Attempted to save the Quantity of a Quantity with an invalid number." );
                     }
-                    _CswNbtNodePropData.SetPropRowValue( _QuantitySubField.Column, Double.NaN );
+                    SetPropRowValue( _QuantitySubField, Double.NaN );
                 }
                 else
                 {
@@ -156,9 +158,10 @@ namespace ChemSW.Nbt.PropTypes
                         PrecisionString += "#";
                     }
                     StringVal = Math.Round( value, Precision, MidpointRounding.AwayFromZero ).ToString( "0." + PrecisionString );
-                    _CswNbtNodePropData.SetPropRowValue( _QuantitySubField.Column, StringVal );
+                    SetPropRowValue( _QuantitySubField, StringVal );
                 }
                 SyncGestalt();
+                SyncConvertedVals();
             }
         }
 
@@ -166,15 +169,47 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return _CswNbtNodePropData.GetPropRowValue( _UnitNameSubField.Column );
+                return GetPropRowValue( _UnitNameSubField );
             }
             set
             {
-                if( value != _CswNbtNodePropData.GetPropRowValue( _UnitNameSubField.Column ) )
+                if( value != GetPropRowValue( _UnitNameSubField ) )
                 {
-                    _CswNbtNodePropData.SetPropRowValue( _UnitNameSubField.Column, value );
+                    SetPropRowValue( _UnitNameSubField, value );
                     SyncGestalt();
                 }
+            }
+        }
+
+        public double Val_kg
+        {
+            get
+            {
+                string Value = GetPropRowValue( _Val_kg_SubField );
+                if( CswTools.IsFloat( Value ) )
+                    return Convert.ToDouble( Value );
+                else
+                    return Double.NaN;
+            }
+            set
+            {
+                SetPropRowValue( _Val_kg_SubField, value );
+            }
+        }
+
+        public double Val_Liters
+        {
+            get
+            {
+                string Value = GetPropRowValue( _Val_Liters_SubField );
+                if( CswTools.IsFloat( Value ) )
+                    return Convert.ToDouble( Value );
+                else
+                    return Double.NaN;
+            }
+            set
+            {
+                SetPropRowValue( _Val_Liters_SubField, value );
             }
         }
 
@@ -195,7 +230,7 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 CswPrimaryKey ret = null;
-                string StringVal = _CswNbtNodePropData.GetPropRowValue( _UnitIdSubField.Column );
+                string StringVal = GetPropRowValue( _UnitIdSubField );
                 if( CswTools.IsInteger( StringVal ) )
                     ret = new CswPrimaryKey( TargetTableName, CswConvert.ToInt32( StringVal ) );
                 return ret;
@@ -210,7 +245,7 @@ namespace ChemSW.Nbt.PropTypes
                     }
                     if( UnitId != value )
                     {
-                        _CswNbtNodePropData.SetPropRowValue( _UnitIdSubField.Column, value.PrimaryKey );
+                        SetPropRowValue( _UnitIdSubField, value.PrimaryKey );
                         CswNbtNode RelatedNode = _CswNbtResources.Nodes[value];
                         if( null != RelatedNode )
                         {
@@ -224,12 +259,13 @@ namespace ChemSW.Nbt.PropTypes
                     {
                         throw new CswDniException( CswEnumErrorType.Warning, "Cannot save a Quantity without a Unit if the Property is required.", "Attempted to save a Quantity with an invalid UnitId." );
                     }
-                    _CswNbtNodePropData.SetPropRowValue( _UnitIdSubField.Column, Int32.MinValue );
+                    SetPropRowValue( _UnitIdSubField, Int32.MinValue );
                 }
 
-                if( WasModified )
+                if( wasSubFieldModified( _UnitIdSubField.Name ) )
                 {
                     PendingUpdate = true;
+                    SyncConvertedVals();
                 }
             }
         }
@@ -239,7 +275,33 @@ namespace ChemSW.Nbt.PropTypes
             get { return Gestalt; }
         }
 
-
+        /// <summary>
+        /// Takes the current Quantity value, converts it to the proper kg and Liters values, and stores it in Val_kg and Val_Liters
+        /// </summary>
+        public void SyncConvertedVals( CswPrimaryKey MaterialId = null )
+        {
+            if( null != UnitId )
+            {
+                CswNbtObjClassUnitOfMeasure CurrentUnit = _CswNbtResources.Nodes[UnitId];
+                if( CurrentUnit.UnitType.Value == CswEnumNbtUnitTypes.Weight.ToString() ||
+                    CurrentUnit.UnitType.Value == CswEnumNbtUnitTypes.Volume.ToString() )
+                {
+                    CswNbtUnitViewBuilder UnitBuilder = new CswNbtUnitViewBuilder( _CswNbtResources );
+                    CswNbtObjClassUnitOfMeasure kgUnit = UnitBuilder.getUnit( "kg", "Unit_Weight" );
+                    CswNbtObjClassUnitOfMeasure LitersUnit = UnitBuilder.getUnit( "Liters", "Unit_Volume" );
+                    if( null != kgUnit && ( CurrentUnit.UnitType.Value == kgUnit.UnitType.Value || MaterialId != null ) )
+                    {
+                        CswNbtUnitConversion Conversion = new CswNbtUnitConversion( _CswNbtResources, UnitId, kgUnit.NodeId, MaterialId );
+                        Val_kg = Conversion.convertUnit( Quantity );
+                    }
+                    if( null != LitersUnit && ( CurrentUnit.UnitType.Value == LitersUnit.UnitType.Value || MaterialId != null ) )
+                    {
+                        CswNbtUnitConversion Conversion = new CswNbtUnitConversion( _CswNbtResources, UnitId, LitersUnit.NodeId, MaterialId );
+                        Val_Liters = Conversion.convertUnit( Quantity );
+                    }
+                }
+            }
+        }
 
         #endregion
 
@@ -336,8 +398,8 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void SyncGestalt()
         {
-            string GestaltValue = _CswNbtNodePropData.GetPropRowValue( _QuantitySubField.Column ) + " " + _CswNbtNodePropData.GetPropRowValue( _UnitNameSubField.Column );
-            _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, GestaltValue );
+            string GestaltValue = GetPropRowValue( _QuantitySubField ) + " " + GetPropRowValue( _UnitNameSubField );
+            SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, GestaltValue );
         }
 
         #endregion
@@ -348,7 +410,11 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
+            base.ToJSON( ParentObject );  // FIRST
+
             ParentObject[_QuantitySubField.ToXmlNodeName( true )] = ( !Double.IsNaN( Quantity ) ) ? CswConvert.ToString( Quantity ) : string.Empty;
+            ParentObject[_Val_kg_SubField.ToXmlNodeName( true )] = ( !Double.IsNaN( Quantity ) ) ? CswConvert.ToString( Val_kg ) : string.Empty;
+            ParentObject[_Val_Liters_SubField.ToXmlNodeName( true )] = ( !Double.IsNaN( Quantity ) ) ? CswConvert.ToString( Val_Liters ) : string.Empty;
 
             ParentObject["minvalue"] = MinValue.ToString();
             ParentObject["maxvalue"] = MaxValue.ToString();
@@ -436,6 +502,14 @@ namespace ChemSW.Nbt.PropTypes
             if( null != JObject[_UnitNameSubField.ToXmlNodeName( true )] )
             {
                 CachedUnitName = JObject[_UnitNameSubField.ToXmlNodeName( true )].ToString();
+            }
+            if( null != JObject[_Val_kg_SubField.ToXmlNodeName( true )] )
+            {
+                Val_kg = CswConvert.ToDouble( JObject[_Val_kg_SubField.ToXmlNodeName( true )].ToString() );
+            }
+            if( null != JObject[_Val_Liters_SubField.ToXmlNodeName( true )] )
+            {
+                Val_Liters = CswConvert.ToDouble( JObject[_Val_Liters_SubField.ToXmlNodeName( true )].ToString() );
             }
 
             if( null != JObject[_UnitIdSubField.ToXmlNodeName( true )] )

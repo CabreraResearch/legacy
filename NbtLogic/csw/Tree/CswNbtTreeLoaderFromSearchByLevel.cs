@@ -9,6 +9,7 @@ using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.Search;
 using ChemSW.Nbt.Security;
 
 namespace ChemSW.Nbt
@@ -21,13 +22,15 @@ namespace ChemSW.Nbt
         private ICswNbtUser _RunAsUser;
         private bool _IncludeSystemNodes = false;
         private bool _IncludeHiddenNodes;
+        private CswEnumSqlLikeMode _SearchType;
 
-        public CswNbtTreeLoaderFromSearchByLevel( CswNbtResources CswNbtResources, ICswNbtUser RunAsUser, ICswNbtTree pCswNbtTree, string SearchTerm, string WhereClause, bool IncludeSystemNodes, bool IncludeHiddenNodes )
+        public CswNbtTreeLoaderFromSearchByLevel( CswNbtResources CswNbtResources, ICswNbtUser RunAsUser, ICswNbtTree pCswNbtTree, string SearchTerm, CswEnumSqlLikeMode SearchType, string WhereClause, bool IncludeSystemNodes, bool IncludeHiddenNodes )
             : base( pCswNbtTree )
         {
             _CswNbtResources = CswNbtResources;
             _RunAsUser = RunAsUser;
             _SearchTerm = SearchTerm;
+            _SearchType = SearchType;
             _ExtraWhereClause = WhereClause;
             _IncludeSystemNodes = IncludeSystemNodes;
             _IncludeHiddenNodes = IncludeHiddenNodes;
@@ -85,7 +88,7 @@ namespace ChemSW.Nbt
 
                         // donb't include properties in search results to which the user has no permissions
                         if( false == RequireViewPermissions ||
-                            ( _canViewNode( ThisPermGrpId ) &&
+                            ( _canViewNode( ThisPermGrpId, ThisNodeType ) &&
                               ( Int32.MinValue == ThisNTPId || _canViewProp( ThisNTPId, ThisPermGrpId ) ) ) )
                         {
                             // Handle property multiplexing
@@ -133,12 +136,12 @@ namespace ChemSW.Nbt
             }
         } // load()
 
-        private bool _canViewNode( CswPrimaryKey PermissionGroupId )
+        private bool _canViewNode( CswPrimaryKey PermissionGroupId, CswNbtMetaDataNodeType NodeType )
         {
             bool canView = true;
             if( null != PermissionGroupId )
             {
-                canView = _CswNbtResources.Permit.canNode( CswEnumNbtNodeTypePermission.View, PermissionGroupId, _CswNbtResources.CurrentNbtUser );
+                canView = _CswNbtResources.Permit.canNode( CswEnumNbtNodeTypePermission.View, PermissionGroupId, _CswNbtResources.CurrentNbtUser, NodeType );
             }
             return canView;
         }
@@ -216,7 +219,7 @@ namespace ChemSW.Nbt
                     {
                         Query += "                                                     or ";
                     }
-                    Query += "                                                             lower(j.gestaltsearch) " + SafeLikeClause + " ";
+                    Query += "                                                             j.gestaltsearch " + SafeLikeClause + " ";
                     first = false;
                 }
                 Query += @"                                                               )
@@ -304,7 +307,7 @@ namespace ChemSW.Nbt
                     {
                         Query += "                     and ";
                     }
-                    Query += "                             n.nodeid in (select nodeid from jctnd where lower(gestaltsearch) " + SafeLikeClause + @") ";
+                    Query += "                             n.nodeid in (select nodeid from jctnd where gestaltsearch " + SafeLikeClause + @") ";
                     first = false;
                 }
                 Query += @"                          ) ";
@@ -357,33 +360,42 @@ namespace ChemSW.Nbt
             string SearchTerm = _SearchTerm.Trim();
             Collection<string> Clauses = new Collection<string>();
 
-            // Find entries in quotes
-            bool StopLoop = false;
-            while( SearchTerm.Contains( "\"" ) && false == StopLoop )
+            if( _SearchType == CswEnumSqlLikeMode.Contains )
             {
-                int begin = SearchTerm.IndexOf( '"' );
-                int length = SearchTerm.Substring( begin + 1 ).IndexOf( '"' );
-                if( length > 0 )
-                {
-                    string QueryItem = SearchTerm.Substring( begin + 1, length ).Trim();
-                    SearchTerm = SearchTerm.Remove( begin, length + 2 ).Trim();
-                    if( false == string.IsNullOrEmpty( QueryItem ) )
-                    {
-                        Clauses.Add( CswTools.SafeSqlLikeClause( QueryItem, CswEnumSqlLikeMode.Contains, true ) );
-                    }
-                }
-                else
-                {
-                    StopLoop = true;
-                }
-            } // while( SearchTerm.Contains( "\"" ) && Continue)
+                // For Contains, we treat each word individually, unless enclosed in quotes
 
-            // Split by spaces (case 27532)
-            foreach( string TrimmedQueryItem in SearchTerm.Split( new char[] { ' ' } )
-                                                          .Select( QueryItem => QueryItem.Trim() )
-                                                          .Where( TrimmedQueryItem => false == string.IsNullOrEmpty( TrimmedQueryItem ) ) )
+                // Find entries in quotes
+                bool StopLoop = false;
+                while( SearchTerm.Contains( "\"" ) && false == StopLoop )
+                {
+                    int begin = SearchTerm.IndexOf( '"' );
+                    int length = SearchTerm.Substring( begin + 1 ).IndexOf( '"' );
+                    if( length > 0 )
+                    {
+                        string QueryItem = SearchTerm.Substring( begin + 1, length ).Trim();
+                        SearchTerm = SearchTerm.Remove( begin, length + 2 ).Trim();
+                        if( false == string.IsNullOrEmpty( QueryItem ) )
+                        {
+                            Clauses.Add( CswTools.SafeSqlLikeClause( QueryItem.ToLower(), CswEnumSqlLikeMode.Contains, true ) );
+                        }
+                    }
+                    else
+                    {
+                        StopLoop = true;
+                    }
+                } // while( SearchTerm.Contains( "\"" ) && Continue)
+
+                // Split by spaces (case 27532)
+                foreach( string TrimmedQueryItem in SearchTerm.Split( new char[] { ' ' } )
+                                                              .Select( QueryItem => QueryItem.Trim() )
+                                                              .Where( TrimmedQueryItem => false == string.IsNullOrEmpty( TrimmedQueryItem ) ) )
+                {
+                    Clauses.Add( CswTools.SafeSqlLikeClause( TrimmedQueryItem.ToLower(), CswEnumSqlLikeMode.Contains, true ) );
+                }
+            } // if( _SearchType == CswEnumSqlLikeMode.Contains )
+            else
             {
-                Clauses.Add( CswTools.SafeSqlLikeClause( TrimmedQueryItem, CswEnumSqlLikeMode.Contains, true ) );
+                Clauses.Add( CswTools.SafeSqlLikeClause( SearchTerm.ToLower(), _SearchType, true ) );
             }
             return Clauses;
         } // makeSafeLikeClauses

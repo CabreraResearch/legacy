@@ -184,11 +184,11 @@ namespace ChemSW.Nbt
             get { return _CswNbtNodeCollection; }
         }
 
-        public CswNbtNode getNode( CswNbtNodeKey NodeKey, DateTime Date )
+        public CswNbtNode getNode( CswNbtNodeKey NodeKey, CswDateTime Date )
         {
             return _CswNbtNodeCollection.GetNode( NodeKey.NodeId, Date );
         }
-        public CswNbtNode getNode( CswPrimaryKey NodePk, DateTime Date )
+        public CswNbtNode getNode( CswPrimaryKey NodePk, CswDateTime Date )
         {
             return _CswNbtNodeCollection.GetNode( NodePk, Date );
         }
@@ -954,9 +954,9 @@ namespace ChemSW.Nbt
          * 
          * For now there is only one, so it can just live here
          */
-        private void _onConfigVblChange( string VariableName, string NewValue )
+        private void _onConfigVblChange( CswConfigVariable ConfigVariable )
         {
-            if( VariableName.Equals( CswEnumNbtConfigurationVariables.LocationViewRootName.ToString().ToLower() ) )
+            if( ConfigVariable.VariableName.Equals( CswEnumNbtConfigurationVariables.LocationViewRootName.ToString().ToLower() ) )
             {
                 CswNbtMetaDataObjectClass locationOC = MetaData.getObjectClass( CswEnumNbtObjectClass.LocationClass );
                 if( null != locationOC )
@@ -980,13 +980,13 @@ namespace ChemSW.Nbt
             } // if( VariableName.Equals( ConfigurationVariables.LocationViewRootName.ToString().ToLower() ) )
 
 
-            if( VariableName.Equals( CswEnumNbtConfigurationVariables.loc_max_depth.ToString().ToLower() ) )
+            if( ConfigVariable.VariableName.Equals( CswEnumNbtConfigurationVariables.loc_max_depth.ToString().ToLower() ) )
             {
                 // case 28895 - Keep 'Locations' view up to date
                 CswNbtView LocationsView = this.ViewSelect.restoreView( "Locations", CswEnumNbtViewVisibility.Global );
                 if( null != LocationsView )
                 {
-                    CswNbtObjClassLocation.makeLocationsTreeView( ref LocationsView, this, CswConvert.ToInt32( NewValue ) );
+                    CswNbtObjClassLocation.makeLocationsTreeView( ref LocationsView, this, CswConvert.ToInt32( ConfigVariable.VariableValue ) );
                     LocationsView.save();
                 }
 
@@ -994,7 +994,7 @@ namespace ChemSW.Nbt
                 CswNbtView EquipByLocView = this.ViewSelect.restoreView( "Equipment By Location", CswEnumNbtViewVisibility.Global );
                 if( null != EquipByLocView )
                 {
-                    CswNbtObjClassLocation.makeLocationsTreeView( ref EquipByLocView, this, CswConvert.ToInt32( NewValue ) );
+                    CswNbtObjClassLocation.makeLocationsTreeView( ref EquipByLocView, this, CswConvert.ToInt32( ConfigVariable.VariableValue ) );
 
                     CswNbtMetaDataNodeTypeProp EquipmentLocationNTP = null;
                     CswNbtMetaDataObjectClass EquipmentOC = this.MetaData.getObjectClass( CswEnumNbtObjectClass.EquipmentClass );
@@ -1031,7 +1031,17 @@ namespace ChemSW.Nbt
                     }
                     EquipByLocView.save();
                 }
+
             } // if( VariableName.Equals( ConfigurationVariables.loc_max_depth.ToString().ToLower() ) )
+
+            if( ConfigVariable.VariableName.Equals( CswEnumNbtConfigurationVariables.relationshipoptionlimit.ToString().ToLower() ) )
+            {
+                if( CswConvert.ToInt32( ConfigVariable.VariableValue ) < 5 )
+                {
+                    ConfigVariable.VariableValue = "5";
+                }
+            }//if( VariableName.Equals( CswEnumNbtConfigurationVariables.relationshipoptionlimit.ToString().ToLower() ) )
+
         } // _onConfigVblChange()
 
         #endregion

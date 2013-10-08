@@ -1,7 +1,7 @@
 
 /// <reference path="~/app/CswApp-vsdoc.js" />
 
-(function() {
+(function () {
     'use strict';
 
     function isArray(obj) {
@@ -12,22 +12,21 @@
         return ret;
     }
     Csw.register('isArray', isArray);
-    Csw.isArray = Csw.isArray || isArray;
-    
+
+
     function array() {
         var retArray = [];
         if (arguments.length > 0) {
             retArray = Array.prototype.slice.call(arguments, 0);
         }
 
-//        retArray.contains = retArray.contains || function(value) {
-//            return retArray.indexOf(value) !== -1;
-//        };
+        //        retArray.contains = retArray.contains || function(value) {
+        //            return retArray.indexOf(value) !== -1;
+        //        };
 
         return retArray;
     }
     Csw.register('array', array);
-    Csw.array = Csw.array || array;
 
     function makeSequentialArray(start, end) {
         var ret = array(),
@@ -42,6 +41,5 @@
         return ret;
     }
     Csw.register('makeSequentialArray', makeSequentialArray);
-    Csw.makeSequentialArray = Csw.makeSequentialArray || makeSequentialArray;
 
 }());

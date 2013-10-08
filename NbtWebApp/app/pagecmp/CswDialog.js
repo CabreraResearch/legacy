@@ -37,7 +37,7 @@
     var ExistingChangePasswordDialog = false;
     var ExistingShowLicenseDialog = false;
     var ExistingMultisessionDialog = false;
-    
+
     var methods = {
 
         //#region Specialized
@@ -710,7 +710,7 @@
                 ExistingMultisessionDialog = true;
                 var logoutOnClose = true;
 
-            var onClose = function() {
+                var onClose = function () {
                     if (logoutOnClose) {
                         Csw.clientSession.logout();
                     }
@@ -724,10 +724,10 @@
 
                 resetLoginTable.cell(2, 1).css('text-align', 'center').button({
                     enabledText: 'Yes, Logout Other Sessions',
-                    onClick: function() {
+                    onClick: function () {
                         Csw.ajaxWcf.post({
                             urlMethod: 'Session/endCurrentUserSessions',
-                            complete: function(data) {
+                            complete: function (data) {
                                 logoutOnClose = false;
                                 div.$.dialog('close');
                                 Csw.tryExec(onSuccess);
@@ -739,7 +739,7 @@
 
                 resetLoginTable.cell(2, 2).css('text-align', 'center').button({
                     enabledText: 'No, Log Me Out',
-                    onClick: function() {
+                    onClick: function () {
                         div.$.dialog('close');
                     }
                 });
@@ -773,6 +773,24 @@
                             row += 1;
                         }
                     }
+                    table.cell(row, 1).css({ padding: '15px 1px 1px 1px' }).append('');
+                    row += 1;
+
+                    // Chemcat Datasource dates (only displayed if c3 is enabled)
+                    if (data.dsDates) {
+                        table.cell(row, 1).css({ padding: '2px 5px 2px 5px' }).append('ChemCatCentral Data Sources');
+                        row += 1;
+                        table.cell(row, 1).css({ padding: '2px 5px 2px 5px' }).append('---------------------------');
+                        row += 1;
+
+                        for (var ds in data.dsDates) {
+                            var thisDS = data.dsDates[ds];
+                            table.cell(row, 1).css({ padding: '2px 5px 2px 5px' }).append(thisDS.componentName);
+                            table.cell(row, 2).css({ padding: '2px 5px 2px 5px' }).append(thisDS.value);
+                            row += 1;
+                        }
+                    }
+
                     table.cell(row, 1).css({ padding: '15px 1px 1px 1px' }).append('');
                     row += 1;
                     table.cell(row, 1).css({ padding: '2px 5px 2px 5px' }).append('Session Info');
@@ -929,7 +947,7 @@
                             height: molImageHeight
                         });
                         table1.cell(2, 2).propDom('rowspan', 5);
-                        
+
                         var fields = [];
                         var columns = [];
 

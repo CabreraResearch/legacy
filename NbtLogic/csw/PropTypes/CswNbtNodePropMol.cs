@@ -9,7 +9,7 @@ using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.PropTypes
 {
-    public class CswNbtNodePropMol: CswNbtNodeProp
+    public class CswNbtNodePropMol : CswNbtNodeProp
     {
         public static readonly string MolImgFileName = "mol.jpeg";
         public static readonly string MolImgFileContentType = "image/jpeg";
@@ -22,10 +22,12 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropMol( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtNode Node )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node )
         {
-            _FieldTypeRule = (CswNbtFieldTypeRuleMol) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
-            _MolSubField = _FieldTypeRule.MolSubField;
+            _MolSubField = ( (CswNbtFieldTypeRuleMol) _FieldTypeRule ).MolSubField;
+
+            // Associate subfields with methods on this object, for SetSubFieldValue()
+            _SubFieldMethods.Add( _MolSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Mol, x => Mol = CswConvert.ToString( x ) ) );
         }
-        private CswNbtFieldTypeRuleMol _FieldTypeRule;
+
         private CswNbtSubField _MolSubField;
 
         override public bool Empty
@@ -37,25 +39,16 @@ namespace ChemSW.Nbt.PropTypes
         }
 
 
-        override public string Gestalt
-        {
-            get
-            {
-                return _CswNbtNodePropData.Gestalt;
-            }
-
-        }//Gestalt
-
         public string Mol
         {
             get
             {
-                return _CswNbtNodePropData.GetPropRowValue( _MolSubField.Column );
+                return GetPropRowValue( _MolSubField );
             }
             set
             {
-                _CswNbtNodePropData.SetPropRowValue( _MolSubField.Column, value );
-                _CswNbtNodePropData.Gestalt = value;
+                SetPropRowValue( _MolSubField, value );
+                Gestalt = value;
             }
         }
 
@@ -70,13 +63,15 @@ namespace ChemSW.Nbt.PropTypes
             string ret = string.Empty;
             if( JctNodePropId != Int32.MinValue && NodeId != null )
             {
-                ret = CswNbtNodePropBlob.getLink( JctNodePropId, NodeId, UseNodeTypeAsPlaceholder : true );
+                ret = CswNbtNodePropBlob.getLink( JctNodePropId, NodeId, UseNodeTypeAsPlaceholder: true );
             }
             return ret;
         }
 
         public override void ToJSON( JObject ParentObject )
         {
+            base.ToJSON( ParentObject );  // FIRST
+
             ParentObject[_MolSubField.ToXmlNodeName( true )] = Mol;
             ParentObject["column"] = _MolSubField.Column.ToString().ToLower();
             ParentObject[CswEnumNbtSubFieldName.Href.ToString().ToLower()] = getLink( JctNodePropId, NodeId );
@@ -98,7 +93,7 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void SyncGestalt()
         {
-            _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, Mol );
+            SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, Mol );
         }
     }//CswNbtNodePropMol
 

@@ -28,16 +28,24 @@ namespace ChemSW.Nbt.PropTypes
             //                                "CswNbtNodePropQuestion() was created on a property with fieldtype: " + _CswNbtMetaDataNodeTypeProp.FieldType.FieldType ) );
             //}
 
-            _FieldTypeRule = (CswNbtFieldTypeRuleQuestion) _CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
+            CswNbtFieldTypeRuleQuestion FieldTypeRule = (CswNbtFieldTypeRuleQuestion) _FieldTypeRule;
 
-            _AnswerSubField = _FieldTypeRule.AnswerSubField;
-            _CommentsSubField = _FieldTypeRule.CommentsSubField;
-            _CorrectiveActionSubField = _FieldTypeRule.CorrectiveActionSubField;
-            _DateAnsweredSubField = _FieldTypeRule.DateAnsweredSubField;
-            _DateCorrectedSubField = _FieldTypeRule.DateCorrectedSubField;
-            _IsCompliantSubField = _FieldTypeRule.IsCompliantSubField;
+            _AnswerSubField = FieldTypeRule.AnswerSubField;
+            _CommentsSubField = FieldTypeRule.CommentsSubField;
+            _CorrectiveActionSubField = FieldTypeRule.CorrectiveActionSubField;
+            _DateAnsweredSubField = FieldTypeRule.DateAnsweredSubField;
+            _DateCorrectedSubField = FieldTypeRule.DateCorrectedSubField;
+            _IsCompliantSubField = FieldTypeRule.IsCompliantSubField;
+
+            // Associate subfields with methods on this object, for SetSubFieldValue()
+            _SubFieldMethods.Add( _AnswerSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Answer, x => Answer = CswConvert.ToString( x ) ) );
+            _SubFieldMethods.Add( _CommentsSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Comments, x => Comments = CswConvert.ToString( x ) ) );
+            _SubFieldMethods.Add( _CorrectiveActionSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => CorrectiveAction, x => CorrectiveAction = CswConvert.ToString( x ) ) );
+            _SubFieldMethods.Add( _DateAnsweredSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => DateAnswered, x => DateAnswered = CswConvert.ToDateTime( x ) ) );
+            _SubFieldMethods.Add( _DateCorrectedSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => DateCorrected, x => DateCorrected = CswConvert.ToDateTime( x ) ) );
+            _SubFieldMethods.Add( _IsCompliantSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => IsCompliant, x => IsCompliant = CswConvert.ToBoolean( x ) ) );
         }//ctor
-        private CswNbtFieldTypeRuleQuestion _FieldTypeRule;
+
         private CswNbtSubField _AnswerSubField;
         private CswNbtSubField _CommentsSubField;
         private CswNbtSubField _CorrectiveActionSubField;
@@ -54,14 +62,6 @@ namespace ChemSW.Nbt.PropTypes
             get { return ( 0 == AllowedAnswers.Count ); }
         }
 
-        /// <summary>
-        /// Text value of property
-        /// </summary>
-        override public string Gestalt
-        {
-            get { return _CswNbtNodePropData.Gestalt; }
-        }
-
         private bool _IsValidNode { get { return ( null != NodeId && Int32.MinValue != NodeId.PrimaryKey ); } }
 
         /// <summary>
@@ -69,10 +69,10 @@ namespace ChemSW.Nbt.PropTypes
         /// </summary>
         public string Answer
         {
-            get { return _CswNbtNodePropData.GetPropRowValue( _AnswerSubField.Column ); }
+            get { return GetPropRowValue( _AnswerSubField ); }
             set
             {
-                if( value != _CswNbtNodePropData.GetPropRowValue( _AnswerSubField.Column ) )
+                if( value != GetPropRowValue( _AnswerSubField ) )
                 {
                     string AnswerVal = value.Trim();
 
@@ -90,7 +90,7 @@ namespace ChemSW.Nbt.PropTypes
                         UpdateDateAnswered = DateTime.MinValue;
                     }
                     DateAnswered = UpdateDateAnswered;
-                    _CswNbtNodePropData.SetPropRowValue( _AnswerSubField.Column, AnswerVal );
+                    SetPropRowValue( _AnswerSubField, AnswerVal );
                     IsCompliant = TestIsCompliant();
 
                     SyncGestalt();
@@ -103,10 +103,10 @@ namespace ChemSW.Nbt.PropTypes
         /// </summary>
         public String CorrectiveAction
         {
-            get { return _CswNbtNodePropData.GetPropRowValue( _CorrectiveActionSubField.Column ); }
+            get { return GetPropRowValue( _CorrectiveActionSubField ); }
             set
             {
-                if( value != _CswNbtNodePropData.GetPropRowValue( _CorrectiveActionSubField.Column ) )
+                if( value != GetPropRowValue( _CorrectiveActionSubField ) )
                 {
                     DateTime UpdateDateCorrected = DateTime.MinValue;
 
@@ -117,7 +117,7 @@ namespace ChemSW.Nbt.PropTypes
                     }
 
                     DateCorrected = UpdateDateCorrected;
-                    _CswNbtNodePropData.SetPropRowValue( _CorrectiveActionSubField.Column, val );
+                    SetPropRowValue( _CorrectiveActionSubField, val );
                     IsCompliant = TestIsCompliant();
                 }
             }
@@ -144,11 +144,11 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return CswConvert.ToBoolean( _CswNbtNodePropData.GetPropRowValue( _IsCompliantSubField.Column ) );
+                return CswConvert.ToBoolean( GetPropRowValue( _IsCompliantSubField ) );
             }
             set
             {
-                _CswNbtNodePropData.SetPropRowValue( _IsCompliantSubField.Column, value );
+                SetPropRowValue( _IsCompliantSubField, value );
             }
         }
 
@@ -172,10 +172,10 @@ namespace ChemSW.Nbt.PropTypes
         /// </summary>
         public DateTime DateAnswered
         {
-            get { return _CswNbtNodePropData.GetPropRowValueDate( _DateAnsweredSubField.Column ); }
+            get { return GetPropRowValueDate( _DateAnsweredSubField ); }
             set
             {
-                _CswNbtNodePropData.SetPropRowValue( _DateAnsweredSubField.Column, value );
+                SetPropRowValue( _DateAnsweredSubField, value );
             }
         }
 
@@ -184,10 +184,10 @@ namespace ChemSW.Nbt.PropTypes
         /// </summary>
         public DateTime DateCorrected
         {
-            get { return _CswNbtNodePropData.GetPropRowValueDate( _DateCorrectedSubField.Column ); }
+            get { return GetPropRowValueDate( _DateCorrectedSubField ); }
             set
             {
-                _CswNbtNodePropData.SetPropRowValue( _DateCorrectedSubField.Column, value );
+                SetPropRowValue( _DateCorrectedSubField, value );
             }
         }
 
@@ -196,8 +196,8 @@ namespace ChemSW.Nbt.PropTypes
         /// </summary>
         public string Comments
         {
-            get { return _CswNbtNodePropData.GetPropRowValue( _CommentsSubField.Column ); }
-            set { _CswNbtNodePropData.SetPropRowValue( _CommentsSubField.Column, value ); }
+            get { return GetPropRowValue( _CommentsSubField ); }
+            set { SetPropRowValue( _CommentsSubField, value ); }
         }
 
         /// <summary>
@@ -205,16 +205,16 @@ namespace ChemSW.Nbt.PropTypes
         /// </summary>
         //public bool IsCompliant
         //{
-        //    get { return CswConvert.ToBoolean( _CswNbtNodePropData.GetPropRowValue( _IsCompliantSubField.Column ) ); }
+        //    get { return CswConvert.ToBoolean( GetPropRowValue( _IsCompliantSubField.Column ) ); }
         //    private set
         //    {
-        //        _CswNbtNodePropData.SetPropRowValue( _IsCompliantSubField.Column, value );
+        //        SetPropRowValue( _IsCompliantSubField.Column, value );
         //    }
         //}
 
         public override void SyncGestalt()
         {
-            _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, Answer );
+            SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, Answer );
         }
 
         //Begin NTP attributes
@@ -326,6 +326,8 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
+            base.ToJSON( ParentObject );  // FIRST
+
             ParentObject[_AnswerSubField.ToXmlNodeName( true )] = Answer;
             ParentObject[CswEnumNbtSubFieldName.AllowedAnswers.ToString().ToLower()] = AllowedAnswersString;
             ParentObject[CswEnumNbtSubFieldName.CompliantAnswers.ToString().ToLower()] = CompliantAnswersString;

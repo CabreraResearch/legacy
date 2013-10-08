@@ -1,4 +1,9 @@
 <!DOCTYPE html>
+<!--[if lt IE 7]><script>window.CswIeVersion = 6; </script><![endif]-->
+<!--[if IE 7]><script>window.CswIeVersion = 7; </script><![endif]-->
+<!--[if IE 8]><script>window.CswIeVersion = 8; </script><![endif]-->
+<!--[if IE 9]><script>window.CswIeVersion = 9; </script><![endif]-->
+<!--[if gt IE 9]><script>window.CswIeVersion = 10; </script><![endif]-->
 
 <html xmlns="http://www.w3.org/1999/xhtml" manifest="<%
     var buildMode = grunt.config('buildMode');

@@ -28,10 +28,12 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropNodeTypeSelect( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtNode Node )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node )
         {
-            _FieldTypeRule = (CswNbtFieldTypeRuleNodeTypeSelect) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
-            _SelectedNodeTypeIdsSubField = _FieldTypeRule.SelectedNodeTypeIdsSubField;
+            _SelectedNodeTypeIdsSubField = ( (CswNbtFieldTypeRuleNodeTypeSelect) _FieldTypeRule ).SelectedNodeTypeIdsSubField;
+
+            // Associate subfields with methods on this object, for SetSubFieldValue()
+            _SubFieldMethods.Add( _SelectedNodeTypeIdsSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => SelectedNodeTypeIds, x => SelectedNodeTypeIds.FromString( CswConvert.ToString( x ) ) ) );
         }//ctor
-        private CswNbtFieldTypeRuleNodeTypeSelect _FieldTypeRule;
+
         private CswNbtSubField _SelectedNodeTypeIdsSubField;
 
         /// <summary>
@@ -45,18 +47,6 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
-        /// <summary>
-        /// Text value of property
-        /// </summary>
-        override public string Gestalt
-        {
-            get
-            {
-                return _CswNbtNodePropData.Gestalt;
-            }
-
-        }//Gestalt
-
         private CswCommaDelimitedString _SelectedNodeTypeIds = null;
         /// <summary>
         /// Comma-separated list of Selected NodeTypeIds
@@ -68,7 +58,7 @@ namespace ChemSW.Nbt.PropTypes
                 if( _SelectedNodeTypeIds == null )
                 {
                     _SelectedNodeTypeIds = new CswCommaDelimitedString();
-                    _SelectedNodeTypeIds.FromString( _CswNbtNodePropData.GetPropRowValue( _SelectedNodeTypeIdsSubField.Column ) );
+                    _SelectedNodeTypeIds.FromString( GetPropRowValue( _SelectedNodeTypeIdsSubField ) );
                     _SelectedNodeTypeIds.OnChange += new CswDelimitedString.DelimitedStringChangeHandler( _SelectedNodeTypeIds_OnChange );
                 }
                 return _SelectedNodeTypeIds;
@@ -84,7 +74,7 @@ namespace ChemSW.Nbt.PropTypes
         // This event handler allows us to save changes made directly to _SelectedNodeTypeIds (like .Add() )
         private void _SelectedNodeTypeIds_OnChange()
         {
-            if( _CswNbtNodePropData.SetPropRowValue( _SelectedNodeTypeIdsSubField.Column, _SelectedNodeTypeIds.ToString() ) )
+            if( SetPropRowValue( _SelectedNodeTypeIdsSubField, _SelectedNodeTypeIds.ToString() ) )
             {
                 // BZ 10094 - this caused Notification names to populate in the background, which was confusing
                 // PendingUpdate = true;
@@ -191,6 +181,8 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
+            base.ToJSON( ParentObject );  // FIRST
+
             ParentObject[_SelectedNodeTypeIdsSubField.ToXmlNodeName().ToLower()] = SelectedNodeTypeIds.ToString();
             ParentObject["selectmode"] = SelectMode.ToString();
             ParentObject[_ElemName_Options] = new JObject();
@@ -286,7 +278,7 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void SyncGestalt()
         {
-            _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, SelectedNodeTypeNames().ToString() );
+            SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, SelectedNodeTypeNames().ToString() );
         }
 
     }//CswNbtNodePropNodeTypeSelect

@@ -1,4 +1,5 @@
 ﻿using System;
+using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Search;
@@ -42,16 +43,16 @@ namespace ChemSW.Nbt.Actions.KioskMode
         public override void CommitOperation( ref OperationData OpData )
         {
             bool succeeded = false;
-            CswNbtNode node = null;
-            string itemName = string.Empty;
-            CswNbtObjClassUser newOwner = _getNodeByBarcode( CswEnumNbtObjectClass.UserClass, OpData.Field1.Value, true );
+            CswNbtObjClassUser newOwner = _CswNbtResources.Nodes[OpData.Field1.NodeId];
+
+            CswNbtNode node = _CswNbtResources.Nodes[OpData.Field2.NodeId];
+            CswNbtMetaDataNodeType NodeType = node.getNodeType();
+            string itemName = NodeType.NodeTypeName;
+
             switch( OpData.Field2.FoundObjClass )
             {
                 case CswEnumNbtObjectClass.EquipmentAssemblyClass:
-                    node = _getNodeByBarcode( CswEnumNbtObjectClass.EquipmentAssemblyClass, OpData.Field2.Value, false );
-                    CswNbtMetaDataNodeType AssemblyNodeType = node.getNodeType();
-                    itemName = AssemblyNodeType.NodeTypeName;
-                    if( _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Edit, AssemblyNodeType ) )
+                    if( _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Edit, NodeType ) )
                     {
                         CswNbtObjClassEquipmentAssembly assemblyNode = node;
                         assemblyNode.UpdateOwner( newOwner );
@@ -59,10 +60,7 @@ namespace ChemSW.Nbt.Actions.KioskMode
                     }
                     break;
                 case CswEnumNbtObjectClass.EquipmentClass:
-                    node = _getNodeByBarcode( CswEnumNbtObjectClass.EquipmentClass, OpData.Field2.Value, false );
-                    CswNbtMetaDataNodeType EquipmentNodeType = node.getNodeType();
-                    itemName = EquipmentNodeType.NodeTypeName;
-                    if( _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Edit, node.getNodeType() ) )
+                    if( _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Edit, NodeType ) )
                     {
                         CswNbtObjClassEquipment equipmentNode = node;
                         equipmentNode.UpdateOwner( newOwner );
@@ -70,10 +68,7 @@ namespace ChemSW.Nbt.Actions.KioskMode
                     }
                     break;
                 case CswEnumNbtObjectClass.ContainerClass:
-                    node = _getNodeByBarcode( CswEnumNbtObjectClass.ContainerClass, OpData.Field2.Value, false );
-                    CswNbtMetaDataNodeType ContainerNodeType = node.getNodeType();
-                    itemName = ContainerNodeType.NodeTypeName;
-                    if( _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Edit, ContainerNodeType ) )
+                    if( _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Edit, NodeType ) )
                     {
                         CswNbtObjClassContainer containerNode = node;
                         containerNode.UpdateOwner( newOwner );
@@ -114,6 +109,7 @@ namespace ChemSW.Nbt.Actions.KioskMode
                 }
                 else
                 {
+                    OpData.Field1.NodeIdStr = tree.getNodeIdForCurrentPosition().ToString();
                 ret = true;
             }
             }
@@ -132,7 +128,8 @@ namespace ChemSW.Nbt.Actions.KioskMode
 
             CswNbtSearch search = new CswNbtSearch( _CswNbtResources )
             {
-                SearchTerm = OpData.Field2.Value
+                SearchTerm = OpData.Field2.Value,
+                SearchType = CswEnumSqlLikeMode.Equals
             };
             ICswNbtTree tree = search.Results();
 
@@ -154,18 +151,21 @@ namespace ChemSW.Nbt.Actions.KioskMode
                         if( ObjClass == CswEnumNbtObjectClass.EquipmentAssemblyClass )
                         {
                             OpData.Field2.FoundObjClass = CswEnumNbtObjectClass.EquipmentAssemblyClass;
+                            OpData.Field2.NodeIdStr = tree.getNodeIdForCurrentPosition().ToString();
                 ret = true;
             }
 
                         if( ObjClass == CswEnumNbtObjectClass.EquipmentClass )
                         {
                             OpData.Field2.FoundObjClass = CswEnumNbtObjectClass.EquipmentClass;
+                            OpData.Field2.NodeIdStr = tree.getNodeIdForCurrentPosition().ToString();
                             ret = true;
                         }
 
                         if( ObjClass == CswEnumNbtObjectClass.ContainerClass )
                         {
                             OpData.Field2.FoundObjClass = CswEnumNbtObjectClass.ContainerClass;
+                            OpData.Field2.NodeIdStr = tree.getNodeIdForCurrentPosition().ToString();
                             ret = true;
                         }
                     }

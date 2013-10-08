@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using ChemSW.Core;
@@ -127,7 +126,7 @@ namespace ChemSW.Nbt.ObjClasses
             if( TabIdAsInt > 0 || ( null != SelectedTab && SelectedTab.HasValues ) )
             {
                 CswNbtSdTabsAndProps Sd = new CswNbtSdTabsAndProps( _CswNbtResources );
-                ButtonData.PropsToReturn = Sd.getProps( NodeId.ToString(), null, TabId, NodeTypeId, null, null, null, ForceReadOnly: false );
+                ButtonData.PropsToReturn = Sd.getProps( NodeId.ToString(), null, TabId, NodeTypeId, null, null, ForceReadOnly: false );
             }
         }
 
@@ -265,6 +264,7 @@ namespace ChemSW.Nbt.ObjClasses
         public abstract class PropertyName
         {
             public const string Save = "Save";
+            public const string LegacyId = "Legacy Id";
         }
 
         public virtual CswNbtNodePropButton Save
@@ -273,6 +273,15 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 CswNbtNodePropButton Ret = Node.Properties[PropertyName.Save];
 
+                return Ret;
+            }
+        }
+
+        public virtual CswNbtNodePropNumber LegacyId
+        {
+            get
+            {
+                CswNbtNodePropNumber Ret = Node.Properties[PropertyName.LegacyId];
                 return Ret;
             }
         }

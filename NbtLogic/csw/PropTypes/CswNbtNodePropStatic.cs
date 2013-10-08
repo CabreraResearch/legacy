@@ -19,11 +19,12 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropStatic( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtNode Node )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node )
         {
-            _FieldTypeRule = (CswNbtFieldTypeRuleStatic) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
-            _TextSubField = _FieldTypeRule.TextSubField;
+            _TextSubField = ( (CswNbtFieldTypeRuleStatic) _FieldTypeRule ).TextSubField;
+
+            // Associate subfields with methods on this object, for SetSubFieldValue()
+            _SubFieldMethods.Add( _TextSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => StaticText, x => StaticText = CswConvert.ToString( x ) ) );
         }
 
-        private CswNbtFieldTypeRuleStatic _FieldTypeRule;
         private CswNbtSubField _TextSubField;
 
         override public bool Empty
@@ -34,20 +35,11 @@ namespace ChemSW.Nbt.PropTypes
             }//
         }
 
-
-        override public string Gestalt
-        {
-            get
-            {
-                return _CswNbtNodePropData.Gestalt;
-            }
-        }//Gestalt
-
         public string StaticText
         {
             get
             {
-                string PossibleValue = _CswNbtNodePropData.GetPropRowValue( _TextSubField.Column );
+                string PossibleValue = GetPropRowValue( _TextSubField );
                 if( PossibleValue != string.Empty )
                     return PossibleValue;
                 else
@@ -57,13 +49,13 @@ namespace ChemSW.Nbt.PropTypes
             {
                 if( value != _CswNbtMetaDataNodeTypeProp.StaticText )
                 {
-                    _CswNbtNodePropData.SetPropRowValue( _TextSubField.Column, value );
-                    _CswNbtNodePropData.Gestalt = value;
+                    SetPropRowValue( _TextSubField, value );
+                    Gestalt = value;
                 }
                 else
                 {
-                    _CswNbtNodePropData.SetPropRowValue( _TextSubField.Column, string.Empty );
-                    _CswNbtNodePropData.Gestalt = string.Empty;
+                    SetPropRowValue( _TextSubField, string.Empty );
+                    Gestalt = string.Empty;
                 }
             }
         }
@@ -106,6 +98,8 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
+            base.ToJSON( ParentObject );  // FIRST
+
             ParentObject[_TextSubField.ToXmlNodeName( true )] = StaticText;
             ParentObject["rows"] = Rows;
             ParentObject["columns"] = Columns;
@@ -126,7 +120,7 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void SyncGestalt()
         {
-            _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, StaticText );
+            SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, StaticText );
         }
     }//CswNbtNodePropStatic
 

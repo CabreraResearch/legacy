@@ -76,7 +76,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterWriteNode( bool Creating )
         {
-            if( Mixture.WasModified || Constituent.WasModified )
+            if( Mixture.wasAnySubFieldModified() || Constituent.wasAnySubFieldModified() )
             {
                 _recalculateRegListMembership();
             }

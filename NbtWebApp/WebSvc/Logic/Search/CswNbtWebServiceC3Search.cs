@@ -182,13 +182,16 @@ namespace ChemSW.Nbt.WebServices
 
                     [DataMember]
                     public string val = string.Empty;
+
+                    [DataMember]
+                    public string nodelink = string.Empty;
                 }
 
                 [DataContract]
                 public class SizeRecord
                 {
                     [DataMember]
-                    public SizeData nodeId = null;
+                    public SizeData nodeTypeId = null;
 
                     [DataMember]
                     public SizeData unitCount = null;
@@ -402,10 +405,10 @@ namespace ChemSW.Nbt.WebServices
                         } );
 
                     // Get or create a vendor node
-                    C3CreateMaterialResponse.State.Supplier Supplier = C3Import.createVendorNode( C3ProductDetails.SupplierName );
+                    C3CreateMaterialResponse.State.Supplier Supplier = C3Import.constructVendorObject( C3ProductDetails.SupplierName );
 
                     // Create size node(s)
-                    Collection<C3CreateMaterialResponse.State.SizeRecord> ProductSizes = C3Import.createSizeNodes( C3ProductTempNode );
+                    Collection<C3CreateMaterialResponse.State.SizeRecord> ProductSizes = C3Import.constructSizeObjects();
 
                     // Create synonyms node(s)
                     C3Import.createMaterialSynonyms( C3ProductTempNode );
@@ -686,12 +689,9 @@ namespace ChemSW.Nbt.WebServices
                 public string NBTSubFieldPropColName2 = string.Empty;
             }
 
-            private Tuple<int, string> _getUnitOfMeasure( string mappedUnitOfMeasure, string origUnitOfMeasure )
+            private string _getUnitOfMeasure( string mappedUnitOfMeasure, string origUnitOfMeasure )
             {
-                Tuple<int, string> UnitOfMeasureNodeInfo = null;
-
-                //if( false == string.IsNullOrEmpty( mappedUnitOfMeasure ) )
-                //{
+                string Ret = string.Empty;
 
                 // Create the view
                 CswNbtMetaDataObjectClass UnitsOfMeasureOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.UnitOfMeasureClass );
@@ -717,7 +717,6 @@ namespace ChemSW.Nbt.WebServices
 
                 // Get and iterate the Tree
                 ICswNbtTree MatchingUOMsTree = _CswNbtResources.Trees.getTreeFromView( MatchingUOMsView, false, false, true );
-                //int Count = MatchingUOMsTree.getChildNodeCount();
                 if( MatchingUOMsTree.getChildNodeCount() == 0 )
                 {
                     // Run view again using the origUnitOfMeasure
@@ -730,9 +729,7 @@ namespace ChemSW.Nbt.WebServices
                         for( int i = 0; i < MatchingUOMsTree.getChildNodeCount(); i++ )
                         {
                             MatchingUOMsTree.goToNthChild( i );
-                            UnitOfMeasureNodeInfo =
-                                new Tuple<int, string>( MatchingUOMsTree.getNodeIdForCurrentPosition().PrimaryKey,
-                                                       MatchingUOMsTree.getNodeNameForCurrentPosition() );
+                            Ret = MatchingUOMsTree.getNodeNameForCurrentPosition();
                             MatchingUOMsTree.goToParentNode();
                         }
                     }
@@ -742,16 +739,12 @@ namespace ChemSW.Nbt.WebServices
                     for( int i = 0; i < MatchingUOMsTree.getChildNodeCount(); i++ )
                     {
                         MatchingUOMsTree.goToNthChild( i );
-                        UnitOfMeasureNodeInfo = new Tuple<int, string>( MatchingUOMsTree.getNodeIdForCurrentPosition().PrimaryKey,
-                                                   MatchingUOMsTree.getNodeNameForCurrentPosition() );
+                        Ret = MatchingUOMsTree.getNodeNameForCurrentPosition();
                         MatchingUOMsTree.goToParentNode();
                     }
                 }
 
-
-                //}//if( false == string.IsNullOrEmpty( unitOfMeasurementName ) )
-
-                return UnitOfMeasureNodeInfo;
+                return Ret;
 
             }//_getUnitOfMeasure()
 
@@ -798,8 +791,6 @@ namespace ChemSW.Nbt.WebServices
                                 NewSDSDocumentNode.Link.Href = MsdsUrl;
                                 NewSDSDocumentNode.Link.Text = MsdsUrl;
                                 NewSDSDocumentNode.Owner.RelatedNodeId = MaterialNode.NodeId;
-                                //NewSDSDocumentNode.IsTemp = false;
-                                //NewSDSDocumentNode.postChanges( true );
                             } );
 
                         // Set the return object
@@ -811,11 +802,11 @@ namespace ChemSW.Nbt.WebServices
             }
 
             /// <summary>
-            /// Creates a new Vendor node if the vendor doesn't already exist otherwise uses the pre-existing Vendor node.
+            /// 
             /// </summary>
             /// <param name="VendorName"></param>
-            /// <returns>A C3CreateMaterialResponse.State.Supplier object with the Vendor name and Vendor nodeid set.</returns>
-            public C3CreateMaterialResponse.State.Supplier createVendorNode( string VendorName )
+            /// <returns></returns>
+            public C3CreateMaterialResponse.State.Supplier constructVendorObject( string VendorName )
             {
                 C3CreateMaterialResponse.State.Supplier Supplier = new C3CreateMaterialResponse.State.Supplier();
 
@@ -842,114 +833,103 @@ namespace ChemSW.Nbt.WebServices
                 if( VendorsTree.getChildNodeCount() > 0 )
                 {
                     VendorsTree.goToNthChild( 0 );
-
-                    // Add to the return object
-                    Supplier.name = VendorsTree.getNodeNameForCurrentPosition();
-                    Supplier.val = VendorsTree.getNodeIdForCurrentPosition().ToString();
+                    CswNbtObjClassVendor VendorNode = VendorsTree.getNodeForCurrentPosition();
+                    Supplier.name = CswConvert.ToString( VendorNode.VendorName );
+                    Supplier.val = CswConvert.ToString( VendorNode.NodeId );
+                    Supplier.nodelink = CswConvert.ToString( VendorNode.Node.NodeLink );
                 }
                 else
                 {
                     // Don't create a new node just return an empty value in the return object - Case 28687
                     Supplier.name = VendorName;
                     Supplier.val = string.Empty;
+                    Supplier.nodelink = string.Empty;
                 }
 
                 return Supplier;
             }//createVendorNode()
 
-            public Collection<C3CreateMaterialResponse.State.SizeRecord> createSizeNodes( CswNbtPropertySetMaterial MaterialNode )
+            /// <summary>
+            /// Creates and populates a C3CreateMaterialResponse.State.SizeRecord for each incoming size.
+            /// </summary>
+            /// <returns>A collection of C3CreateMaterialResponse.State.SizeRecord objects.</returns>
+            public Collection<C3CreateMaterialResponse.State.SizeRecord> constructSizeObjects()
             {
                 // Return object
                 Collection<C3CreateMaterialResponse.State.SizeRecord> ProductSizes = new Collection<C3CreateMaterialResponse.State.SizeRecord>();
 
-                CswNbtMetaDataNodeType SizeNT = _CswNbtResources.MetaData.getNodeType( "Size" );
-                if( null != SizeNT )
+                // Get the Size NodeTypeId
+                CswNbtMetaDataObjectClass SizeOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.SizeClass );
+                string SizeNTId = CswConvert.ToString( SizeOC.getNodeTypeIds().FirstOrDefault() );
+
+                // First set the sizes to import to the original set of sizes
+                _SizesToImport = _ProductToImport.ProductSize.ToList();
+
+                // If we have more than 1 size there is a possibility we will have duplicates
+                if( _SizesToImport.Count > 1 )
                 {
-                    // First set the sizes to import to the original set of sizes
-                    _SizesToImport = _ProductToImport.ProductSize.ToList();
+                    _removeDuplicateSizes();
+                }
 
-                    // If we have more than 1 size there is a possibility we will have duplicates
-                    if( _SizesToImport.Count > 1 )
-                    {
-                        _removeDuplicateSizes();
-                    }
-                    for( int index = 0; index < _SizesToImport.Count; index++ )
-                    {
-                        CswC3Product.Size CurrentSize = _SizesToImport[index];
-                        CswNbtObjClassSize sizeNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( SizeNT.NodeTypeId, delegate( CswNbtNode NewNode )
-                        {
-                            // Don't forget to send in the index so that the correct values get added to the NTPs
-                            addNodeTypeProps( NewNode, index );
-                            ( (CswNbtObjClassSize) NewNode ).Material.RelatedNodeId = MaterialNode.NodeId;
-                            //sizeNode.IsTemp = false;
-                            //sizeNode.postChanges( true );
-                        } );
+                foreach( CswC3Product.Size CurrentSize in _SizesToImport )
+                {
+                    C3CreateMaterialResponse.State.SizeRecord Size = new C3CreateMaterialResponse.State.SizeRecord();
 
-                        //Set the return object
-                        C3CreateMaterialResponse.State.SizeRecord Size = new C3CreateMaterialResponse.State.SizeRecord();
+                    //nodeTypeId
+                    C3CreateMaterialResponse.State.SizeRecord.SizeData NodeTypeId = new C3CreateMaterialResponse.State.SizeRecord.SizeData();
+                    NodeTypeId.value = SizeNTId;
+                    NodeTypeId.readOnly = true;
+                    NodeTypeId.hidden = true;
+                    Size.nodeTypeId = NodeTypeId;
 
-                        //sizeNodeId
-                        C3CreateMaterialResponse.State.SizeRecord.SizeData SizeNodeId = new C3CreateMaterialResponse.State.SizeRecord.SizeData();
-                        SizeNodeId.value = sizeNode.NodeId.ToString();
-                        SizeNodeId.readOnly = true;
-                        SizeNodeId.hidden = true;
-                        Size.nodeId = SizeNodeId;
+                    //unitCount
+                    C3CreateMaterialResponse.State.SizeRecord.SizeData UnitCount = new C3CreateMaterialResponse.State.SizeRecord.SizeData();
+                    UnitCount.value = CswConvert.ToString( CurrentSize.case_qty );
+                    UnitCount.readOnly = true;
+                    UnitCount.hidden = false;
+                    Size.unitCount = UnitCount;
 
-                        //unitCount
-                        C3CreateMaterialResponse.State.SizeRecord.SizeData UnitCount = new C3CreateMaterialResponse.State.SizeRecord.SizeData();
-                        UnitCount.value = CswConvert.ToString( sizeNode.UnitCount.Value );
-                        UnitCount.readOnly = true;
-                        UnitCount.hidden = false;
-                        Size.unitCount = UnitCount;
+                    //initialQuantity
+                    C3CreateMaterialResponse.State.SizeRecord.SizeData InitialQuantity = new C3CreateMaterialResponse.State.SizeRecord.SizeData();
+                    InitialQuantity.value = CswConvert.ToString( CurrentSize.pkg_qty );
+                    InitialQuantity.readOnly = true;
+                    InitialQuantity.hidden = false;
+                    Size.quantity = InitialQuantity;
 
-                        //initialQuantity
-                        C3CreateMaterialResponse.State.SizeRecord.SizeData InitialQuantity = new C3CreateMaterialResponse.State.SizeRecord.SizeData();
-                        InitialQuantity.value = CswConvert.ToString( sizeNode.InitialQuantity.Quantity );
-                        InitialQuantity.readOnly = true;
-                        InitialQuantity.hidden = false;
-                        Size.quantity = InitialQuantity;
+                    //newUoM
+                    C3CreateMaterialResponse.State.SizeRecord.SizeData NewUoM = new C3CreateMaterialResponse.State.SizeRecord.SizeData();
 
-                        //newUoM
-                        C3CreateMaterialResponse.State.SizeRecord.SizeData NewUoM = new C3CreateMaterialResponse.State.SizeRecord.SizeData();
-                        NewUoM.value = sizeNode.InitialQuantity.CachedUnitName;
-                        if( string.IsNullOrEmpty( NewUoM.value ) )
-                        {
-                            NewUoM.readOnly = false;
-                        }
-                        else
-                        {
-                            NewUoM.readOnly = true;
-                        }
-                        NewUoM.hidden = false;
-                        Size.uom = NewUoM;
+                    NewUoM.value = _getUnitOfMeasure( CurrentSize.pkg_qty_uom, CurrentSize.c3_uom );
+                    NewUoM.readOnly = !string.IsNullOrEmpty( NewUoM.value );
+                    NewUoM.hidden = false;
+                    Size.uom = NewUoM;
 
-                        //originalUoM
-                        C3CreateMaterialResponse.State.SizeRecord.SizeData OriginalUoM = new C3CreateMaterialResponse.State.SizeRecord.SizeData();
-                        OriginalUoM.value = CurrentSize.c3_uom;
-                        OriginalUoM.readOnly = true;
-                        OriginalUoM.hidden = false;
-                        Size.origUom = OriginalUoM;
+                    //originalUoM
+                    C3CreateMaterialResponse.State.SizeRecord.SizeData OriginalUoM = new C3CreateMaterialResponse.State.SizeRecord.SizeData();
+                    OriginalUoM.value = CurrentSize.c3_uom;
+                    OriginalUoM.readOnly = true;
+                    OriginalUoM.hidden = false;
+                    Size.origUom = OriginalUoM;
 
-                        //catalogNo
-                        C3CreateMaterialResponse.State.SizeRecord.SizeData CatalogNo = new C3CreateMaterialResponse.State.SizeRecord.SizeData();
-                        CatalogNo.value = sizeNode.CatalogNo.Text;
-                        CatalogNo.readOnly = true;
-                        CatalogNo.hidden = false;
-                        Size.catalogNo = CatalogNo;
+                    //catalogNo
+                    C3CreateMaterialResponse.State.SizeRecord.SizeData CatalogNo = new C3CreateMaterialResponse.State.SizeRecord.SizeData();
+                    CatalogNo.value = CurrentSize.catalog_no;
+                    CatalogNo.readOnly = true;
+                    CatalogNo.hidden = false;
+                    Size.catalogNo = CatalogNo;
 
-                        //quantityEditable
-                        C3CreateMaterialResponse.State.SizeRecord.SizeData QuantityEditable = new C3CreateMaterialResponse.State.SizeRecord.SizeData();
-                        QuantityEditable.value = "checked";
-                        Size.quantityEditable = QuantityEditable;
+                    //quantityEditable
+                    C3CreateMaterialResponse.State.SizeRecord.SizeData QuantityEditable = new C3CreateMaterialResponse.State.SizeRecord.SizeData();
+                    QuantityEditable.value = CswEnumTristate.True;
+                    Size.quantityEditable = QuantityEditable;
 
-                        //dispensible
-                        C3CreateMaterialResponse.State.SizeRecord.SizeData Dispensible = new C3CreateMaterialResponse.State.SizeRecord.SizeData();
-                        Dispensible.value = "checked";
-                        Size.dispensible = Dispensible;
+                    //dispensible
+                    C3CreateMaterialResponse.State.SizeRecord.SizeData Dispensible = new C3CreateMaterialResponse.State.SizeRecord.SizeData();
+                    Dispensible.value = CswEnumTristate.True;
+                    Size.dispensible = Dispensible;
 
-                        ProductSizes.Add( Size );
-                    }
-                } // if( null != SizeNT )
+                    ProductSizes.Add( Size );
+                }
 
                 return ProductSizes;
             }//createSizeNodes()
@@ -966,8 +946,6 @@ namespace ChemSW.Nbt.WebServices
                                 CswNbtObjClassMaterialSynonym MaterialSynonymOC = NewNode;
                                 MaterialSynonymOC.Name.Text = _ProductToImport.Synonyms[index];
                                 MaterialSynonymOC.Material.RelatedNodeId = MaterialNode.NodeId;
-                                //MaterialSynonymOC.IsTemp = false;
-                                //MaterialSynonymOC.postChanges( true );
                             } );
                     }
                 }
@@ -988,42 +966,7 @@ namespace ChemSW.Nbt.WebServices
                         C3Mapping C3Mapping = _Mappings[NTP.PropName];
                         switch( Node.Properties[NTP].getFieldTypeValue() )
                         {
-                            case CswEnumNbtFieldType.Quantity:
-                                string sizeGestalt = string.Empty;
-                                string MappedUoM = _SizesToImport[CurrentIndex].pkg_qty_uom;
-                                string OriginalUoM = _SizesToImport[CurrentIndex].c3_uom;
 
-                                Tuple<int, string> UnitOfMeasureInfo = _getUnitOfMeasure( MappedUoM, OriginalUoM );
-                                if( null != UnitOfMeasureInfo )
-                                {
-                                    Node.Properties[NTP].SetPropRowValue( (CswEnumNbtPropColumn) C3Mapping.NBTSubFieldPropColName2, UnitOfMeasureInfo.Item2 );
-                                    Node.Properties[NTP].SetPropRowValue( CswEnumNbtPropColumn.Field1_FK, UnitOfMeasureInfo.Item1 );
-                                    sizeGestalt = _SizesToImport[CurrentIndex].pkg_qty + " " + UnitOfMeasureInfo.Item2;
-                                    Node.Properties[NTP].SetPropRowValue( CswEnumNbtPropColumn.Gestalt, sizeGestalt );
-                                }
-                                else
-                                {
-                                    sizeGestalt = _SizesToImport[CurrentIndex].pkg_qty;
-                                    Node.Properties[NTP].SetPropRowValue( CswEnumNbtPropColumn.Gestalt, sizeGestalt );
-                                }
-                                Node.Properties[NTP].SetPropRowValue( (CswEnumNbtPropColumn) C3Mapping.NBTSubFieldPropColName, _SizesToImport[CurrentIndex].pkg_qty );
-
-                                // Assumption: We are working with a node that is of NodeType Size
-                                if( NodeType.NodeTypeName == "Size" )
-                                {
-                                    // Set the Unit Count
-                                    CswNbtMetaDataNodeTypeProp UnitCountNTP = NodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassSize.PropertyName.UnitCount );
-                                    Node.Properties[UnitCountNTP].SetPropRowValue( (CswEnumNbtPropColumn) C3Mapping.NBTSubFieldPropColName, _SizesToImport[CurrentIndex].case_qty );
-                                    Node.Properties[UnitCountNTP].SetPropRowValue( CswEnumNbtPropColumn.Gestalt, _SizesToImport[CurrentIndex].case_qty );
-
-                                    // Set the Catalog No
-                                    // This needs to be here because each size has a unique catalogno
-                                    CswNbtMetaDataNodeTypeProp CatalogNoNTP = NodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassSize.PropertyName.CatalogNo );
-                                    Node.Properties[CatalogNoNTP].SetPropRowValue( (CswEnumNbtPropColumn) C3Mapping.NBTSubFieldPropColName2, _SizesToImport[CurrentIndex].catalog_no );
-                                    Node.Properties[CatalogNoNTP].SetPropRowValue( CswEnumNbtPropColumn.Gestalt, _SizesToImport[CurrentIndex].catalog_no );
-                                }
-
-                                break;
                             case CswEnumNbtFieldType.MOL:
                                 if( false == string.IsNullOrEmpty( C3Mapping.C3ProductPropertyValue ) )
                                 {
@@ -1046,8 +989,11 @@ namespace ChemSW.Nbt.WebServices
                                 }
                                 break;
                             default:
-                                Node.Properties[NTP].SetPropRowValue( (CswEnumNbtPropColumn) C3Mapping.NBTSubFieldPropColName, C3Mapping.C3ProductPropertyValue );
-                                Node.Properties[NTP].SetPropRowValue( CswEnumNbtPropColumn.Gestalt, C3Mapping.C3ProductPropertyValue );
+                                CswNbtSubField SubField = NTP.getFieldTypeRule().SubFields[(CswEnumNbtPropColumn) C3Mapping.NBTSubFieldPropColName];
+                                if( null != SubField )
+                                {
+                                    Node.Properties[NTP].SetSubFieldValue( SubField, C3Mapping.C3ProductPropertyValue );
+                                }
                                 break;
                         }
                     }//if( null != Node.Properties[NTP] && _Mappings.ContainsKey( NTP.PropName ) )

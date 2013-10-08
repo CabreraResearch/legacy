@@ -147,7 +147,7 @@ namespace ChemSW.Nbt.ServiceDrivers
         /// <summary>
         /// Create a new node according to NodeTypeId. Does not post changes after calling makeNodeFromNodeTypeId.
         /// </summary>
-        public CswNbtNode getAddNode( Int32 NodeTypeId, string RelatedNodeId )
+        public CswNbtNode getAddNode( Int32 NodeTypeId, string RelatedNodeId, CswNbtNodeCollection.AfterMakeNode After )
         {
             CswNbtNode Ret = null;
             CswNbtMetaDataNodeType NodeType = null;
@@ -162,23 +162,32 @@ namespace ChemSW.Nbt.ServiceDrivers
                     }
                     else
                     {
-                        Ret = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, IsTemp: true );
+                        Ret = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, IsTemp: true, OnAfterMakeNode: delegate( CswNbtNode NewNode )
+                        {
+                            if( null != After )
+                            {
+                                After( NewNode );
+                            }
+                        } );
                         CswPrimaryKey RelatedNodePk = CswConvert.ToPrimaryKey( RelatedNodeId );
+
                         CswNbtNode RelatedNode = _CswNbtResources.Nodes[RelatedNodePk];
                         if( null != RelatedNode )
                         {
                             foreach( CswNbtNodePropRelationship Relationship in from _Prop
-                                                                                in Ret.Properties
+                                in Ret.Properties
                                                                                 where _Prop.getFieldTypeValue() == CswEnumNbtFieldType.Relationship &&
-                                                                                          ( _Prop.AsRelationship.TargetMatches( RelatedNode.getNodeType() ) ||
-                                                                                            _Prop.AsRelationship.TargetMatches( RelatedNode.getObjectClass() ) )
+                                                                                      ( _Prop.AsRelationship.TargetMatches( RelatedNode.getNodeType() ) ||
+                                                                                        _Prop.AsRelationship.TargetMatches( RelatedNode.getObjectClass() ) )
                                                                                 select _Prop )
                             {
                                 Relationship.RelatedNodeId = RelatedNodePk;
                             }
                         }
                         // if( Int32.MinValue != RelatedNodePk.PrimaryKey )
+
                     }
+
                 }
             }
             return Ret;
@@ -207,9 +216,9 @@ namespace ChemSW.Nbt.ServiceDrivers
         /// <summary>
         /// Create a new node according to NodeTypeId. Posts changes.
         /// </summary>
-        public CswNbtNode getAddNodeAndPostChanges( Int32 NodeTypeId, string RelatedNodeId )
+        public CswNbtNode getAddNodeAndPostChanges( Int32 NodeTypeId, string RelatedNodeId, CswNbtNodeCollection.AfterMakeNode After )
         {
-            CswNbtNode Ret = getAddNode( NodeTypeId, RelatedNodeId );
+            CswNbtNode Ret = getAddNode( NodeTypeId, RelatedNodeId, After );
             if( null != Ret )
             {
                 Ret.postChanges( ForceUpdate: false );
@@ -220,7 +229,7 @@ namespace ChemSW.Nbt.ServiceDrivers
         /// <summary>
         /// Fetch or create a node, and return a JObject for all properties in a given tab
         /// </summary>
-        public JObject getProps( string NodeId, string NodeKey, string TabId, Int32 NodeTypeId, CswDateTime Date, string filterToPropId, string RelatedNodeId, bool ForceReadOnly )
+        public JObject getProps( string NodeId, string NodeKey, string TabId, Int32 NodeTypeId, string filterToPropId, string RelatedNodeId, bool ForceReadOnly, CswDateTime Date = null )
         {
             JObject Ret = new JObject();
 
@@ -245,13 +254,13 @@ namespace ChemSW.Nbt.ServiceDrivers
                 CswNbtNode Node;
                 if( _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Add && false == CswTools.IsPrimaryKey( CswConvert.ToPrimaryKey( NodeId ) ) )
                 {
-                    Node = getAddNodeAndPostChanges( NodeTypeId, RelatedNodeId );
+                    Node = getAddNodeAndPostChanges( NodeTypeId, RelatedNodeId, null );
                 }
                 else
                 {
                     Node = _CswNbtResources.getNode( NodeId, NodeKey, Date );
                 }
-                return getProps( Node, TabId, FilterPropIdAttr, LayoutType, ForceReadOnly );
+                return getProps( Node, TabId, FilterPropIdAttr, LayoutType, ForceReadOnly, Date );
 
             } // if-else( TabId.StartsWith( HistoryTabPrefix ) )
             return Ret;
@@ -260,7 +269,7 @@ namespace ChemSW.Nbt.ServiceDrivers
         /// <summary>
         /// Fetch or create a node, and return a JObject for all properties in the identity tab
         /// </summary>
-        public JObject getIdentityTabProps( CswPrimaryKey NodeId, CswDateTime Date, string filterToPropId, string RelatedNodeId )
+        public JObject getIdentityTabProps( CswPrimaryKey NodeId, string filterToPropId, string RelatedNodeId, CswDateTime Date = null )
         {
             JObject Ret = new JObject();
 
@@ -269,7 +278,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             if( null != NodeType )
             {
                 CswNbtMetaDataNodeTypeTab IdentityTab = NodeType.getIdentityTab();
-                Ret = getProps( NodeId.ToString(), null, IdentityTab.TabId.ToString(), NodeType.NodeTypeId, Date, filterToPropId, RelatedNodeId, false );
+                Ret = getProps( NodeId.ToString(), null, IdentityTab.TabId.ToString(), NodeType.NodeTypeId, filterToPropId, RelatedNodeId, false, Date );
                 Ret["tab"] = new JObject();
                 Ret["tab"]["tabid"] = IdentityTab.TabId;
             }
@@ -279,7 +288,7 @@ namespace ChemSW.Nbt.ServiceDrivers
         /// <summary>
         /// Get props of a Node instance
         /// </summary>
-        public JObject getProps( CswNbtNode Node, string TabId, CswPropIdAttr FilterPropIdAttr, CswEnumNbtLayoutType LayoutType, bool ForceReadOnly = false )
+        public JObject getProps( CswNbtNode Node, string TabId, CswPropIdAttr FilterPropIdAttr, CswEnumNbtLayoutType LayoutType, bool ForceReadOnly = false, CswDateTime Date = null )
         {
             JObject Ret = new JObject();
             Ret["node"] = new JObject();
@@ -288,6 +297,12 @@ namespace ChemSW.Nbt.ServiceDrivers
 
             if( Node != null )
             {
+                // case 30765 - this must be done here in order to prepare the property for export to the UI (e.g. setting 'Hidden' correctly)
+                foreach( CswNbtNodePropWrapper Prop in Node.Properties )
+                {
+                    Prop.TriggerOnBeforeRender();
+                }
+
                 if( CswTools.IsPrimaryKey( Node.NodeId ) )
                 {
                     Ret["node"]["nodeid"] = Node.NodeId.ToString();
@@ -307,7 +322,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                 else
                 {
                     Int32 TabIdPk = CswConvert.ToInt32( TabId );
-                    IEnumerable<CswNbtMetaDataNodeTypeProp> Props = _CswNbtResources.MetaData.NodeTypeLayout.getPropsInLayout( Node.NodeTypeId, TabIdPk, LayoutType );
+                    IEnumerable<CswNbtMetaDataNodeTypeProp> Props = _CswNbtResources.MetaData.NodeTypeLayout.getPropsInLayout( Node.NodeTypeId, TabIdPk, LayoutType, Date );
 
                     if( _CswNbtResources.EditMode != CswEnumNbtNodeEditMode.Add ||
                         _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Create, NodeType ) )
@@ -320,7 +335,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                         CswNbtMetaDataNodeTypeTab IdentityTab = Node.getNodeType().getIdentityTab();
                         if( TabIdPk != IdentityTab.TabId )
                         {
-                            IEnumerable<CswNbtMetaDataNodeTypeProp> IdentityProps = _CswNbtResources.MetaData.NodeTypeLayout.getPropsInLayout( Node.NodeTypeId, IdentityTab.TabId, LayoutType );
+                            IEnumerable<CswNbtMetaDataNodeTypeProp> IdentityProps = _CswNbtResources.MetaData.NodeTypeLayout.getPropsInLayout( Node.NodeTypeId, IdentityTab.TabId, LayoutType, Date );
                             IEnumerable<CswNbtMetaDataNodeTypeProp> IdentityTabProps = Props as CswNbtMetaDataNodeTypeProp[] ?? IdentityProps.ToArray();
                             TabHasAnyEditableProp = TabHasAnyEditableProp || IdentityTabProps.Any( Prop => Prop.IsSaveable );
                         }
@@ -381,6 +396,13 @@ namespace ChemSW.Nbt.ServiceDrivers
 
             if( Node != null )
             {
+                // case 30765 - this must be done here in order to prepare the property for export to the UI (e.g. setting 'Hidden' correctly)
+                // We need to do this prop as well as all conditional props
+                foreach( CswNbtNodePropWrapper p in Node.Properties )
+                {
+                    p.TriggerOnBeforeRender();
+                }
+
                 // for prop filters, update node prop value but don't save the change
                 JObject PropJson = CswConvert.ToJObject( NewPropJson, true, "NewPropJson" );
 
@@ -426,7 +448,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                     if( FilterProp.FilterNodeTypePropId == Prop.FirstPropVersionId )
                     {
                         HasSubProps = true;
-                        CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout FilterPropLayout = _CswNbtResources.MetaData.NodeTypeLayout.getLayout( LayoutType, FilterProp.NodeTypeId, FilterProp.PropId, TabId );
+                        CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout FilterPropLayout = FilterProp.getLayout( LayoutType, TabId );
                         JProperty JPFilterProp = makePropJson( Node.NodeId, FilterProp, Node.Properties[FilterProp], FilterPropLayout, ForceReadOnly, Node.Locked );
                         SubPropsObj.Add( JPFilterProp );
                         JObject FilterPropXml = (JObject) JPFilterProp.Value;

@@ -24,13 +24,16 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropPassword( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtNode Node )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node )
         {
-            _FieldTypeRule = (CswNbtFieldTypeRulePassword) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
-            _EncryptedPasswordSubField = _FieldTypeRule.EncryptedPasswordSubField;
-            _ChangedDateSubField = _FieldTypeRule.ChangedDateSubField;
+            _EncryptedPasswordSubField = ( (CswNbtFieldTypeRulePassword) _FieldTypeRule ).EncryptedPasswordSubField;
+            _ChangedDateSubField = ( (CswNbtFieldTypeRulePassword) _FieldTypeRule ).ChangedDateSubField;
 
             _CswEncryption = new CswEncryption( CswNbtResources.MD5Seed );
+
+            // Associate subfields with methods on this object, for SetSubFieldValue()
+            _SubFieldMethods.Add( _EncryptedPasswordSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => EncryptedPassword, x => EncryptedPassword = CswConvert.ToString( x ) ) );
+            _SubFieldMethods.Add( _ChangedDateSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => ChangedDate, x => ChangedDate = CswConvert.ToDateTime( x ) ) );
         }
-        private CswNbtFieldTypeRulePassword _FieldTypeRule;
+
         private CswNbtSubField _EncryptedPasswordSubField;
         private CswNbtSubField _ChangedDateSubField;
 
@@ -42,21 +45,11 @@ namespace ChemSW.Nbt.PropTypes
             }//
         }
 
-
-        override public string Gestalt
-        {
-            get
-            {
-                return _CswNbtNodePropData.Gestalt;
-            }//
-
-        }//Gestalt
-
         public string EncryptedPassword
         {
             get
             {
-                return _CswNbtNodePropData.GetPropRowValue( _EncryptedPasswordSubField.Column );
+                return GetPropRowValue( _EncryptedPasswordSubField );
             }
             set
             {
@@ -77,7 +70,7 @@ namespace ChemSW.Nbt.PropTypes
                     }
                 }
 
-                if( _CswNbtNodePropData.SetPropRowValue( _EncryptedPasswordSubField.Column, value ) )
+                if( SetPropRowValue( _EncryptedPasswordSubField, value ) )
                 {
                     SyncGestalt();
                     ChangedDate = DateTime.Now;
@@ -89,20 +82,20 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                //string StringValue = _CswNbtNodePropData.GetPropRowValue( _ChangedDateSubField.Column );
+                //string StringValue = GetPropRowValue( _ChangedDateSubField.Column );
                 //DateTime ReturnVal = DateTime.MinValue;
                 //if( StringValue != string.Empty )
                 //    ReturnVal = Convert.ToDateTime( StringValue );
                 //return ( ReturnVal.Date );
-                return _CswNbtNodePropData.GetPropRowValueDate( _ChangedDateSubField.Column );
+                return GetPropRowValueDate( _ChangedDateSubField );
             }
 
             set
             {
                 if( DateTime.MinValue != value )
-                    _CswNbtNodePropData.SetPropRowValue( _ChangedDateSubField.Column, value );
+                    SetPropRowValue( _ChangedDateSubField, value );
                 else
-                    _CswNbtNodePropData.SetPropRowValue( _ChangedDateSubField.Column, DBNull.Value );
+                    SetPropRowValue( _ChangedDateSubField, DBNull.Value );
             }
         }
 
@@ -199,17 +192,27 @@ namespace ChemSW.Nbt.PropTypes
                 return Length;
             }
         }
-        
+
         public override void ToJSON( JObject ParentObject )
         {
+            base.ToJSON( ParentObject );  // FIRST
+
             ParentObject[_EncryptedPasswordSubField.ToXmlNodeName( true )] = EncryptedPassword;
-            
+
             ParentObject["passwordcomplexity"] = PasswordComplexity;
             ParentObject["passwordlength"] = PasswordLength;
             ParentObject["newpassword"] = string.Empty;
             ParentObject["isexpired"] = IsExpired;
-            ParentObject["expire"] = false;
-            ParentObject["isadmin"] = _CswNbtResources.CurrentNbtUser.IsAdministrator();
+            if( _CswNbtResources.CurrentNbtUser.IsAdministrator() )
+            {
+                ParentObject["expire"] = IsExpired; // case 30227
+                ParentObject["isadmin"] = true;
+            }
+            else
+            {
+                ParentObject["expire"] = false;
+                ParentObject["isadmin"] = false;
+            }
         }
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
@@ -230,9 +233,14 @@ namespace ChemSW.Nbt.PropTypes
             if( null != JObject["expire"] )
             {
                 bool inIsExpired = CswConvert.ToBoolean( JObject["expire"].ToString() );
-                if( inIsExpired && !IsExpired )
+                // case 30227
+                if( inIsExpired ) //&& !IsExpired )  
                 {
                     ChangedDate = DateTime.MinValue;
+                }
+                else
+                {
+                    ChangedDate = DateTime.Now;
                 }
             }
         }
@@ -247,7 +255,7 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void SyncGestalt()
         {
-            _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, EncryptedPassword );
+            SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, EncryptedPassword );
         }
     }//CswNbtNodePropPassword
 

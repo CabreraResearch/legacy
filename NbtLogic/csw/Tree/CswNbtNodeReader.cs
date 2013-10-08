@@ -93,7 +93,7 @@ namespace ChemSW.Nbt
         }//_extractCol()
 
         //bz # 7816: Don't throw if you cannot find the node data
-        public void completeNodeData( CswNbtNode CswNbtNode, DateTime Date )
+        public void completeNodeData( CswNbtNode CswNbtNode, CswDateTime Date )
         {
             if( CswNbtNode.NodeSpecies == CswEnumNbtNodeSpecies.Plain )
             {
@@ -106,14 +106,14 @@ namespace ChemSW.Nbt
                         CswTimer Timer = new CswTimer();
                         //this[ CswNbtNode.NodeId ].fillFromNodeTypeId( CswNbtNode, CswNbtNode.NodeTypeId );
                         _CswNbtResources.logTimerResult( "completeNodeData about to call fillFromNodeTypeId() on node (" + CswNbtNode.NodeId.ToString() + ")", Timer.ElapsedDurationInSecondsAsString );
-                        fillFromNodeTypeId( CswNbtNode, CswNbtNode.NodeTypeId );
+                        fillFromNodeTypeId( CswNbtNode, CswNbtNode.NodeTypeId, Date );
                         _CswNbtResources.logTimerResult( "completeNodeData called fillFromNodeTypeId(), finished on node (" + CswNbtNode.NodeId.ToString() + ")", Timer.ElapsedDurationInSecondsAsString );
                         if( CswNbtNode.getNodeType() != null )
                             CswNbtNode.Properties.fillFromNodePk( CswNbtNode.NodeId, CswNbtNode.NodeTypeId, Date );
-                        
+
                         _CswNbtResources.logTimerResult( "Filled in node property data for node (" + CswNbtNode.NodeId.ToString() + "): " + CswNbtNode.NodeName, Timer.ElapsedDurationInSecondsAsString );
 
-                        if( Date != DateTime.MinValue )
+                        if( CswTools.IsDate( Date ) )
                         {
                             CswNbtNode.setReadOnly( value: true, SaveToDb: false );
                         }
@@ -130,15 +130,15 @@ namespace ChemSW.Nbt
 
         public void fillFromNodeTypeIdWithProps( CswNbtNode CswNbtNode, Int32 NodeTypeId )
         {
-            CswNbtNode.Properties.fillFromNodePk( CswNbtNode.NodeId, NodeTypeId, DateTime.MinValue );
+            CswNbtNode.Properties.fillFromNodePk( CswNbtNode.NodeId, NodeTypeId, null );
             CswNbtNode.Properties.fillFromNodeTypeId( CswNbtNode.NodeTypeId );
-            
+
         }//_fillFromNodeTypeId()
 
 
-        public void fillFromNodeTypeId( CswNbtNode CswNbtNode, Int32 NodeTypeId )
+        public void fillFromNodeTypeId( CswNbtNode CswNbtNode, Int32 NodeTypeId, CswDateTime Date = null )
         {
-            CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
+            CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId, Date );
 
             // This error causes issues for NbtSched
             //if( NodeType == null )

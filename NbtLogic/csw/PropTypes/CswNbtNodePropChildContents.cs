@@ -13,9 +13,6 @@ namespace ChemSW.Nbt.PropTypes
 {
     public class CswNbtNodePropChildContents : CswNbtNodeProp
     {
-        private CswNbtFieldTypeRuleChildContents _FieldTypeRule;
-        private CswNbtNode _Node;
-
         public static implicit operator CswNbtNodePropChildContents( CswNbtNodePropWrapper PropWrapper )
         {
             return PropWrapper.AsChildContents;
@@ -24,9 +21,7 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropChildContents( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtNode Node )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node )
         {
-            _Node = Node;
-
-            _FieldTypeRule = (CswNbtFieldTypeRuleChildContents) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
+            // No subfields
         }
 
         #region Generic Properties
@@ -39,18 +34,11 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
-        override public string Gestalt
-        {
-            get
-            {
-                return _CswNbtNodePropData.Gestalt;
-            }
-        }
-
         public override string ValueForNameTemplate
         {
             get { return Gestalt; }
         }
+
 
         public override void SyncGestalt()
         {
@@ -95,6 +83,9 @@ namespace ChemSW.Nbt.PropTypes
             return RelationshipProp;
         } // _getRelationshipProp()
 
+        public delegate CswPrimaryKey SetSelectedHandler();
+        public SetSelectedHandler SetSelected = null;
+
         private Dictionary<CswPrimaryKey, string> _getOptions()
         {
             Dictionary<CswPrimaryKey, string> ret = new Dictionary<CswPrimaryKey, string>();
@@ -132,6 +123,8 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
+            base.ToJSON( ParentObject );  // FIRST
+
             bool allowAdd = false;
             ParentObject["nodetypeid"] = string.Empty;
             ParentObject["objectclassid"] = string.Empty;
@@ -181,10 +174,15 @@ namespace ChemSW.Nbt.PropTypes
             ParentObject["relatednodename"] = string.Empty;
 
             Dictionary<CswPrimaryKey, string> Options = _getOptions();
+            CswPrimaryKey SelectedNodeId = null;
+            if( null != SetSelected )
+            {
+                SelectedNodeId = SetSelected();
+            }
             bool first = true;
             foreach( CswPrimaryKey NodePk in Options.Keys )
             {
-                if( first )
+                if( first || ( null != NodePk && NodePk == SelectedNodeId ) )
                 {
                     // Choose first option by default
                     ParentObject["relatednodeid"] = NodePk.ToString();

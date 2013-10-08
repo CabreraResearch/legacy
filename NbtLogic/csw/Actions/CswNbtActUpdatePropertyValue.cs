@@ -74,7 +74,7 @@ namespace ChemSW.Nbt.Actions
                             MTBFProp.RefreshCachedValue();
                             break;
                         default:
-                            PropWrapper.PendingUpdate = false;
+                            PropWrapper.SetSubFieldValue( CswEnumNbtSubFieldName.PendingUpdate, false );
                             break;
                     } // switch (PropWrapper.FieldType.FieldType)
 

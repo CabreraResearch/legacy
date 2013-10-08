@@ -22,20 +22,17 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropBarcode( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtNode Node )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node )
         {
-            //if( _CswNbtMetaDataNodeTypeProp.FieldType.FieldType != CswEnumNbtFieldType.Barcode )
-            //{
-            //    throw ( new CswDniException( ErrorType.Error, "A data consistency problem occurred",
-            //                                "CswNbtNodePropBarcode() was created on a property with fieldtype: " + _CswNbtMetaDataNodeTypeProp.FieldType.FieldType ) );
-            //}
-
-            _FieldTypeRule = (CswNbtFieldTypeRuleBarCode) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
-            _BarcodeSubField = _FieldTypeRule.BarcodeSubField;
-            _SequenceNumberSubField = _FieldTypeRule.SequenceNumberSubField;
+            _BarcodeSubField = ( (CswNbtFieldTypeRuleBarCode) _FieldTypeRule ).BarcodeSubField;
+            _SequenceNumberSubField = ( (CswNbtFieldTypeRuleBarCode) _FieldTypeRule ).SequenceNumberSubField;
 
             _SequenceValue = new CswNbtSequenceValue( _CswNbtMetaDataNodeTypeProp.PropId, _CswNbtResources );
 
-        }//CswNbtNodePropBarcode()
-        private CswNbtFieldTypeRuleBarCode _FieldTypeRule;
+
+            // Associate subfields with methods on this object, for SetSubFieldValue()
+            _SubFieldMethods.Add( _BarcodeSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Barcode, x => setBarcodeValueOverride( CswConvert.ToString( x ), true ) ) );
+            _SubFieldMethods.Add( _SequenceNumberSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => SequenceNumber, null ) );
+        } //CswNbtNodePropBarcode()
+
         private CswNbtSequenceValue _SequenceValue;
         private CswNbtSubField _BarcodeSubField;
         private CswNbtSubField _SequenceNumberSubField;
@@ -48,19 +45,11 @@ namespace ChemSW.Nbt.PropTypes
             }
         }//Empty
 
-        override public string Gestalt
-        {
-            get
-            {
-                return _CswNbtNodePropData.Gestalt;
-            }
-        }//Gestalt
-
         public string Barcode
         {
             get
             {
-                return _CswNbtNodePropData.GetPropRowValue( _BarcodeSubField.Column );
+                return GetPropRowValue( _BarcodeSubField );
             }
         }//Barcode
 
@@ -68,7 +57,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return CswConvert.ToInt32( _CswNbtNodePropData.GetPropRowValue( _SequenceNumberSubField.Column ) );
+                return CswConvert.ToInt32( GetPropRowValue( _SequenceNumberSubField ) );
             }
         }//SequenceNumber
 
@@ -98,7 +87,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             // Fix missing sequence number
             Int32 ThisSeqValue = _SequenceValue.deformatSequence( Barcode );
-            _CswNbtNodePropData.SetPropRowValue( _SequenceNumberSubField.Column, ThisSeqValue );
+            SetPropRowValue( _SequenceNumberSubField, ThisSeqValue );
         }
 
         /// <summary>
@@ -110,10 +99,10 @@ namespace ChemSW.Nbt.PropTypes
         /// (set true if the value was not just generated from the sequence)</param>
         public bool setBarcodeValueOverride( string SeqValue, bool ResetSequence )
         {
-            bool Succeeded = _CswNbtNodePropData.SetPropRowValue( _BarcodeSubField.Column, SeqValue );
+            bool Succeeded = SetPropRowValue( _BarcodeSubField, SeqValue );
             Int32 ThisSeqValue = _SequenceValue.deformatSequence( SeqValue );
-            Succeeded = ( Succeeded && _CswNbtNodePropData.SetPropRowValue( _SequenceNumberSubField.Column, ThisSeqValue ) );
-            _CswNbtNodePropData.Gestalt = SeqValue;
+            Succeeded = ( Succeeded && SetPropRowValue( _SequenceNumberSubField, ThisSeqValue ) );
+            Gestalt = SeqValue;
 
             if( ResetSequence )
             {
@@ -156,6 +145,8 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
+            base.ToJSON( ParentObject );  // FIRST
+
             ParentObject[_SequenceNumberSubField.ToXmlNodeName( true )] = SequenceNumber;
             ParentObject[_BarcodeSubField.ToXmlNodeName( true )] = Barcode;
         }
@@ -183,8 +174,14 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void SyncGestalt()
         {
-            _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, Barcode );
+            SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, Barcode );
         }
+
+        public override bool onBeforeSetDefault()
+        {
+            return DefaultValue.AsBarcode.Barcode != AutoSignal;
+        }
+
     }//CswNbtNodePropQuantity
 
 }//namespace 

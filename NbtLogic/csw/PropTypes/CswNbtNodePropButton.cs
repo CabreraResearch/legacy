@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
@@ -9,7 +10,7 @@ using Newtonsoft.Json.Linq;
 namespace ChemSW.Nbt.PropTypes
 {
 
-    public class CswNbtNodePropButton: CswNbtNodeProp
+    public class CswNbtNodePropButton : CswNbtNodeProp
     {
         public sealed class ButtonMode
         {
@@ -26,14 +27,19 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropButton( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtNode Node )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node )
         {
-            _FieldTypeRule = (CswNbtFieldTypeRuleButton) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
-            _StateSubField = _FieldTypeRule.StateSubField;
-            _MenuOptionsSubField = _FieldTypeRule.MenuOptionsSubField;
-            _DisplayNameSubField = _FieldTypeRule.DisplayNameField;
-            _IconSubField = _FieldTypeRule.IconSubField;
+            CswNbtFieldTypeRuleButton FieldTypeRule = (CswNbtFieldTypeRuleButton) _FieldTypeRule;
+            _StateSubField = FieldTypeRule.StateSubField;
+            _MenuOptionsSubField = FieldTypeRule.MenuOptionsSubField;
+            _DisplayNameSubField = FieldTypeRule.DisplayNameField;
+            _IconSubField = FieldTypeRule.IconSubField;
+
+            // Associate subfields with methods on this object, for SetSubFieldValue()
+            _SubFieldMethods.Add( _StateSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => State, x => State = CswConvert.ToString( x ) ) );
+            _SubFieldMethods.Add( _MenuOptionsSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => MenuOptions, x => MenuOptions = CswConvert.ToString( x ) ) );
+            _SubFieldMethods.Add( _DisplayNameSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => DisplayName, x => DisplayName = CswConvert.ToString( x ) ) );
+            _SubFieldMethods.Add( _IconSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Icon, x => Icon = CswConvert.ToString( x ) ) );
         }
 
-        private CswNbtFieldTypeRuleButton _FieldTypeRule;
         private CswNbtSubField _StateSubField;
         private CswNbtSubField _MenuOptionsSubField;
         private CswNbtSubField _DisplayNameSubField;
@@ -100,14 +106,14 @@ namespace ChemSW.Nbt.PropTypes
         /// </summary>
         public string MenuOptions
         {
-            get { return _CswNbtNodePropData.GetPropRowValue( _MenuOptionsSubField.Column ); }
-            set { _CswNbtNodePropData.SetPropRowValue( _MenuOptionsSubField.Column, value ); }
+            get { return GetPropRowValue( _MenuOptionsSubField ); }
+            set { SetPropRowValue( _MenuOptionsSubField, value ); }
         }
 
         public string State
         {
-            get { return _CswNbtNodePropData.GetPropRowValue( _StateSubField.Column ); }
-            set { _CswNbtNodePropData.SetPropRowValue( _StateSubField.Column, value ); }
+            get { return GetPropRowValue( _StateSubField ); }
+            set { SetPropRowValue( _StateSubField, value ); }
         }
 
         private bool isThisTheSaveButton()
@@ -128,7 +134,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                string Ret = _CswNbtNodePropData.GetPropRowValue( _DisplayNameSubField.Column );
+                string Ret = GetPropRowValue( _DisplayNameSubField );
                 if( string.IsNullOrEmpty( Ret ) )
                 {
                     if( isThisTheSaveButton() )
@@ -139,42 +145,31 @@ namespace ChemSW.Nbt.PropTypes
                     {
                         Ret = Text;
                     }
-                    _CswNbtNodePropData.SetPropRowValue( _DisplayNameSubField.Column, Ret );
+                    //SetPropRowValue( _DisplayNameSubField, Ret );
                 }
                 return Ret;
             }
             set
             {
-                _CswNbtNodePropData.SetPropRowValue( _DisplayNameSubField.Column, value );
+                SetPropRowValue( _DisplayNameSubField, value );
             }
         }
 
 
-        public string Icon 
+        public string Icon
         {
             get
             {
-                string Ret = _CswNbtNodePropData.GetPropRowValue( _IconSubField.Column );
+                string Ret = GetPropRowValue( _IconSubField );
                 if( string.IsNullOrEmpty( Ret ) && isThisTheSaveButton() )
                 {
                     Ret = "save";
-                    Icon = Ret;
+                    //Icon = Ret;
                 }
                 return Ret;
             }
-            set { _CswNbtNodePropData.SetPropRowValue( _IconSubField.Column, value ); }
+            set { SetPropRowValue( _IconSubField, value ); }
         }
-
-
-
-        override public string Gestalt
-        {
-            get
-            {
-                return _CswNbtNodePropData.Gestalt;
-            }
-
-        }//Gestalt
 
         public override string ValueForNameTemplate
         {
@@ -183,6 +178,8 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
+            base.ToJSON( ParentObject );  // FIRST
+
             //TODO: when Case 27516 is complete, merge these two "JSON" methods
             AsJSON( NodeTypeProp, ParentObject, MenuOptions, State );
             ParentObject["confirmmessage"] = ConfirmationDialogMessage;

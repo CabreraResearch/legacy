@@ -323,6 +323,7 @@ namespace ChemSW.Nbt.Schema
         public bool isLogicalDeleteTable( string TableName ) { return ( _CswNbtResources.isLogicalDeleteTable( TableName ) ); }
 
         public void indexColumn( string TableName, string ColumnName, string IndexNameIn = null ) { _CswNbtResources.CswResources.indexColumn( TableName, ColumnName, IndexNameIn ); }
+        public void updateIndex( string TableName, string ColumnName, string IndexName ) { _CswNbtResources.CswResources.updateIndex( TableName, ColumnName, IndexName ); }
 
         public DataTable getAllViews() { return _CswNbtResources.ViewSelect.getAllViews(); }
 
@@ -367,13 +368,13 @@ namespace ChemSW.Nbt.Schema
 
         public void makeTableAuditable( string TableName )
         {
-            if( _CswAuditMetaData.shouldBeAudited( TableName ) && ( false == _CswNbtResources.CswResources.DataDictionary.isColumnDefined( TableName, _CswAuditMetaData.AuditLevelColName ) ) )
-            {
-                addStringColumn( TableName, _CswAuditMetaData.AuditLevelColName, _CswAuditMetaData.AuditLevelColDescription, false, _CswAuditMetaData.AuditLevelColIsRequired, _CswAuditMetaData.AuditLevelColLength );
-            }
-
             if( _CswAuditMetaData.shouldBeAudited( TableName ) )
             {
+                if( false == _CswNbtResources.CswResources.DataDictionary.isColumnDefined( TableName, _CswAuditMetaData.AuditLevelColName ) )
+                {
+                    addStringColumn( TableName, _CswAuditMetaData.AuditLevelColName, _CswAuditMetaData.AuditLevelColDescription, false, _CswAuditMetaData.AuditLevelColIsRequired, _CswAuditMetaData.AuditLevelColLength );
+                }
+
                 string AuditTableName = _CswAuditMetaData.makeAuditTableName( TableName );
 
                 //create the audit table if necessary
@@ -689,7 +690,7 @@ namespace ChemSW.Nbt.Schema
             DataRow JctRow = UpdateAsDataTable.NewRow();
             JctRow["fieldtypeid"] = FieldType.FieldTypeId;
             JctRow["propcolname"] = Column.ToString();
-            JctRow["subfieldname"] = SubField.ToString();
+            JctRow["subfieldname"] = SubField.ToString().ToLower();
             JctRow["reportable"] = CswConvert.ToDbVal( IsReportable );
             JctRow["is_default"] = CswConvert.ToDbVal( IsDefault );
             UpdateAsDataTable.Rows.Add( JctRow );
@@ -945,6 +946,13 @@ namespace ChemSW.Nbt.Schema
                     PropName = CswNbtObjClass.PropertyName.Save,
                     FieldType = CswEnumNbtFieldType.Button,
                     Extended = CswNbtNodePropButton.ButtonMode.button
+                } );
+
+                // Case 30813
+                createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( NewObjectClass )
+                {
+                    PropName = CswNbtObjClass.PropertyName.LegacyId,
+                    FieldType = CswEnumNbtFieldType.Number
                 } );
 
             }
@@ -1390,6 +1398,17 @@ namespace ChemSW.Nbt.Schema
         {
             addColumn( columnname, CswEnumDataDictionaryColumnType.Value, Int32.MinValue, Int32.MinValue, string.Empty, description, string.Empty, string.Empty,
                        false, false, logicaldelete, LowerRangeValue, LowerRangeValueInclusive, CswEnumDataDictionaryPortableDataType.Long, false,
+                       required, tablename, CswEnumDataDictionaryUniqueType.None, UpperRangeValueInclusive, UpperRangeValue );
+        }
+
+        /// <summary>
+        /// Convenience function for adding a new number column to the database schema
+        /// </summary>
+        public void addNumberColumn( string tablename, string columnname, string description, bool logicaldelete, bool required,
+                                   string LowerRangeValue = "", bool LowerRangeValueInclusive = false, string UpperRangeValue = "", bool UpperRangeValueInclusive = false )
+        {
+            addColumn( columnname, CswEnumDataDictionaryColumnType.Value, Int32.MinValue, Int32.MinValue, string.Empty, description, string.Empty, string.Empty,
+                       false, false, logicaldelete, LowerRangeValue, LowerRangeValueInclusive, CswEnumDataDictionaryPortableDataType.Number, false,
                        required, tablename, CswEnumDataDictionaryUniqueType.None, UpperRangeValueInclusive, UpperRangeValue );
         }
 

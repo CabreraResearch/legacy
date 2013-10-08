@@ -31,7 +31,7 @@
                 break;
             case Csw.enums.nbtButtonAction.refreshonadd:
                 if (tabsAndProps) {
-                    tabsAndProps.refresh(null, null); //do not attempt to refresh the properties on add (the dialog is closing)
+                    tabsAndProps.refreshOnAdd(opts.data.savedprops.node);
                     tabsAndProps.tearDown();
                     Csw.tryExec(onRefresh);
                 } else {
@@ -200,217 +200,217 @@
         }
     }
 
-    Csw.composites.nodeButton = Csw.composites.nodeButton ||
-        Csw.composites.register('nodeButton', function (cswParent, options) {
 
-            var cswPublic = {};
-            var cswPrivate = {};
-            var tabsAndProps;
+    Csw.composites.register('nodeButton', function (cswParent, options) {
 
-            (function _pre() {
-                cswPrivate = {
-                    name: 'nodebutton',
-                    div: {},
-                    value: '',
-                    mode: 'button',
-                    useToolTip: true,
-                    messageDiv: {},
-                    state: '',
-                    confirmmessage: '',
-                    table: {},
-                    btnCell: {},
-                    size: 'small',
-                    propId: '',
-                    onClickAction: null,
-                    menuOptions: [],
-                    displayName: '',
-                    icon: '',
-                    nodeId: '',
-                    tabId: '',
-                    identityTabId: '',
-                    properties: {},
-                    onRefresh: function () { }
-                };
+        var cswPublic = {};
+        var cswPrivate = {};
+        var tabsAndProps;
 
-                tabsAndProps = options.tabsAndProps;
-                delete options.tabsAndProps;
-
-                Csw.extend(cswPrivate, options, true);
-                cswPrivate.div = cswParent.div();
-                cswPrivate.div.empty();
-
-                cswPrivate.table = cswPrivate.div.table();
-            }());
-
-            var onAnyNodeButtonClick = function () {
-                cswPublic.button.disable();
-                var onAnyNodeButtonClickFinish = function (eventObj, reEnable) {
-                    Csw.unsubscribe('onAnyNodeButtonClickFinish', onAnyNodeButtonClickFinish);
-                    if (reEnable) {
-                        cswPublic.button.enable();
-                    }
-                };
-                Csw.subscribe('onAnyNodeButtonClickFinish', onAnyNodeButtonClickFinish);
+        (function _pre() {
+            cswPrivate = {
+                name: 'nodebutton',
+                div: {},
+                value: '',
+                mode: 'button',
+                useToolTip: true,
+                messageDiv: {},
+                state: '',
+                confirmmessage: '',
+                table: {},
+                btnCell: {},
+                size: 'small',
+                propId: '',
+                onClickAction: null,
+                menuOptions: [],
+                displayName: '',
+                icon: '',
+                nodeId: '',
+                tabId: '',
+                identityTabId: '',
+                properties: {},
+                onRefresh: function () { }
             };
-            Csw.subscribe('onAnyNodeButtonClick', onAnyNodeButtonClick);
 
-            cswPrivate.onButtonClick = function () {
-                Csw.publish('onAnyNodeButtonClick');
+            tabsAndProps = options.tabsAndProps;
+            delete options.tabsAndProps;
 
-                if (tabsAndProps && false === tabsAndProps.isFormValid()) {
-                    //TODO: make a proper Csw\Ext Dialog class
-                    window.Ext.MessageBox.alert('Warning', 'This form contains some invalid values. Please correct them before proceeding.', function () {
-                        Csw.publish('onAnyNodeButtonClickFinish', true);
-                        tabsAndProps.validator().focusInvalid();
-                    });
+            Csw.extend(cswPrivate, options, true);
+            cswPrivate.div = cswParent.div();
+            cswPrivate.div.empty();
 
+            cswPrivate.table = cswPrivate.div.table();
+        }());
+
+        var onAnyNodeButtonClick = function () {
+            cswPublic.button.disable();
+            var onAnyNodeButtonClickFinish = function (eventObj, reEnable) {
+                Csw.unsubscribe('onAnyNodeButtonClickFinish', onAnyNodeButtonClickFinish);
+                if (reEnable) {
+                    cswPublic.button.enable();
+                }
+            };
+            Csw.subscribe('onAnyNodeButtonClickFinish', onAnyNodeButtonClickFinish);
+        };
+        Csw.subscribe('onAnyNodeButtonClick', onAnyNodeButtonClick);
+
+        cswPrivate.onButtonClick = function () {
+            Csw.publish('onAnyNodeButtonClick');
+
+            if (tabsAndProps && false === tabsAndProps.isFormValid()) {
+                //TODO: make a proper Csw\Ext Dialog class
+                window.Ext.MessageBox.alert('Warning', 'This form contains some invalid values. Please correct them before proceeding.', function () {
+                    Csw.publish('onAnyNodeButtonClickFinish', true);
+                    tabsAndProps.validator().focusInvalid();
+                });
+
+            } else {
+                if (Csw.isNullOrEmpty(cswPrivate.propId)) {
+                    Csw.error.showError(Csw.error.makeErrorObj(Csw.enums.errorType.warning.name, 'Cannot execute a property\'s button click event without a valid property.', 'Attempted to click a property button with a null or empty propid.'));
+                    Csw.publish('onAnyNodeButtonClickFinish', true);
                 } else {
-                    if (Csw.isNullOrEmpty(cswPrivate.propId)) {
-                        Csw.error.showError(Csw.error.makeErrorObj(Csw.enums.errorType.warning.name, 'Cannot execute a property\'s button click event without a valid property.', 'Attempted to click a property button with a null or empty propid.'));
-                        Csw.publish('onAnyNodeButtonClickFinish', true);
+                    // Case 27263: prompt to save instead
+
+                    var propJson = '';
+                    var editMode = Csw.enums.editMode.Table;
+                    var nodeIds = '';
+                    var propIds = '';
+                    var tabIds = '';
+                    if (tabsAndProps) {
+                        propJson = Csw.serialize(tabsAndProps.getPropJson());
+                        editMode = tabsAndProps.getEditMode();
+                        nodeIds = tabsAndProps.getSelectedNodes();
+                        propIds = tabsAndProps.getSelectedProps();
+                        tabIds = tabsAndProps.getTabIds();
+                    }
+
+                    var performOnObjectClassButtonClick = function () {
+                        Csw.ajax.deprecatedWsNbt({
+                            urlMethod: 'onObjectClassButtonClick',
+                            data: {
+                                NodeTypePropAttr: cswPrivate.propId,
+                                SelectedText: Csw.string(cswPublic.button.selectedOption, Csw.string(cswPrivate.value)),
+                                TabIds: tabIds,  //cswPrivate.identityTabId + "," + cswPrivate.tabId,
+                                Props: propJson,
+                                NodeIds: nodeIds,
+                                PropIds: propIds,
+                                EditMode: editMode
+                            },
+                            success: function (data) {
+                                Csw.clientChanges.unsetChanged();
+
+                                var actionData = {
+                                    data: data,
+                                    propid: cswPrivate.propId,
+                                    button: cswPublic.button,
+                                    selectedOption: Csw.string(cswPublic.button.selectedOption),
+                                    messagediv: cswPrivate.messageDiv,
+                                    context: cswPrivate,
+                                    onSuccess: cswPrivate.onAfterButtonClick
+                                };
+
+                                if (false === Csw.isNullOrEmpty(data.message)) {
+                                    if (false === cswPrivate.useToolTip) {
+                                        cswPublic.messageDiv.text(data.message);
+                                    } else {
+                                        cswPrivate.btnCell.quickTip({ html: data.message });
+                                    }
+                                }
+                                if (Csw.bool(data.success)) {
+                                    onObjectClassButtonClick(actionData, tabsAndProps, cswPrivate.onRefresh);
+                                }
+                            }, // ajax success()
+                            error: function () {
+                                Csw.publish('onAnyNodeButtonClickFinish', true);
+                            }
+                        }); // ajax.post()
+                    }; //performOnObjectClassButtonClick
+
+                    if (false === Csw.isNullOrEmpty(cswPrivate.confirmmessage)) {
+                        $.CswDialog('GenericDialog', {
+                            name: 'ButtonConfirmationDialog',
+                            title: 'Confirm ' + Csw.string(cswPrivate.value),
+                            height: 150,
+                            width: 400,
+                            div: Csw.literals.div({ text: cswPrivate.confirmmessage, align: 'center' }),
+                            onOk: function (selectedOption) {
+                                performOnObjectClassButtonClick();
+                            },
+                            onCancel: function () {
+                                Csw.publish('onAnyNodeButtonClickFinish', true);
+                            },
+                            onClose: function () {
+                                Csw.publish('onAnyNodeButtonClickFinish', true);
+                            }
+                        });
                     } else {
-                        // Case 27263: prompt to save instead
-
-                        var propJson = '';
-                        var editMode = Csw.enums.editMode.Table;
-                        var nodeIds = '';
-                        var propIds = '';
-                        var tabIds = '';
-                        if (tabsAndProps) {
-                            propJson = Csw.serialize(tabsAndProps.getPropJson());
-                            editMode = tabsAndProps.getEditMode();
-                            nodeIds = tabsAndProps.getSelectedNodes();
-                            propIds = tabsAndProps.getSelectedProps();
-                            tabIds = tabsAndProps.getTabIds();
-                        }
-
-                        var performOnObjectClassButtonClick = function () {
-                            Csw.ajax.deprecatedWsNbt({
-                                urlMethod: 'onObjectClassButtonClick',
-                                data: {
-                                    NodeTypePropAttr: cswPrivate.propId,
-                                    SelectedText: Csw.string(cswPublic.button.selectedOption, Csw.string(cswPrivate.value)),
-                                    TabIds: tabIds,  //cswPrivate.identityTabId + "," + cswPrivate.tabId,
-                                    Props: propJson,
-                                    NodeIds: nodeIds,
-                                    PropIds: propIds,
-                                    EditMode: editMode
-                                },
-                                success: function (data) {
-                                    Csw.clientChanges.unsetChanged();
-
-                                    var actionData = {
-                                        data: data,
-                                        propid: cswPrivate.propId,
-                                        button: cswPublic.button,
-                                        selectedOption: Csw.string(cswPublic.button.selectedOption),
-                                        messagediv: cswPrivate.messageDiv,
-                                        context: cswPrivate,
-                                        onSuccess: cswPrivate.onAfterButtonClick
-                                    };
-
-                                    if (false === Csw.isNullOrEmpty(data.message)) {
-                                        if (false === cswPrivate.useToolTip) {
-                                            cswPublic.messageDiv.text(data.message);
-                                        } else {
-                                            cswPrivate.btnCell.quickTip({ html: data.message });
-                                        }
-                                    }
-                                    if (Csw.bool(data.success)) {
-                                        onObjectClassButtonClick(actionData, tabsAndProps, cswPrivate.onRefresh);
-                                    }
-                                }, // ajax success()
-                                error: function () {
-                                    Csw.publish('onAnyNodeButtonClickFinish', true);
-                                }
-                            }); // ajax.post()
-                        }; //performOnObjectClassButtonClick
-
-                        if (false === Csw.isNullOrEmpty(cswPrivate.confirmmessage)) {
-                            $.CswDialog('GenericDialog', {
-                                name: 'ButtonConfirmationDialog',
-                                title: 'Confirm ' + Csw.string(cswPrivate.value),
-                                height: 150,
-                                width: 400,
-                                div: Csw.literals.div({ text: cswPrivate.confirmmessage, align: 'center' }),
-                                onOk: function (selectedOption) {
-                                    performOnObjectClassButtonClick();
-                                },
-                                onCancel: function () {
-                                    Csw.publish('onAnyNodeButtonClickFinish', true);
-                                },
-                                onClose: function () {
-                                    Csw.publish('onAnyNodeButtonClickFinish', true);
-                                }
-                            });
-                        } else {
-                            performOnObjectClassButtonClick();
-                        }
-                    } // if-else (Csw.isNullOrEmpty(propAttr)) {
-                }
-            }; // onButtonClick()
-
-            (function _post() {
-                cswPrivate.btnCell = cswPrivate.table.cell(1, 1).div();
-
-                var makeButton = function () {
-
-                    switch (cswPrivate.mode) {
-                        case 'button':
-                            cswPublic.button = cswPrivate.btnCell.buttonExt({
-                                size: cswPrivate.size,
-                                icon: cswPrivate.icon,
-                                enabledText: cswPrivate.displayName,
-                                onClick: cswPrivate.onButtonClick
-                            });
-                            break;
-                        case 'menu':
-                            cswPublic.button = cswPrivate.btnCell.menuButton({
-                                icon: cswPrivate.icon,
-                                selectedText: cswPrivate.displayName,
-                                menuOptions: cswPrivate.menuOptions,
-                                size: cswPrivate.size,
-                                state: Csw.string(cswPrivate.state, cswPrivate.value),
-                                propId: cswPrivate.propId,
-                                onClick: function (selectedOption) {
-                                    cswPrivate.displayName = selectedOption;
-                                    cswPrivate.onButtonClick();
-                                }
-                            });
-                            break;
-                        case 'landingpage':
-                            //landing page handles the button - just execute the onClick event
-                            cswPublic.button = cswPrivate.btnCell.a().hide();
-                            cswPrivate.onButtonClick();
-                            break;
-                        default:
-                            cswPublic.button = cswPrivate.btnCell.a({
-                                value: cswPrivate.value,
-                                onClick: cswPrivate.onButtonClick
-                            });
-                            break;
+                        performOnObjectClassButtonClick();
                     }
+                } // if-else (Csw.isNullOrEmpty(propAttr)) {
+            }
+        }; // onButtonClick()
 
-                    if (Csw.bool(cswPrivate.disabled)) {
-                        cswPublic.button.disable();
-                    }
+        (function _post() {
+            cswPrivate.btnCell = cswPrivate.table.cell(1, 1).div();
 
-                    cswPublic.messageDiv = cswPrivate.table.cell(1, 2).div({
-                        cssclass: 'buttonmessage'
-                    });
-                };
+            var makeButton = function () {
 
-                if (cswPrivate.menuOptions && cswPrivate.menuOptions.length > 0) {
-                    cswPrivate.mode = 'menu';
-                    makeButton();
-                } else {
-                    makeButton();
+                switch (cswPrivate.mode) {
+                    case 'button':
+                        cswPublic.button = cswPrivate.btnCell.buttonExt({
+                            size: cswPrivate.size,
+                            icon: cswPrivate.icon,
+                            enabledText: cswPrivate.displayName,
+                            onClick: cswPrivate.onButtonClick
+                        });
+                        break;
+                    case 'menu':
+                        cswPublic.button = cswPrivate.btnCell.menuButton({
+                            icon: cswPrivate.icon,
+                            selectedText: cswPrivate.displayName,
+                            menuOptions: cswPrivate.menuOptions,
+                            size: cswPrivate.size,
+                            state: Csw.string(cswPrivate.state, cswPrivate.value),
+                            propId: cswPrivate.propId,
+                            onClick: function (selectedOption) {
+                                cswPrivate.displayName = selectedOption;
+                                cswPrivate.onButtonClick();
+                            }
+                        });
+                        break;
+                    case 'landingpage':
+                        //landing page handles the button - just execute the onClick event
+                        cswPublic.button = cswPrivate.btnCell.a().hide();
+                        cswPrivate.onButtonClick();
+                        break;
+                    default:
+                        cswPublic.button = cswPrivate.btnCell.a({
+                            value: cswPrivate.value,
+                            onClick: cswPrivate.onButtonClick
+                        });
+                        break;
                 }
 
-            }());
+                if (Csw.bool(cswPrivate.disabled)) {
+                    cswPublic.button.disable();
+                }
 
-            return cswPublic;
-        });
+                cswPublic.messageDiv = cswPrivate.table.cell(1, 2).div({
+                    cssclass: 'buttonmessage'
+                });
+            };
+
+            if (cswPrivate.menuOptions && cswPrivate.menuOptions.length > 0) {
+                cswPrivate.mode = 'menu';
+                makeButton();
+            } else {
+                makeButton();
+            }
+
+        }());
+
+        return cswPublic;
+    });
 
 
 

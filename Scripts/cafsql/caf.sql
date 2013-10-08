@@ -1,10 +1,9 @@
 -- Create nbtimportqueue table
 create table nbtimportqueue (
-	nbtimportqueueid number(12) NOT NULL PRIMARY KEY,
+  nbtimportqueueid number(12) NOT NULL PRIMARY KEY,
   state varchar(1),
-  itempk number(12) NOT NULL,
-  tablename varchar(50) NOT NULL,
-  viewname varchar(50),
+  itempk varchar(255) NOT NULL,
+  sheetname varchar2(50),
   priority number(12),
   errorlog varchar2(2000)
 );
@@ -15,6 +14,8 @@ create unique index unqidx_nbtimportqueue on NBTIMPORTQUEUE (state, itempk, tabl
 -- Create pk sequence for nbtimportqueue table
 create sequence seq_nbtimportqueueid start with 1 increment by 1;
 commit;
+
+
 
 -- Create views ( these are in order of creation)
 -- Locations level 1
@@ -141,6 +142,340 @@ select w.businessunitid,
   from work_units w
   left outer join business_units b on (b.businessunitid = w.businessunitid)
   left outer join sites s on (s.siteid = w.siteid);
-
+--Users
 create or replace view users_view as
-(select "AUDITFLAG","DEFAULTCATEGORYID","DEFAULTLANGUAGE","DEFAULTLOCATIONID","DEFAULTPRINTERID","DELETED","DISABLED","EMAIL","EMPLOYEEID","FAILEDLOGINCOUNT","HIDEHINTS","HOMEINVENTORYGROUPID","ISSYSTEMUSER","LOCKED","MYSTARTURL","NAMEFIRST","NAMELAST","NAVROWS","NODEVIEWID","PASSWORD","PASSWORD_DATE","PHONE","ROLEID","SUPERVISORID","TITLE","USERID","USERNAME","WELCOMEREDIRECT","WORKUNITID" from users);
+(select "AUDITFLAG","DEFAULTCATEGORYID","DEFAULTLANGUAGE","DEFAULTLOCATIONID","DEFAULTPRINTERID","DELETED","DISABLED","EMAIL","EMPLOYEEID","FAILEDLOGINCOUNT","HIDEHINTS","HOMEINVENTORYGROUPID","ISSYSTEMUSER","LOCKED","MYSTARTURL","NAMEFIRST","NAMELAST","NAVROWS","NODEVIEWID","PASSWORD","PASSWORD_DATE","PHONE","ROLEID","SUPERVISORID","TITLE","USERID","USERNAME","WELCOMEREDIRECT","WORKUNITID" from users where issystemuser != 1);
+
+---Packdetail
+create or replace view packdetail_view as
+select packdetailid,
+       packagedescription,
+       packageid,
+       catalogno,
+       capacity,
+       unitofmeasureid,
+       deleted,
+       dispenseonly,
+       unitcount,
+       upc,
+       CASE containertype
+            when 'A' then 'Aboveground Tank [A]'
+            when 'B' then 'Belowground Tank [B]'
+            when 'C' then 'Tank Inside Building [C]'
+            when 'D' then 'Steel Drum [D]'
+            when 'E' then 'Plastic or Non-Metal Drum [E]'
+            when 'F' then 'Can [F]'
+            when 'G' then 'Carboy [G]'
+            when 'I' then 'Fiberdrum [I]'
+            when 'J' then 'Bag [J]'
+            when 'K' then 'Box [K]'
+            when 'L' then 'Cylinder [L]'
+            when 'M' then 'Glass Bottle or Jug [M]'
+            when 'N' then 'Plastic [N]'
+            when 'O' then 'Tote Bin [O]'
+            when 'P' then 'Tank Wagon [P]'
+       END as containertype
+       from packdetail;
+
+--Chemicals
+create or replace view chemicals_view as
+(select v.vendorid,
+ p.packageid,
+ p.productno,
+ m."AQUEOUS_SOLUBILITY",
+m."BOILING_POINT",
+m."CASNO",
+m."COLOR",
+m."COMPRESSED_GAS",
+m."CREATIONDATE",
+m."CREATIONSITEID",
+m."DELETED",
+m."DOT_CODE",
+m."EXPIREINTERVAL",
+m."EXPIREINTERVALUNITS",
+m."EXPOSURE_LIMITS",
+m."FIRECODE",
+m."FLASH_POINT",
+m."FORMULA",
+m."HAZARDS",
+m."HEALTHCODE",
+m."INVENTORYREQUIRED",
+m."KEYWORDS",
+m."LOB_TYPE",
+m."MANUFACTURER",
+m."MATERIAL_FINISH",
+m."MATERIAL_SIZEVOL",
+m."MATERIAL_TYPE",
+m."MATERIAL_USE",
+m."MATERIALID",
+m."MATERIALNAME",
+m."MATERIALSUBCLASSID",
+m."MELTING_POINT",
+m."MODEL",
+m."MOLECULAR_WEIGHT",
+m."OTHERREFERENCENO",
+m."PH",
+m."PHYSICAL_DESCRIPTION",
+m."PHYSICAL_STATE",
+m.ppe,
+replace(replace(replace(m.ppe, 'Eye Protection', 'Goggles'), 'Hand Protection', 'Gloves'), 'Ventilation', 'Fume Hood') as ppe_trans,
+m."REACTIVECODE",
+m."REVIEWSTATUSCHANGEDATE",
+m."REVIEWSTATUSNAME",
+m."SPEC_NO",
+m."SPECIFIC_CODE",
+m."SPECIFIC_GRAVITY",
+m."SPECIFICCODE",
+m."VAPOR_DENSITY",
+m."VAPOR_PRESSURE",
+m."KEEPATSTATUS",
+m."TARGET_ORGANS",
+m."CREATIONUSERID",
+m."AUDITFLAG",
+m."CREATIONWORKUNITID",
+m."EINECS",
+m."CONST_UBA_CODE",
+m."CONST_COLOR_INDEX",
+m."CONST_SIMPLE_NAME",
+m."CONST_CHEM_GROUP",
+m."CONST_INGRED_CLASS",
+m."CONST_CHEM_REACT",
+m."LASTUPDATED",
+m."OPENEXPIREINTERVAL",
+m."OPENEXPIREINTERVALUNITS",
+m."CONST_FEMA_NO",
+m."CONST_COE_NO",
+m."PRODUCTTYPE",
+m."PRODUCTBRAND",
+m."PRODUCTCATEGORY",
+m."NFPACODE",
+m."CONST_MAT_FUNCTION",
+m."HAS_ACTIVITY",
+m."REFNO",
+m."TYPE",
+m."SPECIES",
+m."VARIETY",
+m."GOI",
+m."TRANSGENIC",
+m."VECTORS",
+m."BIOSAFETY",
+m."CONST_MAT_ORIGIN",
+m."REVIEWSTATUSTYPE",
+m."STORAGE_CONDITIONS",
+m."PENDINGUPDATE",
+m."ISTIER2",
+m."MATERIALVARIETYID",
+m."NONHAZARDOUS3E",
+m."ASSETCREATIONNAME",
+ms.subclassname,
+
+(case m.physical_state
+  when 'S' then 'Solid'
+  when 'L' then 'Liquid'
+  when 'G' then 'Gas'
+end) as physical_state_trans,
+
+(case m.nonhazardous3e
+  when '1' then '0'
+  when '0' then '1'
+end) as nonhazardous3e_trans
+
+from materials m
+             join packages p on p.materialid = m.materialid
+             join vendors v on p.supplierid = v.vendorid
+             join materials_subclass ms on ms.materialsubclassid = m.materialsubclassid
+             join materials_class mc on mc.materialclassid = ms.materialclassid
+     where m.deleted = 0 and p.deleted = 0 and mc.classname = 'CHEMICAL');
+	 
+---Weight
+create or replace view weight_view as
+select unitofmeasurename,
+       unittype,
+       convertfromkgs_base as conversionfactor,
+       deleted,
+       unitofmeasureid
+from units_of_measure
+where lower(unittype)='weight';
+
+---Volume
+create or replace view volume_view as
+select unitofmeasurename,
+       unittype,
+       convertfromliters_base as conversionfactor,
+       deleted,
+       unitofmeasureid
+from units_of_measure
+where lower(unittype)='volume';
+
+---Each
+create or replace view each_view as
+select unitofmeasurename,
+       unittype,
+       convertfromeaches_base as conversionfactor,
+       deleted,
+       unitofmeasureid
+from units_of_measure
+where lower(unittype)='each';
+
+create or replace view sds_view as(
+  select * from (select 
+  d.documentid,
+  d.packageid,
+  d.acquisitiondate,
+  d.captureddate,
+  d.content_type,
+  d.deleted,
+  nvl(d.description, '[blank]') as description,
+  d.docisexternal,
+  d.doctype,
+  d.fileextension,
+  d.filename,
+  d.language,
+  d.materialid,
+  d.documentid || '_' || d.packageid as legacyid,
+  
+  (case d.fileextension
+        when 'URL' then 'Link'
+        else 'File'
+   end) as fileextension_trans,
+   
+   (case d.language
+   when 'english'    then 'en'
+   when 'french'     then 'fr'
+   when 'german'     then 'de'
+   when 'danish'     then 'da'
+   when 'dutch'      then 'nl'
+   when 'spanish'    then 'es'
+   when 'italian'    then 'it'
+   when 'chinese'    then 'zh'
+   when 'portuguese' then 'pt'
+   when 'USA/en'     then 'en'
+  end) as language_trans
+  
+ from documents d 
+ where d.packageid is not null and doctype = 'MSDS' and d.deleted = 0
+ 
+union all
+ 
+select 
+  d2.documentid,
+  p.packageid,
+  d2.acquisitiondate,
+  d2.captureddate,
+  d2.content_type,
+  d2.deleted,
+  nvl(d2.description, '[blank]') as description,
+  d2.docisexternal,
+  d2.doctype,
+  d2.fileextension,
+  d2.filename,
+  d2.language,
+  d2.materialid,
+  d2.documentid || '_' || p.packageid as legacyid,
+  
+  (case d2.fileextension
+   when 'URL' then 'Link'
+   else 'File'
+  end) as fileextension_trans,
+   
+  (case d2.language
+   when 'english'    then 'en'
+   when 'french'     then 'fr'
+   when 'german'     then 'de'
+   when 'danish'     then 'da'
+   when 'dutch'      then 'nl'
+   when 'spanish'    then 'es'
+   when 'italian'    then 'it'
+   when 'chinese'    then 'zh'
+   when 'portuguese' then 'pt'
+   when 'USA/en'     then 'en'
+  end) as language_trans
+  
+ from documents d2 
+       join materials m on m.materialid = d2.materialid
+       join packages p on m.materialid = p.packageid
+       where d2.packageid is null and doctype = 'MSDS' and d2.deleted = 0
+)
+);
+
+create or replace view docs_view as
+(
+  (select
+  d.documentid,
+  d.packageid,
+  d.acquisitiondate,
+  d.captureddate,
+  d.content_type,
+  d.deleted,
+  nvl(d.description, '[blank]') as description,
+  d.docisexternal,
+  d.doctype,
+  d.fileextension,
+  d.filename,
+  d.language,
+  d.materialid,
+  d.documentid || '_' || d.packageid as legacyid,
+
+  (case d.fileextension
+        when 'URL' then 'Link'
+        else 'File'
+   end) as fileextension_trans,
+
+   (case d.language
+   when 'english'    then 'en'
+   when 'french'     then 'fr'
+   when 'german'     then 'de'
+   when 'danish'     then 'da'
+   when 'dutch'      then 'nl'
+   when 'spanish'    then 'es'
+   when 'italian'    then 'it'
+   when 'chinese'    then 'zh'
+   when 'portuguese' then 'pt'
+   when 'USA/en'     then 'en'
+  end) as language_trans
+
+ from documents d
+ where d.packageid is not null and doctype = 'DOC' and d.deleted = 0
+
+union all
+
+select
+  d2.documentid,
+  p.packageid,
+  d2.acquisitiondate,
+  d2.captureddate,
+  d2.content_type,
+  d2.deleted,
+  nvl(d2.description, '[blank]') as description,
+  d2.docisexternal,
+  d2.doctype,
+  d2.fileextension,
+  d2.filename,
+  d2.language,
+  d2.materialid,
+  d2.documentid || '_' || p.packageid as legacyid,
+
+  (case d2.fileextension
+   when 'URL' then 'Link'
+   else 'File'
+  end) as fileextension_trans,
+
+  (case d2.language
+   when 'english'    then 'en'
+   when 'french'     then 'fr'
+   when 'german'     then 'de'
+   when 'danish'     then 'da'
+   when 'dutch'      then 'nl'
+   when 'spanish'    then 'es'
+   when 'italian'    then 'it'
+   when 'chinese'    then 'zh'
+   when 'portuguese' then 'pt'
+   when 'USA/en'     then 'en'
+  end) as language_trans
+
+ from documents d2
+       join materials m on m.materialid = d2.materialid
+       join packages p on m.materialid = p.packageid
+       where d2.packageid is null and doctype = 'DOC' and d2.deleted = 0
+)
+);

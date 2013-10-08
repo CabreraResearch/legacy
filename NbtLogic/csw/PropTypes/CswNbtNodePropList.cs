@@ -20,9 +20,8 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropList( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtNode Node )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node )
         {
-            _FieldTypeRule = (CswNbtFieldTypeRuleList) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
-            _ValueSubField = _FieldTypeRule.ValueSubField;
-            _TextSubField = _FieldTypeRule.TextSubField;
+            _ValueSubField = ( (CswNbtFieldTypeRuleList) _FieldTypeRule ).ValueSubField;
+            _TextSubField = ( (CswNbtFieldTypeRuleList) _FieldTypeRule ).TextSubField;
 
             _SearchThreshold = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumNbtConfigurationVariables.relationshipoptionlimit.ToString() ) );
             if( _SearchThreshold <= 0 )
@@ -30,9 +29,12 @@ namespace ChemSW.Nbt.PropTypes
                 _SearchThreshold = 100;
             }
 
+            // Associate subfields with methods on this object, for SetSubFieldValue()
+            _SubFieldMethods.Add( _ValueSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Value, x => Value = CswConvert.ToString( x ) ) );
+            _SubFieldMethods.Add( _TextSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Text, null ) );
+
         }//generic
 
-        private CswNbtFieldTypeRuleList _FieldTypeRule;
         private CswNbtSubField _ValueSubField;
         private CswNbtSubField _TextSubField;
 
@@ -46,25 +48,15 @@ namespace ChemSW.Nbt.PropTypes
             }//
         }
 
-
-        override public string Gestalt
-        {
-            get
-            {
-                return _CswNbtNodePropData.Gestalt;
-            }//
-
-        }//Gestalt
-
         public string Value
         {
             get
             {
-                return _CswNbtNodePropData.GetPropRowValue( _ValueSubField.Column );
+                return GetPropRowValue( _ValueSubField );
             }
             set
             {
-                _CswNbtNodePropData.SetPropRowValue( _ValueSubField.Column, value );
+                SetPropRowValue( _ValueSubField, value );
                 CswNbtNodeTypePropListOption SelectedOption = Options.FindByValue( value );
                 if( null != SelectedOption )
                 {
@@ -86,12 +78,12 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return _CswNbtNodePropData.GetPropRowValue( _TextSubField.Column );
+                return GetPropRowValue( _TextSubField );
             }
             set
             {
-                _CswNbtNodePropData.SetPropRowValue( _TextSubField.Column, value );
-                _CswNbtNodePropData.Gestalt = value;
+                SetPropRowValue( _TextSubField, value );
+                Gestalt = value;
             }
         }
 
@@ -149,6 +141,8 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
+            base.ToJSON( ParentObject );  // FIRST
+
             ParentObject[_TextSubField.ToXmlNodeName( true )] = Text;
             ParentObject[_ValueSubField.ToXmlNodeName( true )] = Value;
             ParentObject["search"] = false;
@@ -217,8 +211,8 @@ namespace ChemSW.Nbt.PropTypes
         public override void SyncGestalt()
         {
             //TODO: Check this is the correct logic
-            _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, Text );
-            //_CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, Value );
+            SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, Text );
+            //SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, Value );
         }
     }//CswNbtNodeProp
 

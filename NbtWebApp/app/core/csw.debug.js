@@ -3,16 +3,37 @@
 
 (function () {
     'use strict';
-    
+
+    var method;
+    var noop = function () { };
+    var methods = [
+        'assert', 'clear', 'count', 'debug', 'dir', 'dirxml', 'error',
+        'exception', 'group', 'groupCollapsed', 'groupEnd', 'info', 'log',
+        'markTimeline', 'profile', 'profileEnd', 'table', 'time', 'timeEnd',
+        'timeStamp', 'trace', 'warn'
+    ];
+    var length = methods.length;
+    var console = (window.console = window.console || {});
+
+    while (length--) {
+        method = methods[length];
+
+        // Only stub undefined methods.
+        if (!console[method]) {
+            console[method] = noop;
+        }
+    }
+
+
     var cswPrivate = {
         prepMsg: function (msg) {
             var ret = {};
-            var data = msg || { };
-            
-                if (false === Csw.isPlainObject(data)) {
-                    data = { message: Csw.string(data) }; 
-                } 
-            
+            var data = msg || {};
+
+            if (false === Csw.isPlainObject(data)) {
+                data = { message: Csw.string(data) };
+            }
+
             ret.customerid = ret.customerid || Csw.clientSession.currentAccessId();
             ret.username = ret.username || Csw.clientSession.currentUserName();
             ret.sessionid = ret.sessionid || Csw.clientSession.currentSessionId();
@@ -20,27 +41,27 @@
             ret.data = data;
             return ret;
         },
-        logLevels: ['info','performance','warn','error','none']
+        logLevels: ['info', 'performance', 'warn', 'error', 'none']
     };
 
     var cswPublic = {
         loggly: {
             info: function () { },
-            perf: function () {},
-            warn: function () {},
-            error: function () {}
+            perf: function () { },
+            warn: function () { },
+            error: function () { }
         }
     };
 
-    cswPrivate.prepareLoggly = Csw.method(function(url) {
-        cswPublic.loggly = cswPublic.loggly || { };
+    cswPrivate.prepareLoggly = Csw.method(function (url) {
+        cswPublic.loggly = cswPublic.loggly || {};
         cswPublic.loggly.info = new window.loggly({ url: url, level: 'log' });
         cswPublic.loggly.perf = new window.loggly({ url: url, level: 'debug' });
         cswPublic.loggly.warn = new window.loggly({ url: url, level: 'warn' });
         cswPublic.loggly.error = new window.loggly({ url: url, level: 'error' });
     });
 
-    cswPrivate.initLoggly = function(keepTrying) {
+    cswPrivate.initLoggly = function (keepTrying) {
         try {
             var key = Csw.clientSession.getLogglyInput();
             var host = ("https:" == document.location.protocol) ? "https://logs.loggly.com" : 'http://logs.loggly.com';
@@ -52,7 +73,7 @@
                     cswPrivate.initLoggly();
                 }, 5000);
             }
-        } catch(e) {
+        } catch (e) {
             //This kludge is for Dev. getLogglyInput() won't fail in compiled code.
             if (keepTrying !== false) {
                 window.setTimeout(function () {
@@ -68,11 +89,11 @@
         return cswPrivate.logLevels.indexOf(maxLevel) <= cswPrivate.logLevels.indexOf(requestLevel);
     };
 
-    cswPublic.showExceptions = function() {
+    cswPublic.showExceptions = function () {
         return (Csw.clientSession.isDebug() || cswPrivate.isLogLevelSupported('error'));
     };
 
-    cswPublic.logLevels = function() {
+    cswPublic.logLevels = function () {
         return cswPrivate.logLevels.slice(0);
     };
 
@@ -98,18 +119,18 @@
         }
     };
 
-    cswPrivate.tryExecSwallow = function(toConsole, toLoggly, onFail) {
+    cswPrivate.tryExecSwallow = function (toConsole, toLoggly, onFail) {
 
         try {
             toConsole();
-        } catch(e) {
+        } catch (e) {
             try {
                 onFail();
             } catch (e) {
-                
+
             }
         }
-        
+
         try {
             toLoggly();
         } catch (e) {
@@ -220,8 +241,8 @@
             cswPrivate.tryExecSwallow(
                 function toConsole() {
                     name = name || '';
-                        console.profile(name);
-                    }
+                    console.profile(name);
+                }
             );
         }
     };
@@ -232,8 +253,8 @@
             cswPrivate.tryExecSwallow(
                 function toConsole() {
                     name = name || '';
-                        console.profileEnd(name);
-                    }
+                    console.profileEnd(name);
+                }
             );
         }
     };
@@ -291,7 +312,7 @@
         }
     };
 
-    Csw.debug = Csw.debug ||
-        Csw.register('debug', cswPublic);
 
-} ());
+    Csw.register('debug', cswPublic);
+
+}());

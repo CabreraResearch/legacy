@@ -87,7 +87,7 @@ namespace NbtWebApp
             BWriter.Write( ret.Data.data );
             mem.Position = 0;
 
-            WebOperationContext.Current.OutgoingResponse.Headers.Add( "Content-Disposition", "attachment;filename=" + ret.Data.Blob.FileName + ";" );
+            WebOperationContext.Current.OutgoingResponse.Headers.Add( "Content-Disposition", "attachment;filename=\"" + ret.Data.Blob.FileName + "\";" );
             WebOperationContext.Current.OutgoingResponse.Headers.Add( HttpResponseHeader.ContentType, ret.Data.Blob.ContentType );
 
             return mem;

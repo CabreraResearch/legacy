@@ -295,7 +295,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                 } //if user has permission to edit the property
             } //if not null
 
-        } // _applyPropJson
+        } // addSingleNodeProp()
 
         private void _getRelationshipSecondTypeRecursive( Collection<CswNbtViewRelationship> Relationships,
                                                           Dictionary<Int32, Int32> SecondTypes )

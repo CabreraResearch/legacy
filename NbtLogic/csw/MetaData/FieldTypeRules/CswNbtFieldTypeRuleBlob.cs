@@ -26,6 +26,17 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             ContentTypeSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Null );
             SubFields.add( ContentTypeSubField );
 
+            DateModifiedSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field2_Date, CswEnumNbtSubFieldName.DateModified );
+            DateModifiedSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Equals );
+            DateModifiedSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.GreaterThan );
+            DateModifiedSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.GreaterThanOrEquals );
+            DateModifiedSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.LessThan );
+            DateModifiedSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.LessThanOrEquals );
+            DateModifiedSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotEquals );
+            DateModifiedSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotNull );
+            DateModifiedSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Null );
+            SubFields.add( DateModifiedSubField );
+
             //BlobSubField = new CswNbtSubField( CswEnumNbtPropColumn.Field1, CswEnumNbtSubFieldName.Blob );
             //BlobSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotNull |
             //                           CswEnumNbtFilterMode.Null;
@@ -35,6 +46,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
         public CswNbtSubField FileNameSubField;
         public CswNbtSubField ContentTypeSubField;
+        public CswNbtSubField DateModifiedSubField;
         //public CswNbtSubField BlobSubField;
 
         public CswNbtSubFieldColl SubFields

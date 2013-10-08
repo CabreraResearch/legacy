@@ -23,17 +23,17 @@ namespace ChemSW.Nbt.csw.Security
             {
                 AuthStatus = CswEnumAuthenticationStatus.Failed;
             }
-            else if( UserNode.IsArchived() )
-            {
-                AuthStatus = CswEnumAuthenticationStatus.Archived;
-            }
-            else if( UserNode.IsAccountLocked() )
-            {
-                AuthStatus = CswEnumAuthenticationStatus.Locked;
-            }
             else if( UserNode.getFailedLoginCount() == 0 )
             {
                 AuthStatus = CswEnumAuthenticationStatus.Authenticated;
+                if( UserNode.IsArchived() )
+                {
+                    AuthStatus = CswEnumAuthenticationStatus.Archived;
+                }
+                else if( UserNode.IsAccountLocked() )
+                {
+                    AuthStatus = CswEnumAuthenticationStatus.Locked;
+                }
             }
             return AuthStatus;
         }

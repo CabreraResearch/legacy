@@ -21,16 +21,12 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropMultiList( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtNode Node )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node )
         {
-            //if( _CswNbtMetaDataNodeTypeProp.FieldType.FieldType != CswEnumNbtFieldType.MultiList )
-            //{
-            //    throw ( new CswDniException( ErrorType.Error, "A data consistency problem occurred",
-            //                                "CswNbtNodePropMultiList() was created on a property with fieldtype: " + _CswNbtMetaDataNodeTypeProp.FieldType.FieldType ) );
-            //}
-            _FieldTypeRule = (CswNbtFieldTypeRuleMultiList) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
-            _ValueSubField = _FieldTypeRule.ValueSubField;
+            _ValueSubField = ( (CswNbtFieldTypeRuleMultiList) _FieldTypeRule ).ValueSubField;
 
-        }//generic
-        private CswNbtFieldTypeRuleMultiList _FieldTypeRule;
+            // Associate subfields with methods on this object, for SetSubFieldValue()
+            _SubFieldMethods.Add( _ValueSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Value, x => Value.FromString( CswConvert.ToString( x ) ) ) );
+        }
+
         private CswNbtSubField _ValueSubField;
 
         #region Attributes
@@ -42,16 +38,6 @@ namespace ChemSW.Nbt.PropTypes
                 return ( 0 == Gestalt.Length && Value.IsEmpty );
             }//
         }
-
-
-        override public string Gestalt
-        {
-            get
-            {
-                return _CswNbtNodePropData.Gestalt;
-            }//
-
-        }//Gestalt
 
         /// <summary>
         /// The Delimiter used to concatenate all selected options
@@ -93,7 +79,7 @@ namespace ChemSW.Nbt.PropTypes
                 if( _Value == null )
                 {
                     _Value = new CswCommaDelimitedString();
-                    _Value.FromString( _CswNbtNodePropData.GetPropRowValue( _ValueSubField.Column ) );
+                    _Value.FromString( GetPropRowValue( _ValueSubField ) );
                 }
                 return _Value;
             }
@@ -101,7 +87,7 @@ namespace ChemSW.Nbt.PropTypes
             {
                 _Value = value;
                 string ValString = value.ToString();
-                _CswNbtNodePropData.SetPropRowValue( _ValueSubField.Column, ValString );
+                SetPropRowValue( _ValueSubField, ValString );
                 SyncGestalt();
             }
         }
@@ -201,7 +187,7 @@ namespace ChemSW.Nbt.PropTypes
                     NewGestalt.Add( Options[Key] );
                 }
             }
-            _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, NewGestalt.ToString() );
+            SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, NewGestalt.ToString() );
         } // _setGestalt()
 
         public static string OptionTextField = "Text";
@@ -295,6 +281,8 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
+            base.ToJSON( ParentObject );  // FIRST
+
             ParentObject[_ValueSubField.ToXmlNodeName( true )] = Value.ToString();
 
             JObject OptionsObj = new JObject();

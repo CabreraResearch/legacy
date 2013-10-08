@@ -16,7 +16,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>..\bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <DebugType>full</DebugType>
     <PlatformTarget>x64</PlatformTarget>
@@ -30,11 +30,11 @@
     <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
     <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
     <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
-    <DocumentationFile>bin\NbtLogic.XML</DocumentationFile>
+    <DocumentationFile>..\bin\NbtLogic.XML</DocumentationFile>
     <NoWarn>1591,1572,1571,1573,1587,1570</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>..\bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
@@ -49,7 +49,7 @@
     <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
     <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
     <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
-    <DocumentationFile>bin\NbtLogic.XML</DocumentationFile>
+    <DocumentationFile>..\bin\NbtLogic.XML</DocumentationFile>
     <NoWarn>1591,1572,1571,1573,1587,1570</NoWarn>
     <WarningLevel>0</WarningLevel>
   </PropertyGroup>
@@ -113,6 +113,7 @@
     <Compile Include="csw\ImportExport\CswNbtImportDefOrder.cs" />
     <Compile Include="csw\ImportExport\CswNbtImportDefBinding.cs" />
     <Compile Include="csw\ImportExport\CswNbtImporter.cs" />
+    <Compile Include="csw\MetaData\enum\CswEnumNbtCategory.cs" />
     <Compile Include="csw\MetaData\enum\CswEnumNbtFilterConjunction.cs" />
     <Compile Include="csw\MetaData\enum\CswEnumNbtFilterResultMode.cs" />
     <Compile Include="csw\MetaData\enum\CswEnumNbtFilterMode.cs" />
@@ -125,6 +126,7 @@
     <Compile Include="csw\MetaData\enum\CswEnumNbtObjectClassPropAttributes.cs" />
     <Compile Include="csw\MetaData\enum\CswEnumNbtPropAction.cs" />
     <Compile Include="csw\MetaData\enum\CswEnumNbtPropertySelectMode.cs" />
+    <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleFormula.cs" />
     <Compile Include="csw\MetaData\Infr\ICswNbtMetaDataObject.cs" />
     <Compile Include="csw\MetaData\enum\CswEnumNbtPropertySet.cs" />
     <Compile Include="csw\MetaData\Collection\CswNbtMetaDataCollectionPropertySet.cs" />
@@ -188,6 +190,7 @@
     <Compile Include="csw\PropTypes\CswEnumNbtIdRefState.cs" />
     <Compile Include="csw\PropTypes\CswEnumNbtNFPADisplayMode.cs" />
     <Compile Include="csw\PropTypes\CswEnumNbtGridPropMode.cs" />
+    <Compile Include="csw\PropTypes\CswNbtNodePropFormula.cs" />
     <Compile Include="csw\Sched\core\CswEnumNbtScheduleRuleNames.cs" />
     <Compile Include="csw\Sched\logic\CswScheduleLogicNbtImport.cs" />
     <Compile Include="csw\Sched\logic\CswScheduleLogicNbtNodeCounts.cs" />
@@ -302,7 +305,6 @@
     <None Include="csw\Schema\scripts\past\02C\CswUpdateSchema_02C_Case29717.cs" />
     <None Include="csw\Schema\scripts\past\02C\CswUpdateSchema_02C_Case29428.cs" />
     <Compile Include="csw\Schema\Import\CswNbtSchemaUpdateImportMgr.cs" />
-    <Compile Include="csw\Schema\Import\CswNbtSchemaUpdateImportMgrSQL.cs" />
     <Compile Include="csw\Schema\Layout\CswNbtSchemaUpdateLayoutMgrHlprImpl.cs" />
     <Compile Include="csw\Schema\Layout\CswNbtSchemaUpdateLayoutMgr.cs" />
     <Compile Include="csw\Schema\Layout\ICswNbtSchemaUpdateLayoutMgrHlpr.cs" />
@@ -335,19 +337,70 @@
     <None Include="csw\Schema\scripts\past\02E\CswUpdateSchema_02E_Case30440.cs" />
     <None Include="csw\Schema\scripts\past\02E\CswUpdateSchema_02E_Case30445.cs" />
     <None Include="csw\Schema\scripts\past\02E\CswUpdateSchema_02E_Case30300.cs" />
-    <Compile Include="csw\Schema\scripts\prod\02F\CswUpdateSchema_02F_Case30700.cs" />
-    <Compile Include="csw\Schema\scripts\prod\02F\CswUpdateMetaData_02F_Case30697.cs" />
-    <Compile Include="csw\Schema\scripts\prod\02F\CswUpdateSchema_02F_Case30706.cs" />
-    <Compile Include="csw\Schema\scripts\prod\02F\CswUpdateSchema_02F_Case30661.cs" />
-    <Compile Include="csw\Schema\scripts\prod\02F\CswUpdateSchema_02F_Case30647.cs" />
-    <Compile Include="csw\Schema\scripts\prod\02F\CswUpdateSchema_02F_Case29984.cs" />
-    <Compile Include="csw\Schema\scripts\prod\02F\CswUpdateSchema_02F_Case29562.cs" />
-    <Compile Include="csw\Schema\scripts\prod\02F\CswUpdateMetaData_02F_Case30529.cs" />
-    <Compile Include="csw\Schema\scripts\prod\02F\CswUpdateSchema_02F_Case30041_ScheduledRuleImport.cs" />
-    <Compile Include="csw\Schema\scripts\prod\02F\CswUpdateSchema_02F_Case30040.cs" />
+    <None Include="csw\Schema\scripts\past\02F\CswUpdateSchema_02F_Case30700.cs" />
+    <Compile Include="csw\Schema\scripts\ICswSchemaScripts.cs" />
+    <Compile Include="csw\MetaData\Infr\CswNbtAuditTableAbbreviation.cs" />
+    <Compile Include="csw\Schema\scripts\infr\RunAfterEveryExecutionOfUpdater_02AuditSql.cs" />
+    <None Include="csw\Schema\scripts\past\02F\CswSchemaScriptsFoxglove.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateSchema_02G_Case30894.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateSchema_02G_Case30875.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateSchema_02G_Case30832.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateSchema_02G_Case30794.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateDDL_02G_Case30771.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateMetaData_02G_Case30744.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateMetaData_02G_Case30813.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateSchema_02G_Case30793.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateSchema_02G_Case30017.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateSchema_02G_Case30743.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateMetaData_02G_Case30743.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateSchema_02G_Case29283.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateDDL_02G_Case30778.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateSchema_02G_Case30562.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateSchema_02G_Case30756.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateSchema_02G_Case30680.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateMetaData_02G_Case30680.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateSchema_02G_Case30849.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CAF\CswUpdateSchema_02G_Case30047_Docs.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CAF\CswUpdateSchema_02G_Case30744_PackDetail.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateDDL_02G_Case30702.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateSchema_02G_Case30702.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CAF\CswUpdateSchema_02G_Case30047_SDS.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CAF\CswUpdateSchema_02G_Case30743_Materials.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateDDL_02G_Case30737.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateMetaData_02G_Case30575.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateSchema_02G_Case30301.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateSchema_02G_Case28832.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateSchema_02G_Case29894.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateSchema_02G_Case30480.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateMetaData_02G_Case30480.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateSchema_02G_Case30379.cs" />
+    <None Include="csw\Schema\scripts\past\02F\CswUpdateMetaData_02F_Case30697.cs" />
+    <None Include="csw\Schema\scripts\past\02F\CswUpdateSchema_02F_Case30706.cs" />
+    <None Include="csw\Schema\scripts\past\02F\CswUpdateSchema_02F_Case30661.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateSchema_02G_Case30564B.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateMetaData_02G_Case30564.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateSchema_02G_Case29565.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateMetaData_02G_Case30666.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateDDL_02G_Case29565.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02G\CswSchemaScriptsGinkgo.cs" />
+    <None Include="csw\Schema\scripts\past\02F\CswUpdateSchema_02F_Case30647.cs" />
+    <None Include="csw\Schema\scripts\past\02F\CswUpdateSchema_02F_Case29984.cs" />
+    <None Include="csw\Schema\scripts\past\02F\CswUpdateSchema_02F_Case29562.cs" />
+    <None Include="csw\Schema\scripts\past\02F\CswUpdateMetaData_02F_Case30529.cs" />
+    <None Include="csw\Schema\scripts\past\02F\CswUpdateSchema_02F_Case30041_ScheduledRuleImport.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CAF\CswSchemaScriptsCAF.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CAF\CswUpdateSchema_02F_Case30043_InventoryGroups.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CAF\CswUpdateSchema_02F_Case30043_WorkUnits.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CAF\CswUpdateSchema_02F_Case30041_RegLists.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CAF\CswUpdateSchema_02F_Case30041_UnitsOfMeasure.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CAF\CswUpdateSchema_02F_Case30041_Vendors.cs" />
+    <None Include="csw\Schema\scripts\past\02F\CswUpdateSchema_02F_Case30040.cs" />
     <None Include="csw\Schema\scripts\past\02E\CswUpdateSchema_02E_Case30339_UserProfilex2.cs" />
-    <Compile Include="csw\Schema\scripts\prod\02F\CswUpdateSchema_02F_Case30577.cs" />
-    <Compile Include="csw\Schema\scripts\prod\02F\CswUpdateMetaData_02F_Case30040.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CAF\CswUpdateSchema_02F_Case30041_RolesUsers.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CAF\CswUpdateSchema_02F_Case30043_Locations.cs" />
+    <None Include="csw\Schema\scripts\past\02F\CswUpdateSchema_02F_Case30577.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CAF\CswUpdateSchema_02F_Case30043_ControlZones.cs" />
+    <None Include="csw\Schema\scripts\past\02F\CswUpdateMetaData_02F_Case30040.cs" />
     <None Include="csw\Schema\scripts\past\02E\RunBeforeEveryExecutionOfUpdater_02E_Case30347.cs" />
     <None Include="csw\Schema\scripts\past\02E\CswUpdateSchema_02E_Case30360.cs" />
     <None Include="csw\Schema\scripts\past\02E\CswUpdateSchema_02E_Case30370.cs" />
@@ -372,29 +425,29 @@
     <None Include="csw\Schema\scripts\past\02E\CswUpdateSchema_02E_Case29847.cs" />
     <None Include="csw\Schema\scripts\past\02E\CswUpdateSchema_02E_Case30222.cs" />
     <None Include="csw\Schema\scripts\past\02E\CswUpdateSchema_02E_Case30014.cs" />
-    <Compile Include="csw\Schema\scripts\prod\02F\CswUpdateMetaData_02F_Case30252.cs" />
-    <Compile Include="csw\Schema\scripts\prod\02F\CswUpdateSchema_02F_Case30252.cs" />
-    <Compile Include="csw\Schema\scripts\prod\02F\CswUpdateSchema_02F_Case29992.cs" />
-    <Compile Include="csw\Schema\scripts\prod\02F\CswUpdateSchema_02F_Case29402.cs" />
-    <Compile Include="csw\Schema\scripts\prod\02F\CswUpdateMetaData_02F_Case29992.cs" />
-    <Compile Include="csw\Schema\scripts\prod\02F\CswUpdateSchema_02F_Case30228.cs" />
-    <Compile Include="csw\Schema\scripts\prod\02F\CswUpdateMetaData_02F_Case30228.cs" />
-    <Compile Include="csw\Schema\scripts\prod\02F\CswUpdateSchema_02F_Case27495.cs" />
-    <Compile Include="csw\Schema\scripts\prod\02F\CswUpdateSchema_02F_Case30197.cs" />
-    <Compile Include="csw\Schema\scripts\prod\02F\CswUpdateSchema_02F_Case30082_UserCache.cs" />
-    <Compile Include="csw\Schema\scripts\prod\02F\CswUpdateMetaData_02F_Case27883.cs" />
-    <Compile Include="csw\Schema\scripts\prod\02F\CswUpdateSchema_02F_Case27883.cs" />
-    <Compile Include="csw\Schema\scripts\prod\02F\CswUpdateSchema_02F_Case29438.cs" />
-    <Compile Include="csw\Schema\scripts\prod\02F\CswUpdateSchema_02F_Case30417.cs" />
-    <Compile Include="csw\Schema\scripts\prod\02F\CswUpdateSchema_02F_Case29542.cs" />
-    <Compile Include="csw\Schema\scripts\prod\02F\CswUpdateMetaData_02F_Case30082_UserCache.cs" />
-    <Compile Include="csw\Schema\scripts\prod\02F\CswUpdateMetaData_02F_Case30251B.cs" />
-    <Compile Include="csw\Schema\scripts\prod\02F\CswUpdateMetaData_02F_Case30251.cs" />
-    <Compile Include="csw\Schema\scripts\prod\02F\CswUpdateSchema_02F_Case29973.cs" />
-    <Compile Include="csw\Schema\scripts\prod\02F\CswUpdateSchema_02F_Case28998.cs" />
-    <Compile Include="csw\Schema\scripts\prod\02F\CswUpdateSchema_02F_Case30281.cs" />
-    <Compile Include="csw\Schema\scripts\prod\02F\CswUpdateSchema_02F_Case29191.cs" />
-    <Compile Include="csw\Schema\scripts\prod\02F\CswUpdateSchema_02F_CaseXXXXX.cs" />
+    <None Include="csw\Schema\scripts\past\02F\CswUpdateMetaData_02F_Case30252.cs" />
+    <None Include="csw\Schema\scripts\past\02F\CswUpdateSchema_02F_Case30252.cs" />
+    <None Include="csw\Schema\scripts\past\02F\CswUpdateSchema_02F_Case29992.cs" />
+    <None Include="csw\Schema\scripts\past\02F\CswUpdateSchema_02F_Case29402.cs" />
+    <None Include="csw\Schema\scripts\past\02F\CswUpdateMetaData_02F_Case29992.cs" />
+    <None Include="csw\Schema\scripts\past\02F\CswUpdateSchema_02F_Case30228.cs" />
+    <None Include="csw\Schema\scripts\past\02F\CswUpdateMetaData_02F_Case30228.cs" />
+    <None Include="csw\Schema\scripts\past\02F\CswUpdateSchema_02F_Case27495.cs" />
+    <None Include="csw\Schema\scripts\past\02F\CswUpdateSchema_02F_Case30197.cs" />
+    <None Include="csw\Schema\scripts\past\02F\CswUpdateSchema_02F_Case30082_UserCache.cs" />
+    <None Include="csw\Schema\scripts\past\02F\CswUpdateMetaData_02F_Case27883.cs" />
+    <None Include="csw\Schema\scripts\past\02F\CswUpdateSchema_02F_Case27883.cs" />
+    <None Include="csw\Schema\scripts\past\02F\CswUpdateSchema_02F_Case29438.cs" />
+    <None Include="csw\Schema\scripts\past\02F\CswUpdateSchema_02F_Case30417.cs" />
+    <None Include="csw\Schema\scripts\past\02F\CswUpdateSchema_02F_Case29542.cs" />
+    <None Include="csw\Schema\scripts\past\02F\CswUpdateMetaData_02F_Case30082_UserCache.cs" />
+    <None Include="csw\Schema\scripts\past\02F\CswUpdateMetaData_02F_Case30251B.cs" />
+    <None Include="csw\Schema\scripts\past\02F\CswUpdateMetaData_02F_Case30251.cs" />
+    <None Include="csw\Schema\scripts\past\02F\CswUpdateSchema_02F_Case29973.cs" />
+    <None Include="csw\Schema\scripts\past\02F\CswUpdateSchema_02F_Case28998.cs" />
+    <None Include="csw\Schema\scripts\past\02F\CswUpdateSchema_02F_Case30281.cs" />
+    <None Include="csw\Schema\scripts\past\02F\CswUpdateSchema_02F_Case29191.cs" />
+    <None Include="csw\Schema\scripts\past\02F\CswUpdateSchema_02F_CaseXXXXX.cs" />
     <None Include="csw\Schema\scripts\past\02B\CswUpdateSchema_02B_Case29335_DisableSchedules.cs" />
     <None Include="csw\Schema\scripts\past\02B\CswUpdateSchema_02B_Case28690D.cs" />
     <None Include="csw\Schema\scripts\past\02B\CswUpdateSchema_02B_Case28690C.cs" />
@@ -416,7 +469,24 @@
     <None Include="csw\Schema\scripts\past\02D\RunBeforeEveryExecutionOfUpdater_02D_Case29570.cs" />
     <None Include="csw\Schema\scripts\past\02E\RunBeforeEveryExecutionOfUpdater_02E_Case29701.cs" />
     <None Include="csw\Schema\scripts\past\02E\RunBeforeEveryExecutionOfUpdater_02E_Case29700.cs" />
-    <Compile Include="csw\Schema\scripts\prod\02F\CswUpdateMetaData_02F_Case30281.cs" />
+    <None Include="csw\Schema\scripts\past\02F\CswUpdateMetaData_02F_Case30281.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CAF\CswUpdateMetaData_02F_Case30041_NbtImportQueue.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateSchema_02G_CaseXXXXX.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateSchema_02G_Case30561.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateSchema_02G_Case30473.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateMetaData_02G_Case28493A.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateSchema_02G_Case28493B.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateSchema_02G_Case30557.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateSchema_02G_Case30342.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateMetaData_02G_Case30557B.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateMetaData_02G_Case30557.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateMetaData_02G_Case30542.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateMetaData_02G_Case27846.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateMetaData_02G_Case30611.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateSchema_02G_Case30542.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateSchema_02G_Case30610.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateSchema_02G_Case30679.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateSchema_02G_Case30383.cs" />
     <Compile Include="csw\Security\CswNbtWebSvcSchemaAuthenticator.cs" />
     <Compile Include="csw\Security\CswNbtSchemaAuthenticationLogic.cs" />
     <Compile Include="csw\Security\CswNbtSchemaAuthenticatorFactory.cs" />
@@ -824,7 +894,6 @@
     <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleLink.cs" />
     <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleList.cs" />
     <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleLocation.cs" />
-    <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleLocationContents.cs" />
     <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleLogical.cs" />
     <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleLogicalSet.cs" />
     <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleMTBF.cs" />
@@ -928,7 +997,6 @@
     <Compile Include="csw\PropTypes\CswNbtNodePropLink.cs" />
     <Compile Include="csw\PropTypes\CswNbtNodePropList.cs" />
     <Compile Include="csw\PropTypes\CswNbtNodePropLocation.cs" />
-    <Compile Include="csw\PropTypes\CswNbtNodePropLocationContents.cs" />
     <Compile Include="csw\PropTypes\CswNbtNodePropLogical.cs" />
     <Compile Include="csw\PropTypes\CswNbtNodePropLogicalSet.cs" />
     <Compile Include="csw\PropTypes\CswNbtNodePropMTBF.cs" />
@@ -981,9 +1049,7 @@
     <Compile Include="csw\Schema\CswSequenceDdlOp.cs" />
     <Compile Include="csw\Schema\CswTableDdlOp.cs" />
     <Compile Include="csw\Schema\scripts\CswSchemaScriptsProd.cs" />
-    <Compile Include="csw\Schema\scripts\CswSchemaScriptsTest.cs" />
     <Compile Include="csw\Schema\scripts\CswUpdateSchemaTo.cs" />
-    <Compile Include="csw\Schema\scripts\ICswSchemaScripts.cs" />
     <Compile Include="csw\Schema\scripts\infr\RunAfterEveryExecutionOfUpdater_01.cs" />
     <Compile Include="csw\Schema\scripts\infr\RunBeforeEveryExecutionOfUpdater_03.cs" />
     <None Include="csw\Schema\scripts\past\01U\CswUpdateSchema_01U_CaseXXXXX.cs" />
@@ -1177,12 +1243,8 @@
       <Project>{434091FB-F487-4787-8BDB-58C2336B73C2}</Project>
       <Name>CswCommon</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\Common\StructureSearch\StructureSearch\StructureSearch.csproj">
+    <ProjectReference Include="..\..\..\Common\CswCommon\StructureSearch\StructureSearch.csproj">
       <Project>{e9156c9a-605e-4f21-8bb1-0970da055ff0}</Project>
-      <Name>StructureSearch</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\Common\StructureSearch\StructureSearch\StructureSearch.csproj">
-      <Project>{E9156C9A-605E-4F21-8BB1-0970DA055FF0}</Project>
       <Name>StructureSearch</Name>
     </ProjectReference>
   </ItemGroup>

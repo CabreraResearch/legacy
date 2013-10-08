@@ -1,6 +1,6 @@
 using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.PropertySets;
+using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -63,6 +63,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
         {
+            CswNbtPropertySetPermission.createDefaultWildcardPermission( _CswNbtResources, PermissionClass, NodeId );
             _CswNbtObjClassDefault.beforeCreateNode( IsCopy, OverrideUniqueValidation );
         }//beforeCreateNode()
 
@@ -73,11 +74,6 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation, bool Creating )
         {
-            string OldName = Name.GetOriginalPropRowValue();
-            if( string.IsNullOrEmpty( OldName ) && false == IsTemp )
-            {
-                CswNbtPropertySetPermission.createDefaultWildcardPermission( _CswNbtResources, PermissionClass, NodeId );
-            }
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation, Creating );
         }//beforeWriteNode()
 
