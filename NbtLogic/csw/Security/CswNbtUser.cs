@@ -11,7 +11,7 @@ namespace ChemSW.Nbt.Security
     /// To modify the user, you have to fetch the actual user Node using the UserId
     /// </summary>
 
-    public class CswNbtUser : ICswNbtUser
+    public class CswNbtUser: ICswNbtUser
     {
         private CswNbtResources _CswNbtResources;
 
@@ -246,7 +246,7 @@ namespace ChemSW.Nbt.Security
             get
             {
                 string ret = string.Empty;
-                if( _UserPropDict.ContainsKey( CswNbtObjClassUser.PropertyName.Language + _FkSuffix ) )
+                if( _UserPropDict.ContainsKey( CswNbtObjClassUser.PropertyName.Language ) )
                 {
                     ret = _UserPropDict[CswNbtObjClassUser.PropertyName.Language];
                 }
