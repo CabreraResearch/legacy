@@ -282,7 +282,6 @@
 
         }; // makeUploadTable()
 
-
         cswPrivate.makeUploadBindingsTable = function () {
             cswPublic.table.cell(3, 3)
                 .css({ paddingLeft: '100px' })
@@ -329,6 +328,45 @@
                 }
             });
         }; // makeUploadBindingsTable()
+        
+        cswPrivate.makeGenerateSqlTable = function () {
+            cswPublic.table.cell(3, 4)
+                .css({ paddingLeft: '100px' })
+                .text('Generate CAF SQL')
+                    .css({
+                        textAlign: 'center',
+                        fontWeight: 'bold'
+                    });
+
+            cswPublic.generateSqlTable = cswPublic.table.cell(4, 4)
+            .empty()
+            .css({ paddingLeft: '100px' })
+            .table({
+                FirstCellRightAlign: true,
+                cellpadding: 2
+            });
+
+            cswPublic.generateSqlTable.cell(1, 1).buttonExt({
+                name: 'generateSqlBtn',
+                icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.docimport),
+                enabledText: 'Generate',
+                disabledText: 'Generate',
+                disableOnClick: false,
+                onClick: function () {
+                    var importDefName = "CAF";
+                    Csw.ajaxWcf.post({
+                        urlMethod: 'Import/generateCAFSql',
+                        data: importDefName,
+                        success: function (data) {
+                            // do something
+                        },
+                        error: function (data) {
+                            // catch errors
+                        }
+                    });
+                }
+            });
+        }; // makeGenerateSqlTable()
 
         // Init
         (function () {
@@ -349,6 +387,7 @@
             cswPrivate.makeStatusTable();
             cswPrivate.makeUploadDataTable();
             cswPrivate.makeUploadBindingsTable();
+            cswPrivate.makeGenerateSqlTable();
 
         })(); // init
 

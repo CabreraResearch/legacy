@@ -3347,7 +3347,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string saveMaterial( string NodeTypeId, string SupplierId, string Suppliername, string Tradename, string PartNo, string NodeId )
+        public string saveMaterial( string NodeTypeId, string SupplierId, string Suppliername, string Tradename, string PartNo, string NodeId, bool CorporateSupplier = false )
         {
             JObject ReturnVal = new JObject();
             CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
@@ -3357,7 +3357,7 @@ namespace ChemSW.Nbt.WebServices
                 AuthenticationStatus = _attemptRefresh( true );
 
                 CswNbtWebServiceCreateMaterial ws = new CswNbtWebServiceCreateMaterial( _CswNbtResources, _CswNbtStatisticsEvents );
-                ReturnVal = ws.saveMaterial( CswConvert.ToInt32( NodeTypeId ), SupplierId, Suppliername, Tradename, PartNo, NodeId );
+                ReturnVal = ws.saveMaterial( CswConvert.ToInt32( NodeTypeId ), SupplierId, Suppliername, Tradename, PartNo, NodeId, CorporateSupplier );
 
                 _deInitResources();
             }
