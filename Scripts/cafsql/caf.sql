@@ -1,4 +1,10 @@
 -- Create nbtimportqueue table
+begin
+  execute immediate 'drop table nbtimportqueue';
+  exception when others then null;
+end;
+/
+
 create table nbtimportqueue (
   nbtimportqueueid number(12) NOT NULL PRIMARY KEY,
   state varchar(1),
@@ -9,9 +15,15 @@ create table nbtimportqueue (
 );
 
 -- Create unique index
-create unique index unqidx_nbtimportqueue on NBTIMPORTQUEUE (state, itempk, tablename);
+create unique index unqidx_nbtimportqueue on NBTIMPORTQUEUE (state, itempk, sheetname);
 
 -- Create pk sequence for nbtimportqueue table
+begin
+  execute immediate 'drop sequence seq_nbtimportqueueid';
+  exception when others then null;
+end;
+/
+
 create sequence seq_nbtimportqueueid start with 1 increment by 1;
 commit;
 
@@ -142,6 +154,7 @@ select w.businessunitid,
   from work_units w
   left outer join business_units b on (b.businessunitid = w.businessunitid)
   left outer join sites s on (s.siteid = w.siteid);
+  
 --Users
 create or replace view users_view as
 (select "AUDITFLAG","DEFAULTCATEGORYID","DEFAULTLANGUAGE","DEFAULTLOCATIONID","DEFAULTPRINTERID","DELETED","DISABLED","EMAIL","EMPLOYEEID","FAILEDLOGINCOUNT","HIDEHINTS","HOMEINVENTORYGROUPID","ISSYSTEMUSER","LOCKED","MYSTARTURL","NAMEFIRST","NAMELAST","NAVROWS","NODEVIEWID","PASSWORD","PASSWORD_DATE","PHONE","ROLEID","SUPERVISORID","TITLE","USERID","USERNAME","WELCOMEREDIRECT","WORKUNITID" from users where issystemuser != 1);
@@ -479,3 +492,71 @@ select
        where d2.packageid is null and doctype = 'DOC' and d2.deleted = 0
 )
 );
+
+---Receipt Lots
+create or replace view receipt_lots_view as
+select 
+     rl.ReceiptLotNo,
+	   rl.CreatedDate,
+	   rl.ReceiptLotId,
+	   rl.Deleted,
+	   p.PackageId
+  from receipt_lots rl
+	join packages p 
+       on p.packageid = (
+	                    select pd.packageid 
+                            from packdetail pd, containers c 
+								where c.receiptlotid = rl.receiptlotid and 
+										c.packdetailid = pd.packdetailid and
+										rownum=1
+						);
+	
+	
+---C of A Documents
+create or replace view cofa_docs_view as
+select ReceiptLotId,
+	    CA_FileName,
+		CA_AcquisitionDate,
+		CA_Content_Type,
+        (case CA_fileextension
+         when 'URL' then 'Link'
+         else 'File'
+         end) as FileExtension
+	from receipt_lots;
+	 
+---Containers
+create or replace view containers_view as
+select
+	 c.ContainerId,
+	  c.Deleted,
+	  c.BarcodeId,
+	  c.PackDetailId,
+	  c.ParentId,
+	  cg.ContainerGroupId,
+	  c.OwnerId,
+	  c.ContainerStatus,
+	  c.ReceiptLotId,
+	  p.PackageId,
+	  c.NetQuantity,
+	  pd.UnitOfMeasureId,
+	  c.ExpirationDate,
+	  c.LocationId,
+	  c.StorPress,
+	  c.StorTemp,
+	  c.UseType,
+	  c.ReceivedDate,
+	  c.OpenedDate,
+	  c.Concentration || ' ' || c.Conc_Mass_UoMId || '/' || c.Conc_Vol_UoMId as Concentration,
+	  c.HomeLocation,
+	  c.Notes,
+	  c.ProjectId,
+	  c.SpecificActivity,
+	  c.TareQuantity
+	from containers c
+	  left outer join container_groups cg on cg.containergroupcode = c.containergroupcode
+	  join packdetail pd on c.packdetailid = pd.packdetailid
+	  join packages p on pd.packageid = p.packageid;
+	  
+	  
+	  
+	  
