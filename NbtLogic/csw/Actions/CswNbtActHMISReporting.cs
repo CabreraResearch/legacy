@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data;
 using System.Linq;
 using System.Runtime.Serialization;
 using ChemSW.Core;
@@ -37,6 +38,8 @@ namespace ChemSW.Nbt.Actions
 
             [DataMember]
             public String Material = String.Empty;
+            [DataMember]
+            public Int32 NodeId = Int32.MinValue;
             [DataMember]
             public String PhysicalState = String.Empty;
             [DataMember]
@@ -137,13 +140,13 @@ namespace ChemSW.Nbt.Actions
         #region Properties and ctor
 
         private CswNbtResources _CswNbtResources;
-        private HMISData Data;
-        private CswPrimaryKey ControlZoneId;
+        //private HMISData Data;
+        //private CswPrimaryKey ControlZoneId;
 
         public CswNbtActHMISReporting( CswNbtResources CswNbtResources )
         {
             _CswNbtResources = CswNbtResources;
-            Data = new HMISData();
+            //Data = new HMISData();
         }
 
         #endregion Properties and ctor
@@ -160,11 +163,69 @@ namespace ChemSW.Nbt.Actions
             return ControlZonesView;
         }
 
+        public DataTable getHMISDataTable( HMISData.HMISDataRequest Request )
+        {
+            DataTable ret = new DataTable( "HMIS" );
+            ret.Columns.Add( "material_nodeid" );
+            ret.Columns.Add( "material" );
+            ret.Columns.Add( "class" );
+            ret.Columns.Add( "hazardcategory" );
+            ret.Columns.Add( "hazardclass" );
+            ret.Columns.Add( "storage_solid_maq" );
+            ret.Columns.Add( "storage_solid_qty" );
+            ret.Columns.Add( "storage_liquid_maq" );
+            ret.Columns.Add( "storage_liquid_qty" );
+            ret.Columns.Add( "storage_gas_maq" );
+            ret.Columns.Add( "storage_gas_qty" );
+            ret.Columns.Add( "closed_solid_maq" );
+            ret.Columns.Add( "closed_solid_qty" );
+            ret.Columns.Add( "closed_liquid_maq" );
+            ret.Columns.Add( "closed_liquid_qty" );
+            ret.Columns.Add( "closed_gas_maq" );
+            ret.Columns.Add( "closed_gas_qty" );
+            ret.Columns.Add( "open_solid_maq" );
+            ret.Columns.Add( "open_solid_qty" );
+            ret.Columns.Add( "open_liquid_maq" );
+            ret.Columns.Add( "open_liquid_qty" );
+
+            HMISData Data = getHMISData( Request );
+            foreach( HMISData.HMISMaterial Material in Data.Materials )
+            {
+                DataRow thisRow = ret.NewRow();
+                thisRow["material_nodeid"] = Material.NodeId;
+                thisRow["material"] = Material.Material;
+                thisRow["class"] = Material.Class;
+                thisRow["hazardcategory"] = Material.HazardCategory;
+                thisRow["hazardclass"] = Material.HazardClass;
+                thisRow["storage_solid_maq"] = Material.Storage.Solid.MAQ;
+                thisRow["storage_solid_qty"] = Material.Storage.Solid.Qty;
+                thisRow["storage_liquid_maq"] = Material.Storage.Liquid.MAQ;
+                thisRow["storage_liquid_qty"] = Material.Storage.Liquid.Qty;
+                thisRow["storage_gas_maq"] = Material.Storage.Gas.MAQ;
+                thisRow["storage_gas_qty"] = Material.Storage.Gas.Qty;
+                thisRow["closed_solid_maq"] = Material.Closed.Solid.MAQ;
+                thisRow["closed_solid_qty"] = Material.Closed.Solid.Qty;
+                thisRow["closed_liquid_maq"] = Material.Closed.Liquid.MAQ;
+                thisRow["closed_liquid_qty"] = Material.Closed.Liquid.Qty;
+                thisRow["closed_gas_maq"] = Material.Closed.Gas.MAQ;
+                thisRow["closed_gas_qty"] = Material.Closed.Gas.Qty;
+                thisRow["open_solid_maq"] = Material.Open.Solid.MAQ;
+                thisRow["open_solid_qty"] = Material.Open.Solid.Qty;
+                thisRow["open_liquid_maq"] = Material.Open.Liquid.MAQ;
+                thisRow["open_liquid_qty"] = Material.Open.Liquid.Qty;
+                ret.Rows.Add( thisRow );
+            }
+            return ret;
+        }
+
         public HMISData getHMISData( HMISData.HMISDataRequest Request )
         {
-            ControlZoneId = CswConvert.ToPrimaryKey( Request.ControlZoneId );
-            _setFireClasses();
-            CswNbtView HMISView = _getHMISView();
+            HMISData Data = new HMISData();
+            CswPrimaryKey ControlZoneId = CswConvert.ToPrimaryKey( Request.ControlZoneId );
+
+            _setFireClasses( ControlZoneId, Data );
+
+            CswNbtView HMISView = _getHMISView( ControlZoneId );
             ICswNbtTree HMISTree = _CswNbtResources.Trees.getTreeFromView( HMISView, false, true, false );
             Int32 LocationCount = HMISTree.getChildNodeCount();
             for( int i = 0; i < LocationCount; i++ )//Location Nodes
@@ -217,18 +278,19 @@ namespace ChemSW.Nbt.Actions
                                 CswCommaDelimitedString HazardClasses = MaterialNode.Node.Properties[HazardClassesNTP].AsMultiList.Value;
                                 if( HazardClasses.Contains( "FL-1A" ) || HazardClasses.Contains( "FL-1B" ) || HazardClasses.Contains( "FL-1C" ) )
                                 {
-                                    HazardClasses.Add("FL-Comb");
+                                    HazardClasses.Add( "FL-Comb" );
                                 }
                                 foreach( String HazardClass in HazardClasses )
                                 {
                                     HMISData.HMISMaterial HMISMaterial = Data.Materials.FirstOrDefault( EmptyHazardClass => EmptyHazardClass.HazardClass == HazardClass );
                                     if( null != HMISMaterial )//This would only be null if the Material's HazardClass options don't match the Default FireClass nodes
                                     {
-                                        if ( false == String.IsNullOrEmpty( HMISMaterial.Material ) )
+                                        if( false == String.IsNullOrEmpty( HMISMaterial.Material ) )
                                         {
                                             HMISData.HMISMaterial NewMaterial = new HMISData.HMISMaterial
                                             {
-                                                Material = MaterialName, 
+                                                Material = MaterialName,
+                                                NodeId = MaterialId.PrimaryKey,
                                                 HazardClass = HazardClass,
                                                 HazardCategory = HMISMaterial.HazardCategory,
                                                 Class = HMISMaterial.Class,
@@ -244,7 +306,7 @@ namespace ChemSW.Nbt.Actions
                                             HMISMaterial.HazardClass = HazardClass;
                                             HMISMaterial.PhysicalState = MaterialNode.PhysicalState.Value;
                                             _addQuantityDataToHMISMaterial( HMISMaterial, UseType, Quantity, UnitId, MaterialId );
-                                        }   
+                                        }
                                     }
                                 }
                                 HMISTree.goToParentNode();
@@ -262,7 +324,7 @@ namespace ChemSW.Nbt.Actions
 
         #region Private Methods
 
-        private void _setFireClasses()
+        private void _setFireClasses( CswPrimaryKey ControlZoneId, HMISData Data )
         {
             CswNbtNode ControlZone = _CswNbtResources.Nodes.GetNode( ControlZoneId );
             Double MAQOffset = Double.NaN;
@@ -279,14 +341,14 @@ namespace ChemSW.Nbt.Actions
             {
                 List<HMISData.HMISMaterial> HazardClassList = new List<HMISData.HMISMaterial>();
                 CswNbtMetaDataObjectClass FCEAOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.FireClassExemptAmountClass );
-                foreach ( CswNbtObjClassFireClassExemptAmount FCEANode in FCEAOC.getNodes( false, false ) )
+                foreach( CswNbtObjClassFireClassExemptAmount FCEANode in FCEAOC.getNodes( false, false ) )
                 {
                     if( FCEANode.SetName.RelatedNodeId == FCEASId )
                     {
                         HMISData.HMISMaterial EmptyHazardClass = new HMISData.HMISMaterial
                         {
-                            HazardClass = FCEANode.HazardClass.Value, 
-                            HazardCategory = FCEANode.HazardCategory.Text, 
+                            HazardClass = FCEANode.HazardClass.Value,
+                            HazardCategory = FCEANode.HazardCategory.Text,
                             Class = FCEANode.Class.Text,
                             SortOrder = FCEANode.SortOrder.Value
                         };
@@ -317,7 +379,7 @@ namespace ChemSW.Nbt.Actions
             if( false == string.IsNullOrEmpty( OffsetText ) && false == OffsetText.Contains( "NL" ) && MAQOffset < 100.0 )
             {
                 String FormatText = "{0}";
-                if( OffsetText.StartsWith("(") )
+                if( OffsetText.StartsWith( "(" ) )
                 {
                     FormatText = "({0})";
                     OffsetText = OffsetText.Replace( "(", "" );
@@ -340,7 +402,7 @@ namespace ChemSW.Nbt.Actions
             return OffsetText;
         }
 
-        private CswNbtView _getHMISView()
+        private CswNbtView _getHMISView( CswPrimaryKey ControlZoneId )
         {
             CswNbtView HMISView = new CswNbtView( _CswNbtResources );
             CswNbtMetaDataNodeType ControlZoneNT = _CswNbtResources.MetaData.getNodeType( "Control Zone" );
@@ -478,7 +540,7 @@ namespace ChemSW.Nbt.Actions
             }
             CswNbtMetaDataObjectClass UoMOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.UnitOfMeasureClass );
             CswPrimaryKey BaseUnitId = null;
-            foreach (CswNbtObjClassUnitOfMeasure UoMNode in UoMOC.getNodes(false, false))
+            foreach( CswNbtObjClassUnitOfMeasure UoMNode in UoMOC.getNodes( false, false ) )
             {
                 if( UoMNode.Name.Text == UnitName )
                 {

@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Data;
 using System.ServiceModel;
 using System.ServiceModel.Activation;
 using System.ServiceModel.Web;
@@ -55,6 +56,25 @@ namespace NbtWebApp
 
             SvcDriver.run();
             return ( Ret );
+        }
+
+        [OperationContract]
+        [WebInvoke( Method = "POST", ResponseFormat = WebMessageFormat.Xml )]
+        [Description( "Get all reportable hazardous Materials and their total quantities in a given Control Zone" )]
+        [FaultContract( typeof( FaultException ) )]
+        public DataTable getHMISDataTable( HMISData.HMISDataRequest Request )
+        {
+            CswNbtWebServiceRegulatoryReporting.HMISDataTableReturn Ret = new CswNbtWebServiceRegulatoryReporting.HMISDataTableReturn();
+
+            var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceRegulatoryReporting.HMISDataTableReturn, HMISData.HMISDataRequest>(
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj: Ret,
+                WebSvcMethodPtr: CswNbtWebServiceRegulatoryReporting.getHMISDataTable,
+                ParamObj: Request
+                );
+
+            SvcDriver.run();
+            return ( Ret.Data );
         }
 
         [OperationContract]

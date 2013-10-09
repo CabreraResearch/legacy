@@ -1,3 +1,4 @@
+using System.Data;
 using System.Runtime.Serialization;
 using ChemSW.Nbt.Actions;
 using NbtWebApp.WebSvc.Returns;
@@ -20,6 +21,16 @@ namespace ChemSW.Nbt.WebServices
             }
             [DataMember]
             public HMISData Data;
+        }
+
+        /// <summary>
+        /// Return Object for HMIS Data
+        /// </summary>
+        [DataContract]
+        public class HMISDataTableReturn : CswWebSvcReturn
+        {
+            [DataMember]
+            public DataTable Data;
         }
 
         /// <summary>
@@ -61,6 +72,15 @@ namespace ChemSW.Nbt.WebServices
         {
             CswNbtActHMISReporting _CswNbtActHMISReporting = new CswNbtActHMISReporting( (CswNbtResources) CswResources );
             Return.Data = _CswNbtActHMISReporting.getHMISData( Request );
+        }
+
+        /// <summary>
+        /// Gets all reportable hazardous Materials and their total quantities in a given Control Zone
+        /// </summary>
+        public static void getHMISDataTable( ICswResources CswResources, HMISDataTableReturn Return, HMISData.HMISDataRequest Request )
+        {
+            CswNbtActHMISReporting _CswNbtActHMISReporting = new CswNbtActHMISReporting( (CswNbtResources) CswResources );
+            Return.Data = _CswNbtActHMISReporting.getHMISDataTable( Request );
         }
 
         /// <summary>
