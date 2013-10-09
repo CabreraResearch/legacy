@@ -39,7 +39,7 @@ namespace ChemSW.Nbt.Actions
             [DataMember]
             public String Material = String.Empty;
             [DataMember]
-            public Int32 NodeId = Int32.MinValue;
+            public Int32 NodeId = 0;
             [DataMember]
             public String PhysicalState = String.Empty;
             [DataMember]
@@ -290,7 +290,7 @@ namespace ChemSW.Nbt.Actions
                                             HMISData.HMISMaterial NewMaterial = new HMISData.HMISMaterial
                                             {
                                                 Material = MaterialName,
-                                                NodeId = MaterialId.PrimaryKey,
+                                                //NodeId = MaterialId.PrimaryKey,
                                                 HazardClass = HazardClass,
                                                 HazardCategory = HMISMaterial.HazardCategory,
                                                 Class = HMISMaterial.Class,
@@ -303,6 +303,7 @@ namespace ChemSW.Nbt.Actions
                                         else
                                         {
                                             HMISMaterial.Material = MaterialName;
+                                            HMISMaterial.NodeId = MaterialId.PrimaryKey;
                                             HMISMaterial.HazardClass = HazardClass;
                                             HMISMaterial.PhysicalState = MaterialNode.PhysicalState.Value;
                                             _addQuantityDataToHMISMaterial( HMISMaterial, UseType, Quantity, UnitId, MaterialId );
