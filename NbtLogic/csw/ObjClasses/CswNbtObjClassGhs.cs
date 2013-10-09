@@ -27,7 +27,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Classification = "Classification";
         }
 
-        private readonly Dictionary<string, string> LanguageCodeMap = new Dictionary<string, string>
+        public static readonly Dictionary<string, string> LanguageCodeMap = new Dictionary<string, string>
             {
                 {"BG", "Bulgarian"},
                 {"ES", "Spanish"},
@@ -153,9 +153,12 @@ namespace ChemSW.Nbt.ObjClasses
                     }
 
                     PropAsRelationship.SetOptionsOverride( TranslatedOpts );
-                    CswNbtObjClassGHSSignalWord Selected = _CswNbtResources.Nodes[PropAsRelationship.RelatedNodeId];
-                    string TranslantedText = Selected.Node.Properties[_getLanguageForTranslation()].AsText.Text;
-                    Selected.Node.NodeName = ( false == string.IsNullOrEmpty( TranslantedText ) ? TranslantedText : Selected.English.Text );
+                    if( CswTools.IsPrimaryKey( PropAsRelationship.RelatedNodeId ) )
+                    {
+                        CswNbtObjClassGHSSignalWord Selected = _CswNbtResources.Nodes[PropAsRelationship.RelatedNodeId];
+                        string TranslantedText = Selected.Node.Properties[_getLanguageForTranslation()].AsText.Text;
+                        Selected.Node.NodeName = ( false == string.IsNullOrEmpty( TranslantedText ) ? TranslantedText : Selected.English.Text );
+                    }
                 } );
 
             _CswNbtObjClassDefault.triggerAfterPopulateProps();

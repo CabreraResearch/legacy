@@ -32,11 +32,14 @@ namespace ChemSW.Nbt.Schema
 
         public override string Title
         {
-            get { return "Create GHS Signal Word nodes, update existing GHS nodes"; }
+            get { return "Create GHS Signal Word nodes, update existing GHS nodes, add new language opts to user"; }
         }
 
         public override void update()
         {
+
+            #region Create Signal Word Nodes
+
             Dictionary<string, string> DangerDictionary = new Dictionary<string, string>()
                 {
                     {"Bulgarian", "опасност"},
@@ -109,7 +112,7 @@ namespace ChemSW.Nbt.Schema
                 CswNbtMetaDataNodeTypeProp EnglishNTP = SignalWordNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassGHSSignalWord.PropertyName.English );
                 EnglishNTP.updateLayout( CswEnumNbtLayoutType.Add, true );
 
-                foreach(CswNbtMetaDataNodeTypeProp SignalWordNTP in GHSOC.getObjectClassProp( CswNbtObjClassGHS.PropertyName.SignalWord ).getNodeTypeProps())
+                foreach( CswNbtMetaDataNodeTypeProp SignalWordNTP in GHSOC.getObjectClassProp( CswNbtObjClassGHS.PropertyName.SignalWord ).getNodeTypeProps() )
                 {
                     SignalWordNTP.ViewId = SignalWordRelationshipPropView.ViewId;
                 }
@@ -117,6 +120,10 @@ namespace ChemSW.Nbt.Schema
             }
             CswNbtNode DangerNode = _createSignalWord( SignalWordNodeType, DangerDictionary );
             CswNbtNode WarningNode = _createSignalWord( SignalWordNodeType, WarningDictionary );
+
+            #endregion
+
+            #region Update Existing GHS nodes
 
             CswCommaDelimitedString NodeIds = new CswCommaDelimitedString();
             foreach( KeyValuePair<CswPrimaryKey, string> Pair in GHSOC.getNodeIdAndNames( false, true, false, true ) )
@@ -127,6 +134,26 @@ namespace ChemSW.Nbt.Schema
             _updateGHSNodes( "Danger", DangerNode, NodeIds, GHSOC );
             _updateGHSNodes( "Warning", WarningNode, NodeIds, GHSOC );
 
+            #endregion
+
+            #region Add New Language Opts to User
+
+            CswNbtMetaDataObjectClass UserOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.UserClass );
+            CswNbtMetaDataObjectClassProp LanguageProp = UserOC.getObjectClassProp( CswNbtObjClassUser.PropertyName.Language );
+
+            CswCommaDelimitedString ListOpts = new CswCommaDelimitedString() { LanguageProp.ListOptions };
+
+            foreach( string Language in CswNbtObjClassGHS.LanguageCodeMap.Keys )
+            {
+                if( false == ListOpts.Contains( Language ) )
+                {
+                    ListOpts.Add( Language.ToLower() );
+                }
+            }
+
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( LanguageProp, CswEnumNbtObjectClassPropAttributes.listoptions, ListOpts.ToString() );
+
+            #endregion
 
         } // update()
 
