@@ -15,6 +15,7 @@ using ChemSW.Log;
 using ChemSW.MtSched.Core;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.ImportExport;
+using ChemSW.Nbt.LandingPage;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
@@ -105,9 +106,20 @@ namespace ChemSW.Nbt.Schema
             return ( new CswNbtActInspectionDesignWiz( _CswNbtResources, CswEnumNbtViewVisibility.Global, null, true ) );
         }
 
-        public LandingPage.CswNbtLandingPageTable getLandingPageTable()
+        private CswNbtLandingPage _LandingPage = null;
+        /// <summary>
+        /// A library of functions for adding, moving, modifying, and deleting LandingPage Items
+        /// </summary>
+        public CswNbtLandingPage LandingPage
         {
-            return ( new LandingPage.CswNbtLandingPageTable( _CswNbtResources ) );
+            get
+            {
+                if( _LandingPage == null && _CswNbtResources.IsInitializedForDbAccess )
+                {
+                    _LandingPage = new CswNbtLandingPage( _CswNbtResources );
+                }
+                return _LandingPage;
+            }
         }
 
         #region TransactionManagement

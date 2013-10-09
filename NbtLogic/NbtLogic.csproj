@@ -113,6 +113,7 @@
     <Compile Include="csw\ImportExport\CswNbtImportDefOrder.cs" />
     <Compile Include="csw\ImportExport\CswNbtImportDefBinding.cs" />
     <Compile Include="csw\ImportExport\CswNbtImporter.cs" />
+    <Compile Include="csw\LandingPage\CswNbtLandingPage.cs" />
     <Compile Include="csw\MetaData\enum\CswEnumNbtCategory.cs" />
     <Compile Include="csw\MetaData\enum\CswEnumNbtFilterConjunction.cs" />
     <Compile Include="csw\MetaData\enum\CswEnumNbtFilterResultMode.cs" />
