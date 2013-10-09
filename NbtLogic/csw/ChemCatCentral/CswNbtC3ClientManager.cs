@@ -1,4 +1,4 @@
-using System.Collections.ObjectModel;
+using System;
 using System.ServiceModel;
 using ChemSW.Config;
 using ChemSW.Core;
@@ -15,13 +15,13 @@ namespace ChemSW.Nbt.ChemCatCentral
         private CswC3Params _CswC3Params;
         private CswC3SearchParams _CswC3SearchParams;
 
-        public static Collection<CswWebSvcReturnBase.ErrorMessage> Messages;
+        private string _Message;
+        private CswEnumErrorType _MessageType;
 
         public CswNbtC3ClientManager( CswNbtResources CswNbtResources, CswC3Params CswC3Params )
         {
             _CswNbtResources = CswNbtResources;
             _CswC3Params = CswC3Params;
-            Messages = new Collection<CswWebSvcReturnBase.ErrorMessage>();
 
         }//ctor1
 
@@ -29,14 +29,12 @@ namespace ChemSW.Nbt.ChemCatCentral
         {
             _CswNbtResources = CswNbtResources;
             _CswC3SearchParams = CswC3SearchParams;
-            Messages = new Collection<CswWebSvcReturnBase.ErrorMessage>();
 
         }//ctor2
 
         public CswNbtC3ClientManager( CswNbtResources CswNbtResources )
         {
             _CswNbtResources = CswNbtResources;
-            Messages = new Collection<CswWebSvcReturnBase.ErrorMessage>();
 
         }//ctor3
 
@@ -44,11 +42,15 @@ namespace ChemSW.Nbt.ChemCatCentral
         /// 
         /// </summary>
         /// <returns></returns>
-        public SearchClient initializeC3Client()
+        public SearchClient initializeC3Client( CswEnumErrorType MessageType = null, string Message = "" )
         {
+            _Message = Message;
+            _MessageType = MessageType;
+
             SearchClient Ret = new SearchClient();
             bool Success = true;
 
+            // Set the configuration variables
             if( null != _CswC3Params )
             {
                 Success = _setConfigurationVariables( _CswC3Params, _CswNbtResources );
@@ -58,44 +60,32 @@ namespace ChemSW.Nbt.ChemCatCentral
                 Success = _setConfigurationVariables( _CswC3SearchParams, _CswNbtResources );
             }
 
+            // Set the endpoint address 
             Success = Success && _setEndpointAddress( _CswNbtResources, Ret );
+
             if( Success )
             {
                 return Ret;
             }
-
-            _CswNbtResources.Messages = Messages;
             return null;
         }//initializeC3Client()
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public bool checkC3ServiceReferenceStatus()
+        private bool _checkC3ServiceReferenceStatus( SearchClient SearchClient )
         {
             bool Status = true;
 
             try
             {
-                SearchClient C3Service = initializeC3Client();
-                if( null != C3Service )
-                {
-                    C3Service.isAlive();
-                }
-                else
-                {
-                    Status = false;
-                    _CswNbtResources.Messages = Messages;
-                }
+                SearchClient.isAlive();
             }
-            catch
+            catch( Exception e )
             {
+                _createMessage( _MessageType ?? CswEnumErrorType.Error, ( _Message ?? "Endpoint address incorrect or ChemCatCentral service not available: " ) + e );
                 Status = false;
             }
 
             return Status;
-        }
+        }//checkC3ServiceReferenceStatus()
 
         public string getCurrentC3Version()
         {
@@ -106,10 +96,6 @@ namespace ChemSW.Nbt.ChemCatCentral
             {
                 C3Service.isAlive();
                 CurrentVersion = C3Service.getCurrentVersion();
-            }
-            else
-            {
-                _CswNbtResources.Messages = Messages;
             }
 
             return CurrentVersion;
@@ -129,10 +115,6 @@ namespace ChemSW.Nbt.ChemCatCentral
                 {
                     DataSourceDates = DataSources.DataSourceDates.Data;
                 }
-            }
-            else
-            {
-                _CswNbtResources.Messages = Messages;
             }
 
             return DataSourceDates;
@@ -168,7 +150,7 @@ namespace ChemSW.Nbt.ChemCatCentral
         /// parameters using the values from the configuration_variables table in the db.
         /// </summary>
         /// <param name="CswC3Params"></param>
-        private static bool _setConfigurationVariables( CswC3Params CswC3Params, CswNbtResources _CswNbtResources )
+        private bool _setConfigurationVariables( CswC3Params CswC3Params, CswNbtResources _CswNbtResources )
         {
             bool Ret = true;
 
@@ -178,12 +160,7 @@ namespace ChemSW.Nbt.ChemCatCentral
 
             if( string.IsNullOrEmpty( CswC3Params.CustomerLoginName ) || string.IsNullOrEmpty( CswC3Params.LoginPassword ) || string.IsNullOrEmpty( CswC3Params.AccessId ) )
             {
-                CswWebSvcReturnBase.ErrorMessage Message = new CswWebSvcReturnBase.ErrorMessage();
-                Message.Type = CswEnumErrorType.Error;
-                Message.Message = "Unable to connect to ChemCatCentral";
-                Message.Detail = "C3_Username, C3_Password, or C3AccessId value is null.";
-                Message.ShowError = true;
-                Messages.Add( Message );
+                _createMessage( CswEnumErrorType.Error, "C3_Username, C3_Password, or C3AccessId value is null" );
                 Ret = false;
             }
 
@@ -196,7 +173,7 @@ namespace ChemSW.Nbt.ChemCatCentral
         /// parameters using the values from the configuration_variables table in the db.
         /// </summary>
         /// <param name="CswC3SearchParams"></param>
-        private static bool _setConfigurationVariables( CswC3SearchParams CswC3SearchParams, CswNbtResources _CswNbtResources )
+        private bool _setConfigurationVariables( CswC3SearchParams CswC3SearchParams, CswNbtResources _CswNbtResources )
         {
             bool Ret = true;
 
@@ -207,12 +184,7 @@ namespace ChemSW.Nbt.ChemCatCentral
 
             if( string.IsNullOrEmpty( CswC3SearchParams.CustomerLoginName ) || string.IsNullOrEmpty( CswC3SearchParams.LoginPassword ) || string.IsNullOrEmpty( CswC3SearchParams.AccessId ) )
             {
-                CswWebSvcReturnBase.ErrorMessage Message = new CswWebSvcReturnBase.ErrorMessage();
-                Message.Type = CswEnumErrorType.Error;
-                Message.Message = "Unable to connect to ChemCatCentral";
-                Message.Detail = "C3_Username, C3_Password, or C3AccessId value is null.";
-                Message.ShowError = true;
-                Messages.Add( Message );
+                _createMessage( CswEnumErrorType.Error, "C3_Username, C3_Password, or C3AccessId value is null" );
                 Ret = false;
             }
 
@@ -224,7 +196,7 @@ namespace ChemSW.Nbt.ChemCatCentral
         /// </summary>
         /// <param name="CswNbtResources"></param>
         /// <param name="C3SearchClient"></param>
-        private static bool _setEndpointAddress( CswNbtResources CswNbtResources, SearchClient C3SearchClient )
+        private bool _setEndpointAddress( CswNbtResources CswNbtResources, SearchClient C3SearchClient )
         {
             bool Ret = true;
 
@@ -241,25 +213,40 @@ namespace ChemSW.Nbt.ChemCatCentral
                         WebHttpBinding SecureBinding = new WebHttpBinding( "chemCatSSL" );
                         C3SearchClient.Endpoint.Binding = SecureBinding;
                     }
+
+                    // Check the service reference
+                    if( false == _checkC3ServiceReferenceStatus( C3SearchClient ) )
+                    {
+                        Ret = false;
+                    }
                 }
                 else
                 {
-                    CswWebSvcReturnBase.ErrorMessage Message = new CswWebSvcReturnBase.ErrorMessage();
-                    Message.Type = CswEnumErrorType.Error;
-                    Message.Message = "Unable to connect to ChemCatCentral";
-                    Message.Detail = "C3_UrlStem value is null.";
-                    Messages.Add( Message );
+                    _createMessage( CswEnumErrorType.Error, "C3_UrlStem value is null" );
                     Ret = false;
                 }
             }
             else
             {
-                // Set a message for this case? This is an unlikely case.
+                // This should never happen
                 Ret = false;
             }
 
             return Ret;
         }//_setEndpointAddress()
+
+        private void _createMessage( CswEnumErrorType ErrorType, string Detail, bool ShowError = true, string Message = "" )
+        {
+            if( string.IsNullOrEmpty( Message ) ) { Message = "Unable to connect to ChemCatCentral"; }
+
+            CswWebSvcReturnBase.ErrorMessage MessageObj = new CswWebSvcReturnBase.ErrorMessage();
+            MessageObj.Type = ErrorType;
+            MessageObj.Message = Message;
+            MessageObj.Detail = Detail;
+            MessageObj.ShowError = ShowError;
+
+            _CswNbtResources.Messages.Add( MessageObj );
+        }//_createMessage()
 
 
     }//CswNbtC3ClientManager

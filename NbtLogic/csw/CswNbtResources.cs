@@ -94,7 +94,7 @@ namespace ChemSW.Nbt
         /// </summary>
         public CswStructureSearchManager StructureSearchManager;
 
-        private Collection<CswWebSvcReturnBase.ErrorMessage> _Messages;
+        private Collection<CswWebSvcReturnBase.ErrorMessage> _Messages = new Collection<CswWebSvcReturnBase.ErrorMessage>();
         public Collection<CswWebSvcReturnBase.ErrorMessage> Messages
         {
             get { return _Messages; }

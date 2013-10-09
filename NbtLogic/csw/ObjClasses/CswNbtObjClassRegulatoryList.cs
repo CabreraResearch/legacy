@@ -392,11 +392,6 @@ namespace ChemSW.Nbt.ObjClasses
                                                 }
                                             }
                                         }
-                                        else
-                                        {
-                                            // If the C3SearchClient was null, something errored so we provide the message(s) to the Return
-                                            CswNbtResources.Messages = CswNbtC3ClientManager.Messages;
-                                        }
 
                                     } //foreach( KeyValuePair<CswPrimaryKey, List<string>> Pair in RegListListCodes )
 

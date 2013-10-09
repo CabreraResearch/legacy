@@ -4,6 +4,7 @@ using System.Data;
 using System.Linq;
 using ChemSW.Core;
 using ChemSW.DB;
+using ChemSW.Exceptions;
 using ChemSW.Nbt.ChemCatCentral;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
@@ -475,11 +476,6 @@ namespace ChemSW.Nbt.ObjClasses
                         }
                     }
                 }
-                else
-                {
-                    // If the C3SearchClient was null, something errored so we provide the message(s) to the Return
-                    _CswNbtResources.Messages = CswNbtC3ClientManager.Messages;
-                }
             }//if (_CswNbtResources.Modules.IsModuleEnabled(CswEnumNbtModuleName.FireDbSync))
         }//syncFireDbData()
 
@@ -689,11 +685,6 @@ namespace ChemSW.Nbt.ObjClasses
 
                     } //if( null != SearchResults.ExtChemDataResults )
 
-                }
-                else
-                {
-                    // If the C3SearchClient was null, something errored so we provide the message(s) to the Return
-                    _CswNbtResources.Messages = CswNbtC3ClientManager.Messages;
                 }
 
             }//if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.PCIDSync ) )
@@ -1108,8 +1099,8 @@ namespace ChemSW.Nbt.ObjClasses
             if( CasNo.GetOriginalPropRowValue() != CasNo.Text )
             {
                 CswNbtC3ClientManager CswNbtC3ClientManager = new CswNbtC3ClientManager( _CswNbtResources );
-                bool C3ServiceStatus = CswNbtC3ClientManager.checkC3ServiceReferenceStatus();
-                if( C3ServiceStatus )
+                SearchClient C3SearchClient = CswNbtC3ClientManager.initializeC3Client( CswEnumErrorType.Warning, "Unable to sync data. Please contact your administrator. " );
+                if( null != C3SearchClient )
                 {
                     syncFireDbData();
                     syncPCIDData();

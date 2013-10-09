@@ -295,12 +295,6 @@ namespace ChemSW.Nbt.WebServices
 
                 Return.Data.AvailableDataSources = AvailableDataSources;
             }
-            else
-            {
-                // If the C3SearchClient was null, something errored so we provide the message(s) to the Return
-                Return.Status.Messages = CswNbtC3ClientManager.Messages;
-            }
-
         }
 
         public static void GetSearchTypes( ICswResources CswResources, CswNbtC3SearchReturn Return, CswC3Params CswC3Params )
@@ -323,11 +317,6 @@ namespace ChemSW.Nbt.WebServices
                     CswC3Product C3ProductDetails = SearchResults.CswC3SearchResults[0];
                     Return.Data.ProductDetails = C3ProductDetails;
                 }
-            }
-            else
-            {
-                // If the C3SearchClient was null, something errored so we provide the message(s) to the Return
-                Return.Status.Messages = CswNbtC3ClientManager.Messages;
             }
         }
 
@@ -361,11 +350,6 @@ namespace ChemSW.Nbt.WebServices
                 Ret["searchtype"] = "chemcatcentral";
 
                 Return.Data.SearchResults = Ret.ToString();
-            }
-            else
-            {
-                // If the C3SearchClient was null, something errored so we provide the message(s) to the Return
-                Return.Status.Messages = CswNbtC3ClientManager.Messages;
             }
         }
 
@@ -465,11 +449,7 @@ namespace ChemSW.Nbt.WebServices
                     }
                 }
             }
-            else
-            {
-                // If the C3SearchClient was null, something errored so we provide the message(s) to the Return
-                Return.Status.Messages = CswNbtC3ClientManager.Messages;
-            }
+
         }//importC3Product()
 
         #region Import Mananger

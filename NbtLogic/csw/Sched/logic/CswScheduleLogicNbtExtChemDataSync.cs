@@ -79,8 +79,6 @@ namespace ChemSW.Nbt.Sched
             if( _MaterialPks.Count == 0 )
             {
                 _setLoad( CswResources );
-                // Set the configuration variable value?
-                //CswResources.ConfigVbls.setConfigVariableValue( CswConvert.ToString( CswEnumConfigurationVariableNames.C3SyncDate ), CswConvert.ToString( DateTime.Now ) );
             }
             _CswScheduleLogicDetail.LoadCount = _MaterialPks.Count;
             return _CswScheduleLogicDetail.LoadCount;
@@ -122,23 +120,18 @@ namespace ChemSW.Nbt.Sched
                         SearchClient SearchClient = CswNbtC3ClientManager.initializeC3Client();
                         if( null != SearchClient )
                         {
-                            bool C3ServiceStatus = CswNbtC3ClientManager.checkC3ServiceReferenceStatus();
-                            if( C3ServiceStatus )
+                            int MaterialsProcessedPerIteration = CswConvert.ToInt32( CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumConfigurationVariableNames.NodesProcessedPerCycle ) );
+                            int TotalProcessedThisIteration = 0;
+                            while( TotalProcessedThisIteration < MaterialsProcessedPerIteration && _MaterialPks.Count > 0 && ( CswEnumScheduleLogicRunStatus.Stopping != _LogicRunStatus ) )
                             {
-                                int MaterialsProcessedPerIteration = CswConvert.ToInt32( CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumConfigurationVariableNames.NodesProcessedPerCycle ) );
-                                int TotalProcessedThisIteration = 0;
-                                while( TotalProcessedThisIteration < MaterialsProcessedPerIteration && _MaterialPks.Count > 0 && ( CswEnumScheduleLogicRunStatus.Stopping != _LogicRunStatus ) )
+                                CswNbtObjClassChemical MaterialNode = CswNbtResources.Nodes[_MaterialPks[0]];
+                                if( null != MaterialNode )
                                 {
-                                    CswNbtObjClassChemical MaterialNode = CswNbtResources.Nodes[_MaterialPks[0]];
-                                    if( null != MaterialNode )
-                                    {
-                                        _setPendingUpdate( CswNbtResources, CswConvert.ToString( MaterialNode.NodeId.PrimaryKey ) );
-                                        _MaterialPks.RemoveAt( 0 );
-                                        TotalProcessedThisIteration++;
-                                    } //if (null != MaterialNode)
-
-                                }
-                            } //if( C3ServiceStatus )
+                                    _setPendingUpdate( CswNbtResources, CswConvert.ToString( MaterialNode.NodeId.PrimaryKey ) );
+                                    _MaterialPks.RemoveAt( 0 );
+                                    TotalProcessedThisIteration++;
+                                } //if (null != MaterialNode)
+                            }
                         }
                         else
                         {

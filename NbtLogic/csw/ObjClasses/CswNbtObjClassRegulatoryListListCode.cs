@@ -132,11 +132,6 @@ namespace ChemSW.Nbt.ObjClasses
                     }
                 }
             }
-            else
-            {
-                // If the C3SearchClient was null, something errored so we provide the message(s) to the Return
-                _CswNbtResources.Messages = CswNbtC3ClientManager.Messages;
-            }
         }
 
         private void _setChemicalsPendingUpdate()
