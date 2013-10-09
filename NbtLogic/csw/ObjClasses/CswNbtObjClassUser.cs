@@ -46,7 +46,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string TimeFormat = "Time Format";
             public const string Username = "Username";
             public const string DefaultBalance = "Default Balance";
-            public const string WorkUnit = "Work Unit";
+            public const string CurrentWorkUnit = "Current Work Unit";
             public const string CachedData = "Cached Data";
             public const string AvailableWorkUnits = "Available Work Units";
             public const string CostCode = "Cost Code";
@@ -221,9 +221,9 @@ namespace ChemSW.Nbt.ObjClasses
                                           ") attempted to edit the '" + ChemSWAdminUsername + "' user account." );
             }
 
-            if( AvailableWorkUnits.Value.Count == 0 && null != WorkUnitProperty.RelatedNodeId )
+            if( AvailableWorkUnits.Value.Count == 0 && null != CurrentWorkUnitProperty.RelatedNodeId )
             {
-                AvailableWorkUnits.AddValue( WorkUnitProperty.RelatedNodeId.ToString() );
+                AvailableWorkUnits.AddValue( CurrentWorkUnitProperty.RelatedNodeId.ToString() );
             }
         }
 
@@ -313,7 +313,7 @@ namespace ChemSW.Nbt.ObjClasses
 
             UsernameProperty.SetOnPropChange( OnUserNamePropChange );
             AvailableWorkUnits.SetOnPropChange( OnAvailableWorkUnitsChange );
-            WorkUnitProperty.SetOnPropChange( OnWorkUnitPropertyChange );
+            CurrentWorkUnitProperty.SetOnPropChange( OnCurrentWorkUnitPropertyChange );
 
             AvailableWorkUnits.InitOptions = InitAvailableWorkUnitsOptions;
 
@@ -529,40 +529,40 @@ namespace ChemSW.Nbt.ObjClasses
         public CswPrimaryKey DefaultPrinterId { get { return DefaultPrinterProperty.RelatedNodeId; } }
         public CswNbtNodePropRelationship DefaultBalanceProperty { get { return _CswNbtNode.Properties[PropertyName.DefaultBalance]; } }
         public CswPrimaryKey DefaultBalanceId { get { return DefaultBalanceProperty.RelatedNodeId; } }
-        public CswNbtNodePropRelationship WorkUnitProperty { get { return _CswNbtNode.Properties[PropertyName.WorkUnit]; } }
-        public void OnWorkUnitPropertyChange( CswNbtNodeProp Prop, bool Creating )
+        public CswNbtNodePropRelationship CurrentWorkUnitProperty { get { return _CswNbtNode.Properties[PropertyName.CurrentWorkUnit]; } }
+        public void OnCurrentWorkUnitPropertyChange( CswNbtNodeProp Prop, bool Creating )
         {
-            CswPrimaryKey UsersWorkUnitId = WorkUnitId;
+            CswPrimaryKey UsersCurrentWorkUnitId = CurrentWorkUnitId;
             //Case 30817
             //if( null != UsersWorkUnitId )
-            if( false == CswTools.IsPrimaryKey( UsersWorkUnitId ) )
+            if( false == CswTools.IsPrimaryKey( UsersCurrentWorkUnitId ) )
             {
-                UsersWorkUnitId = GetFirstAvailableWorkUnitNodeId();
+                UsersCurrentWorkUnitId = GetFirstAvailableWorkUnitNodeId();
 
             }
 
-            if( false == AvailableWorkUnits.CheckValue( UsersWorkUnitId.ToString() ) )
+            if( false == AvailableWorkUnits.CheckValue( UsersCurrentWorkUnitId.ToString() ) )
             {
                 if( false == _CswNbtResources.CurrentNbtUser is CswNbtSystemUser &&
                     _CswNbtResources.CurrentNbtUser.Username != ChemSWAdminUsername )
                 {
                     throw new CswDniException( CswEnumErrorType.Warning,
-                                               WorkUnitProperty.CachedNodeName +
+                                               CurrentWorkUnitProperty.CachedNodeName +
                                                " is not an available Work Unit for user " + Username,
                                                _CswNbtResources.CurrentNbtUser.Username + " attempted to assign User: " +
-                                               Username + " to Work Unit: " + UsersWorkUnitId +
+                                               Username + " to Work Unit: " + UsersCurrentWorkUnitId +
                                                " when Users available Work Units are: " + AvailableWorkUnits.Value );
                 }
                 // We add the work unit to the list and then check it!
-                AvailableWorkUnits.AddValue( UsersWorkUnitId.ToString() );
-                WorkUnitProperty.RelatedNodeId = UsersWorkUnitId;
-                WorkUnitProperty.SyncGestalt();
+                AvailableWorkUnits.AddValue( UsersCurrentWorkUnitId.ToString() );
+                CurrentWorkUnitProperty.RelatedNodeId = UsersCurrentWorkUnitId;
+                CurrentWorkUnitProperty.SyncGestalt();
 
                 _updateAvailableWorkUnits();
             }
         }
 
-        public CswPrimaryKey WorkUnitId { get { return WorkUnitProperty.RelatedNodeId; } }
+        public CswPrimaryKey CurrentWorkUnitId { get { return CurrentWorkUnitProperty.RelatedNodeId; } }
         public CswNbtNodePropLogical Archived { get { return _CswNbtNode.Properties[PropertyName.Archived]; } }
         public CswNbtNodePropRelationship JurisdictionProperty { get { return _CswNbtNode.Properties[PropertyName.Jurisdiction]; } }
         public CswPrimaryKey JurisdictionId { get { return JurisdictionProperty.RelatedNodeId; } }
@@ -585,11 +585,11 @@ namespace ChemSW.Nbt.ObjClasses
         {
             _updateAvailableWorkUnits();
 
-            if( null == WorkUnitId || false == AvailableWorkUnits.CheckValue( WorkUnitId.ToString() ) )
+            if( null == CurrentWorkUnitId || false == AvailableWorkUnits.CheckValue( CurrentWorkUnitId.ToString() ) )
             {
                 CswPrimaryKey pk = CswConvert.ToPrimaryKey( AvailableWorkUnits.Value[0] ); //we're always guarenteed there's at least one
-                WorkUnitProperty.RelatedNodeId = pk;
-                WorkUnitProperty.SyncGestalt();
+                CurrentWorkUnitProperty.RelatedNodeId = pk;
+                CurrentWorkUnitProperty.SyncGestalt();
             }
         }
 
@@ -801,7 +801,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             Collection<CswPrimaryKey> UserPermissions = new Collection<CswPrimaryKey>();
 
-            if( CswTools.IsPrimaryKey( WorkUnitId ) && CswTools.IsPrimaryKey( RoleId ) )
+            if( CswTools.IsPrimaryKey( CurrentWorkUnitId ) && CswTools.IsPrimaryKey( RoleId ) )
             {
                 CswNbtMetaDataPropertySet PermissionSet = _CswNbtResources.MetaData.getPropertySet( CswEnumNbtPropertySetName.PermissionSet );
 
@@ -838,7 +838,7 @@ namespace ChemSW.Nbt.ObjClasses
                 Query.addParameter( "applyallworkunitsocp", CswNbtPropertySetPermission.PropertyName.ApplyToAllWorkUnits );
                 Query.addParameter( "permsetid", PermissionSet.PropertySetId.ToString() );
                 Query.addParameter( "role", RoleId.PrimaryKey.ToString() );
-                Query.addParameter( "workunit", WorkUnitId.PrimaryKey.ToString() );
+                Query.addParameter( "workunit", CurrentWorkUnitId.PrimaryKey.ToString() );
 
                 DataTable DataTable = Query.getTable();
                 Int32 PermGroupId = 0;
@@ -882,15 +882,15 @@ namespace ChemSW.Nbt.ObjClasses
         private void _updateAvailableWorkUnits()
         {
             //Case 30817 (Case 30843: moved to here from onBeforeCreate)
-            if( CswTools.IsPrimaryKey( WorkUnitId ) &&
-                false == AvailableWorkUnits.CheckValue( WorkUnitId.ToString() ) )
+            if( CswTools.IsPrimaryKey( CurrentWorkUnitId ) &&
+                false == AvailableWorkUnits.CheckValue( CurrentWorkUnitId.ToString() ) )
             {
-                AvailableWorkUnits.AddValue( WorkUnitId.ToString() );
-                WorkUnitProperty.RelatedNodeId = WorkUnitId;
-                WorkUnitProperty.SyncGestalt();
+                AvailableWorkUnits.AddValue( CurrentWorkUnitId.ToString() );
+                CurrentWorkUnitProperty.RelatedNodeId = CurrentWorkUnitId;
+                CurrentWorkUnitProperty.SyncGestalt();
             }
 
-            CswNbtView View = _CswNbtResources.ViewSelect.restoreView( WorkUnitProperty.NodeTypeProp.ViewId );
+            CswNbtView View = _CswNbtResources.ViewSelect.restoreView( CurrentWorkUnitProperty.NodeTypeProp.ViewId );
 
             View.Clear();
             View.SetVisibility( CswEnumNbtViewVisibility.Property, null, null );
@@ -904,7 +904,7 @@ namespace ChemSW.Nbt.ObjClasses
                 WorkUnitParent.NodeIdsToFilterIn.Add( pk );
             }
 
-            WorkUnitProperty.OverrideView( View );
+            CurrentWorkUnitProperty.OverrideView( View );
         }
 
     }//CswNbtObjClassUser

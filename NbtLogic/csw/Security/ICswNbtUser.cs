@@ -24,7 +24,7 @@ namespace ChemSW.Nbt.Security
         CswPrimaryKey DefaultLocationId { get; }
         CswPrimaryKey DefaultPrinterId { get; }
         CswPrimaryKey DefaultBalanceId { get; }
-        CswPrimaryKey WorkUnitId { get; }
+        CswPrimaryKey CurrentWorkUnitId { get; }
         CswPrimaryKey JurisdictionId { get; }
         Int32 UserNodeTypeId { get; }
         Int32 UserObjectClassId { get; }
