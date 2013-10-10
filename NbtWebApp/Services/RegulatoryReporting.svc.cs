@@ -61,12 +61,16 @@ namespace NbtWebApp
 
         [OperationContract]
         //        [WebInvoke( Method = "POST", ResponseFormat = WebMessageFormat.Xml )]
-        [WebInvoke( Method = "GET", UriTemplate = "getHMISDataTable?ControlZone={ControlZone}" )]
-        [Description( "Get all reportable hazardous Materials and their total quantities in a given Control Zone" )]
+        [WebInvoke( Method = "GET", UriTemplate = "getHMISDataTable?ControlZone={ControlZone}&Class={Class}" )]
+        [Description( "Get all reportable hazardous Materials and their total quantities for a given Control Zone, optionally filtered to a Class" )]
         [FaultContract( typeof( FaultException ) )]
-        public DataTable getHMISDataTable( string ControlZone ) //HMISData.HMISDataRequest Request )
+        public DataTable getHMISDataTable( string ControlZone, string Class )
         {
-            HMISData.HMISDataRequest Request = new HMISData.HMISDataRequest() { ControlZone = ControlZone };
+            HMISData.HMISDataRequest Request = new HMISData.HMISDataRequest()
+                {
+                    ControlZone = ControlZone,
+                    Class = Class
+                };
             CswNbtWebServiceRegulatoryReporting.HMISDataTableReturn Ret = new CswNbtWebServiceRegulatoryReporting.HMISDataTableReturn();
 
             var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceRegulatoryReporting.HMISDataTableReturn, HMISData.HMISDataRequest>(
