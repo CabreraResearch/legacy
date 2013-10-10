@@ -490,7 +490,7 @@ namespace ChemSW.Nbt.PropTypes
                         CswNbtView View = _CswNbtResources.ViewSelect.restoreView( Source.NodeTypeProp.DefaultValue.AsViewReference.ViewId );
                         CswNbtView ViewCopy = new CswNbtView( _CswNbtResources );
                         ViewCopy.saveNew( View.ViewName, View.Visibility, View.VisibilityRoleId, View.VisibilityUserId, View );
-                        SetSubFieldValue( CswEnumNbtSubFieldName.ViewID, ViewCopy.ViewId.get() );
+                        SetSubFieldValue( CswEnumNbtSubFieldName.ViewID, ViewCopy.ViewId );
                     }
                     else
                     {
