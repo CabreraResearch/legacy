@@ -248,11 +248,6 @@ namespace ChemSW.Nbt.WebServices
                     NoResultsObj["data"] = "No Results";
                     ( (JArray) ReturnObj["root"]["children"] ).Add( NoResultsObj );
                 }
-                //_wsTreeOfView.saveTreeToCache( Tree );
-                //_View.SaveToCache( IncludeInQuickLaunch );
-
-                //_CswNbtResources.CswSuperCycleCache.put( CacheTreeName, Tree );
-                //View.SaveToCache( IncludeInQuickLaunch );
             }
             return ReturnObj;
         } // runTree()

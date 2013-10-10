@@ -15,6 +15,7 @@ using ChemSW.Log;
 using ChemSW.MtSched.Core;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.ImportExport;
+using ChemSW.Nbt.LandingPage;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
@@ -105,9 +106,20 @@ namespace ChemSW.Nbt.Schema
             return ( new CswNbtActInspectionDesignWiz( _CswNbtResources, CswEnumNbtViewVisibility.Global, null, true ) );
         }
 
-        public LandingPage.CswNbtLandingPageTable getLandingPageTable()
+        private CswNbtLandingPage _LandingPage = null;
+        /// <summary>
+        /// A library of functions for adding, moving, modifying, and deleting LandingPage Items
+        /// </summary>
+        public CswNbtLandingPage LandingPage
         {
-            return ( new LandingPage.CswNbtLandingPageTable( _CswNbtResources ) );
+            get
+            {
+                if( _LandingPage == null && _CswNbtResources.IsInitializedForDbAccess )
+                {
+                    _LandingPage = new CswNbtLandingPage( _CswNbtResources );
+                }
+                return _LandingPage;
+            }
         }
 
         #region TransactionManagement
@@ -366,9 +378,10 @@ namespace ChemSW.Nbt.Schema
             }
         }
 
-        public void makeTableAuditable( string TableName )
+        public bool makeTableAuditable( string TableName )
         {
-            if( _CswAuditMetaData.shouldBeAudited( TableName ) )
+            bool shouldBeAudited = _CswAuditMetaData.shouldBeAudited( TableName );
+            if( shouldBeAudited )
             {
                 if( false == _CswNbtResources.CswResources.DataDictionary.isColumnDefined( TableName, _CswAuditMetaData.AuditLevelColName ) )
                 {
@@ -422,6 +435,7 @@ namespace ChemSW.Nbt.Schema
 
             }//if-else it's an audited table
 
+            return shouldBeAudited;
         }//makeTableAuditable() 
 
         public void makeTableNotAuditable( string TableName )

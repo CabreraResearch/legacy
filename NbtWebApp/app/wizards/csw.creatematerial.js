@@ -36,7 +36,12 @@
                     readOnly: false
                 },
                 tradeName: '',
-                supplier: { name: '', val: '' },
+                supplier: {
+                    name: '',
+                    val: '',
+                    nodelink: '',
+                    corporate: false
+                },
                 c3SupplierName: '',
                 addNewC3Supplier: false,
                 partNo: '',
@@ -221,7 +226,9 @@
                                 cswPrivate.supplierSelect.hide();
                                 cswPrivate.state.supplier = {
                                     name: '',
-                                    val: ''
+                                    val: '',
+                                    nodelink: '',
+                                    corporate: cswPrivate.state.supplier.corporate
                                 };
                             } else {
                                 cswPrivate.supplierLabel.show();
@@ -265,11 +272,21 @@
                             } else {
                                 if (cswPrivate.supplierSelect.selectedText && cswPrivate.supplierSelect.selectedText() === cswPrivate.newSupplierName) {
                                     cswPrivate.newC3SupplierInput.show();
-                                    cswPrivate.state.supplier = { name: cswPrivate.newC3SupplierInput.val(), val: '' };
+                                    cswPrivate.state.supplier = {
+                                        name: cswPrivate.newC3SupplierInput.val(),
+                                        val: '',
+                                        nodelink: cswPrivate.state.supplier.nodelink,
+                                        corporate: cswPrivate.state.supplier.corporate
+                                    };
                                     cswPrivate.state.c3SupplierName = cswPrivate.newC3SupplierInput.val();
                                 } else {
                                     // 'Search' case
-                                    cswPrivate.state.supplier = { name: cswPrivate.newC3SupplierInput.val(), val: '' };
+                                    cswPrivate.state.supplier = {
+                                        name: cswPrivate.newC3SupplierInput.val(),
+                                        val: '',
+                                        nodelink: cswPrivate.state.supplier.nodelink,
+                                        corporate: cswPrivate.state.supplier.corporate
+                                    };
                                     cswPrivate.state.c3SupplierName = cswPrivate.newC3SupplierInput.val();
                                 }
                             }
@@ -333,6 +350,7 @@
                             isRequired: true
                         });
 
+                        /* Supplier */
                         var SupplierCtrlTbl = tbl.cell(3, 2).table();
 
                         cswPrivate.makeNewC3SupplierInput = function (visible, row, column) {
@@ -351,7 +369,6 @@
 
                         };
 
-                        /* Supplier */
                         cswPrivate.makeSupplierCtrl = function (NodeTypeId) {
 
                             SupplierCtrlTbl.cell(1, 1).empty();
@@ -406,7 +423,8 @@
                                     cswPrivate.state.supplier = {
                                         name: cswPrivate.state.c3SupplierName,
                                         val: "",
-                                        nodelink: ""
+                                        nodelink: "",
+                                        corporate: cswPrivate.state.supplier.corporate
                                     };
                                     cswPrivate.makeNewC3SupplierInput(true, 1, 1);
                                 },
@@ -469,7 +487,8 @@
                     SupplierId: cswPrivate.state.supplier.val,
                     Suppliername: cswPrivate.state.supplier.name,
                     PartNo: cswPrivate.state.partNo,
-                    NodeId: cswPrivate.state.materialId
+                    NodeId: cswPrivate.state.materialId,
+                    CorporateSupplier: cswPrivate.state.supplier.corporate || false
                 },
                 success: function (data) {
                     cswPrivate.isDuplicateMaterial = Csw.bool(data.materialexists);

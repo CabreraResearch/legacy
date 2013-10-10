@@ -313,7 +313,8 @@
                                 }]
                             };
                             Csw.extend(cswPrivate.data, ajaxdata);
-
+                            
+                            //Container Statistics Grid Setup
                             var StatusMetricsGridFields = [];
                             var StatusMetricsGridColumns = [];
                             var addColumn = function (colName, displayName) {
@@ -369,6 +370,7 @@
                                 numofcontainers: (Math.round(Csw.number(percentScanned) * 100) / 100) + '%'
                             });
 
+                            //Container Statistics Grid
                             var StatusMetricsGridId = 'ReconciliationStatusGrid';
                             cswPrivate.gridOptions = {
                                 name: StatusMetricsGridId,
@@ -395,6 +397,32 @@
                             };
                             Step2Table.cell(1, 1).empty();
                             cswPrivate.ReconciliationStatusGrid = Step2Table.cell(1, 1).grid(cswPrivate.gridOptions);
+                            
+                            //Unscanned Locations
+                            if (cswPrivate.data.UnscannedLocations.length > 0) {
+                                var unscannedLocationsDiv = Step2Table.cell(2, 1).div();
+                                unscannedLocationsDiv.br();
+                                unscannedLocationsDiv.a({
+                                    text: 'View reconcile locations without scans',
+                                    onClick: function () {
+                                        Csw.dialogs.alert({
+                                            title: 'Unscanned Locations from ' + cswPrivate.state.StartDate + ' to ' + cswPrivate.state.EndDate,
+                                            width: 450,
+                                            height: cswPrivate.data.UnscannedLocations.length * 17 + 135,
+                                            message: (function() {
+                                                var text = 'The following locations do not have any scan data:<br/>';
+                                                Csw.each(cswPrivate.data.UnscannedLocations, function (row) {
+                                                    text += '<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' + row.Path + ' > ' + row.Name;
+                                                    if (row.AllowInventory === false) {
+                                                        text += '&nbsp;<i>(does not allow inventory)</i>';
+                                                    }
+                                                });
+                                                return text;
+                                            })()
+                                        }).open();
+                                    }
+                                });
+                            }
                             cswPrivate.toggleStepButtons();
                         }
                     });

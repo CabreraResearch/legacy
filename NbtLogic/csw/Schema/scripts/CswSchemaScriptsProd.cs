@@ -26,7 +26,7 @@ namespace ChemSW.Nbt.Schema
                     new CswSchemaScriptsGinkgo(),
                     new CswSchemaScriptsHickory(),
                     // Add new milestone script collections here
-                    //new CswSchemaScriptsCAF() // This runs the CAF scripts - you can comment it out if you don't need it
+                    new CswSchemaScriptsCAF() // This runs the CAF scripts - you can comment it out if you don't need it
                 };
 
             // DDL

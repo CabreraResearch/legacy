@@ -83,6 +83,19 @@ namespace ChemSW.Nbt.WebServices
             }
         }
 
+        public static void generateCAFSql( ICswResources CswResources, CswNbtImportWcf.GenerateSQLReturn Ret, string ImportDefName )
+        {
+            //CswNbtResources _CswNbtResources = (CswNbtResources) CswResources;
+
+            if( ImportDefName.Equals( "CAF" ) )
+            {
+                string ImportQueueSql = CswScheduleLogicNbtCAFImport.generateImportQueueTableSQL( CswResources );
+                string TriggersSql = CswScheduleLogicNbtCAFImport.generateTriggerSQL( CswResources );
+
+                Ret.Data = ImportQueueSql + " " + TriggersSql;
+            }
+        }//generateCAFSql()
+
 
     } // class CswNbtWebServiceImport
 

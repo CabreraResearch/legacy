@@ -1,0 +1,78 @@
+/*
+	RUN THE CAF.sql CONTENTS TO CREATE THE QUEUE AND VIEWS FIRST
+*/
+
+
+--control zones
+insert into nbtimportqueue( nbtimportqueueid, state, itempk, sheetname, priority)  
+select seq_nbtimportqueueid.nextval, 'I', controlzoneid, 'cispro_controlzones', 0 from cispro_controlzones where deleted='0';
+
+
+--work units
+insert into nbtimportqueue ( nbtimportqueueid, state, itempk, sheetname, priority)  
+select seq_nbtimportqueueid.nextval, 'I', workunitid, 'workunits_view', 1 from workunits_view where deleted='0';
+
+--inventory groups
+insert into nbtimportqueue ( nbtimportqueueid, state, itempk, sheetname, priority)
+select seq_nbtimportqueueid.nextval, 'I', inventorygroupid, 'inventory_groups',2 from inventory_groups where deleted='0';
+
+--locations
+insert into nbtimportqueue ( nbtimportqueueid, state, itempk, sheetname, priority)
+select seq_nbtimportqueueid.nextval, 'I', locationid, 'locations_view',4 from locations_view where deleted='0';
+
+--Vendors
+insert into nbtimportqueue( nbtimportqueueid, state, itempk, sheetname, priority)
+select seq_nbtimportqueueid.nextval, 'I' as state, vendorid as itempk, 'vendors' as sheetname, 5 as priority from vendors;
+
+--Roles
+insert into nbtimportqueue ( nbtimportqueueid, state, itempk, sheetname, priority)
+select seq_nbtimportqueueid.nextval, 'I', roleid, 'roles',6 from roles where deleted='0' ;
+
+---users
+insert into nbtimportqueue( nbtimportqueueid, state, itempk, sheetname, priority)
+select seq_nbtimportqueueid.nextval, 'I', userid, 'users_view', 7 from users_view where deleted='0';
+
+--Weight
+insert into nbtimportqueue ( nbtimportqueueid, state, itempk, sheetname, priority)
+select seq_nbtimportqueueid.nextval, 'I', unitofmeasureid, 'weight_view', 0 from weight_view;
+
+--Volume
+insert into nbtimportqueue ( nbtimportqueueid, state, itempk, sheetname, priority)
+select seq_nbtimportqueueid.nextval, 'I', unitofmeasureid, 'volume_view', 0 from volume_view;
+
+--Each
+insert into nbtimportqueue ( nbtimportqueueid, state, itempk, sheetname, priority)
+select seq_nbtimportqueueid.nextval, 'I', unitofmeasureid, 'each_view', 0 from each_view;
+
+--Chemicals
+insert into nbtimportqueue( nbtimportqueueid, state, itempk, sheetname, priority)
+select seq_nbtimportqueueid.nextval, 'I' as state, packageid as itempk, 'chemicals_view' as sheetname, 13 as priority from chemicals_view;
+
+--SDS Docs
+insert into nbtimportqueue( nbtimportqueueid, state, itempk, sheetname, priority)
+select seq_nbtimportqueueid.nextval, 'I' as state, legacyid as itempk, 'sds_view' as sheetname, 15 as priority from sds_view;
+
+--Material Docs
+insert into nbtimportqueue( nbtimportqueueid, state, itempk, sheetname, priority)
+select seq_nbtimportqueueid.nextval, 'I' as state, legacyid as itempk, 'docs_view' as sheetname, 15 as priority from docs_view;
+
+--weight
+insert into nbtimportqueue ( nbtimportqueueid, state, itempk, sheetname, priority)
+select seq_nbtimportqueueid.nextval, 'I', packdetailid, 'packdetail_view', 0 from packdetail_view;
+
+--receiptlot
+insert into nbtimportqueue ( nbtimportqueueid, state, itempk, sheetname, priority)
+select seq_nbtimportqueueid.nextval, 'I' as state, receiptlotid as itempk, 'receipt_lots_view' as sheetname, 16 as priority from receipt_lots_view;
+
+--c of a
+insert into nbtimportqueue ( nbtimportqueueid, state, itempk, sheetname, priority)
+select seq_nbtimportqueueid.nextval, 'I' as state, receiptlotid as itempk, 'cofa_docs_view' as sheetname, 17 as priority from receipt_lots;
+
+--container groups
+insert into nbtimportqueue ( nbtimportqueueid, state, itempk, sheetname, priority)
+select seq_nbtimportqueueid.nextval, 'I' as state, containergroupid as itempk, 'container_groups' as sheetname, 18 as priority from container_groups;
+
+--containers
+insert into nbtimportqueue ( nbtimportqueueid, state, itempk, sheetname, priority)
+select seq_nbtimportqueueid.nextval, 'I' as state, containerid as itempk, 'containers_view' as sheetname, 19 as priority from containers_view;
+commit;

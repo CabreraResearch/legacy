@@ -42,11 +42,11 @@ namespace ChemSW.Nbt.Schema
             Int32 n = 1;
             foreach( string TableName in _CswNbtSchemaModTrnsctn.CswDataDictionary.getTableNames( IncludeAudit: false ) )
             {
-                if( _CswNbtSchemaModTrnsctn.isTableAuditable( TableName ) )
-                {
-                    // this function will handle finding missing columns and creating them
-                    _CswNbtSchemaModTrnsctn.makeTableAuditable( TableName );
+                // this function will handle finding missing tables and columns, and creating them
+                bool audited = _CswNbtSchemaModTrnsctn.makeTableAuditable( TableName );
 
+                if( audited )
+                {
                     // case 30839
                     _CswNbtSchemaModTrnsctn.indexColumn( CswAuditMetaData.makeAuditTableName( TableName ), "audittransactionid, recordcreated", "audit" + n );
                     n++;

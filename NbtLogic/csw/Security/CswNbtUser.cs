@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Data;
 using ChemSW.Core;
 using ChemSW.Nbt.ObjClasses;
@@ -215,14 +216,14 @@ namespace ChemSW.Nbt.Security
             }
         }
 
-        public CswPrimaryKey WorkUnitId
+        public CswPrimaryKey CurrentWorkUnitId
         {
             get
             {
                 CswPrimaryKey ret = null;
-                if( _UserPropDict.ContainsKey( CswNbtObjClassUser.PropertyName.WorkUnit + _FkSuffix ) )
+                if( _UserPropDict.ContainsKey( CswNbtObjClassUser.PropertyName.CurrentWorkUnit + _FkSuffix ) )
                 {
-                    ret = new CswPrimaryKey( "nodes", CswConvert.ToInt32( _UserPropDict[CswNbtObjClassUser.PropertyName.WorkUnit + _FkSuffix] ) );
+                    ret = new CswPrimaryKey( "nodes", CswConvert.ToInt32( _UserPropDict[CswNbtObjClassUser.PropertyName.CurrentWorkUnit + _FkSuffix] ) );
                 }
                 return ret;
             }
@@ -268,6 +269,11 @@ namespace ChemSW.Nbt.Security
                 PermissionNode = _NodePermissions[PermissionGroupId];
             }
             return PermissionNode;
+        }
+        public Collection<CswPrimaryKey> getUserPermissions()
+        {
+            CswNbtObjClassUser UserNode = _CswNbtResources.Nodes[UserId];
+            return UserNode.getUserPermissions();
         }
 
         public Int32 PasswordPropertyId

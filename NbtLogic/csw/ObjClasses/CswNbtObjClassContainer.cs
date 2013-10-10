@@ -55,6 +55,13 @@ namespace ChemSW.Nbt.ObjClasses
             public const string ContainerDispenseTransactions = "Container Dispense Transactions";
             public const string Documents = "Documents";
             public const string SubmittedRequests = "Submitted Requests";
+            public const string HomeLocation = "Home Location";
+            public const string Notes = "Notes";
+            public const string Project = "Project";
+            public const string SpecificActivity = "Specific Activity";
+            public const string TareQuantity = "Tare Quantity";
+            public const string Concentration = "Concentration";
+            public const string OpenedDate = "Opened Date";
         }
 
         #endregion Properties
@@ -202,7 +209,7 @@ namespace ChemSW.Nbt.ObjClasses
                 {
                     throw new CswDniException( CswEnumErrorType.Warning, "You do not have Action permission to Receive containers.", "You do not have Action permission to Receive containers." );
                 }
-                Collection<CswPrimaryKey> InventoryGroupIds = CswNbtObjClassInventoryGroupPermission.getInventoryGroupIdsForCurrentUser( _CswNbtResources );
+                Collection<CswPrimaryKey> InventoryGroupIds = _CswNbtResources.CurrentNbtUser.getUserPermissions();
                 if( InventoryGroupIds.Count == 0 )
                 {
                     throw new CswDniException( CswEnumErrorType.Warning, "You do not have Inventory Group permission to Receive containers.", "You do not have Inventory Group permission to Receive containers." );
@@ -862,7 +869,7 @@ namespace ChemSW.Nbt.ObjClasses
                                 case PropertyName.SourceContainer:
                                     bool isHidden = ( false == CswTools.IsPrimaryKey( SourceContainer.RelatedNodeId ) );
                                     p.setHidden( value: isHidden, SaveToDb: true );
-                                    
+
                                     if( CswTools.IsPrimaryKey( Material.RelatedNodeId ) )
                                     {
                                         SourceContainer.setReadOnly( value: true, SaveToDb: true );
@@ -953,9 +960,17 @@ namespace ChemSW.Nbt.ObjClasses
         /// <returns></returns>
         public bool isLocationInAccessibleInventoryGroup( CswPrimaryKey LocationId )
         {
-            Collection<CswPrimaryKey> IgsToWhichCurrentUserHasEdit = CswNbtObjClassInventoryGroupPermission.getInventoryGroupIdsForCurrentUser( _CswNbtResources );
+            bool ret = false;
             CswNbtObjClassLocation ThisLocation = _CswNbtResources.Nodes[LocationId];
-            return null != ThisLocation && IgsToWhichCurrentUserHasEdit.Contains( ThisLocation.InventoryGroup.RelatedNodeId );
+            if( null != ThisLocation )
+            {
+                CswNbtPropertySetPermission PermGrp = _CswNbtResources.CurrentNbtUser.getPermissionForGroup( ThisLocation.InventoryGroup.RelatedNodeId );
+                if( null != PermGrp )
+                {
+                    ret = ( PermGrp.Edit.Checked == CswEnumTristate.True );
+                }
+            }
+            return ret;
         }
 
         #endregion
@@ -1190,6 +1205,14 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropGrid ContainerDispenseTransactions { get { return ( _CswNbtNode.Properties[PropertyName.ContainerDispenseTransactions] ); } }
         public CswNbtNodePropGrid Documents { get { return ( _CswNbtNode.Properties[PropertyName.Documents] ); } }
         public CswNbtNodePropGrid SubmittedRequests { get { return ( _CswNbtNode.Properties[PropertyName.SubmittedRequests] ); } }
+        public CswNbtNodePropRelationship HomeLocation { get { return ( _CswNbtNode.Properties[PropertyName.HomeLocation] ); } }
+        public CswNbtNodePropComments Notes { get { return ( _CswNbtNode.Properties[PropertyName.Notes] ); } }
+        public CswNbtNodePropText Project { get { return ( _CswNbtNode.Properties[PropertyName.Project] ); } }
+        public CswNbtNodePropText SpecificActivity { get { return ( _CswNbtNode.Properties[PropertyName.SpecificActivity] ); } }
+        public CswNbtNodePropQuantity TareQuantity { get { return ( _CswNbtNode.Properties[PropertyName.TareQuantity] ); } }
+        public CswNbtNodePropText Concentration { get { return ( _CswNbtNode.Properties[PropertyName.Concentration] ); } }
+        public CswNbtNodePropDateTime OpenedDate { get { return ( _CswNbtNode.Properties[PropertyName.OpenedDate] ); } }
+
         #endregion
 
 

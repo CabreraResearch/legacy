@@ -185,6 +185,9 @@ namespace ChemSW.Nbt.WebServices
 
                     [DataMember]
                     public string nodelink = string.Empty;
+
+                    [DataMember]
+                    public bool corporate = false;
                 }
 
                 [DataContract]
@@ -820,31 +823,75 @@ namespace ChemSW.Nbt.WebServices
 
                 CswNbtViewProperty ViewProperty1 = VendorView.AddViewProperty( Parent, VendorOCP );
 
-                CswNbtViewPropertyFilter Filter1 = VendorView.AddViewPropertyFilter( ViewProperty1,
+                VendorView.AddViewPropertyFilter( ViewProperty1,
                                                           CswEnumNbtFilterConjunction.And,
                                                           CswEnumNbtFilterResultMode.Hide,
                                                           CswEnumNbtSubFieldName.Text,
                                                           CswEnumNbtFilterMode.Equals,
-                                                          VendorName,
-                                                          false,
-                                                          false );
+                                                  VendorName );
 
                 ICswNbtTree VendorsTree = _CswNbtResources.Trees.getTreeFromView( VendorView, false, true, true );
-                if( VendorsTree.getChildNodeCount() > 0 )
+                bool NewVendor = true;
+                bool ExistingVendor = false;
+                int TreeCount = VendorsTree.getChildNodeCount();
+                if( TreeCount > 0 )
                 {
-                    VendorsTree.goToNthChild( 0 );
-                    CswNbtObjClassVendor VendorNode = VendorsTree.getNodeForCurrentPosition();
-                    Supplier.name = CswConvert.ToString( VendorNode.VendorName );
-                    Supplier.val = CswConvert.ToString( VendorNode.NodeId );
-                    Supplier.nodelink = CswConvert.ToString( VendorNode.Node.NodeLink );
+                    NewVendor = false;
+                    CswNbtObjClassVendor VendorNode = null;
+                    for( int i = 0; i < TreeCount; i++ )
+                    {
+                        VendorsTree.goToNthChild( i );
+                        VendorNode = VendorsTree.getNodeForCurrentPosition();
+
+                        if( VendorNode.VendorType.Value == CswNbtObjClassVendor.VendorTypes.Corporate )
+                        {
+                            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.MLM ) )
+                            {
+                                Supplier.corporate = true;
+                                ExistingVendor = true;
+                            }
+                        }
+                        else if( VendorNode.VendorType.Value == CswNbtObjClassVendor.VendorTypes.Sales )
+                        {
+                            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.MLM ) )
+                            {
+                                if( i == TreeCount - 1 )
+                                {
+                                    NewVendor = true;
+                                }
+                                else
+                                {
+                                    VendorsTree.goToParentNode();
+                                }
+                            }
+                            else
+                            {
+                                ExistingVendor = true;
+                                Supplier.corporate = false;
+                            }
+                        }
+                    }
+
+                    if( ExistingVendor )
+                    {
+                        Supplier.name = CswConvert.ToString( VendorNode.VendorName.Text );
+                        Supplier.val = CswConvert.ToString( VendorNode.NodeId );
+                        Supplier.nodelink = CswConvert.ToString( VendorNode.Node.NodeLink );
+                    }
                 }
-                else
+
+                if( NewVendor )
                 {
                     // Don't create a new node just return an empty value in the return object - Case 28687
                     Supplier.name = VendorName;
                     Supplier.val = string.Empty;
                     Supplier.nodelink = string.Empty;
+                    if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.MLM ) )
+                    {
+                        Supplier.corporate = true;
+                    }
                 }
+
 
                 return Supplier;
             }//createVendorNode()

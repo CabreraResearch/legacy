@@ -83,6 +83,7 @@ namespace ChemSW.Nbt.Actions
                 for( int i = 0; i < ContainersTree.getChildNodeCount(); i++ )//Location Nodes
                 {
                     ContainersTree.goToNthChild( i );
+                    Int32 Scans = 0;
                     if( ContainersTree.getChildNodeCount() > 0 )
                     {
                         for( int j = 0; j < ContainersTree.getChildNodeCount(); j++ )//Container Nodes
@@ -96,6 +97,10 @@ namespace ChemSW.Nbt.Actions
                                     _incrementContainerCount( Data.ContainerStatistics,
                                                              ContainerLocationNode.Status.Value,
                                                              ContainerLocationNode.Type.Value );
+                                    if( ContainerLocationNode.Type.Value == CswEnumNbtContainerLocationTypeOptions.ReconcileScans.ToString() )
+                                    {
+                                        Scans++;
+                                    }
                                 }
                                 else
                                 {
@@ -108,6 +113,10 @@ namespace ChemSW.Nbt.Actions
                             }
                             ContainersTree.goToParentNode();
                         }
+                    }
+                    if( Scans == 0 && _isTypeEnabled( CswEnumNbtContainerLocationTypeOptions.ReconcileScans.ToString(), Request ) )
+                    {
+                        Data.UnscannedLocations.Add( _makeUnscannedLocation( ContainersTree.getNodeIdForCurrentPosition() ) );
                     }
                     ContainersTree.goToParentNode();
                 }
@@ -360,6 +369,21 @@ namespace ChemSW.Nbt.Actions
                     }
                 }
             }
+        }
+
+        private ContainerData.UnscannedLocation _makeUnscannedLocation( CswPrimaryKey LocationId )
+        {
+            ContainerData.UnscannedLocation UnscannedLocation = new ContainerData.UnscannedLocation();
+            CswNbtObjClassLocation LocationNode = _CswNbtResources.Nodes[LocationId];
+            if( null != LocationNode )
+            {
+                UnscannedLocation.LocationId = LocationId.ToString();
+                UnscannedLocation.Name = LocationNode.Name.Text;
+                UnscannedLocation.Path = LocationNode.Location.CachedFullPath;
+                UnscannedLocation.Link = LocationNode.Node.NodeLink;
+                UnscannedLocation.AllowInventory = CswConvert.ToBoolean( LocationNode.AllowInventory.Checked );
+            }
+            return UnscannedLocation;
         }
 
         private Collection<String> _getActionOptions( String Status, CswPrimaryKey ScannedLocationId )

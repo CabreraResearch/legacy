@@ -160,5 +160,25 @@ namespace NbtWebApp
             return Ret;
         }//startImport()
 
+        [OperationContract]
+        [WebInvoke( Method = "POST" )]
+        [Description( "Generate SQL for CAF" )]
+        [FaultContract( typeof( FaultException ) )]
+        public CswNbtImportWcf.GenerateSQLReturn generateCAFSql( string ImportDefName )
+        {
+            CswNbtImportWcf.GenerateSQLReturn Ret = new CswNbtImportWcf.GenerateSQLReturn();
+
+            var SvcDriver = new CswWebSvcDriver<CswNbtImportWcf.GenerateSQLReturn, string>(
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj: Ret,
+                WebSvcMethodPtr: CswNbtWebServiceImport.generateCAFSql,
+                ParamObj: ImportDefName
+                );
+
+            SvcDriver.run();
+
+            return Ret;
+        }//startImport()
+
     }
 }

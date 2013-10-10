@@ -438,7 +438,7 @@ namespace ChemSW.Nbt.ObjClasses
             return ( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Containers ) &&
                      ApprovedForReceiving.Checked == CswEnumTristate.True &&
                      _CswNbtResources.Permit.can( CswEnumNbtActionName.Receiving ) &&
-                     CswNbtObjClassInventoryGroupPermission.getInventoryGroupIdsForCurrentUser( _CswNbtResources ).Count > 0 );
+                     _CswNbtResources.CurrentNbtUser.getUserPermissions().Count > 0 );
         }
 
         private void _toggleButtonVisibility()
