@@ -366,9 +366,10 @@ namespace ChemSW.Nbt.Schema
             }
         }
 
-        public void makeTableAuditable( string TableName )
+        public bool makeTableAuditable( string TableName )
         {
-            if( _CswAuditMetaData.shouldBeAudited( TableName ) )
+            bool shouldBeAudited = _CswAuditMetaData.shouldBeAudited( TableName );
+            if( shouldBeAudited )
             {
                 if( false == _CswNbtResources.CswResources.DataDictionary.isColumnDefined( TableName, _CswAuditMetaData.AuditLevelColName ) )
                 {
@@ -422,6 +423,7 @@ namespace ChemSW.Nbt.Schema
 
             }//if-else it's an audited table
 
+            return shouldBeAudited;
         }//makeTableAuditable() 
 
         public void makeTableNotAuditable( string TableName )
