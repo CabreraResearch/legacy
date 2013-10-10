@@ -72,16 +72,15 @@ namespace ChemSW.Nbt.ChemCatCentral
 
         private bool _checkC3ServiceReferenceStatus( SearchClient SearchClient )
         {
-            bool Status = true;
+            bool Status = false;
 
             try
             {
-                SearchClient.isAlive();
+                Status = SearchClient.isAlive();
             }
             catch( Exception e )
             {
                 _createMessage( _MessageType ?? CswEnumErrorType.Error, ( _Message ?? "Endpoint address incorrect or ChemCatCentral service not available: " ) + e );
-                Status = false;
             }
 
             return Status;
