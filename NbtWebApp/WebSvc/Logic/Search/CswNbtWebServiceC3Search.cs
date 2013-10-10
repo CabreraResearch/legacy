@@ -817,67 +817,30 @@ namespace ChemSW.Nbt.WebServices
                 VendorView.ViewName = "VendorWithNameEquals";
 
                 CswNbtMetaDataObjectClass VendorOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.VendorClass );
-                CswNbtViewRelationship Parent = VendorView.AddViewRelationship( VendorOC, true );
+                CswNbtViewRelationship ParentRelationship = VendorView.AddViewRelationship( VendorOC, true );
 
-                CswNbtMetaDataObjectClassProp VendorOCP = VendorOC.getObjectClassProp( CswNbtObjClassVendor.PropertyName.VendorName );
+                CswNbtMetaDataObjectClassProp VendorNameOCP = VendorOC.getObjectClassProp( CswNbtObjClassVendor.PropertyName.VendorName );
 
-                CswNbtViewProperty ViewProperty1 = VendorView.AddViewProperty( Parent, VendorOCP );
+                VendorView.AddViewPropertyAndFilter( ParentRelationship, VendorNameOCP, VendorName, CswEnumNbtSubFieldName.Text );
 
-                VendorView.AddViewPropertyFilter( ViewProperty1,
-                                                          CswEnumNbtFilterConjunction.And,
-                                                          CswEnumNbtFilterResultMode.Hide,
-                                                          CswEnumNbtSubFieldName.Text,
-                                                          CswEnumNbtFilterMode.Equals,
-                                                  VendorName );
+                // If MLM is enabled, we only want to match on corporate vendors
+                if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.MLM ) )
+                {
+                    CswNbtMetaDataObjectClassProp VendorTypeOCP = VendorOC.getObjectClassProp( CswNbtObjClassVendor.PropertyName.VendorTypeName );
+                    VendorView.AddViewPropertyAndFilter( ParentRelationship, VendorTypeOCP, CswNbtObjClassVendor.VendorTypes.Corporate, CswEnumNbtSubFieldName.Text );
+                }
 
                 ICswNbtTree VendorsTree = _CswNbtResources.Trees.getTreeFromView( VendorView, false, true, true );
                 bool NewVendor = true;
-                bool ExistingVendor = false;
-                int TreeCount = VendorsTree.getChildNodeCount();
-                if( TreeCount > 0 )
+                if( VendorsTree.getChildNodeCount() > 0 )
                 {
                     NewVendor = false;
-                    CswNbtObjClassVendor VendorNode = null;
-                    for( int i = 0; i < TreeCount; i++ )
-                    {
-                        VendorsTree.goToNthChild( i );
-                        VendorNode = VendorsTree.getNodeForCurrentPosition();
 
-                        if( VendorNode.VendorType.Value == CswNbtObjClassVendor.VendorTypes.Corporate )
-                        {
-                            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.MLM ) )
-                            {
-                                Supplier.corporate = true;
-                                ExistingVendor = true;
-                            }
-                        }
-                        else if( VendorNode.VendorType.Value == CswNbtObjClassVendor.VendorTypes.Sales )
-                        {
-                            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.MLM ) )
-                            {
-                                if( i == TreeCount - 1 )
-                                {
-                                    NewVendor = true;
-                                }
-                                else
-                                {
-                                    VendorsTree.goToParentNode();
-                                }
-                            }
-                            else
-                            {
-                                ExistingVendor = true;
-                                Supplier.corporate = false;
-                            }
-                        }
-                    }
-
-                    if( ExistingVendor )
-                    {
-                        Supplier.name = CswConvert.ToString( VendorNode.VendorName.Text );
-                        Supplier.val = CswConvert.ToString( VendorNode.NodeId );
-                        Supplier.nodelink = CswConvert.ToString( VendorNode.Node.NodeLink );
-                    }
+                    VendorsTree.goToNthChild( 0 );
+                    CswNbtObjClassVendor VendorNode = VendorsTree.getNodeForCurrentPosition();
+                    Supplier.name = CswConvert.ToString( VendorNode.VendorName.Text );
+                    Supplier.val = CswConvert.ToString( VendorNode.NodeId );
+                    Supplier.nodelink = CswConvert.ToString( VendorNode.Node.NodeLink );
                 }
 
                 if( NewVendor )
@@ -886,12 +849,9 @@ namespace ChemSW.Nbt.WebServices
                     Supplier.name = VendorName;
                     Supplier.val = string.Empty;
                     Supplier.nodelink = string.Empty;
-                    if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.MLM ) )
-                    {
-                        Supplier.corporate = true;
-                    }
                 }
 
+                Supplier.corporate = _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.MLM );
 
                 return Supplier;
             }//createVendorNode()
