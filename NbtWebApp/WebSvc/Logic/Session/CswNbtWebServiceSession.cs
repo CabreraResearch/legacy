@@ -137,9 +137,9 @@ namespace ChemSW.Nbt.WebServices
             {
                 Ret.Data.JurisdictionId = NbtResources.CurrentNbtUser.JurisdictionId.ToString();
             }
-            if( CswTools.IsPrimaryKey( NbtResources.CurrentNbtUser.WorkUnitId ) )
+            if( CswTools.IsPrimaryKey( NbtResources.CurrentNbtUser.CurrentWorkUnitId ) )
             {
-                Ret.Data.WorkUnitId = NbtResources.CurrentNbtUser.WorkUnitId.ToString();
+                Ret.Data.WorkUnitId = NbtResources.CurrentNbtUser.CurrentWorkUnitId.ToString();
             }
             Ret.Data.DateFormatDn = NbtResources.CurrentNbtUser.DateFormat;
             Ret.Data.TimeFormatDn = NbtResources.CurrentNbtUser.TimeFormat;

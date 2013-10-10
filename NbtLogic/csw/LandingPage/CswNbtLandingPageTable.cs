@@ -77,36 +77,67 @@ namespace ChemSW.Nbt.LandingPage
 
         public void moveLandingPageItem( LandingPageData.Request Request )
         {
+            Request.NewRow = _getNextAvailableRow( Request.LandingPageId, Request.NewRow, Request.NewColumn );
             if( Request.LandingPageId != Int32.MinValue )
             {
-                bool updateComplete = false;
                 CswTableUpdate LandingPageUpdate = _CswNbtResources.makeCswTableUpdate( "MoveLandingPageItem", "landingpage" );
-                while( false == updateComplete )
+                DataTable LandingPageTable = LandingPageUpdate.getTable( "landingpageid", Request.LandingPageId );
+                if ( LandingPageTable.Rows.Count > 0 )
                 {
-                    DataTable ExistingCellTable = LandingPageUpdate.getTable( 
-                        "where display_row = " + Request.NewRow + 
-                        " and display_col = " + Request.NewColumn +
-                        "and for_roleid = (select for_roleid from landingpage where landingpageid = " + Request.LandingPageId + ")" +
-                        "and for_actionid = (select for_actionid from landingpage where landingpageid = " + Request.LandingPageId + ")"
+                    DataRow LandingPageRow = LandingPageTable.Rows[0];
+                    LandingPageRow["display_row"] = CswConvert.ToDbVal( Request.NewRow );
+                    LandingPageRow["display_col"] = CswConvert.ToDbVal( Request.NewColumn );
+                    LandingPageUpdate.update( LandingPageTable );
+                }
+            }
+        }
+
+        public void updateLandingPageItem( LandingPageData.Request Request )
+        {
+            Request.NewRow = _getNextAvailableRow( Request.LandingPageId, Request.NewRow, Request.NewColumn );
+            if( Request.LandingPageId != Int32.MinValue )
+            {
+                CswNbtLandingPageItem Item = CswNbtLandingPageItemFactory.makeLandingPageItem( _CswNbtResources, Request.Type );
+                Item.setItemDataForDB( Request );
+
+                CswTableUpdate LandingPageUpdate = _CswNbtResources.makeCswTableUpdate( "MoveLandingPageItem", "landingpage" );
+                DataTable LandingPageTable = LandingPageUpdate.getTable( "landingpageid", Request.LandingPageId );
+                if( LandingPageTable.Rows.Count > 0 )
+                {
+                    LandingPageTable.Rows[0].Delete();
+                    LandingPageTable.Rows.Add( Item.ItemRow );
+                    LandingPageUpdate.update( LandingPageTable );
+                }
+            }
+        }
+
+        private Int32 _getNextAvailableRow( Int32 LandingPageId, Int32 RowNum, Int32 ColNum )
+        {
+            Int32 NextAvailableRow = RowNum;
+            if( LandingPageId != Int32.MinValue )
+            {
+                bool availableCellFound = false;
+                CswTableUpdate LandingPageUpdate = _CswNbtResources.makeCswTableUpdate( "MoveLandingPageItem", "landingpage" );
+                while( false == availableCellFound )
+                {
+                    DataTable ExistingCellTable = LandingPageUpdate.getTable(
+                        "where display_row = " + NextAvailableRow +
+                        " and display_col = " + ColNum +
+                        "and for_roleid = (select for_roleid from landingpage where landingpageid = " + LandingPageId + ")" +
+                        "and for_actionid = (select for_actionid from landingpage where landingpageid = " + LandingPageId + ")"
                         );
                     if( ExistingCellTable.Rows.Count == 0 )
                     {
-                        DataTable LandingPageTable = LandingPageUpdate.getTable( "landingpageid", Request.LandingPageId );
-                        if ( LandingPageTable.Rows.Count > 0 )
-                        {
-                            DataRow LandingPageRow = LandingPageTable.Rows[0];
-                            LandingPageRow["display_row"] = CswConvert.ToDbVal( Request.NewRow );
-                            LandingPageRow["display_col"] = CswConvert.ToDbVal( Request.NewColumn );
-                            LandingPageUpdate.update( LandingPageTable );
-                            updateComplete = true;
-                        }
+                        availableCellFound = true;
                     }
                     else
                     {
-                        Request.NewRow++;
+                        NextAvailableRow++;
                     }
                 }
             }
+
+            return NextAvailableRow;
         }
 
         public void deleteLandingPageItem( LandingPageData.Request Request )

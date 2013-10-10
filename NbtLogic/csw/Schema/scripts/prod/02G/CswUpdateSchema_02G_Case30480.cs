@@ -101,9 +101,9 @@ namespace ChemSW.Nbt.Schema
                 }
 
             }
-
+            //Case 30900 - I don't think this is the right way to satisfy this requirement
             //5: Revoke MetaData Permissions
-            {
+            /*{
                 if( _CswNbtSchemaModTrnsctn.isMaster() )
                 {
                     Collection<CswNbtObjClassRole> Roles = new Collection<CswNbtObjClassRole>();
@@ -148,7 +148,7 @@ namespace ChemSW.Nbt.Schema
                         SetPerms( InventoryGroupPermNT );
                     }
                 }
-            }
+            }*/
         }
     }
 }

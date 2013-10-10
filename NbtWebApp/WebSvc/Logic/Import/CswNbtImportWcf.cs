@@ -116,6 +116,14 @@ namespace ChemSW.Nbt.WebServices
             } // class ImportStatusReturnData
         } // class ImportStatusReturn
 
+        [DataContract]
+        public class GenerateSQLReturn : CswWebSvcReturn
+        {
+            [DataMember( IsRequired = true )]
+            [Description( "SQL string" )]
+            public string Data;
+        }
+
 
     } // class CswNbtImportWcf
 

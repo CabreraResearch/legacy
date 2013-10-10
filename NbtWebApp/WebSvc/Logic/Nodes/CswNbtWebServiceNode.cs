@@ -467,12 +467,12 @@ namespace ChemSW.Nbt.WebServices
                     CswNbtMetaDataObjectClass UserOc = UserSystemResources.MetaData.getObjectClass( CswEnumNbtObjectClass.UserClass );
                     foreach( CswNbtObjClassUser User in UserOc.getNodes( forceReInit: true, includeSystemNodes: false ) )
                     {
-                        if( CswTools.IsPrimaryKey( User.WorkUnitProperty.RelatedNodeId ) )
+                        if( CswTools.IsPrimaryKey( User.CurrentWorkUnitProperty.RelatedNodeId ) )
                         {
-                            CswNbtNode WorkUnit = UserSystemResources.Nodes[User.WorkUnitProperty.RelatedNodeId];
+                            CswNbtNode WorkUnit = UserSystemResources.Nodes[User.CurrentWorkUnitProperty.RelatedNodeId];
                             if( null != WorkUnit && WorkUnit.IsDemo )
                             {
-                                User.WorkUnitProperty.RelatedNodeId = null;
+                                User.CurrentWorkUnitProperty.RelatedNodeId = null;
                             }
                         }
                         if( CswTools.IsPrimaryKey( User.DefaultLocationProperty.SelectedNodeId ) )
