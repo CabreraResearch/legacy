@@ -129,6 +129,8 @@ namespace ChemSW.Nbt.Actions
         {
             [DataMember]
             public String ControlZoneId = String.Empty;
+            [DataMember]
+            public String ControlZone = String.Empty;
         }
 
     } // HMISData
@@ -153,13 +155,19 @@ namespace ChemSW.Nbt.Actions
 
         #region Public Methods
 
-        public CswNbtView getControlZonesView()
+        public CswNbtView getControlZonesView( string FilterToName = "" )
         {
             CswNbtView ControlZonesView = new CswNbtView( _CswNbtResources );
             CswNbtMetaDataObjectClass ControlZoneOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ControlZoneClass );
-            ControlZonesView.AddViewRelationship( ControlZoneOC, IncludeDefaultFilters: true );
+            CswNbtMetaDataObjectClassProp ControlZoneNameOCP = ControlZoneOC.getObjectClassProp( CswNbtObjClassControlZone.PropertyName.Name );
+            CswNbtViewRelationship ControlZoneVR = ControlZonesView.AddViewRelationship( ControlZoneOC, IncludeDefaultFilters: true );
+            if( false == string.IsNullOrEmpty( FilterToName ) )
+            {
+                ControlZonesView.AddViewPropertyAndFilter( ControlZoneVR,
+                                                           ControlZoneNameOCP,
+                                                           Value: FilterToName );
+            }
             ControlZonesView.ViewName = "HMIS Control Zones";
-            ControlZonesView.SaveToCache( IncludeInQuickLaunch: false );
             return ControlZonesView;
         }
 
@@ -221,103 +229,127 @@ namespace ChemSW.Nbt.Actions
         public HMISData getHMISData( HMISData.HMISDataRequest Request )
         {
             HMISData Data = new HMISData();
-            CswPrimaryKey ControlZoneId = CswConvert.ToPrimaryKey( Request.ControlZoneId );
-
-            _setFireClasses( ControlZoneId, Data );
-
-            CswNbtView HMISView = _getHMISView( ControlZoneId );
-            ICswNbtTree HMISTree = _CswNbtResources.Trees.getTreeFromView( HMISView, false, true, false );
-            Int32 LocationCount = HMISTree.getChildNodeCount();
-            for( int i = 0; i < LocationCount; i++ )//Location Nodes
+            CswPrimaryKey ControlZoneId = null;
+            if( false == string.IsNullOrEmpty( Request.ControlZoneId ) )
             {
-                HMISTree.goToNthChild( i );
-                Int32 ContainerCount = HMISTree.getChildNodeCount();
-                for( int j = 0; j < ContainerCount; j++ )//Container Nodes
+                ControlZoneId = CswConvert.ToPrimaryKey( Request.ControlZoneId );
+            }
+            else if( false == string.IsNullOrEmpty( Request.ControlZone ) )
+            {
+                if( CswTools.IsInteger( Request.ControlZone ) )
                 {
-                    HMISTree.goToNthChild( j );
-                    if( HMISTree.getChildNodeCount() > 0 )//Material Node Exists
+                    ControlZoneId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( Request.ControlZone ) );
+                }
+                else
+                {
+                    CswNbtView ControlZoneView = getControlZonesView( Request.ControlZone );
+                    ICswNbtTree ControlZoneTree = _CswNbtResources.Trees.getTreeFromView( ControlZoneView, RequireViewPermissions: false, IncludeSystemNodes: true, IncludeHiddenNodes: true );
+                    if( ControlZoneTree.getChildNodeCount() > 0 )
                     {
-                        Double Quantity = Double.NaN;
-                        CswPrimaryKey UnitId = null;
-                        String MaterialName = String.Empty;
-                        CswPrimaryKey MaterialId = null;
-                        String UseType = String.Empty;
-                        foreach( CswNbtTreeNodeProp ContainerProp in HMISTree.getChildNodePropsOfNode() )
+                        ControlZoneTree.goToNthChild( 0 );
+                        ControlZoneId = ControlZoneTree.getNodeIdForCurrentPosition();
+                    }
+                }
+            }
+
+            if( null != ControlZoneId )
+            {
+                _setFireClasses( ControlZoneId, Data );
+
+                CswNbtView HMISView = _getHMISView( ControlZoneId );
+                ICswNbtTree HMISTree = _CswNbtResources.Trees.getTreeFromView( HMISView, false, true, false );
+                Int32 LocationCount = HMISTree.getChildNodeCount();
+                for( int i = 0; i < LocationCount; i++ ) //Location Nodes
+                {
+                    HMISTree.goToNthChild( i );
+                    Int32 ContainerCount = HMISTree.getChildNodeCount();
+                    for( int j = 0; j < ContainerCount; j++ ) //Container Nodes
+                    {
+                        HMISTree.goToNthChild( j );
+                        if( HMISTree.getChildNodeCount() > 0 ) //Material Node Exists
                         {
-                            CswNbtMetaDataNodeTypeProp ContainerNTP = _CswNbtResources.MetaData.getNodeTypeProp( ContainerProp.NodeTypePropId );
-                            switch( ContainerNTP.getObjectClassPropName() )
+                            Double Quantity = Double.NaN;
+                            CswPrimaryKey UnitId = null;
+                            String MaterialName = String.Empty;
+                            CswPrimaryKey MaterialId = null;
+                            String UseType = String.Empty;
+                            foreach( CswNbtTreeNodeProp ContainerProp in HMISTree.getChildNodePropsOfNode() )
                             {
-                                case CswNbtObjClassContainer.PropertyName.Quantity:
-                                    Quantity = ContainerProp.Field1_Numeric;
-                                    UnitId = CswConvert.ToPrimaryKey( "nodes_" + ContainerProp.Field1_Fk );
-                                    break;
-                                case CswNbtObjClassContainer.PropertyName.Material:
-                                    MaterialName = ContainerProp.Field1;
-                                    MaterialId = CswConvert.ToPrimaryKey( "nodes_" + ContainerProp.Field1_Fk );
-                                    break;
-                                case CswNbtObjClassContainer.PropertyName.UseType:
-                                    UseType = ContainerProp.Field1;
-                                    break;
-                            }
-                        }
-                        if( false == String.IsNullOrEmpty( UseType ) )
-                        {
-                            IEnumerable<HMISData.HMISMaterial> HMISMaterials = Data.Materials.Where( ExistingMaterial => ExistingMaterial.Material == MaterialName );
-                            if( HMISMaterials.Any() )
-                            {
-                                foreach( HMISData.HMISMaterial HMISMaterial in HMISMaterials )
+                                CswNbtMetaDataNodeTypeProp ContainerNTP = _CswNbtResources.MetaData.getNodeTypeProp( ContainerProp.NodeTypePropId );
+                                switch( ContainerNTP.getObjectClassPropName() )
                                 {
-                                    _addQuantityDataToHMISMaterial( HMISMaterial, UseType, Quantity, UnitId, MaterialId );
+                                    case CswNbtObjClassContainer.PropertyName.Quantity:
+                                        Quantity = ContainerProp.Field1_Numeric;
+                                        UnitId = CswConvert.ToPrimaryKey( "nodes_" + ContainerProp.Field1_Fk );
+                                        break;
+                                    case CswNbtObjClassContainer.PropertyName.Material:
+                                        MaterialName = ContainerProp.Field1;
+                                        MaterialId = CswConvert.ToPrimaryKey( "nodes_" + ContainerProp.Field1_Fk );
+                                        break;
+                                    case CswNbtObjClassContainer.PropertyName.UseType:
+                                        UseType = ContainerProp.Field1;
+                                        break;
                                 }
                             }
-                            else
+                            if( false == String.IsNullOrEmpty( UseType ) )
                             {
-                                HMISTree.goToNthChild( 0 );
-                                CswNbtObjClassChemical MaterialNode = HMISTree.getNodeForCurrentPosition();
-                                CswNbtMetaDataNodeTypeProp HazardClassesNTP = _CswNbtResources.MetaData.getNodeTypeProp( MaterialNode.NodeTypeId, "Hazard Classes" );
-                                CswCommaDelimitedString HazardClasses = MaterialNode.Node.Properties[HazardClassesNTP].AsMultiList.Value;
-                                if( HazardClasses.Contains( "FL-1A" ) || HazardClasses.Contains( "FL-1B" ) || HazardClasses.Contains( "FL-1C" ) )
+                                IEnumerable<HMISData.HMISMaterial> HMISMaterials = Data.Materials.Where( ExistingMaterial => ExistingMaterial.Material == MaterialName );
+                                if( HMISMaterials.Any() )
                                 {
-                                    HazardClasses.Add( "FL-Comb" );
-                                }
-                                foreach( String HazardClass in HazardClasses )
-                                {
-                                    HMISData.HMISMaterial HMISMaterial = Data.Materials.FirstOrDefault( EmptyHazardClass => EmptyHazardClass.HazardClass == HazardClass );
-                                    if( null != HMISMaterial )//This would only be null if the Material's HazardClass options don't match the Default FireClass nodes
+                                    foreach( HMISData.HMISMaterial HMISMaterial in HMISMaterials )
                                     {
-                                        if( false == String.IsNullOrEmpty( HMISMaterial.Material ) )
-                                        {
-                                            HMISData.HMISMaterial NewMaterial = new HMISData.HMISMaterial
-                                            {
-                                                Material = MaterialName,
-                                                //NodeId = MaterialId.PrimaryKey,
-                                                HazardClass = HazardClass,
-                                                HazardCategory = HMISMaterial.HazardCategory,
-                                                Class = HMISMaterial.Class,
-                                                PhysicalState = MaterialNode.PhysicalState.Value,
-                                                SortOrder = HMISMaterial.SortOrder
-                                            };
-                                            _addQuantityDataToHMISMaterial( NewMaterial, UseType, Quantity, UnitId, MaterialId );
-                                            Data.Materials.Add( NewMaterial );
-                                        }
-                                        else
-                                        {
-                                            HMISMaterial.Material = MaterialName;
-                                            HMISMaterial.NodeId = MaterialId.PrimaryKey;
-                                            HMISMaterial.HazardClass = HazardClass;
-                                            HMISMaterial.PhysicalState = MaterialNode.PhysicalState.Value;
-                                            _addQuantityDataToHMISMaterial( HMISMaterial, UseType, Quantity, UnitId, MaterialId );
-                                        }
+                                        _addQuantityDataToHMISMaterial( HMISMaterial, UseType, Quantity, UnitId, MaterialId );
                                     }
                                 }
-                                HMISTree.goToParentNode();
+                                else
+                                {
+                                    HMISTree.goToNthChild( 0 );
+                                    CswNbtObjClassChemical MaterialNode = HMISTree.getNodeForCurrentPosition();
+                                    CswNbtMetaDataNodeTypeProp HazardClassesNTP = _CswNbtResources.MetaData.getNodeTypeProp( MaterialNode.NodeTypeId, "Hazard Classes" );
+                                    CswCommaDelimitedString HazardClasses = MaterialNode.Node.Properties[HazardClassesNTP].AsMultiList.Value;
+                                    if( HazardClasses.Contains( "FL-1A" ) || HazardClasses.Contains( "FL-1B" ) || HazardClasses.Contains( "FL-1C" ) )
+                                    {
+                                        HazardClasses.Add( "FL-Comb" );
+                                    }
+                                    foreach( String HazardClass in HazardClasses )
+                                    {
+                                        HMISData.HMISMaterial HMISMaterial = Data.Materials.FirstOrDefault( EmptyHazardClass => EmptyHazardClass.HazardClass == HazardClass );
+                                        if( null != HMISMaterial ) //This would only be null if the Material's HazardClass options don't match the Default FireClass nodes
+                                        {
+                                            if( false == String.IsNullOrEmpty( HMISMaterial.Material ) )
+                                            {
+                                                HMISData.HMISMaterial NewMaterial = new HMISData.HMISMaterial
+                                                    {
+                                                        Material = MaterialName,
+                                                        //NodeId = MaterialId.PrimaryKey,
+                                                        HazardClass = HazardClass,
+                                                        HazardCategory = HMISMaterial.HazardCategory,
+                                                        Class = HMISMaterial.Class,
+                                                        PhysicalState = MaterialNode.PhysicalState.Value,
+                                                        SortOrder = HMISMaterial.SortOrder
+                                                    };
+                                                _addQuantityDataToHMISMaterial( NewMaterial, UseType, Quantity, UnitId, MaterialId );
+                                                Data.Materials.Add( NewMaterial );
+                                            }
+                                            else
+                                            {
+                                                HMISMaterial.Material = MaterialName;
+                                                HMISMaterial.NodeId = MaterialId.PrimaryKey;
+                                                HMISMaterial.HazardClass = HazardClass;
+                                                HMISMaterial.PhysicalState = MaterialNode.PhysicalState.Value;
+                                                _addQuantityDataToHMISMaterial( HMISMaterial, UseType, Quantity, UnitId, MaterialId );
+                                            }
+                                        }
+                                    }
+                                    HMISTree.goToParentNode();
+                                }
                             }
-                        }
-                    }//Material Node Exists
+                        } //Material Node Exists
+                        HMISTree.goToParentNode();
+                    } //Container Nodes
                     HMISTree.goToParentNode();
-                }//Container Nodes
-                HMISTree.goToParentNode();
-            }//Location Nodes 
+                } //Location Nodes 
+            } // if(null != ControlZoneId)
             return Data;
         }
 

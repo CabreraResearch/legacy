@@ -6,6 +6,7 @@ using System.ServiceModel.Web;
 using System.Web;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.WebServices;
+using ChemSW.Security;
 using ChemSW.WebSvc;
 
 namespace NbtWebApp
@@ -29,10 +30,10 @@ namespace NbtWebApp
             CswNbtWebServiceRegulatoryReporting.HMISViewReturn Ret = new CswNbtWebServiceRegulatoryReporting.HMISViewReturn();
 
             var GetViewDriverType = new CswWebSvcDriver<CswNbtWebServiceRegulatoryReporting.HMISViewReturn, object>(
-                CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
-                ReturnObj : Ret,
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj: Ret,
                 WebSvcMethodPtr: CswNbtWebServiceRegulatoryReporting.getControlZonesView,
-                ParamObj : ""
+                ParamObj: ""
                 );
 
             GetViewDriverType.run();
@@ -59,11 +60,13 @@ namespace NbtWebApp
         }
 
         [OperationContract]
-        [WebInvoke( Method = "POST", ResponseFormat = WebMessageFormat.Xml )]
+        //        [WebInvoke( Method = "POST", ResponseFormat = WebMessageFormat.Xml )]
+        [WebInvoke( Method = "GET", UriTemplate = "getHMISDataTable?ControlZone={ControlZone}" )]
         [Description( "Get all reportable hazardous Materials and their total quantities in a given Control Zone" )]
         [FaultContract( typeof( FaultException ) )]
-        public DataTable getHMISDataTable( HMISData.HMISDataRequest Request )
+        public DataTable getHMISDataTable( string ControlZone ) //HMISData.HMISDataRequest Request )
         {
+            HMISData.HMISDataRequest Request = new HMISData.HMISDataRequest() { ControlZone = ControlZone };
             CswNbtWebServiceRegulatoryReporting.HMISDataTableReturn Ret = new CswNbtWebServiceRegulatoryReporting.HMISDataTableReturn();
 
             var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceRegulatoryReporting.HMISDataTableReturn, HMISData.HMISDataRequest>(

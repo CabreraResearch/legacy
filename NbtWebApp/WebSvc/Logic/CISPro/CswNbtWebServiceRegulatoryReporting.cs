@@ -90,6 +90,7 @@ namespace ChemSW.Nbt.WebServices
         {
             CswNbtActHMISReporting _CswNbtActHMISReporting = new CswNbtActHMISReporting( (CswNbtResources) CswResources );
             CswNbtView ControlZonesView = _CswNbtActHMISReporting.getControlZonesView();
+            ControlZonesView.SaveToCache( IncludeInQuickLaunch: false );
             Return.Data.SessionViewId = ControlZonesView.SessionViewId;
         }
 
