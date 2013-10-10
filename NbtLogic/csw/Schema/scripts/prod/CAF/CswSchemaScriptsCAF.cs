@@ -39,7 +39,8 @@ namespace ChemSW.Nbt.Schema
                     new CswUpdateSchema_02G_Case30743_Materials(),
                     new CswUpdateSchema_02G_Case30744_PackDetail(),
                     new CswUpdateSchema_02G_Case30047_SDS(),
-                    new CswUpdateSchema_02G_Case30047_Docs()
+                    new CswUpdateSchema_02G_Case30047_Docs(),
+                    new CswUpdateSchema_02H_Case30046_Containers(),
                 };
         } // _SchemaScripts()
 

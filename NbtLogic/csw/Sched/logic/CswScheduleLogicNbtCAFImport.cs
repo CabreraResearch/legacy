@@ -77,7 +77,7 @@ namespace ChemSW.Nbt.Sched
                         + QueueTableName + "@" + CAFDbLink + " iq"
                         + " join " + CswNbtImportTables.ImportDef.TableName + " id on (id.sheetname = iq.sheetname )"
                         + " where state = '" + State.I + "' or state = '" + State.U
-                        + "' order by decode (state, '" + State.I + "', 1, '" + State.U + "', 2) asc, id.sheetorder asc, itempk asc";
+                        + "' order by decode (state, '" + State.I + "', 1, '" + State.U + "', 2) asc, id.sheetorder asc, nbtimportqueueid asc";
 
                     CswArbitrarySelect QueueSelect = _CswNbtResources.makeCswArbitrarySelect( "cafimport_queue_select", Sql );
                     DataTable QueueTable = QueueSelect.getTable( 0, NumberToProcess, false, true );

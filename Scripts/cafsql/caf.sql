@@ -521,7 +521,8 @@ select ReceiptLotId,
         (case CA_fileextension
          when 'URL' then 'Link'
          else 'File'
-         end) as FileExtension
+         end) as FileExtension,
+		Deleted
 	from receipt_lots;
 	 
 ---Containers
@@ -547,7 +548,7 @@ select
 	  c.ReceivedDate,
 	  c.OpenedDate,
 	  c.Concentration || ' ' || c.Conc_Mass_UoMId || '/' || c.Conc_Vol_UoMId as Concentration,
-	  c.HomeLocation,
+	  c.LocationIdHome as HomeLocation,
 	  c.Notes,
 	  c.ProjectId,
 	  c.SpecificActivity,

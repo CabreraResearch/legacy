@@ -40,6 +40,9 @@ namespace ChemSW.Nbt.Schema
                         FieldType = CswEnumNbtFieldType.Relationship,
                         PropName = CswNbtObjClassContainer.PropertyName.HomeLocation,
                         ReadOnly = true,
+                        IsFk = true,
+                        FkType = CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(),
+                        FkValue = _CswNbtSchemaModTrnsctn.MetaData.getObjectClassId( CswEnumNbtObjectClass.LocationClass )
                     } );
 
                 CswNbtMetaDataObjectClassProp ProjectOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( ContainerOC, new CswNbtWcfMetaDataModel.ObjectClassProp
@@ -54,6 +57,9 @@ namespace ChemSW.Nbt.Schema
                         FieldType = CswEnumNbtFieldType.Quantity,
                         PropName = CswNbtObjClassContainer.PropertyName.TareQuantity,
                         ReadOnly = true,
+                        IsFk = true,
+                        FkType = CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(),
+                        FkValue = _CswNbtSchemaModTrnsctn.MetaData.getObjectClassId( CswEnumNbtObjectClass.UnitOfMeasureClass )
                     } );
 
                 CswNbtMetaDataObjectClassProp SpecificActivityOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( ContainerOC, new CswNbtWcfMetaDataModel.ObjectClassProp
@@ -77,12 +83,17 @@ namespace ChemSW.Nbt.Schema
                         ReadOnly = true,
                     } );
 
-
+                CswNbtMetaDataObjectClassProp OpenedDateOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( ContainerOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+                    {
+                        FieldType = CswEnumNbtFieldType.DateTime,
+                        PropName = CswNbtObjClassContainer.PropertyName.OpenedDate,
+                        ReadOnly = true,
+                    } );
                 _CswNbtSchemaModTrnsctn.MetaData.makeMissingNodeTypeProps(); //in order to cascade hidden status to the nodetype props
 
                 Collection<CswNbtMetaDataObjectClassProp> ObjectClassProps = new Collection<CswNbtMetaDataObjectClassProp>
                     {
-                        HomeLocationOCP, ProjectOCP, TareQuantityOCP, SpecificActivityOCP, ConcentrationOCP, NotesOCP,
+                        HomeLocationOCP, ProjectOCP, TareQuantityOCP, SpecificActivityOCP, ConcentrationOCP, NotesOCP, OpenedDateOCP
                     }; 
 
 

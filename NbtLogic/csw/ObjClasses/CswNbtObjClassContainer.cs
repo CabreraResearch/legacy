@@ -61,6 +61,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string SpecificActivity = "Specific Activity";
             public const string TareQuantity = "Tare Quantity";
             public const string Concentration = "Concentration";
+            public const string OpenedDate = "Opened Date";
         }
 
         #endregion Properties
@@ -1202,7 +1203,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropText SpecificActivity { get { return ( _CswNbtNode.Properties[PropertyName.SpecificActivity] ); } }
         public CswNbtNodePropQuantity TareQuantity { get { return ( _CswNbtNode.Properties[PropertyName.TareQuantity] ); } }
         public CswNbtNodePropText Concentration { get { return ( _CswNbtNode.Properties[PropertyName.Concentration] ); } }
-
+        public CswNbtNodePropDateTime OpenedDate { get { return ( _CswNbtNode.Properties[PropertyName.OpenedDate] ); } }
 
         #endregion
 
