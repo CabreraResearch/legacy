@@ -556,7 +556,8 @@ select
 	from containers c
 	  left outer join container_groups cg on cg.containergroupcode = c.containergroupcode
 	  join packdetail pd on c.packdetailid = pd.packdetailid
-	  join packages p on pd.packageid = p.packageid;
+	  join packages p on pd.packageid = p.packageid
+	order by c.ContainerId;
 	  
 	  
 	  
