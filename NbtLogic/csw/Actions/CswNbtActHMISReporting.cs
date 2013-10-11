@@ -25,6 +25,8 @@ namespace ChemSW.Nbt.Actions
         [DataMember]
         public String FireClassExemptAmountSet;
         [DataMember]
+        public String ControlZone;
+        [DataMember]
         public Collection<HMISMaterial> Materials;
 
         [DataContract]
@@ -175,6 +177,7 @@ namespace ChemSW.Nbt.Actions
         public DataTable getHMISDataTable( HMISData.HMISDataRequest Request )
         {
             DataTable ret = new DataTable( "HMIS" );
+            ret.Columns.Add( "controlzone" );
             ret.Columns.Add( "material_nodeid" );
             ret.Columns.Add( "material" );
             ret.Columns.Add( "class" );
@@ -201,27 +204,28 @@ namespace ChemSW.Nbt.Actions
             foreach( HMISData.HMISMaterial Material in Data.Materials )
             {
                 DataRow thisRow = ret.NewRow();
+                thisRow["controlzone"] = Data.ControlZone;
                 thisRow["material_nodeid"] = Material.NodeId;
                 thisRow["material"] = Material.Material;
                 thisRow["class"] = Material.Class;
                 thisRow["hazardcategory"] = Material.HazardCategory;
                 thisRow["hazardclass"] = Material.HazardClass;
                 thisRow["storage_solid_maq"] = Material.Storage.Solid.MAQ;
-                thisRow["storage_solid_qty"] = Material.Storage.Solid.Qty;
+                thisRow["storage_solid_qty"] = Math.Round( Material.Storage.Solid.Qty, 2 );
                 thisRow["storage_liquid_maq"] = Material.Storage.Liquid.MAQ;
-                thisRow["storage_liquid_qty"] = Material.Storage.Liquid.Qty;
+                thisRow["storage_liquid_qty"] = Math.Round( Material.Storage.Liquid.Qty, 2 );
                 thisRow["storage_gas_maq"] = Material.Storage.Gas.MAQ;
-                thisRow["storage_gas_qty"] = Material.Storage.Gas.Qty;
+                thisRow["storage_gas_qty"] = Math.Round( Material.Storage.Gas.Qty, 2 );
                 thisRow["closed_solid_maq"] = Material.Closed.Solid.MAQ;
-                thisRow["closed_solid_qty"] = Material.Closed.Solid.Qty;
+                thisRow["closed_solid_qty"] = Math.Round( Material.Closed.Solid.Qty, 2 );
                 thisRow["closed_liquid_maq"] = Material.Closed.Liquid.MAQ;
-                thisRow["closed_liquid_qty"] = Material.Closed.Liquid.Qty;
+                thisRow["closed_liquid_qty"] = Math.Round( Material.Closed.Liquid.Qty, 2 );
                 thisRow["closed_gas_maq"] = Material.Closed.Gas.MAQ;
-                thisRow["closed_gas_qty"] = Material.Closed.Gas.Qty;
+                thisRow["closed_gas_qty"] = Math.Round( Material.Closed.Gas.Qty, 2 );
                 thisRow["open_solid_maq"] = Material.Open.Solid.MAQ;
-                thisRow["open_solid_qty"] = Material.Open.Solid.Qty;
+                thisRow["open_solid_qty"] = Math.Round( Material.Open.Solid.Qty, 2 );
                 thisRow["open_liquid_maq"] = Material.Open.Liquid.MAQ;
-                thisRow["open_liquid_qty"] = Material.Open.Liquid.Qty;
+                thisRow["open_liquid_qty"] = Math.Round( Material.Open.Liquid.Qty, 2 );
                 ret.Rows.Add( thisRow );
             }
             return ret;
@@ -255,6 +259,8 @@ namespace ChemSW.Nbt.Actions
 
             if( CswTools.IsPrimaryKey( ControlZoneId ) )
             {
+                Data.ControlZone = _CswNbtResources.Nodes.getNodeName( ControlZoneId );
+
                 string HMISSql = @"with loc as (select n.nodeid
                                                   from nodes n
                                                   join nodetypes t on t.nodetypeid = n.nodetypeid
