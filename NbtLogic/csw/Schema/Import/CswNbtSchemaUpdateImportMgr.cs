@@ -37,6 +37,8 @@ namespace ChemSW.Nbt.csw.Schema
                 {"cofa_docs_view", 17},
                 {"container_groups", 18},
                 {"containers_view", 19},
+                {"mininventory_view", 20},
+                {"maxinventory_view", 21},
             };
 
         private DataTable _importDefTable;

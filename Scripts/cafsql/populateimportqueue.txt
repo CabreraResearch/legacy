@@ -75,4 +75,14 @@ select seq_nbtimportqueueid.nextval, 'I' as state, containergroupid as itempk, '
 --containers
 insert into nbtimportqueue ( nbtimportqueueid, state, itempk, sheetname, priority)
 select seq_nbtimportqueueid.nextval, 'I' as state, containerid as itempk, 'containers_view' as sheetname, 19 as priority from containers_view;
+
+--inventory levels
+---min
+insert into nbtimportqueue ( nbtimportqueueid, state, itempk, sheetname, priority)
+select seq_nbtimportqueueid.nextval, 'I' as state, mininventorybasicid as itempk, 'mininventory_view' as sheetname, 20 as priority from mininventory_view;
+
+---max
+insert into nbtimportqueue ( nbtimportqueueid, state, itempk, sheetname, priority)
+select seq_nbtimportqueueid.nextval, 'I' as state, maxinventorybasicid as itempk, 'maxinventory_view' as sheetname, 20 as priority from maxinventory_view;
+
 commit;
