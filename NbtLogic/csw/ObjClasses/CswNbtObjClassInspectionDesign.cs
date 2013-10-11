@@ -409,7 +409,9 @@ namespace ChemSW.Nbt.ObjClasses
                             ( this.Target.RelatedNodeId == InspectionNode.Properties[PropertyName.Target].AsRelationship.RelatedNodeId &&
                               this.Node != InspectionNode ) &&
                             // Other inspection isn't future (case 28317)
-                            CswEnumTristate.True != PriorInspection.IsFuture.Checked )
+                            CswEnumTristate.True != PriorInspection.IsFuture.Checked 
+                            // Inspection is older than this one (case 30926)
+                            && this.CreatedDate.DateTimeValue > PriorInspection.CreatedDate.DateTimeValue )
                         {
                             PriorInspection.Status.Value = CswEnumNbtInspectionStatus.Missed.ToString();
                             // Case 20755
