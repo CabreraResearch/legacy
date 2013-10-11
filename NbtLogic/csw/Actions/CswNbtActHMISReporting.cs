@@ -147,6 +147,7 @@ namespace ChemSW.Nbt.Actions
         private CswNbtResources _CswNbtResources;
         //private HMISData Data;
         //private CswPrimaryKey ControlZoneId;
+        private const Int32 RoundPrecision = 3;
 
         public CswNbtActHMISReporting( CswNbtResources CswNbtResources )
         {
@@ -211,21 +212,21 @@ namespace ChemSW.Nbt.Actions
                 thisRow["hazardcategory"] = Material.HazardCategory;
                 thisRow["hazardclass"] = Material.HazardClass;
                 thisRow["storage_solid_maq"] = Material.Storage.Solid.MAQ;
-                thisRow["storage_solid_qty"] = Math.Round( Material.Storage.Solid.Qty, 2 );
+                thisRow["storage_solid_qty"] = Math.Round( Material.Storage.Solid.Qty, RoundPrecision );
                 thisRow["storage_liquid_maq"] = Material.Storage.Liquid.MAQ;
-                thisRow["storage_liquid_qty"] = Math.Round( Material.Storage.Liquid.Qty, 2 );
+                thisRow["storage_liquid_qty"] = Math.Round( Material.Storage.Liquid.Qty, RoundPrecision );
                 thisRow["storage_gas_maq"] = Material.Storage.Gas.MAQ;
-                thisRow["storage_gas_qty"] = Math.Round( Material.Storage.Gas.Qty, 2 );
+                thisRow["storage_gas_qty"] = Math.Round( Material.Storage.Gas.Qty, RoundPrecision );
                 thisRow["closed_solid_maq"] = Material.Closed.Solid.MAQ;
-                thisRow["closed_solid_qty"] = Math.Round( Material.Closed.Solid.Qty, 2 );
+                thisRow["closed_solid_qty"] = Math.Round( Material.Closed.Solid.Qty, RoundPrecision );
                 thisRow["closed_liquid_maq"] = Material.Closed.Liquid.MAQ;
-                thisRow["closed_liquid_qty"] = Math.Round( Material.Closed.Liquid.Qty, 2 );
+                thisRow["closed_liquid_qty"] = Math.Round( Material.Closed.Liquid.Qty, RoundPrecision );
                 thisRow["closed_gas_maq"] = Material.Closed.Gas.MAQ;
-                thisRow["closed_gas_qty"] = Math.Round( Material.Closed.Gas.Qty, 2 );
+                thisRow["closed_gas_qty"] = Math.Round( Material.Closed.Gas.Qty, RoundPrecision );
                 thisRow["open_solid_maq"] = Material.Open.Solid.MAQ;
-                thisRow["open_solid_qty"] = Math.Round( Material.Open.Solid.Qty, 2 );
+                thisRow["open_solid_qty"] = Math.Round( Material.Open.Solid.Qty, RoundPrecision );
                 thisRow["open_liquid_maq"] = Material.Open.Liquid.MAQ;
-                thisRow["open_liquid_qty"] = Math.Round( Material.Open.Liquid.Qty, 2 );
+                thisRow["open_liquid_qty"] = Math.Round( Material.Open.Liquid.Qty, RoundPrecision );
                 ret.Rows.Add( thisRow );
             }
             return ret;
