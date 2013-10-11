@@ -38,46 +38,9 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
-            string HMISActionName = "HMIS_Reporting";
 
-            // Remove from jct_modules_actions
-            {
-                CswTableUpdate JctUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "28562D_Jct_Update", "jct_modules_actions" );
-                DataTable JctTable = JctUpdate.getTable( "where actionid in (select actionid from actions where actionname = '" + HMISActionName + "')" );
-                if( JctTable.Rows.Count > 0 )
-                {
-                    foreach( DataRow JctRow in JctTable.Rows )
-                    {
-                        JctRow.Delete();
-                    }
-                }
-            }
+            _CswNbtSchemaModTrnsctn.deleteAction( "HMIS_Reporting" );
 
-            // Remove from actions
-            {
-                CswTableUpdate ActionUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "28562D_Action_Update", "actions" );
-                DataTable ActionTable = ActionUpdate.getTable( "where actionname = '" + HMISActionName + "'" );
-                if( ActionTable.Rows.Count > 0 )
-                {
-                    foreach( DataRow ActionRow in ActionTable.Rows )
-                    {
-                        ActionRow.Delete();
-                    }
-                }
-            }
-
-            // Fix action permissions
-            {
-                CswNbtMetaDataObjectClass RoleOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.RoleClass );
-                foreach( CswNbtObjClassRole Role in RoleOC.getNodes( false, true ) )
-                {
-                    if( Role.ActionPermissions.CheckValue( HMISActionName ) )
-                    {
-                        Role.ActionPermissions.RemoveValue( HMISActionName );
-                    }
-                    Role.postChanges( false );
-                }
-            }
         } // update()
     }
 
