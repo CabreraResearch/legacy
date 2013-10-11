@@ -386,7 +386,8 @@ namespace ChemSW.Nbt.ObjClasses
         {
             if( CswEnumTristate.True != this.IsFuture.Checked &&
                 CswTools.IsPrimaryKey( this.Generator.RelatedNodeId ) &&
-                false == _genFutureNodesHasRun )
+                false == _genFutureNodesHasRun &&
+                _CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumNbtConfigurationVariables.miss_outdated_inspections.ToString() ) == "1" )
             {
                 String NodeStatus = String.Empty;
                 CswNbtMetaDataNodeType ThisInspectionNT = this.Node.getNodeTypeLatestVersion();
