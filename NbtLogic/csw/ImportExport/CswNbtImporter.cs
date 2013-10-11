@@ -405,6 +405,10 @@ namespace ChemSW.Nbt.ImportExport
             IEnumerable<CswNbtImportDefBinding> NodeTypeBindings = BindingDef.Bindings.Where(
                 delegate( CswNbtImportDefBinding b )
                 {
+                    if( null == b.DestNodeType )
+                    {
+                        throw new CswDniException(CswEnumErrorType.Error, "DestNodeType '" + b.DestNodeTypeName + "' is not enabled or does not exist.", "Accessor for Order.NodeType returned null.");
+                    }
                     return b.DestNodeType == Order.NodeType && b.Instance == Order.Instance;
                 } );
             IEnumerable<CswNbtImportDefRelationship> RowRelationships = BindingDef.RowRelationships.Where( r => r.NodeType.NodeTypeId == Order.NodeType.NodeTypeId ); //&& r.Instance == Order.Instance );
