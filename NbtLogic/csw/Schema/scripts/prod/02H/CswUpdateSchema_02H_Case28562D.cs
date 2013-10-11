@@ -46,9 +46,9 @@ namespace ChemSW.Nbt.Schema
                 DataTable JctTable = JctUpdate.getTable( "where actionid in (select actionid from actions where actionname = '" + HMISActionName + "')" );
                 if( JctTable.Rows.Count > 0 )
                 {
-                    foreach( DataRow ActionRow in JctTable.Rows )
+                    foreach( DataRow JctRow in JctTable.Rows )
                     {
-                        ActionRow.Delete();
+                        JctRow.Delete();
                     }
                 }
             }
@@ -66,6 +66,18 @@ namespace ChemSW.Nbt.Schema
                 }
             }
 
+            // Fix action permissions
+            {
+                CswNbtMetaDataObjectClass RoleOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.RoleClass );
+                foreach( CswNbtObjClassRole Role in RoleOC.getNodes( false, true ) )
+                {
+                    if( Role.ActionPermissions.CheckValue( HMISActionName ) )
+                    {
+                        Role.ActionPermissions.RemoveValue( HMISActionName );
+                    }
+                    Role.postChanges( false );
+                }
+            }
         } // update()
     }
 
