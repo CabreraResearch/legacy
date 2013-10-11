@@ -64,12 +64,15 @@ namespace ChemSW.Nbt.ServiceDrivers
             }
         }
 
-        public int saveFile( string PropIdAttr, byte[] BlobData, string ContentType, string FileName, out string Href, int BlobDataId = Int32.MinValue, bool PostChanges = true )
+        public int saveFile( string PropIdAttr, byte[] BlobData, string ContentType, string FileName, out string Href, int BlobDataId = Int32.MinValue, bool PostChanges = true, CswNbtNode Node = null)
         {
             CswPropIdAttr PropId = new CswPropIdAttr( PropIdAttr );
 
             CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtResources.MetaData.getNodeTypeProp( PropId.NodeTypePropId );
-            CswNbtNode Node = _CswNbtResources.Nodes[PropId.NodeId];
+            if( null == Node )
+            {
+                Node = _CswNbtResources.Nodes[PropId.NodeId];
+            }
             CswNbtNodePropWrapper FileProp = Node.Properties[MetaDataProp];
 
             if( _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Edit, MetaDataProp.getNodeType(), _CswNbtResources.CurrentNbtUser ) &&
@@ -178,7 +181,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             BWriter.Write( BlobData );
         }
 
-        public void saveMol( string MolString, string PropId, out string Href, out string FormattedMolString, bool PostChanges = true )
+        public void saveMol( string MolString, string PropId, out string Href, out string FormattedMolString, bool PostChanges = true, CswNbtNode Node = null )
         {
             CswPropIdAttr PropIdAttr = new CswPropIdAttr( PropId );
             CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtResources.MetaData.getNodeTypeProp( PropIdAttr.NodeTypePropId );
@@ -187,31 +190,16 @@ namespace ChemSW.Nbt.ServiceDrivers
             FormattedMolString = MoleculeBuilder.FormatMolFile( MolString );
 
             Href = "";
-            CswNbtNode Node = _CswNbtResources.Nodes[PropIdAttr.NodeId];
+            if( null == Node )
+            {
+                Node = _CswNbtResources.Nodes[PropIdAttr.NodeId];
+            }
             if( null != Node )
             {
                 CswNbtNodePropMol molProp = Node.Properties[MetaDataProp];
                 if( null != molProp )
                 {
-                    //Save the mol text to _CswNbtResources
-                    CswTableUpdate JctUpdate = _CswNbtResources.makeCswTableUpdate( "Clobber_save_update", "jct_nodes_props" );
-                    DataTable JctTable = null;
-
-                    if( Int32.MinValue != molProp.JctNodePropId )
-                    {
-                        JctTable = JctUpdate.getTable( "jctnodepropid", molProp.JctNodePropId );
-                        JctTable.Rows[0]["clobdata"] = FormattedMolString;
-                    }
-                    else
-                    {
-                        JctTable = JctUpdate.getEmptyTable();
-                        DataRow JRow = JctTable.NewRow();
-                        JRow["nodetypepropid"] = CswConvert.ToDbVal( PropIdAttr.NodeTypePropId );
-                        JRow["nodeid"] = CswConvert.ToDbVal( Node.NodeId.PrimaryKey );
-                        JRow["nodeidtablename"] = Node.NodeId.TableName;
-                        JRow["clobdata"] = FormattedMolString;
-                        JctTable.Rows.Add( JRow );
-                    }
+                    molProp.Mol = FormattedMolString;
 
                     //Save the mol image to blob_data
                     byte[] molImage = CswStructureSearch.GetImage( FormattedMolString );
@@ -219,8 +207,8 @@ namespace ChemSW.Nbt.ServiceDrivers
                     CswNbtSdBlobData SdBlobData = new CswNbtSdBlobData( _CswNbtResources );
                     Href = CswNbtNodePropMol.getLink( molProp.JctNodePropId, Node.NodeId );
 
-                    SdBlobData.saveFile( PropId, molImage, CswNbtNodePropMol.MolImgFileContentType, CswNbtNodePropMol.MolImgFileName, out Href, Int32.MinValue, PostChanges );
-                    JctUpdate.update( JctTable );
+                    SdBlobData.saveFile( PropId, molImage, CswNbtNodePropMol.MolImgFileContentType, CswNbtNodePropMol.MolImgFileName, out Href, Int32.MinValue, PostChanges, Node: Node );
+                    //JctUpdate.update( JctTable );
 
                     //case 28364 - calculate fingerprint and save it
                     _CswNbtResources.StructureSearchManager.InsertFingerprintRecord( PropIdAttr.NodeId.PrimaryKey, FormattedMolString );
