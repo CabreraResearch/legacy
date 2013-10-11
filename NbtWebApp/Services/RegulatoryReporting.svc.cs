@@ -20,45 +20,7 @@ namespace NbtWebApp
     public class RegulatoryReporting
     {
         private HttpContext _Context = HttpContext.Current;
-
-        [OperationContract]
-        [WebInvoke( Method = "GET" )]
-        [FaultContract( typeof( FaultException ) )]
-        [Description( "Get view of all control zones for HMIS Reporting" )]
-        public CswNbtWebServiceRegulatoryReporting.HMISViewReturn getControlZonesView()
-        {
-            CswNbtWebServiceRegulatoryReporting.HMISViewReturn Ret = new CswNbtWebServiceRegulatoryReporting.HMISViewReturn();
-
-            var GetViewDriverType = new CswWebSvcDriver<CswNbtWebServiceRegulatoryReporting.HMISViewReturn, object>(
-                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
-                ReturnObj: Ret,
-                WebSvcMethodPtr: CswNbtWebServiceRegulatoryReporting.getControlZonesView,
-                ParamObj: ""
-                );
-
-            GetViewDriverType.run();
-            return ( Ret );
-        }
-
-        [OperationContract]
-        [WebInvoke( Method = "POST", ResponseFormat = WebMessageFormat.Json )]
-        [Description( "Get all reportable hazardous Materials and their total quantities in a given Control Zone" )]
-        [FaultContract( typeof( FaultException ) )]
-        public CswNbtWebServiceRegulatoryReporting.HMISDataReturn getHMISData( HMISData.HMISDataRequest Request )
-        {
-            CswNbtWebServiceRegulatoryReporting.HMISDataReturn Ret = new CswNbtWebServiceRegulatoryReporting.HMISDataReturn();
-
-            var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceRegulatoryReporting.HMISDataReturn, HMISData.HMISDataRequest>(
-                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
-                ReturnObj: Ret,
-                WebSvcMethodPtr: CswNbtWebServiceRegulatoryReporting.getHMISData,
-                ParamObj: Request
-                );
-
-            SvcDriver.run();
-            return ( Ret );
-        }
-
+        
         [OperationContract]
         //        [WebInvoke( Method = "POST", ResponseFormat = WebMessageFormat.Xml )]
         [WebInvoke( Method = "GET", UriTemplate = "getHMISDataTable?ControlZone={ControlZone}&Class={Class}" )]

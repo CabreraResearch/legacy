@@ -156,24 +156,8 @@ namespace ChemSW.Nbt.Actions
         }
 
         #endregion Properties and ctor
-
+        
         #region Public Methods
-
-        public CswNbtView getControlZonesView( string FilterToName = "" )
-        {
-            CswNbtView ControlZonesView = new CswNbtView( _CswNbtResources );
-            CswNbtMetaDataObjectClass ControlZoneOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ControlZoneClass );
-            CswNbtMetaDataObjectClassProp ControlZoneNameOCP = ControlZoneOC.getObjectClassProp( CswNbtObjClassControlZone.PropertyName.Name );
-            CswNbtViewRelationship ControlZoneVR = ControlZonesView.AddViewRelationship( ControlZoneOC, IncludeDefaultFilters: true );
-            if( false == string.IsNullOrEmpty( FilterToName ) )
-            {
-                ControlZonesView.AddViewPropertyAndFilter( ControlZoneVR,
-                                                           ControlZoneNameOCP,
-                                                           Value: FilterToName );
-            }
-            ControlZonesView.ViewName = "HMIS Control Zones";
-            return ControlZonesView;
-        }
 
         public DataTable getHMISDataTable( HMISData.HMISDataRequest Request )
         {
@@ -407,6 +391,22 @@ namespace ChemSW.Nbt.Actions
         #endregion Public Methods
 
         #region Private Methods
+
+        private CswNbtView getControlZonesView( string FilterToName = "" )
+        {
+            CswNbtView ControlZonesView = new CswNbtView( _CswNbtResources );
+            CswNbtMetaDataObjectClass ControlZoneOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ControlZoneClass );
+            CswNbtMetaDataObjectClassProp ControlZoneNameOCP = ControlZoneOC.getObjectClassProp( CswNbtObjClassControlZone.PropertyName.Name );
+            CswNbtViewRelationship ControlZoneVR = ControlZonesView.AddViewRelationship( ControlZoneOC, IncludeDefaultFilters: true );
+            if( false == string.IsNullOrEmpty( FilterToName ) )
+            {
+                ControlZonesView.AddViewPropertyAndFilter( ControlZoneVR,
+                                                           ControlZoneNameOCP,
+                                                           Value: FilterToName );
+            }
+            ControlZonesView.ViewName = "HMIS Control Zones";
+            return ControlZonesView;
+        }
 
         private void _setFireClasses( CswPrimaryKey ControlZoneId, HMISData Data )
         {
