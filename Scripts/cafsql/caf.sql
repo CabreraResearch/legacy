@@ -560,50 +560,46 @@ select
 	order by c.ContainerId;
 	  
 ---Inventory Levels
---Min
-create or replace view mininventory_view as
-select
-m.DELETED,
-m.INVENTORYGROUPID,
-m.MININVENTORYBASICID,
-m.MININVENTORYLEVEL,
-m.MININVENTORYUNITOFMEASUREID,
-m.PACKAGEID,
-loc.locationid,
-'Minimum' as inventorytype
-from mininventory_basic m
-inner join
-(
-  select 
-  toploc.inventorygroupid, 
-  toploc.locationid 
-  from (
-    select 
-    l.locationid, 
-    l.inventorygroupid, 
-    row_number() over (partition by l.inventorygroupid order by l.locationid) as rn 
-    from locations l
-    order by l.locationlevel5id, l.locationlevel4id, l.locationlevel3id, l.locationlevel2id, l.locationlevel1id
-  ) toploc where toploc.rn = 1
-) loc on loc.inventorygroupid = m.inventorygroupid;
---Max	
-create or replace view maxinventory_view as
-select
+create or replace view inventory_view as
+	select
 	m.DELETED,
-	m.LOCATIONID,
-	m.MATERIALID,
-	m.MAXINVENTORYBASICID,
-	m.MAXINVENTORYLEVEL,
-	m.UNITOFMEASUREID,
-	max(p.packageid) as packageid,
-	'Maximum' as inventorytype
-from 
-	maxinventory_basic m
-	join packages p on p.materialid = m.materialid
-group by 
-	m.DELETED,
-	m.LOCATIONID,
-	m.MATERIALID,
-	m.MAXINVENTORYBASICID,
-	m.MAXINVENTORYLEVEL,
-	m.UNITOFMEASUREID
+	'min_' || m.MININVENTORYBASICID as inventorybasicid,
+	m.MININVENTORYLEVEL as inventorylevel,
+	m.MININVENTORYUNITOFMEASUREID as unitofmeasureid,
+	m.PACKAGEID,
+	loc.locationid,
+	'Minimum' as inventorytype
+	from mininventory_basic m
+	inner join
+	(
+	  select 
+	  toploc.inventorygroupid, 
+	  toploc.locationid 
+	  from (
+		select 
+		l.locationid, 
+		l.inventorygroupid, 
+		row_number() over (partition by l.inventorygroupid order by l.locationid) as rn 
+		from locations l
+		order by l.locationlevel5id, l.locationlevel4id, l.locationlevel3id, l.locationlevel2id, l.locationlevel1id
+	  ) toploc where toploc.rn = 1
+	) loc on loc.inventorygroupid = m.inventorygroupid
+union
+	select
+		m.DELETED,
+		'max_' || m.MAXINVENTORYBASICID as inventorybasicid,
+		m.MAXINVENTORYLEVEL as inventorylevel,
+		m.UNITOFMEASUREID,
+		max(p.packageid) as packageid,
+	  m.LOCATIONID,
+		'Maximum' as inventorytype
+	from 
+		maxinventory_basic m
+		join packages p on p.materialid = m.materialid
+	group by 
+		m.DELETED,
+		m.LOCATIONID,
+		m.MATERIALID,
+		m.MAXINVENTORYBASICID,
+		m.MAXINVENTORYLEVEL,
+		m.UNITOFMEASUREID;
