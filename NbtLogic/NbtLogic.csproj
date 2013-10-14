@@ -113,6 +113,7 @@
     <Compile Include="csw\ImportExport\CswNbtImportDefOrder.cs" />
     <Compile Include="csw\ImportExport\CswNbtImportDefBinding.cs" />
     <Compile Include="csw\ImportExport\CswNbtImporter.cs" />
+    <Compile Include="csw\LandingPage\CswNbtLandingPage.cs" />
     <Compile Include="csw\MetaData\enum\CswEnumNbtCategory.cs" />
     <Compile Include="csw\MetaData\enum\CswEnumNbtFilterConjunction.cs" />
     <Compile Include="csw\MetaData\enum\CswEnumNbtFilterResultMode.cs" />
@@ -363,6 +364,13 @@
     <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateSchema_02G_Case30680.cs" />
     <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateMetaData_02G_Case30680.cs" />
     <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateSchema_02G_Case30849.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02H\CswUpdateSchema_02H_Case28562D.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02H\CswUpdateSchema_02H_Case28562C.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02H\CswUpdateSchema_02H_Case28562B.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02H\CswUpdateMetaData_02H_Case28562.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02H\CswUpdateMetaData_02H_Case30400.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02H\CswUpdateSchema_02H_Case30046.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02H\CswUpdateSchema_02H_Case30400.cs" />
     <Compile Include="csw\Schema\scripts\prod\02H\CswUpdateMetaData_02H_Case30764.cs" />
     <Compile Include="csw\Schema\scripts\prod\02H\CswUpdateMetaData_02H_Case30130.cs" />
     <Compile Include="csw\Schema\scripts\prod\02H\CswUpdateMetaData_02H_Case30879.cs" />
@@ -370,6 +378,8 @@
     <Compile Include="csw\Schema\scripts\prod\02H\CswUpdateSchema_02H_Case30537C.cs" />
     <Compile Include="csw\Schema\scripts\prod\02H\CswUpdateMetaData_02H_Case30537A.cs" />
     <Compile Include="csw\Schema\scripts\prod\02H\CswUpdateMetaData_02H_Case30537B.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CAF\CswUpdateSchema_02H_Case30048_InventoryLevels.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CAF\CswUpdateSchema_02H_Case30046_Containers.cs" />
     <Compile Include="csw\Schema\scripts\prod\CAF\CswUpdateSchema_02G_Case30047_Docs.cs" />
     <Compile Include="csw\Schema\scripts\prod\02H\CswSchemaScriptsHickory.cs" />
     <Compile Include="csw\Schema\scripts\prod\CAF\CswUpdateSchema_02G_Case30744_PackDetail.cs" />

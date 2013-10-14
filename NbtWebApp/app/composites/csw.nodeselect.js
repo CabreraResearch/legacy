@@ -357,23 +357,23 @@
 
         cswPrivate.toggleOptions = function (on) {
             if (Csw.bool(on)) {
-                if (cswPrivate.useSearch) {
-                    cswPrivate.searchButton.show();
-                } else {
-                    cswPrivate.select.show();
-                    cswPrivate.nodeLinkCell.hide();
-                }
+                    if (cswPrivate.useSearch) {
+                        cswPrivate.searchButton.show();
+                    } else {
+                        cswPrivate.select.show();
+                        cswPrivate.nodeLinkCell.hide();
+                    }
                 if (cswPrivate.addImage) {
                     cswPrivate.addImage.show();
                 }
                 cswPrivate.toggleButton.hide();
-            } else {
-                if (cswPrivate.useSearch) {
-                    cswPrivate.searchButton.hide();
                 } else {
-                    cswPrivate.select.hide();
-                    cswPrivate.nodeLinkCell.show();
-                }
+                    if (cswPrivate.useSearch) {
+                        cswPrivate.searchButton.hide();
+                    } else {
+                        cswPrivate.select.hide();
+                        cswPrivate.nodeLinkCell.show();
+                    }
                 if (cswPrivate.addImage) {
                     cswPrivate.addImage.hide();
                 }

@@ -55,6 +55,13 @@ namespace ChemSW.Nbt.ObjClasses
             public const string ContainerDispenseTransactions = "Container Dispense Transactions";
             public const string Documents = "Documents";
             public const string SubmittedRequests = "Submitted Requests";
+            public const string HomeLocation = "Home Location";
+            public const string Notes = "Notes";
+            public const string Project = "Project";
+            public const string SpecificActivity = "Specific Activity";
+            public const string TareQuantity = "Tare Quantity";
+            public const string Concentration = "Concentration";
+            public const string OpenedDate = "Opened Date";
         }
 
         #endregion Properties
@@ -1198,6 +1205,14 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropGrid ContainerDispenseTransactions { get { return ( _CswNbtNode.Properties[PropertyName.ContainerDispenseTransactions] ); } }
         public CswNbtNodePropGrid Documents { get { return ( _CswNbtNode.Properties[PropertyName.Documents] ); } }
         public CswNbtNodePropGrid SubmittedRequests { get { return ( _CswNbtNode.Properties[PropertyName.SubmittedRequests] ); } }
+        public CswNbtNodePropRelationship HomeLocation { get { return ( _CswNbtNode.Properties[PropertyName.HomeLocation] ); } }
+        public CswNbtNodePropComments Notes { get { return ( _CswNbtNode.Properties[PropertyName.Notes] ); } }
+        public CswNbtNodePropText Project { get { return ( _CswNbtNode.Properties[PropertyName.Project] ); } }
+        public CswNbtNodePropText SpecificActivity { get { return ( _CswNbtNode.Properties[PropertyName.SpecificActivity] ); } }
+        public CswNbtNodePropQuantity TareQuantity { get { return ( _CswNbtNode.Properties[PropertyName.TareQuantity] ); } }
+        public CswNbtNodePropText Concentration { get { return ( _CswNbtNode.Properties[PropertyName.Concentration] ); } }
+        public CswNbtNodePropDateTime OpenedDate { get { return ( _CswNbtNode.Properties[PropertyName.OpenedDate] ); } }
+
         #endregion
 
 
