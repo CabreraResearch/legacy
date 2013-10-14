@@ -482,6 +482,7 @@ namespace ChemSW.Nbt.WebServices
                     // case 26166 - apply to all matching properties
                     CswNbtViewPropertyFilter ViewPropFilter = (CswNbtViewPropertyFilter) View.FindViewNodeByArbitraryId( FilterArbitraryId );
                     string OrigValue = ViewPropFilter.Value;
+                    CswEnumNbtFilterMode OrigFilterMode = ViewPropFilter.FilterMode;
 
                     CswNbtViewProperty ViewParentProp = (CswNbtViewProperty) ViewPropFilter.Parent;
                     foreach( CswNbtViewPropertyFilter OtherPropFilter in View.Root.GetAllChildrenOfType( CswEnumNbtViewNodeType.CswNbtViewPropertyFilter ) )
@@ -489,7 +490,8 @@ namespace ChemSW.Nbt.WebServices
                         CswNbtViewProperty OtherParentProp = ( (CswNbtViewProperty) OtherPropFilter.Parent );
                         if( OtherParentProp.Name == ViewParentProp.Name &&
                             OtherParentProp.FieldType == ViewParentProp.FieldType &&
-                            OtherPropFilter.Value == OrigValue )
+                            OtherPropFilter.Value == OrigValue &&
+                            OtherPropFilter.FilterMode == OrigFilterMode )
                         {
                             OtherPropFilter.Conjunction = (CswEnumNbtFilterConjunction) NewFilter["conjunction"].ToString();
                             OtherPropFilter.FilterMode = (CswEnumNbtFilterMode) NewFilter["filter"].ToString();

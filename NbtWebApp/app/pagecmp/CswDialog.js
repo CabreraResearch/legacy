@@ -1719,8 +1719,8 @@
             o.div.button({
                 enabledText: o.okText,
                 onClick: function () {
-                    Csw.tryExec(o.onOk);
-                    o.div.$.dialog('close');
+                    if ( Csw.tryExec(o.onOk) !== false ) 
+                        o.div.$.dialog('close');
                 }
             });
 
