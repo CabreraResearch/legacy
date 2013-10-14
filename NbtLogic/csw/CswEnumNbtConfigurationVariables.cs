@@ -135,6 +135,11 @@ namespace ChemSW.Nbt
         /// </summary>
         LocationViewRootName,
 
+        /// <summary>
+        /// Whether Inspections become 'Missed' when Generator creates new inspection, 1=true
+        /// </summary>
+        miss_outdated_inspections,
+
         sql_report_resultlimit
 
     };

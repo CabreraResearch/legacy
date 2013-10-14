@@ -276,11 +276,15 @@ namespace ChemSW.Nbt
             string From = @"from nodes n
                             join nodetypes t on (n.nodetypeid = t.nodetypeid)
                             join object_class o on (t.objectclassid = o.objectclassid) ";
-            string Where = string.Empty;
+            string Where = " where n.istemp= '0' ";
             string OrderBy = string.Empty;
 
-            // case 26029
-            Where += "where t.enabled = '1' ";
+            //If we have access to disabled module MetaData, we should have access to their Nodes as well
+            if( _CswNbtResources.MetaData.ExcludeDisabledModules )
+            {
+                // case 26029
+                Where += " and t.enabled = '1' ";
+            }
 
             // Nodetype/Object Class filter
             if( Relationship.SecondType == CswEnumNbtViewRelatedIdType.NodeTypeId )
@@ -707,7 +711,6 @@ namespace ChemSW.Nbt
             {
                 Where += " and n.hidden = '0' ";
             }
-            Where += " and n.istemp= '0' ";
 
             string ret = string.Empty;
             if( With.Count > 0 )

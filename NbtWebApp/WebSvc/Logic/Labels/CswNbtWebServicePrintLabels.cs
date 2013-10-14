@@ -359,7 +359,7 @@ namespace ChemSW.Nbt.WebServices
                 foreach( string ImageUrl in ImageUrls )
                 {
                     string RealImageUrl = ImageUrl.Replace( ".jpg", "" );
-                    RealImageUrl = RealImageUrl.Replace( "ghs/", "ghs/" + Scale.ToString() + "/" );
+                    RealImageUrl = RealImageUrl.Replace( "ghs/600/", "ghs/" + Scale.ToString() + "/" );
                     if( NoBorder )
                     {
                         RealImageUrl += "_nobrd";

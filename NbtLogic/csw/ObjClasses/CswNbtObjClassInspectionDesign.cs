@@ -386,7 +386,8 @@ namespace ChemSW.Nbt.ObjClasses
         {
             if( CswEnumTristate.True != this.IsFuture.Checked &&
                 CswTools.IsPrimaryKey( this.Generator.RelatedNodeId ) &&
-                false == _genFutureNodesHasRun )
+                false == _genFutureNodesHasRun &&
+                _CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumNbtConfigurationVariables.miss_outdated_inspections.ToString() ) == "1" )
             {
                 String NodeStatus = String.Empty;
                 CswNbtMetaDataNodeType ThisInspectionNT = this.Node.getNodeTypeLatestVersion();
@@ -409,7 +410,9 @@ namespace ChemSW.Nbt.ObjClasses
                             ( this.Target.RelatedNodeId == InspectionNode.Properties[PropertyName.Target].AsRelationship.RelatedNodeId &&
                               this.Node != InspectionNode ) &&
                             // Other inspection isn't future (case 28317)
-                            CswEnumTristate.True != PriorInspection.IsFuture.Checked )
+                            CswEnumTristate.True != PriorInspection.IsFuture.Checked 
+                            // Inspection is older than this one (case 30926)
+                            && this.CreatedDate.DateTimeValue > PriorInspection.CreatedDate.DateTimeValue )
                         {
                             PriorInspection.Status.Value = CswEnumNbtInspectionStatus.Missed.ToString();
                             // Case 20755
