@@ -59,7 +59,7 @@ namespace ChemSW.Nbt.Schema
 
                                         with audit1 as (select " + AuditTablePk + @", " + RealTablePk + @", auditeventtype
                                               from " + AuditTable + @" a
-                                             where a.recordcreated = (select max(recordcreated)
+                                             where a." + AuditTablePk + @" = (select max(" + AuditTablePk + @")
                                                                                    from " + AuditTable + @" a2
                                                                                   where a2.recordcreated <= AsOfDate
                                                                                     and a2." + RealTablePk + @" = a." + RealTablePk + @"))
