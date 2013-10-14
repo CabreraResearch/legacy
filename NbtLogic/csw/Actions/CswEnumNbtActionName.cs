@@ -24,7 +24,6 @@ namespace ChemSW.Nbt.Actions
             {   DisposeContainer,          DisposeContainer          },
             {   Edit_View,                 Edit_View                 },
             {   Future_Scheduling,         Future_Scheduling         },
-            {   HMIS_Reporting,            HMIS_Reporting            },
             {   Import_Data_From_Excel,    Import_Data_From_Excel    },
             {   Kiosk_Mode,                Kiosk_Mode                },
             {   Login_Data,                Login_Data                },
@@ -104,7 +103,6 @@ namespace ChemSW.Nbt.Actions
         public const string DisposeContainer = "DisposeContainer";
         public const string Edit_View = "Edit_View";
         public const string Future_Scheduling = "Future_Scheduling";
-        public const string HMIS_Reporting = "HMIS_Reporting";
         public const string Import_Data_From_Excel = "Import_Data_from_Excel";
         public const string Kiosk_Mode = "Kiosk_Mode";
         public const string Login_Data = "Login_Data";

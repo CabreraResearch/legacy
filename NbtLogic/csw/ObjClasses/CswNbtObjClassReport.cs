@@ -23,6 +23,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string BtnRun = "Run";
             public const string Instructions = "Instructions";
             public const string ReportGroup = "Report Group";
+            public const string WebService = "Web Service";
         }
 
 
@@ -146,20 +147,14 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Object class specific properties
 
-        public CswNbtNodePropMemo SQL
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.Sql] ); //sic.
-            }
-        }
-
+        public CswNbtNodePropMemo SQL { get { return ( _CswNbtNode.Properties[PropertyName.Sql] ); } }
         public CswNbtNodePropButton Run { get { return ( _CswNbtNode.Properties[PropertyName.BtnRun] ); } }
         public CswNbtNodePropBlob RPTFile { get { return ( _CswNbtNode.Properties[PropertyName.RPTFile] ); } }
         public CswNbtNodePropText ReportName { get { return ( _CswNbtNode.Properties[PropertyName.ReportName] ); } }
         public CswNbtNodePropText Category { get { return ( _CswNbtNode.Properties[PropertyName.Category] ); } }
         public CswNbtNodePropMemo Instructions { get { return ( _CswNbtNode.Properties[PropertyName.Instructions] ); } }
         public CswNbtNodePropRelationship ReportGroup { get { return ( _CswNbtNode.Properties[PropertyName.ReportGroup] ); } }
+        public CswNbtNodePropMemo WebService { get { return ( _CswNbtNode.Properties[PropertyName.WebService] ); } }
 
         #endregion
 
@@ -170,14 +165,21 @@ namespace ChemSW.Nbt.ObjClasses
             public const string UserId = "userid";
             public const string NodeId = "nodeid";
             public const string RoleId = "roleid";
-            public static CswCommaDelimitedString List = new CswCommaDelimitedString { UserId, NodeId, RoleId }; 
+            public static CswCommaDelimitedString List = new CswCommaDelimitedString { UserId, NodeId, RoleId };
         }
 
         public Dictionary<string, string> ExtractReportParams( CswNbtObjClassUser UserNode = null )
         {
             Dictionary<string, string> reportParams = new Dictionary<string, string>();
-
-            MatchCollection matchedParams = Regex.Matches( SQL.Text, @"\{(\w|[0-9])*\}" );
+            MatchCollection matchedParams = null;
+            if( false == string.IsNullOrEmpty( WebService.Text ) )
+            {
+                matchedParams = Regex.Matches( WebService.Text, @"\{(\w|[0-9])*\}" );
+            }
+            else if( false == string.IsNullOrEmpty( SQL.Text ) )
+            {
+                matchedParams = Regex.Matches( SQL.Text, @"\{(\w|[0-9])*\}" );
+            }
             foreach( Match match in matchedParams )
             {
                 string paramName = match.Value.Replace( '{', ' ' ).Replace( '}', ' ' ).Trim(); //remove the '{' and '}' and whitespace
@@ -185,7 +187,7 @@ namespace ChemSW.Nbt.ObjClasses
                 string replacementVal = "";
                 if( null != UserNode )
                 {
-                    if ( paramName == ControlledParams.UserId || 
+                    if( paramName == ControlledParams.UserId ||
                         paramName == ControlledParams.NodeId )
                     {
                         replacementVal = UserNode.Node.NodeId.PrimaryKey.ToString();
@@ -197,16 +199,19 @@ namespace ChemSW.Nbt.ObjClasses
                     else
                     {
                         CswNbtMetaDataNodeTypeProp userNTP = UserNode.NodeType.getNodeTypeProp( paramName );
-                        if ( null != userNTP )
+                        if( null != userNTP )
                         {
                             replacementVal = UserNode.Node.Properties[userNTP].Gestalt;
                         }
                     }
                 }
 
-                if( CswSqlAnalysis.doesSqlContainDmlOrDdl( replacementVal ) )
+                if( false == string.IsNullOrEmpty( SQL.Text ) )
                 {
-                    throw ( new CswDniException( "Parameter contains sql: " + paramName ) );
+                    if( CswSqlAnalysis.doesSqlContainDmlOrDdl( replacementVal ) )
+                    {
+                        throw ( new CswDniException( "Parameter contains sql: " + paramName ) );
+                    }
                 }
 
                 if( false == reportParams.ContainsKey( paramName ) )
@@ -239,7 +244,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             foreach( var paramPair in reportParams )
             {
-                SQL = SQL.Replace( "{" + paramPair.Key + "}", _getParamVal( paramPair.Value ) );    
+                SQL = SQL.Replace( "{" + paramPair.Key + "}", _getParamVal( paramPair.Value ) );
             }
             return SQL;
         }

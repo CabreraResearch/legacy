@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data;
 using System.Linq;
 using System.Runtime.Serialization;
 using ChemSW.Core;
+using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Conversion;
@@ -23,6 +25,8 @@ namespace ChemSW.Nbt.Actions
         [DataMember]
         public String FireClassExemptAmountSet;
         [DataMember]
+        public String ControlZone;
+        [DataMember]
         public Collection<HMISMaterial> Materials;
 
         [DataContract]
@@ -38,7 +42,7 @@ namespace ChemSW.Nbt.Actions
             [DataMember]
             public String Material = String.Empty;
             [DataMember]
-            public String PhysicalState = String.Empty;
+            public Int32 NodeId = 0;
             [DataMember]
             public String HazardClass = String.Empty;
             [DataMember]
@@ -126,6 +130,10 @@ namespace ChemSW.Nbt.Actions
         {
             [DataMember]
             public String ControlZoneId = String.Empty;
+            [DataMember]
+            public String ControlZone = String.Empty;
+            [DataMember]
+            public String Class = String.Empty;
         }
 
     } // HMISData
@@ -137,124 +145,246 @@ namespace ChemSW.Nbt.Actions
         #region Properties and ctor
 
         private CswNbtResources _CswNbtResources;
-        private HMISData Data;
-        private CswPrimaryKey ControlZoneId;
+        //private HMISData Data;
+        //private CswPrimaryKey ControlZoneId;
+        private const Int32 RoundPrecision = 3;
 
         public CswNbtActHMISReporting( CswNbtResources CswNbtResources )
         {
             _CswNbtResources = CswNbtResources;
-            Data = new HMISData();
+            //Data = new HMISData();
         }
 
         #endregion Properties and ctor
-
+        
         #region Public Methods
 
-        public CswNbtView getControlZonesView()
+        public DataTable getHMISDataTable( HMISData.HMISDataRequest Request )
         {
-            CswNbtView ControlZonesView = new CswNbtView( _CswNbtResources );
-            CswNbtMetaDataObjectClass ControlZoneOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ControlZoneClass );
-            ControlZonesView.AddViewRelationship( ControlZoneOC, IncludeDefaultFilters: true );
-            ControlZonesView.ViewName = "HMIS Control Zones";
-            ControlZonesView.SaveToCache( IncludeInQuickLaunch: false );
-            return ControlZonesView;
+            DataTable ret = new DataTable( "HMIS" );
+            ret.Columns.Add( "controlzone" );
+            ret.Columns.Add( "material_nodeid" );
+            ret.Columns.Add( "material" );
+            ret.Columns.Add( "class" );
+            ret.Columns.Add( "hazardcategory" );
+            ret.Columns.Add( "hazardclass" );
+            ret.Columns.Add( "storage_solid_maq" );
+            ret.Columns.Add( "storage_solid_qty" );
+            ret.Columns.Add( "storage_liquid_maq" );
+            ret.Columns.Add( "storage_liquid_qty" );
+            ret.Columns.Add( "storage_gas_maq" );
+            ret.Columns.Add( "storage_gas_qty" );
+            ret.Columns.Add( "closed_solid_maq" );
+            ret.Columns.Add( "closed_solid_qty" );
+            ret.Columns.Add( "closed_liquid_maq" );
+            ret.Columns.Add( "closed_liquid_qty" );
+            ret.Columns.Add( "closed_gas_maq" );
+            ret.Columns.Add( "closed_gas_qty" );
+            ret.Columns.Add( "open_solid_maq" );
+            ret.Columns.Add( "open_solid_qty" );
+            ret.Columns.Add( "open_liquid_maq" );
+            ret.Columns.Add( "open_liquid_qty" );
+
+            HMISData Data = getHMISData( Request );
+            foreach( HMISData.HMISMaterial Material in Data.Materials )
+            {
+                DataRow thisRow = ret.NewRow();
+                thisRow["controlzone"] = Data.ControlZone;
+                thisRow["material_nodeid"] = Material.NodeId;
+                thisRow["material"] = Material.Material;
+                thisRow["class"] = Material.Class;
+                thisRow["hazardcategory"] = Material.HazardCategory;
+                thisRow["hazardclass"] = Material.HazardClass;
+                thisRow["storage_solid_maq"] = Material.Storage.Solid.MAQ;
+                thisRow["storage_solid_qty"] = Math.Round( Material.Storage.Solid.Qty, RoundPrecision );
+                thisRow["storage_liquid_maq"] = Material.Storage.Liquid.MAQ;
+                thisRow["storage_liquid_qty"] = Math.Round( Material.Storage.Liquid.Qty, RoundPrecision );
+                thisRow["storage_gas_maq"] = Material.Storage.Gas.MAQ;
+                thisRow["storage_gas_qty"] = Math.Round( Material.Storage.Gas.Qty, RoundPrecision );
+                thisRow["closed_solid_maq"] = Material.Closed.Solid.MAQ;
+                thisRow["closed_solid_qty"] = Math.Round( Material.Closed.Solid.Qty, RoundPrecision );
+                thisRow["closed_liquid_maq"] = Material.Closed.Liquid.MAQ;
+                thisRow["closed_liquid_qty"] = Math.Round( Material.Closed.Liquid.Qty, RoundPrecision );
+                thisRow["closed_gas_maq"] = Material.Closed.Gas.MAQ;
+                thisRow["closed_gas_qty"] = Math.Round( Material.Closed.Gas.Qty, RoundPrecision );
+                thisRow["open_solid_maq"] = Material.Open.Solid.MAQ;
+                thisRow["open_solid_qty"] = Math.Round( Material.Open.Solid.Qty, RoundPrecision );
+                thisRow["open_liquid_maq"] = Material.Open.Liquid.MAQ;
+                thisRow["open_liquid_qty"] = Math.Round( Material.Open.Liquid.Qty, RoundPrecision );
+                ret.Rows.Add( thisRow );
+            }
+            return ret;
         }
 
         public HMISData getHMISData( HMISData.HMISDataRequest Request )
         {
-            ControlZoneId = CswConvert.ToPrimaryKey( Request.ControlZoneId );
-            _setFireClasses();
-            CswNbtView HMISView = _getHMISView();
-            ICswNbtTree HMISTree = _CswNbtResources.Trees.getTreeFromView( HMISView, false, true, false );
-            Int32 LocationCount = HMISTree.getChildNodeCount();
-            for( int i = 0; i < LocationCount; i++ )//Location Nodes
+            HMISData Data = new HMISData();
+            CswPrimaryKey ControlZoneId = null;
+            if( false == string.IsNullOrEmpty( Request.ControlZoneId ) )
             {
-                HMISTree.goToNthChild( i );
-                Int32 ContainerCount = HMISTree.getChildNodeCount();
-                for( int j = 0; j < ContainerCount; j++ )//Container Nodes
+                ControlZoneId = CswConvert.ToPrimaryKey( Request.ControlZoneId );
+            }
+            else if( false == string.IsNullOrEmpty( Request.ControlZone ) )
+            {
+                if( CswTools.IsInteger( Request.ControlZone ) )
                 {
-                    HMISTree.goToNthChild( j );
-                    if( HMISTree.getChildNodeCount() > 0 )//Material Node Exists
+                    ControlZoneId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( Request.ControlZone ) );
+                }
+                else
+                {
+                    CswNbtView ControlZoneView = getControlZonesView( Request.ControlZone );
+                    ICswNbtTree ControlZoneTree = _CswNbtResources.Trees.getTreeFromView( ControlZoneView, RequireViewPermissions: false, IncludeSystemNodes: true, IncludeHiddenNodes: true );
+                    if( ControlZoneTree.getChildNodeCount() > 0 )
                     {
-                        Double Quantity = Double.NaN;
-                        CswPrimaryKey UnitId = null;
-                        String MaterialName = String.Empty;
-                        CswPrimaryKey MaterialId = null;
-                        String UseType = String.Empty;
-                        foreach( CswNbtTreeNodeProp ContainerProp in HMISTree.getChildNodePropsOfNode() )
+                        ControlZoneTree.goToNthChild( 0 );
+                        ControlZoneId = ControlZoneTree.getNodeIdForCurrentPosition();
+                    }
+                }
+            }
+
+            if( CswTools.IsPrimaryKey( ControlZoneId ) )
+            {
+                Data.ControlZone = _CswNbtResources.Nodes.getNodeName( ControlZoneId );
+
+                string HMISSql = @"with loc as (select n.nodeid
+                                                  from nodes n
+                                                  join nodetypes t on t.nodetypeid = n.nodetypeid
+                                                  join object_class oc on t.objectclassid = oc.objectclassid
+                                                  join (select j.nodeid, j.field1_fk 
+                                                          from object_class_props ocp  
+                                                          join nodetype_props ntp on ocp.objectclasspropid = ntp.objectclasspropid 
+                                                          join jct_nodes_props j on ntp.nodetypepropid = j.nodetypepropid
+                                                         where ocp.propname = 'Control Zone'
+                                                       ) cz on (cz.nodeid = n.nodeid)
+                                                 where oc.objectclass = 'LocationClass'
+                                                   and cz.field1_fk = " + ControlZoneId.PrimaryKey + @"
+                                               ),
+                                        mat as (select n.nodeid, n.nodename materialname, hc.clobdata hazardclasses, sf.gestaltsearch specialflags, ps.field1 physstate
+                                                  from nodes n
+                                                  join nodetypes t on t.nodetypeid = n.nodetypeid
+                                                  join object_class oc on t.objectclassid = oc.objectclassid
+                                                  join (select j.nodeid, j.clobdata
+                                                          from object_class_props ocp  
+                                                          join nodetype_props ntp on ocp.objectclasspropid = ntp.objectclasspropid 
+                                                          join jct_nodes_props j on ntp.nodetypepropid = j.nodetypepropid
+                                                         where ocp.propname = 'Hazard Classes'
+                                                       ) hc on (hc.nodeid = n.nodeid)
+                                                  join (select j.nodeid, j.gestaltsearch 
+                                                          from object_class_props ocp  
+                                                          join nodetype_props ntp on ocp.objectclasspropid = ntp.objectclasspropid 
+                                                          join jct_nodes_props j on ntp.nodetypepropid = j.nodetypepropid
+                                                         where ocp.propname = 'Special Flags'
+                                                       ) sf on (sf.nodeid = n.nodeid)
+                                                  join (select j.nodeid, j.field1
+                                                          from object_class_props ocp  
+                                                          join nodetype_props ntp on ocp.objectclasspropid = ntp.objectclasspropid 
+                                                          join jct_nodes_props j on ntp.nodetypepropid = j.nodetypepropid
+                                                         where ocp.propname = 'Physical State'
+                                                       ) ps on (ps.nodeid = n.nodeid)
+                                                 where oc.objectclass = 'ChemicalClass'
+                                                   and sf.gestaltsearch not like '%Not Reportable%'";
+                if( string.IsNullOrEmpty( Request.Class ) )
+                {
+                    HMISSql += "   and hc.clobdata is not null";
+                }
+                else
+                {
+                    HMISSql += "   and hc.clobdata like '%" + Request.Class + @"%'";
+                }
+                HMISSql += @"                ),
+                                       cont as (select SUM(q.field2_numeric) total_qty_kg, 
+                                                       SUM(q.field3_numeric) total_qty_lt, 
+                                                       ut.field1 usetype, 
+                                                       m.field1_fk materialid
+                                                  from nodes n
+                                                  join nodetypes t on t.nodetypeid = n.nodetypeid
+                                                  join object_class oc on t.objectclassid = oc.objectclassid
+                                                  join (select j.nodeid, j.field1_fk 
+                                                          from object_class_props ocp  
+                                                          join nodetype_props ntp on ocp.objectclasspropid = ntp.objectclasspropid 
+                                                          join jct_nodes_props j on ntp.nodetypepropid = j.nodetypepropid
+                                                         where ocp.propname = 'Location'
+                                                       ) l on (l.nodeid = n.nodeid)
+                                                  join (select j.nodeid, j.field2_numeric, j.field3_numeric 
+                                                          from object_class_props ocp  
+                                                          join nodetype_props ntp on ocp.objectclasspropid = ntp.objectclasspropid 
+                                                          join jct_nodes_props j on ntp.nodetypepropid = j.nodetypepropid
+                                                         where ocp.propname = 'Quantity'
+                                                       ) q on (q.nodeid = n.nodeid)
+                                                  join (select j.nodeid, j.field1 
+                                                          from object_class_props ocp  
+                                                          join nodetype_props ntp on ocp.objectclasspropid = ntp.objectclasspropid 
+                                                          join jct_nodes_props j on ntp.nodetypepropid = j.nodetypepropid
+                                                         where ocp.propname = 'Use Type'
+                                                       ) ut on (ut.nodeid = n.nodeid)
+                                                  join (select j.nodeid, j.field1_fk 
+                                                          from object_class_props ocp  
+                                                          join nodetype_props ntp on ocp.objectclasspropid = ntp.objectclasspropid 
+                                                          join jct_nodes_props j on ntp.nodetypepropid = j.nodetypepropid
+                                                         where ocp.propname = 'Material'
+                                                       ) m on (m.nodeid = n.nodeid)
+                                                 where oc.objectclass = 'ContainerClass'
+                                                   and ut.field1 is not null
+                                                   and l.field1_fk in (select nodeid from loc) 
+                                                   and (q.field2_numeric > 0 
+                                                     or q.field3_numeric > 0)
+                                                 group by ut.field1, m.field1_fk
+                                               )
+                                   select c.*, mat.hazardclasses, mat.specialflags, mat.materialname, mat.physstate
+                                     from cont c
+                                     join mat on (c.materialid = mat.nodeid)";
+                CswArbitrarySelect HMISSelect = _CswNbtResources.makeCswArbitrarySelect( "HMIS_Select", HMISSql );
+                DataTable HMISTable = HMISSelect.getTable();
+
+                if( string.IsNullOrEmpty( Request.Class ) )
+                {
+                    // Get totals for all classes
+                    _setFireClasses( ControlZoneId, Data );
+
+                    foreach( DataRow row in HMISTable.Rows )
+                    {
+                        CswCommaDelimitedString HazardClasses = new CswCommaDelimitedString();
+                        HazardClasses.FromString( CswConvert.ToString( row["hazardclasses"] ) );
+                        if( HazardClasses.Contains( "FL-1A" ) || HazardClasses.Contains( "FL-1B" ) || HazardClasses.Contains( "FL-1C" ) )
                         {
-                            CswNbtMetaDataNodeTypeProp ContainerNTP = _CswNbtResources.MetaData.getNodeTypeProp( ContainerProp.NodeTypePropId );
-                            switch( ContainerNTP.getObjectClassPropName() )
+                            HazardClasses.Add( "FL-Comb" );
+                        }
+                        foreach( String HazardClass in HazardClasses )
+                        {
+                            HMISData.HMISMaterial HMISMaterial = Data.Materials.FirstOrDefault( EmptyHazardClass => EmptyHazardClass.HazardClass == HazardClass );
+                            if( null != HMISMaterial ) //This would only be null if the Material's HazardClass options don't match the Default FireClass nodes
                             {
-                                case CswNbtObjClassContainer.PropertyName.Quantity:
-                                    Quantity = ContainerProp.Field1_Numeric;
-                                    UnitId = CswConvert.ToPrimaryKey( "nodes_" + ContainerProp.Field1_Fk );
-                                    break;
-                                case CswNbtObjClassContainer.PropertyName.Material:
-                                    MaterialName = ContainerProp.Field1;
-                                    MaterialId = CswConvert.ToPrimaryKey( "nodes_" + ContainerProp.Field1_Fk );
-                                    break;
-                                case CswNbtObjClassContainer.PropertyName.UseType:
-                                    UseType = ContainerProp.Field1;
-                                    break;
+                                _addQuantityDataToHMISMaterial( HMISMaterial,
+                                                                CswConvert.ToString( row["usetype"] ),
+                                                                CswConvert.ToDouble( row["total_qty_kg"] ),
+                                                                CswConvert.ToDouble( row["total_qty_lt"] ),
+                                                                CswConvert.ToString( row["physstate"] ),
+                                                                new CswPrimaryKey( "nodes", CswConvert.ToInt32( row["materialid"] ) ) );
                             }
                         }
-                        if( false == String.IsNullOrEmpty( UseType ) )
-                        {
-                            IEnumerable<HMISData.HMISMaterial> HMISMaterials = Data.Materials.Where( ExistingMaterial => ExistingMaterial.Material == MaterialName );
-                            if( HMISMaterials.Any() )
+                    } // foreach( DataRow row in HMISTable )
+                } // if( string.IsNullOrEmpty( Request.Class ) )
+                else
+                {
+                    // Get material information for one class
+                    foreach( DataRow row in HMISTable.Rows )
+                    {
+                        HMISData.HMISMaterial NewMaterial = new HMISData.HMISMaterial
                             {
-                                foreach( HMISData.HMISMaterial HMISMaterial in HMISMaterials )
-                                {
-                                    _addQuantityDataToHMISMaterial( HMISMaterial, UseType, Quantity, UnitId, MaterialId );
-                                }
-                            }
-                            else
-                            {
-                                HMISTree.goToNthChild( 0 );
-                                CswNbtObjClassChemical MaterialNode = HMISTree.getNodeForCurrentPosition();
-                                CswNbtMetaDataNodeTypeProp HazardClassesNTP = _CswNbtResources.MetaData.getNodeTypeProp( MaterialNode.NodeTypeId, "Hazard Classes" );
-                                CswCommaDelimitedString HazardClasses = MaterialNode.Node.Properties[HazardClassesNTP].AsMultiList.Value;
-                                if( HazardClasses.Contains( "FL-1A" ) || HazardClasses.Contains( "FL-1B" ) || HazardClasses.Contains( "FL-1C" ) )
-                                {
-                                    HazardClasses.Add("FL-Comb");
-                                }
-                                foreach( String HazardClass in HazardClasses )
-                                {
-                                    HMISData.HMISMaterial HMISMaterial = Data.Materials.FirstOrDefault( EmptyHazardClass => EmptyHazardClass.HazardClass == HazardClass );
-                                    if( null != HMISMaterial )//This would only be null if the Material's HazardClass options don't match the Default FireClass nodes
-                                    {
-                                        if ( false == String.IsNullOrEmpty( HMISMaterial.Material ) )
-                                        {
-                                            HMISData.HMISMaterial NewMaterial = new HMISData.HMISMaterial
-                                            {
-                                                Material = MaterialName, 
-                                                HazardClass = HazardClass,
-                                                HazardCategory = HMISMaterial.HazardCategory,
-                                                Class = HMISMaterial.Class,
-                                                PhysicalState = MaterialNode.PhysicalState.Value,
-                                                SortOrder = HMISMaterial.SortOrder
-                                            };
-                                            _addQuantityDataToHMISMaterial( NewMaterial, UseType, Quantity, UnitId, MaterialId );
-                                            Data.Materials.Add( NewMaterial );
-                                        }
-                                        else
-                                        {
-                                            HMISMaterial.Material = MaterialName;
-                                            HMISMaterial.HazardClass = HazardClass;
-                                            HMISMaterial.PhysicalState = MaterialNode.PhysicalState.Value;
-                                            _addQuantityDataToHMISMaterial( HMISMaterial, UseType, Quantity, UnitId, MaterialId );
-                                        }   
-                                    }
-                                }
-                                HMISTree.goToParentNode();
-                            }
-                        }
-                    }//Material Node Exists
-                    HMISTree.goToParentNode();
-                }//Container Nodes
-                HMISTree.goToParentNode();
-            }//Location Nodes 
+                                Material = CswConvert.ToString( row["materialname"] ),
+                                NodeId = CswConvert.ToInt32( row["materialid"] ),
+                                HazardClass = Request.Class
+                            };
+                        _addQuantityDataToHMISMaterial( NewMaterial,
+                                                        CswConvert.ToString( row["usetype"] ),
+                                                        CswConvert.ToDouble( row["total_qty_kg"] ),
+                                                        CswConvert.ToDouble( row["total_qty_lt"] ),
+                                                        CswConvert.ToString( row["physstate"] ),
+                                                        new CswPrimaryKey( "nodes", CswConvert.ToInt32( row["materialid"] ) ) );
+                        Data.Materials.Add( NewMaterial );
+                    }
+                } // if-else( string.IsNullOrEmpty( Request.Class ) )
+            } // if( CswTools.IsPrimaryKey( ControlZoneId ) )
             return Data;
         }
 
@@ -262,7 +392,23 @@ namespace ChemSW.Nbt.Actions
 
         #region Private Methods
 
-        private void _setFireClasses()
+        private CswNbtView getControlZonesView( string FilterToName = "" )
+        {
+            CswNbtView ControlZonesView = new CswNbtView( _CswNbtResources );
+            CswNbtMetaDataObjectClass ControlZoneOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ControlZoneClass );
+            CswNbtMetaDataObjectClassProp ControlZoneNameOCP = ControlZoneOC.getObjectClassProp( CswNbtObjClassControlZone.PropertyName.Name );
+            CswNbtViewRelationship ControlZoneVR = ControlZonesView.AddViewRelationship( ControlZoneOC, IncludeDefaultFilters: true );
+            if( false == string.IsNullOrEmpty( FilterToName ) )
+            {
+                ControlZonesView.AddViewPropertyAndFilter( ControlZoneVR,
+                                                           ControlZoneNameOCP,
+                                                           Value: FilterToName );
+            }
+            ControlZonesView.ViewName = "HMIS Control Zones";
+            return ControlZonesView;
+        }
+
+        private void _setFireClasses( CswPrimaryKey ControlZoneId, HMISData Data )
         {
             CswNbtNode ControlZone = _CswNbtResources.Nodes.GetNode( ControlZoneId );
             Double MAQOffset = Double.NaN;
@@ -279,14 +425,14 @@ namespace ChemSW.Nbt.Actions
             {
                 List<HMISData.HMISMaterial> HazardClassList = new List<HMISData.HMISMaterial>();
                 CswNbtMetaDataObjectClass FCEAOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.FireClassExemptAmountClass );
-                foreach ( CswNbtObjClassFireClassExemptAmount FCEANode in FCEAOC.getNodes( false, false ) )
+                foreach( CswNbtObjClassFireClassExemptAmount FCEANode in FCEAOC.getNodes( false, false ) )
                 {
                     if( FCEANode.SetName.RelatedNodeId == FCEASId )
                     {
                         HMISData.HMISMaterial EmptyHazardClass = new HMISData.HMISMaterial
                         {
-                            HazardClass = FCEANode.HazardClass.Value, 
-                            HazardCategory = FCEANode.HazardCategory.Text, 
+                            HazardClass = FCEANode.HazardClass.Value,
+                            HazardCategory = FCEANode.HazardCategory.Text,
                             Class = FCEANode.Class.Text,
                             SortOrder = FCEANode.SortOrder.Value
                         };
@@ -317,7 +463,7 @@ namespace ChemSW.Nbt.Actions
             if( false == string.IsNullOrEmpty( OffsetText ) && false == OffsetText.Contains( "NL" ) && MAQOffset < 100.0 )
             {
                 String FormatText = "{0}";
-                if( OffsetText.StartsWith("(") )
+                if( OffsetText.StartsWith( "(" ) )
                 {
                     FormatText = "({0})";
                     OffsetText = OffsetText.Replace( "(", "" );
@@ -340,82 +486,18 @@ namespace ChemSW.Nbt.Actions
             return OffsetText;
         }
 
-        private CswNbtView _getHMISView()
+        private void _addQuantityDataToHMISMaterial( HMISData.HMISMaterial Material, String UseType, Double Quantity_Kgs, Double Quantity_Lts, string PhysState, CswPrimaryKey MaterialId )
         {
-            CswNbtView HMISView = new CswNbtView( _CswNbtResources );
-            CswNbtMetaDataNodeType ControlZoneNT = _CswNbtResources.MetaData.getNodeType( "Control Zone" );
-            if( null != ControlZoneNT )
-            {
-                CswNbtMetaDataObjectClass LocationOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.LocationClass );
-                CswNbtViewRelationship LocationVR = HMISView.AddViewRelationship( LocationOC, true );
+            CswNbtUnitConversion Conversion1 = new CswNbtUnitConversion( _CswNbtResources, _getUnitIdByName( "kg" ), _getBaseUnitId( PhysState ), MaterialId );
+            Double ConvertedQty1 = Conversion1.convertUnit( Quantity_Kgs );
+            CswNbtUnitConversion Conversion2 = new CswNbtUnitConversion( _CswNbtResources, _getUnitIdByName( "Liters" ), _getBaseUnitId( PhysState ), MaterialId );
+            Double ConvertedQty2 = Conversion2.convertUnit( Quantity_Lts );
+            Double ConvertedQty = ConvertedQty1 + ConvertedQty2;
 
-                CswNbtViewProperty ControlZoneVP = null;
-                foreach( CswNbtMetaDataNodeType LocationNT in LocationOC.getNodeTypes() )
-                {
-                    CswNbtMetaDataNodeTypeProp ControlZoneNTP = LocationNT.getNodeTypeProp( "Control Zone" );
-                    if( null != ControlZoneNTP )
-                    {
-                        ControlZoneVP = HMISView.AddViewProperty( LocationVR, ControlZoneNTP );
-                        break;
-                    }
-                }
-                HMISView.AddViewPropertyFilter( ControlZoneVP,
-                    CswEnumNbtFilterConjunction.And,
-                    CswEnumNbtFilterResultMode.Hide,
-                    CswEnumNbtSubFieldName.NodeID,
-                    CswEnumNbtFilterMode.Equals,
-                    ControlZoneId.PrimaryKey.ToString() );
-
-                CswNbtMetaDataObjectClass ContainerOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerClass );
-                CswNbtMetaDataObjectClassProp LocationOCP = ContainerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Location );
-                CswNbtViewRelationship ContainerVR = HMISView.AddViewRelationship( LocationVR, CswEnumNbtViewPropOwnerType.Second, LocationOCP, true );
-
-                CswNbtMetaDataObjectClassProp QuantityOCP = ContainerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Quantity );
-                CswNbtViewProperty QuantityVP = HMISView.AddViewProperty( ContainerVR, QuantityOCP );
-                HMISView.AddViewPropertyFilter( QuantityVP,
-                    CswEnumNbtFilterConjunction.And,
-                    CswEnumNbtFilterResultMode.Hide,
-                    CswEnumNbtSubFieldName.Value,
-                    CswEnumNbtFilterMode.GreaterThan,
-                    "0" );
-
-                CswNbtMetaDataObjectClassProp UseTypeOCP = ContainerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.UseType );
-                HMISView.AddViewProperty( ContainerVR, UseTypeOCP );
-
-                CswNbtMetaDataObjectClassProp MaterialOCP = ContainerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Material );
-                CswNbtMetaDataObjectClass ChemicalOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass );
-                HMISView.AddViewProperty( ContainerVR, MaterialOCP );
-                CswNbtViewRelationship MaterialVR = HMISView.AddViewRelationship( ContainerVR, CswEnumNbtViewPropOwnerType.First, MaterialOCP, true );
-
-                CswNbtMetaDataObjectClassProp HazardClassesOCP = ChemicalOC.getObjectClassProp( CswNbtObjClassChemical.PropertyName.HazardClasses );
-                CswNbtViewProperty HazardClassesVP = HMISView.AddViewProperty( MaterialVR, HazardClassesOCP );
-                HMISView.AddViewPropertyFilter( HazardClassesVP,
-                    CswEnumNbtFilterConjunction.And,
-                    CswEnumNbtFilterResultMode.Hide,
-                    CswEnumNbtSubFieldName.Value,
-                    CswEnumNbtFilterMode.NotNull );
-
-                CswNbtMetaDataObjectClassProp SpecialFlagsOCP = ChemicalOC.getObjectClassProp( CswNbtObjClassChemical.PropertyName.SpecialFlags );
-                CswNbtViewProperty SpecialFlagsVP = HMISView.AddViewProperty( MaterialVR, SpecialFlagsOCP );
-                HMISView.AddViewPropertyFilter( SpecialFlagsVP,
-                    CswEnumNbtFilterConjunction.And,
-                    CswEnumNbtFilterResultMode.Hide,
-                    CswEnumNbtSubFieldName.Value,
-                    CswEnumNbtFilterMode.NotContains,
-                    "Not Reportable" );
-            }
-            return HMISView;
-        }
-
-        private void _addQuantityDataToHMISMaterial( HMISData.HMISMaterial Material, String UseType, Double Quantity, CswPrimaryKey UnitId, CswPrimaryKey MaterialId )
-        {
-            CswPrimaryKey NewUnitId = _getBaseUnitId( Material.PhysicalState );
-            CswNbtUnitConversion Conversion = new CswNbtUnitConversion( _CswNbtResources, UnitId, NewUnitId, MaterialId );
-            Double ConvertedQty = Conversion.convertUnit( Quantity );
             switch( UseType )
             {
                 case CswEnumNbtContainerUseTypes.Storage:
-                    switch( Material.PhysicalState.ToLower() )
+                    switch( PhysState.ToLower() )
                     {
                         case CswNbtPropertySetMaterial.CswEnumPhysicalState.Solid:
                             Material.Storage.Solid.Qty += ConvertedQty;
@@ -429,7 +511,7 @@ namespace ChemSW.Nbt.Actions
                     }
                     break;
                 case CswEnumNbtContainerUseTypes.Closed:
-                    switch( Material.PhysicalState.ToLower() )
+                    switch( PhysState.ToLower() )
                     {
                         case CswNbtPropertySetMaterial.CswEnumPhysicalState.Solid:
                             Material.Storage.Solid.Qty += ConvertedQty;
@@ -446,7 +528,7 @@ namespace ChemSW.Nbt.Actions
                     }
                     break;
                 case CswEnumNbtContainerUseTypes.Open:
-                    switch( Material.PhysicalState.ToLower() )
+                    switch( PhysState.ToLower() )
                     {
                         case CswNbtPropertySetMaterial.CswEnumPhysicalState.Solid:
                             Material.Open.Solid.Qty += ConvertedQty;
@@ -457,11 +539,11 @@ namespace ChemSW.Nbt.Actions
                     }
                     break;
             }
-        }
+        } // _addQuantityDataToHMISMaterial()
 
-        private CswPrimaryKey _getBaseUnitId( String PhysicalState )
+        private CswPrimaryKey _getBaseUnitId( string PhysicalState )
         {
-            String UnitName;
+            string UnitName;
             switch( PhysicalState.ToLower() )
             {
                 case CswNbtPropertySetMaterial.CswEnumPhysicalState.Liquid:
@@ -476,18 +558,28 @@ namespace ChemSW.Nbt.Actions
                     UnitName = "lb";
                     break;
             }
-            CswNbtMetaDataObjectClass UoMOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.UnitOfMeasureClass );
-            CswPrimaryKey BaseUnitId = null;
-            foreach (CswNbtObjClassUnitOfMeasure UoMNode in UoMOC.getNodes(false, false))
+            return _getUnitIdByName( UnitName );
+        }
+
+
+        private Dictionary<string, CswPrimaryKey> _unitsByName = new Dictionary<string, CswPrimaryKey>();
+
+        private CswPrimaryKey _getUnitIdByName( string UnitName )
+        {
+            if( _unitsByName.Keys.Count == 0 )
             {
-                if( UoMNode.Name.Text == UnitName )
+                CswNbtMetaDataObjectClass UoMOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.UnitOfMeasureClass );
+                foreach( CswNbtObjClassUnitOfMeasure UoMNode in UoMOC.getNodes( false, false ) )
                 {
-                    BaseUnitId = UoMNode.NodeId;
-                    break;
+                    _unitsByName[UoMNode.Name.Text] = UoMNode.NodeId;
+                    foreach( string Alias in UoMNode.AliasesAsDelimitedString )
+                    {
+                        _unitsByName[Alias] = UoMNode.NodeId;
+                    }
                 }
             }
-            return BaseUnitId;
-        }
+            return _unitsByName[UnitName];
+        } // _getUnitByName()
 
         #endregion Private Methods
     }

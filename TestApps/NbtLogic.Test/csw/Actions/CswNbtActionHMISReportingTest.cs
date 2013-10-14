@@ -97,7 +97,7 @@ namespace ChemSW.Nbt.Test.Actions
         {
             CswPrimaryKey ControlZoneId = TestData.Nodes.createControlZoneNode().NodeId;
             CswPrimaryKey LocationId = TestData.Nodes.createLocationNode( ControlZoneId: ControlZoneId ).NodeId;
-            CswNbtNode ChemicalNode = TestData.Nodes.createMaterialNode( );
+            CswNbtNode ChemicalNode = TestData.Nodes.createMaterialNode();
             TestData.Nodes.createContainerNode( "Container", 1, null, ChemicalNode, LocationId );
             HMISData.HMISDataRequest Request = new HMISData.HMISDataRequest
             {
@@ -218,13 +218,13 @@ namespace ChemSW.Nbt.Test.Actions
                 ControlZoneId = ControlZoneId.ToString()
             };
             HMISData Data = HMISAction.getHMISData( Request );
-            Assert.AreEqual( HazardClassCount + 1, Data.Materials.Count );
+            Assert.AreEqual( HazardClassCount, Data.Materials.Count );
             foreach( HMISData.HMISMaterial Material in Data.Materials )
             {
                 if( false == String.IsNullOrEmpty( Material.Material ) )
                 {
-                    Assert.AreEqual("Exp", Material.HazardClass);
-                    Assert.AreEqual(1, Material.Storage.Liquid.Qty);
+                    Assert.AreEqual( "Exp", Material.HazardClass );
+                    Assert.AreEqual( 1, Material.Storage.Liquid.Qty );
                 }
             }
         }

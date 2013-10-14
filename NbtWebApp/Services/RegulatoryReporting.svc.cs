@@ -1,10 +1,12 @@
 ﻿using System.ComponentModel;
+using System.Data;
 using System.ServiceModel;
 using System.ServiceModel.Activation;
 using System.ServiceModel.Web;
 using System.Web;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.WebServices;
+using ChemSW.Security;
 using ChemSW.WebSvc;
 
 namespace NbtWebApp
@@ -18,43 +20,30 @@ namespace NbtWebApp
     public class RegulatoryReporting
     {
         private HttpContext _Context = HttpContext.Current;
-
+        
         [OperationContract]
-        [WebInvoke( Method = "GET" )]
+        //        [WebInvoke( Method = "POST", ResponseFormat = WebMessageFormat.Xml )]
+        [WebInvoke( Method = "GET", UriTemplate = "getHMISDataTable?ControlZone={ControlZone}&Class={Class}" )]
+        [Description( "Get all reportable hazardous Materials and their total quantities for a given Control Zone, optionally filtered to a Class" )]
         [FaultContract( typeof( FaultException ) )]
-        [Description( "Get view of all control zones for HMIS Reporting" )]
-        public CswNbtWebServiceRegulatoryReporting.HMISViewReturn getControlZonesView()
+        public DataTable getHMISDataTable( string ControlZone, string Class )
         {
-            CswNbtWebServiceRegulatoryReporting.HMISViewReturn Ret = new CswNbtWebServiceRegulatoryReporting.HMISViewReturn();
+            HMISData.HMISDataRequest Request = new HMISData.HMISDataRequest()
+                {
+                    ControlZone = ControlZone,
+                    Class = Class
+                };
+            CswNbtWebServiceRegulatoryReporting.HMISDataTableReturn Ret = new CswNbtWebServiceRegulatoryReporting.HMISDataTableReturn();
 
-            var GetViewDriverType = new CswWebSvcDriver<CswNbtWebServiceRegulatoryReporting.HMISViewReturn, object>(
-                CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
-                ReturnObj : Ret,
-                WebSvcMethodPtr: CswNbtWebServiceRegulatoryReporting.getControlZonesView,
-                ParamObj : ""
-                );
-
-            GetViewDriverType.run();
-            return ( Ret );
-        }
-
-        [OperationContract]
-        [WebInvoke( Method = "POST", ResponseFormat = WebMessageFormat.Json )]
-        [Description( "Get all reportable hazardous Materials and their total quantities in a given Control Zone" )]
-        [FaultContract( typeof( FaultException ) )]
-        public CswNbtWebServiceRegulatoryReporting.HMISDataReturn getHMISData( HMISData.HMISDataRequest Request )
-        {
-            CswNbtWebServiceRegulatoryReporting.HMISDataReturn Ret = new CswNbtWebServiceRegulatoryReporting.HMISDataReturn();
-
-            var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceRegulatoryReporting.HMISDataReturn, HMISData.HMISDataRequest>(
+            var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceRegulatoryReporting.HMISDataTableReturn, HMISData.HMISDataRequest>(
                 CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
                 ReturnObj: Ret,
-                WebSvcMethodPtr: CswNbtWebServiceRegulatoryReporting.getHMISData,
+                WebSvcMethodPtr: CswNbtWebServiceRegulatoryReporting.getHMISDataTable,
                 ParamObj: Request
                 );
 
             SvcDriver.run();
-            return ( Ret );
+            return ( Ret.Data );
         }
 
         [OperationContract]
