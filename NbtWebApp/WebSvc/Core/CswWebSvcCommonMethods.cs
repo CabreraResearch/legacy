@@ -176,7 +176,19 @@ namespace ChemSW.WebSvc
                         SvcReturn["timer"]["dbdeinit"] = Math.Round( CswNbtResources.CswLogger.DbDeInitTime, 3 );
                         SvcReturn["timer"]["treeloadersql"] = Math.Round( CswNbtResources.CswLogger.TreeLoaderSQLTime, 3 );
                         SvcReturn["timer"]["servertotal"] = Math.Round( CswNbtResources.TotalServerTime, 3 );
-                    }
+
+                        // Return any messages acquired along the way
+                        if( null != CswNbtResources.Messages && CswNbtResources.Messages.Count > 0 )
+                        {
+                            JArray Messages = new JArray();
+                            SvcReturn["messages"] = Messages;
+                            foreach( CswWebSvcReturnBase.ErrorMessage Message in CswNbtResources.Messages )
+                            {
+                                Messages.Add( Message.ToJObject() );
+                            }
+                        }
+
+                    }//if( null != CswNbtResources )
                 }
             }
         }
@@ -235,12 +247,18 @@ namespace ChemSW.WebSvc
                         LogLevel = CswEnumLogLevels.Error;
                     }
                     SvcReturn.Logging.LogLevel = LogLevel;
+
+                    // Return any messages acquired along the way
+                    if( null != CswNbtResources.Messages && CswNbtResources.Messages.Count > 0 )
+                    {
+                        SvcReturn.Status.Messages = CswNbtResources.Messages;
+                    }
                 }
             }
             HttpCookie AuthStatusCookie = HttpContext.Request.Cookies["CswAuthStatus"];
             if( null == AuthStatusCookie )
             {
-                AuthStatusCookie = new HttpCookie( "CswAuthStatus" ) {HttpOnly = true};
+                AuthStatusCookie = new HttpCookie( "CswAuthStatus" ) { HttpOnly = true };
             }
             if( AuthStatusCookie.Value != AuthenticationStatusIn.ToString() )
             {

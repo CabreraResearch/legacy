@@ -85,6 +85,7 @@
     <Content Include="app\composites\csw.imageSelect.js" />
     <Content Include="app\composites\csw.quickTip.js" />
     <Content Include="app\composites\csw.tabselect.js" />
+    <Content Include="app\core\csw.message.js" />
     <Content Include="app\core\csw.domNode.js" />
     <Content Include="app\currentuser\csw.defaults.js" />
     <Content Include="app\db\csw.dbUpdate.js" />

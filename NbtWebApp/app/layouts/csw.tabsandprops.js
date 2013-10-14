@@ -1178,6 +1178,10 @@
                     cswPrivate.onTearDownProps();
                     cswPrivate.tabState.propertyData = propData;
                     cswPrivate.getPropsImpl(cswPrivate.tabState.tabid);
+                    
+                    // Case 30885: Refresh the identity tab
+                    cswPrivate.identityForm.empty();
+                    cswPrivate.makeIdentityTab();
                 }
             } else {
                 cswPrivate.onTearDown();

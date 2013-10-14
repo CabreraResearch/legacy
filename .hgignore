@@ -48,6 +48,7 @@ glob:CswSetupVariables.json
 Nbt.sln.DotSettings.user
 NbtWebApp/mobile/*
 NbtWebApp/plato*
+Thumbs.db
 syntax: regexp
 .*\.orig
 .*\.vsp

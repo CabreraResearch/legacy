@@ -4,6 +4,13 @@
 (function () {
     'use strict';
     
+    // Handle messages that don't interfere with the success of a method
+    var handleAjaxMessage = function (messageJson) {
+        Csw.message.showMessage(messageJson);
+    };
+    Csw.ajaxCore.register('handleMessage', handleAjaxMessage);
+    
+    // Errors
     var handleAjaxError = function (errorJson) {
         Csw.error.showError(errorJson);
     };
@@ -27,6 +34,5 @@
         return true;
     };
     Csw.ajaxCore.register('onSuccess', onSuccess);
-
    
 } ());
