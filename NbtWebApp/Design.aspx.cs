@@ -1,3 +1,12 @@
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Data;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.HtmlControls;
+using System.Web.UI.WebControls;
 using ChemSW.Audit;
 using ChemSW.Core;
 using ChemSW.CswWebControls;
@@ -9,15 +18,6 @@ using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.NbtWebControls;
 using ChemSW.NbtWebControls.FieldTypes;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Data;
-using System.Linq;
-using System.Web;
-using System.Web.UI;
-using System.Web.UI.HtmlControls;
-using System.Web.UI.WebControls;
 using Telerik.Web.UI;
 
 namespace ChemSW.Nbt.WebPages
@@ -2910,6 +2910,7 @@ namespace ChemSW.Nbt.WebPages
                         case CswEnumNbtFieldType.Relationship:
                         //case CswEnumNbtFieldType.Sequence:
                         case CswEnumNbtFieldType.Text:
+                        case CswEnumNbtFieldType.Formula:
                         //case CswEnumNbtFieldType.TimeInterval:
                         case CswEnumNbtFieldType.ViewPickList:
                             TableRow RequiredRow = makeEditPropTableRow( EditPropPlaceHolder );

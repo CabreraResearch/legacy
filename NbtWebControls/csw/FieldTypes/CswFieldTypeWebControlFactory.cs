@@ -100,6 +100,10 @@ namespace ChemSW.NbtWebControls.FieldTypes
                     Control = new CswFile( CswNbtResources, MetaDataProp, EditMode );
                     break;
 
+                case CswEnumNbtFieldType.Formula:
+                    Control = new CswFormula( CswNbtResources, MetaDataProp, EditMode );
+                    break;
+
                 case CswEnumNbtFieldType.Grid:
                     if( EditMode != CswEnumNbtNodeEditMode.Add && EditMode != CswEnumNbtNodeEditMode.Demo )
                     {
