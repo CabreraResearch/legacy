@@ -79,8 +79,6 @@ namespace ChemSW.Nbt.Sched
             if( _MaterialPks.Count == 0 )
             {
                 _setLoad( CswResources );
-                // Set the configuration variable value?
-                //CswResources.ConfigVbls.setConfigVariableValue( CswConvert.ToString( CswEnumConfigurationVariableNames.C3SyncDate ), CswConvert.ToString( DateTime.Now ) );
             }
             _CswScheduleLogicDetail.LoadCount = _MaterialPks.Count;
             return _CswScheduleLogicDetail.LoadCount;
@@ -120,8 +118,7 @@ namespace ChemSW.Nbt.Sched
                         CswC3Params CswC3Params = new CswC3Params();
                         CswNbtC3ClientManager CswNbtC3ClientManager = new CswNbtC3ClientManager( CswNbtResources, CswC3Params );
                         SearchClient SearchClient = CswNbtC3ClientManager.initializeC3Client();
-                        bool C3ServiceStatus = CswNbtC3ClientManager.checkC3ServiceReferenceStatus();
-                        if( C3ServiceStatus )
+                        if( null != SearchClient )
                         {
                             int MaterialsProcessedPerIteration = CswConvert.ToInt32( CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumConfigurationVariableNames.NodesProcessedPerCycle ) );
                             int TotalProcessedThisIteration = 0;
@@ -133,10 +130,13 @@ namespace ChemSW.Nbt.Sched
                                     _setPendingUpdate( CswNbtResources, CswConvert.ToString( MaterialNode.NodeId.PrimaryKey ) );
                                     _MaterialPks.RemoveAt( 0 );
                                     TotalProcessedThisIteration++;
-                                }//if (null != MaterialNode)
-
+                                } //if (null != MaterialNode)
                             }
-                        }//if( C3ServiceStatus )
+                        }
+                        else
+                        {
+                            // TODO: What should we do with the error in the case of the schedule service?
+                        }
                     }
 
                     _CswScheduleLogicDetail.StatusMessage = "Completed without error";
@@ -181,15 +181,22 @@ namespace ChemSW.Nbt.Sched
             CswC3Params CswC3Params = new CswC3Params();
             CswNbtC3ClientManager CswNbtC3ClientManager = new CswNbtC3ClientManager( CswNbtResources, CswC3Params );
             SearchClient SearchClient = CswNbtC3ClientManager.initializeC3Client();
-            string LastExtChemDataImportDate = CswNbtC3ClientManager.getLastExtChemDataImportDate( SearchClient );
-            string LastLOLIImportDate = CswNbtC3ClientManager.getLastLOLIImportDate( SearchClient );
-
-            // Compare the dates and return true if a sync should be performed
-            DateTime NbtC3SyncDate = CswConvert.ToDateTime( CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumConfigurationVariableNames.C3SyncDate ) );
-
-            if( NbtC3SyncDate == DateTime.MinValue || ( NbtC3SyncDate < CswConvert.ToDateTime( LastExtChemDataImportDate ) || NbtC3SyncDate < CswConvert.ToDateTime( LastLOLIImportDate ) ) )
+            if( null != SearchClient )
             {
-                OutOfDate = true;
+                string LastExtChemDataImportDate = CswNbtC3ClientManager.getLastExtChemDataImportDate( SearchClient );
+                string LastLOLIImportDate = CswNbtC3ClientManager.getLastLOLIImportDate( SearchClient );
+
+                // Compare the dates and return true if a sync should be performed
+                DateTime NbtC3SyncDate = CswConvert.ToDateTime( CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumConfigurationVariableNames.C3SyncDate ) );
+
+                if( NbtC3SyncDate == DateTime.MinValue || ( NbtC3SyncDate < CswConvert.ToDateTime( LastExtChemDataImportDate ) || NbtC3SyncDate < CswConvert.ToDateTime( LastLOLIImportDate ) ) )
+                {
+                    OutOfDate = true;
+                }
+            }
+            else
+            {
+                // TODO: What should we do with the error in the case of the schedule service?
             }
 
             return OutOfDate;

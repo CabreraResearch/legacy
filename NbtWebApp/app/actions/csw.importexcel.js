@@ -3,7 +3,7 @@
 
 (function () {
 
-    Csw.nbt.register('importExcel', function (cswParent, options) {
+    Csw.actions.register('importExcel', function (cswParent, options) {
         'use strict';
 
         var cswPrivate = {

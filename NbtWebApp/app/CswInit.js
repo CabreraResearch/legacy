@@ -149,6 +149,7 @@
     n$.makeSubNameSpace('layouts');
     n$.makeSubNameSpace('literals');
     n$.makeSubNameSpace('main');
+    n$.makeSubNameSpace('message');
     n$.makeSubNameSpace('nbt');
     n$.makeSubNameSpace('promises');
     n$.makeSubNameSpace('properties');
