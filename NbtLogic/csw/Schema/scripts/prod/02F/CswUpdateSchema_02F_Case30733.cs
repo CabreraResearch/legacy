@@ -61,6 +61,7 @@ namespace ChemSW.Nbt.Schema
                 CswNbtObjClassChemical ChemicalNode = _CswNbtSchemaModTrnsctn.Nodes[NodeId];
                 if( String.IsNullOrEmpty( ChemicalNode.Structure.Mol ) ) //if there is no Mol, a user never uploaded a new Mol, find the JctNodeProp row that has the clob data and set it correctly
                 {
+                    int newJctNodePropId = Int32.MinValue;
                     DataTable JnpTbl = _getJNPTblUpdate( NodeId, StructreNTPIds );
                     foreach( DataRow row in JnpTbl.Rows )
                     {
@@ -68,12 +69,16 @@ namespace ChemSW.Nbt.Schema
                         {
                             JctNodePropRowsToDelete.Add( CswConvert.ToInt32( row["jctnodepropid"] ).ToString() );
                         }
+                        else
+                        {
+                            newJctNodePropId = CswConvert.ToInt32( row["jctnodepropid"] );
+                        }
                     }
-                    CswTableUpdate blobDataTblUpdate = _getBlobTblUpdate( JctNodePropRowsToDelete );
-                    DataTable blobDataTbl = blobDataTblUpdate.getTable();
+                    CswTableUpdate blobDataTblUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "getBlobDataTblUpdate", "blob_data" );
+                    DataTable blobDataTbl = blobDataTblUpdate.getTable( "where jctnodepropid in (" + JctNodePropRowsToDelete.ToString() + ")" );
                     if( blobDataTbl.Rows.Count > 0 )
                     {
-                        blobDataTbl.Rows[0]["jctnodepropid"] = ChemicalNode.Structure.JctNodePropId;
+                        blobDataTbl.Rows[0]["jctnodepropid"] = newJctNodePropId;
                     }
                     blobDataTblUpdate.update( blobDataTbl );
 
@@ -119,12 +124,6 @@ namespace ChemSW.Nbt.Schema
             string sql = "select * from jct_nodes_props where nodetypepropid in (" + StructureNTPIds.ToString() + ") and nodeid = " + NodeId.PrimaryKey;
             CswArbitrarySelect arbSel = _CswNbtSchemaModTrnsctn.makeCswArbitrarySelect( "getJNPRows", sql );
             return arbSel.getTable();
-        }
-
-        private CswTableUpdate _getBlobTblUpdate( CswCommaDelimitedString jnpIds )
-        {
-            string sql = " where jctnodepropid in (" + jnpIds.ToString() + ")";
-            return _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "getBlobDataTblUpdate", sql );
         }
 
     }
