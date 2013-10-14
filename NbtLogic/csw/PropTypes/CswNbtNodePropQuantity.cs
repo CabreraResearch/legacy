@@ -503,14 +503,14 @@ namespace ChemSW.Nbt.PropTypes
             {
                 CachedUnitName = JObject[_UnitNameSubField.ToXmlNodeName( true )].ToString();
             }
-            if( null != JObject[_Val_kg_SubField.ToXmlNodeName( true )] )
-            {
-                Val_kg = CswConvert.ToDouble( JObject[_Val_kg_SubField.ToXmlNodeName( true )].ToString() );
-            }
-            if( null != JObject[_Val_Liters_SubField.ToXmlNodeName( true )] )
-            {
-                Val_Liters = CswConvert.ToDouble( JObject[_Val_Liters_SubField.ToXmlNodeName( true )].ToString() );
-            }
+            //if( null != JObject[_Val_kg_SubField.ToXmlNodeName( true )] )
+            //{
+            //    Val_kg = CswConvert.ToDouble( JObject[_Val_kg_SubField.ToXmlNodeName( true )].ToString() );
+            //}
+            //if( null != JObject[_Val_Liters_SubField.ToXmlNodeName( true )] )
+            //{
+            //    Val_Liters = CswConvert.ToDouble( JObject[_Val_Liters_SubField.ToXmlNodeName( true )].ToString() );
+            //}
 
             if( null != JObject[_UnitIdSubField.ToXmlNodeName( true )] )
             {

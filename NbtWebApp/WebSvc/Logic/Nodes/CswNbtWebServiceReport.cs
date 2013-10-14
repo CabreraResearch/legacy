@@ -4,14 +4,18 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Data;
 using System.IO;
+using System.Net;
 using System.Runtime.Serialization;
+using System.Web;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
+using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.Grid;
 using ChemSW.Nbt.ObjClasses;
 using CrystalDecisions.CrystalReports.Engine;
 using CrystalDecisions.Shared;
+using NbtWebApp;
 using NbtWebApp.WebSvc.Returns;
 using Newtonsoft.Json.Linq;
 using ExportOptions = CrystalDecisions.Shared.ExportOptions;
@@ -39,6 +43,8 @@ namespace ChemSW.Nbt.WebServices
         [DataContract]
         public class ReportData
         {
+            public HttpContext Context;
+
             [DataMember]
             public string reportFormat = string.Empty;
 
@@ -207,7 +213,41 @@ namespace ChemSW.Nbt.WebServices
             reportParams.ReportNode = NbtResources.Nodes[reportParams.NodeId];
             if( null != reportParams.ReportNode )
             {
-                if( false == string.IsNullOrEmpty( reportParams.ReportNode.SQL.Text ) )
+                if( false == string.IsNullOrEmpty( reportParams.ReportNode.WebService.Text ) )
+                {
+                    string WebServiceUrl = "http://localhost/NbtDev/Services/" + CswNbtObjClassReport.ReplaceReportParams( reportParams.ReportNode.WebService.Text, reportParams.ReportParamDictionary );
+                    HttpWebRequest request = (HttpWebRequest) HttpWebRequest.Create( WebServiceUrl );
+                    request.Method = "GET";
+                    request.CookieContainer = new CookieContainer();
+                    foreach( string c in reportParams.Context.Request.Cookies.Keys )
+                    {
+                        HttpCookie cookie = reportParams.Context.Request.Cookies[c];
+                        if( cookie.Name == "CswSessionId" )
+                        {
+                            request.CookieContainer.Add( new Cookie()
+                                {
+                                    Name = cookie.Name,
+                                    Value = cookie.Value,
+                                    Domain = "localhost",
+                                    Path = cookie.Path
+                                } );
+                        }
+                    }
+                    HttpWebResponse response = (HttpWebResponse) request.GetResponse();
+                    rptDataTbl = new DataTable();
+
+                    StreamReader sr = new StreamReader( response.GetResponseStream() );
+                    string result = sr.ReadToEnd();
+                    result = result.Replace( @"\", "" );
+                    if( result.StartsWith( "\"" ) )
+                    {
+                        result = result.Substring( 1, result.Length - 2 );
+                    }
+                    //result = @"<?xml version=""1.0"" encoding=""utf-8""?>" + result;
+                    //rptDataTbl.ReadXml( response.GetResponseStream() );
+                    rptDataTbl.ReadXml( new StringReader( result ) );
+                }
+                else if( false == string.IsNullOrEmpty( reportParams.ReportNode.SQL.Text ) )
                 {
                     string ReportSql = "";
                     //Case 30293: We are not trying to solve all of the (usability) issues with SQL Reporting today;
