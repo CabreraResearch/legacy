@@ -359,7 +359,7 @@ namespace ChemSW.Nbt.WebServices
                 foreach( string ImageUrl in ImageUrls )
                 {
                     string RealImageUrl = ImageUrl.Replace( ".jpg", "" );
-                    RealImageUrl = RealImageUrl.Replace( "ghs/600/", "ghs/" + Scale.ToString() + "/" );
+                    RealImageUrl = RealImageUrl.Replace( "ghs/512/", "ghs/" + Scale.ToString() + "/" );
                     if( NoBorder )
                     {
                         RealImageUrl += "_nobrd";
@@ -508,7 +508,7 @@ namespace ChemSW.Nbt.WebServices
                             else if( TemplateName.StartsWith( "NBTGHSPICTOS:" ) || ( TemplateName.Equals( "NBTGHSPICTOS" ) ) )   // Ignore NBTGHSPICTOS_2
                             {
                                 // pictos
-                                Int32 Scale = 300;
+                                Int32 Scale = 256;
                                 bool NoBorder = false;
                                 if( TemplateName.StartsWith( "NBTGHSPICTOS:" ) )
                                 {
@@ -520,7 +520,7 @@ namespace ChemSW.Nbt.WebServices
                                         if( GHSParam.StartsWith( "scale" ) )
                                         {
                                             Int32 NewScale = CswConvert.ToInt32( GHSParam.Substring( "scale".Length ) );
-                                            if( NewScale > 0 )
+                                            if( NewScale > 0 && NewScale % 16 == 0) // case 30937
                                             {
                                                 Scale = NewScale;
                                             }
