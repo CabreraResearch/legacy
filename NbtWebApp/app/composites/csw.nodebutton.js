@@ -285,6 +285,7 @@
                     }
 
                     var performOnObjectClassButtonClick = function () {
+                        Csw.unsubscribe('triggerSave', cswPrivate.onButtonClick);
                         Csw.ajax.deprecatedWsNbt({
                             urlMethod: 'onObjectClassButtonClick',
                             data: {
@@ -349,6 +350,7 @@
                 } // if-else (Csw.isNullOrEmpty(propAttr)) {
             }
         }; // onButtonClick()
+        Csw.subscribe('triggerSave', cswPrivate.onButtonClick);
 
         (function _post() {
             cswPrivate.btnCell = cswPrivate.table.cell(1, 1).div();

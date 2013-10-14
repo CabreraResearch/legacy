@@ -21,11 +21,12 @@
                     name: nodeProperty.name,
                     cssclass: 'selectinput',
                     values: cswPrivate.options,
+                    valStr: nodeProperty.propData.values.value,
                     readonlyless: nodeProperty.propData.values.readonlyless,
                     readonlymore: nodeProperty.propData.values.readonlymore,
                     isMultiEdit: nodeProperty.isMulti(),
                     EditMode: nodeProperty.tabState.EditMode,
-                    onChange: function (sel, val) {
+                    onChange: function (val) {
                         //Case 29390: no sync for Multi List
                         nodeProperty.propData.values.value = val;
                         nodeProperty.broadcastPropChange(val);

@@ -13,6 +13,7 @@
             $parent: '',
             name: '',
             values: [],
+            valStr: '',
             multiple: true,
             cssclass: '',
             readonlyless: '',
@@ -39,24 +40,14 @@
                 moreDivCell = table.cell(1, 1),
                 editBtnCell = table.cell(1, 2),
                 multiSelectCell = table.cell(2, 1),
-                morediv = moreDivCell.moreDiv({ name: cswPrivate.name + '_morediv' });
+                morediv = moreDivCell.moreDiv({ name: cswPrivate.name + '_morediv' }),
+                valStr = cswPrivate.valStr;
 
             delete cswPrivate.values;
             morediv.moreLink.hide();
             cswPrivate.select = multiSelectCell.select(cswPrivate);
             multiSelectCell.hide();
             cswPublic = Csw.dom({}, cswPrivate.select);
-
-            Csw.iterate(values, function (opt) {
-                var value = Csw.string(opt.value, opt.text),
-                    text = Csw.string(opt.text, value),
-                    isSelected;
-                if (false === Csw.isNullOrEmpty(value)) {
-                    isSelected = (Csw.bool(opt.selected) && false === isMultiEdit);
-                    cswPrivate.select.option({ value: value, display: text, isSelected: isSelected, isDisabled: opt.disabled });
-                    optionCount += 1;
-                }
-            });
 
             if (false === Csw.isNullOrEmpty(cswPrivate.readonlyless)) {
                 morediv.shownDiv.span({ text: cswPrivate.readonlyless });
@@ -66,26 +57,16 @@
                 }
             }
 
-            var onChange = function (select) {
-                Csw.tryExec(cswPrivate.onChange, select, cswPublic.val());
-            };
-
-            cswPrivate.multiSelect = {};
             var makeMultiSelect = function () {
-                moreDivCell.hide();
-                editBtnCell.hide();
-                cswPrivate.multiSelect = cswPrivate.select.$.multiselect({
-                    click: Csw.method(onChange, cswPrivate.select),
-                    checkall: Csw.method(onChange, cswPrivate.select),
-                    uncheckall: Csw.method(onChange, cswPrivate.select),
-                    optgrouptoggle: Csw.method(onChange, cswPrivate.select),
-                    close: Csw.method(onChange, cswPrivate.select)
+                Csw.dialogs.multiselectedit({
+                    opts: values,
+                    title: 'Edit Prop',
+                    onSave: function (updatedValues) {
+                        valStr = updatedValues.sort().join(',');
+                        Csw.tryExec(cswPrivate.onChange, valStr);
+                        Csw.publish('triggerSave');
+                    }
                 });
-                if (optionCount > 20) {
-                    cswPrivate.multiSelect.multiselectfilter();
-                }
-
-                multiSelectCell.show();
             };
 
             if (cswPrivate.EditMode === Csw.enums.editMode.Add) {
@@ -104,10 +85,7 @@
         }());
 
         cswPublic.val = function () {
-            //In IE an empty array is frequently !== [], rather === null
-            var values = cswPrivate.select.$.val() || [],
-                valArray = values.sort();
-            return valArray.join(',');
+            return valStr;
         };
 
         return cswPublic;
