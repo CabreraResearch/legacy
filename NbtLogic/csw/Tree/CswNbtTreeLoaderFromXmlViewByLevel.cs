@@ -279,8 +279,12 @@ namespace ChemSW.Nbt
             string Where = string.Empty;
             string OrderBy = string.Empty;
 
-            // case 26029
-            Where += "where t.enabled = '1' ";
+            //If we have access to disabled module MetaData, we should have access to their Nodes as well
+            if( _CswNbtResources.MetaData.ExcludeDisabledModules )
+            {
+                // case 26029
+                Where += "where t.enabled = '1' ";
+            }
 
             // Nodetype/Object Class filter
             if( Relationship.SecondType == CswEnumNbtViewRelatedIdType.NodeTypeId )
