@@ -37,6 +37,18 @@
         };
         Csw.extend(response, data, true);
 
+        // Display any messages
+        if (response.Status.Messages && response.Status.Messages.length > 0) {
+            var lastMsg = response.Status.Messages.length - 1;
+            Csw.ajaxCore.handleMessage({
+                display: response.Status.Messages[lastMsg].Display,
+                type: response.Status.Messages[lastMsg].Type,
+                message: response.Status.Messages[lastMsg].Message,
+                detail: response.Status.Messages[lastMsg].Detail
+            });
+        }
+
+        // Display any errors
         if (false === response.Status.Success ||
             response.Status.Errors.length > 0) {
             var lastErr = response.Status.Errors.length - 1;

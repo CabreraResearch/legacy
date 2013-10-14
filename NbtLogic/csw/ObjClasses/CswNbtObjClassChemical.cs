@@ -4,6 +4,7 @@ using System.Data;
 using System.Linq;
 using ChemSW.Core;
 using ChemSW.DB;
+using ChemSW.Exceptions;
 using ChemSW.Nbt.ChemCatCentral;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
@@ -14,7 +15,7 @@ using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassChemical: CswNbtPropertySetMaterial
+    public class CswNbtObjClassChemical : CswNbtPropertySetMaterial
     {
         #region Base
 
@@ -56,7 +57,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Enums
 
-        public new sealed class PropertyName: CswNbtPropertySetMaterial.PropertyName
+        public new sealed class PropertyName : CswNbtPropertySetMaterial.PropertyName
         {
             public const string PhysicalState = "Physical State";
             public const string SpecificGravity = "Specific Gravity";
@@ -159,8 +160,8 @@ namespace ChemSW.Nbt.ObjClasses
                     CswNbtMetaDataObjectClassProp MaterialOCP = GHSOC.getObjectClassProp( CswNbtObjClassGHS.PropertyName.Material );
                     CswNbtView JurisdictionsView = new CswNbtView( _CswNbtResources );
                     CswNbtViewRelationship RootVR = JurisdictionsView.AddViewRelationship( GHSOC, false );
-                    JurisdictionsView.AddViewPropertyAndFilter( RootVR, JurisdictionOCP, CswEnumNbtFilterConjunction.And, User.JurisdictionId.PrimaryKey.ToString(), CswEnumNbtSubFieldName.NodeID, FilterMode : CswEnumNbtFilterMode.Equals );
-                    JurisdictionsView.AddViewPropertyAndFilter( RootVR, MaterialOCP, CswEnumNbtFilterConjunction.And, NodeId.PrimaryKey.ToString(), CswEnumNbtSubFieldName.NodeID, FilterMode : CswEnumNbtFilterMode.Equals );
+                    JurisdictionsView.AddViewPropertyAndFilter( RootVR, JurisdictionOCP, CswEnumNbtFilterConjunction.And, User.JurisdictionId.PrimaryKey.ToString(), CswEnumNbtSubFieldName.NodeID, FilterMode: CswEnumNbtFilterMode.Equals );
+                    JurisdictionsView.AddViewPropertyAndFilter( RootVR, MaterialOCP, CswEnumNbtFilterConjunction.And, NodeId.PrimaryKey.ToString(), CswEnumNbtSubFieldName.NodeID, FilterMode: CswEnumNbtFilterMode.Equals );
                     ICswNbtTree JurisdictionsTree = _CswNbtResources.Trees.getTreeFromView( JurisdictionsView, false, false, false );
                     if( JurisdictionsTree.getChildNodeCount() > 0 )
                     {
@@ -339,9 +340,9 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtView componentsView = new CswNbtView( _CswNbtResources );
             CswNbtViewRelationship parent = componentsView.AddViewRelationship( materialComponentOC, false );
             componentsView.AddViewPropertyAndFilter( parent, constituentOCP,
-                Value : NodeId.PrimaryKey.ToString(),
-                FilterMode : CswEnumNbtFilterMode.Equals,
-                SubFieldName : CswEnumNbtSubFieldName.NodeID );
+                Value: NodeId.PrimaryKey.ToString(),
+                FilterMode: CswEnumNbtFilterMode.Equals,
+                SubFieldName: CswEnumNbtSubFieldName.NodeID );
             componentsView.AddViewRelationship( parent, CswEnumNbtViewPropOwnerType.First, mixtureOCP, false );
 
             ICswNbtTree componentsTree = _CswNbtResources.Trees.getTreeFromView( componentsView, false, false, false );
@@ -407,73 +408,75 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 CswC3SearchParams CswC3SearchParams = new CswC3SearchParams();
                 CswNbtC3ClientManager CswNbtC3ClientManager = new CswNbtC3ClientManager( _CswNbtResources, CswC3SearchParams );
-                ChemCatCentral.SearchClient C3SearchClient = CswNbtC3ClientManager.initializeC3Client();
-
-                // Set FireDb specific properties
-                CswC3SearchParams.Purpose = "FireDb";
-                CswC3SearchParams.SyncType = "CasNo";
-                CswC3SearchParams.SyncKey = this.CasNo.Text;
-
-                CswRetObjSearchResults SearchResults = C3SearchClient.getExtChemData( CswC3SearchParams );
-                if( null != SearchResults.ExtChemDataResults )
+                SearchClient C3SearchClient = CswNbtC3ClientManager.initializeC3Client( CswEnumErrorType.Warning, "Unable to sync data. Please contact your administrator. " );
+                if( null != C3SearchClient )
                 {
-                    if( SearchResults.ExtChemDataResults.Length > 0 )
+                    // Set FireDb specific properties
+                    CswC3SearchParams.Purpose = "FireDb";
+                    CswC3SearchParams.SyncType = "CasNo";
+                    CswC3SearchParams.SyncKey = this.CasNo.Text;
+
+                    CswRetObjSearchResults SearchResults = C3SearchClient.getExtChemData( CswC3SearchParams );
+                    if( null != SearchResults.ExtChemDataResults )
                     {
-                        ChemCatCentral.CswC3ExtChemData C3ExtChemData = SearchResults.ExtChemDataResults[0];
-
-                        #region Hazard Classes
-
-                        foreach( CswC3ExtChemData.FireDB.UfcHazardClass UfcHazardClass in C3ExtChemData.ExtensionData1.FireDbData.UfcHazardClasses )
+                        if( SearchResults.ExtChemDataResults.Length > 0 )
                         {
-                            if( false == HazardClasses.CheckValue( UfcHazardClass.HazardClass ) )
+                            ChemCatCentral.CswC3ExtChemData C3ExtChemData = SearchResults.ExtChemDataResults[0];
+
+                            #region Hazard Classes
+
+                            foreach( CswC3ExtChemData.FireDB.UfcHazardClass UfcHazardClass in C3ExtChemData.ExtensionData1.FireDbData.UfcHazardClasses )
                             {
-                                HazardClasses.AddValue( UfcHazardClass.HazardClass );
+                                if( false == HazardClasses.CheckValue( UfcHazardClass.HazardClass ) )
+                                {
+                                    HazardClasses.AddValue( UfcHazardClass.HazardClass );
+                                }
                             }
-                        }
 
-                        #endregion
+                            #endregion
 
-                        #region Material Type
+                            #region Material Type
 
-                        if( string.IsNullOrEmpty( this.MaterialType.Value ) )
-                        {
-                            if( false == string.IsNullOrEmpty( C3ExtChemData.ExtensionData1.FireDbData.MaterialType ) )
+                            if( string.IsNullOrEmpty( this.MaterialType.Value ) )
                             {
-                                this.MaterialType.Value = C3ExtChemData.ExtensionData1.FireDbData.MaterialType;
+                                if( false == string.IsNullOrEmpty( C3ExtChemData.ExtensionData1.FireDbData.MaterialType ) )
+                                {
+                                    this.MaterialType.Value = C3ExtChemData.ExtensionData1.FireDbData.MaterialType;
+                                }
                             }
-                        }
 
-                        #endregion
+                            #endregion
 
-                        #region Hazard Categories
+                            #region Hazard Categories
 
-                        foreach( CswC3ExtChemData.FireDB.HazardCategoryClass HazardCategoryClass in C3ExtChemData.ExtensionData1.FireDbData.HazardCategories )
-                        {
-                            // First convert c3 hazard category to nbt equivalent
-                            string ConvertHazardCategory = _convertHazardCategory( HazardCategoryClass.HazardCategory );
-                            if( false == HazardCategories.CheckValue( ConvertHazardCategory ) )
+                            foreach( CswC3ExtChemData.FireDB.HazardCategoryClass HazardCategoryClass in C3ExtChemData.ExtensionData1.FireDbData.HazardCategories )
                             {
-                                HazardCategories.AddValue( ConvertHazardCategory );
+                                // First convert c3 hazard category to nbt equivalent
+                                string ConvertHazardCategory = _convertHazardCategory( HazardCategoryClass.HazardCategory );
+                                if( false == HazardCategories.CheckValue( ConvertHazardCategory ) )
+                                {
+                                    HazardCategories.AddValue( ConvertHazardCategory );
+                                }
                             }
-                        }
 
-                        #endregion
+                            #endregion
 
-                        #region EHS List
+                            #region EHS List
 
-                        if( false == string.IsNullOrEmpty( C3ExtChemData.ExtensionData1.FireDbData.EhsList ) )
-                        {
-                            bool EHSList = CswConvert.ToBoolean( C3ExtChemData.ExtensionData1.FireDbData.EhsList );
-                            if( EHSList )
+                            if( false == string.IsNullOrEmpty( C3ExtChemData.ExtensionData1.FireDbData.EhsList ) )
                             {
-                                this.SpecialFlags.AddValue( "EHS" );
+                                bool EHSList = CswConvert.ToBoolean( C3ExtChemData.ExtensionData1.FireDbData.EhsList );
+                                if( EHSList )
+                                {
+                                    this.SpecialFlags.AddValue( "EHS" );
+                                }
                             }
-                        }
 
-                        #endregion
+                            #endregion
+                        }
                     }
                 }
-            }
+            }//if (_CswNbtResources.Modules.IsModuleEnabled(CswEnumNbtModuleName.FireDbSync))
         }//syncFireDbData()
 
         private string _convertHazardCategory( string C3HazardCategory )
@@ -512,174 +515,177 @@ namespace ChemSW.Nbt.ObjClasses
             if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.PCIDSync ) )
             {
                 CswC3SearchParams CswC3SearchParams = new CswC3SearchParams();
-                CswNbtC3ClientManager CswNbtC3ClientManager = new CswNbtC3ClientManager( _CswNbtResources,
-                                                                                        CswC3SearchParams );
-                ChemCatCentral.SearchClient C3SearchClient = CswNbtC3ClientManager.initializeC3Client();
-
-                // Set PCID specific properties
-                CswC3SearchParams.Purpose = "PCID";
-                CswC3SearchParams.SyncType = "CasNo";
-                CswC3SearchParams.SyncKey = this.CasNo.Text;
-
-                CswRetObjSearchResults SearchResults = C3SearchClient.getExtChemData( CswC3SearchParams );
-                if( null != SearchResults.ExtChemDataResults )
+                CswNbtC3ClientManager CswNbtC3ClientManager = new CswNbtC3ClientManager( _CswNbtResources, CswC3SearchParams );
+                SearchClient C3SearchClient = CswNbtC3ClientManager.initializeC3Client( CswEnumErrorType.Warning, "Unable to sync data. Please contact your administrator. " );
+                if( null != C3SearchClient )
                 {
-                    if( SearchResults.ExtChemDataResults.Length > 0 )
+
+                    // Set PCID specific properties
+                    CswC3SearchParams.Purpose = "PCID";
+                    CswC3SearchParams.SyncType = "CasNo";
+                    CswC3SearchParams.SyncKey = this.CasNo.Text;
+
+                    CswRetObjSearchResults SearchResults = C3SearchClient.getExtChemData( CswC3SearchParams );
+                    if( null != SearchResults.ExtChemDataResults )
                     {
-                        ChemCatCentral.CswC3ExtChemData C3ExtChemData = SearchResults.ExtChemDataResults[0];
+                        if( SearchResults.ExtChemDataResults.Length > 0 )
+                        {
+                            ChemCatCentral.CswC3ExtChemData C3ExtChemData = SearchResults.ExtChemDataResults[0];
 
-                        // NFPA
-                        if( string.IsNullOrEmpty( this.NFPA.Red ) )
-                        {
-                            NFPA.Red = CswConvert.ToString( C3ExtChemData.ExtensionData1.PcidData.NFPA.NfpaFire );
-                        }
-                        if( string.IsNullOrEmpty( this.NFPA.Yellow ) )
-                        {
-                            NFPA.Yellow = CswConvert.ToString( C3ExtChemData.ExtensionData1.PcidData.NFPA.NfpaReact );
-                        }
-                        if( string.IsNullOrEmpty( this.NFPA.Blue ) )
-                        {
-                            NFPA.Blue = CswConvert.ToString( C3ExtChemData.ExtensionData1.PcidData.NFPA.NfpaHealth );
-                        }
-                        if( string.IsNullOrEmpty( this.NFPA.White ) )
-                        {
-                            string NFPASpecificRating = _NFPASpecificRatingNumberToText( C3ExtChemData.ExtensionData1.PcidData.NFPA.NfpaSpecific );
-                            NFPA.White = NFPASpecificRating;
-                        }
-
-                        // PPE
-                        CswCommaDelimitedString CurrentPPEOptions = new CswCommaDelimitedString();
-                        CurrentPPEOptions = this.PPE.Value;
-
-                        CswCommaDelimitedString UpdatedPPEOptions = new CswCommaDelimitedString();
-
-                        foreach( CswC3ExtChemData.PCID.PPEClass PPEClass in C3ExtChemData.ExtensionData1.PcidData.PPEOptions )
-                        {
-                            if( false == CurrentPPEOptions.Contains( PPEClass.PPE ) )
+                            // NFPA
+                            if( string.IsNullOrEmpty( this.NFPA.Red ) )
                             {
-                                UpdatedPPEOptions.Add( PPEClass.PPE );
+                                NFPA.Red = CswConvert.ToString( C3ExtChemData.ExtensionData1.PcidData.NFPA.NfpaFire );
                             }
-                        }
-
-                        // Add the original PPE options to the new list
-                        foreach( string PPE in CurrentPPEOptions )
-                        {
-                            UpdatedPPEOptions.Add( PPE );
-                        }
-
-                        // Set the value of the property to the new list
-                        this.PPE.Value = UpdatedPPEOptions;
-
-                        // Storage Compatibility
-                        if( StorageCompatibility.Value.IsEmpty )
-                        {
-                            string StorageCompatImagePath = _getStorageCompatImagePath( C3ExtChemData.ExtensionData1.PcidData.StorageCompatibility );
-                            CswDelimitedString StorageCompatValue = new CswDelimitedString( '\n' );
-                            StorageCompatValue.Add( StorageCompatImagePath );
-                            StorageCompatibility.Value = StorageCompatValue;
-                        }
-
-                        // Additional properties ONLY IF they have an empty value. For now the following- structure, formula, density, mp, bp, physical description, tier II
-                        foreach( CswC3ExtChemData.PCID.AdditionalProperty Property in C3ExtChemData.ExtensionData1.PcidData.AdditionalProperties )
-                        {
-                            // Structure
-                            if( Property.Name.Equals( "STRUCT" ) )
+                            if( string.IsNullOrEmpty( this.NFPA.Yellow ) )
                             {
-                                if( false == string.IsNullOrEmpty( Property.Value ) )
-                                {
-                                    if( this.Structure.Empty )
-                                    {
-                                        string propAttr =
-                                            new CswPropIdAttr( Node,
-                                                              NodeType.getNodeTypePropByObjectClassProp(
-                                                                  PropertyName.Structure ) ).ToString();
-                                        string molData = Property.Value;
+                                NFPA.Yellow = CswConvert.ToString( C3ExtChemData.ExtensionData1.PcidData.NFPA.NfpaReact );
+                            }
+                            if( string.IsNullOrEmpty( this.NFPA.Blue ) )
+                            {
+                                NFPA.Blue = CswConvert.ToString( C3ExtChemData.ExtensionData1.PcidData.NFPA.NfpaHealth );
+                            }
+                            if( string.IsNullOrEmpty( this.NFPA.White ) )
+                            {
+                                string NFPASpecificRating = _NFPASpecificRatingNumberToText( C3ExtChemData.ExtensionData1.PcidData.NFPA.NfpaSpecific );
+                                NFPA.White = NFPASpecificRating;
+                            }
 
-                                        string Href;
-                                        string FormattedMolString;
-                                        CswNbtSdBlobData SdBlobData = new CswNbtSdBlobData( _CswNbtResources );
-                                        SdBlobData.saveMol( molData, propAttr, out Href, out FormattedMolString, false );
-                                    }
+                            // PPE
+                            CswCommaDelimitedString CurrentPPEOptions = new CswCommaDelimitedString();
+                            CurrentPPEOptions = this.PPE.Value;
+
+                            CswCommaDelimitedString UpdatedPPEOptions = new CswCommaDelimitedString();
+
+                            foreach( CswC3ExtChemData.PCID.PPEClass PPEClass in C3ExtChemData.ExtensionData1.PcidData.PPEOptions )
+                            {
+                                if( false == CurrentPPEOptions.Contains( PPEClass.PPE ) )
+                                {
+                                    UpdatedPPEOptions.Add( PPEClass.PPE );
                                 }
                             }
 
-                            // Formula
-                            if( Property.Name.Equals( "MFORMULA" ) )
+                            // Add the original PPE options to the new list
+                            foreach( string PPE in CurrentPPEOptions )
                             {
-                                if( false == string.IsNullOrEmpty( Property.Value ) )
-                                {
-                                    if( this.Formula.Empty )
-                                    {
-                                        this.Formula.Text = Property.Value;
-                                    }
-                                }
+                                UpdatedPPEOptions.Add( PPE );
                             }
 
-                            // Density
-                            if( Property.Name.Equals( "DENSITY_GMML" ) )
+                            // Set the value of the property to the new list
+                            this.PPE.Value = UpdatedPPEOptions;
+
+                            // Storage Compatibility
+                            if( StorageCompatibility.Value.IsEmpty )
                             {
-                                if( false == string.IsNullOrEmpty( Property.Value ) )
-                                {
-                                    if( this.VaporDensity.Empty )
-                                    {
-                                        this.VaporDensity.Text = Property.Value;
-                                    }
-                                }
+                                string StorageCompatImagePath = _getStorageCompatImagePath( C3ExtChemData.ExtensionData1.PcidData.StorageCompatibility );
+                                CswDelimitedString StorageCompatValue = new CswDelimitedString( '\n' );
+                                StorageCompatValue.Add( StorageCompatImagePath );
+                                StorageCompatibility.Value = StorageCompatValue;
                             }
 
-                            // MP
-                            if( Property.Name.Equals( "MP_C" ) )
+                            // Additional properties ONLY IF they have an empty value. For now the following- structure, formula, density, mp, bp, physical description, tier II
+                            foreach( CswC3ExtChemData.PCID.AdditionalProperty Property in C3ExtChemData.ExtensionData1.PcidData.AdditionalProperties )
                             {
-                                if( false == string.IsNullOrEmpty( Property.Value ) )
+                                // Structure
+                                if( Property.Name.Equals( "STRUCT" ) )
                                 {
-                                    if( this.MeltingPoint.Empty )
+                                    if( false == string.IsNullOrEmpty( Property.Value ) )
                                     {
-                                        this.MeltingPoint.Text = Property.Value;
+                                        if( this.Structure.Empty )
+                                        {
+                                            string propAttr =
+                                                new CswPropIdAttr( Node,
+                                                                  NodeType.getNodeTypePropByObjectClassProp(
+                                                                      PropertyName.Structure ) ).ToString();
+                                            string molData = Property.Value;
+
+                                            string Href;
+                                            string FormattedMolString;
+                                            CswNbtSdBlobData SdBlobData = new CswNbtSdBlobData( _CswNbtResources );
+                                            SdBlobData.saveMol( molData, propAttr, out Href, out FormattedMolString, false );
+                                        }
                                     }
                                 }
-                            }
 
-                            // BP
-                            if( Property.Name.Equals( "BOILING_POINT_C" ) )
-                            {
-                                if( false == string.IsNullOrEmpty( Property.Value ) )
+                                // Formula
+                                if( Property.Name.Equals( "MFORMULA" ) )
                                 {
-                                    if( this.BoilingPoint.Empty )
+                                    if( false == string.IsNullOrEmpty( Property.Value ) )
                                     {
-                                        this.BoilingPoint.Text = Property.Value;
+                                        if( this.Formula.Empty )
+                                        {
+                                            this.Formula.Text = Property.Value;
+                                        }
                                     }
                                 }
-                            }
 
-                            // Physical Description
-                            if( Property.Name.Equals( "PHYSICAL_APPEARANCE" ) )
-                            {
-                                if( false == string.IsNullOrEmpty( Property.Value ) )
+                                // Density
+                                if( Property.Name.Equals( "DENSITY_GMML" ) )
                                 {
-                                    if( this.PhysicalDescription.Empty )
+                                    if( false == string.IsNullOrEmpty( Property.Value ) )
                                     {
-                                        this.PhysicalDescription.Text = Property.Value;
+                                        if( this.VaporDensity.Empty )
+                                        {
+                                            this.VaporDensity.Text = Property.Value;
+                                        }
                                     }
                                 }
-                            }
 
-                            // Tier II
-                            if( Property.Name.Equals( "TIER_II" ) )
-                            {
-                                if( false == string.IsNullOrEmpty( Property.Value ) )
+                                // MP
+                                if( Property.Name.Equals( "MP_C" ) )
                                 {
-                                    if( this.IsTierII.Empty )
+                                    if( false == string.IsNullOrEmpty( Property.Value ) )
                                     {
-                                        this.IsTierII.Checked = CswConvert.ToTristate( Property.Value );
+                                        if( this.MeltingPoint.Empty )
+                                        {
+                                            this.MeltingPoint.Text = Property.Value;
+                                        }
                                     }
                                 }
-                            }
 
-                        }//foreach( CswC3ExtChemData.PCID.AdditionalProperty Property in C3ExtChemData.ExtensionData1.PcidData.AdditionalProperties )
+                                // BP
+                                if( Property.Name.Equals( "BOILING_POINT_C" ) )
+                                {
+                                    if( false == string.IsNullOrEmpty( Property.Value ) )
+                                    {
+                                        if( this.BoilingPoint.Empty )
+                                        {
+                                            this.BoilingPoint.Text = Property.Value;
+                                        }
+                                    }
+                                }
 
-                    }//if( SearchResults.ExtChemDataResults.Length > 0 )
+                                // Physical Description
+                                if( Property.Name.Equals( "PHYSICAL_APPEARANCE" ) )
+                                {
+                                    if( false == string.IsNullOrEmpty( Property.Value ) )
+                                    {
+                                        if( this.PhysicalDescription.Empty )
+                                        {
+                                            this.PhysicalDescription.Text = Property.Value;
+                                        }
+                                    }
+                                }
 
-                }//if( null != SearchResults.ExtChemDataResults )
+                                // Tier II
+                                if( Property.Name.Equals( "TIER_II" ) )
+                                {
+                                    if( false == string.IsNullOrEmpty( Property.Value ) )
+                                    {
+                                        if( this.IsTierII.Empty )
+                                        {
+                                            this.IsTierII.Checked = CswConvert.ToTristate( Property.Value );
+                                        }
+                                    }
+                                }
+
+                            } //foreach( CswC3ExtChemData.PCID.AdditionalProperty Property in C3ExtChemData.ExtensionData1.PcidData.AdditionalProperties )
+
+                        } //if( SearchResults.ExtChemDataResults.Length > 0 )
+
+                    } //if( null != SearchResults.ExtChemDataResults )
+
+                }
 
             }//if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.PCIDSync ) )
         }
@@ -814,13 +820,13 @@ namespace ChemSW.Nbt.ObjClasses
             //CswNbtViewRelationship CompRel = View.AddViewRelationship( ChemRel, CswEnumNbtViewPropOwnerType.Second, ComponentOC.getObjectClassProp( CswNbtObjClassMaterialComponent.PropertyName.Mixture ), false );
             CswNbtViewRelationship CompRel = View.AddViewRelationship( ComponentOC, false );
             View.AddViewPropertyAndFilter( CompRel, ComponentMixtureOCP,
-                                                    SubFieldName : CswEnumNbtSubFieldName.NodeID,
-                                                    FilterMode : CswEnumNbtFilterMode.Equals,
-                                                    Value : this.NodeId.PrimaryKey.ToString() );
+                                                    SubFieldName: CswEnumNbtSubFieldName.NodeID,
+                                                    FilterMode: CswEnumNbtFilterMode.Equals,
+                                                    Value: this.NodeId.PrimaryKey.ToString() );
             CswNbtViewRelationship ConstRel = View.AddViewRelationship( CompRel, CswEnumNbtViewPropOwnerType.First, ComponentConstituentOCP, false );
             View.AddViewProperty( ConstRel, ChemicalCasNoOCP );
 
-            ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, RequireViewPermissions : false, IncludeSystemNodes : true, IncludeHiddenNodes : true );
+            ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, RequireViewPermissions: false, IncludeSystemNodes: true, IncludeHiddenNodes: true );
             //for( Int32 i = 0; i < Tree.getChildNodeCount(); i++ ) // Chemical
             //{
             //    Tree.goToNthChild( i );
@@ -868,12 +874,12 @@ namespace ChemSW.Nbt.ObjClasses
             //CswNbtViewRelationship CompRel = View.AddViewRelationship( ConstRel, CswEnumNbtViewPropOwnerType.Second, ComponentOC.getObjectClassProp( CswNbtObjClassMaterialComponent.PropertyName.Constituent ), false );
             CswNbtViewRelationship CompRel = View.AddViewRelationship( ComponentOC, false );
             View.AddViewPropertyAndFilter( CompRel, ComponentConstituentOCP,
-                                                    SubFieldName : CswEnumNbtSubFieldName.NodeID,
-                                                    FilterMode : CswEnumNbtFilterMode.Equals,
-                                                    Value : this.NodeId.PrimaryKey.ToString() );
+                                                    SubFieldName: CswEnumNbtSubFieldName.NodeID,
+                                                    FilterMode: CswEnumNbtFilterMode.Equals,
+                                                    Value: this.NodeId.PrimaryKey.ToString() );
             CswNbtViewRelationship ChemRel = View.AddViewRelationship( CompRel, CswEnumNbtViewPropOwnerType.First, ComponentMixtureOCP, false );
 
-            ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, RequireViewPermissions : false, IncludeSystemNodes : true, IncludeHiddenNodes : true );
+            ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, RequireViewPermissions: false, IncludeSystemNodes: true, IncludeHiddenNodes: true );
             //for( Int32 i = 0; i < Tree.getChildNodeCount(); i++ ) // Constituent
             //{
             //    Tree.goToNthChild( i );
@@ -927,15 +933,15 @@ namespace ChemSW.Nbt.ObjClasses
                     CswNbtViewRelationship MemberRel = MemberView.AddViewRelationship( RegListMemberOC, false );
                     MemberView.AddViewProperty( MemberRel, MemberByUserOCP, 1 );
                     MemberView.AddViewPropertyAndFilter( MemberRel, MemberChemicalOCP,
-                                                         SubFieldName : CswEnumNbtSubFieldName.NodeID,
-                                                         FilterMode : CswEnumNbtFilterMode.Equals,
-                                                         Value : this.NodeId.PrimaryKey.ToString(),
-                                                         ShowInGrid : false );
+                                                         SubFieldName: CswEnumNbtSubFieldName.NodeID,
+                                                         FilterMode: CswEnumNbtFilterMode.Equals,
+                                                         Value: this.NodeId.PrimaryKey.ToString(),
+                                                         ShowInGrid: false );
                     CswNbtViewRelationship RegListRel = MemberView.AddViewRelationship( MemberRel, CswEnumNbtViewPropOwnerType.First, RegListMemberOC.getObjectClassProp( CswNbtObjClassRegulatoryListMember.PropertyName.RegulatoryList ), false );
                     MemberView.AddViewProperty( RegListRel, RegListNameOCP );
 
 
-                    ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( MemberView, RequireViewPermissions : false, IncludeSystemNodes : true, IncludeHiddenNodes : true );
+                    ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( MemberView, RequireViewPermissions: false, IncludeSystemNodes: true, IncludeHiddenNodes: true );
                     //for( Int32 i = 0; i < Tree.getChildNodeCount(); i++ ) // Chemical
                     //{
                     //    Tree.goToNthChild( i );
@@ -1093,8 +1099,8 @@ namespace ChemSW.Nbt.ObjClasses
             if( CasNo.GetOriginalPropRowValue() != CasNo.Text )
             {
                 CswNbtC3ClientManager CswNbtC3ClientManager = new CswNbtC3ClientManager( _CswNbtResources );
-                bool C3ServiceStatus = CswNbtC3ClientManager.checkC3ServiceReferenceStatus();
-                if( C3ServiceStatus )
+                SearchClient C3SearchClient = CswNbtC3ClientManager.initializeC3Client( CswEnumErrorType.Warning, "Unable to sync data. Please contact your administrator. " );
+                if( null != C3SearchClient )
                 {
                     syncFireDbData();
                     syncPCIDData();
@@ -1140,7 +1146,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropMemo HazardInfo { get { return _CswNbtNode.Properties[PropertyName.HazardInfo]; } }
         public CswNbtNodePropLogical CompressedGas { get { return _CswNbtNode.Properties[PropertyName.CompressedGas]; } }
         public CswNbtNodePropText SMILES { get { return _CswNbtNode.Properties[PropertyName.SMILES]; } }
-        public CswNbtNodePropMemo DisposalInstructions{ get { return _CswNbtNode.Properties[PropertyName.DisposalInstructions]; } }
+        public CswNbtNodePropMemo DisposalInstructions { get { return _CswNbtNode.Properties[PropertyName.DisposalInstructions]; } }
         public CswNbtNodePropQuantity OpenExpireInterval { get { return _CswNbtNode.Properties[PropertyName.OpenExpireInterval]; } }
         public CswNbtNodePropText EINECS { get { return _CswNbtNode.Properties[PropertyName.EINECS]; } }
         public CswNbtNodePropText SubclassName { get { return _CswNbtNode.Properties[PropertyName.SubclassName]; } }

@@ -128,6 +128,36 @@
                 onOk: function () {
                     var filtersJson = {};
 
+                    var PropsValidated = true;
+                    
+                    Csw.each(viewPropFilters, function(filter1) {
+                        Csw.each(viewPropFilters, function (filter2) {
+                            if (filter1 != filter2) {
+
+                                var filter1Json = filter1.getFilterJson();
+                                var filter2Json = filter2.getFilterJson();
+                                if (filter1Json.filter == filter2Json.filter &&
+                                    filter1Json.proparbitraryid == filter2Json.proparbitraryid &&
+                                    filter1Json.filtervalue == filter2Json.filtervalue) {
+                                       PropsValidated = false;
+                                }
+                            }//if (filter1 != filter2) {
+                        });//Csw.each(viewPropFilters, function (filter2) {
+                    });//Csw.each(viewPropFilters, function(filter1) {
+
+
+                    if (false == PropsValidated) {
+                        Csw.error.showError(
+                            Csw.error.makeErrorObj(
+                                Csw.enums.errorType.warning.name,
+                                'Please avoid entering duplicate filters.',
+                                'Attempted to send updateRuntimeViewFilters() two identical filters from csw.viewfilters.js'
+                            )//Csw.error.makeErrorObj()
+                        );//Csw.error.showError()
+                        return false;
+                    }
+
+
                     Csw.each(data, function (propJson) {
                         Csw.each(propJson.filters, function (filtJson) {
                             filtersJson[filtJson.arbitraryid] = viewPropFilters[filtJson.arbitraryid].getFilterJson();
