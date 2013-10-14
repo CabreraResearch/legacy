@@ -75,7 +75,8 @@
                     var succeeded;
                     var errors = [];
                     // Fatal server errors (like file too large)
-                    if ($(jqXHR.result).find('span').children('h2').children('i').text() === 'Maximum request length exceeded.') {
+                    var errortxt = $(jqXHR.result).find('span').children('h2').children('i').text();
+                    if (errortxt === 'Maximum request length exceeded.' || errortxt === 'Runtime Error') {    // see case 30512
                         succeeded = false;
                         errors.push({
                             display: true,
