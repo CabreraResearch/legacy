@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using System.Linq;
+﻿using System.Linq;
 using ChemSW.Core;
 using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.Security;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -14,11 +11,11 @@ namespace ChemSW.Nbt.Schema
     /// </summary>
     public class CswUpdateSchema_02G_Case30480 : CswUpdateSchemaTo
     {
-        public override string Title { get { return "Update Location Inventory Group Data"; } }
+        public override string Title { get { return "Update Location Inventory Group Data Again"; } }
 
         public override CswEnumDeveloper Author
         {
-            get { return CswEnumDeveloper.CF; }
+            get { return CswEnumDeveloper.BV; }
         }
 
         public override int CaseNo
@@ -28,7 +25,7 @@ namespace ChemSW.Nbt.Schema
 
         public override string ScriptName
         {
-            get { return "IGUpdate"; }
+            get { return "IGUpdate Take 2"; }
         }
 
         public override void update()
@@ -43,11 +40,24 @@ namespace ChemSW.Nbt.Schema
                 if( InventoryGroup.Name.Text == "Default Inventory Group" )
                 {
                     DefaultInventoryGroup = InventoryGroup;
+                    break;
                 }
             }
             if( null == DefaultInventoryGroup )
             {
                 DefaultInventoryGroup = InventoryGroupOc.getNodes( true, false, false, true ).FirstOrDefault();
+            }
+            if( null == DefaultInventoryGroup )
+            {
+                CswNbtMetaDataNodeType InvGrpNT = InventoryGroupOc.FirstNodeType;
+                if( null != InvGrpNT )
+                {
+                    DefaultInventoryGroup = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( InvGrpNT.NodeTypeId, delegate( CswNbtNode NewNode )
+                    {
+                        CswNbtObjClassInventoryGroup DefInvGrp = NewNode;
+                        DefInvGrp.Name.Text = "Default Inventory Group";
+                    } );
+                }
             }
 
             if( null != DefaultInventoryGroup )
@@ -74,81 +84,29 @@ namespace ChemSW.Nbt.Schema
                 }
 
                 //4: Ensure at least one Inventory Group Permission exists
+                CswNbtView IgPermitView = _CswNbtSchemaModTrnsctn.makeView();
+                IgPermitView.AddViewRelationship( InventoryGroupPermissisonOc, IncludeDefaultFilters: false );
+                ICswNbtTree Tree = _CswNbtSchemaModTrnsctn.getTreeFromView( IgPermitView, IncludeSystemNodes: false );
+                if( Tree.getChildNodeCount() == 0 )
                 {
-                    CswNbtView IgPermitView = _CswNbtSchemaModTrnsctn.makeView();
-                    IgPermitView.AddViewRelationship( InventoryGroupPermissisonOc, IncludeDefaultFilters: false );
-                    ICswNbtTree Tree = _CswNbtSchemaModTrnsctn.getTreeFromView( IgPermitView, IncludeSystemNodes: false );
-                    if( Tree.getChildNodeCount() == 0 )
+                    CswNbtMetaDataNodeType IgPermNt = InventoryGroupPermissisonOc.getLatestVersionNodeTypes().FirstOrDefault();
+                    if( null != IgPermNt )
                     {
-                        CswNbtMetaDataNodeType IgPermNt = InventoryGroupPermissisonOc.getLatestVersionNodeTypes().FirstOrDefault();
-                        if( null != IgPermNt )
+                        CswNbtObjClassInventoryGroupPermission DefaultPermission = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( IgPermNt.NodeTypeId, delegate( CswNbtNode NewNode )
                         {
-                            CswNbtObjClassInventoryGroupPermission DefaultPermission = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( IgPermNt.NodeTypeId );
-                            DefaultPermission.PermissionGroup.RelatedNodeId = DefaultInventoryGroup.NodeId;
-                            
-                            DefaultPermission.ApplyToAllRoles.Checked = CswEnumTristate.True;
-                            DefaultPermission.ApplyToAllWorkUnits.Checked = CswEnumTristate.True;
-                            
-                            DefaultPermission.Dispense.Checked = CswEnumTristate.True;
-                            DefaultPermission.Dispose.Checked = CswEnumTristate.True;
-                            DefaultPermission.Edit.Checked = CswEnumTristate.True;
-                            DefaultPermission.Request.Checked = CswEnumTristate.True;
-                            DefaultPermission.Undispose.Checked = CswEnumTristate.True;
-
-                            DefaultPermission.postChanges( ForceUpdate: false );
-                        }
+                            CswNbtObjClassInventoryGroupPermission WildCardPerm = NewNode;
+                            WildCardPerm.PermissionGroup.RelatedNodeId = DefaultInventoryGroup.NodeId;
+                            WildCardPerm.ApplyToAllRoles.Checked = CswEnumTristate.True;
+                            WildCardPerm.ApplyToAllWorkUnits.Checked = CswEnumTristate.True;
+                            WildCardPerm.Dispense.Checked = CswEnumTristate.True;
+                            WildCardPerm.Dispose.Checked = CswEnumTristate.True;
+                            WildCardPerm.Edit.Checked = CswEnumTristate.True;
+                            WildCardPerm.Request.Checked = CswEnumTristate.True;
+                            WildCardPerm.Undispose.Checked = CswEnumTristate.True;
+                        } );
                     }
                 }
-
             }
-            //Case 30900 - I don't think this is the right way to satisfy this requirement
-            //5: Revoke MetaData Permissions
-            /*{
-                if( _CswNbtSchemaModTrnsctn.isMaster() )
-                {
-                    Collection<CswNbtObjClassRole> Roles = new Collection<CswNbtObjClassRole>();
-                    {
-                        CswNbtMetaDataObjectClass RoleOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.RoleClass );
-                        Collection<CswNbtNode> RoleNodes = RoleOc.getNodes( true, false, false, true );
-                        foreach( CswNbtObjClassRole Role in RoleNodes )
-                        {
-                            if( Role.Name.Text != CswNbtObjClassRole.ChemSWAdminRoleName )
-                            {
-                                Roles.Add( Role );
-                            }
-                        }
-                    }
-
-                    CswEnumNbtNodeTypePermission[] NtPermissions = { CswEnumNbtNodeTypePermission.Create, CswEnumNbtNodeTypePermission.Edit, CswEnumNbtNodeTypePermission.View, CswEnumNbtNodeTypePermission.Delete };
-                    CswEnumNbtNodeTypeTabPermission[] NtTabPermissions = { CswEnumNbtNodeTypeTabPermission.Edit, CswEnumNbtNodeTypeTabPermission.View };
-                    CswNbtObjClassRole ChemSwAdmin = _CswNbtSchemaModTrnsctn.Nodes.makeRoleNodeFromRoleName( CswNbtObjClassRole.ChemSWAdminRoleName );
-                    
-                    Func<CswNbtMetaDataNodeType,bool> SetPerms = ( NodeType ) =>
-                    {
-                        foreach( CswNbtObjClassRole Role in Roles )
-                        {
-                            _CswNbtSchemaModTrnsctn.Permit.set( NtPermissions, NodeType, Role, false );
-                            foreach( CswNbtMetaDataNodeTypeTab Tab in NodeType.getNodeTypeTabs() )
-                            {
-                                _CswNbtSchemaModTrnsctn.Permit.set( NtTabPermissions, Tab, Role, false );
-                            }
-                        }
-
-                        _CswNbtSchemaModTrnsctn.Permit.set( NtPermissions, NodeType, ChemSwAdmin, true );
-                        return false;
-                    };
-                    
-                    foreach( CswNbtMetaDataNodeType InventoryGroupNT in InventoryGroupOc.getNodeTypes() )
-                    {
-                        SetPerms( InventoryGroupNT );
-                    }
-
-                    foreach( CswNbtMetaDataNodeType InventoryGroupPermNT in InventoryGroupPermissisonOc.getNodeTypes() )
-                    {
-                        SetPerms( InventoryGroupPermNT );
-                    }
-                }
-            }*/
         }
     }
 }

@@ -286,8 +286,12 @@ namespace ChemSW.Nbt
                                               left outer join props on (props.nodetypeid = t.nodetypeid)
                                               left outer join jct_nodes_props propvaljoin on (props.nodetypepropid = propvaljoin.nodetypepropid and propvaljoin.nodeid = n.nodeid)
                                               left outer join jct_nodes_props propval on (propval.jctnodepropid = propvaljoin.jctnodepropid)
-                                             where t.enabled = '1'
-                                               and n.istemp = '0' ";
+                                             where n.istemp = '0' ";
+                //If we have access to disabled module MetaData, we should have access to their Nodes as well
+                if( _CswNbtResources.MetaData.ExcludeDisabledModules )
+                {
+                    Query += "                 and t.enabled = '1' ";
+                }
                 // BZ 6008
                 if( !_IncludeSystemNodes )
                 {
