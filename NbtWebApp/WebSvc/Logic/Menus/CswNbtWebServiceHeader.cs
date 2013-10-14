@@ -314,7 +314,8 @@ namespace ChemSW.Nbt.WebServices
             {
                 CswC3Params CswC3Params = new CswC3Params();
                 CswNbtC3ClientManager C3ClientManager = new CswNbtC3ClientManager( _CswNbtResources, CswC3Params );
-                if( C3ClientManager.checkC3ServiceReferenceStatus() )
+                SearchClient C3SearchClient = C3ClientManager.initializeC3Client();
+                if( null != C3SearchClient )
                 {
                     string C3Version = C3ClientManager.getCurrentC3Version();
                     ComponentObj.Add( new JProperty( "ChemCatCentral", new JObject(
