@@ -236,7 +236,12 @@ namespace ChemSW.Nbt.ChemCatCentral
 
         private void _createMessage( CswEnumErrorType ErrorType, string Detail, bool ShowError = true, string Message = "" )
         {
-            if( string.IsNullOrEmpty( Message ) ) { Message = "Unable to connect to ChemCatCentral"; }
+            if( string.IsNullOrEmpty( Message ) || string.IsNullOrEmpty( _Message ) )
+            {
+                Message = "Unable to connect to ChemCatCentral";
+            }
+
+            if( null != _MessageType ) { ErrorType = _MessageType; }
 
             CswWebSvcReturnBase.ErrorMessage MessageObj = new CswWebSvcReturnBase.ErrorMessage();
             MessageObj.Type = ErrorType;

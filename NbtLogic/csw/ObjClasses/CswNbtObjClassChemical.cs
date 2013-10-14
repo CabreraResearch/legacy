@@ -408,7 +408,7 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 CswC3SearchParams CswC3SearchParams = new CswC3SearchParams();
                 CswNbtC3ClientManager CswNbtC3ClientManager = new CswNbtC3ClientManager( _CswNbtResources, CswC3SearchParams );
-                SearchClient C3SearchClient = CswNbtC3ClientManager.initializeC3Client();
+                SearchClient C3SearchClient = CswNbtC3ClientManager.initializeC3Client( CswEnumErrorType.Warning, "Unable to sync data. Please contact your administrator. " );
                 if( null != C3SearchClient )
                 {
                     // Set FireDb specific properties
@@ -516,7 +516,7 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 CswC3SearchParams CswC3SearchParams = new CswC3SearchParams();
                 CswNbtC3ClientManager CswNbtC3ClientManager = new CswNbtC3ClientManager( _CswNbtResources, CswC3SearchParams );
-                SearchClient C3SearchClient = CswNbtC3ClientManager.initializeC3Client();
+                SearchClient C3SearchClient = CswNbtC3ClientManager.initializeC3Client( CswEnumErrorType.Warning, "Unable to sync data. Please contact your administrator. " );
                 if( null != C3SearchClient )
                 {
 
