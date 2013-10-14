@@ -352,13 +352,13 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Custom Logic
 
-        public static CswNbtView getMaterialNodeView( CswNbtResources NbtResources, CswNbtNode MaterialNode )
+        public static CswNbtView getMaterialNodeView( CswNbtResources NbtResources, CswNbtPropertySetMaterial MaterialNode )
         {
             CswNbtView Ret = null;
             if( MaterialNode != null )
             {
-                Ret = MaterialNode.getViewOfNode( false );
-                if( NbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Containers ) )
+                Ret = MaterialNode.Node.getViewOfNode( false );
+                if( NbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Containers ) && CswEnumTristate.True != MaterialNode.IsConstituent.Checked )
                 {
                     CswNbtMetaDataObjectClass SizeOc = NbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.SizeClass );
                     CswNbtMetaDataObjectClassProp MaterialOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.Material );
