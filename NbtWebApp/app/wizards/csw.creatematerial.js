@@ -23,6 +23,7 @@
             showQuantityEditable: false,
             showDispensable: false,
             state: {
+                chemCatCentralImport: false,
                 request: {},
                 sizeNodeTypeId: '',
                 relatedNodeId: null,
@@ -59,7 +60,8 @@
             containersModuleEnabled: true,
             SDSModuleEnabled: true,
             AllowSupplierAdd: true,
-            sizesGrid: null
+            sizesGrid: null,
+
         };
 
         var cswPublic = {};
@@ -208,10 +210,10 @@
                             cswPrivate.state.physicalState = ''; //Case 29015
                             cswPrivate['step' + cswPrivate.makeSizesStep.stepNo + 'Complete'] = false;
                         }
-                        // Note: When importing from ChemCatCentral, the materialTypeSelect is null because
+                        // NOTE: When importing from ChemCatCentral, the materialTypeSelect is null because
                         // the Material Type is rendered as readOnly. Hence, we need to account for this when
                         // checking if we should add the Attach SDS step.
-                        if (cswPrivate.materialTypeSelect) {
+                        if (false == cswPrivate.state.chemCatCentralImport) {
                             cswPrivate.state.canAddSDS =
                                 cswPrivate.materialTypeSelect.find(':selected').data('objectclassid') === cswPrivate.state.chemicalObjClassId
                                     && false === cswPrivate.isConstituent();
@@ -236,18 +238,23 @@
                             } else {
                                 cswPrivate.supplierLabel.show();
                                 cswPrivate.supplierSelect.show();
-                                
-                                //NOTE: the following should only run while doing a ChemCatCentral import. 
-                                //If there is no longer a comment ~30 lines above this about materialTypeSelect 
-                                //always being null during C3 imports, this block of logic is highly suspect.
-                                if (undefined == cswPrivate.materialTypeSelect &&
-                                    cswPrivate.supplierSelect.selectedText &&
-                                    Csw.string(cswPrivate.state.supplier.val) !== Csw.string(cswPrivate.supplierSelect.val())) {
-                                    
-                                    if (cswPrivate.supplierSelect.selectedText() === cswPrivate.newSupplierName) {
-                                        cswPrivate.makeNewC3SupplierInput(true, 1, 1);
-                                    } else {
-                                        cswPrivate.makeNewC3SupplierInput(false, 1, 1);
+
+                                if (cswPrivate.supplierSelect.selectedText
+                                    && Csw.string(cswPrivate.state.supplier.val) !== Csw.string(cswPrivate.supplierSelect.val())) {
+                                    cswPrivate.state.supplier = {
+                                        name: cswPrivate.supplierSelect.selectedText(),
+                                        val: cswPrivate.supplierSelect.val(),
+                                        nodelink: cswPrivate.state.supplier.nodelink,
+                                        corporate: cswPrivate.state.supplier.corporate
+                                    };
+
+                                    // NOTE: The following should only run while doing a ChemCatCentral import
+                                    if (cswPrivate.state.chemCatCentralImport && cswPrivate.state.addNewC3Supplier) {
+                                        if (cswPrivate.supplierSelect.selectedText() === cswPrivate.newSupplierName) {
+                                            cswPrivate.makeNewC3SupplierInput(true, 1, 1);
+                                        } else {
+                                            cswPrivate.makeNewC3SupplierInput(false, 1, 1);
+                                        }
                                     }
                                 }
                             }
@@ -269,10 +276,12 @@
                                 }
                             }
                         }
+                        
                         if (cswPrivate.newC3SupplierInput) {
                             if (cswPrivate.isConstituent()) {
                                 cswPrivate.newC3SupplierInput.hide();
-                            } else {
+                            }
+                            else {
                                 if (cswPrivate.supplierSelect.selectedText && cswPrivate.supplierSelect.selectedText() === cswPrivate.newSupplierName) {
                                     cswPrivate.newC3SupplierInput.show();
                                     cswPrivate.state.supplier = {
@@ -281,9 +290,10 @@
                                         nodelink: cswPrivate.state.supplier.nodelink,
                                         corporate: cswPrivate.state.supplier.corporate
                                     };
+
                                     cswPrivate.state.c3SupplierName = cswPrivate.newC3SupplierInput.val();
-                                } else {
-                                    // 'Search' case
+                                }
+                                if (cswPrivate.useSearch) {
                                     cswPrivate.state.supplier = {
                                         name: cswPrivate.newC3SupplierInput.val(),
                                         val: '',
@@ -293,7 +303,8 @@
                                     cswPrivate.state.c3SupplierName = cswPrivate.newC3SupplierInput.val();
                                 }
                             }
-                        }
+                        }//if (cswPrivate.newC3SupplierInput)
+                        
                         cswPrivate.reinitSteps(2);
                     }//changeMaterial()
 
