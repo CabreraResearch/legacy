@@ -99,7 +99,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                         false == _IsMultiEdit &&
                         Date.IsNull &&
                         NodeType.AuditLevel != Audit.CswEnumAuditLevel.NoAudit &&
-                        CswConvert.ToBoolean( _CswNbtResources.ConfigVbls.getConfigVariableValue( "auditing" ) ) )
+                        CswConvert.ToBoolean( _CswNbtResources.DoAuditing ) )
                     {
                         if( _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.View, NodeType ) )
                         {

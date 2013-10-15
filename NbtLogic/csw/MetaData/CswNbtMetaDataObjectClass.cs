@@ -181,7 +181,7 @@ namespace ChemSW.Nbt.MetaData
         }
         public CswNbtMetaDataObjectClassProp getObjectClassProp( Int32 ObjectClassPropId )
         {
-            return _CswNbtMetaDataResources.ObjectClassPropsCollection.getObjectClassProp( ObjectClassId, ObjectClassPropId );
+            return _CswNbtMetaDataResources.ObjectClassPropsCollection.getObjectClassProp( ObjectClassPropId );
         }
 
         public CswNbtView CreateDefaultView( bool IncludeDefaultFilters = true )

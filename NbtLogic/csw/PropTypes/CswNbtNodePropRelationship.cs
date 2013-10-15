@@ -62,7 +62,10 @@ namespace ChemSW.Nbt.PropTypes
                     if( null != ViewId && ViewId.isSet() )
                     {
                         _View = _getView( _CswNbtResources, ViewId );
-                        _setRootRelationship( _View );
+                        if( null != _View )
+                        {
+                            _setRootRelationship( _View );
+                        }
                     }
                 }
                 return _View;
@@ -391,7 +394,7 @@ namespace ChemSW.Nbt.PropTypes
             base.ToJSON( ParentObject );  // FIRST
 
             JArray JOptions = (JArray) ( ParentObject["options"] = new JArray() );
-            
+
             CswNbtNode RelatedNode = null;
             if( CswTools.IsPrimaryKey( RelatedNodeId ) )
             {
@@ -439,24 +442,24 @@ namespace ChemSW.Nbt.PropTypes
                     if( ShowEmptyOption )
                     {
                         JObject JOption = new JObject();
-                        JOption[ "id" ] = "";
-                        JOption[ "value" ] = "";
+                        JOption["id"] = "";
+                        JOption["value"] = "";
                         JOptions.AddFirst( JOption );
                     }
                     else
                     {
                         //Case 30030
-                        if( null == RelatedNode && 
-                            Required && 
+                        if( null == RelatedNode &&
+                            Required &&
                             Options.Count == 1 &&
-                            CswTools.IsPrimaryKey(FirstPk) )
+                            CswTools.IsPrimaryKey( FirstPk ) )
                         {
-                            RelatedNode = _CswNbtResources.Nodes[ FirstPk ];
+                            RelatedNode = _CswNbtResources.Nodes[FirstPk];
                         }
                     }
                 }
             }
-            
+
             ParentObject["nodetypeid"] = 0;
             ParentObject["objectclassid"] = 0;
             ParentObject["propertysetid"] = 0;
@@ -496,8 +499,11 @@ namespace ChemSW.Nbt.PropTypes
                 ParentObject["relatednodeid"] = RelatedNode.NodeId.ToString();
                 ParentObject["relatednodelink"] = RelatedNode.NodeLink;
             }
-            ParentObject["viewid"] = View.ViewId.ToString();
-            
+            if( null != View )
+            {
+                ParentObject["viewid"] = View.ViewId.ToString();
+            }
+
         } // ToJSON()
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )

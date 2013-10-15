@@ -337,11 +337,14 @@
     <None Include="csw\Schema\scripts\past\02E\CswUpdateSchema_02E_Case30440.cs" />
     <None Include="csw\Schema\scripts\past\02E\CswUpdateSchema_02E_Case30445.cs" />
     <None Include="csw\Schema\scripts\past\02E\CswUpdateSchema_02E_Case30300.cs" />
+    <None Include="csw\Schema\scripts\past\02F\CswUpdateSchema_02F_Case30929.cs" />
+    <None Include="csw\Schema\scripts\prod\02F\CswUpdateSchema_02F_Case30733.cs" />
     <None Include="csw\Schema\scripts\past\02F\CswUpdateSchema_02F_Case30700.cs" />
     <Compile Include="csw\Schema\scripts\ICswSchemaScripts.cs" />
     <Compile Include="csw\MetaData\Infr\CswNbtAuditTableAbbreviation.cs" />
     <Compile Include="csw\Schema\scripts\infr\RunAfterEveryExecutionOfUpdater_02AuditSql.cs" />
     <None Include="csw\Schema\scripts\past\02F\CswSchemaScriptsFoxglove.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateSchema_02G_Case30912.cs" />
     <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateSchema_02G_Case30924.cs" />
     <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateSchema_02G_Case30913.cs" />
     <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateSchema_02G_Case30902.cs" />
