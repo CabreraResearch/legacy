@@ -131,6 +131,9 @@ namespace ChemSW.Nbt.WebServices
             [DataMember]
             public bool success;
 
+            [DataMember]
+            public bool chemCatCentralImport = true;
+
             [DataContract]
             public class State
             {
