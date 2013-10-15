@@ -62,7 +62,10 @@ namespace ChemSW.Nbt.PropTypes
                     if( null != ViewId && ViewId.isSet() )
                     {
                         _View = _getView( _CswNbtResources, ViewId );
-                        _setRootRelationship( _View );
+                        if( null != _View )
+                        {
+                            _setRootRelationship( _View );
+                        }
                     }
                 }
                 return _View;
@@ -510,7 +513,10 @@ namespace ChemSW.Nbt.PropTypes
                 ParentObject["relatednodeid"] = RelatedNode.NodeId.ToString();
                 ParentObject["relatednodelink"] = RelatedNode.NodeLink;
             }
-            ParentObject["viewid"] = View.ViewId.ToString();
+            if( null != View )
+            {
+                ParentObject["viewid"] = View.ViewId.ToString();
+            }
 
         } // ToJSON()
 

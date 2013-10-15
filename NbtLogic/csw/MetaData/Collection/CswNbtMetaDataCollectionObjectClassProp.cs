@@ -43,19 +43,27 @@ namespace ChemSW.Nbt.MetaData
         {
             return (CswNbtMetaDataObjectClassProp) _CollImpl.getByPk( ObjectClassPropId );
         }
-        public string getObjectClassPropName( Int32 ObjectClassPropId )
+
+        public string getObjectClassPropName( Int32 ObjectClassPropId, CswDateTime Date = null )
         {
+            string ret = string.Empty;
             // This fetches all of them at once.  This was done on purpose.
             // This will actually perform better in any case where you need more than one.
-            return getObjectClassPropNames()[ObjectClassPropId];
+            Dictionary<int, string> dict = getObjectClassPropNames( Date );
+            if( dict.ContainsKey( ObjectClassPropId ) )
+            {
+                ret = dict[ObjectClassPropId];
+            }
+            return ret;
         }
-        public CswNbtMetaDataObjectClassProp getObjectClassProp( Int32 ObjectClassId, string ObjectClassPropName )
+
+        public CswNbtMetaDataObjectClassProp getObjectClassProp( Int32 ObjectClassId, string ObjectClassPropName, CswDateTime Date = null )
         {
-            return (CswNbtMetaDataObjectClassProp) _CollImpl.getWhereFirst( "where objectclassid = " + ObjectClassId.ToString() + " and lower(propname) = '" + CswTools.SafeSqlParam( ObjectClassPropName.ToLower() ) + "'" );
+            return (CswNbtMetaDataObjectClassProp) _CollImpl.getWhereFirst( "where objectclassid = " + ObjectClassId.ToString() + " and lower(propname) = '" + CswTools.SafeSqlParam( ObjectClassPropName.ToLower() ) + "'", Date );
         }
-        public CswNbtMetaDataObjectClassProp getObjectClassProp( Int32 ObjectClassId, Int32 ObjectClassPropId )
+        public CswNbtMetaDataObjectClassProp getObjectClassProp( Int32 ObjectClassPropId, CswDateTime Date = null )
         {
-            return (CswNbtMetaDataObjectClassProp) _CollImpl.getByPk( ObjectClassPropId );
+            return (CswNbtMetaDataObjectClassProp) _CollImpl.getByPk( ObjectClassPropId, Date );
         }
 
         public Collection<Int32> getObjectClassPropIds()
@@ -63,9 +71,9 @@ namespace ChemSW.Nbt.MetaData
             return _CollImpl.getPks();
         }
 
-        public Dictionary<Int32, string> getObjectClassPropNames()
+        public Dictionary<Int32, string> getObjectClassPropNames( CswDateTime Date = null )
         {
-            return _CollImpl.getPkDict();
+            return _CollImpl.getPkDict( Date: Date );
         }
 
         public IEnumerable<CswNbtMetaDataObjectClassProp> getObjectClassProps()

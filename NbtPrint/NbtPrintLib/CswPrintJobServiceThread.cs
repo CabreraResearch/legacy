@@ -62,7 +62,8 @@ namespace NbtPrintLib
                     CustomerId = auth.AccessId,
                     UserName = auth.UserId,
                     Password = auth.Password,
-                    IsMobile = true
+                    IsMobile = true,
+                    SuppressLog = true
                 } );
                 if( ret.Authentication.AuthenticationStatus == "Authenticated" )
                 {
