@@ -226,6 +226,10 @@ namespace ChemSW.Nbt.Test.ObjClasses
         private DateTime getNextDate( Int32 DayOfMonth )
         {
             DateTime NextDay = DateTime.Today;
+            if( NextDay.Day == DayOfMonth )
+            {
+                NextDay = NextDay.AddMonths( 1 );
+            }
             while( NextDay.Day != DayOfMonth )
             {
                 NextDay = NextDay.AddDays( 1 );
