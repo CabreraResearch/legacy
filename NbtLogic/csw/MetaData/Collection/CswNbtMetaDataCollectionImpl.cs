@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
+using System.Linq;
 using ChemSW.Core;
 using ChemSW.DB;
 
@@ -113,7 +114,7 @@ namespace ChemSW.Nbt.MetaData
             _ByPk = null;
             _getWhere = null;
             _getNameWhere = null;
-            _PkDict = null;
+            //_PkDict = null;
             _PkDictsWhere = null;
             _Pks = null;
             _PksWhere = null;
@@ -189,8 +190,9 @@ namespace ChemSW.Nbt.MetaData
             }
             else
             {
-                string Sql = "select " + _PkColumnName + " from " + CswNbtAuditTableAbbreviation.getAuditTableSql( _CswNbtMetaDataResources.CswNbtResources, _TableSelect.TableName, Date ) + " " + _TableSelect.TableName + " " + Where;
-                addModuleWhereClause( ref Sql );
+                string Sql = "select " + _PkColumnName + " from " + CswNbtAuditTableAbbreviation.getAuditTableSql( _CswNbtMetaDataResources.CswNbtResources, _TableSelect.TableName, Date ) + " " + _TableSelect.TableName + " ";
+                addModuleWhereClause( ref Where );
+                Sql += Where;
 
                 CswArbitrarySelect AuditSelect = _CswNbtMetaDataResources.CswNbtResources.makeCswArbitrarySelect( "MetaDataCollectionImpl_getpks_audit_select", Sql );
                 DataTable Table = AuditSelect.getTable();
@@ -216,42 +218,131 @@ namespace ChemSW.Nbt.MetaData
 
 
 
-        private Dictionary<Int32, string> _PkDict = null;
-        public Dictionary<Int32, string> getPkDict()
-        {
-            if( _PkDict == null )
-            {
-                _PkDict = getPkDict( string.Empty );
-            }
-            return _PkDict;
-        } // getPkDict()
+        //private Dictionary<Int32, string> _PkDict = null;
+        //public Dictionary<Int32, string> getPkDict()
+        //{
+        //    if( _PkDict == null )
+        //    {
+        //        _PkDict = getPkDict( string.Empty );
+        //    }
+        //    return _PkDict;
+        //} // getPkDict()
 
-        private Dictionary<string, Dictionary<Int32, string>> _PkDictsWhere = null;
-        public Dictionary<Int32, string> getPkDict( string Where )
+        private class PkDictKey : IEquatable<PkDictKey>
         {
+            public CswDateTime Date;
+            public string Where;
+
+            #region IEquatable
+            /// <summary>
+            /// IEquatable: ==
+            /// </summary>
+            public static bool operator ==( PkDictKey k1, PkDictKey k2 )
+            {
+                // If both are null, or both are same instance, return true.
+                if( System.Object.ReferenceEquals( k1, k2 ) )
+                {
+                    return true;
+                }
+
+                // If one is null, but not both, return false.
+                if( ( (object) k1 == null ) || ( (object) k2 == null ) )
+                {
+                    return false;
+                }
+
+                // Now we know neither are null.  Compare values.
+                return ( k1.Date == k2.Date && k1.Where == k2.Where );
+            }
+
+            /// <summary>
+            /// IEquatable: !=
+            /// </summary>
+            public static bool operator !=( PkDictKey k1, PkDictKey k2 )
+            {
+                return !( k1 == k2 );
+            }
+
+            /// <summary>
+            /// IEquatable: Equals
+            /// </summary>
+            public override bool Equals( object obj )
+            {
+                if( !( obj is PkDictKey ) )
+                    return false;
+                return this == (PkDictKey) obj;
+            }
+
+            /// <summary>
+            /// IEquatable: Equals
+            /// </summary>
+            public bool Equals( PkDictKey obj )
+            {
+                return this == (PkDictKey) obj;
+            }
+
+            /// <summary>
+            /// IEquatable: GetHashCode
+            /// </summary>
+            public override int GetHashCode()
+            {
+                int ret = 0;
+                if( null != this.Date )
+                {
+                    ret += this.Date.GetHashCode();
+                }
+                if( null != this.Where )
+                {
+                    ret += this.Where.GetHashCode();
+                }
+                return ret;
+            }
+
+            #endregion IEquatable
+        }
+
+        private Dictionary<PkDictKey, Dictionary<Int32, string>> _PkDictsWhere = null;
+        public Dictionary<Int32, string> getPkDict( string Where = "", CswDateTime Date = null )
+        {
+            Dictionary<Int32, string> ret = null;
             if( _PkDictsWhere == null )
             {
-                _PkDictsWhere = new Dictionary<string, Dictionary<Int32, string>>();
+                _PkDictsWhere = new Dictionary<PkDictKey, Dictionary<int, string>>();
             }
-            if( false == _PkDictsWhere.ContainsKey( Where ) )
+
+            PkDictKey Key = new PkDictKey() { Date = Date, Where = Where };
+            if( false == _PkDictsWhere.ContainsKey( Key ) )
             {
-                CswCommaDelimitedString Select = new CswCommaDelimitedString();
-                Select.Add( _PkColumnName );
-                Select.Add( _NameColumnName );
+                DataTable Table;
+                if( null == Date )
+                {
+                    CswCommaDelimitedString Select = new CswCommaDelimitedString();
+                    Select.Add( _PkColumnName );
+                    Select.Add( _NameColumnName );
 
-                string WhereClause = Where;
-                addModuleWhereClause( ref WhereClause );
+                    string WhereClause = Where;
+                    addModuleWhereClause( ref WhereClause );
 
-                DataTable Table = _TableSelect.getTable( Select, string.Empty, Int32.MinValue, WhereClause, false );
+                    Table = _TableSelect.getTable( Select, string.Empty, Int32.MinValue, WhereClause, false );
+                }
+                else
+                {
+                    string Sql = "select " + _PkColumnName + "," + _NameColumnName +
+                                 "  from " + CswNbtAuditTableAbbreviation.getAuditTableSql( _CswNbtMetaDataResources.CswNbtResources, _TableSelect.TableName, Date ) + " " + _TableSelect.TableName + " ";
+                    addModuleWhereClause( ref Where );
+                    Sql += Where;
 
+                    CswArbitrarySelect AuditSelect = _CswNbtMetaDataResources.CswNbtResources.makeCswArbitrarySelect( "MetaDataCollectionImpl_getpkdict_audit_select", Sql );
+                    Table = AuditSelect.getTable();
+                }
                 Dictionary<Int32, string> Coll = new Dictionary<Int32, string>();
                 foreach( DataRow Row in Table.Rows )
                 {
                     Coll.Add( CswConvert.ToInt32( Row[_PkColumnName] ), CswConvert.ToString( Row[_NameColumnName] ) );
                 }
-                _PkDictsWhere[Where] = Coll;
+                _PkDictsWhere[Key] = Coll;
             }
-            return _PkDictsWhere[Where];
+            return _PkDictsWhere[Key];
         } // _PkDictsWhere(Where)
 
         private Dictionary<Int32, ICswNbtMetaDataObject> _ByPk = null;
@@ -294,8 +385,9 @@ namespace ChemSW.Nbt.MetaData
             else
             {
                 string Sql = "select * from " + CswNbtAuditTableAbbreviation.getAuditTableSql( _CswNbtMetaDataResources.CswNbtResources, _TableSelect.TableName, Date ) + " " + _TableSelect.TableName;
-                Sql += " where " + _PkColumnName + " = " + Pk.ToString();
-                addModuleWhereClause( ref Sql );
+                string Where = " where " + _PkColumnName + " = " + Pk.ToString();
+                addModuleWhereClause( ref Where );
+                Sql += Where;
 
                 CswArbitrarySelect AuditSelect = _CswNbtMetaDataResources.CswNbtResources.makeCswArbitrarySelect( "MetaDataCollectionImpl_getbypk_audit_select", Sql );
                 DataTable Table = AuditSelect.getTable();

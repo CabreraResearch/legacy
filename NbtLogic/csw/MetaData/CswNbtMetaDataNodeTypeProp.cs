@@ -943,7 +943,7 @@ namespace ChemSW.Nbt.MetaData
             string ret = string.Empty;
             if( Int32.MinValue != ObjectClassPropId )
             {
-                ret = _CswNbtMetaDataResources.CswNbtMetaData.getObjectClassPropName( ObjectClassPropId );
+                ret = _CswNbtMetaDataResources.CswNbtMetaData.getObjectClassPropName( ObjectClassPropId, _Date );
             }
             return ret;
         }
