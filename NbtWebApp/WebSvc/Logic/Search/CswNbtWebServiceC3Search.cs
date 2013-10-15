@@ -979,7 +979,7 @@ namespace ChemSW.Nbt.WebServices
                                     MolecularGraph Mol = MoleculeBuilder.CreateMolFromString( molData );
                                     if( false == Mol.ContainsInvalidAtom() )
                                     {
-                                        SdBlobData.saveMol( molData, propAttr, out Href, out FormattedMolString );
+                                        SdBlobData.saveMol( molData, propAttr, out Href, out FormattedMolString, Node: Node );
                                     }
                                     else
                                     {
