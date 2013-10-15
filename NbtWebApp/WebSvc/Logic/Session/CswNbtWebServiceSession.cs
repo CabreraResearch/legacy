@@ -186,7 +186,7 @@ namespace ChemSW.Nbt.WebServices
             }
             catch( Exception Ex )
             {
-                Ret.addException( Ex );
+                Ret.addException( CswResources, Ex );
             }
         }
 

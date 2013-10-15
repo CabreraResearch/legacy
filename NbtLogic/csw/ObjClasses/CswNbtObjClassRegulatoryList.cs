@@ -190,7 +190,7 @@ namespace ChemSW.Nbt.ObjClasses
                                     } );
                             }
                         }
-                        
+
                         AddCASNumbers.Text = string.Empty; // this makes multi-edit not work, but that's actually desirable.
                     }
                 }
@@ -373,21 +373,23 @@ namespace ChemSW.Nbt.ObjClasses
                                     {
                                         CswC3SearchParams CswC3SearchParams = new CswC3SearchParams();
                                         CswNbtC3ClientManager CswNbtC3ClientManager = new CswNbtC3ClientManager( CswNbtResources, CswC3SearchParams );
-                                        ChemCatCentral.SearchClient C3SearchClient = CswNbtC3ClientManager.initializeC3Client();
-
-                                        string ListCodes = string.Join( ",", Pair.Value.ToArray() );
-
-                                        // Set LOLI Sync specific properties
-                                        CswC3SearchParams.Query = CurrentCasNo; // Query takes the Cas Number
-                                        CswC3SearchParams.ListCodes = ListCodes; // ListCodes should be a comma delimited string of all list codes
-
-                                        CswRetObjSearchResults SearchResults = C3SearchClient.getListCodesByCasNo( CswC3SearchParams );
-                                        if( null != SearchResults.LoliDataResults )
+                                        SearchClient C3SearchClient = CswNbtC3ClientManager.initializeC3Client();
+                                        if( null != C3SearchClient )
                                         {
-                                            if( SearchResults.LoliDataResults.Length > 0 )
+                                            string ListCodes = string.Join( ",", Pair.Value.ToArray() );
+
+                                            // Set LOLI Sync specific properties
+                                            CswC3SearchParams.Query = CurrentCasNo; // Query takes the Cas Number
+                                            CswC3SearchParams.ListCodes = ListCodes; // ListCodes should be a comma delimited string of all list codes
+
+                                            CswRetObjSearchResults SearchResults = C3SearchClient.getListCodesByCasNo( CswC3SearchParams );
+                                            if( null != SearchResults.LoliDataResults )
                                             {
-                                                // If at least one list code was returned, add this regulatory list id to the list of matching reg lists
-                                                ret.Add( Pair.Key );
+                                                if( SearchResults.LoliDataResults.Length > 0 )
+                                                {
+                                                    // If at least one list code was returned, add this regulatory list id to the list of matching reg lists
+                                                    ret.Add( Pair.Key );
+                                                }
                                             }
                                         }
 
