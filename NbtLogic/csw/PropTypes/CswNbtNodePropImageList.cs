@@ -25,7 +25,7 @@ namespace ChemSW.Nbt.PropTypes
             _ValueSubField = ( (CswNbtFieldTypeRuleImageList) _FieldTypeRule ).ValueSubField;
 
             // Associate subfields with methods on this object, for SetSubFieldValue()
-            _SubFieldMethods.Add( _ValueSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Value, x => Value = _setValue( x ) ) );
+            _SubFieldMethods.Add( _ValueSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Value, x => Value = new CswDelimitedString( x, _delimiter ) ) );
         }
 
         private CswNbtSubField _ValueSubField;
@@ -65,13 +65,6 @@ namespace ChemSW.Nbt.PropTypes
                 SetPropRowValue( _ValueSubField, ValString );
                 SyncGestalt();
             }
-        }
-
-        private CswDelimitedString _setValue( string ValString )
-        {
-            CswDelimitedString _Value = new CswDelimitedString( _delimiter );
-            _Value.FromString( ValString );
-            return _Value;
         }
 
         /// <summary>
