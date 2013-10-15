@@ -243,7 +243,9 @@
                                     && Csw.string(cswPrivate.state.supplier.val) !== Csw.string(cswPrivate.supplierSelect.val())) {
                                     cswPrivate.state.supplier = {
                                         name: cswPrivate.supplierSelect.selectedText(),
-                                        val: cswPrivate.supplierSelect.val()
+                                        val: cswPrivate.supplierSelect.val(),
+                                        nodelink: cswPrivate.state.supplier.nodelink,
+                                        corporate: cswPrivate.state.supplier.corporate
                                     };
 
                                     // NOTE: The following should only run while doing a ChemCatCentral import
