@@ -12,7 +12,7 @@ using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.PropTypes
 {
-    public class CswNbtNodePropRelationship : CswNbtNodeProp
+    public class CswNbtNodePropRelationship: CswNbtNodeProp
     {
         public static implicit operator CswNbtNodePropRelationship( CswNbtNodePropWrapper PropWrapper )
         {
@@ -236,7 +236,7 @@ namespace ChemSW.Nbt.PropTypes
             {
                 if( value != GetPropRowValue( _NameSubField ) )
                 {
-                    SetPropRowValue( _NameSubField, value, IsNonModifying: true );
+                    SetPropRowValue( _NameSubField, value, IsNonModifying : true );
                     Gestalt = value;
                 }
             }
@@ -317,6 +317,20 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
+        private Dictionary<CswPrimaryKey, string> _OptionsOverride = null;
+        /// <summary>
+        /// Sets the selectable options for a relationship - use with caution!!! Set ClearAfterUse to true to reset to the Options back to default behavoir after one use
+        /// </summary>
+        public void SetOptionsOverride( Dictionary<CswPrimaryKey, string> NewOpts )
+        {
+            _OptionsOverride = NewOpts;
+        }
+
+        public void ClearOptionsOverride()
+        {
+            _OptionsOverride = null;
+        }
+
         private Dictionary<CswPrimaryKey, string> _getOptions( CswNbtResources NbtResources, bool IsRequired, Int32 FkValue, CswPrimaryKey RelatedNodeId, CswNbtView OptionsView )
         {
             Dictionary<CswPrimaryKey, string> Options = new Dictionary<CswPrimaryKey, string>();
@@ -332,10 +346,10 @@ namespace ChemSW.Nbt.PropTypes
                 //Int32 TargetObjectClassId;
                 //_getIds( NbtResources, _targetType( NbtResources, RelationshipProp ), RelationshipProp.FKValue, out TargetNodeTypeId, out TargetObjectClassId );
 
-                ICswNbtTree CswNbtTree = NbtResources.Trees.getTreeFromView( View: OptionsView,
-                                                                             IncludeSystemNodes: false,
-                                                                             RequireViewPermissions: false,
-                                                                             IncludeHiddenNodes: false );
+                ICswNbtTree CswNbtTree = NbtResources.Trees.getTreeFromView( View : OptionsView,
+                                                                             IncludeSystemNodes : false,
+                                                                             RequireViewPermissions : false,
+                                                                             IncludeHiddenNodes : false );
                 CswEnumNbtViewRelatedIdType targetType = _targetType( NbtResources, _CswNbtMetaDataNodeTypeProp );
                 //_addOptionsRecurse( NbtResources, Options, CswNbtTree, _targetType( NbtResources, RelationshipProp ), RelationshipProp.FKValue ); //, TargetNodeTypeId, TargetObjectClassId );
                 _addOptionsRecurse( NbtResources, Options, CswNbtTree, targetType, FkValue );
@@ -410,7 +424,7 @@ namespace ChemSW.Nbt.PropTypes
                 {
                     pk = RelatedNode.NodeId;
                 }
-                Dictionary<CswPrimaryKey, string> Options = _getOptions( _CswNbtResources, _CswNbtMetaDataNodeTypeProp.IsRequired, _CswNbtMetaDataNodeTypeProp.FKValue, pk, View );
+                Dictionary<CswPrimaryKey, string> Options = _OptionsOverride ?? _getOptions( _CswNbtResources, _CswNbtMetaDataNodeTypeProp.IsRequired, _CswNbtMetaDataNodeTypeProp.FKValue, pk, View );
                 if( Options.Count > _SearchThreshold )
                 {
                     ParentObject["usesearch"] = true;

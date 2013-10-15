@@ -16,11 +16,11 @@ using ChemSW.Security;
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassUser : CswNbtObjClass, ICswNbtUser
+    public class CswNbtObjClassUser: CswNbtObjClass, ICswNbtUser
     {
         public const string ChemSWAdminUsername = CswAuthenticator.ChemSWAdminUsername;
 
-        public new sealed class PropertyName : CswNbtObjClass.PropertyName
+        public new sealed class PropertyName: CswNbtObjClass.PropertyName
         {
             public const string AccountLocked = "AccountLocked";
             public const string Archived = "Archived";
@@ -207,7 +207,7 @@ namespace ChemSW.Nbt.ObjClasses
 
             if( UsernameProperty.Text != string.Empty ) // case 25616
             {
-                UsernameProperty.setReadOnly( value: true, SaveToDb: true ); // BZ 5906
+                UsernameProperty.setReadOnly( value : true, SaveToDb : true ); // BZ 5906
             }
 
             // case 22512
@@ -245,7 +245,7 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 clearFailedLoginCount();
             }
-            CachedData.setHidden( value: true, SaveToDb: true );
+            CachedData.setHidden( value : true, SaveToDb : true );
             // BZ 9170
             _CswNbtResources.ConfigVbls.setConfigVariableValue( "cache_lastupdated", DateTime.Now.ToString() );
 
@@ -345,8 +345,8 @@ namespace ChemSW.Nbt.ObjClasses
             //BZ 9933
             if( _CswNbtResources.CurrentNbtUser == null || !_CswNbtResources.CurrentNbtUser.IsAdministrator() )
             {
-                this.FailedLoginCount.setHidden( value: true, SaveToDb: false );
-                this.AccountLocked.setHidden( value: true, SaveToDb: false );
+                this.FailedLoginCount.setHidden( value : true, SaveToDb : false );
+                this.AccountLocked.setHidden( value : true, SaveToDb : false );
             }
 
 
@@ -397,7 +397,7 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtView view = ParentRelationship.View;
             CswNbtMetaDataObjectClass userOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.UserClass );
             CswNbtMetaDataObjectClassProp archivedOCP = userOC.getObjectClassProp( PropertyName.Archived );
-            view.AddViewPropertyAndFilter( ParentRelationship, archivedOCP, FilterMode: CswEnumNbtFilterMode.NotEquals, Value: CswEnumTristate.True.ToString() );
+            view.AddViewPropertyAndFilter( ParentRelationship, archivedOCP, FilterMode : CswEnumNbtFilterMode.NotEquals, Value : CswEnumTristate.True.ToString() );
 
             _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
         }
@@ -568,7 +568,13 @@ namespace ChemSW.Nbt.ObjClasses
         public CswPrimaryKey JurisdictionId { get { return JurisdictionProperty.RelatedNodeId; } }
         public CswNbtNodePropBarcode Barcode { get { return ( _CswNbtNode.Properties[PropertyName.Barcode] ); } }
         public CswNbtNodePropList LanguageProperty { get { return ( _CswNbtNode.Properties[PropertyName.Language] ); } }
-        public string Language { get { return ( LanguageProperty.Value ); } }
+        public string Language
+        {
+            get
+            {
+                return ( LanguageProperty.Value );
+            }
+        }
         public CswNbtNodePropText Phone { get { return _CswNbtNode.Properties[PropertyName.Phone]; } }
         public CswNbtNodePropText EmployeeId { get { return _CswNbtNode.Properties[PropertyName.EmployeeId]; } }
 
@@ -665,7 +671,7 @@ namespace ChemSW.Nbt.ObjClasses
                     if( null != _CurrentUser )
                     {
                         _CurrentUser.CurrentCache = this;
-                        _CurrentUser.postChanges( ForceUpdate: false );
+                        _CurrentUser.postChanges( ForceUpdate : false );
                     }
                 }
             }
@@ -859,7 +865,7 @@ namespace ChemSW.Nbt.ObjClasses
             Dictionary<string, string> opts = new Dictionary<string, string>();
 
             CswNbtMetaDataObjectClass WorkUnitOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.WorkUnitClass );
-            foreach( KeyValuePair<CswPrimaryKey, string> workUnit in WorkUnitOC.getNodeIdAndNames( false, false, RequireViewPermissions: false ) )
+            foreach( KeyValuePair<CswPrimaryKey, string> workUnit in WorkUnitOC.getNodeIdAndNames( false, false, RequireViewPermissions : false ) )
             {
                 opts[workUnit.Key.ToString()] = workUnit.Value;
             }
@@ -874,7 +880,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswPrimaryKey GetFirstAvailableWorkUnitNodeId()
         {
             CswNbtMetaDataObjectClass WorkUnitOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.WorkUnitClass );
-            Dictionary<CswPrimaryKey, string> WorkUnits = WorkUnitOC.getNodeIdAndNames( false, false, RequireViewPermissions: false );
+            Dictionary<CswPrimaryKey, string> WorkUnits = WorkUnitOC.getNodeIdAndNames( false, false, RequireViewPermissions : false );
             CswPrimaryKey ret = WorkUnits.OrderBy( entry => entry.Key.PrimaryKey ).First().Key;
             return ret;
         }
