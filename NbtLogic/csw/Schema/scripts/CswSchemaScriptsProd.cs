@@ -56,7 +56,7 @@ namespace ChemSW.Nbt.Schema
                     _addVersionedScript( Script );
                 }
             }
-
+            
             #endregion Populate Scripts
 
             #region Calculate the Latest Version

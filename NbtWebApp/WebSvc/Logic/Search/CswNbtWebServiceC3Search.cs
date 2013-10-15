@@ -135,6 +135,9 @@ namespace ChemSW.Nbt.WebServices
             public class State
             {
                 [DataMember]
+                public bool chemCatCentralImport = true;
+
+                [DataMember]
                 public string materialId = string.Empty;
 
                 [DataMember]
@@ -979,7 +982,7 @@ namespace ChemSW.Nbt.WebServices
                                     MolecularGraph Mol = MoleculeBuilder.CreateMolFromString( molData );
                                     if( false == Mol.ContainsInvalidAtom() )
                                     {
-                                        SdBlobData.saveMol( molData, propAttr, out Href, out FormattedMolString );
+                                        SdBlobData.saveMol( molData, propAttr, out Href, out FormattedMolString, Node: Node );
                                     }
                                     else
                                     {

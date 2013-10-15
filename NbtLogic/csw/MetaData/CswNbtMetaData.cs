@@ -380,9 +380,9 @@ namespace ChemSW.Nbt.MetaData
         /// <summary>
         /// Fetches an Object Class Property Name based on the primary key (all object classes)
         /// </summary>
-        public string getObjectClassPropName( Int32 ObjectClassPropId )
+        public string getObjectClassPropName( Int32 ObjectClassPropId, CswDateTime Date = null )
         {
-            return _CswNbtMetaDataResources.ObjectClassPropsCollection.getObjectClassPropName( ObjectClassPropId );
+            return _CswNbtMetaDataResources.ObjectClassPropsCollection.getObjectClassPropName( ObjectClassPropId, Date );
         }
         /// <summary>
         /// Fetches an Object Class Property based on the primary key (all object classes)
