@@ -12,6 +12,19 @@
         if (data.d) {
             result = $.parseJSON(data.d);
         }
+
+        // Display any messages
+        if (result.messages) {
+            result.messages.forEach(function(message) {
+                Csw.ajaxCore.handleMessage({
+                    display: message.Display,
+                    type: message.Type,
+                    message: message.Message,
+                    detail: message.Detail
+                });
+            });
+        }
+
         if (result.error) {
             if (false === o.overrideError) {
                 Csw.ajaxCore.handleError(result.error);

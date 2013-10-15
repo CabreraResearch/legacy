@@ -17,7 +17,7 @@ namespace ChemSW.Nbt
     /// </summary>
     public class CswNbtNodeCollection : IEnumerable
     {
-        private Hashtable NodeHash;
+        private Dictionary<NodeHashKey, CswNbtNode> _NodeHash;
         private CswNbtResources _CswNbtResources;
         //private ICswNbtObjClassFactory _ICswNbtObjClassFactory;
         //private CswNbtNodeReader _CswNbtNodeReader;
@@ -36,7 +36,7 @@ namespace ChemSW.Nbt
             //_CswNbtNodeReader = new CswNbtNodeReader( _CswNbtResources );
             //_CswNbtNodeWriter = new CswNbtNodeWriter( _CswNbtResources );
 
-            NodeHash = new Hashtable();
+            _NodeHash = new Dictionary<NodeHashKey, CswNbtNode>();
         }
 
 
@@ -57,7 +57,7 @@ namespace ChemSW.Nbt
 
         public void Clear()
         {
-            NodeHash.Clear();
+            _NodeHash.Clear();
             _CswNbtNodeFactory.CswNbtNodeWriter.clear();
         }
 
@@ -177,16 +177,16 @@ namespace ChemSW.Nbt
             if( NodeId != null && NodeId.PrimaryKey != Int32.MinValue )  // BZ 8753
             {
                 NodeHashKey HashKey = new NodeHashKey( NodeId, Species );
-                if( false == CswTools.IsDate( Date ) && NodeHash.ContainsKey( HashKey ) )
+                if( false == CswTools.IsDate( Date ) && _NodeHash.ContainsKey( HashKey ) )
                 {
-                    Node = (CswNbtNode) NodeHash[HashKey];
+                    Node = (CswNbtNode) _NodeHash[HashKey];
                 }
                 else
                 {
                     Node = makeNode( HashKey, NodeTypeId, Date );
                     if( false == CswTools.IsDate( Date ) && null != Node )
                     {
-                        Node = (CswNbtNode) NodeHash[HashKey];
+                        Node = (CswNbtNode) _NodeHash[HashKey];
                     }
                 }
                 //if( !NodeHash.ContainsKey( HashKey ) )
@@ -239,8 +239,31 @@ namespace ChemSW.Nbt
         /// </summary>
         public IEnumerator GetEnumerator()
         {
-            return NodeHash.GetEnumerator();
+            return _NodeHash.GetEnumerator();
         }
+
+        /// <summary>
+        /// Fetches just the nodename of a node, by primary key
+        /// </summary>
+        public string getNodeName( CswPrimaryKey NodeId )
+        {
+            string ret = string.Empty;
+            NodeHashKey hashKey = new NodeHashKey( NodeId, CswEnumNbtNodeSpecies.Plain );
+            if( _NodeHash.ContainsKey( hashKey ) )
+            {
+                ret = _NodeHash[hashKey].NodeName;
+            }
+            else
+            {
+                CswTableSelect NodeSelect = _CswNbtResources.makeCswTableSelect( "getNodeName_select", "nodes" );
+                DataTable NodeTable = NodeSelect.getTable( new CswCommaDelimitedString() { "nodename" }, "nodeid", NodeId.PrimaryKey, string.Empty, false );
+                if( NodeTable.Rows.Count > 0 )
+                {
+                    ret = CswConvert.ToString( NodeTable.Rows[0]["nodename"] );
+                }
+            }
+            return ret;
+        } // getNodeName()
 
         #endregion Getting Nodes
 
@@ -251,7 +274,7 @@ namespace ChemSW.Nbt
         /// </summary>
         private void _clear()//bz # 6653
         {
-            NodeHash.Clear();
+            _NodeHash.Clear();
         }
 
         private class NodeHashKey : IEquatable<NodeHashKey>
@@ -332,7 +355,7 @@ namespace ChemSW.Nbt
         {
             CswTimer Timer = new CswTimer();
             //CswNbtNode Node = new CswNbtNode( _CswNbtResources, NodeTypeId, HashKey.Species, NodeHash.Count, _ICswNbtObjClassFactory );
-            CswNbtNode Node = _CswNbtNodeFactory.make( CswEnumNbtNodeSpecies.Plain, HashKey.NodeId, NodeTypeId, NodeHash.Count, Date );
+            CswNbtNode Node = _CswNbtNodeFactory.make( CswEnumNbtNodeSpecies.Plain, HashKey.NodeId, NodeTypeId, _NodeHash.Count, Date );
 
             //bz # 5943
             //Node.OnRequestWriteNode = new CswNbtNode.OnRequestWriteNodeHandler( _CswNbtNodeWriter.write );
@@ -349,9 +372,9 @@ namespace ChemSW.Nbt
             Node.fill( Date );
             if( Node.Filled )
             {
-                if( !NodeHash.ContainsKey( HashKey ) )
+                if( !_NodeHash.ContainsKey( HashKey ) )
                 {
-                    NodeHash.Add( HashKey, Node );
+                    _NodeHash.Add( HashKey, Node );
                 }
                 _CswNbtResources.logTimerResult( "CswNbtNodeCollection.makeNode on NodeId (" + HashKey.NodeId.ToString() + ")", Timer.ElapsedDurationInSecondsAsString );
 
@@ -410,7 +433,7 @@ namespace ChemSW.Nbt
 
         private void OnAfterDeleteNode( CswNbtNode Node )
         {
-            NodeHash.Remove( new NodeHashKey( Node.NodeId, Node.NodeSpecies ) );
+            _NodeHash.Remove( new NodeHashKey( Node.NodeId, Node.NodeSpecies ) );
         }
 
         public delegate void AfterMakeNode( CswNbtNode NewNode );
@@ -425,7 +448,7 @@ namespace ChemSW.Nbt
         /// <returns>The new node. !!POSTS CHANGES!!</returns>
         public CswNbtNode makeNodeFromNodeTypeId( Int32 NodeTypeId, AfterMakeNode OnAfterMakeNode = null, bool IsTemp = false, bool OverrideUniqueValidation = false )
         {
-            CswNbtNode Node = _CswNbtNodeFactory.make( CswEnumNbtNodeSpecies.Plain, null, NodeTypeId, NodeHash.Count, null );
+            CswNbtNode Node = _CswNbtNodeFactory.make( CswEnumNbtNodeSpecies.Plain, null, NodeTypeId, _NodeHash.Count, null );
             //Node.OnAfterSetNodeId += new CswNbtNode.OnSetNodeIdHandler( OnAfterSetNodeIdHandler );
             Node.OnRequestDeleteNode += OnAfterDeleteNode;
             Node.fillFromNodeTypeId( NodeTypeId );
@@ -448,7 +471,7 @@ namespace ChemSW.Nbt
             // We need to hash the Int32.MinValue keys for the Add form to work
             // But we can simply override what's in the hash if we make another new node
             NodeHashKey Hashkey = new NodeHashKey( Node.NodeId, Node.NodeSpecies );
-            NodeHash[Hashkey] = Node;
+            _NodeHash[Hashkey] = Node;
 
             return ( Node );
 

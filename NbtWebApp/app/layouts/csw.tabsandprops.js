@@ -994,9 +994,9 @@
                                 return false;
                             },
                             value: "" //Case 29100 - the prop name will be set by setLabelText()
-                        }).setLabelText(propName, propData.required, propData.readonly || cswPrivate.tabState.ReadOnly);
+                        }).setLabelText(propName, propData.required && propData.fieldtype != "Logical", propData.readonly || cswPrivate.tabState.ReadOnly);
                     } else {
-                        labelCell.setLabelText(propName, propData.required, propData.readonly || cswPrivate.tabState.ReadOnly);
+                        labelCell.setLabelText(propName, propData.required && propData.fieldtype != "Logical", propData.readonly || cswPrivate.tabState.ReadOnly);
                     }
 
                     cswPrivate.tabState.checkBoxes['check_' + propid] = labelCell.checkBox({
@@ -1178,6 +1178,10 @@
                     cswPrivate.onTearDownProps();
                     cswPrivate.tabState.propertyData = propData;
                     cswPrivate.getPropsImpl(cswPrivate.tabState.tabid);
+                    
+                    // Case 30885: Refresh the identity tab
+                    cswPrivate.identityForm.empty();
+                    cswPrivate.makeIdentityTab();
                 }
             } else {
                 cswPrivate.onTearDown();

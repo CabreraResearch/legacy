@@ -43,7 +43,8 @@ namespace ChemSW.Nbt.Actions.KioskMode
         public override void CommitOperation( ref OperationData OpData )
         {
             bool succeeded = false;
-            
+            string statusMsg = null;
+
             CswNbtObjClassUser newTransferOwner = _getNodeByBarcode( CswEnumNbtObjectClass.UserClass, OpData.Field1.Value, true );
 
             CswNbtNode node = _CswNbtResources.Nodes[OpData.Field2.NodeId];
@@ -64,8 +65,15 @@ namespace ChemSW.Nbt.Actions.KioskMode
                     if( _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Edit, NodeType ) )
                     {
                         CswNbtObjClassEquipment equipmentNode = node;
-                        equipmentNode.TransferEquipment( newTransferOwner );
-                        succeeded = true;
+                        if( false == equipmentNode.Assembly.Empty )
+                        {
+                            statusMsg = "This equipment belongs to an assembly and cannot be changed directly.";
+                        }
+                        else
+                        {
+                            equipmentNode.TransferEquipment( newTransferOwner );
+                            succeeded = true;
+                        }
                     }
                     break;
                 case CswEnumNbtObjectClass.ContainerClass:
@@ -86,7 +94,7 @@ namespace ChemSW.Nbt.Actions.KioskMode
             }
             else
             {
-                string statusMsg = "You do not have permission to edit " + itemName + " (" + OpData.Field2.Value + ")";
+                statusMsg = statusMsg ?? "You do not have permission to edit " + itemName + " (" + OpData.Field2.Value + ")";
                 OpData.Field2.StatusMsg = statusMsg;
                 OpData.Field2.ServerValidated = false;
                 OpData.Log.Add( DateTime.Now + " - ERROR: " + statusMsg );

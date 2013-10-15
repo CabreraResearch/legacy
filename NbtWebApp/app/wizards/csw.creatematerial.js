@@ -99,8 +99,11 @@
 
         cswPrivate.isConstituent = function () {
             var ret = false;
+            if (cswPrivate.state.materialType) {
+                ret = cswPrivate.state.constituentNtIds.contains(cswPrivate.state.materialType.val);
+            }
             if (cswPrivate.materialTypeSelect) {
-                ret = cswPrivate.state.constituentNtIds.contains(cswPrivate.materialTypeSelect.selectedVal());
+                ret = ret || cswPrivate.state.constituentNtIds.contains(cswPrivate.materialTypeSelect.selectedVal());
             }
             return ret;
         }; // isConstituent()
@@ -881,8 +884,8 @@
                         doNextOnInit: false
                     });
 
-                    // This checks the step visibility on refresh and on C3 import.
-                    cswPrivate.state.canAddSDS = Csw.bool(cswPrivate.state.materialType.objclassid === cswPrivate.state.chemicalObjClassId);
+                    // This checks the step visibility on refresh, C3 import, and copy.
+                    cswPrivate.state.canAddSDS = Csw.bool(cswPrivate.state.materialType.objclassid === cswPrivate.state.chemicalObjClassId) && false === cswPrivate.isConstituent();
                     cswPrivate.wizard.toggleStepVisibility(cswPrivate.makeAttachSDSStep.stepNo, cswPrivate.state.canAddSDS);
 
                     //cswPrivate.makeStep1();

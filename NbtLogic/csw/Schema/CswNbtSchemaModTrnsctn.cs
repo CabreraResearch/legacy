@@ -616,7 +616,43 @@ namespace ChemSW.Nbt.Schema
             }
             _CswNbtResources.ClearActionsCache();
             return NewActionId;
-        }
+        } // createAction()
+
+        public void deleteAction( string ActionName )
+        {
+            // Remove from jct_modules_actions
+            CswTableUpdate JctUpdate = this.makeCswTableUpdate( "28562D_Jct_Update", "jct_modules_actions" );
+            DataTable JctTable = JctUpdate.getTable( "where actionid in (select actionid from actions where actionname = '" + ActionName + "')" );
+            if( JctTable.Rows.Count > 0 )
+            {
+                foreach( DataRow JctRow in JctTable.Rows )
+                {
+                    JctRow.Delete();
+                }
+            }
+
+            // Remove from actions
+            CswTableUpdate ActionUpdate = this.makeCswTableUpdate( "28562D_Action_Update", "actions" );
+            DataTable ActionTable = ActionUpdate.getTable( "where actionname = '" + ActionName + "'" );
+            if( ActionTable.Rows.Count > 0 )
+            {
+                foreach( DataRow ActionRow in ActionTable.Rows )
+                {
+                    ActionRow.Delete();
+                }
+            }
+
+            // Fix action permissions
+            CswNbtMetaDataObjectClass RoleOC = this.MetaData.getObjectClass( CswEnumNbtObjectClass.RoleClass );
+            foreach( CswNbtObjClassRole Role in RoleOC.getNodes( false, true ) )
+            {
+                if( Role.ActionPermissions.CheckValue( ActionName ) )
+                {
+                    Role.ActionPermissions.RemoveValue( ActionName );
+                    Role.postChanges( false );
+                }
+            }
+        } // deleteAction()
 
         /// <summary>
         /// Convenience function for making new Configuration Variable
