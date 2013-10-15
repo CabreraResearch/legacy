@@ -280,6 +280,16 @@
                     cswPrivate.makeStartImportProps(true);
                 }
 
+                cswPublic.uploadDataTable.cell(4, 2).buttonExt({
+                    name: 'viewBindingsBtn',
+                    enabledText: 'View Import Definition',
+                    disabledText: 'Fetching Bindings...',
+                    disableOnClick: true,
+                    onClick: function () {
+                        //TODO: ajaxWcf to Import.svc, get bindings for selected def, put results in call to viewbindings
+                        Csw.dialogs.viewbindings({});
+                    }
+                });
         }; // makeUploadTable()
 
         cswPrivate.makeUploadBindingsTable = function () {
@@ -326,7 +336,9 @@
                         });
                     }
                 }
-            });
+                });
+
+
         }; // makeUploadBindingsTable()
         
         cswPrivate.makeGenerateSqlTable = function () {
