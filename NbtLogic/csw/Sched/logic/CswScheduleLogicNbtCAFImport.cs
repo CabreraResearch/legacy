@@ -153,6 +153,7 @@ namespace ChemSW.Nbt.Sched
 
             CswTableSelect ImportDefSelect = CswResources.makeCswTableSelect( "importdef_get_caf_rows", CswNbtImportTables.ImportDef.TableName );
             DataTable ImportDefTable = ImportDefSelect.getTable( "where " + CswNbtImportTables.ImportDef.definitionname + " = '" + DefinitionName + "'" );
+            bool FirstRow = true;
             foreach( DataRow DefRow in ImportDefTable.Rows )
             {
                 string DataSource = CswConvert.ToString( string.IsNullOrEmpty( CswConvert.ToString( DefRow[CswNbtImportTables.ImportDef.viewname] ) ) ? DefRow[CswNbtImportTables.ImportDef.tablename] : DefRow[CswNbtImportTables.ImportDef.viewname] );
@@ -165,7 +166,15 @@ namespace ChemSW.Nbt.Sched
                                           + "'' from " + DataSource + "@" + CAFDbLink + " where deleted = '0';";
                 CurrentDefRowSql = CurrentDefRowSql + " commit;";
 
-                Ret = Ret + " " + CurrentDefRowSql;
+                if( FirstRow )
+                {
+                    Ret = CurrentDefRowSql + Environment.NewLine;
+                    FirstRow = false;
+                }
+                else
+                {
+                    Ret = Ret + Environment.NewLine + CurrentDefRowSql + Environment.NewLine;
+                }
             }
 
             return Ret;
