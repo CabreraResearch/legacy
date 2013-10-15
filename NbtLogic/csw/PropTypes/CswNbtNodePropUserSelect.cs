@@ -29,7 +29,7 @@ namespace ChemSW.Nbt.PropTypes
             _SelectedUserIdsSubField = ( (CswNbtFieldTypeRuleUserSelect) _FieldTypeRule ).SelectedUserIdsSubField;
 
             // Associate subfields with methods on this object, for SetSubFieldValue()
-            _SubFieldMethods.Add( _SelectedUserIdsSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => SelectedUserIds, x => SelectedUserIds.FromString( CswConvert.ToString( x ) ) ) );
+            _SubFieldMethods.Add( _SelectedUserIdsSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => SelectedUserIds, x => SelectedUserIds = new CswCommaDelimitedString( CswConvert.ToString( x ) ) ) );
         }//ctor
 
         private CswNbtSubField _SelectedUserIdsSubField;

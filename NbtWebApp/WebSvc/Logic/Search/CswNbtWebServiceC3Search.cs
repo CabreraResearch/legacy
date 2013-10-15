@@ -135,6 +135,9 @@ namespace ChemSW.Nbt.WebServices
             public class State
             {
                 [DataMember]
+                public bool chemCatCentralImport = true;
+
+                [DataMember]
                 public string materialId = string.Empty;
 
                 [DataMember]
