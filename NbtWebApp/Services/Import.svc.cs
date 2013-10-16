@@ -183,7 +183,7 @@ namespace NbtWebApp
 
             SvcDriver.run();
 
-            WebOperationContext.Current.OutgoingResponse.Headers.Set( "Content-Disposition", "attachment; filename=cafsql.sql;" );
+            WebOperationContext.Current.OutgoingResponse.Headers.Set( "Content-Disposition", "attachment; filename=\"cafsql.sql\";" );
 
             return Ret.stream;
         }//startImport()
