@@ -44,6 +44,7 @@
                         onClick: function () {
                             Csw.iterate(ctrlOpts, function (opt) {
                                 opt.ctrl.checkbox.checked(false);
+                                onCheck(opt.ctrl.checkbox, opt.rowIdx);
                             });
                         }
                     });
@@ -52,6 +53,7 @@
                         onClick: function () {
                             Csw.iterate(ctrlOpts, function (opt) {
                                 opt.ctrl.checkbox.checked(true);
+                                onCheck(opt.ctrl.checkbox, opt.rowIdx);
                             });
                         }
                     });
@@ -60,6 +62,20 @@
                     optsDiv.css({ 'height': '400px', 'width': '750px', 'overflow': 'auto', 'border': '1px solid #AED0EA' });
 
                     var optsTbl = optsDiv.table().css('padding', '10px');
+
+                    var onCheck = function (checkBox, idx) {
+                        var selectedVal = ctrlOpts[idx - 1].val;
+                        var selectedIdx = selected.indexOf(selectedVal);
+                        if (checkBox.checked()) {
+                            if (false == (selectedIdx > -1)) {
+                                selected.push(selectedVal);
+                            }
+                        } else {
+                            if (selectedIdx > -1) {
+                                selected.splice(selectedIdx, 1);
+                            }
+                        }
+                    };
 
                     var rowIdx = 1;
                     Csw.iterate(cswPrivate.opts, function (opt) {
@@ -75,23 +91,14 @@
                             canCheck: true,
                             checked: Csw.bool(opt.selected),
                             onChange: function () {
-                                var selectedVal = ctrlOpts[thisRowIdx - 1].val;
-                                var selectedIdx = selected.indexOf(selectedVal);
-                                if (checkBox.checked()) {
-                                    if (false == (selectedIdx > -1)) {
-                                        selected.push(selectedVal);
-                                    }
-                                } else {
-                                    if (selectedIdx > -1) {
-                                        selected.splice(selectedIdx, 1);
-                                    }
-                                }
+                                onCheck(checkBox, thisRowIdx);
                             }
                         });
                         cell.span({ text: opt.text, value: opt.text });
                         ctrlOpts.push({
                             text: opt.text,
                             val: opt.value,
+                            rowIdx: thisRowIdx,
                             ctrl: { ctrlDiv: cell, checkbox: checkBox }
                         });
                         rowIdx++;
