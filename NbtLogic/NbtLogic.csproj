@@ -371,12 +371,12 @@
     <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateSchema_02G_Case30680.cs" />
     <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateMetaData_02G_Case30680.cs" />
     <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateSchema_02G_Case30849.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02H\CswUpdateMetaData_02H_Case30046.cs" />
     <Compile Include="csw\Schema\scripts\prod\02H\CswUpdateSchema_02H_Case28562D.cs" />
     <Compile Include="csw\Schema\scripts\prod\02H\CswUpdateSchema_02H_Case28562C.cs" />
     <Compile Include="csw\Schema\scripts\prod\02H\CswUpdateSchema_02H_Case28562B.cs" />
     <Compile Include="csw\Schema\scripts\prod\02H\CswUpdateMetaData_02H_Case28562.cs" />
     <Compile Include="csw\Schema\scripts\prod\02H\CswUpdateMetaData_02H_Case30400.cs" />
-    <Compile Include="csw\Schema\scripts\prod\02H\CswUpdateSchema_02H_Case30046.cs" />
     <Compile Include="csw\Schema\scripts\prod\02H\CswUpdateSchema_02H_Case30690B.cs" />
     <Compile Include="csw\Schema\scripts\prod\02H\CswUpdateMetaData_02H_Case30690A.cs" />
     <Compile Include="csw\Schema\scripts\prod\02H\CswUpdateSchema_02H_Case30400.cs" />
