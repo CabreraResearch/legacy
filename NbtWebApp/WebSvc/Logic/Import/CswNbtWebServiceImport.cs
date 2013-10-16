@@ -3,6 +3,7 @@ using System.Data;
 using System.IO;
 using ChemSW.Core;
 using ChemSW.DB;
+using ChemSW.Nbt.Grid;
 using ChemSW.Nbt.ImportExport;
 using ChemSW.Nbt.Sched;
 using NbtWebApp.WebSvc.Returns;
@@ -107,6 +108,45 @@ namespace ChemSW.Nbt.WebServices
                 Ret.stream = stream;
             }
         }//generateCAFSql()
+
+
+        public static void getBindingsForDefinition( ICswResources CswResources, CswNbtImportWcf.ImportBindingsReturn Ret, string ImportDefName )
+        {
+            CswNbtResources _CswNbtResources = (CswNbtResources) CswResources;
+
+            string sql = @" select sheetname, io.* from import_def_order io, import_def id
+                             where io.importdefid = id.importdefid
+                               and definitionname = :importdefname";
+
+            CswArbitrarySelect OrderTable = new CswArbitrarySelect( _CswNbtResources.CswResources, "ImportDefinitionsOrder", sql );
+            OrderTable.addParameter( "importdefname", ImportDefName );
+            Ret.Data.Order = new CswNbtGrid( _CswNbtResources ).DataTableToGrid( OrderTable.getTable() );
+            Ret.Data.Order.columns.Remove( Ret.Data.Order.getColumn( "IMPORTDEFID" ) );
+            Ret.Data.Order.columns.Remove( Ret.Data.Order.getColumn( "IMPORTDEFORDERID" ) );
+
+
+            sql = @"select sheetname, ib.* from import_def_bindings ib, import_def id
+                     where ib.importdefid = id.importdefid
+                       and definitionname = :importdefname";
+
+            CswArbitrarySelect BindingsTable = new CswArbitrarySelect( _CswNbtResources.CswResources, "ImportDefinitionsOrder", sql );
+            BindingsTable.addParameter( "importdefname", ImportDefName );
+            Ret.Data.Bindings = new CswNbtGrid( _CswNbtResources ).DataTableToGrid( BindingsTable.getTable() );
+            Ret.Data.Bindings.columns.Remove( Ret.Data.Bindings.getColumn( "IMPORTDEFID" ) );
+            Ret.Data.Bindings.columns.Remove( Ret.Data.Bindings.getColumn( "IMPORTDEFBINDINGID" ) );
+
+
+            sql = @"select sheetname, ir.* from import_def_relationships ir, import_def id
+                       where ir.importdefid = id.importdefid
+                         and definitionname = :importdefname
+";
+            CswArbitrarySelect RelationshipsTable = new CswArbitrarySelect( _CswNbtResources.CswResources, "ImportDefinitionsOrder", sql );
+            RelationshipsTable.addParameter( "importdefname", ImportDefName );
+            Ret.Data.Relationships = new CswNbtGrid( _CswNbtResources ).DataTableToGrid( RelationshipsTable.getTable() );
+            Ret.Data.Relationships.columns.Remove( Ret.Data.Relationships.getColumn( "IMPORTDEFID" ) );
+            Ret.Data.Relationships.columns.Remove( Ret.Data.Relationships.getColumn( "IMPORTDEFRELATIONSHIPID" ) );
+            
+        }
 
 
     } // class CswNbtWebServiceImport

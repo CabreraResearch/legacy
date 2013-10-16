@@ -280,6 +280,23 @@
                 cswPrivate.makeStartImportProps(true);
             }
 
+                cswPublic.uploadDataTable.cell(4, 2).buttonExt({
+                    name: 'viewBindingsBtn',
+                    enabledText: 'View Import Definition',
+                    disabledText: 'Fetching Bindings...',
+                    disableOnClick: true,
+                    onClick: function () {
+                        Csw.ajaxWcf.post({
+                            urlMethod: 'Import/getBindingsForDefinition',
+                            data: cswPrivate.selDefName.val(),
+                            success: function(data) {
+                                Csw.dialogs.viewbindings({
+                                    gridData: data
+                                });
+                            }//success()
+                        });//ajaxWcf.post
+                    }//onClick
+                });
         }; // makeUploadTable()
 
         cswPrivate.makeUploadBindingsTable = function () {
@@ -326,7 +343,9 @@
                         });
                     }
                 }
-            });
+                });
+
+
         }; // makeUploadBindingsTable()
 
         cswPrivate.makeGenerateSqlTable = function () {

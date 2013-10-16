@@ -200,6 +200,9 @@ end;" );
         
         --protect against reserved words for viewname
         select oraviewname into viewname from nodetypes where nodetypeid=ntid;
+        if viewname is null then 
+           return;
+        end if;
         begin
           execute immediate 'select 1 as ' || viewname || ' from dual' ;
         exception

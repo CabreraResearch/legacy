@@ -17,7 +17,7 @@ namespace ChemSW.Nbt.Schema
             _CswNbtResources = CswNbtResources;
 
             // This is where you manually set to the last version of the previous release (the one currently in production)
-            _MinimumVersion = new CswSchemaVersion( 2, 'F', 35 );
+            _MinimumVersion = new CswSchemaVersion( 2, 'F', 37 );
 
             #region Populate Scripts
 
@@ -26,7 +26,7 @@ namespace ChemSW.Nbt.Schema
                     new CswSchemaScriptsGinkgo(),
                     new CswSchemaScriptsHickory(),
                     // Add new milestone script collections here
-                    new CswSchemaScriptsCAF() // This runs the CAF scripts - you can comment it out if you don't need it
+                    //new CswSchemaScriptsCAF() // This runs the CAF scripts - you can comment it out if you don't need it
                 };
 
             // DDL

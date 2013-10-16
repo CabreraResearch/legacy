@@ -1,4 +1,5 @@
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -10,7 +11,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         public new sealed class PropertyName: CswNbtPropertySetPhrase.PropertyName
         {
-
+            public const string Category = "Category";
         }
 
         #endregion Enums
@@ -112,6 +113,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Object class specific properties
 
+        public CswNbtNodePropList Category { get { return ( _CswNbtNode.Properties[PropertyName.Category] ); } }
 
         #endregion
 

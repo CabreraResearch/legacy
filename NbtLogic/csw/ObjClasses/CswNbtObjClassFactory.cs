@@ -127,6 +127,10 @@ namespace ChemSW.Nbt.ObjClasses
                     ReturnVal = new CswNbtObjClassGHSPhrase( CswNbtResources, Node );
                     break;
 
+                case CswEnumNbtObjectClass.GHSSignalWordClass:
+                    ReturnVal = new CswNbtObjClassGHSSignalWord( CswNbtResources, Node );
+                    break;
+
                 case CswEnumNbtObjectClass.InspectionDesignClass:
                     ReturnVal = new CswNbtObjClassInspectionDesign( CswNbtResources, Node );
                     break;
@@ -278,11 +282,11 @@ namespace ChemSW.Nbt.ObjClasses
                 case CswEnumNbtObjectClass.SDSDocumentClass:
                     ReturnVal = new CswNbtObjClassSDSDocument( CswNbtResources, Node );
                     break;
-
+                    
                 case CswEnumNbtObjectClass.GeneratorClass:
                     ReturnVal = new CswNbtObjClassGenerator( CswNbtResources, Node );
                     break;
-
+                    
                 case CswEnumNbtObjectClass.SizeClass:
                     ReturnVal = new CswNbtObjClassSize( CswNbtResources, Node );
                     break;

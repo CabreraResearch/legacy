@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Web;
+using ChemSW.Grid.ExtJs;
 using ChemSW.Nbt.ImportExport;
 using NbtWebApp.WebSvc.Returns;
 
@@ -122,6 +123,20 @@ namespace ChemSW.Nbt.WebServices
         {
             [DataMember]
             public Stream stream = null;
+        }
+
+        [DataContract]
+        public class ImportBindingsReturn : CswWebSvcReturn
+        {
+            [DataMember( IsRequired = true )] 
+            [Description( "Information about import bindings" )] 
+            public ImportBindingReturnData Data = new ImportBindingReturnData();
+            public class ImportBindingReturnData
+            {
+                public CswExtJsGrid Order;
+                public CswExtJsGrid Bindings;
+                public CswExtJsGrid Relationships;
+            }
         }
 
 
