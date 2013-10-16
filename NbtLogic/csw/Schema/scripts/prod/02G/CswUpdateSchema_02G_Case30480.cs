@@ -1,5 +1,7 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using ChemSW.Core;
+using ChemSW.Exceptions;
 using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
@@ -11,7 +13,7 @@ namespace ChemSW.Nbt.Schema
     /// </summary>
     public class CswUpdateSchema_02G_Case30480 : CswUpdateSchemaTo
     {
-        public override string Title { get { return "Update Location Inventory Group Data Again"; } }
+        public override string Title { get { return "Take 3 - Update Location Inventory Group Data Some More"; } }
 
         public override CswEnumDeveloper Author
         {
@@ -25,22 +27,28 @@ namespace ChemSW.Nbt.Schema
 
         public override string ScriptName
         {
-            get { return "IGUpdate Take 2"; }
+            get { return "02G_Case30480"; }
         }
 
         public override void update()
         {
             CswNbtMetaDataObjectClass InventoryGroupOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.InventoryGroupClass );
-            CswNbtMetaDataObjectClass InventoryGroupPermissisonOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.InventoryGroupPermissionClass );
-
+            CswNbtMetaDataObjectClass InventoryGroupPermissionOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.InventoryGroupPermissionClass );
+            CswNbtMetaDataNodeType InvGrpNT = InventoryGroupOc.FirstNodeType;
+            CswNbtMetaDataNodeType InvGrpPermNT = InventoryGroupPermissionOc.FirstNodeType;
+            
             //1: Get Default Inventory Group
             CswNbtObjClassInventoryGroup DefaultInventoryGroup = null;
+            CswNbtObjClassInventoryGroup CISProInventoryGroup = null;
             foreach( CswNbtObjClassInventoryGroup InventoryGroup in InventoryGroupOc.getNodes( true, false, false, true ) )
             {
                 if( InventoryGroup.Name.Text == "Default Inventory Group" )
                 {
                     DefaultInventoryGroup = InventoryGroup;
-                    break;
+                }
+                else if( InventoryGroup.Name.Text == "CISPro" )
+                {
+                    CISProInventoryGroup = InventoryGroup;
                 }
             }
             if( null == DefaultInventoryGroup )
@@ -49,7 +57,6 @@ namespace ChemSW.Nbt.Schema
             }
             if( null == DefaultInventoryGroup )
             {
-                CswNbtMetaDataNodeType InvGrpNT = InventoryGroupOc.FirstNodeType;
                 if( null != InvGrpNT )
                 {
                     DefaultInventoryGroup = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( InvGrpNT.NodeTypeId, delegate( CswNbtNode NewNode )
@@ -60,7 +67,7 @@ namespace ChemSW.Nbt.Schema
                 }
             }
 
-            if( null != DefaultInventoryGroup )
+            if( null != DefaultInventoryGroup )//At this point DefaultInventoryGroup should never be null
             {
                 //2: Set Default Value to Default Inventory Group, if no DefaultValue is present
                 CswNbtMetaDataObjectClass LocationOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.LocationClass );
@@ -84,13 +91,10 @@ namespace ChemSW.Nbt.Schema
                 }
 
                 //4: Ensure at least one Inventory Group Permission exists
-                CswNbtView IgPermitView = _CswNbtSchemaModTrnsctn.makeView();
-                IgPermitView.AddViewRelationship( InventoryGroupPermissisonOc, IncludeDefaultFilters: false );
-                ICswNbtTree Tree = _CswNbtSchemaModTrnsctn.getTreeFromView( IgPermitView, IncludeSystemNodes: false );
-                if( Tree.getChildNodeCount() == 0 )
+                CswNbtMetaDataNodeType IgPermNt = InventoryGroupPermissionOc.getLatestVersionNodeTypes().FirstOrDefault();
+                if( null != IgPermNt )
                 {
-                    CswNbtMetaDataNodeType IgPermNt = InventoryGroupPermissisonOc.getLatestVersionNodeTypes().FirstOrDefault();
-                    if( null != IgPermNt )
+                    try
                     {
                         CswNbtObjClassInventoryGroupPermission DefaultPermission = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( IgPermNt.NodeTypeId, delegate( CswNbtNode NewNode )
                         {
@@ -105,7 +109,63 @@ namespace ChemSW.Nbt.Schema
                             WildCardPerm.Undispose.Checked = CswEnumTristate.True;
                         } );
                     }
+                    catch( CswDniException ex )//If we're here, it's because this wildcard already exists
+                    {
+                        if( ex.ErrorType != CswEnumErrorType.Warning )
+                        {
+                            throw;
+                        }
+                    }
                 }
+
+                //5: Get rid of deprecated CISPro Inventory Group and move their permissions over to Default Inventory Group
+                if( null != CISProInventoryGroup )
+                {
+                    foreach( CswNbtObjClassInventoryGroupPermission InventoryGroupPerm in InventoryGroupPermissionOc.getNodes( true, false, false, true ) )
+                    {
+                        if( InventoryGroupPerm.PermissionGroup.RelatedNodeId == CISProInventoryGroup.NodeId )
+                        {
+                            InventoryGroupPerm.PermissionGroup.RelatedNodeId = DefaultInventoryGroup.NodeId;
+                            InventoryGroupPerm.PermissionGroup.SyncGestalt();
+                            InventoryGroupPerm.postChanges( false );
+                        }
+                    }
+                    CISProInventoryGroup.Node.delete( true, true );
+                }
+            }
+            //6: Fix Inventory Group Permissions grid prop
+            if( null != InvGrpNT && null != InvGrpPermNT )
+            {
+                CswNbtMetaDataNodeTypeProp PermissionsNTP = InvGrpNT.getNodeTypePropByObjectClassProp( CswNbtObjClassInventoryGroup.PropertyName.Permissions );
+
+                CswNbtView InvGrpPermView = _CswNbtSchemaModTrnsctn.restoreView( PermissionsNTP.ViewId );
+                if( null == InvGrpPermView )
+                {
+                    InvGrpPermView = _CswNbtSchemaModTrnsctn.makeSafeView( "Permissions", CswEnumNbtViewVisibility.Property );
+                    InvGrpPermView.ViewMode = CswEnumNbtViewRenderingMode.Grid;
+                }
+                InvGrpPermView.Root.ChildRelationships.Clear();
+
+                CswNbtMetaDataNodeTypeProp PermissionGroupNTP = InvGrpPermNT.getNodeTypePropByObjectClassProp( CswNbtObjClassInventoryGroupPermission.PropertyName.PermissionGroup );
+                CswNbtMetaDataNodeTypeProp RoleNTP = InvGrpPermNT.getNodeTypePropByObjectClassProp( CswNbtObjClassInventoryGroupPermission.PropertyName.Role );
+                CswNbtMetaDataNodeTypeProp WorkUnitNTP = InvGrpPermNT.getNodeTypePropByObjectClassProp( CswNbtObjClassInventoryGroupPermission.PropertyName.WorkUnit );
+                CswNbtMetaDataNodeTypeProp ViewNTP = InvGrpPermNT.getNodeTypePropByObjectClassProp( CswNbtObjClassInventoryGroupPermission.PropertyName.View );
+                CswNbtMetaDataNodeTypeProp EditNTP = InvGrpPermNT.getNodeTypePropByObjectClassProp( CswNbtObjClassInventoryGroupPermission.PropertyName.Edit );
+                CswNbtMetaDataNodeTypeProp DispenseNTP = InvGrpPermNT.getNodeTypePropByObjectClassProp( CswNbtObjClassInventoryGroupPermission.PropertyName.Dispense );
+                CswNbtMetaDataNodeTypeProp RequestNTP = InvGrpPermNT.getNodeTypePropByObjectClassProp( CswNbtObjClassInventoryGroupPermission.PropertyName.Request );
+
+                CswNbtViewRelationship RootRel = InvGrpPermView.AddViewRelationship( InvGrpNT, false );
+                CswNbtViewRelationship PermRel = InvGrpPermView.AddViewRelationship( RootRel, CswEnumNbtViewPropOwnerType.Second, PermissionGroupNTP, true );
+                InvGrpPermView.AddViewProperty( PermRel, PermissionGroupNTP, 1 );
+                InvGrpPermView.AddViewProperty( PermRel, RoleNTP, 2 );
+                InvGrpPermView.AddViewProperty( PermRel, WorkUnitNTP, 3 );
+                InvGrpPermView.AddViewProperty( PermRel, ViewNTP, 4 );
+                InvGrpPermView.AddViewProperty( PermRel, EditNTP, 5 );
+                InvGrpPermView.AddViewProperty( PermRel, DispenseNTP, 6 );
+                InvGrpPermView.AddViewProperty( PermRel, RequestNTP, 7 );
+                InvGrpPermView.save();
+
+                PermissionsNTP.ViewId = InvGrpPermView.ViewId;
             }
         }
     }

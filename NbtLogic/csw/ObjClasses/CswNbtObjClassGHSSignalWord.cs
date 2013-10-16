@@ -1,9 +1,8 @@
 using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassGHSPhrase: CswNbtPropertySetPhrase
+    public class CswNbtObjClassGHSSignalWord: CswNbtPropertySetPhrase
     {
         #region Enums
         /// <summary>
@@ -11,14 +10,14 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         public new sealed class PropertyName: CswNbtPropertySetPhrase.PropertyName
         {
-            public const string Category = "Category";
+
         }
 
         #endregion Enums
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
-        public CswNbtObjClassGHSPhrase( CswNbtResources CswNbtResources, CswNbtNode Node )
+        public CswNbtObjClassGHSSignalWord( CswNbtResources CswNbtResources, CswNbtNode Node )
             : base( CswNbtResources, Node )
         {
             _CswNbtObjClassDefault = new CswNbtObjClassDefault( _CswNbtResources, Node );
@@ -26,18 +25,18 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
-            get { return _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.GHSPhraseClass ); }
+            get { return _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.GHSSignalWordClass ); }
         }
 
         /// <summary>
-        /// Convert a CswNbtNode to a CswNbtObjClassGHSPhrase
+        /// Convert a CswNbtNode to a GHSSignalWordClass
         /// </summary>
-        public static implicit operator CswNbtObjClassGHSPhrase( CswNbtNode Node )
+        public static implicit operator CswNbtObjClassGHSSignalWord( CswNbtNode Node )
         {
-            CswNbtObjClassGHSPhrase ret = null;
-            if( null != Node && _Validate( Node, CswEnumNbtObjectClass.GHSPhraseClass ) )
+            CswNbtObjClassGHSSignalWord ret = null;
+            if( null != Node && _Validate( Node, CswEnumNbtObjectClass.GHSSignalWordClass ) )
             {
-                ret = (CswNbtObjClassGHSPhrase) Node.ObjClass;
+                ret = (CswNbtObjClassGHSSignalWord) Node.ObjClass;
             }
             return ret;
         }
@@ -113,7 +112,6 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Object class specific properties
 
-        public CswNbtNodePropList Category { get { return ( _CswNbtNode.Properties[PropertyName.Category] ); } }
 
         #endregion
 
