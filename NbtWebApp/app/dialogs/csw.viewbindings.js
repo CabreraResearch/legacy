@@ -13,18 +13,26 @@
             cswPrivate.gridData.Order = cswPrivate.gridData.Order || { fields: [], columns: [], data: { items: [] } };
             cswPrivate.gridData.Bindings = cswPrivate.gridData.Bindings || { fields: [], columns: [], data: { items: [] } };
             cswPrivate.gridData.Relationships = cswPrivate.gridData.Relationships || { fields: [], columns: [], data: { items: [] } };
+            
+            //because the CswNbtGrid object is configured for the old-style webservices, we must massage it a bit to display properly here
+               ["Order", "Bindings", "Relationships"].forEach(function (tableName) {
+                   for (var itemNo = 0; itemNo < cswPrivate.gridData[tableName].data.items.length; itemNo++) {
+                       cswPrivate.gridData[tableName].data.items[itemNo] = cswPrivate.gridData[tableName].data.items[itemNo].Row;
+                   }
+               });
 
             cswPrivate.width = cswPrivate.width || 900;
             cswPrivate.height = cswPrivate.height || 600;
 
             cswPrivate.tabs = {};
             cswPrivate.currentTab = '';
+
         }());
+
 
         cswPrivate.updateDisplayedTab = function (tabName, el, eventObj, callBack) {
             //NOTE: this design assumes that the tab name is the same as the grid for that sheet in cswPrivate.gridData
             
-            //clean up the tab that was selected
             cswPrivate.tabs[tabName].csw.empty();
             
             var contentGrid = cswPrivate.tabs[tabName].csw.grid({
@@ -32,14 +40,16 @@
                 columns: cswPrivate.gridData[tabName].columns,
                 data: cswPrivate.gridData[tabName].data,
                 showActionColumn: false,
-                width: cswPrivate.width-100,
+                width: cswPrivate.width - 100,
+                height: cswPrivate.height - 100,
+                usePaging: false,
             });
             
             cswPrivate.currentTab = tabName;
         };
 
         (function _postCtor() {
-
+            
          //first build the dialog itself
             var bindingsDialog = Csw.layouts.dialog({
                 title: 'View Import Bindings',

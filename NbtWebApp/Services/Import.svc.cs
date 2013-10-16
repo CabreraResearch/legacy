@@ -6,6 +6,7 @@ using System.Web;
 using ChemSW.Nbt.WebServices;
 using ChemSW.WebSvc;
 using NbtWebApp.WebSvc.Returns;
+using Newtonsoft.Json.Linq;
 
 namespace NbtWebApp
 {
@@ -179,6 +180,27 @@ namespace NbtWebApp
 
             return Ret;
         }//startImport()
+        
+        [OperationContract]
+        [WebInvoke( Method = "POST" )]
+        [Description( "Retrieve bindings for current definition" )]
+        [FaultContract( typeof( FaultException ) )]
+        public CswNbtImportWcf.ImportBindingsReturn getBindingsForDefinition( string ImportDefName )
+        {
+            CswNbtImportWcf.ImportBindingsReturn  Ret = new CswNbtImportWcf.ImportBindingsReturn();
+
+            var SvcDriver = new CswWebSvcDriver<CswNbtImportWcf.ImportBindingsReturn, string>(
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj: Ret,
+                WebSvcMethodPtr: CswNbtWebServiceImport.getBindingsForDefinition,
+                ParamObj: ImportDefName 
+                );
+
+            SvcDriver.run();
+
+            return Ret;
+        }
+        
 
     }
 }

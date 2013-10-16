@@ -286,9 +286,16 @@
                     disabledText: 'Fetching Bindings...',
                     disableOnClick: true,
                     onClick: function () {
-                        //TODO: ajaxWcf to Import.svc, get bindings for selected def, put results in call to viewbindings
-                        Csw.dialogs.viewbindings({});
-                    }
+                        Csw.ajaxWcf.post({
+                            urlMethod: 'Import/getBindingsForDefinition',
+                            data: cswPrivate.selDefName.val(),
+                            success: function(data) {
+                                Csw.dialogs.viewbindings({
+                                    gridData: data
+                                });
+                            }//success()
+                        });//ajaxWcf.post
+                    }//onClick
                 });
         }; // makeUploadTable()
 
