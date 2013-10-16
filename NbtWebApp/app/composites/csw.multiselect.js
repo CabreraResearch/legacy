@@ -26,7 +26,8 @@
         };
 
         var cswPublic = {};
-
+        var multiSelectCtrl;
+        
         (function () {
 
             if (options) {
@@ -58,11 +59,19 @@
                 }
             }
 
-            var makeMultiSelect = function () {
+            var makeMultiSelect = function (inDialog, div, height, width) {
                 Csw.dialogs.multiselectedit({
                     opts: values,
                     title: 'Edit Prop',
                     required: cswPrivate.required,
+                    inDialog: inDialog,
+                    parent: div,
+                    height: height,
+                    width: width,
+                    onChange: function(updatedValues) {
+                        valStr = updatedValues.sort().join(',');
+                        Csw.tryExec(cswPrivate.onChange, valStr);
+                    },
                     onSave: function (updatedValues) {
                         valStr = updatedValues.sort().join(',');
                         Csw.tryExec(cswPrivate.onChange, valStr);
@@ -72,7 +81,8 @@
             };
 
             if (cswPrivate.EditMode === Csw.enums.editMode.Add) {
-                makeMultiSelect();
+                morediv.hide();
+                multiSelectCtrl = makeMultiSelect(false, parentDiv, '240px', '360px');
             } else {
                 editBtnCell.icon({
                     name: cswPrivate.name + '_toggle',
@@ -80,14 +90,17 @@
                     hovertext: 'Edit',
                     size: 16,
                     isButton: true,
-                    onClick: makeMultiSelect
+                    onClick: function() {
+                        makeMultiSelect(true);
+                    }
                 });
             }
 
         }());
 
         cswPublic.val = function () {
-            return valStr;
+            var ret = valStr;
+            return ret;
         };
 
         return cswPublic;
