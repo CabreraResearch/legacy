@@ -101,7 +101,8 @@ namespace ChemSW.Nbt.Actions.KioskMode
                 tree.goToNthChild( 0 );
                 CswNbtMetaDataObjectClassProp propLoc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.LocationClass ).getObjectClassProp( CswNbtObjClassLocation.PropertyName.Location );
                 CswNbtObjClassLocation anode = tree.getCurrentNode();
-                OpData.Field1.SecondValue = "(" + anode.Location.Gestalt + " > " + tree.getNodeNameForCurrentPosition() + ")";
+                string containingLocation = string.IsNullOrEmpty( anode.Location.Gestalt ) ? "" : anode.Location.Gestalt + " > ";
+                OpData.Field1.SecondValue = "(" + containingLocation + tree.getNodeNameForCurrentPosition() + ")";
                 OpData.Field1.NodeIdStr = tree.getNodeIdForCurrentPosition().ToString();
                 ret = true;
             }
