@@ -15,11 +15,19 @@
         cswPrivate.multiSelectEditDialog = (function () {
             'use strict';
             var selected = [];
+            var saveBtnClicked = false;
 
             var editDialog = Csw.layouts.dialog({
                 title: cswPrivate.title,
                 width: 800,
                 height: 600,
+                onBeforeClose: function () {
+                    var ret = true;
+                    if (false == saveBtnClicked) { //if we clicked the "X", check for changes, otherwise we save changes
+                        ret = Csw.clientChanges.manuallyCheckChanges();
+                    }
+                    return ret;
+                },
                 onOpen: function () {
                     var ctrlOpts = [];
                     var filterInput = editDialog.div.input({
@@ -52,7 +60,7 @@
                         enabledText: 'Check All',
                         onClick: function () {
                             Csw.iterate(ctrlOpts, function (opt) {
-                                opt.ctrl.checkbox.checked(true);
+                                document.getElementById(opt.ctrl.checkbox.getId()).checked = true;
                                 onCheck(opt.ctrl.checkbox, opt.rowIdx);
                             });
                         }
@@ -64,6 +72,7 @@
                     var optsTbl = optsDiv.table().css('padding', '10px');
 
                     var onCheck = function (checkBox, idx) {
+                        Csw.clientChanges.setChanged();
                         var selectedVal = ctrlOpts[idx - 1].val;
                         var selectedIdx = selected.indexOf(selectedVal);
                         if (checkBox.checked()) {

@@ -30,6 +30,9 @@
                         //Case 29390: no sync for Multi List
                         nodeProperty.propData.values.value = val;
                         nodeProperty.broadcastPropChange(val);
+                        
+                        //without this the changes dialog will show up when clicking save in the edit dialog
+                        Csw.clientChanges.unsetChanged(); 
                     }
                 });
             }
