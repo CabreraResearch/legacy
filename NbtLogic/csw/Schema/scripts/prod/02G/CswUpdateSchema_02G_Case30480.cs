@@ -121,13 +121,27 @@ namespace ChemSW.Nbt.Schema
                 //5: Get rid of deprecated CISPro Inventory Group and move their permissions over to Default Inventory Group
                 if( null != CISProInventoryGroup )
                 {
-                    foreach( CswNbtObjClassInventoryGroupPermission InventoryGroupPerm in InventoryGroupPermissionOc.getNodes( true, false, false, true ) )
+                    CswNbtMetaDataObjectClass WorkUnitOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.WorkUnitClass );
+                    CswNbtObjClassWorkUnit DefaultWorkUnit = null;
+                    foreach( CswNbtObjClassWorkUnit WorkUnit in WorkUnitOc.getNodes( true, false, false, true ) )
                     {
-                        if( InventoryGroupPerm.PermissionGroup.RelatedNodeId == CISProInventoryGroup.NodeId )
+                        if( WorkUnit.Name.Text == "Default Work Unit" )
                         {
-                            InventoryGroupPerm.PermissionGroup.RelatedNodeId = DefaultInventoryGroup.NodeId;
-                            InventoryGroupPerm.PermissionGroup.SyncGestalt();
-                            InventoryGroupPerm.postChanges( false );
+                            DefaultWorkUnit = WorkUnit;
+                        }
+                    }
+                    if( null != DefaultWorkUnit )
+                    {
+                        foreach( CswNbtObjClassInventoryGroupPermission InventoryGroupPerm in InventoryGroupPermissionOc.getNodes( true, false, false, true ) )
+                        {
+                            if( InventoryGroupPerm.PermissionGroup.RelatedNodeId == CISProInventoryGroup.NodeId )
+                            {
+                                InventoryGroupPerm.PermissionGroup.RelatedNodeId = DefaultInventoryGroup.NodeId;
+                                InventoryGroupPerm.PermissionGroup.SyncGestalt();
+                                InventoryGroupPerm.WorkUnit.RelatedNodeId = DefaultWorkUnit.NodeId;
+                                InventoryGroupPerm.WorkUnit.SyncGestalt();
+                                InventoryGroupPerm.postChanges( false );
+                            }
                         }
                     }
                     CISProInventoryGroup.Node.delete( true, true );
