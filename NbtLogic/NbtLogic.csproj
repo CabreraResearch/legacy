@@ -386,6 +386,7 @@
     <Compile Include="csw\Schema\scripts\prod\02H\CswUpdateSchema_02H_Case30537C.cs" />
     <Compile Include="csw\Schema\scripts\prod\02H\CswUpdateMetaData_02H_Case30537A.cs" />
     <Compile Include="csw\Schema\scripts\prod\02H\CswUpdateMetaData_02H_Case30537B.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CAF\CswUpdateSchema_02H_Case30042_GHSPhrases.cs" />
     <Compile Include="csw\Schema\scripts\prod\CAF\CswUpdateSchema_02H_Case30048_InventoryLevels.cs" />
     <Compile Include="csw\Schema\scripts\prod\CAF\CswUpdateSchema_02H_Case30046_Containers.cs" />
     <Compile Include="csw\Schema\scripts\prod\CAF\CswUpdateSchema_02G_Case30047_Docs.cs" />
