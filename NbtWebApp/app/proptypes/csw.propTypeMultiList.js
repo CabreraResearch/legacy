@@ -26,6 +26,7 @@
                     readonlymore: nodeProperty.propData.values.readonlymore,
                     isMultiEdit: nodeProperty.isMulti(),
                     EditMode: nodeProperty.tabState.EditMode,
+                    required: nodeProperty.isRequired(),
                     onChange: function (val) {
                         //Case 29390: no sync for Multi List
                         nodeProperty.propData.values.value = val;

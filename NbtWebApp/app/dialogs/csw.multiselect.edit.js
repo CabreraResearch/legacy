@@ -10,24 +10,19 @@
             cswPrivate.title = cswPrivate.title || 'Edit Property';
             cswPrivate.opts = cswPrivate.opts || [];
             cswPrivate.onSave = cswPrivate.onSave || function () { };
+            cswPrivate.required = cswPrivate.required || false;
         }());
 
         cswPrivate.multiSelectEditDialog = (function () {
             'use strict';
             var selected = [];
             var saveBtnClicked = false;
+            var optsDiv, errorDiv;
 
             var editDialog = Csw.layouts.dialog({
                 title: cswPrivate.title,
                 width: 800,
                 height: 600,
-                onBeforeClose: function () {
-                    var ret = true;
-                    if (false == saveBtnClicked) { //if we clicked the "X", check for changes, otherwise we save changes
-                        ret = Csw.clientChanges.manuallyCheckChanges();
-                    }
-                    return ret;
-                },
                 onOpen: function () {
                     var ctrlOpts = [];
                     var filterInput = editDialog.div.input({
@@ -66,7 +61,10 @@
                         }
                     });
 
-                    var optsDiv = editDialog.div.div();
+                    errorDiv = editDialog.div.div().span({ text: 'You must have at least one selected value' }).css('color', 'red');
+                    errorDiv.hide();
+
+                    optsDiv = editDialog.div.div();
                     optsDiv.css({ 'height': '400px', 'width': '750px', 'overflow': 'auto', 'border': '1px solid #AED0EA' });
 
                     var optsTbl = optsDiv.table().css('padding', '10px');
@@ -117,8 +115,15 @@
                         enabledText: 'Save Changes',
                         icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.save),
                         onClick: function () {
-                            Csw.tryExec(cswPrivate.onSave, selected);
-                            editDialog.close();
+                            if (cswPrivate.required && selected.length === 0) { //manual validation
+                                errorDiv.show();
+                            } else {
+                                errorDiv.hide();
+                                saveBtnClicked = true;
+                                Csw.clientChanges.unsetChanged(); //closing a csw.dialog fires manual validation, which we don't want here
+                                Csw.tryExec(cswPrivate.onSave, selected);
+                                editDialog.close();
+                            }
                         }
                     }).css('margin-top', '20px');
 

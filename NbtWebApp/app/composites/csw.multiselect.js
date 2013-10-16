@@ -21,7 +21,8 @@
             isMultiEdit: false,
             onChange: null, //function () {}
             isControl: false,
-            EditMode: ''
+            EditMode: '',
+            required: false
         };
 
         var cswPublic = {};
@@ -61,6 +62,7 @@
                 Csw.dialogs.multiselectedit({
                     opts: values,
                     title: 'Edit Prop',
+                    required: cswPrivate.required,
                     onSave: function (updatedValues) {
                         valStr = updatedValues.sort().join(',');
                         Csw.tryExec(cswPrivate.onChange, valStr);
