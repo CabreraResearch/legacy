@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
-using System.Linq;
 using ChemSW.Core;
 using ChemSW.DB;
 
@@ -304,7 +303,6 @@ namespace ChemSW.Nbt.MetaData
         private Dictionary<PkDictKey, Dictionary<Int32, string>> _PkDictsWhere = null;
         public Dictionary<Int32, string> getPkDict( string Where = "", CswDateTime Date = null )
         {
-            Dictionary<Int32, string> ret = null;
             if( _PkDictsWhere == null )
             {
                 _PkDictsWhere = new Dictionary<PkDictKey, Dictionary<int, string>>();
