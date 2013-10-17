@@ -1,5 +1,6 @@
 using System;
 using System.Data;
+using System.IO;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt.Grid;
@@ -93,7 +94,18 @@ namespace ChemSW.Nbt.WebServices
                 string ImportQueueSql = CswScheduleLogicNbtCAFImport.generateImportQueueTableSQL( CswResources );
                 string TriggersSql = CswScheduleLogicNbtCAFImport.generateTriggerSQL( CswResources );
 
-                Ret.Data = ImportQueueSql + " " + TriggersSql;
+                // Create and return the stream
+                MemoryStream stream = new MemoryStream();
+                StreamWriter sw = new StreamWriter( stream );
+
+                sw.Write( ImportQueueSql );
+                sw.Write( "\r\n" );
+                sw.Write( TriggersSql );
+
+                sw.Flush();
+                stream.Position = 0;
+
+                Ret.stream = stream;
             }
         }//generateCAFSql()
 

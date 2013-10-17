@@ -1,4 +1,6 @@
-﻿using System.ComponentModel;
+﻿using System.Collections.Specialized;
+using System.ComponentModel;
+using System.IO;
 using System.ServiceModel;
 using System.ServiceModel.Activation;
 using System.ServiceModel.Web;
@@ -165,8 +167,12 @@ namespace NbtWebApp
         [WebInvoke( Method = "POST" )]
         [Description( "Generate SQL for CAF" )]
         [FaultContract( typeof( FaultException ) )]
-        public CswNbtImportWcf.GenerateSQLReturn generateCAFSql( string ImportDefName )
+        public Stream generateCAFSql( Stream DataStream )
         {
+            string Data = new StreamReader( DataStream ).ReadToEnd();
+            NameValueCollection FormData = HttpUtility.ParseQueryString( Data );
+            string ImportDefName = FormData["importdefname"];
+
             CswNbtImportWcf.GenerateSQLReturn Ret = new CswNbtImportWcf.GenerateSQLReturn();
 
             var SvcDriver = new CswWebSvcDriver<CswNbtImportWcf.GenerateSQLReturn, string>(
@@ -178,7 +184,9 @@ namespace NbtWebApp
 
             SvcDriver.run();
 
-            return Ret;
+            WebOperationContext.Current.OutgoingResponse.Headers.Set( "Content-Disposition", "attachment; filename=\"cafsql.sql\";" );
+
+            return Ret.stream;
         }//startImport()
         
         [OperationContract]

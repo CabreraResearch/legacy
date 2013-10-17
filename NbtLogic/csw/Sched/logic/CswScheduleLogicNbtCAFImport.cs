@@ -153,19 +153,28 @@ namespace ChemSW.Nbt.Sched
 
             CswTableSelect ImportDefSelect = CswResources.makeCswTableSelect( "importdef_get_caf_rows", CswNbtImportTables.ImportDef.TableName );
             DataTable ImportDefTable = ImportDefSelect.getTable( "where " + CswNbtImportTables.ImportDef.definitionname + " = '" + DefinitionName + "'" );
+            bool FirstRow = true;
             foreach( DataRow DefRow in ImportDefTable.Rows )
             {
                 string DataSource = CswConvert.ToString( string.IsNullOrEmpty( CswConvert.ToString( DefRow[CswNbtImportTables.ImportDef.viewname] ) ) ? DefRow[CswNbtImportTables.ImportDef.tablename] : DefRow[CswNbtImportTables.ImportDef.viewname] );
-                string CurrentDefRowSql = @"insert into nbtimportqueue@" + CAFDbLink + " (nbtimportqueueid, state, itempk, sheetname, priority, errorlog) "
-                                          + " select seq_nbtimportqueueid.nextval@" + CAFDbLink + ", '"
+                string CurrentDefRowSql = @"insert into nbtimportqueue(nbtimportqueueid, state, itempk, sheetname, priority, errorlog) "
+                                          + " select seq_nbtimportqueueid.nextval, '"
                                           + State.I + "', "
                                           + CswConvert.ToString( DefRow[CswNbtImportTables.ImportDef.pkcolumnname] ) + ", "
                                           + "'" + CswConvert.ToString( DefRow[CswNbtImportTables.ImportDef.sheetname] ) + "', "
                                           + "0, "
-                                          + "'' from " + DataSource + "@" + CAFDbLink + " where deleted = '0';";
+                                          + "'' from " + DataSource + " where deleted = '0';";
                 CurrentDefRowSql = CurrentDefRowSql + " commit;";
 
-                Ret = Ret + " " + CurrentDefRowSql;
+                if( FirstRow )
+                {
+                    Ret = CurrentDefRowSql + Environment.NewLine;
+                    FirstRow = false;
+                }
+                else
+                {
+                    Ret = Ret + Environment.NewLine + CurrentDefRowSql + Environment.NewLine;
+                }
             }
 
             return Ret;

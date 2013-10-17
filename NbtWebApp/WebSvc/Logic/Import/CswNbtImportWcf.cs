@@ -1,6 +1,7 @@
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Runtime.Serialization;
 using System.Web;
 using ChemSW.Grid.ExtJs;
@@ -120,9 +121,8 @@ namespace ChemSW.Nbt.WebServices
         [DataContract]
         public class GenerateSQLReturn : CswWebSvcReturn
         {
-            [DataMember( IsRequired = true )]
-            [Description( "SQL string" )]
-            public string Data;
+            [DataMember]
+            public Stream stream = null;
         }
 
         [DataContract]
