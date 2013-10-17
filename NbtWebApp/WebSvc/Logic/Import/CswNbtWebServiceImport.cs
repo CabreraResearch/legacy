@@ -92,6 +92,7 @@ namespace ChemSW.Nbt.WebServices
             if( ImportDefName.Equals( "CAF" ) )
             {
                 string ImportQueueSql = CswScheduleLogicNbtCAFImport.generateImportQueueTableSQL( CswResources );
+                string CAFCleanupSQL = CswScheduleLogicNbtCAFImport.generateCAFCleanupSQL( CswResources );
                 string TriggersSql = CswScheduleLogicNbtCAFImport.generateTriggerSQL( CswResources );
 
                 // Create and return the stream
@@ -99,6 +100,8 @@ namespace ChemSW.Nbt.WebServices
                 StreamWriter sw = new StreamWriter( stream );
 
                 sw.Write( ImportQueueSql );
+                sw.Write( "\r\n" );
+                sw.Write( CAFCleanupSQL );
                 sw.Write( "\r\n" );
                 sw.Write( TriggersSql );
 

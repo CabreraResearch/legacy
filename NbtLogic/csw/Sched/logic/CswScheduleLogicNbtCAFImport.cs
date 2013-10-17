@@ -180,6 +180,32 @@ namespace ChemSW.Nbt.Sched
             return Ret;
         }
 
+        public static string generateCAFCleanupSQL( ICswResources CswResources )
+        {
+            string Ret = "";
+
+            #region Locations
+
+            for( int i = 1; i<=5; i++ )
+            {
+
+                Ret += "\r\n\r\n" +
+                       "update locations_level" + i + " set locationlevel" + i + "name = locationlevel" + i + "name || '_' || locationlevel" + i + "id " + "\r\n" +
+                       "  where locationlevel" + i + "id in ("                                                                                           + "\r\n" +
+                       "      select locationlevel" + i + "id from locations_level" + i + " where "                                                      + "\r\n" +
+                       "          locationlevel"+i+"name in ("                                                                                           + "\r\n" +
+                       "             select locationlevel" + i + "name from locations_level" + i                                                         + "\r\n" +
+                       "                group by locationlevel" + i + "name "                                                                            + "\r\n" +
+                       "                   having count(*) > 1 "                                                                                         + "\r\n" +
+                       "              )"                                                                                                                 + "\r\n" +
+                       "       )";
+            }
+
+            return Ret;
+
+            #endregion
+        }
+
         public static string generateTriggerSQL( ICswResources CswResources )
         {
             string Ret = string.Empty;
