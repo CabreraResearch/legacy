@@ -16,8 +16,25 @@
             if (nodeProperty.isReadOnly()) {
                 nodeProperty.propDiv.append(cswPrivate.gestalt);
             } else {
+                var errorDiv = nodeProperty.propDiv.div();
+
+                var doValidation = function (val) {
+                    var ret = true;
+                    if (nodeProperty.isRequired()) {
+                        if (Csw.isNullOrEmpty(val)) {
+                            cswPrivate.validatorCheckBox.val(false);
+                            ret = false;
+                        } else {
+                            cswPrivate.validatorCheckBox.val(true);
+                            ret = true;
+                        }
+                        cswPrivate.validatorCheckBox.$.valid();
+                    }
+                    return ret;
+                };
+
                 /* Select Box */
-                nodeProperty.propDiv.multiSelect({
+                var multiSel = nodeProperty.propDiv.multiSelect({
                     name: nodeProperty.name,
                     cssclass: 'selectinput',
                     values: cswPrivate.options,
@@ -28,14 +45,40 @@
                     EditMode: nodeProperty.tabState.EditMode,
                     required: nodeProperty.isRequired(),
                     onChange: function (val) {
+                        var valStr = val.join(',');
+
+                        var ret = doValidation(valStr);
+
                         //Case 29390: no sync for Multi List
-                        nodeProperty.propData.values.value = val;
-                        nodeProperty.broadcastPropChange(val);
-                        
+                        nodeProperty.propData.values.value = valStr;
+                        nodeProperty.broadcastPropChange(valStr);
+
                         //without this the changes dialog will show up when clicking save in the edit dialog
-                        Csw.clientChanges.unsetChanged(); 
+                        Csw.clientChanges.unsetChanged();
+
+                        return ret;
                     }
                 });
+
+                //Validation
+                var validator = Csw.validator(errorDiv, multiSel, {
+                    cssOptions: { 'visibility': 'hidden', 'width': '20px' },
+                    errorMsg: 'At least one value must be selected',
+                    onValidation: function (isValid) {
+                        if (isValid) {
+                            errorDiv.hide();
+                        } else {
+                            errorDiv.show();
+                        }
+                    }
+                });
+
+                cswPrivate.validatorCheckBox = validator.input;
+                if (Csw.enums.editMode.Add === nodeProperty.tabState.EditMode) {
+                    doValidation(nodeProperty.propData.values.value);
+                } else {
+                    errorDiv.hide();
+                }
             }
 
         };

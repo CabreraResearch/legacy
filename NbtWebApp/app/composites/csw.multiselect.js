@@ -20,13 +20,16 @@
             readonlymore: '',
             isMultiEdit: false,
             onChange: null, //function () {}
+            onValidate: null,
             isControl: false,
             EditMode: '',
-            required: false
+            required: false,
         };
 
         var cswPublic = {};
         var multiSelectCtrl;
+        var valStr;
+        var valArr;
         
         (function () {
 
@@ -42,8 +45,8 @@
                 moreDivCell = table.cell(1, 1),
                 editBtnCell = table.cell(1, 2),
                 multiSelectCell = table.cell(2, 1),
-                morediv = moreDivCell.moreDiv({ name: cswPrivate.name + '_morediv' }),
-                valStr = cswPrivate.valStr;
+                morediv = moreDivCell.moreDiv({ name: cswPrivate.name + '_morediv' });
+            valStr = cswPrivate.valStr;
 
             delete cswPrivate.values;
             morediv.moreLink.hide();
@@ -68,15 +71,18 @@
                     parent: div,
                     height: height,
                     width: width,
-                    onChange: function(updatedValues) {
-                        valStr = updatedValues.sort().join(',');
-                        Csw.tryExec(cswPrivate.onChange, valStr);
+                    onChange: function (updatedValues) {
+                        valArr = updatedValues;
+                        Csw.tryExec(cswPrivate.onChange, updatedValues);
                     },
                     onSave: function (updatedValues) {
-                        valStr = updatedValues.sort().join(',');
-                        Csw.tryExec(cswPrivate.onChange, valStr);
-                        Csw.publish('triggerSave');
-                    }
+                        valArr = updatedValues;
+                        var isValid = Csw.tryExec(cswPrivate.onChange, updatedValues);
+                        if (isValid) {
+                            Csw.publish('triggerSave');
+                        }
+                        return isValid;
+                    },
                 });
             };
 
@@ -100,7 +106,15 @@
 
         cswPublic.val = function () {
             var ret = valStr;
+            if (valArr) {
+                valStr = valArr.join(',');
+                ret = valStr;
+            }
             return ret;
+        };
+
+        cswPublic.getValue = function () { //need func with this name for the Csw.validator
+            return cswPublic.val(); 
         };
 
         return cswPublic;

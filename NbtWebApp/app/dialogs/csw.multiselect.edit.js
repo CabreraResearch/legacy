@@ -62,7 +62,7 @@
                     }
                 });
 
-                errorDiv = multiSelectDiv.div().span({ text: 'You must have at least one selected value' }).css('color', 'red');
+                errorDiv = multiSelectDiv.div().span({ text: 'At least one value must be selected' }).css('color', 'red');
                 errorDiv.hide();
 
                 optsDiv = multiSelectDiv.div();
@@ -130,14 +130,14 @@
                             enabledText: 'Save Changes',
                             icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.save),
                             onClick: function () {
-                                if (cswPrivate.required && selected.length === 0) { //manual validation
-                                    errorDiv.show();
-                                } else {
-                                    errorDiv.hide();
-                                    saveBtnClicked = true;
-                                    Csw.clientChanges.unsetChanged(); //closing a csw.dialog fires manual validation, which we don't want here
-                                    Csw.tryExec(cswPrivate.onSave, selected);
+                                errorDiv.hide();
+                                saveBtnClicked = true;
+                                Csw.clientChanges.unsetChanged(); //closing a csw.dialog fires manual validation, which we don't want here
+                                var isValid = Csw.tryExec(cswPrivate.onSave, selected);
+                                if (isValid) {
                                     editDialog.close();
+                                } else {
+                                    errorDiv.show();
                                 }
                             }
                         }).css('margin-top', '20px');
