@@ -35,6 +35,7 @@
             isRequired: false,
             onChange: null,
             useEditButton: true,
+            allowHourly: false,
 
             divHourly: '',
             divWeekly: '',
