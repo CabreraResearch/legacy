@@ -21,7 +21,7 @@
                 var doValidation = function (val) {
                     var ret = true;
                     if (nodeProperty.isRequired()) {
-                        if (Csw.isNullOrEmpty(val)) {
+                        if (Csw.isNullOrEmpty(val) && false == nodeProperty.isRequired()) {
                             cswPrivate.validatorCheckBox.val(false);
                             ret = false;
                         } else {
@@ -74,6 +74,7 @@
                 });
 
                 cswPrivate.validatorCheckBox = validator.input;
+                cswPrivate.validatorCheckBox.val(true); //if this is a required property this will get set accordingly , for now set it to true
                 if (Csw.enums.editMode.Add === nodeProperty.tabState.EditMode) {
                     doValidation(nodeProperty.propData.values.value);
                 } else {

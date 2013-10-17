@@ -256,13 +256,27 @@
 
         cswPrivate.onButtonClick = function () {
             Csw.publish('onAnyNodeButtonClick');
+            //Csw.unsubscribe('triggerSave', cswPrivate.onButtonClick);
 
             if (tabsAndProps && false === tabsAndProps.isFormValid()) {
-                //TODO: make a proper Csw\Ext Dialog class
-                window.Ext.MessageBox.alert('Warning', 'This form contains some invalid values. Please correct them before proceeding.', function () {
-                    Csw.publish('onAnyNodeButtonClickFinish', true);
-                    tabsAndProps.validator().focusInvalid();
+                var warningDialog = Csw.layouts.dialog({
+                    title: 'Warning',
+                    width: 500,
+                    height: 130,
+                    onOpen: function () {
+                        warningDialog.div.span({ text: 'This form contains some invalid values. Please correct them before proceeding.' });
+                        warningDialog.div.br({ number: 3 });
+                        warningDialog.div.buttonExt({
+                            enabledText: 'Ok',
+                            onClick: function() {
+                                Csw.publish('onAnyNodeButtonClickFinish', true);
+                                tabsAndProps.validator().focusInvalid();
+                                warningDialog.close();
+                            }
+                        });
+                    }
                 });
+                warningDialog.open();
 
             } else {
                 if (Csw.isNullOrEmpty(cswPrivate.propId)) {
@@ -350,7 +364,7 @@
                 } // if-else (Csw.isNullOrEmpty(propAttr)) {
             }
         }; // onButtonClick()
-        Csw.subscribe('triggerSave', cswPrivate.onButtonClick);
+        //Csw.subscribe('triggerSave', cswPrivate.onButtonClick);
 
         (function _post() {
             cswPrivate.btnCell = cswPrivate.table.cell(1, 1).div();
