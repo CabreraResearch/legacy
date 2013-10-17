@@ -2781,6 +2781,19 @@ namespace ChemSW.Nbt.WebPages
 
                             break;
 
+                        case CswEnumNbtFieldType.TimeInterval:
+
+                            //UseSequence CheckBox
+                            TableRow AllowHourlyRow = makeEditPropTableRow( EditPropPlaceHolder );
+                            ( (Literal) AllowHourlyRow.Cells[0].Controls[0] ).Text = "Allow Hourly:";
+                            CheckBox AllowHourlyValue = new CheckBox();
+                            AllowHourlyValue.ID = "EditProp_Attribute1" + SelectedNodeTypeProp.PropId.ToString();
+                            AllowHourlyValue.Text = "Allow Hourly";
+                            AllowHourlyValue.Checked = CswConvert.ToBoolean( SelectedNodeTypeProp.Attribute1 );
+                            AllowHourlyRow.Cells[1].Controls.Add( AllowHourlyValue );
+
+                            break;
+
                         case CswEnumNbtFieldType.ViewPickList:
                             TableRow ViewSelectModeRow = makeEditPropTableRow( EditPropPlaceHolder );
                             ( (Literal) ViewSelectModeRow.Cells[0].Controls[0] ).Text = "Select Mode:";
