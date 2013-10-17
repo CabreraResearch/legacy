@@ -164,7 +164,7 @@ namespace ChemSW.Nbt.MetaData
                 {
                     FirstTab = NewNodeType.getSecondNodeTypeTab();
                     FirstTab.TabName = "Details";
-                    FirstTab.TabOrder = 10;
+                    FirstTab.TabOrder = 0;
                     FirstTab.IncludeInNodeReport = false;
                 }
 
