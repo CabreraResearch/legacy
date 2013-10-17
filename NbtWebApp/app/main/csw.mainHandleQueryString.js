@@ -35,7 +35,7 @@
                 };
                 if (Csw.isNullOrEmpty(qs.viewmode)) {
                     Csw.ajax.deprecatedWsNbt({
-                        url: Csw.enums.ajaxUrlPrefix + 'getViewMode',
+                        url: 'getViewMode',
                         data: { ViewId: qs.viewid },
                         success: function (data) {
                             setView(qs.viewid, Csw.string(data.viewmode, 'tree'));
