@@ -240,11 +240,6 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterWriteNode( bool Creating )
         {
-            //bz # 6555
-            if( AccountLocked.Checked != CswEnumTristate.True && AccountLocked.wasAnySubFieldModified() )
-            {
-                clearFailedLoginCount();
-            }
             CachedData.setHidden( value: true, SaveToDb: true );
             // BZ 9170
             _CswNbtResources.ConfigVbls.setConfigVariableValue( "cache_lastupdated", DateTime.Now.ToString() );
@@ -314,6 +309,7 @@ namespace ChemSW.Nbt.ObjClasses
             UsernameProperty.SetOnPropChange( OnUserNamePropChange );
             AvailableWorkUnits.SetOnPropChange( OnAvailableWorkUnitsChange );
             WorkUnitProperty.SetOnPropChange( OnWorkUnitPropertyChange );
+            AccountLocked.SetOnPropChange( onAccountLockedPropChange );
 
             AvailableWorkUnits.InitOptions = InitAvailableWorkUnitsOptions;
 
@@ -408,7 +404,7 @@ namespace ChemSW.Nbt.ObjClasses
             return true;
         }
 
-        #endregion
+        #endregion Inherited Events
 
         #region Object class specific properties
 
@@ -448,6 +444,13 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         public CswNbtNodePropLogical AccountLocked { get { return ( _CswNbtNode.Properties[PropertyName.AccountLocked] ); } }
+        private void onAccountLockedPropChange( CswNbtNodeProp NodeProp, bool Creating )
+        {
+            if( CswEnumTristate.True != AccountLocked.Checked )
+            {
+                clearFailedLoginCount();
+            }
+        }
         public CswNbtNodePropNumber FailedLoginCount { get { return ( _CswNbtNode.Properties[PropertyName.FailedLoginCount] ); } }
         public CswNbtNodePropPassword PasswordProperty { get { return ( _CswNbtNode.Properties[PropertyName.Password] ); } }
         public CswNbtNodePropText UsernameProperty { get { return ( _CswNbtNode.Properties[PropertyName.Username] ); } }
@@ -698,7 +701,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public CswNbtNodePropMemo CachedData { get { return _CswNbtNode.Properties[PropertyName.CachedData]; } }
 
-        #endregion
+        #endregion Object class specific properties
 
         public int getFailedLoginCount()
         {
@@ -740,6 +743,8 @@ namespace ChemSW.Nbt.ObjClasses
         {
             return this.Archived.Checked == CswEnumTristate.True;
         }
+
+        #region Permissions Logic
 
         private Dictionary<CswPrimaryKey, CswNbtPropertySetPermission> _NodePermissions;
         public Dictionary<CswPrimaryKey, CswNbtPropertySetPermission> NodePermissions
@@ -854,6 +859,10 @@ namespace ChemSW.Nbt.ObjClasses
             return UserPermissions;
         } // getUserPermissions()
 
+        #endregion Permissions Logic
+
+        #region Work Unit Logic
+
         public Dictionary<string, string> InitAvailableWorkUnitsOptions()
         {
             Dictionary<string, string> opts = new Dictionary<string, string>();
@@ -906,6 +915,8 @@ namespace ChemSW.Nbt.ObjClasses
 
             WorkUnitProperty.OverrideView( View );
         }
+
+        #endregion Work Unit Logic
 
     }//CswNbtObjClassUser
 
