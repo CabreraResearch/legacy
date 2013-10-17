@@ -61,8 +61,7 @@ namespace ChemSW.Nbt
                         else
                         {
                             string Sql = "select t.*, '' as auditchanged " +
-                                         "  from " + CswNbtAuditTableAbbreviation.getAuditTableSql( _CswNbtResources, "jct_nodes_props", Date ) + " t " +
-                                         " where nodeid = " + _NodeKey.PrimaryKey;
+                                         "  from " + CswNbtAuditTableAbbreviation.getAuditTableSql( _CswNbtResources, "jct_nodes_props", Date, _NodeKey.PrimaryKey ) + " t ";
                             CswArbitrarySelect PropsSelect = _CswNbtResources.makeCswArbitrarySelect( "propcolldata_audit_select", Sql );
                             _PropsTable = PropsSelect.getTable();
                             foreach( DataRow AuditRow in _PropsTable.Rows )
