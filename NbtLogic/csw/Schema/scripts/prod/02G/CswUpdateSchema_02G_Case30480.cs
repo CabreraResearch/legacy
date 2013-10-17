@@ -136,11 +136,18 @@ namespace ChemSW.Nbt.Schema
                         {
                             if( InventoryGroupPerm.PermissionGroup.RelatedNodeId == CISProInventoryGroup.NodeId )
                             {
-                                InventoryGroupPerm.PermissionGroup.RelatedNodeId = DefaultInventoryGroup.NodeId;
-                                InventoryGroupPerm.PermissionGroup.SyncGestalt();
-                                InventoryGroupPerm.WorkUnit.RelatedNodeId = DefaultWorkUnit.NodeId;
-                                InventoryGroupPerm.WorkUnit.SyncGestalt();
-                                InventoryGroupPerm.postChanges( false );
+                                try
+                                {
+                                    InventoryGroupPerm.PermissionGroup.RelatedNodeId = DefaultInventoryGroup.NodeId;
+                                    InventoryGroupPerm.PermissionGroup.SyncGestalt();
+                                    InventoryGroupPerm.WorkUnit.RelatedNodeId = DefaultWorkUnit.NodeId;
+                                    InventoryGroupPerm.WorkUnit.SyncGestalt();
+                                    InventoryGroupPerm.postChanges( false );
+                                }
+                                catch( CswDniException )//If we're here, it's because the Permission already exists on Default Inventory Group
+                                {
+                                    InventoryGroupPerm.Node.delete( true, true );
+                                }
                             }
                         }
                     }
