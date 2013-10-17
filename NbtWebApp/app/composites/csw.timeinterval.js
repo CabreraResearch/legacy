@@ -128,19 +128,21 @@
             var subTable = parent.table();
 
             //Hourly
-            subTable.cell(1, 2).span({ text: '&nbsp;Hourly' });
-            subTable.cell(1, 1).input({
-                name: cswPrivate.name + '_type',
-                type: Csw.enums.inputTypes.radio,
-                value: 'hourly',
-                checked: cswPublic.rateInterval.ratetype === Csw.enums.rateIntervalTypes.Hourly,
-                onClick: function () {
-                    cswPublic.rateInterval.ratetype = Csw.enums.rateIntervalTypes.Hourly;
-                    cswPrivate.hideDivs();
-                    cswPrivate.divHourly.show();
-                    Csw.tryExec(cswPrivate.onChange);
-                }
-            });
+            if (cswPrivate.allowHourly) {
+                subTable.cell(1, 2).span({ text: '&nbsp;Hourly' });
+                subTable.cell(1, 1).input({
+                    name: cswPrivate.name + '_type',
+                    type: Csw.enums.inputTypes.radio,
+                    value: 'hourly',
+                    checked: cswPublic.rateInterval.ratetype === Csw.enums.rateIntervalTypes.Hourly,
+                    onClick: function() {
+                        cswPublic.rateInterval.ratetype = Csw.enums.rateIntervalTypes.Hourly;
+                        cswPrivate.hideDivs();
+                        cswPrivate.divHourly.show();
+                        Csw.tryExec(cswPrivate.onChange);
+                    }
+                });
+            }
 
             //Weekly
             subTable.cell(2, 2).span({ text: '&nbsp;Weekly' });
