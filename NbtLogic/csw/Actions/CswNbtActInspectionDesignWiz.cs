@@ -206,11 +206,10 @@ namespace ChemSW.Nbt.Actions
                 TabCount += 1;
                 ActionTab.TabOrder = TabCount;
             }
-            CswNbtMetaDataNodeTypeTab DetailTab = NodeType.getNodeTypeTab( "Detail" );
-            if( null != DetailTab )
+            CswNbtMetaDataNodeTypeTab DetailsTab = NodeType.getNodeTypeTab( "Details" );
+            if( null != DetailsTab )
             {
-                TabCount += 1;
-                DetailTab.TabOrder = TabCount;
+                DetailsTab.TabOrder = 0;
             }
             CswNbtMetaDataNodeTypeTab PictureTab = NodeType.getNodeTypeTab( "Pictures" );
             if( null == PictureTab )

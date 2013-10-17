@@ -151,11 +151,11 @@ namespace NbtPrintClient
         {
             //remove this printer
             int idx = -1;
-            foreach( PrinterSetupData psd in printers )
+            for( int i=0; i < printers.Count; i++ )
             {
-                if( myPrinter.PrinterKey == psd.PrinterKey )
+                if( myPrinter.PrinterKey == printers[i].PrinterKey )
                 {
-                    ++idx;
+                    idx = i;
                 }
             }
             if( idx > -1 )
