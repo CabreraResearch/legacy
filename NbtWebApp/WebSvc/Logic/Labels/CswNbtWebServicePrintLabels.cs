@@ -562,12 +562,18 @@ namespace ChemSW.Nbt.WebServices
                         if( null != ValueChunks )
                         {
                             Int32 CurrentIteration = 1;
-                            string CurrentTemplateName = TemplateName;
+                            string CurrentTemplateName = TemplateName.Split( ':' )[0];
                             foreach( string Chunk in ValueChunks )
                             {
-                                TemplateValues[CurrentTemplateName] = Chunk;
+                                if( CurrentIteration == 1 )
+                                {
+                                    TemplateValues[TemplateName] = Chunk;
+                                }
+                                else
+                                {
+                                    TemplateValues[CurrentTemplateName + "_" + CurrentIteration] = Chunk;
+                                }
                                 CurrentIteration++;
-                                CurrentTemplateName = TemplateName + "_" + CurrentIteration;
                             }
                         } // if( null != ValueChunks )
                         else
