@@ -14,7 +14,7 @@
             cswPrivate.gridData.Bindings = cswPrivate.gridData.Bindings || { fields: [], columns: [], data: { items: [] } };
             cswPrivate.gridData.Relationships = cswPrivate.gridData.Relationships || { fields: [], columns: [], data: { items: [] } };
             
-            //because the CswNbtGrid object is configured for the old-style webservices, we must massage it a bit to display properly here
+            //because the CswExtJsGrid object is configured for the old-style webservices, we must massage it a bit to display properly here
                ["Order", "Bindings", "Relationships"].forEach(function (tableName) {
                    for (var itemNo = 0; itemNo < cswPrivate.gridData[tableName].data.items.length; itemNo++) {
                        cswPrivate.gridData[tableName].data.items[itemNo] = cswPrivate.gridData[tableName].data.items[itemNo].Row;
@@ -47,6 +47,7 @@
             
             cswPrivate.currentTab = tabName;
         };
+        
 
         (function _postCtor() {
             
@@ -71,6 +72,29 @@
 
          //set the active tab to a default value
             cswPrivate.updateDisplayedTab('Order');
+            
+
+            //create a download button for the current binding
+            var downloadBindings = bindingsDialog.div.buttonExt({
+                enabledText: 'Download Bindings',
+                disabledText: 'Generating File...',
+                disableOnClick: false,
+                onClick: function () {
+                    // Return an .xls file that the User can save
+                    var action = 'Services/Import/downloadImportDefinition';
+                    
+                    var $form = $('<form method="POST" action="' + action + '"></form>').appendTo($('body'));
+                    var form = Csw.literals.factory($form);
+
+                    form.input({
+                        name: 'importdefname',
+                        value: cswPrivate.importDefName,
+                    });
+
+                    form.$.submit();
+                    form.remove();
+                }
+            });
         }());
 
 

@@ -291,7 +291,8 @@
                             data: cswPrivate.selDefName.val(),
                             success: function(data) {
                                 Csw.dialogs.viewbindings({
-                                    gridData: data
+                                    gridData: data,
+                                    importDefName: cswPrivate.selDefName.val()
                                 });
                             }//success()
                         });//ajaxWcf.post
