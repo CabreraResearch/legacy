@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ChemSW.Audit;
 using ChemSW.Core;
+using ChemSW.Exceptions;
 
 namespace ChemSW.Nbt
 {
@@ -58,15 +59,33 @@ namespace ChemSW.Nbt
             return getAuditLookupFunctionName( CswAuditMetaData.makeAuditTableName( RealTableName ) );
         }
 
-        public static string getAuditTableSql( CswNbtResources CswNbtResources, string RealTableName, CswDateTime Date )
+        public static string getAuditTableSql( CswNbtResources CswNbtResources, string RealTableName, CswDateTime Date, Int32 NodeId = Int32.MinValue )
         {
-            return getAuditTableSql( CswNbtResources, RealTableName, Date.ToDateTime() );
+            return getAuditTableSql( CswNbtResources, RealTableName, Date.ToDateTime(), NodeId );
         }
 
-        public static string getAuditTableSql( CswNbtResources CswNbtResources, string RealTableName, DateTime Date )
+        public static bool requiresNodeId( string RealTableName )
         {
-            return "TABLE(" + getAuditLookupFunctionNameForRealTable( RealTableName ) +
-                   "(" + CswNbtResources.getDbNativeDate( Date.AddSeconds( 1 ) ) + "))";
+            // case 30982 - require a 'nodeid' param for some audit tables
+            return ( RealTableName == "jct_nodes_props" ||
+                     RealTableName == "nodes" );
+        }
+
+        public static string getAuditTableSql( CswNbtResources CswNbtResources, string RealTableName, DateTime Date, Int32 NodeId = Int32.MinValue )
+        {
+            string ret = "TABLE(" + getAuditLookupFunctionNameForRealTable( RealTableName );
+            ret += "(" + CswNbtResources.getDbNativeDate( Date.AddSeconds( 1 ) );
+
+            if( requiresNodeId( RealTableName ) )
+            {
+                if( NodeId < 0 )
+                {
+                    throw new CswDniException( CswEnumErrorType.Error, "Invalid query", "NodeId is required to extract data from " + RealTableName + " audit table" );
+                }
+                ret += ", " + NodeId;
+            }
+            ret += "))";
+            return ret;
         }
     }
 }

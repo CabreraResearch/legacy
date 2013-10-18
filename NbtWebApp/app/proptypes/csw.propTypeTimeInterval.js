@@ -17,6 +17,7 @@
                     isRequired: nodeProperty.isRequired(),
                     rateIntervalValue: nodeProperty.propData.values.Interval.rateintervalvalue,
                     useEditButton: nodeProperty.tabState.EditMode !== Csw.enums.editMode.Add,
+                    allowHourly: nodeProperty.propData.values.allowHourly,
                     onChange: function () {
                         //Case 29390: We're already passing by reference; no need to update. No sync for Time Interval.
                         nodeProperty.broadcastPropChange();
