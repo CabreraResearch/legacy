@@ -27,7 +27,7 @@ namespace ChemSW.Nbt
                 //NodesTableSelect = _CswNbtResources.makeCswTableSelect( "CswNbtNodeReaderDataNative.fetchNodeInfo_audit", "nodes_audit" );
                 //OrderByClause OrderBy = new OrderByClause( "recordcreated", CswEnumOrderByType.Descending );
                 //NodesTable = NodesTableSelect.getTable( null, "nodeid", CswNbtNode.NodeId.PrimaryKey, "where recordcreated <= " + _CswNbtResources.getDbNativeDate( Date ), false, new Collection<OrderByClause>() { OrderBy } );
-                string NodesSql = "select * from " + CswNbtAuditTableAbbreviation.getAuditTableSql( _CswNbtResources, "nodes", Date ) + " where nodeid = " + CswNbtNode.NodeId.PrimaryKey;
+                string NodesSql = "select * from " + CswNbtAuditTableAbbreviation.getAuditTableSql( _CswNbtResources, "nodes", Date, CswNbtNode.NodeId.PrimaryKey );
                 CswArbitrarySelect NodesTableSelect = _CswNbtResources.makeCswArbitrarySelect( "fetchNodeInfo_Select", NodesSql );
                 NodesTable = NodesTableSelect.getTable();
             }
