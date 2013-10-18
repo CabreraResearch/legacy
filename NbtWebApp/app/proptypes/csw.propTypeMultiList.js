@@ -21,7 +21,7 @@
                 var doValidation = function (val) {
                     var ret = true;
                     if (nodeProperty.isRequired()) {
-                        if (Csw.isNullOrEmpty(val) && false == nodeProperty.isRequired()) {
+                        if (Csw.isNullOrEmpty(val)) {
                             cswPrivate.validatorCheckBox.val(false);
                             ret = false;
                         } else {
@@ -65,7 +65,7 @@
                     cssOptions: { 'visibility': 'hidden', 'width': '20px' },
                     errorMsg: 'At least one value must be selected',
                     onValidation: function (isValid) {
-                        if (isValid) {
+                        if (isValid || Csw.enums.editMode.Edit === nodeProperty.tabState.EditMode) {
                             errorDiv.hide();
                         } else {
                             errorDiv.show();
