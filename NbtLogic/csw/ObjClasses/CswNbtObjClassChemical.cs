@@ -91,7 +91,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string SpecialFlags = "Special Flags";
             public const string HazardCategories = "Hazard Categories";
             public const string Jurisdiction = "Jurisdiction";
-            public const string LegacyId = "Legacy Id";
+            //public const string LegacyId = "Legacy Id";
             public const string SuppressedRegulatoryLists = "Suppressed Regulatory Lists";
             public const string LQNo = "LQNo";
             public const string DOTCode = "DOT Code";

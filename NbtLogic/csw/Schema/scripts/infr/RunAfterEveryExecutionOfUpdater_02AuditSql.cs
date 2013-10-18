@@ -34,6 +34,8 @@ namespace ChemSW.Nbt.Schema
                 string TableType = "CSW_" + Abbrev + @"_TABLE_TYPE";
                 string FuncName = CswNbtAuditTableAbbreviation.getAuditLookupFunctionName( AuditTable );
 
+                bool requiresNodeId = CswNbtAuditTableAbbreviation.requiresNodeId( RealTable );
+
                 CswCommaDelimitedString Columns = new CswCommaDelimitedString();
                 CswCommaDelimitedString ObjectTypeColumns = new CswCommaDelimitedString();
                 foreach( string ColumnName in _CswNbtSchemaModTrnsctn.CswDataDictionary.getColumnNames( RealTable ) )
@@ -53,7 +55,12 @@ namespace ChemSW.Nbt.Schema
 
                 string TableTypeSql = @"CREATE OR REPLACE TYPE " + TableType + " AS TABLE OF " + ObjectType + ";";
 
-                string FuncSql = @"create or replace function " + FuncName + @" (AsOfDate in Date) return " + TableType + @" is
+                string FuncSql = @"create or replace function " + FuncName + @" (AsOfDate in Date";
+                if( requiresNodeId )
+                {
+                    FuncSql += ", aNodeId in number";
+                }
+                FuncSql += @"          ) return " + TableType + @" is
                                       ResultTable " + TableType + @";
                                     begin
 
@@ -71,7 +78,12 @@ namespace ChemSW.Nbt.Schema
                                              union all
                                               select " + Columns.ToString( false ) + @", sysdate as recordcreated 
                                                 from " + RealTable + @" 
-                                               where " + RealTablePk + @" not in (select " + RealTablePk + @" from audit1));
+                                               where " + RealTablePk + @" not in (select " + RealTablePk + @" from audit1))";
+                if( requiresNodeId )
+                {
+                    FuncSql += " where nodeid = aNodeId ";
+                }
+                FuncSql += @";
 
                                       RETURN ResultTable;
 
