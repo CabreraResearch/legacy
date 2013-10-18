@@ -276,8 +276,11 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClass ChemicalOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass );
             foreach( CswNbtMetaDataNodeType ChemicalNT in ChemicalOC.getNodeTypes() )
             {
+                CswNbtMetaDataNodeTypeTab GHSTab = ChemicalNT.getNodeTypeTab( "GHS" );
+                int DSDTabOrder = ( null != GHSTab ? GHSTab.TabOrder : ChemicalNT.getMaximumTabOrder() ) + 1;
+
                 CswNbtMetaDataNodeTypeTab DSDTab = ChemicalNT.getNodeTypeTab( "DSD" ) ??
-                    _CswNbtSchemaModTrnsctn.MetaData.makeNewTab( ChemicalNT, "DSD", ChemicalNT.getMaximumTabOrder() + 1 );
+                    _CswNbtSchemaModTrnsctn.MetaData.makeNewTab( ChemicalNT, "DSD", DSDTabOrder );
 
                 CswNbtMetaDataNodeTypeProp PictogramsNTP = ChemicalNT.getNodeTypePropByObjectClassProp( CswNbtObjClassChemical.PropertyName.Pictograms );
                 PictogramsNTP.removeFromAllLayouts();
