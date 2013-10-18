@@ -207,6 +207,7 @@ namespace ChemSW.Nbt.PropTypes
             ParentObject["displayText"] = NodeTypeProp.PropName;
             ParentObject["icon"] = "";
 
+            ParentObject["issaveprop"] = NodeTypeProp.IsSaveProp;
             ParentObject["selectedText"] = SelectedText;
         }
 

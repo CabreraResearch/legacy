@@ -229,7 +229,8 @@
                 tabId: '',
                 identityTabId: '',
                 properties: {},
-                onRefresh: function () { }
+                onRefresh: function () { },
+                issaveprop: false
             };
 
             tabsAndProps = options.tabsAndProps;
@@ -364,7 +365,9 @@
                 } // if-else (Csw.isNullOrEmpty(propAttr)) {
             }
         }; // onButtonClick()
-        Csw.subscribe('triggerSave', cswPrivate.onButtonClick);
+        if (cswPrivate.issaveprop) {
+            Csw.subscribe('triggerSave', cswPrivate.onButtonClick);
+        }
 
         (function _post() {
             cswPrivate.btnCell = cswPrivate.table.cell(1, 1).div();
