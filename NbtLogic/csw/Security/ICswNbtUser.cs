@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using ChemSW.Core;
+using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Security;
 
@@ -34,7 +36,7 @@ namespace ChemSW.Nbt.Security
         new bool PasswordIsExpired { get; }
         string Language { get; }
         CswNbtPropertySetPermission getPermissionForGroup( CswPrimaryKey PermissionGroupId );
-        Collection<CswPrimaryKey> getUserPermissions();
+        Dictionary<CswPrimaryKey, CswPrimaryKey> getUserPermissions( CswEnumNbtObjectClass PermGroupType = null, bool RequireEdit = false );
 
     }//ICswNbtUser
 }//namespace ChemSW.Nbt
