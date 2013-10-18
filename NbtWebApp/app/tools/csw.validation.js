@@ -19,7 +19,8 @@
                 width: '20px'
             },
             wasModified: false,
-            onValidation: null
+            onValidation: null,
+            errorMsg: 'This field is required.'
         };
 
         Csw.extend(cswPrivate, options);
@@ -56,7 +57,7 @@
             var valid = Csw.bool(cswPublic.input.val());
             cswPrivate.onValidation(valid);
             return valid;
-        }, 'This field is required.');
+        }, cswPrivate.errorMsg);
 
         return cswPublic;
 

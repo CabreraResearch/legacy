@@ -29,7 +29,13 @@ namespace ChemSW.Nbt
                 _CswNbtResources.Modules.ShowProp( containerNT.NodeTypeId, CswNbtObjClassContainer.PropertyName.LotControlled );
                 _CswNbtResources.Modules.ShowProp( containerNT.NodeTypeId, CswNbtObjClassContainer.PropertyName.Requisitionable );
                 _CswNbtResources.Modules.ShowProp( containerNT.NodeTypeId, CswNbtObjClassContainer.PropertyName.ReservedFor );
-                _CswNbtResources.Modules.ShowProp( containerNT.NodeTypeId, CswNbtObjClassContainer.PropertyName.ReceiptLot );
+                //Case 30723 - Receipt Lot is only "semi-disabled" when MLM is off, so just add it back to the layout when it's enabled
+                CswNbtMetaDataNodeTypeProp ReceiptLotNTP = _CswNbtResources.MetaData.getNodeTypeProp( containerNT.NodeTypeId, CswNbtObjClassContainer.PropertyName.ReceiptLot );
+                if( null != ReceiptLotNTP )
+                {
+                    CswNbtMetaDataNodeTypeProp DateCreatedNTP = containerNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.PropertyName.DateCreated );
+                    ReceiptLotNTP.updateLayout( CswEnumNbtLayoutType.Edit, DateCreatedNTP, true );
+                }
             }
 
             CswNbtMetaDataObjectClass RequestMatDispOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestMaterialDispenseClass );
@@ -92,7 +98,6 @@ namespace ChemSW.Nbt
                 _CswNbtResources.Modules.HideProp( containerNT.NodeTypeId, CswNbtObjClassContainer.PropertyName.LotControlled );
                 _CswNbtResources.Modules.HideProp( containerNT.NodeTypeId, CswNbtObjClassContainer.PropertyName.Requisitionable );
                 _CswNbtResources.Modules.HideProp( containerNT.NodeTypeId, CswNbtObjClassContainer.PropertyName.ReservedFor );
-                _CswNbtResources.Modules.HideProp( containerNT.NodeTypeId, CswNbtObjClassContainer.PropertyName.ReceiptLot );
             }
 
             CswNbtMetaDataObjectClass RequestMatDispOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestMaterialDispenseClass );

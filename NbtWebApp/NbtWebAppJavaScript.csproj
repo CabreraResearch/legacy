@@ -92,6 +92,7 @@
     <Content Include="app\db\csw.dbSelect.js" />
     <Content Include="app\db\csw.dbTable.js" />
     <Content Include="app\db\csw.dbInsert.js" />
+    <Content Include="app\dialogs\csw.multiselect.edit.js" />
     <Content Include="app\dialogs\csw.alert.js" />
     <Content Include="app\dialogs\csw.viewbindings.js" />
     <Content Include="app\layouts\csw.dialog.js" />

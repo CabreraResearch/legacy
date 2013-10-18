@@ -342,9 +342,9 @@ namespace ChemSW.Nbt.WebServices
         private static Int32 _fourBytesToInt32( byte[] src, Int32 start )
         {
             Int32 headerLen = CswConvert.ToInt32( src[start] );
-            headerLen += CswConvert.ToInt32( src[start + 1] ) * 64;
-            headerLen += CswConvert.ToInt32( src[start + 2] ) * 64 * 64;
-            headerLen += CswConvert.ToInt32( src[start + 3] ) * 64 * 64 * 64;
+            headerLen += CswConvert.ToInt32( src[start + 1] ) * 256;
+            headerLen += CswConvert.ToInt32( src[start + 2] ) * 256 * 256;
+            headerLen += CswConvert.ToInt32( src[start + 3] ) * 256 * 256 * 256;
             return headerLen;
         }
 
@@ -372,6 +372,7 @@ namespace ChemSW.Nbt.WebServices
                     Int32 headerLen = _fourBytesToInt32( rawimage, 10 ); // BMP format has a variable length header block
                     Int32 heightPixels = _fourBytesToInt32( rawimage, 18 );
                     Int32 widthBytes = _fourBytesToInt32( rawimage, 22 ) / 8;
+                    //widthBytes = 256;
 
                     // strip out header content
                     Int32 newlen = rawimage.Length - headerLen;
@@ -561,12 +562,18 @@ namespace ChemSW.Nbt.WebServices
                         if( null != ValueChunks )
                         {
                             Int32 CurrentIteration = 1;
-                            string CurrentTemplateName = TemplateName;
+                            string CurrentTemplateName = TemplateName.Split( ':' )[0];
                             foreach( string Chunk in ValueChunks )
                             {
-                                TemplateValues[CurrentTemplateName] = Chunk;
+                                if( CurrentIteration == 1 )
+                                {
+                                    TemplateValues[TemplateName] = Chunk;
+                                }
+                                else
+                                {
+                                    TemplateValues[CurrentTemplateName + "_" + CurrentIteration] = Chunk;
+                                }
                                 CurrentIteration++;
-                                CurrentTemplateName = TemplateName + "_" + CurrentIteration;
                             }
                         } // if( null != ValueChunks )
                         else
