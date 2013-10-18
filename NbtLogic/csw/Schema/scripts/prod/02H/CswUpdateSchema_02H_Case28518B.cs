@@ -88,6 +88,7 @@ namespace ChemSW.Nbt.Schema
                     if( CswConvert.ToString( CurrentRow["to_nodeviewid"] ) == "19" )
                     {
                         CurrentRow["to_nodeviewid"] = RolesAndUsersView.ViewId.get();
+                        CurrentRow["displaytext"] = RolesAndUsersView.ViewName;
                     }
                 }
                 else if( CswConvert.ToInt32( CurrentRow["for_roleid"] ) == ChemSWAdminRolePk )
