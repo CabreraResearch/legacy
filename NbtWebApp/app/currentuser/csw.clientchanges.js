@@ -85,4 +85,8 @@
         return ret;
     });
 
+    Csw.clientChanges.register('isChanged', function() {
+        return cswPrivate.changed;
+    });
+
 } ());
