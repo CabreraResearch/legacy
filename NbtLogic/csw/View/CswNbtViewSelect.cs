@@ -95,7 +95,7 @@ namespace ChemSW.Nbt
 
         public List<CswNbtView> restoreViews( string ViewName, bool allowPartialMatches = false )
         {
-            return restoreViews( ViewName, CswEnumNbtViewVisibility.Unknown, allowPartialMatches: allowPartialMatches );
+            return restoreViews( ViewName, CswEnumNbtViewVisibility.Unknown, allowPartialMatches : allowPartialMatches );
         }
         public List<CswNbtView> restoreViews( string ViewName, CswEnumNbtViewVisibility Visibility, Int32 VisibilityId = Int32.MinValue, bool allowPartialMatches = false )
         {
@@ -212,7 +212,7 @@ namespace ChemSW.Nbt
         public DataTable getView( string ViewName, CswEnumNbtViewVisibility Visibility, CswPrimaryKey VisibilityRoleId, CswPrimaryKey VisibilityUserId )
         {
             CswTableSelect ViewsTable = _CswNbtResources.makeCswTableSelect( "CswNbtViewSelect_viewExists_select", "node_views" );
-            string WhereClause = "where viewname = '" + ViewName + "'";
+            string WhereClause = "where viewname = '" + CswTools.SafeSqlParam( ViewName ) + "'";
             if( Visibility == CswEnumNbtViewVisibility.Role )
             {
                 WhereClause += " and visibility = 'Role' and roleid = " + VisibilityRoleId.PrimaryKey.ToString();
@@ -265,7 +265,7 @@ namespace ChemSW.Nbt
                 CswNbtViewId ViewId = new CswNbtViewId( CswConvert.ToInt32( Row["nodeviewid"] ) );
                 CswNbtView View = _CswNbtResources.ViewSelect.restoreView( ViewId );
                 if( false == View.IsFullyEnabled() ||
-                    ( _CswNbtResources.CurrentNbtUser.Username != CswNbtObjClassUser.ChemSWAdminUsername && CswConvert.ToBoolean(Row["issystem"])) ||
+                    ( _CswNbtResources.CurrentNbtUser.Username != CswNbtObjClassUser.ChemSWAdminUsername && CswConvert.ToBoolean( Row["issystem"] ) ) ||
                     ( ExcludeCswAdmin &&
                       ( ( View.Visibility == CswEnumNbtViewVisibility.Role &&
                           View.VisibilityRoleId == ChemSwAdminRole.NodeId ) ||
