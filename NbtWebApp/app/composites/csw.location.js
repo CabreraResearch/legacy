@@ -74,7 +74,10 @@
 
                     }
 
-                    cswPrivate.pathCell.text(cswPrivate.path);
+                    cswPrivate.pathCell.nodeLink({
+                        text: cswPrivate.selectednodelink,
+                        linkText: cswPrivate.path
+                    });
 
                     cswPrivate.selectDiv = cswPrivate.selectCell.div({
                         cssclass: 'locationselect',
