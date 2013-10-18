@@ -257,7 +257,9 @@
 
         cswPrivate.onButtonClick = function () {
             Csw.publish('onAnyNodeButtonClick');
-            Csw.unsubscribe('triggerSave', cswPrivate.onButtonClick);
+            if (cswPrivate.issaveprop) {
+                Csw.unsubscribe('triggerSave', cswPrivate.onButtonClick);
+            }
 
             if (tabsAndProps && false === tabsAndProps.isFormValid()) {
                 var warningDialog = Csw.layouts.dialog({
