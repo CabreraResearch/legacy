@@ -41,7 +41,8 @@ namespace ChemSW.Nbt.Schema
                     ReceiptLotNTP.Hidden = false;
                     if( _CswNbtSchemaModTrnsctn.Modules.IsModuleEnabled( CswEnumNbtModuleName.MLM ) )
                     {
-                        ReceiptLotNTP.updateLayout( CswEnumNbtLayoutType.Edit, true );
+                        CswNbtMetaDataNodeTypeProp DateCreatedNTP = ContainerNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.PropertyName.DateCreated );
+                        ReceiptLotNTP.updateLayout( CswEnumNbtLayoutType.Edit, DateCreatedNTP, true );
                     }
                     else
                     {
