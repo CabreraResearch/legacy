@@ -449,10 +449,10 @@ namespace ChemSW.Nbt
         public CswNbtNode makeNodeFromNodeTypeId( Int32 NodeTypeId, AfterMakeNode OnAfterMakeNode = null, bool IsTemp = false, bool OverrideUniqueValidation = false )
         {
             CswNbtNode Node = _CswNbtNodeFactory.make( CswEnumNbtNodeSpecies.Plain, null, NodeTypeId, _NodeHash.Count, null );
+            Node.IsTemp = IsTemp;
             //Node.OnAfterSetNodeId += new CswNbtNode.OnSetNodeIdHandler( OnAfterSetNodeIdHandler );
             Node.OnRequestDeleteNode += OnAfterDeleteNode;
             Node.fillFromNodeTypeId( NodeTypeId );
-            Node.IsTemp = IsTemp;
 
             _CswNbtNodeFactory.CswNbtNodeWriter.makeNewNodeEntry( Node );
             _CswNbtNodeFactory.CswNbtNodeWriter.setDefaultPropertyValues( Node );
