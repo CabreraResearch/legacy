@@ -10,33 +10,26 @@
         var render = function () {
             'use strict';
 
+            var reportid = nodeProperty.propData.values.reportid;
+            
             var cswPrivate = {
                 size: 'small'
             };
-
-            if (nodeProperty.propData.values.menuoptions.length > 0) {
-                cswPrivate.menuoptions = nodeProperty.propData.values.menuoptions.split(',');
-            }
-
             var buttonOpts = {
-                displayName: nodeProperty.propData.values.displayText,
-                icon: nodeProperty.propData.values.icon,
-                value: Csw.string(nodeProperty.propData.values.text, nodeProperty.propData.name),
+                displayName: nodeProperty.propData.name,
+                value: nodeProperty.propData.name,
                 size: nodeProperty.size,
-                mode: Csw.string(nodeProperty.propData.values.mode, 'button'),
-                state: nodeProperty.propData.values.state,
-                menuOptions: cswPrivate.menuoptions,
-                selectedText: nodeProperty.propData.values.selectedText,
-                confirmmessage: nodeProperty.propData.values.confirmmessage,
+                mode: 'link',
                 propId: nodeProperty.propid,
                 tabId: nodeProperty.tabState.tabid,
                 identityTabId: nodeProperty.identityTabId,
                 nodeId: nodeProperty.tabState.nodeId,
-                onClickSuccess: cswPrivate.onClickSuccess,
+                onClickAction: function() {
+                    Csw.main.handleReport(reportid);
+                },
                 tabsAndProps: tabsAndProps,
                 onRefresh: nodeProperty.onRefresh,
-                disabled: nodeProperty.tabState.Config//Case 30009: only disable the ObjectClassButtons in Config mode
-                //Case 29142: the server decides whether the button is visible. disabled: nodeProperty.isDisabled() || nodeProperty.isReadOnly()
+                disabled: nodeProperty.tabState.Config //disable in Config mode
             };
 
             nodeProperty.propDiv.nodeButton(buttonOpts);

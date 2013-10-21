@@ -52,6 +52,7 @@ namespace ChemSW.Nbt.Schema
                 {
                     CswNbtMetaDataNodeTypeProp HMISReportNTP = ControlZoneNT.getNodeTypePropByObjectClassProp( CswNbtObjClassControlZone.PropertyName.HMISReport );
                     HMISReportNTP.SetFK( "nodeid", HMISReportNodeId.PrimaryKey );
+                    HMISReportNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
                 }
             }
 
