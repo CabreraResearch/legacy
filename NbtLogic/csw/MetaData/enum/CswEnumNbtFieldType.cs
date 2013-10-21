@@ -8,45 +8,45 @@ namespace ChemSW.Nbt.MetaData
 
         private static Dictionary<string, string> _Enums = new Dictionary<string, string>( StringComparer.OrdinalIgnoreCase )
             {
-                {CswEnumNbtFieldType.Barcode, CswEnumNbtFieldType.Barcode}, //public const string Barcode = "Barcode";
-                {CswEnumNbtFieldType.Button, CswEnumNbtFieldType.Button}, //public const string Button = "Button";
-                {CswEnumNbtFieldType.CASNo, CswEnumNbtFieldType.CASNo}, //public const string CASNo = "CASNo";
+                {CswEnumNbtFieldType.Barcode, CswEnumNbtFieldType.Barcode},
+                {CswEnumNbtFieldType.Button, CswEnumNbtFieldType.Button},
+                {CswEnumNbtFieldType.CASNo, CswEnumNbtFieldType.CASNo},
                 {CswEnumNbtFieldType.ChildContents, CswEnumNbtFieldType.ChildContents},
-                {CswEnumNbtFieldType.Comments, CswEnumNbtFieldType.Comments}, //public const string Comments = "Comments";
-                {CswEnumNbtFieldType.Composite, CswEnumNbtFieldType.Composite}, //public const string Composite = "Composite";
-                {CswEnumNbtFieldType.DateTime, CswEnumNbtFieldType.DateTime}, //public const string DateTime = "DateTime";
-                {CswEnumNbtFieldType.External, CswEnumNbtFieldType.External}, //public const string External = "External";
-                {CswEnumNbtFieldType.File, CswEnumNbtFieldType.File}, //public const string File = "File";
+                {CswEnumNbtFieldType.Comments, CswEnumNbtFieldType.Comments},
+                {CswEnumNbtFieldType.Composite, CswEnumNbtFieldType.Composite},
+                {CswEnumNbtFieldType.DateTime, CswEnumNbtFieldType.DateTime},
+                {CswEnumNbtFieldType.External, CswEnumNbtFieldType.External},
+                {CswEnumNbtFieldType.File, CswEnumNbtFieldType.File},
                 {CswEnumNbtFieldType.Formula, CswEnumNbtFieldType.Formula},
-                {CswEnumNbtFieldType.Grid, CswEnumNbtFieldType.Grid}, //public const string Grid = "Grid";
-                {CswEnumNbtFieldType.Image, CswEnumNbtFieldType.Image}, //public const string Image = "Image";
-                {CswEnumNbtFieldType.ImageList, CswEnumNbtFieldType.ImageList}, //public const string ImageList = "ImageList";
-                {CswEnumNbtFieldType.Link, CswEnumNbtFieldType.Link}, //public const string Link = "Link";
-                {CswEnumNbtFieldType.List, CswEnumNbtFieldType.List}, //public const string List = "List";
-                {CswEnumNbtFieldType.Location, CswEnumNbtFieldType.Location}, //public const string Location = "Location";
-                {CswEnumNbtFieldType.Logical, CswEnumNbtFieldType.Logical}, //public const string Logical = "Logical";
-                {CswEnumNbtFieldType.LogicalSet, CswEnumNbtFieldType.LogicalSet}, //public const string LogicalSet = "LogicalSet";
-                {CswEnumNbtFieldType.Memo, CswEnumNbtFieldType.Memo}, //public const string Memo = "Memo";
-                {CswEnumNbtFieldType.MOL, CswEnumNbtFieldType.MOL}, //public const string MOL = "MOL";
-                {CswEnumNbtFieldType.MTBF, CswEnumNbtFieldType.MTBF}, //public const string MTBF = "MTBF";
-                {CswEnumNbtFieldType.MultiList, CswEnumNbtFieldType.MultiList}, //public const string MultiList = "MultiList";
-                {CswEnumNbtFieldType.NFPA, CswEnumNbtFieldType.NFPA}, //public const string NFPA = "NFPA";
-                {CswEnumNbtFieldType.NodeTypeSelect, CswEnumNbtFieldType.NodeTypeSelect}, //public const string NodeTypeSelect = "NodeTypeSelect";
-                {CswEnumNbtFieldType.Number, CswEnumNbtFieldType.Number}, //public const string Number = "Number";
-                {CswEnumNbtFieldType.Password, CswEnumNbtFieldType.Password}, //public const string Password = "Password";
-                {CswEnumNbtFieldType.PropertyReference, CswEnumNbtFieldType.PropertyReference}, //public const string PropertyReference = "PropertyReference";
-                {CswEnumNbtFieldType.Quantity, CswEnumNbtFieldType.Quantity}, //public const string Quantity = "Quantity";
-                {CswEnumNbtFieldType.Question, CswEnumNbtFieldType.Question}, //public const string Question = "Question";
-                {CswEnumNbtFieldType.Relationship, CswEnumNbtFieldType.Relationship}, //public const string Relationship = "Relationship";
-                {CswEnumNbtFieldType.Scientific, CswEnumNbtFieldType.Scientific}, //public const string Scientific = "Scientific";
-                {CswEnumNbtFieldType.Sequence, CswEnumNbtFieldType.Sequence}, //public const string Sequence = "Sequence";
-                {CswEnumNbtFieldType.Static, CswEnumNbtFieldType.Static}, //public const string Static = "Static";
-                {CswEnumNbtFieldType.Text, CswEnumNbtFieldType.Text}, //public const string Text = "Text";
-                {CswEnumNbtFieldType.TimeInterval, CswEnumNbtFieldType.TimeInterval}, //public const string TimeInterval = "TimeInterval";
-                {CswEnumNbtFieldType.UserSelect, CswEnumNbtFieldType.UserSelect}, //public const string UserSelect = "UserSelect";
-                {CswEnumNbtFieldType.ViewPickList, CswEnumNbtFieldType.ViewPickList}, //public const string ViewPickList = "ViewPickList";
-                {CswEnumNbtFieldType.ViewReference, CswEnumNbtFieldType.ViewReference} //public const string ViewReference = "ViewReference";
-
+                {CswEnumNbtFieldType.Grid, CswEnumNbtFieldType.Grid},
+                {CswEnumNbtFieldType.Image, CswEnumNbtFieldType.Image},
+                {CswEnumNbtFieldType.ImageList, CswEnumNbtFieldType.ImageList},
+                {CswEnumNbtFieldType.Link, CswEnumNbtFieldType.Link},
+                {CswEnumNbtFieldType.List, CswEnumNbtFieldType.List},
+                {CswEnumNbtFieldType.Location, CswEnumNbtFieldType.Location},
+                {CswEnumNbtFieldType.Logical, CswEnumNbtFieldType.Logical},
+                {CswEnumNbtFieldType.LogicalSet, CswEnumNbtFieldType.LogicalSet},
+                {CswEnumNbtFieldType.Memo, CswEnumNbtFieldType.Memo},
+                {CswEnumNbtFieldType.MOL, CswEnumNbtFieldType.MOL},
+                {CswEnumNbtFieldType.MTBF, CswEnumNbtFieldType.MTBF},
+                {CswEnumNbtFieldType.MultiList, CswEnumNbtFieldType.MultiList},
+                {CswEnumNbtFieldType.NFPA, CswEnumNbtFieldType.NFPA},
+                {CswEnumNbtFieldType.NodeTypeSelect, CswEnumNbtFieldType.NodeTypeSelect},
+                {CswEnumNbtFieldType.Number, CswEnumNbtFieldType.Number},
+                {CswEnumNbtFieldType.Password, CswEnumNbtFieldType.Password},
+                {CswEnumNbtFieldType.PropertyReference, CswEnumNbtFieldType.PropertyReference},
+                {CswEnumNbtFieldType.Quantity, CswEnumNbtFieldType.Quantity},
+                {CswEnumNbtFieldType.Question, CswEnumNbtFieldType.Question},
+                {CswEnumNbtFieldType.Relationship, CswEnumNbtFieldType.Relationship},
+                {CswEnumNbtFieldType.ReportLink, CswEnumNbtFieldType.ReportLink},
+                {CswEnumNbtFieldType.Scientific, CswEnumNbtFieldType.Scientific},
+                {CswEnumNbtFieldType.Sequence, CswEnumNbtFieldType.Sequence},
+                {CswEnumNbtFieldType.Static, CswEnumNbtFieldType.Static},
+                {CswEnumNbtFieldType.Text, CswEnumNbtFieldType.Text},
+                {CswEnumNbtFieldType.TimeInterval, CswEnumNbtFieldType.TimeInterval},
+                {CswEnumNbtFieldType.UserSelect, CswEnumNbtFieldType.UserSelect},
+                {CswEnumNbtFieldType.ViewPickList, CswEnumNbtFieldType.ViewPickList},
+                {CswEnumNbtFieldType.ViewReference, CswEnumNbtFieldType.ViewReference}
             };
 
         public readonly string Value;
@@ -111,6 +111,7 @@ namespace ChemSW.Nbt.MetaData
         public const string Quantity = "Quantity";
         public const string Question = "Question";
         public const string Relationship = "Relationship";
+        public const string ReportLink = "ReportLink";
         public const string Scientific = "Scientific";
         public const string Sequence = "Sequence";
         public const string Static = "Static";

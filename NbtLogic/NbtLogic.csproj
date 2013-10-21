@@ -127,6 +127,7 @@
     <Compile Include="csw\MetaData\enum\CswEnumNbtObjectClassPropAttributes.cs" />
     <Compile Include="csw\MetaData\enum\CswEnumNbtPropAction.cs" />
     <Compile Include="csw\MetaData\enum\CswEnumNbtPropertySelectMode.cs" />
+    <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleReportLink.cs" />
     <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleFormula.cs" />
     <Compile Include="csw\MetaData\Infr\ICswNbtMetaDataObject.cs" />
     <Compile Include="csw\MetaData\enum\CswEnumNbtPropertySet.cs" />
@@ -188,6 +189,7 @@
     <Compile Include="csw\PropertySets\CswNbtPropertySetDocument.cs" />
     <Compile Include="csw\PropertySets\CswNbtPropertySetMaterial.cs" />
     <Compile Include="csw\PropertySets\ICswNbtPermissionGroup.cs" />
+    <Compile Include="csw\PropTypes\CswNbtNodePropReportLink.cs" />
     <Compile Include="csw\PropTypes\CswEnumNbtDateDisplayMode.cs" />
     <Compile Include="csw\PropTypes\CswEnumNbtDataItemType.cs" />
     <Compile Include="csw\PropTypes\CswEnumNbtDataItemSource.cs" />
@@ -372,6 +374,8 @@
     <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateSchema_02G_Case30680.cs" />
     <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateMetaData_02G_Case30680.cs" />
     <Compile Include="csw\Schema\scripts\prod\02G\CswUpdateSchema_02G_Case30849.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02H\CswUpdateSchema_02H_Case30914B.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02H\CswUpdateMetaData_02H_Case30914.cs" />
     <Compile Include="csw\Schema\scripts\prod\02H\CswUpdateSchema_02H_Case30785.cs" />
     <Compile Include="csw\Schema\scripts\prod\02H\CswUpdateMetaData_02H_Case30723.cs" />
     <Compile Include="csw\Schema\scripts\prod\02H\CswUpdateMetaData_02H_Case30772.cs" />
