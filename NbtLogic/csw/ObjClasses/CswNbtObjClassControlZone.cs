@@ -11,6 +11,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string MAQOffset = "MAQ Offset %";
             public const string FireClassSetName = "Fire Class Set Name";
             public const string Locations = "Locations";
+            public const string HMISReport = "HMIS Report";
         }
 
         #region ctor
@@ -98,6 +99,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropNumber MAQOffset { get { return ( _CswNbtNode.Properties[PropertyName.MAQOffset] ); } }
         public CswNbtNodePropRelationship FireClassSetName { get { return ( _CswNbtNode.Properties[PropertyName.FireClassSetName] ); } }
         public CswNbtNodePropGrid Locations { get { return ( _CswNbtNode.Properties[PropertyName.Locations] ); } }
+        public CswNbtNodePropReportLink HMISReport { get { return ( _CswNbtNode.Properties[PropertyName.HMISReport] ); } }
 
         #endregion
 
