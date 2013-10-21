@@ -677,6 +677,58 @@ namespace ChemSW.Nbt.WebServices
 
         #endregion Get
 
+        #region Favorite
+
+        [DataContract]
+        public class FavoriteRequest
+        {
+            [DataMember]
+            public string NodeId = string.Empty;
+
+            [DataMember]
+            public string CopyType = string.Empty;
+        }
+
+        /// <summary>
+        /// Toggles the favorite status of the node for the current user
+        /// </summary>
+        /// <param name="_CswResources">Resources</param>
+        /// <param name="Response">Empty Repsonse Object</param>
+        /// <param name="NodeId">NodeId to Favorite</param>
+        public static void toggleFavorite( ICswResources _CswResources, CswWebSvcReturn Response, String NodeId )
+        {
+            CswNbtResources _CswNbtResources = (CswNbtResources) _CswResources;
+            CswPrimaryKey NodePK = CswConvert.ToPrimaryKey( NodeId );
+            toggleFavorite( _CswNbtResources, NodePK.PrimaryKey, _CswNbtResources.CurrentNbtUser.UserId.PrimaryKey );
+        }
+
+        /// <summary>
+        /// Toggles the favorite status of the node for the given user
+        /// </summary>
+        /// <param name="_CswResources">Resources</param>
+        /// <param name="NodeId">NodeId to Favorite</param>
+        /// <param name="UserId">UserId with which to associate Favorite</param>
+        public static void toggleFavorite( CswNbtResources _CswNbtResources, Int32 NodeId, Int32 UserId )
+        {
+            CswTableUpdate FavoritesUpdate = _CswNbtResources.makeCswTableUpdate( "favoritesUpdate", "favorites" );
+            DataTable FavoritesTable = FavoritesUpdate.getTable( "where itemid = " + NodeId + " and userid = " + UserId );
+            if( FavoritesTable.Rows.Count == 0 )//Add to Favorites
+            {
+                DataRow FavoritesRow = FavoritesTable.NewRow();
+                FavoritesRow["userid"] = UserId;
+                FavoritesRow["itemid"] = NodeId;
+                FavoritesTable.Rows.Add( FavoritesRow );
+                FavoritesUpdate.update( FavoritesTable );
+            }
+            else//Delete from Favorites
+            {
+                FavoritesTable.Rows[0].Delete();
+                FavoritesUpdate.update( FavoritesTable );
+            }
+        }
+
+        #endregion Favorite
+
     } // class CswNbtWebServiceNode
 
 } // namespace ChemSW.Nbt.WebServices
