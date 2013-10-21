@@ -302,6 +302,7 @@
                         Csw.unsubscribe('triggerSave', cswPrivate.onButtonClick);
                         if (Csw.isFunction(cswPrivate.onClickAction)) {
                             Csw.tryExec(cswPrivate.onClickAction);
+                            Csw.publish('onAnyNodeButtonClickFinish', true);
                         } else {
                             Csw.ajax.deprecatedWsNbt({
                                 urlMethod: 'onObjectClassButtonClick',

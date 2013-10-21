@@ -585,6 +585,7 @@ namespace ChemSW.Nbt.MetaData
                     Ft == CswEnumNbtFieldType.Grid ||
                     Ft == CswEnumNbtFieldType.PropertyReference ||
                     Ft == CswEnumNbtFieldType.Static ||
+                    Ft == CswEnumNbtFieldType.ReportLink ||
                     Ft == CswEnumNbtFieldType.ChildContents )
                 {
                     Ret = false;

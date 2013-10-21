@@ -525,10 +525,11 @@ namespace ChemSW.Nbt.ServiceDrivers
             PropObj["required"] = ReadOnly;
             PropObj["copyable"] = Prop.IsCopyable();
 
-            bool ShowPropertyName = false == ( FieldType == CswEnumNbtFieldType.Image ||
-                                               FieldType == CswEnumNbtFieldType.Button ||
-                                               ( FieldType == CswEnumNbtFieldType.Grid &&
-                                                 PropWrapper.AsGrid.GridMode == CswEnumNbtGridPropMode.Full ) );
+            bool ShowPropertyName = ( false == ( FieldType == CswEnumNbtFieldType.Image ||
+                                                 FieldType == CswEnumNbtFieldType.Button ||
+                                                 FieldType == CswEnumNbtFieldType.ReportLink ||
+                                                 ( FieldType == CswEnumNbtFieldType.Grid &&
+                                                   PropWrapper.AsGrid.GridMode == CswEnumNbtGridPropMode.Full ) ) );
 
             PropObj["showpropertyname"] = ShowPropertyName;
 

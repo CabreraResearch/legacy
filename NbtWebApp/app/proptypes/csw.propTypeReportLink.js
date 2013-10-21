@@ -23,9 +23,9 @@
                 propId: nodeProperty.propid,
                 tabId: nodeProperty.tabState.tabid,
                 identityTabId: nodeProperty.identityTabId,
-                nodeId: nodeProperty.tabState.nodeId,
+                nodeId: nodeProperty.tabState.nodeid,
                 onClickAction: function() {
-                    Csw.main.handleReport(reportid);
+                    Csw.main.handleReport(reportid, nodeProperty.tabState.nodeid);
                 },
                 tabsAndProps: tabsAndProps,
                 onRefresh: nodeProperty.onRefresh,
