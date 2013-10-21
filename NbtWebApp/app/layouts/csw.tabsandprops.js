@@ -386,6 +386,7 @@
                     success: function (data) {
 
                         cswPrivate.tabState.nodetypeid = Csw.number(data.node.nodetypeid, 0);
+                        cswPrivate.tabState.isFavorite = Csw.bool(data.node.isFavorite);
 
                         if (Object.keys(data).length <= 0 || Object.keys(data.tabs).length <= 0) {
                             Csw.error.throwException('Cannot create a property layout without at least one tab.', 'csw.tabsandprops.js');
@@ -878,9 +879,49 @@
                             cswPrivate.getTabs();
                         }
                     };
+                    
+                    cswPrivate.tabState.addFavoriteIcon = formTable.cell(1, 2).icon({
+                        name: cswPrivate.name + 'addFavoriteBtn',
+                        iconType: Csw.enums.iconType.star,
+                        hovertext: 'Add To Favorites',
+                        size: 16,
+                        isButton: true,
+                        onClick: function () {
+                            Csw.ajaxWcf.post({
+                                urlMethod: 'Nodes/toggleFavorite',
+                                data: cswPrivate.tabState.nodeid,
+                                success: function(response) {
+                                    cswPrivate.tabState.addFavoriteIcon.hide();
+                                    cswPrivate.tabState.removeFavoriteIcon.show();
+                                }
+                            });
+                        }
+                    });
+                    cswPrivate.tabState.removeFavoriteIcon = formTable.cell(1, 2).icon({
+                        name: cswPrivate.name + 'removeFavoriteBtn',
+                        iconType: Csw.enums.iconType.starsolid,
+                        hovertext: 'Remove from Favorites',
+                        size: 16,
+                        isButton: true,
+                        onClick: function () {
+                            Csw.ajaxWcf.post({
+                                urlMethod: 'Nodes/toggleFavorite',
+                                data: cswPrivate.tabState.nodeid,
+                                success: function (response) {
+                                    cswPrivate.tabState.removeFavoriteIcon.hide();
+                                    cswPrivate.tabState.addFavoriteIcon.show();
+                                }
+                            });
+                        }
+                    });
+                    if (cswPrivate.tabState.isFavorite) {
+                        cswPrivate.tabState.addFavoriteIcon.hide();
+                    } else {
+                        cswPrivate.tabState.removeFavoriteIcon.hide();
+                    }
 
                     /* Show the 'fake' config button to open the dialog */
-                    cswPrivate.tabState.configIcn = formTable.cell(1, 2).icon({
+                    cswPrivate.tabState.configIcn = formTable.cell(1, 3).icon({
                         name: cswPrivate.name + 'configbtn',
                         iconType: Csw.enums.iconType.wrench,
                         hovertext: 'Configure',

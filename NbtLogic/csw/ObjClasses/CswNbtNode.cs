@@ -1,6 +1,8 @@
 using System;
+using System.Data;
 using System.Runtime.Serialization;
 using ChemSW.Core;
+using ChemSW.DB;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
@@ -56,8 +58,6 @@ namespace ChemSW.Nbt.ObjClasses
                 get { return CswNbtNode.getNodeLink( NodeId, NodeName ); }
                 set { string val = value; } //this is dumb, but WCF will break without a setter
             }
-
-
         }
 
         public delegate void OnSetNodeIdHandler( CswNbtNode Node, CswPrimaryKey OldNodeId, CswPrimaryKey NewNodeId );
@@ -583,6 +583,27 @@ namespace ChemSW.Nbt.ObjClasses
                 } // if( ViewRelationship.PropOwner == PropOwnerType.Second )
             } // foreach( CswNbtViewRelationship ViewRelationship in View.Root.GetAllChildrenOfType( NbtViewNodeType.CswNbtViewRelationship ) )
         } // RelateToNode()
+
+        /// <summary>
+        /// Determines if the Node is marked as Favorite for the current user
+        /// </summary>
+        /// <returns>true if the node is marked as favorite</returns>
+        public bool isFavorite()
+        {
+            CswPrimaryKey UserId = _CswNbtResources.CurrentNbtUser.UserId;
+            return isFavorite( UserId.PrimaryKey );
+        }
+
+        /// <summary>
+        /// Determines if the Node is marked as Favorite for the given user
+        /// </summary>
+        /// <returns>true if the node is marked as favorite</returns>
+        public bool isFavorite( Int32 UserId )
+        {
+            CswTableSelect FavoriteSelect = _CswNbtResources.makeCswTableSelect( "favoriteSelect", "favorites" );
+            DataTable FavoriteTable = FavoriteSelect.getTable( "where itemid = " + NodeId.PrimaryKey + " and userid = " + UserId );
+            return FavoriteTable.Rows.Count > 0;
+        }
 
         #endregion Methods
 
