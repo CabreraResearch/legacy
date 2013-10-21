@@ -615,8 +615,7 @@ namespace ChemSW.Nbt.MetaData
                     Tab = _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeTab( EditLayout.TabId );
                 }
             }
-            if( LayoutType == CswEnumNbtLayoutType.Preview ||
-                _CswNbtMetaDataResources.CswNbtResources.EditMode == CswEnumNbtNodeEditMode.PrintReport ||
+            if( _CswNbtMetaDataResources.CswNbtResources.EditMode == CswEnumNbtNodeEditMode.PrintReport ||
                 _CswNbtMetaDataResources.CswNbtResources.EditMode == CswEnumNbtNodeEditMode.AuditHistoryInPopup )
             {
                 ret = ret && ( getFieldType().FieldType != CswEnumNbtFieldType.Button );
