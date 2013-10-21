@@ -303,6 +303,7 @@ namespace ChemSW.Nbt.Schema
                 PictogramsNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, DSDTab.TabId );
 
                 CswNbtMetaDataNodeTypeProp LabelCodesNTP = ChemicalNT.getNodeTypePropByObjectClassProp( CswNbtObjClassChemical.PropertyName.LabelCodes );
+                LabelCodesNTP.Extended = ",";
                 LabelCodesNTP.removeFromAllLayouts();
                 LabelCodesNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, DSDTab.TabId );
 
