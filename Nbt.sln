@@ -51,6 +51,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogServiceGuiTest", "..\..\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CswLogService", "..\..\Common\CswCommon\CswLogService\CswLogService.csproj", "{799B613A-C722-43C2-8D3F-61CE81384C74}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NbtWebApp.Test", "TestApps\NbtWebApp.Test\NbtWebApp.Test.csproj", "{C4B8CED6-16BA-4354-8D50-FA50F2EC88C2}"
+EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = Nbt.vsmdi
@@ -127,6 +129,9 @@ Global
 		{799B613A-C722-43C2-8D3F-61CE81384C74}.Debug|x64.Build.0 = Debug|x64
 		{799B613A-C722-43C2-8D3F-61CE81384C74}.Release|x64.ActiveCfg = Release|x64
 		{799B613A-C722-43C2-8D3F-61CE81384C74}.Release|x64.Build.0 = Release|x64
+		{C4B8CED6-16BA-4354-8D50-FA50F2EC88C2}.Debug|x64.ActiveCfg = Debug|x64
+		{C4B8CED6-16BA-4354-8D50-FA50F2EC88C2}.Debug|x64.Build.0 = Debug|x64
+		{C4B8CED6-16BA-4354-8D50-FA50F2EC88C2}.Release|x64.ActiveCfg = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -139,5 +144,6 @@ Global
 		{B9AA98D2-572B-4C3B-98D2-A0D0A524E961} = {B0BE6B91-45A3-4EF1-BE1F-1B8D2BA04EC0}
 		{A05B9ACC-2992-4F9D-9E99-5734E96610F5} = {B0BE6B91-45A3-4EF1-BE1F-1B8D2BA04EC0}
 		{73F2E35A-7D81-4909-A3A8-5AB3AB8D718A} = {B0BE6B91-45A3-4EF1-BE1F-1B8D2BA04EC0}
+		{C4B8CED6-16BA-4354-8D50-FA50F2EC88C2} = {B0BE6B91-45A3-4EF1-BE1F-1B8D2BA04EC0}
 	EndGlobalSection
 EndGlobal
