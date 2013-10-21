@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using ChemSW.Config;
@@ -13,9 +14,9 @@ using ChemSW.Nbt.Schema;
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassLocation: CswNbtObjClass
+    public class CswNbtObjClassLocation : CswNbtObjClass
     {
-        public new sealed class PropertyName: CswNbtObjClass.PropertyName
+        public new sealed class PropertyName : CswNbtObjClass.PropertyName
         {
             public const string ChildLocationType = "Child Location Type";
             public const string LocationTemplate = "Location Template";
@@ -136,10 +137,10 @@ namespace ChemSW.Nbt.ObjClasses
             // Hide the Child Location Type and Location Template controls
             if( _CswNbtResources.ConfigVbls.getConfigVariableValue( "loc_use_images" ) == "0" )
             {
-                this.ChildLocationType.setHidden( value : true, SaveToDb : false );
-                this.Rows.setHidden( value : true, SaveToDb : false );
-                this.Columns.setHidden( value : true, SaveToDb : false );
-                this.LocationTemplate.setHidden( value : true, SaveToDb : false );
+                this.ChildLocationType.setHidden( value: true, SaveToDb: false );
+                this.Rows.setHidden( value: true, SaveToDb: false );
+                this.Columns.setHidden( value: true, SaveToDb: false );
+                this.LocationTemplate.setHidden( value: true, SaveToDb: false );
             }
             Location.SetOnPropChange( OnLocationPropChange );
             _CswNbtObjClassDefault.triggerAfterPopulateProps();
@@ -195,17 +196,17 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Custom Logic
 
-        public static void makeLocationsTreeView( ref CswNbtView LocationsView, CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn, Int32 loc_max_depth = Int32.MinValue, CswPrimaryKey NodeIdToFilterOut = null, bool RequireAllowInventory = false, Collection<CswPrimaryKey> InventoryGroupIds = null )
+        public static void makeLocationsTreeView( ref CswNbtView LocationsView, CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn, Int32 loc_max_depth = Int32.MinValue, CswPrimaryKey NodeIdToFilterOut = null, bool RequireAllowInventory = false, IEnumerable<CswPrimaryKey> InventoryGroupIds = null )
         {
             _makeLocationsTreeView( ref LocationsView, CswNbtSchemaModTrnsctn.MetaData, CswNbtSchemaModTrnsctn.ConfigVbls, loc_max_depth, NodeIdToFilterOut, RequireAllowInventory, InventoryGroupIds );
         }
 
-        public static void makeLocationsTreeView( ref CswNbtView LocationsView, CswNbtResources CswNbtResources, Int32 loc_max_depth = Int32.MinValue, CswPrimaryKey NodeIdToFilterOut = null, bool RequireAllowInventory = false, Collection<CswPrimaryKey> InventoryGroupIds = null )
+        public static void makeLocationsTreeView( ref CswNbtView LocationsView, CswNbtResources CswNbtResources, Int32 loc_max_depth = Int32.MinValue, CswPrimaryKey NodeIdToFilterOut = null, bool RequireAllowInventory = false, IEnumerable<CswPrimaryKey> InventoryGroupIds = null )
         {
             _makeLocationsTreeView( ref LocationsView, CswNbtResources.MetaData, CswNbtResources.ConfigVbls, loc_max_depth, NodeIdToFilterOut, RequireAllowInventory, InventoryGroupIds );
         }
 
-        private static void _makeLocationsTreeView( ref CswNbtView LocationsView, CswNbtMetaData MetaData, CswConfigurationVariables ConfigVbls, Int32 loc_max_depth, CswPrimaryKey NodeIdToFilterOut, bool RequireAllowInventory, Collection<CswPrimaryKey> InventoryGroupIds )
+        private static void _makeLocationsTreeView( ref CswNbtView LocationsView, CswNbtMetaData MetaData, CswConfigurationVariables ConfigVbls, Int32 loc_max_depth, CswPrimaryKey NodeIdToFilterOut, bool RequireAllowInventory, IEnumerable<CswPrimaryKey> InventoryGroupIds )
         {
             if( null != LocationsView )
             {
@@ -234,9 +235,9 @@ namespace ChemSW.Nbt.ObjClasses
                         // Top level: Only Locations with null parent locations at the root
                         LocReln = LocationsView.AddViewRelationship( LocationOC, true );
                         LocationsView.AddViewPropertyAndFilter( LocReln, LocationLocationOCP,
-                                                                Conjunction : CswEnumNbtFilterConjunction.And,
-                                                                SubFieldName : CswEnumNbtSubFieldName.NodeID,
-                                                                FilterMode : CswEnumNbtFilterMode.Null );
+                                                                Conjunction: CswEnumNbtFilterConjunction.And,
+                                                                SubFieldName: CswEnumNbtSubFieldName.NodeID,
+                                                                FilterMode: CswEnumNbtFilterMode.Null );
                     }
                     else
                     {
@@ -259,11 +260,11 @@ namespace ChemSW.Nbt.ObjClasses
                         }
 
                         LocationsView.AddViewPropertyFilter( InGroupVp,
-                                                                Conjunction : CswEnumNbtFilterConjunction.And,
-                                                                ResultMode : CswEnumNbtFilterResultMode.Disabled,
-                                                                FilterMode : CswEnumNbtFilterMode.In,
-                                                                SubFieldName : CswEnumNbtSubFieldName.NodeID,
-                                                                Value : Pks.ToString() );
+                                                                Conjunction: CswEnumNbtFilterConjunction.And,
+                                                                ResultMode: CswEnumNbtFilterResultMode.Disabled,
+                                                                FilterMode: CswEnumNbtFilterMode.In,
+                                                                SubFieldName: CswEnumNbtSubFieldName.NodeID,
+                                                                Value: Pks.ToString() );
                     }
 
                     CswNbtViewProperty OrderVPn = LocationsView.AddViewProperty( LocReln, LocationOrderOCP );
@@ -272,10 +273,10 @@ namespace ChemSW.Nbt.ObjClasses
                     if( RequireAllowInventory )
                     {
                         LocationsView.AddViewPropertyAndFilter( LocReln, LocationAllowInventoryOCP,
-                                                                Conjunction : CswEnumNbtFilterConjunction.And,
-                                                                ResultMode : CswEnumNbtFilterResultMode.Disabled,
-                                                                FilterMode : CswEnumNbtFilterMode.Equals,
-                                                                Value : CswEnumTristate.True.ToString() );
+                                                                Conjunction: CswEnumNbtFilterConjunction.And,
+                                                                ResultMode: CswEnumNbtFilterResultMode.Disabled,
+                                                                FilterMode: CswEnumNbtFilterMode.Equals,
+                                                                Value: CswEnumTristate.True.ToString() );
                     }
                 } // for( Int32 i = 1; i <= loc_max_depth; i++ )
             } // if( null != LocationsView )
