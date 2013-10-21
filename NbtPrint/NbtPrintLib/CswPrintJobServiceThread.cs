@@ -33,7 +33,8 @@ namespace NbtPrintLib
                 ReaderQuotas = new XmlDictionaryReaderQuotas()
                     {
                         MaxStringContentLength = 20971520
-                    }
+                    },
+                MaxReceivedMessageSize = 4294967296
             };
 
             //ret.Endpoint.Behaviors.Add( cookieBehavior );
