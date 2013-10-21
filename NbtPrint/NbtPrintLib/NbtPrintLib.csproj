@@ -127,13 +127,13 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Common\CswCore\CswCore.csproj">
-      <Project>{9498738D-42C2-4BBF-875B-846918A8821B}</Project>
-      <Name>CswCore</Name>
-    </ProjectReference>
+    <None Include="Service References\NbtPublic\NbtPublic.disco" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Service References\NbtPublic\NbtPublic.disco" />
+    <ProjectReference Include="..\..\..\..\Common\CswCommon\CswCore\CswCore.csproj">
+      <Project>{9498738d-42c2-4bbf-875b-846918a8821b}</Project>
+      <Name>CswCore</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
