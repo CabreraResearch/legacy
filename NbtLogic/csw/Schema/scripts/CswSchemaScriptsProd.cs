@@ -17,7 +17,7 @@ namespace ChemSW.Nbt.Schema
             _CswNbtResources = CswNbtResources;
 
             // This is where you manually set to the last version of the previous release (the one currently in production)
-            _MinimumVersion = new CswSchemaVersion( 2, 'F', 35 );
+            _MinimumVersion = new CswSchemaVersion( 2, 'F', 37 );
 
             #region Populate Scripts
 

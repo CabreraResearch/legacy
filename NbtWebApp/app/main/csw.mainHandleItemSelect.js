@@ -87,7 +87,7 @@
 
                             if (Csw.isNullOrEmpty(o.mode)) {
                                 Csw.ajax.deprecatedWsNbt({
-                                    url: Csw.enums.ajaxUrlPrefix + 'getViewMode',
+                                    url: 'getViewMode',
                                     data: { ViewId: o.viewid },
                                     success: function (data) {
                                         o.mode = Csw.string(data.viewmode, 'tree');

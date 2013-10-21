@@ -9,7 +9,7 @@ using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassGenerator : CswNbtObjClass, ICswNbtPropertySetScheduler
+    public class CswNbtObjClassGenerator: CswNbtObjClass, ICswNbtPropertySetScheduler
     {
         #region Properties and ctor
 
@@ -98,10 +98,9 @@ namespace ChemSW.Nbt.ObjClasses
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation, bool Creating )
         {
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation, Creating );
-            _setDefaultValues();
 
             //Case 24572
-            updateNextDueDate( ForceUpdate: false, DeleteFutureNodes: ( TargetType.wasAnySubFieldModified() || ParentType.wasAnySubFieldModified() ) );
+            updateNextDueDate( ForceUpdate : false, DeleteFutureNodes : ( TargetType.wasAnySubFieldModified() || ParentType.wasAnySubFieldModified() ) );
 
             // case 28352
             Int32 max = DueDateInterval.getMaximumWarningDays();
@@ -141,6 +140,7 @@ namespace ChemSW.Nbt.ObjClasses
             Owner.SetOnPropChange( onOwnerPropChange );
             TargetType.SetOnPropChange( onTargetTypePropChange );
             ParentType.SetOnPropChange( onParentTypePropChange );
+            Enabled.SetOnPropChange( onEnabledChange );
 
             _CswNbtObjClassDefault.triggerAfterPopulateProps();
         }//afterPopulateProps()
@@ -197,20 +197,20 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtViewRelationship TargetRel = View.AddViewRelationship( TargetNT, false );
             View.AddViewPropertyAndFilter( TargetRel,
                                            GeneratorNTP,
-                                           Conjunction: CswEnumNbtFilterConjunction.And,
-                                           ResultMode: CswEnumNbtFilterResultMode.Hide,
-                                           Value: this.NodeId.PrimaryKey.ToString(),
-                                           SubFieldName: ( (CswNbtFieldTypeRuleRelationship) GeneratorNTP.getFieldTypeRule() ).NodeIDSubField.Name,
-                                           FilterMode: CswEnumNbtFilterMode.Equals );
+                                           Conjunction : CswEnumNbtFilterConjunction.And,
+                                           ResultMode : CswEnumNbtFilterResultMode.Hide,
+                                           Value : this.NodeId.PrimaryKey.ToString(),
+                                           SubFieldName : ( (CswNbtFieldTypeRuleRelationship) GeneratorNTP.getFieldTypeRule() ).NodeIDSubField.Name,
+                                           FilterMode : CswEnumNbtFilterMode.Equals );
 
             if( DateTime.MinValue != TargetDay )
             {
                 View.AddViewPropertyAndFilter( TargetRel,
                                                CreatedDateNTP,
-                                               Conjunction: CswEnumNbtFilterConjunction.And,
-                                               ResultMode: CswEnumNbtFilterResultMode.Hide,
-                                               Value: TargetDay.Date.ToString(),
-                                               FilterMode: CswEnumNbtFilterMode.Equals );
+                                               Conjunction : CswEnumNbtFilterConjunction.And,
+                                               ResultMode : CswEnumNbtFilterResultMode.Hide,
+                                               Value : TargetDay.Date.ToString(),
+                                               FilterMode : CswEnumNbtFilterMode.Equals );
             }
             return View;
         }
@@ -219,9 +219,9 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Private Helper Functions
 
-        private void _setDefaultValues()
+        private void _toggleEnabled()
         {
-            if( TargetType.Empty )
+            if( TargetType.Empty && CswEnumNbtNodeEditMode.Add != _CswNbtResources.EditMode.Value )
             {
                 Enabled.Checked = CswEnumTristate.False;
             }
@@ -390,7 +390,6 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 CswCommaDelimitedString InvalidNodeTypes = new CswCommaDelimitedString();
                 foreach( Int32 InspectionDesignNodeTypeId in TargetType.SelectedNodeTypeIds.ToIntCollection() )
-
                 {
                     CswNbtMetaDataNodeType InspectionDesignNt = _CswNbtResources.MetaData.getNodeType( InspectionDesignNodeTypeId );
                     if( null != InspectionDesignNt )
@@ -407,7 +406,7 @@ namespace ChemSW.Nbt.ObjClasses
                 if( InvalidNodeTypes.Count > 0 && false == Owner.wasAnySubFieldModified() )
                 {
                     throw new CswDniException( CswEnumErrorType.Warning,
-                        "Unable to add the following " + TargetType.PropName + " options because they do not belong to " + Owner.CachedNodeName + 
+                        "Unable to add the following " + TargetType.PropName + " options because they do not belong to " + Owner.CachedNodeName +
                         ": <br/>" + InvalidNodeTypes.ToString().Replace( ",", "<br/>" ),
                         "Invalid Target Type options selected: " + InvalidNodeTypes );
                 }
@@ -463,6 +462,7 @@ namespace ChemSW.Nbt.ObjClasses
         private void onTargetTypePropChange( CswNbtNodeProp NodeProp, bool Creating )
         {
             _removeTargetsNotMatchingSelectedParent();
+            _toggleEnabled();
         }
         public CswNbtNodePropMemo Description { get { return ( _CswNbtNode.Properties[PropertyName.Description] ); } }
         /// <summary>
@@ -487,15 +487,20 @@ namespace ChemSW.Nbt.ObjClasses
         {
             if( DueDateInterval.RateInterval.RateType == CswEnumRateIntervalType.Hourly )
             {
-                RunTime.setHidden( value: true, SaveToDb: true );
+                RunTime.setHidden( value : true, SaveToDb : true );
             }
             else
             {
-                RunTime.setHidden( value: false, SaveToDb: true );
+                RunTime.setHidden( value : false, SaveToDb : true );
             }
         }
         public CswNbtNodePropDateTime RunTime { get { return ( _CswNbtNode.Properties[PropertyName.RunTime] ); } }
         public CswNbtNodePropLogical Enabled { get { return ( _CswNbtNode.Properties[PropertyName.Enabled] ); } }
+        private void onEnabledChange( CswNbtNodeProp Prop, bool Creating )
+        {
+            _toggleEnabled();
+        }
+
         /// <summary>
         /// Node type of parent. In SI parent is node type of Inspection Target. In IMCS, parent type is not used.
         /// </summary>
@@ -504,7 +509,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             if( ParentType.wasAnySubFieldModified() )
             {
-                
+
             }
         }
         /// <summary>

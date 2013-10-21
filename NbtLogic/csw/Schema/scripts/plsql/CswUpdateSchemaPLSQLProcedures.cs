@@ -164,7 +164,7 @@ end;" );
         end loop;
 
         if(pcount>0) then
-        var_line := ' from nodes n where n.nodetypeid=' || to_char(ntid);
+        var_line := ' from nodes n where n.istemp = 0 and n.hidden = 0 and n.nodetypeid=' || to_char(ntid);
         --dbms_output.put_line(var_line);
         var_sql := var_sql || var_line;
         execute immediate (var_sql);
@@ -200,6 +200,9 @@ end;" );
         
         --protect against reserved words for viewname
         select oraviewname into viewname from nodetypes where nodetypeid=ntid;
+        if viewname is null then 
+           return;
+        end if;
         begin
           execute immediate 'select 1 as ' || viewname || ' from dual' ;
         exception
@@ -269,7 +272,7 @@ end;" );
             
         end loop;
 
-          var_line := ' from nodes n where n.nodetypeid=' || to_char(ntid);
+          var_line := ' from nodes n where n.istemp = 0 and n.hidden = 0 and n.nodetypeid=' || to_char(ntid);
           var_sql := var_sql || var_line;
          -- dbms_output.put_line(var_sql);
           execute immediate (var_sql);
@@ -318,7 +321,7 @@ end;" );
     end loop;
 
     if(pcount>0) then
-    aline:= ' from nodes n join nodetypes nt on nt.nodetypeid=n.nodetypeid and nt.objectclassid=' || to_char(objid);
+    aline:= ' from nodes n join nodetypes nt on nt.nodetypeid=n.nodetypeid and nt.objectclassid=' || to_char(objid) || ' where n.istemp = 0 and n.hidden = 0';
     --dbms_output.put_line(aline);
     var_sql:=var_sql || aline;
     --dbms_output.put_line(var_sql);
@@ -433,24 +436,21 @@ end createOCview;" );
             @"CREATE OR REPLACE procedure update_nodecounts is begin
 
 update nodetypes nt
-   set nt.nodecount = (with nodetype_counts as (select count(distinct
-                                                                 nodeid) nt_count,
-                                                                 firstversionid nt_id
-                                                      from (select n.nodeid,
-                                                                   t.firstversionid,
-                                                                   n.istemp
-                                                              from nodes n
-                                                              left outer join nodetypes t on n.nodetypeid =
-                                                                                             t.nodetypeid
-                                                            UNION
-                                                            select n.nodeid,
-                                                                   ta.firstversionid,
-                                                                   n.istemp
-                                                              from nodes_audit n
-                                                              left outer join nodetypes_audit ta on n.nodetypeid =
-                                                                                                    ta.nodetypeid)
-                                                     where istemp = 0
-                                                     group by firstversionid)
+   set nt.nodecount = (with nodetype_counts as (select count(distinct nodeid) nt_count,
+                                                       firstversionid nt_id
+                                                  from (select n.nodeid,
+                                                               t.firstversionid,
+                                                               n.istemp
+                                                          from nodes n
+                                                          left outer join nodetypes t on n.nodetypeid = t.nodetypeid
+                                                        UNION
+                                                        select n.nodeid,
+                                                               ta.firstversionid,
+                                                               n.istemp
+                                                          from nodes_audit n
+                                                          left outer join nodetypes_audit ta on n.nodetypeid = ta.nodetypeid)
+                                                 where istemp = 0 and hidden = 0
+                                                 group by firstversionid)
                         select c.nt_count
                           from nodetype_counts c
                          where c.nt_id = nt.nodetypeid);
@@ -458,29 +458,24 @@ update nodetypes nt
 
 
 update object_class oc
-   set oc.nodecount = (with object_class_counts as (select count(distinct
-                                                                 nodeid) oc_count,
-                                                                 objectclassid oc_id
+   set oc.nodecount = (with object_class_counts as (select count(distinct nodeid) oc_count,
+                                                           objectclassid oc_id
                                                       from (select n.nodeid,
                                                                    t.firstversionid,
                                                                    o.objectclassid,
                                                                    n.istemp
                                                               from nodes n
-                                                              left outer join nodetypes t on n.nodetypeid =
-                                                                                             t.nodetypeid
-                                                              left outer join object_class o on t.objectclassid =
-                                                                                                o.objectclassid
+                                                              left outer join nodetypes t on n.nodetypeid = t.nodetypeid
+                                                              left outer join object_class o on t.objectclassid = o.objectclassid
                                                             UNION
                                                             select n.nodeid,
                                                                    ta.firstversionid,
                                                                    o.objectclassid,
                                                                    n.istemp
                                                               from nodes_audit n
-                                                              left outer join nodetypes_audit ta on n.nodetypeid =
-                                                                                                    ta.nodetypeid
-                                                              left outer join object_class o on ta.objectclassid =
-                                                                                                o.objectclassid)
-                                                     where istemp = 0
+                                                              left outer join nodetypes_audit ta on n.nodetypeid = ta.nodetypeid
+                                                              left outer join object_class o on ta.objectclassid = o.objectclassid)
+                                                     where istemp = 0 and hidden = 0 
                                                      group by objectclassid)
                         select c.oc_count
                           from object_class_counts c
