@@ -1,1 +1,0 @@
-insert into nbtimportqueue@CAFLINK ( nbtimportqueueid, state, itempk, tablename, priority, errorlog, viewname )  select seq_nbtimportqueueid.nextval@CAFLINK, 'I', userid, 'users',0, '', 'Users_View' from Users_View@CAFLINK where deleted='0'  and  issystemuser != '1' 

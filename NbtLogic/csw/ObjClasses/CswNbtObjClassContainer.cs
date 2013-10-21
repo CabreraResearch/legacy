@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using ChemSW.Config;
@@ -203,19 +204,23 @@ namespace ChemSW.Nbt.ObjClasses
 
             _toggleAllPropertyStates();
 
-            if( _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Add || _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Temp )
+            if( ( _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Add || _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Temp || IsTemp ) &&
+                false == _CswNbtResources.Permit.can( CswEnumNbtActionName.Receiving ) )
             {
-                if( false == _CswNbtResources.Permit.can( CswEnumNbtActionName.Receiving ) )
-                {
-                    throw new CswDniException( CswEnumErrorType.Warning, "You do not have Action permission to Receive containers.", "You do not have Action permission to Receive containers." );
-                }
-                Collection<CswPrimaryKey> InventoryGroupIds = _CswNbtResources.CurrentNbtUser.getUserPermissions();
-                if( InventoryGroupIds.Count == 0 )
-                {
-                    throw new CswDniException( CswEnumErrorType.Warning, "You do not have Inventory Group permission to Receive containers.", "You do not have Inventory Group permission to Receive containers." );
-                }
-                Location.View = CswNbtNodePropLocation.LocationPropertyView( _CswNbtResources, Location.NodeTypeProp, Location.SelectedNodeId, InventoryGroupIds );
+                throw new CswDniException( CswEnumErrorType.Warning, "You do not have the necessary Action permission to Receive containers.", "You do not have the necessary Action permission to Receive containers." );
             }
+
+            // Find inventory groups for which the user has 'Edit' permission
+            Dictionary<CswPrimaryKey, CswPrimaryKey> UserPermissions = _CswNbtResources.CurrentNbtUser.getUserPermissions( CswEnumNbtObjectClass.InventoryGroupPermissionClass, true );
+            if( ( _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Add || _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Temp || IsTemp ) &&
+                UserPermissions.Keys.Count == 0 )
+            {
+                throw new CswDniException( CswEnumErrorType.Warning, "You do not have the necessary Inventory Group permissions to Receive containers.", "You do not have the necessary Inventory Group permissions to Receive containers." );
+            }
+            Location.SetOnBeforeRender( delegate( CswNbtNodeProp Prop )
+                {
+                    Location.View = CswNbtNodePropLocation.LocationPropertyView( _CswNbtResources, Location.NodeTypeProp, null, UserPermissions.Keys ); //Location.SelectedNodeId, UserPermissions.Keys );
+                } );
 
             _CswNbtObjClassDefault.triggerAfterPopulateProps();
         }//afterPopulateProps()
