@@ -33,6 +33,22 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
+            #region Create DSD NodeType
+
+            CswNbtMetaDataNodeType DSD_NT = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( CswEnumNbtObjectClass.DSDPhraseClass, "DSD Phrase", "System" );
+            DSD_NT.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( CswNbtPropertySetPhrase.PropertyName.Code ) );
+            foreach( CswNbtMetaDataNodeTypeProp NTP in DSD_NT.getNodeTypeProps() )
+            {
+                if( CswNbtPropertySetPhrase.PropertyName.English != NTP.PropName &&
+                    CswNbtPropertySetPhrase.PropertyName.Code != NTP.PropName &&
+                    CswNbtObjClassDSDPhrase.PropertyName.Category != NTP.PropName )
+                {
+                    NTP.removeFromAllLayouts();
+                }
+            }
+
+            #endregion
+
             #region Create SD Phrases
 
             #region Risk Phrases
