@@ -1,4 +1,5 @@
-﻿using ChemSW.Core;
+﻿using System;
+using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Search;
@@ -33,28 +34,47 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
-            CswPrimaryKey HMISReportNodeId = null;
+            CswPrimaryKey HMISTotalsReportId = null;
+            CswPrimaryKey HMISMaterialsReportId = null;
+
             CswNbtMetaDataObjectClass ReportOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.ReportClass );
+
             CswNbtSearch FindReport = _CswNbtSchemaModTrnsctn.CswNbtSearch;
             FindReport.addFilter( ReportOC, false );
-            FindReport.SearchTerm = "HMIS Totals";
+            FindReport.SearchType = CswEnumSqlLikeMode.Begins;
+            FindReport.SearchTerm = "HMIS";
             ICswNbtTree SearchResults = FindReport.Results();
-            if( SearchResults.getChildNodeCount() > 0 )
+            for( Int32 r = 0; r < SearchResults.getChildNodeCount(); r++ )
             {
-                SearchResults.goToNthChild( 0 );
-                HMISReportNodeId = SearchResults.getNodeIdForCurrentPosition();
-            }
-
-            if( CswTools.IsPrimaryKey( HMISReportNodeId ) )
-            {
-                CswNbtMetaDataObjectClass ControlZoneOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.ControlZoneClass );
-                foreach( CswNbtMetaDataNodeType ControlZoneNT in ControlZoneOC.getNodeTypes() )
+                SearchResults.goToNthChild( r );
+                string ReportName = SearchResults.getNodeNameForCurrentPosition();
+                if( ReportName == "HMIS Totals" )
                 {
-                    CswNbtMetaDataNodeTypeProp HMISReportNTP = ControlZoneNT.getNodeTypePropByObjectClassProp( CswNbtObjClassControlZone.PropertyName.HMISReport );
-                    HMISReportNTP.SetFK( "nodeid", HMISReportNodeId.PrimaryKey );
-                    HMISReportNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
+                    HMISTotalsReportId = SearchResults.getNodeIdForCurrentPosition();
                 }
-            }
+                if( ReportName == "HMIS Materials" )
+                {
+                    HMISMaterialsReportId = SearchResults.getNodeIdForCurrentPosition();
+                }
+                SearchResults.goToParentNode();
+            } // for( Int32 r = 0; r < SearchResults.getChildNodeCount(); r++ )
+
+            CswNbtMetaDataObjectClass ControlZoneOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.ControlZoneClass );
+            foreach( CswNbtMetaDataNodeType ControlZoneNT in ControlZoneOC.getNodeTypes() )
+            {
+                if( CswTools.IsPrimaryKey( HMISTotalsReportId ) )
+                {
+                    CswNbtMetaDataNodeTypeProp HMISTotalsNTP = ControlZoneNT.getNodeTypePropByObjectClassProp( CswNbtObjClassControlZone.PropertyName.HMISTotals );
+                    HMISTotalsNTP.SetFK( "nodeid", HMISTotalsReportId.PrimaryKey );
+                    HMISTotalsNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
+                }
+                if( CswTools.IsPrimaryKey( HMISMaterialsReportId ) )
+                {
+                    CswNbtMetaDataNodeTypeProp HMISMaterialsNTP = ControlZoneNT.getNodeTypePropByObjectClassProp( CswNbtObjClassControlZone.PropertyName.HMISMaterials );
+                    HMISMaterialsNTP.SetFK( "nodeid", HMISMaterialsReportId.PrimaryKey );
+                    HMISMaterialsNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
+                }
+            } // foreach( CswNbtMetaDataNodeType ControlZoneNT in ControlZoneOC.getNodeTypes() )
 
         } // update()
 

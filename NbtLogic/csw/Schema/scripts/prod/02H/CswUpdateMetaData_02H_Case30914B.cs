@@ -33,10 +33,15 @@ namespace ChemSW.Nbt.Schema
         {
             CswNbtMetaDataObjectClass ControlZoneOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.ControlZoneClass );
             _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( ControlZoneOC )
-                {
-                    FieldType = CswEnumNbtFieldType.ReportLink,
-                    PropName = CswNbtObjClassControlZone.PropertyName.HMISReport
-                } );
+            {
+                FieldType = CswEnumNbtFieldType.ReportLink,
+                PropName = CswNbtObjClassControlZone.PropertyName.HMISTotals
+            } );
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( ControlZoneOC )
+            {
+                FieldType = CswEnumNbtFieldType.ReportLink,
+                PropName = CswNbtObjClassControlZone.PropertyName.HMISMaterials
+            } );
         } // update()
 
     } // class CswUpdateMetaData_02H_Case30914
