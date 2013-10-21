@@ -301,7 +301,8 @@
         bottlecalendar: 79,
         calendarstack: 80,
         envelopes: 81,
-        personclock: 82
+        personclock: 82,
+        starsolid: 83
     });
 
 
