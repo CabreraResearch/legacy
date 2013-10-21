@@ -143,7 +143,7 @@ namespace NbtWebApp
 
             SvcDriver.run();
 
-            WebOperationContext.Current.OutgoingResponse.Headers.Set( "Content-Disposition", "attachment; filename=\"bindings.xml\";" );
+            WebOperationContext.Current.OutgoingResponse.Headers.Set( "Content-Disposition", "attachment; filename=\"bindings.xls\";" );
             WebOperationContext.Current.OutgoingResponse.ContentType = "application/vnd.ms-excel";
             return Ret.stream;
         }//downloadImportDefinition
