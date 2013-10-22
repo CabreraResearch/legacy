@@ -38,7 +38,9 @@ namespace ChemSW.Nbt.csw.Schema
                 {"container_groups", 18},
                 {"containers_view", 19},
                 {"inventory_view", 20},
-                {"ghs_phrases", 21}
+                {"regions_view", 21},
+                {"ghs_phrases", 22},
+                {"ghs_phrases_view", 23}
             };
 
         private DataTable _importDefTable;

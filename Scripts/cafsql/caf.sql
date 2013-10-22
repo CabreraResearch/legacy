@@ -603,3 +603,14 @@ union
 		m.MAXINVENTORYBASICID,
 		m.MAXINVENTORYLEVEL,
 		m.UNITOFMEASUREID;
+		
+---GHS
+create or replace view ghs_phrases_view as
+select region, materialid, deleted, listagg(ghscode, ',') within
+ group(
+ order by ghscode) as ghscodes
+  from (select distinct s.region, p.materialid, g.ghscode, p.deleted
+          from jct_ghsphrase_matsite p
+          join sites s on (s.siteid = p.siteid)
+          join ghs_phrases g on (g.ghsphraseid = p.ghsphraseid) where p.deleted = 0) where rownum < 20
+ group by region, materialid, deleted;

@@ -1,5 +1,6 @@
 ﻿using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.csw.Schema;
+using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.Schema
@@ -31,24 +32,46 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
-            CswNbtSchemaUpdateImportMgr GHSPhrasesMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "ghs_phrases", "GHS Phrase" );
+            {
+                CswNbtSchemaUpdateImportMgr JurisdictionMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "sites", "Jurisdiction", "regions_view" );
 
-            GHSPhrasesMgr.importBinding( "ghsphraseid", CswNbtObjClassGHSPhrase.PropertyName.LegacyId, "" );
-            GHSPhrasesMgr.importBinding( "ghscategory", CswNbtObjClassGHSPhrase.PropertyName.Category, "" );
-            GHSPhrasesMgr.importBinding( "ghscode", CswNbtObjClassGHSPhrase.PropertyName.Code, "" );
-            GHSPhrasesMgr.importBinding( "phraseenglish", CswNbtObjClassGHSPhrase.PropertyName.English, "" );
-            GHSPhrasesMgr.importBinding( "phrasedanish", CswNbtObjClassGHSPhrase.PropertyName.Danish, "" );
-            GHSPhrasesMgr.importBinding( "phrasedutch", CswNbtObjClassGHSPhrase.PropertyName.Dutch, "" );
-            GHSPhrasesMgr.importBinding( "phrasefinnish", CswNbtObjClassGHSPhrase.PropertyName.Finnish, "" );
-            GHSPhrasesMgr.importBinding( "phrasefrench", CswNbtObjClassGHSPhrase.PropertyName.French, "" );
-            GHSPhrasesMgr.importBinding( "phrasegerman", CswNbtObjClassGHSPhrase.PropertyName.German, "" );
-            GHSPhrasesMgr.importBinding( "phraseitalian", CswNbtObjClassGHSPhrase.PropertyName.Italian, "" );
-            GHSPhrasesMgr.importBinding( "phraseportuguese", CswNbtObjClassGHSPhrase.PropertyName.Portuguese, "" );
-            GHSPhrasesMgr.importBinding( "phrasespanish", CswNbtObjClassGHSPhrase.PropertyName.Spanish, "" );
-            GHSPhrasesMgr.importBinding( "phraseswedish", CswNbtObjClassGHSPhrase.PropertyName.Swedish, "" );
-            GHSPhrasesMgr.importBinding( "phrasechinese", CswNbtObjClassGHSPhrase.PropertyName.Chinese, "" );
+                JurisdictionMgr.importBinding( "region", CswNbtObjClassJurisdiction.PropertyName.LegacyId, "" );
+                JurisdictionMgr.importBinding( "region", CswNbtObjClassJurisdiction.PropertyName.Name, "" );
 
-            GHSPhrasesMgr.finalize();
+                JurisdictionMgr.finalize();
+            }
+
+            {
+                CswNbtSchemaUpdateImportMgr GHSPhrasesMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "ghs_phrases", "GHS Phrase" );
+
+                GHSPhrasesMgr.importBinding( "ghsphraseid", CswNbtObjClassGHSPhrase.PropertyName.LegacyId, "" );
+                GHSPhrasesMgr.importBinding( "ghscategory", CswNbtObjClassGHSPhrase.PropertyName.Category, "" );
+                GHSPhrasesMgr.importBinding( "ghscode", CswNbtObjClassGHSPhrase.PropertyName.Code, "" );
+                GHSPhrasesMgr.importBinding( "phraseenglish", CswNbtObjClassGHSPhrase.PropertyName.English, "" );
+                GHSPhrasesMgr.importBinding( "phrasedanish", CswNbtObjClassGHSPhrase.PropertyName.Danish, "" );
+                GHSPhrasesMgr.importBinding( "phrasedutch", CswNbtObjClassGHSPhrase.PropertyName.Dutch, "" );
+                GHSPhrasesMgr.importBinding( "phrasefinnish", CswNbtObjClassGHSPhrase.PropertyName.Finnish, "" );
+                GHSPhrasesMgr.importBinding( "phrasefrench", CswNbtObjClassGHSPhrase.PropertyName.French, "" );
+                GHSPhrasesMgr.importBinding( "phrasegerman", CswNbtObjClassGHSPhrase.PropertyName.German, "" );
+                GHSPhrasesMgr.importBinding( "phraseitalian", CswNbtObjClassGHSPhrase.PropertyName.Italian, "" );
+                GHSPhrasesMgr.importBinding( "phraseportuguese", CswNbtObjClassGHSPhrase.PropertyName.Portuguese, "" );
+                GHSPhrasesMgr.importBinding( "phrasespanish", CswNbtObjClassGHSPhrase.PropertyName.Spanish, "" );
+                GHSPhrasesMgr.importBinding( "phraseswedish", CswNbtObjClassGHSPhrase.PropertyName.Swedish, "" );
+                GHSPhrasesMgr.importBinding( "phrasechinese", CswNbtObjClassGHSPhrase.PropertyName.Chinese, "" );
+
+                GHSPhrasesMgr.finalize();
+            }
+
+            {
+                CswNbtSchemaUpdateImportMgr GHSPhrasesMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "jct_ghsphrase_matsite", "GHS", "ghs_phrases_view", "materialid" );
+
+                GHSPhrasesMgr.importBinding( "materialid", CswNbtObjClassGHS.PropertyName.LegacyId, "" );
+                GHSPhrasesMgr.importBinding( "region", CswNbtObjClassGHS.PropertyName.Jurisdiction, "" );
+                GHSPhrasesMgr.importBinding( "materialid", CswNbtObjClassGHS.PropertyName.Material, CswEnumNbtSubFieldName.NodeID.ToString() );
+                GHSPhrasesMgr.importBinding( "ghscodes", CswNbtObjClassGHS.PropertyName.AddLabelCodes, "" );
+
+                GHSPhrasesMgr.finalize();
+            }
 
         }//update()
     }
