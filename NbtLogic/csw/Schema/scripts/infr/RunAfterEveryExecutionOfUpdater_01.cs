@@ -38,9 +38,9 @@ namespace ChemSW.Nbt.Schema
 
         #endregion Blame Logic
 
-        public override string ScriptName
+        public override string AppendToScriptName()
         {
-            get { return "RunAfter_PostScript"; }
+            return "RunAfter_PostScript";
         }
 
         public override bool AlwaysRun
@@ -66,7 +66,7 @@ namespace ChemSW.Nbt.Schema
             _CswNbtSchemaModTrnsctn.execStoredProc( "CREATEALLNTVIEWS", Params );
             _resetBlame();
 
-            _acceptBlame(CswEnumDeveloper.MB, 30700);
+            _acceptBlame( CswEnumDeveloper.MB, 30700 );
             _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( "truncate table sessionlist" );
             _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( "truncate table session_data" );
             _resetBlame();

@@ -8,7 +8,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update
     /// </summary>
-    public class CswUpdateSchema_02H_Case30048_InventoryLevels: CswUpdateSchemaTo
+    public class CswUpdateSchema_02H_Case30048_InventoryLevels : CswUpdateSchemaTo
     {
         public override CswEnumDeveloper Author
         {
@@ -20,9 +20,9 @@ namespace ChemSW.Nbt.Schema
             get { return 30048; }
         }
 
-        public override string ScriptName
+        public override string AppendToScriptName()
         {
-            get { return "02H_Case30048_InventoryLevels"; }
+            return "InventoryLevels";
         }
 
         public override string Title
@@ -32,9 +32,9 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
-            CswNbtSchemaUpdateImportMgr InventoryLevelBindings = 
-                new CswNbtSchemaUpdateImportMgr( 
-                    _CswNbtSchemaModTrnsctn, 
+            CswNbtSchemaUpdateImportMgr InventoryLevelBindings =
+                new CswNbtSchemaUpdateImportMgr(
+                    _CswNbtSchemaModTrnsctn,
                     "mininventory_basic",//we have two source tables (maxinventory_basic) - is that a problem?
                     "Inventory Level",
                     "inventory_view",

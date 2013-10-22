@@ -1,4 +1,5 @@
 ﻿using System;
+using ChemSW.Core;
 using ChemSW.Nbt.csw.Dev;
 
 namespace ChemSW.Nbt.Schema
@@ -37,7 +38,10 @@ namespace ChemSW.Nbt.Schema
 
         public virtual string Description
         {
-            set { _Description = value; }
+            set
+            {
+                _Description = value;
+            }
             get
             {
                 string Ret = _Description;
@@ -94,7 +98,26 @@ namespace ChemSW.Nbt.Schema
         /// A unique identifier for this script
         /// Format: <Release #><Release Letter>_Case<Case #>
         /// </summary>
-        public abstract string ScriptName { get; }
+        private string _ReleaseIteration = CswTools.PadInt( CswSchemaScriptsProd.CurrentReleaseIteration, 2 );
+        private char _ReleaseIdentifier = CswSchemaScriptsProd.CurrentReleaseIdentifier;
+
+        public virtual string AppendToScriptName()
+        {
+            return string.Empty;
+        }
+
+        public string ScriptName
+        {
+            get
+            {
+                //todo: what if there is no case number (before/after/run always scripts)
+                string Ret = _ReleaseIteration + _ReleaseIdentifier + "_Case" + CaseNo;
+                string StringToAppend = AppendToScriptName().Replace( "'", "" );
+                Ret = Ret + StringToAppend;
+
+                return Ret;
+            }
+        }
 
         /// <summary>
         /// Whether the script should be run always
