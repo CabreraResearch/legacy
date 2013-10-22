@@ -31,8 +31,7 @@
                 propId: nodeProperty.propid,
                 tabId: nodeProperty.tabState.tabid,
                 identityTabId: nodeProperty.identityTabId,
-                nodeId: nodeProperty.tabState.nodeId,
-                onClickSuccess: cswPrivate.onClickSuccess,
+                nodeId: nodeProperty.tabState.nodeid,
                 tabsAndProps: tabsAndProps,
                 onRefresh: nodeProperty.onRefresh,
                 disabled: nodeProperty.tabState.Config,//Case 30009: only disable the ObjectClassButtons in Config mode
