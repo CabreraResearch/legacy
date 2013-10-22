@@ -101,6 +101,28 @@
                         }
                     });
                     jobrow++;
+                    
+                    jobTable.cell(jobrow, 2).buttonExt({
+                        name: 'downloadBtn',
+                        icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.docExport),
+                        enabledText: 'Download Data File',
+                        disabledText: 'Fetching Data...',
+                        disableOnClick: false,
+                        onClick: function () {
+                            var action = 'Services/Import/downloadImportData';
+
+                            var $form = $('<form method="POST" action="' + action + '"></form>').appendTo($('body'));
+                            var form = Csw.literals.factory($form);
+
+                            form.input({
+                                name: 'filename',
+                                value: job.FileName,
+                            });
+
+                            form.$.submit();
+                            form.remove();
+                        }
+                    });
 
                 } // success()
             }); // get()
