@@ -95,7 +95,7 @@ order by lower(n.nodename), lower(p.propname)" );
   SELECT 
     n.nodetypename, 
     p.propname, 
-    upper(n.oraviewname) VIEWNAME,
+    upper(makeintovalidname(n.oraviewname)) VIEWNAME,
     CASE
       WHEN s.subfieldname IS NOT NULL
       THEN 
