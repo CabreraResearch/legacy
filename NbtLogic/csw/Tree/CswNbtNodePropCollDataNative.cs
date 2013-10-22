@@ -60,8 +60,19 @@ namespace ChemSW.Nbt
                         }
                         else
                         {
-                            string Sql = "select t.*, '' as auditchanged " +
-                                         "  from " + CswNbtAuditTableAbbreviation.getAuditTableSql( _CswNbtResources, "jct_nodes_props", Date, _NodeKey.PrimaryKey ) + " t ";
+                            // see case 30702 - we're only using audit data here, not live data
+                            //string Sql = "select t.*, '' as auditchanged " +
+                            //             "  from " + CswNbtAuditTableAbbreviation.getAuditTableSql( _CswNbtResources, "jct_nodes_props", Date, _NodeKey.PrimaryKey ) + " t ";
+
+                            string Sql = @"select a.*, '' as auditchanged
+                                             from jct_nodes_props_audit a
+                                            where a.auditeventtype <> 'PhysicalDelete'
+                                              and a.nodeid = " + _NodeKey.PrimaryKey + @"
+                                              and a.jctnodespropsauditid = (select max(jctnodespropsauditid)
+                                                                              from jct_nodes_props_audit a2
+                                                                             where a2.recordcreated <= " + _CswNbtResources.getDbNativeDate( Date.ToDateTime().AddSeconds( 1 ) ) + @"
+                                                                               and a2.jctnodepropid = a.jctnodepropid)";
+
                             CswArbitrarySelect PropsSelect = _CswNbtResources.makeCswArbitrarySelect( "propcolldata_audit_select", Sql );
                             _PropsTable = PropsSelect.getTable();
                             foreach( DataRow AuditRow in _PropsTable.Rows )

@@ -20,6 +20,13 @@ namespace ChemSW.Nbt.MetaData
     public class CswNbtMetaDataNodeTypeProp : ICswNbtMetaDataObject, ICswNbtMetaDataProp, IEquatable<CswNbtMetaDataNodeTypeProp>, IComparable
     {
         private CswDateTime _Date;
+        /// <summary>
+        /// For auditing: the date for which the property was initialized
+        /// </summary>
+        public CswDateTime Date
+        {
+            get { return _Date; }
+        }
 
         public static CswEnumNbtNodeTypePropAttributes getCswEnumNbtNodeTypePropAttributesFromString( string AttributeName )
         {
