@@ -203,13 +203,7 @@ end;" );
         if viewname is null then 
            return;
         end if;
-        begin
-          execute immediate 'select 1 as ' || viewname || ' from dual' ;
-        exception
-          when OTHERS
-          then viewname := viewname || '1';
-        end;
-
+        viewname := makeintovalidname(viewname);
 
         var_line:='create or replace view ' || viewname || ' as select n.nodeid ';
        -- dbms_output.put_line('creating ' || viewname || '...');
@@ -220,13 +214,7 @@ end;" );
             colname := rec.oraviewcolname;
             
         --protect against reserved words for colname
-            begin
-              execute immediate 'select 1 as ' || colname || ' from dual' ;
-            exception
-              when OTHERS
-              then colname := colname || '1';
-            end;
-            
+         colname := makeintovalidname(colname);
                         
             --the gestalt
             var_line := ',(select gestalt from vwNpv where nid=n.nodeid and ntpid=' || to_char(rec.nodetypepropid);

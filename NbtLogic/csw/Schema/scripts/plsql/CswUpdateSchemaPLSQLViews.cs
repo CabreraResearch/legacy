@@ -86,6 +86,118 @@ order by lower(n.nodename), lower(p.propname)" );
               left outer join property_set ps on (ps.propertysetid=ntp.fkvalue and ntp.fktype='PropertySetId')" );
 
             #endregion VWNTPROPDEFS
+
+            #region VWAUTOVIEWCOLNAMES
+
+            public static readonly Views VWAUTOVIEWCOLNAMES = new Views( CswEnumDeveloper.NBT, 0,
+            @"create or replace view VWAUTOVIEWCOLNAMES as
+            SELECT unique nodetypename, propname, viewname, colname from ( 
+  SELECT 
+    n.nodetypename, 
+    p.propname, 
+    upper(n.oraviewname) VIEWNAME,
+    CASE
+      WHEN s.subfieldname IS NOT NULL
+      THEN 
+          CASE
+              WHEN f.fieldtype = 'Quantity'
+              THEN
+                  CASE
+                      WHEN s.subfieldname = 'name'
+                      THEN upper(makeintovalidname(p.oraviewcolname)) || '_UOM'
+                      WHEN s.subfieldname = 'nodeid'
+                      THEN upper(makeintovalidname(p.oraviewcolname)) || '_UOMID'
+                      WHEN s.subfieldname = 'value'
+                      THEN upper(makeintovalidname(p.oraviewcolname)) || '_VAL'
+                      WHEN s.subfieldname = 'val_kg'
+                      THEN upper(makeintovalidname(p.oraviewcolname)) || '_VAL_KG'
+                      WHEN s.subfieldname = 'val_liters'
+                      THEN upper(makeintovalidname(p.oraviewcolname)) || '_VAL_L'
+                      ELSE upper(makeintovalidname(p.oraviewcolname))
+                  END
+              WHEN f.fieldtype = 'NFPA'
+              THEN
+                  CASE
+                      WHEN s.subfieldname = 'special'
+                      THEN upper(makeintovalidname(p.oraviewcolname)) || '_S'
+                      WHEN s.subfieldname = 'health'
+                      THEN upper(makeintovalidname(p.oraviewcolname)) || '_H'
+                      WHEN s.subfieldname = 'reactivity'
+                      THEN upper(makeintovalidname(p.oraviewcolname)) || '_R'
+                      WHEN s.subfieldname = 'flammability'
+                      THEN upper(makeintovalidname(p.oraviewcolname)) || '_F'
+                      ELSE upper(makeintovalidname(p.oraviewcolname))
+                  END
+              WHEN fktype ='ObjectClassId' or fktype ='NodeTypeId'
+              THEN upper(makeintovalidname(p.oraviewcolname)) || '_ID'
+              ELSE upper(makeintovalidname(p.oraviewcolname))
+          END
+      ELSE upper(makeintovalidname(p.oraviewcolname))
+    END COLNAME
+  FROM nodetype_props p
+  JOIN nodetypes n ON n.nodetypeid=p.nodetypeid
+  JOIN object_class c ON c.objectclassid=n.objectclassid
+  JOIN field_types f ON f.fieldtypeid=p.fieldtypeid
+  JOIN field_types_subfields s ON s.fieldtypeid=f.fieldtypeid AND s.reportable='1'
+  LEFT OUTER JOIN nodetypes ntfk ON ntfk.nodetypeid=p.fkvalue AND p.fktype ='NodeTypeId'
+  LEFT OUTER JOIN object_class ocfk ON ocfk.objectclassid=p.fkvalue AND p.fktype ='ObjectClassId')
+ORDER BY nodetypename, propname" );
+            
+            #endregion VWAUTOVIEWCOLNAMES
+
+            #region VWLEGACYVIEWCOLNAMES
+
+            public static readonly Views VWLEGACYVIEWCOLNAMES = new Views( CswEnumDeveloper.NBT, 0,
+            @"CREATE OR REPLACE FORCE VIEW VWLEGACYVIEWCOLNAMES
+AS
+  SELECT n.nodetypename,
+    p.propname,
+    'NT'
+    || upper(alnumonly(n.nodetypename,'')) viewname,
+    CASE
+      WHEN s.subfieldname IS NULL
+      THEN 'P'
+        || TO_CHAR(p.firstpropversionid)
+      WHEN s.subfieldname IS NOT NULL
+      AND fktype           ='ObjectClassId'
+      THEN 'P'
+        || TO_CHAR(p.firstpropversionid)
+        || '_'
+        || alnumonly(ocfk.objectclass,'')
+        || '_OCFK'
+      WHEN s.subfieldname IS NOT NULL
+      AND fktype           ='NodeTypeId'
+      THEN 'P'
+        || TO_CHAR(p.firstpropversionid)
+        || '_'
+        || alnumonly(ntfk.nodetypename,'')
+        || '_NTFK'
+      ELSE 'P'
+        || TO_CHAR(p.firstpropversionid)
+        || '_'
+        || s.subfieldname
+    END colname
+  FROM nodetype_props p
+  JOIN nodetypes n
+  ON n.nodetypeid=p.nodetypeid
+  JOIN object_class c
+  ON c.objectclassid=n.objectclassid
+  JOIN field_types f
+  ON f.fieldtypeid=p.fieldtypeid
+  JOIN field_types_subfields s
+  ON s.fieldtypeid=f.fieldtypeid
+  AND s.reportable='1'
+  LEFT OUTER JOIN nodetypes ntfk
+  ON ntfk.nodetypeid=p.fkvalue
+  AND p.fktype      ='NodeTypeId'
+  LEFT OUTER JOIN object_class ocfk
+  ON ocfk.objectclassid=p.fkvalue
+  AND p.fktype         ='ObjectClassId'
+  ORDER BY n.nodetypename,
+    p.propname,
+    s.subfieldname" );
+
+            #endregion VWLEGACYVIEWCOLNAMES
         }
 
     }//class CswUpdateSchemaPLSQLViews
