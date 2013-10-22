@@ -34,7 +34,7 @@ namespace NbtPrintLib
                     {
                         MaxStringContentLength = 20971520
                     },
-                MaxReceivedMessageSize = 4294967296
+                MaxReceivedMessageSize = Int32.MaxValue
             };
 
             //ret.Endpoint.Behaviors.Add( cookieBehavior );

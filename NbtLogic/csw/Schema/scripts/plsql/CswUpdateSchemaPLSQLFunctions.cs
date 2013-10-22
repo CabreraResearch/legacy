@@ -92,6 +92,25 @@ namespace ChemSW.Nbt.Schema
     end safeSqlParam;" );
 
             #endregion SAFESQLPARAM
+
+            #region MAKEINTOVALIDNAME
+
+            public static readonly Functions MAKEINTOVALIDNAME = new Functions( CswEnumDeveloper.NBT, 0,
+            @"create or replace
+function makeIntoValidName (objName in varchar2) return varchar2 is
+    newName varchar2(30);
+begin
+    newName := objName;
+    begin
+      execute immediate 'select 1 as ' || newName || ' from dual' ;
+    exception
+      when OTHERS
+      then newName := newName || '1';
+    end;
+    return newName;
+end makeIntoValidName;" );
+
+            #endregion MAKEINTOVALIDNAME
         }
 
     }//class CswUpdateSchemaPLSQLFunctions

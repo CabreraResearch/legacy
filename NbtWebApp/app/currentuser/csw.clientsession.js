@@ -62,6 +62,20 @@
         }
     };
 
+    cswPrivate.setLogoutPath = function () {
+        var homeUrl = cswPrivate.logoutpath || Csw.cookie.get(Csw.cookie.cookieNames.LogoutPath) || 'Main.html';
+        if (Csw.clientSession.isDebug(Csw.queryString())) {
+            Csw.clientSession.enableDebug();
+            if (window.location.pathname.endsWith('Dev.html')) {
+                homeUrl = 'Dev.html';
+            }
+        }
+        if (Csw.isNullOrEmpty(Csw.cookie.get(Csw.cookie.cookieNames.LogoutPath))) {
+            Csw.cookie.set(Csw.cookie.cookieNames.LogoutPath, homeUrl);
+        }
+        Csw.clientDb.setItem('homeUrl', homeUrl);
+    };
+
 
     Csw.clientSession.register('currentAccessId', function () {
         return Csw.string(Csw.cookie.get(Csw.cookie.cookieNames.CustomerId), cswPrivate.AccessId);
@@ -146,11 +160,7 @@
     var onLoginSuccess = function (data) {
         //Csw.cookie.set(Csw.cookie.cookieNames.CustomerId, cswPrivate.AccessId);
         //Csw.clientSession.setUsername(cswPrivate.UserName);
-
-        //Case 29617: Once a logout path has been set, do not mutate it.
-        if (Csw.isNullOrEmpty(Csw.cookie.get(Csw.cookie.cookieNames.LogoutPath))) {
-            Csw.cookie.set(Csw.cookie.cookieNames.LogoutPath, cswPrivate.logoutpath);
-        }
+        
         Csw.tryExec(cswPrivate.onAuthenticate, cswPrivate.UserName);
         Csw.cookie.set(Csw.cookie.cookieNames.UserDefaults, JSON.stringify(data));
 
@@ -170,6 +180,7 @@
     Csw.clientSession.register('login', function (loginopts) {
         ///<summary>Attempt a login.</summary>
         Csw.extend(cswPrivate, loginopts);
+        cswPrivate.setLogoutPath();
         cswPrivate.isAuthenticated = true;
         return Csw.ajaxWcf.post({
             urlMethod: 'Session/Init',
