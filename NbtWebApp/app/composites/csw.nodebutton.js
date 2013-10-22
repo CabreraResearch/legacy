@@ -229,7 +229,8 @@
                 tabId: '',
                 identityTabId: '',
                 properties: {},
-                onRefresh: function () { }
+                onRefresh: function () { },
+                issaveprop: false
             };
 
             tabsAndProps = options.tabsAndProps;
@@ -256,7 +257,9 @@
 
         cswPrivate.onButtonClick = function () {
             Csw.publish('onAnyNodeButtonClick');
-            Csw.unsubscribe('triggerSave', cswPrivate.onButtonClick);
+            if (cswPrivate.issaveprop) {
+                Csw.unsubscribe('triggerSave', cswPrivate.onButtonClick);
+            }
 
             if (tabsAndProps && false === tabsAndProps.isFormValid()) {
                 var warningDialog = Csw.layouts.dialog({
@@ -369,7 +372,9 @@
                 } // if-else (Csw.isNullOrEmpty(propAttr)) {
             }
         }; // onButtonClick()
-        Csw.subscribe('triggerSave', cswPrivate.onButtonClick);
+        if (cswPrivate.issaveprop) {
+            Csw.subscribe('triggerSave', cswPrivate.onButtonClick);
+        }
 
         (function _post() {
             cswPrivate.btnCell = cswPrivate.table.cell(1, 1).div();

@@ -34,7 +34,8 @@
                 nodeId: nodeProperty.tabState.nodeid,
                 tabsAndProps: tabsAndProps,
                 onRefresh: nodeProperty.onRefresh,
-                disabled: nodeProperty.tabState.Config//Case 30009: only disable the ObjectClassButtons in Config mode
+                disabled: nodeProperty.tabState.Config,//Case 30009: only disable the ObjectClassButtons in Config mode
+                issaveprop: nodeProperty.propData.values.issaveprop
                 //Case 29142: the server decides whether the button is visible. disabled: nodeProperty.isDisabled() || nodeProperty.isReadOnly()
             };
 

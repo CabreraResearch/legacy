@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
 
-    <Product Id="2D70FC5F-E123-446C-BFD8-885863487B68" Name="ChemSW Print Client" Language="1033" Version="1.6.7.0" Manufacturer="ChemSW Inc." UpgradeCode="56D3BC68-E2AE-4AA8-80DE-73064AE6AC92">
+    <Product Id="2D70FC5F-E123-446C-BFD8-885863487B68" Name="ChemSW Print Client" Language="1033" Version="1.6.8.0" Manufacturer="ChemSW Inc." UpgradeCode="56D3BC68-E2AE-4AA8-80DE-73064AE6AC92">
         <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
 
         <Icon Id="print.ico" SourceFile="$(var.NbtPrintClient.ProjectDir)\print.ico" />

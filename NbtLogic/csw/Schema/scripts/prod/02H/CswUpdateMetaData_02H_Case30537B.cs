@@ -2,7 +2,6 @@
 using ChemSW.DB;
 using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -57,19 +56,7 @@ namespace ChemSW.Nbt.Schema
 
                 TableUpdate.update( ObjClassTbl );
             }
-
-            CswNbtMetaDataNodeType DSD_NT = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( CswEnumNbtObjectClass.DSDPhraseClass, "DSD Phrase", "System" );
-            DSD_NT.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( CswNbtPropertySetPhrase.PropertyName.Code ) );
-            foreach( CswNbtMetaDataNodeTypeProp NTP in DSD_NT.getNodeTypeProps() )
-            {
-                if( CswNbtPropertySetPhrase.PropertyName.English != NTP.PropName &&
-                    CswNbtPropertySetPhrase.PropertyName.Code != NTP.PropName &&
-                    CswNbtObjClassDSDPhrase.PropertyName.Category != NTP.PropName )
-                {
-                    NTP.removeFromLayout( CswEnumNbtLayoutType.Add );
-                }
-            }
-
+            
         } // update()
 
     }

@@ -309,7 +309,8 @@ namespace ChemSW.Nbt.Schema
                 {
                     CswSchemaVersion CurrentVersion = _CswSchemaUpdater.CurrentVersion( CswNbtResources );
 
-                    for( int i = 0; ( UpdateSucceeded && !Cancel && ( CurrentVersion != _CswSchemaUpdater.LatestVersion ) ) || ( i < _CswSchemaUpdater.UpdateDrivers.Count ); i++ )
+                    for( int i = 0; ( UpdateSucceeded && !Cancel
+                        && ( ( CurrentVersion != _CswSchemaUpdater.LatestVersion ) || ( i < _CswSchemaUpdater.UpdateDrivers.Count ) ) ); i++ )
                     {
                         CswSchemaVersion UpdateToVersion = _CswSchemaUpdater.SchemaVersions[i];
                         SetStatus( "Updating to " + UpdateToVersion );
