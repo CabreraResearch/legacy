@@ -279,23 +279,9 @@ namespace ChemSW.Nbt.MetaData
                     throw new CswDniException( CswEnumErrorType.Warning, "Property Name must be unique per nodetype", "Attempted to save a propname which is equal to a propname of another property in this nodetype" );
                 }
 
-                //use objectclasspropname if we have it
-                if( this.ObjectClassPropId != Int32.MinValue )
-                {
-                    _NodeTypePropRow["oraviewcolname"] = this.getObjectClassProp().DbViewColumnName;
-                }
-                else
-                {
-                    if( UseNumbering && QuestionNo != Int32.MinValue )
-                    {
-                        _NodeTypePropRow["oraviewcolname"] = CswTools.MakeOracleCompliantIdentifier( FullQuestionNo.Replace( ".", "x" ) );
-                    }
-                    else
-                    {
-                        _NodeTypePropRow["oraviewcolname"] = CswTools.MakeOracleCompliantIdentifier( value );
-                    }
-                }
                 _setAttribute( "propname", value, true );
+
+                resetDbViewColumnName();
 
                 if( _CswNbtMetaDataResources.CswNbtMetaData.OnEditNodeTypePropName != null )
                     _CswNbtMetaDataResources.CswNbtMetaData.OnEditNodeTypePropName( this );
@@ -367,7 +353,26 @@ namespace ChemSW.Nbt.MetaData
             {
                 return CswConvert.ToString( _NodeTypePropRow["oraviewcolname"] );
             }
+        }
 
+        public void resetDbViewColumnName()
+        {
+            //use objectclasspropname if we have it
+            if( this.ObjectClassPropId != Int32.MinValue )
+            {
+                _NodeTypePropRow["oraviewcolname"] = this.getObjectClassProp().DbViewColumnName;
+            }
+            else
+            {
+                if( UseNumbering && QuestionNo != Int32.MinValue )
+                {
+                    _NodeTypePropRow["oraviewcolname"] = CswTools.MakeOracleCompliantIdentifier( FullQuestionNo.Replace( ".", "x" ) );
+                }
+                else
+                {
+                    _NodeTypePropRow["oraviewcolname"] = CswTools.MakeOracleCompliantIdentifier( PropName );
+                }
+            }
         }
 
         /// <summary>
@@ -1032,14 +1037,7 @@ namespace ChemSW.Nbt.MetaData
             set
             {
                 _DataRow["questionno"] = CswConvert.ToDbVal( value );
-                if( Int32.MinValue != value )
-                {
-                    _DataRow["oraviewcolname"] = CswTools.MakeOracleCompliantIdentifier( FullQuestionNo );
-                }
-                else
-                {
-                    _DataRow["oraviewcolname"] = CswTools.MakeOracleCompliantIdentifier( PropName );
-                }
+                resetDbViewColumnName();
             }
         }
 
