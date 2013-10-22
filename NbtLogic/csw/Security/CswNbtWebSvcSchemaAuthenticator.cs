@@ -48,6 +48,7 @@ namespace ChemSW.Nbt.Security
                 {
                     if( token.Authorized )
                     {
+                        UserNode.clearFailedLoginCount(); //We don't keep track of this when using WebSvc Authentication, but if this gets set ot something other than 0 this user won't be able to log in
                         UserNode.LastLogin.DateTimeValue = DateTime.Now;
 
                         if( null != token.UserId )
