@@ -507,6 +507,7 @@
             }
         },
         Relationship: { name: 'Relationship', subfields: {} },
+        ReportLink: { name: 'ReportLink', subfields: {} },
         Scientific: { name: 'Scientific', subfields: {} },
         Sequence: { name: 'Sequence', subfields: {} },
         Static: {

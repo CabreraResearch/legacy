@@ -140,7 +140,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\common\CswCommon\CswCore\CswCore.csproj">
+    <ProjectReference Include="..\..\..\..\Common\CswCommon\CswCore\CswCore.csproj">
       <Project>{9498738d-42c2-4bbf-875b-846918a8821b}</Project>
       <Name>CswCore</Name>
     </ProjectReference>

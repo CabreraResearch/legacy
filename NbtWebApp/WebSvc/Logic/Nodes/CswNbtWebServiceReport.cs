@@ -62,17 +62,13 @@ namespace ChemSW.Nbt.WebServices
             }
 
             private CswPrimaryKey _NodeId = null;
-
+            /// <summary>
+            /// Primary key of report node
+            /// </summary>
             public CswPrimaryKey NodeId
             {
-                get
-                {
-                    return _NodeId;
-                }
-                set
-                {
-                    _NodeId = value;
-                }
+                get { return _NodeId; }
+                set { _NodeId = value; }
             }
 
             [DataMember( Name = "nodeId" )]
@@ -91,6 +87,38 @@ namespace ChemSW.Nbt.WebServices
                 {
                     NodeId = new CswPrimaryKey();
                     NodeId.FromString( value );
+                }
+            }
+
+            private CswPrimaryKey _SourceId = null;
+            /// <summary>
+            /// Primary key of node from which to derive parameter values
+            /// </summary>
+            public CswPrimaryKey SourceId
+            {
+                get { return _SourceId; }
+                set { _SourceId = value; }
+            }
+
+            [DataMember( Name = "sourceId", IsRequired = false )]
+            public string sourceIdStr
+            {
+                get
+                {
+                    string Ret = string.Empty;
+                    if( CswTools.IsPrimaryKey( SourceId ) )
+                    {
+                        Ret = SourceId.ToString();
+                    }
+                    return Ret;
+                }
+                set
+                {
+                    if( false == string.IsNullOrEmpty( value ) )
+                    {
+                        SourceId = new CswPrimaryKey();
+                        SourceId.FromString( value );
+                    }
                 }
             }
 
@@ -326,8 +354,14 @@ namespace ChemSW.Nbt.WebServices
             {
                 reportParams.doesSupportCrystal = ( false == reportParams.ReportNode.RPTFile.Empty );
 
+                CswNbtNode SourceNode = null;
+                if( CswTools.IsPrimaryKey( reportParams.SourceId ) )
+                {
+                    SourceNode = NBTResources.Nodes[reportParams.SourceId];
+                }
+
                 reportParams.reportParams = new Collection<ReportData.ReportParam>();
-                foreach( var paramPair in reportParams.ReportNode.ExtractReportParams( NBTResources.Nodes[NBTResources.CurrentNbtUser.UserId] ) )
+                foreach( var paramPair in reportParams.ReportNode.ExtractReportParams( NBTResources.Nodes[NBTResources.CurrentNbtUser.UserId], SourceNode ) )
                 {
                     ReportData.ReportParam paramObj = new ReportData.ReportParam();
                     paramObj.name = paramPair.Key;

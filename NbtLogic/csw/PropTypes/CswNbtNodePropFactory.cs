@@ -131,6 +131,9 @@ namespace ChemSW.Nbt.PropTypes
                 case CswEnumNbtFieldType.Relationship:
                     InnerProperty = new CswNbtNodePropRelationship( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node );
                     break;
+                case CswEnumNbtFieldType.ReportLink:
+                    InnerProperty = new CswNbtNodePropReportLink( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node );
+                    break;
                 case CswEnumNbtFieldType.Scientific:
                     InnerProperty = new CswNbtNodePropScientific( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node );
                     break;
@@ -143,9 +146,6 @@ namespace ChemSW.Nbt.PropTypes
                 case CswEnumNbtFieldType.Text:
                     InnerProperty = new CswNbtNodePropText( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node );
                     break;
-                //case CswEnumNbtFieldType.Time:
-                //    InnerProperty = new CswNbtNodePropTime( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node );
-                //    break;
                 case CswEnumNbtFieldType.TimeInterval:
                     InnerProperty = new CswNbtNodePropTimeInterval( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node );
                     break;
