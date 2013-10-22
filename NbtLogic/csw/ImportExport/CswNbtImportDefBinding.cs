@@ -154,19 +154,19 @@ namespace ChemSW.Nbt.ImportExport
             DataTable importBindingsTable = importBindingsUpdate.getEmptyTable();
             foreach( DataRow BindingRow in BindingsDataTable.Rows )
             {
-                string SheetName = BindingRow["sheet"].ToString();
+                string SheetName = BindingRow["sheetname"].ToString();
                 if( false == string.IsNullOrEmpty( SheetName ) )
                 {
                     CswNbtMetaDataNodeType DestNodeType = null;
                     CswNbtMetaDataNodeTypeProp DestProp = null;
 
-                    string DestNTName = BindingRow["destnodetype"].ToString();
+                    string DestNTName = BindingRow["destnodetypename"].ToString();
                     if( false == string.IsNullOrEmpty( DestNTName ) )
                     {
                         DestNodeType = CswNbtResources.MetaData.getNodeType( DestNTName );
                         if( null != DestNodeType )
                         {
-                            string DestNTPName = BindingRow["destproperty"].ToString();
+                            string DestNTPName = BindingRow["destpropname"].ToString();
                             DestProp = DestNodeType.getNodeTypeProp( DestNTPName );
                             if( null != DestProp )
                             {

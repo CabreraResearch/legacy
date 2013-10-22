@@ -88,10 +88,10 @@ namespace ChemSW.Nbt.ImportExport
 
             foreach( DataRow RelRow in RelationshipsDataTable.Rows )
             {
-                string SheetName = RelRow["sheet"].ToString();
+                string SheetName = RelRow["sheetname"].ToString();
                 if( false == string.IsNullOrEmpty( SheetName ) )
                 {
-                    string NodeTypeName = RelRow["nodetype"].ToString();
+                    string NodeTypeName = RelRow["nodetypename"].ToString();
                     CswNbtMetaDataNodeType NodeType = CswNbtResources.MetaData.getNodeType( NodeTypeName );
                     if( null != NodeType )
                     {
