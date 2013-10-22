@@ -1032,7 +1032,14 @@ namespace ChemSW.Nbt.MetaData
             set
             {
                 _DataRow["questionno"] = CswConvert.ToDbVal( value );
-                _DataRow["oraviewcolname"] = CswTools.MakeOracleCompliantIdentifier( FullQuestionNo );
+                if( Int32.MinValue != value )
+                {
+                    _DataRow["oraviewcolname"] = CswTools.MakeOracleCompliantIdentifier( FullQuestionNo );
+                }
+                else
+                {
+                    _DataRow["oraviewcolname"] = CswTools.MakeOracleCompliantIdentifier( PropName );
+                }
             }
         }
 
