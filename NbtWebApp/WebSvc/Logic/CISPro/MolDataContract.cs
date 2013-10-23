@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Runtime.Serialization;
-using System.Collections.ObjectModel;
 using ChemSW.Nbt;
 
 namespace NbtWebApp.WebSvc.Logic.CISPro
@@ -18,6 +17,8 @@ namespace NbtWebApp.WebSvc.Logic.CISPro
         public string propId = String.Empty;
         [DataMember]
         public string href = String.Empty;
+        [DataMember]
+        public string errorMsg = String.Empty;
     }
 
     [DataContract]

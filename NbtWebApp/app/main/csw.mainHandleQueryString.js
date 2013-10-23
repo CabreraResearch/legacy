@@ -8,18 +8,6 @@
             var ret = false;
             var qs = Csw.queryString();
 
-            var homeUrl = Csw.cookie.get(Csw.cookie.cookieNames.LogoutPath) || 'Main.html';
-            if (Csw.clientSession.isDebug(qs)) {
-                Csw.clientSession.enableDebug();
-                if (window.location.pathname.endsWith('Dev.html')) {
-                    homeUrl = 'Dev.html';
-                    if (Csw.isNullOrEmpty(Csw.cookie.get(Csw.cookie.cookieNames.LogoutPath))) {
-                        Csw.cookie.set(Csw.cookie.cookieNames.LogoutPath, homeUrl);
-                    }
-                }
-            }
-            Csw.clientDb.setItem('homeUrl', homeUrl);
-
             if (false == Csw.isNullOrEmpty(qs.action)) {
                 var actopts = {};
                 Csw.extend(actopts, qs);

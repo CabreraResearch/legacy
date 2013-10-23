@@ -1,10 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
 using ChemSW.Config;
 using ChemSW.Core;
-using ChemSW.Exceptions;
 using ChemSW.Nbt.Batch;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
@@ -142,7 +139,6 @@ namespace ChemSW.Nbt.ObjClasses
                 this.Columns.setHidden( value: true, SaveToDb: false );
                 this.LocationTemplate.setHidden( value: true, SaveToDb: false );
             }
-            Location.SetOnPropChange( OnLocationPropChange );
             _CswNbtObjClassDefault.triggerAfterPopulateProps();
         }//afterPopulateProps()
 
@@ -164,20 +160,6 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropList ChildLocationType { get { return ( _CswNbtNode.Properties[PropertyName.ChildLocationType] ); } }
         public CswNbtNodePropList LocationTemplate { get { return ( _CswNbtNode.Properties[PropertyName.LocationTemplate] ); } }
         public CswNbtNodePropLocation Location { get { return ( _CswNbtNode.Properties[PropertyName.Location] ); } }
-        private void OnLocationPropChange( CswNbtNodeProp Prop, bool Creating )
-        {
-            Int32 ParentLevel = Location.CachedFullPath.Split( new string[] { CswNbtNodePropLocation.PathDelimiter }, StringSplitOptions.RemoveEmptyEntries ).Count();
-            Int32 MaxLevel = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumNbtConfigurationVariables.loc_max_depth.ToString() ) );
-            if( ParentLevel >= MaxLevel && false == String.IsNullOrEmpty( Name.Text ) )
-            {
-                throw new CswDniException
-                (
-                    CswEnumErrorType.Warning,
-                    "Cannot create \"" + Name.Text + "\" under \"" + Location.CachedFullPath + "\" because it exceeds the maximum allowed Location depth.",
-                    Name.Text + " exceeds loc_max_depth"
-                );
-            }
-        }
         public CswNbtNodePropNumber Order { get { return ( _CswNbtNode.Properties[PropertyName.Order] ); } }
         public CswNbtNodePropNumber Rows { get { return ( _CswNbtNode.Properties[PropertyName.Rows] ); } }
         public CswNbtNodePropNumber Columns { get { return ( _CswNbtNode.Properties[PropertyName.Columns] ); } }
@@ -196,17 +178,17 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Custom Logic
 
-        public static void makeLocationsTreeView( ref CswNbtView LocationsView, CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn, Int32 loc_max_depth = Int32.MinValue, CswPrimaryKey NodeIdToFilterOut = null, bool RequireAllowInventory = false, IEnumerable<CswPrimaryKey> InventoryGroupIds = null )
+        public static void makeLocationsTreeView( ref CswNbtView LocationsView, CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn, Int32 loc_max_depth = Int32.MinValue, CswPrimaryKey NodeIdToFilterOut = null, bool RequireAllowInventory = false, IEnumerable<CswPrimaryKey> InventoryGroupIds = null, bool DisableLowestLevel = false )
         {
-            _makeLocationsTreeView( ref LocationsView, CswNbtSchemaModTrnsctn.MetaData, CswNbtSchemaModTrnsctn.ConfigVbls, loc_max_depth, NodeIdToFilterOut, RequireAllowInventory, InventoryGroupIds );
+            _makeLocationsTreeView( ref LocationsView, CswNbtSchemaModTrnsctn.MetaData, CswNbtSchemaModTrnsctn.ConfigVbls, loc_max_depth, NodeIdToFilterOut, RequireAllowInventory, InventoryGroupIds, DisableLowestLevel );
         }
 
-        public static void makeLocationsTreeView( ref CswNbtView LocationsView, CswNbtResources CswNbtResources, Int32 loc_max_depth = Int32.MinValue, CswPrimaryKey NodeIdToFilterOut = null, bool RequireAllowInventory = false, IEnumerable<CswPrimaryKey> InventoryGroupIds = null )
+        public static void makeLocationsTreeView( ref CswNbtView LocationsView, CswNbtResources CswNbtResources, Int32 loc_max_depth = Int32.MinValue, CswPrimaryKey NodeIdToFilterOut = null, bool RequireAllowInventory = false, IEnumerable<CswPrimaryKey> InventoryGroupIds = null, bool DisableLowestLevel = false )
         {
-            _makeLocationsTreeView( ref LocationsView, CswNbtResources.MetaData, CswNbtResources.ConfigVbls, loc_max_depth, NodeIdToFilterOut, RequireAllowInventory, InventoryGroupIds );
+            _makeLocationsTreeView( ref LocationsView, CswNbtResources.MetaData, CswNbtResources.ConfigVbls, loc_max_depth, NodeIdToFilterOut, RequireAllowInventory, InventoryGroupIds, DisableLowestLevel );
         }
 
-        private static void _makeLocationsTreeView( ref CswNbtView LocationsView, CswNbtMetaData MetaData, CswConfigurationVariables ConfigVbls, Int32 loc_max_depth, CswPrimaryKey NodeIdToFilterOut, bool RequireAllowInventory, IEnumerable<CswPrimaryKey> InventoryGroupIds )
+        private static void _makeLocationsTreeView( ref CswNbtView LocationsView, CswNbtMetaData MetaData, CswConfigurationVariables ConfigVbls, Int32 loc_max_depth, CswPrimaryKey NodeIdToFilterOut, bool RequireAllowInventory, IEnumerable<CswPrimaryKey> InventoryGroupIds, bool DisableLowestLevel )
         {
             if( null != LocationsView )
             {
@@ -242,6 +224,14 @@ namespace ChemSW.Nbt.ObjClasses
                     else
                     {
                         LocReln = LocationsView.AddViewRelationship( LocReln, CswEnumNbtViewPropOwnerType.Second, LocationLocationOCP, true );
+                        if( i == loc_max_depth && DisableLowestLevel )
+                        {
+                            LocationsView.AddViewPropertyAndFilter( LocReln, LocationLocationOCP,
+                                                                Conjunction: CswEnumNbtFilterConjunction.And,
+                                                                ResultMode: CswEnumNbtFilterResultMode.Disabled,
+                                                                SubFieldName: CswEnumNbtSubFieldName.NodeID,
+                                                                FilterMode: CswEnumNbtFilterMode.Null );
+                        }
                     }
                     if( null != NodeIdToFilterOut )
                     {

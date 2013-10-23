@@ -22,6 +22,7 @@
             table.cell(2, 1).css('width', cswPrivate.width - 36);
             cswPrivate.cell22 = table.cell(2, 2).css('textAlign', 'right');
             cswPrivate.cell23 = table.cell(2, 3).css('textAlign', 'right');
+            var tip;
 
             nodeProperty.onPropChangeBroadcast(function (val) {
                 if (cswPrivate.mol !== val.mol || cswPrivate.href !== val.href) {
@@ -80,10 +81,17 @@
                         size: 16,
                         isButton: true,
                         onClick: function () {
+                            if (tip) {
+                                tip.close();
+                            }
                             $.CswDialog('EditMolDialog', {
                                 PropId: nodeProperty.propData.id,
                                 molData: cswPrivate.mol,
                                 onSuccess: function (data) {
+                                    if (false === Csw.isNullOrEmpty(data.errorMsg)) {
+                                        tip = cswPrivate.cell11.quickTip({ html: data.errorMsg });
+                                    }
+
                                     Csw.properties.publish(nodeProperty.eventName, {
                                         mol: data.molString,
                                         href: data.href
