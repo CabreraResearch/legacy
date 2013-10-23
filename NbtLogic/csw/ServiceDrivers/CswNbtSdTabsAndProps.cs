@@ -571,6 +571,13 @@ namespace ChemSW.Nbt.ServiceDrivers
                 }
 
                 PropObj["gestalt"] = PropWrapper.Gestalt.Replace( "\"", "&quot;" );
+
+                // case 30702
+                if( null != Prop.Date && Int32.MinValue == PropWrapper.JctNodePropId )
+                {
+                    PropObj["helptext"] = "[No Audit Data Available]";
+                }
+
                 PropObj["highlight"] = PropWrapper.AuditChanged.ToString().ToLower();
                 PropWrapper.ToJSON( PropObj );
             }

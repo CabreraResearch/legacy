@@ -40,7 +40,7 @@ namespace ChemSW.Nbt.PropTypes
                     if( _CswNbtMetaDataNodeTypeProp.ViewId.isSet() )
                     {
                         _View = _CswNbtResources.ViewSelect.restoreView( _CswNbtMetaDataNodeTypeProp.ViewId );
-                        if( false == _View.SessionViewId.isSet() )
+                        if( null != _View && false == _View.SessionViewId.isSet() )
                         {
                             _View.SaveToCache( false );
                         }
