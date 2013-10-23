@@ -6,7 +6,7 @@ using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.Sched
 {
-    public class CswScheduleLogicNbtValidateAccessIds: ICswScheduleLogic
+    public class CswScheduleLogicNbtValidateAccessIds : ICswScheduleLogic
     {
         #region Properties
 
@@ -65,16 +65,22 @@ namespace ChemSW.Nbt.Sched
                 {
                     Collection<CswNbtObjClassCustomer> CustomersCollection = _getCustomers( CswNbtResources );
 
-                    foreach ( CswNbtObjClassCustomer Customer in CustomersCollection )
-                    {   
+                    foreach( CswNbtObjClassCustomer Customer in CustomersCollection )
+                    {
                         //does a configuration for this customer's access id exist?
                         if( false == CswNbtResources.CswDbCfgInfo.AccessIds.Contains( Customer.CompanyID.Text ) )
                         {
-                          //this access id doesn't exist, we must send an email
+                            //this access id doesn't exist, we must send an email
                             string Subject = "Invalid Customer AccessID '" + Customer.CompanyID.Text + "' for schema '" + Customer.SchemaName + "'";
                             string Message = "On " + DateTime.Now.ToString() + ", the ValidateAccessIds schedule rule detected that the Access ID '" + Customer.CompanyID.Text + "' on schema '" + Customer.SchemaName + "' does not have an associated value in CswConfigUX.";
                             CswNbtResources.sendSystemAlertEmail( Subject, Message );
-                        }//if false == AccessIDs.Contains( Customer.CompanyID.Text )
+                        } //if false == AccessIDs.Contains( Customer.CompanyID.Text )
+                        else
+                        {
+                            // case 30485 - set Schema Version too
+                            Customer.syncCustomerInfo();
+                            Customer.postChanges( false );
+                        }
                     }//foreach ( Customer in CustomersCollection )
 
                     _CswScheduleLogicDetail.StatusMessage = "Completed without error";
@@ -95,7 +101,7 @@ namespace ChemSW.Nbt.Sched
             CswNbtView CustomersView = CustomerOC.CreateDefaultView( false );
 
             ICswNbtTree CustomersTree = NbtResources.Trees.getTreeFromView( CustomersView, false, false, false );
-            
+
             Collection<CswNbtObjClassCustomer> CustomersCollection = new Collection<CswNbtObjClassCustomer>();
 
             Int32 CustomerCount = CustomersTree.getChildNodeCount();
@@ -116,3 +122,4 @@ namespace ChemSW.Nbt.Sched
         #endregion
     }//CswScheduleLogicNbtTierII
 }//namespace ChemSW.Nbt.Sched
+

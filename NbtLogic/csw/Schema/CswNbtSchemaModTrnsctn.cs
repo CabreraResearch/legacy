@@ -15,6 +15,7 @@ using ChemSW.Log;
 using ChemSW.MtSched.Core;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.ImportExport;
+using ChemSW.Nbt.LandingPage;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
@@ -105,9 +106,20 @@ namespace ChemSW.Nbt.Schema
             return ( new CswNbtActInspectionDesignWiz( _CswNbtResources, CswEnumNbtViewVisibility.Global, null, true ) );
         }
 
-        public LandingPage.CswNbtLandingPageTable getLandingPageTable()
+        private CswNbtLandingPage _LandingPage = null;
+        /// <summary>
+        /// A library of functions for adding, moving, modifying, and deleting LandingPage Items
+        /// </summary>
+        public CswNbtLandingPage LandingPage
         {
-            return ( new LandingPage.CswNbtLandingPageTable( _CswNbtResources ) );
+            get
+            {
+                if( _LandingPage == null && _CswNbtResources.IsInitializedForDbAccess )
+                {
+                    _LandingPage = new CswNbtLandingPage( _CswNbtResources );
+                }
+                return _LandingPage;
+            }
         }
 
         #region TransactionManagement
@@ -604,7 +616,43 @@ namespace ChemSW.Nbt.Schema
             }
             _CswNbtResources.ClearActionsCache();
             return NewActionId;
-        }
+        } // createAction()
+
+        public void deleteAction( string ActionName )
+        {
+            // Remove from jct_modules_actions
+            CswTableUpdate JctUpdate = this.makeCswTableUpdate( "28562D_Jct_Update", "jct_modules_actions" );
+            DataTable JctTable = JctUpdate.getTable( "where actionid in (select actionid from actions where actionname = '" + ActionName + "')" );
+            if( JctTable.Rows.Count > 0 )
+            {
+                foreach( DataRow JctRow in JctTable.Rows )
+                {
+                    JctRow.Delete();
+                }
+            }
+
+            // Remove from actions
+            CswTableUpdate ActionUpdate = this.makeCswTableUpdate( "28562D_Action_Update", "actions" );
+            DataTable ActionTable = ActionUpdate.getTable( "where actionname = '" + ActionName + "'" );
+            if( ActionTable.Rows.Count > 0 )
+            {
+                foreach( DataRow ActionRow in ActionTable.Rows )
+                {
+                    ActionRow.Delete();
+                }
+            }
+
+            // Fix action permissions
+            CswNbtMetaDataObjectClass RoleOC = this.MetaData.getObjectClass( CswEnumNbtObjectClass.RoleClass );
+            foreach( CswNbtObjClassRole Role in RoleOC.getNodes( false, true ) )
+            {
+                if( Role.ActionPermissions.CheckValue( ActionName ) )
+                {
+                    Role.ActionPermissions.RemoveValue( ActionName );
+                    Role.postChanges( false );
+                }
+            }
+        } // deleteAction()
 
         /// <summary>
         /// Convenience function for making new Configuration Variable

@@ -149,6 +149,65 @@ namespace ChemSW.Nbt.Test.Actions
         }
 
         /// <summary>
+        /// Given a location that has one Container and a ContainerLocation for that Container in a different location,
+        /// assert that the returned ContainerStatus data has a ContainerStatus value of WrongLocation
+        /// </summary>
+        [Test]
+        public void getContainerStatusesTestWrongLocation()
+        {
+            CswNbtObjClassLocation Location1 = TestData.Nodes.createLocationNode();
+            CswNbtObjClassLocation Location2 = TestData.Nodes.createLocationNode( Name: "NewRoom2" );
+            CswNbtObjClassContainer ContainerNode = TestData.Nodes.createContainerNode( LocationId: Location1.NodeId );
+            TestData.Nodes.createContainerLocationNode( ContainerNode.Node,
+                LocationId: Location2.NodeId,
+                ContainerScan: ContainerNode.Barcode.Barcode,
+                Type: CswEnumNbtContainerLocationTypeOptions.ReconcileScans.ToString() );
+            ContainerData.ReconciliationRequest Request = new ContainerData.ReconciliationRequest
+            {
+                StartDate = DateTime.Now.AddDays( -1 ).ToString(),
+                EndDate = DateTime.Now.AddSeconds( 1 ).ToString(),
+                LocationId = Location1.NodeId.ToString(),
+                IncludeChildLocations = false,
+                ContainerLocationTypes = _getTypes()
+            };
+            ContainerData Data = ReconciliationAction.getContainerStatuses( Request );
+            Assert.AreEqual( 1, Data.ContainerStatuses.Count );
+            Assert.AreEqual( CswEnumNbtContainerLocationStatusOptions.WrongLocation.ToString(), Data.ContainerStatuses[0].ContainerStatus );
+        }
+
+        /// <summary>
+        /// Given a location that has one Container and a ContainerLocation for that Container in a different location,
+        /// given that the scanned location does not allow inventory
+        /// assert that the returned ContainerStatus data does not have the action option "Move To Location"
+        /// </summary>
+        [Test]
+        public void getContainerStatusesTestWrongLocationNoInventory()
+        {
+            CswNbtObjClassLocation Location1 = TestData.Nodes.createLocationNode();
+            CswNbtObjClassLocation Location2 = TestData.Nodes.createLocationNode( Name: "NewRoom2", AllowInventory: false );
+            CswNbtObjClassContainer ContainerNode = TestData.Nodes.createContainerNode( LocationId: Location1.NodeId );
+            TestData.Nodes.createContainerLocationNode( ContainerNode.Node,
+                LocationId: Location2.NodeId,
+                ContainerScan: ContainerNode.Barcode.Barcode,
+                Type: CswEnumNbtContainerLocationTypeOptions.ReconcileScans.ToString() );
+            ContainerData.ReconciliationRequest Request = new ContainerData.ReconciliationRequest
+            {
+                StartDate = DateTime.Now.AddDays( -1 ).ToString(),
+                EndDate = DateTime.Now.AddSeconds( 1 ).ToString(),
+                LocationId = Location1.NodeId.ToString(),
+                IncludeChildLocations = false,
+                ContainerLocationTypes = _getTypes()
+            };
+            ContainerData Data = ReconciliationAction.getContainerStatuses( Request );
+            Assert.AreEqual( 1, Data.ContainerStatuses.Count );
+            Assert.AreEqual( CswEnumNbtContainerLocationStatusOptions.WrongLocation.ToString(), Data.ContainerStatuses[0].ContainerStatus );
+            foreach( string ActionOption in Data.ContainerStatuses[0].ActionOptions )
+            {
+                Assert.AreNotEqual( CswEnumNbtContainerLocationActionOptions.MoveToLocation.ToString(), ActionOption );
+            }
+        }
+
+        /// <summary>
         /// Given a location that has more than one Container with ContainerLocations in the given timeframe with a Correct status,
         /// assert that the returned ContainerStatus data contains more than one row.
         /// </summary>

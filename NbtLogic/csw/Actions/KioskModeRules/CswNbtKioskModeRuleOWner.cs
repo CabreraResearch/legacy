@@ -48,6 +48,7 @@ namespace ChemSW.Nbt.Actions.KioskMode
             CswNbtNode node = _CswNbtResources.Nodes[OpData.Field2.NodeId];
             CswNbtMetaDataNodeType NodeType = node.getNodeType();
             string itemName = NodeType.NodeTypeName;
+            string statusMsg = null;
 
             switch( OpData.Field2.FoundObjClass )
             {
@@ -63,8 +64,16 @@ namespace ChemSW.Nbt.Actions.KioskMode
                     if( _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Edit, NodeType ) )
                     {
                         CswNbtObjClassEquipment equipmentNode = node;
-                        equipmentNode.UpdateOwner( newOwner );
-                        succeeded = true;
+
+                        if( false == equipmentNode.Assembly.Empty )
+                        {
+                            statusMsg = "This equipment belongs to an assembly and cannot be changed directly.";
+                        }
+                        else
+                        {
+                            equipmentNode.UpdateOwner( newOwner );
+                            succeeded = true;
+                        }
                     }
                     break;
                 case CswEnumNbtObjectClass.ContainerClass:
@@ -84,7 +93,7 @@ namespace ChemSW.Nbt.Actions.KioskMode
             }
             else
             {
-                string statusMsg = "You do not have permission to edit " + itemName + " (" + OpData.Field2.Value + ")";
+                statusMsg = statusMsg ?? "You do not have permission to edit " + itemName + " (" + OpData.Field2.Value + ")";
                 OpData.Field2.StatusMsg = statusMsg;
                 OpData.Field2.ServerValidated = false;
                 OpData.Log.Add( DateTime.Now + " - ERROR: " + statusMsg );

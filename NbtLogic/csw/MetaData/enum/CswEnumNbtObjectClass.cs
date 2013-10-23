@@ -27,6 +27,7 @@ namespace ChemSW.Nbt.MetaData
             { CustomerClass                     , CustomerClass                      },
             { DepartmentClass                   , DepartmentClass                    },
             { DocumentClass                     , DocumentClass                      },
+            { DSDPhraseClass                    , DSDPhraseClass                     },
             { EnterprisePartClass               , EnterprisePartClass                },
             { EquipmentAssemblyClass            , EquipmentAssemblyClass             },
             { EquipmentClass                    , EquipmentClass                     },
@@ -38,6 +39,7 @@ namespace ChemSW.Nbt.MetaData
             { GenericClass                      , GenericClass                       },
             { GHSClass                          , GHSClass                           },
             { GHSPhraseClass                    , GHSPhraseClass                     },
+            { GHSSignalWordClass                , GHSSignalWordClass                 },
             { InspectionDesignClass             , InspectionDesignClass              },
             { InspectionRouteClass              , InspectionRouteClass               },
             { InventoryGroupClass               , InventoryGroupClass                },
@@ -155,6 +157,7 @@ namespace ChemSW.Nbt.MetaData
         public const string CustomerClass = "CustomerClass";
         public const string DepartmentClass = "DepartmentClass";
         public const string DocumentClass = "DocumentClass";
+        public const string DSDPhraseClass = "DSDPhraseClass";
         public const string EnterprisePartClass = "EnterprisePartClass";
         public const string EquipmentAssemblyClass = "EquipmentAssemblyClass";
         public const string EquipmentClass = "EquipmentClass";
@@ -204,6 +207,7 @@ namespace ChemSW.Nbt.MetaData
         public const string RequestMaterialCreateClass = "RequestMaterialCreateClass";
         public const string RoleClass = "RoleClass";
         public const string SDSDocumentClass = "SDSDocumentClass";
+        public const string GHSSignalWordClass = "GHSSignalWord";
         public const string SizeClass = "SizeClass";
         public const string TaskClass = "TaskClass";
         public const string UnitOfMeasureClass = "UnitOfMeasureClass";

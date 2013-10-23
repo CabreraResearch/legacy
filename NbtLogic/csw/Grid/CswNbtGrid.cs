@@ -203,14 +203,14 @@ namespace ChemSW.Nbt.Grid
                                         ( _CswNbtResources.CurrentNbtUser.IsAdministrator() ||
                                           _CswNbtResources.Permit.isNodeWritable( CswEnumNbtNodeTypePermission.Edit,
                                                                                   NodeType,
-                                                                                  NodeId : Tree.getNodeIdForCurrentPosition() ) ) &&
+                                                                                  NodeId: Tree.getNodeIdForCurrentPosition() ) ) &&
                                         false == Tree.getNodeLockedForCurrentPosition() );
 
                     gridrow.canDelete = ( _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Delete,
                                                                                   NodeType ) &&
                                           _CswNbtResources.Permit.isNodeWritable( CswEnumNbtNodeTypePermission.Delete,
                                                                                   NodeType,
-                                                                                  NodeId : Tree.getNodeIdForCurrentPosition() )
+                                                                                  NodeId: Tree.getNodeIdForCurrentPosition() )
                                                                                   );
                     gridrow.isLocked = Tree.getNodeLockedForCurrentPosition();
                     gridrow.isDisabled = ( false == Tree.getNodeIncludedForCurrentPosition() );
@@ -270,9 +270,9 @@ namespace ChemSW.Nbt.Grid
                             break;
                         case CswEnumNbtFieldType.File:
                             string LinkUrl = CswNbtNodePropBlob.getLink( Prop.JctNodePropId, NodeId );
-                            if( false == string.IsNullOrEmpty( LinkUrl ) )
+                            if( false == string.IsNullOrEmpty( LinkUrl ) && false == string.IsNullOrEmpty( oldValue ) )
                             {
-                                newValue = "<a target=\"blank\" href=\"" + LinkUrl + "\">" + ( oldValue ?? "File" ) + "</a>";
+                                newValue = "<a target=\"blank\" href=\"" + LinkUrl + "\">" + ( oldValue ) + "</a>";
                             }
                             break;
                         case CswEnumNbtFieldType.Image:
@@ -468,13 +468,13 @@ namespace ChemSW.Nbt.Grid
 
                         NodeIdForGridRowData = Row[NodeIdColName].ToString();
                         CswExtJsGridButton CurrentButton = new CswExtJsGridButton
-                            {
-                                DataIndex = index.ToString(),
-                                RowNo = RowNo,
-                                MenuOptions = MenuOptions,
-                                SelectedText = CurrentColumn.ColumnName,
-                                PropAttr = NodeIdForGridRowData
-                            };//nu the button
+                        {
+                            DataIndex = index.ToString(),
+                            RowNo = RowNo,
+                            MenuOptions = MenuOptions,
+                            SelectedText = CurrentColumn.ColumnName,
+                            PropAttr = NodeIdForGridRowData
+                        };//nu the button
 
                         grid.rowData.btns.Add( CurrentButton );//add the button
 

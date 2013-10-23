@@ -36,7 +36,7 @@ namespace ChemSW.Nbt.Schema
             {
                 foreach( CswNbtMetaDataNodeType UserNT in UserOC.getNodeTypes() )
                 {
-                    CswNbtMetaDataNodeTypeProp WorkUnitNTP = UserNT.getNodeTypePropByObjectClassProp( CswNbtObjClassUser.PropertyName.WorkUnit );
+                    CswNbtMetaDataNodeTypeProp WorkUnitNTP = UserNT.getNodeTypePropByObjectClassProp( CswNbtObjClassUser.PropertyName.CurrentWorkUnit );
                     WorkUnitNTP.updateLayout( CswEnumNbtLayoutType.Add, true );
                 }
             }

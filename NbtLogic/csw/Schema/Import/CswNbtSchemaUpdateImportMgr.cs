@@ -32,7 +32,13 @@ namespace ChemSW.Nbt.csw.Schema
                 {"chemicals_view", 13},
                 {"packdetail_view", 14},
                 {"sds_view", 15},
-                {"docs_view", 15}
+                {"docs_view", 15},
+                {"receipt_lots_view", 16},
+                {"cofa_docs_view", 17},
+                {"container_groups", 18},
+                {"containers_view", 19},
+                {"inventory_view", 20},
+                {"ghs_phrases", 21}
             };
 
         private DataTable _importDefTable;
@@ -165,7 +171,7 @@ namespace ChemSW.Nbt.csw.Schema
                 DestNodeTypeName = DestNodeTypeName ?? _DestNodeTypeName;
                 if( CswAll.AreStrings( SheetName, DestNodeTypeName, DestPropertyName, SourceColumnName ) )
                 {
-                    _SourceColumns.Add( SourceColumnName, AllowNullOrEmpty : false, IsUnique : true );
+                    _SourceColumns.Add( SourceColumnName, AllowNullOrEmpty: false, IsUnique: true );
 
                     DataRow row = _importBindingsTable.NewRow();
                     row["sheet"] = SheetName;

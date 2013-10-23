@@ -632,17 +632,17 @@ namespace ChemSW.Nbt.WebServices
                     } // if( ExistingPrintersTree.getChildNodeCount() == 0 )
                     else
                     {
-                        Return.addException( new CswDniException( CswEnumErrorType.Error, "That printer is already registered.", "registerLpc() found a printer with the same name: " + Request.LpcName ) );
+                        Return.addException( CswResources, new CswDniException( CswEnumErrorType.Error, "That printer is already registered.", "registerLpc() found a printer with the same name: " + Request.LpcName ) );
                     }
                 } // if( null != PrinterNT )
                 else
                 {
-                    Return.addException( new CswDniException( CswEnumErrorType.Error, "Printer could not be created.", "registerLpc() could not access a Printer NodeType" ) );
+                    Return.addException( CswResources, new CswDniException( CswEnumErrorType.Error, "Printer could not be created.", "registerLpc() could not access a Printer NodeType" ) );
                 }
             } // if( null != PrinterOC )
             else
             {
-                Return.addException( new CswDniException( CswEnumErrorType.Error, "Printer could not be created.", "registerLpc() could not access a Printer Object Class" ) );
+                Return.addException( CswResources, new CswDniException( CswEnumErrorType.Error, "Printer could not be created.", "registerLpc() could not access a Printer Object Class" ) );
             }
         } // registerLpc()
 
@@ -721,17 +721,17 @@ namespace ChemSW.Nbt.WebServices
                     } // if( null != PrinterOC && null != PrintJobOC )
                     else
                     {
-                        Return.addException( new CswDniException( CswEnumErrorType.Error, "Job fetch failed.", "nextLabelJob() could not access a Printer or Print Job Object Class" ) );
+                        Return.addException( CswResources, new CswDniException( CswEnumErrorType.Error, "Job fetch failed.", "nextLabelJob() could not access a Printer or Print Job Object Class" ) );
                     }
                 } // if( null != Printer )
                 else
                 {
-                    Return.addException( new CswDniException( CswEnumErrorType.Error, "Invalid Printer.", "nextLabelJob() printer key (" + Request.PrinterKey + ") did not match a node" ) );
+                    Return.addException( CswResources, new CswDniException( CswEnumErrorType.Error, "Invalid Printer.", "nextLabelJob() printer key (" + Request.PrinterKey + ") did not match a node" ) );
                 }
             } // if( CswTools.IsPrimaryKey( PrinterNodeId ) )
             else
             {
-                Return.addException( new CswDniException( CswEnumErrorType.Error, "Invalid Printer.", "nextLabelJob() got an invalid printer key:" + Request.PrinterKey ) );
+                Return.addException( CswResources, new CswDniException( CswEnumErrorType.Error, "Invalid Printer.", "nextLabelJob() got an invalid printer key:" + Request.PrinterKey ) );
             }
         } // nextLabelJob()
 
@@ -763,12 +763,12 @@ namespace ChemSW.Nbt.WebServices
                 }
                 else
                 {
-                    Return.addException( new CswDniException( CswEnumErrorType.Error, "Invalid Job.", "updateLabelJob() job key (" + Request.JobKey + ") did not match a node" ) );
+                    Return.addException( CswResources, new CswDniException( CswEnumErrorType.Error, "Invalid Job.", "updateLabelJob() job key (" + Request.JobKey + ") did not match a node" ) );
                 }
             } // if( CswTools.IsPrimaryKey( PrinterNodeId ) )
             else
             {
-                Return.addException( new CswDniException( CswEnumErrorType.Error, "Invalid Job.", "updateLabelJob() got an invalid job key:" + Request.JobKey ) );
+                Return.addException( CswResources, new CswDniException( CswEnumErrorType.Error, "Invalid Job.", "updateLabelJob() got an invalid job key:" + Request.JobKey ) );
             }
         } // updateLabelJob()
 

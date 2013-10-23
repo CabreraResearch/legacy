@@ -105,7 +105,16 @@ namespace ChemSW.Nbt.PropTypes
             get { return Gestalt; }
         }
 
-
+        /// <summary>
+        /// When set to true, users can set hourly time intervals
+        /// </summary>
+        public bool AllowHourly
+        {
+            get
+            {
+                return CswConvert.ToBoolean( _CswNbtMetaDataNodeTypeProp.Attribute1 );
+            }
+        }
 
         //private string _ElemName_Rateinterval = "Rateinterval";
 
@@ -115,6 +124,7 @@ namespace ChemSW.Nbt.PropTypes
 
             JObject IntervalObj = new JObject();
             ParentObject[_IntervalSubField.ToXmlNodeName()] = IntervalObj;
+            ParentObject["allowHourly"] = AllowHourly;
             //IntervalObj["text"] = RateInterval.ToString();
             RateInterval.ToJson( IntervalObj );
         }

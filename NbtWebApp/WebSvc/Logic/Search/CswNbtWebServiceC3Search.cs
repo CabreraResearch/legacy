@@ -188,6 +188,9 @@ namespace ChemSW.Nbt.WebServices
 
                     [DataMember]
                     public string nodelink = string.Empty;
+
+                    [DataMember]
+                    public bool corporate = false;
                 }
 
                 [DataContract]
@@ -816,37 +819,41 @@ namespace ChemSW.Nbt.WebServices
                 VendorView.ViewName = "VendorWithNameEquals";
 
                 CswNbtMetaDataObjectClass VendorOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.VendorClass );
-                CswNbtViewRelationship Parent = VendorView.AddViewRelationship( VendorOC, true );
+                CswNbtViewRelationship ParentRelationship = VendorView.AddViewRelationship( VendorOC, true );
 
-                CswNbtMetaDataObjectClassProp VendorOCP = VendorOC.getObjectClassProp( CswNbtObjClassVendor.PropertyName.VendorName );
+                CswNbtMetaDataObjectClassProp VendorNameOCP = VendorOC.getObjectClassProp( CswNbtObjClassVendor.PropertyName.VendorName );
 
-                CswNbtViewProperty ViewProperty1 = VendorView.AddViewProperty( Parent, VendorOCP );
+                VendorView.AddViewPropertyAndFilter( ParentRelationship, VendorNameOCP, VendorName, CswEnumNbtSubFieldName.Text );
 
-                CswNbtViewPropertyFilter Filter1 = VendorView.AddViewPropertyFilter( ViewProperty1,
-                                                          CswEnumNbtFilterConjunction.And,
-                                                          CswEnumNbtFilterResultMode.Hide,
-                                                          CswEnumNbtSubFieldName.Text,
-                                                          CswEnumNbtFilterMode.Equals,
-                                                          VendorName,
-                                                          false,
-                                                          false );
+                // If MLM is enabled, we only want to match on corporate vendors
+                if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.MLM ) )
+                {
+                    CswNbtMetaDataObjectClassProp VendorTypeOCP = VendorOC.getObjectClassProp( CswNbtObjClassVendor.PropertyName.VendorTypeName );
+                    VendorView.AddViewPropertyAndFilter( ParentRelationship, VendorTypeOCP, CswNbtObjClassVendor.VendorTypes.Corporate, CswEnumNbtSubFieldName.Text );
+                }
 
                 ICswNbtTree VendorsTree = _CswNbtResources.Trees.getTreeFromView( VendorView, false, true, true );
+                bool NewVendor = true;
                 if( VendorsTree.getChildNodeCount() > 0 )
                 {
+                    NewVendor = false;
+
                     VendorsTree.goToNthChild( 0 );
                     CswNbtObjClassVendor VendorNode = VendorsTree.getNodeForCurrentPosition();
-                    Supplier.name = CswConvert.ToString( VendorNode.VendorName );
+                    Supplier.name = CswConvert.ToString( VendorNode.VendorName.Text );
                     Supplier.val = CswConvert.ToString( VendorNode.NodeId );
                     Supplier.nodelink = CswConvert.ToString( VendorNode.Node.NodeLink );
                 }
-                else
+
+                if( NewVendor )
                 {
                     // Don't create a new node just return an empty value in the return object - Case 28687
                     Supplier.name = VendorName;
                     Supplier.val = string.Empty;
                     Supplier.nodelink = string.Empty;
                 }
+
+                Supplier.corporate = _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.MLM );
 
                 return Supplier;
             }//createVendorNode()

@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NbtPrintServer", "NbtPrintS
 EndProject
 Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "NbtPrintClientSetup", "NbtPrintClientSetup\NbtPrintClientSetup.wixproj", "{46B47002-5D3D-428C-99D3-525FDE91BD06}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CswCore", "..\..\..\Common\CswCommon\CswCore\CswCore.csproj", "{9498738D-42C2-4BBF-875B-846918A8821B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CswCore", "..\..\..\common\CswCommon\CswCore\CswCore.csproj", "{9498738D-42C2-4BBF-875B-846918A8821B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

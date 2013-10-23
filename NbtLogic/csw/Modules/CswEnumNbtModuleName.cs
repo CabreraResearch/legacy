@@ -8,7 +8,7 @@ namespace ChemSW.Nbt
     /// <summary>
     /// Represents an NBT Module
     /// </summary>
-    public sealed class CswEnumNbtModuleName : IEquatable<CswEnumNbtModuleName>, IComparable<CswEnumNbtModuleName>
+    public sealed class CswEnumNbtModuleName: IEquatable<CswEnumNbtModuleName>, IComparable<CswEnumNbtModuleName>
     {
         #region Internals
 
@@ -23,6 +23,7 @@ namespace ChemSW.Nbt
             {CISPro                   , CISPro},
             {Containers               , Containers},
             {Dev                      , Dev},
+            {DSD                      , DSD},
             {FireCode                 , FireCode},
             {FireDbSync               , FireDbSync},
             {IMCS                     , IMCS},
@@ -91,6 +92,10 @@ namespace ChemSW.Nbt
         /// Development
         /// </summary>
         public const string Dev = "Dev";
+        /// <summary>
+        /// Dangerous Substances Directive
+        /// </summary>
+        public const string DSD = "DSD";
         /// <summary>
         /// Material Life-cycle Management
         /// </summary>

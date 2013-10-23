@@ -1,3 +1,4 @@
+using System.Data;
 using System.Runtime.Serialization;
 using ChemSW.Nbt.Actions;
 using NbtWebApp.WebSvc.Returns;
@@ -20,6 +21,16 @@ namespace ChemSW.Nbt.WebServices
             }
             [DataMember]
             public HMISData Data;
+        }
+
+        /// <summary>
+        /// Return Object for HMIS Data
+        /// </summary>
+        [DataContract]
+        public class HMISDataTableReturn : CswWebSvcReturn
+        {
+            [DataMember]
+            public DataTable Data;
         }
 
         /// <summary>
@@ -53,24 +64,14 @@ namespace ChemSW.Nbt.WebServices
         #endregion DataContract
 
         #region Public
-
+        
         /// <summary>
         /// Gets all reportable hazardous Materials and their total quantities in a given Control Zone
         /// </summary>
-        public static void getHMISData( ICswResources CswResources, HMISDataReturn Return, HMISData.HMISDataRequest Request )
+        public static void getHMISDataTable( ICswResources CswResources, HMISDataTableReturn Return, HMISData.HMISDataRequest Request )
         {
             CswNbtActHMISReporting _CswNbtActHMISReporting = new CswNbtActHMISReporting( (CswNbtResources) CswResources );
-            Return.Data = _CswNbtActHMISReporting.getHMISData( Request );
-        }
-
-        /// <summary>
-        /// Gets view of all control zones for HMIS Reporting
-        /// </summary>
-        public static void getControlZonesView( ICswResources CswResources, HMISViewReturn Return, object Request )
-        {
-            CswNbtActHMISReporting _CswNbtActHMISReporting = new CswNbtActHMISReporting( (CswNbtResources) CswResources );
-            CswNbtView ControlZonesView = _CswNbtActHMISReporting.getControlZonesView();
-            Return.Data.SessionViewId = ControlZonesView.SessionViewId;
+            Return.Data = _CswNbtActHMISReporting.getHMISDataTable( Request );
         }
 
         /// <summary>

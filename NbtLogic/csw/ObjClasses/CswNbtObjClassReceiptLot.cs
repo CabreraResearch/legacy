@@ -1,5 +1,3 @@
-using System;
-using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 
@@ -10,7 +8,7 @@ namespace ChemSW.Nbt.ObjClasses
     {
         public new sealed class PropertyName: CswNbtObjClass.PropertyName
         {
-            //public const string ReceiptLotNo = "Receipt Lot No"; //waiting on 27877
+            public const string ReceiptLotNo = "Receipt Lot No"; 
             public const string Material = "Material";
             //public const string MaterialID = "Material ID"; //waiting on 27864
             public const string ExpirationDate = "Expiration Date";
@@ -175,7 +173,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Object class specific properties
 
-        //public CswNbtNodePropPropRefSequence ReceiptLotNo { get { return _CswNbtNode.Properties[PropertyName.ReceiptLotNo]; } } //waiting on 27877
+        public CswNbtNodePropSequence ReceiptLotNo { get { return _CswNbtNode.Properties[PropertyName.ReceiptLotNo]; } } 
         public CswNbtNodePropRelationship Material { get { return _CswNbtNode.Properties[PropertyName.Material]; } }
         //public CswNbtNodePropPropertyReference MaterialID { get { return _CswNbtNode.Properties[PropertyName.MaterialID]; } } //waiting on 27864
         public CswNbtNodePropDateTime ExpirationDate { get { return _CswNbtNode.Properties[PropertyName.ExpirationDate]; } }

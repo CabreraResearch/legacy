@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using ChemSW.Core;
+using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Security;
 
@@ -24,7 +26,7 @@ namespace ChemSW.Nbt.Security
         CswPrimaryKey DefaultLocationId { get; }
         CswPrimaryKey DefaultPrinterId { get; }
         CswPrimaryKey DefaultBalanceId { get; }
-        CswPrimaryKey WorkUnitId { get; }
+        CswPrimaryKey CurrentWorkUnitId { get; }
         CswPrimaryKey JurisdictionId { get; }
         Int32 UserNodeTypeId { get; }
         Int32 UserObjectClassId { get; }
@@ -34,7 +36,7 @@ namespace ChemSW.Nbt.Security
         new bool PasswordIsExpired { get; }
         string Language { get; }
         CswNbtPropertySetPermission getPermissionForGroup( CswPrimaryKey PermissionGroupId );
-        Collection<CswPrimaryKey> getUserPermissions();
+        Dictionary<CswPrimaryKey, CswPrimaryKey> getUserPermissions( CswEnumNbtObjectClass PermGroupType = null, bool RequireEdit = false );
 
     }//ICswNbtUser
 }//namespace ChemSW.Nbt

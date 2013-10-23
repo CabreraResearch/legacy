@@ -118,10 +118,6 @@ namespace ChemSW.Nbt.ObjClasses
 
         private void _validateAliasUniqueness()
         {
-            CswCommaDelimitedString CommaDelimitedAliases = new CswCommaDelimitedString();
-            string AliasesWithoutSpaces = Aliases.Text.Replace( " ", "" );
-            CommaDelimitedAliases.FromString( AliasesWithoutSpaces );
-
             // Create a view of all UoM nodes and their Aliases property
             CswNbtView UoMView = new CswNbtView( _CswNbtResources );
             CswNbtViewRelationship ParentRelationship = UoMView.AddViewRelationship( ObjectClass, true );
@@ -145,7 +141,7 @@ namespace ChemSW.Nbt.ObjClasses
                         string UoMNodeAliasesWithoutSpaces = TreeNodeProp.Gestalt.Replace( " ", "" );
                         UoMNodeCommaDelimitedAliases.FromString( UoMNodeAliasesWithoutSpaces );
 
-                        foreach( string Alias1 in CommaDelimitedAliases )
+                        foreach( string Alias1 in AliasesAsDelimitedString )
                         {
                             // First check to see whether Alias1 matches the CurrentNodeName
                             if( Alias1.Equals( CurrentNodeName ) )
@@ -208,6 +204,16 @@ namespace ChemSW.Nbt.ObjClasses
         private void onAliasesPropChange( CswNbtNodeProp Prop, bool Creating )
         {
             _validateAliasUniqueness();
+        }
+
+        public CswCommaDelimitedString AliasesAsDelimitedString
+        {
+            get
+            {
+                CswCommaDelimitedString ret = new CswCommaDelimitedString();
+                ret.FromString( Aliases.Text.Replace( " ", "" ) );
+                return ret;
+            }
         }
 
         #endregion

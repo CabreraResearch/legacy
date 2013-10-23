@@ -3,6 +3,7 @@ using System.Data;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt
 {
@@ -10,9 +11,11 @@ namespace ChemSW.Nbt
     public class CswNbtNodePropCollDataRelational : ICswNbtNodePropCollData
     {
         private CswNbtResources _CswNbtResources = null;
-        public CswNbtNodePropCollDataRelational( CswNbtResources CswNbtResources )
+        private CswNbtNode _Node;
+        public CswNbtNodePropCollDataRelational( CswNbtResources CswNbtResources, CswNbtNode Node )
         {
             _CswNbtResources = CswNbtResources;
+            _Node = Node;
         }//ctor
 
 
@@ -25,7 +28,7 @@ namespace ChemSW.Nbt
 
                 if( null == _PropsTable )
                 {
-                    CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
+                    CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( _Node.NodeTypeId );
                     CswTableSelect CswTableSelect = _CswNbtResources.makeCswTableSelect( "CswNbtNodePropCollDataRelational_PropsTable", NodeType.TableName );
                     string FilterColumn = _CswNbtResources.getPrimeKeyColName( NodeType.TableName );
                     CswCommaDelimitedString SelectColumns = new CswCommaDelimitedString();
@@ -39,8 +42,8 @@ namespace ChemSW.Nbt
                     }//iterate node type props to set up select columns
 
                     DataTable DataTable = null;
-                    if( _NodePk != null )
-                        DataTable = CswTableSelect.getTable( SelectColumns, FilterColumn, _NodePk.PrimaryKey, string.Empty, false );
+                    if( _Node.NodeId != null )
+                        DataTable = CswTableSelect.getTable( SelectColumns, FilterColumn, _Node.NodeId.PrimaryKey, string.Empty, false );
                     else
                         DataTable = CswTableSelect.getEmptyTable();
 
@@ -49,10 +52,10 @@ namespace ChemSW.Nbt
                     {
                         DataRow NewRow = _PropsTable.NewRow();
                         NewRow["nodetypepropid"] = CurrentNodeTypeProp.PropId.ToString();
-                        if( _NodePk != null )
+                        if( _Node.NodeId != null )
                         {
-                            NewRow["nodeid"] = CswConvert.ToDbVal( _NodePk.PrimaryKey );
-                            NewRow["nodeidtablename"] = _NodePk.TableName;
+                            NewRow["nodeid"] = CswConvert.ToDbVal( _Node.NodeId.PrimaryKey );
+                            NewRow["nodeidtablename"] = _Node.NodeId.TableName;
                         }
                         foreach( CswNbtSubField CurrentSubField in CurrentNodeTypeProp.getFieldTypeRule().SubFields )
                         {
@@ -68,34 +71,6 @@ namespace ChemSW.Nbt
             }//get
         }//PropsTable
 
-        Int32 _NodeTypeId = Int32.MinValue;
-        public Int32 NodeTypeId
-        {
-            set
-            {
-                _NodeTypeId = value;
-            }
-
-            get
-            {
-                return ( _NodeTypeId );
-            }
-        }
-
-
-        CswPrimaryKey _NodePk = null;
-        public CswPrimaryKey NodePk
-        {
-            set
-            {
-                _NodePk = value;
-            }
-
-            get
-            {
-                return ( _NodePk );
-            }
-        }//NodeKey
 
 
         private DataTable makeEmptyJctNodesProps()
@@ -126,7 +101,7 @@ namespace ChemSW.Nbt
 
         public void update()
         {
-            CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
+            CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( _Node.NodeTypeId );
             CswTableUpdate CswTableUpdate = _CswNbtResources.makeCswTableUpdate( "CswNbtNodePropCollDataRelational_update", NodeType.TableName );
             string PkColumnName = _CswNbtResources.getPrimeKeyColName( NodeType.TableName );
 
@@ -140,7 +115,7 @@ namespace ChemSW.Nbt
                 }
             }//iterate node type props to set up select columns
 
-            DataTable DataTable = CswTableUpdate.getTable( SelectColumns, PkColumnName, _NodePk.PrimaryKey, string.Empty, false );
+            DataTable DataTable = CswTableUpdate.getTable( SelectColumns, PkColumnName, _Node.NodeId.PrimaryKey, string.Empty, false );
 
 
             //test

@@ -930,12 +930,12 @@
                             producturldiv.hide();
                         }
 
-                        // MSDS URL
-                        var msdsurldiv = table1.cell(6, 1).div({
-                            text: '<a href=' + data.ProductDetails.MsdsUrl + ' target="_blank">MSDS</a>'
+                        // SDS URL
+                        var sdsurldiv = table1.cell(6, 1).div({
+                            text: '<a href=' + data.ProductDetails.MsdsUrl + ' target="_blank">SDS</a>'
                         });
                         if (Csw.isNullOrEmpty(data.ProductDetails.MsdsUrl)) {
-                            msdsurldiv.hide();
+                            sdsurldiv.hide();
                         }
 
                         var molImageHeight = 0;

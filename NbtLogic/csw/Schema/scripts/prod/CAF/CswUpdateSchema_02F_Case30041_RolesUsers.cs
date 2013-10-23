@@ -58,7 +58,7 @@ namespace ChemSW.Nbt.Schema
 
                 UserImpMgr.importBinding( "defaultlocationid", CswNbtObjClassUser.PropertyName.DefaultLocation, CswEnumNbtSubFieldName.NodeID.ToString() );
                 UserImpMgr.importBinding( "roleid", CswNbtObjClassUser.PropertyName.Role, CswEnumNbtSubFieldName.NodeID.ToString() );
-                UserImpMgr.importBinding( "workunitid", CswNbtObjClassUser.PropertyName.WorkUnit, CswEnumNbtSubFieldName.NodeID.ToString() );
+                UserImpMgr.importBinding( "workunitid", CswNbtObjClassUser.PropertyName.CurrentWorkUnit, CswEnumNbtSubFieldName.NodeID.ToString() );
 
                 /*
                    +defaultlocationid, 

@@ -13,18 +13,24 @@
             $parent: '',
             name: '',
             values: [],
+            valStr: '',
             multiple: true,
             cssclass: '',
             readonlyless: '',
             readonlymore: '',
             isMultiEdit: false,
             onChange: null, //function () {}
+            onValidate: null,
             isControl: false,
-            EditMode: ''
+            EditMode: '',
+            required: false,
         };
 
         var cswPublic = {};
-
+        var multiSelectCtrl;
+        var valStr;
+        var valArr;
+        
         (function () {
 
             if (options) {
@@ -40,23 +46,13 @@
                 editBtnCell = table.cell(1, 2),
                 multiSelectCell = table.cell(2, 1),
                 morediv = moreDivCell.moreDiv({ name: cswPrivate.name + '_morediv' });
+            valStr = cswPrivate.valStr;
 
             delete cswPrivate.values;
             morediv.moreLink.hide();
             cswPrivate.select = multiSelectCell.select(cswPrivate);
             multiSelectCell.hide();
             cswPublic = Csw.dom({}, cswPrivate.select);
-
-            Csw.iterate(values, function (opt) {
-                var value = Csw.string(opt.value, opt.text),
-                    text = Csw.string(opt.text, value),
-                    isSelected;
-                if (false === Csw.isNullOrEmpty(value)) {
-                    isSelected = (Csw.bool(opt.selected) && false === isMultiEdit);
-                    cswPrivate.select.option({ value: value, display: text, isSelected: isSelected, isDisabled: opt.disabled });
-                    optionCount += 1;
-                }
-            });
 
             if (false === Csw.isNullOrEmpty(cswPrivate.readonlyless)) {
                 morediv.shownDiv.span({ text: cswPrivate.readonlyless });
@@ -66,30 +62,33 @@
                 }
             }
 
-            var onChange = function (select) {
-                Csw.tryExec(cswPrivate.onChange, select, cswPublic.val());
-            };
-
-            cswPrivate.multiSelect = {};
-            var makeMultiSelect = function () {
-                moreDivCell.hide();
-                editBtnCell.hide();
-                cswPrivate.multiSelect = cswPrivate.select.$.multiselect({
-                    click: Csw.method(onChange, cswPrivate.select),
-                    checkall: Csw.method(onChange, cswPrivate.select),
-                    uncheckall: Csw.method(onChange, cswPrivate.select),
-                    optgrouptoggle: Csw.method(onChange, cswPrivate.select),
-                    close: Csw.method(onChange, cswPrivate.select)
+            var makeMultiSelect = function (inDialog, div, height, width) {
+                Csw.dialogs.multiselectedit({
+                    opts: values,
+                    title: 'Edit Prop',
+                    required: cswPrivate.required,
+                    inDialog: inDialog,
+                    parent: div,
+                    height: height,
+                    width: width,
+                    onChange: function (updatedValues) {
+                        valArr = updatedValues;
+                        Csw.tryExec(cswPrivate.onChange, updatedValues);
+                    },
+                    onSave: function (updatedValues) {
+                        valArr = updatedValues;
+                        var isValid = Csw.tryExec(cswPrivate.onChange, updatedValues);
+                        if (isValid) {
+                            Csw.publish('triggerSave');
+                        }
+                        return isValid;
+                    },
                 });
-                if (optionCount > 20) {
-                    cswPrivate.multiSelect.multiselectfilter();
-                }
-
-                multiSelectCell.show();
             };
 
             if (cswPrivate.EditMode === Csw.enums.editMode.Add) {
-                makeMultiSelect();
+                morediv.hide();
+                multiSelectCtrl = makeMultiSelect(false, parentDiv, '240px', '360px');
             } else {
                 editBtnCell.icon({
                     name: cswPrivate.name + '_toggle',
@@ -97,17 +96,25 @@
                     hovertext: 'Edit',
                     size: 16,
                     isButton: true,
-                    onClick: makeMultiSelect
+                    onClick: function() {
+                        makeMultiSelect(true);
+                    }
                 });
             }
 
         }());
 
         cswPublic.val = function () {
-            //In IE an empty array is frequently !== [], rather === null
-            var values = cswPrivate.select.$.val() || [],
-                valArray = values.sort();
-            return valArray.join(',');
+            var ret = valStr;
+            if (valArr) {
+                valStr = valArr.join(',');
+                ret = valStr;
+            }
+            return ret;
+        };
+
+        cswPublic.getValue = function () { //need func with this name for the Csw.validator
+            return cswPublic.val(); 
         };
 
         return cswPublic;

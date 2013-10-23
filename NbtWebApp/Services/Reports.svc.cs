@@ -1,14 +1,14 @@
-﻿using ChemSW.Nbt.WebServices;
-using ChemSW.WebSvc;
-using NbtWebApp.WebSvc.Logic.Reports;
-using NbtWebApp.WebSvc.Returns;
-using System.Collections.Specialized;
+﻿using System.Collections.Specialized;
 using System.ComponentModel;
 using System.IO;
 using System.ServiceModel;
 using System.ServiceModel.Activation;
 using System.ServiceModel.Web;
 using System.Web;
+using ChemSW.Nbt.WebServices;
+using ChemSW.WebSvc;
+using NbtWebApp.WebSvc.Logic.Reports;
+using NbtWebApp.WebSvc.Returns;
 
 namespace NbtWebApp
 {
@@ -69,6 +69,7 @@ namespace NbtWebApp
         public CswNbtWebServiceReport.ReportReturn report( CswNbtWebServiceReport.ReportData Request )
         {
             CswNbtWebServiceReport.ReportReturn Ret = new CswNbtWebServiceReport.ReportReturn();
+            Request.Context = HttpContext.Current;
 
             var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceReport.ReportReturn, CswNbtWebServiceReport.ReportData>(
                 CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
@@ -93,6 +94,7 @@ namespace NbtWebApp
 
             CswNbtWebServiceReport.ReportReturn Ret = new CswNbtWebServiceReport.ReportReturn();
             CswNbtWebServiceReport.ReportData Request = new CswNbtWebServiceReport.ReportData();
+            Request.Context = HttpContext.Current;
             Request.nodeIdStr = formData["reportid"];
             Request.reportFormat = formData["reportFormat"];
             formData.Remove( "reportid" );
@@ -107,7 +109,7 @@ namespace NbtWebApp
                 );
             SvcDriver.run();
 
-            WebOperationContext.Current.OutgoingResponse.Headers.Set( "Content-Disposition", "attachment; filename=export.csv;" );
+            WebOperationContext.Current.OutgoingResponse.Headers.Set( "Content-Disposition", "attachment; filename=\"export.csv\";" );
 
             return Request.stream;
         }
@@ -119,6 +121,7 @@ namespace NbtWebApp
         public CswNbtWebServiceReport.ReportReturn getReportInfo( CswNbtWebServiceReport.ReportData Request )
         {
             CswNbtWebServiceReport.ReportReturn Ret = new CswNbtWebServiceReport.ReportReturn();
+            Request.Context = HttpContext.Current;
 
             var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceReport.ReportReturn, CswNbtWebServiceReport.ReportData>(
                 CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
@@ -139,6 +142,7 @@ namespace NbtWebApp
         public CswNbtWebServiceReport.CrystalReportReturn reportCrystal( CswNbtWebServiceReport.ReportData Request )
         {
             CswNbtWebServiceReport.CrystalReportReturn Ret = new CswNbtWebServiceReport.CrystalReportReturn();
+            Request.Context = HttpContext.Current;
 
             var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceReport.CrystalReportReturn, CswNbtWebServiceReport.ReportData>(
                 CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),

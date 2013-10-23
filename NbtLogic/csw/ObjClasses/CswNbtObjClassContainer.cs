@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using ChemSW.Config;
@@ -55,6 +56,13 @@ namespace ChemSW.Nbt.ObjClasses
             public const string ContainerDispenseTransactions = "Container Dispense Transactions";
             public const string Documents = "Documents";
             public const string SubmittedRequests = "Submitted Requests";
+            public const string HomeLocation = "Home Location";
+            public const string Notes = "Notes";
+            public const string Project = "Project";
+            public const string SpecificActivity = "Specific Activity";
+            public const string TareQuantity = "Tare Quantity";
+            public const string Concentration = "Concentration";
+            public const string OpenedDate = "Opened Date";
         }
 
         #endregion Properties
@@ -196,19 +204,23 @@ namespace ChemSW.Nbt.ObjClasses
 
             _toggleAllPropertyStates();
 
-            if( _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Add || _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Temp )
+            if( ( _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Add || _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Temp || IsTemp ) &&
+                false == _CswNbtResources.Permit.can( CswEnumNbtActionName.Receiving ) )
             {
-                if( false == _CswNbtResources.Permit.can( CswEnumNbtActionName.Receiving ) )
-                {
-                    throw new CswDniException( CswEnumErrorType.Warning, "You do not have Action permission to Receive containers.", "You do not have Action permission to Receive containers." );
-                }
-                Collection<CswPrimaryKey> InventoryGroupIds = _CswNbtResources.CurrentNbtUser.getUserPermissions();
-                if( InventoryGroupIds.Count == 0 )
-                {
-                    throw new CswDniException( CswEnumErrorType.Warning, "You do not have Inventory Group permission to Receive containers.", "You do not have Inventory Group permission to Receive containers." );
-                }
-                Location.View = CswNbtNodePropLocation.LocationPropertyView( _CswNbtResources, Location.NodeTypeProp, Location.SelectedNodeId, InventoryGroupIds );
+                throw new CswDniException( CswEnumErrorType.Warning, "You do not have the necessary Action permission to Receive containers.", "You do not have the necessary Action permission to Receive containers." );
             }
+
+            // Find inventory groups for which the user has 'Edit' permission
+            Dictionary<CswPrimaryKey, CswPrimaryKey> UserPermissions = _CswNbtResources.CurrentNbtUser.getUserPermissions( CswEnumNbtObjectClass.InventoryGroupPermissionClass, true );
+            if( ( _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Add || _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Temp || IsTemp ) &&
+                UserPermissions.Keys.Count == 0 )
+            {
+                throw new CswDniException( CswEnumErrorType.Warning, "You do not have the necessary Inventory Group permissions to Receive containers.", "You do not have the necessary Inventory Group permissions to Receive containers." );
+            }
+            Location.SetOnBeforeRender( delegate( CswNbtNodeProp Prop )
+                {
+                    Location.View = CswNbtNodePropLocation.LocationPropertyView( _CswNbtResources, Location.NodeTypeProp, null, UserPermissions.Keys ); //Location.SelectedNodeId, UserPermissions.Keys );
+                } );
 
             _CswNbtObjClassDefault.triggerAfterPopulateProps();
         }//afterPopulateProps()
@@ -1198,6 +1210,14 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropGrid ContainerDispenseTransactions { get { return ( _CswNbtNode.Properties[PropertyName.ContainerDispenseTransactions] ); } }
         public CswNbtNodePropGrid Documents { get { return ( _CswNbtNode.Properties[PropertyName.Documents] ); } }
         public CswNbtNodePropGrid SubmittedRequests { get { return ( _CswNbtNode.Properties[PropertyName.SubmittedRequests] ); } }
+        public CswNbtNodePropRelationship HomeLocation { get { return ( _CswNbtNode.Properties[PropertyName.HomeLocation] ); } }
+        public CswNbtNodePropComments Notes { get { return ( _CswNbtNode.Properties[PropertyName.Notes] ); } }
+        public CswNbtNodePropText Project { get { return ( _CswNbtNode.Properties[PropertyName.Project] ); } }
+        public CswNbtNodePropText SpecificActivity { get { return ( _CswNbtNode.Properties[PropertyName.SpecificActivity] ); } }
+        public CswNbtNodePropQuantity TareQuantity { get { return ( _CswNbtNode.Properties[PropertyName.TareQuantity] ); } }
+        public CswNbtNodePropText Concentration { get { return ( _CswNbtNode.Properties[PropertyName.Concentration] ); } }
+        public CswNbtNodePropDateTime OpenedDate { get { return ( _CswNbtNode.Properties[PropertyName.OpenedDate] ); } }
+
         #endregion
 
 

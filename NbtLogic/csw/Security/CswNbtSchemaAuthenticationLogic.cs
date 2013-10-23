@@ -40,21 +40,17 @@ namespace ChemSW.Nbt.csw.Security
 
         public void LogAuthenticationAttempt( CswNbtObjClassUser UserNode, CswWebSvcSessionAuthenticateData.Authentication.Request AuthenticationRequest )
         {
-            Int32 FailedLoginCount = null != UserNode ? UserNode.getFailedLoginCount() : 0;
-            //if( AuthenticationRequest.AuthenticationStatus != CswEnumAuthenticationStatus.TooManyUsers )
-            //{
-            //    AuthenticationRequest.AuthenticationStatus = UserNode == null ? (CswEnumAuthenticationStatus) CswEnumAuthenticationStatus.Unknown : AuthenticationRequest.AuthenticationStatus;
-            //}
-
-            LoginData.Login LoginRecord = new LoginData.Login(AuthenticationRequest, UserNode )
+            if( false == AuthenticationRequest.SuppressLog )
             {
-                LoginDate = DateTime.Now.ToString(),
-                FailedLoginCount = FailedLoginCount
-            };
-           
-
-            CswNbtActLoginData _CswNbtActLoginData = new CswNbtActLoginData( _CswNbtResources );
-            _CswNbtActLoginData.postLoginData( LoginRecord );
+                Int32 FailedLoginCount = null != UserNode ? UserNode.getFailedLoginCount() : 0;
+                LoginData.Login LoginRecord = new LoginData.Login( AuthenticationRequest, UserNode )
+                    {
+                        LoginDate = DateTime.Now.ToString(),
+                        FailedLoginCount = FailedLoginCount
+                    };
+                CswNbtActLoginData _CswNbtActLoginData = new CswNbtActLoginData( _CswNbtResources );
+                _CswNbtActLoginData.postLoginData( LoginRecord );
+            }
         }
 
     }

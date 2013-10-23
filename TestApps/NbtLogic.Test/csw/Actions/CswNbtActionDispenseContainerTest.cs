@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using ChemSW.Core;
 using ChemSW.Nbt.Actions;
@@ -284,11 +283,8 @@ namespace ChemSW.Nbt.Test.Actions
         {
             List<CswNbtObjClassContainer> NewContainers = new List<CswNbtObjClassContainer>();
             CswNbtMetaDataObjectClass ContainerOc = TestData.CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerClass );
-            IEnumerator CurrentNodes = TestData.CswNbtResources.Nodes.GetEnumerator();
-            while( CurrentNodes.MoveNext() )
+            foreach(CswNbtNode CurrentNode in ContainerOc.getNodes( false, false ))
             {
-                DictionaryEntry dentry = (DictionaryEntry) CurrentNodes.Current;
-                CswNbtNode CurrentNode = (CswNbtNode) dentry.Value;
                 if( CurrentNode.ObjClass.ObjectClass == ContainerOc )
                 {
                     CswNbtObjClassContainer NewContainer = CurrentNode;

@@ -65,17 +65,10 @@ namespace ChemSW.Nbt.ObjClasses
         public delegate void OnRequestDeleteNodeHandler( CswNbtNode Node );
         public delegate void OnRequestFillHandler( CswNbtNode Node, CswDateTime Date );
         public delegate void OnRequestFillFromNodeTypeIdHandler( CswNbtNode Node, Int32 NodeTypeId );
-        //public event OnSetNodeIdHandler OnAfterSetNodeId = null;
         public event OnRequestWriteNodeHandler OnRequestWriteNode = null;
         public event OnRequestDeleteNodeHandler OnRequestDeleteNode = null;
         public event OnRequestFillHandler OnRequestFill = null;
         public event OnRequestFillFromNodeTypeIdHandler OnRequestFillFromNodeTypeId = null;
-
-        //private void OnAfterSetNodeIdHandler( CswPrimaryKey OldNodeId, CswPrimaryKey NewNodeId )
-        //{
-        //    if( OnAfterSetNodeId != null )
-        //        OnAfterSetNodeId( this, OldNodeId, NewNodeId );
-        //}
 
         private CswNbtNodePropColl _CswNbtNodePropColl = null;
         private CswNbtObjClass __CswNbtObjClass = null;
@@ -231,12 +224,6 @@ namespace ChemSW.Nbt.ObjClasses
             }//get
         }//Filled
 
-        //public bool SuspendModifyTracking
-        //{
-        //    get { return _CswNbtNodePropColl.SuspendModifyTracking; }
-        //    set { _CswNbtNodePropColl.SuspendModifyTracking = value; }
-        //}
-
         public bool DisableSave = false;
 
         public bool New
@@ -250,38 +237,18 @@ namespace ChemSW.Nbt.ObjClasses
         private CswEnumNbtNodeSpecies _NodeSpecies = CswEnumNbtNodeSpecies.Plain;
         public CswEnumNbtNodeSpecies NodeSpecies { get { return ( _NodeSpecies ); } }
 
-
         private CswPrimaryKey _NodeId = null;
         public CswPrimaryKey NodeId
         {
-            get
-            {
-                return ( _NodeId );
-            }//get
+            get { return ( _NodeId ); }
+            set { _NodeId = value; }
+        }
 
-            set
-            {
-                CswPrimaryKey OldNodeId = _NodeId;
-                _NodeId = value;
-
-                // fix properties
-                Properties._NodePk = _NodeId;
-
-                //OnAfterSetNodeIdHandler( OldNodeId, _NodeId );
-            }//set
-
-        }//NodeId
         private Int32 _NodeTypeId = 0;
         public Int32 NodeTypeId
         {
-            get
-            {
-                return ( _NodeTypeId );
-            }
-            set
-            {
-                _NodeTypeId = value;
-            }
+            get { return ( _NodeTypeId ); }
+            set { _NodeTypeId = value; }
         }
 
         public CswNbtMetaDataNodeType getNodeType()

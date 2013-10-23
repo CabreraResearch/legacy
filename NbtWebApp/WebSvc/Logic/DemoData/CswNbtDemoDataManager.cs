@@ -255,7 +255,7 @@ namespace ChemSW.Nbt.WebServices
 
             foreach( string CurrentError in Errors )
             {
-                Return.addException( new CswDniException( "There were errors updating the demo data: " + CurrentError ) );
+                Return.addException( CswResources, new CswDniException( "There were errors updating the demo data: " + CurrentError ) );
             }
         }
 

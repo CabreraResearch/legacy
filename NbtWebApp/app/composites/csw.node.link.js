@@ -10,6 +10,7 @@
         var cswPrivate = {
             name: '',
             text: '',
+            linkText: '',
             cssclasstext: '',
             cssclasslink: '',
             onClick: null
@@ -44,7 +45,7 @@
         cswPrivate.makeNodeLink = function (nodeid, nodename) {
             cswPrivate.div.a({
                 name: cswPrivate.name + '_' + nodeid,
-                text: nodename,
+                text: Csw.isNullOrEmpty(cswPrivate.linkText) ? nodename : cswPrivate.linkText,
                 cssclass: cswPrivate.cssclasslink,
                 onClick: function () {
                     Csw.tryExec(cswPrivate.onClick);

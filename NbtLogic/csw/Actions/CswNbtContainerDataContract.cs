@@ -11,6 +11,7 @@ namespace ChemSW.Nbt.Actions
         {
             ContainerStatistics = new Collection<ReconciliationStatistics>();
             ContainerStatuses = new Collection<ReconciliationStatuses>();
+            UnscannedLocations = new Collection<UnscannedLocation>();
         }
 
         #region Reconciliation
@@ -21,6 +22,8 @@ namespace ChemSW.Nbt.Actions
         public Collection<ReconciliationStatistics> ContainerStatistics;
         [DataMember]
         public Collection<ReconciliationStatuses> ContainerStatuses;
+        [DataMember]
+        public Collection<UnscannedLocation> UnscannedLocations;
 
         [DataContract]
         public class ReconciliationStatistics
@@ -33,6 +36,21 @@ namespace ChemSW.Nbt.Actions
             public Int32 AmountScanned = Int32.MinValue;
             [DataMember]
             public Double PercentScanned = 0.0;
+        }
+
+        [DataContract]
+        public class UnscannedLocation
+        {
+            [DataMember]
+            public String LocationId = String.Empty;
+            [DataMember]
+            public String Name = String.Empty;
+            [DataMember]
+            public String Path = String.Empty;
+            [DataMember]
+            public String Link = String.Empty;
+            [DataMember]
+            public bool AllowInventory = true;
         }
 
         [DataContract]

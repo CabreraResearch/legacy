@@ -26,7 +26,6 @@ namespace ChemSW.Nbt
                 }
                 else if( TheView.SessionViewId != null && TheView.SessionViewId.isSet() )
                 {
-                    //TheView.SaveToCache(false);
                     _KeyString = TheView.SessionViewId.ToString();
                 }
             }

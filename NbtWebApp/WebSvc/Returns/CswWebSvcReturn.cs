@@ -27,13 +27,7 @@ namespace NbtWebApp.WebSvc.Returns
             Logging = new CswWebSvcReturnBase.Logging();
         }
 
-        private CswNbtResources _CswNbtResources = null;
-
-
         #region inherited
-        /// <summary>
-        /// CswResources to support run() and finalize()
-        /// </summary>
 
         /// <summary>
         /// Authentication status and Timeout for this request's response 
@@ -60,38 +54,27 @@ namespace NbtWebApp.WebSvc.Returns
         public CswWebSvcReturnBase.Logging Logging { get; set; }
 
 
-        public ICswResources CswResources
-        {
-            set
-            {
-                _CswNbtResources = (CswNbtResources) value;
-            }
-
-        }
-
-
-
         /// <summary>
         /// Add an exception to this request's Status's Error collection
         /// </summary>
-        public void addException( Exception Exception )
+        public void addException( ICswResources CswResources, Exception Exception )
         {
             Status.Success = false;
-            Status.Errors.Add( CswWebSvcCommonMethods.wError( _CswNbtResources, Exception ) );
+            Status.Errors.Add( CswWebSvcCommonMethods.wError( (CswNbtResources) CswResources, Exception ) );
         }
 
         /// <summary>
         /// Finalize this request to set Authentication, Logging, Performance and Error content to the response.
         /// </summary>
-        public void finalize( HttpContext HttpContext, CswEnumAuthenticationStatus AuthenticationStatus )
+        public void finalize( ICswResources CswResources, HttpContext HttpContext, CswEnumAuthenticationStatus AuthenticationStatus )
         {
             try
             {
-                CswWebSvcCommonMethods.wAddAuthenticationStatus( _CswNbtResources, null, this, AuthenticationStatus, HttpContext );
+                CswWebSvcCommonMethods.wAddAuthenticationStatus( (CswNbtResources) CswResources, null, this, AuthenticationStatus, HttpContext );
             }
             catch( Exception Exception )
             {
-                addException( Exception );
+                addException( CswResources, Exception );
             }
             // ******************************************
             // IT IS VERY IMPORTANT for this function not to require the use of database resources, 

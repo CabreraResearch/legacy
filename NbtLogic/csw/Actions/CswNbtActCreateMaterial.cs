@@ -236,6 +236,7 @@ namespace ChemSW.Nbt.Actions
             }
 
             Ret.ViewName = "Create Material Supplier";
+            //Case 30335 - This is required for MLM to filter to Corporate Vendors
             Ret.SaveToCache( IncludeInQuickLaunch: false );
             return Ret;
         }
@@ -244,7 +245,7 @@ namespace ChemSW.Nbt.Actions
 
         #region Temp Material Logic
 
-        public JObject initNewTempMaterialNode( Int32 NodeTypeId, string SupplierId, string Suppliername, string Tradename, string PartNo, string NodeId )
+        public JObject initNewTempMaterialNode( Int32 NodeTypeId, string SupplierId, string Suppliername, string Tradename, string PartNo, string NodeId, bool CorporateSupplier )
         {
             JObject Ret = new JObject();
 
@@ -259,9 +260,10 @@ namespace ChemSW.Nbt.Actions
                     {
                         CswNbtObjClassVendor NewVendorNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( VendorNT.NodeTypeId, IsTemp: true, OnAfterMakeNode: delegate( CswNbtNode NewNode )
                             {
-                                ( (CswNbtObjClassVendor) NewNode ).VendorName.Text = Suppliername;
-                                ( (CswNbtObjClassVendor) NewNode ).VendorName.SyncGestalt();
-                                //NewVendorNode.postChanges( true );
+                                CswNbtObjClassVendor NodeAsVendor = (CswNbtObjClassVendor) NewNode;
+                                NodeAsVendor.VendorName.Text = Suppliername;
+                                NodeAsVendor.VendorName.SyncGestalt();
+                                if( CorporateSupplier ) { NodeAsVendor.VendorType.Value = CswNbtObjClassVendor.VendorTypes.Corporate; }
                             } );
                         //Set the supplierId to the new vendor node
                         SupplierId = NewVendorNode.NodeId.ToString();

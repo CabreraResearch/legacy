@@ -229,7 +229,8 @@
                 tabId: '',
                 identityTabId: '',
                 properties: {},
-                onRefresh: function () { }
+                onRefresh: function () { },
+                issaveprop: false
             };
 
             tabsAndProps = options.tabsAndProps;
@@ -256,13 +257,29 @@
 
         cswPrivate.onButtonClick = function () {
             Csw.publish('onAnyNodeButtonClick');
+            if (cswPrivate.issaveprop) {
+                Csw.unsubscribe('triggerSave', cswPrivate.onButtonClick);
+            }
 
             if (tabsAndProps && false === tabsAndProps.isFormValid()) {
-                //TODO: make a proper Csw\Ext Dialog class
-                window.Ext.MessageBox.alert('Warning', 'This form contains some invalid values. Please correct them before proceeding.', function () {
-                    Csw.publish('onAnyNodeButtonClickFinish', true);
-                    tabsAndProps.validator().focusInvalid();
+                var warningDialog = Csw.layouts.dialog({
+                    title: 'Warning',
+                    width: 500,
+                    height: 130,
+                    onOpen: function () {
+                        warningDialog.div.span({ text: 'This form contains some invalid values. Please correct them before proceeding.' });
+                        warningDialog.div.br({ number: 3 });
+                        warningDialog.div.buttonExt({
+                            enabledText: 'Ok',
+                            onClick: function() {
+                                Csw.publish('onAnyNodeButtonClickFinish', true);
+                                tabsAndProps.validator().focusInvalid();
+                                warningDialog.close();
+                            }
+                        });
+                    }
                 });
+                warningDialog.open();
 
             } else {
                 if (Csw.isNullOrEmpty(cswPrivate.propId)) {
@@ -285,45 +302,51 @@
                     }
 
                     var performOnObjectClassButtonClick = function () {
-                        Csw.ajax.deprecatedWsNbt({
-                            urlMethod: 'onObjectClassButtonClick',
-                            data: {
-                                NodeTypePropAttr: cswPrivate.propId,
-                                SelectedText: Csw.string(cswPublic.button.selectedOption, Csw.string(cswPrivate.value)),
-                                TabIds: tabIds,  //cswPrivate.identityTabId + "," + cswPrivate.tabId,
-                                Props: propJson,
-                                NodeIds: nodeIds,
-                                PropIds: propIds,
-                                EditMode: editMode
-                            },
-                            success: function (data) {
-                                Csw.clientChanges.unsetChanged();
+                        Csw.unsubscribe('triggerSave', cswPrivate.onButtonClick);
+                        if (Csw.isFunction(cswPrivate.onClickAction)) {
+                            Csw.tryExec(cswPrivate.onClickAction);
+                            Csw.publish('onAnyNodeButtonClickFinish', true);
+                        } else {
+                            Csw.ajax.deprecatedWsNbt({
+                                urlMethod: 'onObjectClassButtonClick',
+                                data: {
+                                    NodeTypePropAttr: cswPrivate.propId,
+                                    SelectedText: Csw.string(cswPublic.button.selectedOption, Csw.string(cswPrivate.value)),
+                                    TabIds: tabIds,  //cswPrivate.identityTabId + "," + cswPrivate.tabId,
+                                    Props: propJson,
+                                    NodeIds: nodeIds,
+                                    PropIds: propIds,
+                                    EditMode: editMode
+                                },
+                                success: function(data) {
+                                    Csw.clientChanges.unsetChanged();
 
-                                var actionData = {
-                                    data: data,
-                                    propid: cswPrivate.propId,
-                                    button: cswPublic.button,
-                                    selectedOption: Csw.string(cswPublic.button.selectedOption),
-                                    messagediv: cswPrivate.messageDiv,
-                                    context: cswPrivate,
-                                    onSuccess: cswPrivate.onAfterButtonClick
-                                };
+                                    var actionData = {
+                                        data: data,
+                                        propid: cswPrivate.propId,
+                                        button: cswPublic.button,
+                                        selectedOption: Csw.string(cswPublic.button.selectedOption),
+                                        messagediv: cswPrivate.messageDiv,
+                                        context: cswPrivate,
+                                        onSuccess: cswPrivate.onAfterButtonClick
+                                    };
 
-                                if (false === Csw.isNullOrEmpty(data.message)) {
-                                    if (false === cswPrivate.useToolTip) {
-                                        cswPublic.messageDiv.text(data.message);
-                                    } else {
-                                        cswPrivate.btnCell.quickTip({ html: data.message });
+                                    if (false === Csw.isNullOrEmpty(data.message)) {
+                                        if (false === cswPrivate.useToolTip) {
+                                            cswPublic.messageDiv.text(data.message);
+                                        } else {
+                                            cswPrivate.btnCell.quickTip({ html: data.message });
+                                        }
                                     }
+                                    if (Csw.bool(data.success)) {
+                                        onObjectClassButtonClick(actionData, tabsAndProps, cswPrivate.onRefresh);
+                                    }
+                                }, // ajax success()
+                                error: function() {
+                                    Csw.publish('onAnyNodeButtonClickFinish', true);
                                 }
-                                if (Csw.bool(data.success)) {
-                                    onObjectClassButtonClick(actionData, tabsAndProps, cswPrivate.onRefresh);
-                                }
-                            }, // ajax success()
-                            error: function () {
-                                Csw.publish('onAnyNodeButtonClickFinish', true);
-                            }
-                        }); // ajax.post()
+                            }); // ajax.post()
+                        } // if-else (Csw.isFunction(cswPrivate.onClickAction)) 
                     }; //performOnObjectClassButtonClick
 
                     if (false === Csw.isNullOrEmpty(cswPrivate.confirmmessage)) {
@@ -349,6 +372,9 @@
                 } // if-else (Csw.isNullOrEmpty(propAttr)) {
             }
         }; // onButtonClick()
+        if (cswPrivate.issaveprop) {
+            Csw.subscribe('triggerSave', cswPrivate.onButtonClick);
+        }
 
         (function _post() {
             cswPrivate.btnCell = cswPrivate.table.cell(1, 1).div();

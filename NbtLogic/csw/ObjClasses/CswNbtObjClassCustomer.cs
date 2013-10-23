@@ -125,19 +125,11 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-        public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
+        /// <summary>
+        /// Set property values according to the value in the DbConfig file or from the target schema
+        /// </summary>
+        public void syncCustomerInfo()
         {
-            _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes );
-        }
-
-        public override void afterDeleteNode()
-        {
-            _CswNbtObjClassDefault.afterDeleteNode();
-        }
-
-        protected override void afterPopulateProps()
-        {
-            // Set property values according to the value in the DbConfig file or from the target schema
             if( _CompanyIDDefined() )
             {
                 // get data from DbConfig file
@@ -214,6 +206,21 @@ namespace ChemSW.Nbt.ObjClasses
                     Login.setHidden( true, false );
                 }
             }
+        } // syncCustomerInfo()
+
+        public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
+        {
+            _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes );
+        }
+
+        public override void afterDeleteNode()
+        {
+            _CswNbtObjClassDefault.afterDeleteNode();
+        }
+
+        protected override void afterPopulateProps()
+        {
+            syncCustomerInfo();
 
             CompanyID.SetOnPropChange( OnCompanyIdPropChange );
 
@@ -239,7 +246,6 @@ namespace ChemSW.Nbt.ObjClasses
             }
             return true;
         }
-
 
         #endregion
 

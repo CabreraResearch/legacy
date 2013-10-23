@@ -55,7 +55,8 @@ namespace BalanceReaderClient
                         CustomerId = AccessId,
                         UserName = UserId,
                         Password = Password,
-                        IsMobile = true
+                        IsMobile = true,
+                        SuppressLog = true
                     } );
 
             

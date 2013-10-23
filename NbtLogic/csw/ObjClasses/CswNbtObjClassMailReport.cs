@@ -184,6 +184,20 @@ namespace ChemSW.Nbt.ObjClasses
             }
             return true;
         }
+
+        public override CswNbtNode CopyNode()
+        {
+            CswNbtObjClassMailReport CopiedMailReport = base.CopyNode();
+            if( ReportView.ViewId.isSet() )
+            {
+                CswNbtView OriginalView = _CswNbtResources.ViewSelect.restoreView( ReportView.ViewId );
+                CswNbtView CopiedView = _CswNbtResources.ViewSelect.restoreView( CopiedMailReport.ReportView.ViewId );
+                CopiedView.CopyFromView( OriginalView );
+                CopiedView.save();
+            }
+            return CopiedMailReport.Node;
+        } // CopyNode()
+
         #endregion
 
         #region Object class specific properties

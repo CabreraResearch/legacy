@@ -346,7 +346,7 @@
                                 Csw.tryExec(cswPrivate.onSelectNode, nodeObj);
                             },
                             onClose: function () {
-                                    cswPrivate.searchButton.enable();
+                                cswPrivate.searchButton.enable();
                             }
                         });
                     }

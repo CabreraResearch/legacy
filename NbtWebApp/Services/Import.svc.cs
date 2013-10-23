@@ -1,4 +1,6 @@
-﻿using System.ComponentModel;
+﻿using System.Collections.Specialized;
+using System.ComponentModel;
+using System.IO;
 using System.ServiceModel;
 using System.ServiceModel.Activation;
 using System.ServiceModel.Web;
@@ -121,6 +123,32 @@ namespace NbtWebApp
         }
 
         [OperationContract]
+        [WebInvoke( Method = "POST" )]
+        [Description( "Download Import Definition" )]
+        [FaultContract( typeof( FaultException ) )]
+        public Stream downloadImportDefinition( Stream DataStream )
+        {
+            string Data = new StreamReader( DataStream ).ReadToEnd();
+            NameValueCollection FormData = HttpUtility.ParseQueryString( Data );
+            string ImportDefName = FormData["importdefname"];
+
+            CswNbtImportWcf.GenerateSQLReturn Ret = new CswNbtImportWcf.GenerateSQLReturn();
+
+            var SvcDriver = new CswWebSvcDriver<CswNbtImportWcf.GenerateSQLReturn, string>(
+                CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj : Ret,
+                WebSvcMethodPtr : CswNbtWebServiceImport.downloadImportDefinition,
+                ParamObj : ImportDefName
+                );
+
+            SvcDriver.run();
+
+            WebOperationContext.Current.OutgoingResponse.Headers.Set( "Content-Disposition", "attachment; filename=\"bindings.xml\";" );
+            WebOperationContext.Current.OutgoingResponse.ContentType = "application/vnd.ms-excel";
+            return Ret.stream;
+        }//downloadImportDefinition
+
+        [OperationContract]
         [WebInvoke( Method = "POST", ResponseFormat = WebMessageFormat.Json )]
         [Description( "Get current status of imports" )]
         [FaultContract( typeof( FaultException ) )]
@@ -159,6 +187,53 @@ namespace NbtWebApp
 
             return Ret;
         }//startImport()
+
+        [OperationContract]
+        [WebInvoke( Method = "POST" )]
+        [Description( "Generate SQL for CAF" )]
+        [FaultContract( typeof( FaultException ) )]
+        public Stream generateCAFSql( Stream DataStream )
+        {
+            string Data = new StreamReader( DataStream ).ReadToEnd();
+            NameValueCollection FormData = HttpUtility.ParseQueryString( Data );
+            string ImportDefName = FormData["importdefname"];
+
+            CswNbtImportWcf.GenerateSQLReturn Ret = new CswNbtImportWcf.GenerateSQLReturn();
+
+            var SvcDriver = new CswWebSvcDriver<CswNbtImportWcf.GenerateSQLReturn, string>(
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj: Ret,
+                WebSvcMethodPtr: CswNbtWebServiceImport.generateCAFSql,
+                ParamObj: ImportDefName
+                );
+
+            SvcDriver.run();
+
+            WebOperationContext.Current.OutgoingResponse.Headers.Set( "Content-Disposition", "attachment; filename=\"cafsql.sql\";" );
+
+            return Ret.stream;
+        }//startImport()
+        
+        [OperationContract]
+        [WebInvoke( Method = "POST" )]
+        [Description( "Retrieve bindings for current definition" )]
+        [FaultContract( typeof( FaultException ) )]
+        public CswNbtImportWcf.ImportBindingsReturn getBindingsForDefinition( string ImportDefName )
+        {
+            CswNbtImportWcf.ImportBindingsReturn  Ret = new CswNbtImportWcf.ImportBindingsReturn();
+
+            var SvcDriver = new CswWebSvcDriver<CswNbtImportWcf.ImportBindingsReturn, string>(
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj: Ret,
+                WebSvcMethodPtr: CswNbtWebServiceImport.getBindingsForDefinition,
+                ParamObj: ImportDefName 
+                );
+
+            SvcDriver.run();
+
+            return Ret;
+        }
+        
 
     }
 }
