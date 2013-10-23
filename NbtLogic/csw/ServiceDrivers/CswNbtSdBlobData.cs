@@ -181,7 +181,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             BWriter.Write( BlobData );
         }
 
-        public void saveMol( string MolString, string PropId, out string Href, out string FormattedMolString, bool PostChanges = true, CswNbtNode Node = null )
+        public void saveMol( string MolString, string PropId, out string Href, out string FormattedMolString, out string errorMsg, bool PostChanges = true, CswNbtNode Node = null )
         {
             CswPropIdAttr PropIdAttr = new CswPropIdAttr( PropId );
             CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtResources.MetaData.getNodeTypeProp( PropIdAttr.NodeTypePropId );
@@ -189,7 +189,8 @@ namespace ChemSW.Nbt.ServiceDrivers
             //Case 29769 - enforce correct mol file format
             FormattedMolString = MoleculeBuilder.FormatMolFile( MolString );
 
-            Href = "";
+            errorMsg = string.Empty;
+            Href = string.Empty;
             if( null == Node )
             {
                 Node = _CswNbtResources.Nodes[PropIdAttr.NodeId];
@@ -210,7 +211,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                     SdBlobData.saveFile( PropId, molImage, CswNbtNodePropMol.MolImgFileContentType, CswNbtNodePropMol.MolImgFileName, out Href, Int32.MinValue, PostChanges, Node: Node );
 
                     //case 28364 - calculate fingerprint and save it
-                    _CswNbtResources.StructureSearchManager.InsertFingerprintRecord( PropIdAttr.NodeId.PrimaryKey, FormattedMolString );
+                    _CswNbtResources.StructureSearchManager.InsertFingerprintRecord( PropIdAttr.NodeId.PrimaryKey, FormattedMolString, out errorMsg );
                 }
             }
         }

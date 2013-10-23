@@ -155,7 +155,7 @@ namespace ChemSW.Nbt.ImportExport
 
             foreach( DataRow OrderRow in OrderDataTable.Rows )
             {
-                SheetName = OrderRow["sheet"].ToString();
+                SheetName = OrderRow["sheetname"].ToString();
                 if( false == string.IsNullOrEmpty( SheetName ) &&
                     false == ret.ContainsKey( SheetName ) )
                 {

@@ -608,8 +608,9 @@ namespace ChemSW.Nbt.ObjClasses
 
                                             string Href;
                                             string FormattedMolString;
+                                            string errorMsg;
                                             CswNbtSdBlobData SdBlobData = new CswNbtSdBlobData( _CswNbtResources );
-                                            SdBlobData.saveMol( molData, propAttr, out Href, out FormattedMolString, false, this.Node );
+                                            SdBlobData.saveMol( molData, propAttr, out Href, out FormattedMolString, out errorMsg, false, this.Node );
                                         }
                                     }
                                 }

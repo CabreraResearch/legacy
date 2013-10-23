@@ -374,6 +374,7 @@ namespace ChemSW.Nbt.Grid
                 CswExtJsGridColumn gridcol = new CswExtJsGridColumn();
                 gridcol.header = CurrentColumn.ColumnName;
                 gridcol.dataIndex = dataIndex;
+                gridcol.width = Math.Max( 100, ( 7 + CurrentColumn.ColumnName.Length*8 ) );
 
                 if( ( NodeIdColName.ToLower() == CurrentColumn.ColumnName.ToLower() ) || ( MenuOptionsColName.ToLower() == CurrentColumn.ColumnName.ToLower() ) )
                 {
