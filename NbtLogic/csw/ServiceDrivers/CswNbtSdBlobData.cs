@@ -209,7 +209,6 @@ namespace ChemSW.Nbt.ServiceDrivers
                     Href = CswNbtNodePropMol.getLink( molProp.JctNodePropId, Node.NodeId );
 
                     SdBlobData.saveFile( PropId, molImage, CswNbtNodePropMol.MolImgFileContentType, CswNbtNodePropMol.MolImgFileName, out Href, Int32.MinValue, PostChanges, Node: Node );
-                    //JctUpdate.update( JctTable );
 
                     //case 28364 - calculate fingerprint and save it
                     _CswNbtResources.StructureSearchManager.InsertFingerprintRecord( PropIdAttr.NodeId.PrimaryKey, FormattedMolString, out errorMsg );

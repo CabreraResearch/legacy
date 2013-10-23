@@ -232,7 +232,7 @@ namespace ChemSW.Nbt.ObjClasses
                             {
                                 Tree.goToNthChild( i );
                                 JObject Doc = new JObject();
-
+            
                                 CswNbtObjClassSDSDocument SDSDoc = Tree.getNodeForCurrentPosition();
                                 if( null != RevisionDateProp )
                                 {
@@ -610,7 +610,7 @@ namespace ChemSW.Nbt.ObjClasses
                                             string FormattedMolString;
                                             string errorMsg;
                                             CswNbtSdBlobData SdBlobData = new CswNbtSdBlobData( _CswNbtResources );
-                                            SdBlobData.saveMol( molData, propAttr, out Href, out FormattedMolString, out errorMsg, false );
+                                            SdBlobData.saveMol( molData, propAttr, out Href, out FormattedMolString, out errorMsg, false, this.Node );
                                         }
                                     }
                                 }
