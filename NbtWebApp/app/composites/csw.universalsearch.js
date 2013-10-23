@@ -58,7 +58,7 @@
             cswPrivate.searchBoxParent.empty();
             var cswtable = cswPrivate.searchBoxParent.table();
 
-            var onPreFilterClick = function (nodetypeObj) {
+            cswPrivate.onPreFilterClick = function (nodetypeObj) {
                 if (false === Csw.isNullOrEmpty(nodetypeObj)) {
                     cswPrivate.preFilterSelect.setText('');
                     cswPrivate.preFilterSelect.setIcon(nodetypeObj.iconfilename);
@@ -90,7 +90,7 @@
                     items.push({
                         text: 'All',
                         icon: '',
-                        handler: Csw.method(function () { onPreFilterClick(null); })
+                        handler: Csw.method(function () { cswPrivate.onPreFilterClick(null); })
                     });
 
                     var selectedText = 'All';
@@ -100,7 +100,7 @@
                             items.push({
                                 text: nt.name,
                                 icon: nt.iconfilename,
-                                handler: Csw.method(function () { onPreFilterClick(nt); })
+                                handler: Csw.method(function () { cswPrivate.onPreFilterClick(nt); })
                             });
                             if (cswPrivate.nodetypeid === nt.id) {
                                 selectedText = '';
@@ -575,6 +575,14 @@
                 success: function (data) {
                     cswPublic.handleResults(data);
                     Csw.tryExec(cswPrivate.onAfterNewSearch, cswPrivate.sessiondataid);
+
+                    cswPrivate.searchinput.val(data.searchterm);
+                    cswPrivate.onSearchTypeSelect(data.searchtype);
+                    Csw.each(data.filtersapplied, function(filter) {
+                        if (filter.filtertype == "nodetype") {
+                            cswPrivate.onPreFilterClick({ id: filter.firstversionid, iconfilename: "Images/newicons/16/" + filter.icon });
+                        }
+                    });
                 }
             });
         }; // restoreSearch()
