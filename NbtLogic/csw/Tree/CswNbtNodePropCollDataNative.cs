@@ -56,7 +56,7 @@ namespace ChemSW.Nbt
                             string Sql = @"select a.*, '' as auditchanged
                                              from jct_nodes_props_audit a
                                             where a.auditeventtype <> 'PhysicalDelete'
-                                              and a.nodeid = " + _NodeKey.PrimaryKey + @"
+                                              and a.nodeid = " + _Node.NodeId.PrimaryKey + @"
                                               and a.jctnodespropsauditid = (select max(jctnodespropsauditid)
                                                                               from jct_nodes_props_audit a2
                                                                              where a2.recordcreated <= " + _CswNbtResources.getDbNativeDate( Date.ToDateTime().AddSeconds( 1 ) ) + @"
