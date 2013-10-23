@@ -102,11 +102,11 @@ namespace NbtWebApp
         [WebInvoke( Method = "POST" )]
         [Description( "Toggle the favorite status of the node for the current user" )]
         [FaultContract( typeof( FaultException ) )]
-        public CswWebSvcReturn toggleFavorite( string NodeId )
+        public CswNbtWebServiceNode.FavoriteReturn toggleFavorite( string NodeId )
         {
-            CswWebSvcReturn Ret = new CswWebSvcReturn();
+            CswNbtWebServiceNode.FavoriteReturn Ret = new CswNbtWebServiceNode.FavoriteReturn();
 
-            var SvcDriver = new CswWebSvcDriver<CswWebSvcReturn, string>(
+            var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceNode.FavoriteReturn, string>(
                 CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context ),
                 ReturnObj: Ret,
                 WebSvcMethodPtr: CswNbtWebServiceNode.toggleFavorite,

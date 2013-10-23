@@ -680,13 +680,22 @@ namespace ChemSW.Nbt.WebServices
         #region Favorite
 
         [DataContract]
-        public class FavoriteRequest
+        public class FavoriteReturn : CswWebSvcReturn
         {
-            [DataMember]
-            public string NodeId = string.Empty;
+            public FavoriteReturn()
+            {
+                Data = new FavoriteResponse();
+            }
 
             [DataMember]
-            public string CopyType = string.Empty;
+            public FavoriteResponse Data;
+
+            [DataContract]
+            public class FavoriteResponse
+            {
+                [DataMember] 
+                public bool isFavorite = false;
+            }
         }
 
         /// <summary>
@@ -695,11 +704,11 @@ namespace ChemSW.Nbt.WebServices
         /// <param name="_CswResources">Resources</param>
         /// <param name="Response">Empty Repsonse Object</param>
         /// <param name="NodeId">NodeId to Favorite</param>
-        public static void toggleFavorite( ICswResources _CswResources, CswWebSvcReturn Response, String NodeId )
+        public static void toggleFavorite( ICswResources _CswResources, FavoriteReturn Response, String NodeId )
         {
             CswNbtResources _CswNbtResources = (CswNbtResources) _CswResources;
             CswPrimaryKey NodePK = CswConvert.ToPrimaryKey( NodeId );
-            toggleFavorite( _CswNbtResources, NodePK.PrimaryKey, _CswNbtResources.CurrentNbtUser.UserId.PrimaryKey );
+            Response.Data.isFavorite = toggleFavorite( _CswNbtResources, NodePK.PrimaryKey, _CswNbtResources.CurrentNbtUser.UserId.PrimaryKey );
         }
 
         /// <summary>
@@ -708,8 +717,9 @@ namespace ChemSW.Nbt.WebServices
         /// <param name="_CswResources">Resources</param>
         /// <param name="NodeId">NodeId to Favorite</param>
         /// <param name="UserId">UserId with which to associate Favorite</param>
-        public static void toggleFavorite( CswNbtResources _CswNbtResources, Int32 NodeId, Int32 UserId )
+        public static bool toggleFavorite( CswNbtResources _CswNbtResources, Int32 NodeId, Int32 UserId )
         {
+            bool isFavorite = false;
             CswTableUpdate FavoritesUpdate = _CswNbtResources.makeCswTableUpdate( "favoritesUpdate", "favorites" );
             DataTable FavoritesTable = FavoritesUpdate.getTable( "where itemid = " + NodeId + " and userid = " + UserId );
             if( FavoritesTable.Rows.Count == 0 )//Add to Favorites
@@ -719,12 +729,14 @@ namespace ChemSW.Nbt.WebServices
                 FavoritesRow["itemid"] = NodeId;
                 FavoritesTable.Rows.Add( FavoritesRow );
                 FavoritesUpdate.update( FavoritesTable );
+                isFavorite = true;
             }
             else//Delete from Favorites
             {
                 FavoritesTable.Rows[0].Delete();
                 FavoritesUpdate.update( FavoritesTable );
             }
+            return isFavorite;
         }
 
         #endregion Favorite

@@ -39,7 +39,7 @@ namespace NbtWebApp.Test.WebServices
             Int32 NodeId = 32767;
             Int32 UserId = 1;
 
-            CswNbtWebServiceNode.toggleFavorite( TestData.CswNbtResources, NodeId, UserId );
+            Assert.IsTrue( CswNbtWebServiceNode.toggleFavorite( TestData.CswNbtResources, NodeId, UserId ) );
             DataTable FavoritesTable = TestData.CswNbtResources.execArbitraryPlatformNeutralSqlSelect( "getFavorite", "select count(*) as favoriteExists from favorites where itemid = " + NodeId + " and UserId = " + UserId );
             Assert.AreEqual( 1, CswConvert.ToInt32( FavoritesTable.Rows[0]["favoriteExists"] ) );
         }
@@ -56,7 +56,7 @@ namespace NbtWebApp.Test.WebServices
             Int32 UserId = 1;
             CswNbtWebServiceNode.toggleFavorite( TestData.CswNbtResources, NodeId, UserId );
 
-            CswNbtWebServiceNode.toggleFavorite( TestData.CswNbtResources, NodeId, UserId );
+            Assert.IsFalse( CswNbtWebServiceNode.toggleFavorite( TestData.CswNbtResources, NodeId, UserId ) );
             DataTable FavoritesTable = TestData.CswNbtResources.execArbitraryPlatformNeutralSqlSelect( "getFavorite", "select count(*) as favoriteExists from favorites where itemid = " + NodeId + " and UserId = " + UserId );
             Assert.AreEqual( 0, CswConvert.ToInt32( FavoritesTable.Rows[0]["favoriteExists"] ) );
         }

@@ -61,6 +61,18 @@ namespace ChemSW.Nbt.Test.ObjClasses
             Assert.IsTrue( TestNode.isFavorite( UserId ) );
         }
 
+        /// <summary>
+        /// Given a newly created node and a userid,
+        /// assert that the node is not listed as a favorite for that userid
+        /// </summary>
+        [Test]
+        public void isFavoriteTestStaticReturnsFalse()
+        {
+            CswNbtNode TestNode = TestData.Nodes.createControlZoneNode();
+            Int32 UserId = 1;
+            Assert.IsFalse( CswNbtNode.isFavorite( TestData.CswNbtResources, TestNode.NodeId.PrimaryKey, UserId ) );
+        }
+
         #endregion isFavorite
 
     }
