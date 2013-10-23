@@ -249,6 +249,12 @@ namespace ChemSW.Nbt.WebServices
                 Ret[TableName] = TableSelect.getTable();
                 Ret[TableName].Columns.Remove( "importdefid" );
                 Ret[TableName].Columns.Remove( "importdef" + TableName.TrimEnd( new[]{'s'} ) + "id" );
+
+                foreach( DataRow Row in Ret[TableName].AsEnumerable().Where( row => (Int32.MinValue == Convert.ToInt32(row["instance"])) ))
+                {
+                    Row["instance"] = DBNull.Value;
+                }
+
             }
 
             return Ret;
