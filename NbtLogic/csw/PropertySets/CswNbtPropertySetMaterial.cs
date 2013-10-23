@@ -1,3 +1,6 @@
+using System;
+using System.Collections.ObjectModel;
+using System.Linq;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
@@ -5,9 +8,6 @@ using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.ObjectModel;
-using System.Linq;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -369,10 +369,10 @@ namespace ChemSW.Nbt.ObjClasses
             return Ret;
         }
 
-        public static CswNbtView getMaterialNodeView( CswNbtResources NbtResources, Int32 NodeTypeId, string Tradename, CswPrimaryKey SupplierId, string PartNo = "" )
+        public static CswNbtView getMaterialNodeView( CswNbtResources NbtResources, Int32 NodeTypeId, string Tradename, CswPrimaryKey SupplierId, string PartNo = "", bool IsConstituent = false )
         {
             if( Int32.MinValue == NodeTypeId ||
-                false == CswTools.IsPrimaryKey( SupplierId ) ||
+                ( false == CswTools.IsPrimaryKey( SupplierId ) && false == IsConstituent ) ||
                 String.IsNullOrEmpty( Tradename ) )
             {
                 throw new CswDniException( CswEnumErrorType.Error,
@@ -390,17 +390,19 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtMetaDataNodeTypeProp SupplierNtp = MaterialNt.getNodeTypePropByObjectClassProp( PropertyName.Supplier );
             CswNbtMetaDataNodeTypeProp PartNoNtp = MaterialNt.getNodeTypePropByObjectClassProp( PropertyName.PartNumber );
 
+
             Ret.AddViewPropertyAndFilter( MaterialRel, TradeNameNtp, Tradename );
-            Ret.AddViewPropertyAndFilter( MaterialRel, SupplierNtp, SupplierId.PrimaryKey.ToString(), CswEnumNbtSubFieldName.NodeID );
-            CswEnumNbtFilterMode PartNoFilterMode = CswEnumNbtFilterMode.Equals;
-            if( string.IsNullOrEmpty( PartNo ) )
+            // If we are looking for other Constituents, we don't need Supplier and PartNo
+            if( false == IsConstituent )
             {
-                PartNoFilterMode = CswEnumNbtFilterMode.Null;
+                Ret.AddViewPropertyAndFilter( MaterialRel, SupplierNtp, SupplierId.PrimaryKey.ToString(), CswEnumNbtSubFieldName.NodeID );
+                CswEnumNbtFilterMode PartNoFilterMode = CswEnumNbtFilterMode.Equals;
+                if( string.IsNullOrEmpty( PartNo ) )
+                {
+                    PartNoFilterMode = CswEnumNbtFilterMode.Null;
+                }
+                Ret.AddViewPropertyAndFilter( MaterialRel, PartNoNtp, PartNo, FilterMode: PartNoFilterMode );
             }
-            Ret.AddViewPropertyAndFilter( ParentViewRelationship: MaterialRel,
-                                            MetaDataProp: PartNoNtp,
-                                            Value: PartNo,
-                                            FilterMode: PartNoFilterMode );
 
             if( NbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Containers ) )
             {
@@ -417,11 +419,11 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Fetch a Material node by NodeTypeId, TradeName, Supplier and PartNo (Optional). This method will throw if required parameters are null or empty.
         /// </summary>
-        public static CswNbtPropertySetMaterial getExistingMaterial( CswNbtResources NbtResources, Int32 MaterialNodeTypeId, CswPrimaryKey SupplierId, string TradeName, string PartNo )
+        public static CswNbtPropertySetMaterial getExistingMaterial( CswNbtResources NbtResources, Int32 MaterialNodeTypeId, CswPrimaryKey SupplierId, string TradeName, string PartNo, bool IsConstituent )
         {
             CswNbtPropertySetMaterial Ret = null;
 
-            CswNbtView MaterialNodeView = getMaterialNodeView( NbtResources, MaterialNodeTypeId, TradeName, SupplierId, PartNo );
+            CswNbtView MaterialNodeView = getMaterialNodeView( NbtResources, MaterialNodeTypeId, TradeName, SupplierId, PartNo, IsConstituent );
             ICswNbtTree Tree = NbtResources.Trees.getTreeFromView( MaterialNodeView, false, false, false );
             bool MaterialExists = Tree.getChildNodeCount() > 0;
 
