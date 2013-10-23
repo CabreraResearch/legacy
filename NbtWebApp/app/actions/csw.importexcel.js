@@ -302,7 +302,7 @@
                 cswPrivate.makeStartImportProps(true);
             }
 
-                cswPublic.uploadDataTable.cell(4, 2).buttonExt({
+                cswPublic.uploadDataTable.cell(1, 3).buttonExt({
                     name: 'viewBindingsBtn',
                     enabledText: 'View Import Definition',
                     disabledText: 'Fetching Bindings...',
