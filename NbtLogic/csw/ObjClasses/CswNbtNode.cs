@@ -186,7 +186,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// Creates INSERT audit records for current values of all properties.
         /// Thus, make sure all other property modifications have been posted before calling this.
         /// </summary>
-        public void PromoteTempToReal()
+        public void PromoteTempToReal( bool IsCreate = false, bool OverrideUniqueValidation = false )
         {
             if( _IsTemp )
             {
@@ -195,7 +195,13 @@ namespace ChemSW.Nbt.ObjClasses
                 IsTempModified = true;
                 SessionId = string.Empty;
                 _IsTemp = false;
-                this.postChanges( ForceUpdate: false, IsCopy: false, AllowAuditing: false ); // we're changing temp to false, but we need to explicitly prevent auditing here or we end up with an extra UPDATE row
+
+                // we're changing temp to false above, so we need to explicitly prevent auditing here or we end up with an extra UPDATE row
+                this.postChanges( ForceUpdate: false,
+                                  IsCopy: false,
+                                  AllowAuditing: false,
+                                  OverrideUniqueValidation: OverrideUniqueValidation,
+                                  IsCreate: IsCreate );
 
                 // Create auditing records for the node and property values
                 _CswNbtNodeWriter.AuditInsert( this );

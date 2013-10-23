@@ -204,7 +204,7 @@ namespace ChemSW.Nbt
         }//_refreshProps()
 
 
-        public void update( CswNbtNode Node, bool IsCopy, bool OverrideUniqueValidation, bool Creating, CswDateTime Date )
+        public void update( CswNbtNode Node, bool IsCopy, bool OverrideUniqueValidation, bool Creating, CswDateTime Date, bool AllowAuditing )
         {
             // Do BeforeUpdateNodePropRow on each row
 
@@ -227,7 +227,7 @@ namespace ChemSW.Nbt
             }
 
             // Do the Update
-            PropCollData.update();
+            PropCollData.update( AllowAuditing );
         }
 
 

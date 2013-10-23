@@ -389,7 +389,7 @@ namespace ChemSW.Nbt
         /// <returns>The new node. !!POSTS CHANGES!!</returns>
         public CswNbtNode makeNodeFromNodeTypeId( Int32 NodeTypeId, AfterMakeNode OnAfterMakeNode = null, bool IsTemp = false, bool OverrideUniqueValidation = false )
         {
-            CswNbtNode Node = _CswNbtNodeFactory.make( CswEnumNbtNodeSpecies.Plain, null, NodeTypeId, _NodeHash.Count, null, IsTemp );
+            CswNbtNode Node = _CswNbtNodeFactory.make( CswEnumNbtNodeSpecies.Plain, null, NodeTypeId, _NodeHash.Count, null, IsTemp: true );  // temp here for auditing, but see below
             //Node.IsTemp = IsTemp;
             //Node.OnAfterSetNodeId += new CswNbtNode.OnSetNodeIdHandler( OnAfterSetNodeIdHandler );
             Node.OnRequestDeleteNode += OnAfterDeleteNode;
@@ -403,7 +403,6 @@ namespace ChemSW.Nbt
                 OnAfterMakeNode( Node );
             }
 
-            Node.postChanges( ForceUpdate: true, IsCopy: false, OverrideUniqueValidation: OverrideUniqueValidation, IsCreate: true );
 
             //if( Node.NodeId != Int32.MinValue )
             //{
@@ -414,8 +413,18 @@ namespace ChemSW.Nbt
             NodeHashKey Hashkey = new NodeHashKey( Node.NodeId, Node.NodeSpecies );
             _NodeHash[Hashkey] = Node;
 
-            return ( Node );
+            if( false == IsTemp )
+            {
+                // we have to do this separately so that the audit record will show as an INSERT instead of an UPDATE
+                // It will however do postChanges()
+                Node.PromoteTempToReal( IsCreate: true, OverrideUniqueValidation: OverrideUniqueValidation );
+            }
+            else
+            {
+                Node.postChanges( ForceUpdate: true, IsCopy: false, OverrideUniqueValidation: OverrideUniqueValidation, IsCreate: true );
+            }
 
+            return ( Node );
         }//makeNodeFromNodeTypeId()
 
 

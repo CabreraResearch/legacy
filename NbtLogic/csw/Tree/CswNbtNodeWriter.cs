@@ -95,7 +95,7 @@ namespace ChemSW.Nbt
 
                 //bz # 5878
                 //propcoll knows whether or not he's got new values to update (presumably)
-                Node.Properties.update( Node, IsCopy, OverrideUniqueValidation, Creating, null );
+                Node.Properties.update( Node, IsCopy, OverrideUniqueValidation, Creating, null, AllowAuditing );
 
                 //set nodename with updated prop values
                 _synchNodeName( Node );

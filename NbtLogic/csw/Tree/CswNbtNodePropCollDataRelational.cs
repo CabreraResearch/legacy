@@ -99,18 +99,18 @@ namespace ChemSW.Nbt
 
 
 
-        public void update()
+        public void update( bool AllowAuditing )
         {
             CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( _Node.NodeTypeId );
             CswTableUpdate CswTableUpdate = _CswNbtResources.makeCswTableUpdate( "CswNbtNodePropCollDataRelational_update", NodeType.TableName );
             string PkColumnName = _CswNbtResources.getPrimeKeyColName( NodeType.TableName );
 
             CswCommaDelimitedString SelectColumns = new CswCommaDelimitedString();
-            foreach ( CswNbtMetaDataNodeTypeProp CurrentNodeTypeProp in NodeType.getNodeTypeProps() )
+            foreach( CswNbtMetaDataNodeTypeProp CurrentNodeTypeProp in NodeType.getNodeTypeProps() )
             {
-                foreach ( CswNbtSubField CurrentSubField in CurrentNodeTypeProp.getFieldTypeRule().SubFields )
+                foreach( CswNbtSubField CurrentSubField in CurrentNodeTypeProp.getFieldTypeRule().SubFields )
                 {
-                    if ( CurrentSubField.RelationalColumn != string.Empty )
+                    if( CurrentSubField.RelationalColumn != string.Empty )
                         SelectColumns.Add( CurrentSubField.RelationalColumn );
                 }
             }//iterate node type props to set up select columns
@@ -120,21 +120,21 @@ namespace ChemSW.Nbt
 
             //test
             string ColumnNames = string.Empty;
-            foreach ( DataColumn CurrentColumn in DataTable.Columns )
+            foreach( DataColumn CurrentColumn in DataTable.Columns )
             {
                 ColumnNames += CurrentColumn.ColumnName + "\r\n";
             }
 
-            foreach ( DataRow CurrentRow in _PropsTable.Rows )
+            foreach( DataRow CurrentRow in _PropsTable.Rows )
             {
-                CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp = NodeType.getNodeTypeProp( CswConvert.ToInt32( CurrentRow[ "nodetypepropid" ] ) );
-                foreach ( CswNbtSubField CurrentSubField in CswNbtMetaDataNodeTypeProp.getFieldTypeRule().SubFields )
+                CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp = NodeType.getNodeTypeProp( CswConvert.ToInt32( CurrentRow["nodetypepropid"] ) );
+                foreach( CswNbtSubField CurrentSubField in CswNbtMetaDataNodeTypeProp.getFieldTypeRule().SubFields )
                 {
-                    if ( CurrentSubField.RelationalColumn != string.Empty )
+                    if( CurrentSubField.RelationalColumn != string.Empty )
                     {
-                        if ( CurrentRow[ CurrentSubField.Column.ToString() ].ToString() == string.Empty )
+                        if( CurrentRow[CurrentSubField.Column.ToString()].ToString() == string.Empty )
                         {
-                            DataTable.Rows[ 0 ][ CurrentSubField.RelationalColumn ] = DBNull.Value;
+                            DataTable.Rows[0][CurrentSubField.RelationalColumn] = DBNull.Value;
                         }
                         else
                         {

@@ -10,7 +10,7 @@ namespace ChemSW.Nbt
         DataTable PropsTable { get; }
         bool IsTableEmpty {get;}
         void refreshTable();
-        void update();
+        void update( bool AllowAuditing );
 
     }//ICswNbtNodePropCollData
 

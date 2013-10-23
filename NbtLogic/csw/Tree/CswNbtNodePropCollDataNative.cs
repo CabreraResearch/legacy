@@ -91,9 +91,9 @@ namespace ChemSW.Nbt
             _PropsTable = null;
         }//refreshTable() 
 
-        public void update()
+        public void update( bool AllowAuditing = true )
         {
-            _PropsUpdate.update( _PropsTable, ( false == _Node.IsTemp ) );
+            _PropsUpdate.update( _PropsTable, ( AllowAuditing && false == _Node.IsTemp ) );
         }
 
     }//CswNbtNodePropCollDataNative
