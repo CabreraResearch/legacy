@@ -26,7 +26,7 @@ namespace ChemSW.Nbt
     /// <summary>
     /// A collection of useful resources for NBT business logic.
     /// </summary>
-    public class CswNbtResources : ICswResources
+    public class CswNbtResources: ICswResources
     {
         /// <summary>
         /// The MD5 seed used for NBT
@@ -124,8 +124,22 @@ namespace ChemSW.Nbt
             ViewSelect = new CswNbtViewSelect( this );
             SessionDataMgr = new CswNbtSessionDataMgr( this );
             Permit = new CswNbtPermit( this );
-            StructureSearchManager = new CswStructureSearchManager( this, "mol_keys", "nodeid", "nodeid", "clobdata", "jct_nodes_props" );
             SearchManager = new CswNbtSearchManager( this );
+
+            StructureSearchManager = new CswStructureSearchManager( this, "mol_keys", "nodeid", "nodeid", "clobdata", "jct_nodes_props" );
+            StructureSearchManager.AddAdditionalWhere = delegate()
+                {
+                    CswNbtMetaDataObjectClass ChemicalOC = this.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass );
+                    CswNbtMetaDataObjectClassProp StructureOCP = ChemicalOC.getObjectClassProp( CswNbtObjClassChemical.PropertyName.Structure );
+                    CswCommaDelimitedString StructureNTPIds = new CswCommaDelimitedString();
+                    foreach( CswNbtMetaDataNodeTypeProp StructureNTP in StructureOCP.getNodeTypeProps() )
+                    {
+                        StructureNTPIds.Add( StructureNTP.PropId.ToString() );
+                    }
+                    string whereClause = " nodetypepropid in (" + StructureNTPIds.ToString() + ")";
+
+                    return whereClause;
+                };
 
             _CswResources.OnConfigVarChangeHandler = _onConfigVblChange;
         }
@@ -601,23 +615,23 @@ namespace ChemSW.Nbt
             MailReportsView.ViewName = "runMailReportEventsView";
             CswNbtViewRelationship Rel1 = MailReportsView.AddViewRelationship( MailReportOC, false );
             // Nodetype matches
-            MailReportsView.AddViewPropertyAndFilter( ParentViewRelationship: Rel1,
-                                                      MetaDataProp: TargetTypeOCP,
-                                                      FilterMode: CswEnumNbtFilterMode.Contains,
-                                                      Value: TargetNodeType.FirstVersionNodeTypeId.ToString() );
+            MailReportsView.AddViewPropertyAndFilter( ParentViewRelationship : Rel1,
+                                                      MetaDataProp : TargetTypeOCP,
+                                                      FilterMode : CswEnumNbtFilterMode.Contains,
+                                                      Value : TargetNodeType.FirstVersionNodeTypeId.ToString() );
             // Event matches
-            MailReportsView.AddViewPropertyAndFilter( ParentViewRelationship: Rel1,
-                                                      MetaDataProp: EventOCP,
-                                                      FilterMode: CswEnumNbtFilterMode.Equals,
-                                                      Value: EventOpt.ToString() );
+            MailReportsView.AddViewPropertyAndFilter( ParentViewRelationship : Rel1,
+                                                      MetaDataProp : EventOCP,
+                                                      FilterMode : CswEnumNbtFilterMode.Equals,
+                                                      Value : EventOpt.ToString() );
             // Enabled
-            MailReportsView.AddViewPropertyAndFilter( ParentViewRelationship: Rel1,
-                                                      MetaDataProp: EnabledOCP,
-                                                      FilterMode: CswEnumNbtFilterMode.Equals,
-                                                      Value: CswEnumTristate.True.ToString() );
+            MailReportsView.AddViewPropertyAndFilter( ParentViewRelationship : Rel1,
+                                                      MetaDataProp : EnabledOCP,
+                                                      FilterMode : CswEnumNbtFilterMode.Equals,
+                                                      Value : CswEnumTristate.True.ToString() );
             // Can't check the view, because it depends on the user
             // But check for a matching property value being altered
-            ICswNbtTree MailReportsTree = Trees.getTreeFromView( MailReportsView, RequireViewPermissions: false, IncludeSystemNodes: true, IncludeHiddenNodes: false );
+            ICswNbtTree MailReportsTree = Trees.getTreeFromView( MailReportsView, RequireViewPermissions : false, IncludeSystemNodes : true, IncludeHiddenNodes : false );
             for( Int32 i = 0; i < MailReportsTree.getChildNodeCount(); i++ )
             {
                 MailReportsTree.goToNthChild( i );

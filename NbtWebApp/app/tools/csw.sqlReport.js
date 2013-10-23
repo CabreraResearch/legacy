@@ -15,7 +15,10 @@
         Csw.ajaxWcf.post({
             urlMethod: 'Reports/getReportInfo',
             async: false,
-            data: { nodeId: qs.reportid },
+            data: {
+                nodeId: qs.reportid,
+                sourceId: qs.sourceid
+            },
             success: function (data) {
                 var params = [];
                 if (data.doesSupportCrystal) {
@@ -57,7 +60,7 @@
                 }
             }
         });
-        
+
         var postForm = function (reportid, params, action) {
 
             var $form = $('<form method="POST" action="' + action + '"></form>').appendTo($('body'));
@@ -78,7 +81,7 @@
             form.remove();
         };
 
-        var runReport = function(reportid, rformat, params) {
+        var runReport = function (reportid, rformat, params) {
 
             $(document).ajaxSend(function startSpinner() {
                 $('#spinner').show();
@@ -100,7 +103,7 @@
                         nodeId: reportid,
                         reportParams: reportParams
                     },
-                    success: function(data) {
+                    success: function (data) {
                         var parent = Csw.domNode({ ID: 'rptDiv' });
                         parent.empty();
                         if (data.hasResults) {
@@ -120,7 +123,7 @@
                         nodeId: reportid,
                         reportParams: reportParams
                     },
-                    success: function(data) {
+                    success: function (data) {
                         var parent = Csw.domNode({ ID: 'rptDiv' });
                         parent.empty();
 
@@ -144,4 +147,4 @@
 
     Csw.reports.register('init', init);
 
-}());
+} ());

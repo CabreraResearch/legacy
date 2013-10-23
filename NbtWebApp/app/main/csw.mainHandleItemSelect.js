@@ -3,11 +3,15 @@
 (function _initMain() {
 
     Csw.main.onReady.then(function() {
-        
-        Csw.main.register('handleReport', function (reportid) {
-            Csw.openPopup("Report.html?reportid=" + reportid);
-        });
 
+        Csw.main.register('handleReport', function(reportid, sourceid) {
+            var url = "Report.html?reportid=" + reportid;
+            if (sourceid) {
+                url += "&sourceid=" + sourceid;
+            }
+            Csw.openPopup(url);
+        });
+        
         Csw.main.register('handleItemSelect', function (options) {
 
             var o = {

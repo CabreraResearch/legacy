@@ -136,6 +136,10 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                     ReturnVal = new CswNbtFieldTypeRuleRelationship( CswNbtFieldResources );
                     break;
 
+                case CswEnumNbtFieldType.ReportLink:
+                    ReturnVal = new CswNbtFieldTypeRuleReportLink( CswNbtFieldResources );
+                    break;
+
                 case CswEnumNbtFieldType.Scientific:
                     ReturnVal = new CswNbtFieldTypeRuleScientific( CswNbtFieldResources );
                     break;

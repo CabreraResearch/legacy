@@ -37,9 +37,9 @@
                     case Csw.enums.subFieldsMap.File.name:
                         Csw.properties.file(cswPublic);
                         break;
-                case Csw.enums.subFieldsMap.Formula.name:
-                    Csw.properties.formula(cswPublic);
-                    break;
+                    case Csw.enums.subFieldsMap.Formula.name:
+                        Csw.properties.formula(cswPublic);
+                        break;
                     case Csw.enums.subFieldsMap.Grid.name:
                         Csw.properties.grid(cswPublic);
                         break;
@@ -102,6 +102,9 @@
                         break;
                     case Csw.enums.subFieldsMap.Relationship.name:
                         Csw.properties.relationship(cswPublic);
+                        break;
+                    case Csw.enums.subFieldsMap.ReportLink.name:
+                        Csw.properties.reportlink(cswPublic);
                         break;
                     case Csw.enums.subFieldsMap.Scientific.name:
                         Csw.properties.scientific(cswPublic);

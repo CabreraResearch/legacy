@@ -656,7 +656,16 @@ namespace ChemSW.Nbt.PropTypes
             }
         }//Relationship
 
-
+        public CswNbtNodePropReportLink AsReportLink
+        {
+            get
+            {
+                if( !( _CswNbtNodeProp is CswNbtNodePropReportLink ) )
+                    throw ( new CswDniException( _makeTypeErrorMessage( typeof( CswNbtNodePropReportLink ) ) ) );
+                return ( (CswNbtNodePropReportLink) _CswNbtNodeProp );
+            }
+        }//Relationship
+        
         public CswNbtNodePropScientific AsScientific
         {
             get
