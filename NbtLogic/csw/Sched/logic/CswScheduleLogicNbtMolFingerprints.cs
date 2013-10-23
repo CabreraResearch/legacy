@@ -88,7 +88,8 @@ namespace ChemSW.Nbt.Sched
                         {
                             if( hasntBeenInserted )
                             {
-                                CswNbtResources.StructureSearchManager.InsertFingerprintRecord( NodeId, prop.AsMol.Mol );
+                                string errorMsg;
+                                CswNbtResources.StructureSearchManager.InsertFingerprintRecord( NodeId, prop.AsMol.Mol, out errorMsg );
                                 hasntBeenInserted = false;
                             }
                         }
