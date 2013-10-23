@@ -10,7 +10,7 @@ namespace ChemSW.Nbt
         void write( CswNbtNode Node, bool ForceSave, bool IsCopy );
         void updateRelationsToThisNode( CswNbtNode Node );
         void delete( CswNbtNode CswNbtNode );
-
+        void AuditInsert( CswNbtNode Node );
     }//CswNbtNodeWriter
 
 }//namespace ChemSW.Nbt

@@ -88,9 +88,11 @@ namespace ChemSW.Nbt.ObjClasses
 
         private CswDateTime _Date;
         private CswNbtResources _CswNbtResources;
-        public CswNbtNode( CswNbtResources CswNbtResources, Int32 NodeTypeId, CswEnumNbtNodeSpecies NodeSpecies, CswPrimaryKey NodeId, Int32 UniqueId, CswDateTime Date, bool IsTemp )
+        private CswNbtNodeWriter _CswNbtNodeWriter;
+        public CswNbtNode( CswNbtResources CswNbtResources, CswNbtNodeWriter CswNbtNodeWriter, Int32 NodeTypeId, CswEnumNbtNodeSpecies NodeSpecies, CswPrimaryKey NodeId, Int32 UniqueId, CswDateTime Date, bool IsTemp )
         {
             _CswNbtResources = CswNbtResources;
+            _CswNbtNodeWriter = CswNbtNodeWriter;
             _UniqueId = UniqueId;
             _NodeId = NodeId;
             _NodeTypeId = NodeTypeId;
@@ -99,7 +101,6 @@ namespace ChemSW.Nbt.ObjClasses
             _IsTemp = IsTemp;
             _Date = Date;
         }//ctor()
-
 
         private CswAuditMetaData _CswAuditMetaData = new CswAuditMetaData();
 
@@ -194,9 +195,11 @@ namespace ChemSW.Nbt.ObjClasses
                 IsTempModified = true;
                 SessionId = string.Empty;
                 _IsTemp = false;
+                this.postChanges( false );
 
                 // Create auditing records for the node and property values
-                
+                _CswNbtNodeWriter.AuditInsert( this );
+                _CswNbtNodePropColl.AuditInsert();
             }
         }
 

@@ -749,11 +749,6 @@ namespace ChemSW.Nbt.ServiceDrivers
                             if( null != Node )
                             {
                                 addNode( NodeType, Node, PropsObj, out RetNbtNodeKey, null, View, NodeTypeTab );
-                                if( setIsTempToFalse )
-                                {
-                                    //Node.IsTemp = false;
-                                    Node.PromoteTempToReal();
-                                }
                             }
                             else
                             {
@@ -818,8 +813,15 @@ namespace ChemSW.Nbt.ServiceDrivers
                     ret["nodelink"] = Node.NodeLink;
                     ret["nodeid"] = Node.NodeId.ToString();
                     ret["action"] = _determineAction( Node.ObjClass.ObjectClass.ObjectClass );
+
+
+                    if( setIsTempToFalse )
+                    {
+                        Node.PromoteTempToReal();
+                    }
                 }
-            }
+            } // if( PropsObj.HasValues )
+
             return ret;
         } // saveProps()
 

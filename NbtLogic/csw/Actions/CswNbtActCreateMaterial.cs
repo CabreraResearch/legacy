@@ -154,7 +154,7 @@ namespace ChemSW.Nbt.Actions
                 return _ExistingNode;
             }
 
-            public CswNbtPropertySetMaterial commit( bool RemoveTempStatus = false )
+            public CswNbtPropertySetMaterial commit()
             {
                 CswNbtPropertySetMaterial Ret;
                 if( null == Node ) //Don't commit twice
@@ -186,10 +186,6 @@ namespace ChemSW.Nbt.Actions
                 //Ret.IsTemp = ( false == RemoveTempStatus );
                 Ret.postChanges( ForceUpdate: false );
 
-                if( RemoveTempStatus )
-                {
-                    Ret.PromoteTempToReal();
-                }
                 return Ret;
             }
 
@@ -448,14 +444,14 @@ namespace ChemSW.Nbt.Actions
                         //Ret.IsTemp = false;
                         JObject MaterialProperties = (JObject) MaterialObj["properties"];
                         CswNbtSdTabsAndProps SdTabsAndProps = new CswNbtSdTabsAndProps( _CswNbtResources );
-                        SdTabsAndProps.saveProps( Ret.NodeId, Int32.MinValue, MaterialProperties, Ret.NodeTypeId, null, IsIdentityTab: false );
+                        SdTabsAndProps.saveProps( Ret.NodeId, Int32.MinValue, MaterialProperties, Ret.NodeTypeId, null, IsIdentityTab: false, setIsTempToFalse: false );
 
                         NewMaterial FinalMaterial = new NewMaterial( _CswNbtResources, Ret );
                         FinalMaterial.TradeName = CswConvert.ToString( MaterialObj["tradename"] );
                         FinalMaterial.SupplierId = CswConvert.ToPrimaryKey( CswConvert.ToString( MaterialObj["supplierid"] ) );
                         FinalMaterial.PartNo = CswConvert.ToString( MaterialObj["partno"] );
 
-                        CswNbtPropertySetMaterial NodeAsMaterial = FinalMaterial.commit( RemoveTempStatus: true );
+                        CswNbtPropertySetMaterial NodeAsMaterial = FinalMaterial.commit();
                         NodeAsMaterial.Save.setHidden( value: false, SaveToDb: true );
 
                         JObject RequestObj = CswConvert.ToJObject( MaterialObj["request"] );

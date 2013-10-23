@@ -951,7 +951,13 @@ namespace ChemSW.Nbt
         public bool doesFkConstraintExistInDb( string ConstraintName ) { return ( _CswResources.doesFkConstraintExistInDb( ConstraintName ) ); }
         public bool doesUniqueConstraintExistInDb( string ConstraintName ) { return ( _CswResources.doesUniqueConstraintExistInDb( ConstraintName ) ); }
         public string getUniqueConstraintName( string TableName, string ColumName ) { return ( _CswResources.getUniqueConstraintName( TableName, ColumName ) ); }
+
         public bool DoAuditing { get { return _CswResources.DoAuditing; } }
+
+        public ICswAuditRecorder AuditRecorder
+        {
+            get { return _CswResources.AuditRecorder; }
+        }
 
         #endregion Pass-thru to CswResources
 

@@ -169,6 +169,16 @@ namespace ChemSW.Nbt
 
         }//delete()
 
+        public void AuditInsert( CswNbtNode Node )
+        {
+            // nodes
+            DataTable NodesTable = CswTableUpdateNodes.getTable( "nodeid", Node.NodeId.PrimaryKey );
+            if( NodesTable.Rows.Count > 0 )
+            {
+                _CswNbtResources.AuditRecorder.addInsertRow( NodesTable.Rows[0] );
+            }
+        }
+
     }//CswNbtNodeWriterNative
 
 }//namespace ChemSW.Nbt

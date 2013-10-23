@@ -291,7 +291,18 @@ namespace ChemSW.Nbt
             return _Props.GetEnumerator();
         }
 
+        public void AuditInsert()
+        {
+            ICswNbtNodePropCollData PropCollData = getPropCollData( _CswNbtNode.getNodeType().TableName, null );
 
+            //Case 29857 - we have to use a traditional for-loop here. onBeforeUpdateNodePropRow() can cause new rows in PropCollData.PropsTable to be created
+            // see Document.ArchivedDate
+            for( int i = 0; i < PropCollData.PropsTable.Rows.Count; i++ )
+            {
+                DataRow CurrentRow = PropCollData.PropsTable.Rows[i];
+                _CswNbtResources.AuditRecorder.addInsertRow( CurrentRow );
+            }
+        }
     }//CswNbtNodePropColl
 
 

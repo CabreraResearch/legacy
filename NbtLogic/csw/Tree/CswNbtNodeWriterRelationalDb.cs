@@ -1,3 +1,4 @@
+using System;
 using System.Data;
 using ChemSW.Core;
 using ChemSW.DB;
@@ -119,6 +120,11 @@ namespace ChemSW.Nbt
             }// catch
 
         }//delete()
+
+        public void AuditInsert( CswNbtNode Node )
+        {
+            throw new NotImplementedException( "AuditInsert not implemented for CswNbtNodeWriterRelationalDb" );
+        }
 
     }//CswNbtNodeWriterRelationalDb
 

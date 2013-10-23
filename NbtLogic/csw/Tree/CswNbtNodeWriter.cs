@@ -91,14 +91,10 @@ namespace ChemSW.Nbt
                 if( null == Node.NodeId )
                 {
                     makeNewNodeEntry( Node );
-                    //setDefaultPropertyValues( Node );
                 }
 
-                //propcoll knows whether or not he's got new 
-                //values to update (presumably)
-
                 //bz # 5878
-                //Node.Properties.ManageTransaction = _ManageTransaction;
+                //propcoll knows whether or not he's got new values to update (presumably)
                 Node.Properties.update( Node, IsCopy, OverrideUniqueValidation, Creating, null );
 
                 //set nodename with updated prop values
@@ -207,6 +203,15 @@ namespace ChemSW.Nbt
             }
 
         }//_synchNodeName()
+
+
+        /// <summary>
+        /// Create audit records as if the node is being inserted, for use with temp nodes
+        /// </summary>
+        public void AuditInsert( CswNbtNode Node )
+        {
+            getWriterImpl( Node.NodeId ).AuditInsert( Node );
+        }
 
     }//CswNbtNodeWriterNative
 

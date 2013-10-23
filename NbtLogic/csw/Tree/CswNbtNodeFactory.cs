@@ -34,7 +34,7 @@ namespace ChemSW.Nbt
         /// </remark>
         public CswNbtNode make( CswEnumNbtNodeSpecies NodeSpecies, CswPrimaryKey NodeId, Int32 NodeTypeId, Int32 UniqueID, CswDateTime Date, bool IsTemp = false )
         {
-            CswNbtNode ReturnVal = new CswNbtNode( _CswNbtResources, NodeTypeId, NodeSpecies, NodeId, UniqueID, Date, IsTemp ); //, _ICswNbtObjClassFactory );
+            CswNbtNode ReturnVal = new CswNbtNode( _CswNbtResources, _CswNbtNodeWriter, NodeTypeId, NodeSpecies, NodeId, UniqueID, Date, IsTemp ); //, _ICswNbtObjClassFactory );
 
             ReturnVal.OnRequestWriteNode += new CswNbtNode.OnRequestWriteNodeHandler( _CswNbtNodeWriter.write );
             if( OnWriteNode != null )
