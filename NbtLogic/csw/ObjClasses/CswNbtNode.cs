@@ -63,7 +63,7 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         public delegate void OnSetNodeIdHandler( CswNbtNode Node, CswPrimaryKey OldNodeId, CswPrimaryKey NewNodeId );
-        public delegate void OnRequestWriteNodeHandler( CswNbtNode Node, bool ForceUpdate, bool IsCopy, bool OverrideUniqueValidation, bool Creating );
+        public delegate void OnRequestWriteNodeHandler( CswNbtNode Node, bool ForceUpdate, bool IsCopy, bool OverrideUniqueValidation, bool Creating, bool AllowAuditing );
         public delegate void OnRequestDeleteNodeHandler( CswNbtNode Node );
         public delegate void OnRequestFillHandler( CswNbtNode Node, CswDateTime Date );
         public delegate void OnRequestFillFromNodeTypeIdHandler( CswNbtNode Node, Int32 NodeTypeId );
@@ -195,7 +195,7 @@ namespace ChemSW.Nbt.ObjClasses
                 IsTempModified = true;
                 SessionId = string.Empty;
                 _IsTemp = false;
-                this.postChanges( false );
+                this.postChanges( ForceUpdate: false, IsCopy: false, AllowAuditing: false ); // we're changing temp to false, but we need to explicitly prevent auditing here or we end up with an extra UPDATE row
 
                 // Create auditing records for the node and property values
                 _CswNbtNodeWriter.AuditInsert( this );
@@ -406,7 +406,7 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         //public void postChanges( bool ForceUpdate, bool IsCopy, bool OverrideUniqueValidation = false )
-        public void postChanges( bool ForceUpdate, bool IsCopy, bool OverrideUniqueValidation = false, bool IsCreate = false )
+        public void postChanges( bool ForceUpdate, bool IsCopy, bool OverrideUniqueValidation = false, bool IsCreate = false, bool AllowAuditing = true )
         {
             if( CswEnumNbtNodeModificationState.Modified == ModificationState || ForceUpdate )
             {
@@ -425,7 +425,7 @@ namespace ChemSW.Nbt.ObjClasses
                     _CswNbtObjClass.beforeWriteNode( IsCopy, OverrideUniqueValidation, Creating );
                 }
 
-                OnRequestWriteNode( this, ForceUpdate, IsCopy, OverrideUniqueValidation, Creating );
+                OnRequestWriteNode( this, ForceUpdate, IsCopy, OverrideUniqueValidation, Creating, ( AllowAuditing && false == IsTemp ) );
 
                 if( Creating )
                 {

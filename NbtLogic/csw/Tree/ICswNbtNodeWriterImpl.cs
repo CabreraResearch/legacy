@@ -7,7 +7,7 @@ namespace ChemSW.Nbt
     {
         void clear();
         void makeNewNodeEntry( CswNbtNode Node, bool PostToDatabase );
-        void write( CswNbtNode Node, bool ForceSave, bool IsCopy );
+        void write( CswNbtNode Node, bool ForceSave, bool IsCopy, bool AllowAuditing );
         void updateRelationsToThisNode( CswNbtNode Node );
         void delete( CswNbtNode CswNbtNode );
         void AuditInsert( CswNbtNode Node );

@@ -72,7 +72,7 @@ namespace ChemSW.Nbt
         } // makeNewNodeEntry()
 
 
-        public void write( CswNbtNode Node, bool ForceSave, bool IsCopy )
+        public void write( CswNbtNode Node, bool ForceSave, bool IsCopy, bool AllowAuditing )
         {
             // save nodename and pendingupdate
             if( Node.NodeId.TableName != "nodes" )
@@ -94,7 +94,7 @@ namespace ChemSW.Nbt
             NodesTable.Rows[0]["iconfilename"] = Node.IconFileNameOverride;
             NodesTable.Rows[0]["searchable"] = CswConvert.ToDbVal( Node.Searchable );
 
-            CswTableUpdateNodes.update( NodesTable, ( false == Node.IsTemp ) );
+            CswTableUpdateNodes.update( NodesTable, AllowAuditing );
 
         }//write()
 

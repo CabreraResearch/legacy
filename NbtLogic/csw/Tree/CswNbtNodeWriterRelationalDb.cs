@@ -57,7 +57,7 @@ namespace ChemSW.Nbt
             //return ( NodesTable );
         }//_getDataTable()
 
-        public void write( CswNbtNode Node, bool ForceSave, bool IsCopy )
+        public void write( CswNbtNode Node, bool ForceSave, bool IsCopy, bool AllowAuditing)
         {
             DataTable NodesTable;
             CswTableUpdate NodesUpdate;
