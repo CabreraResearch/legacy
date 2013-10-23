@@ -200,7 +200,7 @@
                         { text: 'Begins', handler: Csw.method(function () { return cswPrivate.onSearchTypeSelect('Begins'); }) },
                         { text: 'Contains', handler: Csw.method(function () { return cswPrivate.onSearchTypeSelect('Contains'); }) },
                         { text: 'Ends', handler: Csw.method(function () { return cswPrivate.onSearchTypeSelect('Ends'); }) },
-                        { text: 'Equals', handler: Csw.method(function () { return cswPrivate.onSearchTypeSelect('Equals'); }) }
+                        { text: 'Exact', handler: Csw.method(function () { return cswPrivate.onSearchTypeSelect('Exact'); }) }
                     ],
                 }
             }); // toolbar
