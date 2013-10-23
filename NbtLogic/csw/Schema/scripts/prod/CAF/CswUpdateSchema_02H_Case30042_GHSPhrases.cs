@@ -33,7 +33,7 @@ namespace ChemSW.Nbt.Schema
         public override void update()
         {
             {
-                CswNbtSchemaUpdateImportMgr JurisdictionMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "sites", "Jurisdiction", "regions_view" );
+                CswNbtSchemaUpdateImportMgr JurisdictionMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "sites", "Jurisdiction", "regions_view", "region" );
 
                 JurisdictionMgr.importBinding( "region", CswNbtObjClassJurisdiction.PropertyName.LegacyId, "" );
                 JurisdictionMgr.importBinding( "region", CswNbtObjClassJurisdiction.PropertyName.Name, "" );
@@ -63,12 +63,13 @@ namespace ChemSW.Nbt.Schema
             }
 
             {
-                CswNbtSchemaUpdateImportMgr GHSPhrasesMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "jct_ghsphrase_matsite", "GHS", "ghs_phrases_view", "materialid" );
+                CswNbtSchemaUpdateImportMgr GHSPhrasesMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "jct_ghsphrase_matsite", "GHS", "ghs_view", "legacyid" );
 
-                GHSPhrasesMgr.importBinding( "materialid", CswNbtObjClassGHS.PropertyName.LegacyId, "" );
+                GHSPhrasesMgr.importBinding( "legacyid", CswNbtObjClassGHS.PropertyName.LegacyId, "" );
                 GHSPhrasesMgr.importBinding( "region", CswNbtObjClassGHS.PropertyName.Jurisdiction, "" );
                 GHSPhrasesMgr.importBinding( "materialid", CswNbtObjClassGHS.PropertyName.Material, CswEnumNbtSubFieldName.NodeID.ToString() );
                 GHSPhrasesMgr.importBinding( "ghscodes", CswNbtObjClassGHS.PropertyName.AddLabelCodes, "" );
+                GHSPhrasesMgr.importBinding( "pictos", CswNbtObjClassGHS.PropertyName.Pictograms, "" );
 
                 GHSPhrasesMgr.finalize();
             }
