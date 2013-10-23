@@ -138,7 +138,7 @@
 
                     var selectedText = 'Search';
                     var selectedIcon = '';
-                    Csw.each(data.searchTypes, function (st) {
+                    Csw.each(data.searchTargets, function (st) {
                         if (false === Csw.isNullOrEmpty(st.name)) {
                             srchMenuItems.push({
                                 text: st.name,
@@ -256,7 +256,7 @@
                 }).css({ 'padding-bottom': '5px' });
 
                 //If user is performing a universal search, direct them to C3 search
-                if (data.searchtype == 'universal') {
+                if (data.searchtarget == 'universal') {
 
                     table2.cell(1, 1).div({
                         cssclass: 'SearchLabel',
@@ -303,7 +303,7 @@
 
                     } // if (data.alternateoption != null)
 
-                } //if (data.searchtype == 'universal')
+                } //if (data.searchtarget == 'universal')
                 else {
                     var table3 = table2.cell(1, 1).table({
                         cellvalign: 'bottom'
