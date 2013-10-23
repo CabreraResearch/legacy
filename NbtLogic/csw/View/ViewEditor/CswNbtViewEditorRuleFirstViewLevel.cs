@@ -137,7 +137,6 @@ namespace ChemSW.Nbt.ViewEditor
                     }
                 }
             }
-            _addExistingProps( CurrentView );
         }
 
         private void _getPropertyViewProps( CswNbtView TempView, CswNbtViewEditorData Return )

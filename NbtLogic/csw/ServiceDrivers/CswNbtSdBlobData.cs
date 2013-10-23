@@ -8,7 +8,6 @@ using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
@@ -209,7 +208,6 @@ namespace ChemSW.Nbt.ServiceDrivers
                     Href = CswNbtNodePropMol.getLink( molProp.JctNodePropId, Node.NodeId );
 
                     SdBlobData.saveFile( PropId, molImage, CswNbtNodePropMol.MolImgFileContentType, CswNbtNodePropMol.MolImgFileName, out Href, Int32.MinValue, PostChanges, Node: Node );
-                    //JctUpdate.update( JctTable );
 
                     //case 28364 - calculate fingerprint and save it
                     _CswNbtResources.StructureSearchManager.InsertFingerprintRecord( PropIdAttr.NodeId.PrimaryKey, FormattedMolString );
