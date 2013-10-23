@@ -1,5 +1,7 @@
 using System;
+using System.Data;
 using System.Runtime.Serialization;
+using ChemSW.Audit;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
@@ -86,7 +88,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         private CswDateTime _Date;
         private CswNbtResources _CswNbtResources;
-        public CswNbtNode( CswNbtResources CswNbtResources, Int32 NodeTypeId, CswEnumNbtNodeSpecies NodeSpecies, CswPrimaryKey NodeId, Int32 UniqueId, CswDateTime Date, bool IsDemo = false )
+        public CswNbtNode( CswNbtResources CswNbtResources, Int32 NodeTypeId, CswEnumNbtNodeSpecies NodeSpecies, CswPrimaryKey NodeId, Int32 UniqueId, CswDateTime Date, bool IsTemp )
         {
             _CswNbtResources = CswNbtResources;
             _UniqueId = UniqueId;
@@ -94,9 +96,38 @@ namespace ChemSW.Nbt.ObjClasses
             _NodeTypeId = NodeTypeId;
             _CswNbtNodePropColl = new CswNbtNodePropColl( CswNbtResources, this, null );
             _NodeSpecies = NodeSpecies;
-            _IsDemo = IsDemo;
+            _IsTemp = IsTemp;
             _Date = Date;
         }//ctor()
+
+
+        private CswAuditMetaData _CswAuditMetaData = new CswAuditMetaData();
+
+        /// <summary>
+        /// Initialize from data row
+        /// </summary>
+        public void read( DataRow row )
+        {
+            // None of these should not be considered a "modification"
+            _NodeTypeId = CswConvert.ToInt32( row["nodetypeid"] );
+            _NodeName = row["nodename"].ToString();
+            _ReadOnly = CswConvert.ToBoolean( row["readonly"] );
+            _IsDemo = CswConvert.ToBoolean( row["isdemo"] );
+            _Locked = CswConvert.ToBoolean( row["locked"] );
+            _IsTemp = CswConvert.ToBoolean( row["istemp"] );
+            _SessionId = CswConvert.ToString( row["sessionid"] );
+            _PendingUpdate = CswConvert.ToBoolean( row["pendingupdate"] );
+            _Searchable = CswConvert.ToBoolean( row["searchable"] );
+            if( row.Table.Columns.Contains( _CswAuditMetaData.AuditLevelColName ) )
+            {
+                _AuditLevel = row[_CswAuditMetaData.AuditLevelColName].ToString();
+            }
+            else
+            {
+                _AuditLevel = _CswAuditMetaData.DefaultAuditLevel;
+            }
+        } // read()
+
 
         #region Core Properties
 
@@ -140,30 +171,32 @@ namespace ChemSW.Nbt.ObjClasses
 
         public bool IsTempModified = false;
         private bool _IsTemp = false;
+
         /// <summary>
         /// If true, this is a temporary node
         /// </summary>
         public bool IsTemp
         {
             get { return _IsTemp; }
-            set
-            {
-                if( value != _IsTemp )
-                {
-                    IsTempModified = true;
-                }
-                _NodeModificationState = CswEnumNbtNodeModificationState.Modified;
-                if( false == value )
-                {
-                    _NodeModificationState = CswEnumNbtNodeModificationState.Modified;
-                    SessionId = string.Empty;
-                }
-                else if( string.IsNullOrEmpty( SessionId ) )
-                {
-                    SessionId = _CswNbtResources.Session.SessionId;
-                }
+        }
 
-                _IsTemp = value;
+        /// <summary>
+        /// Converts a temp node to a real one.  
+        /// Creates INSERT audit records for current values of all properties.
+        /// Thus, make sure all other property modifications have been posted before calling this.
+        /// </summary>
+        public void PromoteTempToReal()
+        {
+            if( _IsTemp )
+            {
+                // Update the node
+                _NodeModificationState = CswEnumNbtNodeModificationState.Modified;
+                IsTempModified = true;
+                SessionId = string.Empty;
+                _IsTemp = false;
+
+                // Create auditing records for the node and property values
+                
             }
         }
 
@@ -552,7 +585,6 @@ namespace ChemSW.Nbt.ObjClasses
         } // RelateToNode()
 
         #endregion Methods
-
 
     }//CswNbtNode
 

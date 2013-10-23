@@ -344,8 +344,9 @@ namespace ChemSW.Nbt.ServiceDrivers
                         if( _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Add && false == HasEditableProps )
                         {
                             //Case 29531 - There are no props on the Add layout, so just save the node - the client will skip the add dialog
-                            Node.IsTemp = false;
+                            //Node.IsTemp = false;
                             Node.postChanges( ForceUpdate: false );
+                            Node.PromoteTempToReal();
                         }
                         else
                         {
@@ -747,11 +748,12 @@ namespace ChemSW.Nbt.ServiceDrivers
                         case CswEnumNbtNodeEditMode.Add:
                             if( null != Node )
                             {
+                                addNode( NodeType, Node, PropsObj, out RetNbtNodeKey, null, View, NodeTypeTab );
                                 if( setIsTempToFalse )
                                 {
-                                    Node.IsTemp = false;
+                                    //Node.IsTemp = false;
+                                    Node.PromoteTempToReal();
                                 }
-                                addNode( NodeType, Node, PropsObj, out RetNbtNodeKey, null, View, NodeTypeTab );
                             }
                             else
                             {

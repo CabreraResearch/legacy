@@ -183,9 +183,13 @@ namespace ChemSW.Nbt.Actions
                 Ret.Supplier.RelatedNodeId = SupplierId;
                 Ret.ApprovedForReceiving.Checked = CswConvert.ToTristate( _NbtResources.Permit.can( CswEnumNbtActionName.Material_Approval ) );
 
-                Ret.IsTemp = ( false == RemoveTempStatus );
+                //Ret.IsTemp = ( false == RemoveTempStatus );
                 Ret.postChanges( ForceUpdate: false );
 
+                if( RemoveTempStatus )
+                {
+                    Ret.PromoteTempToReal();
+                }
                 return Ret;
             }
 
@@ -435,12 +439,13 @@ namespace ChemSW.Nbt.Actions
                             CswNbtObjClassVendor VendorNode = _CswNbtResources.Nodes.GetNode( VendorNodePk );
                             if( null != VendorNode && VendorNode.IsTemp )
                             {
-                                VendorNode.IsTemp = false;
+                                //VendorNode.IsTemp = false;
                                 VendorNode.postChanges( false );
+                                VendorNode.PromoteTempToReal();
                             }
                         }
 
-                        Ret.IsTemp = false;
+                        //Ret.IsTemp = false;
                         JObject MaterialProperties = (JObject) MaterialObj["properties"];
                         CswNbtSdTabsAndProps SdTabsAndProps = new CswNbtSdTabsAndProps( _CswNbtResources );
                         SdTabsAndProps.saveProps( Ret.NodeId, Int32.MinValue, MaterialProperties, Ret.NodeTypeId, null, IsIdentityTab: false );
@@ -460,6 +465,8 @@ namespace ChemSW.Nbt.Actions
                         }
                         CswNbtActReceiving Receiving = new CswNbtActReceiving( _CswNbtResources );
                         Receiving.commitSDSDocNode( NodeAsMaterial.NodeId, MaterialObj );
+
+                        Ret.PromoteTempToReal();
                     }
                 }
 
