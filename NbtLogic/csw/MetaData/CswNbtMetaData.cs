@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
+using ChemSW.Audit;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
@@ -1073,6 +1074,10 @@ namespace ChemSW.Nbt.MetaData
 
             //Case 24135: If we specified a unique prop name, keep it
             InsertedRow["propname"] = NtpModel.PropName;
+
+            // case 31007: set auditlevel from nodetype
+            CswAuditMetaData _CswAuditMetaData = new CswAuditMetaData();
+            InsertedRow[_CswAuditMetaData.AuditLevelColName] = NtpModel.NodeType.AuditLevel;
 
             _CswNbtMetaDataResources.NodeTypePropTableUpdate.update( NodeTypePropsTable );
 
