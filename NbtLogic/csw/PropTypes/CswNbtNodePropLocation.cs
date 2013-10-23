@@ -220,6 +220,7 @@ namespace ChemSW.Nbt.PropTypes
             CswNbtMetaDataObjectClass ContainerOC = CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerClass );
             CswNbtMetaDataObjectClass UserOC = CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.UserClass );
 
+            //TODO (Case 31016): This is pretty hack-a-delic - we should convert these into prop attributes (like RespectAllowInventory, DisableLowestLevel, and IncludeRoot)
             bool IsLocationNode = ( null != Prop && Prop.getNodeType().getObjectClass().ObjectClass == CswEnumNbtObjectClass.LocationClass );
             bool IsContainerNode = ( null != Prop && null != ContainerOC && Prop.getNodeType().ObjectClassId == ContainerOC.ObjectClassId );
             bool IsUserNode = ( null != Prop && null != ContainerOC && Prop.getNodeType().ObjectClassId == UserOC.ObjectClassId );
@@ -230,7 +231,8 @@ namespace ChemSW.Nbt.PropTypes
             CswNbtObjClassLocation.makeLocationsTreeView( ref Ret, CswNbtResources,
                                                           NodeIdToFilterOut: NodeId,
                                                           RequireAllowInventory: ( CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Containers ) && ( IsContainerNode || IsUserNode ) ),
-                                                          InventoryGroupIds: InventoryGroupIds );
+                                                          InventoryGroupIds: InventoryGroupIds,
+                                                          DisableLowestLevel: IsLocationNode );
             return Ret;
         }
 
