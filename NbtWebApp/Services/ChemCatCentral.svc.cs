@@ -46,10 +46,10 @@ namespace NbtWebApp
         /// 
         /// </summary>
         [OperationContract]
-        [WebInvoke( Method = "POST", UriTemplate = "GetSearchTypes" )]
+        [WebInvoke( Method = "POST", UriTemplate = "GetSearchProperties" )]
         [Description( "" )]
         [FaultContract( typeof( FaultException ) )]
-        public CswNbtWebServiceC3Search.CswNbtC3SearchReturn GetSearchTypes()
+        public CswNbtWebServiceC3Search.CswNbtC3SearchReturn GetSearchProperties()
         {
             CswC3Params CswC3Params = new CswC3Params();
             CswNbtWebServiceC3Search.CswNbtC3SearchReturn Ret = new CswNbtWebServiceC3Search.CswNbtC3SearchReturn();
@@ -57,7 +57,7 @@ namespace NbtWebApp
             var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceC3Search.CswNbtC3SearchReturn, CswC3Params>(
                 CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
                 ReturnObj: Ret,
-                WebSvcMethodPtr: CswNbtWebServiceC3Search.GetSearchTypes,
+                WebSvcMethodPtr: CswNbtWebServiceC3Search.GetSearchProperties,
                 ParamObj: CswC3Params
                 );
 

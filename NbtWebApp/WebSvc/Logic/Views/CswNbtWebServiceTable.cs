@@ -148,7 +148,7 @@ namespace ChemSW.Nbt.WebServices
                 ret["truncated"] = Tree.getCurrentNodeChildrenTruncated();
                 ret["pagesize"] = _CswNbtResources.CurrentNbtUser.PageSize;
                 ret["nodetypes"] = _dictionaryToJson();
-                ret["searchtype"] = "universal";
+                ret["searchtarget"] = "universal";
             }
             return ret;
         } // makeTableFromTree()
@@ -188,7 +188,7 @@ namespace ChemSW.Nbt.WebServices
                 ret["pagesize"] = _CswNbtResources.CurrentNbtUser.PageSize;
                 ret["nodetypes"] = _dictionaryToJson();
                 ret["importmenu"] = CswNbtWebServiceC3Search.getImportBtnItems( _CswNbtResources );
-                ret["searchtype"] = "chemcatcentral";
+                ret["searchtarget"] = "chemcatcentral";
             }
             return ret;
         }
