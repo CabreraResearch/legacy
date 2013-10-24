@@ -417,6 +417,14 @@
                         }); // CswButton
                         btncol += 1;
                     } // if (nodeObj.allowdelete)
+                    
+                    //Favorite Button
+                    btnTable.cell(1, btncol).favoriteButton({
+                        name: nodeid + '_favBtn',
+                        nodeid: nodeid,
+                        isFavorite: Csw.bool(nodeObj.isFavorite),
+                    });
+                    btncol += 1;
 
                     if (Csw.bool(nodeObj.disabled)) {
                         textCell.addClass('disabled');

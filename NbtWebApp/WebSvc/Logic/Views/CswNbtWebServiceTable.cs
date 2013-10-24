@@ -202,6 +202,7 @@ namespace ChemSW.Nbt.WebServices
             public string NodeName;
             public bool Locked;
             public bool Disabled;
+            public bool IsFavorite;
             public string ThumbnailUrl;
 
             public bool AllowView;
@@ -236,6 +237,7 @@ namespace ChemSW.Nbt.WebServices
                 NodeObj["c3productid"] = C3ProductId.ToString();
                 NodeObj["locked"] = Locked.ToString().ToLower();
                 NodeObj["disabled"] = Disabled.ToString().ToLower();
+                NodeObj["isFavorite"] = IsFavorite.ToString().ToLower();
                 NodeObj["nodetypeid"] = NodeType.NodeTypeId;
                 NodeObj["nodetypename"] = NodeType.NodeTypeName;
                 NodeObj["thumbnailurl"] = ThumbnailUrl;
@@ -317,6 +319,7 @@ namespace ChemSW.Nbt.WebServices
                         thisNode.NodeName = Tree.getNodeNameForCurrentPosition();
                         thisNode.Locked = Tree.getNodeLockedForCurrentPosition();
                         thisNode.Disabled = ( false == Tree.getNodeIncludedForCurrentPosition() );
+                        thisNode.IsFavorite = CswNbtNode.isFavorite( _CswNbtResources, thisNode.NodeId.PrimaryKey, _CswNbtResources.CurrentNbtUser.UserId.PrimaryKey );
 
                         thisNode.ThumbnailUrl = _getThumbnailUrl( Tree.getNodeIconForCurrentPosition() );
 
