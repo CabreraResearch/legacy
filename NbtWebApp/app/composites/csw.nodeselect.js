@@ -310,14 +310,7 @@
                 cswPrivate.checkBox = returnObj.input;
 
                 // Validate
-                if (Csw.isNullOrEmpty(cswPrivate.nameSpan.text())) {
-                    cswPrivate.checkBox.val(false);
-                } else {
-                    cswPrivate.checkBox.val(true);
-                }
-                if (cswPrivate.wasNodeLinkModified) {
-                    cswPrivate.checkBox.$.valid();
-                }
+                cswPrivate.validateNodeLink(cswPrivate.nameSpan.text());
             }
 
             cswPrivate.hiddenValue = cswPrivate.table.cell(1, cswPrivate.searchCellCol).input({
@@ -351,7 +344,7 @@
                             cswPrivate.nameSpan.nodeLink({
                                 text: nodeObj.nodelink + '&nbsp;'
                             });
-                            
+
                             cswPrivate.wasNodeLinkModified = true;
 
                             // We use the remove icon during C3 imports - Case 30408
@@ -373,14 +366,7 @@
 
                             // Validation
                             if (cswPrivate.isRequired) {
-                                if (Csw.isNullOrEmpty(cswPrivate.nameSpan.text())) {
-                                    cswPrivate.checkBox.val(false);
-                                } else {
-                                    cswPrivate.checkBox.val(true);
-                                }
-                                if (cswPrivate.wasNodeLinkModified) {
-                                    cswPrivate.checkBox.$.valid();
-                                }
+                                cswPrivate.validateNodeLink(cswPrivate.nameSpan.text());
                             }
 
                             cswPrivate.hiddenValue.val(nodeObj.nodeid);
@@ -425,6 +411,17 @@
             }
         };
 
+        cswPrivate.validateNodeLink = function (value) {
+            if (Csw.isNullOrEmpty(value)) {
+                cswPrivate.checkBox.val(false);
+            } else {
+                cswPrivate.checkBox.val(true);
+            }
+            if (cswPrivate.wasNodeLinkModified) {
+                cswPrivate.checkBox.$.valid();
+            }
+        };
+
         //#endregion Control Construction
 
         //#region Add
@@ -446,7 +443,7 @@
                     nodelink: nodelink
                 });
             }
-            
+
             if (cswPrivate.isRequired) {
                 if (Csw.isNullOrEmpty(cswPrivate.nameSpan.text())) {
                     cswPrivate.checkBox.val(false);
