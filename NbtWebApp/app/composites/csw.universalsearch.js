@@ -225,7 +225,9 @@
                     SearchTerm: cswPrivate.searchterm,
                     SearchType: cswPrivate.searchtype,
                     NodeTypeId: cswPrivate.nodetypeid,
-                    ObjectClassId: cswPrivate.objectclassid
+                    ObjectClassId: cswPrivate.objectclassid,
+                    Page: '0',
+                    Limit: '0',
                 },
                 success: function (data) {
                     cswPublic.handleResults(data);

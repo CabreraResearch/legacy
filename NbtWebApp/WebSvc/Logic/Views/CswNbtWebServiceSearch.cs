@@ -84,10 +84,10 @@ namespace ChemSW.Nbt.WebServices
 
         #region UniversalSearch
 
-        public JObject doUniversalSearch( string SearchTerm, CswEnumSqlLikeMode SearchType, Int32 NodeTypeId, Int32 ObjectClassId )
+        public JObject doUniversalSearch( string SearchTerm, CswEnumSqlLikeMode SearchType, Int32 NodeTypeId, Int32 ObjectClassId, Int32 Page, Int32 PageLimit )
         {
             CswNbtSearch Search = getSearch( SearchTerm, SearchType, NodeTypeId, ObjectClassId );
-            return _finishUniversalSearch( Search );
+            return _finishUniversalSearch( Search, Page, PageLimit );
         }
 
         public CswNbtSearch getSearch( string SearchTerm, CswEnumSqlLikeMode SearchType, Int32 NodeTypeId, Int32 ObjectClassId )
@@ -166,7 +166,7 @@ namespace ChemSW.Nbt.WebServices
             }
             return ret;
         }
-        private JObject _finishUniversalSearch( CswNbtSearch Search )
+        private JObject _finishUniversalSearch( CswNbtSearch Search, Int32 Page=0, Int32 PageLimit=0 )
         {
             ICswNbtTree Tree = Search.Results();
             CswNbtWebServiceTable wsTable = new CswNbtWebServiceTable( _CswNbtResources, _CswNbtStatisticsEvents, Int32.MinValue );
@@ -174,7 +174,7 @@ namespace ChemSW.Nbt.WebServices
             Search.SaveToCache( true );
 
             JObject ret = Search.ToJObject();
-            ret["table"] = wsTable.makeTableFromTree( Tree, Search.getFilteredPropIds() );
+            ret["table"] = wsTable.makeTableFromTree( Tree, Search.getFilteredPropIds(), Page, PageLimit );
             ret["filters"] = Search.FilterOptions( Tree );
             ret["searchtarget"] = "universal";
             ret["searchtype"] = Search.SearchType.ToString();

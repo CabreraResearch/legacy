@@ -2600,7 +2600,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string doUniversalSearch( string SearchTerm, string SearchType, string NodeTypeId, string ObjectClassId )
+        public string doUniversalSearch( string SearchTerm, string SearchType, string NodeTypeId, string ObjectClassId, string Page, string Limit )
         {
             JObject ReturnVal = new JObject();
             CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
@@ -2612,7 +2612,7 @@ namespace ChemSW.Nbt.WebServices
                 if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     CswNbtWebServiceSearch ws = new CswNbtWebServiceSearch( _CswNbtResources, _CswNbtStatisticsEvents );
-                    ReturnVal = ws.doUniversalSearch( SearchTerm, (CswEnumSqlLikeMode) SearchType, CswConvert.ToInt32( NodeTypeId ), CswConvert.ToInt32( ObjectClassId ) );
+                    ReturnVal = ws.doUniversalSearch( SearchTerm, (CswEnumSqlLikeMode) SearchType, CswConvert.ToInt32( NodeTypeId ), CswConvert.ToInt32( ObjectClassId ), CswConvert.ToInt32( Page ), CswConvert.ToInt32( Limit ) );
                 }
                 _deInitResources();
             }

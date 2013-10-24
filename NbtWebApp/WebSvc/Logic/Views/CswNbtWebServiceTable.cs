@@ -135,13 +135,13 @@ namespace ChemSW.Nbt.WebServices
             return ret;
         }
 
-        public JObject makeTableFromTree( ICswNbtTree Tree, Collection<Int32> PropsToHide )
+        public JObject makeTableFromTree( ICswNbtTree Tree, Collection<Int32> PropsToHide, Int32 Page=0, Int32 PageLimit=0 )
         {
 
             JObject ret = new JObject();
             if( Tree != null )
             {
-                Int32 results = _populateDictionary( Tree, PropsToHide );
+                Int32 results = _populateDictionary( Tree, PropsToHide, Page, PageLimit );
 
                 ret["results"] = results; // Tree.getChildNodeCount().ToString();
                 ret["nodetypecount"] = _TableDict.Keys.Count;
@@ -292,10 +292,10 @@ namespace ChemSW.Nbt.WebServices
 
         private Dictionary<CswNbtMetaDataNodeType, Collection<TableNode>> _TableDict = new Dictionary<CswNbtMetaDataNodeType, Collection<TableNode>>();
 
-        private Int32 _populateDictionary( ICswNbtTree Tree, Collection<Int32> PropsToHide )
+        private Int32 _populateDictionary( ICswNbtTree Tree, Collection<Int32> PropsToHide, Int32 Page=0, Int32 PageLimit=0 )
         {
             Int32 results = 0;
-            for( Int32 c = 0; c < Tree.getChildNodeCount(); c++ )
+            for( Int32 c = Math.Max(0, (Page-1)*PageLimit); (c < Tree.getChildNodeCount() && ( PageLimit < 1 || results < PageLimit )); c++ )
             {
                 Tree.goToNthChild( c );
 
