@@ -93,6 +93,10 @@ namespace ChemSW.Nbt.WebServices
             public class ImportStatusReturnData
             {
                 [DataMember( IsRequired = true )]
+                [Description( "End Date, if available" )]
+                public DateTime DateEnded;
+                
+                [DataMember( IsRequired = true )]
                 [Description( "Number of pending items processed" )]
                 public Int32 ItemsDone;
 
