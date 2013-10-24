@@ -1,4 +1,5 @@
 
+using System.Linq;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 
@@ -29,6 +30,29 @@ namespace ChemSW.Nbt
 
                 CswNbtMetaDataNodeTypeProp LabelCodesGridNTP = ChemicalNT.getNodeTypePropByObjectClassProp( CswNbtObjClassChemical.PropertyName.LabelCodesGrid );
                 LabelCodesGridNTP.Hidden = false;
+
+                CswNbtMetaDataNodeTypeTab DSDTab = ChemicalNT.getNodeTypeTab( "DSD" );
+                if( null == DSDTab )
+                {
+                    CswNbtMetaDataNodeTypeTab GHSTab = ChemicalNT.getNodeTypeTab( "GHS" );
+
+                    //Move all tabs over
+                    foreach( CswNbtMetaDataNodeTypeTab tab in ChemicalNT.getNodeTypeTabs().Where( Tab => Tab.TabOrder > GHSTab.TabOrder ) )
+                    {
+                        tab.TabOrder++;
+                    }
+
+                    //Create the DSD tab and put it next to the GHS tab
+                    DSDTab = _CswNbtResources.MetaData.makeNewTab( ChemicalNT, "DSD", GHSTab.TabOrder + 1 );
+                }
+
+                if( false == DSDTab.HasProps )
+                {
+                    //Put the DSD props on the tab
+                    PictogramsNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, DSDTab.TabId );
+                    LabelCodesNTP.updateLayout( CswEnumNbtLayoutType.Edit, PictogramsNTP, true );
+                    LabelCodesGridNTP.updateLayout( CswEnumNbtLayoutType.Edit, LabelCodesNTP, true );
+                }
             }
         }// OnEnable()
 

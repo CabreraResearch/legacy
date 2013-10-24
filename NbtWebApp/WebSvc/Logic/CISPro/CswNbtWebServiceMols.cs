@@ -122,9 +122,11 @@ namespace ChemSW.Nbt.WebServices
             string Href;
             CswNbtSdBlobData SdBlobData = new CswNbtSdBlobData( NBTResources );
             string FormattedMolString;
-            SdBlobData.saveMol( ImgData.molString, ImgData.propId, out Href, out FormattedMolString );
+            string errorMsg;
+            SdBlobData.saveMol( ImgData.molString, ImgData.propId, out Href, out FormattedMolString, out errorMsg );
             ImgData.molString = FormattedMolString;
             ImgData.href = Href;
+            ImgData.errorMsg = errorMsg;
 
             Return.Data = ImgData;
         }

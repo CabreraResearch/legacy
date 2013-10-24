@@ -43,8 +43,10 @@ namespace ChemSW.Nbt.Actions
         }
         public static CswEnumNbtActionName ActionNameStringToEnum( string ActionName )
         {
-            CswEnumNbtActionName Ret = ActionName.Replace( ' ', '_' );
-            return Ret;
+            string ret = ActionName;
+            ret = ret.Replace( "%20", "_" );
+            ret = ret.Replace( ' ', '_' );
+            return (CswEnumNbtActionName) ret;
         }
 
         public CswNbtSessionDataId SaveToCache( bool IncludeInQuickLaunch, bool KeepInQuickLaunch )

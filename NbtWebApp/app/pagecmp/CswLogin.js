@@ -76,7 +76,8 @@
                                     inpPassword.val(''); // case 21303
                                     loginBtn.enable();
                                     Csw.tryExec(o.onFail, txt);
-                                }
+                                },
+                                logoutpath: document.URL
                             });
                         } else {
                             loginBtn.enable();

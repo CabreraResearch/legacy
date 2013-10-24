@@ -36,11 +36,11 @@ namespace ChemSW.Nbt.WebServices
         {
             public SearchMenuResponse()
             {
-                searchTypes = new Collection<SearchType>();
+                searchTargets = new Collection<SearchType>();
             }
 
             [DataMember]
-            public Collection<SearchType> searchTypes;
+            public Collection<SearchType> searchTargets;
 
             [DataContract]
             public class SearchType
@@ -80,7 +80,7 @@ namespace ChemSW.Nbt.WebServices
                 }
             }
 
-            Return.Data.searchTypes = searchTypes;
+            Return.Data.searchTargets = searchTypes;
 
 
         }

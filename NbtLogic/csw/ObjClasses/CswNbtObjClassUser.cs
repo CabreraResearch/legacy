@@ -16,11 +16,11 @@ using ChemSW.Security;
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassUser: CswNbtObjClass, ICswNbtUser
+    public class CswNbtObjClassUser : CswNbtObjClass, ICswNbtUser
     {
         public const string ChemSWAdminUsername = CswAuthenticator.ChemSWAdminUsername;
 
-        public new sealed class PropertyName: CswNbtObjClass.PropertyName
+        public new sealed class PropertyName : CswNbtObjClass.PropertyName
         {
             public const string AccountLocked = "AccountLocked";
             public const string Archived = "Archived";
@@ -207,7 +207,7 @@ namespace ChemSW.Nbt.ObjClasses
 
             if( UsernameProperty.Text != string.Empty ) // case 25616
             {
-                UsernameProperty.setReadOnly( value : true, SaveToDb : true ); // BZ 5906
+                UsernameProperty.setReadOnly( value: true, SaveToDb: true ); // BZ 5906
             }
 
             // case 22512
@@ -240,7 +240,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterWriteNode( bool Creating )
         {
-            CachedData.setHidden( value : true, SaveToDb : true );
+            CachedData.setHidden( value: true, SaveToDb: true );
             // BZ 9170
             _CswNbtResources.ConfigVbls.setConfigVariableValue( "cache_lastupdated", DateTime.Now.ToString() );
 
@@ -341,8 +341,8 @@ namespace ChemSW.Nbt.ObjClasses
             //BZ 9933
             if( _CswNbtResources.CurrentNbtUser == null || !_CswNbtResources.CurrentNbtUser.IsAdministrator() )
             {
-                this.FailedLoginCount.setHidden( value : true, SaveToDb : false );
-                this.AccountLocked.setHidden( value : true, SaveToDb : false );
+                this.FailedLoginCount.setHidden( value: true, SaveToDb: false );
+                this.AccountLocked.setHidden( value: true, SaveToDb: false );
             }
 
 
@@ -393,7 +393,7 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtView view = ParentRelationship.View;
             CswNbtMetaDataObjectClass userOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.UserClass );
             CswNbtMetaDataObjectClassProp archivedOCP = userOC.getObjectClassProp( PropertyName.Archived );
-            view.AddViewPropertyAndFilter( ParentRelationship, archivedOCP, FilterMode : CswEnumNbtFilterMode.NotEquals, Value : CswEnumTristate.True.ToString() );
+            view.AddViewPropertyAndFilter( ParentRelationship, archivedOCP, FilterMode: CswEnumNbtFilterMode.NotEquals, Value: CswEnumTristate.True.ToString() );
 
             _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
         }
@@ -674,7 +674,7 @@ namespace ChemSW.Nbt.ObjClasses
                     if( null != _CurrentUser )
                     {
                         _CurrentUser.CurrentCache = this;
-                        _CurrentUser.postChanges( ForceUpdate : false );
+                        _CurrentUser.postChanges( ForceUpdate: false );
                     }
                 }
             }
@@ -797,20 +797,25 @@ namespace ChemSW.Nbt.ObjClasses
                 _NodePermissions.Clear();
             }
 
-            Collection<CswPrimaryKey> UserPermissions = getUserPermissions();
-            foreach( CswPrimaryKey PermissionId in UserPermissions )
+            Dictionary<CswPrimaryKey, CswPrimaryKey> UserPermissions = getUserPermissions();
+            foreach( CswPrimaryKey GroupId in UserPermissions.Keys )
             {
+                CswPrimaryKey PermissionId = UserPermissions[GroupId];
                 CswNbtPropertySetPermission PermNode = _CswNbtResources.Nodes[PermissionId];
                 if( null != PermNode )
                 {
-                    _NodePermissions.Add( PermNode.PermissionGroup.RelatedNodeId, PermNode );
+                    _NodePermissions.Add( GroupId, PermNode );
                 }
             }
         }
 
-        public Collection<CswPrimaryKey> getUserPermissions()
+        /// <summary>
+        /// Returns a dictionary of Permission Groups and Permissions (primary keys only), if any exists for this User
+        /// </summary>
+        /// <param name="PermGroupType">Filter to a given permission type</param>
+        public Dictionary<CswPrimaryKey, CswPrimaryKey> getUserPermissions( CswEnumNbtObjectClass PermObjectClass = null, bool RequireEdit = false )
         {
-            Collection<CswPrimaryKey> UserPermissions = new Collection<CswPrimaryKey>();
+            Dictionary<CswPrimaryKey, CswPrimaryKey> UserPermissions = new Dictionary<CswPrimaryKey, CswPrimaryKey>();
 
             if( CswTools.IsPrimaryKey( CurrentWorkUnitId ) && CswTools.IsPrimaryKey( RoleId ) )
             {
@@ -827,19 +832,40 @@ namespace ChemSW.Nbt.ObjClasses
                                                           (select p.field1_fk from pval p where p.nodeid = n.nodeid and propname = :workunitocp) userworkunit,
                                                           (select p.field1_fk from pval p where p.nodeid = n.nodeid and propname = :permgroupocp) userpermgroup,
                                                           (select p.field1 from pval p where p.nodeid = n.nodeid and propname = :applyallrolesocp) applyallroles,
-                                                          (select p.field1 from pval p where p.nodeid = n.nodeid and propname = :applyallworkunitsocp) applyallworkunits
+                                                          (select p.field1 from pval p where p.nodeid = n.nodeid and propname = :applyallworkunitsocp) applyallworkunits,
+                                                          (select p.field1 from pval p where p.nodeid = n.nodeid and propname = :editocp) edit
                                                      from nodes n
                                                      join nodetypes nt on n.nodetypeid = nt.nodetypeid
                                                      join object_class oc on nt.objectclassid = oc.objectclassid
-                                                    where n.istemp = 0
-                                                      and oc.objectclassid in (select jpsoc.objectclassid 
+                                                    where n.istemp = 0";
+                if( null != PermObjectClass )
+                {
+                    CswNbtMetaDataObjectClass PermOC = _CswNbtResources.MetaData.getObjectClass( PermObjectClass );
+                    if( null != PermOC )
+                    {
+                        SQLQuery += @"                and oc.objectclassid = " + PermOC.ObjectClassId;
+                    }
+                    else
+                    {
+                        throw new CswDniException( CswEnumErrorType.Error, "Server Configuration Error", "getUserPermissions() filtered to an invalid or disabled object class (" + PermObjectClass + ")" );
+                    }
+                }
+                else
+                {
+                    SQLQuery += @"                    and oc.objectclassid in (select jpsoc.objectclassid 
                                                                                  from jct_propertyset_objectclass jpsoc 
-                                                                                where jpsoc.propertysetid = :permsetid))
+                                                                                where jpsoc.propertysetid = :permsetid)";
+                }
+                SQLQuery += @"                   )
                                        select * 
                                          from perms
                                         where (perms.userrole = :role or perms.userrole is null) 
-                                          and (perms.userworkunit = :workunit or perms.userworkunit is null)
-                                        order by userpermgroup, applyallroles, applyallworkunits";
+                                          and (perms.userworkunit = :workunit or perms.userworkunit is null)";
+                if( RequireEdit )
+                {
+                    SQLQuery += @"        and perms.edit = '" + CswConvert.ToDbVal( (CswEnumTristate) CswEnumTristate.True ) + @"' ";
+                }
+                SQLQuery += @"          order by userpermgroup, applyallroles, applyallworkunits";
                 CswArbitrarySelect Query = _CswNbtResources.makeCswArbitrarySelect( "getUserPermissions", SQLQuery );
 
                 Query.addParameter( "roleocp", CswNbtPropertySetPermission.PropertyName.Role );
@@ -847,18 +873,19 @@ namespace ChemSW.Nbt.ObjClasses
                 Query.addParameter( "permgroupocp", CswNbtPropertySetPermission.PropertyName.PermissionGroup );
                 Query.addParameter( "applyallrolesocp", CswNbtPropertySetPermission.PropertyName.ApplyToAllRoles );
                 Query.addParameter( "applyallworkunitsocp", CswNbtPropertySetPermission.PropertyName.ApplyToAllWorkUnits );
+                Query.addParameter( "editocp", CswNbtPropertySetPermission.PropertyName.Edit );
                 Query.addParameter( "permsetid", PermissionSet.PropertySetId.ToString() );
                 Query.addParameter( "role", RoleId.PrimaryKey.ToString() );
                 Query.addParameter( "workunit", CurrentWorkUnitId.PrimaryKey.ToString() );
 
                 DataTable DataTable = Query.getTable();
-                Int32 PermGroupId = 0;
                 foreach( DataRow Row in DataTable.Rows )
                 {
-                    if( PermGroupId != CswConvert.ToInt32( Row["userpermgroup"].ToString() ) )
+                    CswPrimaryKey PermGroupPk = new CswPrimaryKey( "nodes", CswConvert.ToInt32( Row["userpermgroup"].ToString() ) );
+                    CswPrimaryKey PermPk = new CswPrimaryKey( "nodes", CswConvert.ToInt32( Row["nodeid"] ) );
+                    if( false == UserPermissions.ContainsKey( PermGroupPk ) )
                     {
-                        PermGroupId = CswConvert.ToInt32( Row["userpermgroup"].ToString() );
-                        UserPermissions.Add( new CswPrimaryKey( "nodes", CswConvert.ToInt32( Row["nodeid"] ) ) );
+                        UserPermissions.Add( PermGroupPk, PermPk );
                     }
                 }
             }
@@ -874,7 +901,7 @@ namespace ChemSW.Nbt.ObjClasses
             Dictionary<string, string> opts = new Dictionary<string, string>();
 
             CswNbtMetaDataObjectClass WorkUnitOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.WorkUnitClass );
-            foreach( KeyValuePair<CswPrimaryKey, string> workUnit in WorkUnitOC.getNodeIdAndNames( false, false, RequireViewPermissions : false ) )
+            foreach( KeyValuePair<CswPrimaryKey, string> workUnit in WorkUnitOC.getNodeIdAndNames( false, false, RequireViewPermissions: false ) )
             {
                 opts[workUnit.Key.ToString()] = workUnit.Value;
             }
@@ -889,7 +916,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswPrimaryKey GetFirstAvailableWorkUnitNodeId()
         {
             CswNbtMetaDataObjectClass WorkUnitOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.WorkUnitClass );
-            Dictionary<CswPrimaryKey, string> WorkUnits = WorkUnitOC.getNodeIdAndNames( false, false, RequireViewPermissions : false );
+            Dictionary<CswPrimaryKey, string> WorkUnits = WorkUnitOC.getNodeIdAndNames( false, false, RequireViewPermissions: false );
             CswPrimaryKey ret = WorkUnits.OrderBy( entry => entry.Key.PrimaryKey ).First().Key;
             return ret;
         }

@@ -904,15 +904,16 @@
 
                 cswPrivate.buildPreview(cswPrivate.previewDiv, cswPrivate.View);
 
-                var isAdmin = false;
-                var ready = Csw.promises.all(
-                    [
-                        Csw.clientSession.isAdministrator({
-                            'Yes': function () { isAdmin = true; }
-                        })
-                    ]);
+                Csw.clientSession.isAdministrator({
+                    'Yes': function () {
+                        renderCtrls(true);
+                    },
+                    'No': function () {
+                        renderCtrls(false);
+                    }
+                });
 
-                ready.then(function () {
+                var renderCtrls = function (isAdmin) {
                     var nameCell = step5Tbl.cell(1, 1).setLabelText('View Name', false, false);
                     var viewNameInput = step5Tbl.cell(1, 2).input({
                         name: 'vieweditor_viewname_input',
@@ -993,7 +994,7 @@
                         });
                         cswPrivate.ajaxReqs[cswPrivate.wizardSteps[cswPrivate.currentStepNo]].push(req);
                     };
-                });
+                };
             };
         }());
 

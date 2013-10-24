@@ -168,7 +168,13 @@ namespace ChemSW.Nbt.ObjClasses
             public static CswCommaDelimitedString List = new CswCommaDelimitedString { UserId, NodeId, RoleId };
         }
 
-        public Dictionary<string, string> ExtractReportParams( CswNbtObjClassUser UserNode = null )
+        /// <summary>
+        /// Extract report parameters for a report
+        /// </summary>
+        /// <param name="UserNode">Use this user for matching parameter values</param>
+        /// <param name="SourceNode">Use this node for matching parameter values</param>
+        /// <returns></returns>
+        public Dictionary<string, string> ExtractReportParams( CswNbtObjClassUser UserNode = null, CswNbtNode SourceNode = null )
         {
             Dictionary<string, string> reportParams = new Dictionary<string, string>();
             MatchCollection matchedParams = null;
@@ -203,6 +209,15 @@ namespace ChemSW.Nbt.ObjClasses
                         {
                             replacementVal = UserNode.Node.Properties[userNTP].Gestalt;
                         }
+                    }
+                } // if( null != UserNode )
+
+                if( null != SourceNode )
+                {
+                    CswNbtMetaDataNodeTypeProp sourceNTP = SourceNode.getNodeType().getNodeTypeProp( paramName );
+                    if( null != sourceNTP )
+                    {
+                        replacementVal = SourceNode.Properties[sourceNTP].Gestalt;
                     }
                 }
 

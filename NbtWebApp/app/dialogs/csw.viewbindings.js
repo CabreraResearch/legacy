@@ -14,7 +14,7 @@
             cswPrivate.gridData.Bindings = cswPrivate.gridData.Bindings || { fields: [], columns: [], data: { items: [] } };
             cswPrivate.gridData.Relationships = cswPrivate.gridData.Relationships || { fields: [], columns: [], data: { items: [] } };
             
-            //because the CswNbtGrid object is configured for the old-style webservices, we must massage it a bit to display properly here
+            //because the CswExtJsGrid object is configured for the old-style webservices, we must massage it a bit to display properly here
                ["Order", "Bindings", "Relationships"].forEach(function (tableName) {
                    for (var itemNo = 0; itemNo < cswPrivate.gridData[tableName].data.items.length; itemNo++) {
                        cswPrivate.gridData[tableName].data.items[itemNo] = cswPrivate.gridData[tableName].data.items[itemNo].Row;
@@ -40,13 +40,14 @@
                 columns: cswPrivate.gridData[tabName].columns,
                 data: cswPrivate.gridData[tabName].data,
                 showActionColumn: false,
-                width: cswPrivate.width - 100,
-                height: cswPrivate.height - 100,
+                width: cswPrivate.width - 42,
+                height: cswPrivate.height - 152,
                 usePaging: false,
             });
             
             cswPrivate.currentTab = tabName;
         };
+        
 
         (function _postCtor() {
             
@@ -58,19 +59,45 @@
             });
             bindingsDialog.open();
 
+         //create a container for other UI elements
+            var contentArea = bindingsDialog.div.table({ cellpadding: 5 });
+
          //create the tab container for the binding grids
-            var tabstrip = bindingsDialog.div.tabStrip({
+            var tabstrip = contentArea.cell(1,1).tabStrip({
                 onTabSelect: cswPrivate.updateDisplayedTab,
             });
-            tabstrip.setSize({ width: cswPrivate.width -100, height: cswPrivate.height - 100 });
+            tabstrip.setSize({ width: cswPrivate.width -40, height: cswPrivate.height - 100 });
             
-            tabstrip.setTitle('Import Definition');
+            tabstrip.setTitle('Import Definition for ' + cswPrivate.importDefName);
             cswPrivate.tabs.Order = tabstrip.addTab({ title: 'Order' });
             cswPrivate.tabs.Bindings = tabstrip.addTab({ title: 'Bindings' });
             cswPrivate.tabs.Relationships = tabstrip.addTab({ title: 'Relationships' });
 
          //set the active tab to a default value
             cswPrivate.updateDisplayedTab('Order');
+            
+
+            //create a download button for the current binding
+            var downloadBindings = contentArea.cell(2,1).buttonExt({
+                enabledText: 'Download Bindings',
+                disabledText: 'Generating File...',
+                disableOnClick: false,
+                onClick: function () {
+                    // Return an .xls file that the User can save
+                    var action = 'Services/Import/downloadImportDefinition';
+                    
+                    var $form = $('<form method="POST" action="' + action + '"></form>').appendTo($('body'));
+                    var form = Csw.literals.factory($form);
+
+                    form.input({
+                        name: 'importdefname',
+                        value: cswPrivate.importDefName,
+                    });
+
+                    form.$.submit();
+                    form.remove();
+                }
+            });
         }());
 
 

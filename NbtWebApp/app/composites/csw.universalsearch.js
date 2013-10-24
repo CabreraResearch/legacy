@@ -58,7 +58,7 @@
             cswPrivate.searchBoxParent.empty();
             var cswtable = cswPrivate.searchBoxParent.table();
 
-            var onPreFilterClick = function (nodetypeObj) {
+            cswPrivate.onPreFilterClick = function (nodetypeObj) {
                 if (false === Csw.isNullOrEmpty(nodetypeObj)) {
                     cswPrivate.preFilterSelect.setText('');
                     cswPrivate.preFilterSelect.setIcon(nodetypeObj.iconfilename);
@@ -90,7 +90,7 @@
                     items.push({
                         text: 'All',
                         icon: '',
-                        handler: Csw.method(function () { onPreFilterClick(null); })
+                        handler: Csw.method(function () { cswPrivate.onPreFilterClick(null); })
                     });
 
                     var selectedText = 'All';
@@ -100,7 +100,7 @@
                             items.push({
                                 text: nt.name,
                                 icon: nt.iconfilename,
-                                handler: Csw.method(function () { onPreFilterClick(nt); })
+                                handler: Csw.method(function () { cswPrivate.onPreFilterClick(nt); })
                             });
                             if (cswPrivate.nodetypeid === nt.id) {
                                 selectedText = '';
@@ -138,7 +138,7 @@
 
                     var selectedText = 'Search';
                     var selectedIcon = '';
-                    Csw.each(data.searchTypes, function (st) {
+                    Csw.each(data.searchTargets, function (st) {
                         if (false === Csw.isNullOrEmpty(st.name)) {
                             srchMenuItems.push({
                                 text: st.name,
@@ -200,7 +200,7 @@
                         { text: 'Begins', handler: Csw.method(function () { return cswPrivate.onSearchTypeSelect('Begins'); }) },
                         { text: 'Contains', handler: Csw.method(function () { return cswPrivate.onSearchTypeSelect('Contains'); }) },
                         { text: 'Ends', handler: Csw.method(function () { return cswPrivate.onSearchTypeSelect('Ends'); }) },
-                        { text: 'Equals', handler: Csw.method(function () { return cswPrivate.onSearchTypeSelect('Equals'); }) }
+                        { text: 'Exact', handler: Csw.method(function () { return cswPrivate.onSearchTypeSelect('Exact'); }) }
                     ],
                 }
             }); // toolbar
@@ -256,7 +256,7 @@
                 }).css({ 'padding-bottom': '5px' });
 
                 //If user is performing a universal search, direct them to C3 search
-                if (data.searchtype == 'universal') {
+                if (data.searchtarget == 'universal') {
 
                     table2.cell(1, 1).div({
                         cssclass: 'SearchLabel',
@@ -303,7 +303,7 @@
 
                     } // if (data.alternateoption != null)
 
-                } //if (data.searchtype == 'universal')
+                } //if (data.searchtarget == 'universal')
                 else {
                     var table3 = table2.cell(1, 1).table({
                         cellvalign: 'bottom'
@@ -575,6 +575,14 @@
                 success: function (data) {
                     cswPublic.handleResults(data);
                     Csw.tryExec(cswPrivate.onAfterNewSearch, cswPrivate.sessiondataid);
+
+                    cswPrivate.searchinput.val(data.searchterm);
+                    cswPrivate.onSearchTypeSelect(data.searchtype);
+                    Csw.each(data.filtersapplied, function(filter) {
+                        if (filter.filtertype == "nodetype") {
+                            cswPrivate.onPreFilterClick({ id: filter.firstversionid, iconfilename: "Images/newicons/16/" + filter.icon });
+                        }
+                    });
                 }
             });
         }; // restoreSearch()

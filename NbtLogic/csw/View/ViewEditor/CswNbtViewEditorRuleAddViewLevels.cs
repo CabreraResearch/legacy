@@ -295,7 +295,6 @@ namespace ChemSW.Nbt.ViewEditor
             };
             CswNbtView tempView = _CswNbtResources.ViewSelect.restoreView( CurrentView.ToString() );
             tempView.Root.eachRelationship( eachRelationship, null );
-            _addExistingProps( CurrentView );
         }
 
         private void _removeProp( ICswNbtMetaDataProp prop )

@@ -1,9 +1,7 @@
 using System;
-using System.Collections.ObjectModel;
-using System.Linq;
+using System.Collections.Generic;
 using ChemSW.Config;
 using ChemSW.Core;
-using ChemSW.Exceptions;
 using ChemSW.Nbt.Batch;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
@@ -13,9 +11,9 @@ using ChemSW.Nbt.Schema;
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassLocation: CswNbtObjClass
+    public class CswNbtObjClassLocation : CswNbtObjClass
     {
-        public new sealed class PropertyName: CswNbtObjClass.PropertyName
+        public new sealed class PropertyName : CswNbtObjClass.PropertyName
         {
             public const string ChildLocationType = "Child Location Type";
             public const string LocationTemplate = "Location Template";
@@ -136,12 +134,11 @@ namespace ChemSW.Nbt.ObjClasses
             // Hide the Child Location Type and Location Template controls
             if( _CswNbtResources.ConfigVbls.getConfigVariableValue( "loc_use_images" ) == "0" )
             {
-                this.ChildLocationType.setHidden( value : true, SaveToDb : false );
-                this.Rows.setHidden( value : true, SaveToDb : false );
-                this.Columns.setHidden( value : true, SaveToDb : false );
-                this.LocationTemplate.setHidden( value : true, SaveToDb : false );
+                this.ChildLocationType.setHidden( value: true, SaveToDb: false );
+                this.Rows.setHidden( value: true, SaveToDb: false );
+                this.Columns.setHidden( value: true, SaveToDb: false );
+                this.LocationTemplate.setHidden( value: true, SaveToDb: false );
             }
-            Location.SetOnPropChange( OnLocationPropChange );
             _CswNbtObjClassDefault.triggerAfterPopulateProps();
         }//afterPopulateProps()
 
@@ -163,20 +160,6 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropList ChildLocationType { get { return ( _CswNbtNode.Properties[PropertyName.ChildLocationType] ); } }
         public CswNbtNodePropList LocationTemplate { get { return ( _CswNbtNode.Properties[PropertyName.LocationTemplate] ); } }
         public CswNbtNodePropLocation Location { get { return ( _CswNbtNode.Properties[PropertyName.Location] ); } }
-        private void OnLocationPropChange( CswNbtNodeProp Prop, bool Creating )
-        {
-            Int32 ParentLevel = Location.CachedFullPath.Split( new string[] { CswNbtNodePropLocation.PathDelimiter }, StringSplitOptions.RemoveEmptyEntries ).Count();
-            Int32 MaxLevel = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumNbtConfigurationVariables.loc_max_depth.ToString() ) );
-            if( ParentLevel >= MaxLevel && false == String.IsNullOrEmpty( Name.Text ) )
-            {
-                throw new CswDniException
-                (
-                    CswEnumErrorType.Warning,
-                    "Cannot create \"" + Name.Text + "\" under \"" + Location.CachedFullPath + "\" because it exceeds the maximum allowed Location depth.",
-                    Name.Text + " exceeds loc_max_depth"
-                );
-            }
-        }
         public CswNbtNodePropNumber Order { get { return ( _CswNbtNode.Properties[PropertyName.Order] ); } }
         public CswNbtNodePropNumber Rows { get { return ( _CswNbtNode.Properties[PropertyName.Rows] ); } }
         public CswNbtNodePropNumber Columns { get { return ( _CswNbtNode.Properties[PropertyName.Columns] ); } }
@@ -195,17 +178,17 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Custom Logic
 
-        public static void makeLocationsTreeView( ref CswNbtView LocationsView, CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn, Int32 loc_max_depth = Int32.MinValue, CswPrimaryKey NodeIdToFilterOut = null, bool RequireAllowInventory = false, Collection<CswPrimaryKey> InventoryGroupIds = null )
+        public static void makeLocationsTreeView( ref CswNbtView LocationsView, CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn, Int32 loc_max_depth = Int32.MinValue, CswPrimaryKey NodeIdToFilterOut = null, bool RequireAllowInventory = false, IEnumerable<CswPrimaryKey> InventoryGroupIds = null, bool DisableLowestLevel = false )
         {
-            _makeLocationsTreeView( ref LocationsView, CswNbtSchemaModTrnsctn.MetaData, CswNbtSchemaModTrnsctn.ConfigVbls, loc_max_depth, NodeIdToFilterOut, RequireAllowInventory, InventoryGroupIds );
+            _makeLocationsTreeView( ref LocationsView, CswNbtSchemaModTrnsctn.MetaData, CswNbtSchemaModTrnsctn.ConfigVbls, loc_max_depth, NodeIdToFilterOut, RequireAllowInventory, InventoryGroupIds, DisableLowestLevel );
         }
 
-        public static void makeLocationsTreeView( ref CswNbtView LocationsView, CswNbtResources CswNbtResources, Int32 loc_max_depth = Int32.MinValue, CswPrimaryKey NodeIdToFilterOut = null, bool RequireAllowInventory = false, Collection<CswPrimaryKey> InventoryGroupIds = null )
+        public static void makeLocationsTreeView( ref CswNbtView LocationsView, CswNbtResources CswNbtResources, Int32 loc_max_depth = Int32.MinValue, CswPrimaryKey NodeIdToFilterOut = null, bool RequireAllowInventory = false, IEnumerable<CswPrimaryKey> InventoryGroupIds = null, bool DisableLowestLevel = false )
         {
-            _makeLocationsTreeView( ref LocationsView, CswNbtResources.MetaData, CswNbtResources.ConfigVbls, loc_max_depth, NodeIdToFilterOut, RequireAllowInventory, InventoryGroupIds );
+            _makeLocationsTreeView( ref LocationsView, CswNbtResources.MetaData, CswNbtResources.ConfigVbls, loc_max_depth, NodeIdToFilterOut, RequireAllowInventory, InventoryGroupIds, DisableLowestLevel );
         }
 
-        private static void _makeLocationsTreeView( ref CswNbtView LocationsView, CswNbtMetaData MetaData, CswConfigurationVariables ConfigVbls, Int32 loc_max_depth, CswPrimaryKey NodeIdToFilterOut, bool RequireAllowInventory, Collection<CswPrimaryKey> InventoryGroupIds )
+        private static void _makeLocationsTreeView( ref CswNbtView LocationsView, CswNbtMetaData MetaData, CswConfigurationVariables ConfigVbls, Int32 loc_max_depth, CswPrimaryKey NodeIdToFilterOut, bool RequireAllowInventory, IEnumerable<CswPrimaryKey> InventoryGroupIds, bool DisableLowestLevel )
         {
             if( null != LocationsView )
             {
@@ -234,13 +217,21 @@ namespace ChemSW.Nbt.ObjClasses
                         // Top level: Only Locations with null parent locations at the root
                         LocReln = LocationsView.AddViewRelationship( LocationOC, true );
                         LocationsView.AddViewPropertyAndFilter( LocReln, LocationLocationOCP,
-                                                                Conjunction : CswEnumNbtFilterConjunction.And,
-                                                                SubFieldName : CswEnumNbtSubFieldName.NodeID,
-                                                                FilterMode : CswEnumNbtFilterMode.Null );
+                                                                Conjunction: CswEnumNbtFilterConjunction.And,
+                                                                SubFieldName: CswEnumNbtSubFieldName.NodeID,
+                                                                FilterMode: CswEnumNbtFilterMode.Null );
                     }
                     else
                     {
                         LocReln = LocationsView.AddViewRelationship( LocReln, CswEnumNbtViewPropOwnerType.Second, LocationLocationOCP, true );
+                        if( i == loc_max_depth && DisableLowestLevel )
+                        {
+                            LocationsView.AddViewPropertyAndFilter( LocReln, LocationLocationOCP,
+                                                                Conjunction: CswEnumNbtFilterConjunction.And,
+                                                                ResultMode: CswEnumNbtFilterResultMode.Disabled,
+                                                                SubFieldName: CswEnumNbtSubFieldName.NodeID,
+                                                                FilterMode: CswEnumNbtFilterMode.Null );
+                        }
                     }
                     if( null != NodeIdToFilterOut )
                     {
@@ -259,11 +250,11 @@ namespace ChemSW.Nbt.ObjClasses
                         }
 
                         LocationsView.AddViewPropertyFilter( InGroupVp,
-                                                                Conjunction : CswEnumNbtFilterConjunction.And,
-                                                                ResultMode : CswEnumNbtFilterResultMode.Disabled,
-                                                                FilterMode : CswEnumNbtFilterMode.In,
-                                                                SubFieldName : CswEnumNbtSubFieldName.NodeID,
-                                                                Value : Pks.ToString() );
+                                                                Conjunction: CswEnumNbtFilterConjunction.And,
+                                                                ResultMode: CswEnumNbtFilterResultMode.Disabled,
+                                                                FilterMode: CswEnumNbtFilterMode.In,
+                                                                SubFieldName: CswEnumNbtSubFieldName.NodeID,
+                                                                Value: Pks.ToString() );
                     }
 
                     CswNbtViewProperty OrderVPn = LocationsView.AddViewProperty( LocReln, LocationOrderOCP );
@@ -272,10 +263,10 @@ namespace ChemSW.Nbt.ObjClasses
                     if( RequireAllowInventory )
                     {
                         LocationsView.AddViewPropertyAndFilter( LocReln, LocationAllowInventoryOCP,
-                                                                Conjunction : CswEnumNbtFilterConjunction.And,
-                                                                ResultMode : CswEnumNbtFilterResultMode.Disabled,
-                                                                FilterMode : CswEnumNbtFilterMode.Equals,
-                                                                Value : CswEnumTristate.True.ToString() );
+                                                                Conjunction: CswEnumNbtFilterConjunction.And,
+                                                                ResultMode: CswEnumNbtFilterResultMode.Disabled,
+                                                                FilterMode: CswEnumNbtFilterMode.Equals,
+                                                                Value: CswEnumTristate.True.ToString() );
                     }
                 } // for( Int32 i = 1; i <= loc_max_depth; i++ )
             } // if( null != LocationsView )

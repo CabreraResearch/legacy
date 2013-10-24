@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using ChemSW.Core;
+using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.Security
@@ -12,7 +13,7 @@ namespace ChemSW.Nbt.Security
     /// To modify the user, you have to fetch the actual user Node using the UserId
     /// </summary>
 
-    public class CswNbtUser: ICswNbtUser
+    public class CswNbtUser : ICswNbtUser
     {
         private CswNbtResources _CswNbtResources;
 
@@ -270,10 +271,10 @@ namespace ChemSW.Nbt.Security
             }
             return PermissionNode;
         }
-        public Collection<CswPrimaryKey> getUserPermissions()
+        public Dictionary<CswPrimaryKey, CswPrimaryKey> getUserPermissions( CswEnumNbtObjectClass PermGroupType = null, bool RequireEdit = false )
         {
             CswNbtObjClassUser UserNode = _CswNbtResources.Nodes[UserId];
-            return UserNode.getUserPermissions();
+            return UserNode.getUserPermissions( PermGroupType, RequireEdit );
         }
 
         public Int32 PasswordPropertyId

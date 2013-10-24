@@ -836,7 +836,7 @@ namespace ChemSW.Nbt.WebPages
                                 NewFKType = CswEnumNbtViewRelatedIdType.PropertySetId.ToString();
                                 NewFKValue = CswConvert.ToInt32( TargetValue.Substring( "ps_".Length ) );
                             }
-                           
+
                         }
                     }
                     else if( PropToSave.getFieldTypeValue() == CswEnumNbtFieldType.ChildContents )
@@ -2706,6 +2706,27 @@ namespace ChemSW.Nbt.WebPages
                             //RelRowsRow.Cells[1].Controls.Add( RelRowsValue );
                             break;
 
+                        case CswEnumNbtFieldType.ReportLink:
+                            TableRow ReportLinkReportRow = makeEditPropTableRow( EditPropPlaceHolder );
+                            ( (Literal) ReportLinkReportRow.Cells[0].Controls[0] ).Text = "Report:";
+
+                            HiddenField ReportLinkFkType = new HiddenField();
+                            ReportLinkFkType.ID = "EditProp_FkTypeValue" + SelectedNodeTypeProp.PropId.ToString();
+                            ReportLinkFkType.Value = "nodeid";
+                            ReportLinkReportRow.Cells[1].Controls.Add( ReportLinkFkType );
+
+                            DropDownList ReportLinkReportValue = new DropDownList();
+                            CswNbtMetaDataObjectClass ReportOC = Master.CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ReportClass );
+                            foreach( CswNbtObjClassReport ReportNode in ReportOC.getNodes( false, true ) )
+                            {
+                                ReportLinkReportValue.Items.Add( new ListItem( ReportNode.NodeName, ReportNode.NodeId.PrimaryKey.ToString() ) );
+                            }
+                            ReportLinkReportValue.CssClass = "selectinput";
+                            ReportLinkReportValue.ID = "EditProp_FkValueValue" + SelectedNodeTypeProp.PropId.ToString();
+                            ReportLinkReportValue.SelectedValue = SelectedNodeTypeProp.FKValue.ToString();
+                            ReportLinkReportRow.Cells[1].Controls.Add( ReportLinkReportValue );
+                            break;
+
                         case CswEnumNbtFieldType.Sequence:
                             TableRow SequenceRow = makeEditPropTableRow( EditPropPlaceHolder );
                             ( (Literal) SequenceRow.Cells[0].Controls[0] ).Text = "Sequence:";
@@ -2889,6 +2910,7 @@ namespace ChemSW.Nbt.WebPages
                         FieldType.FieldType != CswEnumNbtFieldType.MOL &&          // temporary until ported into new UI
                         FieldType.FieldType != CswEnumNbtFieldType.Button &&       // temporary until ported into new UI
                         FieldType.FieldType != CswEnumNbtFieldType.MultiList &&     // temporary until ported into new UI
+                        FieldType.FieldType != CswEnumNbtFieldType.ReportLink &&
                         FieldType.FieldType != CswEnumNbtFieldType.ChildContents )
                     {
                         TableRow DefaultValueRow = makeEditPropTableRow( EditPropPlaceHolder );

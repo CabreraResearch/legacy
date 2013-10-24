@@ -1,1 +1,0 @@
-insert into nbtimportqueue@CAFLINK ( nbtimportqueueid, state, itempk, sheetname, priority, errorlog)  select seq_nbtimportqueueid.nextval@CAFLINK, 'I', inventorygroupid, 'inventory_groups',0, '' from inventory_groups@CAFLINK where deleted='0' ;

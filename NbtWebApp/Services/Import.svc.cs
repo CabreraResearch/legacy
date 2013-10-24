@@ -8,7 +8,6 @@ using System.Web;
 using ChemSW.Nbt.WebServices;
 using ChemSW.WebSvc;
 using NbtWebApp.WebSvc.Returns;
-using Newtonsoft.Json.Linq;
 
 namespace NbtWebApp
 {
@@ -96,6 +95,35 @@ namespace NbtWebApp
             return ret;
         }
 
+
+        [OperationContract]
+        [WebInvoke( Method = "POST" )]
+        [Description( "Download Import Data" )]
+        [FaultContract( typeof( FaultException ) )]
+        public Stream downloadImportData( Stream DataStream )
+        {
+            string Data = new StreamReader( DataStream ).ReadToEnd();
+            NameValueCollection FormData = HttpUtility.ParseQueryString( Data );
+            string Filename = FormData["filename"];
+
+            CswNbtImportWcf.GenerateSQLReturn Ret = new CswNbtImportWcf.GenerateSQLReturn();
+
+            var SvcDriver = new CswWebSvcDriver<CswNbtImportWcf.GenerateSQLReturn, string>(
+                CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj : Ret,
+                WebSvcMethodPtr : CswNbtWebServiceImport.downloadImportData,
+                ParamObj : Filename
+                );
+
+            SvcDriver.run();
+
+            WebOperationContext.Current.OutgoingResponse.Headers.Set( "Content-Disposition", "attachment; filename=\"" + Filename + "\";" );
+            WebOperationContext.Current.OutgoingResponse.ContentType = "application/vnd.ms-excel";
+            return Ret.stream;
+        }//downloadImportDefinition
+
+
+
         [OperationContract]
         [WebInvoke( Method = "POST", UriTemplate = "uploadImportDefinition?defname={ImportDefName}" )]
         [Description( "Upload Import Data" )]
@@ -122,6 +150,32 @@ namespace NbtWebApp
 
             return ret;
         }
+
+        [OperationContract]
+        [WebInvoke( Method = "POST" )]
+        [Description( "Download Import Definition" )]
+        [FaultContract( typeof( FaultException ) )]
+        public Stream downloadImportDefinition( Stream DataStream )
+        {
+            string Data = new StreamReader( DataStream ).ReadToEnd();
+            NameValueCollection FormData = HttpUtility.ParseQueryString( Data );
+            string ImportDefName = FormData["importdefname"];
+
+            CswNbtImportWcf.GenerateSQLReturn Ret = new CswNbtImportWcf.GenerateSQLReturn();
+
+            var SvcDriver = new CswWebSvcDriver<CswNbtImportWcf.GenerateSQLReturn, string>(
+                CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj : Ret,
+                WebSvcMethodPtr : CswNbtWebServiceImport.downloadImportDefinition,
+                ParamObj : ImportDefName
+                );
+
+            SvcDriver.run();
+
+            WebOperationContext.Current.OutgoingResponse.Headers.Set( "Content-Disposition", "attachment; filename=\"" + ImportDefName + "bindings.xls\";" );
+            WebOperationContext.Current.OutgoingResponse.ContentType = "application/vnd.ms-excel";
+            return Ret.stream;
+        }//downloadImportDefinition
 
         [OperationContract]
         [WebInvoke( Method = "POST", ResponseFormat = WebMessageFormat.Json )]

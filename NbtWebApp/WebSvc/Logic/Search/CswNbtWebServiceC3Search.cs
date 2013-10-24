@@ -982,14 +982,15 @@ namespace ChemSW.Nbt.WebServices
                                     string propAttr = new CswPropIdAttr( Node, NTP ).ToString();
                                     string molData = C3Mapping.C3ProductPropertyValue;
 
-                                    string Href;
-                                    string FormattedMolString;
                                     CswNbtSdBlobData SdBlobData = new CswNbtSdBlobData( _CswNbtResources );
 
                                     MolecularGraph Mol = MoleculeBuilder.CreateMolFromString( molData );
                                     if( false == Mol.ContainsInvalidAtom() )
                                     {
-                                        SdBlobData.saveMol( molData, propAttr, out Href, out FormattedMolString, Node: Node );
+                                        string Href;
+                                        string FormattedMolString;
+                                        string errorMsg;
+                                        SdBlobData.saveMol( molData, propAttr, out Href, out FormattedMolString, out errorMsg, Node: Node );
                                     }
                                     else
                                     {

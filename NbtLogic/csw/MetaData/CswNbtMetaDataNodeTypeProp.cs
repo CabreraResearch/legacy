@@ -20,6 +20,13 @@ namespace ChemSW.Nbt.MetaData
     public class CswNbtMetaDataNodeTypeProp : ICswNbtMetaDataObject, ICswNbtMetaDataProp, IEquatable<CswNbtMetaDataNodeTypeProp>, IComparable
     {
         private CswDateTime _Date;
+        /// <summary>
+        /// For auditing: the date for which the property was initialized
+        /// </summary>
+        public CswDateTime Date
+        {
+            get { return _Date; }
+        }
 
         public static CswEnumNbtNodeTypePropAttributes getCswEnumNbtNodeTypePropAttributesFromString( string AttributeName )
         {
@@ -279,23 +286,9 @@ namespace ChemSW.Nbt.MetaData
                     throw new CswDniException( CswEnumErrorType.Warning, "Property Name must be unique per nodetype", "Attempted to save a propname which is equal to a propname of another property in this nodetype" );
                 }
 
-                //use objectclasspropname if we have it
-                if( this.ObjectClassPropId != Int32.MinValue )
-                {
-                    _NodeTypePropRow["oraviewcolname"] = this.getObjectClassProp().DbViewColumnName;
-                }
-                else
-                {
-                    if( UseNumbering && QuestionNo != Int32.MinValue )
-                    {
-                        _NodeTypePropRow["oraviewcolname"] = CswTools.MakeOracleCompliantIdentifier( FullQuestionNo.Replace( ".", "x" ) );
-                    }
-                    else
-                    {
-                        _NodeTypePropRow["oraviewcolname"] = CswTools.MakeOracleCompliantIdentifier( value );
-                    }
-                }
                 _setAttribute( "propname", value, true );
+
+                resetDbViewColumnName();
 
                 if( _CswNbtMetaDataResources.CswNbtMetaData.OnEditNodeTypePropName != null )
                     _CswNbtMetaDataResources.CswNbtMetaData.OnEditNodeTypePropName( this );
@@ -367,7 +360,26 @@ namespace ChemSW.Nbt.MetaData
             {
                 return CswConvert.ToString( _NodeTypePropRow["oraviewcolname"] );
             }
+        }
 
+        public void resetDbViewColumnName()
+        {
+            //use objectclasspropname if we have it
+            if( this.ObjectClassPropId != Int32.MinValue )
+            {
+                _NodeTypePropRow["oraviewcolname"] = this.getObjectClassProp().DbViewColumnName;
+            }
+            else
+            {
+                if( UseNumbering && QuestionNo != Int32.MinValue )
+                {
+                    _NodeTypePropRow["oraviewcolname"] = CswTools.MakeOracleCompliantIdentifier( FullQuestionNo.Replace( ".", "x" ) );
+                }
+                else
+                {
+                    _NodeTypePropRow["oraviewcolname"] = CswTools.MakeOracleCompliantIdentifier( PropName );
+                }
+            }
         }
 
         /// <summary>
@@ -585,6 +597,7 @@ namespace ChemSW.Nbt.MetaData
                     Ft == CswEnumNbtFieldType.Grid ||
                     Ft == CswEnumNbtFieldType.PropertyReference ||
                     Ft == CswEnumNbtFieldType.Static ||
+                    Ft == CswEnumNbtFieldType.ReportLink ||
                     Ft == CswEnumNbtFieldType.ChildContents )
                 {
                     Ret = false;
@@ -615,8 +628,7 @@ namespace ChemSW.Nbt.MetaData
                     Tab = _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeTab( EditLayout.TabId );
                 }
             }
-            if( LayoutType == CswEnumNbtLayoutType.Preview ||
-                _CswNbtMetaDataResources.CswNbtResources.EditMode == CswEnumNbtNodeEditMode.PrintReport ||
+            if( _CswNbtMetaDataResources.CswNbtResources.EditMode == CswEnumNbtNodeEditMode.PrintReport ||
                 _CswNbtMetaDataResources.CswNbtResources.EditMode == CswEnumNbtNodeEditMode.AuditHistoryInPopup )
             {
                 ret = ret && ( getFieldType().FieldType != CswEnumNbtFieldType.Button );
@@ -1032,7 +1044,7 @@ namespace ChemSW.Nbt.MetaData
             set
             {
                 _DataRow["questionno"] = CswConvert.ToDbVal( value );
-                _DataRow["oraviewcolname"] = CswTools.MakeOracleCompliantIdentifier( FullQuestionNo );
+                resetDbViewColumnName();
             }
         }
 
