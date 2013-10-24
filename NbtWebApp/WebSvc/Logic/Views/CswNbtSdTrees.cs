@@ -291,6 +291,7 @@ namespace ChemSW.Nbt.WebServices
 
             bool ThisNodeLocked = false;
             bool ThisNodeDisabled = false;
+            bool ThisNodeFavorite = false;
             CswNbtMetaDataNodeType ThisNodeType = _CswNbtResources.MetaData.getNodeType( ThisNodeKey.NodeTypeId );
             switch( ThisNodeKey.NodeSpecies )
             {
@@ -301,11 +302,15 @@ namespace ChemSW.Nbt.WebServices
                     ThisObjectClassId = ThisNodeType.ObjectClassId;
                     ThisNodeLocked = Tree.getNodeLockedForCurrentPosition();
                     ThisNodeDisabled = ( false == Tree.getNodeIncludedForCurrentPosition() );
-                    //if( false == string.IsNullOrEmpty( ThisNodeType.IconFileName ) )
-                    //{
-                    //    ThisNodeIcon = CswNbtMetaDataObjectClass.IconPrefix16 + ThisNodeType.IconFileName;
-                    //}
-                    ThisNodeIcon = CswNbtMetaDataObjectClass.IconPrefix16 + Tree.getNodeIconForCurrentPosition();
+                    ThisNodeFavorite = CswNbtNode.isFavorite( _CswNbtResources, ThisNodeKey.NodeId.PrimaryKey, _CswNbtResources.CurrentNbtUser.UserId.PrimaryKey );
+                    if( ThisNodeFavorite )
+                    {
+                        ThisNodeIcon = CswNbtMetaDataObjectClass.IconPrefix16 + "starsolid.png";
+                    }
+                    else
+                    {
+                        ThisNodeIcon = CswNbtMetaDataObjectClass.IconPrefix16 + Tree.getNodeIconForCurrentPosition();
+                    }
                     break;
                 case CswEnumNbtNodeSpecies.Group:
                     Ret.CssClass = "folder";
@@ -358,6 +363,7 @@ namespace ChemSW.Nbt.WebServices
                 Ret.IsDisabled = true;
                 Ret.CssClass = "disabled";
             }
+            Ret.IsFavorite = ThisNodeFavorite;
 
             if( null != Parent && false == string.IsNullOrEmpty( Parent.Path ) )
             {
