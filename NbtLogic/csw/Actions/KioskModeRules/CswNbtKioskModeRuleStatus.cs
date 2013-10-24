@@ -156,7 +156,7 @@ namespace ChemSW.Nbt.Actions.KioskMode
             CswNbtSearch search = new CswNbtSearch( _CswNbtResources )
             {
                 SearchTerm = OpData.Field2.Value,
-                SearchType = CswEnumSqlLikeMode.Equals
+                SearchType = CswEnumSqlLikeMode.Exact
             };
             ICswNbtTree tree = search.Results();
 

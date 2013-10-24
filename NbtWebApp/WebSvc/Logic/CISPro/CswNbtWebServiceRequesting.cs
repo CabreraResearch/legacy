@@ -115,9 +115,10 @@ namespace ChemSW.Nbt.WebServices
                 CswNbtObjClassRequest Favorite = NbtResources.Nodes[Request.RequestId];
                 if( null != Favorite )
                 {
-                    Favorite.IsTemp = false;
+                    //Favorite.IsTemp = false;
                     Favorite.postChanges( ForceUpdate: false );
                     Succeeded = true;
+                    Favorite.PromoteTempToReal();
                 }
             }
             else

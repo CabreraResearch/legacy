@@ -38,14 +38,6 @@ namespace ChemSW.Nbt
             _CswNbtResources = CswNbtResources;
         }
 
-        //bz # 5878
-        //private bool _ManageTransaction = false;
-        //public bool ManageTransaction
-        //{
-        //    set { _ManageTransaction = value; }
-        //    get { return ( _ManageTransaction ); }
-        //}
-
         public void makeNewNodeEntry( CswNbtNode Node, bool PostToDatabase )
         {
             DataTable NewNodeTable = CswTableUpdateNodes.getEmptyTable();
@@ -74,11 +66,13 @@ namespace ChemSW.Nbt
             Node.NodeId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( NewNodeTable.Rows[0]["nodeid"] ) );
 
             if( PostToDatabase )
-                CswTableUpdateNodes.update( NewNodeTable );
-        }
+            {
+                CswTableUpdateNodes.update( NewNodeTable, ( false == Node.IsTemp ) );
+            }
+        } // makeNewNodeEntry()
 
 
-        public void write( CswNbtNode Node, bool ForceSave, bool IsCopy )
+        public void write( CswNbtNode Node, bool ForceSave, bool IsCopy, bool AllowAuditing )
         {
             // save nodename and pendingupdate
             if( Node.NodeId.TableName != "nodes" )
@@ -100,7 +94,7 @@ namespace ChemSW.Nbt
             NodesTable.Rows[0]["iconfilename"] = Node.IconFileNameOverride;
             NodesTable.Rows[0]["searchable"] = CswConvert.ToDbVal( Node.Searchable );
 
-            CswTableUpdateNodes.update( NodesTable );
+            CswTableUpdateNodes.update( NodesTable, AllowAuditing );
 
         }//write()
 
@@ -174,6 +168,16 @@ namespace ChemSW.Nbt
             }// catch
 
         }//delete()
+
+        public void AuditInsert( CswNbtNode Node )
+        {
+            // nodes
+            DataTable NodesTable = CswTableUpdateNodes.getTable( "nodeid", Node.NodeId.PrimaryKey );
+            if( NodesTable.Rows.Count > 0 )
+            {
+                _CswNbtResources.AuditRecorder.addInsertRow( NodesTable.Rows[0] );
+            }
+        }
 
     }//CswNbtNodeWriterNative
 

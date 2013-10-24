@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Data;
 using ChemSW.Core;
 using ChemSW.DB;
+using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt
 {
@@ -11,27 +12,15 @@ namespace ChemSW.Nbt
     {
         private CswNbtResources _CswNbtResources = null;
         private CswTableUpdate _PropsUpdate = null;
+        private CswNbtNode _Node;
         public string _DebugId;
 
-        public CswNbtNodePropCollDataNative( CswNbtResources CswNbtResources )
+        public CswNbtNodePropCollDataNative( CswNbtResources CswNbtResources, CswNbtNode Node )
         {
             _CswNbtResources = CswNbtResources;
+            _Node = Node;
             _DebugId = DateTime.Now.ToString();
         }//ctor
-
-        private CswPrimaryKey _NodeKey = null;
-        public CswPrimaryKey NodePk
-        {
-            set { _NodeKey = value; }
-            get { return ( _NodeKey ); }
-        }//NodeKey
-
-        private Int32 _NodeTypeId = Int32.MinValue;
-        public Int32 NodeTypeId
-        {
-            set { _NodeTypeId = value; }
-            get { return ( _NodeTypeId ); }
-        }
 
         private CswDateTime _Date = null;
         public CswDateTime Date
@@ -48,7 +37,7 @@ namespace ChemSW.Nbt
                 if( null == _PropsTable )
                 {
                     _PropsUpdate = _CswNbtResources.makeCswTableUpdate( "Props_update", "jct_nodes_props" );
-                    if( _NodeKey == null )
+                    if( _Node.NodeId == null )
                     {
                         _PropsTable = _PropsUpdate.getEmptyTable();
                     }
@@ -56,7 +45,7 @@ namespace ChemSW.Nbt
                     {
                         if( false == CswTools.IsDate( Date ) )
                         {
-                            _PropsTable = _PropsUpdate.getTable( "nodeid", _NodeKey.PrimaryKey );
+                            _PropsTable = _PropsUpdate.getTable( "nodeid", _Node.NodeId.PrimaryKey );
                         }
                         else
                         {
@@ -67,7 +56,7 @@ namespace ChemSW.Nbt
                             string Sql = @"select a.*, '' as auditchanged
                                              from jct_nodes_props_audit a
                                             where a.auditeventtype <> 'PhysicalDelete'
-                                              and a.nodeid = " + _NodeKey.PrimaryKey + @"
+                                              and a.nodeid = " + _Node.NodeId.PrimaryKey + @"
                                               and a.jctnodespropsauditid = (select max(jctnodespropsauditid)
                                                                               from jct_nodes_props_audit a2
                                                                              where a2.recordcreated <= " + _CswNbtResources.getDbNativeDate( Date.ToDateTime().AddSeconds( 1 ) ) + @"
@@ -83,13 +72,11 @@ namespace ChemSW.Nbt
                                 }
                             }
                         }
-                    } // if-else( _NodeKey == null )
+                    } // if-else( _Node.NodeId == null )
                 } // if( null == _PropsTable )
                 return ( _PropsTable );
             } // get
         }//PropsTable
-
-
 
         public bool IsTableEmpty
         {
@@ -97,24 +84,17 @@ namespace ChemSW.Nbt
             {
                 return ( null == _PropsTable );
             }
-
         }
 
         public void refreshTable()
         {
-            //CswTableCaddy RefillPropsCaddy = _CswNbtResources.makeCswTableCaddy( "jct_nodes_props" );
-            //RefillPropsCaddy.FilterColumn = "jctnodepropid";
-            //DataTable PropsRefillTable = RefillPropsCaddy[ CswPrimaryKey.PrimaryKey ].Table;
             _PropsTable = null;
         }//refreshTable() 
 
-
-
-        public void update()
+        public void update( bool AllowAuditing = true )
         {
-            _PropsUpdate.update( _PropsTable );
+            _PropsUpdate.update( _PropsTable, ( AllowAuditing && false == _Node.IsTemp ) );
         }
-
 
     }//CswNbtNodePropCollDataNative
 
