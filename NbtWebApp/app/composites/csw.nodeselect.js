@@ -59,6 +59,7 @@
 
             // Case 30408
             cswPrivate.showRemoveIcon = cswPrivate.showRemoveIcon || false;
+            cswPrivate.wasNodeLinkModified = false; // Used to validate when there is no nodeselect only search button
 
             cswPublic = cswParent.div({ cssclass: 'cswInline' });
             cswPrivate.table = cswPublic.table();
@@ -88,7 +89,8 @@
             cswPrivate.addCellCol = cswPrivate.cellCol + 5;
             cswPrivate.tipCellCol = cswPrivate.cellCol + 6;
             cswPrivate.previewCellCol = cswPrivate.cellCol + 7;
-            
+            cswPrivate.validateCellCol = cswPrivate.cellCol + 8;
+
         }());
 
         //#endregion _preCtor
@@ -198,6 +200,8 @@
                 cswPrivate.nodeLinkText = cswPrivate.nodeLinkCell.nodeLink({
                     text: link
                 });
+
+                cswPrivate.wasNodeLinkModified = true;
             }
         };
 
@@ -285,95 +289,135 @@
         };
 
         cswPrivate.makeSearch = function () {
-                // Find value by using search in a dialog
+            // Find value by using search in a dialog
+            cswPrivate.validateCell = cswPrivate.table.cell(1, cswPrivate.validateCellCol).empty();
+            cswPrivate.nameSpan = cswPrivate.table.cell(1, cswPrivate.searchCellCol).nodeLink({
+                text: Csw.string(cswPrivate.selectedNodeLink) + '&nbsp;'
+            });
 
-                cswPrivate.nameSpan = cswPrivate.table.cell(1, cswPrivate.searchCellCol).nodeLink({
-                    text: Csw.string(cswPrivate.selectedNodeLink) + '&nbsp;'
-                });
+            if (cswPrivate.isRequired) {
+                var returnObj = Csw.validator(
+                    cswPrivate.validateCell.div(),
+                    cswPrivate.nameSpan,
+                    {
+                        cssOptions: { 'visibility': 'hidden', 'width': '20px' },
+                        wasModified: cswPrivate.wasModified,
+                        onValidation: null,
+                        className: 'validateNodeLink',
+                        isExtJsControl: false
+                    }
+                );
+                cswPrivate.checkBox = returnObj.input;
 
-                cswPrivate.hiddenValue = cswPrivate.table.cell(1, cswPrivate.searchCellCol).input({
-                    name: 'hiddenvalue',
-                    type: Csw.enums.inputTypes.hidden,
-                    value: cswPrivate.selectedNodeId
-                });
-                
+                // Validate
+                if (Csw.isNullOrEmpty(cswPrivate.nameSpan.text())) {
+                    cswPrivate.checkBox.val(false);
+                } else {
+                    cswPrivate.checkBox.val(true);
+                }
+                if (cswPrivate.wasNodeLinkModified) {
+                    cswPrivate.checkBox.$.valid();
+                }
+            }
 
-                    cswPrivate.toggleButton = cswPrivate.table.cell(1, cswPrivate.editCellCol).buttonExt({
-                        icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.pencil),
-                        size: 'small',
-                        enabledText: 'Edit',
-                        onClick: function () {
-                            cswPrivate.toggleOptions(true);
+            cswPrivate.hiddenValue = cswPrivate.table.cell(1, cswPrivate.searchCellCol).input({
+                name: 'hiddenvalue',
+                type: Csw.enums.inputTypes.hidden,
+                value: cswPrivate.selectedNodeId
+            });
+
+
+            cswPrivate.toggleButton = cswPrivate.table.cell(1, cswPrivate.editCellCol).buttonExt({
+                icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.pencil),
+                size: 'small',
+                enabledText: 'Edit',
+                onClick: function () {
+                    cswPrivate.toggleOptions(true);
+                }
+            });
+
+            cswPrivate.searchButton = cswPrivate.table.cell(1, cswPrivate.searchButtonCellCol).buttonExt({
+                icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.magglass),
+                size: 'small',
+                enabledText: "Search",
+                tooltip: { title: "Search " + cswPrivate.name, },
+                onClick: function () {
+                    $.CswDialog('SearchDialog', {
+                        propname: cswPrivate.name,
+                        nodetypeid: cswPrivate.nodeTypeId,
+                        objectclassid: cswPrivate.objectClassId,
+                        onSelectNode: function (nodeObj) {
+                            cswPrivate.nameSpan.empty();
+                            cswPrivate.nameSpan.nodeLink({
+                                text: nodeObj.nodelink + '&nbsp;'
+                            });
+                            
+                            cswPrivate.wasNodeLinkModified = true;
+
+                            // We use the remove icon during C3 imports - Case 30408
+                            if (cswPrivate.showRemoveIcon) {
+                                cswPrivate.removeIcon = cswPrivate.table.cell(1, cswPrivate.removeSelCellCol).icon({
+                                    hovertext: 'Remove selected',
+                                    isButton: true,
+                                    iconType: Csw.enums.iconType.x,
+                                    onClick: function () {
+                                        cswPrivate.nameSpan.empty();
+                                        cswPrivate.hiddenValue.val("");
+                                        cswPrivate.selectedNodeId = "";
+                                        cswPrivate.selectedNodeLink = "";
+                                        cswPrivate.removeIcon.hide();
+                                        Csw.tryExec(cswPrivate.onRemoveSelectedNode);
+                                    }
+                                });
+                            }
+
+                            // Validation
+                            if (cswPrivate.isRequired) {
+                                if (Csw.isNullOrEmpty(cswPrivate.nameSpan.text())) {
+                                    cswPrivate.checkBox.val(false);
+                                } else {
+                                    cswPrivate.checkBox.val(true);
+                                }
+                                if (cswPrivate.wasNodeLinkModified) {
+                                    cswPrivate.checkBox.$.valid();
+                                }
+                            }
+
+                            cswPrivate.hiddenValue.val(nodeObj.nodeid);
+                            cswPrivate.selectedNodeId = nodeObj.nodeid;
+                            cswPrivate.selectedNodeLink = nodeObj.nodelink;
+                            Csw.tryExec(cswPrivate.onSelectNode, nodeObj);
+                        },
+                        onClose: function () {
+                            cswPrivate.searchButton.enable();
                         }
                     });
-                
-                    cswPrivate.searchButton = cswPrivate.table.cell(1, cswPrivate.searchButtonCellCol).buttonExt({
-                    icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.magglass),
-                    size: 'small',
-                    enabledText: "Search",
-                    tooltip: { title: "Search " + cswPrivate.name, },
-                    onClick: function () {
-                        $.CswDialog('SearchDialog', {
-                            propname: cswPrivate.name,
-                            nodetypeid: cswPrivate.nodeTypeId,
-                            objectclassid: cswPrivate.objectClassId,
-                            onSelectNode: function (nodeObj) {
-                                cswPrivate.nameSpan.empty();
-                                cswPrivate.nameSpan.nodeLink({
-                                    text: nodeObj.nodelink + '&nbsp;'
-                                });
+                }
+            });
 
-                                // We use the remove icon during C3 imports - Case 30408
-                                if (cswPrivate.showRemoveIcon) {
-                                    cswPrivate.removeIcon = cswPrivate.table.cell(1, cswPrivate.removeSelCellCol).icon({
-                                        hovertext: 'Remove selected',
-                                        isButton: true,
-                                        iconType: Csw.enums.iconType.x,
-                                        onClick: function() {
-                                            cswPrivate.nameSpan.empty();
-                                            cswPrivate.hiddenValue.val("");
-                                            cswPrivate.selectedNodeId = "";
-                                            cswPrivate.selectedNodeLink = "";
-                                            cswPrivate.removeIcon.hide();
-                                            Csw.tryExec(cswPrivate.onRemoveSelectedNode);
-                                        }
-                                    });
-                                }
 
-                                cswPrivate.hiddenValue.val(nodeObj.nodeid);
-                                cswPrivate.selectedNodeId = nodeObj.nodeid;
-                                cswPrivate.selectedNodeLink = nodeObj.nodelink;
-                                Csw.tryExec(cswPrivate.onSelectNode, nodeObj);
-                            },
-                            onClose: function () {
-                                    cswPrivate.searchButton.enable();
-                            }
-                        });
-                    }
-                });
-
-                cswPrivate.toggleOptions(cswPrivate.showSelectOnLoad);
+            cswPrivate.toggleOptions(cswPrivate.showSelectOnLoad);
         };
 
         cswPrivate.toggleOptions = function (on) {
             if (Csw.bool(on)) {
-                    if (cswPrivate.useSearch) {
-                        cswPrivate.searchButton.show();
-                    } else {
-                        cswPrivate.select.show();
-                        cswPrivate.nodeLinkCell.hide();
-                    }
+                if (cswPrivate.useSearch) {
+                    cswPrivate.searchButton.show();
+                } else {
+                    cswPrivate.select.show();
+                    cswPrivate.nodeLinkCell.hide();
+                }
                 if (cswPrivate.addImage) {
                     cswPrivate.addImage.show();
                 }
                 cswPrivate.toggleButton.hide();
+            } else {
+                if (cswPrivate.useSearch) {
+                    cswPrivate.searchButton.hide();
                 } else {
-                    if (cswPrivate.useSearch) {
-                        cswPrivate.searchButton.hide();
-                    } else {
-                        cswPrivate.select.hide();
-                        cswPrivate.nodeLinkCell.show();
-                    }
+                    cswPrivate.select.hide();
+                    cswPrivate.nodeLinkCell.show();
+                }
                 if (cswPrivate.addImage) {
                     cswPrivate.addImage.hide();
                 }
@@ -392,6 +436,7 @@
                 cswPrivate.nameSpan.nodeLink({
                     text: nodelink
                 });
+                cswPrivate.wasNodeLinkModified = true;
             }
             if (cswPrivate.hiddenValue) {
                 cswPrivate.hiddenValue.val(nodeid);
@@ -401,6 +446,18 @@
                     nodelink: nodelink
                 });
             }
+            
+            if (cswPrivate.isRequired) {
+                if (Csw.isNullOrEmpty(cswPrivate.nameSpan.text())) {
+                    cswPrivate.checkBox.val(false);
+                } else {
+                    cswPrivate.checkBox.val(true);
+                }
+                if (cswPrivate.wasNodeLinkModified) {
+                    cswPrivate.checkBox.$.valid();
+                }
+            }
+
             if (cswPrivate.select) {
                 Csw.ajaxWcf.post({
                     urlMethod: cswPrivate.nodesUrlMethod,
