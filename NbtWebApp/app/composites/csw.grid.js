@@ -137,7 +137,7 @@
                 var canview = Csw.bool(cswPrivate.showView) && Csw.bool(tblObj.cellData.canview, true);
                 var candelete = Csw.bool(cswPrivate.showDelete) && Csw.bool(tblObj.cellData.candelete, true);
                 var islocked = Csw.bool(cswPrivate.showLock) && Csw.bool(tblObj.cellData.islocked, false);
-                var hasfavorite = Csw.bool(cswPrivate.showFavorite);
+                var canfavorite = Csw.bool(cswPrivate.showFavorite);
 
                 if (canpreview) {
                     cswPrivate.makeActionButton(previewCell, 'Preview', Csw.enums.iconType.magglass, cswPrivate.onPreview, tblObj);
@@ -151,35 +151,15 @@
                 } else if (canview) {
                     cswPrivate.makeActionButton(editCell, 'View', Csw.enums.iconType.pencil, cswPrivate.onEdit, tblObj);
                 }
-
                 if (candelete) {
                     cswPrivate.makeActionButton(delCel, 'Delete', Csw.enums.iconType.trash, cswPrivate.onDelete, tblObj);
-                }
-
-                var onFavorite = function() {
-                    Csw.ajaxWcf.post({
-                        urlMethod: 'Nodes/toggleFavorite',
-                        data: tblObj.cellData.nodeid,
-                        success: function (response) {
-                            if (response.isFavorite) {
-                                isNotFavIcon.hide();
-                                isFavIcon.show();
-                            } else {
-                                isFavIcon.hide();
-                                isNotFavIcon.show();
-                            }
-                        }
+                }             
+                if (canfavorite) {
+                    favCell.favoriteButton({
+                        name: cswPrivate.name + '_favBtn',
+                        nodeid: tblObj.cellData.nodeid,
+                        isFavorite: tblObj.cellData.isfavorite,
                     });
-                };
-                
-                if (hasfavorite) {
-                    var isFavIcon = cswPrivate.makeActionButton(favCell, 'Remove from Favorites', Csw.enums.iconType.starsolid, onFavorite, tblObj);
-                    var isNotFavIcon = cswPrivate.makeActionButton(favCell, 'Add to Favorites', Csw.enums.iconType.star, onFavorite, tblObj);
-                    if (Csw.bool(tblObj.cellData.isfavorite, false)) {
-                        isNotFavIcon.hide();
-                    } else {
-                        isFavIcon.hide();
-                    }
                 }
             } // if (Csw.isElementInDom(tblObj.cellId)) {
         }; // makeActionCell()

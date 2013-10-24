@@ -879,46 +879,12 @@
                             cswPrivate.getTabs();
                         }
                     };
-                    
-                    cswPrivate.tabState.addFavoriteIcon = formTable.cell(1, 2).icon({
-                        name: cswPrivate.name + 'addFavoriteBtn',
-                        iconType: Csw.enums.iconType.star,
-                        hovertext: 'Add To Favorites',
-                        size: 16,
-                        isButton: true,
-                        onClick: function () {
-                            Csw.ajaxWcf.post({
-                                urlMethod: 'Nodes/toggleFavorite',
-                                data: cswPrivate.tabState.nodeid,
-                                success: function(response) {
-                                    cswPrivate.tabState.addFavoriteIcon.hide();
-                                    cswPrivate.tabState.removeFavoriteIcon.show();
-                                }
-                            });
-                        }
+
+                    formTable.cell(1, 2).favoriteButton({
+                        name: cswPrivate.name + '_favBtn',
+                        nodeid: cswPrivate.tabState.nodeid,
+                        isFavorite: cswPrivate.tabState.isFavorite,
                     });
-                    cswPrivate.tabState.removeFavoriteIcon = formTable.cell(1, 2).icon({
-                        name: cswPrivate.name + 'removeFavoriteBtn',
-                        iconType: Csw.enums.iconType.starsolid,
-                        hovertext: 'Remove from Favorites',
-                        size: 16,
-                        isButton: true,
-                        onClick: function () {
-                            Csw.ajaxWcf.post({
-                                urlMethod: 'Nodes/toggleFavorite',
-                                data: cswPrivate.tabState.nodeid,
-                                success: function (response) {
-                                    cswPrivate.tabState.removeFavoriteIcon.hide();
-                                    cswPrivate.tabState.addFavoriteIcon.show();
-                                }
-                            });
-                        }
-                    });
-                    if (cswPrivate.tabState.isFavorite) {
-                        cswPrivate.tabState.addFavoriteIcon.hide();
-                    } else {
-                        cswPrivate.tabState.removeFavoriteIcon.hide();
-                    }
 
                     /* Show the 'fake' config button to open the dialog */
                     cswPrivate.tabState.configIcn = formTable.cell(1, 3).icon({
