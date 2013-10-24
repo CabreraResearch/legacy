@@ -197,6 +197,11 @@ namespace ChemSW.Nbt
 
         private string _makeNodeSql()
         {
+            string CurrentUserIdClause = string.Empty;
+            if( null != _CswNbtResources.CurrentNbtUser && null != _CswNbtResources.CurrentNbtUser.UserId )
+            {
+                CurrentUserIdClause = " and f.userid = " + _CswNbtResources.CurrentNbtUser.UserId.PrimaryKey;
+            }
             IEnumerable<string> SafeLikeClauses = _makeSafeLikeClauses();
             string Query = string.Empty;
             if( SafeLikeClauses.Any() )
@@ -278,10 +283,12 @@ namespace ChemSW.Nbt
                                                    propval.field1_fk,
                                                    propval.field1_numeric,
                                                    propval.hidden,
-                                                   i.permissiongroupid
+                                                   i.permissiongroupid,
+                                                   f.userid
                                               from nodes n
                                               join nodetypes t on (n.nodetypeid = t.nodetypeid)
                                               join object_class o on (t.objectclassid = o.objectclassid)
+                                              left outer join favorites f on n.nodeid = f.itemid " + CurrentUserIdClause + @"
                                               left outer join permgrp i on (n.nodeid = i.nodeid)
                                               left outer join props on (props.nodetypeid = t.nodetypeid)
                                               left outer join jct_nodes_props propvaljoin on (props.nodetypepropid = propvaljoin.nodetypepropid and propvaljoin.nodeid = n.nodeid)
@@ -333,7 +340,7 @@ namespace ChemSW.Nbt
                                                              from ( select nodeid, rownum as rnum
                                                                       from (select distinct nodeid from srch))
                                                             where rnum <= " + _CswNbtResources.TreeViewResultLimit + @")
-                                    order by lower(srch.nodename), srch.nodeid, lower(srch.propname), srch.display_row ";
+                                    order by srch.userid, lower(srch.nodename), srch.nodeid, lower(srch.propname), srch.display_row ";
 
             }
             return Query;

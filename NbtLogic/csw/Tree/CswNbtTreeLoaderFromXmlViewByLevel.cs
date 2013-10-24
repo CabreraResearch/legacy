@@ -263,6 +263,11 @@ namespace ChemSW.Nbt
 
         private string _makeNodeSql( CswNbtViewRelationship Relationship, IEnumerable<CswPrimaryKey> ParentNodeIds = null )
         {
+            string CurrentUserIdClause = string.Empty;
+            if( null != _CswNbtResources.CurrentNbtUser && null != _CswNbtResources.CurrentNbtUser.UserId )
+            {
+                CurrentUserIdClause = " and f.userid = " + _CswNbtResources.CurrentNbtUser.UserId.PrimaryKey;
+            }
             CswCommaDelimitedString With = new CswCommaDelimitedString();
             string Select = @"select n.nodeid,
                                      n.nodename, 
@@ -272,8 +277,10 @@ namespace ChemSW.Nbt
                                      t.nametemplate,
                                      t.nodetypeid,
                                      o.objectclass,
-                                     o.objectclassid ";
+                                     o.objectclassid,
+                                     f.userid";
             string From = @"from nodes n
+                            left join favorites f on n.nodeid = f.itemid " + CurrentUserIdClause + @"
                             join nodetypes t on (n.nodetypeid = t.nodetypeid)
                             join object_class o on (t.objectclassid = o.objectclassid) ";
             string Where = " where n.istemp= '0' ";
@@ -360,7 +367,7 @@ namespace ChemSW.Nbt
             } // if( Relationship.PropId != Int32.MinValue )
 
             CswCommaDelimitedString OrderByProps = new CswCommaDelimitedString();
-
+            OrderByProps.Add( "f.userid" );
             // Grouping
             if( Relationship.GroupByPropId != Int32.MinValue )
             {
