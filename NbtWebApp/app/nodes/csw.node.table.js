@@ -26,7 +26,7 @@
                 importMenuItems: [],
                 importButtons: {}
             },
-            searchType: null, //c3 addition
+            searchTarget: null, //c3 addition
 
             compactResults: false,
             extraAction: null,
@@ -279,7 +279,7 @@
                             icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.pencil),
                             onClick: function () {
                                 //If C3 search {} else if Universal search {}
-                                if (cswPrivate.searchType === "chemcatcentral") {
+                                if (cswPrivate.searchTarget === "chemcatcentral") {
                                     $.CswDialog('C3DetailsDialog', {
                                         nodeObj: nodeObj,
                                         onEditNode: cswPrivate.onEditNode
@@ -588,7 +588,7 @@
             cswParent.empty();
             cswPrivate.results = Csw.number(cswPrivate.tabledata.results, -1);
             cswPrivate.pagenodelimit = Csw.number(cswPrivate.tabledata.pagesize, 20);
-            cswPrivate.searchType = cswPrivate.tabledata.searchtype; //c3 addition
+            cswPrivate.searchTarget = cswPrivate.tabledata.searchtarget; //c3 addition
 
             // multi-nodetype
             cswPrivate.singleColumn = false;
