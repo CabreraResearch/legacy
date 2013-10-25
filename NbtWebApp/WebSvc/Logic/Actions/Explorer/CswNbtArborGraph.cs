@@ -39,4 +39,6 @@ namespace NbtWebApp.Actions.Explorer
         [DataMember]
         public Collection<CswNbtArborEdge> Edges = new Collection<CswNbtArborEdge>();
     }
+
+
 }

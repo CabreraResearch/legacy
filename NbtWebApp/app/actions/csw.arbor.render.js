@@ -77,6 +77,9 @@
                     ctx.fillStyle = 'blue';
                     ctx.textAlign = 'center';
                     ctx.fillText(node.data.Label, Math.round(pt.x), Math.round(pt.y) + textDist);
+                    if (node.data.Type === 'Instance') {
+                        textUnderline(ctx, node.data.Label, Math.round(pt.x), Math.round(pt.y) + textDist, 'blue', "10px", 'center');
+                    }
 
                 });
             },
@@ -93,22 +96,13 @@
 
                         if (dragged && dragged.node !== null) {
                             selected = dragged.node.data.NodeId;
-                            //dists = computeDists(graph, dragged.node.data.NodeId);
-                            //Csw.each(nodes, function (node) {
-                            //    if (dists[node.Data.NodeId] > 2) {
-                            //        particleSystem.pruneNode(dragged.node);
-                            //    } else {
-                            //        particleSystem.addNode(node.NodeId, node.Data);
-                            //        Csw.each(edges, function(edge) {
-                            //            if (edge.OwnerNodeId === node.NodeId && dists[edge.TargetNodeId] <= 2) {
-                            //                particleSystem.addEdge(edge.OwnerNodeId, edge.TargetNodeId, edge.Data);
-                            //            }
-                            //            if (edge.TargetNodeId === node.NodeId && dists[edge.OwnerNodeId] <= 2) {
-                            //                particleSystem.addEdge(edge.TargetNodeId, edge.OwnerNodeId, edge.Data);
-                            //            }
-                            //        });
-                            //    }
-                            //});
+                            
+                            //TODO: fire on double click?
+                            if (dragged.node.data.Type === 'Instance') {
+                                //TODO: update properties panel
+                            } else {
+                                //TODO: open dialog and fetch list of Nodes relating to starting node
+                            }
 
                             dragged.node.fixed = true;
                         }
@@ -147,5 +141,40 @@
         return that;
 
     });
+
+    //Canvas doesn't support text-decorations (line underline)
+    //courtesy of http://scriptstock.wordpress.com/2012/06/12/html5-canvas-text-underline-workaround/
+    var textUnderline = function(context, text, x, y, color, textSize, align) {
+
+        var textWidth = context.measureText(text).width;
+        var startX;
+        var startY = y + (parseInt(textSize) / 15);
+        var endX;
+        var endY = startY;
+
+        var underlineHeight = parseInt(textSize) / 15;
+
+        if (underlineHeight < 1) {
+            underlineHeight = 1;
+        }
+
+        context.beginPath();
+        if (align == "center") {
+            startX = x - (textWidth / 2);
+            endX = x + (textWidth / 2);
+        } else if (align == "right") {
+            startX = x - textWidth;
+            endX = x;
+        } else {
+            startX = x;
+            endX = x + textWidth;
+        }
+
+        context.strokeStyle = color;
+        context.lineWidth = underlineHeight;
+        context.moveTo(startX, startY);
+        context.lineTo(endX, endY);
+        context.stroke();
+    };
 
 }());

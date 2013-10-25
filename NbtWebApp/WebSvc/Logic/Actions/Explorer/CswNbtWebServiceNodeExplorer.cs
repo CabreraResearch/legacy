@@ -26,7 +26,7 @@ namespace NbtWebApp.Actions.Explorer
 
             StartingNode = NbtResources.Nodes[NodeId];
             //Add the initial node to the graph
-            _addToGraph( Return, StartingNode.NodeName, string.Empty, NodeId.ToString(), StartingNode.IconFileName, 0, "100" );
+            _addToGraph( Return, StartingNode.NodeName, string.Empty, NodeId.ToString(), StartingNode.IconFileName, 0, "Instance" );
 
             CswNbtMetaDataNodeType StartingNodeType = StartingNode.getNodeType();
             foreach( CswNbtMetaDataNodeTypeProp RelNTP in StartingNodeType.getNodeTypeProps( CswEnumNbtFieldType.Relationship ) ) //TODO: Locations are just like relationships, we should be able to handle them
@@ -35,7 +35,7 @@ namespace NbtWebApp.Actions.Explorer
                 string Icon = _getIconFromRelationshipProp( NbtResources, RelNTP );
                 if( CswTools.IsPrimaryKey( RelProp.RelatedNodeId ) )
                 {
-                    _addToGraph( Return, RelProp.PropName + ": " + RelProp.CachedNodeName, NodeId.ToString(), RelProp.RelatedNodeId.ToString(), Icon, 1 );
+                    _addToGraph( Return, RelProp.PropName + ": " + RelProp.CachedNodeName, NodeId.ToString(), RelProp.RelatedNodeId.ToString(), Icon, 1, "Instance" );
 
                     //TODO: show NTs related to props on the starting node?
                 }
@@ -71,7 +71,7 @@ namespace NbtWebApp.Actions.Explorer
                 int RelatingNodeTypeId = CswConvert.ToInt32( Row["id"] );
                 string IconFileName = CswConvert.ToString( Row["iconfilename"] );
                 string DisplayName = CswConvert.ToString( Row["display"] ) + "s"; ;
-                _addToGraph( Return, DisplayName, NodeId.ToString(), "NT_" + RelatingNodeTypeId, IconFileName, 1 );
+                _addToGraph( Return, DisplayName, NodeId.ToString(), "NT_" + RelatingNodeTypeId, IconFileName, 1, "Category" );
 
                 _recurseForRelatedNTs( NbtResources, Return, RelatingNodeTypeId, 2 );
             }
@@ -93,7 +93,7 @@ namespace NbtWebApp.Actions.Explorer
 
                     if( RelatingNodeTypeToNodeTypeId != StartingNode.NodeTypeId )
                     {
-                        _addToGraph( Return, DisplayName, "NT_" + NodeTypeId, "NT_" + RelatingNodeTypeToNodeTypeId, IconFileName, level );
+                        _addToGraph( Return, DisplayName, "NT_" + NodeTypeId, "NT_" + RelatingNodeTypeToNodeTypeId, IconFileName, level, "Category" );
                     }
 
                     if( level + 1 <= MAX_DEPTH )
@@ -113,7 +113,7 @@ namespace NbtWebApp.Actions.Explorer
 
                     if( RelatingObjClassToNodeTypeId != StartingNode.getObjectClassId() )
                     {
-                        _addToGraph( Return, DisplayName, "NT_" + NodeTypeId, "OC_" + RelatingObjClassToNodeTypeId, IconFileName, level );
+                        _addToGraph( Return, DisplayName, "NT_" + NodeTypeId, "OC_" + RelatingObjClassToNodeTypeId, IconFileName, level, "Category" );
                     }
 
                     //TODO: find OCs that relate to the current OC. After depth 3, most MetaData objects are related on the obj class level
@@ -124,17 +124,18 @@ namespace NbtWebApp.Actions.Explorer
         /// <summary>
         /// Helper method for adding data to the return object
         /// </summary>
-        private static void _addToGraph( CswNbtExplorerReturn Return, string Label, string OwnerId, string TargetId, string Icon, int level, string size = "100" )
+        private static void _addToGraph( CswNbtExplorerReturn Return, string Label, string OwnerId, string TargetId, string Icon, int level, string Type )
         {
             Return.Data.Nodes.Add( new CswNbtArborNode()
                 {
                     NodeIdStr = TargetId,
                     Data = new CswNbtArborNode.CswNbtArborNodeData()
                         {
-                            Icon = "Images/newicons/" + size + "/" + Icon,
+                            Icon = "Images/newicons/100/" + Icon,
                             Label = Label,
                             NodeId = TargetId,
-                            Level = level
+                            Level = level,
+                            Type = Type
                         }
                 } );
 
@@ -151,7 +152,7 @@ namespace NbtWebApp.Actions.Explorer
                     } );
             }
         }
-        
+
         /// <summary>
         /// Generates SQL to get all NTs that have a relationship prop that relates to this node
         /// </summary>
@@ -181,7 +182,7 @@ namespace NbtWebApp.Actions.Explorer
                             join field_types ft on ft.fieldtypeid = ntp.fieldtypeid
                      where ntp.fkvalue = oc.objectclassid and ntp.fktype = 'ObjectClassId' and ft.fieldtype = 'Relationship'";
         }
-        
+
 
     }
 }

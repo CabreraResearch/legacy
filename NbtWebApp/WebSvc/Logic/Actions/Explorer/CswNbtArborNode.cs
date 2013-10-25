@@ -41,6 +41,9 @@ namespace NbtWebApp.Actions.Explorer
 
             [DataMember]
             public int Level { get; set; }
+
+            [DataMember]
+            public string Type { get; set; }
         }
     }
 }
