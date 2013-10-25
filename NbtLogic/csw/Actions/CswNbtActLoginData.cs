@@ -122,9 +122,8 @@ namespace ChemSW.Nbt.Actions
 
         public void postLoginData( LoginData.Login LoginRecord )
         {
-            if( ( null == LoginRecord.AuthenticationRequest.Parameters ||
+            if( null == LoginRecord.AuthenticationRequest.Parameters ||
                 LoginRecord.AuthenticationRequest.Parameters.IsIncludedInLoginData )
-                && ( false == LoginRecord.Username.Contains( "printer" ) && LoginRecord.Username != "lpc" ) )
             {
                 CswTableUpdate LoginData = _CswNbtResources.makeCswTableUpdate( "Login Data Insert", "login_data" );
                 DataTable LoginDataTable = LoginData.getTable();
