@@ -164,7 +164,7 @@ namespace ChemSW.Nbt.Sched
                                           + "'" + CswConvert.ToString( DefRow[CswNbtImportTables.ImportDef.sheetname] ) + "', "
                                           + "0, "
                                           + "'' from " + DataSource + " where deleted = '0';";
-                CurrentDefRowSql = CurrentDefRowSql + " commit;";
+                CurrentDefRowSql = CurrentDefRowSql + "\ncommit;";
 
                 if( FirstRow )
                 {
