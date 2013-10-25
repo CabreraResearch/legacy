@@ -319,7 +319,7 @@ namespace ChemSW.Nbt.WebServices
                         thisNode.NodeName = Tree.getNodeNameForCurrentPosition();
                         thisNode.Locked = Tree.getNodeLockedForCurrentPosition();
                         thisNode.Disabled = ( false == Tree.getNodeIncludedForCurrentPosition() );
-                        thisNode.IsFavorite = CswNbtNode.isFavorite( _CswNbtResources, thisNode.NodeId.PrimaryKey, _CswNbtResources.CurrentNbtUser.UserId.PrimaryKey );
+                        thisNode.IsFavorite = Tree.getNodeFavoritedForCurrentPosition();
 
                         thisNode.ThumbnailUrl = _getThumbnailUrl( Tree.getNodeIconForCurrentPosition() );
 

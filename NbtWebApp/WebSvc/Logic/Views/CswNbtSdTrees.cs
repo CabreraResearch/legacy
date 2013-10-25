@@ -302,7 +302,7 @@ namespace ChemSW.Nbt.WebServices
                     ThisObjectClassId = ThisNodeType.ObjectClassId;
                     ThisNodeLocked = Tree.getNodeLockedForCurrentPosition();
                     ThisNodeDisabled = ( false == Tree.getNodeIncludedForCurrentPosition() );
-                    ThisNodeFavorite = CswNbtNode.isFavorite( _CswNbtResources, ThisNodeKey.NodeId.PrimaryKey, _CswNbtResources.CurrentNbtUser.UserId.PrimaryKey );
+                    ThisNodeFavorite = Tree.getNodeFavoritedForCurrentPosition();
                     if( ThisNodeFavorite )
                     {
                         ThisNodeIcon = CswNbtMetaDataObjectClass.IconPrefix16 + "starsolid.png";

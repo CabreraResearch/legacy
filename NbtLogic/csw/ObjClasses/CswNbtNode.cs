@@ -618,13 +618,6 @@ namespace ChemSW.Nbt.ObjClasses
             return FavoriteTable.Rows.Count > 0;
         }
 
-        public static bool isFavorite( CswNbtResources _CswNbtResources, Int32 NodeId, Int32 UserId )
-        {
-            CswTableSelect FavoriteSelect = _CswNbtResources.makeCswTableSelect( "favoriteSelect", "favorites" );
-            DataTable FavoriteTable = FavoriteSelect.getTable( "where itemid = " + NodeId + " and userid = " + UserId );
-            return FavoriteTable.Rows.Count > 0;
-        }
-
         #endregion Methods
 
     }//CswNbtNode
