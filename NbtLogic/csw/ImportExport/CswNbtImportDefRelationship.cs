@@ -70,8 +70,8 @@ namespace ChemSW.Nbt.ImportExport
         public static DataTable getDataTableForNewRelationshipEntries()
         {
             DataTable Table = new DataTable();
-            Table.Columns.Add( "sheet" );
-            Table.Columns.Add( "nodetype" );
+            Table.Columns.Add( "sheetname" );
+            Table.Columns.Add( "nodetypename" );
             Table.Columns.Add( "relationship" );
             Table.Columns.Add( "instance" );
             Table.Columns.Add( "sourcerelcolumnname" );

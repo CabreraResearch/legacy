@@ -66,9 +66,9 @@ namespace ChemSW.Nbt.ImportExport
         public static DataTable getDataTableForNewOrderEntries()
         {
             DataTable Table = new DataTable();
-            Table.Columns.Add( "sheet" );
-            Table.Columns.Add( "nodetype" );
-            Table.Columns.Add( "order" );
+            Table.Columns.Add( "sheetname" );
+            Table.Columns.Add( "nodetypename" );
+            Table.Columns.Add( "importorder" );
             Table.Columns.Add( "instance" );
             return Table;
         }

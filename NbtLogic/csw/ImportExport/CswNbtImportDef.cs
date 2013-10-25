@@ -88,7 +88,7 @@ namespace ChemSW.Nbt.ImportExport
         public static DataTable getDataTableForNewOrderEntries()
         {
             DataTable Table = new DataTable();
-            Table.Columns.Add( "sheet" );
+            Table.Columns.Add( "sheetname" );
             Table.Columns.Add( "sheetorder" );
             Table.Columns.Add( "tablename" );
             Table.Columns.Add( "viewname" );
@@ -146,7 +146,7 @@ namespace ChemSW.Nbt.ImportExport
 
             if( null != DefDataTable )
             {
-                SheetName = DefDataTable.Rows[0]["sheet"].ToString();
+                SheetName = DefDataTable.Rows[0]["sheetname"].ToString();
                 SheetOrder = CswConvert.ToInt32( DefDataTable.Rows[0]["sheetorder"] );
                 TableName = DefDataTable.Rows[0]["tablename"].ToString();
                 ViewName = DefDataTable.Rows[0]["viewname"].ToString();

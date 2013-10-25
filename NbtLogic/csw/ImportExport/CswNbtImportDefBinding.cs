@@ -132,9 +132,9 @@ namespace ChemSW.Nbt.ImportExport
         public static DataTable getDataTableForNewBindingEntries()
         {
             DataTable Table = new DataTable();
-            Table.Columns.Add( "sheet" );
-            Table.Columns.Add( "destnodetype" );
-            Table.Columns.Add( "destproperty" );
+            Table.Columns.Add( "sheetname" );
+            Table.Columns.Add( "destnodetypename" );
+            Table.Columns.Add( "destpropname" );
             Table.Columns.Add( "destsubfield" );
             Table.Columns.Add( "sourcecolumnname" );
             Table.Columns.Add( "instance" );
@@ -196,7 +196,7 @@ namespace ChemSW.Nbt.ImportExport
                             }
                             else
                             {
-                                throw new CswDniException( CswEnumErrorType.Error, "Error reading bindings", "Invalid destproperty defined in 'Bindings' sheet: " + BindingRow["destproperty"].ToString() + " (nodetype: " + DestNTName + ")" );
+                                throw new CswDniException( CswEnumErrorType.Error, "Error reading bindings", "Invalid destproperty defined in 'Bindings' sheet: " + BindingRow["destpropname"].ToString() + " (nodetype: " + DestNTName + ")" );
                             }
                         }
                         else
