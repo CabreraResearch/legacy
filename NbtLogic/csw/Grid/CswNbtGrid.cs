@@ -217,7 +217,7 @@ namespace ChemSW.Nbt.Grid
                     gridrow.isDisabled = ( false == Tree.getNodeIncludedForCurrentPosition() );
                     if( null != _CswNbtResources.CurrentNbtUser )
                     {
-                        gridrow.isFavorite = CswNbtNode.isFavorite( _CswNbtResources, TreeNode.NodeId, _CswNbtResources.CurrentNbtUser.UserId.PrimaryKey );
+                        gridrow.isFavorite = Tree.getNodeFavoritedForCurrentPosition();
                     }
 
                     _TreeNodeToGrid( View, Tree, grid, gridrow );

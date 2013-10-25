@@ -85,6 +85,7 @@ namespace ChemSW.Nbt
                         {
                             ThisPermGrpId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( NodesRow["permissiongroupid"] ) );
                         }
+                        bool ThisNodeFavorited = false == String.IsNullOrEmpty( NodesRow["userid"].ToString() );
 
                         // donb't include properties in search results to which the user has no permissions
                         if( false == RequireViewPermissions ||
@@ -96,7 +97,7 @@ namespace ChemSW.Nbt
                             if( ThisNodeId != PriorNodeId )
                             {
                                 PriorNodeId = ThisNodeId;
-                                NewNodeKeys = _CswNbtTree.loadNodeAsChildFromRow( null, NodesRow, false, string.Empty, true, true, CswEnumNbtViewAddChildrenSetting.None, RowCount );
+                                NewNodeKeys = _CswNbtTree.loadNodeAsChildFromRow( null, NodesRow, false, string.Empty, true, true, CswEnumNbtViewAddChildrenSetting.None, RowCount, Favorited: ThisNodeFavorited );
                                 RowCount++;
                             } // if( ThisNodeId != PriorNodeId )
 

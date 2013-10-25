@@ -69,7 +69,7 @@
                     jobTable.cell(jobrow, 1).text('Date Ended:');
                     jobTable.cell(jobrow, 2)
                         .css({ fontWeight: 'bold' })
-                        .text(DateWCF(job.DateEnded));
+                        .text(DateWCF(data.DateEnded));
                     jobrow++;
 
                     jobTable.cell(jobrow, 1).text('Items Finished:');
@@ -190,6 +190,9 @@
                         fontWeight: 'bold'
                     });
 
+            cswPrivate.excelDataFileText = null;
+            cswPrivate.uploadButton = null;
+            
             cswPublic.uploadDataTable = cswPublic.table.cell(4, 2)
             .empty()
             .css({ paddingLeft: '100px' })

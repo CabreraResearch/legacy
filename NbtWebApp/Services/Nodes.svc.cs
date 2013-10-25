@@ -100,16 +100,35 @@ namespace NbtWebApp
 
         [OperationContract]
         [WebInvoke( Method = "POST" )]
-        [Description( "Toggle the favorite status of the node for the current user" )]
+        [Description( "Add the node to the current user's Favorites" )]
         [FaultContract( typeof( FaultException ) )]
-        public CswNbtWebServiceNode.FavoriteReturn toggleFavorite( string NodeId )
+        public CswWebSvcReturn addToFavorites( string NodeId )
         {
-            CswNbtWebServiceNode.FavoriteReturn Ret = new CswNbtWebServiceNode.FavoriteReturn();
+            CswWebSvcReturn Ret = new CswWebSvcReturn();
 
-            var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceNode.FavoriteReturn, string>(
+            var SvcDriver = new CswWebSvcDriver<CswWebSvcReturn, string>(
                 CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context ),
                 ReturnObj: Ret,
-                WebSvcMethodPtr: CswNbtWebServiceNode.toggleFavorite,
+                WebSvcMethodPtr: CswNbtWebServiceNode.addToFavorites,
+                ParamObj: NodeId
+                );
+
+            SvcDriver.run();
+            return ( Ret );
+        }
+
+        [OperationContract]
+        [WebInvoke( Method = "POST" )]
+        [Description( "Remove the node from the current user's Favorites" )]
+        [FaultContract( typeof( FaultException ) )]
+        public CswWebSvcReturn removeFromFavorites( string NodeId )
+        {
+            CswWebSvcReturn Ret = new CswWebSvcReturn();
+
+            var SvcDriver = new CswWebSvcDriver<CswWebSvcReturn, string>(
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context ),
+                ReturnObj: Ret,
+                WebSvcMethodPtr: CswNbtWebServiceNode.removeFromFavorites,
                 ParamObj: NodeId
                 );
 

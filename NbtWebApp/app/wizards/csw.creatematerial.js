@@ -502,6 +502,7 @@
                     Suppliername: cswPrivate.state.supplier.name,
                     PartNo: cswPrivate.state.partNo,
                     NodeId: cswPrivate.state.materialId,
+                    IsConstituent: cswPrivate.isConstituent(),
                     CorporateSupplier: cswPrivate.state.supplier.corporate || false
                 },
                 success: function (data) {
@@ -798,6 +799,7 @@
                 createMaterialDef.partno = cswPrivate.state.partNo;
                 createMaterialDef.supplierid = cswPrivate.state.supplier.val;
                 createMaterialDef.suppliername = cswPrivate.state.supplier.name;
+                createMaterialDef.isConstituent = cswPrivate.isConstituent();
 
                 //From step 2: any properties on 'Add' layout
                 if (false === Csw.isNullOrEmpty(cswPrivate.state.properties)) {

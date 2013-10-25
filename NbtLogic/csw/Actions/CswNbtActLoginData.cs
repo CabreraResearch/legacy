@@ -123,7 +123,7 @@ namespace ChemSW.Nbt.Actions
         public void postLoginData( LoginData.Login LoginRecord )
         {
             if( null == LoginRecord.AuthenticationRequest.Parameters ||
-                false != LoginRecord.AuthenticationRequest.Parameters.IsIncludedInLoginData )
+                LoginRecord.AuthenticationRequest.Parameters.IsIncludedInLoginData )
             {
                 CswTableUpdate LoginData = _CswNbtResources.makeCswTableUpdate( "Login Data Insert", "login_data" );
                 DataTable LoginDataTable = LoginData.getTable();

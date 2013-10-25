@@ -39,7 +39,7 @@ namespace NbtWebApp.Test.WebServices
             Int32 NodeId = 32767;
             Int32 UserId = 1;
 
-            Assert.IsTrue( CswNbtWebServiceNode.toggleFavorite( TestData.CswNbtResources, NodeId, UserId ) );
+            CswNbtWebServiceNode.toggleFavorite( TestData.CswNbtResources, NodeId, UserId, CswEnumTristate.Null );
             DataTable FavoritesTable = TestData.CswNbtResources.execArbitraryPlatformNeutralSqlSelect( "getFavorite", "select count(*) as favoriteExists from favorites where itemid = " + NodeId + " and UserId = " + UserId );
             Assert.AreEqual( 1, CswConvert.ToInt32( FavoritesTable.Rows[0]["favoriteExists"] ) );
         }
@@ -54,9 +54,42 @@ namespace NbtWebApp.Test.WebServices
         {
             Int32 NodeId = 32767;
             Int32 UserId = 1;
-            CswNbtWebServiceNode.toggleFavorite( TestData.CswNbtResources, NodeId, UserId );
+            CswNbtWebServiceNode.toggleFavorite( TestData.CswNbtResources, NodeId, UserId, CswEnumTristate.Null );
 
-            Assert.IsFalse( CswNbtWebServiceNode.toggleFavorite( TestData.CswNbtResources, NodeId, UserId ) );
+            CswNbtWebServiceNode.toggleFavorite( TestData.CswNbtResources, NodeId, UserId, CswEnumTristate.Null );
+            DataTable FavoritesTable = TestData.CswNbtResources.execArbitraryPlatformNeutralSqlSelect( "getFavorite", "select count(*) as favoriteExists from favorites where itemid = " + NodeId + " and UserId = " + UserId );
+            Assert.AreEqual( 0, CswConvert.ToInt32( FavoritesTable.Rows[0]["favoriteExists"] ) );
+        }
+
+        /// <summary>
+        /// Given a NodeId and a UserId, given that the nodeid is favorited by the user,
+        /// when toggleFavorite is called with the nodeid and userid with Add enforced,
+        /// assert that only one row has been added to the favorites table.
+        /// </summary>
+        [Test]
+        public void toggleFavoriteTestForceAdd()
+        {
+            Int32 NodeId = 32767;
+            Int32 UserId = 1;
+
+            CswNbtWebServiceNode.toggleFavorite( TestData.CswNbtResources, NodeId, UserId, CswEnumTristate.True );
+            CswNbtWebServiceNode.toggleFavorite( TestData.CswNbtResources, NodeId, UserId, CswEnumTristate.True );
+            DataTable FavoritesTable = TestData.CswNbtResources.execArbitraryPlatformNeutralSqlSelect( "getFavorite", "select count(*) as favoriteExists from favorites where itemid = " + NodeId + " and UserId = " + UserId );
+            Assert.AreEqual( 1, CswConvert.ToInt32( FavoritesTable.Rows[0]["favoriteExists"] ) );
+        }
+
+        /// <summary>
+        /// Given a NodeId and a UserId, given that the nodeid is not favorited by the user,
+        /// when toggleFavorite is called with the nodeid and userid and Remove enforced,
+        /// assert that no row exists in the favorites table.
+        /// </summary>
+        [Test]
+        public void toggleFavoriteTestForceDelete()
+        {
+            Int32 NodeId = 32767;
+            Int32 UserId = 1;
+
+            CswNbtWebServiceNode.toggleFavorite( TestData.CswNbtResources, NodeId, UserId, CswEnumTristate.False );
             DataTable FavoritesTable = TestData.CswNbtResources.execArbitraryPlatformNeutralSqlSelect( "getFavorite", "select count(*) as favoriteExists from favorites where itemid = " + NodeId + " and UserId = " + UserId );
             Assert.AreEqual( 0, CswConvert.ToInt32( FavoritesTable.Rows[0]["favoriteExists"] ) );
         }

@@ -598,8 +598,13 @@ namespace ChemSW.Nbt.ObjClasses
         /// <returns>true if the node is marked as favorite</returns>
         public bool isFavorite()
         {
-            CswPrimaryKey UserId = _CswNbtResources.CurrentNbtUser.UserId;
-            return isFavorite( UserId.PrimaryKey );
+            bool isFav = false;
+            if( null != _CswNbtResources.CurrentNbtUser )
+            {
+                CswPrimaryKey UserId = _CswNbtResources.CurrentNbtUser.UserId;
+                isFav = isFavorite( UserId.PrimaryKey );
+            }
+            return isFav;
         }
 
         /// <summary>
@@ -610,13 +615,6 @@ namespace ChemSW.Nbt.ObjClasses
         {
             CswTableSelect FavoriteSelect = _CswNbtResources.makeCswTableSelect( "favoriteSelect", "favorites" );
             DataTable FavoriteTable = FavoriteSelect.getTable( "where itemid = " + NodeId.PrimaryKey + " and userid = " + UserId );
-            return FavoriteTable.Rows.Count > 0;
-        }
-
-        public static bool isFavorite( CswNbtResources _CswNbtResources, Int32 NodeId, Int32 UserId )
-        {
-            CswTableSelect FavoriteSelect = _CswNbtResources.makeCswTableSelect( "favoriteSelect", "favorites" );
-            DataTable FavoriteTable = FavoriteSelect.getTable( "where itemid = " + NodeId + " and userid = " + UserId );
             return FavoriteTable.Rows.Count > 0;
         }
 

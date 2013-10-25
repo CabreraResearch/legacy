@@ -38,6 +38,7 @@ namespace ChemSW.Nbt.WebServices
             if( Int32.MinValue != parms.JobId )
             {
                 CswNbtImportDataJob Job = new CswNbtImportDataJob( CswNbtResources, parms.JobId );
+                ret.Data.DateEnded = Job.DateEnded;
                 Job.getStatus( out ret.Data.RowsDone,
                                out ret.Data.RowsTotal,
                                out ret.Data.RowsError,

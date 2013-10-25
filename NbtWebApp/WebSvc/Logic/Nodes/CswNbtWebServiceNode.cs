@@ -679,36 +679,32 @@ namespace ChemSW.Nbt.WebServices
 
         #region Favorite
 
-        [DataContract]
-        public class FavoriteReturn : CswWebSvcReturn
-        {
-            public FavoriteReturn()
-            {
-                Data = new FavoriteResponse();
-            }
-
-            [DataMember]
-            public FavoriteResponse Data;
-
-            [DataContract]
-            public class FavoriteResponse
-            {
-                [DataMember] 
-                public bool isFavorite = false;
-            }
-        }
-
         /// <summary>
-        /// Toggles the favorite status of the node for the current user
+        /// Adds the node to the current user's Favorites
         /// </summary>
         /// <param name="_CswResources">Resources</param>
         /// <param name="Response">Empty Repsonse Object</param>
         /// <param name="NodeId">NodeId to Favorite</param>
-        public static void toggleFavorite( ICswResources _CswResources, FavoriteReturn Response, String NodeId )
+        public static void addToFavorites( ICswResources _CswResources, CswWebSvcReturn Response, String NodeId )
         {
             CswNbtResources _CswNbtResources = (CswNbtResources) _CswResources;
             CswPrimaryKey NodePK = CswConvert.ToPrimaryKey( NodeId );
-            Response.Data.isFavorite = toggleFavorite( _CswNbtResources, NodePK.PrimaryKey, _CswNbtResources.CurrentNbtUser.UserId.PrimaryKey );
+            Int32 UserId = _CswNbtResources.CurrentNbtUser.UserId.PrimaryKey;
+            toggleFavorite( _CswNbtResources, NodePK.PrimaryKey, UserId, CswEnumTristate.True );
+        }
+
+        /// <summary>
+        /// Removes the node from the current user's Favorites
+        /// </summary>
+        /// <param name="_CswResources">Resources</param>
+        /// <param name="Response">Empty Repsonse Object</param>
+        /// <param name="NodeId">NodeId to un-Favorite</param>
+        public static void removeFromFavorites( ICswResources _CswResources, CswWebSvcReturn Response, String NodeId )
+        {
+            CswNbtResources _CswNbtResources = (CswNbtResources) _CswResources;
+            CswPrimaryKey NodePK = CswConvert.ToPrimaryKey( NodeId );
+            Int32 UserId = _CswNbtResources.CurrentNbtUser.UserId.PrimaryKey;
+            toggleFavorite( _CswNbtResources, NodePK.PrimaryKey, UserId, CswEnumTristate.False );
         }
 
         /// <summary>
@@ -717,26 +713,24 @@ namespace ChemSW.Nbt.WebServices
         /// <param name="_CswResources">Resources</param>
         /// <param name="NodeId">NodeId to Favorite</param>
         /// <param name="UserId">UserId with which to associate Favorite</param>
-        public static bool toggleFavorite( CswNbtResources _CswNbtResources, Int32 NodeId, Int32 UserId )
+        /// <param name="Add">When true, force Add; when false, force remove; when null, toggle</param>
+        public static void toggleFavorite( CswNbtResources _CswNbtResources, Int32 NodeId, Int32 UserId, CswEnumTristate Add )
         {
-            bool isFavorite = false;
             CswTableUpdate FavoritesUpdate = _CswNbtResources.makeCswTableUpdate( "favoritesUpdate", "favorites" );
             DataTable FavoritesTable = FavoritesUpdate.getTable( "where itemid = " + NodeId + " and userid = " + UserId );
-            if( FavoritesTable.Rows.Count == 0 )//Add to Favorites
+            if( Add != CswEnumTristate.False && FavoritesTable.Rows.Count == 0 )
             {
                 DataRow FavoritesRow = FavoritesTable.NewRow();
                 FavoritesRow["userid"] = UserId;
                 FavoritesRow["itemid"] = NodeId;
                 FavoritesTable.Rows.Add( FavoritesRow );
                 FavoritesUpdate.update( FavoritesTable );
-                isFavorite = true;
             }
-            else//Delete from Favorites
+            else if( Add != CswEnumTristate.True && FavoritesTable.Rows.Count > 0 )
             {
                 FavoritesTable.Rows[0].Delete();
                 FavoritesUpdate.update( FavoritesTable );
             }
-            return isFavorite;
         }
 
         #endregion Favorite

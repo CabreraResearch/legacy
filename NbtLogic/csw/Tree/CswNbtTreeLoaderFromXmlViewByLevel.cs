@@ -96,6 +96,7 @@ namespace ChemSW.Nbt
                     ThisParentNodeId = CswConvert.ToInt32( NodesRow["parentnodeid"] );
                 }
                 Int32 ThisNodeTypeId = CswConvert.ToInt32( NodesRow["nodetypeid"] );
+                bool ThisNodeFavorited = false == String.IsNullOrEmpty( NodesRow["userid"].ToString() );
 
                 // Verify permissions
                 // this could be a performance problem
@@ -166,7 +167,7 @@ namespace ChemSW.Nbt
                                 {
                                     _CswNbtTree.makeNodeCurrent( ParentNodeKey );
                                     Int32 ChildCount = _CswNbtTree.getChildNodeCount();
-                                    ThisNewNodeKeys = _CswNbtTree.loadNodeAsChildFromRow( ParentNodeKey, NodesRow, UseGroupBy, GroupName, Relationship, ChildCount + 1, Included );
+                                    ThisNewNodeKeys = _CswNbtTree.loadNodeAsChildFromRow( ParentNodeKey, NodesRow, UseGroupBy, GroupName, Relationship, ChildCount + 1, Included, ThisNodeFavorited );
                                     foreach( CswNbtNodeKey ThisNewNodeKey in ThisNewNodeKeys )
                                     {
                                         NewNodeKeys.Add( ThisNewNodeKey );
@@ -179,7 +180,7 @@ namespace ChemSW.Nbt
                         else
                         {
                             Int32 ChildCount = _CswNbtTree.getChildNodeCount();
-                            ThisNewNodeKeys = _CswNbtTree.loadNodeAsChildFromRow( null, NodesRow, UseGroupBy, GroupName, Relationship, ChildCount + 1, Included );
+                            ThisNewNodeKeys = _CswNbtTree.loadNodeAsChildFromRow( null, NodesRow, UseGroupBy, GroupName, Relationship, ChildCount + 1, Included, ThisNodeFavorited );
                             foreach( CswNbtNodeKey ThisNewNodeKey in ThisNewNodeKeys )
                             {
                                 NewNodeKeys.Add( ThisNewNodeKey );

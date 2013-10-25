@@ -148,14 +148,19 @@ namespace ChemSW.Nbt.WebServices
                         // Filter to the administrator's access id only
                         if( Entry.AccessId == _CswNbtResources.AccessId || _CswNbtResources.CurrentNbtUser.Username == CswNbtObjClassUser.ChemSWAdminUsername )
                         {
-                            JObject JSession = new JObject();
-                            JSession["sessionid"] = Entry.SessionId;
-                            JSession["username"] = Entry.UserName;
-                            JSession["logindate"] = Entry.LoginDate.ToString();
-                            JSession["timeoutdate"] = Entry.TimeoutDate.ToString();
-                            JSession["accessid"] = Entry.AccessId;
-                            JSession["ismobile"] = Entry.IsMobile;
-                            ReturnVal[Entry.SessionId] = JSession;
+                            //TODO - Case 30573 - Fix so that the client apps only use one session instead of creating a new one for every call
+                            //TODO - Then remove this if statement.
+                            if( false == Entry.UserName.Contains( "printer" ) && Entry.UserName != "lpc" )
+                            {
+                                JObject JSession = new JObject();
+                                JSession["sessionid"] = Entry.SessionId;
+                                JSession["username"] = Entry.UserName;
+                                JSession["logindate"] = Entry.LoginDate.ToString();
+                                JSession["timeoutdate"] = Entry.TimeoutDate.ToString();
+                                JSession["accessid"] = Entry.AccessId;
+                                JSession["ismobile"] = Entry.IsMobile;
+                                ReturnVal[Entry.SessionId] = JSession;
+                            }
                         } // if (Entry.AccessId == Master.AccessID)
                     } // foreach (CswAuthenticator.SessionListEntry Entry in SessionList.Values)
                 }
@@ -3347,7 +3352,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string saveMaterial( string NodeTypeId, string SupplierId, string Suppliername, string Tradename, string PartNo, string NodeId, bool CorporateSupplier = false )
+        public string saveMaterial( string NodeTypeId, string SupplierId, string Suppliername, string Tradename, string PartNo, string NodeId, string IsConstituent, bool CorporateSupplier = false )
         {
             JObject ReturnVal = new JObject();
             CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
@@ -3357,7 +3362,7 @@ namespace ChemSW.Nbt.WebServices
                 AuthenticationStatus = _attemptRefresh( true );
 
                 CswNbtWebServiceCreateMaterial ws = new CswNbtWebServiceCreateMaterial( _CswNbtResources, _CswNbtStatisticsEvents );
-                ReturnVal = ws.saveMaterial( CswConvert.ToInt32( NodeTypeId ), SupplierId, Suppliername, Tradename, PartNo, NodeId, CorporateSupplier );
+                ReturnVal = ws.saveMaterial( CswConvert.ToInt32( NodeTypeId ), SupplierId, Suppliername, Tradename, PartNo, NodeId, CswConvert.ToBoolean( IsConstituent ), CorporateSupplier );
 
                 _deInitResources();
             }
