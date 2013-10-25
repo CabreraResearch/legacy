@@ -598,8 +598,13 @@ namespace ChemSW.Nbt.ObjClasses
         /// <returns>true if the node is marked as favorite</returns>
         public bool isFavorite()
         {
-            CswPrimaryKey UserId = _CswNbtResources.CurrentNbtUser.UserId;
-            return isFavorite( UserId.PrimaryKey );
+            bool isFav = false;
+            if( null != _CswNbtResources.CurrentNbtUser )
+            {
+                CswPrimaryKey UserId = _CswNbtResources.CurrentNbtUser.UserId;
+                isFav = isFavorite( UserId.PrimaryKey );
+            }
+            return isFav;
         }
 
         /// <summary>
