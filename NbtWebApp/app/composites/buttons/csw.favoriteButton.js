@@ -19,24 +19,6 @@
             cswPublic = Csw.dom(cswPrivate.div);
         }());
         
-        cswPrivate.onFavorite = function () {
-            Csw.ajaxWcf.post({
-                urlMethod: 'Nodes/toggleFavorite',
-                data: cswPrivate.nodeid,
-                success: function (response) {
-                    if (response.isFavorite) {
-                        cswPrivate.addFavoriteIcon.hide();
-                        cswPrivate.removeFavoriteIcon.show();
-                        onAddFavoriteSuccess();
-                    } else {
-                        cswPrivate.removeFavoriteIcon.hide();
-                        cswPrivate.addFavoriteIcon.show();
-                        onRemoveFavoriteSuccess();
-                    }
-                }
-            });
-        };
-        
         cswPrivate.addFavoriteIcon = cswPrivate.div.icon({
             name: cswPrivate.name + 'addFavoriteBtn',
             iconType: Csw.enums.iconType.star,
@@ -44,7 +26,16 @@
             size: cswPrivate.size,
             isButton: true,
             onClick: function () {
-                cswPrivate.onFavorite();
+                Csw.ajaxWcf.post({
+                    urlMethod: 'Nodes/addToFavorites',
+                    data: cswPrivate.nodeid,
+                    success: function () {
+                        cswPrivate.isFavorite = true;
+                        cswPrivate.addFavoriteIcon.hide();
+                        cswPrivate.removeFavoriteIcon.show();
+                        cswPrivate.onAddFavoriteSuccess();
+                    }
+                });
             }
         });
         
@@ -55,7 +46,16 @@
             size: cswPrivate.size,
             isButton: true,
             onClick: function () {
-                cswPrivate.onFavorite();
+                Csw.ajaxWcf.post({
+                    urlMethod: 'Nodes/removeFromFavorites',
+                    data: cswPrivate.nodeid,
+                    success: function () {
+                        cswPrivate.isFavorite = false;
+                        cswPrivate.removeFavoriteIcon.hide();
+                        cswPrivate.addFavoriteIcon.show();
+                        cswPrivate.onRemoveFavoriteSuccess();
+                    }
+                });
             }
         });
 
