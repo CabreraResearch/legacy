@@ -112,10 +112,16 @@ namespace ChemSW.Nbt.Sched
                             }
                             else
                             {
+                                // truncate error to 2000 chars
+                                string SafeError = CswTools.SafeSqlParam( Error );
+                                if( SafeError.Length > 2000 )
+                                {
+                                    SafeError = SafeError.Substring( 0, 2000 );
+                                }
                                 // record failure - record the error on nbtimportqueue
                                 _CswNbtResources.execArbitraryPlatformNeutralSql( "update " + QueueTableName + "@" + CAFDbLink +
                                                                                   "   set state = '" + State.E + "', " +
-                                                                                  "       errorlog = '" + CswTools.SafeSqlParam( Error ) + "' " +
+                                                                                  "       errorlog = '" + SafeError + "' " +
                                                                                   " where " + QueuePkName + " = " + QueueRow[QueuePkName] );
                             }
                         }
@@ -186,18 +192,18 @@ namespace ChemSW.Nbt.Sched
 
             #region Locations
 
-            for( int i = 1; i<=5; i++ )
+            for( int i = 1; i <= 5; i++ )
             {
 
                 Ret += "\r\n\r\n" +
                        "update locations_level" + i + " set locationlevel" + i + "name = locationlevel" + i + "name || '_' || locationlevel" + i + "id " + "\r\n" +
-                       "  where locationlevel" + i + "id in ("                                                                                           + "\r\n" +
-                       "      select locationlevel" + i + "id from locations_level" + i + " where "                                                      + "\r\n" +
-                       "          locationlevel"+i+"name in ("                                                                                           + "\r\n" +
-                       "             select locationlevel" + i + "name from locations_level" + i                                                         + "\r\n" +
-                       "                group by locationlevel" + i + "name "                                                                            + "\r\n" +
-                       "                   having count(*) > 1 "                                                                                         + "\r\n" +
-                       "              )"                                                                                                                 + "\r\n" +
+                       "  where locationlevel" + i + "id in (" + "\r\n" +
+                       "      select locationlevel" + i + "id from locations_level" + i + " where " + "\r\n" +
+                       "          locationlevel" + i + "name in (" + "\r\n" +
+                       "             select locationlevel" + i + "name from locations_level" + i + "\r\n" +
+                       "                group by locationlevel" + i + "name " + "\r\n" +
+                       "                   having count(*) > 1 " + "\r\n" +
+                       "              )" + "\r\n" +
                        "       )";
             }
 
@@ -213,16 +219,16 @@ namespace ChemSW.Nbt.Sched
             string Ret = "";
 
             CswTableSelect ImportDefinitions = NbtResources.makeCswTableSelect( "FetchImportDefinitions", "import_def" );
-            CswCommaDelimitedString ProjectedColumns = new CswCommaDelimitedString{new[] {"tablename", "viewname", "pkcolumnname", "sheetname"}};
-            DataTable ImportDefinitionsTable = ImportDefinitions.getTable(ProjectedColumns, "where definitionname = 'CAF'");
+            CswCommaDelimitedString ProjectedColumns = new CswCommaDelimitedString { new[] { "tablename", "viewname", "pkcolumnname", "sheetname" } };
+            DataTable ImportDefinitionsTable = ImportDefinitions.getTable( ProjectedColumns, "where definitionname = 'CAF'" );
 
             //handle the special case of inventory levels
-               DataRow maxInventoryRow = ImportDefinitionsTable.NewRow();
-               maxInventoryRow["tablename"] = "maxinventory_basic";
-               maxInventoryRow["viewname"] = "inventory_view";
-               maxInventoryRow["sheetname"] = "inventory_view";
-               maxInventoryRow["pkcolumnname"] = "inventorybasicid";
-               ImportDefinitionsTable.Rows.Add( maxInventoryRow );
+            DataRow maxInventoryRow = ImportDefinitionsTable.NewRow();
+            maxInventoryRow["tablename"] = "maxinventory_basic";
+            maxInventoryRow["viewname"] = "inventory_view";
+            maxInventoryRow["sheetname"] = "inventory_view";
+            maxInventoryRow["pkcolumnname"] = "inventorybasicid";
+            ImportDefinitionsTable.Rows.Add( maxInventoryRow );
 
 
             foreach( DataRow Row in ImportDefinitionsTable.Rows )
@@ -231,77 +237,77 @@ namespace ChemSW.Nbt.Sched
 
                 //we cannot check a view that references the target table from within the trigger, so we need to set values for multiplexed tables and views
                 //all of this information is derived from the create view statements in Nbt/Scripts/cafsql/CAF.sql
-                   string SourceColumn;
-                   string TriggerName;
-                   switch( Row["tablename"].ToString() )
-                   {
-                       case "maxinventory_basic":
-                           SourceColumn = "maxinventorybasicid";
-                           TriggerName = "max_inventory";
-                           break;
-                       case "mininventory_basic":
-                           SourceColumn = "mininventorybasicid";
-                           TriggerName = "min_inventory";
-                           break;
-                       case "documents":
-                           SourceColumn = "documentid";
-                           TriggerName = Row["sheetname"].ToString();
-                           break;
-                       default:
-                           SourceColumn = Row["pkcolumnname"].ToString();
-                           TriggerName = Row["sheetname"].ToString();
-                           break;
-                   }
+                string SourceColumn;
+                string TriggerName;
+                switch( Row["tablename"].ToString() )
+                {
+                    case "maxinventory_basic":
+                        SourceColumn = "maxinventorybasicid";
+                        TriggerName = "max_inventory";
+                        break;
+                    case "mininventory_basic":
+                        SourceColumn = "mininventorybasicid";
+                        TriggerName = "min_inventory";
+                        break;
+                    case "documents":
+                        SourceColumn = "documentid";
+                        TriggerName = Row["sheetname"].ToString();
+                        break;
+                    default:
+                        SourceColumn = Row["pkcolumnname"].ToString();
+                        TriggerName = Row["sheetname"].ToString();
+                        break;
+                }
 
-                   string WhenClause = "";
-                   switch( Row["sheetname"].ToString() )
-                   {
-                       case "docs_view":
-                           WhenClause = "new.packageid is not null and new.doctype = 'DOC'";
-                           break;
-                       case "sds_view":
-                           WhenClause = "new.packageid is null and new.doctype = 'MSDS'";
-                           break;
-                       case "cofa_docs_view":
-                           WhenClause = "new.CA_FileName is not null";
-                           break;
-                       case "each_view":
-                           WhenClause = "lower(new.unittype)='each'";
-                           break;
-                       case "volume_view":
-                           WhenClause = "lower(new.unittype)='volume'";
-                           break;
-                       case "weight_view":
-                           WhenClause = "lower(new.unittype)='weight'";
-                           break;
-                   }
-                
+                string WhenClause = "";
+                switch( Row["sheetname"].ToString() )
+                {
+                    case "docs_view":
+                        WhenClause = "new.packageid is not null and new.doctype = 'DOC'";
+                        break;
+                    case "sds_view":
+                        WhenClause = "new.packageid is null and new.doctype = 'MSDS'";
+                        break;
+                    case "cofa_docs_view":
+                        WhenClause = "new.CA_FileName is not null";
+                        break;
+                    case "each_view":
+                        WhenClause = "lower(new.unittype)='each'";
+                        break;
+                    case "volume_view":
+                        WhenClause = "lower(new.unittype)='volume'";
+                        break;
+                    case "weight_view":
+                        WhenClause = "lower(new.unittype)='weight'";
+                        break;
+                }
+
 
 
                 Ret += "\r\n\r\n" +
-                       "create or replace trigger " + TriggerName + "_trigger"                                                                   + "\r\n" +
-                       "  after insert or update on " + Row["tablename"]                                                                         + "\r\n" +
-                       "for each row"                                                                                                            + "\r\n";
+                       "create or replace trigger " + TriggerName + "_trigger" + "\r\n" +
+                       "  after insert or update on " + Row["tablename"] + "\r\n" +
+                       "for each row" + "\r\n";
 
-                if( false == String.IsNullOrEmpty( WhenClause ) ) { Ret += "  when (" + WhenClause + ")\r\n";}
+                if( false == String.IsNullOrEmpty( WhenClause ) ) { Ret += "  when (" + WhenClause + ")\r\n"; }
 
-                Ret += "begin"                                                                                                                   + "\r\n" +
-                       "  if inserting then"                                                                                                     + "\r\n" +
-                       "    insert into nbtimportqueue(nbtimportqueueid, state, itempk, sheetname, priority, errorlog)"                          + "\r\n" +
-                       "       values (seq_nbtimportqueueid.nextval, 'I', :new." + SourceColumn + ", '" + Row["sheetname"] + "', 0, '');"        + "\r\n" +
-                       "  elsif updating then"                                                                                                   + "\r\n" +
-                       "    if :new.deleted = 1 then"                                                                                            + "\r\n" +
-                       "      insert into nbtimportqueue(nbtimportqueueid, state, itempk, sheetname, priority, errorlog)"                        + "\r\n" +
-                       "         values (seq_nbtimportqueueid.nextval, 'D', :new." + SourceColumn + ", '" + Row["sheetname"] + "', 0, '');"      + "\r\n" +
-                       "    else"                                                                                                                + "\r\n" +
-                       "      insert into nbtimportqueue(nbtimportqueueid, state, itempk, sheetname, priority, errorlog)"                        + "\r\n" +
-                       "         values (seq_nbtimportqueueid.nextval, 'U', :new." + SourceColumn + ", '" + Row["sheetname"] + "', 0, '');"      + "\r\n" +
-                       "    end if;"                                                                                                             + "\r\n" +
-                       "  end if;"                                                                                                               + "\r\n" +
+                Ret += "begin" + "\r\n" +
+                       "  if inserting then" + "\r\n" +
+                       "    insert into nbtimportqueue(nbtimportqueueid, state, itempk, sheetname, priority, errorlog)" + "\r\n" +
+                       "       values (seq_nbtimportqueueid.nextval, 'I', :new." + SourceColumn + ", '" + Row["sheetname"] + "', 0, '');" + "\r\n" +
+                       "  elsif updating then" + "\r\n" +
+                       "    if :new.deleted = 1 then" + "\r\n" +
+                       "      insert into nbtimportqueue(nbtimportqueueid, state, itempk, sheetname, priority, errorlog)" + "\r\n" +
+                       "         values (seq_nbtimportqueueid.nextval, 'D', :new." + SourceColumn + ", '" + Row["sheetname"] + "', 0, '');" + "\r\n" +
+                       "    else" + "\r\n" +
+                       "      insert into nbtimportqueue(nbtimportqueueid, state, itempk, sheetname, priority, errorlog)" + "\r\n" +
+                       "         values (seq_nbtimportqueueid.nextval, 'U', :new." + SourceColumn + ", '" + Row["sheetname"] + "', 0, '');" + "\r\n" +
+                       "    end if;" + "\r\n" +
+                       "  end if;" + "\r\n" +
                        "end;\r\n/";
 
 
-               }
+            }
 
 
 
