@@ -212,7 +212,7 @@ namespace ChemSW.Nbt.ObjClasses
                     case PropertyName.Fulfill:
                         //If we do this here, we'll override the Actions for other options managed by the Property Set
                         //ButtonData.Action = NbtButtonAction.nothing;
-                        
+
                         //Case 30722: The default selected text is "Fulfill": "Create" is the drop-down text.
                         // See also Case 30748 for future exploration.
                         //switch( ButtonData.SelectedText )     { case FulfillMenu.Create:
@@ -294,7 +294,7 @@ namespace ChemSW.Nbt.ObjClasses
         private CswNbtActCreateMaterial.NewMaterial PotentialMaterial()
         {
             Int32 SelectedNodeTypeId = NewMaterialType.SelectedNodeTypeIds.ToIntCollection().FirstOrDefault();
-            _PotentialMaterial = _PotentialMaterial ?? new CswNbtActCreateMaterial.NewMaterial( _CswNbtResources, SelectedNodeTypeId, NewMaterialTradename.Text, NewMaterialSupplier.RelatedNodeId, NewMaterialPartNo.Text );
+            _PotentialMaterial = _PotentialMaterial ?? new CswNbtActCreateMaterial.NewMaterial( _CswNbtResources, SelectedNodeTypeId, NewMaterialTradename.Text, NewMaterialSupplier.RelatedNodeId, false, NewMaterialPartNo.Text );
             _PotentialMaterial.TradeName = NewMaterialTradename.Text;
             _PotentialMaterial.SupplierId = NewMaterialSupplier.RelatedNodeId;
             _PotentialMaterial.PartNo = NewMaterialPartNo.Text;
