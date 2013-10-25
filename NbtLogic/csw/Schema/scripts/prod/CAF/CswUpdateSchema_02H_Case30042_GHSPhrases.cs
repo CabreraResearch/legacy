@@ -35,7 +35,7 @@ namespace ChemSW.Nbt.Schema
             {
                 CswNbtSchemaUpdateImportMgr JurisdictionMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "sites", "Jurisdiction", "regions_view", "region" );
 
-                JurisdictionMgr.importBinding( "region", CswNbtObjClassJurisdiction.PropertyName.LegacyId, "" );
+                JurisdictionMgr.importBinding( "region", CswNbtObjClassJurisdiction.PropertyName.LegacyId, "" ); // Regions are distinct so we can use as the LegacyId
                 JurisdictionMgr.importBinding( "region", CswNbtObjClassJurisdiction.PropertyName.Name, "" );
 
                 JurisdictionMgr.finalize();
@@ -70,6 +70,8 @@ namespace ChemSW.Nbt.Schema
                 GHSPhrasesMgr.importBinding( "materialid", CswNbtObjClassGHS.PropertyName.Material, CswEnumNbtSubFieldName.NodeID.ToString() );
                 GHSPhrasesMgr.importBinding( "ghscodes", CswNbtObjClassGHS.PropertyName.AddLabelCodes, "" );
                 GHSPhrasesMgr.importBinding( "pictos", CswNbtObjClassGHS.PropertyName.Pictograms, "" );
+                GHSPhrasesMgr.importBinding( "signal", CswNbtObjClassGHS.PropertyName.SignalWord, "" );
+                //GHSPhrasesMgr.importBinding( "class", CswNbtObjClassGHS.PropertyName.Classification, "" );
 
                 GHSPhrasesMgr.finalize();
             }
