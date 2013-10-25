@@ -189,9 +189,18 @@ namespace ChemSW.Nbt.ImportExport
                                 row[CswNbtImportTables.ImportDefBindings.destpropname] = DestNTPName;
                                 row[CswNbtImportTables.ImportDefBindings.destsubfield] = DestSubFieldName;
                                 row[CswNbtImportTables.ImportDefBindings.instance] = CswConvert.ToDbVal( BindingRow["instance"].ToString() );
-                                row[CswNbtImportTables.ImportDefBindings.blobtablename] = BindingRow[CswNbtImportTables.ImportDefBindings.blobtablename].ToString();
-                                row[CswNbtImportTables.ImportDefBindings.clobtablename] = BindingRow[CswNbtImportTables.ImportDefBindings.clobtablename].ToString();
-                                row[CswNbtImportTables.ImportDefBindings.lobdatapkcoloverride] = BindingRow[CswNbtImportTables.ImportDefBindings.lobdatapkcoloverride].ToString();
+                                if( BindingRow.Table.Columns.Contains( CswNbtImportTables.ImportDefBindings.blobtablename ) )
+                                {
+                                    row[CswNbtImportTables.ImportDefBindings.blobtablename] = BindingRow[CswNbtImportTables.ImportDefBindings.blobtablename].ToString();
+                                }
+                                if( BindingRow.Table.Columns.Contains( CswNbtImportTables.ImportDefBindings.clobtablename ) )
+                                {
+                                    row[CswNbtImportTables.ImportDefBindings.clobtablename] = BindingRow[CswNbtImportTables.ImportDefBindings.clobtablename].ToString();
+                                }
+                                if( BindingRow.Table.Columns.Contains( CswNbtImportTables.ImportDefBindings.lobdatapkcoloverride ) )
+                                {
+                                    row[CswNbtImportTables.ImportDefBindings.lobdatapkcoloverride] = BindingRow[CswNbtImportTables.ImportDefBindings.lobdatapkcoloverride].ToString();
+                                }
                                 importBindingsTable.Rows.Add( row );
                             }
                             else
