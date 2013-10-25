@@ -91,7 +91,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-        private CswDateTime _Date;
+        public CswDateTime _Date;
         private CswNbtResources _CswNbtResources;
         public CswNbtNode( CswNbtResources CswNbtResources, Int32 NodeTypeId, CswEnumNbtNodeSpecies NodeSpecies, CswPrimaryKey NodeId, Int32 UniqueId, CswDateTime Date, bool IsDemo = false )
         {
