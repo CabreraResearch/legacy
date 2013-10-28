@@ -56,7 +56,7 @@ namespace ChemSW.Nbt.Schema
             {
                 try
                 {
-                    _CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( CswEnumAppType.Nbt, CswEnumSetupMode.NbtExe, false, false, null, ChemSW.RscAdo.CswEnumPooledConnectionState.Closed );
+                    _CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( CswEnumAppType.Nbt, CswEnumSetupMode.NbtExe, false, null, ChemSW.RscAdo.CswEnumPooledConnectionState.Closed );
 
                     _CswNbtResources.AccessId = AccessId;
                     _CswNbtResources.InitCurrentUser = InitUser;

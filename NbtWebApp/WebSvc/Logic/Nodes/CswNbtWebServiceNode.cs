@@ -458,12 +458,12 @@ namespace ChemSW.Nbt.WebServices
             {
                 // Get a new CswNbtResources as the System User
                 CswNbtWebServiceMetaData wsMd = new CswNbtWebServiceMetaData( _CswNbtResources );
-                CswNbtResources NbtSystemResources = wsMd.makeSystemUserResources( _CswNbtResources.AccessId, false, false );
+                CswNbtResources NbtSystemResources = wsMd.makeSystemUserResources( _CswNbtResources.AccessId, false );
 
                 try
                 {
                     //Reassign required relationships which may be tied to Demo data
-                    CswNbtResources UserSystemResources = wsMd.makeSystemUserResources( _CswNbtResources.AccessId, false, false );
+                    CswNbtResources UserSystemResources = wsMd.makeSystemUserResources( _CswNbtResources.AccessId, false );
                     CswNbtMetaDataObjectClass UserOc = UserSystemResources.MetaData.getObjectClass( CswEnumNbtObjectClass.UserClass );
                     foreach( CswNbtObjClassUser User in UserOc.getNodes( forceReInit: true, includeSystemNodes: false ) )
                     {

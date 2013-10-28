@@ -1,12 +1,12 @@
+using System;
+using System.Collections.Generic;
+using System.Web;
 using ChemSW.Config;
 using ChemSW.Core;
 using ChemSW.Nbt.csw.Security;
 using ChemSW.Nbt.Statistics;
 using ChemSW.Security;
 using ChemSW.Session;
-using System;
-using System.Collections.Generic;
-using System.Web;
 
 
 namespace ChemSW.Nbt
@@ -33,11 +33,11 @@ namespace ChemSW.Nbt
 
 
             CswDbCfgInfo CswDbCfgInfo = new CswDbCfgInfo( CswEnumSetupMode.NbtWeb );
-            CswResourcesMaster = new CswResources( CswEnumAppType.Nbt, SetupVbls, CswDbCfgInfo, false, new CswSuperCycleCacheDefault(), null );
+            CswResourcesMaster = new CswResources( CswEnumAppType.Nbt, SetupVbls, CswDbCfgInfo, new CswSuperCycleCacheDefault(), null );
             CswResourcesMaster.SetDbResources( ChemSW.RscAdo.CswEnumPooledConnectionState.Open );
             CswResourcesMaster.AccessId = CswDbCfgInfo.MasterAccessId;
 
-            CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( CswEnumAppType.Nbt, SetupMode, true, false, CswSuperCycleCache, RscAdo.CswEnumPooledConnectionState.Open, CswResourcesMaster, CswResourcesMaster.CswLogger );
+            CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( CswEnumAppType.Nbt, SetupMode, true, CswSuperCycleCache, RscAdo.CswEnumPooledConnectionState.Open, CswResourcesMaster, CswResourcesMaster.CswLogger );
             
             bool RecordStatistics = false;
             if ( CswConvert.ToBoolean( CswNbtResources.SetupVbls[CswEnumSetupVariableNames.RecordUserStatistics] ) )
