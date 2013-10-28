@@ -23,9 +23,9 @@
                                             <p>
                                                 <h3>#1- <a href="NbtPrintClient/NbtPrintClient.zip">Download the LPC Installation ZIP here</a>.</h3>
                                                 <ul>
-                                                    <li>You may receive an installation security warning from your browser, click OK/Accept.</li>
-                                                    <li>Locate the downloaded ZIP (archive) and extract it, then run SETUP.EXE.</li>
-                                                    <li>Follow the Installer instructions and choose Everyone for easiest use</li>
+                                                    <li>You may receive an installation security warning from your browser, click OK/Accept</li>
+                                                    <li>Locate the downloaded ZIP (archive) and extract it, then run NbtPrintClientSetup.msi</li>
+                                                    <li>Follow the steps of the wizard to install the printer client on your local machine</li>
                                                 </ul>
                                                 <br/><img src="NbtPrintClient/pic1.png"/> 
                                             </p>
