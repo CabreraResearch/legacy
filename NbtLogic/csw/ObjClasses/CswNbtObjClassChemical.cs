@@ -105,6 +105,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Pictograms = "Pictograms";
             public const string LabelCodes = "Label Codes";
             public const string LabelCodesGrid = "Labels Codes Grid";
+            public const string AddLabelCodes = "Add Label Codes";
         }
 
         #endregion Enums
@@ -146,6 +147,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             LabelCodes.InitOptions = _initDsdPhraseOptions;
             LabelCodes.SetOnPropChange( OnLabelCodesChange );
+            AddLabelCodes.SetOnPropChange( OnAddLabelCodesPropChange );
             _setUpDsdPhraseView();
 
             if( false == CswNbtObjClassSDSDocument.materialHasActiveSDS( _CswNbtResources, NodeId ) )
@@ -1207,6 +1209,21 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 _setUpDsdPhraseView();
             }
+        }
+
+        public CswNbtNodePropMemo AddLabelCodes { get { return ( _CswNbtNode.Properties[PropertyName.AddLabelCodes] ); } }
+        private void OnAddLabelCodesPropChange( CswNbtNodeProp Prop, bool Creating )
+        {
+            CswCommaDelimitedString NewGHSCodesDelimited = new CswCommaDelimitedString();
+            NewGHSCodesDelimited.FromString( AddLabelCodes.Text, true );
+            foreach( string LabelCode in NewGHSCodesDelimited )
+            {
+                if( LabelCodes.Options.ContainsValue( LabelCode.Trim().ToUpper() ) )
+                {
+                    LabelCodes.AddValue( LabelCodes.Options.FirstOrDefault( x => x.Value == LabelCode.Trim().ToUpper() ).Key );
+                }
+            }
+            AddLabelCodes.Text = string.Empty;
         }
 
         public CswNbtNodePropGrid LabelCodesGrid { get { return _CswNbtNode.Properties[PropertyName.LabelCodesGrid]; } }
