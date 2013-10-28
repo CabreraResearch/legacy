@@ -6,6 +6,7 @@ using ChemSW.Core;
 using ChemSW.Grid.ExtJs;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
+using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 using ChemSW.Nbt.ServiceDrivers;
@@ -214,6 +215,10 @@ namespace ChemSW.Nbt.Grid
                                                                                   );
                     gridrow.isLocked = Tree.getNodeLockedForCurrentPosition();
                     gridrow.isDisabled = ( false == Tree.getNodeIncludedForCurrentPosition() );
+                    if( null != _CswNbtResources.CurrentNbtUser )
+                    {
+                        gridrow.isFavorite = Tree.getNodeFavoritedForCurrentPosition();
+                    }
 
                     _TreeNodeToGrid( View, Tree, grid, gridrow );
 
@@ -374,6 +379,7 @@ namespace ChemSW.Nbt.Grid
                 CswExtJsGridColumn gridcol = new CswExtJsGridColumn();
                 gridcol.header = CurrentColumn.ColumnName;
                 gridcol.dataIndex = dataIndex;
+                gridcol.width = Math.Max( 100, ( 7 + CurrentColumn.ColumnName.Length*8 ) );
 
                 if( ( NodeIdColName.ToLower() == CurrentColumn.ColumnName.ToLower() ) || ( MenuOptionsColName.ToLower() == CurrentColumn.ColumnName.ToLower() ) )
                 {

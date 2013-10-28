@@ -698,7 +698,7 @@ namespace ChemSW.Nbt.Actions
                             switch( ButtonData.SelectedText )
                             {
                                 case CswEnumNbtContainerRequestMenu.Dispose:
-                                    RetAsUpdate.IsTemp = false; // This is the only condition in which we want to commit the node upfront.
+                                    //RetAsUpdate.IsTemp = false; // This is the only condition in which we want to commit the node upfront.
                                     RetAsUpdate.Type.Value = CswNbtObjClassRequestContainerUpdate.Types.Dispose;
                                     RetAsUpdate.Location.SelectedNodeId = Container.Location.SelectedNodeId;
                                     RetAsUpdate.Location.setReadOnly( value: true, SaveToDb: true );
@@ -718,6 +718,12 @@ namespace ChemSW.Nbt.Actions
                 }; // AfterMakeNode
 
                 ret = PropsAction.getAddNodeAndPostChanges( RequestItemNt, After );
+                if( ButtonData.SelectedText == CswEnumNbtContainerRequestMenu.Dispose )
+                {
+                    // This is the only condition in which we want to commit the node upfront.
+                    ret.PromoteTempToReal();
+                }
+
                 if( null == ret )
                 {
                     throw new CswDniException( CswEnumErrorType.Error, "Could not generate a new request item.", "Failed to create a new Request Item node." );

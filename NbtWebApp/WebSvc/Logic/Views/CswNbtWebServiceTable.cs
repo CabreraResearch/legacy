@@ -135,20 +135,20 @@ namespace ChemSW.Nbt.WebServices
             return ret;
         }
 
-        public JObject makeTableFromTree( ICswNbtTree Tree, Collection<Int32> PropsToHide )
+        public JObject makeTableFromTree( ICswNbtTree Tree, Collection<Int32> PropsToHide, Int32 Page=0, Int32 PageLimit=0 )
         {
 
             JObject ret = new JObject();
             if( Tree != null )
             {
-                Int32 results = _populateDictionary( Tree, PropsToHide );
+                Int32 results = _populateDictionary( Tree, PropsToHide, Page, PageLimit );
 
                 ret["results"] = results; // Tree.getChildNodeCount().ToString();
                 ret["nodetypecount"] = _TableDict.Keys.Count;
                 ret["truncated"] = Tree.getCurrentNodeChildrenTruncated();
                 ret["pagesize"] = _CswNbtResources.CurrentNbtUser.PageSize;
                 ret["nodetypes"] = _dictionaryToJson();
-                ret["searchtype"] = "universal";
+                ret["searchtarget"] = "universal";
             }
             return ret;
         } // makeTableFromTree()
@@ -188,7 +188,7 @@ namespace ChemSW.Nbt.WebServices
                 ret["pagesize"] = _CswNbtResources.CurrentNbtUser.PageSize;
                 ret["nodetypes"] = _dictionaryToJson();
                 ret["importmenu"] = CswNbtWebServiceC3Search.getImportBtnItems( _CswNbtResources );
-                ret["searchtype"] = "chemcatcentral";
+                ret["searchtarget"] = "chemcatcentral";
             }
             return ret;
         }
@@ -202,6 +202,7 @@ namespace ChemSW.Nbt.WebServices
             public string NodeName;
             public bool Locked;
             public bool Disabled;
+            public bool IsFavorite;
             public string ThumbnailUrl;
 
             public bool AllowView;
@@ -236,6 +237,7 @@ namespace ChemSW.Nbt.WebServices
                 NodeObj["c3productid"] = C3ProductId.ToString();
                 NodeObj["locked"] = Locked.ToString().ToLower();
                 NodeObj["disabled"] = Disabled.ToString().ToLower();
+                NodeObj["isFavorite"] = IsFavorite.ToString().ToLower();
                 NodeObj["nodetypeid"] = NodeType.NodeTypeId;
                 NodeObj["nodetypename"] = NodeType.NodeTypeName;
                 NodeObj["thumbnailurl"] = ThumbnailUrl;
@@ -292,10 +294,10 @@ namespace ChemSW.Nbt.WebServices
 
         private Dictionary<CswNbtMetaDataNodeType, Collection<TableNode>> _TableDict = new Dictionary<CswNbtMetaDataNodeType, Collection<TableNode>>();
 
-        private Int32 _populateDictionary( ICswNbtTree Tree, Collection<Int32> PropsToHide )
+        private Int32 _populateDictionary( ICswNbtTree Tree, Collection<Int32> PropsToHide, Int32 Page=0, Int32 PageLimit=0 )
         {
             Int32 results = 0;
-            for( Int32 c = 0; c < Tree.getChildNodeCount(); c++ )
+            for( Int32 c = Math.Max(0, (Page-1)*PageLimit); (c < Tree.getChildNodeCount() && ( PageLimit < 1 || results < PageLimit )); c++ )
             {
                 Tree.goToNthChild( c );
 
@@ -317,6 +319,7 @@ namespace ChemSW.Nbt.WebServices
                         thisNode.NodeName = Tree.getNodeNameForCurrentPosition();
                         thisNode.Locked = Tree.getNodeLockedForCurrentPosition();
                         thisNode.Disabled = ( false == Tree.getNodeIncludedForCurrentPosition() );
+                        thisNode.IsFavorite = Tree.getNodeFavoritedForCurrentPosition();
 
                         thisNode.ThumbnailUrl = _getThumbnailUrl( Tree.getNodeIconForCurrentPosition() );
 

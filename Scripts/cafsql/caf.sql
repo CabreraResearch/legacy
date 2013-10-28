@@ -281,18 +281,15 @@ m."MATERIALVARIETYID",
 m."NONHAZARDOUS3E",
 m."ASSETCREATIONNAME",
 ms.subclassname,
-
 (case m.physical_state
   when 'S' then 'Solid'
   when 'L' then 'Liquid'
   when 'G' then 'Gas'
 end) as physical_state_trans,
-
 (case m.nonhazardous3e
   when '1' then '0'
   when '0' then '1'
 end) as nonhazardous3e_trans
-
 from materials m
              join packages p on p.materialid = m.materialid
              join vendors v on p.supplierid = v.vendorid
@@ -346,12 +343,10 @@ create or replace view sds_view as(
   d.language,
   d.materialid,
   d.documentid || '_' || d.packageid as legacyid,
-  
   (case d.fileextension
         when 'URL' then 'Link'
         else 'File'
    end) as fileextension_trans,
-   
    (case d.language
    when 'english'    then 'en'
    when 'french'     then 'fr'
@@ -364,12 +359,9 @@ create or replace view sds_view as(
    when 'portuguese' then 'pt'
    when 'USA/en'     then 'en'
   end) as language_trans
-  
  from documents d 
  where d.packageid is not null and doctype = 'MSDS' and d.deleted = 0
- 
 union all
- 
 select 
   d2.documentid,
   p.packageid,
@@ -385,12 +377,10 @@ select
   d2.language,
   d2.materialid,
   d2.documentid || '_' || p.packageid as legacyid,
-  
   (case d2.fileextension
    when 'URL' then 'Link'
    else 'File'
   end) as fileextension_trans,
-   
   (case d2.language
    when 'english'    then 'en'
    when 'french'     then 'fr'
@@ -403,7 +393,6 @@ select
    when 'portuguese' then 'pt'
    when 'USA/en'     then 'en'
   end) as language_trans
-  
  from documents d2 
        join materials m on m.materialid = d2.materialid
        join packages p on m.materialid = p.packageid
@@ -428,12 +417,10 @@ create or replace view docs_view as
   d.language,
   d.materialid,
   d.documentid || '_' || d.packageid as legacyid,
-
   (case d.fileextension
         when 'URL' then 'Link'
         else 'File'
    end) as fileextension_trans,
-
    (case d.language
    when 'english'    then 'en'
    when 'french'     then 'fr'
@@ -446,12 +433,9 @@ create or replace view docs_view as
    when 'portuguese' then 'pt'
    when 'USA/en'     then 'en'
   end) as language_trans
-
  from documents d
  where d.packageid is not null and doctype = 'DOC' and d.deleted = 0
-
 union all
-
 select
   d2.documentid,
   p.packageid,
@@ -467,12 +451,10 @@ select
   d2.language,
   d2.materialid,
   d2.documentid || '_' || p.packageid as legacyid,
-
   (case d2.fileextension
    when 'URL' then 'Link'
    else 'File'
   end) as fileextension_trans,
-
   (case d2.language
    when 'english'    then 'en'
    when 'french'     then 'fr'
@@ -485,7 +467,6 @@ select
    when 'portuguese' then 'pt'
    when 'USA/en'     then 'en'
   end) as language_trans
-
  from documents d2
        join materials m on m.materialid = d2.materialid
        join packages p on m.materialid = p.packageid

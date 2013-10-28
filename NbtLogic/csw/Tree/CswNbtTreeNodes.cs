@@ -105,6 +105,7 @@ namespace ChemSW.Nbt
                               true,
                               false,
                               true,
+                              false,
                               out _TreeNode,
                               out _TreeNodeKey );
 
@@ -193,6 +194,7 @@ namespace ChemSW.Nbt
                                        bool ShowInTree,
                                        bool Locked,
                                        bool Included,
+                                       bool Favorited,
                                        out CswNbtTreeNode NewNode,
                                        out CswNbtNodeKey NewNodeKey )
         {
@@ -205,6 +207,7 @@ namespace ChemSW.Nbt
                     ShowInTree = ShowInTree,
                     Locked = Locked,
                     Included = Included,
+                    Favorited = Favorited,
                     ChildNodes = new Collection<CswNbtTreeNode>(),
                     ChildProps = new Collection<CswNbtTreeNodeProp>()
                 };
@@ -379,6 +382,7 @@ namespace ChemSW.Nbt
                                   ViewRoot,
                                   CswEnumNbtNodeSpecies.Root,
                                   true,
+                                  false,
                                   false,
                                   ( ViewRoot != null ) && ViewRoot.Included,
                                   out _RootNode,
@@ -759,20 +763,20 @@ namespace ChemSW.Nbt
         public Collection<CswNbtNodeKey> loadNodeAsChildFromRow( CswNbtNodeKey ParentNodeKey, DataRow DataRowToAdd,
                                                                  bool UseGrouping, string GroupName,
                                                                  CswNbtViewRelationship Relationship, Int32 RowCount,
-                                                                 bool Included = true )
+                                                                 bool Included = true, bool Favorited = false )
         {
             return _loadNodeAsChildFromRow( ParentNodeKey, DataRowToAdd, UseGrouping, GroupName, Relationship,
                                             Relationship.Selectable, Relationship.ShowInTree, Relationship.AddChildren,
-                                            RowCount, Included );
+                                            RowCount, Included, Favorited );
         }
 
         public Collection<CswNbtNodeKey> loadNodeAsChildFromRow( CswNbtNodeKey ParentNodeKey, DataRow DataRowToAdd,
                                                                  bool UseGrouping, string GroupName, bool Selectable,
                                                                  bool ShowInTree, CswEnumNbtViewAddChildrenSetting AddChildren,
-                                                                 Int32 RowCount, bool Included = true )
+                                                                 Int32 RowCount, bool Included = true, bool Favorited = false )
         {
             return _loadNodeAsChildFromRow( ParentNodeKey, DataRowToAdd, UseGrouping, GroupName, null, Selectable,
-                                            ShowInTree, AddChildren, RowCount, Included );
+                                            ShowInTree, AddChildren, RowCount, Included, Favorited );
         }
 
         public void setCurrentNodeExpandMode( string ExpandMode )
@@ -854,6 +858,17 @@ namespace ChemSW.Nbt
             return _CurrentNode.ShowInTree;
         } //getNodeShowInTreeForCurrentPosition()
 
+        public bool getNodeFavoritedForCurrentPosition()
+        {
+            _checkCurrentNode();
+            if( _CurrentNode.ElementName != Elements.Node )
+            {
+                throw ( new CswDniException( "The current node (" + _CurrentNode.ElementName + ") is not a CswNbtNode" ) );
+            }
+
+            return _CurrentNode.Favorited;
+        } //getNodeShowInTreeForCurrentPosition()
+
         public string getNodeIconForCurrentPosition()
         {
             _checkCurrentNode();
@@ -930,7 +945,7 @@ namespace ChemSW.Nbt
                                                                    CswNbtViewRelationship Relationship, bool Selectable,
                                                                    bool ShowInTree,
                                                                    CswEnumNbtViewAddChildrenSetting AddChildren, Int32 RowCount,
-                                                                   bool Included = true )
+                                                                   bool Included = true, bool Favorited = false )
         {
             CswNbtMetaDataNodeType NodeType =
                 _CswNbtResources.MetaData.getNodeType(
@@ -950,7 +965,8 @@ namespace ChemSW.Nbt
                                      CswConvert.ToInt32(
                                          DataRowToAdd[_CswNbtColumnNames.ObjectClassId.ToLower()].ToString() ),
                                      DataRowToAdd[_CswNbtColumnNames.ObjectClassName.ToLower()].ToString(),
-                                     CswConvert.ToBoolean( DataRowToAdd[_CswNbtColumnNames.Locked.ToLower()] )
+                                     CswConvert.ToBoolean( DataRowToAdd[_CswNbtColumnNames.Locked.ToLower()] ),
+                                     Favorited
                 );
         }
 
@@ -962,7 +978,7 @@ namespace ChemSW.Nbt
                                                            string IconFileName, string NameTemplate,
                                                            CswPrimaryKey NodeId, string NodeName, Int32 NodeTypeId,
                                                            string NodeTypeName, Int32 ObjectClassId,
-                                                           string ObjectClassName, bool Locked )
+                                                           string ObjectClassName, bool Locked, bool Favorited )
         {
             Collection<CswNbtNodeKey> ReturnKeyColl = new Collection<CswNbtNodeKey>();
 
@@ -1009,6 +1025,7 @@ namespace ChemSW.Nbt
                                           true,
                                           false,
                                           true,
+                                          false,
                                           out MatchingGroup,
                                           out MatchingGroupKey );
                     }
@@ -1039,6 +1056,7 @@ namespace ChemSW.Nbt
                                   ShowInTree,
                                   Locked,
                                   Included,
+                                  Favorited,
                                   out ThisNode,
                                   out ThisKey );
                 ReturnKeyColl.Add( ThisKey );

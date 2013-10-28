@@ -11,7 +11,6 @@ namespace ChemSW.Nbt
 
     public class CswNbtNodeReaderDataNative : ICswNbtNodeReaderData
     {
-        private ChemSW.Audit.CswAuditMetaData _CswAuditMetaData = new CswAuditMetaData();
         private CswNbtResources _CswNbtResources = null;
         public CswNbtNodeReaderDataNative( CswNbtResources CswNbtResources )
         {
@@ -39,24 +38,7 @@ namespace ChemSW.Nbt
 
             if( NodesTable.Rows.Count > 0 )
             {
-                CswNbtNode.NodeTypeId = CswConvert.ToInt32( NodesTable.Rows[0]["nodetypeid"] );
-                CswNbtNode.NodeName = NodesTable.Rows[0]["nodename"].ToString();
-                CswNbtNode.setReadOnly( value: CswConvert.ToBoolean( NodesTable.Rows[0]["readonly"] ), SaveToDb: true );
-                CswNbtNode.IsDemo = CswConvert.ToBoolean( NodesTable.Rows[0]["isdemo"] );
-                CswNbtNode.Locked = CswConvert.ToBoolean( NodesTable.Rows[0]["locked"] );
-                CswNbtNode.IsTemp = CswConvert.ToBoolean( NodesTable.Rows[0]["istemp"] );
-                CswNbtNode.SessionId = CswConvert.ToString( NodesTable.Rows[0]["sessionid"] );
-                CswNbtNode.PendingUpdate = CswConvert.ToBoolean( NodesTable.Rows[0]["pendingupdate"] );
-                CswNbtNode.Searchable = CswConvert.ToBoolean( NodesTable.Rows[0]["searchable"] );
-
-                if( NodesTable.Columns.Contains( _CswAuditMetaData.AuditLevelColName ) )
-                {
-                    CswNbtNode.AuditLevel = NodesTable.Rows[0][_CswAuditMetaData.AuditLevelColName].ToString();
-                }
-                else
-                {
-                    CswNbtNode.AuditLevel = _CswAuditMetaData.DefaultAuditLevel;
-                }
+                CswNbtNode.read( NodesTable.Rows[0] );
             }
 
             ReturnVal = true;

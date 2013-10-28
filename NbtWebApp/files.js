@@ -12,6 +12,7 @@ module.exports.app = [
     'app/events/**.js',
     'app/literals/**.js',
     'app/composites/**.js',
+	'app/composites/buttons/**.js',
     'app/actions/**.js',
     'app/layouts/**.js',
     'app/dialogs/**.js',

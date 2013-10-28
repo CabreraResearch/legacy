@@ -96,6 +96,7 @@ namespace ChemSW.Nbt
                     ThisParentNodeId = CswConvert.ToInt32( NodesRow["parentnodeid"] );
                 }
                 Int32 ThisNodeTypeId = CswConvert.ToInt32( NodesRow["nodetypeid"] );
+                bool ThisNodeFavorited = false == String.IsNullOrEmpty( NodesRow["userid"].ToString() );
 
                 // Verify permissions
                 // this could be a performance problem
@@ -166,7 +167,7 @@ namespace ChemSW.Nbt
                                 {
                                     _CswNbtTree.makeNodeCurrent( ParentNodeKey );
                                     Int32 ChildCount = _CswNbtTree.getChildNodeCount();
-                                    ThisNewNodeKeys = _CswNbtTree.loadNodeAsChildFromRow( ParentNodeKey, NodesRow, UseGroupBy, GroupName, Relationship, ChildCount + 1, Included );
+                                    ThisNewNodeKeys = _CswNbtTree.loadNodeAsChildFromRow( ParentNodeKey, NodesRow, UseGroupBy, GroupName, Relationship, ChildCount + 1, Included, ThisNodeFavorited );
                                     foreach( CswNbtNodeKey ThisNewNodeKey in ThisNewNodeKeys )
                                     {
                                         NewNodeKeys.Add( ThisNewNodeKey );
@@ -179,7 +180,7 @@ namespace ChemSW.Nbt
                         else
                         {
                             Int32 ChildCount = _CswNbtTree.getChildNodeCount();
-                            ThisNewNodeKeys = _CswNbtTree.loadNodeAsChildFromRow( null, NodesRow, UseGroupBy, GroupName, Relationship, ChildCount + 1, Included );
+                            ThisNewNodeKeys = _CswNbtTree.loadNodeAsChildFromRow( null, NodesRow, UseGroupBy, GroupName, Relationship, ChildCount + 1, Included, ThisNodeFavorited );
                             foreach( CswNbtNodeKey ThisNewNodeKey in ThisNewNodeKeys )
                             {
                                 NewNodeKeys.Add( ThisNewNodeKey );
@@ -263,6 +264,11 @@ namespace ChemSW.Nbt
 
         private string _makeNodeSql( CswNbtViewRelationship Relationship, IEnumerable<CswPrimaryKey> ParentNodeIds = null )
         {
+            string CurrentUserIdClause = string.Empty;
+            if( null != _CswNbtResources.CurrentNbtUser && null != _CswNbtResources.CurrentNbtUser.UserId )
+            {
+                CurrentUserIdClause = " and f.userid = " + _CswNbtResources.CurrentNbtUser.UserId.PrimaryKey;
+            }
             CswCommaDelimitedString With = new CswCommaDelimitedString();
             string Select = @"select n.nodeid,
                                      n.nodename, 
@@ -272,8 +278,10 @@ namespace ChemSW.Nbt
                                      t.nametemplate,
                                      t.nodetypeid,
                                      o.objectclass,
-                                     o.objectclassid ";
+                                     o.objectclassid,
+                                     f.userid";
             string From = @"from nodes n
+                            left join favorites f on n.nodeid = f.itemid " + CurrentUserIdClause + @"
                             join nodetypes t on (n.nodetypeid = t.nodetypeid)
                             join object_class o on (t.objectclassid = o.objectclassid) ";
             string Where = " where n.istemp= '0' ";
@@ -360,7 +368,7 @@ namespace ChemSW.Nbt
             } // if( Relationship.PropId != Int32.MinValue )
 
             CswCommaDelimitedString OrderByProps = new CswCommaDelimitedString();
-
+            OrderByProps.Add( "f.userid" );
             // Grouping
             if( Relationship.GroupByPropId != Int32.MinValue )
             {

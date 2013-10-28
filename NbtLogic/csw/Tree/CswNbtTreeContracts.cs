@@ -228,6 +228,8 @@ namespace ChemSW.Nbt
         [DataMember( EmitDefaultValue = false, IsRequired = false, Name = "Truncated", Order = 14 )]
         public bool Truncated;
 
+        [DataMember( EmitDefaultValue = false, IsRequired = false, Name = "Favorited", Order = 15 )]
+        public bool Favorited;
     }
 
 }//namespace ChemSW.Nbt

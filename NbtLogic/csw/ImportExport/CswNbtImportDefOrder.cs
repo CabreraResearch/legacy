@@ -66,9 +66,9 @@ namespace ChemSW.Nbt.ImportExport
         public static DataTable getDataTableForNewOrderEntries()
         {
             DataTable Table = new DataTable();
-            Table.Columns.Add( "sheet" );
-            Table.Columns.Add( "nodetype" );
-            Table.Columns.Add( "order" );
+            Table.Columns.Add( "sheetname" );
+            Table.Columns.Add( "nodetypename" );
+            Table.Columns.Add( "importorder" );
             Table.Columns.Add( "instance" );
             return Table;
         }
@@ -82,16 +82,16 @@ namespace ChemSW.Nbt.ImportExport
             DataTable importOrderTable = importOrderUpdate.getEmptyTable();
             foreach( DataRow OrderRow in OrderDataTable.Rows )
             {
-                string SheetName = OrderRow["sheet"].ToString();
+                string SheetName = OrderRow["sheetname"].ToString();
                 if( false == string.IsNullOrEmpty( SheetName ) )
                 {
-                    string NTName = OrderRow["nodetype"].ToString();
+                    string NTName = OrderRow["nodetypename"].ToString();
                     CswNbtMetaDataNodeType NodeType = CswNbtResources.MetaData.getNodeType( NTName );
                     if( null != NodeType )
                     {
                         DataRow row = importOrderTable.NewRow();
                         row[CswNbtImportTables.ImportDefOrder.importdefid] = DefIdsBySheetName[SheetName];
-                        row[CswNbtImportTables.ImportDefOrder.importorder] = CswConvert.ToDbVal( CswConvert.ToInt32( OrderRow["order"] ) );
+                        row[CswNbtImportTables.ImportDefOrder.importorder] = CswConvert.ToDbVal( CswConvert.ToInt32( OrderRow["importorder"] ) );
                         row[CswNbtImportTables.ImportDefOrder.nodetypename] = NTName;
                         row[CswNbtImportTables.ImportDefOrder.instance] = CswConvert.ToDbVal( OrderRow["instance"].ToString() );
                         importOrderTable.Rows.Add( row );
