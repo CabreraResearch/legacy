@@ -69,7 +69,7 @@ namespace ChemSW.Nbt.WebServices
             public Collection<DataSource> AvailableDataSources = new Collection<DataSource>();
 
             [DataMember]
-            public List<string> SearchTypes = new List<string>();
+            public List<string> SearchProperties = new List<string>();
 
             [DataMember]
             public string SearchResults = string.Empty;
@@ -303,10 +303,10 @@ namespace ChemSW.Nbt.WebServices
             }
         }
 
-        public static void GetSearchTypes( ICswResources CswResources, CswNbtC3SearchReturn Return, CswC3Params CswC3Params )
+        public static void GetSearchProperties( ICswResources CswResources, CswNbtC3SearchReturn Return, CswC3Params CswC3Params )
         {
-            List<string> SearchTypes = ( from CswC3SearchParams.SearchFieldType SearchType in Enum.GetValues( typeof( CswC3SearchParams.SearchFieldType ) ) select SearchType.ToString() ).ToList();
-            Return.Data.SearchTypes = SearchTypes;
+            List<string> SearchProperties = ( from CswC3SearchParams.SearchFieldType SearchType in Enum.GetValues( typeof( CswC3SearchParams.SearchFieldType ) ) select SearchType.ToString() ).ToList();
+            Return.Data.SearchProperties = SearchProperties;
         }
 
         public static void GetC3ProductDetails( ICswResources CswResources, CswNbtC3SearchReturn Return, CswC3SearchParams CswC3SearchParams )
@@ -353,7 +353,7 @@ namespace ChemSW.Nbt.WebServices
                 Ret["searchterm"] = CswC3SearchParams.Query;
                 Ret["filtersapplied"] = "";
                 Ret["sessiondataid"] = "";
-                Ret["searchtype"] = "chemcatcentral";
+                Ret["searchtarget"] = "chemcatcentral";
 
                 Return.Data.SearchResults = Ret.ToString();
             }
@@ -982,14 +982,15 @@ namespace ChemSW.Nbt.WebServices
                                     string propAttr = new CswPropIdAttr( Node, NTP ).ToString();
                                     string molData = C3Mapping.C3ProductPropertyValue;
 
-                                    string Href;
-                                    string FormattedMolString;
                                     CswNbtSdBlobData SdBlobData = new CswNbtSdBlobData( _CswNbtResources );
 
                                     MolecularGraph Mol = MoleculeBuilder.CreateMolFromString( molData );
                                     if( false == Mol.ContainsInvalidAtom() )
                                     {
-                                        SdBlobData.saveMol( molData, propAttr, out Href, out FormattedMolString, Node: Node );
+                                        string Href;
+                                        string FormattedMolString;
+                                        string errorMsg;
+                                        SdBlobData.saveMol( molData, propAttr, out Href, out FormattedMolString, out errorMsg, Node: Node );
                                     }
                                     else
                                     {

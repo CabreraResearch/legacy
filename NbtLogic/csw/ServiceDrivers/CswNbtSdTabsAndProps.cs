@@ -109,6 +109,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                     Ret["node"]["nodename"] = Node.NodeName;
                 } // if-else( filterToPropId != string.Empty )
                 Ret["node"]["nodetypeid"] = NodeTypeId;
+                Ret["node"]["isFavorite"] = Node.isFavorite();
             }
             return Ret;
         } // getTabs()
@@ -344,8 +345,9 @@ namespace ChemSW.Nbt.ServiceDrivers
                         if( _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Add && false == HasEditableProps )
                         {
                             //Case 29531 - There are no props on the Add layout, so just save the node - the client will skip the add dialog
-                            Node.IsTemp = false;
+                            //Node.IsTemp = false;
                             Node.postChanges( ForceUpdate: false );
+                            Node.PromoteTempToReal();
                         }
                         else
                         {
@@ -572,6 +574,13 @@ namespace ChemSW.Nbt.ServiceDrivers
                 }
 
                 PropObj["gestalt"] = PropWrapper.Gestalt.Replace( "\"", "&quot;" );
+
+                // case 30702
+                if( null != Prop.Date && Int32.MinValue == PropWrapper.JctNodePropId )
+                {
+                    PropObj["helptext"] = "[No Audit Data Available]";
+                }
+
                 PropObj["highlight"] = PropWrapper.AuditChanged.ToString().ToLower();
                 PropWrapper.ToJSON( PropObj );
             }
@@ -740,10 +749,6 @@ namespace ChemSW.Nbt.ServiceDrivers
                         case CswEnumNbtNodeEditMode.Add:
                             if( null != Node )
                             {
-                                if( setIsTempToFalse )
-                                {
-                                    Node.IsTemp = false;
-                                }
                                 addNode( NodeType, Node, PropsObj, out RetNbtNodeKey, null, View, NodeTypeTab );
                             }
                             else
@@ -809,8 +814,15 @@ namespace ChemSW.Nbt.ServiceDrivers
                     ret["nodelink"] = Node.NodeLink;
                     ret["nodeid"] = Node.NodeId.ToString();
                     ret["action"] = _determineAction( Node.ObjClass.ObjectClass.ObjectClass );
+
+
+                    if( setIsTempToFalse )
+                    {
+                        Node.PromoteTempToReal();
+                    }
                 }
-            }
+            } // if( PropsObj.HasValues )
+
             return ret;
         } // saveProps()
 

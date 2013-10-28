@@ -40,8 +40,8 @@
                 columns: cswPrivate.gridData[tabName].columns,
                 data: cswPrivate.gridData[tabName].data,
                 showActionColumn: false,
-                width: cswPrivate.width - 100,
-                height: cswPrivate.height - 100,
+                width: cswPrivate.width - 42,
+                height: cswPrivate.height - 152,
                 usePaging: false,
             });
             
@@ -59,13 +59,16 @@
             });
             bindingsDialog.open();
 
+         //create a container for other UI elements
+            var contentArea = bindingsDialog.div.table({ cellpadding: 5 });
+
          //create the tab container for the binding grids
-            var tabstrip = bindingsDialog.div.tabStrip({
+            var tabstrip = contentArea.cell(1,1).tabStrip({
                 onTabSelect: cswPrivate.updateDisplayedTab,
             });
-            tabstrip.setSize({ width: cswPrivate.width -100, height: cswPrivate.height - 100 });
+            tabstrip.setSize({ width: cswPrivate.width -40, height: cswPrivate.height - 100 });
             
-            tabstrip.setTitle('Import Definition');
+            tabstrip.setTitle('Import Definition for ' + cswPrivate.importDefName);
             cswPrivate.tabs.Order = tabstrip.addTab({ title: 'Order' });
             cswPrivate.tabs.Bindings = tabstrip.addTab({ title: 'Bindings' });
             cswPrivate.tabs.Relationships = tabstrip.addTab({ title: 'Relationships' });
@@ -75,7 +78,7 @@
             
 
             //create a download button for the current binding
-            var downloadBindings = bindingsDialog.div.buttonExt({
+            var downloadBindings = contentArea.cell(2,1).buttonExt({
                 enabledText: 'Download Bindings',
                 disabledText: 'Generating File...',
                 disableOnClick: false,

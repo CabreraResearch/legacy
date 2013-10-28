@@ -1074,9 +1074,9 @@
                 });//searchTypeSelect
 
                 Csw.ajaxWcf.post({
-                    urlMethod: 'ChemCatCentral/GetSearchTypes',
+                    urlMethod: 'ChemCatCentral/GetSearchProperties',
                     success: function (data) {
-                        searchTypeSelect.setOptions(searchTypeSelect.makeOptions(data.SearchTypes));
+                        searchTypeSelect.setOptions(searchTypeSelect.makeOptions(data.SearchProperties));
                     }
                 });
 

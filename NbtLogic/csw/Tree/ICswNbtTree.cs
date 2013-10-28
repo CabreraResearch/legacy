@@ -200,6 +200,10 @@ namespace ChemSW.Nbt
         /// </summary>
         bool getNodeShowInTreeForCurrentPosition();
         /// <summary>
+        /// True if the currently indexed node is marked as Favorite for the current user, false otherwise
+        /// </summary>
+        bool getNodeFavoritedForCurrentPosition();
+        /// <summary>
         /// Returns the icon for the currently indexed node
         /// </summary>
         string getNodeIconForCurrentPosition();
@@ -251,7 +255,7 @@ namespace ChemSW.Nbt
         /// <param name="RowCount"></param>
         /// <param name="Included"></param>
         /// <returns>Returns NodeKey index for node</returns>
-        Collection<CswNbtNodeKey> loadNodeAsChildFromRow( CswNbtNodeKey ParentNodeKey, DataRow DataRowToAdd, bool UseGrouping, string GroupName, CswNbtViewRelationship Relationship, Int32 RowCount, bool Included = true );
+        Collection<CswNbtNodeKey> loadNodeAsChildFromRow( CswNbtNodeKey ParentNodeKey, DataRow DataRowToAdd, bool UseGrouping, string GroupName, CswNbtViewRelationship Relationship, Int32 RowCount, bool Included = true, bool Favorited = false );
 
         /// <summary>
         /// Adds a Child from a DataRow.  Used by TreeLoaders.
@@ -266,7 +270,7 @@ namespace ChemSW.Nbt
         /// <param name="RowCount"></param>
         /// <param name="Included"></param>
         /// <returns>Returns NodeKey index for node</returns>
-        Collection<CswNbtNodeKey> loadNodeAsChildFromRow( CswNbtNodeKey ParentNodeKey, DataRow DataRowToAdd, bool UseGrouping, string GroupName, bool Selectable, bool ShowInTree, CswEnumNbtViewAddChildrenSetting AddChildren, Int32 RowCount, bool Included = true );
+        Collection<CswNbtNodeKey> loadNodeAsChildFromRow( CswNbtNodeKey ParentNodeKey, DataRow DataRowToAdd, bool UseGrouping, string GroupName, bool Selectable, bool ShowInTree, CswEnumNbtViewAddChildrenSetting AddChildren, Int32 RowCount, bool Included = true, bool Favorited = false );
 
         /// <summary>
         /// Sets the client-side expandmode of the current node

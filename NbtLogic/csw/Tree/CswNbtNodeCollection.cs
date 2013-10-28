@@ -183,14 +183,12 @@ namespace ChemSW.Nbt
                 }
                 else
                 {
-                    Node = makeNode( HashKey, NodeTypeId, Date );
-                    if( false == CswTools.IsDate( Date ) && null != Node )
-                    {
-                        Node = (CswNbtNode) _NodeHash[HashKey];
-                    }
+                    Node = _getExistingNode( HashKey, NodeTypeId, Date );
+                    //if( false == CswTools.IsDate( Date ) && null != Node )
+                    //{
+                    //    Node = (CswNbtNode) _NodeHash[HashKey];
+                    //}
                 }
-                //if( !NodeHash.ContainsKey( HashKey ) )
-                //    throw new CswDniException( "Invalid Node", "Failed to find node with nodeid=" + NodeId.ToString() + ", species=" + Species.ToString() );
             }
             return Node;
         }//GetNode()
@@ -351,23 +349,11 @@ namespace ChemSW.Nbt
         /// <remark>
         /// We need a NodeTypeId because the NodeId is missing from the HashKey if this is a new node we're about to add
         /// </remark>
-        private CswNbtNode makeNode( NodeHashKey HashKey, Int32 NodeTypeId, CswDateTime Date )
+        private CswNbtNode _getExistingNode( NodeHashKey HashKey, Int32 NodeTypeId, CswDateTime Date )
         {
             CswTimer Timer = new CswTimer();
-            //CswNbtNode Node = new CswNbtNode( _CswNbtResources, NodeTypeId, HashKey.Species, NodeHash.Count, _ICswNbtObjClassFactory );
             CswNbtNode Node = _CswNbtNodeFactory.make( CswEnumNbtNodeSpecies.Plain, HashKey.NodeId, NodeTypeId, _NodeHash.Count, Date );
 
-            //bz # 5943
-            //Node.OnRequestWriteNode = new CswNbtNode.OnRequestWriteNodeHandler( _CswNbtNodeWriter.write );
-            //Node.OnRequestDeleteNode = new CswNbtNode.OnRequestDeleteNodeHandler( _CswNbtNodeWriter.delete );
-            //Node.OnRequestFill = new CswNbtNode.OnRequestFillHandler( _CswNbtNodeReader.completeNodeData );
-            //Node.OnRequestFillFromNodeTypeId = new CswNbtNode.OnRequestFillFromNodeTypeIdHandler( _CswNbtNodeReader.fillFromNodeTypeIdWithProps );
-
-
-            //Node.NodeId = HashKey.NodeId;
-
-            //bz # 5943
-            //_CswNbtNodeReader.completeNodeData( Node );
             //bz # 7816 -- only add to the collection if the node got filled
             Node.fill( Date );
             if( Node.Filled )
@@ -377,59 +363,14 @@ namespace ChemSW.Nbt
                     _NodeHash.Add( HashKey, Node );
                 }
                 _CswNbtResources.logTimerResult( "CswNbtNodeCollection.makeNode on NodeId (" + HashKey.NodeId.ToString() + ")", Timer.ElapsedDurationInSecondsAsString );
-
-                //Node.OnAfterSetNodeId += new CswNbtNode.OnSetNodeIdHandler( OnAfterSetNodeIdHandler );
                 Node.OnRequestDeleteNode += OnAfterDeleteNode;
             }
             else
             {
                 Node = null;
             }
-
             return Node;
         }
-        ///// <summary>
-        ///// Create a new, fresh, empty Node.
-        ///// Property data is not fetched.  
-        ///// The Node is only cached if the NodeId > 0.  
-        ///// To get a node and its property data, use <see cref="CswNbtNodeCollection.GetNode(int, int, NodeSpecies)"/>
-        ///// </summary>
-        ///// <remarks>
-        ///// We may not want to support this using this paradigm, but for now...
-        ///// </remarks>
-        ///// <param name="NodeId">Primary Key of Node</param>
-        ///// <param name="NodeTypeId">Primary Key of NodeTypeId</param>
-        ///// <param name="Species"><see cref="NodeSpecies"/></param>
-        //public CswNbtNode makeEmptyNode( Int32 NodeId, Int32 NodeTypeId, NodeSpecies Species )
-        //{
-        //    //CswNbtNode Node = new CswNbtNode( _CswNbtResources, NodeTypeId, Species, NodeHash.Count, _ICswNbtObjClassFactory );
-        //    CswNbtNode Node = _CswNbtNodeFactory.make( NodeSpecies.Plain, NodeTypeId, NodeHash.Count );
-
-
-        //    //bz # 5943
-        //    //Node.OnRequestWriteNode = new CswNbtNode.OnRequestWriteNodeHandler( _CswNbtNodeWriter.write );
-        //    //Node.OnRequestDeleteNode = new CswNbtNode.OnRequestDeleteNodeHandler( _CswNbtNodeWriter.delete );
-        //    //Node.OnRequestFill = new CswNbtNode.OnRequestFillHandler( _CswNbtNodeReader.completeNodeData );
-        //    //Node.OnRequestFillFromNodeTypeId = new CswNbtNode.OnRequestFillFromNodeTypeIdHandler( _CswNbtNodeReader.fillFromNodeTypeIdWithProps );
-
-        //    Node.NodeId = NodeId;
-
-
-        //    //_CswNbtNodeReader.completeNodeData(Node);
-        //    //if(NodeId > 0)
-        //    NodeHash.Add( new NodeHashKey( NodeId, Species ), Node );
-
-        //    Node.OnAfterSetNodeId += new CswNbtNode.OnSetNodeIdHandler( OnAfterSetNodeIdHandler );
-        //    Node.OnRequestDeleteNode += new CswNbtNode.OnRequestDeleteNodeHandler( OnAfterDeleteNode );
-
-        //    return Node;
-        //}
-
-        //private void OnAfterSetNodeIdHandler( CswNbtNode Node, CswPrimaryKey OldNodeId, CswPrimaryKey NewNodeId )
-        //{
-        //    NodeHash.Remove( new NodeHashKey( OldNodeId, Node.NodeSpecies ) );
-        //    NodeHash.Add( new NodeHashKey( NewNodeId, Node.NodeSpecies ), Node );
-        //}
 
         private void OnAfterDeleteNode( CswNbtNode Node )
         {
@@ -448,8 +389,8 @@ namespace ChemSW.Nbt
         /// <returns>The new node. !!POSTS CHANGES!!</returns>
         public CswNbtNode makeNodeFromNodeTypeId( Int32 NodeTypeId, AfterMakeNode OnAfterMakeNode = null, bool IsTemp = false, bool OverrideUniqueValidation = false )
         {
-            CswNbtNode Node = _CswNbtNodeFactory.make( CswEnumNbtNodeSpecies.Plain, null, NodeTypeId, _NodeHash.Count, null );
-            Node.IsTemp = IsTemp;
+            CswNbtNode Node = _CswNbtNodeFactory.make( CswEnumNbtNodeSpecies.Plain, null, NodeTypeId, _NodeHash.Count, null, IsTemp: true );  // temp here for auditing, but see below
+            //Node.IsTemp = IsTemp;
             //Node.OnAfterSetNodeId += new CswNbtNode.OnSetNodeIdHandler( OnAfterSetNodeIdHandler );
             Node.OnRequestDeleteNode += OnAfterDeleteNode;
             Node.fillFromNodeTypeId( NodeTypeId );
@@ -462,7 +403,6 @@ namespace ChemSW.Nbt
                 OnAfterMakeNode( Node );
             }
 
-            Node.postChanges( ForceUpdate: true, IsCopy: false, OverrideUniqueValidation: OverrideUniqueValidation, IsCreate: true );
 
             //if( Node.NodeId != Int32.MinValue )
             //{
@@ -473,8 +413,18 @@ namespace ChemSW.Nbt
             NodeHashKey Hashkey = new NodeHashKey( Node.NodeId, Node.NodeSpecies );
             _NodeHash[Hashkey] = Node;
 
-            return ( Node );
+            if( false == IsTemp )
+            {
+                // we have to do this separately so that the audit record will show as an INSERT instead of an UPDATE
+                // It will however do postChanges()
+                Node.PromoteTempToReal( IsCreate: true, OverrideUniqueValidation: OverrideUniqueValidation );
+            }
+            else
+            {
+                Node.postChanges( ForceUpdate: true, IsCopy: false, OverrideUniqueValidation: OverrideUniqueValidation, IsCreate: true );
+            }
 
+            return ( Node );
         }//makeNodeFromNodeTypeId()
 
 

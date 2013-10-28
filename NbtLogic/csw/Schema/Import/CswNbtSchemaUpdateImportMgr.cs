@@ -144,7 +144,7 @@ namespace ChemSW.Nbt.csw.Schema
         private void _importDef()
         {
             DataRow row = _importDefTable.NewRow();
-            row["sheet"] = SheetName;
+            row["sheetname"] = SheetName;
             row["sheetorder"] = _SheetOrder[SheetName];
             row["tablename"] = _SourceTableName;
             row["viewname"] = _ViewName;
@@ -158,9 +158,9 @@ namespace ChemSW.Nbt.csw.Schema
             if( CswAll.AreStrings( _SourceTableName, NodeTypeName ) )
             {
                 DataRow row = _importOrderTable.NewRow();
-                row["sheet"] = SheetName;
-                row["nodetype"] = NodeTypeName;
-                row["order"] = Order;
+                row["sheetname"] = SheetName;
+                row["nodetypename"] = NodeTypeName;
+                row["importorder"] = Order;
                 row["instance"] = Instance;
                 _importOrderTable.Rows.Add( row );
             }
@@ -177,9 +177,9 @@ namespace ChemSW.Nbt.csw.Schema
                     _SourceColumns.Add( SourceColumnName, AllowNullOrEmpty: false, IsUnique: true );
 
                     DataRow row = _importBindingsTable.NewRow();
-                    row["sheet"] = SheetName;
-                    row["destnodetype"] = DestNodeTypeName;
-                    row["destproperty"] = DestPropertyName;
+                    row["sheetname"] = SheetName;
+                    row["destnodetypename"] = DestNodeTypeName;
+                    row["destpropname"] = DestPropertyName;
                     row["destsubfield"] = DestSubFieldName;
                     row["sourcecolumnname"] = SourceColumnName;
                     row["instance"] = Instance;
@@ -198,8 +198,8 @@ namespace ChemSW.Nbt.csw.Schema
                 if( CswAll.AreStrings( SheetName, NodetypeName, RelationshipPropName ) )
                 {
                     DataRow row = _importRelationshipsTable.NewRow();
-                    row["sheet"] = SheetName;
-                    row["nodetype"] = NodetypeName;
+                    row["sheetname"] = SheetName;
+                    row["nodetypename"] = NodetypeName;
                     row["relationship"] = RelationshipPropName;
                     row["instance"] = Instance;
                     row["sourcerelcolumnname"] = SourceRelColumnName;
@@ -236,7 +236,7 @@ namespace ChemSW.Nbt.csw.Schema
 
                 //Add the Legacy ID before storing the definition
                 // We check to see if someone already added the Legacy Id
-                bool AlreadyExists = _importBindingsTable.Rows.Cast<DataRow>().Any( Row => Row["destproperty"].ToString() == LegacyID );
+                bool AlreadyExists = _importBindingsTable.Rows.Cast<DataRow>().Any( Row => Row["destpropname"].ToString() == LegacyID );
                 if( false == AlreadyExists ) { importBinding( SourceTablePkColumnName, LegacyID, "" ); }
 
                 //Save the bindings in the DB

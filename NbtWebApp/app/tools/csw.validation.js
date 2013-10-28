@@ -20,7 +20,9 @@
             },
             wasModified: false,
             onValidation: null,
-            errorMsg: 'This field is required.'
+            className: 'validateComboBox',
+            errorMsg: 'This field is required.',
+            isExtJsControl: true
         };
 
         Csw.extend(cswPrivate, options);
@@ -40,9 +42,16 @@
         // Create the hidden input
         cswPublic.input = cswParent.input().css(cswPrivate.cssOptions);
         cswPublic.input.required(true);
-        cswPublic.input.addClass('validateComboBox');
+        cswPublic.input.addClass(cswPrivate.className);
 
-        if (false === Csw.isNullOrEmpty(validatedControl.getValue())) {
+        var currValue = "";
+        if (cswPrivate.isExtJsControl) {
+            currValue = validatedControl.getValue();
+        } else {
+            currValue = validatedControl.val();
+        }
+
+        if (false === Csw.isNullOrEmpty(currValue)) {
             cswPublic.input.val(true);
         } else {
             cswPublic.input.val(false);
@@ -53,9 +62,11 @@
             cswPrivate.onValidation(valid);
         }
 
-        $.validator.addMethod('validateComboBox', function () {
+        $.validator.addMethod(cswPrivate.className, function () {
             var valid = Csw.bool(cswPublic.input.val());
-            cswPrivate.onValidation(valid);
+            if (false == Csw.isNullOrEmpty(cswPrivate.onValidation)) {
+                cswPrivate.onValidation(valid);
+            }
             return valid;
         }, cswPrivate.errorMsg);
 

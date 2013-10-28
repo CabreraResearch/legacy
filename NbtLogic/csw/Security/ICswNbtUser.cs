@@ -36,7 +36,8 @@ namespace ChemSW.Nbt.Security
         new bool PasswordIsExpired { get; }
         string Language { get; }
         CswNbtPropertySetPermission getPermissionForGroup( CswPrimaryKey PermissionGroupId );
-        Dictionary<CswPrimaryKey, CswPrimaryKey> getUserPermissions( CswEnumNbtObjectClass PermGroupType = null, bool RequireEdit = false );
+        bool hasUserPermissions( CswEnumNbtObjectClass PermObjectClass = null, bool RequireEdit = false );
+        Dictionary<CswPrimaryKey, CswPrimaryKey> getUserPermissions( CswEnumNbtObjectClass PermObjectClass = null, bool RequireEdit = false );
 
     }//ICswNbtUser
 }//namespace ChemSW.Nbt

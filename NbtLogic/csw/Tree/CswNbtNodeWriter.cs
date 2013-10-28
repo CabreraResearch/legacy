@@ -80,7 +80,7 @@ namespace ChemSW.Nbt
             }
         }//makeNewNodeEntry()
 
-        public void write( CswNbtNode Node, bool ForceSave, bool IsCopy, bool OverrideUniqueValidation, bool Creating )
+        public void write( CswNbtNode Node, bool ForceSave, bool IsCopy, bool OverrideUniqueValidation, bool Creating, bool AllowAuditing )
         {
             if( CswEnumNbtNodeSpecies.Plain == Node.NodeSpecies &&
                 ( ForceSave || CswEnumNbtNodeModificationState.Modified == Node.ModificationState ) )
@@ -91,20 +91,16 @@ namespace ChemSW.Nbt
                 if( null == Node.NodeId )
                 {
                     makeNewNodeEntry( Node );
-                    //setDefaultPropertyValues( Node );
                 }
 
-                //propcoll knows whether or not he's got new 
-                //values to update (presumably)
-
                 //bz # 5878
-                //Node.Properties.ManageTransaction = _ManageTransaction;
-                Node.Properties.update( Node, IsCopy, OverrideUniqueValidation, Creating, null );
+                //propcoll knows whether or not he's got new values to update (presumably)
+                Node.Properties.update( Node, IsCopy, OverrideUniqueValidation, Creating, null, AllowAuditing );
 
                 //set nodename with updated prop values
                 _synchNodeName( Node );
 
-                getWriterImpl( Node.NodeId ).write( Node, ForceSave, IsCopy );
+                getWriterImpl( Node.NodeId ).write( Node, ForceSave, IsCopy, AllowAuditing );
 
             }//if node was modified
 
@@ -207,6 +203,15 @@ namespace ChemSW.Nbt
             }
 
         }//_synchNodeName()
+
+
+        /// <summary>
+        /// Create audit records as if the node is being inserted, for use with temp nodes
+        /// </summary>
+        public void AuditInsert( CswNbtNode Node )
+        {
+            getWriterImpl( Node.NodeId ).AuditInsert( Node );
+        }
 
     }//CswNbtNodeWriterNative
 

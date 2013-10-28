@@ -38,6 +38,7 @@ namespace ChemSW.Nbt.WebServices
             if( Int32.MinValue != parms.JobId )
             {
                 CswNbtImportDataJob Job = new CswNbtImportDataJob( CswNbtResources, parms.JobId );
+                ret.Data.DateEnded = Job.DateEnded;
                 Job.getStatus( out ret.Data.RowsDone,
                                out ret.Data.RowsTotal,
                                out ret.Data.RowsError,
@@ -52,9 +53,26 @@ namespace ChemSW.Nbt.WebServices
             CswNbtImporter Importer = new CswNbtImporter( CswNbtResources );
 
             // Write uploaded file to temp dir
-            CswTempFile myTempFile = new CswTempFile( CswResources );
-            string path = myTempFile.saveToTempFile( parms.PostedFile.InputStream, DateTime.Now.Ticks + "_" + parms.PostedFile.FileName );
-            ret.JobId = Importer.storeData( parms.PostedFile.FileName, path, parms.ImportDefName, parms.Overwrite );
+            CswFilePath FilePathMgr = new CswFilePath( CswResources );
+            string FullFilePath = System.Web.Hosting.HostingEnvironment.ApplicationPhysicalPath + "\\import\\" + FilePathMgr.getFileNameForSchema( parms.PostedFile.FileName );
+
+            FileStream ImportDataFile = File.Create( FullFilePath );
+            parms.PostedFile.InputStream.CopyTo( ImportDataFile );
+            ImportDataFile.Close();
+            parms.PostedFile.InputStream.Close();
+
+            ret.JobId = Importer.storeData( parms.PostedFile.FileName, FullFilePath, parms.ImportDefName, parms.Overwrite );
+        }
+
+
+        public static void downloadImportData( ICswResources CswResources, CswNbtImportWcf.GenerateSQLReturn Ret, string Filename )
+        {
+            CswNbtResources CswNbtResources = (CswNbtResources) CswResources;
+
+            CswFilePath FilePathMgr = new CswFilePath( CswResources );
+            string FullFilePath = System.Web.Hosting.HostingEnvironment.ApplicationPhysicalPath + "\\import\\" + FilePathMgr.getFileNameForSchema( Filename );
+
+            Ret.stream = File.OpenRead( FullFilePath );
         }
 
 
@@ -232,6 +250,12 @@ namespace ChemSW.Nbt.WebServices
                 Ret[TableName] = TableSelect.getTable();
                 Ret[TableName].Columns.Remove( "importdefid" );
                 Ret[TableName].Columns.Remove( "importdef" + TableName.TrimEnd( new[]{'s'} ) + "id" );
+
+                foreach( DataRow Row in Ret[TableName].AsEnumerable().Where( row => (Int32.MinValue == Convert.ToInt32(row["instance"])) ))
+                {
+                    Row["instance"] = DBNull.Value;
+                }
+
             }
 
             return Ret;

@@ -5,7 +5,6 @@ using System.ServiceModel;
 using System.ServiceModel.Activation;
 using System.ServiceModel.Web;
 using System.Web;
-using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.ServiceDrivers;
 using ChemSW.Nbt.WebServices;
@@ -93,6 +92,44 @@ namespace NbtWebApp
                 ReturnObj: Ret,
                 WebSvcMethodPtr: CswNbtWebServiceNode.getCopyData,
                 ParamObj: Request
+                );
+
+            SvcDriver.run();
+            return ( Ret );
+        }
+
+        [OperationContract]
+        [WebInvoke( Method = "POST" )]
+        [Description( "Add the node to the current user's Favorites" )]
+        [FaultContract( typeof( FaultException ) )]
+        public CswWebSvcReturn addToFavorites( string NodeId )
+        {
+            CswWebSvcReturn Ret = new CswWebSvcReturn();
+
+            var SvcDriver = new CswWebSvcDriver<CswWebSvcReturn, string>(
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context ),
+                ReturnObj: Ret,
+                WebSvcMethodPtr: CswNbtWebServiceNode.addToFavorites,
+                ParamObj: NodeId
+                );
+
+            SvcDriver.run();
+            return ( Ret );
+        }
+
+        [OperationContract]
+        [WebInvoke( Method = "POST" )]
+        [Description( "Remove the node from the current user's Favorites" )]
+        [FaultContract( typeof( FaultException ) )]
+        public CswWebSvcReturn removeFromFavorites( string NodeId )
+        {
+            CswWebSvcReturn Ret = new CswWebSvcReturn();
+
+            var SvcDriver = new CswWebSvcDriver<CswWebSvcReturn, string>(
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context ),
+                ReturnObj: Ret,
+                WebSvcMethodPtr: CswNbtWebServiceNode.removeFromFavorites,
+                ParamObj: NodeId
                 );
 
             SvcDriver.run();

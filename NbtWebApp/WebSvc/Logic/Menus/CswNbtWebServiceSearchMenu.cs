@@ -36,14 +36,14 @@ namespace ChemSW.Nbt.WebServices
         {
             public SearchMenuResponse()
             {
-                searchTypes = new Collection<SearchType>();
+                searchTargets = new Collection<SearchTarget>();
             }
 
             [DataMember]
-            public Collection<SearchType> searchTypes;
+            public Collection<SearchTarget> searchTargets;
 
             [DataContract]
-            public class SearchType
+            public class SearchTarget
             {
                 [DataMember]
                 public string name = string.Empty;
@@ -59,28 +59,28 @@ namespace ChemSW.Nbt.WebServices
         {
             _CswNbtResources = (CswNbtResources) CswResources;
 
-            Collection<SearchMenuResponse.SearchType> searchTypes = new Collection<SearchMenuResponse.SearchType>();
+            Collection<SearchMenuResponse.SearchTarget> SearchTargets = new Collection<SearchMenuResponse.SearchTarget>();
 
             if( false == universalSearchOnly )
             {
                 if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.CISPro ) )
                 {
-                    SearchMenuResponse.SearchType ss = new SearchMenuResponse.SearchType();
+                    SearchMenuResponse.SearchTarget ss = new SearchMenuResponse.SearchTarget();
                     ss.name = "Structure Search";
                     ss.iconfilename = "Images/newicons/16/atommag.png";
-                    searchTypes.Add( ss );
+                    SearchTargets.Add( ss );
                 }
 
                 if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.C3 ) )
                 {
-                    SearchMenuResponse.SearchType c3 = new SearchMenuResponse.SearchType();
+                    SearchMenuResponse.SearchTarget c3 = new SearchMenuResponse.SearchTarget();
                     c3.name = "ChemCatCentral Search";
                     c3.iconfilename = "Images/newicons/16/cat.png";
-                    searchTypes.Add( c3 );
+                    SearchTargets.Add( c3 );
                 }
             }
 
-            Return.Data.searchTypes = searchTypes;
+            Return.Data.searchTargets = SearchTargets;
 
 
         }

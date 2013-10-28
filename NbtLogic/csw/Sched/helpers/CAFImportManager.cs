@@ -872,11 +872,13 @@ namespace ChemSW.Nbt
                     unitOfMeasure.ConversionFactor.Base = baseVal;
                     unitOfMeasure.ConversionFactor.Exponent = expVal;
                 }
-                unitOfMeasure.IsTemp = false;
+                //unitOfMeasure.IsTemp = false;
                 CswNbtMetaDataNodeTypeProp legacyIdNTP = unitOfMeasure.NodeType.getNodeTypeProp( "Legacy Id" );
                 unitOfMeasure.Node.Properties[legacyIdNTP].AsNumber.Value = CswConvert.ToDouble( Row["unitofmeasureid"] ); //set the legacy ID
                 unitIds.Add( Row["unitofmeasureid"].ToString() );
                 unitOfMeasure.postChanges( false );
+
+                unitOfMeasure.PromoteTempToReal();
             }
         }
 
@@ -939,10 +941,11 @@ namespace ChemSW.Nbt
                 vendorNode = _NBTResources.Nodes.makeNodeFromNodeTypeId( VendorNT.NodeTypeId, IsTemp: true );
             }
             _addNodeTypeProps( vendorNode.Node, Row, vendorNode.NodeType );
-            vendorNode.IsTemp = false;
+            //vendorNode.IsTemp = false;
             vendorNode.postChanges( true );
             vendorIds.Add( Row["vendorid"].ToString() );
-
+            vendorNode.PromoteTempToReal();
+            
             return vendorNode;
         }
 
@@ -1038,9 +1041,11 @@ namespace ChemSW.Nbt
             _addNodeTypeProps( materialNode.Node, Row, materialNode.NodeType );
             materialNode.Supplier.RelatedNodeId = VendorNode.NodeId;
             materialNode.Supplier.RefreshNodeName();
-            materialNode.IsTemp = false;
+            //materialNode.IsTemp = false;
             materialNode.postChanges( true );
             _createdMaterials.Add( materialNode );
+            
+            materialNode.PromoteTempToReal();
 
             string packageId = Row["packageid"].ToString();
             if( false == packageIds.Contains( packageId ) )
@@ -1156,8 +1161,10 @@ namespace ChemSW.Nbt
                     }
                     _addNodeTypeProps( matSyn.Node, Row, matSyn.NodeType );
                     matSyn.Material.RelatedNodeId = ChemicalNode.NodeId;
-                    matSyn.IsTemp = false;
+                    //matSyn.IsTemp = false;
                     matSyn.postChanges( true );
+
+                    matSyn.PromoteTempToReal();
                 }
                 if( false == matSynIds.Contains( matSynId ) )
                 {
@@ -1238,9 +1245,11 @@ namespace ChemSW.Nbt
                     }
                     _addNodeTypeProps( sizeNode.Node, Row, sizeNode.NodeType );
                     sizeNode.Material.RelatedNodeId = ChemicalNode.NodeId;
-                    sizeNode.IsTemp = false;
+                    //sizeNode.IsTemp = false;
                     sizeNode.postChanges( true );
                     _createdSizes.Add( sizeNode );
+
+                    sizeNode.PromoteTempToReal();
                 }
                 if( false == sizeIds.Contains( sizeId ) )
                 {

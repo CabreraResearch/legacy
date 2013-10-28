@@ -38,6 +38,7 @@
                 showLock: true,
                 showEdit: true,
                 showDelete: true,
+                showFavorite: true,
 
                 canSelectRow: false,
                 reapplyViewReadyOnLayout: false, //This is not normal. See Requesting for the specific use case.
@@ -129,12 +130,14 @@
                 var previewCell = table.cell(1, 1).css({ width: '26px' });
                 var editCell = table.cell(1, 2).css({ width: '26px' });
                 var delCel = table.cell(1, 3).css({ width: '26px' });
+                var favCell = table.cell(1, 4).css({ width: '26px' });
 
                 var canedit = Csw.bool(cswPrivate.showEdit) && Csw.bool(tblObj.cellData.canedit, true);
                 var canpreview = Csw.bool(cswPrivate.showPreview) && Csw.bool(tblObj.cellData.canview, true);
                 var canview = Csw.bool(cswPrivate.showView) && Csw.bool(tblObj.cellData.canview, true);
                 var candelete = Csw.bool(cswPrivate.showDelete) && Csw.bool(tblObj.cellData.candelete, true);
                 var islocked = Csw.bool(cswPrivate.showLock) && Csw.bool(tblObj.cellData.islocked, false);
+                var canfavorite = Csw.bool(cswPrivate.showFavorite);
 
                 if (canpreview) {
                     cswPrivate.makeActionButton(previewCell, 'Preview', Csw.enums.iconType.magglass, cswPrivate.onPreview, tblObj);
@@ -148,14 +151,21 @@
                 } else if (canview) {
                     cswPrivate.makeActionButton(editCell, 'View', Csw.enums.iconType.pencil, cswPrivate.onEdit, tblObj);
                 }
-
                 if (candelete) {
                     cswPrivate.makeActionButton(delCel, 'Delete', Csw.enums.iconType.trash, cswPrivate.onDelete, tblObj);
+                }             
+                if (canfavorite) {
+                    favCell.favoriteButton({
+                        name: cswPrivate.name + '_favBtn',
+                        nodeid: tblObj.cellData.nodeid,
+                        isFavorite: tblObj.cellData.isfavorite,
+                    });
                 }
             } // if (Csw.isElementInDom(tblObj.cellId)) {
         }; // makeActionCell()
 
         cswPrivate.makeActionButton = function (tableCell, buttonName, iconType, clickFunc, cell) {
+            var icon;
             if (cswPrivate.showActionColumn) {
                 var iconopts = {
                     name: cswPrivate.name + buttonName,
@@ -171,8 +181,9 @@
                         Csw.tryExec(clickFunc, [cell.cellData], cell.raw, event);
                     };
                 }
-                tableCell.icon(iconopts);
+                icon = tableCell.icon(iconopts);
             }
+            return icon;
         }; // makeActionButton()
 
 
@@ -548,7 +559,7 @@
                     dataIndex: cswPrivate.actionDataIndex,
                     menuDisabled: true,
                     sortable: false,
-                    width: 70,
+                    width: 96,
                     flex: false,
                     resizable: false,
                     xtype: 'actioncolumn',

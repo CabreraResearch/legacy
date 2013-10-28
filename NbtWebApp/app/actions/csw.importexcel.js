@@ -69,7 +69,7 @@
                     jobTable.cell(jobrow, 1).text('Date Ended:');
                     jobTable.cell(jobrow, 2)
                         .css({ fontWeight: 'bold' })
-                        .text(DateWCF(job.DateEnded));
+                        .text(DateWCF(data.DateEnded));
                     jobrow++;
 
                     jobTable.cell(jobrow, 1).text('Items Finished:');
@@ -101,6 +101,28 @@
                         }
                     });
                     jobrow++;
+                    
+                    jobTable.cell(jobrow, 2).buttonExt({
+                        name: 'downloadBtn',
+                        icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.docExport),
+                        enabledText: 'Download Data File',
+                        disabledText: 'Fetching Data...',
+                        disableOnClick: false,
+                        onClick: function () {
+                            var action = 'Services/Import/downloadImportData';
+
+                            var $form = $('<form method="POST" action="' + action + '"></form>').appendTo($('body'));
+                            var form = Csw.literals.factory($form);
+
+                            form.input({
+                                name: 'filename',
+                                value: job.FileName,
+                            });
+
+                            form.$.submit();
+                            form.remove();
+                        }
+                    });
 
                 } // success()
             }); // get()
@@ -168,6 +190,9 @@
                         fontWeight: 'bold'
                     });
 
+            cswPrivate.excelDataFileText = null;
+            cswPrivate.uploadButton = null;
+            
             cswPublic.uploadDataTable = cswPublic.table.cell(4, 2)
             .empty()
             .css({ paddingLeft: '100px' })
@@ -280,7 +305,7 @@
                 cswPrivate.makeStartImportProps(true);
             }
 
-                cswPublic.uploadDataTable.cell(4, 2).buttonExt({
+                cswPublic.uploadDataTable.cell(1, 3).buttonExt({
                     name: 'viewBindingsBtn',
                     enabledText: 'View Import Definition',
                     disabledText: 'Fetching Bindings...',

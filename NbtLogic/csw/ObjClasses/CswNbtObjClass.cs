@@ -71,6 +71,16 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtNode.postChanges( ForceUpdate );
         }//postChanges()
 
+        /// <summary>
+        /// Converts a temp node to a real one.  
+        /// Creates INSERT audit records for current values of all properties.
+        /// Thus, make sure all other property modifications have been posted before calling this.
+        /// </summary>
+        public void PromoteTempToReal()
+        {
+            _CswNbtNode.PromoteTempToReal();
+        }
+
         public abstract CswNbtMetaDataObjectClass ObjectClass { get; }
         public abstract void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation );
         public abstract void afterCreateNode();
@@ -292,7 +302,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswPrimaryKey NodeId { get { return _CswNbtNode.NodeId; } }
         public CswNbtNode Node { get { return _CswNbtNode; } }
         public bool IsDemo { get { return _CswNbtNode.IsDemo; } set { _CswNbtNode.IsDemo = value; } }
-        public bool IsTemp { get { return _CswNbtNode.IsTemp; } set { _CswNbtNode.IsTemp = value; } }
+        public bool IsTemp { get { return _CswNbtNode.IsTemp; } } //set { _CswNbtNode.IsTemp = value; } }
         public class NbtButtonData
         {
             public NbtButtonData( CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp )

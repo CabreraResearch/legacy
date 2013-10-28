@@ -11,7 +11,8 @@ namespace ChemSW.Nbt.Schema
         {
             return new Collection<CswUpdateSchemaTo>()
                 {
-                    // new CswUpdateMetaData_02H_CaseXXXXX()
+                    // new CswUpdateDDL_02H_CaseXXXXX()
+                    new CswUpdateDDL_02H_Case30279()
                 };
         } // _DDLScripts()
 

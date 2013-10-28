@@ -19,23 +19,3 @@ set CAFPass=%2
 set CAFDatabase=%3
 
 echo exit | sqlplus %CAFUser%/%CAFPass%@%CAFDatabase% @caf.sql
-
-rem | apply triggers to tables
-
-for /f %%a in ('dir /b ^"triggers\') do ( 
-    echo Applying %%a to database...
-	echo.
-	echo exit | sqlplus -s -l %CAFUser%/%CAFPass%@%CAFDatabase% @"triggers\%%a"
-	echo.
-	echo.
-)
-
-rem | fill nbtimportqueue
-
-for /f %%a in ('dir /b ^"importqueue\') do (
-    echo Applying %%a to database...
-	echo.
-	echo exit | sqlplus -s -l %CAFUser%/%CAFPass%@%CAFDatabase% @"importqueue\%%a"
-	echo.
-	echo.  
-)

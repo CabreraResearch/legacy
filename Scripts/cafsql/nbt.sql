@@ -4,5 +4,5 @@
 	-- [userpwd]
 	-- [database] (this needs to be in single quotes)
 create public database link CAFLINK
-	connect to [cafuser] identified by [userpwd]
-	using '[database]';
+	connect to caf identified by userpwd
+	using 'w2008x64db';

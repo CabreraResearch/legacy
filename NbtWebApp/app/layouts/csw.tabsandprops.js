@@ -386,6 +386,7 @@
                     success: function (data) {
 
                         cswPrivate.tabState.nodetypeid = Csw.number(data.node.nodetypeid, 0);
+                        cswPrivate.tabState.isFavorite = Csw.bool(data.node.isFavorite);
 
                         if (Object.keys(data).length <= 0 || Object.keys(data.tabs).length <= 0) {
                             Csw.error.throwException('Cannot create a property layout without at least one tab.', 'csw.tabsandprops.js');
@@ -879,8 +880,14 @@
                         }
                     };
 
+                    formTable.cell(1, 2).favoriteButton({
+                        name: cswPrivate.name + '_favBtn',
+                        nodeid: cswPrivate.tabState.nodeid,
+                        isFavorite: cswPrivate.tabState.isFavorite,
+                    });
+
                     /* Show the 'fake' config button to open the dialog */
-                    cswPrivate.tabState.configIcn = formTable.cell(1, 2).icon({
+                    cswPrivate.tabState.configIcn = formTable.cell(1, 3).icon({
                         name: cswPrivate.name + 'configbtn',
                         iconType: Csw.enums.iconType.wrench,
                         hovertext: 'Configure',

@@ -65,6 +65,7 @@ namespace ChemSW.Nbt.Security
         public CswPrimaryKey JurisdictionId { get { return null; } }
         public string Language { get { return string.Empty; } }
         public CswNbtPropertySetPermission getPermissionForGroup( CswPrimaryKey PermissionGroupId ) { return null; }
+        public bool hasUserPermissions( CswEnumNbtObjectClass PermObjectClass = null, bool RequireEdit = false ) { return true; }
         public Dictionary<CswPrimaryKey, CswPrimaryKey> getUserPermissions( CswEnumNbtObjectClass PermGroupType = null, bool RequireEdit = false ) { return new Dictionary<CswPrimaryKey, CswPrimaryKey>(); }
 
         public Int32 RoleTimeout { get { return Int32.MinValue; } }

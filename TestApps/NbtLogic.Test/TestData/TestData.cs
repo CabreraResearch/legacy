@@ -22,7 +22,7 @@ namespace ChemSW.Nbt.Test
         /// <summary>
         /// When set to true, all nodes that are created during the test will be committed to the database.
         /// </summary>
-        internal bool FinalizeNodes 
+        public bool FinalizeNodes 
         {
             set 
             { 
@@ -40,7 +40,7 @@ namespace ChemSW.Nbt.Test
 
         internal TestDataNodes Nodes;
 
-        internal TestData()
+        public TestData()
         {
             _CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( CswEnumAppType.Nbt, CswEnumSetupMode.TestProject, true, false );
             _CswDbCfgInfoNbt = new CswDbCfgInfo( CswEnumSetupMode.TestProject );
@@ -50,7 +50,7 @@ namespace ChemSW.Nbt.Test
             _setHighWaterMark();
         }
 
-        internal CswNbtResources CswNbtResources
+        public CswNbtResources CswNbtResources
         {
             get { return _CswNbtResources; }
         }
@@ -69,7 +69,7 @@ namespace ChemSW.Nbt.Test
             _NodeTypeHighWaterMark = _CswNbtResources.MetaData.getNodeTypeIds().Max();
         }
 
-        internal bool isTestNode( CswPrimaryKey NodeId )
+        public bool isTestNode( CswPrimaryKey NodeId )
         {
             return NodeId.PrimaryKey > _NodeIdHighWaterMark;
         }
@@ -156,7 +156,7 @@ namespace ChemSW.Nbt.Test
             }
         }
 
-        internal void Destroy()
+        public void Destroy()
         {
             if( null != _CswNbtResources )
             {

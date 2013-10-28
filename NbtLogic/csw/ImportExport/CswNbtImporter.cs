@@ -432,10 +432,7 @@ namespace ChemSW.Nbt.ImportExport
             }
             foreach( CswNbtImportDefRelationship Relation in UniqueRelationships )
             {
-                CswNbtImportDefOrder thisTargetOrder = BindingDef.ImportOrder.Values.FirstOrDefault( o => Relation.Relationship.FkMatches( o.NodeType ) && o.Instance == Relation.Instance );
-                Int32 Value = Int32.MinValue;
-                Value = null != ImportRow[Relation.SourceRelColumnName] ? CswConvert.ToInt32( ImportRow[Relation.SourceRelColumnName] ) : CswConvert.ToInt32( ImportRow[thisTargetOrder.PkColName] );
-
+                Int32 Value = _getRelationValue( BindingDef, Relation, ImportRow );
                 allEmpty = allEmpty && ( Value != Int32.MinValue );
             }
 
@@ -465,7 +462,7 @@ namespace ChemSW.Nbt.ImportExport
                     CswNbtMetaDataNodeTypeProp LegacyIdNTP = Order.NodeType.getNodeTypeProp( "Legacy Id" );
                     LegacyIdView.AddViewPropertyAndFilter( ParentViewRelationship: NTRel1, MetaDataProp: LegacyIdNTP,
                                                            Value: LegacyId,
-                                                      SubFieldName : CswEnumNbtSubFieldName.Text, CaseSensitive : false );
+                                                      SubFieldName: CswEnumNbtSubFieldName.Text, CaseSensitive: false );
 
                     ICswNbtTree LegacyIdTree = _CswNbtResources.Trees.getTreeFromView( LegacyIdView, false, true, true );
                     if( LegacyIdTree.getChildNodeCount() > 0 )
@@ -515,11 +512,7 @@ namespace ChemSW.Nbt.ImportExport
 
                         foreach( CswNbtImportDefRelationship Relation in UniqueRelationships )
                         {
-                            CswNbtImportDefOrder thisTargetOrder = BindingDef.ImportOrder.Values.FirstOrDefault( o => Relation.Relationship.FkMatches( o.NodeType ) &&
-                                                                                                                      o.Instance == Relation.Instance );
-                            Int32 Value = null != ImportRow[Relation.SourceRelColumnName]
-                                              ? CswConvert.ToInt32( ImportRow[Relation.SourceRelColumnName] )
-                                              : CswConvert.ToInt32( ImportRow[thisTargetOrder.PkColName] );
+                            Int32 Value = _getRelationValue( BindingDef, Relation, ImportRow );
 
                             if( Value != Int32.MinValue )
                             {
@@ -592,10 +585,7 @@ namespace ChemSW.Nbt.ImportExport
                         foreach( CswNbtImportDefRelationship Relation in UniqueRelationships )
                         {
                             CswNbtImportDefOrder thisTargetOrder = BindingDef.ImportOrder.Values.FirstOrDefault( o => Relation.Relationship.FkMatches( o.NodeType ) && o.Instance == Relation.Instance );
-                            //Int32 Value = CswConvert.ToInt32( ImportRow[thisTargetOrder.PkColName] );
-                            //Int32 Value = CswConvert.ToInt32( false == string.IsNullOrEmpty( ImportRow[Relation.SourceRelColumnName].ToString() ) ? ImportRow[Relation.SourceRelColumnName] : ImportRow[thisTargetOrder.PkColName] );
-                            Int32 Value = null != ImportRow[Relation.SourceRelColumnName] ? CswConvert.ToInt32( ImportRow[Relation.SourceRelColumnName] ) : CswConvert.ToInt32( ImportRow[thisTargetOrder.PkColName] );
-
+                            Int32 Value = _getRelationValue( BindingDef, Relation, ImportRow );
                             if( Value != Int32.MinValue )
                             {
                                 WhereClause += " and " + thisTargetOrder.PkColName + "=" + Value.ToString();
@@ -622,6 +612,26 @@ namespace ChemSW.Nbt.ImportExport
             return ImportedNodeId;
         } // _ImportOneRow()
 
+
+        private Int32 _getRelationValue( CswNbtImportDef BindingDef, CswNbtImportDefRelationship Relation, DataRow ImportRow )
+        {
+            CswNbtImportDefOrder thisTargetOrder = BindingDef.ImportOrder.Values.FirstOrDefault( o => Relation.Relationship.FkMatches( o.NodeType ) && 
+                                                                                                      o.Instance == Relation.Instance );
+            Int32 Value = Int32.MinValue;
+            if( null != thisTargetOrder )
+            {
+                if( ImportRow.Table.Columns.Contains( Relation.SourceRelColumnName ) &&
+                    null != ImportRow[Relation.SourceRelColumnName] )
+                {
+                    Value = CswConvert.ToInt32( ImportRow[Relation.SourceRelColumnName] );
+                }
+                else
+                {
+                    Value = CswConvert.ToInt32( ImportRow[thisTargetOrder.PkColName] );
+                }
+            }
+            return Value;
+        } // _getRelationValue()
 
         private void _importPropertyValues( CswNbtImportDef BindingDef, IEnumerable<CswNbtImportDefBinding> NodeTypeBindings, IEnumerable<CswNbtImportDefRelationship> RowRelationships, DataRow ImportRow, CswNbtNode Node )
         {
@@ -767,6 +777,7 @@ namespace ChemSW.Nbt.ImportExport
 
                 // If we have a value for the SourceRelColumnName
                 if( false == string.IsNullOrEmpty( RowRelationship.SourceRelColumnName ) &&
+                    ImportRow.Table.Columns.Contains( RowRelationship.SourceRelColumnName ) &&
                     null != ImportRow[RowRelationship.SourceRelColumnName] )
                 {
                     // In this case, we are matching on Legacy Id
@@ -851,12 +862,12 @@ namespace ChemSW.Nbt.ImportExport
                         break;
                 }
 
-                View.AddViewPropertyAndFilter( ParentViewRelationship : ParentRelationship,
-                                              MetaDataProp : MetaDataProp,
-                                              Conjunction : CswEnumNbtFilterConjunction.And,
-                                              SubFieldName : CswEnumNbtSubFieldName.Text,
-                                              FilterMode : CswEnumNbtFilterMode.Equals,
-                                              Value : LegacyId );
+                View.AddViewPropertyAndFilter( ParentViewRelationship: ParentRelationship,
+                                              MetaDataProp: MetaDataProp,
+                                              Conjunction: CswEnumNbtFilterConjunction.And,
+                                              SubFieldName: CswEnumNbtSubFieldName.Text,
+                                              FilterMode: CswEnumNbtFilterMode.Equals,
+                                              Value: LegacyId );
 
                 ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, false, true, true );
                 if( Tree.getChildNodeCount() > 0 )

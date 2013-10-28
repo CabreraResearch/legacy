@@ -68,6 +68,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="csw\Mobile\CswNbtMobileRapidLoaderTest.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtNodeTest.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassGeneratorTest.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassReportTest.cs" />
     <Compile Include="csw\PropTypes\CswNbtNodePropCasNoTest.cs" />

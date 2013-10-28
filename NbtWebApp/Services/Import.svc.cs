@@ -95,6 +95,35 @@ namespace NbtWebApp
             return ret;
         }
 
+
+        [OperationContract]
+        [WebInvoke( Method = "POST" )]
+        [Description( "Download Import Data" )]
+        [FaultContract( typeof( FaultException ) )]
+        public Stream downloadImportData( Stream DataStream )
+        {
+            string Data = new StreamReader( DataStream ).ReadToEnd();
+            NameValueCollection FormData = HttpUtility.ParseQueryString( Data );
+            string Filename = FormData["filename"];
+
+            CswNbtImportWcf.GenerateSQLReturn Ret = new CswNbtImportWcf.GenerateSQLReturn();
+
+            var SvcDriver = new CswWebSvcDriver<CswNbtImportWcf.GenerateSQLReturn, string>(
+                CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj : Ret,
+                WebSvcMethodPtr : CswNbtWebServiceImport.downloadImportData,
+                ParamObj : Filename
+                );
+
+            SvcDriver.run();
+
+            WebOperationContext.Current.OutgoingResponse.Headers.Set( "Content-Disposition", "attachment; filename=\"" + Filename + "\";" );
+            WebOperationContext.Current.OutgoingResponse.ContentType = "application/vnd.ms-excel";
+            return Ret.stream;
+        }//downloadImportDefinition
+
+
+
         [OperationContract]
         [WebInvoke( Method = "POST", UriTemplate = "uploadImportDefinition?defname={ImportDefName}" )]
         [Description( "Upload Import Data" )]
@@ -143,7 +172,7 @@ namespace NbtWebApp
 
             SvcDriver.run();
 
-            WebOperationContext.Current.OutgoingResponse.Headers.Set( "Content-Disposition", "attachment; filename=\"bindings.xml\";" );
+            WebOperationContext.Current.OutgoingResponse.Headers.Set( "Content-Disposition", "attachment; filename=\"" + ImportDefName + "bindings.xls\";" );
             WebOperationContext.Current.OutgoingResponse.ContentType = "application/vnd.ms-excel";
             return Ret.stream;
         }//downloadImportDefinition
