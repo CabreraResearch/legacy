@@ -4,7 +4,6 @@ using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropertySets;
 using ChemSW.Nbt.PropTypes;
-using ChemSW.Nbt.Security;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -177,9 +176,16 @@ namespace ChemSW.Nbt.ObjClasses
                 //Remember: Save is an OCP too
                 if( PropertyName.RunNow == ButtonData.NodeTypeProp.getObjectClassPropName() )
                 {
-                    NextDueDate.DateTimeValue = DateTime.Now;
-                    Node.postChanges( false );
-                    ButtonData.Action = CswEnumNbtButtonAction.refresh;
+                    if( DueDateInterval.getStartDate() < DateTime.Now ) //if the button was clicked after the first due date
+                    {
+                        NextDueDate.DateTimeValue = DateTime.Now;
+                        Node.postChanges( false );
+                        ButtonData.Action = CswEnumNbtButtonAction.refresh;
+                    }
+                    else
+                    {
+                        throw new CswDniException(CswEnumErrorType.Warning, "A mail report cannot be run before its first scheduled due date.", "Run now is invalid before initial due date.");
+                    }
                 }
             }
             return true;
