@@ -443,7 +443,7 @@ namespace ChemSW.Nbt.ObjClasses
             return ( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Containers ) &&
                      ApprovedForReceiving.Checked == CswEnumTristate.True &&
                      _CswNbtResources.Permit.can( CswEnumNbtActionName.Receiving ) &&
-                     _CswNbtResources.CurrentNbtUser.getUserPermissions().Count > 0 );
+                     _CswNbtResources.CurrentNbtUser.hasUserPermissions() );
         }
 
         private void _toggleButtonVisibility()

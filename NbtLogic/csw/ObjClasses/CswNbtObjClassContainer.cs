@@ -211,14 +211,14 @@ namespace ChemSW.Nbt.ObjClasses
             }
 
             // Find inventory groups for which the user has 'Edit' permission
-            Dictionary<CswPrimaryKey, CswPrimaryKey> UserPermissions = _CswNbtResources.CurrentNbtUser.getUserPermissions( CswEnumNbtObjectClass.InventoryGroupPermissionClass, true );
             if( ( _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Add || _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Temp || IsTemp ) &&
-                UserPermissions.Keys.Count == 0 )
+                false == _CswNbtResources.CurrentNbtUser.hasUserPermissions( CswEnumNbtObjectClass.InventoryGroupPermissionClass, true ) )
             {
                 throw new CswDniException( CswEnumErrorType.Warning, "You do not have the necessary Inventory Group permissions to Receive containers.", "You do not have the necessary Inventory Group permissions to Receive containers." );
             }
             Location.SetOnBeforeRender( delegate( CswNbtNodeProp Prop )
                 {
+                    Dictionary<CswPrimaryKey, CswPrimaryKey> UserPermissions = _CswNbtResources.CurrentNbtUser.getUserPermissions( CswEnumNbtObjectClass.InventoryGroupPermissionClass, true );
                     Location.View = CswNbtNodePropLocation.LocationPropertyView( _CswNbtResources, Location.NodeTypeProp, null, UserPermissions.Keys ); //Location.SelectedNodeId, UserPermissions.Keys );
                 } );
 
