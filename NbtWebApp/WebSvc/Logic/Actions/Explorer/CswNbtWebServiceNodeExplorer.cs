@@ -28,22 +28,37 @@ namespace NbtWebApp.Actions.Explorer
             //Add the initial node to the graph
             _addToGraph( Return, StartingNode.NodeName, string.Empty, NodeId.ToString(), StartingNode.IconFileName, 0, "Instance" );
 
-            CswNbtMetaDataNodeType StartingNodeType = StartingNode.getNodeType();
-            foreach( CswNbtMetaDataNodeTypeProp RelNTP in StartingNodeType.getNodeTypeProps( CswEnumNbtFieldType.Relationship ) ) //TODO: Locations are just like relationships, we should be able to handle them
-            {
-                CswNbtNodePropRelationship RelProp = StartingNode.Properties[RelNTP];
-                string Icon = _getIconFromRelationshipProp( NbtResources, RelNTP );
-                if( CswTools.IsPrimaryKey( RelProp.RelatedNodeId ) )
-                {
-                    _addToGraph( Return, RelProp.PropName + ": " + RelProp.CachedNodeName, NodeId.ToString(), RelProp.RelatedNodeId.ToString(), Icon, 1, "Instance" );
-
-                    //TODO: show NTs related to props on the starting node?
-                }
-            }
+            _recurseForRelatingNodes( NbtResources, Return, StartingNode, 1 );
 
             //Get all NTs that have a relationship prop that relates to this node
             string relatingNTsToNodeSQL = _makeGetRelatedToNodeSQL( NodeId.PrimaryKey );
-            _getRelating( NbtResources, Return, NodeId, relatingNTsToNodeSQL );
+            _getRelating( NbtResources, Return, NodeId, relatingNTsToNodeSQL, 1 );
+        }
+
+        private static void _recurseForRelatingNodes( CswNbtResources NbtResources, CswNbtExplorerReturn Return, CswNbtNode Node, int Level )
+        {
+            CswNbtMetaDataNodeType TargetNodeType = Node.getNodeType();
+            foreach( CswNbtMetaDataNodeTypeProp RelNTP in TargetNodeType.getNodeTypeProps( CswEnumNbtFieldType.Relationship ) ) //TODO: Locations are just like relationships, we should be able to handle them
+            {
+                CswNbtNodePropRelationship RelProp = Node.Properties[RelNTP];
+                string Icon = _getIconFromRelationshipProp( NbtResources, RelNTP );
+                if( CswTools.IsPrimaryKey( RelProp.RelatedNodeId ) )
+                {
+                    _addToGraph( Return, RelProp.PropName + ": " + RelProp.CachedNodeName, Node.NodeId.ToString(), RelProp.RelatedNodeId.ToString(), Icon, Level, "Instance" );
+
+                    string relatingNTsToRelatedNodeSQL = _makeGetRelatedToNodeSQL( RelProp.RelatedNodeId.PrimaryKey );
+                    if( Level + 1 <= MAX_DEPTH )
+                    {
+                        _getRelating( NbtResources, Return, RelProp.RelatedNodeId, relatingNTsToRelatedNodeSQL, Level + 1 );
+                    }
+
+                    if( Level + 1 <= MAX_DEPTH )
+                    {
+                        CswNbtNode TargetNode = NbtResources.Nodes[RelProp.RelatedNodeId];
+                        _recurseForRelatingNodes( NbtResources, Return, TargetNode, Level + 1 );
+                    }
+                }
+            }
         }
 
         private static string _getIconFromRelationshipProp( CswNbtResources NbtResources, CswNbtMetaDataNodeTypeProp RelationshipNTP )
@@ -62,7 +77,7 @@ namespace NbtWebApp.Actions.Explorer
             return ret;
         }
 
-        private static void _getRelating( CswNbtResources NbtResources, CswNbtExplorerReturn Return, CswPrimaryKey NodeId, string sql )
+        private static void _getRelating( CswNbtResources NbtResources, CswNbtExplorerReturn Return, CswPrimaryKey NodeId, string sql, int level )
         {
             CswArbitrarySelect relatingToNTsArbSel = NbtResources.makeCswArbitrarySelect( "getRelatingNTsToNode", sql );
             DataTable relatingToNTTbl = relatingToNTsArbSel.getTable();
@@ -71,9 +86,9 @@ namespace NbtWebApp.Actions.Explorer
                 int RelatingNodeTypeId = CswConvert.ToInt32( Row["id"] );
                 string IconFileName = CswConvert.ToString( Row["iconfilename"] );
                 string DisplayName = CswConvert.ToString( Row["display"] ) + "s"; ;
-                _addToGraph( Return, DisplayName, NodeId.ToString(), "NT_" + RelatingNodeTypeId, IconFileName, 1, "Category" );
+                _addToGraph( Return, DisplayName, NodeId.ToString(), "NT_" + RelatingNodeTypeId, IconFileName, level, "Category" );
 
-                _recurseForRelatedNTs( NbtResources, Return, RelatingNodeTypeId, 2 );
+                _recurseForRelatedNTs( NbtResources, Return, RelatingNodeTypeId, level + 1 );
             }
         }
 

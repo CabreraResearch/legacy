@@ -62,10 +62,6 @@
                             break;
                     }
 
-                    if (node.data.Level === 0) {
-                        size = 50;
-                        textDist = 45;
-                    }
 
                     var imgX = Math.round(pt.x) - (size / 2);
                     var imgY = Math.round(pt.y) - (size / 2);
@@ -80,7 +76,6 @@
                     if (node.data.Type === 'Instance') {
                         textUnderline(ctx, node.data.Label, Math.round(pt.x), Math.round(pt.y) + textDist, 'blue', "10px", 'center');
                     }
-
                 });
             },
 

@@ -21,7 +21,7 @@
             cswPrivate.startingNodeId = cswPrivate.startingNodeId;
             cswPrivate.sys = null;
             cswPrivate.extPanel = null;
-            cswPrivate.maxDept = 2;
+            cswPrivate.maxDepth = 2;
 
             cswParent.empty();
         }());
@@ -38,22 +38,24 @@
                     region: 'south',
                     xtype: 'panel',
                     height: 100,
-                    items: [{
-                        xtype: 'slider',
-                        hideLabel: false,
-                        fieldLabel: 'Depth',
-                        width: 400,
-                        minValue: 1,
-                        maxValue: 4,
-                        value: cswPrivate.maxDept,
-                        increment: 1,
-                        listeners: {
-                            'change': function (slider, newValue, thumb, eOpts) {
-                                cswPrivate.maxDept = newValue;
-                                cswPrivate.initSystem();
+                    items: [
+                        {
+                            xtype: 'slider',
+                            id: 'ExtExplorerSlider',
+                            hideLabel: false,
+                            fieldLabel: 'Depth',
+                            width: 400,
+                            minValue: 1,
+                            maxValue: 4,
+                            value: cswPrivate.maxDepth,
+                            increment: 1,
+                            listeners: {
+                                'change': function (slider, newValue, thumb, eOpts) {
+                                    cswPrivate.maxDepth = newValue;
+                                    cswPrivate.initSystem();
+                                }
                             }
-                        }
-                    }]
+                        }]
                 }, {
                     title: 'Properties',
                     region: 'east',
@@ -77,7 +79,7 @@
         };
 
         cswPrivate.initSystem = function () {
-            cswPrivate.sys = arbor.ParticleSystem(50, 300, 0.7);
+            cswPrivate.sys = arbor.ParticleSystem(1000, 1000, 0.7);
             cswPrivate.sys.parameters({ gravity: true });
 
             if (Csw.isNullOrEmpty(cswPrivate.startingNodeId)) {
@@ -87,7 +89,7 @@
             Csw.ajaxWcf.post({
                 urlMethod: "Explorer/Initialize",
                 data: {
-                    Depth: cswPrivate.maxDept,
+                    Depth: cswPrivate.maxDepth,
                     NodeId: cswPrivate.startingNodeId
                 },
                 success: function (response) {

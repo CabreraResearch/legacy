@@ -261,6 +261,19 @@ namespace ChemSW.Nbt.MetaData
             return _CswNbtMetaDataResources.NodeTypesCollection.getNodeType( NodeTypeId, Date );
         }
 
+        public CswNbtMetaDataNodeType getNodeTypeFromNodeId( CswPrimaryKey NodeId, CswDateTime Date = null )
+        {
+            CswTableSelect TblSel = CswNbtResources.makeCswTableSelect( "GetNodeTypeId", "nodes" );
+            DataTable NodesTbl = TblSel.getTable( new CswCommaDelimitedString(){ "NodeTypeId" }, "where nodeid = " + NodeId.PrimaryKey );
+            int NodeTypeId = Int32.MinValue;
+            if( NodesTbl.Rows.Count > 0 )
+            {
+                NodeTypeId = CswConvert.ToInt32( NodesTbl.Rows[0]["nodetypeid"] );
+            }
+
+            return _CswNbtMetaDataResources.CswNbtMetaData.getNodeType( NodeTypeId, Date );
+        }
+
         /// <summary>
         /// Returns a CswNbtMetaDataFieldType based on the NbtFieldType provided
         /// </summary>
