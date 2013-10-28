@@ -135,16 +135,16 @@ namespace ChemSW.Nbt.ImportExport
 
                 // Generate an Oracle table for storing and manipulating data
                 _CswNbtSchemaModTrnsctn.addTable( ImportDataTableName, CswNbtImportTables.ImportDataN.PkColumnName );
-                _CswNbtSchemaModTrnsctn.addBooleanColumn( ImportDataTableName, CswNbtImportTables.ImportDataN.error, "", false, false );
-                _CswNbtSchemaModTrnsctn.addClobColumn( ImportDataTableName, CswNbtImportTables.ImportDataN.errorlog, "", false, false );
+                _CswNbtSchemaModTrnsctn.addBooleanColumn( ImportDataTableName, CswNbtImportTables.ImportDataN.error, "", false );
+                _CswNbtSchemaModTrnsctn.addClobColumn( ImportDataTableName, CswNbtImportTables.ImportDataN.errorlog, "", false );
                 foreach( DataColumn ExcelColumn in ExcelDataTable.Columns )
                 {
-                    _CswNbtSchemaModTrnsctn.addStringColumn( ImportDataTableName, CswNbtImportDefBinding.SafeColName( ExcelColumn.ColumnName ), "", false, false, 4000 );
+                    _CswNbtSchemaModTrnsctn.addStringColumn( ImportDataTableName, CswNbtImportDefBinding.SafeColName( ExcelColumn.ColumnName ), "", false, 4000 );
                 }
                 CswNbtImportDef Definition = new CswNbtImportDef( _CswNbtResources, ImportDefinitionName, SheetName );
                 foreach( CswNbtImportDefOrder Order in Definition.ImportOrder.Values )
                 {
-                    _CswNbtSchemaModTrnsctn.addLongColumn( ImportDataTableName, Order.PkColName, "", false, false );
+                    _CswNbtSchemaModTrnsctn.addLongColumn( ImportDataTableName, Order.PkColName, "", false );
                 }
                 _CswNbtResources.commitTransaction();
                 _CswNbtResources.beginTransaction();

@@ -73,7 +73,7 @@ namespace ChemSW.Nbt.Schema
 
         public void addColumn( string columnname, CswEnumDataDictionaryColumnType columntype, Int32 datatypesize, Int32 dblprecision,
                                string defaultvalue, string description, string foreignkeycolumn, string foreignkeytable, bool constrainfkref, bool isview,
-                               bool logicaldelete, string lowerrangevalue, bool lowerrangevalueinclusive, CswEnumDataDictionaryPortableDataType portabledatatype, bool ReadOnly,
+                               string lowerrangevalue, bool lowerrangevalueinclusive, CswEnumDataDictionaryPortableDataType portabledatatype, bool ReadOnly,
                                bool Required, CswEnumDataDictionaryUniqueType uniquetype, bool uperrangevalueinclusive, string upperrangevalue )
         //Int32 NodeTypePropId, string SubFieldName )
         {
@@ -86,7 +86,6 @@ namespace ChemSW.Nbt.Schema
             CswColumnDdlOp.defaultvalue = defaultvalue;
             CswColumnDdlOp.description = description;
             CswColumnDdlOp.isview = isview;
-            CswColumnDdlOp.logicaldelete = logicaldelete;
             CswColumnDdlOp.lowerrangevalue = lowerrangevalue;
             CswColumnDdlOp.lowerrangevalueinclusive = lowerrangevalueinclusive;
             CswColumnDdlOp.portabledatatype = portabledatatype;
