@@ -836,10 +836,6 @@ namespace ChemSW.Nbt
         /// </summary>
         public Int32 getNewPrimeKey( string TableName ) { return _CswResources.getNewPrimeKey( TableName ); }
         /// <summary>
-        /// Returns true if the table uses logical delete
-        /// </summary>
-        public bool isLogicalDeleteTable( string TableName ) { return _CswResources.isLogicalDeleteTable( TableName ); }
-        /// <summary>
         /// Access to the logging mechanism
         /// </summary>
         public ICswLogger CswLogger { get { return _CswResources.CswLogger; } }

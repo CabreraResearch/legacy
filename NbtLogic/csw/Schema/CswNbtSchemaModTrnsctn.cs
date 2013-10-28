@@ -332,7 +332,6 @@ namespace ChemSW.Nbt.Schema
 
         public void dropColumn( string TableName, string ColumnName ) { _CswDdl.dropColumn( TableName, ColumnName ); }
         public void changeColumnDataType( string TableName, string ColumnName, CswEnumDataDictionaryPortableDataType NewDataType, Int32 DataTypeSize ) { _CswNbtResources.CswResources.changeColumnDataType( TableName, ColumnName, NewDataType, DataTypeSize ); }
-        public bool isLogicalDeleteTable( string TableName ) { return ( _CswNbtResources.isLogicalDeleteTable( TableName ) ); }
 
         public void indexColumn( string TableName, string ColumnName, string IndexNameIn = null ) { _CswNbtResources.CswResources.indexColumn( TableName, ColumnName, IndexNameIn ); }
         public void updateIndex( string TableName, string ColumnName, string IndexName ) { _CswNbtResources.CswResources.updateIndex( TableName, ColumnName, IndexName ); }
@@ -396,7 +395,7 @@ namespace ChemSW.Nbt.Schema
                     copyTable( TableName, AuditTableName, false );
                     addStringColumn( AuditTableName, _CswAuditMetaData.AuditEventTypeColName, _CswAuditMetaData.AuditEventTypeColDescription, true, _CswAuditMetaData.AuditEventTypeColLength );
                     addForeignKeyColumn( AuditTableName, _CswAuditMetaData.AuditTransactionIdColName, "fk to audittransactions table", true, _CswAuditMetaData.AuditTransactionTableName, _CswAuditMetaData.AuditTransactionIdColName );
-                    addDateColumn( AuditTableName, _CswAuditMetaData.AuditRecordCreatedColName, _CswAuditMetaData.AuditRecordCreatedColDescription, false, true );
+                    addDateColumn( AuditTableName, _CswAuditMetaData.AuditRecordCreatedColName, _CswAuditMetaData.AuditRecordCreatedColDescription, true );
                     addLongColumn( AuditTableName, _CswNbtResources.DataDictionary.getPrimeKeyColumn( TableName ), "prime key of audited record", true );
 
                 }
@@ -1465,15 +1464,15 @@ namespace ChemSW.Nbt.Schema
         /// <summary>
         /// Convenience function for adding a new double column to the database schema
         /// </summary>
-        public void addDoubleColumn( string tablename, string columnname, string description, bool logicaldelete, bool required, Int32 DblPrecision )
+        public void addDoubleColumn( string tablename, string columnname, string description, bool required, Int32 DblPrecision )
         {
-            addDoubleColumn( tablename, columnname, description, logicaldelete, required, DblPrecision, string.Empty, false, string.Empty, false );
+            addDoubleColumn( tablename, columnname, description, required, DblPrecision, string.Empty, false, string.Empty, false );
         }
 
         /// <summary>
         /// Convenience function for adding a new double column to the database schema
         /// </summary>
-        public void addDoubleColumn( string tablename, string columnname, string description, bool logicaldelete, bool required, Int32 DblPrecision,
+        public void addDoubleColumn( string tablename, string columnname, string description, bool required, Int32 DblPrecision,
                                      string LowerRangeValue, bool LowerRangeValueInclusive, string UpperRangeValue, bool UpperRangeValueInclusive )
         {
             addColumn( columnname, CswEnumDataDictionaryColumnType.Value, Int32.MinValue, DblPrecision, string.Empty, description, string.Empty, string.Empty,
@@ -1484,7 +1483,7 @@ namespace ChemSW.Nbt.Schema
         /// <summary>
         /// Convenience function for adding a new date column to the database schema
         /// </summary>
-        public void addDateColumn( string tablename, string columnname, string description, bool logicaldelete, bool required )
+        public void addDateColumn( string tablename, string columnname, string description, bool required )
         {
             addColumn( columnname, CswEnumDataDictionaryColumnType.Value, Int32.MinValue, Int32.MinValue, string.Empty, description, string.Empty, string.Empty,
                        false, false, string.Empty, false, CswEnumDataDictionaryPortableDataType.Datetime, false,

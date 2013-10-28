@@ -126,7 +126,6 @@ namespace ChemSW.Nbt.Schema
             //CswColumnDdlOp.foreignkeycolumn = _CswNbtResources.DataDictionary.ForeignKeyColumn;
             //CswColumnDdlOp.foreignkeytable = _CswNbtResources.DataDictionary.ForeignKeyTable;
             CswColumnDdlOp.isview = _CswNbtResources.DataDictionary.IsView;
-            CswColumnDdlOp.logicaldelete = _CswNbtResources.DataDictionary.LogicalDelete;
             CswColumnDdlOp.lowerrangevalue = _CswNbtResources.DataDictionary.LowerRangeValue;
             CswColumnDdlOp.lowerrangevalueinclusive = _CswNbtResources.DataDictionary.LowerRangeValueInclusive;
             CswColumnDdlOp.portabledatatype = _CswNbtResources.DataDictionary.PortableDataType;

@@ -172,7 +172,7 @@ namespace ChemSW.Nbt.Sched
 
                             //The higher level classes that CswSessions is used require http reponse and request objects, 
                             //so we have to use th bare CswSessions class directly.
-                            CswSessionsFactory CswSessionsFactory = new CswSessionsFactory( CswEnumAppType.Nbt, _MasterSchemaResources.SetupVbls, _MasterSchemaResources.CswDbCfgInfo, false, _MasterSchemaResources.CswLogger );
+                            CswSessionsFactory CswSessionsFactory = new CswSessionsFactory( CswEnumAppType.Nbt, _MasterSchemaResources.SetupVbls, _MasterSchemaResources.CswDbCfgInfo, _MasterSchemaResources.CswLogger );
                             CswSessions CswSessions = CswSessionsFactory.make( CswEnumSessionsStorageType.DbStorage, _MasterSchemaResources );
 
 
