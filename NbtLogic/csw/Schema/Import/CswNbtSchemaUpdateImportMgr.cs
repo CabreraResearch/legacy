@@ -29,18 +29,19 @@ namespace ChemSW.Nbt.csw.Schema
                 {"weight_view", 10},
                 {"volume_view", 11},
                 {"each_view", 12},
-                {"chemicals_view", 13},
-                {"packdetail_view", 14},
-                {"sds_view", 15},
-                {"docs_view", 15},
-                {"receipt_lots_view", 16},
-                {"cofa_docs_view", 17},
-                {"container_groups", 18},
-                {"containers_view", 19},
-                {"inventory_view", 20},
-                {"regions_view", 21},
-                {"ghs_phrases", 22},
-                {"ghs_phrases_view", 23}
+                {"rs_phrases", 13}, //DSD Phrases
+                {"chemicals_view", 14},
+                {"packdetail_view", 15},
+                {"sds_view", 16},
+                {"docs_view", 17},
+                {"receipt_lots_view", 18},
+                {"cofa_docs_view", 19},
+                {"container_groups", 20},
+                {"containers_view", 21},
+                {"inventory_view", 22},
+                {"regions_view", 23},
+                {"ghs_phrases", 24},
+                {"ghs_view", 25}
             };
 
         private DataTable _importDefTable;

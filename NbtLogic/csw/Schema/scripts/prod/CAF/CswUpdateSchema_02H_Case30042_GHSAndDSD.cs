@@ -8,7 +8,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update
     /// </summary>
-    public class CswUpdateSchema_02H_Case30042_GHSPhrases : CswUpdateSchemaTo
+    public class CswUpdateSchema_02H_Case30042_GHSAndDSD : CswUpdateSchemaTo
     {
         public override CswEnumDeveloper Author
         {
@@ -22,16 +22,18 @@ namespace ChemSW.Nbt.Schema
 
         public override string ScriptName
         {
-            get { return "02H_Case30042_GHSPhrases"; }
+            get { return "02H_Case30042_GHSAndDSD"; }
         }
 
         public override string Title
         {
-            get { return "CAF Import - GHS Phrases"; }
+            get { return "CAF Import - GHS and DSD"; }
         }
 
         public override void update()
         {
+            #region GHS
+
             {
                 CswNbtSchemaUpdateImportMgr JurisdictionMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "sites", "Jurisdiction", "regions_view", "region" );
 
@@ -63,18 +65,43 @@ namespace ChemSW.Nbt.Schema
             }
 
             {
-                CswNbtSchemaUpdateImportMgr GHSPhrasesMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "jct_ghsphrase_matsite", "GHS", "ghs_view", "legacyid" );
+                CswNbtSchemaUpdateImportMgr GHSMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "jct_ghsphrase_matsite", "GHS", "ghs_view", "legacyid" );
 
-                GHSPhrasesMgr.importBinding( "legacyid", CswNbtObjClassGHS.PropertyName.LegacyId, "" );
-                GHSPhrasesMgr.importBinding( "region", CswNbtObjClassGHS.PropertyName.Jurisdiction, "" );
-                GHSPhrasesMgr.importBinding( "materialid", CswNbtObjClassGHS.PropertyName.Material, CswEnumNbtSubFieldName.NodeID.ToString() );
-                GHSPhrasesMgr.importBinding( "ghscodes", CswNbtObjClassGHS.PropertyName.AddLabelCodes, "" );
-                GHSPhrasesMgr.importBinding( "pictos", CswNbtObjClassGHS.PropertyName.Pictograms, "" );
-                GHSPhrasesMgr.importBinding( "signal", CswNbtObjClassGHS.PropertyName.SignalWord, "" );
-                //GHSPhrasesMgr.importBinding( "class", CswNbtObjClassGHS.PropertyName.Classification, "" );
+                GHSMgr.importBinding( "legacyid", CswNbtObjClassGHS.PropertyName.LegacyId, "" );
+                GHSMgr.importBinding( "region", CswNbtObjClassGHS.PropertyName.Jurisdiction, "" );
+                GHSMgr.importBinding( "materialid", CswNbtObjClassGHS.PropertyName.Material, CswEnumNbtSubFieldName.NodeID.ToString() );
+                GHSMgr.importBinding( "ghscodes", CswNbtObjClassGHS.PropertyName.AddLabelCodes, "" );
+                GHSMgr.importBinding( "pictos", CswNbtObjClassGHS.PropertyName.Pictograms, "" );
+                GHSMgr.importBinding( "signal", CswNbtObjClassGHS.PropertyName.SignalWord, "" );
 
-                GHSPhrasesMgr.finalize();
+                GHSMgr.finalize();
             }
+
+            #endregion GHS
+
+            #region DSD
+
+            {
+                CswNbtSchemaUpdateImportMgr DSDPhrasesMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "rs_phrases", "DSD Phrase" );
+
+                DSDPhrasesMgr.importBinding( "rsphraseid", CswNbtObjClassDSDPhrase.PropertyName.LegacyId, "" );
+                DSDPhrasesMgr.importBinding( "code", CswNbtObjClassDSDPhrase.PropertyName.Code, "" );
+                DSDPhrasesMgr.importBinding( "phraseenglish", CswNbtObjClassDSDPhrase.PropertyName.English, "" );
+                DSDPhrasesMgr.importBinding( "phrasedanish", CswNbtObjClassDSDPhrase.PropertyName.Danish, "" );
+                DSDPhrasesMgr.importBinding( "phrasedutch", CswNbtObjClassDSDPhrase.PropertyName.Dutch, "" );
+                DSDPhrasesMgr.importBinding( "phrasefinnish", CswNbtObjClassDSDPhrase.PropertyName.Finnish, "" );
+                DSDPhrasesMgr.importBinding( "phrasefrench", CswNbtObjClassDSDPhrase.PropertyName.French, "" );
+                DSDPhrasesMgr.importBinding( "phrasegerman", CswNbtObjClassDSDPhrase.PropertyName.German, "" );
+                DSDPhrasesMgr.importBinding( "phraseitalian", CswNbtObjClassDSDPhrase.PropertyName.Italian, "" );
+                DSDPhrasesMgr.importBinding( "phraseportuguese", CswNbtObjClassDSDPhrase.PropertyName.Portuguese, "" );
+                DSDPhrasesMgr.importBinding( "phrasespanish", CswNbtObjClassDSDPhrase.PropertyName.Spanish, "" );
+                DSDPhrasesMgr.importBinding( "phraseswedish", CswNbtObjClassDSDPhrase.PropertyName.Swedish, "" );
+                DSDPhrasesMgr.importBinding( "phrasechinese", CswNbtObjClassDSDPhrase.PropertyName.Chinese, "" );
+
+                DSDPhrasesMgr.finalize();
+            }
+
+            #endregion DSD
 
         }//update()
     }
