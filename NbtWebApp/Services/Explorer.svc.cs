@@ -19,15 +19,15 @@ namespace NbtWebApp
         [WebInvoke( Method = "POST", UriTemplate = "Initialize" )]
         [Description( "Initialize the Node Explorer" )]
         [FaultContract( typeof( FaultException ) )]
-        public CswNbtExplorerReturn Initialize( string NodeId )
+        public CswNbtExplorerReturn Initialize( CswNbtExplorerRequest Request )
         {
             CswNbtExplorerReturn Ret = new CswNbtExplorerReturn();
 
-            var SvcDriver = new CswWebSvcDriver<CswNbtExplorerReturn, string>(
+            var SvcDriver = new CswWebSvcDriver<CswNbtExplorerReturn, CswNbtExplorerRequest>(
                 CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
                 ReturnObj : Ret,
                 WebSvcMethodPtr : CswNbtWebServiceNodeExplorer.Initialize,
-                ParamObj : NodeId
+                ParamObj : Request
                 );
 
             SvcDriver.run();

@@ -21,6 +21,7 @@
             cswPrivate.startingNodeId = cswPrivate.startingNodeId;
             cswPrivate.sys = null;
             cswPrivate.extPanel = null;
+            cswPrivate.maxDepth = 2;
 
             cswParent.empty();
         }());
@@ -36,7 +37,25 @@
                     title: 'Filters',
                     region: 'south',
                     xtype: 'panel',
-                    height: 100
+                    height: 100,
+                    items: [
+                        {
+                            xtype: 'slider',
+                            id: 'ExtExplorerSlider',
+                            hideLabel: false,
+                            fieldLabel: 'Depth',
+                            width: 400,
+                            minValue: 1,
+                            maxValue: 4,
+                            value: cswPrivate.maxDepth,
+                            increment: 1,
+                            listeners: {
+                                'change': function (slider, newValue, thumb, eOpts) {
+                                    cswPrivate.maxDepth = newValue;
+                                    cswPrivate.initSystem();
+                                }
+                            }
+                        }]
                 }, {
                     title: 'Properties',
                     region: 'east',
@@ -60,14 +79,23 @@
         };
 
         cswPrivate.initSystem = function () {
-            cswPrivate.sys = arbor.ParticleSystem(50, 300, 0.7);
+            cswPrivate.sys = arbor.ParticleSystem(1000, 1000, 0.7);
             cswPrivate.sys.parameters({ gravity: true });
+
+            if (Csw.isNullOrEmpty(cswPrivate.startingNodeId)) {
+                cswPrivate.startingNodeId = 'nodes_2';
+            }
 
             Csw.ajaxWcf.post({
                 urlMethod: "Explorer/Initialize",
-                data: cswPrivate.startingNodeId,
+                data: {
+                    Depth: cswPrivate.maxDepth,
+                    NodeId: cswPrivate.startingNodeId
+                },
                 success: function (response) {
                     var i = 3;
+                    var graph = {};
+
                     Csw.iterate(response.Nodes, function (arborNode) {
                         var secretCell = cswPrivate.actionTbl.cell(1, i);
                         var img = secretCell.img({
@@ -77,13 +105,16 @@
                         i++;
 
                         cswPrivate.sys.addNode(arborNode.NodeId, arborNode.Data);
+                        graph[arborNode.NodeId] = [];
                     });
 
                     Csw.iterate(response.Edges, function (arborEdge) {
+                        graph[arborEdge.OwnerNodeId].push(arborEdge.TargetNodeId);
+                        graph[arborEdge.TargetNodeId].push(arborEdge.OwnerNodeId);
                         cswPrivate.sys.addEdge(arborEdge.OwnerNodeId, arborEdge.TargetNodeId, arborEdge.Data);
                     });
 
-                    cswPrivate.sys.renderer = Csw.ArborRenderer(cswPrivate.extPanel.items.items[2].items.items[0].el.dom.id, response.Nodes, response.Edges);
+                    cswPrivate.sys.renderer = Csw.ArborRenderer(cswPrivate.extPanel.items.items[2].items.items[0].el.dom.id, response.Nodes, response.Edges, graph, '2');
                 }
             });
         };
