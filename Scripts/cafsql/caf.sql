@@ -652,108 +652,120 @@ create or replace view regions_view as
 select distinct region, deleted from sites where deleted = 0;
 
 CREATE OR REPLACE VIEW GHS_VIEW AS
-SELECT materialid
+SELECT PACKAGEID,
+         PACKAGEID
          || '_'
-         || region AS legacyid,
-         materialid,
-         region,
-         ghscodes,
-         pictos,
-         signal,
-         deleted
+         || REGION AS legacyid,
+         MATERIALID,
+         REGION,
+         GHSCODES,
+         PICTOS,
+         SIGNAL,
+         DELETED
   FROM   (WITH mappedpictos
-               AS (SELECT ghspictoid,
-                          CASE pictofilename
-                            WHEN 'acide.gif' THEN 'Images/cispro/ghs/512/acid.jpg'
-                            WHEN 'bottle.gif' THEN 'Images/cispro/ghs/512/bottle.jpg'
-                            WHEN 'exclam.gif' THEN 'Images/cispro/ghs/512/exclam.jpg'
-                            WHEN 'explos.gif' THEN 'Images/cispro/ghs/512/explos.jpg'
-                            WHEN 'flamme.gif' THEN 'Images/cispro/ghs/512/flamme.jpg'
-                            WHEN 'pollu.gif' THEN 'Images/cispro/ghs/512/pollut.jpg'
-                            WHEN 'rondfl.gif' THEN 'Images/cispro/ghs/512/rondflam.jpg'
-                            WHEN 'siloue.gif' THEN 'Images/cispro/ghs/512/silhouet.jpg'
-                            WHEN 'skull.gif' THEN 'Images/cispro/ghs/512/skull.jpg'
+               AS (SELECT GHSPICTOID,
+                          CASE PICTOFILENAME
+                            WHEN 'acide.gif' THEN
+                            'Images/cispro/ghs/512/acid.jpg'
+                            WHEN 'bottle.gif' THEN
+                            'Images/cispro/ghs/512/bottle.jpg'
+                            WHEN 'exclam.gif' THEN
+                            'Images/cispro/ghs/512/exclam.jpg'
+                            WHEN 'explos.gif' THEN
+                            'Images/cispro/ghs/512/explos.jpg'
+                            WHEN 'flamme.gif' THEN
+                            'Images/cispro/ghs/512/flamme.jpg'
+                            WHEN 'pollu.gif' THEN
+                            'Images/cispro/ghs/512/pollut.jpg'
+                            WHEN 'rondfl.gif' THEN
+                            'Images/cispro/ghs/512/rondflam.jpg'
+                            WHEN 'siloue.gif' THEN
+                            'Images/cispro/ghs/512/silhouet.jpg'
+                            WHEN 'skull.gif' THEN
+                            'Images/cispro/ghs/512/skull.jpg'
                           END AS pictofilename
                    FROM   ghs_pictos),
                pictos
-               AS (SELECT region,
-                          materialid,
-                          deleted,
-                          Listagg(pictofilename, chr(10))
+               AS (SELECT REGION,
+                          MATERIALID,
+                          DELETED,
+                          Listagg(PICTOFILENAME, Chr(10))
                             within GROUP( ORDER BY pictofilename) AS pictos
-                   FROM   (SELECT DISTINCT s.region,
-                                           p.materialid,
-                                           g.pictofilename,
-                                           p.deleted
+                   FROM   (SELECT DISTINCT s.REGION,
+                                           p.MATERIALID,
+                                           g.PICTOFILENAME,
+                                           p.DELETED
                            FROM   jct_ghspictos_matsite p
                                   join sites s
-                                    ON ( s.siteid = p.siteid )
+                                    ON ( s.SITEID = p.SITEID )
                                   join mappedpictos g
-                                    ON ( g.ghspictoid = p.ghspictoid )
-                           WHERE  p.deleted = 0)
-                   GROUP  BY region,
-                             materialid,
-                             deleted),
+                                    ON ( g.GHSPICTOID = p.GHSPICTOID )
+                           WHERE  p.DELETED = 0)
+                   GROUP  BY REGION,
+                             MATERIALID,
+                             DELETED),
                phrases
-               AS (SELECT region,
-                          materialid,
-                          deleted,
-                          Listagg(ghscode, ',')
+               AS (SELECT REGION,
+                          MATERIALID,
+                          DELETED,
+                          Listagg(GHSCODE, ',')
                             within GROUP( ORDER BY ghscode) AS ghscodes
-                   FROM   (SELECT DISTINCT s.region,
-                                           p.materialid,
-                                           g.ghscode,
-                                           p.deleted
+                   FROM   (SELECT DISTINCT s.REGION,
+                                           p.MATERIALID,
+                                           g.GHSCODE,
+                                           p.DELETED
                            FROM   jct_ghsphrase_matsite p
                                   join sites s
-                                    ON ( s.siteid = p.siteid )
+                                    ON ( s.SITEID = p.SITEID )
                                   join ghs_phrases g
-                                    ON ( g.ghsphraseid = p.ghsphraseid )
-                           WHERE  p.deleted = 0)
-                   GROUP  BY region,
-                             materialid,
-                             deleted),
+                                    ON ( g.GHSPHRASEID = p.GHSPHRASEID )
+                           WHERE  p.DELETED = 0)
+                   GROUP  BY REGION,
+                             MATERIALID,
+                             DELETED),
                signals
-               AS (SELECT DISTINCT s.region,
-                                   p.materialid,
-                                   g.english,
-                                   p.deleted
+               AS (SELECT DISTINCT s.REGION,
+                                   p.MATERIALID,
+                                   g.ENGLISH,
+                                   p.DELETED
                    FROM   jct_ghssignal_matsite p
                           join sites s
-                            ON ( s.siteid = p.siteid )
+                            ON ( s.SITEID = p.SITEID )
                           join ghs_signal g
-                            ON ( g.ghssignalid = p.ghssignalid )
-                   WHERE  p.deleted = 0),
+                            ON ( g.GHSSIGNALID = p.GHSSIGNALID )
+                   WHERE  p.DELETED = 0),
                classes
-               AS (SELECT DISTINCT materialid,
-                                   ghscategoryname,
-                                   m.deleted
+               AS (SELECT DISTINCT MATERIALID,
+                                   GHSCATEGORYNAME,
+                                   m.DELETED
                    FROM   jct_ghs_materials m
                           join ghs_classes c
-                            ON ( c.ghsclassid = m.ghsclassid )
-                   WHERE  m.deleted = 0)
-          SELECT CASE
-                   WHEN ph.materialid IS NOT NULL THEN ph.materialid
-                   WHEN pc.materialid IS NOT NULL THEN pc.materialid
-                   WHEN s.materialid IS NOT NULL THEN s.materialid
-                 END               AS materialid,
+                            ON ( c.GHSCLASSID = m.GHSCLASSID )
+                   WHERE  m.DELETED = 0)
+          SELECT p.PACKAGEID,
                  CASE
-                   WHEN ph.region IS NOT NULL THEN ph.region
-                   WHEN pc.region IS NOT NULL THEN pc.region
-                   WHEN s.region IS NOT NULL THEN s.region
-                 END               AS region,
-                 ph.ghscodes,
-                 pc.pictos,
+                   WHEN ph.MATERIALID IS NOT NULL THEN ph.MATERIALID
+                   WHEN pc.MATERIALID IS NOT NULL THEN pc.MATERIALID
+                   WHEN s.MATERIALID IS NOT NULL THEN s.MATERIALID
+                 END AS materialid,
                  CASE
-                   WHEN s.english IS NULL THEN 'Warning'
-                   ELSE s.english
-                 END               AS signal,
-                 ph.deleted
+                   WHEN ph.REGION IS NOT NULL THEN ph.REGION
+                   WHEN pc.REGION IS NOT NULL THEN pc.REGION
+                   WHEN s.REGION IS NOT NULL THEN s.REGION
+                 END AS region,
+                 ph.GHSCODES,
+                 pc.PICTOS,
+                 CASE
+                   WHEN s.ENGLISH IS NULL THEN 'Warning'
+                   ELSE s.ENGLISH
+                 END AS signal,
+                 ph.DELETED
            FROM   phrases ph
                   full outer join pictos pc
-                               ON ( pc.materialid = ph.materialid
-                                    AND pc.region = ph.region )
+                               ON ( pc.MATERIALID = ph.MATERIALID
+                                    AND pc.REGION = ph.REGION )
                   full outer join signals s
-                               ON ( s.materialid = ph.materialid
-                                    AND s.region = ph.region )
-           ORDER  BY materialid);
+                               ON ( s.MATERIALID = ph.MATERIALID
+                                    AND s.REGION = ph.REGION )
+                  join packages p
+                    ON ( p.MATERIALID = ph.MATERIALID ));

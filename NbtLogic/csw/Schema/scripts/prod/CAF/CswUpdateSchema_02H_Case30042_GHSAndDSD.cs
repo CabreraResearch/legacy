@@ -69,7 +69,7 @@ namespace ChemSW.Nbt.Schema
 
                 GHSMgr.importBinding( "legacyid", CswNbtObjClassGHS.PropertyName.LegacyId, "" );
                 GHSMgr.importBinding( "region", CswNbtObjClassGHS.PropertyName.Jurisdiction, "" );
-                GHSMgr.importBinding( "materialid", CswNbtObjClassGHS.PropertyName.Material, CswEnumNbtSubFieldName.NodeID.ToString() );
+                GHSMgr.importBinding( "packageid", CswNbtObjClassGHS.PropertyName.Material, CswEnumNbtSubFieldName.NodeID.ToString() );
                 GHSMgr.importBinding( "ghscodes", CswNbtObjClassGHS.PropertyName.AddLabelCodes, "" );
                 GHSMgr.importBinding( "pictos", CswNbtObjClassGHS.PropertyName.Pictograms, "" );
                 GHSMgr.importBinding( "signal", CswNbtObjClassGHS.PropertyName.SignalWord, "" );

@@ -39,8 +39,14 @@ namespace ChemSW.Nbt.Schema
                 NodetypeProp.removeFromAllLayouts();
             }
 
-            // todo: Add the material name to the ghs name template
-
+            // Add material to name template for ghs nodetypes
+            CswNbtMetaDataObjectClass GHSOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.GHSClass );
+            foreach( CswNbtMetaDataNodeType GHSNT in GHSOC.getNodeTypes() )
+            {
+                CswNbtMetaDataNodeTypeProp JurisdictionNTP = GHSNT.getNodeTypePropByObjectClassProp( CswNbtObjClassGHS.PropertyName.Jurisdiction );
+                CswNbtMetaDataNodeTypeProp MaterialNTP = GHSNT.getNodeTypePropByObjectClassProp( CswNbtObjClassGHS.PropertyName.Material );
+                GHSNT.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( JurisdictionNTP.PropName ) + " " + CswNbtMetaData.MakeTemplateEntry( MaterialNTP.PropName ) );
+            }
 
         } // update()
 
