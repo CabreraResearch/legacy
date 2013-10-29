@@ -4,6 +4,7 @@ using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropertySets;
 using ChemSW.Nbt.PropTypes;
+using ChemSW.WebSvc;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -184,7 +185,13 @@ namespace ChemSW.Nbt.ObjClasses
                     }
                     else
                     {
-                        throw new CswDniException(CswEnumErrorType.Warning, "A mail report cannot be run before its first scheduled due date.", "Run now is invalid before initial due date.");
+                        _CswNbtResources.Messages.Add( new CswWebSvcReturnBase.ErrorMessage()
+                            {
+                                ShowError = true, 
+                                Type=CswEnumErrorType.Warning,
+                                Message = "A mail report cannot be run before its first scheduled due date.",
+                                Detail = "Run now is invalid before initial due date."
+                            } );
                     }
                 }
             }
