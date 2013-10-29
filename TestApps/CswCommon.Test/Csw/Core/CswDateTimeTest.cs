@@ -1,8 +1,8 @@
-﻿using ChemSW;
+﻿using System;
+using ChemSW;
 using ChemSW.Config;
 using ChemSW.Core;
 using NUnit.Framework;
-using System;
 
 namespace CswCommon.Test.Csw.Core
 {
@@ -14,11 +14,11 @@ namespace CswCommon.Test.Csw.Core
         [SetUp]
         public void MyTestInitialize()
         {
-            _CswResources = CswResourceFactory.make( CswEnumAppType.Nbt, CswEnumSetupMode.TestProject, IsDeleteModeLogical: false );
+            _CswResources = CswResourceFactory.make( CswEnumAppType.Nbt, CswEnumSetupMode.TestProject );
         }
 
         [TearDown]
-        public void MyTestCleanup()                                                                             
+        public void MyTestCleanup()
         {
         }
 

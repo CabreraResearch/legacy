@@ -227,9 +227,9 @@ namespace ChemSW.Nbt.WebServices
 
         }
 
-        public CswNbtResources makeSystemUserResources( string AccessId, bool ExcludeDisabledModules = true, bool IsDeleteModeLogical = true )
+        public CswNbtResources makeSystemUserResources( string AccessId, bool ExcludeDisabledModules = true )
         {
-            CswNbtResources NbtSystemResources = CswNbtResourcesFactory.makeCswNbtResources( CswEnumAppType.Nbt, CswEnumSetupMode.NbtWeb, ExcludeDisabledModules, IsDeleteModeLogical, new CswSuperCycleCacheDefault() );
+            CswNbtResources NbtSystemResources = CswNbtResourcesFactory.makeCswNbtResources( CswEnumAppType.Nbt, CswEnumSetupMode.NbtWeb, ExcludeDisabledModules, new CswSuperCycleCacheDefault() );
             NbtSystemResources.AccessId = AccessId;
             NbtSystemResources.InitCurrentUser = _InitSystemUser;
             return NbtSystemResources;

@@ -30,7 +30,7 @@ namespace ChemSW.Nbt.Sched
                 PooledConnectionState = CswEnumPooledConnectionState.Closed;
             }
 
-            CswNbtResources ReturnVal = CswNbtResourcesFactory.makeCswNbtResources( CswEnumAppType.Nbt, CswEnumSetupMode.NbtExe, true, false, null, PooledConnectionState );
+            CswNbtResources ReturnVal = CswNbtResourcesFactory.makeCswNbtResources( CswEnumAppType.Nbt, CswEnumSetupMode.NbtExe, true, null, PooledConnectionState );
             ReturnVal.InitCurrentUser = InitUser;
             return ( ReturnVal );
         }

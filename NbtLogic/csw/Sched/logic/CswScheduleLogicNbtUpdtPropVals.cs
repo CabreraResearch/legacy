@@ -78,7 +78,7 @@ namespace ChemSW.Nbt.Sched
                     {
                         NodesPerCycle = 25;
                     }
-                    OutOfDateNodes = OutOfDateNodesQuerySelect.getTable( 0, NodesPerCycle, false, false );
+                    OutOfDateNodes = OutOfDateNodesQuerySelect.getTable( 0, NodesPerCycle, false );
                     NodesPerCycle = OutOfDateNodes.Rows.Count;  //in case we didn't actually retrieve that amount
 
                     Int32 ErroneousNodeCount = 0;

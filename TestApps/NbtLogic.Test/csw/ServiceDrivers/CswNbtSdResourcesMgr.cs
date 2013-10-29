@@ -101,7 +101,7 @@ namespace ChemSW.Nbt.Test.ServiceDrivers
         {
             _ValidateAccessId( AccessId );
             //CswNbtResources OtherResources = CswNbtResourcesFactory.makeCswNbtResources( _CswNbtResources );
-            CswNbtResources OtherResources = CswNbtResourcesFactory.makeCswNbtResources( CswEnumAppType.Nbt, CswEnumSetupMode.TestProject, true, false );
+            CswNbtResources OtherResources = CswNbtResourcesFactory.makeCswNbtResources( CswEnumAppType.Nbt, CswEnumSetupMode.TestProject, true );
             OtherResources.AccessId = AccessId;
             OtherResources.InitCurrentUser = InitSystemUser;
             return OtherResources;
@@ -110,7 +110,7 @@ namespace ChemSW.Nbt.Test.ServiceDrivers
         public CswNbtResources makeNewUserResources( string UserName, CswPrimaryKey RoleId )
         {
             //CswNbtResources Ret = CswNbtResourcesFactory.makeCswNbtResources( _CswNbtResources );
-            CswNbtResources Ret = CswNbtResourcesFactory.makeCswNbtResources( CswEnumAppType.Nbt, CswEnumSetupMode.TestProject, true, false );
+            CswNbtResources Ret = CswNbtResourcesFactory.makeCswNbtResources( CswEnumAppType.Nbt, CswEnumSetupMode.TestProject, true );
             Ret.AccessId = _CswNbtResources.AccessId;
             CswNbtObjClassRole Role = Ret.Nodes[RoleId];
             Ret.InitCurrentUser = Resources => _InitNewUser( Resources, Ret, UserName, Role );
@@ -120,7 +120,7 @@ namespace ChemSW.Nbt.Test.ServiceDrivers
         public CswNbtResources makeUserResources( string UserName )
         {
             //CswNbtResources Ret = CswNbtResourcesFactory.makeCswNbtResources( _CswNbtResources );
-            CswNbtResources Ret = CswNbtResourcesFactory.makeCswNbtResources( CswEnumAppType.Nbt, CswEnumSetupMode.TestProject, true, false );
+            CswNbtResources Ret = CswNbtResourcesFactory.makeCswNbtResources( CswEnumAppType.Nbt, CswEnumSetupMode.TestProject, true );
             Ret.AccessId = _CswNbtResources.AccessId;
             Ret.InitCurrentUser = Resources => _InitUser( Resources, Ret, UserName );
             return Ret;

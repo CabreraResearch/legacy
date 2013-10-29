@@ -1,6 +1,4 @@
 ﻿using ChemSW.Nbt.csw.Dev;
-using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -35,8 +33,8 @@ namespace ChemSW.Nbt.Schema
             if( false == _CswNbtSchemaModTrnsctn.isTableDefined( FavoritesTableName ) )
             {
                 _CswNbtSchemaModTrnsctn.addTable( FavoritesTableName, "favoriteid" );
-                _CswNbtSchemaModTrnsctn.addLongColumn( FavoritesTableName, "userid", "nodeid of the user who favorited this item", false, true );
-                _CswNbtSchemaModTrnsctn.addLongColumn( FavoritesTableName, "itemid", "nodeid of the favorited item", false, true );
+                _CswNbtSchemaModTrnsctn.addLongColumn( FavoritesTableName, "userid", "nodeid of the user who favorited this item", true );
+                _CswNbtSchemaModTrnsctn.addLongColumn( FavoritesTableName, "itemid", "nodeid of the favorited item", true );
             }
         } // update()
     }

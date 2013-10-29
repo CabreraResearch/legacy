@@ -115,7 +115,7 @@ namespace ChemSW.Nbt.Schema.CmdLn
         {
             lock( ResourceAllocationLock )
             {
-                CswNbtResourcesOut = CswNbtResourcesFactory.makeCswNbtResources( CswEnumAppType.Nbt, CswEnumSetupMode.NbtExe, false, false, null, ChemSW.RscAdo.CswEnumPooledConnectionState.Closed );
+                CswNbtResourcesOut = CswNbtResourcesFactory.makeCswNbtResources( CswEnumAppType.Nbt, CswEnumSetupMode.NbtExe, false, null, ChemSW.RscAdo.CswEnumPooledConnectionState.Closed );
                 CswNbtResourcesOut.InitCurrentUser = InitUser;
                 if( AccessId != string.Empty )
                 {

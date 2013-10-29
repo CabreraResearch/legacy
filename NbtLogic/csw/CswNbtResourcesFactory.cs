@@ -19,7 +19,6 @@ namespace ChemSW.Nbt
             return makeCswNbtResources( OtherResources.AppType,
                                         OtherResources.SetupVbls.SetupMode,
                                         OtherResources.ExcludeDisabledModules,
-                                        OtherResources.IsDeleteModeLogical,
                                         OtherResources.CswSuperCycleCache,
                                         OtherResources.PooledConnectionState,
                                         null, OtherResources.CswLogger );
@@ -28,7 +27,7 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Create a new CswNbtResources
         /// </summary>
-        public static CswNbtResources makeCswNbtResources( CswEnumAppType AppType, CswEnumSetupMode SetupMode, bool ExcludeDisabledModules, bool IsDeleteModeLogical, ICswSuperCycleCache CswSuperCycleCache = null, ChemSW.RscAdo.CswEnumPooledConnectionState PooledConnectionState = RscAdo.CswEnumPooledConnectionState.Open, ICswResources CswResourcesMaster = null, ICswLogger CswLogger = null )
+        public static CswNbtResources makeCswNbtResources( CswEnumAppType AppType, CswEnumSetupMode SetupMode, bool ExcludeDisabledModules, ICswSuperCycleCache CswSuperCycleCache = null, ChemSW.RscAdo.CswEnumPooledConnectionState PooledConnectionState = RscAdo.CswEnumPooledConnectionState.Open, ICswResources CswResourcesMaster = null, ICswLogger CswLogger = null )
         {
             if( null == CswSuperCycleCache )
             {
@@ -38,7 +37,7 @@ namespace ChemSW.Nbt
             CswSetupVbls SetupVbls = new CswSetupVbls( SetupMode );
             CswDbCfgInfo ConfigInfo = new CswDbCfgInfo( SetupMode );
             
-            CswNbtResources ReturnVal = new CswNbtResources( AppType, SetupVbls, ConfigInfo, ExcludeDisabledModules, IsDeleteModeLogical, CswSuperCycleCache, CswResourcesMaster, CswLogger );
+            CswNbtResources ReturnVal = new CswNbtResources( AppType, SetupVbls, ConfigInfo, ExcludeDisabledModules, CswSuperCycleCache, CswResourcesMaster, CswLogger );
             ReturnVal.SetDbResources( new CswNbtTreeFactory(), PooledConnectionState );
 
             //bz # 9896: This events must only be assigned when we first instance the class;
