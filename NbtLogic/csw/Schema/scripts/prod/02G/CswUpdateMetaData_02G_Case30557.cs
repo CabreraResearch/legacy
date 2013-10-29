@@ -1,7 +1,5 @@
 using ChemSW.Core;
 using ChemSW.Nbt.csw.Dev;
-using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -40,7 +38,7 @@ namespace ChemSW.Nbt.Schema
             _CswNbtSchemaModTrnsctn.changeColumnDataType( "jct_nodes_props", "field2_numeric", CswEnumDataDictionaryPortableDataType.Number, 0 );
             if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "jct_nodes_props", "field3_numeric" ) )
             {
-                _CswNbtSchemaModTrnsctn.addNumberColumn( "jct_nodes_props", "field3_numeric", "for numeric values", false, true );
+                _CswNbtSchemaModTrnsctn.addNumberColumn( "jct_nodes_props", "field3_numeric", "for numeric values", true );
             }
         }
     }

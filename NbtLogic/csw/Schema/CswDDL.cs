@@ -142,13 +142,13 @@ namespace ChemSW.Nbt.Schema
 
         public void addColumn( string columnname, CswEnumDataDictionaryColumnType columntype, Int32 datatypesize, Int32 dblprecision,
                                string defaultvalue, string description, string foreignkeycolumn, string foreignkeytable, bool constrainfkref, bool isview,
-                               bool logicaldelete, string lowerrangevalue, bool lowerrangevalueinclusive, CswEnumDataDictionaryPortableDataType portabledatatype, bool ReadOnly,
+                               string lowerrangevalue, bool lowerrangevalueinclusive, CswEnumDataDictionaryPortableDataType portabledatatype, bool ReadOnly,
                                bool Required, string tablename, CswEnumDataDictionaryUniqueType uniquetype, bool uperrangevalueinclusive, string upperrangevalue )
         {
             _verifyOrCreateTableForColumnOp( tablename );
             _DdlOps[tablename].addColumn( columnname, columntype, datatypesize, dblprecision,
                                           defaultvalue, description, foreignkeycolumn, foreignkeytable, constrainfkref, isview,
-                                          logicaldelete, lowerrangevalue, lowerrangevalueinclusive, portabledatatype, ReadOnly,
+                                          lowerrangevalue, lowerrangevalueinclusive, portabledatatype, ReadOnly,
                                           Required, uniquetype, uperrangevalueinclusive, upperrangevalue );
             _DdlOps[tablename].apply();
 
@@ -159,7 +159,7 @@ namespace ChemSW.Nbt.Schema
                 _verifyOrCreateTableForColumnOp( audittablename );
                 _DdlOps[audittablename].addColumn( columnname, columntype, datatypesize, dblprecision,
                                                    "", description, "", "", false, isview,
-                                                   false, "", false, portabledatatype, false,
+                                                   "", false, portabledatatype, false,
                                                    false, audittablename, false, "" );
                 _DdlOps[audittablename].apply();
             }

@@ -107,15 +107,14 @@ namespace ChemSW.Nbt
         public string _DebugID;
 
         public CswEnumAppType AppType { get { return _CswResources.AppType; } }
-        public bool IsDeleteModeLogical { get { return _CswResources.IsDeleteModeLogical(); } }
         public const string UnknownEnum = CswResources.UnknownEnum;
         /// <summary>
         /// Constructor
         /// </summary>
-        public CswNbtResources( CswEnumAppType AppType, ICswSetupVbls SetupVbls, ICswDbCfgInfo DbCfgInfo, bool ExcludeDisabledModules, bool IsDeleteModeLogical, ICswSuperCycleCache CswSuperCycleCache, ICswResources CswResourcesMaster = null, ICswLogger CswLogger = null )
+        public CswNbtResources( CswEnumAppType AppType, ICswSetupVbls SetupVbls, ICswDbCfgInfo DbCfgInfo, bool ExcludeDisabledModules, ICswSuperCycleCache CswSuperCycleCache, ICswResources CswResourcesMaster = null, ICswLogger CswLogger = null )
         {
 
-            _CswResources = new CswResources( AppType, SetupVbls, DbCfgInfo, IsDeleteModeLogical, CswSuperCycleCache, CswResourcesMaster, CswLogger );
+            _CswResources = new CswResources( AppType, SetupVbls, DbCfgInfo, CswSuperCycleCache, CswResourcesMaster, CswLogger );
             _DebugID = Guid.NewGuid().ToString(); // DateTime.Now.ToString();
             logMessage( "CswNbtResources CREATED GUID: " + _DebugID );
 
@@ -836,10 +835,6 @@ namespace ChemSW.Nbt
         /// Returns a new primary key value (CswTableUpdate will do this for you)
         /// </summary>
         public Int32 getNewPrimeKey( string TableName ) { return _CswResources.getNewPrimeKey( TableName ); }
-        /// <summary>
-        /// Returns true if the table uses logical delete
-        /// </summary>
-        public bool isLogicalDeleteTable( string TableName ) { return _CswResources.isLogicalDeleteTable( TableName ); }
         /// <summary>
         /// Access to the logging mechanism
         /// </summary>

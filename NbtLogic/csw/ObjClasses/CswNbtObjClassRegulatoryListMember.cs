@@ -1,7 +1,4 @@
-using System;
-using System.Text.RegularExpressions;
 using ChemSW.Core;
-using ChemSW.Nbt.Batch;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;

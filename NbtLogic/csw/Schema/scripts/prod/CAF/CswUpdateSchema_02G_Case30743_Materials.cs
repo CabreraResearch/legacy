@@ -79,6 +79,13 @@ namespace ChemSW.Nbt.Schema
             ImpMgr.importBinding( "disposal", CswNbtObjClassChemical.PropertyName.DisposalInstructions, "", BlobTableName: "materials", LobDataPkColOverride: "materialid" );
             ImpMgr.importBinding( "smiles", CswNbtObjClassChemical.PropertyName.SMILES, "", ClobTableName: "materials", LobDataPkColOverride: "materialid" );
 
+            //DSD
+            ImpMgr.importBinding( "labelcodes", CswNbtObjClassChemical.PropertyName.AddLabelCodes, "" );
+            ImpMgr.importBinding( "pictograms", CswNbtObjClassChemical.PropertyName.Pictograms, "" );
+
+            //Storage Compatibility
+            ImpMgr.importBinding( "storagecompatibility", CswNbtObjClassChemical.PropertyName.StorageCompatibility, "" );
+
             ImpMgr.finalize();
 
         }

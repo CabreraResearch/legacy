@@ -34,11 +34,11 @@ namespace ChemSW.Nbt.Schema
                 _CswNbtSchemaModTrnsctn.addTable( "import_def", "importdefid" );
 
             if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "IMPORT_DEF", "TABLENAME" ) )
-                _CswNbtSchemaModTrnsctn.addStringColumn( "IMPORT_DEF", "TABLENAME", "the source table for this sheet", false, false, 30 );
+                _CswNbtSchemaModTrnsctn.addStringColumn( "IMPORT_DEF", "TABLENAME", "the source table for this sheet", false, 30 );
             if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "IMPORT_DEF", "VIEWNAME" ) )
-                _CswNbtSchemaModTrnsctn.addStringColumn( "IMPORT_DEF", "VIEWNAME", "the source view for this sheet", false, false, 30 );
+                _CswNbtSchemaModTrnsctn.addStringColumn( "IMPORT_DEF", "VIEWNAME", "the source view for this sheet", false, 30 );
             if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "IMPORT_DEF", "PKCOLUMNNAME" ) )
-                _CswNbtSchemaModTrnsctn.addStringColumn( "IMPORT_DEF", "PKCOLUMNNAME", "the column of PKs stored in import queue", false, false, 30 );
+                _CswNbtSchemaModTrnsctn.addStringColumn( "IMPORT_DEF", "PKCOLUMNNAME", "the column of PKs stored in import queue", false, 30 );
 
 
 

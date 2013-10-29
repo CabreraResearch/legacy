@@ -31,28 +31,28 @@ namespace ChemSW.Nbt.Schema
             {
                 _CswNbtSchemaModTrnsctn.addTable( "Import_Lob", "importlobid" );
 
-                _CswNbtSchemaModTrnsctn.addBlobColumn( "Import_Lob", "BlobData", "Blob data from CAF", false, false );
+                _CswNbtSchemaModTrnsctn.addBlobColumn( "Import_Lob", "BlobData", "Blob data from CAF", false );
 
-                _CswNbtSchemaModTrnsctn.addClobColumn( "Import_Lob", "ClobData", "Clob data from CAF", false, false );
+                _CswNbtSchemaModTrnsctn.addClobColumn( "Import_Lob", "ClobData", "Clob data from CAF", false );
 
-                _CswNbtSchemaModTrnsctn.addStringColumn( "Import_Lob", "tablename", "The name of the table this lob came from", false, true, 100 );
+                _CswNbtSchemaModTrnsctn.addStringColumn( "Import_Lob", "tablename", "The name of the table this lob came from", true, 100 );
 
-                _CswNbtSchemaModTrnsctn.addNumberColumn( "Import_Lob", "cafpk", "The PK of the row this lob came from", false, true );
+                _CswNbtSchemaModTrnsctn.addNumberColumn( "Import_Lob", "cafpk", "The PK of the row this lob came from", true );
             }
 
             if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "import_def_bindings", "blobtablename" ) )
             {
-                _CswNbtSchemaModTrnsctn.addStringColumn( "import_def_bindings", "blobtablename", "The name of the table this blob came from", false, false, 255 );
+                _CswNbtSchemaModTrnsctn.addStringColumn( "import_def_bindings", "blobtablename", "The name of the table this blob came from", false, 255 );
             }
 
             if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "import_def_bindings", "clobtablename" ) )
             {
-                _CswNbtSchemaModTrnsctn.addStringColumn( "import_def_bindings", "clobtablename", "The name of the table this clob came from", false, false, 255 );
+                _CswNbtSchemaModTrnsctn.addStringColumn( "import_def_bindings", "clobtablename", "The name of the table this clob came from", false, 255 );
             }
 
             if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "import_def_bindings", "lobdatapkcoloverride" ) )
             {
-                _CswNbtSchemaModTrnsctn.addStringColumn( "import_def_bindings", "lobdatapkcoloverride", "The name of the column that contains the value to use as the PK to the lob data", false, false, 255 );
+                _CswNbtSchemaModTrnsctn.addStringColumn( "import_def_bindings", "lobdatapkcoloverride", "The name of the column that contains the value to use as the PK to the lob data", false, 255 );
             }
 
         } // update()

@@ -191,111 +191,173 @@ select packdetailid,
        from packdetail;
 
 --Chemicals
-create or replace view chemicals_view as
-(select v.vendorid,
- p.packageid,
- p.productno,
- m."AQUEOUS_SOLUBILITY",
-m."BOILING_POINT",
-m."CASNO",
-m."COLOR",
-m."COMPRESSED_GAS",
-m."CREATIONDATE",
-m."CREATIONSITEID",
-m."DELETED",
-m."DOT_CODE",
-m."EXPIREINTERVAL",
-m."EXPIREINTERVALUNITS",
-m."EXPOSURE_LIMITS",
-m."FIRECODE",
-m."FLASH_POINT",
-m."FORMULA",
-m."HAZARDS",
-m."HEALTHCODE",
-m."INVENTORYREQUIRED",
-m."KEYWORDS",
-m."LOB_TYPE",
-m."MANUFACTURER",
-m."MATERIAL_FINISH",
-m."MATERIAL_SIZEVOL",
-m."MATERIAL_TYPE",
-m."MATERIAL_USE",
-m."MATERIALID",
-m."MATERIALNAME",
-m."MATERIALSUBCLASSID",
-m."MELTING_POINT",
-m."MODEL",
-m."MOLECULAR_WEIGHT",
-m."OTHERREFERENCENO",
-m."PH",
-m."PHYSICAL_DESCRIPTION",
-m."PHYSICAL_STATE",
-m.ppe,
-replace(replace(replace(m.ppe, 'Eye Protection', 'Goggles'), 'Hand Protection', 'Gloves'), 'Ventilation', 'Fume Hood') as ppe_trans,
-m."REACTIVECODE",
-m."REVIEWSTATUSCHANGEDATE",
-m."REVIEWSTATUSNAME",
-m."SPEC_NO",
-m."SPECIFIC_CODE",
-m."SPECIFIC_GRAVITY",
-m."SPECIFICCODE",
-m."VAPOR_DENSITY",
-m."VAPOR_PRESSURE",
-m."KEEPATSTATUS",
-m."TARGET_ORGANS",
-m."CREATIONUSERID",
-m."AUDITFLAG",
-m."CREATIONWORKUNITID",
-m."EINECS",
-m."CONST_UBA_CODE",
-m."CONST_COLOR_INDEX",
-m."CONST_SIMPLE_NAME",
-m."CONST_CHEM_GROUP",
-m."CONST_INGRED_CLASS",
-m."CONST_CHEM_REACT",
-m."LASTUPDATED",
-m."OPENEXPIREINTERVAL",
-m."OPENEXPIREINTERVALUNITS",
-m."CONST_FEMA_NO",
-m."CONST_COE_NO",
-m."PRODUCTTYPE",
-m."PRODUCTBRAND",
-m."PRODUCTCATEGORY",
-m."NFPACODE",
-m."CONST_MAT_FUNCTION",
-m."HAS_ACTIVITY",
-m."REFNO",
-m."TYPE",
-m."SPECIES",
-m."VARIETY",
-m."GOI",
-m."TRANSGENIC",
-m."VECTORS",
-m."BIOSAFETY",
-m."CONST_MAT_ORIGIN",
-m."REVIEWSTATUSTYPE",
-m."STORAGE_CONDITIONS",
-m."PENDINGUPDATE",
-m."ISTIER2",
-m."MATERIALVARIETYID",
-m."NONHAZARDOUS3E",
-m."ASSETCREATIONNAME",
-ms.subclassname,
-(case m.physical_state
-  when 'S' then 'Solid'
-  when 'L' then 'Liquid'
-  when 'G' then 'Gas'
-end) as physical_state_trans,
-(case m.nonhazardous3e
-  when '1' then '0'
-  when '0' then '1'
-end) as nonhazardous3e_trans
-from materials m
-             join packages p on p.materialid = m.materialid
-             join vendors v on p.supplierid = v.vendorid
-             join materials_subclass ms on ms.materialsubclassid = m.materialsubclassid
-             join materials_class mc on mc.materialclassid = ms.materialclassid
-     where m.deleted = 0 and p.deleted = 0 and mc.classname = 'CHEMICAL');
+CREATE OR REPLACE VIEW CHEMICALS_VIEW AS
+WITH dsd_phrases 
+     AS (SELECT MATERIALID, 
+                DELETED, 
+                Listagg(CODE, ',') 
+                  within GROUP( ORDER BY code) AS labelcodes 
+         FROM   (SELECT DISTINCT p.MATERIALID, 
+                                 r.CODE, 
+                                 p.DELETED 
+                 FROM   jct_rsphrases_materials p 
+                        join rs_phrases r 
+                          ON ( r.RSPHRASEID = p.RSPHRASEID ) 
+                 WHERE  p.DELETED = 0) 
+         GROUP  BY MATERIALID, 
+                   DELETED), 
+     dsd_pictos 
+     AS (SELECT MATERIALID, 
+                DELETED, 
+                Listagg(GRAPHICFILENAME, Chr(10)) 
+                  within GROUP( ORDER BY graphicfilename) AS pictograms 
+         FROM   (SELECT DISTINCT p.MATERIALID, 
+                                 'Images/cispro/DSD/' 
+                                 || r.GRAPHICFILENAME AS graphicfilename, 
+                                 p.DELETED 
+                 FROM   jct_pictograms_materials p 
+                        join pictograms r 
+                          ON ( r.PICTOGRAMID = p.PICTOGRAMID ) 
+                 WHERE  p.DELETED = 0) 
+         GROUP  BY MATERIALID, 
+                   DELETED), 
+     storagecompat 
+     AS (SELECT MATERIALID, 
+                DELETED, 
+                Listagg(GRAPHICFILENAME, Chr(10)) 
+                  within GROUP( ORDER BY graphicfilename) AS storagecompat 
+         FROM   (SELECT DISTINCT p.MATERIALID, 
+                                 'Images/cispro/' 
+                                 || r.GRAPHICFILENAME AS graphicfilename, 
+                                 p.DELETED 
+                 FROM   jct_graphics_materials p 
+                        join graphic_sets r 
+                          ON ( r.GRAPHICSETID = p.GRAPHICSETID ) 
+                 WHERE  p.DELETED = 0) 
+         GROUP  BY MATERIALID, 
+                   DELETED) 
+SELECT v.VENDORID, 
+       p.PACKAGEID, 
+       p.PRODUCTNO, 
+       m."AQUEOUS_SOLUBILITY", 
+       m."BOILING_POINT", 
+       m."CASNO", 
+       m."COLOR", 
+       m."COMPRESSED_GAS", 
+       m."CREATIONDATE", 
+       m."CREATIONSITEID", 
+       m."DELETED", 
+       m."DOT_CODE", 
+       m."EXPIREINTERVAL", 
+       m."EXPIREINTERVALUNITS", 
+       m."EXPOSURE_LIMITS", 
+       m."FIRECODE", 
+       m."FLASH_POINT", 
+       m."FORMULA", 
+       m."HAZARDS", 
+       m."HEALTHCODE", 
+       m."INVENTORYREQUIRED", 
+       m."KEYWORDS", 
+       m."LOB_TYPE", 
+       m."MANUFACTURER", 
+       m."MATERIAL_FINISH", 
+       m."MATERIAL_SIZEVOL", 
+       m."MATERIAL_TYPE", 
+       m."MATERIAL_USE", 
+       m."MATERIALID", 
+       m."MATERIALNAME", 
+       m."MATERIALSUBCLASSID", 
+       m."MELTING_POINT", 
+       m."MODEL", 
+       m."MOLECULAR_WEIGHT", 
+       m."OTHERREFERENCENO", 
+       m."PH", 
+       m."PHYSICAL_DESCRIPTION", 
+       m."PHYSICAL_STATE", 
+       m.PPE, 
+       Replace(Replace(Replace(m.PPE, 'Eye Protection', 'Goggles'), 
+               'Hand Protection', 
+               'Gloves' 
+               ), 'Ventilation', 'Fume Hood') AS ppe_trans, 
+       m."REACTIVECODE", 
+       m."REVIEWSTATUSCHANGEDATE", 
+       m."REVIEWSTATUSNAME", 
+       m."SPEC_NO", 
+       m."SPECIFIC_CODE", 
+       m."SPECIFIC_GRAVITY", 
+       m."SPECIFICCODE", 
+       m."VAPOR_DENSITY", 
+       m."VAPOR_PRESSURE", 
+       m."KEEPATSTATUS", 
+       m."TARGET_ORGANS", 
+       m."CREATIONUSERID", 
+       m."AUDITFLAG", 
+       m."CREATIONWORKUNITID", 
+       m."EINECS", 
+       m."CONST_UBA_CODE", 
+       m."CONST_COLOR_INDEX", 
+       m."CONST_SIMPLE_NAME", 
+       m."CONST_CHEM_GROUP", 
+       m."CONST_INGRED_CLASS", 
+       m."CONST_CHEM_REACT", 
+       m."LASTUPDATED", 
+       m."OPENEXPIREINTERVAL", 
+       m."OPENEXPIREINTERVALUNITS", 
+       m."CONST_FEMA_NO", 
+       m."CONST_COE_NO", 
+       m."PRODUCTTYPE", 
+       m."PRODUCTBRAND", 
+       m."PRODUCTCATEGORY", 
+       m."NFPACODE", 
+       m."CONST_MAT_FUNCTION", 
+       m."HAS_ACTIVITY", 
+       m."REFNO", 
+       m."TYPE", 
+       m."SPECIES", 
+       m."VARIETY", 
+       m."GOI", 
+       m."TRANSGENIC", 
+       m."VECTORS", 
+       m."BIOSAFETY", 
+       m."CONST_MAT_ORIGIN", 
+       m."REVIEWSTATUSTYPE", 
+       m."STORAGE_CONDITIONS", 
+       m."PENDINGUPDATE", 
+       m."ISTIER2", 
+       m."MATERIALVARIETYID", 
+       m."NONHAZARDOUS3E", 
+       m."ASSETCREATIONNAME", 
+       ms.SUBCLASSNAME, 
+       ( CASE m.PHYSICAL_STATE 
+           WHEN 'S' THEN 'Solid' 
+           WHEN 'L' THEN 'Liquid' 
+           WHEN 'G' THEN 'Gas' 
+         END )                                AS physical_state_trans, 
+       ( CASE m.NONHAZARDOUS3E 
+           WHEN '1' THEN '0' 
+           WHEN '0' THEN '1' 
+         END )                                AS nonhazardous3e_trans, 
+       sc.STORAGECOMPAT                       AS storagecompatibility, 
+       ph.LABELCODES, 
+       pc.PICTOGRAMS 
+FROM   materials m 
+       join packages p 
+         ON p.MATERIALID = m.MATERIALID 
+       join vendors v 
+         ON p.SUPPLIERID = v.VENDORID 
+       join materials_subclass ms 
+         ON ms.MATERIALSUBCLASSID = m.MATERIALSUBCLASSID 
+       join materials_class mc 
+         ON mc.MATERIALCLASSID = ms.MATERIALCLASSID 
+       left outer join storagecompat sc 
+                    ON ( sc.MATERIALID = p.MATERIALID ) 
+       left outer join dsd_phrases ph 
+                    ON ( ph.MATERIALID = p.MATERIALID ) 
+       left outer join dsd_pictos pc 
+                    ON ( pc.MATERIALID = p.MATERIALID ) 
+WHERE  m.DELETED = 0 
+       AND p.DELETED = 0 
+       AND mc.CLASSNAME = 'CHEMICAL'; 
 	 
 ---Weight
 create or replace view weight_view as
@@ -584,3 +646,126 @@ union
 		m.MAXINVENTORYBASICID,
 		m.MAXINVENTORYLEVEL,
 		m.UNITOFMEASUREID;
+		
+---GHS
+create or replace view regions_view as
+select distinct region, deleted from sites where deleted = 0;
+
+CREATE OR REPLACE VIEW GHS_VIEW AS
+SELECT PACKAGEID,
+         PACKAGEID
+         || '_'
+         || REGION AS legacyid,
+         MATERIALID,
+         REGION,
+         GHSCODES,
+         PICTOS,
+         SIGNAL,
+         DELETED
+  FROM   (WITH mappedpictos
+               AS (SELECT GHSPICTOID,
+                          CASE PICTOFILENAME
+                            WHEN 'acide.gif' THEN
+                            'Images/cispro/ghs/512/acid.jpg'
+                            WHEN 'bottle.gif' THEN
+                            'Images/cispro/ghs/512/bottle.jpg'
+                            WHEN 'exclam.gif' THEN
+                            'Images/cispro/ghs/512/exclam.jpg'
+                            WHEN 'explos.gif' THEN
+                            'Images/cispro/ghs/512/explos.jpg'
+                            WHEN 'flamme.gif' THEN
+                            'Images/cispro/ghs/512/flamme.jpg'
+                            WHEN 'pollu.gif' THEN
+                            'Images/cispro/ghs/512/pollut.jpg'
+                            WHEN 'rondfl.gif' THEN
+                            'Images/cispro/ghs/512/rondflam.jpg'
+                            WHEN 'siloue.gif' THEN
+                            'Images/cispro/ghs/512/silhouet.jpg'
+                            WHEN 'skull.gif' THEN
+                            'Images/cispro/ghs/512/skull.jpg'
+                          END AS pictofilename
+                   FROM   ghs_pictos),
+               pictos
+               AS (SELECT REGION,
+                          MATERIALID,
+                          DELETED,
+                          Listagg(PICTOFILENAME, Chr(10))
+                            within GROUP( ORDER BY pictofilename) AS pictos
+                   FROM   (SELECT DISTINCT s.REGION,
+                                           p.MATERIALID,
+                                           g.PICTOFILENAME,
+                                           p.DELETED
+                           FROM   jct_ghspictos_matsite p
+                                  join sites s
+                                    ON ( s.SITEID = p.SITEID )
+                                  join mappedpictos g
+                                    ON ( g.GHSPICTOID = p.GHSPICTOID )
+                           WHERE  p.DELETED = 0)
+                   GROUP  BY REGION,
+                             MATERIALID,
+                             DELETED),
+               phrases
+               AS (SELECT REGION,
+                          MATERIALID,
+                          DELETED,
+                          Listagg(GHSCODE, ',')
+                            within GROUP( ORDER BY ghscode) AS ghscodes
+                   FROM   (SELECT DISTINCT s.REGION,
+                                           p.MATERIALID,
+                                           g.GHSCODE,
+                                           p.DELETED
+                           FROM   jct_ghsphrase_matsite p
+                                  join sites s
+                                    ON ( s.SITEID = p.SITEID )
+                                  join ghs_phrases g
+                                    ON ( g.GHSPHRASEID = p.GHSPHRASEID )
+                           WHERE  p.DELETED = 0)
+                   GROUP  BY REGION,
+                             MATERIALID,
+                             DELETED),
+               signals
+               AS (SELECT DISTINCT s.REGION,
+                                   p.MATERIALID,
+                                   g.ENGLISH,
+                                   p.DELETED
+                   FROM   jct_ghssignal_matsite p
+                          join sites s
+                            ON ( s.SITEID = p.SITEID )
+                          join ghs_signal g
+                            ON ( g.GHSSIGNALID = p.GHSSIGNALID )
+                   WHERE  p.DELETED = 0),
+               classes
+               AS (SELECT DISTINCT MATERIALID,
+                                   GHSCATEGORYNAME,
+                                   m.DELETED
+                   FROM   jct_ghs_materials m
+                          join ghs_classes c
+                            ON ( c.GHSCLASSID = m.GHSCLASSID )
+                   WHERE  m.DELETED = 0)
+          SELECT p.PACKAGEID,
+                 CASE
+                   WHEN ph.MATERIALID IS NOT NULL THEN ph.MATERIALID
+                   WHEN pc.MATERIALID IS NOT NULL THEN pc.MATERIALID
+                   WHEN s.MATERIALID IS NOT NULL THEN s.MATERIALID
+                 END AS materialid,
+                 CASE
+                   WHEN ph.REGION IS NOT NULL THEN ph.REGION
+                   WHEN pc.REGION IS NOT NULL THEN pc.REGION
+                   WHEN s.REGION IS NOT NULL THEN s.REGION
+                 END AS region,
+                 ph.GHSCODES,
+                 pc.PICTOS,
+                 CASE
+                   WHEN s.ENGLISH IS NULL THEN 'Warning'
+                   ELSE s.ENGLISH
+                 END AS signal,
+                 ph.DELETED
+           FROM   phrases ph
+                  full outer join pictos pc
+                               ON ( pc.MATERIALID = ph.MATERIALID
+                                    AND pc.REGION = ph.REGION )
+                  full outer join signals s
+                               ON ( s.MATERIALID = ph.MATERIALID
+                                    AND s.REGION = ph.REGION )
+                  join packages p
+                    ON ( p.MATERIALID = ph.MATERIALID ));
