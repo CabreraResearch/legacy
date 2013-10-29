@@ -81,7 +81,7 @@ namespace ChemSW.Nbt.Sched
                         + "' order by decode (state, '" + State.I + "', 1, '" + State.U + "', 2) asc, id.sheetorder asc, nbtimportqueueid asc";
 
                     CswArbitrarySelect QueueSelect = _CswNbtResources.makeCswArbitrarySelect( "cafimport_queue_select", Sql );
-                    DataTable QueueTable = QueueSelect.getTable( 0, NumberToProcess, false, true );
+                    DataTable QueueTable = QueueSelect.getTable( 0, NumberToProcess, false );
 
                     CswNbtImporter Importer = new CswNbtImporter( _CswNbtResources );
                     foreach( DataRow QueueRow in QueueTable.Rows )

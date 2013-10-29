@@ -1,10 +1,6 @@
 using System;
-using System.Data;
 using ChemSW.Audit;
-using ChemSW.DB;
 using ChemSW.Nbt.csw.Dev;
-using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -35,7 +31,7 @@ namespace ChemSW.Nbt.Schema
             CswAuditMetaData CswAuditMetaData = new CswAuditMetaData();
 
             // part 4, add audittransaction.datetime
-            _CswNbtSchemaModTrnsctn.addDateColumn( CswAuditMetaData.AuditTransactionTableName, "auditdate", "DateTime of audit transaction", false, true );
+            _CswNbtSchemaModTrnsctn.addDateColumn( CswAuditMetaData.AuditTransactionTableName, "auditdate", "DateTime of audit transaction", true );
 
 
             // Inspect shadow tables for missing columns

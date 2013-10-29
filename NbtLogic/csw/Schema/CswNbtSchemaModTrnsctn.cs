@@ -316,12 +316,12 @@ namespace ChemSW.Nbt.Schema
 
         public void addColumn( string columnname, CswEnumDataDictionaryColumnType columntype, Int32 datatypesize, Int32 dblprecision,
                                string defaultvalue, string description, string foreignkeycolumn, string foreignkeytable, bool constrainfkref, bool isview,
-                               bool logicaldelete, string lowerrangevalue, bool lowerrangevalueinclusive, CswEnumDataDictionaryPortableDataType portabledatatype, bool ReadOnly,
+                               string lowerrangevalue, bool lowerrangevalueinclusive, CswEnumDataDictionaryPortableDataType portabledatatype, bool ReadOnly,
                                bool Required, string tablename, CswEnumDataDictionaryUniqueType uniquetype, bool uperrangevalueinclusive, string upperrangevalue )
         {
             _CswDdl.addColumn( columnname, columntype, datatypesize, dblprecision,
                                defaultvalue, description, foreignkeycolumn, foreignkeytable, constrainfkref, isview,
-                               logicaldelete, lowerrangevalue, lowerrangevalueinclusive, portabledatatype, ReadOnly,
+                               lowerrangevalue, lowerrangevalueinclusive, portabledatatype, ReadOnly,
                                Required, tablename, uniquetype, uperrangevalueinclusive, upperrangevalue );
         }
 
@@ -332,7 +332,6 @@ namespace ChemSW.Nbt.Schema
 
         public void dropColumn( string TableName, string ColumnName ) { _CswDdl.dropColumn( TableName, ColumnName ); }
         public void changeColumnDataType( string TableName, string ColumnName, CswEnumDataDictionaryPortableDataType NewDataType, Int32 DataTypeSize ) { _CswNbtResources.CswResources.changeColumnDataType( TableName, ColumnName, NewDataType, DataTypeSize ); }
-        public bool isLogicalDeleteTable( string TableName ) { return ( _CswNbtResources.isLogicalDeleteTable( TableName ) ); }
 
         public void indexColumn( string TableName, string ColumnName, string IndexNameIn = null ) { _CswNbtResources.CswResources.indexColumn( TableName, ColumnName, IndexNameIn ); }
         public void updateIndex( string TableName, string ColumnName, string IndexName ) { _CswNbtResources.CswResources.updateIndex( TableName, ColumnName, IndexName ); }
@@ -385,7 +384,7 @@ namespace ChemSW.Nbt.Schema
             {
                 if( false == _CswNbtResources.CswResources.DataDictionary.isColumnDefined( TableName, _CswAuditMetaData.AuditLevelColName ) )
                 {
-                    addStringColumn( TableName, _CswAuditMetaData.AuditLevelColName, _CswAuditMetaData.AuditLevelColDescription, false, _CswAuditMetaData.AuditLevelColIsRequired, _CswAuditMetaData.AuditLevelColLength );
+                    addStringColumn( TableName, _CswAuditMetaData.AuditLevelColName, _CswAuditMetaData.AuditLevelColDescription, _CswAuditMetaData.AuditLevelColIsRequired, _CswAuditMetaData.AuditLevelColLength );
                 }
 
                 string AuditTableName = _CswAuditMetaData.makeAuditTableName( TableName );
@@ -394,10 +393,10 @@ namespace ChemSW.Nbt.Schema
                 if( false == _CswNbtResources.CswResources.DataDictionary.isTableDefined( AuditTableName ) )
                 {
                     copyTable( TableName, AuditTableName, false );
-                    addStringColumn( AuditTableName, _CswAuditMetaData.AuditEventTypeColName, _CswAuditMetaData.AuditEventTypeColDescription, false, true, _CswAuditMetaData.AuditEventTypeColLength );
-                    addForeignKeyColumn( AuditTableName, _CswAuditMetaData.AuditTransactionIdColName, "fk to audittransactions table", false, true, _CswAuditMetaData.AuditTransactionTableName, _CswAuditMetaData.AuditTransactionIdColName );
-                    addDateColumn( AuditTableName, _CswAuditMetaData.AuditRecordCreatedColName, _CswAuditMetaData.AuditRecordCreatedColDescription, false, true );
-                    addLongColumn( AuditTableName, _CswNbtResources.DataDictionary.getPrimeKeyColumn( TableName ), "prime key of audited record", false, true );
+                    addStringColumn( AuditTableName, _CswAuditMetaData.AuditEventTypeColName, _CswAuditMetaData.AuditEventTypeColDescription, true, _CswAuditMetaData.AuditEventTypeColLength );
+                    addForeignKeyColumn( AuditTableName, _CswAuditMetaData.AuditTransactionIdColName, "fk to audittransactions table", true, _CswAuditMetaData.AuditTransactionTableName, _CswAuditMetaData.AuditTransactionIdColName );
+                    addDateColumn( AuditTableName, _CswAuditMetaData.AuditRecordCreatedColName, _CswAuditMetaData.AuditRecordCreatedColDescription, true );
+                    addLongColumn( AuditTableName, _CswNbtResources.DataDictionary.getPrimeKeyColumn( TableName ), "prime key of audited record", true );
 
                 }
                 else //if it does exist, maybe the target table has new columns to be added to the audit table?
@@ -426,7 +425,7 @@ namespace ChemSW.Nbt.Schema
                         foreach( string CurrentMissingColumnName in MissingAuditTableColumnNames )
                         {
                             _CswNbtResources.DataDictionary.setCurrentColumn( TableName, CurrentMissingColumnName );
-                            addColumn( CurrentMissingColumnName, _CswNbtResources.DataDictionary.ColumnType, _CswNbtResources.DataDictionary.DataTypeSize, _CswNbtResources.DataDictionary.DblPrecision, _CswNbtResources.DataDictionary.DefaultValue, _CswNbtResources.DataDictionary.Description, _CswNbtResources.DataDictionary.ForeignKeyColumn, _CswNbtResources.DataDictionary.ForeignKeyTable, false, _CswNbtResources.DataDictionary.IsView, _CswNbtResources.DataDictionary.LogicalDelete, _CswNbtResources.DataDictionary.LowerRangeValue, _CswNbtResources.DataDictionary.LowerRangeValueInclusive, _CswNbtResources.DataDictionary.PortableDataType, _CswNbtResources.DataDictionary.ReadOnly, _CswNbtResources.DataDictionary.Required, AuditTableName, _CswNbtResources.DataDictionary.UniqueType, _CswNbtResources.DataDictionary.UpperRangeValueInclusive, _CswNbtResources.DataDictionary.UpperRangeValue );
+                            addColumn( CurrentMissingColumnName, _CswNbtResources.DataDictionary.ColumnType, _CswNbtResources.DataDictionary.DataTypeSize, _CswNbtResources.DataDictionary.DblPrecision, _CswNbtResources.DataDictionary.DefaultValue, _CswNbtResources.DataDictionary.Description, _CswNbtResources.DataDictionary.ForeignKeyColumn, _CswNbtResources.DataDictionary.ForeignKeyTable, false, _CswNbtResources.DataDictionary.IsView, _CswNbtResources.DataDictionary.LowerRangeValue, _CswNbtResources.DataDictionary.LowerRangeValueInclusive, _CswNbtResources.DataDictionary.PortableDataType, _CswNbtResources.DataDictionary.ReadOnly, _CswNbtResources.DataDictionary.Required, AuditTableName, _CswNbtResources.DataDictionary.UniqueType, _CswNbtResources.DataDictionary.UpperRangeValueInclusive, _CswNbtResources.DataDictionary.UpperRangeValue );
                         }
 
                     }//if the audit table is missing columns                                                                  
@@ -1002,7 +1001,7 @@ namespace ChemSW.Nbt.Schema
                 createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( NewObjectClass )
                 {
                     PropName = CswNbtObjClass.PropertyName.LegacyId,
-                    FieldType = CswEnumNbtFieldType.Number
+                    FieldType = CswEnumNbtFieldType.Text
                 } );
 
             }
@@ -1405,109 +1404,109 @@ namespace ChemSW.Nbt.Schema
         /// <summary>
         /// Convenience function for adding a new boolean column to the database schema
         /// </summary>
-        public void addBooleanColumn( string tablename, string columnname, string description, bool logicaldelete, bool required )//, Int32 NodeTypePropId, string SubFieldName )
+        public void addBooleanColumn( string tablename, string columnname, string description, bool required )//, Int32 NodeTypePropId, string SubFieldName )
         {
             addColumn( columnname, CswEnumDataDictionaryColumnType.Value, Int32.MinValue, Int32.MinValue, string.Empty, description, string.Empty, string.Empty,
-                       false, false, logicaldelete, string.Empty, false, CswEnumDataDictionaryPortableDataType.Boolean, false,
+                       false, false, string.Empty, false, CswEnumDataDictionaryPortableDataType.Boolean, false,
                        required, tablename, CswEnumDataDictionaryUniqueType.None, false, string.Empty );//, NodeTypePropId, SubFieldName );
         }
 
         /// <summary>
         /// Convenience function for adding a new foreign key column to the database schema
         /// </summary>
-        public void addForeignKeyColumn( string tablename, string columnname, string description, bool logicaldelete, bool required, string foreignkeytable, string foreignkeycolumn )//, Int32 NodeTypePropId, string SubFieldName )
+        public void addForeignKeyColumn( string tablename, string columnname, string description, bool required, string foreignkeytable, string foreignkeycolumn )//, Int32 NodeTypePropId, string SubFieldName )
         {
             addColumn( columnname, CswEnumDataDictionaryColumnType.Fk, Int32.MinValue, Int32.MinValue, string.Empty, description, foreignkeycolumn, foreignkeytable,
-                       false, false, logicaldelete, string.Empty, false, CswEnumDataDictionaryPortableDataType.Long, false,
+                       false, false, string.Empty, false, CswEnumDataDictionaryPortableDataType.Long, false,
                        required, tablename, CswEnumDataDictionaryUniqueType.None, false, string.Empty );//, NodeTypePropId, SubFieldName );
         }
 
         /// <summary>
         /// Convenience function for adding a new string column to the database schema
         /// </summary>
-        public void addStringColumn( string tablename, string columnname, string description, bool logicaldelete, bool required, Int32 datatypesize )//, Int32 NodeTypePropId, string SubFieldName )
+        public void addStringColumn( string tablename, string columnname, string description, bool required, Int32 datatypesize )//, Int32 NodeTypePropId, string SubFieldName )
         {
             addColumn( columnname, CswEnumDataDictionaryColumnType.Value, datatypesize, Int32.MinValue, string.Empty, description, string.Empty, string.Empty,
-                       false, false, logicaldelete, string.Empty, false, CswEnumDataDictionaryPortableDataType.String, false,
+                       false, false, string.Empty, false, CswEnumDataDictionaryPortableDataType.String, false,
                        required, tablename, CswEnumDataDictionaryUniqueType.None, false, string.Empty );//, NodeTypePropId, SubFieldName );
         }
 
         /// <summary>
         /// Convenience function for adding a new long column to the database schema
         /// </summary>
-        public void addLongColumn( string tablename, string columnname, string description, bool logicaldelete, bool required )
+        public void addLongColumn( string tablename, string columnname, string description, bool required )
         {
-            addLongColumn( tablename, columnname, description, logicaldelete, required, string.Empty, false, string.Empty, false );
+            addLongColumn( tablename, columnname, description, required, string.Empty, false, string.Empty, false );
         }
 
         /// <summary>
         /// Convenience function for adding a new long column to the database schema
         /// </summary>
-        public void addLongColumn( string tablename, string columnname, string description, bool logicaldelete, bool required,
+        public void addLongColumn( string tablename, string columnname, string description, bool required,
                                    string LowerRangeValue, bool LowerRangeValueInclusive, string UpperRangeValue, bool UpperRangeValueInclusive )
         {
             addColumn( columnname, CswEnumDataDictionaryColumnType.Value, Int32.MinValue, Int32.MinValue, string.Empty, description, string.Empty, string.Empty,
-                       false, false, logicaldelete, LowerRangeValue, LowerRangeValueInclusive, CswEnumDataDictionaryPortableDataType.Long, false,
+                       false, false, LowerRangeValue, LowerRangeValueInclusive, CswEnumDataDictionaryPortableDataType.Long, false,
                        required, tablename, CswEnumDataDictionaryUniqueType.None, UpperRangeValueInclusive, UpperRangeValue );
         }
 
         /// <summary>
         /// Convenience function for adding a new number column to the database schema
         /// </summary>
-        public void addNumberColumn( string tablename, string columnname, string description, bool logicaldelete, bool required,
+        public void addNumberColumn( string tablename, string columnname, string description, bool required,
                                    string LowerRangeValue = "", bool LowerRangeValueInclusive = false, string UpperRangeValue = "", bool UpperRangeValueInclusive = false )
         {
             addColumn( columnname, CswEnumDataDictionaryColumnType.Value, Int32.MinValue, Int32.MinValue, string.Empty, description, string.Empty, string.Empty,
-                       false, false, logicaldelete, LowerRangeValue, LowerRangeValueInclusive, CswEnumDataDictionaryPortableDataType.Number, false,
+                       false, false, LowerRangeValue, LowerRangeValueInclusive, CswEnumDataDictionaryPortableDataType.Number, false,
                        required, tablename, CswEnumDataDictionaryUniqueType.None, UpperRangeValueInclusive, UpperRangeValue );
         }
 
         /// <summary>
         /// Convenience function for adding a new double column to the database schema
         /// </summary>
-        public void addDoubleColumn( string tablename, string columnname, string description, bool logicaldelete, bool required, Int32 DblPrecision )
+        public void addDoubleColumn( string tablename, string columnname, string description, bool required, Int32 DblPrecision )
         {
-            addDoubleColumn( tablename, columnname, description, logicaldelete, required, DblPrecision, string.Empty, false, string.Empty, false );
+            addDoubleColumn( tablename, columnname, description, required, DblPrecision, string.Empty, false, string.Empty, false );
         }
 
         /// <summary>
         /// Convenience function for adding a new double column to the database schema
         /// </summary>
-        public void addDoubleColumn( string tablename, string columnname, string description, bool logicaldelete, bool required, Int32 DblPrecision,
+        public void addDoubleColumn( string tablename, string columnname, string description, bool required, Int32 DblPrecision,
                                      string LowerRangeValue, bool LowerRangeValueInclusive, string UpperRangeValue, bool UpperRangeValueInclusive )
         {
             addColumn( columnname, CswEnumDataDictionaryColumnType.Value, Int32.MinValue, DblPrecision, string.Empty, description, string.Empty, string.Empty,
-                       false, false, logicaldelete, LowerRangeValue, LowerRangeValueInclusive, CswEnumDataDictionaryPortableDataType.Double, false,
+                       false, false, LowerRangeValue, LowerRangeValueInclusive, CswEnumDataDictionaryPortableDataType.Double, false,
                        required, tablename, CswEnumDataDictionaryUniqueType.None, UpperRangeValueInclusive, UpperRangeValue );
         }
 
         /// <summary>
         /// Convenience function for adding a new date column to the database schema
         /// </summary>
-        public void addDateColumn( string tablename, string columnname, string description, bool logicaldelete, bool required )
+        public void addDateColumn( string tablename, string columnname, string description, bool required )
         {
             addColumn( columnname, CswEnumDataDictionaryColumnType.Value, Int32.MinValue, Int32.MinValue, string.Empty, description, string.Empty, string.Empty,
-                       false, false, logicaldelete, string.Empty, false, CswEnumDataDictionaryPortableDataType.Datetime, false,
+                       false, false, string.Empty, false, CswEnumDataDictionaryPortableDataType.Datetime, false,
                        required, tablename, CswEnumDataDictionaryUniqueType.None, false, string.Empty );
         }
 
         /// <summary>
         /// Convenience function for adding a new date column to the database schema
         /// </summary>
-        public void addBlobColumn( string tablename, string columnname, string description, bool logicaldelete, bool required )
+        public void addBlobColumn( string tablename, string columnname, string description, bool required )
         {
             addColumn( columnname, CswEnumDataDictionaryColumnType.Value, Int32.MinValue, Int32.MinValue, string.Empty, description, string.Empty, string.Empty,
-                       false, false, logicaldelete, string.Empty, false, CswEnumDataDictionaryPortableDataType.Blob, false,
+                       false, false, string.Empty, false, CswEnumDataDictionaryPortableDataType.Blob, false,
                        required, tablename, CswEnumDataDictionaryUniqueType.None, false, string.Empty );
         }
 
         /// <summary>
         /// Convenience function for adding a new date column to the database schema
         /// </summary>
-        public void addClobColumn( string tablename, string columnname, string description, bool logicaldelete, bool required )
+        public void addClobColumn( string tablename, string columnname, string description, bool required )
         {
             addColumn( columnname, CswEnumDataDictionaryColumnType.Value, Int32.MinValue, Int32.MinValue, string.Empty, description, string.Empty, string.Empty,
-                       false, false, logicaldelete, string.Empty, false, CswEnumDataDictionaryPortableDataType.Clob, false,
+                       false, false, string.Empty, false, CswEnumDataDictionaryPortableDataType.Clob, false,
                        required, tablename, CswEnumDataDictionaryUniqueType.None, false, string.Empty );
         }
 

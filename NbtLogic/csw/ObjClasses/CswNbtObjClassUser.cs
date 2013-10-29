@@ -809,6 +809,11 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
+        public bool hasUserPermissions( CswEnumNbtObjectClass PermObjectClass = null, bool RequireEdit = false )
+        {
+            return getUserPermissions( PermObjectClass, RequireEdit ).Keys.Count > 0;
+        }
+
         /// <summary>
         /// Returns a dictionary of Permission Groups and Permissions (primary keys only), if any exists for this User
         /// </summary>

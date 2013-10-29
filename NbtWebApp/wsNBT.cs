@@ -3082,7 +3082,7 @@ namespace ChemSW.Nbt.WebServices
 
 
 
-            CswNbtResources myResources = CswNbtResourcesFactory.makeCswNbtResources( CswEnumAppType.Nbt, CswEnumSetupMode.NbtWeb, true, false, new CswSuperCycleCacheWeb( Context.Cache ) );
+            CswNbtResources myResources = CswNbtResourcesFactory.makeCswNbtResources( CswEnumAppType.Nbt, CswEnumSetupMode.NbtWeb, true, new CswSuperCycleCacheWeb( Context.Cache ) );
             myResources.InitCurrentUser = ConnectTestDb_InitUser;
 
             // use the first accessid

@@ -68,7 +68,7 @@ namespace ChemSW.Nbt
             CswTimer SqlTimer = new CswTimer();
             try
             {
-                NodesTable = ResultSelect.getTable( 0, thisResultLimit, false, false );
+                NodesTable = ResultSelect.getTable( 0, thisResultLimit, false );
             }
             catch( Exception ex )
             {

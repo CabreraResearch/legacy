@@ -17,7 +17,7 @@ namespace ChemSW.LogTester
             _ThreadId = ThreadId;
             _MessageCount = MessageCount;
 
-            _CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( CswEnumAppType.Nbt, CswEnumSetupMode.NbtExe, true, false );
+            _CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( CswEnumAppType.Nbt, CswEnumSetupMode.NbtExe, true );
             _CswLogger = _CswNbtResources.CswLogger;
         }
 

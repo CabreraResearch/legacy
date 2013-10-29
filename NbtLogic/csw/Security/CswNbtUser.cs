@@ -271,10 +271,16 @@ namespace ChemSW.Nbt.Security
             }
             return PermissionNode;
         }
-        public Dictionary<CswPrimaryKey, CswPrimaryKey> getUserPermissions( CswEnumNbtObjectClass PermGroupType = null, bool RequireEdit = false )
+
+        public bool hasUserPermissions( CswEnumNbtObjectClass PermObjectClass = null, bool RequireEdit = false )
         {
             CswNbtObjClassUser UserNode = _CswNbtResources.Nodes[UserId];
-            return UserNode.getUserPermissions( PermGroupType, RequireEdit );
+            return UserNode.hasUserPermissions( PermObjectClass, RequireEdit );
+        }
+        public Dictionary<CswPrimaryKey, CswPrimaryKey> getUserPermissions( CswEnumNbtObjectClass PermObjectClass = null, bool RequireEdit = false )
+        {
+            CswNbtObjClassUser UserNode = _CswNbtResources.Nodes[UserId];
+            return UserNode.getUserPermissions( PermObjectClass, RequireEdit );
         }
 
         public Int32 PasswordPropertyId
