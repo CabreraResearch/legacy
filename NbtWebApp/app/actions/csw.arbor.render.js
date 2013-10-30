@@ -57,12 +57,12 @@
                         case 2:
                             size = 20;
                             textDist = 25;
-                            alpha = .7;
+                            alpha = .6;
                             break;
                         case 3:
                             size = 20;
                             textDist = 25;
-                            alpha = .55;
+                            alpha = .45;
                             break;
                     }
 
@@ -71,7 +71,6 @@
                     var imgY = Math.round(pt.y) - (size / 2);
                     ctx.globalAlpha = alpha;
                     ctx.drawImage($('#' + node.data.iconId)[0], imgX, imgY, size, size);
-                    ctx.globalAlpha = 1;
 
                     ctx.font = "10px Arial";
                     ctx.fillStyle = 'blue';
@@ -80,6 +79,7 @@
                     if (node.data.Type === 'Instance') {
                         textUnderline(ctx, node.data.Label, Math.round(pt.x), Math.round(pt.y) + textDist, 'blue', "10px", 'center');
                     }
+                    ctx.globalAlpha = 1;
                 });
             },
 
