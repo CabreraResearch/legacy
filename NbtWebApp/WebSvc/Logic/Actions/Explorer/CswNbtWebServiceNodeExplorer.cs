@@ -45,12 +45,12 @@ namespace NbtWebApp.Actions.Explorer
                 if( CswTools.IsPrimaryKey( RelProp.RelatedNodeId ) )
                 {
                     string targetIdStr = OwnerIdStr + "_" + RelProp.RelatedNodeId.ToString();
-                    _addToGraph( Return, RelProp.PropName + ": " + RelProp.CachedNodeName, OwnerIdStr, targetIdStr, Icon, Level, "Instance", RelProp.RelatedNodeId.ToString() );
+                    _addToGraph( Return, RelProp.PropName + ": " + RelProp.CachedNodeName, Node.NodeId.ToString(), RelProp.RelatedNodeId.ToString(), Icon, Level, "Instance", RelProp.RelatedNodeId.ToString() );
 
                     string relatingNTsToRelatedNodeSQL = _makeGetRelatedToNodeSQL( RelProp.RelatedNodeId.PrimaryKey );
                     if( Level + 1 <= MAX_DEPTH )
                     {
-                        _getRelating( NbtResources, Return, RelProp.RelatedNodeId, relatingNTsToRelatedNodeSQL, Level + 1, targetIdStr );
+                        _getRelating( NbtResources, Return, RelProp.RelatedNodeId, relatingNTsToRelatedNodeSQL, Level + 1, RelProp.RelatedNodeId.ToString() );
                     }
 
                     if( Level + 1 <= MAX_DEPTH )
@@ -131,9 +131,9 @@ namespace NbtWebApp.Actions.Explorer
                 {
                     int RelatingObjClassToNodeTypeId = CswConvert.ToInt32( Row["objectclassid"] );
                     string IconFileName = CswConvert.ToString( Row["iconfilename"] );
-                    int NodeTypePropRelatingToOCId = CswConvert.ToInt32( Row["nodetypepropid"] );
-                    string PropNameRelatingToOC = NbtResources.MetaData.getNodeTypeProp( NodeTypePropRelatingToOCId ).PropName;
-                    string DisplayName = CswConvert.ToString( Row["objectclass"] ).Replace( "Class", "" ) + " (by " + PropNameRelatingToOC + ")";
+                    int ObjClassPropRelatingToOC = CswConvert.ToInt32( Row["objectclasspropid"] );
+                    string PropNameRelatingToOC = NbtResources.MetaData.getObjectClassProp( ObjClassPropRelatingToOC ).PropName;
+                    string DisplayName = CswConvert.ToString( Row["objectclass"] ).Replace( "dingdon", "" ) + " (by " + PropNameRelatingToOC + ")";
 
                     if( RelatingObjClassToNodeTypeId != StartingNode.getObjectClassId() )
                     {
@@ -186,7 +186,7 @@ namespace NbtWebApp.Actions.Explorer
             return @"select distinct nt.nodetypeid id, ntp.nodetypepropid, nt.nodetypename display, nt.iconfilename from jct_nodes_props jnp
                                                               join nodes n on n.nodeid = jnp.nodeid
                                                               join nodetypes nt on n.nodetypeid = nt.nodetypeid
-                                                              join nodetype_props ntp on nt.nodetypeid = ntp.nodetypeid
+                                                              join nodetype_props ntp on jnp.nodetypepropid = ntp.nodetypepropid
                                                        where jnp.field1_fk = " + NodeId + @" and jnp.nodetypepropid in 
                                                               (select nodetypepropid from nodetype_props ntp where ntp.fieldtypeid = 
                                                                       (select fieldtypeid from field_types ft where ft.fieldtype = 'Relationship'))";
@@ -202,10 +202,11 @@ namespace NbtWebApp.Actions.Explorer
 
         private static string _makeGetRelatedObjClassesOCSQL( int NodeTypeId )
         {
-            return @"select oc.objectclass, oc.objectclassid, oc.iconfilename, ntp.nodetypepropid from object_class oc
+            return @"select oc.objectclass, oc.objectclassid, oc.iconfilename, ocp.objectclasspropid from object_class oc
                             join nodetypes nt on nt.objectclassid = nt.objectclassid and nt.nodetypeid = " + NodeTypeId +
                             @" join nodetype_props ntp on ntp.nodetypeid = nt.nodetypeid
                             join field_types ft on ft.fieldtypeid = ntp.fieldtypeid
+                            join object_class_props ocp on oc.objectclassid = ocp.objectclassid
                      where ntp.fkvalue = oc.objectclassid and ntp.fktype = 'ObjectClassId' and ft.fieldtype = 'Relationship'";
         }
 

@@ -70,7 +70,8 @@
                     var imgX = Math.round(pt.x) - (size / 2);
                     var imgY = Math.round(pt.y) - (size / 2);
                     ctx.globalAlpha = alpha;
-                    ctx.drawImage($('#' + node.data.iconId)[0], imgX, imgY, size, size);
+                    var img = document.getElementById(node.data.iconId);
+                    ctx.drawImage(img, imgX, imgY, size, size);
 
                     ctx.font = "10px Arial";
                     ctx.fillStyle = 'blue';

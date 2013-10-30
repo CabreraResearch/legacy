@@ -9,6 +9,10 @@
         if (Csw.isNullOrEmpty(cswParent)) {
             Csw.error.throwException('Cannot create an action without a valid Csw Parent object.', 'Csw.actions.template', '_template.js', 10);
         }
+        
+
+        var imgs = {};
+        var i = 3;
 
         (function _preCtor() {
             //set default values on cswPrivate if none are supplied
@@ -102,16 +106,23 @@
                     NodeId: cswPrivate.startingNodeId
                 },
                 success: function (response) {
-                    var i = 3;
                     var graph = {};
 
                     Csw.iterate(response.Nodes, function (arborNode) {
-                        var secretCell = cswPrivate.actionTbl.cell(1, i);
-                        var img = secretCell.img({
-                            src: arborNode.Data.Icon
-                        }).hide();
-                        arborNode.Data.iconId = img.getId();
-                        i++;
+                        
+                        if (imgs[arborNode.Data.Icon]) {
+                            arborNode.Data.iconId = imgs[arborNode.Data.Icon];
+                        } else {
+                            var secretCell = cswPrivate.actionTbl.cell(1, i);
+                            var img = secretCell.img({
+                                src: arborNode.Data.Icon,
+                                ID: arborNode.NodeId
+                            }).hide();
+                            i++;
+                            imgs[arborNode.Data.Icon] = img.getId();
+                            
+                            arborNode.Data.iconId = img.getId();
+                        }
 
                         cswPrivate.sys.addNode(arborNode.NodeId, arborNode.Data);
                         graph[arborNode.NodeId] = [];
