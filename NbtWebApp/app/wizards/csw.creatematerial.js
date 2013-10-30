@@ -267,7 +267,7 @@
                                 }
                             }
                         }
-                        
+
                         if (cswPrivate.newC3SupplierInput) {
                             if (cswPrivate.isConstituent()) {
                                 cswPrivate.newC3SupplierInput.hide();
@@ -290,7 +290,7 @@
                                 }
                             }
                         }//if (cswPrivate.newC3SupplierInput)
-                        
+
                         cswPrivate.reinitSteps(2);
                     }//changeMaterial()
 
@@ -374,6 +374,8 @@
                             SupplierCtrlTbl.cell(1, 1).empty();
                             SupplierCtrlTbl.cell(1, 2).empty();
                             SupplierCtrlTbl.cell(1, 3).empty();
+                            cswPrivate.supplierValidateCell = SupplierCtrlTbl.cell(1, 4).empty(); //This is for validation
+                            
 
                             cswPrivate.supplierLabel = tbl.cell(3, 1).span();
                             cswPrivate.supplierLabel.setLabelText('Supplier: ', true, false);
@@ -427,7 +429,7 @@
                                     };
                                     cswPrivate.makeNewC3SupplierInput(true, 1, 1);
                                 },
-                                isRequired: true,
+                                isRequired: false === cswPrivate.state.chemCatCentralImport, // If importing from C3, we perform validation in this class, else we let nodeselect validate.
                                 extraOptions: extraOptions,
                                 showRemoveIcon: cswPrivate.state.addNewC3Supplier,
                                 onSuccess: function (options, useSearch) {
@@ -878,7 +880,27 @@
                             Csw.tryExec(cswPrivate.onCancel);
                         },
                         onFinish: cswPrivate.finalize,
-                        doNextOnInit: false
+                        doNextOnInit: false,
+                        onBeforeNext: function (stepno) {
+                            var Ret = true;
+                            if (stepno === 1 && cswPrivate.state.chemCatCentralImport) {
+                                if (cswPrivate.newC3SupplierInput && Csw.isNullOrEmpty(cswPrivate.newC3SupplierInput.val()) &&
+                                    cswPrivate.supplierSelect && Csw.isNullOrEmpty(cswPrivate.supplierSelect.val())) {
+                                    Ret = false;
+                                    if (cswPrivate.supplierValidateCell) {
+                                        cswPrivate.supplierValidateCell.empty();
+                                        cswPrivate.supplierValidateCell.div({
+                                            text: 'This field is required.'
+                                        }).css({ color: 'red' });
+                                    }
+                                } else {
+                                    if (cswPrivate.supplierValidateCell) {
+                                        cswPrivate.supplierValidateCell.empty();
+                                    }
+                                }
+                            }
+                            return Ret;
+                        }
                     });
 
                     // This checks the step visibility on refresh, C3 import, and copy.
