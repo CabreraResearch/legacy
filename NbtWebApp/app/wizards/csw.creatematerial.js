@@ -884,20 +884,7 @@
                         onBeforeNext: function (stepno) {
                             var Ret = true;
                             if (stepno === 1 && cswPrivate.state.chemCatCentralImport) {
-                                if (cswPrivate.newC3SupplierInput && Csw.isNullOrEmpty(cswPrivate.newC3SupplierInput.val()) &&
-                                    cswPrivate.supplierSelect && Csw.isNullOrEmpty(cswPrivate.supplierSelect.val())) {
-                                    Ret = false;
-                                    if (cswPrivate.supplierValidateCell) {
-                                        cswPrivate.supplierValidateCell.empty();
-                                        cswPrivate.supplierValidateCell.div({
-                                            text: 'This field is required.'
-                                        }).css({ color: 'red' });
-                                    }
-                                } else {
-                                    if (cswPrivate.supplierValidateCell) {
-                                        cswPrivate.supplierValidateCell.empty();
-                                    }
-                                }
+                                Ret = cswPrivate.validateSupplierCtrl();
                             }
                             return Ret;
                         }
@@ -913,6 +900,26 @@
             });
         }());
         //#endregion ctor
+
+        cswPrivate.validateSupplierCtrl = function () {
+            var Ret = true;
+
+            if (cswPrivate.newC3SupplierInput && Csw.isNullOrEmpty(cswPrivate.newC3SupplierInput.val()) &&
+                cswPrivate.supplierSelect && Csw.isNullOrEmpty(cswPrivate.supplierSelect.selectedNodeLink())) {
+                Ret = false;
+                if (cswPrivate.supplierValidateCell) {
+                    cswPrivate.supplierValidateCell.empty();
+                    cswPrivate.supplierValidateCell.div({
+                        text: 'This field is required.'
+                    }).css({ color: 'red' });
+                }
+            } else {
+                if (cswPrivate.supplierValidateCell) {
+                    cswPrivate.supplierValidateCell.empty();
+                }
+            }
+            return Ret;
+        };//cswPrivate.validateSupplierCtrl
 
         return cswPublic;
     });

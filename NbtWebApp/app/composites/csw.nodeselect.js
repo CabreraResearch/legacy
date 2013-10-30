@@ -577,6 +577,9 @@
         cswPublic.selectedName = function () {
             return cswPrivate.selectedName;
         }; // selectedName
+        cswPublic.selectedNodeLink = function() {
+            return cswPrivate.selectedNodeLink;
+        }; // selectedNodeLink
 
         cswPublic.optionsCount = function (excludeEmpty) {
             var ret = cswPrivate.options.length;
