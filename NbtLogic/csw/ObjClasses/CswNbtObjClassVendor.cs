@@ -22,6 +22,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Fax = "Fax";
             public const string CorporateEntityName = "Corporate Entity";
             public const string VendorTypeName = "Vendor Type";
+            public const string Country = "Country";
         }
 
         public sealed class VendorTypes
@@ -151,6 +152,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropText Fax { get { return ( _CswNbtNode.Properties[PropertyName.Fax] ); } }
         public CswNbtNodePropText CorporateIdentity { get { return ( _CswNbtNode.Properties[PropertyName.CorporateEntityName] ); } }
         public CswNbtNodePropList VendorType { get { return ( _CswNbtNode.Properties[PropertyName.VendorTypeName] ); } }
+        public CswNbtNodePropText Country { get { return ( _CswNbtNode.Properties[PropertyName.Country] ); } }
 
         #endregion
 
