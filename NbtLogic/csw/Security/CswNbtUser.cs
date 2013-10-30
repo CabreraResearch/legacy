@@ -256,20 +256,10 @@ namespace ChemSW.Nbt.Security
             }
         }
 
-        private Dictionary<CswPrimaryKey, CswNbtPropertySetPermission> _NodePermissions;
         public CswNbtPropertySetPermission getPermissionForGroup( CswPrimaryKey PermissionGroupId )
         {
-            if( null == _NodePermissions )
-            {
-                CswNbtObjClassUser UserNode = _CswNbtResources.Nodes[UserId];
-                _NodePermissions = UserNode.NodePermissions;
-            }
-            CswNbtPropertySetPermission PermissionNode = null;
-            if( _NodePermissions.ContainsKey( PermissionGroupId ) )
-            {
-                PermissionNode = _NodePermissions[PermissionGroupId];
-            }
-            return PermissionNode;
+            CswNbtObjClassUser UserNode = _CswNbtResources.Nodes[UserId];
+            return UserNode.getPermissionForGroup( PermissionGroupId );
         }
 
         public bool hasUserPermissions( CswEnumNbtObjectClass PermObjectClass = null, bool RequireEdit = false )

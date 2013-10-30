@@ -752,19 +752,6 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Permissions Logic
 
-        private Dictionary<CswPrimaryKey, CswNbtPropertySetPermission> _NodePermissions;
-        public Dictionary<CswPrimaryKey, CswNbtPropertySetPermission> NodePermissions
-        {
-            get
-            {
-                if( null == _NodePermissions )
-                {
-                    _NodePermissions = new Dictionary<CswPrimaryKey, CswNbtPropertySetPermission>();
-                    _updateNodePermissions();
-                }
-                return _NodePermissions;
-            }
-        }
 
         /// <summary>
         /// Returns the Permission node (if one exists) for this User for the given Permission GroupId
@@ -772,61 +759,54 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtPropertySetPermission getPermissionForGroup( CswPrimaryKey PermissionGroupId )
         {
             CswNbtPropertySetPermission PermissionNode = null;
-            if( null == _NodePermissions )
+            Dictionary<CswPrimaryKey, CswPrimaryKey> UserPerms = getUserPermissions();
+            if( null != UserPerms && UserPerms.ContainsKey( PermissionGroupId ) )
             {
-                _NodePermissions = new Dictionary<CswPrimaryKey, CswNbtPropertySetPermission>();
-                _updateNodePermissions();
-            }
-            if( _NodePermissions.ContainsKey( PermissionGroupId ) )
-            {
-                PermissionNode = _NodePermissions[PermissionGroupId];
+                CswPrimaryKey PermissionId = UserPerms[PermissionGroupId];
+                PermissionNode = _CswNbtResources.Nodes[PermissionId];
             }
             return PermissionNode;
         }
 
-        //public 
-
-        private void _updateNodePermissions()
-        {
-            if( null == _NodePermissions )
-            {
-                _NodePermissions = new Dictionary<CswPrimaryKey, CswNbtPropertySetPermission>();
-            }
-            else
-            {
-                _NodePermissions.Clear();
-            }
-
-            Dictionary<CswPrimaryKey, CswPrimaryKey> UserPermissions = getUserPermissions();
-            foreach( CswPrimaryKey GroupId in UserPermissions.Keys )
-            {
-                CswPrimaryKey PermissionId = UserPermissions[GroupId];
-                CswNbtPropertySetPermission PermNode = _CswNbtResources.Nodes[PermissionId];
-                if( null != PermNode )
-                {
-                    _NodePermissions.Add( GroupId, PermNode );
-                }
-            }
-        }
-
+        /// <summary>
+        /// Returns whether the user has any permission to any group
+        /// </summary>
+        /// <param name="PermObjectClass">Limit to one class of permission</param>
+        /// <param name="RequireEdit">Limit to Edit permissions</param>
         public bool hasUserPermissions( CswEnumNbtObjectClass PermObjectClass = null, bool RequireEdit = false )
         {
             return getUserPermissions( PermObjectClass, RequireEdit ).Keys.Count > 0;
         }
 
+        private Dictionary<CswPrimaryKey, CswPrimaryKey> _UserPermissions;
+
         /// <summary>
         /// Returns a dictionary of Permission Groups and Permissions (primary keys only), if any exists for this User
         /// </summary>
-        /// <param name="PermGroupType">Filter to a given permission type</param>
+        /// <param name="PermObjectClass">Limit to one class of permission</param>
+        /// <param name="RequireEdit">Limit to Edit permissions</param>
         public Dictionary<CswPrimaryKey, CswPrimaryKey> getUserPermissions( CswEnumNbtObjectClass PermObjectClass = null, bool RequireEdit = false )
         {
-            Dictionary<CswPrimaryKey, CswPrimaryKey> UserPermissions = new Dictionary<CswPrimaryKey, CswPrimaryKey>();
+            Dictionary<CswPrimaryKey, CswPrimaryKey> ret;
 
-            if( CswTools.IsPrimaryKey( CurrentWorkUnitId ) && CswTools.IsPrimaryKey( RoleId ) )
+            // Check the cache for the general case
+            if( null == PermObjectClass &&
+                false == RequireEdit &&
+                null != _UserPermissions &&
+                _UserPermissions.Keys.Count > 0 )
             {
-                CswNbtMetaDataPropertySet PermissionSet = _CswNbtResources.MetaData.getPropertySet( CswEnumNbtPropertySetName.PermissionSet );
+                ret = _UserPermissions;
+            }
+            else
+            {
+                ret = new Dictionary<CswPrimaryKey, CswPrimaryKey>();
 
-                string SQLQuery = @"with pval as (select j.nodeid, j.field1, j.field1_fk, ocp.objectclasspropid, ocp.propname
+
+                if( CswTools.IsPrimaryKey( CurrentWorkUnitId ) && CswTools.IsPrimaryKey( RoleId ) )
+                {
+                    CswNbtMetaDataPropertySet PermissionSet = _CswNbtResources.MetaData.getPropertySet( CswEnumNbtPropertySetName.PermissionSet );
+
+                    string SQLQuery = @"with pval as (select j.nodeid, j.field1, j.field1_fk, ocp.objectclasspropid, ocp.propname
                                                     from jct_propertyset_ocprop jpocp
                                                     join object_class_props ocp on ocp.objectclasspropid = jpocp.objectclasspropid
                                                     join nodetype_props ntp on ntp.objectclasspropid = ocp.objectclasspropid
@@ -843,58 +823,66 @@ namespace ChemSW.Nbt.ObjClasses
                                                      join nodetypes nt on n.nodetypeid = nt.nodetypeid
                                                      join object_class oc on nt.objectclassid = oc.objectclassid
                                                     where n.istemp = 0";
-                if( null != PermObjectClass )
-                {
-                    CswNbtMetaDataObjectClass PermOC = _CswNbtResources.MetaData.getObjectClass( PermObjectClass );
-                    if( null != PermOC )
+                    if( null != PermObjectClass )
                     {
-                        SQLQuery += @"                and oc.objectclassid = " + PermOC.ObjectClassId;
+                        CswNbtMetaDataObjectClass PermOC = _CswNbtResources.MetaData.getObjectClass( PermObjectClass );
+                        if( null != PermOC )
+                        {
+                            SQLQuery += @"                and oc.objectclassid = " + PermOC.ObjectClassId;
+                        }
+                        else
+                        {
+                            throw new CswDniException( CswEnumErrorType.Error, "Server Configuration Error", "getUserPermissions() filtered to an invalid or disabled object class (" + PermObjectClass + ")" );
+                        }
                     }
                     else
                     {
-                        throw new CswDniException( CswEnumErrorType.Error, "Server Configuration Error", "getUserPermissions() filtered to an invalid or disabled object class (" + PermObjectClass + ")" );
-                    }
-                }
-                else
-                {
-                    SQLQuery += @"                    and oc.objectclassid in (select jpsoc.objectclassid 
+                        SQLQuery += @"                    and oc.objectclassid in (select jpsoc.objectclassid 
                                                                                  from jct_propertyset_objectclass jpsoc 
                                                                                 where jpsoc.propertysetid = :permsetid)";
-                }
-                SQLQuery += @"                   )
+                    }
+                    SQLQuery += @"                   )
                                        select * 
                                          from perms
                                         where (perms.userrole = :role or perms.userrole is null) 
                                           and (perms.userworkunit = :workunit or perms.userworkunit is null)";
-                if( RequireEdit )
-                {
-                    SQLQuery += @"        and perms.edit = '" + CswConvert.ToDbVal( (CswEnumTristate) CswEnumTristate.True ) + @"' ";
-                }
-                SQLQuery += @"          order by userpermgroup, applyallroles, applyallworkunits";
-                CswArbitrarySelect Query = _CswNbtResources.makeCswArbitrarySelect( "getUserPermissions", SQLQuery );
-
-                Query.addParameter( "roleocp", CswNbtPropertySetPermission.PropertyName.Role );
-                Query.addParameter( "workunitocp", CswNbtPropertySetPermission.PropertyName.WorkUnit );
-                Query.addParameter( "permgroupocp", CswNbtPropertySetPermission.PropertyName.PermissionGroup );
-                Query.addParameter( "applyallrolesocp", CswNbtPropertySetPermission.PropertyName.ApplyToAllRoles );
-                Query.addParameter( "applyallworkunitsocp", CswNbtPropertySetPermission.PropertyName.ApplyToAllWorkUnits );
-                Query.addParameter( "editocp", CswNbtPropertySetPermission.PropertyName.Edit );
-                Query.addParameter( "permsetid", PermissionSet.PropertySetId.ToString() );
-                Query.addParameter( "role", RoleId.PrimaryKey.ToString() );
-                Query.addParameter( "workunit", CurrentWorkUnitId.PrimaryKey.ToString() );
-
-                DataTable DataTable = Query.getTable();
-                foreach( DataRow Row in DataTable.Rows )
-                {
-                    CswPrimaryKey PermGroupPk = new CswPrimaryKey( "nodes", CswConvert.ToInt32( Row["userpermgroup"].ToString() ) );
-                    CswPrimaryKey PermPk = new CswPrimaryKey( "nodes", CswConvert.ToInt32( Row["nodeid"] ) );
-                    if( false == UserPermissions.ContainsKey( PermGroupPk ) )
+                    if( RequireEdit )
                     {
-                        UserPermissions.Add( PermGroupPk, PermPk );
+                        SQLQuery += @"        and perms.edit = '" + CswConvert.ToDbVal( (CswEnumTristate) CswEnumTristate.True ) + @"' ";
                     }
+                    SQLQuery += @"          order by userpermgroup, applyallroles, applyallworkunits";
+                    CswArbitrarySelect Query = _CswNbtResources.makeCswArbitrarySelect( "getUserPermissions", SQLQuery );
+
+                    Query.addParameter( "roleocp", CswNbtPropertySetPermission.PropertyName.Role );
+                    Query.addParameter( "workunitocp", CswNbtPropertySetPermission.PropertyName.WorkUnit );
+                    Query.addParameter( "permgroupocp", CswNbtPropertySetPermission.PropertyName.PermissionGroup );
+                    Query.addParameter( "applyallrolesocp", CswNbtPropertySetPermission.PropertyName.ApplyToAllRoles );
+                    Query.addParameter( "applyallworkunitsocp", CswNbtPropertySetPermission.PropertyName.ApplyToAllWorkUnits );
+                    Query.addParameter( "editocp", CswNbtPropertySetPermission.PropertyName.Edit );
+                    Query.addParameter( "permsetid", PermissionSet.PropertySetId.ToString() );
+                    Query.addParameter( "role", RoleId.PrimaryKey.ToString() );
+                    Query.addParameter( "workunit", CurrentWorkUnitId.PrimaryKey.ToString() );
+
+                    DataTable DataTable = Query.getTable();
+                    foreach( DataRow Row in DataTable.Rows )
+                    {
+                        CswPrimaryKey PermGroupPk = new CswPrimaryKey( "nodes", CswConvert.ToInt32( Row["userpermgroup"].ToString() ) );
+                        CswPrimaryKey PermPk = new CswPrimaryKey( "nodes", CswConvert.ToInt32( Row["nodeid"] ) );
+                        if( false == ret.ContainsKey( PermGroupPk ) )
+                        {
+                            ret.Add( PermGroupPk, PermPk );
+                        }
+                    }
+                } // if( CswTools.IsPrimaryKey( CurrentWorkUnitId ) && CswTools.IsPrimaryKey( RoleId ) )
+
+                // Cache the general case for next time
+                if( null == PermObjectClass && false == RequireEdit )
+                {
+                    _UserPermissions = ret;
                 }
-            }
-            return UserPermissions;
+            } // if-else( null == PermObjectClass && false == RequireEdit )
+
+            return ret;
         } // getUserPermissions()
 
         #endregion Permissions Logic

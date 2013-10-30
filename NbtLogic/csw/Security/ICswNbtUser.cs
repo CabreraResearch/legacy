@@ -36,6 +36,12 @@ namespace ChemSW.Nbt.Security
         new bool PasswordIsExpired { get; }
         string Language { get; }
         CswNbtPropertySetPermission getPermissionForGroup( CswPrimaryKey PermissionGroupId );
+
+        /// <summary>
+        /// Returns whether the user has any permission to any group
+        /// </summary>
+        /// <param name="PermObjectClass">Limit to one class of permission</param>
+        /// <param name="RequireEdit">Limit to Edit permissions</param>
         bool hasUserPermissions( CswEnumNbtObjectClass PermObjectClass = null, bool RequireEdit = false );
         Dictionary<CswPrimaryKey, CswPrimaryKey> getUserPermissions( CswEnumNbtObjectClass PermObjectClass = null, bool RequireEdit = false );
 
