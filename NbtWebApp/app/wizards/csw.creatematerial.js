@@ -381,7 +381,7 @@
                             cswPrivate.supplierLabel.setLabelText('Supplier: ', true, false);
 
                             var extraOptions = [];
-
+                            
                             // If we are importing from C3 with a new supplier, always show the
                             // 'New Supplier Name >>' option instead of the 'New+' button.
                             if (cswPrivate.state.addNewC3Supplier) {
@@ -429,7 +429,8 @@
                                     };
                                     cswPrivate.makeNewC3SupplierInput(true, 1, 1);
                                 },
-                                isRequired: false === cswPrivate.state.chemCatCentralImport, // If importing from C3, we perform validation in this class, else we let nodeselect validate.
+                                isRequired: true,
+                                overrideNodelinkValidation: cswPrivate.state.chemCatCentralImport,
                                 extraOptions: extraOptions,
                                 showRemoveIcon: cswPrivate.state.addNewC3Supplier,
                                 onSuccess: function (options, useSearch) {

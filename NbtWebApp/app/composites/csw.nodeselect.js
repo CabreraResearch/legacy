@@ -60,6 +60,7 @@
             // Case 30408
             cswPrivate.showRemoveIcon = cswPrivate.showRemoveIcon || false;
             cswPrivate.wasNodeLinkModified = false; // Used to validate when there is no nodeselect only search button
+            cswPrivate.overrideNodelinkValidation = cswPrivate.overrideNodelinkValidation || false;
 
             cswPublic = cswParent.div({ cssclass: 'cswInline' });
             cswPrivate.table = cswPublic.table();
@@ -295,7 +296,7 @@
                 text: Csw.string(cswPrivate.selectedNodeLink) + '&nbsp;'
             });
 
-            if (cswPrivate.isRequired) {
+            if (cswPrivate.isRequired && false === cswPrivate.overrideNodelinkValidation) {
                 var returnObj = Csw.validator(
                     cswPrivate.validateCell.div(),
                     cswPrivate.nameSpan,
@@ -365,7 +366,7 @@
                             }
 
                             // Validation
-                            if (cswPrivate.isRequired) {
+                            if (cswPrivate.isRequired && false === cswPrivate.overrideNodelinkValidation) {
                                 cswPrivate.validateNodeLink(cswPrivate.nameSpan.text());
                             }
 
@@ -444,15 +445,8 @@
                 });
             }
 
-            if (cswPrivate.isRequired) {
-                if (Csw.isNullOrEmpty(cswPrivate.nameSpan.text())) {
-                    cswPrivate.checkBox.val(false);
-                } else {
-                    cswPrivate.checkBox.val(true);
-                }
-                if (cswPrivate.wasNodeLinkModified) {
-                    cswPrivate.checkBox.$.valid();
-                }
+            if (cswPrivate.isRequired && false === cswPrivate.overrideNodelinkValidation) {
+                cswPrivate.validateNodeLink(cswPrivate.nameSpan.text());
             }
 
             if (cswPrivate.select) {
