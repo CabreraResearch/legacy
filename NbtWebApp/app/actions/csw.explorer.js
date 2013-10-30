@@ -109,8 +109,8 @@
                     });
 
                     Csw.iterate(response.Edges, function (arborEdge) {
-                        graph[arborEdge.OwnerNodeId].push(arborEdge.TargetNodeId);
-                        graph[arborEdge.TargetNodeId].push(arborEdge.OwnerNodeId);
+                        //graph[arborEdge.OwnerNodeId].push(arborEdge.TargetNodeId);
+                        //graph[arborEdge.TargetNodeId].push(arborEdge.OwnerNodeId);
                         cswPrivate.sys.addEdge(arborEdge.OwnerNodeId, arborEdge.TargetNodeId, arborEdge.Data);
                     });
 
