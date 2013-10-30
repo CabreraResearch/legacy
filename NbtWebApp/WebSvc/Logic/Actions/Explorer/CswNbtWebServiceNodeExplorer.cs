@@ -110,7 +110,7 @@ namespace NbtWebApp.Actions.Explorer
                     string IconFileName = CswConvert.ToString( Row["iconfilename"] );
                     int NodeTypePropIdRelatingToNT = CswConvert.ToInt32( Row["nodetypepropid"] );
                     string NodeTypePropNameRelatingToNT = NbtResources.MetaData.getNodeTypeProp( NodeTypePropIdRelatingToNT ).PropName;
-                    string DisplayName = CswConvert.ToString( Row["nodetypename"] ) + " (by" + NodeTypePropNameRelatingToNT + ")";
+                    string DisplayName = CswConvert.ToString( Row["nodetypename"] ) + " (by " + NodeTypePropNameRelatingToNT + ")";
                     string TargetIdStr = OwnerIdStr + "_NT_" + RelatingNodeTypeToNodeTypeId;
 
                     if( RelatingNodeTypeToNodeTypeId != StartingNode.NodeTypeId )
@@ -131,9 +131,9 @@ namespace NbtWebApp.Actions.Explorer
                 {
                     int RelatingObjClassToNodeTypeId = CswConvert.ToInt32( Row["objectclassid"] );
                     string IconFileName = CswConvert.ToString( Row["iconfilename"] );
-                    int ObjClassPropRelatingToOC = CswConvert.ToInt32( Row["objectclasspropid"] );
-                    string PropNameRelatingToOC = NbtResources.MetaData.getObjectClassProp( ObjClassPropRelatingToOC ).PropName;
-                    string DisplayName = CswConvert.ToString( Row["objectclass"] ).Replace( "dingdon", "" ) + " (by " + PropNameRelatingToOC + ")";
+                    int NodeTypePropPropRelatingToOC = CswConvert.ToInt32( Row["nodetypepropid"] );
+                    string PropNameRelatingToOC = NbtResources.MetaData.getNodeTypeProp( NodeTypePropPropRelatingToOC ).PropName;
+                    string DisplayName = CswConvert.ToString( Row["objectclass"] ).Replace( "Class", "" ) + " (by " + PropNameRelatingToOC + ")";
 
                     if( RelatingObjClassToNodeTypeId != StartingNode.getObjectClassId() )
                     {
@@ -194,7 +194,7 @@ namespace NbtWebApp.Actions.Explorer
 
         private static string _makeGetRelatedNodeTypesNTSQL( int NodeTypeId )
         {
-            return @"select ntp.propname, ntp.fieldtypeid, nt.nodetypename, nt.iconfilename, nt.nodetypeid, ntp.nodetypepropid from nodetype_props ntp
+            return @"select distinct ntp.propname, ntp.fieldtypeid, nt.nodetypename, nt.iconfilename, nt.nodetypeid, ntp.nodetypepropid from nodetype_props ntp
                             join nodetypes nt on ntp.nodetypeid = nt.nodetypeid
                             join field_types ft on ntp.fieldtypeid = ft.fieldtypeid
                      where ntp.fkvalue = " + NodeTypeId + " and ft.fieldtype = 'Relationship' and ntp.fktype = 'NodeTypeId'";
@@ -202,7 +202,7 @@ namespace NbtWebApp.Actions.Explorer
 
         private static string _makeGetRelatedObjClassesOCSQL( int NodeTypeId )
         {
-            return @"select oc.objectclass, oc.objectclassid, oc.iconfilename, ocp.objectclasspropid from object_class oc
+            return @"select distinct oc.objectclass, oc.objectclassid, oc.iconfilename, ntp.nodetypepropid from object_class oc
                             join nodetypes nt on nt.objectclassid = nt.objectclassid and nt.nodetypeid = " + NodeTypeId +
                             @" join nodetype_props ntp on ntp.nodetypeid = nt.nodetypeid
                             join field_types ft on ft.fieldtypeid = ntp.fieldtypeid
