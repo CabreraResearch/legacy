@@ -62,6 +62,15 @@
                     xtype: 'panel',
                     width: 300,
                     id: 'west-region-container',
+                    items: [{ //TODO: upon clicking on a node, show props here
+                        xtype: 'button',
+                        text: 'Center On This',
+                        handler: function () {
+                            if (false === Csw.isNullOrEmpty(cswPrivate.startingNodeId)) {
+                                cswPrivate.initSystem();
+                            }
+                        }
+                    }]
                 }, {
                     title: 'Relationships',
                     region: 'center',
@@ -82,9 +91,9 @@
             cswPrivate.sys = arbor.ParticleSystem(1000, 1000, 0.7);
             cswPrivate.sys.parameters({ gravity: true });
 
-            if (Csw.isNullOrEmpty(cswPrivate.startingNodeId)) {
-                cswPrivate.startingNodeId = 'nodes_2';
-            }
+            //if (Csw.isNullOrEmpty(cswPrivate.startingNodeId)) {
+            //    cswPrivate.startingNodeId = 'nodes_2';
+            //}
 
             Csw.ajaxWcf.post({
                 urlMethod: "Explorer/Initialize",
@@ -114,7 +123,14 @@
                         cswPrivate.sys.addEdge(arborEdge.OwnerNodeId, arborEdge.TargetNodeId, arborEdge.Data);
                     });
 
-                    cswPrivate.sys.renderer = Csw.ArborRenderer(cswPrivate.extPanel.items.items[2].items.items[0].el.dom.id, response.Nodes, response.Edges, graph, '2');
+                    cswPrivate.sys.renderer = Csw.ArborRenderer(cswPrivate.extPanel.items.items[2].items.items[0].el.dom.id, {
+                        nodes: response.Nodes,
+                        edges: response.Edges,
+                        startNodeId: cswPrivate.startingNodeId,
+                        onNodeClick: function(selectedId) {
+                            cswPrivate.startingNodeId = selectedId;
+                        }
+                    });
                 }
             });
         };

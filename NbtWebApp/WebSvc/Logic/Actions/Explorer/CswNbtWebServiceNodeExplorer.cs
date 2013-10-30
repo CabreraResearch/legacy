@@ -26,7 +26,7 @@ namespace NbtWebApp.Actions.Explorer
 
             StartingNode = NbtResources.Nodes[NodeId];
             //Add the initial node to the graph
-            _addToGraph( Return, StartingNode.NodeName, string.Empty, NodeId.ToString(), StartingNode.IconFileName, 0, "Instance" );
+            _addToGraph( Return, StartingNode.NodeName, string.Empty, NodeId.ToString(), StartingNode.IconFileName, 0, "Instance", NodeId.ToString() );
 
             _recurseForRelatingNodes( NbtResources, Return, StartingNode, 1, NodeId.ToString() );
 
@@ -45,7 +45,7 @@ namespace NbtWebApp.Actions.Explorer
                 if( CswTools.IsPrimaryKey( RelProp.RelatedNodeId ) )
                 {
                     string targetIdStr = OwnerIdStr + "_" + RelProp.RelatedNodeId.ToString();
-                    _addToGraph( Return, RelProp.PropName + ": " + RelProp.CachedNodeName, OwnerIdStr, targetIdStr, Icon, Level, "Instance" );
+                    _addToGraph( Return, RelProp.PropName + ": " + RelProp.CachedNodeName, OwnerIdStr, targetIdStr, Icon, Level, "Instance", RelProp.RelatedNodeId.ToString() );
 
                     string relatingNTsToRelatedNodeSQL = _makeGetRelatedToNodeSQL( RelProp.RelatedNodeId.PrimaryKey );
                     if( Level + 1 <= MAX_DEPTH )
@@ -88,7 +88,7 @@ namespace NbtWebApp.Actions.Explorer
                 string IconFileName = CswConvert.ToString( Row["iconfilename"] );
                 string DisplayName = CswConvert.ToString( Row["display"] ) + "s";
                 string TargetIdStr = OwnerIdStr + "_NT_" + RelatingNodeTypeId;
-                _addToGraph( Return, DisplayName, OwnerIdStr, TargetIdStr, IconFileName, level, "Category" );
+                _addToGraph( Return, DisplayName, OwnerIdStr, TargetIdStr, IconFileName, level, "Category", "NT_" + RelatingNodeTypeId );
 
                 _recurseForRelatedNTs( NbtResources, Return, RelatingNodeTypeId, level + 1, TargetIdStr );
             }
@@ -111,7 +111,7 @@ namespace NbtWebApp.Actions.Explorer
 
                     if( RelatingNodeTypeToNodeTypeId != StartingNode.NodeTypeId )
                     {
-                        _addToGraph( Return, DisplayName, OwnerIdStr, TargetIdStr, IconFileName, level, "Category" );
+                        _addToGraph( Return, DisplayName, OwnerIdStr, TargetIdStr, IconFileName, level, "Category", "NT_" + RelatingNodeTypeToNodeTypeId );
                     }
 
                     if( level + 1 <= MAX_DEPTH )
@@ -132,7 +132,7 @@ namespace NbtWebApp.Actions.Explorer
                     if( RelatingObjClassToNodeTypeId != StartingNode.getObjectClassId() )
                     {
                         string TargetIdStrOc = OwnerIdStr + "_OC_" + RelatingObjClassToNodeTypeId;
-                        _addToGraph( Return, DisplayName, OwnerIdStr, TargetIdStrOc, IconFileName, level, "Category" );
+                        _addToGraph( Return, DisplayName, OwnerIdStr, TargetIdStrOc, IconFileName, level, "Category", "OC_" + RelatingObjClassToNodeTypeId );
                     }
 
                     //TODO: find OCs that relate to the current OC. After depth 3, most MetaData objects are related on the obj class level
@@ -143,7 +143,7 @@ namespace NbtWebApp.Actions.Explorer
         /// <summary>
         /// Helper method for adding data to the return object
         /// </summary>
-        private static void _addToGraph( CswNbtExplorerReturn Return, string Label, string OwnerId, string TargetId, string Icon, int level, string Type )
+        private static void _addToGraph( CswNbtExplorerReturn Return, string Label, string OwnerId, string TargetId, string Icon, int level, string Type, string Id )
         {
             Return.Data.Nodes.Add( new CswNbtArborNode()
                 {
@@ -152,7 +152,7 @@ namespace NbtWebApp.Actions.Explorer
                         {
                             Icon = "Images/newicons/100/" + Icon,
                             Label = Label,
-                            NodeId = TargetId,
+                            NodeId = Id,
                             Level = level,
                             Type = Type
                         }

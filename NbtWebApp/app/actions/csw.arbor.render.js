@@ -1,14 +1,17 @@
 ﻿(function _cswArborRenderer() {
     'use strict';
 
-    Csw.register('ArborRenderer', function (canvas_id, nodes, edges, graph, startNodeId) {
+    Csw.register('ArborRenderer', function (canvas_id, opts) {
         'use strict';
 
         var canvas = $('#' + canvas_id)[0];
         var ctx = canvas.getContext("2d");
         var particleSystem;
-        var dists;
-        var selected = startNodeId;
+        
+        var selected = opts.startNodeId;
+        var nodes = opts.nodes;
+        var edges = opts.edges;
+        var onNodeClick = opts.onNodeClick;
 
         var that = {
             init: function (system) {
@@ -18,7 +21,8 @@
                 particleSystem.screenPadding(80);
                 //dists = computeDists(graph, startNodeId);
 
-                selected = startNodeId;
+                onNodeClick = opts.onNodeClick;
+                selected = opts.startNodeId;
                 that.initMouseHandling();
             },
 
@@ -95,6 +99,7 @@
                             //TODO: fire on double click?
                             if (dragged.node.data.Type === 'Instance') {
                                 //TODO: update properties panel
+                                onNodeClick(dragged.node.data.NodeId);
                             } else {
                                 //TODO: open dialog and fetch list of Nodes relating to starting node
                             }
