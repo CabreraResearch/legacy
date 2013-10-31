@@ -17,11 +17,6 @@ namespace ChemSW.Nbt.Schema
             get { return 30794; }
         }
 
-        public override string ScriptName
-        {
-            get { return "02G_Case" + CaseNo; }
-        }
-
         public override string Title
         {
             get { return "Lowercase gestaltsearch"; }

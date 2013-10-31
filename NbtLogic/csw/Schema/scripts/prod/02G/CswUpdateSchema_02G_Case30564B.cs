@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Data;
 using System.Linq;
-using ChemSW.DB;
 using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
@@ -25,9 +23,9 @@ namespace ChemSW.Nbt.Schema
             get { return 30564; }
         }
 
-        public override string ScriptName
+        public override string AppendToScriptName()
         {
-            get { return "Case30564-LocationLayout"; }
+            return "LocationLayout";
         }
 
         public override void update()

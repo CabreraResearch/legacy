@@ -11,9 +11,9 @@ namespace ChemSW.Nbt.Schema
     {
         public override string Title { get { return "Equipment Type Name is a Required Property"; } }
 
-        public override string ScriptName
+        public override string AppendToScriptName()
         {
-            get { return "Name = Required"; }
+            return "Name = Required";
         }
 
         #region Blame Logic

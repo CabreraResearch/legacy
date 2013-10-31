@@ -11,9 +11,9 @@ namespace ChemSW.Nbt.Schema
     {
         public override string Title { get { return "Inventory Group is a Required Property"; } }
 
-        public override string ScriptName
+        public override string AppendToScriptName()
         {
-            get { return "Locations Inventory Group = Required"; }
+            return "Locations Inventory Group = Required";
         }
 
         #region Blame Logic

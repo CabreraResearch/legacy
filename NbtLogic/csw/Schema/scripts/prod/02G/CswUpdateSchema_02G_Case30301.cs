@@ -24,9 +24,9 @@ namespace ChemSW.Nbt.Schema
             get { return 30301; }
         }
 
-        public override string ScriptName
+        public override string AppendToScriptName()
         {
-            get { return "Admin Views"; }
+            return "Admin Views";
         }
 
         public override void update()
@@ -66,10 +66,10 @@ namespace ChemSW.Nbt.Schema
                 if( false == ChemSWAdminViews.ContainsKey( ViewName ) )
                 {
                     CswNbtViewId ViewId = KeyValuePair.Value;
-                    
+
                     CswNbtView NewCswAdminView = _CswNbtSchemaModTrnsctn.makeView();
-                    NewCswAdminView.saveNew(ViewName, CswEnumNbtViewVisibility.Role, ChemSwAdmin.NodeId, CopyViewId: ViewId.get() );
-                    
+                    NewCswAdminView.saveNew( ViewName, CswEnumNbtViewVisibility.Role, ChemSwAdmin.NodeId, CopyViewId: ViewId.get() );
+
                     NewCswAdminView.save();
                 }
             }

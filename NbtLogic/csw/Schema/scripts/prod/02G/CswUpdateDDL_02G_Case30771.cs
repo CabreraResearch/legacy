@@ -17,11 +17,6 @@ namespace ChemSW.Nbt.Schema
             get { return 30771; }
         }
 
-        public override string ScriptName
-        {
-            get { return "02G_Case30771"; }
-        }
-
         public override string Title
         {
             get { return "Reorganize CAF Import Columns"; }

@@ -7,7 +7,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update
     /// </summary>
-    public class CswUpdateMetaData_02G_Case30743: CswUpdateSchemaTo
+    public class CswUpdateMetaData_02G_Case30743 : CswUpdateSchemaTo
     {
         public override string Title { get { return "Add new Material Properties"; } }
 
@@ -21,9 +21,9 @@ namespace ChemSW.Nbt.Schema
             get { return 30743; }
         }
 
-        public override string ScriptName
+        public override string AppendToScriptName()
         {
-            get { return "Case30743_New_Materials_Props"; }
+            return "New_Materials_Props";
         }
 
         public override void update()

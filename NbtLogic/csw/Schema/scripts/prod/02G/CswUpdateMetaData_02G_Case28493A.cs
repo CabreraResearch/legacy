@@ -8,7 +8,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update
     /// </summary>
-    public class CswUpdateMetaData_02G_Case28493A: CswUpdateSchemaTo
+    public class CswUpdateMetaData_02G_Case28493A : CswUpdateSchemaTo
     {
         public override CswEnumDeveloper Author
         {
@@ -20,9 +20,9 @@ namespace ChemSW.Nbt.Schema
             get { return 28493; }
         }
 
-        public override string ScriptName
+        public override string AppendToScriptName()
         {
-            get { return "02G_Case28493A"; }
+            return "A";
         }
 
         public override void update()
@@ -33,7 +33,7 @@ namespace ChemSW.Nbt.Schema
             {
                 _createLanguageProp( GhsPhraseOC, language );
             }
-            
+
             _CswNbtSchemaModTrnsctn.changeColumnDataType( "jct_nodes_props", "field1", CswEnumDataDictionaryPortableDataType.String, 500 );
 
         } // update()

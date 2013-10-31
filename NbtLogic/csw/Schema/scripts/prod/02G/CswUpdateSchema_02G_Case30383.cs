@@ -21,16 +21,11 @@ namespace ChemSW.Nbt.Schema
             get { return 30383; }
         }
 
-        public override string ScriptName
-        {
-            get { return "Case30383"; }
-        }
-
         public override void update()
         {
-            CswNbtAction Action = _CswNbtSchemaModTrnsctn.Actions[ CswEnumNbtActionName.Reconciliation ];
+            CswNbtAction Action = _CswNbtSchemaModTrnsctn.Actions[CswEnumNbtActionName.Reconciliation];
             Action.SetCategory( CswEnumNbtCategory.Containers );
-            
+
         }
     }
 }

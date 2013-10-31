@@ -13,13 +13,8 @@ namespace ChemSW.Nbt.Schema
         }
 
         public override int CaseNo
-        {                
-            get { return 30924; }
-        }
-
-        public override string ScriptName
         {
-            get { return "02G_Case" + CaseNo; }
+            get { return 30924; }
         }
 
         public override string Title
@@ -29,7 +24,7 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
-            _CswNbtSchemaModTrnsctn.createConfigurationVariable( CswEnumNbtConfigurationVariables.miss_outdated_inspections, "If set to 1, Inspections will become 'Missed' when an Inspection Schedule generates a new one", "1", false);
+            _CswNbtSchemaModTrnsctn.createConfigurationVariable( CswEnumNbtConfigurationVariables.miss_outdated_inspections, "If set to 1, Inspections will become 'Missed' when an Inspection Schedule generates a new one", "1", false );
         } // update()
 
     }

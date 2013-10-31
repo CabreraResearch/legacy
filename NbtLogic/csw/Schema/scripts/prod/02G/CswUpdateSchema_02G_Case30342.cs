@@ -21,9 +21,9 @@ namespace ChemSW.Nbt.Schema
             get { return 30342; }
         }
 
-        public override string ScriptName
+        public override string AppendToScriptName()
         {
-            get { return "Case30342Nodes"; }
+            return "Nodes";
         }
 
         public override void update()
@@ -31,7 +31,7 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataNodeType SiteNt = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Site" );
             if( null != SiteNt && SiteNt.getObjectClass().ObjectClass == CswEnumNbtObjectClass.LocationClass )
             {
-                foreach( CswNbtObjClassLocation SiteNode in SiteNt.getNodes(true, false, false, false) )
+                foreach( CswNbtObjClassLocation SiteNode in SiteNt.getNodes( true, false, false, false ) )
                 {
                     if( SiteNode.Name.Text == "Site 1" )
                     {
@@ -44,7 +44,7 @@ namespace ChemSW.Nbt.Schema
             }
 
             CswNbtMetaDataObjectClass InventoryGroupClass = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.InventoryGroupClass );
-            foreach( CswNbtObjClassInventoryGroup InventoryGroup in InventoryGroupClass.getNodes(true, false, false, false) )
+            foreach( CswNbtObjClassInventoryGroup InventoryGroup in InventoryGroupClass.getNodes( true, false, false, false ) )
             {
                 if( InventoryGroup.Name.Text == "Default Inventory Group" )
                 {

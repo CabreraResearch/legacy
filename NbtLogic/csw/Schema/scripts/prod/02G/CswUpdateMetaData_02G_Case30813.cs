@@ -9,7 +9,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update
     /// </summary>
-    public class CswUpdateMetaData_02G_Case30813: CswUpdateSchemaTo
+    public class CswUpdateMetaData_02G_Case30813 : CswUpdateSchemaTo
     {
         public override CswEnumDeveloper Author
         {
@@ -19,11 +19,6 @@ namespace ChemSW.Nbt.Schema
         public override int CaseNo
         {
             get { return 30813; }
-        }
-
-        public override string ScriptName
-        {
-            get { return "02G_Case" + CaseNo; }
         }
 
         public override string Title
@@ -64,7 +59,7 @@ namespace ChemSW.Nbt.Schema
                             PropName = CswNbtObjClass.PropertyName.LegacyId
                         } );
                 }
-                
+
             }
 
         } // update()

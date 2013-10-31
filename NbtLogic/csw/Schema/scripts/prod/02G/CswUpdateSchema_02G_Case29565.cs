@@ -1,22 +1,12 @@
-﻿using System.Collections.Generic;
-using System.Data;
-using System.Data.OleDb;
-using System.Linq;
-using ChemSW.Audit;
-using ChemSW.Config;
-using ChemSW.Core;
-using ChemSW.DB;
-using ChemSW.Exceptions;
+﻿using ChemSW.Audit;
 using ChemSW.Nbt.csw.Dev;
-using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.Schema
 {
     /// <summary>
     /// Schema Update
     /// </summary>
-    public class CswUpdateSchema_02G_Case29565B: CswUpdateSchemaTo
+    public class CswUpdateSchema_02G_Case29565B : CswUpdateSchemaTo
     {
         public override CswEnumDeveloper Author
         {
@@ -28,9 +18,9 @@ namespace ChemSW.Nbt.Schema
             get { return 29565; }
         }
 
-        public override string ScriptName
+        public override string AppendToScriptName()
         {
-            get { return "02G_Case29565B"; }
+            return "B";
         }
 
         public override void update()

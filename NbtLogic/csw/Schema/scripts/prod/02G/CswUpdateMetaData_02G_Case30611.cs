@@ -11,11 +11,6 @@ namespace ChemSW.Nbt.Schema
     {
         public override string Title { get { return "ContainerDispenseTransaction Dispenser Property"; } }
 
-        public override string ScriptName
-        {
-            get { return "Case_30611"; }
-        }
-
         #region Blame Logic
 
         public override CswEnumDeveloper Author

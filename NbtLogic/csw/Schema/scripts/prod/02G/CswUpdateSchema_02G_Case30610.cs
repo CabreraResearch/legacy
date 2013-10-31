@@ -23,11 +23,6 @@ namespace ChemSW.Nbt.Schema
             get { return 30610; }
         }
 
-        public override string ScriptName
-        {
-            get { return "02G_Case30610"; }
-        }
-
         public override string Title
         {
             get { return "Add New Reports to Master"; }
@@ -36,7 +31,7 @@ namespace ChemSW.Nbt.Schema
         public override void update()
         {
 
-            CswNbtObjClassReportGroup SystemReportGroup = _createReportGroup("System Reports");
+            CswNbtObjClassReportGroup SystemReportGroup = _createReportGroup( "System Reports" );
 
             if( null != SystemReportGroup )
             {
@@ -102,12 +97,12 @@ select * from (
 
                 if( null != ReportGroupNT )
                 {
-                   SystemReportGroup = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( ReportGroupNT.NodeTypeId, 
-                       OnAfterMakeNode: ( CswNbtNode ) =>
-                           {
-                               CswNbtObjClassReportGroup NewNode = CswNbtNode;
-                               NewNode.Name.Text = Name;
-                           });
+                    SystemReportGroup = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( ReportGroupNT.NodeTypeId,
+                        OnAfterMakeNode: ( CswNbtNode ) =>
+                            {
+                                CswNbtObjClassReportGroup NewNode = CswNbtNode;
+                                NewNode.Name.Text = Name;
+                            } );
 
 
                 }
@@ -119,13 +114,13 @@ select * from (
 
 
 
-        private void _createReport(string ReportName, string Category, CswNbtObjClassReportGroup Group, string Query, string Filename)
+        private void _createReport( string ReportName, string Category, CswNbtObjClassReportGroup Group, string Query, string Filename )
         {
             CswNbtMetaDataNodeType ReportNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Report" );
 
             if( null != ReportNT )
             {
-                CswNbtObjClassReport ReportNode = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( 
+                CswNbtObjClassReport ReportNode = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId(
                     ReportNT.NodeTypeId,
                     OnAfterMakeNode: ( CswNbtNode ) =>
                         {

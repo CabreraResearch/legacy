@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.csw.Dev;
@@ -25,18 +24,13 @@ namespace ChemSW.Nbt.Schema
             get { return 30480; }
         }
 
-        public override string ScriptName
-        {
-            get { return "02G_Case30480"; }
-        }
-
         public override void update()
         {
             CswNbtMetaDataObjectClass InventoryGroupOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.InventoryGroupClass );
             CswNbtMetaDataObjectClass InventoryGroupPermissionOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.InventoryGroupPermissionClass );
             CswNbtMetaDataNodeType InvGrpNT = InventoryGroupOc.FirstNodeType;
             CswNbtMetaDataNodeType InvGrpPermNT = InventoryGroupPermissionOc.FirstNodeType;
-            
+
             //1: Get Default Inventory Group
             CswNbtObjClassInventoryGroup DefaultInventoryGroup = null;
             CswNbtObjClassInventoryGroup CISProInventoryGroup = null;

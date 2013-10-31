@@ -20,11 +20,6 @@ namespace ChemSW.Nbt.Schema
             get { return 30756; }
         }
 
-        public override string ScriptName
-        {
-            get { return "02G_" + CaseNo; }
-        }
-
         public override string Title
         {
             get { return "Correct My Containers View"; }
@@ -43,12 +38,12 @@ namespace ChemSW.Nbt.Schema
                     CswNbtView View = MyContainersView;
                     MyContainersView.Root.eachRelationship( Relationship =>
                     {
-                        if( Relationship.SecondMatches(ContainerOc) )
+                        if( Relationship.SecondMatches( ContainerOc ) )
                         {
                             View.AddViewPropertyAndFilter( Relationship, OwnerOcp, "me" );
                             View.save();
                         }
-                    }, null);
+                    }, null );
                 }
             }
 

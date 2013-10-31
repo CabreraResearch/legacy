@@ -18,11 +18,6 @@ namespace ChemSW.Nbt.Schema
             get { return 30778; }
         }
 
-        public override string ScriptName
-        {
-            get { return "02G_Case30778"; }
-        }
-
         public override string Title
         {
             get { return "Fix ocpa valuepropid"; }
@@ -32,7 +27,7 @@ namespace ChemSW.Nbt.Schema
         {
             // object_class_props_audit.valuepropid is varchar2(20), should be number(12)
             _CswNbtSchemaModTrnsctn.changeColumnDataType( "object_class_props_audit", "valuepropid", CswEnumDataDictionaryPortableDataType.Long, 12 );
-            
+
             // object_class_props_audit.valueproptype is number(15,6), should be varchar2(40)
             _CswNbtSchemaModTrnsctn.changeColumnDataType( "object_class_props_audit", "valueproptype", CswEnumDataDictionaryPortableDataType.String, 40 );
 

@@ -2,7 +2,6 @@
 using ChemSW.DB;
 using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -23,15 +22,15 @@ namespace ChemSW.Nbt.Schema
             get { return 30564; }
         }
 
-        public override string ScriptName
+        public override string AppendToScriptName()
         {
-            get { return "Case30564-LocationContents"; }
+            return "LocationContents";
         }
 
         public override void update()
         {
             // Farewell LocationContents, I hardly knew ye
-            
+
             // delete box's LocationContents property and Contents tab
             CswNbtMetaDataNodeType BoxNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Box" );
             if( null != BoxNT )

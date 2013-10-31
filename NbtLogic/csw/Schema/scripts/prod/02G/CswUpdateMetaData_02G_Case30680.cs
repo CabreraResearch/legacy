@@ -11,9 +11,9 @@ namespace ChemSW.Nbt.Schema
     {
         public override string Title { get { return "GHS Add Codes Properties"; } }
 
-        public override string ScriptName
+        public override string AppendToScriptName()
         {
-            get { return "Case_30680OC"; }
+            return "OC";
         }
 
         #region Blame Logic

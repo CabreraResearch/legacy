@@ -2,7 +2,6 @@ using System.Data;
 using ChemSW.DB;
 using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -12,11 +11,6 @@ namespace ChemSW.Nbt.Schema
     public class CswUpdateMetaData_02G_Case27846 : CswUpdateSchemaTo
     {
         public override string Title { get { return "UserSelect FieldType Field1 to ClobData"; } }
-
-        public override string ScriptName
-        {
-            get { return "Case_27846"; }
-        }
 
         #region Blame Logic
 

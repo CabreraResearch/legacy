@@ -2,7 +2,6 @@
 using System.Data;
 using ChemSW.Core;
 using ChemSW.DB;
-using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
@@ -26,11 +25,6 @@ namespace ChemSW.Nbt.Schema
             get { return 30557; }
         }
 
-        public override string ScriptName
-        {
-            get { return "Case30557"; }
-        }
-
         public override void update()
         {
             CswNbtMetaDataFieldType QuantityFT = _CswNbtSchemaModTrnsctn.MetaData.getFieldType( CswEnumNbtFieldType.Quantity );
@@ -51,12 +45,12 @@ namespace ChemSW.Nbt.Schema
                         CswNbtObjClassUnitOfMeasure LitersUnit = getUnit( "Liters", "Unit_Volume" );
                         if( null != kgUnit && CurrentUnit.UnitType.Value == kgUnit.UnitType.Value )
                         {
-                            Double Val_kg = Quantity*CurrentUnit.ConversionFactor.RealValue/kgUnit.ConversionFactor.RealValue;
+                            Double Val_kg = Quantity * CurrentUnit.ConversionFactor.RealValue / kgUnit.ConversionFactor.RealValue;
                             Row["field2_numeric"] = Val_kg.ToString();
                         }
                         if( null != LitersUnit && CurrentUnit.UnitType.Value == LitersUnit.UnitType.Value )
                         {
-                            Double Val_Liters = Quantity*CurrentUnit.ConversionFactor.RealValue/LitersUnit.ConversionFactor.RealValue;
+                            Double Val_Liters = Quantity * CurrentUnit.ConversionFactor.RealValue / LitersUnit.ConversionFactor.RealValue;
                             Row["field3_numeric"] = Val_Liters.ToString();
                         }
                     }

@@ -15,13 +15,8 @@ namespace ChemSW.Nbt.Schema
         }
 
         public override int CaseNo
-        {                
-            get { return 30017; }
-        }
-
-        public override string ScriptName
         {
-            get { return "02G_Case" + CaseNo; }
+            get { return 30017; }
         }
 
         public override string Title
@@ -71,7 +66,7 @@ namespace ChemSW.Nbt.Schema
                             View.AddViewRelationship( Relationship, CswEnumNbtViewPropOwnerType.Second, LabSafetyChecklist.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.Target ), false );
                         }
 
-                    }, null );  
+                    }, null );
                     GroupView.save();
                 }
 
@@ -80,7 +75,7 @@ namespace ChemSW.Nbt.Schema
                 {
                     DoomedView1.Delete();
                 }
-                
+
                 CswNbtView DoomedView2 = _CswNbtSchemaModTrnsctn.restoreView( "Scheduling, Lab Safety Checklist: Lab Safety (demo)" );
                 if( null != DoomedView2 )
                 {
@@ -92,7 +87,7 @@ namespace ChemSW.Nbt.Schema
 
 
             }
-            
+
 
         } // update()
 

@@ -14,7 +14,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update
     /// </summary>
-    public class CswUpdateSchema_02G_Case28493B: CswUpdateSchemaTo
+    public class CswUpdateSchema_02G_Case28493B : CswUpdateSchemaTo
     {
         public override CswEnumDeveloper Author
         {
@@ -26,9 +26,9 @@ namespace ChemSW.Nbt.Schema
             get { return 28493; }
         }
 
-        public override string ScriptName
+        public override string AppendToScriptName()
         {
-            get { return "02G_Case28493B"; }
+            return "B";
         }
 
         public override void update()
@@ -42,7 +42,7 @@ namespace ChemSW.Nbt.Schema
             //Note - we are ignoring the signal words sheet here
             DataTable HazardStatementsTbl = GHSLanguageData.Tables["'Hazard statements$'"];
             DataTable PrecationaryStatementsTbl = GHSLanguageData.Tables["'Precautionary statements $'"];
-            
+
             _handleData( HazardStatementsTbl, 2, 88, GHSPhrases, GHSPhraseOC.getNodeTypeIds().FirstOrDefault() );
             _handleData( PrecationaryStatementsTbl, 3, 139, GHSPhrases, GHSPhraseOC.getNodeTypeIds().FirstOrDefault() );
         }

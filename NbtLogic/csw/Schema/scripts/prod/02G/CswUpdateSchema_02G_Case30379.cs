@@ -26,9 +26,9 @@ namespace ChemSW.Nbt.Schema
             get { return 30379; }
         }
 
-        public override string ScriptName
+        public override string AppendToScriptName()
         {
-            get { return "Elementary"; }
+            return "Elementary";
         }
 
         public override void update()
@@ -56,13 +56,13 @@ namespace ChemSW.Nbt.Schema
                     DataTable NodeTable = ArbSelect.getTable();
                     foreach( DataRow Row in NodeTable.Rows )
                     {
-                        CswPrimaryKey NodeId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( Row[ "nodeid" ] ) );
-                        CswNbtNode Node = _CswNbtSchemaModTrnsctn.Nodes[ NodeId ];
+                        CswPrimaryKey NodeId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( Row["nodeid"] ) );
+                        CswNbtNode Node = _CswNbtSchemaModTrnsctn.Nodes[NodeId];
                         if( null != Node )
                         {
-                            Int32 NodeTypePropId = CswConvert.ToInt32( Row[ "nodetypepropid" ] );
+                            Int32 NodeTypePropId = CswConvert.ToInt32( Row["nodetypepropid"] );
 
-                            CswNbtNodePropWrapper PropWrapper = Node.Properties[ NodeTypePropId ];
+                            CswNbtNodePropWrapper PropWrapper = Node.Properties[NodeTypePropId];
                             if( null != PropWrapper )
                             {
                                 if( CswEnumTristate.False != PropWrapper.AsLogical.Checked &&
@@ -98,13 +98,13 @@ namespace ChemSW.Nbt.Schema
                     DataTable NodeTable = ArbSelect.getTable();
                     foreach( DataRow Row in NodeTable.Rows )
                     {
-                        CswPrimaryKey NodeId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( Row[ "nodeid" ] ) );
-                        CswNbtNode Node = _CswNbtSchemaModTrnsctn.Nodes[ NodeId ];
+                        CswPrimaryKey NodeId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( Row["nodeid"] ) );
+                        CswNbtNode Node = _CswNbtSchemaModTrnsctn.Nodes[NodeId];
                         if( null != Node )
                         {
-                            Int32 NodeTypePropId = CswConvert.ToInt32( Row[ "nodetypepropid" ] );
+                            Int32 NodeTypePropId = CswConvert.ToInt32( Row["nodetypepropid"] );
 
-                            CswNbtNodePropWrapper PropWrapper = Node.Properties[ NodeTypePropId ];
+                            CswNbtNodePropWrapper PropWrapper = Node.Properties[NodeTypePropId];
                             if( null != PropWrapper )
                             {
                                 if( PropWrapper.Empty )

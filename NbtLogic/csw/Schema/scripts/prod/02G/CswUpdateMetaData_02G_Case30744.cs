@@ -7,7 +7,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update
     /// </summary>
-    public class CswUpdateMetaData_02G_Case30744: CswUpdateSchemaTo
+    public class CswUpdateMetaData_02G_Case30744 : CswUpdateSchemaTo
     {
         public override CswEnumDeveloper Author
         {
@@ -17,11 +17,6 @@ namespace ChemSW.Nbt.Schema
         public override int CaseNo
         {
             get { return 30744; }
-        }
-
-        public override string ScriptName
-        {
-            get { return "02G_30744"; }
         }
 
         public override string Title

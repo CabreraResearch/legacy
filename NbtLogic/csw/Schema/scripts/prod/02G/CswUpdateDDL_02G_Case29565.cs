@@ -11,11 +11,6 @@ namespace ChemSW.Nbt.Schema
     {
         public override string Title { get { return "Add any missing columns to audit tables"; } }
 
-        public override string ScriptName
-        {
-            get { return "Case_29565"; }
-        }
-
         public override CswEnumDeveloper Author
         {
             get { return CswEnumDeveloper.SS; }

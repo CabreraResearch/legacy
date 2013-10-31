@@ -20,11 +20,6 @@ namespace ChemSW.Nbt.Schema
             get { return 30562; }
         }
 
-        public override string ScriptName
-        {
-            get { return "02G_Case30562"; }
-        }
-
         public override string Title
         {
             get { return "Edit 'Due Inspections (all)' view in nbt_master"; }

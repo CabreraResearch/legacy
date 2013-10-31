@@ -1,8 +1,8 @@
 using System.Data;
 using ChemSW.DB;
-using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.MetaData.FieldTypeRules;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -13,9 +13,9 @@ namespace ChemSW.Nbt.Schema
     {
         public override string Title { get { return "Quantity Val_kg and Val_Liters SubFields"; } }
 
-        public override string ScriptName
+        public override string AppendToScriptName()
         {
-            get { return "Case_30557FT"; }
+            return "FT";
         }
 
         #region Blame Logic

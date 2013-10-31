@@ -19,11 +19,6 @@ namespace ChemSW.Nbt.Schema
             get { return 30832; }
         }
 
-        public override string ScriptName
-        {
-            get { return "02G_Case" + CaseNo; }
-        }
-
         public override string Title
         {
             get { return "Set Max/Min value for Page Size property"; }

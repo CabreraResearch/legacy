@@ -22,9 +22,9 @@ namespace ChemSW.Nbt.Schema
             get { return 30473; }
         }
 
-        public override string ScriptName
+        public override string AppendToScriptName()
         {
-            get { return "Case30473_again"; }
+            return "again";
         }
 
         public override void update()

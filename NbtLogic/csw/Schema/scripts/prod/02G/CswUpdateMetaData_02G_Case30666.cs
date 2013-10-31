@@ -11,9 +11,9 @@ namespace ChemSW.Nbt.Schema
     {
         public override string Title { get { return "User Cost Code Property"; } }
 
-        public override string ScriptName
+        public override string AppendToScriptName()
         {
-            get { return "Case_30666_MetaData"; }
+            return "MetaData";
         }
 
         #region Blame Logic

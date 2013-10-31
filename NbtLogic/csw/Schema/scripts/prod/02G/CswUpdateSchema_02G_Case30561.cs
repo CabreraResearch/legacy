@@ -25,11 +25,6 @@ namespace ChemSW.Nbt.Schema
             get { return 30561; }
         }
 
-        public override string ScriptName
-        {
-            get { return "Case30561"; }
-        }
-
         public override void update()
         {
             CswNbtMetaDataObjectClass ReportClass = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.ReportClass );

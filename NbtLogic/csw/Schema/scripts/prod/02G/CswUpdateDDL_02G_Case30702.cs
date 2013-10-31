@@ -9,11 +9,6 @@ namespace ChemSW.Nbt.Schema
     {
         public override string Title { get { return "Audit nodetype_layout"; } }
 
-        public override string ScriptName
-        {
-            get { return "Case_30702"; }
-        }
-
         public override CswEnumDeveloper Author
         {
             get { return CswEnumDeveloper.SS; }

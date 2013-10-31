@@ -17,11 +17,6 @@ namespace ChemSW.Nbt.Schema
             get { return 29283; }
         }
 
-        public override string ScriptName
-        {
-            get { return "02G_Case" + CaseNo; }
-        }
-
         public override string Title
         {
             get { return "Row Limits on SQL Reports"; }

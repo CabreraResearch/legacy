@@ -13,13 +13,8 @@ namespace ChemSW.Nbt.Schema
         }
 
         public override int CaseNo
-        {                
-            get { return 30793; }
-        }
-
-        public override string ScriptName
         {
-            get { return "02G_Case" + CaseNo; }
+            get { return 30793; }
         }
 
         public override string Title
@@ -30,7 +25,7 @@ namespace ChemSW.Nbt.Schema
         public override void update()
         {
 
-            _CswNbtSchemaModTrnsctn.updateIndex( "jct_nodes_props", "nodeid, nodetypepropid, field1, field2, field3, field1_numeric, field1_date, hidden","JCT10" );
+            _CswNbtSchemaModTrnsctn.updateIndex( "jct_nodes_props", "nodeid, nodetypepropid, field1, field2, field3, field1_numeric, field1_date, hidden", "JCT10" );
 
         } // update()
 

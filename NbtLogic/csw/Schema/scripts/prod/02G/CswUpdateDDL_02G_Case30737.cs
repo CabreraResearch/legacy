@@ -5,14 +5,9 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Updates the schema for MetaData changes
     /// </summary>
-    public class CswUpdateDDL_02G_Case30737: CswUpdateSchemaTo
+    public class CswUpdateDDL_02G_Case30737 : CswUpdateSchemaTo
     {
         public override string Title { get { return "Add Import_Lob Table"; } }
-
-        public override string ScriptName
-        {
-            get { return "O2G_30737"; }
-        }
 
         public override CswEnumDeveloper Author
         {

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using ChemSW.Core;
-using ChemSW.Nbt.csw.Dev;
-using ChemSW.Nbt.ObjClasses;
+﻿using ChemSW.Nbt.csw.Dev;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -24,9 +19,9 @@ namespace ChemSW.Nbt.Schema
             get { return 30702; }
         }
 
-        public override string ScriptName
+        public override string AppendToScriptName()
         {
-            get { return "case30702 set auditlevel"; }
+            return "Set_auditlevel";
         }
 
         public override void update()
