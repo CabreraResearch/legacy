@@ -70,31 +70,68 @@ namespace ChemSW.Nbt.ChemCatCentral
             return null;
         }//initializeC3Client()
 
+        private bool _checkConnection( SearchClient SearchClient )
+        {
+            bool Ret = false;
+            CswWebSvcReturnBaseStatus Status = new CswWebSvcReturnBaseStatus();
+            CswC3Params CswC3Params = new CswC3Params();
+
+            if( null != _CswC3Params )
+            {
+                CswC3Params = _CswC3Params;
+            }
+            else
+            {
+                CswC3Params.AccessId = _CswC3SearchParams.AccessId;
+                CswC3Params.CustomerLoginName = _CswC3SearchParams.CustomerLoginName;
+                CswC3Params.LoginPassword = _CswC3SearchParams.LoginPassword;
+            }
+
+            Status = SearchClient.canConnect( CswC3Params );
+            if( Status.Success )
+            {
+                Ret = true;
+            }
+            else
+            {
+                foreach( CswWebSvcReturnBaseErrorMessage Message in Status.Messages )
+                {
+                    _createMessage( Message.Type, Message.Detail, true, Message.Message );
+                }
+            }
+
+            return Ret;
+        }
+
         private bool _checkC3ServiceReferenceStatus( SearchClient SearchClient )
         {
-            bool Status = false;
+            bool Ret = false;
 
             try
             {
-                Status = SearchClient.isAlive();
+                Ret = _checkConnection( SearchClient );
             }
             catch( Exception e )
             {
                 _createMessage( _MessageType ?? CswEnumErrorType.Error, ( _Message ?? "Endpoint address incorrect or ChemCatCentral service not available: " ) + e );
             }
 
-            return Status;
+            return Ret;
         }//checkC3ServiceReferenceStatus()
 
         public string getCurrentC3Version()
         {
             string CurrentVersion = string.Empty;
+            bool Status = false;
 
             SearchClient C3Service = initializeC3Client();
             if( null != C3Service )
             {
-                C3Service.isAlive();
-                CurrentVersion = C3Service.getCurrentVersion();
+                Status = _checkConnection( C3Service );
+                if( Status )
+                {
+                    CurrentVersion = C3Service.getCurrentVersion();
+                }
             }
 
             return CurrentVersion;
@@ -103,16 +140,19 @@ namespace ChemSW.Nbt.ChemCatCentral
         public CswC3ServiceLogicGetDataSourcesDataSource[] getDataSourceDates()
         {
             CswC3ServiceLogicGetDataSourcesDataSource[] DataSourceDates = null;
+            bool Status = false;
 
             SearchClient C3Service = initializeC3Client();
             if( null != C3Service )
             {
-                C3Service.isAlive();
-                CswRetObjSearchResults DataSources = C3Service.getDataSourceDates( _CswC3Params );
-
-                if( null != DataSources.DataSourceDates )
+                Status = _checkConnection( C3Service );
+                if( Status )
                 {
-                    DataSourceDates = DataSources.DataSourceDates.Data;
+                    CswRetObjSearchResults DataSources = C3Service.getDataSourceDates( _CswC3Params );
+                    if( null != DataSources.DataSourceDates )
+                    {
+                        DataSourceDates = DataSources.DataSourceDates.Data;
+                    }
                 }
             }
 
@@ -236,7 +276,7 @@ namespace ChemSW.Nbt.ChemCatCentral
 
         private void _createMessage( CswEnumErrorType ErrorType, string Detail, bool ShowError = true, string Message = "" )
         {
-            if( string.IsNullOrEmpty( Message ) || string.IsNullOrEmpty( _Message ) )
+            if( string.IsNullOrEmpty( Message ) && string.IsNullOrEmpty( _Message ) )
             {
                 Message = "Unable to connect to ChemCatCentral";
             }
