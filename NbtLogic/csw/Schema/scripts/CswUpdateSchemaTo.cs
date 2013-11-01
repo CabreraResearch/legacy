@@ -110,11 +110,16 @@ namespace ChemSW.Nbt.Schema
         {
             get
             {
-                //todo: what if there is no case number (before/after/run always scripts)
-                string Ret = _ReleaseIteration + _ReleaseIdentifier + "_Case" + CaseNo;
                 string StringToAppend = AppendToScriptName().Replace( "'", "" );
-                Ret = Ret + StringToAppend;
 
+                // Run always scripts don't have a case number, but they should have a scriptname
+                if( CaseNo == 0 && false == string.IsNullOrEmpty( StringToAppend ) )
+                {
+                    return StringToAppend;
+                }
+
+                string Ret = _ReleaseIteration + _ReleaseIdentifier + "_Case" + CaseNo;
+                Ret = Ret + StringToAppend;
                 return Ret;
             }
         }
