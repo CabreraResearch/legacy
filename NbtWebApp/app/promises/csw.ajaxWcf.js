@@ -187,7 +187,7 @@
                     cswInternal.cachedResponse = ret;
                     return Csw.ajaxCore.onSuccess(cswInternal.urlMethod, cswInternal.cachedResponse, false, cswInternal.success, cswInternal.cachedResponse);
                 })
-                .then(getAjaxPromise(false));
+                .fin(getAjaxPromise(false));
         } else {
             promise = getAjaxPromise(cswInternal.watchGlobal);
         }

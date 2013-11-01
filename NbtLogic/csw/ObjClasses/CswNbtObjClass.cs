@@ -18,6 +18,11 @@ namespace ChemSW.Nbt.ObjClasses
         protected CswNbtNode _CswNbtNode = null;
         protected CswNbtResources _CswNbtResources = null;
 
+        protected CswDateTime _Date
+        {
+            get { return _CswNbtNode._Date; }
+        }
+
         private bool canSave( string TabId )
         {
             Int32 TabIdInt = CswConvert.ToInt32( TabId );

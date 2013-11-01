@@ -15,7 +15,7 @@ namespace NbtWebApp.Actions.Explorer
         //
         //public CswPrimaryKey NodeId { get { return _NodeId; } }
 
-        [DataMember(Name = "NodeId")]
+        [DataMember( Name = "NodeId" )]
         public string NodeIdStr { get; set; }
 
         [DataMember]
@@ -32,6 +32,18 @@ namespace NbtWebApp.Actions.Explorer
 
             [DataMember]
             public string Label { get; set; }
+
+            [DataMember]
+            public string NodeId { get; set; }
+
+            [DataMember]
+            public string NodeType { get; set; }
+
+            [DataMember]
+            public int Level { get; set; }
+
+            [DataMember]
+            public string Type { get; set; }
         }
     }
 }

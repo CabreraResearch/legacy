@@ -96,8 +96,14 @@ namespace ChemSW.Nbt.Schema
                 {
                     foreach( CswNbtMetaDataObjectClassProp ObjectClassProp in ObjectClassProps )
                     {
-                        CswNbtMetaDataNodeTypeProp NodetypeProp = ContainerNT.getNodeTypePropByObjectClassProp( ObjectClassProp );
-                        NodetypeProp.removeFromAllLayouts();
+                        if( null != ObjectClassProp )
+                        {
+                            CswNbtMetaDataNodeTypeProp NodetypeProp = ContainerNT.getNodeTypePropByObjectClassProp( ObjectClassProp );
+                            if( null != NodetypeProp )
+                            {
+                                NodetypeProp.removeFromAllLayouts();
+                            }
+                        }
                     }
 
                 }

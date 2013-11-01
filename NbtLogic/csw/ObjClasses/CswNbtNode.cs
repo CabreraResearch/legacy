@@ -85,7 +85,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-        private CswDateTime _Date;
+        public CswDateTime _Date;
         private CswNbtResources _CswNbtResources;
         private CswNbtNodeWriter _CswNbtNodeWriter;
         public CswNbtNode( CswNbtResources CswNbtResources, CswNbtNodeWriter CswNbtNodeWriter, Int32 NodeTypeId, CswEnumNbtNodeSpecies NodeSpecies, CswPrimaryKey NodeId, Int32 UniqueId, CswDateTime Date, bool IsTemp )

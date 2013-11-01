@@ -159,7 +159,7 @@
             if (true === cswPrivate.useCache) {
                 Csw.getCachedWebServiceCall('Services/' + cswPrivate.viewMethod)
                     .then(makeSelect)
-                    .then(function (data) {
+                    .fin(function (data) {
                         cswPrivate.useCache = false;
                         return cswParent.viewSelect({
                             onSelect: cswPrivate.onSelect,
