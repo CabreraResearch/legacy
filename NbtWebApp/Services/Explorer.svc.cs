@@ -33,6 +33,27 @@ namespace NbtWebApp
             SvcDriver.run();
             return ( Ret );
         }
+
+        [OperationContract]
+        [WebInvoke( Method = "POST", UriTemplate = "GetFilterOpts" )]
+        [Description( "Initialize the Node Explorer" )]
+        [FaultContract( typeof( FaultException ) )]
+        public CswNbtExplorerReturn GetFilterOpts()
+        {
+            CswNbtExplorerReturn Ret = new CswNbtExplorerReturn();
+
+            var SvcDriver = new CswWebSvcDriver<CswNbtExplorerReturn, string>(
+                CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj : Ret,
+                WebSvcMethodPtr : CswNbtWebServiceNodeExplorer.GetFilterOpts,
+                ParamObj : string.Empty
+                );
+
+            SvcDriver.run();
+            return ( Ret );
+        }
+
+
     }
 
 }
