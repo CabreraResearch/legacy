@@ -294,7 +294,7 @@ namespace ChemSW.Nbt.ViewEditor
 
         #region Get Related
 
-        protected Collection<CswNbtViewRelationship> getViewChildRelationshipOptions( CswNbtView View, string ArbitraryId )
+        public Collection<CswNbtViewRelationship> getViewChildRelationshipOptions( CswNbtView View, string ArbitraryId )
         {
             Collection<CswNbtViewRelationship> ret = new Collection<CswNbtViewRelationship>();
 
