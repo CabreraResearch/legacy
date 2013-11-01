@@ -121,7 +121,10 @@ namespace ChemSW.Nbt.ObjClasses
                     this.Parts.YValues = PartsString;
                 }
             }
-            SyncEquipmentToAssembly();
+            if( false == CswTools.IsDate( _Date ) )
+            {
+                SyncEquipmentToAssembly();
+            }
             _CswNbtObjClassDefault.triggerAfterPopulateProps();
         }//afterPopulateProps()
 
