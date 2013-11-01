@@ -437,7 +437,7 @@ update nodetypes nt
                                                                n.istemp
                                                           from nodes_audit n
                                                           left outer join nodetypes_audit ta on n.nodetypeid = ta.nodetypeid)
-                                                 where istemp = 0 and hidden = 0
+                                                 where istemp = 0
                                                  group by firstversionid)
                         select c.nt_count
                           from nodetype_counts c
@@ -463,7 +463,7 @@ update object_class oc
                                                               from nodes_audit n
                                                               left outer join nodetypes_audit ta on n.nodetypeid = ta.nodetypeid
                                                               left outer join object_class o on ta.objectclassid = o.objectclassid)
-                                                     where istemp = 0 and hidden = 0 
+                                                     where istemp = 0
                                                      group by objectclassid)
                         select c.oc_count
                           from object_class_counts c

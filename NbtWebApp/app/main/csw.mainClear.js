@@ -1,7 +1,10 @@
 /// <reference path="CswApp-vsdoc.js" />
 
 (function _initMain() {
-
+    
+    // see http://stackoverflow.com/questions/17544965/unhandled-rejection-reasons-should-be-empty
+    Q.stopUnhandledRejectionTracking();
+    
     Csw.main.onReady.then(function() {
 
         Csw.main.register('clear', function (options) {

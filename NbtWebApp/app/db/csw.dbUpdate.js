@@ -55,7 +55,7 @@
             return deferred.promise;
         };
 
-        dbManager.promises.connect.then(doUpdate);
+        dbManager.promises.connect.then(doUpdate, function() { deferred.reject(); });
         return deferred.promise;
     };
 

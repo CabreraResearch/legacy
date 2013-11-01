@@ -603,7 +603,9 @@
         }; // getFilterToNodeTypeId()
 
         cswPublic.disable = function () {
-            cswPrivate.preFilterSelect.disable();
+            if (cswPrivate.preFilterSelect) {
+                cswPrivate.preFilterSelect.disable();
+            }
             if (cswPrivate.searchButton) {
                 cswPrivate.searchButton.disable();
             }
@@ -612,7 +614,9 @@
         };
 
         cswPublic.enable = function () {
-            cswPrivate.preFilterSelect.enable();
+            if (cswPrivate.preFilterSelect) {
+                cswPrivate.preFilterSelect.enable();
+            }
             if (cswPrivate.searchButton) {
                 cswPrivate.searchButton.enable();
             }

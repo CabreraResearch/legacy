@@ -47,7 +47,7 @@
             return deferred.promise;
         };
         
-        dbManager.promises.connect.then(doSelect);
+        dbManager.promises.connect.then(doSelect, function() { deferred.reject(); });
         return deferred.promise;
     };
 
@@ -109,7 +109,7 @@
             return deferred.promise;
         };
         
-        dbManager.promises.connect.then(doSelect);
+        dbManager.promises.connect.then(doSelect, function() { deferred.reject(); });
         return deferred.promise;
     };
 
