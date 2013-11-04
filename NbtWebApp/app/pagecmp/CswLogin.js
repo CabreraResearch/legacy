@@ -42,11 +42,11 @@
                         name: 'login_username',
                         width: '120px',
                         cssclass: 'required',
-                        onChange: function () {//Case 26866/27114
-                            var regex = /[^a-zA-Z0-9_.]+/g;
+                        onChange: function () {//Case 26866/27114/31058
+                            var regex = /[^a-zA-Z0-9-_.\s]+/g;
                             var validUserName = inpUserName.val();
                             validUserName = validUserName.replace(regex, "");
-                            inpUserName.val(validUserName);
+                            inpUserName.val(validUserName.trim()); 
                         }
                     });
                     loginTable.cell(4, 1).text('Password: ').align('right');
