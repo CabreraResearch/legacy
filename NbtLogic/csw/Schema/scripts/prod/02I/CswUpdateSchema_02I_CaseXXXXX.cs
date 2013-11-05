@@ -13,13 +13,8 @@ namespace ChemSW.Nbt.Schema
         }
 
         public override int CaseNo
-        {                
-            get { return 0; }
-        }
-
-        public override string ScriptName
         {
-            get { return "02I_Case" + CaseNo; }
+            get { return 0; }
         }
 
         public override string Title

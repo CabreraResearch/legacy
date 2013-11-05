@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
 using ChemSW.Audit;
 using ChemSW.Core;
 using ChemSW.Nbt.csw.Dev;
@@ -17,7 +14,7 @@ namespace ChemSW.Nbt.Schema
         public override int CaseNo { get { return 30702; } }
         public override bool AlwaysRun { get { return true; } }
         public override string Title { get { return "Post-Script: 04: Auditing PL/SQL Objects"; } }
-        public override string ScriptName { get { return "Audit Sql"; } }
+        public override string AppendToScriptName() { return "Audit Sql"; }
 
         public override void update()
         {

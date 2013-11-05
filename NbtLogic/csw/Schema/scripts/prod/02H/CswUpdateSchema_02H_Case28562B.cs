@@ -1,6 +1,6 @@
-﻿using ChemSW.Nbt.MetaData;
+﻿using ChemSW.Nbt.csw.Dev;
+using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.csw.Dev;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -19,9 +19,9 @@ namespace ChemSW.Nbt.Schema
             get { return 28562; }
         }
 
-        public override string ScriptName
+        public override string AppendToScriptName()
         {
-            get { return "02H_Case" + CaseNo + "B"; }
+            return "B";
         }
 
         public override string Title
