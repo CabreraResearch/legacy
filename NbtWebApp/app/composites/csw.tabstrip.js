@@ -32,7 +32,7 @@
             };
 
             cswParent.empty();
-            cswPublic = cswParent.div().css({ width: '100%', height: '100%' });
+            cswPublic = cswParent.div().css({ width: '99%', height: '100%' });
 
         }());
 

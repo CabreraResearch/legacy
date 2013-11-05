@@ -5,16 +5,6 @@
     Csw.actions.register('scheduledRules', function (cswParent, cswPrivate) {
         'use strict';
 
-        //Ext.require([
-        //    'Ext.selection.CellModel',
-        //    'Ext.grid.*',
-        //    'Ext.data.*',
-        //    'Ext.util.*',
-        //    'Ext.state.*',
-        //    'Ext.form.*',
-        //    'Ext.ux.CheckColumn'
-        //]);
-
         //#region _preCtor
 
         var cswPublic = {};
@@ -28,13 +18,7 @@
 
         //#endregion _preCtor
 
-        //#region AJAX methods
-
-
-
-        //#endregion AJAX methods
-
-        //#region Tab construction
+        //#region Tab Functions
 
         cswPrivate.tabNames = ['Rules', 'Timeline'];
 
@@ -103,6 +87,10 @@
 
             return ol;
         };
+        
+        //#endregion Tab Functions
+        
+        //#region Tab construction
 
         cswPrivate.makeRulesTab = function () {
             var ol = cswPrivate.prepTab(cswPrivate.rulesTab, 'Rules', 'Select a Customer to review and make any necessary edits to the Scheduled Rules for their schema.');
@@ -113,6 +101,10 @@
                 cswPrivate.makeScheduledRulesGrid(ol.li());
 
                 ol.li().br({ number: 2 });
+
+                //var buttonTable = ol.li().table();
+                
+                
 
                 cswPrivate.addBtnGroup(ol.li());
             });
@@ -159,38 +151,27 @@
                     }
                 }
             });
-
-            //customerIdTable.cell(1, 3).buttonExt({
-            //    name: 'updateRules',
-            //    icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.save),
-            //    enabledText: 'Save Changes',
-            //    disabledText: 'Saving . . . ',
-            //    onClick: function () {
-            //        var req = Csw.extend({}, cswPrivate.schedulerRequest, true);
-            //        req.Grid.columns.forEach(function (col) {
-            //            delete col.editable;
-            //            delete col.editor;
-            //        });
-
-            //        Csw.ajaxWcf.post({
-            //            urlMethod: 'Scheduler/save',
-            //            data: req,
-            //            success: function() {
-            //                cswPrivate.makeScheduledRulesGrid();
-            //            }
-            //        });
-            //    }
-            //});
+            
+            customerIdTable.cell(1, 3).buttonExt({
+                                    name: 'refreshGrid',
+                                    icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.refresh),
+                                    enabledText: 'Refresh',
+                                    disabledText: 'Refresh',
+                                    onClick: function () {
+                                        cswPrivate.makeScheduledRulesGrid();
+                                    }
+                            });
 
             return ret;
         };
+        
+        //#region Scheduled Rules Grid
 
         cswPrivate.makeScheduledRulesGrid = function (parentDiv) {
             var gridId = 'rulesGrid';
             //Case 29587 - always use parentDiv when given (i.e. - when reloading entire tab)
             //else (when refreshing just the grid), keep cswPrivate.gridDiv 
             cswPrivate.gridDiv = parentDiv || cswPrivate.gridDiv;
-
 
             cswPrivate.gridAjax = Csw.ajaxWcf.post({
                 urlMethod: 'Scheduler/get',
@@ -414,14 +395,10 @@
                         storeId: gridId,
                         data: result.Grid,
                         stateId: gridId,
-                        height: 375,
-                        width: '95%',
+                        height: 400,
+                        width: '98%',
                         title: 'Scheduled Rules',
                         usePaging: true,
-                        onRefresh: function () {
-                            //Case 30547 - grid.onRefresh passes in a default parameter to the callback. Insulating makeScheduledRulesGrid() will save us from that
-                            cswPrivate.makeScheduledRulesGrid();
-                        },
                         showActionColumn: false,
                         canSelectRow: false,
                         selModel: {
@@ -447,24 +424,34 @@
             }
             cswPrivate.schedulerRequest.Grid.data.items[row.rowIdx][row.field] = row.value;
             cswPrivate.schedulerRequest.Grid.data.items[row.rowIdx].Row[row.field] = row.value;
-
-            var req = Csw.extend({}, cswPrivate.schedulerRequest, true);
-            req.Grid.columns.forEach(function (col) {
-                delete col.editable;
-                delete col.editor;
-            });
-
-            return Csw.ajaxWcf.post({
-                urlMethod: 'Scheduler/save',
-                data: req,
-                success: function () {
-                    cswPrivate.makeScheduledRulesGrid();
-                }
-            });
         };
+        
+        //#endregion Scheduled Rules Grid
 
         cswPrivate.addBtnGroup = function (el) {
-            var tbl = el.table({ width: '99%', cellpadding: '5px' });
+            var tbl = el.table({ width: '98%', cellpadding: '5px' });
+            
+            tbl.cell(1, 1).css({ 'text-align': 'left' }).buttonExt({
+                name: 'updateRules',
+                icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.save),
+                enabledText: 'Save Changes',
+                disabledText: 'Saving . . . ',
+                onClick: function () {
+                    var req = Csw.extend({}, cswPrivate.schedulerRequest, true);
+                    req.Grid.columns.forEach(function (col) {
+                        delete col.editable;
+                        delete col.editor;
+                    });
+
+                    Csw.ajaxWcf.post({
+                        urlMethod: 'Scheduler/save',
+                        data: req,
+                        success: function () {
+                            cswPrivate.makeScheduledRulesGrid();
+                        }
+                    });
+                }
+            });
 
             tbl.cell(1, 2).css({ 'text-align': 'right' }).buttonExt({
                 enabledText: 'Close',
