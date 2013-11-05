@@ -18,11 +18,6 @@ namespace ChemSW.Nbt.Schema
             get { return 31057; }
         }
 
-        public override string ScriptName
-        {
-            get { return "02I_Case" + CaseNo; }
-        }
-
         public override string Title
         {
             get { return "Change data size for Nodes.NodeName"; }
@@ -33,6 +28,7 @@ namespace ChemSW.Nbt.Schema
             if( 255 != _CswNbtSchemaModTrnsctn.CswDataDictionary.getDataTypeSize( "nodes", "nodename" ) )
             {
                 _CswNbtSchemaModTrnsctn.changeColumnDataType( "nodes", "nodename", CswEnumDataDictionaryPortableDataType.String, 255 );
+                _CswNbtSchemaModTrnsctn.changeColumnDataType( "nodes_audit", "nodename", CswEnumDataDictionaryPortableDataType.String, 255 );
             }
 
         } // update()
