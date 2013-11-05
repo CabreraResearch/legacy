@@ -102,10 +102,6 @@
 
                 ol.li().br({ number: 2 });
 
-                //var buttonTable = ol.li().table();
-                
-                
-
                 cswPrivate.addBtnGroup(ol.li());
             });
         };
@@ -115,28 +111,42 @@
             ol.schedRulesTimeline();
         };
 
-
-        cswPrivate.makeCustomerIdSelect = function (cswNode) {
+        cswPrivate.makeCustomerIdSelect = function (parentDiv) {
             var customerIdTable, customerIdSelect;
 
-            customerIdTable = cswNode.table({
-                name: 'inspectionTable',
-                FirstCellRightAlign: true,
-                cellpadding: '2px'
+            customerIdTable = parentDiv.table({
+                name: 'customerIdTable',
+                cellpadding: '5px',
+                cellvalign: 'middle',
+                FirstCellRightAlign: true
             });
 
-            customerIdTable.cell(1, 1).span({ text: 'Customer ID&nbsp' })
-                .css({ 'padding': '1px', 'vertical-align': 'middle' });
+            customerIdTable.cell(1, 1).span({ text: 'Customer ID&nbsp' });
 
-            customerIdSelect = customerIdTable.cell(1, 2)
-                .select({
-                    name: 'customerIdSelect',
-                    onChange: function () {
-                        cswPrivate.selectedCustomerId = customerIdSelect.val();
-                        cswPrivate.makeScheduledRulesGrid();
-                    }
-                });
+            customerIdSelect = customerIdTable.cell(1, 2).select({
+                name: 'customerIdSelect',
+                onChange: function () {
+                    cswPrivate.selectedCustomerId = customerIdSelect.val();
+                    cswPrivate.makeScheduledRulesGrid();
+                }
+            });
+            
+            customerIdTable.cell(1, 3).span({ text: '&nbsp;' });
+            
+            customerIdTable.cell(1, 4).buttonExt({
+                name: 'refreshGrid',
+                icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.refresh),
+                enabledText: 'Refresh',
+                disabledText: 'Refresh',
+                onClick: function () {
+                    cswPrivate.makeScheduledRulesGrid();
+                }
+            });
+            
+            customerIdTable.cell(1, 5).span({text:'&nbsp;'});
 
+            cswPrivate.timeStamp = customerIdTable.cell(1, 6).span();
+            
             var ret = Csw.ajax.deprecatedWsNbt({
                 urlMethod: 'getActiveAccessIds',
                 success: function (data) {
@@ -151,16 +161,6 @@
                     }
                 }
             });
-            
-            customerIdTable.cell(1, 3).buttonExt({
-                                    name: 'refreshGrid',
-                                    icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.refresh),
-                                    enabledText: 'Refresh',
-                                    disabledText: 'Refresh',
-                                    onClick: function () {
-                                        cswPrivate.makeScheduledRulesGrid();
-                                    }
-                            });
 
             return ret;
         };
@@ -414,6 +414,8 @@
                         ]
                     });
 
+                    cswPrivate.timeStamp.text('Last refreshed on ' + moment().format('L, HH:mm:ss'));
+
                 } // success
             });
         };
@@ -464,7 +466,7 @@
 
         //#endregion Tab construction
 
-        //#region _postCtor            
+        //#region _postCtor
 
         (function _postCtor() {
 
