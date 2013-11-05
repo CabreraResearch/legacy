@@ -22,11 +22,6 @@ namespace ChemSW.Nbt.Schema
             get { return 31061; }
         }
 
-        public override string ScriptName
-        {
-            get { return "02I_Case" + CaseNo; }
-        }
-
         public override string Title
         {
             get { return "Move Link props hrefs from Field_2 to ClobData"; }
