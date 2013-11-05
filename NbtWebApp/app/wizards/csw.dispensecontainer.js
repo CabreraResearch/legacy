@@ -75,7 +75,8 @@
                 printBarcodes: false,
                 formIsValid: false,
                 roundToPrecision: null,
-                getTotalQuantityToDispense: null
+                getTotalQuantityToDispense: null,
+                balancesDefined: false,
             };
 
             cswPrivate.setDispenseMode = function () {
@@ -284,6 +285,20 @@
                         toggleNext();
                         cswPrivate.stepOneComplete = true;
                     }
+
+
+                    //make a single request to the balance list. If we get results, show the read balanace button in step two
+                    Csw.ajaxWcf.post({
+                        urlMethod: 'Balances/ListConnectedBalances',
+                        success: function (data) {
+                            if (data.BalanceList.length == 0) {
+                                cswPrivate.balancesDefined = false;
+                            } else {
+                                cswPrivate.balancesDefined = true;
+                            }
+                        }//success -- ListConnectedBalances
+                    }); //Csw.ajaxWcf.post
+                    
                 };
             }());
 
@@ -391,7 +406,8 @@
                                 action: 'Dispense',
                                 relatedNodeId: cswPrivate.state.sourceContainerNodeId,
                                 selectedSizeId: cswPrivate.state.sizeId,
-                                customBarcodes: cswPrivate.state.customBarcodes
+                                customBarcodes: cswPrivate.state.customBarcodes,
+                                balancesDefined: cswPrivate.balancesDefined,
                             });
 
                             qtyTableRow++;
@@ -469,21 +485,27 @@
                                     urlMethod: 'Balances/ListConnectedBalances',
                                     success: function (data) {
                                         button.menu.removeAll();
+                                        if (data.BalanceList.length == 0) {
+                                            button.hide();
+                                        } else {
+                                            button.show();
 
-                                        Csw.each(data.BalanceList, function (balance) {
-                                            if (false === Csw.isNullOrEmpty(balance.NbtName)) {
-                                                button.menu.add({
-                                                    text: balance.NbtName + ' - ' + balance.CurrentWeight + balance.UnitOfMeasurement,
-                                                    handler: function () {
-                                                        updateInterface(balance);
-                                                        balanceButton.setText(balance.NbtName);
-                                                        balanceButton.setHandler(function () { getBalanceInformation(balance.NodeId); });
-                                                    }
-                                                });//button.menu.add -- Csw.each(data.BalanceList
-                                            }//if (false === Csw.isNullOrEmpty(balance.NbtName)) {
-                                        });//Csw.each(data.BalanceList)
-                                        if (true == showMenu) {
-                                            button.showMenu();
+                                            Csw.each(data.BalanceList, function(balance) {
+                                                if (false === Csw.isNullOrEmpty(balance.NbtName)) {
+                                                    button.menu.add({
+                                                        text: balance.NbtName + ' - ' + balance.CurrentWeight + balance.UnitOfMeasurement,
+                                                        handler: function() {
+                                                            updateInterface(balance);
+                                                            balanceButton.setText(balance.NbtName);
+                                                            balanceButton.setHandler(function() { getBalanceInformation(balance.NodeId); });
+                                                        }
+                                                    }); //button.menu.add -- Csw.each(data.BalanceList
+                                                } //if (false === Csw.isNullOrEmpty(balance.NbtName)) {
+                                            }); //Csw.each(data.BalanceList)
+                                            if (true == showMenu) {
+                                                button.showMenu();
+                                            }
+
                                         }
                                     }//success -- ListConnectedBalances
                                 }); //Csw.ajaxWcf.post
@@ -511,9 +533,9 @@
                                 buttonText: 'Read from Balance',
                                 width: 137,
                                 arrowHandler: function (button) { updateBalanceMenuInfo(button, true); },
+                                hidden: false == cswPrivate.balancesDefined,
                             });
-
-
+                            
                             //check if user has a default balance. If so, change the behavior of clicking the button
                             var userDefaultBalance = Csw.currentUser.defaults().DefaultBalanceId;
 
