@@ -85,6 +85,7 @@ namespace ChemSW.Nbt.Schema
             // After scripts that always run.
             _addRunAfterScript( new RunAfterEveryExecutionOfUpdater_01() );
             _addRunAfterScript( new RunAfterEveryExecutionOfUpdater_02AuditSql() );
+            _addRunAfterScript( new RunAfterEveryExecutionOfUpdater_03() );
             #endregion After Script
 
         }//ctor
