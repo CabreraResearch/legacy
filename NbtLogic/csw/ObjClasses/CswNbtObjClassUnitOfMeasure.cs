@@ -75,6 +75,10 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
         {
+            if( Name.Text == BaseUnit.Text )
+            {
+                throw new CswDniException( CswEnumErrorType.Warning, Name.Text + " cannot be deleted because it's a Base Unit for " + NodeType.NodeTypeName, "User attempted to delete " + NodeType.NodeTypeName + "'s Base Unit" );
+            }
             _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes );
         }//beforeDeleteNode()
 
@@ -87,6 +91,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             ConversionFactor.SetOnPropChange( OnConversionFactorPropChange );
             Aliases.SetOnPropChange( onAliasesPropChange );
+            Name.SetOnPropChange( OnNamePropChange );
             _CswNbtObjClassDefault.triggerAfterPopulateProps();
         }//afterPopulateProps()
 
@@ -192,6 +197,13 @@ namespace ChemSW.Nbt.ObjClasses
 
         public CswNbtNodePropText Name { get { return ( _CswNbtNode.Properties[PropertyName.Name] ); } }
         public CswNbtNodePropText BaseUnit { get { return ( _CswNbtNode.Properties[PropertyName.BaseUnit] ); } }
+        private void OnNamePropChange( CswNbtNodeProp Prop, bool Creating )
+        {
+            if( Name.GetOriginalPropRowValue() == BaseUnit.Text )
+            {
+                throw new CswDniException( CswEnumErrorType.Warning, Name.Text + " cannot be renamed because it's a Base Unit for " + NodeType.NodeTypeName, "User attempted to rename " + NodeType.NodeTypeName + "'s Base Unit" );
+            }
+        }
         public CswNbtNodePropScientific ConversionFactor { get { return ( _CswNbtNode.Properties[PropertyName.ConversionFactor] ); } }
         private void OnConversionFactorPropChange( CswNbtNodeProp Prop, bool Creating )
         {
