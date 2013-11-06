@@ -28,7 +28,7 @@ namespace ChemSW.Nbt.WebServices
         /// Return Object for Reports, which inherits from CswWebSvcReturn
         /// </summary>
         [DataContract]
-        public class ReportReturn: CswWebSvcReturn
+        public class ReportReturn : CswWebSvcReturn
         {
             public ReportReturn()
             {
@@ -185,7 +185,7 @@ namespace ChemSW.Nbt.WebServices
         /// Return Object for Reports, which inherits from CswWebSvcReturn
         /// </summary>
         [DataContract]
-        public class CrystalReportReturn: CswWebSvcReturn
+        public class CrystalReportReturn : CswWebSvcReturn
         {
             public CrystalReportReturn()
             {
@@ -271,7 +271,10 @@ namespace ChemSW.Nbt.WebServices
                     }
                     //result = @"<?xml version=""1.0"" encoding=""utf-8""?>" + result;
                     //rptDataTbl.ReadXml( response.GetResponseStream() );
-                    rptDataTbl.ReadXml( new StringReader( result ) );
+                    if( false == string.IsNullOrEmpty( result ) )
+                    {
+                        rptDataTbl.ReadXml( new StringReader( result ) );
+                    }
                 }
                 else if( false == string.IsNullOrEmpty( reportParams.ReportNode.SQL.Text ) )
                 {
@@ -290,7 +293,7 @@ namespace ChemSW.Nbt.WebServices
                         }
 
                         //Getting 1 more than RowLimit in order to determine if truncation occurred
-                        rptDataTbl = cswRptSql.getTable( PageLowerBoundExclusive : 0, PageUpperBoundInclusive : reportParams.RowLimit + 1, RequireOneRow : false );
+                        rptDataTbl = cswRptSql.getTable( PageLowerBoundExclusive: 0, PageUpperBoundInclusive: reportParams.RowLimit + 1, RequireOneRow: false );
                         if( string.IsNullOrEmpty( rptDataTbl.TableName ) && null != reportParams.ReportNode )
                         {
                             rptDataTbl.TableName = reportParams.ReportNode.ReportName.Text;
