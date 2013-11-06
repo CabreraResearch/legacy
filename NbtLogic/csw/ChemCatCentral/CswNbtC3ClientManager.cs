@@ -10,11 +10,9 @@ namespace ChemSW.Nbt.ChemCatCentral
 
     public class CswNbtC3ClientManager
     {
-
         private CswNbtResources _CswNbtResources;
         private CswC3Params _CswC3Params;
         private CswC3SearchParams _CswC3SearchParams;
-
         private string _Message;
         private CswEnumErrorType _MessageType;
 
@@ -31,12 +29,6 @@ namespace ChemSW.Nbt.ChemCatCentral
             _CswC3SearchParams = CswC3SearchParams;
 
         }//ctor2
-
-        public CswNbtC3ClientManager( CswNbtResources CswNbtResources )
-        {
-            _CswNbtResources = CswNbtResources;
-
-        }//ctor3
 
         /// <summary>
         /// 
@@ -69,55 +61,6 @@ namespace ChemSW.Nbt.ChemCatCentral
             }
             return null;
         }//initializeC3Client()
-
-        private bool _checkConnection( SearchClient SearchClient )
-        {
-            bool Ret = false;
-            CswWebSvcReturnBaseStatus Status = new CswWebSvcReturnBaseStatus();
-            CswC3Params CswC3Params = new CswC3Params();
-
-            if( null != _CswC3Params )
-            {
-                CswC3Params = _CswC3Params;
-            }
-            else
-            {
-                CswC3Params.AccessId = _CswC3SearchParams.AccessId;
-                CswC3Params.CustomerLoginName = _CswC3SearchParams.CustomerLoginName;
-                CswC3Params.LoginPassword = _CswC3SearchParams.LoginPassword;
-            }
-
-            Status = SearchClient.canConnect( CswC3Params );
-            if( Status.Success )
-            {
-                Ret = true;
-            }
-            else
-            {
-                foreach( CswWebSvcReturnBaseErrorMessage Message in Status.Messages )
-                {
-                    _createMessage( Message.Type, Message.Detail, true, Message.Message );
-                }
-            }
-
-            return Ret;
-        }
-
-        private bool _checkC3ServiceReferenceStatus( SearchClient SearchClient )
-        {
-            bool Ret = false;
-
-            try
-            {
-                Ret = _checkConnection( SearchClient );
-            }
-            catch( Exception e )
-            {
-                _createMessage( _MessageType ?? CswEnumErrorType.Error, ( _Message ?? "Endpoint address incorrect or ChemCatCentral service not available: " ) + e );
-            }
-
-            return Ret;
-        }//checkC3ServiceReferenceStatus()
 
         public string getCurrentC3Version()
         {
@@ -183,6 +126,8 @@ namespace ChemSW.Nbt.ChemCatCentral
 
             return Ret;
         }//getLastLOLIImportDate()
+
+        #region Private Helper Methods
 
         /// <summary>
         /// Set the c3 parameter object's CustomerLoginName, LoginPassword, and AccessId
@@ -291,6 +236,57 @@ namespace ChemSW.Nbt.ChemCatCentral
 
             _CswNbtResources.Messages.Add( MessageObj );
         }//_createMessage()
+
+        private bool _checkC3ServiceReferenceStatus( SearchClient SearchClient )
+        {
+            bool Ret = false;
+
+            try
+            {
+                Ret = _checkConnection( SearchClient );
+            }
+            catch( Exception e )
+            {
+                _createMessage( _MessageType ?? CswEnumErrorType.Error, ( _Message ?? "Endpoint address incorrect or ChemCatCentral service not available: " ) + e );
+            }
+
+            return Ret;
+        }//checkC3ServiceReferenceStatus()
+
+        private bool _checkConnection( SearchClient SearchClient )
+        {
+            bool Ret = false;
+            CswWebSvcReturnBaseStatus Status = new CswWebSvcReturnBaseStatus();
+            CswC3Params CswC3Params = new CswC3Params();
+
+            if( null != _CswC3Params )
+            {
+                CswC3Params = _CswC3Params;
+            }
+            else
+            {
+                CswC3Params.AccessId = _CswC3SearchParams.AccessId;
+                CswC3Params.CustomerLoginName = _CswC3SearchParams.CustomerLoginName;
+                CswC3Params.LoginPassword = _CswC3SearchParams.LoginPassword;
+            }
+
+            Status = SearchClient.canConnect( CswC3Params );
+            if( Status.Success )
+            {
+                Ret = true;
+            }
+            else
+            {
+                foreach( CswWebSvcReturnBaseErrorMessage Message in Status.Messages )
+                {
+                    _createMessage( Message.Type, Message.Detail, true, Message.Message );
+                }
+            }
+
+            return Ret;
+        }
+
+        #endregion
 
 
     }//CswNbtC3ClientManager
