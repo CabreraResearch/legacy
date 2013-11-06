@@ -769,3 +769,9 @@ SELECT PACKAGEID,
                                     AND s.REGION = ph.REGION )
                   join packages p
                     ON ( p.MATERIALID = ph.MATERIALID ));
+					
+--Reglists
+create or replace view reglists_view as
+(select "DELETED","DISPLAYNAME","LISTMODE","MATCHTYPE","REGLISTCODE","REGULATORYLISTID" from regulatory_lists where lower(listmode) = 'cispro');
+
+
