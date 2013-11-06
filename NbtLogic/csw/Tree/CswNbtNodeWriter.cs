@@ -187,7 +187,14 @@ namespace ChemSW.Nbt
                 } // if( Node.Properties.Count > 0 )
             } // if( NameTemplate.Length > 0 )
 
-            if( NewNodeName.Trim() != string.Empty )
+            //Case 31057 - nodename can only be 255 chars max
+            if( NewNodeName.Length > 255 )
+            {
+                NewNodeName = NewNodeName.Substring( 0, 255 );
+            }
+
+            NewNodeName = NewNodeName.Trim();
+            if( NewNodeName != string.Empty )
             {
                 Node.NodeName = NewNodeName;
             }

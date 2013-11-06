@@ -1,4 +1,5 @@
-﻿using ChemSW.Nbt.csw.Dev;
+﻿using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.csw.Schema;
 using ChemSW.Nbt.ObjClasses;
 
@@ -30,7 +31,8 @@ namespace ChemSW.Nbt.Schema
                 CswNbtSchemaUpdateImportMgr UnitMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "units_of_measure", ViewName: "each_view", SourceColumn: "unitofmeasureid", DestNodeTypeName: "Unit_Each" );
 
                 UnitMgr.importBinding( "unitofmeasurename", CswNbtObjClassUnitOfMeasure.PropertyName.Name, "" );
-                UnitMgr.importBinding( "conversionfactor", CswNbtObjClassUnitOfMeasure.PropertyName.ConversionFactor, "" );
+                UnitMgr.importBinding( "conversionfactor", CswNbtObjClassUnitOfMeasure.PropertyName.ConversionFactor, CswEnumNbtSubFieldName.Base.ToString() );
+                UnitMgr.importBinding( "conversionfactorexp", CswNbtObjClassUnitOfMeasure.PropertyName.ConversionFactor, CswEnumNbtSubFieldName.Exponent.ToString() );
                 UnitMgr.importBinding( "unittype", CswNbtObjClassUnitOfMeasure.PropertyName.UnitType, "" );
 
                 UnitMgr.finalize();
@@ -40,7 +42,8 @@ namespace ChemSW.Nbt.Schema
                 CswNbtSchemaUpdateImportMgr UnitMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "units_of_measure", ViewName: "volume_view", SourceColumn: "unitofmeasureid", DestNodeTypeName: "Unit_Volume" );
 
                 UnitMgr.importBinding( "unitofmeasurename", CswNbtObjClassUnitOfMeasure.PropertyName.Name, "" );
-                UnitMgr.importBinding( "conversionfactor", CswNbtObjClassUnitOfMeasure.PropertyName.ConversionFactor, "" );
+                UnitMgr.importBinding( "conversionfactor", CswNbtObjClassUnitOfMeasure.PropertyName.ConversionFactor, CswEnumNbtSubFieldName.Base.ToString() );
+                UnitMgr.importBinding( "conversionfactorexp", CswNbtObjClassUnitOfMeasure.PropertyName.ConversionFactor, CswEnumNbtSubFieldName.Exponent.ToString() );
                 UnitMgr.importBinding( "unittype", CswNbtObjClassUnitOfMeasure.PropertyName.UnitType, "" );
 
                 UnitMgr.finalize();
@@ -49,7 +52,8 @@ namespace ChemSW.Nbt.Schema
                 CswNbtSchemaUpdateImportMgr UnitMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "units_of_measure", ViewName: "weight_view", SourceColumn: "unitofmeasureid", DestNodeTypeName: "Unit_Weight" );
 
                 UnitMgr.importBinding( "unitofmeasurename", CswNbtObjClassUnitOfMeasure.PropertyName.Name, "" );
-                UnitMgr.importBinding( "conversionfactor", CswNbtObjClassUnitOfMeasure.PropertyName.ConversionFactor, "" );
+                UnitMgr.importBinding( "conversionfactor", CswNbtObjClassUnitOfMeasure.PropertyName.ConversionFactor, CswEnumNbtSubFieldName.Base.ToString() );
+                UnitMgr.importBinding( "conversionfactorexp", CswNbtObjClassUnitOfMeasure.PropertyName.ConversionFactor, CswEnumNbtSubFieldName.Exponent.ToString() );
                 UnitMgr.importBinding( "unittype", CswNbtObjClassUnitOfMeasure.PropertyName.UnitType, "" );
 
                 UnitMgr.finalize();
