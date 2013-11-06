@@ -35,6 +35,7 @@ namespace ChemSW.Nbt.Schema
             if( Int32.MinValue == _CswNbtSchemaModTrnsctn.Modules.GetModuleId( CswEnumNbtModuleName.ChemWatch ) )
             {
                 _CswNbtSchemaModTrnsctn.createModule( "ChemWatch", CswEnumNbtModuleName.ChemWatch.ToString() );
+                _CswNbtSchemaModTrnsctn.Modules.CreateModuleDependency( CswEnumNbtModuleName.SDS, CswEnumNbtModuleName.ChemWatch );
             }
 
             CswNbtMetaDataObjectClass ChemicalOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass );
