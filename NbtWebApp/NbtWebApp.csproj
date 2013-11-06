@@ -198,6 +198,7 @@
       <DependentUpon>Views.svc</DependentUpon>
     </Compile>
     <Compile Include="WebSvc\Core\CswWebSvcError.cs" />
+    <Compile Include="WebSvc\Logic\Actions\ChemWatch\CswNbtChemWatchDataContract.cs" />
     <Compile Include="WebSvc\Logic\Actions\Explorer\CswNbtArborEdge.cs" />
     <Compile Include="WebSvc\Logic\Actions\Explorer\CswNbtArborGraph.cs" />
     <Compile Include="WebSvc\Logic\Actions\Explorer\CswNbtArborNode.cs" />
