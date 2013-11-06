@@ -1,5 +1,7 @@
 ﻿using System;
 using ChemSW.Nbt.csw.Dev;
+using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -34,7 +36,14 @@ namespace ChemSW.Nbt.Schema
             {
                 _CswNbtSchemaModTrnsctn.createModule( "ChemWatch", CswEnumNbtModuleName.ChemWatch.ToString() );
             }
-            
+
+            CswNbtMetaDataObjectClass ChemicalOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass );
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( ChemicalOC, new CswNbtWcfMetaDataModel.ObjectClassProp( ChemicalOC )
+                {
+                    PropName = CswNbtObjClassChemical.PropertyName.LinkChemWatch,
+                    FieldType = CswEnumNbtFieldType.Button
+                } );
+
         } // update()
 
     }
