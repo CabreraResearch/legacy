@@ -87,6 +87,14 @@ namespace ChemSW.Nbt.ImportExport
                 {
                     string NTName = OrderRow["nodetypename"].ToString();
                     CswNbtMetaDataNodeType NodeType = CswNbtResources.MetaData.getNodeType( NTName );
+
+                    //set blank instances to min value
+                    if( OrderRow["instance"] == DBNull.Value || String.IsNullOrEmpty( OrderRow["instance"].ToString() ) )
+                    {
+                        OrderRow["instance"] = Int32.MinValue;
+                    }
+
+
                     if( null != NodeType )
                     {
                         DataRow row = importOrderTable.NewRow();
