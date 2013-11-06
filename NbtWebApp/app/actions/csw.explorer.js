@@ -9,7 +9,7 @@
         if (Csw.isNullOrEmpty(cswParent)) {
             Csw.error.throwException('Cannot create an action without a valid Csw Parent object.', 'Csw.actions.template', '_template.js', 10);
         }
-        
+
 
         var imgs = {};
         var i = 3;
@@ -26,8 +26,19 @@
             cswPrivate.sys = null;
             cswPrivate.extPanel = null;
             cswPrivate.maxDepth = 2;
-
+            cswPrivate.filterVals = '';
+            cswPrivate.filterOpts = [];
+            
             cswParent.empty();
+
+            Csw.ajaxWcf.post({
+                urlMethod: "Explorer/GetFilterOpts",
+                success: function (response) {
+                    cswPrivate.filterOpts = response.Opts;
+                    cswPrivate.filterVals = response.filterVals;
+                }
+            });
+            
         }());
 
         cswPrivate.initPanel = function () {
@@ -56,8 +67,32 @@
                             listeners: {
                                 'change': function (slider, newValue, thumb, eOpts) {
                                     cswPrivate.maxDepth = newValue;
+                                    cswPrivate.sys.stop();
                                     cswPrivate.initSystem();
                                 }
+                            }
+                        },
+                        {
+                            xtype: 'button',
+                            text: 'Edit Filters',
+                            id: 'ExtEditFiltersBtn',
+                            handler: function() {
+                                Csw.dialogs.multiselectedit({
+                                    opts: cswPrivate.filterOpts,
+                                    title: 'Edit Explorer Filters',
+                                    inDialog: true,
+                                    onSave: function (updatedValues) {
+                                        cswPrivate.sys.stop();
+
+                                        cswPrivate.filterVal = updatedValues.join(',');
+
+                                        Csw.iterate(cswPrivate.filterOpts, function(opt) {
+                                            opt.selected = updatedValues.indexOf(opt.value) !== -1;
+                                        });
+
+                                        cswPrivate.initSystem();
+                                    },
+                                });
                             }
                         }]
                 }, {
@@ -103,13 +138,14 @@
                 urlMethod: "Explorer/Initialize",
                 data: {
                     Depth: cswPrivate.maxDepth,
-                    NodeId: cswPrivate.startingNodeId
+                    NodeId: cswPrivate.startingNodeId,
+                    FilterVal: cswPrivate.filterVal
                 },
                 success: function (response) {
                     var graph = {};
-
+                    
                     Csw.iterate(response.Nodes, function (arborNode) {
-                        
+
                         if (imgs[arborNode.Data.Icon]) {
                             arborNode.Data.iconId = imgs[arborNode.Data.Icon];
                         } else {
@@ -120,7 +156,7 @@
                             }).hide();
                             i++;
                             imgs[arborNode.Data.Icon] = img.getId();
-                            
+
                             arborNode.Data.iconId = img.getId();
                         }
 
@@ -138,7 +174,7 @@
                         nodes: response.Nodes,
                         edges: response.Edges,
                         startNodeId: cswPrivate.startingNodeId,
-                        onNodeClick: function(selectedId) {
+                        onNodeClick: function (selectedId) {
                             cswPrivate.startingNodeId = selectedId;
                         }
                     });

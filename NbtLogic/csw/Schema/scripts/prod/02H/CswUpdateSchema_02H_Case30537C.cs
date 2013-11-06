@@ -9,7 +9,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update
     /// </summary>
-    public class CswUpdateSchema_02H_Case30537C: CswUpdateSchemaTo
+    public class CswUpdateSchema_02H_Case30537C : CswUpdateSchemaTo
     {
         public override CswEnumDeveloper Author
         {
@@ -21,9 +21,9 @@ namespace ChemSW.Nbt.Schema
             get { return 30537; }
         }
 
-        public override string ScriptName
+        public override string AppendToScriptName()
         {
-            get { return "02G_Case" + CaseNo + "C"; }
+            return "C";
         }
 
         public override string Title
@@ -265,7 +265,7 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClass DSDPhraseOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.DSDPhraseClass );
             foreach( KeyValuePair<string, string> Phrase in RiskPhrases )
             {
-                _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( DSDPhraseOC.getNodeTypeIds().FirstOrDefault(), OnAfterMakeNode : delegate( CswNbtNode NewNode )
+                _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( DSDPhraseOC.getNodeTypeIds().FirstOrDefault(), OnAfterMakeNode: delegate( CswNbtNode NewNode )
                     {
                         CswNbtObjClassDSDPhrase NewPhrase = NewNode;
                         NewPhrase.Code.Text = Phrase.Key;
@@ -276,7 +276,7 @@ namespace ChemSW.Nbt.Schema
 
             foreach( KeyValuePair<string, string> Phrase in SafetyPhrases )
             {
-                _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( DSDPhraseOC.getNodeTypeIds().FirstOrDefault(), OnAfterMakeNode : delegate( CswNbtNode NewNode )
+                _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( DSDPhraseOC.getNodeTypeIds().FirstOrDefault(), OnAfterMakeNode: delegate( CswNbtNode NewNode )
                 {
                     CswNbtObjClassDSDPhrase NewPhrase = NewNode;
                     NewPhrase.Code.Text = Phrase.Key;

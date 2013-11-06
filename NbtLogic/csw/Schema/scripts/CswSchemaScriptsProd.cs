@@ -10,6 +10,9 @@ namespace ChemSW.Nbt.Schema
     /// </summary>
     public class CswSchemaScriptsProd
     {
+        public static int CurrentReleaseIteration;
+        public static char CurrentReleaseIdentifier;
+
         private CswNbtResources _CswNbtResources = null;
 
         public CswSchemaScriptsProd( CswNbtResources CswNbtResources )
@@ -18,6 +21,10 @@ namespace ChemSW.Nbt.Schema
 
             // This is where you manually set to the last version of the previous release (the one currently in production)
             _MinimumVersion = new CswSchemaVersion( 2, 'G', 54 );
+
+            // Set the global variable values
+            CurrentReleaseIdentifier = _getNextReleaseIdentifier();
+            CurrentReleaseIteration = _getNextSuperCycle( CurrentReleaseIdentifier );
 
             #region Populate Scripts
 
