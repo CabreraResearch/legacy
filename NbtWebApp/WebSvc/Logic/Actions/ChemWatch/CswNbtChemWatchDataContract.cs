@@ -12,7 +12,7 @@ namespace NbtWebApp.Actions.ChemWatch
         public string Name { get; set; }
 
         [DataMember]
-        public int Id { get; set; }
+        public long Id { get; set; }
     }
 
     [DataContract]
