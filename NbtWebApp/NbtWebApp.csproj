@@ -95,6 +95,26 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Modules\WcfReadEntityBodyModeWorkaroundModule.cs" />
+    <Compile Include="Service References\ChemWatchAuthServices\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
+    <Compile Include="Service References\ChemWatchCommonServices\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
+    <Compile Include="Service References\ChemWatchDocumentServices\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
+    <Compile Include="Service References\ChemWatchMaterialServices\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
     <Compile Include="Services\Balances.svc.cs">
       <DependentUpon>Balances.svc</DependentUpon>
     </Compile>
@@ -788,6 +808,162 @@
     <Content Include="Scripts\mousetrap.min.js" />
     <Content Include="Scripts\q.js" />
     <Content Include="Scripts\q.min.js" />
+    <Content Include="Service References\ChemWatchAuthServices\NbtWebApp.ChemWatchAuthServices.CurrentUserResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\ChemWatchAuthServices\NbtWebApp.ChemWatchAuthServices.GeneralResponseOfAuthenticationResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\ChemWatchAuthServices\NbtWebApp.ChemWatchAuthServices.UserPermissions.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\ChemWatchAuthServices\soap.disco" />
+    <Content Include="Service References\ChemWatchAuthServices\configuration91.svcinfo" />
+    <Content Include="Service References\ChemWatchAuthServices\configuration.svcinfo" />
+    <Content Include="Service References\ChemWatchAuthServices\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </Content>
+    <Content Include="Service References\ChemWatchCommonServices\CommonService.wsdl" />
+    <Content Include="Service References\ChemWatchCommonServices\NbtWebApp.ChemWatchCommonServices.CodeCollection.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\ChemWatchCommonServices\NbtWebApp.ChemWatchCommonServices.Countries.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\ChemWatchCommonServices\NbtWebApp.ChemWatchCommonServices.DocumentSources.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\ChemWatchCommonServices\NbtWebApp.ChemWatchCommonServices.DocumentTypes.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\ChemWatchCommonServices\NbtWebApp.ChemWatchCommonServices.GHSClassification.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\ChemWatchCommonServices\NbtWebApp.ChemWatchCommonServices.HazardCodes.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\ChemWatchCommonServices\NbtWebApp.ChemWatchCommonServices.Languages.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\ChemWatchCommonServices\NbtWebApp.ChemWatchCommonServices.ListResultOfVendorGroup.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\ChemWatchCommonServices\NbtWebApp.ChemWatchCommonServices.PrecautionaryCodes.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\ChemWatchCommonServices\NbtWebApp.ChemWatchCommonServices.RiskCodes.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\ChemWatchCommonServices\NbtWebApp.ChemWatchCommonServices.SafetyCodes.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\ChemWatchCommonServices\NbtWebApp.ChemWatchCommonServices.TranslationTextGroups.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\ChemWatchCommonServices\soap.disco" />
+    <Content Include="Service References\ChemWatchCommonServices\configuration91.svcinfo" />
+    <Content Include="Service References\ChemWatchCommonServices\configuration.svcinfo" />
+    <Content Include="Service References\ChemWatchCommonServices\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </Content>
+    <Content Include="Service References\ChemWatchDocumentServices\DocumentService.wsdl" />
+    <Content Include="Service References\ChemWatchDocumentServices\NbtWebApp.ChemWatchDocumentServices.DocumentLightWithMaterialAndVendor.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\ChemWatchDocumentServices\NbtWebApp.ChemWatchDocumentServices.ListResultOfDocument.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\ChemWatchDocumentServices\soap.disco" />
+    <Content Include="Service References\ChemWatchDocumentServices\configuration91.svcinfo" />
+    <Content Include="Service References\ChemWatchDocumentServices\configuration.svcinfo" />
+    <Content Include="Service References\ChemWatchDocumentServices\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </Content>
+    <Content Include="Service References\ChemWatchMaterialServices\NbtWebApp.ChemWatchMaterialServices.AutoCompleteData.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\ChemWatchMaterialServices\NbtWebApp.ChemWatchMaterialServices.File.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\ChemWatchMaterialServices\NbtWebApp.ChemWatchMaterialServices.FileSources.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\ChemWatchMaterialServices\NbtWebApp.ChemWatchMaterialServices.FilterList.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\ChemWatchMaterialServices\NbtWebApp.ChemWatchMaterialServices.FlagInfo.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\ChemWatchMaterialServices\NbtWebApp.ChemWatchMaterialServices.GeneralResponseOfDataVersions.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\ChemWatchMaterialServices\NbtWebApp.ChemWatchMaterialServices.IntrayServiceModel.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\ChemWatchMaterialServices\NbtWebApp.ChemWatchMaterialServices.ListResultOfCredoSuggestion.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\ChemWatchMaterialServices\NbtWebApp.ChemWatchMaterialServices.ListResultOfMaterial.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\ChemWatchMaterialServices\NbtWebApp.ChemWatchMaterialServices.ListResultOfPartNumber.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\ChemWatchMaterialServices\NbtWebApp.ChemWatchMaterialServices.ListResultOfPreferredName.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\ChemWatchMaterialServices\NbtWebApp.ChemWatchMaterialServices.ListResultOfVendor.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\ChemWatchMaterialServices\NbtWebApp.ChemWatchMaterialServices.Material.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\ChemWatchMaterialServices\NbtWebApp.ChemWatchMaterialServices.MaterialBase.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\ChemWatchMaterialServices\NbtWebApp.ChemWatchMaterialServices.MaterialData.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\ChemWatchMaterialServices\NbtWebApp.ChemWatchMaterialServices.node.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\ChemWatchMaterialServices\NbtWebApp.ChemWatchMaterialServices.PrivatizedGold.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\ChemWatchMaterialServices\NbtWebApp.ChemWatchMaterialServices.QueryBuilderServiceModel.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\ChemWatchMaterialServices\NbtWebApp.ChemWatchMaterialServices.Supplier.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\ChemWatchMaterialServices\NbtWebApp.ChemWatchMaterialServices.SupplierInfo.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\ChemWatchMaterialServices\NbtWebApp.ChemWatchMaterialServices.Template.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\ChemWatchMaterialServices\NbtWebApp.ChemWatchMaterialServices.Templates.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\ChemWatchMaterialServices\NbtWebApp.ChemWatchMaterialServices.TrackingInfo.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\ChemWatchMaterialServices\NbtWebApp.ChemWatchMaterialServices.UserMethod.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\ChemWatchMaterialServices\NbtWebApp.ChemWatchMaterialServices.VendorBase.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\ChemWatchMaterialServices\soap.disco" />
+    <Content Include="Service References\ChemWatchMaterialServices\configuration91.svcinfo" />
+    <Content Include="Service References\ChemWatchMaterialServices\configuration.svcinfo" />
+    <Content Include="Service References\ChemWatchMaterialServices\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </Content>
     <Content Include="Services\ChemWatch.svc" />
     <Content Include="Services\Explorer.svc" />
     <Content Include="Services\Import.svc" />
@@ -1461,6 +1637,72 @@
     <Content Include="Scripts\mousetrap.min.js.map">
       <DependentUpon>mousetrap.js</DependentUpon>
     </Content>
+    <Content Include="Service References\ChemWatchAuthServices\AuthenticateService.wsdl" />
+    <Content Include="Service References\ChemWatchAuthServices\soap.wsdl" />
+    <None Include="Service References\ChemWatchAuthServices\soap.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ChemWatchAuthServices\soap1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <Content Include="Service References\ChemWatchCommonServices\soap.wsdl" />
+    <None Include="Service References\ChemWatchCommonServices\soap.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ChemWatchCommonServices\soap1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ChemWatchCommonServices\soap2.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ChemWatchCommonServices\soap3.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ChemWatchCommonServices\soap4.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <Content Include="Service References\ChemWatchDocumentServices\soap.wsdl" />
+    <None Include="Service References\ChemWatchDocumentServices\soap.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ChemWatchDocumentServices\soap1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ChemWatchDocumentServices\soap2.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ChemWatchDocumentServices\soap3.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <Content Include="Service References\ChemWatchMaterialServices\MaterialService.wsdl" />
+    <Content Include="Service References\ChemWatchMaterialServices\soap.wsdl" />
+    <None Include="Service References\ChemWatchMaterialServices\soap.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ChemWatchMaterialServices\soap1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ChemWatchMaterialServices\soap2.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ChemWatchMaterialServices\soap3.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ChemWatchMaterialServices\soap4.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ChemWatchMaterialServices\soap5.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ChemWatchMaterialServices\soap6.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ChemWatchMaterialServices\soap7.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ChemWatchMaterialServices\soap8.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="SkinPrint\Calendar\Thumbs.db" />
     <None Include="SkinPrint\ComboBox\Thumbs.db" />
     <None Include="SkinPrint\Grid\Thumbs.db" />
@@ -1511,6 +1753,12 @@
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadataStorage Include="Service References\ChemWatchAuthServices\" />
+    <WCFMetadataStorage Include="Service References\ChemWatchCommonServices\" />
+    <WCFMetadataStorage Include="Service References\ChemWatchDocumentServices\" />
+    <WCFMetadataStorage Include="Service References\ChemWatchMaterialServices\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
