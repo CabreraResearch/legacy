@@ -19,9 +19,9 @@ namespace ChemSW.Nbt.Schema
             get { return 30041; }
         }
 
-        public override string ScriptName
+        public override string AppendToScriptName()
         {
-            get { return "02F_Case30041_UnitsOfMeasure"; }
+            return "UnitsOfMeasure";
         }
 
         public override void update()
@@ -46,7 +46,7 @@ namespace ChemSW.Nbt.Schema
                 UnitMgr.finalize();
             }
             {
-                CswNbtSchemaUpdateImportMgr UnitMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "units_of_measure", ViewName: "weight_view", SourceColumn: "unitofmeasureid", DestNodeTypeName: "Unit_Weight");
+                CswNbtSchemaUpdateImportMgr UnitMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "units_of_measure", ViewName: "weight_view", SourceColumn: "unitofmeasureid", DestNodeTypeName: "Unit_Weight" );
 
                 UnitMgr.importBinding( "unitofmeasurename", CswNbtObjClassUnitOfMeasure.PropertyName.Name, "" );
                 UnitMgr.importBinding( "conversionfactor", CswNbtObjClassUnitOfMeasure.PropertyName.ConversionFactor, "" );

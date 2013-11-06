@@ -15,9 +15,9 @@ namespace ChemSW.Nbt.Schema
     {
         public override string Title { get { return "Pre-Script: Case 30041: DDL for NbtImportQueue"; } }
 
-        public override string ScriptName
+        public override string AppendToScriptName()
         {
-            get { return "02F_Case30041_NbtImportQueue"; }
+            return "NbtImportQueue";
         }
 
         #region Blame Logic

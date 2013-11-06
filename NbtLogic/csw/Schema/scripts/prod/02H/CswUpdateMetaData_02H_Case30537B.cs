@@ -20,9 +20,9 @@ namespace ChemSW.Nbt.Schema
             get { return 30537; }
         }
 
-        public override string ScriptName
+        public override string AppendToScriptName()
         {
-            get { return "02G_Case" + CaseNo + "B"; }
+            return "B";
         }
 
         public override string Title

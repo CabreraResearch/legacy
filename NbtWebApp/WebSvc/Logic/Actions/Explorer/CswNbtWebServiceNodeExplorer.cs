@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
+using System.Collections.ObjectModel;
 using ChemSW;
 using ChemSW.Core;
-using ChemSW.DB;
 using ChemSW.Nbt;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
+using ChemSW.Nbt.ViewEditor;
 
 namespace NbtWebApp.Actions.Explorer
 {
@@ -16,13 +16,57 @@ namespace NbtWebApp.Actions.Explorer
         private static int MAX_DEPTH = 1;
         private static HashSet<int> SEEN = new HashSet<int>();
         private static CswNbtNode StartingNode;
+        private static CswCommaDelimitedString FilterVal;
+
+        public static void GetFilterOpts( ICswResources CswResources, CswNbtExplorerReturn Return, string Request )
+        {
+            CswNbtResources NbtResources = (CswNbtResources) CswResources;
+
+            CswCommaDelimitedString ValsCDS = new CswCommaDelimitedString();
+            Return.Data.FilterVal = CswNbtArborGraph._setDefaultFilterVal( NbtResources );
+            ValsCDS.FromString( Return.Data.FilterVal );
+
+            foreach( CswNbtMetaDataNodeType NodeType in NbtResources.MetaData.getNodeTypes() )
+            {
+                Return.Data.Opts.Add( new ArborFilterOpt()
+                    {
+                        selected = ValsCDS.Contains( "NT_" + NodeType.NodeTypeId ),
+                        text = NodeType.NodeTypeName,
+                        value = "NT_" + NodeType.NodeTypeId.ToString()
+                    } );
+            }
+
+            foreach( CswNbtMetaDataObjectClass ObjClass in NbtResources.MetaData.getObjectClasses() )
+            {
+                Return.Data.Opts.Add( new ArborFilterOpt()
+                {
+                    selected = ValsCDS.Contains( "OC_" + ObjClass.ObjectClassId.ToString() ),
+                    text = ObjClass.ObjectClassName,
+                    value = "OC_" + ObjClass.ObjectClassId.ToString()
+                } );
+            }
+        }
 
         public static void Initialize( ICswResources CswResources, CswNbtExplorerReturn Return, CswNbtExplorerRequest Request )
         {
             CswNbtResources NbtResources = (CswNbtResources) CswResources;
             CswPrimaryKey NodeId = CswConvert.ToPrimaryKey( Request.NodeId );
 
-            MAX_DEPTH = Request.Depth;
+            if( Request.Depth <= 4 || Request.Depth > 0 ) //We never want a request higher than 4 and 0 doesn't make sense
+            {
+                MAX_DEPTH = Request.Depth;
+            }
+
+            FilterVal = new CswCommaDelimitedString();
+            if( String.IsNullOrEmpty( Request.FilterVal ) )
+            {
+                FilterVal.FromString( CswNbtArborGraph._setDefaultFilterVal( NbtResources ) );
+            }
+            else
+            {
+                FilterVal.FromString( Request.FilterVal );
+            }
+
 
             StartingNode = NbtResources.Nodes[NodeId];
             //Add the initial node to the graph
@@ -30,9 +74,7 @@ namespace NbtWebApp.Actions.Explorer
 
             _recurseForRelatingNodes( NbtResources, Return, StartingNode, 1, NodeId.ToString() );
 
-            //Get all NTs that have a relationship prop that relates to this node
-            string relatingNTsToNodeSQL = _makeGetRelatedToNodeSQL( NodeId.PrimaryKey );
-            _getRelating( NbtResources, Return, NodeId, relatingNTsToNodeSQL, 1, NodeId.ToString() );
+            _recurseForRelatedNTs( NbtResources, Return, StartingNode.NodeTypeId, 1, NodeId.ToString() );
         }
 
         private static void _recurseForRelatingNodes( CswNbtResources NbtResources, CswNbtExplorerReturn Return, CswNbtNode Node, int Level, string OwnerIdStr )
@@ -44,19 +86,22 @@ namespace NbtWebApp.Actions.Explorer
                 string Icon = _getIconFromRelationshipProp( NbtResources, RelNTP );
                 if( CswTools.IsPrimaryKey( RelProp.RelatedNodeId ) )
                 {
-                    string targetIdStr = OwnerIdStr + "_" + RelProp.RelatedNodeId.ToString();
-                    _addToGraph( Return, RelProp.PropName + ": " + RelProp.CachedNodeName, Node.NodeId.ToString(), RelProp.RelatedNodeId.ToString(), Icon, Level, "Instance", RelProp.RelatedNodeId.ToString() );
+                    CswNbtNode TargetNode = NbtResources.Nodes[RelProp.RelatedNodeId];
 
-                    string relatingNTsToRelatedNodeSQL = _makeGetRelatedToNodeSQL( RelProp.RelatedNodeId.PrimaryKey );
-                    if( Level + 1 <= MAX_DEPTH )
+                    if( FilterVal.Contains( "NT_" + TargetNode.NodeTypeId ) || FilterVal.Contains( "OC_" + TargetNode.getObjectClassId() ) )
                     {
-                        _getRelating( NbtResources, Return, RelProp.RelatedNodeId, relatingNTsToRelatedNodeSQL, Level + 1, RelProp.RelatedNodeId.ToString() );
-                    }
+                        string targetIdStr = OwnerIdStr + "_" + RelProp.RelatedNodeId.ToString();
+                        _addToGraph( Return, RelProp.PropName + ": " + RelProp.CachedNodeName, Node.NodeId.ToString(), RelProp.RelatedNodeId.ToString(), Icon, Level, "Instance", RelProp.RelatedNodeId.ToString() );
 
-                    if( Level + 1 <= MAX_DEPTH )
-                    {
-                        CswNbtNode TargetNode = NbtResources.Nodes[RelProp.RelatedNodeId];
-                        _recurseForRelatingNodes( NbtResources, Return, TargetNode, Level + 1, targetIdStr );
+                        if( Level + 1 <= MAX_DEPTH )
+                        {
+                            _recurseForRelatedNTs( NbtResources, Return, TargetNode.NodeTypeId, 1, RelProp.RelatedNodeId.ToString() );
+                        }
+
+                        if( Level + 1 <= MAX_DEPTH )
+                        {
+                            _recurseForRelatingNodes( NbtResources, Return, TargetNode, Level + 1, targetIdStr );
+                        }
                     }
                 }
             }
@@ -77,72 +122,72 @@ namespace NbtWebApp.Actions.Explorer
             }
             return ret;
         }
-
-        private static void _getRelating( CswNbtResources NbtResources, CswNbtExplorerReturn Return, CswPrimaryKey NodeId, string sql, int level, string OwnerIdStr )
-        {
-            CswArbitrarySelect relatingToNTsArbSel = NbtResources.makeCswArbitrarySelect( "getRelatingNTsToNode", sql );
-            DataTable relatingToNTTbl = relatingToNTsArbSel.getTable();
-            foreach( DataRow Row in relatingToNTTbl.Rows )
-            {
-                int RelatingNodeTypeId = CswConvert.ToInt32( Row["id"] );
-                string IconFileName = CswConvert.ToString( Row["iconfilename"] );
-                int NodeTypePropIdRelatingToNode = CswConvert.ToInt32( Row["nodetypepropid"] );
-                string NodeTypePropNameRelatingToNode = NbtResources.MetaData.getNodeTypeProp( NodeTypePropIdRelatingToNode ).PropName;
-                string DisplayName = CswConvert.ToString( Row["display"] ) + " (by " + NodeTypePropNameRelatingToNode + ")";
-                string TargetIdStr = OwnerIdStr + "_NT_" + RelatingNodeTypeId;
-                _addToGraph( Return, DisplayName, OwnerIdStr, TargetIdStr, IconFileName, level, "Category", "NT_" + RelatingNodeTypeId );
-
-                _recurseForRelatedNTs( NbtResources, Return, RelatingNodeTypeId, level + 1, TargetIdStr );
-            }
-        }
-
+        
         private static void _recurseForRelatedNTs( CswNbtResources NbtResources, CswNbtExplorerReturn Return, int NodeTypeId, int level, string OwnerIdStr )
         {
             if( false == SEEN.Contains( NodeTypeId ) && level <= MAX_DEPTH )
             {
-                //SEEN.Add( NodeTypeId );
-                string relatingNTsToNTSQL = _makeGetRelatedNodeTypesNTSQL( NodeTypeId );
-                CswArbitrarySelect relatingNTsToNTArbSel = NbtResources.makeCswArbitrarySelect( "getNTsRelatingToNT", relatingNTsToNTSQL );
-                DataTable relatingNTstoNTTbl = relatingNTsToNTArbSel.getTable();
-                foreach( DataRow Row in relatingNTstoNTTbl.Rows )
+                CswNbtMetaDataNodeType NodeType = NbtResources.MetaData.getNodeType( NodeTypeId );
+                CswNbtView View = new CswNbtView( NbtResources );
+                CswNbtViewRelationship Relationship = View.AddViewRelationship( NodeType, false );
+
+                CswNbtViewEditorRule ViewRule = new CswNbtViewEditorRuleAddViewLevels( NbtResources, new CswNbtViewEditorData()
+                    {
+                        CurrentView = View
+                    } );
+
+                string DisplayName = string.Empty;
+                string TargetIdStr = string.Empty;
+                string IconFilename = string.Empty;
+                string Id = string.Empty;
+
+                Collection<CswNbtViewRelationship> RelatedTypes = ViewRule.getViewChildRelationshipOptions( View, Relationship.ArbitraryId );
+                foreach( CswNbtViewRelationship Related in RelatedTypes )
                 {
-                    int RelatingNodeTypeToNodeTypeId = CswConvert.ToInt32( Row["nodetypeid"] );
-                    string IconFileName = CswConvert.ToString( Row["iconfilename"] );
-                    int NodeTypePropIdRelatingToNT = CswConvert.ToInt32( Row["nodetypepropid"] );
-                    string NodeTypePropNameRelatingToNT = NbtResources.MetaData.getNodeTypeProp( NodeTypePropIdRelatingToNT ).PropName;
-                    string DisplayName = CswConvert.ToString( Row["nodetypename"] ) + " (by " + NodeTypePropNameRelatingToNT + ")";
-                    string TargetIdStr = OwnerIdStr + "_NT_" + RelatingNodeTypeToNodeTypeId;
+                    bool WasNT = false;
+                    bool ObjClassAllowed = false;
+                    DisplayName = Related.TextLabel;
 
-                    if( RelatingNodeTypeToNodeTypeId != StartingNode.NodeTypeId )
-                    {
-                        _addToGraph( Return, DisplayName, OwnerIdStr, TargetIdStr, IconFileName, level, "Category", "NT_" + RelatingNodeTypeToNodeTypeId );
-                    }
+                    int id = ( Related.PropOwner == CswEnumNbtViewPropOwnerType.First && Related.FirstId != Int32.MinValue ? Related.FirstId : Related.SecondId );
+                    CswEnumNbtViewRelatedIdType IdType = ( Related.PropOwner == CswEnumNbtViewPropOwnerType.First && Related.FirstId != Int32.MinValue ? Related.FirstType : Related.SecondType );
 
-                    if( level + 1 <= MAX_DEPTH )
+                    if( Related.PropOwner == CswEnumNbtViewPropOwnerType.Second )
                     {
-                        _recurseForRelatedNTs( NbtResources, Return, RelatingNodeTypeToNodeTypeId, level + 1, TargetIdStr );
+
+                        if( IdType == CswEnumNbtViewRelatedIdType.NodeTypeId )
+                        {
+                            CswNbtMetaDataNodeType RelatedNodeType = NbtResources.MetaData.getNodeType( id );
+                            IconFilename = RelatedNodeType.IconFileName;
+                            TargetIdStr = OwnerIdStr + "_NT_" + RelatedNodeType.NodeTypeId;
+                            Id = "NT_" + RelatedNodeType.NodeTypeId;
+
+                            CswNbtMetaDataObjectClass ObjClass = RelatedNodeType.getObjectClass();
+                            ObjClassAllowed = FilterVal.Contains( "OC_" + ObjClass.ObjectClassId );
+
+                            WasNT = true;
+                        }
+                        else if( IdType == CswEnumNbtViewRelatedIdType.ObjectClassId )
+                        {
+                            CswNbtMetaDataObjectClass RelatedObjClass = NbtResources.MetaData.getObjectClass( id );
+                            IconFilename = RelatedObjClass.IconFileName;
+                            TargetIdStr = OwnerIdStr + "_OC_" + RelatedObjClass.ObjectClassId;
+                            Id = "OC_" + RelatedObjClass.ObjectClassId;
+                        }
+
+                        if( ( ( IdType == CswEnumNbtViewRelatedIdType.NodeTypeId && FilterVal.Contains( "NT_" + id ) || ObjClassAllowed ) )
+                            || ( IdType == CswEnumNbtViewRelatedIdType.ObjectClassId && FilterVal.Contains( "OC_" + id ) ) )
+                        {
+
+                            _addToGraph( Return, DisplayName, OwnerIdStr, TargetIdStr, IconFilename, level, "Category", Id );
+
+                            if( level + 1 <= MAX_DEPTH && WasNT )
+                            {
+                                _recurseForRelatedNTs( NbtResources, Return, id, level + 1, TargetIdStr );
+                            }
+                        }
                     }
                 }
 
-                string relatingOCsToNTSQL = _makeGetRelatedObjClassesOCSQL( NodeTypeId );
-                CswArbitrarySelect relatingOCsToNTArbSel = NbtResources.makeCswArbitrarySelect( "getOCsRelatingToNT", relatingOCsToNTSQL );
-                DataTable relatingOCstoNTTbl = relatingOCsToNTArbSel.getTable();
-                foreach( DataRow Row in relatingOCstoNTTbl.Rows )
-                {
-                    int RelatingObjClassToNodeTypeId = CswConvert.ToInt32( Row["objectclassid"] );
-                    string IconFileName = CswConvert.ToString( Row["iconfilename"] );
-                    int NodeTypePropPropRelatingToOC = CswConvert.ToInt32( Row["nodetypepropid"] );
-                    string PropNameRelatingToOC = NbtResources.MetaData.getNodeTypeProp( NodeTypePropPropRelatingToOC ).PropName;
-                    string DisplayName = CswConvert.ToString( Row["objectclass"] ).Replace( "Class", "" ) + " (by " + PropNameRelatingToOC + ")";
-
-                    if( RelatingObjClassToNodeTypeId != StartingNode.getObjectClassId() )
-                    {
-                        string TargetIdStrOc = OwnerIdStr + "_OC_" + RelatingObjClassToNodeTypeId;
-                        _addToGraph( Return, DisplayName, OwnerIdStr, TargetIdStrOc, IconFileName, level, "Category", "OC_" + RelatingObjClassToNodeTypeId );
-                    }
-
-                    //TODO: find OCs that relate to the current OC. After depth 3, most MetaData objects are related on the obj class level
-                }
             }
         }
 
@@ -177,39 +222,6 @@ namespace NbtWebApp.Actions.Explorer
                     } );
             }
         }
-
-        /// <summary>
-        /// Generates SQL to get all NTs that have a relationship prop that relates to this node
-        /// </summary>
-        private static string _makeGetRelatedToNodeSQL( int NodeId )
-        {
-            return @"select distinct nt.nodetypeid id, ntp.nodetypepropid, nt.nodetypename display, nt.iconfilename from jct_nodes_props jnp
-                                                              join nodes n on n.nodeid = jnp.nodeid
-                                                              join nodetypes nt on n.nodetypeid = nt.nodetypeid
-                                                              join nodetype_props ntp on jnp.nodetypepropid = ntp.nodetypepropid
-                                                       where jnp.field1_fk = " + NodeId + @" and jnp.nodetypepropid in 
-                                                              (select nodetypepropid from nodetype_props ntp where ntp.fieldtypeid = 
-                                                                      (select fieldtypeid from field_types ft where ft.fieldtype = 'Relationship'))";
-        }
-
-        private static string _makeGetRelatedNodeTypesNTSQL( int NodeTypeId )
-        {
-            return @"select distinct ntp.propname, ntp.fieldtypeid, nt.nodetypename, nt.iconfilename, nt.nodetypeid, ntp.nodetypepropid from nodetype_props ntp
-                            join nodetypes nt on ntp.nodetypeid = nt.nodetypeid
-                            join field_types ft on ntp.fieldtypeid = ft.fieldtypeid
-                     where ntp.fkvalue = " + NodeTypeId + " and ft.fieldtype = 'Relationship' and ntp.fktype = 'NodeTypeId'";
-        }
-
-        private static string _makeGetRelatedObjClassesOCSQL( int NodeTypeId )
-        {
-            return @"select distinct oc.objectclass, oc.objectclassid, oc.iconfilename, ntp.nodetypepropid from object_class oc
-                            join nodetypes nt on nt.objectclassid = nt.objectclassid and nt.nodetypeid = " + NodeTypeId +
-                            @" join nodetype_props ntp on ntp.nodetypeid = nt.nodetypeid
-                            join field_types ft on ft.fieldtypeid = ntp.fieldtypeid
-                            join object_class_props ocp on oc.objectclassid = ocp.objectclassid
-                     where ntp.fkvalue = oc.objectclassid and ntp.fktype = 'ObjectClassId' and ft.fieldtype = 'Relationship'";
-        }
-
-
+        
     }
 }

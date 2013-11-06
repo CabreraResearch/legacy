@@ -19,11 +19,6 @@ namespace ChemSW.Nbt.Schema
             get { return 30671; }
         }
 
-        public override string ScriptName
-        {
-            get { return "02H_Case" + CaseNo; }
-        }
-
         public override string Title
         {
             get { return "Add Country prop to Vendors"; }

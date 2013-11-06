@@ -8,7 +8,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update
     /// </summary>
-    public class CswUpdateSchema_02G_Case30047_SDS: CswUpdateSchemaTo
+    public class CswUpdateSchema_02G_Case30047_SDS : CswUpdateSchemaTo
     {
         public override string Title { get { return "Setup SDS import bindings"; } }
 
@@ -22,15 +22,15 @@ namespace ChemSW.Nbt.Schema
             get { return 30047; }
         }
 
-        public override string ScriptName
+        public override string AppendToScriptName()
         {
-            get { return "Case30743_SDS"; }
+            return "SDS";
         }
 
         public override void update()
         {
             // CAF bindings definitions for Vendors
-            CswNbtSchemaUpdateImportMgr ImpMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "documents", "SDS Document", ViewName : "sds_view", SourceColumn : "legacyid" );
+            CswNbtSchemaUpdateImportMgr ImpMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "documents", "SDS Document", ViewName: "sds_view", SourceColumn: "legacyid" );
 
             //simple props
             ImpMgr.importBinding( "acquisitiondate", CswNbtObjClassSDSDocument.PropertyName.AcquiredDate, "" );
@@ -49,8 +49,8 @@ namespace ChemSW.Nbt.Schema
             ImpMgr.importBinding( "filename", CswNbtObjClassSDSDocument.PropertyName.File, CswEnumNbtSubFieldName.Name.ToString() );
 
             //Link and BlobData are stored in the same column, we're going to import it twice and let the "FileType" property dictate what is shown
-            ImpMgr.importBinding( "document", CswNbtObjClassSDSDocument.PropertyName.File, CswEnumNbtSubFieldName.Blob.ToString(), BlobTableName : "documents", LobDataPkColOverride : "documentid" );
-            ImpMgr.importBinding( "document", CswNbtObjClassSDSDocument.PropertyName.Link, CswEnumNbtSubFieldName.Href.ToString(), BlobTableName : "documents", LobDataPkColOverride : "documentid" );
+            ImpMgr.importBinding( "document", CswNbtObjClassSDSDocument.PropertyName.File, CswEnumNbtSubFieldName.Blob.ToString(), BlobTableName: "documents", LobDataPkColOverride: "documentid" );
+            ImpMgr.importBinding( "document", CswNbtObjClassSDSDocument.PropertyName.Link, CswEnumNbtSubFieldName.Href.ToString(), BlobTableName: "documents", LobDataPkColOverride: "documentid" );
 
             //Use the description as the text that displays for links
             ImpMgr.importBinding( "description", CswNbtObjClassSDSDocument.PropertyName.Link, CswEnumNbtSubFieldName.Text.ToString() );
