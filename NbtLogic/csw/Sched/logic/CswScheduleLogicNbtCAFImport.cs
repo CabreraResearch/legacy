@@ -54,7 +54,7 @@ namespace ChemSW.Nbt.Sched
         public Int32 getLoadCount( ICswResources CswResources )
         {
             // TODO: Does this SQL need to take State.U into consideration?
-            string Sql = "select count(*) cnt from nbtimportqueue@" + CAFDbLink + " where state = '" + State.I + "'";
+            string Sql = "select count(*) cnt from nbtimportqueue@" + CAFDbLink + " where state = '" + State.I + "' or state = '" + State.U + "'";
             CswArbitrarySelect QueueCountSelect = CswResources.makeCswArbitrarySelect( "cafimport_queue_count", Sql );
             DataTable QueueCountTable = QueueCountSelect.getTable();
             _CswScheduleLogicDetail.LoadCount = CswConvert.ToInt32( QueueCountTable.Rows[0]["cnt"] );
@@ -103,7 +103,9 @@ namespace ChemSW.Nbt.Sched
                         foreach( DataRow ItemRow in ItemTable.Rows )
                         {
                             string SheetName = QueueRow["sheetname"].ToString();
-                            string Error = Importer.ImportRow( ItemRow, DefinitionName, SheetName, true );
+
+                            bool Overwrite = QueueRow["state"].ToString().Equals( "U" );
+                            string Error = Importer.ImportRow( ItemRow, DefinitionName, SheetName, Overwrite );
                             if( string.IsNullOrEmpty( Error ) )
                             {
                                 // record success - delete the record
