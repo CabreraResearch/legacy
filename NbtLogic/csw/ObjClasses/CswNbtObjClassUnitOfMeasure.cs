@@ -96,13 +96,6 @@ namespace ChemSW.Nbt.ObjClasses
             ConversionFactor.SetOnPropChange( OnConversionFactorPropChange );
             Aliases.SetOnPropChange( onAliasesPropChange );
             Name.SetOnPropChange( OnNamePropChange );
-            Name.SetOnBeforeRender( delegate( CswNbtNodeProp Prop )
-            {
-                if( Name.Text == BaseUnit.Text || _isUsedForRegulatoryReporting( Name.Text ) )
-                {
-                    Name.setReadOnly( true, true );
-                }
-            } );
             _CswNbtObjClassDefault.triggerAfterPopulateProps();
         }//afterPopulateProps()
 
@@ -216,13 +209,16 @@ namespace ChemSW.Nbt.ObjClasses
         private void OnNamePropChange( CswNbtNodeProp Prop, bool Creating )
         {
             string OrigName = Name.GetOriginalPropRowValue();
-            if( OrigName == BaseUnit.Text )
+            if( OrigName != Name.Text )
             {
-                throw new CswDniException( CswEnumErrorType.Warning, Name.Text + " cannot be renamed because it's a Base Unit for " + NodeType.NodeTypeName, "User attempted to rename " + NodeType.NodeTypeName + "'s Base Unit" );
-            }
-            if( _isUsedForRegulatoryReporting( OrigName ) )
-            {
-                throw new CswDniException( CswEnumErrorType.Warning, Name.Text + " cannot be renamed because it's used for regulatory reporting.", "User attempted to rename " + Name.Text );
+                if( OrigName == BaseUnit.Text )
+                {
+                    throw new CswDniException( CswEnumErrorType.Warning, Name.Text + " cannot be renamed because it's a Base Unit for " + NodeType.NodeTypeName, "User attempted to rename " + NodeType.NodeTypeName + "'s Base Unit" );
+                }
+                if( _isUsedForRegulatoryReporting( OrigName ) )
+                {
+                    throw new CswDniException( CswEnumErrorType.Warning, Name.Text + " cannot be renamed because it's used for regulatory reporting.", "User attempted to rename " + Name.Text );
+                }
             }
         }
         public CswNbtNodePropScientific ConversionFactor { get { return ( _CswNbtNode.Properties[PropertyName.ConversionFactor] ); } }

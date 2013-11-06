@@ -41,6 +41,7 @@ namespace ChemSW.Nbt.Schema
                 if( UoMNode.Name.Text == UoMNode.BaseUnit.Text || UoMNode.Name.Text == "lb" || UoMNode.Name.Text == "gal" || UoMNode.Name.Text == "cu.ft." )
                 {
                     UoMNode.Name.setReadOnly( true, true );
+                    UoMNode.postChanges( true );
                 }
             }
         } // update()
