@@ -234,7 +234,7 @@ namespace ChemSW.Nbt.ObjClasses
                             {
                                 Tree.goToNthChild( i );
                                 JObject Doc = new JObject();
-            
+
                                 CswNbtObjClassSDSDocument SDSDoc = Tree.getNodeForCurrentPosition();
                                 if( null != RevisionDateProp )
                                 {
@@ -1149,7 +1149,8 @@ namespace ChemSW.Nbt.ObjClasses
         {
             if( CasNo.GetOriginalPropRowValue() != CasNo.Text )
             {
-                CswNbtC3ClientManager CswNbtC3ClientManager = new CswNbtC3ClientManager( _CswNbtResources );
+                CswC3Params CswC3Params = new CswC3Params();
+                CswNbtC3ClientManager CswNbtC3ClientManager = new CswNbtC3ClientManager( _CswNbtResources, CswC3Params );
                 SearchClient C3SearchClient = CswNbtC3ClientManager.initializeC3Client( CswEnumErrorType.Warning, "Unable to sync data. Please contact your administrator. " );
                 if( null != C3SearchClient )
                 {
