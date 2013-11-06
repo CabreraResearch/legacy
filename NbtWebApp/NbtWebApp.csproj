@@ -104,6 +104,9 @@
     <Compile Include="Services\Containers.svc.cs">
       <DependentUpon>Containers.svc</DependentUpon>
     </Compile>
+    <Compile Include="Services\ChemWatch.svc.cs">
+      <DependentUpon>ChemWatch.svc</DependentUpon>
+    </Compile>
     <Compile Include="Services\Explorer.svc.cs">
       <DependentUpon>Explorer.svc</DependentUpon>
     </Compile>
@@ -199,6 +202,7 @@
     </Compile>
     <Compile Include="WebSvc\Core\CswWebSvcError.cs" />
     <Compile Include="WebSvc\Logic\Actions\ChemWatch\CswNbtChemWatchDataContract.cs" />
+    <Compile Include="WebSvc\Logic\Actions\ChemWatch\CswNbtWebServiceChemWatch.cs" />
     <Compile Include="WebSvc\Logic\Actions\Explorer\CswNbtArborEdge.cs" />
     <Compile Include="WebSvc\Logic\Actions\Explorer\CswNbtArborGraph.cs" />
     <Compile Include="WebSvc\Logic\Actions\Explorer\CswNbtArborNode.cs" />
@@ -784,6 +788,7 @@
     <Content Include="Scripts\mousetrap.min.js" />
     <Content Include="Scripts\q.js" />
     <Content Include="Scripts\q.min.js" />
+    <Content Include="Services\ChemWatch.svc" />
     <Content Include="Services\Explorer.svc" />
     <Content Include="Services\Import.svc" />
     <Content Include="Services\Properties.svc" />

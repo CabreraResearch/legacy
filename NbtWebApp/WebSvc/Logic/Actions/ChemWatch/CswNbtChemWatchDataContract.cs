@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
+using ChemSW.Core;
 using NbtWebApp.WebSvc.Returns;
 
 namespace NbtWebApp.Actions.ChemWatch
@@ -37,6 +38,17 @@ namespace NbtWebApp.Actions.ChemWatch
 
         [DataMember]
         public int ChemWatchMaterialId { get; set; }
+
+        public CswPrimaryKey NbtMaterialId = null;
+        [DataMember( Name = "NbtMaterialId" )]
+        private string NbtMaterialIdStr
+        {
+            get { return NbtMaterialId.ToString(); }
+            set
+            {
+                NbtMaterialId = CswConvert.ToPrimaryKey( value );
+            }
+        }
     }
 
     [DataContract]
