@@ -301,7 +301,6 @@
                     cswPrivate.validateCell.div(),
                     cswPrivate.nameSpan,
                     {
-                        cssOptions: { 'visibility': 'hidden', 'width': '20px' },
                         wasModified: cswPrivate.wasModified,
                         onValidation: null,
                         className: 'validateNodeLink',
