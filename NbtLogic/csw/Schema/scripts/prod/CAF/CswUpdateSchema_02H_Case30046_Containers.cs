@@ -8,7 +8,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update
     /// </summary>
-    public class CswUpdateSchema_02H_Case30046_Containers: CswUpdateSchemaTo
+    public class CswUpdateSchema_02H_Case30046_Containers : CswUpdateSchemaTo
     {
         public override CswEnumDeveloper Author
         {
@@ -20,9 +20,9 @@ namespace ChemSW.Nbt.Schema
             get { return 30046; }
         }
 
-        public override string ScriptName
+        public override string AppendToScriptName()
         {
-            get { return "02H_Case30046_Containers"; }
+            return "Containers";
         }
 
         public override string Title
@@ -52,7 +52,7 @@ namespace ChemSW.Nbt.Schema
 
 
 
-            CswNbtSchemaUpdateImportMgr CofABindings = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "receipt_lots", "C of A Document", "cofa_docs_view", "receiptlotid");
+            CswNbtSchemaUpdateImportMgr CofABindings = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "receipt_lots", "C of A Document", "cofa_docs_view", "receiptlotid" );
 
             CofABindings.importBinding( "ReceiptLotId", CswNbtObjClassCofADocument.PropertyName.LegacyId, "" );
             CofABindings.importBinding( "ReceiptLotId", "Receipt Lot", CswEnumNbtSubFieldName.NodeID.ToString() );
@@ -60,7 +60,7 @@ namespace ChemSW.Nbt.Schema
             CofABindings.importBinding( "CA_AcquisitionDate", CswNbtObjClassCofADocument.PropertyName.AcquiredDate, "" );
             CofABindings.importBinding( "CA_FileExtension", CswNbtObjClassCofADocument.PropertyName.FileType, "" );
             CofABindings.importBinding( "CA_Content_Type", CswNbtObjClassCofADocument.PropertyName.File, CswEnumNbtSubFieldName.ContentType.ToString() );
-            CofABindings.importBinding( "CA_Document", CswNbtObjClassCofADocument.PropertyName.File, CswEnumNbtSubFieldName.Blob.ToString(), BlobTableName : "receipt_lots", LobDataPkColOverride : "receiptlotid" );
+            CofABindings.importBinding( "CA_Document", CswNbtObjClassCofADocument.PropertyName.File, CswEnumNbtSubFieldName.Blob.ToString(), BlobTableName: "receipt_lots", LobDataPkColOverride: "receiptlotid" );
 
             CofABindings.finalize();
 
@@ -68,12 +68,12 @@ namespace ChemSW.Nbt.Schema
 
 
             CswNbtSchemaUpdateImportMgr ContainerGroupBindings = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "container_groups", "Container Group", SourceColumn: "ContainerGroupId" );
-            
+
             ContainerGroupBindings.importBinding( "ContainerGroupId", CswNbtObjClassContainerGroup.PropertyName.LegacyId, "" );
             ContainerGroupBindings.importBinding( "ContainerGroupCode", CswNbtObjClassContainerGroup.PropertyName.Name, "" );
 
             ContainerGroupBindings.finalize();
-            
+
 
 
             CswNbtSchemaUpdateImportMgr ContainerBindings = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "Containers", "Container", "containers_view", "containerid" );

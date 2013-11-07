@@ -1,11 +1,11 @@
 using System;
 using System.Data;
+using ChemSW.Audit;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
-using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.MetaData;
-using ChemSW.Audit;
+using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt
 {

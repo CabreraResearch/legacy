@@ -19,20 +19,41 @@ namespace NbtWebApp
         [WebInvoke( Method = "POST", UriTemplate = "Initialize" )]
         [Description( "Initialize the Node Explorer" )]
         [FaultContract( typeof( FaultException ) )]
-        public CswNbtExplorerReturn Initialize( string NodeId )
+        public CswNbtExplorerReturn Initialize( CswNbtExplorerRequest Request )
+        {
+            CswNbtExplorerReturn Ret = new CswNbtExplorerReturn();
+
+            var SvcDriver = new CswWebSvcDriver<CswNbtExplorerReturn, CswNbtExplorerRequest>(
+                CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj : Ret,
+                WebSvcMethodPtr : CswNbtWebServiceNodeExplorer.Initialize,
+                ParamObj : Request
+                );
+
+            SvcDriver.run();
+            return ( Ret );
+        }
+
+        [OperationContract]
+        [WebInvoke( Method = "POST", UriTemplate = "GetFilterOpts" )]
+        [Description( "Initialize the Node Explorer" )]
+        [FaultContract( typeof( FaultException ) )]
+        public CswNbtExplorerReturn GetFilterOpts()
         {
             CswNbtExplorerReturn Ret = new CswNbtExplorerReturn();
 
             var SvcDriver = new CswWebSvcDriver<CswNbtExplorerReturn, string>(
                 CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
                 ReturnObj : Ret,
-                WebSvcMethodPtr : CswNbtWebServiceNodeExplorer.Initialize,
-                ParamObj : NodeId
+                WebSvcMethodPtr : CswNbtWebServiceNodeExplorer.GetFilterOpts,
+                ParamObj : string.Empty
                 );
 
             SvcDriver.run();
             return ( Ret );
         }
+
+
     }
 
 }

@@ -117,10 +117,12 @@ window.initMain = window.initMain || function (undefined) {
             Csw.main.universalsearch.ready,
             Csw.actions.quotaImage(Csw.main.headerQuota)
         ]);
-        ready.fail(function (err) {
-            Csw.debug.error(err);
-        });
-        ready.then(function() {
+// this prevents the page from recovering from a failed clientDb connect
+// see case 31050
+//        ready.fail(function (err) {
+//            Csw.debug.error(err);
+//        });
+        ready.fin(function() {
             Csw.main.finishInitAll(onSuccess);
         });
         return ready;

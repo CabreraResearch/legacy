@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
 using ChemSW.Exceptions;
-using ChemSW.Nbt.Security;
 using ChemSW.Nbt.csw.Dev;
+using ChemSW.Nbt.csw.Schema;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.csw.Schema;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -26,9 +22,9 @@ namespace ChemSW.Nbt.Schema
             get { return 30400; }
         }
 
-        public override string ScriptName
+        public override string AppendToScriptName()
         {
-            get { return "02H_Case" + CaseNo + "_D"; }
+            return "_D";
         }
 
         public override string Title

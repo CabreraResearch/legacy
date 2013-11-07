@@ -20,9 +20,9 @@ namespace ChemSW.Nbt.Schema
             get { return 30041; }
         }
 
-        public override string ScriptName
+        public override string AppendToScriptName()
         {
-            get { return "02F_Case30041_RolesUsers"; }
+            return "RolesUsers";
         }
 
         public override void update()

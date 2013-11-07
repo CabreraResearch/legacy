@@ -362,11 +362,13 @@
                             },
                             forceIframeTransport: true,
                             dataType: 'iframe',
-                            onSuccess: function (response) {
+                            onSuccess: function(response) {
                                 cswPrivate.makeUploadDataTable();
                                 cswPrivate.txtDefName.val('');
                             }
                         });
+                    } else {
+                        alert('Import Definition Name is required.')
                     }
                 }
                 });

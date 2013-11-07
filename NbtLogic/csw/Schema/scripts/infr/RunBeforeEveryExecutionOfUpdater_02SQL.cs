@@ -36,17 +36,17 @@ namespace ChemSW.Nbt.Schema
 
         #endregion Blame Logic
 
-        public override string ScriptName
+        public override string AppendToScriptName()
         {
-            get { return "RunBefore_PL/SQL Objects"; }
+            return "RunBefore_PL/SQL Objects";
         }
 
         public override bool AlwaysRun
         {
             get { return true; }
         }
-        
-         public override string Title { get { return "Pre-Script: 02: PL/SQL Objects"; } }
+
+        public override string Title { get { return "Pre-Script: 02: PL/SQL Objects"; } }
 
 
         public override void update()

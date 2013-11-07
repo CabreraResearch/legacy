@@ -10,6 +10,10 @@
             Csw.error.throwException('Cannot create an action without a valid Csw Parent object.', 'Csw.actions.template', '_template.js', 10);
         }
 
+
+        var imgs = {};
+        var i = 3;
+
         (function _preCtor() {
             //set default values on cswPrivate if none are supplied
             cswPrivate.name = cswPrivate.name || 'Explorer';
@@ -21,8 +25,20 @@
             cswPrivate.startingNodeId = cswPrivate.startingNodeId;
             cswPrivate.sys = null;
             cswPrivate.extPanel = null;
-
+            cswPrivate.maxDepth = 2;
+            cswPrivate.filterVals = '';
+            cswPrivate.filterOpts = [];
+            
             cswParent.empty();
+
+            Csw.ajaxWcf.post({
+                urlMethod: "Explorer/GetFilterOpts",
+                success: function (response) {
+                    cswPrivate.filterOpts = response.Opts;
+                    cswPrivate.filterVals = response.filterVals;
+                }
+            });
+            
         }());
 
         cswPrivate.initPanel = function () {
@@ -36,13 +52,64 @@
                     title: 'Filters',
                     region: 'south',
                     xtype: 'panel',
-                    height: 100
+                    height: 100,
+                    items: [
+                        {
+                            xtype: 'slider',
+                            id: 'ExtExplorerSlider',
+                            hideLabel: false,
+                            fieldLabel: 'Depth',
+                            width: 400,
+                            minValue: 1,
+                            maxValue: 4,
+                            value: cswPrivate.maxDepth,
+                            increment: 1,
+                            listeners: {
+                                'change': function (slider, newValue, thumb, eOpts) {
+                                    cswPrivate.maxDepth = newValue;
+                                    cswPrivate.sys.stop();
+                                    cswPrivate.initSystem();
+                                }
+                            }
+                        },
+                        {
+                            xtype: 'button',
+                            text: 'Edit Filters',
+                            id: 'ExtEditFiltersBtn',
+                            handler: function() {
+                                Csw.dialogs.multiselectedit({
+                                    opts: cswPrivate.filterOpts,
+                                    title: 'Edit Explorer Filters',
+                                    inDialog: true,
+                                    onSave: function (updatedValues) {
+                                        cswPrivate.sys.stop();
+
+                                        cswPrivate.filterVal = updatedValues.join(',');
+
+                                        Csw.iterate(cswPrivate.filterOpts, function(opt) {
+                                            opt.selected = updatedValues.indexOf(opt.value) !== -1;
+                                        });
+
+                                        cswPrivate.initSystem();
+                                    },
+                                });
+                            }
+                        }]
                 }, {
                     title: 'Properties',
                     region: 'east',
                     xtype: 'panel',
                     width: 300,
                     id: 'west-region-container',
+                    items: [{ //TODO: upon clicking on a node, show props here
+                        xtype: 'button',
+                        text: 'Center On This',
+                        handler: function () {
+                            if (false === Csw.isNullOrEmpty(cswPrivate.startingNodeId)) {
+                                cswPrivate.initSystem();
+                            }
+                        }
+                    }]
                 }, {
                     title: 'Relationships',
                     region: 'center',
@@ -60,30 +127,57 @@
         };
 
         cswPrivate.initSystem = function () {
-            cswPrivate.sys = arbor.ParticleSystem(50, 300, 0.7);
+            cswPrivate.sys = arbor.ParticleSystem(1000, 1000, 0.7);
             cswPrivate.sys.parameters({ gravity: true });
+
+            //if (Csw.isNullOrEmpty(cswPrivate.startingNodeId)) {
+            //    cswPrivate.startingNodeId = 'nodes_2';
+            //}
 
             Csw.ajaxWcf.post({
                 urlMethod: "Explorer/Initialize",
-                data: cswPrivate.startingNodeId,
+                data: {
+                    Depth: cswPrivate.maxDepth,
+                    NodeId: cswPrivate.startingNodeId,
+                    FilterVal: cswPrivate.filterVal
+                },
                 success: function (response) {
-                    var i = 3;
+                    var graph = {};
+                    
                     Csw.iterate(response.Nodes, function (arborNode) {
-                        var secretCell = cswPrivate.actionTbl.cell(1, i);
-                        var img = secretCell.img({
-                            src: arborNode.Data.Icon
-                        }).hide();
-                        arborNode.Data.iconId = img.getId();
-                        i++;
+
+                        if (imgs[arborNode.Data.Icon]) {
+                            arborNode.Data.iconId = imgs[arborNode.Data.Icon];
+                        } else {
+                            var secretCell = cswPrivate.actionTbl.cell(1, i);
+                            var img = secretCell.img({
+                                src: arborNode.Data.Icon,
+                                ID: arborNode.NodeId
+                            }).hide();
+                            i++;
+                            imgs[arborNode.Data.Icon] = img.getId();
+
+                            arborNode.Data.iconId = img.getId();
+                        }
 
                         cswPrivate.sys.addNode(arborNode.NodeId, arborNode.Data);
+                        graph[arborNode.NodeId] = [];
                     });
 
                     Csw.iterate(response.Edges, function (arborEdge) {
+                        //graph[arborEdge.OwnerNodeId].push(arborEdge.TargetNodeId);
+                        //graph[arborEdge.TargetNodeId].push(arborEdge.OwnerNodeId);
                         cswPrivate.sys.addEdge(arborEdge.OwnerNodeId, arborEdge.TargetNodeId, arborEdge.Data);
                     });
 
-                    cswPrivate.sys.renderer = Csw.ArborRenderer(cswPrivate.extPanel.items.items[2].items.items[0].el.dom.id, response.Nodes, response.Edges);
+                    cswPrivate.sys.renderer = Csw.ArborRenderer(cswPrivate.extPanel.items.items[2].items.items[0].el.dom.id, {
+                        nodes: response.Nodes,
+                        edges: response.Edges,
+                        startNodeId: cswPrivate.startingNodeId,
+                        onNodeClick: function (selectedId) {
+                            cswPrivate.startingNodeId = selectedId;
+                        }
+                    });
                 }
             });
         };

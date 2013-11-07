@@ -1,7 +1,6 @@
-﻿using ChemSW.Core;
-using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.csw.Dev;
+﻿using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -18,11 +17,6 @@ namespace ChemSW.Nbt.Schema
         public override int CaseNo
         {
             get { return 30723; }
-        }
-
-        public override string ScriptName
-        {
-            get { return "02H_Case" + CaseNo; }
         }
 
         public override string Title

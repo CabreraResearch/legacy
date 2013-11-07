@@ -167,6 +167,8 @@ namespace ChemSW.Nbt.Actions
                         {
                             ChildContainer.Barcode.setBarcodeValue();
                         }
+                        ChildContainer.ReceiptLot.RelatedNodeId = null;
+                        ChildContainer.ExpirationDate.DateTimeValue = _SourceContainer.ExpirationDate.DateTimeValue;
                         ChildContainer.SourceContainer.RelatedNodeId = _SourceContainer.NodeId;
                         ChildContainer.Quantity.Quantity = 0;
                         ChildContainer.Quantity.UnitId = UnitId;

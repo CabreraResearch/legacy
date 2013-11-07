@@ -276,7 +276,7 @@
                                 }
                             }
                         }
-                        
+
                         if (cswPrivate.newC3SupplierInput) {
                             if (cswPrivate.isConstituent()) {
                                 cswPrivate.newC3SupplierInput.hide();
@@ -304,7 +304,7 @@
                                 }
                             }
                         }//if (cswPrivate.newC3SupplierInput)
-                        
+
                         cswPrivate.reinitSteps(2);
                     }//changeMaterial()
 
@@ -388,12 +388,14 @@
                             SupplierCtrlTbl.cell(1, 1).empty();
                             SupplierCtrlTbl.cell(1, 2).empty();
                             SupplierCtrlTbl.cell(1, 3).empty();
+                            cswPrivate.supplierValidateCell = SupplierCtrlTbl.cell(1, 4).empty(); //This is for validation
+                            
 
                             cswPrivate.supplierLabel = tbl.cell(3, 1).span();
                             cswPrivate.supplierLabel.setLabelText('Supplier: ', true, false);
 
                             var extraOptions = [];
-
+                            
                             // If we are importing from C3 with a new supplier, always show the
                             // 'New Supplier Name >>' option instead of the 'New+' button.
                             if (cswPrivate.state.addNewC3Supplier) {
@@ -443,6 +445,7 @@
                                     cswPrivate.makeNewC3SupplierInput(true, 1, 1);
                                 },
                                 isRequired: true,
+                                overrideNodelinkValidation: cswPrivate.state.chemCatCentralImport,
                                 extraOptions: extraOptions,
                                 showRemoveIcon: cswPrivate.state.addNewC3Supplier,
                                 onSuccess: function (options, useSearch) {
@@ -894,7 +897,14 @@
                             Csw.tryExec(cswPrivate.onCancel);
                         },
                         onFinish: cswPrivate.finalize,
-                        doNextOnInit: false
+                        doNextOnInit: false,
+                        onBeforeNext: function (stepno) {
+                            var Ret = true;
+                            if (stepno === 1 && cswPrivate.state.chemCatCentralImport) {
+                                Ret = cswPrivate.validateSupplierCtrl();
+                            }
+                            return Ret;
+                        }
                     });
 
                     // This checks the step visibility on refresh, C3 import, and copy.
@@ -907,6 +917,26 @@
             });
         }());
         //#endregion ctor
+
+        cswPrivate.validateSupplierCtrl = function () {
+            var Ret = true;
+
+            if (cswPrivate.newC3SupplierInput && Csw.isNullOrEmpty(cswPrivate.newC3SupplierInput.val()) &&
+                cswPrivate.supplierSelect && Csw.isNullOrEmpty(cswPrivate.supplierSelect.selectedNodeLink())) {
+                Ret = false;
+                if (cswPrivate.supplierValidateCell) {
+                    cswPrivate.supplierValidateCell.empty();
+                    cswPrivate.supplierValidateCell.div({
+                        text: 'This field is required.'
+                    }).css({ color: 'red' });
+                }
+            } else {
+                if (cswPrivate.supplierValidateCell) {
+                    cswPrivate.supplierValidateCell.empty();
+                }
+            }
+            return Ret;
+        };//cswPrivate.validateSupplierCtrl
 
         return cswPublic;
     });

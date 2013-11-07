@@ -9,9 +9,9 @@ namespace ChemSW.Nbt.Schema
     {
         public override string Title { get { return "Run Always: MakeMissingNodeTypeProps"; } }
 
-        public override string ScriptName
+        public override string AppendToScriptName()
         {
-            get { return "MakeMissingNodeTypeProps"; }
+            return "MakeMissingNodeTypeProps";
         }
 
         public override bool AlwaysRun

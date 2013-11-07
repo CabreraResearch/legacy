@@ -134,7 +134,7 @@
                                 saveBtnClicked = true;
                                 Csw.clientChanges.unsetChanged(); //closing a csw.dialog fires manual validation, which we don't want here
                                 var isValid = Csw.tryExec(cswPrivate.onSave, selected);
-                                if (isValid) {
+                                if (isValid || false === cswPrivate.required) {
                                     editDialog.close();
                                 } else {
                                     errorDiv.show();

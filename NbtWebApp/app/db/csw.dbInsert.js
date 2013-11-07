@@ -35,7 +35,7 @@
             return deferred.resolve(true);
         };
 
-        dbManager.promises.connect.then(doInsert);
+        dbManager.promises.connect.then(doInsert, function() { deferred.reject(); });
         return deferred.promise;
     };
 

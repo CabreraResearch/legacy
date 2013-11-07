@@ -36,18 +36,18 @@
     <ServiceContractMappings />
   </ClientOptions>
   <MetadataSources>
-    <MetadataSource Address="http://localhost/c3test/Search.svc" Protocol="http" SourceId="1" />
+    <MetadataSource Address="http://localhost/c3dev/Search.svc" Protocol="http" SourceId="1" />
   </MetadataSources>
   <Metadata>
-    <MetadataFile FileName="Search41.xsd" MetadataType="Schema" ID="822ffe3b-27fc-4387-8195-8f5f068b41f0" SourceId="1" SourceUrl="http://localhost/c3Test/Search.svc?xsd=xsd5" />
-    <MetadataFile FileName="Search42.xsd" MetadataType="Schema" ID="78d72c85-0d72-498e-891d-c354fa63bcdc" SourceId="1" SourceUrl="http://localhost/c3Test/Search.svc?xsd=xsd2" />
-    <MetadataFile FileName="Search46.xsd" MetadataType="Schema" ID="63e15569-b0e2-4a6b-ace0-7337e14e973c" SourceId="1" SourceUrl="http://localhost/c3Test/Search.svc?xsd=xsd0" />
-    <MetadataFile FileName="Search47.xsd" MetadataType="Schema" ID="4c374aba-3485-4c1b-832e-a47be3283e62" SourceId="1" SourceUrl="http://localhost/c3Test/Search.svc?xsd=xsd1" />
-    <MetadataFile FileName="Search11.wsdl" MetadataType="Wsdl" ID="c46b6a16-8585-4ba1-a349-fb78b017d7e7" SourceId="1" SourceUrl="http://localhost/c3Test/Search.svc?wsdl" />
-    <MetadataFile FileName="Search48.xsd" MetadataType="Schema" ID="51f39d66-1892-4378-b81f-d94bb5b6a072" SourceId="1" SourceUrl="http://localhost/c3Test/Search.svc?xsd=xsd4" />
-    <MetadataFile FileName="Search11.disco" MetadataType="Disco" ID="fff49c30-2c72-4056-8f21-740e0c13a194" SourceId="1" SourceUrl="http://localhost/c3Test/Search.svc?disco" />
-    <MetadataFile FileName="Search49.xsd" MetadataType="Schema" ID="574fcec0-ec02-462c-834c-2613f168e62e" SourceId="1" SourceUrl="http://localhost/c3Test/Search.svc?xsd=xsd6" />
-    <MetadataFile FileName="Search410.xsd" MetadataType="Schema" ID="6a8b4b3b-c9ae-4152-8441-ef05cdb12798" SourceId="1" SourceUrl="http://localhost/c3Test/Search.svc?xsd=xsd3" />
+    <MetadataFile FileName="Search.disco" MetadataType="Disco" ID="216efac8-2d1d-4246-9eb4-45570bebe123" SourceId="1" SourceUrl="http://localhost/c3dev/Search.svc?disco" />
+    <MetadataFile FileName="Search.xsd" MetadataType="Schema" ID="5d0317a9-9381-431c-b822-060548b0250c" SourceId="1" SourceUrl="http://localhost/c3dev/Search.svc?xsd=xsd6" />
+    <MetadataFile FileName="Search1.xsd" MetadataType="Schema" ID="7de412da-6403-4c5f-a5db-cdc380e9319e" SourceId="1" SourceUrl="http://localhost/c3dev/Search.svc?xsd=xsd4" />
+    <MetadataFile FileName="Search.wsdl" MetadataType="Wsdl" ID="4503a94c-50a3-476f-863b-bb0e5022e20d" SourceId="1" SourceUrl="http://localhost/c3dev/Search.svc?wsdl" />
+    <MetadataFile FileName="Search2.xsd" MetadataType="Schema" ID="ea9f22f9-93b7-4797-980b-bde98dee3e03" SourceId="1" SourceUrl="http://localhost/c3dev/Search.svc?xsd=xsd2" />
+    <MetadataFile FileName="Search3.xsd" MetadataType="Schema" ID="4bd583c8-69ee-4780-bc04-ee686be5f519" SourceId="1" SourceUrl="http://localhost/c3dev/Search.svc?xsd=xsd3" />
+    <MetadataFile FileName="Search5.xsd" MetadataType="Schema" ID="19422046-d88c-4936-8819-1160cc47a878" SourceId="1" SourceUrl="http://localhost/c3dev/Search.svc?xsd=xsd0" />
+    <MetadataFile FileName="Search6.xsd" MetadataType="Schema" ID="01fc4d09-eef2-4620-8858-58645d18c8ab" SourceId="1" SourceUrl="http://localhost/c3dev/Search.svc?xsd=xsd1" />
+    <MetadataFile FileName="Search7.xsd" MetadataType="Schema" ID="9358cd13-db39-4c87-b4ae-0078646b0eaf" SourceId="1" SourceUrl="http://localhost/c3dev/Search.svc?xsd=xsd5" />
   </Metadata>
   <Extensions>
     <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />

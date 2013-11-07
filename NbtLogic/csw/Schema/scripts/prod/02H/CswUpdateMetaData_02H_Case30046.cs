@@ -20,11 +20,6 @@ namespace ChemSW.Nbt.Schema
             get { return 30046; }
         }
 
-        public override string ScriptName
-        {
-            get { return "02H_Case" + CaseNo; }
-        }
-
         public override string Title
         {
             get { return "New Container Props Needed for CAF Imports"; }
@@ -101,8 +96,14 @@ namespace ChemSW.Nbt.Schema
                 {
                     foreach( CswNbtMetaDataObjectClassProp ObjectClassProp in ObjectClassProps )
                     {
-                        CswNbtMetaDataNodeTypeProp NodetypeProp = ContainerNT.getNodeTypePropByObjectClassProp( ObjectClassProp );
-                        NodetypeProp.removeFromAllLayouts();
+                        if( null != ObjectClassProp )
+                        {
+                            CswNbtMetaDataNodeTypeProp NodetypeProp = ContainerNT.getNodeTypePropByObjectClassProp( ObjectClassProp );
+                            if( null != NodetypeProp )
+                            {
+                                NodetypeProp.removeFromAllLayouts();
+                            }
+                        }
                     }
 
                 }
