@@ -241,7 +241,11 @@ namespace ChemSW.Nbt.WebServices
             {
                 if( false == string.IsNullOrEmpty( reportParams.ReportNode.WebService.Text ) )
                 {
-                    string WebServiceUrl = "http://localhost/NbtDev/Services/" + CswNbtObjClassReport.ReplaceReportParams( reportParams.ReportNode.WebService.Text, reportParams.ReportParamDictionary );
+                    // Determine the webservice URL from the request URL
+                    string thisUrl = reportParams.Context.Request.Url.AbsoluteUri;
+                    string thisUrlBase = thisUrl.Substring( 0, thisUrl.IndexOf( "/Services/" ) + "/Services/".Length );
+                    string WebServiceUrl = thisUrlBase + CswNbtObjClassReport.ReplaceReportParams( reportParams.ReportNode.WebService.Text, reportParams.ReportParamDictionary );
+
                     HttpWebRequest request = (HttpWebRequest) HttpWebRequest.Create( WebServiceUrl );
                     request.Method = "GET";
                     request.CookieContainer = new CookieContainer();
