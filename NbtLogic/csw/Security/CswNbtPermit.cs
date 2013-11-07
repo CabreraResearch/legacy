@@ -262,7 +262,7 @@ namespace ChemSW.Nbt.Security
                         if( null != CswNbtObjClassUser )
                         {
                             if( PropType.getObjectClassPropName() == CswNbtObjClassUser.PropertyName.Password &&
-                                false == CswNbtObjClassUser.IsPasswordReadyOnly )
+                                false == CswNbtObjClassUser.IsPasswordReadOnly )
                             {
                                 ReturnVal = false;
                             }
