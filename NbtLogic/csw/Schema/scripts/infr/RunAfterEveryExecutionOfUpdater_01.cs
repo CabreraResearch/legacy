@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using ChemSW.Nbt.csw.Dev;
-using ChemSW.RscAdo;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -58,12 +56,6 @@ namespace ChemSW.Nbt.Schema
 
             _acceptBlame( CswEnumDeveloper.PG, 23784 );
             _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( "update scheduledrules set reprobate=0,totalroguecount=0,failedcount=0" );
-            _resetBlame();
-
-            _acceptBlame( CswEnumDeveloper.DH, 30252 );
-
-            List<CswStoredProcParam> Params = new List<CswStoredProcParam>();
-            _CswNbtSchemaModTrnsctn.execStoredProc( "CREATEALLNTVIEWS", Params );
             _resetBlame();
 
             _acceptBlame( CswEnumDeveloper.MB, 30700 );
