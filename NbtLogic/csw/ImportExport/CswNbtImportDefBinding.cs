@@ -182,6 +182,13 @@ namespace ChemSW.Nbt.ImportExport
                                 }
                                 string DestSubFieldName = DestSubFieldStr;
 
+                                //set blank instances to min value
+                                if( BindingRow["instance"] == DBNull.Value || String.IsNullOrEmpty( BindingRow["instance"].ToString() ) )
+                                {
+                                    BindingRow["instance"] = Int32.MinValue;
+                                }
+
+
                                 DataRow row = importBindingsTable.NewRow();
                                 row[CswNbtImportTables.ImportDefBindings.importdefid] = DefIdsBySheetName[SheetName];
                                 row[CswNbtImportTables.ImportDefBindings.sourcecolumnname] = BindingRow["sourcecolumnname"].ToString();
