@@ -7,7 +7,6 @@ using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.MetaData.FieldTypeRules;
 
 namespace ChemSW.Nbt.PropTypes
 {
@@ -438,6 +437,10 @@ namespace ChemSW.Nbt.PropTypes
             {
                 ret = ClobData;
             }
+            else if( Column == CswEnumNbtPropColumn.Field1_Big )
+            {
+                ret = Field1_Big;
+            }
             else
             {
                 throw new CswDniException( CswEnumErrorType.Error, "Invalid PropColumn", "CswNbtNodePropData.GetPropRowValue() found an unhandled PropColumn: " + Column.ToString() );
@@ -502,6 +505,7 @@ namespace ChemSW.Nbt.PropTypes
         public string GestaltSearch { get { return ( _getRowStringVal( CswEnumNbtPropColumn.GestaltSearch ) ); } }
         public string ClobData { get { return ( _getRowStringVal( CswEnumNbtPropColumn.ClobData ) ); } }
         public Double Field3_Numeric { get { return _getRowDoubleVal( CswEnumNbtPropColumn.Field3_Numeric ); } }
+        public string Field1_Big { get { return ( _getRowStringVal( CswEnumNbtPropColumn.Field1_Big ) ); } }
 
         public Int32 JctNodePropId
         {

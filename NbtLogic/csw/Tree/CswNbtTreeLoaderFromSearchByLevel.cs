@@ -9,12 +9,11 @@ using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.Search;
 using ChemSW.Nbt.Security;
 
 namespace ChemSW.Nbt
 {
-    public class CswNbtTreeLoaderFromSearchByLevel : CswNbtTreeLoader
+    public class CswNbtTreeLoaderFromSearchByLevel: CswNbtTreeLoader
     {
         private CswNbtResources _CswNbtResources = null;
         private string _SearchTerm;
@@ -97,7 +96,7 @@ namespace ChemSW.Nbt
                             if( ThisNodeId != PriorNodeId )
                             {
                                 PriorNodeId = ThisNodeId;
-                                NewNodeKeys = _CswNbtTree.loadNodeAsChildFromRow( null, NodesRow, false, string.Empty, true, true, CswEnumNbtViewAddChildrenSetting.None, RowCount, Favorited: ThisNodeFavorited );
+                                NewNodeKeys = _CswNbtTree.loadNodeAsChildFromRow( null, NodesRow, false, string.Empty, true, true, CswEnumNbtViewAddChildrenSetting.None, RowCount, Favorited : ThisNodeFavorited );
                                 RowCount++;
                             } // if( ThisNodeId != PriorNodeId )
 
@@ -117,7 +116,8 @@ namespace ChemSW.Nbt
                                                              CswConvert.ToString( NodesRow["field2"] ),
                                                              CswConvert.ToInt32( NodesRow["field1_fk"] ),
                                                              CswConvert.ToInt32( NodesRow["field1_numeric"] ),
-                                                             CswConvert.ToBoolean( NodesRow["hidden"] ) );
+                                                             CswConvert.ToBoolean( NodesRow["hidden"] ),
+                                                             CswConvert.ToString( NodesRow["field1_big"] ) );
                                 } // foreach( CswNbtNodeKey NewNodeKey in NewNodeKeys )
                             } // if( NewNodeKeys != null && ThisNTPId != Int32.MinValue )
                             _CswNbtTree.goToRoot();
@@ -284,6 +284,7 @@ namespace ChemSW.Nbt
                                                    propval.field1_fk,
                                                    propval.field1_numeric,
                                                    propval.hidden,
+                                                   propval.field1_big,
                                                    i.permissiongroupid,
                                                    f.userid
                                               from nodes n
