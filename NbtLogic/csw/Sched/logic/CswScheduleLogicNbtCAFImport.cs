@@ -206,7 +206,7 @@ namespace ChemSW.Nbt.Sched
                        "                group by locationlevel" + i + "name " + "\r\n" +
                        "                   having count(*) > 1 " + "\r\n" +
                        "              )" + "\r\n" +
-                       "       )";
+                       "       );";
             }
 
             return Ret;
