@@ -258,7 +258,7 @@
         cswPrivate.onButtonClick = function () {
             Csw.publish('onAnyNodeButtonClick');
             if (cswPrivate.issaveprop) {
-                Csw.unsubscribe('triggerSave', cswPrivate.onButtonClick);
+                Csw.unsubscribe('triggerSave_' + cswPrivate.nodeId, cswPrivate.onButtonClick);
             }
 
             if (tabsAndProps && false === tabsAndProps.isFormValid()) {
@@ -373,7 +373,7 @@
             }
         }; // onButtonClick()
         if (cswPrivate.issaveprop) {
-            Csw.subscribe('triggerSave', cswPrivate.onButtonClick);
+            Csw.subscribe('triggerSave_' + cswPrivate.nodeId, cswPrivate.onButtonClick);
         }
 
         (function _post() {
