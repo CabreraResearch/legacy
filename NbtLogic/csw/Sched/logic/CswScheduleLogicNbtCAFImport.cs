@@ -53,7 +53,6 @@ namespace ChemSW.Nbt.Sched
 
         public Int32 getLoadCount( ICswResources CswResources )
         {
-            // TODO: Does this SQL need to take State.U into consideration?
             string Sql = "select count(*) cnt from nbtimportqueue@" + CAFDbLink + " where state = '" + State.I + "' or state = '" + State.U + "'";
             CswArbitrarySelect QueueCountSelect = CswResources.makeCswArbitrarySelect( "cafimport_queue_count", Sql );
             DataTable QueueCountTable = QueueCountSelect.getTable();
