@@ -3,7 +3,6 @@
 (function () {
     'use strict';
 
-
     Csw.register('validator', function (cswParent, validatedControl, options) {
         /// <summary>
         /// Adds an input to a control which simulates what would happen if JQuery validation could
@@ -20,9 +19,11 @@
             },
             wasModified: false,
             onValidation: null,
-            className: 'validateComboBox',
+            className: '',
             errorMsg: 'This field is required.',
-            isExtJsControl: true
+            isExtJsControl: false, // defaults to false
+            emptyText: '',
+            hiddenInputName: ''
         };
 
         Csw.extend(cswPrivate, options);
@@ -33,30 +34,43 @@
         };
 
         if (Csw.isNullOrEmpty(cswParent)) {
-            Csw.error.throwException(Csw.error.exception('Cannot create an input to add validation to without a parent div.', '', 'csw.validation.js', 22));
+            Csw.error.throwException(
+                Csw.error.exception('Cannot create an input to add validation to without a parent div.', '', 'csw.validation.js', 22)
+            );
         }
         if (Csw.isNullOrEmpty(validatedControl)) {
-            Csw.error.throwException(Csw.error.exception('Cannot add validation to an empty control.', '', 'csw.validation.js', 25));
+            Csw.error.throwException(
+                Csw.error.exception('Cannot add validation to an empty control.', '', 'csw.validation.js', 25)
+            );
         }
 
         // Create the hidden input
-        cswPublic.input = cswParent.input().css(cswPrivate.cssOptions);
+        cswPublic.input = cswParent.input({
+            name: cswPrivate.hiddenInputName
+        }).css(cswPrivate.cssOptions);
         cswPublic.input.required(true);
         cswPublic.input.addClass(cswPrivate.className);
 
-        var currValue = "";
+        // Get the current value of the control
+        var currValue;
         if (cswPrivate.isExtJsControl) {
             currValue = validatedControl.getValue();
         } else {
             currValue = validatedControl.val();
         }
 
+        // Check whether the control is valid
         if (false === Csw.isNullOrEmpty(currValue)) {
-            cswPublic.input.val(true);
+            if (false === Csw.isNullOrEmpty(cswPrivate.emptyText) && currValue !== cswPrivate.emptyText) {
+                cswPublic.input.val(true);
+            } else {
+                cswPublic.input.val(false);
+            }
         } else {
             cswPublic.input.val(false);
         }
 
+        // Perform the validation if the control was modified
         if (cswPrivate.wasModified) {
             var valid = cswPublic.input.$.valid();
             cswPrivate.onValidation(valid);
