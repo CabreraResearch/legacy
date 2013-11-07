@@ -21,23 +21,14 @@ namespace ChemSW.Nbt.Schema
 
         public override string Title
         {
-            get { return "Make UnitOfMeasure Name Readonly"; }
+            get { return "Make UnitOfMeasure BaseUnit ServerManaged"; }
         }
 
         public override void update()
         {
             CswNbtMetaDataObjectClass UoMOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.UnitOfMeasureClass );
-            CswNbtMetaDataObjectClassProp NameOCP = UoMOC.getObjectClassProp( CswNbtObjClassUnitOfMeasure.PropertyName.Name );
-            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( NameOCP, CswEnumNbtObjectClassPropAttributes.readOnly, true );
             CswNbtMetaDataObjectClassProp BaseUnitOCP = UoMOC.getObjectClassProp( CswNbtObjClassUnitOfMeasure.PropertyName.BaseUnit );
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( BaseUnitOCP, CswEnumNbtObjectClassPropAttributes.servermanaged, true );
-            foreach( CswNbtMetaDataNodeType UoMNT in UoMOC.getNodeTypes() )
-            {
-                CswNbtMetaDataNodeTypeProp NameNTP = UoMNT.getNodeTypePropByObjectClassProp( NameOCP );
-                NameNTP.ReadOnly = true;
-                CswNbtMetaDataNodeTypeProp BaseUnitNTP = UoMNT.getNodeTypePropByObjectClassProp( BaseUnitOCP );
-                BaseUnitNTP.ServerManaged = true;
-            }
         } // update()
 
     }

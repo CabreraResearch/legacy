@@ -545,7 +545,15 @@ namespace ChemSW.Nbt.ImportExport
                                     _importPropertyValues( BindingDef, NodeTypeBindings, RowRelationships, ImportRow, Node );
                                     Node.postChanges( false );
                                 }
-                                foundMatch = true;
+                                else
+                                {
+                                  //we still want to set legacy id on nodes matched by unique properties
+                                    foreach( CswNbtImportDefBinding Binding in NodeTypeBindings.Where( Binding => Binding.DestPropName == "Legacy ID" ) )
+                                    {
+                                        //there should always be exactly one iteration of this loop
+                                        Node.Properties[Binding.DestProperty].SetSubFieldValue( Binding.DestSubfield, ImportRow[Binding.ImportDataColumnName].ToString() );
+                                    }
+                                }
                             }
                         }
                     } // if( UniqueProps.Any() )

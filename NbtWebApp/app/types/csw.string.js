@@ -230,12 +230,10 @@
         if (militaryTime) {
             ret = hours + ':' + minutes + ':' + seconds;
         } else {
-            ret = (hours % 12) + ':' + minutes + ':' + seconds + ' ';
-            if (hours > 11) {
-                ret += 'PM';
-            } else {
-                ret += 'AM';
-            }
+            period = (hours >= 12) ? 'PM' : 'AM';
+            hours = (hours > 12) ? hours : hours % 12; //this can't be a straight modulo because of noon
+            
+            ret = hours + ':' + minutes + ':' + seconds + ' ' + period;
         }
         return ret;
     }

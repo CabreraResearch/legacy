@@ -79,7 +79,7 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 throw new CswDniException( CswEnumErrorType.Warning, Name.Text + " cannot be deleted because it's a Base Unit for " + NodeType.NodeTypeName, "User attempted to delete " + NodeType.NodeTypeName + "'s Base Unit" );
             }
-            if( Name.Text == "lb" || Name.Text == "gal" || Name.Text == "cu.ft." )
+            if( _isUsedForRegulatoryReporting( Name.Text ) )
             {
                 throw new CswDniException( CswEnumErrorType.Warning, Name.Text + " cannot be deleted because it's used for regulatory reporting.", "User attempted to delete " + Name.Text );
             }
@@ -111,6 +111,11 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         #endregion
+
+        private bool _isUsedForRegulatoryReporting( string UnitName )
+        {
+            return UnitName == "lb" || UnitName == "gal" || UnitName == "cu.ft." || UnitName == "kg" || UnitName == "Liters";
+        }
 
         private void _validateConversionFactor()
         {
@@ -204,13 +209,16 @@ namespace ChemSW.Nbt.ObjClasses
         private void OnNamePropChange( CswNbtNodeProp Prop, bool Creating )
         {
             string OrigName = Name.GetOriginalPropRowValue();
-            if( Name.GetOriginalPropRowValue() == BaseUnit.Text )
+            if( OrigName != Name.Text )
             {
-                throw new CswDniException( CswEnumErrorType.Warning, Name.Text + " cannot be renamed because it's a Base Unit for " + NodeType.NodeTypeName, "User attempted to rename " + NodeType.NodeTypeName + "'s Base Unit" );
-            }
-            if ( OrigName == "lb" || OrigName == "gal" || OrigName == "cu.ft." )
-            {
-                throw new CswDniException( CswEnumErrorType.Warning, Name.Text + " cannot be renamed because it's used for regulatory reporting.", "User attempted to rename " + Name.Text );
+                if( OrigName == BaseUnit.Text )
+                {
+                    throw new CswDniException( CswEnumErrorType.Warning, Name.Text + " cannot be renamed because it's a Base Unit for " + NodeType.NodeTypeName, "User attempted to rename " + NodeType.NodeTypeName + "'s Base Unit" );
+                }
+                if( _isUsedForRegulatoryReporting( OrigName ) )
+                {
+                    throw new CswDniException( CswEnumErrorType.Warning, Name.Text + " cannot be renamed because it's used for regulatory reporting.", "User attempted to rename " + Name.Text );
+                }
             }
         }
         public CswNbtNodePropScientific ConversionFactor { get { return ( _CswNbtNode.Properties[PropertyName.ConversionFactor] ); } }
