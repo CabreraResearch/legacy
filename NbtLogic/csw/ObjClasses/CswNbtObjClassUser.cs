@@ -348,7 +348,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
 
             //case 27793: Prevent non-adminsitrators from editing paswords, except their own
-            if( IsPasswordReadyOnly )
+            if( IsPasswordReadOnly )
             {
                 this.PasswordProperty.setReadOnly( true, false );
             }
@@ -363,12 +363,16 @@ namespace ChemSW.Nbt.ObjClasses
 
             _CswNbtObjClassDefault.triggerAfterPopulateProps();
 
-
+            //Case 31084: only an administrator can edit other users' profiles
+            if( ( null == _CswNbtResources.CurrentNbtUser ) || ( false == _CswNbtResources.CurrentNbtUser.IsAdministrator() && UserId != _CswNbtResources.CurrentNbtUser.UserId ) )
+            {
+                this.Node.setReadOnly( true, false );
+            }
         }
 
         //afterPopulateProps()
 
-        public bool IsPasswordReadyOnly
+        public bool IsPasswordReadOnly
         {
             get
             {
@@ -378,7 +382,7 @@ namespace ChemSW.Nbt.ObjClasses
 
             }//get
 
-        }//IsPasswordReadyOnly
+        }//IsPasswordReadOnly
 
         public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
         {
