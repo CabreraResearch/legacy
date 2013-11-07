@@ -2819,7 +2819,7 @@ namespace ChemSW.Nbt.WebPages
                             TableRow ViewSelectModeRow = makeEditPropTableRow( EditPropPlaceHolder );
                             ( (Literal) ViewSelectModeRow.Cells[0].Controls[0] ).Text = "Select Mode:";
                             DropDownList ViewSelectModeValue = new DropDownList();
-                            foreach( string ViewSelectModeName in Enum.GetNames( typeof( CswEnumNbtPropertySelectMode ) ) )
+                            foreach( string ViewSelectModeName in CswEnumNbtPropertySelectMode._All )
                             {
                                 if( ViewSelectModeName != CswEnumNbtPropertySelectMode.Blank.ToString() )
                                     ViewSelectModeValue.Items.Add( new ListItem( ViewSelectModeName, ViewSelectModeName ) );
