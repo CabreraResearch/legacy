@@ -462,6 +462,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                     } // if( FilterProp.FilterNodeTypePropId == Prop.FirstPropVersionId )
                 } // foreach( CswNbtMetaDataNodeTypeProp FilterProp in Tab.NodeTypePropsByDisplayOrder )
                 PropObj["hassubprops"] = HasSubProps;
+                PropObj["issaveprop"] = Prop.IsSaveProp;
             } // if( false == Node.Properties[Prop].Hidden )
         } // addProp()
 
