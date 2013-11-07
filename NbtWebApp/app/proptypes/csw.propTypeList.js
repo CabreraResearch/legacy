@@ -11,6 +11,7 @@
             'use strict';
             var cswPrivate = Csw.object();
             var comboBoxDefaultWidth = 150;
+            var emptyText = "Type here to search";
 
             cswPrivate.text = nodeProperty.propData.values.text;
             cswPrivate.value = nodeProperty.propData.values.value;
@@ -18,8 +19,6 @@
             cswPrivate.propid = nodeProperty.propData.id;
             cswPrivate.isRequired = nodeProperty.propData.required;
             cswPrivate.wasModified = nodeProperty.propData.wasmodified;
-            //cswPrivate.fieldtype = nodeProperty.propData.fieldtype;
-
             cswPrivate.table = nodeProperty.propDiv.table({ TableCssClass: 'cswInline' });
             cswPrivate.selectCell = cswPrivate.table.cell(1, 1);
             cswPrivate.validateCell = cswPrivate.table.cell(1, 2);
@@ -62,6 +61,30 @@
                 }
             };//setComboBoxValidityColor()
 
+            var initialValue = function () {
+                if ((Csw.isNullOrEmpty(cswPrivate.text) || Csw.isNullOrEmpty(cswPrivate.value)) && nodeProperty.propData.values.search) {
+                    return emptyText;
+                } else {
+                    if (Csw.isNullOrEmpty(cswPrivate.text)) {
+                        return cswPrivate.value;
+                    } else {
+                        return cswPrivate.text;
+                    }
+                }
+            };
+
+            var checkValidity = function (value) {
+                if (cswPrivate.isRequired) {
+                    if (Csw.isNullOrEmpty(value) || value === emptyText) {
+                        cswPrivate.checkBox.val(false);
+                    } else {
+                        cswPrivate.checkBox.val(true);
+                    }
+                    var valid = cswPrivate.checkBox.$.valid();
+                    onValidation(valid);
+                }
+            };
+
             if (nodeProperty.isReadOnly()) {
                 var span = cswPrivate.selectCell.span({ text: cswPrivate.text });
             } else {
@@ -81,39 +104,32 @@
                     store: cswPrivate.listOptionsStore,
                     queryMode: 'local',
                     queryDelay: 2000,
-                    value: cswPrivate.text || cswPrivate.value,
+                    value: initialValue(),
                     listConfig: {
                         width: 'auto'
                     },
-                    forceSelection: true,
+                    //forceSelection: true,
                     listeners: {
                         select: function (combo, records) {
                             var text = records[0].get('Text');
                             var val = records[0].get('Value');
 
-                            if (cswPrivate.isRequired) {
-                                if (Csw.isNullOrEmpty(val)) {
-                                    cswPrivate.checkBox.val(false);
-                                } else {
-                                    cswPrivate.checkBox.val(true);
-                                }
-                                var valid = cswPrivate.checkBox.$.valid();
-                                onValidation(valid);
-                            }
+                            checkValidity(val);
 
                             nodeProperty.broadcastPropChange({ text: text, val: val });
                         },
                         change: function (combo, newvalue) {
                             if (null != newvalue) {
                                 if (cswPrivate.isRequired) {
-
                                     // Is the newvalue an option in the list?
                                     var inlist = false;
-                                    cswPrivate.options.forEach(function (option) {
-                                        if (option.Text === newvalue) {
-                                            inlist = true;
-                                        }
-                                    });
+                                    if (cswPrivate.options) {
+                                        cswPrivate.options.forEach(function (option) {
+                                            if (option.Text === newvalue) {
+                                                inlist = true;
+                                            }
+                                        });
+                                    }
                                     cswPrivate.checkBox.val(false);
                                     if (false === Csw.isNullOrEmpty(newvalue)) {
                                         if (inlist) {
@@ -138,37 +154,30 @@
                 // Ext validation with JQuery, we will add a checkbox to the ComboBox, set it's state based on
                 // validity of the ComboBox value and validate the checkbox instead.
                 if (cswPrivate.isRequired) {
-                    var returnObj = Csw.validator(cswPrivate.validateCell.div(), cswPrivate.select, { cssOptions: { 'visibility': 'hidden', 'width': '20px' }, wasModified: cswPrivate.wasModified, onValidation: onValidation });
+                    
+                    var returnObj = Csw.validator(
+                        cswPrivate.validateCell.div(),
+                        cswPrivate.select,
+                        {
+                            wasModified: cswPrivate.wasModified,
+                            onValidation: onValidation,
+                            className: 'validateComboBox_' + cswPrivate.propid,
+                            isExtJsControl: true,
+                            emptyText: 'Type here to search',
+                            hiddenInputName: 'validationCtrl_' + cswPrivate.propid
+                        }
+                    );
                     cswPrivate.checkBox = returnObj.input;
-                }
 
-                /*
-                 * To search or not to search?
-                 *
-                 * If the server returns search === true, then the number of options exceeded
-                 * the relationshipoptionlimit configuration variable. When the number of
-                 * options exceeds this variable, the user is forced to search the options.
-                 *
-                 */
+                }//if (cswPrivate.isRequired)
+
+                // To search or not to search?
+                // If the server returns search === true, then the number of options exceeded
+                // the relationshipoptionlimit configuration variable. When the number of
+                // options exceeds this variable, the user is forced to search the options.
                 if (nodeProperty.propData.values.search === false) {
                     cswPrivate.listOptionsStore.loadData(cswPrivate.options);
-                    cswPrivate.select.setValue(cswPrivate.value); // Need to set the value here if comboBox 'forceSelection' is set to 'true'
                     setComboBoxSize(cswPrivate.options);
-
-                    // Since we are setting the value, we need to re-validate
-                    if (cswPrivate.isRequired) {
-
-                        if (Csw.isNullOrEmpty(cswPrivate.select.getValue())) {
-                            cswPrivate.checkBox.val(false);
-                        } else {
-                            cswPrivate.checkBox.val(true);
-                        }
-                        if (cswPrivate.wasModified) {
-                            var valid2 = cswPrivate.checkBox.$.valid();
-                            onValidation(valid2);
-                        }
-                    }
-
                 } else {
                     // Create a proxy to call the searchListOptions web service method
                     cswPrivate.proxy = new Ext.data.proxy.Ajax({
