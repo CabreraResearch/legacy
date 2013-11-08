@@ -81,6 +81,19 @@ namespace ChemSW.Nbt.ImportExport
                 DataTable BindingsDataTable = ExcelDataSet.Tables["Bindings$"];
                 DataTable RelationshipsDataTable = ExcelDataSet.Tables["Relationships$"];
 
+                Dictionary<string, Int32> DefIdsBySheetName = CswNbtImportDef.addDefinitionEntries( _CswNbtResources, ImportDefinitionName, OrderDataTable, null );
+                
+                //convert the sheetname column of the excel file into the corresponding importdefid
+                foreach ( DataTable Table in new DataTable[] {OrderDataTable, BindingsDataTable, RelationshipsDataTable} )
+                {
+                    Table.Columns.Add( "importdefid" );
+                    foreach( DataRow Row in Table.Rows )
+                    {
+                        Row["importdefid"] = DefIdsBySheetName[Row["sheetname"].ToString()];
+                    }
+                    Table.Columns.Remove( "sheetname" );
+                }
+                
                 storeDefinition( OrderDataTable, BindingsDataTable, RelationshipsDataTable, ImportDefinitionName );
             } // if( ExcelDataSet.Tables.Count == 3 )
             else
@@ -89,12 +102,11 @@ namespace ChemSW.Nbt.ImportExport
             }
         }
 
-        public void storeDefinition( DataTable OrderDataTable, DataTable BindingsDataTable, DataTable RelationshipsDataTable, string ImportDefinitionName, DataTable DefDataTable = null )
+        public void storeDefinition( DataTable OrderDataTable, DataTable BindingsDataTable, DataTable RelationshipsDataTable, string ImportDefinitionName )
         {
-            Dictionary<string, Int32> DefIdsBySheetName = CswNbtImportDef.addDefinitionEntries( _CswNbtResources, ImportDefinitionName, OrderDataTable, DefDataTable );
-            CswNbtImportDefOrder.addOrderEntries( _CswNbtResources, OrderDataTable, DefIdsBySheetName );
-            CswNbtImportDefBinding.addBindingEntries( _CswNbtResources, BindingsDataTable, DefIdsBySheetName );
-            CswNbtImportDefRelationship.addRelationshipEntries( _CswNbtResources, RelationshipsDataTable, DefIdsBySheetName );
+            CswNbtImportDefOrder.addOrderEntries( _CswNbtResources, OrderDataTable );
+            CswNbtImportDefBinding.addBindingEntries( _CswNbtResources, BindingsDataTable );
+            CswNbtImportDefRelationship.addRelationshipEntries( _CswNbtResources, RelationshipsDataTable );
 
         }
 

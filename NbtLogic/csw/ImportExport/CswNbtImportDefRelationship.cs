@@ -67,18 +67,18 @@ namespace ChemSW.Nbt.ImportExport
         /// <summary>
         /// Add new Relationship entries to a definition (for use by CswNbtImporter)
         /// </summary>
-        public static void addRelationshipEntries( CswNbtResources CswNbtResources, DataTable RelationshipsDataTable, Dictionary<string, Int32> DefIdsBySheetName )
+        public static void addRelationshipEntries( CswNbtResources CswNbtResources, DataTable RelationshipsDataTable )
         {
             CswTableUpdate importRelationshipsUpdate = CswNbtResources.makeCswTableUpdate( "storeDefinition_Relationships_update", CswNbtImportTables.ImportDefRelationships.TableName );
 
             foreach( DataRow RelRow in RelationshipsDataTable.Rows )
             {
 
-                            //set blank instances to min value
-                            if( RelRow["instance"] == DBNull.Value || String.IsNullOrEmpty( RelRow["instance"].ToString() ) )
-                            {
-                                RelRow["instance"] = Int32.MinValue;
-                            }
+                //set blank instances to min value
+                if( RelRow["instance"] == DBNull.Value || String.IsNullOrEmpty( RelRow["instance"].ToString() ) )
+                {
+                    RelRow["instance"] = Int32.MinValue;
+                }
 
                 string NodeTypeName = RelRow["nodetypename"].ToString();
                 string RelationshipName = RelRow["relationship"].ToString();

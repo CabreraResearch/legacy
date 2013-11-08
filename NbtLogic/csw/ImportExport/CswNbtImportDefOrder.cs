@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
 using ChemSW.Core;
 using ChemSW.DB;
@@ -63,7 +62,7 @@ namespace ChemSW.Nbt.ImportExport
         /// <summary>
         /// Add new Order entries to a definition (for use by CswNbtImporter)
         /// </summary>
-        public static void addOrderEntries( CswNbtResources CswNbtResources, DataTable OrderDataTable, Dictionary<string, Int32> DefIdsBySheetName )
+        public static void addOrderEntries( CswNbtResources CswNbtResources, DataTable OrderDataTable )
         {
             CswTableUpdate importOrderUpdate = CswNbtResources.makeCswTableUpdate( "CswNbtImportDefOrder_addOrderEntries_Update", CswNbtImportTables.ImportDefOrder.TableName );
             foreach( DataRow OrderRow in OrderDataTable.Rows )

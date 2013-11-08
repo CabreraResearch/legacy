@@ -130,7 +130,7 @@ namespace ChemSW.Nbt.ImportExport
         /// <summary>
         /// Add new Binding entries to a definition (for use by CswNbtImporter)
         /// </summary>
-        public static void addBindingEntries( CswNbtResources CswNbtResources, DataTable BindingsDataTable, Dictionary<string, Int32> DefIdsBySheetName )
+        public static void addBindingEntries( CswNbtResources CswNbtResources, DataTable BindingsDataTable)
         {
             CswTableUpdate importBindingsUpdate = CswNbtResources.makeCswTableUpdate( "storeDefinition_Bindings_update", CswNbtImportTables.ImportDefBindings.TableName );
             foreach( DataRow BindingRow in BindingsDataTable.Rows )
@@ -151,25 +151,25 @@ namespace ChemSW.Nbt.ImportExport
                 DestProp = DestNodeType.getNodeTypeProp( DestNTPName );
 
                 if( null == DestNodeType )
-                    {
+                {
                     throw new CswDniException( CswEnumErrorType.Error, "Error reading bindings", "Invalid destnodetype defined in 'Bindings' sheet: " + DestNTName );
                 }
                 else if( null == DestProp )
-                        {
+                {
                     throw new CswDniException( CswEnumErrorType.Error, "Error reading bindings", "Invalid destproperty defined in 'Bindings' sheet: " + BindingRow["destpropname"].ToString() + " (nodetype: " + DestNTName + ")" );
                 }
                 else
-                            {
-                                string DestSubFieldStr = BindingRow["destsubfield"].ToString();
-                                if( DestSubFieldStr != CswEnumNbtSubFieldName.Blob.ToString() )
-                                {
-                                    CswNbtSubField DestSubfield = DestProp.getFieldTypeRule().SubFields[(CswEnumNbtSubFieldName) BindingRow["destsubfield"].ToString()];
-                                    if( DestSubfield == null )
-                                    {
-                                        DestSubfield = DestProp.getFieldTypeRule().SubFields.Default;
-                                        DestSubFieldStr = DestSubfield.Name.ToString();
-                                    }
-                                }
+                {
+                    string DestSubFieldStr = BindingRow["destsubfield"].ToString();
+                    if( DestSubFieldStr != CswEnumNbtSubFieldName.Blob.ToString() )
+                    {
+                        CswNbtSubField DestSubfield = DestProp.getFieldTypeRule().SubFields[(CswEnumNbtSubFieldName) BindingRow["destsubfield"].ToString()];
+                        if( DestSubfield == null )
+                        {
+                            DestSubfield = DestProp.getFieldTypeRule().SubFields.Default;
+                            DestSubFieldStr = DestSubfield.Name.ToString();
+                        }
+                    }
                     BindingRow["destsubfield"] = DestSubFieldStr;
 
                 }// else -- (when DestNodeType and DestProp are defined)

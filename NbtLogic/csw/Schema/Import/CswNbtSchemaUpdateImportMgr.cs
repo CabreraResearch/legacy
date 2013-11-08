@@ -187,7 +187,7 @@ namespace ChemSW.Nbt.csw.Schema
                 if( false == AlreadyExists ) { importBinding( SourceTablePkColumnName, LegacyID, "" ); }
 
                 //Save the bindings in the DB
-                _NbtImporter.storeDefinition( _importOrderTable, _importBindingsTable, _importRelationshipsTable, DefinitionName, _importDefTable );
+                _NbtImporter.storeDefinition( _importOrderTable, _importBindingsTable, _importRelationshipsTable, DefinitionName );
 
                 //_populateImportQueueTable( WhereClause, UseView );
                 //_createTriggerOnImportTable();
