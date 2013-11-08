@@ -49,6 +49,7 @@ namespace ChemSW.Nbt.csw.Schema
         private DataTable _importBindingsTable;
         private DataTable _importRelationshipsTable;
 
+        private Dictionary<string, int> _SheetDefinitions; 
         private string _DestNodeTypeName;
         private string _SourceTableName;
         private string _ViewName;
@@ -77,7 +78,7 @@ namespace ChemSW.Nbt.csw.Schema
 
         private CswCommaDelimitedString _SourceColumns;
 
-        public CswNbtSchemaUpdateImportMgr( CswNbtSchemaModTrnsctn SchemaModTrnsctn, string SourceTableName, string DestNodeTypeName, string ViewName = "", string SourceColumn = "", string Sheet = "", string CafDbLink = null, Int32 ImportOrder = 1 )
+        public CswNbtSchemaUpdateImportMgr( CswNbtSchemaModTrnsctn SchemaModTrnsctn, string SourceTableName, string DestNodeTypeName, string ViewName = "", string SourceColumn = "", string Sheet = "", string CafDbLink = null, Int32 ImportOrder = 1, string DefinitionName = CswScheduleLogicNbtCAFImport.DefinitionName )
         {
             string ExceptionText = string.Empty;
             _CAFDbLink = CafDbLink ?? CswScheduleLogicNbtCAFImport.CAFDbLink;
@@ -101,6 +102,8 @@ namespace ChemSW.Nbt.csw.Schema
 
                 _importOrder( _ImportOrder, _DestNodeTypeName );
                 _importDef();
+
+                _SheetDefinitions = SchemaModTrnsctn.createImportDefinitionEntries( DefinitionName, _importOrderTable, _importDefTable );
             }
             else
             {
@@ -108,7 +111,7 @@ namespace ChemSW.Nbt.csw.Schema
             }
         }//ctor
 
-        public CswNbtSchemaUpdateImportMgr( CswNbtSchemaModTrnsctn SchemaModTrnsctn, string SourceTableName, List<Tuple<string, Int32>> DestNodeTypesAndInstances, string ViewName = "", string SourceColumn = "", string Sheet = "", string CafDbLink = null )
+        public CswNbtSchemaUpdateImportMgr( CswNbtSchemaModTrnsctn SchemaModTrnsctn, string SourceTableName, List<Tuple<string, Int32>> DestNodeTypesAndInstances, string ViewName = "", string SourceColumn = "", string Sheet = "", string CafDbLink = null, string DefinitionName = CswScheduleLogicNbtCAFImport.DefinitionName )
         {
             string ExceptionText = string.Empty;
             _CAFDbLink = CafDbLink ?? CswScheduleLogicNbtCAFImport.CAFDbLink;
@@ -134,6 +137,8 @@ namespace ChemSW.Nbt.csw.Schema
                 }
 
                 _importDef();
+
+                _SheetDefinitions = SchemaModTrnsctn.createImportDefinitionEntries( DefinitionName, _importOrderTable, _importDefTable );
             }
             else
             {
@@ -228,12 +233,12 @@ namespace ChemSW.Nbt.csw.Schema
             set { _SourceTablePkColumnName = value; }
         }
 
-        public void finalize( string DefinitionName = null )
+        public void finalize(string DefinitionName = null)
         {
             if( null != _NbtImporter )
             {
-                DefinitionName = DefinitionName ?? CswScheduleLogicNbtCAFImport.DefinitionName;
 
+                DefinitionName = DefinitionName ?? CswScheduleLogicNbtCAFImport.DefinitionName;
                 //Add the Legacy ID before storing the definition
                 // We check to see if someone already added the Legacy Id
                 bool AlreadyExists = _importBindingsTable.Rows.Cast<DataRow>().Any( Row => Row["destpropname"].ToString() == LegacyID );
