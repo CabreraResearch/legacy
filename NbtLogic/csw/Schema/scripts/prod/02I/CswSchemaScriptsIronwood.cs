@@ -12,7 +12,8 @@ namespace ChemSW.Nbt.Schema
             return new Collection<CswUpdateSchemaTo>()
                 {
                     // new CswUpdateDDL_02I_CaseXXXXX()
-                    new CswUpdateDDL_02I_Case31057()
+                    new CswUpdateDDL_02I_Case31057(),
+                    new CswUpdateDDL_02I_Case31061A()
                 };
         } // _DDLScripts()
 
@@ -21,7 +22,8 @@ namespace ChemSW.Nbt.Schema
             return new Collection<CswUpdateSchemaTo>()
                 {
                     // new CswUpdateMetaData_02I_CaseXXXXX()
-                    new CswUpdateMetaData_02I_Case31072()
+                    new CswUpdateMetaData_02I_Case31072(),
+                    new CswUpdateMetaData_02I_Case31114A()
                 };
         } // _MetaDataScripts()
 
@@ -31,8 +33,9 @@ namespace ChemSW.Nbt.Schema
                 {
                     // new CswUpdateSchema_02I_CaseXXXXX()
                     new CswUpdateSchema_02I_Case31040(),
-                    new CswUpdateSchema_02I_Case31061(),
                     new CswUpdateSchema_02I_Case31072(),
+                    new CswUpdateSchema_02I_Case31061B(),
+                    new CswUpdateSchema_02I_Case31114B(),
                     new CswUpdateSchema_02I_Case31041(),
                 };
         } // _SchemaScripts()

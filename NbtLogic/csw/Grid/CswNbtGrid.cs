@@ -6,7 +6,6 @@ using ChemSW.Core;
 using ChemSW.Grid.ExtJs;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
-using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 using ChemSW.Nbt.ServiceDrivers;
@@ -288,7 +287,8 @@ namespace ChemSW.Nbt.Grid
                             }
                             break;
                         case CswEnumNbtFieldType.Link:
-                            string Href = CswNbtNodePropLink.GetFullURL( MetaDataProp.Attribute1, Prop.Field2, MetaDataProp.Attribute2 );
+                            
+                            string Href = CswNbtNodePropLink.GetFullURL( MetaDataProp.Attribute1, Prop.Field1_Big, MetaDataProp.Attribute2 );
                             if( false == string.IsNullOrEmpty( Href ) )
                             {
                                 newValue = "<a target=\"blank\" href=\"" + Href + "\">" + ( oldValue ?? "Link" ) + "</a>";

@@ -27,7 +27,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             TextSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Null );
             SubFields.add( TextSubField, true );
 
-            HrefSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.ClobData, CswEnumNbtSubFieldName.Href );
+            HrefSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1_Big, CswEnumNbtSubFieldName.Href );
             HrefSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Contains );
             HrefSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotContains );
             HrefSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Equals );

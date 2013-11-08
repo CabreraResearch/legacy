@@ -20,6 +20,7 @@ namespace ChemSW.Nbt
         private static Dictionary<string, string> _Enums = new Dictionary<string, string>( StringComparer.OrdinalIgnoreCase )
         {
             {C3                       , C3},
+            {ChemWatch,                 ChemWatch},
             {CISPro                   , CISPro},
             {Containers               , Containers},
             {Dev                      , Dev},
@@ -116,6 +117,10 @@ namespace ChemSW.Nbt
         /// ChemCatCentral
         /// </summary>
         public const string C3 = "C3";
+        /// <summary>
+        /// ChemWatch
+        /// </summary>
+        public const string ChemWatch = "ChemWatch";
         /// <summary>
         /// Containers
         /// </summary>

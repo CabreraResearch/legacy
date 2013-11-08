@@ -10,7 +10,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update
     /// </summary>
-    public class CswUpdateSchema_02I_Case31061: CswUpdateSchemaTo
+    public class CswUpdateSchema_02I_Case31061B: CswUpdateSchemaTo
     {
         public override CswEnumDeveloper Author
         {
@@ -24,7 +24,12 @@ namespace ChemSW.Nbt.Schema
 
         public override string Title
         {
-            get { return "Move Link props hrefs from Field_2 to ClobData"; }
+            get { return "Move Link props hrefs from field2 to field1_big"; }
+        }
+
+        public override string AppendToScriptName()
+        {
+            return "B";
         }
 
         public override void update()
@@ -36,11 +41,11 @@ namespace ChemSW.Nbt.Schema
                          "  where ntp.fieldtypeid = " + LinkFieldType.FieldTypeId + " and jnp.field2 is not null)";
 
             CswTableUpdate linkTU = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "31057.UpdateLinkPropsHrefCol", "jct_nodes_props" );
-            DataTable jct_nodes_props = linkTU.getTable( new CswCommaDelimitedString() { "clobdata,field2" }, string.Empty, Int32.MinValue, where, false );
+            DataTable jct_nodes_props = linkTU.getTable( new CswCommaDelimitedString() { "field1_big,field2" }, string.Empty, Int32.MinValue, where, false );
 
             foreach( DataRow Row in jct_nodes_props.Rows )
             {
-                Row["clobdata"] = Row["field2"];
+                Row["field1_big"] = Row["field2"];
                 Row["field2"] = string.Empty;
             }
             linkTU.update( jct_nodes_props );
