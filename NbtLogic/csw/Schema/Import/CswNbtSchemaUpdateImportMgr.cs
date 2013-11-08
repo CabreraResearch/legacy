@@ -53,37 +53,15 @@ namespace ChemSW.Nbt.csw.Schema
         private string _DestNodeTypeName;
         private string _SourceTableName;
         private string _ViewName;
-        private string _SheetName;
-        private string SheetName
-        {
-            get
-            {
-                string Ret;
-                if( string.IsNullOrEmpty( _SheetName ) )
-                {
-                    Ret = string.IsNullOrEmpty( _ViewName ) ? _SourceTableName : _ViewName;
-                }
-                else
-                {
-                    Ret = _SheetName;
-                }
-                return Ret.ToLower();
-            }
-            set { _SheetName = value; }
-        }
-        private Int32 _ImportOrder;
 
         private string _CAFDbLink;
         private CswNbtImporter _NbtImporter;
 
         private CswCommaDelimitedString _SourceColumns;
 
-        public CswNbtSchemaUpdateImportMgr( CswNbtSchemaModTrnsctn SchemaModTrnsctn, string SourceTableName, string DestNodeTypeName, string ViewName = "", string SourceColumn = "", string Sheet = "", string CafDbLink = null, Int32 ImportOrder = 1, string DefinitionName = CswScheduleLogicNbtCAFImport.DefinitionName )
+        public CswNbtSchemaUpdateImportMgr( CswNbtSchemaModTrnsctn SchemaModTrnsctn, string SourceTableName = "", string DestNodeTypeName = "", string ViewName = "", string SourceColumn = "", string CafDbLink = null, string DefinitionName = CswScheduleLogicNbtCAFImport.DefinitionName )
         {
-            string ExceptionText = string.Empty;
             _CAFDbLink = CafDbLink ?? CswScheduleLogicNbtCAFImport.CAFDbLink;
-            if( SchemaModTrnsctn.IsDbLinkConnectionHealthy( _CAFDbLink, ref ExceptionText ) )
-            {
                 _NbtImporter = SchemaModTrnsctn.makeCswNbtImporter();
                 this.SchemaModTrnsctn = SchemaModTrnsctn;
 
@@ -95,75 +73,31 @@ namespace ChemSW.Nbt.csw.Schema
                 _SourceTableName = SourceTableName.ToLower();
                 _DestNodeTypeName = DestNodeTypeName.ToLower();
                 _ViewName = ViewName.ToLower();
-                SheetName = Sheet.ToLower();
-                _ImportOrder = ImportOrder;
                 _SourceColumns = new CswCommaDelimitedString();
                 SourceTablePkColumnName = SourceColumn.ToLower();
 
-                _importOrder( _ImportOrder, _DestNodeTypeName );
-                _importDef();
+            _SheetDefinitions = SchemaModTrnsctn.createImportDefinitionEntries( DefinitionName, _importOrderTable, _importDefTable );
 
-                _SheetDefinitions = SchemaModTrnsctn.createImportDefinitionEntries( DefinitionName, _importOrderTable, _importDefTable );
-            }
-            else
-            {
-                SchemaModTrnsctn.logError( ExceptionText );
-            }
         }//ctor
 
-        public CswNbtSchemaUpdateImportMgr( CswNbtSchemaModTrnsctn SchemaModTrnsctn, string SourceTableName, List<Tuple<string, Int32>> DestNodeTypesAndInstances, string ViewName = "", string SourceColumn = "", string Sheet = "", string CafDbLink = null, string DefinitionName = CswScheduleLogicNbtCAFImport.DefinitionName )
-        {
-            string ExceptionText = string.Empty;
-            _CAFDbLink = CafDbLink ?? CswScheduleLogicNbtCAFImport.CAFDbLink;
-            if( SchemaModTrnsctn.IsDbLinkConnectionHealthy( _CAFDbLink, ref ExceptionText ) )
-            {
-                _NbtImporter = SchemaModTrnsctn.makeCswNbtImporter();
-                this.SchemaModTrnsctn = SchemaModTrnsctn;
 
-                _importDefTable = SchemaModTrnsctn.makeCswTableSelect( "Import_getDefs", "import_def" ).getTable();
-                _importOrderTable = SchemaModTrnsctn.makeCswTableSelect( "Import_getOrder", "import_def_order" ).getTable();
-                _importBindingsTable = SchemaModTrnsctn.makeCswTableSelect( "Import_getBindings", "import_def_bindings" ).getTable();
-                _importRelationshipsTable = SchemaModTrnsctn.makeCswTableSelect( "Import_getRelationships", "import_def_relationships" ).getTable();
-
-                _SourceTableName = SourceTableName.ToLower();
-                _ViewName = ViewName.ToLower();
-                SheetName = Sheet.ToLower();
-                _SourceColumns = new CswCommaDelimitedString();
-                SourceTablePkColumnName = SourceColumn.ToLower();
-
-                for( int i = 0; i < DestNodeTypesAndInstances.Count; i++ )
-                {
-                    _importOrder( i + 1, DestNodeTypesAndInstances[i].Item1, DestNodeTypesAndInstances[i].Item2 );
-                }
-
-                _importDef();
-
-                _SheetDefinitions = SchemaModTrnsctn.createImportDefinitionEntries( DefinitionName, _importOrderTable, _importDefTable );
-            }
-            else
-            {
-                SchemaModTrnsctn.logError( ExceptionText );
-            }
-        }
-
-        private void _importDef()
+        public void importDef(string DefinitionName, int SheetOrder, string SheetName = null)
         {
             DataRow row = _importDefTable.NewRow();
-            row["sheetname"] = SheetName;
-            row["sheetorder"] = _SheetOrder[SheetName];
-            row["tablename"] = _SourceTableName;
-            row["viewname"] = _ViewName;
-            row["pkcolumnname"] = SourceTablePkColumnName;
+            row["sheetname"] = SheetName ?? _ViewName ?? _SourceTableName;
+            row["sheetorder"] = SheetOrder;
+            row["definitionname"] = DefinitionName;
             _importDefTable.Rows.Add( row );
         }
 
-        private void _importOrder( Int32 Order, string NodeTypeName = null, Int32 Instance = Int32.MinValue )
+        public void importOrder( Int32 Order, string NodeTypeName = null, Int32 Instance = Int32.MinValue, string SheetName = null )
         {
             NodeTypeName = NodeTypeName ?? _DestNodeTypeName;
-            if( CswAll.AreStrings( _SourceTableName, NodeTypeName ) )
+            SheetName = SheetName ?? _ViewName ?? _SourceTableName;
+            if( CswAll.AreStrings( SheetName, NodeTypeName ) )
             {
                 DataRow row = _importOrderTable.NewRow();
-                row["sheetname"] = SheetName;
+                row["importdefid"] = _SheetDefinitions[SheetName];
                 row["nodetypename"] = NodeTypeName;
                 row["importorder"] = Order;
                 row["instance"] = Instance;
@@ -175,14 +109,14 @@ namespace ChemSW.Nbt.csw.Schema
         {
             if( null != _NbtImporter )
             {
-                SheetName = SheetName ?? this.SheetName;
+                SheetName = SheetName ?? _ViewName ?? _SourceTableName;
                 DestNodeTypeName = DestNodeTypeName ?? _DestNodeTypeName;
                 if( CswAll.AreStrings( SheetName, DestNodeTypeName, DestPropertyName, SourceColumnName ) )
                 {
                     _SourceColumns.Add( SourceColumnName, AllowNullOrEmpty: false, IsUnique: true );
 
                     DataRow row = _importBindingsTable.NewRow();
-                    row["sheetname"] = SheetName;
+                    row["importdefid"] = _SheetDefinitions[SheetName];
                     row["destnodetypename"] = DestNodeTypeName;
                     row["destpropname"] = DestPropertyName;
                     row["destsubfield"] = DestSubFieldName;
@@ -203,7 +137,7 @@ namespace ChemSW.Nbt.csw.Schema
                 if( CswAll.AreStrings( SheetName, NodetypeName, RelationshipPropName ) )
                 {
                     DataRow row = _importRelationshipsTable.NewRow();
-                    row["sheetname"] = SheetName;
+                    row["importdefid"] = _SheetDefinitions[SheetName];
                     row["nodetypename"] = NodetypeName;
                     row["relationship"] = RelationshipPropName;
                     row["instance"] = Instance;
@@ -225,7 +159,15 @@ namespace ChemSW.Nbt.csw.Schema
                 }
                 else if( null != _NbtImporter )
                 {
+                    string ExceptionText = "";
+                    if( SchemaModTrnsctn.IsDbLinkConnectionHealthy( _CAFDbLink, ref ExceptionText ) )
+                    {
                     Ret = _NbtImporter.getRemoteDataDictionaryPkColumnName( _SourceTableName, _CAFDbLink );
+                }
+                    else
+                    {
+                        SchemaModTrnsctn.logError( ExceptionText );
+                    }
                 }
 
                 return Ret;
