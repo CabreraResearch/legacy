@@ -134,7 +134,7 @@ namespace ChemSW.Nbt.ImportExport
         {
             Dictionary<string, Int32> ret = new Dictionary<string, Int32>();
             CswTableUpdate importDefinitionUpdate = CswNbtResources.makeCswTableUpdate( "CswNbtImportDef_addDefinitionEntries_Update", CswNbtImportTables.ImportDef.TableName );
-            DataTable importDefinitionTable = importDefinitionUpdate.getEmptyTable();
+            DataTable importDefinitionTable = importDefinitionUpdate.getTable();
             Int32 i = 1;
 
             // First we get the sheet and sheetorder
@@ -159,16 +159,25 @@ namespace ChemSW.Nbt.ImportExport
                 if( false == string.IsNullOrEmpty( SheetName ) &&
                     false == ret.ContainsKey( SheetName ) )
                 {
-                    DataRow defrow = importDefinitionTable.NewRow();
-                    defrow[CswNbtImportTables.ImportDef.definitionname] = ImportDefinitionName;
-                    defrow[CswNbtImportTables.ImportDef.sheetname] = SheetName;
-                    defrow[CswNbtImportTables.ImportDef.sheetorder] = Int32.MinValue != SheetOrder ? SheetOrder : i;
-                    defrow["tablename"] = TableName;
-                    defrow["viewname"] = ViewName;
-                    defrow["pkcolumnname"] = PKColumn;
-                    i++;
-                    importDefinitionTable.Rows.Add( defrow );
-                    ret.Add( SheetName, CswConvert.ToInt32( defrow[CswNbtImportTables.ImportDef.PkColumnName] ) );
+
+                    DataRow[] ExistingRows = importDefinitionTable.Select( "sheetname = '" + SheetName + "' and definitionname = '" + ImportDefinitionName + "'" );
+                    if( ExistingRows.Length > 0 )
+                    {
+                        ret.Add( SheetName, CswConvert.ToInt32( ExistingRows[0][CswNbtImportTables.ImportDef.PkColumnName] ) );
+                    }
+                    else
+                    {
+                        DataRow defrow = importDefinitionTable.NewRow();
+                        defrow[CswNbtImportTables.ImportDef.definitionname] = ImportDefinitionName;
+                        defrow[CswNbtImportTables.ImportDef.sheetname] = SheetName;
+                        defrow[CswNbtImportTables.ImportDef.sheetorder] = Int32.MinValue != SheetOrder ? SheetOrder : i;
+                        defrow["tablename"] = TableName;
+                        defrow["viewname"] = ViewName;
+                        defrow["pkcolumnname"] = PKColumn;
+                        i++;
+                        importDefinitionTable.Rows.Add( defrow );
+                        ret.Add( SheetName, CswConvert.ToInt32( defrow[CswNbtImportTables.ImportDef.PkColumnName] ) );
+                    }
                 }
             } // foreach
             importDefinitionUpdate.update( importDefinitionTable );
