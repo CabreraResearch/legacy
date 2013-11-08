@@ -70,21 +70,9 @@ namespace ChemSW.Nbt.ImportExport
         public static void addRelationshipEntries( CswNbtResources CswNbtResources, DataTable RelationshipsDataTable, Dictionary<string, Int32> DefIdsBySheetName )
         {
             CswTableUpdate importRelationshipsUpdate = CswNbtResources.makeCswTableUpdate( "storeDefinition_Relationships_update", CswNbtImportTables.ImportDefRelationships.TableName );
-            DataTable importRelationshipsTable = importRelationshipsUpdate.getEmptyTable();
 
             foreach( DataRow RelRow in RelationshipsDataTable.Rows )
             {
-                string SheetName = RelRow["sheetname"].ToString();
-                if( false == string.IsNullOrEmpty( SheetName ) )
-                {
-                    string NodeTypeName = RelRow["nodetypename"].ToString();
-                    CswNbtMetaDataNodeType NodeType = CswNbtResources.MetaData.getNodeType( NodeTypeName );
-                    if( null != NodeType )
-                    {
-                        string RelationshipName = RelRow["relationship"].ToString();
-                        CswNbtMetaDataNodeTypeProp Relationship = NodeType.getNodeTypeProp( RelationshipName );
-                        if( null != Relationship )
-                        {
 
                             //set blank instances to min value
                             if( RelRow["instance"] == DBNull.Value || String.IsNullOrEmpty( RelRow["instance"].ToString() ) )
@@ -92,31 +80,23 @@ namespace ChemSW.Nbt.ImportExport
                                 RelRow["instance"] = Int32.MinValue;
                             }
 
-
-                            DataRow row = importRelationshipsTable.NewRow();
-                            row[CswNbtImportTables.ImportDefRelationships.importdefid] = DefIdsBySheetName[SheetName];
-                            row[CswNbtImportTables.ImportDefRelationships.nodetypename] = NodeTypeName;
-                            row[CswNbtImportTables.ImportDefRelationships.relationship] = RelationshipName;
-                            row[CswNbtImportTables.ImportDefRelationships.instance] = CswConvert.ToDbVal( RelRow["instance"].ToString() );
-                            if( RelRow.Table.Columns.Contains( "sourcerelcolumnname" ) )
+                string NodeTypeName = RelRow["nodetypename"].ToString();
+                string RelationshipName = RelRow["relationship"].ToString();
+                CswNbtMetaDataNodeType NodeType = CswNbtResources.MetaData.getNodeType( NodeTypeName );
+                CswNbtMetaDataNodeTypeProp Relationship = NodeType.getNodeTypeProp( RelationshipName );
+                if( null == NodeType )
                             {
-                                row[CswNbtImportTables.ImportDefRelationships.sourcerelcolumnname] = RelRow["sourcerelcolumnname"].ToString();
+                    throw new CswDniException( CswEnumErrorType.Error, "Error reading bindings", "Invalid NodeType defined in 'Relationships' sheet: " + NodeTypeName );
                             }
-                            importRelationshipsTable.Rows.Add( row );
-
-                        }
-                        else
+                else if( null == Relationship )
                         {
                             throw new CswDniException( CswEnumErrorType.Error, "Error reading bindings", "Invalid Relationship defined in 'Relationships' sheet: " + RelRow["relationship"].ToString() + " (nodetype: " + NodeTypeName + ")" );
                         }
-                    }
-                    else
-                    {
-                        throw new CswDniException( CswEnumErrorType.Error, "Error reading bindings", "Invalid NodeType defined in 'Relationships' sheet: " + NodeTypeName );
-                    }
-                }
+
             } // foreach( DataRow RelRow in RelationshipsDataTable.Rows )
-            importRelationshipsUpdate.update( importRelationshipsTable );
+
+            importRelationshipsUpdate.update( RelationshipsDataTable );
+
         } // addRelationshipEntries()
 
     } // class CswNbt2DRowRelationship
