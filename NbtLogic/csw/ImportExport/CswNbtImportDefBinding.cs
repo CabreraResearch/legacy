@@ -125,25 +125,7 @@ namespace ChemSW.Nbt.ImportExport
             }
         }
 
-        /// <summary>
-        /// Get a DataTable to fill out, for use with addBindingEntries()
-        /// </summary>
-        /// <returns></returns>
-        public static DataTable getDataTableForNewBindingEntries()
-        {
-            DataTable Table = new DataTable();
-            Table.Columns.Add( "sheetname" );
-            Table.Columns.Add( "destnodetypename" );
-            Table.Columns.Add( "destpropname" );
-            Table.Columns.Add( "destsubfield" );
-            Table.Columns.Add( "sourcecolumnname" );
-            Table.Columns.Add( "instance" );
-            Table.Columns.Add( "clobtablename" );
-            Table.Columns.Add( "blobtablename" );
-            Table.Columns.Add( "lobdatapkcoloverride" );
-            return Table;
-        }
-
+        
 
         /// <summary>
         /// Add new Binding entries to a definition (for use by CswNbtImporter)

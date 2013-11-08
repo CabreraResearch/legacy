@@ -87,10 +87,10 @@ namespace ChemSW.Nbt.csw.Schema
                 _NbtImporter = SchemaModTrnsctn.makeCswNbtImporter();
                 this.SchemaModTrnsctn = SchemaModTrnsctn;
 
-                _importDefTable = CswNbtImportDef.getDataTableForNewOrderEntries();
-                _importOrderTable = CswNbtImportDefOrder.getDataTableForNewOrderEntries();
-                _importBindingsTable = CswNbtImportDefBinding.getDataTableForNewBindingEntries();
-                _importRelationshipsTable = CswNbtImportDefRelationship.getDataTableForNewRelationshipEntries();
+                _importDefTable = SchemaModTrnsctn.makeCswTableSelect( "Import_getDefs", "import_def" ).getTable();
+                _importOrderTable = SchemaModTrnsctn.makeCswTableSelect( "Import_getOrder", "import_def_order" ).getTable();
+                _importBindingsTable = SchemaModTrnsctn.makeCswTableSelect( "Import_getBindings", "import_def_bindings" ).getTable();
+                _importRelationshipsTable = SchemaModTrnsctn.makeCswTableSelect( "Import_getRelationships", "import_def_relationships" ).getTable();
 
                 _SourceTableName = SourceTableName.ToLower();
                 _DestNodeTypeName = DestNodeTypeName.ToLower();
@@ -120,10 +120,10 @@ namespace ChemSW.Nbt.csw.Schema
                 _NbtImporter = SchemaModTrnsctn.makeCswNbtImporter();
                 this.SchemaModTrnsctn = SchemaModTrnsctn;
 
-                _importDefTable = CswNbtImportDef.getDataTableForNewOrderEntries();
-                _importOrderTable = CswNbtImportDefOrder.getDataTableForNewOrderEntries();
-                _importBindingsTable = CswNbtImportDefBinding.getDataTableForNewBindingEntries();
-                _importRelationshipsTable = CswNbtImportDefRelationship.getDataTableForNewRelationshipEntries();
+                _importDefTable = SchemaModTrnsctn.makeCswTableSelect( "Import_getDefs", "import_def" ).getTable();
+                _importOrderTable = SchemaModTrnsctn.makeCswTableSelect( "Import_getOrder", "import_def_order" ).getTable();
+                _importBindingsTable = SchemaModTrnsctn.makeCswTableSelect( "Import_getBindings", "import_def_bindings" ).getTable();
+                _importRelationshipsTable = SchemaModTrnsctn.makeCswTableSelect( "Import_getRelationships", "import_def_relationships" ).getTable();
 
                 _SourceTableName = SourceTableName.ToLower();
                 _ViewName = ViewName.ToLower();

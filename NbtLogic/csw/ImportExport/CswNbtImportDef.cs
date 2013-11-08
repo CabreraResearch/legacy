@@ -85,16 +85,7 @@ namespace ChemSW.Nbt.ImportExport
         public SortedList<Int32, CswNbtImportDefOrder> ImportOrder = new SortedList<int, CswNbtImportDefOrder>();
         public Collection<CswNbtImportDefRelationship> RowRelationships = new Collection<CswNbtImportDefRelationship>();
 
-        public static DataTable getDataTableForNewOrderEntries()
-        {
-            DataTable Table = new DataTable();
-            Table.Columns.Add( "sheetname" );
-            Table.Columns.Add( "sheetorder" );
-            Table.Columns.Add( "tablename" );
-            Table.Columns.Add( "viewname" );
-            Table.Columns.Add( "pkcolumnname" );
-            return Table;
-        }
+       
 
         /// <summary>
         /// Loads import definition bindings from the database
