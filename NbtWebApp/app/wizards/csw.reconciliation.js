@@ -179,7 +179,8 @@
                     cswPrivate.state.LocationName = locationControl.selectedName();
                     cswPrivate.toggleButton(cswPrivate.buttons.next, false === Csw.isNullOrEmpty(cswPrivate.state.LocationId));
                     //Pending Actions
-                    var pendingActionLabel = locationDatesTable.cell(rowNum, 3).span({ text: 'Pending Actions:' });
+                    var pendingText = 'Prior reconciliation actions still pending for this scope: ';
+                    var pendingActionLabel = locationDatesTable.cell(rowNum, 3).span({ text: pendingText });
                     var getPendingChangesCount = function () {
                         if (false === Csw.isNullOrEmpty(cswPrivate.state.LocationId)) {
                             Csw.ajaxWcf.post({
@@ -187,7 +188,7 @@
                                 data: cswPrivate.state,
                                 success: function (ajaxdata) {
                                     var count = ajaxdata.OutstandingActionsCount;
-                                    pendingActionLabel.text('Pending Actions: ' + count);
+                                    pendingActionLabel.text(pendingText + count);
                                 }
                             });
                         }
