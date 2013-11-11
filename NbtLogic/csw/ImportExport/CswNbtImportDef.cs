@@ -121,7 +121,7 @@ namespace ChemSW.Nbt.ImportExport
         } // _loadBindings()
 
 
-        public static Dictionary<string, Int32> addDefinitionEntries( CswNbtResources CswNbtResources, string ImportDefinitionName, DataTable OrderDataTable, DataTable DefDataTable )
+        public static Dictionary<string, Int32> addDefinitionEntriesFromExcel( CswNbtResources CswNbtResources, string ImportDefinitionName, DataTable OrderDataTable, DataTable DefDataTable )
         {
             Dictionary<string, Int32> ret = new Dictionary<string, Int32>();
             CswTableUpdate importDefinitionUpdate = CswNbtResources.makeCswTableUpdate( "CswNbtImportDef_addDefinitionEntries_Update", CswNbtImportTables.ImportDef.TableName );
@@ -164,9 +164,25 @@ namespace ChemSW.Nbt.ImportExport
             } // foreach
             importDefinitionUpdate.update( importDefinitionTable );
             return ret;
+        } // _addDefinitionEntriesFromExcel();
+
+        public static Dictionary<string, Int32> addDefinitionEntries( CswNbtResources CswNbtResources, string ImportDefinitionName, DataTable DefDataTable )
+        {
+            Dictionary<string, Int32> ret = new Dictionary<string, Int32>();
+            CswTableUpdate importDefinitionUpdate = CswNbtResources.makeCswTableUpdate( "CswNbtImportDef_addDefinitionEntries_Update", CswNbtImportTables.ImportDef.TableName );
+            importDefinitionUpdate.update( DefDataTable );
+
+            CswTableSelect importDefSelect = CswNbtResources.makeCswTableSelect( "CswNbtImportDef_addDefinitionEntries_Select", CswNbtImportTables.ImportDef.TableName );
+
+            DataTable importDefTable = importDefSelect.getTable();
+
+            foreach( DataRow DefRow in importDefTable.Rows )
+            {
+                ret.Add( DefRow["sheetname"].ToString(), Convert.ToInt32(DefRow["importdefid"]) );
+            }
+
+            return ret;
         } // _addDefinitionEntries();
-
-
 
     } // class CswNbtImportDef
 } // namespace

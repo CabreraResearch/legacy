@@ -81,7 +81,7 @@ namespace ChemSW.Nbt.ImportExport
                 DataTable BindingsDataTable = ExcelDataSet.Tables["Bindings$"];
                 DataTable RelationshipsDataTable = ExcelDataSet.Tables["Relationships$"];
 
-                Dictionary<string, Int32> DefIdsBySheetName = CswNbtImportDef.addDefinitionEntries( _CswNbtResources, ImportDefinitionName, OrderDataTable, null );
+                Dictionary<string, Int32> DefIdsBySheetName = CswNbtImportDef.addDefinitionEntriesFromExcel( _CswNbtResources, ImportDefinitionName, OrderDataTable, null );
                 
                 //convert the sheetname column of the excel file into the corresponding importdefid
                 foreach ( DataTable Table in new DataTable[] {OrderDataTable, BindingsDataTable, RelationshipsDataTable} )
@@ -94,7 +94,7 @@ namespace ChemSW.Nbt.ImportExport
                     Table.Columns.Remove( "sheetname" );
                 }
                 
-                storeDefinition( OrderDataTable, BindingsDataTable, RelationshipsDataTable, ImportDefinitionName );
+                storeDefinition( OrderDataTable, BindingsDataTable, RelationshipsDataTable);
             } // if( ExcelDataSet.Tables.Count == 3 )
             else
             {
@@ -102,7 +102,7 @@ namespace ChemSW.Nbt.ImportExport
             }
         }
 
-        public void storeDefinition( DataTable OrderDataTable, DataTable BindingsDataTable, DataTable RelationshipsDataTable, string ImportDefinitionName )
+        public void storeDefinition( DataTable OrderDataTable, DataTable BindingsDataTable, DataTable RelationshipsDataTable )
         {
             CswNbtImportDefOrder.addOrderEntries( _CswNbtResources, OrderDataTable );
             CswNbtImportDefBinding.addBindingEntries( _CswNbtResources, BindingsDataTable );
