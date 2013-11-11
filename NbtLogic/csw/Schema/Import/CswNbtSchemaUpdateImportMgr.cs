@@ -90,9 +90,12 @@ namespace ChemSW.Nbt.csw.Schema
             _importDefTable.Rows.Add( row );
         }
 
-        public void importOrder( Int32 Order, string NodeTypeName = null, Int32 Instance = Int32.MinValue, string SheetName = null )
+        public void importOrder( Int32 Order, string NodeTypeName = null, Int32 Instance = Int32.MinValue, string SheetName = null, string TableName = null, string ViewName = null, string PkColumnName = null )
         {
             NodeTypeName = NodeTypeName ?? _DestNodeTypeName;
+            TableName = TableName ?? _SourceTableName;
+            ViewName = ViewName ?? _ViewName;
+            PkColumnName = PkColumnName ?? _SourceTablePkColumnName;
             SheetName = SheetName ?? _ViewName ?? _SourceTableName;
             if( CswAll.AreStrings( SheetName, NodeTypeName ) )
             {
@@ -101,6 +104,9 @@ namespace ChemSW.Nbt.csw.Schema
                 row["nodetypename"] = NodeTypeName;
                 row["importorder"] = Order;
                 row["instance"] = Instance;
+                row["tablename"] = TableName;
+                row["viewname"] = ViewName;
+                row["pkcolumnname"] = PkColumnName;
                 _importOrderTable.Rows.Add( row );
             }
         } // _importOrder()
