@@ -154,7 +154,7 @@ namespace ChemSW.Nbt.Actions
                             ContainerStatus.ContainerId = ContainerNode.NodeId.ToString();
                             ContainerStatus.ContainerBarcode = ContainerNode.Properties[CswNbtObjClassContainer.PropertyName.Barcode].AsBarcode.Barcode;
                             ContainerStatus.LocationId = LocationId.ToString();
-                            ContainerStatus.PriorLocation = ContainerNode.Properties[CswNbtObjClassContainer.PropertyName.Location].AsLocation.CachedFullPath;
+                            ContainerStatus.ExpectedLocation = ContainerNode.Properties[CswNbtObjClassContainer.PropertyName.Location].AsLocation.CachedFullPath;
                             ContainerStatus.ContainerStatus = CswEnumNbtContainerLocationStatusOptions.NotScanned.ToString();
                             CswPrimaryKey ScannedLocationId = null;
                             if( ContainersTree.getChildNodeCount() > 0 )//ContainerLocation Nodes
@@ -163,7 +163,6 @@ namespace ChemSW.Nbt.Actions
                                 if( null != ContainerLocationNode )
                                 {
                                     ContainerStatus.ContainerLocationId = ContainerLocationNode.NodeId.ToString();
-                                    ContainerStatus.ScannedLocation = ContainerLocationNode.Location.CachedFullPath;
                                     ScannedLocationId = ContainerLocationNode.Location.SelectedNodeId;
                                     ContainerStatus.ScanDate = ContainerLocationNode.ScanDate.DateTimeValue.Date.ToShortDateString();
                                     ContainerStatus.Action = ContainerLocationNode.Action.Value;
@@ -171,6 +170,10 @@ namespace ChemSW.Nbt.Actions
                                     if( _isTypeEnabled( ContainerLocationNode.Type.Value, Request ) )
                                     {
                                         ContainerStatus.ContainerStatus = ContainerLocationNode.Status.Value;
+                                        if( ContainerLocationNode.Type.Value == CswEnumNbtContainerLocationTypeOptions.ReconcileScans.ToString() )
+                                        {
+                                            ContainerStatus.ScannedLocation = ContainerLocationNode.Location.CachedFullPath;
+                                        }
                                     }
                                 }
                             }
