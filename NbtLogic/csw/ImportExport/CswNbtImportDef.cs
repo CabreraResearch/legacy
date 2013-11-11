@@ -131,17 +131,11 @@ namespace ChemSW.Nbt.ImportExport
             // First we get the sheet and sheetorder
             string SheetName = string.Empty;
             Int32 SheetOrder = Int32.MinValue;
-            string TableName = string.Empty;
-            string ViewName = string.Empty;
-            string PKColumn = string.Empty;
 
             if( null != DefDataTable )
             {
                 SheetName = DefDataTable.Rows[0]["sheetname"].ToString();
                 SheetOrder = CswConvert.ToInt32( DefDataTable.Rows[0]["sheetorder"] );
-                TableName = DefDataTable.Rows[0]["tablename"].ToString();
-                ViewName = DefDataTable.Rows[0]["viewname"].ToString();
-                PKColumn = DefDataTable.Rows[0]["pkcolumnname"].ToString();
             }
 
             foreach( DataRow OrderRow in OrderDataTable.Rows )
@@ -162,9 +156,6 @@ namespace ChemSW.Nbt.ImportExport
                         defrow[CswNbtImportTables.ImportDef.definitionname] = ImportDefinitionName;
                         defrow[CswNbtImportTables.ImportDef.sheetname] = SheetName;
                         defrow[CswNbtImportTables.ImportDef.sheetorder] = Int32.MinValue != SheetOrder ? SheetOrder : i;
-                        defrow["tablename"] = TableName;
-                        defrow["viewname"] = ViewName;
-                        defrow["pkcolumnname"] = PKColumn;
                         i++;
                         importDefinitionTable.Rows.Add( defrow );
                         ret.Add( SheetName, CswConvert.ToInt32( defrow[CswNbtImportTables.ImportDef.PkColumnName] ) );
