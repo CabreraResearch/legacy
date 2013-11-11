@@ -58,17 +58,13 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterCreateNode()
         {
+            CswNbtPropertySetPermission.createDefaultWildcardPermission( _CswNbtResources, PermissionClass, NodeId );
             _CswNbtObjClassDefault.afterCreateNode();
         }//afterCreateNode()
 
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation, bool Creating )
         {
-            string OldName = Name.GetOriginalPropRowValue();
-            if( string.IsNullOrEmpty( OldName ) && false == IsTemp )
-            {
-                CswNbtPropertySetPermission.createDefaultWildcardPermission( _CswNbtResources, PermissionClass, NodeId );
-            }
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation, Creating );
         }//beforeWriteNode()
 
