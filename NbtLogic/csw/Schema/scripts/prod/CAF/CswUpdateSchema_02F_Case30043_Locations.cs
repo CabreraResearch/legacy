@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using ChemSW.Nbt.csw.Dev;
+﻿using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.csw.Schema;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
@@ -38,20 +36,13 @@ namespace ChemSW.Nbt.Schema
             const string BoxNTName = "Box";
             const string LocationSheetName = "locations_view";
 
-            // Import order is based on these
-            List<Tuple<string, Int32>> DestNodeTypesAndInstances = new List<Tuple<string, int>>();
-            DestNodeTypesAndInstances.Add( new Tuple<string, int>( SiteNTName, 1 ) );
-            DestNodeTypesAndInstances.Add( new Tuple<string, int>( BuildingNTName, 2 ) );
-            DestNodeTypesAndInstances.Add( new Tuple<string, int>( RoomNTName, 3 ) );
-            DestNodeTypesAndInstances.Add( new Tuple<string, int>( CabinetNTName, 4 ) );
-            DestNodeTypesAndInstances.Add( new Tuple<string, int>( ShelfNTName, 5 ) );
-            DestNodeTypesAndInstances.Add( new Tuple<string, int>( BoxNTName, 6 ) );
 
-            CswNbtSchemaUpdateImportMgr LocationsMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "locations",  "locations_view" );
+            CswNbtSchemaUpdateImportMgr LocationsMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "CAF" );
 
             // Bindings
 
             #region Site
+            LocationsMgr.CAFimportOrder( SiteNTName, "locations", "locations_view", "locationid", false );
             LocationsMgr.importBinding( "sitename", CswNbtObjClassLocation.PropertyName.Name, "", LocationSheetName, SiteNTName, 1 );
             LocationsMgr.importBinding( "sitecode", CswNbtObjClassLocation.PropertyName.LocationCode, "", LocationSheetName, SiteNTName, 1 );
             LocationsMgr.importBinding( "siteid", "Legacy ID", "", LocationSheetName, SiteNTName, 1 );
@@ -60,6 +51,8 @@ namespace ChemSW.Nbt.Schema
             #endregion
 
             #region Building
+            LocationsMgr.CAFimportOrder( BuildingNTName, "locations", "locations_view", "locationid", false );
+
             LocationsMgr.importBinding( "locationlevel1name", CswNbtObjClassLocation.PropertyName.Name, "", LocationSheetName, BuildingNTName, 2 );
             LocationsMgr.importBinding( "locationcode", CswNbtObjClassLocation.PropertyName.LocationCode, "", LocationSheetName, BuildingNTName, 2 );
             LocationsMgr.importBinding( "buildingid", "Legacy ID", "", LocationSheetName, BuildingNTName, 2 );
@@ -69,6 +62,8 @@ namespace ChemSW.Nbt.Schema
             #endregion
 
             #region Room
+            LocationsMgr.CAFimportOrder( RoomNTName, "locations", "locations_view", "locationid", false );
+
             LocationsMgr.importBinding( "locationlevel2name", CswNbtObjClassLocation.PropertyName.Name, "", LocationSheetName, RoomNTName, 3 );
             LocationsMgr.importBinding( "locationcode", CswNbtObjClassLocation.PropertyName.LocationCode, "", LocationSheetName, RoomNTName, 3 );
             LocationsMgr.importBinding( "roomid", "Legacy ID", "", LocationSheetName, RoomNTName, 3 );
@@ -78,6 +73,8 @@ namespace ChemSW.Nbt.Schema
             #endregion
 
             #region Cabinet
+            LocationsMgr.CAFimportOrder( CabinetNTName, "locations", "locations_view", "locationid", false );
+
             LocationsMgr.importBinding( "locationlevel3name", CswNbtObjClassLocation.PropertyName.Name, "", LocationSheetName, CabinetNTName, 4 );
             LocationsMgr.importBinding( "locationcode", CswNbtObjClassLocation.PropertyName.LocationCode, "", LocationSheetName, CabinetNTName, 4 );
             LocationsMgr.importBinding( "cabinetid", "Legacy ID", "", LocationSheetName, CabinetNTName, 4 );
@@ -87,6 +84,8 @@ namespace ChemSW.Nbt.Schema
             #endregion
 
             #region Shelf
+            LocationsMgr.CAFimportOrder( ShelfNTName, "locations", "locations_view", "locationid", false );
+
             LocationsMgr.importBinding( "locationlevel4name", CswNbtObjClassLocation.PropertyName.Name, "", LocationSheetName, ShelfNTName, 5 );
             LocationsMgr.importBinding( "locationcode", CswNbtObjClassLocation.PropertyName.LocationCode, "", LocationSheetName, ShelfNTName, 5 );
             LocationsMgr.importBinding( "shelfid", "Legacy ID", "", LocationSheetName, ShelfNTName, 5 );
@@ -96,6 +95,8 @@ namespace ChemSW.Nbt.Schema
             #endregion
 
             #region Box
+            LocationsMgr.CAFimportOrder( BoxNTName, "locations", "locations_view", "locationid", false );
+
             LocationsMgr.importBinding( "locationlevel5name", CswNbtObjClassLocation.PropertyName.Name, "", LocationSheetName, BoxNTName, 6 );
             LocationsMgr.importBinding( "locationcode", CswNbtObjClassLocation.PropertyName.LocationCode, "", LocationSheetName, BoxNTName, 6 );
             LocationsMgr.importBinding( "boxid", "Legacy ID", "", LocationSheetName, BoxNTName, 6 );
