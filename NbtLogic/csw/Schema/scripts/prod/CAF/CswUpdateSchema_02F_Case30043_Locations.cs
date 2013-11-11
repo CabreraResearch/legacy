@@ -47,7 +47,7 @@ namespace ChemSW.Nbt.Schema
             DestNodeTypesAndInstances.Add( new Tuple<string, int>( ShelfNTName, 5 ) );
             DestNodeTypesAndInstances.Add( new Tuple<string, int>( BoxNTName, 6 ) );
 
-            CswNbtSchemaUpdateImportMgr LocationsMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "locations", DestNodeTypesAndInstances, "locations_view" );
+            CswNbtSchemaUpdateImportMgr LocationsMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "locations",  "locations_view" );
 
             // Bindings
 
