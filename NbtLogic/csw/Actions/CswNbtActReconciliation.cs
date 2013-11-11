@@ -80,10 +80,12 @@ namespace ChemSW.Nbt.Actions
             _setContainersTree( Request );
             if( ContainersTree.getChildNodeCount() > 0 )
             {
+                Collection<CswPrimaryKey> AllLocationIds = new Collection<CswPrimaryKey>();
+                Collection<CswPrimaryKey> ScannedLocationIds = new Collection<CswPrimaryKey>();
                 for( int i = 0; i < ContainersTree.getChildNodeCount(); i++ )//Location Nodes
                 {
                     ContainersTree.goToNthChild( i );
-                    Int32 Scans = 0;
+                    AllLocationIds.Add( ContainersTree.getNodeIdForCurrentPosition() );
                     if( ContainersTree.getChildNodeCount() > 0 )
                     {
                         for( int j = 0; j < ContainersTree.getChildNodeCount(); j++ )//Container Nodes
@@ -99,7 +101,7 @@ namespace ChemSW.Nbt.Actions
                                                              ContainerLocationNode.Type.Value );
                                     if( ContainerLocationNode.Type.Value == CswEnumNbtContainerLocationTypeOptions.ReconcileScans.ToString() )
                                     {
-                                        Scans++;
+                                        ScannedLocationIds.Add( ContainerLocationNode.Location.SelectedNodeId );
                                     }
                                 }
                                 else
@@ -114,11 +116,17 @@ namespace ChemSW.Nbt.Actions
                             ContainersTree.goToParentNode();
                         }
                     }
-                    if( Scans == 0 && _isTypeEnabled( CswEnumNbtContainerLocationTypeOptions.ReconcileScans.ToString(), Request ) )
-                    {
-                        Data.UnscannedLocations.Add( _makeUnscannedLocation( ContainersTree.getNodeIdForCurrentPosition() ) );
-                    }
                     ContainersTree.goToParentNode();
+                }
+                if( _isTypeEnabled( CswEnumNbtContainerLocationTypeOptions.ReconcileScans.ToString(), Request ) )
+                {
+                    foreach( CswPrimaryKey LocationId in AllLocationIds )
+                    {
+                        if( false == ScannedLocationIds.Contains( LocationId ) )
+                        {
+                            Data.UnscannedLocations.Add( _makeUnscannedLocation( LocationId ) );
+                        }
+                    }
                 }
             }
             foreach( ContainerData.ReconciliationStatistics Stat in Data.ContainerStatistics )
