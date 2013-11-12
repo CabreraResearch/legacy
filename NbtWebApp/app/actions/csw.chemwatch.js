@@ -24,23 +24,59 @@
         };
         var cswPublic = {};
 
+        cswPrivate.makeSupplierSelect = function(tbl) {
+            var supplierList = cswPrivate.OperationData.Suppliers;
+            cswPrivate.supplierSelect = tbl.cell(1, 3);
+            cswPrivate.supplierSelect.select({
+                values: supplierList
+            });
+
+            if (supplierList.length === 0) {
+                tbl.cell(1, 4).span({
+                    text: 'No Suppliers matched the one provided. Try using a broader search term.'
+                }).css({ 'color': 'red' });
+            } else {
+                tbl.cell(1, 4).empty();
+            }
+        };
+
         cswPrivate.makeMatSearchTable = function () {
             var tbl = cswPublic.table.cell(1, 1).table({
                 cellPadding: 5
             });
 
-            tbl.cell(1, 1).input({
+            //#region Supplier
+            cswPrivate.supplierInput = tbl.cell(1, 1).input({
                 labelText: 'Supplier',
-                value: cswPrivate.OperationData.Supplier
+                value: cswPrivate.OperationData.Supplier,
+                onChange: function (value) {
+                    cswPrivate.OperationData.Supplier = value;
+
+                    Csw.ajaxWcf.post({
+                        urlMethod: 'ChemWatch/GetMatchingSuppliers',
+                        data: cswPrivate.OperationData,
+                        success: function (data) {
+                            cswPrivate.OperationData = data;
+
+                            if (cswPrivate.supplierSelect) {
+                                cswPrivate.supplierSelect.empty();
+                                cswPrivate.makeSupplierSelect(tbl);
+                            }
+                        },
+                        error: function (data) {
+                            console.log(data);
+                        }
+                    });
+
+                }
             });
 
             tbl.cell(1, 2).span({
                 text: 'AS'
             });
 
-            tbl.cell(1, 3).select({
-                values: ['supplier1', 'supplier2', 'supplier3'],
-            });
+            cswPrivate.makeSupplierSelect(tbl);
+            //#endregion Supplier
 
             tbl.cell(2, 1).input({
                 labelText: 'Material',
@@ -138,7 +174,7 @@
                 name: 'chemwatchLngSelect',
                 selected: '',
                 //values: cswPrivate.Languages,
-                values: ['language1','language1','language1','language1'],
+                values: ['language1', 'language1', 'language1', 'language1'],
                 width: '',
                 onChange: null
             });
@@ -148,7 +184,7 @@
                 name: 'chemwatchCntrySelect',
                 selected: '',
                 //values: cswPrivate.Countries,
-                values: ['country','country','country','country','country','country'],
+                values: ['country', 'country', 'country', 'country', 'country', 'country'],
                 width: '',
                 onChange: null
             });

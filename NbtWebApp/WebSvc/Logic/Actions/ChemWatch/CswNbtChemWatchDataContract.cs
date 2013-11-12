@@ -8,11 +8,11 @@ namespace NbtWebApp.Actions.ChemWatch
     [DataContract]
     public class CswNbtChemWatchListItem
     {
-        [DataMember]
+        [DataMember( Name = "display" )]
         public string Name { get; set; }
 
-        [DataMember]
-        public long Id { get; set; }
+        [DataMember( Name = "value" )]
+        public string Id { get; set; }
     }
 
     [DataContract]

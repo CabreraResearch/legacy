@@ -1,11 +1,15 @@
 ﻿using System;
 using ChemSW;
+using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt;
 using ChemSW.Nbt.ObjClasses;
 using NbtWebApp.ChemWatchAuthServices;
 using NbtWebApp.ChemWatchCommonServices;
+using NbtWebApp.ChemWatchMaterialServices;
 using NbtWebApp.WebSvc.Logic.Actions.ChemWatch;
+using Country = NbtWebApp.ChemWatchCommonServices.Country;
+using Language = NbtWebApp.ChemWatchCommonServices.Language;
 
 namespace NbtWebApp.Actions.ChemWatch
 {
@@ -33,29 +37,70 @@ namespace NbtWebApp.Actions.ChemWatch
                 CommonServiceClient cwCommonClient = new CommonServiceClient();
                 cwCommonClient.Endpoint.Behaviors.Add( _cookieBehavior );
 
+                // Populate Language list
                 Languages cwLanguages = cwCommonClient.GetLanguages();
                 foreach( Language cwLanguage in cwLanguages )
                 {
-                    Return.Data.Suppliers.Add( new CswNbtChemWatchListItem()
+                    Return.Data.Languages.Add( new CswNbtChemWatchListItem()
                         {
                             Name = cwLanguage.Name,
-                            Id = cwLanguage.Id
+                            Id = CswConvert.ToString( cwLanguage.Id )
                         } );
                 }
 
+                // Populate Country list
                 Countries cwCountries = cwCommonClient.GetCountries();
                 foreach( Country cwCountry in cwCountries )
                 {
-                    Return.Data.Suppliers.Add( new CswNbtChemWatchListItem()
+                    Return.Data.Countries.Add( new CswNbtChemWatchListItem()
                     {
                         Name = cwCountry.Name,
-                        Id = cwCountry.Id
+                        Id = CswConvert.ToString( cwCountry.Id )
                     } );
                 }
+
+                // Populate Supplier list
+                _getMatchingSuppliers( Return.Data.Supplier, Return );
             }
             else
             {
                 throw new CswDniException( CswEnumErrorType.Error, "There was a problem authenticating with ChemWatch", errorMsg );
+            }
+        }
+
+        public static void GetMatchingSuppliers( ICswResources CswResources, CswNbtChemWatchReturn Return, CswNbtChemWatchRequest Request )
+        {
+            CswNbtResources NbtResources = (CswNbtResources) CswResources;
+
+            string errorMsg;
+            if( _authenticate( out errorMsg ) )
+            {
+                _getMatchingSuppliers( Request.Supplier, Return );
+            }
+            else
+            {
+                throw new CswDniException( CswEnumErrorType.Error, "There was a problem authenticating with ChemWatch", errorMsg );
+            }
+        }
+
+        private static void _getMatchingSuppliers( string SearchString, CswNbtChemWatchReturn Return )
+        {
+            MaterialServiceClient cwMaterialClient = new MaterialServiceClient();
+            cwMaterialClient.Endpoint.Behaviors.Add( _cookieBehavior );
+
+            SearchVendorRequest cwSearchVend = new SearchVendorRequest();
+            cwSearchVend.Name = SearchString;
+            cwSearchVend.PageNumber = 1;
+            cwSearchVend.PageSize = 100;
+
+            ListResultOfVendor cwVendors = cwMaterialClient.SearchVendors( cwSearchVend );
+            foreach( Vendor cwVendor in cwVendors.Rows )
+            {
+                Return.Data.Suppliers.Add( new CswNbtChemWatchListItem()
+                    {
+                        Name = cwVendor.Name,
+                        Id = cwVendor.VendorGroup.Gid
+                    } );
             }
         }
 

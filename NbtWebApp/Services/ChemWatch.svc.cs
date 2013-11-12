@@ -24,10 +24,29 @@ namespace NbtWebApp
             CswNbtChemWatchReturn Ret = new CswNbtChemWatchReturn();
 
             var SvcDriver = new CswWebSvcDriver<CswNbtChemWatchReturn, CswNbtChemWatchRequest>(
-                CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
-                ReturnObj : Ret,
-                WebSvcMethodPtr : CswNbtWebServiceChemWatch.Initialize,
-                ParamObj : Request
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj: Ret,
+                WebSvcMethodPtr: CswNbtWebServiceChemWatch.Initialize,
+                ParamObj: Request
+                );
+
+            SvcDriver.run();
+            return ( Ret );
+        }
+
+        [OperationContract]
+        [WebInvoke( Method = "POST", UriTemplate = "GetMatchingSuppliers" )]
+        [Description( "Get the initialization data for the ChemWatch action" )]
+        [FaultContract( typeof( FaultException ) )]
+        public CswNbtChemWatchReturn GetMatchingSuppliers( CswNbtChemWatchRequest Request )
+        {
+            CswNbtChemWatchReturn Ret = new CswNbtChemWatchReturn();
+
+            var SvcDriver = new CswWebSvcDriver<CswNbtChemWatchReturn, CswNbtChemWatchRequest>(
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj: Ret,
+                WebSvcMethodPtr: CswNbtWebServiceChemWatch.GetMatchingSuppliers,
+                ParamObj: Request
                 );
 
             SvcDriver.run();
