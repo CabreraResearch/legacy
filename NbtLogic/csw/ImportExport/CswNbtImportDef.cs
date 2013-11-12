@@ -170,11 +170,14 @@ namespace ChemSW.Nbt.ImportExport
         {
             Dictionary<string, Int32> ret = new Dictionary<string, Int32>();
             CswTableUpdate importDefinitionUpdate = CswNbtResources.makeCswTableUpdate( "CswNbtImportDef_addDefinitionEntries_Update", CswNbtImportTables.ImportDef.TableName );
+
+            //this is a hack, and the fact that we can even do this makes me sad
+            importDefinitionUpdate._DoledOutTables.Add( DefDataTable );
             importDefinitionUpdate.update( DefDataTable );
 
             CswTableSelect importDefSelect = CswNbtResources.makeCswTableSelect( "CswNbtImportDef_addDefinitionEntries_Select", CswNbtImportTables.ImportDef.TableName );
 
-            DataTable importDefTable = importDefSelect.getTable();
+            DataTable importDefTable = importDefSelect.getTable("where definitionname = '" + ImportDefinitionName + "'");
 
             foreach( DataRow DefRow in importDefTable.Rows )
             {

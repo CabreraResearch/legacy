@@ -281,17 +281,16 @@ namespace ChemSW.Nbt.ImportExport
         /// Import a single row (for CAF imports)
         /// </summary>
         /// <returns>Non-null string indicates an error</returns>
-        public string ImportRow( DataRow SourceRow, string ImportDefinitionName, string SheetName, bool Overwrite )
+        public string ImportRow( DataRow SourceRow, string ImportDefinitionName, string NodeType, bool Overwrite )
         {
             string Error = string.Empty;
 
-            if( false == string.IsNullOrEmpty( ImportDefinitionName ) &&
-                false == string.IsNullOrEmpty( SheetName ) )
+            if( false == string.IsNullOrEmpty( ImportDefinitionName ) )
             {
-                CswNbtImportDef BindingDef = new CswNbtImportDef( _CswNbtResources, ImportDefinitionName, SheetName );
+                CswNbtImportDef BindingDef = new CswNbtImportDef( _CswNbtResources, ImportDefinitionName, "CAF" );
                 if( null != BindingDef && ( BindingDef.Bindings.Count > 0 || BindingDef.RowRelationships.Count > 0 ) && BindingDef.ImportOrder.Count > 0 )
                 {
-                    foreach( CswNbtImportDefOrder Order in BindingDef.ImportOrder.Values )
+                    foreach( CswNbtImportDefOrder Order in BindingDef.ImportOrder.Values.Where( order => order.NodeTypeName == NodeType ))
                     {
                         try
                         {
@@ -417,12 +416,16 @@ namespace ChemSW.Nbt.ImportExport
             IEnumerable<CswNbtImportDefBinding> NodeTypeBindings = BindingDef.Bindings.Where(
                 delegate( CswNbtImportDefBinding b )
                 {
-                    if( null == b.DestNodeType )
-                    {
-                        throw new CswDniException(CswEnumErrorType.Error, "DestNodeType '" + b.DestNodeTypeName + "' is not enabled or does not exist.", "Accessor for Order.NodeType returned null.");
-                    }
-                    return b.DestNodeType == Order.NodeType && b.Instance == Order.Instance;
+                    return null != b.DestNodeType && b.DestNodeType == Order.NodeType && b.Instance == Order.Instance;
                 } );
+
+
+            if( false == NodeTypeBindings.Any() )
+            {
+                throw new CswDniException( CswEnumErrorType.Error, "No bindings are defined for Row.", "No bindings passed the filter. Are appropriate nodetypes enabled in NBT?" );
+            }
+
+
             IEnumerable<CswNbtImportDefRelationship> RowRelationships = BindingDef.RowRelationships.Where( r => r.NodeType.NodeTypeId == Order.NodeType.NodeTypeId ); //&& r.Instance == Order.Instance );
             IEnumerable<CswNbtImportDefRelationship> UniqueRelationships = RowRelationships.Where( r => r.Relationship.IsUnique() ||
                                                                                                         r.Relationship.IsCompoundUnique() ||
@@ -451,7 +454,7 @@ namespace ChemSW.Nbt.ImportExport
             string LegacyId = string.Empty;
             foreach( CswNbtImportDefBinding Binding in NodeTypeBindings )
             {
-                if( Binding.DestPropName == "Legacy ID" )
+                if( Binding.DestPropName == "Legacy Id" )
                 {
                     LegacyId = ImportRow[Binding.ImportDataColumnName].ToString();
                 }
@@ -560,7 +563,7 @@ namespace ChemSW.Nbt.ImportExport
                                 else
                                 {
                                   //we still want to set legacy id on nodes matched by unique properties
-                                    foreach( CswNbtImportDefBinding Binding in NodeTypeBindings.Where( Binding => Binding.DestPropName == "Legacy ID" ) )
+                                    foreach( CswNbtImportDefBinding Binding in NodeTypeBindings.Where( Binding => Binding.DestPropName == "Legacy Id" ) )
                                     {
                                         //there should always be exactly one iteration of this loop
                                         Node.Properties[Binding.DestProperty].SetSubFieldValue( Binding.DestSubfield, ImportRow[Binding.ImportDataColumnName].ToString() );

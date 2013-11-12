@@ -45,7 +45,7 @@ namespace ChemSW.Nbt.Schema
                 UnitMgr.importBinding( "unittype", CswNbtObjClassUnitOfMeasure.PropertyName.UnitType, "" );
 
 
-                UnitMgr.CAFimportOrder( "Unit_Weight", "units_of_measure", "weight_viwe", "unitofmeasureid" );
+                UnitMgr.CAFimportOrder( "Unit_Weight", "units_of_measure", "weight_view", "unitofmeasureid" );
 
                 UnitMgr.importBinding( "unitofmeasurename", CswNbtObjClassUnitOfMeasure.PropertyName.Name, "" );
                 UnitMgr.importBinding( "conversionfactor", CswNbtObjClassUnitOfMeasure.PropertyName.ConversionFactor, CswEnumNbtSubFieldName.Base.ToString() );

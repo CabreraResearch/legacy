@@ -73,9 +73,9 @@ namespace ChemSW.Nbt.Sched
                     const string QueuePkName = "nbtimportqueueid";
 
                     Int32 NumberToProcess = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumConfigurationVariableNames.NodesProcessedPerCycle ) );
-                    string Sql = "select nbtimportqueueid, state, itempk, pkcolumnname, sheetname, priority, importorder, tablename, coalesce(viewname, tablename) as sourcename from "
+                    string Sql = "select nbtimportqueueid, state, itempk, pkcolumnname, sheetname, priority, importorder, tablename, coalesce(viewname, tablename) as sourcename, nodetypename from "
                         + QueueTableName + "@" + CAFDbLink + " iq"
-                        + " join " + CswNbtImportTables.ImportDefOrder.TableName + " io on ( sourcename = iq.sheetname )"
+                        + " join " + CswNbtImportTables.ImportDefOrder.TableName + " io on ( coalesce(viewname, tablename) = iq.sheetname )"
                         + " where state = '" + State.I + "' or state = '" + State.U
                         + "' order by decode (state, '" + State.I + "', 1, '" + State.U + "', 2) asc, priority desc, importorder asc, nbtimportqueueid asc";
 
@@ -99,10 +99,10 @@ namespace ChemSW.Nbt.Sched
                         DataTable ItemTable = ItemSelect.getTable();
                         foreach( DataRow ItemRow in ItemTable.Rows )
                         {
-                            string SheetName = QueueRow["sheetname"].ToString();
-
+                            string NodetypeName = QueueRow["nodetypename"].ToString();
                             bool Overwrite = QueueRow["state"].ToString().Equals( "U" );
-                            string Error = Importer.ImportRow( ItemRow, DefinitionName, SheetName, Overwrite );
+
+                            string Error = Importer.ImportRow( ItemRow, DefinitionName, NodetypeName, Overwrite );
                             if( string.IsNullOrEmpty( Error ) )
                             {
                                 // record success - delete the record
@@ -156,7 +156,7 @@ namespace ChemSW.Nbt.Sched
         {
             string Ret = string.Empty;
 
-            CswArbitrarySelect ImportDefSelect = CswResources.makeCswArbitrarySelect( "importdef_get_caf_rows", "select pkcolumnname, coalesce(viewname, tablename) as sourcename " +
+            CswArbitrarySelect ImportDefSelect = CswResources.makeCswArbitrarySelect( "importdef_get_caf_rows", "select distinct pkcolumnname, coalesce(viewname, tablename) as sourcename " +
                                                                                                                 "from import_def_order io, import_def id " +
                                                                                                                 "where id.importdefid = io.importdefid " +
                                                                                                                 "and id.definitionname = '" + DefinitionName + "'" );
@@ -220,7 +220,7 @@ namespace ChemSW.Nbt.Sched
             string Ret = "";
 
             CswArbitrarySelect ImportDefinitions = NbtResources.makeCswArbitrarySelect( "getCafImportDefTables", "select tablename, pkcolumnname, coalesce(viewname, tablename) as sourcename from import_def id " +
-                                                                                                                     "join import_def_order io on id.importdefid = io.importdefid" +
+                                                                                                                     "join import_def_order io on id.importdefid = io.importdefid " +
                                                                                                                      "where definitionname = 'CAF'" );
             ;
             DataTable ImportDefinitionsTable = ImportDefinitions.getTable();
@@ -251,11 +251,11 @@ namespace ChemSW.Nbt.Sched
                         break;
                     case "documents":
                         SourceColumn = "documentid";
-                        TriggerName = Row["sheetname"].ToString();
+                        TriggerName = Row["sourcename"].ToString();
                         break;
                     default:
                         SourceColumn = Row["pkcolumnname"].ToString();
-                        TriggerName = Row["sheetname"].ToString();
+                        TriggerName = Row["sourcename"].ToString();
                         break;
                 }
 

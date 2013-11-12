@@ -29,6 +29,9 @@ namespace ChemSW.Nbt.Schema
             // CAF bindings definitions for Vendors
             CswNbtSchemaUpdateImportMgr ImpMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "CAF" );
 
+            //This is only necessary for the very first CAF script, to create the caf definition
+            ImpMgr.importDef( 1, "CAF" );
+
             ImpMgr.CAFimportOrder( "Vendor", "vendors" );
             // Binding
             ImpMgr.importBinding( "accountno", CswNbtObjClassVendor.PropertyName.AccountNo, "" );

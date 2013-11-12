@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using ChemSW.Core;
+using ChemSW.Exceptions;
 using ChemSW.Nbt.ImportExport;
 using ChemSW.Nbt.Sched;
 using ChemSW.Nbt.Schema;
@@ -68,11 +69,12 @@ namespace ChemSW.Nbt.csw.Schema
             _NbtImporter = SchemaModTrnsctn.makeCswNbtImporter();
             this.SchemaModTrnsctn = SchemaModTrnsctn;
 
-            _importDefTable = SchemaModTrnsctn.makeCswTableSelect( "Import_getDefs", "import_def" ).getTable();
-            _importOrderTable = SchemaModTrnsctn.makeCswTableSelect( "Import_getOrder", "import_def_order" ).getTable();
-            _importBindingsTable = SchemaModTrnsctn.makeCswTableSelect( "Import_getBindings", "import_def_bindings" ).getTable();
-            _importRelationshipsTable = SchemaModTrnsctn.makeCswTableSelect( "Import_getRelationships", "import_def_relationships" ).getTable();
+            _importDefTable = SchemaModTrnsctn.makeCswTableUpdate( "Import_getDefs", "import_def" ).getTable();
+            _importOrderTable = SchemaModTrnsctn.makeCswTableUpdate( "Import_getOrder", "import_def_order" ).getTable();
+            _importBindingsTable = SchemaModTrnsctn.makeCswTableUpdate( "Import_getBindings", "import_def_bindings" ).getTable();
+            _importRelationshipsTable = SchemaModTrnsctn.makeCswTableUpdate( "Import_getRelationships", "import_def_relationships" ).getTable();
 
+            
             _DefinitionName = DefinitionName;
             _SourceColumns = new CswCommaDelimitedString();
 
@@ -99,22 +101,19 @@ namespace ChemSW.Nbt.csw.Schema
         public void importOrder( Int32 Order, string NodeTypeName, string SheetName, Int32 Instance = Int32.MinValue)
         {
             _DestNodeTypeName = NodeTypeName;
-            if( CswAll.AreStrings( SheetName, NodeTypeName ) )
-            {
-                DataRow row = _importOrderTable.NewRow();
-                row["importdefid"] = _SheetDefinitions[SheetName];
-                row["nodetypename"] = NodeTypeName;
-                row["importorder"] = Order;
-                row["instance"] = Instance;
-                _importOrderTable.Rows.Add( row );
-            }
+            DataRow row = _importOrderTable.NewRow();
+            row["importdefid"] = _SheetDefinitions[SheetName];
+            row["nodetypename"] = NodeTypeName;
+            row["importorder"] = Order;
+            row["instance"] = Instance;
+            _importOrderTable.Rows.Add( row );
         } // importOrder()
 
         public void CAFimportOrder( string NodeTypeName, string TableName, string ViewName = null, string PkColumnName = null, bool createLegacyId = true, Int32 Instance = Int32.MinValue )
         {
             _DestNodeTypeName = NodeTypeName;
             PkColumnName = PkColumnName ?? _getPKColumnForTable( TableName );
-            if( CswAll.AreStrings( NodeTypeName, TableName, ViewName, PkColumnName ) )
+            if( CswAll.AreStrings( NodeTypeName, TableName, PkColumnName ) )
             {
                 DataRow row = _importOrderTable.NewRow();
                 row["importdefid"] = _SheetDefinitions[CswScheduleLogicNbtCAFImport.DefinitionName];
@@ -130,6 +129,10 @@ namespace ChemSW.Nbt.csw.Schema
                 {
                     importBinding( PkColumnName, LegacyID, "" );
                 }
+            }
+            else
+            {
+                throw new CswDniException(CswEnumErrorType.Error, "Failed to validate inputs for CAF import order: " + NodeTypeName, "One of the required fields was missing.");
             }
         }// CAFimportOrder()
 
