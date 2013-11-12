@@ -80,7 +80,7 @@ namespace ChemSW.Nbt.Actions
         {
             return CswNbtObjClassUser.getCurrentUserCache( _CswNbtResources ).CartCounts.PendingRequestItems;
         }
-
+        //Er, not sure what the difference is between these two methods
         public int getCartCount()
         {
             CswNbtView CartView = getOpenCartsView();
@@ -88,6 +88,7 @@ namespace ChemSW.Nbt.Actions
             return Tree.getChildNodeCount();
         }
 
+        //I see what this is doing, but how is it possible to have more than one pending request for a given user (or is that the point)?
         private CswNbtObjClassRequest _getFirstPendingRequest()
         {
             CswNbtNode Ret = null;
@@ -128,6 +129,7 @@ namespace ChemSW.Nbt.Actions
 
         private CswNbtObjClassRequest _RecurringRequestNode;
 
+        //so this makes it sound like we get the first, and only the first recurring Request - is that right?
         public CswNbtObjClassRequest getRecurringRequestNode()
         {
             if( null == _RecurringRequestNode &&
@@ -151,6 +153,7 @@ namespace ChemSW.Nbt.Actions
                     CswNbtMetaDataNodeType RequestNt = _RequestOc.getLatestVersionNodeTypes().FirstOrDefault();
                     if( null == RequestNt )
                     {
+                        //This error is misleading - it makes it sound like the user did something wrong
                         throw new CswDniException( CswEnumErrorType.Warning,
                             "Cannot make a Request without a valid Request object.",
                             "No Request NodeType could be found." );
@@ -178,6 +181,7 @@ namespace ChemSW.Nbt.Actions
 
         private CswNbtObjClassRequest _CurrentRequestNode;
 
+        //Get the first pending request, or make a new one if one doesn't exist
         public CswNbtObjClassRequest getCurrentRequestNode()
         {
             if( null == _CurrentRequestNode &&
@@ -189,6 +193,8 @@ namespace ChemSW.Nbt.Actions
                     CswNbtMetaDataNodeType RequestNt = _RequestOc.getLatestVersionNodeTypes().FirstOrDefault();
                     if( null == RequestNt )
                     {
+                        //This error makes slightly more sense, but again, 
+                        //it sounds like it's the user's fault that RequestNT doesn't exist
                         throw new CswDniException( CswEnumErrorType.Warning,
                             "Cannot Submit Request without a valid Request object.",
                             "No Request NodeType could be found." );
@@ -199,6 +205,7 @@ namespace ChemSW.Nbt.Actions
             return _CurrentRequestNode;
         }
 
+        //Is this really necessary?
         public CswPrimaryKey getCurrentRequestNodeId()
         {
             CswPrimaryKey Ret = null;
@@ -212,6 +219,7 @@ namespace ChemSW.Nbt.Actions
 
         #region Views
 
+        //Okay, so here we have pending requests (not submitted and not completed)
         public CswNbtView getRequestViewBase( bool LimitToUnsubmitted = true, bool IncludeDefaultFilters = true, bool AddRootRel = true )
         {
             CswNbtView Ret = new CswNbtView( _CswNbtResources );
@@ -236,6 +244,7 @@ namespace ChemSW.Nbt.Actions
             return Ret;
         }
 
+        //Here we take the Request base and, for each requestItem type, add them to the Cart view
         public CswNbtView getOpenCartsView( bool IncludeItemProperties = true )
         {
             CswNbtView Ret = getRequestViewBase( IncludeDefaultFilters: true, LimitToUnsubmitted: true );
@@ -282,6 +291,7 @@ namespace ChemSW.Nbt.Actions
 
         public const string PendingItemsViewName = "Pending Request Items";
 
+        //this is the open carts view, scoped to the user's current Request
         public CswNbtView getPendingItemsView()
         {
             CswNbtView Ret = getOpenCartsView();
@@ -300,11 +310,16 @@ namespace ChemSW.Nbt.Actions
         public JObject getRequestItemAddProps( CswNbtPropertySetRequestItem RetAsRequestItem )
         {
             CswNbtSdTabsAndProps PropsAction = new CswNbtSdTabsAndProps( _CswNbtResources );
+            //"Note: this does not get the properties."
+            //wat.
+            //...oh wait, these add props are going to be different for each type - how are we going to do this?
             return PropsAction.getProps( RetAsRequestItem.Node, "", null, CswEnumNbtLayoutType.Add );
         }
 
         public const string SubmittedItemsViewName = "Submitted Request Items";
 
+
+        //takes the request view, adds items, and filters by submitted
         public CswNbtView getSubmittedRequestItemsView()
         {
             CswNbtView Ret = getRequestViewBase( LimitToUnsubmitted: false, AddRootRel: false, IncludeDefaultFilters: false );
@@ -348,6 +363,7 @@ namespace ChemSW.Nbt.Actions
             return Ret;
         }
 
+        //takes the default request view and filters by favorites
         public CswNbtView getFavoriteRequestNamesView()
         {
             CswNbtView Ret = getRequestViewBase( IncludeDefaultFilters: false, LimitToUnsubmitted: false );
@@ -369,6 +385,7 @@ namespace ChemSW.Nbt.Actions
 
         public const string FavoriteItemsViewName = "Favorite Request Items";
 
+        //takes the default request view, adds items, and filters by favorites
         public CswNbtView getFavoriteRequestsItemsView()
         {
             CswNbtView Ret = new CswNbtView( _CswNbtResources )
@@ -407,6 +424,7 @@ namespace ChemSW.Nbt.Actions
 
         public const string RecurringItemsViewName = "Recurring Request Items";
 
+        //we really shouldn't infer apostraphes in function names
         public CswNbtView getUsersRecurringRequestsItemsView()
         {
             CswNbtView Ret = getAllRecurringRequestsItemsView();
@@ -450,6 +468,8 @@ namespace ChemSW.Nbt.Actions
 
             //Unlike other Request Items, Recurring requests are not tied to a Request, so they don't have a Name.
 
+            //^hahaha, wat?
+
             CswNbtMetaDataObjectClass MemberOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestMaterialDispenseClass );
             CswNbtViewRelationship RequestItemRel = Ret.AddViewRelationship( MemberOc, IncludeDefaultFilters: false );
 
@@ -473,20 +493,6 @@ namespace ChemSW.Nbt.Actions
         }
 
         #endregion Views
-
-        private Int32 _getItemCount( CswNbtView View )
-        {
-            ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, RequireViewPermissions: false, IncludeSystemNodes: false, IncludeHiddenNodes: false );
-            if( View.Visibility == CswEnumNbtViewVisibility.Property )
-            {
-                if( Tree.getChildNodeCount() > 0 )
-                {
-                    Tree.goToNthChild( 0 );
-                }
-            }
-            Int32 Ret = Tree.getChildNodeCount();
-            return Ret;
-        }
 
         public Cart getCart( Cart Cart, bool CalculateCounts = false )
         {
@@ -516,6 +522,7 @@ namespace ChemSW.Nbt.Actions
             FavoriteItems.SaveToCache( IncludeInQuickLaunch: false );
             Cart.FavoriteItemsView = FavoriteItems;
 
+            //We'll need to change this to use Type value instead of ObjClassId
             Cart.CopyableObjectClassId = _CswNbtResources.MetaData.getObjectClassId( CswEnumNbtObjectClass.RequestMaterialDispenseClass );
 
             Cart.Counts = CswNbtObjClassUser.getCurrentUserCache( _CswNbtResources ).CartCounts;
@@ -535,6 +542,7 @@ namespace ChemSW.Nbt.Actions
 
         #region Sets
 
+        //This flushes the current CartCount cache and builds it anew
         public static void resetCartCounts( ICswResources Resources )
         {
             CswNbtResources NbtResources = (CswNbtResources) Resources;
@@ -607,6 +615,7 @@ namespace ChemSW.Nbt.Actions
             }
         }
 
+        //Ah, so simple - this is probably the one function I won't have to change
         public bool submitRequest( CswPrimaryKey NodeId, string NodeName )
         {
             bool Ret = false;
@@ -629,11 +638,13 @@ namespace ChemSW.Nbt.Actions
             return Ret;
         }
 
+        //this description doesn't help - it creates dispense, move, or dispose depending on the selected button menu item
         /// <summary>
         /// Instance a new request item according to Object Class rules. Note: this does not get the properties.
         /// </summary>
         public CswNbtPropertySetRequestItem makeContainerRequestItem( CswNbtObjClassContainer Container, CswNbtObjClass.NbtButtonData ButtonData, CswNbtMetaDataObjectClass ItemOc = null )
         {
+            //Set Type
             CswNbtPropertySetRequestItem ret = null;
             if( null == ItemOc )
             {
@@ -657,6 +668,7 @@ namespace ChemSW.Nbt.Actions
                     CswNbtPropertySetRequestItem RetAsRequestItem = NewNode;
                     if( null != getCurrentRequestNodeId() && null != Container )
                     {
+                        //set location
                         CswPrimaryKey SelectedLocationId = new CswPrimaryKey();
                         if( CswTools.IsPrimaryKey( _ThisUser.DefaultLocationId ) )
                         {
@@ -671,6 +683,7 @@ namespace ChemSW.Nbt.Actions
                         {
                             CswNbtObjClassRequestContainerDispense RetAsDispense = CswNbtObjClassRequestContainerDispense.fromPropertySet( RetAsRequestItem );
 
+                            //set which properties are visible/readonly in the add layout
                             RetAsDispense.Container.RelatedNodeId = Container.NodeId;
                             RetAsDispense.Container.setReadOnly( value: true, SaveToDb: true );
                             RetAsDispense.Material.RelatedNodeId = Container.Material.RelatedNodeId;
@@ -717,10 +730,11 @@ namespace ChemSW.Nbt.Actions
                     }
                 }; // AfterMakeNode
 
-                ret = PropsAction.getAddNodeAndPostChanges( RequestItemNt, After );
+                ret = PropsAction.getAddNodeAndPostChanges( RequestItemNt, After );//this does everything above
                 if( ButtonData.SelectedText == CswEnumNbtContainerRequestMenu.Dispose )
                 {
                     // This is the only condition in which we want to commit the node upfront.
+                    //why?
                     ret.PromoteTempToReal();
                 }
 
@@ -733,6 +747,7 @@ namespace ChemSW.Nbt.Actions
             return ret;
         }
 
+        //
         /// <summary>
         /// Instance a new request item according to Object Class rules. Note: this does not get the properties.
         /// </summary>
@@ -744,6 +759,7 @@ namespace ChemSW.Nbt.Actions
             CswNbtSdTabsAndProps PropsAction = new CswNbtSdTabsAndProps( _CswNbtResources );
             if( null != RequestItemNt )
             {
+                //this one doesn't call postchanges, so why does the other one?
                 Ret = PropsAction.getAddNode( RequestItemNt.NodeTypeId, MaterialId.ToString(), delegate( CswNbtNode NewNode )
                 {
                     CswNbtPropertySetRequestItem RetAsRequestItem = NewNode;

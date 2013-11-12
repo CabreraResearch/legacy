@@ -278,6 +278,9 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
+        //Fake nodes are placeholders that hang out in the Favorite or Recurring tab until the user wants to copy them
+        //they're acually never processed
+        //I think we need to come up with a better name, though
         private bool _IsFakeNode
         {
             get { return IsFavorite.Checked == CswEnumTristate.True || IsRecurring.Checked == CswEnumTristate.True; }

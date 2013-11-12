@@ -27,6 +27,7 @@ namespace ChemSW.Nbt.WebServices
 
         public JObject getRequestViewGrid( string SessionViewId )
         {
+            //It looks like we have one function that grabs any of the four grids in the Cart action, based on context... interesting.
             JObject Ret = new JObject();
 
             CswNbtSessionDataId SessionDataId = new CswNbtSessionDataId( SessionViewId );
@@ -48,6 +49,7 @@ namespace ChemSW.Nbt.WebServices
 
         #region WCF
 
+        //Is this necessary?  Don't we _not_ show the cart when CISPro is enabled?  Or again, are these webservice methods potentially public-facing?
         private static CswNbtResources _validate( ICswResources CswResources )
         {
             CswNbtResources Ret = null;
@@ -74,6 +76,7 @@ namespace ChemSW.Nbt.WebServices
         /// </summary>
         public static void getRequestMaterialCreate( ICswResources CswResources, CswNbtRequestDataModel.CswNbtRequestMaterialCreateReturn Ret, object Request )
         {
+            //we're not getting the node, we're getting the nodetype - my guess is this is vague because it's public-facing, but still...
             CswNbtResources NbtResources = _validate( CswResources );
             CswNbtMetaDataObjectClass RequestMaterialCreateOc = NbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestMaterialCreateClass );
             CswNbtMetaDataNodeType FirstNodeType = RequestMaterialCreateOc.getLatestVersionNodeTypes().FirstOrDefault();
@@ -108,8 +111,10 @@ namespace ChemSW.Nbt.WebServices
         /// </summary>
         public static void createFavorite( ICswResources CswResources, CswNbtRequestDataModel.CswRequestReturn Ret, CswNbtRequestDataModel.CswRequestReturn.Ret Request )
         {
+            //...this seems so familiar..... deja vu?
             CswNbtResources NbtResources = _validate( CswResources );
             bool Succeeded = false;
+            //apparently we might already have a favorite, in which case we use that one - else we make a new one
             if( null != Request && false == string.IsNullOrEmpty( Request.RequestId ) )
             {
                 CswNbtObjClassRequest Favorite = NbtResources.Nodes[Request.RequestId];
@@ -142,6 +147,7 @@ namespace ChemSW.Nbt.WebServices
             }
             Ret.Data.Succeeded = Succeeded;
         }
+        //^this needs to update the tab count
 
         private delegate void applyCopyLogic( CswNbtObjClassRequestMaterialDispense RequestItem );
 
@@ -152,6 +158,9 @@ namespace ChemSW.Nbt.WebServices
         {
             CswNbtResources NbtResources = _validate( CswResources );
             bool Succeeded = false;
+            //...I have no idea what the difference is between Request.RequestId and Request.CswRequestId
+            //I think they both refer to the current cart, 
+            //but then how are we differentiating between the current Request and the Favorite Request?
             if( CswTools.IsPrimaryKey( Request.CswRequestId ) && Request.RequestItems.Any() )
             {
                 CswNbtObjClassRequest RequestNode = NbtResources.Nodes[Request.CswRequestId];
@@ -179,6 +188,7 @@ namespace ChemSW.Nbt.WebServices
             {
                 CswNbtWebServiceRequesting ws = new CswNbtWebServiceRequesting( NbtResources );
                 CswNbtActRequesting act = new CswNbtActRequesting( NbtResources );
+                //So here we're getting the "Recurring" Request and copying the request items from the current request into there
                 CswNbtObjClassRequest RequestNode = act.getRecurringRequestNode();
                 applyCopyLogic SetRequest = ( Item ) =>
                     {
@@ -189,12 +199,16 @@ namespace ChemSW.Nbt.WebServices
             }
             Ret.Data.Succeeded = Succeeded;
         }
+        //^this needs to update the tab count
 
         private bool copyRequestItems( CswNbtRequestDataModel.CswRequestReturn.Ret Request, applyCopyLogic CopyLogic )
         {
             bool Succeeded = false;
             if( Request.RequestItems.Any() )
             {
+                //This is just a long way of saying "grab all MaterialDispense RequestItems in the current Request"
+                //We'll need to change this to grab RequestItems of type "MaterialDispense"
+                //maybe don't use Linq (unless we find a significant difference in performance)
                 foreach( CswNbtObjClassRequestMaterialDispense NewRequestItem in
                     from Item
                         in Request.RequestItems
@@ -206,12 +220,15 @@ namespace ChemSW.Nbt.WebServices
                         select CswNbtObjClassRequestMaterialDispense.fromPropertySet( PropertySetRequest )
                             into MaterialDispense
                             where null != MaterialDispense
+                            //This is really sneaky - it's copying all of the MaterialDispense requests
+                            //and throwing them into the collection we're selecting
                             select MaterialDispense.copyNode( ClearRequest: false )
                                 into NewPropSetRequest
                                 select CswNbtObjClassRequestMaterialDispense.fromPropertySet( NewPropSetRequest ) )
                 {
                     CopyLogic( NewRequestItem );
 
+                    //As far as I can see, there's no reason this couldn't be in copy from favorites' CopyLogic
                     if( NewRequestItem.IsRecurring.Checked != CswEnumTristate.True && CswConvert.ToTristate( NewRequestItem.IsFavorite.Gestalt ) != CswEnumTristate.True )
                     {
                         NewRequestItem.Status.Value = CswNbtObjClassRequestMaterialDispense.Statuses.Pending;
@@ -231,6 +248,7 @@ namespace ChemSW.Nbt.WebServices
         /// </summary>  
         public static void fulfillRequest( ICswResources CswResources, CswNbtRequestDataModel.CswRequestReturn Ret, CswNbtRequestDataModel.RequestFulfill Request )
         {
+            //the name of this function is pretty vague given that the only action being taken is moving containers (when
             CswNbtResources NbtResources = _validate( CswResources );
             CswNbtPropertySetRequestItem RequestAsPropSet = NbtResources.Nodes[Request.RequestItemId];
             if( null != RequestAsPropSet )
@@ -239,6 +257,7 @@ namespace ChemSW.Nbt.WebServices
                 {
                     case CswNbtObjClassRequestMaterialDispense.Types.Size:
                         CswNbtObjClassRequestMaterialDispense RequestNode = CswNbtObjClassRequestMaterialDispense.fromPropertySet( RequestAsPropSet );
+                        //okay, we REALLY need to stop obfuscating Requests and RequestItems
                         Int32 ContainersMoved = moveContainers( NbtResources, RequestNode, Request );
                         Ret.Data.Succeeded = ContainersMoved > 0;
                         if( Ret.Data.Succeeded )
