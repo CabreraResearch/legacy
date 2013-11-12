@@ -12,24 +12,34 @@
         };
         cswPrivate.OperationData = {
             NbtMaterialId: options.materialid,
-            //Countries: [],
-            //Languages: [],
+            Countries: [],
+            Languages: [],
             Supplier: "",
-            //Suppliers: [],
+            Suppliers: [],
             PartNo: "",
             MaterialName: "",
             ChemWatchMaterialId: 1,
-            //Materials: [],
-            //SDSDocuments: []
+            Materials: [],
+            SDSDocuments: []
         };
         var cswPublic = {};
 
         cswPrivate.makeMatSearchTable = function () {
-            var tbl = cswPublic.table.cell(1, 1).table();
+            var tbl = cswPublic.table.cell(1, 1).table({
+                cellPadding: 5
+            });
 
             tbl.cell(1, 1).input({
                 labelText: 'Supplier',
                 value: cswPrivate.OperationData.Supplier
+            });
+
+            tbl.cell(1, 2).span({
+                text: 'AS'
+            });
+
+            tbl.cell(1, 3).select({
+                values: ['supplier1', 'supplier2', 'supplier3'],
             });
 
             tbl.cell(2, 1).input({
@@ -49,9 +59,9 @@
                 disabledText: 'Searching...',
                 disableOnClick: false,
                 onClick: function () {
-                    
+
                     // todo: call the method that will search chemwatch
-                    
+
                     Csw.ajaxWcf.post({
                         urlMethod: 'ChemWatch/MaterialSearch', //todo: Pending discussion to call this 'MaterialSearch'
                         data: cswPrivate.OperationData,
@@ -88,11 +98,24 @@
                         header: 'Material',
                         dataIndex: 'material'
                     }],
-                data: cswPrivate.Materials,
+                //data: cswPrivate.Materials,
+                data: {
+                    'items': [
+                        {
+                            'material': 'Material 1'
+                        },
+                        {
+                            'material': 'Material 2'
+                        },
+                        {
+                            'material': 'Material 3'
+                        }
+                    ]
+                },
                 height: 200,
                 width: 400,
                 showActionColumn: false,
-                onSelect: function (rows){
+                onSelect: function (rows) {
                     //todo: fill the SDS grid with data
                     var data = rows;
                     console.log(data);
@@ -103,27 +126,29 @@
             });
         };
 
-        cswPrivate.makeLngCntrySelects = function() {
+        cswPrivate.makeLngCntrySelects = function () {
             cswPrivate.sdsInfoTbl = cswPublic.table.cell(2, 2).table({
                 cellPadding: 5
             });
-            
+
             //todo: onSelect for either control below, reload the sdsgrid or filter it
 
             cswPrivate.lngSelect = cswPrivate.sdsInfoTbl.cell(1, 1).select({
                 ID: 'chemwatchLngSelect',
                 name: 'chemwatchLngSelect',
                 selected: '',
-                values: cswPrivate.Languages,
+                //values: cswPrivate.Languages,
+                values: ['language1','language1','language1','language1'],
                 width: '',
                 onChange: null
             });
-            
+
             cswPrivate.makeLngCntrySelects = cswPrivate.sdsInfoTbl.cell(1, 2).select({
                 ID: 'chemwatchCntrySelect',
                 name: 'chemwatchCntrySelect',
                 selected: '',
-                values: cswPrivate.Countries,
+                //values: cswPrivate.Countries,
+                values: ['country','country','country','country','country','country'],
                 width: '',
                 onChange: null
             });
@@ -135,21 +160,30 @@
 
             cswPrivate.sdsListGridDiv = cswPrivate.sdsListGridDiv.grid({
                 name: 'chemwatchsdslistgrid',
-                fields: ['view', 'langauge', 'country', 'select'],
+                fields: ['view', 'language', 'country', 'select'],
                 columns: [
                     { header: 'View', dataIndex: 'view' },
                     { header: 'Language', dataIndex: 'language' },
                     { header: 'Country', dataIndex: 'country' },
                     { header: 'Select', dataIndex: 'select' }
                 ],
-                data: cswPrivate.SDSDocuments,
+                //data: cswPrivate.SDSDocuments,
+                data: {
+                    'items': [
+                        {
+                            'view': '1111',
+                            'language': '2222',
+                            'country': '3333',
+                            'select': '4444'
+                        }]
+                },
                 height: 200,
                 width: 400,
                 showActionColumn: false
             });
         };
-        
-        cswPrivate.makeCreateSDSLinksBtn = function() {
+
+        cswPrivate.makeCreateSDSLinksBtn = function () {
             cswPrivate.createSDSLinksBtn = cswPublic.table.cell(3, 1).buttonExt({
                 name: 'createSDSLinksBtn',
                 enabledText: 'Create SDS Links',
@@ -160,7 +194,7 @@
                     // Return to the material view
                 }
             });
-        }
+        };
 
         // Init
         (function () {
