@@ -173,7 +173,8 @@
                             cswPrivate.reinitSteps(2);
                             getPendingChangesCount();
                         },
-                        useDefaultLocation: false
+                        useDefaultLocation: false,
+                        EditMode: Csw.enums.editMode.Add
                     });
                     cswPrivate.state.LocationId = locationControl.val();
                     cswPrivate.state.LocationName = locationControl.selectedName();
@@ -455,7 +456,7 @@
                             cswPrivate.data.ContainerStatuses = [{
                                 ContainerId: '',
                                 ContainerBarcode: '',
-                                PriorLocation: '',
+                                ExpectedLocation: '',
                                 ScannedLocation: '',
                                 LocationId: '',
                                 ContainerLocationId: '',
@@ -490,7 +491,7 @@
                             addColumn('containerlocationid', 'ContainerLocation Id', true);
                             addColumn('actionoptions', 'Action Options', true);
                             addColumn('containerbarcode', 'Container Barcode', false);
-                            addColumn('priorlocation', 'Prior Location', false);
+                            addColumn('expectedlocation', 'Expected Location', false);
                             addColumn('scannedlocation', 'Scanned Location', false);
                             var StatusOptions = [];
                             Csw.each(cswPrivate.data.ContainerStatistics, function (row) {
@@ -528,7 +529,7 @@
                                     containerlocationid: row.ContainerLocationId,
                                     completed: row.Completed,
                                     containerbarcode: row.ContainerBarcode,
-                                    priorlocation: row.PriorLocation,
+                                    expectedlocation: row.ExpectedLocation,
                                     scannedlocation: row.ScannedLocation,
                                     status: row.ContainerStatus,
                                     scandate: row.ScanDate,
