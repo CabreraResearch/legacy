@@ -420,7 +420,7 @@ namespace ChemSW.Nbt.ObjClasses
 
                 //bool Creating = ( false == CswTools.IsPrimaryKey( NodeId ) || ( IsTempModified && false == IsTemp ) );
                 bool Creating = ( IsCreate || ( IsTempModified && false == IsTemp ) );
-                if( Creating && AllowAuditing )
+                if( Creating && false == AllowAuditing )
                 {
                     _CswNbtObjClass.beforeCreateNode( IsCopy, OverrideUniqueValidation );
                 }
