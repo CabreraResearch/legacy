@@ -418,6 +418,11 @@ namespace ChemSW.Nbt.ObjClasses
                 if( null == OnRequestWriteNode )
                     throw ( new CswDniException( "There is no write handler" ) );
 
+                //TODO - Case 31167 - This logic sucks; it's confusing and misleading, and it really needs to be cleaned up.
+                //We're adding the "&& false == AllowAuditing" check to before/after CreatENode to ensure they only get called once.
+                //This means we only call them when calling postChanges from PromoteTempToReal (which passes allowAuditing = false).
+                //This works even for nodes that were never temp because makeNodeFromNodeTypeId calls PromoteTempToReal directly in that case.
+
                 //bool Creating = ( false == CswTools.IsPrimaryKey( NodeId ) || ( IsTempModified && false == IsTemp ) );
                 bool Creating = ( IsCreate || ( IsTempModified && false == IsTemp ) );
                 if( Creating && false == AllowAuditing )
