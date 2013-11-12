@@ -20,6 +20,14 @@
 
         var actionHandler = Csw.object();
         (function buildActHandler() {
+            actionHandler.add('chemwatch', function(o) {
+                var options = {
+                    materialid: o.state.materialId,
+                    onCancel: null, // todo: return to the material
+                    onFinish: null // todo: return to the material
+                };
+                return Csw.actions.chemwatch(Csw.main.centerTopDiv, options);
+            });
             actionHandler.add('create inspection', function (o) {
                 var designOpt = {
                     name: 'cswInspectionDesignWizard',
