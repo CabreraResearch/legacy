@@ -38,9 +38,7 @@
                 text: 'AS'
             });
 
-            tbl.cell(1, 3).select({
-                values: ['supplier1', 'supplier2', 'supplier3'],
-            });
+            tbl.cell(1, 3).select();
 
             tbl.cell(2, 1).input({
                 labelText: 'Material',
@@ -100,17 +98,7 @@
                     }],
                 //data: cswPrivate.Materials,
                 data: {
-                    'items': [
-                        {
-                            'material': 'Material 1'
-                        },
-                        {
-                            'material': 'Material 2'
-                        },
-                        {
-                            'material': 'Material 3'
-                        }
-                    ]
+
                 },
                 height: 200,
                 width: 400,
@@ -137,8 +125,7 @@
                 ID: 'chemwatchLngSelect',
                 name: 'chemwatchLngSelect',
                 selected: '',
-                //values: cswPrivate.Languages,
-                values: ['language1','language1','language1','language1'],
+                values: cswPrivate.OperationData.Languages,
                 width: '',
                 onChange: null
             });
@@ -147,8 +134,7 @@
                 ID: 'chemwatchCntrySelect',
                 name: 'chemwatchCntrySelect',
                 selected: '',
-                //values: cswPrivate.Countries,
-                values: ['country','country','country','country','country','country'],
+                values: cswPrivate.OperationData.Countries,
                 width: '',
                 onChange: null
             });

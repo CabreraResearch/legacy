@@ -36,7 +36,7 @@ namespace NbtWebApp.Actions.ChemWatch
                 Languages cwLanguages = cwCommonClient.GetLanguages();
                 foreach( Language cwLanguage in cwLanguages )
                 {
-                    Return.Data.Suppliers.Add( new CswNbtChemWatchListItem()
+                    Return.Data.Languages.Add( new CswNbtChemWatchListItem()
                         {
                             Name = cwLanguage.Name,
                             Id = cwLanguage.Id
@@ -46,7 +46,7 @@ namespace NbtWebApp.Actions.ChemWatch
                 Countries cwCountries = cwCommonClient.GetCountries();
                 foreach( Country cwCountry in cwCountries )
                 {
-                    Return.Data.Suppliers.Add( new CswNbtChemWatchListItem()
+                    Return.Data.Countries.Add( new CswNbtChemWatchListItem()
                     {
                         Name = cwCountry.Name,
                         Id = cwCountry.Id
