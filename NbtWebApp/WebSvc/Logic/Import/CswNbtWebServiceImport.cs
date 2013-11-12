@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
+using System.Web;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt.Grid;
@@ -197,6 +198,7 @@ namespace ChemSW.Nbt.WebServices
 
             if( ImportDefName.Equals( "CAF" ) )
             {
+                string ViewSql = CswScheduleLogicNbtCAFImport.generateCAFViewSQL(HttpContext.Current.Request.PhysicalApplicationPath);
                 string ImportQueueSql = CswScheduleLogicNbtCAFImport.generateImportQueueTableSQL( CswResources );
                 string CAFCleanupSQL = CswScheduleLogicNbtCAFImport.generateCAFCleanupSQL( CswResources );
                 string TriggersSql = CswScheduleLogicNbtCAFImport.generateTriggerSQL( CswResources );
@@ -205,6 +207,8 @@ namespace ChemSW.Nbt.WebServices
                 MemoryStream stream = new MemoryStream();
                 StreamWriter sw = new StreamWriter( stream );
 
+                sw.Write( ViewSql );
+                sw.Write( "\r\n"  );
                 sw.Write( ImportQueueSql );
                 sw.Write( "\r\n" );
                 sw.Write( CAFCleanupSQL );
