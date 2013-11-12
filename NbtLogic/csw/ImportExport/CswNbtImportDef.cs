@@ -85,16 +85,7 @@ namespace ChemSW.Nbt.ImportExport
         public SortedList<Int32, CswNbtImportDefOrder> ImportOrder = new SortedList<int, CswNbtImportDefOrder>();
         public Collection<CswNbtImportDefRelationship> RowRelationships = new Collection<CswNbtImportDefRelationship>();
 
-        public static DataTable getDataTableForNewOrderEntries()
-        {
-            DataTable Table = new DataTable();
-            Table.Columns.Add( "sheetname" );
-            Table.Columns.Add( "sheetorder" );
-            Table.Columns.Add( "tablename" );
-            Table.Columns.Add( "viewname" );
-            Table.Columns.Add( "pkcolumnname" );
-            return Table;
-        }
+       
 
         /// <summary>
         /// Loads import definition bindings from the database
@@ -130,27 +121,21 @@ namespace ChemSW.Nbt.ImportExport
         } // _loadBindings()
 
 
-        public static Dictionary<string, Int32> addDefinitionEntries( CswNbtResources CswNbtResources, string ImportDefinitionName, DataTable OrderDataTable, DataTable DefDataTable )
+        public static Dictionary<string, Int32> addDefinitionEntriesFromExcel( CswNbtResources CswNbtResources, string ImportDefinitionName, DataTable OrderDataTable, DataTable DefDataTable )
         {
             Dictionary<string, Int32> ret = new Dictionary<string, Int32>();
             CswTableUpdate importDefinitionUpdate = CswNbtResources.makeCswTableUpdate( "CswNbtImportDef_addDefinitionEntries_Update", CswNbtImportTables.ImportDef.TableName );
-            DataTable importDefinitionTable = importDefinitionUpdate.getEmptyTable();
+            DataTable importDefinitionTable = importDefinitionUpdate.getTable();
             Int32 i = 1;
 
             // First we get the sheet and sheetorder
             string SheetName = string.Empty;
             Int32 SheetOrder = Int32.MinValue;
-            string TableName = string.Empty;
-            string ViewName = string.Empty;
-            string PKColumn = string.Empty;
 
             if( null != DefDataTable )
             {
                 SheetName = DefDataTable.Rows[0]["sheetname"].ToString();
                 SheetOrder = CswConvert.ToInt32( DefDataTable.Rows[0]["sheetorder"] );
-                TableName = DefDataTable.Rows[0]["tablename"].ToString();
-                ViewName = DefDataTable.Rows[0]["viewname"].ToString();
-                PKColumn = DefDataTable.Rows[0]["pkcolumnname"].ToString();
             }
 
             foreach( DataRow OrderRow in OrderDataTable.Rows )
@@ -159,23 +144,48 @@ namespace ChemSW.Nbt.ImportExport
                 if( false == string.IsNullOrEmpty( SheetName ) &&
                     false == ret.ContainsKey( SheetName ) )
                 {
-                    DataRow defrow = importDefinitionTable.NewRow();
-                    defrow[CswNbtImportTables.ImportDef.definitionname] = ImportDefinitionName;
-                    defrow[CswNbtImportTables.ImportDef.sheetname] = SheetName;
-                    defrow[CswNbtImportTables.ImportDef.sheetorder] = Int32.MinValue != SheetOrder ? SheetOrder : i;
-                    defrow["tablename"] = TableName;
-                    defrow["viewname"] = ViewName;
-                    defrow["pkcolumnname"] = PKColumn;
-                    i++;
-                    importDefinitionTable.Rows.Add( defrow );
-                    ret.Add( SheetName, CswConvert.ToInt32( defrow[CswNbtImportTables.ImportDef.PkColumnName] ) );
+
+                    DataRow[] ExistingRows = importDefinitionTable.Select( "sheetname = '" + SheetName + "' and definitionname = '" + ImportDefinitionName + "'" );
+                    if( ExistingRows.Length > 0 )
+                    {
+                        ret.Add( SheetName, CswConvert.ToInt32( ExistingRows[0][CswNbtImportTables.ImportDef.PkColumnName] ) );
+                    }
+                    else
+                    {
+                        DataRow defrow = importDefinitionTable.NewRow();
+                        defrow[CswNbtImportTables.ImportDef.definitionname] = ImportDefinitionName;
+                        defrow[CswNbtImportTables.ImportDef.sheetname] = SheetName;
+                        defrow[CswNbtImportTables.ImportDef.sheetorder] = Int32.MinValue != SheetOrder ? SheetOrder : i;
+                        i++;
+                        importDefinitionTable.Rows.Add( defrow );
+                        ret.Add( SheetName, CswConvert.ToInt32( defrow[CswNbtImportTables.ImportDef.PkColumnName] ) );
+                    }
                 }
             } // foreach
             importDefinitionUpdate.update( importDefinitionTable );
             return ret;
+        } // _addDefinitionEntriesFromExcel();
+
+        public static Dictionary<string, Int32> addDefinitionEntries( CswNbtResources CswNbtResources, string ImportDefinitionName, DataTable DefDataTable )
+        {
+            Dictionary<string, Int32> ret = new Dictionary<string, Int32>();
+            CswTableUpdate importDefinitionUpdate = CswNbtResources.makeCswTableUpdate( "CswNbtImportDef_addDefinitionEntries_Update", CswNbtImportTables.ImportDef.TableName );
+
+            //this is a hack, and the fact that we can even do this makes me sad
+            importDefinitionUpdate._DoledOutTables.Add( DefDataTable );
+            importDefinitionUpdate.update( DefDataTable );
+
+            CswTableSelect importDefSelect = CswNbtResources.makeCswTableSelect( "CswNbtImportDef_addDefinitionEntries_Select", CswNbtImportTables.ImportDef.TableName );
+
+            DataTable importDefTable = importDefSelect.getTable("where definitionname = '" + ImportDefinitionName + "'");
+
+            foreach( DataRow DefRow in importDefTable.Rows )
+            {
+                ret.Add( DefRow["sheetname"].ToString(), Convert.ToInt32(DefRow["importdefid"]) );
+            }
+
+            return ret;
         } // _addDefinitionEntries();
-
-
 
     } // class CswNbtImportDef
 } // namespace

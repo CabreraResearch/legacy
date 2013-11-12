@@ -27,8 +27,9 @@ namespace ChemSW.Nbt.Schema
         public override void update()
         {
             // Case 30043 - CAF Migration: Sites/Locations/Work Units
-            CswNbtSchemaUpdateImportMgr importMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "inventory_groups", "Inventory Group" );
+            CswNbtSchemaUpdateImportMgr importMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "CAF" );
 
+            importMgr.CAFimportOrder( "Inventory Group", "inventory_groups" );
             // Binding
             importMgr.importBinding( "inventorygroupname", CswNbtObjClassInventoryGroup.PropertyName.Name, "" );
             importMgr.importBinding( "iscentralgroup", CswNbtObjClassInventoryGroup.PropertyName.Central, "" );

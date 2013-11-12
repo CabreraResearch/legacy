@@ -81,7 +81,20 @@ namespace ChemSW.Nbt.ImportExport
                 DataTable BindingsDataTable = ExcelDataSet.Tables["Bindings$"];
                 DataTable RelationshipsDataTable = ExcelDataSet.Tables["Relationships$"];
 
-                storeDefinition( OrderDataTable, BindingsDataTable, RelationshipsDataTable, ImportDefinitionName );
+                Dictionary<string, Int32> DefIdsBySheetName = CswNbtImportDef.addDefinitionEntriesFromExcel( _CswNbtResources, ImportDefinitionName, OrderDataTable, null );
+                
+                //convert the sheetname column of the excel file into the corresponding importdefid
+                foreach ( DataTable Table in new DataTable[] {OrderDataTable, BindingsDataTable, RelationshipsDataTable} )
+                {
+                    Table.Columns.Add( "importdefid" );
+                    foreach( DataRow Row in Table.Rows )
+                    {
+                        Row["importdefid"] = DefIdsBySheetName[Row["sheetname"].ToString()];
+                    }
+                    Table.Columns.Remove( "sheetname" );
+                }
+                
+                storeDefinition( OrderDataTable, BindingsDataTable, RelationshipsDataTable);
             } // if( ExcelDataSet.Tables.Count == 3 )
             else
             {
@@ -89,12 +102,11 @@ namespace ChemSW.Nbt.ImportExport
             }
         }
 
-        public void storeDefinition( DataTable OrderDataTable, DataTable BindingsDataTable, DataTable RelationshipsDataTable, string ImportDefinitionName, DataTable DefDataTable = null )
+        public void storeDefinition( DataTable OrderDataTable, DataTable BindingsDataTable, DataTable RelationshipsDataTable )
         {
-            Dictionary<string, Int32> DefIdsBySheetName = CswNbtImportDef.addDefinitionEntries( _CswNbtResources, ImportDefinitionName, OrderDataTable, DefDataTable );
-            CswNbtImportDefOrder.addOrderEntries( _CswNbtResources, OrderDataTable, DefIdsBySheetName );
-            CswNbtImportDefBinding.addBindingEntries( _CswNbtResources, BindingsDataTable, DefIdsBySheetName );
-            CswNbtImportDefRelationship.addRelationshipEntries( _CswNbtResources, RelationshipsDataTable, DefIdsBySheetName );
+            CswNbtImportDefOrder.addOrderEntries( _CswNbtResources, OrderDataTable );
+            CswNbtImportDefBinding.addBindingEntries( _CswNbtResources, BindingsDataTable );
+            CswNbtImportDefRelationship.addRelationshipEntries( _CswNbtResources, RelationshipsDataTable );
 
         }
 
@@ -269,17 +281,16 @@ namespace ChemSW.Nbt.ImportExport
         /// Import a single row (for CAF imports)
         /// </summary>
         /// <returns>Non-null string indicates an error</returns>
-        public string ImportRow( DataRow SourceRow, string ImportDefinitionName, string SheetName, bool Overwrite )
+        public string ImportRow( DataRow SourceRow, string ImportDefinitionName, string NodeType, bool Overwrite )
         {
             string Error = string.Empty;
 
-            if( false == string.IsNullOrEmpty( ImportDefinitionName ) &&
-                false == string.IsNullOrEmpty( SheetName ) )
+            if( false == string.IsNullOrEmpty( ImportDefinitionName ) )
             {
-                CswNbtImportDef BindingDef = new CswNbtImportDef( _CswNbtResources, ImportDefinitionName, SheetName );
+                CswNbtImportDef BindingDef = new CswNbtImportDef( _CswNbtResources, ImportDefinitionName, "CAF" );
                 if( null != BindingDef && ( BindingDef.Bindings.Count > 0 || BindingDef.RowRelationships.Count > 0 ) && BindingDef.ImportOrder.Count > 0 )
                 {
-                    foreach( CswNbtImportDefOrder Order in BindingDef.ImportOrder.Values )
+                    foreach( CswNbtImportDefOrder Order in BindingDef.ImportOrder.Values.Where( order => order.NodeTypeName == NodeType ))
                     {
                         try
                         {
@@ -405,12 +416,16 @@ namespace ChemSW.Nbt.ImportExport
             IEnumerable<CswNbtImportDefBinding> NodeTypeBindings = BindingDef.Bindings.Where(
                 delegate( CswNbtImportDefBinding b )
                 {
-                    if( null == b.DestNodeType )
-                    {
-                        throw new CswDniException(CswEnumErrorType.Error, "DestNodeType '" + b.DestNodeTypeName + "' is not enabled or does not exist.", "Accessor for Order.NodeType returned null.");
-                    }
-                    return b.DestNodeType == Order.NodeType && b.Instance == Order.Instance;
+                    return null != b.DestNodeType && b.DestNodeType == Order.NodeType && b.Instance == Order.Instance;
                 } );
+
+
+            if( false == NodeTypeBindings.Any() )
+            {
+                throw new CswDniException( CswEnumErrorType.Error, "No bindings are defined for Row.", "No bindings passed the filter. Are appropriate nodetypes enabled in NBT?" );
+            }
+
+
             IEnumerable<CswNbtImportDefRelationship> RowRelationships = BindingDef.RowRelationships.Where( r => r.NodeType.NodeTypeId == Order.NodeType.NodeTypeId ); //&& r.Instance == Order.Instance );
             IEnumerable<CswNbtImportDefRelationship> UniqueRelationships = RowRelationships.Where( r => r.Relationship.IsUnique() ||
                                                                                                         r.Relationship.IsCompoundUnique() ||
@@ -439,7 +454,7 @@ namespace ChemSW.Nbt.ImportExport
             string LegacyId = string.Empty;
             foreach( CswNbtImportDefBinding Binding in NodeTypeBindings )
             {
-                if( Binding.DestPropName == "Legacy ID" )
+                if( Binding.DestPropName == "Legacy Id" )
                 {
                     LegacyId = ImportRow[Binding.ImportDataColumnName].ToString();
                 }
@@ -548,7 +563,7 @@ namespace ChemSW.Nbt.ImportExport
                                 else
                                 {
                                   //we still want to set legacy id on nodes matched by unique properties
-                                    foreach( CswNbtImportDefBinding Binding in NodeTypeBindings.Where( Binding => Binding.DestPropName == "Legacy ID" ) )
+                                    foreach( CswNbtImportDefBinding Binding in NodeTypeBindings.Where( Binding => Binding.DestPropName == "Legacy Id" ) )
                                     {
                                         //there should always be exactly one iteration of this loop
                                         Node.Properties[Binding.DestProperty].SetSubFieldValue( Binding.DestSubfield, ImportRow[Binding.ImportDataColumnName].ToString() );

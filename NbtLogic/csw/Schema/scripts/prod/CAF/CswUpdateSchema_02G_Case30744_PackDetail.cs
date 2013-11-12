@@ -36,9 +36,10 @@ namespace ChemSW.Nbt.Schema
 
         private void _createImportBindings()
         {
-            CswNbtSchemaUpdateImportMgr sizeImporter = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "packdetail", "Size", "packdetail_view" );
+            CswNbtSchemaUpdateImportMgr sizeImporter = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "CAF" );
 
-            sizeImporter.importBinding( "packdetailid", "Legacy Id", "" ); //needed because of view
+            sizeImporter.CAFimportOrder( "Size", "packdetail", "packdetail_view", "packdetailid" );
+
             sizeImporter.importBinding( "packagedescription", CswNbtObjClassSize.PropertyName.Description, "" );
             sizeImporter.importBinding( "packageid", CswNbtObjClassSize.PropertyName.Material, CswEnumNbtSubFieldName.NodeID.ToString() );
             sizeImporter.importBinding( "catalogno", CswNbtObjClassSize.PropertyName.CatalogNo, "" );
