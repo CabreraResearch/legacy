@@ -1072,12 +1072,13 @@ namespace ChemSW.Nbt.MetaData
             //note: if we are using numbering, we will perform this on the setter for prop.questionno
             if( NtpModel.UseNumbering == false )
             {
-                string OraViewColName = CswTools.MakeOracleCompliantIdentifier( NtpModel.PropName );
+                string OraViewColName = NtpModel.PropName;
                 if( null == NtpModel.ObjectClassPropToCopy ) //Case 31160 - all NTPs with no ObjClass get a special prefix
                 {
                     OraViewColName = OraViewColNamePrefix + OraViewColName;
                 }
-                InsertedRow["oraviewcolname"] = OraViewColName;
+                InsertedRow["oraviewcolname"] = CswTools.MakeOracleCompliantIdentifier( OraViewColName );
+                
             }
 
 
