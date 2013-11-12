@@ -41,9 +41,20 @@ namespace NbtWebApp.Actions.ChemWatch
 
         public CswPrimaryKey NbtMaterialId = null;
         [DataMember( Name = "NbtMaterialId" )]
-        private string NbtMaterialIdStr
+        public string NbtMaterialIdStr
         {
-            get { return NbtMaterialId.ToString(); }
+            get
+            {
+                if( null == NbtMaterialId )
+                {
+                    return "";
+                }
+                else
+                {
+                    return NbtMaterialId.ToString();
+                }
+            }
+
             set
             {
                 NbtMaterialId = CswConvert.ToPrimaryKey( value );
@@ -52,7 +63,7 @@ namespace NbtWebApp.Actions.ChemWatch
     }
 
     [DataContract]
-    public class CswNbtChemWatchReturn: CswWebSvcReturn
+    public class CswNbtChemWatchReturn : CswWebSvcReturn
     {
         public CswNbtChemWatchReturn()
         {

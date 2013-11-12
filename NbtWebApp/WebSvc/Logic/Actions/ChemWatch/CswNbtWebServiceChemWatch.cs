@@ -23,12 +23,12 @@ namespace NbtWebApp.Actions.ChemWatch
 
             CswNbtObjClassChemical ChemicalNode = NbtResources.Nodes[Request.NbtMaterialId]; //TODO: should we verify the Request.NodeId is of a Chemical?
 
-            Request.Supplier = ChemicalNode.Supplier.CachedNodeName;
-            Request.PartNo = ChemicalNode.PartNumber.Text;
-            Request.MaterialName = ChemicalNode.TradeName.Text;
+            Return.Data.Supplier = ChemicalNode.Supplier.CachedNodeName;
+            Return.Data.PartNo = ChemicalNode.PartNumber.Text;
+            Return.Data.MaterialName = ChemicalNode.TradeName.Text;
 
             string errorMsg;
-            if( _authenticate(out errorMsg) )
+            if( _authenticate( out errorMsg ) )
             {
                 CommonServiceClient cwCommonClient = new CommonServiceClient();
                 cwCommonClient.Endpoint.Behaviors.Add( _cookieBehavior );
@@ -36,11 +36,11 @@ namespace NbtWebApp.Actions.ChemWatch
                 Languages cwLanguages = cwCommonClient.GetLanguages();
                 foreach( Language cwLanguage in cwLanguages )
                 {
-                    Return.Data.Suppliers.Add(new CswNbtChemWatchListItem()
+                    Return.Data.Suppliers.Add( new CswNbtChemWatchListItem()
                         {
                             Name = cwLanguage.Name,
                             Id = cwLanguage.Id
-                        });
+                        } );
                 }
 
                 Countries cwCountries = cwCommonClient.GetCountries();
@@ -58,8 +58,8 @@ namespace NbtWebApp.Actions.ChemWatch
                 throw new CswDniException( CswEnumErrorType.Error, "There was a problem authenticating with ChemWatch", errorMsg );
             }
         }
-        
-        private static bool _authenticate(out string ErrorMsg)
+
+        private static bool _authenticate( out string ErrorMsg )
         {
             ErrorMsg = "";
             bool ret = false;
