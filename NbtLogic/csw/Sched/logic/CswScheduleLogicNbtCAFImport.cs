@@ -1,5 +1,6 @@
 using System;
 using System.Data;
+using System.IO;
 using ChemSW.Config;
 using ChemSW.Core;
 using ChemSW.DB;
@@ -151,6 +152,18 @@ namespace ChemSW.Nbt.Sched
         {
             _LogicRunStatus = CswEnumScheduleLogicRunStatus.Idle;
         }
+
+        public static string generateCAFViewSQL(string RelativePath )
+        {
+            
+            StreamReader ViewFile = new StreamReader( File.Open( RelativePath  + "../NbtLogic/Resources/CAF.sql", FileMode.Open ) );
+            string ViewSQL = ViewFile.ReadToEnd();
+            ViewFile.Close();
+
+            return ViewSQL;
+        }
+
+
 
         public static string generateImportQueueTableSQL( ICswResources CswResources )
         {
