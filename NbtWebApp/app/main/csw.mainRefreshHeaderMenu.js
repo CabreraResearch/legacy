@@ -64,7 +64,6 @@
                     Csw.publish(Csw.enums.events.main.clear, { centertop: true, centerbottom: true });
                     /* case 24669 */
                     Csw.cookie.clearAll();
-                    Csw.clientDb.setItem('returnHome', false); // Case 31158
                     return Csw.ajax.deprecatedWsNbt({
                         urlMethod: 'nbtManagerReauthenticate',
                         success: function (result) {

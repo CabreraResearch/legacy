@@ -151,26 +151,16 @@
         if (!cswPrivate.logoutpath) {
             throw new Error('Attempted to Logout, but Logout path was empty.');
         }
-        
-        // Case 31158
-        var returnHome = Csw.clientDb.getItem('returnHome');
-        if (Csw.isNullOrEmpty(returnHome)) {
-            returnHome = true;
-        }
 
         Csw.clientDb.clear();
         Csw.cookie.clearAll();
-        if (returnHome) {
-            Csw.window.location(cswPrivate.logoutpath);
-        } else {
-            Csw.window.location().reload();
-        }
+        Csw.window.location(cswPrivate.logoutpath);
     });
 
     var onLoginSuccess = function (data) {
         //Csw.cookie.set(Csw.cookie.cookieNames.CustomerId, cswPrivate.AccessId);
         //Csw.clientSession.setUsername(cswPrivate.UserName);
-        
+
         Csw.tryExec(cswPrivate.onAuthenticate, cswPrivate.UserName);
         Csw.cookie.set(Csw.cookie.cookieNames.UserDefaults, JSON.stringify(data));
 
