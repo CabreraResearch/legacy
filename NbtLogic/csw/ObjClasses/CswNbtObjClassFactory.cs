@@ -259,6 +259,10 @@ namespace ChemSW.Nbt.ObjClasses
                     ReturnVal = new CswNbtObjClassRequest( CswNbtResources, Node );
                     break;
 
+                case CswEnumNbtObjectClass.RequestItemClass:
+                    ReturnVal = new CswNbtObjClassRequestItem( CswNbtResources, Node );
+                    break;
+
                 case CswEnumNbtObjectClass.RequestContainerDispenseClass:
                     ReturnVal = new CswNbtObjClassRequestContainerDispense( CswNbtResources, Node );
                     break;
@@ -309,15 +313,6 @@ namespace ChemSW.Nbt.ObjClasses
 
                 case CswEnumNbtObjectClass.WorkUnitClass:
                     ReturnVal = new CswNbtObjClassWorkUnit( CswNbtResources, Node );
-                    break;
-
-                case "SampleClass":
-                case "TestClass":
-                case "ResultClass":
-                case "ParameterClass":
-                case "AliquotClass":
-                case "BiologicalClass":
-                    ReturnVal = new CswNbtObjClassDefault( CswNbtResources, Node );
                     break;
 
                 default:
