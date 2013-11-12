@@ -80,7 +80,7 @@ namespace NbtWebApp.Actions.ChemWatch
                 {
                     Return.Data.Materials.Add(new CswNbtChemWatchListItem()
                         {
-                            Id = cwMaterial.MaterialID,
+                            Id = cwMaterial.MaterialID.ToString(),
                             Name = cwMaterial.Name
                         });
                 }

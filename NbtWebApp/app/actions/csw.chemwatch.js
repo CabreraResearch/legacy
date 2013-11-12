@@ -24,10 +24,10 @@
         };
         var cswPublic = {};
 
-        cswPrivate.makeSupplierSelect = function(tbl) {
+        cswPrivate.makeSupplierSelect = function (tbl) {
             var supplierList = cswPrivate.OperationData.Suppliers;
-            cswPrivate.supplierSelect = tbl.cell(1, 3);
-            cswPrivate.supplierSelect.select({
+            cswPrivate.supplierSelectCell = tbl.cell(1, 3);
+            cswPrivate.supplierSelect = cswPrivate.supplierSelectCell.select({
                 values: supplierList
             });
 
@@ -59,7 +59,7 @@
                             cswPrivate.OperationData = data;
 
                             if (cswPrivate.supplierSelect) {
-                                cswPrivate.supplierSelect.empty();
+                                cswPrivate.supplierSelectCell.empty();
                                 cswPrivate.makeSupplierSelect(tbl);
                             }
                         },
@@ -95,7 +95,6 @@
                 disabledText: 'Searching...',
                 disableOnClick: false,
                 onClick: function () {
-                    
                     Csw.ajaxWcf.post({
                         urlMethod: 'ChemWatch/MaterialSearch',
                         data: {
@@ -106,11 +105,17 @@
                         success: function (data) {
                             cswPrivate.OperationData = data;
 
+                            var gridData = { 'items': [] };
+                            Csw.iterate(cswPrivate.OperationData.Materials, function (material) {
+                                gridData.items.push({ 'material': material.display, 'materialid': material.value });
+                            });
+
                             // Fill the table with the returned data
-                            if (cswPrivate.cswPrivate.materialListGrid && cswPrivate.cswPrivate.materialListGrid.destroy) {
-                                cswPrivate.cswPrivate.materialListGrid.destroy();
+                            if (cswPrivate.materialListGrid && cswPrivate.materialListGrid.destroy) {
+                                cswPrivate.materialListGrid.destroy();
                             }
-                            cswPrivate.makeMatListGrid();
+
+                            cswPrivate.makeMatListGrid(gridData);
                         },
                         error: function (data) {
                             console.log(data);
@@ -120,7 +125,7 @@
             });
         };
 
-        cswPrivate.makeMatListGrid = function () {
+        cswPrivate.makeMatListGrid = function (gridData) {
             cswPrivate.matListGridDiv = cswPublic.table.cell(2, 1).table({
                 cellPadding: 5
             });
@@ -130,15 +135,20 @@
 
             cswPrivate.materialListGrid = cswPrivate.matListGridDiv.cell(1, 1).grid({
                 name: 'chemwatchmatlistgrid',
-                fields: ['material'],
+                fields: ['material', 'materialid'],
                 columns: [
                     {
                         header: 'Material',
-                        dataIndex: 'material'
+                        dataIndex: 'material',
+                        width: 400
+                    },
+                    {
+                        header: 'Material Id',
+                        dataIndex: 'materialid',
+                        hidden: true
                     }],
-                //data: cswPrivate.Materials,
-                data: {
-
+                data: gridData || {
+                    'items': [] //ExtGrids won't show without data
                 },
                 height: 200,
                 width: 400,
