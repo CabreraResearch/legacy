@@ -5,7 +5,10 @@ using ChemSW.Nbt;
 using ChemSW.Nbt.ObjClasses;
 using NbtWebApp.ChemWatchAuthServices;
 using NbtWebApp.ChemWatchCommonServices;
+using NbtWebApp.ChemWatchMaterialServices;
 using NbtWebApp.WebSvc.Logic.Actions.ChemWatch;
+using Country = NbtWebApp.ChemWatchCommonServices.Country;
+using Language = NbtWebApp.ChemWatchCommonServices.Language;
 
 namespace NbtWebApp.Actions.ChemWatch
 {
@@ -51,6 +54,32 @@ namespace NbtWebApp.Actions.ChemWatch
                         Name = cwCountry.Name,
                         Id = cwCountry.Id
                     } );
+                }
+            }
+            else
+            {
+                throw new CswDniException( CswEnumErrorType.Error, "There was a problem authenticating with ChemWatch", errorMsg );
+            }
+        }
+
+        public static void MaterialSearch( ICswResources CswResources, CswNbtChemWatchReturn Return, CswNbtChemWatchRequest Request )
+        {
+            string errorMsg;
+            if( _authenticate( out errorMsg ) )
+            {
+                MaterialServiceClient cwMaterialClient = new MaterialServiceClient();
+                cwMaterialClient.Endpoint.Behaviors.Add( _cookieBehavior );
+
+                Request.Supplier = "SIGMA"; //FOR TESTING
+
+                ListResultOfMaterial cwMaterials = cwMaterialClient.GetMaterialsByVendorGroupId( Request.Supplier, Request.MaterialName, Request.PartNo, false, 1, 100, "", 0 );
+                foreach( Material cwMaterial in cwMaterials.Rows )
+                {
+                    Return.Data.Materials.Add(new CswNbtChemWatchListItem()
+                        {
+                            Id = cwMaterial.MaterialID,
+                            Name = cwMaterial.Name
+                        });
                 }
             }
             else

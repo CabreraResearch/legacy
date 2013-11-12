@@ -33,6 +33,25 @@ namespace NbtWebApp
             SvcDriver.run();
             return ( Ret );
         }
+
+        [OperationContract]
+        [WebInvoke( Method = "POST", UriTemplate = "MaterialSearch" )]
+        [Description( "Search for Materials" )]
+        [FaultContract( typeof( FaultException ) )]
+        public CswNbtChemWatchReturn MaterialSearch( CswNbtChemWatchRequest Request )
+        {
+            CswNbtChemWatchReturn Ret = new CswNbtChemWatchReturn();
+
+            var SvcDriver = new CswWebSvcDriver<CswNbtChemWatchReturn, CswNbtChemWatchRequest>(
+                CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj : Ret,
+                WebSvcMethodPtr : CswNbtWebServiceChemWatch.MaterialSearch,
+                ParamObj : Request
+                );
+
+            SvcDriver.run();
+            return ( Ret );
+        }
     }
 
 }

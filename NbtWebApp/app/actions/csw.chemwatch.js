@@ -38,14 +38,14 @@
                 text: 'AS'
             });
 
-            tbl.cell(1, 3).select();
+            cswPrivate.supplierSelect = tbl.cell(1, 3).select();
 
-            tbl.cell(2, 1).input({
+            cswPrivate.materialInput = tbl.cell(2, 1).input({
                 labelText: 'Material',
                 value: cswPrivate.OperationData.MaterialName
             });
 
-            tbl.cell(3, 1).input({
+            cswPrivate.partNoInput = tbl.cell(3, 1).input({
                 labelText: 'Part No',
                 value: cswPrivate.OperationData.PartNo
             });
@@ -57,12 +57,14 @@
                 disabledText: 'Searching...',
                 disableOnClick: false,
                 onClick: function () {
-
-                    // todo: call the method that will search chemwatch
-
+                    
                     Csw.ajaxWcf.post({
-                        urlMethod: 'ChemWatch/MaterialSearch', //todo: Pending discussion to call this 'MaterialSearch'
-                        data: cswPrivate.OperationData,
+                        urlMethod: 'ChemWatch/MaterialSearch',
+                        data: {
+                            Supplier: cswPrivate.supplierSelect.selectedVal(),
+                            MaterialName: cswPrivate.materialInput.val(),
+                            PartNo: cswPrivate.partNoInput.val()
+                        },
                         success: function (data) {
                             cswPrivate.OperationData = data;
 

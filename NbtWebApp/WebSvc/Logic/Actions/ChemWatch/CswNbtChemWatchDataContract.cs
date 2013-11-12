@@ -39,6 +39,9 @@ namespace NbtWebApp.Actions.ChemWatch
         [DataMember]
         public int ChemWatchMaterialId { get; set; }
 
+        [DataMember]
+        public Collection<CswNbtChemWatchListItem> Materials = new Collection<CswNbtChemWatchListItem>();
+
         public CswPrimaryKey NbtMaterialId = null;
         [DataMember( Name = "NbtMaterialId" )]
         public string NbtMaterialIdStr
