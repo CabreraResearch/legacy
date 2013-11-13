@@ -777,4 +777,14 @@ SELECT PACKAGEID,
 create or replace view reglists_view as
 (select "DELETED","DISPLAYNAME","LISTMODE","MATCHTYPE","REGLISTCODE","REGULATORYLISTID" from regulatory_lists where lower(listmode) = 'cispro');
 
-
+--Material Synonyms
+create or replace view synonyms_view as
+(
+  select ms.synonymname,
+  ms.synonymclass,
+  ms.materialsynonymid,
+  cv.packageid,
+  ms.materialsynonymid || '_' || cv.packageid as LegacyId
+  from materials_synonyms ms
+       join chemicals_view cv on ms.materialid = cv.materialid
+);

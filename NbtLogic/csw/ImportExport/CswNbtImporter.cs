@@ -450,7 +450,7 @@ namespace ChemSW.Nbt.ImportExport
                 allEmpty = true;
             }
 
-            if( false == allEmpty )
+            if( false == allEmpty || false == UniqueBindings.Any() )
             {
                 bool foundMatch = false;
                 if( false == string.IsNullOrEmpty( LegacyId ) ) //Check for matching nodes using a view on legacy id
