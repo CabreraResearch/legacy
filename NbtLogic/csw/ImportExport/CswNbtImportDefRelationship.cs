@@ -99,6 +99,14 @@ namespace ChemSW.Nbt.ImportExport
                         CswNbtMetaDataNodeTypeProp Relationship = NodeType.getNodeTypeProp( RelationshipName );
                         if( null != Relationship )
                         {
+
+                            //set blank instances to min value
+                            if( RelRow["instance"] == DBNull.Value || String.IsNullOrEmpty( RelRow["instance"].ToString() ) )
+                            {
+                                RelRow["instance"] = Int32.MinValue;
+                            }
+
+
                             DataRow row = importRelationshipsTable.NewRow();
                             row[CswNbtImportTables.ImportDefRelationships.importdefid] = DefIdsBySheetName[SheetName];
                             row[CswNbtImportTables.ImportDefRelationships.nodetypename] = NodeTypeName;

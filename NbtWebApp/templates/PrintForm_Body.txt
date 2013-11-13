@@ -37,7 +37,7 @@
                                             </p>
                                             <p>    
                                                 <h3>#3 - On the Setup tab, provide <em>login credentials</em> for ChemSW Live.</h3>
-                                                <br/><img src="NbtPrintClient/pic2.png"/><br/>*Do not check the "Use Windows Service" box unless you have are a system administrator for this computer. 
+                                                <br/><img src="NbtPrintClient/pic2.png"/><br/>Checking the "Use Windows Service" checkbox will allow the print client to be run as a background task on the computer, even when no user is logged in. Note that this checkbox will not function properly unless you are a system administrator for the computer. 
                                             </p>
                                             <p>                                        
                                                 <h3>#4 - Click the Add Printer button, then Choose a printer</h3>

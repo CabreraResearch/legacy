@@ -697,38 +697,27 @@ namespace ChemSW.Nbt.WebServices
             private string _getUnitOfMeasure( string mappedUnitOfMeasure, string origUnitOfMeasure )
             {
                 string Ret = string.Empty;
+                ICswNbtTree MatchingUOMsTree;
 
-                // Create the view
-                CswNbtMetaDataObjectClass UnitsOfMeasureOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.UnitOfMeasureClass );
-                CswNbtView MatchingUOMsView = new CswNbtView( _CswNbtResources );
-                CswNbtViewRelationship ParentRelationship = MatchingUOMsView.AddViewRelationship( UnitsOfMeasureOC, false );
-
-                CswNbtMetaDataObjectClassProp NameOCP = UnitsOfMeasureOC.getObjectClassProp( CswNbtObjClassUnitOfMeasure.PropertyName.Name );
-                CswNbtMetaDataObjectClassProp AliasesOCP = UnitsOfMeasureOC.getObjectClassProp( CswNbtObjClassUnitOfMeasure.PropertyName.Aliases );
-
-                CswNbtViewPropertyFilter ViewPropertyFilter_Name = MatchingUOMsView.AddViewPropertyAndFilter( ParentRelationship,
-                                                               MetaDataProp: NameOCP,
-                                                           Value: mappedUnitOfMeasure,
-                                                               SubFieldName: CswEnumNbtSubFieldName.Text,
-                                                               FilterMode: CswEnumNbtFilterMode.Equals );
-
-
-                CswNbtViewPropertyFilter ViewPropertyFilter_Aliases = MatchingUOMsView.AddViewPropertyAndFilter( ParentRelationship,
-                                                               MetaDataProp: AliasesOCP,
-                                                           Value: mappedUnitOfMeasure,
-                                                               SubFieldName: CswEnumNbtSubFieldName.Text,
-                                                               FilterMode: CswEnumNbtFilterMode.Contains,
-                                                               Conjunction: CswEnumNbtFilterConjunction.Or );
-
-                // Get and iterate the Tree
-                ICswNbtTree MatchingUOMsTree = _CswNbtResources.Trees.getTreeFromView( MatchingUOMsView, false, false, true );
-                if( MatchingUOMsTree.getChildNodeCount() == 0 )
+                bool FoundMatch = false;
+                if( false == string.IsNullOrEmpty( mappedUnitOfMeasure ) )
                 {
-                    // Run view again using the origUnitOfMeasure
-                    ViewPropertyFilter_Name.Value = origUnitOfMeasure;
-                    ViewPropertyFilter_Aliases.Value = origUnitOfMeasure;
+                    MatchingUOMsTree = _createUoMView( mappedUnitOfMeasure );
+                    if( MatchingUOMsTree.getChildNodeCount() > 0 )
+                    {
+                        for( int i = 0; i < MatchingUOMsTree.getChildNodeCount(); i++ )
+                        {
+                            MatchingUOMsTree.goToNthChild( i );
+                            Ret = MatchingUOMsTree.getNodeNameForCurrentPosition();
+                            MatchingUOMsTree.goToParentNode();
+                        }
+                        FoundMatch = true;
+                    }
+                }
 
-                    MatchingUOMsTree = _CswNbtResources.Trees.getTreeFromView( MatchingUOMsView, false, false, true );
+                if( false == FoundMatch )
+                {
+                    MatchingUOMsTree = _createUoMView( origUnitOfMeasure );
                     if( MatchingUOMsTree.getChildNodeCount() > 0 )
                     {
                         for( int i = 0; i < MatchingUOMsTree.getChildNodeCount(); i++ )
@@ -739,19 +728,42 @@ namespace ChemSW.Nbt.WebServices
                         }
                     }
                 }
-                else
-                {
-                    for( int i = 0; i < MatchingUOMsTree.getChildNodeCount(); i++ )
-                    {
-                        MatchingUOMsTree.goToNthChild( i );
-                        Ret = MatchingUOMsTree.getNodeNameForCurrentPosition();
-                        MatchingUOMsTree.goToParentNode();
-                    }
-                }
 
                 return Ret;
 
             }//_getUnitOfMeasure()
+
+            private ICswNbtTree _createUoMView( string Value )
+            {
+                ICswNbtTree Ret;
+
+                // Create the view
+                CswNbtMetaDataObjectClass UnitsOfMeasureOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.UnitOfMeasureClass );
+                CswNbtView MatchingUOMsView = new CswNbtView( _CswNbtResources );
+                CswNbtViewRelationship ParentRelationship = MatchingUOMsView.AddViewRelationship( UnitsOfMeasureOC, false );
+
+                CswNbtMetaDataObjectClassProp NameOCP = UnitsOfMeasureOC.getObjectClassProp( CswNbtObjClassUnitOfMeasure.PropertyName.Name );
+                CswNbtMetaDataObjectClassProp AliasesOCP = UnitsOfMeasureOC.getObjectClassProp( CswNbtObjClassUnitOfMeasure.PropertyName.Aliases );
+
+                MatchingUOMsView.AddViewPropertyAndFilter( ParentRelationship,
+                                                               MetaDataProp: NameOCP,
+                                                               Value: Value,
+                                                               SubFieldName: CswEnumNbtSubFieldName.Text,
+                                                               FilterMode: CswEnumNbtFilterMode.Equals );
+
+
+                MatchingUOMsView.AddViewPropertyAndFilter( ParentRelationship,
+                                                               MetaDataProp: AliasesOCP,
+                                                               Value: Value,
+                                                               SubFieldName: CswEnumNbtSubFieldName.Text,
+                                                               FilterMode: CswEnumNbtFilterMode.Contains,
+                                                               Conjunction: CswEnumNbtFilterConjunction.Or );
+
+                // Create the tree
+                Ret = _CswNbtResources.Trees.getTreeFromView( MatchingUOMsView, false, false, true );
+
+                return Ret;
+            }
 
             private void _removeDuplicateSizes()
             {

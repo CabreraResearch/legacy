@@ -28,7 +28,7 @@ namespace ChemSW.Nbt.WebServices
         /// Return Object for Reports, which inherits from CswWebSvcReturn
         /// </summary>
         [DataContract]
-        public class ReportReturn: CswWebSvcReturn
+        public class ReportReturn : CswWebSvcReturn
         {
             public ReportReturn()
             {
@@ -185,7 +185,7 @@ namespace ChemSW.Nbt.WebServices
         /// Return Object for Reports, which inherits from CswWebSvcReturn
         /// </summary>
         [DataContract]
-        public class CrystalReportReturn: CswWebSvcReturn
+        public class CrystalReportReturn : CswWebSvcReturn
         {
             public CrystalReportReturn()
             {
@@ -241,7 +241,14 @@ namespace ChemSW.Nbt.WebServices
             {
                 if( false == string.IsNullOrEmpty( reportParams.ReportNode.WebService.Text ) )
                 {
-                    string WebServiceUrl = "http://localhost/NbtDev/Services/" + CswNbtObjClassReport.ReplaceReportParams( reportParams.ReportNode.WebService.Text, reportParams.ReportParamDictionary );
+                    // case 31102
+                    // Determine the webservice URL from the request URL
+                    // Use 'localhost' however, since daily/prod may not be able to see its own DNS
+                    //string thisUrl = reportParams.Context.Request.Url.AbsoluteUri;
+                    string thisUrl = reportParams.Context.Request.Url.Scheme + "://localhost" + reportParams.Context.Request.Url.LocalPath;
+                    string thisUrlBase = thisUrl.Substring( 0, thisUrl.IndexOf( "/Services/" ) + "/Services/".Length );
+                    string WebServiceUrl = thisUrlBase + CswNbtObjClassReport.ReplaceReportParams( reportParams.ReportNode.WebService.Text, reportParams.ReportParamDictionary );
+
                     HttpWebRequest request = (HttpWebRequest) HttpWebRequest.Create( WebServiceUrl );
                     request.Method = "GET";
                     request.CookieContainer = new CookieContainer();
@@ -271,7 +278,10 @@ namespace ChemSW.Nbt.WebServices
                     }
                     //result = @"<?xml version=""1.0"" encoding=""utf-8""?>" + result;
                     //rptDataTbl.ReadXml( response.GetResponseStream() );
-                    rptDataTbl.ReadXml( new StringReader( result ) );
+                    if( false == string.IsNullOrEmpty( result ) )
+                    {
+                        rptDataTbl.ReadXml( new StringReader( result ) );
+                    }
                 }
                 else if( false == string.IsNullOrEmpty( reportParams.ReportNode.SQL.Text ) )
                 {
@@ -290,7 +300,7 @@ namespace ChemSW.Nbt.WebServices
                         }
 
                         //Getting 1 more than RowLimit in order to determine if truncation occurred
-                        rptDataTbl = cswRptSql.getTable( PageLowerBoundExclusive : 0, PageUpperBoundInclusive : reportParams.RowLimit + 1, RequireOneRow : false );
+                        rptDataTbl = cswRptSql.getTable( PageLowerBoundExclusive: 0, PageUpperBoundInclusive: reportParams.RowLimit + 1, RequireOneRow: false );
                         if( string.IsNullOrEmpty( rptDataTbl.TableName ) && null != reportParams.ReportNode )
                         {
                             rptDataTbl.TableName = reportParams.ReportNode.ReportName.Text;

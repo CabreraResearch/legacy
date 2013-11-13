@@ -68,7 +68,6 @@
     <Content Include="app\actions\csw.logindata.js" />
     <Content Include="app\actions\csw.scheduledRules.js" />
     <Content Include="app\actions\csw.tierIIReporting.js" />
-    <Content Include="app\actions\csw.hmisReporting.js" />
     <Content Include="app\actions\csw.kioskmode.js" />
     <Content Include="app\actions\csw.arbor.render.js" />
     <Content Include="app\actions\_template.js" />

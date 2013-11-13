@@ -1107,6 +1107,7 @@
                     propid: propData.id,
                     propData: propData,
                     Required: Csw.bool(propData.required),
+                    issaveprop: propData.issaveprop,
                     onReload: function (afterReload) {
                         cswPrivate.getProps(tabid, afterReload);
                     },

@@ -29,7 +29,7 @@
                 },
                 fieldtype: '',
                 propDiv: cswParent,
-                //saveBtn: {},
+                issaveprop: false,
                 propData: {
                     id: '',
                     name: '',
@@ -118,6 +118,9 @@
                     Csw.unsubscribe('render_' + cswPublic.tabState.nodeid + '_' + cswPublic.tabid, null, cswPrivate.renderer);
                     Csw.unsubscribe('initPropertyTearDown', null, cswPrivate.tearDown);
                     Csw.unsubscribe('initPropertyTearDown_' + cswPublic.tabState.nodeid, null, cswPrivate.tearDown);
+                    if (cswPrivate.issaveprop) {
+                        Csw.unsubscribe('triggerSave_' + cswPublic.tabState.nodeid);
+                    }
 
                     Csw.properties.unsubscribe(cswPublic.eventName);
 

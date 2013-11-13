@@ -282,7 +282,7 @@ namespace ChemSW.Nbt.Actions
                                                          where ocp.propname = 'Physical State'
                                                        ) ps on (ps.nodeid = n.nodeid)
                                                  where oc.objectclass = 'ChemicalClass'
-                                                   and sf.gestaltsearch not like '%Not Reportable%'";
+                                                   and (sf.gestaltsearch is null or sf.gestaltsearch not like '%not reportable%')";
                 if( string.IsNullOrEmpty( Request.Class ) )
                 {
                     HMISSql += "   and hc.clobdata is not null";

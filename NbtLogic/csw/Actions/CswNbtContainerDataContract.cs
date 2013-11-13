@@ -66,7 +66,7 @@ namespace ChemSW.Nbt.Actions
             [DataMember]
             public String ContainerBarcode = String.Empty;
             [DataMember]
-            public String PriorLocation = String.Empty;
+            public String ExpectedLocation = String.Empty;
             [DataMember]
             public String ScannedLocation = String.Empty;
             [DataMember]
