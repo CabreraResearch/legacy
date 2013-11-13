@@ -211,6 +211,10 @@
             });
         };
 
+        cswPrivate.onView = function(recordData) {
+            window.open(recordData.file, '_blank', 'toolbar=0,location=0,menubar=0');
+        };
+
         cswPrivate.makeSDSListGrid = function (gridData) {
             cswPrivate.sdsListGridCell = cswPrivate.sdsInfoTbl.cell(2, 1);
             cswPrivate.sdsListGridCell.empty();
@@ -249,7 +253,8 @@
                                     isButton: true,
                                     size: 18,
                                     onClick: function (event) {
-                                        //show the pdf in a window
+                                        // todo: cache this to the server instead then show it
+                                        Csw.tryExec(cswPrivate.onView, record.data);
                                     }
                                 };
                                 previewCell.icon(iconopts);
