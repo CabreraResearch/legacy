@@ -295,7 +295,6 @@
                                     isButton: true,
                                     size: 18,
                                     onClick: function (event) {
-                                        // todo: cache this to the server instead then show it
                                         Csw.tryExec(cswPrivate.onView, record.data);
                                     }
                                 };
@@ -333,6 +332,7 @@
             });
         };
         
+        //TODO: What if the URL doesn't work? Should we show an error?
         cswPrivate.onView = function (recordData) {
             // We are using Google's Viewer to view the PDF's in the browser: https://docs.google.com/viewer
             // +1 for Google
