@@ -153,11 +153,15 @@
                 showActionColumn: false,
                 canSelectRow: true,
                 onSelect: function (rows) {
-                    
                     // Search for documents related to selected material
                     Csw.ajaxWcf.post({
                         urlMethod: 'ChemWatch/SDSDocumentSearch',
-                        data: cswPrivate.OperationData,
+                        data: {
+                            ChemWatchMaterialId: rows.materialid,
+                            Languages: [{ 'display': '', 'value': cswPrivate.lngSelect.val() }],
+                            Countries: [{ 'display': '', 'value': cswPrivate.cntrySelect.val() }],
+                            Supplier: cswPrivate.supplierSelect.val()
+                        },
                         success: function (data) {
                             cswPrivate.OperationData = data;
 
@@ -166,8 +170,12 @@
                                 gridData.items.push({ 'language': sdsdoc.language, 'country': sdsdoc.country, 'file': sdsdoc.file });
                             });
 
+                            // Destroy current grid
+                            if (cswPrivate.sdsListGrid && cswPrivate.sdsListGrid.destroy) {
+                                cswPrivate.sdsListGrid.destroy();
+                            }
+                            // Remake grid
                             cswPrivate.makeSDSListGrid(gridData);
-
                         },
                         error: function (data) {
                             //todo: implement error condition
@@ -183,8 +191,7 @@
                 cellPadding: 5
             });
 
-            //todo: onSelect for either control below, reload the sdsgrid or filter it
-
+            //todo: onChange for either control, set the values of cswPrivate.OperationData
             cswPrivate.lngSelect = cswPrivate.sdsInfoTbl.cell(1, 1).select({
                 ID: 'chemwatchLngSelect',
                 name: 'chemwatchLngSelect',
@@ -194,7 +201,7 @@
                 onChange: null
             });
 
-            cswPrivate.makeLngCntrySelects = cswPrivate.sdsInfoTbl.cell(1, 2).select({
+            cswPrivate.cntrySelect = cswPrivate.sdsInfoTbl.cell(1, 2).select({
                 ID: 'chemwatchCntrySelect',
                 name: 'chemwatchCntrySelect',
                 selected: '',
@@ -205,10 +212,10 @@
         };
 
         cswPrivate.makeSDSListGrid = function (gridData) {
-            cswPrivate.sdsListGridDiv = cswPrivate.sdsInfoTbl.cell(2, 1).div();
-            cswPrivate.sdsListGridDiv.empty();
+            cswPrivate.sdsListGridCell = cswPrivate.sdsInfoTbl.cell(2, 1);
+            cswPrivate.sdsListGridCell.empty();
 
-            cswPrivate.sdsListGridDiv = cswPrivate.sdsListGridDiv.grid({
+            cswPrivate.sdsListGrid = cswPrivate.sdsListGridCell.grid({
                 name: 'chemwatchsdslistgrid',
                 fields: ['view', 'language', 'country', 'select', 'file'],
                 columns: [

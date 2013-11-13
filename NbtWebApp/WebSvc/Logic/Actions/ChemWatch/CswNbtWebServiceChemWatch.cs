@@ -129,6 +129,7 @@ namespace NbtWebApp.Actions.ChemWatch
                     SDSDoc.Language = Doc.LanguageCode;
                     SDSDoc.Country = Doc.CountryCode;
                     SDSDoc.File = Doc.FileName.Length > 0 ? Doc.FileName : Doc.ExternalUrl;
+                    Return.Data.SDSDocuments.Add( SDSDoc );
                 }
             }
             else
