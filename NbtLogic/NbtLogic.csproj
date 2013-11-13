@@ -420,6 +420,10 @@
     <Compile Include="csw\Schema\scripts\prod\02I\CswUpdateSchema_02I_Case31041.cs" />
     <Compile Include="csw\Schema\scripts\prod\02I\CswUpdateSchema_02I_Case31072.cs" />
     <Compile Include="csw\Schema\scripts\prod\02I\CswUpdateDDL_02I_Case31061A.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02I\CswUpdateMetaData_02I_Case31072.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02I\CswUpdateSchema_02I_Case31040.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02I\CswSchemaScriptsIronwood.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02I\CswUpdateSchema_02I_CaseXXXXX.cs" />
     <Compile Include="csw\Schema\scripts\prod\02I\CswUpdateSchema_02I_Case31114B.cs" />
     <Compile Include="csw\Schema\scripts\prod\02I\CswUpdateMetaData_02I_Case31114A.cs" />
     <Compile Include="csw\Schema\scripts\prod\02I\CswUpdateMetaData_02I_Case31072.cs" />

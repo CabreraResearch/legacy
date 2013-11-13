@@ -58,6 +58,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterCreateNode()
         {
+            CswNbtPropertySetPermission.createDefaultWildcardPermission( _CswNbtResources, PermissionClass, NodeId );
             _CswNbtObjClassDefault.afterCreateNode();
         }//afterCreateNode()
 

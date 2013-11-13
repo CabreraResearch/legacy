@@ -497,6 +497,39 @@ namespace ChemSW.Nbt.Test.Actions
             }
         }
 
+        /// <summary>
+        /// Given a Container that was scanned in the wrong location, 
+        /// given that no other containers were scanned in the right location,
+        /// when container statistics are gathered for both locations,
+        /// assert that the scanned location does not show up in the list of unscanned locations.
+        /// Prior to resolving Case 31153, this test failed.
+        /// </summary>
+        [Test]
+        public void getContainerStatisticsTestWrongScannedLocation()
+        {
+            CswPrimaryKey LocationId = TestData.Nodes.createLocationNode().NodeId;
+            CswPrimaryKey LocationId2 = TestData.Nodes.createLocationNode( Name: "Room2", ParentLocationId: LocationId ).NodeId;
+            CswPrimaryKey LocationId3 = TestData.Nodes.createLocationNode( Name: "Room3", ParentLocationId: LocationId ).NodeId;
+            CswNbtObjClassContainer ContainerNode = TestData.Nodes.createContainerNode( LocationId: LocationId2 );
+            TestData.Nodes.createContainerLocationNode( ContainerNode.Node,
+               LocationId: LocationId3,
+               ContainerScan: ContainerNode.Barcode.Barcode,
+               Type: CswEnumNbtContainerLocationTypeOptions.ReconcileScans.ToString() );
+            ContainerData.ReconciliationRequest Request = new ContainerData.ReconciliationRequest
+            {
+                StartDate = DateTime.Now.AddHours( -1 ).ToString(),
+                EndDate = DateTime.Now.AddSeconds( 1 ).ToString(),
+                LocationId = LocationId.ToString(),
+                IncludeChildLocations = true,
+                ContainerLocationTypes = _getTypes()
+            };
+            ContainerData Data = ReconciliationAction.getContainerStatistics( Request );
+            foreach( ContainerData.UnscannedLocation UnscannedLocation in Data.UnscannedLocations )
+            {
+                Assert.AreNotEqual( UnscannedLocation.LocationId, LocationId3.ToString() );
+            }
+        }
+
         #endregion
 
         #region getReconciliationData

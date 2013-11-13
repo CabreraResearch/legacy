@@ -241,8 +241,11 @@ namespace ChemSW.Nbt.WebServices
             {
                 if( false == string.IsNullOrEmpty( reportParams.ReportNode.WebService.Text ) )
                 {
+                    // case 31102
                     // Determine the webservice URL from the request URL
-                    string thisUrl = reportParams.Context.Request.Url.AbsoluteUri;
+                    // Use 'localhost' however, since daily/prod may not be able to see its own DNS
+                    //string thisUrl = reportParams.Context.Request.Url.AbsoluteUri;
+                    string thisUrl = reportParams.Context.Request.Url.Scheme + "://localhost" + reportParams.Context.Request.Url.LocalPath;
                     string thisUrlBase = thisUrl.Substring( 0, thisUrl.IndexOf( "/Services/" ) + "/Services/".Length );
                     string WebServiceUrl = thisUrlBase + CswNbtObjClassReport.ReplaceReportParams( reportParams.ReportNode.WebService.Text, reportParams.ReportParamDictionary );
 

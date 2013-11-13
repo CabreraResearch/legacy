@@ -220,7 +220,10 @@ namespace ChemSW.Nbt.ObjClasses
 
         protected override void afterPopulateProps()
         {
-            syncCustomerInfo();
+            SchemaVersion.SetOnBeforeRender( delegate( CswNbtNodeProp Prop )
+                {
+                    syncCustomerInfo();
+                } );
 
             CompanyID.SetOnPropChange( OnCompanyIdPropChange );
 
