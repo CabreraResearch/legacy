@@ -219,7 +219,45 @@
                 name: 'chemwatchsdslistgrid',
                 fields: ['view', 'language', 'country', 'select', 'file'],
                 columns: [
-                    { header: 'View', dataIndex: 'view' },
+                    {
+                        header: 'View',
+                        dataIndex: 'view',
+                        menuDisabled: true,
+                        sortable: false,
+                        width: 40,
+                        flex: false,
+                        resizable: false,
+                        xtype: 'actioncolumn',
+                        renderer: function (value, metaData, record, rowIndex, colIndex, store, view) {
+                            var divId = 'view' + rowIndex + colIndex;
+                            Csw.defer(Csw.method(function () {
+
+                                var div = Csw.domNode({
+                                    ID: divId,
+                                    tagName: 'DIV'
+                                });
+                                div.empty();
+
+                                var table = div.table({ cellpadding: 0 });
+                                var previewCell = table.cell(1, 1).css({ width: '40px', 'text-align': 'center' });
+                                
+                                var iconopts = {
+                                    name: 'View',
+                                    hovertext: 'View',
+                                    iconType: Csw.enums.iconType.magglass,
+                                    state: Csw.enums.iconState.normal,
+                                    isButton: true,
+                                    size: 18,
+                                    onClick: function (event) {
+                                        //show the pdf in a window
+                                    }
+                                };
+                                previewCell.icon(iconopts);
+                                
+                            }), 100);
+                            return '<div id="' + divId + '" style="height:18px;"></div>';
+                        } // renderer()
+                    },
                     { header: 'Language', dataIndex: 'language' },
                     { header: 'Country', dataIndex: 'country' },
                     { header: 'Select', dataIndex: 'select' },
