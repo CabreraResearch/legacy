@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
 using ChemSW.Core;
 
 namespace ChemSW.Nbt.MetaData
@@ -29,6 +27,7 @@ namespace ChemSW.Nbt.MetaData
         public static readonly CswEnumNbtPropColumn Field1_FK = new CswEnumNbtPropColumn( "Field1_FK" );
         public static readonly CswEnumNbtPropColumn Field1_Date = new CswEnumNbtPropColumn( "Field1_Date" );
         public static readonly CswEnumNbtPropColumn Field1_Numeric = new CswEnumNbtPropColumn( "Field1_Numeric" );
+        public static readonly CswEnumNbtPropColumn Field1_Big = new CswEnumNbtPropColumn( "Field1_Big" );
         public static readonly CswEnumNbtPropColumn Field2_Numeric = new CswEnumNbtPropColumn( "Field2_Numeric" );
         public static readonly CswEnumNbtPropColumn Field3_Numeric = new CswEnumNbtPropColumn( "Field3_Numeric" );
         public static readonly CswEnumNbtPropColumn Field2 = new CswEnumNbtPropColumn( "Field2" );

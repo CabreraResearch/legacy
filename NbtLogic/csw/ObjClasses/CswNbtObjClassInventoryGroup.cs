@@ -1,12 +1,12 @@
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.PropertySets;
+using ChemSW.Nbt.PropTypes;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassInventoryGroup : CswNbtObjClass, ICswNbtPermissionGroup
+    public class CswNbtObjClassInventoryGroup: CswNbtObjClass, ICswNbtPermissionGroup
     {
         public new sealed class PropertyName: CswNbtObjClass.PropertyName
         {
@@ -70,6 +70,11 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterWriteNode( bool Creating )
         {
+            if( Creating && false == IsTemp )
+            {
+                CswNbtPropertySetPermission.createDefaultWildcardPermission( _CswNbtResources, PermissionClass, NodeId );
+            }
+
             _CswNbtObjClassDefault.afterWriteNode( Creating );
         }//afterWriteNode()
 
@@ -97,7 +102,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         protected override bool onButtonClick( NbtButtonData ButtonData )
         {
-            if( null != ButtonData && null != ButtonData.NodeTypeProp ) 
+            if( null != ButtonData && null != ButtonData.NodeTypeProp )
             {
                 if( PropertyName.ManageLocations == ButtonData.NodeTypeProp.getObjectClassPropName() )
                 {

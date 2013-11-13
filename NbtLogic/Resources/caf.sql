@@ -363,7 +363,8 @@ WHERE  m.DELETED = 0
 create or replace view weight_view as
 select unitofmeasurename,
        unittype,
-       convertfromkgs_base as conversionfactor,
+       converttokgs_base as conversionfactor,
+       decode(converttokgs_exp, 0,1, converttokgs_exp) as conversionfactorexp,
        deleted,
        unitofmeasureid
 from units_of_measure
@@ -373,7 +374,8 @@ where lower(unittype)='weight';
 create or replace view volume_view as
 select unitofmeasurename,
        unittype,
-       convertfromliters_base as conversionfactor,
+       converttoliters_base as conversionfactor,
+       decode(converttoliters_exp, 0,1, converttoliters_exp) as conversionfactorexp,
        deleted,
        unitofmeasureid
 from units_of_measure
@@ -383,7 +385,8 @@ where lower(unittype)='volume';
 create or replace view each_view as
 select unitofmeasurename,
        unittype,
-       convertfromeaches_base as conversionfactor,
+       converttoeaches_base as conversionfactor,
+       decode(converttoeaches_exp, 0,1, converttoeaches_exp) as conversionfactorexp,
        deleted,
        unitofmeasureid
 from units_of_measure
@@ -769,3 +772,9 @@ SELECT PACKAGEID,
                                     AND s.REGION = ph.REGION )
                   join packages p
                     ON ( p.MATERIALID = ph.MATERIALID ));
+					
+--Reglists
+create or replace view reglists_view as
+(select "DELETED","DISPLAYNAME","LISTMODE","MATCHTYPE","REGLISTCODE","REGULATORYLISTID" from regulatory_lists where lower(listmode) = 'cispro');
+
+

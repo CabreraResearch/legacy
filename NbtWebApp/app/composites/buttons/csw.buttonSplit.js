@@ -23,6 +23,7 @@
             buttonText: 'SplitButton',
             width: '100px',
             menu: { items: [] },
+            hidden: false,
         };
         var cswPublic = {};
 
@@ -63,7 +64,8 @@
                         renderTo: cswPublic.getId(),
                         menu: cswPrivate.menu,
                         handler: cswPrivate.menuClickHandler,
-                        arrowHandler: cswPrivate.arrowHandler
+                        arrowHandler: cswPrivate.arrowHandler,
+                        hidden: cswPrivate.hidden,
                     });
 
                 } catch (e) {

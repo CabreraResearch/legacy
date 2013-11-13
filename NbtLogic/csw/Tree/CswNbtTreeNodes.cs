@@ -283,7 +283,8 @@ namespace ChemSW.Nbt
                                        string Field2,
                                        Int32 Field1_Fk,
                                        double Field1_Numeric,
-                                       bool Hidden )
+                                       bool Hidden,
+                                       string Field1_Big)
         {
             CswNbtTreeNodeProp TreeNodeProp = new CswNbtTreeNodeProp( FieldType, PropName, ObjectClassPropName, ObjectClassPropId, NodeTypePropId, JctNodePropId, TreeNode )
                 {
@@ -293,7 +294,8 @@ namespace ChemSW.Nbt
                     Field2 = Field2,
                     Field1_Fk = Field1_Fk,
                     Field1_Numeric = Field1_Numeric,
-                    Hidden = Hidden
+                    Hidden = Hidden,
+                    Field1_Big = Field1_Big
                 };
 
             TreeNode.ChildProps.Add( TreeNodeProp );
@@ -924,11 +926,11 @@ namespace ChemSW.Nbt
 
         public void addProperty( Int32 NodeTypePropId, Int32 ObjectClassPropId, Int32 JctNodePropId, string PropName, string ObjectClassPropName, string Gestalt,
                                  CswEnumNbtFieldType FieldType, string Field1, string Field2,
-                                 Int32 Field1_Fk, double Field1_Numeric, bool Hidden )
+                                 Int32 Field1_Fk, double Field1_Numeric, bool Hidden, string Field1_Big )
         {
             _checkCurrentNode();
             _makeTreeNodeProp( _CurrentNode, NodeTypePropId, ObjectClassPropId, JctNodePropId, PropName, ObjectClassPropName, Gestalt, FieldType, Field1, Field2,
-                               Field1_Fk, Field1_Numeric, Hidden );
+                               Field1_Fk, Field1_Numeric, Hidden, Field1_Big );
         }
 
 //addProperty()

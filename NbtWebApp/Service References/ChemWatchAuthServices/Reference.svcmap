@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="0f541555-efc5-44c5-8771-9f63d5b2740a" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
+  <ClientOptions>
+    <GenerateAsynchronousMethods>false</GenerateAsynchronousMethods>
+    <EnableDataBinding>true</EnableDataBinding>
+    <ExcludedTypes />
+    <ImportXmlTypes>false</ImportXmlTypes>
+    <GenerateInternalTypes>false</GenerateInternalTypes>
+    <GenerateMessageContracts>false</GenerateMessageContracts>
+    <NamespaceMappings />
+    <CollectionMappings />
+    <GenerateSerializableTypes>true</GenerateSerializableTypes>
+    <Serializer>Auto</Serializer>
+    <UseSerializerForFaults>true</UseSerializerForFaults>
+    <ReferenceAllAssemblies>true</ReferenceAllAssemblies>
+    <ReferencedAssemblies />
+    <ReferencedDataContractTypes />
+    <ServiceContractMappings />
+  </ClientOptions>
+  <MetadataSources>
+    <MetadataSource Address="http://jr.chemwatch.net/CWWS.BP.CISPRO/AuthenticateService.svc" Protocol="http" SourceId="1" />
+  </MetadataSources>
+  <Metadata>
+    <MetadataFile FileName="soap.wsdl" MetadataType="Wsdl" ID="bab0ef30-9520-4bbc-baf6-bd9787edbd42" SourceId="1" SourceUrl="http://jr.chemwatch.net/CWWS.BP.CISPRO/AuthenticateService.svc/soap?wsdl=wsdl0" />
+    <MetadataFile FileName="AuthenticateService.wsdl" MetadataType="Wsdl" ID="d015294a-bab4-45ab-9428-cb94dc70d7e3" SourceId="1" SourceUrl="http://jr.chemwatch.net/CWWS.BP.CISPRO/AuthenticateService.svc/soap?wsdl" />
+    <MetadataFile FileName="soap.xsd" MetadataType="Schema" ID="81626585-5061-45d5-84b2-45c252a42dea" SourceId="1" SourceUrl="http://jr.chemwatch.net/CWWS.BP.CISPRO/AuthenticateService.svc/soap?xsd=xsd1" />
+    <MetadataFile FileName="soap1.xsd" MetadataType="Schema" ID="3c4fb3d1-bc0e-4f76-8b70-246a606bc2e7" SourceId="1" SourceUrl="http://jr.chemwatch.net/CWWS.BP.CISPRO/AuthenticateService.svc/soap?xsd=xsd0" />
+    <MetadataFile FileName="soap.disco" MetadataType="Disco" ID="37d766de-ea51-4de7-aa52-040f678a9ace" SourceId="1" SourceUrl="http://jr.chemwatch.net/CWWS.BP.CISPRO/AuthenticateService.svc/soap?disco" />
+  </Metadata>
+  <Extensions>
+    <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />
+    <ExtensionFile FileName="configuration.svcinfo" Name="configuration.svcinfo" />
+  </Extensions>
+</ReferenceGroup>

@@ -73,7 +73,9 @@ namespace ChemSW.Nbt
         [DataMember( EmitDefaultValue = false, IsRequired = false, Name = "ObjectClassPropId", Order = 13 )]
         public int ObjectClassPropId = int.MinValue;
 
-        
+        [DataMember( EmitDefaultValue = false, IsRequired = false, Name = "Field1Big", Order = 14 )]
+        public string Field1_Big = string.Empty;
+
         public string this[CswEnumNbtPropColumn column]
         {
             get
@@ -98,6 +100,10 @@ namespace ChemSW.Nbt
                 else if( CswEnumNbtPropColumn.Gestalt == column )
                 {
                     ret = this.Gestalt;
+                }
+                else if( CswEnumNbtPropColumn.Field1_Big == column )
+                {
+                    ret = this.Field1_Big;
                 }
                 return ret;
             }

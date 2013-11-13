@@ -1,5 +1,6 @@
 using System;
 using System.Data;
+using System.IO;
 using ChemSW.Config;
 using ChemSW.Core;
 using ChemSW.DB;
@@ -53,8 +54,7 @@ namespace ChemSW.Nbt.Sched
 
         public Int32 getLoadCount( ICswResources CswResources )
         {
-            // TODO: Does this SQL need to take State.U into consideration?
-            string Sql = "select count(*) cnt from nbtimportqueue@" + CAFDbLink + " where state = '" + State.I + "'";
+            string Sql = "select count(*) cnt from nbtimportqueue@" + CAFDbLink + " where state = '" + State.I + "' or state = '" + State.U + "'";
             CswArbitrarySelect QueueCountSelect = CswResources.makeCswArbitrarySelect( "cafimport_queue_count", Sql );
             DataTable QueueCountTable = QueueCountSelect.getTable();
             _CswScheduleLogicDetail.LoadCount = CswConvert.ToInt32( QueueCountTable.Rows[0]["cnt"] );
@@ -78,7 +78,7 @@ namespace ChemSW.Nbt.Sched
                         + QueueTableName + "@" + CAFDbLink + " iq"
                         + " join " + CswNbtImportTables.ImportDef.TableName + " id on (id.sheetname = iq.sheetname )"
                         + " where state = '" + State.I + "' or state = '" + State.U
-                        + "' order by decode (state, '" + State.I + "', 1, '" + State.U + "', 2) asc, id.sheetorder asc, nbtimportqueueid asc";
+                        + "' order by decode (state, '" + State.I + "', 1, '" + State.U + "', 2) asc, priority desc, id.sheetorder asc, nbtimportqueueid asc";
 
                     CswArbitrarySelect QueueSelect = _CswNbtResources.makeCswArbitrarySelect( "cafimport_queue_select", Sql );
                     DataTable QueueTable = QueueSelect.getTable( 0, NumberToProcess, false );
@@ -103,7 +103,9 @@ namespace ChemSW.Nbt.Sched
                         foreach( DataRow ItemRow in ItemTable.Rows )
                         {
                             string SheetName = QueueRow["sheetname"].ToString();
-                            string Error = Importer.ImportRow( ItemRow, DefinitionName, SheetName, true );
+
+                            bool Overwrite = QueueRow["state"].ToString().Equals( "U" );
+                            string Error = Importer.ImportRow( ItemRow, DefinitionName, SheetName, Overwrite );
                             if( string.IsNullOrEmpty( Error ) )
                             {
                                 // record success - delete the record
@@ -152,6 +154,18 @@ namespace ChemSW.Nbt.Sched
         {
             _LogicRunStatus = CswEnumScheduleLogicRunStatus.Idle;
         }
+
+        public static string generateCAFViewSQL(string RelativePath )
+        {
+            
+            StreamReader ViewFile = new StreamReader( File.Open( RelativePath  + "../NbtLogic/Resources/CAF.sql", FileMode.Open ) );
+            string ViewSQL = ViewFile.ReadToEnd();
+            ViewFile.Close();
+
+            return ViewSQL;
+        }
+
+
 
         public static string generateImportQueueTableSQL( ICswResources CswResources )
         {
@@ -204,7 +218,7 @@ namespace ChemSW.Nbt.Sched
                        "                group by locationlevel" + i + "name " + "\r\n" +
                        "                   having count(*) > 1 " + "\r\n" +
                        "              )" + "\r\n" +
-                       "       )";
+                       "       );";
             }
 
             return Ret;

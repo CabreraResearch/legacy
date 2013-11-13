@@ -43,7 +43,8 @@
                 },
                 customBarcodes: false,
                 nodeTypeName: '',
-                sizeSelectOpts: []
+                sizeSelectOpts: [],
+                balancesDefined: false,
             };
             Csw.extend(cswPrivate, options);
 
@@ -55,7 +56,7 @@
             if (cswPrivate.customBarcodes) {
                 cswPrivate.header = cswPrivate.header.concat([{ "value": cswPrivate.config.barcodeName, "isRequired": false }]);
             }
-            if (cswPrivate.action === 'Dispense') {
+            if (cswPrivate.balancesDefined ) {
                 cswPrivate.header = cswPrivate.header.concat([{ "value": cswPrivate.config.balanceName, "isRequired": false }]);
             }
             if (cswPrivate.rows.length === 0) {

@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
 using System.Runtime.Serialization;
-using System.Text.RegularExpressions;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
@@ -152,12 +150,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get { return CachedData.Text; }
         }
-
-        public static string getValidUserName( string Name )
-        {
-            return Regex.Replace( Name, "[^a-zA-Z0-9_.]+", "" );
-        }
-
+        
         public static bool IsUserNameUnique( CswNbtResources Resources, string UserName )
         {
             CswNbtObjClassUser ExistingUserNode = Resources.Nodes.makeUserNodeFromUsername( UserName );
@@ -199,7 +192,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             if( _unableToWriteNodeInvalidUserName() )
             {
-                throw new CswDniException( CswEnumErrorType.Warning, "Username must contain alphanumeric characters only.",
+                throw new CswDniException( CswEnumErrorType.Warning, "Usernames may only contains letters, numbers, underscores, periods and dashes.",
                                           "Username contains invalid characters: " + this.Username );
             }
 

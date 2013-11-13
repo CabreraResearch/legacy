@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <xsd:schema targetNamespace="/Imports">
+      <xsd:import schemaLocation="http://jr.chemwatch.net/CWWS.BP.CISPRO/AuthenticateService.svc/soap?xsd=xsd0" />
+      <xsd:import schemaLocation="http://jr.chemwatch.net/CWWS.BP.CISPRO/AuthenticateService.svc/soap?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="IAuthenticateService_Authenticate_InputMessage">
+    <wsdl:part name="parameters" element="Authenticate" />
+  </wsdl:message>
+  <wsdl:message name="IAuthenticateService_Authenticate_OutputMessage">
+    <wsdl:part name="parameters" element="AuthenticateResponse" />
+  </wsdl:message>
+  <wsdl:message name="IAuthenticateService_Authenticate_New_InputMessage">
+    <wsdl:part name="parameters" element="Authenticate_New" />
+  </wsdl:message>
+  <wsdl:message name="IAuthenticateService_Authenticate_New_OutputMessage">
+    <wsdl:part name="parameters" element="Authenticate_NewResponse" />
+  </wsdl:message>
+  <wsdl:message name="IAuthenticateService_Authenticate2_InputMessage">
+    <wsdl:part name="parameters" element="Authenticate2" />
+  </wsdl:message>
+  <wsdl:message name="IAuthenticateService_Authenticate2_OutputMessage">
+    <wsdl:part name="parameters" element="Authenticate2Response" />
+  </wsdl:message>
+  <wsdl:message name="IAuthenticateService_GetUserRights_InputMessage">
+    <wsdl:part name="parameters" element="GetUserRights" />
+  </wsdl:message>
+  <wsdl:message name="IAuthenticateService_GetUserRights_OutputMessage">
+    <wsdl:part name="parameters" element="GetUserRightsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IAuthenticateService_LoginUserByIp_InputMessage">
+    <wsdl:part name="parameters" element="LoginUserByIp" />
+  </wsdl:message>
+  <wsdl:message name="IAuthenticateService_LoginUserByIp_OutputMessage">
+    <wsdl:part name="parameters" element="LoginUserByIpResponse" />
+  </wsdl:message>
+  <wsdl:message name="IAuthenticateService_GetCurrentUser_InputMessage">
+    <wsdl:part name="parameters" element="GetCurrentUser" />
+  </wsdl:message>
+  <wsdl:message name="IAuthenticateService_GetCurrentUser_OutputMessage">
+    <wsdl:part name="parameters" element="GetCurrentUserResponse" />
+  </wsdl:message>
+  <wsdl:message name="IAuthenticateService_OutbackLogin_InputMessage">
+    <wsdl:part name="parameters" element="OutbackLogin" />
+  </wsdl:message>
+  <wsdl:message name="IAuthenticateService_OutbackLogin_OutputMessage">
+    <wsdl:part name="parameters" element="OutbackLoginResponse" />
+  </wsdl:message>
+  <wsdl:portType name="IAuthenticateService">
+    <wsdl:operation name="Authenticate">
+      <wsdl:input wsaw:Action="urn:IAuthenticateService/Authenticate" message="IAuthenticateService_Authenticate_InputMessage" />
+      <wsdl:output wsaw:Action="urn:IAuthenticateService/AuthenticateResponse" message="IAuthenticateService_Authenticate_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Authenticate_New">
+      <wsdl:input wsaw:Action="urn:IAuthenticateService/Authenticate_New" message="IAuthenticateService_Authenticate_New_InputMessage" />
+      <wsdl:output wsaw:Action="urn:IAuthenticateService/Authenticate_NewResponse" message="IAuthenticateService_Authenticate_New_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Authenticate2">
+      <wsdl:input wsaw:Action="urn:IAuthenticateService/Authenticate2" message="IAuthenticateService_Authenticate2_InputMessage" />
+      <wsdl:output wsaw:Action="urn:IAuthenticateService/Authenticate2Response" message="IAuthenticateService_Authenticate2_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetUserRights">
+      <wsdl:input wsaw:Action="urn:IAuthenticateService/GetUserRights" message="IAuthenticateService_GetUserRights_InputMessage" />
+      <wsdl:output wsaw:Action="urn:IAuthenticateService/GetUserRightsResponse" message="IAuthenticateService_GetUserRights_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="LoginUserByIp">
+      <wsdl:input wsaw:Action="urn:IAuthenticateService/LoginUserByIp" message="IAuthenticateService_LoginUserByIp_InputMessage" />
+      <wsdl:output wsaw:Action="urn:IAuthenticateService/LoginUserByIpResponse" message="IAuthenticateService_LoginUserByIp_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetCurrentUser">
+      <wsdl:input wsaw:Action="urn:IAuthenticateService/GetCurrentUser" message="IAuthenticateService_GetCurrentUser_InputMessage" />
+      <wsdl:output wsaw:Action="urn:IAuthenticateService/GetCurrentUserResponse" message="IAuthenticateService_GetCurrentUser_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="OutbackLogin">
+      <wsdl:input wsaw:Action="urn:IAuthenticateService/OutbackLogin" message="IAuthenticateService_OutbackLogin_InputMessage" />
+      <wsdl:output wsaw:Action="urn:IAuthenticateService/OutbackLoginResponse" message="IAuthenticateService_OutbackLogin_OutputMessage" />
+    </wsdl:operation>
+  </wsdl:portType>
+</wsdl:definitions>

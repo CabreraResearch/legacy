@@ -106,6 +106,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string LabelCodes = "Label Codes";
             public const string LabelCodesGrid = "Labels Codes Grid";
             public const string AddLabelCodes = "Add Label Codes";
+            public const string LinkChemWatch = "Link ChemWatch";
         }
 
         #endregion Enums
@@ -199,6 +200,12 @@ namespace ChemSW.Nbt.ObjClasses
                     case PropertyName.ViewSDS:
                         HasPermission = true;
                         GetMatchingSDSForCurrentUser( ButtonData );
+                        break;
+                    case PropertyName.LinkChemWatch:
+                        HasPermission = true; //todo: what should this be based off?
+                        ButtonData.Data["state"] = new JObject();
+                        ButtonData.Data["state"]["materialId"] = NodeId.ToString();
+                        ButtonData.Action = CswEnumNbtButtonAction.chemwatch;
                         break;
                 }
             }
@@ -1228,6 +1235,7 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         public CswNbtNodePropGrid LabelCodesGrid { get { return _CswNbtNode.Properties[PropertyName.LabelCodesGrid]; } }
+        public CswNbtNodePropGrid LinkChemWatch { get { return _CswNbtNode.Properties[PropertyName.LinkChemWatch]; } }
 
         #endregion Object class specific properties
 

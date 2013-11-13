@@ -126,7 +126,8 @@
         editprop: 'editprop',
         nothing: 'nothing',
         griddialog: 'griddialog',
-        managelocations: 'Manage Locations'
+        managelocations: 'Manage Locations',
+        chemwatch: 'chemwatch'
     });
 
 
