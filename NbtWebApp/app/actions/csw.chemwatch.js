@@ -131,8 +131,6 @@
             });
             cswPrivate.matListGridDiv.empty();
 
-            //todo: span single column the length of the entire grid
-
             cswPrivate.materialListGrid = cswPrivate.matListGridDiv.cell(1, 1).grid({
                 name: 'chemwatchmatlistgrid',
                 fields: ['material', 'materialid'],
@@ -153,13 +151,29 @@
                 height: 200,
                 width: 400,
                 showActionColumn: false,
+                canSelectRow: true,
                 onSelect: function (rows) {
-                    //todo: fill the SDS grid with data
-                    var data = rows;
-                    console.log(data);
+                    
+                    // Search for documents related to selected material
+                    Csw.ajaxWcf.post({
+                        urlMethod: 'ChemWatch/SDSDocumentSearch',
+                        data: cswPrivate.OperationData,
+                        success: function (data) {
+                            cswPrivate.OperationData = data;
 
-                    cswPrivate.makeSDSListGrid();
+                            var gridData = { 'items': [] };
+                            Csw.iterate(cswPrivate.OperationData.SDSDocuments, function (sdsdoc) {
+                                gridData.items.push({ 'language': sdsdoc.language, 'country': sdsdoc.country, 'file': sdsdoc.file });
+                            });
 
+                            cswPrivate.makeSDSListGrid(gridData);
+
+                        },
+                        error: function (data) {
+                            //todo: implement error condition
+                            console.log(data);
+                        }
+                    });
                 }
             });
         };
@@ -190,28 +204,22 @@
             });
         };
 
-        cswPrivate.makeSDSListGrid = function () {
+        cswPrivate.makeSDSListGrid = function (gridData) {
             cswPrivate.sdsListGridDiv = cswPrivate.sdsInfoTbl.cell(2, 1).div();
             cswPrivate.sdsListGridDiv.empty();
 
             cswPrivate.sdsListGridDiv = cswPrivate.sdsListGridDiv.grid({
                 name: 'chemwatchsdslistgrid',
-                fields: ['view', 'language', 'country', 'select'],
+                fields: ['view', 'language', 'country', 'select', 'file'],
                 columns: [
                     { header: 'View', dataIndex: 'view' },
                     { header: 'Language', dataIndex: 'language' },
                     { header: 'Country', dataIndex: 'country' },
-                    { header: 'Select', dataIndex: 'select' }
+                    { header: 'Select', dataIndex: 'select' },
+                    { header: 'FileInfo', dataIndex: 'file', hidden: true }
                 ],
-                //data: cswPrivate.SDSDocuments,
-                data: {
-                    'items': [
-                        {
-                            'view': '1111',
-                            'language': '2222',
-                            'country': '3333',
-                            'select': '4444'
-                        }]
+                data: gridData || {
+                    'items': [] //ExtGrids won't show without data
                 },
                 height: 200,
                 width: 400,

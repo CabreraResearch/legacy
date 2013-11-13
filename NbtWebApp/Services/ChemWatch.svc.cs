@@ -36,7 +36,7 @@ namespace NbtWebApp
 
         [OperationContract]
         [WebInvoke( Method = "POST", UriTemplate = "GetMatchingSuppliers" )]
-        [Description( "Get the initialization data for the ChemWatch action" )]
+        [Description( "Search for matching Suppliers" )]
         [FaultContract( typeof( FaultException ) )]
         public CswNbtChemWatchReturn GetMatchingSuppliers( CswNbtChemWatchRequest Request )
         {
@@ -62,10 +62,29 @@ namespace NbtWebApp
             CswNbtChemWatchReturn Ret = new CswNbtChemWatchReturn();
 
             var SvcDriver = new CswWebSvcDriver<CswNbtChemWatchReturn, CswNbtChemWatchRequest>(
-                CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
-                ReturnObj : Ret,
-                WebSvcMethodPtr : CswNbtWebServiceChemWatch.MaterialSearch,
-                ParamObj : Request
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj: Ret,
+                WebSvcMethodPtr: CswNbtWebServiceChemWatch.MaterialSearch,
+                ParamObj: Request
+                );
+
+            SvcDriver.run();
+            return ( Ret );
+        }
+
+        [OperationContract]
+        [WebInvoke( Method = "POST", UriTemplate = "SDSDocumentSearch" )]
+        [Description( "Search for Materials" )]
+        [FaultContract( typeof( FaultException ) )]
+        public CswNbtChemWatchReturn SDSDocumentSearch( CswNbtChemWatchRequest Request )
+        {
+            CswNbtChemWatchReturn Ret = new CswNbtChemWatchReturn();
+
+            var SvcDriver = new CswWebSvcDriver<CswNbtChemWatchReturn, CswNbtChemWatchRequest>(
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj: Ret,
+                WebSvcMethodPtr: CswNbtWebServiceChemWatch.SDSDocumentSearch,
+                ParamObj: Request
                 );
 
             SvcDriver.run();
