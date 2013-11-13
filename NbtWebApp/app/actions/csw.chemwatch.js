@@ -176,7 +176,13 @@
 
                             var gridData = { 'items': [] };
                             Csw.iterate(cswPrivate.OperationData.SDSDocuments, function (sdsdoc) {
-                                gridData.items.push({ 'language': sdsdoc.language, 'country': sdsdoc.country, 'file': sdsdoc.file });
+                                gridData.items.push(
+                                    {
+                                        'language': sdsdoc.language,
+                                        'country': sdsdoc.country,
+                                        'filename': sdsdoc.filename,
+                                        'externalurl': sdsdoc.externalurl
+                                    });
                             });
 
                             // Destroy current grid
@@ -212,7 +218,7 @@
                         inDialog: true,
                         onSave: function (updatedValues) {
                             Csw.iterate(LanguageOptions, function (lang) {
-                                    lang.selected = false;
+                                lang.selected = false;
                             });
 
                             selectedLanguages = [];
@@ -237,7 +243,7 @@
                         inDialog: true,
                         onSave: function (updatedValues) {
                             Csw.iterate(CountryOptions, function (country) {
-                                    country.selected = false;
+                                country.selected = false;
                             });
 
                             selectedCountries = [];
@@ -251,17 +257,13 @@
             });
         };
 
-        cswPrivate.onView = function(recordData) {
-            window.open(recordData.file, '_blank', 'toolbar=0,location=0,menubar=0');
-        };
-
         cswPrivate.makeSDSListGrid = function (gridData) {
             cswPrivate.sdsListGridCell = cswPrivate.sdsInfoTbl.cell(2, 1);
             cswPrivate.sdsListGridCell.empty();
 
             cswPrivate.sdsListGrid = cswPrivate.sdsListGridCell.grid({
                 name: 'chemwatchsdslistgrid',
-                fields: ['view', 'language', 'country', 'select', 'file'],
+                fields: ['view', 'language', 'country', 'select', 'filename', 'externalurl'],
                 columns: [
                     {
                         header: 'View',
@@ -284,7 +286,7 @@
 
                                 var table = div.table({ cellpadding: 0 });
                                 var previewCell = table.cell(1, 1).css({ width: '40px', 'text-align': 'center' });
-                                
+
                                 var iconopts = {
                                     name: 'View',
                                     hovertext: 'View',
@@ -298,7 +300,7 @@
                                     }
                                 };
                                 previewCell.icon(iconopts);
-                                
+
                             }), 100);
                             return '<div id="' + divId + '" style="height:18px;"></div>';
                         } // renderer()
@@ -306,7 +308,8 @@
                     { header: 'Language', dataIndex: 'language' },
                     { header: 'Country', dataIndex: 'country' },
                     { header: 'Select', dataIndex: 'select' },
-                    { header: 'FileInfo', dataIndex: 'file', hidden: true }
+                    { header: 'FileName', dataIndex: 'filename', hidden: true },
+                    { header: 'ExternalUrl', dataIndex: 'externalurl', hidden: true }
                 ],
                 data: gridData || {
                     'items': [] //ExtGrids won't show without data
@@ -328,6 +331,13 @@
                     // Return to the material view
                 }
             });
+        };
+        
+        cswPrivate.onView = function (recordData) {
+            // We are using Google's Viewer to view the PDF's in the browser: https://docs.google.com/viewer
+            // +1 for Google
+            var extrnlurl = "http://docs.google.com/viewer?url=" + recordData.externalurl;
+            window.open(extrnlurl, '_blank', 'toolbar=0,location=0,menubar=0');
         };
 
         // Init
@@ -352,7 +362,7 @@
                     LanguageOptions = cswPrivate.OperationData.Languages;
                     CountryOptions = cswPrivate.OperationData.Countries;
 
-                    Csw.iterate(LanguageOptions, function(lang) {
+                    Csw.iterate(LanguageOptions, function (lang) {
                         LanguageLookup[lang.value] = lang;
                     });
                     Csw.iterate(CountryOptions, function (country) {
@@ -371,8 +381,8 @@
                 }
             });
 
-
         })(); // init
+        
     });
 
 })();

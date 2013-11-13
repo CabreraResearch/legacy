@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Web;
 using ChemSW;
 using ChemSW.Core;
 using ChemSW.Exceptions;
@@ -124,11 +125,12 @@ namespace NbtWebApp.Actions.ChemWatch
                 ListResultOfDocument DocumentList = cwDocClient.GetDocumentsByMaterialId( DocumentRequest );
                 foreach( Document Doc in DocumentList.Rows )
                 {
-                    // todo: we need to display language and country on client and pass filename/externalurl
                     ChemWatchSDSDoc SDSDoc = new ChemWatchSDSDoc();
                     SDSDoc.Language = Doc.LanguageCode;
                     SDSDoc.Country = Doc.CountryCode;
-                    SDSDoc.File = Doc.FileName.Length > 0 ? Doc.FileName : Doc.ExternalUrl;
+                    SDSDoc.FileName = Doc.FileName.Length > 0 ? Doc.FileName : String.Empty;
+                    SDSDoc.ExternalUrl = HttpUtility.UrlEncode( Doc.ExternalUrl );
+                    //SDSDoc.ExternalUrl = Doc.ExternalUrl;
                     Return.Data.SDSDocuments.Add( SDSDoc );
                 }
             }

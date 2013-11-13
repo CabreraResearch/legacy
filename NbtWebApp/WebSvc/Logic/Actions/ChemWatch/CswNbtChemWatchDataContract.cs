@@ -34,8 +34,11 @@ namespace NbtWebApp.Actions.ChemWatch
         [DataMember( Name = "country" )]
         public string Country { get; set; }
 
-        [DataMember( Name = "file" )]
-        public string File { get; set; }
+        [DataMember( Name = "filename" )]
+        public string FileName { get; set; }
+
+        [DataMember( Name = "externalurl" )]
+        public string ExternalUrl { get; set; }
     }
 
     [DataContract]
