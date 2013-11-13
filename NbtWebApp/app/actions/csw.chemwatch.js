@@ -116,7 +116,7 @@
 
                             var gridData = { 'items': [] };
                             Csw.iterate(cswPrivate.OperationData.Materials, function (material) {
-                                gridData.items.push({ 'material': material.text, 'materialid': material.value });
+                                gridData.items.push({ 'material': material.display, 'materialid': material.value });
                             });
 
                             // Fill the table with the returned data

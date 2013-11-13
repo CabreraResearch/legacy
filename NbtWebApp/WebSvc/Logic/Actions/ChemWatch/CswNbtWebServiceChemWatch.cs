@@ -44,7 +44,7 @@ namespace NbtWebApp.Actions.ChemWatch
                 Languages cwLanguages = cwCommonClient.GetLanguages();
                 foreach( Language cwLanguage in cwLanguages )
                 {
-                    Return.Data.Languages.Add( new CswNbtChemWatchListItem()
+                    Return.Data.Languages.Add( new ChemWatchMultiSlctListItem()
                         {
                             Name = cwLanguage.Name,
                             Id = CswConvert.ToString( cwLanguage.Id )
@@ -55,7 +55,7 @@ namespace NbtWebApp.Actions.ChemWatch
                 Countries cwCountries = cwCommonClient.GetCountries();
                 foreach( Country cwCountry in cwCountries )
                 {
-                    Return.Data.Countries.Add( new CswNbtChemWatchListItem()
+                    Return.Data.Countries.Add( new ChemWatchMultiSlctListItem()
                     {
                         Name = cwCountry.Name,
                         Id = CswConvert.ToString( cwCountry.Id )
@@ -81,7 +81,7 @@ namespace NbtWebApp.Actions.ChemWatch
                 ListResultOfMaterial cwMaterials = cwMaterialClient.GetMaterialsByVendorGroupId( Request.Supplier, Request.MaterialName, Request.PartNo, false, 1, 100, "", 0 );
                 foreach( Material cwMaterial in cwMaterials.Rows )
                 {
-                    Return.Data.Materials.Add( new CswNbtChemWatchListItem()
+                    Return.Data.Materials.Add( new ChemWatchListItem()
                         {
                             Id = CswConvert.ToString( cwMaterial.MaterialID ),
                             Name = cwMaterial.Name
@@ -125,7 +125,7 @@ namespace NbtWebApp.Actions.ChemWatch
                 foreach( Document Doc in DocumentList.Rows )
                 {
                     // todo: we need to display language and country on client and pass filename/externalurl
-                    CswNbtChemWatchSDSDoc SDSDoc = new CswNbtChemWatchSDSDoc();
+                    ChemWatchSDSDoc SDSDoc = new ChemWatchSDSDoc();
                     SDSDoc.Language = Doc.LanguageCode;
                     SDSDoc.Country = Doc.CountryCode;
                     SDSDoc.File = Doc.FileName.Length > 0 ? Doc.FileName : Doc.ExternalUrl;
@@ -166,7 +166,7 @@ namespace NbtWebApp.Actions.ChemWatch
             ListResultOfVendor cwVendors = cwMaterialClient.SearchVendors( cwSearchVend );
             foreach( Vendor cwVendor in cwVendors.Rows )
             {
-                Return.Data.Suppliers.Add( new CswNbtChemWatchListItem()
+                Return.Data.Suppliers.Add( new ChemWatchListItem()
                     {
                         Name = cwVendor.Name,
                         Id = cwVendor.VendorGroup.Gid

@@ -6,7 +6,17 @@ using NbtWebApp.WebSvc.Returns;
 namespace NbtWebApp.Actions.ChemWatch
 {
     [DataContract]
-    public class CswNbtChemWatchListItem
+    public class ChemWatchListItem
+    {
+        [DataMember( Name = "display" )]
+        public string Name { get; set; }
+
+        [DataMember( Name = "value" )]
+        public string Id { get; set; }
+    }
+
+    [DataContract]
+    public class ChemWatchMultiSlctListItem
     {
         [DataMember( Name = "text" )]
         public string Name { get; set; }
@@ -16,7 +26,7 @@ namespace NbtWebApp.Actions.ChemWatch
     }
 
     [DataContract]
-    public class CswNbtChemWatchSDSDoc
+    public class ChemWatchSDSDoc
     {
         [DataMember( Name = "language" )]
         public string Language { get; set; }
@@ -32,16 +42,16 @@ namespace NbtWebApp.Actions.ChemWatch
     public class CswNbtChemWatchRequest
     {
         [DataMember]
-        public Collection<CswNbtChemWatchListItem> Countries = new Collection<CswNbtChemWatchListItem>();
+        public Collection<ChemWatchMultiSlctListItem> Countries = new Collection<ChemWatchMultiSlctListItem>();
 
         [DataMember]
-        public Collection<CswNbtChemWatchListItem> Languages = new Collection<CswNbtChemWatchListItem>();
+        public Collection<ChemWatchMultiSlctListItem> Languages = new Collection<ChemWatchMultiSlctListItem>();
 
         [DataMember]
         public string Supplier { get; set; }
 
         [DataMember]
-        public Collection<CswNbtChemWatchListItem> Suppliers = new Collection<CswNbtChemWatchListItem>();
+        public Collection<ChemWatchListItem> Suppliers = new Collection<ChemWatchListItem>();
 
         [DataMember]
         public string PartNo { get; set; }
@@ -53,10 +63,10 @@ namespace NbtWebApp.Actions.ChemWatch
         public int ChemWatchMaterialId { get; set; }
 
         [DataMember]
-        public Collection<CswNbtChemWatchListItem> Materials = new Collection<CswNbtChemWatchListItem>();
+        public Collection<ChemWatchListItem> Materials = new Collection<ChemWatchListItem>();
 
         [DataMember]
-        public Collection<CswNbtChemWatchSDSDoc> SDSDocuments = new Collection<CswNbtChemWatchSDSDoc>();
+        public Collection<ChemWatchSDSDoc> SDSDocuments = new Collection<ChemWatchSDSDoc>();
 
         public CswPrimaryKey NbtMaterialId = null;
         [DataMember( Name = "NbtMaterialId" )]
