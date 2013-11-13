@@ -1320,7 +1320,7 @@
   <ItemGroup />
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
+      <Generator>PublicResXFileCodeGenerator</Generator>
       <SubType>Designer</SubType>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
@@ -1334,6 +1334,7 @@
     <Service Include="{C0C07587-41A7-46C8-8FBD-3F9C8EBE2DDC}" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Resources\caf.sql" />
     <Content Include="Resources\SMTP.Net.dll" />
     <Content Include="Resources\SMTP.Net.xml" />
   </ItemGroup>
