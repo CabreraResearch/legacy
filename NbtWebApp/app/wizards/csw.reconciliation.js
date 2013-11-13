@@ -708,6 +708,9 @@
             if (status === 'Not Scanned') {
                 actionOptions.push('Mark Missing');
             }
+            if (status === 'Scanned, but already marked Missing') {
+                actionOptions.push('Unmark Missing');
+            }
             return actionOptions;
         };
 
