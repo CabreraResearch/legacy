@@ -24,6 +24,15 @@
         };
         var cswPublic = {};
 
+        //Once these are set by Init, they shouldn't be touched
+        var LanguageOptions = [];
+        var CountryOptions = [];
+        var LanguageLookup = {};
+        var CountryLookup = {};
+
+        var selectedLanguages = [];
+        var selectedCountries = [];
+
         cswPrivate.makeSupplierSelect = function (tbl) {
             var supplierList = cswPrivate.OperationData.Suppliers;
             cswPrivate.supplierSelectCell = tbl.cell(1, 3);
@@ -107,7 +116,7 @@
 
                             var gridData = { 'items': [] };
                             Csw.iterate(cswPrivate.OperationData.Materials, function (material) {
-                                gridData.items.push({ 'material': material.display, 'materialid': material.value });
+                                gridData.items.push({ 'material': material.text, 'materialid': material.value });
                             });
 
                             // Fill the table with the returned data
@@ -158,8 +167,8 @@
                         urlMethod: 'ChemWatch/SDSDocumentSearch',
                         data: {
                             ChemWatchMaterialId: rows.materialid,
-                            Languages: [{ 'display': '', 'value': cswPrivate.lngSelect.val() }],
-                            Countries: [{ 'display': '', 'value': cswPrivate.cntrySelect.val() }],
+                            Languages: selectedLanguages,
+                            Countries: selectedCountries,
                             Supplier: cswPrivate.supplierSelect.val()
                         },
                         success: function (data) {
@@ -191,23 +200,54 @@
                 cellPadding: 5
             });
 
-            //todo: onChange for either control, set the values of cswPrivate.OperationData
-            cswPrivate.lngSelect = cswPrivate.sdsInfoTbl.cell(1, 1).select({
-                ID: 'chemwatchLngSelect',
-                name: 'chemwatchLngSelect',
-                selected: '',
-                values: cswPrivate.OperationData.Languages,
-                width: '',
-                onChange: null
+            var langDiv = cswPrivate.sdsInfoTbl.cell(1, 1).div();
+            langDiv.span({ text: 'Edit Languages: ' });
+            langDiv.icon({
+                iconType: Csw.enums.iconType.pencil,
+                isButton: true,
+                onClick: function () {
+                    Csw.dialogs.multiselectedit({
+                        opts: LanguageOptions,
+                        title: 'Edit Language Filters',
+                        inDialog: true,
+                        onSave: function (updatedValues) {
+                            Csw.iterate(LanguageOptions, function (lang) {
+                                    lang.selected = false;
+                            });
+
+                            selectedLanguages = [];
+                            Csw.iterate(updatedValues, function (val) {
+                                selectedLanguages.push({ 'text': '', 'value': val });
+                                LanguageLookup[val].selected = true;
+                            });
+                        },
+                    });
+                }
             });
 
-            cswPrivate.cntrySelect = cswPrivate.sdsInfoTbl.cell(1, 2).select({
-                ID: 'chemwatchCntrySelect',
-                name: 'chemwatchCntrySelect',
-                selected: '',
-                values: cswPrivate.OperationData.Countries,
-                width: '',
-                onChange: null
+            var countryDiv = cswPrivate.sdsInfoTbl.cell(1, 2).div();
+            countryDiv.span({ text: 'Edit Countries: ' });
+            countryDiv.icon({
+                iconType: Csw.enums.iconType.pencil,
+                isButton: true,
+                onClick: function () {
+                    Csw.dialogs.multiselectedit({
+                        opts: CountryOptions,
+                        title: 'Edit Country Filters',
+                        inDialog: true,
+                        onSave: function (updatedValues) {
+                            Csw.iterate(CountryOptions, function (country) {
+                                    country.selected = false;
+                            });
+
+                            selectedCountries = [];
+                            Csw.iterate(updatedValues, function (val) {
+                                selectedCountries.push({ 'text': '', 'value': val });
+                                CountryLookup[val].selected = true;
+                            });
+                        },
+                    });
+                }
             });
         };
 
@@ -308,6 +348,16 @@
                 data: cswPrivate.OperationData,
                 success: function (data) {
                     cswPrivate.OperationData = data;
+
+                    LanguageOptions = cswPrivate.OperationData.Languages;
+                    CountryOptions = cswPrivate.OperationData.Countries;
+
+                    Csw.iterate(LanguageOptions, function(lang) {
+                        LanguageLookup[lang.value] = lang;
+                    });
+                    Csw.iterate(CountryOptions, function (country) {
+                        CountryLookup[country.value] = country;
+                    });
 
                     // call functions to make the controls
                     cswPrivate.makeMatSearchTable();
