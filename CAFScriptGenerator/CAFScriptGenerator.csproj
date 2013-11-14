@@ -52,22 +52,6 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CswCommon, Version=2013.7.19.1, Culture=neutral, PublicKeyToken=aec8acbd345583cc, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\nbt\nbt\bin\Debug\CswCommon.dll</HintPath>
-    </Reference>
-    <Reference Include="NbtLogic, Version=2013.7.19.1, Culture=neutral, processorArchitecture=AMD64">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\nbt\nbt\bin\Debug\NbtLogic.dll</HintPath>
-    </Reference>
-    <Reference Include="NbtWebApp, Version=2012.2.4.1, Culture=neutral, processorArchitecture=AMD64">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\bin\Debug\NbtWebApp.dll</HintPath>
-    </Reference>
-    <Reference Include="StructureSearch, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\nbt\nbt\bin\Debug\StructureSearch.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -82,6 +66,20 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Common\CswCommon\CswCommon.csproj">
+      <Project>{434091fb-f487-4787-8bdb-58c2336b73c2}</Project>
+      <Name>CswCommon</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\NbtLogic\NbtLogic.csproj">
+      <Project>{7e8253ca-37b0-4ce1-aa9c-8c3086afd974}</Project>
+      <Name>NbtLogic</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\NbtWebApp\NbtWebApp.csproj">
+      <Project>{db33d180-b7cc-407b-8611-52deb49363a8}</Project>
+      <Name>NbtWebApp</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
