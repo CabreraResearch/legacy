@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
 using ChemSW.Core;
 using ChemSW.DB;
@@ -175,6 +174,8 @@ namespace ChemSW.Nbt.ImportExport
                 }// else -- (when DestNodeType and DestProp are defined)
             } // foreach( DataRow BindingRow in BindingsDataTable.Rows )
 
+            //this is a hack, and the fact that we can even do this makes me sad
+            importBindingsUpdate._DoledOutTables.Add( BindingsDataTable );
             importBindingsUpdate.update( BindingsDataTable );
 
         } // addBindingEntries()

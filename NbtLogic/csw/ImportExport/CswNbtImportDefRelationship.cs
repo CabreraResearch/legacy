@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
 using ChemSW.Core;
 using ChemSW.DB;
@@ -95,6 +94,8 @@ namespace ChemSW.Nbt.ImportExport
 
             } // foreach( DataRow RelRow in RelationshipsDataTable.Rows )
 
+            //this is a hack, and the fact that we can even do this makes me sad
+            importRelationshipsUpdate._DoledOutTables.Add( RelationshipsDataTable );
             importRelationshipsUpdate.update( RelationshipsDataTable );
 
         } // addRelationshipEntries()

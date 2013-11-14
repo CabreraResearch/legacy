@@ -82,6 +82,8 @@ namespace ChemSW.Nbt.ImportExport
                 } // if(false == string.IsNullOrEmpty(SheetName) )
             } // foreach( DataRow OrderRow in OrderDataTable.Rows )
 
+            //this is a hack, and the fact that we can even do this makes me sad
+            importOrderUpdate._DoledOutTables.Add( OrderDataTable );
             importOrderUpdate.update( OrderDataTable );
 
         } // addOrderEntries()
