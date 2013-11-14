@@ -45,7 +45,7 @@
                 onImpersonate: function (userid, username) {
                     return Csw.main.handleImpersonation(userid, username, function () {
                         Csw.clientState.clearCurrent();
-                        Csw.window.location(Csw.clientDb.getItem('homeUrl'));
+                        Csw.window.location().reload();
                     });
                 },
                 onEndImpersonation: function () {
@@ -55,14 +55,13 @@
                             if (Csw.bool(data.result)) {
                                 Csw.ajax.abortAll();
                                 Csw.clientState.clearCurrent();
-                                Csw.window.location(Csw.clientDb.getItem('homeUrl'));
+                                Csw.window.location().reload();
                             }
                         } // success
                     }); // ajax
                 }, // onEndImpersonation
                 onReturnToNbtManager: function () {
                     Csw.publish(Csw.enums.events.main.clear, { centertop: true, centerbottom: true });
-                    var sessionid = Csw.cookie.get(Csw.cookie.cookieNames.SessionId);
                     /* case 24669 */
                     Csw.cookie.clearAll();
                     return Csw.ajax.deprecatedWsNbt({
@@ -71,7 +70,7 @@
                             Csw.ajax.abortAll();
                             Csw.clientChanges.unsetChanged();
                             Csw.publish(Csw.enums.events.main.reauthenticate, { username: result.username, customerid: result.customerid });
-                            Csw.window.location('Main.html');
+                            Csw.window.location().reload();
                         }
                     });
                 },

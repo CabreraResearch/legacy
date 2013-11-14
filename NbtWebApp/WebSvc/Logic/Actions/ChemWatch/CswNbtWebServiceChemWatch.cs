@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using ChemSW;
 using ChemSW.Core;
 using ChemSW.Exceptions;
@@ -6,6 +8,7 @@ using ChemSW.Nbt;
 using ChemSW.Nbt.ObjClasses;
 using NbtWebApp.ChemWatchAuthServices;
 using NbtWebApp.ChemWatchCommonServices;
+using NbtWebApp.ChemWatchDocumentServices;
 using NbtWebApp.ChemWatchMaterialServices;
 using NbtWebApp.WebSvc.Logic.Actions.ChemWatch;
 using Country = NbtWebApp.ChemWatchCommonServices.Country;
@@ -58,9 +61,76 @@ namespace NbtWebApp.Actions.ChemWatch
                         Id = CswConvert.ToString( cwCountry.Id )
                     } );
                 }
+            }
+            else
+            {
+                throw new CswDniException( CswEnumErrorType.Error, "There was a problem authenticating with ChemWatch", errorMsg );
+            }
+        }
 
-                // Populate Supplier list
-                _getMatchingSuppliers( Return.Data.Supplier, Return );
+        public static void MaterialSearch( ICswResources CswResources, CswNbtChemWatchReturn Return, CswNbtChemWatchRequest Request )
+        {
+            string errorMsg;
+            if( _authenticate( out errorMsg ) )
+            {
+                MaterialServiceClient cwMaterialClient = new MaterialServiceClient();
+                cwMaterialClient.Endpoint.Behaviors.Add( _cookieBehavior );
+
+                Request.Supplier = "SIGMA"; //FOR TESTING
+
+                ListResultOfMaterial cwMaterials = cwMaterialClient.GetMaterialsByVendorGroupId( Request.Supplier, Request.MaterialName, Request.PartNo, false, 1, 100, "", 0 );
+                foreach( Material cwMaterial in cwMaterials.Rows )
+                {
+                    Return.Data.Materials.Add( new CswNbtChemWatchListItem()
+                        {
+                            Id = CswConvert.ToString( cwMaterial.MaterialID ),
+                            Name = cwMaterial.Name
+                        } );
+                }
+            }
+            else
+            {
+                throw new CswDniException( CswEnumErrorType.Error, "There was a problem authenticating with ChemWatch", errorMsg );
+            }
+        }
+
+        public static void SDSDocumentSearch( ICswResources CswResources, CswNbtChemWatchReturn Return, CswNbtChemWatchRequest Request )
+        {
+            string errorMsg;
+            if( _authenticate( out errorMsg ) )
+            {
+                DocumentServiceClient cwDocClient = new DocumentServiceClient();
+                cwDocClient.Endpoint.Behaviors.Add( _cookieBehavior ); //every service client needs to share this
+
+                DocumentRequest DocumentRequest = new DocumentRequest();
+
+                List<int> CountryIdsList = Request.Countries.Select( ListItem => CswConvert.ToInt32( ListItem.Id ) ).ToList();
+                int[] CountryIdsArray = CountryIdsList.ToArray();
+                DocumentRequest.CountryCode = CountryIdsArray;
+
+                List<int> LanguageIdsList = Request.Languages.Select( ListItem => CswConvert.ToInt32( ListItem.Id ) ).ToList();
+                int[] LanguageIdsArray = LanguageIdsList.ToArray();
+                DocumentRequest.LanguageCode = LanguageIdsArray;
+
+                DocumentRequest.MaterialId = CswConvert.ToString( Request.ChemWatchMaterialId );
+                DocumentRequest.IsShowOwn = false;
+                DocumentRequest.IsLatest = true;
+                DocumentRequest.ShowOnlyGold = false;
+                DocumentRequest.PageNumber = 1;
+                DocumentRequest.PageSize = 50;
+                DocumentRequest.HideGold = true;
+                DocumentRequest.Gid = Request.Supplier;
+
+                ListResultOfDocument DocumentList = cwDocClient.GetDocumentsByMaterialId( DocumentRequest );
+                foreach( Document Doc in DocumentList.Rows )
+                {
+                    // todo: we need to display language and country on client and pass filename/externalurl
+                    CswNbtChemWatchSDSDoc SDSDoc = new CswNbtChemWatchSDSDoc();
+                    SDSDoc.Language = Doc.LanguageCode;
+                    SDSDoc.Country = Doc.CountryCode;
+                    SDSDoc.File = Doc.FileName.Length > 0 ? Doc.FileName : Doc.ExternalUrl;
+                    Return.Data.SDSDocuments.Add( SDSDoc );
+                }
             }
             else
             {

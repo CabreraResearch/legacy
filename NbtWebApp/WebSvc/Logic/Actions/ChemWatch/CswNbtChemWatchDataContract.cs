@@ -8,11 +8,24 @@ namespace NbtWebApp.Actions.ChemWatch
     [DataContract]
     public class CswNbtChemWatchListItem
     {
-        [DataMember( Name = "display" )]
+        [DataMember( Name = "text" )]
         public string Name { get; set; }
 
         [DataMember( Name = "value" )]
         public string Id { get; set; }
+    }
+
+    [DataContract]
+    public class CswNbtChemWatchSDSDoc
+    {
+        [DataMember( Name = "language" )]
+        public string Language { get; set; }
+
+        [DataMember( Name = "country" )]
+        public string Country { get; set; }
+
+        [DataMember( Name = "file" )]
+        public string File { get; set; }
     }
 
     [DataContract]
@@ -38,6 +51,12 @@ namespace NbtWebApp.Actions.ChemWatch
 
         [DataMember]
         public int ChemWatchMaterialId { get; set; }
+
+        [DataMember]
+        public Collection<CswNbtChemWatchListItem> Materials = new Collection<CswNbtChemWatchListItem>();
+
+        [DataMember]
+        public Collection<CswNbtChemWatchSDSDoc> SDSDocuments = new Collection<CswNbtChemWatchSDSDoc>();
 
         public CswPrimaryKey NbtMaterialId = null;
         [DataMember( Name = "NbtMaterialId" )]

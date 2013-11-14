@@ -160,7 +160,7 @@
     var onLoginSuccess = function (data) {
         //Csw.cookie.set(Csw.cookie.cookieNames.CustomerId, cswPrivate.AccessId);
         //Csw.clientSession.setUsername(cswPrivate.UserName);
-        
+
         Csw.tryExec(cswPrivate.onAuthenticate, cswPrivate.UserName);
         Csw.cookie.set(Csw.cookie.cookieNames.UserDefaults, JSON.stringify(data));
 

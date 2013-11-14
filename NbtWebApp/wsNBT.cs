@@ -395,7 +395,7 @@ namespace ChemSW.Nbt.WebServices
             try
             {
                 _initResources();
-                _attemptRefresh( true );
+                CswEnumAuthenticationStatus AuthenticationStatus = _attemptRefresh( true );
 
                 // This is for the case where we login to a customer schema,
                 // and then impersonate another user on that schema. We should still
@@ -405,8 +405,6 @@ namespace ChemSW.Nbt.WebServices
                 {
                     _CswNbtResources.CswSessionManager.endImpersonation();
                 }
-
-                CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
 
                 if( _CswNbtResources.CurrentNbtUser.Username.Equals( CswNbtObjClassUser.ChemSWAdminUsername ) )
                 {
