@@ -34,6 +34,7 @@ namespace ChemSW.Nbt.Schema
 
             //simple props
             ImpMgr.importBinding( "synonymname", CswNbtObjClassMaterialSynonym.PropertyName.Name, "" );
+            ImpMgr.importBinding( "synonymclass", CswNbtObjClassMaterialSynonym.PropertyName.Type, "" );
 
             //relationships
             ImpMgr.importBinding( "packageid",CswNbtObjClassMaterialSynonym.PropertyName.Material, CswEnumNbtSubFieldName.NodeID.ToString() );
