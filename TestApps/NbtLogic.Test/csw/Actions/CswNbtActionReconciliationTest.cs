@@ -290,6 +290,55 @@ namespace ChemSW.Nbt.Test.Actions
             Assert.AreEqual( CswEnumNbtContainerLocationStatusOptions.ScannedCorrect.ToString(), Data.ContainerStatuses[0].ContainerStatus );
         }
 
+        /// <summary>
+        /// Given a location that has one disposed Container and a ContainerLocation in the given timeframe with a "Moved, Dispensed, or Disposed/Undisposed"  status,
+        /// assert that the returned ContainerStatus data has a container  with a ContainerStatus value of "Moved, Dispensed, or Disposed/Undisposed"
+        /// </summary>
+        [Test]
+        public void getContainerStatusesTestDisposed()
+        {
+            CswPrimaryKey LocationId = TestData.Nodes.createLocationNode().NodeId;
+            CswNbtObjClassContainer ContainerNode = TestData.Nodes.createContainerNode( LocationId: LocationId );
+            ContainerNode.DisposeContainer( true );
+            ContainerNode.postChanges( true );
+            ContainerData.ReconciliationRequest Request = new ContainerData.ReconciliationRequest
+            {
+                StartDate = DateTime.Now.AddDays( -1 ).ToString(),
+                EndDate = DateTime.Now.AddSeconds( 1 ).ToString(),
+                LocationId = LocationId.ToString(),
+                IncludeChildLocations = false,
+                ContainerLocationTypes = _getTypes()
+            };
+            ContainerData Data = ReconciliationAction.getContainerStatuses( Request );
+            Assert.AreEqual( 1, Data.ContainerStatuses.Count );
+            Assert.AreEqual( CswEnumNbtContainerLocationStatusOptions.Correct.ToString(), Data.ContainerStatuses[0].ContainerStatus );
+        }
+
+        /// <summary>
+        /// Given a location that has one disposed Container and a ContainerLocation in the given timeframe with a "Scanned, but already marked Disposed"  status,
+        /// assert that the returned ContainerStatus data has a container with a ContainerStatus value of "Scanned, but already marked Disposed"
+        /// </summary>
+        [Test]
+        public void getContainerStatusesTestScannedDisposed()
+        {
+            CswPrimaryKey LocationId = TestData.Nodes.createLocationNode().NodeId;
+            CswNbtObjClassContainer ContainerNode = TestData.Nodes.createContainerNode( LocationId: LocationId );
+            ContainerNode.DisposeContainer( true );
+            ContainerNode.postChanges( true );
+            TestData.Nodes.createContainerLocationNode( ContainerNode.Node, LocationId: LocationId, Type: CswEnumNbtContainerLocationTypeOptions.ReconcileScans.ToString() );
+            ContainerData.ReconciliationRequest Request = new ContainerData.ReconciliationRequest
+            {
+                StartDate = DateTime.Now.AddDays( -1 ).ToString(),
+                EndDate = DateTime.Now.AddSeconds( 1 ).ToString(),
+                LocationId = LocationId.ToString(),
+                IncludeChildLocations = false,
+                ContainerLocationTypes = _getTypes()
+            };
+            ContainerData Data = ReconciliationAction.getContainerStatuses( Request );
+            Assert.AreEqual( 1, Data.ContainerStatuses.Count );
+            Assert.AreEqual( CswEnumNbtContainerLocationStatusOptions.Disposed.ToString(), Data.ContainerStatuses[0].ContainerStatus );
+        }
+
         #endregion
 
         #region getContainerStatistics
