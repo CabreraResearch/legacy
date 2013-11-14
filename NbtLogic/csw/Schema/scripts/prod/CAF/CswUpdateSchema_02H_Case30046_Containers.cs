@@ -41,70 +41,61 @@ namespace ChemSW.Nbt.Schema
 
         private void _createImportBindings()
         {
-            CswNbtSchemaUpdateImportMgr ReceiptLotBindings = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "receipt_lots", "Receipt Lot", "receipt_lots_view", "receiptlotid" );
+            CswNbtSchemaUpdateImportMgr ImpMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "CAF" );
 
-            ReceiptLotBindings.importBinding( "ReceiptLotNo", CswNbtObjClassReceiptLot.PropertyName.ReceiptLotNo, "" );
-            ReceiptLotBindings.importBinding( "CreatedDate", CswNbtObjClassReceiptLot.PropertyName.ManufacturedDate, "" );
-            ReceiptLotBindings.importBinding( "ReceiptLotId", CswNbtObjClassReceiptLot.PropertyName.LegacyId, "" );
-            ReceiptLotBindings.importBinding( "PackageId", CswNbtObjClassReceiptLot.PropertyName.Material, CswEnumNbtSubFieldName.NodeID.ToString() );
+            ImpMgr.CAFimportOrder( "Receipt Lot", "receipt_lots", "receipt_lots_view", "receiptlotid" );
 
-            ReceiptLotBindings.finalize();
-
-
-
-            CswNbtSchemaUpdateImportMgr CofABindings = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "receipt_lots", "C of A Document", "cofa_docs_view", "receiptlotid" );
-
-            CofABindings.importBinding( "ReceiptLotId", CswNbtObjClassCofADocument.PropertyName.LegacyId, "" );
-            CofABindings.importBinding( "ReceiptLotId", "Receipt Lot", CswEnumNbtSubFieldName.NodeID.ToString() );
-            CofABindings.importBinding( "CA_FileName", CswNbtObjClassCofADocument.PropertyName.Title, "" );
-            CofABindings.importBinding( "CA_AcquisitionDate", CswNbtObjClassCofADocument.PropertyName.AcquiredDate, "" );
-            CofABindings.importBinding( "CA_FileExtension", CswNbtObjClassCofADocument.PropertyName.FileType, "" );
-            CofABindings.importBinding( "CA_Content_Type", CswNbtObjClassCofADocument.PropertyName.File, CswEnumNbtSubFieldName.ContentType.ToString() );
-            CofABindings.importBinding( "CA_Document", CswNbtObjClassCofADocument.PropertyName.File, CswEnumNbtSubFieldName.Blob.ToString(), BlobTableName: "receipt_lots", LobDataPkColOverride: "receiptlotid" );
-
-            CofABindings.finalize();
+            ImpMgr.importBinding( "ReceiptLotNo", CswNbtObjClassReceiptLot.PropertyName.ReceiptLotNo, "" );
+            ImpMgr.importBinding( "CreatedDate", CswNbtObjClassReceiptLot.PropertyName.ManufacturedDate, "" );
+            ImpMgr.importBinding( "PackageId", CswNbtObjClassReceiptLot.PropertyName.Material, CswEnumNbtSubFieldName.NodeID.ToString() );
 
 
 
+            ImpMgr.CAFimportOrder( "C of A Document", "receipt_lots", "cofa_docs_view", "receiptlotid" );
 
-            CswNbtSchemaUpdateImportMgr ContainerGroupBindings = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "container_groups", "Container Group", SourceColumn: "ContainerGroupId" );
+            ImpMgr.importBinding( "ReceiptLotId", "Receipt Lot", CswEnumNbtSubFieldName.NodeID.ToString() );
+            ImpMgr.importBinding( "CA_FileName", CswNbtObjClassCofADocument.PropertyName.Title, "" );
+            ImpMgr.importBinding( "CA_AcquisitionDate", CswNbtObjClassCofADocument.PropertyName.AcquiredDate, "" );
+            ImpMgr.importBinding( "CA_FileExtension", CswNbtObjClassCofADocument.PropertyName.FileType, "" );
+            ImpMgr.importBinding( "CA_Content_Type", CswNbtObjClassCofADocument.PropertyName.File, CswEnumNbtSubFieldName.ContentType.ToString() );
+            ImpMgr.importBinding( "CA_Document", CswNbtObjClassCofADocument.PropertyName.File, CswEnumNbtSubFieldName.Blob.ToString(), BlobTableName: "receipt_lots", LobDataPkColOverride: "receiptlotid" );
 
-            ContainerGroupBindings.importBinding( "ContainerGroupId", CswNbtObjClassContainerGroup.PropertyName.LegacyId, "" );
-            ContainerGroupBindings.importBinding( "ContainerGroupCode", CswNbtObjClassContainerGroup.PropertyName.Name, "" );
-
-            ContainerGroupBindings.finalize();
 
 
+            ImpMgr.CAFimportOrder( "Container Group", "container_groups", PkColumnName: "ContainerGroupId" );
 
-            CswNbtSchemaUpdateImportMgr ContainerBindings = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "Containers", "Container", "containers_view", "containerid" );
+            ImpMgr.importBinding( "ContainerGroupCode", CswNbtObjClassContainerGroup.PropertyName.Name, "" );
 
-            ContainerBindings.importBinding( "ContainerId", CswNbtObjClassContainer.PropertyName.LegacyId, "" );
-            ContainerBindings.importBinding( "BarcodeId", CswNbtObjClassContainer.PropertyName.Barcode, "" );
-            ContainerBindings.importBinding( "PackDetailId", CswNbtObjClassContainer.PropertyName.Size, CswEnumNbtSubFieldName.NodeID.ToString() );
-            ContainerBindings.importBinding( "ParentId", CswNbtObjClassContainer.PropertyName.SourceContainer, CswEnumNbtSubFieldName.NodeID.ToString() );
-            ContainerBindings.importBinding( "ContainerGroupId", CswNbtObjClassContainer.PropertyName.ContainerGroup, CswEnumNbtSubFieldName.NodeID.ToString() );
-            ContainerBindings.importBinding( "OwnerId", CswNbtObjClassContainer.PropertyName.Owner, CswEnumNbtSubFieldName.NodeID.ToString() );
-            ContainerBindings.importBinding( "ContainerStatus", CswNbtObjClassContainer.PropertyName.Status, "" );
-            ContainerBindings.importBinding( "ReceiptLotId", CswNbtObjClassContainer.PropertyName.ReceiptLot, CswEnumNbtSubFieldName.NodeID.ToString() );
-            ContainerBindings.importBinding( "PackageId", CswNbtObjClassContainer.PropertyName.Material, CswEnumNbtSubFieldName.NodeID.ToString() );
-            ContainerBindings.importBinding( "NetQuantity", CswNbtObjClassContainer.PropertyName.Quantity, CswEnumNbtSubFieldName.Value.ToString() );
-            ContainerBindings.importBinding( "UnitOfMeasureId", CswNbtObjClassContainer.PropertyName.Quantity, CswEnumNbtSubFieldName.NodeID.ToString() );
-            ContainerBindings.importBinding( "ExpirationDate", CswNbtObjClassContainer.PropertyName.ExpirationDate, "" );
-            ContainerBindings.importBinding( "LocationId", CswNbtObjClassContainer.PropertyName.Location, CswEnumNbtSubFieldName.NodeID.ToString() );
-            ContainerBindings.importBinding( "StorPress", CswNbtObjClassContainer.PropertyName.StoragePressure, "" );
-            ContainerBindings.importBinding( "StorTemp", CswNbtObjClassContainer.PropertyName.StorageTemperature, "" );
-            ContainerBindings.importBinding( "UseType", CswNbtObjClassContainer.PropertyName.UseType, "" );
-            ContainerBindings.importBinding( "ReceivedDate", CswNbtObjClassContainer.PropertyName.DateCreated, "" );
-            ContainerBindings.importBinding( "OpenedDate", CswNbtObjClassContainer.PropertyName.OpenedDate, "" );
-            ContainerBindings.importBinding( "Concentration", CswNbtObjClassContainer.PropertyName.Concentration, "" );
-            ContainerBindings.importBinding( "HomeLocation", CswNbtObjClassContainer.PropertyName.HomeLocation, CswEnumNbtSubFieldName.NodeID.ToString() );
-            ContainerBindings.importBinding( "Notes", CswNbtObjClassContainer.PropertyName.Notes, "" );
-            ContainerBindings.importBinding( "ProjectId", CswNbtObjClassContainer.PropertyName.Project, "" );
-            ContainerBindings.importBinding( "SpecificActivity", CswNbtObjClassContainer.PropertyName.SpecificActivity, "" );
-            ContainerBindings.importBinding( "TareQuantity", CswNbtObjClassContainer.PropertyName.TareQuantity, CswEnumNbtSubFieldName.Value.ToString() );
-            ContainerBindings.importBinding( "UnitOfMeasureId", CswNbtObjClassContainer.PropertyName.TareQuantity, CswEnumNbtSubFieldName.NodeID.ToString() );
 
-            ContainerBindings.finalize();
+
+            ImpMgr.CAFimportOrder( "Container", "containers", "containers_view", "containerid" );
+
+            ImpMgr.importBinding( "BarcodeId", CswNbtObjClassContainer.PropertyName.Barcode, "" );
+            ImpMgr.importBinding( "PackDetailId", CswNbtObjClassContainer.PropertyName.Size, CswEnumNbtSubFieldName.NodeID.ToString() );
+            ImpMgr.importBinding( "ParentId", CswNbtObjClassContainer.PropertyName.SourceContainer, CswEnumNbtSubFieldName.NodeID.ToString() );
+            ImpMgr.importBinding( "ContainerGroupId", CswNbtObjClassContainer.PropertyName.ContainerGroup, CswEnumNbtSubFieldName.NodeID.ToString() );
+            ImpMgr.importBinding( "OwnerId", CswNbtObjClassContainer.PropertyName.Owner, CswEnumNbtSubFieldName.NodeID.ToString() );
+            ImpMgr.importBinding( "ContainerStatus", CswNbtObjClassContainer.PropertyName.Status, "" );
+            ImpMgr.importBinding( "ReceiptLotId", CswNbtObjClassContainer.PropertyName.ReceiptLot, CswEnumNbtSubFieldName.NodeID.ToString() );
+            ImpMgr.importBinding( "PackageId", CswNbtObjClassContainer.PropertyName.Material, CswEnumNbtSubFieldName.NodeID.ToString() );
+            ImpMgr.importBinding( "NetQuantity", CswNbtObjClassContainer.PropertyName.Quantity, CswEnumNbtSubFieldName.Value.ToString() );
+            ImpMgr.importBinding( "UnitOfMeasureId", CswNbtObjClassContainer.PropertyName.Quantity, CswEnumNbtSubFieldName.NodeID.ToString() );
+            ImpMgr.importBinding( "ExpirationDate", CswNbtObjClassContainer.PropertyName.ExpirationDate, "" );
+            ImpMgr.importBinding( "LocationId", CswNbtObjClassContainer.PropertyName.Location, CswEnumNbtSubFieldName.NodeID.ToString() );
+            ImpMgr.importBinding( "StorPress", CswNbtObjClassContainer.PropertyName.StoragePressure, "" );
+            ImpMgr.importBinding( "StorTemp", CswNbtObjClassContainer.PropertyName.StorageTemperature, "" );
+            ImpMgr.importBinding( "UseType", CswNbtObjClassContainer.PropertyName.UseType, "" );
+            ImpMgr.importBinding( "ReceivedDate", CswNbtObjClassContainer.PropertyName.DateCreated, "" );
+            ImpMgr.importBinding( "OpenedDate", CswNbtObjClassContainer.PropertyName.OpenedDate, "" );
+            ImpMgr.importBinding( "Concentration", CswNbtObjClassContainer.PropertyName.Concentration, "" );
+            ImpMgr.importBinding( "HomeLocation", CswNbtObjClassContainer.PropertyName.HomeLocation, CswEnumNbtSubFieldName.NodeID.ToString() );
+            ImpMgr.importBinding( "Notes", CswNbtObjClassContainer.PropertyName.Notes, "" );
+            ImpMgr.importBinding( "ProjectId", CswNbtObjClassContainer.PropertyName.Project, "" );
+            ImpMgr.importBinding( "SpecificActivity", CswNbtObjClassContainer.PropertyName.SpecificActivity, "" );
+            ImpMgr.importBinding( "TareQuantity", CswNbtObjClassContainer.PropertyName.TareQuantity, CswEnumNbtSubFieldName.Value.ToString() );
+            ImpMgr.importBinding( "UnitOfMeasureId", CswNbtObjClassContainer.PropertyName.TareQuantity, CswEnumNbtSubFieldName.NodeID.ToString() );
+
+            ImpMgr.finalize();
         }
 
         #endregion

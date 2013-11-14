@@ -1,9 +1,16 @@
--- Create nbtimportqueue table
 begin
   execute immediate 'drop table nbtimportqueue';
   exception when others then null;
 end;
 /
+begin
+  execute immediate 'drop sequence seq_nbtimportqueueid';
+  exception when others then null;
+end;
+/
+
+
+-- Create nbtimportqueue table
 
 create table nbtimportqueue (
   nbtimportqueueid number(12) NOT NULL PRIMARY KEY,
@@ -18,12 +25,6 @@ create table nbtimportqueue (
 create unique index unqidx_nbtimportqueue on NBTIMPORTQUEUE (state, itempk, sheetname);
 
 -- Create pk sequence for nbtimportqueue table
-begin
-  execute immediate 'drop sequence seq_nbtimportqueueid';
-  exception when others then null;
-end;
-/
-
 create sequence seq_nbtimportqueueid start with 1 increment by 1;
 commit;
 
