@@ -113,6 +113,7 @@
     <Compile Include="csw\ImportExport\CswNbtImportDefOrder.cs" />
     <Compile Include="csw\ImportExport\CswNbtImportDefBinding.cs" />
     <Compile Include="csw\ImportExport\CswNbtImporter.cs" />
+    <Compile Include="csw\ImportExport\CswNbtImportTools.cs" />
     <Compile Include="csw\LandingPage\CswNbtLandingPage.cs" />
     <Compile Include="csw\MetaData\enum\CswEnumNbtCategory.cs" />
     <Compile Include="csw\MetaData\enum\CswEnumNbtFilterConjunction.cs" />
@@ -428,6 +429,7 @@
     <Compile Include="csw\Schema\scripts\prod\02I\CswUpdateMetaData_02I_Case31114A.cs" />
     <Compile Include="csw\Schema\scripts\prod\02I\CswUpdateDDL_02I_Case31057.cs" />
     <Compile Include="csw\Schema\scripts\prod\02I\CswUpdateSchema_02I_Case31061B.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CAF\CswUpdateSchema_02I_Case31091_Chemicals_Props.cs" />
     <Compile Include="csw\Schema\scripts\prod\CAF\CswUpdateSchema_02I_Case31194_Synonyms.cs" />
     <Compile Include="csw\Schema\scripts\prod\CAF\CswUpdateSchema_02H_Case30042_GHSAndDSD.cs" />
     <Compile Include="csw\Schema\scripts\prod\CAF\CswUpdateSchema_02H_Case30048_InventoryLevels.cs" />
