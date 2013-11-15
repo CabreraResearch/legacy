@@ -180,7 +180,7 @@
                     cswPrivate.state.LocationName = locationControl.selectedName();
                     cswPrivate.toggleButton(cswPrivate.buttons.next, false === Csw.isNullOrEmpty(cswPrivate.state.LocationId));
                     //Pending Actions
-                    var pendingText = 'Prior reconciliation actions still pending for this scope: ';
+                    var pendingText = 'Prior reconciliation changes still pending for this scope: ';
                     var pendingActionLabel = locationDatesTable.cell(rowNum, 3).span({ text: pendingText });
                     var getPendingChangesCount = function () {
                         if (false === Csw.isNullOrEmpty(cswPrivate.state.LocationId)) {
