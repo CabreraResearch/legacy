@@ -4,6 +4,7 @@ using System.Data;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.ImportExport;
+using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Sched;
 using ChemSW.Nbt.Schema;
 
@@ -12,7 +13,6 @@ namespace ChemSW.Nbt.csw.Schema
     partial class CswNbtSchemaUpdateImportMgr
     {
         public CswNbtSchemaModTrnsctn SchemaModTrnsctn;
-        public const string LegacyID = "Legacy Id";
 
         private Dictionary<string, Int32> _CAFOrder = new Dictionary<string, int>
             {
@@ -127,7 +127,7 @@ namespace ChemSW.Nbt.csw.Schema
 
                 if( createLegacyId )
                 {
-                    importBinding( PkColumnName, LegacyID, "" );
+                    importBinding( PkColumnName, CswNbtObjClass.PropertyName.LegacyId, "" );
                 }
             }
             else

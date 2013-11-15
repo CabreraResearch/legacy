@@ -454,7 +454,7 @@ namespace ChemSW.Nbt.ImportExport
             string LegacyId = string.Empty;
             foreach( CswNbtImportDefBinding Binding in NodeTypeBindings )
             {
-                if( Binding.DestPropName == "Legacy Id" )
+                if( Binding.DestPropName == CswNbtObjClass.PropertyName.LegacyId )
                 {
                     LegacyId = ImportRow[Binding.ImportDataColumnName].ToString();
                 }
@@ -474,7 +474,7 @@ namespace ChemSW.Nbt.ImportExport
                     LegacyIdView.ViewName = "Check Legacy Id";
                     CswNbtViewRelationship NTRel1 = LegacyIdView.AddViewRelationship( Order.NodeType, false );
 
-                    CswNbtMetaDataNodeTypeProp LegacyIdNTP = Order.NodeType.getNodeTypeProp( "Legacy Id" );
+                    CswNbtMetaDataNodeTypeProp LegacyIdNTP = Order.NodeType.getNodeTypeProp( CswNbtObjClass.PropertyName.LegacyId );
                     LegacyIdView.AddViewPropertyAndFilter( ParentViewRelationship: NTRel1, MetaDataProp: LegacyIdNTP,
                                                            Value: LegacyId,
                                                       SubFieldName: CswEnumNbtSubFieldName.Text, CaseSensitive: false );
@@ -563,7 +563,7 @@ namespace ChemSW.Nbt.ImportExport
                                 else
                                 {
                                   //we still want to set legacy id on nodes matched by unique properties
-                                    foreach( CswNbtImportDefBinding Binding in NodeTypeBindings.Where( Binding => Binding.DestPropName == "Legacy Id" ) )
+                                    foreach( CswNbtImportDefBinding Binding in NodeTypeBindings.Where( Binding => Binding.DestPropName == CswNbtObjClass.PropertyName.LegacyId ) )
                                     {
                                         //there should always be exactly one iteration of this loop
                                         Node.Properties[Binding.DestProperty].SetSubFieldValue( Binding.DestSubfield, ImportRow[Binding.ImportDataColumnName].ToString() );
@@ -870,17 +870,17 @@ namespace ChemSW.Nbt.ImportExport
                                        .FirstOrDefault()
                                        .getNodeTypes()
                                        .FirstOrDefault()
-                                       .getNodeTypeProp( "Legacy Id" );
+                                       .getNodeTypeProp( CswNbtObjClass.PropertyName.LegacyId );
                         ParentRelationship = View.AddViewRelationship( PropertySet, false );
                         break;
                     case "ObjectClassId":
                         CswNbtMetaDataObjectClass ObjectClass = _CswNbtResources.MetaData.getObjectClass( NodeTypeProp.FKValue );
-                        MetaDataProp = ObjectClass.getNodeTypes().FirstOrDefault().getNodeTypeProp( "Legacy Id" );
+                        MetaDataProp = ObjectClass.getNodeTypes().FirstOrDefault().getNodeTypeProp( CswNbtObjClass.PropertyName.LegacyId );
                         ParentRelationship = View.AddViewRelationship( ObjectClass, false );
                         break;
                     case "NodeTypeId":
                         CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeProp.FKValue );
-                        MetaDataProp = NodeType.getNodeTypeProp( "Legacy Id" );
+                        MetaDataProp = NodeType.getNodeTypeProp( CswNbtObjClass.PropertyName.LegacyId );
                         ParentRelationship = View.AddViewRelationship( NodeType, false );
                         break;
                 }
