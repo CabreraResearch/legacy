@@ -426,20 +426,21 @@
     <Compile Include="csw\Schema\scripts\prod\02H\CswUpdateSchema_02H_Case30537C.cs" />
     <Compile Include="csw\Schema\scripts\prod\02H\CswUpdateMetaData_02H_Case30537A.cs" />
     <Compile Include="csw\Schema\scripts\prod\02H\CswUpdateMetaData_02H_Case30537B.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02I\CswUpdateDDL_02I_Case31142.cs" />
     <Compile Include="csw\Schema\scripts\prod\02I\CswUpdateSchema_02I_Case30533B.cs" />
     <Compile Include="csw\Schema\scripts\prod\02I\CswUpdateMetaData_02I_Case30533A.cs" />
     <Compile Include="csw\Schema\scripts\prod\02I\CswUpdateSchema_02I_Case31055.cs" />
     <Compile Include="csw\Schema\scripts\prod\02I\CswUpdateSchema_02I_Case31041.cs" />
     <Compile Include="csw\Schema\scripts\prod\02I\CswUpdateSchema_02I_Case31072.cs" />
     <Compile Include="csw\Schema\scripts\prod\02I\CswUpdateDDL_02I_Case31061A.cs" />
-    <Compile Include="csw\Schema\scripts\prod\02I\CswUpdateSchema_02I_Case31114B.cs" />
-    <Compile Include="csw\Schema\scripts\prod\02I\CswUpdateMetaData_02I_Case31114A.cs" />
     <Compile Include="csw\Schema\scripts\prod\02I\CswUpdateMetaData_02I_Case31072.cs" />
     <Compile Include="csw\Schema\scripts\prod\02I\CswUpdateSchema_02I_Case31040.cs" />
-    <Compile Include="csw\Schema\scripts\prod\02I\CswUpdateDDL_02I_Case31057.cs" />
-    <Compile Include="csw\Schema\scripts\prod\02I\CswUpdateSchema_02I_Case31061B.cs" />
     <Compile Include="csw\Schema\scripts\prod\02I\CswSchemaScriptsIronwood.cs" />
     <Compile Include="csw\Schema\scripts\prod\02I\CswUpdateSchema_02I_CaseXXXXX.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02I\CswUpdateSchema_02I_Case31114B.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02I\CswUpdateMetaData_02I_Case31114A.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02I\CswUpdateDDL_02I_Case31057.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02I\CswUpdateSchema_02I_Case31061B.cs" />
     <Compile Include="csw\Schema\scripts\prod\CAF\CswUpdateSchema_02H_Case30042_GHSAndDSD.cs" />
     <Compile Include="csw\Schema\scripts\prod\CAF\CswUpdateSchema_02H_Case30048_InventoryLevels.cs" />
     <Compile Include="csw\Schema\scripts\prod\CAF\CswUpdateSchema_02H_Case30046_Containers.cs" />
@@ -1330,7 +1331,7 @@
   <ItemGroup />
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
+      <Generator>PublicResXFileCodeGenerator</Generator>
       <SubType>Designer</SubType>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
@@ -1344,6 +1345,7 @@
     <Service Include="{C0C07587-41A7-46C8-8FBD-3F9C8EBE2DDC}" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Resources\caf.sql" />
     <Content Include="Resources\SMTP.Net.dll" />
     <Content Include="Resources\SMTP.Net.xml" />
   </ItemGroup>

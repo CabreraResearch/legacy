@@ -201,6 +201,12 @@ namespace ChemSW.Nbt.ObjClasses
                         HasPermission = true;
                         GetMatchingSDSForCurrentUser( ButtonData );
                         break;
+                    case PropertyName.LinkChemWatch:
+                        HasPermission = true; //todo: what should this be based off?
+                        ButtonData.Data["state"] = new JObject();
+                        ButtonData.Data["state"]["materialId"] = NodeId.ToString();
+                        ButtonData.Action = CswEnumNbtButtonAction.chemwatch;
+                        break;
                 }
             }
             return HasPermission;

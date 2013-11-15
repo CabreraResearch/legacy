@@ -27,38 +27,33 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
-            {
-                CswNbtSchemaUpdateImportMgr RoleImpMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "roles", "Role" );
+                CswNbtSchemaUpdateImportMgr ImpMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "CAF" );
+                ImpMgr.CAFimportOrder( "Role", "roles" );
 
-                // Bindings
-                RoleImpMgr.importBinding( "roledescription", CswNbtObjClassRole.PropertyName.Description, "" );
-                RoleImpMgr.importBinding( "rolename", CswNbtObjClassRole.PropertyName.Name, "" );
-                RoleImpMgr.importBinding( "timeout", CswNbtObjClassRole.PropertyName.Timeout, "" );
+                ImpMgr.importBinding( "roledescription", CswNbtObjClassRole.PropertyName.Description, "" );
+                ImpMgr.importBinding( "rolename", CswNbtObjClassRole.PropertyName.Name, "" );
+                ImpMgr.importBinding( "timeout", CswNbtObjClassRole.PropertyName.Timeout, "" );
 
-                // Relationships
-                // none
 
-                RoleImpMgr.finalize();
-            }
-            {
-                // Bindings
-                CswNbtSchemaUpdateImportMgr UserImpMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "users", "User", ViewName: "Users_View" );
-                UserImpMgr.importBinding( "disabled", CswNbtObjClassUser.PropertyName.Archived, "" );
-                UserImpMgr.importBinding( "namefirst", CswNbtObjClassUser.PropertyName.FirstName, "" );
-                UserImpMgr.importBinding( "namelast", CswNbtObjClassUser.PropertyName.LastName, "" );
-                UserImpMgr.importBinding( "password", CswNbtObjClassUser.PropertyName.Password, "" );
-                UserImpMgr.importBinding( "email", CswNbtObjClassUser.PropertyName.Email, "" );
-                UserImpMgr.importBinding( "employeeid", CswNbtObjClassUser.PropertyName.EmployeeId, "" );
-                UserImpMgr.importBinding( "navrows", CswNbtObjClassUser.PropertyName.PageSize, "" );
-                UserImpMgr.importBinding( "locked", CswNbtObjClassUser.PropertyName.AccountLocked, "" );
-                UserImpMgr.importBinding( "failedlogincount", CswNbtObjClassUser.PropertyName.FailedLoginCount, "" );
-                UserImpMgr.importBinding( "defaultlanguage", CswNbtObjClassUser.PropertyName.Language, "" );
-                UserImpMgr.importBinding( "phone", CswNbtObjClassUser.PropertyName.Phone, "" );
-                UserImpMgr.importBinding( "username", CswNbtObjClassUser.PropertyName.Username, "" );
 
-                UserImpMgr.importBinding( "defaultlocationid", CswNbtObjClassUser.PropertyName.DefaultLocation, CswEnumNbtSubFieldName.NodeID.ToString() );
-                UserImpMgr.importBinding( "roleid", CswNbtObjClassUser.PropertyName.Role, CswEnumNbtSubFieldName.NodeID.ToString() );
-                UserImpMgr.importBinding( "workunitid", CswNbtObjClassUser.PropertyName.CurrentWorkUnit, CswEnumNbtSubFieldName.NodeID.ToString() );
+                ImpMgr.CAFimportOrder( "User", "users", "users_view" );
+
+                ImpMgr.importBinding( "disabled", CswNbtObjClassUser.PropertyName.Archived, "" );
+                ImpMgr.importBinding( "namefirst", CswNbtObjClassUser.PropertyName.FirstName, "" );
+                ImpMgr.importBinding( "namelast", CswNbtObjClassUser.PropertyName.LastName, "" );
+                ImpMgr.importBinding( "password", CswNbtObjClassUser.PropertyName.Password, "" );
+                ImpMgr.importBinding( "email", CswNbtObjClassUser.PropertyName.Email, "" );
+                ImpMgr.importBinding( "employeeid", CswNbtObjClassUser.PropertyName.EmployeeId, "" );
+                ImpMgr.importBinding( "navrows", CswNbtObjClassUser.PropertyName.PageSize, "" );
+                ImpMgr.importBinding( "locked", CswNbtObjClassUser.PropertyName.AccountLocked, "" );
+                ImpMgr.importBinding( "failedlogincount", CswNbtObjClassUser.PropertyName.FailedLoginCount, "" );
+                ImpMgr.importBinding( "defaultlanguage", CswNbtObjClassUser.PropertyName.Language, "" );
+                ImpMgr.importBinding( "phone", CswNbtObjClassUser.PropertyName.Phone, "" );
+                ImpMgr.importBinding( "username", CswNbtObjClassUser.PropertyName.Username, "" );
+
+                ImpMgr.importBinding( "defaultlocationid", CswNbtObjClassUser.PropertyName.DefaultLocation, CswEnumNbtSubFieldName.NodeID.ToString() );
+                ImpMgr.importBinding( "roleid", CswNbtObjClassUser.PropertyName.Role, CswEnumNbtSubFieldName.NodeID.ToString() );
+                ImpMgr.importBinding( "workunitid", CswNbtObjClassUser.PropertyName.CurrentWorkUnit, CswEnumNbtSubFieldName.NodeID.ToString() );
 
                 /*
                    +defaultlocationid, 
@@ -83,8 +78,7 @@ namespace ChemSW.Nbt.Schema
                 */
 
                 // Exclude issystemuser
-                UserImpMgr.finalize();
-            }
+                ImpMgr.finalize();
 
         } // update()
 

@@ -30,8 +30,9 @@ namespace ChemSW.Nbt.Schema
         public override void update()
         {
             // CAF bindings definitions for Vendors
-            CswNbtSchemaUpdateImportMgr ImpMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "documents", "SDS Document", ViewName: "sds_view", SourceColumn: "legacyid" );
+            CswNbtSchemaUpdateImportMgr ImpMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "CAF" );
 
+            ImpMgr.CAFimportOrder( "SDS Document", "documents", "sds_view", "legacyid", false );
             //simple props
             ImpMgr.importBinding( "acquisitiondate", CswNbtObjClassSDSDocument.PropertyName.AcquiredDate, "" );
             ImpMgr.importBinding( "description", CswNbtObjClassSDSDocument.PropertyName.Title, "" );

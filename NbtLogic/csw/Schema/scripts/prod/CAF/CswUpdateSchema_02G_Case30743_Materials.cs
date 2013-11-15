@@ -30,8 +30,9 @@ namespace ChemSW.Nbt.Schema
         public override void update()
         {
             // CAF bindings definitions for Vendors
-            CswNbtSchemaUpdateImportMgr ImpMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "packages", "Chemical", ViewName: "Chemicals_View" ); //PACKAGES not MATERIALS (intentional)
+            CswNbtSchemaUpdateImportMgr ImpMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "CAF" ); //PACKAGES not MATERIALS (intentional)
 
+            ImpMgr.CAFimportOrder( "Chemical", "packages", "chemicals_view" );
             //Simple Props
             ImpMgr.importBinding( "aqueous_solubility", CswNbtObjClassChemical.PropertyName.AqueousSolubility, "" );
             ImpMgr.importBinding( "casno", CswNbtObjClassChemical.PropertyName.CasNo, "" );

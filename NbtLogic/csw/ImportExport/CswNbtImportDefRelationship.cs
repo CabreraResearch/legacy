@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
 using ChemSW.Core;
 using ChemSW.DB;
@@ -63,74 +62,42 @@ namespace ChemSW.Nbt.ImportExport
         }
 
 
-        /// <summary>
-        /// Get a DataTable to fill out, for use with addRelationshipEntries()
-        /// </summary>
-        /// <returns></returns>
-        public static DataTable getDataTableForNewRelationshipEntries()
-        {
-            DataTable Table = new DataTable();
-            Table.Columns.Add( "sheetname" );
-            Table.Columns.Add( "nodetypename" );
-            Table.Columns.Add( "relationship" );
-            Table.Columns.Add( "instance" );
-            Table.Columns.Add( "sourcerelcolumnname" );
-            return Table;
-        }
 
         /// <summary>
         /// Add new Relationship entries to a definition (for use by CswNbtImporter)
         /// </summary>
-        public static void addRelationshipEntries( CswNbtResources CswNbtResources, DataTable RelationshipsDataTable, Dictionary<string, Int32> DefIdsBySheetName )
+        public static void addRelationshipEntries( CswNbtResources CswNbtResources, DataTable RelationshipsDataTable )
         {
             CswTableUpdate importRelationshipsUpdate = CswNbtResources.makeCswTableUpdate( "storeDefinition_Relationships_update", CswNbtImportTables.ImportDefRelationships.TableName );
-            DataTable importRelationshipsTable = importRelationshipsUpdate.getEmptyTable();
 
             foreach( DataRow RelRow in RelationshipsDataTable.Rows )
             {
-                string SheetName = RelRow["sheetname"].ToString();
-                if( false == string.IsNullOrEmpty( SheetName ) )
+
+                //set blank instances to min value
+                if( RelRow["instance"] == DBNull.Value || String.IsNullOrEmpty( RelRow["instance"].ToString() ) )
                 {
-                    string NodeTypeName = RelRow["nodetypename"].ToString();
-                    CswNbtMetaDataNodeType NodeType = CswNbtResources.MetaData.getNodeType( NodeTypeName );
-                    if( null != NodeType )
-                    {
-                        string RelationshipName = RelRow["relationship"].ToString();
-                        CswNbtMetaDataNodeTypeProp Relationship = NodeType.getNodeTypeProp( RelationshipName );
-                        if( null != Relationship )
-                        {
+                    RelRow["instance"] = Int32.MinValue;
+                }
 
-                            //set blank instances to min value
-                            if( RelRow["instance"] == DBNull.Value || String.IsNullOrEmpty( RelRow["instance"].ToString() ) )
+                string NodeTypeName = RelRow["nodetypename"].ToString();
+                string RelationshipName = RelRow["relationship"].ToString();
+                CswNbtMetaDataNodeType NodeType = CswNbtResources.MetaData.getNodeType( NodeTypeName );
+                CswNbtMetaDataNodeTypeProp Relationship = NodeType.getNodeTypeProp( RelationshipName );
+                if( null == NodeType )
                             {
-                                RelRow["instance"] = Int32.MinValue;
+                    throw new CswDniException( CswEnumErrorType.Error, "Error reading bindings", "Invalid NodeType defined in 'Relationships' sheet: " + NodeTypeName );
                             }
-
-
-                            DataRow row = importRelationshipsTable.NewRow();
-                            row[CswNbtImportTables.ImportDefRelationships.importdefid] = DefIdsBySheetName[SheetName];
-                            row[CswNbtImportTables.ImportDefRelationships.nodetypename] = NodeTypeName;
-                            row[CswNbtImportTables.ImportDefRelationships.relationship] = RelationshipName;
-                            row[CswNbtImportTables.ImportDefRelationships.instance] = CswConvert.ToDbVal( RelRow["instance"].ToString() );
-                            if( RelRow.Table.Columns.Contains( "sourcerelcolumnname" ) )
-                            {
-                                row[CswNbtImportTables.ImportDefRelationships.sourcerelcolumnname] = RelRow["sourcerelcolumnname"].ToString();
-                            }
-                            importRelationshipsTable.Rows.Add( row );
-
-                        }
-                        else
+                else if( null == Relationship )
                         {
                             throw new CswDniException( CswEnumErrorType.Error, "Error reading bindings", "Invalid Relationship defined in 'Relationships' sheet: " + RelRow["relationship"].ToString() + " (nodetype: " + NodeTypeName + ")" );
                         }
-                    }
-                    else
-                    {
-                        throw new CswDniException( CswEnumErrorType.Error, "Error reading bindings", "Invalid NodeType defined in 'Relationships' sheet: " + NodeTypeName );
-                    }
-                }
+
             } // foreach( DataRow RelRow in RelationshipsDataTable.Rows )
-            importRelationshipsUpdate.update( importRelationshipsTable );
+
+            //this is a hack, and the fact that we can even do this makes me sad
+            importRelationshipsUpdate._DoledOutTables.Add( RelationshipsDataTable );
+            importRelationshipsUpdate.update( RelationshipsDataTable );
+
         } // addRelationshipEntries()
 
     } // class CswNbt2DRowRelationship

@@ -184,7 +184,10 @@
                 actionJson.actionname = 'Manage Locations';
                 launchAction = true;
                 break;
-
+            case Csw.enums.nbtButtonAction.chemwatch.toLowerCase():
+                actionJson.actionname = 'chemwatch';
+                launchAction = true;
+                break;
             default:
                 if (tabsAndProps) {
                     tabsAndProps.refresh(opts.data.savedprops.properties);

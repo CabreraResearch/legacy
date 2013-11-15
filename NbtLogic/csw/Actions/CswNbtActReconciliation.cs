@@ -80,10 +80,12 @@ namespace ChemSW.Nbt.Actions
             _setContainersTree( Request );
             if( ContainersTree.getChildNodeCount() > 0 )
             {
+                Collection<CswPrimaryKey> AllLocationIds = new Collection<CswPrimaryKey>();
+                Collection<CswPrimaryKey> ScannedLocationIds = new Collection<CswPrimaryKey>();
                 for( int i = 0; i < ContainersTree.getChildNodeCount(); i++ )//Location Nodes
                 {
                     ContainersTree.goToNthChild( i );
-                    Int32 Scans = 0;
+                    AllLocationIds.Add( ContainersTree.getNodeIdForCurrentPosition() );
                     if( ContainersTree.getChildNodeCount() > 0 )
                     {
                         for( int j = 0; j < ContainersTree.getChildNodeCount(); j++ )//Container Nodes
@@ -99,7 +101,7 @@ namespace ChemSW.Nbt.Actions
                                                              ContainerLocationNode.Type.Value );
                                     if( ContainerLocationNode.Type.Value == CswEnumNbtContainerLocationTypeOptions.ReconcileScans.ToString() )
                                     {
-                                        Scans++;
+                                        ScannedLocationIds.Add( ContainerLocationNode.Location.SelectedNodeId );
                                     }
                                 }
                                 else
@@ -114,11 +116,17 @@ namespace ChemSW.Nbt.Actions
                             ContainersTree.goToParentNode();
                         }
                     }
-                    if( Scans == 0 && _isTypeEnabled( CswEnumNbtContainerLocationTypeOptions.ReconcileScans.ToString(), Request ) )
-                    {
-                        Data.UnscannedLocations.Add( _makeUnscannedLocation( ContainersTree.getNodeIdForCurrentPosition() ) );
-                    }
                     ContainersTree.goToParentNode();
+                }
+                if( _isTypeEnabled( CswEnumNbtContainerLocationTypeOptions.ReconcileScans.ToString(), Request ) )
+                {
+                    foreach( CswPrimaryKey LocationId in AllLocationIds )
+                    {
+                        if( false == ScannedLocationIds.Contains( LocationId ) )
+                        {
+                            Data.UnscannedLocations.Add( _makeUnscannedLocation( LocationId ) );
+                        }
+                    }
                 }
             }
             foreach( ContainerData.ReconciliationStatistics Stat in Data.ContainerStatistics )
@@ -154,7 +162,7 @@ namespace ChemSW.Nbt.Actions
                             ContainerStatus.ContainerId = ContainerNode.NodeId.ToString();
                             ContainerStatus.ContainerBarcode = ContainerNode.Properties[CswNbtObjClassContainer.PropertyName.Barcode].AsBarcode.Barcode;
                             ContainerStatus.LocationId = LocationId.ToString();
-                            ContainerStatus.PriorLocation = ContainerNode.Properties[CswNbtObjClassContainer.PropertyName.Location].AsLocation.CachedFullPath;
+                            ContainerStatus.ExpectedLocation = ContainerNode.Properties[CswNbtObjClassContainer.PropertyName.Location].AsLocation.CachedFullPath;
                             ContainerStatus.ContainerStatus = CswEnumNbtContainerLocationStatusOptions.NotScanned.ToString();
                             CswPrimaryKey ScannedLocationId = null;
                             if( ContainersTree.getChildNodeCount() > 0 )//ContainerLocation Nodes
@@ -163,7 +171,6 @@ namespace ChemSW.Nbt.Actions
                                 if( null != ContainerLocationNode )
                                 {
                                     ContainerStatus.ContainerLocationId = ContainerLocationNode.NodeId.ToString();
-                                    ContainerStatus.ScannedLocation = ContainerLocationNode.Location.CachedFullPath;
                                     ScannedLocationId = ContainerLocationNode.Location.SelectedNodeId;
                                     ContainerStatus.ScanDate = ContainerLocationNode.ScanDate.DateTimeValue.Date.ToShortDateString();
                                     ContainerStatus.Action = ContainerLocationNode.Action.Value;
@@ -171,6 +178,10 @@ namespace ChemSW.Nbt.Actions
                                     if( _isTypeEnabled( ContainerLocationNode.Type.Value, Request ) )
                                     {
                                         ContainerStatus.ContainerStatus = ContainerLocationNode.Status.Value;
+                                        if( ContainerLocationNode.Type.Value == CswEnumNbtContainerLocationTypeOptions.ReconcileScans.ToString() )
+                                        {
+                                            ContainerStatus.ScannedLocation = ContainerLocationNode.Location.CachedFullPath;
+                                        }
                                     }
                                 }
                             }

@@ -27,7 +27,10 @@ namespace ChemSW.Nbt.Schema
         public override void update()
         {
             // Case 30043 - CAF Migration: Sites/Locations/Work Units
-            CswNbtSchemaUpdateImportMgr ImportMgr_ControlZones = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "cispro_controlzones", "Control Zone" );
+            CswNbtSchemaUpdateImportMgr ImportMgr_ControlZones = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "CAF" );
+
+
+            ImportMgr_ControlZones.CAFimportOrder( "Control Zone", "cispro_controlzones" );
 
             // Binding
             ImportMgr_ControlZones.importBinding( "controlzonename", CswNbtObjClassControlZone.PropertyName.Name, "" );
