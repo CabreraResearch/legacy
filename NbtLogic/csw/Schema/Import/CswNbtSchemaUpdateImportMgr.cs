@@ -292,7 +292,7 @@ namespace ChemSW.Nbt.csw.Schema
         /// <summary>
         /// Remove the specified nodetype from the IMPORT_DEF_ORDER table.
         /// </summary>
-        /// <param name="Sheetname">the name of the sheet where this import order is defined</param>
+        /// <param name="Sheetname">the name of the sheet where this import order is defined ("CAF" for all CAF bindings)</param>
         /// <param name="NodetypeName">the name of the nodetype to be removed</param>
         /// <param name="Instance">the instance associated with this nodetype</param>
         /// <param name="CascadeDelete">whether to delete any bindings associated with this import order</param>
@@ -318,14 +318,38 @@ namespace ChemSW.Nbt.csw.Schema
             }//if CascadeDelete
         }//removeImportOrder()
 
-        public void removeImportBinding()
+
+        /// <summary>
+        /// Remove the specified binding from the IMPORT_DEF_BINDINGS table.
+        /// </summary>
+        /// <param name="Sheetname">The sheet where the specified binding is found ("CAF" for all CAF bindings)</param>
+        /// <param name="SourceColumn">The column where the binding pulled data from</param>
+        /// <param name="NodetypeName">The Nodetype that data was imported to</param>
+        /// <param name="PropName">The prop where the source column data was stored</param>
+        /// <param name="SubfieldName">The subfield on the prop of the nodetype for this binding</param>
+        /// <param name="Instance">Which import order instance this binding was associated with</param>
+        public void removeImportBinding(string Sheetname, string SourceColumn, string NodetypeName, string PropName, string SubfieldName, int Instance = int.MinValue)
         {
-            
+            //this should only ever return one result
+            DataRow BindingToDelete = _importBindingsTable.Select( "importdefid = " + _SheetDefinitions[Sheetname] + " and sourcecolumnname = '" + SourceColumn + "' and destnodetypename = '" 
+                                                                   + NodetypeName + "' and destpropname = '" + PropName + "'" + " and destsubfield = '" + SubfieldName + "' and instance = " + Instance )[0];
+            _importBindingsTable.Rows.Remove( BindingToDelete );
         }//removeImportBinding()
 
-        public void removeImportRelationship()
+
+        /// <summary>
+        /// Remove the specified binding from the IMPORT_DEF_RELATIONSHIPS table.
+        /// </summary>
+        /// <param name="Sheetname">The sheet where the specified binding is found ("CAF" for all CAF bindings)</param>
+        /// <param name="NodetypeName">The Nodetype that data was imported to</param>
+        /// <param name="Relationship">the relationship which was bound</param>
+        /// <param name="Instance">Which import order instance this binding was associated with</param>
+        public void removeImportRelationship(string Sheetname, string NodetypeName, string Relationship, int Instance = int.MinValue)
         {
-            
+            //this should only ever return one result
+            DataRow RelationshipToDelete = _importRelationshipsTable.Select( "importdefid = " + _SheetDefinitions[Sheetname] + " and nodetypename = '" + NodetypeName + "' " +
+                                                                             "and relationship = '" + Relationship + "' and instance = " + Instance )[0];
+            _importRelationshipsTable.Rows.Remove( RelationshipToDelete );
         }//removeImportRelationship()
 
         #endregion
