@@ -12,7 +12,7 @@ namespace ChemSW.Nbt.csw.Schema
 {
     partial class CswNbtSchemaUpdateImportMgr
     {
-        public CswNbtSchemaModTrnsctn SchemaModTrnsctn;
+        private CswNbtSchemaModTrnsctn SchemaModTrnsctn;
 
         /// <summary>
         /// The ordering of CAF imported nodetypes. Used to make ordering imports convenient for CAFimportOrder.
@@ -59,11 +59,13 @@ namespace ChemSW.Nbt.csw.Schema
 
         private Dictionary<string, int> _SheetDefinitions;
         private string _DefinitionName;
-        private string _DestNodeTypeName;
 
         /// <summary>
-        /// Legacy property: this should probably be looked at after case 31124
+        /// The nodetype which will be used by default for importBinding()
         /// </summary>
+        public string DefaultNodetype;
+
+        //TODO: if case 31124 is resolved and this comment is still here, figure out if this is used
         private string _CAFDbLink;
 
         /// <summary>
@@ -135,7 +137,7 @@ namespace ChemSW.Nbt.csw.Schema
         /// <param name="Instance">Used to differentiate the same nodetype imported from multiple places</param>
         public void importOrder( Int32 Order, string NodeTypeName, string SheetName, Int32 Instance = Int32.MinValue)
         {
-            _DestNodeTypeName = NodeTypeName;
+            DefaultNodetype = NodeTypeName;
             DataRow row = _importOrderTable.NewRow();
             row["importdefid"] = _SheetDefinitions[SheetName];
             row["nodetypename"] = NodeTypeName;
@@ -158,7 +160,7 @@ namespace ChemSW.Nbt.csw.Schema
         /// <param name="Instance">Used to differentiate the same nodetype imported from multiple places</param>
         public void CAFimportOrder( string NodeTypeName, string TableName, string ViewName = null, string PkColumnName = null, bool createLegacyId = true, Int32 Instance = Int32.MinValue )
         {
-            _DestNodeTypeName = NodeTypeName;
+            DefaultNodetype = NodeTypeName;
             PkColumnName = PkColumnName ?? _getPKColumnForTable( TableName );
             if( CswAll.AreStrings( NodeTypeName, TableName, PkColumnName ) )
             {
@@ -202,7 +204,7 @@ namespace ChemSW.Nbt.csw.Schema
             if( null != _NbtImporter )
             {
                 SheetName = SheetName ?? CswScheduleLogicNbtCAFImport.DefinitionName;
-                DestNodeTypeName = DestNodeTypeName ?? _DestNodeTypeName; //default to the last nodetype defined in ImportOrder
+                DestNodeTypeName = DestNodeTypeName ?? DefaultNodetype; //default to the last nodetype defined in ImportOrder
                 if( CswAll.AreStrings( SheetName, DestNodeTypeName, DestPropertyName, SourceColumnName ) )
                 {
                     _SourceColumns.Add( SourceColumnName, AllowNullOrEmpty: false, IsUnique: true );
