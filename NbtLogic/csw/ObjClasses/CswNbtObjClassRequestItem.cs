@@ -2,6 +2,7 @@ using System;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
+using ChemSW.Nbt.Requesting;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.ObjClasses
@@ -305,14 +306,15 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         public class Types
         {
-            public const string Create = "Request Material Create";
-            public const string Bulk = "Request By Bulk";
-            public const string Size = "Request By Size";
-            public const string Dispense = "Request Container Dispense";
-            public const string Dispose = "Request Container Dispose";
-            public const string Move = "Request Container Move";
+            public const string EnterprisePart = "Request Enterprise Part";
+            public const string MaterialCreate = "Request Material Create";
+            public const string MaterialBulk = "Request Material By Bulk";
+            public const string MaterialSize = "Request Material By Size";
+            public const string ContainerDispense = "Request Container Dispense";
+            public const string ContainerDispose = "Request Container Dispose";
+            public const string ContainerMove = "Request Container Move";
             public static readonly CswCommaDelimitedString Options =
-                new CswCommaDelimitedString { Create, Bulk, Size, Dispense, Dispose, Move };
+                new CswCommaDelimitedString { EnterprisePart, MaterialCreate, MaterialBulk, MaterialSize, ContainerDispense, ContainerMove, ContainerDispose };
         }
 
         #endregion Enums
@@ -340,6 +342,20 @@ namespace ChemSW.Nbt.ObjClasses
         public override CswNbtMetaDataObjectClass ObjectClass
         {
             get { return _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestItemClass ); }
+        }
+
+        private CswNbtRequestItemType _TypeDef;//Do not access the private variable directly
+        public CswNbtRequestItemType TypeDef
+        {
+            get
+            {
+                //Always make sure we're using the right RequestItem Type Definition (in case the Type changes)
+                if( null == _TypeDef || _TypeDef.RequestItemType != Type.Value )
+                {
+                    _TypeDef = CswNbtRequestItemTypeFactory.makeRequestItemType( _CswNbtResources, this );
+                }
+                return _TypeDef;
+            }
         }
 
         #endregion ctor
@@ -499,14 +515,16 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropButton Fulfill { get { return _CswNbtNode.Properties[PropertyName.Fulfill]; } }
         public CswNbtNodePropLocation Location { get { return _CswNbtNode.Properties[PropertyName.Location]; } }
         public CswNbtNodePropRelationship InventoryGroup { get { return _CswNbtNode.Properties[PropertyName.InventoryGroup]; } }
-        //Target Item Type (Only one of these will be used for a given Request Item)
+        //Target Item Type (will return EnterprisePart, Material, or Container depending on the RequestItem type)
+        public CswNbtNodePropRelationship Target { get { return _TypeDef.Target; } }
+        //(Only one of these will be used for a given Request Item)
         public CswNbtNodePropRelationship EnterprisePart { get { return _CswNbtNode.Properties[PropertyName.EnterprisePart]; } }
         public CswNbtNodePropRelationship Material { get { return _CswNbtNode.Properties[PropertyName.Material]; } }
         public CswNbtNodePropRelationship Container { get { return _CswNbtNode.Properties[PropertyName.Container]; } }
-        //Bulk Request Properties (all Request Items except Move/Dispose use either Bulk or Size)
+        //Bulk Request Properties (all Request Items except Move/Dispose/Size use Bulk)
         public CswNbtNodePropQuantity Quantity { get { return _CswNbtNode.Properties[PropertyName.Quantity]; } }
         public CswNbtNodePropQuantity TotalDispensed { get { return _CswNbtNode.Properties[PropertyName.TotalDispensed]; } }
-        //Size Request Properties (all Request Items except Move/Dispose use either Bulk or Size)
+        //Size Request Properties (used by Request By Size Request Items)
         public CswNbtNodePropRelationship Size { get { return _CswNbtNode.Properties[PropertyName.Size]; } }
         public CswNbtNodePropNumber SizeCount { get { return _CswNbtNode.Properties[PropertyName.SizeCount]; } }
         public CswNbtNodePropNumber TotalMoved { get { return _CswNbtNode.Properties[PropertyName.TotalMoved]; } }

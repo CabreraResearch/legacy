@@ -200,6 +200,15 @@
     <Compile Include="csw\PropTypes\CswEnumNbtNFPADisplayMode.cs" />
     <Compile Include="csw\PropTypes\CswEnumNbtGridPropMode.cs" />
     <Compile Include="csw\PropTypes\CswNbtNodePropFormula.cs" />
+    <Compile Include="csw\Requesting\CswNbtRequestItemTypeContainerMove.cs" />
+    <Compile Include="csw\Requesting\CswNbtRequestItemTypeContainerDispose.cs" />
+    <Compile Include="csw\Requesting\CswNbtRequestItemTypeContainerDispense.cs" />
+    <Compile Include="csw\Requesting\CswNbtRequestItemTypeMaterialBySize.cs" />
+    <Compile Include="csw\Requesting\CswNbtRequestItemTypeMaterialByBulk.cs" />
+    <Compile Include="csw\Requesting\CswNbtRequestItemTypeEnterprisePart.cs" />
+    <Compile Include="csw\Requesting\CswNbtRequestItemTypeFactory.cs" />
+    <Compile Include="csw\Requesting\CswNbtRequestItemType.cs" />
+    <Compile Include="csw\Requesting\CswNbtRequestItemTypeMaterialCreate.cs" />
     <Compile Include="csw\Sched\core\CswEnumNbtScheduleRuleNames.cs" />
     <Compile Include="csw\Sched\logic\CswScheduleLogicNbtImport.cs" />
     <Compile Include="csw\Sched\logic\CswScheduleLogicNbtNodeCounts.cs" />
@@ -417,6 +426,7 @@
     <Compile Include="csw\Schema\scripts\prod\02H\CswUpdateSchema_02H_Case30537C.cs" />
     <Compile Include="csw\Schema\scripts\prod\02H\CswUpdateMetaData_02H_Case30537A.cs" />
     <Compile Include="csw\Schema\scripts\prod\02H\CswUpdateMetaData_02H_Case30537B.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02I\CswUpdateSchema_02I_Case30533B.cs" />
     <Compile Include="csw\Schema\scripts\prod\02I\CswUpdateMetaData_02I_Case30533A.cs" />
     <Compile Include="csw\Schema\scripts\prod\02I\CswUpdateSchema_02I_Case31055.cs" />
     <Compile Include="csw\Schema\scripts\prod\02I\CswUpdateSchema_02I_Case31041.cs" />
