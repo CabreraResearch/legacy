@@ -280,28 +280,53 @@ namespace ChemSW.Nbt.csw.Schema
                 {
                     _importRelationshipsTable.Rows.Remove( ImportRelationship );
                 }
-            }
+            }//if CascadeDelete
 
             _SheetDefinitions.Remove( SheetName );
 
             return DeletedImportDef;
 
-        }
+        }//removeImportDef()
 
-        public void removeImportOrder()
+
+        /// <summary>
+        /// Remove the specified nodetype from the IMPORT_DEF_ORDER table.
+        /// </summary>
+        /// <param name="Sheetname">the name of the sheet where this import order is defined</param>
+        /// <param name="NodetypeName">the name of the nodetype to be removed</param>
+        /// <param name="Instance">the instance associated with this nodetype</param>
+        /// <param name="CascadeDelete">whether to delete any bindings associated with this import order</param>
+        public void removeImportOrder(string Sheetname, string NodetypeName, int Instance = Int32.MinValue, bool CascadeDelete = false )
         {
+            //this query should only ever return one row
+            DataRow OrderToDelete = _importOrderTable.Select( "importdefid = " + _SheetDefinitions[Sheetname] + " and nodetypename = '" + NodetypeName + "' and instance = " + Instance )[0];
+            _importOrderTable.Rows.Remove( OrderToDelete );
 
-        }
+            if( CascadeDelete )
+            {
+                DataRow[] BindingsToDelete = _importBindingsTable.Select( "importdefid = " + _SheetDefinitions[Sheetname] + " and destnodetypename = '" + NodetypeName + "' and instance = " + Instance );
+                foreach( DataRow Binding in BindingsToDelete )
+                {
+                    _importBindingsTable.Rows.Remove( Binding );
+                }
+
+                DataRow[] RelationshipsToDelete = _importRelationshipsTable.Select( "importdefid = " + _SheetDefinitions[Sheetname] + " and nodetypename = '" + NodetypeName + "' and instance = " + Instance );
+                foreach( DataRow Relationship in RelationshipsToDelete )
+                {
+                    _importRelationshipsTable.Rows.Remove( Relationship );
+                }
+            }//if CascadeDelete
+        }//removeImportOrder()
 
         public void removeImportBinding()
         {
             
-        }
+        }//removeImportBinding()
 
         public void removeImportRelationship()
         {
             
-        }
+        }//removeImportRelationship()
 
         #endregion
 
