@@ -1,5 +1,6 @@
 using System;
 using ChemSW.Core;
+using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Requesting;
@@ -352,6 +353,10 @@ namespace ChemSW.Nbt.ObjClasses
                 //Always make sure we're using the right RequestItem Type Definition (in case the Type changes)
                 if( null == _TypeDef || _TypeDef.RequestItemType != Type.Value )
                 {
+                    if( String.IsNullOrEmpty( Type.Value ) )
+                    {
+                        Type.Value = Types.MaterialCreate;
+                    }
                     _TypeDef = CswNbtRequestItemTypeFactory.makeRequestItemType( _CswNbtResources, this );
                 }
                 return _TypeDef;
@@ -374,6 +379,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation, bool Creating )
         {
+            _setDefaultValues();
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation, Creating );
         }
 
@@ -409,7 +415,7 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtMetaDataObjectClassProp IsFavoriteOcp = ObjectClass.getObjectClassProp( PropertyName.IsFavorite );
             ParentRelationship.View.AddViewPropertyAndFilter( ParentRelationship, IsFavoriteOcp,
                                                                 FilterMode: CswEnumNbtFilterMode.NotEquals,
-                                                                Value: CswEnumTristate.True,
+                                                                Value: CswNbtNodePropLogical.toLogicalGestalt( CswEnumTristate.True ),
                                                                 ShowInGrid: false );
             CswNbtMetaDataObjectClassProp IsRecurringOcp = ObjectClass.getObjectClassProp( PropertyName.IsRecurring );
             ParentRelationship.View.AddViewPropertyAndFilter( ParentRelationship, IsRecurringOcp,
@@ -513,7 +519,30 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Custom Logic
 
-
+        private void _setDefaultValues()
+        {
+            if( false == CswTools.IsPrimaryKey( Request.RelatedNodeId ) )
+            {
+                CswNbtActRequesting RequestAct = new CswNbtActRequesting( _CswNbtResources );
+                CswNbtObjClassRequest CurrentRequest = RequestAct.getCurrentRequestNode();
+                if( null != CurrentRequest )
+                {
+                    // In sched rule(s), no Current Cart will exist
+                    Request.RelatedNodeId = CurrentRequest.NodeId;
+                }
+                Request.setReadOnly( value: true, SaveToDb: true );
+                Request.setHidden( value: true, SaveToDb: false );
+            }
+            if( false == CswTools.IsPrimaryKey( Requestor.RelatedNodeId ) )
+            {
+                CswNbtObjClassRequest ThisRequest = _CswNbtResources.Nodes[Request.RelatedNodeId];
+                if( null != ThisRequest )
+                {
+                    Requestor.RelatedNodeId = ThisRequest.Requestor.RelatedNodeId;
+                    RequestedFor.RelatedNodeId = ThisRequest.Requestor.RelatedNodeId;
+                }
+            }
+        }
 
         #endregion Custom Logic
 

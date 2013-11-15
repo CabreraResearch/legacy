@@ -61,6 +61,7 @@ namespace ChemSW.Nbt.Schema
                     ServerManaged = true,
                     ListOptions = CswNbtObjClassRequestItem.Types.Options.ToString()
                 } );
+                _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( TypeOCP, CswNbtObjClassRequestItem.Types.MaterialCreate, CswEnumNbtSubFieldName.Value );
                 CswNbtMetaDataObjectClassProp RequestOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( RequestItemOC, new CswNbtWcfMetaDataModel.ObjectClassProp
                 {
                     PropName = CswNbtObjClassRequestItem.PropertyName.Request,
@@ -93,16 +94,13 @@ namespace ChemSW.Nbt.Schema
                     PropName = CswNbtObjClassRequestItem.PropertyName.Description,
                     FieldType = CswEnumNbtFieldType.Static
                 } );
-                CswNbtMetaDataObjectClassProp RequestRequestorOCP = RequestOC.getObjectClassProp( CswNbtObjClassRequest.PropertyName.Requestor );
                 CswNbtMetaDataObjectClassProp RequestorOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( RequestItemOC, new CswNbtWcfMetaDataModel.ObjectClassProp
                 {
                     PropName = CswNbtObjClassRequestItem.PropertyName.Requestor,
-                    FieldType = CswEnumNbtFieldType.PropertyReference,
+                    FieldType = CswEnumNbtFieldType.Relationship,
                     IsFk = true,
-                    FkType = CswEnumNbtViewPropIdType.ObjectClassPropId.ToString(),
-                    FkValue = RequestOCP.ObjectClassPropId,
-                    ValuePropType = CswEnumNbtViewPropIdType.ObjectClassPropId.ToString(),
-                    ValueFieldId = RequestRequestorOCP.PropId
+                    FkType = CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(),
+                    FkValue = UserOC.ObjectClassId
                 } );
                 CswNbtMetaDataObjectClassProp RequestedForOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( RequestItemOC, new CswNbtWcfMetaDataModel.ObjectClassProp
                 {
@@ -280,8 +278,7 @@ namespace ChemSW.Nbt.Schema
                 {
                     PropName = CswNbtObjClassRequestItem.PropertyName.NewMaterialPartNo,
                     FieldType = CswEnumNbtFieldType.Text,
-                    SetValOnAdd = true,
-                    IsRequired = true
+                    SetValOnAdd = true
                 } );
                 #endregion Create Material Properties
                 #region Placeholder Properties

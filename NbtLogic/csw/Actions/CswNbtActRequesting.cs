@@ -306,13 +306,13 @@ namespace ChemSW.Nbt.Actions
 
         /// <summary>
         /// Instance a new request item according to Object Class rules. Note: this does not get the properties.
+        /// The above description is a copy/paste error
         /// </summary>
         public JObject getRequestItemAddProps( CswNbtPropertySetRequestItem RetAsRequestItem )
         {
             CswNbtSdTabsAndProps PropsAction = new CswNbtSdTabsAndProps( _CswNbtResources );
-            //"Note: this does not get the properties."
-            //wat.
             //...oh wait, these add props are going to be different for each type - how are we going to do this?
+            //according to the getProps logic, we should be ignoring hidden properties, which we're properly setting
             return PropsAction.getProps( RetAsRequestItem.Node, "", null, CswEnumNbtLayoutType.Add );
         }
 

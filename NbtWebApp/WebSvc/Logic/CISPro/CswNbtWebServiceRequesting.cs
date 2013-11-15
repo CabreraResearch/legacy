@@ -78,8 +78,8 @@ namespace ChemSW.Nbt.WebServices
         {
             //we're not getting the node, we're getting the nodetype - my guess is this is vague because it's public-facing, but still...
             CswNbtResources NbtResources = _validate( CswResources );
-            CswNbtMetaDataObjectClass RequestMaterialCreateOc = NbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestMaterialCreateClass );
-            CswNbtMetaDataNodeType FirstNodeType = RequestMaterialCreateOc.getLatestVersionNodeTypes().FirstOrDefault();
+            CswNbtMetaDataObjectClass RequestItemOC = NbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestItemClass );
+            CswNbtMetaDataNodeType FirstNodeType = RequestItemOC.getLatestVersionNodeTypes().FirstOrDefault();
             if( null != FirstNodeType )
             {
                 Ret.Data.NodeTypeId = FirstNodeType.NodeTypeId;
