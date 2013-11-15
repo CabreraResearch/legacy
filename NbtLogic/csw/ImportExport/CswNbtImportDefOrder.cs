@@ -65,7 +65,7 @@ namespace ChemSW.Nbt.ImportExport
         public static void addOrderEntries( CswNbtResources CswNbtResources, DataTable OrderDataTable )
         {
             CswTableUpdate importOrderUpdate = CswNbtResources.makeCswTableUpdate( "CswNbtImportDefOrder_addOrderEntries_Update", CswNbtImportTables.ImportDefOrder.TableName );
-            foreach( DataRow OrderRow in OrderDataTable.Rows )
+            foreach( DataRow OrderRow in OrderDataTable.Select() )
             {
                     //set blank instances to min value
                     if( OrderRow["instance"] == DBNull.Value || String.IsNullOrEmpty( OrderRow["instance"].ToString() ) )

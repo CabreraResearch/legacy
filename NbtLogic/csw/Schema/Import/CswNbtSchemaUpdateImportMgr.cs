@@ -131,7 +131,7 @@ namespace ChemSW.Nbt.csw.Schema
         /// that nodetype as the default for new bindings with this ImportMgr.
         /// NOTE: use .CAFimportOrder for declaring new CAF nodetypes
         /// </summary>
-        /// <param name="Order">The order of this nodetype to other nodetypes in this sheet</param>
+        /// <param name="Order">The order of this nodetype relative to other nodetypes in this sheet</param>
         /// <param name="NodeTypeName">The string used to identify this nodetype</param>
         /// <param name="SheetName">The sheet to which this order is attached</param>
         /// <param name="Instance">Used to differentiate the same nodetype imported from multiple places</param>
@@ -261,30 +261,30 @@ namespace ChemSW.Nbt.csw.Schema
 
             //this select should only ever return one row
             DataRow SheetToDelete = _importDefTable.Select( "sheetname = '" + SheetName + "'" )[0];
-            _importDefTable.Rows.Remove( SheetToDelete );
+            SheetToDelete.Delete();
                 
             if( CascadeDelete )
             {
                 DataRow[] OrdersToDelete = _importOrderTable.Select( "importdefid = " + DeletedImportDef );
                 foreach( DataRow ImportOrder in OrdersToDelete )
                 {
-                    _importOrderTable.Rows.Remove( ImportOrder );
+                    ImportOrder.Delete();
                 }
 
                 DataRow[] BindingsToDelete = _importBindingsTable.Select( "importdefid = " + DeletedImportDef );
                 foreach( DataRow ImportBinding in BindingsToDelete )
                 {
-                    _importBindingsTable.Rows.Remove( ImportBinding);
+                    ImportBinding.Delete();
                 }
 
                 DataRow[] RelationshipsToDelete = _importRelationshipsTable.Select( "importdefid = " + DeletedImportDef );
                 foreach( DataRow ImportRelationship in RelationshipsToDelete )
                 {
-                    _importRelationshipsTable.Rows.Remove( ImportRelationship );
+                    ImportRelationship.Delete();
                 }
             }//if CascadeDelete
 
-            _SheetDefinitions.Remove( SheetName );
+            _SheetDefinitions = SchemaModTrnsctn.createImportDefinitionEntries( _DefinitionName, _importDefTable );
 
             return DeletedImportDef;
 
@@ -302,20 +302,20 @@ namespace ChemSW.Nbt.csw.Schema
         {
             //this query should only ever return one row
             DataRow OrderToDelete = _importOrderTable.Select( "importdefid = " + _SheetDefinitions[Sheetname] + " and nodetypename = '" + NodetypeName + "' and instance = " + Instance )[0];
-            _importOrderTable.Rows.Remove( OrderToDelete );
+            OrderToDelete.Delete();
 
             if( CascadeDelete )
             {
                 DataRow[] BindingsToDelete = _importBindingsTable.Select( "importdefid = " + _SheetDefinitions[Sheetname] + " and destnodetypename = '" + NodetypeName + "' and instance = " + Instance );
                 foreach( DataRow Binding in BindingsToDelete )
                 {
-                    _importBindingsTable.Rows.Remove( Binding );
+                    Binding.Delete();
                 }
 
                 DataRow[] RelationshipsToDelete = _importRelationshipsTable.Select( "importdefid = " + _SheetDefinitions[Sheetname] + " and nodetypename = '" + NodetypeName + "' and instance = " + Instance );
                 foreach( DataRow Relationship in RelationshipsToDelete )
                 {
-                    _importRelationshipsTable.Rows.Remove( Relationship );
+                    Relationship.Delete();
                 }
             }//if CascadeDelete
         }//removeImportOrder()
@@ -335,7 +335,7 @@ namespace ChemSW.Nbt.csw.Schema
             //this should only ever return one result
             DataRow BindingToDelete = _importBindingsTable.Select( "importdefid = " + _SheetDefinitions[Sheetname] + " and sourcecolumnname = '" + SourceColumn + "' and destnodetypename = '" 
                                                                    + NodetypeName + "' and destpropname = '" + PropName + "'" + " and destsubfield = '" + SubfieldName + "' and instance = " + Instance )[0];
-            _importBindingsTable.Rows.Remove( BindingToDelete );
+            BindingToDelete.Delete();
         }//removeImportBinding()
 
 
@@ -351,7 +351,7 @@ namespace ChemSW.Nbt.csw.Schema
             //this should only ever return one result
             DataRow RelationshipToDelete = _importRelationshipsTable.Select( "importdefid = " + _SheetDefinitions[Sheetname] + " and nodetypename = '" + NodetypeName + "' " +
                                                                              "and relationship = '" + Relationship + "' and instance = " + Instance )[0];
-            _importRelationshipsTable.Rows.Remove( RelationshipToDelete );
+            RelationshipToDelete.Delete();
         }//removeImportRelationship()
 
         #endregion

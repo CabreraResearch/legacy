@@ -132,7 +132,7 @@ namespace ChemSW.Nbt.ImportExport
         public static void addBindingEntries( CswNbtResources CswNbtResources, DataTable BindingsDataTable)
         {
             CswTableUpdate importBindingsUpdate = CswNbtResources.makeCswTableUpdate( "storeDefinition_Bindings_update", CswNbtImportTables.ImportDefBindings.TableName );
-            foreach( DataRow BindingRow in BindingsDataTable.Rows )
+            foreach( DataRow BindingRow in BindingsDataTable.Select() )
             {
 
                 //set blank instances to min value
