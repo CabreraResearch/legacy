@@ -394,6 +394,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         protected override void afterPopulateProps()
         {
+            _setUIVisibility();
             _CswNbtObjClassDefault.triggerAfterPopulateProps();
         }
 
@@ -483,6 +484,33 @@ namespace ChemSW.Nbt.ObjClasses
 
         #endregion Inherited Events
 
+        #region UI Logic
+
+        private void _setUIVisibility()
+        {
+            EnterprisePart.SetOnBeforeRender( TypeDef.setPropUIVisibility );
+            Material.SetOnBeforeRender( TypeDef.setPropUIVisibility );
+            Container.SetOnBeforeRender( TypeDef.setPropUIVisibility );
+            Quantity.SetOnBeforeRender( TypeDef.setPropUIVisibility );
+            TotalDispensed.SetOnBeforeRender( TypeDef.setPropUIVisibility );
+            Size.SetOnBeforeRender( TypeDef.setPropUIVisibility );
+            SizeCount.SetOnBeforeRender( TypeDef.setPropUIVisibility );
+            TotalMoved.SetOnBeforeRender( TypeDef.setPropUIVisibility );
+            NewMaterialType.SetOnBeforeRender( TypeDef.setPropUIVisibility );
+            NewMaterialTradename.SetOnBeforeRender( TypeDef.setPropUIVisibility );
+            NewMaterialSupplier.SetOnBeforeRender( TypeDef.setPropUIVisibility );
+            NewMaterialPartNo.SetOnBeforeRender( TypeDef.setPropUIVisibility );
+            RecurringFrequency.SetOnBeforeRender( _hideRecurringProps );
+            NextReorderDate.SetOnBeforeRender( _hideRecurringProps );
+        }
+
+        private void _hideRecurringProps( CswNbtNodeProp Prop )
+        {
+            Prop.setHidden( IsRecurring.Checked != CswEnumTristate.True, SaveToDb: false );
+        }
+
+        #endregion UI Logic
+
         #region Custom Logic
 
 
@@ -547,6 +575,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropGrid ReceiptLotsReceived { get { return _CswNbtNode.Properties[PropertyName.ReceiptLotsReceived]; } }
 
         #endregion ObjectClass-specific properties
+
     }//CswNbtObjClassRequestItem
 
 }//namespace ChemSW.Nbt.ObjClasses

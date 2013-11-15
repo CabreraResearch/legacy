@@ -22,5 +22,11 @@ namespace ChemSW.Nbt.Requesting
         /// Returns the Target property for the RequestItem.
         /// </summary>
         public abstract CswNbtNodePropRelationship Target { get; }
+
+        /// <summary>
+        /// Determines whether the given Prop should be hidden or readonly
+        /// </summary>
+        /// <param name="Prop">RequestItem Prop</param>
+        public abstract void setPropUIVisibility( CswNbtNodeProp Prop );
     }
 }

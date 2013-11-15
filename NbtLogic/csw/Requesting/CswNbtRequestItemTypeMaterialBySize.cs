@@ -11,5 +11,24 @@ namespace ChemSW.Nbt.Requesting
         {
             get { return _RequestItem.Material; }
         }
+
+        public override void setPropUIVisibility( CswNbtNodeProp Prop )
+        {
+            bool IsVisible = true;
+            switch( Prop.PropName )
+            {
+                case CswNbtObjClassRequestItem.PropertyName.Container:
+                case CswNbtObjClassRequestItem.PropertyName.EnterprisePart:
+                case CswNbtObjClassRequestItem.PropertyName.Quantity:
+                case CswNbtObjClassRequestItem.PropertyName.TotalDispensed:
+                case CswNbtObjClassRequestItem.PropertyName.NewMaterialType:
+                case CswNbtObjClassRequestItem.PropertyName.NewMaterialTradename:
+                case CswNbtObjClassRequestItem.PropertyName.NewMaterialSupplier:
+                case CswNbtObjClassRequestItem.PropertyName.NewMaterialPartNo:
+                    IsVisible = false;
+                    break;
+            }
+            Prop.setHidden( false == IsVisible, SaveToDb: false );
+        }
     }
 }

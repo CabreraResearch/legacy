@@ -38,6 +38,7 @@ namespace ChemSW.Nbt
                 }
             }
 
+            //TODO - Case 30533 - remove when old Request Item is fully deprecated
             CswNbtMetaDataObjectClass RequestMatDispOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestMaterialDispenseClass );
             foreach( CswNbtMetaDataNodeType NodeType in RequestMatDispOc.getLatestVersionNodeTypes() )
             {
@@ -63,6 +64,17 @@ namespace ChemSW.Nbt
                 NrdNtp.updateLayout( CswEnumNbtLayoutType.Edit, RofNtp, true );
                 //End intentional layout moves
 
+            }
+
+            CswNbtMetaDataObjectClass RequestItemOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestItemClass );
+            foreach( CswNbtMetaDataNodeType RequestItemNT in RequestItemOC.getLatestVersionNodeTypes() )
+            {
+                _CswNbtResources.Modules.ShowProp( RequestItemNT.NodeTypeId, CswNbtObjClassRequestItem.PropertyName.CertificationLevel );
+                _CswNbtResources.Modules.ShowProp( RequestItemNT.NodeTypeId, CswNbtObjClassRequestItem.PropertyName.IsBatch );
+                _CswNbtResources.Modules.ShowProp( RequestItemNT.NodeTypeId, CswNbtObjClassRequestItem.PropertyName.BatchNumber );
+                _CswNbtResources.Modules.ShowProp( RequestItemNT.NodeTypeId, CswNbtObjClassRequestItem.PropertyName.GoodsReceived );
+                _CswNbtResources.Modules.ShowProp( RequestItemNT.NodeTypeId, CswNbtObjClassRequestItem.PropertyName.ReceiptLotToDispense );
+                _CswNbtResources.Modules.ShowProp( RequestItemNT.NodeTypeId, CswNbtObjClassRequestItem.PropertyName.ReceiptLotsReceived );
             }
 
             //Case 28339
@@ -100,6 +112,7 @@ namespace ChemSW.Nbt
                 _CswNbtResources.Modules.HideProp( containerNT.NodeTypeId, CswNbtObjClassContainer.PropertyName.ReservedFor );
             }
 
+            //TODO - Case 30533 - remove when old Request Item is fully deprecated
             CswNbtMetaDataObjectClass RequestMatDispOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestMaterialDispenseClass );
             foreach( CswNbtMetaDataNodeType NodeType in RequestMatDispOc.getLatestVersionNodeTypes() )
             {
@@ -120,6 +133,17 @@ namespace ChemSW.Nbt
                 CswNbtMetaDataNodeTypeProp NrdNtp = NodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.NextReorderDate );
                 NrdNtp.updateLayout( CswEnumNbtLayoutType.Edit, RofNtp, true );
 
+            }
+
+            CswNbtMetaDataObjectClass RequestItemOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestItemClass );
+            foreach( CswNbtMetaDataNodeType RequestItemNT in RequestItemOC.getLatestVersionNodeTypes() )
+            {
+                _CswNbtResources.Modules.HideProp( RequestItemNT.NodeTypeId, CswNbtObjClassRequestItem.PropertyName.CertificationLevel );
+                _CswNbtResources.Modules.HideProp( RequestItemNT.NodeTypeId, CswNbtObjClassRequestItem.PropertyName.IsBatch );
+                _CswNbtResources.Modules.HideProp( RequestItemNT.NodeTypeId, CswNbtObjClassRequestItem.PropertyName.BatchNumber );
+                _CswNbtResources.Modules.HideProp( RequestItemNT.NodeTypeId, CswNbtObjClassRequestItem.PropertyName.GoodsReceived );
+                _CswNbtResources.Modules.HideProp( RequestItemNT.NodeTypeId, CswNbtObjClassRequestItem.PropertyName.ReceiptLotToDispense );
+                _CswNbtResources.Modules.HideProp( RequestItemNT.NodeTypeId, CswNbtObjClassRequestItem.PropertyName.ReceiptLotsReceived );
             }
 
             //Case 28339
