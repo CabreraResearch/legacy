@@ -98,15 +98,24 @@ namespace ChemSW.Nbt.csw.Schema
 
         }//ctor
 
+        #region Add definitions
+
+
         /// <summary>
         /// Declare a new import sheet in IMPORT_DEF and set that sheet as the default for new orders and bindings 
         /// with this ImportMgr. (Unnecessary for CAF imports -- all imports use the "CAF" sheet)
         /// </summary>
         /// <param name="SheetOrder">The order of this sheet relative to other sheets</param>
         /// <param name="SheetName">The name used to identify this sheet</param>
-        public void importDef(int SheetOrder, string SheetName)
+        /// <param name="OverrideImportDefId">Manually set the ImportDefId for this import. Use only when a sheet
+        /// has been deleted with removeImportDef and a new one must be defined with the same importdefid.</param>
+        public void importDef(int SheetOrder, string SheetName, int OverrideImportDefId = int.MinValue)
         {
             DataRow row = _importDefTable.NewRow();
+            if( OverrideImportDefId != int.MinValue )
+            {
+                row["importdefid"] = OverrideImportDefId;
+            }
             row["sheetname"] = SheetName;
             row["sheetorder"] = SheetOrder;
             row["definitionname"] = _DefinitionName;
@@ -232,11 +241,76 @@ namespace ChemSW.Nbt.csw.Schema
         } // _importRelationship()
 
 
+        #endregion Add definitions
+
+
+        #region Remove definitions
+
         /// <summary>
-        /// 
+        /// Delete the specified sheetname from this definition in IMPORT_DEF. Note that this removes the sheet from the sheetDefinitions index,
+        /// making it impossible to access associated bindings unless a new IMPORT_DEF with that importdefid is defined
         /// </summary>
-        /// <param name="SourceTable"></param>
-        /// <returns></returns>
+        /// <param name="SheetName">The sheet to be deleted</param>
+        /// <param name="CascadeDelete">Whether to delete ALL things associated with this sheet in IMPORT_DEF_ORDER and IMPORT_DEF_BINDINGS (be careful)</param>
+        /// <returns>The importdefid of the sheet that was deleted</returns>
+        public int removeImportDef( string SheetName, bool CascadeDelete = false )
+        {
+            int DeletedImportDef = _SheetDefinitions[SheetName];
+
+            //this select should only ever return one row
+            DataRow SheetToDelete = _importDefTable.Select( "sheetname = '" + SheetName + "'" )[0];
+            _importDefTable.Rows.Remove( SheetToDelete );
+                
+            if( CascadeDelete )
+            {
+                DataRow[] OrdersToDelete = _importOrderTable.Select( "importdefid = " + DeletedImportDef );
+                foreach( DataRow ImportOrder in OrdersToDelete )
+                {
+                    _importOrderTable.Rows.Remove( ImportOrder );
+                }
+
+                DataRow[] BindingsToDelete = _importBindingsTable.Select( "importdefid = " + DeletedImportDef );
+                foreach( DataRow ImportBinding in BindingsToDelete )
+                {
+                    _importBindingsTable.Rows.Remove( ImportBinding);
+                }
+
+                DataRow[] RelationshipsToDelete = _importRelationshipsTable.Select( "importdefid = " + DeletedImportDef );
+                foreach( DataRow ImportRelationship in RelationshipsToDelete )
+                {
+                    _importRelationshipsTable.Rows.Remove( ImportRelationship );
+                }
+            }
+
+            _SheetDefinitions.Remove( SheetName );
+
+            return DeletedImportDef;
+
+        }
+
+        public void removeImportOrder()
+        {
+
+        }
+
+        public void removeImportBinding()
+        {
+            
+        }
+
+        public void removeImportRelationship()
+        {
+            
+        }
+
+        #endregion
+
+
+        /// <summary>
+        /// Use CAFDbLink to lookup the PK column of a table on a CAF schema in DATA_DICTIONARY
+        /// </summary>
+        /// <param name="SourceTable">The table to find a PK column for</param>
+        /// <returns>The PK column of the SourceTable</returns>
         private string _getPKColumnForTable( string SourceTable )
         {
             string ret = "";
