@@ -33,5 +33,13 @@ namespace ChemSW.Nbt.Requesting
             }
             Prop.setHidden( false == IsVisible, SaveToDb: false );
         }
+
+        public override void setDescription()
+        {
+            string Description = "Move " + _RequestItem.Container.Gestalt + 
+                " of " + _RequestItem.Material.Gestalt + 
+                " to " + _RequestItem.Location.Gestalt;
+            _RequestItem.Description.StaticText = Description;
+        }
     }
 }

@@ -27,5 +27,17 @@ namespace ChemSW.Nbt.Requesting
             }
             Prop.setHidden( false == IsVisible, SaveToDb: false );
         }
+
+        public override void setDescription()
+        {
+            string Description = "Create new " + _RequestItem.NewMaterialType.SelectedNodeTypeNames() + ": " +
+                _RequestItem.NewMaterialTradename.Text + " " +
+                _RequestItem.NewMaterialSupplier.Gestalt;
+            if( false == string.IsNullOrEmpty( _RequestItem.NewMaterialPartNo.Text ) )
+            {
+                Description += " " + _RequestItem.NewMaterialPartNo.Text;
+            }
+            _RequestItem.Description.StaticText = Description;
+        }
     }
 }

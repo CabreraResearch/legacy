@@ -1,4 +1,5 @@
-﻿using ChemSW.Nbt.ObjClasses;
+﻿using ChemSW.Core;
+using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.Requesting
@@ -30,6 +31,17 @@ namespace ChemSW.Nbt.Requesting
                     break;
             }
             Prop.setHidden( false == IsVisible, SaveToDb: false );
+        }
+
+        public override void setDescription()
+        {
+            string Description = "";
+            if( CswEnumTristate.True == _RequestItem.IsRecurring.Checked && false == _RequestItem.RecurringFrequency.Empty )
+            {
+                Description = "Recurring " + _RequestItem.RecurringFrequency.RateInterval.RateType + ": ";
+            }
+            Description += "Dispense " + _RequestItem.Quantity.Gestalt + " of " + _RequestItem.Material.Gestalt;
+            _RequestItem.Description.StaticText = Description;
         }
     }
 }

@@ -28,5 +28,10 @@ namespace ChemSW.Nbt.Requesting
         /// </summary>
         /// <param name="Prop">RequestItem Prop</param>
         public abstract void setPropUIVisibility( CswNbtNodeProp Prop );
+
+        /// <summary>
+        /// Sets the Request Item's description
+        /// </summary>
+        public abstract void setDescription();
     }
 }

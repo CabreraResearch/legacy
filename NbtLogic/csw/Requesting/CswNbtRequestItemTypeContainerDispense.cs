@@ -1,4 +1,5 @@
-﻿using ChemSW.Nbt.ObjClasses;
+﻿using ChemSW.Core;
+using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.Requesting
@@ -31,6 +32,14 @@ namespace ChemSW.Nbt.Requesting
                     break;
             }
             Prop.setHidden( false == IsVisible, SaveToDb: false );
+        }
+
+        public override void setDescription()
+        {
+            string Description = "Dispense " + _RequestItem.Quantity.Gestalt + 
+                " from " + _RequestItem.Container.Gestalt + 
+                " of " + _RequestItem.Material.Gestalt;
+            _RequestItem.Description.StaticText = Description;
         }
     }
 }
