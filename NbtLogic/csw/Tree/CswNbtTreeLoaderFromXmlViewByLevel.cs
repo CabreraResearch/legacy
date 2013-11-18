@@ -51,7 +51,7 @@ namespace ChemSW.Nbt
 
             // Nodes and Properties
             DataTable NodesTable = new DataTable();
-            string Sql = _makeNodeSql( Relationship, ParentNodeIds );
+            CswArbitrarySelect ResultSelect = _makeNodeSql( Relationship, ParentNodeIds );
 
             Int32 thisResultLimit = _CswNbtResources.TreeViewResultLimit;
             if( ResultsLimit != Int32.MinValue )
@@ -64,7 +64,6 @@ namespace ChemSW.Nbt
                 thisResultLimit = thisResultLimit * Relationship.Properties.Count;
             }
 
-            CswArbitrarySelect ResultSelect = _CswNbtResources.makeCswArbitrarySelect( "TreeLoader_select", Sql );
             CswTimer SqlTimer = new CswTimer();
             try
             {
@@ -72,13 +71,13 @@ namespace ChemSW.Nbt
             }
             catch( Exception ex )
             {
-                throw new CswDniException( CswEnumErrorType.Error, "Invalid View", "_getNodes() attempted to run invalid SQL: " + Sql, ex );
+                throw new CswDniException( CswEnumErrorType.Error, "Invalid View", "_getNodes() attempted to run invalid SQL: " + ResultSelect.Sql, ex );
             }
             _CswNbtResources.CswLogger.TreeLoaderSQLTime += SqlTimer.ElapsedDurationInMilliseconds;
 
             if( SqlTimer.ElapsedDurationInSeconds > 2 )
             {
-                _CswNbtResources.logMessage( "Tree View SQL required longer than 2 seconds to run: " + Sql );
+                _CswNbtResources.logMessage( "Tree View SQL required longer than 2 seconds to run: " + ResultSelect.Sql );
             }
 
             Int32 PriorNodeId = Int32.MinValue;
@@ -263,7 +262,7 @@ namespace ChemSW.Nbt
         } // loadRelationshipRecursive()
 
 
-        private string _makeNodeSql( CswNbtViewRelationship Relationship, IEnumerable<CswPrimaryKey> ParentNodeIds = null )
+        private CswArbitrarySelect _makeNodeSql( CswNbtViewRelationship Relationship, IEnumerable<CswPrimaryKey> ParentNodeIds = null )
         {
             string CurrentUserIdClause = string.Empty;
             if( null != _CswNbtResources.CurrentNbtUser && null != _CswNbtResources.CurrentNbtUser.UserId )
@@ -729,13 +728,20 @@ namespace ChemSW.Nbt
                 Where += " and n.hidden = '0' ";
             }
 
-            string ret = string.Empty;
+            string Sql = string.Empty;
             if( With.Count > 0 )
             {
-                ret = "with " + With.ToString( false );
+                Sql = "with " + With.ToString( false );
             }
-            ret += " " + Select + " " + From + " " + Where + " " + OrderBy;
-            return ret;
+            Sql += " " + Select + " " + From + " " + Where + " " + OrderBy;
+
+
+            CswArbitrarySelect Ret = _CswNbtResources.makeCswArbitrarySelect( "TreeLoader_select", Sql );
+            foreach( string Parameter in FilterParameters.Keys )
+            {
+                Ret.addParameter( Parameter, FilterParameters[Parameter] );
+            }
+            return Ret;
         } //_makeNodeSql()
 
         private CswNbtSubField _getDefaultSubFieldForProperty( CswEnumNbtViewPropIdType Type, Int32 Id )
