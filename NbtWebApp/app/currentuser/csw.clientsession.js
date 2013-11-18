@@ -64,16 +64,17 @@
 
     cswPrivate.setLogoutPath = function () {
         var homeUrl = cswPrivate.logoutpath || Csw.cookie.get(Csw.cookie.cookieNames.LogoutPath) || 'Main.html';
+        
         if (Csw.clientSession.isDebug(Csw.queryString())) {
             Csw.clientSession.enableDebug();
             if (window.location.pathname.endsWith('Dev.html')) {
                 homeUrl = 'Dev.html';
             }
         }
+        
         if (Csw.isNullOrEmpty(Csw.cookie.get(Csw.cookie.cookieNames.LogoutPath))) {
             Csw.cookie.set(Csw.cookie.cookieNames.LogoutPath, homeUrl);
         }
-        Csw.clientDb.setItem('homeUrl', homeUrl);
     };
 
 
@@ -146,7 +147,7 @@
         ///<summary>Complete the logout. Nuke any lingering client-side data.</summary>
         cswPrivate.logoutpath = cswPrivate.logoutpath ||
             Csw.cookie.get(Csw.cookie.cookieNames.LogoutPath) ||
-            Csw.clientDb.getItem('homeUrl');
+            'Main.html';
 
         if (!cswPrivate.logoutpath) {
             throw new Error('Attempted to Logout, but Logout path was empty.');
@@ -158,9 +159,6 @@
     });
 
     var onLoginSuccess = function (data) {
-        //Csw.cookie.set(Csw.cookie.cookieNames.CustomerId, cswPrivate.AccessId);
-        //Csw.clientSession.setUsername(cswPrivate.UserName);
-
         Csw.tryExec(cswPrivate.onAuthenticate, cswPrivate.UserName);
         Csw.cookie.set(Csw.cookie.cookieNames.UserDefaults, JSON.stringify(data));
 
