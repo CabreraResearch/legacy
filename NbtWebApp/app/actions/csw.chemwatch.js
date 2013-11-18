@@ -8,7 +8,9 @@
 
         var cswPrivate = {
             name: 'CswChemWatchAction',
-            title: 'ChemWatch'
+            title: 'ChemWatch',
+            onCancel: options.onCancel || null,
+            onFinish: options.onFinish || null
         };
         cswPrivate.OperationData = {
             NbtMaterialId: options.materialid,
@@ -330,38 +332,32 @@
             });
         };
 
-        cswPrivate.makeCreateSDSLinksBtn = function () {
-            cswPrivate.createSDSLinksBtn = cswPublic.table.cell(3, 1).buttonExt({
-                name: 'createSDSLinksBtn',
-                enabledText: 'Create SDS Links',
-                disabledText: 'Creating...',
-                disableOnClick: true,
-                onClick: function () {
-                    var rawRows = cswPrivate.sdsListGrid.getGridItems();
-                    var sdsdocs = [];
-                    if (rawRows && rawRows.length > 0) {
-                        rawRows.forEach(function (item) {
-                            if (item && item.select === true) {
-                                sdsdocs.push(item);
-                            }
-                        });
+        cswPrivate.createSDSLinks = function () {
+            if (cswPrivate.sdsListGrid) {
+                var rawRows = cswPrivate.sdsListGrid.getGridItems();
+            }
+            var sdsdocs = [];
+            if (rawRows && rawRows.length > 0) {
+                rawRows.forEach(function(item) {
+                    if (item && item.select === true) {
+                        sdsdocs.push(item);
                     }
+                });
+            }
 
-                    // Create the SDS Documents
-                    Csw.ajaxWcf.post({
-                        urlMethod: 'ChemWatch/CreateSDSDocuments',
-                        data: {
-                            SDSDocuments: sdsdocs,
-                            NbtMaterialId: cswPrivate.OperationData.NbtMaterialId
-                        },
-                        success: function (data) {
-                            // Return to the material view
-                        },
-                        error: function (data) {
-                            //TODO: implement error condition
-                            console.log(data);
-                        }
-                    });
+            // Create the SDS Documents
+            Csw.ajaxWcf.post({
+                urlMethod: 'ChemWatch/CreateSDSDocuments',
+                data: {
+                    SDSDocuments: sdsdocs,
+                    NbtMaterialId: cswPrivate.OperationData.NbtMaterialId
+                },
+                success: function(data) {
+                    Csw.tryExec(cswPrivate.onFinish);
+                },
+                error: function(data) {
+                    //TODO: implement error condition
+                    console.log(data);
                 }
             });
         };
@@ -380,8 +376,12 @@
             // Set up action layout
             var layout = Csw.layouts.action(cswParent, {
                 title: 'ChemWatch',
-                useFinish: false,
-                useCancel: cswPrivate.onCancel
+                finishText: 'Create SDS Links',
+                onFinish: cswPrivate.createSDSLinks,
+                onCancel: function () {
+                    //todo: clear state
+                    Csw.tryExec(cswPrivate.onCancel);
+                },
             });
 
             cswPublic.table = layout.actionDiv.table();
