@@ -214,6 +214,7 @@ namespace ChemSW.Nbt.ObjClasses
             /// Whether or not this item is scheduled to be reordered
             /// <para>PropType: Logical</para>
             /// <para>Default Value: False</para>
+            /// <para>ServerManaged</para>
             /// </summary>
             public const string IsRecurring = "Is Recurring";
             /// <summary>
@@ -353,6 +354,7 @@ namespace ChemSW.Nbt.ObjClasses
                 //Always make sure we're using the right RequestItem Type Definition (in case the Type changes)
                 if( null == _TypeDef || _TypeDef.RequestItemType != Type.Value )
                 {
+                    //We use _TypeDef before the default value for Type is set, so set it here in that case
                     if( String.IsNullOrEmpty( Type.Value ) )
                     {
                         Type.Value = Types.MaterialCreate;
@@ -380,6 +382,7 @@ namespace ChemSW.Nbt.ObjClasses
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation, bool Creating )
         {
             _setDefaultValues();
+            TypeDef.setDescription();
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation, Creating );
         }
 

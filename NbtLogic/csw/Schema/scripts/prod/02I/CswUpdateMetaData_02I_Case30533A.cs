@@ -41,7 +41,6 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClass ContainerOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerClass );
             CswNbtMetaDataObjectClass SizeOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.SizeClass );
             CswNbtMetaDataObjectClass ReceiptLotOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.ReceiptLotClass );
-
             CswNbtMetaDataObjectClass RequestItemOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestItemClass );
             if( null == RequestItemOC )
             {
@@ -54,6 +53,7 @@ namespace ChemSW.Nbt.Schema
                     ServerManaged = true,
                     ListOptions = CswNbtObjClassRequestItem.Statuses.Options.ToString()
                 } );
+                _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( StatusOCP, CswNbtObjClassRequestItem.Statuses.Pending, CswEnumNbtSubFieldName.Value );
                 CswNbtMetaDataObjectClassProp TypeOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( RequestItemOC, new CswNbtWcfMetaDataModel.ObjectClassProp
                 {
                     PropName = CswNbtObjClassRequestItem.PropertyName.Type,
@@ -86,7 +86,6 @@ namespace ChemSW.Nbt.Schema
                 {
                     PropName = CswNbtObjClassRequestItem.PropertyName.ItemNumber,
                     FieldType = CswEnumNbtFieldType.Sequence,
-                    SetValOnAdd = true,
                     ServerManaged = true
                 } );
                 CswNbtMetaDataObjectClassProp DescriptionOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( RequestItemOC, new CswNbtWcfMetaDataModel.ObjectClassProp
@@ -297,7 +296,8 @@ namespace ChemSW.Nbt.Schema
                 {
                     PropName = CswNbtObjClassRequestItem.PropertyName.IsRecurring,
                     FieldType = CswEnumNbtFieldType.Logical,
-                    IsRequired = true
+                    IsRequired = true,
+                    ServerManaged = true
                 } );
                 _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( IsRecurringOCP, CswEnumTristate.False, CswEnumNbtSubFieldName.Checked );
                 CswNbtMetaDataObjectClassProp RecurringFrequencyOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( RequestItemOC, new CswNbtWcfMetaDataModel.ObjectClassProp
