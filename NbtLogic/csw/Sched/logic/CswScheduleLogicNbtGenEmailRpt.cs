@@ -143,8 +143,7 @@ namespace ChemSW.Nbt.Sched
             Collection<CswNbtObjClassMailReport> MailReports = _CswScheduleLogicNodes.getMailReports();
             Collection<CswPrimaryKey> MailReportIdsToRun = new Collection<CswPrimaryKey>();
 
-            int NodeLimit = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumConfigurationVariableNames.NodesProcessedPerCycle ) );
-            for( Int32 idx = 0; ( idx < MailReports.Count && idx < NodeLimit ); idx++ )
+            for( Int32 idx = 0; ( idx < MailReports.Count ); idx++ )
             {
                 CswNbtObjClassMailReport CurrentMailReport = MailReports[idx];
                 if( null != CurrentMailReport )
