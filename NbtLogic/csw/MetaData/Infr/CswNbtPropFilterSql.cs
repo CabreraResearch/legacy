@@ -42,7 +42,7 @@ namespace ChemSW.Nbt.MetaData
                 FilterTableAlias = "n.";
             }
 
-            string ParameterName = ":filt" + FilterNumber + "filtval";
+            string ParameterName = "filt" + FilterNumber + "filtval";
             string ReturnVal = "";
 
             //This is sort of a hacky way of dealing with the bz # 6936 issue. But since it's all going to need to be
@@ -74,7 +74,7 @@ namespace ChemSW.Nbt.MetaData
                         throw new CswDniException( CswEnumErrorType.Error, "Invalid filter", "An invalid FilterMode was encountered in CswNbtPropFilterSql.renderViewPropFilter()) { " + CswNbtViewPropertyFilterIn.FilterMode.ToString() );
                     }
 
-                    ReturnVal += ParameterName;
+                    ReturnVal += ":" + ParameterName;
                     ParameterCollection.Add( ParameterName, CswNbtViewPropertyFilterIn.Value );
 
                     if( CswNbtViewPropertyFilterIn.FilterMode == CswEnumNbtFilterMode.In )
@@ -100,64 +100,64 @@ namespace ChemSW.Nbt.MetaData
 
                     if( CswNbtViewPropertyFilterIn.FilterMode == CswEnumNbtFilterMode.Begins )
                     {
-                        ReturnVal = NonNumericValueColumn + " like " + ParameterName;
-                        ParameterCollection.Add( ParameterName, CasePrepend + "'" + SafeValue + "%'" + CaseAppend );
+                        ReturnVal = NonNumericValueColumn + " like " + CasePrepend + ":" + ParameterName + CaseAppend;
+                        ParameterCollection.Add( ParameterName,  SafeValue + "%" );
                     }
                     else if( CswNbtViewPropertyFilterIn.FilterMode == CswEnumNbtFilterMode.Contains )
                     {
-                        ReturnVal = NonNumericValueColumn + " like " + ParameterName;
-                        ParameterCollection.Add( ParameterName, CasePrepend + "'%" + SafeValue + "%'" + CaseAppend );
+                        ReturnVal = NonNumericValueColumn + " like " + CasePrepend + ":" + ParameterName + CaseAppend;
+                        ParameterCollection.Add( ParameterName,  "%" + SafeValue + "%" );
                     }
                     else if( CswNbtViewPropertyFilterIn.FilterMode == CswEnumNbtFilterMode.NotContains )
                     {
-                        ReturnVal = "(" + NonNumericValueColumn + " not like " + ParameterName
+                        ReturnVal = "(" + NonNumericValueColumn + " not like " + CasePrepend + ":" + ParameterName + CaseAppend
                             + " or " + NonNumericValueColumn + " is null" + ")";
-                        ParameterCollection.Add( ParameterName, CasePrepend + "'%" + SafeValue + "%'" + CaseAppend );
+                        ParameterCollection.Add( ParameterName,  "%" + SafeValue + "%" );
                     }
                     else if( CswNbtViewPropertyFilterIn.FilterMode == CswEnumNbtFilterMode.Ends )
                     {
-                        ReturnVal = NonNumericValueColumn + " like " + ParameterName;
-                        ParameterCollection.Add( ParameterName, CasePrepend + "'%" + SafeValue + "'" + CaseAppend );
+                        ReturnVal = NonNumericValueColumn + " like " + CasePrepend + ":" + ParameterName + CaseAppend;
+                        ParameterCollection.Add( ParameterName, "%" + SafeValue  );
 
                     }
                     else if( CswNbtViewPropertyFilterIn.FilterMode == CswEnumNbtFilterMode.Equals )
                     {
                         //covers the case of clobs
-                        ReturnVal = NonNumericValueColumn + " like " + ParameterName;
-                        ParameterCollection.Add( ParameterName, CasePrepend + "'" + SafeValue + "'" + CaseAppend );
+                        ReturnVal = NonNumericValueColumn + " like " + CasePrepend + ":" + ParameterName + CaseAppend;
+                        ParameterCollection.Add( ParameterName, SafeValue  );
                     }
                     else if( CswNbtViewPropertyFilterIn.FilterMode == CswEnumNbtFilterMode.GreaterThan )
                     {
-                        ReturnVal = NonNumericValueColumn + " > " + ParameterName;
-                        ParameterCollection.Add( ParameterName, CasePrepend + "'" + SafeValue + "'" + CaseAppend );
+                        ReturnVal = NonNumericValueColumn + " > " + CasePrepend + ":" + ParameterName + CaseAppend;
+                        ParameterCollection.Add( ParameterName, SafeValue  );
                     }
                     else if( CswNbtViewPropertyFilterIn.FilterMode == CswEnumNbtFilterMode.GreaterThanOrEquals )
                     {
-                        ReturnVal = NonNumericValueColumn + " >= " + ParameterName;
-                        ParameterCollection.Add( ParameterName, CasePrepend + "'" + SafeValue + "'" + CaseAppend );
+                        ReturnVal = NonNumericValueColumn + " >= " + CasePrepend + ":" + ParameterName + CaseAppend;
+                        ParameterCollection.Add( ParameterName, SafeValue );
                     }
                     else if( CswNbtViewPropertyFilterIn.FilterMode == CswEnumNbtFilterMode.LessThan )
                     {
-                        ReturnVal = NonNumericValueColumn + " < " + ParameterName;
-                        ParameterCollection.Add( ParameterName, CasePrepend + "'" + SafeValue + "'" + CaseAppend );
+                        ReturnVal = NonNumericValueColumn + " < " + CasePrepend + ":" + ParameterName + CaseAppend;
+                        ParameterCollection.Add( ParameterName,  SafeValue );
                     }
                     else if( CswNbtViewPropertyFilterIn.FilterMode == CswEnumNbtFilterMode.LessThanOrEquals )
                     {
-                        ReturnVal = NonNumericValueColumn + " <= " + ParameterName;
-                        ParameterCollection.Add( ParameterName, CasePrepend + "'" + SafeValue + "'" + CaseAppend );
+                        ReturnVal = NonNumericValueColumn + " <= " + CasePrepend + ":" + ParameterName + CaseAppend;
+                        ParameterCollection.Add( ParameterName, SafeValue );
                     }
                     else if( CswNbtViewPropertyFilterIn.FilterMode == CswEnumNbtFilterMode.NotEquals )
                     {
-                        ReturnVal = "(" + NonNumericValueColumn + " not like " + ParameterName +
+                        ReturnVal = "(" + NonNumericValueColumn + " not like " + CasePrepend + ":" + ParameterName + CaseAppend +
                                     " or " + NonNumericValueColumn + " is null )";   //case 21623
-                        ParameterCollection.Add( ParameterName, CasePrepend + "'" + SafeValue + "'" + CaseAppend );
+                        ParameterCollection.Add( ParameterName, SafeValue );
 
                     }
                     else if( CswNbtViewPropertyFilterIn.FilterMode == CswEnumNbtFilterMode.In )
                     {
                         //ReturnVal = NonNumericValueColumn + " in( " + CasePrepend + "'" + SafeValue + "'" + CaseAppend + " ) ";
                         // see case 30165
-                        ReturnVal = NonNumericValueColumn + " in(" + ParameterName + ") ";
+                        ReturnVal = NonNumericValueColumn + " in(:" + ParameterName + ") ";
                         ParameterCollection.Add( ParameterName, CswNbtViewPropertyFilterIn.Value );
                     }
                     else
