@@ -75,22 +75,8 @@ namespace NbtWebApp.Actions.ChemWatch
         [DataMember( Name = "NbtMaterialId" )]
         public string NbtMaterialIdStr
         {
-            get
-            {
-                if( null == NbtMaterialId )
-                {
-                    return "";
-                }
-                else
-                {
-                    return NbtMaterialId.ToString();
-                }
-            }
-
-            set
-            {
-                NbtMaterialId = CswConvert.ToPrimaryKey( value );
-            }
+            get { return null == NbtMaterialId ? "" : NbtMaterialId.ToString(); }
+            set { NbtMaterialId = CswConvert.ToPrimaryKey( value ); }
         }
     }
 

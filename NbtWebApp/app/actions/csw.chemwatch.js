@@ -59,13 +59,14 @@
                 labelText: 'Supplier',
                 value: cswPrivate.OperationData.Supplier,
                 onChange: function (value) {
-                    cswPrivate.OperationData.Supplier = value;
 
                     Csw.ajaxWcf.post({
                         urlMethod: 'ChemWatch/GetMatchingSuppliers',
-                        data: cswPrivate.OperationData,
+                        data: {
+                            Supplier: value
+                        },
                         success: function (data) {
-                            cswPrivate.OperationData = data;
+                            cswPrivate.OperationData.Suppliers = data.Suppliers;
 
                             if (cswPrivate.supplierSelect) {
                                 cswPrivate.supplierSelectCell.empty();
@@ -112,7 +113,7 @@
                             PartNo: cswPrivate.partNoInput.val()
                         },
                         success: function (data) {
-                            cswPrivate.OperationData = data;
+                            cswPrivate.OperationData.Materials = data.Materials;
 
                             var gridData = { 'items': [] };
                             Csw.iterate(cswPrivate.OperationData.Materials, function (material) {
@@ -172,7 +173,7 @@
                             Supplier: cswPrivate.supplierSelect.val()
                         },
                         success: function (data) {
-                            cswPrivate.OperationData = data;
+                            cswPrivate.OperationData.SDSDocuments = data.SDSDocuments;
 
                             var gridData = { 'items': [] };
                             Csw.iterate(cswPrivate.OperationData.SDSDocuments, function (sdsdoc) {
@@ -263,7 +264,14 @@
 
             cswPrivate.sdsListGrid = cswPrivate.sdsListGridCell.grid({
                 name: 'chemwatchsdslistgrid',
-                fields: ['view', 'language', 'country', 'select', 'filename', 'externalurl'],
+                fields: [
+                    'view',
+                    'language',
+                    'country',
+                    { name: 'select', type: 'bool' },
+                    'filename',
+                    'externalurl'
+                ],
                 columns: [
                     {
                         header: 'View',
@@ -306,12 +314,15 @@
                     },
                     { header: 'Language', dataIndex: 'language' },
                     { header: 'Country', dataIndex: 'country' },
-                    { header: 'Select', dataIndex: 'select' },
+                    { header: 'Select', dataIndex: 'select', xtype: 'checkcolumn' },
                     { header: 'FileName', dataIndex: 'filename', hidden: true },
                     { header: 'ExternalUrl', dataIndex: 'externalurl', hidden: true }
                 ],
                 data: gridData || {
                     'items': [] //ExtGrids won't show without data
+                },
+                viewConfig: {
+                    markDirty: false
                 },
                 height: 200,
                 width: 400,
@@ -326,12 +337,35 @@
                 disabledText: 'Creating...',
                 disableOnClick: true,
                 onClick: function () {
-                    // todo: call the method that will create the SDS documents
-                    // Return to the material view
+                    var rawRows = cswPrivate.sdsListGrid.getGridItems();
+                    var sdsdocs = [];
+                    if (rawRows && rawRows.length > 0) {
+                        rawRows.forEach(function (item) {
+                            if (item && item.select === true) {
+                                sdsdocs.push(item);
+                            }
+                        });
+                    }
+
+                    // Create the SDS Documents
+                    Csw.ajaxWcf.post({
+                        urlMethod: 'ChemWatch/CreateSDSDocuments',
+                        data: {
+                            SDSDocuments: sdsdocs,
+                            NbtMaterialId: cswPrivate.OperationData.NbtMaterialId
+                        },
+                        success: function (data) {
+                            // Return to the material view
+                        },
+                        error: function (data) {
+                            //TODO: implement error condition
+                            console.log(data);
+                        }
+                    });
                 }
             });
         };
-        
+
         //TODO: What if the URL doesn't work? Should we show an error?
         cswPrivate.onView = function (recordData) {
             // We are using Google's Viewer to view the PDF's in the browser: https://docs.google.com/viewer
@@ -382,7 +416,7 @@
             });
 
         })(); // init
-        
+
     });
 
 })();

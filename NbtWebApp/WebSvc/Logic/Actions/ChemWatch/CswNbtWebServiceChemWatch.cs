@@ -6,6 +6,7 @@ using ChemSW;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt;
+using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using NbtWebApp.ChemWatchAuthServices;
 using NbtWebApp.ChemWatchCommonServices;
@@ -34,6 +35,7 @@ namespace NbtWebApp.Actions.ChemWatch
             Return.Data.Supplier = ChemicalNode.Supplier.CachedNodeName;
             Return.Data.PartNo = ChemicalNode.PartNumber.Text;
             Return.Data.MaterialName = ChemicalNode.TradeName.Text;
+            Return.Data.NbtMaterialId = ChemicalNode.NodeId;
 
             string errorMsg;
             if( _authenticate( out errorMsg ) )
@@ -76,8 +78,6 @@ namespace NbtWebApp.Actions.ChemWatch
             {
                 MaterialServiceClient cwMaterialClient = new MaterialServiceClient();
                 cwMaterialClient.Endpoint.Behaviors.Add( _cookieBehavior );
-
-                Request.Supplier = "SIGMA"; //FOR TESTING
 
                 ListResultOfMaterial cwMaterials = cwMaterialClient.GetMaterialsByVendorGroupId( Request.Supplier, Request.MaterialName, Request.PartNo, false, 1, 100, "", 0 );
                 foreach( Material cwMaterial in cwMaterials.Rows )
@@ -155,6 +155,26 @@ namespace NbtWebApp.Actions.ChemWatch
             }
         }
 
+        public static void CreateSDSDocuments( ICswResources CswResources, CswNbtChemWatchReturn Return, CswNbtChemWatchRequest Request )
+        {
+            CswNbtResources CswNbtResources = (CswNbtResources) CswResources;
+
+            CswNbtMetaDataObjectClass SDSDocumentOC = CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.SDSDocumentClass );
+
+            foreach( ChemWatchSDSDoc SDSDoc in Request.SDSDocuments )
+            {
+                string Language = _getLanguage( SDSDoc.Language );
+                CswNbtResources.Nodes.makeNodeFromNodeTypeId( SDSDocumentOC.FirstNodeType.NodeTypeId, delegate( CswNbtNode NewNode )
+                    {
+                        CswNbtObjClassSDSDocument NewSDSDocNode = NewNode;
+                        NewSDSDocNode.Language.Value = Language;
+                        NewSDSDocNode.Owner.RelatedNodeId = Request.NbtMaterialId;
+                    } );
+            }
+        }
+
+        #region Private Helper Methods
+
         private static void _getMatchingSuppliers( string SearchString, CswNbtChemWatchReturn Return )
         {
             MaterialServiceClient cwMaterialClient = new MaterialServiceClient();
@@ -205,6 +225,96 @@ namespace NbtWebApp.Actions.ChemWatch
             }
             return ret;
         }
+
+        private static string _getLanguage( string ChemWatchLanguage )
+        {
+            string Ret = string.Empty;
+
+            if( ChemWatchLanguage.ToLower().Contains( "english" ) )
+            {
+                ChemWatchLanguage = "English";
+            }
+            else if( ChemWatchLanguage.ToLower().Contains( "french" ) )
+            {
+                ChemWatchLanguage = "French";
+            }
+
+            switch( ChemWatchLanguage )
+            {
+                case "Bulgarian":
+                    Ret = "bg";
+                    break;
+                case "Czech":
+                    Ret = "cs";
+                    break;
+                case "Danish":
+                    Ret = "da";
+                    break;
+                case "Dutch":
+                    Ret = "nl";
+                    break;
+                case "English":
+                    Ret = "en";
+                    break;
+                case "Estonian":
+                    Ret = "et";
+                    break;
+                case "Finnish":
+                    Ret = "fi";
+                    break;
+                case "French":
+                    Ret = "fr";
+                    break;
+                case "German":
+                    Ret = "de";
+                    break;
+                case "Greek":
+                    Ret = "el";
+                    break;
+                case "Hungarian":
+                    Ret = "hu";
+                    break;
+                case "Irish":
+                    Ret = "ga";
+                    break;
+                case "Italian":
+                    Ret = "it";
+                    break;
+                case "Latvian":
+                    Ret = "lv";
+                    break;
+                case "Lithuanian":
+                    Ret = "lt";
+                    break;
+                case "Maltese":
+                    Ret = "mt";
+                    break;
+                case "Portuguese":
+                    Ret = "pt";
+                    break;
+                case "Romanian":
+                    Ret = "ro";
+                    break;
+                case "Slovakian":
+                    Ret = "sk";
+                    break;
+                case "Slovenian":
+                    Ret = "sl";
+                    break;
+                case "Spanish":
+                    Ret = "es";
+                    break;
+                case "Swedish":
+                    Ret = "sv";
+                    break;
+                default:
+                    Ret = string.Empty;
+                    break;
+            }
+            return Ret;
+        }
+
+        #endregion
 
     }
 }

@@ -74,7 +74,7 @@ namespace NbtWebApp
 
         [OperationContract]
         [WebInvoke( Method = "POST", UriTemplate = "SDSDocumentSearch" )]
-        [Description( "Search for Materials" )]
+        [Description( "Search for SDS Documents" )]
         [FaultContract( typeof( FaultException ) )]
         public CswNbtChemWatchReturn SDSDocumentSearch( CswNbtChemWatchRequest Request )
         {
@@ -84,6 +84,25 @@ namespace NbtWebApp
                 CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
                 ReturnObj: Ret,
                 WebSvcMethodPtr: CswNbtWebServiceChemWatch.SDSDocumentSearch,
+                ParamObj: Request
+                );
+
+            SvcDriver.run();
+            return ( Ret );
+        }
+
+        [OperationContract]
+        [WebInvoke( Method = "POST", UriTemplate = "CreateSDSDocuments" )]
+        [Description( "Create selected SDS Documents" )]
+        [FaultContract( typeof( FaultException ) )]
+        public CswNbtChemWatchReturn CreateSDSDocuments( CswNbtChemWatchRequest Request )
+        {
+            CswNbtChemWatchReturn Ret = new CswNbtChemWatchReturn();
+
+            var SvcDriver = new CswWebSvcDriver<CswNbtChemWatchReturn, CswNbtChemWatchRequest>(
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj: Ret,
+                WebSvcMethodPtr: CswNbtWebServiceChemWatch.CreateSDSDocuments,
                 ParamObj: Request
                 );
 
