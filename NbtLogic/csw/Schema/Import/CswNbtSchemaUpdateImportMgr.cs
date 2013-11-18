@@ -46,7 +46,8 @@ namespace ChemSW.Nbt.csw.Schema
                 {"Inventory Level", 27},
                 {"Jurisdiction", 28},
                 {"GHS Phrase", 29},
-                {"GHS", 30}
+                {"GHS", 30},
+                {"Material Synonym", 31}
             };
 
         private DataTable _importDefTable;

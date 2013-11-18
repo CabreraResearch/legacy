@@ -30,7 +30,8 @@ namespace ChemSW.Nbt.Schema
         public override void update()
         {
             // CAF bindings definitions for Vendors
-            CswNbtSchemaUpdateImportMgr ImpMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "material_synonyms", "Material Synonym", ViewName: "synonyms_view", SourceColumn: "legacyid" );
+            CswNbtSchemaUpdateImportMgr ImpMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "CAF" );
+            ImpMgr.CAFimportOrder( "Material Synonym", "materials_synonyms", "synonyms_view", "legacyid", false );
 
             //simple props
             ImpMgr.importBinding( "synonymname", CswNbtObjClassMaterialSynonym.PropertyName.Name, "" );
