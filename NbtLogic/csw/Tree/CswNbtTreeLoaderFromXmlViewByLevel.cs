@@ -560,7 +560,7 @@ namespace ChemSW.Nbt
                         string FilterValue = string.Empty;
                         if( null != FilterFieldTypeRule )
                         {
-                            FilterValue = FilterFieldTypeRule.renderViewPropFilter( _RunAsUser, Filter );
+                            FilterValue = FilterFieldTypeRule.renderViewPropFilter( _RunAsUser, Filter, FilterParameters, FilterCount );
                         }
                         if( false == string.IsNullOrEmpty( FilterValue ) )
                         {
