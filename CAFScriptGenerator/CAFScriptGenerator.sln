@@ -1,0 +1,30 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CAFScriptGenerator", "CAFScriptGenerator.csproj", "{F7B7D197-1F9D-4073-AE7F-8ECDAA5423A2}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|Mixed Platforms = Debug|Mixed Platforms
+		Debug|x64 = Debug|x64
+		Release|Any CPU = Release|Any CPU
+		Release|Mixed Platforms = Release|Mixed Platforms
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F7B7D197-1F9D-4073-AE7F-8ECDAA5423A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F7B7D197-1F9D-4073-AE7F-8ECDAA5423A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F7B7D197-1F9D-4073-AE7F-8ECDAA5423A2}.Debug|Mixed Platforms.ActiveCfg = Debug|x64
+		{F7B7D197-1F9D-4073-AE7F-8ECDAA5423A2}.Debug|Mixed Platforms.Build.0 = Debug|x64
+		{F7B7D197-1F9D-4073-AE7F-8ECDAA5423A2}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{F7B7D197-1F9D-4073-AE7F-8ECDAA5423A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F7B7D197-1F9D-4073-AE7F-8ECDAA5423A2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F7B7D197-1F9D-4073-AE7F-8ECDAA5423A2}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{F7B7D197-1F9D-4073-AE7F-8ECDAA5423A2}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{F7B7D197-1F9D-4073-AE7F-8ECDAA5423A2}.Release|x64.ActiveCfg = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
 using ChemSW.Core;
 using ChemSW.DB;
@@ -125,104 +124,60 @@ namespace ChemSW.Nbt.ImportExport
             }
         }
 
-        /// <summary>
-        /// Get a DataTable to fill out, for use with addBindingEntries()
-        /// </summary>
-        /// <returns></returns>
-        public static DataTable getDataTableForNewBindingEntries()
-        {
-            DataTable Table = new DataTable();
-            Table.Columns.Add( "sheetname" );
-            Table.Columns.Add( "destnodetypename" );
-            Table.Columns.Add( "destpropname" );
-            Table.Columns.Add( "destsubfield" );
-            Table.Columns.Add( "sourcecolumnname" );
-            Table.Columns.Add( "instance" );
-            Table.Columns.Add( "clobtablename" );
-            Table.Columns.Add( "blobtablename" );
-            Table.Columns.Add( "lobdatapkcoloverride" );
-            return Table;
-        }
-
+        
 
         /// <summary>
         /// Add new Binding entries to a definition (for use by CswNbtImporter)
         /// </summary>
-        public static void addBindingEntries( CswNbtResources CswNbtResources, DataTable BindingsDataTable, Dictionary<string, Int32> DefIdsBySheetName )
+        public static void addBindingEntries( CswNbtResources CswNbtResources, DataTable BindingsDataTable)
         {
             CswTableUpdate importBindingsUpdate = CswNbtResources.makeCswTableUpdate( "storeDefinition_Bindings_update", CswNbtImportTables.ImportDefBindings.TableName );
-            DataTable importBindingsTable = importBindingsUpdate.getEmptyTable();
             foreach( DataRow BindingRow in BindingsDataTable.Rows )
             {
-                string SheetName = BindingRow["sheetname"].ToString();
-                if( false == string.IsNullOrEmpty( SheetName ) )
+
+                //set blank instances to min value
+                if( BindingRow["instance"] == DBNull.Value || String.IsNullOrEmpty( BindingRow["instance"].ToString() ) )
                 {
+                    BindingRow["instance"] = Int32.MinValue;
+                }
+
                     CswNbtMetaDataNodeType DestNodeType = null;
                     CswNbtMetaDataNodeTypeProp DestProp = null;
 
                     string DestNTName = BindingRow["destnodetypename"].ToString();
-                    if( false == string.IsNullOrEmpty( DestNTName ) )
+                string DestNTPName = BindingRow["destpropname"].ToString();
+                DestNodeType = CswNbtResources.MetaData.getNodeType( DestNTName );
+                DestProp = DestNodeType.getNodeTypeProp( DestNTPName );
+
+                if( null == DestNodeType )
+                {
+                    throw new CswDniException( CswEnumErrorType.Error, "Error reading bindings", "Invalid destnodetype defined in 'Bindings' sheet: " + DestNTName );
+                }
+                else if( null == DestProp )
+                {
+                    throw new CswDniException( CswEnumErrorType.Error, "Error reading bindings", "Invalid destproperty defined in 'Bindings' sheet: " + BindingRow["destpropname"].ToString() + " (nodetype: " + DestNTName + ")" );
+                }
+                else
+                {
+                    string DestSubFieldStr = BindingRow["destsubfield"].ToString();
+                    if( DestSubFieldStr != CswEnumNbtSubFieldName.Blob.ToString() )
                     {
-                        DestNodeType = CswNbtResources.MetaData.getNodeType( DestNTName );
-                        if( null != DestNodeType )
+                        CswNbtSubField DestSubfield = DestProp.getFieldTypeRule().SubFields[(CswEnumNbtSubFieldName) BindingRow["destsubfield"].ToString()];
+                        if( DestSubfield == null )
                         {
-                            string DestNTPName = BindingRow["destpropname"].ToString();
-                            DestProp = DestNodeType.getNodeTypeProp( DestNTPName );
-                            if( null != DestProp )
-                            {
-                                string DestSubFieldStr = BindingRow["destsubfield"].ToString();
-                                if( DestSubFieldStr != CswEnumNbtSubFieldName.Blob.ToString() )
-                                {
-                                    CswNbtSubField DestSubfield = DestProp.getFieldTypeRule().SubFields[(CswEnumNbtSubFieldName) BindingRow["destsubfield"].ToString()];
-                                    if( DestSubfield == null )
-                                    {
-                                        DestSubfield = DestProp.getFieldTypeRule().SubFields.Default;
-                                        DestSubFieldStr = DestSubfield.Name.ToString();
-                                    }
-                                }
-                                string DestSubFieldName = DestSubFieldStr;
-
-                                //set blank instances to min value
-                                if( BindingRow["instance"] == DBNull.Value || String.IsNullOrEmpty( BindingRow["instance"].ToString() ) )
-                                {
-                                    BindingRow["instance"] = Int32.MinValue;
-                                }
-
-
-                                DataRow row = importBindingsTable.NewRow();
-                                row[CswNbtImportTables.ImportDefBindings.importdefid] = DefIdsBySheetName[SheetName];
-                                row[CswNbtImportTables.ImportDefBindings.sourcecolumnname] = BindingRow["sourcecolumnname"].ToString();
-                                row[CswNbtImportTables.ImportDefBindings.destnodetypename] = DestNTName;
-                                row[CswNbtImportTables.ImportDefBindings.destpropname] = DestNTPName;
-                                row[CswNbtImportTables.ImportDefBindings.destsubfield] = DestSubFieldName;
-                                row[CswNbtImportTables.ImportDefBindings.instance] = CswConvert.ToDbVal( BindingRow["instance"].ToString() );
-                                if( BindingRow.Table.Columns.Contains( CswNbtImportTables.ImportDefBindings.blobtablename ) )
-                                {
-                                    row[CswNbtImportTables.ImportDefBindings.blobtablename] = BindingRow[CswNbtImportTables.ImportDefBindings.blobtablename].ToString();
-                                }
-                                if( BindingRow.Table.Columns.Contains( CswNbtImportTables.ImportDefBindings.clobtablename ) )
-                                {
-                                    row[CswNbtImportTables.ImportDefBindings.clobtablename] = BindingRow[CswNbtImportTables.ImportDefBindings.clobtablename].ToString();
-                                }
-                                if( BindingRow.Table.Columns.Contains( CswNbtImportTables.ImportDefBindings.lobdatapkcoloverride ) )
-                                {
-                                    row[CswNbtImportTables.ImportDefBindings.lobdatapkcoloverride] = BindingRow[CswNbtImportTables.ImportDefBindings.lobdatapkcoloverride].ToString();
-                                }
-                                importBindingsTable.Rows.Add( row );
-                            }
-                            else
-                            {
-                                throw new CswDniException( CswEnumErrorType.Error, "Error reading bindings", "Invalid destproperty defined in 'Bindings' sheet: " + BindingRow["destpropname"].ToString() + " (nodetype: " + DestNTName + ")" );
-                            }
+                            DestSubfield = DestProp.getFieldTypeRule().SubFields.Default;
+                            DestSubFieldStr = DestSubfield.Name.ToString();
                         }
-                        else
-                        {
-                            throw new CswDniException( CswEnumErrorType.Error, "Error reading bindings", "Invalid destnodetype defined in 'Bindings' sheet: " + DestNTName );
-                        }
-                    } // if( false == string.IsNullOrEmpty( DestNTName ) )
-                } // if( false == string.IsNullOrEmpty( SheetName ) )
+                    }
+                    BindingRow["destsubfield"] = DestSubFieldStr;
+
+                }// else -- (when DestNodeType and DestProp are defined)
             } // foreach( DataRow BindingRow in BindingsDataTable.Rows )
-            importBindingsUpdate.update( importBindingsTable );
+
+            //this is a hack, and the fact that we can even do this makes me sad
+            importBindingsUpdate._DoledOutTables.Add( BindingsDataTable );
+            importBindingsUpdate.update( BindingsDataTable );
+
         } // addBindingEntries()
 
     } // class CswNbt2DBinding

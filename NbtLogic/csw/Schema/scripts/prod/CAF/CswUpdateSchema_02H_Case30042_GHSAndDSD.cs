@@ -34,74 +34,67 @@ namespace ChemSW.Nbt.Schema
         {
             #region GHS
 
-            {
-                CswNbtSchemaUpdateImportMgr JurisdictionMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "sites", "Jurisdiction", "regions_view", "region" );
+                CswNbtSchemaUpdateImportMgr ImpMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "CAF" );
 
-                JurisdictionMgr.importBinding( "region", CswNbtObjClassJurisdiction.PropertyName.LegacyId, "" ); // Regions are distinct so we can use as the LegacyId
-                JurisdictionMgr.importBinding( "region", CswNbtObjClassJurisdiction.PropertyName.Name, "" );
+                ImpMgr.CAFimportOrder( "Jurisdiction", "sites", "regions_view", "region", false );
 
-                JurisdictionMgr.finalize();
-            }
+                ImpMgr.importBinding( "region", CswNbtObjClassJurisdiction.PropertyName.LegacyId, "" ); // Regions are distinct so we can use as the LegacyId
+                ImpMgr.importBinding( "region", CswNbtObjClassJurisdiction.PropertyName.Name, "" );
 
-            {
-                CswNbtSchemaUpdateImportMgr GHSPhrasesMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "ghs_phrases", "GHS Phrase" );
 
-                GHSPhrasesMgr.importBinding( "ghsphraseid", CswNbtObjClassGHSPhrase.PropertyName.LegacyId, "" );
-                GHSPhrasesMgr.importBinding( "ghscategory", CswNbtObjClassGHSPhrase.PropertyName.Category, "" );
-                GHSPhrasesMgr.importBinding( "ghscode", CswNbtObjClassGHSPhrase.PropertyName.Code, "" );
-                GHSPhrasesMgr.importBinding( "phraseenglish", CswNbtObjClassGHSPhrase.PropertyName.English, "" );
-                GHSPhrasesMgr.importBinding( "phrasedanish", CswNbtObjClassGHSPhrase.PropertyName.Danish, "" );
-                GHSPhrasesMgr.importBinding( "phrasedutch", CswNbtObjClassGHSPhrase.PropertyName.Dutch, "" );
-                GHSPhrasesMgr.importBinding( "phrasefinnish", CswNbtObjClassGHSPhrase.PropertyName.Finnish, "" );
-                GHSPhrasesMgr.importBinding( "phrasefrench", CswNbtObjClassGHSPhrase.PropertyName.French, "" );
-                GHSPhrasesMgr.importBinding( "phrasegerman", CswNbtObjClassGHSPhrase.PropertyName.German, "" );
-                GHSPhrasesMgr.importBinding( "phraseitalian", CswNbtObjClassGHSPhrase.PropertyName.Italian, "" );
-                GHSPhrasesMgr.importBinding( "phraseportuguese", CswNbtObjClassGHSPhrase.PropertyName.Portuguese, "" );
-                GHSPhrasesMgr.importBinding( "phrasespanish", CswNbtObjClassGHSPhrase.PropertyName.Spanish, "" );
-                GHSPhrasesMgr.importBinding( "phraseswedish", CswNbtObjClassGHSPhrase.PropertyName.Swedish, "" );
-                GHSPhrasesMgr.importBinding( "phrasechinese", CswNbtObjClassGHSPhrase.PropertyName.Chinese, "" );
+                ImpMgr.CAFimportOrder( "GHS Phrase", "ghs_phrases", PkColumnName: "ghsphraseid" );
 
-                GHSPhrasesMgr.finalize();
-            }
+                ImpMgr.importBinding( "ghscategory", CswNbtObjClassGHSPhrase.PropertyName.Category, "" );
+                ImpMgr.importBinding( "ghscode", CswNbtObjClassGHSPhrase.PropertyName.Code, "" );
+                ImpMgr.importBinding( "phraseenglish", CswNbtObjClassGHSPhrase.PropertyName.English, "" );
+                ImpMgr.importBinding( "phrasedanish", CswNbtObjClassGHSPhrase.PropertyName.Danish, "" );
+                ImpMgr.importBinding( "phrasedutch", CswNbtObjClassGHSPhrase.PropertyName.Dutch, "" );
+                ImpMgr.importBinding( "phrasefinnish", CswNbtObjClassGHSPhrase.PropertyName.Finnish, "" );
+                ImpMgr.importBinding( "phrasefrench", CswNbtObjClassGHSPhrase.PropertyName.French, "" );
+                ImpMgr.importBinding( "phrasegerman", CswNbtObjClassGHSPhrase.PropertyName.German, "" );
+                ImpMgr.importBinding( "phraseitalian", CswNbtObjClassGHSPhrase.PropertyName.Italian, "" );
+                ImpMgr.importBinding( "phraseportuguese", CswNbtObjClassGHSPhrase.PropertyName.Portuguese, "" );
+                ImpMgr.importBinding( "phrasespanish", CswNbtObjClassGHSPhrase.PropertyName.Spanish, "" );
+                ImpMgr.importBinding( "phraseswedish", CswNbtObjClassGHSPhrase.PropertyName.Swedish, "" );
+                ImpMgr.importBinding( "phrasechinese", CswNbtObjClassGHSPhrase.PropertyName.Chinese, "" );
 
-            {
-                CswNbtSchemaUpdateImportMgr GHSMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "jct_ghsphrase_matsite", "GHS", "ghs_view", "legacyid" );
 
-                GHSMgr.importBinding( "legacyid", CswNbtObjClassGHS.PropertyName.LegacyId, "" );
-                GHSMgr.importBinding( "region", CswNbtObjClassGHS.PropertyName.Jurisdiction, "" );
-                GHSMgr.importBinding( "packageid", CswNbtObjClassGHS.PropertyName.Material, CswEnumNbtSubFieldName.NodeID.ToString() );
-                GHSMgr.importBinding( "ghscodes", CswNbtObjClassGHS.PropertyName.AddLabelCodes, "" );
-                GHSMgr.importBinding( "pictos", CswNbtObjClassGHS.PropertyName.Pictograms, "" );
-                GHSMgr.importBinding( "signal", CswNbtObjClassGHS.PropertyName.SignalWord, "" );
 
-                GHSMgr.finalize();
-            }
+                ImpMgr.CAFimportOrder( "GHS", "jct_ghsphrase_matsite", "ghs_view", "legacyid", false );
+
+                ImpMgr.importBinding( "legacyid", CswNbtObjClassGHS.PropertyName.LegacyId, "" );
+                ImpMgr.importBinding( "region", CswNbtObjClassGHS.PropertyName.Jurisdiction, "" );
+                ImpMgr.importBinding( "packageid", CswNbtObjClassGHS.PropertyName.Material, CswEnumNbtSubFieldName.NodeID.ToString() );
+                ImpMgr.importBinding( "ghscodes", CswNbtObjClassGHS.PropertyName.AddLabelCodes, "" );
+                ImpMgr.importBinding( "pictos", CswNbtObjClassGHS.PropertyName.Pictograms, "" );
+                ImpMgr.importBinding( "signal", CswNbtObjClassGHS.PropertyName.SignalWord, "" );
 
             #endregion GHS
 
             #region DSD
 
-            {
-                CswNbtSchemaUpdateImportMgr DSDPhrasesMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "rs_phrases", "DSD Phrase" );
 
-                DSDPhrasesMgr.importBinding( "rsphraseid", CswNbtObjClassDSDPhrase.PropertyName.LegacyId, "" );
-                DSDPhrasesMgr.importBinding( "code", CswNbtObjClassDSDPhrase.PropertyName.Code, "" );
-                DSDPhrasesMgr.importBinding( "phraseenglish", CswNbtObjClassDSDPhrase.PropertyName.English, "" );
-                DSDPhrasesMgr.importBinding( "phrasedanish", CswNbtObjClassDSDPhrase.PropertyName.Danish, "" );
-                DSDPhrasesMgr.importBinding( "phrasedutch", CswNbtObjClassDSDPhrase.PropertyName.Dutch, "" );
-                DSDPhrasesMgr.importBinding( "phrasefinnish", CswNbtObjClassDSDPhrase.PropertyName.Finnish, "" );
-                DSDPhrasesMgr.importBinding( "phrasefrench", CswNbtObjClassDSDPhrase.PropertyName.French, "" );
-                DSDPhrasesMgr.importBinding( "phrasegerman", CswNbtObjClassDSDPhrase.PropertyName.German, "" );
-                DSDPhrasesMgr.importBinding( "phraseitalian", CswNbtObjClassDSDPhrase.PropertyName.Italian, "" );
-                DSDPhrasesMgr.importBinding( "phraseportuguese", CswNbtObjClassDSDPhrase.PropertyName.Portuguese, "" );
-                DSDPhrasesMgr.importBinding( "phrasespanish", CswNbtObjClassDSDPhrase.PropertyName.Spanish, "" );
-                DSDPhrasesMgr.importBinding( "phraseswedish", CswNbtObjClassDSDPhrase.PropertyName.Swedish, "" );
-                DSDPhrasesMgr.importBinding( "phrasechinese", CswNbtObjClassDSDPhrase.PropertyName.Chinese, "" );
+                ImpMgr.CAFimportOrder( "DSD Phrase", "rs_phrases", PkColumnName: "rsphraseid" );
 
-                DSDPhrasesMgr.finalize();
-            }
+                ImpMgr.importBinding( "code", CswNbtObjClassDSDPhrase.PropertyName.Code, "" );
+                ImpMgr.importBinding( "phraseenglish", CswNbtObjClassDSDPhrase.PropertyName.English, "" );
+                ImpMgr.importBinding( "phrasedanish", CswNbtObjClassDSDPhrase.PropertyName.Danish, "" );
+                ImpMgr.importBinding( "phrasedutch", CswNbtObjClassDSDPhrase.PropertyName.Dutch, "" );
+                ImpMgr.importBinding( "phrasefinnish", CswNbtObjClassDSDPhrase.PropertyName.Finnish, "" );
+                ImpMgr.importBinding( "phrasefrench", CswNbtObjClassDSDPhrase.PropertyName.French, "" );
+                ImpMgr.importBinding( "phrasegerman", CswNbtObjClassDSDPhrase.PropertyName.German, "" );
+                ImpMgr.importBinding( "phraseitalian", CswNbtObjClassDSDPhrase.PropertyName.Italian, "" );
+                ImpMgr.importBinding( "phraseportuguese", CswNbtObjClassDSDPhrase.PropertyName.Portuguese, "" );
+                ImpMgr.importBinding( "phrasespanish", CswNbtObjClassDSDPhrase.PropertyName.Spanish, "" );
+                ImpMgr.importBinding( "phraseswedish", CswNbtObjClassDSDPhrase.PropertyName.Swedish, "" );
+                ImpMgr.importBinding( "phrasechinese", CswNbtObjClassDSDPhrase.PropertyName.Chinese, "" );
+
 
             #endregion DSD
+
+
+            ImpMgr.finalize();
+
 
         }//update()
     }

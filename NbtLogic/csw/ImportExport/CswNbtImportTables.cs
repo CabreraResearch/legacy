@@ -12,9 +12,6 @@ namespace ChemSW.Nbt.ImportExport
             public const string definitionname = "definitionname";
             public const string sheetname = "sheetname";
             public const string sheetorder = "sheetorder";
-            public const string tablename = "tablename";
-            public const string viewname = "viewname";
-            public const string pkcolumnname = "pkcolumnname";
         }
 
         public class ImportDefOrder
@@ -27,6 +24,9 @@ namespace ChemSW.Nbt.ImportExport
             public const string importorder = "importorder";
             public const string nodetypename = "nodetypename";
             public const string instance = "instance";
+            public const string tablename = "tablename";
+            public const string viewname = "viewname";
+            public const string pkcolumnname = "pkcolumnname";
         }
 
         public class ImportDefBindings

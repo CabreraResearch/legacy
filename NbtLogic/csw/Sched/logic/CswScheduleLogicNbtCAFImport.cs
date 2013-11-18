@@ -1,6 +1,5 @@
 using System;
 using System.Data;
-using System.IO;
 using ChemSW.Config;
 using ChemSW.Core;
 using ChemSW.DB;
@@ -74,11 +73,11 @@ namespace ChemSW.Nbt.Sched
                     const string QueuePkName = "nbtimportqueueid";
 
                     Int32 NumberToProcess = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumConfigurationVariableNames.NodesProcessedPerCycle ) );
-                    string Sql = "select * from "
+                    string Sql = "select nbtimportqueueid, state, itempk, pkcolumnname, sheetname, priority, importorder, tablename, coalesce(viewname, tablename) as sourcename, nodetypename from "
                         + QueueTableName + "@" + CAFDbLink + " iq"
-                        + " join " + CswNbtImportTables.ImportDef.TableName + " id on (id.sheetname = iq.sheetname )"
+                        + " join " + CswNbtImportTables.ImportDefOrder.TableName + " io on ( coalesce(viewname, tablename) = iq.sheetname )"
                         + " where state = '" + State.I + "' or state = '" + State.U
-                        + "' order by decode (state, '" + State.I + "', 1, '" + State.U + "', 2) asc, priority desc, id.sheetorder asc, nbtimportqueueid asc";
+                        + "' order by decode (state, '" + State.I + "', 1, '" + State.U + "', 2) asc, priority desc, importorder asc, nbtimportqueueid asc";
 
                     CswArbitrarySelect QueueSelect = _CswNbtResources.makeCswArbitrarySelect( "cafimport_queue_select", Sql );
                     DataTable QueueTable = QueueSelect.getTable( 0, NumberToProcess, false );
@@ -93,19 +92,17 @@ namespace ChemSW.Nbt.Sched
                         }
 
                         string ItemSql = string.Empty;
-                        ItemSql = string.IsNullOrEmpty( QueueRow["viewname"].ToString() ) ? "select * from " + QueueRow["tablename"] + "@" + CAFDbLink +
-                                                                                          " where " + CurrentTblNamePkCol + " = '" + QueueRow["itempk"] +
-                                                                                          "'" : "select * from " + QueueRow["viewname"] + "@" + CAFDbLink +
-                                                                                          " where " + CurrentTblNamePkCol + " = '" + QueueRow["itempk"] + "'";
+                        ItemSql = "select * from " + QueueRow["sourcename"] + "@" + CAFDbLink +
+                                  " where " + CurrentTblNamePkCol + " = '" + QueueRow["itempk"] + "'";
 
                         CswArbitrarySelect ItemSelect = _CswNbtResources.makeCswArbitrarySelect( "cafimport_queue_select", ItemSql );
                         DataTable ItemTable = ItemSelect.getTable();
                         foreach( DataRow ItemRow in ItemTable.Rows )
                         {
-                            string SheetName = QueueRow["sheetname"].ToString();
-
+                            string NodetypeName = QueueRow["nodetypename"].ToString();
                             bool Overwrite = QueueRow["state"].ToString().Equals( "U" );
-                            string Error = Importer.ImportRow( ItemRow, DefinitionName, SheetName, Overwrite );
+
+                            string Error = Importer.ImportRow( ItemRow, DefinitionName, NodetypeName, Overwrite );
                             if( string.IsNullOrEmpty( Error ) )
                             {
                                 // record success - delete the record
@@ -155,14 +152,9 @@ namespace ChemSW.Nbt.Sched
             _LogicRunStatus = CswEnumScheduleLogicRunStatus.Idle;
         }
 
-        public static string generateCAFViewSQL(string RelativePath )
+        public static string generateCAFViewSQL()
         {
-            
-            StreamReader ViewFile = new StreamReader( File.Open( RelativePath  + "../NbtLogic/Resources/CAF.sql", FileMode.Open ) );
-            string ViewSQL = ViewFile.ReadToEnd();
-            ViewFile.Close();
-
-            return ViewSQL;
+            return Nbt.Properties.Resources.caf;
         }
 
 
@@ -171,19 +163,21 @@ namespace ChemSW.Nbt.Sched
         {
             string Ret = string.Empty;
 
-            CswTableSelect ImportDefSelect = CswResources.makeCswTableSelect( "importdef_get_caf_rows", CswNbtImportTables.ImportDef.TableName );
-            DataTable ImportDefTable = ImportDefSelect.getTable( "where " + CswNbtImportTables.ImportDef.definitionname + " = '" + DefinitionName + "'" );
+            CswArbitrarySelect ImportDefSelect = CswResources.makeCswArbitrarySelect( "importdef_get_caf_rows", "select distinct pkcolumnname, coalesce(viewname, tablename) as sourcename " +
+                                                                                                                "from import_def_order io, import_def id " +
+                                                                                                                "where id.importdefid = io.importdefid " +
+                                                                                                                "and id.definitionname = '" + DefinitionName + "'" );
+            DataTable ImportDefTable = ImportDefSelect.getTable();
             bool FirstRow = true;
             foreach( DataRow DefRow in ImportDefTable.Rows )
             {
-                string DataSource = CswConvert.ToString( string.IsNullOrEmpty( CswConvert.ToString( DefRow[CswNbtImportTables.ImportDef.viewname] ) ) ? DefRow[CswNbtImportTables.ImportDef.tablename] : DefRow[CswNbtImportTables.ImportDef.viewname] );
                 string CurrentDefRowSql = @"insert into nbtimportqueue(nbtimportqueueid, state, itempk, sheetname, priority, errorlog) "
                                           + " select seq_nbtimportqueueid.nextval, '"
                                           + State.I + "', "
-                                          + CswConvert.ToString( DefRow[CswNbtImportTables.ImportDef.pkcolumnname] ) + ", "
-                                          + "'" + CswConvert.ToString( DefRow[CswNbtImportTables.ImportDef.sheetname] ) + "', "
+                                          + CswConvert.ToString( DefRow[CswNbtImportTables.ImportDefOrder.pkcolumnname] ) + ", "
+                                          + "'" + CswConvert.ToString( DefRow["sourcename"] ) + "', "
                                           + "0, "
-                                          + "'' from " + DataSource + " where deleted = '0';";
+                                          + "'' from " + CswConvert.ToString( DefRow["sourcename"] ) + " where deleted = '0';";
                 CurrentDefRowSql = CurrentDefRowSql + "\ncommit;";
 
                 if( FirstRow )
@@ -232,23 +226,22 @@ namespace ChemSW.Nbt.Sched
 
             string Ret = "";
 
-            CswTableSelect ImportDefinitions = NbtResources.makeCswTableSelect( "FetchImportDefinitions", "import_def" );
-            CswCommaDelimitedString ProjectedColumns = new CswCommaDelimitedString { new[] { "tablename", "viewname", "pkcolumnname", "sheetname" } };
-            DataTable ImportDefinitionsTable = ImportDefinitions.getTable( ProjectedColumns, "where definitionname = 'CAF'" );
+            CswArbitrarySelect ImportDefinitions = NbtResources.makeCswArbitrarySelect( "getCafImportDefTables", "select tablename, pkcolumnname, coalesce(viewname, tablename) as sourcename from import_def id " +
+                                                                                                                     "join import_def_order io on id.importdefid = io.importdefid " +
+                                                                                                                     "where definitionname = 'CAF'" );
+            ;
+            DataTable ImportDefinitionsTable = ImportDefinitions.getTable();
 
             //handle the special case of inventory levels
             DataRow maxInventoryRow = ImportDefinitionsTable.NewRow();
             maxInventoryRow["tablename"] = "maxinventory_basic";
-            maxInventoryRow["viewname"] = "inventory_view";
-            maxInventoryRow["sheetname"] = "inventory_view";
+            maxInventoryRow["sourcename"] = "inventory_view";
             maxInventoryRow["pkcolumnname"] = "inventorybasicid";
             ImportDefinitionsTable.Rows.Add( maxInventoryRow );
 
 
             foreach( DataRow Row in ImportDefinitionsTable.Rows )
             {
-                string TableOrView = string.IsNullOrEmpty( Row["viewname"].ToString() ) ? Row["tablename"].ToString() : Row["viewname"].ToString();
-
                 //we cannot check a view that references the target table from within the trigger, so we need to set values for multiplexed tables and views
                 //all of this information is derived from the create view statements in Nbt/Scripts/cafsql/CAF.sql
                 string SourceColumn;
@@ -265,16 +258,16 @@ namespace ChemSW.Nbt.Sched
                         break;
                     case "documents":
                         SourceColumn = "documentid";
-                        TriggerName = Row["sheetname"].ToString();
+                        TriggerName = Row["sourcename"].ToString();
                         break;
                     default:
                         SourceColumn = Row["pkcolumnname"].ToString();
-                        TriggerName = Row["sheetname"].ToString();
+                        TriggerName = Row["sourcename"].ToString();
                         break;
                 }
 
                 string WhenClause = "";
-                switch( Row["sheetname"].ToString() )
+                switch( Row["sourcename"].ToString() )
                 {
                     case "docs_view":
                         WhenClause = "new.packageid is not null and new.doctype = 'DOC'";
@@ -308,14 +301,14 @@ namespace ChemSW.Nbt.Sched
                 Ret += "begin" + "\r\n" +
                        "  if inserting then" + "\r\n" +
                        "    insert into nbtimportqueue(nbtimportqueueid, state, itempk, sheetname, priority, errorlog)" + "\r\n" +
-                       "       values (seq_nbtimportqueueid.nextval, 'I', :new." + SourceColumn + ", '" + Row["sheetname"] + "', 0, '');" + "\r\n" +
+                       "       values (seq_nbtimportqueueid.nextval, 'I', :new." + SourceColumn + ", '" + Row["sourcename"] + "', 0, '');" + "\r\n" +
                        "  elsif updating then" + "\r\n" +
                        "    if :new.deleted = 1 then" + "\r\n" +
                        "      insert into nbtimportqueue(nbtimportqueueid, state, itempk, sheetname, priority, errorlog)" + "\r\n" +
-                       "         values (seq_nbtimportqueueid.nextval, 'D', :new." + SourceColumn + ", '" + Row["sheetname"] + "', 0, '');" + "\r\n" +
+                       "         values (seq_nbtimportqueueid.nextval, 'D', :new." + SourceColumn + ", '" + Row["sourcename"] + "', 0, '');" + "\r\n" +
                        "    else" + "\r\n" +
                        "      insert into nbtimportqueue(nbtimportqueueid, state, itempk, sheetname, priority, errorlog)" + "\r\n" +
-                       "         values (seq_nbtimportqueueid.nextval, 'U', :new." + SourceColumn + ", '" + Row["sheetname"] + "', 0, '');" + "\r\n" +
+                       "         values (seq_nbtimportqueueid.nextval, 'U', :new." + SourceColumn + ", '" + Row["sourcename"] + "', 0, '');" + "\r\n" +
                        "    end if;" + "\r\n" +
                        "  end if;" + "\r\n" +
                        "end;\r\n/";

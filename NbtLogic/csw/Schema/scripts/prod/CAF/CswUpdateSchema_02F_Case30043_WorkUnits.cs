@@ -33,8 +33,9 @@ namespace ChemSW.Nbt.Schema
             //left outer join business_units b on (b.businessunitid = w.businessunitid)
             //left outer join sites s on (s.siteid = w.siteid)
 
-            CswNbtSchemaUpdateImportMgr importMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "work_units", "Work Unit", "workunits_view" );
+            CswNbtSchemaUpdateImportMgr importMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "CAF" );
 
+            importMgr.CAFimportOrder( "Work Unit", "work_units", "workunits_view" );
             // Binding
             importMgr.importBinding( "workunitname", CswNbtObjClassWorkUnit.PropertyName.Name, "" );
 

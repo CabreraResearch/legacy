@@ -35,10 +35,9 @@ namespace ChemSW.Nbt.Schema
             CswNbtSchemaUpdateImportMgr InventoryLevelBindings =
                 new CswNbtSchemaUpdateImportMgr(
                     _CswNbtSchemaModTrnsctn,
-                    "mininventory_basic",//we have two source tables (maxinventory_basic) - is that a problem?
-                    "Inventory Level",
-                    "inventory_view",
-                    SourceColumn: "inventorybasicid" );
+                    "CAF" );
+
+            InventoryLevelBindings.CAFimportOrder( "Inventory Level", "mininventory_basic", "inventory_view", "inventorybasicid" ); //SPECIAL CASE: maxinventory_basic is also in the view
 
             InventoryLevelBindings.importBinding( "inventorybasicid", CswNbtObjClassInventoryLevel.PropertyName.LegacyId, "" );
             InventoryLevelBindings.importBinding( "inventorylevel", CswNbtObjClassInventoryLevel.PropertyName.Level, CswEnumNbtSubFieldName.Value.ToString() );
