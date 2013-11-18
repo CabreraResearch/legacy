@@ -26,7 +26,7 @@ namespace ChemSW.Nbt.Schema
 
         public override string AppendToScriptName()
         {
-            return "B";
+            return "B_V2";
         }
 
         public override string Title
@@ -36,9 +36,8 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
-            Int32 CISProAdminRolePK = Int32.MinValue;
             Int32 AdminRolePk = Int32.MinValue;
-            Int32 ChemSWAdminRolePk = Int32.MinValue;
+            CswCommaDelimitedString AdminRoles = new CswCommaDelimitedString();
 
             // Change the visibilily of the 'Roles and Users' view to global
             CswNbtView RolesAndUsersView = _CswNbtSchemaModTrnsctn.restoreView( "Roles and Users" );
@@ -47,59 +46,49 @@ namespace ChemSW.Nbt.Schema
                 RolesAndUsersView.SetVisibility( CswEnumNbtViewVisibility.Global, null, null );
                 RolesAndUsersView.save();
 
-                // For any roles that aren't Administrator OR "Inspection Manager" OR "Equipment Manager" roles, remove any role permissions
+                // For any roles that aren't Administrator roles, remove any role permissions
                 CswNbtMetaDataObjectClass RoleOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.RoleClass );
                 foreach( CswNbtObjClassRole RoleNode in RoleOC.getNodes( false, true, false ) )
                 {
-                    if( CswEnumTristate.True != RoleNode.Administrator.Checked && RoleNode.Name.Text != "Inspection Manager" && RoleNode.Name.Text != "Equipment Manager" )
+                    if( CswEnumTristate.True != RoleNode.Administrator.Checked )
                     {
-                        string RoleViewPerm = CswNbtObjClassRole.MakeNodeTypePermissionValue( RoleOC.FirstNodeType.NodeTypeId, CswEnumNbtNodeTypePermission.View );
-                        RoleNode.NodeTypePermissions.RemoveValue( RoleViewPerm );
+                        foreach( CswEnumNbtNodeTypePermission Permission in CswEnumNbtNodeTypePermission.Members )
+                        {
+                            RoleNode.NodeTypePermissions.RemoveValue( CswNbtObjClassRole.MakeNodeTypePermissionValue( RoleOC.FirstNodeType.NodeTypeId, Permission ) );
+                        }
                         RoleNode.NodeTypePermissions.SyncGestalt();
                         RoleNode.postChanges( false );
                     }
-
-                    if( RoleNode.Name.Text == "CISPro_Admin" )
+                    else
                     {
-                        CISProAdminRolePK = RoleNode.NodeId.PrimaryKey;
+                        AdminRoles.Add( CswConvert.ToString( RoleNode.NodeId.PrimaryKey ) );
                     }
+
+                    // We need this because setting the landing page for this Role is a special case
                     if( RoleNode.Name.Text == "Administrator" )
                     {
                         AdminRolePk = RoleNode.NodeId.PrimaryKey;
-                    }
-                    if( RoleNode.Name.Text == "chemsw_admin_role" )
-                    {
-                        ChemSWAdminRolePk = RoleNode.NodeId.PrimaryKey;
                     }
                 }
 
                 // Redirect Welcome Landingpage items
                 CswTableUpdate TableUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "updateLandingPageItems_Case28518", "landingpage" );
-                DataTable LandingPageDt = TableUpdate.getTable( "where for_roleid in (" + CISProAdminRolePK + "," + AdminRolePk + "," + ChemSWAdminRolePk + ")" );
+                DataTable LandingPageDt = TableUpdate.getTable( "where for_roleid in (" + AdminRoles.ToString() + ")" );
                 foreach( DataRow CurrentRow in LandingPageDt.Rows )
                 {
-                    if( CswConvert.ToInt32( CurrentRow["for_roleid"] ) == CISProAdminRolePK )
-                    {
-                        if( CswConvert.ToString( CurrentRow["displaytext"] ) == "Roles and Users" )
-                        {
-                            CurrentRow["to_nodeviewid"] = RolesAndUsersView.ViewId.get();
-                        }
-                    }
-                    else if( CswConvert.ToInt32( CurrentRow["for_roleid"] ) == AdminRolePk )
+                    if( CswConvert.ToInt32( CurrentRow["for_roleid"] ) == AdminRolePk )
                     {
                         if( CswConvert.ToString( CurrentRow["to_nodeviewid"] ) == "19" )
                         {
-                            CurrentRow["to_nodeviewid"] = RolesAndUsersView.ViewId.get();
                             CurrentRow["displaytext"] = RolesAndUsersView.ViewName;
                         }
                     }
-                    else if( CswConvert.ToInt32( CurrentRow["for_roleid"] ) == ChemSWAdminRolePk )
+
+                    if( CswConvert.ToString( CurrentRow["displaytext"] ) == "Roles and Users" )
                     {
-                        if( CswConvert.ToString( CurrentRow["displaytext"] ) == "Roles and Users" )
-                        {
-                            CurrentRow["to_nodeviewid"] = RolesAndUsersView.ViewId.get();
-                        }
+                        CurrentRow["to_nodeviewid"] = RolesAndUsersView.ViewId.get();
                     }
+
                 }
 
                 TableUpdate.update( LandingPageDt );
