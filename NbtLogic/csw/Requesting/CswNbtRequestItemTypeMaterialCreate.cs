@@ -1,4 +1,5 @@
-﻿using ChemSW.Nbt.ObjClasses;
+﻿using ChemSW.Core;
+using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.Requesting
@@ -38,6 +39,16 @@ namespace ChemSW.Nbt.Requesting
                 Description += " " + _RequestItem.NewMaterialPartNo.Text;
             }
             _RequestItem.Description.StaticText = Description;
+        }
+
+        public override void setFulfillOptions()
+        {
+            _RequestItem.Fulfill.MenuOptions = new CswCommaDelimitedString
+                {
+                    CswNbtObjClassRequestItem.FulfillMenu.Create, 
+                    CswNbtObjClassRequestItem.FulfillMenu.Cancel
+                }.ToString();
+            _RequestItem.Fulfill.State = CswNbtObjClassRequestItem.FulfillMenu.Create;
         }
     }
 }

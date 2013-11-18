@@ -41,5 +41,16 @@ namespace ChemSW.Nbt.Requesting
                 " of " + _RequestItem.Material.Gestalt;
             _RequestItem.Description.StaticText = Description;
         }
+
+        public override void setFulfillOptions()
+        {
+            _RequestItem.Fulfill.MenuOptions = new CswCommaDelimitedString
+                {
+                    CswNbtObjClassRequestItem.FulfillMenu.Dispense, 
+                    CswNbtObjClassRequestItem.FulfillMenu.Complete,
+                    CswNbtObjClassRequestItem.FulfillMenu.Cancel
+                }.ToString();
+            _RequestItem.Fulfill.State = CswNbtObjClassRequestItem.FulfillMenu.Dispense;
+        }
     }
 }

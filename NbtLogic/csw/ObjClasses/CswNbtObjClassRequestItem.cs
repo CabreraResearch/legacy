@@ -294,8 +294,8 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Create = "Create Material";
             public const string Order = "Order";
             public const string Receive = "Receive";
-            public const string Dispense = "Dispense this Container";//Dispense from Container
-            public const string Move = "Move this Container";//Move Containers
+            public const string Dispense = "Dispense from Container";
+            public const string Move = "Move Container";
             public const string Dispose = "Dispose this Container";
             public const string Complete = "Complete Request";
             public const string Cancel = "Cancel Request";
@@ -371,6 +371,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
         {
+            TypeDef.setFulfillOptions();
             _CswNbtObjClassDefault.beforeCreateNode( IsCopy, OverrideUniqueValidation );
         }
 
@@ -511,11 +512,21 @@ namespace ChemSW.Nbt.ObjClasses
             NewMaterialPartNo.SetOnBeforeRender( TypeDef.setPropUIVisibility );
             RecurringFrequency.SetOnBeforeRender( _hideRecurringProps );
             NextReorderDate.SetOnBeforeRender( _hideRecurringProps );
+            Fulfill.SetOnBeforeRender( _hideFulfillButton );
         }
 
         private void _hideRecurringProps( CswNbtNodeProp Prop )
         {
             Prop.setHidden( IsRecurring.Checked != CswEnumTristate.True, SaveToDb: false );
+        }
+
+        private void _hideFulfillButton( CswNbtNodeProp Prop )
+        {
+            Prop.setHidden( 
+                Status.Value == Statuses.Pending || 
+                Status.Value == Statuses.Completed || 
+                Status.Value == Statuses.Cancelled, 
+                SaveToDb: false );
         }
 
         #endregion UI Logic

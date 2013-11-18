@@ -43,5 +43,19 @@ namespace ChemSW.Nbt.Requesting
             Description += "Dispense " + _RequestItem.Quantity.Gestalt + " of " + _RequestItem.EnterprisePart.Gestalt;
             _RequestItem.Description.StaticText = Description;
         }
+
+        public override void setFulfillOptions()
+        {
+            _RequestItem.Fulfill.MenuOptions = new CswCommaDelimitedString
+                {
+                    CswNbtObjClassRequestItem.FulfillMenu.Order, 
+                    CswNbtObjClassRequestItem.FulfillMenu.Receive,
+                    CswNbtObjClassRequestItem.FulfillMenu.Move,
+                    CswNbtObjClassRequestItem.FulfillMenu.Dispense, 
+                    CswNbtObjClassRequestItem.FulfillMenu.Complete,
+                    CswNbtObjClassRequestItem.FulfillMenu.Cancel
+                }.ToString();
+            _RequestItem.Fulfill.State = CswNbtObjClassRequestItem.FulfillMenu.Dispense;
+        }
     }
 }

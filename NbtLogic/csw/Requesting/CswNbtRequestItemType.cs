@@ -33,5 +33,10 @@ namespace ChemSW.Nbt.Requesting
         /// Sets the Request Item's description
         /// </summary>
         public abstract void setDescription();
+
+        /// <summary>
+        /// Sets the Request Item's Fulfill button menu options
+        /// </summary>
+        public abstract void setFulfillOptions();
     }
 }
