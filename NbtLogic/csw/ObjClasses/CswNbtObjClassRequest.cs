@@ -147,7 +147,7 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtViewRelationship RootVr = RequestItemView.AddViewRelationship( RequestOc, IncludeDefaultFilters : false );
             RootVr.NodeIdsToFilterIn.Add( this.NodeId );
 
-            foreach( CswEnumNbtObjectClass Member in CswNbtPropertySetRequestItem.Members() )
+            foreach( CswEnumNbtObjectClass Member in CswNbtPropertySetRequestItem.Members() )//TODO - case 30533 - remove this block
             {
                 CswNbtMetaDataObjectClass MemberOc = _CswNbtResources.MetaData.getObjectClass( Member );
                 CswNbtMetaDataObjectClassProp RequestOcp = MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Request );
@@ -161,6 +161,16 @@ namespace ChemSW.Nbt.ObjClasses
                 }
             }
 
+            CswNbtMetaDataObjectClass RequestItemOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestItemClass );
+            CswNbtMetaDataObjectClassProp RequestOCP = RequestItemOC.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Request );
+            CswNbtViewRelationship RequestItemVR = RequestItemView.AddViewRelationship( RootVr, CswEnumNbtViewPropOwnerType.Second, RequestOCP, IncludeDefaultFilters: false );
+            if( false == string.IsNullOrEmpty( FilterByStatus ) )
+            {
+                RequestItemView.AddViewPropertyAndFilter( RequestItemVR,
+                                                          RequestItemOC.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Status ),
+                                                          FilterByStatus.ToString(),
+                                                          FilterMode: CswEnumNbtFilterMode.Equals );
+            }
 
             ICswNbtTree RequestItemTree = _CswNbtResources.Trees.getTreeFromView( RequestItemView, IncludeSystemNodes : false, RequireViewPermissions : false, IncludeHiddenNodes : false );
             return RequestItemTree;
@@ -238,11 +248,24 @@ namespace ChemSW.Nbt.ObjClasses
                         for( Int32 N = 0; N < RequestItemNodeCount; N += 1 )
                         {
                             Tree.goToNthChild( N );
-                            CswNbtPropertySetRequestItem NodeAsPropSet = _CswNbtResources.Nodes[Tree.getNodeIdForCurrentPosition()];
-                            NodeAsPropSet.Status.Value = CswNbtPropertySetRequestItem.Statuses.Submitted;
-                            NodeAsPropSet.Request.RefreshNodeName();
-                            NodeAsPropSet.Name.RecalculateReferenceValue();
-                            NodeAsPropSet.postChanges( ForceUpdate : false );
+                            CswNbtNode RequestItemNode = Tree.getNodeForCurrentPosition();
+                            if( RequestItemNode.getObjectClass().ObjectClass == CswEnumNbtObjectClass.RequestItemClass )
+                            {
+                                CswNbtObjClassRequestItem RequestItem = RequestItemNode;
+                                RequestItem.Status.Value = CswNbtObjClassRequestItem.Statuses.Submitted;
+                                RequestItem.Request.RefreshNodeName();
+                                RequestItem.Name.RecalculateReferenceValue();
+                                RequestItem.postChanges( ForceUpdate: false );
+                            }
+                            else//TODO - case 30533 - remove
+                            {
+                                CswNbtPropertySetRequestItem NodeAsPropSet = RequestItemNode;
+                                NodeAsPropSet.Status.Value = CswNbtPropertySetRequestItem.Statuses.Submitted;
+                                NodeAsPropSet.Request.RefreshNodeName();
+                                NodeAsPropSet.Name.RecalculateReferenceValue();
+                                NodeAsPropSet.postChanges( ForceUpdate: false );
+                            }
+
                             Tree.goToParentNode();
                         }
                     }
