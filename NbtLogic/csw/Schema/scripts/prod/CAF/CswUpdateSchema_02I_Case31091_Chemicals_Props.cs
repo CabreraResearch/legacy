@@ -55,7 +55,7 @@ namespace ChemSW.Nbt.Schema
                     newProp.ReadOnly = CswConvert.ToBoolean( row["readonly"] );
                     newProp.ListOptions = row["listopts"].ToString();
 
-                    string cafColPropName = "p" + row["propertyid"];
+                    string cafColPropName = "prop" + row["propertyid"];
                     string cafSourceCol = "propvaltext";
                     if( CswEnumNbtFieldType.DateTime == propFT )
                     {
@@ -65,7 +65,7 @@ namespace ChemSW.Nbt.Schema
                     {
                         cafSourceCol = "propvalnumber";
                     }
-                    ImpMgr.importBinding( cafSourceCol, PropName, "", "CAF", ChemicalNT.NodeTypeName, ClobTableName : "properties_values", LobDataPkColOverride : cafColPropName );
+                    ImpMgr.importBinding( cafSourceCol, PropName, "", "CAF", ChemicalNT.NodeTypeName, ClobTableName : "properties_values", LobDataPkColOverride : cafColPropName, LobDataPkColName: "propertiesvaluesid" );
                 }
             }
 

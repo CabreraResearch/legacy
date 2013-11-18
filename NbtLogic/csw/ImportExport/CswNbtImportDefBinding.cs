@@ -81,6 +81,11 @@ namespace ChemSW.Nbt.ImportExport
             get { return _row[CswNbtImportTables.ImportDefBindings.lobdatapkcoloverride].ToString(); }
         }
 
+        public string LobDataPkColName
+        {
+            get { return _row[CswNbtImportTables.ImportDefBindings.lobdatapkcolname].ToString(); }
+        }
+
         public static string SafeColName( string ColName )
         {
             string ret = ColName;
