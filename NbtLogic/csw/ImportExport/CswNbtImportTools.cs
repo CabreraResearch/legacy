@@ -17,10 +17,10 @@ namespace ChemSW.Nbt.csw.ImportExport
                              p.required, 
                              p.readonly,
                              (select listopts from (select propertyid, listagg(lkpitem, ',') within group (order by lkpitem) as listopts
-                                   from properties_list_lkps
+                                   from properties_list_lkps@caflink
                                         group by propertyid) where propertyid = p.propertyid) listopts
-                            from properties p
-                                   join " + propValsTblName + @" pv on p.propertyid = pv.propertyid;
+                            from properties@caflink p
+                                   join " + propValsTblName + @"@caflink pv on p.propertyid = pv.propertyid
                             order by propertyid";
 
             return sql;

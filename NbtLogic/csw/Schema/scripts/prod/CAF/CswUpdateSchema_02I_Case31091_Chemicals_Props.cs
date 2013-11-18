@@ -4,6 +4,7 @@ using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.csw.ImportExport;
+using ChemSW.Nbt.csw.Schema;
 using ChemSW.Nbt.MetaData;
 
 namespace ChemSW.Nbt.Schema
@@ -32,6 +33,8 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
+            CswNbtSchemaUpdateImportMgr ImpMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "CAF" );
+
             CswNbtMetaDataObjectClass ChemicalOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass );
 
             string sql = CswNbtImportTools.GetCAFPropertiesSQL( "properties_values" );
@@ -51,10 +54,24 @@ namespace ChemSW.Nbt.Schema
                     newProp.IsRequired = CswConvert.ToBoolean( row["required"] );
                     newProp.ReadOnly = CswConvert.ToBoolean( row["readonly"] );
                     newProp.ListOptions = row["listopts"].ToString();
+
+                    string cafColPropName = "p" + row["propertyid"];
+                    string cafSourceCol = "propvaltext";
+                    if( CswEnumNbtFieldType.DateTime == propFT )
+                    {
+                        cafSourceCol = "propvaldate";
+                    }
+                    else if( CswEnumNbtFieldType.Number == propFT )
+                    {
+                        cafSourceCol = "propvalnumber";
+                    }
+                    ImpMgr.importBinding( cafSourceCol, PropName, "", "CAF", ChemicalNT.NodeTypeName, ClobTableName : "properties_values", LobDataPkColOverride : cafColPropName );
                 }
             }
 
-        }
+            ImpMgr.finalize();
 
         }
+
+    }
 }
