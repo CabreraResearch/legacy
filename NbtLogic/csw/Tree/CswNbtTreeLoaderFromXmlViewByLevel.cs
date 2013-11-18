@@ -545,6 +545,8 @@ namespace ChemSW.Nbt
             // Property Filters
             Int32 FilterCount = 0;
             string FilterWhere = string.Empty;
+            Dictionary<string, string> FilterParameters = new Dictionary<string, string>();
+
             foreach( CswNbtViewProperty Prop in Relationship.Properties )
             {
                 foreach( CswNbtViewPropertyFilter Filter in Prop.Filters )
@@ -571,16 +573,18 @@ namespace ChemSW.Nbt
                                 {
                                     FilterClause += @"select z.nodeid, '1' as included 
                                                         from nodes z ";
+
                                     if( Relationship.SecondType == CswEnumNbtViewRelatedIdType.NodeTypeId )
                                     {
                                         FilterClause += @" join nodetypes t on z.nodetypeid = t.nodetypeid
-                                                          where (t.firstversionid = " + Relationship.SecondId + ") ";
+                                                          where (t.firstversionid = :filt" + FilterCount + "relid) ";
+
                                     }
                                     else if( Relationship.SecondType == CswEnumNbtViewRelatedIdType.ObjectClassId )
                                     {
                                         FilterClause += @" join nodetypes t on z.nodetypeid = t.nodetypeid
                                                            join object_class o on t.objectclassid = o.objectclassid
-                                                          where (o.objectclassid = " + Relationship.SecondId + ") ";
+                                                          where (o.objectclassid = :filt" + FilterCount + "relid) ";
                                     }
                                     else if( Relationship.SecondType == CswEnumNbtViewRelatedIdType.PropertySetId )
                                     {
@@ -588,20 +592,21 @@ namespace ChemSW.Nbt
                                                            join object_class o on t.objectclassid = o.objectclassid
                                                            join jct_propertyset_objectclass jpo on (o.objectclassid = jpo.objectclassid) 
                                                            join property_set ps on (jpo.propertysetid = ps.propertysetid) 
-                                                          where (ps.propertysetid = " + Relationship.SecondId + ") ";
+                                                          where (ps.propertysetid = :filt" + FilterCount + "relid) ";
                                     }
                                     FilterClause += @"      and (z.nodeid not in (
                                                            select jnp.nodeid
                                                              from jct_nodes_props jnp
                                                              join nodetype_props p on (jnp.nodetypepropid = p.nodetypepropid) ";
+
                                     if( Prop.Type == CswEnumNbtViewPropType.NodeTypePropId )
                                     {
-                                        FilterClause += @"  where (lower(p.propname) = '" + CswTools.SafeSqlParam( Prop.NodeTypeProp.PropName.ToLower() ) + @"')) ";
+                                        FilterClause += @"  where (lower(p.propname) = :filt" + FilterCount + @"ntpname)) ";
                                     }
                                     else
                                     {
                                         FilterClause += @"   join object_class_props op on (p.objectclasspropid = op.objectclasspropid)
-                                                            where op.objectclasspropid = " + Prop.ObjectClassPropId + @")";
+                                                            where op.objectclasspropid = :filt" + FilterCount + @"ocpid)";
                                     }
                                     FilterClause += @" or z.nodeid in (select n.nodeid from nodes n ";
 
@@ -613,25 +618,28 @@ namespace ChemSW.Nbt
 
                                 if( Prop.Type == CswEnumNbtViewPropType.NodeTypePropId )
                                 {
-                                    FilterClause += @"            join nodetype_props p on (lower(p.propname) = '" + CswTools.SafeSqlParam( Prop.NodeTypeProp.PropName.ToLower() ) + @"') ";
+                                    FilterClause += @"            join nodetype_props p on (lower(p.propname) = :filt" + FilterCount + @"ntpname) ";
+                                    FilterParameters.Add( "filt" + FilterCount + "ntpname", CswTools.SafeSqlParam( Prop.NodeTypeProp.PropName.ToLower() ) );
                                 }
                                 else
                                 {
-                                    FilterClause += @"            join object_class_props op on (op.objectclasspropid = " + Prop.ObjectClassPropId + @")
+                                    FilterClause += @"            join object_class_props op on (op.objectclasspropid = :filt" + FilterCount + @"ocpid)
                                                                   join nodetype_props p on (p.objectclasspropid = op.objectclasspropid) ";
+                                    FilterParameters.Add( "filt" + FilterCount + "ocpid", Prop.ObjectClassPropId.ToString() );
                                 }
                                 FilterClause += @"                join jct_nodes_props jnp on (jnp.nodeid = n.nodeid and jnp.nodetypepropid = p.nodetypepropid) ";
 
+                                FilterParameters.Add( "filt" + FilterCount + "relid", Relationship.SecondId.ToString() );
                                 if( Relationship.SecondType == CswEnumNbtViewRelatedIdType.NodeTypeId )
                                 {
                                     FilterClause += @" join nodetypes t on n.nodetypeid = t.nodetypeid
-                                                        where (t.firstversionid = " + Relationship.SecondId + ") ";
+                                                        where (t.firstversionid = :filt" + FilterCount + "relid) ";
                                 }
                                 else if( Relationship.SecondType == CswEnumNbtViewRelatedIdType.ObjectClassId )
                                 {
                                     FilterClause += @" join nodetypes t on n.nodetypeid = t.nodetypeid
                                                         join object_class o on t.objectclassid = o.objectclassid
-                                                        where (o.objectclassid = " + Relationship.SecondId + ") ";
+                                                        where (o.objectclassid = :filt" + FilterCount + "relid) ";
                                 }
                                 else if( Relationship.SecondType == CswEnumNbtViewRelatedIdType.PropertySetId )
                                 {
@@ -639,7 +647,7 @@ namespace ChemSW.Nbt
                                                         join object_class o on t.objectclassid = o.objectclassid
                                                         join jct_propertyset_objectclass jpo on (o.objectclassid = jpo.objectclassid) 
                                                         join property_set ps on (jpo.propertysetid = ps.propertysetid) 
-                                                        where (ps.propertysetid = " + Relationship.SecondId + ") ";
+                                                        where (ps.propertysetid = :filt" + FilterCount + "relid) ";
                                 }
 
                                 FilterClause += @" and " + FilterValue + @"";
