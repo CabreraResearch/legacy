@@ -487,7 +487,7 @@ namespace ChemSW.Nbt.ImportExport
                         if( Overwrite )
                         {
                             _importPropertyValues( BindingDef, NodeTypeBindings, RowRelationships, ImportRow, Node );
-                            Node.postChanges( false );
+                            Node.postChanges( false, false, true );
                         }
                         foundMatch = true;
                     }
@@ -582,7 +582,7 @@ namespace ChemSW.Nbt.ImportExport
                     Node = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( Order.NodeType.NodeTypeId, delegate( CswNbtNode NewNode )
                         {
                             _importPropertyValues( BindingDef, NodeTypeBindings, RowRelationships, ImportRow, NewNode );
-                        } );
+                        }, OverrideUniqueValidation: true );
                 }
 
                 ImportedNodeId = Node.NodeId;
