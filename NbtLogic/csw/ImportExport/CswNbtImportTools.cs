@@ -16,7 +16,7 @@ namespace ChemSW.Nbt.csw.ImportExport
                              p.propertytype,
                              p.required, 
                              p.readonly,
-                             (select listopts from (select propertyid, listagg(lkpitem, ',') within group (order by lkpitem) as listopts
+                             (select listopts from (select propertyid, listagg(replace(lkpitem, ',', ''), ','), ',') within group (order by lkpitem) as listopts
                                    from properties_list_lkps@caflink
                                         group by propertyid) where propertyid = p.propertyid) listopts
                             from properties@caflink p

@@ -54,6 +54,7 @@ namespace ChemSW.Nbt.Schema
                     newProp.IsRequired = CswConvert.ToBoolean( row["required"] );
                     newProp.ReadOnly = CswConvert.ToBoolean( row["readonly"] );
                     newProp.ListOptions = row["listopts"].ToString();
+                    newProp.removeFromAllLayouts();
 
                     string cafColPropName = "prop" + row["propertyid"];
                     string cafSourceCol = "propvaltext";
