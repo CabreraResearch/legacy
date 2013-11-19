@@ -77,9 +77,19 @@ namespace ChemSW.Nbt.Sched
                         } //if false == AccessIDs.Contains( Customer.CompanyID.Text )
                         else
                         {
-                            // case 30485 - set Schema Version too
-                            Customer.syncCustomerInfo();
-                            Customer.postChanges( false );
+                            try
+                            {
+                                // case 30485 - set Schema Version too
+                                Customer.syncCustomerInfo();
+                                Customer.postChanges( false );
+                            }
+                            catch( Exception ex )
+                            { 
+                                // case 30485 - something is wrong with this access id
+                                string Subject = "Error synchronizing Customer AccessID '" + Customer.CompanyID.Text + "' for schema '" + Customer.SchemaName + "'";
+                                string Message = "On " + DateTime.Now.ToString() + ", the ValidateAccessIds schedule rule encountered an exception while synchronizing: \n" + ex.Message + "\n" + ex.StackTrace;
+                                CswNbtResources.sendSystemAlertEmail( Subject, Message );
+                            }
                         }
                     }//foreach ( Customer in CustomersCollection )
 

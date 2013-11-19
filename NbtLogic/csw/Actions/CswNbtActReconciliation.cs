@@ -433,6 +433,10 @@ namespace ChemSW.Nbt.Actions
             {
                 ActionOptions.Add( CswEnumNbtContainerLocationActionOptions.UndisposeAndMove.ToString() );
             }
+            if( Status == CswEnumNbtContainerLocationStatusOptions.Missing.ToString() )
+            {
+                ActionOptions.Add( CswEnumNbtContainerLocationActionOptions.UnmarkMissing.ToString() );
+            }
             return ActionOptions;
         }
 
