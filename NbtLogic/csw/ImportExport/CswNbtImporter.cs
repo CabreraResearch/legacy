@@ -582,7 +582,7 @@ namespace ChemSW.Nbt.ImportExport
                     Node = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( Order.NodeType.NodeTypeId, delegate( CswNbtNode NewNode )
                         {
                             _importPropertyValues( BindingDef, NodeTypeBindings, RowRelationships, ImportRow, NewNode );
-                        }, OverrideUniqueValidation: true );
+                        }, OverrideUniqueValidation: true ); //even when we care about uniqueness, we've already checked it above and this would be redundant
                 }
 
                 ImportedNodeId = Node.NodeId;
