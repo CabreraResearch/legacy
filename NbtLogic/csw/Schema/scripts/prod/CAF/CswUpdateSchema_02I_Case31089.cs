@@ -7,7 +7,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update
     /// </summary>
-    public class CswUpdateSchema_02I_Case31088: CswUpdateSchemaTo
+    public class CswUpdateSchema_02I_Case31089: CswUpdateSchemaTo
     {
         public override string Title { get { return "Add Manufacturer Lot No to Receipt Lot import bindings"; } }
 
@@ -18,7 +18,7 @@ namespace ChemSW.Nbt.Schema
 
         public override int CaseNo
         {
-            get { return 31088; }
+            get { return 31089; }
         }
 
         public override void update()
