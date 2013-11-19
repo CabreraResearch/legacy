@@ -20,8 +20,7 @@ namespace ChemSW.Nbt.Sched
         {
             _CswScheduleLogicNodes = new CswScheduleLogicNodes( ( CswNbtResources ) CswResources );
             Collection<CswNbtObjClassInspectionDesign> InspectionDesigns = _CswScheduleLogicNodes.getInspectonDesigns();
-            _CswScheduleLogicDetail.LoadCount = InspectionDesigns.Count;
-            return _CswScheduleLogicDetail.LoadCount;
+            return InspectionDesigns.Count;
         }
 
         private CswEnumScheduleLogicRunStatus _LogicRunStatus = CswEnumScheduleLogicRunStatus.Idle;

@@ -80,8 +80,7 @@ namespace ChemSW.Nbt.Sched
             {
                 _setLoad( CswResources );
             }
-            _CswScheduleLogicDetail.LoadCount = _MaterialPks.Count;
-            return _CswScheduleLogicDetail.LoadCount;
+            return _MaterialPks.Count;
         }
 
         public void stop()
