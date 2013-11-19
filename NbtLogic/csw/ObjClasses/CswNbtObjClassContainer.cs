@@ -571,10 +571,6 @@ namespace ChemSW.Nbt.ObjClasses
                        //ContLocNode.postChanges( false );
                    } );
                 LocationVerified.DateTimeValue = DateTime.Now;
-                if( Missing.Checked == CswEnumTristate.True )
-                {
-                    Missing.Checked = CswEnumTristate.False;
-                }
             }
         }
 
