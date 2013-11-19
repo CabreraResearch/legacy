@@ -438,23 +438,25 @@ namespace ChemSW.Nbt.ObjClasses
 
         protected override bool onButtonClick( NbtButtonData ButtonData )
         {
+            CswNbtObjClassContainer ContainerNode;
             if( null != ButtonData && null != ButtonData.NodeTypeProp )
             {
                 switch( ButtonData.NodeTypeProp.getObjectClassPropName() )
                 {
                     case PropertyName.Fulfill:
+                        ButtonData.Action = CswEnumNbtButtonAction.nothing;
                         switch( ButtonData.SelectedText )//TODO - subclass and fill in logic
                         {
                             case FulfillMenu.Cancel:
                                 Status.Value = Statuses.Cancelled;
                                 Fulfill.State = FulfillMenu.Cancel;
-                                Fulfill.MenuOptions = "";
+                                FulfillmentHistory.AddComment( "Request Item Cancelled." );
                                 ButtonData.Action = CswEnumNbtButtonAction.refresh;
                                 break;
                             case FulfillMenu.Complete:
                                 Status.Value = Statuses.Completed;
                                 Fulfill.State = FulfillMenu.Complete;
-                                Fulfill.MenuOptions = "";
+                                FulfillmentHistory.AddComment( "Request Item Completed." );
                                 ButtonData.Action = CswEnumNbtButtonAction.refresh;
                                 break;
                             case FulfillMenu.Create:
@@ -482,26 +484,56 @@ namespace ChemSW.Nbt.ObjClasses
                                     ButtonData.Data["state"]["request"]["materialid"] = ( Material.RelatedNodeId ?? new CswPrimaryKey() ).ToString();
                                     ButtonData.Data["success"] = true;
                                 break;
-                            case FulfillMenu.Order:
+                            case FulfillMenu.Order://TODO - Implement Ordering
                                 ButtonData.Action = CswEnumNbtButtonAction.editprop;
                                 break;
                             case FulfillMenu.Receive:
-                                CswNbtPropertySetMaterial NodeAsMaterial = _CswNbtResources.Nodes.GetNode( Material.RelatedNodeId );
-                                if( null != NodeAsMaterial )
+                                CswNbtPropertySetMaterial MaterialNode = _CswNbtResources.Nodes.GetNode( Material.RelatedNodeId );
+                                if( null != MaterialNode )
                                 {
-                                    if( null != NodeAsMaterial.Receive.NodeTypeProp )
-                                    {
-                                        NbtButtonData ReceiveData = new NbtButtonData( NodeAsMaterial.Receive.NodeTypeProp );
-                                        NodeAsMaterial.triggerOnButtonClick( ReceiveData );
-                                        ButtonData.clone( ReceiveData );
-                                    }
+                                    NbtButtonData ReceiveData = new NbtButtonData( MaterialNode.Receive.NodeTypeProp );
+                                    MaterialNode.triggerOnButtonClick( ReceiveData );
+                                    ButtonData.clone( ReceiveData );
                                 }
                                 break;
                             case FulfillMenu.Dispense:
-                                ButtonData.Action = CswEnumNbtButtonAction.dispense;
+                                //Apparently CswEnumNbtButtonAction.dispense is for dispensing an arbitrary container for Material requests
+                                //TODO - figure out how to handle this discrepancy
+                                ContainerNode = _CswNbtResources.Nodes.GetNode( Container.RelatedNodeId );
+                                if( null != ContainerNode )
+                                {
+                                    NbtButtonData DispenseData = new NbtButtonData( ContainerNode.Dispense.NodeTypeProp );
+                                    ContainerNode.triggerOnButtonClick( DispenseData );
+                                    ButtonData.clone( DispenseData );
+                                }
                                 break;
                             case FulfillMenu.Move:
-                                ButtonData.Action = CswEnumNbtButtonAction.move;
+                                //Apparently CswEnumNbtButtonAction.move is for moving multiple containers for MaterialSize requests
+                                //TODO - figure out how to handle this discrepancy
+                                ButtonData.Action = CswEnumNbtButtonAction.refresh;
+                                ContainerNode = _CswNbtResources.Nodes.GetNode( Container.RelatedNodeId );
+                                if( null != ContainerNode )
+                                {
+                                    ContainerNode.Location.SelectedNodeId = Location.SelectedNodeId;
+                                    ContainerNode.Location.CachedNodeName = Location.CachedNodeName;
+                                    ContainerNode.Location.CachedPath = Location.CachedPath;
+                                    ContainerNode.postChanges( false );
+                                    FulfillmentHistory.AddComment( "Moved " + ContainerNode.NodeName + " to " + Location.CachedFullPath );
+                                    FulfillmentHistory.AddComment( "Request Item Completed." );
+                                    Status.Value = Statuses.Completed;
+                                }
+                                break;
+                            case FulfillMenu.Dispose:
+                                ButtonData.Action = CswEnumNbtButtonAction.refresh;
+                                ContainerNode = _CswNbtResources.Nodes.GetNode( Container.RelatedNodeId );
+                                if( null != ContainerNode )
+                                {
+                                    ContainerNode.DisposeContainer();
+                                    ContainerNode.postChanges( true );
+                                    FulfillmentHistory.AddComment( "Disposed Container " + ContainerNode.Barcode.Barcode );
+                                    FulfillmentHistory.AddComment( "Request Item Completed." );
+                                    Status.Value = Statuses.Completed;
+                                }
                                 break;
                         } //switch( ButtonData.SelectedText )
                         ButtonData.Data["requestitem"] = ButtonData.Data["requestitem"] ?? new JObject();
@@ -509,7 +541,9 @@ namespace ChemSW.Nbt.ObjClasses
                         ButtonData.Data["requestitem"]["requestitemid"] = NodeId.ToString();
                         ButtonData.Data["requestitem"]["inventorygroupid"] = ( InventoryGroup.RelatedNodeId ?? new CswPrimaryKey() ).ToString();
                         ButtonData.Data["requestitem"]["materialid"] = ( Material.RelatedNodeId ?? new CswPrimaryKey() ).ToString();
+                        ButtonData.Data["requestitem"]["containerid"] = ( Container.RelatedNodeId ?? new CswPrimaryKey() ).ToString();
                         ButtonData.Data["requestitem"]["locationid"] = ( Location.SelectedNodeId ?? new CswPrimaryKey() ).ToString();
+                        postChanges( ForceUpdate: false );
                         break; //case PropertyName.Fulfill:
                 }
             }
