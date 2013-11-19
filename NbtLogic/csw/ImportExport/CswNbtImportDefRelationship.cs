@@ -70,7 +70,7 @@ namespace ChemSW.Nbt.ImportExport
         {
             CswTableUpdate importRelationshipsUpdate = CswNbtResources.makeCswTableUpdate( "storeDefinition_Relationships_update", CswNbtImportTables.ImportDefRelationships.TableName );
 
-            foreach( DataRow RelRow in RelationshipsDataTable.Rows )
+            foreach( DataRow RelRow in RelationshipsDataTable.Select() )
             {
 
                 //set blank instances to min value

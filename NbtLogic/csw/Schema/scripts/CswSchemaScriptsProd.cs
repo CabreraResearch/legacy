@@ -33,7 +33,7 @@ namespace ChemSW.Nbt.Schema
                     new CswSchemaScriptsHickory(),
                     new CswSchemaScriptsIronwood(),
                     // Add new milestone script collections here
-                    new CswSchemaScriptsCAF() // This runs the CAF scripts - you can comment it out if you don't need it
+                    new CswSchemaScriptsCAF() // This runs the CAF scripts - keep it around and uncommented until CAF is done
                 };
 
             // DDL

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 
@@ -73,7 +74,8 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
         public bool SearchAllowed { get { return ( _CswNbtFieldTypeRuleDefault.SearchAllowed ); } }
 
-        public string renderViewPropFilter( ICswNbtUser RunAsUser, CswNbtViewPropertyFilter CswNbtViewPropertyFilterIn )
+
+        public string renderViewPropFilter( ICswNbtUser RunAsUser, CswNbtViewPropertyFilter CswNbtViewPropertyFilterIn, Dictionary<string, string> ParameterCollection, int FilterNumber )
         {
             //return ( _CswNbtFieldTypeRuleDefault.renderViewPropFilter( RunAsUser, SubFields, CswNbtViewPropertyFilterIn ) );
 
@@ -110,8 +112,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                 }
                 //}
             }
-            string ret = _CswNbtFieldTypeRuleDefault.renderViewPropFilter( RunAsUser, SubFields, CswNbtViewPropertyFilterIn, false );
-
+            string ret = _CswNbtFieldTypeRuleDefault.renderViewPropFilter( RunAsUser, CswNbtViewPropertyFilterIn, ParameterCollection, FilterNumber );
             CswNbtViewPropertyFilterIn.SubfieldName = OldSubfieldName;
             CswNbtViewPropertyFilterIn.FilterMode = OldFilterMode;
             CswNbtViewPropertyFilterIn.Value = OldValue;

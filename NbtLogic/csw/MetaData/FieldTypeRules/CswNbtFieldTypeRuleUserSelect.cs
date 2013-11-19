@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using ChemSW.Core;
 using ChemSW.Exceptions;
@@ -44,7 +45,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
         private string _FilterTableAlias = "jnp.";
 
-        public string renderViewPropFilter( ICswNbtUser RunAsUser, CswNbtViewPropertyFilter CswNbtViewPropertyFilterIn )
+        public string renderViewPropFilter( ICswNbtUser RunAsUser, CswNbtViewPropertyFilter CswNbtViewPropertyFilterIn, Dictionary<string, string> ParameterCollection, int FilterNumber )
         {
             CswNbtSubField CswNbtSubField = null;
             CswNbtSubField = SubFields[CswNbtViewPropertyFilterIn.SubfieldName];

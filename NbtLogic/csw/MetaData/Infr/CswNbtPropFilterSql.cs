@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.Security;
 
@@ -7,13 +8,25 @@ namespace ChemSW.Nbt.MetaData
     public class CswNbtPropFilterSql
     {
         private string _FilterTableAlias = "jnp.";
+
+        private readonly Dictionary<CswEnumNbtFilterMode, string> _numericHackFilterModes = new Dictionary<CswEnumNbtFilterMode, string>
+            {
+                {CswEnumNbtFilterMode.Equals, " = "},
+                {CswEnumNbtFilterMode.NotEquals, " <> " },
+                {CswEnumNbtFilterMode.GreaterThan, " > " },
+                {CswEnumNbtFilterMode.LessThan, " < " },
+                {CswEnumNbtFilterMode.GreaterThanOrEquals, " >= " },
+                {CswEnumNbtFilterMode.LessThanOrEquals, " <= " },
+                {CswEnumNbtFilterMode.In, " in(" }
+            };
+
         public CswNbtPropFilterSql()
-        {
+        {   
         }
 
         // UseNumericHack: SEE BZ 6661
 
-        public string renderViewPropFilter( ICswNbtUser RunAsUser, CswNbtViewPropertyFilter CswNbtViewPropertyFilterIn, CswNbtSubField CswNbtSubField, bool UseNumericHack )
+        public string renderViewPropFilter( ICswNbtUser RunAsUser, CswNbtViewPropertyFilter CswNbtViewPropertyFilterIn, CswNbtSubField CswNbtSubField, Dictionary<string, string> ParameterCollection, int FilterNumber, bool UseNumericHack )
         {
             if( CswNbtSubField == null )
                 throw ( new CswDniException( "CswNbtPropFilterSql.renderViewPropFilter() got a null CswNbtSubField for view: " + CswNbtViewPropertyFilterIn.View.ViewName ) );
@@ -29,6 +42,7 @@ namespace ChemSW.Nbt.MetaData
                 FilterTableAlias = "n.";
             }
 
+            string ParameterName = "filt" + FilterNumber + "filtval";
             string ReturnVal = "";
 
             //This is sort of a hacky way of dealing with the bz # 6936 issue. But since it's all going to need to be
@@ -50,39 +64,25 @@ namespace ChemSW.Nbt.MetaData
 
 
                     string NumericValueColumn = " nvl(" + FilterTableAlias + Column + ", 0) ";
-
-                    if( CswNbtViewPropertyFilterIn.FilterMode == CswEnumNbtFilterMode.Equals )
+                    ReturnVal = NumericValueColumn;
+                    if( _numericHackFilterModes.ContainsKey( CswNbtViewPropertyFilterIn.FilterMode ) )
                     {
-                        ReturnVal = NumericValueColumn + " = " + CswNbtViewPropertyFilterIn.Value;
-                    }
-                    else if( CswNbtViewPropertyFilterIn.FilterMode == CswEnumNbtFilterMode.GreaterThan )
-                    {
-                        ReturnVal = NumericValueColumn + " > " + CswNbtViewPropertyFilterIn.Value;
-                    }
-                    else if( CswNbtViewPropertyFilterIn.FilterMode == CswEnumNbtFilterMode.GreaterThanOrEquals )
-                    {
-                        ReturnVal = NumericValueColumn + " >= " + CswNbtViewPropertyFilterIn.Value;
-                    }
-                    else if( CswNbtViewPropertyFilterIn.FilterMode == CswEnumNbtFilterMode.LessThan )
-                    {
-                        ReturnVal = NumericValueColumn + " < " + CswNbtViewPropertyFilterIn.Value;
-                    }
-                    else if( CswNbtViewPropertyFilterIn.FilterMode == CswEnumNbtFilterMode.LessThanOrEquals )
-                    {
-                        ReturnVal = NumericValueColumn + " <= " + CswNbtViewPropertyFilterIn.Value;
-                    }
-                    else if( CswNbtViewPropertyFilterIn.FilterMode == CswEnumNbtFilterMode.NotEquals )
-                    {
-                        ReturnVal = NumericValueColumn + " <> " + CswNbtViewPropertyFilterIn.Value;
-                    }
-                    else if( CswNbtViewPropertyFilterIn.FilterMode == CswEnumNbtFilterMode.In )
-                    {
-                        ReturnVal = NumericValueColumn + " in(" + CswNbtViewPropertyFilterIn.Value + ") ";
+                        ReturnVal += _numericHackFilterModes[CswNbtViewPropertyFilterIn.FilterMode];
                     }
                     else
                     {
                         throw new CswDniException( CswEnumErrorType.Error, "Invalid filter", "An invalid FilterMode was encountered in CswNbtPropFilterSql.renderViewPropFilter()) { " + CswNbtViewPropertyFilterIn.FilterMode.ToString() );
                     }
+
+                    ReturnVal += ":" + ParameterName;
+                    ParameterCollection.Add( ParameterName, CswNbtViewPropertyFilterIn.Value );
+
+                    if( CswNbtViewPropertyFilterIn.FilterMode == CswEnumNbtFilterMode.In )
+                    {
+                        ReturnVal += ")";
+                    }
+
+
                 }
                 else
                 {
@@ -100,52 +100,65 @@ namespace ChemSW.Nbt.MetaData
 
                     if( CswNbtViewPropertyFilterIn.FilterMode == CswEnumNbtFilterMode.Begins )
                     {
-                        ReturnVal = NonNumericValueColumn + " like " + CasePrepend + "'" + SafeValue + "%'" + CaseAppend;
+                        ReturnVal = NonNumericValueColumn + " like " + CasePrepend + ":" + ParameterName + CaseAppend;
+                        ParameterCollection.Add( ParameterName,  SafeValue + "%" );
                     }
                     else if( CswNbtViewPropertyFilterIn.FilterMode == CswEnumNbtFilterMode.Contains )
                     {
-                        ReturnVal = NonNumericValueColumn + " like " + CasePrepend + "'%" + SafeValue + "%'" + CaseAppend;
+                        ReturnVal = NonNumericValueColumn + " like " + CasePrepend + ":" + ParameterName + CaseAppend;
+                        ParameterCollection.Add( ParameterName,  "%" + SafeValue + "%" );
                     }
                     else if( CswNbtViewPropertyFilterIn.FilterMode == CswEnumNbtFilterMode.NotContains )
                     {
-                        ReturnVal = "(" + NonNumericValueColumn + " not like " + CasePrepend + "'%" + SafeValue + "%'" + CaseAppend
+                        ReturnVal = "(" + NonNumericValueColumn + " not like " + CasePrepend + ":" + ParameterName + CaseAppend
                             + " or " + NonNumericValueColumn + " is null" + ")";
+                        ParameterCollection.Add( ParameterName,  "%" + SafeValue + "%" );
                     }
                     else if( CswNbtViewPropertyFilterIn.FilterMode == CswEnumNbtFilterMode.Ends )
                     {
-                        ReturnVal = NonNumericValueColumn + " like " + CasePrepend + "'%" + SafeValue + "'" + CaseAppend;
+                        ReturnVal = NonNumericValueColumn + " like " + CasePrepend + ":" + ParameterName + CaseAppend;
+                        ParameterCollection.Add( ParameterName, "%" + SafeValue  );
+
                     }
                     else if( CswNbtViewPropertyFilterIn.FilterMode == CswEnumNbtFilterMode.Equals )
                     {
                         //covers the case of clobs
-                        ReturnVal = NonNumericValueColumn + " like " + CasePrepend + "'" + SafeValue + "'" + CaseAppend;
+                        ReturnVal = NonNumericValueColumn + " like " + CasePrepend + ":" + ParameterName + CaseAppend;
+                        ParameterCollection.Add( ParameterName, SafeValue  );
                     }
                     else if( CswNbtViewPropertyFilterIn.FilterMode == CswEnumNbtFilterMode.GreaterThan )
                     {
-                        ReturnVal = NonNumericValueColumn + " > " + CasePrepend + "'" + SafeValue + "'" + CaseAppend;
+                        ReturnVal = NonNumericValueColumn + " > " + CasePrepend + ":" + ParameterName + CaseAppend;
+                        ParameterCollection.Add( ParameterName, SafeValue  );
                     }
                     else if( CswNbtViewPropertyFilterIn.FilterMode == CswEnumNbtFilterMode.GreaterThanOrEquals )
                     {
-                        ReturnVal = NonNumericValueColumn + " >= " + CasePrepend + "'" + SafeValue + "'" + CaseAppend;
+                        ReturnVal = NonNumericValueColumn + " >= " + CasePrepend + ":" + ParameterName + CaseAppend;
+                        ParameterCollection.Add( ParameterName, SafeValue );
                     }
                     else if( CswNbtViewPropertyFilterIn.FilterMode == CswEnumNbtFilterMode.LessThan )
                     {
-                        ReturnVal = NonNumericValueColumn + " < " + CasePrepend + "'" + SafeValue + "'" + CaseAppend;
+                        ReturnVal = NonNumericValueColumn + " < " + CasePrepend + ":" + ParameterName + CaseAppend;
+                        ParameterCollection.Add( ParameterName,  SafeValue );
                     }
                     else if( CswNbtViewPropertyFilterIn.FilterMode == CswEnumNbtFilterMode.LessThanOrEquals )
                     {
-                        ReturnVal = NonNumericValueColumn + " <= " + CasePrepend + "'" + SafeValue + "'" + CaseAppend;
+                        ReturnVal = NonNumericValueColumn + " <= " + CasePrepend + ":" + ParameterName + CaseAppend;
+                        ParameterCollection.Add( ParameterName, SafeValue );
                     }
                     else if( CswNbtViewPropertyFilterIn.FilterMode == CswEnumNbtFilterMode.NotEquals )
                     {
-                        ReturnVal = "(" + NonNumericValueColumn + " not like " + CasePrepend + "'" + SafeValue + "'" + CaseAppend +
+                        ReturnVal = "(" + NonNumericValueColumn + " not like " + CasePrepend + ":" + ParameterName + CaseAppend +
                                     " or " + NonNumericValueColumn + " is null )";   //case 21623
+                        ParameterCollection.Add( ParameterName, SafeValue );
+
                     }
                     else if( CswNbtViewPropertyFilterIn.FilterMode == CswEnumNbtFilterMode.In )
                     {
                         //ReturnVal = NonNumericValueColumn + " in( " + CasePrepend + "'" + SafeValue + "'" + CaseAppend + " ) ";
                         // see case 30165
-                        ReturnVal = NonNumericValueColumn + " in(" + CswNbtViewPropertyFilterIn.Value + ") ";
+                        ReturnVal = NonNumericValueColumn + " in(:" + ParameterName + ") ";
+                        ParameterCollection.Add( ParameterName, CswNbtViewPropertyFilterIn.Value );
                     }
                     else
                     {

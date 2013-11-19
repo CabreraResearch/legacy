@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
@@ -38,7 +39,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
         public bool SearchAllowed { get { return ( _CswNbtFieldTypeRuleDefault.SearchAllowed ); } }
         private string _FilterTableAlias = "jnp.";
 
-        public string renderViewPropFilter( ICswNbtUser RunAsUser, CswNbtViewPropertyFilter CswNbtViewPropertyFilterIn )
+        public string renderViewPropFilter( ICswNbtUser RunAsUser, CswNbtViewPropertyFilter CswNbtViewPropertyFilterIn, Dictionary<string, string> ParameterCollection, int FilterNumber )
         {
             CswNbtSubField CswNbtSubField = null;
             CswNbtSubField = SubFields[CswNbtViewPropertyFilterIn.SubfieldName];
