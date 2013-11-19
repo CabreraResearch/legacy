@@ -294,7 +294,7 @@ namespace ChemSW.Nbt.ImportExport
                     {
                         try
                         {
-                            _ImportOneRow( SourceRow, BindingDef, Order, Overwrite, null );
+                            _ImportOneRow( SourceRow, BindingDef, Order, Overwrite, null, OverrideUniqueValidation: true );
                         }
                         catch( Exception e )
                         {
@@ -406,7 +406,7 @@ namespace ChemSW.Nbt.ImportExport
         /// Import a single node for a single row
         /// </summary>
         /// <returns>NodeId of imported node</returns>
-        private CswPrimaryKey _ImportOneRow( DataRow ImportRow, CswNbtImportDef BindingDef, CswNbtImportDefOrder Order, bool Overwrite, CswTableUpdate ImportDataUpdate )
+        private CswPrimaryKey _ImportOneRow( DataRow ImportRow, CswNbtImportDef BindingDef, CswNbtImportDefOrder Order, bool Overwrite, CswTableUpdate ImportDataUpdate, bool OverrideUniqueValidation = false )
         {
             CswPrimaryKey ImportedNodeId = null;
             //string msgPrefix = Order.NodeType.NodeTypeName + " Import (" + ImportRow[CswNbtImportTables.ImportDataN.importdataid].ToString() + "): ";
@@ -493,7 +493,7 @@ namespace ChemSW.Nbt.ImportExport
                     }
                 }
 
-                if( false == foundMatch )
+                if( false == foundMatch && false == OverrideUniqueValidation )
                 {
                     // Find matching nodes using a view on unique properties
                     CswNbtView UniqueView = new CswNbtView( _CswNbtResources );
