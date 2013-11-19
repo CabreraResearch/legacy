@@ -25,7 +25,7 @@ namespace ChemSW.Nbt.Schema
         {
             CswNbtSchemaUpdateImportMgr ImpMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "CAF" );
 
-            ImpMgr.importBinding( "country", CswNbtObjClassVendor.PropertyName.Country,"", "vendors" );
+            ImpMgr.importBinding( "country", CswNbtObjClassVendor.PropertyName.Country, "", DestNodeTypeName: "Vendor");
 
             ImpMgr.finalize();
 

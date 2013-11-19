@@ -25,7 +25,7 @@ namespace ChemSW.Nbt.Schema
         {
             CswNbtSchemaUpdateImportMgr ImpMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "CAF" );
 
-            ImpMgr.importBinding( "manufacturerlotno", CswNbtObjClassReceiptLot.PropertyName.ManufacturerLotNo, "", "receipt_lots_view" );
+            ImpMgr.importBinding( "manufacturerlotno", CswNbtObjClassReceiptLot.PropertyName.ManufacturerLotNo, "", DestNodeTypeName : "Receipt Lot" );
 
             ImpMgr.finalize();
 
