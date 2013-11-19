@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
@@ -25,12 +26,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             doSetFk( inFKType, inFKValue, inValuePropType, inValuePropId );
         }
 
-        public string renderViewPropFilter( ICswNbtUser RunAsUser, CswNbtSubFieldColl SubFields, CswNbtViewPropertyFilter CswNbtViewPropertyFilterIn )
-        {
-            return renderViewPropFilter( RunAsUser, SubFields, CswNbtViewPropertyFilterIn, false );
-        }
-
-        public string renderViewPropFilter( ICswNbtUser RunAsUser, CswNbtSubFieldColl SubFields, CswNbtViewPropertyFilter CswNbtViewPropertyFilterIn, bool UseNumericHack )
+        public string renderViewPropFilter( ICswNbtUser RunAsUser,CswNbtViewPropertyFilter CswNbtViewPropertyFilterIn, Dictionary<string,string> ParameterCollection, int FilterNumber,  bool UseNumericHack = false )
         {
 
             CswNbtSubField CswNbtSubField = null;
@@ -38,7 +34,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             if( CswNbtSubField == null )
                 throw new CswDniException( CswEnumErrorType.Error, "Misconfigured View", "CswNbtFieldTypeRuleDefaultImpl.renderViewPropFilter() could not find SubField '" + CswNbtViewPropertyFilterIn.SubfieldName + "' in field type '" + ( (CswNbtViewProperty) CswNbtViewPropertyFilterIn.Parent ).FieldType.ToString() + "' for view '" + CswNbtViewPropertyFilterIn.View.ViewName + "'" );
 
-            return ( _CswNbtFieldResources.CswNbtPropFilterSql.renderViewPropFilter( RunAsUser, CswNbtViewPropertyFilterIn, CswNbtSubField, UseNumericHack ) );
+            return ( _CswNbtFieldResources.CswNbtPropFilterSql.renderViewPropFilter( RunAsUser, CswNbtViewPropertyFilterIn, CswNbtSubField, ParameterCollection, FilterNumber, UseNumericHack ) );
 
         }//makeWhereClause()
 

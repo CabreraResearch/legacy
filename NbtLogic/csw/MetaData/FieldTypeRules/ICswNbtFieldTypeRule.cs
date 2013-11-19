@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 
@@ -8,7 +9,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
     public interface ICswNbtFieldTypeRule
     {
 
-        string renderViewPropFilter( ICswNbtUser RunAsUser, CswNbtViewPropertyFilter CswNbtViewPropertyFilter );
+        string renderViewPropFilter( ICswNbtUser RunAsUser, CswNbtViewPropertyFilter CswNbtViewPropertyFilter, Dictionary<string, string> ParameterCollection, int FilterNumber );
         CswNbtSubFieldColl SubFields { get; }
         bool SearchAllowed { get; }
         string FilterModeToString( CswNbtSubField SubField, CswEnumNbtFilterMode FilterMode );
