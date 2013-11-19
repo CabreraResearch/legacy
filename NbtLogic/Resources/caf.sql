@@ -589,19 +589,21 @@ select
 create or replace view receipt_lots_view as
 select 
      rl.ReceiptLotNo,
-	   rl.CreatedDate,
-	   rl.ReceiptLotId,
-	   rl.Deleted,
-	   p.PackageId
+     rl.CreatedDate,
+     rl.ReceiptLotId,
+     rl.Deleted,
+     p.PackageId,
+     c.manufacturerlotno
   from receipt_lots rl
-	join packages p 
+  join containers c on c.receiptlotid = rl.receiptlotid and c.containerclass = 'lotholder'
+  join packages p 
        on p.packageid = (
-	                    select pd.packageid 
+                      select pd.packageid 
                             from packdetail pd, containers c 
-								where c.receiptlotid = rl.receiptlotid and 
-										c.packdetailid = pd.packdetailid and
-										rownum=1
-						);
+                where c.receiptlotid = rl.receiptlotid and 
+                    c.packdetailid = pd.packdetailid and
+                    rownum=1
+            );
 	
 	
 ---C of A Documents
