@@ -26,7 +26,8 @@
 
             cswPrivate.tabs = {};
             cswPrivate.currentTab = '';
-
+            cswPrivate.importDefName = cswPrivate.importDefName || 'Invalid Definition';
+            
         }());
 
 
