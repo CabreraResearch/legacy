@@ -15,8 +15,7 @@ namespace ChemSW.Nbt.Sched
         //Determine the number of batchops that need to run and return that value
         public Int32 getLoadCount( ICswResources CswResources )
         {
-            _CswScheduleLogicDetail.LoadCount = CswNbtBatchManager.getBatchNodeCount( (CswNbtResources) CswResources );
-            return _CswScheduleLogicDetail.LoadCount;
+            return CswNbtBatchManager.getBatchNodeCount( (CswNbtResources) CswResources );
         }
 
         private CswEnumScheduleLogicRunStatus _LogicRunStatus = CswEnumScheduleLogicRunStatus.Idle;

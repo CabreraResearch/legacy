@@ -101,7 +101,7 @@
                         canCheck: true,
                         checked: Csw.bool(opt.selected),
                         onChange: function () {
-                            onCheck(checkBox, thisRowIdx);
+                            onCheck(checkBox, thisRowIdx, checkBox.checked());
                         }
                     });
                     cell.span({ text: opt.text, value: opt.text });
