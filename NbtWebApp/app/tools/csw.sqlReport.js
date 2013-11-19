@@ -106,10 +106,10 @@
                     success: function (data) {
                         var parent = Csw.domNode({ ID: 'rptDiv' });
                         parent.empty();
-                        if (data.hasResults) {
+                        if (Csw.bool(data.hasResults)) {
                             Csw.window.location(data.reportUrl);
                         } else {
-                            parent.span('There are no rows to display.');
+                            parent.span({ text: 'There are no rows to display.' });
                         }
                     }
                 });

@@ -173,13 +173,15 @@
                             cswPrivate.reinitSteps(2);
                             getPendingChangesCount();
                         },
-                        useDefaultLocation: false
+                        useDefaultLocation: false,
+                        EditMode: Csw.enums.editMode.Add
                     });
                     cswPrivate.state.LocationId = locationControl.val();
                     cswPrivate.state.LocationName = locationControl.selectedName();
                     cswPrivate.toggleButton(cswPrivate.buttons.next, false === Csw.isNullOrEmpty(cswPrivate.state.LocationId));
                     //Pending Actions
-                    var pendingActionLabel = locationDatesTable.cell(rowNum, 3).span({ text: 'Pending Actions:' });
+                    var pendingText = 'Prior reconciliation changes still pending for this scope: ';
+                    var pendingActionLabel = locationDatesTable.cell(rowNum, 3).span({ text: pendingText });
                     var getPendingChangesCount = function () {
                         if (false === Csw.isNullOrEmpty(cswPrivate.state.LocationId)) {
                             Csw.ajaxWcf.post({
@@ -187,7 +189,7 @@
                                 data: cswPrivate.state,
                                 success: function (ajaxdata) {
                                     var count = ajaxdata.OutstandingActionsCount;
-                                    pendingActionLabel.text('Pending Actions: ' + count);
+                                    pendingActionLabel.text(pendingText + count);
                                 }
                             });
                         }
@@ -454,7 +456,7 @@
                             cswPrivate.data.ContainerStatuses = [{
                                 ContainerId: '',
                                 ContainerBarcode: '',
-                                PriorLocation: '',
+                                ExpectedLocation: '',
                                 ScannedLocation: '',
                                 LocationId: '',
                                 ContainerLocationId: '',
@@ -489,7 +491,7 @@
                             addColumn('containerlocationid', 'ContainerLocation Id', true);
                             addColumn('actionoptions', 'Action Options', true);
                             addColumn('containerbarcode', 'Container Barcode', false);
-                            addColumn('priorlocation', 'Prior Location', false);
+                            addColumn('expectedlocation', 'Expected Location', false);
                             addColumn('scannedlocation', 'Scanned Location', false);
                             var StatusOptions = [];
                             Csw.each(cswPrivate.data.ContainerStatistics, function (row) {
@@ -527,7 +529,7 @@
                                     containerlocationid: row.ContainerLocationId,
                                     completed: row.Completed,
                                     containerbarcode: row.ContainerBarcode,
-                                    priorlocation: row.PriorLocation,
+                                    expectedlocation: row.ExpectedLocation,
                                     scannedlocation: row.ScannedLocation,
                                     status: row.ContainerStatus,
                                     scandate: row.ScanDate,
@@ -705,6 +707,9 @@
             }
             if (status === 'Not Scanned') {
                 actionOptions.push('Mark Missing');
+            }
+            if (status === 'Scanned, but already marked Missing') {
+                actionOptions.push('Unmark Missing');
             }
             return actionOptions;
         };

@@ -62,8 +62,9 @@ namespace ChemSW.Nbt.Actions
                     {
                         CswNbtObjClassContainer RetAsContainer = NewNode;
                         RetAsContainer.Material.RelatedNodeId = _MaterialId;
-                        RetAsContainer.Material.setHidden( value: true, SaveToDb: false );
-                        RetAsContainer.Size.setHidden( value: true, SaveToDb: false );
+                        //cases 30647 and 31079
+                        //RetAsContainer.Material.setHidden( value: true, SaveToDb: false );
+                        //RetAsContainer.Size.setHidden( value: true, SaveToDb: false );  
                         After( NewNode );
                     };
                 ret = _CswNbtSdTabsAndProps.getAddNodeAndPostChanges( ContainerNt, After2 );

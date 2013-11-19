@@ -44,6 +44,7 @@
                     isMultiEdit: nodeProperty.isMulti(),
                     EditMode: nodeProperty.tabState.EditMode,
                     required: nodeProperty.isRequired(),
+                    nodeId: nodeProperty.tabState.nodeid,
                     onChange: function (val) {
                         var valStr = val.join(',');
 

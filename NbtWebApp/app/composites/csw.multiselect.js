@@ -24,13 +24,14 @@
             isControl: false,
             EditMode: '',
             required: false,
+            nodeId: ''
         };
 
         var cswPublic = {};
         var multiSelectCtrl;
         var valStr;
         var valArr;
-        
+
         (function () {
 
             if (options) {
@@ -79,7 +80,7 @@
                         valArr = updatedValues;
                         var isValid = Csw.tryExec(cswPrivate.onChange, updatedValues);
                         if (isValid) {
-                            Csw.publish('triggerSave');
+                            Csw.publish('triggerSave_' + cswPrivate.nodeId);
                         }
                         return isValid;
                     },
@@ -96,7 +97,7 @@
                     hovertext: 'Edit',
                     size: 16,
                     isButton: true,
-                    onClick: function() {
+                    onClick: function () {
                         makeMultiSelect(true);
                     }
                 });
@@ -114,7 +115,7 @@
         };
 
         cswPublic.getValue = function () { //need func with this name for the Csw.validator
-            return cswPublic.val(); 
+            return cswPublic.val();
         };
 
         return cswPublic;

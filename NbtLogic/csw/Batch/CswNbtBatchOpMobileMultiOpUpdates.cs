@@ -219,7 +219,7 @@ namespace ChemSW.Nbt.Batch
 
         #region Helper Methods
 
-        private CswNbtNode _getNodeFromBarcode( string barcode, CswEnumNbtObjectClass objClassType, string barcodePropertyName )
+        private CswNbtNode _getNodeFromBarcode( string barcode, CswEnumNbtObjectClass objClassType, string barcodePropertyName, bool IncludeDefaultFilters = true )
         {
             CswNbtNode returnNode = null;
 
@@ -227,7 +227,7 @@ namespace ChemSW.Nbt.Batch
             CswNbtMetaDataObjectClass objClass = _CswNbtResources.MetaData.getObjectClass( objClassType );
             CswNbtMetaDataObjectClassProp barcodeOCP = objClass.getObjectClassProp( barcodePropertyName );
 
-            CswNbtViewRelationship parent = objClassView.AddViewRelationship( objClass, true );
+            CswNbtViewRelationship parent = objClassView.AddViewRelationship( objClass, IncludeDefaultFilters );
             objClassView.AddViewPropertyAndFilter( parent,
                                                     MetaDataProp : barcodeOCP,
                                                     Value : barcode,
@@ -400,7 +400,7 @@ namespace ChemSW.Nbt.Batch
 
             string newLocationBarcode = update["location"].ToString();
 
-            CswNbtObjClassContainer containerNode = _getNodeFromBarcode( barcode, CswEnumNbtObjectClass.ContainerClass, CswNbtObjClassContainer.PropertyName.Barcode );
+            CswNbtObjClassContainer containerNode = _getNodeFromBarcode( barcode, CswEnumNbtObjectClass.ContainerClass, CswNbtObjClassContainer.PropertyName.Barcode, false );
             if( null != containerNode )
             {
                 containerNode.CreateContainerLocationNode( CswEnumNbtContainerLocationTypeOptions.ReconcileScans, newLocationBarcode, barcode );

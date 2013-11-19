@@ -47,8 +47,7 @@
                     enabledText: 'Uncheck All',
                     onClick: function () {
                         Csw.iterate(ctrlOpts, function (opt) {
-                            opt.ctrl.checkbox.checked(false);
-                            onCheck(opt.ctrl.checkbox, opt.rowIdx);
+                            onCheck(opt.ctrl.checkbox, opt.rowIdx, false);
                         });
                     }
                 });
@@ -56,8 +55,7 @@
                     enabledText: 'Check All',
                     onClick: function () {
                         Csw.iterate(ctrlOpts, function (opt) {
-                            document.getElementById(opt.ctrl.checkbox.getId()).checked = true;
-                            onCheck(opt.ctrl.checkbox, opt.rowIdx);
+                            onCheck(opt.ctrl.checkbox, opt.rowIdx, true);
                         });
                     }
                 });
@@ -70,17 +68,20 @@
 
                 var optsTbl = optsDiv.table().css('padding', '10px');
 
-                var onCheck = function (checkBox, idx) {
-                    Csw.clientChanges.setChanged();
-                    var selectedVal = ctrlOpts[idx - 1].val;
-                    var selectedIdx = selected.indexOf(selectedVal);
-                    if (checkBox.checked()) {
-                        if (false == (selectedIdx > -1)) {
-                            selected.push(selectedVal);
-                        }
-                    } else {
-                        if (selectedIdx > -1) {
-                            selected.splice(selectedIdx, 1);
+                var onCheck = function (checkBox, idx, isChecked) {
+                    if (false === checkBox.$.is(':hidden')) {
+                        var selectedVal = ctrlOpts[idx - 1].val;
+                        var selectedIdx = selected.indexOf(selectedVal);
+                        document.getElementById(checkBox.getId()).checked = isChecked;
+                        Csw.clientChanges.setChanged();
+                        if (checkBox.checked()) {
+                            if (false == (selectedIdx > -1)) {
+                                selected.push(selectedVal);
+                            }
+                        } else {
+                            if (selectedIdx > -1) {
+                                selected.splice(selectedIdx, 1);
+                            }
                         }
                     }
                     cswPrivate.onChange(selected);
@@ -100,7 +101,7 @@
                         canCheck: true,
                         checked: Csw.bool(opt.selected),
                         onChange: function () {
-                            onCheck(checkBox, thisRowIdx);
+                            onCheck(checkBox, thisRowIdx, checkBox.checked());
                         }
                     });
                     cell.span({ text: opt.text, value: opt.text });

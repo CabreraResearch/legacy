@@ -262,7 +262,8 @@ namespace ChemSW.Nbt.Security
                         if( null != CswNbtObjClassUser )
                         {
                             if( PropType.getObjectClassPropName() == CswNbtObjClassUser.PropertyName.Password &&
-                                false == CswNbtObjClassUser.IsPasswordReadyOnly )
+                                false == CswNbtObjClassUser.IsPasswordReadOnly &&
+                                Node.NodeId == CswNbtObjClassUser.NodeId )
                             {
                                 ReturnVal = false;
                             }
@@ -863,9 +864,17 @@ namespace ChemSW.Nbt.Security
                                           where op.propname in ('Location', 'Inventory Group', 'Report Group', 'Mail Report Group'))
                            select n.nodeid, ivgval.field1_fk permissiongroupid
                              from nodes n
+                             join pval ivgval on (ivgval.nodeid = n.nodeid and ivgval.propname = 'Inventory Group')
+                            where n.nodetypeid = " + NodeTypeId + @"
+                        union
+                            select n.nodeid, ivgval.field1_fk permissiongroupid
+                             from nodes n
                              join pval locval on (locval.nodeid = n.nodeid and locval.propname = 'Location')
                              join pval ivgval on (ivgval.nodeid = locval.field1_fk and ivgval.propname = 'Inventory Group')
-                            where n.nodetypeid = " + NodeTypeId + @"
+                            where n.nodetypeid = " + NodeTypeId + @" 
+                              and not exists (select nodeid from pval x
+                                               where x.nodeid = n.nodeid 
+                                                 and x.propname = 'Inventory Group')
                         union
                            select n.nodeid, rgval.field1_fk permissiongroupid
                              from nodes n
@@ -1159,7 +1168,7 @@ namespace ChemSW.Nbt.Security
             {
                 User = _CswNbtResources.CurrentNbtUser;
             }
-            if( false == ( User is CswNbtSystemUser ) )
+            if( false == ( User is CswNbtSystemUser || User.Username == CswNbtObjClassUser.ChemSWAdminUsername ) )
             {
                 if( null != User && CswTools.IsPrimaryKey( PermissionGroupId ) )
                 {
