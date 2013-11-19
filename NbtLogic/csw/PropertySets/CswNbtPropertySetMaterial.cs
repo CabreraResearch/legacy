@@ -287,7 +287,7 @@ namespace ChemSW.Nbt.ObjClasses
 
                             ButtonData.Data["requestaction"] = OCPPropName;
                             ButtonData.Data["titleText"] = ButtonData.SelectedText + " for " + TradeName.Text;
-                            ButtonData.Data["requestItemProps"] = RequestAct.getRequestItemAddProps( NodeAsPropSet );
+                            ButtonData.Data["requestItemProps"] = RequestAct.getRequestItemAddProps( NodeAsPropSet.Node );
                             ButtonData.Data["requestItemNodeTypeId"] = NodeAsPropSet.NodeTypeId;
                             ButtonData.Data["relatednodeid"] = NodeId.ToString();
                             ButtonData.Action = CswEnumNbtButtonAction.request;

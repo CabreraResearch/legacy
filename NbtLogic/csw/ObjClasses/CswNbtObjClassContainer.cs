@@ -275,6 +275,7 @@ namespace ChemSW.Nbt.ObjClasses
                     case PropertyName.Request:
                         if( canContainer( _CswNbtResources, _CswNbtResources.Actions[CswEnumNbtActionName.Submit_Request], getPermissionGroupId() ) )
                         {
+                            ButtonData.Action = CswEnumNbtButtonAction.request;
                             CswNbtActRequesting RequestAct = new CswNbtActRequesting( _CswNbtResources );
                             HasPermission = true;
                             if( false == CswEnumNbtContainerRequestMenu.Options.Contains( ButtonData.SelectedText, CaseSensitive: false ) )
@@ -289,13 +290,11 @@ namespace ChemSW.Nbt.ObjClasses
                                     throw new CswDniException( "Could not find matching Container Button Action for " + ButtonData.SelectedText );
                                 }
                             }
-
-                            CswNbtPropertySetRequestItem NodeAsPropSet = RequestAct.makeContainerRequestItem( this, ButtonData );
-
-                            ButtonData.Data["titleText"] = "Add to Cart: " + NodeAsPropSet.Type.Value + " " + Barcode.Barcode;
+                            CswNbtObjClassRequestItem RequestItem = RequestAct.makeContainerRequestItem( this, ButtonData );
+                            ButtonData.Data["titleText"] = "Add to Cart: " + RequestItem.Type.Value + " " + Barcode.Barcode;
                             ButtonData.Data["requestaction"] = ButtonData.SelectedText;
-                            ButtonData.Data["requestItemProps"] = RequestAct.getRequestItemAddProps( NodeAsPropSet );
-                            ButtonData.Data["requestItemNodeTypeId"] = NodeAsPropSet.NodeTypeId;
+                            ButtonData.Data["requestItemProps"] = RequestAct.getRequestItemAddProps( RequestItem.Node );
+                            ButtonData.Data["requestItemNodeTypeId"] = RequestItem.NodeTypeId;
                         }
                         break;
                     case PropertyName.ContainerFamily:

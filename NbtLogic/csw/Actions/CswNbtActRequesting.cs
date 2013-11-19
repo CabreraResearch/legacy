@@ -305,15 +305,12 @@ namespace ChemSW.Nbt.Actions
         }
 
         /// <summary>
-        /// Instance a new request item according to Object Class rules. Note: this does not get the properties.
-        /// The above description is a copy/paste error
+        /// Get the Add Layout Properties for the given RequestItem
         /// </summary>
-        public JObject getRequestItemAddProps( CswNbtPropertySetRequestItem RetAsRequestItem )
+        public JObject getRequestItemAddProps( CswNbtNode RequestItemNode )
         {
             CswNbtSdTabsAndProps PropsAction = new CswNbtSdTabsAndProps( _CswNbtResources );
-            //...oh wait, these add props are going to be different for each type - how are we going to do this?
-            //according to the getProps logic, we should be ignoring hidden properties, which we're properly setting
-            return PropsAction.getProps( RetAsRequestItem.Node, "", null, CswEnumNbtLayoutType.Add );
+            return PropsAction.getProps( RequestItemNode, "", null, CswEnumNbtLayoutType.Add );
         }
 
         public const string SubmittedItemsViewName = "Submitted Request Items";
@@ -638,113 +635,60 @@ namespace ChemSW.Nbt.Actions
             return Ret;
         }
 
-        //this description doesn't help - it creates dispense, move, or dispose depending on the selected button menu item
         /// <summary>
-        /// Instance a new request item according to Object Class rules. Note: this does not get the properties.
+        /// Instance a new Container Request Item based on the selected button option - the type will either be Dispense, Move, or Dispose.
         /// </summary>
-        public CswNbtPropertySetRequestItem makeContainerRequestItem( CswNbtObjClassContainer Container, CswNbtObjClass.NbtButtonData ButtonData, CswNbtMetaDataObjectClass ItemOc = null )
+        public CswNbtObjClassRequestItem makeContainerRequestItem( CswNbtObjClassContainer Container, CswNbtObjClass.NbtButtonData ButtonData )
         {
-            //Set Type
-            CswNbtPropertySetRequestItem ret = null;
-            if( null == ItemOc )
+            CswNbtObjClassRequestItem RequestItem;
+            CswNbtMetaDataObjectClass RequestItemOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestItemClass );
+            CswNbtMetaDataNodeType RequestItemNT = RequestItemOC.getNodeTypes().FirstOrDefault();
+            CswNbtSdTabsAndProps PropsAction = new CswNbtSdTabsAndProps( _CswNbtResources );
+            RequestItem = PropsAction.getAddNodeAndPostChanges( RequestItemNT, delegate( CswNbtNode NewNode )
             {
-                if( ButtonData.SelectedText == CswEnumNbtContainerRequestMenu.Dispense )
+                CswNbtObjClassRequestItem RequestItemNode = NewNode;
+                if( null != getCurrentRequestNodeId() && null != Container )
                 {
-                    ItemOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestContainerDispenseClass );
-                }
-                else
-                {
-                    ItemOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestContainerUpdateClass );
-                }
-            }
-
-            if( null != ItemOc )
-            {
-                CswNbtMetaDataNodeType RequestItemNt = ItemOc.getNodeTypes().FirstOrDefault();
-                CswNbtSdTabsAndProps PropsAction = new CswNbtSdTabsAndProps( _CswNbtResources );
-
-                CswNbtNodeCollection.AfterMakeNode After = delegate( CswNbtNode NewNode )
-                {
-                    CswNbtPropertySetRequestItem RetAsRequestItem = NewNode;
-                    if( null != getCurrentRequestNodeId() && null != Container )
+                    RequestItemNode.Container.RelatedNodeId = Container.NodeId;
+                    RequestItemNode.Material.RelatedNodeId = Container.Material.RelatedNodeId;
+                    CswPrimaryKey SelectedLocationId = CswTools.IsPrimaryKey( _ThisUser.DefaultLocationId ) ? 
+                        _ThisUser.DefaultLocationId : 
+                        Container.Location.SelectedNodeId;
+                    ButtonData.Action = CswEnumNbtButtonAction.request;
+                    switch( ButtonData.SelectedText )
                     {
-                        //set location
-                        CswPrimaryKey SelectedLocationId = new CswPrimaryKey();
-                        if( CswTools.IsPrimaryKey( _ThisUser.DefaultLocationId ) )
-                        {
-                            SelectedLocationId = _ThisUser.DefaultLocationId;
-                        }
-                        else
-                        {
-                            SelectedLocationId = Container.Location.SelectedNodeId;
-                        }
-                        ButtonData.Action = CswEnumNbtButtonAction.request;
-                        if( ButtonData.SelectedText == CswEnumNbtContainerRequestMenu.Dispense )
-                        {
-                            CswNbtObjClassRequestContainerDispense RetAsDispense = CswNbtObjClassRequestContainerDispense.fromPropertySet( RetAsRequestItem );
-
-                            //set which properties are visible/readonly in the add layout
-                            RetAsDispense.Container.RelatedNodeId = Container.NodeId;
-                            RetAsDispense.Container.setReadOnly( value: true, SaveToDb: true );
-                            RetAsDispense.Material.RelatedNodeId = Container.Material.RelatedNodeId;
-                            RetAsDispense.Material.setReadOnly( value: true, SaveToDb: false );
-                            RetAsDispense.Material.setHidden( value: true, SaveToDb: false );
-                            RetAsDispense.Quantity.UnitId = Container.Quantity.UnitId;
-                            RetAsDispense.Size.RelatedNodeId = Container.Size.RelatedNodeId;
-                            RetAsDispense.Location.SelectedNodeId = SelectedLocationId;
-
-                            _setRequestItemSizesView( RetAsDispense.Size.View.ViewId, Container.Material.RelatedNodeId );
+                        case CswEnumNbtContainerRequestMenu.Dispense:
+                            RequestItemNode.Type.Value = CswNbtObjClassRequestItem.Types.ContainerDispense;
+                            RequestItemNode.Quantity.UnitId = Container.Quantity.UnitId;
+                            RequestItemNode.Size.RelatedNodeId = Container.Size.RelatedNodeId;
+                            RequestItemNode.Location.SelectedNodeId = SelectedLocationId;
+                            //Scope available units of measure on Quantity based on the Container's Material and Size
+                            _setRequestItemSizesView( RequestItemNode.Size.View.ViewId, Container.Material.RelatedNodeId );
                             CswNbtNode MaterialNode = _CswNbtResources.Nodes[Container.Material.RelatedNodeId];
-                            Debug.Assert( null != MaterialNode, "RequestItem created without a valid Material." );
                             if( null != MaterialNode )
                             {
                                 CswNbtUnitViewBuilder Vb = new CswNbtUnitViewBuilder( _CswNbtResources );
-                                Vb.setQuantityUnitOfMeasureView( MaterialNode, RetAsDispense.Quantity );
+                                Vb.setQuantityUnitOfMeasureView( MaterialNode, RequestItemNode.Quantity );
                             }
-                        }
-                        else
-                        {
-                            CswNbtObjClassRequestContainerUpdate RetAsUpdate = CswNbtObjClassRequestContainerUpdate.fromPropertySet( RetAsRequestItem );
-                            RetAsUpdate.Container.RelatedNodeId = Container.NodeId;
-                            RetAsUpdate.Container.setReadOnly( value: true, SaveToDb: true );
-
-                            switch( ButtonData.SelectedText )
-                            {
-                                case CswEnumNbtContainerRequestMenu.Dispose:
-                                    //RetAsUpdate.IsTemp = false; // This is the only condition in which we want to commit the node upfront.
-                                    RetAsUpdate.Type.Value = CswNbtObjClassRequestContainerUpdate.Types.Dispose;
-                                    RetAsUpdate.Location.SelectedNodeId = Container.Location.SelectedNodeId;
-                                    RetAsUpdate.Location.setReadOnly( value: true, SaveToDb: true );
-                                    break;
-                                case CswEnumNbtContainerRequestMenu.Move:
-                                    RetAsUpdate.Location.SelectedNodeId = SelectedLocationId;
-                                    RetAsUpdate.Type.Value = CswNbtObjClassRequestContainerUpdate.Types.Move;
-                                    break;
-                            }
-                        }
-
-                        RetAsRequestItem.Location.RefreshNodeName();
-                        RetAsRequestItem.Type.setReadOnly( value: true, SaveToDb: true );
-
-                        //RetAsRequestItem.postChanges( ForceUpdate: false );
+                            break;
+                        case CswEnumNbtContainerRequestMenu.Dispose:
+                            RequestItemNode.Type.Value = CswNbtObjClassRequestItem.Types.ContainerDispose;
+                            RequestItemNode.Location.SelectedNodeId = Container.Location.SelectedNodeId;
+                            break;
+                        case CswEnumNbtContainerRequestMenu.Move:
+                            RequestItemNode.Type.Value = CswNbtObjClassRequestItem.Types.ContainerMove;
+                            RequestItemNode.Location.SelectedNodeId = SelectedLocationId;
+                            
+                            break;
                     }
-                }; // AfterMakeNode
-
-                ret = PropsAction.getAddNodeAndPostChanges( RequestItemNt, After );//this does everything above
-                if( ButtonData.SelectedText == CswEnumNbtContainerRequestMenu.Dispose )
-                {
-                    // This is the only condition in which we want to commit the node upfront.
-                    //why?
-                    ret.PromoteTempToReal();
+                    RequestItemNode.Location.RefreshNodeName();
                 }
-
-                if( null == ret )
-                {
-                    throw new CswDniException( CswEnumErrorType.Error, "Could not generate a new request item.", "Failed to create a new Request Item node." );
-                }
-
-            } // if( null != ItemOc )
-            return ret;
+            } );
+            if( null == RequestItem )
+            {
+                throw new CswDniException( CswEnumErrorType.Error, "Could not generate a new request item.", "Failed to create a new Request Item node." );
+            }
+            return RequestItem;
         }
 
         //

@@ -372,6 +372,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
         {
+            _setUIVisibility();//This sets the Request Item's add layout based on its Type
             _CswNbtObjClassDefault.beforeCreateNode( IsCopy, OverrideUniqueValidation );
         }
 
@@ -535,7 +536,7 @@ namespace ChemSW.Nbt.ObjClasses
             NewMaterialPartNo.SetOnBeforeRender( TypeDef.setPropUIVisibility );
             RecurringFrequency.SetOnBeforeRender( _hideRecurringProps );
             NextReorderDate.SetOnBeforeRender( _hideRecurringProps );
-            Fulfill.SetOnBeforeRender( _hideFulfillButton );
+            //Fulfill.SetOnBeforeRender( _hideFulfillButton );//TODO - uncomment when done debugging
         }
 
         private void _hideRecurringProps( CswNbtNodeProp Prop )
