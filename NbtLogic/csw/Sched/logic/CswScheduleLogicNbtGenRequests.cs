@@ -18,16 +18,16 @@ namespace ChemSW.Nbt.Sched
         //Determine the number of recurring requests that need to be processed and return that value
         public Int32 getLoadCount( ICswResources CswResources )
         {
-            _CswScheduleLogicDetail.LoadCount = 0;
+            Int32 LoadCount = 0;
             CswNbtResources NbtResources = (CswNbtResources) CswResources;
             if( NbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Containers ) )
             {
                 CswNbtActRequesting ActRequesting = new CswNbtActRequesting( NbtResources );
                 CswNbtView AllRecurringRequests = ActRequesting.getDueRecurringRequestsItemsView();
                 ICswNbtTree Tree = NbtResources.Trees.getTreeFromView( AllRecurringRequests, RequireViewPermissions: false, IncludeSystemNodes: false, IncludeHiddenNodes: false );
-                _CswScheduleLogicDetail.LoadCount = Tree.getChildNodeCount();
+                LoadCount = Tree.getChildNodeCount();
             }
-            return _CswScheduleLogicDetail.LoadCount;
+            return LoadCount;
         }
 
         private CswEnumScheduleLogicRunStatus _LogicRunStatus = CswEnumScheduleLogicRunStatus.Idle;
