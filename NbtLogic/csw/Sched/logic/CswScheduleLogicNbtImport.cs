@@ -54,8 +54,7 @@ namespace ChemSW.Nbt.Sched
                 CswNbtImporter Importer = new CswNbtImporter( CswNbtResources );
                 _DataTableNames = Importer.getImportDataTableNames();
             }
-            _CswScheduleLogicDetail.LoadCount = _DataTableNames.Count;
-            return _CswScheduleLogicDetail.LoadCount;
+            return _DataTableNames.Count;
         }
 
         public void threadCallBack( ICswResources CswResources )

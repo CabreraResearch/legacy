@@ -69,8 +69,7 @@ namespace ChemSW.Nbt.Sched
             {
                 _setLoad( CswResources );
             }
-            _CswScheduleLogicDetail.LoadCount = _GeneratorPks.Count;
-            return _CswScheduleLogicDetail.LoadCount;
+            return _GeneratorPks.Count;
         } 
 
         public void threadCallBack( ICswResources CswResources )

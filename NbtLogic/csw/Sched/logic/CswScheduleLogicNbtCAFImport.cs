@@ -57,8 +57,7 @@ namespace ChemSW.Nbt.Sched
             string Sql = "select count(*) cnt from nbtimportqueue@" + CAFDbLink + " where state = '" + State.I + "'";
             CswArbitrarySelect QueueCountSelect = CswResources.makeCswArbitrarySelect( "cafimport_queue_count", Sql );
             DataTable QueueCountTable = QueueCountSelect.getTable();
-            _CswScheduleLogicDetail.LoadCount = CswConvert.ToInt32( QueueCountTable.Rows[0]["cnt"] );
-            return _CswScheduleLogicDetail.LoadCount;
+            return CswConvert.ToInt32( QueueCountTable.Rows[0]["cnt"] ); ;
         }
 
         public void threadCallBack( ICswResources CswResources )

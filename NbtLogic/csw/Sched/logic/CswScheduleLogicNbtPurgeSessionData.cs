@@ -50,8 +50,6 @@ namespace ChemSW.Nbt.Sched
                     ReturnVal = ExpiredSessionRecordCount + OrhpanSessionDataCount;
                     _StaleDataExists = true;
                 }
-
-                _CswScheduleLogicDetail.LoadCount = ReturnVal;
             }
             else
             {
