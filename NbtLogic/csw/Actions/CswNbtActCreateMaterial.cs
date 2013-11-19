@@ -471,7 +471,7 @@ namespace ChemSW.Nbt.Actions
                         JObject RequestObj = CswConvert.ToJObject( MaterialObj["request"] );
                         if( RequestObj.HasValues )
                         {
-                            _processRequest( CswConvert.ToString( RequestObj["requestitemid"] ), FinalMaterial.Node.NodeId );
+                            _processRequest( CswConvert.ToString( RequestObj["requestitemid"] ), NodeAsMaterial );
                         }
                         CswNbtActReceiving Receiving = new CswNbtActReceiving( _CswNbtResources );
                         Receiving.commitSDSDocNode( NodeAsMaterial.NodeId, MaterialObj );
@@ -490,22 +490,34 @@ namespace ChemSW.Nbt.Actions
             return Ret;
         }
 
-        private void _processRequest( String RequestItemId, CswPrimaryKey MaterialId )
+        private void _processRequest( String RequestItemId, CswNbtPropertySetMaterial Material )
         {
-            CswNbtObjClassRequestMaterialCreate RequestCreate = _CswNbtResources.Nodes[RequestItemId];
-            if( null != RequestCreate )
+            CswNbtNode RequestItemNode = _CswNbtResources.Nodes[RequestItemId];
+            if( RequestItemNode.getObjectClass().ObjectClass == CswEnumNbtObjectClass.RequestItemClass )
             {
-                RequestCreate.Material.RelatedNodeId = MaterialId;
-                RequestCreate.Status.Value = CswNbtObjClassRequestMaterialCreate.Statuses.Created;
-                RequestCreate.Fulfill.State = CswNbtObjClassRequestMaterialCreate.FulfillMenu.Complete;
-                RequestCreate.Fulfill.MenuOptions = CswNbtObjClassRequestMaterialCreate.FulfillMenu.Complete;
+                CswNbtObjClassRequestItem RequestCreate = RequestItemNode;
+                RequestCreate.Material.RelatedNodeId = Material.NodeId;
+                RequestCreate.Status.Value = CswNbtObjClassRequestItem.Statuses.Created;
+                RequestCreate.Type.Value = CswNbtObjClassRequestItem.Types.MaterialBulk;
+                RequestCreate.FulfillmentHistory.AddComment( "Created " + Material.NodeName );
                 RequestCreate.postChanges( ForceUpdate: false );
-
-                CswNbtMetaDataObjectClass RequestMaterialDispenseOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestMaterialDispenseClass );
-                CswNbtMetaDataNodeType RequestMaterialDispenseNT = RequestMaterialDispenseOC.FirstNodeType;
-                if( null != RequestMaterialDispenseNT )
+            }
+            else//TODO - Case 30533 - remove
+            {
+                CswNbtObjClassRequestMaterialCreate RequestCreate = RequestItemNode;
+                if( null != RequestCreate )
                 {
-                    _CswNbtResources.Nodes.makeNodeFromNodeTypeId( RequestMaterialDispenseNT.NodeTypeId, delegate( CswNbtNode NewNode )
+                    RequestCreate.Material.RelatedNodeId = Material.NodeId;
+                    RequestCreate.Status.Value = CswNbtObjClassRequestMaterialCreate.Statuses.Created;
+                    RequestCreate.Fulfill.State = CswNbtObjClassRequestMaterialCreate.FulfillMenu.Complete;
+                    RequestCreate.Fulfill.MenuOptions = CswNbtObjClassRequestMaterialCreate.FulfillMenu.Complete;
+                    RequestCreate.postChanges( ForceUpdate: false );
+
+                    CswNbtMetaDataObjectClass RequestMaterialDispenseOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestMaterialDispenseClass );
+                    CswNbtMetaDataNodeType RequestMaterialDispenseNT = RequestMaterialDispenseOC.FirstNodeType;
+                    if( null != RequestMaterialDispenseNT )
+                    {
+                        _CswNbtResources.Nodes.makeNodeFromNodeTypeId( RequestMaterialDispenseNT.NodeTypeId, delegate( CswNbtNode NewNode )
                         {
                             CswNbtObjClassRequestMaterialDispense RequestDispense = NewNode;
                             RequestDispense.Request.RelatedNodeId = RequestCreate.Request.RelatedNodeId;
@@ -514,7 +526,7 @@ namespace ChemSW.Nbt.Actions
                             RequestDispense.Location.CachedPath = RequestCreate.Location.CachedPath;
                             RequestDispense.Quantity.Quantity = RequestCreate.Quantity.Quantity;
                             RequestDispense.Quantity.UnitId = RequestCreate.Quantity.UnitId;
-                            RequestDispense.Material.RelatedNodeId = MaterialId;
+                            RequestDispense.Material.RelatedNodeId = Material.NodeId;
                             RequestDispense.InventoryGroup.RelatedNodeId = RequestCreate.InventoryGroup.RelatedNodeId;
                             RequestDispense.ExternalOrderNumber.Text = RequestCreate.ExternalOrderNumber.Text;
                             RequestDispense.Requestor.RelatedNodeId = RequestCreate.Requestor.RelatedNodeId;
@@ -527,6 +539,7 @@ namespace ChemSW.Nbt.Actions
                             RequestDispense.setRequestDescription();
                             //RequestDispense.postChanges( false );
                         } );
+                    }
                 }
             }
         }

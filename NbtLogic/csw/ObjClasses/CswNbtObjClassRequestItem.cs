@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using ChemSW.Core;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
@@ -371,7 +372,6 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
         {
-            TypeDef.setFulfillOptions();
             _CswNbtObjClassDefault.beforeCreateNode( IsCopy, OverrideUniqueValidation );
         }
 
@@ -384,6 +384,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             _setDefaultValues();
             TypeDef.setDescription();
+            Type.SetOnPropChange( _onTypePropChange );
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation, Creating );
         }
 
@@ -457,6 +458,28 @@ namespace ChemSW.Nbt.ObjClasses
                                 break;
                             case FulfillMenu.Create:
                                 ButtonData.Action = CswEnumNbtButtonAction.creatematerial;
+                                    // Create the temporary material node
+                                    Int32 SelectedNodeTypeId = NewMaterialType.SelectedNodeTypeIds.ToIntCollection().FirstOrDefault();
+                                    CswNbtPropertySetMaterial NewMaterial = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( SelectedNodeTypeId, IsTemp: true, OnAfterMakeNode: delegate( CswNbtNode NewNode )
+                                    {
+                                        ( (CswNbtPropertySetMaterial) NewNode ).TradeName.Text = NewMaterialTradename.Text;
+                                        ( (CswNbtPropertySetMaterial) NewNode ).PartNumber.Text = NewMaterialPartNo.Text;
+                                    } );
+                                    Material.RelatedNodeId = NewMaterial.NodeId;
+                                    ButtonData.Data["state"] = new JObject();
+                                    ButtonData.Data["state"]["materialType"] = new JObject();
+                                    ButtonData.Data["state"]["materialType"]["name"] = NewMaterial.NodeType.NodeTypeName;
+                                    ButtonData.Data["state"]["materialType"]["val"] = NewMaterial.NodeType.NodeTypeId;
+                                    ButtonData.Data["state"]["materialId"] = NewMaterial.NodeId.ToString();
+                                    ButtonData.Data["state"]["tradeName"] = NewMaterial.TradeName.Text;
+                                    ButtonData.Data["state"]["addNewC3Supplier"] = true;
+                                    ButtonData.Data["state"]["supplier"] = new JObject();
+                                    ButtonData.Data["state"]["supplier"]["name"] = NewMaterialSupplier.Text;
+                                    ButtonData.Data["state"]["partNo"] = NewMaterialPartNo.Text;
+                                    ButtonData.Data["state"]["request"] = new JObject();
+                                    ButtonData.Data["state"]["request"]["requestitemid"] = NodeId.ToString();
+                                    ButtonData.Data["state"]["request"]["materialid"] = ( Material.RelatedNodeId ?? new CswPrimaryKey() ).ToString();
+                                    ButtonData.Data["success"] = true;
                                 break;
                             case FulfillMenu.Order:
                                 ButtonData.Action = CswEnumNbtButtonAction.editprop;
@@ -571,6 +594,10 @@ namespace ChemSW.Nbt.ObjClasses
         //Core Properties (All Request Items use these)
         public CswNbtNodePropList Status { get { return _CswNbtNode.Properties[PropertyName.Status]; } }
         public CswNbtNodePropList Type { get { return _CswNbtNode.Properties[PropertyName.Type]; } }
+        private void _onTypePropChange( CswNbtNodeProp Prop, bool Creating )
+        {
+            TypeDef.setFulfillOptions();
+        }
         public CswNbtNodePropRelationship Request { get { return _CswNbtNode.Properties[PropertyName.Request]; } }
         public CswNbtNodePropPropertyReference Name { get { return _CswNbtNode.Properties[PropertyName.Name]; } }
         public CswNbtNodePropSequence ItemNumber { get { return _CswNbtNode.Properties[PropertyName.ItemNumber]; } }
