@@ -385,6 +385,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             _setDefaultValues();
             TypeDef.setDescription();
+            Status.SetOnPropChange( _onStatusPropChange );
             Type.SetOnPropChange( _onTypePropChange );
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation, Creating );
         }
@@ -456,7 +457,6 @@ namespace ChemSW.Nbt.ObjClasses
                             case FulfillMenu.Complete:
                                 Status.Value = Statuses.Completed;
                                 Fulfill.State = FulfillMenu.Complete;
-                                FulfillmentHistory.AddComment( "Request Item Completed." );
                                 ButtonData.Action = CswEnumNbtButtonAction.refresh;
                                 break;
                             case FulfillMenu.Create:
@@ -507,6 +507,7 @@ namespace ChemSW.Nbt.ObjClasses
                                     ButtonData.clone( DispenseData );
                                 }
                                 break;
+                            //TODO - Case 27697 - for move and Dispose, search for other requests with the same container/location and mark them as complete
                             case FulfillMenu.Move:
                                 //Apparently CswEnumNbtButtonAction.move is for moving multiple containers for MaterialSize requests
                                 //TODO - figure out how to handle this discrepancy
@@ -519,7 +520,6 @@ namespace ChemSW.Nbt.ObjClasses
                                     ContainerNode.Location.CachedPath = Location.CachedPath;
                                     ContainerNode.postChanges( false );
                                     FulfillmentHistory.AddComment( "Moved " + ContainerNode.NodeName + " to " + Location.CachedFullPath );
-                                    FulfillmentHistory.AddComment( "Request Item Completed." );
                                     Status.Value = Statuses.Completed;
                                 }
                                 break;
@@ -531,7 +531,6 @@ namespace ChemSW.Nbt.ObjClasses
                                     ContainerNode.DisposeContainer();
                                     ContainerNode.postChanges( true );
                                     FulfillmentHistory.AddComment( "Disposed Container " + ContainerNode.Barcode.Barcode );
-                                    FulfillmentHistory.AddComment( "Request Item Completed." );
                                     Status.Value = Statuses.Completed;
                                 }
                                 break;
@@ -628,6 +627,13 @@ namespace ChemSW.Nbt.ObjClasses
 
         //Core Properties (All Request Items use these)
         public CswNbtNodePropList Status { get { return _CswNbtNode.Properties[PropertyName.Status]; } }
+        private void _onStatusPropChange( CswNbtNodeProp Prop, bool Creating )
+        {
+            if( Status.Value == Statuses.Completed )
+            {
+                FulfillmentHistory.AddComment( "Request Item Completed." );
+            }
+        }
         public CswNbtNodePropList Type { get { return _CswNbtNode.Properties[PropertyName.Type]; } }
         private void _onTypePropChange( CswNbtNodeProp Prop, bool Creating )
         {
