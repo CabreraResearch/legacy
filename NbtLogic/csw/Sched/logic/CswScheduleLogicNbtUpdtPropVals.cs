@@ -33,9 +33,15 @@ namespace ChemSW.Nbt.Sched
         //Determine the number of props that need to be updated and return that value
         public Int32 getLoadCount( ICswResources CswResources )
         {
+            Int32 OldLoadCount = _CswScheduleLogicDetail.LoadCount;
             CswArbitrarySelect OutOfDateNodesQuerySelect = getValuesToUpdate( CswResources );
             DataTable OutOfDateNodes = OutOfDateNodesQuerySelect.getTable();
-            return OutOfDateNodes.Rows.Count;
+            Int32 LoadCount = OutOfDateNodes.Rows.Count;
+            if( LoadCount == OldLoadCount )
+            {
+                LoadCount = 0;//Case 31213 - If LoadCount is stuck above 0 and hasn't changed, skip running this rule
+            }
+            return LoadCount;
         }
 
         private CswScheduleLogicDetail _CswScheduleLogicDetail = null;
