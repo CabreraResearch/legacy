@@ -498,6 +498,7 @@ namespace ChemSW.Nbt.ObjClasses
                                     MaterialNode.triggerOnButtonClick( ReceiveData );
                                     ButtonData.clone( ReceiveData );
                                 }
+                                //TODO - if it's a Material Size Request, we should select the requested Size and Unit Count by default.
                                 break;
                             case FulfillMenu.Dispense:
                                 //Apparently CswEnumNbtButtonAction.dispense is for dispensing an arbitrary container for Material requests
@@ -522,7 +523,7 @@ namespace ChemSW.Nbt.ObjClasses
                                     ContainerNode.Location.CachedNodeName = Location.CachedNodeName;
                                     ContainerNode.Location.CachedPath = Location.CachedPath;
                                     ContainerNode.postChanges( false );
-                                    FulfillmentHistory.AddComment( "Moved " + ContainerNode.NodeName + " to " + Location.CachedFullPath );
+                                    FulfillmentHistory.AddComment( "Moved " + ContainerNode.Node.NodeLink + " to " + Location.CachedFullPath );
                                     Status.Value = Statuses.Completed;
                                 }
                                 break;
@@ -533,11 +534,12 @@ namespace ChemSW.Nbt.ObjClasses
                                 {
                                     ContainerNode.DisposeContainer();
                                     ContainerNode.postChanges( true );
-                                    FulfillmentHistory.AddComment( "Disposed Container " + ContainerNode.Barcode.Barcode );
+                                    FulfillmentHistory.AddComment( "Disposed Container " + CswNbtNode.getNodeLink(ContainerNode.NodeId, ContainerNode.Barcode.Barcode) );
                                     Status.Value = Statuses.Completed;
                                 }
                                 break;
                         } //switch( ButtonData.SelectedText )
+                        //TODO - we use 3 different RequestItem objects for 3 different wizards - can we clean this up?
                         ButtonData.Data["requestitem"] = ButtonData.Data["requestitem"] ?? new JObject();
                         ButtonData.Data["requestitem"]["requestMode"] = Type.Value.ToLower();
                         ButtonData.Data["requestitem"]["requestitemid"] = NodeId.ToString();
@@ -545,6 +547,10 @@ namespace ChemSW.Nbt.ObjClasses
                         ButtonData.Data["requestitem"]["materialid"] = ( Material.RelatedNodeId ?? new CswPrimaryKey() ).ToString();
                         ButtonData.Data["requestitem"]["containerid"] = ( Container.RelatedNodeId ?? new CswPrimaryKey() ).ToString();
                         ButtonData.Data["requestitem"]["locationid"] = ( Location.SelectedNodeId ?? new CswPrimaryKey() ).ToString();
+                        if( ButtonData.Data["state"] != null )
+                        {
+                            ButtonData.Data["state"]["requestitem"] = ButtonData.Data["requestitem"];
+                        }
                         postChanges( ForceUpdate: false );
                         break; //case PropertyName.Fulfill:
                 }
@@ -632,9 +638,14 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropList Status { get { return _CswNbtNode.Properties[PropertyName.Status]; } }
         private void _onStatusPropChange( CswNbtNodeProp Prop, bool Creating )
         {
-            if( Status.Value == Statuses.Completed )
+            switch( Status.Value )
             {
-                FulfillmentHistory.AddComment( "Request Item Completed." );
+                case Statuses.Submitted:
+                    FulfillmentHistory.AddComment( "Request Item Submitted." );
+                    break;
+                case Statuses.Completed:
+                    FulfillmentHistory.AddComment( "Request Item Completed." );
+                    break;
             }
         }
         public CswNbtNodePropList Type { get { return _CswNbtNode.Properties[PropertyName.Type]; } }

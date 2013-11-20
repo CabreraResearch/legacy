@@ -59,6 +59,17 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterCreateNode()
         {
+            CswNbtNode NodeAsRequestItem = _CswNbtResources.Nodes[RequestItem.RelatedNodeId];
+            if( null != NodeAsRequestItem )
+            {
+                if( NodeAsRequestItem.getObjectClass().ObjectClass == CswEnumNbtObjectClass.RequestItemClass )//TODO - case 30533 - remove if 
+                {
+                    CswNbtObjClassRequestItem RequestItemNode = NodeAsRequestItem;
+                    RequestItemNode.FulfillmentHistory.AddComment( "Received " + Node.NodeLink );
+                    RequestItemNode.Status.Value = CswNbtObjClassRequestItem.Statuses.Received;
+                    RequestItemNode.postChanges( false );
+                }
+            }
             _CswNbtObjClassDefault.afterCreateNode();
         }//afterCreateNode()
 
