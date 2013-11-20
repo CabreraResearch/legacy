@@ -499,7 +499,7 @@ namespace ChemSW.Nbt.Actions
                 RequestCreate.Material.RelatedNodeId = Material.NodeId;
                 RequestCreate.Status.Value = CswNbtObjClassRequestItem.Statuses.Created;
                 RequestCreate.Type.Value = CswNbtObjClassRequestItem.Types.MaterialBulk;
-                RequestCreate.FulfillmentHistory.AddComment( "Created " + Material.NodeName );
+                RequestCreate.FulfillmentHistory.AddComment( "Created " + Material.Node.NodeLink );
                 RequestCreate.postChanges( ForceUpdate: false );
             }
             else//TODO - Case 30533 - remove

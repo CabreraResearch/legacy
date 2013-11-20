@@ -71,10 +71,14 @@ namespace ChemSW.Nbt.ObjClasses
                     if( NodeAsRequestItem.getObjectClass().ObjectClass == CswEnumNbtObjectClass.RequestItemClass )
                     {
                         CswNbtObjClassRequestItem RequestItemNode = NodeAsRequestItem;
-                        CswNbtUnitConversion Conversion = new CswNbtUnitConversion( _CswNbtResources, QuantityDispensed.UnitId, RequestItemNode.TotalDispensed.UnitId, RequestItemNode.Material.RelatedNodeId );
-                        double DispensedQuantity = Conversion.convertUnit( QuantityDispensed.Quantity );
-                        RequestItemNode.TotalDispensed.Quantity -= DispensedQuantity; // Subtracting a negative number in order to add
-                        RequestItemNode.FulfillmentHistory.AddComment( "Dispensed " + QuantityDispensed.Gestalt + " into " + DestinationContainer.Gestalt );
+                        if( Type.Value == CswEnumNbtContainerDispenseType.Dispense.ToString() )
+                        {
+                            CswNbtUnitConversion Conversion = new CswNbtUnitConversion( _CswNbtResources, QuantityDispensed.UnitId, RequestItemNode.TotalDispensed.UnitId, RequestItemNode.Material.RelatedNodeId );
+                            double DispensedQuantity = Conversion.convertUnit( QuantityDispensed.Quantity );
+                            RequestItemNode.TotalDispensed.Quantity -= DispensedQuantity; // Subtracting a negative number in order to add
+                            RequestItemNode.FulfillmentHistory.AddComment( "Dispensed " + QuantityDispensed.Gestalt + " into " + CswNbtNode.getNodeLink(DestinationContainer.RelatedNodeId, DestinationContainer.Gestalt) );
+                            RequestItemNode.Status.Value = CswNbtObjClassRequestItem.Statuses.Dispensed;
+                        }
                         RequestItemNode.postChanges( false );
                     }
                     else//TODO - case 30533 - remove
