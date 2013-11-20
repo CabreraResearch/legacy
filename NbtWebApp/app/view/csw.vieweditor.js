@@ -144,11 +144,7 @@
                 cswPrivate.toggleButton(cswPrivate.buttons.prev, false);
                 cswPrivate.toggleButton(cswPrivate.buttons.cancel, true);
                 cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
-                if (false == Csw.isNullOrEmpty(cswPrivate.selectedViewId)) {
-                    cswPrivate.toggleButton(cswPrivate.buttons.next, true);
-                } else {
-                    cswPrivate.toggleButton(cswPrivate.buttons.next, false);
-                }
+                cswPrivate.toggleButton(cswPrivate.buttons.next, false);
 
                 cswPrivate.step1Div = cswPrivate.step1Div || cswPrivate.wizard.div(cswPrivate.currentStepNo);
                 cswPrivate.step1Div.empty();
@@ -283,8 +279,14 @@
                                 onLoad: function (grid) {
                                     if (false === Csw.isNullOrEmpty(cswPrivate.selectedViewId)) {
                                         var rowid = grid.getRowIdForVal('viewid', cswPrivate.selectedViewId);
-                                        grid.setSelection(rowid);
-                                        grid.scrollToRow(rowid);
+                                        if (rowid > -1) {
+                                            grid.setSelection(rowid);
+                                            grid.scrollToRow(rowid);
+                                            cswPrivate.toggleButton(cswPrivate.buttons.next, true);
+                                        } else {
+                                            deleteViewBtn.disable();
+                                            copyViewBtn.disable();
+                                        }
                                     } else {
                                         deleteViewBtn.disable();
                                         copyViewBtn.disable();
