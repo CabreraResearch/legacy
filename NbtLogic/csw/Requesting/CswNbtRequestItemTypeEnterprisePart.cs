@@ -48,8 +48,7 @@ namespace ChemSW.Nbt.Requesting
         {
             _RequestItem.Fulfill.MenuOptions = new CswCommaDelimitedString
                 {
-                    CswNbtObjClassRequestItem.FulfillMenu.Order, 
-                    CswNbtObjClassRequestItem.FulfillMenu.Receive,
+                    CswNbtObjClassRequestItem.FulfillMenu.Order,
                     CswNbtObjClassRequestItem.FulfillMenu.Move,
                     CswNbtObjClassRequestItem.FulfillMenu.Dispense, 
                     CswNbtObjClassRequestItem.FulfillMenu.Complete,

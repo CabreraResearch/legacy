@@ -730,6 +730,37 @@ namespace ChemSW.Nbt.Actions
             return RequestItem;
         }
 
+        /// <summary>
+        /// Instance a new EnterprisePart Request Item
+        /// </summary>
+        public CswNbtObjClassRequestItem makeEnterprisePartRequestItem( CswNbtObjClassEnterprisePart EnterprisePart, CswNbtObjClass.NbtButtonData ButtonData )
+        {
+            CswNbtObjClassRequestItem RequestItem = null;
+            CswNbtMetaDataObjectClass RequestItemOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestItemClass );
+            CswNbtMetaDataNodeType RequestItemNT = RequestItemOC.getNodeTypes().FirstOrDefault();
+            CswNbtSdTabsAndProps PropsAction = new CswNbtSdTabsAndProps( _CswNbtResources );
+            if( null != RequestItemNT )
+            {
+                RequestItem = PropsAction.getAddNodeAndPostChanges( RequestItemNT.NodeTypeId, EnterprisePart.NodeId.ToString(), delegate( CswNbtNode NewNode )
+                {
+                    CswNbtObjClassRequestItem RequestItemNode = NewNode;
+                    RequestItemNode.EnterprisePart.RelatedNodeId = EnterprisePart.NodeId;
+                    RequestItemNode.Type.Value = CswNbtObjClassRequestItem.Types.EnterprisePart;
+                    if( null != _ThisUser.DefaultLocationId )
+                    {
+                        CswNbtObjClassLocation DefaultAsLocation = _CswNbtResources.Nodes.GetNode( _ThisUser.DefaultLocationId );
+                        if( null != DefaultAsLocation )
+                        {
+                            RequestItemNode.Location.SelectedNodeId = DefaultAsLocation.NodeId;
+                            RequestItemNode.Location.CachedNodeName = DefaultAsLocation.Location.CachedNodeName;
+                            RequestItemNode.Location.CachedPath = DefaultAsLocation.Location.CachedPath;
+                        }
+                    }
+                } );
+            }
+            return RequestItem;
+        }
+
         #endregion Sets
 
         #endregion Public methods and props
