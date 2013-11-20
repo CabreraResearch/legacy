@@ -79,7 +79,6 @@
     <Compile Include="csw\Actions\CswNbtActDeleteDemoData.cs" />
     <Compile Include="csw\Actions\CswEnumNbtActionName.cs" />
     <Compile Include="csw\Actions\CswEnumNbtSystemViewName.cs" />
-    <Compile Include="csw\Actions\CswEnumNbtRequestItemType.cs" />
     <Compile Include="csw\Actions\CswNbtActManageLocations.cs" />
     <Compile Include="csw\Actions\CswNbtActLoginData.cs" />
     <Compile Include="csw\Actions\CswNbtActTierIIReporting.cs" />

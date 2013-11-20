@@ -239,7 +239,9 @@ namespace ChemSW.Nbt.Schema
                     PropName = CswNbtObjClassRequestItem.PropertyName.SizeCount,
                     FieldType = CswEnumNbtFieldType.Number,
                     NumberMinValue = 1,
-                    NumberPrecision = 0
+                    NumberPrecision = 0,
+                    SetValOnAdd = true,
+                    IsRequired = true
                 } );
                 CswNbtMetaDataObjectClassProp TotalMovedOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( RequestItemOC, new CswNbtWcfMetaDataModel.ObjectClassProp
                 {

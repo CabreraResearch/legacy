@@ -678,7 +678,6 @@ namespace ChemSW.Nbt.Actions
                         case CswEnumNbtContainerRequestMenu.Move:
                             RequestItemNode.Type.Value = CswNbtObjClassRequestItem.Types.ContainerMove;
                             RequestItemNode.Location.SelectedNodeId = SelectedLocationId;
-                            
                             break;
                     }
                     RequestItemNode.Location.RefreshNodeName();
@@ -691,59 +690,44 @@ namespace ChemSW.Nbt.Actions
             return RequestItem;
         }
 
-        //
         /// <summary>
-        /// Instance a new request item according to Object Class rules. Note: this does not get the properties.
+        /// Instance a new Material Request Item based on the selected button option - the type will either be By Bulk or By Size.
         /// </summary>
-        public CswNbtPropertySetRequestItem makeMaterialRequestItem( CswEnumNbtRequestItemType Item, CswPrimaryKey MaterialId, CswNbtObjClass.NbtButtonData ButtonData )
+        public CswNbtObjClassRequestItem makeMaterialRequestItem( CswNbtPropertySetMaterial Material, CswNbtObjClass.NbtButtonData ButtonData )
         {
-            CswNbtPropertySetRequestItem Ret = null;
-            CswNbtMetaDataObjectClass ItemOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestMaterialDispenseClass );
-            CswNbtMetaDataNodeType RequestItemNt = ItemOc.getNodeTypes().FirstOrDefault();
+            CswNbtObjClassRequestItem RequestItem = null;
+            CswNbtMetaDataObjectClass RequestItemOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestItemClass );
+            CswNbtMetaDataNodeType RequestItemNT = RequestItemOC.getNodeTypes().FirstOrDefault();
             CswNbtSdTabsAndProps PropsAction = new CswNbtSdTabsAndProps( _CswNbtResources );
-            if( null != RequestItemNt )
+            if( null != RequestItemNT )
             {
-                //this one doesn't call postchanges, so why does the other one?
-                Ret = PropsAction.getAddNode( RequestItemNt.NodeTypeId, MaterialId.ToString(), delegate( CswNbtNode NewNode )
+                RequestItem = PropsAction.getAddNodeAndPostChanges( RequestItemNT.NodeTypeId, Material.NodeId.ToString(), delegate( CswNbtNode NewNode )
                 {
-                    CswNbtPropertySetRequestItem RetAsRequestItem = NewNode;
-                    if( null == RetAsRequestItem )
-                    {
-                        throw new CswDniException( CswEnumErrorType.Error, "Could not generate a new request item.", "Failed to create a new Request Item node." );
-                    }
-                    if( null == RetAsRequestItem.Request.RelatedNodeId )
-                    {
-                        RetAsRequestItem.Request.RelatedNodeId = getCurrentRequestNodeId();
-                    }
-                    //if( null == RetAsRequestItem.Material.RelatedNodeId )
-                    //{
-                    //    RetAsRequestItem.Material.RelatedNodeId = MaterialId;
-                    //}
+                    CswNbtObjClassRequestItem RequestItemNode = NewNode;
+                    RequestItemNode.Material.RelatedNodeId = Material.NodeId;
                     if( null != _ThisUser.DefaultLocationId )
                     {
                         CswNbtObjClassLocation DefaultAsLocation = _CswNbtResources.Nodes.GetNode( _ThisUser.DefaultLocationId );
                         if( null != DefaultAsLocation )
                         {
-                            RetAsRequestItem.Location.SelectedNodeId = _ThisUser.DefaultLocationId;
-                            RetAsRequestItem.Location.CachedNodeName = DefaultAsLocation.Location.CachedNodeName;
-                            RetAsRequestItem.Location.CachedPath = DefaultAsLocation.Location.CachedPath;
+                            RequestItemNode.Location.SelectedNodeId = DefaultAsLocation.NodeId;
+                            RequestItemNode.Location.CachedNodeName = DefaultAsLocation.Location.CachedNodeName;
+                            RequestItemNode.Location.CachedPath = DefaultAsLocation.Location.CachedPath;
                         }
                     }
                     switch( ButtonData.SelectedText )
                     {
                         case CswNbtPropertySetMaterial.CswEnumRequestOption.Size:
-                            RetAsRequestItem.Type.Value = CswNbtObjClassRequestMaterialDispense.Types.Size;
-                            CswNbtObjClassRequestMaterialDispense RetAsMatDisp = CswNbtObjClassRequestMaterialDispense.fromPropertySet( RetAsRequestItem );
-                            _setRequestItemSizesView( RetAsMatDisp.Size.View.ViewId, MaterialId );
+                            RequestItemNode.Type.Value = CswNbtObjClassRequestItem.Types.MaterialSize;
+                            _setRequestItemSizesView( RequestItemNode.Size.View.ViewId, Material.NodeId );
                             break;
-
-                        default: //Request or Bulk
-                            RetAsRequestItem.Type.Value = CswNbtObjClassRequestMaterialDispense.Types.Bulk;
+                        default: //Request by Bulk
+                            RequestItemNode.Type.Value = CswNbtObjClassRequestItem.Types.MaterialBulk;
                             break;
                     }
                 } );
             }
-            return Ret;
+            return RequestItem;
         }
 
         #endregion Sets
@@ -766,7 +750,8 @@ namespace ChemSW.Nbt.Actions
 
             SizeView.AddViewPropertyAndFilter( SizeVr,
                 MetaDataProp: SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.InitialQuantity ),
-                FilterMode: CswEnumNbtFilterMode.NotNull );
+                FilterMode: CswEnumNbtFilterMode.NotNull,
+                SubFieldName: CswEnumNbtSubFieldName.Value );
             SizeView.AddViewPropertyAndFilter( SizeVr,
                 MetaDataProp: SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.UnitCount ),
                 FilterMode: CswEnumNbtFilterMode.NotNull );

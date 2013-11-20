@@ -202,6 +202,9 @@ namespace ChemSW.Nbt.Actions
             return DispenseContainerView.SessionViewId.ToString();
         }
 
+        //This looks like the grid we use when fulfilling Material request dispenses
+        //TODO - Case 30533 - refactor to use new RequestItem 
+        //TODO - Case 31176 - if Request Item type is EP, filter containers view by material's EP
         public CswNbtView getDispensibleContainersView( CswPrimaryKey RequestItemId )
         {
             CswNbtView Ret = new CswNbtView( _CswNbtResources );

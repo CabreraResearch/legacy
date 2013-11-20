@@ -372,7 +372,6 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
         {
-            _setUIVisibility();//This sets the Request Item's add layout based on its Type
             _CswNbtObjClassDefault.beforeCreateNode( IsCopy, OverrideUniqueValidation );
         }
 
@@ -383,10 +382,12 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation, bool Creating )
         {
+            if( Creating )
+            {
+                _setUIVisibility();//This sets the Request Item's add layout based on its Type
+            }
             _setDefaultValues();
             TypeDef.setDescription();
-            Status.SetOnPropChange( _onStatusPropChange );
-            Type.SetOnPropChange( _onTypePropChange );
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation, Creating );
         }
 
@@ -408,6 +409,8 @@ namespace ChemSW.Nbt.ObjClasses
         protected override void afterPopulateProps()
         {
             _setUIVisibility();
+            Status.SetOnPropChange( _onStatusPropChange );
+            Type.SetOnPropChange( _onTypePropChange );
             _CswNbtObjClassDefault.triggerAfterPopulateProps();
         }
 
@@ -569,7 +572,7 @@ namespace ChemSW.Nbt.ObjClasses
             NewMaterialPartNo.SetOnBeforeRender( TypeDef.setPropUIVisibility );
             RecurringFrequency.SetOnBeforeRender( _hideRecurringProps );
             NextReorderDate.SetOnBeforeRender( _hideRecurringProps );
-            //Fulfill.SetOnBeforeRender( _hideFulfillButton );//TODO - uncomment when done debugging
+            Fulfill.SetOnBeforeRender( _hideFulfillButton );
         }
 
         private void _hideRecurringProps( CswNbtNodeProp Prop )
@@ -579,8 +582,8 @@ namespace ChemSW.Nbt.ObjClasses
 
         private void _hideFulfillButton( CswNbtNodeProp Prop )
         {
-            Prop.setHidden( 
-                Status.Value == Statuses.Pending || 
+            Prop.setHidden(
+                //Status.Value == Statuses.Pending || //TODO - uncomment when done debugging
                 Status.Value == Statuses.Completed || 
                 Status.Value == Statuses.Cancelled, 
                 SaveToDb: false );
