@@ -45,6 +45,7 @@ namespace ChemSW.Nbt.ImportExport
             public const string blobtablename = "blobtablename";
             public const string lobdatapkcoloverride = "lobdatapkcoloverride";
             public const string lobdatapkcolname = "lobdatapkcolname";
+            public const string legacypropid = "legacypropid";
         }
 
         public class ImportDefRelationships

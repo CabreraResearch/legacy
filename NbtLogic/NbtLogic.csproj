@@ -433,7 +433,6 @@
     <Compile Include="csw\Schema\scripts\prod\02I\CswUpdateSchema_02I_Case31061B.cs" />
     <Compile Include="csw\Schema\scripts\prod\CAF\CswUpdateSchema_02I_Case31089.cs" />
     <Compile Include="csw\Schema\scripts\prod\CAF\CswUpdateSchema_02I_Case31087.cs" />
-    <Compile Include="csw\Schema\scripts\prod\CAF\CswUpdateSchema_02I_Case31091_Chemicals_Props.cs" />
     <Compile Include="csw\Schema\scripts\prod\CAF\CswUpdateSchema_02I_Case31194_Synonyms.cs" />
     <Compile Include="csw\Schema\scripts\prod\CAF\CswUpdateSchema_02H_Case30042_GHSAndDSD.cs" />
     <Compile Include="csw\Schema\scripts\prod\CAF\CswUpdateSchema_02H_Case30048_InventoryLevels.cs" />

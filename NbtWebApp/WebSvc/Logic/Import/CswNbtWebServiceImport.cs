@@ -4,8 +4,10 @@ using System.Data;
 using System.IO;
 using ChemSW.Core;
 using ChemSW.DB;
+using ChemSW.Nbt.csw.ImportExport;
 using ChemSW.Nbt.Grid;
 using ChemSW.Nbt.ImportExport;
+using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.Sched;
 using NbtWebApp.WebSvc.Returns;
 
@@ -180,6 +182,11 @@ namespace ChemSW.Nbt.WebServices
 
             if( Params.ImportDefName.Equals( "CAF" ) )
             {
+                //Create custom NodeTypeProps from CAF Properties collections and set up bindings for them
+                CswNbtImportTools.CreateCafProps( _CswNbtResources, CswEnumNbtObjectClass.ChemicalClass, "properties_values", "propertiesvaluesid" );
+                //TODO: Containers
+                //TODO: Receipt Lots
+
                 // Enable the CAFImport rule
                 CswTableUpdate TableUpdate = _CswNbtResources.makeCswTableUpdate( "enableCafImportRule", "scheduledrules" );
                 DataTable DataTable = TableUpdate.getTable( "where rulename = '" + CswEnumNbtScheduleRuleNames.CAFImport + "'" );
@@ -197,7 +204,7 @@ namespace ChemSW.Nbt.WebServices
 
             if( ImportDefName.Equals( "CAF" ) )
             {
-                
+
                 string ViewSql = CswScheduleLogicNbtCAFImport.generateCAFViewSQL();
                 string ImportQueueSql = CswScheduleLogicNbtCAFImport.generateImportQueueTableSQL( CswResources );
                 string CAFCleanupSQL = CswScheduleLogicNbtCAFImport.generateCAFCleanupSQL( CswResources );
@@ -208,7 +215,7 @@ namespace ChemSW.Nbt.WebServices
                 StreamWriter sw = new StreamWriter( stream );
 
                 sw.Write( ViewSql );
-                sw.Write( "\r\n"  );
+                sw.Write( "\r\n" );
                 sw.Write( ImportQueueSql );
                 sw.Write( "\r\n" );
                 sw.Write( CAFCleanupSQL );
@@ -230,9 +237,9 @@ namespace ChemSW.Nbt.WebServices
             Dictionary<string, DataTable> Tables = _retrieveBindings( _CswNbtResources, ImportDefName );
 
             //in a perfect world this would be done in a loop, but its probably not worth the time
-               Ret.Data.Order = new CswNbtGrid( _CswNbtResources ).DataTableToGrid( Tables["Order"] );
-               Ret.Data.Bindings = new CswNbtGrid( _CswNbtResources ).DataTableToGrid( Tables["Bindings"] );
-               Ret.Data.Relationships = new CswNbtGrid( _CswNbtResources ).DataTableToGrid( Tables["Relationships"] );
+            Ret.Data.Order = new CswNbtGrid( _CswNbtResources ).DataTableToGrid( Tables["Order"] );
+            Ret.Data.Bindings = new CswNbtGrid( _CswNbtResources ).DataTableToGrid( Tables["Bindings"] );
+            Ret.Data.Relationships = new CswNbtGrid( _CswNbtResources ).DataTableToGrid( Tables["Relationships"] );
 
 
         }
@@ -242,20 +249,20 @@ namespace ChemSW.Nbt.WebServices
 
             Dictionary<string, DataTable> Ret = new Dictionary<string, DataTable>();
 
-            foreach( string TableName in new[] {"Order", "Bindings", "Relationships"} )
+            foreach( string TableName in new[] { "Order", "Bindings", "Relationships" } )
             {
                 string sql = " select sheetname, io.* from import_def_" + TableName + " io, import_def id " +
                              "where io.importdefid = id.importdefid " +
                              "and definitionname = :importdefname";
 
-                CswArbitrarySelect TableSelect = new CswArbitrarySelect( NbtResources.CswResources, "ImportDefinitions"+TableName, sql );
+                CswArbitrarySelect TableSelect = new CswArbitrarySelect( NbtResources.CswResources, "ImportDefinitions" + TableName, sql );
                 TableSelect.addParameter( "importdefname", ImportDefName );
 
                 Ret[TableName] = TableSelect.getTable();
                 Ret[TableName].Columns.Remove( "importdefid" );
-                Ret[TableName].Columns.Remove( "importdef" + TableName.TrimEnd( new[]{'s'} ) + "id" );
+                Ret[TableName].Columns.Remove( "importdef" + TableName.TrimEnd( new[] { 's' } ) + "id" );
 
-                foreach( DataRow Row in Ret[TableName].AsEnumerable().Where( row => (Int32.MinValue == Convert.ToInt32(row["instance"])) ))
+                foreach( DataRow Row in Ret[TableName].AsEnumerable().Where( row => ( Int32.MinValue == Convert.ToInt32( row["instance"] ) ) ) )
                 {
                     Row["instance"] = DBNull.Value;
                 }
@@ -263,8 +270,7 @@ namespace ChemSW.Nbt.WebServices
             }
 
             return Ret;
-        } 
-
+        }
 
 
     } // class CswNbtWebServiceImport

@@ -137,7 +137,7 @@ namespace ChemSW.Nbt.csw.Schema
             }
         }// CAFimportOrder()
 
-        public void importBinding( string SourceColumnName, string DestPropertyName, string DestSubFieldName, string SheetName = null, string DestNodeTypeName = null, Int32 Instance = Int32.MinValue, string BlobTableName = "", string ClobTableName = "", string LobDataPkColOverride = "", string LobDataPkColName = "" )
+        public void importBinding( string SourceColumnName, string DestPropertyName, string DestSubFieldName, string SheetName = null, string DestNodeTypeName = null, Int32 Instance = Int32.MinValue, string BlobTableName = "", string ClobTableName = "", string LobDataPkColOverride = "", string LobDataPkColName = "", Int32 LegacyPropId = Int32.MinValue )
         {
             if( null != _NbtImporter )
             {
@@ -158,6 +158,7 @@ namespace ChemSW.Nbt.csw.Schema
                     row["clobtablename"] = ClobTableName;
                     row["lobdatapkcoloverride"] = LobDataPkColOverride;
                     row["lobdatapkcolname"] = LobDataPkColName;
+                    row["legacypropid"] = LegacyPropId;
                     _importBindingsTable.Rows.Add( row );
                 }
             }
