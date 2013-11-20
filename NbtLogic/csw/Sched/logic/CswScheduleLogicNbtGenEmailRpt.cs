@@ -64,8 +64,7 @@ namespace ChemSW.Nbt.Sched
             {
                 _setLoad( CswResources );
             }
-            _CswScheduleLogicDetail.LoadCount = _MailReportIdsToRun.Count;
-            return _CswScheduleLogicDetail.LoadCount;
+            return _MailReportIdsToRun.Count;
         }
 
         public void threadCallBack( ICswResources CswResources )

@@ -60,8 +60,7 @@ namespace ChemSW.Nbt.Sched
             {
                 _setLoad( CswResources );
             }
-            _CswScheduleLogicDetail.LoadCount = _ContainerLocations.Count;
-            return _CswScheduleLogicDetail.LoadCount;
+            return _ContainerLocations.Count;
         }
 
         public void stop()

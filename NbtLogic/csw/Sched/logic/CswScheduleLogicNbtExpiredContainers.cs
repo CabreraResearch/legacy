@@ -67,8 +67,7 @@ namespace ChemSW.Nbt.Sched
             {
                 _setLoad( CswResources );
             }
-            _CswScheduleLogicDetail.LoadCount = _ExpiredContainerIds.Count;
-            return _CswScheduleLogicDetail.LoadCount;
+            return _ExpiredContainerIds.Count;
         }
 
         public void threadCallBack( ICswResources CswResources )

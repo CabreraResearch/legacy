@@ -5,6 +5,7 @@ using System.Collections.Specialized;
 using System.Data;
 using System.IO;
 using System.Net;
+using System.Reflection;
 using System.Runtime.Serialization;
 using System.Web;
 using ChemSW.Core;
@@ -241,47 +242,81 @@ namespace ChemSW.Nbt.WebServices
             {
                 if( false == string.IsNullOrEmpty( reportParams.ReportNode.WebService.Text ) )
                 {
-                    //// case 31102
-                    //// Determine the webservice URL from the request URL
-                    //// Use 'localhost' however, since daily/prod may not be able to see its own DNS
-                    ////string thisUrl = reportParams.Context.Request.Url.AbsoluteUri;
-                    //string thisUrl = reportParams.Context.Request.Url.Scheme + "://localhost" + reportParams.Context.Request.Url.LocalPath;
-                    //string thisUrlBase = thisUrl.Substring( 0, thisUrl.IndexOf( "/Services/" ) + "/Services/".Length );
-                    //string WebServiceUrl = thisUrlBase + CswNbtObjClassReport.ReplaceReportParams( reportParams.ReportNode.WebService.Text, reportParams.ReportParamDictionary );
-                    string WebServiceUrl = NbtResources.SetupVbls[CswEnumSetupVariableNames.MailReportUrlStem] + "Services/" + CswNbtObjClassReport.ReplaceReportParams( reportParams.ReportNode.WebService.Text, reportParams.ReportParamDictionary );
 
-                    HttpWebRequest request = (HttpWebRequest) HttpWebRequest.Create( WebServiceUrl );
-                    request.Method = "GET";
-                    request.CookieContainer = new CookieContainer();
-                    foreach( string c in reportParams.Context.Request.Cookies.Keys )
+                    // See cases: 28562, 31102, 31147, 31190
+                    // All of my efforts to get this report to execute using self-referencing webservices have failed.
+                    // If I use 'localhost', I get SSL errors with https://.
+                    // If I use a real URL, like 'https://nbtdaily.chemswlive.com/CiTest/', then I simply get empty strings back.
+                    // So I'm going to use reflection to find and execute the method instead.
+
+
+                    ////// case 31102
+                    ////// Determine the webservice URL from the request URL
+                    ////// Use 'localhost' however, since daily/prod may not be able to see its own DNS
+                    //////string thisUrl = reportParams.Context.Request.Url.AbsoluteUri;
+                    ////string thisUrl = reportParams.Context.Request.Url.Scheme + "://localhost" + reportParams.Context.Request.Url.LocalPath;
+                    ////string thisUrlBase = thisUrl.Substring( 0, thisUrl.IndexOf( "/Services/" ) + "/Services/".Length );
+                    ////string WebServiceUrl = thisUrlBase + CswNbtObjClassReport.ReplaceReportParams( reportParams.ReportNode.WebService.Text, reportParams.ReportParamDictionary );
+                    //string WebServiceUrl = NbtResources.SetupVbls[CswEnumSetupVariableNames.MailReportUrlStem] + "Services/" + CswNbtObjClassReport.ReplaceReportParams( reportParams.ReportNode.WebService.Text, reportParams.ReportParamDictionary );
+
+                    //HttpWebRequest request = (HttpWebRequest) HttpWebRequest.Create( WebServiceUrl );
+                    //request.Method = "GET";
+                    //request.CookieContainer = new CookieContainer();
+                    //foreach( string c in reportParams.Context.Request.Cookies.Keys )
+                    //{
+                    //    HttpCookie cookie = reportParams.Context.Request.Cookies[c];
+                    //    if( cookie.Name == "CswSessionId" )
+                    //    {
+                    //        request.CookieContainer.Add( new Cookie()
+                    //            {
+                    //                Name = cookie.Name,
+                    //                Value = cookie.Value,
+                    //                Domain = "localhost",
+                    //                Path = cookie.Path
+                    //            } );
+                    //    }
+                    //}
+                    //HttpWebResponse response = (HttpWebResponse) request.GetResponse();
+                    //rptDataTbl = new DataTable();
+
+                    //StreamReader sr = new StreamReader( response.GetResponseStream() );
+                    //string result = sr.ReadToEnd();
+                    //result = result.Replace( @"\", "" );
+                    //if( result.StartsWith( "\"" ) )
+                    //{
+                    //    result = result.Substring( 1, result.Length - 2 );
+                    //}
+                    ////result = @"<?xml version=""1.0"" encoding=""utf-8""?>" + result;
+                    ////rptDataTbl.ReadXml( response.GetResponseStream() );
+                    //if( false == string.IsNullOrEmpty( result ) )
+                    //{
+                    //    rptDataTbl.ReadXml( new StringReader( result ) );
+                    //}
+
+
+                    // reportParams.ReportNode.WebService.Text is something like "RegulatoryReporting/getHMISDataTable?ControlZone={Name}"
+                    string[] WebServiceStr = reportParams.ReportNode.WebService.Text.Split( '/' );
+                    string wsClassName = "NbtWebApp." + WebServiceStr[0];
+                    string[] rawParams = WebServiceStr[WebServiceStr.Length - 1].Split( new char[] { '?', '&' } );
+                    string wsMethodName = rawParams[0];
+                    object[] wsParams = new object[rawParams.Length - 1];
+                    for( Int32 w = 1; w < rawParams.Length; w++ )
                     {
-                        HttpCookie cookie = reportParams.Context.Request.Cookies[c];
-                        if( cookie.Name == "CswSessionId" )
+                        string[] thisParam = rawParams[w].Split( '=' );
+                        string paramValue = CswNbtObjClassReport.ReplaceReportParams( thisParam[1], reportParams.ReportParamDictionary );
+                        wsParams[w - 1] = paramValue;
+                        w++;
+                    }
+
+                    Type classInfo = Type.GetType( wsClassName );
+                    if( null != classInfo )
+                    {
+                        var classInstance = classInfo.GetConstructor( System.Type.EmptyTypes ).Invoke( null );
+                        MethodInfo methodInfo = classInfo.GetMethod( wsMethodName );
+                        if( null != methodInfo )
                         {
-                            request.CookieContainer.Add( new Cookie()
-                                {
-                                    Name = cookie.Name,
-                                    Value = cookie.Value,
-                                    Domain = "localhost",
-                                    Path = cookie.Path
-                                } );
+                            rptDataTbl = (DataTable) methodInfo.Invoke( classInstance, wsParams );
                         }
-                    }
-                    HttpWebResponse response = (HttpWebResponse) request.GetResponse();
-                    rptDataTbl = new DataTable();
-
-                    StreamReader sr = new StreamReader( response.GetResponseStream() );
-                    string result = sr.ReadToEnd();
-                    result = result.Replace( @"\", "" );
-                    if( result.StartsWith( "\"" ) )
-                    {
-                        result = result.Substring( 1, result.Length - 2 );
-                    }
-                    //result = @"<?xml version=""1.0"" encoding=""utf-8""?>" + result;
-                    //rptDataTbl.ReadXml( response.GetResponseStream() );
-                    if( false == string.IsNullOrEmpty( result ) )
-                    {
-                        rptDataTbl.ReadXml( new StringReader( result ) );
                     }
                 }
                 else if( false == string.IsNullOrEmpty( reportParams.ReportNode.SQL.Text ) )
