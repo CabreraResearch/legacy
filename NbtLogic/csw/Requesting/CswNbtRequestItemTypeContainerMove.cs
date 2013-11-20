@@ -18,6 +18,7 @@ namespace ChemSW.Nbt.Requesting
             bool IsVisible = true;
             switch( Prop.PropName )
             {
+                case CswNbtObjClassRequestItem.PropertyName.ExternalOrderNumber:
                 case CswNbtObjClassRequestItem.PropertyName.EnterprisePart:
                 case CswNbtObjClassRequestItem.PropertyName.Material:
                 case CswNbtObjClassRequestItem.PropertyName.Quantity:
