@@ -6,25 +6,23 @@ using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassGHS: CswNbtObjClass
+    public class CswNbtObjClassGHS : CswNbtObjClass
     {
         #region Enums
         /// <summary>
         /// Object Class property names
         /// </summary>
-        public new sealed class PropertyName: CswNbtObjClass.PropertyName
+        public new sealed class PropertyName : CswNbtObjClass.PropertyName
         {
-            public const string Jurisdiction = "Jurisdiction";
-            public const string Material = "Material";
-            public const string LabelCodes = "Label Codes";
-            public const string ClassCodes = "Class Codes";
             public const string AddLabelCodes = "Add Label Codes";
-            public const string AddClassCodes = "Add Class Codes";
+            public const string Classifications = "Classifications";
+            public const string ClassificationsGrid = "Classifications Grid";
+            public const string Jurisdiction = "Jurisdiction";
+            public const string LabelCodes = "Label Codes";
             public const string LabelCodesGrid = "Label Codes Grid";
-            public const string ClassCodesGrid = "Class Codes Grid";
-            public const string SignalWord = "Signal Word";
+            public const string Material = "Material";
             public const string Pictograms = "Pictograms";
-            public const string Classification = "Classification";
+            public const string SignalWord = "Signal Word";
         }
 
         public static readonly Dictionary<string, string> LanguageCodeMap = new Dictionary<string, string>
@@ -120,10 +118,9 @@ namespace ChemSW.Nbt.ObjClasses
         protected override void afterPopulateProps()
         {
             LabelCodes.InitOptions = _initGhsPhraseOptions;
-            ClassCodes.InitOptions = _initGhsPhraseOptions;
+            Classifications.InitOptions = _initGhsClassificationOptions;
 
             AddLabelCodes.SetOnPropChange( OnAddLabelCodesPropChange );
-            AddClassCodes.SetOnPropChange( OnAddClassCodesPropChange );
 
             _CswNbtNode.Properties[PropertyName.LabelCodesGrid].SetOnBeforeRender( delegate( CswNbtNodeProp Prop )
                 {
@@ -131,10 +128,10 @@ namespace ChemSW.Nbt.ObjClasses
                     _setupPhraseView( PropAsGrid.View, LabelCodes.Value );
                 } );
 
-            _CswNbtNode.Properties[PropertyName.ClassCodesGrid].SetOnBeforeRender( delegate( CswNbtNodeProp Prop )
+            _CswNbtNode.Properties[PropertyName.ClassificationsGrid].SetOnBeforeRender( delegate( CswNbtNodeProp Prop )
                 {
                     CswNbtNodePropGrid PropAsGrid = (CswNbtNodePropGrid) Prop;
-                    _setupPhraseView( PropAsGrid.View, ClassCodes.Value );
+                    _setupClassificationView( PropAsGrid.View, Classifications.Value );
                 } );
 
             _CswNbtNode.Properties[PropertyName.SignalWord].SetOnBeforeRender( delegate( CswNbtNodeProp Prop )
@@ -202,8 +199,38 @@ namespace ChemSW.Nbt.ObjClasses
                     LanguageVP.Width = 100;
                 }
             } // if( SelectedPhraseIds.Count > 0 )
-            View.SaveToCache( IncludeInQuickLaunch : false, UpdateCache : true, KeepInQuickLaunch : false );
+            View.SaveToCache( IncludeInQuickLaunch: false, UpdateCache: true, KeepInQuickLaunch: false );
         } // _setupPhraseView()
+
+
+        private void _setupClassificationView( CswNbtView View, CswCommaDelimitedString SelectedClassIds )
+        {
+            CswNbtMetaDataObjectClass GhsClassOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.GHSClassificationClass );
+            CswNbtMetaDataNodeType GhsClassNT = GhsClassOC.FirstNodeType;
+
+            View.SetVisibility( CswEnumNbtViewVisibility.Hidden, null, null );
+            View.Root.ChildRelationships.Clear();
+            if( SelectedClassIds.Count > 0 )
+            {
+                CswNbtViewRelationship ClassVR = View.AddViewRelationship( GhsClassOC, false );
+                foreach( string ClassId in SelectedClassIds )
+                {
+                    CswPrimaryKey ClassPk = new CswPrimaryKey();
+                    ClassPk.FromString( ClassId );
+                    ClassVR.NodeIdsToFilterIn.Add( ClassPk );
+                }
+
+                //View.AddViewProperty( ClassVR, GhsClassOC.getObjectClassProp( CswNbtObjClassGHSClassification.PropertyName.Code ) );
+                if( null != GhsClassNT )
+                {
+                    CswNbtMetaDataNodeTypeProp LanguageProp = GhsClassNT.getNodeTypePropByObjectClassProp( _getLanguageForTranslation() );
+                    CswNbtViewProperty LanguageVP = View.AddViewProperty( ClassVR, LanguageProp );
+                    LanguageVP.Width = 100;
+                }
+            } // if( SelectedClassIds.Count > 0 )
+            View.SaveToCache( IncludeInQuickLaunch: false, UpdateCache: true, KeepInQuickLaunch: false );
+        } // _setupClassificationView()
+
 
         private Dictionary<string, string> _initGhsPhraseOptions()
         {
@@ -211,6 +238,13 @@ namespace ChemSW.Nbt.ObjClasses
             Dictionary<CswPrimaryKey, string> Phrases = GhsPhraseOC.getNodeIdAndNames( false, false );
             return Phrases.Keys.ToDictionary( pk => pk.ToString(), pk => Phrases[pk] );
         } // _initGhsPhraseOptions()
+
+        private Dictionary<string, string> _initGhsClassificationOptions()
+        {
+            CswNbtMetaDataObjectClass GhsClassOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.GHSClassificationClass );
+            Dictionary<CswPrimaryKey, string> Classes = GhsClassOC.getNodeIdAndNames( false, false );
+            return Classes.Keys.ToDictionary( pk => pk.ToString(), pk => Classes[pk] );
+        } // _initGhsClassificationOptions()
 
         public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
         {
@@ -229,7 +263,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropRelationship Jurisdiction { get { return ( _CswNbtNode.Properties[PropertyName.Jurisdiction] ); } }
         public CswNbtNodePropRelationship Material { get { return ( _CswNbtNode.Properties[PropertyName.Material] ); } }
         public CswNbtNodePropMultiList LabelCodes { get { return ( _CswNbtNode.Properties[PropertyName.LabelCodes] ); } }
-        public CswNbtNodePropMultiList ClassCodes { get { return ( _CswNbtNode.Properties[PropertyName.ClassCodes] ); } }
+        public CswNbtNodePropMultiList Classifications { get { return ( _CswNbtNode.Properties[PropertyName.Classifications] ); } }
         public CswNbtNodePropMemo AddLabelCodes { get { return ( _CswNbtNode.Properties[PropertyName.AddLabelCodes] ); } }
         private void OnAddLabelCodesPropChange( CswNbtNodeProp Prop, bool Creating )
         {
@@ -243,24 +277,10 @@ namespace ChemSW.Nbt.ObjClasses
             }
             AddLabelCodes.Text = string.Empty;
         }
-        public CswNbtNodePropMemo AddClassCodes { get { return ( _CswNbtNode.Properties[PropertyName.AddClassCodes] ); } }
-        private void OnAddClassCodesPropChange( CswNbtNodeProp Prop, bool Creating )
-        {
-            CswCommaDelimitedString NewGHSClassCodes = _getGHSCodesFromMemo( AddClassCodes.Text );
-            foreach( string ClassCode in NewGHSClassCodes )
-            {
-                if( ClassCodes.Options.ContainsValue( ClassCode.Trim().ToUpper() ) )
-                {
-                    ClassCodes.AddValue( ClassCodes.Options.FirstOrDefault( x => x.Value == ClassCode.Trim().ToUpper() ).Key );
-                }
-            }
-            AddClassCodes.Text = string.Empty;
-        }
         public CswNbtNodePropGrid LabelCodesGrid { get { return ( _CswNbtNode.Properties[PropertyName.LabelCodesGrid] ); } }
-        public CswNbtNodePropGrid ClassCodesGrid { get { return ( _CswNbtNode.Properties[PropertyName.ClassCodesGrid] ); } }
+        public CswNbtNodePropGrid ClassificationsGrid { get { return ( _CswNbtNode.Properties[PropertyName.ClassificationsGrid] ); } }
         public CswNbtNodePropRelationship SignalWord { get { return ( _CswNbtNode.Properties[PropertyName.SignalWord] ); } }
         public CswNbtNodePropImageList Pictograms { get { return ( _CswNbtNode.Properties[PropertyName.Pictograms] ); } }
-        public CswNbtNodePropList Classification { get { return ( _CswNbtNode.Properties[PropertyName.Classification] ); } }
 
         #endregion
 

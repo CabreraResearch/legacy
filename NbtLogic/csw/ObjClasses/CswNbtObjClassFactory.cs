@@ -123,6 +123,10 @@ namespace ChemSW.Nbt.ObjClasses
                     ReturnVal = new CswNbtObjClassGHS( CswNbtResources, Node );
                     break;
 
+                case CswEnumNbtObjectClass.GHSClassificationClass:
+                    ReturnVal = new CswNbtObjClassGHSClassification( CswNbtResources, Node );
+                    break;
+
                 case CswEnumNbtObjectClass.GHSPhraseClass:
                     ReturnVal = new CswNbtObjClassGHSPhrase( CswNbtResources, Node );
                     break;
