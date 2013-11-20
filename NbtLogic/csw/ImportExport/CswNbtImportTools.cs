@@ -55,6 +55,8 @@ namespace ChemSW.Nbt.csw.ImportExport
                         LegacyPropId : PropId );
                 }
             }
+
+            ImpMgr.finalize();
         }
 
         /// <summary>
