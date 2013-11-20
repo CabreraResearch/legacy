@@ -127,7 +127,8 @@
         nothing: 'nothing',
         griddialog: 'griddialog',
         managelocations: 'Manage Locations',
-        chemwatch: 'chemwatch'
+        chemwatch: 'chemwatch',
+        openfile: 'openfile'
     });
 
 

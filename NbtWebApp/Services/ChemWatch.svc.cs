@@ -3,6 +3,7 @@ using System.ServiceModel;
 using System.ServiceModel.Activation;
 using System.ServiceModel.Web;
 using System.Web;
+using ChemSW.Nbt.WebServices;
 using ChemSW.WebSvc;
 using NbtWebApp.Actions.ChemWatch;
 

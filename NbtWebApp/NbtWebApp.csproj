@@ -221,8 +221,6 @@
       <DependentUpon>Views.svc</DependentUpon>
     </Compile>
     <Compile Include="WebSvc\Core\CswWebSvcError.cs" />
-    <Compile Include="WebSvc\Logic\Actions\ChemWatch\CswNbtChemWatchCookie.cs" />
-    <Compile Include="WebSvc\Logic\Actions\ChemWatch\CswNbtChemWatchDataContract.cs" />
     <Compile Include="WebSvc\Logic\Actions\ChemWatch\CswNbtWebServiceChemWatch.cs" />
     <Compile Include="WebSvc\Logic\Actions\Explorer\CswNbtArborEdge.cs" />
     <Compile Include="WebSvc\Logic\Actions\Explorer\CswNbtArborGraph.cs" />

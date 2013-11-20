@@ -5,13 +5,13 @@ using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassSDSDocument: CswNbtPropertySetDocument
+    public class CswNbtObjClassSDSDocument : CswNbtPropertySetDocument
     {
         #region Enums
         /// <summary>
         /// Object Class Property Names
         /// </summary>
-        public new sealed class PropertyName: CswNbtPropertySetDocument.PropertyName
+        public new sealed class PropertyName : CswNbtPropertySetDocument.PropertyName
         {
             /// <summary>
             /// Language of the document.
@@ -25,8 +25,11 @@ namespace ChemSW.Nbt.ObjClasses
             /// Revision Date of the document.
             /// </summary>
             public const string RevisionDate = "Revision Date";
+            /// <summary>
+            /// If FileType == ChemWatch, the Link
+            /// </summary>
+            public const string ChemWatch = "ChemWatch";
         }
-
 
         /// <summary>
         /// Formats recognized by Business Logic
@@ -46,6 +49,22 @@ namespace ChemSW.Nbt.ObjClasses
             /// </summary>
             public const string GHS = "GHS";
             public static CswCommaDelimitedString Options = new CswCommaDelimitedString { OSHA, GHS };
+        }
+
+        /// <summary>
+        /// Potential File Type options (Includes menu inherited from base class <see cref="CswNbtPropertySetDocument"/>)
+        /// </summary>
+        public new sealed class CswEnumDocumentFileTypes : CswNbtPropertySetDocument.CswEnumDocumentFileTypes
+        {
+            /// <summary>
+            /// Hyperlink
+            /// </summary>
+            public const string ChemWatch = "ChemWatch";
+
+            public new static readonly CswCommaDelimitedString Options = new CswCommaDelimitedString
+                {
+                    File, Link, ChemWatch
+                };
         }
 
         #endregion Enums
@@ -139,7 +158,7 @@ namespace ChemSW.Nbt.ObjClasses
                     CswNbtView ExistingDocsView = new CswNbtView( _CswNbtResources );
                     CswNbtViewRelationship DocumentVr = ExistingDocsView.AddViewRelationship( NodeType, false );
                     ExistingDocsView.AddViewPropertyAndFilter( DocumentVr, Owner.NodeTypeProp, OwnerNode.NodeId.PrimaryKey.ToString(), CswEnumNbtSubFieldName.NodeID );
-                    ExistingDocsView.AddViewPropertyAndFilter( DocumentVr, Archived.NodeTypeProp, CswEnumTristate.True.ToString(), FilterMode : CswEnumNbtFilterMode.NotEquals );
+                    ExistingDocsView.AddViewPropertyAndFilter( DocumentVr, Archived.NodeTypeProp, CswEnumTristate.True.ToString(), FilterMode: CswEnumNbtFilterMode.NotEquals );
                     ExistingDocsView.AddViewPropertyAndFilter( DocumentVr, Format.NodeTypeProp, Format.Value );
                     ExistingDocsView.AddViewPropertyAndFilter( DocumentVr, Language.NodeTypeProp, Language.Value );
 
@@ -187,6 +206,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public static string getAssignedSDSDocumentUrl( CswNbtResources _CswNbtResources, CswPrimaryKey MaterialId )
         {
+            //todo: add chemwatch condition
             string url = "";
             if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.SDS ) )
             {
@@ -318,6 +338,7 @@ namespace ChemSW.Nbt.ObjClasses
             archiveMatchingDocs();
         }
         public CswNbtNodePropDateTime RevisionDate { get { return _CswNbtNode.Properties[PropertyName.RevisionDate]; } }
+        public CswNbtNodePropText ChemWatch { get { return _CswNbtNode.Properties[PropertyName.ChemWatch]; } }
 
         #endregion Object class specific properties
 

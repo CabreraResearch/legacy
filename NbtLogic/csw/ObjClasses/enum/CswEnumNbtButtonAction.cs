@@ -34,6 +34,8 @@ namespace ChemSW.Nbt.ObjClasses
         public static readonly CswEnumNbtButtonAction managelocations = new CswEnumNbtButtonAction( "Manage Locations" );
         public static readonly CswEnumNbtButtonAction refreshonadd = new CswEnumNbtButtonAction( "refreshonadd" );
         public static readonly CswEnumNbtButtonAction chemwatch = new CswEnumNbtButtonAction( "chemwatch" );
+        public static readonly CswEnumNbtButtonAction openfile = new CswEnumNbtButtonAction( "openfile" );
+
     }
 
 }//namespace ChemSW.Nbt.ObjClasses
