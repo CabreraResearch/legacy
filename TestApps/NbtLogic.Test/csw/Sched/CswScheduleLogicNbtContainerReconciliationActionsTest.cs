@@ -266,6 +266,28 @@ namespace ChemSW.Nbt.Test.Sched
             Assert.AreEqual( CswEnumTristate.True, ContainerNode.Missing.Checked.ToString() );
         }
 
+        /// <summary>
+        /// Given a ContainerLocation with Action "UnmarkMissing"
+        /// (given a Container that's marked Missing with no ContainerLocation in the given timeframe),
+        /// assert that the Contianer has Missing set to false, 
+        /// and that the ContainerLocation is marked ActionApplied.
+        /// </summary>
+        [Test]
+        public void processReconciliationActionsTestUnmarkMissing()
+        {
+            CswNbtObjClassContainer ContainerNode = TestData.Nodes.createContainerNode( Missing: true );
+            Assert.AreEqual( CswEnumTristate.True, ContainerNode.Missing.Checked.ToString() );
+            CswNbtObjClassContainerLocation ContainerLocationNode = TestData.Nodes.createContainerLocationNode(
+                ContainerNode.Node,
+                CswEnumNbtContainerLocationActionOptions.UnmarkMissing.ToString(),
+                Type: CswEnumNbtContainerLocationTypeOptions.ReconcileScans.ToString() );
+
+            CswScheduleLogicNbtContainerReconciliationActions Sched = _getReconciliationActionSched();
+            Sched.processReconciliationActions( TestData.CswNbtResources );
+            Assert.AreEqual( CswEnumTristate.True, ContainerLocationNode.ActionApplied.Checked.ToString() );
+            Assert.AreEqual( CswEnumTristate.False, ContainerNode.Missing.Checked.ToString() );
+        }
+
         #endregion Old BatchOp Tests
     }
 }

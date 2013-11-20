@@ -141,9 +141,9 @@ namespace ChemSW.Nbt.WebServices
             JObject ret = new JObject();
             if( Tree != null )
             {
-                Int32 results = _populateDictionary( Tree, PropsToHide, Page, PageLimit );
+                _populateDictionary( Tree, PropsToHide, Page, PageLimit );
 
-                ret["results"] = results; // Tree.getChildNodeCount().ToString();
+                ret["results"] = Tree.getChildNodeCount().ToString();
                 ret["nodetypecount"] = _TableDict.Keys.Count;
                 ret["truncated"] = Tree.getCurrentNodeChildrenTruncated();
                 ret["pagesize"] = _CswNbtResources.CurrentNbtUser.PageSize;

@@ -25,5 +25,6 @@ namespace ChemSW.Nbt.ObjClasses
         public static readonly CswEnumNbtContainerLocationActionOptions MoveToLocation = new CswEnumNbtContainerLocationActionOptions( "Move To Location" );
         public static readonly CswEnumNbtContainerLocationActionOptions UndisposeAndMove = new CswEnumNbtContainerLocationActionOptions( "Undispose And Move" );
         public static readonly CswEnumNbtContainerLocationActionOptions MarkMissing = new CswEnumNbtContainerLocationActionOptions( "Mark Missing" );
+        public static readonly CswEnumNbtContainerLocationActionOptions UnmarkMissing = new CswEnumNbtContainerLocationActionOptions( "Unmark Missing" );
     }
 } // namespace

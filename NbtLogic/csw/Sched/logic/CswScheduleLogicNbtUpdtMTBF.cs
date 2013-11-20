@@ -18,8 +18,7 @@ namespace ChemSW.Nbt.Sched
         //This is necessary to stop the rule from running once it has completed its job.
         public Int32 getLoadCount( ICswResources CswResources )
         {
-            _CswScheduleLogicDetail.LoadCount = _CswScheduleLogicDetail.doesItemRunNow() ? 1 : 0;
-            return _CswScheduleLogicDetail.LoadCount;
+            return _CswScheduleLogicDetail.doesItemRunNow() ? 1 : 0;
         }
 
         private CswEnumScheduleLogicRunStatus _LogicRunStatus = CswEnumScheduleLogicRunStatus.Idle;

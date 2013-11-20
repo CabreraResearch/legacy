@@ -294,7 +294,7 @@ namespace ChemSW.Nbt.ImportExport
                     {
                         try
                         {
-                            _ImportOneRow( SourceRow, BindingDef, Order, Overwrite, null );
+                            _ImportOneRow( SourceRow, BindingDef, Order, Overwrite, null, OverrideUniqueValidation: true );
                         }
                         catch( Exception e )
                         {
@@ -406,7 +406,7 @@ namespace ChemSW.Nbt.ImportExport
         /// Import a single node for a single row
         /// </summary>
         /// <returns>NodeId of imported node</returns>
-        private CswPrimaryKey _ImportOneRow( DataRow ImportRow, CswNbtImportDef BindingDef, CswNbtImportDefOrder Order, bool Overwrite, CswTableUpdate ImportDataUpdate )
+        private CswPrimaryKey _ImportOneRow( DataRow ImportRow, CswNbtImportDef BindingDef, CswNbtImportDefOrder Order, bool Overwrite, CswTableUpdate ImportDataUpdate, bool OverrideUniqueValidation = false )
         {
             CswPrimaryKey ImportedNodeId = null;
             //string msgPrefix = Order.NodeType.NodeTypeName + " Import (" + ImportRow[CswNbtImportTables.ImportDataN.importdataid].ToString() + "): ";
@@ -454,7 +454,7 @@ namespace ChemSW.Nbt.ImportExport
             string LegacyId = string.Empty;
             foreach( CswNbtImportDefBinding Binding in NodeTypeBindings )
             {
-                if( Binding.DestPropName == "Legacy Id" )
+                if( Binding.DestPropName == CswNbtObjClass.PropertyName.LegacyId )
                 {
                     LegacyId = ImportRow[Binding.ImportDataColumnName].ToString();
                 }
@@ -474,7 +474,7 @@ namespace ChemSW.Nbt.ImportExport
                     LegacyIdView.ViewName = "Check Legacy Id";
                     CswNbtViewRelationship NTRel1 = LegacyIdView.AddViewRelationship( Order.NodeType, false );
 
-                    CswNbtMetaDataNodeTypeProp LegacyIdNTP = Order.NodeType.getNodeTypeProp( "Legacy Id" );
+                    CswNbtMetaDataNodeTypeProp LegacyIdNTP = Order.NodeType.getNodeTypeProp( CswNbtObjClass.PropertyName.LegacyId );
                     LegacyIdView.AddViewPropertyAndFilter( ParentViewRelationship: NTRel1, MetaDataProp: LegacyIdNTP,
                                                            Value: LegacyId,
                                                       SubFieldName: CswEnumNbtSubFieldName.Text, CaseSensitive: false );
@@ -487,13 +487,13 @@ namespace ChemSW.Nbt.ImportExport
                         if( Overwrite )
                         {
                             _importPropertyValues( BindingDef, NodeTypeBindings, RowRelationships, ImportRow, Node );
-                            Node.postChanges( false );
+                            Node.postChanges( false, false, true );
                         }
                         foundMatch = true;
                     }
                 }
 
-                if( false == foundMatch )
+                if( false == foundMatch && false == OverrideUniqueValidation )
                 {
                     // Find matching nodes using a view on unique properties
                     CswNbtView UniqueView = new CswNbtView( _CswNbtResources );
@@ -563,7 +563,7 @@ namespace ChemSW.Nbt.ImportExport
                                 else
                                 {
                                   //we still want to set legacy id on nodes matched by unique properties
-                                    foreach( CswNbtImportDefBinding Binding in NodeTypeBindings.Where( Binding => Binding.DestPropName == "Legacy Id" ) )
+                                    foreach( CswNbtImportDefBinding Binding in NodeTypeBindings.Where( Binding => Binding.DestPropName == CswNbtObjClass.PropertyName.LegacyId ) )
                                     {
                                         //there should always be exactly one iteration of this loop
                                         Node.Properties[Binding.DestProperty].SetSubFieldValue( Binding.DestSubfield, ImportRow[Binding.ImportDataColumnName].ToString() );
@@ -582,7 +582,7 @@ namespace ChemSW.Nbt.ImportExport
                     Node = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( Order.NodeType.NodeTypeId, delegate( CswNbtNode NewNode )
                         {
                             _importPropertyValues( BindingDef, NodeTypeBindings, RowRelationships, ImportRow, NewNode );
-                        } );
+                        }, OverrideUniqueValidation: true ); //even when we care about uniqueness, we've already checked it above and this would be redundant
                 }
 
                 ImportedNodeId = Node.NodeId;
@@ -870,17 +870,17 @@ namespace ChemSW.Nbt.ImportExport
                                        .FirstOrDefault()
                                        .getNodeTypes()
                                        .FirstOrDefault()
-                                       .getNodeTypeProp( "Legacy Id" );
+                                       .getNodeTypeProp( CswNbtObjClass.PropertyName.LegacyId );
                         ParentRelationship = View.AddViewRelationship( PropertySet, false );
                         break;
                     case "ObjectClassId":
                         CswNbtMetaDataObjectClass ObjectClass = _CswNbtResources.MetaData.getObjectClass( NodeTypeProp.FKValue );
-                        MetaDataProp = ObjectClass.getNodeTypes().FirstOrDefault().getNodeTypeProp( "Legacy Id" );
+                        MetaDataProp = ObjectClass.getNodeTypes().FirstOrDefault().getNodeTypeProp( CswNbtObjClass.PropertyName.LegacyId );
                         ParentRelationship = View.AddViewRelationship( ObjectClass, false );
                         break;
                     case "NodeTypeId":
                         CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeProp.FKValue );
-                        MetaDataProp = NodeType.getNodeTypeProp( "Legacy Id" );
+                        MetaDataProp = NodeType.getNodeTypeProp( CswNbtObjClass.PropertyName.LegacyId );
                         ParentRelationship = View.AddViewRelationship( NodeType, false );
                         break;
                 }

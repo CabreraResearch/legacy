@@ -2,14 +2,12 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
-using ChemSW.DB;
-using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.MetaData;
 using ChemSW.Core;
+using ChemSW.DB;
+using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
+using ChemSW.Nbt.ObjClasses;
 
-using System.Diagnostics;
-using System.IO;
 
 namespace ChemSW.Nbt
 {
@@ -75,10 +73,10 @@ namespace ChemSW.Nbt
             tradenameNTP = chemicalNT.getNodeTypePropByObjectClassProp( CswNbtObjClassChemical.PropertyName.TradeName );
             supplierNTP = chemicalNT.getNodeTypePropByObjectClassProp( CswNbtObjClassChemical.PropertyName.Supplier );
             partNoNTP = chemicalNT.getNodeTypePropByObjectClassProp( CswNbtObjClassChemical.PropertyName.PartNumber );
-            materialLegacyIdNTP = chemicalNT.getNodeTypeProp( "Legacy Id" );
+            materialLegacyIdNTP = chemicalNT.getNodeTypeProp( CswNbtObjClass.PropertyName.LegacyId );
 
             vendorNameNTP = vendorNT.getNodeTypePropByObjectClassProp( CswNbtObjClassVendor.PropertyName.VendorName );
-            vendorLegacyIdNTP = vendorNT.getNodeTypeProp( "Legacy Id" );
+            vendorLegacyIdNTP = vendorNT.getNodeTypeProp( CswNbtObjClass.PropertyName.LegacyId );
 
             UoM_weight_NT = _NBTResources.MetaData.getNodeType( "Unit_Weight" );
             UoM_each_NT = _NBTResources.MetaData.getNodeType( "Unit_Each" );
@@ -88,7 +86,7 @@ namespace ChemSW.Nbt
             nameOCP = unitOfMeasureOC.getObjectClassProp( CswNbtObjClassUnitOfMeasure.PropertyName.Name );
 
             materialSynNT = _NBTResources.MetaData.getNodeType( "Material Synonym" );
-            synonymLegacyIdNTP = materialSynNT.getNodeTypeProp( "Legacy Id" );
+            synonymLegacyIdNTP = materialSynNT.getNodeTypeProp( CswNbtObjClass.PropertyName.LegacyId );
             synonymMaterialNTP = materialSynNT.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterialSynonym.PropertyName.Material );
 
             sizeNT = _NBTResources.MetaData.getNodeType( "Size" );
@@ -96,7 +94,7 @@ namespace ChemSW.Nbt
             catalogNTP = sizeNT.getNodeTypePropByObjectClassProp( CswNbtObjClassSize.PropertyName.CatalogNo );
             materialNTP = sizeNT.getNodeTypePropByObjectClassProp( CswNbtObjClassSize.PropertyName.Material );
             quantNTP = sizeNT.getNodeTypePropByObjectClassProp( CswNbtObjClassSize.PropertyName.InitialQuantity );
-            sizeLegacyId = sizeNT.getNodeTypeProp( "Legacy Id" );
+            sizeLegacyId = sizeNT.getNodeTypeProp( CswNbtObjClass.PropertyName.LegacyId );
         }
 
         public void Import()
@@ -287,7 +285,7 @@ namespace ChemSW.Nbt
                 }
             } );
 
-            CswNbtMetaDataNodeTypeProp vendorLegacyIdNTP = vendorNT.getNodeTypeProp( "Legacy Id" );
+            CswNbtMetaDataNodeTypeProp vendorLegacyIdNTP = vendorNT.getNodeTypeProp( CswNbtObjClass.PropertyName.LegacyId );
             CswNbtFieldTypeRuleNumber numberFTR = (CswNbtFieldTypeRuleNumber) vendorLegacyIdNTP.getFieldTypeRule();
             _Mappings.Add( "Vendor_" + vendorLegacyIdNTP.PropName, new CAFMapping
             {
@@ -554,7 +552,7 @@ namespace ChemSW.Nbt
                 }
             } );
 
-            CswNbtMetaDataNodeTypeProp materialLegacyIdNTP = chemicalNT.getNodeTypeProp( "Legacy Id" );
+            CswNbtMetaDataNodeTypeProp materialLegacyIdNTP = chemicalNT.getNodeTypeProp( CswNbtObjClass.PropertyName.LegacyId );
             _Mappings.Add( "Chemical_" + materialLegacyIdNTP.PropName, new CAFMapping
             {
                 NodeTypeId = chemicalNT.NodeTypeId,
@@ -586,7 +584,7 @@ namespace ChemSW.Nbt
                 }
             } );
 
-            CswNbtMetaDataNodeTypeProp materialSynLegacyIdNTP = materialSynonymNT.getNodeTypeProp( "Legacy Id" );
+            CswNbtMetaDataNodeTypeProp materialSynLegacyIdNTP = materialSynonymNT.getNodeTypeProp( CswNbtObjClass.PropertyName.LegacyId );
             _Mappings.Add( "Material Synonym_" + materialLegacyIdNTP.PropName, new CAFMapping
             {
                 NodeTypeId = materialSynonymNT.NodeTypeId,
@@ -645,7 +643,7 @@ namespace ChemSW.Nbt
                 }
             } );
 
-            CswNbtMetaDataNodeTypeProp sizeLegacyIdNTP = sizeNT.getNodeTypeProp( "Legacy Id" );
+            CswNbtMetaDataNodeTypeProp sizeLegacyIdNTP = sizeNT.getNodeTypeProp( CswNbtObjClass.PropertyName.LegacyId );
             _Mappings.Add( "Size_" + sizeLegacyIdNTP.PropName, new CAFMapping
             {
                 NodeTypeId = sizeNT.NodeTypeId,
@@ -709,7 +707,7 @@ namespace ChemSW.Nbt
             foreach( CswNbtMetaDataNodeTypeProp ntp in NodeType.getNodeTypeProps() )
             {
                 string PropName = ntp.PropName;
-                if( PropName.Equals( "Legacy Id" ) )
+                if( PropName.Equals( CswNbtObjClass.PropertyName.LegacyId ) )
                 {
                     PropName = NodeType.NodeTypeName + "_" + PropName;
                 }
@@ -760,7 +758,7 @@ namespace ChemSW.Nbt
             CswNbtMetaDataNodeTypeProp legacyIdNTP = null;
             foreach( CswNbtMetaDataNodeType uomNT in expectedOC.getNodeTypes() )
             {
-                legacyIdNTP = uomNT.getNodeTypeProp( "Legacy Id" );
+                legacyIdNTP = uomNT.getNodeTypeProp( CswNbtObjClass.PropertyName.LegacyId );
                 break;
             }
 
@@ -793,7 +791,7 @@ namespace ChemSW.Nbt
             CswNbtMetaDataNodeTypeProp legacyIdNTP = null;
             foreach( CswNbtMetaDataNodeType uomNT in expectedOC.getNodeTypes() )
             {
-                legacyIdNTP = uomNT.getNodeTypeProp( "Legacy Id" );
+                legacyIdNTP = uomNT.getNodeTypeProp( CswNbtObjClass.PropertyName.LegacyId );
                 break;
             }
 
@@ -873,7 +871,7 @@ namespace ChemSW.Nbt
                     unitOfMeasure.ConversionFactor.Exponent = expVal;
                 }
                 //unitOfMeasure.IsTemp = false;
-                CswNbtMetaDataNodeTypeProp legacyIdNTP = unitOfMeasure.NodeType.getNodeTypeProp( "Legacy Id" );
+                CswNbtMetaDataNodeTypeProp legacyIdNTP = unitOfMeasure.NodeType.getNodeTypeProp( CswNbtObjClass.PropertyName.LegacyId );
                 unitOfMeasure.Node.Properties[legacyIdNTP].AsNumber.Value = CswConvert.ToDouble( Row["unitofmeasureid"] ); //set the legacy ID
                 unitIds.Add( Row["unitofmeasureid"].ToString() );
                 unitOfMeasure.postChanges( false );
