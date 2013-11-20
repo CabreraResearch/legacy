@@ -60,8 +60,7 @@ namespace ChemSW.Nbt.Sched
             {
                 _setLoad( CswResources );
             }
-            _CswScheduleLogicDetail.LoadCount = _NonFingerprintedMols.Count;
-            return _CswScheduleLogicDetail.LoadCount;
+            return _NonFingerprintedMols.Count;
         }
 
         public void threadCallBack( ICswResources CswResources )

@@ -64,8 +64,7 @@ namespace ChemSW.Nbt.Sched
             {
                 _setLoad( CswResources );
             }
-            _CswScheduleLogicDetail.LoadCount = _MailReportIdsToRun.Count;
-            return _CswScheduleLogicDetail.LoadCount;
+            return _MailReportIdsToRun.Count;
         }
 
         public void threadCallBack( ICswResources CswResources )
@@ -240,8 +239,7 @@ namespace ChemSW.Nbt.Sched
             if( false == CurrentMailReport.Recipients.Empty )
             {
                 Collection<Int32> RecipientIds = CurrentMailReport.Recipients.SelectedUserIds.ToIntCollection();
-                int NodeLimit = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumConfigurationVariableNames.NodesProcessedPerCycle ) );
-                for( Int32 u = 0; u < RecipientIds.Count && u < NodeLimit; u++ )
+                for( Int32 u = 0; u < RecipientIds.Count; u++ )
                 {
                     Int32 UserId = CswConvert.ToInt32( RecipientIds[u].ToString() );
 

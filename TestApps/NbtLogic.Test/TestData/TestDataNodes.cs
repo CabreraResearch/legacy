@@ -85,7 +85,7 @@ namespace ChemSW.Nbt.Test
             return ret;
         }
 
-        internal CswNbtNode createContainerNode( string NodeTypeName = "Container", double Quantity = 1.0, CswNbtNode UnitOfMeasure = null, CswNbtNode Material = null, CswPrimaryKey LocationId = null )
+        internal CswNbtNode createContainerNode( string NodeTypeName = "Container", double Quantity = 1.0, CswNbtNode UnitOfMeasure = null, CswNbtNode Material = null, CswPrimaryKey LocationId = null, bool Missing = false )
         {
             CswNbtNode ret = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( _getNodeTypeId( NodeTypeName ), delegate( CswNbtNode NewNode )
                 {
@@ -107,6 +107,10 @@ namespace ChemSW.Nbt.Test
                     {
                         ContainerNode.Location.SelectedNodeId = LocationId;
                         ContainerNode.Location.RefreshNodeName();
+                    }
+                    if( Missing )
+                    {
+                        ContainerNode.Missing.Checked = CswEnumTristate.True;
                     }
                     //ContainerNode.postChanges( true );
                 } );

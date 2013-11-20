@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 
@@ -33,7 +34,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
         public bool SearchAllowed { get { return ( false ); } }
 
-        public string renderViewPropFilter( ICswNbtUser RunAsUser, CswNbtViewPropertyFilter CswNbtViewPropertyFilterIn )
+        public string renderViewPropFilter( ICswNbtUser RunAsUser, CswNbtViewPropertyFilter CswNbtViewPropertyFilterIn, Dictionary<string, string> ParameterCollection, int FilterNumber )
         {
             return ( string.Empty );
         }//makeWhereClause()

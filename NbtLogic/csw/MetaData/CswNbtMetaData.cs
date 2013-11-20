@@ -33,6 +33,8 @@ namespace ChemSW.Nbt.MetaData
 
         public const string IdentityTabName = "Identity";
 
+        public static readonly string OraViewColNamePrefix = "cu_";
+
         #region Initialization
 
         /// <summary>
@@ -1070,7 +1072,13 @@ namespace ChemSW.Nbt.MetaData
             //note: if we are using numbering, we will perform this on the setter for prop.questionno
             if( NtpModel.UseNumbering == false )
             {
-                InsertedRow["oraviewcolname"] = CswTools.MakeOracleCompliantIdentifier( NtpModel.PropName );
+                string OraViewColName = NtpModel.PropName;
+                if( null == NtpModel.ObjectClassPropToCopy ) //Case 31160 - all NTPs with no ObjClass get a special prefix
+                {
+                    OraViewColName = OraViewColNamePrefix + OraViewColName;
+                }
+                InsertedRow["oraviewcolname"] = CswTools.MakeOracleCompliantIdentifier( OraViewColName );
+                
             }
 
 
@@ -1481,6 +1489,7 @@ namespace ChemSW.Nbt.MetaData
             if( CswConvert.ToInt32( NodeTypePropRow["fieldtypeid"] ) != ObjectClassProp.FieldTypeId )
                 throw new CswDniException( CswEnumErrorType.Error, "Illegal property assignment", "Attempting to assign an ObjectClassProperty (" + ObjectClassProp.PropId.ToString() + ") to a NodeTypeProperty (" + NodeTypePropRow["nodetypepropid"].ToString() + ") where their fieldtypes do not match" );
 
+            //Case 31160 - this will copy OraViewColName from the OCP to the NTP, this is desired behavior
             ObjectClassProp.CopyPropToNewPropRow( NodeTypePropRow );
 
             // Handle the object class prop's viewxml

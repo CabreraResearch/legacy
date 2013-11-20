@@ -38,8 +38,7 @@ namespace ChemSW.Nbt.Sched
 
         public Int32 getLoadCount( ICswResources CswResources )
         {
-            _CswScheduleLogicDetail.LoadCount = _CswScheduleLogicDetail.doesItemRunNow() ? 1 : 0;
-            return _CswScheduleLogicDetail.LoadCount;
+            return _CswScheduleLogicDetail.doesItemRunNow() ? 1 : 0;
         }
 
         public void threadCallBack( ICswResources CswResources )
