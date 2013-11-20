@@ -36,10 +36,8 @@ namespace ChemSW.Nbt.Sched
         {
             CswNbtResources NbtResources = ( CswNbtResources ) CswResources;
             CswNbtObjClassUser ChemSWAdminUser = NbtResources.Nodes.makeUserNodeFromUsername( CswNbtObjClassUser.ChemSWAdminUsername );
-            _CswScheduleLogicDetail.LoadCount = 
-                false == NbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.NBTManager ) && 
+            return false == NbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.NBTManager ) && 
                 ChemSWAdminUser.AccountLocked.Checked == CswEnumTristate.True ? 0 : 1;
-            return _CswScheduleLogicDetail.LoadCount;
         }
 
         public void threadCallBack( ICswResources CswResources )

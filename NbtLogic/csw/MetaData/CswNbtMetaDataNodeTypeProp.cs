@@ -373,11 +373,11 @@ namespace ChemSW.Nbt.MetaData
             {
                 if( UseNumbering && QuestionNo != Int32.MinValue )
                 {
-                    _NodeTypePropRow["oraviewcolname"] = CswTools.MakeOracleCompliantIdentifier( FullQuestionNo.Replace( ".", "x" ) );
+                    _NodeTypePropRow["oraviewcolname"] = CswTools.MakeOracleCompliantIdentifier( CswNbtMetaData.OraViewColNamePrefix + FullQuestionNo.Replace( ".", "x" ) );
                 }
                 else
                 {
-                    _NodeTypePropRow["oraviewcolname"] = CswTools.MakeOracleCompliantIdentifier( PropName );
+                    _NodeTypePropRow["oraviewcolname"] = CswTools.MakeOracleCompliantIdentifier( CswNbtMetaData.OraViewColNamePrefix + PropName );
                 }
             }
         }
