@@ -46,6 +46,13 @@ namespace ChemSW.Nbt.Schema
             {
                 RequestItemOC = _CswNbtSchemaModTrnsctn.createObjectClass( CswEnumNbtObjectClass.RequestItemClass, "cart.png", true );
                 #region Core OCPs
+                CswNbtMetaDataObjectClassProp RequestTypeOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( RequestItemOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+                {
+                    PropName = CswNbtObjClassRequestItem.PropertyName.RequestType,
+                    FieldType = CswEnumNbtFieldType.List,
+                    ServerManaged = true,
+                    ListOptions = CswNbtObjClassRequestItem.Types.Options.ToString()
+                } );
                 CswNbtMetaDataObjectClassProp StatusOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( RequestItemOC, new CswNbtWcfMetaDataModel.ObjectClassProp
                 {
                     PropName = CswNbtObjClassRequestItem.PropertyName.Status,
@@ -193,8 +200,7 @@ namespace ChemSW.Nbt.Schema
                     FieldType = CswEnumNbtFieldType.Relationship,
                     IsFk = true,
                     FkType = CswEnumNbtViewRelatedIdType.PropertySetId.ToString(),
-                    FkValue = MaterialPS.PropertySetId,
-                    ServerManaged = true
+                    FkValue = MaterialPS.PropertySetId
                 } );
                 CswNbtMetaDataObjectClassProp ContainerOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( RequestItemOC, new CswNbtWcfMetaDataModel.ObjectClassProp
                 {

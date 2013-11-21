@@ -47,11 +47,11 @@ namespace ChemSW.Nbt.Requesting
         {
             _RequestItem.Fulfill.MenuOptions = new CswCommaDelimitedString
                 {
-                    CswNbtObjClassRequestItem.FulfillMenu.Dispense, 
+                    CswNbtObjClassRequestItem.FulfillMenu.DispenseContainer, 
                     CswNbtObjClassRequestItem.FulfillMenu.Complete,
                     CswNbtObjClassRequestItem.FulfillMenu.Cancel
                 }.ToString();
-            _RequestItem.Fulfill.State = CswNbtObjClassRequestItem.FulfillMenu.Dispense;
+            _RequestItem.Fulfill.State = CswNbtObjClassRequestItem.FulfillMenu.DispenseContainer;
         }
     }
 }

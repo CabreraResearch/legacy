@@ -31,6 +31,13 @@ namespace ChemSW.Nbt.Requesting
                     break;
             }
             Prop.setHidden( false == IsVisible, SaveToDb: false );
+
+            switch( Prop.PropName )
+            {
+                case CswNbtObjClassRequestItem.PropertyName.Material:
+                    Prop.setReadOnly( true, SaveToDb: false );
+                    break;
+            }
         }
 
         public override void setDescription()
@@ -50,11 +57,12 @@ namespace ChemSW.Nbt.Requesting
                 {
                     CswNbtObjClassRequestItem.FulfillMenu.Order, 
                     CswNbtObjClassRequestItem.FulfillMenu.Receive,
-                    CswNbtObjClassRequestItem.FulfillMenu.Dispense, 
+                    CswNbtObjClassRequestItem.FulfillMenu.DispenseMaterial, 
+                    CswNbtObjClassRequestItem.FulfillMenu.MoveMaterial, 
                     CswNbtObjClassRequestItem.FulfillMenu.Complete,
                     CswNbtObjClassRequestItem.FulfillMenu.Cancel
                 }.ToString();
-            _RequestItem.Fulfill.State = CswNbtObjClassRequestItem.FulfillMenu.Dispense;
+            _RequestItem.Fulfill.State = CswNbtObjClassRequestItem.FulfillMenu.DispenseMaterial;
         }
     }
 }

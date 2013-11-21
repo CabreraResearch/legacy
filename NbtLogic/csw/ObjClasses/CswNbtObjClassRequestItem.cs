@@ -17,6 +17,12 @@ namespace ChemSW.Nbt.ObjClasses
         {
             #region Core Properties
             /// <summary>
+            /// The Type of Request Item submitted by the User.
+            /// <para>PropType: List</para>
+            /// <para>ServerManaged</para>
+            /// </summary>
+            public const string RequestType = "Request Type";
+            /// <summary>
             /// The status of the Request Item based on actions performed.
             /// <para>PropType: List</para>
             /// <para>ServerManaged</para>
@@ -126,7 +132,6 @@ namespace ChemSW.Nbt.ObjClasses
             /// <summary>
             /// The Material from which the Request Item will be Fulfilled.
             /// <para>PropType: Relationship (Material)</para>
-            /// <para>ServerManaged</para>
             /// </summary>
             public const string Material = "Material";
             /// <summary>
@@ -295,13 +300,15 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Create = "Create Material";
             public const string Order = "Order";
             public const string Receive = "Receive";
-            public const string Dispense = "Dispense from Container";
-            public const string Move = "Move Container";
+            public const string DispenseContainer = "Dispense Container";
+            public const string DispenseMaterial = "Dispense from Container";
+            public const string MoveContainer = "Move Container";
+            public const string MoveMaterial = "Move Containers";
             public const string Dispose = "Dispose this Container";
             public const string Complete = "Complete Request";
             public const string Cancel = "Cancel Request";
             public static readonly CswCommaDelimitedString Options =
-                new CswCommaDelimitedString { Create, Order, Receive, Dispense, Move, Dispose, Complete, Cancel };
+                new CswCommaDelimitedString { Create, Order, Receive, DispenseContainer, DispenseMaterial, MoveContainer, MoveMaterial, Dispose, Complete, Cancel };
         }
 
         /// <summary>
@@ -372,6 +379,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
         {
+            RequestType.Value = Type.Value;
             _CswNbtObjClassDefault.beforeCreateNode( IsCopy, OverrideUniqueValidation );
         }
 
@@ -500,9 +508,22 @@ namespace ChemSW.Nbt.ObjClasses
                                 }
                                 //TODO - if it's a Material Size Request, we should select the requested Size and Unit Count by default.
                                 break;
-                            case FulfillMenu.Dispense:
-                                //Apparently CswEnumNbtButtonAction.dispense is for dispensing an arbitrary container for Material requests
-                                //TODO - figure out how to handle this discrepancy
+                            case FulfillMenu.DispenseMaterial:
+                                if( false == Quantity.Empty )
+                                {
+                                    JObject InitialQuantity = new JObject();
+                                    Quantity.ToJSON( InitialQuantity );
+                                    ButtonData.Data["initialQuantity"] = InitialQuantity;
+                                }
+                                string Title = "Fulfill Request for " + Quantity.Gestalt + " of " + Material.Gestalt;
+                                if( TotalDispensed.Quantity > 0 )//Letting the user know how much has already been dispensed...
+                                {
+                                    Title += " (" + TotalDispensed.Gestalt + ") dispensed.";
+                                }
+                                ButtonData.Data["title"] = Title;
+                                ButtonData.Action = CswEnumNbtButtonAction.dispense;
+                                break;
+                            case FulfillMenu.DispenseContainer:
                                 ContainerNode = _CswNbtResources.Nodes.GetNode( Container.RelatedNodeId );
                                 if( null != ContainerNode )
                                 {
@@ -511,10 +532,15 @@ namespace ChemSW.Nbt.ObjClasses
                                     ButtonData.clone( DispenseData );
                                 }
                                 break;
+                            case FulfillMenu.MoveMaterial:
+                                ButtonData.Action = CswEnumNbtButtonAction.move;
+                                //TODO - add type-specific properties (EP, Material Size, Source Container)
+                                //ButtonData.Data["title"] = "Fulfill Request for " + SizeCount.Value + " x " + Size.Gestalt + " of " + Material.Gestalt;
+                                //ButtonData.Data["sizeid"] = Size.RelatedNodeId.ToString();
+                                ButtonData.Data["location"] = Location.Gestalt;
+                                break;
                             //TODO - Case 27697 - for move and Dispose, search for other requests with the same container/location and mark them as complete
-                            case FulfillMenu.Move:
-                                //Apparently CswEnumNbtButtonAction.move is for moving multiple containers for MaterialSize requests
-                                //TODO - figure out how to handle this discrepancy
+                            case FulfillMenu.MoveContainer:
                                 ButtonData.Action = CswEnumNbtButtonAction.refresh;
                                 ContainerNode = _CswNbtResources.Nodes.GetNode( Container.RelatedNodeId );
                                 if( null != ContainerNode )
@@ -564,6 +590,8 @@ namespace ChemSW.Nbt.ObjClasses
 
         private void _setUIVisibility()
         {
+            ExternalOrderNumber.SetOnBeforeRender( TypeDef.setPropUIVisibility );
+            Location.SetOnBeforeRender( TypeDef.setPropUIVisibility );
             EnterprisePart.SetOnBeforeRender( TypeDef.setPropUIVisibility );
             Material.SetOnBeforeRender( TypeDef.setPropUIVisibility );
             Container.SetOnBeforeRender( TypeDef.setPropUIVisibility );
@@ -635,6 +663,7 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         //Core Properties (All Request Items use these)
+        public CswNbtNodePropList RequestType { get { return _CswNbtNode.Properties[PropertyName.RequestType]; } }
         public CswNbtNodePropList Status { get { return _CswNbtNode.Properties[PropertyName.Status]; } }
         private void _onStatusPropChange( CswNbtNodeProp Prop, bool Creating )
         {

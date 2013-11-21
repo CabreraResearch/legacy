@@ -19,7 +19,6 @@ namespace ChemSW.Nbt.Requesting
             switch( Prop.PropName )
             {
                 case CswNbtObjClassRequestItem.PropertyName.Container:
-                case CswNbtObjClassRequestItem.PropertyName.Material:
                 case CswNbtObjClassRequestItem.PropertyName.Size:
                 case CswNbtObjClassRequestItem.PropertyName.SizeCount:
                 case CswNbtObjClassRequestItem.PropertyName.TotalMoved:
@@ -49,12 +48,13 @@ namespace ChemSW.Nbt.Requesting
             _RequestItem.Fulfill.MenuOptions = new CswCommaDelimitedString
                 {
                     CswNbtObjClassRequestItem.FulfillMenu.Order,
-                    CswNbtObjClassRequestItem.FulfillMenu.Move,
-                    CswNbtObjClassRequestItem.FulfillMenu.Dispense, 
+                    CswNbtObjClassRequestItem.FulfillMenu.Receive, 
+                    CswNbtObjClassRequestItem.FulfillMenu.MoveMaterial,
+                    CswNbtObjClassRequestItem.FulfillMenu.DispenseMaterial, 
                     CswNbtObjClassRequestItem.FulfillMenu.Complete,
                     CswNbtObjClassRequestItem.FulfillMenu.Cancel
                 }.ToString();
-            _RequestItem.Fulfill.State = CswNbtObjClassRequestItem.FulfillMenu.Dispense;
+            _RequestItem.Fulfill.State = CswNbtObjClassRequestItem.FulfillMenu.DispenseMaterial;
         }
     }
 }
