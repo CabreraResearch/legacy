@@ -305,7 +305,6 @@ namespace ChemSW.Nbt.WebServices
                         string[] thisParam = rawParams[w].Split( '=' );
                         string paramValue = CswNbtObjClassReport.ReplaceReportParams( thisParam[1], reportParams.ReportParamDictionary );
                         wsParams[w - 1] = paramValue;
-                        w++;
                     }
 
                     Type classInfo = Type.GetType( wsClassName );
