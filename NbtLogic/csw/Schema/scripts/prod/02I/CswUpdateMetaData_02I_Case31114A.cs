@@ -8,7 +8,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update
     /// </summary>
-    public class CswUpdateMetaData_02I_Case31114A: CswUpdateSchemaTo
+    public class CswUpdateMetaData_02I_Case31114A : CswUpdateSchemaTo
     {
         public override CswEnumDeveloper Author
         {
@@ -34,7 +34,7 @@ namespace ChemSW.Nbt.Schema
         {
             if( Int32.MinValue == _CswNbtSchemaModTrnsctn.Modules.GetModuleId( CswEnumNbtModuleName.ChemWatch ) )
             {
-                _CswNbtSchemaModTrnsctn.createModule( "ChemWatch", CswEnumNbtModuleName.ChemWatch.ToString() );
+                _CswNbtSchemaModTrnsctn.createModule( "ChemWatch", CswEnumNbtModuleName.ChemWatch.ToString(), false ); // ChemWatch disabled by default
                 _CswNbtSchemaModTrnsctn.Modules.CreateModuleDependency( CswEnumNbtModuleName.SDS, CswEnumNbtModuleName.ChemWatch );
             }
 
