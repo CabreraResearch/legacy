@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.IO;
 using System.Runtime.Serialization;
 using ChemSW.Core;
 
@@ -66,6 +67,9 @@ namespace NbtWebApp.Actions.ChemWatch
 
         [DataMember]
         public Collection<ChemWatchListItem> Materials = new Collection<ChemWatchListItem>();
+
+        [DataMember]
+        public Stream SDSDocument = null;
 
         [DataMember]
         public Collection<ChemWatchSDSDoc> SDSDocuments = new Collection<ChemWatchSDSDoc>();

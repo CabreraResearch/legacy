@@ -1,12 +1,11 @@
 using System;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using ChemSW.Core;
-using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
-using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -240,9 +239,6 @@ namespace ChemSW.Nbt.ObjClasses
                 {
                     case PropertyName.OpenFile:
                         HasPermission = true; //todo: what should this be based off?
-                        ButtonData.Data["state"] = new JObject();
-                        ButtonData.Data["state"]["filetype"] = FileType.Value;
-
                         string url = "";
                         if( FileType.Value.Equals( CswEnumDocumentFileTypes.File ) )
                         {
@@ -258,12 +254,12 @@ namespace ChemSW.Nbt.ObjClasses
                             CswNbtObjClassSDSDocument SDSDocNode = Node;
                             if( null != SDSDocNode.ChemWatch && false == string.IsNullOrEmpty( SDSDocNode.ChemWatch.Text ) )
                             {
-                                url = CswNbtActChemWatch.GetSDSDocument( _CswNbtResources, SDSDocNode.ChemWatch.Text );
+                                url = "Services/ChemWatch/GetSDSDocument?filename=" + SDSDocNode.ChemWatch.Text;
                             }
                         }
 
-                        ButtonData.Data["state"]["url"] = url;
-                        ButtonData.Action = CswEnumNbtButtonAction.openfile;
+                        ButtonData.Data["url"] = url;
+                        ButtonData.Action = CswEnumNbtButtonAction.popup;
                         break;
                 }
             }

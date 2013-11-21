@@ -151,31 +151,18 @@ namespace ChemSW.Nbt.Actions
             return Return;
         }
 
-        public static string GetSDSDocument( ICswResources CswResources, string filename )
+        public static Stream GetSDSDocument( ICswResources CswResources, string filename )
         {
-            string Ret;
+            Stream Ret = null;
             string errorMsg;
 
             if( _authenticate( out errorMsg ) )
             {
                 DocumentServiceClient cwDocClient = new DocumentServiceClient();
-                cwDocClient.Endpoint.Behaviors.Add( _cookieBehavior ); //every service client needs to share this
-                Stream fs = cwDocClient.GetDocumentContent( filename );
+                cwDocClient.Endpoint.Behaviors.Add( _cookieBehavior );
+                Stream DocStream = cwDocClient.GetDocumentContent( filename );
 
-                CswTempFile TempFile = new CswTempFile( CswResources );
-                string tempdir = TempFile.TempPath;
-                string apath = tempdir + filename;
-                FileInfo fInfo = new FileInfo( apath );
-                if( !fInfo.Directory.Exists )
-                {
-                    fInfo.Directory.Create();
-                }
-                FileStream file = new FileStream( apath, FileMode.Create );
-
-                fs.CopyTo( file );
-                file.Close();
-
-                Ret = apath;
+                Ret = DocStream;
             }
             else
             {
@@ -214,9 +201,12 @@ namespace ChemSW.Nbt.Actions
             foreach( ChemWatchSDSDoc SDSDoc in Request.SDSDocuments )
             {
                 string Language = _getLanguage( SDSDoc.Language );
+                string FileName = SDSDoc.FileName;
                 CswNbtResources.Nodes.makeNodeFromNodeTypeId( SDSDocumentOC.FirstNodeType.NodeTypeId, delegate( CswNbtNode NewNode )
                     {
                         CswNbtObjClassSDSDocument NewSDSDocNode = NewNode;
+                        NewSDSDocNode.FileType.Value = CswNbtObjClassSDSDocument.CswEnumDocumentFileTypes.ChemWatch;
+                        NewSDSDocNode.ChemWatch.Text = FileName;
                         NewSDSDocNode.Language.Value = Language;
                         NewSDSDocNode.Owner.RelatedNodeId = Request.NbtMaterialId;
                     } );

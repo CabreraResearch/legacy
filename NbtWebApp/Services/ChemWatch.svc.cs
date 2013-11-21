@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.IO;
 using System.ServiceModel;
 using System.ServiceModel.Activation;
 using System.ServiceModel.Web;
@@ -110,6 +111,30 @@ namespace NbtWebApp
             SvcDriver.run();
             return ( Ret );
         }
-    }
 
+        [OperationContract]
+        [WebInvoke( Method = "GET", UriTemplate = "GetSDSDocument?filename={filename}" )]
+        [Description( "Get a specific SDS Document file" )]
+        [FaultContract( typeof( FaultException ) )]
+        public Stream GetSDSDocument( string FileName )
+        {
+            CswNbtChemWatchReturn Ret = new CswNbtChemWatchReturn();
+
+            var SvcDriver = new CswWebSvcDriver<CswNbtChemWatchReturn, string>(
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj: Ret,
+                WebSvcMethodPtr: CswNbtWebServiceChemWatch.GetSDSDocument,
+                ParamObj: FileName
+                );
+            SvcDriver.run();
+
+            if( false == FileName.EndsWith( ".pdf" ) )
+            {
+                FileName = FileName + ".pdf";
+            }
+            WebOperationContext.Current.OutgoingResponse.Headers.Set( "Content-Disposition", "attachment; filename=\"" + FileName + "\";" );
+
+            return Ret.Data.SDSDocument;
+        }//startImport()
+    }
 }

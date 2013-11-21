@@ -34,10 +34,10 @@ namespace ChemSW.Nbt.WebServices
             Return.Data = CswNbtActChemWatch.SDSDocumentSearch( CswResources, Request );
         }
 
-        //public static void GetSDSDocument( ICswResources CswResources, string filename )
-        //{
-        //    Return.Data = CswNbtActChemWatch.GetSDSDocument( CswResources, fileanme );
-        //}
+        public static void GetSDSDocument( ICswResources CswResources, CswNbtChemWatchReturn Return, string FileName )
+        {
+            Return.Data.SDSDocument = CswNbtActChemWatch.GetSDSDocument( CswResources, FileName );
+        }
 
         public static void GetMatchingSuppliers( ICswResources CswResources, CswNbtChemWatchReturn Return, CswNbtChemWatchRequest Request )
         {

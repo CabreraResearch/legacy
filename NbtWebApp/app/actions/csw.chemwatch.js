@@ -408,7 +408,6 @@
                     cswPrivate.makeMatListGrid();
                     cswPrivate.makeLngCntrySelects();
                     cswPrivate.makeSDSListGrid();
-                    cswPrivate.makeCreateSDSLinksBtn();
                 },
                 error: function (data) {
                     console.log(data);
