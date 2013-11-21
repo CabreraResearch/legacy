@@ -59,15 +59,18 @@ namespace ChemSW.Nbt.Schema
                 EditDisplayRow++;
 
                 CswNbtMetaDataNodeTypeProp ClassGridNTP = GhsNT.getNodeTypePropByObjectClassProp( CswNbtObjClassGHS.PropertyName.ClassificationsGrid );
-                ClassNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
-                ClassNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, GhsNT.getFirstNodeTypeTab().TabId, EditDisplayRow, 1, "Classification" );
+                ClassGridNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
+                ClassGridNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, GhsNT.getFirstNodeTypeTab().TabId, EditDisplayRow, 1, "Classification" );
             }
 
             // Add new 'GHS Classification' nodetype
             GHSClassNT = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( new CswNbtWcfMetaDataModel.NodeType( GHSClassOC )
                 {
+                    NodeTypeName = "GHS Classification",
                     Category = "System"
                 } );
+
+            GHSClassNT.addNameTemplateText( CswNbtObjClassGHSClassification.PropertyName.English );
 
             CswNbtMetaDataNodeTypeProp GHSClassCategoryNTP = GHSClassNT.getNodeTypePropByObjectClassProp( CswNbtObjClassGHSClassification.PropertyName.Category );
             GHSClassCategoryNTP.updateLayout( CswEnumNbtLayoutType.Add, true, Int32.MinValue, 1, 1 );

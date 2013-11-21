@@ -220,7 +220,7 @@ namespace ChemSW.Nbt.ObjClasses
                     ClassVR.NodeIdsToFilterIn.Add( ClassPk );
                 }
 
-                //View.AddViewProperty( ClassVR, GhsClassOC.getObjectClassProp( CswNbtObjClassGHSClassification.PropertyName.Code ) );
+                View.AddViewProperty( ClassVR, GhsClassOC.getObjectClassProp( CswNbtObjClassGHSClassification.PropertyName.Category ) );
                 if( null != GhsClassNT )
                 {
                     CswNbtMetaDataNodeTypeProp LanguageProp = GhsClassNT.getNodeTypePropByObjectClassProp( _getLanguageForTranslation() );

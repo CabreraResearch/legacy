@@ -1,5 +1,9 @@
-﻿using ChemSW.Nbt.MetaData;
+﻿using System.Data;
+using ChemSW.Core;
+using ChemSW.DB;
+using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.csw.Dev;
 
 namespace ChemSW.Nbt.Schema
@@ -29,14 +33,33 @@ namespace ChemSW.Nbt.Schema
             // Add new 'GHS Classification' object class
             CswNbtMetaDataObjectClass GHSClassOC = _CswNbtSchemaModTrnsctn.createObjectClass( CswEnumNbtObjectClass.GHSClassificationClass, "warning.png", false );
 
-            // TODO: Add object class to property set 'Phrase'
-
             _CswNbtSchemaModTrnsctn.createObjectClassProp( GHSClassOC, new CswNbtWcfMetaDataModel.ObjectClassProp()
                 {
                     FieldType = CswEnumNbtFieldType.List,
                     PropName = CswNbtObjClassGHSClassification.PropertyName.Category,
                     ListOptions = "Physical,Health,Environmental"
                 } );
+
+            // Language properties
+            foreach( string Language in CswNbtPropertySetPhrase.SupportedLanguages.All )
+            {
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( GHSClassOC, new CswNbtWcfMetaDataModel.ObjectClassProp( GHSClassOC )
+                {
+                    PropName = Language,
+                    FieldType = CswEnumNbtFieldType.Text
+                } );
+            }
+
+            // Add new object class to 'Phrase' Property Set
+            CswNbtMetaDataPropertySet PhrasePS = _CswNbtSchemaModTrnsctn.MetaData.getPropertySet( CswEnumNbtPropertySetName.PhraseSet );
+            CswTableUpdate jctUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "31074_jctPropSets_update", "jct_propertyset_objectclass" );
+            DataTable jctTable = jctUpdate.getEmptyTable();
+            DataRow row = jctTable.NewRow();
+            row["propertysetid"] = PhrasePS.PropertySetId;
+            row["objectclassid"] = GHSClassOC.ObjectClassId;
+            jctTable.Rows.Add( row );
+            jctUpdate.update( jctTable );
+
 
             CswNbtMetaDataObjectClass GhsOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.GHSClass );
 
@@ -61,7 +84,9 @@ namespace ChemSW.Nbt.Schema
             _CswNbtSchemaModTrnsctn.createObjectClassProp( GhsOC, new CswNbtWcfMetaDataModel.ObjectClassProp()
             {
                 FieldType = CswEnumNbtFieldType.Grid,
-                PropName = CswNbtObjClassGHS.PropertyName.ClassificationsGrid
+                PropName = CswNbtObjClassGHS.PropertyName.ClassificationsGrid,
+                Extended = CswEnumNbtGridPropMode.Small.ToString(),
+                NumberMaxValue = 10
             } );
 
             _CswNbtSchemaModTrnsctn.createObjectClassProp( GhsOC, new CswNbtWcfMetaDataModel.ObjectClassProp()
