@@ -4,6 +4,7 @@ using System.Data;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
+using ChemSW.Audit;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
@@ -72,7 +73,7 @@ namespace ChemSW.Nbt.Actions
         private Int32 _DesignNtId = 0;
         private Int32 _TargetNtId = 0;
         private Int32 _GroupNtId = 0;
-        
+
         #region MetaData
 
         /// <summary>
@@ -403,12 +404,12 @@ namespace ChemSW.Nbt.Actions
                 ItgSchedulesView.NbtViewMode = CswEnumNbtViewRenderingMode.Grid.ToString();
 
                 CswNbtViewRelationship Rel = ItgSchedulesView.AddViewRelationship( InspectionTargetGroupNt, IncludeDefaultFilters: true );
-                CswNbtViewRelationship SchedRel = ItgSchedulesView.AddViewRelationship( Rel, CswEnumNbtViewPropOwnerType.Second, GeneratorNt.getNodeTypePropByObjectClassProp(CswNbtObjClassGenerator.PropertyName.Owner ), IncludeDefaultFilters: true );
+                CswNbtViewRelationship SchedRel = ItgSchedulesView.AddViewRelationship( Rel, CswEnumNbtViewPropOwnerType.Second, GeneratorNt.getNodeTypePropByObjectClassProp( CswNbtObjClassGenerator.PropertyName.Owner ), IncludeDefaultFilters: true );
                 ItgSchedulesView.AddViewProperty( SchedRel, GeneratorNt.getNodeTypePropByObjectClassProp( CswNbtObjClassGenerator.PropertyName.Description ) );
                 ItgSchedulesView.AddViewProperty( SchedRel, GeneratorNt.getNodeTypePropByObjectClassProp( CswNbtObjClassGenerator.PropertyName.NextDueDate ) );
                 ItgSchedulesView.AddViewProperty( SchedRel, GeneratorNt.getNodeTypePropByObjectClassProp( CswNbtObjClassGenerator.PropertyName.RunStatus ) );
                 ItgSchedulesView.AddViewProperty( SchedRel, GeneratorNt.getNodeTypePropByObjectClassProp( CswNbtObjClassGenerator.PropertyName.RunTime ) );
-                
+
                 ItgSchedulesView.save();
                 ItgSchedulesNtp.ViewId = ItgSchedulesView.ViewId;
                 ItgSchedulesNtp.removeFromLayout( CswEnumNbtLayoutType.Add );
@@ -416,7 +417,20 @@ namespace ChemSW.Nbt.Actions
 
             #endregion Set InspectionTargetGroup Props and Tabs
 
+            _setAuditing( RetInspectionTargetNt );
+            _setAuditing( InspectionTargetGroupNt );
+
             return RetInspectionTargetNt;
+        }
+
+        // case 30874 - set auditing enabled by default
+        private void _setAuditing( CswNbtMetaDataNodeType NodeType )
+        {
+            NodeType.AuditLevel = CswEnumAuditLevel.PlainAudit;
+            foreach( CswNbtMetaDataNodeTypeProp Prop in NodeType.getNodeTypeProps() )
+            {
+                Prop.AuditLevel = CswEnumAuditLevel.PlainAudit;
+            }
         }
 
         private void _setInspectionDesignTabsAndProps( CswNbtMetaDataNodeType InspectionDesignNt, CswNbtMetaDataNodeType InspectionTargetNt )
@@ -529,7 +543,7 @@ namespace ChemSW.Nbt.Actions
                   }, null );
                 }
             }
-            
+
             if( null == RetView )
             {
                 try
@@ -553,7 +567,7 @@ namespace ChemSW.Nbt.Actions
                     */
                     CswNbtViewRelationship IpGroupRelationship = RetView.AddViewRelationship( InspectionTargetGroupNt, false );
                     CswNbtViewRelationship IpTargetRelationship = RetView.AddViewRelationship( IpGroupRelationship, CswEnumNbtViewPropOwnerType.Second, ItTargetGroupNtp, false );
-                    RetView.AddViewRelationship( IpTargetRelationship, CswEnumNbtViewPropOwnerType.Second, InspectionDesignNt.getNodeTypePropByObjectClassProp(CswNbtObjClassInspectionDesign.PropertyName.Target), false );
+                    RetView.AddViewRelationship( IpTargetRelationship, CswEnumNbtViewPropOwnerType.Second, InspectionDesignNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.Target ), false );
                 }
                 catch( Exception ex )
                 {
@@ -673,7 +687,7 @@ namespace ChemSW.Nbt.Actions
             CswCommaDelimitedString CompliantAnswers = new CswCommaDelimitedString();
             CompliantAnswers.FromString( CompliantAnswersString );
 
-            if( false == CompliantAnswers.Contains( PreferredAnswerString, CaseSensitive : false ) )
+            if( false == CompliantAnswers.Contains( PreferredAnswerString, CaseSensitive: false ) )
             {
                 PreferredAnswerString = "";
             }
@@ -743,7 +757,7 @@ namespace ChemSW.Nbt.Actions
         public Int32 DesignNtId { get { return ( _DesignNtId ); } }
         public Int32 TargetNtId { get { return ( _TargetNtId ); } }
         public Int32 GroupNtId { get { return ( _GroupNtId ); } }
-        
+
         private CswCommaDelimitedString _UniqueQuestions = new CswCommaDelimitedString();
 
         public DataTable prepareDataTable( DataTable UploadDataTable )
@@ -768,7 +782,7 @@ namespace ChemSW.Nbt.Actions
                 foreach( DataRow Row in UploadDataTable.Rows )
                 {
                     string Question = _standardizeName( Row[_QuestionName] );
-                    if( false == _UniqueQuestions.Contains( Question, CaseSensitive : false ) )
+                    if( false == _UniqueQuestions.Contains( Question, CaseSensitive: false ) )
                     {
                         _UniqueQuestions.Add( Question );
                         if( false == string.IsNullOrEmpty( Question ) )
@@ -814,7 +828,7 @@ namespace ChemSW.Nbt.Actions
             CswNbtMetaDataNodeType InspectionDesignNt = _CswNbtResources.MetaData.getNodeType( InspectionDesignName );
             if( null != InspectionDesignNt )
             {
-                string CopyInspectionNameOrig = CswTools.makeUniqueCopyName( InspectionDesignName, MaxLength : 50 );
+                string CopyInspectionNameOrig = CswTools.makeUniqueCopyName( InspectionDesignName, MaxLength: 50 );
                 string CopyInspectionNameFinal = CopyInspectionNameOrig;
                 Int32 Iterator = 0;
                 while( null != _CswNbtResources.MetaData.getNodeType( CopyInspectionNameFinal ) )
@@ -876,6 +890,8 @@ namespace ChemSW.Nbt.Actions
             RetObj["totalrows"] = TotalRows.ToString();
             RetObj["rownumbersskipped"] = new JArray( GridRowsSkipped.ToString() );
             RetObj["countsucceeded"] = PropsWithoutError.ToString();
+
+            _setAuditing( InspectionDesignNt );
 
             return ( RetObj );
         }
