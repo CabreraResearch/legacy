@@ -7,7 +7,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update
     /// </summary>
-    public class CswUpdateMetaData_02H_Case31223 : CswUpdateSchemaTo
+    public class CswUpdateSchema_02I_Case31223 : CswUpdateSchemaTo
     {
         public override CswEnumDeveloper Author
         {
@@ -31,16 +31,9 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
-            /*
-             * NOTE: This is an OC update because I am using the view created on the NTP to update the OCP (see comment on line 38 below) 
-             */
-
             // Assigned SDS property view - Chemical
             CswNbtView AssignedSDSView = _editView( CswEnumNbtObjectClass.SDSDocumentClass, CswEnumNbtObjectClass.ChemicalClass, CswNbtObjClassChemical.PropertyName.AssignedSDS );
-            // Update the ViewXML on the AssignedSDSOCP
-            CswNbtMetaDataObjectClass ChemicalOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass );
-            CswNbtMetaDataObjectClassProp AssignedSDSOCP = ChemicalOC.getObjectClassProp( CswNbtObjClassChemical.PropertyName.AssignedSDS );
-            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( AssignedSDSOCP, CswEnumNbtObjectClassPropAttributes.viewxml, AssignedSDSView.ToString() );
+            _updateAssignedSDSOCP( AssignedSDSView );
 
             // Documents property view on all Materials
             CswNbtMetaDataPropertySet MaterialPS = _CswNbtSchemaModTrnsctn.MetaData.getPropertySet( CswEnumNbtPropertySetName.MaterialSet );
@@ -87,6 +80,14 @@ namespace ChemSW.Nbt.Schema
                 }
             }
             return DocumentsView;
+        }
+
+        private void _updateAssignedSDSOCP( CswNbtView View )
+        {
+            // Update the ViewXML on the AssignedSDSOCP
+            CswNbtMetaDataObjectClass ChemicalOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass );
+            CswNbtMetaDataObjectClassProp AssignedSDSOCP = ChemicalOC.getObjectClassProp( CswNbtObjClassChemical.PropertyName.AssignedSDS );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( AssignedSDSOCP, CswEnumNbtObjectClassPropAttributes.viewxml, View.ToString() );
         }
     }
 
