@@ -179,7 +179,7 @@ namespace ChemSW.Nbt.ObjClasses
                     } //we have a duplicate value situation
                 }
 
-                else
+                else if( IsCopy ) //[9:55:20 AM 11/21/2013] Steven Salter: I can't think of any other situation [that unique props should be blanked]
                 {
                     foreach( CswNbtNodePropWrapper CurrentPropWrapper in CompoundUniqueProps )
                     {

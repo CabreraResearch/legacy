@@ -48,6 +48,12 @@ namespace ChemSW.Nbt.Schema
             LocationsMgr.removeImportOrder( "CAF", "Shelf", 5, true );
             LocationsMgr.removeImportOrder( "CAF", "Box", 6, true );
 
+            //the instance on the relationships is different for Locations, so they must be deleted manually
+            LocationsMgr.removeImportRelationship( "CAF", "Building", "Location", 1 );
+            LocationsMgr.removeImportRelationship( "CAF", "Room", "Location", 2 );
+            LocationsMgr.removeImportRelationship( "CAF", "Cabinet", "Location", 3 );
+            LocationsMgr.removeImportRelationship( "CAF", "Shelf", "Location", 4 );
+            LocationsMgr.removeImportRelationship( "CAF", "Box", "Location", 5 );
 
 
             #region Site
@@ -67,7 +73,7 @@ namespace ChemSW.Nbt.Schema
             LocationsMgr.importBinding( "controlzoneid", CswNbtObjClassLocation.PropertyName.ControlZone, CswEnumNbtSubFieldName.NodeID.ToString() );
             LocationsMgr.importBinding( "allowinventory", CswNbtObjClassLocation.PropertyName.AllowInventory, "" );
             LocationsMgr.importBinding( "barcode", CswNbtObjClassLocation.PropertyName.Barcode, "" );
-            LocationsMgr.importBinding( "siteid", CswNbtObjClassLocation.PropertyName.LocationCode, CswEnumNbtSubFieldName.NodeID.ToString() );
+            LocationsMgr.importBinding( "siteid", CswNbtObjClassLocation.PropertyName.Location, CswEnumNbtSubFieldName.NodeID.ToString() );
 
             #endregion
 
@@ -80,7 +86,7 @@ namespace ChemSW.Nbt.Schema
             LocationsMgr.importBinding( "controlzoneid", CswNbtObjClassLocation.PropertyName.ControlZone, CswEnumNbtSubFieldName.NodeID.ToString() );
             LocationsMgr.importBinding( "allowinventory", CswNbtObjClassLocation.PropertyName.AllowInventory, "" );
             LocationsMgr.importBinding( "barcode", CswNbtObjClassLocation.PropertyName.Barcode, "" );
-            LocationsMgr.importBinding( "buildingid", CswNbtObjClassLocation.PropertyName.LocationCode, CswEnumNbtSubFieldName.NodeID.ToString() );
+            LocationsMgr.importBinding( "buildingid", CswNbtObjClassLocation.PropertyName.Location, CswEnumNbtSubFieldName.NodeID.ToString() );
 
             #endregion
 
@@ -93,7 +99,7 @@ namespace ChemSW.Nbt.Schema
             LocationsMgr.importBinding( "controlzoneid", CswNbtObjClassLocation.PropertyName.ControlZone, CswEnumNbtSubFieldName.NodeID.ToString() );
             LocationsMgr.importBinding( "allowinventory", CswNbtObjClassLocation.PropertyName.AllowInventory, "" );
             LocationsMgr.importBinding( "barcode", CswNbtObjClassLocation.PropertyName.Barcode, "" );
-            LocationsMgr.importBinding( "roomid", CswNbtObjClassLocation.PropertyName.LocationCode, CswEnumNbtSubFieldName.NodeID.ToString() );
+            LocationsMgr.importBinding( "roomid", CswNbtObjClassLocation.PropertyName.Location, CswEnumNbtSubFieldName.NodeID.ToString() );
 
             #endregion
 
@@ -106,7 +112,7 @@ namespace ChemSW.Nbt.Schema
             LocationsMgr.importBinding( "controlzoneid", CswNbtObjClassLocation.PropertyName.ControlZone, CswEnumNbtSubFieldName.NodeID.ToString() );
             LocationsMgr.importBinding( "allowinventory", CswNbtObjClassLocation.PropertyName.AllowInventory, "" );
             LocationsMgr.importBinding( "barcode", CswNbtObjClassLocation.PropertyName.Barcode, "" );
-            LocationsMgr.importBinding( "cabinetid", CswNbtObjClassLocation.PropertyName.LocationCode, CswEnumNbtSubFieldName.NodeID.ToString() );
+            LocationsMgr.importBinding( "cabinetid", CswNbtObjClassLocation.PropertyName.Location, CswEnumNbtSubFieldName.NodeID.ToString() );
 
             #endregion
 
@@ -119,7 +125,7 @@ namespace ChemSW.Nbt.Schema
             LocationsMgr.importBinding( "controlzoneid", CswNbtObjClassLocation.PropertyName.ControlZone, CswEnumNbtSubFieldName.NodeID.ToString() );
             LocationsMgr.importBinding( "allowinventory", CswNbtObjClassLocation.PropertyName.AllowInventory, "" );
             LocationsMgr.importBinding( "barcode", CswNbtObjClassLocation.PropertyName.Barcode, "" );
-            LocationsMgr.importBinding( "shelfid", CswNbtObjClassLocation.PropertyName.LocationCode, CswEnumNbtSubFieldName.NodeID.ToString() );
+            LocationsMgr.importBinding( "shelfid", CswNbtObjClassLocation.PropertyName.Location, CswEnumNbtSubFieldName.NodeID.ToString() );
 
             #endregion
 
