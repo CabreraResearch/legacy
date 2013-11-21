@@ -7,7 +7,6 @@ using ChemSW.DB;
 using ChemSW.Nbt.csw.ImportExport;
 using ChemSW.Nbt.Grid;
 using ChemSW.Nbt.ImportExport;
-using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.Sched;
 using NbtWebApp.WebSvc.Returns;
 
@@ -183,9 +182,7 @@ namespace ChemSW.Nbt.WebServices
             if( Params.ImportDefName.Equals( "CAF" ) )
             {
                 //Create custom NodeTypeProps from CAF Properties collections and set up bindings for them
-                CswNbtImportTools.CreateCafProps( _CswNbtResources, CswEnumNbtObjectClass.ChemicalClass, "properties_values", "propertiesvaluesid" );
-                CswNbtImportTools.CreateCafProps( _CswNbtResources, CswEnumNbtObjectClass.ContainerClass, "properties_values_cont", "contpropsvaluesid" );
-                CswNbtImportTools.CreateCafProps( _CswNbtResources, CswEnumNbtObjectClass.ContainerClass, "properties_values_lot", "lotpropsvaluesid" );
+                CswNbtImportTools.CreateAllCAFProps( _CswNbtResources );
 
                 // Enable the CAFImport rule
                 CswTableUpdate TableUpdate = _CswNbtResources.makeCswTableUpdate( "enableCafImportRule", "scheduledrules" );
@@ -271,6 +268,7 @@ namespace ChemSW.Nbt.WebServices
 
             return Ret;
         }
+
 
 
     } // class CswNbtWebServiceImport

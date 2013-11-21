@@ -11,6 +11,12 @@ namespace ChemSW.Nbt.csw.ImportExport
 {
     public static class CswNbtImportTools
     {
+        public static void CreateAllCAFProps( CswNbtResources NbtResources )
+        {
+            CreateCafProps( NbtResources, CswEnumNbtObjectClass.ChemicalClass, "properties_values", "propertiesvaluesid" );
+            CreateCafProps( NbtResources, CswEnumNbtObjectClass.ContainerClass, "properties_values_cont", "contpropsvaluesid" );
+            CreateCafProps( NbtResources, CswEnumNbtObjectClass.ContainerClass, "properties_values_lot", "lotpropsvaluesid" );
+        }
 
         public static void CreateCafProps( CswNbtResources NbtResources, CswEnumNbtObjectClass ObjClass, string PropsValsTblName, string PropsValsPKName )
         {
