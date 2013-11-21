@@ -457,15 +457,11 @@ namespace ChemSW.Nbt.ImportExport
                 if( Binding.DestPropName == CswNbtObjClass.PropertyName.LegacyId )
                 {
                     LegacyId = ImportRow[Binding.ImportDataColumnName].ToString();
+                    allEmpty = false;
                 }
             }
-
-            if( string.IsNullOrEmpty( LegacyId ) && BindingDef.DefinitionName == "CAF" )
-            {
-                allEmpty = true;
-            }
-
-            if( false == allEmpty || false == UniqueBindings.Any() )
+            
+            if( false == allEmpty )
             {
                 bool foundMatch = false;
                 if( false == string.IsNullOrEmpty( LegacyId ) ) //Check for matching nodes using a view on legacy id
