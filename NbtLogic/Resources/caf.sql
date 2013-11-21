@@ -398,6 +398,7 @@ SELECT v.VENDORID,
        sc.STORAGECOMPAT                       AS storagecompatibility,
        ph.LABELCODES,
        pc.PICTOGRAMS,
+	   p.productdescription,
        cpv.*
 FROM   materials m
        join packages p
