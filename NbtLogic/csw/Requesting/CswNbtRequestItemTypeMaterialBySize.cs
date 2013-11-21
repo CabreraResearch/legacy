@@ -28,15 +28,11 @@ namespace ChemSW.Nbt.Requesting
                 case CswNbtObjClassRequestItem.PropertyName.NewMaterialPartNo:
                     IsVisible = false;
                     break;
-            }
-            Prop.setHidden( false == IsVisible, SaveToDb: false );
-
-            switch( Prop.PropName )
-            {
                 case CswNbtObjClassRequestItem.PropertyName.Material:
                     Prop.setReadOnly( true, SaveToDb: false );
                     break;
             }
+            Prop.setHidden( false == IsVisible, SaveToDb: false );
         }
 
         public override void setDescription()

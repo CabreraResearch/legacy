@@ -417,6 +417,8 @@ namespace ChemSW.Nbt.ObjClasses
         protected override void afterPopulateProps()
         {
             _setUIVisibility();
+            EnterprisePart.SetOnPropChange( _onEnterprisePartPropChange );
+            Material.SetOnPropChange( _onMaterialPropChange );
             Status.SetOnPropChange( _onStatusPropChange );
             Type.SetOnPropChange( _onTypePropChange );
             _CswNbtObjClassDefault.triggerAfterPopulateProps();
@@ -590,6 +592,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         private void _setUIVisibility()
         {
+            TypeDef.setFulfillOptions();
             ExternalOrderNumber.SetOnBeforeRender( TypeDef.setPropUIVisibility );
             Location.SetOnBeforeRender( TypeDef.setPropUIVisibility );
             EnterprisePart.SetOnBeforeRender( TypeDef.setPropUIVisibility );
@@ -699,9 +702,21 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropRelationship InventoryGroup { get { return _CswNbtNode.Properties[PropertyName.InventoryGroup]; } }
         //Target Item Type (will return EnterprisePart, Material, or Container depending on the RequestItem type)
         public CswNbtNodePropRelationship Target { get { return _TypeDef.Target; } }
-        //(Only one of these will be used for a given Request Item)
         public CswNbtNodePropRelationship EnterprisePart { get { return _CswNbtNode.Properties[PropertyName.EnterprisePart]; } }
+        private void _onEnterprisePartPropChange( CswNbtNodeProp Prop, bool Creating )
+        {
+            //TODO - Case 31176 - scope Material picklist to materials belonging to EP
+            //TODO - remove this block once Case 31242 is complete
+        }
         public CswNbtNodePropRelationship Material { get { return _CswNbtNode.Properties[PropertyName.Material]; } }
+        private void _onMaterialPropChange( CswNbtNodeProp Prop, bool Creating )
+        {
+            if( Type.Value == Types.MaterialCreate && String.IsNullOrEmpty( Material.GetOriginalPropRowValue() ) )
+            {
+                Type.Value = Types.MaterialBulk;
+                FulfillmentHistory.AddComment( "Selected existing Material: " + CswNbtNode.getNodeLink( Material.RelatedNodeId, Material.CachedNodeName ) );
+            }
+        }
         public CswNbtNodePropRelationship Container { get { return _CswNbtNode.Properties[PropertyName.Container]; } }
         //Bulk Request Properties (all Request Items except Move/Dispose/Size use Bulk)
         public CswNbtNodePropQuantity Quantity { get { return _CswNbtNode.Properties[PropertyName.Quantity]; } }
