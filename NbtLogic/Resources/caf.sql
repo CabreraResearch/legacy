@@ -585,6 +585,17 @@ select
 )
 );
 
+--This MUST be executed before the receipt_lots_view is created for CAF Properties
+begin
+  -- Call the procedure
+  pivotpropertiesvalues(viewname => 'receiptlots_props_view',
+                        propstblname => 'properties_values_lot',
+                        proptblpkcol => 'lotpropsvaluesid',
+                        joincol => 'receiptlotid',
+						fromtbl => 'receipt_lots');
+end;
+/
+
 ---Receipt Lots
 create or replace view receipt_lots_view as
 select 
@@ -596,6 +607,7 @@ select
      c.manufacturerlotno
   from receipt_lots rl
   join containers c on c.receiptlotid = rl.receiptlotid and c.containerclass = 'lotholder'
+  join receiptlots_props_view rpv on rpv.receiptlotid = rl.receiptlotid
   join packages p 
        on p.packageid = (
                       select pd.packageid 
