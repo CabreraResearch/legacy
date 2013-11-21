@@ -618,11 +618,21 @@ select ReceiptLotId,
          end) as FileExtension,
 		Deleted
 	from receipt_lots;
-	 
+	
+--This MUST be executed before the Containers_View is created for CAF Properties
+begin
+  -- Call the procedure
+  pivotpropertiesvalues(viewname => 'containers_props_view',
+                        propstblname => 'properties_values_cont',
+                        proptblpkcol => 'contpropsvaluesid',
+                        joincol => 'containerid',
+						fromtbl => 'containers');
+end;
+/	
+	
 ---Containers
 create or replace view containers_view as
 select
-	 c.ContainerId,
 	  c.Deleted,
 	  c.BarcodeId,
 	  c.PackDetailId,
@@ -646,11 +656,13 @@ select
 	  c.Notes,
 	  c.ProjectId,
 	  c.SpecificActivity,
-	  c.TareQuantity
+	  c.TareQuantity,
+	  cpv.*
 	from containers c
 	  left outer join container_groups cg on cg.containergroupcode = c.containergroupcode
 	  join packdetail pd on c.packdetailid = pd.packdetailid
 	  join packages p on pd.packageid = p.packageid
+	  join containers_props_view cpv on cpv.containerid = c.containerid
 	order by c.ContainerId;
 	  
 ---Inventory Levels

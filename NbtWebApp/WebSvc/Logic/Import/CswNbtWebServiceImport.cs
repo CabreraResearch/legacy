@@ -184,7 +184,7 @@ namespace ChemSW.Nbt.WebServices
             {
                 //Create custom NodeTypeProps from CAF Properties collections and set up bindings for them
                 CswNbtImportTools.CreateCafProps( _CswNbtResources, CswEnumNbtObjectClass.ChemicalClass, "properties_values", "propertiesvaluesid" );
-                //TODO: Containers
+                CswNbtImportTools.CreateCafProps( _CswNbtResources, CswEnumNbtObjectClass.ContainerClass, "properties_values_cont", "contpropsvaluesid" );
                 //TODO: Receipt Lots
 
                 // Enable the CAFImport rule
