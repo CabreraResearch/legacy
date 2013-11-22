@@ -25,6 +25,11 @@ namespace ChemSW.Nbt.Schema
             get { return "Add new props to DocumentPS & SDSDocumentOC"; }
         }
 
+        public override string AppendToScriptName()
+        {
+            return "A";
+        }
+
         public override void update()
         {
             // Create OpenUrl DocumentPS property
@@ -59,7 +64,8 @@ namespace ChemSW.Nbt.Schema
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( SDSDocumentOC, new CswNbtWcfMetaDataModel.ObjectClassProp( SDSDocumentOC )
                     {
                         PropName = CswNbtObjClassSDSDocument.PropertyName.ChemWatch,
-                        FieldType = CswEnumNbtFieldType.Text
+                        FieldType = CswEnumNbtFieldType.Text,
+                        ReadOnly = true
                     } );
             }
 
