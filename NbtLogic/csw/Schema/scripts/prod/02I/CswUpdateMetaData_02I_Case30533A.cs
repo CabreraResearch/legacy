@@ -230,6 +230,7 @@ namespace ChemSW.Nbt.Schema
                     FkType = CswEnumNbtViewRelatedIdType.NodeTypeId.ToString(),
                     ServerManaged = true
                 } );
+                _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( TotalDispensedOCP, 0, CswEnumNbtSubFieldName.Value );
                 CswNbtMetaDataObjectClassProp SizeOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( RequestItemOC, new CswNbtWcfMetaDataModel.ObjectClassProp
                 {
                     PropName = CswNbtObjClassRequestItem.PropertyName.Size,
@@ -252,7 +253,8 @@ namespace ChemSW.Nbt.Schema
                 CswNbtMetaDataObjectClassProp TotalMovedOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( RequestItemOC, new CswNbtWcfMetaDataModel.ObjectClassProp
                 {
                     PropName = CswNbtObjClassRequestItem.PropertyName.TotalMoved,
-                    FieldType = CswEnumNbtFieldType.Number
+                    FieldType = CswEnumNbtFieldType.Number,
+                    ServerManaged = true
                 } );
                 _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( TotalMovedOCP, 0, CswEnumNbtSubFieldName.Value );
                 #endregion Amount Properties

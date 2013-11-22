@@ -244,51 +244,45 @@ namespace ChemSW.Nbt.WebServices
         }
 
         /// <summary>
-        /// WCF method to fulfill request
+        /// WCF method to fulfill a Move Containers request
         /// </summary>  
-        public static void fulfillRequest( ICswResources CswResources, CswNbtRequestDataModel.CswRequestReturn Ret, CswNbtRequestDataModel.RequestFulfill Request )
+        public static void fulfillContainerMoveRequest( ICswResources CswResources, CswNbtRequestDataModel.CswRequestReturn Ret, CswNbtRequestDataModel.RequestFulfill Request )
         {
-            //the name of this function is pretty vague given that the only action being taken is moving containers (when
             CswNbtResources NbtResources = _validate( CswResources );
-            CswNbtPropertySetRequestItem RequestAsPropSet = NbtResources.Nodes[Request.RequestItemId];
-            if( null != RequestAsPropSet )
+            CswNbtObjClassRequestItem RequestItem = NbtResources.Nodes[Request.RequestItemId];
+            if( null != RequestItem )
             {
-                switch( RequestAsPropSet.Type.Value )
+                Int32 ContainersMoved = moveContainers( NbtResources, RequestItem, Request );
+                Ret.Data.Succeeded = ContainersMoved > 0;
+                if( Ret.Data.Succeeded )
                 {
-                    case CswNbtObjClassRequestMaterialDispense.Types.Size:
-                        CswNbtObjClassRequestMaterialDispense RequestNode = CswNbtObjClassRequestMaterialDispense.fromPropertySet( RequestAsPropSet );
-                        //okay, we REALLY need to stop obfuscating Requests and RequestItems
-                        Int32 ContainersMoved = moveContainers( NbtResources, RequestNode, Request );
-                        Ret.Data.Succeeded = ContainersMoved > 0;
-                        if( Ret.Data.Succeeded )
-                        {
-                            if( CswTools.IsDouble( RequestNode.TotalMoved.Value ) )
-                            {
-                                RequestNode.TotalMoved.Value += ContainersMoved;
-                            }
-                            else
-                            {
-                                RequestNode.TotalMoved.Value = ContainersMoved;
-                            }
-                            RequestNode.Status.Value = CswNbtObjClassRequestMaterialDispense.Statuses.Moved;
-                            RequestNode.postChanges( ForceUpdate: false );
-                        }
-                        break;
+                    if( CswTools.IsDouble( RequestItem.TotalMoved.Value ) )
+                    {
+                        RequestItem.TotalMoved.Value += ContainersMoved;
+                    }
+                    else
+                    {
+                        RequestItem.TotalMoved.Value = ContainersMoved;
+                    }
+                    RequestItem.Status.Value = CswNbtObjClassRequestItem.Statuses.Moved;
+                    RequestItem.FulfillmentHistory.AddComment( "Moved " + ContainersMoved + " containers to " + 
+                        CswNbtNode.getNodeLink( RequestItem.Location.SelectedNodeId, RequestItem.Location.CachedFullPath ) );
+                    RequestItem.postChanges( ForceUpdate: false );
                 }
             }
         }
 
-        private static Int32 moveContainers( CswNbtResources NbtResources, CswNbtObjClassRequestMaterialDispense RequestNode, CswNbtRequestDataModel.RequestFulfill Request )
+        private static Int32 moveContainers( CswNbtResources NbtResources, CswNbtObjClassRequestItem RequestItem, CswNbtRequestDataModel.RequestFulfill Request )
         {
             Int32 Ret = 0;
-            if( null != RequestNode )
+            if( null != RequestItem )
             {
                 foreach( string ContainerId in Request.ContainerIds )
                 {
                     CswNbtObjClassContainer ContainerNode = NbtResources.Nodes[ContainerId];
                     if( null != ContainerNode )
                     {
-                        ContainerNode.Location.SelectedNodeId = RequestNode.Location.SelectedNodeId;
+                        ContainerNode.Location.SelectedNodeId = RequestItem.Location.SelectedNodeId;
                         ContainerNode.Location.RefreshNodeName();
                         ContainerNode.postChanges( ForceUpdate: false );
                         Ret += 1;

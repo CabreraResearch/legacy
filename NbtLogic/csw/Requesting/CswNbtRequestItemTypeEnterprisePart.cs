@@ -21,7 +21,6 @@ namespace ChemSW.Nbt.Requesting
                 case CswNbtObjClassRequestItem.PropertyName.Container:
                 case CswNbtObjClassRequestItem.PropertyName.Size:
                 case CswNbtObjClassRequestItem.PropertyName.SizeCount:
-                case CswNbtObjClassRequestItem.PropertyName.TotalMoved:
                 case CswNbtObjClassRequestItem.PropertyName.NewMaterialType:
                 case CswNbtObjClassRequestItem.PropertyName.NewMaterialTradename:
                 case CswNbtObjClassRequestItem.PropertyName.NewMaterialSupplier:
@@ -49,7 +48,7 @@ namespace ChemSW.Nbt.Requesting
                 {
                     CswNbtObjClassRequestItem.FulfillMenu.Order,
                     CswNbtObjClassRequestItem.FulfillMenu.Receive, 
-                    CswNbtObjClassRequestItem.FulfillMenu.MoveMaterial,
+                    CswNbtObjClassRequestItem.FulfillMenu.MoveContainers,
                     CswNbtObjClassRequestItem.FulfillMenu.DispenseMaterial, 
                     CswNbtObjClassRequestItem.FulfillMenu.Complete,
                     CswNbtObjClassRequestItem.FulfillMenu.Cancel

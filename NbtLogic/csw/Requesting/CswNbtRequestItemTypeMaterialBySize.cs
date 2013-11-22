@@ -21,8 +21,7 @@ namespace ChemSW.Nbt.Requesting
                 case CswNbtObjClassRequestItem.PropertyName.Container:
                 case CswNbtObjClassRequestItem.PropertyName.EnterprisePart:
                 case CswNbtObjClassRequestItem.PropertyName.Quantity:
-                case CswNbtObjClassRequestItem.PropertyName.TotalDispensed:
-                case CswNbtObjClassRequestItem.PropertyName.NewMaterialType:
+                case CswNbtObjClassRequestItem.PropertyName.TotalDispensed://TODO - remove when dispensing Size containers works
                 case CswNbtObjClassRequestItem.PropertyName.NewMaterialTradename:
                 case CswNbtObjClassRequestItem.PropertyName.NewMaterialSupplier:
                 case CswNbtObjClassRequestItem.PropertyName.NewMaterialPartNo:
@@ -52,12 +51,12 @@ namespace ChemSW.Nbt.Requesting
                 {
                     CswNbtObjClassRequestItem.FulfillMenu.Order, 
                     CswNbtObjClassRequestItem.FulfillMenu.Receive,
-                    CswNbtObjClassRequestItem.FulfillMenu.DispenseMaterial, 
-                    CswNbtObjClassRequestItem.FulfillMenu.MoveMaterial, 
+                    //CswNbtObjClassRequestItem.FulfillMenu.DispenseMaterial, //TODO - uncomment when dispensing Size Containers works
+                    CswNbtObjClassRequestItem.FulfillMenu.MoveContainers, 
                     CswNbtObjClassRequestItem.FulfillMenu.Complete,
                     CswNbtObjClassRequestItem.FulfillMenu.Cancel
                 }.ToString();
-            _RequestItem.Fulfill.State = CswNbtObjClassRequestItem.FulfillMenu.MoveMaterial;
+            _RequestItem.Fulfill.State = CswNbtObjClassRequestItem.FulfillMenu.MoveContainers;
         }
     }
 }

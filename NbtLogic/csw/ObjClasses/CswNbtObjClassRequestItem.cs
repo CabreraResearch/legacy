@@ -297,18 +297,48 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         public class FulfillMenu
         {
+            /// <summary>
+            /// Create the requested Material
+            /// </summary>
             public const string Create = "Create Material";
+            /// <summary>
+            /// Make an external Order for the requested Material
+            /// </summary>
             public const string Order = "Order";
+            /// <summary>
+            /// Receive the requested Material (or, for EP Requests, select an EP Material to Receive)
+            /// </summary>
             public const string Receive = "Receive";
+            /// <summary>
+            /// Dispense the requested Container
+            /// </summary>
             public const string DispenseContainer = "Dispense Container";
+            /// <summary>
+            /// Select a Container of the given Material (or EP) to dispense from
+            /// </summary>
             public const string DispenseMaterial = "Dispense from Container";
+            /// <summary>
+            /// Move the requested Container to the requested Location
+            /// </summary>
             public const string MoveContainer = "Move Container";
-            public const string MoveMaterial = "Move Containers";
+            /// <summary>
+            /// Select containers of the requested Target to move to the requested Location
+            /// </summary>
+            public const string MoveContainers = "Move Containers";
+            /// <summary>
+            /// Dispose the requested Container
+            /// </summary>
             public const string Dispose = "Dispose this Container";
+            /// <summary>
+            /// Complete the Request Item
+            /// </summary>
             public const string Complete = "Complete Request";
+            /// <summary>
+            /// Cancel the Request Item
+            /// </summary>
             public const string Cancel = "Cancel Request";
             public static readonly CswCommaDelimitedString Options =
-                new CswCommaDelimitedString { Create, Order, Receive, DispenseContainer, DispenseMaterial, MoveContainer, MoveMaterial, Dispose, Complete, Cancel };
+                new CswCommaDelimitedString { Create, Order, Receive, DispenseContainer, DispenseMaterial, MoveContainer, MoveContainers, Dispose, Complete, Cancel };
         }
 
         /// <summary>
@@ -380,6 +410,7 @@ namespace ChemSW.Nbt.ObjClasses
         public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
         {
             RequestType.Value = Type.Value;
+            TotalDispensed.UnitId = Quantity.UnitId;
             _CswNbtObjClassDefault.beforeCreateNode( IsCopy, OverrideUniqueValidation );
         }
 
@@ -534,7 +565,7 @@ namespace ChemSW.Nbt.ObjClasses
                                     ButtonData.clone( DispenseData );
                                 }
                                 break;
-                            case FulfillMenu.MoveMaterial:
+                            case FulfillMenu.MoveContainers:
                                 ButtonData.Action = CswEnumNbtButtonAction.move;
                                 //TODO - add type-specific properties (EP, Material Size, Source Container)
                                 //ButtonData.Data["title"] = "Fulfill Request for " + SizeCount.Value + " x " + Size.Gestalt + " of " + Material.Gestalt;

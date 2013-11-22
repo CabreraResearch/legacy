@@ -24,7 +24,6 @@ namespace ChemSW.Nbt.Requesting
                 case CswNbtObjClassRequestItem.PropertyName.Size:
                 case CswNbtObjClassRequestItem.PropertyName.SizeCount:
                 case CswNbtObjClassRequestItem.PropertyName.TotalMoved:
-                case CswNbtObjClassRequestItem.PropertyName.TotalDispensed:
                 case CswNbtObjClassRequestItem.PropertyName.NewMaterialType:
                 case CswNbtObjClassRequestItem.PropertyName.NewMaterialTradename:
                 case CswNbtObjClassRequestItem.PropertyName.NewMaterialSupplier:
