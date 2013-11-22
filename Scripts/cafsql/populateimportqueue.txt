@@ -80,4 +80,12 @@ select seq_nbtimportqueueid.nextval, 'I' as state, containerid as itempk, 'conta
 insert into nbtimportqueue ( nbtimportqueueid, state, itempk, sheetname, priority)
 select seq_nbtimportqueueid.nextval, 'I' as state, inventorybasicid as itempk, 'inventory_view' as sheetname, 20 as priority from inventory_view;
 
+--reg lists
+insert into nbtimportqueue ( nbtimportqueueid, state, itempk, sheetname, priority)
+select seq_nbtimportqueueid.nextval, 'I', REGULATORYLISTID, 'reglists_view', 0 from reglists_view;
+
+--reg list cas no
+insert into nbtimportqueue ( nbtimportqueueid, state, itempk, sheetname, priority)
+select seq_nbtimportqueueid.nextval, 'I', regulatedcasnoid, 'regulated_casnos', 0 from regulated_casnos;
+
 commit;

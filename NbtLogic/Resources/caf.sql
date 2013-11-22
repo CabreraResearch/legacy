@@ -862,8 +862,18 @@ SELECT PACKAGEID,
                     ON ( p.MATERIALID = ph.MATERIALID ));
 					
 --Reglists
-create or replace view reglists_view as
-(select "DELETED","DISPLAYNAME","LISTMODE","MATCHTYPE","REGLISTCODE","REGULATORYLISTID" from regulatory_lists where lower(listmode) = 'cispro');
+CREATE OR replace VIEW reglists_view 
+AS 
+  (SELECT rl.deleted, 
+          rl.displayname, 
+          rl.listmode, 
+          rl.matchtype, 
+          rl.reglistcode, 
+          rl.regulatorylistid
+   FROM   regulatory_lists rl
+   WHERE  Lower(listmode) = 'cispro'   
+   AND    (select count(r.regulatorylistid) from regulated_casnos r where r.regulatorylistid = rl.regulatorylistid) > 0
+   ); 
 
 --Material Synonyms
 create or replace view synonyms_view as

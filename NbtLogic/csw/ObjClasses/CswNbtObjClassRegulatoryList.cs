@@ -21,6 +21,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string ListMode = "List Mode";
             public const string LOLIListCodes = "LOLI List Codes";
             public const string Chemicals = "Chemicals";
+            public const string ListCode = "List Code";
         }
 
         /// <summary>
@@ -202,6 +203,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropList ListMode { get { return _CswNbtNode.Properties[PropertyName.ListMode]; } }
         public CswNbtNodePropGrid LOLIListCodes { get { return _CswNbtNode.Properties[PropertyName.LOLIListCodes]; } }
         public CswNbtNodePropGrid Chemicals { get { return _CswNbtNode.Properties[PropertyName.Chemicals]; } }
+        public CswNbtNodePropText ListCode { get { return _CswNbtNode.Properties[PropertyName.ListCode]; } }
 
         #endregion
 
