@@ -875,3 +875,31 @@ create or replace view synonyms_view as
   from materials_synonyms ms
        join chemicals_view cv on ms.materialid = cv.materialid
 );
+
+--Roles
+create or replace view roles_view as
+select distinct r.roleid,
+                r.rolename,
+                r.roledescription,
+                r.timeout,
+                max(case
+                      when fpd.featurepermissionname = 'system' and nonepm = 1 then
+                       1
+                      when fpd.featurepermissionname = 'system_site' and
+                           nonepm = 1 then
+                       1
+                      else
+                       0
+                    end) as administrator,
+                r.deleted
+  from roles r
+  join permissions_by_role rp on (rp.roleid = r.roleid)
+  join feature_permission_definitions fpd on (fpd.featurepermissiondefinitionid =
+                                             rp.featurepermissiondefinitionid)
+ where r.deleted = 0
+   and r.issystem = 0
+ group by r.roleid,
+          r.rolename,
+          r.roledescription,
+          r.timeout,
+          r.deleted;
