@@ -72,7 +72,9 @@ namespace ChemSW.Nbt.WebServices
             CswFilePath FilePathMgr = new CswFilePath( CswResources );
             string FullFilePath = System.Web.Hosting.HostingEnvironment.ApplicationPhysicalPath + "\\import\\" + FilePathMgr.getFileNameForSchema( Filename );
 
-            Ret.stream = File.OpenRead( FullFilePath );
+            FileStream DataFile = File.OpenRead( FullFilePath );
+            DataFile.CopyTo( Ret.stream );
+            DataFile.Close();
         }
 
 

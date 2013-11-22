@@ -2631,7 +2631,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string restoreUniversalSearch( string SessionDataId )
+        public string restoreUniversalSearch( string SessionDataId, string Limit )
         {
             JObject ReturnVal = new JObject();
             CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
@@ -2647,12 +2647,12 @@ namespace ChemSW.Nbt.WebServices
                     CswPrimaryKey Pk = CswConvert.ToPrimaryKey( SessionDataId );
                     if( CswTools.IsPrimaryKey( Pk ) && Pk.TableName == CswNbtSearchManager.SearchTableName )
                     {
-                        ReturnVal = ws.restoreUniversalSearch( Pk );
+                        ReturnVal = ws.restoreUniversalSearch( Pk, CswConvert.ToInt32( Limit ) );
                     }
                     else
                     {
                         CswNbtSessionDataId RealSessionDataId = new CswNbtSessionDataId( SessionDataId );
-                        ReturnVal = ws.restoreUniversalSearch( RealSessionDataId );
+                        ReturnVal = ws.restoreUniversalSearch( RealSessionDataId, CswConvert.ToInt32(Limit) );
                     }
                 }
                 _deInitResources();
@@ -2669,7 +2669,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string filterUniversalSearch( string SessionDataId, string Filter, string Action )
+        public string filterUniversalSearch( string SessionDataId, string Filter, string Action, string Limit )
         {
             JObject ReturnVal = new JObject();
             CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
@@ -2682,7 +2682,7 @@ namespace ChemSW.Nbt.WebServices
                 {
                     CswNbtWebServiceSearch ws = new CswNbtWebServiceSearch( _CswNbtResources, _CswNbtStatisticsEvents );
                     CswNbtSessionDataId RealSessionDataId = new CswNbtSessionDataId( SessionDataId );
-                    ReturnVal = ws.filterUniversalSearch( RealSessionDataId, JObject.Parse( Filter ), Action );
+                    ReturnVal = ws.filterUniversalSearch( RealSessionDataId, JObject.Parse( Filter ), Action, Convert.ToInt32( Limit ) );
                 }
                 _deInitResources();
             }
@@ -2698,7 +2698,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string filterUniversalSearchByNodeType( string SessionDataId, string NodeTypeId )
+        public string filterUniversalSearchByNodeType( string SessionDataId, string NodeTypeId, string Limit )
         {
             JObject ReturnVal = new JObject();
             CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
@@ -2711,7 +2711,7 @@ namespace ChemSW.Nbt.WebServices
                 {
                     CswNbtWebServiceSearch ws = new CswNbtWebServiceSearch( _CswNbtResources, _CswNbtStatisticsEvents );
                     CswNbtSessionDataId RealSessionDataId = new CswNbtSessionDataId( SessionDataId );
-                    ReturnVal = ws.filterUniversalSearchByNodeType( RealSessionDataId, CswConvert.ToInt32( NodeTypeId ) );
+                    ReturnVal = ws.filterUniversalSearchByNodeType( RealSessionDataId, CswConvert.ToInt32( NodeTypeId ), CswConvert.ToInt32( Limit ) );
                 }
                 _deInitResources();
             }
@@ -2727,7 +2727,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string saveSearch( string SessionDataId, string Name, string Category )
+        public string saveSearch( string SessionDataId, string Name, string Category, string Limit )
         {
             JObject ReturnVal = new JObject();
             CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
@@ -2740,7 +2740,7 @@ namespace ChemSW.Nbt.WebServices
                 {
                     CswNbtWebServiceSearch ws = new CswNbtWebServiceSearch( _CswNbtResources, _CswNbtStatisticsEvents );
                     CswNbtSessionDataId RealSessionDataId = new CswNbtSessionDataId( SessionDataId );
-                    ReturnVal = ws.saveSearch( RealSessionDataId, Name, Category );
+                    ReturnVal = ws.saveSearch( RealSessionDataId, Name, Category, CswConvert.ToInt32( Limit ) );
                 }
                 _deInitResources();
             }
@@ -2756,7 +2756,7 @@ namespace ChemSW.Nbt.WebServices
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
 
-        public string deleteSearch( string SearchId )
+        public string deleteSearch( string SearchId, string Limit )
         {
             JObject ReturnVal = new JObject();
             CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
@@ -2769,7 +2769,7 @@ namespace ChemSW.Nbt.WebServices
                 {
                     CswNbtWebServiceSearch ws = new CswNbtWebServiceSearch( _CswNbtResources, _CswNbtStatisticsEvents );
                     CswPrimaryKey RealSearchId = new CswPrimaryKey( CswNbtSearchManager.SearchTableName, CswConvert.ToInt32( SearchId ) );
-                    ReturnVal = ws.deleteSearch( RealSearchId );
+                    ReturnVal = ws.deleteSearch( RealSearchId, CswConvert.ToInt32( Limit ) );
                 }
                 _deInitResources();
             }
