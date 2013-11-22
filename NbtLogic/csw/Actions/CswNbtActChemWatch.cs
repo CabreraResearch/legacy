@@ -202,12 +202,14 @@ namespace ChemSW.Nbt.Actions
             {
                 string Language = _getLanguage( SDSDoc.Language );
                 string FileName = SDSDoc.FileName;
+                string Country = SDSDoc.Country;
                 CswNbtResources.Nodes.makeNodeFromNodeTypeId( SDSDocumentOC.FirstNodeType.NodeTypeId, delegate( CswNbtNode NewNode )
                     {
                         CswNbtObjClassSDSDocument NewSDSDocNode = NewNode;
                         NewSDSDocNode.FileType.Value = CswNbtObjClassSDSDocument.CswEnumDocumentFileTypes.ChemWatch;
                         NewSDSDocNode.ChemWatch.Text = FileName;
                         NewSDSDocNode.Language.Value = Language;
+                        NewSDSDocNode.Country.Text = Country;
                         NewSDSDocNode.Owner.RelatedNodeId = Request.NbtMaterialId;
                     } );
             }
