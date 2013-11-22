@@ -1,4 +1,5 @@
 using System;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.Serialization;
 using ChemSW.Core;
@@ -47,7 +48,7 @@ namespace ChemSW.Nbt.Actions
         {
             public Cart()
             {
-
+                CopyableRequestTypes = new Collection<string>();
             }
 
             [DataMember( IsRequired = false )]
@@ -63,8 +64,8 @@ namespace ChemSW.Nbt.Actions
             [DataMember( IsRequired = false )]
             public CswNbtView FavoriteItemsView;
 
-            [DataMember]
-            public Int32 CopyableObjectClassId;
+            [DataMember] 
+            public Collection<String> CopyableRequestTypes;
 
             [DataMember]
             public CswNbtObjClassUser.Cache.Cart Counts;
@@ -263,7 +264,7 @@ namespace ChemSW.Nbt.Actions
             if( IncludeItemProperties )
             {
                 CswNbtViewProperty ItemNumberVP = Ret.AddViewProperty( RequestItemRel, _RequestItemOC.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.ItemNumber ), 1 );
-                ItemNumberVP.Width = 7;
+                ItemNumberVP.Width = 10;
                 CswNbtViewProperty DescriptionVP = Ret.AddViewProperty( RequestItemRel, _RequestItemOC.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Description ), 2 );
                 DescriptionVP.Width = 50;
                 CswNbtViewProperty NeededByVP = Ret.AddViewProperty( RequestItemRel, _RequestItemOC.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.NeededBy ), 3 );
@@ -272,6 +273,8 @@ namespace ChemSW.Nbt.Actions
                 CswNbtViewProperty InventoryGroupVP = Ret.AddViewProperty( RequestItemRel, _RequestItemOC.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.InventoryGroup ), 5 );
                 InventoryGroupVP.Width = 20;
                 CswNbtViewProperty RequestedForVP = Ret.AddViewProperty( RequestItemRel, _RequestItemOC.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.RequestedFor ), 6 );
+                CswNbtViewProperty RequestTypeVP = Ret.AddViewProperty( RequestItemRel, _RequestItemOC.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.RequestType ), 7 );
+                RequestTypeVP.Width = 20;
             }
 
             Ret.SaveToCache( IncludeInQuickLaunch: false );
@@ -319,7 +322,7 @@ namespace ChemSW.Nbt.Actions
             //NameVP.ShowInGrid = true;
             CswNbtViewPropertyFilter NameVpf = Ret.AddViewPropertyFilter( NameVP, ShowAtRuntime: true );
             CswNbtViewProperty ItemNumberVP = Ret.AddViewProperty( RequestItemRel, _RequestItemOC.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.ItemNumber ), 2 );
-            ItemNumberVP.Width = 7;
+            ItemNumberVP.Width = 10;
             CswNbtViewProperty StatusVP = Ret.AddViewProperty( RequestItemRel, _RequestItemOC.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Status ), 3 );
             CswNbtViewPropertyFilter StatusVpf = Ret.AddViewPropertyFilter( StatusVP, FilterMode: CswEnumNbtFilterMode.NotEquals, Value: CswNbtObjClassRequestItem.Statuses.Pending );
             StatusVpf.ShowAtRuntime = true;
@@ -328,6 +331,8 @@ namespace ChemSW.Nbt.Actions
             CswNbtViewProperty NeededByVP = Ret.AddViewProperty( RequestItemRel, _RequestItemOC.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.NeededBy ), 5 );
             CswNbtViewProperty RequestVP = Ret.AddViewProperty( RequestItemRel, _RequestItemOC.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Request ) );
             CswNbtViewProperty CommentsVP = Ret.AddViewProperty( RequestItemRel, _RequestItemOC.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Comments ) );
+            CswNbtViewProperty RequestTypeVP = Ret.AddViewProperty( RequestItemRel, _RequestItemOC.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.RequestType ), 7 );
+            RequestTypeVP.Width = 20;
 
             return Ret;
         }
@@ -395,7 +400,7 @@ namespace ChemSW.Nbt.Actions
             return Ret;
         }
 
-        public CswNbtView getDueRecurringRequestsItemsView()
+        public CswNbtView getDueRecurringRequestItemsView()
         {
             CswNbtView Ret = getAllRecurringRequestItemsView( AddRunTimeFilters: false );
             CswNbtViewRelationship RequestItemRel = Ret.Root.ChildRelationships[0];
@@ -463,9 +468,16 @@ namespace ChemSW.Nbt.Actions
             FavoriteItems.SaveToCache( IncludeInQuickLaunch: false );
             Cart.FavoriteItemsView = FavoriteItems;
 
-            //TODO - case 30533 - We'll need to change this to use Type value instead of ObjClassId
-            Cart.CopyableObjectClassId = _CswNbtResources.MetaData.getObjectClassId( CswEnumNbtObjectClass.RequestItemClass );
+            Cart.CopyableRequestTypes = new Collection<String>
+                                            {
+                                                CswNbtObjClassRequestItem.Types.EnterprisePart,
+                                                CswNbtObjClassRequestItem.Types.MaterialBulk,
+                                                CswNbtObjClassRequestItem.Types.MaterialSize
+                                            };
+
             Cart.Counts = CswNbtObjClassUser.getCurrentUserCache( _CswNbtResources ).CartCounts;
+
+
 
             //if( CalculateCounts )
             //{

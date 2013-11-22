@@ -37,7 +37,7 @@
                 recurringItemsViewId: '',
                 submittedItemsViewId: '',
                 pendingCartId: '',
-                copyableId: 0,
+                copyableRequestTypes: [],
                 cartCounts: {
                     PendingRequestItems: 0,
                     SubmittedRequestItems: 0,
@@ -70,7 +70,7 @@
                     cswPrivate.state.recurringItemsViewId = data.RecurringItemsView.SessionViewId;
                     cswPrivate.state.submittedItemsViewId = data.SubmittedItemsView.SessionViewId;
                     cswPrivate.state.pendingCartId = data.CurrentRequest.NodeId;
-                    cswPrivate.state.copyableId = data.CopyableObjectClassId;
+                    cswPrivate.state.copyableRequestTypes = data.CopyableRequestTypes;
 
                     cswPrivate.saveState();
 
@@ -483,7 +483,7 @@
             opts.title = 'Select any Pending items to save to a Favorite list or to copy to a new Recurring request.';
             opts.onBeforeSelect = function (record, node) {
                 var ret = true;
-                if (record.raw.objectclassid != cswPrivate.state.copyableId) {
+                if (false === cswPrivate.isRequestCopyable(record.raw.request_type)) {
                     ret = false;
                 }
                 return ret;
@@ -495,7 +495,7 @@
             opts.reapplyViewReadyOnLayout = true;
             opts.onSuccess = function () {
                 cswPublic.pendingGrid.iterateRows(function (record, node) {
-                    if (record.raw.objectclassid != cswPrivate.state.copyableId) {
+                    if (false === cswPrivate.isRequestCopyable(record.raw.request_type)) {
                         $(node).find('.x-grid-row-checker').remove();
                     }
                 });
@@ -594,7 +594,7 @@
             opts.onEditNode = cswPrivate.makeSubmittedTab;
             opts.onBeforeSelect = function (record, node) {
                 var ret = true;
-                if (record.raw.objectclassid != cswPrivate.state.copyableId) {
+                if (false === cswPrivate.isRequestCopyable(record.raw.request_type)) {
                     ret = false;
                 }
                 return ret;
@@ -602,7 +602,7 @@
             opts.reapplyViewReadyOnLayout = true;
             opts.onSuccess = function () {
                 cswPublic.submittedGrid.iterateRows(function (record, node) {
-                    if (record.raw.objectclassid != cswPrivate.state.copyableId) {
+                    if (false === cswPrivate.isRequestCopyable(record.raw.request_type)) {
                         $(node).find('.x-grid-row-checker').remove();
                     }
                 });
@@ -717,6 +717,10 @@
 
             cswPrivate.addBtnGroup(ol.li(), false);
 
+        };
+        
+        cswPrivate.isRequestCopyable = function(requestType) {
+            return cswPrivate.state.copyableRequestTypes.indexOf(requestType) > -1;
         };
 
         cswPrivate.addBtnGroup = function (el, hasFinish) {
