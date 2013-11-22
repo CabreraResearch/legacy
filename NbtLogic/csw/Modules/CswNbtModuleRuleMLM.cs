@@ -38,34 +38,6 @@ namespace ChemSW.Nbt
                 }
             }
 
-            //TODO - Case 30533 - remove when old Request Item is fully deprecated
-            CswNbtMetaDataObjectClass RequestMatDispOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestMaterialDispenseClass );
-            foreach( CswNbtMetaDataNodeType NodeType in RequestMatDispOc.getLatestVersionNodeTypes() )
-            {
-                CswNbtMetaDataNodeTypeTab ReceiveTab = NodeType.getNodeTypeTab( "Receive" ) ?? _CswNbtResources.MetaData.makeNewTab( NodeType, "Receive", NodeType.getNextTabOrder() );
-                foreach( string ReceiveTabProp in CswNbtObjClassRequestMaterialDispense.PropertyName.MLMReceiveTabProps )
-                {
-                    CswNbtMetaDataNodeTypeProp ReceiveNtp = NodeType.getNodeTypePropByObjectClassProp( ReceiveTabProp );
-                    ReceiveNtp.Hidden = false;
-                }
-
-                foreach( string CmgTabProp in CswNbtObjClassRequestMaterialDispense.PropertyName.MLMCmgTabProps )
-                {
-                    CswNbtMetaDataNodeTypeProp CmgNtp = NodeType.getNodeTypePropByObjectClassProp( CmgTabProp );
-                    CmgNtp.Hidden = false;
-                }
-
-                //These are intentional layout moves
-                CswNbtMetaDataNodeTypeTab CmgTab = NodeType.getNodeTypeTab( "Central Material Group" ) ?? _CswNbtResources.MetaData.makeNewTab( NodeType, "Central Material Group", NodeType.getNextTabOrder() );
-
-                CswNbtMetaDataNodeTypeProp RofNtp = NodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.RecurringFrequency );
-                RofNtp.updateLayout( CswEnumNbtLayoutType.Edit, true, CmgTab.TabId );
-                CswNbtMetaDataNodeTypeProp NrdNtp = NodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.NextReorderDate );
-                NrdNtp.updateLayout( CswEnumNbtLayoutType.Edit, RofNtp, true );
-                //End intentional layout moves
-
-            }
-
             CswNbtMetaDataObjectClass RequestItemOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestItemClass );
             foreach( CswNbtMetaDataNodeType RequestItemNT in RequestItemOC.getLatestVersionNodeTypes() )
             {
@@ -110,29 +82,6 @@ namespace ChemSW.Nbt
                 _CswNbtResources.Modules.HideProp( containerNT.NodeTypeId, CswNbtObjClassContainer.PropertyName.LotControlled );
                 _CswNbtResources.Modules.HideProp( containerNT.NodeTypeId, CswNbtObjClassContainer.PropertyName.Requisitionable );
                 _CswNbtResources.Modules.HideProp( containerNT.NodeTypeId, CswNbtObjClassContainer.PropertyName.ReservedFor );
-            }
-
-            //TODO - Case 30533 - remove when old Request Item is fully deprecated
-            CswNbtMetaDataObjectClass RequestMatDispOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestMaterialDispenseClass );
-            foreach( CswNbtMetaDataNodeType NodeType in RequestMatDispOc.getLatestVersionNodeTypes() )
-            {
-                foreach( string CmgTabProp in CswNbtObjClassRequestMaterialDispense.PropertyName.MLMCmgTabProps )
-                {
-                    _CswNbtResources.Modules.HideProp( NodeType.NodeTypeId, CmgTabProp );
-                }
-
-                foreach( string ReceiveTabProp in CswNbtObjClassRequestMaterialDispense.PropertyName.MLMReceiveTabProps )
-                {
-                    _CswNbtResources.Modules.HideProp( NodeType.NodeTypeId, ReceiveTabProp );
-                }
-
-                //These layout moves are intentional
-                CswNbtMetaDataNodeTypeProp RofNtp = NodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.RecurringFrequency );
-                RofNtp.updateLayout( CswEnumNbtLayoutType.Edit, true, NodeType.getFirstNodeTypeTab().TabId );
-
-                CswNbtMetaDataNodeTypeProp NrdNtp = NodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.NextReorderDate );
-                NrdNtp.updateLayout( CswEnumNbtLayoutType.Edit, RofNtp, true );
-
             }
 
             CswNbtMetaDataObjectClass RequestItemOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestItemClass );
