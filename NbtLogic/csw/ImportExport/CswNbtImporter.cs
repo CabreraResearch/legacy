@@ -82,9 +82,9 @@ namespace ChemSW.Nbt.ImportExport
                 DataTable RelationshipsDataTable = ExcelDataSet.Tables["Relationships$"];
 
                 Dictionary<string, Int32> DefIdsBySheetName = CswNbtImportDef.addDefinitionEntriesFromExcel( _CswNbtResources, ImportDefinitionName, OrderDataTable, null );
-                
+
                 //convert the sheetname column of the excel file into the corresponding importdefid
-                foreach ( DataTable Table in new DataTable[] {OrderDataTable, BindingsDataTable, RelationshipsDataTable} )
+                foreach( DataTable Table in new DataTable[] { OrderDataTable, BindingsDataTable, RelationshipsDataTable } )
                 {
                     Table.Columns.Add( "importdefid" );
                     foreach( DataRow Row in Table.Rows )
@@ -93,8 +93,8 @@ namespace ChemSW.Nbt.ImportExport
                     }
                     Table.Columns.Remove( "sheetname" );
                 }
-                
-                storeDefinition( OrderDataTable, BindingsDataTable, RelationshipsDataTable);
+
+                storeDefinition( OrderDataTable, BindingsDataTable, RelationshipsDataTable );
             } // if( ExcelDataSet.Tables.Count == 3 )
             else
             {
@@ -290,7 +290,7 @@ namespace ChemSW.Nbt.ImportExport
                 CswNbtImportDef BindingDef = new CswNbtImportDef( _CswNbtResources, ImportDefinitionName, "CAF" );
                 if( null != BindingDef && ( BindingDef.Bindings.Count > 0 || BindingDef.RowRelationships.Count > 0 ) && BindingDef.ImportOrder.Count > 0 )
                 {
-                    foreach( CswNbtImportDefOrder Order in BindingDef.ImportOrder.Values.Where( order => order.NodeTypeName == NodeType ))
+                    foreach( CswNbtImportDefOrder Order in BindingDef.ImportOrder.Values.Where( order => order.NodeTypeName == NodeType ) )
                     {
                         try
                         {
@@ -460,7 +460,7 @@ namespace ChemSW.Nbt.ImportExport
                     allEmpty = false;
                 }
             }
-            
+
             if( false == allEmpty )
             {
                 bool foundMatch = false;
@@ -558,7 +558,7 @@ namespace ChemSW.Nbt.ImportExport
                                 }
                                 else
                                 {
-                                  //we still want to set legacy id on nodes matched by unique properties
+                                    //we still want to set legacy id on nodes matched by unique properties
                                     foreach( CswNbtImportDefBinding Binding in NodeTypeBindings.Where( Binding => Binding.DestPropName == CswNbtObjClass.PropertyName.LegacyId ) )
                                     {
                                         //there should always be exactly one iteration of this loop
@@ -578,6 +578,13 @@ namespace ChemSW.Nbt.ImportExport
                     Node = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( Order.NodeType.NodeTypeId, delegate( CswNbtNode NewNode )
                         {
                             _importPropertyValues( BindingDef, NodeTypeBindings, RowRelationships, ImportRow, NewNode );
+
+                            // Specific logic for Roles (see Case 31043)
+                            if( Order.NodeType.NodeTypeName == "Role" )
+                            {
+                                _setRolePermissions( NewNode, CswEnumTristate.True == NewNode.Properties[CswNbtObjClassRole.PropertyName.Administrator].AsLogical.Checked ? "CISPro_Admin" : "CISPro_General" );
+                            }
+
                         }, OverrideUniqueValidation: true ); //even when we care about uniqueness, we've already checked it above and this would be redundant
                 }
 
@@ -634,7 +641,7 @@ namespace ChemSW.Nbt.ImportExport
 
         private Int32 _getRelationValue( CswNbtImportDef BindingDef, CswNbtImportDefRelationship Relation, DataRow ImportRow )
         {
-            CswNbtImportDefOrder thisTargetOrder = BindingDef.ImportOrder.Values.FirstOrDefault( o => Relation.Relationship.FkMatches( o.NodeType ) && 
+            CswNbtImportDefOrder thisTargetOrder = BindingDef.ImportOrder.Values.FirstOrDefault( o => Relation.Relationship.FkMatches( o.NodeType ) &&
                                                                                                       o.Instance == Relation.Instance );
             Int32 Value = Int32.MinValue;
             if( null != thisTargetOrder )
@@ -1007,6 +1014,27 @@ namespace ChemSW.Nbt.ImportExport
                 }
             }
         }
+
+        #region NodeType specific import logic
+
+        private void _setRolePermissions( CswNbtNode NewNode, string RoleName )
+        {
+            CswNbtObjClassRole RoleNode = _CswNbtResources.Nodes.makeRoleNodeFromRoleName( RoleName );
+            if( null != RoleNode )
+            {
+                NewNode.Properties[CswNbtObjClassRole.PropertyName.NodeTypePermissions].SetSubFieldValue(
+                    CswEnumNbtSubFieldName.Value,
+                    RoleNode.NodeTypePermissions.GetSubFieldValue( CswEnumNbtSubFieldName.Value )
+                    );
+
+                NewNode.Properties[CswNbtObjClassRole.PropertyName.ActionPermissions].SetSubFieldValue(
+                    CswEnumNbtSubFieldName.Value,
+                    RoleNode.ActionPermissions.GetSubFieldValue( CswEnumNbtSubFieldName.Value )
+                    );
+            }
+        }//_setRolePermissions()
+
+        #endregion
 
     } // class CswNbt2DImporter
 } // namespace ChemSW.Nbt.ImportExport

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="f584090e-d702-47ee-89f7-f036b958e82c" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
+  <ClientOptions>
+    <GenerateAsynchronousMethods>false</GenerateAsynchronousMethods>
+    <EnableDataBinding>true</EnableDataBinding>
+    <ExcludedTypes />
+    <ImportXmlTypes>false</ImportXmlTypes>
+    <GenerateInternalTypes>false</GenerateInternalTypes>
+    <GenerateMessageContracts>false</GenerateMessageContracts>
+    <NamespaceMappings />
+    <CollectionMappings />
+    <GenerateSerializableTypes>true</GenerateSerializableTypes>
+    <Serializer>Auto</Serializer>
+    <UseSerializerForFaults>true</UseSerializerForFaults>
+    <ReferenceAllAssemblies>true</ReferenceAllAssemblies>
+    <ReferencedAssemblies />
+    <ReferencedDataContractTypes />
+    <ServiceContractMappings />
+  </ClientOptions>
+  <MetadataSources>
+    <MetadataSource Address="http://jr.chemwatch.net/CWWS.BP.CISPRO/MaterialService.svc" Protocol="http" SourceId="1" />
+  </MetadataSources>
+  <Metadata>
+    <MetadataFile FileName="soap.xsd" MetadataType="Schema" ID="fb74e7c3-04ac-4d90-b1da-3cf1779fd5a2" SourceId="1" SourceUrl="http://jr.chemwatch.net/CWWS.BP.CISPRO/MaterialService.svc/soap?xsd=xsd6" />
+    <MetadataFile FileName="soap.wsdl" MetadataType="Wsdl" ID="9fb813ee-c3c9-404a-93f5-2df99537c520" SourceId="1" SourceUrl="http://jr.chemwatch.net/CWWS.BP.CISPRO/MaterialService.svc/soap?wsdl=wsdl0" />
+    <MetadataFile FileName="soap1.xsd" MetadataType="Schema" ID="91d5c332-1544-4d48-8f29-a713a8599d72" SourceId="1" SourceUrl="http://jr.chemwatch.net/CWWS.BP.CISPRO/MaterialService.svc/soap?xsd=xsd8" />
+    <MetadataFile FileName="soap2.xsd" MetadataType="Schema" ID="5ca7ce83-699c-4e1d-9037-1cfb7f272788" SourceId="1" SourceUrl="http://jr.chemwatch.net/CWWS.BP.CISPRO/MaterialService.svc/soap?xsd=xsd7" />
+    <MetadataFile FileName="soap3.xsd" MetadataType="Schema" ID="30bf56bb-f1f3-4986-ac33-1cd2197670c2" SourceId="1" SourceUrl="http://jr.chemwatch.net/CWWS.BP.CISPRO/MaterialService.svc/soap?xsd=xsd3" />
+    <MetadataFile FileName="soap4.xsd" MetadataType="Schema" ID="6fd7d3b6-c33d-4d8b-88cf-d5a89b9f4510" SourceId="1" SourceUrl="http://jr.chemwatch.net/CWWS.BP.CISPRO/MaterialService.svc/soap?xsd=xsd5" />
+    <MetadataFile FileName="soap5.xsd" MetadataType="Schema" ID="911fa068-7b7c-4350-9c4a-4f8857ebc05e" SourceId="1" SourceUrl="http://jr.chemwatch.net/CWWS.BP.CISPRO/MaterialService.svc/soap?xsd=xsd1" />
+    <MetadataFile FileName="MaterialService.wsdl" MetadataType="Wsdl" ID="ec5bb5e2-8a64-4378-861e-a35b6a70f3d4" SourceId="1" SourceUrl="http://jr.chemwatch.net/CWWS.BP.CISPRO/MaterialService.svc/soap?wsdl" />
+    <MetadataFile FileName="soap.disco" MetadataType="Disco" ID="7ce78c2c-f13e-484a-8af9-0f809dbf4bd3" SourceId="1" SourceUrl="http://jr.chemwatch.net/CWWS.BP.CISPRO/MaterialService.svc/soap?disco" />
+    <MetadataFile FileName="soap6.xsd" MetadataType="Schema" ID="21a4f573-9ea7-4469-b0dd-c80f72a87fb3" SourceId="1" SourceUrl="http://jr.chemwatch.net/CWWS.BP.CISPRO/MaterialService.svc/soap?xsd=xsd2" />
+    <MetadataFile FileName="soap7.xsd" MetadataType="Schema" ID="153118a8-5356-44d3-bd87-0c2e8d706b73" SourceId="1" SourceUrl="http://jr.chemwatch.net/CWWS.BP.CISPRO/MaterialService.svc/soap?xsd=xsd0" />
+    <MetadataFile FileName="soap8.xsd" MetadataType="Schema" ID="363acc65-2970-460e-9d55-a41793c06f67" SourceId="1" SourceUrl="http://jr.chemwatch.net/CWWS.BP.CISPRO/MaterialService.svc/soap?xsd=xsd4" />
+  </Metadata>
+  <Extensions>
+    <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />
+    <ExtensionFile FileName="configuration.svcinfo" Name="configuration.svcinfo" />
+  </Extensions>
+</ReferenceGroup>

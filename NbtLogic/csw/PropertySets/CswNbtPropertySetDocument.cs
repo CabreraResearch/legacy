@@ -1,5 +1,6 @@
 using System;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
@@ -11,14 +12,14 @@ namespace ChemSW.Nbt.ObjClasses
     /// <summary>
     /// Document Property Set
     /// </summary>
-    public abstract class CswNbtPropertySetDocument: CswNbtObjClass
+    public abstract class CswNbtPropertySetDocument : CswNbtObjClass
     {
         #region Enums
 
         /// <summary>
         /// Object Class property names
         /// </summary>
-        public new class PropertyName: CswNbtObjClass.PropertyName
+        public new class PropertyName : CswNbtObjClass.PropertyName
         {
             /// <summary>
             /// Basis for the name of the Document
@@ -37,7 +38,7 @@ namespace ChemSW.Nbt.ObjClasses
             /// </summary>
             public const string Link = "Link ";
             /// <summary>
-            /// Type. Currently support File and Link
+            /// Type. Currently support File, Link, and ChemWatch (in SDS Document)
             /// </summary>
             public const string FileType = "File Type";
             /// <summary>
@@ -60,12 +61,16 @@ namespace ChemSW.Nbt.ObjClasses
             /// User who last modified this document
             /// </summary>
             public const string LastModifiedBy = "Last Modified By";
+            /// <summary>
+            /// Opens file based on selected FileType
+            /// </summary>
+            public const string OpenFile = "Open File";
         }
 
         /// <summary>
         /// Potential File Types
         /// </summary>
-        public sealed class CswEnumDocumentFileTypes
+        public class CswEnumDocumentFileTypes
         {
             /// <summary>
             /// Blob
@@ -225,8 +230,40 @@ namespace ChemSW.Nbt.ObjClasses
 
         protected override bool onButtonClick( NbtButtonData ButtonData )
         {
-            if( null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
-            return true;
+            bool HasPermission = true;
+            if( null != ButtonData.NodeTypeProp )
+            {
+                HasPermission = false;
+                string OCPPropName = ButtonData.NodeTypeProp.getObjectClassPropName();
+                switch( OCPPropName )
+                {
+                    case PropertyName.OpenFile:
+                        HasPermission = true; //todo: what should this be based off?
+                        string url = "";
+                        if( FileType.Value.Equals( CswEnumDocumentFileTypes.File ) )
+                        {
+                            url = File.Href;
+                        }
+                        else if( FileType.Value.Equals( CswEnumDocumentFileTypes.Link ) )
+                        {
+                            url = Link.GetFullURL();
+                        }
+                        else if( FileType.Value.Equals( CswNbtObjClassSDSDocument.CswEnumDocumentFileTypes.ChemWatch ) )
+                        {
+                            //todo: check if this is actually an sdsdocument node
+                            CswNbtObjClassSDSDocument SDSDocNode = Node;
+                            if( null != SDSDocNode.ChemWatch && false == string.IsNullOrEmpty( SDSDocNode.ChemWatch.Text ) )
+                            {
+                                url = "Services/ChemWatch/GetSDSDocument?filename=" + SDSDocNode.ChemWatch.Text;
+                            }
+                        }
+
+                        ButtonData.Data["url"] = url;
+                        ButtonData.Action = CswEnumNbtButtonAction.popup;
+                        break;
+                }
+            }
+            return HasPermission;
         }
 
         #endregion Inherited Events
@@ -237,7 +274,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropDateTime AcquiredDate { get { return _CswNbtNode.Properties[PropertyName.AcquiredDate]; } }
         private void OnAcquiredDatePropChange( CswNbtNodeProp NodeProp, bool Creating )
         {
-            ArchiveDate.setHidden( value : true, SaveToDb : true );
+            ArchiveDate.setHidden( value: true, SaveToDb: true );
         }
         public CswNbtNodePropBlob File { get { return _CswNbtNode.Properties[PropertyName.File]; } }
         private void OnFilePropChange( CswNbtNodeProp NodeProp, bool Creating )
@@ -284,7 +321,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropLogical Archived { get { return _CswNbtNode.Properties[PropertyName.Archived]; } }
         private void OnArchivedPropChange( CswNbtNodeProp NodeProp, bool Creating )
         {
-            ArchiveDate.setHidden( value : Archived.Checked != CswEnumTristate.True, SaveToDb : true );
+            ArchiveDate.setHidden( value: Archived.Checked != CswEnumTristate.True, SaveToDb: true );
             string ArchivedTitleSuffix = " (Archived)";
             if( Archived.Checked == CswEnumTristate.True )
             {
@@ -303,6 +340,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropDateTime ArchiveDate { get { return _CswNbtNode.Properties[PropertyName.ArchiveDate]; } }
         public CswNbtNodePropDateTime LastModifiedOn { get { return _CswNbtNode.Properties[PropertyName.LastModifiedOn]; } }
         public CswNbtNodePropRelationship LastModifiedBy { get { return _CswNbtNode.Properties[PropertyName.LastModifiedBy]; } }
+        public CswNbtNodePropButton OpenFile { get { return _CswNbtNode.Properties[PropertyName.OpenFile]; } }
         #endregion
 
         #region Custom Logic

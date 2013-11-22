@@ -49,6 +49,7 @@ namespace ChemSW.Nbt.Schema
                     //CAF Updates
                     new CswUpdateSchema_02I_Case31087(),
                     new CswUpdateSchema_02I_Case31089(),
+                    new CswUpdateSchema_02I_Case31043_FixRoles(),
                     new CswUpdateSchema_02I_Case31234C(),
                     new CswUpdateSchema_02I_Case31090C(),
                     new CswUpdateSchema_02I_Case31236B()

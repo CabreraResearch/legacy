@@ -917,8 +917,8 @@
 
         cswPrivate.extractRows = function (rawRows) {
             var ret = [];
-            if (rawRows && rawRows.length > 0) {
-                rawRows.forEach(function (item) {
+            if (rawRows.items && rawRows.items.length > 0) {
+                rawRows.items.forEach(function (item) {
                     if (item && item.data) {
                         ret.push(item.data);
                     }
