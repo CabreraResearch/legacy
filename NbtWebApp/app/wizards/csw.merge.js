@@ -15,8 +15,11 @@
                 finish: 'finish',
                 cancel: 'cancel'
             },
-            node1: null,
-            node2: null
+//            node1: null,
+//            node2: null,
+            node1: { nodeid: 'nodes_51984', nodename: 'acenaphthrene Fluka' },  // DEBUG ONLY
+            node2: { nodeid: 'nodes_54960', nodename: 'Acesulfame K' },     // DEBUG ONLY
+            propertychoices: {}
         };
 
         var cswPublic = {};
@@ -112,7 +115,10 @@
             makeStep: (function () {
                 return function (StepNo) {
                     cswPrivate.toggleStepButtons(StepNo);
-                    cswPrivate.toggleButton(cswPrivate.buttons.next, false);
+
+                    if (null === cswPrivate.node1) {
+                        cswPrivate.toggleButton(cswPrivate.buttons.next, false);
+                    }
 
                     cswPrivate.setStepHeader(StepNo, 'What do you want to merge?');
 
@@ -144,7 +150,8 @@
                 };
             }()),
             onStepChange: function () {}
-        };
+        }; // wizardStepMergeWhat
+        
 
         cswPrivate.wizardStepMergeWith = {
             stepName: 'Merge With',
@@ -152,7 +159,11 @@
             makeStep: (function () {
                 return function (StepNo) {
                     cswPrivate.toggleStepButtons(StepNo);
-                    cswPrivate.toggleButton(cswPrivate.buttons.next, false);
+
+                    if (null === cswPrivate.node2) {
+                        cswPrivate.toggleButton(cswPrivate.buttons.next, false);
+                    }
+
                     cswPrivate.setStepHeader(StepNo, 'What do you want to merge with ' + cswPrivate.node1.nodename + '?');
 
                     var div = cswPrivate['divStep' + StepNo];
@@ -182,7 +193,8 @@
                     });
                 };
             }())
-        };
+        }; // wizardStepMergeWith
+        
 
         cswPrivate.wizardStepPerformMerge = {
             stepName: 'Perform Merge',
@@ -193,22 +205,105 @@
                     cswPrivate.setStepHeader(StepNo, 'Merging ' + cswPrivate.node1.nodename + ' with ' + cswPrivate.node2.nodename + '.' );
 
                     var div = cswPrivate['divStep' + StepNo];
+
+                    Csw.ajaxWcf.post({
+                        urlMethod: 'Nodes/getMergeInfo',
+                        data: {
+                            NodeId1: cswPrivate.node1.nodeid,
+                            NodeId2: cswPrivate.node2.nodeid
+                        },
+                        success: function (data) {
+                            var table = div.table();
+                            var row = 1;
+
+                            cswPrivate.mergeData = data;
+
+                            table.addClass('MergeTable');
+                            
+                            // Header Row
+                            var evenodd = "Even";
+                            table.cell(row, 1).addClass('MergeTable_Cell MergeTable_LabelCell_' + evenodd + ' MergeTable_LabelCell MergeTable_Header').text('Property');
+                            table.cell(row, 2).addClass('MergeTable_Cell MergeTable_LeftCell_' + evenodd + ' MergeTable_PropLeftCell MergeTable_Header').text(cswPrivate.node1.nodename);
+                            table.cell(row, 3).addClass('MergeTable_Cell MergeTable_LeftCell_' + evenodd + ' MergeTable_RadioLeftCell MergeTable_Header');
+                            table.cell(row, 4).addClass('MergeTable_Cell MergeTable_RightCell_' + evenodd + ' MergeTable_RadioRightCell MergeTable_Header');
+                            table.cell(row, 5).addClass('MergeTable_Cell MergeTable_RightCell_' + evenodd + ' MergeTable_PropRightCell MergeTable_Header').text(cswPrivate.node2.nodename);
+                            evenodd === "Even" ? evenodd = "Odd" : evenodd = "Even";
+                            row++;
+                            
+                            // Property Rows
+                            Csw.iterate(data.Properties, function(prop) {
+
+                                cswPrivate.propertychoices[prop.NodeTypePropId] = 1;
+
+                                var cell1 = table.cell(row, 1).addClass('MergeTable_Cell MergeTable_LabelCell_' + evenodd + ' MergeTable_LabelCell').text('Property');
+                                var cell2 = table.cell(row, 2).addClass('MergeTable_Cell MergeTable_LeftCell_' + evenodd + ' MergeTable_PropLeftCell');
+                                var cell3 = table.cell(row, 3).addClass('MergeTable_Cell MergeTable_LeftCell_' + evenodd + ' MergeTable_RadioLeftCell');
+                                var cell4 = table.cell(row, 4).addClass('MergeTable_Cell MergeTable_RightCell_' + evenodd + ' MergeTable_RadioRightCell');
+                                var cell5 = table.cell(row, 5).addClass('MergeTable_Cell MergeTable_RightCell_' + evenodd + ' MergeTable_PropRightCell');
+                            
+                                cell1.text(prop.PropName);
+                                cell2.text(prop.Node1Value);
+                                cell5.text(prop.Node2Value);
+
+                                cell3.input({
+                                    name: prop.NodeTypePropId,
+                                    type: Csw.enums.inputTypes.radio,
+                                    onClick: function() {
+                                        prop.Choice = 1;
+                                    },
+                                    checked: true
+                                });
+                                cell4.input({
+                                    name: prop.NodeTypePropId,
+                                    type: Csw.enums.inputTypes.radio,
+                                    onClick: function() {
+                                        prop.Choice = 2;
+                                    },
+                                    checked: false
+                                });
+
+                                evenodd === "Even" ? evenodd = "Odd" : evenodd = "Even";
+                                row++;
+                            });
+                        } // success()
+                    }); // ajax
                 };
-            }())
-        };
+            }()) // makeStep func
+        }; // wizardStepPerformMerge
+        
 
         cswPrivate.wizardStepPreviewResult = {
             stepName: 'Preview Result',
             stepNo: '',
             makeStep: (function () {
-                return function (StepNo) {
+                return function(StepNo) {
                     cswPrivate.toggleStepButtons(StepNo);
-                    cswPrivate.setStepHeader(StepNo, 'Preview results of merging ' + cswPrivate.node1.nodename + ' with ' + cswPrivate.node2.nodename + '.' );
+                    cswPrivate.setStepHeader(StepNo, 'Preview results of merging ' + cswPrivate.node1.nodename + ' with ' + cswPrivate.node2.nodename + '.');
 
                     var div = cswPrivate['divStep' + StepNo];
+
+                    Csw.ajaxWcf.post({
+                        urlMethod: 'Nodes/applyMergeChoices',
+                        data: {
+                            NodeId1: cswPrivate.node1.nodeid,
+                            NodeId2: cswPrivate.node2.nodeid,
+                            Choices: cswPrivate.mergeData
+                        },
+                        success: function(data) {
+                            Csw.layouts.tabsAndProps(div, {
+                                forceReadOnly: true,
+                                tabState: {
+                                    nodeid: data,
+                                    ReadOnly: true,
+                                    EditMode: Csw.enums.editMode.Edit
+                                }
+                            });
+                        } // success()
+                    }); // ajax
                 };
-            }())
-        };
+            }()) // makeStep func
+        }; // wizardStepPreviewResult
+        
         //#endregion Steps
 
         //#region Finish

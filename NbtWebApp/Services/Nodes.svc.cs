@@ -13,7 +13,7 @@ using NbtWebApp.WebSvc.Returns;
 
 namespace NbtWebApp
 {
-    
+
     [DataContract]
     public class NodeResponse : CswWebSvcReturn
     {
@@ -21,11 +21,11 @@ namespace NbtWebApp
         {
             Data = new NodeSelect.Response();
         }
-            
+
         [DataMember]
         public NodeSelect.Response Data = null;
     }
-    
+
     /// <summary>
     /// WCF Web Methods for View operations
     /// </summary>
@@ -57,7 +57,7 @@ namespace NbtWebApp
             GetViewDriverType.run();
             return ( Ret );
         }
-        
+
         [OperationContract]
         [WebInvoke( Method = "POST" )]
         [FaultContract( typeof( FaultException ) )]
@@ -135,5 +135,50 @@ namespace NbtWebApp
             SvcDriver.run();
             return ( Ret );
         }
+
+
+        [OperationContract]
+        [WebInvoke( Method = "POST" )]
+        [Description( "Get information for merging two nodes" )]
+        [FaultContract( typeof( FaultException ) )]
+        public CswNbtWebServiceNode.MergeInfoReturn getMergeInfo( CswNbtWebServiceNode.MergeInfoRequest Request )
+        {
+            CswNbtWebServiceNode.MergeInfoReturn Ret = new CswNbtWebServiceNode.MergeInfoReturn();
+
+            var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceNode.MergeInfoReturn, CswNbtWebServiceNode.MergeInfoRequest>(
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context ),
+                ReturnObj: Ret,
+                WebSvcMethodPtr: CswNbtWebServiceNode.getMergeInfo,
+                ParamObj: Request
+                );
+
+            SvcDriver.run();
+            return ( Ret );
+        }
+
+
+
+        [OperationContract]
+        [WebInvoke( Method = "POST" )]
+        [Description( "Apply choices from merge and return the new nodeid" )]
+        [FaultContract( typeof( FaultException ) )]
+        public CswNbtWebServiceNode.MergeChoicesReturn applyMergeChoices( CswNbtWebServiceNode.MergeChoicesRequest Request )
+        {
+            CswNbtWebServiceNode.MergeChoicesReturn Ret = new CswNbtWebServiceNode.MergeChoicesReturn();
+
+            var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceNode.MergeChoicesReturn, CswNbtWebServiceNode.MergeChoicesRequest>(
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context ),
+                ReturnObj: Ret,
+                WebSvcMethodPtr: CswNbtWebServiceNode.applyMergeChoices,
+                ParamObj: Request
+                );
+
+            SvcDriver.run();
+            return ( Ret );
+        }
+
+
+
+
     }
 }
