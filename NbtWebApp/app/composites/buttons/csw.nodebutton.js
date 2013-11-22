@@ -188,10 +188,6 @@
                 actionJson.actionname = 'chemwatch';
                 launchAction = true;
                 break;
-            case Csw.enums.nbtButtonAction.openfile.toLowerCase():
-                actionJson.actionname = 'openfile';
-                window.open(actionJson.state.url);
-                break;
             default:
                 if (tabsAndProps) {
                     tabsAndProps.refresh(opts.data.savedprops.properties);
