@@ -38,6 +38,7 @@ namespace ChemSW.Nbt.MetaData
             { GeneratorClass                    , GeneratorClass                     },
             { GenericClass                      , GenericClass                       },
             { GHSClass                          , GHSClass                           },
+            { GHSClassificationClass            , GHSClassificationClass             },
             { GHSPhraseClass                    , GHSPhraseClass                     },
             { GHSSignalWordClass                , GHSSignalWordClass                 },
             { InspectionDesignClass             , InspectionDesignClass              },
@@ -161,6 +162,7 @@ namespace ChemSW.Nbt.MetaData
         public const string GeneratorClass = "GeneratorClass";
         public const string GenericClass = "GenericClass";
         public const string GHSClass = "GHSClass";
+        public const string GHSClassificationClass = "GHSClassificationClass";
         public const string GHSPhraseClass = "GHSPhraseClass";
         public const string InspectionDesignClass = "InspectionDesignClass";
         public const string InspectionRouteClass = "InspectionRouteClass";

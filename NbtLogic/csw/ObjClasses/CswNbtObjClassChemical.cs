@@ -1099,7 +1099,7 @@ namespace ChemSW.Nbt.ObjClasses
                 Ret = Phrases.Keys.ToDictionary( pk => pk.ToString(), pk => Phrases[pk] );
             }
             return Ret;
-        } // _initGhsPhraseOptions()
+        } // _initDsdPhraseOptions()
 
         private void _setUpDsdPhraseView()
         {

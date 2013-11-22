@@ -28,7 +28,39 @@ create unique index unqidx_nbtimportqueue on NBTIMPORTQUEUE (state, itempk, shee
 create sequence seq_nbtimportqueueid start with 1 increment by 1;
 commit;
 
+--This needs to be executed before the views are created for CAF Properties to work
+create or replace procedure pivotPropertiesValues(viewname in varchar, propstblname in varchar, proptblpkcol in varchar, joincol in varchar, fromtbl in varchar) is
 
+  props_sql VARCHAR2(200);
+  TYPE cur_typ IS REF CURSOR;
+  c       cur_typ;
+  propid  varchar(200);
+  viewsql clob;
+  line    clob;
+
+begin
+  props_sql := 'select distinct pv.propertyid from properties p join ' || propstblname ||  ' pv on p.propertyid = pv.propertyid';
+
+  viewsql   := 'create or replace view ' || viewname || ' as select m.' || joincol;
+
+  open c for props_sql;
+  loop
+    fetch c
+      into propid;
+    exit when c%NOTFOUND;
+
+    line    := ', (select max(' || proptblpkcol || ') propvalid from ' || propstblname || ' where propertyid = ' ||
+               propid || ' and ' || joincol || ' = m.' || joincol || ') prop' || propid;
+    viewsql := viewsql || line;
+
+  end loop;
+  close c;
+
+  viewsql := viewsql || ' from ' || fromtbl || ' m';
+
+  execute immediate (viewsql);
+end;
+/
 
 -- Create views ( these are in order of creation)
 
@@ -206,174 +238,187 @@ select packdetailid,
        END as containertype
        from packdetail;
 
---Chemicals
+--This MUST be executed before the Chemicals_View is created for CAF Properties
+begin
+  -- Call the procedure
+  pivotpropertiesvalues(viewname => 'chemicals_props_view',
+                        propstblname => 'properties_values',
+                        proptblpkcol => 'propertiesvaluesid',
+                        joincol => 'materialid',
+						fromtbl => 'materials');
+end;
+/
+
+--CHEMICALS
 CREATE OR REPLACE VIEW CHEMICALS_VIEW AS
-WITH dsd_phrases 
-     AS (SELECT MATERIALID, 
-                DELETED, 
-                Listagg(CODE, ',') 
-                  within GROUP( ORDER BY code) AS labelcodes 
-         FROM   (SELECT DISTINCT p.MATERIALID, 
-                                 r.CODE, 
-                                 p.DELETED 
-                 FROM   jct_rsphrases_materials p 
-                        join rs_phrases r 
-                          ON ( r.RSPHRASEID = p.RSPHRASEID ) 
-                 WHERE  p.DELETED = 0) 
-         GROUP  BY MATERIALID, 
-                   DELETED), 
-     dsd_pictos 
-     AS (SELECT MATERIALID, 
-                DELETED, 
-                Listagg(GRAPHICFILENAME, Chr(10)) 
-                  within GROUP( ORDER BY graphicfilename) AS pictograms 
-         FROM   (SELECT DISTINCT p.MATERIALID, 
-                                 'Images/cispro/DSD/' 
-                                 || r.GRAPHICFILENAME AS graphicfilename, 
-                                 p.DELETED 
-                 FROM   jct_pictograms_materials p 
-                        join pictograms r 
-                          ON ( r.PICTOGRAMID = p.PICTOGRAMID ) 
-                 WHERE  p.DELETED = 0) 
-         GROUP  BY MATERIALID, 
-                   DELETED), 
-     storagecompat 
-     AS (SELECT MATERIALID, 
-                DELETED, 
-                Listagg(GRAPHICFILENAME, Chr(10)) 
-                  within GROUP( ORDER BY graphicfilename) AS storagecompat 
-         FROM   (SELECT DISTINCT p.MATERIALID, 
-                                 'Images/cispro/' 
-                                 || r.GRAPHICFILENAME AS graphicfilename, 
-                                 p.DELETED 
-                 FROM   jct_graphics_materials p 
-                        join graphic_sets r 
-                          ON ( r.GRAPHICSETID = p.GRAPHICSETID ) 
-                 WHERE  p.DELETED = 0) 
-         GROUP  BY MATERIALID, 
-                   DELETED) 
-SELECT v.VENDORID, 
-       p.PACKAGEID, 
-       p.PRODUCTNO, 
-       m."AQUEOUS_SOLUBILITY", 
-       m."BOILING_POINT", 
-       m."CASNO", 
-       m."COLOR", 
-       m."COMPRESSED_GAS", 
-       m."CREATIONDATE", 
-       m."CREATIONSITEID", 
-       m."DELETED", 
-       m."DOT_CODE", 
-       m."EXPIREINTERVAL", 
-       m."EXPIREINTERVALUNITS", 
-       m."EXPOSURE_LIMITS", 
-       m."FIRECODE", 
-       m."FLASH_POINT", 
-       m."FORMULA", 
-       m."HAZARDS", 
-       m."HEALTHCODE", 
-       m."INVENTORYREQUIRED", 
-       m."KEYWORDS", 
-       m."LOB_TYPE", 
-       m."MANUFACTURER", 
-       m."MATERIAL_FINISH", 
-       m."MATERIAL_SIZEVOL", 
-       m."MATERIAL_TYPE", 
-       m."MATERIAL_USE", 
-       m."MATERIALID", 
-       m."MATERIALNAME", 
-       m."MATERIALSUBCLASSID", 
-       m."MELTING_POINT", 
-       m."MODEL", 
-       m."MOLECULAR_WEIGHT", 
-       m."OTHERREFERENCENO", 
-       m."PH", 
-       m."PHYSICAL_DESCRIPTION", 
-       m."PHYSICAL_STATE", 
-       m.PPE, 
-       Replace(Replace(Replace(m.PPE, 'Eye Protection', 'Goggles'), 
-               'Hand Protection', 
-               'Gloves' 
-               ), 'Ventilation', 'Fume Hood') AS ppe_trans, 
-       m."REACTIVECODE", 
-       m."REVIEWSTATUSCHANGEDATE", 
-       m."REVIEWSTATUSNAME", 
-       m."SPEC_NO", 
-       m."SPECIFIC_CODE", 
-       m."SPECIFIC_GRAVITY", 
-       m."SPECIFICCODE", 
-       m."VAPOR_DENSITY", 
-       m."VAPOR_PRESSURE", 
-       m."KEEPATSTATUS", 
-       m."TARGET_ORGANS", 
-       m."CREATIONUSERID", 
-       m."AUDITFLAG", 
-       m."CREATIONWORKUNITID", 
-       m."EINECS", 
-       m."CONST_UBA_CODE", 
-       m."CONST_COLOR_INDEX", 
-       m."CONST_SIMPLE_NAME", 
-       m."CONST_CHEM_GROUP", 
-       m."CONST_INGRED_CLASS", 
-       m."CONST_CHEM_REACT", 
-       m."LASTUPDATED", 
-       m."OPENEXPIREINTERVAL", 
-       m."OPENEXPIREINTERVALUNITS", 
-       m."CONST_FEMA_NO", 
-       m."CONST_COE_NO", 
-       m."PRODUCTTYPE", 
-       m."PRODUCTBRAND", 
-       m."PRODUCTCATEGORY", 
-       m."NFPACODE", 
-       m."CONST_MAT_FUNCTION", 
-       m."HAS_ACTIVITY", 
-       m."REFNO", 
-       m."TYPE", 
-       m."SPECIES", 
-       m."VARIETY", 
-       m."GOI", 
-       m."TRANSGENIC", 
-       m."VECTORS", 
-       m."BIOSAFETY", 
-       m."CONST_MAT_ORIGIN", 
-       m."REVIEWSTATUSTYPE", 
-       m."STORAGE_CONDITIONS", 
-       m."PENDINGUPDATE", 
-       m."ISTIER2", 
-       m."MATERIALVARIETYID", 
-       m."NONHAZARDOUS3E", 
-       m."ASSETCREATIONNAME", 
-       ms.SUBCLASSNAME, 
-       ( CASE m.PHYSICAL_STATE 
-           WHEN 'S' THEN 'Solid' 
-           WHEN 'L' THEN 'Liquid' 
-           WHEN 'G' THEN 'Gas' 
-         END )                                AS physical_state_trans, 
-       ( CASE m.NONHAZARDOUS3E 
-           WHEN '1' THEN '0' 
-           WHEN '0' THEN '1' 
-         END )                                AS nonhazardous3e_trans, 
-       sc.STORAGECOMPAT                       AS storagecompatibility, 
-       ph.LABELCODES, 
-       pc.PICTOGRAMS 
-FROM   materials m 
-       join packages p 
-         ON p.MATERIALID = m.MATERIALID 
-       join vendors v 
-         ON p.SUPPLIERID = v.VENDORID 
-       join materials_subclass ms 
-         ON ms.MATERIALSUBCLASSID = m.MATERIALSUBCLASSID 
-       join materials_class mc 
-         ON mc.MATERIALCLASSID = ms.MATERIALCLASSID 
-       left outer join storagecompat sc 
-                    ON ( sc.MATERIALID = p.MATERIALID ) 
-       left outer join dsd_phrases ph 
-                    ON ( ph.MATERIALID = p.MATERIALID ) 
-       left outer join dsd_pictos pc 
-                    ON ( pc.MATERIALID = p.MATERIALID ) 
-WHERE  m.DELETED = 0 
-       AND p.DELETED = 0 
-       AND mc.CLASSNAME = 'CHEMICAL'; 
+WITH dsd_phrases
+     AS (SELECT MATERIALID,
+                DELETED,
+                Listagg(CODE, ',')
+                  within GROUP( ORDER BY code) AS labelcodes
+         FROM   (SELECT DISTINCT p.MATERIALID,
+                                 r.CODE,
+                                 p.DELETED
+                 FROM   jct_rsphrases_materials p
+                        join rs_phrases r
+                          ON ( r.RSPHRASEID = p.RSPHRASEID )
+                 WHERE  p.DELETED = 0)
+         GROUP  BY MATERIALID,
+                   DELETED),
+     dsd_pictos
+     AS (SELECT MATERIALID,
+                DELETED,
+                Listagg(GRAPHICFILENAME, Chr(10))
+                  within GROUP( ORDER BY graphicfilename) AS pictograms
+         FROM   (SELECT DISTINCT p.MATERIALID,
+                                 'Images/cispro/DSD/'
+                                 || r.GRAPHICFILENAME AS graphicfilename,
+                                 p.DELETED
+                 FROM   jct_pictograms_materials p
+                        join pictograms r
+                          ON ( r.PICTOGRAMID = p.PICTOGRAMID )
+                 WHERE  p.DELETED = 0)
+         GROUP  BY MATERIALID,
+                   DELETED),
+     storagecompat
+     AS (SELECT MATERIALID,
+                DELETED,
+                Listagg(GRAPHICFILENAME, Chr(10))
+                  within GROUP( ORDER BY graphicfilename) AS storagecompat
+         FROM   (SELECT DISTINCT p.MATERIALID,
+                                 'Images/cispro/'
+                                 || r.GRAPHICFILENAME AS graphicfilename,
+                                 p.DELETED
+                 FROM   jct_graphics_materials p
+                        join graphic_sets r
+                          ON ( r.GRAPHICSETID = p.GRAPHICSETID )
+                 WHERE  p.DELETED = 0)
+         GROUP  BY MATERIALID,
+                   DELETED)
+SELECT v.VENDORID,
+       p.PACKAGEID,
+       p.PRODUCTNO,
+       m."AQUEOUS_SOLUBILITY",
+       m."BOILING_POINT",
+       m."CASNO",
+       m."COLOR",
+       m."COMPRESSED_GAS",
+       m."CREATIONDATE",
+       m."CREATIONSITEID",
+       m."DELETED",
+       m."DOT_CODE",
+       m."EXPIREINTERVAL",
+       m."EXPIREINTERVALUNITS",
+       m."EXPOSURE_LIMITS",
+       m."FIRECODE",
+       m."FLASH_POINT",
+       m."FORMULA",
+       m."HAZARDS",
+       m."HEALTHCODE",
+       m."INVENTORYREQUIRED",
+       m."KEYWORDS",
+       m."LOB_TYPE",
+       m."MANUFACTURER",
+       m."MATERIAL_FINISH",
+       m."MATERIAL_SIZEVOL",
+       m."MATERIAL_TYPE",
+       m."MATERIAL_USE",
+       m."MATERIALNAME",
+       m."MATERIALSUBCLASSID",
+       m."MELTING_POINT",
+       m."MODEL",
+       m."MOLECULAR_WEIGHT",
+       m."OTHERREFERENCENO",
+       m."PH",
+       m."PHYSICAL_DESCRIPTION",
+       m."PHYSICAL_STATE",
+       m.PPE,
+       Replace(Replace(Replace(m.PPE, 'Eye Protection', 'Goggles'),
+               'Hand Protection',
+               'Gloves'
+               ), 'Ventilation', 'Fume Hood') AS ppe_trans,
+       m."REACTIVECODE",
+       m."REVIEWSTATUSCHANGEDATE",
+       m."REVIEWSTATUSNAME",
+       m."SPEC_NO",
+       m."SPECIFIC_CODE",
+       m."SPECIFIC_GRAVITY",
+       m."SPECIFICCODE",
+       m."VAPOR_DENSITY",
+       m."VAPOR_PRESSURE",
+       m."KEEPATSTATUS",
+       m."TARGET_ORGANS",
+       m."CREATIONUSERID",
+       m."AUDITFLAG",
+       m."CREATIONWORKUNITID",
+       m."EINECS",
+       m."CONST_UBA_CODE",
+       m."CONST_COLOR_INDEX",
+       m."CONST_SIMPLE_NAME",
+       m."CONST_CHEM_GROUP",
+       m."CONST_INGRED_CLASS",
+       m."CONST_CHEM_REACT",
+       m."LASTUPDATED",
+       m."OPENEXPIREINTERVAL",
+       m."OPENEXPIREINTERVALUNITS",
+       m."CONST_FEMA_NO",
+       m."CONST_COE_NO",
+       m."PRODUCTTYPE",
+       m."PRODUCTBRAND",
+       m."PRODUCTCATEGORY",
+       m."NFPACODE",
+       m."CONST_MAT_FUNCTION",
+       m."HAS_ACTIVITY",
+       m."REFNO",
+       m."TYPE",
+       m."SPECIES",
+       m."VARIETY",
+       m."GOI",
+       m."TRANSGENIC",
+       m."VECTORS",
+       m."BIOSAFETY",
+       m."CONST_MAT_ORIGIN",
+       m."REVIEWSTATUSTYPE",
+       m."STORAGE_CONDITIONS",
+       m."PENDINGUPDATE",
+       m."ISTIER2",
+       m."MATERIALVARIETYID",
+       m."NONHAZARDOUS3E",
+       m."ASSETCREATIONNAME",
+       ms.SUBCLASSNAME,
+       ( CASE m.PHYSICAL_STATE
+           WHEN 'S' THEN 'Solid'
+           WHEN 'L' THEN 'Liquid'
+           WHEN 'G' THEN 'Gas'
+         END )                                AS physical_state_trans,
+       ( CASE m.NONHAZARDOUS3E
+           WHEN '1' THEN '0'
+           WHEN '0' THEN '1'
+         END )                                AS nonhazardous3e_trans,
+       sc.STORAGECOMPAT                       AS storagecompatibility,
+       ph.LABELCODES,
+       pc.PICTOGRAMS,
+       cpv.*
+FROM   materials m
+       join packages p
+         ON p.MATERIALID = m.MATERIALID
+       join vendors v
+         ON p.SUPPLIERID = v.VENDORID
+       join materials_subclass ms
+         ON ms.MATERIALSUBCLASSID = m.MATERIALSUBCLASSID
+       join materials_class mc
+         ON mc.MATERIALCLASSID = ms.MATERIALCLASSID
+       left outer join storagecompat sc
+                    ON ( sc.MATERIALID = p.MATERIALID )
+       left outer join dsd_phrases ph
+                    ON ( ph.MATERIALID = p.MATERIALID )
+       left outer join dsd_pictos pc
+                    ON ( pc.MATERIALID = p.MATERIALID )
+       join chemicals_props_view cpv
+                    ON (p.materialid = cpv.materialid)
+WHERE  m.DELETED = 0
+       AND p.DELETED = 0
+       AND mc.CLASSNAME = 'CHEMICAL';
 	 
 ---Weight
 create or replace view weight_view as
@@ -555,23 +600,37 @@ select
 )
 );
 
+--This MUST be executed before the receipt_lots_view is created for CAF Properties
+begin
+  -- Call the procedure
+  pivotpropertiesvalues(viewname => 'receiptlots_props_view',
+                        propstblname => 'properties_values_lot',
+                        proptblpkcol => 'lotpropsvaluesid',
+                        joincol => 'receiptlotid',
+						fromtbl => 'receipt_lots');
+end;
+/
+
 ---Receipt Lots
 create or replace view receipt_lots_view as
 select 
      rl.ReceiptLotNo,
-	   rl.CreatedDate,
-	   rl.ReceiptLotId,
-	   rl.Deleted,
-	   p.PackageId
+     rl.CreatedDate,
+     rl.ReceiptLotId,
+     rl.Deleted,
+     p.PackageId,
+     c.manufacturerlotno
   from receipt_lots rl
-	join packages p 
+  join containers c on c.receiptlotid = rl.receiptlotid and c.containerclass = 'lotholder'
+  join receiptlots_props_view rpv on rpv.receiptlotid = rl.receiptlotid
+  join packages p 
        on p.packageid = (
-	                    select pd.packageid 
+                      select pd.packageid 
                             from packdetail pd, containers c 
-								where c.receiptlotid = rl.receiptlotid and 
-										c.packdetailid = pd.packdetailid and
-										rownum=1
-						);
+                where c.receiptlotid = rl.receiptlotid and 
+                    c.packdetailid = pd.packdetailid and
+                    rownum=1
+            );
 	
 	
 ---C of A Documents
@@ -586,11 +645,21 @@ select ReceiptLotId,
          end) as FileExtension,
 		Deleted
 	from receipt_lots;
-	 
+	
+--This MUST be executed before the Containers_View is created for CAF Properties
+begin
+  -- Call the procedure
+  pivotpropertiesvalues(viewname => 'containers_props_view',
+                        propstblname => 'properties_values_cont',
+                        proptblpkcol => 'contpropsvaluesid',
+                        joincol => 'containerid',
+						fromtbl => 'containers');
+end;
+/	
+	
 ---Containers
 create or replace view containers_view as
 select
-	 c.ContainerId,
 	  c.Deleted,
 	  c.BarcodeId,
 	  c.PackDetailId,
@@ -614,11 +683,13 @@ select
 	  c.Notes,
 	  c.ProjectId,
 	  c.SpecificActivity,
-	  c.TareQuantity
+	  c.TareQuantity,
+	  cpv.*
 	from containers c
 	  left outer join container_groups cg on cg.containergroupcode = c.containergroupcode
 	  join packdetail pd on c.packdetailid = pd.packdetailid
 	  join packages p on pd.packageid = p.packageid
+	  join containers_props_view cpv on cpv.containerid = c.containerid
 	order by c.ContainerId;
 	  
 ---Inventory Levels
@@ -793,4 +864,14 @@ SELECT PACKAGEID,
 create or replace view reglists_view as
 (select "DELETED","DISPLAYNAME","LISTMODE","MATCHTYPE","REGLISTCODE","REGULATORYLISTID" from regulatory_lists where lower(listmode) = 'cispro');
 
-
+--Material Synonyms
+create or replace view synonyms_view as
+(
+  select ms.synonymname,
+  ms.synonymclass,
+  ms.materialsynonymid,
+  cv.packageid,
+  ms.materialsynonymid || '_' || cv.packageid as LegacyId
+  from materials_synonyms ms
+       join chemicals_view cv on ms.materialid = cv.materialid
+);

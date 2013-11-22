@@ -49,7 +49,8 @@ namespace ChemSW.Nbt.csw.Schema
                 {"Inventory Level", 27},
                 {"Jurisdiction", 28},
                 {"GHS Phrase", 29},
-                {"GHS", 30}
+                {"GHS", 30},
+                {"Material Synonym", 31}
             };
 
         private DataTable _importDefTable;
@@ -198,8 +199,10 @@ namespace ChemSW.Nbt.csw.Schema
         /// <param name="Instance">Sets which entry in IMPORT_DEF_ORDER this binding should be associated with</param>
         /// <param name="BlobTableName">The source table for BLOB data being imported from CAF, if this binding is to a LOB</param>
         /// <param name="ClobTableName">The source table for CLOB data being imported from CAF, if this binding is to a LOB</param>
-        /// <param name="LobDataPkColOverride">The PK column of the LOB table, if this binding is to a LOB</param>
-        public void importBinding( string SourceColumnName, string DestPropertyName, string DestSubFieldName, string SheetName = null, string DestNodeTypeName = null, Int32 Instance = Int32.MinValue, string BlobTableName = "", string ClobTableName = "", string LobDataPkColOverride = "" )
+        /// <param name="LobDataPkColOverride">The column that stores the value of the PK for the LOB table</param>
+        /// <param name="LobDataPkColName">The PK Column of the LOB table, if it differs from the column in the table the stores the PK used to access the LOB table</param>
+        /// <param name="LegacyPropId">The CAF PropertyId (used for CAF Props only)</param>
+        public void importBinding( string SourceColumnName, string DestPropertyName, string DestSubFieldName, string SheetName = null, string DestNodeTypeName = null, Int32 Instance = Int32.MinValue, string BlobTableName = "", string ClobTableName = "", string LobDataPkColOverride = "", string LobDataPkColName = "", Int32 LegacyPropId = Int32.MinValue )
         {
             if( null != _NbtImporter )
             {
@@ -219,6 +222,8 @@ namespace ChemSW.Nbt.csw.Schema
                     row["blobtablename"] = BlobTableName;
                     row["clobtablename"] = ClobTableName;
                     row["lobdatapkcoloverride"] = LobDataPkColOverride;
+                    row["lobdatapkcolname"] = LobDataPkColName;
+                    row["legacypropid"] = LegacyPropId;
                     _importBindingsTable.Rows.Add( row );
                 }
             }

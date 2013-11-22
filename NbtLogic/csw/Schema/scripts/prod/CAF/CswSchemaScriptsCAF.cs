@@ -44,6 +44,11 @@ namespace ChemSW.Nbt.Schema
                     new CswUpdateSchema_02H_Case30048_InventoryLevels(),
                     new CswUpdateSchema_02H_Case30042_GHSAndDSD(),
                     new CswUpdateSchema_02I_Case31222_LocationsFix(),
+                    new CswUpdateSchema_02I_Case31194_Synonyms(),
+
+                    //CAF Updates
+                    new CswUpdateSchema_02I_Case31087(),
+                    new CswUpdateSchema_02I_Case31089(),
                 };
         } // _SchemaScripts()
 
