@@ -343,7 +343,7 @@ namespace ChemSW.Nbt.ObjClasses
         }
         public CswNbtNodePropDateTime RevisionDate { get { return _CswNbtNode.Properties[PropertyName.RevisionDate]; } }
         public CswNbtNodePropText ChemWatch { get { return _CswNbtNode.Properties[PropertyName.ChemWatch]; } }
-        public CswNbtNodePropList Country { get { return _CswNbtNode.Properties[PropertyName.Country]; } }
+        public CswNbtNodePropText Country { get { return _CswNbtNode.Properties[PropertyName.Country]; } }
 
         #endregion Object class specific properties
 

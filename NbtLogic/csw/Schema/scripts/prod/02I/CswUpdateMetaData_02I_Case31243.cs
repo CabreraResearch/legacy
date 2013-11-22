@@ -31,13 +31,13 @@ namespace ChemSW.Nbt.Schema
         {
             // Create Country property on SDSDocumentOC
             CswNbtMetaDataObjectClass SDSDocumentOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.SDSDocumentClass );
-            CswNbtMetaDataObjectClassProp CountryOCP = SDSDocumentOC.getObjectClassProp( CswNbtObjClassSDSDocument.PropertyName.ChemWatch );
+            CswNbtMetaDataObjectClassProp CountryOCP = SDSDocumentOC.getObjectClassProp( CswNbtObjClassSDSDocument.PropertyName.Country );
             if( null == CountryOCP )
             {
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( SDSDocumentOC, new CswNbtWcfMetaDataModel.ObjectClassProp( SDSDocumentOC )
                     {
                         PropName = CswNbtObjClassSDSDocument.PropertyName.Country,
-                        FieldType = CswEnumNbtFieldType.List
+                        FieldType = CswEnumNbtFieldType.Text
                     } );
             }
 
