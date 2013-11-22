@@ -422,6 +422,7 @@
     <Compile Include="csw\Schema\scripts\prod\02H\CswUpdateSchema_02H_Case30537C.cs" />
     <Compile Include="csw\Schema\scripts\prod\02H\CswUpdateMetaData_02H_Case30537A.cs" />
     <Compile Include="csw\Schema\scripts\prod\02H\CswUpdateMetaData_02H_Case30537B.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02I\CswUpdateSchema_02I_Case31025.cs" />
     <Compile Include="csw\Schema\scripts\prod\02I\CswUpdateSchema_02I_Case31090B.cs" />
     <Compile Include="csw\Schema\scripts\prod\02I\CswUpdateMetaData_02I_Case31090A.cs" />
     <Compile Include="csw\Schema\scripts\prod\02I\CswUpdateMetaData_02I_Case31234A.cs" />
