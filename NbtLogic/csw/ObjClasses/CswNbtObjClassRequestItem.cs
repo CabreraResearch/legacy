@@ -4,6 +4,7 @@ using ChemSW.Core;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
+using ChemSW.Nbt.PropertySets;
 using ChemSW.Nbt.Requesting;
 using Newtonsoft.Json.Linq;
 
@@ -437,6 +438,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
         {
+            _updateCartCounts( -1 );
             _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes );
         }
 
@@ -452,6 +454,7 @@ namespace ChemSW.Nbt.ObjClasses
             Material.SetOnPropChange( _onMaterialPropChange );
             Status.SetOnPropChange( _onStatusPropChange );
             Type.SetOnPropChange( _onTypePropChange );
+            RecurringFrequency.SetOnPropChange( _onRecurringFrequencyPropChange );
             _CswNbtObjClassDefault.triggerAfterPopulateProps();
         }
 
@@ -651,7 +654,7 @@ namespace ChemSW.Nbt.ObjClasses
         private void _hideFulfillButton( CswNbtNodeProp Prop )
         {
             Prop.setHidden(
-                //Status.Value == Statuses.Pending || //TODO - uncomment when done debugging
+                Status.Value == Statuses.Pending ||
                 Status.Value == Statuses.Completed || 
                 Status.Value == Statuses.Cancelled, 
                 SaveToDb: false );
@@ -660,6 +663,24 @@ namespace ChemSW.Nbt.ObjClasses
         #endregion UI Logic
 
         #region Custom Logic
+
+        /// <summary>
+        /// Copy the Request Item
+        /// </summary>
+        public CswNbtObjClassRequestItem copyNode( bool PostChanges = true, bool ClearRequest = true )
+        {
+            CswNbtObjClassRequestItem RetCopy = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, delegate( CswNbtNode NewNode )
+            {
+                NewNode.copyPropertyValues( Node );
+                ( (CswNbtObjClassRequestItem) NewNode ).Status.Value = Statuses.Pending;
+                if( ClearRequest )
+                {
+                    ( (CswNbtObjClassRequestItem) NewNode ).Request.RelatedNodeId = null;
+                }
+            } );
+
+            return RetCopy;
+        }
 
         private void _setDefaultValues()
         {
@@ -683,6 +704,30 @@ namespace ChemSW.Nbt.ObjClasses
                     Requestor.RelatedNodeId = ThisRequest.Requestor.RelatedNodeId;
                     RequestedFor.RelatedNodeId = ThisRequest.Requestor.RelatedNodeId;
                 }
+            }
+        }
+
+        private void _updateCartCounts( Int32 Incrementer = 1 )
+        {
+            switch( Status.Value )
+            {
+                case Statuses.Pending:
+                    UserCache.CartCounts.PendingRequestItems += Incrementer;
+                    UserCache.update( _CswNbtResources );
+                    break;
+                case Statuses.Submitted:
+                    UserCache.CartCounts.SubmittedRequestItems += Incrementer;
+                    UserCache.update( _CswNbtResources );
+                    break;
+            }
+
+            //If the Item is moving from Pending to something else
+            string LastStatus = Status.GetOriginalPropRowValue();
+            if( Status.Value != Statuses.Pending &&
+                LastStatus == Statuses.Pending )
+            {
+                UserCache.CartCounts.PendingRequestItems -= 1;
+                UserCache.update( _CswNbtResources );
             }
         }
 
@@ -710,6 +755,7 @@ namespace ChemSW.Nbt.ObjClasses
                     FulfillmentHistory.AddComment( "Request Item Completed." );
                     break;
             }
+            _updateCartCounts();
         }
         public CswNbtNodePropList Type { get { return _CswNbtNode.Properties[PropertyName.Type]; } }
         private void _onTypePropChange( CswNbtNodeProp Prop, bool Creating )
@@ -765,6 +811,10 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropPropertyReference IsFavorite { get { return _CswNbtNode.Properties[PropertyName.IsFavorite]; } }
         public CswNbtNodePropLogical IsRecurring { get { return _CswNbtNode.Properties[PropertyName.IsRecurring]; } }
         public CswNbtNodePropTimeInterval RecurringFrequency { get { return _CswNbtNode.Properties[PropertyName.RecurringFrequency]; } }
+        private void _onRecurringFrequencyPropChange( CswNbtNodeProp NodeProp, bool Creating )
+        {
+            NextReorderDate.DateTimeValue = CswNbtPropertySetSchedulerImpl.getNextDueDate( Node, NextReorderDate, RecurringFrequency );
+        }
         public CswNbtNodePropDateTime NextReorderDate { get { return _CswNbtNode.Properties[PropertyName.NextReorderDate]; } }
         //MLM properties
         public CswNbtNodePropList CertificationLevel { get { return _CswNbtNode.Properties[PropertyName.CertificationLevel]; } }

@@ -46,7 +46,8 @@ namespace ChemSW.Nbt.Requesting
         {
             _RequestItem.Fulfill.MenuOptions = new CswCommaDelimitedString
                 {
-                    CswNbtObjClassRequestItem.FulfillMenu.DispenseContainer, 
+                    CswNbtObjClassRequestItem.FulfillMenu.DispenseContainer,
+                    //CswNbtObjClassRequestItem.FulfillMenu.MoveContainers, //TODO - uncomment when fulfill Move container(s) works for parent and child containers
                     CswNbtObjClassRequestItem.FulfillMenu.Complete,
                     CswNbtObjClassRequestItem.FulfillMenu.Cancel
                 }.ToString();

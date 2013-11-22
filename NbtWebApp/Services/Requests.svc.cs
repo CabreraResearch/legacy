@@ -35,7 +35,7 @@ namespace NbtWebApp
             var InitDriverType = new CswWebSvcDriver<CswNbtRequestDataModel.CswNbtRequestMaterialCreateReturn, object>(
                 CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
                 ReturnObj: Ret,
-                WebSvcMethodPtr: CswNbtWebServiceRequesting.getRequestMaterialCreate,
+                WebSvcMethodPtr: CswNbtWebServiceRequesting.getRequestItemNodeType,
                 ParamObj: null
                 );
 

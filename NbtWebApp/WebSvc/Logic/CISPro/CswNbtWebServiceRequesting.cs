@@ -49,14 +49,14 @@ namespace ChemSW.Nbt.WebServices
 
         #region WCF
 
-        //Is this necessary?  Don't we _not_ show the cart when CISPro is enabled?  Or again, are these webservice methods potentially public-facing?
+        //We shouldn't rely on UI Visibility logic to prevent non-CISPro Containers users for accessing Requesting WebServices
         private static CswNbtResources _validate( ICswResources CswResources )
         {
             CswNbtResources Ret = null;
             if( null != CswResources )
             {
                 Ret = (CswNbtResources) CswResources;
-                if( false == Ret.Modules.IsModuleEnabled( CswEnumNbtModuleName.CISPro ) )
+                if( false == Ret.Modules.IsModuleEnabled( CswEnumNbtModuleName.Containers ) )
                 {
                     throw new CswDniException( CswEnumErrorType.Error, "The CISPro module is required to complete this action.", "Attempted to use the Ordering service without the CISPro module." );
                 }
@@ -74,9 +74,8 @@ namespace ChemSW.Nbt.WebServices
         /// <summary>
         /// WCF method to get the NodeTypeId of the Request Material Create 
         /// </summary>
-        public static void getRequestMaterialCreate( ICswResources CswResources, CswNbtRequestDataModel.CswNbtRequestMaterialCreateReturn Ret, object Request )
+        public static void getRequestItemNodeType( ICswResources CswResources, CswNbtRequestDataModel.CswNbtRequestMaterialCreateReturn Ret, object Request )
         {
-            //we're not getting the node, we're getting the nodetype - my guess is this is vague because it's public-facing, but still...
             CswNbtResources NbtResources = _validate( CswResources );
             CswNbtMetaDataObjectClass RequestItemOC = NbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestItemClass );
             CswNbtMetaDataNodeType FirstNodeType = RequestItemOC.getLatestVersionNodeTypes().FirstOrDefault();
@@ -149,7 +148,7 @@ namespace ChemSW.Nbt.WebServices
         }
         //^this needs to update the tab count
 
-        private delegate void applyCopyLogic( CswNbtObjClassRequestMaterialDispense RequestItem );
+        private delegate void applyCopyLogic( CswNbtObjClassRequestItem RequestItem );
 
         /// <summary>
         /// WCF method to copy a favorite to the current cart
@@ -207,31 +206,31 @@ namespace ChemSW.Nbt.WebServices
             if( Request.RequestItems.Any() )
             {
                 //This is just a long way of saying "grab all MaterialDispense RequestItems in the current Request"
-                //We'll need to change this to grab RequestItems of type "MaterialDispense"
-                //maybe don't use Linq (unless we find a significant difference in performance)
-                foreach( CswNbtObjClassRequestMaterialDispense NewRequestItem in
+                //maybe don't use Linq to make it more readable? (unless we find a significant difference in performance)
+                foreach( CswNbtObjClassRequestItem NewRequestItem in
                     from Item
                         in Request.RequestItems
                     select _CswNbtResources.Nodes[Item.NodePk]
                         into PropertySetRequest
-                        where null != (CswNbtPropertySetRequestItem) PropertySetRequest &&
-                        ( ( (CswNbtPropertySetRequestItem) PropertySetRequest ).Type.Value == CswNbtObjClassRequestMaterialDispense.Types.Bulk ||
-                        ( (CswNbtPropertySetRequestItem) PropertySetRequest ).Type.Value == CswNbtObjClassRequestMaterialDispense.Types.Size )
-                        select CswNbtObjClassRequestMaterialDispense.fromPropertySet( PropertySetRequest )
+                        where null != (CswNbtObjClassRequestItem) PropertySetRequest &&
+                        ( ( (CswNbtObjClassRequestItem) PropertySetRequest ).Type.Value == CswNbtObjClassRequestItem.Types.MaterialBulk ||
+                        ( (CswNbtObjClassRequestItem) PropertySetRequest ).Type.Value == CswNbtObjClassRequestItem.Types.MaterialSize ||
+                        ( (CswNbtObjClassRequestItem) PropertySetRequest ).Type.Value == CswNbtObjClassRequestItem.Types.EnterprisePart )
+                        select (CswNbtObjClassRequestItem) PropertySetRequest 
                             into MaterialDispense
                             where null != MaterialDispense
                             //This is really sneaky - it's copying all of the MaterialDispense requests
                             //and throwing them into the collection we're selecting
                             select MaterialDispense.copyNode( ClearRequest: false )
                                 into NewPropSetRequest
-                                select CswNbtObjClassRequestMaterialDispense.fromPropertySet( NewPropSetRequest ) )
+                                select  NewPropSetRequest )
                 {
                     CopyLogic( NewRequestItem );
 
                     //As far as I can see, there's no reason this couldn't be in copy from favorites' CopyLogic
                     if( NewRequestItem.IsRecurring.Checked != CswEnumTristate.True && CswConvert.ToTristate( NewRequestItem.IsFavorite.Gestalt ) != CswEnumTristate.True )
                     {
-                        NewRequestItem.Status.Value = CswNbtObjClassRequestMaterialDispense.Statuses.Pending;
+                        NewRequestItem.Status.Value = CswNbtObjClassRequestItem.Statuses.Pending;
                     }
                     
                     NewRequestItem.postChanges( ForceUpdate: false );
