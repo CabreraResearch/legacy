@@ -37,7 +37,7 @@ namespace ChemSW.Nbt.Schema
                 ImpMgrCIS.importOrder( 3, "Site", "chemicals", 1 );
                 ImpMgrCIS.importOrder( 4, "Building", "chemicals", 2 );
                 ImpMgrCIS.importOrder( 5, "Room", "chemicals", 3 );
-                ImpMgrCIS.importOrder( 6, "Cabinet", "chemicals" );
+                ImpMgrCIS.importOrder( 6, "Cabinet", "chemicals", 4 );
                 ImpMgrCIS.importOrder( 7, "Vendor", "chemicals" );
                 ImpMgrCIS.importOrder( 8, "Chemical", "chemicals" );
                 ImpMgrCIS.importOrder( 9, "Unit_Weight", "chemicals" );
@@ -72,7 +72,7 @@ namespace ChemSW.Nbt.Schema
                 ImpMgrCIS.importBinding( "UnitOfMeasureName", "Initial Quantity", "name", "chemicals", "size" );
                 ImpMgrCIS.importBinding( "barcodeid", "Barcode", "", "chemicals", "container" );
                 ImpMgrCIS.importBinding( "responsible", "Username", "", "chemicals", "user" );
-                ImpMgrCIS.importBinding( "expirationdate", "expiration", "date", "chemicals", "container" );
+                ImpMgrCIS.importBinding( "expirationdate", "expiration date", "", "chemicals", "container" );
                 ImpMgrCIS.importBinding( "rolename", "Name", "", "chemicals", "role" );
 
                 ImpMgrCIS.importRelationship( "chemicals", "Building", "Location", 1 );
@@ -97,41 +97,40 @@ namespace ChemSW.Nbt.Schema
                 ImpMgrCIS.finalize();
             }
 
-            // SI
-            {
-                CswNbtSchemaUpdateImportMgr ImpMgrSI = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "SI" );
+            //// SI
+            //{
+            //    CswNbtSchemaUpdateImportMgr ImpMgrSI = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "SI" );
 
+            //    ImpMgrSI.importDef( 1, "InspectionTarget" );
 
-                ImpMgrSI.importDef( 1, "InspectionTarget" );
+            //    ImpMgrSI.importOrder( 1, "Site", "InspectionTarget", 1 );
+            //    ImpMgrSI.importOrder( 2, "Building", "InspectionTarget", 2 );
+            //    ImpMgrSI.importOrder( 3, "Room", "InspectionTarget", 3 );
+            //    ImpMgrSI.importOrder( 4, "InspectionTarget Group", "InspectionTarget" );
+            //    ImpMgrSI.importOrder( 5, "InspectionTarget", "InspectionTarget" );
+            //    ImpMgrSI.importOrder( 6, "Inspection Schedule", "InspectionTarget" );
 
-                ImpMgrSI.importOrder( 1, "InspectionTarget", "Site", 1 );
-                ImpMgrSI.importOrder( 2, "InspectionTarget", "Building", 2 );
-                ImpMgrSI.importOrder( 3, "InspectionTarget", "Room", 3 );
-                ImpMgrSI.importOrder( 4, "InspectionTarget", "InspectionTarget Group" );
-                ImpMgrSI.importOrder( 5, "InspectionTarget", "InspectionTarget" );
-                ImpMgrSI.importOrder( 6, "InspectionTarget", "Inspection Schedule" );
+            //    ImpMgrSI.importBinding( "site", "Name", "", "InspectionTarget", "site", 1 );
+            //    ImpMgrSI.importBinding( "building", "Name", "", "InspectionTarget", "building", 2 );
+            //    ImpMgrSI.importBinding( "room", "Name", "", "InspectionTarget", "room", 3 );
+            //    ImpMgrSI.importBinding( "inspectiongroup", "Name", "", "InspectionTarget", "inspectiontarget group" );
+            //    ImpMgrSI.importBinding( "UniqueTargetName", "Description", "", "InspectionTarget", "inspectiontarget" );
+            //    ImpMgrSI.importBinding( "schedule_summary", "Summary", "", "InspectionTarget", "Inspection Schedule" );
+            //    ImpMgrSI.importBinding( "checklist name", "Inspection Type", "", "InspectionTarget", "Inspection Schedule" );
+            //    ImpMgrSI.importBinding( "Next Due Date", "Next Due Date", "", "InspectionTarget", "Inspection Schedule" );
+            //    ImpMgrSI.importBinding( "DueDateInterval", "Due Date Interval", "", "InspectionTarget", "Inspection Schedule" );
+            //    ImpMgrSI.importBinding( "WarningDays", "Warning Days", "", "InspectionTarget", "Inspection Schedule" );
 
-                ImpMgrSI.importBinding( "site", "Name", "", "InspectionTarget", "site", 1 );
-                ImpMgrSI.importBinding( "building", "Name", "", "InspectionTarget", "building", 2 );
-                ImpMgrSI.importBinding( "room", "Name", "", "InspectionTarget", "room", 3 );
-                ImpMgrSI.importBinding( "inspectiongroup", "Name", "", "InspectionTarget", "inspectiontarget group" );
-                ImpMgrSI.importBinding( "UniqueTargetName", "Description", "", "InspectionTarget", "inspectiontarget" );
-                ImpMgrSI.importBinding( "schedule_summary", "Summary", "", "InspectionTarget", "Inspection Schedule" );
-                ImpMgrSI.importBinding( "checklist name", "Inspection Type", "", "InspectionTarget", "Inspection Schedule" );
-                ImpMgrSI.importBinding( "Next Due Date", "Next Due Date", "", "InspectionTarget", "Inspection Schedule" );
-                ImpMgrSI.importBinding( "DueDateInterval", "Due Date Interval", "", "InspectionTarget", "Inspection Schedule" );
-                ImpMgrSI.importBinding( "WarningDays", "Warning Days", "", "InspectionTarget", "Inspection Schedule" );
+            //    ImpMgrSI.importRelationship( "InspectionTarget", "InspectionTarget", "Location", 3 );
+            //    ImpMgrSI.importRelationship( "InspectionTarget", "InspectionTarget", "Location", 2 );
+            //    ImpMgrSI.importRelationship( "InspectionTarget", "InspectionTarget", "Location", 1 );
+            //    ImpMgrSI.importRelationship( "InspectionTarget", "InspectionTarget", "InspectionTarget Group" );
+            //    ImpMgrSI.importRelationship( "InspectionTarget", "Inspection Schedule", "Inspection Group" );
+            //    ImpMgrSI.importRelationship( "InspectionTarget", "Building", "Location", 1 );
+            //    ImpMgrSI.importRelationship( "InspectionTarget", "Room", "Location", 2 );
 
-                ImpMgrSI.importRelationship( "InspectionTarget", "InspectionTarget", "Location", 3 );
-                ImpMgrSI.importRelationship( "InspectionTarget", "InspectionTarget", "Location", 2 );
-                ImpMgrSI.importRelationship( "InspectionTarget", "InspectionTarget", "Location", 1 );
-                ImpMgrSI.importRelationship( "InspectionTarget", "InspectionTarget", "InspectionTarget Group" );
-                ImpMgrSI.importRelationship( "InspectionTarget", "Inspection Schedule", "Inspection Group" );
-                ImpMgrSI.importRelationship( "InspectionTarget", "Building", "Location", 1 );
-                ImpMgrSI.importRelationship( "InspectionTarget", "Room", "Location", 2 );
-
-                ImpMgrSI.finalize();
-            }
+            //    ImpMgrSI.finalize();
+            //}
         } // update()
 
     } // class
