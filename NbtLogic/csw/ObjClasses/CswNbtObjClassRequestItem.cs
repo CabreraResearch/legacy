@@ -450,6 +450,7 @@ namespace ChemSW.Nbt.ObjClasses
         protected override void afterPopulateProps()
         {
             _setUIVisibility();
+            Request.SetOnPropChange( _onRequestPropChange );
             EnterprisePart.SetOnPropChange( _onEnterprisePartPropChange );
             Material.SetOnPropChange( _onMaterialPropChange );
             Status.SetOnPropChange( _onStatusPropChange );
@@ -763,6 +764,11 @@ namespace ChemSW.Nbt.ObjClasses
             TypeDef.setFulfillOptions();
         }
         public CswNbtNodePropRelationship Request { get { return _CswNbtNode.Properties[PropertyName.Request]; } }
+        private void _onRequestPropChange( CswNbtNodeProp Prop, bool Creating )
+        {
+            IsFavorite.RecalculateReferenceValue();
+            Name.RecalculateReferenceValue();
+        }
         public CswNbtNodePropPropertyReference Name { get { return _CswNbtNode.Properties[PropertyName.Name]; } }
         public CswNbtNodePropSequence ItemNumber { get { return _CswNbtNode.Properties[PropertyName.ItemNumber]; } }
         public CswNbtNodePropStatic Description { get { return _CswNbtNode.Properties[PropertyName.Description]; } }

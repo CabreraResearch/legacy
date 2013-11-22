@@ -87,7 +87,7 @@ namespace ChemSW.Nbt.Schema
                     FkType = CswEnumNbtViewPropIdType.ObjectClassPropId.ToString(),
                     FkValue = RequestOCP.ObjectClassPropId,
                     ValuePropType = CswEnumNbtViewPropIdType.ObjectClassPropId.ToString(),
-                    ValueFieldId = RequestNameOCP.PropId
+                    ValuePropId = RequestNameOCP.PropId
                 } );
                 CswNbtMetaDataObjectClassProp ItemNumberOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( RequestItemOC, new CswNbtWcfMetaDataModel.ObjectClassProp
                 {
@@ -300,7 +300,7 @@ namespace ChemSW.Nbt.Schema
                     FkType = CswEnumNbtViewPropIdType.ObjectClassPropId.ToString(),
                     FkValue = RequestOCP.ObjectClassPropId,
                     ValuePropType = CswEnumNbtViewPropIdType.ObjectClassPropId.ToString(),
-                    ValueFieldId = RequestIsFavoriteOCP.PropId
+                    ValuePropId = RequestIsFavoriteOCP.PropId
                 } );
                 CswNbtMetaDataObjectClassProp IsRecurringOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( RequestItemOC, new CswNbtWcfMetaDataModel.ObjectClassProp
                 {

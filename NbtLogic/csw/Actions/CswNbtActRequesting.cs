@@ -654,7 +654,7 @@ namespace ChemSW.Nbt.Actions
             CswNbtSdTabsAndProps PropsAction = new CswNbtSdTabsAndProps( _CswNbtResources );
             if( null != RequestItemNT )
             {
-                RequestItem = PropsAction.getAddNodeAndPostChanges( RequestItemNT.NodeTypeId, Material.NodeId.ToString(), delegate( CswNbtNode NewNode )
+                RequestItem = PropsAction.getAddNodeAndPostChanges( RequestItemNT, delegate( CswNbtNode NewNode )
                 {
                     CswNbtObjClassRequestItem RequestItemNode = NewNode;
                     RequestItemNode.Material.RelatedNodeId = Material.NodeId;
@@ -694,7 +694,7 @@ namespace ChemSW.Nbt.Actions
             CswNbtSdTabsAndProps PropsAction = new CswNbtSdTabsAndProps( _CswNbtResources );
             if( null != RequestItemNT )
             {
-                RequestItem = PropsAction.getAddNodeAndPostChanges( RequestItemNT.NodeTypeId, EnterprisePart.NodeId.ToString(), delegate( CswNbtNode NewNode )
+                RequestItem = PropsAction.getAddNodeAndPostChanges( RequestItemNT, delegate( CswNbtNode NewNode )
                 {
                     CswNbtObjClassRequestItem RequestItemNode = NewNode;
                     RequestItemNode.EnterprisePart.RelatedNodeId = EnterprisePart.NodeId;
