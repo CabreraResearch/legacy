@@ -24,7 +24,8 @@
             extraAction: null,
             extraActionIcon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.none),
             onExtraAction: null,  // function(nodeObj) {}
-            compactResults: false,
+            compactResults: false,   // Don't show full table layout unless expanded
+            suppressButtons: false,  // Don't include buttons in results
             newsearchurl: 'doUniversalSearch',
             restoresearchurl: 'restoreUniversalSearch',
             sessiondataid: '',
@@ -367,6 +368,7 @@
                     extraActionIcon: cswPrivate.extraActionIcon,
                     onExtraAction: cswPrivate.onExtraAction,
                     compactResults: cswPrivate.compactResults,
+                    suppressButtons: cswPrivate.suppressButtons,
                     onMoreClick: function (nodetypeid, nodetypename) {
                         // a little bit of a kludge
                         cswPrivate.filterNodeType(nodetypeid);
