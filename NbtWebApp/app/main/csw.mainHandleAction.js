@@ -258,6 +258,9 @@
                     }
                 });
             });
+            actionHandler.add('merge', function (o) {
+                return Csw.nbt.mergeWizard(Csw.main.centerTopDiv, {});
+            });
             actionHandler.add('receiving', function (o) {
                 var opts = Csw.extend({}, o);
                 opts.onFinish = function (viewid) {
