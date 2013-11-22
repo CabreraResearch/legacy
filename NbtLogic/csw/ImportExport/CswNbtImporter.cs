@@ -457,14 +457,10 @@ namespace ChemSW.Nbt.ImportExport
                 if( Binding.DestPropName == CswNbtObjClass.PropertyName.LegacyId )
                 {
                     LegacyId = ImportRow[Binding.ImportDataColumnName].ToString();
+                    allEmpty = false;
                 }
             }
-
-            if( string.IsNullOrEmpty( LegacyId ) && BindingDef.DefinitionName == "CAF" )
-            {
-                allEmpty = true;
-            }
-
+            
             if( false == allEmpty )
             {
                 bool foundMatch = false;
@@ -972,39 +968,43 @@ namespace ChemSW.Nbt.ImportExport
             BlobData = null;
 
             int LobDataPK = CswConvert.ToInt32( ImportRow[Binding.SourceLobDataPkColOverride] );
-            string SourceTableName = ( String.IsNullOrEmpty( Binding.SourceBlobTableName ) ? Binding.SourceClobTableName : Binding.SourceBlobTableName );
+            if( Int32.MinValue != LobDataPK )
+            {
+                string SourceTableName = ( String.IsNullOrEmpty( Binding.SourceBlobTableName ) ? Binding.SourceClobTableName : Binding.SourceBlobTableName );
+                string SourceColName = ( false == String.IsNullOrEmpty( Binding.LobDataPkColName ) ? Binding.LobDataPkColName : Binding.SourceLobDataPkColOverride );
 
-            if( String.IsNullOrEmpty( Binding.SourceBlobTableName ) )
-            {
-                _importClobData( SourceTableName, LobDataPK, Binding.SourceColumnName, Binding.SourceLobDataPkColOverride );
-            }
-            else
-            {
-                _importBlobData( SourceTableName, LobDataPK, Binding.SourceColumnName, Binding.SourceLobDataPkColOverride );
-            }
-
-            //get the Lob data
-            CswTableUpdate lobDataUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "Importer.GetLobData", "import_lob" );
-            DataTable importLobTbl = lobDataUpdate.getTable( "where CafPk = " + LobDataPK + " and Tablename = '" + SourceTableName + "'" );
-            if( importLobTbl.Rows.Count > 0 )
-            {
                 if( String.IsNullOrEmpty( Binding.SourceBlobTableName ) )
                 {
-                    PropertyData = importLobTbl.Rows[0]["clobdata"].ToString();
+                    _importClobData( SourceTableName, LobDataPK, Binding.SourceColumnName, SourceColName );
                 }
                 else
                 {
-                    BlobData = importLobTbl.Rows[0]["blobdata"] as byte[];
-                    if( null != BlobData )
-                    {
-                        PropertyData = Encoding.UTF8.GetString( BlobData );
-                    }
+                    _importBlobData( SourceTableName, LobDataPK, Binding.SourceColumnName, SourceColName );
                 }
-                foreach( DataRow LobDataRow in importLobTbl.Rows )
+
+                //get the Lob data
+                CswTableUpdate lobDataUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "Importer.GetLobData", "import_lob" );
+                DataTable importLobTbl = lobDataUpdate.getTable( "where CafPk = " + LobDataPK + " and Tablename = '" + SourceTableName + "'" );
+                if( importLobTbl.Rows.Count > 0 )
                 {
-                    LobDataRow.Delete();
+                    if( String.IsNullOrEmpty( Binding.SourceBlobTableName ) )
+                    {
+                        PropertyData = importLobTbl.Rows[0]["clobdata"].ToString();
+                    }
+                    else
+                    {
+                        BlobData = importLobTbl.Rows[0]["blobdata"] as byte[];
+                        if( null != BlobData )
+                        {
+                            PropertyData = Encoding.UTF8.GetString( BlobData );
+                        }
+                    }
+                    foreach( DataRow LobDataRow in importLobTbl.Rows )
+                    {
+                        LobDataRow.Delete();
+                    }
+                    lobDataUpdate.update( importLobTbl );
                 }
-                lobDataUpdate.update( importLobTbl );
             }
         }
 

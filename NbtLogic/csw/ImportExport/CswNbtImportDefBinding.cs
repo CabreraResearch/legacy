@@ -81,6 +81,16 @@ namespace ChemSW.Nbt.ImportExport
             get { return _row[CswNbtImportTables.ImportDefBindings.lobdatapkcoloverride].ToString(); }
         }
 
+        public string LobDataPkColName
+        {
+            get { return _row[CswNbtImportTables.ImportDefBindings.lobdatapkcolname].ToString(); }
+        }
+
+        public Int32 LegacyPropId
+        {
+            get { return CswConvert.ToInt32( _row[CswNbtImportTables.ImportDefBindings.legacypropid] ); }
+        }
+
         public static string SafeColName( string ColName )
         {
             string ret = ColName;
@@ -124,12 +134,12 @@ namespace ChemSW.Nbt.ImportExport
             }
         }
 
-        
+
 
         /// <summary>
         /// Add new Binding entries to a definition (for use by CswNbtImporter)
         /// </summary>
-        public static void addBindingEntries( CswNbtResources CswNbtResources, DataTable BindingsDataTable)
+        public static void addBindingEntries( CswNbtResources CswNbtResources, DataTable BindingsDataTable )
         {
             CswTableUpdate importBindingsUpdate = CswNbtResources.makeCswTableUpdate( "storeDefinition_Bindings_update", CswNbtImportTables.ImportDefBindings.TableName );
             foreach( DataRow BindingRow in BindingsDataTable.Select() )
@@ -141,10 +151,10 @@ namespace ChemSW.Nbt.ImportExport
                     BindingRow["instance"] = Int32.MinValue;
                 }
 
-                    CswNbtMetaDataNodeType DestNodeType = null;
-                    CswNbtMetaDataNodeTypeProp DestProp = null;
+                CswNbtMetaDataNodeType DestNodeType = null;
+                CswNbtMetaDataNodeTypeProp DestProp = null;
 
-                    string DestNTName = BindingRow["destnodetypename"].ToString();
+                string DestNTName = BindingRow["destnodetypename"].ToString();
                 string DestNTPName = BindingRow["destpropname"].ToString();
                 DestNodeType = CswNbtResources.MetaData.getNodeType( DestNTName );
                 DestProp = DestNodeType.getNodeTypeProp( DestNTPName );

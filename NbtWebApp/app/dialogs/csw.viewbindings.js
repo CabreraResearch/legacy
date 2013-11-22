@@ -26,7 +26,8 @@
 
             cswPrivate.tabs = {};
             cswPrivate.currentTab = '';
-
+            cswPrivate.importDefName = cswPrivate.importDefName || 'Invalid Definition';
+            
         }());
 
 
@@ -35,7 +36,7 @@
             
             cswPrivate.tabs[tabName].csw.empty();
             
-            var contentGrid = cswPrivate.tabs[tabName].csw.grid({
+            var gridOptions = {
                 fields: cswPrivate.gridData[tabName].fields,
                 columns: cswPrivate.gridData[tabName].columns,
                 data: cswPrivate.gridData[tabName].data,
@@ -43,8 +44,27 @@
                 width: cswPrivate.width - 42,
                 height: cswPrivate.height - 152,
                 usePaging: false,
-            });
-            
+            };
+
+            if (cswPrivate.importDefName == "CAF") {
+                gridOptions["plugins"] = [
+                    Ext.create('Ext.grid.plugin.CellEditing', {
+                        clicksToEdit: 1,
+                        listeners: {
+                            edit: cswPrivate.onGridEdit
+                        }
+                    })
+                ];
+                gridOptions["showActionColumn"] = true;
+                gridOptions["showView"] = false;
+                gridOptions["showPreview"] = false;
+                gridOptions["showLock"] = false;
+                gridOptions["showEdit"] = false;
+                gridOptions["showFavorites"] = false;
+            }
+
+            var contentGrid = cswPrivate.tabs[tabName].csw.grid(gridOptions);
+
             cswPrivate.currentTab = tabName;
         };
         

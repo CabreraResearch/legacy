@@ -3,6 +3,7 @@ using System.IO;
 using ChemSW;
 using ChemSW.Config;
 using ChemSW.Nbt;
+using ChemSW.Nbt.csw.ImportExport;
 using ChemSW.Nbt.WebServices;
 using ChemSW.RscAdo;
 
@@ -67,6 +68,10 @@ namespace CAFScriptGenerator
                         }
                     }
                 }//foreach PL/SQL block in CAF.sql
+
+                //Create all custom props and set up import bindings
+                CswNbtImportTools.CreateAllCAFProps( NbtResources );
+
             }//if correct number of args
         }//Main
 
