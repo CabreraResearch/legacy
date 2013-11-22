@@ -29,6 +29,10 @@ namespace ChemSW.Nbt.ObjClasses
             /// If FileType == ChemWatch, the Link
             /// </summary>
             public const string ChemWatch = "ChemWatch";
+            /// <summary>
+            /// Country of the document.
+            /// </summary>
+            public const string Country = "Country";
         }
 
         /// <summary>
@@ -339,6 +343,7 @@ namespace ChemSW.Nbt.ObjClasses
         }
         public CswNbtNodePropDateTime RevisionDate { get { return _CswNbtNode.Properties[PropertyName.RevisionDate]; } }
         public CswNbtNodePropText ChemWatch { get { return _CswNbtNode.Properties[PropertyName.ChemWatch]; } }
+        public CswNbtNodePropList Country { get { return _CswNbtNode.Properties[PropertyName.Country]; } }
 
         #endregion Object class specific properties
 
