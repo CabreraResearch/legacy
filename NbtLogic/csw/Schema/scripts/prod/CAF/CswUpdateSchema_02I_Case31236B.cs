@@ -32,8 +32,8 @@ namespace ChemSW.Nbt.Schema
 
             ImpMgr.importBinding( "classes", CswNbtObjClassChemical.PropertyName.HazardClasses, "", DestNodeTypeName : "Chemical" );
             ImpMgr.importBinding( "categories", CswNbtObjClassChemical.PropertyName.HazardClasses, "", DestNodeTypeName : "Chemical" );
-            //TODO: material type?
-            //TODO: special flags?
+            ImpMgr.importBinding( "chemtype", CswNbtObjClassChemical.PropertyName.MaterialType, "", DestNodeTypeName : "Chemical" );
+            ImpMgr.importBinding( "special_flags", CswNbtObjClassChemical.PropertyName.SpecialFlags, "", DestNodeTypeName : "Chemical" );
             
             ImpMgr.finalize();
 
