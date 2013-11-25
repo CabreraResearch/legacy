@@ -15,7 +15,6 @@ namespace ChemSW.Nbt.Requesting
 
         public override void setPropUIVisibility( CswNbtNodeProp Prop )
         {
-            bool IsVisible = true;
             switch ( Prop.PropName )
             {
                 case CswNbtObjClassRequestItem.PropertyName.Container:
@@ -23,10 +22,12 @@ namespace ChemSW.Nbt.Requesting
                 case CswNbtObjClassRequestItem.PropertyName.Size:
                 case CswNbtObjClassRequestItem.PropertyName.SizeCount:
                 case CswNbtObjClassRequestItem.PropertyName.TotalMoved:
-                    IsVisible = false;
+                    Prop.setHidden( true, SaveToDb: false );
+                    break;
+                case CswNbtObjClassRequestItem.PropertyName.Material:
+                    Prop.setHidden( _RequestItem.Status.Value == CswNbtObjClassRequestItem.Statuses.Pending, SaveToDb: false );
                     break;
             }
-            Prop.setHidden( false == IsVisible, SaveToDb: false );
         }
 
         public override void setDescription()

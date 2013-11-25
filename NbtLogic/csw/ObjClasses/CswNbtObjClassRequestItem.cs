@@ -499,12 +499,13 @@ namespace ChemSW.Nbt.ObjClasses
                             case FulfillMenu.Cancel:
                                 Status.Value = Statuses.Cancelled;
                                 Fulfill.State = FulfillMenu.Cancel;
-                                FulfillmentHistory.AddComment( "Request Item Cancelled." );
+                                Node.setReadOnly( true, true );
                                 ButtonData.Action = CswEnumNbtButtonAction.refresh;
                                 break;
                             case FulfillMenu.Complete:
                                 Status.Value = Statuses.Completed;
                                 Fulfill.State = FulfillMenu.Complete;
+                                Node.setReadOnly( true, true );
                                 ButtonData.Action = CswEnumNbtButtonAction.refresh;
                                 break;
                             case FulfillMenu.Create:
@@ -627,38 +628,30 @@ namespace ChemSW.Nbt.ObjClasses
 
         private void _setUIVisibility()
         {
-            TypeDef.setFulfillOptions();
-            ExternalOrderNumber.SetOnBeforeRender( TypeDef.setPropUIVisibility );
-            Location.SetOnBeforeRender( TypeDef.setPropUIVisibility );
-            EnterprisePart.SetOnBeforeRender( TypeDef.setPropUIVisibility );
-            Material.SetOnBeforeRender( TypeDef.setPropUIVisibility );
-            Container.SetOnBeforeRender( TypeDef.setPropUIVisibility );
-            Quantity.SetOnBeforeRender( TypeDef.setPropUIVisibility );
-            TotalDispensed.SetOnBeforeRender( TypeDef.setPropUIVisibility );
-            Size.SetOnBeforeRender( TypeDef.setPropUIVisibility );
-            SizeCount.SetOnBeforeRender( TypeDef.setPropUIVisibility );
-            TotalMoved.SetOnBeforeRender( TypeDef.setPropUIVisibility );
-            NewMaterialType.SetOnBeforeRender( TypeDef.setPropUIVisibility );
-            NewMaterialTradename.SetOnBeforeRender( TypeDef.setPropUIVisibility );
-            NewMaterialSupplier.SetOnBeforeRender( TypeDef.setPropUIVisibility );
-            NewMaterialPartNo.SetOnBeforeRender( TypeDef.setPropUIVisibility );
+            //TODO - This loop is a bit expensive - perhaps revisit later and come up with a better way to invoke this hide logic
+            foreach( CswNbtNodePropWrapper Prop in Node.Properties )
+            {
+                Prop.SetOnBeforeRender( TypeDef.setPropUIVisibility );
+            }
             RecurringFrequency.SetOnBeforeRender( _hideRecurringProps );
             NextReorderDate.SetOnBeforeRender( _hideRecurringProps );
-            Fulfill.SetOnBeforeRender( _hideFulfillButton );
+            //This can't be done in OnBeforeRender because Search ignores it
+            if( Status.Value == Statuses.Pending ||
+                Status.Value == Statuses.Completed ||
+                Status.Value == Statuses.Cancelled )
+            {
+                Fulfill.setHidden( true, SaveToDb: false );
+                Fulfill.MenuOptions = "";
+            }
+            else
+            {
+                TypeDef.setFulfillOptions();
+            }
         }
 
         private void _hideRecurringProps( CswNbtNodeProp Prop )
         {
             Prop.setHidden( IsRecurring.Checked != CswEnumTristate.True, SaveToDb: false );
-        }
-
-        private void _hideFulfillButton( CswNbtNodeProp Prop )
-        {
-            Prop.setHidden(
-                Status.Value == Statuses.Pending ||
-                Status.Value == Statuses.Completed || 
-                Status.Value == Statuses.Cancelled, 
-                SaveToDb: false );
         }
 
         #endregion UI Logic
@@ -685,6 +678,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         private void _setDefaultValues()
         {
+            //Set Request to current active Cart Request
             if( false == CswTools.IsPrimaryKey( Request.RelatedNodeId ) )
             {
                 CswNbtActRequesting RequestAct = new CswNbtActRequesting( _CswNbtResources );
@@ -697,6 +691,7 @@ namespace ChemSW.Nbt.ObjClasses
                 Request.setReadOnly( value: true, SaveToDb: true );
                 Request.setHidden( value: true, SaveToDb: false );
             }
+            //Set Requestor and RequestedFor to current user
             if( false == CswTools.IsPrimaryKey( Requestor.RelatedNodeId ) )
             {
                 CswNbtObjClassRequest ThisRequest = _CswNbtResources.Nodes[Request.RelatedNodeId];
@@ -755,6 +750,9 @@ namespace ChemSW.Nbt.ObjClasses
                 case Statuses.Completed:
                     FulfillmentHistory.AddComment( "Request Item Completed." );
                     break;
+                case Statuses.Cancelled:
+                    FulfillmentHistory.AddComment( "Request Item Cancelled." );
+                    break;
             }
             _updateCartCounts();
         }
@@ -799,6 +797,7 @@ namespace ChemSW.Nbt.ObjClasses
                 Type.Value = Types.MaterialBulk;
                 FulfillmentHistory.AddComment( "Selected existing Material: " + CswNbtNode.getNodeLink( Material.RelatedNodeId, Material.CachedNodeName ) );
             }
+            //TODO - filter ReceiptLotsToDispense by Material
         }
         public CswNbtNodePropRelationship Container { get { return _CswNbtNode.Properties[PropertyName.Container]; } }
         //Bulk Request Properties (all Request Items except Move/Dispose/Size use Bulk)

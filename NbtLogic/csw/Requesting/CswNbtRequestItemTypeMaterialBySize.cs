@@ -22,16 +22,21 @@ namespace ChemSW.Nbt.Requesting
                 case CswNbtObjClassRequestItem.PropertyName.EnterprisePart:
                 case CswNbtObjClassRequestItem.PropertyName.Quantity:
                 case CswNbtObjClassRequestItem.PropertyName.TotalDispensed://TODO - remove when dispensing Size containers works
+                case CswNbtObjClassRequestItem.PropertyName.NewMaterialType:
                 case CswNbtObjClassRequestItem.PropertyName.NewMaterialTradename:
                 case CswNbtObjClassRequestItem.PropertyName.NewMaterialSupplier:
                 case CswNbtObjClassRequestItem.PropertyName.NewMaterialPartNo:
+                    Prop.setHidden( true, SaveToDb: false );
                     IsVisible = false;
                     break;
                 case CswNbtObjClassRequestItem.PropertyName.Material:
                     Prop.setReadOnly( true, SaveToDb: false );
                     break;
             }
-            Prop.setHidden( false == IsVisible, SaveToDb: false );
+            if( IsVisible && _RequestItem.IsRecurring.Checked == CswEnumTristate.True )
+            {
+                setRecurringPropVisibility( Prop );
+            }
         }
 
         public override void setDescription()

@@ -15,7 +15,6 @@ namespace ChemSW.Nbt.Requesting
 
         public override void setPropUIVisibility( CswNbtNodeProp Prop )
         {
-            bool IsVisible = true;
             switch( Prop.PropName )
             {
                 case CswNbtObjClassRequestItem.PropertyName.ExternalOrderNumber:
@@ -28,10 +27,11 @@ namespace ChemSW.Nbt.Requesting
                 case CswNbtObjClassRequestItem.PropertyName.NewMaterialTradename:
                 case CswNbtObjClassRequestItem.PropertyName.NewMaterialSupplier:
                 case CswNbtObjClassRequestItem.PropertyName.NewMaterialPartNo:
-                    IsVisible = false;
+                case CswNbtObjClassRequestItem.PropertyName.ReceiptLotToDispense:
+                case CswNbtObjClassRequestItem.PropertyName.ReceiptLotsReceived:
+                    Prop.setHidden( true, SaveToDb: false );
                     break;
             }
-            Prop.setHidden( false == IsVisible, SaveToDb: false );
         }
 
         public override void setDescription()

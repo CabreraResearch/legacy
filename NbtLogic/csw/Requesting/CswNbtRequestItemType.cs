@@ -38,5 +38,20 @@ namespace ChemSW.Nbt.Requesting
         /// Sets the Request Item's Fulfill button menu options
         /// </summary>
         public abstract void setFulfillOptions();
+
+        protected void setRecurringPropVisibility( CswNbtNodeProp Prop )
+        {
+            switch( Prop.PropName )
+            {
+                case CswNbtObjClassRequestItem.PropertyName.NeededBy:
+                case CswNbtObjClassRequestItem.PropertyName.Priority:
+                case CswNbtObjClassRequestItem.PropertyName.TotalDispensed:
+                case CswNbtObjClassRequestItem.PropertyName.TotalMoved:
+                case CswNbtObjClassRequestItem.PropertyName.Comments:
+                case CswNbtObjClassRequestItem.PropertyName.FulfillmentHistory:
+                    Prop.setHidden( true, SaveToDb: false );
+                    break;
+            }
+        }
     }
 }
