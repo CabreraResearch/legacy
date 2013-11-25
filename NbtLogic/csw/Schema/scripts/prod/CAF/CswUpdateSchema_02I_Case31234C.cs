@@ -32,7 +32,7 @@ namespace ChemSW.Nbt.Schema
 
             ImpMgr.importBinding( "flash_point", CswNbtObjClassChemical.PropertyName.FlashPoint, "", DestNodeTypeName : "Chemical" );
             ImpMgr.importBinding( "materialid", CswNbtObjClassChemical.PropertyName.LegacyMaterialId, "", DestNodeTypeName : "Chemical" );
-            ImpMgr.importBinding( "materialid", CswNbtObjClassChemical.PropertyName.ProductDescription, "", DestNodeTypeName : "Chemical" );
+            ImpMgr.importBinding( "productdescription", CswNbtObjClassChemical.PropertyName.ProductDescription, "", DestNodeTypeName : "Chemical" );
 
             ImpMgr.finalize();
 
