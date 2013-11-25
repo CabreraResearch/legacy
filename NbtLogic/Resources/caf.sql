@@ -249,7 +249,6 @@ begin
 end;
 /
 
---CHEMICALS 
 CREATE OR replace VIEW chemicals_view 
 AS 
   WITH dsd_phrases 
@@ -400,10 +399,16 @@ AS
          ph.labelcodes, 
          pc.pictograms, 
          p.productdescription, 
-         cpv.*, 
+         cpv.*
          haz.categories, 
          haz.classes, 
          haz.chemtype, 
+         ( CASE 
+             WHEN (SELECT enabled 
+                   FROM   modules 
+                   WHERE  name = 'pkg_approval') = '0' THEN '1' 
+             ELSE p.approved 
+           END )                                   approved_trans, 
          (SELECT Trim(both ',' FROM Nvl2(( CASE notreportable 
                                              WHEN '1' THEN 'Not Reportable' 
                                              WHEN '0' THEN NULL 
@@ -441,8 +446,7 @@ AS
            ON ( p.materialid = haz.materialid ) 
   WHERE  m.deleted = 0 
          AND p.deleted = 0 
-         AND mc.classname = 'CHEMICAL'; 
-	 
+         AND mc.classname = 'CHEMICAL'; 	 
 ---Weight
 create or replace view weight_view as
 select unitofmeasurename,
