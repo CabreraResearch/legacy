@@ -23,8 +23,10 @@
             actionHandler.add('chemwatch', function(o) {
                 var options = {
                     materialid: o.state.materialId,
-                    onCancel: null, // todo: return to the material
-                    onFinish: null // todo: return to the material
+                    onCancel: onCancel, // return to the material
+                    onFinish: function(data) {
+                        onCancel();
+                    }
                 };
                 return Csw.actions.chemwatch(Csw.main.centerTopDiv, options);
             });

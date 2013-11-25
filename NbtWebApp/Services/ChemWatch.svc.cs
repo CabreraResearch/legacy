@@ -1,8 +1,10 @@
 ﻿using System.ComponentModel;
+using System.IO;
 using System.ServiceModel;
 using System.ServiceModel.Activation;
 using System.ServiceModel.Web;
 using System.Web;
+using ChemSW.Nbt.WebServices;
 using ChemSW.WebSvc;
 using NbtWebApp.Actions.ChemWatch;
 
@@ -74,7 +76,7 @@ namespace NbtWebApp
 
         [OperationContract]
         [WebInvoke( Method = "POST", UriTemplate = "SDSDocumentSearch" )]
-        [Description( "Search for Materials" )]
+        [Description( "Search for SDS Documents" )]
         [FaultContract( typeof( FaultException ) )]
         public CswNbtChemWatchReturn SDSDocumentSearch( CswNbtChemWatchRequest Request )
         {
@@ -90,6 +92,49 @@ namespace NbtWebApp
             SvcDriver.run();
             return ( Ret );
         }
-    }
 
+        [OperationContract]
+        [WebInvoke( Method = "POST", UriTemplate = "CreateSDSDocuments" )]
+        [Description( "Create selected SDS Documents" )]
+        [FaultContract( typeof( FaultException ) )]
+        public CswNbtChemWatchReturn CreateSDSDocuments( CswNbtChemWatchRequest Request )
+        {
+            CswNbtChemWatchReturn Ret = new CswNbtChemWatchReturn();
+
+            var SvcDriver = new CswWebSvcDriver<CswNbtChemWatchReturn, CswNbtChemWatchRequest>(
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj: Ret,
+                WebSvcMethodPtr: CswNbtWebServiceChemWatch.CreateSDSDocuments,
+                ParamObj: Request
+                );
+
+            SvcDriver.run();
+            return ( Ret );
+        }
+
+        [OperationContract]
+        [WebInvoke( Method = "GET", UriTemplate = "GetSDSDocument?filename={filename}" )]
+        [Description( "Get a specific SDS Document file" )]
+        [FaultContract( typeof( FaultException ) )]
+        public Stream GetSDSDocument( string FileName )
+        {
+            CswNbtChemWatchReturn Ret = new CswNbtChemWatchReturn();
+
+            var SvcDriver = new CswWebSvcDriver<CswNbtChemWatchReturn, string>(
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj: Ret,
+                WebSvcMethodPtr: CswNbtWebServiceChemWatch.GetSDSDocument,
+                ParamObj: FileName
+                );
+            SvcDriver.run();
+
+            if( false == FileName.EndsWith( ".pdf" ) )
+            {
+                FileName = FileName + ".pdf";
+            }
+            WebOperationContext.Current.OutgoingResponse.Headers.Set( "Content-Disposition", "attachment; filename=\"" + FileName + "\";" );
+
+            return Ret.Data.SDSDocument;
+        }//startImport()
+    }
 }

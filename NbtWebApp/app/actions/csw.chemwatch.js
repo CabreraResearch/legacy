@@ -8,7 +8,9 @@
 
         var cswPrivate = {
             name: 'CswChemWatchAction',
-            title: 'ChemWatch'
+            title: 'ChemWatch',
+            onCancel: options.onCancel || null,
+            onFinish: options.onFinish || null
         };
         cswPrivate.OperationData = {
             NbtMaterialId: options.materialid,
@@ -59,13 +61,14 @@
                 labelText: 'Supplier',
                 value: cswPrivate.OperationData.Supplier,
                 onChange: function (value) {
-                    cswPrivate.OperationData.Supplier = value;
 
                     Csw.ajaxWcf.post({
                         urlMethod: 'ChemWatch/GetMatchingSuppliers',
-                        data: cswPrivate.OperationData,
+                        data: {
+                            Supplier: value
+                        },
                         success: function (data) {
-                            cswPrivate.OperationData = data;
+                            cswPrivate.OperationData.Suppliers = data.Suppliers;
 
                             if (cswPrivate.supplierSelect) {
                                 cswPrivate.supplierSelectCell.empty();
@@ -112,11 +115,11 @@
                             PartNo: cswPrivate.partNoInput.val()
                         },
                         success: function (data) {
-                            cswPrivate.OperationData = data;
+                            cswPrivate.OperationData.Materials = data.Materials;
 
                             var gridData = { 'items': [] };
                             Csw.iterate(cswPrivate.OperationData.Materials, function (material) {
-                                gridData.items.push({ 'material': material.text, 'materialid': material.value });
+                                gridData.items.push({ 'material': material.display, 'materialid': material.value });
                             });
 
                             // Fill the table with the returned data
@@ -172,11 +175,17 @@
                             Supplier: cswPrivate.supplierSelect.val()
                         },
                         success: function (data) {
-                            cswPrivate.OperationData = data;
+                            cswPrivate.OperationData.SDSDocuments = data.SDSDocuments;
 
                             var gridData = { 'items': [] };
                             Csw.iterate(cswPrivate.OperationData.SDSDocuments, function (sdsdoc) {
-                                gridData.items.push({ 'language': sdsdoc.language, 'country': sdsdoc.country, 'file': sdsdoc.file });
+                                gridData.items.push(
+                                    {
+                                        'language': sdsdoc.language,
+                                        'country': sdsdoc.country,
+                                        'filename': sdsdoc.filename,
+                                        'externalurl': sdsdoc.externalurl
+                                    });
                             });
 
                             // Destroy current grid
@@ -212,7 +221,7 @@
                         inDialog: true,
                         onSave: function (updatedValues) {
                             Csw.iterate(LanguageOptions, function (lang) {
-                                    lang.selected = false;
+                                lang.selected = false;
                             });
 
                             selectedLanguages = [];
@@ -237,7 +246,7 @@
                         inDialog: true,
                         onSave: function (updatedValues) {
                             Csw.iterate(CountryOptions, function (country) {
-                                    country.selected = false;
+                                country.selected = false;
                             });
 
                             selectedCountries = [];
@@ -257,16 +266,65 @@
 
             cswPrivate.sdsListGrid = cswPrivate.sdsListGridCell.grid({
                 name: 'chemwatchsdslistgrid',
-                fields: ['view', 'language', 'country', 'select', 'file'],
+                fields: [
+                    'view',
+                    'language',
+                    'country',
+                    { name: 'select', type: 'bool' },
+                    'filename',
+                    'externalurl'
+                ],
                 columns: [
-                    { header: 'View', dataIndex: 'view' },
+                    {
+                        header: 'View',
+                        dataIndex: 'view',
+                        menuDisabled: true,
+                        sortable: false,
+                        width: 40,
+                        flex: false,
+                        resizable: false,
+                        xtype: 'actioncolumn',
+                        renderer: function (value, metaData, record, rowIndex, colIndex, store, view) {
+                            var divId = 'view' + rowIndex + colIndex;
+                            Csw.defer(Csw.method(function () {
+
+                                var div = Csw.domNode({
+                                    ID: divId,
+                                    tagName: 'DIV'
+                                });
+                                div.empty();
+
+                                var table = div.table({ cellpadding: 0 });
+                                var previewCell = table.cell(1, 1).css({ width: '40px', 'text-align': 'center' });
+
+                                var iconopts = {
+                                    name: 'View',
+                                    hovertext: 'View',
+                                    iconType: Csw.enums.iconType.magglass,
+                                    state: Csw.enums.iconState.normal,
+                                    isButton: true,
+                                    size: 18,
+                                    onClick: function (event) {
+                                        Csw.tryExec(cswPrivate.onView, record.data);
+                                    }
+                                };
+                                previewCell.icon(iconopts);
+
+                            }), 100);
+                            return '<div id="' + divId + '" style="height:18px;"></div>';
+                        } // renderer()
+                    },
                     { header: 'Language', dataIndex: 'language' },
                     { header: 'Country', dataIndex: 'country' },
-                    { header: 'Select', dataIndex: 'select' },
-                    { header: 'FileInfo', dataIndex: 'file', hidden: true }
+                    { header: 'Select', dataIndex: 'select', xtype: 'checkcolumn' },
+                    { header: 'FileName', dataIndex: 'filename', hidden: true },
+                    { header: 'ExternalUrl', dataIndex: 'externalurl', hidden: true }
                 ],
                 data: gridData || {
                     'items': [] //ExtGrids won't show without data
+                },
+                viewConfig: {
+                    markDirty: false
                 },
                 height: 200,
                 width: 400,
@@ -274,17 +332,42 @@
             });
         };
 
-        cswPrivate.makeCreateSDSLinksBtn = function () {
-            cswPrivate.createSDSLinksBtn = cswPublic.table.cell(3, 1).buttonExt({
-                name: 'createSDSLinksBtn',
-                enabledText: 'Create SDS Links',
-                disabledText: 'Creating...',
-                disableOnClick: true,
-                onClick: function () {
-                    // todo: call the method that will create the SDS documents
-                    // Return to the material view
+        cswPrivate.createSDSLinks = function () {
+            if (cswPrivate.sdsListGrid) {
+                var rawRows = cswPrivate.sdsListGrid.getGridItems();
+            }
+            var sdsdocs = [];
+            if (rawRows && rawRows.length > 0) {
+                rawRows.forEach(function(item) {
+                    if (item && item.select === true) {
+                        sdsdocs.push(item);
+                    }
+                });
+            }
+
+            // Create the SDS Documents
+            Csw.ajaxWcf.post({
+                urlMethod: 'ChemWatch/CreateSDSDocuments',
+                data: {
+                    SDSDocuments: sdsdocs,
+                    NbtMaterialId: cswPrivate.OperationData.NbtMaterialId
+                },
+                success: function(data) {
+                    Csw.tryExec(cswPrivate.onFinish);
+                },
+                error: function(data) {
+                    //TODO: implement error condition
+                    console.log(data);
                 }
             });
+        };
+
+        //TODO: What if the URL doesn't work? Should we show an error?
+        cswPrivate.onView = function (recordData) {
+            // We are using Google's Viewer to view the PDF's in the browser: https://docs.google.com/viewer
+            // +1 for Google
+            var extrnlurl = "http://docs.google.com/viewer?url=" + recordData.externalurl;
+            window.open(extrnlurl, '_blank', 'toolbar=0,location=0,menubar=0');
         };
 
         // Init
@@ -293,8 +376,12 @@
             // Set up action layout
             var layout = Csw.layouts.action(cswParent, {
                 title: 'ChemWatch',
-                useFinish: false,
-                useCancel: cswPrivate.onCancel
+                finishText: 'Create SDS Links',
+                onFinish: cswPrivate.createSDSLinks,
+                onCancel: function () {
+                    //todo: clear state
+                    Csw.tryExec(cswPrivate.onCancel);
+                },
             });
 
             cswPublic.table = layout.actionDiv.table();
@@ -309,7 +396,7 @@
                     LanguageOptions = cswPrivate.OperationData.Languages;
                     CountryOptions = cswPrivate.OperationData.Countries;
 
-                    Csw.iterate(LanguageOptions, function(lang) {
+                    Csw.iterate(LanguageOptions, function (lang) {
                         LanguageLookup[lang.value] = lang;
                     });
                     Csw.iterate(CountryOptions, function (country) {
@@ -321,15 +408,14 @@
                     cswPrivate.makeMatListGrid();
                     cswPrivate.makeLngCntrySelects();
                     cswPrivate.makeSDSListGrid();
-                    cswPrivate.makeCreateSDSLinksBtn();
                 },
                 error: function (data) {
                     console.log(data);
                 }
             });
 
-
         })(); // init
+
     });
 
 })();
