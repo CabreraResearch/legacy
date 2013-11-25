@@ -28,7 +28,6 @@ create unique index unqidx_nbtimportqueue on NBTIMPORTQUEUE (state, itempk, shee
 create sequence seq_nbtimportqueueid start with 1 increment by 1;
 commit;
 
---This needs to be executed before the views are created for CAF Properties to work
 create or replace procedure pivotPropertiesValues(viewname in varchar, propstblname in varchar, proptblpkcol in varchar, joincol in varchar, fromtbl in varchar) is
 
   props_sql VARCHAR2(200);
@@ -61,6 +60,34 @@ begin
   execute immediate (viewsql);
 end;
 /
+begin
+  -- Call the procedure
+  pivotpropertiesvalues(viewname => 'chemicals_props_view',
+                        propstblname => 'properties_values',
+                        proptblpkcol => 'propertiesvaluesid',
+                        joincol => 'materialid',
+						fromtbl => 'materials');
+end;
+/
+begin
+  -- Call the procedure
+  pivotpropertiesvalues(viewname => 'receiptlots_props_view',
+                        propstblname => 'properties_values_lot',
+                        proptblpkcol => 'lotpropsvaluesid',
+                        joincol => 'receiptlotid',
+						fromtbl => 'receipt_lots');
+end;
+/
+begin
+  -- Call the procedure
+  pivotpropertiesvalues(viewname => 'containers_props_view',
+                        propstblname => 'properties_values_cont',
+                        proptblpkcol => 'contpropsvaluesid',
+                        joincol => 'containerid',
+						fromtbl => 'containers');
+end;
+/	
+
 
 -- Create views ( these are in order of creation)
 
@@ -238,16 +265,7 @@ select packdetailid,
        END as containertype
        from packdetail;
 
---This MUST be executed before the Chemicals_View is created for CAF Properties
-begin
-  -- Call the procedure
-  pivotpropertiesvalues(viewname => 'chemicals_props_view',
-                        propstblname => 'properties_values',
-                        proptblpkcol => 'propertiesvaluesid',
-                        joincol => 'materialid',
-						fromtbl => 'materials');
-end;
-/
+
 
 CREATE OR replace VIEW chemicals_view 
 AS 
@@ -627,16 +645,6 @@ select
 )
 );
 
---This MUST be executed before the receipt_lots_view is created for CAF Properties
-begin
-  -- Call the procedure
-  pivotpropertiesvalues(viewname => 'receiptlots_props_view',
-                        propstblname => 'properties_values_lot',
-                        proptblpkcol => 'lotpropsvaluesid',
-                        joincol => 'receiptlotid',
-						fromtbl => 'receipt_lots');
-end;
-/
 
 ---Receipt Lots
 create or replace view receipt_lots_view as
@@ -672,17 +680,7 @@ select ReceiptLotId,
          end) as FileExtension,
 		Deleted
 	from receipt_lots;
-	
---This MUST be executed before the Containers_View is created for CAF Properties
-begin
-  -- Call the procedure
-  pivotpropertiesvalues(viewname => 'containers_props_view',
-                        propstblname => 'properties_values_cont',
-                        proptblpkcol => 'contpropsvaluesid',
-                        joincol => 'containerid',
-						fromtbl => 'containers');
-end;
-/	
+
 	
 ---Containers
 create or replace view containers_view as
@@ -908,7 +906,8 @@ create or replace view synonyms_view as
   ms.synonymclass,
   ms.materialsynonymid,
   cv.packageid,
-  ms.materialsynonymid || '_' || cv.packageid as LegacyId
+  ms.materialsynonymid || '_' || cv.packageid as LegacyId,
+  ms.deleted
   from materials_synonyms ms
        join chemicals_view cv on ms.materialid = cv.materialid
 );
