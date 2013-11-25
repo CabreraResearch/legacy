@@ -408,6 +408,10 @@ namespace ChemSW.Nbt.MetaData
             return _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeProps( NodeTypeId, FieldType, _Date );
         }
 
+        public IEnumerable<CswNbtMetaDataNodeTypeProp> getUniqueProps()
+        {
+            return _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeProps( NodeTypeId, _Date ).Where( p => p.IsCompoundUnique() || p.IsGlobalUnique() || p.IsUnique() );
+        }
 
         public CswNbtMetaDataNodeTypeTab getFirstNodeTypeTab()
         {

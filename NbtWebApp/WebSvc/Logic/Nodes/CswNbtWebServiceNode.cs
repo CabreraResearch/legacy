@@ -763,28 +763,13 @@ namespace ChemSW.Nbt.WebServices
         public class MergeChoicesRequest
         {
             [DataMember]
-            public string NodeId1 = string.Empty;
-            [DataMember]
-            public string NodeId2 = string.Empty;
-            [DataMember]
             public CswNbtActMerge.MergeInfoData Choices = null;
         }
 
-        [DataContract]
-        public class MergeChoicesReturn : CswWebSvcReturn
-        {
-            [DataMember]
-            public string Data;
-        }
-
-        public static void applyMergeChoices( ICswResources _CswResources, MergeChoicesReturn Return, MergeChoicesRequest Request )
+        public static void applyMergeChoices( ICswResources _CswResources, MergeInfoReturn Return, MergeChoicesRequest Request )
         {
             CswNbtActMerge Merge = new CswNbtActMerge( (CswNbtResources) _CswResources );
-            CswNbtNode tempNode = Merge.applyMergeChoices( CswConvert.ToPrimaryKey( Request.NodeId1 ), CswConvert.ToPrimaryKey( Request.NodeId2 ), Request.Choices );
-            if( null != tempNode )
-            {
-                Return.Data = tempNode.NodeId.ToString();
-            }
+            Return.Data = Merge.applyMergeChoices( Request.Choices );
         }
 
         #endregion Merge

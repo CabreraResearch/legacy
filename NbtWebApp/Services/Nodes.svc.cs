@@ -162,11 +162,11 @@ namespace NbtWebApp
         [WebInvoke( Method = "POST" )]
         [Description( "Apply choices from merge and return the new nodeid" )]
         [FaultContract( typeof( FaultException ) )]
-        public CswNbtWebServiceNode.MergeChoicesReturn applyMergeChoices( CswNbtWebServiceNode.MergeChoicesRequest Request )
+        public CswNbtWebServiceNode.MergeInfoReturn applyMergeChoices( CswNbtWebServiceNode.MergeChoicesRequest Request )
         {
-            CswNbtWebServiceNode.MergeChoicesReturn Ret = new CswNbtWebServiceNode.MergeChoicesReturn();
+            CswNbtWebServiceNode.MergeInfoReturn Ret = new CswNbtWebServiceNode.MergeInfoReturn();
 
-            var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceNode.MergeChoicesReturn, CswNbtWebServiceNode.MergeChoicesRequest>(
+            var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceNode.MergeInfoReturn, CswNbtWebServiceNode.MergeChoicesRequest>(
                 CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context ),
                 ReturnObj: Ret,
                 WebSvcMethodPtr: CswNbtWebServiceNode.applyMergeChoices,

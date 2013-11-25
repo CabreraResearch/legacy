@@ -1458,7 +1458,7 @@ ul li div {
 
 
 .MergeTable {
-    border: 1px solid black;
+    border-bottom: 1px solid black;
 }
 .MergeTable_Cell {
     padding: 2px;
@@ -1466,14 +1466,20 @@ ul li div {
 .MergeTable_Header {
     font-size: 18px;
     font-weight: bold;
-    padding: 2px;
     text-align: center !Important;
+    border-bottom: 1px solid black;
+}
+.MergeTable_TypeCell {
+    font-size: 18px;
+    font-weight: bold;
+    text-align: left;
     border-bottom: 1px solid black;
 }
 .MergeTable_LabelCell {
     text-align: right;
     font-weight: bold;
     border-right: 1px solid black;
+    border-left: 1px solid black;
 }
 .MergeTable_PropLeftCell {
     text-align: right;
@@ -1483,6 +1489,7 @@ ul li div {
 .MergeTable_RadioRightCell {
 }
 .MergeTable_PropRightCell {
+    border-right: 1px solid black;
 }
 .MergeTable_LabelCell_Even {
     background-color: #dddddd;

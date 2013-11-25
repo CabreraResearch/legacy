@@ -19,7 +19,7 @@
 //            node2: null,
             node1: { nodeid: 'nodes_51984', nodename: 'acenaphthrene Fluka' },  // DEBUG ONLY
             node2: { nodeid: 'nodes_54960', nodename: 'Acesulfame K' },     // DEBUG ONLY
-            propertychoices: {}
+            mergeData: null
         };
 
         var cswPublic = {};
@@ -206,67 +206,25 @@
 
                     var div = cswPrivate['divStep' + StepNo];
 
-                    Csw.ajaxWcf.post({
-                        urlMethod: 'Nodes/getMergeInfo',
-                        data: {
-                            NodeId1: cswPrivate.node1.nodeid,
-                            NodeId2: cswPrivate.node2.nodeid
-                        },
-                        success: function (data) {
-                            var table = div.table();
-                            var row = 1;
-
-                            cswPrivate.mergeData = data;
-
-                            table.addClass('MergeTable');
-                            
-                            // Header Row
-                            var evenodd = "Even";
-                            table.cell(row, 1).addClass('MergeTable_Cell MergeTable_LabelCell_' + evenodd + ' MergeTable_LabelCell MergeTable_Header').text('Property');
-                            table.cell(row, 2).addClass('MergeTable_Cell MergeTable_LeftCell_' + evenodd + ' MergeTable_PropLeftCell MergeTable_Header').text(cswPrivate.node1.nodename);
-                            table.cell(row, 3).addClass('MergeTable_Cell MergeTable_LeftCell_' + evenodd + ' MergeTable_RadioLeftCell MergeTable_Header');
-                            table.cell(row, 4).addClass('MergeTable_Cell MergeTable_RightCell_' + evenodd + ' MergeTable_RadioRightCell MergeTable_Header');
-                            table.cell(row, 5).addClass('MergeTable_Cell MergeTable_RightCell_' + evenodd + ' MergeTable_PropRightCell MergeTable_Header').text(cswPrivate.node2.nodename);
-                            evenodd === "Even" ? evenodd = "Odd" : evenodd = "Even";
-                            row++;
-                            
-                            // Property Rows
-                            Csw.iterate(data.Properties, function(prop) {
-
-                                cswPrivate.propertychoices[prop.NodeTypePropId] = 1;
-
-                                var cell1 = table.cell(row, 1).addClass('MergeTable_Cell MergeTable_LabelCell_' + evenodd + ' MergeTable_LabelCell').text('Property');
-                                var cell2 = table.cell(row, 2).addClass('MergeTable_Cell MergeTable_LeftCell_' + evenodd + ' MergeTable_PropLeftCell');
-                                var cell3 = table.cell(row, 3).addClass('MergeTable_Cell MergeTable_LeftCell_' + evenodd + ' MergeTable_RadioLeftCell');
-                                var cell4 = table.cell(row, 4).addClass('MergeTable_Cell MergeTable_RightCell_' + evenodd + ' MergeTable_RadioRightCell');
-                                var cell5 = table.cell(row, 5).addClass('MergeTable_Cell MergeTable_RightCell_' + evenodd + ' MergeTable_PropRightCell');
-                            
-                                cell1.text(prop.PropName);
-                                cell2.text(prop.Node1Value);
-                                cell5.text(prop.Node2Value);
-
-                                cell3.input({
-                                    name: prop.NodeTypePropId,
-                                    type: Csw.enums.inputTypes.radio,
-                                    onClick: function() {
-                                        prop.Choice = 1;
-                                    },
-                                    checked: true
+                    if (null !== cswPrivate.mergeData) {
+                        Csw.iterate(cswPrivate.mergeData.NodePairs, function(nodePair) {
+                            cswPrivate.makeMergeTable(div, nodePair);
+                        });
+                    } else {
+                        Csw.ajaxWcf.post({
+                            urlMethod: 'Nodes/getMergeInfo',
+                            data: {
+                                NodeId1: cswPrivate.node1.nodeid,
+                                NodeId2: cswPrivate.node2.nodeid
+                            },
+                            success: function(data) {
+                                cswPrivate.mergeData = data;
+                                Csw.iterate(data.NodePairs, function(nodePair) {
+                                    cswPrivate.makeMergeTable(div, nodePair);
                                 });
-                                cell4.input({
-                                    name: prop.NodeTypePropId,
-                                    type: Csw.enums.inputTypes.radio,
-                                    onClick: function() {
-                                        prop.Choice = 2;
-                                    },
-                                    checked: false
-                                });
-
-                                evenodd === "Even" ? evenodd = "Odd" : evenodd = "Even";
-                                row++;
-                            });
-                        } // success()
-                    }); // ajax
+                            } // success()
+                        }); // ajax
+                    }
                 };
             }()) // makeStep func
         }; // wizardStepPerformMerge
@@ -281,23 +239,25 @@
                     cswPrivate.setStepHeader(StepNo, 'Preview results of merging ' + cswPrivate.node1.nodename + ' with ' + cswPrivate.node2.nodename + '.');
 
                     var div = cswPrivate['divStep' + StepNo];
-
+                    
                     Csw.ajaxWcf.post({
                         urlMethod: 'Nodes/applyMergeChoices',
                         data: {
-                            NodeId1: cswPrivate.node1.nodeid,
-                            NodeId2: cswPrivate.node2.nodeid,
                             Choices: cswPrivate.mergeData
                         },
                         success: function(data) {
-                            Csw.layouts.tabsAndProps(div, {
-                                forceReadOnly: true,
-                                tabState: {
-                                    nodeid: data,
-                                    ReadOnly: true,
-                                    EditMode: Csw.enums.editMode.Edit
-                                }
-                            });
+                            cswPrivate.mergeData = data;
+
+                            if (data.NodePairs && data.NodePairs[0] ) {
+                                Csw.layouts.tabsAndProps(div, {
+                                    forceReadOnly: true,
+                                    tabState: {
+                                        nodeid: data.NodePairs[0].NodeResultId,
+                                        ReadOnly: true,
+                                        EditMode: Csw.enums.editMode.Edit
+                                    }
+                                });
+                            }
                         } // success()
                     }); // ajax
                 };
@@ -305,6 +265,62 @@
         }; // wizardStepPreviewResult
         
         //#endregion Steps
+
+        cswPrivate.makeMergeTable = function(div, nodePair) {
+            var table = div.table();
+            div.br();
+            var row = 1;
+
+            table.addClass('MergeTable');
+            if (nodePair.Properties.length > 0) {
+                // Header Row
+                var evenodd = "Even";
+                table.cell(row, 1).addClass('MergeTable_Cell MergeTable_TypeCell').text(nodePair.NodeTypeName).propDom('colspan', '100%');
+                row++;
+                table.cell(row, 1).addClass('MergeTable_Cell MergeTable_LabelCell_' + evenodd + ' MergeTable_LabelCell MergeTable_Header').text('Property');
+                table.cell(row, 2).addClass('MergeTable_Cell MergeTable_LeftCell_' + evenodd + ' MergeTable_PropLeftCell MergeTable_Header').text(nodePair.Node1Name);
+                table.cell(row, 3).addClass('MergeTable_Cell MergeTable_LeftCell_' + evenodd + ' MergeTable_RadioLeftCell MergeTable_Header');
+                table.cell(row, 4).addClass('MergeTable_Cell MergeTable_RightCell_' + evenodd + ' MergeTable_RadioRightCell MergeTable_Header');
+                table.cell(row, 5).addClass('MergeTable_Cell MergeTable_RightCell_' + evenodd + ' MergeTable_PropRightCell MergeTable_Header').text(nodePair.Node2Name);
+                evenodd === "Even" ? evenodd = "Odd" : evenodd = "Even";
+                row++;
+
+                // Property Rows
+                Csw.iterate(nodePair.Properties, function(prop) {
+
+                    var cell1 = table.cell(row, 1).addClass('MergeTable_Cell MergeTable_LabelCell_' + evenodd + ' MergeTable_LabelCell');
+                    var cell2 = table.cell(row, 2).addClass('MergeTable_Cell MergeTable_LeftCell_' + evenodd + ' MergeTable_PropLeftCell');
+                    var cell3 = table.cell(row, 3).addClass('MergeTable_Cell MergeTable_LeftCell_' + evenodd + ' MergeTable_RadioLeftCell');
+                    var cell4 = table.cell(row, 4).addClass('MergeTable_Cell MergeTable_RightCell_' + evenodd + ' MergeTable_RadioRightCell');
+                    var cell5 = table.cell(row, 5).addClass('MergeTable_Cell MergeTable_RightCell_' + evenodd + ' MergeTable_PropRightCell');
+
+                    cell1.text(prop.PropName);
+                    cell2.text(prop.Node1Value);
+                    cell5.text(prop.Node2Value);
+
+                    cell3.input({
+                        name: prop.NodeTypePropId,
+                        type: Csw.enums.inputTypes.radio,
+                        onClick: function() {
+                            prop.Choice = 1;
+                        },
+                        checked: (prop.Choice == 1)
+                    });
+                    cell4.input({
+                        name: prop.NodeTypePropId,
+                        type: Csw.enums.inputTypes.radio,
+                        onClick: function() {
+                            prop.Choice = 2;
+                        },
+                        checked: (prop.Choice == 2)
+                    });
+
+                    evenodd === "Even" ? evenodd = "Odd" : evenodd = "Even";
+                    row++;
+                });
+            }
+        } // success()
+
 
         //#region Finish
         cswPrivate.finalize = function () {
