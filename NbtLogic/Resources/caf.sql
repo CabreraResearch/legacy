@@ -28,7 +28,6 @@ create unique index unqidx_nbtimportqueue on NBTIMPORTQUEUE (state, itempk, shee
 create sequence seq_nbtimportqueueid start with 1 increment by 1;
 commit;
 
---This needs to be executed before the views are created for CAF Properties to work
 create or replace procedure pivotPropertiesValues(viewname in varchar, propstblname in varchar, proptblpkcol in varchar, joincol in varchar, fromtbl in varchar) is
 
   props_sql VARCHAR2(200);
@@ -870,7 +869,8 @@ create or replace view synonyms_view as
   ms.synonymclass,
   ms.materialsynonymid,
   cv.packageid,
-  ms.materialsynonymid || '_' || cv.packageid as LegacyId
+  ms.materialsynonymid || '_' || cv.packageid as LegacyId,
+  ms.deleted
   from materials_synonyms ms
        join chemicals_view cv on ms.materialid = cv.materialid
 );
