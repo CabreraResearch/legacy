@@ -61,6 +61,34 @@ begin
   execute immediate (viewsql);
 end;
 /
+begin
+  -- Call the procedure
+  pivotpropertiesvalues(viewname => 'chemicals_props_view',
+                        propstblname => 'properties_values',
+                        proptblpkcol => 'propertiesvaluesid',
+                        joincol => 'materialid',
+						fromtbl => 'materials');
+end;
+/
+begin
+  -- Call the procedure
+  pivotpropertiesvalues(viewname => 'receiptlots_props_view',
+                        propstblname => 'properties_values_lot',
+                        proptblpkcol => 'lotpropsvaluesid',
+                        joincol => 'receiptlotid',
+						fromtbl => 'receipt_lots');
+end;
+/
+begin
+  -- Call the procedure
+  pivotpropertiesvalues(viewname => 'containers_props_view',
+                        propstblname => 'properties_values_cont',
+                        proptblpkcol => 'contpropsvaluesid',
+                        joincol => 'containerid',
+						fromtbl => 'containers');
+end;
+/	
+
 
 -- Create views ( these are in order of creation)
 
@@ -238,16 +266,7 @@ select packdetailid,
        END as containertype
        from packdetail;
 
---This MUST be executed before the Chemicals_View is created for CAF Properties
-begin
-  -- Call the procedure
-  pivotpropertiesvalues(viewname => 'chemicals_props_view',
-                        propstblname => 'properties_values',
-                        proptblpkcol => 'propertiesvaluesid',
-                        joincol => 'materialid',
-						fromtbl => 'materials');
-end;
-/
+
 
 --CHEMICALS
 CREATE OR REPLACE VIEW CHEMICALS_VIEW AS
@@ -600,16 +619,6 @@ select
 )
 );
 
---This MUST be executed before the receipt_lots_view is created for CAF Properties
-begin
-  -- Call the procedure
-  pivotpropertiesvalues(viewname => 'receiptlots_props_view',
-                        propstblname => 'properties_values_lot',
-                        proptblpkcol => 'lotpropsvaluesid',
-                        joincol => 'receiptlotid',
-						fromtbl => 'receipt_lots');
-end;
-/
 
 ---Receipt Lots
 create or replace view receipt_lots_view as
@@ -645,17 +654,7 @@ select ReceiptLotId,
          end) as FileExtension,
 		Deleted
 	from receipt_lots;
-	
---This MUST be executed before the Containers_View is created for CAF Properties
-begin
-  -- Call the procedure
-  pivotpropertiesvalues(viewname => 'containers_props_view',
-                        propstblname => 'properties_values_cont',
-                        proptblpkcol => 'contpropsvaluesid',
-                        joincol => 'containerid',
-						fromtbl => 'containers');
-end;
-/	
+
 	
 ---Containers
 create or replace view containers_view as
