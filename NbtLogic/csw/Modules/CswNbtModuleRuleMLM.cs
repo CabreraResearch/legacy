@@ -62,9 +62,6 @@ namespace ChemSW.Nbt
             _toggleMaterialSupplierView( false );
             _toggleReceiptLotManufacturerView( false );
 
-            _toggleMaterialRequestApprovalLevel( CswEnumNbtObjectClass.RequestMaterialCreateClass, false );
-            _toggleMaterialRequestApprovalLevel( CswEnumNbtObjectClass.RequestMaterialDispenseClass, false );
-
         }
 
         protected override void OnDisable()
@@ -112,8 +109,6 @@ namespace ChemSW.Nbt
 
             _toggleMaterialSupplierView( true );
             _toggleReceiptLotManufacturerView( true );
-            _toggleMaterialRequestApprovalLevel( CswEnumNbtObjectClass.RequestMaterialCreateClass, true );
-            _toggleMaterialRequestApprovalLevel( CswEnumNbtObjectClass.RequestMaterialDispenseClass, true );
 
         } // OnDisable()
 
@@ -165,23 +160,6 @@ namespace ChemSW.Nbt
                 ManufacturerView.Visibility = CswEnumNbtViewVisibility.Property;
                 ManufacturerView.ViewName = "Manufacturer";
                 ManufacturerView.save();
-            }
-        }
-
-        private void _toggleMaterialRequestApprovalLevel( CswEnumNbtObjectClass ObjClass, bool MLMDisabled )
-        {
-            CswNbtMetaDataObjectClass createMaterialRequestOC = _CswNbtResources.MetaData.getObjectClass( ObjClass );
-            foreach( CswNbtMetaDataNodeType createMaterialRequestNT in createMaterialRequestOC.getNodeTypes() )
-            {
-                CswNbtMetaDataNodeTypeProp approvalLevelNTP = createMaterialRequestNT.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialCreate.PropertyName.ApprovalLevel );
-                if( MLMDisabled )
-                {
-                    approvalLevelNTP.Hidden = true;
-                }
-                else
-                {
-                    approvalLevelNTP.Hidden = false;
-                }
             }
         }
 

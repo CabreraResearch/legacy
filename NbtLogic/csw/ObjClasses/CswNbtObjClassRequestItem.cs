@@ -1,11 +1,14 @@
 using System;
 using System.Linq;
 using ChemSW.Core;
+using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.PropertySets;
 using ChemSW.Nbt.Requesting;
+using ChemSW.Nbt.ServiceDrivers;
+using ChemSW.Nbt.UnitsOfMeasure;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.ObjClasses
@@ -449,6 +452,16 @@ namespace ChemSW.Nbt.ObjClasses
 
         protected override void afterPopulateProps()
         {
+            //TODO - see if this makes an important difference in the quantity available values for material requests
+            //CswNbtNode MaterialNode = _CswNbtResources.Nodes.GetNode( Material.RelatedNodeId );
+            //if( MaterialNode != null )
+            //{
+            //    Material.setReadOnly( value: true, SaveToDb: true );
+            //    CswNbtUnitViewBuilder Vb = new CswNbtUnitViewBuilder( _CswNbtResources );
+            //    Vb.setQuantityUnitOfMeasureView( MaterialNode, Quantity );
+            //}
+
+
             _setUIVisibility();
             Request.SetOnPropChange( _onRequestPropChange );
             EnterprisePart.SetOnPropChange( _onEnterprisePartPropChange );
@@ -533,8 +546,12 @@ namespace ChemSW.Nbt.ObjClasses
                                     ButtonData.Data["state"]["request"]["materialid"] = ( Material.RelatedNodeId ?? new CswPrimaryKey() ).ToString();
                                     ButtonData.Data["success"] = true;
                                 break;
-                            case FulfillMenu.Order://TODO - Implement Ordering
+                            case FulfillMenu.Order://TODO - Implement Ordering (and test this:)
                                 ButtonData.Action = CswEnumNbtButtonAction.editprop;
+                                ButtonData.Data["nodeid"] = NodeId.ToString();
+                                CswPropIdAttr OrdIdAttr = new CswPropIdAttr( Node, ExternalOrderNumber.NodeTypeProp );
+                                ButtonData.Data["propidattr"] = OrdIdAttr.ToString();
+                                ButtonData.Data["title"] = "Enter the External Order Number";
                                 break;
                             case FulfillMenu.Receive:
                                 CswNbtPropertySetMaterial MaterialNode = _CswNbtResources.Nodes.GetNode( Material.RelatedNodeId );
@@ -628,11 +645,13 @@ namespace ChemSW.Nbt.ObjClasses
 
         private void _setUIVisibility()
         {
-            //TODO - This loop is a bit expensive - perhaps revisit later and come up with a better way to invoke this hide logic
+            //This loop is a bit expensive - perhaps revisit later and come up with a better way to invoke this hide logic
             foreach( CswNbtNodePropWrapper Prop in Node.Properties )
             {
                 Prop.SetOnBeforeRender( TypeDef.setPropUIVisibility );
             }
+            //TODO - hide requestor/priority/totaldispensed/totalmoved if pending
+            //TODO - if not pending, make invGrp/loc/quantity/size/sizecount/new material props readonly
             RecurringFrequency.SetOnBeforeRender( _hideRecurringProps );
             NextReorderDate.SetOnBeforeRender( _hideRecurringProps );
             //This can't be done in OnBeforeRender because Search ignores it
@@ -788,6 +807,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             //TODO - Case 31176 - scope Material picklist to materials belonging to EP
             //TODO - remove this block once Case 31242 is complete
+            //TODO - filter ReceiptLotsToDispense by EP
         }
         public CswNbtNodePropRelationship Material { get { return _CswNbtNode.Properties[PropertyName.Material]; } }
         private void _onMaterialPropChange( CswNbtNodeProp Prop, bool Creating )
@@ -797,7 +817,7 @@ namespace ChemSW.Nbt.ObjClasses
                 Type.Value = Types.MaterialBulk;
                 FulfillmentHistory.AddComment( "Selected existing Material: " + CswNbtNode.getNodeLink( Material.RelatedNodeId, Material.CachedNodeName ) );
             }
-            //TODO - filter ReceiptLotsToDispense by Material
+            //TODO - filter ReceiptLotsToDispense by Material (if not EP)
         }
         public CswNbtNodePropRelationship Container { get { return _CswNbtNode.Properties[PropertyName.Container]; } }
         //Bulk Request Properties (all Request Items except Move/Dispose/Size use Bulk)

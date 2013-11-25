@@ -14,7 +14,6 @@ namespace ChemSW.Nbt.MetaData
         {
             { GeneratorTargetSet      , GeneratorTargetSet    },
             { InspectionParentSet     , InspectionParentSet   },
-            { RequestItemSet          , RequestItemSet        },
             { SchedulerSet            , SchedulerSet          },
             { MaterialSet             , MaterialSet           },
             { DocumentSet             , DocumentSet           },
@@ -80,7 +79,6 @@ namespace ChemSW.Nbt.MetaData
 
         public const string GeneratorTargetSet = "GeneratorTargetSet";
         public const string InspectionParentSet = "InspectionParentSet";
-        public const string RequestItemSet = "RequestItemSet";
         public const string SchedulerSet = "SchedulerSet";
         public const string MaterialSet = "MaterialSet";
         public const string DocumentSet = "DocumentSet";

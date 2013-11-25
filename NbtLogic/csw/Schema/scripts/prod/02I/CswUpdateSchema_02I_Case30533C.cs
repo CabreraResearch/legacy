@@ -8,7 +8,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update
     /// </summary>
-    public class CswUpdateSchema_02I_Case30533B : CswUpdateSchemaTo
+    public class CswUpdateSchema_02I_Case30533C : CswUpdateSchemaTo
     {
         public override CswEnumDeveloper Author
         {
@@ -22,7 +22,7 @@ namespace ChemSW.Nbt.Schema
 
         public override string AppendToScriptName()
         {
-            return "F";
+            return "C";
         }
 
         public override string Title
@@ -53,7 +53,10 @@ namespace ChemSW.Nbt.Schema
                 CswNbtMetaDataNodeTypeProp IsRecurringNTP = RequestItemNT.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestItem.PropertyName.IsRecurring );
                 IsRecurringNTP.Hidden = true;
 
-                //TODO - fill in ReceiptLots Received grid definition (also, filter receipt lots by requested material ...and EP)
+                //TODO - fill in ReceiptLots Received grid definition
+                //My Request History view
+                //Submitted Requests view
+                //Container: Submitted Requests grid view
 
                 //Remove all props from all layouts
                 foreach( CswNbtMetaDataNodeTypeProp Prop in RequestItemNT.getNodeTypeProps() )

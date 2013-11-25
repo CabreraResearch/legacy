@@ -232,10 +232,6 @@ namespace ChemSW.Nbt.MetaData
                            _CswNbtMetaDataResources.CswNbtResources.CurrentNbtUser.IsAdministrator() ) &&
                        ObjectClass != CswEnumNbtObjectClass.RequestClass &&
                        ObjectClass != CswEnumNbtObjectClass.RequestItemClass &&
-                       ObjectClass != CswEnumNbtObjectClass.RequestContainerDispenseClass &&
-                       ObjectClass != CswEnumNbtObjectClass.RequestContainerUpdateClass &&
-                       ObjectClass != CswEnumNbtObjectClass.RequestMaterialCreateClass &&
-                       ObjectClass != CswEnumNbtObjectClass.RequestMaterialDispenseClass &&
                        ObjectClass != CswEnumNbtObjectClass.RegulatoryListCasNoClass &&
                        ObjectClass != CswEnumNbtObjectClass.ContainerClass &&
                        ObjectClass != CswEnumNbtObjectClass.ContainerLocationClass &&

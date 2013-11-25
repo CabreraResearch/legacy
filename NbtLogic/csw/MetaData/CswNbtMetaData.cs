@@ -472,7 +472,7 @@ namespace ChemSW.Nbt.MetaData
         {
             return _CswNbtMetaDataResources.PropertySetsCollection.getPropertySets();
         }
-        public CswNbtMetaDataPropertySet getPropertySet( CswEnumNbtPropertySetName PropertySet )
+        public CswNbtMetaDataPropertySet getPropertySet( string PropertySet )
         {
             return _CswNbtMetaDataResources.PropertySetsCollection.getPropertySet( PropertySet );
         }

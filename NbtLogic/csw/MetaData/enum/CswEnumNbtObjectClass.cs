@@ -73,10 +73,6 @@ namespace ChemSW.Nbt.MetaData
             { ReportGroupPermissionClass        , ReportGroupPermissionClass         },
             { RequestClass                      , RequestClass                       },
             { RequestItemClass                  , RequestItemClass                   },
-            { RequestContainerDispenseClass     , RequestContainerDispenseClass      },
-            { RequestContainerUpdateClass       , RequestContainerUpdateClass        },
-            { RequestMaterialCreateClass        , RequestMaterialCreateClass         },
-            { RequestMaterialDispenseClass      , RequestMaterialDispenseClass       },
             { RoleClass                         , RoleClass                          },
             { SDSDocumentClass                  , SDSDocumentClass                   },
             { SizeClass                         , SizeClass                          },
@@ -197,10 +193,6 @@ namespace ChemSW.Nbt.MetaData
         public const string ReportGroupPermissionClass = "ReportGroupPermissionClass";
         public const string RequestClass = "RequestClass";
         public const string RequestItemClass = "RequestItemClass";
-        public const string RequestContainerDispenseClass = "RequestContainerDispenseClass";
-        public const string RequestContainerUpdateClass = "RequestContainerUpdateClass";
-        public const string RequestMaterialDispenseClass = "RequestMaterialDispenseClass";
-        public const string RequestMaterialCreateClass = "RequestMaterialCreateClass";
         public const string RoleClass = "RoleClass";
         public const string SDSDocumentClass = "SDSDocumentClass";
         public const string GHSSignalWordClass = "GHSSignalWord";

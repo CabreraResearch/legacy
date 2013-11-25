@@ -43,12 +43,17 @@ namespace ChemSW.Nbt.Requesting
         {
             switch( Prop.PropName )
             {
+                case CswNbtObjClassRequestItem.PropertyName.ItemNumber:
+                case CswNbtObjClassRequestItem.PropertyName.AssignedTo:
                 case CswNbtObjClassRequestItem.PropertyName.NeededBy:
                 case CswNbtObjClassRequestItem.PropertyName.Priority:
                 case CswNbtObjClassRequestItem.PropertyName.TotalDispensed:
                 case CswNbtObjClassRequestItem.PropertyName.TotalMoved:
                 case CswNbtObjClassRequestItem.PropertyName.Comments:
                 case CswNbtObjClassRequestItem.PropertyName.FulfillmentHistory:
+                case CswNbtObjClassRequestItem.PropertyName.ReceiptLotToDispense:
+                case CswNbtObjClassRequestItem.PropertyName.ReceiptLotsReceived:
+                case CswNbtObjClassRequestItem.PropertyName.GoodsReceived:
                     Prop.setHidden( true, SaveToDb: false );
                     break;
             }

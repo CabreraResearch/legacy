@@ -17,6 +17,7 @@ namespace ChemSW.Nbt.Requesting
         {
             switch( Prop.PropName )
             {
+                case CswNbtObjClassRequestItem.PropertyName.InventoryGroup:
                 case CswNbtObjClassRequestItem.PropertyName.ExternalOrderNumber:
                 case CswNbtObjClassRequestItem.PropertyName.EnterprisePart:
                 case CswNbtObjClassRequestItem.PropertyName.Material:
