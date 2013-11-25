@@ -217,6 +217,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                         {
                             Answer = PropAsQuestion.Answer,
                             AnswerId = PropAsQuestion.JctNodePropId,
+                            IsAnswerEditable = PropAsQuestion.IsAnswerEditable,
                             Comments = PropAsQuestion.Comments,
                             CorrectiveAction = PropAsQuestion.CorrectiveAction,
                             DateAnswered = PropAsQuestion.DateAnswered,

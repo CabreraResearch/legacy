@@ -116,25 +116,25 @@ namespace ChemSW.Nbt.WebServices
             return Search;
         }
 
-        public JObject restoreUniversalSearch( CswPrimaryKey SearchId )
+        public JObject restoreUniversalSearch( CswPrimaryKey SearchId, int Limit )
         {
             CswNbtSearch Search = _CswNbtResources.SearchManager.restoreSearch( SearchId );
-            return _finishUniversalSearch( Search );
+            return _finishUniversalSearch( Search, PageLimit: Limit );
         } // restoreUniversalSearch()
 
-        public JObject restoreUniversalSearch( CswNbtSessionDataId SessionDataId )
+        public JObject restoreUniversalSearch( CswNbtSessionDataId SessionDataId, int Limit )
         {
             JObject ret = new JObject();
             CswNbtSessionDataItem SessionDataItem = _CswNbtResources.SessionDataMgr.getSessionDataItem( SessionDataId );
             if( null != SessionDataItem && SessionDataItem.DataType == CswEnumNbtSessionDataType.Search )
             {
                 CswNbtSearch Search = SessionDataItem.Search;
-                ret = _finishUniversalSearch( Search );
+                ret = _finishUniversalSearch( Search, PageLimit: Limit );
             }
             return ret;
         } // restoreUniversalSearch()
 
-        public JObject filterUniversalSearch( CswNbtSessionDataId SessionDataId, JObject Filter, string Action )
+        public JObject filterUniversalSearch( CswNbtSessionDataId SessionDataId, JObject Filter, string Action, int Limit )
         {
             JObject ret = new JObject();
             CswNbtSessionDataItem SessionDataItem = _CswNbtResources.SessionDataMgr.getSessionDataItem( SessionDataId );
@@ -149,12 +149,12 @@ namespace ChemSW.Nbt.WebServices
                 {
                     Search.removeFilter( Filter );
                 }
-                ret = _finishUniversalSearch( Search );
+                ret = _finishUniversalSearch( Search, PageLimit: Limit );
             }
             return ret;
         }
 
-        public JObject filterUniversalSearchByNodeType( CswNbtSessionDataId SessionDataId, Int32 NodeTypeId )
+        public JObject filterUniversalSearchByNodeType( CswNbtSessionDataId SessionDataId, Int32 NodeTypeId, int Limit )
         {
             JObject ret = new JObject();
             CswNbtSessionDataItem SessionDataItem = _CswNbtResources.SessionDataMgr.getSessionDataItem( SessionDataId );
@@ -162,7 +162,7 @@ namespace ChemSW.Nbt.WebServices
             {
                 CswNbtSearch Search = SessionDataItem.Search;
                 Search.addFilter( NodeTypeId, true );
-                ret = _finishUniversalSearch( Search );
+                ret = _finishUniversalSearch( Search, PageLimit: Limit );
             }
             return ret;
         }
@@ -183,7 +183,7 @@ namespace ChemSW.Nbt.WebServices
             return ret;
         }
 
-        public JObject saveSearch( CswNbtSessionDataId SessionDataId, string Name, string Category )
+        public JObject saveSearch( CswNbtSessionDataId SessionDataId, string Name, string Category, int Limit )
         {
             JObject ret = new JObject();
             CswNbtSessionDataItem SessionDataItem = _CswNbtResources.SessionDataMgr.getSessionDataItem( SessionDataId );
@@ -193,19 +193,19 @@ namespace ChemSW.Nbt.WebServices
                 Search.Name = Name;
                 Search.Category = Category;
                 Search.SaveToDb();
-                ret = _finishUniversalSearch( Search );
+                ret = _finishUniversalSearch( Search, PageLimit: Limit );
             }
             return ret;
         } // saveSearch
 
-        public JObject deleteSearch( CswPrimaryKey SearchId )
+        public JObject deleteSearch( CswPrimaryKey SearchId, int Limit )
         {
             CswNbtSearch doomedSearch = _CswNbtResources.SearchManager.restoreSearch( SearchId );
             if( null != doomedSearch )
             {
                 doomedSearch.delete();
             }
-            return _finishUniversalSearch( doomedSearch );
+            return _finishUniversalSearch( doomedSearch, PageLimit: Limit );
         } // deleteSearch
 
 

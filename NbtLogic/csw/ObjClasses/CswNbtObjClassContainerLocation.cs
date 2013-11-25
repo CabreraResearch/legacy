@@ -117,24 +117,32 @@ namespace ChemSW.Nbt.ObjClasses
 
         private void _setStatus()
         {
+            bool doUpdate = true;
             CswEnumNbtContainerLocationStatusOptions ContLocStatus = CswEnumNbtContainerLocationStatusOptions.Correct;
             if( Type.Value == CswEnumNbtContainerLocationTypeOptions.ReconcileScans.ToString() )
             {
                 ContLocStatus = CswEnumNbtContainerLocationStatusOptions.ScannedCorrect;
                 CswNbtObjClassContainer ContainerNode = _CswNbtResources.Nodes.GetNode( Container.RelatedNodeId );
-                if( ContainerNode.Disposed.Checked == CswEnumTristate.True )
+                if( null != ContainerNode )
                 {
-                    ContLocStatus = CswEnumNbtContainerLocationStatusOptions.Disposed;
+                    if( ContainerNode.Disposed.Checked == CswEnumTristate.True )
+                    {
+                        ContLocStatus = CswEnumNbtContainerLocationStatusOptions.Disposed;
+                    }
+                    if( ContainerNode.Location.SelectedNodeId != Location.SelectedNodeId )
+                    {
+                        ContLocStatus = ContLocStatus == CswEnumNbtContainerLocationStatusOptions.Disposed
+                                            ? CswEnumNbtContainerLocationStatusOptions.DisposedAtWrongLocation
+                                            : CswEnumNbtContainerLocationStatusOptions.WrongLocation;
+                    }
+                    if( ContainerNode.Missing.Checked == CswEnumTristate.True )
+                    {
+                        ContLocStatus = CswEnumNbtContainerLocationStatusOptions.Missing;
+                    }
                 }
-                if( ContainerNode.Location.SelectedNodeId != Location.SelectedNodeId )
+                else//If we're here, it's because we ca no longer find the container that was scanned
                 {
-                    ContLocStatus = ContLocStatus == CswEnumNbtContainerLocationStatusOptions.Disposed
-                                        ? CswEnumNbtContainerLocationStatusOptions.DisposedAtWrongLocation
-                                        : CswEnumNbtContainerLocationStatusOptions.WrongLocation;
-                }
-                if( ContainerNode.Missing.Checked == CswEnumTristate.True )
-                {
-                    ContLocStatus = CswEnumNbtContainerLocationStatusOptions.Missing;
+                    doUpdate = false;
                 }
             }
             else if( Type.Value == CswEnumNbtContainerLocationTypeOptions.Missing.ToString() ||
@@ -142,7 +150,10 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 ContLocStatus = CswEnumNbtContainerLocationStatusOptions.NotScanned;
             }
-            Status.Value = ContLocStatus.ToString();
+            if( doUpdate )
+            {
+                Status.Value = ContLocStatus.ToString();
+            }
         }
 
         #endregion

@@ -66,6 +66,11 @@ namespace ChemSW.Nbt
         license_type,
 
         /// <summary>
+        /// Whether to prevent editing answers once an inspection is Action Required
+        /// </summary>
+        lock_inspection_answer,
+
+        /// <summary>
         /// Maximum depth of location controls
         /// </summary>
         loc_max_depth,

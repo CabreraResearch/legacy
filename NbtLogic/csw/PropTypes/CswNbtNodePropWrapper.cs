@@ -141,6 +141,7 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropWrapper DefaultValue { get { return ( _CswNbtNodeProp.DefaultValue ); } }
         public bool HasDefaultValue() { return ( _CswNbtNodeProp.HasDefaultValue() ); }
 
+        public void setPendingUpdate( bool value ) { _CswNbtNodePropData.SetPropRowValue( CswEnumNbtSubFieldName.PendingUpdate, CswEnumNbtPropColumn.PendingUpdate, value ); }
         public bool PendingUpdate { get { return ( _CswNbtNodePropData.PendingUpdate ); } } // set { _CswNbtNodePropData.PendingUpdate = value; } }
 
         public void ClearValue() { _CswNbtNodePropData.ClearValue(); }
