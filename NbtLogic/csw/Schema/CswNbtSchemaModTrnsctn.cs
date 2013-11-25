@@ -1001,7 +1001,8 @@ namespace ChemSW.Nbt.Schema
                 createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( NewObjectClass )
                 {
                     PropName = CswNbtObjClass.PropertyName.LegacyId,
-                    FieldType = CswEnumNbtFieldType.Text
+                    FieldType = CswEnumNbtFieldType.Text,
+                    ServerManaged = true
                 } );
 
             }
