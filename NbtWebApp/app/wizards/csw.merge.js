@@ -17,8 +17,8 @@
             },
 //            node1: null,
 //            node2: null,
-            node1: { nodeid: 'nodes_51984', nodename: 'acenaphthrene Fluka' },  // DEBUG ONLY
-            node2: { nodeid: 'nodes_54960', nodename: 'Acesulfame K' },     // DEBUG ONLY
+            node1: { nodeid: 'nodes_42063', nodename: 'isopropylguacamolate Sigma 123' },      // TODO: REMOVE ME
+            node2: { nodeid: 'nodes_42064', nodename: 'iso-propyl-guacamolate Sigma 123.1' },  // TODO: REMOVE ME
             mergeData: null
         };
 
@@ -115,7 +115,7 @@
             makeStep: (function () {
                 return function (StepNo) {
                     cswPrivate.toggleStepButtons(StepNo);
-
+                    
                     if (null === cswPrivate.node1) {
                         cswPrivate.toggleButton(cswPrivate.buttons.next, false);
                     }
@@ -143,6 +143,7 @@
                         universalSearchOnly: true, //No C3 or Structure Search here
                         onExtraAction: function (nodeObj) {
                             cswPrivate.node1 = nodeObj;
+                            cswPrivate.mergeData = null;
                             cswPrivate.toggleButton(cswPrivate.buttons.next, true);
                             cswPrivate.wizard.next.click();
                         }
@@ -159,7 +160,7 @@
             makeStep: (function () {
                 return function (StepNo) {
                     cswPrivate.toggleStepButtons(StepNo);
-
+                    
                     if (null === cswPrivate.node2) {
                         cswPrivate.toggleButton(cswPrivate.buttons.next, false);
                     }
@@ -187,6 +188,7 @@
                         universalSearchOnly: true, //No C3 or Structure Search here
                         onExtraAction: function (nodeObj) {
                             cswPrivate.node2 = nodeObj;
+                            cswPrivate.mergeData = null;
                             cswPrivate.toggleButton(cswPrivate.buttons.next, true);
                             cswPrivate.wizard.next.click();
                         }
