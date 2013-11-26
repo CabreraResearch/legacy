@@ -34,7 +34,7 @@ namespace ChemSW.Nbt.Schema
 
                 ImpMgr.CAFimportOrder( "Regulatory List CAS", "regulated_casnos" );
                 ImpMgr.importBinding( "casno", CswNbtObjClassRegulatoryListCasNo.PropertyName.CASNo, "" );
-                //TODO: Add reg list relationship
+                
                 ImpMgr.finalize();
 
         } // update()

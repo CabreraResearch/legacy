@@ -48,11 +48,14 @@ namespace CAFScriptGenerator
 
 
                 //add a / before the first trigger and split the file into an array of strings on / chars (breaking off potential PL/SQL blocks)
-                string[] SQLCommands = CAFSql.Replace( ");\r\n\r\n\r\ncreate or replace trigger", ");\r\n\r\n\r\n/\r\ncreate or replace trigger" ).Split( new[] { "\r\n/" }, StringSplitOptions.RemoveEmptyEntries );
+                string[] SQLCommands = CAFSql
+                    .Replace( ");\r\n\r\n\r\ncreate or replace trigger", ");\r\n\r\n\r\n/\r\ncreate or replace trigger" )
+                    .Replace( "create or replace procedure", "\r\n/\r\ncreate or replace procedure" )
+                    .Split( new[] { "\r\n/" }, StringSplitOptions.RemoveEmptyEntries );
 
                 foreach( string SQLCommand in SQLCommands )
                 {   //if the string starts with either of these, it's a PL/SQL block and can be sent as-is
-                    if( SQLCommand.Trim().StartsWith( "begin" ) || SQLCommand.Trim().StartsWith( "create or replace trigger" ) )
+                    if( SQLCommand.Trim().StartsWith( "begin" ) || SQLCommand.Trim().StartsWith( "create or replace trigger" ) || SQLCommand.Trim().StartsWith( "create or replace procedure" ))
                     {
                         CAFConnection.execArbitraryPlatformNeutralSql( SQLCommand );
                     }

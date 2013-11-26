@@ -326,73 +326,76 @@ namespace ChemSW.Nbt.ImportExport
             RowsImported = 0;
             if( false == string.IsNullOrEmpty( ImportDataTableName ) && _CswNbtResources.isTableDefinedInDataBase( ImportDataTableName ) )
             {
-                // Lookup the binding definition
+                // case 31008 - Checking DataMap.Completed here allows us to cancel
                 CswNbtImportDataMap DataMap = new CswNbtImportDataMap( _CswNbtResources, ImportDataTableName );
-                CswNbtImportDef BindingDef = new CswNbtImportDef( _CswNbtResources, DataMap.ImportDefinitionId );
-
-                if( null != BindingDef && ( BindingDef.Bindings.Count > 0 || BindingDef.RowRelationships.Count > 0 ) && BindingDef.ImportOrder.Count > 0 ) //dch
+                if( false == DataMap.Completed )
                 {
-                    foreach( CswNbtImportDefOrder Order in BindingDef.ImportOrder.Values )
+                    // Lookup the binding definition
+                    CswNbtImportDef BindingDef = new CswNbtImportDef( _CswNbtResources, DataMap.ImportDefinitionId );
+                    if( ( BindingDef.Bindings.Count > 0 || BindingDef.RowRelationships.Count > 0 ) && BindingDef.ImportOrder.Count > 0 )
                     {
-                        CswTableUpdate ImportDataUpdate = _CswNbtResources.makeCswTableUpdate( "Importer_Update", ImportDataTableName );
-
-                        // Fetch the next row to process
-                        DataTable ImportDataTable;
-                        do
+                        foreach( CswNbtImportDefOrder Order in BindingDef.ImportOrder.Values )
                         {
-                            ImportDataTable = ImportDataUpdate.getTable( "where " + CswNbtImportTables.ImportDataN.error + " = '" + CswConvert.ToDbVal( false ) + "' and " + Order.PkColName + " is null",
-                                                                         new Collection<OrderByClause> { new OrderByClause( CswNbtImportTables.ImportDataN.importdataid, CswEnumOrderByType.Ascending ) },
-                                                                         0, 1 );
-                            if( ImportDataTable.Rows.Count > 0 )
+                            CswTableUpdate ImportDataUpdate = _CswNbtResources.makeCswTableUpdate( "Importer_Update", ImportDataTableName );
+
+                            // Fetch the next row to process
+                            DataTable ImportDataTable;
+                            do
                             {
-                                DataRow Row = ImportDataTable.Rows[0];
-                                string msgPrefix = Order.NodeType.NodeTypeName + " Import (" + Row[CswNbtImportTables.ImportDataN.importdataid].ToString() + "): ";
-                                try
+                                ImportDataTable = ImportDataUpdate.getTable( "where " + CswNbtImportTables.ImportDataN.error + " = '" + CswConvert.ToDbVal( false ) + "' and " + Order.PkColName + " is null",
+                                                                             new Collection<OrderByClause> { new OrderByClause( CswNbtImportTables.ImportDataN.importdataid, CswEnumOrderByType.Ascending ) },
+                                                                             0, 1 );
+                                if( ImportDataTable.Rows.Count > 0 )
                                 {
-                                    CswPrimaryKey ImportedNodeId = _ImportOneRow( Row, BindingDef, Order, DataMap.Overwrite, ImportDataUpdate );
+                                    DataRow Row = ImportDataTable.Rows[0];
+                                    string msgPrefix = Order.NodeType.NodeTypeName + " Import (" + Row[CswNbtImportTables.ImportDataN.importdataid].ToString() + "): ";
+                                    try
+                                    {
+                                        CswPrimaryKey ImportedNodeId = _ImportOneRow( Row, BindingDef, Order, DataMap.Overwrite, ImportDataUpdate );
 
-                                    // Save the nodeid in this row
-                                    Row[Order.PkColName] = CswConvert.ToDbVal( ImportedNodeId.PrimaryKey );
-                                    ImportDataUpdate.update( ImportDataTable );
+                                        // Save the nodeid in this row
+                                        Row[Order.PkColName] = CswConvert.ToDbVal( ImportedNodeId.PrimaryKey );
+                                        ImportDataUpdate.update( ImportDataTable );
 
+                                    }
+                                    catch( Exception ex )
+                                    {
+                                        // Swallow and store the error on the row
+                                        string ErrorMsg = msgPrefix + ex.Message; //+ "\r\n" + ex.StackTrace;
+                                        Row[CswNbtImportTables.ImportDataN.error] = CswConvert.ToDbVal( true );
+                                        Row[CswNbtImportTables.ImportDataN.errorlog] = ErrorMsg;
+                                        ImportDataUpdate.update( ImportDataTable );
+                                    }
+
+                                    RowsImported += 1;
                                 }
-                                catch( Exception ex )
-                                {
-                                    // Swallow and store the error on the row
-                                    string ErrorMsg = msgPrefix + ex.Message; //+ "\r\n" + ex.StackTrace;
-                                    Row[CswNbtImportTables.ImportDataN.error] = CswConvert.ToDbVal( true );
-                                    Row[CswNbtImportTables.ImportDataN.errorlog] = ErrorMsg;
-                                    ImportDataUpdate.update( ImportDataTable );
-                                }
 
-                                RowsImported += 1;
+                            } while( ImportDataTable.Rows.Count > 0 && RowsImported < RowsToImport );
+
+                            if( RowsImported >= RowsToImport )
+                            {
+                                break;
                             }
+                        } // foreach( CswNbtMetaDataNodeType NodeType in _ImportOrder.Values )
 
-                        } while( ImportDataTable.Rows.Count > 0 && RowsImported < RowsToImport );
-
-                        if( RowsImported >= RowsToImport )
+                        if( RowsImported == 0 )
                         {
-                            break;
-                        }
-                    } // foreach( CswNbtMetaDataNodeType NodeType in _ImportOrder.Values )
+                            DataMap.Completed = true;
 
-                    if( RowsImported == 0 )
+                            // If all datamaps are completed, set dateended on job
+                            CswNbtImportDataJob Job = new CswNbtImportDataJob( _CswNbtResources, DataMap.ImportDataJobId );
+                            if( null == Job.Maps.FirstOrDefault( map => map.Completed == false ) )
+                            {
+                                Job.DateEnded = DateTime.Now;
+                            }
+                        }
+
+                    } // if( Bindings.Count > 0 && ImportOrder.count > 0)
+                    else
                     {
-                        DataMap.Completed = true;
-
-                        // If all datamaps are completed, set dateended on job
-                        CswNbtImportDataJob Job = new CswNbtImportDataJob( _CswNbtResources, DataMap.ImportDataJobId );
-                        if( null == Job.Maps.FirstOrDefault( map => map.Completed == false ) )
-                        {
-                            Job.DateEnded = DateTime.Now;
-                        }
+                        throw new Exception( "No Bindings or Order defined" );
                     }
-
-                } // if( Bindings.Count > 0 && ImportOrder.count > 0)
-                else
-                {
-                    throw new Exception( "No Bindings or Order defined" );
-                }
+                } // if( false == DataMap.Completed )
             } // if( _CswNbtResources.isTableDefinedInDataBase(ImportDataTableName) ) 
             else
             {
@@ -1035,6 +1038,20 @@ namespace ChemSW.Nbt.ImportExport
         }//_setRolePermissions()
 
         #endregion
+
+
+        public void CancelJob( Int32 JobId )
+        {
+            // Set Job's dateended to now
+            CswNbtImportDataJob Job = new CswNbtImportDataJob( _CswNbtResources, JobId );
+            Job.DateEnded = DateTime.Now;
+
+            // Set all DataMaps to Completed=1
+            foreach( CswNbtImportDataMap DataMap in Job.Maps )
+            {
+                DataMap.Completed = true;
+            }
+        } // CancelJob()
 
     } // class CswNbt2DImporter
 } // namespace ChemSW.Nbt.ImportExport

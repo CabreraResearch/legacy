@@ -94,12 +94,13 @@ namespace ChemSW.Nbt.csw.ImportExport
         {
             bool isUnique = true;
             int idx = 1;
+            string OrigPropName = PropName;
             while( isUnique )
             {
                 CswNbtMetaDataNodeTypeProp ntp = NodeType.getNodeTypeProp( PropName );
                 if( null != ntp )
                 {
-                    PropName = PropName + idx;
+                    PropName = OrigPropName + idx;
                     idx++;
                 }
                 else
