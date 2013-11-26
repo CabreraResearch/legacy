@@ -2,7 +2,7 @@
 
 
 (function () {
-
+    var cswChemWatchActionStateName = 'cswChemWatchActionStateName';
     Csw.actions.register('chemwatch', function (cswParent, options) {
         'use strict';
 
@@ -10,10 +10,13 @@
             name: 'CswChemWatchAction',
             title: 'ChemWatch',
             onCancel: options.onCancel || null,
-            onFinish: options.onFinish || null
+            onFinish: options.onFinish || null,
+            state: {
+                materialId: ''
+            }
         };
         cswPrivate.OperationData = {
-            NbtMaterialId: options.materialid,
+            NbtMaterialId: '',
             Countries: [],
             Languages: [],
             Supplier: "",
@@ -49,7 +52,7 @@
                 value: cswPrivate.OperationData.Supplier,
                 size: 30,
                 onChange: function (value) {
-                    
+
                     // Clear steps two and three if they exist
                     if (cswPrivate.stepTwoTable) {
                         cswPrivate.stepTwoTable.empty();
@@ -107,7 +110,7 @@
                 disabled: searchBtnEnabled,
                 disableOnClick: false,
                 onClick: function () {
-                    
+
                     // Clear Step 3 (if it has been rendered)
                     if (cswPrivate.stepThreeTable) {
                         cswPrivate.stepThreeTable.empty();
@@ -263,10 +266,10 @@
         };//makeStepTwo()
 
         cswPrivate.makeStepThree = function (gridData) {
-             var stepThreeTable = cswPublic.table.cell(3, 1).empty().table({
+            var stepThreeTable = cswPublic.table.cell(3, 1).empty().table({
                 width: '80%',
                 cellpadding: 5
-             });
+            });
             cswPrivate.stepThreeTable = stepThreeTable;
 
             stepThreeTable.cell(1, 1).div({
@@ -287,7 +290,7 @@
                     }
                 });
             }
-            
+
 
         };//makeStepThree()
 
@@ -438,23 +441,55 @@
         }
         //#endregion Helper Functions
 
+
+        //#region State Functions
+
+        cswPrivate.setState = function () {
+            var state;
+            if (Csw.isNullOrEmpty(cswPrivate.state.materialId)) {
+                state = cswPrivate.getState();
+                Csw.extend(cswPrivate.state, state);
+            }
+            Csw.clientDb.setItem(cswPrivate.name + '_' + cswChemWatchActionStateName, cswPrivate.state);
+        };
+        
+        cswPrivate.getState = function () {
+            var ret = Csw.clientDb.getItem(cswPrivate.name + '_' + cswChemWatchActionStateName);
+            return ret;
+        };
+
+        cswPrivate.clearState = function () {
+            Csw.clientDb.removeItem(cswPrivate.name + '_' + cswChemWatchActionStateName);
+        };
+
+        //#endregion State Functions
+
         //#region Initialize
         (function () {
-
+            // Extend cswPrivate
+            Csw.extend(cswPrivate, options);
+            
+            // We need to preserve the nbtmaterialid
+            cswPrivate.setState();
+            cswPrivate.OperationData.NbtMaterialId = cswPrivate.state.materialId;
+            
             // Set up action layout
             var layout = Csw.layouts.action(cswParent, {
                 title: 'ChemWatch',
                 finishText: 'Create SDS Links',
-                onFinish: cswPrivate.createSDSLinks,
+                onFinish: function () {
+                    cswPrivate.clearState();
+                    cswPrivate.createSDSLinks();
+                },
                 onCancel: function () {
-                    //todo: clear state
+                    cswPrivate.clearState();
                     Csw.tryExec(cswPrivate.onCancel);
                 },
             });
 
             cswPublic.table = layout.actionDiv.table({
                 width: '90%'
-            }).css({ padding: '20px'});
+            }).css({ padding: '20px' });
 
             // call the Initialize web service met
             Csw.ajaxWcf.post({
