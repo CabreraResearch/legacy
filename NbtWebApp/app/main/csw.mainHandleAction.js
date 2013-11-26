@@ -261,7 +261,16 @@
                 });
             });
             actionHandler.add('merge', function (o) {
-                return Csw.nbt.mergeWizard(Csw.main.centerTopDiv, {});
+                return Csw.nbt.mergeWizard(Csw.main.centerTopDiv, {
+                    onFinish: function(viewid) {
+                        Csw.main.clear({ 'all': true });
+                        Csw.main.handleItemSelect({
+                            type: 'view',
+                            mode: 'tree',
+                            itemid: viewid
+                        });
+                    }
+                });
             });
             actionHandler.add('receiving', function (o) {
                 var opts = Csw.extend({}, o);

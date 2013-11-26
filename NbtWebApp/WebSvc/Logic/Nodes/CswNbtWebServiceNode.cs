@@ -763,8 +763,20 @@ namespace ChemSW.Nbt.WebServices
         [DataContract]
         public class MergeFinishReturn : CswWebSvcReturn
         {
+            public MergeFinishReturn()
+            {
+                Data = new MergeFinishData();
+            }
+
             [DataMember]
-            public string ViewId;
+            public MergeFinishData Data;
+
+            [DataContract]
+            public class MergeFinishData
+            {
+                [DataMember]
+                public string ViewId;
+            }
         }
 
 
@@ -787,8 +799,8 @@ namespace ChemSW.Nbt.WebServices
             CswNbtActMerge Merge = new CswNbtActMerge( NbtResources );
             CswNbtView view = Merge.finishMerge( Request.Choices );
             view.SaveToCache( IncludeInQuickLaunch: false );
-            Return.ViewId = view.SessionViewId.ToString();
-        }
+            Return.Data.ViewId = view.SessionViewId.ToString();
+        } // finishMerge()
 
         #endregion Merge
 

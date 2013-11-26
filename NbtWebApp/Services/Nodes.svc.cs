@@ -182,7 +182,7 @@ namespace NbtWebApp
 
         [OperationContract]
         [WebInvoke( Method = "POST" )]
-        [Description( "Apply choices from merge and return the new nodeid" )]
+        [Description( "Apply choices from merge and return a view to the new nodeid" )]
         [FaultContract( typeof( FaultException ) )]
         public CswNbtWebServiceNode.MergeFinishReturn finishMerge( CswNbtWebServiceNode.MergeChoicesRequest Request )
         {
