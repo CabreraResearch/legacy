@@ -104,7 +104,7 @@
                     
                     jobTable.cell(jobrow, 2).buttonExt({
                         name: 'downloadBtn',
-                        icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.docExport),
+                        icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.docexport),
                         enabledText: 'Download Data File',
                         disabledText: 'Fetching Data...',
                         disableOnClick: false,
@@ -123,11 +123,37 @@
                             form.remove();
                         }
                     });
-
+                    jobrow++;
+                    if (false === Csw.bool(data.Completed)){
+                        jobTable.cell(jobrow, 2).buttonExt({
+                            name: 'cancelBtn',
+                            icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.cancel),
+                            enabledText: 'Cancel Import',
+                            disabledText: 'Cancelling...',
+                            disableOnClick: false,
+                            onClick: function() {
+                                cswPrivate.cancelJob(job);
+                            }
+                        });
+                    }
                 } // success()
             }); // get()
         }; // loadStatus()
 
+
+        cswPrivate.cancelJob = function(job) {
+            if (confirm("Are you sure you want to cancel this import?")) {
+                Csw.ajaxWcf.post({
+                    urlMethod: 'Import/cancelJob',
+                    data: {
+                        JobId: job.ImportDataJobId
+                    },
+                    success: function(data) {
+                        cswPrivate.loadStatus(job);
+                    }
+                });
+            }
+        }; // cancelJob()
 
         cswPrivate.makeStatusTable = function () {
             cswPublic.table.cell(3, 1)
@@ -368,7 +394,7 @@
                             }
                         });
                     } else {
-                        alert('Import Definition Name is required.')
+                        alert('Import Definition Name is required.');
                     }
                 }
                 });

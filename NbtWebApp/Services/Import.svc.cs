@@ -109,10 +109,10 @@ namespace NbtWebApp
             CswNbtImportWcf.GenerateSQLReturn Ret = new CswNbtImportWcf.GenerateSQLReturn();
 
             var SvcDriver = new CswWebSvcDriver<CswNbtImportWcf.GenerateSQLReturn, string>(
-                CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
-                ReturnObj : Ret,
-                WebSvcMethodPtr : CswNbtWebServiceImport.downloadImportData,
-                ParamObj : Filename
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj: Ret,
+                WebSvcMethodPtr: CswNbtWebServiceImport.downloadImportData,
+                ParamObj: Filename
                 );
 
             SvcDriver.run();
@@ -164,10 +164,10 @@ namespace NbtWebApp
             CswNbtImportWcf.GenerateSQLReturn Ret = new CswNbtImportWcf.GenerateSQLReturn();
 
             var SvcDriver = new CswWebSvcDriver<CswNbtImportWcf.GenerateSQLReturn, string>(
-                CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
-                ReturnObj : Ret,
-                WebSvcMethodPtr : CswNbtWebServiceImport.downloadImportDefinition,
-                ParamObj : ImportDefName
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj: Ret,
+                WebSvcMethodPtr: CswNbtWebServiceImport.downloadImportDefinition,
+                ParamObj: ImportDefName
                 );
 
             SvcDriver.run();
@@ -181,11 +181,11 @@ namespace NbtWebApp
         [WebInvoke( Method = "POST", ResponseFormat = WebMessageFormat.Json )]
         [Description( "Get current status of imports" )]
         [FaultContract( typeof( FaultException ) )]
-        public CswNbtImportWcf.ImportStatusReturn getImportStatus( CswNbtImportWcf.ImportStatusRequest parms )
+        public CswNbtImportWcf.ImportStatusReturn getImportStatus( CswNbtImportWcf.JobRequest parms )
         {
             CswNbtImportWcf.ImportStatusReturn ret = new CswNbtImportWcf.ImportStatusReturn();
 
-            var SvcDriver = new CswWebSvcDriver<CswNbtImportWcf.ImportStatusReturn, CswNbtImportWcf.ImportStatusRequest>(
+            var SvcDriver = new CswWebSvcDriver<CswNbtImportWcf.ImportStatusReturn, CswNbtImportWcf.JobRequest>(
                 CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, AuthRequest ),
                 ReturnObj: ret,
                 WebSvcMethodPtr: CswNbtWebServiceImport.getImportStatus,
@@ -196,6 +196,26 @@ namespace NbtWebApp
 
             return ret;
         } // getImportStatus()
+
+        [OperationContract]
+        [WebInvoke( Method = "POST", ResponseFormat = WebMessageFormat.Json )]
+        [Description( "Get current status of imports" )]
+        [FaultContract( typeof( FaultException ) )]
+        public CswWebSvcReturn cancelJob( CswNbtImportWcf.JobRequest parms )
+        {
+            CswWebSvcReturn ret = new CswWebSvcReturn();
+
+            var SvcDriver = new CswWebSvcDriver<CswWebSvcReturn, CswNbtImportWcf.JobRequest>(
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, AuthRequest ),
+                ReturnObj: ret,
+                WebSvcMethodPtr: CswNbtWebServiceImport.cancelJob,
+                ParamObj: parms
+                );
+
+            SvcDriver.run();
+
+            return ret;
+        } // cancelJob()
 
         [OperationContract]
         [WebInvoke( Method = "POST" )]
@@ -242,27 +262,27 @@ namespace NbtWebApp
 
             return Ret.stream;
         }//startImport()
-        
+
         [OperationContract]
         [WebInvoke( Method = "POST" )]
         [Description( "Retrieve bindings for current definition" )]
         [FaultContract( typeof( FaultException ) )]
         public CswNbtImportWcf.ImportBindingsReturn getBindingsForDefinition( string ImportDefName )
         {
-            CswNbtImportWcf.ImportBindingsReturn  Ret = new CswNbtImportWcf.ImportBindingsReturn();
+            CswNbtImportWcf.ImportBindingsReturn Ret = new CswNbtImportWcf.ImportBindingsReturn();
 
             var SvcDriver = new CswWebSvcDriver<CswNbtImportWcf.ImportBindingsReturn, string>(
                 CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
                 ReturnObj: Ret,
                 WebSvcMethodPtr: CswNbtWebServiceImport.getBindingsForDefinition,
-                ParamObj: ImportDefName 
+                ParamObj: ImportDefName
                 );
 
             SvcDriver.run();
 
             return Ret;
         }
-        
+
 
     }
 }

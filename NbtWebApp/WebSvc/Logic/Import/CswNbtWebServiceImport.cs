@@ -31,7 +31,7 @@ namespace ChemSW.Nbt.WebServices
             }
         }
 
-        public static void getImportStatus( ICswResources CswResources, CswNbtImportWcf.ImportStatusReturn ret, CswNbtImportWcf.ImportStatusRequest parms )
+        public static void getImportStatus( ICswResources CswResources, CswNbtImportWcf.ImportStatusReturn ret, CswNbtImportWcf.JobRequest parms )
         {
             CswNbtResources CswNbtResources = (CswNbtResources) CswResources;
             CswNbtImporter Importer = new CswNbtImporter( CswNbtResources );
@@ -46,6 +46,15 @@ namespace ChemSW.Nbt.WebServices
                                out ret.Data.ItemsDone,
                                out ret.Data.ItemsTotal );
             }
+        }
+
+        /// <summary>
+        /// Cancel a running job
+        /// </summary>
+        public static void cancelJob( ICswResources CswResources, CswWebSvcReturn ret, CswNbtImportWcf.JobRequest parms )
+        {
+            CswNbtImporter Importer = new CswNbtImporter( (CswNbtResources) CswResources );
+            Importer.CancelJob( parms.JobId );
         }
 
         public static void uploadImportData( ICswResources CswResources, CswNbtImportWcf.ImportDataReturn ret, CswNbtImportWcf.ImportFileParams parms )
@@ -268,6 +277,7 @@ namespace ChemSW.Nbt.WebServices
 
             return Ret;
         }
+
 
 
 
