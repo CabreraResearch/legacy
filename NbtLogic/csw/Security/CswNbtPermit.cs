@@ -857,19 +857,16 @@ namespace ChemSW.Nbt.Security
         {
             Dictionary<CswPrimaryKey, CswPrimaryKey> ret = new Dictionary<CswPrimaryKey, CswPrimaryKey>();
 
-            string SQL = @"with pval as (select j.nodeid, op.propname, j.field1_fk
+            string SQL = @"with pval as (select j.nodeid, op.propname, j.field1_fk, p.nodetypeid
                                            from object_class_props op
                                            join nodetype_props p on op.objectclasspropid = p.objectclasspropid
                                            join jct_nodes_props j on j.nodetypepropid = p.nodetypepropid
                                           where op.propname in ('Location', 'Inventory Group', 'Report Group', 'Mail Report Group'))
-                           select n.nodeid, ivgval.field1_fk permissiongroupid
-                             from nodes n
-                             join pval ivgval on (ivgval.nodeid = n.nodeid and ivgval.propname = 'Inventory Group')
-                            where n.nodetypeid = " + NodeTypeId + @"
-                        union
                             select n.nodeid, ivgval.field1_fk permissiongroupid
                              from nodes n
                              join pval locval on (locval.nodeid = n.nodeid and locval.propname = 'Location')
+                                and locval.nodetypeid in (select nodetypeid from nodetypes where objectclassid in
+                                    (select objectclassid from object_class where objectclass = '" + CswEnumNbtObjectClass.ContainerClass + @"') )
                              join pval ivgval on (ivgval.nodeid = locval.field1_fk and ivgval.propname = 'Inventory Group')
                             where n.nodetypeid = " + NodeTypeId + @" 
                               and not exists (select nodeid from pval x
