@@ -30,6 +30,7 @@ namespace ChemSW.Nbt.Requesting
                 case CswNbtObjClassRequestItem.PropertyName.NewMaterialTradename:
                 case CswNbtObjClassRequestItem.PropertyName.NewMaterialSupplier:
                 case CswNbtObjClassRequestItem.PropertyName.NewMaterialPartNo:
+                case CswNbtObjClassRequestItem.PropertyName.GoodsReceived:
                 case CswNbtObjClassRequestItem.PropertyName.ReceiptLotToDispense:
                 case CswNbtObjClassRequestItem.PropertyName.ReceiptLotsReceived:
                     Prop.setHidden( true, SaveToDb: false );

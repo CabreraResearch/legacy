@@ -24,6 +24,9 @@ namespace ChemSW.Nbt.Requesting
                 case CswNbtObjClassRequestItem.PropertyName.TotalMoved:
                     Prop.setHidden( true, SaveToDb: false );
                     break;
+                //This is a special case that lets the Request-fulfiller choose an existing Material for MaterialCreate Request Items.
+                //We may consider an alternative way to choose said Material in the future.
+                //If and when that day comes, remove this (and other related) logic and make Material ServerManaged.
                 case CswNbtObjClassRequestItem.PropertyName.Material:
                     Prop.setHidden( _RequestItem.Status.Value == CswNbtObjClassRequestItem.Statuses.Pending, SaveToDb: false );
                     break;

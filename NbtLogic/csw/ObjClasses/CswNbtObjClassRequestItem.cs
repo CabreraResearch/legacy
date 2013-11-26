@@ -546,7 +546,7 @@ namespace ChemSW.Nbt.ObjClasses
                                     ButtonData.Data["state"]["request"]["materialid"] = ( Material.RelatedNodeId ?? new CswPrimaryKey() ).ToString();
                                     ButtonData.Data["success"] = true;
                                 break;
-                            case FulfillMenu.Order://TODO - Implement Ordering (and test this:)
+                            case FulfillMenu.Order://TODO - Case 31271 - Implement Ordering for Realz
                                 ButtonData.Action = CswEnumNbtButtonAction.editprop;
                                 ButtonData.Data["nodeid"] = NodeId.ToString();
                                 CswPropIdAttr OrdIdAttr = new CswPropIdAttr( Node, ExternalOrderNumber.NodeTypeProp );
@@ -594,7 +594,6 @@ namespace ChemSW.Nbt.ObjClasses
                                 //ButtonData.Data["sizeid"] = Size.RelatedNodeId.ToString();
                                 ButtonData.Data["location"] = Location.Gestalt;
                                 break;
-                            //TODO - Case 27697 - for move and Dispose, search for other requests with the same container/location and mark them as complete
                             case FulfillMenu.MoveContainer:
                                 ButtonData.Action = CswEnumNbtButtonAction.refresh;
                                 ContainerNode = _CswNbtResources.Nodes.GetNode( Container.RelatedNodeId );
@@ -648,10 +647,8 @@ namespace ChemSW.Nbt.ObjClasses
             //This loop is a bit expensive - perhaps revisit later and come up with a better way to invoke this hide logic
             foreach( CswNbtNodePropWrapper Prop in Node.Properties )
             {
-                Prop.SetOnBeforeRender( TypeDef.setPropUIVisibility );
+                Prop.SetOnBeforeRender( TypeDef.setUIVisibility );
             }
-            //TODO - hide requestor/priority/totaldispensed/totalmoved if pending
-            //TODO - if not pending, make invGrp/loc/quantity/size/sizecount/new material props readonly
             RecurringFrequency.SetOnBeforeRender( _hideRecurringProps );
             NextReorderDate.SetOnBeforeRender( _hideRecurringProps );
             //This can't be done in OnBeforeRender because Search ignores it
@@ -722,6 +719,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
+        //TODO - This updates the Cart Count when creating the temp - we should really change this so it only increments after PromoteTempToReal
         private void _updateCartCounts( Int32 Incrementer = 1 )
         {
             switch( Status.Value )
@@ -817,7 +815,6 @@ namespace ChemSW.Nbt.ObjClasses
                 Type.Value = Types.MaterialBulk;
                 FulfillmentHistory.AddComment( "Selected existing Material: " + CswNbtNode.getNodeLink( Material.RelatedNodeId, Material.CachedNodeName ) );
             }
-            //TODO - filter ReceiptLotsToDispense by Material (if not EP)
         }
         public CswNbtNodePropRelationship Container { get { return _CswNbtNode.Properties[PropertyName.Container]; } }
         //Bulk Request Properties (all Request Items except Move/Dispose/Size use Bulk)
