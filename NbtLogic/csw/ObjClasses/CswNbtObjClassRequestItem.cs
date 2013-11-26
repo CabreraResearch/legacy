@@ -589,7 +589,7 @@ namespace ChemSW.Nbt.ObjClasses
                                 break;
                             case FulfillMenu.MoveContainers:
                                 ButtonData.Action = CswEnumNbtButtonAction.move;
-                                //TODO - add type-specific properties (EP, Material Size, Source Container)
+                                //TODO - see if we need these propertes (or others) depending on the Request Type
                                 //ButtonData.Data["title"] = "Fulfill Request for " + SizeCount.Value + " x " + Size.Gestalt + " of " + Material.Gestalt;
                                 //ButtonData.Data["sizeid"] = Size.RelatedNodeId.ToString();
                                 ButtonData.Data["location"] = Location.Gestalt;
@@ -805,7 +805,6 @@ namespace ChemSW.Nbt.ObjClasses
         {
             //TODO - Case 31176 - scope Material picklist to materials belonging to EP
             //TODO - remove this block once Case 31242 is complete
-            //TODO - filter ReceiptLotsToDispense by EP
         }
         public CswNbtNodePropRelationship Material { get { return _CswNbtNode.Properties[PropertyName.Material]; } }
         private void _onMaterialPropChange( CswNbtNodeProp Prop, bool Creating )

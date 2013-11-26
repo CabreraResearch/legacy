@@ -225,28 +225,24 @@ namespace ChemSW.Nbt.Actions
                     CswNbtViewRelationship ContainerRel = Ret.AddViewRelationship( ContainerOc, true );
                     CswNbtViewProperty BarcodeVp = Ret.AddViewProperty( ContainerRel, ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Barcode ) );
                     
-                    //Filters to containers by material, EP or container
-                    CswNbtViewProperty MaterialVp = Ret.AddViewProperty( ContainerRel, ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Material ) );
-                    Ret.AddViewPropertyFilter( MaterialVp, SubFieldName: CswEnumNbtSubFieldName.NodeID, Value: TargetNode.NodeId.PrimaryKey.ToString() );
-                    MaterialVp.ShowInGrid = false;
-
-                    CswNbtViewProperty MissingVp = Ret.AddViewProperty( ContainerRel, ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Missing ) );
-                    Ret.AddViewPropertyFilter( MissingVp, FilterMode: CswEnumNbtFilterMode.NotEquals, Value: CswEnumTristate.True.ToString() );
-                    MissingVp.ShowInGrid = false;
-
-                    CswNbtViewProperty QuantityVp = Ret.AddViewProperty( ContainerRel, ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Quantity ) );
-                    Ret.AddViewPropertyFilter( QuantityVp, CswEnumNbtSubFieldName.Value, FilterMode: CswEnumNbtFilterMode.GreaterThan, Value: "0" );
-
-                    CswNbtViewProperty StatusVp = Ret.AddViewProperty( ContainerRel, ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Status ) );
-                    Ret.AddViewPropertyFilter( StatusVp, FilterMode: CswEnumNbtFilterMode.NotEquals, Value: CswEnumNbtContainerStatuses.Expired );
-                    StatusVp.ShowInGrid = false;
-
+                    //Filter Containers by Materials in Requested EP
+                    if( NodeAsRequestItem.Type.Value == CswNbtObjClassRequestItem.Types.EnterprisePart )
+                    {
+                        CswCommaDelimitedString EPMaterialPks = _getMaterialPKsForEP( NodeAsRequestItem.EnterprisePart.RelatedNodeId );
+                        Ret.AddViewPropertyAndFilter( ContainerRel, ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Material ), SubFieldName: CswEnumNbtSubFieldName.NodeID, FilterMode: CswEnumNbtFilterMode.In, Value: EPMaterialPks.ToString(), ShowInGrid: false );
+                    }
+                    else//Filters Containers by Requested Material
+                    {
+                        Ret.AddViewPropertyAndFilter( ContainerRel, ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Material ), SubFieldName: CswEnumNbtSubFieldName.NodeID, Value: TargetNode.NodeId.PrimaryKey.ToString(), ShowInGrid: false );
+                    }
+                    Ret.AddViewPropertyAndFilter( ContainerRel, ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Missing ), FilterMode: CswEnumNbtFilterMode.NotEquals, Value: CswEnumTristate.True, ShowInGrid: false );
+                    Ret.AddViewPropertyAndFilter( ContainerRel, ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Quantity ), SubFieldName: CswEnumNbtSubFieldName.Value, FilterMode: CswEnumNbtFilterMode.GreaterThan, Value: "0" );
+                    Ret.AddViewPropertyAndFilter( ContainerRel, ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Status ), FilterMode: CswEnumNbtFilterMode.NotEquals, Value: CswEnumNbtContainerStatuses.Expired, ShowInGrid: false );
                     Ret.AddViewProperty( ContainerRel, ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Location ) );
 
                     CswNbtMetaDataObjectClass LocationOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.LocationClass );
                     CswNbtMetaDataObjectClassProp InventoryGroupOcp = LocationOc.getObjectClassProp( CswNbtObjClassLocation.PropertyName.InventoryGroup );
                     CswNbtViewRelationship LocationVr = Ret.AddViewRelationship( ContainerRel, CswEnumNbtViewPropOwnerType.First, ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Location ), IncludeDefaultFilters: true );
-
                     if( CswTools.IsPrimaryKey( NodeAsRequestItem.InventoryGroup.RelatedNodeId ) )//Filter by Inventory Group
                     {
                         Ret.AddViewPropertyAndFilter( LocationVr, InventoryGroupOcp, SubFieldName: CswEnumNbtSubFieldName.NodeID, Value: NodeAsRequestItem.InventoryGroup.RelatedNodeId.PrimaryKey.ToString(), ShowInGrid: false );
@@ -260,13 +256,44 @@ namespace ChemSW.Nbt.Actions
                     {
                         Ret.AddViewPropertyAndFilter( ContainerRel, ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Size ), SubFieldName: CswEnumNbtSubFieldName.NodeID, Value: NodeAsRequestItem.Size.RelatedNodeId.PrimaryKey.ToString(), ShowInGrid: false );
                     }
-
-                    //TODO - Case 31176 - if Request Item type is EP, filter containers view by material's EP
                 }
             }
             return Ret;
         }
 
         #endregion Public Methods
+
+        #region Private Methods
+
+        private CswCommaDelimitedString _getMaterialPKsForEP( CswPrimaryKey EPId )
+        {
+            CswCommaDelimitedString EPMaterialPks = new CswCommaDelimitedString();
+            CswNbtMetaDataObjectClass ManufacturerEquivalentPartOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ManufacturerEquivalentPartClass );
+            CswNbtMetaDataObjectClassProp EPOCP = ManufacturerEquivalentPartOC.getObjectClassProp( CswNbtObjClassManufacturerEquivalentPart.PropertyName.EnterprisePart );
+            CswNbtMetaDataObjectClassProp MaterialOCP = ManufacturerEquivalentPartOC.getObjectClassProp( CswNbtObjClassManufacturerEquivalentPart.PropertyName.Material );
+
+            CswNbtView EPMatsView = new CswNbtView( _CswNbtResources );
+            EPMatsView.ViewName = "Materials under " + EPId;
+            CswNbtViewRelationship MEPVR = EPMatsView.AddViewRelationship( ManufacturerEquivalentPartOC, false );
+            EPMatsView.AddViewPropertyAndFilter( MEPVR, EPOCP, SubFieldName: CswEnumNbtSubFieldName.NodeID, Value: EPId.PrimaryKey.ToString() );
+            CswNbtViewRelationship MatVR = EPMatsView.AddViewRelationship( MEPVR, CswEnumNbtViewPropOwnerType.First, MaterialOCP, false );
+
+            ICswNbtTree EPMatsTree = _CswNbtResources.Trees.getTreeFromView( EPMatsView, false, true, true );
+            if( EPMatsTree.getChildNodeCount() > 0 )
+            {
+                EPMatsTree.goToNthChild( 0 );//EP's MEPs
+                for( int i = 0; i < EPMatsTree.getChildNodeCount(); i++ )
+                {
+                    EPMatsTree.goToNthChild( 0 );//MEPs Materials
+                    EPMaterialPks.Add( EPMatsTree.getNodeIdForCurrentPosition().PrimaryKey.ToString() );
+                    EPMatsTree.goToParentNode();
+                }
+                EPMatsTree.goToParentNode();
+            }
+
+            return EPMaterialPks;
+        }
+
+        #endregion Private Methods
     }
 }
