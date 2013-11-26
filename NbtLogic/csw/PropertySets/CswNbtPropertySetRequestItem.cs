@@ -324,11 +324,11 @@ namespace ChemSW.Nbt.ObjClasses
         }//afterWriteNode()
 
 
-        public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
+        public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false, bool ValidateRequiredRelationships = true )
         {
             _updateCartCounts( IsDelete: true );
             beforePropertySetDeleteNode();
-            CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes );
+            CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes, ValidateRequiredRelationships );
 
         }//beforeDeleteNode()
 
@@ -430,26 +430,26 @@ namespace ChemSW.Nbt.ObjClasses
             //if( false == HasBeenTouched )
             //{
             //    HasBeenTouched = true;
-                switch( Status.Value )
-                {
-                    case Statuses.Pending:
-                        UserCache.CartCounts.PendingRequestItems += Incrementer;
-                        UserCache.update( _CswNbtResources );
-                        break;
-                    case Statuses.Submitted:
-                        UserCache.CartCounts.SubmittedRequestItems += Incrementer;
-                        UserCache.update( _CswNbtResources );
-                        break;
-                }
-
-                //If the Item is moving from Pending to something else
-                string LastStatus = Status.GetOriginalPropRowValue();
-                if( Status.Value != Statuses.Pending &&
-                    LastStatus == Statuses.Pending )
-                {
-                    UserCache.CartCounts.PendingRequestItems -= 1;
+            switch( Status.Value )
+            {
+                case Statuses.Pending:
+                    UserCache.CartCounts.PendingRequestItems += Incrementer;
                     UserCache.update( _CswNbtResources );
-                }
+                    break;
+                case Statuses.Submitted:
+                    UserCache.CartCounts.SubmittedRequestItems += Incrementer;
+                    UserCache.update( _CswNbtResources );
+                    break;
+            }
+
+            //If the Item is moving from Pending to something else
+            string LastStatus = Status.GetOriginalPropRowValue();
+            if( Status.Value != Statuses.Pending &&
+                LastStatus == Statuses.Pending )
+            {
+                UserCache.CartCounts.PendingRequestItems -= 1;
+                UserCache.update( _CswNbtResources );
+            }
             //}
             //}
         }

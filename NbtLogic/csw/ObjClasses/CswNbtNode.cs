@@ -469,7 +469,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         /// <param name="DeleteAllRequiredRelatedNodes"></param>
         /// <param name="OverridePermissions">For internal use only. When set to true, ignores user permissions.</param>
-        public void delete( bool DeleteAllRequiredRelatedNodes = false, bool OverridePermissions = false )
+        public void delete( bool DeleteAllRequiredRelatedNodes = false, bool OverridePermissions = false, bool ValidateRequiredRelationships = true )
         {
             if( null == OnRequestDeleteNode )
             {
@@ -483,7 +483,7 @@ namespace ChemSW.Nbt.ObjClasses
 
             if( null != _CswNbtObjClass )
             {
-                _CswNbtObjClass.beforeDeleteNode( DeleteAllRequiredRelatedNodes: DeleteAllRequiredRelatedNodes );
+                _CswNbtObjClass.beforeDeleteNode( DeleteAllRequiredRelatedNodes: DeleteAllRequiredRelatedNodes, ValidateRequiredRelationships: ValidateRequiredRelationships );
             }
 
             OnRequestDeleteNode( this );

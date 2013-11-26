@@ -91,7 +91,7 @@ namespace ChemSW.Nbt.ObjClasses
         public abstract void afterCreateNode();
         public abstract void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation, bool Creating );
         public abstract void afterWriteNode( bool Creating );
-        public abstract void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false );
+        public abstract void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false, bool ValidateRequiredRelationships = true );
         public abstract void afterDeleteNode();
 
         public void triggerAfterPopulateProps()

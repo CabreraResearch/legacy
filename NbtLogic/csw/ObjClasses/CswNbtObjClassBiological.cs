@@ -9,7 +9,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public new sealed class PropertyName : CswNbtObjClass.PropertyName
         {
-            
+
         }
 
         public CswNbtObjClassBiological( CswNbtResources CswNbtResources, CswNbtNode Node )
@@ -58,9 +58,9 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.afterWriteNode( Creating );
         }//afterWriteNode()
 
-        public override void beforeDeleteNode(bool DeleteAllRequiredRelatedNodes = false)
+        public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false, bool ValidateRequiredRelationships = true )
         {
-            _CswNbtObjClassDefault.beforeDeleteNode(DeleteAllRequiredRelatedNodes);
+            _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes, ValidateRequiredRelationships );
 
         }//beforeDeleteNode()
 
@@ -81,9 +81,9 @@ namespace ChemSW.Nbt.ObjClasses
 
         protected override bool onButtonClick( NbtButtonData ButtonData )
         {
-            
-            
-            
+
+
+
             if( null != ButtonData && null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
             return true;
         }
