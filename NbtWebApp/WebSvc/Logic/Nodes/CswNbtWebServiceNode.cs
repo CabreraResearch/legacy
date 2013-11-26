@@ -77,7 +77,7 @@ namespace ChemSW.Nbt.WebServices
 
         public static void getCopyData( ICswResources _CswResources, CopyDataReturn Copy, CopyDataRequest Request )
         {
-            CswNbtResources _CswNbtResources = ( CswNbtResources ) _CswResources;
+            CswNbtResources _CswNbtResources = (CswNbtResources) _CswResources;
             //If we get any more copy types in the future, extract them out into their own classes and instantiate them via factory
             #region Create_Material Copy Data
 
@@ -94,10 +94,10 @@ namespace ChemSW.Nbt.WebServices
                         CswNbtPropertySetMaterial MaterialCopy = OriginalMaterial.CopyNode();
                         Copy.Data.Create_Material = new CswNbtWebServiceC3Search.C3CreateMaterialResponse
                         {
-                            actionname = CswEnumNbtActionName.Create_Material, 
+                            actionname = CswEnumNbtActionName.Create_Material,
                             state = new CswNbtWebServiceC3Search.C3CreateMaterialResponse.State
                             {
-                                materialId = MaterialCopy.NodeId.ToString(), 
+                                materialId = MaterialCopy.NodeId.ToString(),
                                 materialType = new CswNbtWebServiceC3Search.C3CreateMaterialResponse.State.MaterialType
                                 {
                                     name = MaterialCopy.NodeType.NodeTypeName,
@@ -172,7 +172,7 @@ namespace ChemSW.Nbt.WebServices
                                 {
                                     value = SizeNode.Dispensable.Checked
                                 }
-                            });
+                            } );
                             SizesTree.goToParentNode();
                         }
 
@@ -734,6 +734,46 @@ namespace ChemSW.Nbt.WebServices
         }
 
         #endregion Favorite
+
+        #region Merge
+
+        [DataContract]
+        public class MergeInfoRequest
+        {
+            [DataMember]
+            public string NodeId1 = string.Empty;
+            [DataMember]
+            public string NodeId2 = string.Empty;
+        }
+
+        [DataContract]
+        public class MergeInfoReturn : CswWebSvcReturn
+        {
+            [DataMember]
+            public CswNbtActMerge.MergeInfoData Data;
+        }
+
+        public static void getMergeInfo( ICswResources _CswResources, MergeInfoReturn Return, MergeInfoRequest Request )
+        {
+            CswNbtActMerge Merge = new CswNbtActMerge( (CswNbtResources) _CswResources );
+            Return.Data = Merge.getMergeInfo( CswConvert.ToPrimaryKey( Request.NodeId1 ), CswConvert.ToPrimaryKey( Request.NodeId2 ) );
+        }
+
+        [DataContract]
+        public class MergeChoicesRequest
+        {
+            [DataMember]
+            public CswNbtActMerge.MergeInfoData Choices = null;
+        }
+
+        public static void applyMergeChoices( ICswResources _CswResources, MergeInfoReturn Return, MergeChoicesRequest Request )
+        {
+            CswNbtActMerge Merge = new CswNbtActMerge( (CswNbtResources) _CswResources );
+            Return.Data = Merge.applyMergeChoices( Request.Choices );
+        }
+
+        #endregion Merge
+
 
     } // class CswNbtWebServiceNode
 

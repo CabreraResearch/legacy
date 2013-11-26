@@ -377,8 +377,6 @@ namespace ChemSW.Nbt
             _NodeHash.Remove( new NodeHashKey( Node.NodeId, Node.NodeSpecies ) );
         }
 
-        public delegate void AfterMakeNode( CswNbtNode NewNode );
-
         /// <summary>
         /// Create a new, fresh, empty Node from a node type.  Properties are filled in, but Property Values are not. !!POSTS CHANGES!!
         /// </summary>
@@ -387,7 +385,7 @@ namespace ChemSW.Nbt
         /// <param name="OnAfterMakeNode">Event that occurs after creating the node but before saving it for the first time</param>
         /// <param name="OverrideUniqueValidation">If true, allow this node to be created even if it violates uniqueness rules</param>
         /// <returns>The new node. !!POSTS CHANGES!!</returns>
-        public CswNbtNode makeNodeFromNodeTypeId( Int32 NodeTypeId, AfterMakeNode OnAfterMakeNode = null, bool IsTemp = false, bool OverrideUniqueValidation = false )
+        public CswNbtNode makeNodeFromNodeTypeId( Int32 NodeTypeId, Action<CswNbtNode> OnAfterMakeNode = null, bool IsTemp = false, bool OverrideUniqueValidation = false )
         {
             CswNbtNode Node = _CswNbtNodeFactory.make( CswEnumNbtNodeSpecies.Plain, null, NodeTypeId, _NodeHash.Count, null, IsTemp: true );  // temp here for auditing, but see below
             //Node.IsTemp = IsTemp;

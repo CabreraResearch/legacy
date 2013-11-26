@@ -652,7 +652,7 @@ namespace ChemSW.Nbt.Actions
                 CswNbtMetaDataNodeType RequestItemNt = ItemOc.getNodeTypes().FirstOrDefault();
                 CswNbtSdTabsAndProps PropsAction = new CswNbtSdTabsAndProps( _CswNbtResources );
 
-                CswNbtNodeCollection.AfterMakeNode After = delegate( CswNbtNode NewNode )
+                Action<CswNbtNode> After = delegate( CswNbtNode NewNode )
                 {
                     CswNbtPropertySetRequestItem RetAsRequestItem = NewNode;
                     if( null != getCurrentRequestNodeId() && null != Container )

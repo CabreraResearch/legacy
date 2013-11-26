@@ -300,7 +300,7 @@ namespace ChemSW.Nbt.ObjClasses
                             CswNbtActReceiving Act = new CswNbtActReceiving( _CswNbtResources, ObjectClass, NodeId );
                             _CswNbtResources.setAuditActionContext( CswEnumNbtActionName.Receiving );
 
-                            CswNbtNodeCollection.AfterMakeNode After = delegate( CswNbtNode NewNode )
+                            Action<CswNbtNode> After = delegate( CswNbtNode NewNode )
                                 {
                                     CswNbtObjClassContainer newContainer = NewNode;
                                     //Case 29436

@@ -2976,7 +2976,7 @@ namespace ChemSW.Nbt.WebServices
 
                 CswNbtMetaDataNodeType feedbackNT = _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( nodetypeid ) );
 
-                CswNbtNodeCollection.AfterMakeNode After = delegate( CswNbtNode NewNode )
+                Action<CswNbtNode> After = delegate( CswNbtNode NewNode )
                     {
                         CswNbtObjClassFeedback newFeedbackNode = NewNode;
                         //if we have an action this is all we want/need/care about

@@ -29,6 +29,7 @@
             searchTarget: null, //c3 addition
 
             compactResults: false,
+            suppressButtons: false,
             extraAction: null,
             extraActionIcon: Csw.enums.iconType.none,
             onExtraAction: null,  // function(nodeObj) {}
@@ -219,26 +220,26 @@
                     // Props
                     Csw.iterate(nodeObj.props, function (propObj) {
                         if (propObj.fieldtype === "Button") {
+                            if (false == Csw.bool(cswPrivate.suppressButtons)) {
+                                // Object Class Buttons
+                                propObj.size = 'small';
+                                propObj.nodeid = nodeid;
+                                propObj.tabState = propObj.tabState || {};
+                                propObj.tabState.nodeid = nodeid;
+                                propObj.tabState.tabid = tabid;
+                                propObj.tabid = tabid;
+                                propObj.name = propObj.propname;
+                                propObj.EditMode = Csw.enums.editMode.Table;
+                                propObj.onRefresh = cswPrivate.onEditNode;
 
-                            // Object Class Buttons
-                            propObj.size = 'small';
-                            propObj.nodeid = nodeid;
-                            propObj.tabState = propObj.tabState || {};
-                            propObj.tabState.nodeid = nodeid;
-                            propObj.tabState.tabid = tabid;
-                            propObj.tabid = tabid;
-                            propObj.name = propObj.propname;
-                            propObj.EditMode = Csw.enums.editMode.Table;
-                            propObj.onRefresh = cswPrivate.onEditNode;
+                                var width = (propObj.propData.values.selectedText.length > propObj.name.length ? propObj.propData.values.selectedText.length * 8 + 5 : propObj.name.length * 6 + 14);
+                                var buttonDiv = btnTable.cell(1, btncol).div().css({ 'width': width });
+                                var fieldOpt = Csw.nbt.propertyOption(propObj, buttonDiv);
 
-                            var width = (propObj.propData.values.selectedText.length > propObj.name.length ? propObj.propData.values.selectedText.length * 8 + 5 : propObj.name.length * 6 + 14);
-                            var buttonDiv = btnTable.cell(1, btncol).div().css({ 'width': width });
-                            var fieldOpt = Csw.nbt.propertyOption(propObj, buttonDiv);
+                                Csw.nbt.property(fieldOpt);
 
-                            Csw.nbt.property(fieldOpt);
-
-                            btncol += 1;
-
+                                btncol += 1;
+                            }
                         } else {
                             var propCell = texttable.cell(Csw.number(propObj.row, row), Csw.number(propObj.column, 1));
                             var cssclass = 'searchResult';
@@ -311,7 +312,7 @@
                     } // if (nodeObj.allowview || nodeObj.allowedit) 
 
                     //Delete Button
-                    if (Csw.bool(cswPrivate.allowDelete) && Csw.bool(nodeObj.allowdelete)) {
+                    if (false == Csw.bool(cswPrivate.suppressButtons) && Csw.bool(cswPrivate.allowDelete) && Csw.bool(nodeObj.allowdelete)) {
                         var deleteBtn = btnTable.cell(1, btncol).buttonExt({
                             name: Csw.delimitedString(cswPrivate.name, nodeid, 'morebtn').string('_'),
                             width: ('Delete'.length * 8) + 16,
@@ -333,7 +334,7 @@
                     } // if (nodeObj.allowdelete)
 
                     //Import Button
-                    if (Csw.bool(cswPrivate.chemCatConfig.allowImport) && Csw.bool(nodeObj.allowimport)) {
+                    if (false == Csw.bool(cswPrivate.suppressButtons) && Csw.bool(cswPrivate.chemCatConfig.allowImport) && Csw.bool(nodeObj.allowimport)) {
 
                         var importMenuItems = [];
                         Csw.each(cswPrivate.chemCatConfig.importMenuItems, function (nt) {

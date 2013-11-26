@@ -1454,3 +1454,58 @@ ul li div {
     right: 1px;
     height: 12px;
 }
+
+
+
+.MergeTable {
+    border-bottom: 1px solid black;
+}
+.MergeTable_Cell {
+    padding: 2px;
+}
+.MergeTable_Header {
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center !Important;
+    border-bottom: 1px solid black;
+}
+.MergeTable_TypeCell {
+    font-size: 18px;
+    font-weight: bold;
+    text-align: left;
+    border-bottom: 1px solid black;
+}
+.MergeTable_LabelCell {
+    text-align: right;
+    font-weight: bold;
+    border-right: 1px solid black;
+    border-left: 1px solid black;
+}
+.MergeTable_PropLeftCell {
+    text-align: right;
+}
+.MergeTable_RadioLeftCell {
+}
+.MergeTable_RadioRightCell {
+}
+.MergeTable_PropRightCell {
+    border-right: 1px solid black;
+}
+.MergeTable_LabelCell_Even {
+    background-color: #dddddd;
+}
+.MergeTable_LabelCell_Odd {
+    background-color: #ffffff;
+}
+.MergeTable_LeftCell_Even {
+    background-color: #ddaa77;
+}
+.MergeTable_LeftCell_Odd {
+    background-color: #ffcc99;
+}
+.MergeTable_RightCell_Even {
+    background-color: #77ddaa;
+}
+.MergeTable_RightCell_Odd {
+    background-color: #99ffcc;
+}
