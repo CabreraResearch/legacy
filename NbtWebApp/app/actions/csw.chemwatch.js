@@ -40,6 +40,7 @@
                 width: '100%',
                 cellpadding: 3
             });
+            cswPrivate.stepOneTable = stepOneTable;
 
             // Supplier
             cswPrivate.supplierInput = stepOneTable.cell(1, 1).empty().css({ width: '275px' });
@@ -48,6 +49,14 @@
                 value: cswPrivate.OperationData.Supplier,
                 size: 30,
                 onChange: function (value) {
+                    
+                    // Clear steps two and three if they exist
+                    if (cswPrivate.stepTwoTable) {
+                        cswPrivate.stepTwoTable.empty();
+                    }
+                    if (cswPrivate.stepThreeTable) {
+                        cswPrivate.stepThreeTable.empty();
+                    }
 
                     Csw.ajaxWcf.post({
                         urlMethod: 'ChemWatch/GetMatchingSuppliers',
@@ -98,6 +107,12 @@
                 disabled: searchBtnEnabled,
                 disableOnClick: false,
                 onClick: function () {
+                    
+                    // Clear Step 3 (if it has been rendered)
+                    if (cswPrivate.stepThreeTable) {
+                        cswPrivate.stepThreeTable.empty();
+                    }
+
                     Csw.ajaxWcf.post({
                         urlMethod: 'ChemWatch/MaterialSearch',
                         data: {
@@ -126,6 +141,7 @@
                 width: '80%',
                 cellpadding: 5
             });
+            cswPrivate.stepTwoTable = stepTwoTable;
 
             stepTwoTable.cell(1, 1).div({
                 text: 'Matching Materials',
@@ -247,10 +263,11 @@
         };//makeStepTwo()
 
         cswPrivate.makeStepThree = function (gridData) {
-            var stepThreeTable = cswPublic.table.cell(3, 1).empty().table({
+             var stepThreeTable = cswPublic.table.cell(3, 1).empty().table({
                 width: '80%',
                 cellpadding: 5
-            });
+             });
+            cswPrivate.stepThreeTable = stepThreeTable;
 
             stepThreeTable.cell(1, 1).div({
                 text: 'Matching SDS Documents',
@@ -331,18 +348,8 @@
 
         function onView(recordData) {
             //TODO: What if the URL doesn't work? Should we show an error?
-            var action = 'Services/ChemWatch/GetSDSDocument';
-
-            var $form = $('<form method="GET" action="' + action + '"></form>').appendTo($('body'));
-            var form = Csw.literals.factory($form);
-
-            form.input({
-                name: 'FileName',
-                value: recordData.filename,
-            });
-
-            form.$.submit();
-            form.remove();
+            var url = 'Services/ChemWatch/GetSDSDocument' + '?' + 'filename=' + recordData.filename;
+            Csw.openPopup(url);
         };//onView()
 
         function makeMaterialSelect(table) {
@@ -403,7 +410,7 @@
                                     isButton: true,
                                     size: 18,
                                     onClick: function (event) {
-                                        Csw.tryExec(onView(), record.data);
+                                        Csw.tryExec(onView, record.data);
                                     }
                                 };
                                 previewCell.icon(iconopts);
