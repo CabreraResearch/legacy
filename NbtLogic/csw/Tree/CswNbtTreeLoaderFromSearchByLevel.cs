@@ -254,7 +254,7 @@ namespace ChemSW.Nbt
                                              where f.searchable = '1'
                                           ),
 
-                                pval as (select j.nodeid, op.propname, j.field1_fk, p.nodetypeid
+                                pval as (select j.nodeid, op.propname, j.field1_fk
                                            from object_class_props op
                                            join nodetype_props p on op.objectclasspropid = p.objectclasspropid
                                            join jct_nodes_props j on j.nodetypepropid = p.nodetypepropid
@@ -356,7 +356,7 @@ namespace ChemSW.Nbt
             string SQL = @"select n.nodeid, ivgval.field1_fk permissiongroupid
                              from nodes n
                              join pval locval on (locval.nodeid = n.nodeid and locval.propname = 'Location')
-                                and locval.nodetypeid in (select nodetypeid from nodetypes where objectclassid in
+                                and n.nodetypeid in (select nodetypeid from nodetypes where objectclassid in
                                     (select objectclassid from object_class where objectclass = '" + CswEnumNbtObjectClass.ContainerClass + @"') )
                              join pval ivgval on (ivgval.nodeid = locval.field1_fk and ivgval.propname = 'Inventory Group')
                          union
