@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.Security;
 using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.csw.Schema;
 
@@ -61,6 +63,21 @@ namespace ChemSW.Nbt.Schema
                     if( Prop.PropName != CswNbtObjClass.PropertyName.Save )
                     {
                         Prop.removeFromAllLayouts();
+                    }
+                }
+
+                //Give CRUD permissions to applicable Roles and Users
+                CswNbtMetaDataObjectClass RoleOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.RoleClass ); 
+                foreach( CswNbtObjClassRole RoleNode in RoleOC.getNodes( false, false, false, true ) )
+                {
+                    _CswNbtSchemaModTrnsctn.Permit.set( CswEnumNbtNodeTypePermission.View, RequestItemNT, RoleNode,
+                        RoleNode.Administrator.Checked == CswEnumTristate.True || RoleNode.Name.Text.Contains( "CISPro" ) );
+                    if( RoleNode.Administrator.Checked == CswEnumTristate.True || 
+                      ( RoleNode.Name.Text.Contains( "CISPro" ) && RoleNode.Name.Text != "CISPro_View_Only" ) )
+                    {
+                        _CswNbtSchemaModTrnsctn.Permit.set( CswEnumNbtNodeTypePermission.Edit, RequestItemNT, RoleNode, true );
+                        _CswNbtSchemaModTrnsctn.Permit.set( CswEnumNbtNodeTypePermission.Create, RequestItemNT, RoleNode, true );
+                        _CswNbtSchemaModTrnsctn.Permit.set( CswEnumNbtNodeTypePermission.Delete, RequestItemNT, RoleNode, true );
                     }
                 }
             }
