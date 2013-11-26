@@ -780,6 +780,10 @@ namespace ChemSW.Nbt.MetaData
                     NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Add, NewProp.NodeTypeId, NewProp, true, FirstTab.TabId, Int32.MaxValue, 1 );
                     NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, NewProp.NodeTypeId, NewProp, true, FirstTab.TabId, Int32.MaxValue, 1 );
                 }
+                else if( OCProp.PropName.Equals( CswNbtObjClass.PropertyName.LegacyId ) )//case 30969- Legacy Id is removed from all layouts by default
+                {
+                    NodeTypeLayout.removePropFromAllLayouts( NewProp );
+                }
                 else
                 {
                     NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, NewProp.NodeTypeId, NewProp, true, FirstTab.TabId, DisplayRow, 1 );
