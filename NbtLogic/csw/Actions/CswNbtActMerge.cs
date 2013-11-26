@@ -177,7 +177,7 @@ namespace ChemSW.Nbt.Actions
 
             // Find unique properties for this relationship's nodetype
             IEnumerable<CswNbtMetaDataNodeTypeProp> UniqueProps = RelationshipProp.getNodeType().getUniqueProps();
-            if( UniqueProps.Count() > 0 )
+            if( UniqueProps.Any() )
             {
                 // Create a view of nodes that point to the target node via this relationship
                 CswNbtView view = new CswNbtView( _CswNbtResources );
@@ -272,6 +272,50 @@ namespace ChemSW.Nbt.Actions
             return Choices;
         } // applyMergeChoices()
 
+
+        public CswNbtView finishMerge( MergeInfoData Choices )
+        {
+            CswNbtView view = new CswNbtView( _CswNbtResources );
+            CswNbtNode firstNodeResult = null;
+
+            foreach( MergeInfoData.MergeInfoNodePair nodePair in Choices.NodePairs )
+            {
+                CswNbtNode Node1 = _CswNbtResources.Nodes[nodePair.Node1Id];
+                CswNbtNode Node2 = _CswNbtResources.Nodes[nodePair.Node2Id];
+                CswNbtNode NodeResult = _CswNbtResources.Nodes[nodePair.NodeResultId];
+                if( null != NodeResult && null != Node1 && null != Node2 )
+                {
+                    // Store the first node merged to return
+                    if( null == firstNodeResult )
+                    {
+                        firstNodeResult = NodeResult;
+                    }
+
+                    // Promote result node from temp to real
+                    NodeResult.PromoteTempToReal( IsCreate: true, OverrideUniqueValidation: true );
+
+                    // Update any relationships to point to the new node
+                    foreach( MergeInfoData.MergeInfoRelationship rel in nodePair.Relationships )
+                    {
+                        CswNbtNode relNode = _CswNbtResources.Nodes[rel.NodeId];
+                        relNode.Properties[rel.NodeTypePropId].AsRelationship.RelatedNodeId = NodeResult.NodeId;
+                        relNode.postChanges( ForceUpdate: false, IsCopy: false, OverrideUniqueValidation: true );
+                    }
+
+                    // Delete merged nodes
+                    Node1.delete( DeleteAllRequiredRelatedNodes: false, OverridePermissions: true, ValidateRequiredRelationships: false );
+                    Node2.delete( DeleteAllRequiredRelatedNodes: false, OverridePermissions: true, ValidateRequiredRelationships: false );
+
+                } // if( null != Node1 && null != Node2 )
+            } // foreach( MergeInfoData.MergeInfoNodePair nodePair in Choices.NodePairs )
+
+            // Return a view of the first merged node
+            if( null != firstNodeResult )
+            {
+                view = firstNodeResult.getViewOfNode( includeDefaultFilters: false );
+            }
+            return view;
+        } // finishMerge()
 
     }
 }

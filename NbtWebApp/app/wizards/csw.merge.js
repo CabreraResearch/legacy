@@ -327,7 +327,16 @@
         //#region Finish
         cswPrivate.finalize = function () {
             cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
-
+            
+            Csw.ajaxWcf.post({
+                urlMethod: 'Nodes/finishMerge',
+                data: {
+                    Choices: cswPrivate.mergeData
+                },
+                success: function(data) {
+                    Csw.tryExec(cswPrivate.onFinish, data.viewid);
+                } // success()
+            }); // ajax
         };
         //#endregion Finish
 

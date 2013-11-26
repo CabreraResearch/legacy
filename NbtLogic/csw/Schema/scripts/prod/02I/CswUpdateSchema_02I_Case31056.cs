@@ -31,7 +31,9 @@ namespace ChemSW.Nbt.Schema
             // Create new action 'Merge'
             _CswNbtSchemaModTrnsctn.createAction( CswEnumNbtActionName.Merge, true, "", "System" );
 
+            #region Debug test data
             // Some debug test data (TODO: REMOVE ME!)
+
             CswNbtMetaDataNodeType ChemicalNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Chemical" );
             CswNbtMetaDataNodeType SizeNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Size" );
             CswNbtMetaDataNodeType ContainerNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Container" );
@@ -85,7 +87,7 @@ namespace ChemSW.Nbt.Schema
                 {
                     CswNbtObjClassContainer container = node;
                     container.Material.RelatedNodeId = chem1.NodeId;
-                    container.Size.RelatedNodeId = size1.NodeId; 
+                    container.Size.RelatedNodeId = size1.NodeId;
                     container.Barcode.setBarcodeValueOverride( "C500051", false );
                     container.Quantity.Quantity = 101;
                     container.Quantity.UnitId = new CswPrimaryKey( "nodes", 26744 ); // kg
@@ -99,6 +101,18 @@ namespace ChemSW.Nbt.Schema
                     container.Quantity.Quantity = 102;
                     container.Quantity.UnitId = new CswPrimaryKey( "nodes", 26744 ); // kg
                 } );
+
+            CswNbtNode container3 = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( ContainerNT.NodeTypeId, delegate( CswNbtNode node )
+                {
+                    CswNbtObjClassContainer container = node;
+                    container.Material.RelatedNodeId = chem2.NodeId;
+                    container.Size.RelatedNodeId = size2.NodeId;
+                    container.Barcode.setBarcodeValueOverride( "C500052", false );
+                    container.Quantity.Quantity = 103;
+                    container.Quantity.UnitId = new CswPrimaryKey( "nodes", 26744 ); // kg
+                } );
+
+            #endregion Debug test data
 
         } // update()
 

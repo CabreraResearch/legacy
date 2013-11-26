@@ -753,12 +753,6 @@ namespace ChemSW.Nbt.WebServices
             public CswNbtActMerge.MergeInfoData Data;
         }
 
-        public static void getMergeInfo( ICswResources _CswResources, MergeInfoReturn Return, MergeInfoRequest Request )
-        {
-            CswNbtActMerge Merge = new CswNbtActMerge( (CswNbtResources) _CswResources );
-            Return.Data = Merge.getMergeInfo( CswConvert.ToPrimaryKey( Request.NodeId1 ), CswConvert.ToPrimaryKey( Request.NodeId2 ) );
-        }
-
         [DataContract]
         public class MergeChoicesRequest
         {
@@ -766,10 +760,34 @@ namespace ChemSW.Nbt.WebServices
             public CswNbtActMerge.MergeInfoData Choices = null;
         }
 
-        public static void applyMergeChoices( ICswResources _CswResources, MergeInfoReturn Return, MergeChoicesRequest Request )
+        [DataContract]
+        public class MergeFinishReturn : CswWebSvcReturn
         {
-            CswNbtActMerge Merge = new CswNbtActMerge( (CswNbtResources) _CswResources );
+            [DataMember]
+            public string ViewId;
+        }
+
+
+        public static void getMergeInfo( ICswResources CswResources, MergeInfoReturn Return, MergeInfoRequest Request )
+        {
+            CswNbtActMerge Merge = new CswNbtActMerge( (CswNbtResources) CswResources );
+            Return.Data = Merge.getMergeInfo( CswConvert.ToPrimaryKey( Request.NodeId1 ), CswConvert.ToPrimaryKey( Request.NodeId2 ) );
+        }
+
+        public static void applyMergeChoices( ICswResources CswResources, MergeInfoReturn Return, MergeChoicesRequest Request )
+        {
+            CswNbtActMerge Merge = new CswNbtActMerge( (CswNbtResources) CswResources );
             Return.Data = Merge.applyMergeChoices( Request.Choices );
+        }
+
+        public static void finishMerge( ICswResources CswResources, MergeFinishReturn Return, MergeChoicesRequest Request )
+        {
+            CswNbtResources NbtResources = (CswNbtResources) CswResources;
+
+            CswNbtActMerge Merge = new CswNbtActMerge( NbtResources );
+            CswNbtView view = Merge.finishMerge( Request.Choices );
+            view.SaveToCache( IncludeInQuickLaunch: false );
+            Return.ViewId = view.SessionViewId.ToString();
         }
 
         #endregion Merge
