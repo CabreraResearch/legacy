@@ -41,7 +41,7 @@ namespace ChemSW.Nbt.WebServices
         }
 
         [DataContract]
-        public class ImportStatusRequest
+        public class JobRequest
         {
             [DataMember( IsRequired = true )]
             [Description( "Job Id" )]
@@ -97,7 +97,15 @@ namespace ChemSW.Nbt.WebServices
                 [DataMember( IsRequired = true )]
                 [Description( "End Date, if available" )]
                 public DateTime DateEnded;
-                
+
+                [DataMember( IsRequired = true )]
+                [Description( "Whether the import is complete" )]
+                public bool Completed
+                {
+                    get { return ( DateTime.MinValue != DateEnded ); }
+                    set { }
+                }
+
                 [DataMember( IsRequired = true )]
                 [Description( "Number of pending items processed" )]
                 public Int32 ItemsDone;
@@ -132,8 +140,8 @@ namespace ChemSW.Nbt.WebServices
         [DataContract]
         public class ImportBindingsReturn : CswWebSvcReturn
         {
-            [DataMember( IsRequired = true )] 
-            [Description( "Information about import bindings" )] 
+            [DataMember( IsRequired = true )]
+            [Description( "Information about import bindings" )]
             public ImportBindingReturnData Data = new ImportBindingReturnData();
             public class ImportBindingReturnData
             {
