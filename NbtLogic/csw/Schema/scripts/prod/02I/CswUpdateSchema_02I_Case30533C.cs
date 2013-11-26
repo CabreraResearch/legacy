@@ -182,8 +182,8 @@ namespace ChemSW.Nbt.Schema
             LocationVP.Width = 40;
             CswNbtViewProperty InventoryGroupVP = SubmittedRequestsView.AddViewProperty( RootRel, RequestItemOC.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.InventoryGroup ), 4 );
             InventoryGroupVP.Width = 20;
-            SubmittedRequestsView.AddViewPropertyAndFilter( RootRel, RequestItemOC.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.RequestedFor ),  ShowAtRuntime: true );
-            SubmittedRequestsView.AddViewPropertyAndFilter( RootRel, RequestItemOC.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Requestor ), ShowAtRuntime: true );
+            SubmittedRequestsView.AddViewPropertyAndFilter( RootRel, RequestItemOC.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.RequestedFor ), "me", ShowAtRuntime: true );
+            SubmittedRequestsView.AddViewPropertyAndFilter( RootRel, RequestItemOC.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Requestor ), "me", ShowAtRuntime: true );
             SubmittedRequestsView.AddViewPropertyAndFilter( RootRel, RequestItemOC.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Status ), CswNbtObjClassRequestItem.Statuses.Submitted, ShowInGrid: false, ShowAtRuntime: true );
             SubmittedRequestsView.save();
 
