@@ -41,6 +41,7 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClass ContainerOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerClass );
             CswNbtMetaDataObjectClass SizeOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.SizeClass );
             CswNbtMetaDataObjectClass ReceiptLotOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.ReceiptLotClass );
+            CswNbtMetaDataObjectClass ContDispTransOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerDispenseTransactionClass );
             CswNbtMetaDataObjectClass RequestItemOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestItemClass );
             if( null == RequestItemOC )
             {
@@ -359,11 +360,19 @@ namespace ChemSW.Nbt.Schema
                 CswNbtMetaDataObjectClassProp ReceiptLotsReceivedOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( RequestItemOC, new CswNbtWcfMetaDataModel.ObjectClassProp
                 {
                     PropName = CswNbtObjClassRequestItem.PropertyName.ReceiptLotsReceived,
-                    FieldType = CswEnumNbtFieldType.Grid
+                    FieldType = CswEnumNbtFieldType.Grid,
+                    Extended = "Link"
                 } );
+                #endregion MLM Properties
+
                 _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( RequestItemOC.ObjectClassId, "Request Item", "Requests" );
 
-                #endregion MLM Properties
+                #region Update FK Values
+
+                CswNbtMetaDataObjectClassProp CDTRequestItemOCP = ContDispTransOC.getObjectClassProp( CswNbtObjClassContainerDispenseTransaction.PropertyName.RequestItem );
+                _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( CDTRequestItemOCP, CswEnumNbtObjectClassPropAttributes.fkvalue, RequestItemOC.ObjectClassId );
+
+                #endregion Update FK Values
             }
         } // update()
 

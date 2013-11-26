@@ -1,4 +1,6 @@
-﻿using ChemSW.Nbt.MetaData;
+﻿using System;
+using System.Collections.Generic;
+using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.csw.Schema;
@@ -53,11 +55,6 @@ namespace ChemSW.Nbt.Schema
                 CswNbtMetaDataNodeTypeProp IsRecurringNTP = RequestItemNT.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestItem.PropertyName.IsRecurring );
                 IsRecurringNTP.Hidden = true;
 
-                //TODO - fill in ReceiptLots Received grid definition
-                //My Request History view
-                //Submitted Requests view
-                //Container: Submitted Requests grid view
-
                 //Remove all props from all layouts
                 foreach( CswNbtMetaDataNodeTypeProp Prop in RequestItemNT.getNodeTypeProps() )
                 {
@@ -72,6 +69,8 @@ namespace ChemSW.Nbt.Schema
             _updateEditLayout();
             _updatePreviewLayout();
             _updateTableLayout();
+
+            _updateRequestViews();
         } // update()
 
         private void _updateAddLayout()
@@ -90,6 +89,7 @@ namespace ChemSW.Nbt.Schema
             AddLayoutMgr.First.moveProp( Row: 10, Column: 1, PropName: CswNbtObjClassRequestItem.PropertyName.NeededBy );
             AddLayoutMgr.First.moveProp( Row: 11, Column: 1, PropName: CswNbtObjClassRequestItem.PropertyName.InventoryGroup );
             AddLayoutMgr.First.moveProp( Row: 12, Column: 1, PropName: CswNbtObjClassRequestItem.PropertyName.Location );
+            AddLayoutMgr.First.moveProp( Row: 13, Column: 1, PropName: CswNbtObjClassRequestItem.PropertyName.CertificationLevel );
         }
 
         private void _updateEditLayout()
@@ -132,6 +132,7 @@ namespace ChemSW.Nbt.Schema
             LayoutMgr.First.moveProp( Row: 13, Column: 2, PropName: CswNbtObjClassRequestItem.PropertyName.FulfillmentHistory );
 
             //Receipt Lots tab
+
             LayoutMgr["Receipt Lots"].copyProp( Row: 1, Column: 1, PropName: CswNbtObjClassRequestItem.PropertyName.GoodsReceived );
             LayoutMgr["Receipt Lots"].copyProp( Row: 2, Column: 1, PropName: CswNbtObjClassRequestItem.PropertyName.ReceiptLotToDispense );
             LayoutMgr["Receipt Lots"].copyProp( Row: 3, Column: 1, PropName: CswNbtObjClassRequestItem.PropertyName.ReceiptLotsReceived );
@@ -163,6 +164,98 @@ namespace ChemSW.Nbt.Schema
             TableLayoutMgr.First.moveProp( Row: 2, Column: 1, PropName: CswNbtObjClassRequestItem.PropertyName.ExternalOrderNumber );
             TableLayoutMgr.First.moveProp( Row: 3, Column: 1, PropName: CswNbtObjClassRequestItem.PropertyName.InventoryGroup );
             TableLayoutMgr.First.moveProp( Row: 4, Column: 1, PropName: CswNbtObjClassRequestItem.PropertyName.Fulfill );
+        }
+
+        private void _updateRequestViews()
+        {
+            CswNbtMetaDataObjectClass RequestItemOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestItemClass );
+            CswNbtView SubmittedRequestsView = _CswNbtSchemaModTrnsctn.restoreView( "Submitted Requests" ) ?? 
+                _CswNbtSchemaModTrnsctn.makeSafeView( "Submitted Requests", CswEnumNbtViewVisibility.Global );
+            SubmittedRequestsView.ViewMode = CswEnumNbtViewRenderingMode.Grid;
+            SubmittedRequestsView.Category = "Requests";
+            SubmittedRequestsView.Root.ChildRelationships.Clear();
+            CswNbtViewRelationship RootRel = SubmittedRequestsView.AddViewRelationship( RequestItemOC, false );
+            CswNbtViewProperty DescriptionVP = SubmittedRequestsView.AddViewProperty( RootRel, RequestItemOC.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Description ), 1 );
+            DescriptionVP.Width = 50;
+            SubmittedRequestsView.AddViewProperty( RootRel, RequestItemOC.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.NeededBy ), 2 );
+            CswNbtViewProperty LocationVP = SubmittedRequestsView.AddViewProperty( RootRel, RequestItemOC.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Location ), 3 );
+            LocationVP.Width = 40;
+            CswNbtViewProperty InventoryGroupVP = SubmittedRequestsView.AddViewProperty( RootRel, RequestItemOC.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.InventoryGroup ), 4 );
+            InventoryGroupVP.Width = 20;
+            SubmittedRequestsView.AddViewPropertyAndFilter( RootRel, RequestItemOC.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.RequestedFor ),  ShowAtRuntime: true );
+            SubmittedRequestsView.AddViewPropertyAndFilter( RootRel, RequestItemOC.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Requestor ), ShowAtRuntime: true );
+            SubmittedRequestsView.AddViewPropertyAndFilter( RootRel, RequestItemOC.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Status ), CswNbtObjClassRequestItem.Statuses.Submitted, ShowInGrid: false, ShowAtRuntime: true );
+            SubmittedRequestsView.save();
+
+            _makeGridView( CswEnumNbtObjectClass.RequestClass,
+                CswNbtObjClassRequest.PropertyName.RequestItems,
+                CswEnumNbtObjectClass.RequestItemClass,
+                CswNbtObjClassRequestItem.PropertyName.Request,
+                new List<string>
+                    {
+                        CswNbtObjClassRequestItem.PropertyName.Status,
+                        CswNbtObjClassRequestItem.PropertyName.Description,
+                        CswNbtObjClassRequestItem.PropertyName.NeededBy,
+                        CswNbtObjClassRequestItem.PropertyName.Location,
+                        CswNbtObjClassRequestItem.PropertyName.InventoryGroup,
+                        CswNbtObjClassRequestItem.PropertyName.RequestedFor,
+                        CswNbtObjClassRequestItem.PropertyName.ItemNumber
+                    }
+                );
+
+            _makeGridView( CswEnumNbtObjectClass.ContainerClass,
+                CswNbtObjClassContainer.PropertyName.SubmittedRequests,
+                CswEnumNbtObjectClass.RequestItemClass,
+                CswNbtObjClassRequestItem.PropertyName.Container,
+                new List<string>
+                    {
+                        CswNbtObjClassRequestItem.PropertyName.Status,
+                        CswNbtObjClassRequestItem.PropertyName.Description,
+                        CswNbtObjClassRequestItem.PropertyName.NeededBy,
+                        CswNbtObjClassRequestItem.PropertyName.InventoryGroup,
+                        CswNbtObjClassRequestItem.PropertyName.Requestor,
+                        CswNbtObjClassRequestItem.PropertyName.RequestedFor,
+                        CswNbtObjClassRequestItem.PropertyName.ItemNumber
+                    }
+                );
+
+            _makeGridView( CswEnumNbtObjectClass.RequestItemClass,
+                CswNbtObjClassRequestItem.PropertyName.ReceiptLotsReceived,
+                CswEnumNbtObjectClass.ReceiptLotClass,
+                CswNbtObjClassReceiptLot.PropertyName.RequestItem,
+                new List<string>
+                    {
+                        CswNbtObjClassReceiptLot.PropertyName.ExpirationDate,
+                        CswNbtObjClassReceiptLot.PropertyName.InvestigationNotes,
+                        CswNbtObjClassReceiptLot.PropertyName.Manufacturer,
+                        CswNbtObjClassReceiptLot.PropertyName.UnderInvestigation
+                    }
+                );
+        }
+
+        private void _makeGridView( string RootOCName, string RootGridOCPName, string RelOCName, string RelOCPName, List<String> RelOCPNames )
+        {
+            CswNbtMetaDataObjectClass RootOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( RootOCName );
+            CswNbtMetaDataObjectClass RelOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( RelOCName );
+            CswNbtMetaDataObjectClassProp GridOCP = RootOC.getObjectClassProp( RootGridOCPName );
+            CswNbtMetaDataObjectClassProp RelOCP = RelOC.getObjectClassProp( RelOCPName );
+            CswNbtView GridView = _CswNbtSchemaModTrnsctn.makeSafeView( RootGridOCPName, CswEnumNbtViewVisibility.Property );
+            GridView.ViewName = RootGridOCPName;
+            GridView.ViewMode = CswEnumNbtViewRenderingMode.Grid;
+            GridView.Root.ChildRelationships.Clear();
+            CswNbtViewRelationship RootRel = GridView.AddViewRelationship( RootOC, false );
+            CswNbtViewRelationship Rel = GridView.AddViewRelationship( RootRel, CswEnumNbtViewPropOwnerType.Second, RelOCP, true );
+            for( int i = 0; i < RelOCPNames.Count; i++ )
+            {
+                GridView.AddViewProperty( Rel, RelOC.getObjectClassProp( RelOCPNames[i] ), i + 1 );
+            }
+            GridView.save();
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( GridOCP, CswEnumNbtObjectClassPropAttributes.viewxml, GridView.ToString() );
+            foreach( CswNbtMetaDataNodeType RootNT in RootOC.getNodeTypes() )
+            {
+                CswNbtMetaDataNodeTypeProp GridNTP = RootNT.getNodeTypePropByObjectClassProp( GridOCP );
+                GridNTP.ViewId = GridView.ViewId;
+            }
         }
 
     }
