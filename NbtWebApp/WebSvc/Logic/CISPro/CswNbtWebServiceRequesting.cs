@@ -27,6 +27,7 @@ namespace ChemSW.Nbt.WebServices
 
         public JObject getRequestViewGrid( string SessionViewId )
         {
+            //It looks like we have one function that grabs any of the four grids in the Cart action, based on context... interesting.
             JObject Ret = new JObject();
 
             CswNbtSessionDataId SessionDataId = new CswNbtSessionDataId( SessionViewId );
@@ -48,13 +49,14 @@ namespace ChemSW.Nbt.WebServices
 
         #region WCF
 
+        //We shouldn't rely on UI Visibility logic to prevent non-CISPro Containers users for accessing Requesting WebServices
         private static CswNbtResources _validate( ICswResources CswResources )
         {
             CswNbtResources Ret = null;
             if( null != CswResources )
             {
                 Ret = (CswNbtResources) CswResources;
-                if( false == Ret.Modules.IsModuleEnabled( CswEnumNbtModuleName.CISPro ) )
+                if( false == Ret.Modules.IsModuleEnabled( CswEnumNbtModuleName.Containers ) )
                 {
                     throw new CswDniException( CswEnumErrorType.Error, "The CISPro module is required to complete this action.", "Attempted to use the Ordering service without the CISPro module." );
                 }
@@ -72,11 +74,11 @@ namespace ChemSW.Nbt.WebServices
         /// <summary>
         /// WCF method to get the NodeTypeId of the Request Material Create 
         /// </summary>
-        public static void getRequestMaterialCreate( ICswResources CswResources, CswNbtRequestDataModel.CswNbtRequestMaterialCreateReturn Ret, object Request )
+        public static void getRequestItemNodeType( ICswResources CswResources, CswNbtRequestDataModel.CswNbtRequestMaterialCreateReturn Ret, object Request )
         {
             CswNbtResources NbtResources = _validate( CswResources );
-            CswNbtMetaDataObjectClass RequestMaterialCreateOc = NbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestMaterialCreateClass );
-            CswNbtMetaDataNodeType FirstNodeType = RequestMaterialCreateOc.getLatestVersionNodeTypes().FirstOrDefault();
+            CswNbtMetaDataObjectClass RequestItemOC = NbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestItemClass );
+            CswNbtMetaDataNodeType FirstNodeType = RequestItemOC.getLatestVersionNodeTypes().FirstOrDefault();
             if( null != FirstNodeType )
             {
                 Ret.Data.NodeTypeId = FirstNodeType.NodeTypeId;
@@ -108,8 +110,10 @@ namespace ChemSW.Nbt.WebServices
         /// </summary>
         public static void createFavorite( ICswResources CswResources, CswNbtRequestDataModel.CswRequestReturn Ret, CswNbtRequestDataModel.CswRequestReturn.Ret Request )
         {
+            //...this seems so familiar..... deja vu?
             CswNbtResources NbtResources = _validate( CswResources );
             bool Succeeded = false;
+            //apparently we might already have a favorite, in which case we use that one - else we make a new one
             if( null != Request && false == string.IsNullOrEmpty( Request.RequestId ) )
             {
                 CswNbtObjClassRequest Favorite = NbtResources.Nodes[Request.RequestId];
@@ -142,8 +146,9 @@ namespace ChemSW.Nbt.WebServices
             }
             Ret.Data.Succeeded = Succeeded;
         }
+        //^this needs to update the tab count
 
-        private delegate void applyCopyLogic( CswNbtObjClassRequestMaterialDispense RequestItem );
+        private delegate void applyCopyLogic( CswNbtObjClassRequestItem RequestItem );
 
         /// <summary>
         /// WCF method to copy a favorite to the current cart
@@ -152,6 +157,9 @@ namespace ChemSW.Nbt.WebServices
         {
             CswNbtResources NbtResources = _validate( CswResources );
             bool Succeeded = false;
+            //...I have no idea what the difference is between Request.RequestId and Request.CswRequestId
+            //I think they both refer to the current cart, 
+            //but then how are we differentiating between the current Request and the Favorite Request?
             if( CswTools.IsPrimaryKey( Request.CswRequestId ) && Request.RequestItems.Any() )
             {
                 CswNbtObjClassRequest RequestNode = NbtResources.Nodes[Request.CswRequestId];
@@ -179,6 +187,7 @@ namespace ChemSW.Nbt.WebServices
             {
                 CswNbtWebServiceRequesting ws = new CswNbtWebServiceRequesting( NbtResources );
                 CswNbtActRequesting act = new CswNbtActRequesting( NbtResources );
+                //So here we're getting the "Recurring" Request and copying the request items from the current request into there
                 CswNbtObjClassRequest RequestNode = act.getRecurringRequestNode();
                 applyCopyLogic SetRequest = ( Item ) =>
                     {
@@ -189,32 +198,39 @@ namespace ChemSW.Nbt.WebServices
             }
             Ret.Data.Succeeded = Succeeded;
         }
+        //^this needs to update the tab count
 
         private bool copyRequestItems( CswNbtRequestDataModel.CswRequestReturn.Ret Request, applyCopyLogic CopyLogic )
         {
             bool Succeeded = false;
             if( Request.RequestItems.Any() )
             {
-                foreach( CswNbtObjClassRequestMaterialDispense NewRequestItem in
+                //This is just a long way of saying "grab all MaterialDispense RequestItems in the current Request"
+                //maybe don't use Linq to make it more readable? (unless we find a significant difference in performance)
+                foreach( CswNbtObjClassRequestItem NewRequestItem in
                     from Item
                         in Request.RequestItems
                     select _CswNbtResources.Nodes[Item.NodePk]
                         into PropertySetRequest
-                        where null != (CswNbtPropertySetRequestItem) PropertySetRequest &&
-                        ( ( (CswNbtPropertySetRequestItem) PropertySetRequest ).Type.Value == CswNbtObjClassRequestMaterialDispense.Types.Bulk ||
-                        ( (CswNbtPropertySetRequestItem) PropertySetRequest ).Type.Value == CswNbtObjClassRequestMaterialDispense.Types.Size )
-                        select CswNbtObjClassRequestMaterialDispense.fromPropertySet( PropertySetRequest )
+                        where null != (CswNbtObjClassRequestItem) PropertySetRequest &&
+                        ( ( (CswNbtObjClassRequestItem) PropertySetRequest ).Type.Value == CswNbtObjClassRequestItem.Types.MaterialBulk ||
+                        ( (CswNbtObjClassRequestItem) PropertySetRequest ).Type.Value == CswNbtObjClassRequestItem.Types.MaterialSize ||
+                        ( (CswNbtObjClassRequestItem) PropertySetRequest ).Type.Value == CswNbtObjClassRequestItem.Types.EnterprisePart )
+                        select (CswNbtObjClassRequestItem) PropertySetRequest 
                             into MaterialDispense
                             where null != MaterialDispense
+                            //This is really sneaky - it's copying all of the MaterialDispense requests
+                            //and throwing them into the collection we're selecting
                             select MaterialDispense.copyNode( ClearRequest: false )
                                 into NewPropSetRequest
-                                select CswNbtObjClassRequestMaterialDispense.fromPropertySet( NewPropSetRequest ) )
+                                select  NewPropSetRequest )
                 {
                     CopyLogic( NewRequestItem );
 
+                    //As far as I can see, there's no reason this couldn't be in copy from favorites' CopyLogic
                     if( NewRequestItem.IsRecurring.Checked != CswEnumTristate.True && CswConvert.ToTristate( NewRequestItem.IsFavorite.Gestalt ) != CswEnumTristate.True )
                     {
-                        NewRequestItem.Status.Value = CswNbtObjClassRequestMaterialDispense.Statuses.Pending;
+                        NewRequestItem.Status.Value = CswNbtObjClassRequestItem.Statuses.Pending;
                     }
                     
                     NewRequestItem.postChanges( ForceUpdate: false );
@@ -227,49 +243,45 @@ namespace ChemSW.Nbt.WebServices
         }
 
         /// <summary>
-        /// WCF method to fulfill request
+        /// WCF method to fulfill a Move Containers request
         /// </summary>  
-        public static void fulfillRequest( ICswResources CswResources, CswNbtRequestDataModel.CswRequestReturn Ret, CswNbtRequestDataModel.RequestFulfill Request )
+        public static void fulfillContainerMoveRequest( ICswResources CswResources, CswNbtRequestDataModel.CswRequestReturn Ret, CswNbtRequestDataModel.RequestFulfill Request )
         {
             CswNbtResources NbtResources = _validate( CswResources );
-            CswNbtPropertySetRequestItem RequestAsPropSet = NbtResources.Nodes[Request.RequestItemId];
-            if( null != RequestAsPropSet )
+            CswNbtObjClassRequestItem RequestItem = NbtResources.Nodes[Request.RequestItemId];
+            if( null != RequestItem )
             {
-                switch( RequestAsPropSet.Type.Value )
+                Int32 ContainersMoved = moveContainers( NbtResources, RequestItem, Request );
+                Ret.Data.Succeeded = ContainersMoved > 0;
+                if( Ret.Data.Succeeded )
                 {
-                    case CswNbtObjClassRequestMaterialDispense.Types.Size:
-                        CswNbtObjClassRequestMaterialDispense RequestNode = CswNbtObjClassRequestMaterialDispense.fromPropertySet( RequestAsPropSet );
-                        Int32 ContainersMoved = moveContainers( NbtResources, RequestNode, Request );
-                        Ret.Data.Succeeded = ContainersMoved > 0;
-                        if( Ret.Data.Succeeded )
-                        {
-                            if( CswTools.IsDouble( RequestNode.TotalMoved.Value ) )
-                            {
-                                RequestNode.TotalMoved.Value += ContainersMoved;
-                            }
-                            else
-                            {
-                                RequestNode.TotalMoved.Value = ContainersMoved;
-                            }
-                            RequestNode.Status.Value = CswNbtObjClassRequestMaterialDispense.Statuses.Moved;
-                            RequestNode.postChanges( ForceUpdate: false );
-                        }
-                        break;
+                    if( CswTools.IsDouble( RequestItem.TotalMoved.Value ) )
+                    {
+                        RequestItem.TotalMoved.Value += ContainersMoved;
+                    }
+                    else
+                    {
+                        RequestItem.TotalMoved.Value = ContainersMoved;
+                    }
+                    RequestItem.Status.Value = CswNbtObjClassRequestItem.Statuses.Moved;
+                    RequestItem.FulfillmentHistory.AddComment( "Moved " + ContainersMoved + " containers to " + 
+                        CswNbtNode.getNodeLink( RequestItem.Location.SelectedNodeId, RequestItem.Location.CachedFullPath ) );
+                    RequestItem.postChanges( ForceUpdate: false );
                 }
             }
         }
 
-        private static Int32 moveContainers( CswNbtResources NbtResources, CswNbtObjClassRequestMaterialDispense RequestNode, CswNbtRequestDataModel.RequestFulfill Request )
+        private static Int32 moveContainers( CswNbtResources NbtResources, CswNbtObjClassRequestItem RequestItem, CswNbtRequestDataModel.RequestFulfill Request )
         {
             Int32 Ret = 0;
-            if( null != RequestNode )
+            if( null != RequestItem )
             {
                 foreach( string ContainerId in Request.ContainerIds )
                 {
                     CswNbtObjClassContainer ContainerNode = NbtResources.Nodes[ContainerId];
                     if( null != ContainerNode )
                     {
-                        ContainerNode.Location.SelectedNodeId = RequestNode.Location.SelectedNodeId;
+                        ContainerNode.Location.SelectedNodeId = RequestItem.Location.SelectedNodeId;
                         ContainerNode.Location.RefreshNodeName();
                         ContainerNode.postChanges( ForceUpdate: false );
                         Ret += 1;

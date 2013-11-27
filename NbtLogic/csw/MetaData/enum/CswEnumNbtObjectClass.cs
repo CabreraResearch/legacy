@@ -72,10 +72,7 @@ namespace ChemSW.Nbt.MetaData
             { ReportGroupClass                  , ReportGroupClass                   },
             { ReportGroupPermissionClass        , ReportGroupPermissionClass         },
             { RequestClass                      , RequestClass                       },
-            { RequestContainerDispenseClass     , RequestContainerDispenseClass      },
-            { RequestContainerUpdateClass       , RequestContainerUpdateClass        },
-            { RequestMaterialCreateClass        , RequestMaterialCreateClass         },
-            { RequestMaterialDispenseClass      , RequestMaterialDispenseClass       },
+            { RequestItemClass                  , RequestItemClass                   },
             { RoleClass                         , RoleClass                          },
             { SDSDocumentClass                  , SDSDocumentClass                   },
             { SizeClass                         , SizeClass                          },
@@ -83,15 +80,7 @@ namespace ChemSW.Nbt.MetaData
             { UnitOfMeasureClass                , UnitOfMeasureClass                 },
             { UserClass                         , UserClass                          },
             { VendorClass                       , VendorClass                        },
-            { WorkUnitClass                     , WorkUnitClass                      },
-
-            //TODO: delete these in Foxglove
-            { AliquotClass                      , AliquotClass                       },
-            { TestClass                         , TestClass                          },
-            { SampleClass                       , SampleClass                        },
-            { ParameterClass                    , ParameterClass                     },
-            { ResultClass                       , ResultClass                        },
-            { BiologicalClass                   , BiologicalClass                    }
+            { WorkUnitClass                     , WorkUnitClass                      }
         };
         /// <summary>
         /// The string value of the current instance
@@ -203,10 +192,7 @@ namespace ChemSW.Nbt.MetaData
         public const string ReportGroupClass = "ReportGroupClass";
         public const string ReportGroupPermissionClass = "ReportGroupPermissionClass";
         public const string RequestClass = "RequestClass";
-        public const string RequestContainerDispenseClass = "RequestContainerDispenseClass";
-        public const string RequestContainerUpdateClass = "RequestContainerUpdateClass";
-        public const string RequestMaterialDispenseClass = "RequestMaterialDispenseClass";
-        public const string RequestMaterialCreateClass = "RequestMaterialCreateClass";
+        public const string RequestItemClass = "RequestItemClass";
         public const string RoleClass = "RoleClass";
         public const string SDSDocumentClass = "SDSDocumentClass";
         public const string GHSSignalWordClass = "GHSSignalWord";
@@ -217,13 +203,6 @@ namespace ChemSW.Nbt.MetaData
         public const string VendorClass = "VendorClass";
         public const string WorkUnitClass = "WorkUnitClass";
 
-        //TODO: delete these in Foxglove
-        public const string AliquotClass = "AliquotClass";
-        public const string TestClass = "TestClass";
-        public const string SampleClass = "SampleClass";
-        public const string ResultClass = "ResultClass";
-        public const string ParameterClass = "ParameterClass";
-        public const string BiologicalClass = "BiologicalClass";
         #endregion Enum members
 
 

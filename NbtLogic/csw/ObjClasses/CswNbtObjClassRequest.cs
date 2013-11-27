@@ -147,20 +147,16 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtViewRelationship RootVr = RequestItemView.AddViewRelationship( RequestOc, IncludeDefaultFilters : false );
             RootVr.NodeIdsToFilterIn.Add( this.NodeId );
 
-            foreach( CswEnumNbtObjectClass Member in CswNbtPropertySetRequestItem.Members() )
+            CswNbtMetaDataObjectClass RequestItemOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestItemClass );
+            CswNbtMetaDataObjectClassProp RequestOCP = RequestItemOC.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Request );
+            CswNbtViewRelationship RequestItemVR = RequestItemView.AddViewRelationship( RootVr, CswEnumNbtViewPropOwnerType.Second, RequestOCP, IncludeDefaultFilters: false );
+            if( false == string.IsNullOrEmpty( FilterByStatus ) )
             {
-                CswNbtMetaDataObjectClass MemberOc = _CswNbtResources.MetaData.getObjectClass( Member );
-                CswNbtMetaDataObjectClassProp RequestOcp = MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Request );
-                CswNbtViewRelationship RiRelationship = RequestItemView.AddViewRelationship( RootVr, CswEnumNbtViewPropOwnerType.Second, RequestOcp, IncludeDefaultFilters : false );
-                if( false == string.IsNullOrEmpty( FilterByStatus ) )
-                {
-                    RequestItemView.AddViewPropertyAndFilter( RiRelationship,
-                                                              MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Status ),
-                                                              FilterByStatus.ToString(),
-                                                              FilterMode : CswEnumNbtFilterMode.Equals );
-                }
+                RequestItemView.AddViewPropertyAndFilter( RequestItemVR,
+                                                          RequestItemOC.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Status ),
+                                                          FilterByStatus.ToString(),
+                                                          FilterMode: CswEnumNbtFilterMode.Equals );
             }
-
 
             ICswNbtTree RequestItemTree = _CswNbtResources.Trees.getTreeFromView( RequestItemView, IncludeSystemNodes : false, RequireViewPermissions : false, IncludeHiddenNodes : false );
             return RequestItemTree;
@@ -179,10 +175,10 @@ namespace ChemSW.Nbt.ObjClasses
                     for( Int32 N = 0; N < RequestItemTree.getChildNodeCount(); N += 1 )
                     {
                         RequestItemTree.goToNthChild( N );
-                        CswNbtPropertySetRequestItem NodeAsPropSet = RequestItemTree.getNodeForCurrentPosition();
-                        if( null != NodeAsPropSet )
+                        CswNbtObjClassRequestItem RequestItem = RequestItemTree.getNodeForCurrentPosition();
+                        if( null != RequestItem )
                         {
-                            if( CswNbtPropertySetRequestItem.Statuses.Completed != NodeAsPropSet.Status.Value )
+                            if( CswNbtObjClassRequestItem.Statuses.Completed != RequestItem.Status.Value )
                             {
                                 allRequestItemsCompleted = false;
                             }
@@ -226,7 +222,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             if( SubmittedDate.DateTimeValue != DateTime.MinValue )
             {
-                ICswNbtTree Tree = _getRelatedRequestItemsTree( FilterByStatus : CswNbtPropertySetRequestItem.Statuses.Pending );
+                ICswNbtTree Tree = _getRelatedRequestItemsTree( FilterByStatus : CswNbtObjClassRequestItem.Statuses.Pending );
                 int RequestCount = Tree.getChildNodeCount();
                 if( RequestCount == 1 )
                 {
@@ -238,11 +234,11 @@ namespace ChemSW.Nbt.ObjClasses
                         for( Int32 N = 0; N < RequestItemNodeCount; N += 1 )
                         {
                             Tree.goToNthChild( N );
-                            CswNbtPropertySetRequestItem NodeAsPropSet = _CswNbtResources.Nodes[Tree.getNodeIdForCurrentPosition()];
-                            NodeAsPropSet.Status.Value = CswNbtPropertySetRequestItem.Statuses.Submitted;
-                            NodeAsPropSet.Request.RefreshNodeName();
-                            NodeAsPropSet.Name.RecalculateReferenceValue();
-                            NodeAsPropSet.postChanges( ForceUpdate : false );
+                            CswNbtObjClassRequestItem RequestItem = Tree.getNodeForCurrentPosition();
+                            RequestItem.Status.Value = CswNbtObjClassRequestItem.Statuses.Submitted;
+                            RequestItem.Request.RefreshNodeName();
+                            RequestItem.Name.RecalculateReferenceValue();
+                            RequestItem.postChanges( ForceUpdate: false );
                             Tree.goToParentNode();
                         }
                     }
@@ -278,6 +274,9 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
+        //Fake nodes are placeholders that hang out in the Favorite or Recurring tab until the user wants to copy them
+        //they're acually never processed
+        //I think we need to come up with a better name, though
         private bool _IsFakeNode
         {
             get { return IsFavorite.Checked == CswEnumTristate.True || IsRecurring.Checked == CswEnumTristate.True; }
