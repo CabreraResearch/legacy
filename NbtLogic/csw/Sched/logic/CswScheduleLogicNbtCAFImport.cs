@@ -346,7 +346,8 @@ namespace ChemSW.Nbt.Sched
                                  '');
                             end if;
                           end loop;
-                        end;";
+                        end;
+                        /";
             }
 
             return Ret;
