@@ -400,7 +400,9 @@ namespace ChemSW.Nbt.WebServices
             if( null != GHSNode )
             {
                 // Run the Label Codes View
-                ICswNbtTree LabelCodesTree = NbtResources.Trees.getTreeFromView( GHSNode.LabelCodesGrid.View, false, false, false );
+                CswNbtView PreppedView = GHSNode.setupPhraseView( GHSNode.LabelCodesGrid.View, GHSNode.LabelCodes.Value );
+                PreppedView = PreppedView.PrepGridView( GHSNode.NodeId );
+                ICswNbtTree LabelCodesTree = NbtResources.Trees.getTreeFromView( PreppedView, false, false, false );
                 SortedList<string, string> Phrases = new SortedList<string, string>();
                 for( Int32 p = 0; p < LabelCodesTree.getChildNodeCount(); p++ )
                 {
