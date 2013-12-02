@@ -33,7 +33,8 @@
             searchterm: '',
             searchtype: 'Begins',
             filterHideThreshold: 5,
-            universalSearchOnly: false
+            universalSearchOnly: false,
+            filterOutNodeId: null
             //buttonSingleColumn: '',
             //buttonMultiColumn: ''
         };
@@ -375,6 +376,7 @@
                     onExtraAction: cswPrivate.onExtraAction,
                     compactResults: cswPrivate.compactResults,
                     suppressButtons: cswPrivate.suppressButtons,
+                    filterOutNodeId: cswPrivate.filterOutNodeId,
                     onMoreClick: function (nodetypeid, nodetypename) {
                         // a little bit of a kludge
                         cswPrivate.filterNodeType(nodetypeid);
