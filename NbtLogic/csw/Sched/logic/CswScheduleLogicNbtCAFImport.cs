@@ -225,9 +225,10 @@ namespace ChemSW.Nbt.Sched
 
             string Ret = "";
 
-            CswArbitrarySelect ImportDefinitions = NbtResources.makeCswArbitrarySelect( "getCafImportDefTables", "select tablename, pkcolumnname, coalesce(viewname, tablename) as sourcename from import_def id " +
-                                                                                                                     "join import_def_order io on id.importdefid = io.importdefid " +
-                                                                                                                     "where definitionname = 'CAF'" );
+            CswArbitrarySelect ImportDefinitions = NbtResources.makeCswArbitrarySelect( "getCafImportDefTables",
+                "select tablename, pkcolumnname, coalesce(viewname, tablename) as sourcename from import_def id "
+                + "join import_def_order io on id.importdefid = io.importdefid "
+                + "where definitionname = 'CAF'" );
             ;
             DataTable ImportDefinitionsTable = ImportDefinitions.getTable();
 
@@ -297,25 +298,57 @@ namespace ChemSW.Nbt.Sched
 
                 if( false == String.IsNullOrEmpty( WhenClause ) ) { Ret += "  when (" + WhenClause + ")\r\n"; }
 
-                Ret += "begin" + "\r\n" +
-                       "  if inserting then" + "\r\n" +
-                       "    insert into nbtimportqueue(nbtimportqueueid, state, itempk, sheetname, priority, errorlog)" + "\r\n" +
-                       "       values (seq_nbtimportqueueid.nextval, 'I', :new." + SourceColumn + ", '" + Row["sourcename"] + "', 0, '');" + "\r\n" +
-                       "  elsif updating then" + "\r\n" +
-                       "    if :new.deleted = 1 then" + "\r\n" +
-                       "      insert into nbtimportqueue(nbtimportqueueid, state, itempk, sheetname, priority, errorlog)" + "\r\n" +
-                       "         values (seq_nbtimportqueueid.nextval, 'D', :new." + SourceColumn + ", '" + Row["sourcename"] + "', 0, '');" + "\r\n" +
-                       "    else" + "\r\n" +
-                       "      insert into nbtimportqueue(nbtimportqueueid, state, itempk, sheetname, priority, errorlog)" + "\r\n" +
-                       "         values (seq_nbtimportqueueid.nextval, 'U', :new." + SourceColumn + ", '" + Row["sourcename"] + "', 0, '');" + "\r\n" +
-                       "    end if;" + "\r\n" +
-                       "  end if;" + "\r\n" +
-                       "end;\r\n/";
+                // Case 31062
+                Ret += "declare statestr varchar(1);";
 
+                //Ret += "begin" + "\r\n" +
+                //       "  if inserting then" + "\r\n" +
+                //       "    insert into nbtimportqueue(nbtimportqueueid, state, itempk, sheetname, priority, errorlog)" + "\r\n" +
+                //       "       values (seq_nbtimportqueueid.nextval, 'I', :new." + SourceColumn + ", '" + Row["sourcename"] + "', 0, '');" + "\r\n" +
+                //       "  elsif updating then" + "\r\n" +
+                //       "    if :new.deleted = 1 then" + "\r\n" +
+                //       "      insert into nbtimportqueue(nbtimportqueueid, state, itempk, sheetname, priority, errorlog)" + "\r\n" +
+                //       "         values (seq_nbtimportqueueid.nextval, 'D', :new." + SourceColumn + ", '" + Row["sourcename"] + "', 0, '');" + "\r\n" +
+                //       "    else" + "\r\n" +
+                //       "      insert into nbtimportqueue(nbtimportqueueid, state, itempk, sheetname, priority, errorlog)" + "\r\n" +
+                //       "         values (seq_nbtimportqueueid.nextval, 'U', :new." + SourceColumn + ", '" + Row["sourcename"] + "', 0, '');" + "\r\n" +
+                //       "    end if;" + "\r\n" +
+                //       "  end if;" + "\r\n" +
+                //       "end;\r\n/";
 
+                Ret += @"begin
+                          if inserting then
+                            statestr := 'I';
+                          elsif updating then
+                            if :new.deleted = 1 then
+                              statestr := 'D';
+                            else
+                              statestr := 'U';
+                            end if;
+                          end if;
+
+                          for x in (select count(*) cnt
+                                      from dual
+                                     where exists (select null
+                                              from nbtimportqueue
+                                             where state = statestr
+                                               and itempk = :new." + SourceColumn + @" 
+                                               and sheetname = '" + Row["sourcename"] + @"')) loop
+                            if (x.cnt = 0) then
+                              insert into nbtimportqueue
+                                (nbtimportqueueid, state, itempk, sheetname, priority, errorlog)
+                              values
+                                (seq_nbtimportqueueid.nextval,
+                                 statestr,
+                                 :new." + SourceColumn + @",
+                                 '" + Row["sourcename"] + @"',
+                                 0,
+                                 '');
+                            end if;
+                          end loop;
+                        end;
+                        /";
             }
-
-
 
             return Ret;
         }

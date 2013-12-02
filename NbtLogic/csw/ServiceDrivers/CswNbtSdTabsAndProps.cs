@@ -222,7 +222,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             CswNbtNode Ret = getAddNode( NodeTypeId, RelatedNodeId, After );
             if( null != Ret )
             {
-                Ret.postChanges( ForceUpdate: false );
+                Ret.postChanges( ForceUpdate: false );//This might be doing more work than necessary - maybe this should be PromoteTemptoReal?
             }
             return Ret;
         }

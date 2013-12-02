@@ -58,7 +58,8 @@
                 var cell3 = cswPrivate.myTable.cell(cswPrivate.arow * 2 + 1, 1);
                 cell3.propNonDom('colspan', '2');
                 cell3.addClass(cswPrivate.bgclass);
-                cell3.append(acomment.message);
+                //If there's a NodeLink in the comment, render it as such - if not, it will render as plain text
+                cell3.nodeLink({ text: acomment.message });
             });
             if (false === nodeProperty.isReadOnly()) {
                 nodeProperty.propDiv.textArea({

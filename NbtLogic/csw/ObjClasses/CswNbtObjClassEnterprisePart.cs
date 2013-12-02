@@ -1,3 +1,5 @@
+using ChemSW.Exceptions;
+using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 
@@ -86,8 +88,29 @@ namespace ChemSW.Nbt.ObjClasses
 
         protected override bool onButtonClick( NbtButtonData ButtonData )
         {
-            //Remember: Save is an OCP too
-            if( null != ButtonData && null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
+            if( null != ButtonData.NodeTypeProp )
+            {
+                string OCPPropName = ButtonData.NodeTypeProp.getObjectClassPropName();
+                switch( OCPPropName )
+                {
+                    case PropertyName.Request:
+                        if( _CswNbtResources.Permit.can( CswEnumNbtActionName.Submit_Request ) )
+                        {
+                            ButtonData.Action = CswEnumNbtButtonAction.request;
+                            CswNbtActRequesting RequestAct = new CswNbtActRequesting( _CswNbtResources );
+                            CswNbtObjClassRequestItem RequestItem = RequestAct.makeEnterprisePartRequestItem( this, ButtonData );
+                            ButtonData.Data["titleText"] = "Add to Cart: " + RequestItem.Type.Value;
+                            ButtonData.Data["requestaction"] = ButtonData.SelectedText;
+                            ButtonData.Data["requestItemProps"] = RequestAct.getRequestItemAddProps( RequestItem.Node );
+                            ButtonData.Data["requestItemNodeTypeId"] = RequestItem.NodeTypeId;
+                        }
+                        else
+                        {
+                            throw new CswDniException( CswEnumErrorType.Warning, "You do not have permission to the Submit Request action.", "You do not have permission to the Submit Request action." );
+                        }
+                        break;
+                }
+            }
             return true;
         }
         #endregion

@@ -125,7 +125,8 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtNode.Properties[PropertyName.LabelCodesGrid].SetOnBeforeRender( delegate( CswNbtNodeProp Prop )
                 {
                     CswNbtNodePropGrid PropAsGrid = (CswNbtNodePropGrid) Prop;
-                    _setupPhraseView( PropAsGrid.View, LabelCodes.Value );
+                    CswNbtView UpdatedPhraseView = setupPhraseView( PropAsGrid.View, LabelCodes.Value );
+                    UpdatedPhraseView.SaveToCache( IncludeInQuickLaunch: false, UpdateCache: true, KeepInQuickLaunch: false );
                 } );
 
             _CswNbtNode.Properties[PropertyName.ClassificationsGrid].SetOnBeforeRender( delegate( CswNbtNodeProp Prop )
@@ -174,7 +175,7 @@ namespace ChemSW.Nbt.ObjClasses
             return ret;
         }
 
-        private void _setupPhraseView( CswNbtView View, CswCommaDelimitedString SelectedPhraseIds )
+        public CswNbtView setupPhraseView( CswNbtView View, CswCommaDelimitedString SelectedPhraseIds )
         {
             CswNbtMetaDataObjectClass GhsPhraseOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.GHSPhraseClass );
             CswNbtMetaDataNodeType GhsPhraseNT = GhsPhraseOC.FirstNodeType;
@@ -199,8 +200,10 @@ namespace ChemSW.Nbt.ObjClasses
                     LanguageVP.Width = 100;
                 }
             } // if( SelectedPhraseIds.Count > 0 )
-            View.SaveToCache( IncludeInQuickLaunch: false, UpdateCache: true, KeepInQuickLaunch: false );
-        } // _setupPhraseView()
+
+            return View;
+
+        } // setupPhraseView()
 
 
         private void _setupClassificationView( CswNbtView View, CswCommaDelimitedString SelectedClassIds )

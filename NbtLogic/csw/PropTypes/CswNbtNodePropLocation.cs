@@ -219,18 +219,20 @@ namespace ChemSW.Nbt.PropTypes
         {
             CswNbtMetaDataObjectClass ContainerOC = CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerClass );
             CswNbtMetaDataObjectClass UserOC = CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.UserClass );
+            CswNbtMetaDataObjectClass RequestItemOC = CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestItemClass );
 
             //TODO (Case 31016): This is pretty hack-a-delic - we should convert these into prop attributes (like RespectAllowInventory, DisableLowestLevel, and IncludeRoot)
             bool IsLocationNode = ( null != Prop && Prop.getNodeType().getObjectClass().ObjectClass == CswEnumNbtObjectClass.LocationClass );
             bool IsContainerNode = ( null != Prop && null != ContainerOC && Prop.getNodeType().ObjectClassId == ContainerOC.ObjectClassId );
-            bool IsUserNode = ( null != Prop && null != ContainerOC && Prop.getNodeType().ObjectClassId == UserOC.ObjectClassId );
+            bool IsUserNode = ( null != Prop && null != UserOC && Prop.getNodeType().ObjectClassId == UserOC.ObjectClassId );
+            bool IsRequestItemNode = ( null != Prop && null != RequestItemOC && Prop.getNodeType().ObjectClassId == RequestItemOC.ObjectClassId );
 
             CswNbtView Ret = new CswNbtView( CswNbtResources );
             Ret.ViewName = GetTopLevelName( CswNbtResources );
             Ret.Root.Included = IsLocationNode;
             CswNbtObjClassLocation.makeLocationsTreeView( ref Ret, CswNbtResources,
                                                           NodeIdToFilterOut: NodeId,
-                                                          RequireAllowInventory: ( CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Containers ) && ( IsContainerNode || IsUserNode ) ),
+                                                          RequireAllowInventory: ( CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Containers ) && ( IsContainerNode || IsUserNode || IsRequestItemNode ) ),
                                                           InventoryGroupIds: InventoryGroupIds,
                                                           DisableLowestLevel: IsLocationNode );
             return Ret;
