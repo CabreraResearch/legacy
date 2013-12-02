@@ -83,7 +83,7 @@ namespace ChemSW.Nbt.Actions
                 [DataMember]
                 public string Node2Value;
                 [DataMember]
-                public Int32 Choice = 1;
+                public Int32 Choice = 2;
             }
 
             /// <summary>
