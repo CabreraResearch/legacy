@@ -79,9 +79,9 @@
                 wizardSteps[cswPrivate.stepCount] = wizardStep.stepName;
             };
             //Add steps here:
-            setWizardStep(cswPrivate.wizardStepMergeWhat);
-            setWizardStep(cswPrivate.wizardStepMergeWith);
-            setWizardStep(cswPrivate.wizardStepPerformMerge);
+            setWizardStep(cswPrivate.wizardStepMergeSource);
+            setWizardStep(cswPrivate.wizardStepMergeDest);
+            setWizardStep(cswPrivate.wizardStepMergeOptions);
             setWizardStep(cswPrivate.wizardStepPreviewResult);
             cswPrivate.reinitSteps(1);
             return wizardSteps;
@@ -111,8 +111,8 @@
         //#endregion ctor preInit
 
         //#region Steps
-        cswPrivate.wizardStepMergeWhat = {
-            stepName: 'Merge What',
+        cswPrivate.wizardStepMergeSource = {
+            stepName: 'Merge Source',
             stepNo: '',
             makeStep: (function () {
                 return function (StepNo) {
@@ -121,8 +121,8 @@
                     if (null === cswPrivate.node1) {
                         cswPrivate.toggleButton(cswPrivate.buttons.next, false);
                     }
-
-                    cswPrivate.setStepHeader(StepNo, 'What do you want to merge?');
+                    
+                    cswPrivate.setStepHeader(StepNo, 'What do you want to merge?  This choice will be deleted as a result of the merge.');
 
                     var div = cswPrivate['divStep' + StepNo];
                     
@@ -153,11 +153,11 @@
                 };
             }()),
             onStepChange: function () {}
-        }; // wizardStepMergeWhat
+        }; // wizardStepMergeSource
         
 
-        cswPrivate.wizardStepMergeWith = {
-            stepName: 'Merge With',
+        cswPrivate.wizardStepMergeDest = {
+            stepName: 'Merge Destination',
             stepNo: '',
             makeStep: (function () {
                 return function (StepNo) {
@@ -167,7 +167,7 @@
                         cswPrivate.toggleButton(cswPrivate.buttons.next, false);
                     }
 
-                    cswPrivate.setStepHeader(StepNo, 'What do you want to merge with ' + cswPrivate.node1.nodename + '?');
+                    cswPrivate.setStepHeader(StepNo, 'What do you want to merge with "' + cswPrivate.node1.nodename + '"?  This choice will hold the merge result.');
 
                     var div = cswPrivate['divStep' + StepNo];
                     
@@ -197,16 +197,16 @@
                     });
                 };
             }())
-        }; // wizardStepMergeWith
+        }; // wizardStepMergeDest
         
 
-        cswPrivate.wizardStepPerformMerge = {
-            stepName: 'Perform Merge',
+        cswPrivate.wizardStepMergeOptions = {
+            stepName: 'Merge Options',
             stepNo: '',
             makeStep: (function () {
                 return function (StepNo) {
                     cswPrivate.toggleStepButtons(StepNo);
-                    cswPrivate.setStepHeader(StepNo, 'Merging ' + cswPrivate.node1.nodename + ' with ' + cswPrivate.node2.nodename + '.' );
+                    cswPrivate.setStepHeader(StepNo, 'Merging "' + cswPrivate.node1.nodename + '" into "' + cswPrivate.node2.nodename + '":' );
 
                     var div = cswPrivate['divStep' + StepNo];
 
@@ -231,7 +231,7 @@
                     }
                 };
             }()) // makeStep func
-        }; // wizardStepPerformMerge
+        }; // wizardStepMergeOptions
         
 
         cswPrivate.wizardStepPreviewResult = {
@@ -240,7 +240,7 @@
             makeStep: (function () {
                 return function(StepNo) {
                     cswPrivate.toggleStepButtons(StepNo);
-                    cswPrivate.setStepHeader(StepNo, 'Preview results of merging ' + cswPrivate.node1.nodename + ' with ' + cswPrivate.node2.nodename + '.');
+                    cswPrivate.setStepHeader(StepNo, 'Preview results of merging "' + cswPrivate.node1.nodename + '" into "' + cswPrivate.node2.nodename + '".');
 
                     var div = cswPrivate['divStep' + StepNo];
                     
