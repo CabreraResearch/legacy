@@ -342,6 +342,7 @@ namespace ChemSW.Nbt.Actions
                     {
                         CswNbtNode relNode = _CswNbtResources.Nodes[rel.NodeId];
                         relNode.Properties[rel.NodeTypePropId].AsRelationship.RelatedNodeId = Node2.NodeId;
+                        relNode.Properties[rel.NodeTypePropId].AsRelationship.RefreshNodeName();
                         relNode.postChanges( ForceUpdate: false, IsCopy: false, OverrideUniqueValidation: true );
                     }
 
