@@ -10,6 +10,7 @@
             searchFiltersParent: {},
             nodetypeid: '',       // automatically filter results to this nodetype
             objectclassid: '',    // automatically filter results to this objectclass
+            allowNodeTypeChange: true,  // allowed to change which nodetype is filtered
             onBeforeSearch: null,
             onAfterSearch: null,
             onAfterNewSearch: null,
@@ -119,6 +120,10 @@
                             items: items
                         }
                     }); // toolbar
+
+                    if (false === cswPrivate.allowNodeTypeChange) {
+                        cswPrivate.preFilterSelect.disable();
+                    }
 
                     Csw.tryExec(cswPrivate.onSuccess);
                 } // success

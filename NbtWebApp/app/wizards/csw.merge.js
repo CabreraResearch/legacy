@@ -202,6 +202,7 @@
                         cswPrivate.searchDest = Csw.composites.universalSearch(div, {
                             name: 'searchDest',
                             nodetypeid: cswPrivate.node1.nodetypeid,
+                            allowNodeTypeChange: false,
                             searchterm: cswPrivate.searchSource.getSearchTerm(),   // default to the same search
                             objectclassid: '',
                             onBeforeSearch: function() {},
