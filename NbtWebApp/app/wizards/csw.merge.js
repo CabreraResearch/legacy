@@ -19,8 +19,8 @@
             onCancel: function() {},
 //            node1: null,
 //            node2: null,
-            node1: { nodeid: 'nodes_42744', nodename: 'isopropylguacamolate Sigma 123' },      // TODO: REMOVE ME
-            node2: { nodeid: 'nodes_42745', nodename: 'iso-propyl-guacamolate Sigma 123.1' },  // TODO: REMOVE ME
+            node1: { nodeid: 'nodes_42744', nodename: 'isopropylguacamolate Sigma 123', nodetypeid: 1014 },      // TODO: REMOVE ME
+            node2: { nodeid: 'nodes_42745', nodename: 'iso-propyl-guacamolate Sigma 123.1', nodetypeid: 1014 },  // TODO: REMOVE ME
             mergeData: null
         };
 
@@ -126,6 +126,15 @@
 
                     var div = cswPrivate['divStep' + StepNo];
                     
+                    if (null !== cswPrivate.node1) {
+                        div.nodeLink({
+                            nodeid: cswPrivate.node1.nodeid,
+                            nodename: cswPrivate.node1.nodename,
+                            pretext: 'Currently Selected: '
+                        });
+                        div.br();
+                    }
+
                     cswPrivate.searchWhat = Csw.composites.universalSearch(div, {
                         name: 'searchWhat',
                         nodetypeid: '',
@@ -170,6 +179,15 @@
                     cswPrivate.setStepHeader(StepNo, 'What do you want to merge with "' + cswPrivate.node1.nodename + '"?  This choice will hold the merge result.');
 
                     var div = cswPrivate['divStep' + StepNo];
+                    
+                    if (null !== cswPrivate.node2) {
+                        div.nodeLink({
+                            nodeid: cswPrivate.node2.nodeid,
+                            nodename: cswPrivate.node2.nodename,
+                            pretext: 'Currently Selected: '
+                        });
+                        div.br();
+                    }
                     
                     cswPrivate.searchWith = Csw.composites.universalSearch(div, {
                         name: 'searchWith',
