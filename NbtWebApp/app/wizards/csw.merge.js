@@ -16,6 +16,7 @@
                 cancel: 'cancel'
             },
             onFinish: function(viewid) {},
+            onCancel: function() {},
 //            node1: null,
 //            node2: null,
             node1: { nodeid: 'nodes_42744', nodename: 'isopropylguacamolate Sigma 123' },      // TODO: REMOVE ME

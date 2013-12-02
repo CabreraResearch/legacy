@@ -269,7 +269,8 @@
                             mode: 'tree',
                             itemid: viewid
                         });
-                    }
+                    },
+                    onCancel: onCancel
                 });
             });
             actionHandler.add('receiving', function (o) {
