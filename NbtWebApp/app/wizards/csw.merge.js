@@ -256,7 +256,7 @@
                                 Csw.layouts.tabsAndProps(div, {
                                     forceReadOnly: true,
                                     tabState: {
-                                        nodeid: data.NodePairs[0].NodeResultId,
+                                        nodeid: data.NodePairs[0].NodeTempId,
                                         ReadOnly: true,
                                         EditMode: Csw.enums.editMode.Edit
                                     }

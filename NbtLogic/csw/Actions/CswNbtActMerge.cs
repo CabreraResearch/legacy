@@ -63,9 +63,9 @@ namespace ChemSW.Nbt.Actions
                 [DataMember]
                 public string Node2Name;
                 [DataMember]
-                public string NodeResultId;
+                public string NodeTempId;
                 [DataMember]
-                public string NodeResultName;
+                public string NodeTempName;
             }
 
             /// <summary>
@@ -251,95 +251,113 @@ namespace ChemSW.Nbt.Actions
         {
             foreach( MergeInfoData.MergeInfoNodePair nodePair in Choices.NodePairs )
             {
-                CswNbtNode Node1 = _CswNbtResources.Nodes[nodePair.Node1Id];
-                CswNbtNode Node2 = _CswNbtResources.Nodes[nodePair.Node2Id];
-                if( null != Node1 && null != Node2 )
+                // Apply the changes to a temp node, so that they can be previewed
+                CswNbtNode tempNode;
+                if( false == string.IsNullOrEmpty( nodePair.NodeTempId ) )
                 {
-                    Action<CswNbtNode> ApplyPropVals = delegate( CswNbtNode newNode )
-                        {
-                            // Set property values according to choice
-                            newNode.copyPropertyValues( Node1 );
-                            foreach( MergeInfoData.MergeInfoProperty mergeProp in nodePair.Properties.Where( mergeProp => mergeProp.Choice == 2 ) )
-                            {
-                                newNode.Properties[mergeProp.NodeTypePropId].copy( Node2.Properties[mergeProp.NodeTypePropId] );
-                            }
-
-                            // Set relationship to new merged node
-                            if( Int32.MinValue != nodePair.RelationshipPropId )
-                            {
-                                // Find the new nodeid for the value of the relationship
-                                CswPrimaryKey oldNodeId = newNode.Properties[nodePair.RelationshipPropId].AsRelationship.RelatedNodeId;
-                                MergeInfoData.MergeInfoNodePair otherNodePair = Choices.NodePairs.FirstOrDefault( np => np.Node1Id == oldNodeId.ToString() || np.Node2Id == oldNodeId.ToString() );
-                                if( null != otherNodePair )
-                                {
-                                    // Set the relationship to point to the new merged node
-                                    newNode.Properties[nodePair.RelationshipPropId].AsRelationship.RelatedNodeId = CswConvert.ToPrimaryKey( otherNodePair.NodeResultId );
-                                }
-                            }
-                        };
-
-                    CswNbtNode tempNode;
-                    if( false == string.IsNullOrEmpty( nodePair.NodeResultId ) )
+                    tempNode = _CswNbtResources.Nodes[nodePair.NodeTempId];
+                    _applyMergeChoicesToNode( Choices, nodePair, tempNode );
+                    tempNode.postChanges( false );
+                }
+                else
+                {
+                    CswNbtNode Node1 = _CswNbtResources.Nodes[nodePair.Node1Id];
+                    if( null != Node1 )
                     {
-                        tempNode = _CswNbtResources.Nodes[nodePair.NodeResultId];
-                        ApplyPropVals( tempNode );
-                        tempNode.postChanges( false );
+                        tempNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( Node1.NodeTypeId,
+                                                                                  IsTemp: true,
+                                                                                  OverrideUniqueValidation: true,
+                                                                                  OnAfterMakeNode: delegate( CswNbtNode newNode )
+                                                                                      {
+                                                                                          _applyMergeChoicesToNode( Choices, nodePair, newNode );
+                                                                                      } );
+                        nodePair.NodeTempId = tempNode.NodeId.ToString();
+                        nodePair.NodeTempName = tempNode.NodeName;
                     }
-                    else
-                    {
-                        tempNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( Node1.NodeTypeId, IsTemp: true, OverrideUniqueValidation: true, OnAfterMakeNode: ApplyPropVals );
-                        nodePair.NodeResultId = tempNode.NodeId.ToString();
-                        nodePair.NodeResultName = tempNode.NodeName;
-                    }
-                } // if( null != Node1 && null != Node2 )
+                }
             } // foreach( MergeInfoData.MergeInfoNodePair nodePair in Choices.NodePairs )
             return Choices;
         } // applyMergeChoices()
 
+        public void _applyMergeChoicesToNode( MergeInfoData Choices, MergeInfoData.MergeInfoNodePair nodePair, CswNbtNode resultNode )
+        {
+            CswNbtNode Node1 = _CswNbtResources.Nodes[nodePair.Node1Id];
+            CswNbtNode Node2 = _CswNbtResources.Nodes[nodePair.Node2Id];
+            if( null != Node1 && null != Node2 )
+            {
+                // Set property values according to choice
+                resultNode.copyPropertyValues( Node2 );
+                foreach( MergeInfoData.MergeInfoProperty mergeProp in nodePair.Properties.Where( mergeProp => mergeProp.Choice == 1 ) )
+                {
+                    resultNode.Properties[mergeProp.NodeTypePropId].copy( Node1.Properties[mergeProp.NodeTypePropId] );
+                }
+
+                // Set relationship to new merged node
+                if( Int32.MinValue != nodePair.RelationshipPropId )
+                {
+                    // Find the new nodeid for the value of the relationship
+                    CswPrimaryKey oldNodeId = resultNode.Properties[nodePair.RelationshipPropId].AsRelationship.RelatedNodeId;
+                    MergeInfoData.MergeInfoNodePair otherNodePair = Choices.NodePairs.FirstOrDefault( np => np.Node1Id == oldNodeId.ToString() || np.Node2Id == oldNodeId.ToString() );
+                    if( null != otherNodePair )
+                    {
+                        // Set the relationship to point to the new merged node
+                        resultNode.Properties[nodePair.RelationshipPropId].AsRelationship.RelatedNodeId = CswConvert.ToPrimaryKey( otherNodePair.Node2Id );
+                    }
+                } // if( Int32.MinValue != nodePair.RelationshipPropId )
+
+            } // if( null != Node1 && null != Node2 )
+        } // _applyMergeChoicesToNode()
 
         public CswNbtView finishMerge( MergeInfoData Choices )
         {
             CswNbtView view = new CswNbtView( _CswNbtResources );
-            CswNbtNode firstNodeResult = null;
+            CswNbtNode firstMergedNode = null;
 
             foreach( MergeInfoData.MergeInfoNodePair nodePair in Choices.NodePairs )
             {
+                // Remove the temp node
+                CswNbtNode NodeTemp = _CswNbtResources.Nodes[nodePair.NodeTempId];
+                if( null != NodeTemp )
+                {
+                    NodeTemp.delete( DeleteAllRequiredRelatedNodes: false, OverridePermissions: true, ValidateRequiredRelationships: false );
+                }
+
+                // Merge Node1 into Node2, and delete Node1
                 CswNbtNode Node1 = _CswNbtResources.Nodes[nodePair.Node1Id];
                 CswNbtNode Node2 = _CswNbtResources.Nodes[nodePair.Node2Id];
-                CswNbtNode NodeResult = _CswNbtResources.Nodes[nodePair.NodeResultId];
-                if( null != NodeResult && null != Node1 && null != Node2 )
+                if( null != Node1 && null != Node2 )
                 {
                     // Store the first node merged to return
-                    if( null == firstNodeResult )
+                    if( null == firstMergedNode )
                     {
-                        firstNodeResult = NodeResult;
+                        firstMergedNode = Node2;
                     }
 
-                    // Promote result node from temp to real
-                    NodeResult.PromoteTempToReal( IsCreate: true, OverrideUniqueValidation: true );
+                    // Apply the merge to Node2
+                    _applyMergeChoicesToNode( Choices, nodePair, Node2 );
+                    Node2.postChanges( false );
 
-                    // Update any relationships to point to the new node
+                    // Update any relationships to point to node2
                     foreach( MergeInfoData.MergeInfoRelationship rel in nodePair.Relationships )
                     {
                         CswNbtNode relNode = _CswNbtResources.Nodes[rel.NodeId];
-                        relNode.Properties[rel.NodeTypePropId].AsRelationship.RelatedNodeId = NodeResult.NodeId;
+                        relNode.Properties[rel.NodeTypePropId].AsRelationship.RelatedNodeId = Node2.NodeId;
                         relNode.postChanges( ForceUpdate: false, IsCopy: false, OverrideUniqueValidation: true );
                     }
 
-                    // Delete merged nodes
+                    // Delete merged node 1
                     Node1.delete( DeleteAllRequiredRelatedNodes: false, OverridePermissions: true, ValidateRequiredRelationships: false );
-                    Node2.delete( DeleteAllRequiredRelatedNodes: false, OverridePermissions: true, ValidateRequiredRelationships: false );
 
                 } // if( null != Node1 && null != Node2 )
             } // foreach( MergeInfoData.MergeInfoNodePair nodePair in Choices.NodePairs )
 
             // Return a view of the first merged node
-            if( null != firstNodeResult )
+            if( null != firstMergedNode )
             {
-                view = firstNodeResult.getViewOfNode( includeDefaultFilters: false );
+                view = firstMergedNode.getViewOfNode( includeDefaultFilters: false );
             }
             return view;
         } // finishMerge()
 
-    }
-}
+    } // public class CswNbtActMerge
+} // namespace ChemSW.Nbt.Actions
