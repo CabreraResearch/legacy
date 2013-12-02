@@ -31,6 +31,18 @@ namespace ChemSW.Nbt.Schema
             // Create new action 'Merge'
             _CswNbtSchemaModTrnsctn.createAction( CswEnumNbtActionName.Merge, true, "", "System" );
 
+            // Grant permission to all administrators
+            CswNbtMetaDataObjectClass RoleOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.RoleClass );
+            foreach( CswNbtObjClassRole RoleNode in RoleOC.getNodes( forceReInit: false, IncludeDefaultFilters: false, IncludeHiddenNodes: true, includeSystemNodes: true ) )
+            {
+                if( RoleNode.Administrator.Checked == CswEnumTristate.True )
+                {
+                    _CswNbtSchemaModTrnsctn.Permit.set( CswEnumNbtActionName.Merge, RoleNode, true );
+                }
+            } // foreach( CswNbtObjClassRole RoleNode in RoleOC.getNodes( forceReInit: false, IncludeDefaultFilters: false, IncludeHiddenNodes: true, includeSystemNodes: true ) )
+
+
+
             #region Debug test data
             // Some debug test data (TODO: REMOVE ME!)
 
