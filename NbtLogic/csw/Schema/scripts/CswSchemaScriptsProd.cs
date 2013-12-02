@@ -20,7 +20,7 @@ namespace ChemSW.Nbt.Schema
             _CswNbtResources = CswNbtResources;
 
             // This is where you manually set to the last version of the previous release (the one currently in production)
-            _MinimumVersion = new CswSchemaVersion( 2, 'G', 54 );
+            _MinimumVersion = new CswSchemaVersion( 2, 'H', 38 );
 
             // Set the global variable values
             CurrentReleaseIdentifier = _getNextReleaseIdentifier();
@@ -30,7 +30,6 @@ namespace ChemSW.Nbt.Schema
 
             Collection<ICswSchemaScripts> AllScripts = new Collection<ICswSchemaScripts>()
                 {
-                    new CswSchemaScriptsHickory(),
                     new CswSchemaScriptsIronwood(),
                     // Add new milestone script collections here
                     new CswSchemaScriptsCAF() // This runs the CAF scripts - keep it around and uncommented until CAF is done
