@@ -208,6 +208,7 @@
 
             cswPrivate.searchinput = cswtable.cell(1, 3).input({
                 type: Csw.enums.inputTypes.search,
+                value: cswPrivate.searchterm,
                 width: cswPrivate.searchbox_width,
                 cssclass: 'mousetrap',
                 onKeyEnter: function () {
@@ -626,6 +627,10 @@
             cswPrivate.searchTypeSelect.enable();
         };
 
+        cswPublic.getSearchTerm = function() {
+            return cswPrivate.searchterm;
+        };
+        
         return cswPublic;
     });
 })();

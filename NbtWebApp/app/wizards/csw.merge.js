@@ -21,7 +21,11 @@
 //            node2: null,
             node1: { nodeid: 'nodes_42744', nodename: 'isopropylguacamolate Sigma 123', nodetypeid: 1014 },      // TODO: REMOVE ME
             node2: { nodeid: 'nodes_42745', nodename: 'iso-propyl-guacamolate Sigma 123.1', nodetypeid: 1014 },  // TODO: REMOVE ME
-            mergeData: null
+            mergeData: null,
+            searchSource: null,
+            searchDest: null,
+            wizardStepMergeSource_init: false,
+            wizardStepMergeDest_init: false
         };
 
         var cswPublic = {};
@@ -116,103 +120,111 @@
             stepNo: '',
             makeStep: (function () {
                 return function (StepNo) {
-                    cswPrivate.toggleStepButtons(StepNo);
-                    
-                    if (null === cswPrivate.node1) {
-                        cswPrivate.toggleButton(cswPrivate.buttons.next, false);
-                    }
-                    
-                    cswPrivate.setStepHeader(StepNo, 'What do you want to merge?  This choice will be deleted as a result of the merge.');
+                    if (false === cswPrivate.wizardStepMergeSource_init) {
+                        cswPrivate.wizardStepMergeSource_init = true;
+                        
+                        cswPrivate.setStepHeader(StepNo, 'What do you want to merge?  This choice will be deleted as a result of the merge.');
+                        var div = cswPrivate['divStep' + StepNo];
 
-                    var div = cswPrivate['divStep' + StepNo];
-                    
-                    if (null !== cswPrivate.node1) {
-                        div.nodeLink({
-                            nodeid: cswPrivate.node1.nodeid,
-                            nodename: cswPrivate.node1.nodename,
-                            pretext: 'Currently Selected: '
-                        });
-                        div.br();
-                    }
-
-                    cswPrivate.searchWhat = Csw.composites.universalSearch(div, {
-                        name: 'searchWhat',
-                        nodetypeid: '',
-                        objectclassid: '',
-                        onBeforeSearch: function () { },
-                        onAfterSearch: function () { },
-                        onAfterNewSearch: function (searchid) { },
-                        onAddView: function (viewid, viewmode) { },
-                        onLoadView: function (viewid, viewmode) { },
-                        showSave: false,
-                        allowEdit: false,
-                        allowDelete: false,
-                        compactResults: true,
-                        suppressButtons: true,
-                        extraAction: 'Select',
-                        extraActionIcon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.check),
-                        universalSearchOnly: true, //No C3 or Structure Search here
-                        onExtraAction: function (nodeObj) {
-                            cswPrivate.node1 = nodeObj;
-                            cswPrivate.mergeData = null;
-                            cswPrivate.toggleButton(cswPrivate.buttons.next, true);
-                            cswPrivate.wizard.next.click();
+                        cswPrivate.toggleStepButtons(StepNo);
+                        if (null === cswPrivate.node1) {
+                            cswPrivate.toggleButton(cswPrivate.buttons.next, false);
                         }
-                    });
+
+                        if (null !== cswPrivate.node1) {
+                            div.nodeLink({
+                                nodeid: cswPrivate.node1.nodeid,
+                                nodename: cswPrivate.node1.nodename,
+                                pretext: 'Currently Selected: '
+                            });
+                            div.br();
+                        }
+
+                        cswPrivate.searchSource = Csw.composites.universalSearch(div, {
+                            name: 'searchSource',
+                            nodetypeid: '',
+                            objectclassid: '',
+                            onBeforeSearch: function() {},
+                            onAfterSearch: function() {},
+                            onAfterNewSearch: function(searchid) {},
+                            onAddView: function(viewid, viewmode) {},
+                            onLoadView: function(viewid, viewmode) {},
+                            showSave: false,
+                            allowEdit: false,
+                            allowDelete: false,
+                            compactResults: true,
+                            suppressButtons: true,
+                            extraAction: 'Select',
+                            extraActionIcon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.check),
+                            universalSearchOnly: true, //No C3 or Structure Search here
+                            onExtraAction: function(nodeObj) {
+                                cswPrivate.node1 = nodeObj;
+                                
+                                 // reset future steps if step 1 is changed
+                                cswPrivate.wizardStepMergeDest_init = false;
+                                cswPrivate.node2 = null;
+                                cswPrivate.mergeData = null;
+                                
+                                cswPrivate.toggleButton(cswPrivate.buttons.next, true);
+                                cswPrivate.wizard.next.click();
+                            }
+                        }); // cswPrivate.searchSource
+                    } // if (false === wizardStepMergeSource_init) {
                 };
             }()),
             onStepChange: function () {}
         }; // wizardStepMergeSource
-        
 
         cswPrivate.wizardStepMergeDest = {
             stepName: 'Merge Destination',
             stepNo: '',
             makeStep: (function () {
                 return function (StepNo) {
-                    cswPrivate.toggleStepButtons(StepNo);
-                    
-                    if (null === cswPrivate.node2) {
-                        cswPrivate.toggleButton(cswPrivate.buttons.next, false);
-                    }
+                    if (false === cswPrivate.wizardStepMergeDest_init) {
+                        cswPrivate.wizardStepMergeDest_init = true;
 
-                    cswPrivate.setStepHeader(StepNo, 'What do you want to merge with "' + cswPrivate.node1.nodename + '"?  This choice will hold the merge result.');
+                        cswPrivate.setStepHeader(StepNo, 'What do you want to merge with "' + cswPrivate.node1.nodename + '"?  This choice will hold the merge result.');
+                        var div = cswPrivate['divStep' + StepNo];
 
-                    var div = cswPrivate['divStep' + StepNo];
-                    
-                    if (null !== cswPrivate.node2) {
-                        div.nodeLink({
-                            nodeid: cswPrivate.node2.nodeid,
-                            nodename: cswPrivate.node2.nodename,
-                            pretext: 'Currently Selected: '
-                        });
-                        div.br();
-                    }
-                    
-                    cswPrivate.searchWith = Csw.composites.universalSearch(div, {
-                        name: 'searchWith',
-                        nodetypeid: cswPrivate.node1.nodetypeid,
-                        objectclassid: '',
-                        onBeforeSearch: function () { },
-                        onAfterSearch: function () { },
-                        onAfterNewSearch: function (searchid) { },
-                        onAddView: function (viewid, viewmode) { },
-                        onLoadView: function (viewid, viewmode) { },
-                        showSave: false,
-                        allowEdit: false,
-                        allowDelete: false,
-                        compactResults: true,
-                        suppressButtons: true,
-                        extraAction: 'Select',
-                        extraActionIcon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.check),
-                        universalSearchOnly: true, //No C3 or Structure Search here
-                        onExtraAction: function (nodeObj) {
-                            cswPrivate.node2 = nodeObj;
-                            cswPrivate.mergeData = null;
-                            cswPrivate.toggleButton(cswPrivate.buttons.next, true);
-                            cswPrivate.wizard.next.click();
+                        cswPrivate.toggleStepButtons(StepNo);
+                        if (null === cswPrivate.node2) {
+                            cswPrivate.toggleButton(cswPrivate.buttons.next, false);
                         }
-                    });
+
+                        if (null !== cswPrivate.node2) {
+                            div.nodeLink({
+                                nodeid: cswPrivate.node2.nodeid,
+                                nodename: cswPrivate.node2.nodename,
+                                pretext: 'Currently Selected: '
+                            });
+                            div.br();
+                        }
+                        cswPrivate.searchDest = Csw.composites.universalSearch(div, {
+                            name: 'searchDest',
+                            nodetypeid: cswPrivate.node1.nodetypeid,
+                            searchterm: cswPrivate.searchSource.getSearchTerm(),   // default to the same search
+                            objectclassid: '',
+                            onBeforeSearch: function() {},
+                            onAfterSearch: function() {},
+                            onAfterNewSearch: function(searchid) {},
+                            onAddView: function(viewid, viewmode) {},
+                            onLoadView: function(viewid, viewmode) {},
+                            showSave: false,
+                            allowEdit: false,
+                            allowDelete: false,
+                            compactResults: true,
+                            suppressButtons: true,
+                            extraAction: 'Select',
+                            extraActionIcon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.check),
+                            universalSearchOnly: true, //No C3 or Structure Search here
+                            onExtraAction: function(nodeObj) {
+                                cswPrivate.node2 = nodeObj;
+                                cswPrivate.mergeData = null;
+                                cswPrivate.toggleButton(cswPrivate.buttons.next, true);
+                                cswPrivate.wizard.next.click();
+                            }
+                        });
+                    } // if (false === cswPrivate.wizardStepMergeDest_init) 
                 };
             }())
         }; // wizardStepMergeDest
