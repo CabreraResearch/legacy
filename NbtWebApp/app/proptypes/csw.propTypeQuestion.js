@@ -63,6 +63,7 @@
             cswPrivate.dateAnswered = Csw.string(nodeProperty.propData.values.dateanswered.date).trim();
             cswPrivate.dateCorrected = Csw.string(nodeProperty.propData.values.datecorrected.date).trim();
             cswPrivate.isActionRequired = Csw.bool(nodeProperty.propData.values.isactionrequired); //case 25035
+            cswPrivate.isAnswerEditable = Csw.bool(nodeProperty.propData.values.isanswereditable); //case 31231
             cswPrivate.defaultText = (false === cswPrivate.multi) ? '' : Csw.enums.multiEditDefaultValue;
             cswPrivate.splitCompliantAnswers = cswPrivate.compliantAnswers.split(',');
 
@@ -137,6 +138,9 @@
                         values: cswPrivate.splitAnswers,
                         selected: cswPrivate.answer
                     });
+                if (false === cswPrivate.isAnswerEditable) {
+                    cswPrivate.answerSel.disable();
+                }
 
                 cswPrivate.correctiveActionLabel = table.cell(2, 1).text('Corrective Action');
                 cswPrivate.correctiveActionTextBox = table.cell(2, 2).textArea({

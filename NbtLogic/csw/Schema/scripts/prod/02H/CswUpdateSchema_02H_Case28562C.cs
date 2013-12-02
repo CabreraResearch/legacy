@@ -50,7 +50,7 @@ namespace ChemSW.Nbt.Schema
                 if( null != ReportNT )
                 {
                     // Add HMIS reports
-                    _createReport( "HMIS Totals", "Materials", CISProGroup, "", "RegulatoryReporting/getHMISDataTable?ControlZone={Name}", "HMISTotals.rpt" );
+                    _createReport( "HMIS Totals", "Materials", CISProGroup, "", "RegulatoryReporting/getHMISDataTable?ControlZone={Name}&Class=", "HMISTotals.rpt" );
                     _createReport( "HMIS Materials", "Materials", CISProGroup, "", "RegulatoryReporting/getHMISDataTable?ControlZone={Name}&Class={Class}", "HMISMaterials.rpt" );
                 }
             }
