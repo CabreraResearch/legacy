@@ -270,7 +270,7 @@ namespace ChemSW.Nbt.ServiceDrivers
         /// <summary>
         /// Fetch or create a node, and return a JObject for all properties in the identity tab
         /// </summary>
-        public JObject getIdentityTabProps( CswPrimaryKey NodeId, string filterToPropId, string RelatedNodeId, CswDateTime Date = null )
+        public JObject getIdentityTabProps( CswPrimaryKey NodeId, string filterToPropId, string RelatedNodeId, bool ForceReadOnly = false, CswDateTime Date = null )
         {
             JObject Ret = new JObject();
 
@@ -279,7 +279,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             if( null != NodeType )
             {
                 CswNbtMetaDataNodeTypeTab IdentityTab = NodeType.getIdentityTab();
-                Ret = getProps( NodeId.ToString(), null, IdentityTab.TabId.ToString(), NodeType.NodeTypeId, filterToPropId, RelatedNodeId, false, Date );
+                Ret = getProps( NodeId.ToString(), null, IdentityTab.TabId.ToString(), NodeType.NodeTypeId, filterToPropId, RelatedNodeId, ForceReadOnly, Date );
                 Ret["tab"] = new JObject();
                 Ret["tab"]["tabid"] = IdentityTab.TabId;
             }
@@ -433,7 +433,9 @@ namespace ChemSW.Nbt.ServiceDrivers
                 LayoutType = CswEnumNbtLayoutType.LayoutTypeForEditMode( _CswNbtResources.EditMode );
             }
             CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout Layout = Prop.getLayout( LayoutType, TabId );
-            if( false == Node.Properties[Prop].Hidden || _ConfigMode )
+            if( _ConfigMode ||
+                ( false == Node.Properties[Prop].Hidden &&
+                  ( false == ForceReadOnly || Prop.getFieldTypeValue() != CswEnumNbtFieldType.Button ) ) ) // Hide buttons when ForceReadOnly is true
             {
                 JProperty JpProp = makePropJson( Node.NodeId, Prop, Node.Properties[Prop], Layout, ForceReadOnly, Node.Locked );
                 ParentObj.Add( JpProp );

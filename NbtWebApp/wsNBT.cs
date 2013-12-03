@@ -1816,7 +1816,7 @@ namespace ChemSW.Nbt.WebServices
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
         public string getIdentityTabProps( string EditMode, string NodeId, string SafeNodeKey, //string NodeTypeId, 
-            string Date, string filterToPropId, string Multi, string ConfigMode, string RelatedNodeId )
+            string Date, string filterToPropId, string Multi, string ConfigMode, string RelatedNodeId, bool ForceReadOnly = false )
         {
             JObject ReturnVal = new JObject();
             CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
@@ -1842,7 +1842,7 @@ namespace ChemSW.Nbt.WebServices
                         }
                     }
 
-                    ReturnVal = ws.getIdentityTabProps( RealNodeId, filterToPropId, RelatedNodeId, InDate );
+                    ReturnVal = ws.getIdentityTabProps( RealNodeId, filterToPropId, RelatedNodeId, ForceReadOnly, InDate );
                 }
 
                 _deInitResources();
