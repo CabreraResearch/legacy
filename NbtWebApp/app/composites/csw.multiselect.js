@@ -12,6 +12,7 @@
         var cswPrivate = {
             $parent: '',
             name: '',
+            propname: '',
             values: [],
             valStr: '',
             multiple: true,
@@ -66,7 +67,7 @@
             var makeMultiSelect = function (inDialog, div, height, width) {
                 Csw.dialogs.multiselectedit({
                     opts: values,
-                    title: 'Edit Prop',
+                    title: 'Edit ' + Csw.string(cswPrivate.propname, 'Prop'),
                     required: cswPrivate.required,
                     inDialog: inDialog,
                     parent: div,

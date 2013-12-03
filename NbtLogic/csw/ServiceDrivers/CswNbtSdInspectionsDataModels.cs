@@ -162,6 +162,9 @@ namespace NbtWebAppServices.Response
                     public Int32 AnswerId { get; set; }
 
                     [DataMember]
+                    public bool IsAnswerEditable { get; set; }
+
+                    [DataMember]
                     public string Comments { get; set; }
 
                     [DataMember]

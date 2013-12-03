@@ -351,7 +351,11 @@ namespace ChemSW.Nbt.Sched
 
                 }//for( Int32 u = 0; u < BatchData.RecipientIds.Count() && u < NodeLimit; u++ )
 
-                CurrentMailReport.RunStatus.AddComment( EmailReportStatusMessage );
+                // case 27720, 28006, 31205, 30959
+                CurrentMailReport.ClearNodesToReport();                        
+                CurrentMailReport.LastProcessed.DateTimeValue = DateTime.Now;  
+                
+                CurrentMailReport.RunStatus.AddComment( EmailReportStatusMessage ); 
                 CurrentMailReport.postChanges( false );
             }//if( !CurrentMailReport.Recipients.Empty )
         }//processMailReport()

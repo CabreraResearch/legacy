@@ -36,6 +36,7 @@
                 /* Select Box */
                 var multiSel = nodeProperty.propDiv.multiSelect({
                     name: nodeProperty.name,
+                    propname: nodeProperty.propData.name,
                     cssclass: 'selectinput',
                     values: cswPrivate.options,
                     valStr: nodeProperty.propData.values.value,

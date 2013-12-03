@@ -168,6 +168,19 @@ namespace ChemSW.Nbt.PropTypes
         }
 
         /// <summary>
+        /// Whether the answer is editable (case 31231)
+        /// </summary>
+        public bool IsAnswerEditable
+        {
+            get
+            {
+                return false == _IsActionRequired ||
+                       _CswNbtResources.CurrentNbtUser.IsAdministrator() ||
+                       "1" != _CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumNbtConfigurationVariables.lock_inspection_answer.ToString() );
+            }
+        }
+
+        /// <summary>
         /// Date value set when question is answered
         /// </summary>
         public DateTime DateAnswered
@@ -336,12 +349,7 @@ namespace ChemSW.Nbt.PropTypes
             ParentObject[_IsCompliantSubField.ToXmlNodeName( true )] = IsCompliant;
 
             ParentObject["isactionrequired"] = IsActionRequired;
-
-
-            //ParentObject[_DateAnsweredSubField.ToXmlNodeName( true )] = ( DateAnswered != DateTime.MinValue ) ?
-            //        DateAnswered.ToShortDateString() : string.Empty;
-            //ParentObject[_DateCorrectedSubField.ToXmlNodeName( true )] = ( DateCorrected != DateTime.MinValue ) ?
-            //        DateCorrected.ToShortDateString() : string.Empty;
+            ParentObject["isanswereditable"] = IsAnswerEditable;
 
             CswDateTime CswDateAnswered = new CswDateTime( _CswNbtResources, DateAnswered );
             ParentObject[_DateAnsweredSubField.ToXmlNodeName( true )] = CswDateAnswered.ToClientAsDateTimeJObject();
@@ -351,41 +359,40 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            Answer = CswTools.XmlRealAttributeName( PropRow[_AnswerSubField.ToXmlNodeName()].ToString() );
+            if( IsAnswerEditable )
+            {
+                Answer = CswTools.XmlRealAttributeName( PropRow[_AnswerSubField.ToXmlNodeName()].ToString() );
+            }
             Comments = CswTools.XmlRealAttributeName( PropRow[_CommentsSubField.ToXmlNodeName()].ToString() );
             CorrectiveAction = CswTools.XmlRealAttributeName( PropRow[_CorrectiveActionSubField.ToXmlNodeName()].ToString() );
             String DateAnsweredString = CswTools.XmlRealAttributeName( PropRow[_DateAnsweredSubField.ToXmlNodeName()].ToString() );
             if( !String.IsNullOrEmpty( DateAnsweredString ) )
+            {
                 DateAnswered = Convert.ToDateTime( DateAnsweredString );
+            }
             String DateCorrectedString = CswTools.XmlRealAttributeName( PropRow[_DateCorrectedSubField.ToXmlNodeName()].ToString() );
             if( !String.IsNullOrEmpty( DateCorrectedString ) )
+            {
                 DateCorrected = Convert.ToDateTime( DateCorrectedString );
+            }
         }
 
         public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
             if( DateAnswered == DateTime.MinValue )
             {
-                //    if( null != JObject.Property( _DateAnsweredSubField.ToXmlNodeName( true ) ) )
-                //    {
-                //        DateAnswered = CswConvert.ToDateTime( JObject.Property( _DateAnsweredSubField.ToXmlNodeName( true ) ).Value );
-                //    }
                 CswDateTime CswDateAnswered = new CswDateTime( _CswNbtResources );
                 CswDateAnswered.FromClientDateTimeJObject( (JObject) JObject[_DateAnsweredSubField.ToXmlNodeName( true )] );
                 DateAnswered = CswDateAnswered.ToDateTime();
             }
             if( DateCorrected == DateTime.MinValue )
             {
-                //    if( null != JObject.Property( _DateCorrectedSubField.ToXmlNodeName( true ) ) )
-                //    {
-                //        DateCorrected = CswConvert.ToDateTime( JObject.Property( _DateCorrectedSubField.ToXmlNodeName( true ) ).Value );
-                //    }
                 CswDateTime CswDateCorrected = new CswDateTime( _CswNbtResources );
                 CswDateCorrected.FromClientDateTimeJObject( (JObject) JObject[_DateCorrectedSubField.ToXmlNodeName( true )] );
                 DateCorrected = CswDateCorrected.ToDateTime();
             }
 
-            if( null != JObject[_AnswerSubField.ToXmlNodeName( true )] )
+            if( null != JObject[_AnswerSubField.ToXmlNodeName( true )] && IsAnswerEditable )
             {
                 Answer = JObject[_AnswerSubField.ToXmlNodeName( true )].ToString();
             }

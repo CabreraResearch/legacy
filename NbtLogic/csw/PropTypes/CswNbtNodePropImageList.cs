@@ -12,7 +12,7 @@ namespace ChemSW.Nbt.PropTypes
 
     public class CswNbtNodePropImageList : CswNbtNodeProp
     {
-        private char _delimiter = '\n';
+        public static char Delimiter = '\n';
 
         public static implicit operator CswNbtNodePropImageList( CswNbtNodePropWrapper PropWrapper )
         {
@@ -25,7 +25,7 @@ namespace ChemSW.Nbt.PropTypes
             _ValueSubField = ( (CswNbtFieldTypeRuleImageList) _FieldTypeRule ).ValueSubField;
 
             // Associate subfields with methods on this object, for SetSubFieldValue()
-            _SubFieldMethods.Add( _ValueSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Value, x => Value = new CswDelimitedString( x, _delimiter ) ) );
+            _SubFieldMethods.Add( _ValueSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Value, x => Value = new CswDelimitedString( x, Delimiter ) ) );
         }
 
         private CswNbtSubField _ValueSubField;
@@ -53,7 +53,7 @@ namespace ChemSW.Nbt.PropTypes
             {
                 if( _Value == null )
                 {
-                    _Value = new CswDelimitedString( _delimiter );
+                    _Value = new CswDelimitedString( Delimiter );
                     _Value.FromString( GetPropRowValue( _ValueSubField ) );
                 }
                 return _Value;
@@ -108,8 +108,8 @@ namespace ChemSW.Nbt.PropTypes
                 else
                 {
                     ret = new Dictionary<string, string>();
-                    CswDelimitedString NameOptions = new CswDelimitedString( _delimiter );
-                    CswDelimitedString ValueOptions = new CswDelimitedString( _delimiter );
+                    CswDelimitedString NameOptions = new CswDelimitedString( Delimiter );
+                    CswDelimitedString ValueOptions = new CswDelimitedString( Delimiter );
                     NameOptions.FromString( _CswNbtMetaDataNodeTypeProp.ListOptions.Trim() );
                     ValueOptions.FromString( _CswNbtMetaDataNodeTypeProp.ValueOptions.Trim() );
 
@@ -150,7 +150,7 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void SyncGestalt()
         {
-            CswDelimitedString NewGestalt = new CswDelimitedString( _delimiter );
+            CswDelimitedString NewGestalt = new CswDelimitedString( Delimiter );
             foreach( string Key in Value )
             {
                 if( Options.ContainsKey( Key ) )
@@ -199,7 +199,7 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            CswDelimitedString NewValue = new CswDelimitedString( _delimiter );
+            CswDelimitedString NewValue = new CswDelimitedString( Delimiter );
             NewValue.FromString( CswTools.XmlRealAttributeName( PropRow[_ValueSubField.ToXmlNodeName()].ToString() ) );
             Value = NewValue;
         }
@@ -208,7 +208,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             if( null != JObject[_ValueSubField.ToXmlNodeName( true )] )
             {
-                CswDelimitedString NewValue = new CswDelimitedString( _delimiter );
+                CswDelimitedString NewValue = new CswDelimitedString( Delimiter );
                 NewValue.FromString( JObject[_ValueSubField.ToXmlNodeName( true )].ToString() );
                 if( false == AllowMultiple )
                 {
