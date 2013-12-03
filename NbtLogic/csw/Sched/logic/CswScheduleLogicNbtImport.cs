@@ -83,6 +83,7 @@ namespace ChemSW.Nbt.Sched
                         {
                             _DataTableNames.RemoveAt( 0 );
                         }
+                        Importer.Finish();
                     }
                     else
                     {
