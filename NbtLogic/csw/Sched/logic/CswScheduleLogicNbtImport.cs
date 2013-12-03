@@ -4,6 +4,7 @@ using ChemSW.Config;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.MtSched.Core;
+using ChemSW.Nbt.csw.ImportExport;
 using ChemSW.Nbt.ImportExport;
 
 namespace ChemSW.Nbt.Sched
@@ -51,8 +52,7 @@ namespace ChemSW.Nbt.Sched
             // Only recalculate load count if it's zero
             if( _DataTableNames.Count == 0 )
             {
-                CswNbtImporter Importer = new CswNbtImporter( CswNbtResources );
-                _DataTableNames = Importer.getImportDataTableNames();
+                _DataTableNames = CswNbtImportTools.getImportDataTableNames( CswNbtResources );
             }
             return _DataTableNames.Count;
         }

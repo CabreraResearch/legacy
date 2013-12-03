@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using System.Data;
-using System.Data.OleDb;
 using System.Linq;
 using System.Text;
 using System.Xml;
@@ -11,6 +9,7 @@ using System.Xml.Linq;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
+using ChemSW.Nbt.csw.ImportExport;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
@@ -34,46 +33,12 @@ namespace ChemSW.Nbt.ImportExport
 
         public MessageHandler OnMessage = delegate( string Message ) { };
 
-        private DataSet _readExcel( string FilePath )
-        {
-            DataSet ret = new DataSet();
-
-            //Set up ADO connection to spreadsheet
-            string ConnStr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + FilePath + ";Extended Properties=Excel 8.0;";
-            OleDbConnection ExcelConn = new OleDbConnection( ConnStr );
-            ExcelConn.Open();
-
-            DataTable ExcelMetaDataTable = ExcelConn.GetOleDbSchemaTable( OleDbSchemaGuid.Tables, null );
-            if( null == ExcelMetaDataTable )
-            {
-                throw new CswDniException( CswEnumErrorType.Warning, "Invalid File", "Could not process the excel file: " + FilePath );
-            }
-
-            foreach( DataRow ExcelMetaDataRow in ExcelMetaDataTable.Rows )
-            {
-                string SheetName = ExcelMetaDataRow["TABLE_NAME"].ToString();
-
-                OleDbDataAdapter DataAdapter = new OleDbDataAdapter();
-                OleDbCommand SelectCommand = new OleDbCommand( "SELECT * FROM [" + SheetName + "]", ExcelConn );
-                DataAdapter.SelectCommand = SelectCommand;
-
-                DataTable ExcelDataTable = new DataTable( SheetName );
-                DataAdapter.Fill( ExcelDataTable );
-
-                ret.Tables.Add( ExcelDataTable );
-            }
-            return ret;
-        }
-
-        // _readExcel()
-
-
         /// <summary>
         /// Stores new import definition
         /// </summary>
         public void storeDefinition( string FullFilePath, string ImportDefinitionName )
         {
-            DataSet ExcelDataSet = _readExcel( FullFilePath );
+            DataSet ExcelDataSet = CswNbtImportTools.ReadExcel( FullFilePath );
 
             if( ExcelDataSet.Tables.Count == 3 )
             {
@@ -109,174 +74,7 @@ namespace ChemSW.Nbt.ImportExport
             CswNbtImportDefRelationship.addRelationshipEntries( _CswNbtResources, RelationshipsDataTable );
 
         }
-
-        // storeDefinition()
-
-
-        /// <summary>
-        /// Stores data in temporary Oracle tables
-        /// </summary>
-        public Int32 storeData( string FileName, string FullFilePath, string ImportDefinitionName, bool Overwrite )
-        {
-            //StringCollection ret = new StringCollection();
-            DataSet ExcelDataSet = _readExcel( FullFilePath );
-
-            // Store the job reference in import_data_job
-            CswTableUpdate ImportDataJobUpdate = _CswNbtResources.makeCswTableUpdate( "Importer_DataJob_Insert", CswNbtImportTables.ImportDataJob.TableName );
-            DataTable ImportDataJobTable = ImportDataJobUpdate.getEmptyTable();
-            DataRow DataJobRow = ImportDataJobTable.NewRow();
-            DataJobRow[CswNbtImportTables.ImportDataJob.filename] = FileName;
-            DataJobRow[CswNbtImportTables.ImportDataJob.userid] = _CswNbtResources.CurrentNbtUser.UserId.PrimaryKey;
-            DataJobRow[CswNbtImportTables.ImportDataJob.datestarted] = CswConvert.ToDbVal( DateTime.Now );
-            ImportDataJobTable.Rows.Add( DataJobRow );
-            Int32 JobId = CswConvert.ToInt32( DataJobRow[CswNbtImportTables.ImportDataJob.importdatajobid] );
-            ImportDataJobUpdate.update( ImportDataJobTable );
-
-            foreach( DataTable ExcelDataTable in ExcelDataSet.Tables )
-            {
-                string SheetName = ExcelDataTable.TableName;
-
-                // Determine Oracle table name
-                Int32 i = 1;
-                string ImportDataTableName = CswNbtImportTables.ImportDataN.TableNamePrefix + i.ToString();
-                while( _CswNbtSchemaModTrnsctn.isTableDefinedInDataBase( ImportDataTableName ) )
-                {
-                    i++;
-                    ImportDataTableName = CswNbtImportTables.ImportDataN.TableNamePrefix + i.ToString();
-                }
-
-                // Generate an Oracle table for storing and manipulating data
-                _CswNbtSchemaModTrnsctn.addTable( ImportDataTableName, CswNbtImportTables.ImportDataN.PkColumnName );
-                _CswNbtSchemaModTrnsctn.addBooleanColumn( ImportDataTableName, CswNbtImportTables.ImportDataN.error, "", false );
-                _CswNbtSchemaModTrnsctn.addClobColumn( ImportDataTableName, CswNbtImportTables.ImportDataN.errorlog, "", false );
-                foreach( DataColumn ExcelColumn in ExcelDataTable.Columns )
-                {
-                    _CswNbtSchemaModTrnsctn.addStringColumn( ImportDataTableName, CswNbtImportDefBinding.SafeColName( ExcelColumn.ColumnName ), "", false, 4000 );
-                }
-                CswNbtImportDef Definition = new CswNbtImportDef( _CswNbtResources, ImportDefinitionName, SheetName );
-                foreach( CswNbtImportDefOrder Order in Definition.ImportOrder.Values )
-                {
-                    _CswNbtSchemaModTrnsctn.addLongColumn( ImportDataTableName, Order.PkColName, "", false );
-                }
-                _CswNbtResources.commitTransaction();
-                _CswNbtResources.beginTransaction();
-
-                //ret.Add( ImportDataTableName );
-
-                // Store the sheet reference in import_data_map
-                CswTableUpdate ImportDataMapUpdate = _CswNbtResources.makeCswTableUpdate( "Importer_DataMap_Insert", CswNbtImportTables.ImportDataMap.TableName );
-                DataTable ImportDataMapTable = ImportDataMapUpdate.getEmptyTable();
-                DataRow DataMapRow = ImportDataMapTable.NewRow();
-                DataMapRow[CswNbtImportTables.ImportDataMap.datatablename] = ImportDataTableName;
-                DataMapRow[CswNbtImportTables.ImportDataMap.importdefid] = Definition.ImportDefinitionId;
-                DataMapRow[CswNbtImportTables.ImportDataMap.importdatajobid] = JobId;
-                DataMapRow[CswNbtImportTables.ImportDataMap.overwrite] = CswConvert.ToDbVal( Overwrite );
-                DataMapRow[CswNbtImportTables.ImportDataMap.completed] = CswConvert.ToDbVal( false );
-                ImportDataMapTable.Rows.Add( DataMapRow );
-                ImportDataMapUpdate.update( ImportDataMapTable );
-
-                // Copy the Excel data into the Oracle table
-                CswTableUpdate ImportDataUpdate = _CswNbtResources.makeCswTableUpdate( "Importer_Update", ImportDataTableName );
-                DataTable ImportDataTable = ImportDataUpdate.getEmptyTable();
-                foreach( DataRow ExcelRow in ExcelDataTable.Rows )
-                {
-                    bool hasData = false;
-                    DataRow ImportRow = ImportDataTable.NewRow();
-                    ImportRow[CswNbtImportTables.ImportDataN.error] = CswConvert.ToDbVal( false );
-                    foreach( DataColumn ExcelColumn in ExcelDataTable.Columns )
-                    {
-                        if( ExcelRow[ExcelColumn] != DBNull.Value )
-                        {
-                            hasData = true;
-                        }
-                        ImportRow[CswNbtImportDefBinding.SafeColName( ExcelColumn.ColumnName )] = ExcelRow[ExcelColumn];
-                    }
-                    if( hasData == true )
-                    {
-                        ImportDataTable.Rows.Add( ImportRow );
-                    }
-                }
-                ImportDataUpdate.update( ImportDataTable );
-
-                OnMessage( "Sheet '" + SheetName + "' is stored in Table '" + ImportDataTableName + "'" );
-            } // foreach( DataTable ExcelDataTable in ExcelDataSet.Tables )
-
-            _CswNbtResources.commitTransaction();
-            _CswNbtResources.beginTransaction();
-
-            //return ret;
-            return JobId;
-        }
-
-        // storeData()
-
-        /// <summary>
-        /// Returns the set of available Import Definition Names
-        /// </summary>
-        public CswCommaDelimitedString getDefinitionNames()
-        {
-            CswCommaDelimitedString ret = new CswCommaDelimitedString();
-            //CswTableSelect DefSelect = _CswNbtResources.makeCswTableSelect( "loadBindings_def_select1", CswNbtImportTables.ImportDef.TableName );
-            string Sql = @"select distinct(" + CswNbtImportTables.ImportDef.definitionname + ") from " + CswNbtImportTables.ImportDef.TableName + "";
-            CswArbitrarySelect DefSelect = _CswNbtResources.makeCswArbitrarySelect( "loadBindings_def_select1", Sql );
-            DataTable DefDataTable = DefSelect.getTable();
-            foreach( DataRow defrow in DefDataTable.Rows )
-            {
-                ret.Add( defrow[CswNbtImportTables.ImportDef.definitionname].ToString(), false, true );
-            }
-            return ret;
-        }
-
-        // getDefinitions()
-
-        /// <summary>
-        /// Returns the set of available Import Jobs
-        /// </summary>
-        public Collection<CswNbtImportDataJob> getJobs()
-        {
-            Collection<CswNbtImportDataJob> ret = new Collection<CswNbtImportDataJob>();
-            CswTableSelect JobSelect = _CswNbtResources.makeCswTableSelect( "getJobs_select", CswNbtImportTables.ImportDataJob.TableName );
-            DataTable JobDataTable = JobSelect.getTable();
-            foreach( DataRow jobrow in JobDataTable.Rows )
-            {
-                ret.Add( new CswNbtImportDataJob( _CswNbtResources, jobrow ) );
-            }
-            return ret;
-        }
-
-        // getJobs()
-
-
-
-        /// <summary>
-        /// Returns import data table names, in import order
-        /// </summary>
-        /// <param name="IncludeCompleted">If true, also include table names for already completed imports</param>
-        public StringCollection getImportDataTableNames( bool IncludeCompleted = false )
-        {
-            StringCollection ret = new StringCollection();
-
-            string Sql = @"select m." + CswNbtImportTables.ImportDataMap.datatablename +
-                         " from " + CswNbtImportTables.ImportDataMap.TableName + " m " +
-                         " join " + CswNbtImportTables.ImportDataJob.TableName + " j on m." + CswNbtImportTables.ImportDataMap.importdatajobid + " = j." + CswNbtImportTables.ImportDataJob.importdatajobid +
-                         " join " + CswNbtImportTables.ImportDef.TableName + " d on m." + CswNbtImportTables.ImportDataMap.importdefid + " = d." + CswNbtImportTables.ImportDef.importdefid;
-            if( false == IncludeCompleted )
-            {
-                Sql += "  where " + CswNbtImportTables.ImportDataJob.dateended + " is null";
-                Sql += "    and m." + CswNbtImportTables.ImportDataMap.completed + " = '" + CswConvert.ToDbVal( false ) + "'";
-            }
-            Sql += @"     order by j." + CswNbtImportTables.ImportDataJob.datestarted + ", d." + CswNbtImportTables.ImportDef.sheetorder + ", m." + CswNbtImportTables.ImportDataMap.PkColumnName;
-
-            CswArbitrarySelect ImportDataSelect = _CswNbtResources.makeCswArbitrarySelect( "getImportDataTableNames_Select", Sql );
-            DataTable ImportDataTable = ImportDataSelect.getTable();
-            foreach( DataRow Row in ImportDataTable.Rows )
-            {
-                ret.Add( CswConvert.ToString( Row[CswNbtImportTables.ImportDataMap.datatablename] ) );
-            }
-
-            return ret;
-        } // getImportDataTableNames()
-
+        
         /// <summary>
         /// Import a single row (for CAF imports)
         /// </summary>
@@ -1038,20 +836,6 @@ namespace ChemSW.Nbt.ImportExport
         }//_setRolePermissions()
 
         #endregion
-
-
-        public void CancelJob( Int32 JobId )
-        {
-            // Set Job's dateended to now
-            CswNbtImportDataJob Job = new CswNbtImportDataJob( _CswNbtResources, JobId );
-            Job.DateEnded = DateTime.Now;
-
-            // Set all DataMaps to Completed=1
-            foreach( CswNbtImportDataMap DataMap in Job.Maps )
-            {
-                DataMap.Completed = true;
-            }
-        } // CancelJob()
 
     } // class CswNbt2DImporter
 } // namespace ChemSW.Nbt.ImportExport

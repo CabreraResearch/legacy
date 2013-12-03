@@ -17,15 +17,14 @@ namespace ChemSW.Nbt.WebServices
         public static void getImportDefs( ICswResources CswResources, CswNbtImportWcf.ImportDefsReturn ret, object parms )
         {
             CswNbtResources CswNbtResources = (CswNbtResources) CswResources;
-            CswNbtImporter Importer = new CswNbtImporter( CswNbtResources );
-            ret.Data = Importer.getDefinitionNames().ToString();
+            ret.Data = CswNbtImportTools.getDefinitionNames( CswNbtResources ).ToString();
         }
 
         public static void getImportJobs( ICswResources CswResources, CswNbtImportWcf.ImportJobsReturn ret, object parms )
         {
             CswNbtResources CswNbtResources = (CswNbtResources) CswResources;
             CswNbtImporter Importer = new CswNbtImporter( CswNbtResources );
-            foreach( CswNbtImportDataJob Job in Importer.getJobs() )
+            foreach( CswNbtImportDataJob Job in CswNbtImportTools.getJobs( CswNbtResources ) )
             {
                 ret.Data.Add( Job );
             }
@@ -34,8 +33,6 @@ namespace ChemSW.Nbt.WebServices
         public static void getImportStatus( ICswResources CswResources, CswNbtImportWcf.ImportStatusReturn ret, CswNbtImportWcf.JobRequest parms )
         {
             CswNbtResources CswNbtResources = (CswNbtResources) CswResources;
-            CswNbtImporter Importer = new CswNbtImporter( CswNbtResources );
-
             if( Int32.MinValue != parms.JobId )
             {
                 CswNbtImportDataJob Job = new CswNbtImportDataJob( CswNbtResources, parms.JobId );
@@ -53,14 +50,12 @@ namespace ChemSW.Nbt.WebServices
         /// </summary>
         public static void cancelJob( ICswResources CswResources, CswWebSvcReturn ret, CswNbtImportWcf.JobRequest parms )
         {
-            CswNbtImporter Importer = new CswNbtImporter( (CswNbtResources) CswResources );
-            Importer.CancelJob( parms.JobId );
+            CswNbtImportTools.CancelJob( (CswNbtResources) CswResources, parms.JobId );
         }
 
         public static void uploadImportData( ICswResources CswResources, CswNbtImportWcf.ImportDataReturn ret, CswNbtImportWcf.ImportFileParams parms )
         {
             CswNbtResources CswNbtResources = (CswNbtResources) CswResources;
-            CswNbtImporter Importer = new CswNbtImporter( CswNbtResources );
 
             // Write uploaded file to temp dir
             CswFilePath FilePathMgr = new CswFilePath( CswResources );
@@ -71,7 +66,7 @@ namespace ChemSW.Nbt.WebServices
             ImportDataFile.Close();
             parms.PostedFile.InputStream.Close();
 
-            ret.JobId = Importer.storeData( parms.PostedFile.FileName, FullFilePath, parms.ImportDefName, parms.Overwrite );
+            ret.JobId = CswNbtImportTools.storeData( CswNbtResources, parms.PostedFile.FileName, FullFilePath, parms.ImportDefName, parms.Overwrite );
         }
 
 
