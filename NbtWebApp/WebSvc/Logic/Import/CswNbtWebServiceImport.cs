@@ -23,7 +23,6 @@ namespace ChemSW.Nbt.WebServices
         public static void getImportJobs( ICswResources CswResources, CswNbtImportWcf.ImportJobsReturn ret, object parms )
         {
             CswNbtResources CswNbtResources = (CswNbtResources) CswResources;
-            CswNbtImporter Importer = new CswNbtImporter( CswNbtResources );
             foreach( CswNbtImportDataJob Job in CswNbtImportTools.getJobs( CswNbtResources ) )
             {
                 ret.Data.Add( Job );
