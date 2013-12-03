@@ -187,62 +187,62 @@ namespace ChemSW.Nbt.Actions
 
             // Find unique properties for this relationship's nodetype
             IEnumerable<CswNbtMetaDataNodeTypeProp> UniqueProps = RelationshipProp.getNodeType().getUniqueProps();
-            if( UniqueProps.Any() )
+
+            // Create a view of nodes that point to the target node via this relationship
+            CswNbtView view = new CswNbtView( _CswNbtResources );
+            CswNbtViewRelationship rel1 = view.AddViewRelationship( Node.getNodeType(), false );
+            rel1.NodeIdsToFilterIn.Add( Node.NodeId );
+            CswNbtViewRelationship rel2 = view.AddViewRelationship( rel1, CswEnumNbtViewPropOwnerType.Second, RelationshipProp, false );
+            foreach( CswNbtMetaDataNodeTypeProp uniqueProp in UniqueProps )
             {
-                // Create a view of nodes that point to the target node via this relationship
-                CswNbtView view = new CswNbtView( _CswNbtResources );
-                CswNbtViewRelationship rel1 = view.AddViewRelationship( Node.getNodeType(), false );
-                rel1.NodeIdsToFilterIn.Add( Node.NodeId );
-                CswNbtViewRelationship rel2 = view.AddViewRelationship( rel1, CswEnumNbtViewPropOwnerType.Second, RelationshipProp, false );
-                foreach( CswNbtMetaDataNodeTypeProp uniqueProp in UniqueProps )
+                view.AddViewProperty( rel2, uniqueProp );
+            }
+
+            // Iterate children and store unique property values in a dictionary key
+            ICswNbtTree tree = _CswNbtResources.Trees.getTreeFromView( view, RequireViewPermissions: false, IncludeHiddenNodes: true, IncludeSystemNodes: true );
+            if( tree.getChildNodeCount() > 0 )
+            {
+                tree.goToNthChild( 0 );
+                for( Int32 c = 0; c < tree.getChildNodeCount(); c++ )
                 {
-                    view.AddViewProperty( rel2, uniqueProp );
-                }
+                    tree.goToNthChild( c );
 
-                // Iterate children and store unique property values in a dictionary key
-                ICswNbtTree tree = _CswNbtResources.Trees.getTreeFromView( view, RequireViewPermissions: false, IncludeHiddenNodes: true, IncludeSystemNodes: true );
-                if( tree.getChildNodeCount() > 0 )
-                {
-                    tree.goToNthChild( 0 );
-                    for( Int32 c = 0; c < tree.getChildNodeCount(); c++ )
-                    {
-                        tree.goToNthChild( c );
-
-                        // Populate MergeInfoData.NodePair.Relationships while we're here
-                        NodePair.Relationships.Add( new MergeInfoData.MergeInfoRelationship()
-                            {
-                                NodeId = tree.getNodeIdForCurrentPosition().ToString(),
-                                NodeTypePropId = RelationshipProp.PropId
-                            } );
-
-                        CswDelimitedString key = new CswDelimitedString( delimiter );
-                        foreach( CswNbtMetaDataNodeTypeProp uniqueProp in UniqueProps )
+                    // Populate MergeInfoData.NodePair.Relationships while we're here
+                    NodePair.Relationships.Add( new MergeInfoData.MergeInfoRelationship()
                         {
-                            CswNbtTreeNodeProp prop = tree.getChildNodePropsOfNode().FirstOrDefault( p => p.NodeTypePropId == uniqueProp.PropId );
-                            if( null != prop )
+                            NodeId = tree.getNodeIdForCurrentPosition().ToString(),
+                            NodeTypePropId = RelationshipProp.PropId
+                        } );
+
+                    CswDelimitedString key = new CswDelimitedString( delimiter );
+                    foreach( CswNbtMetaDataNodeTypeProp uniqueProp in UniqueProps )
+                    {
+                        CswNbtTreeNodeProp prop = tree.getChildNodePropsOfNode().FirstOrDefault( p => p.NodeTypePropId == uniqueProp.PropId );
+                        if( null != prop )
+                        {
+                            if( prop.NodeTypePropId == RelationshipProp.PropId )
                             {
-                                if( prop.NodeTypePropId == RelationshipProp.PropId )
-                                {
-                                    // This value will be equal after the merge
-                                    key.Add( "[mergeresult]" );
-                                }
-                                else
-                                {
-                                    key.Add( prop.Gestalt );
-                                }
+                                // This value will be equal after the merge
+                                key.Add( "[mergeresult]" );
                             }
                             else
                             {
-                                key.Add( "" );
+                                key.Add( prop.Gestalt );
                             }
-                        } // foreach( CswNbtMetaDataNodeTypeProp uniqueProp in UniqueProps )
+                        }
+                        else
+                        {
+                            key.Add( "" );
+                        }
+                    } // foreach( CswNbtMetaDataNodeTypeProp uniqueProp in UniqueProps )
+                    if( key.Count > 0 )
+                    {
                         ret.Add( key, tree.getNodeIdForCurrentPosition() );
+                    }
 
-                        tree.goToParentNode();
-                    } // for( Int32 c = 0; c < tree.getChildNodeCount(); c++ )
-                } // if( tree.getChildNodeCount() > 0 )
-
-            } // if( UniqueProps.Count() > 0 )
+                    tree.goToParentNode();
+                } // for( Int32 c = 0; c < tree.getChildNodeCount(); c++ )
+            } // if( tree.getChildNodeCount() > 0 )
             return ret;
         } // _getUniqueKeysDict()
 

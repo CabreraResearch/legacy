@@ -42,12 +42,12 @@ namespace ChemSW.Nbt.Schema
             } // foreach( CswNbtObjClassRole RoleNode in RoleOC.getNodes( forceReInit: false, IncludeDefaultFilters: false, IncludeHiddenNodes: true, includeSystemNodes: true ) )
 
 
-
             #region Debug test data
             // Some debug test data (TODO: REMOVE ME!)
 
             CswNbtMetaDataNodeType ChemicalNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Chemical" );
             CswNbtMetaDataNodeType SizeNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Size" );
+            CswNbtMetaDataNodeType GhsNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "GHS" );
             CswNbtMetaDataNodeType ContainerNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Container" );
 
             CswNbtMetaDataNodeTypeProp ContainerBarcodeNTP = ContainerNT.getNodeTypeProp( CswNbtObjClassContainer.PropertyName.Barcode );
@@ -73,6 +73,29 @@ namespace ChemSW.Nbt.Schema
                     chem.PartNumber.Text = "123.1";
                     chem.BoilingPoint.Text = "113";
                     chem.MeltingPoint.Text = "54";
+                } );
+            CswNbtNode ghs1 = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( GhsNT.NodeTypeId, delegate( CswNbtNode node )
+                {
+                    CswNbtObjClassGHS ghs = node;
+                    ghs.Material.RelatedNodeId = chem1.NodeId;
+                    ghs.Jurisdiction.RelatedNodeId = new CswPrimaryKey( "nodes", 31745 ); // default jurisdiction
+                    ghs.Classifications.AddValue( "nodes_41958" ); // Acute Toxicity: Oral (Category 5)
+                    ghs.Classifications.AddValue( "nodes_41963" ); // Acute Toxicity: Dermal (Category 5)
+                    ghs.LabelCodes.AddValue( "nodes_27745" ); // H201
+                    ghs.LabelCodes.AddValue( "nodes_27760" ); // H241
+                    ghs.Pictograms.AddValue( "acid.jpg" );
+                    ghs.Pictograms.AddValue( "exclam.jpg" );
+                    ghs.SignalWord.RelatedNodeId = new CswPrimaryKey( "nodes", 41941 ); // Danger
+                } );
+            CswNbtNode ghs2 = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( GhsNT.NodeTypeId, delegate( CswNbtNode node )
+                {
+                    CswNbtObjClassGHS ghs = node;
+                    ghs.Material.RelatedNodeId = chem2.NodeId;
+                    ghs.Jurisdiction.RelatedNodeId = new CswPrimaryKey( "nodes", 31745 ); // default jurisdiction
+                    ghs.Classifications.AddValue( "nodes_41958" ); // Acute Toxicity: Oral (Category 5)
+                    ghs.LabelCodes.AddValue( "nodes_27745" ); // H201
+                    ghs.Pictograms.AddValue( "acid.jpg" );
+                    ghs.SignalWord.RelatedNodeId = new CswPrimaryKey( "nodes", 41942 ); // Warning
                 } );
 
             CswNbtNode size1 = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( SizeNT.NodeTypeId, delegate( CswNbtNode node )
