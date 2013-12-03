@@ -64,6 +64,9 @@ namespace ChemSW.Nbt.Actions
                         Id = CswConvert.ToString( cwCountry.Id )
                     } );
                 }
+
+                // Attempt to populate the Suppliers list
+                _getMatchingSuppliers( Return.Supplier, Return );
             }
             else
             {
@@ -179,7 +182,6 @@ namespace ChemSW.Nbt.Actions
         public static CswNbtChemWatchRequest GetMatchingSuppliers( ICswResources CswResources, CswNbtChemWatchRequest Request )
         {
             CswNbtChemWatchRequest Return = new CswNbtChemWatchRequest();
-            CswNbtResources NbtResources = (CswNbtResources) CswResources;
 
             string errorMsg;
 

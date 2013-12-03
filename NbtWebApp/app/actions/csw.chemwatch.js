@@ -46,11 +46,10 @@
             cswPrivate.stepOneTable = stepOneTable;
 
             // Supplier
-            cswPrivate.supplierInput = stepOneTable.cell(1, 1).empty().css({ width: '275px' });
+            cswPrivate.supplierInput = stepOneTable.cell(1, 1).empty().css({ width: '350px' });
             cswPrivate.supplierInput.input({
                 labelText: 'Supplier Name contains: ',
                 value: cswPrivate.OperationData.Supplier,
-                size: 30,
                 onChange: function (value) {
 
                     // Clear steps two and three if they exist
@@ -99,15 +98,15 @@
             });
 
             // Search button
-            var searchBtnEnabled = false;
+            var searchBtnDisabled = true;
             if (cswPrivate.supplierSelect.length() > 0) {
-                searchBtnEnabled = true;
+                searchBtnDisabled = false;
             }
             cswPrivate.searchButton = stepOneTable.cell(4, 1).buttonExt({
                 name: 'searchChemWatchBtn',
                 icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.magglass),
                 enabledText: 'Search Materials',
-                disabled: searchBtnEnabled,
+                disabled: searchBtnDisabled,
                 disableOnClick: false,
                 onClick: function () {
 
