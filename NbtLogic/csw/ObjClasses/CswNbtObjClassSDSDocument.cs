@@ -210,11 +210,29 @@ namespace ChemSW.Nbt.ObjClasses
 
         public static string getAssignedSDSDocumentUrl( CswNbtResources _CswNbtResources, CswPrimaryKey MaterialId )
         {
-            //todo: add chemwatch condition
             string url = "";
             if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.SDS ) )
             {
+                CswNbtMetaDataObjectClass SDSDocOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.SDSDocumentClass );
+                CswNbtMetaDataNodeType SDSDocumentNT = SDSDocOC.FirstNodeType;
+
                 CswNbtView docView = getAssignedSDSDocumentsView( _CswNbtResources, MaterialId );
+
+                // We need to re-add these properties because they were removed from the 'Assigned SDS' view in Case 31223
+                CswNbtMetaDataNodeTypeProp LinkNTP = SDSDocumentNT.getNodeTypePropByObjectClassProp( CswNbtPropertySetDocument.PropertyName.Link );
+                docView.AddViewProperty( docView.Root.ChildRelationships[0].ChildRelationships[0], LinkNTP );
+                CswNbtMetaDataNodeTypeProp FileNTP = SDSDocumentNT.getNodeTypePropByObjectClassProp( CswNbtPropertySetDocument.PropertyName.File );
+                docView.AddViewProperty( docView.Root.ChildRelationships[0].ChildRelationships[0], FileNTP );
+                CswNbtMetaDataNodeTypeProp FileTypeNTP = SDSDocumentNT.getNodeTypePropByObjectClassProp( CswNbtPropertySetDocument.PropertyName.FileType );
+                docView.AddViewProperty( docView.Root.ChildRelationships[0].ChildRelationships[0], FileTypeNTP );
+
+                // If ChemWatch is enabled, we need to check for this type of file too
+                if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.ChemWatch ) )
+                {
+                    CswNbtMetaDataNodeTypeProp ChemWatchNTP = SDSDocumentNT.getNodeTypePropByObjectClassProp( PropertyName.ChemWatch );
+                    docView.AddViewProperty( docView.Root.ChildRelationships[0].ChildRelationships[0], ChemWatchNTP );
+                }
+
                 CswNbtObjClassUser currentUserNode = _CswNbtResources.Nodes[_CswNbtResources.CurrentNbtUser.UserId];
                 CswNbtObjClassJurisdiction userJurisdictionNode = _CswNbtResources.Nodes[currentUserNode.JurisdictionProperty.RelatedNodeId];
 
@@ -225,6 +243,7 @@ namespace ChemSW.Nbt.ObjClasses
                 string matchedFileType = "";
                 CswNbtTreeNodeProp matchedFileProp = null;
                 CswNbtTreeNodeProp matchedLinkProp = null;
+                CswNbtTreeNodeProp matchedChemWatchProp = null;
                 CswPrimaryKey matchedNodeId = null;
 
                 if( childCount > 0 )
@@ -238,6 +257,7 @@ namespace ChemSW.Nbt.ObjClasses
                         string fileType = "";
                         CswNbtTreeNodeProp fileProp = null;
                         CswNbtTreeNodeProp linkProp = null;
+                        CswNbtTreeNodeProp chemWatchProp = null;
                         CswPrimaryKey nodeId = docsTree.getNodeIdForCurrentPosition();
 
                         foreach( CswNbtTreeNodeProp prop in docsTree.getChildNodePropsOfNode() )
@@ -260,6 +280,9 @@ namespace ChemSW.Nbt.ObjClasses
                                 case PropertyName.Link:
                                     linkProp = prop;
                                     break;
+                                case PropertyName.ChemWatch:
+                                    chemWatchProp = prop;
+                                    break;
                             }
                         }
 
@@ -268,6 +291,7 @@ namespace ChemSW.Nbt.ObjClasses
                             matchedFileType = fileType;
                             matchedFileProp = fileProp;
                             matchedLinkProp = linkProp;
+                            matchedChemWatchProp = chemWatchProp;
                             matchedNodeId = nodeId;
                             lvlMatched = 0;
                         }
@@ -278,6 +302,7 @@ namespace ChemSW.Nbt.ObjClasses
                                 matchedFileType = fileType;
                                 matchedFileProp = fileProp;
                                 matchedLinkProp = linkProp;
+                                matchedChemWatchProp = chemWatchProp;
                                 matchedNodeId = nodeId;
                                 lvlMatched = 1;
                             }
@@ -286,6 +311,7 @@ namespace ChemSW.Nbt.ObjClasses
                                 matchedFileType = fileType;
                                 matchedFileProp = fileProp;
                                 matchedLinkProp = linkProp;
+                                matchedChemWatchProp = chemWatchProp;
                                 matchedNodeId = nodeId;
                                 lvlMatched = 2;
                             }
@@ -294,6 +320,7 @@ namespace ChemSW.Nbt.ObjClasses
                                 matchedFileType = fileType;
                                 matchedFileProp = fileProp;
                                 matchedLinkProp = linkProp;
+                                matchedChemWatchProp = chemWatchProp;
                                 matchedNodeId = nodeId;
                                 lvlMatched = 3;
                             }
@@ -307,10 +334,11 @@ namespace ChemSW.Nbt.ObjClasses
                             url = CswNbtNodePropBlob.getLink( jctnodepropid, matchedNodeId );
                             break;
                         case CswEnumDocumentFileTypes.Link:
-                            CswNbtMetaDataObjectClass SDSDocOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.SDSDocumentClass );
-                            CswNbtMetaDataNodeType SDSDocumentNT = SDSDocOC.FirstNodeType;
                             CswNbtMetaDataNodeTypeProp linkNTP = SDSDocumentNT.getNodeTypePropByObjectClassProp( PropertyName.Link );
-                            url = CswNbtNodePropLink.GetFullURL( linkNTP.Attribute1, matchedLinkProp.Field2, linkNTP.Attribute2 );
+                            url = CswNbtNodePropLink.GetFullURL( linkNTP.Attribute1, matchedLinkProp.Field1_Big, linkNTP.Attribute2 );
+                            break;
+                        case CswEnumDocumentFileTypes.ChemWatch:
+                            url = "Services/ChemWatch/GetSDSDocument?filename=" + matchedChemWatchProp.Field1;
                             break;
                     }
                 }
