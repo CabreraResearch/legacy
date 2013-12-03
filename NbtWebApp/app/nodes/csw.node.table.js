@@ -7,6 +7,7 @@
         var cswPrivate = {
             viewid: '',
             name: '',
+            cssclass: '',
             //                nodeid: '',
             //                nodekey: '',
             EditMode: Csw.enums.editMode.Edit,
@@ -51,7 +52,8 @@
                 });
             },
             filterToNodeTypeId: '',
-            filterOutNodeId: ''
+            filterOutNodeId: '',
+            forceSingleColumn: false
         };
         if (params) Csw.extend(cswPrivate, params, true);
 
@@ -110,7 +112,7 @@
             if (null === cswPrivate.filterOutNodeId || nodeid !== cswPrivate.filterOutNodeId) {
                 if (cswPrivate.c <= cswPrivate.columns) {
                     if ((false == cswPrivate.singleColumn || // paging handled in makeTable()
-                            cswPrivate.pagenodecount >= cswPrivate.pagenodelimit * (cswPrivate.currentpage - 1)) &&
+                        cswPrivate.pagenodecount >= cswPrivate.pagenodelimit * (cswPrivate.currentpage - 1)) &&
                         (cswPrivate.pagenodecount < cswPrivate.pagenodelimit * cswPrivate.currentpage)) {
 
 
@@ -179,7 +181,6 @@
                             });
                         }
                         textCell.br();
-
                         var texttable = textCell.table({ width: '100%', cellpadding: 0, cellspacing: 0 });
                         cswPrivate.texttables.push(texttable);
 
@@ -258,6 +259,7 @@
                             }
                         });
                         Csw.publish('render_' + nodeid + '_' + tabid);
+                        
                         // System Buttons
                         if (Csw.bool(cswPrivate.compactResults)) {
                             btnTable.cell(1, btncol).buttonExt({
@@ -398,7 +400,6 @@
                                 }
                             }); //importButton
 
-
                             btncol += 1;
 
                         } //nodeObj.allowimport
@@ -470,7 +471,8 @@
                 cellSet: cellset,
                 cellalign: cellalign,
                 width: '100%',
-                cellspacing: cellspacing
+                cellspacing: cellspacing,
+                TableCssClass: cswPrivate.cssclass
             });
 
             // Iterate Nodes per Nodetype
@@ -487,33 +489,23 @@
                     ((cswPrivate.pagenodecount + buffer) < cswPrivate.pagenodelimit * cswPrivate.currentpage)) {
 
                     Csw.eachRecursive(nodetypeObj.nodes, cswPrivate.makeNodeCell);
-
-                    // empty cells if no results, to keep image in place
-                    while (false === cswPrivate.singleColumn && cswPrivate.c <= cswPrivate.columns) {
-                        var cellSet = cswPrivate.layoutTable.cellSet(cswPrivate.r, cswPrivate.c);
-                        var textCell = cswPrivate.getTextCell(cellSet);
-                        textCell.append('&nbsp;');
-                        cswPrivate.c += 1;
-                    }
-
-
-                    // empty cells if no results, to keep image in place
-                    while (false === cswPrivate.singleColumn && cswPrivate.c <= cswPrivate.columns) {
-                        var cellSet = cswPrivate.layoutTable.cellSet(cswPrivate.r, cswPrivate.c);
-                        var textCell = cswPrivate.getTextCell(cellSet);
-                        textCell.append('&nbsp;');
-                        cswPrivate.c += 1;
-                    }
-
-
+                    
                     var nodetypeid = nodetypeObj["nodetypeid"];
                     var nodetypename = nodetypeObj["nodetypename"];
-
-                    var handleClick = function () {
+                    var handleClick = function() {
                         Csw.tryExec(cswPrivate.onMoreClick, nodetypeid, nodetypename);
                     };
-
+                    
                     if (false === cswPrivate.singleColumn) {
+
+                        // empty cells if no results, to keep image in place
+                        while (cswPrivate.c <= cswPrivate.columns) {
+                            var cellSet = cswPrivate.layoutTable.cellSet(cswPrivate.r, cswPrivate.c);
+                            var textCell = cswPrivate.getTextCell(cellSet);
+                            textCell.append('&nbsp;');
+                            cswPrivate.c += 1;
+                        }
+
                         var startCellSet = cswPrivate.layoutTable.cellSet(cswPrivate.r, 1);
                         var startHeaderCell = cswPrivate.getRowHeaderCell(startCellSet);
                         startHeaderCell.a({
@@ -522,17 +514,21 @@
                         });
 
                         if (results > 3) {
-                            var endCellSet = cswPrivate.layoutTable.cellSet(cswPrivate.r, cswPrivate.c);
-                            var endTextCell = cswPrivate.getTextCell(endCellSet);
-
-                            endTextCell.a({
-                                text: 'More...',
-                                onClick: handleClick
-                            });
+                            cswPrivate.makeEndCell(nodetypename, handleClick);
                         } // if (results > 3) {
+
+                        cswPrivate.c = 1;
+                        cswPrivate.r += 1;
+                    } // if (false === cswPrivate.singleColumn)
+                    else 
+                    {
+                        if (results > 3 && Csw.number(cswPrivate.tabledata.nodetypecount) > 1 ) {
+                            var endTextCell = cswPrivate.makeEndCell(nodetypename, handleClick);
+                            endTextCell.br();
+                            endTextCell.br();
+                            cswPrivate.r += 1;
+                        }
                     }
-                    cswPrivate.c = 1;
-                    cswPrivate.r += 1;
                 } else {
                     cswPrivate.pagenodecount += buffer;
                 }
@@ -588,6 +584,17 @@
             }
         }; // makeTable()
 
+        cswPrivate.makeEndCell = function(nodetypename, onClick) {
+            var endCellSet = cswPrivate.layoutTable.cellSet(cswPrivate.r, cswPrivate.c);
+            var endTextCell = cswPrivate.getTextCell(endCellSet);
+            endTextCell.a({
+                text: 'More ' + nodetypename + ' Results...',
+                onClick: onClick
+            });
+            return endTextCell;
+        }; // makeEndCell()
+
+
 
         cswPrivate.HandleTableData = function () {
             cswParent.empty();
@@ -598,7 +605,7 @@
             // multi-nodetype
             cswPrivate.singleColumn = false;
             cswPrivate.columns = 3;
-            if (Csw.number(cswPrivate.tabledata.nodetypecount) <= 1) {
+            if (Csw.number(cswPrivate.tabledata.nodetypecount) <= 1 ) {
                 // single nodetype
                 cswPrivate.singleColumn = true;
                 cswPrivate.columns = 1;
@@ -619,6 +626,12 @@
                 cswPrivate.totalpages = Math.ceil(constrainedResults / cswPrivate.pagenodelimit);
             }
 
+            // this needs to be after calculating totalpages
+            if (Csw.bool(cswPrivate.forceSingleColumn)) {
+                cswPrivate.singleColumn = true;
+                cswPrivate.columns = 1;
+            }
+            
             if (cswPrivate.results === 0) {
                 Csw.tryExec(cswPrivate.onNoResults, {
                     viewid: cswPrivate.viewid,

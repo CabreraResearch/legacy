@@ -34,7 +34,8 @@
             searchtype: 'Begins',
             filterHideThreshold: 5,
             universalSearchOnly: false,
-            filterOutNodeId: null
+            filterOutNodeId: null,
+            forceSingleColumn: false
             //buttonSingleColumn: '',
             //buttonMultiColumn: ''
         };
@@ -353,6 +354,7 @@
                 resultstable.cell(2, 1).propDom({ 'colspan': 3 });
 
                 nodeTable = Csw.nbt.nodeTable(resultstable.cell(2, 1), {
+                    cssclass: 'SearchTable',
                     onEditNode: function () {
                         // case 27245 - refresh on edit
                         cswPublic.restoreSearch(cswPrivate.sessiondataid);
@@ -375,6 +377,7 @@
                     extraActionIcon: cswPrivate.extraActionIcon,
                     onExtraAction: cswPrivate.onExtraAction,
                     compactResults: cswPrivate.compactResults,
+                    forceSingleColumn: cswPrivate.forceSingleColumn,
                     suppressButtons: cswPrivate.suppressButtons,
                     filterOutNodeId: cswPrivate.filterOutNodeId,
                     onMoreClick: function (nodetypeid, nodetypename) {
@@ -389,9 +392,8 @@
             // Filter panel
             cswPrivate.searchFiltersParent.empty();
 
-            fdiv = cswPrivate.searchFiltersParent.div().css({
-                paddingTop: '15px'
-            });
+            fdiv = cswPrivate.searchFiltersParent.div();
+            fdiv.addClass('SearchFilterDiv');
 
             fdiv.span({ text: data.name }).br();
             //fdiv.span({ text: 'Searched For: ' + data.searchterm }).br();

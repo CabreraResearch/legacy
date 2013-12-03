@@ -299,10 +299,6 @@ ul li div {
 
 
 
-.SearchTable
-{
-}
-
 .selectinput
 {
     font-family: verdana;
@@ -1417,13 +1413,24 @@ ul li div {
     font-size: 12px !Important;
 }
 
-
 .NodeTableOddRow
 {
 }
 .NodeTableEvenRow
 {
     background-color: #eeeeee;
+}
+
+.SearchTable
+{
+}
+
+.SearchFilterDiv
+{
+    padding-top: 15px;
+    padding-left: 5px;
+    background-color: #ddeeff;
+    border: 1px solid #99ccff;
 }
 
 .searchResult {
