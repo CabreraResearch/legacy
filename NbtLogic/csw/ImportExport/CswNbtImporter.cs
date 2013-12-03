@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
+using ChemSW.Config;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
@@ -14,7 +15,9 @@ using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Schema;
+using ChemSW.Nbt.Security;
 using ChemSW.Nbt.ServiceDrivers;
+using ChemSW.Security;
 
 namespace ChemSW.Nbt.ImportExport
 {
@@ -23,10 +26,29 @@ namespace ChemSW.Nbt.ImportExport
         private readonly CswNbtResources _CswNbtResources;
         private readonly CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;
 
-        public CswNbtImporter( CswNbtResources CswNbtResources )
+        public CswNbtImporter( string AccessId, CswEnumSetupMode SetupMode )
         {
-            _CswNbtResources = CswNbtResources;
-            _CswNbtSchemaModTrnsctn = new CswNbtSchemaModTrnsctn( _CswNbtResources );
+            if( CswEnumSetupMode.NbtExe == SetupMode || CswEnumSetupMode.NbtWeb == SetupMode )
+            {
+                _CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( CswEnumAppType.Nbt, SetupMode, false ); //ExcludeDisabledModules needs to be false
+                _CswNbtResources.AccessId = AccessId;
+                _CswNbtResources.InitCurrentUser = _initUser;
+                _CswNbtSchemaModTrnsctn = new CswNbtSchemaModTrnsctn( _CswNbtResources );
+            }
+            else
+            {
+                throw new CswDniException(CswEnumErrorType.Error, "Error initializing CswNbtImporter", "CswNbtImporter was passed an invalid SetupMode: " + SetupMode.ToString());
+            }
+        }
+
+        private ICswNbtUser _initUser( ICswResources Resources )
+        {
+            return new CswNbtSystemUser( Resources, CswEnumSystemUserNames.SysUsr__SchemaImport );
+        }
+
+        public void Finish()
+        {
+            _CswNbtResources.finalize();
         }
 
         public delegate void MessageHandler( string Message );

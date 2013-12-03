@@ -76,7 +76,7 @@ namespace ChemSW.Nbt.Sched
 
                     if( _DataTableNames.Count > 0 )
                     {
-                        CswNbtImporter Importer = new CswNbtImporter( CswNbtResources );
+                        CswNbtImporter Importer = new CswNbtImporter( CswNbtResources.AccessId, CswEnumSetupMode.NbtExe );
                         Int32 RowsProcessed;
                         bool MoreToDo = Importer.ImportRows( ImportLimit, _DataTableNames[0], out RowsProcessed );
                         if( false == MoreToDo )

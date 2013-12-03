@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
+using ChemSW.Config;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt.csw.ImportExport;
@@ -85,7 +86,7 @@ namespace ChemSW.Nbt.WebServices
         public static void uploadImportDefinition( ICswResources CswResources, CswWebSvcReturn ret, CswNbtImportWcf.ImportFileParams parms )
         {
             CswNbtResources CswNbtResources = (CswNbtResources) CswResources;
-            CswNbtImporter Importer = new CswNbtImporter( CswNbtResources );
+            CswNbtImporter Importer = new CswNbtImporter( CswNbtResources.AccessId, CswEnumSetupMode.NbtWeb );
 
             // Write uploaded file to temp dir
             CswTempFile myTempFile = new CswTempFile( CswResources );
