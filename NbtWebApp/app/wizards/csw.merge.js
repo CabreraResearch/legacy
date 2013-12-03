@@ -370,7 +370,6 @@
                     Choices: cswPrivate.mergeData
                 },
                 success: function(data) {
-debugger;
                     Csw.tryExec(cswPrivate.onFinish, data.ViewId);
                 } // success()
             }); // ajax
