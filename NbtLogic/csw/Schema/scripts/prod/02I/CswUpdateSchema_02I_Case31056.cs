@@ -83,8 +83,8 @@ namespace ChemSW.Nbt.Schema
                     ghs.Classifications.AddValue( "nodes_41963" ); // Acute Toxicity: Dermal (Category 5)
                     ghs.LabelCodes.AddValue( "nodes_27745" ); // H201
                     ghs.LabelCodes.AddValue( "nodes_27760" ); // H241
-                    ghs.Pictograms.AddValue( "acid.jpg" );
-                    ghs.Pictograms.AddValue( "exclam.jpg" );
+                    ghs.Pictograms.AddValue( "Images/cispro/ghs/512/acid.jpg" );
+                    ghs.Pictograms.AddValue( "Images/cispro/ghs/512/exclam.jpg" );
                     ghs.SignalWord.RelatedNodeId = new CswPrimaryKey( "nodes", 41941 ); // Danger
                 } );
             CswNbtNode ghs2 = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( GhsNT.NodeTypeId, delegate( CswNbtNode node )
@@ -94,7 +94,7 @@ namespace ChemSW.Nbt.Schema
                     ghs.Jurisdiction.RelatedNodeId = new CswPrimaryKey( "nodes", 31745 ); // default jurisdiction
                     ghs.Classifications.AddValue( "nodes_41958" ); // Acute Toxicity: Oral (Category 5)
                     ghs.LabelCodes.AddValue( "nodes_27745" ); // H201
-                    ghs.Pictograms.AddValue( "acid.jpg" );
+                    ghs.Pictograms.AddValue( "Images/cispro/ghs/512/acid.jpg" );
                     ghs.SignalWord.RelatedNodeId = new CswPrimaryKey( "nodes", 41942 ); // Warning
                 } );
 
