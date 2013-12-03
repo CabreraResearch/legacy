@@ -62,22 +62,22 @@ namespace ChemSW.Nbt.Schema
                 PropSetUpdate.update( PropSetTable );
             }
             CswNbtMetaDataObjectClass RequestMaterialCreateOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( "RequestMaterialCreateClass" );
-            if( null != RequestMaterialCreateOC )
+            if( null != RequestMaterialCreateOC && RequestMaterialCreateOC.ObjectClass != CswNbtResources.UnknownEnum )
             {
                 _CswNbtSchemaModTrnsctn.MetaData.DeleteObjectClass( RequestMaterialCreateOC );
             }
             CswNbtMetaDataObjectClass RequestMaterialDispenseOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( "RequestMaterialDispenseClass" );
-            if( null != RequestMaterialDispenseOC )
+            if( null != RequestMaterialDispenseOC && RequestMaterialDispenseOC.ObjectClass != CswNbtResources.UnknownEnum )
             {
                 _CswNbtSchemaModTrnsctn.MetaData.DeleteObjectClass( RequestMaterialDispenseOC );
             }
             CswNbtMetaDataObjectClass RequestContainerDispenseOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( "RequestContainerDispenseClass" );
-            if( null != RequestContainerDispenseOC )
+            if( null != RequestContainerDispenseOC && RequestContainerDispenseOC.ObjectClass != CswNbtResources.UnknownEnum )
             {
                 _CswNbtSchemaModTrnsctn.MetaData.DeleteObjectClass( RequestContainerDispenseOC );
             }
             CswNbtMetaDataObjectClass RequestContainerUpdateOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( "RequestContainerUpdateClass" );
-            if( null != RequestContainerUpdateOC )
+            if( null != RequestContainerUpdateOC && RequestContainerUpdateOC.ObjectClass != CswNbtResources.UnknownEnum )
             {
                 _CswNbtSchemaModTrnsctn.MetaData.DeleteObjectClass( RequestContainerUpdateOC );
             }
