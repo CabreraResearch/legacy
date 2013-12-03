@@ -36,7 +36,7 @@ namespace ChemSW.Nbt.WebServices
 
         public static void GetSDSDocument( ICswResources CswResources, CswNbtChemWatchReturn Return, string FileName )
         {
-            Return.Data.SDSDocument = CswNbtActChemWatch.GetSDSDocument( CswResources, FileName );
+            Return.Data = CswNbtActChemWatch.GetSDSDocument( CswResources, FileName );
         }
 
         public static void GetMatchingSuppliers( ICswResources CswResources, CswNbtChemWatchReturn Return, CswNbtChemWatchRequest Request )

@@ -238,7 +238,7 @@ namespace ChemSW.Nbt.ObjClasses
                 switch( OCPPropName )
                 {
                     case PropertyName.OpenFile:
-                        HasPermission = true; //todo: what should this be based off?
+                        HasPermission = true;
                         string url = "";
                         if( FileType.Value.Equals( CswEnumDocumentFileTypes.File ) )
                         {

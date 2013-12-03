@@ -417,6 +417,7 @@ namespace ChemSW.Nbt.PropTypes
             }
 
             bool AllowEdit = _CswNbtResources.Permit.isPropWritable( CswEnumNbtNodeTypePermission.Create, NodeTypeProp, null );
+            Int32 OptionCount = 0;
             if( AllowEdit )
             {
                 CswPrimaryKey pk = null;
@@ -432,7 +433,6 @@ namespace ChemSW.Nbt.PropTypes
                 else
                 {
                     ParentObject["usesearch"] = false;
-                    Int32 OptionCount = 0;
                     CswPrimaryKey FirstPk = null;
                     foreach( CswPrimaryKey NodePk in Options.Keys ) //.Where( NodePk => NodePk != null && NodePk.PrimaryKey != Int32.MinValue ) )
                     {
@@ -516,6 +516,10 @@ namespace ChemSW.Nbt.PropTypes
             if( null != View )
             {
                 ParentObject["viewid"] = View.ViewId.ToString();
+                if( AllowEdit && OptionCount == 0 )
+                {
+                    ParentObject["doGetNodes"] = true;
+                }
             }
 
         } // ToJSON()

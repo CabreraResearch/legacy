@@ -59,66 +59,35 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
+        //updates total dispensed for all dispense request fulfillment actions 
         private void _onCreateFromRequestItem()
         {
             if( CswTools.IsPrimaryKey( RequestItem.RelatedNodeId ) )
             {
-                CswNbtPropertySetRequestItem NodeAsPropSet = _CswNbtResources.Nodes[ RequestItem.RelatedNodeId ];
-                if( null != NodeAsPropSet )
+                CswNbtObjClassRequestItem RequestItemNode = _CswNbtResources.Nodes[RequestItem.RelatedNodeId];
+                if( null != RequestItemNode )
                 {
                     if( Type.Value == CswEnumNbtContainerDispenseType.Dispense.ToString() )
                     {
-                        CswNbtUnitConversion Conversion = null;
-                        switch( NodeAsPropSet.Type.Value )
-                        {
-                            case CswNbtObjClassRequestContainerDispense.Types.ContainerDispense:
-                                CswNbtObjClassRequestContainerDispense NodeAsCd = CswNbtObjClassRequestContainerDispense.fromPropertySet( NodeAsPropSet );
-                                if( false == CswTools.IsPrimaryKey( NodeAsCd.TotalDispensed.UnitId ) )
-                                {
-                                    NodeAsCd.TotalDispensed.UnitId = QuantityDispensed.UnitId;
-                                }
-                                NodeAsCd.setNextStatus( CswNbtObjClassRequestContainerDispense.Statuses.Dispensed );
-
-                                Conversion = new CswNbtUnitConversion( _CswNbtResources, QuantityDispensed.UnitId, NodeAsCd.TotalDispensed.UnitId, NodeAsCd.Material.RelatedNodeId );
-                                NodeAsCd.TotalDispensed.Quantity -= Conversion.convertUnit( QuantityDispensed.Quantity ); // Subtracting a negative number in order to add
-                                break;
-
-                            default:
-                                CswNbtObjClassRequestMaterialDispense NodeAsMd = CswNbtObjClassRequestMaterialDispense.fromPropertySet( NodeAsPropSet );
-                                if( false == CswTools.IsPrimaryKey( NodeAsMd.TotalDispensed.UnitId ) )
-                                {
-                                    NodeAsMd.TotalDispensed.UnitId = QuantityDispensed.UnitId;
-                                }
-                                NodeAsMd.setNextStatus( CswNbtObjClassRequestMaterialDispense.Statuses.Dispensed );
-
-                                Conversion = new CswNbtUnitConversion( _CswNbtResources, QuantityDispensed.UnitId, NodeAsMd.TotalDispensed.UnitId, NodeAsMd.Material.RelatedNodeId );
-                                NodeAsMd.TotalDispensed.Quantity -= Conversion.convertUnit( QuantityDispensed.Quantity ); // Subtracting a negative number in order to add
-                                break;
-                        }
+                        CswNbtUnitConversion Conversion = new CswNbtUnitConversion( _CswNbtResources, QuantityDispensed.UnitId, RequestItemNode.TotalDispensed.UnitId, RequestItemNode.Material.RelatedNodeId );
+                        double DispensedQuantity = Conversion.convertUnit( QuantityDispensed.Quantity );
+                        RequestItemNode.TotalDispensed.Quantity -= DispensedQuantity; // Subtracting a negative number in order to add
+                        RequestItemNode.FulfillmentHistory.AddComment( "Dispensed " + QuantityDispensed.Gestalt + " into " + CswNbtNode.getNodeLink(DestinationContainer.RelatedNodeId, DestinationContainer.Gestalt) );
+                        RequestItemNode.Status.Value = CswNbtObjClassRequestItem.Statuses.Dispensed;
                     }
-                    else if( Type.Value == CswEnumNbtContainerDispenseType.Dispose.ToString() )
-                    {
-                        CswNbtObjClassRequestContainerUpdate NodeAsCu = CswNbtObjClassRequestContainerUpdate.fromPropertySet( NodeAsPropSet );
-                        NodeAsCu.setNextStatus( CswNbtObjClassRequestContainerUpdate.Statuses.Disposed );
-                    }
-                    else if( Type.Value == CswEnumNbtContainerDispenseType.Receive.ToString() )
-                    {
-                        CswNbtObjClassRequestMaterialDispense NodeAsMd = CswNbtObjClassRequestMaterialDispense.fromPropertySet( NodeAsPropSet );
-                        NodeAsMd.setNextStatus( CswNbtObjClassRequestMaterialDispense.Statuses.Received );
-                    }
-                    NodeAsPropSet.postChanges( true );
+                    RequestItemNode.postChanges( false );
                 }
             }
         }
 
         public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
         {
-            _onCreateFromRequestItem();
             _CswNbtObjClassDefault.beforeCreateNode( IsCopy, OverrideUniqueValidation );
         }//beforeCreateNode()
 
         public override void afterCreateNode()
         {
+            _onCreateFromRequestItem();
             _CswNbtObjClassDefault.afterCreateNode();
         }//afterCreateNode()
 

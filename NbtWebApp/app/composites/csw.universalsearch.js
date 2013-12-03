@@ -524,7 +524,8 @@
                 data: {
                     SessionDataId: cswPrivate.sessiondataid,
                     Filter: JSON.stringify(thisFilter),
-                    Action: action
+                    Action: action,
+                    Limit: '0',
                 },
                 success: cswPublic.handleResults
             });
@@ -536,7 +537,8 @@
                 urlMethod: 'filterUniversalSearchByNodeType',
                 data: {
                     SessionDataId: cswPrivate.sessiondataid,
-                    NodeTypeId: nodetypeid
+                    NodeTypeId: nodetypeid,
+                    Limit: '0',
                 },
                 success: cswPublic.handleResults
             });
@@ -553,7 +555,8 @@
                         data: {
                             SessionDataId: cswPrivate.sessiondataid,
                             Name: name,
-                            Category: category
+                            Category: category,
+                            Limit: '0',
                         },
                         success: function (data) {
                             cswPublic.handleResults(data);
@@ -568,7 +571,8 @@
             Csw.ajax.deprecatedWsNbt({
                 urlMethod: 'deleteSearch',
                 data: {
-                    SearchId: searchid
+                    SearchId: searchid,
+                    Limit: '0',
                 },
                 success: function (data) {
                     cswPublic.handleResults(data);
@@ -584,7 +588,8 @@
             Csw.ajax.deprecatedWsNbt({
                 urlMethod: cswPrivate.restoresearchurl,
                 data: {
-                    SessionDataId: cswPrivate.sessiondataid
+                    SessionDataId: cswPrivate.sessiondataid,
+                    Limit: '0',
                 },
                 success: function (data) {
                     cswPublic.handleResults(data);

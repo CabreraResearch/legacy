@@ -220,6 +220,9 @@ namespace ChemSW.Nbt.MetaData
             return Dict;
         } // getNodeIdAndNames()
 
+        /// <summary>
+        /// Returns true if the user is allowed to add a new node of the given ObjectClass through the AddNode dialog.
+        /// </summary>
         public bool CanAdd
         {
             get
@@ -228,10 +231,7 @@ namespace ChemSW.Nbt.MetaData
                              ObjectClass != CswEnumNbtObjectClass.UserClass ) ||
                            _CswNbtMetaDataResources.CswNbtResources.CurrentNbtUser.IsAdministrator() ) &&
                        ObjectClass != CswEnumNbtObjectClass.RequestClass &&
-                       ObjectClass != CswEnumNbtObjectClass.RequestContainerDispenseClass &&
-                       ObjectClass != CswEnumNbtObjectClass.RequestContainerUpdateClass &&
-                       ObjectClass != CswEnumNbtObjectClass.RequestMaterialCreateClass &&
-                       ObjectClass != CswEnumNbtObjectClass.RequestMaterialDispenseClass &&
+                       ObjectClass != CswEnumNbtObjectClass.RequestItemClass &&
                        ObjectClass != CswEnumNbtObjectClass.RegulatoryListCasNoClass &&
                        ObjectClass != CswEnumNbtObjectClass.ContainerClass &&
                        ObjectClass != CswEnumNbtObjectClass.ContainerLocationClass &&

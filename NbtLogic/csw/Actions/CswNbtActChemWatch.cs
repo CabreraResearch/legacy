@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Web;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.ChemWatchAuthServices;
@@ -65,6 +64,9 @@ namespace ChemSW.Nbt.Actions
                         Id = CswConvert.ToString( cwCountry.Id )
                     } );
                 }
+
+                // Attempt to populate the Suppliers list
+                _getMatchingSuppliers( Return.Supplier, Return );
             }
             else
             {
@@ -138,8 +140,7 @@ namespace ChemSW.Nbt.Actions
                     SDSDoc.Language = Doc.LanguageCode;
                     SDSDoc.Country = Doc.CountryCode;
                     SDSDoc.FileName = Doc.FileName.Length > 0 ? Doc.FileName : String.Empty;
-                    SDSDoc.ExternalUrl = HttpUtility.UrlEncode( Doc.ExternalUrl );
-                    //SDSDoc.ExternalUrl = Doc.ExternalUrl;
+                    SDSDoc.ExternalUrl = Doc.ExternalUrl;
                     Return.SDSDocuments.Add( SDSDoc );
                 }
             }
@@ -151,31 +152,36 @@ namespace ChemSW.Nbt.Actions
             return Return;
         }
 
-        public static Stream GetSDSDocument( ICswResources CswResources, string filename )
+        public static CswNbtChemWatchRequest GetSDSDocument( ICswResources CswResources, string filename )
         {
-            Stream Ret = null;
+            CswNbtChemWatchRequest Return = new CswNbtChemWatchRequest();
             string errorMsg;
 
             if( _authenticate( out errorMsg ) )
             {
                 DocumentServiceClient cwDocClient = new DocumentServiceClient();
                 cwDocClient.Endpoint.Behaviors.Add( _cookieBehavior );
-                Stream DocStream = cwDocClient.GetDocumentContent( filename );
-
-                Ret = DocStream;
+                try
+                {
+                    Stream DocStream = cwDocClient.GetDocumentContent( filename );
+                    Return.SDSDocument = DocStream;
+                }
+                catch( Exception ex )
+                {
+                    Return.Message = ex.Message;
+                }
             }
             else
             {
                 throw new CswDniException( CswEnumErrorType.Error, "There was a problem authenticating with ChemWatch", errorMsg );
             }
 
-            return Ret;
+            return Return;
         }
 
         public static CswNbtChemWatchRequest GetMatchingSuppliers( ICswResources CswResources, CswNbtChemWatchRequest Request )
         {
             CswNbtChemWatchRequest Return = new CswNbtChemWatchRequest();
-            CswNbtResources NbtResources = (CswNbtResources) CswResources;
 
             string errorMsg;
 
@@ -232,11 +238,13 @@ namespace ChemSW.Nbt.Actions
             ListResultOfVendor cwVendors = cwMaterialClient.SearchVendors( cwSearchVend );
             foreach( Vendor cwVendor in cwVendors.Rows )
             {
-                Return.Suppliers.Add( new ChemWatchListItem()
-                    {
-                        Name = cwVendor.Name,
-                        Id = cwVendor.VendorGroup.Gid
-                    } );
+                ChemWatchListItem cwSupplier = new ChemWatchListItem();
+                cwSupplier.Name = cwVendor.Name;
+                cwSupplier.Id = cwVendor.VendorGroup.Gid;
+                if( false == Return.Suppliers.Any( supplier => supplier.Id == cwVendor.VendorGroup.Gid ) )
+                {
+                    Return.Suppliers.Add( cwSupplier );
+                }
             }
         }
 

@@ -38,31 +38,15 @@ namespace ChemSW.Nbt
                 }
             }
 
-            CswNbtMetaDataObjectClass RequestMatDispOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestMaterialDispenseClass );
-            foreach( CswNbtMetaDataNodeType NodeType in RequestMatDispOc.getLatestVersionNodeTypes() )
+            CswNbtMetaDataObjectClass RequestItemOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestItemClass );
+            foreach( CswNbtMetaDataNodeType RequestItemNT in RequestItemOC.getLatestVersionNodeTypes() )
             {
-                CswNbtMetaDataNodeTypeTab ReceiveTab = NodeType.getNodeTypeTab( "Receive" ) ?? _CswNbtResources.MetaData.makeNewTab( NodeType, "Receive", NodeType.getNextTabOrder() );
-                foreach( string ReceiveTabProp in CswNbtObjClassRequestMaterialDispense.PropertyName.MLMReceiveTabProps )
-                {
-                    CswNbtMetaDataNodeTypeProp ReceiveNtp = NodeType.getNodeTypePropByObjectClassProp( ReceiveTabProp );
-                    ReceiveNtp.Hidden = false;
-                }
-
-                foreach( string CmgTabProp in CswNbtObjClassRequestMaterialDispense.PropertyName.MLMCmgTabProps )
-                {
-                    CswNbtMetaDataNodeTypeProp CmgNtp = NodeType.getNodeTypePropByObjectClassProp( CmgTabProp );
-                    CmgNtp.Hidden = false;
-                }
-
-                //These are intentional layout moves
-                CswNbtMetaDataNodeTypeTab CmgTab = NodeType.getNodeTypeTab( "Central Material Group" ) ?? _CswNbtResources.MetaData.makeNewTab( NodeType, "Central Material Group", NodeType.getNextTabOrder() );
-
-                CswNbtMetaDataNodeTypeProp RofNtp = NodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.RecurringFrequency );
-                RofNtp.updateLayout( CswEnumNbtLayoutType.Edit, true, CmgTab.TabId );
-                CswNbtMetaDataNodeTypeProp NrdNtp = NodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.NextReorderDate );
-                NrdNtp.updateLayout( CswEnumNbtLayoutType.Edit, RofNtp, true );
-                //End intentional layout moves
-
+                _CswNbtResources.Modules.ShowProp( RequestItemNT.NodeTypeId, CswNbtObjClassRequestItem.PropertyName.CertificationLevel );
+                _CswNbtResources.Modules.ShowProp( RequestItemNT.NodeTypeId, CswNbtObjClassRequestItem.PropertyName.IsBatch );
+                _CswNbtResources.Modules.ShowProp( RequestItemNT.NodeTypeId, CswNbtObjClassRequestItem.PropertyName.BatchNumber );
+                _CswNbtResources.Modules.ShowProp( RequestItemNT.NodeTypeId, CswNbtObjClassRequestItem.PropertyName.GoodsReceived );
+                _CswNbtResources.Modules.ShowProp( RequestItemNT.NodeTypeId, CswNbtObjClassRequestItem.PropertyName.ReceiptLotToDispense );
+                _CswNbtResources.Modules.ShowProp( RequestItemNT.NodeTypeId, CswNbtObjClassRequestItem.PropertyName.ReceiptLotsReceived );
             }
 
             //Case 28339
@@ -77,9 +61,6 @@ namespace ChemSW.Nbt
 
             _toggleMaterialSupplierView( false );
             _toggleReceiptLotManufacturerView( false );
-
-            _toggleMaterialRequestApprovalLevel( CswEnumNbtObjectClass.RequestMaterialCreateClass, false );
-            _toggleMaterialRequestApprovalLevel( CswEnumNbtObjectClass.RequestMaterialDispenseClass, false );
 
         }
 
@@ -100,26 +81,15 @@ namespace ChemSW.Nbt
                 _CswNbtResources.Modules.HideProp( containerNT.NodeTypeId, CswNbtObjClassContainer.PropertyName.ReservedFor );
             }
 
-            CswNbtMetaDataObjectClass RequestMatDispOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestMaterialDispenseClass );
-            foreach( CswNbtMetaDataNodeType NodeType in RequestMatDispOc.getLatestVersionNodeTypes() )
+            CswNbtMetaDataObjectClass RequestItemOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestItemClass );
+            foreach( CswNbtMetaDataNodeType RequestItemNT in RequestItemOC.getLatestVersionNodeTypes() )
             {
-                foreach( string CmgTabProp in CswNbtObjClassRequestMaterialDispense.PropertyName.MLMCmgTabProps )
-                {
-                    _CswNbtResources.Modules.HideProp( NodeType.NodeTypeId, CmgTabProp );
-                }
-
-                foreach( string ReceiveTabProp in CswNbtObjClassRequestMaterialDispense.PropertyName.MLMReceiveTabProps )
-                {
-                    _CswNbtResources.Modules.HideProp( NodeType.NodeTypeId, ReceiveTabProp );
-                }
-
-                //These layout moves are intentional
-                CswNbtMetaDataNodeTypeProp RofNtp = NodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.RecurringFrequency );
-                RofNtp.updateLayout( CswEnumNbtLayoutType.Edit, true, NodeType.getFirstNodeTypeTab().TabId );
-
-                CswNbtMetaDataNodeTypeProp NrdNtp = NodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.NextReorderDate );
-                NrdNtp.updateLayout( CswEnumNbtLayoutType.Edit, RofNtp, true );
-
+                _CswNbtResources.Modules.HideProp( RequestItemNT.NodeTypeId, CswNbtObjClassRequestItem.PropertyName.CertificationLevel );
+                _CswNbtResources.Modules.HideProp( RequestItemNT.NodeTypeId, CswNbtObjClassRequestItem.PropertyName.IsBatch );
+                _CswNbtResources.Modules.HideProp( RequestItemNT.NodeTypeId, CswNbtObjClassRequestItem.PropertyName.BatchNumber );
+                _CswNbtResources.Modules.HideProp( RequestItemNT.NodeTypeId, CswNbtObjClassRequestItem.PropertyName.GoodsReceived );
+                _CswNbtResources.Modules.HideProp( RequestItemNT.NodeTypeId, CswNbtObjClassRequestItem.PropertyName.ReceiptLotToDispense );
+                _CswNbtResources.Modules.HideProp( RequestItemNT.NodeTypeId, CswNbtObjClassRequestItem.PropertyName.ReceiptLotsReceived );
             }
 
             //Case 28339
@@ -139,8 +109,6 @@ namespace ChemSW.Nbt
 
             _toggleMaterialSupplierView( true );
             _toggleReceiptLotManufacturerView( true );
-            _toggleMaterialRequestApprovalLevel( CswEnumNbtObjectClass.RequestMaterialCreateClass, true );
-            _toggleMaterialRequestApprovalLevel( CswEnumNbtObjectClass.RequestMaterialDispenseClass, true );
 
         } // OnDisable()
 
@@ -192,23 +160,6 @@ namespace ChemSW.Nbt
                 ManufacturerView.Visibility = CswEnumNbtViewVisibility.Property;
                 ManufacturerView.ViewName = "Manufacturer";
                 ManufacturerView.save();
-            }
-        }
-
-        private void _toggleMaterialRequestApprovalLevel( CswEnumNbtObjectClass ObjClass, bool MLMDisabled )
-        {
-            CswNbtMetaDataObjectClass createMaterialRequestOC = _CswNbtResources.MetaData.getObjectClass( ObjClass );
-            foreach( CswNbtMetaDataNodeType createMaterialRequestNT in createMaterialRequestOC.getNodeTypes() )
-            {
-                CswNbtMetaDataNodeTypeProp approvalLevelNTP = createMaterialRequestNT.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialCreate.PropertyName.ApprovalLevel );
-                if( MLMDisabled )
-                {
-                    approvalLevelNTP.Hidden = true;
-                }
-                else
-                {
-                    approvalLevelNTP.Hidden = false;
-                }
             }
         }
 

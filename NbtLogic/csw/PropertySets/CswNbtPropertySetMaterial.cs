@@ -283,12 +283,12 @@ namespace ChemSW.Nbt.ObjClasses
                             HasPermission = true;
                             CswNbtActRequesting RequestAct = new CswNbtActRequesting( _CswNbtResources );
 
-                            CswNbtPropertySetRequestItem NodeAsPropSet = RequestAct.makeMaterialRequestItem( new CswEnumNbtRequestItemType( CswEnumNbtRequestItemType.Material ), NodeId, ButtonData );
+                            CswNbtObjClassRequestItem RequestItem = RequestAct.makeMaterialRequestItem( this, ButtonData );
 
                             ButtonData.Data["requestaction"] = OCPPropName;
                             ButtonData.Data["titleText"] = ButtonData.SelectedText + " for " + TradeName.Text;
-                            ButtonData.Data["requestItemProps"] = RequestAct.getRequestItemAddProps( NodeAsPropSet );
-                            ButtonData.Data["requestItemNodeTypeId"] = NodeAsPropSet.NodeTypeId;
+                            ButtonData.Data["requestItemProps"] = RequestAct.getRequestItemAddProps( RequestItem.Node );
+                            ButtonData.Data["requestItemNodeTypeId"] = RequestItem.NodeTypeId;
                             ButtonData.Data["relatednodeid"] = NodeId.ToString();
                             ButtonData.Action = CswEnumNbtButtonAction.request;
                         }

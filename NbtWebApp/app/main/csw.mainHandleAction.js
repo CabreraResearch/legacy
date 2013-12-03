@@ -20,15 +20,14 @@
 
         var actionHandler = Csw.object();
         (function buildActHandler() {
-            actionHandler.add('chemwatch', function(o) {
-                var options = {
-                    materialid: o.state.materialId,
-                    onCancel: onCancel, // return to the material
-                    onFinish: function(data) {
+            actionHandler.add('chemwatch', function (o) {
+                return Csw.actions.chemwatch(Csw.main.centerTopDiv, {
+                    state: o.state,
+                    onCancel: onCancel,
+                    onFinish: function () {
                         onCancel();
                     }
-                };
-                return Csw.actions.chemwatch(Csw.main.centerTopDiv, options);
+                });
             });
             actionHandler.add('create inspection', function (o) {
                 var designOpt = {
@@ -340,14 +339,14 @@
             });
             actionHandler.add('default', defaultAct);
 
-            actionHandler.add('explorer', function(o) {
+            actionHandler.add('explorer', function (o) {
                 return Csw.actions.explorer(Csw.main.centerTopDiv, {
                     startingNodeId: o.ActionOptions.startingNodeId,
                     onCancel: onCancel
                 });
             });
         }()); //buildActHandler
-        
+
         Csw.subscribe(Csw.enums.events.main.handleAction, function (eventObj, opts) {
             Csw.main.handleAction(opts);
         }); // _handleAction()

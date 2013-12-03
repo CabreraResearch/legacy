@@ -35,9 +35,9 @@ namespace ChemSW.Nbt.Actions
         {
             _CswNbtResources = CswNbtResources;
             _CswNbtSdTabsAndProps = new CswNbtSdTabsAndProps( _CswNbtResources );
-            if( false == _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.CISPro ) )
+            if( false == _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Containers ) )
             {
-                throw new CswDniException( CswEnumErrorType.Error, "Cannot use the Submit Request action without the required module.", "Attempted to constuct CswNbtActReceiving without the required module." );
+                throw new CswDniException( CswEnumErrorType.Error, "Cannot use the Receive Material action without the required module.", "Attempted to constuct CswNbtActReceiving without the required module." );
             }
             _MaterialOc = MaterialOc;
             _MaterialId = MaterialNodeId;

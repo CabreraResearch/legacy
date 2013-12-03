@@ -64,7 +64,7 @@
             //case 28180 - relationships not clickable from audit history popup (Case 30496 - or when viewing As Report)
             optsNodeSelect.isClickable = nodeProperty.tabState.EditMode !== Csw.enums.editMode.AuditHistoryInPopup && nodeProperty.tabState.EditMode !== Csw.enums.editMode.PrintReport;
 
-            optsNodeSelect.doGetNodes = false;
+            optsNodeSelect.doGetNodes = nodeProperty.propData.values.doGetNodes;
 
             optsNodeSelect.showSelectOnLoad = (function () {
                 return nodeProperty.tabState.EditMode === Csw.enums.editMode.Add ||

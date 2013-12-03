@@ -17,9 +17,6 @@ namespace NbtWebApp.WebSvc.Logic.CISPro
         [DataContract]
         public class CswNbtRequestMaterialCreateReturn : CswWebSvcReturn
         {
-            /// <summary>
-            /// Ctor
-            /// </summary>
             public CswNbtRequestMaterialCreateReturn()
             {
                 Data = new Ret();
@@ -32,7 +29,6 @@ namespace NbtWebApp.WebSvc.Logic.CISPro
             {
                 public Int32 NodeTypeId { get; set; }
             }
-
         }
 
         /// <summary>
@@ -41,9 +37,6 @@ namespace NbtWebApp.WebSvc.Logic.CISPro
         [DataContract]
         public class CswRequestReturn : CswWebSvcReturn
         {
-            /// <summary>
-            /// Ctor
-            /// </summary>
             public CswRequestReturn()
             {
                 Data = new Ret();
@@ -101,20 +94,12 @@ namespace NbtWebApp.WebSvc.Logic.CISPro
         [DataContract]
         public class RequestCart : CswWebSvcReturn
         {
-            /// <summary>
-            /// Ctor
-            /// </summary>
             public RequestCart()
             {
                 Data = new CswNbtActRequesting.Cart();
             }
-
             [DataMember]
             public CswNbtActRequesting.Cart Data;
-
-
-
         }
-
     }
 }

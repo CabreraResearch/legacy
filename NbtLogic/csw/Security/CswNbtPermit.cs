@@ -862,14 +862,11 @@ namespace ChemSW.Nbt.Security
                                            join nodetype_props p on op.objectclasspropid = p.objectclasspropid
                                            join jct_nodes_props j on j.nodetypepropid = p.nodetypepropid
                                           where op.propname in ('Location', 'Inventory Group', 'Report Group', 'Mail Report Group'))
-                           select n.nodeid, ivgval.field1_fk permissiongroupid
-                             from nodes n
-                             join pval ivgval on (ivgval.nodeid = n.nodeid and ivgval.propname = 'Inventory Group')
-                            where n.nodetypeid = " + NodeTypeId + @"
-                        union
                             select n.nodeid, ivgval.field1_fk permissiongroupid
                              from nodes n
                              join pval locval on (locval.nodeid = n.nodeid and locval.propname = 'Location')
+                                and n.nodetypeid in (select nodetypeid from nodetypes where objectclassid in
+                                    (select objectclassid from object_class where objectclass = '" + CswEnumNbtObjectClass.ContainerClass + @"') )
                              join pval ivgval on (ivgval.nodeid = locval.field1_fk and ivgval.propname = 'Inventory Group')
                             where n.nodetypeid = " + NodeTypeId + @" 
                               and not exists (select nodeid from pval x

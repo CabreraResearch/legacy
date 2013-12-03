@@ -23,7 +23,7 @@ namespace ChemSW.Nbt.Sched
             if( NbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Containers ) )
             {
                 CswNbtActRequesting ActRequesting = new CswNbtActRequesting( NbtResources );
-                CswNbtView AllRecurringRequests = ActRequesting.getDueRecurringRequestsItemsView();
+                CswNbtView AllRecurringRequests = ActRequesting.getDueRecurringRequestItemsView();
                 ICswNbtTree Tree = NbtResources.Trees.getTreeFromView( AllRecurringRequests, RequireViewPermissions: false, IncludeSystemNodes: false, IncludeHiddenNodes: false );
                 LoadCount = Tree.getChildNodeCount();
             }
@@ -56,7 +56,6 @@ namespace ChemSW.Nbt.Sched
 
             if( CswEnumScheduleLogicRunStatus.Stopping != _LogicRunStatus )
             {
-
                 try
                 {
                     if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Containers ) )
@@ -68,7 +67,7 @@ namespace ChemSW.Nbt.Sched
                         }
 
                         CswNbtActRequesting ActRequesting = new CswNbtActRequesting( _CswNbtResources );
-                        CswNbtView AllRecurringRequests = ActRequesting.getDueRecurringRequestsItemsView();
+                        CswNbtView AllRecurringRequests = ActRequesting.getDueRecurringRequestItemsView();
                         ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( AllRecurringRequests, RequireViewPermissions: false, IncludeSystemNodes: false, IncludeHiddenNodes: false );
 
                         Int32 TotalRequestsProcessed = 0;
@@ -81,26 +80,17 @@ namespace ChemSW.Nbt.Sched
                             try
                             {
                                 Tree.goToNthChild( ChildN );
-                                CswNbtObjClassRequestMaterialDispense CurrentRequestItem = Tree.getNodeForCurrentPosition();
-
-                                if( null != CurrentRequestItem && // The Request Item isn't null
-                                    CurrentRequestItem.IsRecurring.Checked == CswEnumTristate.True && // This is actually a recurring request
-                                    false == CurrentRequestItem.RecurringFrequency.Empty && // The recurring frequency has been defined
-                                    CurrentRequestItem.RecurringFrequency.RateInterval.RateType != CswEnumRateIntervalType.Hourly || // Recurring on any frequency other than hourly
-                                    ( CurrentRequestItem.NextReorderDate.DateTimeValue.Date <= DateTime.Today && // Recurring no more than once per hour
-                                      DateTime.Now.AddHours( 1 ).Subtract( CurrentRequestItem.NextReorderDate.DateTimeValue ).Hours >= 1 ) ) //if we wait until the rule is overdue, then we'll never run more than once per hour.
+                                CswNbtObjClassRequestItem CurrentRequestItem = Tree.getNodeForCurrentPosition();
+                                if( _doesRequestItemCopyNow( CurrentRequestItem ) )
                                 {
                                     Description = CurrentRequestItem.Description.StaticText;
-
                                     CswNbtObjClassRequest RecurringRequest = _CswNbtResources.Nodes[CurrentRequestItem.Request.RelatedNodeId];
                                     if( null != RecurringRequest )
                                     {
                                         CswNbtObjClassUser Requestor = _CswNbtResources.Nodes[RecurringRequest.Requestor.RelatedNodeId];
                                         if( null != Requestor )
                                         {
-                                            CswNbtObjClassRequestMaterialDispense NewRequestItem = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( CurrentRequestItem.NodeTypeId );
-                                            //CswNbtObjClassRequestMaterialDispense.fromPropertySet( CurrentRequest.copyNode( PostChanges : false ) );
-                                            if( null != NewRequestItem )
+                                            CswNbtObjClassRequestItem CopiedRequestItem = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( CurrentRequestItem.NodeTypeId, delegate( CswNbtNode NewNode )
                                             {
                                                 // We'd get all of this for free if we used copyNode, 
                                                 // but then we'd have to manually do as much work in the other direction:
@@ -109,6 +99,7 @@ namespace ChemSW.Nbt.Sched
                                                 CswNbtObjClassRequest UsersCartNode = ThisUserAct.getCurrentRequestNode();
                                                 if( null != UsersCartNode )
                                                 {
+                                                    CswNbtObjClassRequestItem NewRequestItem = NewNode;
                                                     // Most importantly, put the new request item in the current cart
                                                     NewRequestItem.Request.RelatedNodeId = UsersCartNode.NodeId;
 
@@ -121,26 +112,26 @@ namespace ChemSW.Nbt.Sched
                                                     NewRequestItem.Comments.CommentsJson = CurrentRequestItem.Comments.CommentsJson;
                                                     NewRequestItem.Type.Value = CurrentRequestItem.Type.Value;
 
-                                                    if( CurrentRequestItem.Type.Value == CswNbtObjClassRequestMaterialDispense.Types.Bulk )
+                                                    if( CurrentRequestItem.Type.Value == CswNbtObjClassRequestItem.Types.MaterialSize )
+                                                    {
+                                                        NewRequestItem.Size.RelatedNodeId = CurrentRequestItem.Size.RelatedNodeId;
+                                                        NewRequestItem.Size.CachedNodeName = CurrentRequestItem.Size.CachedNodeName;
+                                                        NewRequestItem.SizeCount.Value = CurrentRequestItem.SizeCount.Value;
+                                                    }
+                                                    else
                                                     {
                                                         NewRequestItem.Quantity.Quantity = CurrentRequestItem.Quantity.Quantity;
                                                         NewRequestItem.Quantity.CachedUnitName = CurrentRequestItem.Quantity.CachedUnitName;
                                                         NewRequestItem.Quantity.UnitId = CurrentRequestItem.Quantity.UnitId;
                                                     }
-                                                    else
-                                                    {
-                                                        NewRequestItem.Size.RelatedNodeId = CurrentRequestItem.Size.RelatedNodeId;
-                                                        NewRequestItem.Size.CachedNodeName = CurrentRequestItem.Size.CachedNodeName;
-                                                        NewRequestItem.Count.Value = CurrentRequestItem.Count.Value;
-                                                    }
-                                                    NewRequestItem.Status.Value = CswNbtObjClassRequestMaterialDispense.Statuses.Pending;
-                                                    NewRequestItem.setRequestDescription();
+                                                    NewRequestItem.Status.Value = CswNbtObjClassRequestItem.Statuses.Pending;
+
                                                     NewRequestItem.postChanges( ForceUpdate: false );
 
                                                     CurrentRequestItem.NextReorderDate.DateTimeValue = CswNbtPropertySetSchedulerImpl.getNextDueDate( CurrentRequestItem.Node, CurrentRequestItem.NextReorderDate, CurrentRequestItem.RecurringFrequency, ForceUpdate: true );
                                                     CurrentRequestItem.postChanges( ForceUpdate: false );
                                                 }
-                                            }
+                                            } );
                                         }
                                         RequestDescriptions += CurrentRequestItem.Description + "; ";
                                     }
@@ -186,6 +177,17 @@ namespace ChemSW.Nbt.Sched
         public void reset()
         {
             _LogicRunStatus = CswEnumScheduleLogicRunStatus.Idle;
+        }
+
+        private bool _doesRequestItemCopyNow( CswNbtObjClassRequestItem CurrentRequestItem )
+        {
+            //A lot of these checks seem excessive...
+            return null != CurrentRequestItem && // The Request Item isn't null
+                   CurrentRequestItem.IsRecurring.Checked == CswEnumTristate.True && // This is actually a recurring request
+                   false == CurrentRequestItem.RecurringFrequency.Empty && // The recurring frequency has been defined
+                   ( CurrentRequestItem.RecurringFrequency.RateInterval.RateType != CswEnumRateIntervalType.Hourly || // Recurring on any frequency other than hourly
+                   ( CurrentRequestItem.NextReorderDate.DateTimeValue.Date <= DateTime.Today && // Recurring no more than once per hour
+                     DateTime.Now.AddHours( 1 ).Subtract( CurrentRequestItem.NextReorderDate.DateTimeValue ).Hours >= 1 ) );
         }
     }//CswScheduleLogicNbtGenRequests
 

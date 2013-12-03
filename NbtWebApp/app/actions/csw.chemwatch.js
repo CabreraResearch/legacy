@@ -2,7 +2,7 @@
 
 
 (function () {
-
+    var cswChemWatchActionStateName = 'cswChemWatchActionStateName';
     Csw.actions.register('chemwatch', function (cswParent, options) {
         'use strict';
 
@@ -10,10 +10,13 @@
             name: 'CswChemWatchAction',
             title: 'ChemWatch',
             onCancel: options.onCancel || null,
-            onFinish: options.onFinish || null
+            onFinish: options.onFinish || null,
+            state: {
+                materialId: ''
+            }
         };
         cswPrivate.OperationData = {
-            NbtMaterialId: options.materialid,
+            NbtMaterialId: '',
             Countries: [],
             Languages: [],
             Supplier: "",
@@ -35,32 +38,27 @@
         var selectedLanguages = [];
         var selectedCountries = [];
 
-        cswPrivate.makeSupplierSelect = function (tbl) {
-            var supplierList = cswPrivate.OperationData.Suppliers;
-            cswPrivate.supplierSelectCell = tbl.cell(1, 3);
-            cswPrivate.supplierSelect = cswPrivate.supplierSelectCell.select({
-                values: supplierList
+        cswPrivate.makeStepOne = function () {
+            var stepOneTable = cswPublic.table.cell(1, 1).table({
+                width: '100%',
+                cellpadding: 3
             });
+            cswPrivate.stepOneTable = stepOneTable;
 
-            if (supplierList.length === 0) {
-                tbl.cell(1, 4).span({
-                    text: 'No Suppliers matched the one provided. Try using a broader search term.'
-                }).css({ 'color': 'red' });
-            } else {
-                tbl.cell(1, 4).empty();
-            }
-        };
-
-        cswPrivate.makeMatSearchTable = function () {
-            var tbl = cswPublic.table.cell(1, 1).table({
-                cellPadding: 5
-            });
-
-            //#region Supplier
-            cswPrivate.supplierInput = tbl.cell(1, 1).input({
-                labelText: 'Supplier',
+            // Supplier
+            cswPrivate.supplierInput = stepOneTable.cell(1, 1).empty().css({ width: '350px' });
+            cswPrivate.supplierInput.input({
+                labelText: 'Supplier Name contains: ',
                 value: cswPrivate.OperationData.Supplier,
                 onChange: function (value) {
+
+                    // Clear steps two and three if they exist
+                    if (cswPrivate.stepTwoTable) {
+                        cswPrivate.stepTwoTable.empty();
+                    }
+                    if (cswPrivate.stepThreeTable) {
+                        cswPrivate.stepThreeTable.empty();
+                    }
 
                     Csw.ajaxWcf.post({
                         urlMethod: 'ChemWatch/GetMatchingSuppliers',
@@ -71,8 +69,7 @@
                             cswPrivate.OperationData.Suppliers = data.Suppliers;
 
                             if (cswPrivate.supplierSelect) {
-                                cswPrivate.supplierSelectCell.empty();
-                                cswPrivate.makeSupplierSelect(tbl);
+                                makeSupplierSelect(stepOneTable);
                             }
                         },
                         error: function (data) {
@@ -83,30 +80,41 @@
                 }
             });
 
-            tbl.cell(1, 2).span({
-                text: 'AS'
-            });
+            var cell12 = stepOneTable.cell(1, 2).empty().css({ width: '30px' });
+            cell12.span({ text: 'AS' });
 
-            cswPrivate.makeSupplierSelect(tbl);
-            //#endregion Supplier
+            makeSupplierSelect(stepOneTable);
 
-            cswPrivate.materialInput = tbl.cell(2, 1).input({
-                labelText: 'Material',
+            // Material name
+            cswPrivate.materialInput = stepOneTable.cell(2, 1).input({
+                labelText: 'Material Name begins: ',
                 value: cswPrivate.OperationData.MaterialName
             });
 
-            cswPrivate.partNoInput = tbl.cell(3, 1).input({
-                labelText: 'Part No',
+            // Part number
+            cswPrivate.partNoInput = stepOneTable.cell(3, 1).input({
+                labelText: 'Part Number is: ',
                 value: cswPrivate.OperationData.PartNo
             });
 
-            tbl.cell(4, 1).buttonExt({
+            // Search button
+            var searchBtnDisabled = true;
+            if (cswPrivate.supplierSelect.length() > 0) {
+                searchBtnDisabled = false;
+            }
+            cswPrivate.searchButton = stepOneTable.cell(4, 1).buttonExt({
                 name: 'searchChemWatchBtn',
                 icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.magglass),
-                enabledText: 'Search',
-                disabledText: 'Searching...',
+                enabledText: 'Search Materials',
+                disabled: searchBtnDisabled,
                 disableOnClick: false,
                 onClick: function () {
+
+                    // Clear Step 3 (if it has been rendered)
+                    if (cswPrivate.stepThreeTable) {
+                        cswPrivate.stepThreeTable.empty();
+                    }
+
                     Csw.ajaxWcf.post({
                         urlMethod: 'ChemWatch/MaterialSearch',
                         data: {
@@ -116,18 +124,7 @@
                         },
                         success: function (data) {
                             cswPrivate.OperationData.Materials = data.Materials;
-
-                            var gridData = { 'items': [] };
-                            Csw.iterate(cswPrivate.OperationData.Materials, function (material) {
-                                gridData.items.push({ 'material': material.display, 'materialid': material.value });
-                            });
-
-                            // Fill the table with the returned data
-                            if (cswPrivate.materialListGrid && cswPrivate.materialListGrid.destroy) {
-                                cswPrivate.materialListGrid.destroy();
-                            }
-
-                            cswPrivate.makeMatListGrid(gridData);
+                            cswPrivate.makeStepTwo();
                         },
                         error: function (data) {
                             console.log(data);
@@ -135,137 +132,247 @@
                     });
                 }
             });
-        };
 
-        cswPrivate.makeMatListGrid = function (gridData) {
-            cswPrivate.matListGridDiv = cswPublic.table.cell(2, 1).table({
-                cellPadding: 5
+            stepOneTable.cell(5, 1).div({
+                text: '<br/>'
             });
-            cswPrivate.matListGridDiv.empty();
+        };//makeStepOne()
 
-            cswPrivate.materialListGrid = cswPrivate.matListGridDiv.cell(1, 1).grid({
-                name: 'chemwatchmatlistgrid',
-                fields: ['material', 'materialid'],
-                columns: [
-                    {
-                        header: 'Material',
-                        dataIndex: 'material',
-                        width: 400
-                    },
-                    {
-                        header: 'Material Id',
-                        dataIndex: 'materialid',
-                        hidden: true
-                    }],
-                data: gridData || {
-                    'items': [] //ExtGrids won't show without data
+        cswPrivate.makeStepTwo = function () {
+            var stepTwoTable = cswPublic.table.cell(2, 1).empty().table({
+                width: '80%',
+                cellpadding: 5
+            });
+            cswPrivate.stepTwoTable = stepTwoTable;
+
+            stepTwoTable.cell(1, 1).div({
+                text: 'Matching Materials',
+                styles: {
+                    'font-weight': 'bold',
+                    'font-size': '14px'
+                }
+            });
+
+            if (cswPrivate.OperationData.Materials.length > 0) {
+                // Material select
+                makeMaterialSelect(stepTwoTable);
+
+                // Language multi-select
+                var langDiv = stepTwoTable.cell(2, 2).empty().css({ width: '100px' });
+                langDiv.div();
+                langDiv.span({ text: 'Languages: ' });
+                langDiv.icon({
+                    iconType: Csw.enums.iconType.pencil,
+                    isButton: true,
+                    onClick: function () {
+                        Csw.dialogs.multiselectedit({
+                            opts: LanguageOptions,
+                            title: 'Edit Language Filters',
+                            inDialog: true,
+                            onSave: function (updatedValues) {
+                                Csw.iterate(LanguageOptions, function (lang) {
+                                    lang.selected = false;
+                                });
+
+                                selectedLanguages = [];
+                                Csw.iterate(updatedValues, function (val) {
+                                    selectedLanguages.push({ 'text': '', 'value': val });
+                                    LanguageLookup[val].selected = true;
+                                });
+                            },
+                        });
+                    }
+                });
+
+                // Country multi-select
+                var countryDiv = stepTwoTable.cell(2, 3).empty().css({ width: '100px' });
+                countryDiv.div();
+                countryDiv.span({ text: 'Countries: ' });
+                countryDiv.icon({
+                    iconType: Csw.enums.iconType.pencil,
+                    isButton: true,
+                    onClick: function () {
+                        Csw.dialogs.multiselectedit({
+                            opts: CountryOptions,
+                            title: 'Edit Country Filters',
+                            inDialog: true,
+                            onSave: function (updatedValues) {
+                                Csw.iterate(CountryOptions, function (country) {
+                                    country.selected = false;
+                                });
+
+                                selectedCountries = [];
+                                Csw.iterate(updatedValues, function (val) {
+                                    selectedCountries.push({ 'text': '', 'value': val });
+                                    CountryLookup[val].selected = true;
+                                });
+                            },
+                        });
+                    }
+                });
+
+                // Document Search button
+                cswPrivate.documentSrchBtn = stepTwoTable.cell(2, 4).buttonExt({
+                    name: 'searchDocumentsBtn',
+                    icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.magglass),
+                    enabledText: 'Search Documents',
+                    disableOnClick: false,
+                    onClick: function () {
+                        // Search for documents related to selected material
+                        Csw.ajaxWcf.post({
+                            urlMethod: 'ChemWatch/SDSDocumentSearch',
+                            data: {
+                                ChemWatchMaterialId: cswPrivate.materialSelect.val(),
+                                Languages: selectedLanguages,
+                                Countries: selectedCountries,
+                                Supplier: cswPrivate.supplierSelect.val()
+                            },
+                            success: function (data) {
+                                cswPrivate.OperationData.SDSDocuments = data.SDSDocuments;
+
+                                var gridData = { 'items': [] };
+                                Csw.iterate(cswPrivate.OperationData.SDSDocuments, function (sdsdoc) {
+                                    gridData.items.push(
+                                        {
+                                            'language': sdsdoc.language,
+                                            'country': sdsdoc.country,
+                                            'filename': sdsdoc.filename,
+                                            'externalurl': sdsdoc.externalurl
+                                        });
+                                });
+                                cswPrivate.makeStepThree(gridData);
+                            },
+                            error: function (data) {
+                                //todo: implement error condition
+                                console.log(data);
+                            }
+                        });
+                    }
+                });
+
+                stepTwoTable.cell(3, 1).div({
+                    text: '<br/>'
+                });
+            } else {
+                stepTwoTable.cell(2, 1).div({
+                    text: 'No matching materials were found. Try using broader search terms.',
+                    styles: {
+                        'color': 'red'
+                    }
+                });
+            }
+
+        };//makeStepTwo()
+
+        cswPrivate.makeStepThree = function (gridData) {
+            var stepThreeTable = cswPublic.table.cell(3, 1).empty().table({
+                width: '80%',
+                cellpadding: 5
+            });
+            cswPrivate.stepThreeTable = stepThreeTable;
+
+            stepThreeTable.cell(1, 1).div({
+                text: 'Matching SDS Documents',
+                styles: {
+                    'font-weight': 'bold',
+                    'font-size': '14px'
+                }
+            });
+
+            if (gridData.items.length > 0) {
+                makeSDSListGrid(stepThreeTable, gridData);
+            } else {
+                stepThreeTable.cell(2, 1).div({
+                    text: 'No documents were found. Choose another material.',
+                    styles: {
+                        'color': 'red'
+                    }
+                });
+            }
+
+
+        };//makeStepThree()
+
+        cswPrivate.createSDSLinks = function () {
+            var rawRows = [];
+            if (cswPrivate.sdsDocumentGrid) {
+                rawRows = cswPrivate.sdsDocumentGrid.getGridItems();
+            }
+            var sdsdocs = [];
+            if (rawRows && rawRows.length > 0) {
+                rawRows.forEach(function (item) {
+                    if (item && item.select === true) {
+                        sdsdocs.push(item);
+                    }
+                });
+            }
+
+            // Create the SDS Documents
+            Csw.ajaxWcf.post({
+                urlMethod: 'ChemWatch/CreateSDSDocuments',
+                data: {
+                    SDSDocuments: sdsdocs,
+                    NbtMaterialId: cswPrivate.OperationData.NbtMaterialId
                 },
-                height: 200,
-                width: 400,
-                showActionColumn: false,
-                canSelectRow: true,
-                onSelect: function (rows) {
-                    // Search for documents related to selected material
-                    Csw.ajaxWcf.post({
-                        urlMethod: 'ChemWatch/SDSDocumentSearch',
-                        data: {
-                            ChemWatchMaterialId: rows.materialid,
-                            Languages: selectedLanguages,
-                            Countries: selectedCountries,
-                            Supplier: cswPrivate.supplierSelect.val()
-                        },
-                        success: function (data) {
-                            cswPrivate.OperationData.SDSDocuments = data.SDSDocuments;
-
-                            var gridData = { 'items': [] };
-                            Csw.iterate(cswPrivate.OperationData.SDSDocuments, function (sdsdoc) {
-                                gridData.items.push(
-                                    {
-                                        'language': sdsdoc.language,
-                                        'country': sdsdoc.country,
-                                        'filename': sdsdoc.filename,
-                                        'externalurl': sdsdoc.externalurl
-                                    });
-                            });
-
-                            // Destroy current grid
-                            if (cswPrivate.sdsListGrid && cswPrivate.sdsListGrid.destroy) {
-                                cswPrivate.sdsListGrid.destroy();
-                            }
-                            // Remake grid
-                            cswPrivate.makeSDSListGrid(gridData);
-                        },
-                        error: function (data) {
-                            //todo: implement error condition
-                            console.log(data);
-                        }
-                    });
+                success: function (data) {
+                    Csw.tryExec(cswPrivate.onFinish);
+                },
+                error: function (data) {
+                    //TODO: implement error condition
+                    console.log(data);
                 }
             });
         };
 
-        cswPrivate.makeLngCntrySelects = function () {
-            cswPrivate.sdsInfoTbl = cswPublic.table.cell(2, 2).table({
-                cellPadding: 5
+        //#region Helper Functions
+        function makeSupplierSelect(table) {
+            var supplierList = cswPrivate.OperationData.Suppliers;
+            cswPrivate.supplierSelectCell = table.cell(1, 3).empty().css({ width: '400px' });
+            cswPrivate.supplierSelect = cswPrivate.supplierSelectCell.select({
+                values: supplierList
             });
 
-            var langDiv = cswPrivate.sdsInfoTbl.cell(1, 1).div();
-            langDiv.span({ text: 'Edit Languages: ' });
-            langDiv.icon({
-                iconType: Csw.enums.iconType.pencil,
-                isButton: true,
-                onClick: function () {
-                    Csw.dialogs.multiselectedit({
-                        opts: LanguageOptions,
-                        title: 'Edit Language Filters',
-                        inDialog: true,
-                        onSave: function (updatedValues) {
-                            Csw.iterate(LanguageOptions, function (lang) {
-                                lang.selected = false;
-                            });
-
-                            selectedLanguages = [];
-                            Csw.iterate(updatedValues, function (val) {
-                                selectedLanguages.push({ 'text': '', 'value': val });
-                                LanguageLookup[val].selected = true;
-                            });
-                        },
-                    });
+            if (supplierList.length === 0) {
+                var cell14 = table.cell(1, 4).empty().css({ width: '300px' });
+                cell14.span({
+                    text: 'No Suppliers matched the one provided. Try using a broader search term.'
+                }).css({ 'color': 'red' });
+                if (cswPrivate.searchButton) {
+                    cswPrivate.searchButton.disable();
                 }
-            });
-
-            var countryDiv = cswPrivate.sdsInfoTbl.cell(1, 2).div();
-            countryDiv.span({ text: 'Edit Countries: ' });
-            countryDiv.icon({
-                iconType: Csw.enums.iconType.pencil,
-                isButton: true,
-                onClick: function () {
-                    Csw.dialogs.multiselectedit({
-                        opts: CountryOptions,
-                        title: 'Edit Country Filters',
-                        inDialog: true,
-                        onSave: function (updatedValues) {
-                            Csw.iterate(CountryOptions, function (country) {
-                                country.selected = false;
-                            });
-
-                            selectedCountries = [];
-                            Csw.iterate(updatedValues, function (val) {
-                                selectedCountries.push({ 'text': '', 'value': val });
-                                CountryLookup[val].selected = true;
-                            });
-                        },
-                    });
+            } else {
+                table.cell(1, 4).empty();
+                if (cswPrivate.searchButton) {
+                    cswPrivate.searchButton.enable();
                 }
+            }
+        }//makeSupplierSelect()
+
+        function onView(recordData) {
+            //TODO: What if the URL doesn't work? Should we show an error?
+            var url = 'Services/ChemWatch/GetSDSDocument' + '?' + 'filename=' + recordData.filename;
+            Csw.openPopup(url);
+        };//onView()
+
+        function makeMaterialSelect(table) {
+            var materialList = cswPrivate.OperationData.Materials;
+            cswPrivate.materialSelectCell = table.cell(2, 1).empty().css({ width: '500px' });
+            cswPrivate.materialSelect = cswPrivate.materialSelectCell.select({
+                values: materialList
             });
-        };
+        }//makeMaterialSelect()
 
-        cswPrivate.makeSDSListGrid = function (gridData) {
-            cswPrivate.sdsListGridCell = cswPrivate.sdsInfoTbl.cell(2, 1);
-            cswPrivate.sdsListGridCell.empty();
+        function makeSDSListGrid(table, gridData) {
+            cswPrivate.sdsDocumentGridCell = table.cell(2, 1).empty();
 
-            cswPrivate.sdsListGrid = cswPrivate.sdsListGridCell.grid({
+            // Destroy the grid first if it has been made previously
+            if (cswPrivate.sdsDocumentGrid && cswPrivate.sdsDocumentGrid.destroy) {
+                cswPrivate.sdsDocumentGrid.destroy();
+            }
+
+            cswPrivate.sdsDocumentGrid = cswPrivate.sdsDocumentGridCell.grid({
                 name: 'chemwatchsdslistgrid',
+                stateId: 'chemwatchsdslistgrid',
                 fields: [
                     'view',
                     'language',
@@ -305,7 +412,7 @@
                                     isButton: true,
                                     size: 18,
                                     onClick: function (event) {
-                                        Csw.tryExec(cswPrivate.onView, record.data);
+                                        Csw.tryExec(onView, record.data);
                                     }
                                 };
                                 previewCell.icon(iconopts);
@@ -330,61 +437,58 @@
                 width: 400,
                 showActionColumn: false
             });
-        };
+        }
+        //#endregion Helper Functions
 
-        cswPrivate.createSDSLinks = function () {
-            if (cswPrivate.sdsListGrid) {
-                var rawRows = cswPrivate.sdsListGrid.getGridItems();
+
+        //#region State Functions
+
+        cswPrivate.setState = function () {
+            var state;
+            if (Csw.isNullOrEmpty(cswPrivate.state.materialId)) {
+                state = cswPrivate.getState();
+                Csw.extend(cswPrivate.state, state);
             }
-            var sdsdocs = [];
-            if (rawRows && rawRows.length > 0) {
-                rawRows.forEach(function(item) {
-                    if (item && item.select === true) {
-                        sdsdocs.push(item);
-                    }
-                });
-            }
-
-            // Create the SDS Documents
-            Csw.ajaxWcf.post({
-                urlMethod: 'ChemWatch/CreateSDSDocuments',
-                data: {
-                    SDSDocuments: sdsdocs,
-                    NbtMaterialId: cswPrivate.OperationData.NbtMaterialId
-                },
-                success: function(data) {
-                    Csw.tryExec(cswPrivate.onFinish);
-                },
-                error: function(data) {
-                    //TODO: implement error condition
-                    console.log(data);
-                }
-            });
+            Csw.clientDb.setItem(cswPrivate.name + '_' + cswChemWatchActionStateName, cswPrivate.state);
+        };
+        
+        cswPrivate.getState = function () {
+            var ret = Csw.clientDb.getItem(cswPrivate.name + '_' + cswChemWatchActionStateName);
+            return ret;
         };
 
-        //TODO: What if the URL doesn't work? Should we show an error?
-        cswPrivate.onView = function (recordData) {
-            // We are using Google's Viewer to view the PDF's in the browser: https://docs.google.com/viewer
-            // +1 for Google
-            var extrnlurl = "http://docs.google.com/viewer?url=" + recordData.externalurl;
-            window.open(extrnlurl, '_blank', 'toolbar=0,location=0,menubar=0');
+        cswPrivate.clearState = function () {
+            Csw.clientDb.removeItem(cswPrivate.name + '_' + cswChemWatchActionStateName);
         };
 
-        // Init
+        //#endregion State Functions
+
+        //#region Initialize
         (function () {
-
+            // Extend cswPrivate
+            Csw.extend(cswPrivate, options);
+            
+            // We need to preserve the nbtmaterialid
+            cswPrivate.setState();
+            cswPrivate.OperationData.NbtMaterialId = cswPrivate.state.materialId;
+            
             // Set up action layout
             var layout = Csw.layouts.action(cswParent, {
                 title: 'ChemWatch',
                 finishText: 'Create SDS Links',
-                onFinish: cswPrivate.createSDSLinks,
+                onFinish: function () {
+                    cswPrivate.clearState();
+                    cswPrivate.createSDSLinks();
+                },
                 onCancel: function () {
-                    //todo: clear state
+                    cswPrivate.clearState();
                     Csw.tryExec(cswPrivate.onCancel);
                 },
             });
 
-            cswPublic.table = layout.actionDiv.table();
+            cswPublic.table = layout.actionDiv.table({
+                width: '90%'
+            }).css({ padding: '20px' });
 
             // call the Initialize web service met
             Csw.ajaxWcf.post({
@@ -403,18 +507,16 @@
                         CountryLookup[country.value] = country;
                     });
 
-                    // call functions to make the controls
-                    cswPrivate.makeMatSearchTable();
-                    cswPrivate.makeMatListGrid();
-                    cswPrivate.makeLngCntrySelects();
-                    cswPrivate.makeSDSListGrid();
+                    // Make step 1
+                    cswPrivate.makeStepOne();
                 },
                 error: function (data) {
                     console.log(data);
                 }
             });
 
-        })(); // init
+        })();// init
+        //#endregion Initialize
 
     });
 
