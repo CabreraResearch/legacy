@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using ChemSW.Config;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.ImportExport;
@@ -82,10 +83,11 @@ namespace ChemSW.Nbt.csw.Schema
         /// <param name="SchemaModTrnsctn">The schema script resources class</param>
         /// <param name="DefinitionName">The IMPORT_DEF definition (use "CAF" for caf imports)</param>
         /// <param name="CafDbLink">Legacy: this should probably change/go away after case 31124</param>
-        public CswNbtSchemaUpdateImportMgr( CswNbtSchemaModTrnsctn SchemaModTrnsctn, string DefinitionName, string CafDbLink = null )
+        /// <param name="ImporterSetUpMode">NbtExe or NbtWeb - depending on where you are using the Imp mgr</param>
+        public CswNbtSchemaUpdateImportMgr( CswNbtSchemaModTrnsctn SchemaModTrnsctn, string DefinitionName, string CafDbLink = null, CswEnumSetupMode ImporterSetUpMode = CswEnumSetupMode.NbtExe )
         {
             _CAFDbLink = CafDbLink ?? CswScheduleLogicNbtCAFImport.CAFDbLink;
-            _NbtImporter = SchemaModTrnsctn.makeCswNbtImporter();
+            _NbtImporter = new CswNbtImporter( SchemaModTrnsctn.Accessid, ImporterSetUpMode );
             this.SchemaModTrnsctn = SchemaModTrnsctn;
 
             _importDefTable = SchemaModTrnsctn.makeCswTableUpdate( "Import_getDefs", "import_def" ).getTable();
@@ -391,10 +393,9 @@ namespace ChemSW.Nbt.csw.Schema
         {
             if( null != _NbtImporter )
             {
+                _NbtImporter.refreshMetaData();
                 _NbtImporter.storeDefinition( _importOrderTable, _importBindingsTable, _importRelationshipsTable );
-
-                //_populateImportQueueTable( WhereClause, UseView );
-                //_createTriggerOnImportTable();
+                _NbtImporter.Finish();
             }
         }//finalize()
     }

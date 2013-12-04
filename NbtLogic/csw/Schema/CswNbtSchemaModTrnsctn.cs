@@ -1842,11 +1842,6 @@ namespace ChemSW.Nbt.Schema
 
         //}//doSearch()
 
-        public CswNbtImporter makeCswNbtImporter()
-        {
-            return new CswNbtImporter( _CswNbtResources );
-        }
-
         public Dictionary<string, int> createImportDefinitionEntries(string ImportDefinitionName, DataTable DefDataTable)
         {
             return CswNbtImportDef.addDefinitionEntries( _CswNbtResources, ImportDefinitionName, DefDataTable );
