@@ -4,6 +4,7 @@ using ChemSW.Config;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.MtSched.Core;
+using ChemSW.Nbt.csw.ImportExport;
 using ChemSW.Nbt.ImportExport;
 
 namespace ChemSW.Nbt.Sched
@@ -51,8 +52,7 @@ namespace ChemSW.Nbt.Sched
             // Only recalculate load count if it's zero
             if( _DataTableNames.Count == 0 )
             {
-                CswNbtImporter Importer = new CswNbtImporter( CswNbtResources );
-                _DataTableNames = Importer.getImportDataTableNames();
+                _DataTableNames = CswNbtImportTools.getImportDataTableNames( CswNbtResources );
             }
             return _DataTableNames.Count;
         }
@@ -76,13 +76,14 @@ namespace ChemSW.Nbt.Sched
 
                     if( _DataTableNames.Count > 0 )
                     {
-                        CswNbtImporter Importer = new CswNbtImporter( CswNbtResources );
+                        CswNbtImporter Importer = new CswNbtImporter( CswNbtResources.AccessId, CswEnumSetupMode.NbtExe );
                         Int32 RowsProcessed;
                         bool MoreToDo = Importer.ImportRows( ImportLimit, _DataTableNames[0], out RowsProcessed );
                         if( false == MoreToDo )
                         {
                             _DataTableNames.RemoveAt( 0 );
                         }
+                        Importer.Finish();
                     }
                     else
                     {

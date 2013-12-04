@@ -73,7 +73,7 @@ namespace CAFScriptGenerator
                 }//foreach PL/SQL block in CAF.sql
 
                 //Create all custom props and set up import bindings
-                CswNbtImportTools.CreateAllCAFProps( NbtResources );
+                CswNbtImportTools.CreateAllCAFProps( NbtResources, CswEnumSetupMode.NbtExe );
 
             }//if correct number of args
         }//Main
