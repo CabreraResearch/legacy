@@ -269,7 +269,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtNode CopyNode( bool IsNodeTemp = false )
         {
-            CswNbtNode NewNode = base.CopyNodeImpl( IsNodeTemp );
+            CswNbtNode NewNode = base.CopyNodeImpl( IsNodeTemp );   
 
             //Copy the existing file if there is any
             CswNbtSdBlobData.CopyBlobData( _CswNbtResources, this.File, ( NewNode.Properties[PropertyName.File].JctNodePropId ) );

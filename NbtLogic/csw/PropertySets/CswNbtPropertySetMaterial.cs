@@ -104,12 +104,7 @@ namespace ChemSW.Nbt.ObjClasses
             // If you're looking for where we set up the create material wizard for handling copying materials, 
             // it's here: CswNbtWebServiceNode.getCopyData()
 
-            CswNbtNode CopiedNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, delegate( CswNbtNode NewNode )
-                {
-                    NewNode.copyPropertyValues( Node );
-                    //CopiedNode.postChanges( true, true );
-                }, IsTemp : IsNodeTemp );
-            return CopiedNode;
+            return base.CopyNodeImpl( IsNodeTemp );
         }
 
         #endregion Base
