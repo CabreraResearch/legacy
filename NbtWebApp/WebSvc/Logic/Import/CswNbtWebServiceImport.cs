@@ -188,7 +188,7 @@ namespace ChemSW.Nbt.WebServices
             if( Params.ImportDefName.Equals( "CAF" ) )
             {
                 //Create custom NodeTypeProps from CAF Properties collections and set up bindings for them
-                CswNbtImportTools.CreateAllCAFProps( _CswNbtResources );
+                CswNbtImportTools.CreateAllCAFProps( _CswNbtResources, CswEnumSetupMode.NbtWeb );
 
                 // Enable the CAFImport rule
                 CswTableUpdate TableUpdate = _CswNbtResources.makeCswTableUpdate( "enableCafImportRule", "scheduledrules" );
