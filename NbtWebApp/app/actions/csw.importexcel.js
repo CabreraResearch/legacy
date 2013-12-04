@@ -238,6 +238,8 @@
                         cswPrivate.makeUploadDataProps(true);
                         cswPrivate.makeStartImportProps(false);
                     }
+
+                    cswPrivate.makeBindingsGrid(cswPrivate.selDefName.val());
                 }
             });
 
@@ -332,21 +334,23 @@
             }
 
                 cswPublic.uploadDataTable.cell(1, 3).buttonExt({
-                    name: 'viewBindingsBtn',
-                    enabledText: 'View Import Definition',
-                    disabledText: 'Fetching Bindings...',
+                    name: 'downloadBindingsBtn',
+                    enabledText: 'Download this Definition',
+                    disabledText: 'Generating File...',
                     disableOnClick: true,
                     onClick: function () {
-                        Csw.ajaxWcf.post({
-                            urlMethod: 'Import/getBindingsForDefinition',
-                            data: cswPrivate.selDefName.val(),
-                            success: function(data) {
-                                Csw.dialogs.viewbindings({
-                                    gridData: data,
-                                    importDefName: cswPrivate.selDefName.val()
+                        var action = 'Services/Import/downloadImportDefinition';
+
+                        var $form = $('<form method="POST" action="' + action + '"></form>').appendTo($('body'));
+                        var form = Csw.literals.factory($form);
+
+                        form.input({
+                            name: 'importdefname',
+                            value: cswPrivate.selDefName.val(),
                                 });
-                            }//success()
-                        });//ajaxWcf.post
+
+                        form.$.submit();
+                        form.remove();
                     }//onClick
                 });
         }; // makeUploadTable()
@@ -442,6 +446,150 @@
                 }
             });
         }; // makeGenerateSqlTable()
+
+        cswPrivate.makeBindingsGrid = function (importDefName) {
+            Csw.ajaxWcf.post({
+                urlMethod: 'Import/getBindingsForDefinition',
+                data: cswPrivate.selDefName.val(),
+                success: function (data) {
+
+                    cswPrivate.gridModifiedRows = [];
+                        
+                    cswPrivate.gridData = {};
+                    cswPrivate.gridData.Order = data.Order || { fields: [], columns: [], data: { items: [] } };
+                    cswPrivate.gridData.Bindings = data.Bindings || { fields: [], columns: [], data: { items: [] } };
+                    cswPrivate.gridData.Relationships = data.Relationships || { fields: [], columns: [], data: { items: [] } };
+
+                    //because the CswExtJsGrid object is configured for the old-style webservices, we must massage it a bit to display properly here
+                    ["Order", "Bindings", "Relationships"].forEach(function (tableName) {
+                        for (var itemNo = 0; itemNo < cswPrivate.gridData[tableName].data.items.length; itemNo++) {
+                            cswPrivate.gridData[tableName].data.items[itemNo] = cswPrivate.gridData[tableName].data.items[itemNo].Row;
+                        }
+                        cswPrivate.gridData[tableName].columns.forEach(function (column) {
+                            var pkcolumnname = "IMPORTDEF" + (tableName.endsWith('s') ? tableName.substr(0, tableName.length - 1) : tableName) + "ID";
+                            if (column.header == pkcolumnname.toUpperCase()) {
+                                column.hidden = true;
+                            }
+                            column.editable = true;
+                            Object.defineProperty(column, 'editor', {
+                                writable: true,
+                                configurable: true,
+                                enumerable: true,
+                                value: {
+                                    allowBlank: true
+                                }
+                            });
+                        });
+                    });
+
+                    cswPrivate.gridContentArea = cswPrivate.gridContentArea || cswPublic.table.cell(6, 2).propDom('colspan', 4).div().css('margin', '40px');
+                    cswPrivate.gridContentArea.empty();
+                    var tabstrip = cswPrivate.gridContentArea.tabStrip({
+                        onTabSelect: cswPrivate.updateDisplayedTab,
+                    });
+                    tabstrip.setSize({ width: 800, height: 600 });
+
+                    tabstrip.setTitle('Import Definition for ' + importDefName);
+
+                    cswPrivate.gridTabs = {};
+                    cswPrivate.gridTabs.Order = tabstrip.addTab({ title: 'Order' });
+                    cswPrivate.gridTabs.Bindings = tabstrip.addTab({ title: 'Bindings' });
+                    cswPrivate.gridTabs.Relationships = tabstrip.addTab({ title: 'Relationships' });
+                    
+                    cswPrivate.currentGridTab = 'Order';
+                    cswPrivate.updateDisplayedTab(cswPrivate.currentGridTab);
+                    
+                    cswPublic.table.cell(7,2).buttonExt({
+                        enabledText: 'Save Changes',
+                        disabledText: 'Sending Updates...',
+                        disableOnClick: true,
+                        onClick: function () {
+
+                            var dataToSend = [];
+
+                            cswPrivate.gridModifiedRows.forEach(function (row, index) {
+                                dataToSend[index] = {};
+                                dataToSend[index].editMode = row.editMode;
+                                dataToSend[index].definitionType = row.definitionType;
+                                dataToSend[index].row = [];
+                                Object.keys(row.row).forEach(function(cellName) {
+                                    dataToSend[index].row.push({ Key: cellName, Value: row.row[cellName] });
+                                });
+                            });
+                            Csw.ajaxWcf.post({
+                                urlMethod: 'Import/updateImportDefinition',
+                                data: dataToSend,
+                                success: function() {
+                                    cswPrivate.gridModifiedRows = [];
+                                }
+                            });
+                        }
+                    });
+                    
+
+                }//success()
+            });//ajaxWcf.post
+        };//make binding grid
+
+        cswPrivate.updateDisplayedTab = function(tabName) {
+
+            cswPrivate.gridTabs[tabName].csw.empty();
+            
+            var gridOptions = {
+                fields: cswPrivate.gridData[tabName].fields,
+                columns: cswPrivate.gridData[tabName].columns,
+                data: cswPrivate.gridData[tabName].data,
+                showActionColumn: false,
+                width: 800 - 2,
+                height: 600 - 52,
+                usePaging: false,
+                selModel: {
+                    selType: 'cellmodel'
+                },
+                canSelectRow: false,
+            };
+
+
+            if (cswPrivate.selDefName.val() == "CAF") {
+                gridOptions["plugins"] = [
+                    Ext.create('Ext.grid.plugin.CellEditing', {
+                        clicksToEdit: 1,
+                        listeners: {
+                            edit: function (grid, row) {
+                                if (cswPrivate.gridData[tabName].data.items[row.rowIdx][row.field] != row.value) {
+                                    cswPrivate.gridData[tabName].data.items[row.rowIdx][row.field] = row.value;
+                                    cswPrivate.gridModifiedRows.push({
+                                        editMode: "modify",
+                                        definitionType: tabName,
+                                        row: cswPrivate.gridData[tabName].data.items[row.rowIdx]
+                                    });
+                                }
+                            }
+                        }
+                    })
+                ];
+                gridOptions["showActionColumn"] = true;
+                gridOptions["showView"] = false;
+                gridOptions["showPreview"] = false;
+                gridOptions["showLock"] = false;
+                gridOptions["showEdit"] = false;
+                gridOptions["showFavorites"] = false;
+                gridOptions["onDelete"] = function(rows, rowdata) {
+                    cswPrivate.gridData[tabName].data.items.splice(cswPrivate.bindingsGrid.getSelectedRowId(), 1);
+                    cswPrivate.bindingsGrid.reload();
+                    cswPrivate.gridModifiedRows.push({
+                        editMode: "delete",
+                        definitionType: tabName,
+                        row: rowdata
+                    });
+                };
+            }
+            cswPrivate.bindingsGrid = cswPrivate.gridTabs[tabName].csw.grid(gridOptions);
+            
+        };
+        
+
+
 
         // Init
         (function () {

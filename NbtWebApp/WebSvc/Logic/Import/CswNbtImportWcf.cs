@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
@@ -151,6 +152,23 @@ namespace ChemSW.Nbt.WebServices
             }
         }
 
+        [DataContract]
+        public class DefinitionUpdateRow
+        {
+                public DefinitionUpdateRow()
+                {
+                    row = new Dictionary<string, string>();
+                }
+
+                [DataMember( IsRequired = true)]
+                public string editMode;
+
+                [DataMember( IsRequired = true )]
+                public string definitionType;
+
+                [DataMember( IsRequired = true )]
+                public  Dictionary<string, string> row;
+        }
 
     } // class CswNbtImportWcf
 

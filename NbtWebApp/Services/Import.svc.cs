@@ -177,6 +177,29 @@ namespace NbtWebApp
             return Ret.stream;
         }//downloadImportDefinition
 
+
+        [OperationContract]
+        [WebInvoke( Method = "POST" )]
+        [Description( "Update a binding definition" )]
+        [FaultContract( typeof( FaultException ) )]
+        public CswWebSvcReturn updateImportDefinition( CswNbtImportWcf.DefinitionUpdateRow[] parms )
+        {
+            CswWebSvcReturn ret = new CswWebSvcReturn();
+
+            var SvcDriver = new CswWebSvcDriver<CswWebSvcReturn, CswNbtImportWcf.DefinitionUpdateRow[]>(
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj: ret,
+                WebSvcMethodPtr: CswNbtWebServiceImport.updateImportDefinition,
+                ParamObj: parms
+                );
+
+            SvcDriver.run();
+
+            return ret;
+        }
+
+
+
         [OperationContract]
         [WebInvoke( Method = "POST", ResponseFormat = WebMessageFormat.Json )]
         [Description( "Get current status of imports" )]

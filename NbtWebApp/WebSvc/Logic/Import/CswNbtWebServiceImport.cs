@@ -6,9 +6,11 @@ using ChemSW.Config;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt.csw.ImportExport;
+using ChemSW.Nbt.csw.Schema;
 using ChemSW.Nbt.Grid;
 using ChemSW.Nbt.ImportExport;
 using ChemSW.Nbt.Sched;
+using ChemSW.Nbt.Schema;
 using NbtWebApp.WebSvc.Returns;
 
 namespace ChemSW.Nbt.WebServices
@@ -149,6 +151,10 @@ namespace ChemSW.Nbt.WebServices
 
             foreach( KeyValuePair<string, DataTable> Table in BindingsTables )
             {
+                //remove the PK column so its not exposed in the excel file
+                Table.Value.Columns.Remove( "importdef" + Table.Key.TrimEnd( new[] { 's' } ) + "id" );
+
+
                 //name each worksheet tab after the table
                 sw.Write( "<Worksheet ss:Name=\"" + Table.Key + "\"><Table>" );
 
@@ -178,6 +184,19 @@ namespace ChemSW.Nbt.WebServices
             sw.Write( "</Workbook>" );
             sw.Flush();
             Ret.stream.Position = 0;
+        }
+
+        public static void updateImportDefinition( ICswResources CswResources, CswWebSvcReturn Ret, CswNbtImportWcf.DefinitionUpdateRow[] Params )
+        {
+            //NOTE: if we decide to use definitions other than CAF in the future, we're going to need a way to discern what definition we're working with
+            CswNbtSchemaUpdateImportMgr ImportUpdater = new CswNbtSchemaUpdateImportMgr( new CswNbtSchemaModTrnsctn((CswNbtResources)CswResources), "CAF" );
+
+            foreach( CswNbtImportWcf.DefinitionUpdateRow Row in Params )
+            {
+                ImportUpdater.updateDefinitionElementByPK( Row.definitionType, Row.editMode, Row.row );
+            }
+
+            ImportUpdater.finalize();
         }
 
 
@@ -263,7 +282,6 @@ namespace ChemSW.Nbt.WebServices
 
                 Ret[TableName] = TableSelect.getTable();
                 Ret[TableName].Columns.Remove( "importdefid" );
-                Ret[TableName].Columns.Remove( "importdef" + TableName.TrimEnd( new[] { 's' } ) + "id" );
 
                 foreach( DataRow Row in Ret[TableName].AsEnumerable().Where( row => ( Int32.MinValue == Convert.ToInt32( row["instance"] ) ) ) )
                 {

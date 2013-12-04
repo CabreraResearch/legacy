@@ -11,7 +11,7 @@ using ChemSW.Nbt.Schema;
 
 namespace ChemSW.Nbt.csw.Schema
 {
-    partial class CswNbtSchemaUpdateImportMgr
+    public class CswNbtSchemaUpdateImportMgr
     {
         private CswNbtSchemaModTrnsctn SchemaModTrnsctn;
 
@@ -364,6 +364,76 @@ namespace ChemSW.Nbt.csw.Schema
         #endregion
 
 
+        public void updateDefinitionElementByPK( string DefinitionType, string UpdateMethod, Dictionary<string, string> Row )
+        {
+            string PrimaryKeyName = "";
+            DataTable Table = null;
+            switch( DefinitionType )
+            {
+                case "Order":
+                    PrimaryKeyName = "importdeforderid";
+                    Table = _importOrderTable;
+                    break;
+                case "Bindings":
+                    PrimaryKeyName = "importdefbindingid";
+                    Table = _importBindingsTable;
+                    break;
+                case "Relationships":
+                    PrimaryKeyName = "importdefrelationshipid";
+                    Table = _importRelationshipsTable;
+                    break;
+                default:
+                    throw new CswDniException( CswEnumErrorType.Error, "updateDefinitionElementByPK attempted to update an invalid import definition table.", "Value supplied was: " + DefinitionType + ", but must be one of Order, Bindings, or Relationships." );
+
+            }
+
+
+            DataRow DataRow;
+            if( UpdateMethod == "add" )
+            {
+                DataRow = Table.NewRow();
+            }
+            else
+            {
+                DataRow[] Selection = Table.Select( PrimaryKeyName + " = " + Row[PrimaryKeyName] );
+                if( Selection.Length > 0 )
+                {
+                    DataRow = Selection[0];
+                }
+                else
+                {
+                    throw new CswDniException("Attempted to " + UpdateMethod + " " + PrimaryKeyName + " " + Row[PrimaryKeyName] + " from Import " + DefinitionType + ", but this row does not exist.");
+                }
+            }
+
+            switch( UpdateMethod )
+            {
+                case "delete":
+                    DataRow.Delete();
+                    break;
+
+
+                //add uses the same logic as modify to set the cell's contents, just with a new row instead of an existing one
+                case "add": 
+                case "modify":
+                    foreach( string Column in Row.Keys )
+                    {
+                        if( Column.ToLower() != "sheetname" && Row[Column] != "")
+                        {
+                            DataRow[Column] = Row[Column];
+                        }
+                    }
+                    break;
+
+                default:
+                    throw new CswDniException( CswEnumErrorType.Error, "updateDefinitionElementByPK attempted an invalid operation on the data table", "Value supplied was: " + UpdateMethod);
+
+            }
+
+    }//updateDefinitionElementByPK
+
+
+
         /// <summary>
         /// Use CAFDbLink to lookup the PK column of a table on a CAF schema in DATA_DICTIONARY
         /// </summary>
@@ -391,12 +461,14 @@ namespace ChemSW.Nbt.csw.Schema
         /// </summary>
         public void finalize()
         {
-            if( null != _NbtImporter )
+            if( null == _NbtImporter )
             {
-                _NbtImporter.refreshMetaData();
-                _NbtImporter.storeDefinition( _importOrderTable, _importBindingsTable, _importRelationshipsTable );
-                _NbtImporter.Finish();
+                throw new CswDniException( CswEnumErrorType.Error, "UpdateImportMgr tried to store definition, but NbtImporter is not instanced.", "" );
             }
+
+            _NbtImporter.storeDefinition( _importOrderTable, _importBindingsTable, _importRelationshipsTable );
+            _NbtImporter.Finish();
+
         }//finalize()
     }
 }
