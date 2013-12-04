@@ -1,7 +1,5 @@
 using System;
-using System.Data;
 using ChemSW.Core;
-using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 
@@ -148,35 +146,6 @@ namespace ChemSW.Nbt.ObjClasses
         {
             if( null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
             return true;
-        }
-
-        public override CswNbtNode CopyNode( bool IsNodeTemp = false )
-        {
-            CswNbtNode NewNode = base.CopyNodeImpl( IsNodeTemp );
-
-            //Copy the existing file if there is any
-            CswTableUpdate blobDataTU = _CswNbtResources.makeCswTableUpdate( "CopyBlobData", "blob_data" );
-            DataTable blobDataDT = blobDataTU.getTable( "where jctnodepropid = " + this.File.JctNodePropId );
-            if( blobDataDT.Rows.Count > 0 )
-            {
-                DataRow existingRow = blobDataDT.Rows[0];
-                DataRow newRow = blobDataDT.NewRow();
-                foreach( DataColumn col in blobDataDT.Columns )
-                {
-                    if( "jctnodepropid" == col.ColumnName )
-                    {
-                        newRow["jctnodepropid"] = ( (CswNbtObjClassSDSDocument) NewNode ).File.JctNodePropId;
-                    }
-                    else if( col.ColumnName != "blobdataid" )
-                    {
-                        newRow[col] = existingRow[col];
-                    }
-                }
-                blobDataDT.Rows.Add( newRow );
-                blobDataTU.update( blobDataDT );
-            }
-
-            return NewNode;
         }
 
         #endregion Inherited Events
