@@ -21,7 +21,6 @@ namespace ChemSW.Nbt.Requesting
                 case CswNbtObjClassRequestItem.PropertyName.Container:
                 case CswNbtObjClassRequestItem.PropertyName.EnterprisePart:
                 case CswNbtObjClassRequestItem.PropertyName.Quantity:
-                case CswNbtObjClassRequestItem.PropertyName.TotalDispensed://TODO - remove when dispensing Size containers works
                 case CswNbtObjClassRequestItem.PropertyName.NewMaterialType:
                 case CswNbtObjClassRequestItem.PropertyName.NewMaterialTradename:
                 case CswNbtObjClassRequestItem.PropertyName.NewMaterialSupplier:
@@ -56,7 +55,7 @@ namespace ChemSW.Nbt.Requesting
                 {
                     CswNbtObjClassRequestItem.FulfillMenu.Order, 
                     CswNbtObjClassRequestItem.FulfillMenu.Receive,
-                    //CswNbtObjClassRequestItem.FulfillMenu.DispenseMaterial, //TODO - uncomment when dispensing Size Containers works
+                    CswNbtObjClassRequestItem.FulfillMenu.DispenseMaterial,
                     CswNbtObjClassRequestItem.FulfillMenu.MoveContainers, 
                     CswNbtObjClassRequestItem.FulfillMenu.Complete,
                     CswNbtObjClassRequestItem.FulfillMenu.Cancel

@@ -188,8 +188,7 @@ namespace ChemSW.Nbt.Schema
         private void _updateRequestViews()
         {
             CswNbtMetaDataObjectClass RequestItemOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestItemClass );
-            CswNbtView SubmittedRequestsView = _CswNbtSchemaModTrnsctn.restoreView( "Submitted Requests" ) ?? 
-                _CswNbtSchemaModTrnsctn.makeSafeView( "Submitted Requests", CswEnumNbtViewVisibility.Global );
+            CswNbtView SubmittedRequestsView = _CswNbtSchemaModTrnsctn.makeSafeView( "Submitted Requests", CswEnumNbtViewVisibility.Global );
             SubmittedRequestsView.ViewMode = CswEnumNbtViewRenderingMode.Grid;
             SubmittedRequestsView.Category = "Requests";
             SubmittedRequestsView.Root.ChildRelationships.Clear();
