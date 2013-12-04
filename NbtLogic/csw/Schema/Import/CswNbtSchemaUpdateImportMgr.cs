@@ -417,6 +417,8 @@ namespace ChemSW.Nbt.csw.Schema
                             DataRow[Column] = Row[Column];
                         }
                     }
+                    DataRow["importdefid"] = _SheetDefinitions[Row["sheetname"]];
+
                     Table.Rows.Add( DataRow );
                     break;
 
