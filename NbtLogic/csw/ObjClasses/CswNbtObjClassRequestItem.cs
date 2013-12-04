@@ -415,6 +415,15 @@ namespace ChemSW.Nbt.ObjClasses
         {
             RequestType.Value = Type.Value;
             TotalDispensed.UnitId = Quantity.UnitId;
+            if( false == CswTools.IsDouble( Quantity.Quantity ) )
+            {
+                Quantity.Quantity = 0;
+                if( null != Size.RelatedNodeId )
+                {
+                    CswNbtObjClassSize SizeNode = _CswNbtResources.Nodes[Size.RelatedNodeId];
+                    TotalDispensed.UnitId = SizeNode.InitialQuantity.UnitId;
+                }
+            }
             _CswNbtObjClassDefault.beforeCreateNode( IsCopy, OverrideUniqueValidation );
         }
 
@@ -770,6 +779,11 @@ namespace ChemSW.Nbt.ObjClasses
                     break;
                 case Statuses.Completed:
                     FulfillmentHistory.AddComment( "Request Item Completed." );
+                    if( null != Request.RelatedNodeId )
+                    {
+                        CswNbtObjClassRequest ParentRequest = _CswNbtResources.Nodes[Request.RelatedNodeId];
+                        ParentRequest.setCompletedDate();
+                    }
                     break;
                 case Statuses.Cancelled:
                     FulfillmentHistory.AddComment( "Request Item Cancelled." );
