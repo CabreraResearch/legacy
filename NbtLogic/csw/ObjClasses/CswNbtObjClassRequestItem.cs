@@ -561,6 +561,10 @@ namespace ChemSW.Nbt.ObjClasses
                                     MaterialNode.triggerOnButtonClick( ReceiveData );
                                     ButtonData.clone( ReceiveData );
                                 }
+                                else
+                                {
+                                    throw new CswDniException(CswEnumErrorType.Warning, "A Material must be selected in order to Receive.", "User attempted to Receive without a material defined.");
+                                }
                                 //TODO - if it's a Material Size Request, we should select the requested Size and Unit Count by default.
                                 break;
                             case FulfillMenu.DispenseMaterial:
@@ -803,8 +807,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropRelationship EnterprisePart { get { return _CswNbtNode.Properties[PropertyName.EnterprisePart]; } }
         private void _onEnterprisePartPropChange( CswNbtNodeProp Prop, bool Creating )
         {
-            //TODO - Case 31176 - scope Material picklist to materials belonging to EP
-            //TODO - remove this block once Case 31242 is complete
+            //TODO - Case 31176 - is it possible to scope Material picklist to materials belonging to EP?
         }
         public CswNbtNodePropRelationship Material { get { return _CswNbtNode.Properties[PropertyName.Material]; } }
         private void _onMaterialPropChange( CswNbtNodeProp Prop, bool Creating )
@@ -813,6 +816,39 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 Type.Value = Types.MaterialBulk;
                 FulfillmentHistory.AddComment( "Selected existing Material: " + CswNbtNode.getNodeLink( Material.RelatedNodeId, Material.CachedNodeName ) );
+            }
+            else if( Type.Value == Types.EnterprisePart )//TODO - remove this block once Case 31242 is complete
+            {
+                bool materialMatchesEP = false;
+                CswNbtMetaDataObjectClass ManufacturerEquivalentPartOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ManufacturerEquivalentPartClass );
+                CswNbtMetaDataObjectClassProp EPOCP = ManufacturerEquivalentPartOC.getObjectClassProp( CswNbtObjClassManufacturerEquivalentPart.PropertyName.EnterprisePart );
+                CswNbtMetaDataObjectClassProp MaterialOCP = ManufacturerEquivalentPartOC.getObjectClassProp( CswNbtObjClassManufacturerEquivalentPart.PropertyName.Material );
+
+                CswNbtView EPMatsView = new CswNbtView( _CswNbtResources );
+                EPMatsView.ViewName = "Materials under " + EnterprisePart.RelatedNodeId;
+                CswNbtViewRelationship MEPVR = EPMatsView.AddViewRelationship( ManufacturerEquivalentPartOC, false );
+                EPMatsView.AddViewPropertyAndFilter( MEPVR, EPOCP, SubFieldName: CswEnumNbtSubFieldName.NodeID, Value: EnterprisePart.RelatedNodeId.PrimaryKey.ToString() );
+                CswNbtViewRelationship MatVR = EPMatsView.AddViewRelationship( MEPVR, CswEnumNbtViewPropOwnerType.First, MaterialOCP, false );
+
+                ICswNbtTree EPMatsTree = _CswNbtResources.Trees.getTreeFromView( EPMatsView, false, true, true );
+                for( int i = 0; i < EPMatsTree.getChildNodeCount(); i++ )
+                {
+                    EPMatsTree.goToNthChild( i ); //EP's MEPs
+                    if( EPMatsTree.getChildNodeCount() > 0)
+                    {
+                        EPMatsTree.goToNthChild( 0 ); //MEP's Material
+                        if( EPMatsTree.getNodeIdForCurrentPosition() == Material.RelatedNodeId )
+                        {
+                            materialMatchesEP = true;
+                            break;
+                        }
+                    }
+                    EPMatsTree.goToParentNode();
+                }
+                if( false == materialMatchesEP )
+                {
+                    throw new CswDniException( CswEnumErrorType.Warning, "Selected Material does not belong to requested Enterprise Part.", "User selected an invalid Material." );
+                }
             }
         }
         public CswNbtNodePropRelationship Container { get { return _CswNbtNode.Properties[PropertyName.Container]; } }
