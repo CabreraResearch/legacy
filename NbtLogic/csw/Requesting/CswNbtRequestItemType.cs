@@ -33,6 +33,14 @@ namespace ChemSW.Nbt.Requesting
         /// </summary>
         public abstract void setFulfillOptions();
 
+        /// <summary>
+        /// Sets available unit options on the Quantity property based on the related Material
+        /// </summary>
+        public virtual void setQuantityOptions()
+        {
+            //Null Op
+        }
+
         #region UI Visibility Logic
 
         /// <summary>

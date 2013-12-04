@@ -437,6 +437,7 @@ namespace ChemSW.Nbt.ObjClasses
             if( Creating )
             {
                 _setUIVisibility();//This sets the Request Item's add layout based on its Type
+                TypeDef.setQuantityOptions();
             }
             _setDefaultValues();
             TypeDef.setDescription();
@@ -461,15 +462,6 @@ namespace ChemSW.Nbt.ObjClasses
 
         protected override void afterPopulateProps()
         {
-            //TODO - see if this makes an important difference in the quantity available values for material requests
-            //CswNbtNode MaterialNode = _CswNbtResources.Nodes.GetNode( Material.RelatedNodeId );
-            //if( MaterialNode != null )
-            //{
-            //    Material.setReadOnly( value: true, SaveToDb: true );
-            //    CswNbtUnitViewBuilder Vb = new CswNbtUnitViewBuilder( _CswNbtResources );
-            //    Vb.setQuantityUnitOfMeasureView( MaterialNode, Quantity );
-            //}
-
             _setUIVisibility();
             Request.SetOnPropChange( _onRequestPropChange );
             EnterprisePart.SetOnPropChange( _onEnterprisePartPropChange );
