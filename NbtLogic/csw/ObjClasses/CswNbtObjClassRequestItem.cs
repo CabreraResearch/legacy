@@ -415,6 +415,15 @@ namespace ChemSW.Nbt.ObjClasses
         {
             RequestType.Value = Type.Value;
             TotalDispensed.UnitId = Quantity.UnitId;
+            if( false == CswTools.IsDouble( Quantity.Quantity ) )
+            {
+                Quantity.Quantity = 0;
+                if( null != Size.RelatedNodeId )
+                {
+                    CswNbtObjClassSize SizeNode = _CswNbtResources.Nodes[Size.RelatedNodeId];
+                    TotalDispensed.UnitId = SizeNode.InitialQuantity.UnitId;
+                }
+            }
             _CswNbtObjClassDefault.beforeCreateNode( IsCopy, OverrideUniqueValidation );
         }
 
@@ -428,6 +437,7 @@ namespace ChemSW.Nbt.ObjClasses
             if( Creating )
             {
                 _setUIVisibility();//This sets the Request Item's add layout based on its Type
+                TypeDef.setQuantityOptions();
             }
             _setDefaultValues();
             TypeDef.setDescription();
@@ -452,22 +462,13 @@ namespace ChemSW.Nbt.ObjClasses
 
         protected override void afterPopulateProps()
         {
-            //TODO - see if this makes an important difference in the quantity available values for material requests
-            //CswNbtNode MaterialNode = _CswNbtResources.Nodes.GetNode( Material.RelatedNodeId );
-            //if( MaterialNode != null )
-            //{
-            //    Material.setReadOnly( value: true, SaveToDb: true );
-            //    CswNbtUnitViewBuilder Vb = new CswNbtUnitViewBuilder( _CswNbtResources );
-            //    Vb.setQuantityUnitOfMeasureView( MaterialNode, Quantity );
-            //}
-
-
             _setUIVisibility();
             Request.SetOnPropChange( _onRequestPropChange );
             EnterprisePart.SetOnPropChange( _onEnterprisePartPropChange );
             Material.SetOnPropChange( _onMaterialPropChange );
             Status.SetOnPropChange( _onStatusPropChange );
             Type.SetOnPropChange( _onTypePropChange );
+            ExternalOrderNumber.SetOnPropChange( _onExternalOrderNumberPropChange );
             RecurringFrequency.SetOnPropChange( _onRecurringFrequencyPropChange );
             _CswNbtObjClassDefault.triggerAfterPopulateProps();
         }
@@ -770,6 +771,11 @@ namespace ChemSW.Nbt.ObjClasses
                     break;
                 case Statuses.Completed:
                     FulfillmentHistory.AddComment( "Request Item Completed." );
+                    if( null != Request.RelatedNodeId )
+                    {
+                        CswNbtObjClassRequest ParentRequest = _CswNbtResources.Nodes[Request.RelatedNodeId];
+                        ParentRequest.setCompletedDate();
+                    }
                     break;
                 case Statuses.Cancelled:
                     FulfillmentHistory.AddComment( "Request Item Cancelled." );
@@ -795,6 +801,14 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropRelationship RequestedFor { get { return _CswNbtNode.Properties[PropertyName.RequestedFor]; } }
         public CswNbtNodePropDateTime NeededBy { get { return _CswNbtNode.Properties[PropertyName.NeededBy]; } }
         public CswNbtNodePropText ExternalOrderNumber { get { return _CswNbtNode.Properties[PropertyName.ExternalOrderNumber]; } }
+        private void _onExternalOrderNumberPropChange( CswNbtNodeProp NodeProp, bool Creating )
+        {
+            if( false == String.IsNullOrEmpty( ExternalOrderNumber.Text ) && Status.Value != Statuses.Pending )
+            {
+                String ActionChange = String.IsNullOrEmpty( ExternalOrderNumber.GetOriginalPropRowValue() ) ? "Added" : "Modified";
+                FulfillmentHistory.AddComment( ActionChange + " External Order Number: " + ExternalOrderNumber.Text );
+            }
+        }
         public CswNbtNodePropRelationship AssignedTo { get { return _CswNbtNode.Properties[PropertyName.AssignedTo]; } }
         public CswNbtNodePropComments Comments { get { return _CswNbtNode.Properties[PropertyName.Comments]; } }
         public CswNbtNodePropNumber Priority { get { return _CswNbtNode.Properties[PropertyName.Priority]; } }
