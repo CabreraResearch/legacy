@@ -470,13 +470,13 @@ namespace ChemSW.Nbt.ObjClasses
             //    Vb.setQuantityUnitOfMeasureView( MaterialNode, Quantity );
             //}
 
-
             _setUIVisibility();
             Request.SetOnPropChange( _onRequestPropChange );
             EnterprisePart.SetOnPropChange( _onEnterprisePartPropChange );
             Material.SetOnPropChange( _onMaterialPropChange );
             Status.SetOnPropChange( _onStatusPropChange );
             Type.SetOnPropChange( _onTypePropChange );
+            ExternalOrderNumber.SetOnPropChange( _onExternalOrderNumberPropChange );
             RecurringFrequency.SetOnPropChange( _onRecurringFrequencyPropChange );
             _CswNbtObjClassDefault.triggerAfterPopulateProps();
         }
@@ -809,6 +809,14 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropRelationship RequestedFor { get { return _CswNbtNode.Properties[PropertyName.RequestedFor]; } }
         public CswNbtNodePropDateTime NeededBy { get { return _CswNbtNode.Properties[PropertyName.NeededBy]; } }
         public CswNbtNodePropText ExternalOrderNumber { get { return _CswNbtNode.Properties[PropertyName.ExternalOrderNumber]; } }
+        private void _onExternalOrderNumberPropChange( CswNbtNodeProp NodeProp, bool Creating )
+        {
+            if( false == String.IsNullOrEmpty( ExternalOrderNumber.Text ) && Status.Value != Statuses.Pending )
+            {
+                String ActionChange = String.IsNullOrEmpty( ExternalOrderNumber.GetOriginalPropRowValue() ) ? "Added" : "Modified";
+                FulfillmentHistory.AddComment( ActionChange + " External Order Number: " + ExternalOrderNumber.Text );
+            }
+        }
         public CswNbtNodePropRelationship AssignedTo { get { return _CswNbtNode.Properties[PropertyName.AssignedTo]; } }
         public CswNbtNodePropComments Comments { get { return _CswNbtNode.Properties[PropertyName.Comments]; } }
         public CswNbtNodePropNumber Priority { get { return _CswNbtNode.Properties[PropertyName.Priority]; } }
