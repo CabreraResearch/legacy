@@ -81,7 +81,7 @@ namespace ChemSW.Nbt.Sched
                     CswArbitrarySelect QueueSelect = _CswNbtResources.makeCswArbitrarySelect( "cafimport_queue_select", Sql );
                     DataTable QueueTable = QueueSelect.getTable( 0, NumberToProcess, false );
 
-                    CswNbtImporter Importer = new CswNbtImporter( _CswNbtResources );
+                    CswNbtImporter Importer = new CswNbtImporter( _CswNbtResources.AccessId, CswEnumSetupMode.NbtExe );
                     foreach( DataRow QueueRow in QueueTable.Rows )
                     {
                         string CurrentTblNamePkCol = CswConvert.ToString( QueueRow["pkcolumnname"] );
@@ -124,6 +124,9 @@ namespace ChemSW.Nbt.Sched
                             }
                         }
                     }//foreach( DataRow QueueRow in QueueTable.Rows )
+
+                    Importer.Finish();
+
                     _CswScheduleLogicDetail.StatusMessage = "Completed without error";
                     _LogicRunStatus = CswEnumScheduleLogicRunStatus.Succeeded; //last line
 

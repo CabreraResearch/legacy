@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using ChemSW.Config;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.ImportExport;
@@ -85,7 +86,7 @@ namespace ChemSW.Nbt.csw.Schema
         public CswNbtSchemaUpdateImportMgr( CswNbtSchemaModTrnsctn SchemaModTrnsctn, string DefinitionName, string CafDbLink = null )
         {
             _CAFDbLink = CafDbLink ?? CswScheduleLogicNbtCAFImport.CAFDbLink;
-            _NbtImporter = SchemaModTrnsctn.makeCswNbtImporter();
+            _NbtImporter = new CswNbtImporter( SchemaModTrnsctn.Accessid, CswEnumSetupMode.NbtExe );
             this.SchemaModTrnsctn = SchemaModTrnsctn;
 
             _importDefTable = SchemaModTrnsctn.makeCswTableUpdate( "Import_getDefs", "import_def" ).getTable();
@@ -392,9 +393,7 @@ namespace ChemSW.Nbt.csw.Schema
             if( null != _NbtImporter )
             {
                 _NbtImporter.storeDefinition( _importOrderTable, _importBindingsTable, _importRelationshipsTable );
-
-                //_populateImportQueueTable( WhereClause, UseView );
-                //_createTriggerOnImportTable();
+                _NbtImporter.Finish();
             }
         }//finalize()
     }
