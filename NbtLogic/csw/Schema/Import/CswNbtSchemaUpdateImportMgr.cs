@@ -363,9 +363,16 @@ namespace ChemSW.Nbt.csw.Schema
 
         #endregion
 
-
+        /// <summary>
+        /// Given the modification type, operation, and a dictionary of column-value pairs for the updated row, update a binding. For use by view bindings grid in Web App.
+        /// </summary>
+        /// <param name="DefinitionType">One of 'Order', 'Bindings', or 'Relationships'</param>
+        /// <param name="UpdateMethod">One of 'add', 'modify', or 'delete'</param>
+        /// <param name="Row">A dictionary of string key value pairs representing the cells of the row.</param>
         public void updateDefinitionElementByPK( string DefinitionType, string UpdateMethod, Dictionary<string, string> Row )
         {
+
+            //first set some variables to make the function ready for the type of binding we are updating
             string PrimaryKeyName = "";
             DataTable Table = null;
             switch( DefinitionType )
@@ -385,15 +392,17 @@ namespace ChemSW.Nbt.csw.Schema
                 default:
                     throw new CswDniException( CswEnumErrorType.Error, "updateDefinitionElementByPK attempted to update an invalid import definition table.", "Value supplied was: " + DefinitionType + ", but must be one of Order, Bindings, or Relationships." );
 
-            }
+            }//switch( DefinitionType )
 
 
+            //if we are not adding a new row, fetch the old row from the database
             DataRow DataRow = null;
             if( UpdateMethod != "add" )
             {
                 DataRow[] Selection = Table.Select( PrimaryKeyName + " = " + Row[PrimaryKeyName] );
                 if( Selection.Length > 0 )
                 {
+                    //we assume that we will always have one and only one result for a particular primary key, but this is probably dangerous
                     DataRow = Selection[0];
                 }
                 else
@@ -402,14 +411,19 @@ namespace ChemSW.Nbt.csw.Schema
                 }
             }
 
+
+            //now perform the operation on the row we have fetched
             switch( UpdateMethod )
             {
                 case "delete":
+                    //if deleting, just delete the row and we are done
                     DataRow.Delete();
                     break;
 
                 case "add":
+                    //when adding, we need to create the new row in the data table first
                     DataRow = Table.NewRow();
+                    //copy over each cell from the dictionary to the data row
                     foreach( string Column in Row.Keys )
                     {
                         if( Column.ToLower() != "sheetname" && Row[Column] != "")
@@ -417,12 +431,14 @@ namespace ChemSW.Nbt.csw.Schema
                             DataRow[Column] = Row[Column];
                         }
                     }
+                    //perform a sheet lookup so this binding knows what definition it belongs to
                     DataRow["importdefid"] = _SheetDefinitions[Row["sheetname"]];
 
                     Table.Rows.Add( DataRow );
                     break;
 
                 case "modify":
+                    //copy over each cell from the dictionary to the data row
                     foreach( string Column in Row.Keys )
                     {
                         if( Column.ToLower() != "sheetname" && Row[Column] != "")
@@ -435,7 +451,7 @@ namespace ChemSW.Nbt.csw.Schema
                 default:
                     throw new CswDniException( CswEnumErrorType.Error, "updateDefinitionElementByPK attempted an invalid operation on the data table", "Value supplied was: " + UpdateMethod);
 
-            }
+            }//switch ( UpdateMethod )
 
     }//updateDefinitionElementByPK
 

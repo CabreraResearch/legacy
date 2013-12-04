@@ -447,24 +447,30 @@
             });
         }; // makeGenerateSqlTable()
 
+
         cswPrivate.makeBindingsGrid = function (importDefName) {
+            //the grid does not actually get created until after we have received its bindings from the server
             Csw.ajaxWcf.post({
                 urlMethod: 'Import/getBindingsForDefinition',
                 data: cswPrivate.selDefName.val(),
                 success: function (data) {
 
+                    //maintain a cache of just the updated rows so we do not have to send the whole table to the server
                     cswPrivate.gridModifiedRows = [];
                         
+                    //prepare a data structure for holding the ext grid data
                     cswPrivate.gridData = {};
                     cswPrivate.gridData.Order = data.Order || { fields: [], columns: [], data: { items: [] } };
                     cswPrivate.gridData.Bindings = data.Bindings || { fields: [], columns: [], data: { items: [] } };
                     cswPrivate.gridData.Relationships = data.Relationships || { fields: [], columns: [], data: { items: [] } };
 
-                    //because the CswExtJsGrid object is configured for the old-style webservices, we must massage it a bit to display properly here
+                    //because the CswExtJsGrid object is a bit hard coded for scheduledRules, we must massage it a bit to display properly here
                     ["Order", "Bindings", "Relationships"].forEach(function (tableName) {
                         for (var itemNo = 0; itemNo < cswPrivate.gridData[tableName].data.items.length; itemNo++) {
                             cswPrivate.gridData[tableName].data.items[itemNo] = cswPrivate.gridData[tableName].data.items[itemNo].Row;
                         }
+                        
+                        //hide the pk column name so people can't mess with it, otherwise make the column editable
                         cswPrivate.gridData[tableName].columns.forEach(function (column) {
                             var pkcolumnname = "IMPORTDEF" + (tableName.endsWith('s') ? tableName.substr(0, tableName.length - 1) : tableName) + "ID";
                             if (column.header == pkcolumnname.toUpperCase()) {
@@ -482,6 +488,7 @@
                         });
                     });
 
+                    //prepare the tabbed container for the grid sheets
                     cswPrivate.gridContentArea = cswPrivate.gridContentArea || cswPublic.table.cell(6, 2).propDom('colspan', 4).div().css('margin', '20px');
                     cswPrivate.gridContentArea.empty();
                     cswPrivate.gridTabstrip = cswPrivate.gridContentArea.tabStrip({
@@ -491,15 +498,18 @@
 
                     cswPrivate.gridTabstrip.setTitle('Import Definition for ' + importDefName);
 
+                    //store the tabs so that we can manipulate them when we update the displayed tab
                     cswPrivate.gridTabs = {};
                     cswPrivate.gridTabs.Order = cswPrivate.gridTabstrip.addTab({ title: 'Order' });
                     cswPrivate.gridTabs.Bindings = cswPrivate.gridTabstrip.addTab({ title: 'Bindings' });
                     cswPrivate.gridTabs.Relationships = cswPrivate.gridTabstrip.addTab({ title: 'Relationships' });
                     
+                    //set the active tab so everything works before the user picks one for the first time
                     cswPrivate.currentGridTab = 'Order';
                     cswPrivate.gridTabstrip.setActiveTab(0);
                     cswPrivate.updateDisplayedTab(cswPrivate.currentGridTab);
 
+                    //only show the CAF-specific buttons below the grid if we are displaying CAF
                     cswPublic.table.cell(7, 2).empty();
                     cswPublic.table.cell(7, 3).empty();
                     
@@ -510,6 +520,7 @@
                             disableOnClick: true,
                             onClick: function() {
 
+                                //WCF requires dictionaries to be arrays of {Key: XXX, Value: YYY} tuples instead of, y'know... dictionaries. So we need to copy the data over to this format
                                 var dataToSend = [];
 
                                 cswPrivate.gridModifiedRows.forEach(function(row, index) {
@@ -521,6 +532,8 @@
                                         dataToSend[index].row.push({ Key: cellName, Value: row.row[cellName] });
                                     });
                                 });
+                                
+                                //send the data to the server, then clear our list of pending modifications on success
                                 Csw.ajaxWcf.post({
                                     urlMethod: 'Import/updateImportDefinition',
                                     data: dataToSend,
@@ -534,7 +547,8 @@
                         cswPublic.table.cell(7, 3).buttonExt({
                             enabledText: 'Add Row',
                             disableOnClick: false,
-                            onClick: function() {
+                            onClick: function () {
+                                //add a new row to the data store, then refresh the grid so that it appears in the UI
                                 var tabName = cswPrivate.currentGridTab;
 
                                 var rowNum = cswPrivate.gridData[tabName].data.items.push(new Object()) - 1;
@@ -552,14 +566,19 @@
             });//ajaxWcf.post
         };//make binding grid
 
-        cswPrivate.indexModifiedRow = function(editMode, sheetName, rowData) {
+
+        cswPrivate.indexModifiedRow = function (editMode, sheetName, rowData) {
+            //NOTE: Rows are stored by REFERENCE, and the Ext data store and modifiedRows column both reference the SAME row object
             var matchingRow = null;
-            cswPrivate.gridModifiedRows.forEach(function(modifiedRow) {
+            
+            //figure out if the user has already modified this row, so we can re-use the same record in the cache
+            cswPrivate.gridModifiedRows.forEach(function (modifiedRow) {
                 if ( rowData == modifiedRow.row ) {
                     matchingRow = modifiedRow;
                 }
             });
 
+            //if this row does not exist in our cache of modified rows yet, add it
             if (matchingRow == null) {
                 cswPrivate.gridModifiedRows.push({
                     editMode: editMode,
@@ -567,15 +586,18 @@
                     row: rowData
                 });
             } else {
+                //otherwise, only update the reference to the row data on the off chance its changed
+                //TODO: this is probably broken if a user modifies a binding, and then deletes it afterward
                 matchingRow.row = rowData;
             }
         };
 
 
         cswPrivate.updateDisplayedTab = function(tabName) {
-
+            //clear the old grid out of the tab
             cswPrivate.gridTabs[tabName].csw.empty();
             
+
             var gridOptions = {
                 fields: cswPrivate.gridData[tabName].fields,
                 columns: cswPrivate.gridData[tabName].columns,
@@ -592,6 +614,7 @@
 
 
             if (cswPrivate.selDefName.val() == "CAF") {
+                //only make the grid editable if the definition is CAF
                 gridOptions["plugins"] = [
                     Ext.create('Ext.grid.plugin.CellEditing', {
                         clicksToEdit: 1,
@@ -611,13 +634,16 @@
                 gridOptions["showLock"] = false;
                 gridOptions["showEdit"] = false;
                 gridOptions["showFavorites"] = false;
-                gridOptions["onDelete"] = function(rows, rowdata) {
+                gridOptions["onDelete"] = function (rows, rowdata) {
+                    //when deleting a row from the grid, splice it out of the data store then reload the grid so it disapears from the UI
                     cswPrivate.gridData[tabName].data.items.splice(cswPrivate.bindingsGrid.getSelectedRowId(), 1);
                     cswPrivate.updateDisplayedTab(tabName);
                     cswPrivate.indexModifiedRow("delete", tabName, rowdata);
                     
                 };
-            }
+            }//if import def name == CAF
+            
+            //build the grid with the options supplied above, then set the active tab
             cswPrivate.bindingsGrid = cswPrivate.gridTabs[tabName].csw.grid(gridOptions);
             cswPrivate.currentGridTab = tabName;
         };
