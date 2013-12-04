@@ -482,7 +482,7 @@
                         });
                     });
 
-                    cswPrivate.gridContentArea = cswPrivate.gridContentArea || cswPublic.table.cell(6, 2).propDom('colspan', 4).div().css('margin', '40px');
+                    cswPrivate.gridContentArea = cswPrivate.gridContentArea || cswPublic.table.cell(6, 2).propDom('colspan', 4).div().css('margin', '20px');
                     cswPrivate.gridContentArea.empty();
                     cswPrivate.gridTabstrip = cswPrivate.gridContentArea.tabStrip({
                         onTabSelect: cswPrivate.updateDisplayedTab,
@@ -499,50 +499,54 @@
                     cswPrivate.currentGridTab = 'Order';
                     cswPrivate.gridTabstrip.setActiveTab(0);
                     cswPrivate.updateDisplayedTab(cswPrivate.currentGridTab);
+
+                    cswPublic.table.cell(7, 2).empty();
+                    cswPublic.table.cell(7, 3).empty();
                     
-                    cswPublic.table.cell(7,2).buttonExt({
-                        enabledText: 'Save Changes',
-                        disabledText: 'Sending Updates...',
-                        disableOnClick: true,
-                        onClick: function () {
+                    if (importDefName == "CAF") {
+                        cswPublic.table.cell(7, 2).buttonExt({
+                            enabledText: 'Save Changes',
+                            disabledText: 'Sending Updates...',
+                            disableOnClick: true,
+                            onClick: function() {
 
-                            var dataToSend = [];
+                                var dataToSend = [];
 
-                            cswPrivate.gridModifiedRows.forEach(function (row, index) {
-                                dataToSend[index] = {};
-                                dataToSend[index].editMode = row.editMode;
-                                dataToSend[index].definitionType = row.definitionType;
-                                dataToSend[index].row = [];
-                                Object.keys(row.row).forEach(function(cellName) {
-                                    dataToSend[index].row.push({ Key: cellName, Value: row.row[cellName] });
+                                cswPrivate.gridModifiedRows.forEach(function(row, index) {
+                                    dataToSend[index] = {};
+                                    dataToSend[index].editMode = row.editMode;
+                                    dataToSend[index].definitionType = row.definitionType;
+                                    dataToSend[index].row = [];
+                                    Object.keys(row.row).forEach(function(cellName) {
+                                        dataToSend[index].row.push({ Key: cellName, Value: row.row[cellName] });
+                                    });
                                 });
-                            });
-                            Csw.ajaxWcf.post({
-                                urlMethod: 'Import/updateImportDefinition',
-                                data: dataToSend,
-                                success: function() {
-                                    cswPrivate.gridModifiedRows = [];
-                                }
-                            });
-                        }
-                    });
-                    
-                    cswPublic.table.cell(7, 3).buttonExt({
-                        enabledText: 'Add Row',
-                        disableOnClick: false,
-                        onClick: function () {
-                            var tabName = cswPrivate.currentGridTab;
-                            
-                            var rowNum = cswPrivate.gridData[tabName].data.items.push(new Object()) -1;
-                            var newRow = cswPrivate.gridData[tabName].data.items[rowNum];
-                            cswPrivate.gridData[tabName].columns.forEach(function(column) {
-                                newRow[column.dataIndex] = "";
-                            });
-                            cswPrivate.indexModifiedRow("add", tabName, newRow);
-                            cswPrivate.updateDisplayedTab(tabName);
-                        }
-                    });
-                    
+                                Csw.ajaxWcf.post({
+                                    urlMethod: 'Import/updateImportDefinition',
+                                    data: dataToSend,
+                                    success: function() {
+                                        cswPrivate.gridModifiedRows = [];
+                                    }
+                                });
+                            }
+                        });
+
+                        cswPublic.table.cell(7, 3).buttonExt({
+                            enabledText: 'Add Row',
+                            disableOnClick: false,
+                            onClick: function() {
+                                var tabName = cswPrivate.currentGridTab;
+
+                                var rowNum = cswPrivate.gridData[tabName].data.items.push(new Object()) - 1;
+                                var newRow = cswPrivate.gridData[tabName].data.items[rowNum];
+                                cswPrivate.gridData[tabName].columns.forEach(function(column) {
+                                    newRow[column.dataIndex] = "";
+                                });
+                                cswPrivate.indexModifiedRow("add", tabName, newRow);
+                                cswPrivate.updateDisplayedTab(tabName);
+                            }
+                        });
+                    }
 
                 }//success()
             });//ajaxWcf.post
