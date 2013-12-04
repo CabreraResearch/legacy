@@ -484,19 +484,20 @@
 
                     cswPrivate.gridContentArea = cswPrivate.gridContentArea || cswPublic.table.cell(6, 2).propDom('colspan', 4).div().css('margin', '40px');
                     cswPrivate.gridContentArea.empty();
-                    var tabstrip = cswPrivate.gridContentArea.tabStrip({
+                    cswPrivate.gridTabstrip = cswPrivate.gridContentArea.tabStrip({
                         onTabSelect: cswPrivate.updateDisplayedTab,
                     });
-                    tabstrip.setSize({ width: 800, height: 600 });
+                    cswPrivate.gridTabstrip.setSize({ width: 800, height: 600 });
 
-                    tabstrip.setTitle('Import Definition for ' + importDefName);
+                    cswPrivate.gridTabstrip.setTitle('Import Definition for ' + importDefName);
 
                     cswPrivate.gridTabs = {};
-                    cswPrivate.gridTabs.Order = tabstrip.addTab({ title: 'Order' });
-                    cswPrivate.gridTabs.Bindings = tabstrip.addTab({ title: 'Bindings' });
-                    cswPrivate.gridTabs.Relationships = tabstrip.addTab({ title: 'Relationships' });
+                    cswPrivate.gridTabs.Order = cswPrivate.gridTabstrip.addTab({ title: 'Order' });
+                    cswPrivate.gridTabs.Bindings = cswPrivate.gridTabstrip.addTab({ title: 'Bindings' });
+                    cswPrivate.gridTabs.Relationships = cswPrivate.gridTabstrip.addTab({ title: 'Relationships' });
                     
                     cswPrivate.currentGridTab = 'Order';
+                    cswPrivate.gridTabstrip.setActiveTab(0);
                     cswPrivate.updateDisplayedTab(cswPrivate.currentGridTab);
                     
                     cswPublic.table.cell(7,2).buttonExt({
@@ -526,10 +527,46 @@
                         }
                     });
                     
+                    cswPublic.table.cell(7, 3).buttonExt({
+                        enabledText: 'Add Row',
+                        disableOnClick: false,
+                        onClick: function () {
+                            var tabName = cswPrivate.currentGridTab;
+                            
+                            var rowNum = cswPrivate.gridData[tabName].data.items.push(new Object()) -1;
+                            var newRow = cswPrivate.gridData[tabName].data.items[rowNum];
+                            cswPrivate.gridData[tabName].columns.forEach(function(column) {
+                                newRow[column.dataIndex] = "";
+                            });
+                            cswPrivate.indexModifiedRow("add", tabName, newRow);
+                            cswPrivate.updateDisplayedTab(tabName);
+                        }
+                    });
+                    
 
                 }//success()
             });//ajaxWcf.post
         };//make binding grid
+
+        cswPrivate.indexModifiedRow = function(editMode, sheetName, rowData) {
+            var matchingRow = null;
+            cswPrivate.gridModifiedRows.forEach(function(modifiedRow) {
+                if ( rowData == modifiedRow.row ) {
+                    matchingRow = modifiedRow;
+                }
+            });
+
+            if (matchingRow == null) {
+                cswPrivate.gridModifiedRows.push({
+                    editMode: editMode,
+                    definitionType: sheetName,
+                    row: rowData
+                });
+            } else {
+                matchingRow.row = rowData;
+            }
+        };
+
 
         cswPrivate.updateDisplayedTab = function(tabName) {
 
@@ -558,11 +595,7 @@
                             edit: function (grid, row) {
                                 if (cswPrivate.gridData[tabName].data.items[row.rowIdx][row.field] != row.value) {
                                     cswPrivate.gridData[tabName].data.items[row.rowIdx][row.field] = row.value;
-                                    cswPrivate.gridModifiedRows.push({
-                                        editMode: "modify",
-                                        definitionType: tabName,
-                                        row: cswPrivate.gridData[tabName].data.items[row.rowIdx]
-                                    });
+                                    cswPrivate.indexModifiedRow("modify", tabName, cswPrivate.gridData[tabName].data.items[row.rowIdx]);
                                 }
                             }
                         }
@@ -576,16 +609,13 @@
                 gridOptions["showFavorites"] = false;
                 gridOptions["onDelete"] = function(rows, rowdata) {
                     cswPrivate.gridData[tabName].data.items.splice(cswPrivate.bindingsGrid.getSelectedRowId(), 1);
-                    cswPrivate.bindingsGrid.reload();
-                    cswPrivate.gridModifiedRows.push({
-                        editMode: "delete",
-                        definitionType: tabName,
-                        row: rowdata
-                    });
+                    cswPrivate.updateDisplayedTab(tabName);
+                    cswPrivate.indexModifiedRow("delete", tabName, rowdata);
+                    
                 };
             }
             cswPrivate.bindingsGrid = cswPrivate.gridTabs[tabName].csw.grid(gridOptions);
-            
+            cswPrivate.currentGridTab = tabName;
         };
         
 

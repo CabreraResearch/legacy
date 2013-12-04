@@ -388,12 +388,8 @@ namespace ChemSW.Nbt.csw.Schema
             }
 
 
-            DataRow DataRow;
-            if( UpdateMethod == "add" )
-            {
-                DataRow = Table.NewRow();
-            }
-            else
+            DataRow DataRow = null;
+            if( UpdateMethod != "add" )
             {
                 DataRow[] Selection = Table.Select( PrimaryKeyName + " = " + Row[PrimaryKeyName] );
                 if( Selection.Length > 0 )
@@ -412,9 +408,18 @@ namespace ChemSW.Nbt.csw.Schema
                     DataRow.Delete();
                     break;
 
+                case "add":
+                    DataRow = Table.NewRow();
+                    foreach( string Column in Row.Keys )
+                    {
+                        if( Column.ToLower() != "sheetname" && Row[Column] != "")
+                        {
+                            DataRow[Column] = Row[Column];
+                        }
+                    }
+                    Table.Rows.Add( DataRow );
+                    break;
 
-                //add uses the same logic as modify to set the cell's contents, just with a new row instead of an existing one
-                case "add": 
                 case "modify":
                     foreach( string Column in Row.Keys )
                     {
