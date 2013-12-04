@@ -1,4 +1,5 @@
-﻿using ChemSW.Core;
+﻿using System.Collections.ObjectModel;
+using ChemSW.Core;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
@@ -9,7 +10,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update
     /// </summary>
-    public class CswUpdateSchema_02I_Case31056 : CswUpdateSchemaTo
+    public class CswUpdateSchema_02I_Case31056B : CswUpdateSchemaTo
     {
         public override CswEnumDeveloper Author
         {
@@ -26,8 +27,34 @@ namespace ChemSW.Nbt.Schema
             get { return "Merge Action"; }
         }
 
+        public override string AppendToScriptName()
+        {
+            return "B";
+        }
+
         public override void update()
         {
+            Collection<CswEnumNbtObjectClass> NonMergeableOCs = new Collection<CswEnumNbtObjectClass>();
+            NonMergeableOCs.Add( CswEnumNbtObjectClass.FireClassExemptAmountClass );
+            NonMergeableOCs.Add( CswEnumNbtObjectClass.FireClassExemptAmountSetClass );
+            NonMergeableOCs.Add( CswEnumNbtObjectClass.BatchOpClass );
+            NonMergeableOCs.Add( CswEnumNbtObjectClass.ContainerDispenseTransactionClass );
+            NonMergeableOCs.Add( CswEnumNbtObjectClass.ContainerLocationClass );
+            NonMergeableOCs.Add( CswEnumNbtObjectClass.PrintJobClass );
+
+            // Set value for nodetypes.mergeable
+            foreach( CswNbtMetaDataNodeType NodeType in _CswNbtSchemaModTrnsctn.MetaData.getNodeTypes() )
+            {
+                if( NonMergeableOCs.Contains( NodeType.getObjectClass().ObjectClass ) )
+                {
+                    NodeType.Mergeable = false;
+                }
+                else
+                {
+                    NodeType.Mergeable = true;
+                }
+            }
+
             // Create new action 'Merge'
             _CswNbtSchemaModTrnsctn.createAction( CswEnumNbtActionName.Merge, true, "", "System" );
 

@@ -35,7 +35,8 @@
             filterHideThreshold: 5,
             universalSearchOnly: false,
             filterOutNodeId: null,
-            forceSingleColumn: false
+            forceSingleColumn: false,
+            onlyMergeableNodeTypes: false,
             //buttonSingleColumn: '',
             //buttonMultiColumn: ''
         };
@@ -235,6 +236,7 @@
                     SearchType: cswPrivate.searchtype,
                     NodeTypeId: cswPrivate.nodetypeid,
                     ObjectClassId: cswPrivate.objectclassid,
+                    OnlyMergeableNodeTypes: cswPrivate.onlyMergeableNodeTypes,
                     Page: '0',
                     Limit: '0',
                 },
