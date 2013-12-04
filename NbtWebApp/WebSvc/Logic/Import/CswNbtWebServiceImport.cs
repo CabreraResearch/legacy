@@ -189,7 +189,7 @@ namespace ChemSW.Nbt.WebServices
         public static void updateImportDefinition( ICswResources CswResources, CswWebSvcReturn Ret, CswNbtImportWcf.DefinitionUpdateRow[] Params )
         {
             //NOTE: if we decide to use definitions other than CAF in the future, we're going to need a way to discern what definition we're working with
-            CswNbtSchemaUpdateImportMgr ImportUpdater = new CswNbtSchemaUpdateImportMgr( new CswNbtSchemaModTrnsctn((CswNbtResources)CswResources), "CAF" );
+            CswNbtSchemaUpdateImportMgr ImportUpdater = new CswNbtSchemaUpdateImportMgr( new CswNbtSchemaModTrnsctn((CswNbtResources)CswResources), "CAF", ImporterSetUpMode: CswEnumSetupMode.NbtWeb );
 
             foreach( CswNbtImportWcf.DefinitionUpdateRow Row in Params )
             {
