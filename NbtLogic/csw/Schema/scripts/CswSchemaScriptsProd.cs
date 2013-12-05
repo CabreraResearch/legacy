@@ -31,6 +31,7 @@ namespace ChemSW.Nbt.Schema
             Collection<ICswSchemaScripts> AllScripts = new Collection<ICswSchemaScripts>()
                 {
                     new CswSchemaScriptsIronwood(),
+                    new CswSchemaScriptsJuniper(),
                     // Add new milestone script collections here
                     new CswSchemaScriptsCAF() // This runs the CAF scripts - keep it around and uncommented until CAF is done
                 };
