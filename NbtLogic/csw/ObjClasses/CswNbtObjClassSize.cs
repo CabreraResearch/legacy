@@ -6,7 +6,7 @@ using ChemSW.Nbt.UnitsOfMeasure;
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassSize : CswNbtObjClass
+    public class CswNbtObjClassSize: CswNbtObjClass
     {
         public new sealed class PropertyName: CswNbtObjClass.PropertyName
         {
@@ -113,15 +113,6 @@ namespace ChemSW.Nbt.ObjClasses
             return true;
         }
 
-        public override CswNbtNode CopyNode()
-        {
-            CswNbtNode CopiedNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, delegate( CswNbtNode NewNode )
-            {
-                NewNode.copyPropertyValues( Node );
-                //CopiedNode.postChanges( true, true );
-            }, IsTemp: true );
-            return CopiedNode;
-        }
         #endregion
 
         #region Object class specific properties
@@ -154,7 +145,7 @@ namespace ChemSW.Nbt.ObjClasses
                     isMaterialID = ( MaterialPS.PropertySetId == NodePS.PropertySetId );
                 }
             }
-            
+
             return isMaterialID;
         }
 
@@ -163,7 +154,7 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtNode MaterialNode = _CswNbtResources.Nodes.GetNode( Material.RelatedNodeId );
             if( MaterialNode != null )
             {
-                Material.setReadOnly( value: true, SaveToDb: true );
+                Material.setReadOnly( value : true, SaveToDb : true );
                 CswNbtUnitViewBuilder Vb = new CswNbtUnitViewBuilder( _CswNbtResources );
                 Vb.setQuantityUnitOfMeasureView( MaterialNode, InitialQuantity );
             }

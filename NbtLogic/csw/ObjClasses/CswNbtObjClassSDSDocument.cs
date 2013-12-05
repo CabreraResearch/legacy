@@ -5,13 +5,13 @@ using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassSDSDocument : CswNbtPropertySetDocument
+    public class CswNbtObjClassSDSDocument: CswNbtPropertySetDocument
     {
         #region Enums
         /// <summary>
         /// Object Class Property Names
         /// </summary>
-        public new sealed class PropertyName : CswNbtPropertySetDocument.PropertyName
+        public new sealed class PropertyName: CswNbtPropertySetDocument.PropertyName
         {
             /// <summary>
             /// Language of the document.
@@ -58,7 +58,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Potential File Type options (Includes menu inherited from base class <see cref="CswNbtPropertySetDocument"/>)
         /// </summary>
-        public new sealed class CswEnumDocumentFileTypes : CswNbtPropertySetDocument.CswEnumDocumentFileTypes
+        public new sealed class CswEnumDocumentFileTypes: CswNbtPropertySetDocument.CswEnumDocumentFileTypes
         {
             /// <summary>
             /// Hyperlink
@@ -148,6 +148,10 @@ namespace ChemSW.Nbt.ObjClasses
             return true;
         }
 
+        #endregion Inherited Events
+
+        #region Custom Logic
+
         public override void archiveMatchingDocs()
         {
             //Archives existing Documents related to the same Owner.
@@ -162,7 +166,7 @@ namespace ChemSW.Nbt.ObjClasses
                     CswNbtView ExistingDocsView = new CswNbtView( _CswNbtResources );
                     CswNbtViewRelationship DocumentVr = ExistingDocsView.AddViewRelationship( NodeType, false );
                     ExistingDocsView.AddViewPropertyAndFilter( DocumentVr, Owner.NodeTypeProp, OwnerNode.NodeId.PrimaryKey.ToString(), CswEnumNbtSubFieldName.NodeID );
-                    ExistingDocsView.AddViewPropertyAndFilter( DocumentVr, Archived.NodeTypeProp, CswEnumTristate.True.ToString(), FilterMode: CswEnumNbtFilterMode.NotEquals );
+                    ExistingDocsView.AddViewPropertyAndFilter( DocumentVr, Archived.NodeTypeProp, CswEnumTristate.True.ToString(), FilterMode : CswEnumNbtFilterMode.NotEquals );
                     ExistingDocsView.AddViewPropertyAndFilter( DocumentVr, Format.NodeTypeProp, Format.Value );
                     ExistingDocsView.AddViewPropertyAndFilter( DocumentVr, Language.NodeTypeProp, Language.Value );
 
@@ -187,10 +191,6 @@ namespace ChemSW.Nbt.ObjClasses
                 }
             }
         }
-
-        #endregion Inherited Events
-
-        #region Custom Logic
 
         public static bool materialHasActiveSDS( CswNbtResources _CswNbtResources, CswPrimaryKey MaterialId )
         {
