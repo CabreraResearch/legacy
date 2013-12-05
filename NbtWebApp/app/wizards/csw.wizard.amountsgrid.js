@@ -262,6 +262,8 @@
                                 case cswPrivate.config.sizeName:
                                     cswPublic.rows[rowid].sizeControl = cswCell.nodeSelect({
                                         name: 'Size',
+                                        isRequired: true,
+                                        overrideNodelinkValidation: true,
                                         doGetNodes: false, //Case 31096 - if the options below are empty, they're empty for a reason.
                                         options: cswPrivate.sizeSelectOpts,
                                         showSelectOnLoad: true,
