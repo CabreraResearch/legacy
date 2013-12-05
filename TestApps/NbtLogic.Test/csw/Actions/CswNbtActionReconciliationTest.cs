@@ -106,6 +106,37 @@ namespace ChemSW.Nbt.Test.Actions
         }
 
         /// <summary>
+        /// Given a location that has one disposed Container in the given timeframe, given that the container has not been scanned,
+        /// when grabbing Containers for Reconcile Scans only,
+        /// assert that no Container Status data is returned for the disposed Container.
+        /// Prior to resolving Case 31304, this test failed.
+        /// </summary>
+        [Test]
+        public void getContainerStatusesTestDisposedExcludedFromReconcileScans()
+        {
+            CswPrimaryKey LocationId = TestData.Nodes.createLocationNode().NodeId;
+            CswNbtObjClassContainer ContainerNode = TestData.Nodes.createContainerNode( LocationId: LocationId );
+            ContainerNode.DisposeContainer( true );
+            ContainerData.ReconciliationRequest Request = new ContainerData.ReconciliationRequest
+            {
+                StartDate = DateTime.Now.AddDays( -1 ).ToString(),
+                EndDate = DateTime.Now.AddSeconds( 1 ).ToString(),
+                LocationId = LocationId.ToString(),
+                IncludeChildLocations = false,
+                ContainerLocationTypes = new Collection<ContainerData.ReconciliationTypes>
+                {
+                    new ContainerData.ReconciliationTypes
+                    {
+                        Enabled=true, 
+                        Type= CswEnumNbtContainerLocationTypeOptions.ReconcileScans.ToString()
+                    }
+                }
+            };
+            ContainerData Data = ReconciliationAction.getContainerStatuses( Request );
+            Assert.AreEqual( 0, Data.ContainerStatuses.Count );
+        }
+
+        /// <summary>
         /// Given a location that has one Container that did not exist in the given timeframe,
         /// assert that the no ContainerStatus data is returned
         /// </summary>
@@ -393,6 +424,42 @@ namespace ChemSW.Nbt.Test.Actions
                 {
                     Assert.AreEqual( 0, Stat.ContainerCount );
                 }
+            }
+        }
+
+        /// <summary>
+        /// Given a location that has one disposed Container in the given timeframe, given that the container has not been scanned,
+        /// when grabbing Containers for Reconcile Scans only,
+        /// assert that no ContainerStatistics data is returned.
+        /// Prior to resolving Case 31304, this test failed.
+        /// </summary>
+        [Test]
+        public void getContainerStatisticsTestDisposedExcludedFromReconcileScans()
+        {
+            CswPrimaryKey LocationId = TestData.Nodes.createLocationNode().NodeId;
+            CswNbtObjClassContainer ContainerNode = TestData.Nodes.createContainerNode( LocationId: LocationId );
+            ContainerNode.DisposeContainer( true );
+            ContainerNode.postChanges( true );
+            Assert.AreEqual( CswEnumTristate.True, ContainerNode.Disposed.Checked.ToString() );
+            ContainerData.ReconciliationRequest Request = new ContainerData.ReconciliationRequest
+            {
+                StartDate = DateTime.Now.AddDays( -1 ).ToString(),
+                EndDate = DateTime.Now.AddSeconds( 1 ).ToString(),
+                LocationId = LocationId.ToString(),
+                IncludeChildLocations = false,
+                ContainerLocationTypes = new Collection<ContainerData.ReconciliationTypes>
+                {
+                    new ContainerData.ReconciliationTypes
+                    {
+                        Enabled=true, 
+                        Type= CswEnumNbtContainerLocationTypeOptions.ReconcileScans.ToString()
+                    }
+                }
+            };
+            ContainerData Data = ReconciliationAction.getContainerStatistics( Request );
+            foreach( ContainerData.ReconciliationStatistics Stat in Data.ContainerStatistics )
+            {
+                Assert.AreEqual( 0, Stat.ContainerCount );
             }
         }
 
