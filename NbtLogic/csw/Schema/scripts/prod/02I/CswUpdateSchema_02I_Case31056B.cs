@@ -174,6 +174,43 @@ namespace ChemSW.Nbt.Schema
                     container.Quantity.UnitId = new CswPrimaryKey( "nodes", 26744 ); // kg
                 } );
 
+            // To test double-relationship compound-unique nodetypes
+            // new nodetype
+            CswNbtMetaDataObjectClass GenericOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.GenericClass );
+            CswNbtMetaDataNodeType TestNT = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( new CswNbtWcfMetaDataModel.NodeType( GenericOC )
+                {
+                    NodeTypeName = "Test1",
+                    Category = "Materials",
+                    IconFileName = "star.png"
+                } );
+
+            CswNbtMetaDataNodeTypeProp TextNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( new CswNbtWcfMetaDataModel.NodeTypeProp( TestNT, _CswNbtSchemaModTrnsctn.MetaData.getFieldType( CswEnumNbtFieldType.Text ), "Text1" ) );
+            CswNbtMetaDataNodeTypeProp MaterialNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( new CswNbtWcfMetaDataModel.NodeTypeProp( TestNT, _CswNbtSchemaModTrnsctn.MetaData.getFieldType( CswEnumNbtFieldType.Relationship ), "Material" )
+                {
+                    IsCompoundUnique = true
+                } );
+            MaterialNTP.SetFK( CswEnumNbtViewRelatedIdType.NodeTypeId.ToString(), ChemicalNT.NodeTypeId );
+            CswNbtMetaDataNodeTypeProp SizeNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( new CswNbtWcfMetaDataModel.NodeTypeProp( TestNT, _CswNbtSchemaModTrnsctn.MetaData.getFieldType( CswEnumNbtFieldType.Relationship ), "Size" )
+                {
+                    IsCompoundUnique = true
+                } );
+            SizeNTP.SetFK( CswEnumNbtViewRelatedIdType.NodeTypeId.ToString(), SizeNT.NodeTypeId );
+
+            // nodes
+            CswNbtNode test1 = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( TestNT.NodeTypeId, delegate( CswNbtNode node )
+                {
+                    node.Properties[TextNTP].AsText.Text = "Test 1";
+                    node.Properties[MaterialNTP].AsRelationship.RelatedNodeId = chem1.NodeId;
+                    node.Properties[SizeNTP].AsRelationship.RelatedNodeId = size1.NodeId;
+                } );
+            CswNbtNode test2 = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( TestNT.NodeTypeId, delegate( CswNbtNode node )
+                {
+                    node.Properties[TextNTP].AsText.Text = "Test 2";
+                    node.Properties[MaterialNTP].AsRelationship.RelatedNodeId = chem2.NodeId;
+                    node.Properties[SizeNTP].AsRelationship.RelatedNodeId = size2.NodeId;
+                } );
+
+
             #endregion Debug test data
 
         } // update()

@@ -176,6 +176,8 @@ namespace ChemSW.Nbt.Actions
         } // _addMergeNodes()
 
 
+        private Dictionary<CswPrimaryKey, CswDelimitedString> _AllUniqueKeys = new Dictionary<CswPrimaryKey, CswDelimitedString>();
+
         /// <summary>
         /// Create a dictionary of the unique key values of related nodes
         /// As a side effect, also populate MergeInfoData.NodePair.Relationships
@@ -206,38 +208,61 @@ namespace ChemSW.Nbt.Actions
                 for( Int32 c = 0; c < tree.getChildNodeCount(); c++ )
                 {
                     tree.goToNthChild( c );
+                    CswPrimaryKey thisNodeId = tree.getNodeIdForCurrentPosition();
 
                     // Populate MergeInfoData.NodePair.Relationships while we're here
                     NodePair.Relationships.Add( new MergeInfoData.MergeInfoRelationship()
                         {
-                            NodeId = tree.getNodeIdForCurrentPosition().ToString(),
+                            NodeId = thisNodeId.ToString(),
                             NodeTypePropId = RelationshipProp.PropId
                         } );
 
-                    CswDelimitedString key = new CswDelimitedString( delimiter );
-                    foreach( CswNbtMetaDataNodeTypeProp uniqueProp in UniqueProps )
+                    CswDelimitedString key;
+                    if( _AllUniqueKeys.ContainsKey( thisNodeId ) )
                     {
-                        CswNbtTreeNodeProp prop = tree.getChildNodePropsOfNode().FirstOrDefault( p => p.NodeTypePropId == uniqueProp.PropId );
-                        if( null != prop )
+                        // If we've seen this node before, use the existing key but override the merge property
+                        // (this will allow us to merge correctly if a nodetype has 
+                        //  multiple compound unique relationships that are all involved in the merge)
+                        key = _AllUniqueKeys[thisNodeId];
+                        for( Int32 u = 0; u < UniqueProps.Count(); u++ )
                         {
-                            if( prop.NodeTypePropId == RelationshipProp.PropId )
+                            if( UniqueProps.ElementAt( u ).PropId == RelationshipProp.PropId )
                             {
                                 // This value will be equal after the merge
-                                key.Add( "[mergeresult]" );
+                                key[u] = "[mergeresult]";
+                            }
+                        } // foreach( CswNbtMetaDataNodeTypeProp uniqueProp in UniqueProps )
+                    } // if( _AllUniqueKeys.ContainsKey( thisNodeId ) )
+                    else
+                    {
+                        // generate a new key
+                        key = new CswDelimitedString( delimiter );
+                        foreach( CswNbtMetaDataNodeTypeProp uniqueProp in UniqueProps )
+                        {
+                            CswNbtTreeNodeProp prop = tree.getChildNodePropsOfNode().FirstOrDefault( p => p.NodeTypePropId == uniqueProp.PropId );
+                            if( null != prop )
+                            {
+                                if( prop.NodeTypePropId == RelationshipProp.PropId )
+                                {
+                                    // This value will be equal after the merge
+                                    key.Add( "[mergeresult]" );
+                                }
+                                else
+                                {
+                                    key.Add( prop.Gestalt );
+                                }
                             }
                             else
                             {
-                                key.Add( prop.Gestalt );
+                                key.Add( "" );
                             }
-                        }
-                        else
-                        {
-                            key.Add( "" );
-                        }
-                    } // foreach( CswNbtMetaDataNodeTypeProp uniqueProp in UniqueProps )
+                        } // foreach( CswNbtMetaDataNodeTypeProp uniqueProp in UniqueProps )
+                    } // if-else( _AllUniqueKeys.ContainsKey( thisNodeId ) )
+
                     if( key.Count > 0 )
                     {
-                        ret.Add( key, tree.getNodeIdForCurrentPosition() );
+                        ret.Add( key, thisNodeId );
+                        _AllUniqueKeys[thisNodeId] = key;
                     }
 
                     tree.goToParentNode();
