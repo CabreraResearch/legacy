@@ -309,6 +309,7 @@
                                                 if (Balance.IsActive) {
                                                     cswPublic.rows[rowid].balanceControl.setText(Balance.NbtName);
                                                     cswPublic.rows[rowid].balanceControl.setHandler(function () { getBalanceInformation(Balance.NodeId); });
+                                                    updateBalanceInterface(Balance);
                                                 } else {
                                                     cswPublic.rows[rowid].balanceControl.setText(Balance.NbtName + " (Inactive)");
                                                 }
