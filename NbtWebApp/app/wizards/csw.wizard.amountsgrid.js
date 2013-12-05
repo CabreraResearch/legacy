@@ -56,7 +56,7 @@
             if (cswPrivate.customBarcodes) {
                 cswPrivate.header = cswPrivate.header.concat([{ "value": cswPrivate.config.barcodeName, "isRequired": false }]);
             }
-            if (cswPrivate.balancesDefined ) {
+            if (cswPrivate.balancesDefined) {
                 cswPrivate.header = cswPrivate.header.concat([{ "value": cswPrivate.config.balanceName, "isRequired": false }]);
             }
             if (cswPrivate.rows.length === 0) {
@@ -141,6 +141,29 @@
                                 Csw.tryExec(cswPrivate.onChange, cswPublic.quantities());
                             };
 
+
+                            var buildQtyCtrl = function (cellOverride) {
+                                cswPrivate.quantity.minvalue = 0;
+                                cswPrivate.quantity.excludeRangeLimits = true;
+                                cswPrivate.quantity.onNumberChange = function () {
+                                    updateColumnVals(false);
+                                };
+                                cswPrivate.quantity.onQuantityChange = function () {
+                                    updateColumnVals(false);
+                                };
+                                cswPrivate.quantity.quantity = cswPrivate.quantity.value;
+                                cswPrivate.quantity.selectedNodeId = cswPrivate.quantity.nodeid;
+                                cswPrivate.quantity.name = 'containerQuantity';
+                                cswPrivate.quantity.qtyWidth = (7 * 8) + 'px'; //7 characters wide, 8 is the characters-to-pixels ratio
+                                cswPrivate.quantity.isReadOnly = cswPrivate.quantity.qtyReadonly;
+
+                                if (cellOverride) {
+                                    cswPublic.rows[rowid].qtyControl = cellOverride.quantity(cswPrivate.quantity);
+                                } else {
+                                    cswPublic.rows[rowid].qtyControl = cswCell.quantity(cswPrivate.quantity);
+                                }
+                                updateColumnVals(true);
+                            };
                             var updateBarcodes = function (value) {
                                 var parseBarcodes = function (anArray) {
                                     if (anArray.length > cswPublic.rows[rowid].quantityValues.containerNo) {
@@ -156,9 +179,10 @@
                             var onSizeChange = function () {
                                 updateSizeVals();
                                 cswPrivate.getQuantity(function () {
-                                    if (cswPublic.rows[rowid].qtyControl) {
-                                        cswPublic.rows[rowid].qtyControl.refresh(cswPrivate.quantity);
+                                    if (!cswPublic.rows[rowid].qtyControl) {
+                                        buildQtyCtrl(cswPublic.rows[rowid].qtyCell);
                                     }
+                                    cswPublic.rows[rowid].qtyControl.refresh(cswPrivate.quantity);
                                     updateColumnVals(true);
                                 });
                             };
@@ -238,6 +262,9 @@
                                 case cswPrivate.config.sizeName:
                                     cswPublic.rows[rowid].sizeControl = cswCell.nodeSelect({
                                         name: 'Size',
+                                        isRequired: true,
+                                        overrideNodelinkValidation: true,
+                                        doGetNodes: false, //Case 31096 - if the options below are empty, they're empty for a reason.
                                         options: cswPrivate.sizeSelectOpts,
                                         showSelectOnLoad: true,
                                         objectClassName: 'SizeClass',
@@ -260,24 +287,7 @@
                                     onSizeChange();
                                     break;
                                 case cswPrivate.config.quantityName:
-                                    var buildQtyCtrl = function () {
-                                        cswPrivate.quantity.minvalue = 0;
-                                        cswPrivate.quantity.excludeRangeLimits = true;
-                                        cswPrivate.quantity.onNumberChange = function () {
-                                            updateColumnVals(false);
-                                        };
-                                        cswPrivate.quantity.onQuantityChange = function () {
-                                            updateColumnVals(false);
-                                        };
-                                        cswPrivate.quantity.quantity = cswPrivate.quantity.value;
-                                        cswPrivate.quantity.selectedNodeId = cswPrivate.quantity.nodeid;
-                                        cswPrivate.quantity.name = 'containerQuantity';
-                                        cswPrivate.quantity.qtyWidth = (7 * 8) + 'px'; //7 characters wide, 8 is the characters-to-pixels ratio
-                                        cswPrivate.quantity.isReadOnly = cswPrivate.quantity.qtyReadonly;
-
-                                        cswPublic.rows[rowid].qtyControl = cswCell.quantity(cswPrivate.quantity);
-                                        updateColumnVals(true);
-                                    };
+                                    cswPublic.rows[rowid].qtyCell = cswCell;
                                     cswPrivate.getQuantity(buildQtyCtrl);
                                     break;
                                 case cswPrivate.config.barcodeName:
@@ -368,8 +378,10 @@
                                 cswPrivate.sizeSelectOpts.push({ id: obj.NodeId, value: obj.NodeName, nodelink: obj.NodeLink });
                             });
 
-                            cswPrivate.sizeSelectOpts[0].isSelected = true;
-                            cswPrivate.selectedSizeId = cswPrivate.sizeSelectOpts[0].id;
+                            if (cswPrivate.sizeSelectOpts.length > 0) {
+                                cswPrivate.sizeSelectOpts[0].isSelected = true;
+                                cswPrivate.selectedSizeId = cswPrivate.sizeSelectOpts[0].id;
+                            }
                         }
                     }));
                 }

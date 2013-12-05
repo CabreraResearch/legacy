@@ -51,7 +51,7 @@ namespace ChemSW.Nbt.WebServices
         }
 
         [DataContract]
-        public class CopyDataReturn : CswWebSvcReturn
+        public class CopyDataReturn: CswWebSvcReturn
         {
             public CopyDataReturn()
             {
@@ -77,7 +77,7 @@ namespace ChemSW.Nbt.WebServices
 
         public static void getCopyData( ICswResources _CswResources, CopyDataReturn Copy, CopyDataRequest Request )
         {
-            CswNbtResources _CswNbtResources = ( CswNbtResources ) _CswResources;
+            CswNbtResources _CswNbtResources = (CswNbtResources) _CswResources;
             //If we get any more copy types in the future, extract them out into their own classes and instantiate them via factory
             #region Create_Material Copy Data
 
@@ -94,10 +94,10 @@ namespace ChemSW.Nbt.WebServices
                         CswNbtPropertySetMaterial MaterialCopy = OriginalMaterial.CopyNode();
                         Copy.Data.Create_Material = new CswNbtWebServiceC3Search.C3CreateMaterialResponse
                         {
-                            actionname = CswEnumNbtActionName.Create_Material, 
+                            actionname = CswEnumNbtActionName.Create_Material,
                             state = new CswNbtWebServiceC3Search.C3CreateMaterialResponse.State
                             {
-                                materialId = MaterialCopy.NodeId.ToString(), 
+                                materialId = MaterialCopy.NodeId.ToString(),
                                 materialType = new CswNbtWebServiceC3Search.C3CreateMaterialResponse.State.MaterialType
                                 {
                                     name = MaterialCopy.NodeType.NodeTypeName,
@@ -172,7 +172,7 @@ namespace ChemSW.Nbt.WebServices
                                 {
                                     value = SizeNode.Dispensable.Checked
                                 }
-                            });
+                            } );
                             SizesTree.goToParentNode();
                         }
 
@@ -214,9 +214,11 @@ namespace ChemSW.Nbt.WebServices
                                 {
                                     SDSTree.goToNthChild( i );
                                     CswNbtObjClassSDSDocument SDSDoc = SDSTree.getNodeForCurrentPosition();
-                                    CswNbtObjClassSDSDocument SDSCopy = SDSDoc.CopyNode();
+                                    CswNbtObjClassSDSDocument SDSCopy = SDSDoc.CopyNode( IsNodeTemp : true );
+
                                     SDSCopy.Owner.RelatedNodeId = MaterialCopy.NodeId;
                                     SDSCopy.postChanges( false );
+
                                     if( i == 0 )
                                     {
                                         Copy.Data.Create_Material.state.sdsDocId = SDSCopy.NodeId.ToString();
@@ -419,7 +421,7 @@ namespace ChemSW.Nbt.WebServices
                     }
                     else
                     {
-                        DoomedNode.delete( DeleteAllRequiredRelatedNodes: true );
+                        DoomedNode.delete( DeleteAllRequiredRelatedNodes : true );
                         RetObj["succeeded"][NodePk.ToString()] = _makeDeletedNodeText( NodeType, DoomedNodeName, DoomedNodeId );
                     }
                 }
@@ -465,7 +467,7 @@ namespace ChemSW.Nbt.WebServices
                     //Reassign required relationships which may be tied to Demo data
                     CswNbtResources UserSystemResources = wsMd.makeSystemUserResources( _CswNbtResources.AccessId, false );
                     CswNbtMetaDataObjectClass UserOc = UserSystemResources.MetaData.getObjectClass( CswEnumNbtObjectClass.UserClass );
-                    foreach( CswNbtObjClassUser User in UserOc.getNodes( forceReInit: true, includeSystemNodes: false ) )
+                    foreach( CswNbtObjClassUser User in UserOc.getNodes( forceReInit : true, includeSystemNodes : false ) )
                     {
                         if( CswTools.IsPrimaryKey( User.CurrentWorkUnitProperty.RelatedNodeId ) )
                         {
@@ -483,7 +485,7 @@ namespace ChemSW.Nbt.WebServices
                                 User.DefaultLocationProperty.SelectedNodeId = null;
                             }
                         }
-                        User.postChanges( ForceUpdate: true );
+                        User.postChanges( ForceUpdate : true );
                     }
                     wsMd.finalizeOtherResources( UserSystemResources );
                 }
@@ -496,9 +498,9 @@ namespace ChemSW.Nbt.WebServices
 
                 CswTableSelect NodesSelect = NbtSystemResources.makeCswTableSelect( "delete_demodata_nodes1", "nodes" );
                 DataTable NodesTable = NodesSelect.getTable(
-                    SelectColumns: new CswCommaDelimitedString { "nodeid", "nodename", "nodetypeid" },
-                    WhereClause: "where isdemo='" + CswConvert.ToDbVal( true ) + "'",
-                    OrderByColumns: new Collection<OrderByClause> { new OrderByClause( "nodeid", CswEnumOrderByType.Descending ) }
+                    SelectColumns : new CswCommaDelimitedString { "nodeid", "nodename", "nodetypeid" },
+                    WhereClause : "where isdemo='" + CswConvert.ToDbVal( true ) + "'",
+                    OrderByColumns : new Collection<OrderByClause> { new OrderByClause( "nodeid", CswEnumOrderByType.Descending ) }
                 );
                 Total = NodesTable.Rows.Count;
                 foreach( DataRow NodeRow in NodesTable.Rows )
@@ -654,10 +656,10 @@ namespace ChemSW.Nbt.WebServices
                     CswNbtView sizesView = new CswNbtView( NbtResources );
                     CswNbtViewRelationship parent = sizesView.AddViewRelationship( sizeOC, true );
                     sizesView.AddViewPropertyAndFilter( parent,
-                        MetaDataProp: materialOCP,
-                        Value: pk.PrimaryKey.ToString(),
-                        SubFieldName: CswEnumNbtSubFieldName.NodeID,
-                        FilterMode: CswEnumNbtFilterMode.Equals );
+                        MetaDataProp : materialOCP,
+                        Value : pk.PrimaryKey.ToString(),
+                        SubFieldName : CswEnumNbtSubFieldName.NodeID,
+                        FilterMode : CswEnumNbtFilterMode.Equals );
 
                     ICswNbtTree tree = NbtResources.Trees.getTreeFromView( sizesView, true, false, false );
                     for( int i = 0; i < tree.getChildNodeCount(); i++ )
