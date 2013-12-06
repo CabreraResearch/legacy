@@ -39,6 +39,8 @@
                                             <p>    
                                                 <h3>#3 - On the Setup tab, provide <em>login credentials</em> for ChemSW Live.</h3>
                                                 <br/><img src="NbtBalanceReader/pic3.png"/>
+						<br/><strong>NOTE:</strong> Make sure the account you have provided to connect to ChemSW Live belongs to a role with "Create, View, Edit, Delete" permissions for both the Balance 
+<br />and Balance Configuration Nodetypes. If not, then you will be unable to create new balance configurations or connect balances, even if the connection test is successful.<br/>
                                             </p>
                                             <p>                                        
                                                 <h3>#4 - Switch to the Configurations tab. A list of balance templates which have been created by your ChemSW Live account should appear in the grid here.</h3>
