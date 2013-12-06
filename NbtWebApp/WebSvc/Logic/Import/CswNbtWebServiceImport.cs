@@ -215,6 +215,40 @@ namespace ChemSW.Nbt.WebServices
                 throw new CswDniException(CswEnumErrorType.Error, "Check the supplied parameters for the CAF database.", Error);
             }
 
+            //Run the SQL to generate the table, views, triggers, and other setup operations.
+            //there is no clean solution for running the contents of .SQL file from inside C#, so please forgive the horrible hacks that follow.
+            //Assumptions made here: 
+            //   the only PL/SQL blocks are the deletes at the top of the script and the triggers at the bottom, 
+            //   the / at the end of PL/SQL is always at the beginning of a line, 
+            //   triggers always have two lines of spaces before them, except the very first trigger, which has 3
+
+            string CAFSql = generateCAFSql( _CswNbtResources );
+
+            //add a / before the first trigger and split the file into an array of strings on / chars (breaking off potential PL/SQL blocks)
+            string[] SQLCommands = CAFSql
+                                      .Replace( ");\r\n\r\n\r\ncreate or replace trigger", ");\r\n\r\n\r\n/\r\ncreate or replace trigger" )
+                                      .Replace( "create or replace procedure", "\r\n/\r\ncreate or replace procedure" )
+                                      .Split( new[] { "\r\n/" }, StringSplitOptions.RemoveEmptyEntries );
+
+            foreach( string SQLCommand in SQLCommands )
+            {   //if the string starts with any of these, it's a PL/SQL block and can be sent as-is
+                if( SQLCommand.Trim().StartsWith( "begin" ) || SQLCommand.Trim().StartsWith( "create or replace trigger" ) || SQLCommand.Trim().StartsWith( "create or replace procedure" ) )
+                {
+                    CAFConnection.execArbitraryPlatformNeutralSql( SQLCommand );
+                }
+                //otherwise, we need to further split out each command on ; chars
+                else
+                {
+                    foreach( string SingleCommand in SQLCommand.Split( ';' ) )
+                    {
+                        if( SingleCommand.Trim() != String.Empty )
+                        {
+                            CAFConnection.execArbitraryPlatformNeutralSql( SingleCommand.Trim() );
+                        }
+                    }
+                }
+            }//foreach PL/SQL block in CAF.sql
+
 
             //create the database link
             _CswNbtResources.execArbitraryPlatformNeutralSql( "create database link caflink connect to " + Params.CAFSchema + " identified by " + Params.CAFPassword + " using '" + Params.CAFDatabase + "'" );
@@ -232,35 +266,18 @@ namespace ChemSW.Nbt.WebServices
             }
         }
 
-        public static void generateCAFSql( ICswResources CswResources, CswNbtImportWcf.GenerateSQLReturn Ret, string ImportDefName )
+
+        private static string generateCAFSql( ICswResources CswResources )
         {
             //CswNbtResources _CswNbtResources = (CswNbtResources) CswResources;
 
-            if( ImportDefName.Equals( "CAF" ) )
-            {
+            string ViewSql = CswScheduleLogicNbtCAFImport.generateCAFViewSQL();
+            string ImportQueueSql = CswScheduleLogicNbtCAFImport.generateImportQueueTableSQL( CswResources );
+            string CAFCleanupSQL = CswScheduleLogicNbtCAFImport.generateCAFCleanupSQL( CswResources );
+            string TriggersSql = CswScheduleLogicNbtCAFImport.generateTriggerSQL( CswResources );
 
-                string ViewSql = CswScheduleLogicNbtCAFImport.generateCAFViewSQL();
-                string ImportQueueSql = CswScheduleLogicNbtCAFImport.generateImportQueueTableSQL( CswResources );
-                string CAFCleanupSQL = CswScheduleLogicNbtCAFImport.generateCAFCleanupSQL( CswResources );
-                string TriggersSql = CswScheduleLogicNbtCAFImport.generateTriggerSQL( CswResources );
+            return ViewSql + "\r\n" + ImportQueueSql + "\r\n" + CAFCleanupSQL + "\r\n" + TriggersSql;
 
-                // Create and return the stream
-                MemoryStream stream = new MemoryStream();
-                StreamWriter sw = new StreamWriter( stream );
-
-                sw.Write( ViewSql );
-                sw.Write( "\r\n" );
-                sw.Write( ImportQueueSql );
-                sw.Write( "\r\n" );
-                sw.Write( CAFCleanupSQL );
-                sw.Write( "\r\n" );
-                sw.Write( TriggersSql );
-
-                sw.Flush();
-                stream.Position = 0;
-
-                Ret.stream = stream;
-            }
         }//generateCAFSql()
 
 
