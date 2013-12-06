@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using ChemSW.Config;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.ChemWatchAuthServices;
@@ -20,8 +21,9 @@ namespace ChemSW.Nbt.Actions
 {
     public class CswNbtActChemWatch
     {
-        private const string _chemWatchUserName = "chemswt";
-        private const string _chemWatchPassword = "1107ms";
+        //Leaving these here for testing purposes -- this is David's account
+        // private const string _chemWatchUserName = "chemswt";
+        // private const string _chemWatchPassword = "1107ms";
 
         private static readonly CookieManagerBehavior _cookieBehavior = new CookieManagerBehavior(); //All ChemWatch service clients must share this
 
@@ -30,7 +32,7 @@ namespace ChemSW.Nbt.Actions
             CswNbtChemWatchRequest Return = new CswNbtChemWatchRequest();
             CswNbtResources NbtResources = (CswNbtResources) CswResources;
 
-            CswNbtObjClassChemical ChemicalNode = NbtResources.Nodes[Request.NbtMaterialId]; //TODO: should we verify the Request.NodeId is of a Chemical?
+            CswNbtObjClassChemical ChemicalNode = NbtResources.Nodes[Request.NbtMaterialId];
 
             Return.Supplier = ChemicalNode.Supplier.CachedNodeName;
             Return.PartNo = ChemicalNode.PartNumber.Text;
@@ -38,7 +40,7 @@ namespace ChemSW.Nbt.Actions
             Return.NbtMaterialId = ChemicalNode.NodeId;
 
             string errorMsg;
-            if( _authenticate( out errorMsg ) )
+            if( _authenticate( NbtResources, out errorMsg ) )
             {
                 CommonServiceClient cwCommonClient = new CommonServiceClient();
                 cwCommonClient.Endpoint.Behaviors.Add( _cookieBehavior );
@@ -79,9 +81,10 @@ namespace ChemSW.Nbt.Actions
         public static CswNbtChemWatchRequest MaterialSearch( ICswResources CswResources, CswNbtChemWatchRequest Request )
         {
             CswNbtChemWatchRequest Return = new CswNbtChemWatchRequest();
+            CswNbtResources NbtResources = (CswNbtResources) CswResources;
             string errorMsg;
 
-            if( _authenticate( out errorMsg ) )
+            if( _authenticate( NbtResources, out errorMsg ) )
             {
                 MaterialServiceClient cwMaterialClient = new MaterialServiceClient();
                 cwMaterialClient.Endpoint.Behaviors.Add( _cookieBehavior );
@@ -107,9 +110,10 @@ namespace ChemSW.Nbt.Actions
         public static CswNbtChemWatchRequest SDSDocumentSearch( ICswResources CswResources, CswNbtChemWatchRequest Request )
         {
             CswNbtChemWatchRequest Return = new CswNbtChemWatchRequest();
+            CswNbtResources NbtResources = (CswNbtResources) CswResources;
             string errorMsg;
 
-            if( _authenticate( out errorMsg ) )
+            if( _authenticate( NbtResources, out errorMsg ) )
             {
                 DocumentServiceClient cwDocClient = new DocumentServiceClient();
                 cwDocClient.Endpoint.Behaviors.Add( _cookieBehavior ); //every service client needs to share this
@@ -155,9 +159,10 @@ namespace ChemSW.Nbt.Actions
         public static CswNbtChemWatchRequest GetSDSDocument( ICswResources CswResources, string filename )
         {
             CswNbtChemWatchRequest Return = new CswNbtChemWatchRequest();
+            CswNbtResources NbtResources = (CswNbtResources) CswResources;
             string errorMsg;
 
-            if( _authenticate( out errorMsg ) )
+            if( _authenticate( NbtResources, out errorMsg ) )
             {
                 DocumentServiceClient cwDocClient = new DocumentServiceClient();
                 cwDocClient.Endpoint.Behaviors.Add( _cookieBehavior );
@@ -182,10 +187,11 @@ namespace ChemSW.Nbt.Actions
         public static CswNbtChemWatchRequest GetMatchingSuppliers( ICswResources CswResources, CswNbtChemWatchRequest Request )
         {
             CswNbtChemWatchRequest Return = new CswNbtChemWatchRequest();
+            CswNbtResources NbtResources = (CswNbtResources) CswResources;
 
             string errorMsg;
 
-            if( _authenticate( out errorMsg ) )
+            if( _authenticate( NbtResources, out errorMsg ) )
             {
                 _getMatchingSuppliers( Request.Supplier, Return );
             }
@@ -248,18 +254,21 @@ namespace ChemSW.Nbt.Actions
             }
         }
 
-        private static bool _authenticate( out string ErrorMsg )
+        private static bool _authenticate( CswNbtResources CswNbtResources, out string ErrorMsg )
         {
             ErrorMsg = "";
             bool ret = false;
             try
             {
+                string cwUsername = CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumConfigurationVariableNames.ChemWatchUsername );
+                string cwPassword = CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumConfigurationVariableNames.ChemWatchPassword );
+
                 AuthenticateServiceClient cwAuthClient = new AuthenticateServiceClient();
                 cwAuthClient.Endpoint.Behaviors.Add( _cookieBehavior );
                 UserCredential cwUserCredential = new UserCredential()
                     {
-                        UserName = _chemWatchUserName,
-                        Password = _chemWatchPassword
+                        UserName = cwUsername,
+                        Password = cwPassword
                     };
                 GeneralResponseOfAuthenticationResponse cwAuthResponse = cwAuthClient.Authenticate( cwUserCredential ); //providing invalid credentials will throw an exception
                 if( cwAuthResponse.ErrorCode == 0 )
