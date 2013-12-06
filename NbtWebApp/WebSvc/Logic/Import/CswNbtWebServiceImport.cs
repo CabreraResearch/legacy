@@ -204,19 +204,20 @@ namespace ChemSW.Nbt.WebServices
         {
             CswNbtResources _CswNbtResources = (CswNbtResources) CswResources;
 
-            if( Params.ImportDefName.Equals( "CAF" ) )
-            {
-                //Create custom NodeTypeProps from CAF Properties collections and set up bindings for them
-                CswNbtImportTools.CreateAllCAFProps( _CswNbtResources, CswEnumSetupMode.NbtWeb );
+            //create the database link
+            _CswNbtResources.execArbitraryPlatformNeutralSql( "create database link caflink connect to " + Params.CAFSchema + " identified by " + Params.CAFPassword + " using '" + Params.CAFDatabase + "'" );
 
-                // Enable the CAFImport rule
-                CswTableUpdate TableUpdate = _CswNbtResources.makeCswTableUpdate( "enableCafImportRule", "scheduledrules" );
-                DataTable DataTable = TableUpdate.getTable( "where rulename = '" + CswEnumNbtScheduleRuleNames.CAFImport + "'" );
-                if( DataTable.Rows.Count > 0 )
-                {
-                    DataTable.Rows[0]["disabled"] = CswConvert.ToDbVal( false );
-                    TableUpdate.update( DataTable );
-                }
+
+            //Create custom NodeTypeProps from CAF Properties collections and set up bindings for them
+            CswNbtImportTools.CreateAllCAFProps( _CswNbtResources, CswEnumSetupMode.NbtWeb );
+
+            // Enable the CAFImport rule
+            CswTableUpdate TableUpdate = _CswNbtResources.makeCswTableUpdate( "enableCafImportRule", "scheduledrules" );
+            DataTable DataTable = TableUpdate.getTable( "where rulename = '" + CswEnumNbtScheduleRuleNames.CAFImport + "'" );
+            if( DataTable.Rows.Count > 0 )
+            {
+                DataTable.Rows[0]["disabled"] = CswConvert.ToDbVal( false );
+                TableUpdate.update( DataTable );
             }
         }
 
