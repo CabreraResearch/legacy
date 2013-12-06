@@ -64,7 +64,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             }
         }
 
-        public int saveFile( string PropIdAttr, byte[] BlobData, string ContentType, string FileName, out string Href, int BlobDataId = Int32.MinValue, bool PostChanges = true, CswNbtNode Node = null)
+        public int saveFile( string PropIdAttr, byte[] BlobData, string ContentType, string FileName, out string Href, int BlobDataId = Int32.MinValue, bool PostChanges = true, CswNbtNode Node = null )
         {
             CswPropIdAttr PropId = new CswPropIdAttr( PropIdAttr );
 
@@ -208,7 +208,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                     CswNbtSdBlobData SdBlobData = new CswNbtSdBlobData( _CswNbtResources );
                     Href = CswNbtNodePropMol.getLink( molProp.JctNodePropId, Node.NodeId );
 
-                    SdBlobData.saveFile( PropId, molImage, CswNbtNodePropMol.MolImgFileContentType, CswNbtNodePropMol.MolImgFileName, out Href, Int32.MinValue, PostChanges, Node: Node );
+                    SdBlobData.saveFile( PropId, molImage, CswNbtNodePropMol.MolImgFileContentType, CswNbtNodePropMol.MolImgFileName, out Href, Int32.MinValue, PostChanges, Node : Node );
 
                     //case 28364 - calculate fingerprint and save it
                     _CswNbtResources.StructureSearchManager.InsertFingerprintRecord( PropIdAttr.NodeId.PrimaryKey, FormattedMolString, out errorMsg );
@@ -368,6 +368,33 @@ namespace ChemSW.Nbt.ServiceDrivers
             }
 
             return BlobAuditSelect;
+        }
+
+        /// <summary>
+        /// If blobdata exists for the given file prop, creates a new row and copies the row and sets the new JctNodePropId
+        /// </summary>
+        public static void CopyBlobData( CswNbtResources NbtResources, CswNbtNodePropBlob FileProp, int JctNodePropId )
+        {
+            CswTableUpdate blobDataTU = NbtResources.makeCswTableUpdate( "CopyBlobData", "blob_data" );
+            DataTable blobDataDT = blobDataTU.getTable( "where jctnodepropid = " + FileProp.JctNodePropId );
+            if( blobDataDT.Rows.Count > 0 )
+            {
+                DataRow existingRow = blobDataDT.Rows[0];
+                DataRow newRow = blobDataDT.NewRow();
+                foreach( DataColumn col in blobDataDT.Columns )
+                {
+                    if( "jctnodepropid" == col.ColumnName )
+                    {
+                        newRow["jctnodepropid"] = JctNodePropId;
+                    }
+                    else if( col.ColumnName != "blobdataid" )
+                    {
+                        newRow[col] = existingRow[col];
+                    }
+                }
+                blobDataDT.Rows.Add( newRow );
+                blobDataTU.update( blobDataDT );
+            }
         }
 
         [DataContract]

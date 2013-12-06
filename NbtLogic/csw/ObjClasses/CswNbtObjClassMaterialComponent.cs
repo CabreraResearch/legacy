@@ -24,6 +24,9 @@ namespace ChemSW.Nbt.ObjClasses
         public new sealed class PropertyName: CswNbtObjClass.PropertyName
         {
             public const string Percentage = "Percentage";
+            public const string LowPercentageValue = "Low % Value";
+            public const string TargetPercentageValue = "Target % Value";
+            public const string HighPercentageValue = "High % Value";
             public const string Mixture = "Mixture";
             public const string Constituent = "Constituent";
             public const string Active = "Active";
@@ -71,6 +74,7 @@ namespace ChemSW.Nbt.ObjClasses
                     "Material Components must be added from a Chemical.",
                     "Mixture is a server managed property and in this context no material can be discerned to set as the Mixture." );
             }
+            Percentage.Value = HighPercentageValue.Value;
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation, Creating );
         }//beforeWriteNode()
 
@@ -97,6 +101,9 @@ namespace ChemSW.Nbt.ObjClasses
         protected override void afterPopulateProps()
         {
             Mixture.SetOnPropChange( OnMixturePropChange );
+            LowPercentageValue.SetOnPropChange( _onLowPercentageValuePropChange );
+            TargetPercentageValue.SetOnPropChange( _onTargetPercentageValuePropChange );
+            HighPercentageValue.SetOnPropChange( _onHighPercentageValuePropChange );
             _CswNbtObjClassDefault.triggerAfterPopulateProps();
         }//afterPopulateProps()
 
@@ -115,7 +122,34 @@ namespace ChemSW.Nbt.ObjClasses
         #region Object class specific properties
 
         public CswNbtNodePropNumber Percentage { get { return ( _CswNbtNode.Properties[PropertyName.Percentage] ); } }
-
+        public CswNbtNodePropNumber LowPercentageValue { get { return ( _CswNbtNode.Properties[PropertyName.LowPercentageValue] ); } }
+        private void _onLowPercentageValuePropChange( CswNbtNodeProp Prop, bool Creating )
+        {
+            if( LowPercentageValue.Value > TargetPercentageValue.Value )
+            {
+                throw new CswDniException( CswEnumErrorType.Warning, PropertyName.LowPercentageValue + " cannot be higher than " + PropertyName.TargetPercentageValue, "" );
+            }
+        }
+        public CswNbtNodePropNumber TargetPercentageValue { get { return ( _CswNbtNode.Properties[PropertyName.TargetPercentageValue] ); } }
+        private void _onTargetPercentageValuePropChange( CswNbtNodeProp Prop, bool Creating )
+        {
+            if( TargetPercentageValue.Value > HighPercentageValue.Value )
+            {
+                throw new CswDniException( CswEnumErrorType.Warning, PropertyName.TargetPercentageValue + " cannot be higher than " + PropertyName.HighPercentageValue, "" );
+            }
+            if( TargetPercentageValue.Value < LowPercentageValue.Value )
+            {
+                throw new CswDniException( CswEnumErrorType.Warning, PropertyName.TargetPercentageValue + " cannot be lower than " + PropertyName.LowPercentageValue, "" );
+            }
+        }
+        public CswNbtNodePropNumber HighPercentageValue { get { return ( _CswNbtNode.Properties[PropertyName.HighPercentageValue] ); } }
+        private void _onHighPercentageValuePropChange( CswNbtNodeProp Prop, bool Creating )
+        {
+            if( HighPercentageValue.Value < TargetPercentageValue.Value )
+            {
+                throw new CswDniException( CswEnumErrorType.Warning, PropertyName.HighPercentageValue + " cannot be lower than " + PropertyName.TargetPercentageValue, "" );
+            }
+        }
         public CswNbtNodePropRelationship Mixture { get { return ( _CswNbtNode.Properties[PropertyName.Mixture] ); } }
         private void OnMixturePropChange( CswNbtNodeProp Prop, bool Creating )
         {
