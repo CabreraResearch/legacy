@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Runtime.Serialization;
 using ChemSW.Core;
@@ -42,13 +43,31 @@ namespace NbtWebApp.Actions.ChemWatch
     }
 
     [DataContract]
+    public class ChemWatchLngCntryInfo
+    {
+        [DataMember]
+        public List<ChemWatchMultiSlctListItem> options = new List<ChemWatchMultiSlctListItem>();
+
+        [DataMember]
+        public List<ChemWatchMultiSlctListItem> selected = new List<ChemWatchMultiSlctListItem>();
+
+        // TODO: Implement these for Case 31313
+        [DataMember]
+        public string readonlyless { get; set; }
+
+        // TODO: Implement these for Case 31313
+        [DataMember]
+        public string readonlymore { get; set; }
+    }
+
+    [DataContract]
     public class CswNbtChemWatchRequest
     {
         [DataMember]
-        public Collection<ChemWatchMultiSlctListItem> Countries = new Collection<ChemWatchMultiSlctListItem>();
+        public ChemWatchLngCntryInfo Countries = new ChemWatchLngCntryInfo();
 
         [DataMember]
-        public Collection<ChemWatchMultiSlctListItem> Languages = new Collection<ChemWatchMultiSlctListItem>();
+        public ChemWatchLngCntryInfo Languages = new ChemWatchLngCntryInfo();
 
         [DataMember]
         public string Supplier { get; set; }

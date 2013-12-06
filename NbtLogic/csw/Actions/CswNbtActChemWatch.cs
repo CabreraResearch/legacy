@@ -46,26 +46,32 @@ namespace ChemSW.Nbt.Actions
                 cwCommonClient.Endpoint.Behaviors.Add( _cookieBehavior );
 
                 // Populate Language list
+                List<ChemWatchMultiSlctListItem> Languages = new List<ChemWatchMultiSlctListItem>();
                 Languages cwLanguages = cwCommonClient.GetLanguages();
                 foreach( Language cwLanguage in cwLanguages )
                 {
-                    Return.Languages.Add( new ChemWatchMultiSlctListItem()
+                    Languages.Add( new ChemWatchMultiSlctListItem()
                         {
                             Name = cwLanguage.Name,
                             Id = CswConvert.ToString( cwLanguage.Id )
                         } );
                 }
+                IEnumerable<ChemWatchMultiSlctListItem> SortedLanguages = Languages.OrderBy( si => si.Name );
+                Return.Languages.options = SortedLanguages.ToList();
 
                 // Populate Country list
+                List<ChemWatchMultiSlctListItem> Countries = new List<ChemWatchMultiSlctListItem>();
                 Countries cwCountries = cwCommonClient.GetCountries();
                 foreach( Country cwCountry in cwCountries )
                 {
-                    Return.Countries.Add( new ChemWatchMultiSlctListItem()
+                    Countries.Add( new ChemWatchMultiSlctListItem()
                     {
                         Name = cwCountry.Name,
                         Id = CswConvert.ToString( cwCountry.Id )
                     } );
                 }
+                IEnumerable<ChemWatchMultiSlctListItem> SortedCountries = Countries.OrderBy( si => si.Name );
+                Return.Countries.options = SortedCountries.ToList();
 
                 // Attempt to populate the Suppliers list
                 _getMatchingSuppliers( Return.Supplier, Return );
@@ -120,11 +126,11 @@ namespace ChemSW.Nbt.Actions
 
                 DocumentRequest DocumentRequest = new DocumentRequest();
 
-                List<int> CountryIdsList = Request.Countries.Select( ListItem => CswConvert.ToInt32( ListItem.Id ) ).ToList();
+                List<int> CountryIdsList = Request.Countries.selected.Select( ListItem => CswConvert.ToInt32( ListItem.Id ) ).ToList();
                 int[] CountryIdsArray = CountryIdsList.ToArray();
                 DocumentRequest.CountryCode = CountryIdsArray;
 
-                List<int> LanguageIdsList = Request.Languages.Select( ListItem => CswConvert.ToInt32( ListItem.Id ) ).ToList();
+                List<int> LanguageIdsList = Request.Languages.selected.Select( ListItem => CswConvert.ToInt32( ListItem.Id ) ).ToList();
                 int[] LanguageIdsArray = LanguageIdsList.ToArray();
                 DocumentRequest.LanguageCode = LanguageIdsArray;
 
@@ -166,9 +172,11 @@ namespace ChemSW.Nbt.Actions
             {
                 DocumentServiceClient cwDocClient = new DocumentServiceClient();
                 cwDocClient.Endpoint.Behaviors.Add( _cookieBehavior );
+                Stream DocStream = null;
+
                 try
                 {
-                    Stream DocStream = cwDocClient.GetDocumentContent( filename );
+                    DocStream = cwDocClient.GetDocumentContent( filename );
                     Return.SDSDocument = DocStream;
                 }
                 catch( Exception ex )

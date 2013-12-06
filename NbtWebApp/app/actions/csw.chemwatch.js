@@ -17,15 +17,26 @@
         };
         cswPrivate.OperationData = {
             NbtMaterialId: '',
-            Countries: [],
-            Languages: [],
+            Countries: {
+                options: [],
+                selected: '',
+                readonlyless: '',
+                readonlymore: ''
+            },
+            Languages: {
+                options: [],
+                select: '',
+                readonlyless: '',
+                readonlymore: ''
+            },
             Supplier: "",
             Suppliers: [],
             PartNo: "",
             MaterialName: "",
             ChemWatchMaterialId: 1,
             Materials: [],
-            SDSDocuments: []
+            SDSDocuments: [],
+
         };
         var cswPublic = {};
 
@@ -34,9 +45,6 @@
         var CountryOptions = [];
         var LanguageLookup = {};
         var CountryLookup = {};
-
-        var selectedLanguages = [];
-        var selectedCountries = [];
 
         cswPrivate.makeStepOne = function () {
             var stepOneTable = cswPublic.table.cell(1, 1).table({
@@ -137,10 +145,9 @@
                 text: '<br/>'
             });
         };//makeStepOne()
-
+        
         cswPrivate.makeStepTwo = function () {
             var stepTwoTable = cswPublic.table.cell(2, 1).empty().table({
-                width: '80%',
                 cellpadding: 5
             });
             cswPrivate.stepTwoTable = stepTwoTable;
@@ -156,63 +163,85 @@
             if (cswPrivate.OperationData.Materials.length > 0) {
                 // Material select
                 makeMaterialSelect(stepTwoTable);
-
-                // Language multi-select
-                var langDiv = stepTwoTable.cell(2, 2).empty().css({ width: '100px' });
+                
+                var lngCntryOptsTbl = stepTwoTable.cell(3, 1).table().empty();
+                
+                //#region Language
+                lngCntryOptsTbl.cell(1, 1).empty().span({
+                    text: 'Languages:&nbsp;&nbsp;&nbsp;'
+                }).css({ width: '30px' });
+                var langDiv = lngCntryOptsTbl.cell(1, 2).empty().css({ width: '150px' });
                 langDiv.div();
-                langDiv.span({ text: 'Languages: ' });
-                langDiv.icon({
-                    iconType: Csw.enums.iconType.pencil,
-                    isButton: true,
-                    onClick: function () {
-                        Csw.dialogs.multiselectedit({
-                            opts: LanguageOptions,
-                            title: 'Edit Language Filters',
-                            inDialog: true,
-                            onSave: function (updatedValues) {
-                                Csw.iterate(LanguageOptions, function (lang) {
-                                    lang.selected = false;
-                                });
 
-                                selectedLanguages = [];
-                                Csw.iterate(updatedValues, function (val) {
-                                    selectedLanguages.push({ 'text': '', 'value': val });
-                                    LanguageLookup[val].selected = true;
-                                });
-                            },
+                // TODO: Get select language options from server
+                
+                cswPrivate.langMultiSelect = langDiv.multiSelect({
+                    name: 'cw_lang_select',
+                    propname: 'Language Filters',
+                    values: LanguageOptions,
+                    readonlyless: cswPrivate.OperationData.Languages.readonlyless,
+                    readonlymore: cswPrivate.OperationData.Languages.readonlymore,
+                    onChange: function (updatedValues) {
+                        Csw.iterate(LanguageOptions, function (lang) {
+                            lang.selected = false;
                         });
+
+                        var selectedlist = [];
+                        cswPrivate.OperationData.Languages.selected = [];
+                        Csw.iterate(updatedValues, function (val) {
+                            var text = LanguageLookup[val].text;
+                            cswPrivate.OperationData.Languages.selected.push({ 'text': text, 'value': val });
+                            LanguageLookup[val].selected = true;
+                            selectedlist.push(text);
+                        });
+
+                        // Create and set the new readonlyless/readonlymore
+                        setReadonlyMoreLess(selectedlist, cswPrivate.langMultiSelect);
                     }
                 });
+                //#endregion Language
 
-                // Country multi-select
-                var countryDiv = stepTwoTable.cell(2, 3).empty().css({ width: '100px' });
+                lngCntryOptsTbl.cell(1, 3).span({
+                    text: '&nbsp;&nbsp;&nbsp;'
+                });
+                
+                // TODO: Get select country options from server
+                
+                //#region Country
+                lngCntryOptsTbl.cell(1, 4).empty().span({
+                    text: 'Countires:&nbsp;&nbsp;&nbsp;'
+                }).css({ width: '30px' });
+                var countryDiv = lngCntryOptsTbl.cell(1, 5).empty().css({ width: '150px' });
                 countryDiv.div();
-                countryDiv.span({ text: 'Countries: ' });
-                countryDiv.icon({
-                    iconType: Csw.enums.iconType.pencil,
-                    isButton: true,
-                    onClick: function () {
-                        Csw.dialogs.multiselectedit({
-                            opts: CountryOptions,
-                            title: 'Edit Country Filters',
-                            inDialog: true,
-                            onSave: function (updatedValues) {
-                                Csw.iterate(CountryOptions, function (country) {
-                                    country.selected = false;
-                                });
-
-                                selectedCountries = [];
-                                Csw.iterate(updatedValues, function (val) {
-                                    selectedCountries.push({ 'text': '', 'value': val });
-                                    CountryLookup[val].selected = true;
-                                });
-                            },
+                
+                cswPrivate.cntryMultiSelect = countryDiv.multiSelect({
+                    name: 'cw_cntry_select',
+                    propname: 'Country Filters',
+                    values: CountryOptions,
+                    readonlyless: cswPrivate.OperationData.Countries.readonlyless,
+                    readonlymore: cswPrivate.OperationData.Countries.readonlymore,
+                    onChange: function (updatedValues) {
+                        Csw.iterate(CountryOptions, function (country) {
+                            country.selected = false;
                         });
+
+                        var selectedlist = [];
+                        cswPrivate.OperationData.Countries.selected = [];
+                        Csw.iterate(updatedValues, function (val) {
+                            var text = CountryLookup[val].text;
+                            cswPrivate.OperationData.Countries.selected.push({ 'text': text, 'value': val });
+                            CountryLookup[val].selected = true;
+                            selectedlist.push(text);
+                        });
+
+                        // Create and set the new readonlyless/readonlymore
+                        setReadonlyMoreLess(selectedlist, cswPrivate.cntryMultiSelect);
                     }
                 });
+                //#endregion Country
 
                 // Document Search button
-                cswPrivate.documentSrchBtn = stepTwoTable.cell(3, 1).buttonExt({
+                cswPrivate.documentSrchBtn = stepTwoTable.cell(4, 1).buttonExt({
                     name: 'searchDocumentsBtn',
                     icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.magglass),
                     enabledText: 'Search Documents',
@@ -223,10 +252,12 @@
                     }
                 });
 
-                stepTwoTable.cell(3, 1).div({
+                stepTwoTable.cell(5, 1).div({
                     text: '<br/>'
                 });
-                
+
+                cswPrivate.materialSelectCell.propDom('colspan', 2);
+
                 // We want to render step 3 here too
                 cswPrivate.makeStepThree();
 
@@ -255,13 +286,17 @@
                     'font-size': '14px'
                 }
             });
-            
+
             Csw.ajaxWcf.post({
                 urlMethod: 'ChemWatch/SDSDocumentSearch',
                 data: {
                     ChemWatchMaterialId: cswPrivate.materialSelect.val(),
-                    Languages: selectedLanguages,
-                    Countries: selectedCountries,
+                    Languages: {
+                        selected: cswPrivate.OperationData.Languages.selected,
+                    },
+                    Countries: {
+                        selected: cswPrivate.OperationData.Countries.selected
+                    },
                     Supplier: cswPrivate.supplierSelect.val()
                 },
                 success: function (data) {
@@ -277,7 +312,7 @@
                                 'externalurl': sdsdoc.externalurl
                             });
                     });
-                    
+
                     if (gridData.items.length > 0) {
                         makeSDSListGrid(stepThreeTable, gridData);
                     } else {
@@ -349,7 +384,16 @@
                     cswPrivate.searchButton.enable();
                 }
             }
-        }//makeSupplierSelect()
+        };//makeSupplierSelect()
+        
+        function setReadonlyMoreLess(list, control) {
+            list.sort();
+            var lessOpts = list.slice(0, 6);
+            var lessStr = lessOpts.join('<br/>');
+            var moreOpts = list.slice(6, list.length);
+            var moreStr = moreOpts.join('<br/>');
+            control.setReadOnlyLessAndMore(lessStr, moreStr);
+        }//setReadonlyMoreLess()
 
         function onView(recordData) {
             //TODO: What if the URL doesn't work? Should we show an error?
@@ -359,7 +403,7 @@
 
         function makeMaterialSelect(table) {
             var materialList = cswPrivate.OperationData.Materials;
-            cswPrivate.materialSelectCell = table.cell(2, 1).empty().css({ width: '500px' });
+            cswPrivate.materialSelectCell = table.cell(2, 1).empty();
             cswPrivate.materialSelect = cswPrivate.materialSelectCell.select({
                 values: materialList
             });
@@ -454,7 +498,7 @@
             }
             Csw.clientDb.setItem(cswPrivate.name + '_' + cswChemWatchActionStateName, cswPrivate.state);
         };
-        
+
         cswPrivate.getState = function () {
             var ret = Csw.clientDb.getItem(cswPrivate.name + '_' + cswChemWatchActionStateName);
             return ret;
@@ -470,11 +514,11 @@
         (function () {
             // Extend cswPrivate
             Csw.extend(cswPrivate, options);
-            
+
             // We need to preserve the nbtmaterialid
             cswPrivate.setState();
             cswPrivate.OperationData.NbtMaterialId = cswPrivate.state.materialId;
-            
+
             // Set up action layout
             var layout = Csw.layouts.action(cswParent, {
                 title: 'ChemWatch',
@@ -500,8 +544,8 @@
                 success: function (data) {
                     cswPrivate.OperationData = data;
 
-                    LanguageOptions = cswPrivate.OperationData.Languages;
-                    CountryOptions = cswPrivate.OperationData.Countries;
+                    LanguageOptions = cswPrivate.OperationData.Languages.options;
+                    CountryOptions = cswPrivate.OperationData.Countries.options;
 
                     Csw.iterate(LanguageOptions, function (lang) {
                         LanguageLookup[lang.value] = lang;
