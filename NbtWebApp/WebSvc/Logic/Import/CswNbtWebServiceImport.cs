@@ -5,12 +5,14 @@ using System.IO;
 using ChemSW.Config;
 using ChemSW.Core;
 using ChemSW.DB;
+using ChemSW.Exceptions;
 using ChemSW.Nbt.csw.ImportExport;
 using ChemSW.Nbt.csw.Schema;
 using ChemSW.Nbt.Grid;
 using ChemSW.Nbt.ImportExport;
 using ChemSW.Nbt.Sched;
 using ChemSW.Nbt.Schema;
+using ChemSW.RscAdo;
 using NbtWebApp.WebSvc.Returns;
 
 namespace ChemSW.Nbt.WebServices
@@ -204,9 +206,18 @@ namespace ChemSW.Nbt.WebServices
         {
             CswNbtResources _CswNbtResources = (CswNbtResources) CswResources;
 
+            //connect to the CAF database
+            CswDbVendorOpsOracle CAFConnection = new CswDbVendorOpsOracle( "CAFImport", Params.CAFDatabase, Params.CAFSchema, Params.CAFPassword, (CswDataDictionary) _CswNbtResources.DataDictionary, _CswNbtResources.CswLogger, CswEnumPooledConnectionState.Open, "" );
+
+            string Error = "";
+            if( false == CAFConnection.IsDbConnectionHealthy( ref Error ) )
+            {
+                throw new CswDniException(CswEnumErrorType.Error, "Check the supplied parameters for the CAF database.", Error);
+            }
+
+
             //create the database link
             _CswNbtResources.execArbitraryPlatformNeutralSql( "create database link caflink connect to " + Params.CAFSchema + " identified by " + Params.CAFPassword + " using '" + Params.CAFDatabase + "'" );
-
 
             //Create custom NodeTypeProps from CAF Properties collections and set up bindings for them
             CswNbtImportTools.CreateAllCAFProps( _CswNbtResources, CswEnumSetupMode.NbtWeb );
