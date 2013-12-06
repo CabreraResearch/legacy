@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Data;
 using System.Data.OleDb;
+using ChemSW.Config;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
@@ -16,16 +17,16 @@ namespace ChemSW.Nbt.csw.ImportExport
 {
     public static class CswNbtImportTools
     {
-        public static void CreateAllCAFProps( CswNbtResources NbtResources )
+        public static void CreateAllCAFProps( CswNbtResources NbtResources, CswEnumSetupMode SetupMode )
         {
-            CreateCafProps( NbtResources, CswEnumNbtObjectClass.ChemicalClass, "properties_values", "propertiesvaluesid" );
-            CreateCafProps( NbtResources, CswEnumNbtObjectClass.ContainerClass, "properties_values_cont", "contpropsvaluesid" );
-            CreateCafProps( NbtResources, CswEnumNbtObjectClass.ContainerClass, "properties_values_lot", "lotpropsvaluesid" );
+            CreateCafProps( NbtResources, CswEnumNbtObjectClass.ChemicalClass, "properties_values", "propertiesvaluesid", SetupMode );
+            CreateCafProps( NbtResources, CswEnumNbtObjectClass.ContainerClass, "properties_values_cont", "contpropsvaluesid", SetupMode );
+            CreateCafProps( NbtResources, CswEnumNbtObjectClass.ContainerClass, "properties_values_lot", "lotpropsvaluesid", SetupMode );
         }
 
-        public static void CreateCafProps( CswNbtResources NbtResources, CswEnumNbtObjectClass ObjClass, string PropsValsTblName, string PropsValsPKName )
+        public static void CreateCafProps( CswNbtResources NbtResources, CswEnumNbtObjectClass ObjClass, string PropsValsTblName, string PropsValsPKName, CswEnumSetupMode SetupMode )
         {
-            CswNbtSchemaUpdateImportMgr ImpMgr = new CswNbtSchemaUpdateImportMgr( new CswNbtSchemaModTrnsctn( NbtResources ), "CAF" );
+            CswNbtSchemaUpdateImportMgr ImpMgr = new CswNbtSchemaUpdateImportMgr( new CswNbtSchemaModTrnsctn( NbtResources ), "CAF", ImporterSetUpMode : SetupMode );
 
             CswNbtMetaDataObjectClass MetaDataObjClass = NbtResources.MetaData.getObjectClass( ObjClass );
             string sql = GetCAFPropertiesSQL( PropsValsTblName );
@@ -67,6 +68,7 @@ namespace ChemSW.Nbt.csw.ImportExport
                 }
             }
 
+            NbtResources.commitTransaction();
             ImpMgr.finalize();
         }
 
@@ -193,7 +195,7 @@ namespace ChemSW.Nbt.csw.ImportExport
         /// </summary>
         public static Int32 storeData( CswNbtResources CswNbtResources, string FileName, string FullFilePath, string ImportDefinitionName, bool Overwrite )
         {
-            CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn = new CswNbtSchemaModTrnsctn(CswNbtResources);
+            CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn = new CswNbtSchemaModTrnsctn( CswNbtResources );
 
             //StringCollection ret = new StringCollection();
             DataSet ExcelDataSet = CswNbtImportTools.ReadExcel( FullFilePath );
@@ -288,7 +290,7 @@ namespace ChemSW.Nbt.csw.ImportExport
         /// <summary>
         /// Returns the set of available Import Definition Names
         /// </summary>
-        public static CswCommaDelimitedString getDefinitionNames(CswNbtResources CswNbtResources)
+        public static CswCommaDelimitedString getDefinitionNames( CswNbtResources CswNbtResources )
         {
             CswCommaDelimitedString ret = new CswCommaDelimitedString();
             //CswTableSelect DefSelect = _CswNbtResources.makeCswTableSelect( "loadBindings_def_select1", CswNbtImportTables.ImportDef.TableName );

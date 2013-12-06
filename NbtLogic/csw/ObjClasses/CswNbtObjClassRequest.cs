@@ -135,7 +135,7 @@ namespace ChemSW.Nbt.ObjClasses
             ICswNbtTree RequestItemTree = _getRelatedRequestItemsTree();
             if( _allRequestItemsCompleted( RequestItemTree ) )
             {
-                this.CompletedDate.DateTimeValue = DateTime.Today;
+                this.CompletedDate.DateTimeValue = DateTime.Now;
                 this.postChanges( false );
             }
         }

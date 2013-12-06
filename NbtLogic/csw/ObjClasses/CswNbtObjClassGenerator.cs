@@ -158,9 +158,9 @@ namespace ChemSW.Nbt.ObjClasses
             return true;
         }
 
-        public override CswNbtNode CopyNode()
+        public override CswNbtNode CopyNode( bool IsNodeTemp = false )
         {
-            CswNbtObjClassGenerator CopiedIDNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, delegate( CswNbtNode NewNode )
+            CswNbtObjClassGenerator CopiedIDNode = base.CopyNodeImpl( IsNodeTemp : IsNodeTemp, OnCopy : delegate( CswNbtNode NewNode )
                 {
                     NewNode.copyPropertyValues( Node );
                     ( (CswNbtObjClassGenerator) NewNode ).RunStatus.CommentsJson = new Newtonsoft.Json.Linq.JArray();

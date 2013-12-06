@@ -560,7 +560,7 @@
 
                 // _setupTabs()
             };
-            openDialog(cswPublic.div, 900, 600, cswPublic.close, title, cswDlgPrivate.onOpen);
+            openDialog(cswPublic.div, 1100, 700, cswPublic.close, title, cswDlgPrivate.onOpen);
             return cswPublic;
         }, // EditNodeDialog
         DeleteNodeDialog: function (options) {

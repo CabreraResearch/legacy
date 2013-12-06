@@ -4,7 +4,7 @@ using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassInspectionTarget : CswNbtObjClass, ICswNbtPropertySetInspectionParent
+    public class CswNbtObjClassInspectionTarget: CswNbtObjClass, ICswNbtPropertySetInspectionParent
     {
         public new sealed class PropertyName: CswNbtObjClass.PropertyName
         {
@@ -90,17 +90,6 @@ namespace ChemSW.Nbt.ObjClasses
         {
             if( null != ButtonData && null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
             return true;
-        }
-
-        public override CswNbtNode CopyNode()
-        {
-            CswNbtObjClassInspectionTarget CopiedInspectionTargetNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, delegate( CswNbtNode NewNode )
-                {
-                    NewNode.copyPropertyValues( Node );
-                    ( (CswNbtObjClassInspectionTarget) NewNode ).Status.Value = CswEnumNbtInspectionTargetStatus.TargetStatusAsString( CswEnumNbtInspectionTargetStatus.TargetStatus.Not_Inspected );
-                    //CopiedInspectionTargetNode.postChanges( true );
-                } );
-            return CopiedInspectionTargetNode.Node;
         }
 
         #endregion

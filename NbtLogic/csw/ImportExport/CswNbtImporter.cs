@@ -51,6 +51,11 @@ namespace ChemSW.Nbt.ImportExport
             _CswNbtResources.finalize();
         }
 
+        public void refreshMetaData()
+        {
+            _CswNbtResources.MetaData.refreshAll();
+        }
+
         public delegate void MessageHandler( string Message );
 
         public MessageHandler OnMessage = delegate( string Message ) { };

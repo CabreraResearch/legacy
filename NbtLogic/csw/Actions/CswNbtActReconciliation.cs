@@ -5,6 +5,7 @@ using System.Linq;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
 
@@ -91,6 +92,7 @@ namespace ChemSW.Nbt.Actions
                         for( int j = 0; j < ContainersTree.getChildNodeCount(); j++ )//Container Nodes
                         {
                             ContainersTree.goToNthChild( j );
+                            CswNbtTreeNodeProp DisposedProp = ContainersTree.getChildNodePropsOfNode().FirstOrDefault( p => p.ObjectClassPropName == CswNbtObjClassContainer.PropertyName.Disposed );
                             if( ContainersTree.getChildNodeCount() > 0 )//ContainerLocation Nodes
                             {
                                 CswNbtObjClassContainerLocation ContainerLocationNode = _getMostRelevantContainerLocation();
@@ -104,7 +106,7 @@ namespace ChemSW.Nbt.Actions
                                         ScannedLocationIds.Add( ContainerLocationNode.Location.SelectedNodeId );
                                     }
                                 }
-                                else
+                                else if( null != DisposedProp && false == CswConvert.ToBoolean( DisposedProp.Field1 ) )
                                 {
                                     _incrementContainerCount( Data.ContainerStatistics, CswEnumNbtContainerLocationStatusOptions.NotScanned.ToString() );
                                 }
@@ -156,6 +158,7 @@ namespace ChemSW.Nbt.Actions
                     {
                         for( int j = 0; j < ContainersTree.getChildNodeCount(); j++ )//Container Nodes
                         {
+                            bool IncludeContainer = true;
                             ContainerData.ReconciliationStatuses ContainerStatus = new ContainerData.ReconciliationStatuses();
                             ContainersTree.goToNthChild( j );
                             CswNbtNode ContainerNode = ContainersTree.getNodeForCurrentPosition();//In this case, instancing the base node is faster
@@ -183,10 +186,17 @@ namespace ChemSW.Nbt.Actions
                                             ContainerStatus.ScannedLocation = ContainerLocationNode.Location.CachedFullPath;
                                         }
                                     }
+                                    else if( ContainerNode.Properties[CswNbtObjClassContainer.PropertyName.Disposed].AsLogical.Checked == CswEnumTristate.True )
+                                    {
+                                        IncludeContainer = false;
+                                    }
                                 }
                             }
                             ContainerStatus.ActionOptions = _getActionOptions( ContainerStatus.ContainerStatus, ScannedLocationId );
-                            Data.ContainerStatuses.Add( ContainerStatus );
+                            if( IncludeContainer )
+                            {
+                                Data.ContainerStatuses.Add( ContainerStatus );
+                            }
                             ContainersTree.goToParentNode();
                         }
                     }
@@ -258,6 +268,7 @@ namespace ChemSW.Nbt.Actions
             CswNbtMetaDataObjectClass ContainerOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerClass );
             CswNbtMetaDataObjectClassProp LocationOCP = ContainerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Location );
             CswNbtMetaDataObjectClassProp DateCreatedOCP = ContainerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.DateCreated );
+            CswNbtMetaDataObjectClassProp DisposedOCP = ContainerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Disposed );
             CswNbtMetaDataObjectClass ContainerLocationOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerLocationClass );
             CswNbtMetaDataObjectClassProp ContainerOCP = ContainerLocationOC.getObjectClassProp( CswNbtObjClassContainerLocation.PropertyName.Container );
             CswNbtMetaDataObjectClassProp ScanDateOCP = ContainerLocationOC.getObjectClassProp( CswNbtObjClassContainerLocation.PropertyName.ScanDate );
@@ -269,6 +280,7 @@ namespace ChemSW.Nbt.Actions
             CswNbtViewRelationship ContainerVR = ContainersView.AddViewRelationship( LocationVR, CswEnumNbtViewPropOwnerType.Second, LocationOCP, false );
             CswNbtViewProperty DateCreatedVP = ContainersView.AddViewProperty( ContainerVR, DateCreatedOCP );
             ContainersView.AddViewPropertyFilter( DateCreatedVP, FilterMode: CswEnumNbtFilterMode.LessThanOrEquals, Value: Request.EndDate );
+            CswNbtViewProperty DisposedVP = ContainersView.AddViewProperty( ContainerVR, DisposedOCP );
             CswNbtViewRelationship ContainerLocationVR = ContainersView.AddViewRelationship( ContainerVR, CswEnumNbtViewPropOwnerType.Second, ContainerOCP, false );
             CswNbtViewProperty ScanDateVP = ContainersView.AddViewProperty( ContainerLocationVR, ScanDateOCP );
             if( CswConvert.ToDateTime( Request.StartDate ) > CswConvert.ToDateTime( Request.EndDate ) )

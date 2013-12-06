@@ -5,9 +5,9 @@ using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassEquipment : CswNbtObjClass
+    public class CswNbtObjClassEquipment: CswNbtObjClass
     {
-        public new sealed class PropertyName : CswNbtObjClass.PropertyName
+        public new sealed class PropertyName: CswNbtObjClass.PropertyName
         {
             public const string Assembly = "Assembly";
             public const string Type = "Type";
@@ -149,9 +149,9 @@ namespace ChemSW.Nbt.ObjClasses
             return true;
         }
 
-        public override CswNbtNode CopyNode()
+        public override CswNbtNode CopyNode( bool IsNodeTemp = false )
         {
-            CswNbtNode CopiedEquipmentNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, delegate( CswNbtNode NewNode )
+            CswNbtNode CopiedEquipmentNode = base.CopyNodeImpl( IsNodeTemp : IsNodeTemp, OnCopy : delegate( CswNbtNode NewNode )
                 {
                     NewNode.copyPropertyValues( Node );
                     //CopiedEquipmentNode.postChanges( true, true );
@@ -250,7 +250,7 @@ namespace ChemSW.Nbt.ObjClasses
                                 {
                                     // Found a match -- copy the value and set readonly
                                     EquipProp.copy( AssemblyProp );
-                                    EquipProp.setReadOnly( value: true, SaveToDb: true );
+                                    EquipProp.setReadOnly( value : true, SaveToDb : true );
                                     FoundMatch = true;
                                     // case 21809
                                     EquipProp.HelpText = EquipProp.PropName + " is set on the Assembly, and must be modified there.";
@@ -263,7 +263,7 @@ namespace ChemSW.Nbt.ObjClasses
                             // but it must be conditional - see BZ 7084
                             if( EquipProp.ReadOnly )
                             {
-                                EquipProp.setReadOnly( value: false, SaveToDb: true );
+                                EquipProp.setReadOnly( value : false, SaveToDb : true );
                             }
                         }
                     }
@@ -278,7 +278,7 @@ namespace ChemSW.Nbt.ObjClasses
                     // but it must be conditional - see BZ 7084
                     if( EquipProp.ReadOnly )
                     {
-                        EquipProp.setReadOnly( value: false, SaveToDb: true );
+                        EquipProp.setReadOnly( value : false, SaveToDb : true );
                     }
                 }
             }

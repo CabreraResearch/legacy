@@ -1192,8 +1192,11 @@ namespace ChemSW.Nbt
             {
                 foreach( CswNbtMetaDataObjectClass DefaultFilterOC in DefaultFilterOCs )
                 {
-                    CswNbtObjClass DefaultFilterObjClass = CswNbtObjClassFactory.makeObjClass( _CswNbtResources, DefaultFilterOC );
-                    DefaultFilterObjClass.addDefaultViewFilters( this );
+                    if( DefaultFilterOC.ObjectClassName != CswResources.UnknownEnum )//Case 31285 - don't try to get ObjClass if it's being deleted
+                    {
+                        CswNbtObjClass DefaultFilterObjClass = CswNbtObjClassFactory.makeObjClass( _CswNbtResources, DefaultFilterOC );
+                        DefaultFilterObjClass.addDefaultViewFilters( this );
+                    }
                 }
             }
         } // _setDefaultFilters()
