@@ -33,12 +33,16 @@ namespace ChemSW.Nbt.WebServices
         public class StartImportParams
         {
             [DataMember( IsRequired = true )]
-            [Description( "Name of import definition" )]
-            public string ImportDefName;
+            [Description( "The database username of the target CAF schema" )]
+            public string CAFSchema;
 
-            [DataMember( IsRequired = false )]
-            [Description( "True if imported content should overwrite existing content" )]
-            public bool Overwrite;
+            [DataMember( IsRequired = true )]
+            [Description( "Database password for the target CAF schema" )]
+            public string CAFPassword;
+
+            [DataMember( IsRequired = true )]
+            [Description( "TNS name for target CAF schema" )]
+            public string CAFDatabase;
         }
 
         [DataContract]
