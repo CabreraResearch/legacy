@@ -212,47 +212,24 @@
                 });
 
                 // Document Search button
-                cswPrivate.documentSrchBtn = stepTwoTable.cell(2, 4).buttonExt({
+                cswPrivate.documentSrchBtn = stepTwoTable.cell(3, 1).buttonExt({
                     name: 'searchDocumentsBtn',
                     icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.magglass),
                     enabledText: 'Search Documents',
                     disableOnClick: false,
                     onClick: function () {
                         // Search for documents related to selected material
-                        Csw.ajaxWcf.post({
-                            urlMethod: 'ChemWatch/SDSDocumentSearch',
-                            data: {
-                                ChemWatchMaterialId: cswPrivate.materialSelect.val(),
-                                Languages: selectedLanguages,
-                                Countries: selectedCountries,
-                                Supplier: cswPrivate.supplierSelect.val()
-                            },
-                            success: function (data) {
-                                cswPrivate.OperationData.SDSDocuments = data.SDSDocuments;
-
-                                var gridData = { 'items': [] };
-                                Csw.iterate(cswPrivate.OperationData.SDSDocuments, function (sdsdoc) {
-                                    gridData.items.push(
-                                        {
-                                            'language': sdsdoc.language,
-                                            'country': sdsdoc.country,
-                                            'filename': sdsdoc.filename,
-                                            'externalurl': sdsdoc.externalurl
-                                        });
-                                });
-                                cswPrivate.makeStepThree(gridData);
-                            },
-                            error: function (data) {
-                                //todo: implement error condition
-                                console.log(data);
-                            }
-                        });
+                        cswPrivate.makeStepThree();
                     }
                 });
 
                 stepTwoTable.cell(3, 1).div({
                     text: '<br/>'
                 });
+                
+                // We want to render step 3 here too
+                cswPrivate.makeStepThree();
+
             } else {
                 stepTwoTable.cell(2, 1).div({
                     text: 'No matching materials were found. Try using broader search terms.',
@@ -264,7 +241,7 @@
 
         };//makeStepTwo()
 
-        cswPrivate.makeStepThree = function (gridData) {
+        cswPrivate.makeStepThree = function () {
             var stepThreeTable = cswPublic.table.cell(3, 1).empty().table({
                 width: '80%',
                 cellpadding: 5
@@ -278,18 +255,44 @@
                     'font-size': '14px'
                 }
             });
+            
+            Csw.ajaxWcf.post({
+                urlMethod: 'ChemWatch/SDSDocumentSearch',
+                data: {
+                    ChemWatchMaterialId: cswPrivate.materialSelect.val(),
+                    Languages: selectedLanguages,
+                    Countries: selectedCountries,
+                    Supplier: cswPrivate.supplierSelect.val()
+                },
+                success: function (data) {
+                    cswPrivate.OperationData.SDSDocuments = data.SDSDocuments;
 
-            if (gridData.items.length > 0) {
-                makeSDSListGrid(stepThreeTable, gridData);
-            } else {
-                stepThreeTable.cell(2, 1).div({
-                    text: 'No documents were found. Choose another material.',
-                    styles: {
-                        'color': 'red'
+                    var gridData = { 'items': [] };
+                    Csw.iterate(cswPrivate.OperationData.SDSDocuments, function (sdsdoc) {
+                        gridData.items.push(
+                            {
+                                'language': sdsdoc.language,
+                                'country': sdsdoc.country,
+                                'filename': sdsdoc.filename,
+                                'externalurl': sdsdoc.externalurl
+                            });
+                    });
+                    
+                    if (gridData.items.length > 0) {
+                        makeSDSListGrid(stepThreeTable, gridData);
+                    } else {
+                        stepThreeTable.cell(2, 1).div({
+                            text: 'No documents were found. Choose another material.',
+                            styles: {
+                                'color': 'red'
+                            }
+                        });
                     }
-                });
-            }
-
+                },
+                error: function (data) {
+                    // TODO: ERROR
+                }
+            });
 
         };//makeStepThree()
 
