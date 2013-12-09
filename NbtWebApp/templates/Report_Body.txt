@@ -11,7 +11,8 @@
     <div id="formatChooser">View as: 
         <input type="button" value="Grid" id="btnGrid" />
         <input type="button" value="CSV" id="btnCsv" />
-        <input type="button" value="PDF" id="btnCrystal" style="display: none;" />
+        <input type="button" value="XML" id="btnXml" style="display: none;" />    
+        <input type="button" value="PDF" id="btnCrystal" style="display: none;" />    
     </div>
     <div id="spinner" width="100%" style="text-align: center; display: none;">
         <img src="images/ajax/progress.gif" />

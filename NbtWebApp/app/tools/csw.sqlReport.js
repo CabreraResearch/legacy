@@ -21,8 +21,12 @@
             },
             success: function (data) {
                 var params = [];
+                
                 if (data.doesSupportCrystal) {
                     $('#btnCrystal').css('display', '');
+                }
+                if (Csw.clientSession.currentUserName() == "chemsw_admin") { // case 31307
+                    $('#btnXml').css('display', '');
                 }
 
                 var parent = Csw.domNode({ ID: 'paramsDiv' });
@@ -56,6 +60,7 @@
                         runReport(qs.reportid, 'grid', params);
                     });
                     $('#btnCsv').click(function () { runReport(qs.reportid, 'csv', params); });
+                    $('#btnXml').click(function () { runReport(qs.reportid, 'xml', params); });
                     $('#btnCrystal').click(function () { runReport(qs.reportid, 'crystal', params) });
                 }
             }
@@ -94,6 +99,8 @@
 
             if ('csv' == rformat.toLowerCase()) {
                 postForm(reportid, params, 'Services/Reports/reportCSV');
+            } else if ('xml' == rformat.toLowerCase()) {
+                postForm(reportid, params, 'Services/Reports/reportXML');
             } else if ('crystal' == rformat.toLowerCase()) {
                 //postForm(reportid, params, 'report.aspx');
                 Csw.ajaxWcf.post({
@@ -103,7 +110,7 @@
                         nodeId: reportid,
                         reportParams: reportParams
                     },
-                    success: function (data) {
+                    success: function(data) {
                         var parent = Csw.domNode({ ID: 'rptDiv' });
                         parent.empty();
                         if (Csw.bool(data.hasResults)) {
@@ -123,7 +130,7 @@
                         nodeId: reportid,
                         reportParams: reportParams
                     },
-                    success: function (data) {
+                    success: function(data) {
                         var parent = Csw.domNode({ ID: 'rptDiv' });
                         parent.empty();
 
