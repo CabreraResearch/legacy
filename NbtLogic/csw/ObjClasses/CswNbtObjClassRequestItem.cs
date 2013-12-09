@@ -13,11 +13,11 @@ using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassRequestItem: CswNbtObjClass
+    public class CswNbtObjClassRequestItem : CswNbtObjClass
     {
         #region Properties
 
-        public new sealed class PropertyName: CswNbtObjClass.PropertyName
+        public new sealed class PropertyName : CswNbtObjClass.PropertyName
         {
             #region Core Properties
             /// <summary>
@@ -292,7 +292,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Completed = "Completed";
             public const string Cancelled = "Cancelled";
             public const string NonRequestableStatus = "No Status";//this is used as a placeholder for recurring/favorite request items
-            public static readonly CswCommaDelimitedString Options = 
+            public static readonly CswCommaDelimitedString Options =
                 new CswCommaDelimitedString { Pending, Submitted, Created, Ordered, Received, Dispensed, Moved, Completed, Cancelled };
         }
 
@@ -449,10 +449,10 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.afterWriteNode( Creating );
         }
 
-        public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
+        public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false, bool ValidateRequiredRelationships = true )
         {
             _updateCartCounts( -1 );
-            _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes );
+            _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes, ValidateRequiredRelationships );
         }
 
         public override void afterDeleteNode()
@@ -524,28 +524,28 @@ namespace ChemSW.Nbt.ObjClasses
                                 break;
                             case FulfillMenu.Create:
                                 ButtonData.Action = CswEnumNbtButtonAction.creatematerial;
-                                    // Create the temporary material node
-                                    Int32 SelectedNodeTypeId = NewMaterialType.SelectedNodeTypeIds.ToIntCollection().FirstOrDefault();
-                                    CswNbtPropertySetMaterial NewMaterial = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( SelectedNodeTypeId, IsTemp: true, OnAfterMakeNode: delegate( CswNbtNode NewNode )
-                                    {
-                                        ( (CswNbtPropertySetMaterial) NewNode ).TradeName.Text = NewMaterialTradename.Text;
-                                        ( (CswNbtPropertySetMaterial) NewNode ).PartNumber.Text = NewMaterialPartNo.Text;
-                                    } );
-                                    Material.RelatedNodeId = NewMaterial.NodeId;
-                                    ButtonData.Data["state"] = new JObject();
-                                    ButtonData.Data["state"]["materialType"] = new JObject();
-                                    ButtonData.Data["state"]["materialType"]["name"] = NewMaterial.NodeType.NodeTypeName;
-                                    ButtonData.Data["state"]["materialType"]["val"] = NewMaterial.NodeType.NodeTypeId;
-                                    ButtonData.Data["state"]["materialId"] = NewMaterial.NodeId.ToString();
-                                    ButtonData.Data["state"]["tradeName"] = NewMaterial.TradeName.Text;
-                                    ButtonData.Data["state"]["addNewC3Supplier"] = true;
-                                    ButtonData.Data["state"]["supplier"] = new JObject();
-                                    ButtonData.Data["state"]["supplier"]["name"] = NewMaterialSupplier.Text;
-                                    ButtonData.Data["state"]["partNo"] = NewMaterialPartNo.Text;
-                                    ButtonData.Data["state"]["request"] = new JObject();
-                                    ButtonData.Data["state"]["request"]["requestitemid"] = NodeId.ToString();
-                                    ButtonData.Data["state"]["request"]["materialid"] = ( Material.RelatedNodeId ?? new CswPrimaryKey() ).ToString();
-                                    ButtonData.Data["success"] = true;
+                                // Create the temporary material node
+                                Int32 SelectedNodeTypeId = NewMaterialType.SelectedNodeTypeIds.ToIntCollection().FirstOrDefault();
+                                CswNbtPropertySetMaterial NewMaterial = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( SelectedNodeTypeId, IsTemp: true, OnAfterMakeNode: delegate( CswNbtNode NewNode )
+                                {
+                                    ( (CswNbtPropertySetMaterial) NewNode ).TradeName.Text = NewMaterialTradename.Text;
+                                    ( (CswNbtPropertySetMaterial) NewNode ).PartNumber.Text = NewMaterialPartNo.Text;
+                                } );
+                                Material.RelatedNodeId = NewMaterial.NodeId;
+                                ButtonData.Data["state"] = new JObject();
+                                ButtonData.Data["state"]["materialType"] = new JObject();
+                                ButtonData.Data["state"]["materialType"]["name"] = NewMaterial.NodeType.NodeTypeName;
+                                ButtonData.Data["state"]["materialType"]["val"] = NewMaterial.NodeType.NodeTypeId;
+                                ButtonData.Data["state"]["materialId"] = NewMaterial.NodeId.ToString();
+                                ButtonData.Data["state"]["tradeName"] = NewMaterial.TradeName.Text;
+                                ButtonData.Data["state"]["addNewC3Supplier"] = true;
+                                ButtonData.Data["state"]["supplier"] = new JObject();
+                                ButtonData.Data["state"]["supplier"]["name"] = NewMaterialSupplier.Text;
+                                ButtonData.Data["state"]["partNo"] = NewMaterialPartNo.Text;
+                                ButtonData.Data["state"]["request"] = new JObject();
+                                ButtonData.Data["state"]["request"]["requestitemid"] = NodeId.ToString();
+                                ButtonData.Data["state"]["request"]["materialid"] = ( Material.RelatedNodeId ?? new CswPrimaryKey() ).ToString();
+                                ButtonData.Data["success"] = true;
                                 break;
                             case FulfillMenu.Order://TODO - Case 31271 - Implement Ordering for Realz
                                 ButtonData.Action = CswEnumNbtButtonAction.editprop;
@@ -564,7 +564,7 @@ namespace ChemSW.Nbt.ObjClasses
                                 }
                                 else
                                 {
-                                    throw new CswDniException(CswEnumErrorType.Warning, "A Material must be selected in order to Receive.", "User attempted to Receive without a material defined.");
+                                    throw new CswDniException( CswEnumErrorType.Warning, "A Material must be selected in order to Receive.", "User attempted to Receive without a material defined." );
                                 }
                                 //TODO - if it's a Material Size Request, we should select the requested Size and Unit Count by default.
                                 break;
@@ -619,7 +619,7 @@ namespace ChemSW.Nbt.ObjClasses
                                 {
                                     ContainerNode.DisposeContainer();
                                     ContainerNode.postChanges( true );
-                                    FulfillmentHistory.AddComment( "Disposed Container " + CswNbtNode.getNodeLink(ContainerNode.NodeId, ContainerNode.Barcode.Barcode) );
+                                    FulfillmentHistory.AddComment( "Disposed Container " + CswNbtNode.getNodeLink( ContainerNode.NodeId, ContainerNode.Barcode.Barcode ) );
                                     Status.Value = Statuses.Completed;
                                 }
                                 break;
@@ -754,9 +754,9 @@ namespace ChemSW.Nbt.ObjClasses
         #region ObjectClass-specific properties
 
         private CswNbtObjClassUser.Cache _UserCache;
-        public CswNbtObjClassUser.Cache UserCache 
-        { 
-            get { return _UserCache ?? ( _UserCache = CswNbtObjClassUser.getCurrentUserCache( _CswNbtResources ) ); } 
+        public CswNbtObjClassUser.Cache UserCache
+        {
+            get { return _UserCache ?? ( _UserCache = CswNbtObjClassUser.getCurrentUserCache( _CswNbtResources ) ); }
         }
 
         //Core Properties (All Request Items use these)
@@ -848,7 +848,7 @@ namespace ChemSW.Nbt.ObjClasses
                 for( int i = 0; i < EPMatsTree.getChildNodeCount(); i++ )
                 {
                     EPMatsTree.goToNthChild( i ); //EP's MEPs
-                    if( EPMatsTree.getChildNodeCount() > 0)
+                    if( EPMatsTree.getChildNodeCount() > 0 )
                     {
                         EPMatsTree.goToNthChild( 0 ); //MEP's Material
                         if( EPMatsTree.getNodeIdForCurrentPosition() == Material.RelatedNodeId )

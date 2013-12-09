@@ -12,8 +12,6 @@ namespace ChemSW.WebSvc
     {
         private CswTimer _Timer = new CswTimer();
         private CswWebSvcSessionAuthenticateData.Authentication.Request _AuthenticationRequest;
-        private delegate void _OnDeInitDelegate();
-        private _OnDeInitDelegate _OnDeInit;
 
         public HttpContext _HttpContext = null;
         public HttpContext HttpContext
@@ -71,7 +69,6 @@ namespace ChemSW.WebSvc
                 }
             }
             _SessionAuthenticate = new CswNbtSessionAuthenticate( _CswNbtResources, _CswSessionResourcesNbt.CswSessionManager, _AuthenticationRequest );
-            _OnDeInit =  _deInitResources;
             return ( _CswNbtResources );
 
         }//_initResources() 
@@ -150,23 +147,13 @@ namespace ChemSW.WebSvc
             _SessionAuthenticate.deauthenticate();
         }//autheticate
 
-        private void _deInitResources()
+        public void deInitResources()
         {
             if( _CswSessionResourcesNbt != null )
             {
                 _CswSessionResourcesNbt.endSession();
-
                 _CswSessionResourcesNbt.finalize();
                 _CswSessionResourcesNbt.release();
-            }
-        }
-
-        public void deInitResources()
-        {
-            if( null != _OnDeInit )
-            {
-                //for example, Oracle is down and we never finished Init
-                _OnDeInit.BeginInvoke( null, null );
             }
             if( null != _CswNbtResources )
             {

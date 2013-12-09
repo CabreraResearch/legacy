@@ -21,9 +21,11 @@ namespace ChemSW.Nbt
         private ICswNbtUser _RunAsUser;
         private bool _IncludeSystemNodes = false;
         private bool _IncludeHiddenNodes;
+        private bool _OnlyMergeableNodeTypes;
         private CswEnumSqlLikeMode _SearchType;
 
-        public CswNbtTreeLoaderFromSearchByLevel( CswNbtResources CswNbtResources, ICswNbtUser RunAsUser, ICswNbtTree pCswNbtTree, string SearchTerm, CswEnumSqlLikeMode SearchType, string WhereClause, bool IncludeSystemNodes, bool IncludeHiddenNodes )
+        public CswNbtTreeLoaderFromSearchByLevel( CswNbtResources CswNbtResources, ICswNbtUser RunAsUser, ICswNbtTree pCswNbtTree, string SearchTerm, CswEnumSqlLikeMode SearchType, string WhereClause,
+                                                  bool IncludeSystemNodes, bool IncludeHiddenNodes, bool OnlyMergeableNodeTypes )
             : base( pCswNbtTree )
         {
             _CswNbtResources = CswNbtResources;
@@ -33,6 +35,7 @@ namespace ChemSW.Nbt
             _ExtraWhereClause = WhereClause;
             _IncludeSystemNodes = IncludeSystemNodes;
             _IncludeHiddenNodes = IncludeHiddenNodes;
+            _OnlyMergeableNodeTypes = OnlyMergeableNodeTypes;
         }
 
         public override void load( bool RequireViewPermissions, Int32 ResultsLimit = Int32.MinValue )
@@ -300,6 +303,11 @@ namespace ChemSW.Nbt
                 if( _CswNbtResources.MetaData.ExcludeDisabledModules )
                 {
                     Query += "                 and t.enabled = '1' ";
+                }
+                // case 31056
+                if( _OnlyMergeableNodeTypes )
+                {
+                    Query += "                 and t.mergeable = '1' ";
                 }
                 // BZ 6008
                 if( !_IncludeSystemNodes )

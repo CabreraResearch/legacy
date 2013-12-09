@@ -295,7 +295,7 @@ namespace ChemSW.Nbt.WebServices
         {
             JArray RetRows = new JArray();
             ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( _View, true, false, false );
-            if( _View.Visibility == CswEnumNbtViewVisibility.Property )
+            if( _View.Visibility == CswEnumNbtViewVisibility.Property && Tree.getChildNodeCount() > 0 )
             {
                 Tree.goToNthChild( 0 );
             }

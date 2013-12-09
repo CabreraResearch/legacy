@@ -91,19 +91,22 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Instance a Tree from a Universal Search
         /// </summary>
-        public ICswNbtTree getTreeFromSearch( string SearchTerm, CswEnumSqlLikeMode SearchType, string WhereClause, bool RequireViewPermissions, bool IncludeSystemNodes, bool IncludeHiddenNodes, Int32 PerLevelNodeLimit = Int32.MinValue )
+        public ICswNbtTree getTreeFromSearch( string SearchTerm, CswEnumSqlLikeMode SearchType, string WhereClause, 
+                                              bool RequireViewPermissions, bool IncludeSystemNodes, bool IncludeHiddenNodes, bool OnlyMergeableNodeTypes, Int32 PerLevelNodeLimit = Int32.MinValue )
         {
-            return getTreeFromSearch( _CswNbtResources.CurrentNbtUser, SearchTerm, SearchType, WhereClause, RequireViewPermissions, IncludeSystemNodes, IncludeHiddenNodes, PerLevelNodeLimit );
+            return getTreeFromSearch( _CswNbtResources.CurrentNbtUser, SearchTerm, SearchType, WhereClause, RequireViewPermissions, IncludeSystemNodes, IncludeHiddenNodes, OnlyMergeableNodeTypes, PerLevelNodeLimit );
         }
 
         /// <summary>
         /// Instance a Tree from a Universal Search
         /// </summary>
-        public ICswNbtTree getTreeFromSearch( ICswNbtUser RunAsUser, string SearchTerm, CswEnumSqlLikeMode SearchType, string WhereClause, bool RequireViewPermissions, bool IncludeSystemNodes, bool IncludeHiddenNodes, Int32 PerLevelNodeLimit = Int32.MinValue )
+        public ICswNbtTree getTreeFromSearch( ICswNbtUser RunAsUser, string SearchTerm, CswEnumSqlLikeMode SearchType, string WhereClause, 
+                                              bool RequireViewPermissions, bool IncludeSystemNodes, bool IncludeHiddenNodes, bool OnlyMergeableNodeTypes, Int32 PerLevelNodeLimit = Int32.MinValue )
         {
             ICswNbtTree ReturnVal = _makeTree( true );
 
-            CswNbtTreeLoaderFromSearchByLevel TreeLoader = new CswNbtTreeLoaderFromSearchByLevel( _CswNbtResources, RunAsUser, ReturnVal, SearchTerm, SearchType, WhereClause, IncludeSystemNodes, IncludeHiddenNodes );
+            CswNbtTreeLoaderFromSearchByLevel TreeLoader = new CswNbtTreeLoaderFromSearchByLevel( _CswNbtResources, RunAsUser, ReturnVal, SearchTerm, SearchType, WhereClause, 
+                                                                                                  IncludeSystemNodes, IncludeHiddenNodes, OnlyMergeableNodeTypes );
             TreeLoader.load( RequireViewPermissions, PerLevelNodeLimit );
 
             return ( ReturnVal );

@@ -275,7 +275,8 @@
                     Multi: Csw.bool(cswPrivate.tabState.Multi),
                     filterToPropId: Csw.string(cswPrivate.tabState.filterToPropId),
                     ConfigMode: cswPrivate.tabState.Config,
-                    RelatedNodeId: Csw.string(cswPrivate.tabState.relatednodeid)
+                    RelatedNodeId: Csw.string(cswPrivate.tabState.relatednodeid),
+                    ForceReadOnly: cswPrivate.forceReadOnly
                 },
                 success: function (data) {
                     cswPrivate.IdentityTab = data.properties;
