@@ -240,7 +240,7 @@ namespace ChemSW.Nbt.WebServices
 
         public static void runReportXML( ICswResources CswResources, CswNbtWebServiceReport.ReportReturn Return, CswNbtWebServiceReport.ReportData reportParams )
         {
-            reportParams.datatable = _getReportTable( CswResources, reportParams ); ;
+            reportParams.datatable = _getReportTable( CswResources, reportParams );
             Return.Data = reportParams;
         }
 
