@@ -305,18 +305,35 @@
                         disabledText: 'Start',
                         disableOnClick: false,
                         onClick: function () {
-                            Csw.ajaxWcf.post({
-                                urlMethod: 'Import/startImport',
-                                data: {
-                                    ImportDefName: cswPrivate.selDefName.val(),
-                                    Overwrite: cswPrivate.cbOverwrite.checked()
+                            
+                            
+
+                            Csw.dialogs.inputDialog({
+                                name: 'StartCAFDialog',
+                                title: 'CAF Connection Details',
+                                message: 'Enter the database connection information for this customer',
+                                fields: {
+                                    'CAF Database Name': Csw.enums.inputTypes.text,
+                                    'CAF Database Password': Csw.enums.inputTypes.text,
+                                    'CAF Server': Csw.enums.inputTypes.text,
                                 },
-                                success: function (data) {
-                                    // show success or show progress
-                                }
+                                onOk: function (fields) {
+                                    Csw.ajaxWcf.post({
+                                        urlMethod: 'Import/startImport',
+                                        data: {
+                                            CAFSchema: fields['CAF Database Name'].val(),
+                                            CAFPassword: fields['CAF Database Password'].val(),
+                                            CAFDatabase: fields['CAF Server'].val(),
+                                        },
+                                        success: function (data) {
+                                            // show success or show progress
+                                        }
+                                    });
+                                },
                             });
-                        }
+                        }//onClick
                     });
+
                 }
 
                 if (visible) {
