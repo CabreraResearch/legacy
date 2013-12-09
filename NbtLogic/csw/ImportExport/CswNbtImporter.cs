@@ -123,70 +123,82 @@ namespace ChemSW.Nbt.ImportExport
             foreach( DataTable ExcelDataTable in ExcelDataSet.Tables )
             {
                 string SheetName = ExcelDataTable.TableName;
-
-                // Determine Oracle table name
-                Int32 i = 1;
-                string ImportDataTableName = CswNbtImportTables.ImportDataN.TableNamePrefix + i.ToString();
-                while( _CswNbtSchemaModTrnsctn.isTableDefinedInDataBase( ImportDataTableName ) )
+                CswNbtImportDef Definition = null;
+                try
                 {
-                    i++;
-                    ImportDataTableName = CswNbtImportTables.ImportDataN.TableNamePrefix + i.ToString();
+                    Definition = new CswNbtImportDef( _CswNbtResources, ImportDefinitionName, SheetName );
+                }
+                catch( Exception ex )
+                {
+                    OnMessage( "Sheet '" + SheetName + "' is invalid: " + ex.Message );
                 }
 
-                // Generate an Oracle table for storing and manipulating data
-                _CswNbtSchemaModTrnsctn.addTable( ImportDataTableName, CswNbtImportTables.ImportDataN.PkColumnName );
-                _CswNbtSchemaModTrnsctn.addBooleanColumn( ImportDataTableName, CswNbtImportTables.ImportDataN.error, "", false );
-                _CswNbtSchemaModTrnsctn.addClobColumn( ImportDataTableName, CswNbtImportTables.ImportDataN.errorlog, "", false );
-                foreach( DataColumn ExcelColumn in ExcelDataTable.Columns )
+                // ignore bad sheetnames
+                if( null != Definition )
                 {
-                    _CswNbtSchemaModTrnsctn.addStringColumn( ImportDataTableName, CswNbtImportDefBinding.SafeColName( ExcelColumn.ColumnName ), "", false, 4000 );
-                }
-                CswNbtImportDef Definition = new CswNbtImportDef( _CswNbtResources, ImportDefinitionName, SheetName );
-                foreach( CswNbtImportDefOrder Order in Definition.ImportOrder.Values )
-                {
-                    _CswNbtSchemaModTrnsctn.addLongColumn( ImportDataTableName, Order.PkColName, "", false );
-                }
-                _CswNbtResources.commitTransaction();
-                _CswNbtResources.beginTransaction();
+                    // Determine Oracle table name
+                    Int32 i = 1;
+                    string ImportDataTableName = CswNbtImportTables.ImportDataN.TableNamePrefix + i.ToString();
+                    while( _CswNbtSchemaModTrnsctn.isTableDefinedInDataBase( ImportDataTableName ) )
+                    {
+                        i++;
+                        ImportDataTableName = CswNbtImportTables.ImportDataN.TableNamePrefix + i.ToString();
+                    }
 
-                //ret.Add( ImportDataTableName );
-
-                // Store the sheet reference in import_data_map
-                CswTableUpdate ImportDataMapUpdate = _CswNbtResources.makeCswTableUpdate( "Importer_DataMap_Insert", CswNbtImportTables.ImportDataMap.TableName );
-                DataTable ImportDataMapTable = ImportDataMapUpdate.getEmptyTable();
-                DataRow DataMapRow = ImportDataMapTable.NewRow();
-                DataMapRow[CswNbtImportTables.ImportDataMap.datatablename] = ImportDataTableName;
-                DataMapRow[CswNbtImportTables.ImportDataMap.importdefid] = Definition.ImportDefinitionId;
-                DataMapRow[CswNbtImportTables.ImportDataMap.importdatajobid] = JobId;
-                DataMapRow[CswNbtImportTables.ImportDataMap.overwrite] = CswConvert.ToDbVal( Overwrite );
-                DataMapRow[CswNbtImportTables.ImportDataMap.completed] = CswConvert.ToDbVal( false );
-                ImportDataMapTable.Rows.Add( DataMapRow );
-                ImportDataMapUpdate.update( ImportDataMapTable );
-
-                // Copy the Excel data into the Oracle table
-                CswTableUpdate ImportDataUpdate = _CswNbtResources.makeCswTableUpdate( "Importer_Update", ImportDataTableName );
-                DataTable ImportDataTable = ImportDataUpdate.getEmptyTable();
-                foreach( DataRow ExcelRow in ExcelDataTable.Rows )
-                {
-                    bool hasData = false;
-                    DataRow ImportRow = ImportDataTable.NewRow();
-                    ImportRow[CswNbtImportTables.ImportDataN.error] = CswConvert.ToDbVal( false );
+                    // Generate an Oracle table for storing and manipulating data
+                    _CswNbtSchemaModTrnsctn.addTable( ImportDataTableName, CswNbtImportTables.ImportDataN.PkColumnName );
+                    _CswNbtSchemaModTrnsctn.addBooleanColumn( ImportDataTableName, CswNbtImportTables.ImportDataN.error, "", false );
+                    _CswNbtSchemaModTrnsctn.addClobColumn( ImportDataTableName, CswNbtImportTables.ImportDataN.errorlog, "", false );
                     foreach( DataColumn ExcelColumn in ExcelDataTable.Columns )
                     {
-                        if( ExcelRow[ExcelColumn] != DBNull.Value )
-                        {
-                            hasData = true;
-                        }
-                        ImportRow[CswNbtImportDefBinding.SafeColName( ExcelColumn.ColumnName )] = ExcelRow[ExcelColumn];
+                        _CswNbtSchemaModTrnsctn.addStringColumn( ImportDataTableName, CswNbtImportDefBinding.SafeColName( ExcelColumn.ColumnName ), "", false, 4000 );
                     }
-                    if( hasData == true )
+                    foreach( CswNbtImportDefOrder Order in Definition.ImportOrder.Values )
                     {
-                        ImportDataTable.Rows.Add( ImportRow );
+                        _CswNbtSchemaModTrnsctn.addLongColumn( ImportDataTableName, Order.PkColName, "", false );
                     }
-                }
-                ImportDataUpdate.update( ImportDataTable );
+                    _CswNbtResources.commitTransaction();
+                    _CswNbtResources.beginTransaction();
 
-                OnMessage( "Sheet '" + SheetName + "' is stored in Table '" + ImportDataTableName + "'" );
+                    //ret.Add( ImportDataTableName );
+
+                    // Store the sheet reference in import_data_map
+                    CswTableUpdate ImportDataMapUpdate = _CswNbtResources.makeCswTableUpdate( "Importer_DataMap_Insert", CswNbtImportTables.ImportDataMap.TableName );
+                    DataTable ImportDataMapTable = ImportDataMapUpdate.getEmptyTable();
+                    DataRow DataMapRow = ImportDataMapTable.NewRow();
+                    DataMapRow[CswNbtImportTables.ImportDataMap.datatablename] = ImportDataTableName;
+                    DataMapRow[CswNbtImportTables.ImportDataMap.importdefid] = Definition.ImportDefinitionId;
+                    DataMapRow[CswNbtImportTables.ImportDataMap.importdatajobid] = JobId;
+                    DataMapRow[CswNbtImportTables.ImportDataMap.overwrite] = CswConvert.ToDbVal( Overwrite );
+                    DataMapRow[CswNbtImportTables.ImportDataMap.completed] = CswConvert.ToDbVal( false );
+                    ImportDataMapTable.Rows.Add( DataMapRow );
+                    ImportDataMapUpdate.update( ImportDataMapTable );
+
+                    // Copy the Excel data into the Oracle table
+                    CswTableUpdate ImportDataUpdate = _CswNbtResources.makeCswTableUpdate( "Importer_Update", ImportDataTableName );
+                    DataTable ImportDataTable = ImportDataUpdate.getEmptyTable();
+                    foreach( DataRow ExcelRow in ExcelDataTable.Rows )
+                    {
+                        bool hasData = false;
+                        DataRow ImportRow = ImportDataTable.NewRow();
+                        ImportRow[CswNbtImportTables.ImportDataN.error] = CswConvert.ToDbVal( false );
+                        foreach( DataColumn ExcelColumn in ExcelDataTable.Columns )
+                        {
+                            if( ExcelRow[ExcelColumn] != DBNull.Value )
+                            {
+                                hasData = true;
+                            }
+                            ImportRow[CswNbtImportDefBinding.SafeColName( ExcelColumn.ColumnName )] = ExcelRow[ExcelColumn];
+                        }
+                        if( hasData == true )
+                        {
+                            ImportDataTable.Rows.Add( ImportRow );
+                        }
+                    }
+                    ImportDataUpdate.update( ImportDataTable );
+
+                    OnMessage( "Sheet '" + SheetName + "' is stored in Table '" + ImportDataTableName + "'" );
+                }
             } // foreach( DataTable ExcelDataTable in ExcelDataSet.Tables )
 
             _CswNbtResources.commitTransaction();
@@ -407,7 +419,7 @@ namespace ChemSW.Nbt.ImportExport
                 {
                     if( null == b.DestNodeType )
                     {
-                        throw new CswDniException(CswEnumErrorType.Error, "DestNodeType '" + b.DestNodeTypeName + "' is not enabled or does not exist.", "Accessor for Order.NodeType returned null.");
+                        throw new CswDniException( CswEnumErrorType.Error, "DestNodeType '" + b.DestNodeTypeName + "' is not enabled or does not exist.", "Accessor for Order.NodeType returned null." );
                     }
                     return b.DestNodeType == Order.NodeType && b.Instance == Order.Instance;
                 } );
@@ -615,7 +627,7 @@ namespace ChemSW.Nbt.ImportExport
 
         private Int32 _getRelationValue( CswNbtImportDef BindingDef, CswNbtImportDefRelationship Relation, DataRow ImportRow )
         {
-            CswNbtImportDefOrder thisTargetOrder = BindingDef.ImportOrder.Values.FirstOrDefault( o => Relation.Relationship.FkMatches( o.NodeType ) && 
+            CswNbtImportDefOrder thisTargetOrder = BindingDef.ImportOrder.Values.FirstOrDefault( o => Relation.Relationship.FkMatches( o.NodeType ) &&
                                                                                                       o.Instance == Relation.Instance );
             Int32 Value = Int32.MinValue;
             if( null != thisTargetOrder )
