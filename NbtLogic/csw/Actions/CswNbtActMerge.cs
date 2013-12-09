@@ -53,6 +53,8 @@ namespace ChemSW.Nbt.Actions
                 [DataMember]
                 public Int32 RelationshipPropId;
                 [DataMember]
+                public string RelationshipPropFieldType;
+                [DataMember]
                 public string NodeTypeName;
                 [DataMember]
                 public string Node1Id;
@@ -96,6 +98,8 @@ namespace ChemSW.Nbt.Actions
                 public string NodeId;
                 [DataMember]
                 public Int32 NodeTypePropId;
+                [DataMember]
+                public string FieldType;
             }
         }
 
@@ -122,9 +126,11 @@ namespace ChemSW.Nbt.Actions
                 if( false == ret.NodePairs.Any( np => ( np.Node1Id == Node1.NodeId.ToString() && np.Node2Id == Node2.NodeId.ToString() ) ||
                                                       ( np.Node1Id == Node2.NodeId.ToString() && np.Node2Id == Node1.NodeId.ToString() ) ) )
                 {
+                    CswNbtMetaDataNodeType Node1NT = Node1.getNodeType();
+
                     MergeInfoData.MergeInfoNodePair NodePair = new MergeInfoData.MergeInfoNodePair();
                     NodePair.Relationships = new Collection<MergeInfoData.MergeInfoRelationship>();
-                    NodePair.NodeTypeName = Node1.getNodeType().NodeTypeName;
+                    NodePair.NodeTypeName = Node1NT.NodeTypeName;
                     NodePair.Node1Id = Node1.NodeId.ToString();
                     NodePair.Node2Id = Node2.NodeId.ToString();
                     NodePair.Node1Name = Node1.NodeName;
@@ -132,10 +138,12 @@ namespace ChemSW.Nbt.Actions
                     if( null != RelationshipProp )
                     {
                         NodePair.RelationshipPropId = RelationshipProp.PropId;
+                        NodePair.RelationshipPropFieldType = RelationshipProp.getFieldTypeValue().ToString();
                     }
                     else
                     {
                         NodePair.RelationshipPropId = Int32.MinValue;
+                        NodePair.RelationshipPropFieldType = string.Empty;
                     }
 
                     foreach( CswNbtNodePropWrapper Prop1 in Node1.Properties.Where( p => ( null == RelationshipProp || p.NodeTypePropId != RelationshipProp.PropId ) ) )
@@ -159,12 +167,14 @@ namespace ChemSW.Nbt.Actions
                     // and they now would be compound unique violations, we have to merge those too.
 
                     // First, find relationships that point to the merged nodes
-                    foreach( CswNbtMetaDataNodeTypeProp thisRelationshipProp in _CswNbtResources.MetaData.getNodeTypeProps( CswEnumNbtFieldType.Relationship )
-                                                                                                .Where( thisRelationshipProp => thisRelationshipProp.FkMatches( Node1.getNodeType() ) ) )
+                    foreach( CswNbtMetaDataNodeTypeProp thisProp in _CswNbtResources.MetaData.getNodeTypeProps()
+                        .Where( p => ( p.getFieldTypeValue() == CswEnumNbtFieldType.Relationship && p.FkMatches( Node1NT ) ) ||
+                                     ( p.getFieldTypeValue() == CswEnumNbtFieldType.Location && Node1NT.getObjectClass().ObjectClass == CswEnumNbtObjectClass.LocationClass ) ) )
+                    //( p.getFieldTypeValue() == CswEnumNbtFieldType.Quantity && Node1NT.getObjectClass().ObjectClass == CswEnumNbtObjectClass.UnitOfMeasureClass ) ) )
                     {
                         // Find unique key sets for nodes using this relationship that point to either node1 or node2
-                        Dictionary<CswDelimitedString, CswPrimaryKey> Node1UniqueKeysDict = _getUniqueKeysDict( NodePair, Node1, thisRelationshipProp );
-                        Dictionary<CswDelimitedString, CswPrimaryKey> Node2UniqueKeysDict = _getUniqueKeysDict( NodePair, Node2, thisRelationshipProp );
+                        Dictionary<CswDelimitedString, CswPrimaryKey> Node1UniqueKeysDict = _getUniqueKeysDict( NodePair, Node1, thisProp );
+                        Dictionary<CswDelimitedString, CswPrimaryKey> Node2UniqueKeysDict = _getUniqueKeysDict( NodePair, Node2, thisProp );
 
                         // Look for redundant keys to indicate a potential unique violation
                         foreach( CswDelimitedString key in Node1UniqueKeysDict.Keys )
@@ -172,10 +182,10 @@ namespace ChemSW.Nbt.Actions
                             if( Node2UniqueKeysDict.ContainsKey( key ) )
                             {
                                 // unique violation!  gotta merge these too.
-                                _addMergeNodes( ret, Node1UniqueKeysDict[key], Node2UniqueKeysDict[key], thisRelationshipProp );
+                                _addMergeNodes( ret, Node1UniqueKeysDict[key], Node2UniqueKeysDict[key], thisProp );
                             }
                         } // foreach( CswDelimitedString key in Node1UniqueKeysDict.Keys )
-                    } // foreach( CswNbtMetaDataNodeTypeProp RelationshipProp in ...)
+                    } // foreach( CswNbtMetaDataNodeTypeProp thisRelationshipProp in ...)
                 } // if(false == ret.NodePairs.Any( ... ))
             } // if( null != Node1 && null != Node2 )
         } // _addMergeNodes()
@@ -219,7 +229,8 @@ namespace ChemSW.Nbt.Actions
                     NodePair.Relationships.Add( new MergeInfoData.MergeInfoRelationship()
                         {
                             NodeId = thisNodeId.ToString(),
-                            NodeTypePropId = RelationshipProp.PropId
+                            NodeTypePropId = RelationshipProp.PropId,
+                            FieldType = RelationshipProp.getFieldTypeValue().ToString()
                         } );
 
                     CswDelimitedString key;
@@ -325,14 +336,35 @@ namespace ChemSW.Nbt.Actions
                 // Set relationship to new merged node
                 if( Int32.MinValue != nodePair.RelationshipPropId )
                 {
-                    // Find the new nodeid for the value of the relationship
-                    CswPrimaryKey oldNodeId = resultNode.Properties[nodePair.RelationshipPropId].AsRelationship.RelatedNodeId;
-                    MergeInfoData.MergeInfoNodePair otherNodePair = Choices.NodePairs.FirstOrDefault( np => np.Node1Id == oldNodeId.ToString() || np.Node2Id == oldNodeId.ToString() );
-                    if( null != otherNodePair )
+                    switch( nodePair.RelationshipPropFieldType )
                     {
-                        // Set the relationship to point to the new merged node
-                        resultNode.Properties[nodePair.RelationshipPropId].AsRelationship.RelatedNodeId = CswConvert.ToPrimaryKey( otherNodePair.Node2Id );
-                    }
+                        case CswEnumNbtFieldType.Relationship:
+                            {
+                                // Find the new nodeid for the value of the relationship
+                                CswPrimaryKey oldNodeId = resultNode.Properties[nodePair.RelationshipPropId].AsRelationship.RelatedNodeId;
+                                MergeInfoData.MergeInfoNodePair otherNodePair = Choices.NodePairs.FirstOrDefault( np => np.Node1Id == oldNodeId.ToString() || np.Node2Id == oldNodeId.ToString() );
+                                if( null != otherNodePair )
+                                {
+                                    // Set the relationship to point to the new merged node
+                                    resultNode.Properties[nodePair.RelationshipPropId].AsRelationship.RelatedNodeId = CswConvert.ToPrimaryKey( otherNodePair.Node2Id );
+                                }
+                            }
+                            break;
+                        case CswEnumNbtFieldType.Location:
+                            {
+                                // Find the new nodeid for the value of the relationship
+                                CswPrimaryKey oldNodeId = resultNode.Properties[nodePair.RelationshipPropId].AsLocation.SelectedNodeId;
+                                MergeInfoData.MergeInfoNodePair otherNodePair = Choices.NodePairs.FirstOrDefault( np => np.Node1Id == oldNodeId.ToString() || np.Node2Id == oldNodeId.ToString() );
+                                if( null != otherNodePair )
+                                {
+                                    // Set the relationship to point to the new merged node
+                                    resultNode.Properties[nodePair.RelationshipPropId].AsLocation.SelectedNodeId = CswConvert.ToPrimaryKey( otherNodePair.Node2Id );
+                                }
+                            }
+                            break;
+                        case CswEnumNbtFieldType.Quantity:
+                            break;
+                    } // switch( nodePair.RelationshipPropFieldType )
                 } // if( Int32.MinValue != nodePair.RelationshipPropId )
 
             } // if( null != Node1 && null != Node2 )
@@ -371,8 +403,23 @@ namespace ChemSW.Nbt.Actions
                     foreach( MergeInfoData.MergeInfoRelationship rel in nodePair.Relationships )
                     {
                         CswNbtNode relNode = _CswNbtResources.Nodes[rel.NodeId];
-                        relNode.Properties[rel.NodeTypePropId].AsRelationship.RelatedNodeId = Node2.NodeId;
-                        relNode.Properties[rel.NodeTypePropId].AsRelationship.RefreshNodeName();
+                        switch( rel.FieldType )
+                        {
+                            case CswEnumNbtFieldType.Relationship:
+                                {
+                                    relNode.Properties[rel.NodeTypePropId].AsRelationship.RelatedNodeId = Node2.NodeId;
+                                    relNode.Properties[rel.NodeTypePropId].AsRelationship.RefreshNodeName();
+                                }
+                                break;
+                            case CswEnumNbtFieldType.Location:
+                                {
+                                    relNode.Properties[rel.NodeTypePropId].AsLocation.SelectedNodeId = Node2.NodeId;
+                                    relNode.Properties[rel.NodeTypePropId].AsLocation.RefreshNodeName();
+                                }
+                                break;
+                            case CswEnumNbtFieldType.Quantity:
+                                break;
+                        }
                         relNode.postChanges( ForceUpdate: false, IsCopy: false, OverrideUniqueValidation: true );
                     }
 

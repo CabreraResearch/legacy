@@ -266,7 +266,7 @@ namespace ChemSW.Nbt.MetaData
         public CswNbtMetaDataNodeType getNodeTypeFromNodeId( CswPrimaryKey NodeId, CswDateTime Date = null )
         {
             CswTableSelect TblSel = CswNbtResources.makeCswTableSelect( "GetNodeTypeId", "nodes" );
-            DataTable NodesTbl = TblSel.getTable( new CswCommaDelimitedString(){ "NodeTypeId" }, "where nodeid = " + NodeId.PrimaryKey );
+            DataTable NodesTbl = TblSel.getTable( new CswCommaDelimitedString() { "NodeTypeId" }, "where nodeid = " + NodeId.PrimaryKey );
             int NodeTypeId = Int32.MinValue;
             if( NodesTbl.Rows.Count > 0 )
             {
@@ -456,6 +456,11 @@ namespace ChemSW.Nbt.MetaData
         public IEnumerable<CswNbtMetaDataNodeTypeProp> getNodeTypeProps( Int32 NodeTypeId, CswDateTime Date = null )
         {
             return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypeProps( NodeTypeId, Date );
+        }
+
+        public IEnumerable<CswNbtMetaDataNodeTypeProp> getNodeTypeProps()
+        {
+            return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypeProps();
         }
 
         public IEnumerable<CswNbtMetaDataNodeTypeProp> getNodeTypeProps( CswEnumNbtFieldType FieldType, CswDateTime Date = null )
@@ -1083,7 +1088,7 @@ namespace ChemSW.Nbt.MetaData
                     OraViewColName = OraViewColNamePrefix + OraViewColName;
                 }
                 InsertedRow["oraviewcolname"] = CswTools.MakeOracleCompliantIdentifier( OraViewColName );
-                
+
             }
 
 

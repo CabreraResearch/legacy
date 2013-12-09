@@ -76,12 +76,28 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataNodeType SizeNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Size" );
             CswNbtMetaDataNodeType GhsNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "GHS" );
             CswNbtMetaDataNodeType ContainerNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Container" );
+            CswNbtMetaDataNodeType BuildingNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Building" );
 
             CswNbtMetaDataNodeTypeProp ContainerBarcodeNTP = ContainerNT.getNodeTypeProp( CswNbtObjClassContainer.PropertyName.Barcode );
             CswNbtMetaDataNodeTypeProp ContainerMaterialNTP = ContainerNT.getNodeTypeProp( CswNbtObjClassContainer.PropertyName.Material );
             ContainerBarcodeNTP.setIsUnique( false );
             ContainerBarcodeNTP.setIsCompoundUnique( true );
             ContainerMaterialNTP.setIsCompoundUnique( true );
+
+            CswNbtNode bldg1 = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( BuildingNT.NodeTypeId, delegate( CswNbtNode node )
+                {
+                    CswNbtObjClassLocation b = node;
+                    b.Name.Text = "building A101";
+                    b.Location.SelectedNodeId = new CswPrimaryKey( "nodes", 24704 ); // Default Site
+                    b.AllowInventory.Checked = CswEnumTristate.True;
+                } );
+            CswNbtNode bldg2 = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( BuildingNT.NodeTypeId, delegate( CswNbtNode node )
+                {
+                    CswNbtObjClassLocation b = node;
+                    b.Name.Text = "building B202";
+                    b.Location.SelectedNodeId = new CswPrimaryKey( "nodes", 24704 ); // Default Site
+                    b.AllowInventory.Checked = CswEnumTristate.True;
+                } );
 
             CswNbtNode chem1 = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( ChemicalNT.NodeTypeId, delegate( CswNbtNode node )
                 {
@@ -153,6 +169,7 @@ namespace ChemSW.Nbt.Schema
                     container.Barcode.setBarcodeValueOverride( "C500051", false );
                     container.Quantity.Quantity = 101;
                     container.Quantity.UnitId = new CswPrimaryKey( "nodes", 26744 ); // kg
+                    container.Location.SelectedNodeId = bldg1.NodeId;
                 } );
             CswNbtNode container2 = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( ContainerNT.NodeTypeId, delegate( CswNbtNode node )
                 {
@@ -162,6 +179,7 @@ namespace ChemSW.Nbt.Schema
                     container.Barcode.setBarcodeValueOverride( "C500051", false );
                     container.Quantity.Quantity = 102;
                     container.Quantity.UnitId = new CswPrimaryKey( "nodes", 26744 ); // kg
+                    container.Location.SelectedNodeId = bldg2.NodeId;
                 } );
 
             CswNbtNode container3 = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( ContainerNT.NodeTypeId, delegate( CswNbtNode node )
@@ -172,6 +190,7 @@ namespace ChemSW.Nbt.Schema
                     container.Barcode.setBarcodeValueOverride( "C500052", false );
                     container.Quantity.Quantity = 103;
                     container.Quantity.UnitId = new CswPrimaryKey( "nodes", 26744 ); // kg
+                    container.Location.SelectedNodeId = bldg2.NodeId;
                 } );
 
             // To test double-relationship compound-unique nodetypes
