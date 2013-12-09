@@ -176,12 +176,13 @@
                                 cswPublic.rows[rowid].quantityValues.barcodes = value;
                             };
 
-                            var onSizeChange = function () {
+                            var onSizeChange = function (checkControl) {
                                 updateSizeVals();
                                 cswPrivate.getQuantity(function () {
-                                    if (!cswPublic.rows[rowid].qtyControl) {
+                                    if (checkControl && !cswPublic.rows[rowid].qtyControl) {
                                         buildQtyCtrl(cswPublic.rows[rowid].qtyCell);
                                     }
+
                                     cswPublic.rows[rowid].qtyControl.refresh(cswPrivate.quantity);
                                     updateColumnVals(true);
                                 });
@@ -274,13 +275,13 @@
                                             relatednodeid: cswPrivate.materialId
                                         },
                                         onChange: function () {
-                                            onSizeChange();
+                                            onSizeChange(false); //Case 31328 - on change we don't want to create the quantity control, it should be there
                                         },
                                         onSuccess: function () {
                                             //onSizeChange();
                                         },
                                         onAfterAdd: function () {
-                                            onSizeChange();
+                                            onSizeChange(true); //Case 31328 - when we add a size we need to check if the qty ctrl is there if there were no sizes before
                                         },
                                         allowAdd: true
                                     });
