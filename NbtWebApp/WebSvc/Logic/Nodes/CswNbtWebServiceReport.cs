@@ -7,6 +7,7 @@ using System.IO;
 using System.Net;
 using System.Reflection;
 using System.Runtime.Serialization;
+using System.ServiceModel;
 using System.Web;
 using ChemSW.Core;
 using ChemSW.DB;
@@ -135,6 +136,10 @@ namespace ChemSW.Nbt.WebServices
 
             [DataMember]
             public Stream stream = null;
+
+            [DataMember]
+            public DataTable datatable = null;
+
             [DataMember]
             public Collection<ReportParam> reportParams = new Collection<ReportParam>();
 
@@ -230,6 +235,12 @@ namespace ChemSW.Nbt.WebServices
         {
             DataTable rptDataTbl = _getReportTable( CswResources, reportParams );
             reportParams.stream = wsTools.ReturnCSVStream( rptDataTbl );
+            Return.Data = reportParams;
+        }
+
+        public static void runReportXML( ICswResources CswResources, CswNbtWebServiceReport.ReportReturn Return, CswNbtWebServiceReport.ReportData reportParams )
+        {
+            reportParams.datatable = _getReportTable( CswResources, reportParams ); ;
             Return.Data = reportParams;
         }
 
