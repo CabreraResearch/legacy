@@ -23,6 +23,7 @@
 
             cswPrivate.labelText = cswPrivate.labelText || null;
             cswPrivate.excludeNodeTypeIds = cswPrivate.excludeNodeTypeIds || '';
+            cswPrivate.excludeNodeIds = cswPrivate.excludeNodeIds || [];
             cswPrivate.selectedNodeId = cswPrivate.selectedNodeId || '';
             cswPrivate.selectedName = cswPrivate.selectedName || '';
             cswPrivate.viewid = cswPrivate.viewid || '';
@@ -123,7 +124,9 @@
                     });
 
                     data.Nodes.forEach(function (obj) {
-                        cswPrivate.options.push({ id: obj.NodeId, value: obj.NodeName, nodelink: obj.NodeLink });
+                        if (-1 === cswPrivate.excludeNodeIds.indexOf(obj.NodeId)) {
+                            cswPrivate.options.push({ id: obj.NodeId, value: obj.NodeName, nodelink: obj.NodeLink });
+                        }
                     });
                     cswPrivate.canAdd = Csw.bool(cswPrivate.canAdd) && Csw.bool(data.CanAdd);
                     cswPrivate.useSearch = Csw.bool(data.UseSearch);
@@ -570,7 +573,7 @@
         cswPublic.selectedName = function () {
             return cswPrivate.selectedName;
         }; // selectedName
-        cswPublic.selectedNodeLink = function() {
+        cswPublic.selectedNodeLink = function () {
             return cswPrivate.selectedNodeLink;
         }; // selectedNodeLink
 
