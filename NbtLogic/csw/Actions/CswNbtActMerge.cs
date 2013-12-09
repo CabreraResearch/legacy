@@ -118,60 +118,65 @@ namespace ChemSW.Nbt.Actions
             CswNbtNode Node2 = _CswNbtResources.Nodes[NodeId2];
             if( null != Node1 && null != Node2 )
             {
-                MergeInfoData.MergeInfoNodePair NodePair = new MergeInfoData.MergeInfoNodePair();
-                NodePair.Relationships = new Collection<MergeInfoData.MergeInfoRelationship>();
-                NodePair.NodeTypeName = Node1.getNodeType().NodeTypeName;
-                NodePair.Node1Id = Node1.NodeId.ToString();
-                NodePair.Node2Id = Node2.NodeId.ToString();
-                NodePair.Node1Name = Node1.NodeName;
-                NodePair.Node2Name = Node2.NodeName;
-                if( null != RelationshipProp )
+                // Make sure there isn't already a node pair for these nodes
+                if( false == ret.NodePairs.Any( np => ( np.Node1Id == Node1.NodeId.ToString() && np.Node2Id == Node2.NodeId.ToString() ) ||
+                                                      ( np.Node1Id == Node2.NodeId.ToString() && np.Node2Id == Node1.NodeId.ToString() ) ) )
                 {
-                    NodePair.RelationshipPropId = RelationshipProp.PropId;
-                }
-                else
-                {
-                    NodePair.RelationshipPropId = Int32.MinValue;
-                }
-
-                foreach( CswNbtNodePropWrapper Prop1 in Node1.Properties.Where( p => ( null == RelationshipProp || p.NodeTypePropId != RelationshipProp.PropId ) ) )
-                {
-                    CswNbtNodePropWrapper Prop2 = Node2.Properties[Prop1.NodeTypePropId];
-                    if( null == Prop2 || Prop1.Gestalt != Prop2.Gestalt )
+                    MergeInfoData.MergeInfoNodePair NodePair = new MergeInfoData.MergeInfoNodePair();
+                    NodePair.Relationships = new Collection<MergeInfoData.MergeInfoRelationship>();
+                    NodePair.NodeTypeName = Node1.getNodeType().NodeTypeName;
+                    NodePair.Node1Id = Node1.NodeId.ToString();
+                    NodePair.Node2Id = Node2.NodeId.ToString();
+                    NodePair.Node1Name = Node1.NodeName;
+                    NodePair.Node2Name = Node2.NodeName;
+                    if( null != RelationshipProp )
                     {
-                        NodePair.Properties.Add( new MergeInfoData.MergeInfoProperty()
-                            {
-                                PropName = Prop1.PropName,
-                                NodeTypePropId = Prop1.NodeTypePropId,
-                                Node1Value = Prop1.Gestalt,
-                                Node2Value = Prop2.Gestalt
-                            } );
-                    } // if( null == Prop2 || Prop1.Gestalt != Prop2.Gestalt )
-                } // foreach( CswNbtNodePropWrapper Prop1 in Node1.Properties )
-                ret.NodePairs.Add( NodePair );
-
-
-                // If two nodes that formerly related to each of node1 and node2 now relate to the merged target,
-                // and they now would be compound unique violations, we have to merge those too.
-
-                // First, find relationships that point to the merged nodes
-                foreach( CswNbtMetaDataNodeTypeProp thisRelationshipProp in _CswNbtResources.MetaData.getNodeTypeProps( CswEnumNbtFieldType.Relationship )
-                                                                                        .Where( thisRelationshipProp => thisRelationshipProp.FkMatches( Node1.getNodeType() ) ) )
-                {
-                    // Find unique key sets for nodes using this relationship that point to either node1 or node2
-                    Dictionary<CswDelimitedString, CswPrimaryKey> Node1UniqueKeysDict = _getUniqueKeysDict( NodePair, Node1, thisRelationshipProp );
-                    Dictionary<CswDelimitedString, CswPrimaryKey> Node2UniqueKeysDict = _getUniqueKeysDict( NodePair, Node2, thisRelationshipProp );
-
-                    // Look for redundant keys to indicate a potential unique violation
-                    foreach( CswDelimitedString key in Node1UniqueKeysDict.Keys )
+                        NodePair.RelationshipPropId = RelationshipProp.PropId;
+                    }
+                    else
                     {
-                        if( Node2UniqueKeysDict.ContainsKey( key ) )
+                        NodePair.RelationshipPropId = Int32.MinValue;
+                    }
+
+                    foreach( CswNbtNodePropWrapper Prop1 in Node1.Properties.Where( p => ( null == RelationshipProp || p.NodeTypePropId != RelationshipProp.PropId ) ) )
+                    {
+                        CswNbtNodePropWrapper Prop2 = Node2.Properties[Prop1.NodeTypePropId];
+                        if( null == Prop2 || Prop1.Gestalt != Prop2.Gestalt )
                         {
-                            // unique violation!  gotta merge these too.
-                            _addMergeNodes( ret, Node1UniqueKeysDict[key], Node2UniqueKeysDict[key], thisRelationshipProp );
-                        }
-                    } // foreach( CswDelimitedString key in Node1UniqueKeysDict.Keys )
-                } // foreach( CswNbtMetaDataNodeTypeProp RelationshipProp in ...)
+                            NodePair.Properties.Add( new MergeInfoData.MergeInfoProperty()
+                                {
+                                    PropName = Prop1.PropName,
+                                    NodeTypePropId = Prop1.NodeTypePropId,
+                                    Node1Value = Prop1.Gestalt,
+                                    Node2Value = Prop2.Gestalt
+                                } );
+                        } // if( null == Prop2 || Prop1.Gestalt != Prop2.Gestalt )
+                    } // foreach( CswNbtNodePropWrapper Prop1 in Node1.Properties )
+                    ret.NodePairs.Add( NodePair );
+
+
+                    // If two nodes that formerly related to each of node1 and node2 now relate to the merged target,
+                    // and they now would be compound unique violations, we have to merge those too.
+
+                    // First, find relationships that point to the merged nodes
+                    foreach( CswNbtMetaDataNodeTypeProp thisRelationshipProp in _CswNbtResources.MetaData.getNodeTypeProps( CswEnumNbtFieldType.Relationship )
+                                                                                                .Where( thisRelationshipProp => thisRelationshipProp.FkMatches( Node1.getNodeType() ) ) )
+                    {
+                        // Find unique key sets for nodes using this relationship that point to either node1 or node2
+                        Dictionary<CswDelimitedString, CswPrimaryKey> Node1UniqueKeysDict = _getUniqueKeysDict( NodePair, Node1, thisRelationshipProp );
+                        Dictionary<CswDelimitedString, CswPrimaryKey> Node2UniqueKeysDict = _getUniqueKeysDict( NodePair, Node2, thisRelationshipProp );
+
+                        // Look for redundant keys to indicate a potential unique violation
+                        foreach( CswDelimitedString key in Node1UniqueKeysDict.Keys )
+                        {
+                            if( Node2UniqueKeysDict.ContainsKey( key ) )
+                            {
+                                // unique violation!  gotta merge these too.
+                                _addMergeNodes( ret, Node1UniqueKeysDict[key], Node2UniqueKeysDict[key], thisRelationshipProp );
+                            }
+                        } // foreach( CswDelimitedString key in Node1UniqueKeysDict.Keys )
+                    } // foreach( CswNbtMetaDataNodeTypeProp RelationshipProp in ...)
+                } // if(false == ret.NodePairs.Any( ... ))
             } // if( null != Node1 && null != Node2 )
         } // _addMergeNodes()
 
