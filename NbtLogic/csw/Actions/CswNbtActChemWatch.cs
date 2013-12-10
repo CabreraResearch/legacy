@@ -95,15 +95,18 @@ namespace ChemSW.Nbt.Actions
                 MaterialServiceClient cwMaterialClient = new MaterialServiceClient();
                 cwMaterialClient.Endpoint.Behaviors.Add( _cookieBehavior );
 
+                List<ChemWatchListItem> Materials = new List<ChemWatchListItem>();
                 ListResultOfMaterial cwMaterials = cwMaterialClient.GetMaterialsByVendorGroupId( Request.Supplier, Request.MaterialName, Request.PartNo, false, 1, 100, "", 0 );
                 foreach( Material cwMaterial in cwMaterials.Rows )
                 {
-                    Return.Materials.Add( new ChemWatchListItem()
+                    Materials.Add( new ChemWatchListItem()
                         {
                             Id = CswConvert.ToString( cwMaterial.MaterialID ),
                             Name = cwMaterial.Name
                         } );
                 }
+                IEnumerable<ChemWatchListItem> SortedMaterials = Materials.OrderBy( si => si.Name );
+                Return.Materials = SortedMaterials.ToList();
             }
             else
             {

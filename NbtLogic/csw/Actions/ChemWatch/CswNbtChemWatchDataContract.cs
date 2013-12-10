@@ -85,7 +85,7 @@ namespace NbtWebApp.Actions.ChemWatch
         public int ChemWatchMaterialId { get; set; }
 
         [DataMember]
-        public Collection<ChemWatchListItem> Materials = new Collection<ChemWatchListItem>();
+        public List<ChemWatchListItem> Materials = new List<ChemWatchListItem>();
 
         [DataMember]
         public Stream SDSDocument = null;

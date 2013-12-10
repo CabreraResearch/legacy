@@ -95,7 +95,7 @@
 
             // Material name
             cswPrivate.materialInput = stepOneTable.cell(2, 1).input({
-                labelText: 'Material Name begins: ',
+                labelText: 'Material Name contains: ',
                 value: cswPrivate.OperationData.MaterialName
             });
 
