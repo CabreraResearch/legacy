@@ -595,7 +595,7 @@ namespace ChemSW.Nbt.ObjClasses
                             case FulfillMenu.MoveContainers:
                                 ButtonData.Action = CswEnumNbtButtonAction.move;
                                 //TODO - see if we need these propertes (or others) depending on the Request Type
-                                //ButtonData.Data["title"] = "Fulfill Request for " + SizeCount.Value + " x " + Size.Gestalt + " of " + Material.Gestalt;
+                                //ButtonData.Data["title"] = "Fulfill " + Description.StaticText;//Defaults to 'Move Containers'
                                 //ButtonData.Data["sizeid"] = Size.RelatedNodeId.ToString();
                                 ButtonData.Data["location"] = Location.Gestalt;
                                 break;

@@ -2365,7 +2365,7 @@ namespace ChemSW.Nbt.WebPages
                                 RelatedPropType.ID = "EditProp_RelatedPropType" + SelectedNodeTypeProp.PropId.ToString();
                                 RelatedPropRow.Cells[1].Controls.Add( RelatedPropType );
 
-                                IEnumerable<CswNbtMetaDataNodeType> NodeTypeCol = null;
+                                IEnumerable<CswNbtMetaDataNodeType> NodeTypeCol = new Collection<CswNbtMetaDataNodeType>();
                                 if( RelationshipProp != null )
                                 {
                                     if( RelationshipProp.FKType == CswEnumNbtViewRelatedIdType.NodeTypeId.ToString() )
@@ -2389,7 +2389,7 @@ namespace ChemSW.Nbt.WebPages
                                         {
                                             if( RelatedObjectClass != null )
                                             {
-                                                NodeTypeCol.Union( RelatedObjectClass.getNodeTypes() );
+                                                NodeTypeCol = NodeTypeCol.Union( RelatedObjectClass.getNodeTypes() );
                                             }
                                         }
                                     }

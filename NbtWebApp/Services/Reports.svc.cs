@@ -1,10 +1,12 @@
 ﻿using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Data;
 using System.IO;
 using System.ServiceModel;
 using System.ServiceModel.Activation;
 using System.ServiceModel.Web;
 using System.Web;
+using ChemSW.DB;
 using ChemSW.Nbt.WebServices;
 using ChemSW.WebSvc;
 using NbtWebApp.WebSvc.Logic.Reports;
@@ -114,6 +116,37 @@ namespace NbtWebApp
             return Request.stream;
         }
 
+        [OperationContract]
+        [WebInvoke( BodyStyle = WebMessageBodyStyle.Bare, Method = "POST" )]
+        [Description( "Generate an xml report file" )]
+        [FaultContract( typeof( FaultException ) )]
+        [ServiceKnownType(typeof(CswDataTable))]
+        public DataTable reportXML( Stream dataStream )
+        {
+            string body = new StreamReader( dataStream ).ReadToEnd();
+            NameValueCollection formData = HttpUtility.ParseQueryString( body );
+
+            CswNbtWebServiceReport.ReportReturn Ret = new CswNbtWebServiceReport.ReportReturn();
+            CswNbtWebServiceReport.ReportData Request = new CswNbtWebServiceReport.ReportData();
+            Request.Context = HttpContext.Current;
+            Request.nodeIdStr = formData["reportid"];
+            Request.reportFormat = formData["reportFormat"];
+            formData.Remove( "reportid" );
+            formData.Remove( "reportFormat" );
+            Request.reportParams = CswNbtWebServiceReport.FormReportParamsToCollection( formData );
+
+            var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceReport.ReportReturn, CswNbtWebServiceReport.ReportData>(
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj: Ret,
+                WebSvcMethodPtr: CswNbtWebServiceReport.runReportXML,
+                ParamObj: Request
+                );
+            SvcDriver.run();
+
+            WebOperationContext.Current.OutgoingResponse.Headers.Set( "Content-Disposition", "attachment; filename=\"report.xml\";" );
+
+            return Request.datatable;
+        }
         [OperationContract]
         [WebInvoke( Method = "POST" )]
         [Description( "Gets a Reports parameters in the sql" )]
