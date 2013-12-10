@@ -769,22 +769,25 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropList Status { get { return _CswNbtNode.Properties[PropertyName.Status]; } }
         private void _onStatusPropChange( CswNbtNodeProp Prop, bool Creating )
         {
-            switch( Status.Value )
+            if( Status.Value != Status.GetOriginalPropRowValue() )
             {
-                case Statuses.Submitted:
-                    FulfillmentHistory.AddComment( "Request Item Submitted." );
-                    break;
-                case Statuses.Completed:
-                    FulfillmentHistory.AddComment( "Request Item Completed." );
-                    if( null != Request.RelatedNodeId )
-                    {
-                        CswNbtObjClassRequest ParentRequest = _CswNbtResources.Nodes[Request.RelatedNodeId];
-                        ParentRequest.setCompletedDate();
-                    }
-                    break;
-                case Statuses.Cancelled:
-                    FulfillmentHistory.AddComment( "Request Item Cancelled." );
-                    break;
+                switch( Status.Value )
+                {
+                    case Statuses.Submitted:
+                        FulfillmentHistory.AddComment( "Request Item Submitted." );
+                        break;
+                    case Statuses.Completed:
+                        FulfillmentHistory.AddComment( "Request Item Completed." );
+                        if( null != Request.RelatedNodeId )
+                        {
+                            CswNbtObjClassRequest ParentRequest = _CswNbtResources.Nodes[Request.RelatedNodeId];
+                            ParentRequest.setCompletedDate();
+                        }
+                        break;
+                    case Statuses.Cancelled:
+                        FulfillmentHistory.AddComment( "Request Item Cancelled." );
+                        break;
+                }
             }
             _updateCartCounts();
         }
