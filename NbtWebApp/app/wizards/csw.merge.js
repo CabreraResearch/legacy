@@ -17,10 +17,10 @@
             },
             onFinish: function(viewid) {},
             onCancel: function() {},
-//            node1: null,
-//            node2: null,
-            node1: { nodeid: 'nodes_43746', nodename: 'isopropylguacamolate Sigma 123', nodetypeid: 1014 },      // TODO: REMOVE ME
-            node2: { nodeid: 'nodes_43747', nodename: 'iso-propyl-guacamolate Sigma 123.1', nodetypeid: 1014 },  // TODO: REMOVE ME
+            node1: null,
+            node2: null,
+//            node1: { nodeid: 'nodes_43746', nodename: 'isopropylguacamolate Sigma 123', nodetypeid: 1014 },      // TODO: REMOVE ME
+//            node2: { nodeid: 'nodes_43747', nodename: 'iso-propyl-guacamolate Sigma 123.1', nodetypeid: 1014 },  // TODO: REMOVE ME
             mergeData: null,
             searchSource: null,
             searchDest: null,
