@@ -352,10 +352,10 @@ namespace ChemSW.Nbt.Actions
             if( null != Node1 && null != Node2 )
             {
                 // Set property values according to choice
-                resultNode.copyPropertyValues( Node2 );
+                resultNode.copyPropertyValuesGeneric( Node2 );
                 foreach( MergeInfoData.MergeInfoProperty mergeProp in nodePair.Properties.Where( mergeProp => mergeProp.Choice == 1 ) )
                 {
-                    resultNode.Properties[mergeProp.NodeTypePropId].copy( Node1.Properties[mergeProp.NodeTypePropId] );
+                    resultNode.Properties[mergeProp.NodeTypePropId].copyGeneric( Node1.Properties[mergeProp.NodeTypePropId] );
                 }
 
                 // Set references to new merged node

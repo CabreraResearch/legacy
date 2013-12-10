@@ -322,6 +322,16 @@ namespace ChemSW.Nbt.PropTypes
             _CswNbtNodeProp.Copy( Source );
         }
 
+
+        /// <summary>
+        /// Copy property value, forcing generic behavior and bypassing field-type specific behavior
+        /// </summary>
+        public void copyGeneric( CswNbtNodePropWrapper Source )
+        {
+            _CswNbtNodeProp.CopyGeneric( Source._CswNbtNodePropData );
+        }
+
+
         private string _makeTypeErrorMessage( Type CurrentType )
         {
             return ( "Current class is not of type " + CurrentType.ToString() );

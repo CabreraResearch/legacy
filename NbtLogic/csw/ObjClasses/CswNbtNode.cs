@@ -551,6 +551,25 @@ namespace ChemSW.Nbt.ObjClasses
         } // copyPropertyValues()
 
         /// <summary>
+        /// Copies all matching properties (by name and field type) from another node. 
+        /// Forces generic behavior (bypasses field-type specific copy behavior)
+        /// </summary>
+        /// <param name="SourceNode">Node from which to copy property values</param>
+        public void copyPropertyValuesGeneric( CswNbtNode SourceNode )
+        {
+            foreach( CswNbtNodePropWrapper SourceProp in SourceNode.Properties )
+            {
+                foreach( CswNbtNodePropWrapper ThisProp in this.Properties )
+                {
+                    if( ThisProp.PropName == SourceProp.PropName && ThisProp.getFieldTypeValue() == SourceProp.getFieldTypeValue() )
+                    {
+                        ThisProp.copyGeneric( SourceProp );
+                    } // if( ThisProp.PropName == SourceProp.PropName && ThisProp.FieldType == SourceProp.FieldType )
+                } // foreach( CswNbtNodePropWrapper ThisProp in this.Properties )
+            } // foreach( CswNbtNodePropWrapper SourceProp in SourceNode.Properties )
+        } // copyPropertyValuesGeneric()
+
+        /// <summary>
         /// Sets the values of all relationships whose target matches 
         /// the ParentNode's nodetypeid or objectclassid to the ParentNode's nodeid.
         /// </summary>
