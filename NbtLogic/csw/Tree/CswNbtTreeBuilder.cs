@@ -68,19 +68,19 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Instance a Tree from a View
         /// </summary>
-        public ICswNbtTree getTreeFromView( CswNbtView View, bool RequireViewPermissions, bool IncludeSystemNodes, bool IncludeHiddenNodes, Int32 PerLevelNodeLimit = Int32.MinValue )
+        public ICswNbtTree getTreeFromView( CswNbtView View, bool RequireViewPermissions, bool IncludeSystemNodes, bool IncludeHiddenNodes, bool IncludeTempNodes = false, Int32 PerLevelNodeLimit = Int32.MinValue )
         {
-            return getTreeFromView( _CswNbtResources.CurrentNbtUser, View, RequireViewPermissions, IncludeSystemNodes, IncludeHiddenNodes, PerLevelNodeLimit );
+            return getTreeFromView( _CswNbtResources.CurrentNbtUser, View, RequireViewPermissions, IncludeSystemNodes, IncludeHiddenNodes, IncludeTempNodes, PerLevelNodeLimit );
         }
 
         /// <summary>
         /// Instance a Tree from a View
         /// </summary>
-        public ICswNbtTree getTreeFromView( ICswNbtUser RunAsUser, CswNbtView View, bool RequireViewPermissions, bool IncludeSystemNodes, bool IncludeHiddenNodes, Int32 PerLevelNodeLimit = Int32.MinValue )
+        public ICswNbtTree getTreeFromView( ICswNbtUser RunAsUser, CswNbtView View, bool RequireViewPermissions, bool IncludeSystemNodes, bool IncludeHiddenNodes, bool IncludeTempNodes = false, Int32 PerLevelNodeLimit = Int32.MinValue )
         {
             ICswNbtTree ReturnVal = _makeTree( View, true );
 
-            CswNbtTreeLoaderFromXmlViewByLevel TreeLoader = new CswNbtTreeLoaderFromXmlViewByLevel( _CswNbtResources, RunAsUser, ReturnVal, View, IncludeSystemNodes, IncludeHiddenNodes );
+            CswNbtTreeLoaderFromXmlViewByLevel TreeLoader = new CswNbtTreeLoaderFromXmlViewByLevel( _CswNbtResources, RunAsUser, ReturnVal, View, IncludeSystemNodes, IncludeHiddenNodes, IncludeTempNodes );
             TreeLoader.load( RequireViewPermissions, PerLevelNodeLimit );
 
             return ( ReturnVal );

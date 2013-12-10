@@ -12,15 +12,16 @@ using ChemSW.Nbt.Security;
 
 namespace ChemSW.Nbt
 {
-    public class CswNbtTreeLoaderFromXmlViewByLevel: CswNbtTreeLoader
+    public class CswNbtTreeLoaderFromXmlViewByLevel : CswNbtTreeLoader
     {
         private CswNbtResources _CswNbtResources = null;
         private CswNbtView _View;
         private ICswNbtUser _RunAsUser;
-        private bool _IncludeSystemNodes = false;
+        private bool _IncludeSystemNodes;
         private bool _IncludeHiddenNodes;
+        private bool _IncludeTempNodes;
 
-        public CswNbtTreeLoaderFromXmlViewByLevel( CswNbtResources CswNbtResources, ICswNbtUser RunAsUser, ICswNbtTree pCswNbtTree, CswNbtView View, bool IncludeSystemNodes, bool IncludeHiddenNodes )
+        public CswNbtTreeLoaderFromXmlViewByLevel( CswNbtResources CswNbtResources, ICswNbtUser RunAsUser, ICswNbtTree pCswNbtTree, CswNbtView View, bool IncludeSystemNodes, bool IncludeHiddenNodes, bool IncludeTempNodes )
             : base( pCswNbtTree )
         {
             _CswNbtResources = CswNbtResources;
@@ -28,6 +29,7 @@ namespace ChemSW.Nbt
             _View = View;
             _IncludeSystemNodes = IncludeSystemNodes;
             _IncludeHiddenNodes = IncludeHiddenNodes;
+            _IncludeTempNodes = IncludeTempNodes;
         }
 
         public override void load( bool RequireViewPermissions, Int32 ResultsLimit = Int32.MinValue )
@@ -38,7 +40,7 @@ namespace ChemSW.Nbt
             foreach( CswNbtViewRelationship Relationship in _View.Root.ChildRelationships )
             {
                 bool GroupBySiblings = _View.GroupBySiblings && _View.Root.ChildRelationships.Count > 1;
-                loadRelationshipRecursive( Relationship, RequireViewPermissions, GroupBySiblings, ResultsLimit : ResultsLimit );
+                loadRelationshipRecursive( Relationship, RequireViewPermissions, GroupBySiblings, ResultsLimit: ResultsLimit );
             }
             _CswNbtTree.goToRoot();
 
@@ -284,30 +286,34 @@ namespace ChemSW.Nbt
                             left join favorites f on n.nodeid = f.itemid " + CurrentUserIdClause + @"
                             join nodetypes t on (n.nodetypeid = t.nodetypeid)
                             join object_class o on (t.objectclassid = o.objectclassid) ";
-            string Where = " where n.istemp= '0' ";
             string OrderBy = string.Empty;
+
+            // Nodetype/Object Class filter
+            string Where;
+            if( Relationship.SecondType == CswEnumNbtViewRelatedIdType.NodeTypeId )
+            {
+                Where = " where (t.firstversionid = " + Relationship.SecondId + ") ";
+            }
+            else if( Relationship.SecondType == CswEnumNbtViewRelatedIdType.ObjectClassId )
+            {
+                Where = " where (o.objectclassid = " + Relationship.SecondId + ") ";
+            }
+            else if( Relationship.SecondType == CswEnumNbtViewRelatedIdType.PropertySetId )
+            {
+                From += @" join jct_propertyset_objectclass jpo on (o.objectclassid = jpo.objectclassid) 
+                           join property_set ps on (jpo.propertysetid = ps.propertysetid) ";
+                Where = " where (ps.propertysetid = " + Relationship.SecondId + ") ";
+            }
+            else
+            {
+                throw new CswDniException( CswEnumErrorType.Error, "Invalid View", "CswNbtTreeLoaderFromXmlViewByLevel got a relationship with an unrecognized SecondType: " + Relationship.SecondType.ToString() );
+            }
 
             //If we have access to disabled module MetaData, we should have access to their Nodes as well
             if( _CswNbtResources.MetaData.ExcludeDisabledModules )
             {
                 // case 26029
                 Where += " and t.enabled = '1' ";
-            }
-
-            // Nodetype/Object Class filter
-            if( Relationship.SecondType == CswEnumNbtViewRelatedIdType.NodeTypeId )
-            {
-                Where += " and (t.firstversionid = " + Relationship.SecondId + ") ";
-            }
-            else if( Relationship.SecondType == CswEnumNbtViewRelatedIdType.ObjectClassId )
-            {
-                Where += " and (o.objectclassid = " + Relationship.SecondId + ") ";
-            }
-            else if( Relationship.SecondType == CswEnumNbtViewRelatedIdType.PropertySetId )
-            {
-                From += @" join jct_propertyset_objectclass jpo on (o.objectclassid = jpo.objectclassid) 
-                           join property_set ps on (jpo.propertysetid = ps.propertysetid) ";
-                Where += " and (ps.propertysetid = " + Relationship.SecondId + ") ";
             }
 
             // Parent Node
@@ -719,13 +725,17 @@ namespace ChemSW.Nbt
             }
 
             // BZ 6008
-            if( !_IncludeSystemNodes )
+            if( false == _IncludeSystemNodes )
             {
                 Where += " and n.issystem = '0' ";
             }
             if( false == _IncludeHiddenNodes )
             {
                 Where += " and n.hidden = '0' ";
+            }
+            if( false == _IncludeTempNodes )
+            {
+                Where += " and n.istemp= '0' ";
             }
 
             string Sql = string.Empty;
