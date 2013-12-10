@@ -213,48 +213,52 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }//afterWriteNode()
 
-        public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
+        public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false, bool ValidateRequiredRelationships = true )
         {
-            // case 22486 - Don't allow deleting targets of required relationships
-            CswTableSelect JctSelect = _CswNbtResources.makeCswTableSelect( "defaultBeforeDeleteNode_jnp_select", "jct_nodes_props" );
-            string WhereClause = " where nodetypepropid in (select nodetypepropid from nodetype_props where isrequired = '1') and field1_fk = " + _CswNbtNode.NodeId.PrimaryKey.ToString();
-            CswCommaDelimitedString SelectClause = new CswCommaDelimitedString() { "nodeid" };
-            DataTable MatchTable = JctSelect.getTable( SelectClause, WhereClause );
-
-            if( MatchTable.Rows.Count > 0 )
+            if( ValidateRequiredRelationships )
             {
-                CswCommaDelimitedString InUseStr = new CswCommaDelimitedString();
-                foreach( DataRow MatchRow in MatchTable.Rows )
-                {
-                    CswPrimaryKey MatchNodePk = new CswPrimaryKey( "nodes", CswConvert.ToInt32( MatchRow["nodeid"] ) );
-                    if( DeleteAllRequiredRelatedNodes )
-                    {
-                        CswNbtNode NodeToDelete = _CswNbtResources.Nodes.GetNode( MatchNodePk );
-                        if( null != NodeToDelete )
-                        {
-                            NodeToDelete.delete( DeleteAllRequiredRelatedNodes: DeleteAllRequiredRelatedNodes );
-                        }
-                    }
-                    else
-                    {
-                        CswNbtNode RelatedNode = _CswNbtResources.Nodes[MatchNodePk];
-                        if( null != RelatedNode )
-                        {
-                            InUseStr.Add( RelatedNode.NodeLink );
-                        }
+                // case 22486 - Don't allow deleting targets of required relationships
+                CswTableSelect JctSelect = _CswNbtResources.makeCswTableSelect( "defaultBeforeDeleteNode_jnp_select", "jct_nodes_props" );
+                string WhereClause = " where nodetypepropid in (select nodetypepropid from nodetype_props where isrequired = '1') and field1_fk = " + _CswNbtNode.NodeId.PrimaryKey.ToString();
+                CswCommaDelimitedString SelectClause = new CswCommaDelimitedString() { "nodeid" };
+                DataTable MatchTable = JctSelect.getTable( SelectClause, WhereClause );
 
-                    }
-                }
-                if( false == DeleteAllRequiredRelatedNodes )
+                if( MatchTable.Rows.Count > 0 )
                 {
-                    throw new CswDniException( CswEnumErrorType.Warning,
-                                              "This " + _CswNbtNode.getNodeType().NodeTypeName +
-                                              " cannot be deleted because it is in use by: " + InUseStr,
-                                              "Current user (" + _CswNbtResources.CurrentUser.Username +
-                                              ") tried to delete a " + _CswNbtNode.getNodeType().NodeTypeName +
-                                              " that is in use by: " + InUseStr );
-                }
-            }
+                    CswCommaDelimitedString InUseStr = new CswCommaDelimitedString();
+                    foreach( DataRow MatchRow in MatchTable.Rows )
+                    {
+                        CswPrimaryKey MatchNodePk = new CswPrimaryKey( "nodes", CswConvert.ToInt32( MatchRow["nodeid"] ) );
+                        if( DeleteAllRequiredRelatedNodes )
+                        {
+                            CswNbtNode NodeToDelete = _CswNbtResources.Nodes.GetNode( MatchNodePk );
+                            if( null != NodeToDelete )
+                            {
+                                NodeToDelete.delete( DeleteAllRequiredRelatedNodes: DeleteAllRequiredRelatedNodes );
+                            }
+                        }
+                        else
+                        {
+                            CswNbtNode RelatedNode = _CswNbtResources.Nodes[MatchNodePk];
+                            if( null != RelatedNode )
+                            {
+                                InUseStr.Add( RelatedNode.NodeLink );
+                            }
+
+                        }
+                    } // foreach( DataRow MatchRow in MatchTable.Rows )
+
+                    if( false == DeleteAllRequiredRelatedNodes )
+                    {
+                        throw new CswDniException( CswEnumErrorType.Warning,
+                                                   "This " + _CswNbtNode.getNodeType().NodeTypeName +
+                                                   " cannot be deleted because it is in use by: " + InUseStr,
+                                                   "Current user (" + _CswNbtResources.CurrentUser.Username +
+                                                   ") tried to delete a " + _CswNbtNode.getNodeType().NodeTypeName +
+                                                   " that is in use by: " + InUseStr );
+                    }
+                } // if( MatchTable.Rows.Count > 0 )
+            } // if( ValidateRequiredRelationships )
         } // beforeDeleteNode()
 
         public override void afterDeleteNode()

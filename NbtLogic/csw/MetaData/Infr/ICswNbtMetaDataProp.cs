@@ -20,6 +20,7 @@ namespace ChemSW.Nbt.MetaData
         string ListOptions { get; }
         CswEnumNbtPropertySelectMode Multi { get; }
         ICswNbtFieldTypeRule getFieldTypeRule();
+        bool IsNodeReference();
         bool IsUserRelationship();
         bool IsUnique();
         bool IsGlobalUnique();

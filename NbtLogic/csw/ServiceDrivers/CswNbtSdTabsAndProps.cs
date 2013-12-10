@@ -148,7 +148,7 @@ namespace ChemSW.Nbt.ServiceDrivers
         /// <summary>
         /// Create a new node according to NodeTypeId. Does not post changes after calling makeNodeFromNodeTypeId.
         /// </summary>
-        public CswNbtNode getAddNode( Int32 NodeTypeId, string RelatedNodeId, CswNbtNodeCollection.AfterMakeNode After )
+        public CswNbtNode getAddNode( Int32 NodeTypeId, string RelatedNodeId, Action<CswNbtNode> After )
         {
             CswNbtNode Ret = null;
             CswNbtMetaDataNodeType NodeType = null;
@@ -197,7 +197,7 @@ namespace ChemSW.Nbt.ServiceDrivers
         /// <summary>
         /// Create a new node according to NodeType. Posts changes.
         /// </summary>
-        public CswNbtNode getAddNodeAndPostChanges( CswNbtMetaDataNodeType NodeType, CswNbtNodeCollection.AfterMakeNode After )
+        public CswNbtNode getAddNodeAndPostChanges( CswNbtMetaDataNodeType NodeType, Action<CswNbtNode> After )
         {
             CswNbtNode Ret = null;
             if( null != NodeType )
@@ -217,7 +217,7 @@ namespace ChemSW.Nbt.ServiceDrivers
         /// <summary>
         /// Create a new node according to NodeTypeId. Posts changes.
         /// </summary>
-        public CswNbtNode getAddNodeAndPostChanges( Int32 NodeTypeId, string RelatedNodeId, CswNbtNodeCollection.AfterMakeNode After )
+        public CswNbtNode getAddNodeAndPostChanges( Int32 NodeTypeId, string RelatedNodeId, Action<CswNbtNode> After )
         {
             CswNbtNode Ret = getAddNode( NodeTypeId, RelatedNodeId, After );
             if( null != Ret )
@@ -270,7 +270,7 @@ namespace ChemSW.Nbt.ServiceDrivers
         /// <summary>
         /// Fetch or create a node, and return a JObject for all properties in the identity tab
         /// </summary>
-        public JObject getIdentityTabProps( CswPrimaryKey NodeId, string filterToPropId, string RelatedNodeId, CswDateTime Date = null )
+        public JObject getIdentityTabProps( CswPrimaryKey NodeId, string filterToPropId, string RelatedNodeId, bool ForceReadOnly = false, CswDateTime Date = null )
         {
             JObject Ret = new JObject();
 
@@ -279,7 +279,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             if( null != NodeType )
             {
                 CswNbtMetaDataNodeTypeTab IdentityTab = NodeType.getIdentityTab();
-                Ret = getProps( NodeId.ToString(), null, IdentityTab.TabId.ToString(), NodeType.NodeTypeId, filterToPropId, RelatedNodeId, false, Date );
+                Ret = getProps( NodeId.ToString(), null, IdentityTab.TabId.ToString(), NodeType.NodeTypeId, filterToPropId, RelatedNodeId, ForceReadOnly, Date );
                 Ret["tab"] = new JObject();
                 Ret["tab"]["tabid"] = IdentityTab.TabId;
             }
@@ -433,7 +433,9 @@ namespace ChemSW.Nbt.ServiceDrivers
                 LayoutType = CswEnumNbtLayoutType.LayoutTypeForEditMode( _CswNbtResources.EditMode );
             }
             CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout Layout = Prop.getLayout( LayoutType, TabId );
-            if( false == Node.Properties[Prop].Hidden || _ConfigMode )
+            if( _ConfigMode ||
+                ( false == Node.Properties[Prop].Hidden &&
+                  ( false == ForceReadOnly || Prop.getFieldTypeValue() != CswEnumNbtFieldType.Button ) ) ) // Hide buttons when ForceReadOnly is true
             {
                 JProperty JpProp = makePropJson( Node.NodeId, Prop, Node.Properties[Prop], Layout, ForceReadOnly, Node.Locked );
                 ParentObj.Add( JpProp );
@@ -656,7 +658,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             return ret;
         } // removeProp()
 
-        private CswNbtNode _addNode( CswNbtMetaDataNodeType NodeType, CswNbtNode Node, JObject PropsObj, out CswNbtNodeKey RetNbtNodeKey, CswNbtNodeCollection.AfterMakeNode After, CswNbtView View = null, CswNbtMetaDataNodeTypeTab NodeTypeTab = null )
+        private CswNbtNode _addNode( CswNbtMetaDataNodeType NodeType, CswNbtNode Node, JObject PropsObj, out CswNbtNodeKey RetNbtNodeKey, Action<CswNbtNode> After, CswNbtView View = null, CswNbtMetaDataNodeTypeTab NodeTypeTab = null )
         {
             CswNbtNode Ret = Node;
             RetNbtNodeKey = null;
@@ -665,7 +667,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             if( Quota.HasSpace )
             {
                 CswNbtNodeKey nodekey = null;
-                CswNbtNodeCollection.AfterMakeNode After2 = delegate( CswNbtNode NewNode )
+                Action<CswNbtNode> After2 = delegate( CswNbtNode NewNode )
                     {
                         bool CanEdit = (
                                             _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Edit, NodeType ) ||
@@ -699,12 +701,12 @@ namespace ChemSW.Nbt.ServiceDrivers
             return Ret;
         }
 
-        public CswNbtNode addNode( CswNbtMetaDataNodeType NodeType, JObject PropsObj, out CswNbtNodeKey RetNbtNodeKey, CswNbtNodeCollection.AfterMakeNode After, CswNbtView View = null, CswNbtMetaDataNodeTypeTab NodeTypeTab = null )
+        public CswNbtNode addNode( CswNbtMetaDataNodeType NodeType, JObject PropsObj, out CswNbtNodeKey RetNbtNodeKey, Action<CswNbtNode> After, CswNbtView View = null, CswNbtMetaDataNodeTypeTab NodeTypeTab = null )
         {
             return _addNode( NodeType, null, PropsObj, out RetNbtNodeKey, After, View, NodeTypeTab );
         }
 
-        public CswNbtNode addNode( CswNbtMetaDataNodeType NodeType, CswNbtNode Node, JObject PropsObj, out CswNbtNodeKey RetNbtNodeKey, CswNbtNodeCollection.AfterMakeNode After, CswNbtView View = null, CswNbtMetaDataNodeTypeTab NodeTypeTab = null )
+        public CswNbtNode addNode( CswNbtMetaDataNodeType NodeType, CswNbtNode Node, JObject PropsObj, out CswNbtNodeKey RetNbtNodeKey, Action<CswNbtNode> After, CswNbtView View = null, CswNbtMetaDataNodeTypeTab NodeTypeTab = null )
         {
             return _addNode( NodeType, Node, PropsObj, out RetNbtNodeKey, After, View, NodeTypeTab );
         }

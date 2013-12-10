@@ -9,8 +9,11 @@
         'use strict';
         var cswPrivate = {
             name: '',
+            nodename: '',
+            nodeid: '',
             text: '',
             linkText: '',
+            pretext: '',
             cssclasstext: '',
             cssclasslink: '',
             onClick: null
@@ -61,9 +64,13 @@
         (function () {
             if (options) Csw.extend(cswPrivate, options);
             cswPrivate.div = cswParent.div({ cssclass: cswPrivate.cssclasstext });
+            cswPrivate.div.append(cswPrivate.pretext);
             cswPublic = Csw.dom({}, cswPrivate.div);
-            cswPrivate.findNodeRef();
-
+            if (false === Csw.isNullOrEmpty(cswPrivate.text)) {
+                cswPrivate.findNodeRef();
+            } else {
+                cswPrivate.makeNodeLink(cswPrivate.nodeid, cswPrivate.nodename);
+            }
         }());
 
         return cswPublic;

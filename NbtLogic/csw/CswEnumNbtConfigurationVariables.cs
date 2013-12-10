@@ -145,7 +145,20 @@ namespace ChemSW.Nbt
         /// </summary>
         miss_outdated_inspections,
 
-        sql_report_resultlimit
+        /// <summary>
+        /// 
+        /// </summary>
+        sql_report_resultlimit,
+
+        /// <summary>
+        /// Customer username for accessing ChemWatch
+        /// </summary>
+        chemwatchusername,
+
+        /// <summary>
+        /// Customer password for accessing ChemWatch
+        /// </summary>
+        chemwatchpassword
 
     };
 

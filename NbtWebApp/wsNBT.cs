@@ -1816,7 +1816,7 @@ namespace ChemSW.Nbt.WebServices
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
         public string getIdentityTabProps( string EditMode, string NodeId, string SafeNodeKey, //string NodeTypeId, 
-            string Date, string filterToPropId, string Multi, string ConfigMode, string RelatedNodeId )
+            string Date, string filterToPropId, string Multi, string ConfigMode, string RelatedNodeId, bool ForceReadOnly = false )
         {
             JObject ReturnVal = new JObject();
             CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
@@ -1842,7 +1842,7 @@ namespace ChemSW.Nbt.WebServices
                         }
                     }
 
-                    ReturnVal = ws.getIdentityTabProps( RealNodeId, filterToPropId, RelatedNodeId, InDate );
+                    ReturnVal = ws.getIdentityTabProps( RealNodeId, filterToPropId, RelatedNodeId, ForceReadOnly, InDate );
                 }
 
                 _deInitResources();
@@ -2603,7 +2603,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string doUniversalSearch( string SearchTerm, string SearchType, string NodeTypeId, string ObjectClassId, string Page, string Limit )
+        public string doUniversalSearch( string SearchTerm, string SearchType, string NodeTypeId, string ObjectClassId, string Page, string Limit, string OnlyMergeableNodeTypes )
         {
             JObject ReturnVal = new JObject();
             CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
@@ -2615,7 +2615,7 @@ namespace ChemSW.Nbt.WebServices
                 if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     CswNbtWebServiceSearch ws = new CswNbtWebServiceSearch( _CswNbtResources, _CswNbtStatisticsEvents );
-                    ReturnVal = ws.doUniversalSearch( SearchTerm, (CswEnumSqlLikeMode) SearchType, CswConvert.ToInt32( NodeTypeId ), CswConvert.ToInt32( ObjectClassId ), CswConvert.ToInt32( Page ), CswConvert.ToInt32( Limit ) );
+                    ReturnVal = ws.doUniversalSearch( SearchTerm, (CswEnumSqlLikeMode) SearchType, CswConvert.ToInt32( NodeTypeId ), CswConvert.ToInt32( ObjectClassId ), CswConvert.ToInt32( Page ), CswConvert.ToInt32( Limit ), CswConvert.ToBoolean( OnlyMergeableNodeTypes ) );
                 }
                 _deInitResources();
             }
@@ -2976,7 +2976,7 @@ namespace ChemSW.Nbt.WebServices
 
                 CswNbtMetaDataNodeType feedbackNT = _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( nodetypeid ) );
 
-                CswNbtNodeCollection.AfterMakeNode After = delegate( CswNbtNode NewNode )
+                Action<CswNbtNode> After = delegate( CswNbtNode NewNode )
                     {
                         CswNbtObjClassFeedback newFeedbackNode = NewNode;
                         //if we have an action this is all we want/need/care about

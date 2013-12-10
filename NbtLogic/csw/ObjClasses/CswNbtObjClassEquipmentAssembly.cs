@@ -129,9 +129,9 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-        public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
+        public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false, bool ValidateRequiredRelationships = true )
         {
-            _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes );
+            _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes, ValidateRequiredRelationships );
 
         }//beforeDeleteNode()
 
@@ -167,13 +167,12 @@ namespace ChemSW.Nbt.ObjClasses
             return true;
         }
 
-        public override CswNbtNode CopyNode()
+        public override CswNbtNode CopyNode( bool IsNodeTemp = false)
         {
             // Copy this Assembly
-            CswNbtNode CopiedAssemblyNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, delegate( CswNbtNode NewNode )
+            CswNbtNode CopiedAssemblyNode = base.CopyNodeImpl( IsNodeTemp: IsNodeTemp, OnCopy: delegate( CswNbtNode NewNode )
                 {
                     NewNode.copyPropertyValues( Node );
-                    //CopiedAssemblyNode.postChanges( true, true );
                 } );
 
                                                                                                                                        // Copy all Equipment

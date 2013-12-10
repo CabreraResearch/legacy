@@ -403,9 +403,10 @@ namespace ChemSW.Nbt
 
         private void setProp( CswEnumNbtViewPropOwnerType InOwnerType, ICswNbtMetaDataProp Prop )
         {
-            CswNbtMetaDataFieldType FieldType = Prop.getFieldType();
-            if( FieldType.FieldType != CswEnumNbtFieldType.Relationship &&
-                FieldType.FieldType != CswEnumNbtFieldType.Location )
+            //CswNbtMetaDataFieldType FieldType = Prop.getFieldType();
+            //if( FieldType.FieldType != CswEnumNbtFieldType.Relationship &&
+            //    FieldType.FieldType != CswEnumNbtFieldType.Location )
+            if(false == Prop.IsNodeReference())
             {
                 throw new CswDniException( CswEnumErrorType.Error, "Illegal view setting", "Views must be built from Relationship or Location properties" );
             }

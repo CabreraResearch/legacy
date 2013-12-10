@@ -716,6 +716,7 @@ select
 	  join packdetail pd on c.packdetailid = pd.packdetailid
 	  join packages p on pd.packageid = p.packageid
 	  left outer join containers_props_view cpv on cpv.containerid = c.containerid
+	where c.containerclass != 'lotholder'
 	order by c.ContainerId;
 	  
 ---Inventory Levels

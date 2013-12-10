@@ -13,7 +13,7 @@ using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.PropTypes
 {
-    public class CswNbtNodePropQuantity : CswNbtNodeProp
+    public class CswNbtNodePropQuantity : CswNbtNodeProp, ICswNbtNodePropNodeReference
     {
         #region Private Variables
 
@@ -540,6 +540,41 @@ namespace ChemSW.Nbt.PropTypes
         }
 
         #endregion
+
+        #region ICswNbtNodePropNodeReference
+
+        public CswPrimaryKey ReferencedNodeId
+        {
+            get { return UnitId; }
+            set { UnitId = value; }
+        }
+        public string CachedNodeName
+        {
+            get { return CachedUnitName; }
+            set { CachedUnitName = value; }
+        }
+
+        public void RefreshNodeName()
+        {
+            CachedUnitName = string.Empty;
+            if( null != UnitId )
+            {
+                CswNbtNode RelatedNode = _CswNbtResources.Nodes[UnitId];
+                if( null != RelatedNode )
+                {
+                    CachedUnitName = RelatedNode.NodeName;
+                }
+            }
+            PendingUpdate = false;
+        }
+
+        public void clearRelationship()
+        {
+            UnitId = null;
+            CachedUnitName = string.Empty;
+        }
+
+        #endregion ICswNbtNodePropNodeReference
 
     }//CswNbtNodePropQuantity
 

@@ -45,12 +45,12 @@ namespace ChemSW.Nbt.ObjClasses
                             CswNbtMetaDataNodeTypeTab Tab = this.NodeType.getNodeTypeTab( TabIdInt );
                             if( null != Tab )
                             {
-                                Ret = _CswNbtResources.Permit.canTab( CswEnumNbtNodeTypePermission.Edit, this.NodeType, Tab, NodeId: NodeId );
+                                Ret = _CswNbtResources.Permit.canTab( CswEnumNbtNodeTypePermission.Edit, this.NodeType, Tab, NodeId : NodeId );
                             }
                         }
                         else
                         {
-                            Ret = _CswNbtResources.Permit.canAnyTab( CswEnumNbtNodeTypePermission.Edit, this.NodeType, NodeId: NodeId );
+                            Ret = _CswNbtResources.Permit.canAnyTab( CswEnumNbtNodeTypePermission.Edit, this.NodeType, NodeId : NodeId );
                         }
                         break;
                 }
@@ -91,7 +91,7 @@ namespace ChemSW.Nbt.ObjClasses
         public abstract void afterCreateNode();
         public abstract void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation, bool Creating );
         public abstract void afterWriteNode( bool Creating );
-        public abstract void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false );
+        public abstract void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false, bool ValidateRequiredRelationships = true );
         public abstract void afterDeleteNode();
 
         public void triggerAfterPopulateProps()
@@ -141,7 +141,7 @@ namespace ChemSW.Nbt.ObjClasses
             if( TabIdAsInt > 0 || ( null != SelectedTab && SelectedTab.HasValues ) )
             {
                 CswNbtSdTabsAndProps Sd = new CswNbtSdTabsAndProps( _CswNbtResources );
-                ButtonData.PropsToReturn = Sd.getProps( NodeId.ToString(), null, TabId, NodeTypeId, null, null, ForceReadOnly: false );
+                ButtonData.PropsToReturn = Sd.getProps( NodeId.ToString(), null, TabId, NodeTypeId, null, null, ForceReadOnly : false );
             }
         }
 
@@ -155,7 +155,7 @@ namespace ChemSW.Nbt.ObjClasses
                 Collection<Int32> TabIds = new Collection<int>();
                 if( null != ButtonData.TabIds )
                 {
-                    TabIds = ButtonData.TabIds.ToIntCollection( ExcludeMinVal: true, ExcludeDuplicates: true );
+                    TabIds = ButtonData.TabIds.ToIntCollection( ExcludeMinVal : true, ExcludeDuplicates : true );
                 }
 
                 if( TabIds.Count > 0 )
@@ -266,12 +266,20 @@ namespace ChemSW.Nbt.ObjClasses
         protected abstract bool onButtonClick( NbtButtonData ButtonData );
 
         public abstract void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship );
-        public virtual CswNbtNode CopyNode()
+
+        public virtual CswNbtNode CopyNode( bool IsNodeTemp = false )
         {
-            CswNbtNode CopiedNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, delegate( CswNbtNode NewNode )
+            return CopyNodeImpl( IsNodeTemp );
+        }
+        protected CswNbtNode CopyNodeImpl( bool IsNodeTemp = false, Action<CswNbtNode> OnCopy = null )
+        {
+            CswNbtNode CopiedNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, IsTemp : IsNodeTemp, OnAfterMakeNode : delegate( CswNbtNode NewNode )
                 {
                     NewNode.copyPropertyValues( Node );
-                    //CopiedNode.postChanges( true, true );
+                    if( null != OnCopy )
+                    {
+                        OnCopy( NewNode );
+                    }
                 } );
             return CopiedNode;
         }

@@ -8,14 +8,14 @@ namespace ChemSW.Nbt.ObjClasses
     /// <summary>
     /// Document Property Set
     /// </summary>
-    public abstract class CswNbtPropertySetPhrase: CswNbtObjClass
+    public abstract class CswNbtPropertySetPhrase : CswNbtObjClass
     {
         #region Enums
 
         /// <summary>
         /// Object Class property names
         /// </summary>
-        public new class PropertyName: CswNbtObjClass.PropertyName
+        public new class PropertyName : CswNbtObjClass.PropertyName
         {
             public const string Code = "Code";
             public const string English = "English";
@@ -177,10 +177,10 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtObjClassDefault.afterWriteNode( Creating );
         }
 
-        public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
+        public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false, bool ValidateRequiredRelationships = true )
         {
             beforePropertySetDeleteNode( DeleteAllRequiredRelatedNodes );
-            CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes );
+            CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes, ValidateRequiredRelationships );
         }
 
         public override void afterDeleteNode()
@@ -235,7 +235,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropText Slovenian { get { return ( _CswNbtNode.Properties[PropertyName.Slovenian] ); } }
         public CswNbtNodePropText Spanish { get { return ( _CswNbtNode.Properties[PropertyName.Spanish] ); } }
         public CswNbtNodePropText Swedish { get { return ( _CswNbtNode.Properties[PropertyName.Swedish] ); } }
-        
+
         #endregion
 
     }//CswNbtPropertySetDocument

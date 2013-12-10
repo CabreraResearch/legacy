@@ -10,6 +10,7 @@
             searchFiltersParent: {},
             nodetypeid: '',       // automatically filter results to this nodetype
             objectclassid: '',    // automatically filter results to this objectclass
+            allowNodeTypeChange: true,  // allowed to change which nodetype is filtered
             onBeforeSearch: null,
             onAfterSearch: null,
             onAfterNewSearch: null,
@@ -24,14 +25,18 @@
             extraAction: null,
             extraActionIcon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.none),
             onExtraAction: null,  // function(nodeObj) {}
-            compactResults: false,
+            compactResults: false,   // Don't show full table layout unless expanded
+            suppressButtons: false,  // Don't include buttons in results
             newsearchurl: 'doUniversalSearch',
             restoresearchurl: 'restoreUniversalSearch',
             sessiondataid: '',
             searchterm: '',
             searchtype: 'Begins',
             filterHideThreshold: 5,
-            universalSearchOnly: false
+            universalSearchOnly: false,
+            filterOutNodeId: null,
+            forceSingleColumn: false,
+            onlyMergeableNodeTypes: false,
             //buttonSingleColumn: '',
             //buttonMultiColumn: ''
         };
@@ -118,6 +123,10 @@
                             items: items
                         }
                     }); // toolbar
+
+                    if (false === cswPrivate.allowNodeTypeChange) {
+                        cswPrivate.preFilterSelect.disable();
+                    }
 
                     Csw.tryExec(cswPrivate.onSuccess);
                 } // success
@@ -207,6 +216,7 @@
 
             cswPrivate.searchinput = cswtable.cell(1, 3).input({
                 type: Csw.enums.inputTypes.search,
+                value: cswPrivate.searchterm,
                 width: cswPrivate.searchbox_width,
                 cssclass: 'mousetrap',
                 onKeyEnter: function () {
@@ -226,6 +236,7 @@
                     SearchType: cswPrivate.searchtype,
                     NodeTypeId: cswPrivate.nodetypeid,
                     ObjectClassId: cswPrivate.objectclassid,
+                    OnlyMergeableNodeTypes: cswPrivate.onlyMergeableNodeTypes,
                     Page: '0',
                     Limit: '0',
                 },
@@ -345,6 +356,7 @@
                 resultstable.cell(2, 1).propDom({ 'colspan': 3 });
 
                 nodeTable = Csw.nbt.nodeTable(resultstable.cell(2, 1), {
+                    cssclass: 'SearchTable',
                     onEditNode: function () {
                         // case 27245 - refresh on edit
                         cswPublic.restoreSearch(cswPrivate.sessiondataid);
@@ -367,6 +379,9 @@
                     extraActionIcon: cswPrivate.extraActionIcon,
                     onExtraAction: cswPrivate.onExtraAction,
                     compactResults: cswPrivate.compactResults,
+                    forceSingleColumn: cswPrivate.forceSingleColumn,
+                    suppressButtons: cswPrivate.suppressButtons,
+                    filterOutNodeId: cswPrivate.filterOutNodeId,
                     onMoreClick: function (nodetypeid, nodetypename) {
                         // a little bit of a kludge
                         cswPrivate.filterNodeType(nodetypeid);
@@ -379,9 +394,8 @@
             // Filter panel
             cswPrivate.searchFiltersParent.empty();
 
-            fdiv = cswPrivate.searchFiltersParent.div().css({
-                paddingTop: '15px'
-            });
+            fdiv = cswPrivate.searchFiltersParent.div();
+            fdiv.addClass('SearchFilterDiv');
 
             fdiv.span({ text: data.name }).br();
             //fdiv.span({ text: 'Searched For: ' + data.searchterm }).br();
@@ -629,6 +643,10 @@
             cswPrivate.searchTypeSelect.enable();
         };
 
+        cswPublic.getSearchTerm = function() {
+            return cswPrivate.searchterm;
+        };
+        
         return cswPublic;
     });
 })();

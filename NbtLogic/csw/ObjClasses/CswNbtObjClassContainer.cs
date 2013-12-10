@@ -179,9 +179,9 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.afterWriteNode( Creating );
         }//afterWriteNode()
 
-        public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
+        public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false, bool ValidateRequiredRelationships = true )
         {
-            _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes );
+            _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes, ValidateRequiredRelationships );
 
         }//beforeDeleteNode()
 
@@ -1007,6 +1007,10 @@ namespace ChemSW.Nbt.ObjClasses
                         CswNbtObjClassRequestItem NodeAsRequestItem = Tree.getNodeForCurrentPosition();
                         if( null != NodeAsRequestItem )
                         {
+                            if( RequestItemType == CswNbtObjClassRequestItem.Types.ContainerMove )
+                            {
+                                NodeAsRequestItem.FulfillmentHistory.AddComment( "Moved " + Node.NodeLink + " to " + Location.CachedFullPath );
+                            }
                             NodeAsRequestItem.Status.Value = CswNbtObjClassRequestItem.Statuses.Completed;
                             NodeAsRequestItem.postChanges( false );
                         }
