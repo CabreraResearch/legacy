@@ -17,7 +17,6 @@ namespace ChemSW.Nbt.Requesting
         {
             switch( Prop.PropName )
             {
-                case CswNbtObjClassRequestItem.PropertyName.InventoryGroup:
                 case CswNbtObjClassRequestItem.PropertyName.Location:
                 case CswNbtObjClassRequestItem.PropertyName.ExternalOrderNumber:
                 case CswNbtObjClassRequestItem.PropertyName.EnterprisePart:
@@ -35,6 +34,9 @@ namespace ChemSW.Nbt.Requesting
                 case CswNbtObjClassRequestItem.PropertyName.ReceiptLotToDispense:
                 case CswNbtObjClassRequestItem.PropertyName.ReceiptLotsReceived:
                     Prop.setHidden( true, SaveToDb: false );
+                    break;
+                case CswNbtObjClassRequestItem.PropertyName.InventoryGroup:
+                    Prop.setReadOnly( true, SaveToDb: false );
                     break;
             }
         }

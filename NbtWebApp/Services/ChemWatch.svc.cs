@@ -132,7 +132,9 @@ namespace NbtWebApp
             {
                 FileName = FileName + ".pdf";
             }
-            WebOperationContext.Current.OutgoingResponse.Headers.Set( "Content-Disposition", "attachment; filename=\"" + FileName + "\";" );
+
+            WebOperationContext.Current.OutgoingResponse.Headers.Set( "Content-disposition", "inline; filename=" + FileName );
+            WebOperationContext.Current.OutgoingResponse.ContentType = "application/pdf";
 
             return Ret.Data.SDSDocument;
         }//startImport()

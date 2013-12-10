@@ -438,6 +438,11 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 _setUIVisibility();//This sets the Request Item's add layout based on its Type
                 TypeDef.setQuantityOptions();
+                if( null != Container.RelatedNodeId )//Set Inventory Group to Container's Inventory Group (if applicable)
+                {
+                    CswNbtObjClassContainer ContainerNode = _CswNbtResources.Nodes[Container.RelatedNodeId];
+                    InventoryGroup.RelatedNodeId = ContainerNode.getPermissionGroupId();
+                }
             }
             _setDefaultValues();
             TypeDef.setDescription();
@@ -595,7 +600,7 @@ namespace ChemSW.Nbt.ObjClasses
                             case FulfillMenu.MoveContainers:
                                 ButtonData.Action = CswEnumNbtButtonAction.move;
                                 //TODO - see if we need these propertes (or others) depending on the Request Type
-                                //ButtonData.Data["title"] = "Fulfill Request for " + SizeCount.Value + " x " + Size.Gestalt + " of " + Material.Gestalt;
+                                //ButtonData.Data["title"] = "Fulfill " + Description.StaticText;//Defaults to 'Move Containers'
                                 //ButtonData.Data["sizeid"] = Size.RelatedNodeId.ToString();
                                 ButtonData.Data["location"] = Location.Gestalt;
                                 break;
@@ -608,8 +613,7 @@ namespace ChemSW.Nbt.ObjClasses
                                     ContainerNode.Location.CachedNodeName = Location.CachedNodeName;
                                     ContainerNode.Location.CachedPath = Location.CachedPath;
                                     ContainerNode.postChanges( false );
-                                    FulfillmentHistory.AddComment( "Moved " + ContainerNode.Node.NodeLink + " to " + Location.CachedFullPath );
-                                    Status.Value = Statuses.Completed;
+                                    //Note: The Container will mark all related Move request items (including this one) as Completed
                                 }
                                 break;
                             case FulfillMenu.Dispose:
@@ -764,22 +768,25 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropList Status { get { return _CswNbtNode.Properties[PropertyName.Status]; } }
         private void _onStatusPropChange( CswNbtNodeProp Prop, bool Creating )
         {
-            switch( Status.Value )
+            if( Status.Value != Status.GetOriginalPropRowValue() )
             {
-                case Statuses.Submitted:
-                    FulfillmentHistory.AddComment( "Request Item Submitted." );
-                    break;
-                case Statuses.Completed:
-                    FulfillmentHistory.AddComment( "Request Item Completed." );
-                    if( null != Request.RelatedNodeId )
-                    {
-                        CswNbtObjClassRequest ParentRequest = _CswNbtResources.Nodes[Request.RelatedNodeId];
-                        ParentRequest.setCompletedDate();
-                    }
-                    break;
-                case Statuses.Cancelled:
-                    FulfillmentHistory.AddComment( "Request Item Cancelled." );
-                    break;
+                switch( Status.Value )
+                {
+                    case Statuses.Submitted:
+                        FulfillmentHistory.AddComment( "Request Item Submitted." );
+                        break;
+                    case Statuses.Completed:
+                        FulfillmentHistory.AddComment( "Request Item Completed." );
+                        if( null != Request.RelatedNodeId )
+                        {
+                            CswNbtObjClassRequest ParentRequest = _CswNbtResources.Nodes[Request.RelatedNodeId];
+                            ParentRequest.setCompletedDate();
+                        }
+                        break;
+                    case Statuses.Cancelled:
+                        FulfillmentHistory.AddComment( "Request Item Cancelled." );
+                        break;
+                }
             }
             _updateCartCounts();
         }
