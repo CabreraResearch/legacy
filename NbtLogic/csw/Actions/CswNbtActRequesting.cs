@@ -720,7 +720,7 @@ namespace ChemSW.Nbt.Actions
 
         #region Private helper functions
 
-        //TODO - for some reason, even though we're calling this before the Add layout shows up, we're using the previous version - how do we fix this?
+        //TODO - Case 31302 - for some reason, even though we're calling this before the Add layout shows up, we're using the previous version - how do we fix this?
         private void _setRequestItemSizesView( CswNbtViewId SizeViewId, CswPrimaryKey SizeMaterialId )
         {
             CswNbtMetaDataObjectClass SizeOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.SizeClass );
