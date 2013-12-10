@@ -2,14 +2,17 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
+using System.ServiceModel;
 using ChemSW.Config;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
+using ChemSW.MtSched.Core;
 using ChemSW.Nbt.csw.ImportExport;
 using ChemSW.Nbt.csw.Schema;
 using ChemSW.Nbt.Grid;
 using ChemSW.Nbt.ImportExport;
+using ChemSW.Nbt.NbtSchedSvcRef;
 using ChemSW.Nbt.Sched;
 using ChemSW.Nbt.Schema;
 using ChemSW.RscAdo;
@@ -256,13 +259,39 @@ namespace ChemSW.Nbt.WebServices
             //Create custom NodeTypeProps from CAF Properties collections and set up bindings for them
             CswNbtImportTools.CreateAllCAFProps( _CswNbtResources, CswEnumSetupMode.NbtWeb );
 
-            // Enable the CAFImport rule
+            // Enable the CAFImport rule in the database
             CswTableUpdate TableUpdate = _CswNbtResources.makeCswTableUpdate( "enableCafImportRule", "scheduledrules" );
             DataTable DataTable = TableUpdate.getTable( "where rulename = '" + CswEnumNbtScheduleRuleNames.CAFImport + "'" );
             if( DataTable.Rows.Count > 0 )
             {
                 DataTable.Rows[0]["disabled"] = CswConvert.ToDbVal( false );
                 TableUpdate.update( DataTable );
+            }
+
+            //create a connection to the schedule service
+            CswSchedSvcAdminEndPointClient SchedSvcRef = new CswSchedSvcAdminEndPointClient();
+            EndpointAddress URI = new EndpointAddress( CswResources.SetupVbls["SchedServiceUri"] );
+            SchedSvcRef.Endpoint.Address = URI;
+
+            //fetch the CAFImport rule from ScheduleService
+            CswSchedSvcParams CswSchedSvcParams = new CswSchedSvcParams();
+            CswSchedSvcParams.CustomerId = _CswNbtResources.AccessId;
+            CswSchedSvcParams.RuleName = CswEnumNbtScheduleRuleNames.CAFImport;
+            CswSchedSvcReturn CAFRuleResponse = SchedSvcRef.getRules( CswSchedSvcParams );
+
+            //take the rule that was returned from the last request, set disabled to false, then send it back as an update
+            CswScheduleLogicDetail CAFImport = CAFRuleResponse.Data[0];
+            CAFImport.Disabled = false;
+            CswSchedSvcParams.LogicDetails.Add( CAFImport );
+
+            CswSchedSvcReturn svcReturn = SchedSvcRef.updateScheduledRules( CswSchedSvcParams );
+            if( null != svcReturn )
+            {
+                Ret.Status = svcReturn.Status;
+            }
+            else
+            {
+                throw new CswDniException( "Failed to connect to schedule service" );
             }
         }
 
