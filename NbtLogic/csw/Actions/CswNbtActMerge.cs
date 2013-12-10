@@ -178,6 +178,40 @@ namespace ChemSW.Nbt.Actions
                         } // foreach( CswDelimitedString key in Node1UniqueKeysDict.Keys )
                     } // foreach( CswNbtMetaDataNodeTypeProp thisProp in _CswNbtResources.MetaData.getNodeTypeProps().Where( p => p.IsNodeReference() ) )
 
+                    // Special case: UserSelect properties
+                    if( Node1NT.getObjectClassValue() == CswEnumNbtObjectClass.UserClass )
+                    {
+                        foreach( CswNbtMetaDataNodeTypeProp thisUserSelProp in _CswNbtResources.MetaData.getNodeTypeProps( CswEnumNbtFieldType.UserSelect ) )
+                        {
+                            // Create a view of nodes that point to either merged node via this reference
+                            CswNbtView view = new CswNbtView( _CswNbtResources );
+                            CswNbtViewRelationship rel1 = view.AddViewRelationship( thisUserSelProp.getNodeType(), false );
+                            view.AddViewPropertyAndFilter( rel1,
+                                                           thisUserSelProp,
+                                                           Conjunction: CswEnumNbtFilterConjunction.And,
+                                                           FilterMode: CswEnumNbtFilterMode.Contains,
+                                                           Value: Node1.NodeId.PrimaryKey.ToString() );
+                            view.AddViewPropertyAndFilter( rel1,
+                                                           thisUserSelProp,
+                                                           Conjunction: CswEnumNbtFilterConjunction.Or,
+                                                           FilterMode: CswEnumNbtFilterMode.Contains,
+                                                           Value: Node2.NodeId.PrimaryKey.ToString() );
+
+                            // Add nodes with matching UserSelect properties to NodeReferences for later updating
+                            ICswNbtTree tree = _CswNbtResources.Trees.getTreeFromView( view, RequireViewPermissions: false, IncludeHiddenNodes: true, IncludeSystemNodes: true );
+                            for( Int32 c = 0; c < tree.getChildNodeCount(); c++ )
+                            {
+                                tree.goToNthChild( c );
+                                NodePair.NodeReferences.Add( new MergeInfoData.MergeInfoNodeReference()
+                                    {
+                                        NodeId = tree.getNodeIdForCurrentPosition().ToString(),
+                                        NodeTypePropId = thisUserSelProp.PropId
+                                    } );
+                                tree.goToParentNode();
+                            } // for( Int32 c = 0; c < tree.getChildNodeCount(); c++ )
+                        } // foreach( CswNbtMetaDataNodeTypeProp thisUserSelProp in _CswNbtResources.MetaData.getNodeTypeProps( CswEnumNbtFieldType.UserSelect ) )
+                    } // if( Node1NT.getObjectClassValue() == CswEnumNbtObjectClass.UserClass )
+
                 } // if(false == ret.NodePairs.Any( ... ))
             } // if( null != Node1 && null != Node2 )
         } // _addMergeNodes()
@@ -374,8 +408,19 @@ namespace ChemSW.Nbt.Actions
                     foreach( MergeInfoData.MergeInfoNodeReference Ref in nodePair.NodeReferences )
                     {
                         CswNbtNode refNode = _CswNbtResources.Nodes[Ref.NodeId];
-                        refNode.Properties[Ref.NodeTypePropId].AsNodeReference.ReferencedNodeId = Node2.NodeId;
-                        refNode.Properties[Ref.NodeTypePropId].AsNodeReference.RefreshNodeName();
+                        if( refNode.Properties[Ref.NodeTypePropId].getFieldTypeValue() == CswEnumNbtFieldType.UserSelect )
+                        {
+                            // Special case: UserSelect
+                            refNode.Properties[Ref.NodeTypePropId].AsUserSelect.RemoveUser( Node1.NodeId );
+                            refNode.Properties[Ref.NodeTypePropId].AsUserSelect.AddUser( Node2.NodeId );
+                            refNode.Properties[Ref.NodeTypePropId].AsUserSelect.SyncGestalt();
+                        }
+                        else
+                        {
+                            // Node Reference
+                            refNode.Properties[Ref.NodeTypePropId].AsNodeReference.ReferencedNodeId = Node2.NodeId;
+                            refNode.Properties[Ref.NodeTypePropId].AsNodeReference.RefreshNodeName();
+                        }
                         refNode.postChanges( ForceUpdate: false, IsCopy: false, OverrideUniqueValidation: true );
                     }
 

@@ -349,7 +349,12 @@ namespace ChemSW.Nbt.MetaData
 
         public CswNbtMetaDataObjectClass getObjectClass()
         {
-            return _CswNbtMetaDataResources.CswNbtMetaData.getObjectClass( CswConvert.ToInt32( _NodeTypeRow["objectclassid"].ToString() ) );
+            return _CswNbtMetaDataResources.CswNbtMetaData.getObjectClass( ObjectClassId );
+        }
+
+        public CswEnumNbtObjectClass getObjectClassValue()
+        {
+            return _CswNbtMetaDataResources.CswNbtMetaData.getObjectClassValue( ObjectClassId );
         }
 
         public Int32 ObjectClassId

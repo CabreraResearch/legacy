@@ -185,6 +185,14 @@ namespace ChemSW.Nbt.MetaData
         }
 
         /// <summary>
+        /// Returns a CswEnumNbtObjectClass based on the object class primary key parameter
+        /// </summary>
+        public CswEnumNbtObjectClass getObjectClassValue( Int32 ObjectClassId )
+        {
+            return _CswNbtMetaDataResources.ObjectClassesCollection.getObjectClassValue( ObjectClassId );
+        }
+
+        /// <summary>
         /// Returns a CswNbtMetaDataObjectClass based on the object class name parameter
         /// </summary>
         public CswNbtMetaDataObjectClass getObjectClass( string ObjectClassName )

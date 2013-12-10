@@ -77,6 +77,7 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataNodeType GhsNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "GHS" );
             CswNbtMetaDataNodeType ContainerNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Container" );
             CswNbtMetaDataNodeType BuildingNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Building" );
+            CswNbtMetaDataNodeType UserNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "User" );
 
             CswNbtMetaDataNodeTypeProp ContainerBarcodeNTP = ContainerNT.getNodeTypeProp( CswNbtObjClassContainer.PropertyName.Barcode );
             CswNbtMetaDataNodeTypeProp ContainerMaterialNTP = ContainerNT.getNodeTypeProp( CswNbtObjClassContainer.PropertyName.Material );
@@ -229,6 +230,22 @@ namespace ChemSW.Nbt.Schema
                     node.Properties[SizeNTP].AsRelationship.RelatedNodeId = size2.NodeId;
                 } );
 
+
+            CswNbtNode user1 = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( UserNT.NodeTypeId, delegate( CswNbtNode node )
+            {
+                CswNbtObjClassUser user = (CswNbtObjClassUser) node;
+                user.Role.RelatedNodeId = new CswPrimaryKey( "nodes", 23202 ); // Equipment User
+                user.UsernameProperty.Text = "tmpuser1";
+                user.PasswordProperty.Password = "tmpuser1";
+            } );
+
+            CswNbtNode user2 = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( UserNT.NodeTypeId, delegate( CswNbtNode node )
+            {
+                CswNbtObjClassUser user = (CswNbtObjClassUser) node;
+                user.Role.RelatedNodeId = new CswPrimaryKey( "nodes", 23202 ); // Equipment User
+                user.UsernameProperty.Text = "tmpuser2";
+                user.PasswordProperty.Password = "tmpuser2";
+            } );
 
             #endregion Debug test data
 
