@@ -276,7 +276,7 @@
             makeStep: (function () {
                 return function(StepNo) {
                     cswPrivate.toggleStepButtons(StepNo);
-                    cswPrivate.setStepHeader(StepNo, 'Preview results of merging "' + cswPrivate.node1.nodename + '" into "' + cswPrivate.node2.nodename + '".');
+                    cswPrivate.setStepHeader(StepNo, 'Preview results of merging "' + cswPrivate.node1.nodename + '" into "' + cswPrivate.node2.nodename + '".  Note, only the results of the primary merge are shown.');
 
                     var div = cswPrivate['divStep' + StepNo];
                     
