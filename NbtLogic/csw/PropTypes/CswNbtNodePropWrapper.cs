@@ -747,6 +747,20 @@ namespace ChemSW.Nbt.PropTypes
             }
         }//View
 
+        
+        /// <summary>
+        /// Properties of various field types that reference nodes
+        /// </summary>
+        public ICswNbtNodePropNodeReference AsNodeReference
+        {
+            get
+            {
+                if( !( _CswNbtNodeProp is ICswNbtNodePropNodeReference ) )
+                    throw ( new CswDniException( _makeTypeErrorMessage( typeof( ICswNbtNodePropNodeReference ) ) ) );
+                return ( (ICswNbtNodePropNodeReference) _CswNbtNodeProp );
+            }
+        }//AsNodeReference
+
 
 
     }//CswNbtNodePropWrapper

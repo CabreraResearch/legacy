@@ -197,6 +197,7 @@
     <Compile Include="csw\PropertySets\CswNbtPropertySetDocument.cs" />
     <Compile Include="csw\PropertySets\CswNbtPropertySetMaterial.cs" />
     <Compile Include="csw\PropertySets\ICswNbtPermissionGroup.cs" />
+    <Compile Include="csw\PropTypes\ICswNbtNodePropNodeReference.cs" />
     <Compile Include="csw\PropTypes\CswNbtNodePropReportLink.cs" />
     <Compile Include="csw\PropTypes\CswEnumNbtDateDisplayMode.cs" />
     <Compile Include="csw\PropTypes\CswEnumNbtDataItemType.cs" />

@@ -146,7 +146,7 @@ namespace ChemSW.Nbt.Schema
                     CswNbtObjClassSize size = node;
                     size.Material.RelatedNodeId = chem1.NodeId;
                     size.InitialQuantity.Quantity = 100;
-                    size.InitialQuantity.UnitId = new CswPrimaryKey( "nodes", 26744 ); // kg
+                    size.InitialQuantity.UnitId = new CswPrimaryKey( "nodes", 26748 ); // ounces
                     size.CatalogNo.Text = "321";
                     size.Description.Text = "Drum";
                 } );
@@ -156,7 +156,7 @@ namespace ChemSW.Nbt.Schema
                     CswNbtObjClassSize size = node;
                     size.Material.RelatedNodeId = chem2.NodeId;
                     size.InitialQuantity.Quantity = 100;
-                    size.InitialQuantity.UnitId = new CswPrimaryKey( "nodes", 26744 ); // kg
+                    size.InitialQuantity.UnitId = new CswPrimaryKey( "nodes", 26748 ); // ounces
                     size.CatalogNo.Text = "321";
                     size.Description.Text = "Tub";
                 } );
@@ -168,7 +168,7 @@ namespace ChemSW.Nbt.Schema
                     container.Size.RelatedNodeId = size1.NodeId;
                     container.Barcode.setBarcodeValueOverride( "C500051", false );
                     container.Quantity.Quantity = 101;
-                    container.Quantity.UnitId = new CswPrimaryKey( "nodes", 26744 ); // kg
+                    container.Quantity.UnitId = new CswPrimaryKey( "nodes", 26748 ); // ounces
                     container.Location.SelectedNodeId = bldg1.NodeId;
                 } );
             CswNbtNode container2 = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( ContainerNT.NodeTypeId, delegate( CswNbtNode node )
@@ -178,7 +178,7 @@ namespace ChemSW.Nbt.Schema
                     container.Size.RelatedNodeId = size2.NodeId;
                     container.Barcode.setBarcodeValueOverride( "C500051", false );
                     container.Quantity.Quantity = 102;
-                    container.Quantity.UnitId = new CswPrimaryKey( "nodes", 26744 ); // kg
+                    container.Quantity.UnitId = new CswPrimaryKey( "nodes", 26748 ); // ounces
                     container.Location.SelectedNodeId = bldg2.NodeId;
                 } );
 
@@ -189,7 +189,7 @@ namespace ChemSW.Nbt.Schema
                     container.Size.RelatedNodeId = size2.NodeId;
                     container.Barcode.setBarcodeValueOverride( "C500052", false );
                     container.Quantity.Quantity = 103;
-                    container.Quantity.UnitId = new CswPrimaryKey( "nodes", 26744 ); // kg
+                    container.Quantity.UnitId = new CswPrimaryKey( "nodes", 26748 ); // ounces
                     container.Location.SelectedNodeId = bldg2.NodeId;
                 } );
 
