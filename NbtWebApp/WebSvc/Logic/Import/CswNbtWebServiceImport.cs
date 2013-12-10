@@ -16,6 +16,7 @@ using ChemSW.Nbt.NbtSchedSvcRef;
 using ChemSW.Nbt.Sched;
 using ChemSW.Nbt.Schema;
 using ChemSW.RscAdo;
+using ChemSW.WebSvc;
 using NbtWebApp.WebSvc.Returns;
 
 namespace ChemSW.Nbt.WebServices
@@ -252,9 +253,19 @@ namespace ChemSW.Nbt.WebServices
                 }
             }//foreach PL/SQL block in CAF.sql
 
+            try
+            {
+                //create the database link
+                _CswNbtResources.execArbitraryPlatformNeutralSql( "create database link caflink connect to " + Params.CAFSchema + " identified by " + Params.CAFPassword + " using '" + Params.CAFDatabase + "'" );
+            }
+            catch( Exception e )
+            {
+                //catching this in case someone clicks the start import button twice, and letting them off with a warning
+                Ret.Status.Messages.Add( new CswWebSvcReturnBase.ErrorMessage{
+                    Message = "The link to the customer data may not have been created", 
+                    Detail = e.Message });
+            }
 
-            //create the database link
-            _CswNbtResources.execArbitraryPlatformNeutralSql( "create database link caflink connect to " + Params.CAFSchema + " identified by " + Params.CAFPassword + " using '" + Params.CAFDatabase + "'" );
 
             //Create custom NodeTypeProps from CAF Properties collections and set up bindings for them
             CswNbtImportTools.CreateAllCAFProps( _CswNbtResources, CswEnumSetupMode.NbtWeb );
@@ -285,13 +296,14 @@ namespace ChemSW.Nbt.WebServices
             CswSchedSvcParams.LogicDetails.Add( CAFImport );
 
             CswSchedSvcReturn svcReturn = SchedSvcRef.updateScheduledRules( CswSchedSvcParams );
-            if( null != svcReturn )
-            {
-                Ret.Status = svcReturn.Status;
-            }
-            else
-            {
+            if( null == svcReturn ) {
                 throw new CswDniException( "Failed to connect to schedule service" );
+            }
+
+            Ret.Status.Success = Ret.Status.Success && svcReturn.Status.Success;
+            foreach( CswWebSvcReturnBase.ErrorMessage error in svcReturn.Status.Errors )
+            {
+                Ret.Status.Errors.Add( error );
             }
         }
 
