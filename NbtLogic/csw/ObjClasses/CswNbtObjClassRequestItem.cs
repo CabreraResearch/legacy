@@ -613,8 +613,7 @@ namespace ChemSW.Nbt.ObjClasses
                                     ContainerNode.Location.CachedNodeName = Location.CachedNodeName;
                                     ContainerNode.Location.CachedPath = Location.CachedPath;
                                     ContainerNode.postChanges( false );
-                                    FulfillmentHistory.AddComment( "Moved " + ContainerNode.Node.NodeLink + " to " + Location.CachedFullPath );
-                                    Status.Value = Statuses.Completed;
+                                    //Note: The Container will mark all related Move request items (including this one) as Completed
                                 }
                                 break;
                             case FulfillMenu.Dispose:

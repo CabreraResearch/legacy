@@ -1007,6 +1007,10 @@ namespace ChemSW.Nbt.ObjClasses
                         CswNbtObjClassRequestItem NodeAsRequestItem = Tree.getNodeForCurrentPosition();
                         if( null != NodeAsRequestItem )
                         {
+                            if( RequestItemType == CswNbtObjClassRequestItem.Types.ContainerMove )
+                            {
+                                NodeAsRequestItem.FulfillmentHistory.AddComment( "Moved " + Node.NodeLink + " to " + Location.CachedFullPath );
+                            }
                             NodeAsRequestItem.Status.Value = CswNbtObjClassRequestItem.Statuses.Completed;
                             NodeAsRequestItem.postChanges( false );
                         }
