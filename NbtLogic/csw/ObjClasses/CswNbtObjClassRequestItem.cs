@@ -438,6 +438,11 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 _setUIVisibility();//This sets the Request Item's add layout based on its Type
                 TypeDef.setQuantityOptions();
+                if( null != Container.RelatedNodeId )//Set Inventory Group to Container's Inventory Group (if applicable)
+                {
+                    CswNbtObjClassContainer ContainerNode = _CswNbtResources.Nodes[Container.RelatedNodeId];
+                    InventoryGroup.RelatedNodeId = ContainerNode.getPermissionGroupId();
+                }
             }
             _setDefaultValues();
             TypeDef.setDescription();
