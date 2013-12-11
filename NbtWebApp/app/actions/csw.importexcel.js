@@ -308,7 +308,7 @@
                             
                             
 
-                            Csw.dialogs.inputDialog({
+                            var inputDialog = Csw.dialogs.inputDialog({
                                 name: 'StartCAFDialog',
                                 title: 'CAF Connection Details',
                                 message: 'Enter the database connection information for this customer',
@@ -327,6 +327,7 @@
                                         },
                                         success: function (data) {
                                             // show success or show progress
+                                            inputDialog.close();
                                         }
                                     });
                                 },

@@ -4,14 +4,20 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Data;
 using System.Data.OleDb;
+using System.ServiceModel;
 using ChemSW.Config;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
+using ChemSW.MtSched.Core;
 using ChemSW.Nbt.csw.Schema;
 using ChemSW.Nbt.ImportExport;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.NbtSchedSvcRef;
+using ChemSW.Nbt.Sched;
 using ChemSW.Nbt.Schema;
+using ChemSW.RscAdo;
+
 
 namespace ChemSW.Nbt.csw.ImportExport
 {
@@ -71,6 +77,133 @@ namespace ChemSW.Nbt.csw.ImportExport
             NbtResources.commitTransaction();
             ImpMgr.finalize();
         }
+
+
+        public static void startCAFImportImpl( ICswResources CswResources, string CAFDatabase, string CAFSchema, string CAFPassword, CswEnumSetupMode SetupMode )
+        {
+            CswNbtResources _CswNbtResources = (CswNbtResources) CswResources;
+
+            //connect to the CAF database
+            CswDbVendorOpsOracle CAFConnection = new CswDbVendorOpsOracle( "CAFImport", CAFDatabase, CAFSchema, CAFPassword, (CswDataDictionary) _CswNbtResources.DataDictionary, _CswNbtResources.CswLogger, CswEnumPooledConnectionState.Open, "" );
+
+            string Error = "";
+            if( false == CAFConnection.IsDbConnectionHealthy( ref Error ) )
+            {
+                throw new CswDniException( CswEnumErrorType.Error, "Check the supplied parameters for the CAF database.", Error );
+            }
+
+            //Run the SQL to generate the table, views, triggers, and other setup operations.
+            //there is no clean solution for running the contents of .SQL file from inside C#, so please forgive the horrible hacks that follow.
+            //Assumptions made here: 
+            //   the only PL/SQL blocks are the deletes at the top of the script and the triggers at the bottom, 
+            //   the / at the end of PL/SQL is always at the beginning of a line, 
+            //   triggers always have two lines of spaces before them, except the very first trigger, which has 3
+
+            string CAFSql = generateCAFSql( _CswNbtResources );
+
+            //add a / before the first trigger and split the file into an array of strings on / chars (breaking off potential PL/SQL blocks)
+            string[] SQLCommands = CAFSql
+                                      .Replace( ");\r\n\r\n\r\ncreate or replace trigger", ");\r\n\r\n\r\n/\r\ncreate or replace trigger" )
+                                      .Replace( "create or replace procedure", "\r\n/\r\ncreate or replace procedure" )
+                                      .Split( new[] { "\r\n/" }, StringSplitOptions.RemoveEmptyEntries );
+
+            foreach( string SQLCommand in SQLCommands )
+            {   //if the string starts with any of these, it's a PL/SQL block and can be sent as-is
+                if( SQLCommand.Trim().StartsWith( "begin" ) || SQLCommand.Trim().StartsWith( "create or replace trigger" ) || SQLCommand.Trim().StartsWith( "create or replace procedure" ) )
+                {
+                    CAFConnection.execArbitraryPlatformNeutralSql( SQLCommand );
+                }
+                //otherwise, we need to further split out each command on ; chars
+                else
+                {
+                    foreach( string SingleCommand in SQLCommand.Split( ';' ) )
+                    {
+                        if( SingleCommand.Trim() != String.Empty )
+                        {
+                            CAFConnection.execArbitraryPlatformNeutralSql( SingleCommand.Trim() );
+                        }
+                    }
+                }
+            }//foreach PL/SQL block in CAF.sql
+
+
+            //create the database link, after cleaning up an old one if it exists
+            _CswNbtResources.execArbitraryPlatformNeutralSql( @"
+              begin
+                execute immediate 'drop database link caflink';
+                exception when others then null;
+              end;
+            " );
+
+            _CswNbtResources.execArbitraryPlatformNeutralSql( "create database link caflink connect to " + CAFSchema + " identified by " + CAFPassword + " using '" + CAFDatabase + "'" );
+
+
+
+            //Create custom NodeTypeProps from CAF Properties collections and set up bindings for them
+            CreateAllCAFProps( _CswNbtResources, SetupMode );
+
+            // Enable the CAFImport rule
+            CswTableUpdate TableUpdate = _CswNbtResources.makeCswTableUpdate( "enableCafImportRule", "scheduledrules" );
+            DataTable DataTable = TableUpdate.getTable( "where rulename = '" + CswEnumNbtScheduleRuleNames.CAFImport + "'" );
+            if( DataTable.Rows.Count > 0 )
+            {
+                DataTable.Rows[0]["disabled"] = CswConvert.ToDbVal( false );
+                TableUpdate.update( DataTable );
+            }
+
+            
+            //create a connection to the schedule service
+            WSHttpBinding Binding = new WSHttpBinding();
+            EndpointAddress Endpoint = new EndpointAddress( CswResources.SetupVbls["SchedServiceUri"] );
+            CswSchedSvcAdminEndPointClient SchedSvcRef = new CswSchedSvcAdminEndPointClient(Binding, Endpoint);
+
+
+            //fetch the CAFImport rule from ScheduleService
+            CswSchedSvcParams CswSchedSvcParams = new CswSchedSvcParams();
+            CswSchedSvcParams.CustomerId = _CswNbtResources.AccessId;
+            CswSchedSvcParams.RuleName = CswEnumNbtScheduleRuleNames.CAFImport;
+            CswSchedSvcReturn CAFRuleResponse;
+            try
+            {
+                CAFRuleResponse = SchedSvcRef.getRules( CswSchedSvcParams );
+            }
+            catch( Exception e )
+            {
+                throw new CswDniException( CswEnumErrorType.Error, "Could not connect to schedule service", e.Message );
+            }
+
+
+            //take the rule that was returned from the last request, set disabled to false, then send it back as an update
+            CswScheduleLogicDetail CAFImport = CAFRuleResponse.Data[0];
+            CAFImport.Disabled = false;
+            CswSchedSvcParams.LogicDetails = new Collection<CswScheduleLogicDetail>();
+            CswSchedSvcParams.LogicDetails.Add( CAFImport );
+
+            CswSchedSvcReturn svcReturn = SchedSvcRef.updateScheduledRules( CswSchedSvcParams );
+
+            if( false == svcReturn.Status.Success )
+            {
+                throw new CswDniException( svcReturn.Status.Errors[0].Message );
+            }
+        }//startCAFImport
+
+
+        private static string generateCAFSql( ICswResources CswResources )
+        {
+            //CswNbtResources _CswNbtResources = (CswNbtResources) CswResources;
+
+            string ViewSql = CswScheduleLogicNbtCAFImport.generateCAFViewSQL();
+            string ImportQueueSql = CswScheduleLogicNbtCAFImport.generateImportQueueTableSQL( CswResources );
+            string CAFCleanupSQL = CswScheduleLogicNbtCAFImport.generateCAFCleanupSQL( CswResources );
+            string TriggersSql = CswScheduleLogicNbtCAFImport.generateTriggerSQL( CswResources );
+
+            return ViewSql + "\r\n" + ImportQueueSql + "\r\n" + CAFCleanupSQL + "\r\n" + TriggersSql;
+
+        }//generateCAFSql()
+
+
+
+
 
         /// <summary>
         /// Get all the custom properties in a CAF schema
@@ -198,7 +331,7 @@ namespace ChemSW.Nbt.csw.ImportExport
             CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn = new CswNbtSchemaModTrnsctn( CswNbtResources );
 
             //StringCollection ret = new StringCollection();
-            DataSet ExcelDataSet = CswNbtImportTools.ReadExcel( FullFilePath );
+            DataSet ExcelDataSet = ReadExcel( FullFilePath );
 
             // Store the job reference in import_data_job
             CswTableUpdate ImportDataJobUpdate = CswNbtResources.makeCswTableUpdate( "Importer_DataJob_Insert", CswNbtImportTables.ImportDataJob.TableName );

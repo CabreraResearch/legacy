@@ -1,8 +1,7 @@
 ﻿using System;
 using ChemSW.Config;
 using ChemSW.Nbt;
-using ChemSW.Nbt.WebServices;
-using NbtWebApp.WebSvc.Returns;
+using ChemSW.Nbt.csw.ImportExport;
 
 namespace CAFScriptGenerator
 {
@@ -21,20 +20,16 @@ namespace CAFScriptGenerator
             {
                 //assign the command line params to readable variables
                 string AccessId = args[0];
-
-                CswNbtImportWcf.StartImportParams Params = new CswNbtImportWcf.StartImportParams
-                    {
-                        CAFSchema = args[1],
-                        CAFPassword = args[2],
-                        CAFDatabase = args[3],
-                    };
+                string CAFSchema = args[1];
+                string CAFPassword = args[2];
+                string CAFDatabase = args[3];
 
 
                 //create the NbtResources and assign the DB Resources using the access id
                 CswNbtResources NbtResources = CswNbtResourcesFactory.makeCswNbtResources( CswEnumAppType.Nbt, CswEnumSetupMode.NbtExe, true );
                 NbtResources.AccessId = AccessId;
 
-                CswNbtWebServiceImport.startCAFImport( NbtResources, new CswWebSvcReturn(), Params );
+                CswNbtImportTools.startCAFImportImpl( NbtResources, CAFDatabase, CAFSchema, CAFPassword, CswEnumSetupMode.NbtExe );
 
             }//if correct number of args
         }//Main
