@@ -548,6 +548,7 @@
                                         if (Balance.IsActive) {
                                             balanceButton.setText(Balance.NbtName);
                                             balanceButton.setHandler(function () { getBalanceInformation(Balance.NodeId); });
+                                            updateInterface(Balance);
                                         } else {
                                             balanceButton.setText(Balance.NbtName + " (Inactive)");
                                         }

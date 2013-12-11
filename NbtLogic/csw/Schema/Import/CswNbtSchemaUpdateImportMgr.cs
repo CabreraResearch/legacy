@@ -11,7 +11,7 @@ using ChemSW.Nbt.Schema;
 
 namespace ChemSW.Nbt.csw.Schema
 {
-    partial class CswNbtSchemaUpdateImportMgr
+    public class CswNbtSchemaUpdateImportMgr
     {
         private CswNbtSchemaModTrnsctn SchemaModTrnsctn;
 
@@ -363,6 +363,99 @@ namespace ChemSW.Nbt.csw.Schema
 
         #endregion
 
+        /// <summary>
+        /// Given the modification type, operation, and a dictionary of column-value pairs for the updated row, update a binding. For use by view bindings grid in Web App.
+        /// </summary>
+        /// <param name="DefinitionType">One of 'Order', 'Bindings', or 'Relationships'</param>
+        /// <param name="UpdateMethod">One of 'add', 'modify', or 'delete'</param>
+        /// <param name="Row">A dictionary of string key value pairs representing the cells of the row.</param>
+        public void updateDefinitionElementByPK( string DefinitionType, string UpdateMethod, Dictionary<string, string> Row )
+        {
+
+            //first set some variables to make the function ready for the type of binding we are updating
+            string PrimaryKeyName = "";
+            DataTable Table = null;
+            switch( DefinitionType )
+            {
+                case "Order":
+                    PrimaryKeyName = "importdeforderid";
+                    Table = _importOrderTable;
+                    break;
+                case "Bindings":
+                    PrimaryKeyName = "importdefbindingid";
+                    Table = _importBindingsTable;
+                    break;
+                case "Relationships":
+                    PrimaryKeyName = "importdefrelationshipid";
+                    Table = _importRelationshipsTable;
+                    break;
+                default:
+                    throw new CswDniException( CswEnumErrorType.Error, "updateDefinitionElementByPK attempted to update an invalid import definition table.", "Value supplied was: " + DefinitionType + ", but must be one of Order, Bindings, or Relationships." );
+
+            }//switch( DefinitionType )
+
+
+            //if we are not adding a new row, fetch the old row from the database
+            DataRow DataRow = null;
+            if( UpdateMethod != "add" )
+            {
+                DataRow[] Selection = Table.Select( PrimaryKeyName + " = " + Row[PrimaryKeyName] );
+                if( Selection.Length > 0 )
+                {
+                    //we assume that we will always have one and only one result for a particular primary key, but this is probably dangerous
+                    DataRow = Selection[0];
+                }
+                else
+                {
+                    throw new CswDniException("Attempted to " + UpdateMethod + " " + PrimaryKeyName + " " + Row[PrimaryKeyName] + " from Import " + DefinitionType + ", but this row does not exist.");
+                }
+            }
+
+
+            //now perform the operation on the row we have fetched
+            switch( UpdateMethod )
+            {
+                case "delete":
+                    //if deleting, just delete the row and we are done
+                    DataRow.Delete();
+                    break;
+
+                case "add":
+                    //when adding, we need to create the new row in the data table first
+                    DataRow = Table.NewRow();
+                    //copy over each cell from the dictionary to the data row
+                    foreach( string Column in Row.Keys )
+                    {
+                        if( Column.ToLower() != "sheetname" && Row[Column] != "")
+                        {
+                            DataRow[Column] = Row[Column];
+                        }
+                    }
+                    //perform a sheet lookup so this binding knows what definition it belongs to
+                    DataRow["importdefid"] = _SheetDefinitions[Row["sheetname"]];
+
+                    Table.Rows.Add( DataRow );
+                    break;
+
+                case "modify":
+                    //copy over each cell from the dictionary to the data row
+                    foreach( string Column in Row.Keys )
+                    {
+                        if( Column.ToLower() != "sheetname" && Row[Column] != "")
+                        {
+                            DataRow[Column] = Row[Column];
+                        }
+                    }
+                    break;
+
+                default:
+                    throw new CswDniException( CswEnumErrorType.Error, "updateDefinitionElementByPK attempted an invalid operation on the data table", "Value supplied was: " + UpdateMethod);
+
+            }//switch ( UpdateMethod )
+
+    }//updateDefinitionElementByPK
+
+
 
         /// <summary>
         /// Use CAFDbLink to lookup the PK column of a table on a CAF schema in DATA_DICTIONARY
@@ -391,12 +484,14 @@ namespace ChemSW.Nbt.csw.Schema
         /// </summary>
         public void finalize()
         {
-            if( null != _NbtImporter )
+            if( null == _NbtImporter )
             {
-                _NbtImporter.refreshMetaData();
-                _NbtImporter.storeDefinition( _importOrderTable, _importBindingsTable, _importRelationshipsTable );
-                _NbtImporter.Finish();
+                throw new CswDniException( CswEnumErrorType.Error, "UpdateImportMgr tried to store definition, but NbtImporter is not instanced.", "" );
             }
+
+            _NbtImporter.storeDefinition( _importOrderTable, _importBindingsTable, _importRelationshipsTable );
+            _NbtImporter.Finish();
+
         }//finalize()
     }
 }
