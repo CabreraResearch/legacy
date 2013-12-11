@@ -422,8 +422,12 @@ namespace ChemSW.Nbt.WebServices
                     Return.Data.ImpersonateViewId = NbtViewId.ToString();
                 }
 
-                // We always want to exclude the current user
+                // We always want to exclude the current user 
                 Return.Data.ExcludeNodeIds.Add( CswNbtResources.CurrentNbtUser.UserId.ToString() );
+                // and exclude any users of chemsw_admin_role
+                CswNbtObjClassUser ChemSWAdminUser = CswNbtResources.Nodes.makeUserNodeFromUsername( "chemsw_admin" );
+                Return.Data.ExcludeNodeIds.Add( ChemSWAdminUser.UserId.ToString() );
+                //todo: make this encompass _all_ users of chemsw_admin_role
             }
             else
             {

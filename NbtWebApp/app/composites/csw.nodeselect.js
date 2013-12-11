@@ -23,6 +23,8 @@
 
             cswPrivate.labelText = cswPrivate.labelText || null;
             cswPrivate.excludeNodeTypeIds = cswPrivate.excludeNodeTypeIds || '';
+            // Note for excludeNodeIds: This also filters these nodes from search results
+            // in the case that the nodeselect is a Search button
             cswPrivate.excludeNodeIds = cswPrivate.excludeNodeIds || [];
             cswPrivate.selectedNodeId = cswPrivate.selectedNodeId || '';
             cswPrivate.selectedName = cswPrivate.selectedName || '';
@@ -342,6 +344,7 @@
                         propname: cswPrivate.name,
                         nodetypeid: cswPrivate.nodeTypeId,
                         objectclassid: cswPrivate.objectClassId,
+                        filterOutNodeIds: cswPrivate.excludeNodeIds,
                         onSelectNode: function (nodeObj) {
                             cswPrivate.nameSpan.empty();
                             cswPrivate.nameSpan.nodeLink({

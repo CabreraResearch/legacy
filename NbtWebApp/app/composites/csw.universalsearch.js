@@ -382,6 +382,7 @@
                     forceSingleColumn: cswPrivate.forceSingleColumn,
                     suppressButtons: cswPrivate.suppressButtons,
                     filterOutNodeId: cswPrivate.filterOutNodeId,
+                    filterOutNodeIds: cswPrivate.filterOutNodeIds,
                     onMoreClick: function (nodetypeid, nodetypename) {
                         // a little bit of a kludge
                         cswPrivate.filterNodeType(nodetypeid);

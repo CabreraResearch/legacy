@@ -1657,7 +1657,8 @@
                 onExtraAction: function (nodeObj) {
                     cswPublic.close();
                     Csw.tryExec(cswDlgPrivate.onSelectNode, nodeObj);
-                }
+                },
+                filterOutNodeIds: cswDlgPrivate.filterOutNodeIds
             });
             return cswPublic;
         }, // SearchDialog
