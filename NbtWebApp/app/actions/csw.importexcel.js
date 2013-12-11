@@ -424,48 +424,6 @@
 
         }; // makeUploadBindingsTable()
 
-        cswPrivate.makeGenerateSqlTable = function () {
-            cswPublic.table.cell(3, 4)
-                .css({ paddingLeft: '100px' })
-                .text('Generate CAF SQL')
-                    .css({
-                        textAlign: 'center',
-                        fontWeight: 'bold'
-                    });
-
-            cswPublic.generateSqlTable = cswPublic.table.cell(4, 4)
-            .empty()
-            .css({ paddingLeft: '100px' })
-            .table({
-                FirstCellRightAlign: true,
-                cellpadding: 2
-            });
-
-            cswPublic.generateSqlTable.cell(1, 1).buttonExt({
-                name: 'generateSqlBtn',
-                icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.docimport),
-                enabledText: 'Generate',
-                disabledText: 'Generate',
-                disableOnClick: false,
-                onClick: function () {
-                    // Return a .sql file that the User can save on their system
-                    var action = 'Services/Import/generateCAFSql';
-                    
-                    var $form = $('<form method="POST" action="' + action + '"></form>').appendTo($('body'));
-                    var form = Csw.literals.factory($form);
-
-                    form.input({
-                        name: 'importdefname',
-                        value: 'CAF'
-                    });
-
-                    form.$.submit();
-                    form.remove();
-                }
-            });
-        }; // makeGenerateSqlTable()
-
-
         cswPrivate.makeBindingsGrid = function (importDefName) {
             //the grid does not actually get created until after we have received its bindings from the server
             Csw.ajaxWcf.post({
@@ -688,7 +646,6 @@
             cswPrivate.makeStatusTable();
             cswPrivate.makeUploadDataTable();
             cswPrivate.makeUploadBindingsTable();
-            cswPrivate.makeGenerateSqlTable();
 
         })(); // init
 
