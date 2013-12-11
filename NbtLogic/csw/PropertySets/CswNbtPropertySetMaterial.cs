@@ -14,14 +14,14 @@ namespace ChemSW.Nbt.ObjClasses
     /// <summary>
     /// Material Property Set
     /// </summary>
-    public abstract class CswNbtPropertySetMaterial : CswNbtObjClass
+    public abstract class CswNbtPropertySetMaterial: CswNbtObjClass
     {
         #region Enums
 
         /// <summary>
         /// Object Class property names
         /// </summary>
-        public new class PropertyName : CswNbtObjClass.PropertyName
+        public new class PropertyName: CswNbtObjClass.PropertyName
         {
             public const string MaterialId = "Material Id";
             public const string TradeName = "Tradename";
@@ -99,17 +99,12 @@ namespace ChemSW.Nbt.ObjClasses
             return Ret;
         }
 
-        public override CswNbtNode CopyNode()
+        public override CswNbtNode CopyNode( bool IsNodeTemp = true )
         {
             // If you're looking for where we set up the create material wizard for handling copying materials, 
             // it's here: CswNbtWebServiceNode.getCopyData()
 
-            CswNbtNode CopiedNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, delegate( CswNbtNode NewNode )
-                {
-                    NewNode.copyPropertyValues( Node );
-                    //CopiedNode.postChanges( true, true );
-                }, IsTemp: true );
-            return CopiedNode;
+            return base.CopyNodeImpl( IsNodeTemp );
         }
 
         #endregion Base
@@ -181,7 +176,7 @@ namespace ChemSW.Nbt.ObjClasses
 
             if( ApprovedForReceiving.wasAnySubFieldModified() )
             {
-                Receive.setHidden( value: ApprovedForReceiving.Checked != CswEnumTristate.True, SaveToDb: true );
+                Receive.setHidden( value : ApprovedForReceiving.Checked != CswEnumTristate.True, SaveToDb : true );
             }
 
             CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation, Creating );
@@ -193,10 +188,10 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtObjClassDefault.afterWriteNode( Creating );
         }
 
-        public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
+        public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false, bool ValidateRequiredRelationships = true )
         {
             beforePropertySetDeleteNode( DeleteAllRequiredRelatedNodes );
-            CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes );
+            CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes, ValidateRequiredRelationships );
         }
 
         public override void afterDeleteNode()
@@ -208,8 +203,8 @@ namespace ChemSW.Nbt.ObjClasses
         protected override void afterPopulateProps()
         {
             afterPropertySetPopulateProps();
-            ApprovedForReceiving.setReadOnly( false == _CswNbtResources.Permit.can( CswEnumNbtActionName.Material_Approval ), SaveToDb: false );
-            ContainerExpirationLocked.setReadOnly( false == _CswNbtResources.Permit.can( CswEnumNbtActionName.Container_Expiration_Lock ), SaveToDb: false );
+            ApprovedForReceiving.setReadOnly( false == _CswNbtResources.Permit.can( CswEnumNbtActionName.Material_Approval ), SaveToDb : false );
+            ContainerExpirationLocked.setReadOnly( false == _CswNbtResources.Permit.can( CswEnumNbtActionName.Container_Expiration_Lock ), SaveToDb : false );
             _toggleButtonVisibility();
             _toggleConstituentProps();
             CswNbtObjClassDefault.triggerAfterPopulateProps();
@@ -261,8 +256,8 @@ namespace ChemSW.Nbt.ObjClasses
                 CswNbtViewProperty viewProp = ParentRelationship.View.AddViewProperty( ParentRelationship, IsConstituentProp );
                 viewProp.ShowInGrid = false;
                 ParentRelationship.View.AddViewPropertyFilter( viewProp,
-                                                               FilterMode: CswEnumNbtFilterMode.NotEquals,
-                                                               Value: CswEnumTristate.True.ToString() );
+                                                               FilterMode : CswEnumNbtFilterMode.NotEquals,
+                                                               Value : CswEnumTristate.True.ToString() );
             }
 
             onPropertySetAddDefaultViewFilters( ParentRelationship );
@@ -286,6 +281,11 @@ namespace ChemSW.Nbt.ObjClasses
                             CswNbtObjClassRequestItem RequestItem = RequestAct.makeMaterialRequestItem( this, ButtonData );
 
                             ButtonData.Data["requestaction"] = OCPPropName;
+                            //Case 31298: Default Option Text "Request" != "Request By Bulk"
+                            if( ButtonData.SelectedText == "Request" )
+                            {
+                                ButtonData.SelectedText = CswEnumRequestOption.Bulk;
+                            }
                             ButtonData.Data["titleText"] = ButtonData.SelectedText + " for " + TradeName.Text;
                             ButtonData.Data["requestItemProps"] = RequestAct.getRequestItemAddProps( RequestItem.Node );
                             ButtonData.Data["requestItemNodeTypeId"] = RequestItem.NodeTypeId;
@@ -300,7 +300,7 @@ namespace ChemSW.Nbt.ObjClasses
                             CswNbtActReceiving Act = new CswNbtActReceiving( _CswNbtResources, ObjectClass, NodeId );
                             _CswNbtResources.setAuditActionContext( CswEnumNbtActionName.Receiving );
 
-                            CswNbtNodeCollection.AfterMakeNode After = delegate( CswNbtNode NewNode )
+                            Action<CswNbtNode> After = delegate( CswNbtNode NewNode )
                                 {
                                     CswNbtObjClassContainer newContainer = NewNode;
                                     //Case 29436
@@ -404,7 +404,7 @@ namespace ChemSW.Nbt.ObjClasses
                 {
                     PartNoFilterMode = CswEnumNbtFilterMode.Null;
                 }
-                Ret.AddViewPropertyAndFilter( MaterialRel, PartNoNtp, PartNo, FilterMode: PartNoFilterMode );
+                Ret.AddViewPropertyAndFilter( MaterialRel, PartNoNtp, PartNo, FilterMode : PartNoFilterMode );
             }
 
             if( NbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Containers ) )
@@ -448,8 +448,8 @@ namespace ChemSW.Nbt.ObjClasses
 
         private void _toggleButtonVisibility()
         {
-            Receive.setHidden( value: false == _canReceive(), SaveToDb: false );
-            Request.setHidden( value: false == _CswNbtResources.Permit.can( CswEnumNbtActionName.Submit_Request ), SaveToDb: false );
+            Receive.setHidden( value : false == _canReceive(), SaveToDb : false );
+            Request.setHidden( value : false == _CswNbtResources.Permit.can( CswEnumNbtActionName.Submit_Request ), SaveToDb : false );
         }
 
         private void _setCofAData( NbtButtonData ButtonData )

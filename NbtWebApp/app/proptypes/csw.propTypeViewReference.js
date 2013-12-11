@@ -32,7 +32,8 @@
                         Csw.cookie.clear(Csw.cookie.cookieNames.CurrentNodeId);
                         Csw.cookie.clear(Csw.cookie.cookieNames.CurrentNodeKey);
 
-                        Csw.window.location(Csw.clientDb.getItem('homeUrl'));
+                        // We just need to load the new view, so we will refresh the page
+                        Csw.window.location().reload();
                     }
                 });
                 if (false === nodeProperty.isReadOnly()) {

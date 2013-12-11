@@ -503,7 +503,7 @@ namespace ChemSW.Nbt.Schema
 
         /// <summary>
         /// Creates and persists a new CswNbtView object.
-        /// STRONGLY RECOMMEND USING makeSafeView()
+        /// STRONGLY RECOMMEND USING makeSafeView() if you think this view may conflict with existing views in the system
         /// </summary>
         public CswNbtView makeNewView( string ViewName, CswEnumNbtViewVisibility Visibility, CswPrimaryKey RoleId = null, CswPrimaryKey UserId = null, Int32 CopyViewId = Int32.MinValue )
         {
@@ -516,17 +516,34 @@ namespace ChemSW.Nbt.Schema
         public CswNbtView restoreView( string ViewName, CswEnumNbtViewVisibility Visibility = null ) { return ViewSelect.restoreView( ViewName, Visibility ); }
 
         /// <summary>
-        /// Clears a matching existing view or creates (and saves) a new one
+        /// Creates a new view and clears/deletes any existing views that violate uniqueness with the new view
         /// </summary>
         public CswNbtView makeSafeView( string ViewName, CswEnumNbtViewVisibility Visibility, CswPrimaryKey RoleId = null, CswPrimaryKey UserId = null, Int32 CopyViewId = Int32.MinValue )
         {
             CswNbtView Ret = ViewSelect.restoreView( ViewName, Visibility );
+            if( null == Ret && ( Visibility == CswEnumNbtViewVisibility.Role || Visibility == CswEnumNbtViewVisibility.User ) )
+            {
+                //If we're making a new Role/User view, override any existing global views that match
+                Ret = ViewSelect.restoreView( ViewName, CswEnumNbtViewVisibility.Global );
+            }
             if( null != Ret )
             {
                 Ret.Root.ChildRelationships.Clear();
             }
             else
             {
+                if( Visibility == CswEnumNbtViewVisibility.Global )
+                {
+                    //If we're making a new Global view, delete any existing Role/User views that match
+                    List<CswNbtView> MatchingViews = ViewSelect.restoreViews( ViewName );
+                    foreach( CswNbtView MatchingView in MatchingViews )
+                    {
+                        if( MatchingView.Visibility == CswEnumNbtViewVisibility.Role || MatchingView.Visibility == CswEnumNbtViewVisibility.User )
+                        {
+                            MatchingView.Delete();
+                        }
+                    }
+                }
                 Ret = new CswNbtView( _CswNbtResources );
                 Ret.saveNew( ViewName, Visibility, RoleId, UserId, CopyViewId );
             }
@@ -1824,11 +1841,6 @@ namespace ChemSW.Nbt.Schema
         //    return( _search.Results() ); 
 
         //}//doSearch()
-
-        public CswNbtImporter makeCswNbtImporter()
-        {
-            return new CswNbtImporter( _CswNbtResources );
-        }
 
         public Dictionary<string, int> createImportDefinitionEntries(string ImportDefinitionName, DataTable DefDataTable)
         {

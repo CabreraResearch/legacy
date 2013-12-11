@@ -458,9 +458,9 @@ AS
                       ON ( ph.MATERIALID = p.MATERIALID ) 
          left outer join dsd_pictos pc 
                       ON ( pc.MATERIALID = p.MATERIALID ) 
-         join chemicals_props_view cpv 
+         left outer join chemicals_props_view cpv 
            ON ( p.MATERIALID = cpv.MATERIALID ) 
-         join cispro_hazdata haz 
+         left outer join cispro_hazdata haz 
            ON ( p.MATERIALID = haz.MATERIALID ) 
   WHERE  m.DELETED = 0 
          AND p.DELETED = 0 
@@ -658,7 +658,7 @@ select
      c.manufacturerlotno
   from receipt_lots rl
   join containers c on c.receiptlotid = rl.receiptlotid and c.containerclass = 'lotholder'
-  join receiptlots_props_view rpv on rpv.receiptlotid = rl.receiptlotid
+  left outer join receiptlots_props_view rpv on rpv.receiptlotid = rl.receiptlotid
   join packages p 
        on p.packageid = (
                       select pd.packageid 
@@ -715,7 +715,8 @@ select
 	  left outer join container_groups cg on cg.containergroupcode = c.containergroupcode
 	  join packdetail pd on c.packdetailid = pd.packdetailid
 	  join packages p on pd.packageid = p.packageid
-	  join containers_props_view cpv on cpv.containerid = c.containerid
+	  left outer join containers_props_view cpv on cpv.containerid = c.containerid
+	where c.containerclass != 'lotholder'
 	order by c.ContainerId;
 	  
 ---Inventory Levels

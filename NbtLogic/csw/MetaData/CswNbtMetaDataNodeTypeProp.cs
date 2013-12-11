@@ -1734,7 +1734,12 @@ namespace ChemSW.Nbt.MetaData
 
         #endregion IComparable
 
-
+        public bool IsNodeReference()
+        {
+            return ( ( this.getFieldTypeValue() == CswEnumNbtFieldType.Relationship ) ||
+                     ( this.getFieldTypeValue() == CswEnumNbtFieldType.Location ) ||
+                     ( this.getFieldTypeValue() == CswEnumNbtFieldType.Quantity ) );
+        }
 
         public bool IsUserRelationship()
         {

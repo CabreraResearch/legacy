@@ -99,6 +99,9 @@ namespace ChemSW.Nbt.Search
             set { _Name = value; }
         }
 
+        [DataMember]
+        public bool OnlyMergeableNodeTypes = false;
+
         #endregion Search Data
 
         #region Serialization
@@ -126,6 +129,10 @@ namespace ChemSW.Nbt.Search
             {
                 SessionDataId = new CswNbtSessionDataId( SearchObj["sessiondataid"].ToString() );
             }
+            if( null != SearchObj["onlymergeablenodetypes"] )
+            {
+                OnlyMergeableNodeTypes = CswConvert.ToBoolean( SearchObj["onlymergeablenodetypes"] );
+            }
             JArray FiltersArr = (JArray) SearchObj["filtersapplied"];
             foreach( JObject FilterObj in FiltersArr )
             {
@@ -148,6 +155,7 @@ namespace ChemSW.Nbt.Search
             {
                 SearchObj["sessiondataid"] = SessionDataId.ToString();
             }
+            SearchObj["onlymergeablenodetypes"] = OnlyMergeableNodeTypes;
             JArray FiltersArr = new JArray();
             foreach( CswNbtSearchFilter Filter in FiltersApplied )
             {
@@ -374,7 +382,7 @@ namespace ChemSW.Nbt.Search
                 } // else if( Filter.Type == CswNbtSearchFilterType.propval )
             } // foreach( CswNbtSearchFilter Filter in FiltersApplied )
 
-            ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromSearch( SearchTerm, SearchType, WhereClause, true, false, false );
+            ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromSearch( SearchTerm, SearchType, WhereClause, true, false, false, OnlyMergeableNodeTypes );
             return Tree;
         } // Results()
 

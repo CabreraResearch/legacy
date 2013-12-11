@@ -142,9 +142,9 @@ namespace ChemSW.Nbt.ObjClasses
             //_CswNbtPropertySetSchedulerImpl.setLastFutureDate();
         }//afterWriteNode()
 
-        public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
+        public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false, bool ValidateRequiredRelationships = true )
         {
-            _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes );
+            _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes, ValidateRequiredRelationships );
 
         }//beforeDeleteNode()
 
@@ -187,8 +187,8 @@ namespace ChemSW.Nbt.ObjClasses
                     {
                         _CswNbtResources.Messages.Add( new CswWebSvcReturnBase.ErrorMessage()
                             {
-                                ShowError = true, 
-                                Type=CswEnumErrorType.Warning,
+                                ShowError = true,
+                                Type = CswEnumErrorType.Warning,
                                 Message = "A mail report cannot be run before its first scheduled due date.",
                                 Detail = "Run now is invalid before initial due date."
                             } );
@@ -198,9 +198,9 @@ namespace ChemSW.Nbt.ObjClasses
             return true;
         }
 
-        public override CswNbtNode CopyNode()
+        public override CswNbtNode CopyNode( bool IsNodeTemp = false )
         {
-            CswNbtObjClassMailReport CopiedMailReport = base.CopyNode();
+            CswNbtObjClassMailReport CopiedMailReport = base.CopyNodeImpl();
             if( ReportView.ViewId.isSet() )
             {
                 CswNbtView OriginalView = _CswNbtResources.ViewSelect.restoreView( ReportView.ViewId );

@@ -1,6 +1,7 @@
 ﻿using ChemSW.Core;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
+using ChemSW.Nbt.UnitsOfMeasure;
 
 namespace ChemSW.Nbt.Requesting
 {
@@ -32,6 +33,9 @@ namespace ChemSW.Nbt.Requesting
                 case CswNbtObjClassRequestItem.PropertyName.ReceiptLotsReceived:
                     Prop.setHidden( true, SaveToDb: false );
                     break;
+                case CswNbtObjClassRequestItem.PropertyName.InventoryGroup:
+                    Prop.setReadOnly( true, SaveToDb: false );
+                    break;
             }
         }
 
@@ -53,6 +57,20 @@ namespace ChemSW.Nbt.Requesting
                     CswNbtObjClassRequestItem.FulfillMenu.Cancel
                 }.ToString();
             _RequestItem.Fulfill.State = CswNbtObjClassRequestItem.FulfillMenu.DispenseContainer;
+        }
+
+        public override void setQuantityOptions()
+        {
+            CswNbtObjClassContainer ContainerNode = _CswNbtResources.Nodes.GetNode( _RequestItem.Container.RelatedNodeId );
+            if( null != ContainerNode )
+            {
+                CswNbtNode MaterialNode = _CswNbtResources.Nodes.GetNode( ContainerNode.Material.RelatedNodeId );
+                if( MaterialNode != null )
+                {
+                    CswNbtUnitViewBuilder Vb = new CswNbtUnitViewBuilder( _CswNbtResources );
+                    Vb.setQuantityUnitOfMeasureView( MaterialNode, _RequestItem.Quantity );
+                }
+            }
         }
     }
 }

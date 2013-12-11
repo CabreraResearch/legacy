@@ -1,6 +1,7 @@
 ﻿using ChemSW.Core;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
+using ChemSW.Nbt.UnitsOfMeasure;
 
 namespace ChemSW.Nbt.Requesting
 {
@@ -53,6 +54,12 @@ namespace ChemSW.Nbt.Requesting
                     CswNbtObjClassRequestItem.FulfillMenu.Cancel
                 }.ToString();
             _RequestItem.Fulfill.State = CswNbtObjClassRequestItem.FulfillMenu.Create;
+        }
+
+        public override void setQuantityOptions()
+        {
+            CswNbtUnitViewBuilder Vb = new CswNbtUnitViewBuilder( _CswNbtResources );
+            Vb.getQuantityUnitOfMeasureView( CswNbtPropertySetMaterial.CswEnumPhysicalState.Liquid, _RequestItem.Quantity );
         }
     }
 }

@@ -97,11 +97,11 @@ namespace ChemSW.Nbt.ObjClasses
 
         public abstract void beforePropertySetDeleteNode( bool DeleteAllRequiredRelatedNodes );
 
-        public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
+        public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false, bool ValidateRequiredRelationships = true )
         {
             beforePropertySetDeleteNode( DeleteAllRequiredRelatedNodes );
 
-            CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes );
+            CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes, ValidateRequiredRelationships );
         }//beforeDeleteNode()
 
         public override void afterDeleteNode()

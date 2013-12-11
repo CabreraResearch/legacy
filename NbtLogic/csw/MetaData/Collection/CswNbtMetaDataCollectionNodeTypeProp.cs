@@ -70,6 +70,10 @@ namespace ChemSW.Nbt.MetaData
         {
             return _CollImpl.getWhere( "where nodetypeid = " + NodeTypeId.ToString(), Date ).Cast<CswNbtMetaDataNodeTypeProp>();
         }
+        public IEnumerable<CswNbtMetaDataNodeTypeProp> getNodeTypeProps()
+        {
+            return _CollImpl.getAll().Cast<CswNbtMetaDataNodeTypeProp>();
+        }
         public IEnumerable<CswNbtMetaDataNodeTypeProp> getNodeTypeProps( CswEnumNbtFieldType FieldType, CswDateTime Date = null )
         {
             return _CollImpl.getWhere( "where fieldtypeid in (select fieldtypeid from field_types where fieldtype = '" + FieldType.ToString() + "')", Date ).Cast<CswNbtMetaDataNodeTypeProp>();

@@ -33,6 +33,14 @@ namespace ChemSW.Nbt.Requesting
         /// </summary>
         public abstract void setFulfillOptions();
 
+        /// <summary>
+        /// Sets available unit options on the Quantity property based on the related Material
+        /// </summary>
+        public virtual void setQuantityOptions()
+        {
+            //Null Op
+        }
+
         #region UI Visibility Logic
 
         /// <summary>
@@ -52,11 +60,14 @@ namespace ChemSW.Nbt.Requesting
 
         /// <summary>
         /// Hide props that should not be present on Request Items that are marked as Recurring
+        /// Make props that should not be edited on Recurring Request Items readonly 
         /// </summary>
         protected void setRecurringPropVisibility( CswNbtNodeProp Prop )
         {
             switch( Prop.PropName )
             {
+                case CswNbtObjClassRequestItem.PropertyName.Status:
+                case CswNbtObjClassRequestItem.PropertyName.ExternalOrderNumber:
                 case CswNbtObjClassRequestItem.PropertyName.ItemNumber:
                 case CswNbtObjClassRequestItem.PropertyName.AssignedTo:
                 case CswNbtObjClassRequestItem.PropertyName.NeededBy:
@@ -69,6 +80,13 @@ namespace ChemSW.Nbt.Requesting
                 case CswNbtObjClassRequestItem.PropertyName.ReceiptLotsReceived:
                 case CswNbtObjClassRequestItem.PropertyName.GoodsReceived:
                     Prop.setHidden( true, SaveToDb: false );
+                    break;
+                case CswNbtObjClassRequestItem.PropertyName.InventoryGroup:
+                case CswNbtObjClassRequestItem.PropertyName.Location:
+                case CswNbtObjClassRequestItem.PropertyName.Quantity:
+                case CswNbtObjClassRequestItem.PropertyName.Size:
+                case CswNbtObjClassRequestItem.PropertyName.SizeCount:
+                    Prop.setReadOnly( true, SaveToDb: false );
                     break;
             }
         }

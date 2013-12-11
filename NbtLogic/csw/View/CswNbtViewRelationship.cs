@@ -403,9 +403,10 @@ namespace ChemSW.Nbt
 
         private void setProp( CswEnumNbtViewPropOwnerType InOwnerType, ICswNbtMetaDataProp Prop )
         {
-            CswNbtMetaDataFieldType FieldType = Prop.getFieldType();
-            if( FieldType.FieldType != CswEnumNbtFieldType.Relationship &&
-                FieldType.FieldType != CswEnumNbtFieldType.Location )
+            //CswNbtMetaDataFieldType FieldType = Prop.getFieldType();
+            //if( FieldType.FieldType != CswEnumNbtFieldType.Relationship &&
+            //    FieldType.FieldType != CswEnumNbtFieldType.Location )
+            if(false == Prop.IsNodeReference())
             {
                 throw new CswDniException( CswEnumErrorType.Error, "Illegal view setting", "Views must be built from Relationship or Location properties" );
             }
@@ -1192,8 +1193,11 @@ namespace ChemSW.Nbt
             {
                 foreach( CswNbtMetaDataObjectClass DefaultFilterOC in DefaultFilterOCs )
                 {
-                    CswNbtObjClass DefaultFilterObjClass = CswNbtObjClassFactory.makeObjClass( _CswNbtResources, DefaultFilterOC );
-                    DefaultFilterObjClass.addDefaultViewFilters( this );
+                    if( DefaultFilterOC.ObjectClassName != CswResources.UnknownEnum )//Case 31285 - don't try to get ObjClass if it's being deleted
+                    {
+                        CswNbtObjClass DefaultFilterObjClass = CswNbtObjClassFactory.makeObjClass( _CswNbtResources, DefaultFilterOC );
+                        DefaultFilterObjClass.addDefaultViewFilters( this );
+                    }
                 }
             }
         } // _setDefaultFilters()

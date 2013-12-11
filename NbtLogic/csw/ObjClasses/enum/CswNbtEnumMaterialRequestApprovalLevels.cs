@@ -11,7 +11,6 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 return new CswCommaDelimitedString
                     {
-                        Lvl0,
                         Lvl1,
                         Lvl2,
                         Lvl3,
@@ -22,7 +21,6 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-        public const string Lvl0 = "Level 0";
         public const string Lvl1 = "Level 1";
         public const string Lvl2 = "Level 2";
         public const string Lvl3 = "Level 3";

@@ -279,12 +279,12 @@ namespace ChemSW.Nbt.Actions
             CswNbtViewRelationship MatVR = EPMatsView.AddViewRelationship( MEPVR, CswEnumNbtViewPropOwnerType.First, MaterialOCP, false );
 
             ICswNbtTree EPMatsTree = _CswNbtResources.Trees.getTreeFromView( EPMatsView, false, true, true );
-            if( EPMatsTree.getChildNodeCount() > 0 )
+            for( int i = 0; i < EPMatsTree.getChildNodeCount(); i++ )
             {
-                EPMatsTree.goToNthChild( 0 );//EP's MEPs
-                for( int i = 0; i < EPMatsTree.getChildNodeCount(); i++ )
+                EPMatsTree.goToNthChild( i ); //EP's MEPs
+                if( EPMatsTree.getChildNodeCount() > 0 )
                 {
-                    EPMatsTree.goToNthChild( 0 );//MEPs Materials
+                    EPMatsTree.goToNthChild( 0 ); //MEP's Material
                     EPMaterialPks.Add( EPMatsTree.getNodeIdForCurrentPosition().PrimaryKey.ToString() );
                     EPMatsTree.goToParentNode();
                 }
