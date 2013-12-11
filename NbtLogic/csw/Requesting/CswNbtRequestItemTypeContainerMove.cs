@@ -34,6 +34,9 @@ namespace ChemSW.Nbt.Requesting
                 case CswNbtObjClassRequestItem.PropertyName.ReceiptLotsReceived:
                     Prop.setHidden( true, SaveToDb: false );
                     break;
+                case CswNbtObjClassRequestItem.PropertyName.InventoryGroup:
+                    Prop.setReadOnly( true, SaveToDb: false );
+                    break;
             }
         }
 

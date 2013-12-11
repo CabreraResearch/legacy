@@ -51,14 +51,14 @@ namespace ChemSW.Nbt.Actions
         /// <summary>
         /// Instance a new container according to Object Class rules. Note: this does not get the properties.
         /// </summary>
-        public CswNbtObjClassContainer makeContainer( CswNbtNodeCollection.AfterMakeNode After )
+        public CswNbtObjClassContainer makeContainer( Action<CswNbtNode> After )
         {
             CswNbtObjClassContainer ret = null;
 
             CswNbtMetaDataNodeType ContainerNt = _ContainerOc.getLatestVersionNodeTypes().FirstOrDefault();
             if( null != ContainerNt )
             {
-                CswNbtNodeCollection.AfterMakeNode After2 = delegate( CswNbtNode NewNode )
+                Action<CswNbtNode> After2 = delegate( CswNbtNode NewNode )
                     {
                         CswNbtObjClassContainer RetAsContainer = NewNode;
                         RetAsContainer.Material.RelatedNodeId = _MaterialId;
@@ -166,9 +166,9 @@ namespace ChemSW.Nbt.Actions
                                     {
                                         // This includes the initial Container node that was created at the start of the receive wizard.
                                         // This is done so we can create Dispense Transaction and Location records, and persist custom barcodes.
-                                        
 
-                                        CswNbtNodeCollection.AfterMakeNode After = delegate( CswNbtNode NewNode )
+
+                                        Action<CswNbtNode> After = delegate( CswNbtNode NewNode )
                                             {
                                                 CswNbtObjClassContainer thisContainer = NewNode;
                                                 if( Barcodes.Count <= NoContainers && false == string.IsNullOrEmpty( Barcodes[C] ) )
@@ -291,7 +291,7 @@ namespace ChemSW.Nbt.Actions
 
         private CswNbtNode _makeReceiptLot( CswPrimaryKey MaterialId, CswPrimaryKey RequestId, JObject ReceiptObj, DateTime ExpirationDate )
         {
-            CswNbtNodeCollection.AfterMakeNode AfterReceiptLot = delegate( CswNbtNode NewNode )
+            Action<CswNbtNode> AfterReceiptLot = delegate( CswNbtNode NewNode )
                 {
                     CswNbtObjClassReceiptLot thisReceiptLot = NewNode;
                     thisReceiptLot.Material.RelatedNodeId = MaterialId;

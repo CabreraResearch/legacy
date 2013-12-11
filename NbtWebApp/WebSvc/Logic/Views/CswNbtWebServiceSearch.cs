@@ -84,9 +84,10 @@ namespace ChemSW.Nbt.WebServices
 
         #region UniversalSearch
 
-        public JObject doUniversalSearch( string SearchTerm, CswEnumSqlLikeMode SearchType, Int32 NodeTypeId, Int32 ObjectClassId, Int32 Page, Int32 PageLimit )
+        public JObject doUniversalSearch( string SearchTerm, CswEnumSqlLikeMode SearchType, Int32 NodeTypeId, Int32 ObjectClassId, Int32 Page, Int32 PageLimit, bool OnlyMergeableNodeTypes )
         {
             CswNbtSearch Search = getSearch( SearchTerm, SearchType, NodeTypeId, ObjectClassId );
+            Search.OnlyMergeableNodeTypes = OnlyMergeableNodeTypes;
             return _finishUniversalSearch( Search, Page, PageLimit );
         }
 

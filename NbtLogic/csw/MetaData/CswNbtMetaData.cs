@@ -185,6 +185,14 @@ namespace ChemSW.Nbt.MetaData
         }
 
         /// <summary>
+        /// Returns a CswEnumNbtObjectClass based on the object class primary key parameter
+        /// </summary>
+        public CswEnumNbtObjectClass getObjectClassValue( Int32 ObjectClassId )
+        {
+            return _CswNbtMetaDataResources.ObjectClassesCollection.getObjectClassValue( ObjectClassId );
+        }
+
+        /// <summary>
         /// Returns a CswNbtMetaDataObjectClass based on the object class name parameter
         /// </summary>
         public CswNbtMetaDataObjectClass getObjectClass( string ObjectClassName )
@@ -266,7 +274,7 @@ namespace ChemSW.Nbt.MetaData
         public CswNbtMetaDataNodeType getNodeTypeFromNodeId( CswPrimaryKey NodeId, CswDateTime Date = null )
         {
             CswTableSelect TblSel = CswNbtResources.makeCswTableSelect( "GetNodeTypeId", "nodes" );
-            DataTable NodesTbl = TblSel.getTable( new CswCommaDelimitedString(){ "NodeTypeId" }, "where nodeid = " + NodeId.PrimaryKey );
+            DataTable NodesTbl = TblSel.getTable( new CswCommaDelimitedString() { "NodeTypeId" }, "where nodeid = " + NodeId.PrimaryKey );
             int NodeTypeId = Int32.MinValue;
             if( NodesTbl.Rows.Count > 0 )
             {
@@ -456,6 +464,11 @@ namespace ChemSW.Nbt.MetaData
         public IEnumerable<CswNbtMetaDataNodeTypeProp> getNodeTypeProps( Int32 NodeTypeId, CswDateTime Date = null )
         {
             return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypeProps( NodeTypeId, Date );
+        }
+
+        public IEnumerable<CswNbtMetaDataNodeTypeProp> getNodeTypeProps()
+        {
+            return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypeProps();
         }
 
         public IEnumerable<CswNbtMetaDataNodeTypeProp> getNodeTypeProps( CswEnumNbtFieldType FieldType, CswDateTime Date = null )
@@ -1071,6 +1084,7 @@ namespace ChemSW.Nbt.MetaData
             InsertedRow["multi"] = CswConvert.ToDbVal( NtpModel.Multi );
             InsertedRow["readonly"] = CswConvert.ToDbVal( NtpModel.ReadOnly );
             InsertedRow["isunique"] = CswConvert.ToDbVal( NtpModel.IsUnique );
+            InsertedRow["iscompoundunique"] = CswConvert.ToDbVal( NtpModel.IsCompoundUnique );
             InsertedRow["hidden"] = CswConvert.ToDbVal( NtpModel.Hidden );
 
             //note: if we are using numbering, we will perform this on the setter for prop.questionno
@@ -1082,7 +1096,7 @@ namespace ChemSW.Nbt.MetaData
                     OraViewColName = OraViewColNamePrefix + OraViewColName;
                 }
                 InsertedRow["oraviewcolname"] = CswTools.MakeOracleCompliantIdentifier( OraViewColName );
-                
+
             }
 
 

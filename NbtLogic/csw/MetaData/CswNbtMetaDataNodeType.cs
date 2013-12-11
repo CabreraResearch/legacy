@@ -168,6 +168,15 @@ namespace ChemSW.Nbt.MetaData
         }
 
         /// <summary>
+        /// Whether nodes of this nodetype are allowed to be merged
+        /// </summary>
+        public bool Mergeable
+        {
+            get { return CswConvert.ToBoolean( _NodeTypeRow["mergeable"] ); }
+            set { _NodeTypeRow["mergeable"] = CswConvert.ToDbVal( value ); }
+        }
+
+        /// <summary>
         /// Parse the <see cref="NameTemplateValue"/> removing "'{', '}', ' ', '-', '(', ')'" and return a comma delimited string
         /// </summary>
         /// <returns></returns>
@@ -340,7 +349,12 @@ namespace ChemSW.Nbt.MetaData
 
         public CswNbtMetaDataObjectClass getObjectClass()
         {
-            return _CswNbtMetaDataResources.CswNbtMetaData.getObjectClass( CswConvert.ToInt32( _NodeTypeRow["objectclassid"].ToString() ) );
+            return _CswNbtMetaDataResources.CswNbtMetaData.getObjectClass( ObjectClassId );
+        }
+
+        public CswEnumNbtObjectClass getObjectClassValue()
+        {
+            return _CswNbtMetaDataResources.CswNbtMetaData.getObjectClassValue( ObjectClassId );
         }
 
         public Int32 ObjectClassId
@@ -408,6 +422,10 @@ namespace ChemSW.Nbt.MetaData
             return _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeProps( NodeTypeId, FieldType, _Date );
         }
 
+        public IEnumerable<CswNbtMetaDataNodeTypeProp> getUniqueProps()
+        {
+            return _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeProps( NodeTypeId, _Date ).Where( p => p.IsCompoundUnique() || p.IsGlobalUnique() || p.IsUnique() );
+        }
 
         public CswNbtMetaDataNodeTypeTab getFirstNodeTypeTab()
         {
@@ -828,6 +846,5 @@ namespace ChemSW.Nbt.MetaData
             }
             NodesUpdate.update( NodesTable );
         }
-
     }
 }

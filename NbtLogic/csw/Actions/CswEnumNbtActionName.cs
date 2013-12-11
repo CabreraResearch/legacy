@@ -29,6 +29,7 @@ namespace ChemSW.Nbt.Actions
             {   Login_Data,                Login_Data                },
             {   Manage_Locations,          Manage_Locations          },
             {   Material_Approval,         Material_Approval         },
+            {   Merge,                     Merge                     },
             {   Modules,                   Modules                   },
             {   Multi_Edit,                Multi_Edit                },
             {   Quotas,                    Quotas                    },
@@ -108,6 +109,7 @@ namespace ChemSW.Nbt.Actions
         public const string Login_Data = "Login_Data";
         public const string Manage_Locations = "Manage_Locations";
         public const string Material_Approval = "Material_Approval";
+        public const string Merge = "Merge";
         public const string Modules = "Modules";
         public const string Multi_Edit = "Multi_Edit";
         public const string Quotas = "Quotas";
