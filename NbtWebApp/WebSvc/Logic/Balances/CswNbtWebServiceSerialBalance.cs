@@ -60,7 +60,7 @@ namespace ChemSW.Nbt.WebServices
 
                 CswNbtObjClassBalance Balance;
 
-                CswNbtNodeCollection.AfterMakeNode AfterBalance = delegate( CswNbtNode NewNode )
+                Action<CswNbtNode> AfterBalance = delegate( CswNbtNode NewNode )
                     {
                         CswNbtObjClassBalance thisBalance = NewNode;
                         thisBalance.Name.Text = Request.NbtName;
@@ -249,7 +249,7 @@ namespace ChemSW.Nbt.WebServices
 
                 CswNbtObjClassBalanceConfiguration BalanceConfiguration = _findConfigurationWithName( NbtResources, Request.Name );
 
-                CswNbtNodeCollection.AfterMakeNode AfterBalanceConfig = delegate( CswNbtNode NewNode )
+                Action<CswNbtNode> AfterBalanceConfig = delegate( CswNbtNode NewNode )
                     {
                         CswNbtObjClassBalanceConfiguration thisBalanceConfig = NewNode;
                         thisBalanceConfig.Name.Text = Request.Name;

@@ -737,6 +737,76 @@ namespace ChemSW.Nbt.WebServices
 
         #endregion Favorite
 
+        #region Merge
+
+        [DataContract]
+        public class MergeInfoRequest
+        {
+            [DataMember]
+            public string NodeId1 = string.Empty;
+            [DataMember]
+            public string NodeId2 = string.Empty;
+        }
+
+        [DataContract]
+        public class MergeInfoReturn : CswWebSvcReturn
+        {
+            [DataMember]
+            public CswNbtActMerge.MergeInfoData Data;
+        }
+
+        [DataContract]
+        public class MergeChoicesRequest
+        {
+            [DataMember]
+            public CswNbtActMerge.MergeInfoData Choices = null;
+        }
+
+        [DataContract]
+        public class MergeFinishReturn : CswWebSvcReturn
+        {
+            public MergeFinishReturn()
+            {
+                Data = new MergeFinishData();
+            }
+
+            [DataMember]
+            public MergeFinishData Data;
+
+            [DataContract]
+            public class MergeFinishData
+            {
+                [DataMember]
+                public string ViewId;
+            }
+        }
+
+
+        public static void getMergeInfo( ICswResources CswResources, MergeInfoReturn Return, MergeInfoRequest Request )
+        {
+            CswNbtActMerge Merge = new CswNbtActMerge( (CswNbtResources) CswResources );
+            Return.Data = Merge.getMergeInfo( CswConvert.ToPrimaryKey( Request.NodeId1 ), CswConvert.ToPrimaryKey( Request.NodeId2 ) );
+        }
+
+        public static void applyMergeChoices( ICswResources CswResources, MergeInfoReturn Return, MergeChoicesRequest Request )
+        {
+            CswNbtActMerge Merge = new CswNbtActMerge( (CswNbtResources) CswResources );
+            Return.Data = Merge.applyMergeChoices( Request.Choices );
+        }
+
+        public static void finishMerge( ICswResources CswResources, MergeFinishReturn Return, MergeChoicesRequest Request )
+        {
+            CswNbtResources NbtResources = (CswNbtResources) CswResources;
+
+            CswNbtActMerge Merge = new CswNbtActMerge( NbtResources );
+            CswNbtView view = Merge.finishMerge( Request.Choices );
+            view.SaveToCache( IncludeInQuickLaunch: false );
+            Return.Data.ViewId = view.SessionViewId.ToString();
+        } // finishMerge()
+
+        #endregion Merge
+
+
     } // class CswNbtWebServiceNode
 
 } // namespace ChemSW.Nbt.WebServices

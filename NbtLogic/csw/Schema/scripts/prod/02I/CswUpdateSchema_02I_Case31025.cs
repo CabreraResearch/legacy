@@ -1,4 +1,5 @@
 ﻿using ChemSW.Nbt.ImportExport;
+using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.csw.Schema;
 
@@ -28,13 +29,18 @@ namespace ChemSW.Nbt.Schema
         {
             // CISPro
             {
+                CswNbtMetaDataNodeType SiteNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Site" );
+                
                 CswNbtSchemaUpdateImportMgr ImpMgrCIS = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "CISPro" );
 
                 ImpMgrCIS.importDef( 1, "chemicals" );
 
                 ImpMgrCIS.importOrder( 1, "Inventory Group", "chemicals" );
                 ImpMgrCIS.importOrder( 2, "Department", "chemicals" );
-                ImpMgrCIS.importOrder( 3, "Site", "chemicals", 1 );
+                if( null != SiteNT ) // case 31306
+                {
+                    ImpMgrCIS.importOrder( 3, "Site", "chemicals", 1 );
+                }
                 ImpMgrCIS.importOrder( 4, "Building", "chemicals", 2 );
                 ImpMgrCIS.importOrder( 5, "Room", "chemicals", 3 );
                 ImpMgrCIS.importOrder( 6, "Cabinet", "chemicals", 4 );
@@ -50,7 +56,10 @@ namespace ChemSW.Nbt.Schema
 
                 ImpMgrCIS.importBinding( "inventorygroupname", "Name", "", "chemicals", "inventory group" );
                 ImpMgrCIS.importBinding( "department", "Department Name", "", "chemicals", "department" );
-                ImpMgrCIS.importBinding( "site", "Name", "", "chemicals", "site", 1 );
+                if( null != SiteNT ) // case 31306
+                {
+                    ImpMgrCIS.importBinding( "site", "Name", "", "chemicals", "site", 1 );
+                }
                 ImpMgrCIS.importBinding( "building", "Name", "", "chemicals", "building", 2 );
                 ImpMgrCIS.importBinding( "room", "Name", "", "chemicals", "room", 3 );
                 ImpMgrCIS.importBinding( "cabinet", "Name", "", "chemicals", "cabinet", 4 );
@@ -88,7 +97,10 @@ namespace ChemSW.Nbt.Schema
                 ImpMgrCIS.importRelationship( "chemicals", "Container", "Location", 3 );
                 ImpMgrCIS.importRelationship( "chemicals", "Container", "Location", 4 );
                 ImpMgrCIS.importRelationship( "chemicals", "Container", "Owner" );
-                ImpMgrCIS.importRelationship( "chemicals", "Site", "Inventory Group" );
+                if( null != SiteNT ) // case 31306
+                {
+                    ImpMgrCIS.importRelationship( "chemicals", "Site", "Inventory Group" );
+                }
                 ImpMgrCIS.importRelationship( "chemicals", "Room", "Inventory Group" );
                 ImpMgrCIS.importRelationship( "chemicals", "Building", "Inventory Group" );
                 ImpMgrCIS.importRelationship( "chemicals", "Cabinet", "Inventory Group" );

@@ -12,7 +12,7 @@ using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.PropTypes
 {
-    public class CswNbtNodePropRelationship: CswNbtNodeProp
+    public class CswNbtNodePropRelationship : CswNbtNodeProp, ICswNbtNodePropNodeReference
     {
         public static implicit operator CswNbtNodePropRelationship( CswNbtNodePropWrapper PropWrapper )
         {
@@ -177,6 +177,13 @@ namespace ChemSW.Nbt.PropTypes
         {
             RelatedNodeId = null;
             CachedNodeName = "";
+        }
+
+        // for ICswNbtNodePropNodeReference
+        public CswPrimaryKey ReferencedNodeId
+        {
+            get { return RelatedNodeId; }
+            set { RelatedNodeId = value; }
         }
 
         /// <summary>
