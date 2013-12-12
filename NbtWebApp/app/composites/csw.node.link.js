@@ -71,8 +71,13 @@
             } else {
                 cswPrivate.makeNodeLink(cswPrivate.nodeid, cswPrivate.nodename);
             }
-        }());
 
+            cswPublic.val = function() {
+                return cswPrivate.text;
+            };
+
+        }());
+        
         return cswPublic;
     });
 }());

@@ -59,10 +59,17 @@
                     cswPrivate.previewCell = cswPublic.table.cell(1, 4);
                     cswPrivate.validateCell = cswPublic.table.cell(1, 5);
 
-                    cswPrivate.pathCell.nodeLink({
+                    var nodeLink = cswPrivate.pathCell.nodeLink({
                         text: cswPrivate.selectednodelink,
                         linkText: cswPrivate.path
                     });
+
+                    if (cswPrivate.isRequired) {
+                        cswPrivate.locationValidator = Csw.validator(cswPrivate.validateCell, nodeLink, {
+                            className: 'locationValidator_' + window.Ext.id(),
+                            errorMsg: 'Location is required.'
+                        });
+                    }
 
                     cswPrivate.selectDiv = cswPrivate.selectCell.div({
                         cssclass: 'locationselect',
@@ -183,23 +190,9 @@
                         nodeId: cswPrivate.nodeid,
                         nodeKey: cswPrivate.nodeKey,
                         includeInQuickLaunch: false,
-                        //defaultSelect: Csw.enums.nodeTree_DefaultSelect.root.name
+                        defaultSelect: Csw.enums.nodeTree_DefaultSelect.root.name
                     }
                 });
-
-                if (cswPrivate.isRequired) {
-                    cswPrivate.locationValidator = Csw.validator(cswPrivate.validateCell, cswPublic.comboBox, {
-                        cssOptions: { 'visibility': 'hidden', 'width': '20px' },
-                        errorMsg: 'Location is required.',
-                        onValidation: function (isValid) {
-                            if (isValid) {
-                                cswPrivate.validateCell.hide();
-                            } else {
-                                cswPrivate.validateCell.show();
-                            }
-                        }
-                    });
-                }
             }; // makeLocationCombo()
 
             //#endregion cswPrivate/cswPublic methods and props
