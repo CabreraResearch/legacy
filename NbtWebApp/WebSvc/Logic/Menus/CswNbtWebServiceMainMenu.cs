@@ -423,10 +423,10 @@ namespace ChemSW.Nbt.WebServices
                 }
 
                 // We always want to exclude the current user 
-                Return.Data.ExcludeNodeIds.Add( CswNbtResources.CurrentNbtUser.UserId.ToString() );
+                Return.Data.ExcludeNodeIds.Add( CswConvert.ToString( CswNbtResources.CurrentNbtUser.UserId.PrimaryKey ) );
                 // and exclude any users of chemsw_admin_role
                 CswNbtObjClassUser ChemSWAdminUser = CswNbtResources.Nodes.makeUserNodeFromUsername( "chemsw_admin" );
-                Return.Data.ExcludeNodeIds.Add( ChemSWAdminUser.UserId.ToString() );
+                Return.Data.ExcludeNodeIds.Add( CswConvert.ToString( ChemSWAdminUser.UserId.PrimaryKey ) );
                 //todo: make this encompass _all_ users of chemsw_admin_role
             }
             else

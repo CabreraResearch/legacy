@@ -1593,7 +1593,14 @@
                             name: 'ImpersonateButton',
                             enabledText: 'Impersonate',
                             onClick: function () {
-                                Csw.tryExec(o.onImpersonate, usersel.val(), usersel.selectedText());
+                                var val = usersel.val() || usersel.selectedNodeId();
+                                var text = '';
+                                if (usersel.selectedText) {
+                                    text = usersel.selectedText();
+                                } else if (usersel.selectedName) {
+                                    text = usersel.selectedName();
+                                }
+                                Csw.tryExec(o.onImpersonate, val, text);
                                 div.$.dialog('close');
                             }
                         });
@@ -1658,7 +1665,7 @@
                     cswPublic.close();
                     Csw.tryExec(cswDlgPrivate.onSelectNode, nodeObj);
                 },
-                filterOutNodeIds: cswDlgPrivate.filterOutNodeIds
+                excludeNodeIds: cswDlgPrivate.excludeNodeIds
             });
             return cswPublic;
         }, // SearchDialog
