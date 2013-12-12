@@ -1,7 +1,6 @@
-﻿using ChemSW.Nbt.ImportExport;
-using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.csw.Dev;
+﻿using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.csw.Schema;
+using ChemSW.Nbt.MetaData;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -28,7 +27,7 @@ namespace ChemSW.Nbt.Schema
         public override void update()
         {
             // CISPro
-            {
+            if ( _CswNbtSchemaModTrnsctn.isMaster() ){
                 CswNbtMetaDataNodeType SiteNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Site" );
                 
                 CswNbtSchemaUpdateImportMgr ImpMgrCIS = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "CISPro" );
