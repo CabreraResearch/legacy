@@ -27,12 +27,12 @@ namespace ChemSW.Nbt.Schema
         public override void update()
         {
                 CswNbtSchemaUpdateImportMgr ImpMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "CAF" );
-                ImpMgr.CAFimportOrder( "Regulatory List", "regulatory_lists", "reglists_view");
+                ImpMgr.CAFimportOrder( "Regulatory List", "regulatory_lists", "reglists_view", "regulatorylistid");
                 ImpMgr.importBinding( "displayname", CswNbtObjClassRegulatoryList.PropertyName.Name, "" );
                 ImpMgr.importBinding( "listmode", CswNbtObjClassRegulatoryList.PropertyName.ListMode, "" );
 
 
-                ImpMgr.CAFimportOrder( "Regulatory List CAS", "regulated_casnos" );
+                ImpMgr.CAFimportOrder( "Regulatory List CAS", "regulated_casnos", PkColumnName: "regulatorylistid" );
                 ImpMgr.importBinding( "casno", CswNbtObjClassRegulatoryListCasNo.PropertyName.CASNo, "" );
                 
                 ImpMgr.finalize();

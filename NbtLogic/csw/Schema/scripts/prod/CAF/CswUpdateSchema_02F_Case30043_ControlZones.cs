@@ -30,7 +30,7 @@ namespace ChemSW.Nbt.Schema
             CswNbtSchemaUpdateImportMgr ImportMgr_ControlZones = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "CAF" );
 
 
-            ImportMgr_ControlZones.CAFimportOrder( "Control Zone", "cispro_controlzones" );
+            ImportMgr_ControlZones.CAFimportOrder( "Control Zone", "cispro_controlzones", PkColumnName: "controlzoneid" );
 
             // Binding
             ImportMgr_ControlZones.importBinding( "controlzonename", CswNbtObjClassControlZone.PropertyName.Name, "" );
