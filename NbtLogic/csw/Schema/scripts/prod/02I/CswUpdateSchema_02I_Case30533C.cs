@@ -104,7 +104,6 @@ namespace ChemSW.Nbt.Schema
             AddLayoutMgr.First.moveProp( Row: 6, Column: 1, PropName: CswNbtObjClassRequestItem.PropertyName.Quantity );
             AddLayoutMgr.First.moveProp( Row: 7, Column: 1, PropName: CswNbtObjClassRequestItem.PropertyName.Size );
             AddLayoutMgr.First.moveProp( Row: 8, Column: 1, PropName: CswNbtObjClassRequestItem.PropertyName.SizeCount );
-            AddLayoutMgr.First.moveProp( Row: 9, Column: 1, PropName: CswNbtObjClassRequestItem.PropertyName.ExternalOrderNumber );
             AddLayoutMgr.First.moveProp( Row: 10, Column: 1, PropName: CswNbtObjClassRequestItem.PropertyName.NeededBy );
             AddLayoutMgr.First.moveProp( Row: 11, Column: 1, PropName: CswNbtObjClassRequestItem.PropertyName.InventoryGroup );
             AddLayoutMgr.First.moveProp( Row: 12, Column: 1, PropName: CswNbtObjClassRequestItem.PropertyName.Location );

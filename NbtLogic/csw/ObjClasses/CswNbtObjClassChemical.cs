@@ -152,11 +152,15 @@ namespace ChemSW.Nbt.ObjClasses
             LabelCodes.SetOnPropChange( OnLabelCodesChange );
             AddLabelCodes.SetOnPropChange( OnAddLabelCodesPropChange );
             _setUpDsdPhraseView();
-
-            if( false == CswNbtObjClassSDSDocument.materialHasActiveSDS( _CswNbtResources, NodeId ) )
-            {
-                ViewSDS.setHidden( true, false );
-            }
+            
+            ViewSDS.SetOnBeforeRender( delegate( CswNbtNodeProp prop )
+                {
+                    if( false == CswNbtObjClassSDSDocument.materialHasActiveSDS( _CswNbtResources, NodeId ) )
+                    {
+                        ViewSDS.setHidden( true, false );
+                    }
+                } );
+            
             if( IsConstituent.Checked == CswEnumTristate.True )
             {
                 AssignedSDS.setHidden( true, false );

@@ -38,9 +38,9 @@ namespace ChemSW.Nbt.WebServices
             return _TabsPropsSd.getProps( NodeId, NodeKey, TabId, NodeTypeId, filterToPropId, RelatedNodeId, ForceReadOnly, Date );
         } // getProps()
 
-        public JObject getIdentityTabProps( CswPrimaryKey NodeId, string filterToPropId, string RelatedNodeId, CswDateTime Date = null )
+        public JObject getIdentityTabProps( CswPrimaryKey NodeId, string filterToPropId, string RelatedNodeId, bool ForceReadOnly = false, CswDateTime Date = null )
         {
-            return _TabsPropsSd.getIdentityTabProps( NodeId, filterToPropId, RelatedNodeId, Date );
+            return _TabsPropsSd.getIdentityTabProps( NodeId, filterToPropId, RelatedNodeId, ForceReadOnly, Date );
         } // getProps()
 
         /// <summary>
@@ -74,7 +74,7 @@ namespace ChemSW.Nbt.WebServices
             return _TabsPropsSd.removeProp( PropIdAttr, TabId );
         } // removeProp()
 
-        public CswNbtNode addNode( CswNbtMetaDataNodeType NodeType, JObject PropsObj, out CswNbtNodeKey RetNbtNodeKey, CswNbtNodeCollection.AfterMakeNode After, CswNbtView View = null, CswNbtMetaDataNodeTypeTab NodeTypeTab = null )
+        public CswNbtNode addNode( CswNbtMetaDataNodeType NodeType, JObject PropsObj, out CswNbtNodeKey RetNbtNodeKey, Action<CswNbtNode> After, CswNbtView View = null, CswNbtMetaDataNodeTypeTab NodeTypeTab = null )
         {
             return _TabsPropsSd.addNode( NodeType, PropsObj, out RetNbtNodeKey, After, View, NodeTypeTab );
         }

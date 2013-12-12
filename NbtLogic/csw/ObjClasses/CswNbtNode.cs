@@ -469,7 +469,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         /// <param name="DeleteAllRequiredRelatedNodes"></param>
         /// <param name="OverridePermissions">For internal use only. When set to true, ignores user permissions.</param>
-        public void delete( bool DeleteAllRequiredRelatedNodes = false, bool OverridePermissions = false )
+        public void delete( bool DeleteAllRequiredRelatedNodes = false, bool OverridePermissions = false, bool ValidateRequiredRelationships = true )
         {
             if( null == OnRequestDeleteNode )
             {
@@ -483,7 +483,7 @@ namespace ChemSW.Nbt.ObjClasses
 
             if( null != _CswNbtObjClass )
             {
-                _CswNbtObjClass.beforeDeleteNode( DeleteAllRequiredRelatedNodes: DeleteAllRequiredRelatedNodes );
+                _CswNbtObjClass.beforeDeleteNode( DeleteAllRequiredRelatedNodes: DeleteAllRequiredRelatedNodes, ValidateRequiredRelationships: ValidateRequiredRelationships );
             }
 
             OnRequestDeleteNode( this );
@@ -549,6 +549,25 @@ namespace ChemSW.Nbt.ObjClasses
                 } // foreach( CswNbtNodePropWrapper ThisProp in this.Properties )
             } // foreach( CswNbtNodePropWrapper SourceProp in SourceNode.Properties )
         } // copyPropertyValues()
+
+        /// <summary>
+        /// Copies all matching properties (by name and field type) from another node. 
+        /// Forces generic behavior (bypasses field-type specific copy behavior)
+        /// </summary>
+        /// <param name="SourceNode">Node from which to copy property values</param>
+        public void copyPropertyValuesGeneric( CswNbtNode SourceNode )
+        {
+            foreach( CswNbtNodePropWrapper SourceProp in SourceNode.Properties )
+            {
+                foreach( CswNbtNodePropWrapper ThisProp in this.Properties )
+                {
+                    if( ThisProp.PropName == SourceProp.PropName && ThisProp.getFieldTypeValue() == SourceProp.getFieldTypeValue() )
+                    {
+                        ThisProp.copyGeneric( SourceProp );
+                    } // if( ThisProp.PropName == SourceProp.PropName && ThisProp.FieldType == SourceProp.FieldType )
+                } // foreach( CswNbtNodePropWrapper ThisProp in this.Properties )
+            } // foreach( CswNbtNodePropWrapper SourceProp in SourceNode.Properties )
+        } // copyPropertyValuesGeneric()
 
         /// <summary>
         /// Sets the values of all relationships whose target matches 

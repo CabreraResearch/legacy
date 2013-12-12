@@ -475,6 +475,14 @@ namespace ChemSW.Nbt.PropTypes
         /// </summary>
         public virtual void Copy( CswNbtNodePropData Source )
         {
+            CopyGeneric( Source );
+        }
+
+        /// <summary>
+        /// Handles when the property value is copied to another node
+        /// </summary>
+        public void CopyGeneric( CswNbtNodePropData Source )
+        {
             // Default, just copy the data values
 
             CswEnumNbtFieldType FieldType = Source.getFieldTypeValue();
@@ -567,7 +575,7 @@ namespace ChemSW.Nbt.PropTypes
             {
                 if( SubFieldName == SubFieldKey.Name )
                 {
-                    // This calls the appropriate set; method in the CswNbtNodeProp* class
+                    // This calls the appropriate get; method in the CswNbtNodeProp* class
                     if( null != _SubFieldMethods[SubFieldKey].Item1 )
                     {
                         ret = _SubFieldMethods[SubFieldKey].Item1();

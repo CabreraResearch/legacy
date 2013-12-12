@@ -84,7 +84,7 @@
         (function _postCtor() {
 
             cswPrivate.action = Csw.layouts.action(cswParent, {
-                title: cswPrivate.title || 'Fulfill Material Request by Size',
+                title: cswPrivate.title || 'Move Containers',
                 finishText: 'Fulfill Request',
                 onFinish: cswPrivate.submitRequest,
                 onCancel: function () {

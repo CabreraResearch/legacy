@@ -74,6 +74,19 @@ namespace ChemSW.Nbt.MetaData
         {
             return (CswNbtMetaDataObjectClass) _CollImpl.getByPk( ObjectClassId );
         }
+
+        public CswEnumNbtObjectClass getObjectClassValue( Int32 ObjectClassId )
+        {
+            CswEnumNbtObjectClass ObjectClass = CswNbtResources.UnknownEnum;
+            if( ObjectClassId != Int32.MinValue )
+            {
+                string ObjectClassStr = _CollImpl.getNameWhereFirst( "where objectclassid = " + ObjectClassId.ToString() );
+                ObjectClass = ObjectClassStr;
+            }
+            return ObjectClass;
+        }
+
+
         public CswNbtMetaDataObjectClass getObjectClassByNodeTypeId( Int32 NodeTypeId )
         {
             return (CswNbtMetaDataObjectClass) _CollImpl.getWhereFirst( "where objectclassid in (select objectclassid from nodetypes where nodetypeid = " + NodeTypeId.ToString() + ")" );

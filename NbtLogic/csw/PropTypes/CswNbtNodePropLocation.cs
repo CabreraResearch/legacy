@@ -10,7 +10,7 @@ using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.PropTypes
 {
-    public class CswNbtNodePropLocation : CswNbtNodeProp
+    public class CswNbtNodePropLocation : CswNbtNodeProp, ICswNbtNodePropNodeReference
     {
         public static implicit operator CswNbtNodePropLocation( CswNbtNodePropWrapper PropWrapper )
         {
@@ -59,6 +59,16 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
+        // for ICswNbtNodePropNodeReference
+        public CswPrimaryKey ReferencedNodeId
+        {
+            get { return SelectedNodeId; }
+            set { SelectedNodeId = value; }
+        }
+        public CswEnumNbtViewRelatedIdType TargetType { get { return CswEnumNbtViewRelatedIdType.ObjectClassId; } }
+        public Int32 TargetId { get { return _CswNbtResources.MetaData.getObjectClassId( CswEnumNbtObjectClass.LocationClass ); } }
+
+
         public CswPrimaryKey SelectedNodeId
         {
             get
@@ -95,7 +105,8 @@ namespace ChemSW.Nbt.PropTypes
                 string NodeName = GetPropRowValue( _NameSubField );
                 if( string.IsNullOrEmpty( NodeName ) )
                 {
-                    NodeName = RefreshNodeName();
+                    RefreshNodeName(); // executes this setter
+                    NodeName = GetPropRowValue( _NameSubField );
                 }
                 return NodeName;
             }
@@ -179,10 +190,11 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
-        public string RefreshNodeName()
+        public void RefreshNodeName()
         {
-            CachedNodeName = CswNbtNodePropLocation.GetTopLevelName( _CswNbtResources );
-            CachedPath = CachedNodeName;
+            string topLevelName = CswNbtNodePropLocation.GetTopLevelName( _CswNbtResources );
+            CachedNodeName = topLevelName;
+            CachedPath = topLevelName;
             CachedBarcode = string.Empty;
 
             if( SelectedNodeId != null )
@@ -198,7 +210,15 @@ namespace ChemSW.Nbt.PropTypes
             }
 
             this.PendingUpdate = false;
-            return CachedNodeName;
+        }
+
+        public void clearRelationship()
+        {
+            SelectedNodeId = null;
+            string topLevelName = CswNbtNodePropLocation.GetTopLevelName( _CswNbtResources );
+            CachedNodeName = topLevelName;
+            CachedPath = topLevelName;
+            CachedBarcode = string.Empty;
         }
 
         public static readonly string PathDelimiter = " > ";

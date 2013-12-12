@@ -46,21 +46,21 @@
                 table = parentDiv.table({ name: 'tbl' }),
                 moreDivCell = table.cell(1, 1),
                 editBtnCell = table.cell(1, 2),
-                multiSelectCell = table.cell(2, 1),
-                morediv = moreDivCell.moreDiv({ name: cswPrivate.name + '_morediv' });
+                multiSelectCell = table.cell(2, 1)
             valStr = cswPrivate.valStr;
+            cswPrivate.morediv = moreDivCell.moreDiv({ name: cswPrivate.name + '_morediv' });
 
             delete cswPrivate.values;
-            morediv.moreLink.hide();
+            cswPrivate.morediv.moreLink.hide();
             cswPrivate.select = multiSelectCell.select(cswPrivate);
             multiSelectCell.hide();
             cswPublic = Csw.dom({}, cswPrivate.select);
 
             if (false === Csw.isNullOrEmpty(cswPrivate.readonlyless)) {
-                morediv.shownDiv.span({ text: cswPrivate.readonlyless });
+                cswPrivate.morediv.shownDiv.span({ text: cswPrivate.readonlyless });
                 if (false === Csw.isNullOrEmpty(cswPrivate.readonlymore)) {
-                    morediv.hiddenDiv.span({ text: cswPrivate.readonlymore });
-                    morediv.moreLink.show();
+                    cswPrivate.morediv.hiddenDiv.span({ text: cswPrivate.readonlymore });
+                    cswPrivate.morediv.moreLink.show();
                 }
             }
 
@@ -89,7 +89,7 @@
             };
 
             if (cswPrivate.EditMode === Csw.enums.editMode.Add) {
-                morediv.hide();
+                cswPrivate.morediv.hide();
                 multiSelectCtrl = makeMultiSelect(false, parentDiv, '240px', '360px');
             } else {
                 editBtnCell.icon({
@@ -117,6 +117,18 @@
 
         cswPublic.getValue = function () { //need func with this name for the Csw.validator
             return cswPublic.val();
+        };
+
+        cswPublic.setReadOnlyLessAndMore = function (readonlyless, readonlymore) {
+            cswPrivate.morediv.shownDiv.empty();
+            cswPrivate.morediv.hiddenDiv.empty();
+            if (false === Csw.isNullOrEmpty(readonlyless)) {
+                cswPrivate.morediv.shownDiv.span({ text: readonlyless });
+                if (false === Csw.isNullOrEmpty(readonlymore)) {
+                    cswPrivate.morediv.hiddenDiv.span({ text: readonlymore });
+                    cswPrivate.morediv.moreLink.show();
+                }
+            }
         };
 
         return cswPublic;

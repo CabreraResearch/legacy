@@ -60,7 +60,7 @@ namespace ChemSW.Nbt.WebServices
 
                 CswNbtObjClassBalance Balance;
 
-                CswNbtNodeCollection.AfterMakeNode AfterBalance = delegate( CswNbtNode NewNode )
+                Action<CswNbtNode> AfterBalance = delegate( CswNbtNode NewNode )
                     {
                         CswNbtObjClassBalance thisBalance = NewNode;
                         thisBalance.Name.Text = Request.NbtName;
@@ -249,7 +249,7 @@ namespace ChemSW.Nbt.WebServices
 
                 CswNbtObjClassBalanceConfiguration BalanceConfiguration = _findConfigurationWithName( NbtResources, Request.Name );
 
-                CswNbtNodeCollection.AfterMakeNode AfterBalanceConfig = delegate( CswNbtNode NewNode )
+                Action<CswNbtNode> AfterBalanceConfig = delegate( CswNbtNode NewNode )
                     {
                         CswNbtObjClassBalanceConfiguration thisBalanceConfig = NewNode;
                         thisBalanceConfig.Name.Text = Request.Name;
@@ -300,6 +300,8 @@ namespace ChemSW.Nbt.WebServices
                 NbtName = Balance.Name.Text,
                 CurrentWeight = Balance.Quantity.Quantity,
                 UnitOfMeasurement = Balance.Quantity.CachedUnitName,
+                NodeId = Balance.NodeId.ToString(),
+                IsActive = (Balance.LastActive.DateTimeValue + TimeSpan.FromMinutes(10) > DateTime.Now),
             } );
 
 

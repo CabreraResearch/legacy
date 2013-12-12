@@ -77,6 +77,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="csw\Actions\CswNbtActMerge.cs" />
     <Compile Include="csw\Actions\ChemWatch\CswNbtChemWatchCookie.cs" />
     <Compile Include="csw\Actions\ChemWatch\CswNbtChemWatchDataContract.cs" />
     <Compile Include="csw\Actions\CswNbtActChemWatch.cs" />
@@ -196,6 +197,7 @@
     <Compile Include="csw\PropertySets\CswNbtPropertySetDocument.cs" />
     <Compile Include="csw\PropertySets\CswNbtPropertySetMaterial.cs" />
     <Compile Include="csw\PropertySets\ICswNbtPermissionGroup.cs" />
+    <Compile Include="csw\PropTypes\ICswNbtNodePropNodeReference.cs" />
     <Compile Include="csw\PropTypes\CswNbtNodePropReportLink.cs" />
     <Compile Include="csw\PropTypes\CswEnumNbtDateDisplayMode.cs" />
     <Compile Include="csw\PropTypes\CswEnumNbtDataItemType.cs" />
@@ -593,11 +595,17 @@
     <None Include="csw\Schema\scripts\past\02H\CswUpdateSchema_02H_Case30537C.cs" />
     <None Include="csw\Schema\scripts\past\02H\CswUpdateMetaData_02H_Case30537A.cs" />
     <None Include="csw\Schema\scripts\past\02H\CswUpdateMetaData_02H_Case30537B.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02I\CswUpdateSchema_02I_Case31308B.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02I\CswUpdateMetaData_02I_Case31308.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02I\CswUpdateDDL_02I_Case31056.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02I\CswUpdateSchema_02I_Case31312.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02I\CswUpdateSchema_02I_Case31292.cs" />
     <Compile Include="csw\Schema\scripts\prod\02I\CswUpdateSchema_02I_Case31113B.cs" />
     <Compile Include="csw\Schema\scripts\prod\02I\CswUpdateMetaData_02I_Case31113A.cs" />
     <Compile Include="csw\Schema\scripts\prod\02I\CswUpdateSchema_02I_Case30989.cs" />
     <Compile Include="csw\Schema\scripts\prod\02I\CswUpdateSchema_02I_Case30941.cs" />
     <Compile Include="csw\Schema\scripts\prod\02I\CswUpdateSchema_02I_Case30969.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02I\CswUpdateSchema_02I_Case31056B.cs" />
     <Compile Include="csw\Schema\scripts\prod\02I\CswUpdateMetaData_02I_Case30533B.cs" />
     <Compile Include="csw\Schema\scripts\prod\02I\CswUpdateMetaData_02I_Case31243.cs" />
     <Compile Include="csw\Schema\scripts\prod\02I\CswUpdateSchema_02I_Case31210.cs" />
@@ -626,6 +634,7 @@
     <Compile Include="csw\Schema\scripts\prod\02I\CswUpdateMetaData_02I_Case31114A.cs" />
     <Compile Include="csw\Schema\scripts\prod\02I\CswUpdateDDL_02I_Case31057.cs" />
     <Compile Include="csw\Schema\scripts\prod\02I\CswUpdateSchema_02I_Case31061B.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CAF\CswUpdateSchema_02I_Case31353_CofA_Fix.cs" />
     <Compile Include="csw\Schema\scripts\prod\CAF\CswUpdateSchema_02I_Case31098.cs" />
     <Compile Include="csw\Schema\scripts\prod\CAF\CswUpdateSchema_02I_Case31043_FixRoles.cs" />
     <Compile Include="csw\Schema\scripts\prod\02I\CswUpdateSchema_02I_Case31236A.cs" />

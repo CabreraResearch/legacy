@@ -133,7 +133,7 @@ namespace ChemSW.Nbt.WebServices
         public JObject runGrid( string Title, bool IncludeInQuickLaunch, bool GetAllRowsNow = false, bool IsPropertyGrid = false, string GroupByCol = "", Int32 ResultsLimit = Int32.MinValue )
         {
             _View.SaveToCache( IncludeInQuickLaunch );
-            ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( _View, true, false, false, ResultsLimit );
+            ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( _View, true, false, false, PerLevelNodeLimit: ResultsLimit );
             if( String.IsNullOrEmpty( Title ) )
             {
                 Title = _View.ViewName;
@@ -295,7 +295,7 @@ namespace ChemSW.Nbt.WebServices
         {
             JArray RetRows = new JArray();
             ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( _View, true, false, false );
-            if( _View.Visibility == CswEnumNbtViewVisibility.Property )
+            if( _View.Visibility == CswEnumNbtViewVisibility.Property && Tree.getChildNodeCount() > 0 )
             {
                 Tree.goToNthChild( 0 );
             }
