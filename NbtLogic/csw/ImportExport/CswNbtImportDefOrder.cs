@@ -67,19 +67,19 @@ namespace ChemSW.Nbt.ImportExport
             CswTableUpdate importOrderUpdate = CswNbtResources.makeCswTableUpdate( "CswNbtImportDefOrder_addOrderEntries_Update", CswNbtImportTables.ImportDefOrder.TableName );
             foreach( DataRow OrderRow in OrderDataTable.Select() )
             {
-                    //set blank instances to min value
-                    if( OrderRow["instance"] == DBNull.Value || String.IsNullOrEmpty( OrderRow["instance"].ToString() ) )
-                    {
-                        OrderRow["instance"] = Int32.MinValue;
-                    }
+                //set blank instances to min value
+                if( OrderRow["instance"] == DBNull.Value || String.IsNullOrEmpty( OrderRow["instance"].ToString() ) )
+                {
+                    OrderRow["instance"] = Int32.MinValue;
+                }
 
-                string NTName = OrderRow["nodetypename"].ToString();
-                CswNbtMetaDataNodeType NodeType = CswNbtResources.MetaData.getNodeType( NTName );
+                //string NTName = OrderRow["nodetypename"].ToString();
+                //CswNbtMetaDataNodeType NodeType = CswNbtResources.MetaData.getNodeType( NTName );
 
-                if( null == NodeType )
-                    {
-                    throw new CswDniException( CswEnumErrorType.Error, "Error reading definition", "Invalid NodeType defined in 'Order' sheet: " + NTName );
-                } // if(false == string.IsNullOrEmpty(SheetName) )
+                //if( null == NodeType )
+                //{
+                //    throw new CswDniException( CswEnumErrorType.Error, "Error reading definition", "Invalid NodeType defined in 'Order' sheet: " + NTName );
+                //} // if(false == string.IsNullOrEmpty(SheetName) )
             } // foreach( DataRow OrderRow in OrderDataTable.Rows )
 
             //this is a hack, and the fact that we can even do this makes me sad
