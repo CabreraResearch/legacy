@@ -23,6 +23,9 @@
 
             cswPrivate.labelText = cswPrivate.labelText || null;
             cswPrivate.excludeNodeTypeIds = cswPrivate.excludeNodeTypeIds || '';
+            // Note for excludeNodeIds: This also filters these nodes from search results
+            // in the case that the nodeselect is a Search button
+            cswPrivate.excludeNodeIds = cswPrivate.excludeNodeIds || [];
             cswPrivate.selectedNodeId = cswPrivate.selectedNodeId || '';
             cswPrivate.selectedName = cswPrivate.selectedName || '';
             cswPrivate.viewid = cswPrivate.viewid || '';
@@ -123,7 +126,9 @@
                     });
 
                     data.Nodes.forEach(function (obj) {
-                        cswPrivate.options.push({ id: obj.NodeId, value: obj.NodeName, nodelink: obj.NodeLink });
+                        if (-1 === cswPrivate.excludeNodeIds.indexOf(obj.NodeId)) {
+                            cswPrivate.options.push({ id: obj.NodeId, value: obj.NodeName, nodelink: obj.NodeLink });
+                        }
                     });
                     cswPrivate.canAdd = Csw.bool(cswPrivate.canAdd) && Csw.bool(data.CanAdd);
                     cswPrivate.useSearch = Csw.bool(data.UseSearch);
@@ -339,6 +344,7 @@
                         propname: cswPrivate.name,
                         nodetypeid: cswPrivate.nodeTypeId,
                         objectclassid: cswPrivate.objectClassId,
+                        excludeNodeIds: cswPrivate.excludeNodeIds,
                         onSelectNode: function (nodeObj) {
                             cswPrivate.nameSpan.empty();
                             cswPrivate.nameSpan.nodeLink({
@@ -370,6 +376,7 @@
                             }
 
                             cswPrivate.hiddenValue.val(nodeObj.nodeid);
+                            cswPrivate.selectedName = nodeObj.nodename;
                             cswPrivate.selectedNodeId = nodeObj.nodeid;
                             cswPrivate.selectedNodeLink = nodeObj.nodelink;
                             Csw.tryExec(cswPrivate.onSelectNode, nodeObj);
@@ -570,7 +577,7 @@
         cswPublic.selectedName = function () {
             return cswPrivate.selectedName;
         }; // selectedName
-        cswPublic.selectedNodeLink = function() {
+        cswPublic.selectedNodeLink = function () {
             return cswPrivate.selectedNodeLink;
         }; // selectedNodeLink
 

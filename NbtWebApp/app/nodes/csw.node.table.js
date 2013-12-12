@@ -52,7 +52,6 @@
                 });
             },
             filterToNodeTypeId: '',
-            filterOutNodeId: '',
             forceSingleColumn: false
         };
         if (params) Csw.extend(cswPrivate, params, true);
@@ -107,9 +106,8 @@
         };
 
 
-        cswPrivate.makeNodeCell = function(nodeObj) {
+        cswPrivate.makeNodeCell = function (nodeObj) {
             var nodeid = nodeObj.nodeid;
-            if (null === cswPrivate.filterOutNodeId || nodeid !== cswPrivate.filterOutNodeId) {
                 if (cswPrivate.c <= cswPrivate.columns) {
                     if ((false == cswPrivate.singleColumn || // paging handled in makeTable()
                         cswPrivate.pagenodecount >= cswPrivate.pagenodelimit * (cswPrivate.currentpage - 1)) &&
@@ -200,17 +198,17 @@
                         }
 
                         thumbnailCell.$.hover(
-                            function(event) {
+                            function (event) {
                                 Csw.nodeHoverIn(event, { nodeid: nodeid, nodename: nodeObj.nodename, parentDiv: thumbnailCell });
                             },
-                            function(event) {
+                            function (event) {
                                 Csw.nodeHoverOut();
                             });
                         textCell.$.hover(
-                            function(event) {
+                            function (event) {
                                 Csw.nodeHoverIn(event, { nodeid: nodeid, nodename: nodeObj.nodename, parentDiv: thumbnailCell }); // yes, thumbnailCell.
                             },
-                            function(event) {
+                            function (event) {
                                 Csw.nodeHoverOut();
                             });
 
@@ -222,7 +220,7 @@
                         var row = 1;
                         var tabid = window.Ext.id();
                         // Props
-                        Csw.iterate(nodeObj.props, function(propObj) {
+                        Csw.iterate(nodeObj.props, function (propObj) {
                             if (propObj.fieldtype === "Button") {
                                 if (false == Csw.bool(cswPrivate.suppressButtons)) {
                                     // Object Class Buttons
@@ -259,7 +257,7 @@
                             }
                         });
                         Csw.publish('render_' + nodeid + '_' + tabid);
-                        
+
                         // System Buttons
                         if (Csw.bool(cswPrivate.compactResults)) {
                             btnTable.cell(1, btncol).buttonExt({
@@ -268,7 +266,7 @@
                                 enabledText: 'More Info',
                                 icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.info),
                                 disableOnClick: false,
-                                onClick: function() {
+                                onClick: function () {
                                     texttable.toggle();
                                 } // onClick
                             }); // CswButton
@@ -283,7 +281,7 @@
                                 enabledText: 'Details',
                                 disableOnClick: false,
                                 icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.pencil),
-                                onClick: function() {
+                                onClick: function () {
                                     //If C3 search {} else if Universal search {}
                                     if (cswPrivate.searchTarget === "chemcatcentral") {
                                         $.CswDialog('C3DetailsDialog', {
@@ -297,7 +295,7 @@
                                             nodenames: [nodeObj.nodename],
                                             ReadOnly: (false === nodeObj.allowedit),
                                             onEditNode: cswPrivate.onEditNode,
-                                            onEditView: function(viewid) {
+                                            onEditView: function (viewid) {
                                                 Csw.main.handleAction({
                                                     actionname: 'Edit_View',
                                                     ActionOptions: {
@@ -324,7 +322,7 @@
                                 disabledOnClick: false,
                                 //tooltip: { title: 'Delete' },
                                 icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.trash),
-                                onClick: Csw.method(function() {
+                                onClick: Csw.method(function () {
                                     $.CswDialog('DeleteNodeDialog', {
                                         nodenames: [nodeObj.nodename],
                                         nodeids: [nodeid],
@@ -341,23 +339,23 @@
                         if (false == Csw.bool(cswPrivate.suppressButtons) && Csw.bool(cswPrivate.chemCatConfig.allowImport) && Csw.bool(nodeObj.allowimport)) {
 
                             var importMenuItems = [];
-                            Csw.each(cswPrivate.chemCatConfig.importMenuItems, function(nt) {
+                            Csw.each(cswPrivate.chemCatConfig.importMenuItems, function (nt) {
                                 if (false === Csw.isNullOrEmpty(nt.nodetypename)) {
                                     importMenuItems.push({
                                         text: 'Import ' + nt.nodetypename,
                                         ntname: nt.nodetypename,
                                         ntid: nt.nodetypeid,
                                         icon: nt.iconfilename,
-                                        handler: Csw.method(function() {
+                                        handler: Csw.method(function () {
                                             return importOnClick(nt.nodetypename, nt.nodetypeid);
                                         })
                                     });
                                 }
                             }); //Csw.each()
 
-                            var importOnClick = function(nodetypename, nodetypeid) {
+                            var importOnClick = function (nodetypename, nodetypeid) {
                                 // Disable all import buttons so Masotti can't create an "import conga line"
-                                Csw.iterate(cswPrivate.chemCatConfig.importButtons, function(button, name) {
+                                Csw.iterate(cswPrivate.chemCatConfig.importButtons, function (button, name) {
                                     button.disable();
                                 });
 
@@ -369,18 +367,18 @@
                                         NodeTypeName: nodetypename,
                                         NodeTypeId: nodetypeid
                                     },
-                                    success: function(data) {
+                                    success: function (data) {
                                         Csw.publish(Csw.enums.events.main.handleAction, data);
                                     },
-                                    error: function(data) {
+                                    error: function (data) {
                                         // Re-enable all import buttons
-                                        Csw.iterate(cswPrivate.chemCatConfig.importButtons, function(button, name) {
+                                        Csw.iterate(cswPrivate.chemCatConfig.importButtons, function (button, name) {
                                             button.enable();
                                         });
                                     },
-                                    complete: function(data) {
+                                    complete: function (data) {
                                         // Re-enable all import buttons
-                                        Csw.iterate(cswPrivate.chemCatConfig.importButtons, function(button, name) {
+                                        Csw.iterate(cswPrivate.chemCatConfig.importButtons, function (button, name) {
                                             button.enable();
                                         });
                                     }
@@ -392,7 +390,7 @@
                                 icon: importMenuItems[0].icon,
                                 width: (importMenuItems[0].text.length * 8) + 16,
                                 renderTo: btnTable.cell(1, btncol).getId(),
-                                handler: Csw.method(function() {
+                                handler: Csw.method(function () {
                                     importOnClick(importMenuItems[0].ntname, importMenuItems[0].ntid);
                                 }),
                                 menu: {
@@ -414,7 +412,7 @@
                                 //tooltip: { title: cswPrivate.extraAction },
                                 icon: cswPrivate.extraActionIcon,
                                 disableOnClick: false,
-                                onClick: function() {
+                                onClick: function () {
                                     Csw.tryExec(cswPrivate.onExtraAction, nodeObj);
                                 } // onClick
                             }); // CswButton
@@ -444,7 +442,6 @@
                     } // if((pagenodecount < pagenodelimit * (currentpage - 1))
                     cswPrivate.pagenodecount += 1;
                 } // if (cswPrivate.c <= cswPrivate.columns) {
-            } // if (null === cswPrivate.filterOutNodeId || nodeid !== cswPrivate.filterOutNodeId) 
         }; // makeNodeCell()
 
 
@@ -489,13 +486,13 @@
                     ((cswPrivate.pagenodecount + buffer) < cswPrivate.pagenodelimit * cswPrivate.currentpage)) {
 
                     Csw.eachRecursive(nodetypeObj.nodes, cswPrivate.makeNodeCell);
-                    
+
                     var nodetypeid = nodetypeObj["nodetypeid"];
                     var nodetypename = nodetypeObj["nodetypename"];
-                    var handleClick = function() {
+                    var handleClick = function () {
                         Csw.tryExec(cswPrivate.onMoreClick, nodetypeid, nodetypename);
                     };
-                    
+
                     if (false === cswPrivate.singleColumn) {
 
                         // empty cells if no results, to keep image in place
@@ -520,9 +517,8 @@
                         cswPrivate.c = 1;
                         cswPrivate.r += 1;
                     } // if (false === cswPrivate.singleColumn)
-                    else 
-                    {
-                        if (results > 3 && Csw.number(cswPrivate.tabledata.nodetypecount) > 1 ) {
+                    else {
+                        if (results > 3 && Csw.number(cswPrivate.tabledata.nodetypecount) > 1) {
                             var endTextCell = cswPrivate.makeEndCell(nodetypename, handleClick);
                             endTextCell.br();
                             endTextCell.br();
@@ -584,7 +580,7 @@
             }
         }; // makeTable()
 
-        cswPrivate.makeEndCell = function(nodetypename, onClick) {
+        cswPrivate.makeEndCell = function (nodetypename, onClick) {
             var endCellSet = cswPrivate.layoutTable.cellSet(cswPrivate.r, cswPrivate.c);
             var endTextCell = cswPrivate.getTextCell(endCellSet);
             endTextCell.a({
@@ -605,7 +601,7 @@
             // multi-nodetype
             cswPrivate.singleColumn = false;
             cswPrivate.columns = 3;
-            if (Csw.number(cswPrivate.tabledata.nodetypecount) <= 1 ) {
+            if (Csw.number(cswPrivate.tabledata.nodetypecount) <= 1) {
                 // single nodetype
                 cswPrivate.singleColumn = true;
                 cswPrivate.columns = 1;
@@ -631,7 +627,7 @@
                 cswPrivate.singleColumn = true;
                 cswPrivate.columns = 1;
             }
-            
+
             if (cswPrivate.results === 0) {
                 Csw.tryExec(cswPrivate.onNoResults, {
                     viewid: cswPrivate.viewid,
