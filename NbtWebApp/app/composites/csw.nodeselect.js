@@ -344,7 +344,7 @@
                         propname: cswPrivate.name,
                         nodetypeid: cswPrivate.nodeTypeId,
                         objectclassid: cswPrivate.objectClassId,
-                        filterOutNodeIds: cswPrivate.excludeNodeIds,
+                        excludeNodeIds: cswPrivate.excludeNodeIds,
                         onSelectNode: function (nodeObj) {
                             cswPrivate.nameSpan.empty();
                             cswPrivate.nameSpan.nodeLink({
@@ -376,6 +376,7 @@
                             }
 
                             cswPrivate.hiddenValue.val(nodeObj.nodeid);
+                            cswPrivate.selectedName = nodeObj.nodename;
                             cswPrivate.selectedNodeId = nodeObj.nodeid;
                             cswPrivate.selectedNodeLink = nodeObj.nodelink;
                             Csw.tryExec(cswPrivate.onSelectNode, nodeObj);

@@ -53,7 +53,6 @@
             },
             filterToNodeTypeId: '',
             filterOutNodeId: '',
-            filterOutNodeIds: null,
             forceSingleColumn: false
         };
         if (params) Csw.extend(cswPrivate, params, true);
@@ -110,8 +109,8 @@
 
         cswPrivate.makeNodeCell = function (nodeObj) {
             var nodeid = nodeObj.nodeid;
-            if (null === cswPrivate.filterOutNodeIds || (-1 === cswPrivate.filterOutNodeIds.indexOf(nodeid))) {
-                //if (null === cswPrivate.filterOutNodeId || nodeid !== cswPrivate.filterOutNodeId) {
+            //todo: we now filter nodes on the server -> remove this
+                if (null === cswPrivate.filterOutNodeId || nodeid !== cswPrivate.filterOutNodeId) {
                 if (cswPrivate.c <= cswPrivate.columns) {
                     if ((false == cswPrivate.singleColumn || // paging handled in makeTable()
                         cswPrivate.pagenodecount >= cswPrivate.pagenodelimit * (cswPrivate.currentpage - 1)) &&

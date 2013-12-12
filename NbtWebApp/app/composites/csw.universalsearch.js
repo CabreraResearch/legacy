@@ -37,6 +37,7 @@
             filterOutNodeId: null,
             forceSingleColumn: false,
             onlyMergeableNodeTypes: false,
+            excludeNodeIds: [] // exclude specific nodes from the search mechanism
             //buttonSingleColumn: '',
             //buttonMultiColumn: ''
         };
@@ -239,6 +240,7 @@
                     OnlyMergeableNodeTypes: cswPrivate.onlyMergeableNodeTypes,
                     Page: '0',
                     Limit: '0',
+                    ExcludeNodeIds: cswPrivate.excludeNodeIds
                 },
                 success: function (data) {
                     cswPublic.handleResults(data);
