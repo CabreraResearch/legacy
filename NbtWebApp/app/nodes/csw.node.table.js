@@ -52,7 +52,6 @@
                 });
             },
             filterToNodeTypeId: '',
-            filterOutNodeId: '',
             forceSingleColumn: false
         };
         if (params) Csw.extend(cswPrivate, params, true);
@@ -109,8 +108,6 @@
 
         cswPrivate.makeNodeCell = function (nodeObj) {
             var nodeid = nodeObj.nodeid;
-            //todo: we now filter nodes on the server -> remove this
-                if (null === cswPrivate.filterOutNodeId || nodeid !== cswPrivate.filterOutNodeId) {
                 if (cswPrivate.c <= cswPrivate.columns) {
                     if ((false == cswPrivate.singleColumn || // paging handled in makeTable()
                         cswPrivate.pagenodecount >= cswPrivate.pagenodelimit * (cswPrivate.currentpage - 1)) &&
@@ -445,7 +442,6 @@
                     } // if((pagenodecount < pagenodelimit * (currentpage - 1))
                     cswPrivate.pagenodecount += 1;
                 } // if (cswPrivate.c <= cswPrivate.columns) {
-            } // if (null === cswPrivate.filterOutNodeId || nodeid !== cswPrivate.filterOutNodeId) 
         }; // makeNodeCell()
 
 
