@@ -39,7 +39,7 @@
             (function _pre() {
                 var render = function () {
                     cswParent.empty();
-                        
+
                     if (cswPrivate.relatednodeid) {
                         cswPrivate.nodeid = Csw.string(cswPrivate.relatednodeid, cswPrivate.nodeid).trim();
                         cswPrivate.name = Csw.string(cswPrivate.relatednodename, cswPrivate.name).trim();
@@ -58,21 +58,6 @@
                     cswPrivate.editCell = cswPublic.table.cell(1, 3);
                     cswPrivate.previewCell = cswPublic.table.cell(1, 4);
                     cswPrivate.validateCell = cswPublic.table.cell(1, 5);
-
-                    if (cswPrivate.isRequired) {
-                        cswPrivate.checkBox = cswPrivate.validateCell.div().input().hide();
-                        cswPrivate.checkBox.required(true);
-                        cswPrivate.checkBox.addClass('validateLocation');
-                        if (false === Csw.isNullOrEmpty(cswPrivate.nodeid)) {
-                            cswPrivate.checkBox.val(true);
-                        } else {
-                            cswPrivate.checkBox.val(false);
-                        }
-                        $.validator.addMethod('validateLocation', function () {
-                            return Csw.bool(cswPrivate.checkBox.val());
-                        }, 'Location is required.');
-
-                    }
 
                     cswPrivate.pathCell.nodeLink({
                         text: cswPrivate.selectednodelink,
@@ -162,7 +147,7 @@
                                 first = false;
                             }
                             if (cswPrivate.isRequired) {
-                                cswPrivate.checkBox.$.valid();
+                                cswPrivate.locationValidator.input.$.valid();
                             }
                             cswPublic.comboBox.open(); // ensure we're open on click
                             return false;    // but only close when onTreeSelect fires, below
@@ -177,11 +162,10 @@
                         if (cswPrivate.isRequired) {
                             if (!treeNode.raw || Csw.isNullOrEmpty(treeNode.raw.nodeid)) {
                                 ret = false;
-                                //cswPrivate.checkBox.val(false); //no need to set the checkbox false--we just prevented selection
                             } else {
-                                cswPrivate.checkBox.val(true);
+                                cswPrivate.locationValidator.input.val(true);
                             }
-                            cswPrivate.checkBox.$.valid();
+                            cswPrivate.locationValidator.input.$.valid();
                         }
                         return ret;
                     },
@@ -199,9 +183,23 @@
                         nodeId: cswPrivate.nodeid,
                         nodeKey: cswPrivate.nodeKey,
                         includeInQuickLaunch: false,
-                        defaultSelect: Csw.enums.nodeTree_DefaultSelect.root.name
+                        //defaultSelect: Csw.enums.nodeTree_DefaultSelect.root.name
                     }
                 });
+
+                if (cswPrivate.isRequired) {
+                    cswPrivate.locationValidator = Csw.validator(cswPrivate.validateCell, cswPublic.comboBox, {
+                        cssOptions: { 'visibility': 'hidden', 'width': '20px' },
+                        errorMsg: 'Location is required.',
+                        onValidation: function (isValid) {
+                            if (isValid) {
+                                cswPrivate.validateCell.hide();
+                            } else {
+                                cswPrivate.validateCell.show();
+                            }
+                        }
+                    });
+                }
             }; // makeLocationCombo()
 
             //#endregion cswPrivate/cswPublic methods and props
