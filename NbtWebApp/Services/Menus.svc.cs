@@ -9,7 +9,7 @@ using ChemSW.WebSvc;
 namespace NbtWebApp
 {
     /// <summary>
-    /// WCF Web Methods for ChemCatCentral Searches
+    /// 
     /// </summary>
     [ServiceBehavior( IncludeExceptionDetailInFaults = true )]
     [ServiceContract( Namespace = "NbtWebApp" )]
@@ -33,7 +33,29 @@ namespace NbtWebApp
                 CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
                 ReturnObj: Ret,
                 WebSvcMethodPtr: CswNbtWebServiceSearchMenu.GetSearchMenuItems,
-                ParamObj : UniversalSearchOnly
+                ParamObj: UniversalSearchOnly
+                );
+
+            SvcDriver.run();
+            return ( Ret );
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [OperationContract]
+        [WebInvoke( Method = "POST", UriTemplate = "initImpersonate" )]
+        [Description( "" )]
+        [FaultContract( typeof( FaultException ) )]
+        public CswNbtWebServiceMainMenu.CswNbtMainMenuReturn initImpersonate()
+        {
+            CswNbtWebServiceMainMenu.CswNbtMainMenuReturn Ret = new CswNbtWebServiceMainMenu.CswNbtMainMenuReturn();
+
+            var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceMainMenu.CswNbtMainMenuReturn, object>(
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj: Ret,
+                WebSvcMethodPtr: CswNbtWebServiceMainMenu.initializeImpersonate,
+                ParamObj: null
                 );
 
             SvcDriver.run();

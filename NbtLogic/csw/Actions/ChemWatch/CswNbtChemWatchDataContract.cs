@@ -73,7 +73,7 @@ namespace NbtWebApp.Actions.ChemWatch
         public string Supplier { get; set; }
 
         [DataMember]
-        public Collection<ChemWatchListItem> Suppliers = new Collection<ChemWatchListItem>();
+        public List<ChemWatchListItem> Suppliers = new List<ChemWatchListItem>();
 
         [DataMember]
         public string PartNo { get; set; }
