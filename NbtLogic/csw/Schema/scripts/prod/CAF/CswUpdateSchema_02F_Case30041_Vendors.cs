@@ -32,7 +32,7 @@ namespace ChemSW.Nbt.Schema
             //This is only necessary for the very first CAF script, to create the caf definition
             ImpMgr.importDef( 1, "CAF" );
 
-            ImpMgr.CAFimportOrder( "Vendor", "vendors" );
+            ImpMgr.CAFimportOrder( "Vendor", "vendors", PkColumnName: "vendorid" );
             // Binding
             ImpMgr.importBinding( "accountno", CswNbtObjClassVendor.PropertyName.AccountNo, "" );
             ImpMgr.importBinding( "city", CswNbtObjClassVendor.PropertyName.City, "" );
