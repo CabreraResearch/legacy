@@ -595,6 +595,8 @@
     <None Include="csw\Schema\scripts\past\02H\CswUpdateSchema_02H_Case30537C.cs" />
     <None Include="csw\Schema\scripts\past\02H\CswUpdateMetaData_02H_Case30537A.cs" />
     <None Include="csw\Schema\scripts\past\02H\CswUpdateMetaData_02H_Case30537B.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02I\CswUpdateSchema_02I_Case31308B.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02I\CswUpdateMetaData_02I_Case31308.cs" />
     <Compile Include="csw\Schema\scripts\prod\02I\CswUpdateDDL_02I_Case31056.cs" />
     <Compile Include="csw\Schema\scripts\prod\02I\CswUpdateSchema_02I_Case31312.cs" />
     <Compile Include="csw\Schema\scripts\prod\02I\CswUpdateSchema_02I_Case31292.cs" />
