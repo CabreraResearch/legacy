@@ -1780,9 +1780,17 @@ namespace ChemSW.Nbt.Schema
         /// </summary>
         public bool isMaster()
         {
-            // This is kind of a kludgey way to determine whether we're on a fresh master, but see case 25806
-            CswNbtNode AdminNode = Nodes.makeUserNodeFromUsername( "admin" );
-            return ( null != AdminNode && ( (CswNbtObjClassUser) AdminNode ).LastLogin.DateTimeValue.Date == new DateTime( 2012, 8, 10 ) );
+            // This is even uglier than what was here before, but this is just a bandaid until we refactor this to use a system config var toggled by 'I agree' to the ToS
+            CswArbitrarySelect AdminUserQuery = new CswArbitrarySelect( _CswNbtResources.CswResources, "get_admin_last_login", @"
+select field1_date from jct_nodes_props jnp
+  join nodetype_props p on jnp.nodetypepropid = p.nodetypepropid
+  where jnp.nodeid = (select nodeid from nodes where nodename = 'admin')
+       and propname = 'Last Login'
+              ");
+
+            DataRowCollection Results = AdminUserQuery.getTable().Rows;
+            return ( Results.Count == 1 && 
+                DateTime.Parse(Results[0]["field1_date"].ToString()) == new DateTime( 2012, 8, 10 ) );
         }
 
         /// <summary>
