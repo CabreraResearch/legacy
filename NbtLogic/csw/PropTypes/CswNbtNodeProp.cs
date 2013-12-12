@@ -575,7 +575,7 @@ namespace ChemSW.Nbt.PropTypes
             {
                 if( SubFieldName == SubFieldKey.Name )
                 {
-                    // This calls the appropriate set; method in the CswNbtNodeProp* class
+                    // This calls the appropriate get; method in the CswNbtNodeProp* class
                     if( null != _SubFieldMethods[SubFieldKey].Item1 )
                     {
                         ret = _SubFieldMethods[SubFieldKey].Item1();

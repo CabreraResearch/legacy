@@ -177,6 +177,29 @@ namespace NbtWebApp
             return Ret.stream;
         }//downloadImportDefinition
 
+
+        [OperationContract]
+        [WebInvoke( Method = "POST" )]
+        [Description( "Update a binding definition" )]
+        [FaultContract( typeof( FaultException ) )]
+        public CswWebSvcReturn updateImportDefinition( CswNbtImportWcf.DefinitionUpdateRow[] parms )
+        {
+            CswWebSvcReturn ret = new CswWebSvcReturn();
+
+            var SvcDriver = new CswWebSvcDriver<CswWebSvcReturn, CswNbtImportWcf.DefinitionUpdateRow[]>(
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj: ret,
+                WebSvcMethodPtr: CswNbtWebServiceImport.updateImportDefinition,
+                ParamObj: parms
+                );
+
+            SvcDriver.run();
+
+            return ret;
+        }
+
+
+
         [OperationContract]
         [WebInvoke( Method = "POST", ResponseFormat = WebMessageFormat.Json )]
         [Description( "Get current status of imports" )]
@@ -237,31 +260,6 @@ namespace NbtWebApp
             return Ret;
         }//startImport()
 
-        [OperationContract]
-        [WebInvoke( Method = "POST" )]
-        [Description( "Generate SQL for CAF" )]
-        [FaultContract( typeof( FaultException ) )]
-        public Stream generateCAFSql( Stream DataStream )
-        {
-            string Data = new StreamReader( DataStream ).ReadToEnd();
-            NameValueCollection FormData = HttpUtility.ParseQueryString( Data );
-            string ImportDefName = FormData["importdefname"];
-
-            CswNbtImportWcf.GenerateSQLReturn Ret = new CswNbtImportWcf.GenerateSQLReturn();
-
-            var SvcDriver = new CswWebSvcDriver<CswNbtImportWcf.GenerateSQLReturn, string>(
-                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
-                ReturnObj: Ret,
-                WebSvcMethodPtr: CswNbtWebServiceImport.generateCAFSql,
-                ParamObj: ImportDefName
-                );
-
-            SvcDriver.run();
-
-            WebOperationContext.Current.OutgoingResponse.Headers.Set( "Content-Disposition", "attachment; filename=\"cafsql.sql\";" );
-
-            return Ret.stream;
-        }//startImport()
 
         [OperationContract]
         [WebInvoke( Method = "POST" )]

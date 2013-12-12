@@ -35,7 +35,7 @@ namespace ChemSW.Nbt.Schema
 
             CswNbtSchemaUpdateImportMgr importMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "CAF" );
 
-            importMgr.CAFimportOrder( "Work Unit", "work_units", "workunits_view" );
+            importMgr.CAFimportOrder( "Work Unit", "work_units", "workunits_view", "workunitid" );
             // Binding
             importMgr.importBinding( "workunitname", CswNbtObjClassWorkUnit.PropertyName.Name, "" );
 

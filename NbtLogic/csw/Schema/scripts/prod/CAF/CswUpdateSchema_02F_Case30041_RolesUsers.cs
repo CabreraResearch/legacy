@@ -28,7 +28,7 @@ namespace ChemSW.Nbt.Schema
         public override void update()
         {
                 CswNbtSchemaUpdateImportMgr ImpMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "CAF" );
-                ImpMgr.CAFimportOrder( "Role", "roles" );
+                ImpMgr.CAFimportOrder( "Role", "roles", PkColumnName: "roleid" );
 
                 ImpMgr.importBinding( "roledescription", CswNbtObjClassRole.PropertyName.Description, "" );
                 ImpMgr.importBinding( "rolename", CswNbtObjClassRole.PropertyName.Name, "" );
@@ -36,7 +36,7 @@ namespace ChemSW.Nbt.Schema
 
 
 
-                ImpMgr.CAFimportOrder( "User", "users", "users_view" );
+                ImpMgr.CAFimportOrder( "User", "users", "users_view", "userid" );
 
                 ImpMgr.importBinding( "disabled", CswNbtObjClassUser.PropertyName.Archived, "" );
                 ImpMgr.importBinding( "namefirst", CswNbtObjClassUser.PropertyName.FirstName, "" );
