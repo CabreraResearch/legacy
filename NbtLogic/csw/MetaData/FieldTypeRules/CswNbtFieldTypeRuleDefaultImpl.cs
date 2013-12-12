@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
@@ -52,7 +53,15 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             {
                 SubField = SubFields.Default;
             }
+
             string StringValueToCheck = PropertyValueToCheck.GetSubFieldValue( SubField );
+            // case 31292 - Kludge fix for NodeID filters
+            if( SubField.Name == CswEnumNbtSubFieldName.NodeID && false == string.IsNullOrEmpty(StringValueToCheck) )
+            {
+                CswPrimaryKey pkValue = new CswPrimaryKey();
+                pkValue.FromString( StringValueToCheck );
+                StringValueToCheck = pkValue.PrimaryKey.ToString();
+            }
             CswEnumNbtFilterMode FilterMode;
             //case 27670 - in order to reserve the right for compound unique props to be empty, it has to be explicitly stated when creating the ForCompundUnique view
             if( EnforceNullEntries && String.IsNullOrEmpty( StringValueToCheck ) )

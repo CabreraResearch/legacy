@@ -37,7 +37,7 @@ namespace ChemSW.Nbt.Schema
             CswNbtSchemaUpdateImportMgr RoleMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "CAF" );
 
             RoleMgr.removeImportOrder( "CAF", "Role" );
-            RoleMgr.CAFimportOrder( "Role", "roles", "roles_view" );
+            RoleMgr.CAFimportOrder( "Role", "roles", "roles_view", "roleid" );
 
             RoleMgr.importBinding( "administrator", CswNbtObjClassRole.PropertyName.Administrator, "" );
 
