@@ -1568,7 +1568,8 @@
                 onImpersonate: null
             };
             if (options) Csw.extend(o, options);
-
+            
+            // NOTE: Old implementation -- leave this here
             function onOpen(div) {
                 Csw.ajax.deprecatedWsNbt({
                     urlMethod: 'getUsers',
@@ -1603,6 +1604,55 @@
                     } // success
                 }); // ajax    
             }
+
+            // NOTE: New implementation -- leave this uncommented as I am still working out a bug
+            //function onOpen(div) {
+            //    Csw.ajaxWcf.post({
+            //        urlMethod: 'Menus/initImpersonate',
+            //        success: function (data) {
+            //            var viewid = data.ImpersonateViewId;
+
+            //            // Case 31086 - Use NodeSelect instead of Select
+            //            var usersel = div.nodeSelect({
+            //                name: 'ImperonsateSelect',
+            //                objectClassName: 'UserClass',
+            //                allowAdd: false,
+            //                isRequired: true,
+            //                showSelectOnLoad: true,
+            //                isMulti: false,
+            //                selectedNodeId: '',
+            //                viewid: viewid,
+            //                excludeNodeIds: data.ExcludeNodeIds
+            //            });
+
+
+            //            div.button({
+            //                name: 'ImpersonateButton',
+            //                enabledText: 'Impersonate',
+            //                onClick: function () {
+            //                    var val = usersel.val() || usersel.selectedNodeId();
+            //                    var text = '';
+            //                    if (usersel.selectedText) {
+            //                        text = usersel.selectedText();
+            //                    } else if (usersel.selectedName) {
+            //                        text = usersel.selectedName();
+            //                    }
+            //                    Csw.tryExec(o.onImpersonate, val, text);
+            //                    div.$.dialog('close');
+            //                }
+            //            });
+
+            //            div.button({
+            //                name: 'CancelButton',
+            //                enabledText: 'Cancel',
+            //                onClick: function () {
+            //                    div.$.dialog('close');
+            //                }
+            //            });
+
+            //        } // success
+            //    }); // ajax
+            //}//onOpen()
 
             openDialog(Csw.literals.div(), 400, 300, null, 'Impersonate', onOpen);
         }, // ImpersonateDialog
@@ -1651,7 +1701,8 @@
                 onExtraAction: function (nodeObj) {
                     cswPublic.close();
                     Csw.tryExec(cswDlgPrivate.onSelectNode, nodeObj);
-                }
+                },
+                excludeNodeIds: cswDlgPrivate.excludeNodeIds
             });
             return cswPublic;
         }, // SearchDialog
@@ -1719,7 +1770,7 @@
             o.div.button({
                 enabledText: o.okText,
                 onClick: function () {
-                    if ( Csw.tryExec(o.onOk) !== false ) 
+                    if (Csw.tryExec(o.onOk) !== false)
                         o.div.$.dialog('close');
                 }
             });
