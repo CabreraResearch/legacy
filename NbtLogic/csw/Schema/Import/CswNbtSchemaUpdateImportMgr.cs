@@ -164,7 +164,6 @@ namespace ChemSW.Nbt.csw.Schema
         public void CAFimportOrder( string NodeTypeName, string TableName, string ViewName = null, string PkColumnName = null, bool createLegacyId = true, Int32 Instance = Int32.MinValue )
         {
             DefaultNodetype = NodeTypeName;
-            PkColumnName = PkColumnName ?? _getPKColumnForTable( TableName );
             if( CswAll.AreStrings( NodeTypeName, TableName, PkColumnName ) )
             {
                 DataRow row = _importOrderTable.NewRow();
@@ -179,6 +178,10 @@ namespace ChemSW.Nbt.csw.Schema
 
                 if( createLegacyId )
                 {
+                    if( string.IsNullOrEmpty(PkColumnName) )
+                    {
+                        throw new CswDniException(CswEnumErrorType.Error, "Tried to autogenerate legacyid binding, but did not supply a PK column name.", "");
+                    }
                     importBinding( PkColumnName, CswNbtObjClass.PropertyName.LegacyId, "" );
                 }
             }
