@@ -79,18 +79,18 @@ namespace ChemSW.Nbt.ImportExport
                     RelRow["instance"] = Int32.MinValue;
                 }
 
-                //string NodeTypeName = RelRow["nodetypename"].ToString();
-                //string RelationshipName = RelRow["relationship"].ToString();
-                //CswNbtMetaDataNodeType NodeType = CswNbtResources.MetaData.getNodeType( NodeTypeName );
-                //CswNbtMetaDataNodeTypeProp Relationship = NodeType.getNodeTypeProp( RelationshipName );
-                //if( null == NodeType )
-                //{
-                //    throw new CswDniException( CswEnumErrorType.Error, "Error reading bindings", "Invalid NodeType defined in 'Relationships' sheet: " + NodeTypeName );
-                //}
-                //else if( null == Relationship )
-                //{
-                //    throw new CswDniException( CswEnumErrorType.Error, "Error reading bindings", "Invalid Relationship defined in 'Relationships' sheet: " + RelRow["relationship"].ToString() + " (nodetype: " + NodeTypeName + ")" );
-                //}
+                string NodeTypeName = RelRow["nodetypename"].ToString();
+                string RelationshipName = RelRow["relationship"].ToString();
+                CswNbtMetaDataNodeType NodeType = CswNbtResources.MetaData.getNodeType( NodeTypeName );
+                CswNbtMetaDataNodeTypeProp Relationship = NodeType.getNodeTypeProp( RelationshipName );
+                if( null == NodeType )
+                            {
+                    throw new CswDniException( CswEnumErrorType.Error, "Error reading bindings", "Invalid NodeType defined in 'Relationships' sheet: " + NodeTypeName );
+                            }
+                else if( null == Relationship )
+                        {
+                            throw new CswDniException( CswEnumErrorType.Error, "Error reading bindings", "Invalid Relationship defined in 'Relationships' sheet: " + RelRow["relationship"].ToString() + " (nodetype: " + NodeTypeName + ")" );
+                        }
 
             } // foreach( DataRow RelRow in RelationshipsDataTable.Rows )
 
