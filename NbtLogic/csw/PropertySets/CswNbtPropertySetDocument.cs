@@ -6,7 +6,6 @@ using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
-using ChemSW.Nbt.ServiceDrivers;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -266,17 +265,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
             return HasPermission;
         }
-
-        public override CswNbtNode CopyNode( bool IsNodeTemp = false )
-        {
-            CswNbtNode NewNode = base.CopyNodeImpl( IsNodeTemp );   
-
-            //Copy the existing file if there is any
-            CswNbtSdBlobData.CopyBlobData( _CswNbtResources, this.File, ( NewNode.Properties[PropertyName.File].JctNodePropId ) );
-
-            return NewNode;
-        }
-
+        
         #endregion Inherited Events
 
         #region Property Set specific properties
