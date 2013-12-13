@@ -146,7 +146,7 @@ namespace ChemSW.Nbt.ServiceDrivers
 
 
         /// <summary>
-        /// Create a new node according to NodeTypeId. Does not post changes after calling makeNodeFromNodeTypeId.
+        /// Create a new temp node according to NodeTypeId.
         /// </summary>
         public CswNbtNode getAddNode( Int32 NodeTypeId, string RelatedNodeId, Action<CswNbtNode> After )
         {
@@ -169,33 +169,29 @@ namespace ChemSW.Nbt.ServiceDrivers
                             {
                                 After( NewNode );
                             }
-                        } );
-                        CswPrimaryKey RelatedNodePk = CswConvert.ToPrimaryKey( RelatedNodeId );
-
-                        CswNbtNode RelatedNode = _CswNbtResources.Nodes[RelatedNodePk];
-                        if( null != RelatedNode )
-                        {
-                            foreach( CswNbtNodePropRelationship Relationship in from _Prop
-                                in Ret.Properties
-                                                                                where _Prop.getFieldTypeValue() == CswEnumNbtFieldType.Relationship &&
-                                                                                      ( _Prop.AsRelationship.TargetMatches( RelatedNode.getNodeType() ) ||
-                                                                                        _Prop.AsRelationship.TargetMatches( RelatedNode.getObjectClass() ) )
-                                                                                select _Prop )
+                            CswPrimaryKey RelatedNodePk = CswConvert.ToPrimaryKey( RelatedNodeId );
+                            CswNbtNode RelatedNode = _CswNbtResources.Nodes[RelatedNodePk];
+                            if( null != RelatedNode )
                             {
-                                Relationship.RelatedNodeId = RelatedNodePk;
+                                foreach( CswNbtNodePropRelationship Relationship in from _Prop
+                                    in NewNode.Properties
+                                    where _Prop.getFieldTypeValue() == CswEnumNbtFieldType.Relationship &&
+                                            ( _Prop.AsRelationship.TargetMatches( RelatedNode.getNodeType() ) ||
+                                            _Prop.AsRelationship.TargetMatches( RelatedNode.getObjectClass() ) )
+                                    select _Prop )
+                                {
+                                    Relationship.RelatedNodeId = RelatedNodePk;
+                                }
                             }
-                        }
-                        // if( Int32.MinValue != RelatedNodePk.PrimaryKey )
-
+                        } );
                     }
-
                 }
             }
             return Ret;
         }
 
         /// <summary>
-        /// Create a new node according to NodeType. Posts changes.
+        /// Create a new temp node according to NodeType.
         /// </summary>
         public CswNbtNode getAddNodeAndPostChanges( CswNbtMetaDataNodeType NodeType, Action<CswNbtNode> After )
         {
@@ -210,19 +206,6 @@ namespace ChemSW.Nbt.ServiceDrivers
                 {
                     throw new CswDniException( CswEnumErrorType.Warning, "Insufficient permission to create a new " + NodeType.NodeTypeName, "User " + _CswNbtResources.CurrentNbtUser.Username + " does not have Create permission for " + NodeType.NodeTypeName );
                 }
-            }
-            return Ret;
-        }
-
-        /// <summary>
-        /// Create a new node according to NodeTypeId. Posts changes.
-        /// </summary>
-        public CswNbtNode getAddNodeAndPostChanges( Int32 NodeTypeId, string RelatedNodeId, Action<CswNbtNode> After )
-        {
-            CswNbtNode Ret = getAddNode( NodeTypeId, RelatedNodeId, After );
-            if( null != Ret )
-            {
-                Ret.postChanges( ForceUpdate: false );//This might be doing more work than necessary - maybe this should be PromoteTemptoReal?
             }
             return Ret;
         }
@@ -255,7 +238,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                 CswNbtNode Node;
                 if( _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Add && false == CswTools.IsPrimaryKey( CswConvert.ToPrimaryKey( NodeId ) ) )
                 {
-                    Node = getAddNodeAndPostChanges( NodeTypeId, RelatedNodeId, null );
+                    Node = getAddNode( NodeTypeId, RelatedNodeId, null );
                 }
                 else
                 {
@@ -345,8 +328,6 @@ namespace ChemSW.Nbt.ServiceDrivers
                         if( _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Add && false == HasEditableProps )
                         {
                             //Case 29531 - There are no props on the Add layout, so just save the node - the client will skip the add dialog
-                            //Node.IsTemp = false;
-                            Node.postChanges( ForceUpdate: false );
                             Node.PromoteTempToReal();
                         }
                         else
@@ -810,19 +791,20 @@ namespace ChemSW.Nbt.ServiceDrivers
                 {
                     CswNbtActUpdatePropertyValue ActUpdatePropVal = new CswNbtActUpdatePropertyValue( _CswNbtResources );
                     ActUpdatePropVal.UpdateNode( Node, true );
-                    Node.postChanges( false );
+                    if( setIsTempToFalse )
+                    {
+                        Node.PromoteTempToReal();
+                    }
+                    else
+                    {
+                        Node.postChanges( false );
+                    }
                     ret["result"] = "Succeeded";
                     //If we're Adding, NodeName won't be valid until now.
                     ret["nodename"] = Node.NodeName;
                     ret["nodelink"] = Node.NodeLink;
                     ret["nodeid"] = Node.NodeId.ToString();
                     ret["action"] = _determineAction( Node.ObjClass.ObjectClass.ObjectClass );
-
-
-                    if( setIsTempToFalse )
-                    {
-                        Node.PromoteTempToReal();
-                    }
                 }
             } // if( PropsObj.HasValues )
 

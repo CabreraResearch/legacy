@@ -388,7 +388,6 @@ namespace ChemSW.Nbt
         public CswNbtNode makeNodeFromNodeTypeId( Int32 NodeTypeId, Action<CswNbtNode> OnAfterMakeNode = null, bool IsTemp = false, bool OverrideUniqueValidation = false )
         {
             CswNbtNode Node = _CswNbtNodeFactory.make( CswEnumNbtNodeSpecies.Plain, null, NodeTypeId, _NodeHash.Count, null, IsTemp: true );  // temp here for auditing, but see below
-            //Node.IsTemp = IsTemp;
             //Node.OnAfterSetNodeId += new CswNbtNode.OnSetNodeIdHandler( OnAfterSetNodeIdHandler );
             Node.OnRequestDeleteNode += OnAfterDeleteNode;
             Node.fillFromNodeTypeId( NodeTypeId );
@@ -401,11 +400,6 @@ namespace ChemSW.Nbt
                 OnAfterMakeNode( Node );
             }
 
-
-            //if( Node.NodeId != Int32.MinValue )
-            //{
-            //    NodeHash.Add( new NodeHashKey( Node.NodeId, Node.NodeSpecies ), Node );
-            //}
             // We need to hash the Int32.MinValue keys for the Add form to work
             // But we can simply override what's in the hash if we make another new node
             NodeHashKey Hashkey = new NodeHashKey( Node.NodeId, Node.NodeSpecies );
