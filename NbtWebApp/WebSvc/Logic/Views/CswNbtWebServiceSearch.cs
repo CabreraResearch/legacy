@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
 using ChemSW.Core;
@@ -84,10 +85,11 @@ namespace ChemSW.Nbt.WebServices
 
         #region UniversalSearch
 
-        public JObject doUniversalSearch( string SearchTerm, CswEnumSqlLikeMode SearchType, Int32 NodeTypeId, Int32 ObjectClassId, Int32 Page, Int32 PageLimit, bool OnlyMergeableNodeTypes )
+        public JObject doUniversalSearch( string SearchTerm, CswEnumSqlLikeMode SearchType, Int32 NodeTypeId, Int32 ObjectClassId, Int32 Page, Int32 PageLimit, bool OnlyMergeableNodeTypes, List<string> ExcludeNodeIds )
         {
             CswNbtSearch Search = getSearch( SearchTerm, SearchType, NodeTypeId, ObjectClassId );
             Search.OnlyMergeableNodeTypes = OnlyMergeableNodeTypes;
+            Search.ExcludeNodeIds = ExcludeNodeIds;
             return _finishUniversalSearch( Search, Page, PageLimit );
         }
 
@@ -167,7 +169,7 @@ namespace ChemSW.Nbt.WebServices
             }
             return ret;
         }
-        private JObject _finishUniversalSearch( CswNbtSearch Search, Int32 Page=0, Int32 PageLimit=0 )
+        private JObject _finishUniversalSearch( CswNbtSearch Search, Int32 Page = 0, Int32 PageLimit = 0 )
         {
             ICswNbtTree Tree = Search.Results();
             CswNbtWebServiceTable wsTable = new CswNbtWebServiceTable( _CswNbtResources, _CswNbtStatisticsEvents, Int32.MinValue );

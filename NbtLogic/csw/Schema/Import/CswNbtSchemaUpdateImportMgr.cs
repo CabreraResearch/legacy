@@ -342,10 +342,13 @@ namespace ChemSW.Nbt.csw.Schema
         /// <param name="Instance">Which import order instance this binding was associated with</param>
         public void removeImportBinding(string Sheetname, string SourceColumn, string NodetypeName, string PropName, string SubfieldName, int Instance = int.MinValue)
         {
-            //this should only ever return one result
-            DataRow BindingToDelete = _importBindingsTable.Select( "importdefid = " + _SheetDefinitions[Sheetname] + " and sourcecolumnname = '" + SourceColumn + "' and destnodetypename = '" 
-                                                                   + NodetypeName + "' and destpropname = '" + PropName + "'" + " and destsubfield = '" + SubfieldName + "' and instance = " + Instance )[0];
-            BindingToDelete.Delete();
+            //this should never return more than one result
+            DataRow[] Bindings = _importBindingsTable.Select( "importdefid = " + _SheetDefinitions[Sheetname] + " and sourcecolumnname = '" + SourceColumn + "' and destnodetypename = '"
+                                                              + NodetypeName + "' and destpropname = '" + PropName + "'" + " and destsubfield = '" + SubfieldName + "' and instance = " + Instance );
+            if( Bindings.Length > 0 )
+            {
+                Bindings[0].Delete();
+            }
         }//removeImportBinding()
 
 

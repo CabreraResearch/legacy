@@ -13,7 +13,7 @@ using ChemSW.Nbt.Security;
 
 namespace ChemSW.Nbt
 {
-    public class CswNbtTreeLoaderFromSearchByLevel: CswNbtTreeLoader
+    public class CswNbtTreeLoaderFromSearchByLevel : CswNbtTreeLoader
     {
         private CswNbtResources _CswNbtResources = null;
         private string _SearchTerm;
@@ -23,9 +23,10 @@ namespace ChemSW.Nbt
         private bool _IncludeHiddenNodes;
         private bool _OnlyMergeableNodeTypes;
         private CswEnumSqlLikeMode _SearchType;
+        private CswCommaDelimitedString _ExcludeNodeIds;
 
         public CswNbtTreeLoaderFromSearchByLevel( CswNbtResources CswNbtResources, ICswNbtUser RunAsUser, ICswNbtTree pCswNbtTree, string SearchTerm, CswEnumSqlLikeMode SearchType, string WhereClause,
-                                                  bool IncludeSystemNodes, bool IncludeHiddenNodes, bool OnlyMergeableNodeTypes )
+                                                  bool IncludeSystemNodes, bool IncludeHiddenNodes, bool OnlyMergeableNodeTypes, List<string> ExcludeNodeIds = null )
             : base( pCswNbtTree )
         {
             _CswNbtResources = CswNbtResources;
@@ -36,6 +37,11 @@ namespace ChemSW.Nbt
             _IncludeSystemNodes = IncludeSystemNodes;
             _IncludeHiddenNodes = IncludeHiddenNodes;
             _OnlyMergeableNodeTypes = OnlyMergeableNodeTypes;
+            if( null != ExcludeNodeIds )
+            {
+                _ExcludeNodeIds = new CswCommaDelimitedString( string.Join( ",", ExcludeNodeIds.ToArray() ) );
+            }
+
         }
 
         public override void load( bool RequireViewPermissions, Int32 ResultsLimit = Int32.MinValue )
@@ -99,7 +105,7 @@ namespace ChemSW.Nbt
                             if( ThisNodeId != PriorNodeId )
                             {
                                 PriorNodeId = ThisNodeId;
-                                NewNodeKeys = _CswNbtTree.loadNodeAsChildFromRow( null, NodesRow, false, string.Empty, true, true, CswEnumNbtViewAddChildrenSetting.None, RowCount, Favorited : ThisNodeFavorited );
+                                NewNodeKeys = _CswNbtTree.loadNodeAsChildFromRow( null, NodesRow, false, string.Empty, true, true, CswEnumNbtViewAddChildrenSetting.None, RowCount, Favorited: ThisNodeFavorited );
                                 RowCount++;
                             } // if( ThisNodeId != PriorNodeId )
 
@@ -340,6 +346,11 @@ namespace ChemSW.Nbt
 
                 Query += @"                    and ( n.searchable = '1' or ( props.fieldtype = 'Barcode' and propval.field1 = '" + CswTools.SafeSqlParam( _SearchTerm ) + @"' ) )";
                 Query += _ExtraWhereClause;
+                // Case 31351: Exclude specific nodes
+                if( _ExcludeNodeIds.Count > 0 )
+                {
+                    Query += "                     and n.nodeid not in (" + _ExcludeNodeIds.ToString() + ") ";
+                }
                 Query += @"               )
                 
                                    select *

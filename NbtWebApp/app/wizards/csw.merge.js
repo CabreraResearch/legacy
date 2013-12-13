@@ -201,6 +201,7 @@
                             });
                             div.br();
                         }
+
                         cswPrivate.searchDest = Csw.composites.universalSearch(div, {
                             name: 'searchDest',
                             nodetypeid: cswPrivate.node1.nodetypeid,
@@ -222,7 +223,7 @@
                             extraAction: 'Select',
                             extraActionIcon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.check),
                             universalSearchOnly: true, //No C3 or Structure Search here
-                            filterOutNodeId: cswPrivate.node1.nodeid,
+                            excludeNodeIds: [cswPrivate.node1.nodeid.replace( /^\D+/g, '')],
                             onExtraAction: function(nodeObj) {
                                 cswPrivate.node2 = nodeObj;
                                 cswPrivate.mergeData = null;

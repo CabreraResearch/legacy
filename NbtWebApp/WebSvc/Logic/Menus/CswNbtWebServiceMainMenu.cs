@@ -1,16 +1,46 @@
 using System;
+using System.Collections.Generic;
+using System.Data;
 using System.Linq;
+using System.Runtime.Serialization;
 using ChemSW.Core;
+using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Security;
+using NbtWebApp.WebSvc.Returns;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.WebServices
 {
     public class CswNbtWebServiceMainMenu
     {
+        #region DataContracts
+
+        [DataContract]
+        public class CswNbtMainMenuReturn : CswWebSvcReturn
+        {
+            public CswNbtMainMenuReturn()
+            {
+                Data = new MainMenuResponse();
+            }
+
+            [DataMember]
+            public MainMenuResponse Data;
+        }
+
+        [DataContract]
+        public class MainMenuResponse
+        {
+            [DataMember]
+            public string ImpersonateViewId { get; set; }
+
+            [DataMember]
+            public List<string> ExcludeNodeIds = new List<string>();
+        }
+
+        #endregion
 
         private readonly CswCommaDelimitedString _MenuItems = new CswCommaDelimitedString()
         {
@@ -25,7 +55,7 @@ namespace ChemSW.Nbt.WebServices
             "Edit View",
             "Multi-Edit"
         };
-        
+
         private CswNbtResources _CswNbtResources;
 
         public CswNbtWebServiceMainMenu( CswNbtResources CswNbtResources, string LimitMenuTo = null )
@@ -200,7 +230,7 @@ namespace ChemSW.Nbt.WebServices
                     // PRINT LABEL
 
                     bool ValidForTreePrint = ( false == string.IsNullOrEmpty( SafeNodeKey ) &&
-                                               View.ViewMode != CswEnumNbtViewRenderingMode.Grid &&                        
+                                               View.ViewMode != CswEnumNbtViewRenderingMode.Grid &&
                                                null != Node &&
                                                null != Node.getNodeType() &&
                                                Node.getNodeType().HasLabel );
@@ -236,7 +266,7 @@ namespace ChemSW.Nbt.WebServices
                             }
                         }
                     }
-                    
+
                     if( _MenuItems.Contains( "Print" ) &&
                         ( ValidForTreePrint || ValidForGridPrint ) )
                     {
@@ -376,6 +406,36 @@ namespace ChemSW.Nbt.WebServices
             }
             return ActionType;
         }
+
+        public static void initializeImpersonate( ICswResources CswResources, CswNbtMainMenuReturn Return, object Object )
+        {
+            CswNbtResources CswNbtResources = (CswNbtResources) CswResources;
+
+            if( CswNbtResources.CurrentNbtUser.IsAdministrator() )
+            {
+                // get the impersonate view
+                DataTable DataTable = CswNbtResources.ViewSelect.getView( "Impersonation NodeSelect View", CswEnumNbtViewVisibility.Hidden, null, null );
+                if( DataTable.Rows.Count > 0 )
+                {
+                    Int32 ViewId = CswConvert.ToInt32( DataTable.Rows[0]["nodeviewid"].ToString() );
+                    CswNbtViewId NbtViewId = new CswNbtViewId( ViewId );
+                    Return.Data.ImpersonateViewId = NbtViewId.ToString();
+                }
+
+                // We always want to exclude the current user 
+                Return.Data.ExcludeNodeIds.Add( CswConvert.ToString( CswNbtResources.CurrentNbtUser.UserId.PrimaryKey ) );
+                // and exclude any users of chemsw_admin_role
+                CswNbtObjClassUser ChemSWAdminUser = CswNbtResources.Nodes.makeUserNodeFromUsername( "chemsw_admin" );
+                Return.Data.ExcludeNodeIds.Add( CswConvert.ToString( ChemSWAdminUser.UserId.PrimaryKey ) );
+                //todo: make this encompass _all_ users of chemsw_admin_role
+            }
+            else
+            {
+                throw new CswDniException( CswEnumErrorType.Warning,
+                                           "You do not have permission to use this feature.",
+                                           "User " + CswNbtResources.CurrentNbtUser.Username + " attempted to run initalizeImpersonate()." );
+            }
+        }//initializeImpersonate()
 
     } // class CswNbtWebServiceMainMenu
 } // namespace ChemSW.Nbt.WebServices

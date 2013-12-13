@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Xml.Schema;
 using ChemSW.Core;
 using ChemSW.Nbt.Security;
@@ -91,22 +92,22 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Instance a Tree from a Universal Search
         /// </summary>
-        public ICswNbtTree getTreeFromSearch( string SearchTerm, CswEnumSqlLikeMode SearchType, string WhereClause, 
-                                              bool RequireViewPermissions, bool IncludeSystemNodes, bool IncludeHiddenNodes, bool OnlyMergeableNodeTypes, Int32 PerLevelNodeLimit = Int32.MinValue )
+        public ICswNbtTree getTreeFromSearch( string SearchTerm, CswEnumSqlLikeMode SearchType, string WhereClause,
+                                              bool RequireViewPermissions, bool IncludeSystemNodes, bool IncludeHiddenNodes, bool OnlyMergeableNodeTypes, Int32 PerLevelNodeLimit = Int32.MinValue, List<string> ExcludeNodeIds = null )
         {
-            return getTreeFromSearch( _CswNbtResources.CurrentNbtUser, SearchTerm, SearchType, WhereClause, RequireViewPermissions, IncludeSystemNodes, IncludeHiddenNodes, OnlyMergeableNodeTypes, PerLevelNodeLimit );
+            return getTreeFromSearch( _CswNbtResources.CurrentNbtUser, SearchTerm, SearchType, WhereClause, RequireViewPermissions, IncludeSystemNodes, IncludeHiddenNodes, OnlyMergeableNodeTypes, PerLevelNodeLimit, ExcludeNodeIds );
         }
 
         /// <summary>
         /// Instance a Tree from a Universal Search
         /// </summary>
-        public ICswNbtTree getTreeFromSearch( ICswNbtUser RunAsUser, string SearchTerm, CswEnumSqlLikeMode SearchType, string WhereClause, 
-                                              bool RequireViewPermissions, bool IncludeSystemNodes, bool IncludeHiddenNodes, bool OnlyMergeableNodeTypes, Int32 PerLevelNodeLimit = Int32.MinValue )
+        public ICswNbtTree getTreeFromSearch( ICswNbtUser RunAsUser, string SearchTerm, CswEnumSqlLikeMode SearchType, string WhereClause,
+                                              bool RequireViewPermissions, bool IncludeSystemNodes, bool IncludeHiddenNodes, bool OnlyMergeableNodeTypes, Int32 PerLevelNodeLimit = Int32.MinValue, List<string> ExcludeNodeIds = null )
         {
             ICswNbtTree ReturnVal = _makeTree( true );
 
-            CswNbtTreeLoaderFromSearchByLevel TreeLoader = new CswNbtTreeLoaderFromSearchByLevel( _CswNbtResources, RunAsUser, ReturnVal, SearchTerm, SearchType, WhereClause, 
-                                                                                                  IncludeSystemNodes, IncludeHiddenNodes, OnlyMergeableNodeTypes );
+            CswNbtTreeLoaderFromSearchByLevel TreeLoader = new CswNbtTreeLoaderFromSearchByLevel( _CswNbtResources, RunAsUser, ReturnVal, SearchTerm, SearchType, WhereClause,
+                                                                                                  IncludeSystemNodes, IncludeHiddenNodes, OnlyMergeableNodeTypes, ExcludeNodeIds );
             TreeLoader.load( RequireViewPermissions, PerLevelNodeLimit );
 
             return ( ReturnVal );
