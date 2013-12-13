@@ -102,6 +102,9 @@ namespace ChemSW.Nbt.Search
         [DataMember]
         public bool OnlyMergeableNodeTypes = false;
 
+        [DataMember]
+        public List<string> ExcludeNodeIds = new List<string>();
+
         #endregion Search Data
 
         #region Serialization
@@ -382,7 +385,7 @@ namespace ChemSW.Nbt.Search
                 } // else if( Filter.Type == CswNbtSearchFilterType.propval )
             } // foreach( CswNbtSearchFilter Filter in FiltersApplied )
 
-            ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromSearch( SearchTerm, SearchType, WhereClause, true, false, false, OnlyMergeableNodeTypes );
+            ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromSearch( SearchTerm, SearchType, WhereClause, true, false, false, OnlyMergeableNodeTypes, ExcludeNodeIds: ExcludeNodeIds );
             return Tree;
         } // Results()
 

@@ -251,17 +251,20 @@ namespace ChemSW.Nbt.Actions
             cwSearchVend.PageNumber = 1;
             cwSearchVend.PageSize = 100;
 
+            List<ChemWatchListItem> Suppliers = new List<ChemWatchListItem>();
             ListResultOfVendor cwVendors = cwMaterialClient.SearchVendors( cwSearchVend );
             foreach( Vendor cwVendor in cwVendors.Rows )
             {
                 ChemWatchListItem cwSupplier = new ChemWatchListItem();
                 cwSupplier.Name = cwVendor.Name;
                 cwSupplier.Id = cwVendor.VendorGroup.Gid;
-                if( false == Return.Suppliers.Any( supplier => supplier.Id == cwVendor.VendorGroup.Gid ) )
+                if( false == Suppliers.Any( supplier => supplier.Id == cwVendor.VendorGroup.Gid && supplier.Name == cwVendor.Name ) )
                 {
-                    Return.Suppliers.Add( cwSupplier );
+                    Suppliers.Add( cwSupplier );
                 }
             }
+            IEnumerable<ChemWatchListItem> SortedSuppliers = Suppliers.OrderBy( si => si.Name );
+            Return.Suppliers = SortedSuppliers.ToList();
         }
 
         private static bool _authenticate( CswNbtResources CswNbtResources, out string ErrorMsg )

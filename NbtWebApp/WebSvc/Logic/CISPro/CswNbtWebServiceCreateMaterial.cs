@@ -81,12 +81,6 @@ namespace ChemSW.Nbt.WebServices
                     Response.Data.AllowSupplierAdd = NbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Create, VendorNT );
                 }
 
-                //Alert wizard to active modules
-                bool ContainersEnabled = NbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Containers );
-                Response.Data.ContainersModuleEnabled = ContainersEnabled;
-                bool SDSEnabled = NbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.SDS );
-                Response.Data.SDSModuleEnabled = SDSEnabled;
-
                 //Determine the steps
                 int StepNo = 1;
                 MaterialResponse.WizardStep TypeAndIdentity = new MaterialResponse.WizardStep()
@@ -105,6 +99,9 @@ namespace ChemSW.Nbt.WebServices
                 Response.Data.Steps.Add( AdditionalProps );
                 StepNo++;
 
+                #region Alert wizard to active modules
+
+                bool ContainersEnabled = NbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Containers );
                 if( ContainersEnabled )
                 {
                     bool CanSize = false;
@@ -127,7 +124,14 @@ namespace ChemSW.Nbt.WebServices
                         Response.Data.ContainerLimit = CswConvert.ToInt32( NbtResources.ConfigVbls.getConfigVariableValue( CswEnumNbtConfigurationVariables.container_receipt_limit.ToString() ) );
                         StepNo++;
                     }
+                    else
+                    {
+                        ContainersEnabled = false;
+                    }
                 }
+                Response.Data.ContainersModuleEnabled = ContainersEnabled;
+
+                bool SDSEnabled = NbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.SDS );
                 if( SDSEnabled )
                 {
                     CswNbtMetaDataNodeType SDSNT = NbtResources.MetaData.getNodeType( "SDS Document" );
@@ -140,7 +144,14 @@ namespace ChemSW.Nbt.WebServices
                             };
                         Response.Data.Steps.Add( AttachSDS );
                     }
+                    else
+                    {
+                        SDSEnabled = false;
+                    }
                 }
+                Response.Data.SDSModuleEnabled = SDSEnabled;
+
+                #endregion Alert wizard to active modules
 
                 // Get the ChemicalObjClassId 
                 CswNbtMetaDataObjectClass ChemicalOC = NbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass );

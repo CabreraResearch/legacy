@@ -19,7 +19,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string ContainerType = "Container Type";
             public const string Supplier = "Supplier";
             public const string Description = "Description";
-            public const string Barcode = "UPC Barcode";
+            public const string UPC = "UPC";
         }
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
@@ -126,7 +126,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropList ContainerType { get { return _CswNbtNode.Properties[PropertyName.ContainerType]; } }
         public CswNbtNodePropPropertyReference Supplier { get { return _CswNbtNode.Properties[PropertyName.Supplier]; } }
         public CswNbtNodePropText Description { get { return _CswNbtNode.Properties[PropertyName.Description]; } }
-        public CswNbtNodePropBarcode Barcode { get { return _CswNbtNode.Properties[PropertyName.Barcode]; } }
+        public CswNbtNodePropText UPC { get { return _CswNbtNode.Properties[PropertyName.UPC]; } }
 
         #endregion
 

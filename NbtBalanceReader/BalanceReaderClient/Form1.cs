@@ -399,7 +399,6 @@ namespace BalanceReaderClient
                 Balance.BalanceAsynchronousTask AnnounceBalance = Balance.announceBalance;
                 AnnounceBalance.BeginInvoke( null, null );
             }
-
         }//announceBalances()
 
 

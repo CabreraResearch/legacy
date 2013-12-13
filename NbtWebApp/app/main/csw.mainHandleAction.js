@@ -103,6 +103,7 @@
                     },
                     startingStep: o.ActionOptions.startingStep
                 };
+                Csw.main.clear({ 'all': true });
                 return Csw.nbt.createMaterialWizard(Csw.main.centerTopDiv, createOpt);
             });
             actionHandler.add('dispensecontainer', function (o) {
@@ -165,6 +166,7 @@
                 };
                 return Csw.actions.containerMove(Csw.main.centerTopDiv, designOpt);
             });
+            //Uh, what? why do we have two of these?
             actionHandler.add('movecontainer', function (o) {
                 var designOpt = {
                     title: o.title,

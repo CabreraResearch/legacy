@@ -209,7 +209,7 @@
                 
                 //#region Country
                 lngCntryOptsTbl.cell(1, 4).empty().span({
-                    text: 'Countires:&nbsp;&nbsp;&nbsp;'
+                    text: 'Countries:&nbsp;&nbsp;&nbsp;'
                 }).css({ width: '30px' });
                 var countryDiv = lngCntryOptsTbl.cell(1, 5).empty().css({ width: '150px' });
                 countryDiv.div();

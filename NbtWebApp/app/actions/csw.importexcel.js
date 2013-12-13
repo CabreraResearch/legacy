@@ -238,6 +238,8 @@
                         cswPrivate.makeUploadDataProps(true);
                         cswPrivate.makeStartImportProps(false);
                     }
+
+                    cswPrivate.makeBindingsGrid(cswPrivate.selDefName.val());
                 }
             });
 
@@ -303,18 +305,36 @@
                         disabledText: 'Start',
                         disableOnClick: false,
                         onClick: function () {
-                            Csw.ajaxWcf.post({
-                                urlMethod: 'Import/startImport',
-                                data: {
-                                    ImportDefName: cswPrivate.selDefName.val(),
-                                    Overwrite: cswPrivate.cbOverwrite.checked()
+                            
+                            
+
+                            var inputDialog = Csw.dialogs.inputDialog({
+                                name: 'StartCAFDialog',
+                                title: 'CAF Connection Details',
+                                message: 'Enter the database connection information for this customer',
+                                fields: {
+                                    'CAF Database Name': Csw.enums.inputTypes.text,
+                                    'CAF Database Password': Csw.enums.inputTypes.text,
+                                    'CAF Server': Csw.enums.inputTypes.text,
                                 },
-                                success: function (data) {
-                                    // show success or show progress
-                                }
+                                onOk: function (fields) {
+                                    Csw.ajaxWcf.post({
+                                        urlMethod: 'Import/startImport',
+                                        data: {
+                                            CAFSchema: fields['CAF Database Name'].val(),
+                                            CAFPassword: fields['CAF Database Password'].val(),
+                                            CAFDatabase: fields['CAF Server'].val(),
+                                        },
+                                        success: function (data) {
+                                            // show success or show progress
+                                            inputDialog.close();
+                                        }
+                                    });
+                                },
                             });
-                        }
+                        }//onClick
                     });
+
                 }
 
                 if (visible) {
@@ -332,21 +352,23 @@
             }
 
                 cswPublic.uploadDataTable.cell(1, 3).buttonExt({
-                    name: 'viewBindingsBtn',
-                    enabledText: 'View Import Definition',
-                    disabledText: 'Fetching Bindings...',
+                    name: 'downloadBindingsBtn',
+                    enabledText: 'Download this Definition',
+                    disabledText: 'Generating File...',
                     disableOnClick: true,
                     onClick: function () {
-                        Csw.ajaxWcf.post({
-                            urlMethod: 'Import/getBindingsForDefinition',
-                            data: cswPrivate.selDefName.val(),
-                            success: function(data) {
-                                Csw.dialogs.viewbindings({
-                                    gridData: data,
-                                    importDefName: cswPrivate.selDefName.val()
+                        var action = 'Services/Import/downloadImportDefinition';
+
+                        var $form = $('<form method="POST" action="' + action + '"></form>').appendTo($('body'));
+                        var form = Csw.literals.factory($form);
+
+                        form.input({
+                            name: 'importdefname',
+                            value: cswPrivate.selDefName.val(),
                                 });
-                            }//success()
-                        });//ajaxWcf.post
+
+                        form.$.submit();
+                        form.remove();
                     }//onClick
                 });
         }; // makeUploadTable()
@@ -402,46 +424,208 @@
 
         }; // makeUploadBindingsTable()
 
-        cswPrivate.makeGenerateSqlTable = function () {
-            cswPublic.table.cell(3, 4)
-                .css({ paddingLeft: '100px' })
-                .text('Generate CAF SQL')
-                    .css({
-                        textAlign: 'center',
-                        fontWeight: 'bold'
+        cswPrivate.makeBindingsGrid = function (importDefName) {
+            //the grid does not actually get created until after we have received its bindings from the server
+            Csw.ajaxWcf.post({
+                urlMethod: 'Import/getBindingsForDefinition',
+                data: cswPrivate.selDefName.val(),
+                success: function (data) {
+
+                    //maintain a cache of just the updated rows so we do not have to send the whole table to the server
+                    cswPrivate.gridModifiedRows = [];
+                        
+                    //prepare a data structure for holding the ext grid data
+                    cswPrivate.gridData = {};
+                    cswPrivate.gridData.Order = data.Order || { fields: [], columns: [], data: { items: [] } };
+                    cswPrivate.gridData.Bindings = data.Bindings || { fields: [], columns: [], data: { items: [] } };
+                    cswPrivate.gridData.Relationships = data.Relationships || { fields: [], columns: [], data: { items: [] } };
+
+                    //because the CswExtJsGrid object is a bit hard coded for scheduledRules, we must massage it a bit to display properly here
+                    ["Order", "Bindings", "Relationships"].forEach(function (tableName) {
+                        for (var itemNo = 0; itemNo < cswPrivate.gridData[tableName].data.items.length; itemNo++) {
+                            cswPrivate.gridData[tableName].data.items[itemNo] = cswPrivate.gridData[tableName].data.items[itemNo].Row;
+                        }
+                        
+                        //hide the pk column name so people can't mess with it, otherwise make the column editable
+                        cswPrivate.gridData[tableName].columns.forEach(function (column) {
+                            var pkcolumnname = "IMPORTDEF" + (tableName.endsWith('s') ? tableName.substr(0, tableName.length - 1) : tableName) + "ID";
+                            if (column.header == pkcolumnname.toUpperCase()) {
+                                column.hidden = true;
+                            }
+                            column.editable = true;
+                            Object.defineProperty(column, 'editor', {
+                                writable: true,
+                                configurable: true,
+                                enumerable: true,
+                                value: {
+                                    allowBlank: true
+                                }
+                            });
+                        });
                     });
 
-            cswPublic.generateSqlTable = cswPublic.table.cell(4, 4)
-            .empty()
-            .css({ paddingLeft: '100px' })
-            .table({
-                FirstCellRightAlign: true,
-                cellpadding: 2
-            });
+                    //prepare the tabbed container for the grid sheets
+                    cswPrivate.gridContentArea = cswPrivate.gridContentArea || cswPublic.table.cell(6, 2).propDom('colspan', 4).div().css('margin', '20px');
+                    cswPrivate.gridContentArea.empty();
+                    cswPrivate.gridTabstrip = cswPrivate.gridContentArea.tabStrip({
+                        onTabSelect: cswPrivate.updateDisplayedTab,
+                    });
+                    cswPrivate.gridTabstrip.setSize({ width: 800, height: 600 });
 
-            cswPublic.generateSqlTable.cell(1, 1).buttonExt({
-                name: 'generateSqlBtn',
-                icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.docimport),
-                enabledText: 'Generate',
-                disabledText: 'Generate',
-                disableOnClick: false,
-                onClick: function () {
-                    // Return a .sql file that the User can save on their system
-                    var action = 'Services/Import/generateCAFSql';
+                    cswPrivate.gridTabstrip.setTitle('Import Definition for ' + importDefName);
+
+                    //store the tabs so that we can manipulate them when we update the displayed tab
+                    cswPrivate.gridTabs = {};
+                    cswPrivate.gridTabs.Order = cswPrivate.gridTabstrip.addTab({ title: 'Order' });
+                    cswPrivate.gridTabs.Bindings = cswPrivate.gridTabstrip.addTab({ title: 'Bindings' });
+                    cswPrivate.gridTabs.Relationships = cswPrivate.gridTabstrip.addTab({ title: 'Relationships' });
                     
-                    var $form = $('<form method="POST" action="' + action + '"></form>').appendTo($('body'));
-                    var form = Csw.literals.factory($form);
+                    //set the active tab so everything works before the user picks one for the first time
+                    cswPrivate.currentGridTab = 'Order';
+                    cswPrivate.gridTabstrip.setActiveTab(0);
+                    cswPrivate.updateDisplayedTab(cswPrivate.currentGridTab);
 
-                    form.input({
-                        name: 'importdefname',
-                        value: 'CAF'
-                    });
+                    //only show the CAF-specific buttons below the grid if we are displaying CAF
+                    cswPublic.table.cell(7, 2).empty();
+                    cswPublic.table.cell(7, 3).empty();
+                    
+                    if (importDefName == "CAF") {
+                        cswPublic.table.cell(7, 2).buttonExt({
+                            enabledText: 'Save Changes',
+                            disabledText: 'Sending Updates...',
+                            disableOnClick: true,
+                            onClick: function() {
 
-                    form.$.submit();
-                    form.remove();
+                                //WCF requires dictionaries to be arrays of {Key: XXX, Value: YYY} tuples instead of, y'know... dictionaries. So we need to copy the data over to this format
+                                var dataToSend = [];
+
+                                cswPrivate.gridModifiedRows.forEach(function(row, index) {
+                                    dataToSend[index] = {};
+                                    dataToSend[index].editMode = row.editMode;
+                                    dataToSend[index].definitionType = row.definitionType;
+                                    dataToSend[index].row = [];
+                                    Object.keys(row.row).forEach(function(cellName) {
+                                        dataToSend[index].row.push({ Key: cellName, Value: row.row[cellName] });
+                                    });
+                                });
+                                
+                                //send the data to the server, then clear our list of pending modifications on success
+                                Csw.ajaxWcf.post({
+                                    urlMethod: 'Import/updateImportDefinition',
+                                    data: dataToSend,
+                                    success: function() {
+                                        cswPrivate.gridModifiedRows = [];
+                                    }
+                                });
+                            }
+                        });
+
+                        cswPublic.table.cell(7, 3).buttonExt({
+                            enabledText: 'Add Row',
+                            disableOnClick: false,
+                            onClick: function () {
+                                //add a new row to the data store, then refresh the grid so that it appears in the UI
+                                var tabName = cswPrivate.currentGridTab;
+
+                                var rowNum = cswPrivate.gridData[tabName].data.items.push(new Object()) - 1;
+                                var newRow = cswPrivate.gridData[tabName].data.items[rowNum];
+                                cswPrivate.gridData[tabName].columns.forEach(function(column) {
+                                    newRow[column.dataIndex] = "";
+                                });
+                                cswPrivate.indexModifiedRow("add", tabName, newRow);
+                                cswPrivate.updateDisplayedTab(tabName);
+                            }
+                        });
+                    }
+
+                }//success()
+            });//ajaxWcf.post
+        };//make binding grid
+
+
+        cswPrivate.indexModifiedRow = function (editMode, sheetName, rowData) {
+            //NOTE: Rows are stored by REFERENCE, and the Ext data store and modifiedRows column both reference the SAME row object
+            var matchingRow = null;
+            
+            //figure out if the user has already modified this row, so we can re-use the same record in the cache
+            cswPrivate.gridModifiedRows.forEach(function (modifiedRow) {
+                if ( rowData == modifiedRow.row ) {
+                    matchingRow = modifiedRow;
                 }
             });
-        }; // makeGenerateSqlTable()
+
+            //if this row does not exist in our cache of modified rows yet, add it
+            if (matchingRow == null) {
+                cswPrivate.gridModifiedRows.push({
+                    editMode: editMode,
+                    definitionType: sheetName,
+                    row: rowData
+                });
+            } else {
+                //otherwise, only update the reference to the row data on the off chance its changed
+                //TODO: this is probably broken if a user modifies a binding, and then deletes it afterward
+                matchingRow.row = rowData;
+            }
+        };
+
+
+        cswPrivate.updateDisplayedTab = function(tabName) {
+            //clear the old grid out of the tab
+            cswPrivate.gridTabs[tabName].csw.empty();
+            
+
+            var gridOptions = {
+                fields: cswPrivate.gridData[tabName].fields,
+                columns: cswPrivate.gridData[tabName].columns,
+                data: cswPrivate.gridData[tabName].data,
+                showActionColumn: false,
+                width: 800 - 2,
+                height: 600 - 52,
+                usePaging: false,
+                selModel: {
+                    selType: 'cellmodel'
+                },
+                canSelectRow: false,
+            };
+
+
+            if (cswPrivate.selDefName.val() == "CAF") {
+                //only make the grid editable if the definition is CAF
+                gridOptions["plugins"] = [
+                    Ext.create('Ext.grid.plugin.CellEditing', {
+                        clicksToEdit: 1,
+                        listeners: {
+                            edit: function (grid, row) {
+                                if (cswPrivate.gridData[tabName].data.items[row.rowIdx][row.field] != row.value) {
+                                    cswPrivate.gridData[tabName].data.items[row.rowIdx][row.field] = row.value;
+                                    cswPrivate.indexModifiedRow("modify", tabName, cswPrivate.gridData[tabName].data.items[row.rowIdx]);
+                                }
+                            }
+                        }
+                    })
+                ];
+                gridOptions["showActionColumn"] = true;
+                gridOptions["showView"] = false;
+                gridOptions["showPreview"] = false;
+                gridOptions["showLock"] = false;
+                gridOptions["showEdit"] = false;
+                gridOptions["showFavorites"] = false;
+                gridOptions["onDelete"] = function (rows, rowdata) {
+                    //when deleting a row from the grid, splice it out of the data store then reload the grid so it disapears from the UI
+                    cswPrivate.gridData[tabName].data.items.splice(cswPrivate.bindingsGrid.getSelectedRowId(), 1);
+                    cswPrivate.updateDisplayedTab(tabName);
+                    cswPrivate.indexModifiedRow("delete", tabName, rowdata);
+                    
+                };
+            }//if import def name == CAF
+            
+            //build the grid with the options supplied above, then set the active tab
+            cswPrivate.bindingsGrid = cswPrivate.gridTabs[tabName].csw.grid(gridOptions);
+            cswPrivate.currentGridTab = tabName;
+        };
+        
+
+
 
         // Init
         (function () {
@@ -462,7 +646,6 @@
             cswPrivate.makeStatusTable();
             cswPrivate.makeUploadDataTable();
             cswPrivate.makeUploadBindingsTable();
-            cswPrivate.makeGenerateSqlTable();
 
         })(); // init
 

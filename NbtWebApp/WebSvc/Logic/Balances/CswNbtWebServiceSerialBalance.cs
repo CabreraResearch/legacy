@@ -300,6 +300,8 @@ namespace ChemSW.Nbt.WebServices
                 NbtName = Balance.Name.Text,
                 CurrentWeight = Balance.Quantity.Quantity,
                 UnitOfMeasurement = Balance.Quantity.CachedUnitName,
+                NodeId = Balance.NodeId.ToString(),
+                IsActive = (Balance.LastActive.DateTimeValue + TimeSpan.FromMinutes(10) > DateTime.Now),
             } );
 
 

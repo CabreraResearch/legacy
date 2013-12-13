@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using ChemSW.Core;
-using ChemSW.DB;
 
 namespace ChemSW.Nbt.Actions
 {
@@ -14,7 +12,7 @@ namespace ChemSW.Nbt.Actions
         #region Internals
         private static Dictionary<string, string> _Enums = new Dictionary<string, string>( StringComparer.OrdinalIgnoreCase )
         {
-                                                                    
+            {   ChemWatch,                 ChemWatch },                          
             {   Container_Expiration_Lock, Container_Expiration_Lock },
             {   Create_Inspection,         Create_Inspection         },
             {   Create_Material,           Create_Material           },
@@ -95,6 +93,7 @@ namespace ChemSW.Nbt.Actions
 
         #region Enum members
 
+        public const string ChemWatch = "ChemWatch";
         public const string Container_Expiration_Lock = "Container_Expiration_Lock";
         public const string Create_Inspection = "Create_Inspection";
         public const string Create_Material = "Create_Material";
