@@ -1784,7 +1784,11 @@ namespace ChemSW.Nbt.Schema
             CswArbitrarySelect AdminUserQuery = new CswArbitrarySelect( _CswNbtResources.CswResources, "get_admin_last_login", @"
 select field1_date from jct_nodes_props jnp
   join nodetype_props p on jnp.nodetypepropid = p.nodetypepropid
-  where jnp.nodeid = (select nodeid from nodes where nodename = 'admin')
+  where jnp.nodeid = (select nodeid from nodes n 
+                         join nodetypes nt on nt.nodetypeid = n.nodetypeid
+                         where nodename = 'admin'
+                           and nodetypename = 'User'
+                     )
        and propname = 'Last Login'
               ");
 
