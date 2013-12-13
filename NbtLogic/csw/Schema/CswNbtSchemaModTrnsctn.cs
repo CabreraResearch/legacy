@@ -1790,7 +1790,7 @@ select field1_date from jct_nodes_props jnp
 
             DataRowCollection Results = AdminUserQuery.getTable().Rows;
             return ( Results.Count == 1 && 
-                DateTime.Parse(Results[0]["field1_date"].ToString()) == new DateTime( 2012, 8, 10 ) );
+                DateTime.Parse(Results[0]["field1_date"].ToString()) < new DateTime( 2012, 8, 11 ) );
         }
 
         /// <summary>
