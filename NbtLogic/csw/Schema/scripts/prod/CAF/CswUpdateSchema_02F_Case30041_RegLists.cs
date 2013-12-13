@@ -32,7 +32,7 @@ namespace ChemSW.Nbt.Schema
                 ImpMgr.importBinding( "listmode", CswNbtObjClassRegulatoryList.PropertyName.ListMode, "" );
 
 
-                ImpMgr.CAFimportOrder( "Regulatory List CAS", "regulated_casnos", PkColumnName: "regulatorylistid" );
+                ImpMgr.CAFimportOrder( "Regulatory List CAS", "regulated_casnos", PkColumnName: "regulatedcasnoid" );
                 ImpMgr.importBinding( "casno", CswNbtObjClassRegulatoryListCasNo.PropertyName.CASNo, "" );
                 
                 ImpMgr.finalize();
