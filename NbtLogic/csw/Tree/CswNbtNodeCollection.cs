@@ -385,7 +385,7 @@ namespace ChemSW.Nbt
         /// <param name="OnAfterMakeNode">Event that occurs after creating the node but before saving it for the first time</param>
         /// <param name="OverrideUniqueValidation">If true, allow this node to be created even if it violates uniqueness rules</param>
         /// <returns>The new node. !!POSTS CHANGES!!</returns>
-        public CswNbtNode makeNodeFromNodeTypeId( Int32 NodeTypeId, Action<CswNbtNode> OnAfterMakeNode = null, bool IsTemp = false, bool OverrideUniqueValidation = false )
+        public CswNbtNode makeNodeFromNodeTypeId( Int32 NodeTypeId, Action<CswNbtNode> OnAfterMakeNode = null, bool IsTemp = false, bool OverrideUniqueValidation = false, bool IsCopy = false )
         {
             CswNbtNode Node = _CswNbtNodeFactory.make( CswEnumNbtNodeSpecies.Plain, null, NodeTypeId, _NodeHash.Count, null, IsTemp: true );  // temp here for auditing, but see below
             //Node.OnAfterSetNodeId += new CswNbtNode.OnSetNodeIdHandler( OnAfterSetNodeIdHandler );
@@ -414,6 +414,7 @@ namespace ChemSW.Nbt
             {
                 NodePersistStrategy = new CswNbtNodePersistStrategyCreate( _CswNbtResources );
             }
+            NodePersistStrategy.IsCopy = IsCopy;
             NodePersistStrategy.OverrideUniqueValidation = OverrideUniqueValidation;
             NodePersistStrategy.postChanges( Node );
 
