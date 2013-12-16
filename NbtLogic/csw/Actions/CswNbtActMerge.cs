@@ -4,11 +4,10 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.Serialization;
 using ChemSW.Core;
-using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
-using Newtonsoft.Json.Linq;
+using ChemSW.Nbt.ServiceDrivers;
 
 namespace ChemSW.Nbt.Actions
 {
@@ -188,17 +187,17 @@ namespace ChemSW.Nbt.Actions
                             CswNbtViewRelationship rel1 = view.AddViewRelationship( thisUserSelProp.getNodeType(), false );
                             view.AddViewPropertyAndFilter( rel1,
                                                            thisUserSelProp,
-                                                           Conjunction: CswEnumNbtFilterConjunction.And,
-                                                           FilterMode: CswEnumNbtFilterMode.Contains,
-                                                           Value: Node1.NodeId.PrimaryKey.ToString() );
+                                                           Conjunction : CswEnumNbtFilterConjunction.And,
+                                                           FilterMode : CswEnumNbtFilterMode.Contains,
+                                                           Value : Node1.NodeId.PrimaryKey.ToString() );
                             view.AddViewPropertyAndFilter( rel1,
                                                            thisUserSelProp,
-                                                           Conjunction: CswEnumNbtFilterConjunction.Or,
-                                                           FilterMode: CswEnumNbtFilterMode.Contains,
-                                                           Value: Node2.NodeId.PrimaryKey.ToString() );
+                                                           Conjunction : CswEnumNbtFilterConjunction.Or,
+                                                           FilterMode : CswEnumNbtFilterMode.Contains,
+                                                           Value : Node2.NodeId.PrimaryKey.ToString() );
 
                             // Add nodes with matching UserSelect properties to NodeReferences for later updating
-                            ICswNbtTree tree = _CswNbtResources.Trees.getTreeFromView( view, RequireViewPermissions: false, IncludeHiddenNodes: true, IncludeSystemNodes: true );
+                            ICswNbtTree tree = _CswNbtResources.Trees.getTreeFromView( view, RequireViewPermissions : false, IncludeHiddenNodes : true, IncludeSystemNodes : true );
                             for( Int32 c = 0; c < tree.getChildNodeCount(); c++ )
                             {
                                 tree.goToNthChild( c );
@@ -242,7 +241,7 @@ namespace ChemSW.Nbt.Actions
             }
 
             // Iterate children and store unique property values in a dictionary key
-            ICswNbtTree tree = _CswNbtResources.Trees.getTreeFromView( view, RequireViewPermissions: false, IncludeHiddenNodes: true, IncludeSystemNodes: true );
+            ICswNbtTree tree = _CswNbtResources.Trees.getTreeFromView( view, RequireViewPermissions : false, IncludeHiddenNodes : true, IncludeSystemNodes : true );
             if( tree.getChildNodeCount() > 0 )
             {
                 tree.goToNthChild( 0 );
@@ -323,7 +322,7 @@ namespace ChemSW.Nbt.Actions
                 {
                     tempNode = _CswNbtResources.Nodes[nodePair.NodeTempId];
                     _applyMergeChoicesToNode( Choices, nodePair, tempNode );
-                    tempNode.postChanges( ForceUpdate: false, IsCopy: false, OverrideUniqueValidation: true );
+                    tempNode.postChanges( ForceUpdate : false, IsCopy : false, OverrideUniqueValidation : true );
                 }
                 else
                 {
@@ -331,9 +330,9 @@ namespace ChemSW.Nbt.Actions
                     if( null != Node1 )
                     {
                         tempNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( Node1.NodeTypeId,
-                                                                                  IsTemp: true,
-                                                                                  OverrideUniqueValidation: true,
-                                                                                  OnAfterMakeNode: delegate( CswNbtNode newNode )
+                                                                                  IsTemp : true,
+                                                                                  OverrideUniqueValidation : true,
+                                                                                  OnAfterMakeNode : delegate( CswNbtNode newNode )
                                                                                       {
                                                                                           _applyMergeChoicesToNode( Choices, nodePair, newNode );
                                                                                       } );
@@ -351,6 +350,12 @@ namespace ChemSW.Nbt.Actions
             CswNbtNode Node2 = _CswNbtResources.Nodes[nodePair.Node2Id];
             if( null != Node1 && null != Node2 )
             {
+                //Case 31362 - if we've click "Back" on the wizard we've copied blob_data to the result node. We need to delete it in case we've decided not to copy it
+                foreach( CswNbtNodePropWrapper blobProp in resultNode.Properties.Where( P => CswNbtSdBlobData.IsBlobProp( P ) ) )
+                {
+                    CswNbtSdBlobData.DeleteBlobData( _CswNbtResources, blobProp.JctNodePropId );
+                }
+
                 // Set property values according to choice
                 resultNode.copyPropertyValuesGeneric( Node2 );
                 foreach( MergeInfoData.MergeInfoProperty mergeProp in nodePair.Properties.Where( mergeProp => mergeProp.Choice == 1 ) )
@@ -386,7 +391,7 @@ namespace ChemSW.Nbt.Actions
                 CswNbtNode NodeTemp = _CswNbtResources.Nodes[nodePair.NodeTempId];
                 if( null != NodeTemp )
                 {
-                    NodeTemp.delete( DeleteAllRequiredRelatedNodes: false, OverridePermissions: true, ValidateRequiredRelationships: false );
+                    NodeTemp.delete( DeleteAllRequiredRelatedNodes : false, OverridePermissions : true, ValidateRequiredRelationships : false );
                 }
 
                 // Merge Node1 into Node2, and delete Node1
@@ -402,7 +407,7 @@ namespace ChemSW.Nbt.Actions
 
                     // Apply the merge to Node2
                     _applyMergeChoicesToNode( Choices, nodePair, Node2 );
-                    Node2.postChanges( ForceUpdate: false, IsCopy: false, OverrideUniqueValidation: true );
+                    Node2.postChanges( ForceUpdate : false, IsCopy : false, OverrideUniqueValidation : true );
 
                     // Update any references to point to node2
                     foreach( MergeInfoData.MergeInfoNodeReference Ref in nodePair.NodeReferences )
@@ -421,11 +426,11 @@ namespace ChemSW.Nbt.Actions
                             refNode.Properties[Ref.NodeTypePropId].AsNodeReference.ReferencedNodeId = Node2.NodeId;
                             refNode.Properties[Ref.NodeTypePropId].AsNodeReference.RefreshNodeName();
                         }
-                        refNode.postChanges( ForceUpdate: false, IsCopy: false, OverrideUniqueValidation: true );
+                        refNode.postChanges( ForceUpdate : false, IsCopy : false, OverrideUniqueValidation : true );
                     }
 
                     // Delete merged node 1
-                    Node1.delete( DeleteAllRequiredRelatedNodes: false, OverridePermissions: true, ValidateRequiredRelationships: false );
+                    Node1.delete( DeleteAllRequiredRelatedNodes : false, OverridePermissions : true, ValidateRequiredRelationships : false );
 
                 } // if( null != Node1 && null != Node2 )
             } // foreach( MergeInfoData.MergeInfoNodePair nodePair in Choices.NodePairs )
@@ -433,7 +438,7 @@ namespace ChemSW.Nbt.Actions
             // Return a view of the first merged node
             if( null != firstMergedNode )
             {
-                view = firstMergedNode.getViewOfNode( includeDefaultFilters: false );
+                view = firstMergedNode.getViewOfNode( includeDefaultFilters : false );
             }
             return view;
         } // finishMerge()

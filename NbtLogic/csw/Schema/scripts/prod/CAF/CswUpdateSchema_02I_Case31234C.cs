@@ -7,7 +7,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update
     /// </summary>
-    public class CswUpdateSchema_02I_Case31234C: CswUpdateSchemaTo
+    public class CswUpdateSchema_02I_Case31234C: CswUpdateNbtMasterSchemaTo
     {
         public override string Title { get { return "Add missing Chemical bindings"; } }
 
@@ -26,7 +26,7 @@ namespace ChemSW.Nbt.Schema
             return "C";
         }
 
-        public override void update()
+        public override void doUpdate()
         {
             CswNbtSchemaUpdateImportMgr ImpMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "CAF" );
 

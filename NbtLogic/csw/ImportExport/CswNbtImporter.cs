@@ -37,7 +37,7 @@ namespace ChemSW.Nbt.ImportExport
             }
             else
             {
-                throw new CswDniException(CswEnumErrorType.Error, "Error initializing CswNbtImporter", "CswNbtImporter was passed an invalid SetupMode: " + SetupMode.ToString());
+                throw new CswDniException( CswEnumErrorType.Error, "Error initializing CswNbtImporter", "CswNbtImporter was passed an invalid SetupMode: " + SetupMode.ToString() );
             }
         }
 
@@ -65,28 +65,52 @@ namespace ChemSW.Nbt.ImportExport
         /// </summary>
         public void storeDefinition( string FullFilePath, string ImportDefinitionName )
         {
+            //construct the excel tables from the uploaded bindings. If this worked correctly,
+            //we should get three tables: "Order$", "Bindings$", and "Relationships$"
             DataSet ExcelDataSet = CswNbtImportTools.ReadExcel( FullFilePath );
 
             if( ExcelDataSet.Tables.Count == 3 )
             {
-                DataTable OrderDataTable = ExcelDataSet.Tables["Order$"];
-                DataTable BindingsDataTable = ExcelDataSet.Tables["Bindings$"];
-                DataTable RelationshipsDataTable = ExcelDataSet.Tables["Relationships$"];
 
-                Dictionary<string, Int32> DefIdsBySheetName = CswNbtImportDef.addDefinitionEntriesFromExcel( _CswNbtResources, ImportDefinitionName, OrderDataTable, null );
+                Dictionary<string, Int32> DefIdsBySheetName = CswNbtImportDef.addDefinitionEntriesFromExcel( _CswNbtResources, ImportDefinitionName, ExcelDataSet.Tables["Order$"], null );
 
-                //convert the sheetname column of the excel file into the corresponding importdefid
-                foreach( DataTable Table in new DataTable[] { OrderDataTable, BindingsDataTable, RelationshipsDataTable } )
+                //create new tables to hold the data, and index them similarly to ReadExcel() so we can talk about the two in pairs
+                //we seem to need this so that the pk column is handled correctly; I'm sure there's an in-place way to do it,
+                //but good luck figuring it out.
+                Dictionary<string, DataTable> TableUpdates = new Dictionary<string, DataTable>();
+                TableUpdates["Order$"] = _CswNbtResources.makeCswTableUpdate( "importdeforder", "import_def_order" ).getTable();
+                TableUpdates["Bindings$"] = _CswNbtResources.makeCswTableUpdate( "importdefbinding", "import_def_bindings" ).getTable();
+                TableUpdates["Relationships$"] = _CswNbtResources.makeCswTableUpdate( "importdefrelationship", "import_def_relationships" ).getTable();
+
+                //loop through each pair of tables by name
+                foreach( string Table in new [] {"Order$", "Bindings$", "Relationships$"} )
                 {
-                    Table.Columns.Add( "importdefid" );
-                    foreach( DataRow Row in Table.Rows )
+                    //for each row in the old table
+                    foreach( DataRow Row in ExcelDataSet.Tables[Table].Rows )
                     {
-                        Row["importdefid"] = DefIdsBySheetName[Row["sheetname"].ToString()];
-                    }
-                    Table.Columns.Remove( "sheetname" );
-                }
+                        //create a new row from the equivalent new table
+                        DataRow NewRow = TableUpdates[Table].NewRow();
 
-                storeDefinition( OrderDataTable, BindingsDataTable, RelationshipsDataTable );
+                        //foreach column of the old row
+                        foreach( DataColumn Column in ExcelDataSet.Tables[Table].Columns )
+                        {
+                            //if the cell is sheetname convert it to the appropriate importdefid, otherwise copy it directly if there's something there
+                            if( Column.ColumnName.ToLower() == "sheetname" )
+                            {
+                                NewRow["importdefid"] = DefIdsBySheetName[Row["sheetname"].ToString()];
+                            }
+                            else if ( false == string.IsNullOrEmpty(Row[Column].ToString()))
+                            {
+                                NewRow[Column.ColumnName] = Row[Column];
+                            }
+                        }//for each column in the row
+
+                        //add the new row to the new table
+                        TableUpdates[Table].Rows.Add( NewRow );
+                    }//for each row in the table
+                }//for each table in the excel sheet
+
+                storeDefinition( TableUpdates["Order$"], TableUpdates["Bindings$"], TableUpdates["Relationships$"] );
             } // if( ExcelDataSet.Tables.Count == 3 )
             else
             {
@@ -101,7 +125,7 @@ namespace ChemSW.Nbt.ImportExport
             CswNbtImportDefRelationship.addRelationshipEntries( _CswNbtResources, RelationshipsDataTable );
 
         }
-        
+
         /// <summary>
         /// Import a single row (for CAF imports)
         /// </summary>
@@ -119,7 +143,7 @@ namespace ChemSW.Nbt.ImportExport
                     {
                         try
                         {
-                            _ImportOneRow( SourceRow, BindingDef, Order, Overwrite, null, OverrideUniqueValidation: true );
+                            _ImportOneRow( SourceRow, BindingDef, Order, Overwrite, null, OverrideUniqueValidation : true );
                         }
                         catch( Exception e )
                         {
@@ -299,9 +323,9 @@ namespace ChemSW.Nbt.ImportExport
                     CswNbtViewRelationship NTRel1 = LegacyIdView.AddViewRelationship( Order.NodeType, false );
 
                     CswNbtMetaDataNodeTypeProp LegacyIdNTP = Order.NodeType.getNodeTypeProp( CswNbtObjClass.PropertyName.LegacyId );
-                    LegacyIdView.AddViewPropertyAndFilter( ParentViewRelationship: NTRel1, MetaDataProp: LegacyIdNTP,
-                                                           Value: LegacyId,
-                                                      SubFieldName: CswEnumNbtSubFieldName.Text, CaseSensitive: false );
+                    LegacyIdView.AddViewPropertyAndFilter( ParentViewRelationship : NTRel1, MetaDataProp : LegacyIdNTP,
+                                                           Value : LegacyId,
+                                                      SubFieldName : CswEnumNbtSubFieldName.Text, CaseSensitive : false );
 
                     ICswNbtTree LegacyIdTree = _CswNbtResources.Trees.getTreeFromView( LegacyIdView, false, true, true );
                     if( LegacyIdTree.getChildNodeCount() > 0 )
@@ -333,18 +357,18 @@ namespace ChemSW.Nbt.ImportExport
                             if( Value != string.Empty )
                             {
                                 UniqueView.AddViewPropertyAndFilter( NTRel, Binding.DestProperty,
-                                                                     Conjunction: CswEnumNbtFilterConjunction.And,
-                                                                     SubFieldName: Binding.DestSubfield.Name,
-                                                                     FilterMode: CswEnumNbtFilterMode.Equals,
-                                                                     Value: Value,
-                                                                     CaseSensitive: false );
+                                                                     Conjunction : CswEnumNbtFilterConjunction.And,
+                                                                     SubFieldName : Binding.DestSubfield.Name,
+                                                                     FilterMode : CswEnumNbtFilterMode.Equals,
+                                                                     Value : Value,
+                                                                     CaseSensitive : false );
                             }
                             else
                             {
                                 UniqueView.AddViewPropertyAndFilter( NTRel, Binding.DestProperty,
-                                                                     Conjunction: CswEnumNbtFilterConjunction.And,
-                                                                     SubFieldName: Binding.DestSubfield.Name,
-                                                                     FilterMode: CswEnumNbtFilterMode.Null );
+                                                                     Conjunction : CswEnumNbtFilterConjunction.And,
+                                                                     SubFieldName : Binding.DestSubfield.Name,
+                                                                     FilterMode : CswEnumNbtFilterMode.Null );
                             }
                             atLeastOneFilter = true;
                         }
@@ -356,18 +380,18 @@ namespace ChemSW.Nbt.ImportExport
                             if( Value != Int32.MinValue )
                             {
                                 UniqueView.AddViewPropertyAndFilter( NTRel, Relation.Relationship,
-                                                                     Conjunction: CswEnumNbtFilterConjunction.And,
-                                                                     SubFieldName: CswEnumNbtSubFieldName.NodeID,
-                                                                     FilterMode: CswEnumNbtFilterMode.Equals,
-                                                                     Value: Value.ToString(),
-                                                                     CaseSensitive: false );
+                                                                     Conjunction : CswEnumNbtFilterConjunction.And,
+                                                                     SubFieldName : CswEnumNbtSubFieldName.NodeID,
+                                                                     FilterMode : CswEnumNbtFilterMode.Equals,
+                                                                     Value : Value.ToString(),
+                                                                     CaseSensitive : false );
                             }
                             else
                             {
                                 UniqueView.AddViewPropertyAndFilter( NTRel, Relation.Relationship,
-                                                                     Conjunction: CswEnumNbtFilterConjunction.And,
-                                                                     SubFieldName: CswEnumNbtSubFieldName.NodeID,
-                                                                     FilterMode: CswEnumNbtFilterMode.Null );
+                                                                     Conjunction : CswEnumNbtFilterConjunction.And,
+                                                                     SubFieldName : CswEnumNbtSubFieldName.NodeID,
+                                                                     FilterMode : CswEnumNbtFilterMode.Null );
                             }
                             atLeastOneFilter = true;
                         }
@@ -413,7 +437,7 @@ namespace ChemSW.Nbt.ImportExport
                                 _setRolePermissions( NewNode, CswEnumTristate.True == NewNode.Properties[CswNbtObjClassRole.PropertyName.Administrator].AsLogical.Checked ? "CISPro_Admin" : "CISPro_General" );
                             }
 
-                        }, OverrideUniqueValidation: true ); //even when we care about uniqueness, we've already checked it above and this would be redundant
+                        }, OverrideUniqueValidation : true ); //even when we care about uniqueness, we've already checked it above and this would be redundant
                 }
 
                 ImportedNodeId = Node.NodeId;
@@ -716,12 +740,12 @@ namespace ChemSW.Nbt.ImportExport
                         break;
                 }
 
-                View.AddViewPropertyAndFilter( ParentViewRelationship: ParentRelationship,
-                                              MetaDataProp: MetaDataProp,
-                                              Conjunction: CswEnumNbtFilterConjunction.And,
-                                              SubFieldName: CswEnumNbtSubFieldName.Text,
-                                              FilterMode: CswEnumNbtFilterMode.Equals,
-                                              Value: LegacyId );
+                View.AddViewPropertyAndFilter( ParentViewRelationship : ParentRelationship,
+                                              MetaDataProp : MetaDataProp,
+                                              Conjunction : CswEnumNbtFilterConjunction.And,
+                                              SubFieldName : CswEnumNbtSubFieldName.Text,
+                                              FilterMode : CswEnumNbtFilterMode.Equals,
+                                              Value : LegacyId );
 
                 ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, false, true, true );
                 if( Tree.getChildNodeCount() > 0 )
@@ -754,32 +778,35 @@ namespace ChemSW.Nbt.ImportExport
 
         private void _relationshipSearchViaName( CswNbtNode Node, CswCommaDelimitedString inClause, DataRow ImportRow, CswNbtImportDefBinding Binding )
         {
-            string sql = "select min(nodeid) nodeid from nodes where nodetypeid in ("
-                                   + inClause.ToString()
-                                   + ") and lower(nodename)='"
-                                   + ImportRow[Binding.ImportDataColumnName].ToString().ToLower() + "'";
-            CswArbitrarySelect relNodeSel = _CswNbtResources.makeCswArbitrarySelect( "getRelatedNode", sql );
-            DataTable relNodeTbl = relNodeSel.getTable();
-            if( relNodeTbl.Rows.Count > 0 )
+            if( false == String.IsNullOrEmpty( ImportRow[Binding.ImportDataColumnName].ToString() ) )
             {
-                // Because the sql query is using 'min' it will always return a row; we only want the row if it has a value
-                if( false == string.IsNullOrEmpty( relNodeTbl.Rows[0][0].ToString() ) )
+                string sql = "select min(nodeid) nodeid from nodes where nodetypeid in ("
+                             + inClause.ToString()
+                             + ") and lower(nodename)='"
+                             + ImportRow[Binding.ImportDataColumnName].ToString().ToLower() + "'";
+                CswArbitrarySelect relNodeSel = _CswNbtResources.makeCswArbitrarySelect( "getRelatedNode", sql );
+                DataTable relNodeTbl = relNodeSel.getTable();
+                if( relNodeTbl.Rows.Count > 0 )
                 {
-                    CswPrimaryKey pk = new CswPrimaryKey( "nodes", CswConvert.ToInt32( relNodeTbl.Rows[0]["nodeid"] ) );
-                    if( Binding.DestProperty.getFieldTypeValue() == CswEnumNbtFieldType.Quantity )
+                    // Because the sql query is using 'min' it will always return a row; we only want the row if it has a value
+                    if( false == string.IsNullOrEmpty( relNodeTbl.Rows[0][0].ToString() ) )
                     {
-                        Node.Properties[Binding.DestProperty].AsQuantity.UnitId = pk;
-                    }
-                    else
-                    {
-                        Node.Properties[Binding.DestProperty].AsRelationship.RelatedNodeId = pk;
+                        CswPrimaryKey pk = new CswPrimaryKey( "nodes", CswConvert.ToInt32( relNodeTbl.Rows[0]["nodeid"] ) );
+                        if( Binding.DestProperty.getFieldTypeValue() == CswEnumNbtFieldType.Quantity )
+                        {
+                            Node.Properties[Binding.DestProperty].AsQuantity.UnitId = pk;
+                        }
+                        else
+                        {
+                            Node.Properties[Binding.DestProperty].AsRelationship.RelatedNodeId = pk;
+                        }
                     }
                 }
-            }
-            else
-            {
-                OnMessage( "No matching " + Binding.DestNodeType.NodeTypeName + " for " +
-                          ImportRow[Binding.ImportDataColumnName] );
+                else
+                {
+                    OnMessage( "No matching " + Binding.DestNodeType.NodeTypeName + " for " +
+                               ImportRow[Binding.ImportDataColumnName] );
+                }
             }
         }
 
