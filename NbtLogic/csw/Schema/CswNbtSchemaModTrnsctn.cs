@@ -1780,7 +1780,7 @@ namespace ChemSW.Nbt.Schema
         /// </summary>
         public bool isMaster()
         {
-
+            //
             CswTableSelect LicenseAcceptance = new CswTableSelect( _CswNbtResources.CswResources, "license acceptance", "license_accept" );
             return ( LicenseAcceptance.getRecordCount() == 0 );
         }

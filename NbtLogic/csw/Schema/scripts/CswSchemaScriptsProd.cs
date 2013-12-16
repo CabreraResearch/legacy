@@ -31,22 +31,8 @@ namespace ChemSW.Nbt.Schema
             Collection<ICswSchemaScripts> AllScripts = new Collection<ICswSchemaScripts>()
                 {
                     new CswSchemaScriptsIronwood(),
-                    // Add new milestone script collections here
+                    new CswSchemaScriptsCAF()
                 };
-
-            {//CAF
-                //this is not the cleanest way to do this, but I assume isMaster is not in Resources for a reason.
-                CswNbtSchemaModTrnsctn Trnsctn = new CswNbtSchemaModTrnsctn( _CswNbtResources );
-
-                //we only want to run CAF scripts on master
-                if( Trnsctn.isMaster() )
-                {
-                    AllScripts.Add( new CswSchemaScriptsCAF() );
-                }
-            }//</CAF>
-
-
-
 
             // DDL
             foreach( ICswSchemaScripts ScriptColl in AllScripts )
