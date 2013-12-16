@@ -65,28 +65,52 @@ namespace ChemSW.Nbt.ImportExport
         /// </summary>
         public void storeDefinition( string FullFilePath, string ImportDefinitionName )
         {
+            //construct the excel tables from the uploaded bindings. If this worked correctly,
+            //we should get three tables: "Order$", "Bindings$", and "Relationships$"
             DataSet ExcelDataSet = CswNbtImportTools.ReadExcel( FullFilePath );
 
             if( ExcelDataSet.Tables.Count == 3 )
             {
-                DataTable OrderDataTable = ExcelDataSet.Tables["Order$"];
-                DataTable BindingsDataTable = ExcelDataSet.Tables["Bindings$"];
-                DataTable RelationshipsDataTable = ExcelDataSet.Tables["Relationships$"];
 
-                Dictionary<string, Int32> DefIdsBySheetName = CswNbtImportDef.addDefinitionEntriesFromExcel( _CswNbtResources, ImportDefinitionName, OrderDataTable, null );
+                Dictionary<string, Int32> DefIdsBySheetName = CswNbtImportDef.addDefinitionEntriesFromExcel( _CswNbtResources, ImportDefinitionName, ExcelDataSet.Tables["Order$"], null );
 
-                //convert the sheetname column of the excel file into the corresponding importdefid
-                foreach( DataTable Table in new DataTable[] { OrderDataTable, BindingsDataTable, RelationshipsDataTable } )
+                //create new tables to hold the data, and index them similarly to ReadExcel() so we can talk about the two in pairs
+                //we seem to need this so that the pk column is handled correctly; I'm sure there's an in-place way to do it,
+                //but good luck figuring it out.
+                Dictionary<string, DataTable> TableUpdates = new Dictionary<string, DataTable>();
+                TableUpdates["Order$"] = _CswNbtResources.makeCswTableUpdate( "importdeforder", "import_def_order" ).getTable();
+                TableUpdates["Bindings$"] = _CswNbtResources.makeCswTableUpdate( "importdefbinding", "import_def_bindings" ).getTable();
+                TableUpdates["Relationships$"] = _CswNbtResources.makeCswTableUpdate( "importdefrelationship", "import_def_relationships" ).getTable();
+
+                //loop through each pair of tables by name
+                foreach( string Table in new [] {"Order$", "Bindings$", "Relationships$"} )
                 {
-                    Table.Columns.Add( "importdefid" );
-                    foreach( DataRow Row in Table.Rows )
+                    //for each row in the old table
+                    foreach( DataRow Row in ExcelDataSet.Tables[Table].Rows )
                     {
-                        Row["importdefid"] = DefIdsBySheetName[Row["sheetname"].ToString()];
-                    }
-                    Table.Columns.Remove( "sheetname" );
-                }
+                        //create a new row from the equivalent new table
+                        DataRow NewRow = TableUpdates[Table].NewRow();
 
-                storeDefinition( OrderDataTable, BindingsDataTable, RelationshipsDataTable );
+                        //foreach column of the old row
+                        foreach( DataColumn Column in ExcelDataSet.Tables[Table].Columns )
+                        {
+                            //if the cell is sheetname convert it to the appropriate importdefid, otherwise copy it directly if there's something there
+                            if( Column.ColumnName.ToLower() == "sheetname" )
+                            {
+                                NewRow["importdefid"] = DefIdsBySheetName[Row["sheetname"].ToString()];
+                            }
+                            else if ( false == string.IsNullOrEmpty(Row[Column].ToString()))
+                            {
+                                NewRow[Column.ColumnName] = Row[Column];
+                            }
+                        }//for each column in the row
+
+                        //add the new row to the new table
+                        TableUpdates[Table].Rows.Add( NewRow );
+                    }//for each row in the table
+                }//for each table in the excel sheet
+
+                storeDefinition( TableUpdates["Order$"], TableUpdates["Bindings$"], TableUpdates["Relationships$"] );
             } // if( ExcelDataSet.Tables.Count == 3 )
             else
             {
