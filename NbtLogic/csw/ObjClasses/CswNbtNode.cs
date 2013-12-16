@@ -169,9 +169,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-        public bool IsTempModified = false;
         private bool _IsTemp = false;
-
         /// <summary>
         /// If true, this is a temporary node
         /// </summary>
@@ -193,11 +191,10 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         public void removeTemp()
-            {
-                _NodeModificationState = CswEnumNbtNodeModificationState.Modified;
-                IsTempModified = true;
-                SessionId = string.Empty;
-                _IsTemp = false;
+        {
+            _NodeModificationState = CswEnumNbtNodeModificationState.Modified;
+            SessionId = string.Empty;
+            _IsTemp = false;
         }
 
         private bool _Hidden = false;
