@@ -12,14 +12,14 @@ namespace ChemSW.Nbt.ObjClasses
     /// <summary>
     /// Document Property Set
     /// </summary>
-    public abstract class CswNbtPropertySetDocument: CswNbtObjClass
+    public abstract class CswNbtPropertySetDocument : CswNbtObjClass
     {
         #region Enums
 
         /// <summary>
         /// Object Class property names
         /// </summary>
-        public new class PropertyName: CswNbtObjClass.PropertyName
+        public new class PropertyName : CswNbtObjClass.PropertyName
         {
             /// <summary>
             /// Basis for the name of the Document
@@ -250,11 +250,13 @@ namespace ChemSW.Nbt.ObjClasses
                         }
                         else if( FileType.Value.Equals( CswNbtObjClassSDSDocument.CswEnumDocumentFileTypes.ChemWatch ) )
                         {
-                            //todo: check if this is actually an sdsdocument node
-                            CswNbtObjClassSDSDocument SDSDocNode = Node;
-                            if( null != SDSDocNode.ChemWatch && false == string.IsNullOrEmpty( SDSDocNode.ChemWatch.Text ) )
+                            if( CswEnumNbtObjectClass.SDSDocumentClass == Node.ObjClass.ObjectClass.ObjectClass )
                             {
-                                url = "Services/ChemWatch/GetSDSDocument?filename=" + SDSDocNode.ChemWatch.Text;
+                                CswNbtObjClassSDSDocument SDSDocNode = Node;
+                                if( null != SDSDocNode.ChemWatch && false == string.IsNullOrEmpty( SDSDocNode.ChemWatch.Text ) )
+                                {
+                                    url = "Services/ChemWatch/GetSDSDocument?filename=" + SDSDocNode.ChemWatch.Text;
+                                }
                             }
                         }
 
@@ -274,7 +276,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropDateTime AcquiredDate { get { return _CswNbtNode.Properties[PropertyName.AcquiredDate]; } }
         private void OnAcquiredDatePropChange( CswNbtNodeProp NodeProp, bool Creating )
         {
-            ArchiveDate.setHidden( value : true, SaveToDb : true );
+            ArchiveDate.setHidden( value: true, SaveToDb: true );
         }
         public CswNbtNodePropBlob File { get { return _CswNbtNode.Properties[PropertyName.File]; } }
         private void OnFilePropChange( CswNbtNodeProp NodeProp, bool Creating )
@@ -321,7 +323,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropLogical Archived { get { return _CswNbtNode.Properties[PropertyName.Archived]; } }
         private void OnArchivedPropChange( CswNbtNodeProp NodeProp, bool Creating )
         {
-            ArchiveDate.setHidden( value : Archived.Checked != CswEnumTristate.True, SaveToDb : true );
+            ArchiveDate.setHidden( value: Archived.Checked != CswEnumTristate.True, SaveToDb: true );
             string ArchivedTitleSuffix = " (Archived)";
             if( Archived.Checked == CswEnumTristate.True )
             {

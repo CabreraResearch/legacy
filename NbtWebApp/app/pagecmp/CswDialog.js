@@ -1569,92 +1569,75 @@
             };
             if (options) Csw.extend(o, options);
             
-            // NOTE: Old implementation -- leave this here
-            function onOpen(div) {
-                Csw.ajax.deprecatedWsNbt({
-                    urlMethod: 'getUsers',
+            var div = Csw.literals.div().empty(),
+                form = div.form(),
+                table = form.table();
+
+            function onOpen(tbl) {
+                Csw.ajaxWcf.post({
+                    urlMethod: 'Menus/initImpersonate',
                     success: function (data) {
-                        if (Csw.bool(data.result)) {
-                            var usersel = div.select({
-                                name: 'ImpersonateSelect',
-                                selected: ''
-                            });
+                        var viewid = data.ImpersonateViewId;
 
-                            Csw.each(data.users, function (thisUser) {
-                                usersel.addOption({ value: thisUser.userid, display: thisUser.username }, false);
-                            });
+                        // Case 31086 - Use NodeSelect instead of Select
+                        var usersel = tbl.cell(1, 1).nodeSelect({
+                            name: 'ImperonsateSelect',
+                            objectClassName: 'UserClass',
+                            allowAdd: false,
+                            isRequired: true,
+                            showSelectOnLoad: true,
+                            isMulti: false,
+                            selectedNodeId: '',
+                            viewid: viewid,
+                            excludeNodeIds: data.ExcludeNodeIds,
+                            onSelectNode: function (nodeObject) {
+                                if (nodeObject) {
+                                    var name = nodeObject.name || nodeObject.nodename;
+                                    var nodeid = nodeObject.nodeid;
+                                    if (false === Csw.isNullOrEmpty(name) || false === Csw.isNullOrEmpty(nodeid)) {
+                                        impersonateBtn.enable();
+                                    } else {
+                                        impersonateBtn.disable();
+                                    }
+                                }//if (nodeObject)
+                            }//onSelectNode
+                        });
 
-                            div.button({
-                                name: 'ImpersonateButton',
-                                enabledText: 'Impersonate',
-                                onClick: function () {
-                                    Csw.tryExec(o.onImpersonate, usersel.val(), usersel.selectedText());
-                                    div.$.dialog('close');
-                                }
-                            });
+                        var impersonateBtn = tbl.cell(1, 2).button({
+                            name: 'ImpersonateButton',
+                            enabledText: 'Impersonate',
+                            isEnabled: false,
+                            onClick: function () {
+                                var val = usersel.val() || usersel.selectedNodeId();
+                                var text = getUserSelText(usersel);
+                                Csw.tryExec(o.onImpersonate, val, text);
+                                div.$.dialog('close');
+                            }
+                        });
 
-                            div.button({
-                                name: 'CancelButton',
-                                enabledText: 'Cancel',
-                                onClick: function () {
-                                    div.$.dialog('close');
-                                }
-                            });
-                        } // if(Csw.bool(data.result))
+                        tbl.cell(1, 3).button({
+                            name: 'CancelButton',
+                            enabledText: 'Cancel',
+                            onClick: function () {
+                                div.$.dialog('close');
+                            }
+                        });
+
                     } // success
-                }); // ajax    
+                }); // ajax
+            }//onOpen()
+            
+            function getUserSelText(sel) {
+                var text = '';
+                if (sel.selectedText) {
+                    text = sel.selectedText();
+                } else if (sel.selectedName) {
+                    text = sel.selectedName();
+                }
+                return text;
             }
 
-            // NOTE: New implementation -- leave this uncommented as I am still working out a bug
-            //function onOpen(div) {
-            //    Csw.ajaxWcf.post({
-            //        urlMethod: 'Menus/initImpersonate',
-            //        success: function (data) {
-            //            var viewid = data.ImpersonateViewId;
-
-            //            // Case 31086 - Use NodeSelect instead of Select
-            //            var usersel = div.nodeSelect({
-            //                name: 'ImperonsateSelect',
-            //                objectClassName: 'UserClass',
-            //                allowAdd: false,
-            //                isRequired: true,
-            //                showSelectOnLoad: true,
-            //                isMulti: false,
-            //                selectedNodeId: '',
-            //                viewid: viewid,
-            //                excludeNodeIds: data.ExcludeNodeIds
-            //            });
-
-
-            //            div.button({
-            //                name: 'ImpersonateButton',
-            //                enabledText: 'Impersonate',
-            //                onClick: function () {
-            //                    var val = usersel.val() || usersel.selectedNodeId();
-            //                    var text = '';
-            //                    if (usersel.selectedText) {
-            //                        text = usersel.selectedText();
-            //                    } else if (usersel.selectedName) {
-            //                        text = usersel.selectedName();
-            //                    }
-            //                    Csw.tryExec(o.onImpersonate, val, text);
-            //                    div.$.dialog('close');
-            //                }
-            //            });
-
-            //            div.button({
-            //                name: 'CancelButton',
-            //                enabledText: 'Cancel',
-            //                onClick: function () {
-            //                    div.$.dialog('close');
-            //                }
-            //            });
-
-            //        } // success
-            //    }); // ajax
-            //}//onOpen()
-
-            openDialog(Csw.literals.div(), 400, 300, null, 'Impersonate', onOpen);
+            openDialog(div, 450, 300, null, 'Impersonate', onOpen(table));
         }, // ImpersonateDialog
 
         SearchDialog: function (options) {
