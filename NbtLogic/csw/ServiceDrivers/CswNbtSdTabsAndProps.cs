@@ -791,7 +791,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                 {
                     CswNbtActUpdatePropertyValue ActUpdatePropVal = new CswNbtActUpdatePropertyValue( _CswNbtResources );
                     ActUpdatePropVal.UpdateNode( Node, true );
-                    if( setIsTempToFalse )
+                    if( Node.IsTemp && setIsTempToFalse )
                     {
                         Node.PromoteTempToReal();
                     }
