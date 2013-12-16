@@ -185,27 +185,19 @@ namespace ChemSW.Nbt.ObjClasses
         /// Creates INSERT audit records for current values of all properties.
         /// Thus, make sure all other property modifications have been posted before calling this.
         /// </summary>
-        public void PromoteTempToReal( bool IsCreate = false, bool OverrideUniqueValidation = false )
+        public void PromoteTempToReal( bool OverrideUniqueValidation = false )
         {
-            if( _IsTemp )
+            ICswNbtNodePersistStrategy NodePersistStrategy = new CswNbtNodePersistStrategyPromote( _CswNbtResources );
+            NodePersistStrategy.OverrideUniqueValidation = OverrideUniqueValidation;
+            NodePersistStrategy.postChanges( this );
+        }
+
+        public void removeTemp()
             {
-                // Update the node
                 _NodeModificationState = CswEnumNbtNodeModificationState.Modified;
                 IsTempModified = true;
                 SessionId = string.Empty;
                 _IsTemp = false;
-
-                // we're changing temp to false above, so we need to explicitly prevent auditing here or we end up with an extra UPDATE row
-                this.postChanges( ForceUpdate: false,
-                                  IsCopy: false,
-                                  AllowAuditing: false,
-                                  OverrideUniqueValidation: OverrideUniqueValidation,
-                                  IsCreate: IsCreate );
-
-                // Create auditing records for the node and property values
-                _CswNbtNodeWriter.AuditInsert( this );
-                _CswNbtNodePropColl.AuditInsert();
-            }
         }
 
         private bool _Hidden = false;
@@ -405,50 +397,36 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Methods
 
-        public void postChanges( bool ForceUpdate )
+        public void postChanges( bool ForceUpdate, bool IsCopy = false, bool OverrideUniqueValidation = false )
         {
-            postChanges( ForceUpdate, false, false );
+            ICswNbtNodePersistStrategy NodePersistStrategy = new CswNbtNodePersistStrategyUpdate( _CswNbtResources );
+            NodePersistStrategy.OverrideUniqueValidation = OverrideUniqueValidation;
+            NodePersistStrategy.ForceUpdate = ForceUpdate;
+            NodePersistStrategy.postChanges( this );
         }
 
-        //public void postChanges( bool ForceUpdate, bool IsCopy, bool OverrideUniqueValidation = false )
-        public void postChanges( bool ForceUpdate, bool IsCopy, bool OverrideUniqueValidation = false, bool IsCreate = false, bool AllowAuditing = true )
+        public void checkWriter()
         {
-            if( CswEnumNbtNodeModificationState.Modified == ModificationState || ForceUpdate )
-            {
-                if( null == OnRequestWriteNode )
-                    throw ( new CswDniException( "There is no write handler" ) );
+            if( null == OnRequestWriteNode )
+                throw ( new CswDniException( "There is no write handler" ) );
+        }
 
-                //TODO - Case 31167 - This logic sucks; it's confusing and misleading, and it really needs to be cleaned up.
-                //We're adding the "&& false == AllowAuditing" check to before/after CreatENode to ensure they only get called once.
-                //This means we only call them when calling postChanges from PromoteTempToReal (which passes allowAuditing = false).
-                //This works even for nodes that were never temp because makeNodeFromNodeTypeId calls PromoteTempToReal directly in that case.
+        public void requestWrite( bool ForceUpdate, bool IsCopy, bool OverrideUniqueValidation, bool Creating, bool AllowAuditing )
+        {
+            checkWriter();
+            OnRequestWriteNode( this, ForceUpdate, IsCopy, OverrideUniqueValidation, Creating, AllowAuditing );
+        }
 
-                //bool Creating = ( false == CswTools.IsPrimaryKey( NodeId ) || ( IsTempModified && false == IsTemp ) );
-                bool Creating = ( IsCreate || ( IsTempModified && false == IsTemp ) );
-                if( Creating && false == AllowAuditing )
-                {
-                    _CswNbtObjClass.beforeCreateNode( IsCopy, OverrideUniqueValidation );
-                }
+        public void setModificationState( String ModState )
+        {
+            _NodeModificationState = ModState;
+        }
 
-                if( null != _CswNbtObjClass )
-                {
-                    _CswNbtObjClass.beforeWriteNode( IsCopy, OverrideUniqueValidation, Creating );
-                }
-
-                OnRequestWriteNode( this, ForceUpdate, IsCopy, OverrideUniqueValidation, Creating, ( AllowAuditing && false == IsTemp ) );
-
-                if( Creating && false == AllowAuditing )
-                {
-                    _CswNbtObjClass.afterCreateNode();
-                }
-                if( null != _CswNbtObjClass )
-                {
-                    _CswNbtObjClass.afterWriteNode( Creating );
-                }
-
-                _NodeModificationState = CswEnumNbtNodeModificationState.Posted;
-            }
-        }//postChanges()
+        public void Audit()
+        {
+            _CswNbtNodeWriter.AuditInsert( this );
+            _CswNbtNodePropColl.AuditInsert();
+        }
 
         /// <summary>
         /// Get a tree view of this node, visible to the current user

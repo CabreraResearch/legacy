@@ -405,16 +405,17 @@ namespace ChemSW.Nbt
             NodeHashKey Hashkey = new NodeHashKey( Node.NodeId, Node.NodeSpecies );
             _NodeHash[Hashkey] = Node;
 
+            ICswNbtNodePersistStrategy NodePersistStrategy;
             if( false == IsTemp )
             {
-                // we have to do this separately so that the audit record will show as an INSERT instead of an UPDATE
-                // It will however do postChanges()
-                Node.PromoteTempToReal( IsCreate: true, OverrideUniqueValidation: OverrideUniqueValidation );
+                NodePersistStrategy = new CswNbtNodePersistStrategyPromote( _CswNbtResources );
             }
             else
             {
-                Node.postChanges( ForceUpdate: true, IsCopy: false, OverrideUniqueValidation: OverrideUniqueValidation, IsCreate: true );
+                NodePersistStrategy = new CswNbtNodePersistStrategyCreate( _CswNbtResources );
             }
+            NodePersistStrategy.OverrideUniqueValidation = OverrideUniqueValidation;
+            NodePersistStrategy.postChanges( Node );
 
             return ( Node );
         }//makeNodeFromNodeTypeId()
