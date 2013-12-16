@@ -1780,17 +1780,8 @@ namespace ChemSW.Nbt.Schema
         /// </summary>
         public bool isMaster()
         {
-            // This is even uglier than what was here before, but this is just a bandaid until we refactor this to use a system config var toggled by 'I agree' to the ToS
-            CswArbitrarySelect AdminUserQuery = new CswArbitrarySelect( _CswNbtResources.CswResources, "get_admin_last_login", @"
-select field1_date from jct_nodes_props jnp
-  join nodetype_props p on jnp.nodetypepropid = p.nodetypepropid
-  where jnp.nodeid = (select nodeid from nodes where nodename = 'admin')
-       and propname = 'Last Login'
-              ");
-
-            DataRowCollection Results = AdminUserQuery.getTable().Rows;
-            return ( Results.Count == 1 && 
-                DateTime.Parse(Results[0]["field1_date"].ToString()) < new DateTime( 2012, 8, 11 ) );
+            CswTableSelect LicenseAcceptance = new CswTableSelect( _CswNbtResources.CswResources, "license acceptance", "license_accept" );
+            return ( LicenseAcceptance.getRecordCount() == 0 );
         }
 
         /// <summary>
