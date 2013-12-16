@@ -296,19 +296,8 @@
                 }
             };//cswPrivate.makeUploadDataProps()
 
-            cswPrivate.makeStartImportProps = function (visible) {
-                if (!cswPrivate.startImportBtn) {
-                    cswPrivate.startImportBtn = cswPublic.uploadDataTable.cell(3, 3).buttonExt({
-                        name: 'startCAFImportBtn',
-                        icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.star),
-                        enabledText: 'Start',
-                        disabledText: 'Start',
-                        disableOnClick: false,
-                        onClick: function () {
-                            
-                            
-
-                            var inputDialog = Csw.dialogs.inputDialog({
+            cswPrivate.renderInputDialog = function() {
+                cswPrivate.inputDialog = Csw.dialogs.inputDialog({
                                 name: 'StartCAFDialog',
                                 title: 'CAF Connection Details',
                                 message: 'Enter the database connection information for this customer',
@@ -332,6 +321,59 @@
                                     });
                                 },
                             });
+            };
+
+            cswPrivate.makeStartImportProps = function (visible) {
+                if (!cswPrivate.startImportBtn) {
+                    cswPrivate.startImportBtn = cswPublic.uploadDataTable.cell(3, 3).buttonExt({
+                        name: 'startCAFImportBtn',
+                        icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.star),
+                        enabledText: 'Start',
+                        disabledText: 'Start',
+                        disableOnClick: false,
+                        onClick: function () {
+
+                            // Ask the user if they want to delete all existing nodes from the system
+                            Csw.ajaxWcf.post({
+                                urlMethod: 'Import/getExistingNodes',
+                                success: function (data) {
+                                    cswPrivate.confirmDialog = Csw.dialogs.confirmDialog({
+                                        name: 'ConfirmDeleteNodes',
+                                        title: 'Delete Existing Nodes?',
+                                        message: 'Would you like to delete any existing nodes in the system? The following will be deleted if you accept.',
+                                        gridData: {
+                                            fields: [
+                                                { name: 'nodeid', type: 'number' },
+                                                { name: 'nodename', type: 'string' },
+                                                { name: 'nodetype', type: 'string' }],
+                                            columns: [
+                                                { header: 'NodeId', dataIndex: 'nodeid' },
+                                                { header: 'Name', dataIndex: 'nodename' },
+                                                { header: 'NodeType', dataIndex: 'nodetype' }
+                                            ],
+                                            items: data.NodesToDelete
+                                        },
+                                        onYes: function () {
+                                            // Delete existing nodes
+                                            Csw.ajaxWcf.post({
+                                                urlMethod: 'Import/deleteExistingNodes',
+                                                success: function (data) {
+                                                    cswPrivate.confirmDialog.close();
+                                                    // Continue with CAF import process
+                                                    cswPrivate.renderInputDialog();
+                                                },error: function(data) {
+                                                    // what to do on error?
+                                                }
+                                            });
+                                        },
+                                        onNo: function () {
+                                            cswPrivate.confirmDialog.close();
+                                            cswPrivate.renderInputDialog();
+                                        }
+                                    });
+                                }//success
+                            });
+                            
                         }//onClick
                     });
 

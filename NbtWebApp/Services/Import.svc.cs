@@ -281,6 +281,46 @@ namespace NbtWebApp
             return Ret;
         }
 
+        [OperationContract]
+        [WebInvoke( Method = "POST" )]
+        [Description( "Get list of existing nodes in system" )]
+        [FaultContract( typeof( FaultException ) )]
+        public CswNbtImportWcf.DltExistingNodesReturn getExistingNodes()
+        {
+            CswNbtImportWcf.DltExistingNodesReturn Ret = new CswNbtImportWcf.DltExistingNodesReturn();
+
+            var SvcDriver = new CswWebSvcDriver<CswNbtImportWcf.DltExistingNodesReturn, object>(
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj: Ret,
+                WebSvcMethodPtr: CswNbtWebServiceImport.getExistingNodes,
+                ParamObj: null
+                );
+
+            SvcDriver.run();
+
+            return Ret;
+        }
+
+        [OperationContract]
+        [WebInvoke( Method = "POST" )]
+        [Description( "Delete existing nodes from the system" )]
+        [FaultContract( typeof( FaultException ) )]
+        public CswNbtImportWcf.DltExistingNodesReturn deleteExistingNodes()
+        {
+            CswNbtImportWcf.DltExistingNodesReturn Ret = new CswNbtImportWcf.DltExistingNodesReturn();
+
+            var SvcDriver = new CswWebSvcDriver<CswNbtImportWcf.DltExistingNodesReturn, object>(
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj: Ret,
+                WebSvcMethodPtr: CswNbtWebServiceImport.deleteExistingNodes,
+                ParamObj: null
+                );
+
+            SvcDriver.run();
+
+            return Ret;
+        }
+
 
     }
 }
