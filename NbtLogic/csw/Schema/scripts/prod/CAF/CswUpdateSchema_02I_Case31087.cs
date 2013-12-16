@@ -7,7 +7,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update
     /// </summary>
-    public class CswUpdateSchema_02I_Case31087: CswUpdateSchemaTo
+    public class CswUpdateSchema_02I_Case31087: CswUpdateNbtMasterSchemaTo
     {
         public override string Title { get { return "Add Country to Vendor import bindings"; } }
 
@@ -21,7 +21,7 @@ namespace ChemSW.Nbt.Schema
             get { return 31087; }
         }
 
-        public override void update()
+        public override void doUpdate()
         {
             CswNbtSchemaUpdateImportMgr ImpMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "CAF" );
 

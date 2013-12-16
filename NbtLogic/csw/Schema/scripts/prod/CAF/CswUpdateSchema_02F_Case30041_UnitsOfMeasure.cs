@@ -8,7 +8,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update
     /// </summary>
-    public class CswUpdateSchema_02F_Case30041_UnitsOfMeasure : CswUpdateSchemaTo
+    public class CswUpdateSchema_02F_Case30041_UnitsOfMeasure: CswUpdateNbtMasterSchemaTo
     {
         public override CswEnumDeveloper Author
         {
@@ -25,7 +25,7 @@ namespace ChemSW.Nbt.Schema
             return "UnitsOfMeasure";
         }
 
-        public override void update()
+        public override void doUpdate()
         {
                 CswNbtSchemaUpdateImportMgr UnitMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "CAF" );
 

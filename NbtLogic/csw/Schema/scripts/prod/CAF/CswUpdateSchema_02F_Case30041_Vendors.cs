@@ -7,7 +7,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update
     /// </summary>
-    public class CswUpdateSchema_02F_Case30041_Vendors : CswUpdateSchemaTo
+    public class CswUpdateSchema_02F_Case30041_Vendors: CswUpdateNbtMasterSchemaTo
     {
         public override CswEnumDeveloper Author
         {
@@ -24,7 +24,7 @@ namespace ChemSW.Nbt.Schema
             return "02F_Case30041_Vendors";
         }
 
-        public override void update()
+        public override void doUpdate()
         {
             // CAF bindings definitions for Vendors
             CswNbtSchemaUpdateImportMgr ImpMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "CAF" );

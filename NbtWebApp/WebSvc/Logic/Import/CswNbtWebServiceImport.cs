@@ -93,6 +93,7 @@ namespace ChemSW.Nbt.WebServices
             CswTempFile myTempFile = new CswTempFile( CswResources );
             string path = myTempFile.saveToTempFile( parms.PostedFile.InputStream, DateTime.Now.Ticks + "_" + parms.PostedFile.FileName );
             Importer.storeDefinition( path, parms.ImportDefName );
+            Importer.Finish();
         }
 
 

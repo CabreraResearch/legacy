@@ -8,7 +8,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update
     /// </summary>
-    public class CswUpdateSchema_02G_Case30047_Docs : CswUpdateSchemaTo
+    public class CswUpdateSchema_02G_Case30047_Docs: CswUpdateNbtMasterSchemaTo
     {
         public override string Title { get { return "Setup Material Document import bindings"; } }
 
@@ -27,7 +27,7 @@ namespace ChemSW.Nbt.Schema
             return "Docs";
         }
 
-        public override void update()
+        public override void doUpdate()
         {
             // CAF bindings definitions for Vendors
             CswNbtSchemaUpdateImportMgr ImpMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "CAF" );

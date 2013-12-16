@@ -7,7 +7,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update
     /// </summary>
-    public class CswUpdateSchema_02I_Case31353: CswUpdateSchemaTo
+    public class CswUpdateSchema_02I_Case31353: CswUpdateNbtMasterSchemaTo
     {
         public override string Title { get { return "Fix FileExtension column on CofA Imports"; } }
 
@@ -21,7 +21,7 @@ namespace ChemSW.Nbt.Schema
             get { return 31353; }
         }
 
-        public override void update()
+        public override void doUpdate()
         {
             CswNbtSchemaUpdateImportMgr ImpMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "CAF" );
 
