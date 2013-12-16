@@ -8,7 +8,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update
     /// </summary>
-    public class CswUpdateSchema_02H_Case30042_GHSAndDSD : CswUpdateSchemaTo
+    public class CswUpdateSchema_02H_Case30042_GHSAndDSD: CswUpdateNbtMasterSchemaTo
     {
         public override CswEnumDeveloper Author
         {
@@ -30,7 +30,7 @@ namespace ChemSW.Nbt.Schema
             get { return "CAF Import - GHS and DSD"; }
         }
 
-        public override void update()
+        public override void doUpdate()
         {
             #region GHS
 

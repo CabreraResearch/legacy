@@ -29,7 +29,7 @@ namespace ChemSW.Nbt.Schema
         public override void update()
         {
             // Create new action 'ChemWatch'
-            _CswNbtSchemaModTrnsctn.createAction( CswEnumNbtActionName.ChemWatch, true, "", "System" );
+            _CswNbtSchemaModTrnsctn.createAction( CswEnumNbtActionName.ChemWatch, false, "", "System" );
 
             // Grant permission to all administrators
             CswNbtMetaDataObjectClass RoleOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.RoleClass );

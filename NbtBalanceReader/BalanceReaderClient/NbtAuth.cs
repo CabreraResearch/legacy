@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.ServiceModel;
+using System.Windows.Forms;
 using BalanceReaderClient.NbtPublic;
 
 namespace BalanceReaderClient
@@ -12,7 +13,7 @@ namespace BalanceReaderClient
         public string Password;
         public bool useSSL;
         public string baseURL;
-
+        public Timer announceBalanceTimer;
 
         /// <summary>
         /// This delegate is used to specify what an NbtPublicClient should do after an authentication attempt.
@@ -73,6 +74,10 @@ namespace BalanceReaderClient
             if( StatusText == "Authenticated" )
             {
                 NbtClient.SessionEnd();
+            }
+            else
+            {
+                announceBalanceTimer.Stop();
             }
             NbtClient.Close();
 

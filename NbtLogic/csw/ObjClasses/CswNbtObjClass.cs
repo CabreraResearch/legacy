@@ -280,7 +280,7 @@ namespace ChemSW.Nbt.ObjClasses
                     {
                         OnCopy( NewNode );
                     }
-                } );
+                }, IsCopy: true );
             return CopiedNode;
         }
 

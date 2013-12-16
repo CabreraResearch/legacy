@@ -8,7 +8,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update
     /// </summary>
-    public class CswUpdateSchema_02F_Case30041_RolesUsers : CswUpdateSchemaTo
+    public class CswUpdateSchema_02F_Case30041_RolesUsers: CswUpdateNbtMasterSchemaTo
     {
         public override CswEnumDeveloper Author
         {
@@ -25,7 +25,7 @@ namespace ChemSW.Nbt.Schema
             return "RolesUsers";
         }
 
-        public override void update()
+        public override void doUpdate()
         {
                 CswNbtSchemaUpdateImportMgr ImpMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "CAF" );
                 ImpMgr.CAFimportOrder( "Role", "roles", PkColumnName: "roleid" );
