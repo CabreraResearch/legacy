@@ -8,7 +8,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update
     /// </summary>
-    public class CswUpdateSchema_02I_Case31194_Synonyms: CswUpdateSchemaTo
+    public class CswUpdateSchema_02I_Case31194_Synonyms: CswUpdateNbtMasterSchemaTo
     {
         public override string Title { get { return "Setup Material Synonym import bindings"; } }
 
@@ -27,7 +27,7 @@ namespace ChemSW.Nbt.Schema
             return "Synonyms";
         }
 
-        public override void update()
+        public override void doUpdate()
         {
             // CAF bindings definitions for Vendors
             CswNbtSchemaUpdateImportMgr ImpMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "CAF" );

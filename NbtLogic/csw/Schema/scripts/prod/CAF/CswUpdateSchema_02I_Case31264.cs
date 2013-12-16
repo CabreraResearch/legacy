@@ -8,7 +8,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update
     /// </summary>
-    public class CswUpdateSchema_02I_Case31264 : CswUpdateSchemaTo
+    public class CswUpdateSchema_02I_Case31264: CswUpdateNbtMasterSchemaTo
     {
         public override CswEnumDeveloper Author
         {
@@ -25,7 +25,7 @@ namespace ChemSW.Nbt.Schema
             get { return "CAF Import - Update Size UPC"; }
         }
 
-        public override void update()
+        public override void doUpdate()
         {
             CswNbtSchemaUpdateImportMgr sizeImporter = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "CAF" );
             sizeImporter.removeImportBinding( "CAF", "upc", "Size", "UPC Barcode", CswEnumNbtSubFieldName.Barcode.ToString() );

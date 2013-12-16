@@ -7,7 +7,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update
     /// </summary>
-    public class CswUpdateSchema_02F_Case30041_RegLists : CswUpdateSchemaTo
+    public class CswUpdateSchema_02F_Case30041_RegLists: CswUpdateNbtMasterSchemaTo
     {
         public override CswEnumDeveloper Author
         {
@@ -24,18 +24,18 @@ namespace ChemSW.Nbt.Schema
             return "RegLists";
         }
 
-        public override void update()
+        public override void doUpdate()
         {
-                CswNbtSchemaUpdateImportMgr ImpMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "CAF" );
-                ImpMgr.CAFimportOrder( "Regulatory List", "regulatory_lists", "reglists_view", "regulatorylistid");
-                ImpMgr.importBinding( "displayname", CswNbtObjClassRegulatoryList.PropertyName.Name, "" );
-                ImpMgr.importBinding( "listmode", CswNbtObjClassRegulatoryList.PropertyName.ListMode, "" );
+            CswNbtSchemaUpdateImportMgr ImpMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "CAF" );
+            ImpMgr.CAFimportOrder( "Regulatory List", "regulatory_lists", "reglists_view", "regulatorylistid" );
+            ImpMgr.importBinding( "displayname", CswNbtObjClassRegulatoryList.PropertyName.Name, "" );
+            ImpMgr.importBinding( "listmode", CswNbtObjClassRegulatoryList.PropertyName.ListMode, "" );
 
 
-                ImpMgr.CAFimportOrder( "Regulatory List CAS", "regulated_casnos", PkColumnName: "regulatedcasnoid" );
-                ImpMgr.importBinding( "casno", CswNbtObjClassRegulatoryListCasNo.PropertyName.CASNo, "" );
-                
-                ImpMgr.finalize();
+            ImpMgr.CAFimportOrder( "Regulatory List CAS", "regulated_casnos", PkColumnName : "regulatedcasnoid" );
+            ImpMgr.importBinding( "casno", CswNbtObjClassRegulatoryListCasNo.PropertyName.CASNo, "" );
+
+            ImpMgr.finalize();
 
         } // update()
 

@@ -8,7 +8,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update
     /// </summary>
-    public class CswUpdateSchema_02H_Case30046_Containers : CswUpdateSchemaTo
+    public class CswUpdateSchema_02H_Case30046_Containers: CswUpdateNbtMasterSchemaTo
     {
         public override CswEnumDeveloper Author
         {
@@ -30,7 +30,7 @@ namespace ChemSW.Nbt.Schema
             get { return "CAF Import - Containers"; }
         }
 
-        public override void update()
+        public override void doUpdate()
         {
             _createImportBindings();
 
