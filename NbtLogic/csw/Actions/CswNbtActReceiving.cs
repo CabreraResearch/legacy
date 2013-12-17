@@ -206,7 +206,6 @@ namespace ChemSW.Nbt.Actions
                                                 throw new CswDniException( CswEnumErrorType.Warning, "You do not have Inventory Group permission to receive Containers into this Location: " + AsContainer.Location.CachedPath, "You do not have Inventory Group permission to receive Containers into this Location: " + AsContainer.Location.CachedPath );
                                             }
                                             After( AsContainer.Node );
-                                            AsContainer.postChanges( false );
                                             AsContainer.PromoteTempToReal();
                                         }
                                         else
@@ -262,9 +261,7 @@ namespace ChemSW.Nbt.Actions
                 if( ( SDSDoc.FileType.Value == CswNbtPropertySetDocument.CswEnumDocumentFileTypes.File && false == string.IsNullOrEmpty( SDSDoc.File.FileName ) ) ||
                     ( SDSDoc.FileType.Value == CswNbtPropertySetDocument.CswEnumDocumentFileTypes.Link && false == string.IsNullOrEmpty( SDSDoc.Link.Href ) ) )
                 {
-                    //SDSDoc.IsTemp = false;
                     SDSDoc.Owner.RelatedNodeId = MaterialId;
-                    SDSDoc.postChanges( ForceUpdate: false );
                     SDSDoc.PromoteTempToReal();
                 }
             }
@@ -325,9 +322,7 @@ namespace ChemSW.Nbt.Actions
                 if( ( CofADoc.FileType.Value == CswNbtPropertySetDocument.CswEnumDocumentFileTypes.File && false == string.IsNullOrEmpty( CofADoc.File.FileName ) ) ||
                     ( CofADoc.FileType.Value == CswNbtPropertySetDocument.CswEnumDocumentFileTypes.Link && false == string.IsNullOrEmpty( CofADoc.Link.Href ) ) )
                 {
-                    //CofADoc.IsTemp = false;
                     CofADoc.Owner.RelatedNodeId = ReceiptLotId;
-                    CofADoc.postChanges( ForceUpdate: false );
                     CofADoc.PromoteTempToReal();
                 }
             }

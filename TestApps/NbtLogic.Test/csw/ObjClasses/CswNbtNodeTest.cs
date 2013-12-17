@@ -63,5 +63,38 @@ namespace ChemSW.Nbt.Test.ObjClasses
 
         #endregion isFavorite
 
+        #region postChanges
+
+        /// <summary>
+        /// Given a newly created node,
+        /// assert that the node's state is unchanged
+        /// </summary>
+        [Test]
+        public void postChangesTestStateModified()
+        {
+            CswNbtNode TestNode = TestData.Nodes.createControlZoneNode();
+            //TestNode.postChanges( false );
+            Assert.AreEqual( CswEnumNbtNodeModificationState.Modified, TestNode.ModificationState.ToString() );
     }
+
+        #endregion postChanges
+
+        #region promoteTempToReal
+
+        /// <summary>
+        /// Given a newly created temp node,
+        /// when the temp node is promoted,
+        /// assert that the node is no longer temp
+        /// </summary>
+        [Test]
+        public void promoteTempToRealTestTempStateRemoved()
+        {
+            CswNbtNode TestNode = TestData.Nodes.createTempNode();
+            Assert.IsTrue( TestNode.IsTemp );
+            TestNode.PromoteTempToReal();
+            Assert.IsFalse( TestNode.IsTemp );
+}
+
+        #endregion promoteTempToReal
+}
 }

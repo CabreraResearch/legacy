@@ -34,6 +34,18 @@ namespace ChemSW.Nbt.Test
 
         #region Nodes
 
+        internal CswNbtNode createTempNode()
+        {
+            CswNbtNode ControlZoneNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( _getNodeTypeId( "Control Zone" ), delegate( CswNbtNode NewNode )
+            {
+                CswNbtMetaDataNodeTypeProp NameNTP = _CswNbtResources.MetaData.getNodeTypeProp( NewNode.NodeTypeId, "Name" );
+                NewNode.Properties[NameNTP].AsText.Text = "TempNode";
+            }, true );
+            _finalize();
+
+            return ControlZoneNode;
+        }
+
         internal CswNbtNode createLocationNode( String LocationType = "Room", String Name = "New Room", CswPrimaryKey ParentLocationId = null, CswPrimaryKey ControlZoneId = null, bool AllowInventory = true )
         {
             CswNbtNode ret = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( _getNodeTypeId( LocationType ), delegate( CswNbtNode NewNode )

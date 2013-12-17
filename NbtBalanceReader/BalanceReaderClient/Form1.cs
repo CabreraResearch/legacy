@@ -19,7 +19,6 @@ namespace BalanceReaderClient
         private Dictionary<string, Balance> _balanceList;
         private Dictionary<string, BalanceConfiguration> _configurationList; 
         private Timer _balancePollTimer;
-        private Timer _announceBalanceTimer;
         private NbtAuth _authenticationClient;
         private static string ConfigPath = Path.GetDirectoryName( Application.ExecutablePath ) + "/BalanceReaderClient.cfg";
 
@@ -40,14 +39,15 @@ namespace BalanceReaderClient
 
             _authenticationClient = new NbtAuth();
 
-
             
-            constructPollTimer(500); //set a default timer for updating balances
 
-            _announceBalanceTimer = new Timer();
-            _announceBalanceTimer.Interval = 600000;
-            _announceBalanceTimer.Tick += announceBalances;
-            _announceBalanceTimer.Start();
+            _authenticationClient.announceBalanceTimer = new Timer();
+            _authenticationClient.announceBalanceTimer.Interval = 600000;
+            _authenticationClient.announceBalanceTimer.Tick += announceBalances;
+            _authenticationClient.announceBalanceTimer.Start();
+
+            constructPollTimer( 500 ); //set a default timer for updating balances
+
 
          //event handlers for keeping the _authenticationClient object up to date with user-entered values 
             AccessIdField.TextChanged += ( Sender, Args ) => { _authenticationClient.AccessId = AccessIdField.Text;  };
@@ -532,6 +532,10 @@ namespace BalanceReaderClient
 
                         case "Authenticated":
                             ConnectionResultsOutput.Invoke( (Action) ( () => { ConnectionResultsOutput.Text += "Connection successful.\r\n"; } ) );
+                            if( false == _authenticationClient.announceBalanceTimer.Enabled )
+                            {
+                                _authenticationClient.announceBalanceTimer.Start();
+                            }
                             break;
 
                         case "Object reference not set to an instance of an object.":
