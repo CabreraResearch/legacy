@@ -103,7 +103,7 @@ namespace ChemSW.Nbt.ViewEditor
                         }
                         Return.Step6.RootNode = (CswNbtViewRoot) foundNode;
                     }
-                    else if( foundNode is CswNbtViewProperty )
+                    else if( foundNode is CswNbtViewProperty && CswEnumNbtFieldType.Button != ( (CswNbtViewProperty) foundNode ).FieldType )
                     {
                         Return.Step6.PropertyNode = (CswNbtViewProperty) foundNode;
                         Request.Relationship = (CswNbtViewRelationship) foundNode.Parent; //getFilterProps needs Request.Relationship to be populated
