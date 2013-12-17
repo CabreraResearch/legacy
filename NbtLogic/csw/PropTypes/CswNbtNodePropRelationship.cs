@@ -485,29 +485,48 @@ namespace ChemSW.Nbt.PropTypes
             ParentObject["objectclassid"] = 0;
             ParentObject["propertysetid"] = 0;
             bool AllowAdd = false;
-            if( TargetType == CswEnumNbtViewRelatedIdType.NodeTypeId )
+            bool AllowView = true;
+            if( null != RelatedNodeId )
+            {
+                CswNbtMetaDataNodeType TargetNodeType = _CswNbtResources.MetaData.getNodeTypeFromNodeId( RelatedNodeId );
+                AllowAdd = ( null != TargetNodeType && _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Create, TargetNodeType ) );
+                AllowView = ( null != TargetNodeType && _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.View, TargetNodeType ) );
+            }
+            else if( TargetType == CswEnumNbtViewRelatedIdType.NodeTypeId )
             {
                 ParentObject["nodetypeid"] = TargetId;
                 CswNbtMetaDataNodeType TargetNodeType = _CswNbtResources.MetaData.getNodeType( TargetId );
                 AllowAdd = ( null != TargetNodeType && _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Create, TargetNodeType ) );
+                AllowView = ( null != TargetNodeType && _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.View, TargetNodeType ) );
             }
             else if( TargetType == CswEnumNbtViewRelatedIdType.ObjectClassId )
             {
                 ParentObject["objectclassid"] = TargetId;
                 CswNbtMetaDataObjectClass TargetObjectClass = _CswNbtResources.MetaData.getObjectClass( TargetId );
                 AllowAdd = ( null != TargetObjectClass &&
-                             TargetObjectClass.CanAdd &&
-                             TargetObjectClass.getNodeTypes().Any( nt => _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Create, nt ) ) );
+                                TargetObjectClass.CanAdd &&
+                                TargetObjectClass.getNodeTypes().Any( nt => _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Create, nt ) ) );
+                if( false == AllowAdd )
+                {
+                    AllowView = ( null != TargetObjectClass &&
+                         TargetObjectClass.getNodeTypes().Any( nt => _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.View, nt ) ) );
+                }
             }
             else if( TargetType == CswEnumNbtViewRelatedIdType.PropertySetId )
             {
                 ParentObject["propertysetid"] = TargetId;
                 CswNbtMetaDataPropertySet TargetPropSet = _CswNbtResources.MetaData.getPropertySet( TargetId );
                 AllowAdd = TargetPropSet.getObjectClasses().Any( oc => null != oc &&
-                                                                       oc.CanAdd &&
-                                                                       oc.getNodeTypes().Any( nt => _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Create, nt ) ) );
+                                                                        oc.CanAdd &&
+                                                                        oc.getNodeTypes().Any( nt => _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Create, nt ) ) );
+                if( false == AllowAdd )
+                {
+                    AllowView = TargetPropSet.getObjectClasses().Any( oc => null != oc &&
+                         oc.getNodeTypes().Any( nt => _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.View, nt ) ) );
+                }
             }
             ParentObject["allowadd"] = AllowAdd;
+            ParentObject["allowview"] = AllowView;
 
             ParentObject[_NodeIDSubField.ToXmlNodeName( true ).ToLower()] = string.Empty;
             ParentObject[_NameSubField.ToXmlNodeName( true ).ToLower()] = CachedNodeName;

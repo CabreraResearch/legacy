@@ -20,6 +20,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Params = "params";
             public const string NodeTypes = "NodeTypes";
             public const string LabelName = "Label Name";
+            public const string SqlScript = "Sql Script";
         }
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
@@ -141,6 +142,7 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         public CswNbtNodePropText LabelName { get { return _CswNbtNode.Properties[PropertyName.LabelName]; } }
+        public CswNbtNodePropMemo SqlScript { get { return _CswNbtNode.Properties[PropertyName.SqlScript]; } }
 
         #endregion
 

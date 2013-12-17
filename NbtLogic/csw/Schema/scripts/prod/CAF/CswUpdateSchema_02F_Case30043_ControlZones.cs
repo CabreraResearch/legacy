@@ -7,7 +7,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update
     /// </summary>
-    public class CswUpdateSchema_02F_Case30043_ControlZones : CswUpdateSchemaTo
+    public class CswUpdateSchema_02F_Case30043_ControlZones: CswUpdateNbtMasterSchemaTo
     {
         public override CswEnumDeveloper Author
         {
@@ -24,13 +24,13 @@ namespace ChemSW.Nbt.Schema
             return "02F_Case30043_ControlZones";
         }
 
-        public override void update()
+        public override void doUpdate()
         {
             // Case 30043 - CAF Migration: Sites/Locations/Work Units
             CswNbtSchemaUpdateImportMgr ImportMgr_ControlZones = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "CAF" );
 
 
-            ImportMgr_ControlZones.CAFimportOrder( "Control Zone", "cispro_controlzones" );
+            ImportMgr_ControlZones.CAFimportOrder( "Control Zone", "cispro_controlzones", PkColumnName: "controlzoneid" );
 
             // Binding
             ImportMgr_ControlZones.importBinding( "controlzonename", CswNbtObjClassControlZone.PropertyName.Name, "" );

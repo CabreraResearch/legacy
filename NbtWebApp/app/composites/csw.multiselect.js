@@ -89,7 +89,7 @@
             };
 
             if (cswPrivate.EditMode === Csw.enums.editMode.Add) {
-                morediv.hide();
+                cswPrivate.morediv.hide();
                 multiSelectCtrl = makeMultiSelect(false, parentDiv, '240px', '360px');
             } else {
                 editBtnCell.icon({

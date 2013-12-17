@@ -101,6 +101,7 @@ namespace NbtPrintClient
             else
             {
                 Log( e.Message );
+                timer1.Stop();
             }
             //find this printer and clear its working flag
             for( int i = 0; i < config.printers.Count; ++i )
@@ -135,6 +136,7 @@ namespace NbtPrintClient
             {
                 lblTestStatus.Text = e.Message;
                 Log( e.Message );
+                timer1.Stop();
             }
             btnTestPrintSvc.Enabled = true;
         } // _InitNextJobUI()
@@ -217,6 +219,10 @@ namespace NbtPrintClient
             config.serviceMode = cbServiceMode.Checked;
             config.password = tbPassword.Text;
             config.SaveToReg( Application.UserAppDataRegistry );
+            if( false == timer1.Enabled )
+            {
+                timer1.Start();
+            }
 
             config.url = _formatUrl( tbURL.Text );
 

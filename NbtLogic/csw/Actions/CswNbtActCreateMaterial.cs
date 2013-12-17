@@ -446,8 +446,6 @@ namespace ChemSW.Nbt.Actions
                             CswNbtObjClassVendor VendorNode = _CswNbtResources.Nodes.GetNode( VendorNodePk );
                             if( null != VendorNode && VendorNode.IsTemp )
                             {
-                                //VendorNode.IsTemp = false;
-                                VendorNode.postChanges( false );
                                 VendorNode.PromoteTempToReal();
                             }
                         }
@@ -556,7 +554,7 @@ namespace ChemSW.Nbt.Actions
             CswPrimaryKey UnitIdPK = CswConvert.ToPrimaryKey( SizeObj["uom"]["id"].ToString() );
             if( null != UnitIdPK )
             {
-                SizeNode = CswNbtResources.Nodes.makeNodeFromNodeTypeId( SizeNodeTypeId, OverrideUniqueValidation: false, OnAfterMakeNode: delegate( CswNbtNode NewNode )
+                SizeNode = CswNbtResources.Nodes.makeNodeFromNodeTypeId( SizeNodeTypeId, delegate( CswNbtNode NewNode )
                     {
                         CswNbtObjClassSize NodeAsSize = (CswNbtObjClassSize) NewNode;
                         NodeAsSize.InitialQuantity.Quantity = CswConvert.ToDouble( SizeObj["quantity"]["value"] );

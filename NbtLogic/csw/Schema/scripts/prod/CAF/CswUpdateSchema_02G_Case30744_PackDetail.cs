@@ -8,7 +8,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update
     /// </summary>
-    public class CswUpdateSchema_02G_Case30744_PackDetail : CswUpdateSchemaTo
+    public class CswUpdateSchema_02G_Case30744_PackDetail: CswUpdateNbtMasterSchemaTo
     {
         public override CswEnumDeveloper Author
         {
@@ -25,7 +25,7 @@ namespace ChemSW.Nbt.Schema
             get { return "CAF Import - PackDetails -> Sizes"; }
         }
 
-        public override void update()
+        public override void doUpdate()
         {
             _createImportBindings();
 
@@ -45,7 +45,7 @@ namespace ChemSW.Nbt.Schema
             sizeImporter.importBinding( "catalogno", CswNbtObjClassSize.PropertyName.CatalogNo, "" );
             sizeImporter.importBinding( "capacity", CswNbtObjClassSize.PropertyName.InitialQuantity, CswEnumNbtSubFieldName.Value.ToString() );
             sizeImporter.importBinding( "unitofmeasureid", CswNbtObjClassSize.PropertyName.InitialQuantity, CswEnumNbtSubFieldName.NodeID.ToString() );
-            sizeImporter.importBinding( "upc", CswNbtObjClassSize.PropertyName.Barcode, "" );
+            //sizeImporter.importBinding( "upc", "UPC Barcode", "" );//Case 31264 invalidates this binding
             sizeImporter.importBinding( "containertype", CswNbtObjClassSize.PropertyName.ContainerType, "" );
 
             sizeImporter.finalize();

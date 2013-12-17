@@ -6,9 +6,10 @@ using ChemSW.Config;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt.csw.ImportExport;
+using ChemSW.Nbt.csw.Schema;
 using ChemSW.Nbt.Grid;
 using ChemSW.Nbt.ImportExport;
-using ChemSW.Nbt.Sched;
+using ChemSW.Nbt.Schema;
 using NbtWebApp.WebSvc.Returns;
 
 namespace ChemSW.Nbt.WebServices
@@ -92,6 +93,7 @@ namespace ChemSW.Nbt.WebServices
             CswTempFile myTempFile = new CswTempFile( CswResources );
             string path = myTempFile.saveToTempFile( parms.PostedFile.InputStream, DateTime.Now.Ticks + "_" + parms.PostedFile.FileName );
             Importer.storeDefinition( path, parms.ImportDefName );
+            Importer.Finish();
         }
 
 
@@ -149,6 +151,10 @@ namespace ChemSW.Nbt.WebServices
 
             foreach( KeyValuePair<string, DataTable> Table in BindingsTables )
             {
+                //remove the PK column so its not exposed in the excel file
+                Table.Value.Columns.Remove( "importdef" + Table.Key.TrimEnd( new[] { 's' } ) + "id" );
+
+
                 //name each worksheet tab after the table
                 sw.Write( "<Worksheet ss:Name=\"" + Table.Key + "\"><Table>" );
 
@@ -180,57 +186,26 @@ namespace ChemSW.Nbt.WebServices
             Ret.stream.Position = 0;
         }
 
+        public static void updateImportDefinition( ICswResources CswResources, CswWebSvcReturn Ret, CswNbtImportWcf.DefinitionUpdateRow[] Params )
+        {
+            //NOTE: if we decide to use definitions other than CAF in the future, we're going to need a way to discern what definition we're working with
+            CswNbtSchemaUpdateImportMgr ImportUpdater = new CswNbtSchemaUpdateImportMgr( new CswNbtSchemaModTrnsctn((CswNbtResources)CswResources), "CAF", ImporterSetUpMode: CswEnumSetupMode.NbtWeb );
+
+            foreach( CswNbtImportWcf.DefinitionUpdateRow Row in Params )
+            {
+                ImportUpdater.updateDefinitionElementByPK( Row.definitionType, Row.editMode, Row.row );
+            }
+
+            ImportUpdater.finalize();
+        }
+
 
         public static void startCAFImport( ICswResources CswResources, CswWebSvcReturn Ret, CswNbtImportWcf.StartImportParams Params )
         {
-            CswNbtResources _CswNbtResources = (CswNbtResources) CswResources;
-
-            if( Params.ImportDefName.Equals( "CAF" ) )
-            {
-                //Create custom NodeTypeProps from CAF Properties collections and set up bindings for them
-                CswNbtImportTools.CreateAllCAFProps( _CswNbtResources, CswEnumSetupMode.NbtWeb );
-
-                // Enable the CAFImport rule
-                CswTableUpdate TableUpdate = _CswNbtResources.makeCswTableUpdate( "enableCafImportRule", "scheduledrules" );
-                DataTable DataTable = TableUpdate.getTable( "where rulename = '" + CswEnumNbtScheduleRuleNames.CAFImport + "'" );
-                if( DataTable.Rows.Count > 0 )
-                {
-                    DataTable.Rows[0]["disabled"] = CswConvert.ToDbVal( false );
-                    TableUpdate.update( DataTable );
-                }
-            }
+            CswNbtImportTools.startCAFImportImpl( CswResources, Params.CAFDatabase, Params.CAFSchema, Params.CAFPassword, CswEnumSetupMode.NbtWeb );
         }
 
-        public static void generateCAFSql( ICswResources CswResources, CswNbtImportWcf.GenerateSQLReturn Ret, string ImportDefName )
-        {
-            //CswNbtResources _CswNbtResources = (CswNbtResources) CswResources;
 
-            if( ImportDefName.Equals( "CAF" ) )
-            {
-
-                string ViewSql = CswScheduleLogicNbtCAFImport.generateCAFViewSQL();
-                string ImportQueueSql = CswScheduleLogicNbtCAFImport.generateImportQueueTableSQL( CswResources );
-                string CAFCleanupSQL = CswScheduleLogicNbtCAFImport.generateCAFCleanupSQL( CswResources );
-                string TriggersSql = CswScheduleLogicNbtCAFImport.generateTriggerSQL( CswResources );
-
-                // Create and return the stream
-                MemoryStream stream = new MemoryStream();
-                StreamWriter sw = new StreamWriter( stream );
-
-                sw.Write( ViewSql );
-                sw.Write( "\r\n" );
-                sw.Write( ImportQueueSql );
-                sw.Write( "\r\n" );
-                sw.Write( CAFCleanupSQL );
-                sw.Write( "\r\n" );
-                sw.Write( TriggersSql );
-
-                sw.Flush();
-                stream.Position = 0;
-
-                Ret.stream = stream;
-            }
-        }//generateCAFSql()
 
 
         public static void getBindingsForDefinition( ICswResources CswResources, CswNbtImportWcf.ImportBindingsReturn Ret, string ImportDefName )
@@ -263,7 +238,6 @@ namespace ChemSW.Nbt.WebServices
 
                 Ret[TableName] = TableSelect.getTable();
                 Ret[TableName].Columns.Remove( "importdefid" );
-                Ret[TableName].Columns.Remove( "importdef" + TableName.TrimEnd( new[] { 's' } ) + "id" );
 
                 foreach( DataRow Row in Ret[TableName].AsEnumerable().Where( row => ( Int32.MinValue == Convert.ToInt32( row["instance"] ) ) ) )
                 {
@@ -274,10 +248,6 @@ namespace ChemSW.Nbt.WebServices
 
             return Ret;
         }
-
-
-
-
     } // class CswNbtWebServiceImport
 
 } // namespace ChemSW.Nbt.WebServices

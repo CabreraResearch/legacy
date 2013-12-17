@@ -6,6 +6,7 @@ using System.Linq;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
+using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.ChemCatCentral;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
@@ -152,7 +153,7 @@ namespace ChemSW.Nbt.ObjClasses
             LabelCodes.SetOnPropChange( OnLabelCodesChange );
             AddLabelCodes.SetOnPropChange( OnAddLabelCodesPropChange );
             _setUpDsdPhraseView();
-            
+
             ViewSDS.SetOnBeforeRender( delegate( CswNbtNodeProp prop )
                 {
                     if( false == CswNbtObjClassSDSDocument.materialHasActiveSDS( _CswNbtResources, NodeId ) )
@@ -160,7 +161,7 @@ namespace ChemSW.Nbt.ObjClasses
                         ViewSDS.setHidden( true, false );
                     }
                 } );
-            
+
             if( IsConstituent.Checked == CswEnumTristate.True )
             {
                 AssignedSDS.setHidden( true, false );
@@ -208,10 +209,13 @@ namespace ChemSW.Nbt.ObjClasses
                         GetMatchingSDSForCurrentUser( ButtonData );
                         break;
                     case PropertyName.LinkChemWatch:
-                        HasPermission = true; //todo: what should this be based off?
-                        ButtonData.Data["state"] = new JObject();
-                        ButtonData.Data["state"]["materialId"] = NodeId.ToString();
-                        ButtonData.Action = CswEnumNbtButtonAction.chemwatch;
+                        if( _CswNbtResources.Permit.can( CswEnumNbtActionName.ChemWatch ) )
+                        {
+                            HasPermission = true;
+                            ButtonData.Data["state"] = new JObject();
+                            ButtonData.Data["state"]["materialId"] = NodeId.ToString();
+                            ButtonData.Action = CswEnumNbtButtonAction.chemwatch;
+                        }
                         break;
                 }
             }

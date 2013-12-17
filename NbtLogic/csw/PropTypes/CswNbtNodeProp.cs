@@ -7,6 +7,7 @@ using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.ServiceDrivers;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.PropTypes
@@ -514,6 +515,12 @@ namespace ChemSW.Nbt.PropTypes
             // Also copy Gestalt, which usually isn't listed as a subfield
             SetSubFieldValue( CswEnumNbtSubFieldName.Gestalt, Source.Gestalt );
             SetSubFieldValue( CswEnumNbtSubFieldName.GestaltSearch, Source.GestaltSearch );
+
+            //Case 31362 - also copy Blob_Data if necessary
+            if( Source.getFieldTypeValue() == CswEnumNbtFieldType.MOL || Source.getFieldTypeValue() == CswEnumNbtFieldType.Image || Source.getFieldTypeValue() == CswEnumNbtFieldType.File )
+            {
+                CswNbtSdBlobData.CopyBlobData( _CswNbtResources, Source.JctNodePropId, JctNodePropId );
+            }
         }
 
         /// <summary>
@@ -575,7 +582,7 @@ namespace ChemSW.Nbt.PropTypes
             {
                 if( SubFieldName == SubFieldKey.Name )
                 {
-                    // This calls the appropriate set; method in the CswNbtNodeProp* class
+                    // This calls the appropriate get; method in the CswNbtNodeProp* class
                     if( null != _SubFieldMethods[SubFieldKey].Item1 )
                     {
                         ret = _SubFieldMethods[SubFieldKey].Item1();

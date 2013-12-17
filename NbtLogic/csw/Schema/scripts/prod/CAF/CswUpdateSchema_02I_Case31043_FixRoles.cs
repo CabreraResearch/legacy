@@ -7,7 +7,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update
     /// </summary>
-    public class CswUpdateSchema_02I_Case31043_FixRoles : CswUpdateSchemaTo
+    public class CswUpdateSchema_02I_Case31043_FixRoles: CswUpdateNbtMasterSchemaTo
     {
         public override CswEnumDeveloper Author
         {
@@ -32,12 +32,12 @@ namespace ChemSW.Nbt.Schema
             }
         }
 
-        public override void update()
+        public override void doUpdate()
         {
             CswNbtSchemaUpdateImportMgr RoleMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "CAF" );
 
             RoleMgr.removeImportOrder( "CAF", "Role" );
-            RoleMgr.CAFimportOrder( "Role", "roles", "roles_view" );
+            RoleMgr.CAFimportOrder( "Role", "roles", "roles_view", "roleid" );
 
             RoleMgr.importBinding( "administrator", CswNbtObjClassRole.PropertyName.Administrator, "" );
 

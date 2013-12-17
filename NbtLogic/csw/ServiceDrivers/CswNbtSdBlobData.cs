@@ -373,19 +373,20 @@ namespace ChemSW.Nbt.ServiceDrivers
         /// <summary>
         /// If blobdata exists for the given file prop, creates a new row and copies the row and sets the new JctNodePropId
         /// </summary>
-        public static void CopyBlobData( CswNbtResources NbtResources, CswNbtNodePropBlob FileProp, int JctNodePropId )
+        public static void CopyBlobData( CswNbtResources NbtResources, int SourceJctNodePropId, int TargetJctNodePropId )
         {
             CswTableUpdate blobDataTU = NbtResources.makeCswTableUpdate( "CopyBlobData", "blob_data" );
-            DataTable blobDataDT = blobDataTU.getTable( "where jctnodepropid = " + FileProp.JctNodePropId );
-            if( blobDataDT.Rows.Count > 0 )
+            DataTable blobDataDT = blobDataTU.getTable( "where jctnodepropid = " + SourceJctNodePropId );
+            int totalRows = blobDataDT.Rows.Count; //to avoid infinate loop, since we're adding to rows
+            for( int i = 0; i < totalRows; i++ )
             {
-                DataRow existingRow = blobDataDT.Rows[0];
+                DataRow existingRow = blobDataDT.Rows[i];
                 DataRow newRow = blobDataDT.NewRow();
                 foreach( DataColumn col in blobDataDT.Columns )
                 {
                     if( "jctnodepropid" == col.ColumnName )
                     {
-                        newRow["jctnodepropid"] = JctNodePropId;
+                        newRow["jctnodepropid"] = TargetJctNodePropId;
                     }
                     else if( col.ColumnName != "blobdataid" )
                     {
@@ -393,8 +394,32 @@ namespace ChemSW.Nbt.ServiceDrivers
                     }
                 }
                 blobDataDT.Rows.Add( newRow );
-                blobDataTU.update( blobDataDT );
             }
+
+            blobDataTU.update( blobDataDT );
+        }
+
+        /// <summary>
+        /// Delete all blob_data associated with a JctNodePropId
+        /// </summary>
+        public static void DeleteBlobData( CswNbtResources NbtResources, int JctNodePropId )
+        {
+            CswTableUpdate blobDataTU = NbtResources.makeCswTableUpdate( "DeleteBlobData", "blob_data" );
+            DataTable blobDataDT = blobDataTU.getTable( "where jctnodepropid = " + JctNodePropId );
+            int totalRows = blobDataDT.Rows.Count; //to avoid infinate loop, since we're adding to rows
+            for( int i = 0; i < totalRows; i++ )
+            {
+                DataRow existingRow = blobDataDT.Rows[i];
+                existingRow.Delete();
+            }
+
+            blobDataTU.update( blobDataDT );
+        }
+
+        public static bool IsBlobProp( CswNbtNodePropWrapper Prop )
+        {
+            bool ret = ( Prop.getFieldTypeValue() == CswEnumNbtFieldType.MOL || Prop.getFieldTypeValue() == CswEnumNbtFieldType.Image || Prop.getFieldTypeValue() == CswEnumNbtFieldType.File );
+            return ret;
         }
 
         [DataContract]
@@ -417,4 +442,5 @@ namespace ChemSW.Nbt.ServiceDrivers
         }
 
     }
+
 }

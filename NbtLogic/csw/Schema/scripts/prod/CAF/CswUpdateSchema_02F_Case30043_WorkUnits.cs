@@ -7,7 +7,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update
     /// </summary>
-    public class CswUpdateSchema_02F_Case30043_WorkUnits : CswUpdateSchemaTo
+    public class CswUpdateSchema_02F_Case30043_WorkUnits: CswUpdateNbtMasterSchemaTo
     {
         public override CswEnumDeveloper Author
         {
@@ -24,7 +24,7 @@ namespace ChemSW.Nbt.Schema
             return "WorkUnits";
         }
 
-        public override void update()
+        public override void doUpdate()
         {
             // Case 30043 - CAF Migration: Sites/Locations/Work Units
 
@@ -35,7 +35,7 @@ namespace ChemSW.Nbt.Schema
 
             CswNbtSchemaUpdateImportMgr importMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "CAF" );
 
-            importMgr.CAFimportOrder( "Work Unit", "work_units", "workunits_view" );
+            importMgr.CAFimportOrder( "Work Unit", "work_units", "workunits_view", "workunitid" );
             // Binding
             importMgr.importBinding( "workunitname", CswNbtObjClassWorkUnit.PropertyName.Name, "" );
 
