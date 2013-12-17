@@ -64,6 +64,8 @@
             cswPrivate.showRemoveIcon = cswPrivate.showRemoveIcon || false;
             cswPrivate.wasNodeLinkModified = false; // Used to validate when there is no nodeselect only search button
             cswPrivate.overrideNodelinkValidation = cswPrivate.overrideNodelinkValidation || false;
+            
+            cswPrivate.hideNodeLink = cswPrivate.hideNodeLink || false;
 
             cswPublic = cswParent.div({ cssclass: 'cswInline' });
             cswPrivate.table = cswPublic.table();
@@ -203,9 +205,16 @@
                 false === cswPrivate.isMulti) {
 
                 cswPrivate.nodeLinkCell.empty();
-                cswPrivate.nodeLinkText = cswPrivate.nodeLinkCell.nodeLink({
-                    text: link
-                });
+
+                if (cswPrivate.hideNodeLink) {
+                    cswPrivate.nodeLinkText = cswPrivate.nodeLinkCell.span({
+                        text: cswPrivate.selectedName
+                    });
+                } else {
+                    cswPrivate.nodeLinkText = cswPrivate.nodeLinkCell.nodeLink({
+                        text: link
+                    });
+                };
 
                 cswPrivate.wasNodeLinkModified = true;
             }
@@ -274,6 +283,7 @@
             //cswPrivate.select.bind('change', handleChange);
 
             cswPrivate.nodeLinkCell = cswPrivate.table.cell(1, cswPrivate.textCellCol);
+            
             cswPrivate.setNodeLinkText(cswPrivate.selectedNodeLink);
 
             cswPrivate.toggleButton = cswPrivate.table.cell(1, cswPrivate.editCellCol).buttonExt({
@@ -297,6 +307,7 @@
         cswPrivate.makeSearch = function () {
             // Find value by using search in a dialog
             cswPrivate.validateCell = cswPrivate.table.cell(1, cswPrivate.validateCellCol).empty();
+
             cswPrivate.nameSpan = cswPrivate.table.cell(1, cswPrivate.searchCellCol).nodeLink({
                 text: Csw.string(cswPrivate.selectedNodeLink) + '&nbsp;'
             });
