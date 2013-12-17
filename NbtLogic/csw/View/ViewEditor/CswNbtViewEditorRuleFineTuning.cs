@@ -45,7 +45,7 @@ namespace ChemSW.Nbt.ViewEditor
                             foreach( CswNbtViewProperty prop in _getProps( NodeType, TempView, new HashSet<string>(), asRelationship ) )
                             {
                                 if( ( ( CswEnumNbtViewRenderingMode.Tree == Request.CurrentView.ViewMode || CswEnumNbtViewRenderingMode.List == Request.CurrentView.ViewMode ) && CswEnumNbtFieldType.Button != prop.FieldType ) ||
-                                    CswEnumNbtViewRenderingMode.Grid == Request.CurrentView.ViewMode || CswEnumNbtViewRenderingMode.Tree == Request.CurrentView.ViewMode )
+                                    CswEnumNbtViewRenderingMode.Grid == Request.CurrentView.ViewMode || CswEnumNbtViewRenderingMode.Table == Request.CurrentView.ViewMode )
                                 {
 
                                     Return.Step6.Properties.Add( prop );
@@ -58,7 +58,7 @@ namespace ChemSW.Nbt.ViewEditor
                             foreach( CswNbtViewProperty prop in _getProps( ObjClass, TempView, new HashSet<string>(), asRelationship ) )
                             {
                                 if( ( ( CswEnumNbtViewRenderingMode.Tree == Request.CurrentView.ViewMode || CswEnumNbtViewRenderingMode.List == Request.CurrentView.ViewMode ) && CswEnumNbtFieldType.Button != prop.FieldType ) ||
-                                    CswEnumNbtViewRenderingMode.Grid == Request.CurrentView.ViewMode || CswEnumNbtViewRenderingMode.Tree == Request.CurrentView.ViewMode )
+                                    CswEnumNbtViewRenderingMode.Grid == Request.CurrentView.ViewMode || CswEnumNbtViewRenderingMode.Table == Request.CurrentView.ViewMode )
                                 {
 
                                     Return.Step6.Properties.Add( prop );
@@ -74,7 +74,7 @@ namespace ChemSW.Nbt.ViewEditor
                                 foreach( CswNbtViewProperty prop in _getProps( ObjClass, TempView, seenProps, asRelationship ).OrderBy( prop => prop.TextLabel ) )
                                 {
                                     if( ( ( CswEnumNbtViewRenderingMode.Tree == Request.CurrentView.ViewMode || CswEnumNbtViewRenderingMode.List == Request.CurrentView.ViewMode ) && CswEnumNbtFieldType.Button != prop.FieldType ) ||
-                                        CswEnumNbtViewRenderingMode.Grid == Request.CurrentView.ViewMode || CswEnumNbtViewRenderingMode.Tree == Request.CurrentView.ViewMode )
+                                        CswEnumNbtViewRenderingMode.Grid == Request.CurrentView.ViewMode || CswEnumNbtViewRenderingMode.Table == Request.CurrentView.ViewMode )
                                     {
                                         Return.Step6.Properties.Add( prop );
                                     }
