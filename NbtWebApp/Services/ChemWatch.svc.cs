@@ -128,13 +128,20 @@ namespace NbtWebApp
                 );
             SvcDriver.run();
 
-            if( false == FileName.EndsWith( ".pdf" ) )
+            string ContentDisposition = string.Empty;
+            // Filetype encountered: .pdf, .gz
+            if( FileName.EndsWith( ".pdf" ) )
             {
-                FileName = FileName + ".pdf";
+                ContentDisposition = "inline; filename=" + FileName;
+                WebOperationContext.Current.OutgoingResponse.ContentType = "application/pdf";
             }
+            else
+            {
+                ContentDisposition = "attachment; filename=" + FileName;
+            }
+            WebOperationContext.Current.OutgoingResponse.Headers.Set( "Content-disposition", ContentDisposition );
 
-            WebOperationContext.Current.OutgoingResponse.Headers.Set( "Content-disposition", "inline; filename=" + FileName );
-            WebOperationContext.Current.OutgoingResponse.ContentType = "application/pdf";
+
 
             return Ret.Data.SDSDocument;
         }//startImport()
