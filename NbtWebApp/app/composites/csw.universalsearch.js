@@ -37,7 +37,8 @@
             filterOutNodeId: null,
             forceSingleColumn: false,
             onlyMergeableNodeTypes: false,
-            excludeNodeIds: [] // exclude specific nodes from the search mechanism
+            excludeNodeIds: [], // exclude specific nodes from the search mechanism
+            showC3SrchPromptText: true // Display the alternative search text or not (client-side filter _only_)
             //buttonSingleColumn: '',
             //buttonMultiColumn: ''
         };
@@ -279,7 +280,7 @@
                     });
 
                     //If the C3 module is enabled
-                    if (data.alternateoption) {
+                    if (data.alternateoption && cswPrivate.showC3SrchPromptText) {
 
                         table2.cell(1, 2).div({
                             text: '&nbsp; &nbsp;'
@@ -316,7 +317,7 @@
                             }
                         });
 
-                    } // if (data.alternateoption != null)
+                    } // if (data.alternateoption != null && cswPrivate.showC3SrchPromptText === true)
 
                 } //if (data.searchtarget == 'universal')
                 else {
