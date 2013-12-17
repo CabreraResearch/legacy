@@ -198,6 +198,7 @@ namespace ChemSW.Nbt.Actions
         public static CswNbtChemWatchRequest GetMatchingSuppliers( ICswResources CswResources, CswNbtChemWatchRequest Request )
         {
             CswNbtChemWatchRequest Return = new CswNbtChemWatchRequest();
+            CswNbtResources NbtResources = (CswNbtResources) CswResources;
 
             string errorMsg;
 
