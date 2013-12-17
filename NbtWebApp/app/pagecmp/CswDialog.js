@@ -1681,6 +1681,7 @@
                 extraAction: 'Select',
                 extraActionIcon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.check),
                 universalSearchOnly: true, //No C3 or Structure Search here
+                showC3SrchPromptText: false, // Don't prompt users to search C3
                 onExtraAction: function (nodeObj) {
                     cswPublic.close();
                     Csw.tryExec(cswDlgPrivate.onSelectNode, nodeObj);
