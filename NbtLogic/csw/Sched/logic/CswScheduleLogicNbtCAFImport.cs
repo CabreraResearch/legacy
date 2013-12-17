@@ -1,7 +1,5 @@
 using System;
 using System.Data;
-using System.Diagnostics;
-using System.IO;
 using ChemSW.Config;
 using ChemSW.Core;
 using ChemSW.DB;
@@ -70,9 +68,6 @@ namespace ChemSW.Nbt.Sched
                 CswNbtResources _CswNbtResources = (CswNbtResources) CswResources;
                 try
                 {
-                    Stopwatch w = new Stopwatch();
-                    w.Start();
-
                     const string QueueTableName = "nbtimportqueue";
                     const string QueuePkName = "nbtimportqueueid";
 
@@ -131,11 +126,6 @@ namespace ChemSW.Nbt.Sched
                     }//foreach( DataRow QueueRow in QueueTable.Rows )
 
                     Importer.Finish();
-
-                    w.Stop();
-                    StreamWriter writer = new StreamWriter( @"C:\tmp\mattslog.txt", true );
-                    writer.WriteLine(w.ElapsedMilliseconds.ToString());
-                    writer.Close();
 
                     _CswScheduleLogicDetail.StatusMessage = "Completed without error";
                     _LogicRunStatus = CswEnumScheduleLogicRunStatus.Succeeded; //last line
