@@ -100,7 +100,7 @@ namespace ChemSW.Nbt.ViewEditor
                 }
             }
         }
-        
+
         protected void _populatePropsCollection( CswNbtViewRelationship relationship, CswNbtView TempView, Collection<CswNbtViewProperty> Props,
             HashSet<string> seenProps, bool UseMetaName = false, bool overrideFirst = false, bool DoCheck = true )
         {
@@ -226,7 +226,7 @@ namespace ChemSW.Nbt.ViewEditor
             CswNbtViewRelationship Relationship = (CswNbtViewRelationship) TempView.FindViewNodeByArbitraryId( Request.Relationship.ArbitraryId );
             if( null != Relationship )
             {
-                foreach( CswNbtViewProperty viewProp in Relationship.Properties )
+                foreach( CswNbtViewProperty viewProp in Relationship.Properties.Where( p => CswEnumNbtFieldType.Button != p.FieldType ) )
                 {
                     seenProps.Add( viewProp.TextLabel );
                     Return.Step4.Properties.Add( viewProp );
@@ -239,7 +239,7 @@ namespace ChemSW.Nbt.ViewEditor
                     {
                         foreach( CswNbtMetaDataObjectClass ObjClass in PropSet.getObjectClasses() )
                         {
-                            Collection<CswNbtViewProperty> props = _getProps( ObjClass, TempView, seenProps, Relationship );
+                            IEnumerable<CswNbtViewProperty> props = _getProps( ObjClass, TempView, seenProps, Relationship ).Where( p => CswEnumNbtFieldType.Button != p.FieldType ); ;
                             foreach( CswNbtViewProperty vp in props )
                             {
                                 Return.Step4.Properties.Add( vp );
@@ -252,7 +252,7 @@ namespace ChemSW.Nbt.ViewEditor
                     CswNbtMetaDataObjectClass ObjClass = _CswNbtResources.MetaData.getObjectClass( Relationship.SecondId );
                     if( null != ObjClass )
                     {
-                        Collection<CswNbtViewProperty> props = _getProps( ObjClass, TempView, seenProps, Relationship );
+                        IEnumerable<CswNbtViewProperty> props = _getProps( ObjClass, TempView, seenProps, Relationship ).Where( p => CswEnumNbtFieldType.Button != p.FieldType ); ;
                         foreach( CswNbtViewProperty vp in props )
                         {
                             Return.Step4.Properties.Add( vp );
@@ -264,7 +264,7 @@ namespace ChemSW.Nbt.ViewEditor
                     CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( Relationship.SecondId );
                     if( null != NodeType )
                     {
-                        Collection<CswNbtViewProperty> props = _getProps( NodeType, TempView, seenProps, Relationship );
+                        IEnumerable<CswNbtViewProperty> props = _getProps( NodeType, TempView, seenProps, Relationship ).Where( p => CswEnumNbtFieldType.Button != p.FieldType );
                         foreach( CswNbtViewProperty vp in props )
                         {
                             Return.Step4.Properties.Add( vp );
