@@ -7,7 +7,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update
     /// </summary>
-    public class CswUpdateSchema_02I_Case31236B: CswUpdateSchemaTo
+    public class CswUpdateSchema_02I_Case31236B: CswUpdateNbtMasterSchemaTo
     {
         public override string Title { get { return "Add Fire Reporting bindings to Chemical"; } }
 
@@ -26,7 +26,7 @@ namespace ChemSW.Nbt.Schema
             return "B";
         }
 
-        public override void update()
+        public override void doUpdate()
         {
             CswNbtSchemaUpdateImportMgr ImpMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "CAF" );
 

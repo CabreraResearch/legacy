@@ -385,10 +385,9 @@ namespace ChemSW.Nbt
         /// <param name="OnAfterMakeNode">Event that occurs after creating the node but before saving it for the first time</param>
         /// <param name="OverrideUniqueValidation">If true, allow this node to be created even if it violates uniqueness rules</param>
         /// <returns>The new node. !!POSTS CHANGES!!</returns>
-        public CswNbtNode makeNodeFromNodeTypeId( Int32 NodeTypeId, Action<CswNbtNode> OnAfterMakeNode = null, bool IsTemp = false, bool OverrideUniqueValidation = false )
+        public CswNbtNode makeNodeFromNodeTypeId( Int32 NodeTypeId, Action<CswNbtNode> OnAfterMakeNode = null, bool IsTemp = false, bool OverrideUniqueValidation = false, bool IsCopy = false )
         {
             CswNbtNode Node = _CswNbtNodeFactory.make( CswEnumNbtNodeSpecies.Plain, null, NodeTypeId, _NodeHash.Count, null, IsTemp: true );  // temp here for auditing, but see below
-            //Node.IsTemp = IsTemp;
             //Node.OnAfterSetNodeId += new CswNbtNode.OnSetNodeIdHandler( OnAfterSetNodeIdHandler );
             Node.OnRequestDeleteNode += OnAfterDeleteNode;
             Node.fillFromNodeTypeId( NodeTypeId );
@@ -401,26 +400,23 @@ namespace ChemSW.Nbt
                 OnAfterMakeNode( Node );
             }
 
-
-            //if( Node.NodeId != Int32.MinValue )
-            //{
-            //    NodeHash.Add( new NodeHashKey( Node.NodeId, Node.NodeSpecies ), Node );
-            //}
             // We need to hash the Int32.MinValue keys for the Add form to work
             // But we can simply override what's in the hash if we make another new node
             NodeHashKey Hashkey = new NodeHashKey( Node.NodeId, Node.NodeSpecies );
             _NodeHash[Hashkey] = Node;
 
+            ICswNbtNodePersistStrategy NodePersistStrategy;
             if( false == IsTemp )
             {
-                // we have to do this separately so that the audit record will show as an INSERT instead of an UPDATE
-                // It will however do postChanges()
-                Node.PromoteTempToReal( IsCreate: true, OverrideUniqueValidation: OverrideUniqueValidation );
+                NodePersistStrategy = new CswNbtNodePersistStrategyPromote( _CswNbtResources );
             }
             else
             {
-                Node.postChanges( ForceUpdate: true, IsCopy: false, OverrideUniqueValidation: OverrideUniqueValidation, IsCreate: true );
+                NodePersistStrategy = new CswNbtNodePersistStrategyCreate( _CswNbtResources );
             }
+            NodePersistStrategy.IsCopy = IsCopy;
+            NodePersistStrategy.OverrideUniqueValidation = OverrideUniqueValidation;
+            NodePersistStrategy.postChanges( Node );
 
             return ( Node );
         }//makeNodeFromNodeTypeId()

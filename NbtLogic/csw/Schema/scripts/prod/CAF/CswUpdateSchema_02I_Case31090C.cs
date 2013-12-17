@@ -8,7 +8,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update
     /// </summary>
-    public class CswUpdateSchema_02I_Case31090C: CswUpdateSchemaTo
+    public class CswUpdateSchema_02I_Case31090C: CswUpdateNbtMasterSchemaTo
     {
         public override string Title { get { return "Add Regulatory List Id to Regulatory List CAS binding"; } }
 
@@ -22,7 +22,7 @@ namespace ChemSW.Nbt.Schema
             get { return 31090; }
         }
 
-        public override void update()
+        public override void doUpdate()
         {
             CswNbtSchemaUpdateImportMgr ImpMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "CAF" );
 

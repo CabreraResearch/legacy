@@ -7,7 +7,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update
     /// </summary>
-    public class CswUpdateSchema_02I_Case31098: CswUpdateSchemaTo
+    public class CswUpdateSchema_02I_Case31098: CswUpdateNbtMasterSchemaTo
     {
         public override string Title { get { return "Add Approved For Receiving to Chemical import bindings"; } }
 
@@ -21,7 +21,7 @@ namespace ChemSW.Nbt.Schema
             get { return 31098; }
         }
 
-        public override void update()
+        public override void doUpdate()
         {
             CswNbtSchemaUpdateImportMgr ImpMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "CAF" );
 
