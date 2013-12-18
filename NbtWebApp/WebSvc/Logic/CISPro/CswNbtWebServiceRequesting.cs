@@ -220,17 +220,11 @@ namespace ChemSW.Nbt.WebServices
                             where null != MaterialDispense
                             //This is really sneaky - it's copying all of the MaterialDispense requests
                             //and throwing them into the collection we're selecting
-                            select MaterialDispense.copyNode( ClearRequest: false )
+                            select MaterialDispense.copyNode()
                                 into NewPropSetRequest
                                 select  NewPropSetRequest )
                 {
                     CopyLogic( NewRequestItem );
-
-                    //As far as I can see, there's no reason this couldn't be in copy from favorites' CopyLogic
-                    if( NewRequestItem.IsRecurring.Checked != CswEnumTristate.True && CswConvert.ToTristate( NewRequestItem.IsFavorite.Gestalt ) != CswEnumTristate.True )
-                    {
-                        NewRequestItem.Status.Value = CswNbtObjClassRequestItem.Statuses.Pending;
-                    }
                     
                     NewRequestItem.postChanges( ForceUpdate: false );
                     

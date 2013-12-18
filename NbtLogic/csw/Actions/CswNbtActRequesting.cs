@@ -512,7 +512,7 @@ namespace ChemSW.Nbt.Actions
 
                 CswNbtView ReqView = new CswNbtView( _CswNbtResources );
                 CswNbtMetaDataObjectClass RequestOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestClass );
-                CswNbtViewRelationship RootVr = ReqView.AddViewRelationship( RequestOc, IncludeDefaultFilters: true );
+                CswNbtViewRelationship RootVr = ReqView.AddViewRelationship( RequestOc, IncludeDefaultFilters: false );
 
                 CswNbtMetaDataObjectClassProp RequestorOcp = RequestOc.getObjectClassProp( CswNbtObjClassRequest.PropertyName.Requestor );
                 ReqView.AddViewPropertyAndFilter( RootVr, RequestorOcp, FilterMode: CswEnumNbtFilterMode.Equals, SubFieldName: CswEnumNbtSubFieldName.NodeID, Value: User.NodeId.PrimaryKey.ToString() );
@@ -520,7 +520,7 @@ namespace ChemSW.Nbt.Actions
                 CswNbtMetaDataObjectClassProp RequestOcp = _RequestItemOC.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Request );
                 CswNbtViewRelationship RequestItemRel = ReqView.AddViewRelationship( RootVr,
                     CswEnumNbtViewPropOwnerType.Second,
-                    RequestOcp, IncludeDefaultFilters: true );
+                    RequestOcp, IncludeDefaultFilters: false );
 
                 ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( ReqView, IncludeSystemNodes: false, RequireViewPermissions: false, IncludeHiddenNodes: false );
                 Int32 RequestCount = Tree.getChildNodeCount();

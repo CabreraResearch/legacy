@@ -687,16 +687,12 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Copy the Request Item
         /// </summary>
-        public CswNbtObjClassRequestItem copyNode( bool PostChanges = true, bool ClearRequest = true )
+        public CswNbtObjClassRequestItem copyNode()
         {
             CswNbtObjClassRequestItem RetCopy = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, delegate( CswNbtNode NewNode )
             {
                 NewNode.copyPropertyValues( Node );
-                ( (CswNbtObjClassRequestItem) NewNode ).Status.Value = Statuses.Pending;
-                if( ClearRequest )
-                {
-                    ( (CswNbtObjClassRequestItem) NewNode ).Request.RelatedNodeId = null;
-                }
+                ( (CswNbtObjClassRequestItem) NewNode ).Status.Value = Statuses.NonRequestableStatus;
             } );
 
             return RetCopy;
@@ -729,7 +725,6 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-        //TODO - This updates the Cart Count when creating the temp - we should really change this so it only increments after PromoteTempToReal
         private void _updateCartCounts( Int32 Incrementer = 1 )
         {
             switch( Status.Value )
