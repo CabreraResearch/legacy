@@ -42,6 +42,8 @@ namespace ChemSW.Nbt.PropTypes
 
             _ClobDataSubField = ( (CswNbtFieldTypeRuleLogicalSet) _FieldTypeRule ).ClobDataSubField;
 
+            // Associate subfields with methods on this object, for SetSubFieldValue()
+            _SubFieldMethods.Add( _ClobDataSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => LogicalSetXmlDoc, x => setXml( CswConvert.ToString( x ) ) ) );
         }//ctor
 
         private CswNbtSubField _ClobDataSubField;
