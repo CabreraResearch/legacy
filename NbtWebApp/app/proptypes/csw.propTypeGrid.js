@@ -90,6 +90,7 @@
                     readonly: nodeProperty.isReadOnly(),
                     reinit: false,
                     EditMode: nodeProperty.tabState.EditMode,
+                    onEditView: nodeProperty.onEditView,
                     onEditNode: function () {
                         nodeGrid.grid.reload(true);
                     },

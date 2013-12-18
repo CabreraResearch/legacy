@@ -88,25 +88,28 @@ namespace ChemSW.Nbt.ImportExport
                     //for each row in the old table
                     foreach( DataRow Row in ExcelDataSet.Tables[Table].Rows )
                     {
-                        //create a new row from the equivalent new table
-                        DataRow NewRow = TableUpdates[Table].NewRow();
-
-                        //foreach column of the old row
-                        foreach( DataColumn Column in ExcelDataSet.Tables[Table].Columns )
+                        if( false == Row.IsNull( "sheetname" ) )
                         {
-                            //if the cell is sheetname convert it to the appropriate importdefid, otherwise copy it directly if there's something there
-                            if( Column.ColumnName.ToLower() == "sheetname" )
-                            {
-                                NewRow["importdefid"] = DefIdsBySheetName[Row["sheetname"].ToString()];
-                            }
-                            else if ( false == string.IsNullOrEmpty(Row[Column].ToString()))
-                            {
-                                NewRow[Column.ColumnName] = Row[Column];
-                            }
-                        }//for each column in the row
+                            //create a new row from the equivalent new table
+                            DataRow NewRow = TableUpdates[Table].NewRow();
 
-                        //add the new row to the new table
-                        TableUpdates[Table].Rows.Add( NewRow );
+                            //foreach column of the old row
+                            foreach( DataColumn Column in ExcelDataSet.Tables[Table].Columns )
+                            {
+                                //if the cell is sheetname convert it to the appropriate importdefid, otherwise copy it directly if there's something there
+                                if( Column.ColumnName.ToLower() == "sheetname" )
+                                {
+                                    NewRow["importdefid"] = DefIdsBySheetName[Row["sheetname"].ToString()];
+                                }
+                                else if( false == string.IsNullOrEmpty( Row[Column].ToString() ) )
+                                {
+                                    NewRow[Column.ColumnName] = Row[Column];
+                                }
+                            } //for each column in the row
+
+                            //add the new row to the new table
+                            TableUpdates[Table].Rows.Add( NewRow );
+                        }//if the row isn't blank
                     }//for each row in the table
                 }//for each table in the excel sheet
 
