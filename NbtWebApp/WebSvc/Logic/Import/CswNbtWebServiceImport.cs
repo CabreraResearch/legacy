@@ -1,15 +1,20 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Data;
 using System.IO;
 using ChemSW.Config;
 using ChemSW.Core;
 using ChemSW.DB;
+using ChemSW.Exceptions;
 using ChemSW.Nbt.csw.ImportExport;
 using ChemSW.Nbt.csw.Schema;
 using ChemSW.Nbt.Grid;
 using ChemSW.Nbt.ImportExport;
+using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Schema;
+using ChemSW.Nbt.Security;
+using ChemSW.Security;
 using NbtWebApp.WebSvc.Returns;
 
 namespace ChemSW.Nbt.WebServices
@@ -189,7 +194,7 @@ namespace ChemSW.Nbt.WebServices
         public static void updateImportDefinition( ICswResources CswResources, CswWebSvcReturn Ret, CswNbtImportWcf.DefinitionUpdateRow[] Params )
         {
             //NOTE: if we decide to use definitions other than CAF in the future, we're going to need a way to discern what definition we're working with
-            CswNbtSchemaUpdateImportMgr ImportUpdater = new CswNbtSchemaUpdateImportMgr( new CswNbtSchemaModTrnsctn((CswNbtResources)CswResources), "CAF", ImporterSetUpMode: CswEnumSetupMode.NbtWeb );
+            CswNbtSchemaUpdateImportMgr ImportUpdater = new CswNbtSchemaUpdateImportMgr( new CswNbtSchemaModTrnsctn( (CswNbtResources) CswResources ), "CAF", ImporterSetUpMode: CswEnumSetupMode.NbtWeb );
 
             foreach( CswNbtImportWcf.DefinitionUpdateRow Row in Params )
             {
@@ -222,6 +227,53 @@ namespace ChemSW.Nbt.WebServices
 
         }
 
+        public static void getExistingNodes( ICswResources CswResources, CswNbtImportWcf.DltExistingNodesReturn Ret, object EmptyObject )
+        {
+            CswNbtResources _CswNbtResources = (CswNbtResources) CswResources;
+
+            Ret.Data = new CswNbtImportWcf.DltExistingNodesReturn.DltExistingNodesReturnData();
+            Ret.Data.NodesToDelete = _retriveDoomedNodes( _CswNbtResources );
+        }//getExistingNodes()
+
+        public static void deleteExistingNodes( ICswResources CswResources, CswNbtImportWcf.DltExistingNodesReturn Ret, object EmptyObject )
+        {
+            // In this case, we need to create a new instance of CswNbtResources
+            // so that we can delete all nodes (including MLM nodes)
+            CswNbtResources _CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( CswEnumAppType.Nbt, CswEnumSetupMode.NbtWeb, false ); //ExcludeDisabledModules needs to be false
+            _CswNbtResources.AccessId = CswResources.AccessId;
+            _CswNbtResources.InitCurrentUser = _initUser;
+
+            Collection<CswNbtImportWcf.DltExistingNodesReturn.DltExistingNodesReturnData.DoomedNode> DoomedNodes = _retriveDoomedNodes( _CswNbtResources );
+            foreach( CswNbtImportWcf.DltExistingNodesReturn.DltExistingNodesReturnData.DoomedNode DoomedNode in DoomedNodes )
+            {
+                try
+                {
+                    CswPrimaryKey NodePrimeKey = new CswPrimaryKey();
+                    NodePrimeKey.FromString( "nodes_" + DoomedNode.NodeId );
+                    CswNbtNode CurrentNode = _CswNbtResources.Nodes[NodePrimeKey];
+                    if( null != CurrentNode )
+                    {
+                        CurrentNode.delete( true, true, false );
+                    }
+
+                }
+                catch( Exception exception )
+                {
+                    throw new CswDniException( CswEnumErrorType.Error, "Error deleting node: ", exception.Message );
+                }
+            }
+
+            _CswNbtResources.finalize();
+            Ret.Data.DeleteSuccessful = true;
+        }
+
+        #region Private helper methods
+
+        private static ICswNbtUser _initUser( ICswResources CswResources )
+        {
+            return new CswNbtSystemUser( CswResources, CswEnumSystemUserNames.SysUsr__SchemaImport );
+        }
+
         private static Dictionary<string, DataTable> _retrieveBindings( CswNbtResources NbtResources, string ImportDefName )
         {
 
@@ -248,6 +300,37 @@ namespace ChemSW.Nbt.WebServices
 
             return Ret;
         }
+
+        private static Collection<CswNbtImportWcf.DltExistingNodesReturn.DltExistingNodesReturnData.DoomedNode> _retriveDoomedNodes( CswNbtResources NbtResources )
+        {
+            Collection<CswNbtImportWcf.DltExistingNodesReturn.DltExistingNodesReturnData.DoomedNode> DoomedNodes = new Collection<CswNbtImportWcf.DltExistingNodesReturn.DltExistingNodesReturnData.DoomedNode>();
+
+            CswArbitrarySelect NodeTblSelect = NbtResources.makeCswArbitrarySelect( "getDoomedNodes_nbtImporter",
+                            @"select t.nodeid, t.nodename, t.nodetypeid, nt.nodetypename
+                                from nodes t
+                                join nodetypes nt on (nt.nodetypeid = t.nodetypeid)
+                                where nodename not in ('chemsw_admin', 'chemsw_admin_role', 'Each', 'Days', 'Ci', 'kg',
+                                    'Liters', 'lb', 'gal', 'cu.ft.', 'CISPro_Admin',
+                                    'CISPro_General', 'Default Jurisdiction')
+                                and t.nodetypeid not in
+                                    (1130, 1212, 1329, 1330, 1369, 33, 114, 659, 1052, 1053, 1290, 1291, 1292, 1293, 1211)" );
+
+            DataTable NodesTbl = NodeTblSelect.getTable();
+            foreach( DataRow Row in NodesTbl.Rows )
+            {
+                DoomedNodes.Add( new CswNbtImportWcf.DltExistingNodesReturn.DltExistingNodesReturnData.DoomedNode
+                    {
+                        NodeId = CswConvert.ToInt32( Row["nodeid"] ),
+                        NodeName = CswConvert.ToString( Row["nodename"] ),
+                        NodeType = CswConvert.ToString( Row["nodetypename"] )
+                    } );
+            }
+
+            return DoomedNodes;
+        }//_retriveDoomedNodes()
+
+        #endregion Private helper methods
+
     } // class CswNbtWebServiceImport
 
 } // namespace ChemSW.Nbt.WebServices
