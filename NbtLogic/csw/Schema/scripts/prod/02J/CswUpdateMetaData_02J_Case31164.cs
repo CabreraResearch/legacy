@@ -53,6 +53,18 @@ namespace ChemSW.Nbt.Schema
                 _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswEnumNbtModuleName.Requesting, RequestItemOC.ObjectClassId );
             }
             
+            foreach( CswNbtMetaDataNodeType RequestITemNT in RequestItemOC.getNodeTypes() )
+            {
+                CswNbtMetaDataNodeTypeProp InventoryGroupNTP = RequestITemNT.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestItem.PropertyName.InventoryGroup );
+                CswNbtView InventoryGroupView = _CswNbtSchemaModTrnsctn.restoreView( InventoryGroupNTP.ViewId );
+                InventoryGroupView.Root.ChildRelationships.Clear();
+                CswNbtMetaDataObjectClass InventoryGroupOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.InventoryGroupClass );
+                CswNbtMetaDataObjectClassProp CentralOCP = InventoryGroupOC.getObjectClassProp( CswNbtObjClassInventoryGroup.PropertyName.Central );
+                CswNbtViewRelationship IGVR = InventoryGroupView.AddViewRelationship( InventoryGroupOC, true );
+                InventoryGroupView.AddViewPropertyAndFilter( IGVR, CentralOCP, FilterMode: CswEnumNbtFilterMode.Equals, Value: CswEnumTristate.True );
+                InventoryGroupView.save();
+            }
+
         } // update()
 
     }

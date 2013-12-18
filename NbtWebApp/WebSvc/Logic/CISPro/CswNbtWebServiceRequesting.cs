@@ -77,6 +77,7 @@ namespace ChemSW.Nbt.WebServices
         public static void getRequestItemNodeType( ICswResources CswResources, CswNbtRequestDataModel.CswNbtRequestMaterialCreateReturn Ret, object Request )
         {
             CswNbtResources NbtResources = _validate( CswResources );
+            CswNbtActRequesting.checkForCentralInventoryGroups( NbtResources );
             CswNbtMetaDataObjectClass RequestItemOC = NbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestItemClass );
             CswNbtMetaDataNodeType FirstNodeType = RequestItemOC.getLatestVersionNodeTypes().FirstOrDefault();
             if( null != FirstNodeType )
