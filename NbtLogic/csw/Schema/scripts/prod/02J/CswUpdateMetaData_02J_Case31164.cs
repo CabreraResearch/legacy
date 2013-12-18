@@ -35,7 +35,7 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClass RequestItemOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestItemClass );
             if( Int32.MinValue == _CswNbtSchemaModTrnsctn.Modules.GetModuleId( CswEnumNbtModuleName.Requesting ) )
             {
-                _CswNbtSchemaModTrnsctn.createModule( "Requesting", CswEnumNbtModuleName.Requesting, false );
+                _CswNbtSchemaModTrnsctn.createModule( "Requesting", CswEnumNbtModuleName.Requesting, true );
                 _CswNbtSchemaModTrnsctn.Modules.CreateModuleDependency( CswEnumNbtModuleName.Containers, CswEnumNbtModuleName.Requesting );
                 _CswNbtSchemaModTrnsctn.createModuleActionJunction( CswEnumNbtModuleName.Requesting, CswEnumNbtActionName.Submit_Request );
 
