@@ -77,6 +77,7 @@ namespace ChemSW.Nbt.WebServices
         public static void getRequestItemNodeType( ICswResources CswResources, CswNbtRequestDataModel.CswNbtRequestMaterialCreateReturn Ret, object Request )
         {
             CswNbtResources NbtResources = _validate( CswResources );
+            CswNbtActRequesting.checkForCentralInventoryGroups( NbtResources );
             CswNbtMetaDataObjectClass RequestItemOC = NbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestItemClass );
             CswNbtMetaDataNodeType FirstNodeType = RequestItemOC.getLatestVersionNodeTypes().FirstOrDefault();
             if( null != FirstNodeType )
@@ -166,6 +167,7 @@ namespace ChemSW.Nbt.WebServices
                     CswNbtWebServiceRequesting ws = new CswNbtWebServiceRequesting( NbtResources );
                     applyCopyLogic SetRequest = ( Item ) =>
                                                     {
+                                                        Item.Status.Value = CswNbtObjClassRequestItem.Statuses.Pending;
                                                         Item.Request.RelatedNodeId = RequestNode.NodeId;
                                                     };
                     Succeeded = ws.copyRequestItems( Request, SetRequest );
@@ -219,17 +221,11 @@ namespace ChemSW.Nbt.WebServices
                             where null != MaterialDispense
                             //This is really sneaky - it's copying all of the MaterialDispense requests
                             //and throwing them into the collection we're selecting
-                            select MaterialDispense.copyNode( ClearRequest: false )
+                            select MaterialDispense.copyNode()
                                 into NewPropSetRequest
                                 select  NewPropSetRequest )
                 {
                     CopyLogic( NewRequestItem );
-
-                    //As far as I can see, there's no reason this couldn't be in copy from favorites' CopyLogic
-                    if( NewRequestItem.IsRecurring.Checked != CswEnumTristate.True && CswConvert.ToTristate( NewRequestItem.IsFavorite.Gestalt ) != CswEnumTristate.True )
-                    {
-                        NewRequestItem.Status.Value = CswNbtObjClassRequestItem.Statuses.Pending;
-                    }
                     
                     NewRequestItem.postChanges( ForceUpdate: false );
                     

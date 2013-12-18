@@ -198,7 +198,7 @@ namespace ChemSW.Nbt.WebServices
                                     ) )
                                 );
 
-            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Containers ) )
+            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Requesting ) && _CswNbtResources.Permit.can( CswEnumNbtActionName.Submit_Request ) )
             {
                 CswNbtActRequesting RequestAction = new CswNbtActRequesting( _CswNbtResources );
                 Int32 CartCount = RequestAction.getCartContentCount();

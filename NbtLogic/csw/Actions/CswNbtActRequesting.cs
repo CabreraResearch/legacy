@@ -512,7 +512,7 @@ namespace ChemSW.Nbt.Actions
 
                 CswNbtView ReqView = new CswNbtView( _CswNbtResources );
                 CswNbtMetaDataObjectClass RequestOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestClass );
-                CswNbtViewRelationship RootVr = ReqView.AddViewRelationship( RequestOc, IncludeDefaultFilters: true );
+                CswNbtViewRelationship RootVr = ReqView.AddViewRelationship( RequestOc, IncludeDefaultFilters: false );
 
                 CswNbtMetaDataObjectClassProp RequestorOcp = RequestOc.getObjectClassProp( CswNbtObjClassRequest.PropertyName.Requestor );
                 ReqView.AddViewPropertyAndFilter( RootVr, RequestorOcp, FilterMode: CswEnumNbtFilterMode.Equals, SubFieldName: CswEnumNbtSubFieldName.NodeID, Value: User.NodeId.PrimaryKey.ToString() );
@@ -520,7 +520,7 @@ namespace ChemSW.Nbt.Actions
                 CswNbtMetaDataObjectClassProp RequestOcp = _RequestItemOC.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Request );
                 CswNbtViewRelationship RequestItemRel = ReqView.AddViewRelationship( RootVr,
                     CswEnumNbtViewPropOwnerType.Second,
-                    RequestOcp, IncludeDefaultFilters: true );
+                    RequestOcp, IncludeDefaultFilters: false );
 
                 ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( ReqView, IncludeSystemNodes: false, RequireViewPermissions: false, IncludeHiddenNodes: false );
                 Int32 RequestCount = Tree.getChildNodeCount();
@@ -593,6 +593,7 @@ namespace ChemSW.Nbt.Actions
         /// </summary>
         public CswNbtObjClassRequestItem makeContainerRequestItem( CswNbtObjClassContainer Container, CswNbtObjClass.NbtButtonData ButtonData )
         {
+            checkForCentralInventoryGroups( _CswNbtResources );
             CswNbtObjClassRequestItem RequestItem;
             CswNbtMetaDataObjectClass RequestItemOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestItemClass );
             CswNbtMetaDataNodeType RequestItemNT = RequestItemOC.getNodeTypes().FirstOrDefault();
@@ -648,6 +649,7 @@ namespace ChemSW.Nbt.Actions
         /// </summary>
         public CswNbtObjClassRequestItem makeMaterialRequestItem( CswNbtPropertySetMaterial Material, CswNbtObjClass.NbtButtonData ButtonData )
         {
+            checkForCentralInventoryGroups( _CswNbtResources );
             CswNbtObjClassRequestItem RequestItem = null;
             CswNbtMetaDataObjectClass RequestItemOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestItemClass );
             CswNbtMetaDataNodeType RequestItemNT = RequestItemOC.getNodeTypes().FirstOrDefault();
@@ -688,6 +690,7 @@ namespace ChemSW.Nbt.Actions
         /// </summary>
         public CswNbtObjClassRequestItem makeEnterprisePartRequestItem( CswNbtObjClassEnterprisePart EnterprisePart, CswNbtObjClass.NbtButtonData ButtonData )
         {
+            checkForCentralInventoryGroups( _CswNbtResources );
             CswNbtObjClassRequestItem RequestItem = null;
             CswNbtMetaDataObjectClass RequestItemOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestItemClass );
             CswNbtMetaDataNodeType RequestItemNT = RequestItemOC.getNodeTypes().FirstOrDefault();
@@ -742,6 +745,21 @@ namespace ChemSW.Nbt.Actions
                 FilterMode: CswEnumNbtFilterMode.NotNull );
 
             SizeView.save();
+        }
+
+        public static void checkForCentralInventoryGroups( CswNbtResources _CswNbtResources )
+        {
+            CswNbtView InventoryGroupView = new CswNbtView( _CswNbtResources );
+            CswNbtMetaDataObjectClass InventoryGroupOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.InventoryGroupClass );
+            CswNbtMetaDataObjectClassProp CentralOCP = InventoryGroupOC.getObjectClassProp( CswNbtObjClassInventoryGroup.PropertyName.Central );
+            CswNbtViewRelationship IGVR = InventoryGroupView.AddViewRelationship( InventoryGroupOC, true );
+            InventoryGroupView.AddViewPropertyAndFilter( IGVR, CentralOCP, FilterMode: CswEnumNbtFilterMode.Equals, Value: CswEnumTristate.True );
+            ICswNbtTree IGTree = _CswNbtResources.Trees.getTreeFromView( InventoryGroupView, false, false, true );
+            IGTree.goToRoot();
+            if( IGTree.getChildNodeCount() == 0 )
+            {
+                throw new CswDniException( CswEnumErrorType.Warning, "Unable to make requests because there are no central Inventory Groups.", "Can't Request without at least one Central Inventory Group defined." );
+            }
         }
 
         #endregion
