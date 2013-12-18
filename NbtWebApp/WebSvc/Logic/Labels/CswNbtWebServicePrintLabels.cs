@@ -549,7 +549,7 @@ namespace ChemSW.Nbt.WebServices
                                     TemplateValue = _getGhsPictosForLabel( NbtResources, Node, Scale, NoBorder );
                                 }
                             }
-                            else if( SqlResultRow.Table.Columns.Contains( TemplateName ) )
+                            else if( null != SqlResultRow && SqlResultRow.Table.Columns.Contains( TemplateName ) )
                             {
                                 // Extract template values from SQL script results (case 31308)
                                 TemplateValue = CswConvert.ToString( SqlResultRow[TemplateName] );
