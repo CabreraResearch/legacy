@@ -1625,8 +1625,6 @@ namespace ChemSW.Nbt.MetaData
             DataTable ViewsTable = ViewsUpdate.getTable( SelectCols );
             foreach( DataRow CurrentRow in ViewsTable.Rows )
             {
-                //CswNbtView CurrentView = new CswNbtView(_CswNbtResources);
-                //CurrentView.LoadXml(CswConvert.ToInt32(CurrentRow["nodeviewid"].ToString()));
                 CswNbtView CurrentView = _CswNbtMetaDataResources.CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( CswConvert.ToInt32( CurrentRow["nodeviewid"] ) ) );
                 if( CurrentView.ContainsNodeType( NodeType ) )
                 {
@@ -1756,7 +1754,7 @@ namespace ChemSW.Nbt.MetaData
                 CswCommaDelimitedString SelectCols = new CswCommaDelimitedString();
                 SelectCols.Add( "nodeviewid" );
                 SelectCols.Add( "viewxml" );
-                DataTable ViewsTable = ViewsUpdate.getTable( SelectCols );
+                DataTable ViewsTable = ViewsUpdate.getTable( "where nodeviewid = " + NodeTypeProp.ViewId.get() + " or viewxml like '%nodetypepropid=\"" + NodeTypeProp.PropId + "\"%'", false );
                 foreach( DataRow CurrentRow in ViewsTable.Rows )
                 {
                     if( CurrentRow.RowState != DataRowState.Deleted )
@@ -1765,10 +1763,14 @@ namespace ChemSW.Nbt.MetaData
                         CurrentView.LoadXml( CurrentRow["viewxml"].ToString() );
                         CurrentView.ViewId = new CswNbtViewId( CswConvert.ToInt32( CurrentRow["nodeviewid"] ) );
 
-                        if( CurrentView.ContainsNodeTypeProp( NodeTypeProp ) || CurrentView.ViewId == NodeTypeProp.ViewId )
+                        if( CurrentView.ContainsNodeTypeProp( NodeTypeProp ) )
                         {
                             CurrentView.removeViewProperty( NodeTypeProp );
                             CurrentView.save();
+                        }
+                        else if( CurrentView.ViewId == NodeTypeProp.ViewId )
+                        {
+                            CurrentView.Delete();
                         }
                     }
                 }

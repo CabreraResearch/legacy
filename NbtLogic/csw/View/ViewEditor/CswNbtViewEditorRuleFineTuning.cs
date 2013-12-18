@@ -42,12 +42,28 @@ namespace ChemSW.Nbt.ViewEditor
                         if( asRelationship.SecondType == CswEnumNbtViewRelatedIdType.NodeTypeId )
                         {
                             CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( asRelationship.SecondId );
-                            Return.Step6.Properties = _getProps( NodeType, TempView, new HashSet<string>(), asRelationship );
+                            foreach( CswNbtViewProperty prop in _getProps( NodeType, TempView, new HashSet<string>(), asRelationship ) )
+                            {
+                                if( ( ( CswEnumNbtViewRenderingMode.Tree == Request.CurrentView.ViewMode || CswEnumNbtViewRenderingMode.List == Request.CurrentView.ViewMode ) && CswEnumNbtFieldType.Button != prop.FieldType ) ||
+                                    CswEnumNbtViewRenderingMode.Grid == Request.CurrentView.ViewMode || CswEnumNbtViewRenderingMode.Table == Request.CurrentView.ViewMode )
+                                {
+
+                                    Return.Step6.Properties.Add( prop );
+                                }
+                            }
                         }
                         else if( asRelationship.SecondType == CswEnumNbtViewRelatedIdType.ObjectClassId )
                         {
                             CswNbtMetaDataObjectClass ObjClass = _CswNbtResources.MetaData.getObjectClass( asRelationship.SecondId );
-                            Return.Step6.Properties = _getProps( ObjClass, TempView, new HashSet<string>(), asRelationship );
+                            foreach( CswNbtViewProperty prop in _getProps( ObjClass, TempView, new HashSet<string>(), asRelationship ) )
+                            {
+                                if( ( ( CswEnumNbtViewRenderingMode.Tree == Request.CurrentView.ViewMode || CswEnumNbtViewRenderingMode.List == Request.CurrentView.ViewMode ) && CswEnumNbtFieldType.Button != prop.FieldType ) ||
+                                    CswEnumNbtViewRenderingMode.Grid == Request.CurrentView.ViewMode || CswEnumNbtViewRenderingMode.Table == Request.CurrentView.ViewMode )
+                                {
+
+                                    Return.Step6.Properties.Add( prop );
+                                }
+                            }
                         }
                         else
                         {
@@ -57,7 +73,11 @@ namespace ChemSW.Nbt.ViewEditor
                             {
                                 foreach( CswNbtViewProperty prop in _getProps( ObjClass, TempView, seenProps, asRelationship ).OrderBy( prop => prop.TextLabel ) )
                                 {
-                                    Return.Step6.Properties.Add( prop );
+                                    if( ( ( CswEnumNbtViewRenderingMode.Tree == Request.CurrentView.ViewMode || CswEnumNbtViewRenderingMode.List == Request.CurrentView.ViewMode ) && CswEnumNbtFieldType.Button != prop.FieldType ) ||
+                                        CswEnumNbtViewRenderingMode.Grid == Request.CurrentView.ViewMode || CswEnumNbtViewRenderingMode.Table == Request.CurrentView.ViewMode )
+                                    {
+                                        Return.Step6.Properties.Add( prop );
+                                    }
                                 }
                             }
                         }
@@ -83,7 +103,7 @@ namespace ChemSW.Nbt.ViewEditor
                         }
                         Return.Step6.RootNode = (CswNbtViewRoot) foundNode;
                     }
-                    else if( foundNode is CswNbtViewProperty )
+                    else if( foundNode is CswNbtViewProperty && CswEnumNbtFieldType.Button != ( (CswNbtViewProperty) foundNode ).FieldType )
                     {
                         Return.Step6.PropertyNode = (CswNbtViewProperty) foundNode;
                         Request.Relationship = (CswNbtViewRelationship) foundNode.Parent; //getFilterProps needs Request.Relationship to be populated
@@ -125,10 +145,10 @@ namespace ChemSW.Nbt.ViewEditor
                 if( false == _hasFilter( propNode ) )
                 {
                     CurrentView.AddViewPropertyFilter( propNode,
-                                                       Conjunction: (CswEnumNbtFilterConjunction) Request.FilterConjunction,
-                                                       SubFieldName: (CswEnumNbtSubFieldName) Request.FilterSubfield,
-                                                       FilterMode: (CswEnumNbtFilterMode) Request.FilterMode,
-                                                       Value: Request.FilterValue
+                                                       Conjunction : (CswEnumNbtFilterConjunction) Request.FilterConjunction,
+                                                       SubFieldName : (CswEnumNbtSubFieldName) Request.FilterSubfield,
+                                                       FilterMode : (CswEnumNbtFilterMode) Request.FilterMode,
+                                                       Value : Request.FilterValue
                         );
                 }
             }
