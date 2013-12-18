@@ -485,6 +485,9 @@ namespace ChemSW.Nbt.ChemCatCentral {
         private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string[] AllC3ProductPropertiesField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
         private bool AuthenticatedField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
@@ -548,6 +551,19 @@ namespace ChemSW.Nbt.ChemCatCentral {
             }
             set {
                 this.extensionDataField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string[] AllC3ProductProperties {
+            get {
+                return this.AllC3ProductPropertiesField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.AllC3ProductPropertiesField, value) != true)) {
+                    this.AllC3ProductPropertiesField = value;
+                    this.RaisePropertyChanged("AllC3ProductProperties");
+                }
             }
         }
         
