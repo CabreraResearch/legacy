@@ -7,8 +7,8 @@
         (function _preCtor() {
             cswPrivate.title = cswPrivate.title || 'Accept or Decline';
             cswPrivate.name = cswPrivate.name || 'ConfirmDialog',
-            cswPrivate.height = cswPrivate.height || 400;
-            cswPrivate.width = cswPrivate.width || 600;
+            cswPrivate.height = cswPrivate.height || 500;
+            cswPrivate.width = cswPrivate.width || 500;
             cswPrivate.message = cswPrivate.message || '';
             cswPrivate.gridData = cswPrivate.gridData || null; // { fields: [], columns: [], data: [] }
             cswPrivate.onOpen = cswPrivate.onOpen || function () { };
@@ -28,8 +28,8 @@
             });
             inputDialog.open();
             
-            //inputDialog.div.span({ text: cswPrivate.message, align: 'center' });
-            //inputDialog.div.br({ number: 2 });
+            inputDialog.div.span({ text: cswPrivate.message, align: 'center' });
+            inputDialog.div.br({ number: 2 });
 
             if (false === Csw.isNullOrEmpty(cswPrivate.gridData)) {
                 var fieldTable = inputDialog.div.table();
@@ -43,10 +43,13 @@
                     },
                     pageSize: 25,
                     showActionColumn: false,
-                    width: 500,
+                    width: 450,
                     height: 300,
+                    stateful: false
                 });
             }
+            
+            inputDialog.div.br({ number: 2 });
 
             inputDialog.div.button({
                 enabledText: 'Yes',

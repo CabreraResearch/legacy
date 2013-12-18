@@ -547,7 +547,7 @@ namespace ChemSW.Nbt.Actions
             return getSizeNodeProps( CswNbtResources, SizeNodeTypeId, SizeObj, WriteNode, out SizeNode );
         }
 
-        public static JObject getSizeNodeProps( CswNbtResources CswNbtResources, Int32 SizeNodeTypeId, JObject SizeObj, bool WriteNode, out CswNbtNode SizeNode )
+        public static JObject getSizeNodeProps( CswNbtResources CswNbtResources, Int32 SizeNodeTypeId, JObject SizeObj, bool WriteNode, out CswNbtNode SizeNode, CswPrimaryKey MaterialId = null )
         {
             JObject Ret = new JObject();
 
@@ -563,6 +563,7 @@ namespace ChemSW.Nbt.Actions
                         NodeAsSize.QuantityEditable.Checked = CswConvert.ToTristate( SizeObj["quantityEditable"]["value"] );
                         NodeAsSize.Dispensable.Checked = CswConvert.ToTristate( SizeObj["dispensible"]["value"] );
                         NodeAsSize.UnitCount.Value = CswConvert.ToDouble( SizeObj["unitCount"]["value"] );
+                        NodeAsSize.Material.RelatedNodeId = MaterialId;
                     } );
             }
             else
@@ -613,14 +614,8 @@ namespace ChemSW.Nbt.Actions
                     Int32 SizeNtId = CswConvert.ToInt32( SizeObj["nodeTypeId"]["value"] );
                     if( Int32.MinValue != SizeNtId )
                     {
-                        getSizeNodeProps( _CswNbtResources, SizeNtId, SizeObj, false, out SizeNode );
-                        if( null != SizeNode )
-                        {
-                            CswNbtObjClassSize NodeAsSize = SizeNode;
-                            NodeAsSize.Material.RelatedNodeId = MaterialNode.NodeId;
-                            SizeNode.postChanges( true );
-                        }
-                        else
+                        getSizeNodeProps( _CswNbtResources, SizeNtId, SizeObj, false, out SizeNode, MaterialNode.NodeId );
+                        if( null == SizeNode )
                         {
                             SizesArray.Remove( SizeObj );
                         }

@@ -340,16 +340,16 @@
                                     cswPrivate.confirmDialog = Csw.dialogs.confirmDialog({
                                         name: 'ConfirmDeleteNodes',
                                         title: 'Delete Existing Nodes?',
-                                        message: 'Would you like to delete any existing nodes in the system? The following will be deleted if you accept.',
+                                        message: 'The following nodes will be deleted if you accept. This is a permanent and irrevocable action.',
                                         gridData: {
                                             fields: [
                                                 { name: 'nodeid', type: 'number' },
                                                 { name: 'nodename', type: 'string' },
                                                 { name: 'nodetype', type: 'string' }],
                                             columns: [
-                                                { header: 'NodeId', dataIndex: 'nodeid' },
-                                                { header: 'Name', dataIndex: 'nodename' },
-                                                { header: 'NodeType', dataIndex: 'nodetype' }
+                                                { header: 'NodeId', dataIndex: 'nodeid', width: 70 },
+                                                { header: 'Name', dataIndex: 'nodename', flex: 1 },
+                                                { header: 'NodeType', dataIndex: 'nodetype', width: 200 }
                                             ],
                                             items: data.NodesToDelete
                                         },
