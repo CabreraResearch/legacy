@@ -483,12 +483,22 @@
             }
             Csw.extend(cswDlgPrivate, options);
 
+            //Case 31402 - set cookies to this nodeid and store the previous ones
+            var prevNodeId = Csw.cookie.get(Csw.cookie.cookieNames.CurrentNodeId);
+            var prevNodeKey = Csw.cookie.get(Csw.cookie.cookieNames.CurrentNodeKey);
+            Csw.cookie.set(Csw.cookie.cookieNames.CurrentNodeId, cswDlgPrivate.currentNodeId);
+            Csw.cookie.set(Csw.cookie.cookieNames.CurrentNodeKey, cswDlgPrivate.currentNodeKey);
+
             var doRefresh = true;
             var cswPublic = {
                 closed: false,
                 div: Csw.literals.div({ ID: window.Ext.id() }), //Case 28799 - we have to differentiate dialog div Ids from each other
                 close: function () {
                     if (false === cswPublic.closed && doRefresh) {
+                        //Case 31402 - when we close the dialog, set the cookies to the node on the main screen
+                        Csw.cookie.set(Csw.cookie.cookieNames.CurrentNodeId, prevNodeId);
+                        Csw.cookie.set(Csw.cookie.cookieNames.CurrentNodeKey, prevNodeKey);
+
                         cswPublic.closed = true;
                         //cswPublic.tabsAndProps.refresh(null, null);
                         cswPublic.tabsAndProps.tearDown();
@@ -1568,7 +1578,7 @@
                 onImpersonate: null
             };
             if (options) Csw.extend(o, options);
-            
+
             var div = Csw.literals.div().empty(),
                 form = div.form(),
                 table = form.table();
@@ -1626,7 +1636,7 @@
                     } // success
                 }); // ajax
             }//onOpen()
-            
+
             function getUserSelText(sel) {
                 var text = '';
                 if (sel.selectedText) {
