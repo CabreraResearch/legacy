@@ -429,6 +429,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterCreateNode()
         {
+            _updateCartCounts();
             _CswNbtObjClassDefault.afterCreateNode();
         }
 
@@ -788,7 +789,10 @@ namespace ChemSW.Nbt.ObjClasses
                         break;
                 }
             }
-            _updateCartCounts();
+            if( false == Creating )
+            {
+                _updateCartCounts();
+            }
         }
         public CswNbtNodePropList Type { get { return _CswNbtNode.Properties[PropertyName.Type]; } }
         private void _onTypePropChange( CswNbtNodeProp Prop, bool Creating )
