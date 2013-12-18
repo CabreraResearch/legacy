@@ -39,7 +39,6 @@ namespace ChemSW.Nbt
             //   Containers
             //   Approved for Receiving
             //   Receive (button)
-            //   Request (button)
             //   Storage Compatibility
             CswNbtMetaDataPropertySet MaterialSet = _CswNbtResources.MetaData.getPropertySet( CswEnumNbtPropertySetName.MaterialSet );
             foreach( CswNbtMetaDataObjectClass materialOC in MaterialSet.getObjectClasses() )
@@ -57,7 +56,6 @@ namespace ChemSW.Nbt
                     _CswNbtResources.Modules.ShowProp( materialNT.NodeTypeId, CswNbtObjClassChemical.PropertyName.ApprovedForReceiving );
 
                     _CswNbtResources.Modules.ShowProp( materialNT.NodeTypeId, CswNbtObjClassChemical.PropertyName.Receive );
-                    _CswNbtResources.Modules.ShowProp( materialNT.NodeTypeId, CswNbtObjClassChemical.PropertyName.Request );
 
                     _CswNbtResources.Modules.ShowProp( materialNT.NodeTypeId, CswNbtObjClassChemical.PropertyName.StorageCompatibility );
                 }
@@ -77,12 +75,7 @@ namespace ChemSW.Nbt
             //Show Print Labels with a dependent NodeType
             _CswNbtResources.Modules.TogglePrintLabels( false, CswEnumNbtModuleName.Containers );
 
-            //Show the request fulfiller Role/User
-            _CswNbtResources.Modules.ToggleRoleNodes( false, "request_fulfiller" );
-            _CswNbtResources.Modules.ToggleUserNodes( false, "request_fulfiller" );
-
             // Case 28930 - Enable Scheduled Rules
-            _CswNbtResources.Modules.ToggleScheduledRule( CswEnumNbtScheduleRuleNames.GenRequest, Disabled : false );
             _CswNbtResources.Modules.ToggleScheduledRule( CswEnumNbtScheduleRuleNames.ExpiredContainers, Disabled : false );
             _CswNbtResources.Modules.ToggleScheduledRule( CswEnumNbtScheduleRuleNames.ContainerReconciliationActions, Disabled : false );
         }
@@ -111,7 +104,6 @@ namespace ChemSW.Nbt
             //   Containers
             //   Approved for Receiving
             //   Receive (button)
-            //   Request (button)
             //   Storage Compatibility
             CswNbtMetaDataPropertySet MaterialSet = _CswNbtResources.MetaData.getPropertySet( CswEnumNbtPropertySetName.MaterialSet );
             foreach( CswNbtMetaDataObjectClass materialOC in MaterialSet.getObjectClasses() )
@@ -128,7 +120,6 @@ namespace ChemSW.Nbt
 
                     _CswNbtResources.Modules.HideProp( materialNT.NodeTypeId, CswNbtObjClassChemical.PropertyName.ApprovedForReceiving );
                     _CswNbtResources.Modules.HideProp( materialNT.NodeTypeId, CswNbtObjClassChemical.PropertyName.Receive );
-                    _CswNbtResources.Modules.HideProp( materialNT.NodeTypeId, CswNbtObjClassChemical.PropertyName.Request );
                     _CswNbtResources.Modules.HideProp( materialNT.NodeTypeId, CswNbtObjClassChemical.PropertyName.StorageCompatibility );
                 }
             }
@@ -151,12 +142,7 @@ namespace ChemSW.Nbt
             //Hide Print Labels with a dependent NodeType
             _CswNbtResources.Modules.TogglePrintLabels( true, CswEnumNbtModuleName.Containers );
 
-            //Hide the request fulfiller Role/User
-            _CswNbtResources.Modules.ToggleRoleNodes( true, "request_fulfiller" );
-            _CswNbtResources.Modules.ToggleUserNodes( true, "request_fulfiller" );
-
             // Case 28930 - Disable Scheduled Rules
-            _CswNbtResources.Modules.ToggleScheduledRule( CswEnumNbtScheduleRuleNames.GenRequest, Disabled : true );
             _CswNbtResources.Modules.ToggleScheduledRule( CswEnumNbtScheduleRuleNames.ExpiredContainers, Disabled : true );
             _CswNbtResources.Modules.ToggleScheduledRule( CswEnumNbtScheduleRuleNames.ContainerReconciliationActions, Disabled : true );
         } // OnDisable()

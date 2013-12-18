@@ -36,6 +36,7 @@ namespace ChemSW.Nbt
             {NBTManager               , NBTManager},
             {PCIDSync                 , PCIDSync},
             {RegulatoryLists          , RegulatoryLists},
+            {Requesting               , Requesting},
             {SDS                      , SDS},
             {SI                       , SI}
         };
@@ -129,6 +130,10 @@ namespace ChemSW.Nbt
         /// Regulatory Lists
         /// </summary>
         public const string RegulatoryLists = "Regulatory Lists";
+        /// <summary>
+        /// Requesting
+        /// </summary>
+        public const string Requesting = "Requesting";
         /// <summary>
         /// Module that allows fire and hazard reporting on containers
         /// </summary>
