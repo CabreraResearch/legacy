@@ -173,38 +173,29 @@ namespace ChemSW.Nbt.ViewEditor
                                     if( related.getRelatedType() == CswEnumNbtViewRelatedIdType.NodeTypeId )
                                     {
                                         CswNbtMetaDataNodeType ownerNT = _CswNbtResources.MetaData.getNodeType( relatedTargetId );
-                                        foreach( CswNbtMetaDataNodeTypeProp ntp in ownerNT.getNodeTypeProps() )
+                                        foreach( CswNbtMetaDataNodeTypeProp ntp in ownerNT.getNodeTypeProps().Where( ntp => ntp.PropName == prop.PropName ) )
                                         {
-                                            if( ntp.PropName == prop.PropName )
+                                            CswNbtViewRelationship parentRel = (CswNbtViewRelationship) CurrentView.FindViewNodeByArbitraryId( related.ParentArbitraryId );
+                                            CswNbtViewRelationship relToAddPropTo = relationship.findChildRelationshipByNodeTypeId( relatedTargetId );
+                                            if( null == relToAddPropTo )
                                             {
-                                                CswNbtViewRelationship parentRel = (CswNbtViewRelationship) CurrentView.FindViewNodeByArbitraryId( related.ParentArbitraryId );
-                                                CswNbtViewRelationship relToAddPropTo = relationship.findChildRelationshipByNodeTypeId( relatedTargetId );
-                                                if( null == relToAddPropTo )
-                                                {
-                                                    relToAddPropTo = CurrentView.AddViewRelationship( parentRel, related.PropOwner, relProp, false );
-                                                }
-                                                CurrentView.AddViewProperty( relToAddPropTo, ntp );
+                                                relToAddPropTo = CurrentView.AddViewRelationship( parentRel, related.PropOwner, relProp, false );
                                             }
+                                            CurrentView.AddViewProperty( relToAddPropTo, ntp );
                                         }
                                     }
                                     else if( related.getRelatedType() == CswEnumNbtViewRelatedIdType.ObjectClassId )
                                     {
                                         CswNbtMetaDataObjectClass ownerOC = _CswNbtResources.MetaData.getObjectClass( relatedTargetId );
-                                        foreach( CswNbtMetaDataNodeType nt in ownerOC.getNodeTypes() )
+                                        foreach( CswNbtMetaDataObjectClassProp ocp in ownerOC.getObjectClassProps().Where( ocp => ocp.PropName == prop.PropName ) )
                                         {
-                                            foreach( CswNbtMetaDataNodeTypeProp ntp in nt.getNodeTypeProps() )
+                                            CswNbtViewRelationship parentRel = (CswNbtViewRelationship) CurrentView.FindViewNodeByArbitraryId( related.ParentArbitraryId );
+                                            CswNbtViewRelationship relToAddPropTo = relationship.findChildRelationshipByObjClassId( relatedTargetId );
+                                            if( null == relToAddPropTo )
                                             {
-                                                if( ntp.PropName == prop.PropName )
-                                                {
-                                                    CswNbtViewRelationship parentRel = (CswNbtViewRelationship) CurrentView.FindViewNodeByArbitraryId( related.ParentArbitraryId );
-                                                    CswNbtViewRelationship relToAddPropTo = relationship.findChildRelationshipByObjClassId( relatedTargetId );
-                                                    if( null == relToAddPropTo )
-                                                    {
-                                                        relToAddPropTo = CurrentView.AddViewRelationship( parentRel, related.PropOwner, relProp, false );
-                                                    }
-                                                    CurrentView.AddViewProperty( relToAddPropTo, ntp );
-                                                }
+                                                relToAddPropTo = CurrentView.AddViewRelationship( parentRel, related.PropOwner, relProp, false );
                                             }
+                                            CurrentView.AddViewProperty( relToAddPropTo, ocp );
                                         }
                                     }
                                     else

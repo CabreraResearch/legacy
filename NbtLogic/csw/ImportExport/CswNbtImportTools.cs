@@ -5,6 +5,7 @@ using System.Collections.Specialized;
 using System.Data;
 using System.Data.OleDb;
 using System.ServiceModel;
+using System.Text.RegularExpressions;
 using ChemSW.Config;
 using ChemSW.Core;
 using ChemSW.DB;
@@ -101,11 +102,13 @@ namespace ChemSW.Nbt.csw.ImportExport
 
             string CAFSql = generateCAFSql( _CswNbtResources );
 
-            //add a / before the first trigger and split the file into an array of strings on / chars (breaking off potential PL/SQL blocks)
-            string[] SQLCommands = CAFSql
-                                      .Replace( ");\r\n\r\n\r\ncreate or replace trigger", ");\r\n\r\n\r\n/\r\ncreate or replace trigger" )
-                                      .Replace( "create or replace procedure", "\r\n/\r\ncreate or replace procedure" )
-                                      .Split( new[] { "\r\n/" }, StringSplitOptions.RemoveEmptyEntries );
+            //add a / before the first trigger and split the file into an array of strings on space-only preceded / chars (breaking off potential PL/SQL blocks)
+            string[] SQLCommands = Regex.Split( CAFSql
+                             .Replace( ");\r\n\r\n\r\ncreate or replace trigger", ");\r\n\r\n\r\n/\r\ncreate or replace trigger" )
+                             .Replace( "create or replace procedure", "\r\n/\r\ncreate or replace procedure" ),
+                         @"\s+/" );
+            
+                                      
 
             foreach( string SQLCommand in SQLCommands )
             {   //if the string starts with any of these, it's a PL/SQL block and can be sent as-is

@@ -12,7 +12,6 @@ using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.ServiceDrivers;
-using ChemSW.Nbt.UnitsOfMeasure;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.ObjClasses
@@ -188,7 +187,7 @@ namespace ChemSW.Nbt.ObjClasses
                 }
                 return SelectedNodeId;
             };
-            PhysicalState.SetOnPropChange( _onPhysicalStatePropChange );
+            //PhysicalState.SetOnPropChange( _onPhysicalStatePropChange );
             CasNo.SetOnPropChange( _onCasNoPropChange );
         }
 
@@ -1145,18 +1144,18 @@ namespace ChemSW.Nbt.ObjClasses
         #region Object class specific properties
 
         public CswNbtNodePropList PhysicalState { get { return _CswNbtNode.Properties[PropertyName.PhysicalState]; } }
-        private void _onPhysicalStatePropChange( CswNbtNodeProp prop, bool Creating )
-        {
-            if( false == String.IsNullOrEmpty( PhysicalState.Value ) )
-            {
-                CswNbtUnitViewBuilder Vb = new CswNbtUnitViewBuilder( _CswNbtResources );
-                CswNbtView unitsOfMeasureView = Vb.getQuantityUnitOfMeasureView( _CswNbtNode.NodeId );
-                if( null != unitsOfMeasureView )
-                {
-                    unitsOfMeasureView.save();
-                }
-            }
-        }
+        //private void _onPhysicalStatePropChange( CswNbtNodeProp prop, bool Creating )
+        //{
+        //if( false == String.IsNullOrEmpty( PhysicalState.Value ) )
+        //{
+        //    CswNbtUnitViewBuilder Vb = new CswNbtUnitViewBuilder( _CswNbtResources );
+        //    CswNbtView unitsOfMeasureView = Vb.getQuantityUnitOfMeasureView( _CswNbtNode.NodeId );
+        //    if( null != unitsOfMeasureView )
+        //    {
+        //        unitsOfMeasureView.save();
+        //    }
+        //}
+        //}
         public CswNbtNodePropNumber SpecificGravity { get { return _CswNbtNode.Properties[PropertyName.SpecificGravity]; } }
         public CswNbtNodePropImageList StorageCompatibility { get { return ( _CswNbtNode.Properties[PropertyName.StorageCompatibility] ); } }
         public CswNbtNodePropQuantity ExpirationInterval { get { return ( _CswNbtNode.Properties[PropertyName.ExpirationInterval] ); } }
