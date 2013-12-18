@@ -1658,6 +1658,7 @@
                 title: '',
                 nodetypeid: '',
                 objectclassid: '',
+                propertysetid: '',
                 onSelectNode: null,
                 onClose: function () { }
             };
@@ -1679,6 +1680,7 @@
                 name: cswDlgPrivate.name,
                 nodetypeid: cswDlgPrivate.nodetypeid,
                 objectclassid: cswDlgPrivate.objectclassid,
+                propertysetid: cswDlgPrivate.propertysetid,
                 onBeforeSearch: function () { },
                 onAfterSearch: function () { },
                 onAfterNewSearch: function (searchid) { },

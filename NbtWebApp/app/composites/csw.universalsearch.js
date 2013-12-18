@@ -10,6 +10,7 @@
             searchFiltersParent: {},
             nodetypeid: '',       // automatically filter results to this nodetype
             objectclassid: '',    // automatically filter results to this objectclass
+            propertysetid: '',    // automatically filter results to this propertyset
             allowNodeTypeChange: true,  // allowed to change which nodetype is filtered
             onBeforeSearch: null,
             onAfterSearch: null,
@@ -238,6 +239,7 @@
                     SearchType: cswPrivate.searchtype,
                     NodeTypeId: cswPrivate.nodetypeid,
                     ObjectClassId: cswPrivate.objectclassid,
+                    PropertySetId: cswPrivate.propertysetid,
                     OnlyMergeableNodeTypes: cswPrivate.onlyMergeableNodeTypes,
                     Page: '0',
                     Limit: '0',
