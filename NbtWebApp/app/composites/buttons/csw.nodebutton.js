@@ -119,7 +119,7 @@
                             title: actionJson.titleText,
                             onSaveImmediate: function () {
                                 Csw.publish('onAnyNodeButtonClickFinish', true);
-                                Csw.publish(Csw.enums.events.main.refreshHeader);
+                                Csw.dialogs.goToCart({requestName: actionJson.titleText}).open();
                             }
                         });
                         break;

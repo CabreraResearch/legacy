@@ -36,6 +36,7 @@
             optsNodeSelect.viewid = nodeProperty.propData.values.viewid;
             optsNodeSelect.objectClassId = nodeProperty.propData.values.objectclassid;
             optsNodeSelect.allowAdd = nodeProperty.propData.values.allowadd;
+            optsNodeSelect.hideNodeLink = false === nodeProperty.propData.values.allowview;
             optsNodeSelect.options = nodeProperty.propData.values.options;
             optsNodeSelect.useSearch = nodeProperty.propData.values.usesearch;
             optsNodeSelect.cellCol = 1;
