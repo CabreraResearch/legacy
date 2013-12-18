@@ -17,6 +17,7 @@ namespace ChemSW.Nbt.Search
 
         public static readonly CswEnumNbtSearchFilterType nodetype = new CswEnumNbtSearchFilterType( "nodetype" );
         public static readonly CswEnumNbtSearchFilterType objectclass = new CswEnumNbtSearchFilterType( "objectclass" );
+        public static readonly CswEnumNbtSearchFilterType propertyset = new CswEnumNbtSearchFilterType( "propertyset" );
         public static readonly CswEnumNbtSearchFilterType propval = new CswEnumNbtSearchFilterType( "propval" );
     }
 

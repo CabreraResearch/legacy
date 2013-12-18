@@ -2603,7 +2603,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string doUniversalSearch( string SearchTerm, string SearchType, string NodeTypeId, string ObjectClassId, string Page, string Limit, string OnlyMergeableNodeTypes, List<string> ExcludeNodeIds )
+        public string doUniversalSearch( string SearchTerm, string SearchType, string NodeTypeId, string ObjectClassId, string PropertySetId, string Page, string Limit, string OnlyMergeableNodeTypes, List<string> ExcludeNodeIds )
         {
             JObject ReturnVal = new JObject();
             CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
@@ -2621,6 +2621,7 @@ namespace ChemSW.Nbt.WebServices
                         (CswEnumSqlLikeMode) SearchType,
                         CswConvert.ToInt32( NodeTypeId ),
                         CswConvert.ToInt32( ObjectClassId ),
+                        CswConvert.ToInt32( PropertySetId ),
                         CswConvert.ToInt32( Page ),
                         CswConvert.ToInt32( Limit ),
                         CswConvert.ToBoolean( OnlyMergeableNodeTypes ),

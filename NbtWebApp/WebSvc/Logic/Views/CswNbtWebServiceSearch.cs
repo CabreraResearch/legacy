@@ -85,15 +85,15 @@ namespace ChemSW.Nbt.WebServices
 
         #region UniversalSearch
 
-        public JObject doUniversalSearch( string SearchTerm, CswEnumSqlLikeMode SearchType, Int32 NodeTypeId, Int32 ObjectClassId, Int32 Page, Int32 PageLimit, bool OnlyMergeableNodeTypes, List<string> ExcludeNodeIds )
+        public JObject doUniversalSearch( string SearchTerm, CswEnumSqlLikeMode SearchType, Int32 NodeTypeId, Int32 ObjectClassId, Int32 PropertySetId, Int32 Page, Int32 PageLimit, bool OnlyMergeableNodeTypes, List<string> ExcludeNodeIds )
         {
-            CswNbtSearch Search = getSearch( SearchTerm, SearchType, NodeTypeId, ObjectClassId );
+            CswNbtSearch Search = getSearch( SearchTerm, SearchType, NodeTypeId, ObjectClassId, PropertySetId );
             Search.OnlyMergeableNodeTypes = OnlyMergeableNodeTypes;
             Search.ExcludeNodeIds = ExcludeNodeIds;
             return _finishUniversalSearch( Search, Page, PageLimit );
         }
 
-        public CswNbtSearch getSearch( string SearchTerm, CswEnumSqlLikeMode SearchType, Int32 NodeTypeId, Int32 ObjectClassId )
+        public CswNbtSearch getSearch( string SearchTerm, CswEnumSqlLikeMode SearchType, Int32 NodeTypeId, Int32 ObjectClassId, Int32 PropertySetId )
         {
             CswNbtSearch Search = new CswNbtSearch( _CswNbtResources )
             {
@@ -114,6 +114,14 @@ namespace ChemSW.Nbt.WebServices
                 if( null != ObjectClass )
                 {
                     Search.addFilter( ObjectClass, false );
+                }
+            }
+            if( Int32.MinValue != PropertySetId )
+            {
+                CswNbtMetaDataPropertySet PropertySet = _CswNbtResources.MetaData.getPropertySet( PropertySetId );
+                if( null != PropertySet )
+                {
+                    Search.addFilter( PropertySet, false );
                 }
             }
             return Search;

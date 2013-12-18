@@ -346,6 +346,7 @@
                         propname: cswPrivate.name,
                         nodetypeid: cswPrivate.nodeTypeId,
                         objectclassid: cswPrivate.objectClassId,
+                        propertysetid: cswPrivate.propertySetId,
                         excludeNodeIds: cswPrivate.excludeNodeIds,
                         onSelectNode: function (nodeObj) {
                             cswPrivate.nameSpan.empty();
