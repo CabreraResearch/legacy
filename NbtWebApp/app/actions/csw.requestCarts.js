@@ -222,6 +222,7 @@
                         RequestId: cswPrivate.state.pendingCartId
                     },
                     success: function () {
+                        cswPrivate.getCartCounts();
                         cswPrivate.openTab('Recurring');
                     },
                     error: function () {

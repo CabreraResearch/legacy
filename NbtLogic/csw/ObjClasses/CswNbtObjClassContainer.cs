@@ -276,6 +276,11 @@ namespace ChemSW.Nbt.ObjClasses
                     case PropertyName.Request:
                         if( canContainer( _CswNbtResources, _CswNbtResources.Actions[CswEnumNbtActionName.Submit_Request], getPermissionGroupId() ) )
                         {
+                            CswNbtObjClassInventoryGroup IGNode = _CswNbtResources.Nodes[getPermissionGroupId()];
+                            if( IGNode.Central.Checked != CswEnumTristate.True )
+                            {
+                                throw new CswDniException( CswEnumErrorType.Warning, "Unable to Request " + NodeName + " because it does not belong to a central Inventory Group.", "Container's Inventory Group is not Central" );
+                            }
                             ButtonData.Action = CswEnumNbtButtonAction.request;
                             CswNbtActRequesting RequestAct = new CswNbtActRequesting( _CswNbtResources );
                             HasPermission = true;
@@ -292,7 +297,7 @@ namespace ChemSW.Nbt.ObjClasses
                                 }
                             }
                             CswNbtObjClassRequestItem RequestItem = RequestAct.makeContainerRequestItem( this, ButtonData );
-                            ButtonData.Data["titleText"] = "Add to Cart: " + RequestItem.Type.Value + " " + Barcode.Barcode;
+                            ButtonData.Data["titleText"] = RequestItem.Type.Value + " " + Barcode.Barcode;
                             ButtonData.Data["requestaction"] = ButtonData.SelectedText;
                             ButtonData.Data["requestItemProps"] = RequestAct.getRequestItemAddProps( RequestItem.Node );
                             ButtonData.Data["requestItemNodeTypeId"] = RequestItem.NodeTypeId;
