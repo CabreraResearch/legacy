@@ -357,10 +357,16 @@ namespace ChemSW.Nbt.Actions
                 }
 
                 // Set property values according to choice
-                resultNode.copyPropertyValuesGeneric( Node2 );
-                foreach( MergeInfoData.MergeInfoProperty mergeProp in nodePair.Properties.Where( mergeProp => mergeProp.Choice == 1 ) )
+                foreach( MergeInfoData.MergeInfoProperty mergeProp in nodePair.Properties )
                 {
-                    resultNode.Properties[mergeProp.NodeTypePropId].copyGeneric( Node1.Properties[mergeProp.NodeTypePropId] );
+                    if( 1 == mergeProp.Choice )
+                    {
+                        resultNode.Properties[mergeProp.NodeTypePropId].copyGeneric( Node1.Properties[mergeProp.NodeTypePropId] );
+                    }
+                    else
+                    {
+                        resultNode.Properties[mergeProp.NodeTypePropId].copyGeneric( Node2.Properties[mergeProp.NodeTypePropId] );
+                    }
                 }
 
                 // Set references to new merged node
