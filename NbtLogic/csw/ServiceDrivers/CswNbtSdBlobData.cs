@@ -375,28 +375,34 @@ namespace ChemSW.Nbt.ServiceDrivers
         /// </summary>
         public static void CopyBlobData( CswNbtResources NbtResources, int SourceJctNodePropId, int TargetJctNodePropId )
         {
-            CswTableUpdate blobDataTU = NbtResources.makeCswTableUpdate( "CopyBlobData", "blob_data" );
-            DataTable blobDataDT = blobDataTU.getTable( "where jctnodepropid = " + SourceJctNodePropId );
-            int totalRows = blobDataDT.Rows.Count; //to avoid infinate loop, since we're adding to rows
-            for( int i = 0; i < totalRows; i++ )
+            if( SourceJctNodePropId != TargetJctNodePropId ) //Prevent users from copying themselves
             {
-                DataRow existingRow = blobDataDT.Rows[i];
-                DataRow newRow = blobDataDT.NewRow();
-                foreach( DataColumn col in blobDataDT.Columns )
-                {
-                    if( "jctnodepropid" == col.ColumnName )
-                    {
-                        newRow["jctnodepropid"] = TargetJctNodePropId;
-                    }
-                    else if( col.ColumnName != "blobdataid" )
-                    {
-                        newRow[col] = existingRow[col];
-                    }
-                }
-                blobDataDT.Rows.Add( newRow );
-            }
+                //Clear existing blob data for the prop we're copying to
+                DeleteBlobData( NbtResources, TargetJctNodePropId );
 
-            blobDataTU.update( blobDataDT );
+                CswTableUpdate blobDataTU = NbtResources.makeCswTableUpdate( "CopyBlobData", "blob_data" );
+                DataTable blobDataDT = blobDataTU.getTable( "where jctnodepropid = " + SourceJctNodePropId );
+                int totalRows = blobDataDT.Rows.Count; //to avoid infinate loop, since we're adding to rows
+                for( int i = 0; i < totalRows; i++ )
+                {
+                    DataRow existingRow = blobDataDT.Rows[i];
+                    DataRow newRow = blobDataDT.NewRow();
+                    foreach( DataColumn col in blobDataDT.Columns )
+                    {
+                        if( "jctnodepropid" == col.ColumnName )
+                        {
+                            newRow["jctnodepropid"] = TargetJctNodePropId;
+                        }
+                        else if( col.ColumnName != "blobdataid" )
+                        {
+                            newRow[col] = existingRow[col];
+                        }
+                    }
+                    blobDataDT.Rows.Add( newRow );
+                }
+
+                blobDataTU.update( blobDataDT );
+            }
         }
 
         /// <summary>
