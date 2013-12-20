@@ -302,6 +302,10 @@ namespace ChemSW.Nbt.Search
             addFilter( makeFilter( ObjectClass, Int32.MinValue, Removeable, CswEnumNbtSearchPropOrderSourceType.Unknown ) );
         } // addFilter()
 
+        public void addFilter( CswNbtMetaDataPropertySet PropertySet, bool Removeable )
+        {
+            addFilter( makeFilter( PropertySet, Int32.MinValue, Removeable, CswEnumNbtSearchPropOrderSourceType.Unknown ) );
+        } // addFilter()
 
         public void removeFilter( JObject FilterObj )
         {
@@ -354,6 +358,15 @@ namespace ChemSW.Nbt.Search
                     if( ObjectClassId != Int32.MinValue )
                     {
                         WhereClause += " and t.nodetypeid in (select nodetypeid from nodetypes where objectclassid = " + ObjectClassId.ToString() + @") ";
+                    }
+                }
+                else if( Filter.Type == CswEnumNbtSearchFilterType.propertyset )
+                {
+                    // PropertySet filter
+                    Int32 PropertySetId = Filter.PropertySetId;
+                    if( PropertySetId != Int32.MinValue )
+                    {
+                        WhereClause += " and t.nodetypeid in (select nodetypeid from nodetypes where objectclassid in (select objectclassid from jct_propertyset_objectclass where propertysetid = " + PropertySetId.ToString() + @") )";
                     }
                 }
                 else if( Filter.Type == CswEnumNbtSearchFilterType.propval )
@@ -557,6 +570,21 @@ namespace ChemSW.Nbt.Search
                                                   Removeable,
                                                   Source );
             ret.ObjectClassId = ObjectClass.ObjectClassId;
+            ret.UseMoreLink = false;
+            return ret;
+        }
+
+        private CswNbtSearchFilter makeFilter( CswNbtMetaDataPropertySet PropertySet, Int32 ResultCount, bool Removeable, CswEnumNbtSearchPropOrderSourceType Source )
+        {
+            CswNbtSearchFilter ret = new CswNbtSearchFilter( "Filter To",
+                                                  CswEnumNbtSearchFilterType.propertyset,
+                                                  "PS_" + PropertySet.PropertySetId.ToString(),
+                                                  "All " + PropertySet.Name,
+                                                  ResultCount,
+                                                  PropertySet.IconFileName,
+                                                  Removeable,
+                                                  Source );
+            ret.PropertySetId = PropertySet.PropertySetId;
             ret.UseMoreLink = false;
             return ret;
         }

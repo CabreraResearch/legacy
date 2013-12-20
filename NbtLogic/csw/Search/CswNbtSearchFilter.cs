@@ -52,6 +52,10 @@ namespace ChemSW.Nbt.Search
         [DataMember]
         public Int32 ObjectClassId;
 
+        // for PropertySet Filters
+        [DataMember]
+        public Int32 PropertySetId;
+
         // for PropVal Filters
         [DataMember]
         public Int32 FirstPropVersionId;
@@ -94,6 +98,10 @@ namespace ChemSW.Nbt.Search
             {
                 FilterObj["objectclassid"] = ObjectClassId;
             }
+            if( Int32.MinValue != PropertySetId )
+            {
+                FilterObj["propertysetid"] = PropertySetId;
+            }
 
             return FilterObj;
         } // ToJObject()
@@ -111,6 +119,7 @@ namespace ChemSW.Nbt.Search
             FirstVersionId = CswConvert.ToInt32( FilterObj["firstversionid"] );
             FirstPropVersionId = CswConvert.ToInt32( FilterObj["firstpropversionid"] );
             ObjectClassId = CswConvert.ToInt32( FilterObj["objectclassid"] );
+            PropertySetId = CswConvert.ToInt32( FilterObj["propertysetid"] );
             return FilterObj;
         } // FromJObject()
 

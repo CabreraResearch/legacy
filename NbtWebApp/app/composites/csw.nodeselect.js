@@ -32,6 +32,7 @@
 
             cswPrivate.nodeTypeId = cswPrivate.nodeTypeId || '';
             cswPrivate.objectClassId = cswPrivate.objectClassId || '';
+            cswPrivate.propertySetId = cswPrivate.propertySetId || '';
             cswPrivate.objectClassName = cswPrivate.objectClassName || '';
             cswPrivate.addNodeDialogTitle = cswPrivate.addNodeDialogTitle || '';
 
@@ -110,6 +111,7 @@
                 data: cswPrivate.ajaxData || {
                     NodeTypeId: Csw.number(cswPrivate.nodeTypeId, 0),
                     ObjectClassId: Csw.number(cswPrivate.objectClassId, 0),
+                    PropertySetId: Csw.number(cswPrivate.propertySetId, 0),
                     ObjectClass: Csw.string(cswPrivate.objectClassName),
                     RelatedToObjectClass: Csw.string(cswPrivate.relatedTo.objectClassName),
                     RelatedToNodeId: Csw.string(cswPrivate.relatedTo.nodeId),
@@ -344,6 +346,7 @@
                         propname: cswPrivate.name,
                         nodetypeid: cswPrivate.nodeTypeId,
                         objectclassid: cswPrivate.objectClassId,
+                        propertysetid: cswPrivate.propertySetId,
                         excludeNodeIds: cswPrivate.excludeNodeIds,
                         onSelectNode: function (nodeObj) {
                             cswPrivate.nameSpan.empty();
@@ -462,6 +465,7 @@
                         ViewId: Csw.string(cswPrivate.viewid),
                         NodeTypeId: Csw.number(cswPrivate.nodeTypeId, 0),
                         ObjectClassId: Csw.number(cswPrivate.objectClassId, 0),
+                        PropertySetId: Csw.number(cswPrivate.propertySetId, 0),
                         ObjectClass: Csw.string(cswPrivate.objectClassName),
                         RelatedToObjectClass: Csw.string(cswPrivate.relatedTo.objectClassName),
                         RelatedToNodeId: Csw.string(cswPrivate.relatedTo.nodeId)
