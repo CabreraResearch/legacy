@@ -289,6 +289,9 @@ namespace ChemSW.Nbt.Sched
                     case "weight_view":
                         WhenClause = "lower(new.unittype)='weight'";
                         break;
+                    case "containers_view":
+                        WhenClause = "new.containerclass != 'lotholder'";
+                        break;
                 }
 
 
