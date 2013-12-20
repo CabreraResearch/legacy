@@ -1,5 +1,5 @@
 begin
-  execute immediate 'drop table nbtimportqueue';
+	execute immediate 'drop table nbtimportqueue';
   exception when others then null;
 end;
 /
@@ -566,8 +566,7 @@ select
    when 'USA/en'     then 'en'
   end) as language_trans
  from documents d2 
-       join materials m on m.materialid = d2.materialid
-       join packages p on m.materialid = p.packageid
+       join packages p on p.materialid = d2.materialid
        where d2.packageid is null and doctype = 'MSDS' and d2.deleted = 0
 )
 );
