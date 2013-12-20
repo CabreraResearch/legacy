@@ -40,7 +40,7 @@ namespace ChemSW.Nbt.WebServices
     public class CswNbtWebServiceSerialBalance
     {
 
-        public static void UpdateBalanceData( ICswResources CswResources, CswNbtBalanceReturn Return, SerialBalance Request )
+        public static void UpdateBalanceData( ICswResources CswResources, SerialBalance Return, SerialBalance Request )
         {
 
             CswNbtResources NbtResources = (CswNbtResources) CswResources;
@@ -93,6 +93,10 @@ namespace ChemSW.Nbt.WebServices
                     AfterBalance(Balance.Node);
                     Balance.postChanges( false );
                 }
+
+                //return the requested balance back, plus what nodeId it was assigned
+                Return = Request;
+                Return.NodeId = Balance.NodeId.PrimaryKey.ToString();
 
             }//if ( null != BalanceOC )
 

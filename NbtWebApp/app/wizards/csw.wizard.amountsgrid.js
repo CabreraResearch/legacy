@@ -157,6 +157,24 @@
                                 cswPrivate.quantity.qtyWidth = (7 * 8) + 'px'; //7 characters wide, 8 is the characters-to-pixels ratio
                                 cswPrivate.quantity.isReadOnly = cswPrivate.quantity.qtyReadonly;
 
+                                if (null != Csw.currentUser.defaults().DefaultBalanceId) {
+                                    Csw.ajaxWcf.post({
+                                        urlMethod: 'Balances/getBalanceInformation',
+                                        data: Csw.currentUser.defaults().DefaultBalanceId,
+                                        success: function (data) {
+                                            var Balance = data.BalanceList[0];
+                                            if (Balance.IsActive) {
+                                                cswPublic.rows[rowid].balanceControl.setText(Balance.NbtName);
+                                                cswPublic.rows[rowid].balanceControl.setHandler(function () { getBalanceInformation(Balance.NodeId); });
+                                                updateBalanceInterface(Balance);
+                                            } else {
+                                                cswPublic.rows[rowid].balanceControl.setText(Balance.NbtName + " (Inactive)");
+                                            }
+                                        }//success
+                                    });
+                                }//if there is a default balance
+                                
+
                                 if (cellOverride) {
                                     cswPublic.rows[rowid].qtyControl = cellOverride.quantity(cswPrivate.quantity);
                                 } else {

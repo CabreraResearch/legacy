@@ -164,12 +164,12 @@ namespace NbtWebApp
         [WebInvoke( Method = "POST", ResponseFormat = WebMessageFormat.Json )]
         [Description( "Register a serial balance" )]
         [FaultContract( typeof( FaultException ) )]
-        public void UpdateBalanceData( SerialBalance Request )
+        public SerialBalance UpdateBalanceData( SerialBalance Request )
         {
             //delegate has to be static because you can't create an instance yet: you don't have resources until the delegate is actually called
-            CswNbtBalanceReturn Ret = new CswNbtBalanceReturn();
+            SerialBalance Ret = new SerialBalance();
 
-            var SvcDriver = new CswWebSvcDriver<CswNbtBalanceReturn, SerialBalance>(
+            var SvcDriver = new CswWebSvcDriver<SerialBalance, SerialBalance>(
                 CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
                 ReturnObj: Ret,
                 WebSvcMethodPtr: CswNbtWebServiceSerialBalance.UpdateBalanceData,
@@ -177,6 +177,8 @@ namespace NbtWebApp
                 );
 
             SvcDriver.run();
+
+            return Ret;
         }
 
 
