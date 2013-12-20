@@ -242,7 +242,6 @@ namespace ChemSW.Nbt.Sched
             maxInventoryRow["pkcolumnname"] = "inventorybasicid";
             ImportDefinitionsTable.Rows.Add( maxInventoryRow );
 
-
             foreach( DataRow Row in ImportDefinitionsTable.Rows )
             {
                 //we cannot check a view that references the target table from within the trigger, so we need to set values for multiplexed tables and views
@@ -353,6 +352,36 @@ namespace ChemSW.Nbt.Sched
                         /";
             }
 
+
+            //what follows are special cases that they don't have the legacyid of their nbt targets (most of these are tables joined in views for a few columns we map to props)
+            //to handle these, we trigger an empty update on relevant rows of the table joined to these, cascading the triggers back to a table that actually is in the import queue
+            DataTable SupplementaryTriggers = new DataTable();
+            SupplementaryTriggers.Columns.Add( new DataColumn( "triggerName" ) );
+            SupplementaryTriggers.Columns.Add( new DataColumn( "triggerTable" ) );
+            SupplementaryTriggers.Columns.Add( new DataColumn( "triggerColumn" ) );
+            SupplementaryTriggers.Columns.Add( new DataColumn( "joinTable" ) );
+            SupplementaryTriggers.Columns.Add( new DataColumn( "joinTableColumn" ) );
+
+            SupplementaryTriggers.Rows.Add( new object[] { "material_import_trigger", "materials", "materialid", "packages", "materialid" } );
+            SupplementaryTriggers.Rows.Add( new object[] { "mat_subclass_import_trigger", "materials_subclass", "materialsubclassid", "materials", "materialsubclassid"});
+            SupplementaryTriggers.Rows.Add( new object[] { "hazdata_import_trigger", "cispro_hazdata", "materialid", "packages", "materialid"}  );
+            SupplementaryTriggers.Rows.Add( new object[] { "dsdpictos_import_trigger", "jct_pictograms_materials", "materialid", "packages", "materialid"}  );
+            SupplementaryTriggers.Rows.Add( new object[] { "dsdphrases_import_trigger", "jct_rsphrases_materials", "materialid", "packages", "materialid"}  );
+            SupplementaryTriggers.Rows.Add( new object[] { "matprops_import_trigger", "properties_values", "materialid", "packages", "materialid"}  );
+            SupplementaryTriggers.Rows.Add( new object[] { "storagecompat_import_trigger", "jct_graphics_materials", "materialid", "packages", "materialid"}  );
+
+
+            foreach( DataRow Trigger in SupplementaryTriggers.Rows )
+            {
+                Ret += "\r\n\r\ncreate or replace trigger " + Trigger["triggerName"] + @"
+                         after insert or update on " + Trigger["triggerTable"] + @" 
+                       for each row
+                       begin
+                         update " + Trigger["joinTable"] + " set " + Trigger["joinTableColumn"] + " = " + Trigger["joinTableColumn"] + 
+                                  " where " + Trigger["joinTableColumn"] + " = :new." + Trigger["triggerColumn"] + @";
+                       end;
+                        /";
+            }
             return Ret;
         }
 
