@@ -488,7 +488,7 @@ namespace ChemSW.Nbt.PropTypes
 
             CswEnumNbtFieldType FieldType = Source.getFieldTypeValue();
             ICswNbtFieldTypeRule FieldTypeRule = _CswNbtResources.MetaData.getFieldTypeRule( FieldType );
-
+            
             foreach( CswNbtSubField SubField in FieldTypeRule.SubFields )
             {
                 if( SubField.Column == CswEnumNbtPropColumn.Field1_FK )
