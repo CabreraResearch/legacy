@@ -165,8 +165,9 @@
                 cswPrivate.ajaxCollection.push(linkAjax);
             };
 
-            if (false == nodeProperty.isReport() &&
-                nodeProperty.isMulti()) {
+            if (nodeProperty.tabState.EditMode === Csw.enums.editMode.AuditHistoryInPopup ||
+                ( false == nodeProperty.isReport() &&
+                  nodeProperty.isMulti())) {
 
                 nodeProperty.propDiv.append('[Grid display disabled]');
             } else {
