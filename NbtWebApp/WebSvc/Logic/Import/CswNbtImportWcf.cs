@@ -174,6 +174,42 @@ namespace ChemSW.Nbt.WebServices
                 public  Dictionary<string, string> row;
         }
 
+        [DataContract]
+        public class DltExistingNodesReturn : CswWebSvcReturn
+        {
+            public DltExistingNodesReturn()
+            {
+                Data = new DltExistingNodesReturnData();
+            }
+
+            [DataMember( IsRequired = true )]
+            [Description( "" )]
+            public DltExistingNodesReturnData Data;
+
+            [DataContract]
+            public class DltExistingNodesReturnData
+            {
+                [DataMember]
+                public bool DeleteSuccessful { get; set; }
+
+                [DataMember]
+                public Collection<DoomedNode> NodesToDelete = new Collection<DoomedNode>();
+
+                [DataContract]
+                public class DoomedNode
+                {
+                    [DataMember( Name = "nodeid" )]
+                    public Int32 NodeId { get; set; }
+
+                    [DataMember( Name = "nodename" )]
+                    public string NodeName { get; set; }
+
+                    [DataMember( Name = "nodetype" )]
+                    public string NodeType { get; set; }
+                }
+            }
+        }
+
     } // class CswNbtImportWcf
 
 } // namespace ChemSW.Nbt.WebServices

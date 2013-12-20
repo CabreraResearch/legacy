@@ -10,6 +10,7 @@
             searchFiltersParent: {},
             nodetypeid: '',       // automatically filter results to this nodetype
             objectclassid: '',    // automatically filter results to this objectclass
+            propertysetid: '',    // automatically filter results to this propertyset
             allowNodeTypeChange: true,  // allowed to change which nodetype is filtered
             onBeforeSearch: null,
             onAfterSearch: null,
@@ -37,7 +38,8 @@
             filterOutNodeId: null,
             forceSingleColumn: false,
             onlyMergeableNodeTypes: false,
-            excludeNodeIds: [] // exclude specific nodes from the search mechanism
+            excludeNodeIds: [], // exclude specific nodes from the search mechanism
+            showC3SrchPromptText: true // Display the alternative search text or not (client-side filter _only_)
             //buttonSingleColumn: '',
             //buttonMultiColumn: ''
         };
@@ -237,6 +239,7 @@
                     SearchType: cswPrivate.searchtype,
                     NodeTypeId: cswPrivate.nodetypeid,
                     ObjectClassId: cswPrivate.objectclassid,
+                    PropertySetId: cswPrivate.propertysetid,
                     OnlyMergeableNodeTypes: cswPrivate.onlyMergeableNodeTypes,
                     Page: '0',
                     Limit: '0',
@@ -279,7 +282,7 @@
                     });
 
                     //If the C3 module is enabled
-                    if (data.alternateoption) {
+                    if (data.alternateoption && cswPrivate.showC3SrchPromptText) {
 
                         table2.cell(1, 2).div({
                             text: '&nbsp; &nbsp;'
@@ -316,7 +319,7 @@
                             }
                         });
 
-                    } // if (data.alternateoption != null)
+                    } // if (data.alternateoption != null && cswPrivate.showC3SrchPromptText === true)
 
                 } //if (data.searchtarget == 'universal')
                 else {

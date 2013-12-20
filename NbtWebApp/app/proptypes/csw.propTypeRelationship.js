@@ -35,6 +35,7 @@
             optsNodeSelect.nodeTypeId = nodeProperty.propData.values.nodetypeid;
             optsNodeSelect.viewid = nodeProperty.propData.values.viewid;
             optsNodeSelect.objectClassId = nodeProperty.propData.values.objectclassid;
+            optsNodeSelect.propertySetId = nodeProperty.propData.values.propertysetid;
             optsNodeSelect.allowAdd = nodeProperty.propData.values.allowadd;
             optsNodeSelect.hideNodeLink = false === nodeProperty.propData.values.allowview;
             optsNodeSelect.options = nodeProperty.propData.values.options;

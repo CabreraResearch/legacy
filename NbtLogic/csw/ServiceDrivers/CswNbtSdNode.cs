@@ -24,6 +24,9 @@ namespace ChemSW.Nbt.ServiceDrivers
             [DataMember( IsRequired = false )]
             public Int32 ObjectClassId = Int32.MinValue;
 
+            [DataMember( IsRequired = false )]
+            public Int32 PropertySetId = Int32.MinValue;
+
             private CswEnumNbtObjectClass _ObjectClass;
 
             [DataMember( IsRequired = false )]
@@ -122,6 +125,9 @@ namespace ChemSW.Nbt.ServiceDrivers
 
             [DataMember( EmitDefaultValue = false, IsRequired = false, Name = "ObjectClassId" )]
             public Int32 ObjectClassId = Int32.MinValue;
+
+            [DataMember( EmitDefaultValue = false, IsRequired = false, Name = "PropertySetId" )]
+            public Int32 PropertySetId = Int32.MinValue;
 
             [DataMember( EmitDefaultValue = true, IsRequired = true, Name = "Nodes" )]
             public Collection<CswNbtNode.Node> Nodes = new Collection<CswNbtNode.Node>();
@@ -452,6 +458,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             Ret.UseSearch = false;
             Ret.NodeTypeId = Request.NodeTypeId;
             Ret.ObjectClassId = Request.ObjectClassId;
+            Ret.PropertySetId = Request.PropertySetId;
 
             CswNbtMetaDataObjectClass MetaDataObjectClass = null;
             // case 25956
@@ -461,21 +468,35 @@ namespace ChemSW.Nbt.ServiceDrivers
             CswNbtView View = _getView( Request );
             if( null != View )
             {
-                // Absent a MetaDataObject ID, 
-                // the safest assumption is that we want all nodes of the same Object Class at the lowest level of the View,
-                // using the relationships defined on the View, of course.
-                Dictionary<Int32, Int32> LowestLevelNodeTypes = _getRelationshipSecondType( View );
-                foreach( KeyValuePair<int, int> KeyValuePair in LowestLevelNodeTypes )
+                if( Request.PropertySetId > 0 )
                 {
-                    NodeTypeIds.Add( KeyValuePair.Key );
-                    CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( KeyValuePair.Key );
-
-                    Ret.CanAdd = Ret.CanAdd ||
-                                    _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Create,
-                                                                        NodeType );
+                    CswNbtMetaDataPropertySet PropSet = _CswNbtResources.MetaData.getPropertySet( Request.PropertySetId );
+                    foreach( CswNbtMetaDataObjectClass OC in PropSet.getObjectClasses() )
+                    {
+                        foreach( CswNbtMetaDataNodeType NT in OC.getNodeTypes() )
+                        {
+                            NodeTypeIds.Add( NT.NodeTypeId );
+                        }
+                    }
                 }
-                Ret.ObjectClassId = LowestLevelNodeTypes.FirstOrDefault().Value;
-                MetaDataObjectClass = _CswNbtResources.MetaData.getObjectClass( Ret.ObjectClassId );
+                else
+                {
+                    // Absent a MetaDataObject ID, 
+                    // the safest assumption is that we want all nodes of the same Object Class at the lowest level of the View,
+                    // using the relationships defined on the View, of course.
+                    Dictionary<Int32, Int32> LowestLevelNodeTypes = _getRelationshipSecondType( View );
+                    foreach( KeyValuePair<int, int> KeyValuePair in LowestLevelNodeTypes )
+                    {
+                        NodeTypeIds.Add( KeyValuePair.Key );
+                        CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( KeyValuePair.Key );
+
+                        Ret.CanAdd = Ret.CanAdd ||
+                                        _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Create,
+                                                                            NodeType );
+                    }
+                    Ret.ObjectClassId = LowestLevelNodeTypes.FirstOrDefault().Value;
+                    MetaDataObjectClass = _CswNbtResources.MetaData.getObjectClass( Ret.ObjectClassId );
+                }
             }
 
 

@@ -31,7 +31,7 @@ namespace ChemSW.Nbt
         {
             _CswNbtResources = CswNbtResources;
             _RunAsUser = RunAsUser;
-            _SearchTerm = SearchTerm;
+            _SearchTerm = _makeSafeSearchTerm(SearchTerm);
             _SearchType = SearchType;
             _ExtraWhereClause = WhereClause;
             _IncludeSystemNodes = IncludeSystemNodes;
@@ -43,6 +43,24 @@ namespace ChemSW.Nbt
             }
 
         }
+
+        public string _makeSafeSearchTerm( string SearchTerm )
+        {
+            string ret = string.Empty;
+            foreach( char c in SearchTerm )
+            {
+                // case 31076 - fix subscripts from Formula -- see CswNbtNodePropFormula._parseChemicalFormula().
+                if( 0x2080 <= c && c <= 0x2089 ) // subscript 0 - 9
+                {
+                    ret += (char) ( c - 0x2050 );
+                }
+                else
+                {
+                    ret += c;
+                }
+            }
+            return ret;
+        } // _makeSafeSearchTerm()
 
         public override void load( bool RequireViewPermissions, Int32 ResultsLimit = Int32.MinValue )
         {
@@ -326,7 +344,7 @@ namespace ChemSW.Nbt
                     Query += "                 and n.hidden = '0' ";
                 }
 
-                Query += "                     and ( ( ";
+                Query += "                     and ( ";
                 first = true;
                 foreach( string SafeLikeClause in SafeLikeClauses )
                 {
@@ -334,15 +352,16 @@ namespace ChemSW.Nbt
                     {
                         Query += "                     and ";
                     }
-                    Query += "                             n.nodeid in (select nodeid from jctnd where gestaltsearch " + SafeLikeClause + @") ";
+                    Query += "                             n.nodeid in (select nodeid from jctnd where gestaltsearch " + SafeLikeClause;
+                    if( CswTools.IsInteger( _SearchTerm ) )
+                    {
+                        Query += @"                                      union select " + _SearchTerm + " from dual";
+                    }
+                    Query += "                                         ) ";
                     first = false;
                 }
-                Query += @"                          ) ";
-                if( CswTools.IsInteger( _SearchTerm ) )
-                {
-                    Query += @"                      or ( n.nodeid = '" + _SearchTerm + "' and t.searchdeferpropid is null )";
-                }
                 Query += @"                        ) ";
+                Query += @"                    and t.searchdeferpropid is null";
 
                 Query += @"                    and ( n.searchable = '1' or ( props.fieldtype = 'Barcode' and propval.field1 = '" + CswTools.SafeSqlParam( _SearchTerm ) + @"' ) )";
                 Query += _ExtraWhereClause;
