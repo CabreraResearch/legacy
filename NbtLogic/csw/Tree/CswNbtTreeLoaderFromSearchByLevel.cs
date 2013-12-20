@@ -326,7 +326,7 @@ namespace ChemSW.Nbt
                     Query += "                 and n.hidden = '0' ";
                 }
 
-                Query += "                     and ( ( ";
+                Query += "                     and ( ";
                 first = true;
                 foreach( string SafeLikeClause in SafeLikeClauses )
                 {
@@ -334,15 +334,16 @@ namespace ChemSW.Nbt
                     {
                         Query += "                     and ";
                     }
-                    Query += "                             n.nodeid in (select nodeid from jctnd where gestaltsearch " + SafeLikeClause + @") ";
+                    Query += "                             n.nodeid in (select nodeid from jctnd where gestaltsearch " + SafeLikeClause;
+                    if( CswTools.IsInteger( _SearchTerm ) )
+                    {
+                        Query += @"                                      union select " + _SearchTerm + " from dual";
+                    }
+                    Query += "                                         ) ";
                     first = false;
                 }
-                Query += @"                          ) ";
-                if( CswTools.IsInteger( _SearchTerm ) )
-                {
-                    Query += @"                      or ( n.nodeid = '" + _SearchTerm + "' and t.searchdeferpropid is null )";
-                }
                 Query += @"                        ) ";
+                Query += @"                    and t.searchdeferpropid is null";
 
                 Query += @"                    and ( n.searchable = '1' or ( props.fieldtype = 'Barcode' and propval.field1 = '" + CswTools.SafeSqlParam( _SearchTerm ) + @"' ) )";
                 Query += _ExtraWhereClause;
