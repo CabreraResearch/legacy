@@ -185,7 +185,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         public void PromoteTempToReal( bool OverrideUniqueValidation = false )
         {
-            ICswNbtNodePersistStrategy NodePersistStrategy = new CswNbtNodePersistStrategyPromote( _CswNbtResources );
+            ICswNbtNodePersistStrategy NodePersistStrategy = new CswNbtNodePersistStrategyPromoteReal( _CswNbtResources );
             NodePersistStrategy.OverrideUniqueValidation = OverrideUniqueValidation;
             NodePersistStrategy.postChanges( this );
         }

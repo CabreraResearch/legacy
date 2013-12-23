@@ -38,11 +38,11 @@ namespace ChemSW.Nbt.ObjClasses
             return ret;
         }
 
-        public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
+        public override void beforePromoteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
         }
 
-        public override void afterCreateNode()
+        public override void afterPromoteNode()
         {
         }
 
