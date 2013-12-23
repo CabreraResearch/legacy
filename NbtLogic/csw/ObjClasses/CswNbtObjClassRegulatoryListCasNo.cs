@@ -49,14 +49,14 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
+        public override void beforePromoteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
-            _CswNbtObjClassDefault.beforeCreateNode( IsCopy, OverrideUniqueValidation );
+            _CswNbtObjClassDefault.beforePromoteNode( IsCopy, OverrideUniqueValidation );
         }//beforeCreateNode()
 
-        public override void afterCreateNode()
+        public override void afterPromoteNode()
         {
-            _CswNbtObjClassDefault.afterCreateNode();
+            _CswNbtObjClassDefault.afterPromoteNode();
         }//afterCreateNode()
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation, bool Creating )

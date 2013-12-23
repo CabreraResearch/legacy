@@ -87,8 +87,14 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         public abstract CswNbtMetaDataObjectClass ObjectClass { get; }
-        public abstract void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation );
-        public abstract void afterCreateNode();
+        /// <summary>
+        /// ObjectClass-specific logic to execute before persisting a new real node (from temp or create)
+        /// </summary>
+        public abstract void beforePromoteNode( bool IsCopy, bool OverrideUniqueValidation );
+        /// <summary>
+        /// ObjectClass-specific logic to execute after persisting a new real node (from temp or create)
+        /// </summary>
+        public abstract void afterPromoteNode();
         public abstract void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation, bool Creating );
         public abstract void afterWriteNode( bool Creating );
         public abstract void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false, bool ValidateRequiredRelationships = true );
