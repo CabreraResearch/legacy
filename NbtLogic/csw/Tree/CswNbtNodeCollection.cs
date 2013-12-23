@@ -408,11 +408,11 @@ namespace ChemSW.Nbt
             ICswNbtNodePersistStrategy NodePersistStrategy;
             if( false == IsTemp )
             {
-                NodePersistStrategy = new CswNbtNodePersistStrategyPromote( _CswNbtResources );
+                NodePersistStrategy = new CswNbtNodePersistStrategyPromoteReal( _CswNbtResources );
             }
             else
             {
-                NodePersistStrategy = new CswNbtNodePersistStrategyCreate( _CswNbtResources );
+                NodePersistStrategy = new CswNbtNodePersistStrategyCreateTemp( _CswNbtResources );
             }
             NodePersistStrategy.IsCopy = IsCopy;
             NodePersistStrategy.OverrideUniqueValidation = OverrideUniqueValidation;
