@@ -1,4 +1,4 @@
-/// <reference path="~/vendor/extjs-4.1.0/ext-all-debug.js" />
+fil/// <reference path="~/vendor/extjs-4.1.0/ext-all-debug.js" />
 /// <reference path="~/app/CswApp-vsdoc.js" />
 
 /*global Csw:true*/
@@ -490,7 +490,9 @@
             var columns = Csw.extend([], cswPrivate.columns);
 
             Csw.each(columns, function (val) {
-                val.filterable = true;
+                if (undefined === val.filterable) {
+                    val.filterable = true;
+                }
             });
 
             var gridopts = {
