@@ -411,7 +411,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public override void beforePromoteNode( bool IsCopy, bool OverrideUniqueValidation )
+        public override void beforePromoteNode()
         {
             RequestType.Value = Type.Value;
             TotalDispensed.UnitId = Quantity.UnitId;
@@ -424,7 +424,7 @@ namespace ChemSW.Nbt.ObjClasses
                     TotalDispensed.UnitId = SizeNode.InitialQuantity.UnitId;
                 }
             }
-            _CswNbtObjClassDefault.beforePromoteNode( IsCopy, OverrideUniqueValidation );
+            _CswNbtObjClassDefault.beforePromoteNode();
         }
 
         public override void afterPromoteNode()
@@ -433,7 +433,7 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.afterPromoteNode();
         }
 
-        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation, bool Creating )
+        public override void beforeWriteNode( bool Creating )
         {
             if( Creating )
             {
@@ -447,18 +447,18 @@ namespace ChemSW.Nbt.ObjClasses
             }
             _setDefaultValues();
             TypeDef.setDescription();
-            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation, Creating );
+            _CswNbtObjClassDefault.beforeWriteNode( Creating );
         }
 
-        public override void afterWriteNode( bool Creating )
+        public override void afterWriteNode()
         {
-            _CswNbtObjClassDefault.afterWriteNode( Creating );
+            _CswNbtObjClassDefault.afterWriteNode();
         }
 
-        public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false, bool ValidateRequiredRelationships = true )
+        public override void beforeDeleteNode()
         {
             _updateCartCounts( -1 );
-            _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes, ValidateRequiredRelationships );
+            _CswNbtObjClassDefault.beforeDeleteNode();
         }
 
         public override void afterDeleteNode()

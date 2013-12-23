@@ -80,9 +80,9 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-        public override void beforePromoteNode( bool IsCopy, bool OverrideUniqueValidation )
+        public override void beforePromoteNode()
         {
-            _CswNbtObjClassDefault.beforePromoteNode( IsCopy, OverrideUniqueValidation );
+            _CswNbtObjClassDefault.beforePromoteNode();
         }//beforeCreateNode()
 
         public override void afterPromoteNode()
@@ -91,21 +91,21 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.afterPromoteNode();
         }//afterCreateNode()
 
-        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation, bool Creating )
+        public override void beforeWriteNode( bool Creating )
         {
             _CswNbtNode.setReadOnly( value: true, SaveToDb: true ); //case 24508
 
-            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation, Creating );
+            _CswNbtObjClassDefault.beforeWriteNode( Creating );
         }//beforeWriteNode()
 
-        public override void afterWriteNode( bool Creating )
+        public override void afterWriteNode()
         {
-            _CswNbtObjClassDefault.afterWriteNode( Creating );
+            _CswNbtObjClassDefault.afterWriteNode();
         }//afterWriteNode()
 
-        public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false, bool ValidateRequiredRelationships = true )
+        public override void beforeDeleteNode()
         {
-            _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes, ValidateRequiredRelationships );
+            _CswNbtObjClassDefault.beforeDeleteNode();
         }//beforeDeleteNode()
 
         public override void afterDeleteNode()

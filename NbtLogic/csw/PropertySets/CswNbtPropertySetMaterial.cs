@@ -114,7 +114,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Before write node event for derived classes to implement
         /// </summary>
-        public abstract void beforePropertySetWriteNode( bool IsCopy, bool OverrideUniqueValidation );
+        public abstract void beforePropertySetWriteNode();
 
         /// <summary>
         /// After write node event for derived classes to implement
@@ -124,7 +124,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Before delete node event for derived classes to implement
         /// </summary>
-        public abstract void beforePropertySetDeleteNode( bool DeleteAllRequiredRelatedNodes = false );
+        public abstract void beforePropertySetDeleteNode();
 
         /// <summary>
         /// After delete node event for derived classes to implement
@@ -159,7 +159,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public override void beforePromoteNode( bool IsCopy, bool OverrideUniqueValidation )
+        public override void beforePromoteNode()
         {
         }
 
@@ -167,9 +167,9 @@ namespace ChemSW.Nbt.ObjClasses
         {
         }
 
-        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation, bool Creating )
+        public override void beforeWriteNode( bool Creating )
         {
-            beforePropertySetWriteNode( IsCopy, OverrideUniqueValidation );
+            beforePropertySetWriteNode();
 
             Request.MenuOptions = CswEnumRequestOption.Options.ToString();
             Request.State = CswEnumRequestOption.Size;
@@ -179,19 +179,19 @@ namespace ChemSW.Nbt.ObjClasses
                 Receive.setHidden( value : ApprovedForReceiving.Checked != CswEnumTristate.True, SaveToDb : true );
             }
 
-            CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation, Creating );
+            CswNbtObjClassDefault.beforeWriteNode( Creating );
         }
 
-        public override void afterWriteNode( bool Creating )
+        public override void afterWriteNode()
         {
             afterPropertySetWriteNode();
-            CswNbtObjClassDefault.afterWriteNode( Creating );
+            CswNbtObjClassDefault.afterWriteNode();
         }
 
-        public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false, bool ValidateRequiredRelationships = true )
+        public override void beforeDeleteNode()
         {
-            beforePropertySetDeleteNode( DeleteAllRequiredRelatedNodes );
-            CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes, ValidateRequiredRelationships );
+            beforePropertySetDeleteNode();
+            CswNbtObjClassDefault.beforeDeleteNode();
         }
 
         public override void afterDeleteNode()

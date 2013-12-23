@@ -458,7 +458,7 @@ namespace ChemSW.Nbt.ObjClasses
 
             if( null != _CswNbtObjClass )
             {
-                _CswNbtObjClass.beforeDeleteNode( DeleteAllRequiredRelatedNodes: DeleteAllRequiredRelatedNodes, ValidateRequiredRelationships: ValidateRequiredRelationships );
+                _CswNbtObjClass.beforeDeleteNode( DeleteAllRequiredRelatedNodes, ValidateRequiredRelationships );
             }
 
             OnRequestDeleteNode( this );

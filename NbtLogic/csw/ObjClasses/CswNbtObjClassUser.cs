@@ -178,9 +178,9 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public override void beforePromoteNode( bool IsCopy, bool OverrideUniqueValidation )
+        public override void beforePromoteNode()
         {
-            _CswNbtObjClassDefault.beforePromoteNode( IsCopy, OverrideUniqueValidation );
+            _CswNbtObjClassDefault.beforePromoteNode();
         }//beforeCreateNode()
 
         public override void afterPromoteNode()
@@ -188,7 +188,7 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.afterPromoteNode();
         }//afterCreateNode()
 
-        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation, bool Creating )
+        public override void beforeWriteNode( bool Creating )
         {
             if( _unableToWriteNodeInvalidUserName() )
             {
@@ -196,7 +196,7 @@ namespace ChemSW.Nbt.ObjClasses
                                           "Username contains invalid characters: " + this.Username );
             }
 
-            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation, Creating );
+            _CswNbtObjClassDefault.beforeWriteNode( Creating );
 
             if( UsernameProperty.Text != string.Empty ) // case 25616
             {
@@ -231,20 +231,20 @@ namespace ChemSW.Nbt.ObjClasses
                  ( this.AccountLocked.wasAnySubFieldModified() && this.AccountLocked.Checked == CswEnumTristate.False ) );
         }
 
-        public override void afterWriteNode( bool Creating )
+        public override void afterWriteNode()
         {
             CachedData.setHidden( value: true, SaveToDb: true );
             // BZ 9170
             _CswNbtResources.ConfigVbls.setConfigVariableValue( "cache_lastupdated", DateTime.Now.ToString() );
 
-            _CswNbtObjClassDefault.afterWriteNode( Creating );
+            _CswNbtObjClassDefault.afterWriteNode();
         }
 
         //afterWriteNode()
 
-        public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false, bool ValidateRequiredRelationships = true )
+        public override void beforeDeleteNode()
         {
-            _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes, ValidateRequiredRelationships );
+            _CswNbtObjClassDefault.beforeDeleteNode();
 
             //prevent user from deleting their own user
             if( _CswNbtNode.NodeId == _CswNbtResources.CurrentUser.UserId )

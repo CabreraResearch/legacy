@@ -64,7 +64,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public override void beforePromoteNode( bool IsCopy, bool OverrideUniqueValidation )
+        public override void beforePromoteNode()
         {
         }
 
@@ -72,36 +72,36 @@ namespace ChemSW.Nbt.ObjClasses
         {
         }
 
-        public abstract void beforePropertySetWriteNode( bool IsCopy, bool OverrideUniqueValidation );
+        public abstract void beforePropertySetWriteNode();
 
-        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation, bool Creating )
+        public override void beforeWriteNode( bool Creating )
         {
-            beforePropertySetWriteNode( IsCopy, OverrideUniqueValidation );
+            beforePropertySetWriteNode();
 
             if( DateTime.MinValue == CreatedDate.DateTimeValue )
             {
                 CreatedDate.DateTimeValue = DateTime.Now;
             }
 
-            CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation, Creating );
+            CswNbtObjClassDefault.beforeWriteNode( Creating );
         }//beforeWriteNode()
 
         public abstract void afterPropertySetWriteNode();
 
-        public override void afterWriteNode( bool Creating )
+        public override void afterWriteNode()
         {
             afterPropertySetWriteNode();
 
-            CswNbtObjClassDefault.afterWriteNode( Creating );
+            CswNbtObjClassDefault.afterWriteNode();
         }//afterWriteNode()
 
-        public abstract void beforePropertySetDeleteNode( bool DeleteAllRequiredRelatedNodes );
+        public abstract void beforePropertySetDeleteNode();
 
-        public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false, bool ValidateRequiredRelationships = true )
+        public override void beforeDeleteNode()
         {
-            beforePropertySetDeleteNode( DeleteAllRequiredRelatedNodes );
+            beforePropertySetDeleteNode();
 
-            CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes, ValidateRequiredRelationships );
+            CswNbtObjClassDefault.beforeDeleteNode();
         }//beforeDeleteNode()
 
         public override void afterDeleteNode()

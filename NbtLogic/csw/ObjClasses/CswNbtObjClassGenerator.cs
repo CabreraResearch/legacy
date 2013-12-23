@@ -84,9 +84,9 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public override void beforePromoteNode( bool IsCopy, bool OverrideUniqueValidation )
+        public override void beforePromoteNode()
         {
-            _CswNbtObjClassDefault.beforePromoteNode( IsCopy, OverrideUniqueValidation );
+            _CswNbtObjClassDefault.beforePromoteNode();
         }//beforeCreateNode()
 
         public override void afterPromoteNode()
@@ -95,9 +95,9 @@ namespace ChemSW.Nbt.ObjClasses
         }//afterCreateNode()
 
 
-        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation, bool Creating )
+        public override void beforeWriteNode( bool Creating )
         {
-            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation, Creating );
+            _CswNbtObjClassDefault.beforeWriteNode( Creating );
 
             //Case 24572
             updateNextDueDate( ForceUpdate : false, DeleteFutureNodes : ( TargetType.wasAnySubFieldModified() || ParentType.wasAnySubFieldModified() ) );
@@ -110,16 +110,16 @@ namespace ChemSW.Nbt.ObjClasses
             }
         } //beforeWriteNode()
 
-        public override void afterWriteNode( bool Creating )
+        public override void afterWriteNode()
         {
             _CswNbtPropertySetSchedulerImpl.setLastFutureDate();
-            _CswNbtObjClassDefault.afterWriteNode( Creating );
+            _CswNbtObjClassDefault.afterWriteNode();
         }//afterWriteNode()
 
-        public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false, bool ValidateRequiredRelationships = true )
+        public override void beforeDeleteNode()
         {
             _deleteFutureNodes();
-            _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes, ValidateRequiredRelationships );
+            _CswNbtObjClassDefault.beforeDeleteNode();
         } //beforeDeleteNode()
 
         public override void afterDeleteNode()

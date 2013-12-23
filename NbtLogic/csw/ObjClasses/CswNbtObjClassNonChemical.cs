@@ -34,7 +34,7 @@ namespace ChemSW.Nbt.ObjClasses
             get { return _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.NonChemicalClass ); }
         }
 
-        public override void beforePromoteNode( bool IsCopy, bool OverrideUniqueValidation )
+        public override void beforePromoteNode()
         {
         }
 
@@ -71,11 +71,11 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public override void beforePropertySetWriteNode( bool IsCopy, bool OverrideUniqueValidation ) { }
+        public override void beforePropertySetWriteNode() { }
 
         public override void afterPropertySetWriteNode() { }
 
-        public override void beforePropertySetDeleteNode( bool DeleteAllRequiredRelatedNodes = false ) { }
+        public override void beforePropertySetDeleteNode() { }
 
         public override void afterPropertySetDeleteNode() { }
 

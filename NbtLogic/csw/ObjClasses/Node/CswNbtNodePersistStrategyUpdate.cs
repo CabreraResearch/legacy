@@ -25,14 +25,14 @@ namespace ChemSW.Nbt.ObjClasses
 
                 if( null != Node.ObjClass )
                 {
-                    Node.ObjClass.beforeWriteNode( IsCopy, OverrideUniqueValidation, false );
+                    Node.ObjClass.beforeWriteNode( false );
                 }
 
                 Node.requestWrite( ForceUpdate, IsCopy, OverrideUniqueValidation, false, ( false == Node.IsTemp ) );
 
                 if( null != Node.ObjClass )
                 {
-                    Node.ObjClass.afterWriteNode( false );
+                    Node.ObjClass.afterWriteNode();
                 }
 
                 Node.setModificationState( CswEnumNbtNodeModificationState.Posted );

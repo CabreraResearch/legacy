@@ -48,9 +48,9 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public override void beforePromoteNode( bool IsCopy, bool OverrideUniqueValidation )
+        public override void beforePromoteNode()
         {
-            _CswNbtObjClassDefault.beforePromoteNode( IsCopy, OverrideUniqueValidation );
+            _CswNbtObjClassDefault.beforePromoteNode();
         }//beforeCreateNode()
 
         public override void afterPromoteNode()
@@ -59,7 +59,7 @@ namespace ChemSW.Nbt.ObjClasses
         }//afterCreateNode()
 
 
-        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation, bool Creating )
+        public override void beforeWriteNode( bool Creating )
         {
             if( null != Mixture.RelatedNodeId )
             {
@@ -75,21 +75,21 @@ namespace ChemSW.Nbt.ObjClasses
                     "Mixture is a server managed property and in this context no material can be discerned to set as the Mixture." );
             }
             Percentage.Value = HighPercentageValue.Value;
-            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation, Creating );
+            _CswNbtObjClassDefault.beforeWriteNode( Creating );
         }//beforeWriteNode()
 
-        public override void afterWriteNode( bool Creating )
+        public override void afterWriteNode()
         {
             if( Mixture.wasAnySubFieldModified() || Constituent.wasAnySubFieldModified() )
             {
                 _recalculateRegListMembership();
             }
-            _CswNbtObjClassDefault.afterWriteNode( Creating );
+            _CswNbtObjClassDefault.afterWriteNode();
         }//afterWriteNode()
 
-        public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false, bool ValidateRequiredRelationships = true )
+        public override void beforeDeleteNode()
         {
-            _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes, ValidateRequiredRelationships );
+            _CswNbtObjClassDefault.beforeDeleteNode();
         }//beforeDeleteNode()
 
         public override void afterDeleteNode()
