@@ -29,13 +29,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region ctor
 
-        private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
-
-        public CswNbtObjClassContainerDispenseTransaction( CswNbtResources CswNbtResources, CswNbtNode Node )
-            : base( CswNbtResources, Node )
-        {
-            _CswNbtObjClassDefault = new CswNbtObjClassDefault( _CswNbtResources, Node );
-        }//ctor()
+        public CswNbtObjClassContainerDispenseTransaction( CswNbtResources CswNbtResources, CswNbtNode Node ) : base( CswNbtResources, Node ) {}
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
@@ -80,54 +74,15 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-        public override void beforePromoteNode()
-        {
-            _CswNbtObjClassDefault.beforePromoteNode();
-        }//beforeCreateNode()
-
         public override void afterPromoteNode()
         {
             _onCreateFromRequestItem();
-            _CswNbtObjClassDefault.afterPromoteNode();
         }//afterCreateNode()
 
         public override void beforeWriteNode( bool Creating )
         {
             _CswNbtNode.setReadOnly( value: true, SaveToDb: true ); //case 24508
-
-            _CswNbtObjClassDefault.beforeWriteNode( Creating );
         }//beforeWriteNode()
-
-        public override void afterWriteNode()
-        {
-            _CswNbtObjClassDefault.afterWriteNode();
-        }//afterWriteNode()
-
-        public override void beforeDeleteNode()
-        {
-            _CswNbtObjClassDefault.beforeDeleteNode();
-        }//beforeDeleteNode()
-
-        public override void afterDeleteNode()
-        {
-            _CswNbtObjClassDefault.afterDeleteNode();
-        }//afterDeleteNode()        
-
-        protected override void afterPopulateProps()
-        {
-            _CswNbtObjClassDefault.triggerAfterPopulateProps();
-        }//afterPopulateProps()
-
-        public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
-        {
-            _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
-        }
-
-        protected override bool onButtonClick( NbtButtonData ButtonData )
-        {
-            if( null != ButtonData && null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
-            return true;
-        }
 
         #endregion Inherited Events
 

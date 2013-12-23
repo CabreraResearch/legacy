@@ -71,42 +71,12 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public override void beforePropertySetWriteNode() { }
-
-        public override void afterPropertySetWriteNode() { }
-
-        public override void beforePropertySetDeleteNode() { }
-
-        public override void afterPropertySetDeleteNode() { }
-
-        public override void afterPropertySetPopulateProps() { }
-
-        public override bool onPropertySetButtonClick( NbtButtonData ButtonData )
-        {
-            if( null != ButtonData && null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
-            return true;
-        }
-
         public override void onReceiveButtonClick( NbtButtonData ButtonData )
         {
             ButtonData.Data["state"]["canAddSDS"] = false;
         }
 
-        public override void onPropertySetAddDefaultViewFilters( CswNbtViewRelationship ParentRelationship ) { }
-
-        public override void onUpdatePropertyValue() { }
-
         #endregion Inherited Events
-
-        #region Custom Logic
-
-        //NonChemical Materials don't have an expiration interval, so their containers won't have an expiration date defined.
-        public override DateTime getDefaultExpirationDate( DateTime InitialDate )
-        {
-            return DateTime.MinValue;
-        }
-
-        #endregion Custom Logic
 
         #region ObjectClass-specific properties
 

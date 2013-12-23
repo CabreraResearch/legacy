@@ -18,14 +18,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string LOLIListCode = "LOLI List Code";
         }
 
-        private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
-
-        public CswNbtObjClassRegulatoryListListCode( CswNbtResources CswNbtResources, CswNbtNode Node )
-            : base( CswNbtResources, Node )
-        {
-            _CswNbtObjClassDefault = new CswNbtObjClassDefault( _CswNbtResources, Node );
-
-        }//ctor()
+        public CswNbtObjClassRegulatoryListListCode( CswNbtResources CswNbtResources, CswNbtNode Node ) : base( CswNbtResources, Node ) {}
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
@@ -47,16 +40,6 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public override void beforePromoteNode()
-        {
-            _CswNbtObjClassDefault.beforePromoteNode();
-        }//beforeCreateNode()
-
-        public override void afterPromoteNode()
-        {
-            _CswNbtObjClassDefault.afterPromoteNode();
-        }//afterCreateNode()
-
         public override void beforeWriteNode( bool Creating )
         {
             // Set the value of the LOLIListCode property
@@ -65,43 +48,23 @@ namespace ChemSW.Nbt.ObjClasses
                 LOLIListCode.Value = CswConvert.ToDouble( LOLIListName.Value );
                 LOLIListCode.SyncGestalt();
             }
-
-            _CswNbtObjClassDefault.beforeWriteNode( Creating );
         }//beforeWriteNode()
 
         public override void afterWriteNode()
         {
             _setChemicalsPendingUpdate(); // TODO: Move to afterCreateNode() when Design Mode is done
-            _CswNbtObjClassDefault.afterWriteNode();
         }//afterWriteNode()
-
-        public override void beforeDeleteNode()
-        {
-            _CswNbtObjClassDefault.beforeDeleteNode();
-        }//beforeDeleteNode()
 
         public override void afterDeleteNode()
         {
             _setChemicalsPendingUpdate();
-            _CswNbtObjClassDefault.afterDeleteNode();
         }//afterDeleteNode()        
 
         protected override void afterPopulateProps()
         {
             LOLIListName.OnBeforeFilterOptions = _searchLOLI;
-            _CswNbtObjClassDefault.triggerAfterPopulateProps();
         }//afterPopulateProps()
 
-        public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
-        {
-            _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
-        }
-
-        protected override bool onButtonClick( NbtButtonData ButtonData )
-        {
-            if( null != ButtonData && null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
-            return true;
-        }
         #endregion
 
         private void _searchLOLI( string SearchTerm, Int32 SearchThreshold )

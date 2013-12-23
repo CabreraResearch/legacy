@@ -30,18 +30,9 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         /// <summary>
-        /// Default Object Class for consumption by derived classes
-        /// </summary>
-        public CswNbtObjClassDefault CswNbtObjClassDefault = null;
-
-        /// <summary>
         /// Property Set ctor
         /// </summary>
-        public CswNbtPropertySetGeneratorTarget( CswNbtResources CswNbtResources, CswNbtNode Node )
-            : base( CswNbtResources, Node )
-        {
-            CswNbtObjClassDefault = new CswNbtObjClassDefault( _CswNbtResources, Node );
-        }//ctor()
+        public CswNbtPropertySetGeneratorTarget( CswNbtResources CswNbtResources, CswNbtNode Node ) : base( CswNbtResources, Node ) {}
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
@@ -61,18 +52,9 @@ namespace ChemSW.Nbt.ObjClasses
             return ret;
         }
 
-
         #region Inherited Events
 
-        public override void beforePromoteNode()
-        {
-        }
-
-        public override void afterPromoteNode()
-        {
-        }
-
-        public abstract void beforePropertySetWriteNode();
+        public virtual void beforePropertySetWriteNode() {}
 
         public override void beforeWriteNode( bool Creating )
         {
@@ -82,58 +64,31 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 CreatedDate.DateTimeValue = DateTime.Now;
             }
-
-            CswNbtObjClassDefault.beforeWriteNode( Creating );
         }//beforeWriteNode()
 
-        public abstract void afterPropertySetWriteNode();
+        public virtual void afterPropertySetWriteNode() {}
 
         public override void afterWriteNode()
         {
             afterPropertySetWriteNode();
-
-            CswNbtObjClassDefault.afterWriteNode();
         }//afterWriteNode()
 
-        public abstract void beforePropertySetDeleteNode();
+        public virtual void beforePropertySetDeleteNode() {}
 
         public override void beforeDeleteNode()
         {
             beforePropertySetDeleteNode();
+        }//beforeDeleteNode()     
 
-            CswNbtObjClassDefault.beforeDeleteNode();
-        }//beforeDeleteNode()
-
-        public override void afterDeleteNode()
-        {
-            CswNbtObjClassDefault.afterDeleteNode();
-        }//afterDeleteNode()        
-
-        public abstract void afterPropertySetPopulateProps();
+        public virtual void afterPropertySetPopulateProps() {}
 
         protected override void afterPopulateProps()
         {
             afterPropertySetPopulateProps();
-
-            CswNbtObjClassDefault.triggerAfterPopulateProps();
         }//afterPopulateProps()
 
-        public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
-        {
-            CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
-        }
+        public virtual bool onPropertySetButtonClick( NbtButtonData ButtonData ) { return true; }
 
-        public abstract bool onPropertySetButtonClick( NbtButtonData ButtonData );
-
-        protected override bool onButtonClick( NbtButtonData ButtonData )
-        {
-            bool Ret = false;
-            if( null != ButtonData.NodeTypeProp )
-            {
-                Ret = onPropertySetButtonClick( ButtonData );
-            }
-            return Ret;
-        }
         #endregion
 
         #region Property Set specific properties

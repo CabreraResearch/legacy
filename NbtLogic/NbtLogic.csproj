@@ -1264,7 +1264,6 @@
     <Compile Include="csw\ObjClasses\CswNbtObjClassContainer.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassContainerDispenseTransaction.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassCustomer.cs" />
-    <Compile Include="csw\ObjClasses\CswNbtObjClassDefault.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassDocument.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassEnterprisePart.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassEquipment.cs" />

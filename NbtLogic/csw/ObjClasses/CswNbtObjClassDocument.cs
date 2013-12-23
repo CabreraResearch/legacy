@@ -61,32 +61,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public override void beforePromoteNode()
-        {
-        }
-        public override void afterPromoteNode()
-        {
-        }
-        
-        public override void beforePropertySetWriteNode() { }
-
-        public override void afterPropertySetWriteNode() { }
-
-        public override void beforePropertySetDeleteNode() { }
-
-        public override void afterPropertySetDeleteNode() { }
-
-        public override void afterPropertySetPopulateProps() { }
-
-        public override void onPropertySetAddDefaultViewFilters( CswNbtViewRelationship ParentRelationship ) { }
-
-        public override bool onPropertySetButtonClick( NbtButtonData ButtonData )
-        {
-            if( null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
-            return true;
-        }
-
-        public override void archiveMatchingDocs() { }
+        //Extend CswNbtPropertySetDocument events here
 
         #endregion Inherited Events
 

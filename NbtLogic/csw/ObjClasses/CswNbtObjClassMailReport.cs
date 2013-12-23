@@ -45,15 +45,12 @@ namespace ChemSW.Nbt.ObjClasses
         public string SchedulerDueDateIntervalPropertyName { get { return PropertyName.DueDateInterval; } }
         public string SchedulerRunTimePropertyName { get { return PropertyName.RunTime; } }
 
-        private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
         private CswNbtPropertySetSchedulerImpl _CswNbtPropertySetSchedulerImpl;
-
-        public CswNbtObjClassMailReport( CswNbtResources CswNbtResources, CswNbtNode Node )
-            : base( CswNbtResources, Node )
+        
+        public CswNbtObjClassMailReport( CswNbtResources CswNbtResources, CswNbtNode Node ) : base( CswNbtResources, Node )
         {
-            _CswNbtObjClassDefault = new CswNbtObjClassDefault( _CswNbtResources, Node );
             _CswNbtPropertySetSchedulerImpl = new CswNbtPropertySetSchedulerImpl( _CswNbtResources, this, Node );
-        }//ctor()
+        }
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
@@ -75,19 +72,8 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public override void beforePromoteNode()
-        {
-            _CswNbtObjClassDefault.beforePromoteNode();
-        }//beforeCreateNode()
-
-        public override void afterPromoteNode()
-        {
-            _CswNbtObjClassDefault.afterPromoteNode();
-        }//afterCreateNode()
-
         public override void beforeWriteNode( bool Creating )
         {
-            _CswNbtObjClassDefault.beforeWriteNode( Creating );
             updateNextDueDate( ForceUpdate : false, DeleteFutureNodes : false );
 
             _assertMailReportIsValid();
@@ -134,24 +120,7 @@ namespace ChemSW.Nbt.ObjClasses
                 }
             }
             return mailReportError;
-        }
-
-        public override void afterWriteNode()
-        {
-            _CswNbtObjClassDefault.afterWriteNode();
-            //_CswNbtPropertySetSchedulerImpl.setLastFutureDate();
-        }//afterWriteNode()
-
-        public override void beforeDeleteNode()
-        {
-            _CswNbtObjClassDefault.beforeDeleteNode();
-
-        }//beforeDeleteNode()
-
-        public override void afterDeleteNode()
-        {
-            _CswNbtObjClassDefault.afterDeleteNode();
-        }//afterDeleteNode()        
+        }     
 
         protected override void afterPopulateProps()
         {
@@ -162,13 +131,7 @@ namespace ChemSW.Nbt.ObjClasses
             // Setting TemporarilyRequired should be good enough to meet the need.
             Event.TemporarilyRequired = true;
             Event.SetOnPropChange( onEventPropChange );
-            _CswNbtObjClassDefault.triggerAfterPopulateProps();
         }//afterPopulateProps()
-
-        public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
-        {
-            _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
-        }
 
         protected override bool onButtonClick( NbtButtonData ButtonData )
         {

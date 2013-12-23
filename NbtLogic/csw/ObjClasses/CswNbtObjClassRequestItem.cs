@@ -375,13 +375,7 @@ namespace ChemSW.Nbt.ObjClasses
             return ret;
         }
 
-        private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
-
-        public CswNbtObjClassRequestItem( CswNbtResources CswNbtResources, CswNbtNode Node )
-            : base( CswNbtResources, Node )
-        {
-            _CswNbtObjClassDefault = new CswNbtObjClassDefault( _CswNbtResources, Node );
-        }
+        public CswNbtObjClassRequestItem( CswNbtResources CswNbtResources, CswNbtNode Node ) : base( CswNbtResources, Node ) {}
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
@@ -424,13 +418,11 @@ namespace ChemSW.Nbt.ObjClasses
                     TotalDispensed.UnitId = SizeNode.InitialQuantity.UnitId;
                 }
             }
-            _CswNbtObjClassDefault.beforePromoteNode();
         }
 
         public override void afterPromoteNode()
         {
             _updateCartCounts();
-            _CswNbtObjClassDefault.afterPromoteNode();
         }
 
         public override void beforeWriteNode( bool Creating )
@@ -447,23 +439,11 @@ namespace ChemSW.Nbt.ObjClasses
             }
             _setDefaultValues();
             TypeDef.setDescription();
-            _CswNbtObjClassDefault.beforeWriteNode( Creating );
-        }
-
-        public override void afterWriteNode()
-        {
-            _CswNbtObjClassDefault.afterWriteNode();
         }
 
         public override void beforeDeleteNode()
         {
             _updateCartCounts( -1 );
-            _CswNbtObjClassDefault.beforeDeleteNode();
-        }
-
-        public override void afterDeleteNode()
-        {
-            _CswNbtObjClassDefault.afterDeleteNode();
         }
 
         protected override void afterPopulateProps()
@@ -476,7 +456,6 @@ namespace ChemSW.Nbt.ObjClasses
             Type.SetOnPropChange( _onTypePropChange );
             ExternalOrderNumber.SetOnPropChange( _onExternalOrderNumberPropChange );
             RecurringFrequency.SetOnPropChange( _onRecurringFrequencyPropChange );
-            _CswNbtObjClassDefault.triggerAfterPopulateProps();
         }
 
         public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
@@ -502,7 +481,6 @@ namespace ChemSW.Nbt.ObjClasses
                                                                 FilterMode: CswEnumNbtFilterMode.NotEquals,
                                                                 Value: Statuses.NonRequestableStatus,
                                                                 ShowInGrid: false );
-            _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
         }
 
         protected override bool onButtonClick( NbtButtonData ButtonData )

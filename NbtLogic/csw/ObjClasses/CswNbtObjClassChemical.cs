@@ -38,14 +38,6 @@ namespace ChemSW.Nbt.ObjClasses
             return ret;
         }
 
-        public override void beforePromoteNode()
-        {
-        }
-
-        public override void afterPromoteNode()
-        {
-        }
-
         /// <summary>
         /// Object Class
         /// </summary>
@@ -137,14 +129,10 @@ namespace ChemSW.Nbt.ObjClasses
             //}
         }
 
-        public override void afterPropertySetWriteNode() { }
-
         public override void beforePropertySetDeleteNode()
         {
             _CswNbtResources.StructureSearchManager.DeleteFingerprintRecord( this.NodeId.PrimaryKey );
         }
-
-        public override void afterPropertySetDeleteNode() { }
 
         public override void afterPropertySetPopulateProps()
         {

@@ -35,13 +35,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Error = "Error";
         }
 
-        private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
-
-        public CswNbtObjClassPrintJob( CswNbtResources CswNbtResources, CswNbtNode Node )
-            : base( CswNbtResources, Node )
-        {
-            _CswNbtObjClassDefault = new CswNbtObjClassDefault( _CswNbtResources, Node );
-        }//ctor()
+        public CswNbtObjClassPrintJob( CswNbtResources CswNbtResources, CswNbtNode Node ) : base( CswNbtResources, Node ) {}
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
@@ -62,58 +56,13 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         #region Inherited Events
-
-        public override void beforePromoteNode()
-        {
-            _CswNbtObjClassDefault.beforePromoteNode();
-        }//beforeCreateNode()
-
-        public override void afterPromoteNode()
-        {
-            _CswNbtObjClassDefault.afterPromoteNode();
-        }//afterCreateNode()
-
-
-        public override void beforeWriteNode( bool Creating )
-        {
-            _CswNbtObjClassDefault.beforeWriteNode( Creating );
-        }//beforeWriteNode()
-
-        public override void afterWriteNode()
-        {
-            _CswNbtObjClassDefault.afterWriteNode();
-        }//afterWriteNode()
-
-        public override void beforeDeleteNode()
-        {
-            _CswNbtObjClassDefault.beforeDeleteNode();
-
-        }//beforeDeleteNode()
-
-        public override void afterDeleteNode()
-        {
-            _CswNbtObjClassDefault.afterDeleteNode();
-        }//afterDeleteNode()        
-
-        protected override void afterPopulateProps()
-        {
-            //NodeTypes.SetOnPropChange( OnNodeTypesPropChange );
-            _CswNbtObjClassDefault.triggerAfterPopulateProps();
-        }//afterPopulateProps()
-
+        
         public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
         {
             CswNbtMetaDataObjectClassProp JobStateOcp = ObjectClass.getObjectClassProp( PropertyName.JobState );
             ParentRelationship.View.AddViewPropertyAndFilter( ParentRelationship, JobStateOcp, Value: StateOption.Closed, FilterMode: CswEnumNbtFilterMode.NotEquals, ShowAtRuntime: true );
-            
-            _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
         }
-        
-        protected override bool onButtonClick( NbtButtonData ButtonData )
-        {
-            if( null != ButtonData && null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
-            return true;
-        }
+
         #endregion
 
         #region Object class specific properties

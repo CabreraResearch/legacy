@@ -89,6 +89,8 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtNode.PromoteTempToReal();
         }
 
+        #region ObjectClass-Specific Logic
+
         public abstract CswNbtMetaDataObjectClass ObjectClass { get; }
         /// <summary>
         /// ObjectClass-specific logic to execute before persisting a new real node (from temp or create)
@@ -114,6 +116,18 @@ namespace ChemSW.Nbt.ObjClasses
         /// ObjectClass-specific logic to execute after deleting a node
         /// </summary>
         public virtual void afterDeleteNode() {}
+        /// <summary>
+        /// ObjectClass-specific logic to execute after clicking an object-class button (including the Save button)
+        /// </summary>
+        protected virtual bool onButtonClick( NbtButtonData ButtonData ) { return true; }
+        /// <summary>
+        /// ObjectClass-specific View Filters to add
+        /// </summary>
+        public virtual void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship ) { }
+
+        #endregion ObjectClass-Specific Logic
+
+        #region Base Node Event Logic
 
         public void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation, bool Creating )
         {
@@ -361,6 +375,8 @@ namespace ChemSW.Nbt.ObjClasses
 
         protected virtual void afterPopulateProps() {}
 
+        
+
         /// <summary>
         /// Save any properties before the Object Class Button Click Event is triggered
         /// </summary>
@@ -519,10 +535,6 @@ namespace ChemSW.Nbt.ObjClasses
             return Ret;
         }
 
-        protected virtual bool onButtonClick( NbtButtonData ButtonData ) { return true; }
-
-        public virtual void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship ) {}
-
         public virtual CswNbtNode CopyNode( bool IsNodeTemp = false )
         {
             return CopyNodeImpl( IsNodeTemp );
@@ -539,6 +551,8 @@ namespace ChemSW.Nbt.ObjClasses
                 }, IsCopy: true );
             return CopiedNode;
         }
+
+        #endregion Base Node Event Logic
 
         public abstract class PropertyName
         {

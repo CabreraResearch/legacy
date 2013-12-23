@@ -1,6 +1,5 @@
 using System;
 using System.Collections.ObjectModel;
-using System.IO;
 using System.Linq;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
@@ -88,18 +87,9 @@ namespace ChemSW.Nbt.ObjClasses
         #region Base
 
         /// <summary>
-        /// Default Object Class for consumption by derived classes
-        /// </summary>
-        public CswNbtObjClassDefault CswNbtObjClassDefault = null;
-
-        /// <summary>
         /// Property Set ctor
         /// </summary>
-        protected CswNbtPropertySetDocument( CswNbtResources CswNbtResources, CswNbtNode Node )
-            : base( CswNbtResources, Node )
-        {
-            CswNbtObjClassDefault = new CswNbtObjClassDefault( _CswNbtResources, Node );
-        }//ctor()
+        protected CswNbtPropertySetDocument( CswNbtResources CswNbtResources, CswNbtNode Node ) : base( CswNbtResources, Node ) {}
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
@@ -137,42 +127,42 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Before write node event for derived classes to implement
         /// </summary>
-        public abstract void beforePropertySetWriteNode();
+        public virtual void beforePropertySetWriteNode() {}
 
         /// <summary>
         /// After write node event for derived classes to implement
         /// </summary>
-        public abstract void afterPropertySetWriteNode();
+        public virtual void afterPropertySetWriteNode() {}
 
         /// <summary>
         /// Before delete node event for derived classes to implement
         /// </summary>
-        public abstract void beforePropertySetDeleteNode();
+        public virtual void beforePropertySetDeleteNode() {}
 
         /// <summary>
         /// After delete node event for derived classes to implement
         /// </summary>
-        public abstract void afterPropertySetDeleteNode();
+        public virtual void afterPropertySetDeleteNode() {}
 
         /// <summary>
         /// Populate props event for derived classes to implement
         /// </summary>
-        public abstract void afterPropertySetPopulateProps();
+        public virtual void afterPropertySetPopulateProps() {}
 
         /// <summary>
         /// Button click event for derived classes to implement
         /// </summary>
-        public abstract bool onPropertySetButtonClick( NbtButtonData ButtonData );
+        public virtual bool onPropertySetButtonClick( NbtButtonData ButtonData ) { return true; }
 
         /// <summary>
         /// Mechanism to add default filters in derived classes
         /// </summary>
-        public abstract void onPropertySetAddDefaultViewFilters( CswNbtViewRelationship ParentRelationship );
+        public virtual void onPropertySetAddDefaultViewFilters( CswNbtViewRelationship ParentRelationship ) {}
 
         /// <summary>
         /// ObjectClass-specific logic for archiving existing matching Documents
         /// </summary>
-        public abstract void archiveMatchingDocs();
+        public virtual void archiveMatchingDocs() {}
 
         #endregion Abstract Methods
 
@@ -188,26 +178,21 @@ namespace ChemSW.Nbt.ObjClasses
                 LastModifiedBy.SyncGestalt();
                 LastModifiedOn.DateTimeValue = DateTime.Now;
             }
-
-            CswNbtObjClassDefault.beforeWriteNode( Creating );
         }
 
         public override void afterWriteNode()
         {
             afterPropertySetWriteNode();
-            CswNbtObjClassDefault.afterWriteNode();
         }
 
         public override void beforeDeleteNode()
         {
             beforePropertySetDeleteNode();
-            CswNbtObjClassDefault.beforeDeleteNode();
         }
 
         public override void afterDeleteNode()
         {
             afterPropertySetDeleteNode();
-            CswNbtObjClassDefault.afterDeleteNode();
         }
 
         protected override void afterPopulateProps()
@@ -219,13 +204,11 @@ namespace ChemSW.Nbt.ObjClasses
             AcquiredDate.SetOnPropChange( OnAcquiredDatePropChange );
             Archived.SetOnPropChange( OnArchivedPropChange );
             FileType.SetOnPropChange( OnFileTypePropChange );
-            CswNbtObjClassDefault.triggerAfterPopulateProps();
         }
 
         public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
         {
             onPropertySetAddDefaultViewFilters( ParentRelationship );
-            CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
         }
 
         protected override bool onButtonClick( NbtButtonData ButtonData )

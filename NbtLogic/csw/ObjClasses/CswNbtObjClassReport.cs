@@ -26,14 +26,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string WebService = "Web Service";
         }
 
-
-        private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
-
-        public CswNbtObjClassReport( CswNbtResources CswNbtResources, CswNbtNode Node )
-            : base( CswNbtResources, Node )
-        {
-            _CswNbtObjClassDefault = new CswNbtObjClassDefault( _CswNbtResources, Node );
-        }//ctor()
+        public CswNbtObjClassReport( CswNbtResources CswNbtResources, CswNbtNode Node ) : base( CswNbtResources, Node ) {}
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
@@ -81,32 +74,14 @@ namespace ChemSW.Nbt.ObjClasses
 
         #endregion Object class specific Events
 
-
         #region Inherited Events
-
-        public override void beforePromoteNode()
-        {
-            _CswNbtObjClassDefault.beforePromoteNode();
-        }//beforeCreateNode()
-
-        public override void afterPromoteNode()
-        {
-            _CswNbtObjClassDefault.afterPromoteNode();
-        }//afterCreateNode()
-
 
         public override void beforeWriteNode( bool Creating )
         {
-
-            string candidate_sql = SQL.Text;
-
             if( CswSqlAnalysis.doesSqlContainDmlOrDdl( SQL.Text ) )
             {
                 throw ( new CswDniException( "Invalid sql: " + SQL.Text ) );
             }
-
-            _CswNbtObjClassDefault.beforeWriteNode( Creating );
-
         }//beforeWriteNode()
 
         public override void afterWriteNode()
@@ -118,30 +93,7 @@ namespace ChemSW.Nbt.ObjClasses
                 if( Handler is AfterModifyReportEventHandler )
                     ( (AfterModifyReportEventHandler) Handler )();
             }
-
-            _CswNbtObjClassDefault.afterWriteNode();
         }//afterWriteNode()
-
-        public override void beforeDeleteNode()
-        {
-            _CswNbtObjClassDefault.beforeDeleteNode();
-
-        }//beforeDeleteNode()
-
-        public override void afterDeleteNode()
-        {
-            _CswNbtObjClassDefault.afterDeleteNode();
-        }//afterDeleteNode()        
-
-        protected override void afterPopulateProps()
-        {
-            _CswNbtObjClassDefault.triggerAfterPopulateProps();
-        }//afterPopulateProps()
-
-        public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
-        {
-            _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
-        }
 
         #endregion
 

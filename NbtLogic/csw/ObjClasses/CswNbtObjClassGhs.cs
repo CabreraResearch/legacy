@@ -54,13 +54,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #endregion Enums
 
-        private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
-
-        public CswNbtObjClassGHS( CswNbtResources CswNbtResources, CswNbtNode Node )
-            : base( CswNbtResources, Node )
-        {
-            _CswNbtObjClassDefault = new CswNbtObjClassDefault( _CswNbtResources, Node );
-        }//ctor()
+        public CswNbtObjClassGHS( CswNbtResources CswNbtResources, CswNbtNode Node ) : base( CswNbtResources, Node ) {}
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
@@ -80,40 +74,7 @@ namespace ChemSW.Nbt.ObjClasses
             return ret;
         }
 
-
-        #region Inherited Events
-
-        public override void beforePromoteNode()
-        {
-            _CswNbtObjClassDefault.beforePromoteNode();
-        }//beforeCreateNode()
-
-        public override void afterPromoteNode()
-        {
-            _CswNbtObjClassDefault.afterPromoteNode();
-        }//afterCreateNode()
-
-
-        public override void beforeWriteNode( bool Creating )
-        {
-            _CswNbtObjClassDefault.beforeWriteNode( Creating );
-        }//beforeWriteNode()
-
-        public override void afterWriteNode()
-        {
-            _CswNbtObjClassDefault.afterWriteNode();
-        }//afterWriteNode()
-
-        public override void beforeDeleteNode()
-        {
-            _CswNbtObjClassDefault.beforeDeleteNode();
-
-        }//beforeDeleteNode()
-
-        public override void afterDeleteNode()
-        {
-            _CswNbtObjClassDefault.afterDeleteNode();
-        }//afterDeleteNode()        
+        #region Inherited Events      
 
         protected override void afterPopulateProps()
         {
@@ -158,8 +119,6 @@ namespace ChemSW.Nbt.ObjClasses
                         Selected.Node.NodeName = ( false == string.IsNullOrEmpty( TranslantedText ) ? TranslantedText : Selected.English.Text );
                     }
                 } );
-
-            _CswNbtObjClassDefault.triggerAfterPopulateProps();
         } //afterPopulateProps()
 
         /// <summary>
@@ -249,16 +208,6 @@ namespace ChemSW.Nbt.ObjClasses
             return Classes.Keys.ToDictionary( pk => pk.ToString(), pk => Classes[pk] );
         } // _initGhsClassificationOptions()
 
-        public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
-        {
-            _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
-        }
-
-        protected override bool onButtonClick( NbtButtonData ButtonData )
-        {
-            if( null != ButtonData && null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
-            return true;
-        }
         #endregion
 
         #region Object class specific properties

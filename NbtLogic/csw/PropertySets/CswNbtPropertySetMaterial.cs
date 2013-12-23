@@ -58,18 +58,9 @@ namespace ChemSW.Nbt.ObjClasses
         #region Base
 
         /// <summary>
-        /// Default Object Class for consumption by derived classes
-        /// </summary>
-        public CswNbtObjClassDefault CswNbtObjClassDefault = null;
-
-        /// <summary>
         /// Property Set ctor
         /// </summary>
-        public CswNbtPropertySetMaterial( CswNbtResources CswNbtResources, CswNbtNode Node )
-            : base( CswNbtResources, Node )
-        {
-            CswNbtObjClassDefault = new CswNbtObjClassDefault( _CswNbtResources, Node );
-        }//ctor()
+        public CswNbtPropertySetMaterial( CswNbtResources CswNbtResources, CswNbtNode Node ) : base( CswNbtResources, Node ) {}
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
@@ -114,32 +105,32 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Before write node event for derived classes to implement
         /// </summary>
-        public abstract void beforePropertySetWriteNode();
+        public virtual void beforePropertySetWriteNode() {}
 
         /// <summary>
         /// After write node event for derived classes to implement
         /// </summary>
-        public abstract void afterPropertySetWriteNode();
+        public virtual void afterPropertySetWriteNode() {}
 
         /// <summary>
         /// Before delete node event for derived classes to implement
         /// </summary>
-        public abstract void beforePropertySetDeleteNode();
+        public virtual void beforePropertySetDeleteNode() {}
 
         /// <summary>
         /// After delete node event for derived classes to implement
         /// </summary>
-        public abstract void afterPropertySetDeleteNode();
+        public virtual void afterPropertySetDeleteNode() { }
 
         /// <summary>
         /// Populate props event for derived classes to implement
         /// </summary>
-        public abstract void afterPropertySetPopulateProps();
+        public virtual void afterPropertySetPopulateProps() { }
 
         /// <summary>
         /// Button click event for derived classes to implement
         /// </summary>
-        public abstract bool onPropertySetButtonClick( NbtButtonData ButtonData );
+        public virtual bool onPropertySetButtonClick( NbtButtonData ButtonData ) { return true; }
 
         /// <summary>
         /// ObjectClass-specific data for Receive button click
@@ -149,23 +140,15 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Mechanism to add default filters in derived classes
         /// </summary>
-        public abstract void onPropertySetAddDefaultViewFilters( CswNbtViewRelationship ParentRelationship );
+        public virtual void onPropertySetAddDefaultViewFilters( CswNbtViewRelationship ParentRelationship ) {}
 
-        public abstract DateTime getDefaultExpirationDate( DateTime InitialDate );
+        public virtual DateTime getDefaultExpirationDate( DateTime InitialDate ) { return DateTime.MinValue; }
 
-        public abstract void onUpdatePropertyValue();
+        public virtual void onUpdatePropertyValue() {}
 
         #endregion Abstract Methods
 
         #region Inherited Events
-
-        public override void beforePromoteNode()
-        {
-        }
-
-        public override void afterPromoteNode()
-        {
-        }
 
         public override void beforeWriteNode( bool Creating )
         {
@@ -178,26 +161,21 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 Receive.setHidden( value : ApprovedForReceiving.Checked != CswEnumTristate.True, SaveToDb : true );
             }
-
-            CswNbtObjClassDefault.beforeWriteNode( Creating );
         }
 
         public override void afterWriteNode()
         {
             afterPropertySetWriteNode();
-            CswNbtObjClassDefault.afterWriteNode();
         }
 
         public override void beforeDeleteNode()
         {
             beforePropertySetDeleteNode();
-            CswNbtObjClassDefault.beforeDeleteNode();
         }
 
         public override void afterDeleteNode()
         {
             afterPropertySetDeleteNode();
-            CswNbtObjClassDefault.afterDeleteNode();
         }
 
         protected override void afterPopulateProps()
@@ -207,7 +185,6 @@ namespace ChemSW.Nbt.ObjClasses
             ContainerExpirationLocked.setReadOnly( false == _CswNbtResources.Permit.can( CswEnumNbtActionName.Container_Expiration_Lock ), SaveToDb : false );
             _toggleButtonVisibility();
             _toggleConstituentProps();
-            CswNbtObjClassDefault.triggerAfterPopulateProps();
         }
 
         /// <summary>
@@ -261,7 +238,6 @@ namespace ChemSW.Nbt.ObjClasses
             }
 
             onPropertySetAddDefaultViewFilters( ParentRelationship );
-            CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
         }
 
         protected override bool onButtonClick( NbtButtonData ButtonData )

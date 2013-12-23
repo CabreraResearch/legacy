@@ -29,15 +29,7 @@ namespace ChemSW.Nbt.ObjClasses
             return ret;
         }
 
-        private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
-
-        public CswNbtObjClassRequest( CswNbtResources CswNbtResources, CswNbtNode Node )
-            : base( CswNbtResources, Node )
-        {
-            _CswNbtObjClassDefault = new CswNbtObjClassDefault( _CswNbtResources, Node );
-        }
-
-        //ctor()
+        public CswNbtObjClassRequest( CswNbtResources CswNbtResources, CswNbtNode Node ) : base( CswNbtResources, Node ) {}
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
@@ -58,43 +50,10 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public override void beforePromoteNode()
-        {
-            _CswNbtObjClassDefault.beforePromoteNode();
-        }//beforeCreateNode()
-
-        public override void afterPromoteNode()
-        {
-            _CswNbtObjClassDefault.afterPromoteNode();
-        }//afterCreateNode()
-
-
         public override void beforeWriteNode( bool Creating )
         {
             _setDefaultValues();
-            _CswNbtObjClassDefault.beforeWriteNode( Creating );
-        }
-
-        //beforeWriteNode()
-
-        public override void afterWriteNode()
-        {
-            _CswNbtObjClassDefault.afterWriteNode();
-        }
-
-        //afterWriteNode()
-
-        public override void beforeDeleteNode()
-        {
-            _CswNbtObjClassDefault.beforeDeleteNode();
-        }
-
-        //beforeDeleteNode()
-
-        public override void afterDeleteNode()
-        {
-            _CswNbtObjClassDefault.afterDeleteNode();
-        } //afterDeleteNode()        
+        }    
 
         protected override void afterPopulateProps()
         {
@@ -102,7 +61,6 @@ namespace ChemSW.Nbt.ObjClasses
             IsRecurring.SetOnPropChange( onIsRecurringChange );
             Name.SetOnPropChange( onNamePropChange );
             SubmittedDate.SetOnPropChange( onSubmittedDatePropChange );
-            _CswNbtObjClassDefault.triggerAfterPopulateProps();
         } //afterPopulateProps()
 
         public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
@@ -113,17 +71,6 @@ namespace ChemSW.Nbt.ObjClasses
             ParentRelationship.View.AddViewPropertyAndFilter( ParentRelationship, RequestorOcp, Value : "me", ShowInGrid : false );
             ParentRelationship.View.AddViewPropertyAndFilter( ParentRelationship, IsFavoriteOcp, FilterMode : CswEnumNbtFilterMode.NotEquals, Value : CswEnumTristate.True.ToString(), ShowInGrid : false );
             ParentRelationship.View.AddViewPropertyAndFilter( ParentRelationship, IsRecurringOcp, FilterMode : CswEnumNbtFilterMode.NotEquals, Value : CswEnumTristate.True.ToString(), ShowInGrid : false );
-
-            _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
-        }
-
-        protected override bool onButtonClick( NbtButtonData ButtonData )
-        {
-            if( null != ButtonData && null != ButtonData.NodeTypeProp )
-            {
-                /*Do Something*/
-            }
-            return true;
         }
 
         #endregion
