@@ -22,6 +22,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string LOLIListCodes = "LOLI List Codes";
             public const string Chemicals = "Chemicals";
             public const string ListCode = "List Code";
+            public const string Regions = "Regions"; // List of options provided by Ariel
         }
 
         /// <summary>
@@ -37,8 +38,12 @@ namespace ChemSW.Nbt.ObjClasses
             /// LOLI Managed - List Codes are synced with LOLI
             /// </summary>
             public const string LOLIManaged = "LOLI Managed";
+            /// <summary>
+            /// Ariel Managed - List Codes are synced with Ariel
+            /// </summary>
+            public const string ArielManaged = "Ariel Managed";
 
-            public static CswCommaDelimitedString Options = new CswCommaDelimitedString { ManuallyManaged, LOLIManaged };
+            public static CswCommaDelimitedString Options = new CswCommaDelimitedString { ManuallyManaged, LOLIManaged, ArielManaged };
         }
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
@@ -86,6 +91,7 @@ namespace ChemSW.Nbt.ObjClasses
             // Set which node grid is displayed
             switch( ListMode.Value )
             {
+                case CswEnumRegulatoryListListModes.ArielManaged:
                 case CswEnumRegulatoryListListModes.LOLIManaged:
                     CASNosGrid.setHidden( true, true );
                     AddCASNumbers.setHidden( true, true );
@@ -93,6 +99,7 @@ namespace ChemSW.Nbt.ObjClasses
                     break;
                 case CswEnumRegulatoryListListModes.ManuallyManaged:
                     LOLIListCodes.setHidden( true, true );
+                    Regions.setHidden( true, true );
                     break;
             }
 
@@ -122,17 +129,9 @@ namespace ChemSW.Nbt.ObjClasses
 
         protected override void afterPopulateProps()
         {
+            Regions.InitOptions = _initRegionsOptions;
             AddCASNumbers.SetOnPropChange( _AddCASNumbers_OnChange );
-
-            // If the LOLI Sync module is disabled, then we don't want to the user to see the 'LOLI Managed' option.
-            if( false == _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.LOLISync ) )
-            {
-                CswCommaDelimitedString NewOptions = new CswCommaDelimitedString
-                    {
-                        CswEnumRegulatoryListListModes.ManuallyManaged
-                    };
-                ListMode.Options.Override( NewOptions );
-            }
+            _setListModeOptions();
 
             _CswNbtObjClassDefault.triggerAfterPopulateProps();
         }//afterPopulateProps()
@@ -204,6 +203,8 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropGrid LOLIListCodes { get { return _CswNbtNode.Properties[PropertyName.LOLIListCodes]; } }
         public CswNbtNodePropGrid Chemicals { get { return _CswNbtNode.Properties[PropertyName.Chemicals]; } }
         public CswNbtNodePropText ListCode { get { return _CswNbtNode.Properties[PropertyName.ListCode]; } }
+        public CswNbtNodePropMultiList Regions { get { return _CswNbtNode.Properties[PropertyName.Regions]; } }
+
 
         #endregion
 
@@ -427,6 +428,37 @@ namespace ChemSW.Nbt.ObjClasses
             } // if( CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.RegulatoryLists ) )
             return ret;
         } // findMatches()
+
+        private Dictionary<string, string> _initRegionsOptions()
+        {
+            Dictionary<string, string> Ret = new Dictionary<string, string>();
+            Ret.Add( "EU", "Western Europe" );
+            Ret.Add( "NA", "North America" );
+            Ret.Add( "LA", "Latin America" );
+            Ret.Add( "MA", "Middle East Africa" );
+            Ret.Add( "EE", "Central/Eastern Europe" );
+            Ret.Add( "AP", "Asia Pacific" );
+
+            return Ret;
+        } // _initDsdPhraseOptions()
+
+        private void _setListModeOptions()
+        {
+            CswCommaDelimitedString NewOptions = new CswCommaDelimitedString();
+            NewOptions.Add( CswEnumRegulatoryListListModes.ManuallyManaged );
+
+            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.LOLISync ) )
+            {
+                NewOptions.Add( CswEnumRegulatoryListListModes.LOLIManaged );
+            }
+
+            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.ArielSync ) )
+            {
+                NewOptions.Add( CswEnumRegulatoryListListModes.ArielManaged );
+            }
+
+            ListMode.Options.Override( NewOptions );
+        }
 
     }//CswNbtObjClassRegulatoryList
 
