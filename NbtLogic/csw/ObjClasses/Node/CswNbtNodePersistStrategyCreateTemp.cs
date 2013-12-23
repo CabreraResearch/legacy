@@ -1,11 +1,14 @@
 ﻿
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtNodePersistStrategyCreate : ICswNbtNodePersistStrategy
+    public class CswNbtNodePersistStrategyCreateTemp : ICswNbtNodePersistStrategy
     {
         private CswNbtResources _CswNbtResources;
 
-        public CswNbtNodePersistStrategyCreate( CswNbtResources CswNbtResources )
+        /// <summary>
+        /// Strategy used to create and copy new temp nodes.  To create new real nodes, use CswNbtNodePersistStrategyPromoteReal.
+        /// </summary>
+        public CswNbtNodePersistStrategyCreateTemp( CswNbtResources CswNbtResources )
         {
             _CswNbtResources = CswNbtResources;
         }
