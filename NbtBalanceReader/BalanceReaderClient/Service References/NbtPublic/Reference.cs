@@ -2191,10 +2191,10 @@ namespace BalanceReaderClient.NbtPublic {
         
         [System.ServiceModel.OperationContractAttribute(Action="NbtWebApp/NbtPublic/UpdateBalanceData", ReplyAction="NbtWebApp/NbtPublic/UpdateBalanceDataResponse")]
         [System.ServiceModel.FaultContractAttribute(typeof(System.ServiceModel.FaultException), Action="NbtWebApp/NbtPublic/UpdateBalanceDataFaultExceptionFault", Name="FaultException", Namespace="http://schemas.datacontract.org/2004/07/System.ServiceModel")]
-        void UpdateBalanceData(BalanceReaderClient.NbtPublic.SerialBalance Request);
+        BalanceReaderClient.NbtPublic.SerialBalance UpdateBalanceData(BalanceReaderClient.NbtPublic.SerialBalance Request);
         
         [System.ServiceModel.OperationContractAttribute(Action="NbtWebApp/NbtPublic/UpdateBalanceData", ReplyAction="NbtWebApp/NbtPublic/UpdateBalanceDataResponse")]
-        System.Threading.Tasks.Task UpdateBalanceDataAsync(BalanceReaderClient.NbtPublic.SerialBalance Request);
+        System.Threading.Tasks.Task<BalanceReaderClient.NbtPublic.SerialBalance> UpdateBalanceDataAsync(BalanceReaderClient.NbtPublic.SerialBalance Request);
         
         [System.ServiceModel.OperationContractAttribute(Action="NbtWebApp/NbtPublic/ListBalanceConfigurations", ReplyAction="NbtWebApp/NbtPublic/ListBalanceConfigurationsResponse")]
         [System.ServiceModel.FaultContractAttribute(typeof(System.ServiceModel.FaultException), Action="NbtWebApp/NbtPublic/ListBalanceConfigurationsFaultExceptionFault", Name="FaultException", Namespace="http://schemas.datacontract.org/2004/07/System.ServiceModel")]
@@ -2286,11 +2286,11 @@ namespace BalanceReaderClient.NbtPublic {
             return base.Channel.LpcUpdateJobAsync(Request);
         }
         
-        public void UpdateBalanceData(BalanceReaderClient.NbtPublic.SerialBalance Request) {
-            base.Channel.UpdateBalanceData(Request);
+        public BalanceReaderClient.NbtPublic.SerialBalance UpdateBalanceData(BalanceReaderClient.NbtPublic.SerialBalance Request) {
+            return base.Channel.UpdateBalanceData(Request);
         }
         
-        public System.Threading.Tasks.Task UpdateBalanceDataAsync(BalanceReaderClient.NbtPublic.SerialBalance Request) {
+        public System.Threading.Tasks.Task<BalanceReaderClient.NbtPublic.SerialBalance> UpdateBalanceDataAsync(BalanceReaderClient.NbtPublic.SerialBalance Request) {
             return base.Channel.UpdateBalanceDataAsync(Request);
         }
         

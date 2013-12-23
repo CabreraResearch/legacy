@@ -93,13 +93,6 @@ namespace ChemSW.Nbt.WebServices
                     AfterBalance(Balance.Node);
                     Balance.postChanges( false );
 
-
-                    Return.Data.BalanceList.Add( new SerialBalance
-                        {
-                            NbtName = Balance.Name.Text,
-                            CurrentWeight = Balance.Quantity.Quantity,
-                            NodeId = Balance.NodeId.PrimaryKey.ToString()
-                        } );
                 }
 
                 //return the requested balance back, plus what nodeId it was assigned
