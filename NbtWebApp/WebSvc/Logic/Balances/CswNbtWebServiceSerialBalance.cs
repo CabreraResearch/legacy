@@ -49,50 +49,61 @@ namespace ChemSW.Nbt.WebServices
             if( null != BalanceOC )
             {
                 CswNbtMetaDataObjectClassProp BalanceNameOCP = BalanceOC.getObjectClassProp( CswNbtObjClassBalance.PropertyName.Name );
-
-                CswNbtView ExistingBalancesView = new CswNbtView( NbtResources );
-                ExistingBalancesView.ViewName = "Existing Balances";
-                CswNbtViewRelationship BalanceRel = ExistingBalancesView.AddViewRelationship( BalanceOC, false );
-                ExistingBalancesView.AddViewPropertyAndFilter( BalanceRel, BalanceNameOCP,
-                                                               Value: Request.NbtName,
-                                                               FilterMode: CswEnumNbtFilterMode.Equals );
-                ICswNbtTree ExistingBalancesTree = NbtResources.Trees.getTreeFromView( ExistingBalancesView, false, true, true );
-
                 CswNbtObjClassBalance Balance;
 
-                Action<CswNbtNode> AfterBalance = delegate( CswNbtNode NewNode )
-                    {
-                        CswNbtObjClassBalance thisBalance = NewNode;
-                        thisBalance.Name.Text = Request.NbtName;
-                        thisBalance.Quantity.Quantity = Request.CurrentWeight;
-                        thisBalance.LastActive.DateTimeValue = DateTime.Now;
-                        thisBalance.Device.Text = Request.DeviceDescription;
-                        thisBalance.Manufacturer.Text = Request.Manufacturer;
-                        thisBalance.Operational.Checked = CswConvert.ToTristate( Request.Operational );
-                        thisBalance.BalanceConfiguration.RelatedNodeId = _findConfigurationWithName( NbtResources, Request.Configuration ).NodeId;
 
-                        CswNbtObjClassUnitOfMeasure Unit = _mapUnitToNode( NbtResources, Request.UnitOfMeasurement );
-
-                        if( null != Unit )
-                        {
-                            thisBalance.Quantity.UnitId = Unit.NodeId;
-                        }
-                    };
-
-                if( ExistingBalancesTree.getChildNodeCount() == 0 )
+                Action<CswNbtNode> UpdateBalance = delegate( CswNbtNode NewNode )
                 {
-                    //there is no balance with this name yet. Make a new one.
-                    CswNbtMetaDataNodeType BalanceNT = BalanceOC.FirstNodeType;
-                    Balance = NbtResources.Nodes.makeNodeFromNodeTypeId( BalanceNT.NodeTypeId, AfterBalance );
-                }
+                    CswNbtObjClassBalance thisBalance = NewNode;
+                    thisBalance.Name.Text = Request.NbtName;
+                    thisBalance.Quantity.Quantity = Request.CurrentWeight;
+                    thisBalance.LastActive.DateTimeValue = DateTime.Now;
+                    thisBalance.Device.Text = Request.DeviceDescription;
+                    thisBalance.Manufacturer.Text = Request.Manufacturer;
+                    thisBalance.Operational.Checked = CswConvert.ToTristate( Request.Operational );
+                    thisBalance.BalanceConfiguration.RelatedNodeId = _findConfigurationWithName( NbtResources, Request.Configuration ).NodeId;
+
+                    CswNbtObjClassUnitOfMeasure Unit = _mapUnitToNode( NbtResources, Request.UnitOfMeasurement );
+
+                    if( null != Unit )
+                    {
+                        thisBalance.Quantity.UnitId = Unit.NodeId;
+                    }
+                };
+
+
+                if( string.IsNullOrEmpty(Request.NodeId) )
+                {
+                    CswNbtView ExistingBalancesView = new CswNbtView( NbtResources );
+                    ExistingBalancesView.ViewName = "Existing Balances";
+                    CswNbtViewRelationship BalanceRel = ExistingBalancesView.AddViewRelationship( BalanceOC, false );
+                    ExistingBalancesView.AddViewPropertyAndFilter( BalanceRel, BalanceNameOCP,
+                                                                   Value: Request.NbtName,
+                                                                   FilterMode: CswEnumNbtFilterMode.Equals );
+                    ICswNbtTree ExistingBalancesTree = NbtResources.Trees.getTreeFromView( ExistingBalancesView, false, true, true );
+
+
+                    if( ExistingBalancesTree.getChildNodeCount() == 0 )
+                    {
+                        //there is no balance with this name yet. Make a new one.
+                        CswNbtMetaDataNodeType BalanceNT = BalanceOC.FirstNodeType;
+                        Balance = NbtResources.Nodes.makeNodeFromNodeTypeId( BalanceNT.NodeTypeId, UpdateBalance );
+                    }
+                    else
+                    {
+                        //this balance already exists, grab a reference to it.
+                        ExistingBalancesTree.goToNthChild( 0 );
+                        Balance = ExistingBalancesTree.getCurrentNode();
+                        UpdateBalance( Balance.Node );
+                        Balance.postChanges( false );
+
+                    }
+                }//if null == request.nodeid
                 else
                 {
-                    //this balance already exists, grab a reference to it.
-                    ExistingBalancesTree.goToNthChild( 0 );
-                    Balance = ExistingBalancesTree.getCurrentNode();
-                    AfterBalance(Balance.Node);
+                    Balance = NbtResources.Nodes[new CswPrimaryKey( "nodes", Convert.ToInt32( Request.NodeId ) )];
+                    UpdateBalance( Balance.Node );
                     Balance.postChanges( false );
-
                 }
 
                 //return the requested balance back, plus what nodeId it was assigned

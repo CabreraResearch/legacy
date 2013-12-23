@@ -98,7 +98,7 @@ namespace BalanceReaderClient
                     {
                         if( StatusText == "Authenticated" )
                         {
-                            Client.UpdateBalanceData( _balanceData );
+                            _balanceData.NodeId = Client.UpdateBalanceData( _balanceData ).NodeId;
                         }
                     };
 
