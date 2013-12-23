@@ -31,7 +31,7 @@ namespace ChemSW.Nbt.Schema
             CswNbtSchemaUpdateImportMgr ImpMgr = new CswNbtSchemaUpdateImportMgr( _CswNbtSchemaModTrnsctn, "CAF" );
 
             ImpMgr.importBinding( "classes", CswNbtObjClassChemical.PropertyName.HazardClasses, "", DestNodeTypeName : "Chemical" );
-            ImpMgr.importBinding( "categories", CswNbtObjClassChemical.PropertyName.HazardClasses, "", DestNodeTypeName : "Chemical" );
+            ImpMgr.importBinding( "categories", CswNbtObjClassChemical.PropertyName.HazardCategories, "", DestNodeTypeName : "Chemical" );
             ImpMgr.importBinding( "chemtype", CswNbtObjClassChemical.PropertyName.MaterialType, "", DestNodeTypeName : "Chemical" );
             ImpMgr.importBinding( "special_flags", CswNbtObjClassChemical.PropertyName.SpecialFlags, "", DestNodeTypeName : "Chemical" );
             
