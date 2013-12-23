@@ -61,9 +61,8 @@
 
         // Check whether the control is valid
         if (false === Csw.isNullOrEmpty(currValue)) {
-            if (false === Csw.isNullOrEmpty(cswPrivate.emptyText) && currValue !== cswPrivate.emptyText) {
-                cswPublic.input.val(true);
-            } else {
+            cswPublic.input.val(true);
+            if (false === Csw.isNullOrEmpty(cswPrivate.emptyText) && currValue === cswPrivate.emptyText) {
                 cswPublic.input.val(false);
             }
         } else {
