@@ -141,11 +141,11 @@ namespace ChemSW.Nbt.ObjClasses
             get { return _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.InspectionDesignClass ); }
         }
 
-        public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
+        public override void beforePromoteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
         }
 
-        public override void afterCreateNode()
+        public override void afterPromoteNode()
         {
         }
 

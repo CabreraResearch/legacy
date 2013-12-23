@@ -6,7 +6,7 @@ namespace ChemSW.Nbt.ObjClasses
         private CswNbtResources _CswNbtResources;
 
         /// <summary>
-        /// Strategy used to update pre-existing temp and real nodes.
+        /// Strategy used to update pre-existing temp and real nodes.  Will not update unmodified nodes unless forced.
         /// </summary>
         public CswNbtNodePersistStrategyUpdate( CswNbtResources CswNbtResources )
         {

@@ -411,7 +411,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
+        public override void beforePromoteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
             RequestType.Value = Type.Value;
             TotalDispensed.UnitId = Quantity.UnitId;
@@ -424,12 +424,12 @@ namespace ChemSW.Nbt.ObjClasses
                     TotalDispensed.UnitId = SizeNode.InitialQuantity.UnitId;
                 }
             }
-            _CswNbtObjClassDefault.beforeCreateNode( IsCopy, OverrideUniqueValidation );
+            _CswNbtObjClassDefault.beforePromoteNode( IsCopy, OverrideUniqueValidation );
         }
 
-        public override void afterCreateNode()
+        public override void afterPromoteNode()
         {
-            _CswNbtObjClassDefault.afterCreateNode();
+            _CswNbtObjClassDefault.afterPromoteNode();
         }
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation, bool Creating )

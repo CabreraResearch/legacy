@@ -26,7 +26,7 @@ namespace ChemSW.Nbt.ObjClasses
                 Node.ObjClass.beforeWriteNode( IsCopy, OverrideUniqueValidation, true );
             }
 
-            Node.requestWrite( true, IsCopy, OverrideUniqueValidation, true, ( false == Node.IsTemp ) );
+            Node.requestWrite( true, IsCopy, OverrideUniqueValidation, true, false );
 
             if( null != Node.ObjClass )
             {

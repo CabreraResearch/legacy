@@ -19,30 +19,26 @@ namespace ChemSW.Nbt.ObjClasses
 
         public void postChanges( CswNbtNode Node )
         {
-            if( Node.IsTemp )
+            Node.removeTemp();
+            Node.checkWriter();
+
+            if( null != Node.ObjClass )
             {
-                Node.removeTemp();
-
-                Node.checkWriter();
-
-                if( null != Node.ObjClass )
-                {
-                    Node.ObjClass.beforeCreateNode( IsCopy, OverrideUniqueValidation );
-                    Node.ObjClass.beforeWriteNode( IsCopy, OverrideUniqueValidation, true );
-                }
-
-                Node.requestWrite( false, IsCopy, OverrideUniqueValidation, true, false );
-
-                if( null != Node.ObjClass )
-                {
-                    Node.ObjClass.afterCreateNode();
-                    Node.ObjClass.afterWriteNode( true );
-                }
-
-                Node.setModificationState( CswEnumNbtNodeModificationState.Posted );
-
-                Node.Audit();
+                Node.ObjClass.beforePromoteNode( IsCopy, OverrideUniqueValidation );
+                Node.ObjClass.beforeWriteNode( IsCopy, OverrideUniqueValidation, true );
             }
+
+            Node.requestWrite( false, IsCopy, OverrideUniqueValidation, true, false );
+
+            if( null != Node.ObjClass )
+            {
+                Node.ObjClass.afterPromoteNode();
+                Node.ObjClass.afterWriteNode( true );
+            }
+
+            Node.setModificationState( CswEnumNbtNodeModificationState.Posted );
+
+            Node.Audit();
         }
     }
 }
