@@ -155,13 +155,13 @@
   <wsdl:message name="Search_getLastExtChemDataImportDate_SampleFaultExceptionFault_FaultMessage">
     <wsdl:part xmlns:q16="http://schemas.datacontract.org/2004/07/c3WebServii" name="detail" element="q16:SampleFaultException" />
   </wsdl:message>
-  <wsdl:message name="Search_getLastLOLIImportDate_InputMessage">
-    <wsdl:part name="parameters" element="tns:getLastLOLIImportDate" />
+  <wsdl:message name="Search_getLastestRegDbDate_InputMessage">
+    <wsdl:part name="parameters" element="tns:getLastestRegDbDate" />
   </wsdl:message>
-  <wsdl:message name="Search_getLastLOLIImportDate_OutputMessage">
-    <wsdl:part name="parameters" element="tns:getLastLOLIImportDateResponse" />
+  <wsdl:message name="Search_getLastestRegDbDate_OutputMessage">
+    <wsdl:part name="parameters" element="tns:getLastestRegDbDateResponse" />
   </wsdl:message>
-  <wsdl:message name="Search_getLastLOLIImportDate_SampleFaultExceptionFault_FaultMessage">
+  <wsdl:message name="Search_getLastestRegDbDate_SampleFaultExceptionFault_FaultMessage">
     <wsdl:part xmlns:q17="http://schemas.datacontract.org/2004/07/c3WebServii" name="detail" element="q17:SampleFaultException" />
   </wsdl:message>
   <wsdl:message name="Search_getListCodesByCasNo_InputMessage">
@@ -181,15 +181,6 @@
   </wsdl:message>
   <wsdl:message name="Search_getListCodesByName_SampleFaultExceptionFault_FaultMessage">
     <wsdl:part xmlns:q19="http://schemas.datacontract.org/2004/07/c3WebServii" name="detail" element="q19:SampleFaultException" />
-  </wsdl:message>
-  <wsdl:message name="Search_getCasLinkData_InputMessage">
-    <wsdl:part name="parameters" element="tns:getCasLinkData" />
-  </wsdl:message>
-  <wsdl:message name="Search_getCasLinkData_OutputMessage">
-    <wsdl:part name="parameters" element="tns:getCasLinkDataResponse" />
-  </wsdl:message>
-  <wsdl:message name="Search_getCasLinkData_SampleFaultExceptionFault_FaultMessage">
-    <wsdl:part xmlns:q20="http://schemas.datacontract.org/2004/07/c3WebServii" name="detail" element="q20:SampleFaultException" />
   </wsdl:message>
   <wsdl:portType name="Search">
     <wsdl:operation name="canConnect">
@@ -272,10 +263,10 @@
       <wsdl:output wsaw:Action="http://tempuri.org/Search/getLastExtChemDataImportDateResponse" message="tns:Search_getLastExtChemDataImportDate_OutputMessage" />
       <wsdl:fault wsaw:Action="http://tempuri.org/Search/getLastExtChemDataImportDateSampleFaultExceptionFault" name="SampleFaultExceptionFault" message="tns:Search_getLastExtChemDataImportDate_SampleFaultExceptionFault_FaultMessage" />
     </wsdl:operation>
-    <wsdl:operation name="getLastLOLIImportDate">
-      <wsdl:input wsaw:Action="http://tempuri.org/Search/getLastLOLIImportDate" message="tns:Search_getLastLOLIImportDate_InputMessage" />
-      <wsdl:output wsaw:Action="http://tempuri.org/Search/getLastLOLIImportDateResponse" message="tns:Search_getLastLOLIImportDate_OutputMessage" />
-      <wsdl:fault wsaw:Action="http://tempuri.org/Search/getLastLOLIImportDateSampleFaultExceptionFault" name="SampleFaultExceptionFault" message="tns:Search_getLastLOLIImportDate_SampleFaultExceptionFault_FaultMessage" />
+    <wsdl:operation name="getLastestRegDbDate">
+      <wsdl:input wsaw:Action="http://tempuri.org/Search/getLastestRegDbDate" message="tns:Search_getLastestRegDbDate_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/Search/getLastestRegDbDateResponse" message="tns:Search_getLastestRegDbDate_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://tempuri.org/Search/getLastestRegDbDateSampleFaultExceptionFault" name="SampleFaultExceptionFault" message="tns:Search_getLastestRegDbDate_SampleFaultExceptionFault_FaultMessage" />
     </wsdl:operation>
     <wsdl:operation name="getListCodesByCasNo">
       <wsdl:input wsaw:Action="http://tempuri.org/Search/getListCodesByCasNo" message="tns:Search_getListCodesByCasNo_InputMessage" />
@@ -286,11 +277,6 @@
       <wsdl:input wsaw:Action="http://tempuri.org/Search/getListCodesByName" message="tns:Search_getListCodesByName_InputMessage" />
       <wsdl:output wsaw:Action="http://tempuri.org/Search/getListCodesByNameResponse" message="tns:Search_getListCodesByName_OutputMessage" />
       <wsdl:fault wsaw:Action="http://tempuri.org/Search/getListCodesByNameSampleFaultExceptionFault" name="SampleFaultExceptionFault" message="tns:Search_getListCodesByName_SampleFaultExceptionFault_FaultMessage" />
-    </wsdl:operation>
-    <wsdl:operation name="getCasLinkData">
-      <wsdl:input wsaw:Action="http://tempuri.org/Search/getCasLinkData" message="tns:Search_getCasLinkData_InputMessage" />
-      <wsdl:output wsaw:Action="http://tempuri.org/Search/getCasLinkDataResponse" message="tns:Search_getCasLinkData_OutputMessage" />
-      <wsdl:fault wsaw:Action="http://tempuri.org/Search/getCasLinkDataSampleFaultExceptionFault" name="SampleFaultExceptionFault" message="tns:Search_getCasLinkData_SampleFaultExceptionFault_FaultMessage" />
     </wsdl:operation>
   </wsdl:portType>
   <wsdl:service name="Search" />

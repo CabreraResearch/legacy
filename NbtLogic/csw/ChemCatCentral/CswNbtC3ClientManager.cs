@@ -30,6 +30,12 @@ namespace ChemSW.Nbt.ChemCatCentral
 
         }//ctor2
 
+        public string RegulationDatabase
+        {
+            get { return _CswC3SearchParams.RegulationDatabase; }
+            set { _CswC3SearchParams.RegulationDatabase = value; }
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -106,26 +112,27 @@ namespace ChemSW.Nbt.ChemCatCentral
         {
             string Ret = string.Empty;
 
-            CswRetObjSearchResults ReturnObject = SearchClient.getLastExtChemDataImportDate( _CswC3Params );
+            CswRetObjSearchResults ReturnObject = SearchClient.getLastExtChemDataImportDate( _CswC3SearchParams );
             Ret = ReturnObject.LastExtChemDataImportDate;
 
             return Ret;
         }//getLastExtChemDataImportDate()
 
         /// <summary>
-        /// Get the most recent LOLI data import date.
+        /// Get the most recent Regulation database data import date.
         /// </summary>
         /// <param name="SearchClient"></param>
         /// <returns></returns>
-        public string getLastLOLIImportDate( SearchClient SearchClient )
+        public string getLastRegulationDataImportDate( SearchClient SearchClient )
         {
             string Ret = string.Empty;
 
-            CswRetObjSearchResults ReturnObject = SearchClient.getLastLOLIImportDate( _CswC3Params );
-            Ret = ReturnObject.LastLOLIImportDate;
+            // TODO: THIS NEEDS TO BE GENERIC TO TAKE BOTH LOLI AND ARIEL
+            CswRetObjSearchResults ReturnObject = SearchClient.getLastestRegDbDate( _CswC3SearchParams );
+            Ret = ReturnObject.LastestRegulationDbDate;
 
             return Ret;
-        }//getLastLOLIImportDate()
+        }//getLastRegulationDataImportDate()
 
         #region Private Helper Methods
 

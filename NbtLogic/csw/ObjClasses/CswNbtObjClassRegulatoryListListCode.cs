@@ -112,6 +112,12 @@ namespace ChemSW.Nbt.ObjClasses
             SearchClient C3SearchClient = CswNbtC3ClientManager.initializeC3Client();
             if( null != C3SearchClient )
             {
+                CswNbtObjClassRegulatoryList RegListNode = _CswNbtResources.Nodes.GetNode( RegulatoryList.RelatedNodeId );
+                if( null != RegListNode )
+                {
+                    // Assuming ListCode options are in the following format: "[Database Name] Managed"
+                    CswC3SearchParams.RegulationDatabase = RegListNode.ListMode.Value.Split( ' ' )[0];
+                }
                 CswC3SearchParams.Query = SearchTerm;
 
                 // Perform the search
@@ -122,7 +128,7 @@ namespace ChemSW.Nbt.ObjClasses
                     {
                         Collection<CswNbtNodeTypePropListOption> MatchingRegLists = new Collection<CswNbtNodeTypePropListOption>();
 
-                        foreach( CswC3LoliData LoliRecord in SearchResults.LoliDataResults )
+                        foreach( CswC3RegulationDbData LoliRecord in SearchResults.LoliDataResults )
                         {
                             MatchingRegLists.Add( new CswNbtNodeTypePropListOption( LoliRecord.ListName, CswConvert.ToString( LoliRecord.ListId ) ) );
                         }
