@@ -1,4 +1,4 @@
-fil/// <reference path="~/vendor/extjs-4.1.0/ext-all-debug.js" />
+/// <reference path="~/vendor/extjs-4.1.0/ext-all-debug.js" />
 /// <reference path="~/app/CswApp-vsdoc.js" />
 
 /*global Csw:true*/
@@ -29,6 +29,7 @@ fil/// <reference path="~/vendor/extjs-4.1.0/ext-all-debug.js" />
                     urlMethod: '',
                     data: {}
                 },
+                
 
                 showMultiEditToolbar: true,
                 showCheckboxes: false,
