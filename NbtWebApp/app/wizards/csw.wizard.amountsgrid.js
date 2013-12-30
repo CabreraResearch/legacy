@@ -365,7 +365,8 @@
                                 sizename: '',
                                 unit: '',
                                 unitid: '',
-                                barcodes: ''
+                                barcodes: '',
+                                containerids: []
                             };
                             var extractNewAmount = function (object) {
                                 var ret = Csw.extend({}, object, true);

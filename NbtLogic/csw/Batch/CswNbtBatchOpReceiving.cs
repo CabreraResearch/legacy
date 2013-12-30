@@ -113,14 +113,8 @@ namespace ChemSW.Nbt.Batch
                     JArray Quantities = CswConvert.ToJArray( ReceiptObj["quantities"] );
                     if( null != ContainerNt && CswTools.IsPrimaryKey( MaterialId ) && Quantities.HasValues )
                     {
-                        //TODO: remove this, the SDS doc is committed on finish
-                        //_commitSDSDocNode( MaterialId, ReceiptObj );
-
                         CswPrimaryKey RequestId = _getRequestId( ReceiptObj );
                         CswNbtNode ReceiptLot = _CswNbtResources.Nodes[RequestId];
-
-                        //TODO: remove this, it the receipt lot should be created on finish
-                        //CswNbtNode ReceiptLot = _makeReceiptLot( MaterialId, RequestId, ReceiptObj, InitialContainerNode.ExpirationDate.DateTimeValue );
 
                         for( int index = 0; index < Quantities.Count; index++ )
                         {
@@ -157,54 +151,12 @@ namespace ChemSW.Nbt.Batch
                                                 CswNbtActReceiving.AddContainerIdToReceiptDefinition( BatchData.ReceiptDefinitionObj, index, AsContainer.NodeId.ToString() );
                                                 _NodesProcessed++;
                                             } );
-                                        
-                                        //TODO: remove this junk
-                                        //if( C == 0 && index == 0 )
-                                        //{
-                                        //    AsContainer = InitialContainerNode;
-                                        //    if( false == CswTools.IsPrimaryKey( AsContainer.Location.SelectedNodeId ) )
-                                        //    {
-                                        //        throw new CswDniException( CswEnumErrorType.Warning, "You cannot Receive a Container without picking a Location.", "You cannot Receive a Container without picking a Location." );
-                                        //    }
-                                        //    if( false == AsContainer.isLocationInAccessibleInventoryGroup( AsContainer.Location.SelectedNodeId ) )
-                                        //    {
-                                        //        throw new CswDniException( CswEnumErrorType.Warning, "You do not have Inventory Group permission to receive Containers into this Location: " + AsContainer.Location.CachedPath, "You do not have Inventory Group permission to receive Containers into this Location: " + AsContainer.Location.CachedPath );
-                                        //    }
-                                        //    After( AsContainer.Node );
-                                        //    AsContainer.PromoteTempToReal();
-                                        //}
-                                        //else
-                                        //{
-                                        //    CswNbtNodeKey ContainerNodeKey;
-                                        //    AsContainer = _CswNbtSdTabsAndProps.addNode( ContainerNt, null, ContainerAddProps, out ContainerNodeKey, After );
-                                        //}
-
-                                        //if( null != AsContainer )
-                                        //{
-                                        //    //ContainerIds.Add( AsContainer.NodeId );
-                                        //
-                                        //    JObject BarcodeNode = new JObject();
-                                        //    jBarcodes[AsContainer.NodeId.ToString()] = BarcodeNode;
-                                        //    BarcodeNode["nodeid"] = AsContainer.NodeId.ToString();
-                                        //    BarcodeNode["nodename"] = AsContainer.NodeName;
-                                        //}
                                     }
                                 } //for( Int32 C = 0; C < NoContainers; C += 1 )
                             }
                         }//for( int index = 0; index < Quantities.Count; index++ )
 
                     }//if( null != ContainerNt )
-
-                    //TODO: remove this junk
-                    //if( ContainerIds.Count > 0 )
-                    //{
-                    //    CswNbtView NewContainersView = new CswNbtView( _CswNbtResources );
-                    //    NewContainersView.ViewName = "New Containers";
-                    //    CswNbtViewRelationship ContainerVr = NewContainersView.AddViewRelationship( ContainerNt, true );
-                    //    ContainerVr.NodeIdsToFilterIn = ContainerIds;
-                    //    NewContainersView.SaveToCache( false );
-                    //    Ret["viewid"] = NewContainersView.SessionViewId.ToString();
-                    //}
                 }//if( Int32.MinValue != ContainerNodeTypeId )
 
             }//if( null != InitialContainerNode )
