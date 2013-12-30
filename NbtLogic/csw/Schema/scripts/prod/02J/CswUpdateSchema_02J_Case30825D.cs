@@ -8,7 +8,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update
     /// </summary>
-    public class CswUpdateSchema_02J_Case30825C : CswUpdateSchemaTo
+    public class CswUpdateSchema_02J_Case30825D : CswUpdateSchemaTo
     {
         public override CswEnumDeveloper Author
         {
@@ -22,12 +22,12 @@ namespace ChemSW.Nbt.Schema
 
         public override string Title
         {
-            get { return ""; }
+            get { return "Make Reg. List Regions property conditional on ListMode property"; }
         }
 
         public override string AppendToScriptName()
         {
-            return "C";
+            return "D";
         }
 
         public override void update()

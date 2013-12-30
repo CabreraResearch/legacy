@@ -524,13 +524,13 @@ namespace ChemSW.Nbt.ChemCatCentral {
         private ChemSW.Nbt.ChemCatCentral.CswWebSvcReturnBaseLogging LoggingField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private ChemSW.Nbt.ChemCatCentral.CswC3RegulationDbData[] LoliDataResultsField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
         private string MessageField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
         private ChemSW.Nbt.ChemCatCentral.CswWebSvcReturnBasePerformance PerformanceField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private ChemSW.Nbt.ChemCatCentral.CswC3RegulationDbData[] RegulationDbDataResultsField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
         private string RoleField;
@@ -724,19 +724,6 @@ namespace ChemSW.Nbt.ChemCatCentral {
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public ChemSW.Nbt.ChemCatCentral.CswC3RegulationDbData[] LoliDataResults {
-            get {
-                return this.LoliDataResultsField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.LoliDataResultsField, value) != true)) {
-                    this.LoliDataResultsField = value;
-                    this.RaisePropertyChanged("LoliDataResults");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
         public string Message {
             get {
                 return this.MessageField;
@@ -758,6 +745,19 @@ namespace ChemSW.Nbt.ChemCatCentral {
                 if ((object.ReferenceEquals(this.PerformanceField, value) != true)) {
                     this.PerformanceField = value;
                     this.RaisePropertyChanged("Performance");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ChemSW.Nbt.ChemCatCentral.CswC3RegulationDbData[] RegulationDbDataResults {
+            get {
+                return this.RegulationDbDataResultsField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.RegulationDbDataResultsField, value) != true)) {
+                    this.RegulationDbDataResultsField = value;
+                    this.RaisePropertyChanged("RegulationDbDataResults");
                 }
             }
         }
@@ -2575,7 +2575,7 @@ namespace ChemSW.Nbt.ChemCatCentral {
         private string QueryField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string[] RegionsField;
+        private string RegionsField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
         private string RegulationDatabaseField;
@@ -2726,7 +2726,7 @@ namespace ChemSW.Nbt.ChemCatCentral {
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public string[] Regions {
+        public string Regions {
             get {
                 return this.RegionsField;
             }

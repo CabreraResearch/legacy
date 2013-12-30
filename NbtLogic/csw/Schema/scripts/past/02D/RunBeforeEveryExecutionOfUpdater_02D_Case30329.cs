@@ -25,7 +25,7 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClass RegListListCodeOC =
                 _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.RegulatoryListListCodeClass );
             CswNbtMetaDataObjectClassProp LOLIListNameOCP =
-                RegListListCodeOC.getObjectClassProp( CswNbtObjClassRegulatoryListListCode.PropertyName.LOLIListName );
+                RegListListCodeOC.getObjectClassProp( CswNbtObjClassRegulatoryListListCode.PropertyName.ListName );
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( LOLIListNameOCP, CswEnumNbtObjectClassPropAttributes.isrequired, true );
 
         } //Update()

@@ -21,7 +21,7 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
-            // RegulatoryListListCodes should be compound unique on the following properties: RegulatoryList, LOLIListCode, and LOLIListName
+            // RegulatoryListListCodes should be compound unique on the following properties: RegulatoryList, LOLIListCode, and ListName
             CswNbtMetaDataObjectClass RegListListCodeOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.RegulatoryListListCodeClass );
             foreach( CswNbtMetaDataNodeType RegListListCodeNT in RegListListCodeOC.getNodeTypes() )
             {
@@ -34,7 +34,7 @@ namespace ChemSW.Nbt.Schema
                 RegListListCodeRegListNTP.setIsCompoundUnique( true );
 
                 // LOLI List Name NTP
-                CswNbtMetaDataNodeTypeProp RegListListCodeLoliListNameNTP = RegListListCodeNT.getNodeTypePropByObjectClassProp( CswNbtObjClassRegulatoryListListCode.PropertyName.LOLIListName );
+                CswNbtMetaDataNodeTypeProp RegListListCodeLoliListNameNTP = RegListListCodeNT.getNodeTypePropByObjectClassProp( CswNbtObjClassRegulatoryListListCode.PropertyName.ListName );
                 RegListListCodeLoliListNameNTP.setIsCompoundUnique( true );
             }
         } // update()
