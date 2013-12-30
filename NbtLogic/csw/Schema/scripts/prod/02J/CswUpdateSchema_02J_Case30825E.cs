@@ -8,7 +8,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update
     /// </summary>
-    public class CswUpdateSchema_02J_Case30825D : CswUpdateSchemaTo
+    public class CswUpdateSchema_02J_Case30825E : CswUpdateSchemaTo
     {
         public override CswEnumDeveloper Author
         {
@@ -27,7 +27,7 @@ namespace ChemSW.Nbt.Schema
 
         public override string AppendToScriptName()
         {
-            return "D";
+            return "E";
         }
 
         public override void update()

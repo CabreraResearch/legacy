@@ -297,7 +297,7 @@ namespace ChemSW.Nbt.ChemCatCentral {
         private string DataField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private int ListIdField;
+        private string ListIdField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
         private string ListNameField;
@@ -352,12 +352,12 @@ namespace ChemSW.Nbt.ChemCatCentral {
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public int ListId {
+        public string ListId {
             get {
                 return this.ListIdField;
             }
             set {
-                if ((this.ListIdField.Equals(value) != true)) {
+                if ((object.ReferenceEquals(this.ListIdField, value) != true)) {
                     this.ListIdField = value;
                     this.RaisePropertyChanged("ListId");
                 }

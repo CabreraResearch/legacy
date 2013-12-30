@@ -20,7 +20,7 @@ namespace ChemSW.Nbt.Schema
 
         public override string Title
         {
-            get { return "Update OC property names for Reg. Lists"; }
+            get { return "Update RegList and RegListListCode OCP Names"; }
         }
 
         public override string AppendToScriptName()

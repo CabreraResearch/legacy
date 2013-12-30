@@ -46,7 +46,7 @@ namespace ChemSW.Nbt.ObjClasses
             public static CswCommaDelimitedString Options = new CswCommaDelimitedString { ManuallyManaged, LOLIManaged, ArielManaged };
         }
 
-        public CswNbtObjClassRegulatoryList( CswNbtResources CswNbtResources, CswNbtNode Node ) : base( CswNbtResources, Node ) {}
+        public CswNbtObjClassRegulatoryList( CswNbtResources CswNbtResources, CswNbtNode Node ) : base( CswNbtResources, Node ) { }
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
@@ -87,7 +87,7 @@ namespace ChemSW.Nbt.ObjClasses
 
             // We don't want users to be able to edit this property after the node is created
             ListMode.setReadOnly( true, true );
-        }   
+        }
 
         protected override void afterPopulateProps()
         {
@@ -255,12 +255,21 @@ namespace ChemSW.Nbt.ObjClasses
                         #endregion Manually Managed Reg Lists
 
                         #region Regulation Database Managed Reg Lists
-
                         if( CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.LOLISync ) || CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.ArielSync ) )
                         {
                             CswNbtMetaDataObjectClass RegListListCodeOC = CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RegulatoryListListCodeClass );
                             if( null != RegListListCodeOC )
                             {
+                                string RegulationDatabase = "";
+                                if( CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.LOLISync ) )
+                                {
+                                    RegulationDatabase = "LOLI";
+                                }
+                                else if( CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.ArielSync ) )
+                                {
+                                    RegulationDatabase = "Ariel";
+                                }
+
                                 CswNbtMetaDataObjectClassProp RegListListCodeListCodeOCP = RegListListCodeOC.getObjectClassProp( CswNbtObjClassRegulatoryListListCode.PropertyName.ListCode );
                                 CswNbtMetaDataObjectClassProp RegListListCodeRegulatoryListOCP = RegListListCodeOC.getObjectClassProp( CswNbtObjClassRegulatoryListListCode.PropertyName.RegulatoryList );
                                 CswNbtMetaDataObjectClassProp RegListListModeOCP = RegulatoryListOC.getObjectClassProp( PropertyName.ListMode );
@@ -287,8 +296,8 @@ namespace ChemSW.Nbt.ObjClasses
                                 CswNbtViewRelationship SecondaryRelationship = View1.AddViewRelationship( ParentRelationship, CswEnumNbtViewPropOwnerType.Second, RegListListCodeRegulatoryListOCP, false );
                                 View1.AddViewProperty( SecondaryRelationship, RegListListCodeListCodeOCP );
 
-                                // Dictionary that stores the List Codes for each Regulatory List
-                                Dictionary<CswPrimaryKey, List<string>> RegListListCodes = new Dictionary<CswPrimaryKey, List<string>>();
+                                // Dictionary that stores the Regions and List Codes for each Regulatory List
+                                Dictionary<CswPrimaryKey, Tuple<string, List<string>>> RegListListCodes = new Dictionary<CswPrimaryKey, Tuple<string, List<string>>>();
 
                                 // Get and iterate the Tree
                                 ICswNbtTree Tree1 = CswNbtResources.Trees.getTreeFromView( View1, false, true, true );
@@ -297,7 +306,13 @@ namespace ChemSW.Nbt.ObjClasses
                                     Tree1.goToNthChild( i );
 
                                     List<string> CurrentListCodes = new List<string>();
-                                    CswPrimaryKey CurrentRegListPk = Tree1.getNodeIdForCurrentPosition();
+                                    CswNbtObjClassRegulatoryList CurrentRegListNode = Tree1.getCurrentNode();
+                                    CswPrimaryKey CurrentRegListPk = CurrentRegListNode.NodeId;
+                                    string CurrentRegListRegions = "";
+                                    if( null != CurrentRegListNode.Regions.Value )
+                                    {
+                                        CurrentRegListRegions = CswConvert.ToString( CurrentRegListNode.Regions.Value );
+                                    }
 
                                     for( int j = 0; j < Tree1.getChildNodeCount(); j++ )
                                     // Regulatory List List Code Nodes
@@ -314,13 +329,13 @@ namespace ChemSW.Nbt.ObjClasses
                                         }
                                         if( null != ListCodeTreeProp )
                                         {
-                                            CurrentListCodes.Add( CswConvert.ToString( ListCodeTreeProp.Field1_Numeric ) );
+                                            CurrentListCodes.Add( CswConvert.ToString( ListCodeTreeProp.Field1 ) );
                                         }
                                         Tree1.goToParentNode();
                                     }
 
                                     // Add to the dictionary
-                                    RegListListCodes.Add( CurrentRegListPk, CurrentListCodes );
+                                    RegListListCodes.Add( CurrentRegListPk, new Tuple<string, List<string>>( CurrentRegListRegions, CurrentListCodes ) );
 
                                     Tree1.goToParentNode();
                                 }
@@ -328,19 +343,21 @@ namespace ChemSW.Nbt.ObjClasses
                                 // Search the regulation database
                                 foreach( string CurrentCasNo in CasNos )
                                 {
-                                    foreach( KeyValuePair<CswPrimaryKey, List<string>> Pair in RegListListCodes )
+                                    foreach( KeyValuePair<CswPrimaryKey, Tuple<string, List<string>>> Pair in RegListListCodes )
                                     {
                                         CswC3SearchParams CswC3SearchParams = new CswC3SearchParams();
                                         CswNbtC3ClientManager CswNbtC3ClientManager = new CswNbtC3ClientManager( CswNbtResources, CswC3SearchParams );
                                         SearchClient C3SearchClient = CswNbtC3ClientManager.initializeC3Client();
                                         if( null != C3SearchClient )
                                         {
-                                            string ListCodes = string.Join( ",", Pair.Value.ToArray() );
+                                            string ListCodes = string.Join( ",", Pair.Value.Item2.ToArray() );
+                                            string Regions = Pair.Value.Item1;
 
                                             // Set LOLI Sync specific properties
                                             CswC3SearchParams.Query = CurrentCasNo; // Query takes the Cas Number
                                             CswC3SearchParams.ListCodes = ListCodes; // ListCodes should be a comma delimited string of all list codes
-                                            //todo: add region for ariel
+                                            CswC3SearchParams.Regions = Regions; // String list of all regions (for Ariel)
+                                            CswC3SearchParams.RegulationDatabase = RegulationDatabase; // Which Regulation Database to search
 
                                             CswRetObjSearchResults SearchResults = C3SearchClient.getListCodesByCasNo( CswC3SearchParams );
                                             if( null != SearchResults.RegulationDbDataResults )
