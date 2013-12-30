@@ -22,6 +22,7 @@ namespace ChemSW.Nbt.Schema
                     // new CswUpdateMetaData_02J_CaseXXXXX()
                     new CswUpdateMetaData_02J_Case31164(),
                     new CswUpdateMetaData_02J_Case30825A(),
+                    new CswUpdateMetaData_02J_Case31156(),
                     new CswUpdateMetaData_02J_Case30825B(),
                     new CswUpdateMetaData_02J_Case30825C(),
                     new CswUpdateMetaData_02J_Case30825D()
