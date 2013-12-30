@@ -27,6 +27,7 @@
         var cswPublic = {};
 
         cswPrivate.dateFormats = {
+            'mm/dd/yyyy': /^(0[1-9]|1[012])\/(0[1-9]|[12][0-9]|3[01])\/(\d{4})$/,
             'M/d/yyyy': /^([1-9]|1[012])\/([1-9]|[12][0-9]|3[01])\/(\d{4})$/,
             'd-M-yyyy': /^([1-9]|[12][0-9]|3[01])-([1-9]|1[012])-(\d{4})$/,
             'dd MMM yyyy': /^(0[1-9]|[12][0-9]|3[01]) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) (\d{4})$/i,
@@ -41,12 +42,12 @@
 
         cswPrivate.addValidators = function () {
 
-            if (cswPrivate.DateFormat in cswPrivate.dateFormats && undefined != cswPrivate.dateBox) {
+            if (cswPrivate.DateFormat in cswPrivate.dateFormats && undefined != cswPublic.dateBox) {
                 $.validator.addMethod('validateDate', function (value, element) {
 
                     var ret = true;
 
-                    if (cswPrivate.isRequired || false == Csw.isNullOrEmpty(cswPrivate.dateBox.val())) {
+                    if (cswPrivate.isRequired || false == Csw.isNullOrEmpty(cswPublic.dateBox.val())) {
                         var dateExpression = cswPrivate.dateFormats[cswPrivate.DateFormat];
                         ret = dateExpression.test(cswPublic.val().date);
                     }
@@ -54,15 +55,15 @@
                     return ret;
 
                 }, 'Please select a valid date');
-                cswPrivate.dateBox.addClass('validateDate');
-            }//if preferredFormat in dateFormats && undefined != cswPrivate.dateBox
+                cswPublic.dateBox.addClass('validateDate');
+            }//if preferredFormat in dateFormats && undefined != cswPublic.dateBox
 
-            if (cswPrivate.TimeFormat in cswPrivate.timeFormats && undefined != cswPrivate.timeBox) {
+            if (cswPrivate.TimeFormat in cswPrivate.timeFormats && undefined != cswPublic.timeBox) {
                 $.validator.addMethod('validateTime', function (value, element) {
 
                     var ret = true;
 
-                    if (cswPrivate.isRequired || false == Csw.isNullOrEmpty(cswPrivate.timeBox.val())) {
+                    if (cswPrivate.isRequired || false == Csw.isNullOrEmpty(cswPublic.timeBox.val())) {
                         var timeExpression = cswPrivate.timeFormats[cswPrivate.TimeFormat];
                         ret = timeExpression.test(cswPublic.val().time);
                     }
@@ -70,8 +71,8 @@
                     return ret;
 
                 }, 'Please enter a valid time in the format ' + cswPrivate.TimeFormat);
-                cswPrivate.timeBox.addClass('validateTime');
-            }//if cswPrivate.TimeFormat in cswPrivate.timeFormats && undefined != cswPrivate.timeBox
+                cswPublic.timeBox.addClass('validateTime');
+            }//if cswPrivate.TimeFormat in cswPrivate.timeFormats && undefined != cswPublic.timeBox
 
         };//function addValidators()
 
@@ -105,7 +106,7 @@
                 };
 
                 if (cswPrivate.DisplayMode === 'Date' || cswPrivate.DisplayMode === 'DateTime') {
-                    cswPrivate.dateBox = cswPrivate.dateTimeTbl.cell(1, 1).input({
+                    cswPublic.dateBox = cswPrivate.dateTimeTbl.cell(1, 1).input({
                         name: cswPrivate.name + '_date',
                         type: Csw.enums.inputTypes.text,
                         value: cswPrivate.Date,
@@ -114,18 +115,18 @@
                         cssclass: 'textinput'
                     });
                     if (cswPrivate.Date.substr(0, 'today'.length) !== 'today') {
-                        cswPrivate.dateBox.$.datepicker({
+                        cswPublic.dateBox.$.datepicker({
                             'dateFormat': Csw.serverDateFormatToJQuery(cswPrivate.DateFormat),
                             'changeYear': cswPrivate.changeYear,
                             'minDate': cswPrivate.minDate,
                             'maxDate': cswPrivate.maxDate
                         });
                     }
-                    cswPrivate.dateBox.required(cswPrivate.isRequired);
+                    cswPublic.dateBox.required(cswPrivate.isRequired);
                 }
 
                 if (cswPrivate.DisplayMode === 'Time' || cswPrivate.DisplayMode === 'DateTime') {
-                    cswPrivate.timeBox = cswPrivate.dateTimeTbl.cell(1, 3).input({
+                    cswPublic.timeBox = cswPrivate.dateTimeTbl.cell(1, 3).input({
                         name: cswPrivate.name + '_time',
                         type: Csw.enums.inputTypes.text,
                         cssclass: 'textinput',
@@ -137,12 +138,12 @@
                         name: cswPrivate.name + '_now',
                         disableOnClick: false,
                         onClick: function () {
-                            cswPrivate.timeBox.val(Csw.getTimeString(new Date(), cswPrivate.TimeFormat));
+                            cswPublic.timeBox.val(Csw.getTimeString(new Date(), cswPrivate.TimeFormat));
                             changeEvent();
                         },
                         enabledText: 'Now'
                     });
-                    cswPrivate.timeBox.required(cswPrivate.isRequired);
+                    cswPublic.timeBox.required(cswPrivate.isRequired);
                 }
 
                 if (Csw.bool(cswPrivate.showTodayButton)) {
@@ -150,8 +151,8 @@
                         name: cswPrivate.name + '_today',
                         disableOnClick: false,
                         onClick: function () {
-                            cswPrivate.dateBox.$.datepicker('destroy');
-                            cswPrivate.dateBox.val('today');  // this doesn't trigger onchange
+                            cswPublic.dateBox.$.datepicker('destroy');
+                            cswPublic.dateBox.val('today');  // this doesn't trigger onchange
                             changeEvent();
                         },
                         enabledText: 'Today'
@@ -163,7 +164,7 @@
         }());
 
         cswPublic.setMaxDate = function (maxDate) {
-            cswPrivate.dateBox.$.datepicker('option', 'maxDate', maxDate);
+            cswPublic.dateBox.$.datepicker('option', 'maxDate', maxDate);
         };
 
         cswPublic.val = function (readOnly, value) {
@@ -171,18 +172,18 @@
             ret.date = '';
             ret.time = '';
 
-            if (cswPrivate.dateBox && cswPrivate.dateBox.length() > 0) {
-                ret.date = (false === Csw.bool(readOnly)) ? cswPrivate.dateBox.val() : cswPrivate.dateBox.text();
+            if (cswPublic.dateBox && cswPublic.dateBox.length() > 0) {
+                ret.date = (false === Csw.bool(readOnly)) ? cswPublic.dateBox.val() : cswPublic.dateBox.text();
             }
-            if (cswPrivate.timeBox && cswPrivate.timeBox.length() > 0) {
-                ret.time = (false === Csw.bool(readOnly)) ? cswPrivate.timeBox.val() : cswPrivate.timeBox.text();
+            if (cswPublic.timeBox && cswPublic.timeBox.length() > 0) {
+                ret.time = (false === Csw.bool(readOnly)) ? cswPublic.timeBox.val() : cswPublic.timeBox.text();
             }
             if (value) {
-                if (cswPrivate.dateBox) {
-                    cswPrivate.dateBox.val(value.date);
+                if (cswPublic.dateBox) {
+                    cswPublic.dateBox.val(value.date);
                 }
-                if (cswPrivate.timeBox) {
-                    cswPrivate.timeBox.val(value.time);
+                if (cswPublic.timeBox) {
+                    cswPublic.timeBox.val(value.time);
                 }
             }
             return ret;

@@ -65,7 +65,7 @@
             cswPrivate.LocationName = locationControl.selectedName();
             //StartDate
             cswPrivate.controlTbl.cell(2, 1).span({ text: 'Start Date:' }).addClass('propertylabel');
-            var startDatePicker = cswPrivate.controlTbl.cell(2, 2).dateTimePicker({
+            var startDatePicker = cswPrivate.controlTbl.cell(2, 2).form().dateTimePicker({
                 name: 'startDate',
                 Date: cswPrivate.getCurrentDate(),
                 isRequired: true,
@@ -75,12 +75,13 @@
                         startDatePicker.setMaxDate(cswPrivate.EndDate);
                     }
                     cswPrivate.StartDate = startDatePicker.val().date;
+                    startDatePicker.dateBox.$.valid();
                 }
             });
             cswPrivate.StartDate = startDatePicker.val().date;
             //EndDate
             cswPrivate.controlTbl.cell(3, 1).span({ text: 'End Date:' }).addClass('propertylabel');
-            var endDatePicker = cswPrivate.controlTbl.cell(3, 2).dateTimePicker({
+            var endDatePicker = cswPrivate.controlTbl.cell(3, 2).form().dateTimePicker({
                 name: 'endDate',
                 Date: cswPrivate.getCurrentDate(),
                 isRequired: true,
@@ -92,6 +93,7 @@
                     cswPrivate.EndDate = endDatePicker.val().date;
                     startDatePicker.setMaxDate(cswPrivate.EndDate);
                     cswPrivate.StartDate = startDatePicker.val().date;
+                    endDatePicker.dateBox.$.valid();
                 }
             });
             cswPrivate.EndDate = endDatePicker.val().date;
@@ -102,11 +104,15 @@
                 tooltip: { title: 'View Report' },
                 icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.magglass),
                 onClick: function () {
-                    cswPrivate.loadGrid({
-                        LocationId: cswPrivate.LocationId,
-                        StartDate: cswPrivate.StartDate,
-                        EndDate: cswPrivate.EndDate
-                    });
+                    if (startDatePicker.dateBox.$.valid() && endDatePicker.dateBox.$.valid()) {
+                        cswPrivate.loadGrid({
+                            LocationId: cswPrivate.LocationId,
+                            StartDate: cswPrivate.StartDate,
+                            EndDate: cswPrivate.EndDate
+                        });
+                    } else {
+                        Csw.error.showError(Csw.error.makeErrorObj(Csw.enums.errorType.warning.name, 'Please enter valid dates.', ''));
+                    }
                     updateButton.enable();
                 }
             });
