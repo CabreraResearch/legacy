@@ -1,6 +1,10 @@
 ﻿using System;
+using ChemSW.Config;
 using ChemSW.Core;
+using ChemSW.Exceptions;
+using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.ServiceDrivers;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.Batch
@@ -10,9 +14,14 @@ namespace ChemSW.Nbt.Batch
         private readonly CswNbtResources _CswNbtResources;
         private readonly CswEnumNbtBatchOpName _BatchOpName = CswEnumNbtBatchOpName.Receiving;
 
+        private CswNbtSdTabsAndProps _CswNbtSdTabsAndProps;
+        private int _NodesProcessed = 0; //the number of nodes processed this run of the batch op
+        private int _MaxNodeProcessed = 10;
+
         public CswNbtBatchOpReceiving( CswNbtResources CswNbtResources )
         {
             _CswNbtResources = CswNbtResources;
+            _MaxNodeProcessed = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumConfigurationVariableNames.NodesProcessedPerCycle ) );
         }
 
         /// <summary>
@@ -44,53 +53,21 @@ namespace ChemSW.Nbt.Batch
         /// </summary>
         public void runBatchOp( CswNbtObjClassBatchOp BatchNode )
         {
-
             try
             {
-                if( BatchNode != null && BatchNode.OpNameValue == CswEnumNbtBatchOpName.Receiving )
+                if( BatchNode.OpNameValue == CswEnumNbtBatchOpName.Receiving )
                 {
+                    _CswNbtSdTabsAndProps = new CswNbtSdTabsAndProps( _CswNbtResources );
+
                     BatchNode.start();
 
                     ReceivingBatchData BatchData = new ReceivingBatchData( BatchNode.BatchData.Text );
+                    _receiveContainers( BatchData );
 
-                    //if( BatchData.NodePks.Count > 0 )
-                    //{
-                    //    int NodesProcessedPerIteration = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumConfigurationVariableNames.NodesProcessedPerCycle ) );
-                    //    for( int i = 0; i < NodesProcessedPerIteration && BatchData.NodePks.Count > 0; i++ )
-                    //    {
-                    //        CswNbtNode Node = _CswNbtResources.Nodes[CswConvert.ToString( BatchData.NodePks[0] )];
-                    //        BatchData.NodePks.RemoveAt( 0 );
-                    //        bool LocationUpdated = false;
-                    //        if( null != Node )
-                    //        {
-                    //            CswNbtMetaDataNodeType NodeType = Node.getNodeType();
-                    //            if( null != NodeType )
-                    //            {
-                    //                CswNbtMetaDataNodeTypeProp LocationNTP = NodeType.getLocationProperty();
-                    //                if( null != LocationNTP )
-                    //                {
-                    //                    CswNbtNodePropLocation LocationProp = Node.Properties[LocationNTP];
-                    //                    if( null != LocationProp )
-                    //                    {
-                    //                        LocationProp.SelectedNodeId = BatchData.LocationId;
-                    //                        Node.postChanges( false );
-                    //                        LocationUpdated = true;
-                    //                    }
-                    //                }
-                    //            }
-                    //        }//if( null != Node )
-                    //
-                    //        if( false == LocationUpdated )
-                    //        {
-                    //            BatchNode.appendToLog( "Unable to update the location of: " + Node.NodeName + " (" + Node.NodeId.ToString() + ")" );
-                    //        }
-                    //
-                    //    }//for( int i = 0; i < NodesProcessedPerIteration && BatchData.NodePks.Count > 0; i++ )
-                    //}
-                    //else
-                    //{
-                    //    BatchNode.finish();
-                    //}
+                    if( 0 == BatchData.getNumberContainersToCreate() || 0 == _NodesProcessed )
+                    {
+                        BatchNode.finish();
+                    }
 
                     BatchNode.PercentDone.Value = getPercentDone( BatchNode );
                     BatchNode.BatchData.Text = BatchData.ToString();
@@ -104,6 +81,167 @@ namespace ChemSW.Nbt.Batch
 
         } // runBatchOp()
 
+        private static CswPrimaryKey _getRequestId( JObject ReceiptObj )
+        {
+            CswPrimaryKey RequestId = null;
+            if( ReceiptObj["requestitem"] != null )
+            {
+                RequestId = new CswPrimaryKey();
+                RequestId.FromString( CswConvert.ToString( ReceiptObj["requestitem"]["requestitemid"] ) );
+                if( false == CswTools.IsPrimaryKey( RequestId ) )
+                {
+                    RequestId = null;
+                }
+            }
+            return RequestId;
+        }
+
+        private void _addContainerIdToReceiptDefinition( ReceivingBatchData BatchData, int QuantityIdx, string ContainerNodeId )
+        {
+            try
+            {
+                CswConvert.ToJArray( BatchData.ReceiptDefinitionObj["quantities"][QuantityIdx]["containerids"] ).Add( ContainerNodeId );
+            }
+            catch( Exception ex )
+            {
+                //TODO: error on batchNode instead of throwing?
+                throw new CswDniException( CswEnumErrorType.Error, "Error adding container id to quantity", ex.Message );
+            }
+        }
+
+        private void _receiveContainers( ReceivingBatchData BatchData )
+        {
+            JObject ReceiptObj = BatchData.ReceiptDefinitionObj;
+            CswNbtObjClassContainer InitialContainerNode = _CswNbtResources.Nodes[CswConvert.ToString( ReceiptObj["containernodeid"] )];
+            if( null != InitialContainerNode )
+            {
+                JObject ContainerAddProps = CswConvert.ToJObject( ReceiptObj["props"] );
+                Int32 ContainerNodeTypeId = CswConvert.ToInt32( ReceiptObj["containernodetypeid"] );
+                if( Int32.MinValue != ContainerNodeTypeId )
+                {
+                    CswNbtMetaDataNodeType ContainerNt = _CswNbtResources.MetaData.getNodeType( ContainerNodeTypeId );
+                    CswPrimaryKey MaterialId = new CswPrimaryKey();
+                    MaterialId.FromString( CswConvert.ToString( ReceiptObj["materialid"] ) );
+                    JArray Quantities = CswConvert.ToJArray( ReceiptObj["quantities"] );
+                    if( null != ContainerNt && CswTools.IsPrimaryKey( MaterialId ) && Quantities.HasValues )
+                    {
+                        //TODO: remove this, the SDS doc is committed on finish
+                        //_commitSDSDocNode( MaterialId, ReceiptObj );
+
+                        CswPrimaryKey RequestId = _getRequestId( ReceiptObj );
+                        CswNbtNode ReceiptLot = _CswNbtResources.Nodes[RequestId];
+
+                        //TODO: remove this, it the receipt lot should be created on finish
+                        //CswNbtNode ReceiptLot = _makeReceiptLot( MaterialId, RequestId, ReceiptObj, InitialContainerNode.ExpirationDate.DateTimeValue );
+
+                        for( int index = 0; index < Quantities.Count; index++ )
+                        {
+                            JObject QuantityDef = CswConvert.ToJObject( Quantities[index] );
+                            Int32 NoContainers = CswConvert.ToInt32( QuantityDef["containerNo"] );
+
+                            CswCommaDelimitedString Barcodes = new CswCommaDelimitedString();
+                            Barcodes.FromString( CswConvert.ToString( QuantityDef["barcodes"] ) );
+
+                            double QuantityValue = CswConvert.ToDouble( QuantityDef["quantity"] );
+
+                            CswPrimaryKey UnitId = new CswPrimaryKey();
+                            UnitId.FromString( CswConvert.ToString( QuantityDef["unitid"] ) );
+
+                            CswPrimaryKey SizeId = new CswPrimaryKey();
+                            SizeId.FromString( CswConvert.ToString( QuantityDef["sizeid"] ) );
+
+                            CswNbtObjClassSize AsSize = _CswNbtResources.Nodes.GetNode( SizeId );
+
+                            CswCommaDelimitedString ContainerIds = new CswCommaDelimitedString();
+                            ContainerIds.FromString( QuantityDef["containerids"].ToString() );
+
+                            if( NoContainers > 0 && QuantityValue > 0 && Int32.MinValue != UnitId.PrimaryKey )
+                            {
+                                for( Int32 C = 0; C < NoContainers && _NodesProcessed >= _MaxNodeProcessed; C += 1 )
+                                {
+                                    //we promote the first container before the batch op starts, so there should always be at least one container id in the first set of quantities
+                                    if( String.IsNullOrEmpty( ContainerIds[C] ) )
+                                    {
+                                        Action<CswNbtNode> After = delegate( CswNbtNode NewNode )
+                                            {
+                                                CswNbtObjClassContainer thisContainer = NewNode;
+                                                if( Barcodes.Count <= NoContainers && false == string.IsNullOrEmpty( Barcodes[C] ) )
+                                                {
+                                                    thisContainer.Barcode.setBarcodeValueOverride( Barcodes[C], false );
+                                                }
+                                                thisContainer.Size.RelatedNodeId = SizeId;
+                                                thisContainer.Material.RelatedNodeId = MaterialId;
+                                                if( AsSize.QuantityEditable.Checked != CswEnumTristate.True )
+                                                {
+                                                    QuantityValue = AsSize.InitialQuantity.Quantity;
+                                                    UnitId = AsSize.InitialQuantity.UnitId;
+                                                }
+                                                if( null == thisContainer.Quantity.UnitId || Int32.MinValue == thisContainer.Quantity.UnitId.PrimaryKey )
+                                                {
+                                                    thisContainer.Quantity.UnitId = UnitId;
+                                                }
+                                                thisContainer.DispenseIn( CswEnumNbtContainerDispenseType.Receive, QuantityValue, UnitId, RequestId );
+                                                thisContainer.Disposed.Checked = CswEnumTristate.False;
+                                                thisContainer.ReceiptLot.RelatedNodeId = ReceiptLot.NodeId;
+                                            };
+
+                                        CswNbtNodeKey ContainerNodeKey;
+                                        CswNbtObjClassContainer AsContainer = _CswNbtSdTabsAndProps.addNode( ContainerNt, null, ContainerAddProps, out ContainerNodeKey, After );
+                                        _addContainerIdToReceiptDefinition( BatchData, index, AsContainer.NodeId.ToString() );
+                                        _NodesProcessed++;
+
+                                        //TODO: remove this junk
+                                        //if( C == 0 && index == 0 )
+                                        //{
+                                        //    AsContainer = InitialContainerNode;
+                                        //    if( false == CswTools.IsPrimaryKey( AsContainer.Location.SelectedNodeId ) )
+                                        //    {
+                                        //        throw new CswDniException( CswEnumErrorType.Warning, "You cannot Receive a Container without picking a Location.", "You cannot Receive a Container without picking a Location." );
+                                        //    }
+                                        //    if( false == AsContainer.isLocationInAccessibleInventoryGroup( AsContainer.Location.SelectedNodeId ) )
+                                        //    {
+                                        //        throw new CswDniException( CswEnumErrorType.Warning, "You do not have Inventory Group permission to receive Containers into this Location: " + AsContainer.Location.CachedPath, "You do not have Inventory Group permission to receive Containers into this Location: " + AsContainer.Location.CachedPath );
+                                        //    }
+                                        //    After( AsContainer.Node );
+                                        //    AsContainer.PromoteTempToReal();
+                                        //}
+                                        //else
+                                        //{
+                                        //    CswNbtNodeKey ContainerNodeKey;
+                                        //    AsContainer = _CswNbtSdTabsAndProps.addNode( ContainerNt, null, ContainerAddProps, out ContainerNodeKey, After );
+                                        //}
+
+                                        //if( null != AsContainer )
+                                        //{
+                                        //    //ContainerIds.Add( AsContainer.NodeId );
+                                        //
+                                        //    JObject BarcodeNode = new JObject();
+                                        //    jBarcodes[AsContainer.NodeId.ToString()] = BarcodeNode;
+                                        //    BarcodeNode["nodeid"] = AsContainer.NodeId.ToString();
+                                        //    BarcodeNode["nodename"] = AsContainer.NodeName;
+                                        //}
+                                    }
+                                } //for( Int32 C = 0; C < NoContainers; C += 1 )
+                            }
+                        }//for( int index = 0; index < Quantities.Count; index++ )
+
+                    }//if( null != ContainerNt )
+
+                    //TODO: remove this junk
+                    //if( ContainerIds.Count > 0 )
+                    //{
+                    //    CswNbtView NewContainersView = new CswNbtView( _CswNbtResources );
+                    //    NewContainersView.ViewName = "New Containers";
+                    //    CswNbtViewRelationship ContainerVr = NewContainersView.AddViewRelationship( ContainerNt, true );
+                    //    ContainerVr.NodeIdsToFilterIn = ContainerIds;
+                    //    NewContainersView.SaveToCache( false );
+                    //    Ret["viewid"] = NewContainersView.SessionViewId.ToString();
+                    //}
+                }//if( Int32.MinValue != ContainerNodeTypeId )
+
+            }//if( null != InitialContainerNode )
+        }
+
         #region ReceivingBatchData
 
         // This internal class is specific to this batch operation
@@ -116,6 +254,11 @@ namespace ChemSW.Nbt.Batch
                 _BatchData = CswConvert.ToJObject( ReceiptDefinition, true, "ReceiptDefinitionForReceivingBatchOp" );
             }
 
+            public JObject ReceiptDefinitionObj
+            {
+                get { return _BatchData; }
+            }
+
             private Int32 _TotalContainers = Int32.MinValue;
             public Int32 TotalContainers
             {
@@ -123,16 +266,55 @@ namespace ChemSW.Nbt.Batch
                 {
                     if( Int32.MinValue == _TotalContainers )
                     {
-                        //TODO: count number of containers to be created and set _TotalContainers
+                        _TotalContainers = _countContainers();
                     }
                     return _TotalContainers;
+                }
+            }
+
+            /// <summary>
+            /// Counts the number of containers this batch op needs to create
+            /// </summary>
+            private int _countContainers()
+            {
+                JArray Quantities = CswConvert.ToJArray( _BatchData["quantities"].ToString(), true );
+                for( int index = 0; index < Quantities.Count; index++ )
+                {
+                    JObject QuantityDef = CswConvert.ToJObject( Quantities[index].ToString(), true, "QuantifyDefinition" );
+                    if( QuantityDef.HasValues )
+                    {
+                        int NumContainers = CswConvert.ToInt32( QuantityDef["containerNo"] );
+                        if( Int32.MinValue != NumContainers )
+                        {
+                            _TotalContainers += NumContainers;
+                        }
+                        else
+                        {
+                            throw new CswDniException( CswEnumErrorType.Error, "Cannot calculate number of containers to create", "Receipt Definition is missing number of containers for a quantity." );
+                        }
+                    }
                 }
             }
 
             public Int32 getNumberContainersToCreate()
             {
                 Int32 Ret = Int32.MinValue;
-                //TODO: calculate how many containers are left to create
+
+                JArray Quantities = CswConvert.ToJArray( _BatchData["quantities"].ToString(), true );
+                for( int index = 0; index < Quantities.Count; index++ )
+                {
+                    JObject QuantityDef = CswConvert.ToJObject( Quantities[index].ToString(), true, "QuantityDefinition" );
+                    if( QuantityDef.HasValues )
+                    {
+                        int NumContainers = CswConvert.ToInt32( QuantityDef["containerNo"] );
+                        CswCommaDelimitedString ContainerIds = new CswCommaDelimitedString();
+                        ContainerIds.FromString( QuantityDef["containerids"].ToString() );
+                        int ContainerIdsCount = ContainerIds.Count;
+
+                        Ret += ( NumContainers - ContainerIdsCount );
+                    }
+                }
+
                 return Ret;
             }
 
