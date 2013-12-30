@@ -1689,6 +1689,7 @@
                 showSave: false,
                 allowEdit: false,
                 allowDelete: false,
+                allowNodeTypeChange: false,
                 compactResults: true,
                 extraAction: 'Select',
                 extraActionIcon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.check),
