@@ -18,7 +18,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string ListCode = "List Code";
         }
 
-        public CswNbtObjClassRegulatoryListListCode( CswNbtResources CswNbtResources, CswNbtNode Node ) : base( CswNbtResources, Node ) {}
+        public CswNbtObjClassRegulatoryListListCode( CswNbtResources CswNbtResources, CswNbtNode Node ) : base( CswNbtResources, Node ) { }
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
@@ -45,7 +45,7 @@ namespace ChemSW.Nbt.ObjClasses
             // Set the value of the ListCode property
             if( ListCode.Empty && false == string.IsNullOrEmpty( ListName.Value ) )
             {
-                ListCode.Value = CswConvert.ToDouble( ListName.Value );
+                ListCode.Text = ListName.Value;
                 ListCode.SyncGestalt();
             }
         }//beforeWriteNode()
@@ -123,7 +123,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public CswNbtNodePropRelationship RegulatoryList { get { return _CswNbtNode.Properties[PropertyName.RegulatoryList]; } }
         public CswNbtNodePropList ListName { get { return _CswNbtNode.Properties[PropertyName.ListName]; } }
-        public CswNbtNodePropNumber ListCode { get { return _CswNbtNode.Properties[PropertyName.ListCode]; } }
+        public CswNbtNodePropText ListCode { get { return _CswNbtNode.Properties[PropertyName.ListCode]; } }
 
         #endregion
 
