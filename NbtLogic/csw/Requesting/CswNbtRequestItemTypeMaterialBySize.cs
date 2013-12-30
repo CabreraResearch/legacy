@@ -1,4 +1,5 @@
 ﻿using ChemSW.Core;
+using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
 
@@ -30,6 +31,19 @@ namespace ChemSW.Nbt.Requesting
                     break;
                 case CswNbtObjClassRequestItem.PropertyName.Material:
                     Prop.setReadOnly( true, SaveToDb: false );
+                    break;
+                case CswNbtObjClassRequestItem.PropertyName.Size:
+                    //Case 31302 - Filter Size options to requested Material
+                    CswNbtMetaDataObjectClass SizeOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.SizeClass );
+                    CswNbtMetaDataObjectClassProp SizeMaterialOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.Material );
+                    CswNbtView SizeView = _CswNbtResources.ViewSelect.restoreView( _RequestItem.Size.View.ViewId );
+                    SizeView.Root.ChildRelationships.Clear();
+                    CswNbtViewRelationship SizeVr = SizeView.AddViewRelationship( SizeOc, false );
+                    SizeView.AddViewPropertyAndFilter( SizeVr, SizeMaterialOcp, _RequestItem.Material.RelatedNodeId.PrimaryKey.ToString(), CswEnumNbtSubFieldName.NodeID );
+                    SizeView.AddViewPropertyAndFilter( SizeVr, SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.Dispensable ), "false", FilterMode: CswEnumNbtFilterMode.NotEquals );
+                    SizeView.AddViewPropertyAndFilter( SizeVr, SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.InitialQuantity ), FilterMode: CswEnumNbtFilterMode.NotNull, SubFieldName: CswEnumNbtSubFieldName.Value );
+                    SizeView.AddViewPropertyAndFilter( SizeVr, SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.UnitCount ), FilterMode: CswEnumNbtFilterMode.NotNull );
+                    SizeView.save();
                     break;
             }
             if( IsVisible && _RequestItem.IsRecurring.Checked == CswEnumTristate.True )

@@ -616,8 +616,7 @@ namespace ChemSW.Nbt.Actions
                             RequestItemNode.Quantity.UnitId = Container.Quantity.UnitId;
                             RequestItemNode.Size.RelatedNodeId = Container.Size.RelatedNodeId;
                             RequestItemNode.Location.SelectedNodeId = SelectedLocationId;
-                            //Scope available units of measure on Quantity based on the Container's Material and Size
-                            _setRequestItemSizesView( RequestItemNode.Size.View.ViewId, Container.Material.RelatedNodeId );
+                            //Scope available units of measure on Quantity based on the Container's Material
                             CswNbtNode MaterialNode = _CswNbtResources.Nodes[Container.Material.RelatedNodeId];
                             if( null != MaterialNode )
                             {
@@ -674,7 +673,6 @@ namespace ChemSW.Nbt.Actions
                     {
                         case CswNbtPropertySetMaterial.CswEnumRequestOption.Size:
                             RequestItemNode.Type.Value = CswNbtObjClassRequestItem.Types.MaterialSize;
-                            _setRequestItemSizesView( RequestItemNode.Size.View.ViewId, Material.NodeId );
                             break;
                         default: //Request by Bulk
                             RequestItemNode.Type.Value = CswNbtObjClassRequestItem.Types.MaterialBulk;
@@ -722,30 +720,6 @@ namespace ChemSW.Nbt.Actions
         #endregion Public methods and props
 
         #region Private helper functions
-
-        //TODO - Case 31302 - for some reason, even though we're calling this before the Add layout shows up, we're using the previous version - how do we fix this?
-        private void _setRequestItemSizesView( CswNbtViewId SizeViewId, CswPrimaryKey SizeMaterialId )
-        {
-            CswNbtMetaDataObjectClass SizeOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.SizeClass );
-            CswNbtMetaDataObjectClassProp SizeMaterialOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.Material );
-            CswNbtView SizeView = _CswNbtResources.ViewSelect.restoreView( SizeViewId );
-            SizeView.Root.ChildRelationships.Clear();
-
-            CswNbtViewRelationship SizeVr = SizeView.AddViewRelationship( SizeOc, false );
-
-            SizeView.AddViewPropertyAndFilter( SizeVr, SizeMaterialOcp, SizeMaterialId.PrimaryKey.ToString(), SubFieldName: CswEnumNbtSubFieldName.NodeID );
-            SizeView.AddViewPropertyAndFilter( SizeVr, SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.Dispensable ), "false", FilterMode: CswEnumNbtFilterMode.NotEquals );
-
-            SizeView.AddViewPropertyAndFilter( SizeVr,
-                MetaDataProp: SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.InitialQuantity ),
-                FilterMode: CswEnumNbtFilterMode.NotNull,
-                SubFieldName: CswEnumNbtSubFieldName.Value );
-            SizeView.AddViewPropertyAndFilter( SizeVr,
-                MetaDataProp: SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.UnitCount ),
-                FilterMode: CswEnumNbtFilterMode.NotNull );
-
-            SizeView.save();
-        }
 
         public static void checkForCentralInventoryGroups( CswNbtResources _CswNbtResources )
         {
