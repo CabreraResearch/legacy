@@ -101,6 +101,7 @@
     <Compile Include="csw\Actions\KioskModeRules\CswNbtKioskModeRuleStatus.cs" />
     <Compile Include="csw\Actions\KioskModeRules\CswNbtKioskModeDataContracts.cs" />
     <Compile Include="csw\Actions\KioskModeRules\CswNbtKioskModeRule.cs" />
+    <Compile Include="csw\Batch\CswNbtBatchOpReceiving.cs" />
     <Compile Include="csw\Batch\CswNbtBatchOpMultiButtonClick.cs" />
     <Compile Include="csw\Batch\CswEnumNbtBatchOpStatus.cs" />
     <Compile Include="csw\Batch\CswNbtBatchOpMobileMultiOpUpdates.cs" />
@@ -1173,7 +1174,6 @@
     <Compile Include="csw\Actions\CswNbtActUpdatePropertyValue.cs" />
     <Compile Include="csw\Actions\CswNbtAction.cs" />
     <Compile Include="csw\Actions\CswNbtActionCollection.cs" />
-    <Compile Include="csw\Batch\CswNbtBatchOpUpdateRegulatoryListsForMaterials.cs" />
     <Compile Include="csw\Batch\ICswNbtBatchOp.cs" />
     <Compile Include="csw\CswNbtResources.cs" />
     <Compile Include="csw\CswNbtResourcesFactory.cs" />
@@ -1497,7 +1497,6 @@
     <Compile Include="csw\Batch\CswNbtBatchOpInventoryLevels.cs" />
     <Compile Include="csw\Batch\CswNbtBatchOpMultiDelete.cs" />
     <Compile Include="csw\Batch\CswNbtBatchOpMultiEdit.cs" />
-    <Compile Include="csw\Batch\CswNbtBatchOpUpdateRegulatoryLists.cs" />
     <Compile Include="Resources\SqlRptViewDict.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

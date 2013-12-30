@@ -22,10 +22,9 @@ namespace ChemSW.Nbt.Batch
         public static readonly CswEnumNbtBatchOpName MultiButtonClick = new CswEnumNbtBatchOpName( "MultiButtonClick" );
         public static readonly CswEnumNbtBatchOpName MultiDelete = new CswEnumNbtBatchOpName( "MultiDelete" );
         public static readonly CswEnumNbtBatchOpName InventoryLevel = new CswEnumNbtBatchOpName( "InventoryLevel" );
-        //public static readonly CswEnumNbtBatchOpName UpdateRegulatoryLists = new CswEnumNbtBatchOpName( "UpdateRegulatoryLists" );
-        //public static readonly CswEnumNbtBatchOpName UpdateRegulatoryListsForMaterials = new CswEnumNbtBatchOpName( "UpdateRegulatoryListsForMaterials" );
         public static readonly CswEnumNbtBatchOpName SyncLocation = new CswEnumNbtBatchOpName( "SyncLocation" );
         public static readonly CswEnumNbtBatchOpName MobileMultiOpUpdates = new CswEnumNbtBatchOpName( "MobileMultiOpUpdates" );
+        public static readonly CswEnumNbtBatchOpName Receiving = new CswEnumNbtBatchOpName( "Receiving" );
     }
 
 } // namespace ChemSW.Nbt.Batch
