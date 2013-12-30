@@ -26,14 +26,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string PendingFeedbackCount = "Pending Feedback Count";
         }
 
-
-        private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
-
-        public CswNbtObjClassCustomer( CswNbtResources CswNbtResources, CswNbtNode Node )
-            : base( CswNbtResources, Node )
-        {
-            _CswNbtObjClassDefault = new CswNbtObjClassDefault( _CswNbtResources, Node );
-        }
+        public CswNbtObjClassCustomer( CswNbtResources CswNbtResources, CswNbtNode Node ) : base( CswNbtResources, Node ) {}
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
@@ -79,27 +72,14 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
-        {
-            _CswNbtObjClassDefault.beforeCreateNode( IsCopy, OverrideUniqueValidation );
-        }//beforeCreateNode()
-
-        public override void afterCreateNode()
-        {
-            _CswNbtObjClassDefault.afterCreateNode();
-        }//afterCreateNode()
-
-
-        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation, bool Creating )
+        public override void beforeWriteNode( bool Creating )
         {
             _checkForConfigFileUpdate();
-            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation, Creating );
         }
 
-        public override void afterWriteNode( bool Creating )
+        public override void afterWriteNode()
         {
             _doConfigFileUpdate();
-            _CswNbtObjClassDefault.afterWriteNode( Creating );
         } // afterWriteNode()
 
         bool UpdateConfigFile = false;
@@ -208,16 +188,6 @@ namespace ChemSW.Nbt.ObjClasses
             }
         } // syncCustomerInfo()
 
-        public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false, bool ValidateRequiredRelationships = true )
-        {
-            _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes, ValidateRequiredRelationships );
-        }
-
-        public override void afterDeleteNode()
-        {
-            _CswNbtObjClassDefault.afterDeleteNode();
-        }
-
         protected override void afterPopulateProps()
         {
             SchemaVersion.SetOnBeforeRender( delegate( CswNbtNodeProp Prop )
@@ -226,16 +196,9 @@ namespace ChemSW.Nbt.ObjClasses
                 } );
 
             CompanyID.SetOnPropChange( OnCompanyIdPropChange );
-
-            _CswNbtObjClassDefault.triggerAfterPopulateProps();
         }//afterPopulateProps()
 
         public static string ModulesEnabledXValue = "Enabled";
-
-        public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
-        {
-            _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
-        }
 
         protected override bool onButtonClick( NbtButtonData ButtonData )
         {
@@ -334,7 +297,6 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         #endregion
-
 
     }//CswNbtObjClassCustomer
 

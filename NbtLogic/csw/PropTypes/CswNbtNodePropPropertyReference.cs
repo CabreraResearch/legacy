@@ -236,11 +236,9 @@ namespace ChemSW.Nbt.PropTypes
             get { return Gestalt; }
         }
 
-        public override void onBeforeUpdateNodePropRow( CswNbtNode Node, bool IsCopy, bool OverrideUniqueValidation, bool Creating )
+        public override void onBeforeUpdateNodePropRow()
         {
-            // Automatically generate a value.  This will not overwrite existing values.
             setSequenceValue();
-            base.onBeforeUpdateNodePropRow( Node, IsCopy, OverrideUniqueValidation, Creating );
         }
 
         public override void Copy( CswNbtNodePropData Source )

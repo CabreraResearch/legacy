@@ -38,14 +38,6 @@ namespace ChemSW.Nbt.ObjClasses
             return ret;
         }
 
-        public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
-        {
-        }
-
-        public override void afterCreateNode()
-        {
-        }
-
         /// <summary>
         /// Object Class
         /// </summary>
@@ -115,7 +107,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public override void beforePropertySetWriteNode( bool IsCopy, bool OverrideUniqueValidation )
+        public override void beforePropertySetWriteNode()
         {
             ViewSDS.State = PropertyName.ViewSDS;
             ViewSDS.MenuOptions = PropertyName.ViewSDS + ",View All";
@@ -137,14 +129,10 @@ namespace ChemSW.Nbt.ObjClasses
             //}
         }
 
-        public override void afterPropertySetWriteNode() { }
-
-        public override void beforePropertySetDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
+        public override void beforePropertySetDeleteNode()
         {
             _CswNbtResources.StructureSearchManager.DeleteFingerprintRecord( this.NodeId.PrimaryKey );
         }
-
-        public override void afterPropertySetDeleteNode() { }
 
         public override void afterPropertySetPopulateProps()
         {

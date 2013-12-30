@@ -30,18 +30,9 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         /// <summary>
-        /// Default Object Class for consumption by derived classes
-        /// </summary>
-        public CswNbtObjClassDefault CswNbtObjClassDefault = null;
-
-        /// <summary>
         /// Property Set ctor
         /// </summary>
-        public CswNbtPropertySetGeneratorTarget( CswNbtResources CswNbtResources, CswNbtNode Node )
-            : base( CswNbtResources, Node )
-        {
-            CswNbtObjClassDefault = new CswNbtObjClassDefault( _CswNbtResources, Node );
-        }//ctor()
+        public CswNbtPropertySetGeneratorTarget( CswNbtResources CswNbtResources, CswNbtNode Node ) : base( CswNbtResources, Node ) {}
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
@@ -61,79 +52,43 @@ namespace ChemSW.Nbt.ObjClasses
             return ret;
         }
 
-
         #region Inherited Events
 
-        public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
-        {
-        }
+        public virtual void beforePropertySetWriteNode() {}
 
-        public override void afterCreateNode()
+        public override void beforeWriteNode( bool Creating )
         {
-        }
-
-        public abstract void beforePropertySetWriteNode( bool IsCopy, bool OverrideUniqueValidation );
-
-        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation, bool Creating )
-        {
-            beforePropertySetWriteNode( IsCopy, OverrideUniqueValidation );
+            beforePropertySetWriteNode();
 
             if( DateTime.MinValue == CreatedDate.DateTimeValue )
             {
                 CreatedDate.DateTimeValue = DateTime.Now;
             }
-
-            CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation, Creating );
         }//beforeWriteNode()
 
-        public abstract void afterPropertySetWriteNode();
+        public virtual void afterPropertySetWriteNode() {}
 
-        public override void afterWriteNode( bool Creating )
+        public override void afterWriteNode()
         {
             afterPropertySetWriteNode();
-
-            CswNbtObjClassDefault.afterWriteNode( Creating );
         }//afterWriteNode()
 
-        public abstract void beforePropertySetDeleteNode( bool DeleteAllRequiredRelatedNodes );
+        public virtual void beforePropertySetDeleteNode() {}
 
-        public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false, bool ValidateRequiredRelationships = true )
+        public override void beforeDeleteNode()
         {
-            beforePropertySetDeleteNode( DeleteAllRequiredRelatedNodes );
+            beforePropertySetDeleteNode();
+        }//beforeDeleteNode()     
 
-            CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes, ValidateRequiredRelationships );
-        }//beforeDeleteNode()
-
-        public override void afterDeleteNode()
-        {
-            CswNbtObjClassDefault.afterDeleteNode();
-        }//afterDeleteNode()        
-
-        public abstract void afterPropertySetPopulateProps();
+        public virtual void afterPropertySetPopulateProps() {}
 
         protected override void afterPopulateProps()
         {
             afterPropertySetPopulateProps();
-
-            CswNbtObjClassDefault.triggerAfterPopulateProps();
         }//afterPopulateProps()
 
-        public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
-        {
-            CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
-        }
+        public virtual bool onPropertySetButtonClick( NbtButtonData ButtonData ) { return true; }
 
-        public abstract bool onPropertySetButtonClick( NbtButtonData ButtonData );
-
-        protected override bool onButtonClick( NbtButtonData ButtonData )
-        {
-            bool Ret = false;
-            if( null != ButtonData.NodeTypeProp )
-            {
-                Ret = onPropertySetButtonClick( ButtonData );
-            }
-            return Ret;
-        }
         #endregion
 
         #region Property Set specific properties

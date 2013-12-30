@@ -7,7 +7,6 @@ using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
-using ChemSW.Nbt.ServiceDrivers;
 
 namespace ChemSW.Nbt.Actions
 {
@@ -350,13 +349,10 @@ namespace ChemSW.Nbt.Actions
             CswNbtNode Node2 = _CswNbtResources.Nodes[nodePair.Node2Id];
             if( null != Node1 && null != Node2 )
             {
-                //Case 31362 - if we've click "Back" on the wizard we've copied blob_data to the result node. We need to delete it in case we've decided not to copy it
-                foreach( CswNbtNodePropWrapper blobProp in resultNode.Properties.Where( P => CswNbtSdBlobData.IsBlobProp( P ) ) )
-                {
-                    CswNbtSdBlobData.DeleteBlobData( _CswNbtResources, blobProp.JctNodePropId );
-                }
-
-                // Set property values according to choice
+                /*
+                 * Copy all the values from Node2 into the result and then copy any properties from Node1 into the result that were selected
+                 * This is to ensure we copy property values we didn't have to merge.
+                 */
                 resultNode.copyPropertyValuesGeneric( Node2 );
                 foreach( MergeInfoData.MergeInfoProperty mergeProp in nodePair.Properties.Where( mergeProp => mergeProp.Choice == 1 ) )
                 {

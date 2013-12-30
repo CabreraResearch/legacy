@@ -115,42 +115,16 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
-        {
-        }//beforeCreateNode()
-
-        public override void afterCreateNode()
-        {
-        }//afterCreateNode()
-
-        public override void beforePropertySetWriteNode( bool IsCopy, bool OverrideUniqueValidation )
+        public override void beforePropertySetWriteNode()
         {
             this.MakeFilePropReadonly();
         }
-
-        public override void afterPropertySetWriteNode() { }
-
-        public override void beforePropertySetDeleteNode( bool DeleteAllRequiredRelatedNodes = false ) { }
-
-        public override void afterPropertySetDeleteNode() { }
 
         public override void afterPropertySetPopulateProps()
         {
             Language.SetOnPropChange( OnLanguagePropChange );
             Format.SetOnPropChange( OnFormatPropChange );
         }//afterPopulateProps()
-
-        public override void onPropertySetAddDefaultViewFilters( CswNbtViewRelationship ParentRelationship ) { }
-
-        public override bool onPropertySetButtonClick( NbtButtonData ButtonData )
-        {
-            if( null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
-            return true;
-        }
-
-        #endregion Inherited Events
-
-        #region Custom Logic
 
         public override void archiveMatchingDocs()
         {
@@ -191,6 +165,10 @@ namespace ChemSW.Nbt.ObjClasses
                 }
             }
         }
+
+        #endregion Inherited Events
+
+        #region Custom Logic
 
         public static bool materialHasActiveSDS( CswNbtResources _CswNbtResources, CswPrimaryKey MaterialId )
         {

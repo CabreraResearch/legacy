@@ -26,14 +26,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string WebService = "Web Service";
         }
 
-
-        private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
-
-        public CswNbtObjClassReport( CswNbtResources CswNbtResources, CswNbtNode Node )
-            : base( CswNbtResources, Node )
-        {
-            _CswNbtObjClassDefault = new CswNbtObjClassDefault( _CswNbtResources, Node );
-        }//ctor()
+        public CswNbtObjClassReport( CswNbtResources CswNbtResources, CswNbtNode Node ) : base( CswNbtResources, Node ) {}
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
@@ -81,35 +74,17 @@ namespace ChemSW.Nbt.ObjClasses
 
         #endregion Object class specific Events
 
-
         #region Inherited Events
 
-        public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
+        public override void beforeWriteNode( bool Creating )
         {
-            _CswNbtObjClassDefault.beforeCreateNode( IsCopy, OverrideUniqueValidation );
-        }//beforeCreateNode()
-
-        public override void afterCreateNode()
-        {
-            _CswNbtObjClassDefault.afterCreateNode();
-        }//afterCreateNode()
-
-
-        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation, bool Creating )
-        {
-
-            string candidate_sql = SQL.Text;
-
             if( CswSqlAnalysis.doesSqlContainDmlOrDdl( SQL.Text ) )
             {
                 throw ( new CswDniException( "Invalid sql: " + SQL.Text ) );
             }
-
-            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation, Creating );
-
         }//beforeWriteNode()
 
-        public override void afterWriteNode( bool Creating )
+        public override void afterWriteNode()
         {
             // BZ 10048
             Collection<object> AfterModifyReportEvents = _CswNbtResources.CswEventLinker.Trigger( AfterModifyReportEventName );
@@ -118,30 +93,7 @@ namespace ChemSW.Nbt.ObjClasses
                 if( Handler is AfterModifyReportEventHandler )
                     ( (AfterModifyReportEventHandler) Handler )();
             }
-
-            _CswNbtObjClassDefault.afterWriteNode( Creating );
         }//afterWriteNode()
-
-        public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false, bool ValidateRequiredRelationships = true )
-        {
-            _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes, ValidateRequiredRelationships );
-
-        }//beforeDeleteNode()
-
-        public override void afterDeleteNode()
-        {
-            _CswNbtObjClassDefault.afterDeleteNode();
-        }//afterDeleteNode()        
-
-        protected override void afterPopulateProps()
-        {
-            _CswNbtObjClassDefault.triggerAfterPopulateProps();
-        }//afterPopulateProps()
-
-        public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
-        {
-            _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
-        }
 
         #endregion
 

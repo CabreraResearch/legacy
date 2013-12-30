@@ -44,8 +44,6 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Maximum = "Maximum";
             public static readonly CswCommaDelimitedString Options = new CswCommaDelimitedString { Minimum, Maximum };
         }
-
-        private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
         private CswNbtSdInventoryLevelMgr _LevelMgr = null;
 
         public static implicit operator CswNbtObjClassInventoryLevel( CswNbtNode Node )
@@ -68,53 +66,14 @@ namespace ChemSW.Nbt.ObjClasses
             return RetCopy;
         }
 
-        public CswNbtObjClassInventoryLevel( CswNbtResources CswNbtResources, CswNbtNode Node )
-            : base( CswNbtResources, Node )
-        {
-            _CswNbtObjClassDefault = new CswNbtObjClassDefault( _CswNbtResources, Node );
-            _LevelMgr = new CswNbtSdInventoryLevelMgr( _CswNbtResources );
-        }//ctor()
+        public CswNbtObjClassInventoryLevel( CswNbtResources CswNbtResources, CswNbtNode Node ) : base( CswNbtResources, Node ) {}
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
             get { return _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.InventoryLevelClass ); }
         }
 
-
         #region Inherited Events
-
-        public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
-        {
-            _CswNbtObjClassDefault.beforeCreateNode( IsCopy, OverrideUniqueValidation );
-        }//beforeCreateNode()
-
-        public override void afterCreateNode()
-        {
-            _CswNbtObjClassDefault.afterCreateNode();
-        }//afterCreateNode()
-
-
-        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation, bool Creating )
-        {
-            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation, Creating );
-
-        }//beforeWriteNode()
-
-        public override void afterWriteNode( bool Creating )
-        {
-            _CswNbtObjClassDefault.afterWriteNode( Creating );
-        }//afterWriteNode()
-
-        public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false, bool ValidateRequiredRelationships = true )
-        {
-            _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes, ValidateRequiredRelationships );
-
-        }//beforeDeleteNode()
-
-        public override void afterDeleteNode()
-        {
-            _CswNbtObjClassDefault.afterDeleteNode();
-        }//afterDeleteNode()        
 
         protected override void afterPopulateProps()
         {
@@ -122,22 +81,8 @@ namespace ChemSW.Nbt.ObjClasses
             Material.SetOnPropChange( OnMaterialPropChange );
             CurrentQuantity.SetOnPropChange( OnCurrrentQuantityPropChange );
             Location.SetOnPropChange( OnLocationPropChange );
-            _CswNbtObjClassDefault.triggerAfterPopulateProps();
         }//afterPopulateProps()
 
-        public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
-        {
-            //CswNbtMetaDataObjectClassProp StatusOcp = ObjectClass.getObjectClassProp( PropertyName.Status.ToString() );
-            //ParentRelationship.View.AddViewPropertyAndFilter( ParentRelationship, StatusOcp, Statuses.Pending.ToString() );
-
-            _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
-        }
-
-        protected override bool onButtonClick( NbtButtonData ButtonData )
-        {
-            if( null != ButtonData && null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
-            return true;
-        }
         #endregion
 
         #region Object class specific properties
@@ -204,6 +149,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropComments CurrentQuantityLog { get { return _CswNbtNode.Properties[PropertyName.CurrentQuantityLog]; } }
 
         #endregion
+    
     }//CswNbtObjClassInventoryLevel
 
 }//namespace ChemSW.Nbt.ObjClasses

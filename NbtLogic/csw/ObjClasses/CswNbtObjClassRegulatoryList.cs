@@ -46,14 +46,7 @@ namespace ChemSW.Nbt.ObjClasses
             public static CswCommaDelimitedString Options = new CswCommaDelimitedString { ManuallyManaged, LOLIManaged, ArielManaged };
         }
 
-        private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
-
-        public CswNbtObjClassRegulatoryList( CswNbtResources CswNbtResources, CswNbtNode Node )
-            : base( CswNbtResources, Node )
-        {
-            _CswNbtObjClassDefault = new CswNbtObjClassDefault( _CswNbtResources, Node );
-
-        }//ctor()
+        public CswNbtObjClassRegulatoryList( CswNbtResources CswNbtResources, CswNbtNode Node ) : base( CswNbtResources, Node ) {}
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
@@ -75,18 +68,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
-        {
-            _CswNbtObjClassDefault.beforeCreateNode( IsCopy, OverrideUniqueValidation );
-        }//beforeCreateNode()
-
-        public override void afterCreateNode()
-        {
-            _CswNbtObjClassDefault.afterCreateNode();
-        }//afterCreateNode()
-
-
-        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation, bool Creating )
+        public override void beforeWriteNode( bool Creating )
         {
             // Set which node grid is displayed
             switch( ListMode.Value )
@@ -105,47 +87,15 @@ namespace ChemSW.Nbt.ObjClasses
 
             // We don't want users to be able to edit this property after the node is created
             ListMode.setReadOnly( true, true );
-
-            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation, Creating );
-        }
-
-        //beforeWriteNode()
-
-        public override void afterWriteNode( bool Creating )
-        {
-            _CswNbtObjClassDefault.afterWriteNode( Creating );
-        }//afterWriteNode()
-
-        public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false, bool ValidateRequiredRelationships = true )
-        {
-            //_removeListFromMaterials();
-            _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes, ValidateRequiredRelationships );
-        }//beforeDeleteNode()
-
-        public override void afterDeleteNode()
-        {
-            _CswNbtObjClassDefault.afterDeleteNode();
-        }//afterDeleteNode()        
+        }   
 
         protected override void afterPopulateProps()
         {
             Regions.InitOptions = _initRegionsOptions;
             AddCASNumbers.SetOnPropChange( _AddCASNumbers_OnChange );
             _setListModeOptions();
-
-            _CswNbtObjClassDefault.triggerAfterPopulateProps();
         }//afterPopulateProps()
 
-        public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
-        {
-            _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
-        }
-
-        protected override bool onButtonClick( NbtButtonData ButtonData )
-        {
-            if( null != ButtonData && null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
-            return true;
-        }
         #endregion
 
         #region Object class specific properties

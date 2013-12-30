@@ -141,11 +141,11 @@ namespace ChemSW.Nbt.ObjClasses
             get { return _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.InspectionDesignClass ); }
         }
 
-        public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
+        public override void beforePromoteNode()
         {
         }
 
-        public override void afterCreateNode()
+        public override void afterPromoteNode()
         {
         }
 
@@ -182,7 +182,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Determine Inspection Status and set read-only
         /// </summary>
-        public override void beforePropertySetWriteNode( bool IsCopy, bool OverrideUniqueValidation )
+        public override void beforePropertySetWriteNode()
         {
             _setDefaultValues();
 
@@ -216,7 +216,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
         } //afterWriteNode()
 
-        public override void beforePropertySetDeleteNode( bool DeleteAllRequiredRelatedNodes )
+        public override void beforePropertySetDeleteNode()
         {
             //case 26113: check parent for bad inspections 
             CswNbtNode ParentNode = _CswNbtResources.Nodes.GetNode( this.Parent.RelatedNodeId );

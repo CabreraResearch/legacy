@@ -18,14 +18,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string ListCode = "List Code";
         }
 
-        private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
-
-        public CswNbtObjClassRegulatoryListListCode( CswNbtResources CswNbtResources, CswNbtNode Node )
-            : base( CswNbtResources, Node )
-        {
-            _CswNbtObjClassDefault = new CswNbtObjClassDefault( _CswNbtResources, Node );
-
-        }//ctor()
+        public CswNbtObjClassRegulatoryListListCode( CswNbtResources CswNbtResources, CswNbtNode Node ) : base( CswNbtResources, Node ) {}
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
@@ -47,17 +40,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
-        {
-            _CswNbtObjClassDefault.beforeCreateNode( IsCopy, OverrideUniqueValidation );
-        }//beforeCreateNode()
-
-        public override void afterCreateNode()
-        {
-            _CswNbtObjClassDefault.afterCreateNode();
-        }//afterCreateNode()
-
-        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation, bool Creating )
+        public override void beforeWriteNode( bool Creating )
         {
             // Set the value of the ListCode property
             if( ListCode.Empty && false == string.IsNullOrEmpty( ListName.Value ) )
@@ -65,43 +48,23 @@ namespace ChemSW.Nbt.ObjClasses
                 ListCode.Value = CswConvert.ToDouble( ListName.Value );
                 ListCode.SyncGestalt();
             }
-
-            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation, Creating );
         }//beforeWriteNode()
 
-        public override void afterWriteNode( bool Creating )
+        public override void afterWriteNode()
         {
             _setChemicalsPendingUpdate(); // TODO: Move to afterCreateNode() when Design Mode is done
-            _CswNbtObjClassDefault.afterWriteNode( Creating );
         }//afterWriteNode()
-
-        public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false, bool ValidateRequiredRelationships = true )
-        {
-            _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes, ValidateRequiredRelationships );
-        }//beforeDeleteNode()
 
         public override void afterDeleteNode()
         {
             _setChemicalsPendingUpdate();
-            _CswNbtObjClassDefault.afterDeleteNode();
         }//afterDeleteNode()        
 
         protected override void afterPopulateProps()
         {
             ListName.OnBeforeFilterOptions = _searchRegulationDb;
-            _CswNbtObjClassDefault.triggerAfterPopulateProps();
         }//afterPopulateProps()
 
-        public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
-        {
-            _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
-        }
-
-        protected override bool onButtonClick( NbtButtonData ButtonData )
-        {
-            if( null != ButtonData && null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
-            return true;
-        }
         #endregion
 
         private void _searchRegulationDb( string SearchTerm, Int32 SearchThreshold )

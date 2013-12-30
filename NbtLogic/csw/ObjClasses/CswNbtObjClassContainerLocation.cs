@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
@@ -32,13 +31,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region ctor
 
-        private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
-
-        public CswNbtObjClassContainerLocation( CswNbtResources CswNbtResources, CswNbtNode Node )
-            : base( CswNbtResources, Node )
-        {
-            _CswNbtObjClassDefault = new CswNbtObjClassDefault( _CswNbtResources, Node );
-        }//ctor()
+        public CswNbtObjClassContainerLocation( CswNbtResources CswNbtResources, CswNbtNode Node ) : base( CswNbtResources, Node ) {}
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
@@ -62,54 +55,16 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
-        {
-            _CswNbtObjClassDefault.beforeCreateNode( IsCopy, OverrideUniqueValidation );
-        }//beforeCreateNode()
-
-        public override void afterCreateNode()
-        {
-            _CswNbtObjClassDefault.afterCreateNode();
-        }//afterCreateNode()
-
-        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation, bool Creating )
+        public override void beforeWriteNode( bool Creating )
         {
             _setStatus();
-            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation, Creating );
         }//beforeWriteNode()
-
-        public override void afterWriteNode( bool Creating )
-        {
-            _CswNbtObjClassDefault.afterWriteNode( Creating );
-        }//afterWriteNode()
-
-        public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false, bool ValidateRequiredRelationships = true )
-        {
-            _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes, ValidateRequiredRelationships );
-        }//beforeDeleteNode()
-
-        public override void afterDeleteNode()
-        {
-            _CswNbtObjClassDefault.afterDeleteNode();
-        }//afterDeleteNode()
 
         protected override void afterPopulateProps()
         {
             ContainerScan.SetOnPropChange( OnContainerScanPropChange );
             LocationScan.SetOnPropChange( OnLocationScanPropChange );
-            _CswNbtObjClassDefault.triggerAfterPopulateProps();
         }//afterPopulateProps()
-
-        public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
-        {
-            _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
-        }
-
-        protected override bool onButtonClick( NbtButtonData ButtonData )
-        {
-            if( null != ButtonData && null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
-            return true;
-        }
 
         #endregion
 
@@ -125,6 +80,10 @@ namespace ChemSW.Nbt.ObjClasses
                 CswNbtObjClassContainer ContainerNode = _CswNbtResources.Nodes.GetNode( Container.RelatedNodeId );
                 if( null != ContainerNode )
                 {
+                    if( ContainerNode.Missing.Checked == CswEnumTristate.True )
+                    {
+                        ContLocStatus = CswEnumNbtContainerLocationStatusOptions.Missing;
+                    }
                     if( ContainerNode.Disposed.Checked == CswEnumTristate.True )
                     {
                         ContLocStatus = CswEnumNbtContainerLocationStatusOptions.Disposed;
@@ -135,12 +94,8 @@ namespace ChemSW.Nbt.ObjClasses
                                             ? CswEnumNbtContainerLocationStatusOptions.DisposedAtWrongLocation
                                             : CswEnumNbtContainerLocationStatusOptions.WrongLocation;
                     }
-                    if( ContainerNode.Missing.Checked == CswEnumTristate.True )
-                    {
-                        ContLocStatus = CswEnumNbtContainerLocationStatusOptions.Missing;
-                    }
                 }
-                else//If we're here, it's because we ca no longer find the container that was scanned
+                else//If we're here, it's because we can no longer find the container that was scanned
                 {
                     doUpdate = false;
                 }
@@ -264,4 +219,3 @@ namespace ChemSW.Nbt.ObjClasses
     }//CswNbtObjClassContainerLocation
 
 }//namespace ChemSW.Nbt.ObjClasses
-

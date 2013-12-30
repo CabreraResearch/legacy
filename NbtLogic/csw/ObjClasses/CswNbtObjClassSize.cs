@@ -22,13 +22,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string UPC = "UPC";
         }
 
-        private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
-
-        public CswNbtObjClassSize( CswNbtResources CswNbtResources, CswNbtNode Node )
-            : base( CswNbtResources, Node )
-        {
-            _CswNbtObjClassDefault = new CswNbtObjClassDefault( _CswNbtResources, Node );
-        }//ctor()
+        public CswNbtObjClassSize( CswNbtResources CswNbtResources, CswNbtNode Node ) : base( CswNbtResources, Node ) {}
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
@@ -50,18 +44,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
-        {
-            _CswNbtObjClassDefault.beforeCreateNode( IsCopy, OverrideUniqueValidation );
-        }//beforeCreateNode()
-
-        public override void afterCreateNode()
-        {
-            _CswNbtObjClassDefault.afterCreateNode();
-        }//afterCreateNode()
-
-
-        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation, bool Creating )
+        public override void beforeWriteNode( bool Creating )
         {
             if( null != _CswNbtResources.CurrentNbtUser.Cookies && null == Material.RelatedNodeId && _CswNbtResources.CurrentNbtUser.Cookies.ContainsKey( "csw_currentnodeid" ) )
             {
@@ -76,42 +59,12 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 throw new CswDniException( CswEnumErrorType.Warning, "Cannot have a null Initial Quantity if Quantity Editable is unchecked.", "Cannot have a null Initial Quantity if Quantity Editable is unchecked." );
             }
-
-            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation, Creating );
-        }//beforeWriteNode()
-
-        public override void afterWriteNode( bool Creating )
-        {
-            _CswNbtObjClassDefault.afterWriteNode( Creating );
-        }//afterWriteNode()
-
-        public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false, bool ValidateRequiredRelationships = true )
-        {
-            _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes, ValidateRequiredRelationships );
-
-        }//beforeDeleteNode()
-
-        public override void afterDeleteNode()
-        {
-            _CswNbtObjClassDefault.afterDeleteNode();
-        }//afterDeleteNode()        
+        }//beforeWriteNode()     
 
         protected override void afterPopulateProps()
         {
             _setUnits();//Case 29579 - set available quantity units on the edit layout
-            _CswNbtObjClassDefault.triggerAfterPopulateProps();
         }//afterPopulateProps()
-
-        public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
-        {
-            _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
-        }
-
-        protected override bool onButtonClick( NbtButtonData ButtonData )
-        {
-            if( null != ButtonData && null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
-            return true;
-        }
 
         #endregion
 

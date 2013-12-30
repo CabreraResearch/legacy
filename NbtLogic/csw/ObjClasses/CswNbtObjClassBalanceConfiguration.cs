@@ -8,8 +8,6 @@ namespace ChemSW.Nbt.ObjClasses
     /// </summary>
     public class CswNbtObjClassBalanceConfiguration : CswNbtObjClass
     {
-
-        
         /// <summary>
         /// Property names for Balance Configurations
         /// </summary>
@@ -34,25 +32,12 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropText StopBits { get { return _CswNbtNode.Properties[PropertyName.StopBits]; } }
         public CswNbtNodePropText Handshake { get { return _CswNbtNode.Properties[PropertyName.Handshake]; } }
 
-        private CswNbtObjClassDefault _CswNbtObjClassDefault;
-
-
-
-
-
-        public CswNbtObjClassBalanceConfiguration( CswNbtResources Resources, CswNbtNode Node )
-            : base( Resources, Node )
-        {
-            _CswNbtObjClassDefault = new CswNbtObjClassDefault( _CswNbtResources, Node );
-        }
-
+        public CswNbtObjClassBalanceConfiguration( CswNbtResources Resources, CswNbtNode Node ) : base( Resources, Node ) {}
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
             get { return _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.BalanceConfigurationClass ); }
         }
-
-
 
         /// <summary>
         /// Convert a CswNbtNode to a CswNbtObjClassBalance
@@ -67,68 +52,9 @@ namespace ChemSW.Nbt.ObjClasses
             return ret;
         }
 
-
-
         #region Inherited Events
 
-
-        public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
-        {
-            _CswNbtObjClassDefault.beforeCreateNode( IsCopy, OverrideUniqueValidation );
-        }//beforeCreateNode()
-
-        public override void afterCreateNode()
-        {
-            _CswNbtObjClassDefault.afterCreateNode();
-        }//afterCreateNode()
-
-
-        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation, bool Creating )
-        {
-            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation, Creating );
-        }//beforeWriteNode()
-
-
-        public override void afterWriteNode( bool Creating )
-        {
-            _CswNbtObjClassDefault.afterWriteNode( Creating );
-        }//afterWriteNode()
-
-
-        public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false, bool ValidateRequiredRelationships = true )
-        {
-            _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes, ValidateRequiredRelationships );
-
-        }//beforeDeleteNode()
-
-
-        public override void afterDeleteNode()
-        {
-            _CswNbtObjClassDefault.afterDeleteNode();
-        }//afterDeleteNode()        
-
-
-        protected override void afterPopulateProps()
-        {
-            _CswNbtObjClassDefault.triggerAfterPopulateProps();
-        }//afterPopulateProps()
-
-
-        public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
-        {
-            _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
-        }
-
-
-        protected override bool onButtonClick( NbtButtonData ButtonData )
-        {
-            if( null != ButtonData && null != ButtonData.NodeTypeProp )
-            {
-                /*Do Something*/
-            }
-            return true;
-        }
-
+        //Extend CswNbtObjClass events here
 
         #endregion
 

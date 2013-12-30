@@ -185,7 +185,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         public void PromoteTempToReal( bool OverrideUniqueValidation = false )
         {
-            ICswNbtNodePersistStrategy NodePersistStrategy = new CswNbtNodePersistStrategyPromote( _CswNbtResources );
+            ICswNbtNodePersistStrategy NodePersistStrategy = new CswNbtNodePersistStrategyPromoteReal( _CswNbtResources );
             NodePersistStrategy.OverrideUniqueValidation = OverrideUniqueValidation;
             NodePersistStrategy.postChanges( this );
         }
@@ -458,7 +458,7 @@ namespace ChemSW.Nbt.ObjClasses
 
             if( null != _CswNbtObjClass )
             {
-                _CswNbtObjClass.beforeDeleteNode( DeleteAllRequiredRelatedNodes: DeleteAllRequiredRelatedNodes, ValidateRequiredRelationships: ValidateRequiredRelationships );
+                _CswNbtObjClass.beforeDeleteNode( DeleteAllRequiredRelatedNodes, ValidateRequiredRelationships );
             }
 
             OnRequestDeleteNode( this );

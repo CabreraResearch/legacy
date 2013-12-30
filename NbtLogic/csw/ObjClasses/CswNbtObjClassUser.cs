@@ -50,16 +50,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string CostCode = "Cost Code";
         }
 
-        private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
-
-
-        public CswNbtObjClassUser( CswNbtResources CswNbtResources, CswNbtNode Node )
-            : base( CswNbtResources, Node )
-        {
-            _CswNbtObjClassDefault = new CswNbtObjClassDefault( _CswNbtResources, Node );
-        }
-
-        //ctor()
+        public CswNbtObjClassUser( CswNbtResources CswNbtResources, CswNbtNode Node ) : base( CswNbtResources, Node ) {}
 
         private CswNbtNode __RoleNode = null;
 
@@ -178,25 +169,13 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
-        {
-            _CswNbtObjClassDefault.beforeCreateNode( IsCopy, OverrideUniqueValidation );
-        }//beforeCreateNode()
-
-        public override void afterCreateNode()
-        {
-            _CswNbtObjClassDefault.afterCreateNode();
-        }//afterCreateNode()
-
-        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation, bool Creating )
+        public override void beforeWriteNode( bool Creating )
         {
             if( _unableToWriteNodeInvalidUserName() )
             {
                 throw new CswDniException( CswEnumErrorType.Warning, "Usernames may only contains letters, numbers, underscores, periods and dashes.",
                                           "Username contains invalid characters: " + this.Username );
             }
-
-            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation, Creating );
 
             if( UsernameProperty.Text != string.Empty ) // case 25616
             {
@@ -231,21 +210,17 @@ namespace ChemSW.Nbt.ObjClasses
                  ( this.AccountLocked.wasAnySubFieldModified() && this.AccountLocked.Checked == CswEnumTristate.False ) );
         }
 
-        public override void afterWriteNode( bool Creating )
+        public override void afterWriteNode()
         {
             CachedData.setHidden( value: true, SaveToDb: true );
             // BZ 9170
             _CswNbtResources.ConfigVbls.setConfigVariableValue( "cache_lastupdated", DateTime.Now.ToString() );
-
-            _CswNbtObjClassDefault.afterWriteNode( Creating );
         }
 
         //afterWriteNode()
 
-        public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false, bool ValidateRequiredRelationships = true )
+        public override void beforeDeleteNode()
         {
-            _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes, ValidateRequiredRelationships );
-
             //prevent user from deleting their own user
             if( _CswNbtNode.NodeId == _CswNbtResources.CurrentUser.UserId )
             {
@@ -284,21 +259,10 @@ namespace ChemSW.Nbt.ObjClasses
 
             //case 28010 - delete all view assigned to this user
             _CswNbtResources.ViewSelect.deleteViewsByUserId( NodeId );
-
         }
-
-        //beforeDeleteNode()
-
-        public override void afterDeleteNode()
-        {
-            _CswNbtObjClassDefault.afterDeleteNode();
-        }
-
-        //afterDeleteNode()        
 
         protected override void afterPopulateProps()
         {
-
             UsernameProperty.SetOnPropChange( OnUserNamePropChange );
             AvailableWorkUnits.SetOnPropChange( OnAvailableWorkUnitsChange );
             CurrentWorkUnitProperty.SetOnPropChange( OnCurrentWorkUnitPropertyChange );
@@ -361,8 +325,6 @@ namespace ChemSW.Nbt.ObjClasses
             DateFormatProperty.SetOnPropChange( onDateFormatPropChange );
             TimeFormatProperty.SetOnPropChange( onTimeFormatPropChange );
 
-            _CswNbtObjClassDefault.triggerAfterPopulateProps();
-
             //Case 31084: only an administrator can edit other users' profiles
             if( ( null == _CswNbtResources.CurrentNbtUser ) || ( false == _CswNbtResources.CurrentNbtUser.IsAdministrator() && UserId != _CswNbtResources.CurrentNbtUser.UserId ) )
             {
@@ -391,14 +353,6 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtMetaDataObjectClass userOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.UserClass );
             CswNbtMetaDataObjectClassProp archivedOCP = userOC.getObjectClassProp( PropertyName.Archived );
             view.AddViewPropertyAndFilter( ParentRelationship, archivedOCP, FilterMode: CswEnumNbtFilterMode.NotEquals, Value: CswEnumTristate.True.ToString() );
-
-            _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
-        }
-
-        protected override bool onButtonClick( NbtButtonData ButtonData )
-        {
-            if( null != ButtonData && null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
-            return true;
         }
 
         #endregion Inherited Events

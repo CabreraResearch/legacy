@@ -367,12 +367,17 @@ namespace ChemSW.Nbt.PropTypes
         public abstract string ValueForNameTemplate { get; }
 
         /// <summary>
+        /// Prop-specific event which fires before the node prop data row is written to the database
+        /// </summary>
+        public virtual void onBeforeUpdateNodePropRow(){}
+
+        /// <summary>
         /// Event which fires before the node prop data row is written to the database
         /// </summary>
         /// <param name="IsCopy">True if the update is part of a Copy operation</param>
-        /// <param name="OverrideUniqueValidation"></param>
-        public virtual void onBeforeUpdateNodePropRow( CswNbtNode Node, bool IsCopy, bool OverrideUniqueValidation, bool Creating )
+        public void onBeforeUpdateNodePropRow( CswNbtNode Node, bool IsCopy, bool OverrideUniqueValidation, bool Creating )
         {
+            onBeforeUpdateNodePropRow();
             if( false == Node.Properties[this.NodeTypeProp].Empty ) //case 26546 - we allow unique properties to be empty
             {
                 //bz # 6686
@@ -488,7 +493,7 @@ namespace ChemSW.Nbt.PropTypes
 
             CswEnumNbtFieldType FieldType = Source.getFieldTypeValue();
             ICswNbtFieldTypeRule FieldTypeRule = _CswNbtResources.MetaData.getFieldTypeRule( FieldType );
-
+            
             foreach( CswNbtSubField SubField in FieldTypeRule.SubFields )
             {
                 if( SubField.Column == CswEnumNbtPropColumn.Field1_FK )

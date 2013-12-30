@@ -77,15 +77,15 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
+        public override void beforePromoteNode()
         {
         }
 
-        public override void afterCreateNode()
+        public override void afterPromoteNode()
         {
         }
 
-        public override void beforePropertySetWriteNode( bool IsCopy, bool OverrideUniqueValidation )
+        public override void beforePropertySetWriteNode()
         {
             setDoneOnDate();
             // Set the IsFuture flag = false if the node is modified
@@ -105,7 +105,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
         }//afterWriteNode()
 
-        public override void beforePropertySetDeleteNode( bool DeleteAllRequiredRelatedNodes )
+        public override void beforePropertySetDeleteNode()
         {
         }
 

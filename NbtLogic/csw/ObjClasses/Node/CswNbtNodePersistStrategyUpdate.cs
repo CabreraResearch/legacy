@@ -5,6 +5,9 @@ namespace ChemSW.Nbt.ObjClasses
     {
         private CswNbtResources _CswNbtResources;
 
+        /// <summary>
+        /// Strategy used to update pre-existing temp and real nodes.  Will not update unmodified nodes unless forced.
+        /// </summary>
         public CswNbtNodePersistStrategyUpdate( CswNbtResources CswNbtResources )
         {
             _CswNbtResources = CswNbtResources;
@@ -22,14 +25,14 @@ namespace ChemSW.Nbt.ObjClasses
 
                 if( null != Node.ObjClass )
                 {
-                    Node.ObjClass.beforeWriteNode( IsCopy, OverrideUniqueValidation, false );
+                    Node.ObjClass.beforeWriteNode( false );
                 }
 
                 Node.requestWrite( ForceUpdate, IsCopy, OverrideUniqueValidation, false, ( false == Node.IsTemp ) );
 
                 if( null != Node.ObjClass )
                 {
-                    Node.ObjClass.afterWriteNode( false );
+                    Node.ObjClass.afterWriteNode();
                 }
 
                 Node.setModificationState( CswEnumNbtNodeModificationState.Posted );

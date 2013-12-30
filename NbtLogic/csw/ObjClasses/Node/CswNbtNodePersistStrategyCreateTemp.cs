@@ -1,11 +1,14 @@
 ﻿
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtNodePersistStrategyCreate : ICswNbtNodePersistStrategy
+    public class CswNbtNodePersistStrategyCreateTemp : ICswNbtNodePersistStrategy
     {
         private CswNbtResources _CswNbtResources;
 
-        public CswNbtNodePersistStrategyCreate( CswNbtResources CswNbtResources )
+        /// <summary>
+        /// Strategy used to create and copy new temp nodes.  To create new real nodes, use CswNbtNodePersistStrategyPromoteReal.
+        /// </summary>
+        public CswNbtNodePersistStrategyCreateTemp( CswNbtResources CswNbtResources )
         {
             _CswNbtResources = CswNbtResources;
         }
@@ -20,14 +23,14 @@ namespace ChemSW.Nbt.ObjClasses
 
             if( null != Node.ObjClass )
             {
-                Node.ObjClass.beforeWriteNode( IsCopy, OverrideUniqueValidation, true );
+                Node.ObjClass.beforeWriteNode( true );
             }
 
-            Node.requestWrite( true, IsCopy, OverrideUniqueValidation, true, ( false == Node.IsTemp ) );
+            Node.requestWrite( true, IsCopy, OverrideUniqueValidation, true, false );
 
             if( null != Node.ObjClass )
             {
-                Node.ObjClass.afterWriteNode( true );
+                Node.ObjClass.afterWriteNode();
             }
 
             Node.setModificationState( CswEnumNbtNodeModificationState.Posted );

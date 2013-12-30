@@ -25,17 +25,9 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Name = "Name";
         }
 
-
         public const string ActionPermissionsXValueName = CswNbtAction.PermissionXValue;
 
-
-        private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
-
-        public CswNbtObjClassRole( CswNbtResources CswNbtResources, CswNbtNode Node )
-            : base( CswNbtResources, Node )
-        {
-            _CswNbtObjClassDefault = new CswNbtObjClassDefault( _CswNbtResources, Node );
-        }//ctor()
+        public CswNbtObjClassRole( CswNbtResources CswNbtResources, CswNbtNode Node ) : base( CswNbtResources, Node ) {}
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
@@ -57,18 +49,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
-        {
-            _CswNbtObjClassDefault.beforeCreateNode( IsCopy, OverrideUniqueValidation );
-        }//beforeCreateNode()
-
-        public override void afterCreateNode()
-        {
-            _CswNbtObjClassDefault.afterCreateNode();
-        }//afterCreateNode()
-
-
-        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation, bool Creating )
+        public override void beforeWriteNode( bool Creating )
         {
             // The user cannot change his or her own Administrator privileges.
             if( Administrator.wasAnySubFieldModified() && 
@@ -168,23 +149,15 @@ namespace ChemSW.Nbt.ObjClasses
                     } // foreach( string ActionNameString in ActionPermissions.YValues )
                 } // if( ActionPermissions.Value != ActionPermissionsOriginalValue )
             } // if( ActionPermissions.getAnySubFieldModified() )
-
-            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation, Creating );
         }//beforeWriteNode()
 
-        public override void afterWriteNode( bool Creating )
+        public override void afterWriteNode()
         {
-            _CswNbtObjClassDefault.afterWriteNode( Creating );
-
-            // BZ 9170
             _CswNbtResources.ConfigVbls.setConfigVariableValue( "cache_lastupdated", DateTime.Now.ToString() );
-
         }//afterWriteNode()
 
-        public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false, bool ValidateRequiredRelationships = true )
+        public override void beforeDeleteNode()
         {
-            _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes, ValidateRequiredRelationships );
-
             // Prevent deleting your own role
             if( _CswNbtNode.NodeId == _CswNbtResources.CurrentUser.RoleId )
             {
@@ -205,12 +178,7 @@ namespace ChemSW.Nbt.ObjClasses
             //Case 30628 - Delete all PermissionSet nodes assigned to this Role
             _deleteRelatedPermissionNodes();
 
-        }//beforeDeleteNode()
-
-        public override void afterDeleteNode()
-        {
-            _CswNbtObjClassDefault.afterDeleteNode();
-        }//afterDeleteNode()        
+        }//beforeDeleteNode()     
 
         public static string MakeNodeTypePermissionValue( Int32 FirstVersionNodeTypeId, CswEnumNbtNodeTypePermission Permission )
         {
@@ -257,20 +225,7 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 this.Node.setReadOnly( true, false );
             }
-
-            _CswNbtObjClassDefault.triggerAfterPopulateProps();
         }//afterPopulateProps()
-
-        public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
-        {
-            _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
-        }
-
-        protected override bool onButtonClick( NbtButtonData ButtonData )
-        {
-            if( null != ButtonData && null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
-            return true;
-        }
 
         #endregion Inherited Events
 

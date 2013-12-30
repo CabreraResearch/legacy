@@ -72,13 +72,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         private bool _InventoryLevelModified = false;
 
-        private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
-
-        public CswNbtObjClassContainer( CswNbtResources CswNbtResources, CswNbtNode Node )
-            : base( CswNbtResources, Node )
-        {
-            _CswNbtObjClassDefault = new CswNbtObjClassDefault( _CswNbtResources, Node );
-        }//ctor()
+        public CswNbtObjClassContainer( CswNbtResources CswNbtResources, CswNbtNode Node ) : base( CswNbtResources, Node ) { }
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
@@ -100,20 +94,13 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
-        {
-            _CswNbtObjClassDefault.beforeCreateNode( IsCopy, OverrideUniqueValidation );
-        }
-
-        public override void afterCreateNode()
+        public override void afterPromoteNode()
         {
             // originally case 27330, moved here by case 30647
             Size.setReadOnly( value : true, SaveToDb : true );
-
-            _CswNbtObjClassDefault.afterCreateNode();
         }
 
-        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation, bool Creating )
+        public override void beforeWriteNode( bool Creating )
         {
             ViewSDS.State = PropertyName.ViewSDS;
             ViewSDS.MenuOptions = PropertyName.ViewSDS + ",View All";
@@ -170,28 +157,13 @@ namespace ChemSW.Nbt.ObjClasses
                     }
                 }
             }
-
-            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation, Creating );
-
         }//beforeWriteNode()
-
-        public override void afterWriteNode( bool Creating )
-        {
-            _CswNbtObjClassDefault.afterWriteNode( Creating );
-        }//afterWriteNode()
-
-        public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false, bool ValidateRequiredRelationships = true )
-        {
-            _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes, ValidateRequiredRelationships );
-
-        }//beforeDeleteNode()
 
         public override void afterDeleteNode()
         {
             CswNbtSdInventoryLevelMgr Mgr = new CswNbtSdInventoryLevelMgr( _CswNbtResources );
             string Reason = "Container " + Barcode.Barcode + " with quantity " + Quantity.Quantity + " has been deleted.";
             _InventoryLevelModified = Mgr.addToCurrentQuantity( -Quantity.Quantity, Quantity.UnitId, Reason, Material.RelatedNodeId, Location.SelectedNodeId );
-            _CswNbtObjClassDefault.afterDeleteNode();
         }//afterDeleteNode()        
 
         protected override void afterPopulateProps()
@@ -221,8 +193,6 @@ namespace ChemSW.Nbt.ObjClasses
                     Dictionary<CswPrimaryKey, CswPrimaryKey> UserPermissions = _CswNbtResources.CurrentNbtUser.getUserPermissions( CswEnumNbtObjectClass.InventoryGroupPermissionClass, true );
                     Location.View = CswNbtNodePropLocation.LocationPropertyView( _CswNbtResources, Location.NodeTypeProp, null, UserPermissions.Keys ); //Location.SelectedNodeId, UserPermissions.Keys );
                 } );
-
-            _CswNbtObjClassDefault.triggerAfterPopulateProps();
         }//afterPopulateProps()
 
         public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
@@ -232,8 +202,6 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtViewProperty viewProp = ParentRelationship.View.AddViewProperty( ParentRelationship, DisposedOCP );
             viewProp.ShowInGrid = false;
             ParentRelationship.View.AddViewPropertyFilter( viewProp, FilterMode : CswEnumNbtFilterMode.Equals, Value : CswEnumTristate.False.ToString(), ShowAtRuntime : true );
-
-            _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
         }
 
         protected override bool onButtonClick( NbtButtonData ButtonData )

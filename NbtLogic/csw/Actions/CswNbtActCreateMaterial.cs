@@ -190,7 +190,13 @@ namespace ChemSW.Nbt.Actions
                     Ret.PartNumber.Text = PartNo;
                     Ret.Supplier.RelatedNodeId = SupplierId;
                 }
-                Ret.ApprovedForReceiving.Checked = CswConvert.ToTristate( _NbtResources.Permit.can( CswEnumNbtActionName.Material_Approval ) );
+
+                //Case 29409 - if a User has Material Approval, set the created Material to Approved for Receiving = true, otherwise set it to default value (which should be "?")
+                bool HasMaterialApproval = _NbtResources.Permit.can( CswEnumNbtActionName.Material_Approval );
+                if( HasMaterialApproval )
+                {
+                    Ret.ApprovedForReceiving.Checked = CswEnumTristate.True;
+                }
 
                 //Ret.IsTemp = ( false == RemoveTempStatus );
                 Ret.postChanges( ForceUpdate: false );

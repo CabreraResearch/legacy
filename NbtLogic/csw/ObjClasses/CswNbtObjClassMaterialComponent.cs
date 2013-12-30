@@ -1,6 +1,4 @@
-using ChemSW.Core;
 using ChemSW.Exceptions;
-using ChemSW.Nbt.Batch;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 
@@ -8,13 +6,7 @@ namespace ChemSW.Nbt.ObjClasses
 {
     public class CswNbtObjClassMaterialComponent : CswNbtObjClass
     {
-        private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
-
-        public CswNbtObjClassMaterialComponent( CswNbtResources CswNbtResources, CswNbtNode Node )
-            : base( CswNbtResources, Node )
-        {
-            _CswNbtObjClassDefault = new CswNbtObjClassDefault( _CswNbtResources, Node );
-        }//ctor()
+        public CswNbtObjClassMaterialComponent( CswNbtResources CswNbtResources, CswNbtNode Node ) : base( CswNbtResources, Node ) {}
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
@@ -48,18 +40,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
-        {
-            _CswNbtObjClassDefault.beforeCreateNode( IsCopy, OverrideUniqueValidation );
-        }//beforeCreateNode()
-
-        public override void afterCreateNode()
-        {
-            _CswNbtObjClassDefault.afterCreateNode();
-        }//afterCreateNode()
-
-
-        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation, bool Creating )
+        public override void beforeWriteNode( bool Creating )
         {
             if( null != Mixture.RelatedNodeId )
             {
@@ -75,27 +56,19 @@ namespace ChemSW.Nbt.ObjClasses
                     "Mixture is a server managed property and in this context no material can be discerned to set as the Mixture." );
             }
             Percentage.Value = HighPercentageValue.Value;
-            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation, Creating );
         }//beforeWriteNode()
 
-        public override void afterWriteNode( bool Creating )
+        public override void afterWriteNode()
         {
             if( Mixture.wasAnySubFieldModified() || Constituent.wasAnySubFieldModified() )
             {
                 _recalculateRegListMembership();
             }
-            _CswNbtObjClassDefault.afterWriteNode( Creating );
         }//afterWriteNode()
-
-        public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false, bool ValidateRequiredRelationships = true )
-        {
-            _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes, ValidateRequiredRelationships );
-        }//beforeDeleteNode()
 
         public override void afterDeleteNode()
         {
             _recalculateRegListMembership();
-            _CswNbtObjClassDefault.afterDeleteNode();
         }//afterDeleteNode()        
 
         protected override void afterPopulateProps()
@@ -104,13 +77,7 @@ namespace ChemSW.Nbt.ObjClasses
             LowPercentageValue.SetOnPropChange( _onLowPercentageValuePropChange );
             TargetPercentageValue.SetOnPropChange( _onTargetPercentageValuePropChange );
             HighPercentageValue.SetOnPropChange( _onHighPercentageValuePropChange );
-            _CswNbtObjClassDefault.triggerAfterPopulateProps();
         }//afterPopulateProps()
-
-        public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
-        {
-            _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
-        }
 
         protected override bool onButtonClick( NbtButtonData ButtonData )
         {

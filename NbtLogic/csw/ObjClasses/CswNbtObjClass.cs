@@ -1,10 +1,14 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data;
 using System.Diagnostics;
 using ChemSW.Core;
+using ChemSW.DB;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.Batch;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 using ChemSW.Nbt.ServiceDrivers;
@@ -14,7 +18,6 @@ namespace ChemSW.Nbt.ObjClasses
 {
     public abstract class CswNbtObjClass
     {
-        //protected CswNbtObjClassDefault _CswNbtObjClassDefault = null;
         protected CswNbtNode _CswNbtNode = null;
         protected CswNbtResources _CswNbtResources = null;
 
@@ -86,13 +89,279 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtNode.PromoteTempToReal();
         }
 
+        #region ObjectClass-Specific Logic
+
         public abstract CswNbtMetaDataObjectClass ObjectClass { get; }
-        public abstract void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation );
-        public abstract void afterCreateNode();
-        public abstract void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation, bool Creating );
-        public abstract void afterWriteNode( bool Creating );
-        public abstract void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false, bool ValidateRequiredRelationships = true );
-        public abstract void afterDeleteNode();
+        /// <summary>
+        /// ObjectClass-specific logic to execute before persisting a new real node (from temp or create)
+        /// </summary>
+        public virtual void beforePromoteNode() {}
+        /// <summary>
+        /// ObjectClass-specific logic to execute after persisting a new real node (from temp or create)
+        /// </summary>
+        public virtual void afterPromoteNode() {}
+        /// <summary>
+        /// ObjectClass-specific logic to execute before updating a new or existing node
+        /// </summary>
+        public virtual void beforeWriteNode( bool Creating ) {}
+        /// <summary>
+        /// ObjectClass-specific logic to execute after updating a new or existing node
+        /// </summary>
+        public virtual void afterWriteNode() {}
+        /// <summary>
+        /// ObjectClass-specific logic to execute before deleting a node
+        /// </summary>
+        public virtual void beforeDeleteNode() {}
+        /// <summary>
+        /// ObjectClass-specific logic to execute after deleting a node
+        /// </summary>
+        public virtual void afterDeleteNode() {}
+        /// <summary>
+        /// ObjectClass-specific logic to execute after clicking an object-class button (including the Save button)
+        /// </summary>
+        protected virtual bool onButtonClick( NbtButtonData ButtonData ) { return true; }
+        /// <summary>
+        /// ObjectClass-specific View Filters to add
+        /// </summary>
+        public virtual void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship ) { }
+
+        #endregion ObjectClass-Specific Logic
+
+        #region Base Node Event Logic
+
+        public void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation, bool Creating )
+        {
+            beforeWriteNode( Creating );
+            List<CswNbtNodePropWrapper> CompoundUniqueProps = new List<CswNbtNodePropWrapper>();
+            foreach( CswNbtNodePropWrapper CurrentProp in _CswNbtNode.Properties )
+            {
+                if( CurrentProp.wasAnySubFieldModified() )
+                {
+                    // When a property changes, we need to:
+                    // 1. recalculate composite property values which include changed properties on this node
+                    foreach( CswNbtNodePropWrapper CompositeProp in _CswNbtNode.Properties[(CswEnumNbtFieldType) CswEnumNbtFieldType.Composite] )
+                    {
+                        if( CompositeProp.AsComposite.TemplateValue.Contains( CswNbtMetaData.MakeTemplateEntry( CurrentProp.NodeTypePropId.ToString() ) ) )
+                        {
+                            CompositeProp.AsComposite.RecalculateCompositeValue();
+                        }
+                    }
+
+                    // 2. recalculate property references attached to relationships whose values changed
+                    if( CurrentProp.getFieldTypeValue() == CswEnumNbtFieldType.Relationship )
+                    {
+                        foreach( CswNbtNodePropWrapper PropRefPropWrapper in _CswNbtNode.Properties[(CswEnumNbtFieldType) CswEnumNbtFieldType.PropertyReference] )
+                        {
+                            CswNbtNodePropPropertyReference PropRefProp = PropRefPropWrapper.AsPropertyReference;
+                            if( ( PropRefProp.RelationshipType == CswEnumNbtViewPropIdType.NodeTypePropId &&
+                                  PropRefProp.RelationshipId == CurrentProp.NodeTypePropId ) ||
+                                ( PropRefProp.RelationshipType == CswEnumNbtViewPropIdType.ObjectClassPropId &&
+                                  PropRefProp.RelationshipId == CurrentProp.ObjectClassPropId ) )
+                            {
+                                PropRefProp.RecalculateReferenceValue();
+                            }
+                        }
+                    }
+
+                    // case 30350 - this is very expensive for multiple nodes, and unnecessary on create.  So skip it.
+                    if( false == Creating )
+                    {
+                        // 3. mark any property references to this property on other nodes as pending update
+                        if( CswTools.IsPrimaryKey( CurrentProp.NodeId ) )
+                        {
+                            //BZ 10239 - Fetch the cached value field name.
+                            CswNbtFieldTypeRulePropertyReference PropRefFTR = (CswNbtFieldTypeRulePropertyReference) _CswNbtResources.MetaData.getFieldTypeRule( CswEnumNbtFieldType.PropertyReference );
+                            CswEnumNbtPropColumn PropRefColumn = PropRefFTR.CachedValueSubField.Column;
+
+                            string SQL = @"update jct_nodes_props 
+                                      set pendingupdate = '" + CswConvert.ToDbVal( true ) + @"',
+                                          " + PropRefColumn.ToString() + @" = ''
+                                    where jctnodepropid in (select j.jctnodepropid
+                                                              from jct_nodes_props j
+                                                              join nodes n on n.nodeid = j.nodeid
+                                                              join nodetype_props p on p.nodetypepropid = j.nodetypepropid
+                                                              join field_types f on p.fieldtypeid = f.fieldtypeid
+                                                              left outer join jct_nodes_props jntp on (jntp.nodetypepropid = p.fkvalue
+                                                                                                  and jntp.nodeid = n.nodeid
+                                                                                                  and jntp.field1_fk = " + CurrentProp.NodeId.PrimaryKey.ToString() + @")
+                                                              left outer join (select jx.jctnodepropid, ox.objectclasspropid, jx.nodeid
+                                                                                  from jct_nodes_props jx
+                                                                                  join nodetype_props px on jx.nodetypepropid = px.nodetypepropid
+                                                                                  join object_class_props ox on px.objectclasspropid = ox.objectclasspropid
+                                                                              where jx.field1_fk = " + CurrentProp.NodeId.PrimaryKey.ToString() + @") jocp 
+                                                                                                  on (jocp.objectclasspropid = p.fkvalue 
+                                                                                                  and jocp.nodeid = n.nodeid)
+                                                              where f.fieldtype = 'PropertyReference'
+                                                              and ((lower(p.fktype) = 'nodetypepropid' and jntp.jctnodepropid is not null)
+                                                                  or (lower(p.fktype) = 'objectclasspropid' and jocp.jctnodepropid is not null))
+                                                              and ((lower(p.valueproptype) = 'nodetypepropid' and p.valuepropid = " + CurrentProp.NodeTypePropId.ToString() + @") 
+                                                                  or (lower(p.valueproptype) = 'objectclasspropid' and p.valuepropid = " + CurrentProp.ObjectClassPropId + @")))";
+
+                            // We're not doing this in a CswTableUpdate because it might be a large operation, 
+                            // and we don't care about auditing for this change.
+                            _CswNbtResources.execArbitraryPlatformNeutralSql( SQL );
+                        }
+
+                        // 4. For locations, if this node's location changed, we need to update the pathname on the children
+                        if( CurrentProp.getFieldTypeValue() == CswEnumNbtFieldType.Location &&
+                            CswTools.IsPrimaryKey( _CswNbtNode.NodeId ) )
+                        {
+                            _CswNbtResources.CswNbtNodeFactory.CswNbtNodeWriter.updateRelationsToThisNode( _CswNbtNode );
+                        }
+                    } // if( false == _IsCreate )
+
+                    // 5. Prepare for compound unique validation
+                    if( CurrentProp.NodeTypeProp.IsCompoundUnique() )
+                    {
+                        CompoundUniqueProps.Add( CurrentProp );
+                    }
+                } // if(CurrentProp.WasModified)
+            } // foreach (CswNbtNodePropWrapper CurrentProp in _CswNbtNode.Properties)
+
+            if( CompoundUniqueProps.Count > 0 && NodeId != null )
+            {
+
+                if( false == IsCopy && false == OverrideUniqueValidation )
+                {
+
+                    //check for other compound unique props that were _not_ modififed
+                    foreach( CswNbtNodePropWrapper CurrentProp in _CswNbtNode.Properties )
+                    {
+                        if( CurrentProp.NodeTypeProp.IsCompoundUnique() && ( false == CompoundUniqueProps.Contains( CurrentProp ) ) )
+                        {
+                            CompoundUniqueProps.Add( CurrentProp );
+                        }
+                    }
+
+                    CswNbtView CswNbtView = this.NodeType.CreateDefaultView();
+                    CswNbtView.ViewName = "For compound unique";
+
+                    CswNbtViewRelationship ViewRelationship = CswNbtView.Root.ChildRelationships[0];
+
+                    if( CswTools.IsPrimaryKey( NodeId ) )
+                    {
+                        ViewRelationship.NodeIdsToFilterOut.Add( NodeId );
+                    }
+
+
+                    foreach( CswNbtNodePropWrapper CurrentCompoundUniqueProp in CompoundUniqueProps )
+                    {
+                        //case 27670 - in order to reserve the right for compound unique props to be empty, it has to be explicitly stated when creating the ForCompundUnique view
+                        CswNbtViewProperty CswNbtViewProperty = CswNbtView.AddViewProperty( ViewRelationship, CurrentCompoundUniqueProp.NodeTypeProp );
+                        ICswNbtFieldTypeRule ftRule = CurrentCompoundUniqueProp.NodeTypeProp.getFieldTypeRule();
+                        ftRule.AddUniqueFilterToView( CswNbtView, CswNbtViewProperty, CurrentCompoundUniqueProp, true );
+                    }
+
+                    ICswNbtTree NodeTree = _CswNbtResources.Trees.getTreeFromView( _CswNbtResources.CurrentNbtUser, CswNbtView, true, false, false );
+
+                    if( NodeTree.getChildNodeCount() > 0 )
+                    {
+                        NodeTree.goToNthChild( 0 );
+                        CswNbtNode DuplicateValueNode = NodeTree.getNodeForCurrentPosition();
+
+                        CswCommaDelimitedString CompoundUniquePropNames = new CswCommaDelimitedString();
+                        CswCommaDelimitedString CompoundUniquePropValues = new CswCommaDelimitedString();
+                        foreach( CswNbtNodePropWrapper CurrentUniqueProp in CompoundUniqueProps )
+                        {
+                            CompoundUniquePropNames.Add( CurrentUniqueProp.PropName );
+                            CompoundUniquePropValues.Add( CurrentUniqueProp.Gestalt );
+                        }
+
+                        string ExotericMessage = "The following properties must have unique values:  " + CompoundUniquePropNames.ToString();
+                        string EsotericMessage = "The " + CompoundUniquePropNames.ToString() +
+                                                 " of node " + NodeId.ToString() + " are the same as for node " + DuplicateValueNode.NodeId.ToString() + ": " + CompoundUniquePropValues.ToString();
+
+                        if( false == _CswNbtNode.IsTemp && false == DuplicateValueNode.IsTemp ) //only throw an error if we're comparing two REAL nodes
+                        {
+                            throw ( new CswDniException( CswEnumErrorType.Warning, ExotericMessage, EsotericMessage ) );
+                        }
+
+                    } //we have a duplicate value situation
+                }
+
+                else if( IsCopy ) //[9:55:20 AM 11/21/2013] Steven Salter: I can't think of any other situation [that unique props should be blanked]
+                {
+                    foreach( CswNbtNodePropWrapper CurrentPropWrapper in CompoundUniqueProps )
+                    {
+                        CurrentPropWrapper.ClearValue();
+                        CurrentPropWrapper.clearSubFieldModifiedFlags();
+                    }
+
+                } //if-else we're not a copy and not overridding
+
+            } //if we have at leaste one modified compound unique prop
+
+            //_synchNodeName();
+            // can't do this here, because we miss some of the onBeforeUpdateNodePropRow events
+            // we do it in writer now instead
+        } // beforeWriteNode()
+
+        public void afterWriteNode( bool Creating )
+        {
+            afterWriteNode();
+            // BZ 10094 - Notification event
+            Collection<CswNbtNodePropWrapper> ModifiedProps = new Collection<CswNbtNodePropWrapper>();
+            foreach( CswNbtNodePropWrapper CurrentProp in _CswNbtNode.Properties )
+            {
+                if( CurrentProp.wasAnySubFieldModified( IncludePendingUpdate: false ) )
+                {
+                    ModifiedProps.Add( CurrentProp );
+                }
+            }
+            if( ModifiedProps.Count > 0 )
+            {
+                _CswNbtResources.runMailReportEvents( this.NodeType, CswEnumNbtMailReportEventOption.Edit, _CswNbtNode, ModifiedProps );
+            }
+        }//afterWriteNode()
+
+        public void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes, bool ValidateRequiredRelationships )
+        {
+            beforeDeleteNode();
+            if( ValidateRequiredRelationships )
+            {
+                // case 22486 - Don't allow deleting targets of required relationships
+                CswTableSelect JctSelect = _CswNbtResources.makeCswTableSelect( "defaultBeforeDeleteNode_jnp_select", "jct_nodes_props" );
+                string WhereClause = " where nodetypepropid in (select nodetypepropid from nodetype_props where isrequired = '1') and field1_fk = " + _CswNbtNode.NodeId.PrimaryKey.ToString();
+                CswCommaDelimitedString SelectClause = new CswCommaDelimitedString() { "nodeid" };
+                DataTable MatchTable = JctSelect.getTable( SelectClause, WhereClause );
+
+                if( MatchTable.Rows.Count > 0 )
+                {
+                    CswCommaDelimitedString InUseStr = new CswCommaDelimitedString();
+                    foreach( DataRow MatchRow in MatchTable.Rows )
+                    {
+                        CswPrimaryKey MatchNodePk = new CswPrimaryKey( "nodes", CswConvert.ToInt32( MatchRow["nodeid"] ) );
+                        if( DeleteAllRequiredRelatedNodes )
+                        {
+                            CswNbtNode NodeToDelete = _CswNbtResources.Nodes.GetNode( MatchNodePk );
+                            if( null != NodeToDelete )
+                            {
+                                NodeToDelete.delete( DeleteAllRequiredRelatedNodes: DeleteAllRequiredRelatedNodes );
+                            }
+                        }
+                        else
+                        {
+                            CswNbtNode RelatedNode = _CswNbtResources.Nodes[MatchNodePk];
+                            if( null != RelatedNode )
+                            {
+                                InUseStr.Add( RelatedNode.NodeLink );
+                            }
+
+                        }
+                    } // foreach( DataRow MatchRow in MatchTable.Rows )
+
+                    if( false == DeleteAllRequiredRelatedNodes )
+                    {
+                        throw new CswDniException( CswEnumErrorType.Warning,
+                                                   "This " + _CswNbtNode.getNodeType().NodeTypeName +
+                                                   " cannot be deleted because it is in use by: " + InUseStr,
+                                                   "Current user (" + _CswNbtResources.CurrentUser.Username +
+                                                   ") tried to delete a " + _CswNbtNode.getNodeType().NodeTypeName +
+                                                   " that is in use by: " + InUseStr );
+                    }
+                } // if( MatchTable.Rows.Count > 0 )
+            } // if( ValidateRequiredRelationships )
+        } // beforeDeleteNode()
 
         public void triggerAfterPopulateProps()
         {
@@ -103,7 +372,10 @@ namespace ChemSW.Nbt.ObjClasses
             //}
             afterPopulateProps();
         }
-        protected abstract void afterPopulateProps();
+
+        protected virtual void afterPopulateProps() {}
+
+        
 
         /// <summary>
         /// Save any properties before the Object Class Button Click Event is triggered
@@ -263,10 +535,6 @@ namespace ChemSW.Nbt.ObjClasses
             return Ret;
         }
 
-        protected abstract bool onButtonClick( NbtButtonData ButtonData );
-
-        public abstract void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship );
-
         public virtual CswNbtNode CopyNode( bool IsNodeTemp = false )
         {
             return CopyNodeImpl( IsNodeTemp );
@@ -283,6 +551,8 @@ namespace ChemSW.Nbt.ObjClasses
                 }, IsCopy: true );
             return CopiedNode;
         }
+
+        #endregion Base Node Event Logic
 
         public abstract class PropertyName
         {
