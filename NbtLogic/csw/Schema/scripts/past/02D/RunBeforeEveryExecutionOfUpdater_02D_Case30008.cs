@@ -51,7 +51,7 @@ namespace ChemSW.Nbt.Schema
                     } );
                     _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RegListListCodeOC )
                     {
-                        PropName = CswNbtObjClassRegulatoryListListCode.PropertyName.LOLIListName,
+                        PropName = CswNbtObjClassRegulatoryListListCode.PropertyName.ListName,
                         FieldType = CswEnumNbtFieldType.List,
                         ListOptions = "",
                         SetValOnAdd = true,

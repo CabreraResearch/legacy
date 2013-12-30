@@ -33,12 +33,12 @@ namespace ChemSW.Nbt.Schema
             if( null != RegListOC )
             {
                 // Grid property
-                CswNbtMetaDataObjectClassProp RegListLOLIListCodesGridOCP = RegListOC.getObjectClassProp( CswNbtObjClassRegulatoryList.PropertyName.LOLIListCodes );
+                CswNbtMetaDataObjectClassProp RegListLOLIListCodesGridOCP = RegListOC.getObjectClassProp( CswNbtObjClassRegulatoryList.PropertyName.ListCodes );
                 if( null == RegListLOLIListCodesGridOCP )
                 {
                     RegListLOLIListCodesGridOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RegListOC )
                     {
-                        PropName = CswNbtObjClassRegulatoryList.PropertyName.LOLIListCodes,
+                        PropName = CswNbtObjClassRegulatoryList.PropertyName.ListCodes,
                         FieldType = CswEnumNbtFieldType.Grid
                     } );
 
@@ -49,7 +49,7 @@ namespace ChemSW.Nbt.Schema
 
                         // Grid View
                         CswNbtView RegListListCodesView = _CswNbtSchemaModTrnsctn.makeView();
-                        RegListListCodesView.ViewName = CswNbtObjClassRegulatoryList.PropertyName.LOLIListCodes;
+                        RegListListCodesView.ViewName = CswNbtObjClassRegulatoryList.PropertyName.ListCodes;
                         RegListListCodesView.ViewMode = CswEnumNbtViewRenderingMode.Grid;
                         CswNbtViewRelationship RegListRel = RegListListCodesView.AddViewRelationship( RegListOC, false );
                         CswNbtViewRelationship MemberRel = RegListListCodesView.AddViewRelationship( RegListRel, CswEnumNbtViewPropOwnerType.Second, RegListListCodeRegListOCP, true );

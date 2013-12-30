@@ -17,8 +17,8 @@ namespace ChemSW.Nbt.ChemCatCentral {
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
     [System.Runtime.Serialization.DataContractAttribute(Name="CswC3Params", Namespace="http://schemas.datacontract.org/2004/07/c3WebServii.WebServices")]
     [System.SerializableAttribute()]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ChemSW.Nbt.ChemCatCentral.CswC3LoliData[]))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ChemSW.Nbt.ChemCatCentral.CswC3LoliData))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ChemSW.Nbt.ChemCatCentral.CswC3RegulationDbData[]))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ChemSW.Nbt.ChemCatCentral.CswC3RegulationDbData))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(ChemSW.Nbt.ChemCatCentral.SampleFaultException))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(ChemSW.Nbt.ChemCatCentral.FaultCode))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(ChemSW.Nbt.ChemCatCentral.CswRetObjSearchResults))]
@@ -280,9 +280,9 @@ namespace ChemSW.Nbt.ChemCatCentral {
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="CswC3LoliData", Namespace="http://schemas.datacontract.org/2004/07/c3WebServii.Csw.Core")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="CswC3RegulationDbData", Namespace="http://schemas.datacontract.org/2004/07/c3WebServii.Csw.Core")]
     [System.SerializableAttribute()]
-    public partial class CswC3LoliData : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
+    public partial class CswC3RegulationDbData : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
         
         [System.NonSerializedAttribute()]
         private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
@@ -485,6 +485,9 @@ namespace ChemSW.Nbt.ChemCatCentral {
         private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string[] AllC3ProductPropertiesField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
         private bool AuthenticatedField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
@@ -515,19 +518,19 @@ namespace ChemSW.Nbt.ChemCatCentral {
         private string LastExtChemDataImportDateField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string LastLOLIImportDateField;
+        private string LastestRegulationDbDateField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
         private ChemSW.Nbt.ChemCatCentral.CswWebSvcReturnBaseLogging LoggingField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private ChemSW.Nbt.ChemCatCentral.CswC3LoliData[] LoliDataResultsField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
         private string MessageField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
         private ChemSW.Nbt.ChemCatCentral.CswWebSvcReturnBasePerformance PerformanceField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private ChemSW.Nbt.ChemCatCentral.CswC3RegulationDbData[] RegulationDbDataResultsField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
         private string RoleField;
@@ -548,6 +551,19 @@ namespace ChemSW.Nbt.ChemCatCentral {
             }
             set {
                 this.extensionDataField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string[] AllC3ProductProperties {
+            get {
+                return this.AllC3ProductPropertiesField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.AllC3ProductPropertiesField, value) != true)) {
+                    this.AllC3ProductPropertiesField = value;
+                    this.RaisePropertyChanged("AllC3ProductProperties");
+                }
             }
         }
         
@@ -682,14 +698,14 @@ namespace ChemSW.Nbt.ChemCatCentral {
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public string LastLOLIImportDate {
+        public string LastestRegulationDbDate {
             get {
-                return this.LastLOLIImportDateField;
+                return this.LastestRegulationDbDateField;
             }
             set {
-                if ((object.ReferenceEquals(this.LastLOLIImportDateField, value) != true)) {
-                    this.LastLOLIImportDateField = value;
-                    this.RaisePropertyChanged("LastLOLIImportDate");
+                if ((object.ReferenceEquals(this.LastestRegulationDbDateField, value) != true)) {
+                    this.LastestRegulationDbDateField = value;
+                    this.RaisePropertyChanged("LastestRegulationDbDate");
                 }
             }
         }
@@ -703,19 +719,6 @@ namespace ChemSW.Nbt.ChemCatCentral {
                 if ((object.ReferenceEquals(this.LoggingField, value) != true)) {
                     this.LoggingField = value;
                     this.RaisePropertyChanged("Logging");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public ChemSW.Nbt.ChemCatCentral.CswC3LoliData[] LoliDataResults {
-            get {
-                return this.LoliDataResultsField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.LoliDataResultsField, value) != true)) {
-                    this.LoliDataResultsField = value;
-                    this.RaisePropertyChanged("LoliDataResults");
                 }
             }
         }
@@ -742,6 +745,19 @@ namespace ChemSW.Nbt.ChemCatCentral {
                 if ((object.ReferenceEquals(this.PerformanceField, value) != true)) {
                     this.PerformanceField = value;
                     this.RaisePropertyChanged("Performance");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ChemSW.Nbt.ChemCatCentral.CswC3RegulationDbData[] RegulationDbDataResults {
+            get {
+                return this.RegulationDbDataResultsField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.RegulationDbDataResultsField, value) != true)) {
+                    this.RegulationDbDataResultsField = value;
+                    this.RaisePropertyChanged("RegulationDbDataResults");
                 }
             }
         }
@@ -2559,6 +2575,12 @@ namespace ChemSW.Nbt.ChemCatCentral {
         private string QueryField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string RegionsField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string RegulationDatabaseField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
         private string SearchOperatorField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
@@ -2699,6 +2721,32 @@ namespace ChemSW.Nbt.ChemCatCentral {
                 if ((object.ReferenceEquals(this.QueryField, value) != true)) {
                     this.QueryField = value;
                     this.RaisePropertyChanged("Query");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string Regions {
+            get {
+                return this.RegionsField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.RegionsField, value) != true)) {
+                    this.RegionsField = value;
+                    this.RaisePropertyChanged("Regions");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string RegulationDatabase {
+            get {
+                return this.RegulationDatabaseField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.RegulationDatabaseField, value) != true)) {
+                    this.RegulationDatabaseField = value;
+                    this.RaisePropertyChanged("RegulationDatabase");
                 }
             }
         }
@@ -3472,11 +3520,11 @@ namespace ChemSW.Nbt.ChemCatCentral {
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/Search/getLastExtChemDataImportDate", ReplyAction="http://tempuri.org/Search/getLastExtChemDataImportDateResponse")]
         [System.ServiceModel.FaultContractAttribute(typeof(ChemSW.Nbt.ChemCatCentral.SampleFaultException), Action="http://tempuri.org/Search/getLastExtChemDataImportDateSampleFaultExceptionFault", Name="SampleFaultException", Namespace="http://schemas.datacontract.org/2004/07/c3WebServii")]
-        ChemSW.Nbt.ChemCatCentral.CswRetObjSearchResults getLastExtChemDataImportDate(ChemSW.Nbt.ChemCatCentral.CswC3Params CswC3Params);
+        ChemSW.Nbt.ChemCatCentral.CswRetObjSearchResults getLastExtChemDataImportDate(ChemSW.Nbt.ChemCatCentral.CswC3SearchParams CswC3SearchParams);
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/Search/getLastLOLIImportDate", ReplyAction="http://tempuri.org/Search/getLastLOLIImportDateResponse")]
-        [System.ServiceModel.FaultContractAttribute(typeof(ChemSW.Nbt.ChemCatCentral.SampleFaultException), Action="http://tempuri.org/Search/getLastLOLIImportDateSampleFaultExceptionFault", Name="SampleFaultException", Namespace="http://schemas.datacontract.org/2004/07/c3WebServii")]
-        ChemSW.Nbt.ChemCatCentral.CswRetObjSearchResults getLastLOLIImportDate(ChemSW.Nbt.ChemCatCentral.CswC3Params CswC3Params);
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/Search/getLastestRegDbDate", ReplyAction="http://tempuri.org/Search/getLastestRegDbDateResponse")]
+        [System.ServiceModel.FaultContractAttribute(typeof(ChemSW.Nbt.ChemCatCentral.SampleFaultException), Action="http://tempuri.org/Search/getLastestRegDbDateSampleFaultExceptionFault", Name="SampleFaultException", Namespace="http://schemas.datacontract.org/2004/07/c3WebServii")]
+        ChemSW.Nbt.ChemCatCentral.CswRetObjSearchResults getLastestRegDbDate(ChemSW.Nbt.ChemCatCentral.CswC3SearchParams CswC3SearchParams);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/Search/getListCodesByCasNo", ReplyAction="http://tempuri.org/Search/getListCodesByCasNoResponse")]
         [System.ServiceModel.FaultContractAttribute(typeof(ChemSW.Nbt.ChemCatCentral.SampleFaultException), Action="http://tempuri.org/Search/getListCodesByCasNoSampleFaultExceptionFault", Name="SampleFaultException", Namespace="http://schemas.datacontract.org/2004/07/c3WebServii")]
@@ -3485,10 +3533,6 @@ namespace ChemSW.Nbt.ChemCatCentral {
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/Search/getListCodesByName", ReplyAction="http://tempuri.org/Search/getListCodesByNameResponse")]
         [System.ServiceModel.FaultContractAttribute(typeof(ChemSW.Nbt.ChemCatCentral.SampleFaultException), Action="http://tempuri.org/Search/getListCodesByNameSampleFaultExceptionFault", Name="SampleFaultException", Namespace="http://schemas.datacontract.org/2004/07/c3WebServii")]
         ChemSW.Nbt.ChemCatCentral.CswRetObjSearchResults getListCodesByName(ChemSW.Nbt.ChemCatCentral.CswC3SearchParams CswC3SearchParams);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/Search/getCasLinkData", ReplyAction="http://tempuri.org/Search/getCasLinkDataResponse")]
-        [System.ServiceModel.FaultContractAttribute(typeof(ChemSW.Nbt.ChemCatCentral.SampleFaultException), Action="http://tempuri.org/Search/getCasLinkDataSampleFaultExceptionFault", Name="SampleFaultException", Namespace="http://schemas.datacontract.org/2004/07/c3WebServii")]
-        ChemSW.Nbt.ChemCatCentral.CswRetObjSearchResults getCasLinkData(ChemSW.Nbt.ChemCatCentral.CswC3SearchParams CswC3SearchParams);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -3578,12 +3622,12 @@ namespace ChemSW.Nbt.ChemCatCentral {
             return base.Channel.getExtChemData(CswC3SearchParams);
         }
         
-        public ChemSW.Nbt.ChemCatCentral.CswRetObjSearchResults getLastExtChemDataImportDate(ChemSW.Nbt.ChemCatCentral.CswC3Params CswC3Params) {
-            return base.Channel.getLastExtChemDataImportDate(CswC3Params);
+        public ChemSW.Nbt.ChemCatCentral.CswRetObjSearchResults getLastExtChemDataImportDate(ChemSW.Nbt.ChemCatCentral.CswC3SearchParams CswC3SearchParams) {
+            return base.Channel.getLastExtChemDataImportDate(CswC3SearchParams);
         }
         
-        public ChemSW.Nbt.ChemCatCentral.CswRetObjSearchResults getLastLOLIImportDate(ChemSW.Nbt.ChemCatCentral.CswC3Params CswC3Params) {
-            return base.Channel.getLastLOLIImportDate(CswC3Params);
+        public ChemSW.Nbt.ChemCatCentral.CswRetObjSearchResults getLastestRegDbDate(ChemSW.Nbt.ChemCatCentral.CswC3SearchParams CswC3SearchParams) {
+            return base.Channel.getLastestRegDbDate(CswC3SearchParams);
         }
         
         public ChemSW.Nbt.ChemCatCentral.CswRetObjSearchResults getListCodesByCasNo(ChemSW.Nbt.ChemCatCentral.CswC3SearchParams CswC3SearchParams) {
@@ -3592,10 +3636,6 @@ namespace ChemSW.Nbt.ChemCatCentral {
         
         public ChemSW.Nbt.ChemCatCentral.CswRetObjSearchResults getListCodesByName(ChemSW.Nbt.ChemCatCentral.CswC3SearchParams CswC3SearchParams) {
             return base.Channel.getListCodesByName(CswC3SearchParams);
-        }
-        
-        public ChemSW.Nbt.ChemCatCentral.CswRetObjSearchResults getCasLinkData(ChemSW.Nbt.ChemCatCentral.CswC3SearchParams CswC3SearchParams) {
-            return base.Channel.getCasLinkData(CswC3SearchParams);
         }
     }
 }
