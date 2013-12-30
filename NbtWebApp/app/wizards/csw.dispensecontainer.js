@@ -1,14 +1,7 @@
-
 /// <reference path="~/app/CswApp-vsdoc.js" />
-
 (function () {
-
-    var cswDispenseWizardStateName = 'cswDispenseWizardStateName';
-
-
     Csw.nbt.register('dispenseContainerWizard', function (cswParent, options) {
         'use strict';
-
         var cswPublic = {};
 
         Csw.tryExec(function () {
@@ -63,7 +56,6 @@
                 divStep1: '',
                 divStep2: '',
                 quantityControl: null,
-                updateQuantityAfterDispense: null,
                 quantityAfterDispenseSpan: null,
                 netQuantityExceededSpan: null,
                 title: 'Dispense from Container',
@@ -74,33 +66,34 @@
                 },
                 printBarcodes: false,
                 formIsValid: false,
-                roundToPrecision: null,
-                getTotalQuantityToDispense: null,
                 balancesDefined: false,
             };
-
-            cswPrivate.setDispenseMode = function () {
-                cswPrivate.state.dispenseType = cswPrivate.dispenseTypes.Dispense;
-                if (false === Csw.isNullOrEmpty(cswPrivate.state.requestItemId)) {
-                    if (Csw.isNullOrEmpty(cswPrivate.state.sourceContainerNodeId)) {
-                        cswPrivate.state.dispenseMode = cswPrivate.dispenseModes.RequestMaterial;
-                        cswPrivate.wizardSteps["1"] = 'Select a Container';
-                    } else {
-                        cswPrivate.state.dispenseMode = cswPrivate.dispenseModes.RequestContainer;
-                    }
-                } else {
-                    cswPrivate.state.dispenseMode = cswPrivate.dispenseModes.Direct;
-                }
-            };
+            //#endregion Variable Declaration
+            
+            //#region State Functions
+            var cswDispenseWizardStateName = 'cswDispenseWizardStateName';
 
             cswPrivate.validateState = function () {
-                var state;
+                var setDispenseMode = function() {
+                    cswPrivate.state.dispenseType = cswPrivate.dispenseTypes.Dispense;
+                    if (false === Csw.isNullOrEmpty(cswPrivate.state.requestItemId)) {
+                        if (Csw.isNullOrEmpty(cswPrivate.state.sourceContainerNodeId)) {
+                            cswPrivate.state.dispenseMode = cswPrivate.dispenseModes.RequestMaterial;
+                            cswPrivate.wizardSteps["1"] = 'Select a Container';
+                        } else {
+                            cswPrivate.state.dispenseMode = cswPrivate.dispenseModes.RequestContainer;
+                        }
+                    } else {
+                        cswPrivate.state.dispenseMode = cswPrivate.dispenseModes.Direct;
+                    }
+                };
+                
                 if (Csw.isNullOrEmpty(cswPrivate.state.sourceContainerNodeId) && Csw.isNullOrEmpty(cswPrivate.state.requestItemId)) {
-                    state = cswPrivate.getState();
+                    var state = cswPrivate.getState();
                     Csw.extend(cswPrivate.state, state);
                 }
                 if (Csw.isNullOrEmpty(cswPrivate.state.dispenseMode)) {
-                    cswPrivate.setDispenseMode();
+                    setDispenseMode();
                 } else if (cswPrivate.state.dispenseMode === cswPrivate.dispenseModes.RequestMaterial) {
                     cswPrivate.wizardSteps["1"] = 'Select a Container';
                 }
@@ -124,16 +117,9 @@
             cswPrivate.clearState = function () {
                 Csw.clientDb.removeItem(cswPrivate.name + '_' + cswDispenseWizardStateName);
             };
-
-            (function _pre() {
-                if (options) {
-                    Csw.extend(cswPrivate, options);
-                }
-                cswPrivate.validateState();
-                cswPublic = cswParent.div();
-                cswPrivate.currentStepNo = cswPrivate.startingStep;
-            }());
-
+            //#endregion State Functions
+            
+            //#region Wizard Functions
             cswPrivate.toggleButton = function (button, isEnabled, doClick) {
                 var btn;
                 if (Csw.bool(isEnabled)) {
@@ -145,8 +131,69 @@
                     cswPrivate.wizard[button].disable();
                 }
             };
+            
+            cswPrivate.handleNext = function (newStepNo) {
+                cswPrivate.currentStepNo = newStepNo;
+                cswPrivate.setState();
+                switch (newStepNo) {
+                    case 2:
+                        if (Csw.isNullOrEmpty(cswPrivate.state.sourceContainerNodeId)) {
+                            Csw.error.throwException(Csw.error.exception('Cannot dispense without a source container.', '', 'csw.dispensecontainer.js', 283));
+                        } else {
+                            if (Csw.isNullOrEmpty(cswPrivate.state.barcode) ||
+                                Csw.isNullOrEmpty(cswPrivate.state.materialname) ||
+                                Csw.isNullOrEmpty(cswPrivate.state.location) ||
+                                Csw.isNullOrEmpty(cswPrivate.state.containerNodeTypeId)) {
 
-            //Step 1. Select a Dispense Type.
+                                Csw.ajax.deprecatedWsNbt({
+                                    urlMethod: 'getDispenseSourceContainerData',
+                                    data: {
+                                        ContainerId: cswPrivate.state.sourceContainerNodeId
+                                    },
+                                    success: function (data) {
+                                        cswPrivate.state.barcode = data.barcode;
+                                        cswPrivate.state.materialname = data.materialname;
+                                        cswPrivate.state.location = data.location;
+                                        cswPrivate.state.containerNodeTypeId = data.nodetypeid;
+                                        cswPrivate.state.unitId = data.unitid;
+                                        cswPrivate.state.currentQuantity = data.quantity;
+                                        cswPrivate.state.currentUnitName = data.unit;
+                                        cswPrivate.state.sizeId = data.sizeid;
+                                        cswPrivate.state.materialId = data.materialid;
+                                        cswPrivate.makeStepTwo(true);
+                                    }
+                                });
+                            } else {
+                                cswPrivate.makeStepTwo(true);
+                            }
+                        }
+                        break;
+                }
+            };
+
+            cswPrivate.handlePrevious = function (newStepNo) {
+                cswPrivate.currentStepNo = newStepNo;
+                cswPrivate.setState();
+                switch (newStepNo) {
+                    case 1:
+                        cswPrivate.makeStepOne();
+                        break;
+                }
+            };
+            //#endregion Wizard Functions
+            
+            //#region _pre()
+            (function _pre() {
+                if (options) {
+                    Csw.extend(cswPrivate, options);
+                }
+                cswPrivate.validateState();
+                cswPublic = cswParent.div();
+                cswPrivate.currentStepNo = cswPrivate.startingStep;
+            }());
+            //#endregion _pre()
+
+            //#region Step 1. Select a Dispense Type.
             cswPrivate.makeStepOne = (function () {
                 return function () {
 
@@ -301,8 +348,9 @@
                     
                 };
             }());
+            //#endregion Step 1. Select a Dispense Type.
 
-            //Step 2. Select Amount
+            //#region Step 2. Select Amount
             //state.dispenseType != Dispense ? 
             //Select a state.quantity :
             //Select the number of destination containers and their quantities.
@@ -390,6 +438,73 @@
                                 }
                             });
                         };
+                        
+                        var updateQuantityAfterDispense = function (quantities) {
+                            var roundToPrecision = function (num) {
+                                var precision = Csw.number(cswPrivate.state.precision, 6);
+                                return Math.round(Csw.number(num) * Math.pow(10, precision)) / Math.pow(10, precision);
+                            };
+                            var totalQuantityToDispense = 0;
+                            var ajaxReqs = [];
+                            var ready = Q.all(ajaxReqs);
+                            Csw.each(quantities, function (quantity) {
+                                if (false === Csw.isNullOrEmpty(quantity)) {
+                                    var containerNo = quantity.containerNo;
+                                    if (Csw.number(containerNo) === 0) {
+                                        //Not all deducted quantity needs to go into a container, but the quantity remaining still needs to be updated
+                                        containerNo = 1;
+                                    }
+                                    if (quantity.unitid !== cswPrivate.state.unitId) {
+                                        var req = Csw.ajax.deprecatedWsNbt({
+                                            urlMethod: 'convertUnit',
+                                            data: {
+                                                ValueToConvert: Csw.number(quantity.quantity, 0),
+                                                OldUnitId: quantity.unitid,
+                                                NewUnitId: cswPrivate.state.unitId,
+                                                MaterialId: cswPrivate.state.materialId
+                                            },
+                                            success: function (data) {
+                                                if (false === Csw.isNullOrEmpty(data)) {
+                                                    totalQuantityToDispense += roundToPrecision(Csw.number(data.convertedvalue, 0) * Csw.number(containerNo, 0));
+                                                }
+                                            }
+                                        });
+                                        ajaxReqs.push(req);
+                                    } else {
+                                        totalQuantityToDispense += roundToPrecision(Csw.number(quantity.quantity, 0) * Csw.number(containerNo, 0));
+                                    }
+                                }
+                            });
+                            var update = function (quantityToDispense) {
+                                var enableFinishButton = true;
+                                cswPrivate.state.quantityAfterDispense = roundToPrecision(Csw.number(cswPrivate.state.currentQuantity - quantityToDispense));
+
+                                if (false === Csw.isNullOrEmpty(cswPrivate.amountsGrid)) {
+                                    enableFinishButton = Csw.bool(cswPrivate.amountsGrid.containerCount >= 0 &&
+                                        cswPrivate.amountsGrid.containerCount <= cswPrivate.amountsGrid.containerlimit);
+                                }
+
+                                if (Csw.bool(cswPrivate.state.netQuantityEnforced)) {
+                                    if (cswPrivate.state.quantityAfterDispense < 0) {
+                                        cswPrivate.netQuantityExceededSpan.show();
+                                        enableFinishButton = false;
+                                    } else {
+                                        cswPrivate.netQuantityExceededSpan.hide();
+                                    }
+                                }
+                                cswPrivate.quantityAfterDispenseSpan.text(cswPrivate.state.quantityAfterDispense + ' ' + cswPrivate.state.currentUnitName);
+
+                                if (cswPrivate.state.quantityAfterDispense === cswPrivate.state.currentQuantity) {
+                                    enableFinishButton = false;
+                                }
+
+                                cswPrivate.formIsValid = enableFinishButton;
+                                cswPrivate.toggleButton(cswPrivate.buttons.finish, cswPrivate.formIsValid);
+                            };
+                            ready.then(function () {
+                                Csw.tryExec(update, totalQuantityToDispense);
+                            });
+                        };
 
                         var makeQuantityForm = function () {
                             cswPrivate.state.initialQuantity.quantity = cswPrivate.state.initialQuantity.value;
@@ -398,7 +513,7 @@
                             cswPrivate.amountsGrid = Csw.wizard.amountsGrid(quantityTable.cell(qtyTableRow, 1), {
                                 name: 'wizardAmountsThinGrid',
                                 onChange: function (quantities) {
-                                    cswPrivate.updateQuantityAfterDispense(quantities);
+                                    updateQuantityAfterDispense(quantities);
                                 },
                                 quantity: cswPrivate.state.initialQuantity,
                                 containerlimit: cswPrivate.containerlimit,
@@ -442,11 +557,8 @@
                                 unitid: cswPrivate.quantityControl.selectedUnit(),
                                 containerNo: 1
                             });
-                            cswPrivate.updateQuantityAfterDispense(quantities);
+                            updateQuantityAfterDispense(quantities);
                         };
-
-
-
 
                         ///<summary>
                         /// draw an Ext.SplitButton to the wizard and attach relevant logic
@@ -599,133 +711,13 @@
                     }, 250);
                 };
             }());//cswPrivate.makeStepTwo()
+            //#endregion Step 2. Select Amount
 
-            cswPrivate.roundToPrecision = function (num) {
-                var precision = Csw.number(cswPrivate.state.precision, 6);
-                return Math.round(Csw.number(num) * Math.pow(10, precision)) / Math.pow(10, precision);
-            };
-
-            cswPrivate.getTotalQuantityToDispense = function (quantities, onSuccess) {
-                var totalQuantityToDispense = 0;
-                var ajaxReqs = [];
-                var ready = Q.all(ajaxReqs);
-                Csw.each(quantities, function (quantity) {
-                    if (false === Csw.isNullOrEmpty(quantity)) {
-                        var containerNo = quantity.containerNo;
-                        if (Csw.number(containerNo) === 0) {
-                            //Not all deducted quantity needs to go into a container, but the quantity remaining still needs to be updated
-                            containerNo = 1;
-                        }
-                        if (quantity.unitid !== cswPrivate.state.unitId) {
-                            var req = Csw.ajax.deprecatedWsNbt({
-                                urlMethod: 'convertUnit',
-                                data: {
-                                    ValueToConvert: Csw.number(quantity.quantity, 0),
-                                    OldUnitId: quantity.unitid,
-                                    NewUnitId: cswPrivate.state.unitId,
-                                    MaterialId: cswPrivate.state.materialId
-                                },
-                                success: function (data) {
-                                    if (false === Csw.isNullOrEmpty(data)) {
-                                        totalQuantityToDispense += cswPrivate.roundToPrecision(Csw.number(data.convertedvalue, 0) * Csw.number(containerNo, 0));
-                                    }
-                                }
-                            });
-                            ajaxReqs.push(req);
-                        } else {
-                            totalQuantityToDispense += cswPrivate.roundToPrecision(Csw.number(quantity.quantity, 0) * Csw.number(containerNo, 0));
-                        }
-                    }
-                });
-                ready.then(function () {
-                    Csw.tryExec(onSuccess, totalQuantityToDispense);
-                });
-            };
-
-            cswPrivate.updateQuantityAfterDispense = function (quantities) {
-                var update = function (quantityToDispense) {
-                    var enableFinishButton = true;
-                    cswPrivate.state.quantityAfterDispense = cswPrivate.roundToPrecision(Csw.number(cswPrivate.state.currentQuantity - quantityToDispense));
-
-                    if (false === Csw.isNullOrEmpty(cswPrivate.amountsGrid)) {
-                        enableFinishButton = Csw.bool(cswPrivate.amountsGrid.containerCount >= 0 &&
-                            cswPrivate.amountsGrid.containerCount <= cswPrivate.amountsGrid.containerlimit);
-                    }
-
-                    if (Csw.bool(cswPrivate.state.netQuantityEnforced)) {
-                        if (cswPrivate.state.quantityAfterDispense < 0) {
-                            cswPrivate.netQuantityExceededSpan.show();
-                            enableFinishButton = false;
-                        } else {
-                            cswPrivate.netQuantityExceededSpan.hide();
-                        }
-                    }
-                    cswPrivate.quantityAfterDispenseSpan.text(cswPrivate.state.quantityAfterDispense + ' ' + cswPrivate.state.currentUnitName);
-
-                    if (cswPrivate.state.quantityAfterDispense === cswPrivate.state.currentQuantity) {
-                        enableFinishButton = false;
-                    }
-
-                    cswPrivate.formIsValid = enableFinishButton;
-                    cswPrivate.toggleButton(cswPrivate.buttons.finish, cswPrivate.formIsValid);
-                };
-                cswPrivate.getTotalQuantityToDispense(quantities, update);
-            };
-
-            cswPrivate.handleNext = function (newStepNo) {
-                cswPrivate.currentStepNo = newStepNo;
-                cswPrivate.setState();
-                switch (newStepNo) {
-                    case 2:
-                        if (Csw.isNullOrEmpty(cswPrivate.state.sourceContainerNodeId)) {
-                            Csw.error.throwException(Csw.error.exception('Cannot dispense without a source container.', '', 'csw.dispensecontainer.js', 283));
-                        } else {
-                            if (Csw.isNullOrEmpty(cswPrivate.state.barcode) ||
-                                Csw.isNullOrEmpty(cswPrivate.state.materialname) ||
-                                Csw.isNullOrEmpty(cswPrivate.state.location) ||
-                                Csw.isNullOrEmpty(cswPrivate.state.containerNodeTypeId)) {
-
-                                Csw.ajax.deprecatedWsNbt({
-                                    urlMethod: 'getDispenseSourceContainerData',
-                                    data: {
-                                        ContainerId: cswPrivate.state.sourceContainerNodeId
-                                    },
-                                    success: function (data) {
-                                        cswPrivate.state.barcode = data.barcode;
-                                        cswPrivate.state.materialname = data.materialname;
-                                        cswPrivate.state.location = data.location;
-                                        cswPrivate.state.containerNodeTypeId = data.nodetypeid;
-                                        cswPrivate.state.unitId = data.unitid;
-                                        cswPrivate.state.currentQuantity = data.quantity;
-                                        cswPrivate.state.currentUnitName = data.unit;
-                                        cswPrivate.state.sizeId = data.sizeid;
-                                        cswPrivate.state.materialId = data.materialid;
-                                        cswPrivate.makeStepTwo(true);
-                                    }
-                                });
-                            } else {
-                                cswPrivate.makeStepTwo(true);
-                            }
-                        }
-                        break;
-                }
-            };
-
-            cswPrivate.handlePrevious = function (newStepNo) {
-                cswPrivate.currentStepNo = newStepNo;
-                cswPrivate.setState();
-                switch (newStepNo) {
-                    case 1:
-                        cswPrivate.makeStepOne();
-                        break;
-                }
-            };
-
+            //#region onFinish
             cswPrivate.onConfirmFinish = function () {
                 var designGrid = '',
                     finalQuantity = '',
-                    finalUnit = '',
-                    enableFinish = true;
+                    finalUnit = '';
                 if (false === Csw.isNullOrEmpty(cswPrivate.amountsGrid)) {
                     finalQuantity = cswPrivate.state.quantity;
                     finalUnit = cswPrivate.state.unitId;
@@ -737,53 +729,50 @@
                     designGrid = '';
                 }
 
-                if (false === enableFinish) {
-                    cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
-                } else {
+                cswPrivate.toggleButton(cswPrivate.buttons.prev, false);
+                cswPrivate.toggleButton(cswPrivate.buttons.next, false);
+                cswPrivate.toggleButton(cswPrivate.buttons.cancel, false);
+                cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
 
-                    cswPrivate.toggleButton(cswPrivate.buttons.prev, false);
-                    cswPrivate.toggleButton(cswPrivate.buttons.next, false);
-                    cswPrivate.toggleButton(cswPrivate.buttons.cancel, false);
-                    cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
+                var jsonData = {
+                    SourceContainerNodeId: Csw.string(cswPrivate.state.sourceContainerNodeId),
+                    DispenseType: Csw.string(cswPrivate.state.dispenseType),
+                    Quantity: Csw.string(finalQuantity),
+                    UnitId: Csw.string(finalUnit),
+                    ContainerNodeTypeId: Csw.string(cswPrivate.state.containerNodeTypeId),
+                    DesignGrid: Csw.string(designGrid),
+                    RequestItemId: Csw.string(cswPrivate.state.requestItemId)
+                };
 
-                    var jsonData = {
-                        SourceContainerNodeId: Csw.string(cswPrivate.state.sourceContainerNodeId),
-                        DispenseType: Csw.string(cswPrivate.state.dispenseType),
-                        Quantity: Csw.string(finalQuantity),
-                        UnitId: Csw.string(finalUnit),
-                        ContainerNodeTypeId: Csw.string(cswPrivate.state.containerNodeTypeId),
-                        DesignGrid: Csw.string(designGrid),
-                        RequestItemId: Csw.string(cswPrivate.state.requestItemId)
-                    };
+                Csw.ajax.deprecatedWsNbt({
+                    urlMethod: 'finalizeDispenseContainer',
+                    data: jsonData,
+                    success: function (data) {
+                        var viewId = data.viewId;
+                        Csw.tryExec(cswPrivate.onFinish, viewId);
+                        cswPrivate.clearState();
+                        if (cswPrivate.printBarcodes) {
+                            if (false === Csw.isNullOrEmpty(data.barcodes) &&
+                                Object.keys(data.barcodes).length > 0) {
 
-                    Csw.ajax.deprecatedWsNbt({
-                        urlMethod: 'finalizeDispenseContainer',
-                        data: jsonData,
-                        success: function (data) {
-                            var viewId = data.viewId;
-                            Csw.tryExec(cswPrivate.onFinish, viewId);
-                            cswPrivate.clearState();
-                            if (cswPrivate.printBarcodes) {
-                                if (false === Csw.isNullOrEmpty(data.barcodes) &&
-                                    Object.keys(data.barcodes).length > 0) {
-
-                                    $.CswDialog('PrintLabelDialog', {
-                                        nodes: data.barcodes,
-                                        nodetypeid: cswPrivate.state.containerNodeTypeId
-                                    });
-                                } else {
-                                    //handle warning
-                                }
+                                $.CswDialog('PrintLabelDialog', {
+                                    nodes: data.barcodes,
+                                    nodetypeid: cswPrivate.state.containerNodeTypeId
+                                });
+                            } else {
+                                //handle warning
                             }
-                        },
-                        error: function () {
-                            cswPrivate.toggleButton(cswPrivate.buttons.cancel, true);
-                            cswPrivate.toggleButton(cswPrivate.buttons.prev, true);
                         }
-                    });
-                }
+                    },
+                    error: function () {
+                        cswPrivate.toggleButton(cswPrivate.buttons.cancel, true);
+                        cswPrivate.toggleButton(cswPrivate.buttons.prev, true);
+                    }
+                });
             };
+            //#endregion onFinish
 
+            //#region _post()
             (function _post() {
 
                 cswPrivate.wizard = Csw.layouts.wizard(cswPublic, {
@@ -808,8 +797,8 @@
 
                 cswPrivate.makeStepOne();
             }());
+            //#endregion _post()
         });
         return cswPublic;
     });
 }());
-
