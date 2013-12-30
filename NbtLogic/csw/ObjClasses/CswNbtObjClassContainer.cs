@@ -639,6 +639,16 @@ namespace ChemSW.Nbt.ObjClasses
             ActionDataObj["customBarcodes"] = customBarcodes;
             bool netQuantityEnforced = CswConvert.ToBoolean( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumNbtConfigurationVariables.netquantity_enforced.ToString() ) );
             ActionDataObj["netQuantityEnforced"] = netQuantityEnforced;
+
+            CswNbtSdTabsAndProps _TabsAndProps = new CswNbtSdTabsAndProps( _CswNbtResources );
+            CswNbtMetaDataObjectClass CDTOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerDispenseTransactionClass );
+            CswNbtMetaDataNodeType CDTNT = CDTOC.getLatestVersionNodeTypes().FirstOrDefault();
+            if( null != CDTNT )
+            {
+                CswNbtObjClassContainerDispenseTransaction CDT = _TabsAndProps.getAddNodeAndPostChanges( CDTNT, null );
+                ActionDataObj["dispenseTransactionAddLayout"] = _TabsAndProps.getProps( CDT.Node, "", null, CswEnumNbtLayoutType.Add );
+            }
+            
             return ActionDataObj;
         }
 

@@ -138,7 +138,8 @@
                         containerNodeTypeId: o.containernodetypeid,
                         containerObjectClassId: o.containerobjectclassid,
                         customBarcodes: o.customBarcodes,
-                        netQuantityEnforced: o.netQuantityEnforced
+                        netQuantityEnforced: o.netQuantityEnforced,
+                        dispenseTransactionAddLayout: o.dispenseTransactionAddLayout
                     },
                     onCancel: onCancel,
                     onFinish: function (viewid) {

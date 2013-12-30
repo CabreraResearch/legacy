@@ -28,7 +28,8 @@
                     requestItemId: '',
                     dispenseMode: '',
                     customBarcodes: false,
-                    netQuantityEnforced: true
+                    netQuantityEnforced: true,
+                    dispenseTransactionAddLayout: {},
                 },
                 onCancel: null,
                 onFinish: null,
@@ -41,6 +42,7 @@
                 },
                 stepOneComplete: false,
                 stepTwoComplete: false,
+                stepThreeComplete: false,
                 buttons: {
                     next: 'next',
                     prev: 'previous',
@@ -67,6 +69,7 @@
                 printBarcodes: false,
                 formIsValid: false,
                 balancesDefined: false,
+                step2Next: 'finish'
             };
             //#endregion Variable Declaration
             
@@ -168,6 +171,9 @@
                             }
                         }
                         break;
+                    case 3:
+                        cswPrivate.makeStepThree(true);
+                        break;
                 }
             };
 
@@ -210,9 +216,55 @@
                     cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
 
                     var initStepOne = Csw.method(function () {
+                        
+                        cswPrivate.divStep1 = cswPrivate.divStep1 || cswPrivate.wizard.div(1);
+                        cswPrivate.divStep1.empty();
+
+                        var helpText = 'Confirm the container to use for this dispense';
+                        if (cswPrivate.state.dispenseMode !== cswPrivate.dispenseModes.RequestMaterial) {
+                            helpText += ', and select a type of dispense to perform';
+                        }
+                        helpText += '.';
+                        cswPrivate.divStep1.span({ text: helpText });
+
+                        cswPrivate.divStep1.br({ number: 2 });
+
+                        dispenseTypeTable = cswPrivate.divStep1.table({
+                            name: 'setDispenseTypeTable',
+                            width: '45%',
+                            cellpadding: '1px',
+                            cellalign: 'left',
+                            cellvalign: 'middle',
+                            FirstCellRightAlign: true
+                        });
+                        //#region makeTypeSelect (Direct Container Dispense)
                         var makeTypeSelect = function () {
 
                             if (cswPrivate.state.dispenseMode !== cswPrivate.dispenseModes.RequestMaterial) {
+                                if (false === Csw.isNullOrEmpty(cswPrivate.state.barcode)) {
+                                    dispenseTypeTable.cell(1, 1).span().setLabelText('Barcode: ');
+                                    dispenseTypeTable.cell(1, 2).span({ text: Csw.string(cswPrivate.state.barcode) });
+
+                                }
+                                if (false === Csw.isNullOrEmpty(cswPrivate.state.materialname)) {
+                                    dispenseTypeTable.cell(2, 1).span().setLabelText('Material: ');
+                                    dispenseTypeTable.cell(2, 2).span({
+                                        text: Csw.string(cswPrivate.state.materialname)
+                                    });
+                                }
+                                if (false === Csw.isNullOrEmpty(cswPrivate.state.location)) {
+                                    dispenseTypeTable.cell(3, 1).span().setLabelText('Location: ');
+                                    dispenseTypeTable.cell(3, 2).span({
+                                        text: Csw.string(cswPrivate.state.location)
+                                    });
+                                }
+                                if (false === Csw.isNullOrEmpty(cswPrivate.state.currentQuantity)) {
+                                    dispenseTypeTable.cell(4, 1).span().setLabelText('Current Quantity: ');
+                                    dispenseTypeTable.cell(4, 2).span({
+                                        text: cswPrivate.state.currentQuantity + ' ' + cswPrivate.state.currentUnitName
+                                    });
+                                }
+
                                 cswPrivate.divStep1.br({ number: 2 });
                                 cswPrivate.divStep1.span({ text: 'Pick a type of dispense:' });
                                 cswPrivate.divStep1.br({ number: 1 });
@@ -241,7 +293,8 @@
                                 });
                             }
                         };
-
+                        //#endregion makeTypeSelect (Direct Container Dispense)
+                        //#region makeContainerGrid (Request Container Dispense)
                         var makeContainerGrid = function () {
                             Csw.ajax.deprecatedWsNbt({
                                 urlMethod: 'getDispenseContainerView',
@@ -269,53 +322,7 @@
                                 }
                             });
                         };
-
-                        cswPrivate.divStep1 = cswPrivate.divStep1 || cswPrivate.wizard.div(1);
-                        cswPrivate.divStep1.empty();
-
-                        var helpText = 'Confirm the container to use for this dispense';
-                        if (cswPrivate.state.dispenseMode !== cswPrivate.dispenseModes.RequestMaterial) {
-                            helpText += ', and select a type of dispense to perform';
-                        }
-                        helpText += '.';
-                        cswPrivate.divStep1.span({ text: helpText });
-
-                        cswPrivate.divStep1.br({ number: 2 });
-
-                        dispenseTypeTable = cswPrivate.divStep1.table({
-                            name: 'setDispenseTypeTable',
-                            width: '45%',
-                            cellpadding: '1px',
-                            cellalign: 'left',
-                            cellvalign: 'middle',
-                            FirstCellRightAlign: true
-                        });
-
-                        if (cswPrivate.state.dispenseMode !== cswPrivate.dispenseModes.RequestMaterial) {
-                            if (false === Csw.isNullOrEmpty(cswPrivate.state.barcode)) {
-                                dispenseTypeTable.cell(1, 1).span().setLabelText('Barcode: ');
-                                dispenseTypeTable.cell(1, 2).span({ text: Csw.string(cswPrivate.state.barcode) });
-
-                            }
-                            if (false === Csw.isNullOrEmpty(cswPrivate.state.materialname)) {
-                                dispenseTypeTable.cell(2, 1).span().setLabelText('Material: ');
-                                dispenseTypeTable.cell(2, 2).span({
-                                    text: Csw.string(cswPrivate.state.materialname)
-                                });
-                            }
-                            if (false === Csw.isNullOrEmpty(cswPrivate.state.location)) {
-                                dispenseTypeTable.cell(3, 1).span().setLabelText('Location: ');
-                                dispenseTypeTable.cell(3, 2).span({
-                                    text: Csw.string(cswPrivate.state.location)
-                                });
-                            }
-                            if (false === Csw.isNullOrEmpty(cswPrivate.state.currentQuantity)) {
-                                dispenseTypeTable.cell(4, 1).span().setLabelText('Current Quantity: ');
-                                dispenseTypeTable.cell(4, 2).span({
-                                    text: cswPrivate.state.currentQuantity + ' ' + cswPrivate.state.currentUnitName
-                                });
-                            }
-                        }
+                        //#endregion makeContainerGrid (Request Container Dispense)
 
                         if (cswPrivate.state.dispenseMode === cswPrivate.dispenseModes.RequestMaterial) {
                             makeContainerGrid();
@@ -333,7 +340,6 @@
                         cswPrivate.stepOneComplete = true;
                     }
 
-
                     //make a single request to the balance list. If we get results, show the read balanace button in step two
                     Csw.ajaxWcf.post({
                         urlMethod: 'Balances/ListConnectedBalances',
@@ -345,7 +351,6 @@
                             }
                         }//success -- ListConnectedBalances
                     }); //Csw.ajaxWcf.post
-                    
                 };
             }());
             //#endregion Step 1. Select a Dispense Type.
@@ -499,7 +504,7 @@
                                 }
 
                                 cswPrivate.formIsValid = enableFinishButton;
-                                cswPrivate.toggleButton(cswPrivate.buttons.finish, cswPrivate.formIsValid);
+                                cswPrivate.toggleButton(cswPrivate.step2Next, cswPrivate.formIsValid);
                             };
                             ready.then(function () {
                                 Csw.tryExec(update, totalQuantityToDispense);
@@ -704,14 +709,56 @@
                         }
                         cswPrivate.stepTwoComplete = true;
                     } else {
-                        cswPrivate.toggleButton(cswPrivate.buttons.finish, cswPrivate.formIsValid);
+                        cswPrivate.toggleButton(cswPrivate.step2Next, cswPrivate.formIsValid);
                     }
-                    window.setTimeout(function () {
+                    /*window.setTimeout(function () {
                         cswPrivate.toggleButton(cswPrivate.buttons.next, false);
-                    }, 250);
+                    }, 250);*/
                 };
             }());//cswPrivate.makeStepTwo()
             //#endregion Step 2. Select Amount
+
+            //#region Step 3. Additional Properties
+            cswPrivate.makeStepThree = (function () {
+                return function () {
+                    cswPrivate.toggleButton(cswPrivate.buttons.next, false);
+                    cswPrivate.toggleButton(cswPrivate.buttons.finish, true);
+
+                    var initStepThree = Csw.method(function () {
+
+                        cswPrivate.divStep3 = cswPrivate.divStep3 || cswPrivate.wizard.div(3);
+                        cswPrivate.divStep3.empty();
+
+                        cswPrivate.divStep1.span({
+                            text: 'Configure additional properties to apply to the dispense transaction upon dispense.<br/>' +
+                                'Note that these properties will apply to the source container as well as all destination containers.'
+                        });
+
+                        cswPrivate.divStep3.br({ number: 2 });
+
+                        cswPrivate.contDispTransTabsAndProps = Csw.wizard.addLayout(cswPrivate.divStep3, {
+                            name: cswPrivate.state.dispenseTransactionAddLayout.node.nodetypeid + '_add_layout',
+                            excludeOcProps: ['save'],
+                            tabState: {
+                                propertyData: cswPrivate.state.dispenseTransactionAddLayout,
+                                removeTempStatus: false,
+                                nodetypeid: cswPrivate.state.dispenseTransactionAddLayout.node.nodetypeid,
+                                nodeid: cswPrivate.state.dispenseTransactionAddLayout.node.nodeid
+                            },
+                            onSaveError: function (errorData) {
+                                console.log(errorData);
+                                cswPrivate.saveError = true;
+                            }
+                        });
+                        cswPrivate.stepThreeComplete = true;
+                    });
+
+                    if (false === cswPrivate.stepThreeComplete) {
+                        initStepThree();
+                    }
+                };
+            }());
+            //#endregion Step 3. Additional Properties
 
             //#region onFinish
             cswPrivate.onConfirmFinish = function () {
@@ -775,13 +822,20 @@
             //#region _post()
             (function _post() {
 
+                var stepCount = 2;
+                if (Csw.count(cswPrivate.state.dispenseTransactionAddLayout.properties) > 1) {
+                    stepCount = 3;
+                    cswPrivate.wizardSteps[3] = 'Additional Properties';
+                    cswPrivate.step2Next = cswPrivate.buttons.next;
+                }
+
                 cswPrivate.wizard = Csw.layouts.wizard(cswPublic, {
                     sourceContainerNodeId: cswPrivate.state.sourceContainerNodeId,
                     currentQuantity: cswPrivate.state.currentQuantity,
                     currentUnitName: cswPrivate.state.currentUnitName,
                     initialQuantity: cswPrivate.state.initialQuantity,
                     Title: Csw.string(cswPrivate.title),
-                    StepCount: 2,
+                    StepCount: stepCount,
                     Steps: cswPrivate.wizardSteps,
                     StartingStep: cswPrivate.startingStep,
                     FinishText: 'Finish',

@@ -357,7 +357,17 @@
         return ret;
     });
 
-
+    Csw.register('count', function (obj) {
+        /// <summary>Determines the number of elements in the object</summary>
+        /// <returns type="Number">Count</returns>
+        'use strict';
+        var count = 0;
+        for (var prop in obj) {
+            if (obj.hasOwnProperty(prop))
+                count++;
+        }
+        return count;
+    });
 
     /*
     The following two methods are to make your life easier with IE9, WCF and jQueryFileUpload
