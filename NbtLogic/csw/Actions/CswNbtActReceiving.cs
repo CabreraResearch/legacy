@@ -64,8 +64,11 @@ namespace ChemSW.Nbt.Actions
                         RetAsContainer.Material.RelatedNodeId = _MaterialId;
                         //cases 30647 and 31079
                         //RetAsContainer.Material.setHidden( value: true, SaveToDb: false );
-                        //RetAsContainer.Size.setHidden( value: true, SaveToDb: false );  
-                        After( NewNode );
+                        //RetAsContainer.Size.setHidden( value: true, SaveToDb: false );
+                        if( null != After )
+                        {
+                            After( NewNode );
+                        }
                     };
                 ret = _CswNbtSdTabsAndProps.getAddNodeAndPostChanges( ContainerNt, After2 );
                 if( null == ret )
@@ -139,7 +142,7 @@ namespace ChemSW.Nbt.Actions
                 CswNbtObjClassContainer InitialContainerNode = _CswNbtResources.Nodes[CswConvert.ToString( ReceiptObj["containernodeid"] )];
                 if( null != InitialContainerNode )
                 {
-                    _HandleInitialContainer( InitialContainerNode, ReceiptObj );
+                    HandleInitialContainer( InitialContainerNode, ReceiptObj );
 
                     CswNbtBatchOpReceiving ReceivingBatchOp = new CswNbtBatchOpReceiving( _CswNbtResources );
                     ReceivingBatchOp.makeBatchOp( ReceiptObj.ToString() );
@@ -151,7 +154,7 @@ namespace ChemSW.Nbt.Actions
         }
 
         //Abstracted outside receiveMaterial() for Unit Test purposes
-        private void _HandleInitialContainer( CswNbtObjClassContainer InitialContainerNode, JObject ReceiptObj )
+        public void HandleInitialContainer( CswNbtObjClassContainer InitialContainerNode, JObject ReceiptObj )
         {
             JObject ContainerAddProps = CswConvert.ToJObject( ReceiptObj["props"] );
             _CswNbtSdTabsAndProps.saveNodeProps( InitialContainerNode.Node, ContainerAddProps );
@@ -159,8 +162,13 @@ namespace ChemSW.Nbt.Actions
 
             CswPrimaryKey MaterialId = new CswPrimaryKey();
             MaterialId.FromString( CswConvert.ToString( ReceiptObj["materialid"] ) );
-            commitSDSDocNode( MaterialId, ReceiptObj ); CswPrimaryKey RequestId = _getRequestId( ReceiptObj );
+            commitSDSDocNode( MaterialId, ReceiptObj );
+            CswPrimaryKey RequestId = _getRequestId( ReceiptObj );
             CswNbtNode ReceiptLot = _makeReceiptLot( MaterialId, RequestId, ReceiptObj, InitialContainerNode.ExpirationDate.DateTimeValue );
+            if( null == ReceiptObj["receiptLotId"] )
+            {
+                ReceiptObj["receiptLotId"] = ReceiptLot.NodeId.ToString();
+            }
 
             JArray Quants = CswConvert.ToJArray( ReceiptObj["quantities"] );
             JObject QuantityDef = CswConvert.ToJObject( Quants[0] );
@@ -221,15 +229,19 @@ namespace ChemSW.Nbt.Actions
                 thisContainer.ReceiptLot.RelatedNodeId = ReceiptLotId;
             };
 
-            Apply( After );
+            if( NoContainers > 0 && QuantityValue > 0 && Int32.MinValue != UnitId.PrimaryKey )
+            {
+                Apply( After );
+            }
         }
-        
+
         /// <summary>
         /// Persist the SDS Document
         /// </summary>
         public void commitSDSDocNode( CswPrimaryKey MaterialId, JObject Obj )
         {
-            CswNbtObjClassSDSDocument SDSDoc = _CswNbtResources.Nodes[CswConvert.ToString( Obj["sdsDocId"] )];
+            string sdsDocId = CswConvert.ToString( Obj["sdsDocId"] );
+            CswNbtObjClassSDSDocument SDSDoc = _CswNbtResources.Nodes.GetNode( CswConvert.ToPrimaryKey( sdsDocId ) );
             if( null != SDSDoc )
             {
                 _CswNbtSdTabsAndProps.saveProps( SDSDoc.NodeId, Int32.MinValue, (JObject) Obj["sdsDocProperties"], SDSDoc.NodeTypeId, null, IsIdentityTab : false, setIsTempToFalse : false );
@@ -272,7 +284,8 @@ namespace ChemSW.Nbt.Actions
                     //ReceiptLot.postChanges( false );
                 };
 
-            CswNbtObjClassReceiptLot ReceiptLot = _CswNbtResources.Nodes[CswConvert.ToString( ReceiptObj["receiptLotId"] )];
+            string receiptLotId = CswConvert.ToString( ReceiptObj["receiptLotId"] );
+            CswNbtObjClassReceiptLot ReceiptLot = _CswNbtResources.Nodes.GetNode( CswConvert.ToPrimaryKey( receiptLotId ) );
             if( null != ReceiptLot )
             {
                 _CswNbtSdTabsAndProps.saveProps( ReceiptLot.NodeId, Int32.MinValue, (JObject) ReceiptObj["receiptLotProperties"], ReceiptLot.NodeTypeId, null, IsIdentityTab : false );
@@ -290,7 +303,8 @@ namespace ChemSW.Nbt.Actions
 
         private void _attachCofA( CswPrimaryKey ReceiptLotId, JObject Obj )
         {
-            CswNbtObjClassCofADocument CofADoc = _CswNbtResources.Nodes[CswConvert.ToString( Obj["cofaDocId"] )];
+            string cofaDocId = CswConvert.ToString( Obj["cofaDocId"] );
+            CswNbtObjClassCofADocument CofADoc = _CswNbtResources.Nodes.GetNode( CswConvert.ToPrimaryKey( cofaDocId ) );
             if( null != CofADoc )
             {
                 _CswNbtSdTabsAndProps.saveProps( CofADoc.NodeId, Int32.MinValue, (JObject) Obj["cofaDocProperties"], CofADoc.NodeTypeId, null, IsIdentityTab : false );
