@@ -180,22 +180,7 @@ namespace ChemSW.Nbt.Sched
             if( null != SearchClient )
             {
                 string LastExtChemDataImportDate = CswNbtC3ClientManager.getLastExtChemDataImportDate( SearchClient );
-                string LastRegDataImportDate = "";
-                bool RegDataSyncModuleEnabled = false;
-                if( CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.LOLISync ) )
-                {
-                    RegDataSyncModuleEnabled = true;
-                    CswNbtC3ClientManager.RegulationDatabase = "LOLI";
-                }
-                else if( CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.ArielSync ) )
-                {
-                    RegDataSyncModuleEnabled = true;
-                    CswNbtC3ClientManager.RegulationDatabase = "Ariel";
-                }
-                if( RegDataSyncModuleEnabled )
-                {
-                    LastRegDataImportDate = CswNbtC3ClientManager.getLastRegulationDataImportDate( SearchClient );
-                }
+                string LastRegDataImportDate = CswNbtC3ClientManager.getLastRegulationDataImportDate( SearchClient );
 
                 // Compare the dates and return true if a sync should be performed
                 DateTime NbtC3SyncDate = CswConvert.ToDateTime( CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumConfigurationVariableNames.C3SyncDate ) );

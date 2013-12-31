@@ -77,8 +77,7 @@ namespace ChemSW.Nbt.ObjClasses
                 CswNbtObjClassRegulatoryList RegListNode = _CswNbtResources.Nodes.GetNode( RegulatoryList.RelatedNodeId );
                 if( null != RegListNode )
                 {
-                    // Assuming ListCode options are in the following format: "[Database Name] Managed"
-                    CswC3SearchParams.RegulationDatabase = RegListNode.ListMode.Value.Split( ' ' )[0];
+                    CswC3SearchParams.RegulationDatabase = CswNbtC3ClientManager.RegulationDatabase;
                     CswC3SearchParams.Regions = CswConvert.ToString( RegListNode.Regions.Value );
                 }
                 CswC3SearchParams.Query = SearchTerm;

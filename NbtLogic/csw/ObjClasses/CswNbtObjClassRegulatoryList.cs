@@ -255,34 +255,24 @@ namespace ChemSW.Nbt.ObjClasses
                         #endregion Manually Managed Reg Lists
 
                         #region Regulation Database Managed Reg Lists
-                        if( CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.LOLISync ) || CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.ArielSync ) )
+
+                        string SyncModule = string.Empty;
+                        if( CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.LOLISync ) )
+                        {
+                            SyncModule = CswEnumRegulatoryListListModes.LOLIManaged;
+                        }
+                        else if( CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.ArielSync ) )
+                        {
+                            SyncModule = CswEnumRegulatoryListListModes.ArielManaged;
+                        }
+                        if( false == string.IsNullOrEmpty( SyncModule ) ) //at least one of LOLISync or ArielSync is enabled
                         {
                             CswNbtMetaDataObjectClass RegListListCodeOC = CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RegulatoryListListCodeClass );
                             if( null != RegListListCodeOC )
                             {
-                                string RegulationDatabase = "";
-                                if( CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.LOLISync ) )
-                                {
-                                    RegulationDatabase = "LOLI";
-                                }
-                                else if( CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.ArielSync ) )
-                                {
-                                    RegulationDatabase = "Ariel";
-                                }
-
                                 CswNbtMetaDataObjectClassProp RegListListCodeListCodeOCP = RegListListCodeOC.getObjectClassProp( CswNbtObjClassRegulatoryListListCode.PropertyName.ListCode );
                                 CswNbtMetaDataObjectClassProp RegListListCodeRegulatoryListOCP = RegListListCodeOC.getObjectClassProp( CswNbtObjClassRegulatoryListListCode.PropertyName.RegulatoryList );
                                 CswNbtMetaDataObjectClassProp RegListListModeOCP = RegulatoryListOC.getObjectClassProp( PropertyName.ListMode );
-
-                                string Value = string.Empty;
-                                if( CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.LOLISync ) )
-                                {
-                                    Value = CswEnumRegulatoryListListModes.LOLIManaged;
-                                }
-                                else if( CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.ArielSync ) )
-                                {
-                                    Value = CswEnumRegulatoryListListModes.ArielManaged;
-                                }
 
                                 // Get all regulation db managed regulatory lists
                                 CswNbtView View1 = new CswNbtView( CswNbtResources );
@@ -290,7 +280,7 @@ namespace ChemSW.Nbt.ObjClasses
                                 CswNbtViewRelationship ParentRelationship = View1.AddViewRelationship( RegulatoryListOC, false );
                                 View1.AddViewPropertyAndFilter( ParentViewRelationship: ParentRelationship,
                                                                 MetaDataProp: RegListListModeOCP,
-                                                                Value: Value,
+                                                                Value: SyncModule, //sync module that is enabled
                                                                 SubFieldName: CswEnumNbtSubFieldName.Value,
                                                                 FilterMode: CswEnumNbtFilterMode.Equals );
                                 CswNbtViewRelationship SecondaryRelationship = View1.AddViewRelationship( ParentRelationship, CswEnumNbtViewPropOwnerType.Second, RegListListCodeRegulatoryListOCP, false );
@@ -314,8 +304,7 @@ namespace ChemSW.Nbt.ObjClasses
                                         CurrentRegListRegions = CswConvert.ToString( CurrentRegListNode.Regions.Value );
                                     }
 
-                                    for( int j = 0; j < Tree1.getChildNodeCount(); j++ )
-                                    // Regulatory List List Code Nodes
+                                    for( int j = 0; j < Tree1.getChildNodeCount(); j++ ) // Regulatory List List Code Nodes
                                     {
                                         Tree1.goToNthChild( j );
                                         CswNbtTreeNodeProp ListCodeTreeProp = null;
@@ -353,11 +342,10 @@ namespace ChemSW.Nbt.ObjClasses
                                             string ListCodes = string.Join( ",", Pair.Value.Item2.ToArray() );
                                             string Regions = Pair.Value.Item1;
 
-                                            // Set LOLI Sync specific properties
                                             CswC3SearchParams.Query = CurrentCasNo; // Query takes the Cas Number
                                             CswC3SearchParams.ListCodes = ListCodes; // ListCodes should be a comma delimited string of all list codes
                                             CswC3SearchParams.Regions = Regions; // String list of all regions (for Ariel)
-                                            CswC3SearchParams.RegulationDatabase = RegulationDatabase; // Which Regulation Database to search
+                                            CswC3SearchParams.RegulationDatabase = CswNbtC3ClientManager.RegulationDatabase; // Which Regulation Database to search
 
                                             CswRetObjSearchResults SearchResults = C3SearchClient.getListCodesByCasNo( CswC3SearchParams );
                                             if( null != SearchResults.RegulationDbDataResults )
