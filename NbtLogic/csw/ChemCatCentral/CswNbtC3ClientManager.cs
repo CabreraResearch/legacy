@@ -144,10 +144,13 @@ namespace ChemSW.Nbt.ChemCatCentral
         {
             string Ret = string.Empty;
 
-            // We set the Regulation Database so that C3 knows which date to retrieve
-            _CswC3SearchParams.RegulationDatabase = _RegulationDatabase;
-            CswRetObjSearchResults ReturnObject = SearchClient.getLastestRegDbDate( _CswC3SearchParams );
-            Ret = ReturnObject.LastestRegulationDbDate;
+            if( false == string.IsNullOrEmpty( _RegulationDatabase ) )
+            {
+                // We set the Regulation Database so that C3 knows which date to retrieve
+                _CswC3SearchParams.RegulationDatabase = _RegulationDatabase;
+                CswRetObjSearchResults ReturnObject = SearchClient.getLastestRegDbDate( _CswC3SearchParams );
+                Ret = ReturnObject.LastestRegulationDbDate;
+            }
 
             return Ret;
         }//getLastRegulationDataImportDate()
