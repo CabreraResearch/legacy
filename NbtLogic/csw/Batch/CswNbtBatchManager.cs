@@ -105,14 +105,6 @@ namespace ChemSW.Nbt.Batch
                 {
                     op = new CswNbtBatchOpMultiDelete( CswNbtResources );
                 }
-                //else if( OpName == CswEnumNbtBatchOpName.UpdateRegulatoryLists )
-                //{
-                //    op = new CswNbtBatchOpUpdateRegulatoryLists( CswNbtResources );
-                //}
-                //else if( OpName == CswEnumNbtBatchOpName.UpdateRegulatoryListsForMaterials )
-                //{
-                //    op = new CswNbtBatchOpUpdateRegulatoryListsForMaterials( CswNbtResources );
-                //}
                 else if( OpName == CswEnumNbtBatchOpName.SyncLocation )
                 {
                     op = new CswNbtBatchOpSyncLocation( CswNbtResources );
@@ -120,6 +112,10 @@ namespace ChemSW.Nbt.Batch
                 else if( OpName == CswEnumNbtBatchOpName.MobileMultiOpUpdates )
                 {
                     op = new CswNbtBatchOpMobileMultiOpUpdates( CswNbtResources );
+                }
+                else if( OpName == CswEnumNbtBatchOpName.Receiving )
+                {
+                    op = new CswNbtBatchOpReceiving( CswNbtResources );
                 }
 
                 // New batch ops go here

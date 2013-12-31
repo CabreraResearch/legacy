@@ -76,12 +76,13 @@ namespace ChemSW.Nbt.Batch
 
                     ReceivingBatchData BatchData = new ReceivingBatchData( BatchNode.BatchData.Text );
                     _receiveContainers( BatchData );
-                    _NodesProcessed = 0; //reset this for Unit Test purposes
-
+                    
                     if( 0 == BatchData.getNumberContainersToCreate() || 0 == _NodesProcessed )
                     {
                         BatchNode.finish();
                     }
+
+                    _NodesProcessed = 0; //reset this for Unit Test purposes
 
                     BatchNode.PercentDone.Value = getPercentDone( BatchNode );
                     BatchNode.BatchData.Text = BatchData.ToString();
