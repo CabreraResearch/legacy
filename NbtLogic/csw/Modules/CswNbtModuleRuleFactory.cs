@@ -90,6 +90,10 @@ namespace ChemSW.Nbt
             {
                 ret = new CswNbtModuleRuleChemWatch( CswNbtResources );
             }
+            else if( CswEnumNbtModuleName.ArielSync == ModuleName )
+            {
+                ret = new CswNbtModuleRuleArielSync( CswNbtResources );
+            }
             else
             {
                 throw new CswDniException( CswEnumErrorType.Error,

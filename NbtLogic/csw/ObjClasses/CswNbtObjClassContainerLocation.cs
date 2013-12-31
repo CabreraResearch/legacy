@@ -80,6 +80,10 @@ namespace ChemSW.Nbt.ObjClasses
                 CswNbtObjClassContainer ContainerNode = _CswNbtResources.Nodes.GetNode( Container.RelatedNodeId );
                 if( null != ContainerNode )
                 {
+                    if( ContainerNode.Missing.Checked == CswEnumTristate.True )
+                    {
+                        ContLocStatus = CswEnumNbtContainerLocationStatusOptions.Missing;
+                    }
                     if( ContainerNode.Disposed.Checked == CswEnumTristate.True )
                     {
                         ContLocStatus = CswEnumNbtContainerLocationStatusOptions.Disposed;
@@ -90,12 +94,8 @@ namespace ChemSW.Nbt.ObjClasses
                                             ? CswEnumNbtContainerLocationStatusOptions.DisposedAtWrongLocation
                                             : CswEnumNbtContainerLocationStatusOptions.WrongLocation;
                     }
-                    if( ContainerNode.Missing.Checked == CswEnumTristate.True )
-                    {
-                        ContLocStatus = CswEnumNbtContainerLocationStatusOptions.Missing;
-                    }
                 }
-                else//If we're here, it's because we ca no longer find the container that was scanned
+                else//If we're here, it's because we can no longer find the container that was scanned
                 {
                     doUpdate = false;
                 }

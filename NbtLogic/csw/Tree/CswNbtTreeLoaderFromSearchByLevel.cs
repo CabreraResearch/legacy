@@ -21,12 +21,13 @@ namespace ChemSW.Nbt
         private ICswNbtUser _RunAsUser;
         private bool _IncludeSystemNodes = false;
         private bool _IncludeHiddenNodes;
+        private bool _SingleNodetype;
         private bool _OnlyMergeableNodeTypes;
         private CswEnumSqlLikeMode _SearchType;
         private CswCommaDelimitedString _ExcludeNodeIds;
 
         public CswNbtTreeLoaderFromSearchByLevel( CswNbtResources CswNbtResources, ICswNbtUser RunAsUser, ICswNbtTree pCswNbtTree, string SearchTerm, CswEnumSqlLikeMode SearchType, string WhereClause,
-                                                  bool IncludeSystemNodes, bool IncludeHiddenNodes, bool OnlyMergeableNodeTypes, List<string> ExcludeNodeIds = null )
+                                                  bool IncludeSystemNodes, bool IncludeHiddenNodes, bool SingleNodetype, bool OnlyMergeableNodeTypes, List<string> ExcludeNodeIds = null )
             : base( pCswNbtTree )
         {
             _CswNbtResources = CswNbtResources;
@@ -36,6 +37,7 @@ namespace ChemSW.Nbt
             _ExtraWhereClause = WhereClause;
             _IncludeSystemNodes = IncludeSystemNodes;
             _IncludeHiddenNodes = IncludeHiddenNodes;
+            _SingleNodetype = SingleNodetype;
             _OnlyMergeableNodeTypes = OnlyMergeableNodeTypes;
             if( null != ExcludeNodeIds )
             {
@@ -266,8 +268,11 @@ namespace ChemSW.Nbt
                                               join nodetype_props p on (jnp.nodetypepropid = p.nodetypepropid)
                                               join nodetypes t on (p.nodetypeid = t.nodetypeid)
                                               join field_types f on (p.fieldtypeid = f.fieldtypeid)
-                                             where f.searchable = '1'
-                                               and t.searchdeferpropid is null";
+                                              where f.searchable = '1'";
+                if( false == _SingleNodetype )
+                {
+                Query += @"                   and t.searchdeferpropid is null";
+                }
                 Query += @"                UNION
                                             select rn.nodeid, jnp.gestaltsearch
                                               from nodes n
@@ -361,8 +366,10 @@ namespace ChemSW.Nbt
                     first = false;
                 }
                 Query += @"                        ) ";
-                Query += @"                    and t.searchdeferpropid is null";
-
+                if( false == _SingleNodetype )
+                {
+                    Query += @"                    and t.searchdeferpropid is null";
+                }
                 Query += @"                    and ( n.searchable = '1' or ( props.fieldtype = 'Barcode' and propval.field1 = '" + CswTools.SafeSqlParam( _SearchTerm ) + @"' ) )";
                 Query += _ExtraWhereClause;
                 // Case 31351: Exclude specific nodes

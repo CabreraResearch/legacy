@@ -103,39 +103,26 @@ namespace ChemSW.Nbt.WebServices
         /// </summary>
         /// <param name="C3SearchResultsObj"></param>
         /// <returns></returns>
-        public JObject getTable( CswRetObjSearchResults C3SearchResultsObj )
+        public JObject getTable( CswRetObjSearchResults C3SearchResultsObj, string SearchField )
         {
             JObject ret = new JObject();
 
             Collection<string> PropsToHide = new Collection<string>();
-            PropsToHide.Add( "ExtensionData" );
-            PropsToHide.Add( "ImportSetId" );
-            PropsToHide.Add( "MolData" );
-            PropsToHide.Add( "MolImage" );
-            PropsToHide.Add( "Obsolete" );
-            PropsToHide.Add( "PartNo" );
-            PropsToHide.Add( "ProductId" );
-            PropsToHide.Add( "ProductSize" );
-            PropsToHide.Add( "SourceRowId" );
-            PropsToHide.Add( "TemplateSelectedExtensionData" );
-            PropsToHide.Add( "TradeName" );
-            PropsToHide.Add( "ProductUrl" );
-            PropsToHide.Add( "MsdsUrl" );
-            PropsToHide.Add( "CasNo" );
-            PropsToHide.Add( "Description" );
-            PropsToHide.Add( "Formula" );
-            PropsToHide.Add( "Synonyms" );
-            PropsToHide.Add( "Status" );
-
-            if( C3SearchResultsObj != null )
+            foreach( string Property in C3SearchResultsObj.AllC3ProductProperties )
             {
-                ret = makeTableFromWebServiceObj( C3SearchResultsObj, PropsToHide );
+                PropsToHide.Add( Property );
             }
+
+            PropsToHide.Remove( "SourceName" );
+            PropsToHide.Remove( "SupplierName" );
+            PropsToHide.Remove( SearchField );
+
+            ret = makeTableFromWebServiceObj( C3SearchResultsObj, PropsToHide );
 
             return ret;
         }
 
-        public JObject makeTableFromTree( ICswNbtTree Tree, Collection<Int32> PropsToHide, Int32 Page=0, Int32 PageLimit=0 )
+        public JObject makeTableFromTree( ICswNbtTree Tree, Collection<Int32> PropsToHide, Int32 Page = 0, Int32 PageLimit = 0 )
         {
 
             JObject ret = new JObject();
@@ -294,10 +281,10 @@ namespace ChemSW.Nbt.WebServices
 
         private Dictionary<CswNbtMetaDataNodeType, Collection<TableNode>> _TableDict = new Dictionary<CswNbtMetaDataNodeType, Collection<TableNode>>();
 
-        private Int32 _populateDictionary( ICswNbtTree Tree, Collection<Int32> PropsToHide, Int32 Page=0, Int32 PageLimit=0 )
+        private Int32 _populateDictionary( ICswNbtTree Tree, Collection<Int32> PropsToHide, Int32 Page = 0, Int32 PageLimit = 0 )
         {
             Int32 results = 0;
-            for( Int32 c = Math.Max(0, (Page-1)*PageLimit); (c < Tree.getChildNodeCount() && ( PageLimit < 1 || results < PageLimit )); c++ )
+            for( Int32 c = Math.Max( 0, ( Page - 1 ) * PageLimit ); ( c < Tree.getChildNodeCount() && ( PageLimit < 1 || results < PageLimit ) ); c++ )
             {
                 Tree.goToNthChild( c );
 

@@ -8,7 +8,7 @@ namespace ChemSW.Nbt
     /// <summary>
     /// Represents an NBT Module
     /// </summary>
-    public sealed class CswEnumNbtModuleName: IEquatable<CswEnumNbtModuleName>, IComparable<CswEnumNbtModuleName>
+    public sealed class CswEnumNbtModuleName : IEquatable<CswEnumNbtModuleName>, IComparable<CswEnumNbtModuleName>
     {
         #region Internals
 
@@ -19,8 +19,9 @@ namespace ChemSW.Nbt
 
         private static Dictionary<string, string> _Enums = new Dictionary<string, string>( StringComparer.OrdinalIgnoreCase )
         {
+            {ArielSync                , ArielSync},
             {C3                       , C3},
-            {ChemWatch,                 ChemWatch},
+            {ChemWatch                , ChemWatch},
             {CISPro                   , CISPro},
             {Containers               , Containers},
             {Dev                      , Dev},
@@ -166,6 +167,10 @@ namespace ChemSW.Nbt
         /// Module that syncs Regulatory List data with LOLI.
         /// </summary>
         public const string LOLISync = "LOLI Sync";
+        /// <summary>
+        /// Module that syncs Regulatory List data with Ariel.
+        /// </summary>
+        public const string ArielSync = "Ariel Sync";
 
         #endregion
 
