@@ -36,7 +36,10 @@ namespace ChemSW.Nbt.WebServices
                     seenModules.Add( ModuleName.ToString() );
                     CswNbtDataContractModule module = _getModuleData( NbtResources, ModuleName );
                     _recurse( NbtResources, module, seenModules );
-                    RootModule.ChildModules.Add( module );
+                    if( false == NbtResources.Modules.ModuleIsHidden( ModuleName ) )
+                    {
+                        RootModule.ChildModules.Add( module );
+                    }
                 }
             }
             return ret;
@@ -49,7 +52,10 @@ namespace ChemSW.Nbt.WebServices
                 CswNbtDataContractModule childModuleData = _getModuleData( NbtResources, childModule );
                 seenModules.Add( childModule.Value );
                 _recurse( NbtResources, childModuleData, seenModules );
-                Module.ChildModules.Add( childModuleData );
+                if( false == NbtResources.Modules.ModuleIsHidden( childModule ) )
+                {
+                    Module.ChildModules.Add( childModuleData );
+                }
             }
         }
 

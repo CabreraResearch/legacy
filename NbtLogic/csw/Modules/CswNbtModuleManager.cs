@@ -222,10 +222,10 @@ namespace ChemSW.Nbt
             CswNbtView usersView = new CswNbtView( _CswNbtResources );
             CswNbtViewRelationship parent = usersView.AddViewRelationship( userOC, false );
             usersView.AddViewPropertyAndFilter( parent,
-                MetaDataProp : usernameOCP,
-                Value : modulename,
-                SubFieldName : CswEnumNbtSubFieldName.Text,
-                FilterMode : CswEnumNbtFilterMode.Contains );
+                MetaDataProp: usernameOCP,
+                Value: modulename,
+                SubFieldName: CswEnumNbtSubFieldName.Text,
+                FilterMode: CswEnumNbtFilterMode.Contains );
 
             ICswNbtTree cisproUsersTree = _CswNbtResources.Trees.getTreeFromView( usersView, false, true, true );
             int count = cisproUsersTree.getChildNodeCount();
@@ -251,10 +251,10 @@ namespace ChemSW.Nbt
             CswNbtView rolesView = new CswNbtView( _CswNbtResources );
             CswNbtViewRelationship parent = rolesView.AddViewRelationship( roleOC, false );
             rolesView.AddViewPropertyAndFilter( parent,
-                MetaDataProp : nameOCP,
-                Value : modulename,
-                SubFieldName : CswEnumNbtSubFieldName.Text,
-                FilterMode : CswEnumNbtFilterMode.Contains );
+                MetaDataProp: nameOCP,
+                Value: modulename,
+                SubFieldName: CswEnumNbtSubFieldName.Text,
+                FilterMode: CswEnumNbtFilterMode.Contains );
 
             ICswNbtTree cisproUsersTree = _CswNbtResources.Trees.getTreeFromView( rolesView, false, true, true );
             int count = cisproUsersTree.getChildNodeCount();
@@ -277,7 +277,7 @@ namespace ChemSW.Nbt
         public void ToggleNode( bool Hidden, string NodeName, String ObjectClassName )
         {
             CswNbtMetaDataObjectClass ObjectClass = _CswNbtResources.MetaData.getObjectClass( ObjectClassName );
-            foreach( CswNbtNode Node in ObjectClass.getNodes( false, false, IncludeHiddenNodes : true ) )
+            foreach( CswNbtNode Node in ObjectClass.getNodes( false, false, IncludeHiddenNodes: true ) )
             {
                 if( Node.NodeName == NodeName )
                 {
@@ -375,17 +375,17 @@ namespace ChemSW.Nbt
                     if( first )
                     {
                         printLabelsView.AddViewPropertyAndFilter( parent, nodetypesOCP,
-                            Value : NodeType.NodeTypeName,
-                            FilterMode : CswEnumNbtFilterMode.Contains );
+                            Value: NodeType.NodeTypeName,
+                            FilterMode: CswEnumNbtFilterMode.Contains );
 
                         first = false;
                     }
                     else
                     {
                         printLabelsView.AddViewPropertyAndFilter( parent, nodetypesOCP,
-                            Value : NodeType.NodeTypeName,
-                            FilterMode : CswEnumNbtFilterMode.Contains,
-                            Conjunction : CswEnumNbtFilterConjunction.Or );
+                            Value: NodeType.NodeTypeName,
+                            FilterMode: CswEnumNbtFilterMode.Contains,
+                            Conjunction: CswEnumNbtFilterConjunction.Or );
                     }
                 }
             }
@@ -421,7 +421,7 @@ namespace ChemSW.Nbt
                 CswNbtMetaDataNodeType locationNT = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
                 if( Int32.MinValue != Row && Int32.MinValue != Col )
                 {
-                    NodeTypeProp.updateLayout( CswEnumNbtLayoutType.Edit, true, Tab.TabId, DisplayRow : Row, DisplayColumn : Col, TabGroup : TabGroup );
+                    NodeTypeProp.updateLayout( CswEnumNbtLayoutType.Edit, true, Tab.TabId, DisplayRow: Row, DisplayColumn: Col, TabGroup: TabGroup );
                 }
                 else
                 {
@@ -467,8 +467,8 @@ namespace ChemSW.Nbt
             CswNbtView reportsView = new CswNbtView( _CswNbtResources );
             CswNbtViewRelationship parent = reportsView.AddViewRelationship( reportOC, false );
             reportsView.AddViewPropertyAndFilter( parent, categoryOCP,
-                Value : Category,
-                FilterMode : CswEnumNbtFilterMode.Equals );
+                Value: Category,
+                FilterMode: CswEnumNbtFilterMode.Equals );
 
             ICswNbtTree reportsTree = _CswNbtResources.Trees.getTreeFromView( reportsView, false, true, true );
             int childCount = reportsTree.getChildNodeCount();
@@ -522,6 +522,24 @@ namespace ChemSW.Nbt
             CswTableSelect modulesTS = _CswNbtResources.makeCswTableSelect( "modulehasparent", "modules" );
             DataTable modulesDT = modulesTS.getTable( "where prereq is not null and moduleid = " + moduleId );
             return modulesDT.Rows.Count > 0;
+        }
+
+        public bool ModuleIsHidden( CswEnumNbtModuleName Module )
+        {
+            bool Ret = false;
+
+            int ModuleId = _CswNbtResources.Modules.GetModuleId( Module );
+            CswTableSelect ModulesTblSelect = _CswNbtResources.makeCswTableSelect( "isModuleHidden", "modules" );
+            DataTable ModulesDt = ModulesTblSelect.getTable( "where moduleid = " + ModuleId );
+            if( ModulesDt.Rows.Count > 0 )
+            {
+                if( CswConvert.ToBoolean( ModulesDt.Rows[0]["hidden"] ) )
+                {
+                    Ret = true;
+                }
+            }
+
+            return Ret;
         }
 
         public Collection<CswEnumNbtModuleName> GetChildModules( CswEnumNbtModuleName Module )
