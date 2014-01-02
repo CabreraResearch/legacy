@@ -27,8 +27,35 @@ namespace ChemSW.Nbt.ChemCatCentral
         {
             _CswNbtResources = CswNbtResources;
             _CswC3SearchParams = CswC3SearchParams;
+            // Set the Regulation Database
+            _setRegulationDatabase();
 
         }//ctor2
+
+        private string _RegulationDatabase;
+        public string RegulationDatabase
+        {
+            get
+            {
+                return _RegulationDatabase;
+            }
+        }
+
+        private void _setRegulationDatabase()
+        {
+            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.LOLISync ) )
+            {
+                _RegulationDatabase = "LOLI";
+            }
+            else if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.ArielSync ) )
+            {
+                _RegulationDatabase = "Ariel";
+            }
+            else
+            {
+                _RegulationDatabase = string.Empty;
+            }
+        }
 
         /// <summary>
         /// 
@@ -55,11 +82,7 @@ namespace ChemSW.Nbt.ChemCatCentral
             // Set the endpoint address 
             Success = Success && _setEndpointAddress( _CswNbtResources, Ret );
 
-            if( Success )
-            {
-                return Ret;
-            }
-            return null;
+            return Success ? Ret : null;
         }//initializeC3Client()
 
         public string getCurrentC3Version()
@@ -106,26 +129,31 @@ namespace ChemSW.Nbt.ChemCatCentral
         {
             string Ret = string.Empty;
 
-            CswRetObjSearchResults ReturnObject = SearchClient.getLastExtChemDataImportDate( _CswC3Params );
+            CswRetObjSearchResults ReturnObject = SearchClient.getLastExtChemDataImportDate( _CswC3SearchParams );
             Ret = ReturnObject.LastExtChemDataImportDate;
 
             return Ret;
         }//getLastExtChemDataImportDate()
 
         /// <summary>
-        /// Get the most recent LOLI data import date.
+        /// Get the most recent Regulation database data import date.
         /// </summary>
         /// <param name="SearchClient"></param>
         /// <returns></returns>
-        public string getLastLOLIImportDate( SearchClient SearchClient )
+        public string getLastRegulationDataImportDate( SearchClient SearchClient )
         {
             string Ret = string.Empty;
 
-            CswRetObjSearchResults ReturnObject = SearchClient.getLastLOLIImportDate( _CswC3Params );
-            Ret = ReturnObject.LastLOLIImportDate;
+            if( false == string.IsNullOrEmpty( _RegulationDatabase ) )
+            {
+                // We set the Regulation Database so that C3 knows which date to retrieve
+                _CswC3SearchParams.RegulationDatabase = _RegulationDatabase;
+                CswRetObjSearchResults ReturnObject = SearchClient.getLastestRegDbDate( _CswC3SearchParams );
+                Ret = ReturnObject.LastestRegulationDbDate;
+            }
 
             return Ret;
-        }//getLastLOLIImportDate()
+        }//getLastRegulationDataImportDate()
 
         #region Private Helper Methods
 

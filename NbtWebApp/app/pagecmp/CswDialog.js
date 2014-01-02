@@ -931,9 +931,17 @@
                         if (Csw.isNullOrEmpty(data.ProductDetails.CasNo)) {
                             casnodiv.hide();
                         }
+                        
+                        // Formula
+                        var formuladiv = table1.cell(5, 1).div({
+                            text: 'Formula: ' + data.ProductDetails.Formula
+                        });
+                        if (Csw.isNullOrEmpty(data.ProductDetails.Formula)) {
+                            formuladiv.hide();
+                        }
 
                         // Product Website
-                        var producturldiv = table1.cell(5, 1).div({
+                        var producturldiv = table1.cell(6, 1).div({
                             text: '<a href=' + data.ProductDetails.ProductUrl + ' target="_blank">Product Website</a>'
                         });
                         if (Csw.isNullOrEmpty(data.ProductDetails.ProductUrl)) {
@@ -941,7 +949,7 @@
                         }
 
                         // SDS URL
-                        var sdsurldiv = table1.cell(6, 1).div({
+                        var sdsurldiv = table1.cell(7, 1).div({
                             text: '<a href=' + data.ProductDetails.MsdsUrl + ' target="_blank">SDS</a>'
                         });
                         if (Csw.isNullOrEmpty(data.ProductDetails.MsdsUrl)) {
@@ -956,7 +964,7 @@
                             src: 'data:image/jpeg;base64,' + data.ProductDetails.MolImage,
                             height: molImageHeight
                         });
-                        table1.cell(2, 2).propDom('rowspan', 5);
+                        table1.cell(2, 2).propDom('rowspan', 6);
 
                         var fields = [];
                         var columns = [];
@@ -977,7 +985,7 @@
                         ];
 
                         var sizeGridId = 'c3detailsgrid_size';
-                        table1.cell(7, 1).grid({
+                        table1.cell(8, 1).grid({
                             name: sizeGridId,
                             stateId: sizeGridId,
                             title: 'Sizes',
@@ -992,10 +1000,10 @@
                             usePaging: false,
                             showActionColumn: false
                         });
-                        table1.cell(7, 1).propDom('colspan', 2);
+                        table1.cell(8, 1).propDom('colspan', 2);
 
                         var extraDataGridId = 'c3detailsgrid_extradata';
-                        table1.cell(8, 1).grid({
+                        table1.cell(9, 1).grid({
                             name: extraDataGridId,
                             stateId: extraDataGridId,
                             title: 'Extra Attributes',
@@ -1010,7 +1018,7 @@
                             usePaging: false,
                             showActionColumn: false
                         });
-                        table1.cell(8, 1).propDom('colspan', 2);
+                        table1.cell(9, 1).propDom('colspan', 2);
 
 
                     }
@@ -1689,6 +1697,7 @@
                 showSave: false,
                 allowEdit: false,
                 allowDelete: false,
+                allowNodeTypeChange: false,
                 compactResults: true,
                 extraAction: 'Select',
                 extraActionIcon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.check),

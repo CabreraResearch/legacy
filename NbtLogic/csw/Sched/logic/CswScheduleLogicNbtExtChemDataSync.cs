@@ -35,6 +35,14 @@ namespace ChemSW.Nbt.Sched
             get { return ( _CswScheduleLogicDetail ); }
         }
 
+        private Collection<CswEnumNbtModuleName> _SyncModules = new Collection<CswEnumNbtModuleName>
+            {
+                CswEnumNbtModuleName.FireDbSync,
+                CswEnumNbtModuleName.PCIDSync,
+                CswEnumNbtModuleName.LOLISync,
+                CswEnumNbtModuleName.ArielSync
+            };
+
         #endregion Properties
 
         #region State
@@ -46,11 +54,7 @@ namespace ChemSW.Nbt.Sched
             CswNbtResources CswNbtResources = (CswNbtResources) CswResources;
             if( CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.CISPro ) )
             {
-                Collection<CswEnumNbtModuleName> SyncModules = new Collection<CswEnumNbtModuleName>();
-                SyncModules.Add( CswEnumNbtModuleName.FireDbSync );
-                SyncModules.Add( CswEnumNbtModuleName.PCIDSync );
-                SyncModules.Add( CswEnumNbtModuleName.LOLISync );
-                if( SyncModules.Any( SyncModule => CswNbtResources.Modules.IsModuleEnabled( SyncModule ) ) )
+                if( _SyncModules.Any( SyncModule => CswNbtResources.Modules.IsModuleEnabled( SyncModule ) ) )
                 {
                     // If the date is out of sync, then we get all valid Materials to be synced
                     if( outOfDate( CswNbtResources ) )
@@ -104,14 +108,7 @@ namespace ChemSW.Nbt.Sched
             {
                 try
                 {
-                    // Get all sync modules
-                    Collection<CswEnumNbtModuleName> SyncModules = new Collection<CswEnumNbtModuleName>();
-                    SyncModules.Add( CswEnumNbtModuleName.FireDbSync );
-                    SyncModules.Add( CswEnumNbtModuleName.PCIDSync );
-                    SyncModules.Add( CswEnumNbtModuleName.LOLISync );
-
-                    // Check to see if at least one is enabled
-                    if( SyncModules.Any( SyncModule => CswNbtResources.Modules.IsModuleEnabled( SyncModule ) ) )
+                    if( _SyncModules.Any( SyncModule => CswNbtResources.Modules.IsModuleEnabled( SyncModule ) ) )
                     {
                         // Check C3 Status
                         CswC3Params CswC3Params = new CswC3Params();
@@ -168,7 +165,7 @@ namespace ChemSW.Nbt.Sched
 
         /// <summary>
         /// This method determines whether the C3SyncDate is older than either 
-        /// the LastExtChemDataImportDate or the LastLOLIImportDate. If it is
+        /// the LastExtChemDataImportDate or the LastRegulationDataImportDate. If it is
         /// out of date, we return true so that a sync is then performed.
         /// </summary>
         /// <param name="CswNbtResources"></param>
@@ -177,18 +174,19 @@ namespace ChemSW.Nbt.Sched
         {
             bool OutOfDate = false;
 
-            CswC3Params CswC3Params = new CswC3Params();
-            CswNbtC3ClientManager CswNbtC3ClientManager = new CswNbtC3ClientManager( CswNbtResources, CswC3Params );
+            CswC3SearchParams CswC3SearchParams = new CswC3SearchParams();
+            CswNbtC3ClientManager CswNbtC3ClientManager = new CswNbtC3ClientManager( CswNbtResources, CswC3SearchParams );
             SearchClient SearchClient = CswNbtC3ClientManager.initializeC3Client();
             if( null != SearchClient )
             {
                 string LastExtChemDataImportDate = CswNbtC3ClientManager.getLastExtChemDataImportDate( SearchClient );
-                string LastLOLIImportDate = CswNbtC3ClientManager.getLastLOLIImportDate( SearchClient );
+                string LastRegDataImportDate = CswNbtC3ClientManager.getLastRegulationDataImportDate( SearchClient );
 
                 // Compare the dates and return true if a sync should be performed
                 DateTime NbtC3SyncDate = CswConvert.ToDateTime( CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumConfigurationVariableNames.C3SyncDate ) );
 
-                if( NbtC3SyncDate == DateTime.MinValue || ( NbtC3SyncDate < CswConvert.ToDateTime( LastExtChemDataImportDate ) || NbtC3SyncDate < CswConvert.ToDateTime( LastLOLIImportDate ) ) )
+                if( NbtC3SyncDate == DateTime.MinValue ||
+                    ( NbtC3SyncDate < CswConvert.ToDateTime( LastExtChemDataImportDate ) || ( false == string.IsNullOrEmpty( LastRegDataImportDate ) && NbtC3SyncDate < CswConvert.ToDateTime( LastRegDataImportDate ) ) ) )
                 {
                     OutOfDate = true;
                 }

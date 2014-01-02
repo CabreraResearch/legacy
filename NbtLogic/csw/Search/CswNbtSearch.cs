@@ -338,7 +338,6 @@ namespace ChemSW.Nbt.Search
         {
             // Filters to apply
             string WhereClause = string.Empty;
-            //bool SingleNodeType = false;
             //Collection<Int32> FilteredPropIds = new Collection<Int32>();
             foreach( CswNbtSearchFilter Filter in FiltersApplied )
             {
@@ -398,7 +397,7 @@ namespace ChemSW.Nbt.Search
                 } // else if( Filter.Type == CswNbtSearchFilterType.propval )
             } // foreach( CswNbtSearchFilter Filter in FiltersApplied )
 
-            ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromSearch( SearchTerm, SearchType, WhereClause, true, false, false, OnlyMergeableNodeTypes, ExcludeNodeIds: ExcludeNodeIds );
+            ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromSearch( SearchTerm, SearchType, WhereClause, true, false, false, IsSingleNodeType(), OnlyMergeableNodeTypes, ExcludeNodeIds: ExcludeNodeIds );
             return Tree;
         } // Results()
 

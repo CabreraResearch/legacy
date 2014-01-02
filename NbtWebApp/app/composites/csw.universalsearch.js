@@ -79,19 +79,28 @@
             }; // onFilterClick()
 
             // Nodetype Filter Menu
+            
+            //create the request for getNodeTypes assuming we're populating the list normally
+            var nodeTypeOptions = {
+                PropertySetName: '',
+                ObjectClassName: '',
+                ObjectClassId: '',
+                ExcludeNodeTypeIds: '',
+                RelatedToNodeTypeId: '',
+                RelatedObjectClassPropName: '',
+                FilterToPermission: '',
+                RelationshipNodeTypePropId: '',
+                Searchable: true
+            };
+
+            //if we're locked to a particular nodetype, include normally unsearchable types (like constituents)
+            if (false === cswPrivate.allowNodeTypeChange) {
+                nodeTypeOptions.Searchable = false;
+            }
+            
             cswPublic.ready = Csw.ajax.deprecatedWsNbt({
                 urlMethod: 'getNodeTypes',
-                data: {
-                    PropertySetName: '',
-                    ObjectClassName: '',
-                    ObjectClassId: '',
-                    ExcludeNodeTypeIds: '',
-                    RelatedToNodeTypeId: '',
-                    RelatedObjectClassPropName: '',
-                    FilterToPermission: '',
-                    RelationshipNodeTypePropId: '',
-                    Searchable: true
-                },
+                data: nodeTypeOptions,
                 success: function (data) {
                     var items = [];
 
@@ -127,6 +136,7 @@
                         }
                     }); // toolbar
 
+                    //if we're locked to a particular nodetype, disable the nodetype selector
                     if (false === cswPrivate.allowNodeTypeChange) {
                         cswPrivate.preFilterSelect.disable();
                     }
@@ -134,6 +144,8 @@
                     Csw.tryExec(cswPrivate.onSuccess);
                 } // success
             }); // ajax
+            
+            
 
             // Search Menu
             Csw.ajaxWcf.post({

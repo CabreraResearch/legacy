@@ -348,7 +348,7 @@ namespace ChemSW.Nbt.WebServices
                 }
 
                 CswNbtWebServiceTable wsTable = new CswNbtWebServiceTable( _CswNbtResources, null, Int32.MinValue );
-                Ret["table"] = wsTable.getTable( SearchResults );
+                Ret["table"] = wsTable.getTable( SearchResults, CswC3SearchParams.Field );
                 Ret["filters"] = "";
                 Ret["searchterm"] = CswC3SearchParams.Query;
                 Ret["filtersapplied"] = "";

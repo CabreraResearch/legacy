@@ -14,11 +14,11 @@ namespace ChemSW.Nbt.ObjClasses
         public new sealed class PropertyName : CswNbtObjClass.PropertyName
         {
             public const string RegulatoryList = "Regulatory List";
-            public const string LOLIListName = "LOLI List Name";
-            public const string LOLIListCode = "LOLI List Code";
+            public const string ListName = "List Name";
+            public const string ListCode = "List Code";
         }
 
-        public CswNbtObjClassRegulatoryListListCode( CswNbtResources CswNbtResources, CswNbtNode Node ) : base( CswNbtResources, Node ) {}
+        public CswNbtObjClassRegulatoryListListCode( CswNbtResources CswNbtResources, CswNbtNode Node ) : base( CswNbtResources, Node ) { }
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
@@ -42,11 +42,11 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void beforeWriteNode( bool Creating )
         {
-            // Set the value of the LOLIListCode property
-            if( LOLIListCode.Empty && false == string.IsNullOrEmpty( LOLIListName.Value ) )
+            // Set the value of the ListCode property
+            if( ListCode.Empty && false == string.IsNullOrEmpty( ListName.Value ) )
             {
-                LOLIListCode.Value = CswConvert.ToDouble( LOLIListName.Value );
-                LOLIListCode.SyncGestalt();
+                ListCode.Text = ListName.Value;
+                ListCode.SyncGestalt();
             }
         }//beforeWriteNode()
 
@@ -62,36 +62,41 @@ namespace ChemSW.Nbt.ObjClasses
 
         protected override void afterPopulateProps()
         {
-            LOLIListName.OnBeforeFilterOptions = _searchLOLI;
+            ListName.OnBeforeFilterOptions = _searchRegulationDb;
         }//afterPopulateProps()
 
         #endregion
 
-        private void _searchLOLI( string SearchTerm, Int32 SearchThreshold )
+        private void _searchRegulationDb( string SearchTerm, Int32 SearchThreshold )
         {
-            // Instance a ChemCatCentral SearchClient
             CswC3SearchParams CswC3SearchParams = new CswC3SearchParams();
             CswNbtC3ClientManager CswNbtC3ClientManager = new CswNbtC3ClientManager( _CswNbtResources, CswC3SearchParams );
             SearchClient C3SearchClient = CswNbtC3ClientManager.initializeC3Client();
             if( null != C3SearchClient )
             {
+                CswNbtObjClassRegulatoryList RegListNode = _CswNbtResources.Nodes.GetNode( RegulatoryList.RelatedNodeId );
+                if( null != RegListNode )
+                {
+                    CswC3SearchParams.RegulationDatabase = CswNbtC3ClientManager.RegulationDatabase;
+                    CswC3SearchParams.Regions = CswConvert.ToString( RegListNode.Regions.Value );
+                }
                 CswC3SearchParams.Query = SearchTerm;
 
                 // Perform the search
                 CswRetObjSearchResults SearchResults = C3SearchClient.getListCodesByName( CswC3SearchParams );
-                if( null != SearchResults.LoliDataResults )
+                if( null != SearchResults.RegulationDbDataResults )
                 {
-                    if( SearchResults.LoliDataResults.Length > 0 && SearchResults.LoliDataResults.Length < SearchThreshold )
+                    if( SearchResults.RegulationDbDataResults.Length > 0 && SearchResults.RegulationDbDataResults.Length < SearchThreshold )
                     {
                         Collection<CswNbtNodeTypePropListOption> MatchingRegLists = new Collection<CswNbtNodeTypePropListOption>();
 
-                        foreach( CswC3LoliData LoliRecord in SearchResults.LoliDataResults )
+                        foreach( CswC3RegulationDbData RegDbRecord in SearchResults.RegulationDbDataResults )
                         {
-                            MatchingRegLists.Add( new CswNbtNodeTypePropListOption( LoliRecord.ListName, CswConvert.ToString( LoliRecord.ListId ) ) );
+                            MatchingRegLists.Add( new CswNbtNodeTypePropListOption( RegDbRecord.ListName, CswConvert.ToString( RegDbRecord.ListId ) ) );
                         }
 
                         // Set the list options
-                        LOLIListName.Options.Options = MatchingRegLists;
+                        ListName.Options.Options = MatchingRegLists;
                     }
                 }
             }
@@ -116,8 +121,8 @@ namespace ChemSW.Nbt.ObjClasses
         #region Object class specific properties
 
         public CswNbtNodePropRelationship RegulatoryList { get { return _CswNbtNode.Properties[PropertyName.RegulatoryList]; } }
-        public CswNbtNodePropList LOLIListName { get { return _CswNbtNode.Properties[PropertyName.LOLIListName]; } }
-        public CswNbtNodePropNumber LOLIListCode { get { return _CswNbtNode.Properties[PropertyName.LOLIListCode]; } }
+        public CswNbtNodePropList ListName { get { return _CswNbtNode.Properties[PropertyName.ListName]; } }
+        public CswNbtNodePropText ListCode { get { return _CswNbtNode.Properties[PropertyName.ListCode]; } }
 
         #endregion
 
