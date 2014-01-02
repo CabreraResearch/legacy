@@ -4,6 +4,7 @@ using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.ServiceDrivers;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.Actions
@@ -11,25 +12,40 @@ namespace ChemSW.Nbt.Actions
     public class CswNbtActDispenseContainer
     {
         private CswNbtResources _CswNbtResources = null;
+        private CswNbtSdTabsAndProps _CswNbtSdTabsAndProps;
         private CswNbtObjClassContainer _SourceContainer = null;
         private Collection<CswPrimaryKey> _ContainersToView = new Collection<CswPrimaryKey>();
+        private CswNbtObjClassContainerDispenseTransaction _TempDispenseTransaction;
 
         #region Constructor
 
         public CswNbtActDispenseContainer( CswNbtResources CswNbtResources )
         {
             _CswNbtResources = CswNbtResources;
+            _CswNbtSdTabsAndProps = new CswNbtSdTabsAndProps( _CswNbtResources );
         }
 
-        public CswNbtActDispenseContainer( CswNbtResources CswNbtResources, string SourceContainerNodeId )
+        public CswNbtActDispenseContainer( CswNbtResources CswNbtResources, string SourceContainerNodeId, string DispenseTransactionId = null, string DispenseTransactionProperties = null )
         {
             _CswNbtResources = CswNbtResources;
+            _CswNbtSdTabsAndProps = new CswNbtSdTabsAndProps( _CswNbtResources );
 
             if( false == String.IsNullOrEmpty( SourceContainerNodeId ) )
             {
                 CswPrimaryKey SourceContainerPK = new CswPrimaryKey();
                 SourceContainerPK.FromString( SourceContainerNodeId );
                 _SourceContainer = _CswNbtResources.Nodes.GetNode( SourceContainerPK );
+                if( false == String.IsNullOrEmpty( DispenseTransactionId ) )
+                {
+                    CswPrimaryKey ContainerDispenseTransactionId = new CswPrimaryKey();
+                    ContainerDispenseTransactionId.FromString( DispenseTransactionId );
+                    _TempDispenseTransaction = _CswNbtResources.Nodes.GetNode( ContainerDispenseTransactionId );
+                    if( null != _TempDispenseTransaction )
+                    {
+                        _CswNbtSdTabsAndProps.saveProps( _TempDispenseTransaction.NodeId, Int32.MinValue, CswConvert.ToJObject( DispenseTransactionProperties ), _TempDispenseTransaction.NodeTypeId, null, IsIdentityTab: false, setIsTempToFalse: false );
+                    }
+                    _SourceContainer.Dispenser = new CswNbtContainerDispenser( _CswNbtResources, new CswNbtContainerDispenseTransactionBuilder( _CswNbtResources, _TempDispenseTransaction ), _SourceContainer );
+                }
             }
             else
             {
@@ -129,7 +145,6 @@ namespace ChemSW.Nbt.Actions
                                 _SourceContainer.DispenseOut(
                                     CswEnumNbtContainerDispenseType.Dispense, QuantityToDispense,
                                     UnitOfMeasurePK, RequestItemPk, ChildContainer );
-                                //ChildContainer.DispenseIn( CswEnumNbtContainerDispenseType.Dispense, QuantityToDispense, UnitOfMeasurePK, RequestItemPk, _SourceContainer );
                                 ChildContainer.postChanges( false );
 
                                 JObject BarcodeNode = new JObject();
@@ -173,7 +188,6 @@ namespace ChemSW.Nbt.Actions
                         ChildContainer.Quantity.Quantity = 0;
                         ChildContainer.Quantity.UnitId = UnitId;
                         ChildContainer.Disposed.Checked = CswEnumTristate.False;
-                        //ChildContainer.postChanges( false );
                         _ContainersToView.Add( ChildContainer.NodeId );
                     } );
             }

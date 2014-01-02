@@ -788,8 +788,14 @@
                     UnitId: Csw.string(finalUnit),
                     ContainerNodeTypeId: Csw.string(cswPrivate.state.containerNodeTypeId),
                     DesignGrid: Csw.string(designGrid),
-                    RequestItemId: Csw.string(cswPrivate.state.requestItemId)
+                    RequestItemId: Csw.string(cswPrivate.state.requestItemId),
+                    DispenseTransactionId: Csw.string(''),
+                    DispenseTransactionProperties: Csw.string('')
                 };
+                if (false === Csw.isNullOrEmpty(cswPrivate.contDispTransTabsAndProps)) {
+                    jsonData.DispenseTransactionId = cswPrivate.state.dispenseTransactionAddLayout.node.nodeid;
+                    jsonData.DispenseTransactionProperties = Csw.serialize(cswPrivate.contDispTransTabsAndProps.getProps());
+                }
 
                 Csw.ajax.deprecatedWsNbt({
                     urlMethod: 'finalizeDispenseContainer',

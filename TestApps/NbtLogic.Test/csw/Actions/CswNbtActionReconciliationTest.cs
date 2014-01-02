@@ -116,7 +116,7 @@ namespace ChemSW.Nbt.Test.Actions
         {
             CswPrimaryKey LocationId = TestData.Nodes.createLocationNode().NodeId;
             CswNbtObjClassContainer ContainerNode = TestData.Nodes.createContainerNode( LocationId: LocationId );
-            ContainerNode.DisposeContainer( true );
+            ContainerNode.DisposeContainer();
             ContainerData.ReconciliationRequest Request = new ContainerData.ReconciliationRequest
             {
                 StartDate = DateTime.Now.AddDays( -1 ).ToString(),
@@ -358,7 +358,7 @@ namespace ChemSW.Nbt.Test.Actions
         {
             CswPrimaryKey LocationId = TestData.Nodes.createLocationNode().NodeId;
             CswNbtObjClassContainer ContainerNode = TestData.Nodes.createContainerNode( LocationId: LocationId );
-            ContainerNode.DisposeContainer( true );
+            ContainerNode.DisposeContainer();
             ContainerNode.postChanges( true );
             ContainerData.ReconciliationRequest Request = new ContainerData.ReconciliationRequest
             {
@@ -382,7 +382,7 @@ namespace ChemSW.Nbt.Test.Actions
         {
             CswPrimaryKey LocationId = TestData.Nodes.createLocationNode().NodeId;
             CswNbtObjClassContainer ContainerNode = TestData.Nodes.createContainerNode( LocationId: LocationId );
-            ContainerNode.DisposeContainer( true );
+            ContainerNode.DisposeContainer();
             ContainerNode.postChanges( true );
             TestData.Nodes.createContainerLocationNode( ContainerNode.Node, LocationId: LocationId, Type: CswEnumNbtContainerLocationTypeOptions.ReconcileScans.ToString() );
             ContainerData.ReconciliationRequest Request = new ContainerData.ReconciliationRequest
@@ -466,7 +466,7 @@ namespace ChemSW.Nbt.Test.Actions
         {
             CswPrimaryKey LocationId = TestData.Nodes.createLocationNode().NodeId;
             CswNbtObjClassContainer ContainerNode = TestData.Nodes.createContainerNode( LocationId: LocationId );
-            ContainerNode.DisposeContainer( true );
+            ContainerNode.DisposeContainer();
             ContainerNode.postChanges( true );
             Assert.AreEqual( CswEnumTristate.True, ContainerNode.Disposed.Checked.ToString() );
             ContainerData.ReconciliationRequest Request = new ContainerData.ReconciliationRequest

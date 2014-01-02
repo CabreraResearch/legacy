@@ -12,10 +12,10 @@ namespace ChemSW.Nbt.Actions
 
         #region Constructor
 
-        public CswNbtContainerDispenser( CswNbtResources CswNbtResources, CswNbtObjClassContainer Container )
+        public CswNbtContainerDispenser( CswNbtResources CswNbtResources, CswNbtContainerDispenseTransactionBuilder ContainerDispenseTransactionBuilder, CswNbtObjClassContainer Container )
         {
             _CswNbtResources = CswNbtResources;
-            _ContainerDispenseTransactionBuilder = new CswNbtContainerDispenseTransactionBuilder( _CswNbtResources );
+            _ContainerDispenseTransactionBuilder = ContainerDispenseTransactionBuilder;
             _Container = Container;
         }
 

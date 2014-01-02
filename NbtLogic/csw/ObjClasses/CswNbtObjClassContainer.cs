@@ -71,13 +71,13 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         private bool _InventoryLevelModified = false;
 
-        private CswNbtContainerDispenser _Dispenser;
+        public CswNbtContainerDispenser Dispenser;
         private CswNbtContainerDisposer _Disposer;
 
         public CswNbtObjClassContainer( CswNbtResources CswNbtResources, CswNbtNode Node ) : base( CswNbtResources, Node )
         {
-            _Dispenser = new CswNbtContainerDispenser( _CswNbtResources, this );
-            _Disposer = new CswNbtContainerDisposer( _CswNbtResources, this );
+            Dispenser = new CswNbtContainerDispenser( _CswNbtResources, new CswNbtContainerDispenseTransactionBuilder( _CswNbtResources ), this );
+            _Disposer = new CswNbtContainerDisposer( _CswNbtResources, new CswNbtContainerDispenseTransactionBuilder( _CswNbtResources ), this );
         }
 
         public override CswNbtMetaDataObjectClass ObjectClass
@@ -399,7 +399,7 @@ namespace ChemSW.Nbt.ObjClasses
         public void DispenseOut( CswEnumNbtContainerDispenseType DispenseType, double QuantityToDeduct, CswPrimaryKey UnitId,
                                  CswPrimaryKey RequestItemId = null, CswNbtObjClassContainer DestinationContainer = null, bool RecordTransaction = true )
         {
-            _Dispenser.DispenseOut( DispenseType, QuantityToDeduct, UnitId, RequestItemId, DestinationContainer, RecordTransaction );
+            Dispenser.DispenseOut( DispenseType, QuantityToDeduct, UnitId, RequestItemId, DestinationContainer, RecordTransaction );
         } // DispenseOut()
 
         /// <summary>
@@ -413,7 +413,7 @@ namespace ChemSW.Nbt.ObjClasses
         public void DispenseIn( CswEnumNbtContainerDispenseType DispenseType, double QuantityToAdd, CswPrimaryKey UnitId,
                                 CswPrimaryKey RequestItemId = null, CswNbtObjClassContainer SourceContainer = null, bool RecordTransaction = true )
         {
-            _Dispenser.DispenseIn( DispenseType, QuantityToAdd, UnitId, RequestItemId, SourceContainer, RecordTransaction );
+            Dispenser.DispenseIn( DispenseType, QuantityToAdd, UnitId, RequestItemId, SourceContainer, RecordTransaction );
         } // DispenseIn()
 
         /// <summary>

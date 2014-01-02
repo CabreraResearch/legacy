@@ -8,12 +8,14 @@ namespace ChemSW.Nbt.Actions
     public class CswNbtContainerDispenseTransactionBuilder
     {
         private CswNbtResources _CswNbtResources;
+        private CswNbtObjClassContainerDispenseTransaction _TempDispenseTransaction;
 
         #region Constructor
 
-        public CswNbtContainerDispenseTransactionBuilder( CswNbtResources CswNbtResources )
+        public CswNbtContainerDispenseTransactionBuilder( CswNbtResources CswNbtResources, CswNbtObjClassContainerDispenseTransaction TempDispenseTransaction = null )
         {
             _CswNbtResources = CswNbtResources;
+            _TempDispenseTransaction = TempDispenseTransaction;
         }
 
         #endregion Constructor
@@ -38,6 +40,10 @@ namespace ChemSW.Nbt.Actions
             {
                 _CswNbtResources.Nodes.makeNodeFromNodeTypeId( ContDispTransNT.NodeTypeId, delegate( CswNbtNode NewNode )
                 {
+                    if( null != _TempDispenseTransaction )
+                    {
+                        NewNode.copyPropertyValues( _TempDispenseTransaction.Node );
+                    }
                     CswNbtObjClassContainerDispenseTransaction ContDispTransNode = NewNode;
                     if( SrcContainer != null )
                     {
@@ -62,16 +68,10 @@ namespace ChemSW.Nbt.Actions
                     {
                         ContDispTransNode.RequestItem.RelatedNodeId = RequestItemId;
                     }
-                    //ContDispTransNode.postChanges( false );
                 } );
             } // if( ContDispTransNT != null )
-        } // _createContainerTransactionNode
+        }
 
         #endregion Public Methods
-
-        #region Private Methods
-
-        
-        #endregion Private Methods
     }
 }
