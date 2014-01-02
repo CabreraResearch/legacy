@@ -45,7 +45,8 @@
             printBarcodes: true,
             amountsGrid: null,
             saveError: false,
-            manufacturerLotInfoChanged: false
+            manufacturerLotInfoChanged: false,
+            printLabels: false
         };
 
         var cswPublic = {};
@@ -111,6 +112,7 @@
             if (cswPrivate.state.canAddSDS) {
                 setWizardStep(cswPrivate.wizardStepAttachSDS);
             }
+            setWizardStep(cswPrivate.wizardStepPrintLabels);
             cswPrivate.reinitSteps(1);
             return wizardSteps;
         };
@@ -419,9 +421,55 @@
         };
         //#endregion Step: Attach SDS
 
+        //#region Step: Print Labels
+        cswPrivate.wizardStepPrintLabels = {
+            stepName: 'Print Labels',
+            stepNo: '',
+            makeStep: (function () {
+                return function (StepNo) {
+                    cswPrivate.toggleStepButtons(StepNo);
+
+                    if (false === cswPrivate['step' + StepNo + 'Complete']) {
+                        cswPrivate.setStepHeader(StepNo, 'Would you like to print labels?');
+
+                        var printLabelsTbl = cswPrivate['divStep' + StepNo].table().css({
+                            'padding-top': '20px'
+                        });
+                        
+                        var printLabelCell = printLabelsTbl.cell(1, 1).css({ 'padding-bottom': '20px' });
+                        printLabelCell.div({ text: 'I want to print labels: ' }).checkBox({
+                            name: 'printLabelCheckBox',
+                            checked: false,
+                            onChange: function (newVal) {
+                                if (newVal) {
+                                    labelsDiv.show();
+                                    cswPrivate.state.printLabels = true;
+                                } else {
+                                    labelsDiv.hide();
+                                    cswPrivate.state.printLabels = false;
+                                }
+                            }
+                        });
+                        
+                        var labelsDiv = printLabelsTbl.cell(2, 1).div().hide();
+                        var printLabels = Csw.composites.printLabels(labelsDiv,
+                            {
+                                showButton: false
+                            },
+                            cswPrivate.state.containerNodeTypeId,
+                            cswPrivate.state.containerNodeId);
+
+                        cswPrivate['step' + StepNo + 'Complete'] = true;
+                    }
+                };
+            }())
+        };
+        //#endregion Step: Print Labels
+
         //#region Finish
         cswPrivate.finalize = function () {
             cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
+
 
             var container = {
                 containernodeid: cswPrivate.state.containerNodeId,
@@ -448,23 +496,26 @@
                 urlMethod: 'receiveMaterial',
                 data: { ReceiptDefinition: Csw.serialize(container) },
                 success: function (data) {
-                    if (Csw.number(data.containerscreated) < 1) {
-                        Csw.error.throwException(Csw.error.exception('Failed to create any containers.'));
-                    } else {
-                        Csw.tryExec(cswPrivate.onFinish, data.viewid);
-                        if (cswPrivate.printBarcodes) {
-                            if (false === Csw.isNullOrEmpty(data.barcodes) &&
-                                Object.keys(data.barcodes).length > 0) {
 
-                                $.CswDialog('PrintLabelDialog', {
-                                    nodes: data.barcodes,
-                                    nodetypeid: cswPrivate.state.containerNodeTypeId
-                                });
-                            } else {
-                                //handle warning
-                            }
-                        }
-                    }
+                    Csw.tryExec(cswPrivate.onFinish, data);
+
+                    //if (Csw.number(data.containerscreated) < 1) {
+                    //    Csw.error.throwException(Csw.error.exception('Failed to create any containers.'));
+                    //} else {
+                    //    Csw.tryExec(cswPrivate.onFinish, data.viewid);
+                    //    if (cswPrivate.printBarcodes) {
+                    //        if (false === Csw.isNullOrEmpty(data.barcodes) &&
+                    //            Object.keys(data.barcodes).length > 0) {
+                    //
+                    //            $.CswDialog('PrintLabelDialog', {
+                    //                nodes: data.barcodes,
+                    //                nodetypeid: cswPrivate.state.containerNodeTypeId
+                    //            });
+                    //        } else {
+                    //            //handle warning
+                    //        }
+                    //    }
+                    //}
                 }
             });
         };

@@ -124,6 +124,7 @@
     <Content Include="app\main\csw.mainHandleImpersonation.js" />
     <Content Include="app\main\csw.mainEvents.js" />
     <Content Include="app\main\csw.mainDivs.js" />
+    <Content Include="app\composites\csw.printlabels.js" />
     <Content Include="app\promises\csw.ajaxCore.js" />
     <Content Include="app\promises\csw.ajaxDeprecated.js" />
     <Content Include="app\db\csw.db.js" />

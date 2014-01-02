@@ -931,7 +931,7 @@
                         if (Csw.isNullOrEmpty(data.ProductDetails.CasNo)) {
                             casnodiv.hide();
                         }
-                        
+
                         // Formula
                         var formuladiv = table1.cell(5, 1).div({
                             text: 'Formula: ' + data.ProductDetails.Formula
@@ -1482,97 +1482,16 @@
             } else {
 
                 cswPublic = {
-                    div: Csw.literals.div({ text: 'Print labels for the following: ' }),
+                    div: Csw.literals.div(),
                     close: function () {
                         cswPublic.div.$.dialog('close');
                     }
                 };
 
-                cswPublic.div.br();
-                Csw.iterate(cswDlgPrivate.nodes, function (nodeObj) {
-                    cswDlgPrivate.nodeids.push(nodeObj.nodeid);
-                    cswPublic.div.span({ text: nodeObj.nodename }).css({ 'padding-left': '10px' }).br();
-                });
-
-                var handlePrint = function () {
-                    Csw.ajaxWcf.post({
-                        urlMethod: 'Labels/newPrintJob',
-                        data: {
-                            LabelId: labelSel.val(),
-                            PrinterId: printerSel.selectedNodeId(),
-                            TargetIds: cswDlgPrivate.nodeids.join(',')
-                        },
-                        success: function (data) {
-                            cswPublic.div.empty();
-                            cswPublic.div.nodeLink({ text: 'Label(s) will be printed in Job: ' + data.JobLink });
-                        } // success
-                    }); // ajax
-                }; // handlePrint()
-
-                cswPublic.div.br();
-                cswPublic.div.div({ text: 'Select a label to Print:' });
-                var labelSelDiv = cswPublic.div.div();
-                var labelSel = labelSelDiv.select({
-                    name: cswDlgPrivate.name + '_labelsel'
-                });
-                var labelSelError = labelSelDiv.div();
-                Csw.ajaxWcf.post({
-                    urlMethod: 'Labels/list',
-                    data: {
-                        TargetTypeId: Csw.number(cswDlgPrivate.nodetypeid, 0),
-                        TargetId: cswDlgPrivate.nodeids[0]
-                    },
-                    success: function (data) {
-                        if (data.Labels && data.Labels.length > 0) {
-                            for (var i = 0; i < data.Labels.length; i += 1) {
-                                var label = data.Labels[i];
-                                var isSelected = Csw.bool(label.Id === data.SelectedLabelId);
-                                labelSel.option({ value: label.Id, display: label.Name, isSelected: isSelected });
-                            }
-                        } else {
-                            labelSelError.span({ cssclass: 'warning', text: 'No labels have been assigned!' });
-                        }
-                    } // success
-                }); // ajax
-
-                labelSelDiv.br();
-                labelSelDiv.div({ text: 'Select a Printer:' });
-
-                var printerSel = labelSelDiv.nodeSelect({
-                    name: cswDlgPrivate.name + '_printersel',
-                    objectClassName: 'PrinterClass',
-                    allowAdd: false,
-                    isRequired: true,
-                    showSelectOnLoad: true,
-                    isMulti: false,
-                    selectedNodeId: Csw.currentUser.defaults().DefaultPrinterId,
-                    onSuccess: function () {
-                        if (printerSel.optionsCount() === 0) {
-                            printerSel.hide();
-                            printBtn.hide();
-                            prinerSelErr.span({ cssclass: 'warning', text: 'No printers have been registered!' });
-                        }
-                    }
-                });
-                var prinerSelErr = labelSelDiv.div();
-
-
-                var printBtn = cswPublic.div.button({
-                    name: 'print_label_print',
-                    enabledText: 'Print',
-                    //disabledText: 'Printing...', 
-                    disableOnClick: false,
-                    onClick: handlePrint //getEplContext
-                });
-
-                cswPublic.div.button({
-                    name: 'print_label_close',
-                    enabledText: 'Close',
-                    disabledText: 'Closing...',
-                    onClick: function () {
-                        cswPublic.close();
-                    }
-                });
+                Csw.composites.printLabels(cswPublic.div, {
+                    nodeids: cswDlgPrivate.nodeids,
+                    nodes: cswDlgPrivate.nodes
+                }, Csw.number(cswDlgPrivate.nodetypeid, 0), cswDlgPrivate.nodeids[0]);
 
                 openDialog(cswPublic.div, 400, 300, null, 'Print');
             }
