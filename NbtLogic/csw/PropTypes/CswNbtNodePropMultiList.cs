@@ -86,7 +86,15 @@ namespace ChemSW.Nbt.PropTypes
             set
             {
                 _Value = value;
-                string ValString = value.ToString();
+
+                //Case 31236 - trim each selected value to avoid having values like " value1" or "value2 "
+                CswCommaDelimitedString trimmmedValues = new CswCommaDelimitedString();
+                foreach( string s in value )
+                {
+                    trimmmedValues.Add( s.Trim() );
+                }
+
+                string ValString = trimmmedValues.ToString();
                 SetPropRowValue( _ValueSubField, ValString );
                 SyncGestalt();
             }

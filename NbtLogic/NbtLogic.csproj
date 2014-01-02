@@ -606,6 +606,7 @@
     <None Include="csw\Schema\scripts\past\02H\CswUpdateSchema_02H_Case30537C.cs" />
     <None Include="csw\Schema\scripts\past\02H\CswUpdateMetaData_02H_Case30537A.cs" />
     <None Include="csw\Schema\scripts\past\02H\CswUpdateMetaData_02H_Case30537B.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02I\CswUpdateMetaData_02I_Case31294.cs" />
     <Compile Include="csw\Schema\scripts\prod\02I\CswUpdateSchema_02I_Case31356.cs" />
     <Compile Include="csw\Schema\scripts\prod\02I\CswUpdateSchema_02I_Case31355.cs" />
     <Compile Include="csw\Schema\scripts\prod\02I\CswUpdateSchema_02I_Case31171.cs" />
@@ -652,7 +653,11 @@
     <Compile Include="csw\Schema\scripts\prod\02I\CswUpdateMetaData_02I_Case31114A.cs" />
     <Compile Include="csw\Schema\scripts\prod\02I\CswUpdateDDL_02I_Case31057.cs" />
     <Compile Include="csw\Schema\scripts\prod\02I\CswUpdateSchema_02I_Case31061B.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02J\CswUpdateSchema_02J_Case31315.cs" />
     <Compile Include="csw\Schema\scripts\prod\02J\CswUpdateSchema_02J_Case31203.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02J\CswUpdateMetaData_02J_Case31315.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02J\CswUpdateSchema_02J_Case31464.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02J\CswUpdateDDL_02JCase31464.cs" />
     <Compile Include="csw\Schema\scripts\prod\02J\CswUpdateMetaData_02J_Case31156.cs" />
     <Compile Include="csw\Schema\scripts\prod\02J\CswUpdateMetaData_02J_Case30825D.cs" />
     <Compile Include="csw\Schema\scripts\prod\02J\CswUpdateSchema_02J_Case29409.cs" />
