@@ -266,13 +266,13 @@ namespace ChemSW.Nbt.Sched
                         ItemSubquery = "select :new.documentid || '_' || :new.packageid as primarykey from dual where :new.packageid is not null UNION select :new.documentid || '_' || p.packageid as primarykey from packages p where :new.packageid is null and :new.materialid = p.materialid ";
                         break;
                     case "jct_ghsphrase_matsite":
-                        ItemSubquery = "select p.packageid || '_' || s.region as primarykey from jct_ghsphrase_matsite ph join packages p on ( p.materialid = ph.materialid ) join sites s on ( ph.siteid = s.siteid ) where ph..ghsphrasematsiteid = :new.ghsphrasematsiteid";
+                        ItemSubquery = "select p.packageid || '_'|| s.region as primarykey from packages p full join sites s on 1=1 where p.materialid = :new.materialid and s.siteid = :new.siteid";
                         break;
                     case "materials_synonyms":
                         ItemSubquery = "select :new.materialsynonymid || '_' || packageid as primarykey from packages p where :new.materialid = p.materialid";
                         break;
                     default:
-                        ItemSubquery = "select :new. " + Row["pkcolumnname"] + " as primarykey from dual";
+                        ItemSubquery = "select :new." + Row["pkcolumnname"] + " as primarykey from dual";
                         break;
                 }
 
