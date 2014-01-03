@@ -5,7 +5,6 @@ using System.Text;
 using ChemSW.Config;
 using ChemSW.Core;
 using ChemSW.Nbt.Actions;
-using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.ServiceDrivers;
 using NbtWebApp.Actions.Receiving;
@@ -80,7 +79,10 @@ namespace ChemSW.Nbt.Batch
                     BatchNode.start();
 
                     ReceivingBatchData BatchData = new ReceivingBatchData( BatchNode.BatchData.Text );
-                    CswNbtReceivingDefiniton UpdatedReceiptDef = _receiveContainers( BatchData.ReceiptDef );
+
+                    CswNbtActReceiving ActReceiving = new CswNbtActReceiving( _CswNbtResources );
+                    CswNbtReceivingDefiniton UpdatedReceiptDef = ActReceiving.receiveContainers( BatchData.ReceiptDef, ref _NodesProcessed, _MaxNodeProcessed );
+                    
                     ReceivingBatchData UpdatedBatchData = new ReceivingBatchData( UpdatedReceiptDef );
                     BatchNode.BatchData.Text = UpdatedBatchData.ToString();
 
@@ -102,33 +104,7 @@ namespace ChemSW.Nbt.Batch
             }
 
         } // runBatchOp()
-
-        private CswNbtReceivingDefiniton _receiveContainers( CswNbtReceivingDefiniton ReceiptDef )
-        {
-            CswNbtMetaDataNodeType ContainerNt = _CswNbtResources.MetaData.getNodeType( ReceiptDef.ContainerNodeTypeId );
-
-            foreach( CswNbtAmountsGridQuantity QuantityDef in ReceiptDef.Quantities )
-            {
-                for( Int32 C = 0; C < QuantityDef.NumContainers; C += 1 )
-                {
-                    //we promote the first container before the batch op starts, so there should always be at least one container id in the first set of quantities
-                    if( C >= QuantityDef.ContainerIds.Count && _NodesProcessed < _MaxNodeProcessed ) //only create a container where we haven't already
-                    {
-                        string Barcode = ( QuantityDef.Barcodes.Count > C ? QuantityDef.Barcodes[C] : string.Empty );
-                        CswNbtActReceiving.HandleContainer( _CswNbtResources, ReceiptDef, QuantityDef, Barcode, delegate( Action<CswNbtNode> After )
-                            {
-                                CswNbtNodeKey ContainerNodeKey;
-                                CswNbtObjClassContainer AsContainer = _CswNbtSdTabsAndProps.addNode( ContainerNt, null, ReceiptDef.ContainerProps, out ContainerNodeKey, After );
-                                QuantityDef.ContainerIds.Add( AsContainer.NodeId.ToString() );
-                                _NodesProcessed++;
-                            } );
-                    }
-                } //for( Int32 C = 0; C < NoContainers; C += 1 )
-            }
-
-            return ReceiptDef;
-        }
-
+        
         #region ReceivingBatchData
 
         private class ReceivingBatchData

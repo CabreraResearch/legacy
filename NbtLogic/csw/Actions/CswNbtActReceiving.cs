@@ -1,6 +1,7 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using ChemSW.Config;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.Batch;
@@ -88,15 +89,54 @@ namespace ChemSW.Nbt.Actions
             {
                 HandleInitialContainer( InitialContainerNode, ReceiptDefinition );
 
-                CswNbtBatchOpReceiving ReceivingBatchOp = new CswNbtBatchOpReceiving( _CswNbtResources );
-                ReceivingBatchOp.makeBatchOp( ReceiptDefinition );
+                int TotalContainersToMake = ReceiptDefinition.CountNumberContainersToMake();
+                int PerCycle = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumConfigurationVariableNames.NodesProcessedPerCycle ) );
+                if( TotalContainersToMake > PerCycle )
+                {
+                    //Containers will be created in a batch op
+                    CswNbtBatchOpReceiving ReceivingBatchOp = new CswNbtBatchOpReceiving( _CswNbtResources );
+                    ReceivingBatchOp.makeBatchOp( ReceiptDefinition );
+                }
+                else
+                {
+                    //Create the containers now
+                    int nodesProcessed = 0;
+                    receiveContainers( ReceiptDefinition, ref nodesProcessed, TotalContainersToMake + 1 );
+                }
 
                 //TODO: spawn print jobs
+
                 CswNbtNode MaterialNode = _CswNbtResources.Nodes.GetNode( ReceiptDefinition.MaterialNodeId );
                 Ret = getLandingPageData( _CswNbtResources, MaterialNode );
             }
 
             return Ret;
+        }
+
+        public CswNbtReceivingDefiniton receiveContainers( CswNbtReceivingDefiniton ReceiptDef, ref int NodesProcessed, int MaxProcessed )
+        {
+            CswNbtMetaDataNodeType ContainerNt = _CswNbtResources.MetaData.getNodeType( ReceiptDef.ContainerNodeTypeId );
+
+            foreach( CswNbtAmountsGridQuantity QuantityDef in ReceiptDef.Quantities )
+            {
+                for( Int32 C = 0; C < QuantityDef.NumContainers; C += 1 )
+                {
+                    //we promote the first container before the batch op starts, so there should always be at least one container id in the first set of quantities
+                    if( C >= QuantityDef.ContainerIds.Count && NodesProcessed < MaxProcessed ) //only create a container where we haven't already
+                    {
+                        string Barcode = ( QuantityDef.Barcodes.Count > C ? QuantityDef.Barcodes[C] : string.Empty );
+                        CswNbtActReceiving.HandleContainer( _CswNbtResources, ReceiptDef, QuantityDef, Barcode, delegate( Action<CswNbtNode> After )
+                        {
+                            CswNbtNodeKey ContainerNodeKey;
+                            CswNbtObjClassContainer AsContainer = _CswNbtSdTabsAndProps.addNode( ContainerNt, null, ReceiptDef.ContainerProps, out ContainerNodeKey, After );
+                            QuantityDef.ContainerIds.Add( AsContainer.NodeId.ToString() );
+                        } );
+                        NodesProcessed++;
+                    }
+                } //for( Int32 C = 0; C < NoContainers; C += 1 )
+            }
+
+            return ReceiptDef;
         }
 
         /// <summary>

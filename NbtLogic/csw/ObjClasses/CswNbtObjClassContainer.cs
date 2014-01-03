@@ -74,7 +74,8 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtContainerDispenser Dispenser;
         private CswNbtContainerDisposer _Disposer;
 
-        public CswNbtObjClassContainer( CswNbtResources CswNbtResources, CswNbtNode Node ) : base( CswNbtResources, Node )
+        public CswNbtObjClassContainer( CswNbtResources CswNbtResources, CswNbtNode Node )
+            : base( CswNbtResources, Node )
         {
             Dispenser = new CswNbtContainerDispenser( _CswNbtResources, new CswNbtContainerDispenseTransactionBuilder( _CswNbtResources ), this );
             _Disposer = new CswNbtContainerDisposer( _CswNbtResources, new CswNbtContainerDispenseTransactionBuilder( _CswNbtResources ), this );
@@ -586,7 +587,7 @@ namespace ChemSW.Nbt.ObjClasses
                 CswNbtObjClassContainerDispenseTransaction CDT = _TabsAndProps.getAddNodeAndPostChanges( CDTNT, null );
                 ActionDataObj["dispenseTransactionAddLayout"] = _TabsAndProps.getProps( CDT.Node, "", null, CswEnumNbtLayoutType.Add );
             }
-            
+
             return ActionDataObj;
         }
 
@@ -654,7 +655,7 @@ namespace ChemSW.Nbt.ObjClasses
                                     p.setHidden( value : isHidden, SaveToDb : false );
                                     break;
                                 case PropertyName.Request:
-                                    isHidden = ( false == canContainer( _CswNbtResources, _CswNbtResources.Actions[CswEnumNbtActionName.Submit_Request], InventoryGroupId ) )
+                                    isHidden = ( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Requesting ) && false == canContainer( _CswNbtResources, _CswNbtResources.Actions[CswEnumNbtActionName.Submit_Request], InventoryGroupId ) )
                                                || IsDisposed
                                                || ( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.MLM )
                                                     && Requisitionable.Checked == CswEnumTristate.False );

@@ -10,6 +10,16 @@ namespace NbtWebApp.Actions.Receiving
     [DataContract]
     public class CswNbtReceivingDefiniton
     {
+        public int CountNumberContainersToMake()
+        {
+            int Ret = 0;
+            foreach( CswNbtAmountsGridQuantity Quant in Quantities )
+            {
+                Ret += Quant.NumContainers;
+            }
+            return Ret;
+        }
+
         [DataMember]
         public string ActionData;
 
