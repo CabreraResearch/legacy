@@ -16,7 +16,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update for case 29311
     /// </summary>
-    public class CswUpdateSchema_02D_Case29311_Fixes : CswUpdateSchemaTo
+    public class CswUpdateSchema_02K_Case29311_Fixes : CswUpdateSchemaTo
     {
         public override CswEnumDeveloper Author
         {
@@ -26,6 +26,11 @@ namespace ChemSW.Nbt.Schema
         public override int CaseNo
         {
             get { return 29311; }
+        }
+
+        public override string AppendToScriptName()
+        {
+            return "Fixes";
         }
 
         public override void update()
@@ -45,6 +50,6 @@ namespace ChemSW.Nbt.Schema
         }
 
         // update()
-    }//class CswUpdateSchema_02D_Case29311_Fixes
+    }//class CswUpdateSchema_02K_Case29311_Fixes
 
 }//namespace ChemSW.Nbt.Schema

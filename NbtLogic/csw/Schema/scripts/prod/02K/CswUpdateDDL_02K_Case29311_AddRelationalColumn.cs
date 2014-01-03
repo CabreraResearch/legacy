@@ -6,7 +6,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Updates the schema for DDL changes
     /// </summary>
-    public class RunBeforeEveryExecutionOfUpdater_02D_Case29311_AddRelationalColumn : CswUpdateSchemaTo
+    public class CswUpdateDDL_02K_Case29311_AddRelationalColumn : CswUpdateSchemaTo
     {
         public override CswEnumDeveloper Author
         {
@@ -16,6 +16,11 @@ namespace ChemSW.Nbt.Schema
         public override int CaseNo
         {
             get { return 29311; }
+        }
+
+        public override string AppendToScriptName()
+        {
+            return "AddRelationalColumn";
         }
 
         public override void update()
@@ -30,7 +35,7 @@ namespace ChemSW.Nbt.Schema
             }
         } // update()
 
-    }//class RunBeforeEveryExecutionOfUpdater_02D_Case29311_AddRelationalColumn
+    }//class CswUpdateMetaData_02K_Case29311_AddRelationalColumn
 }//namespace ChemSW.Nbt.Schema
 
 

@@ -13,7 +13,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update for case 29833
     /// </summary>
-    public class RunBeforeEveryExecutionOfUpdater_02D_Case29311 : CswUpdateSchemaTo
+    public class CswUpdateMetaData_02K_Case29311: CswUpdateSchemaTo
     {
         public override CswEnumDeveloper Author
         {
@@ -393,6 +393,6 @@ namespace ChemSW.Nbt.Schema
             }
         } // _defaultViewButton()
 
-    }//class RunBeforeEveryExecutionOfUpdater_02D_Case29311
+    }//class CswUpdateMetaData_02K_Case29311
 
 }//namespace ChemSW.Nbt.Schema

@@ -8,7 +8,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update for case 30207
     /// </summary>
-    public class CswUpdateSchema_02D_Case30207 : CswUpdateSchemaTo
+    public class CswUpdateSchema_02K_Case30207 : CswUpdateSchemaTo
     {
         public override CswEnumDeveloper Author
         {
@@ -42,6 +42,6 @@ namespace ChemSW.Nbt.Schema
 
         } // update()
 
-    }//class CswUpdateSchema_02D_Case30207
+    }//class CswUpdateSchema_02K_Case30207
 
 }//namespace ChemSW.Nbt.Schema
