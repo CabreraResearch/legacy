@@ -1,5 +1,6 @@
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 
@@ -39,6 +40,16 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
+        public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
+        {
+            _CswNbtObjClassDefault.beforeCreateNode( IsCopy, OverrideUniqueValidation );
+        }
+
+        public override void afterCreateNode()
+        {
+            _CswNbtObjClassDefault.afterCreateNode();
+        }
+
         public override void afterDeleteNode()
         {
             // case 28303 - add list to Chemical's Suppressed list
@@ -69,7 +80,7 @@ namespace ChemSW.Nbt.ObjClasses
         public void _RegulatoryList_OnChange( CswNbtNodeProp Prop, bool Creating )
         {
             if( null != RegulatoryList.RelatedNodeId &&
-                RegulatoryList.RelatedNodeId.PrimaryKey != CswConvert.ToInt32( RegulatoryList.GetOriginalPropRowValue( CswEnumNbtSubFieldName.NodeID ) ) )
+                RegulatoryList.RelatedNodeId.PrimaryKey != CswConvert.ToInt32( RegulatoryList.GetOriginalPropRowValue( CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID ) ) )
             {
                 // case 28303 - set ByUser to current user when regulatory list is modified
                 if( false == SetByChemical && false == _CswNbtResources.CurrentNbtUser is CswNbtSystemUser )

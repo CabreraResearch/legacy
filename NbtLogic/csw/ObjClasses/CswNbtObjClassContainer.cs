@@ -101,6 +101,7 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         public override void beforeWriteNode( bool Creating )
+
         {
             ViewSDS.State = PropertyName.ViewSDS;
             ViewSDS.MenuOptions = PropertyName.ViewSDS + ",View All";
@@ -130,7 +131,7 @@ namespace ChemSW.Nbt.ObjClasses
             // then the Container Group location overrides the user set location.
             if( this.ContainerGroup.wasAnySubFieldModified() &&
                 this.ContainerGroup.RelatedNodeId != null &&
-                ( this.ContainerGroup.GetOriginalPropRowValue( CswEnumNbtSubFieldName.NodeID ) != this.ContainerGroup.RelatedNodeId.PrimaryKey.ToString() ) )
+                ( this.ContainerGroup.GetOriginalPropRowValue( CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID ) != this.ContainerGroup.RelatedNodeId.PrimaryKey.ToString() ) )
             {
                 CswNbtObjClassContainerGroup NewGroupNode = _CswNbtResources.Nodes[this.ContainerGroup.RelatedNodeId];
 
@@ -145,7 +146,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
             else if( this.Location.wasAnySubFieldModified() &&
                      this.Location.SelectedNodeId != null &&
-                     ( this.Location.GetOriginalPropRowValue( CswEnumNbtSubFieldName.NodeID ) != this.Location.SelectedNodeId.PrimaryKey.ToString() ) )
+                     ( this.Location.GetOriginalPropRowValue( CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID ) != this.Location.SelectedNodeId.PrimaryKey.ToString() ) )
             {
                 CswNbtObjClassContainerGroup NewGroupNode = _CswNbtResources.Nodes[this.ContainerGroup.RelatedNodeId];
 
@@ -682,7 +683,7 @@ namespace ChemSW.Nbt.ObjClasses
                     ParentRelationship,
                     ContDispTransNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainerDispenseTransaction.PropertyName.SourceContainer ),
                     NodeId.PrimaryKey.ToString(),
-                    CswEnumNbtSubFieldName.NodeID,
+                    CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID,
                     false,
                     CswEnumNbtFilterMode.Equals
                     );
@@ -691,7 +692,7 @@ namespace ChemSW.Nbt.ObjClasses
                     ParentRelationship,
                     ContDispTransNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainerDispenseTransaction.PropertyName.Type ),
                     CswEnumNbtContainerDispenseType.Dispose.ToString(),
-                    CswEnumNbtSubFieldName.Value,
+                    CswNbtFieldTypeRuleList.SubFieldName.Value,
                     false,
                     CswEnumNbtFilterMode.Equals
                     );
@@ -963,13 +964,13 @@ namespace ChemSW.Nbt.ObjClasses
                 CswNbtMetaDataObjectClassProp TypeOcp = RequestItemOc.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.RequestType );
 
                 RequestItemView.AddViewPropertyAndFilter( RiRelationship, StatusOcp, CswNbtObjClassRequestItem.Statuses.Submitted );
-                RequestItemView.AddViewPropertyAndFilter( RiRelationship, ContainerOcp, SubFieldName : CswEnumNbtSubFieldName.NodeID, Value : NodeId.PrimaryKey.ToString() );
+                RequestItemView.AddViewPropertyAndFilter( RiRelationship, ContainerOcp, SubFieldName: CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID, Value: NodeId.PrimaryKey.ToString() );
                 RequestItemView.AddViewPropertyAndFilter( RiRelationship, TypeOcp, RequestItemType );
 
                 if( RequestItemType == CswNbtObjClassRequestItem.Types.ContainerMove )
                 {
                     CswNbtMetaDataObjectClassProp LocationOcp = RequestItemOc.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Location );
-                    RequestItemView.AddViewPropertyAndFilter( RiRelationship, LocationOcp, SubFieldName : CswEnumNbtSubFieldName.NodeID, Value : Location.SelectedNodeId.PrimaryKey.ToString() );
+                    RequestItemView.AddViewPropertyAndFilter( RiRelationship, LocationOcp, SubFieldName: CswNbtFieldTypeRuleLocation.SubFieldName.NodeID, Value: Location.SelectedNodeId.PrimaryKey.ToString() );
                 }
 
                 ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( RequestItemView, IncludeSystemNodes : false, RequireViewPermissions : false, IncludeHiddenNodes : false );

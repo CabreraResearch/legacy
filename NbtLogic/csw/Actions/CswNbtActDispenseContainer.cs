@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
 using Newtonsoft.Json.Linq;
 
@@ -174,6 +175,7 @@ namespace ChemSW.Nbt.Actions
                         ChildContainer.Quantity.UnitId = UnitId;
                         ChildContainer.Disposed.Checked = CswEnumTristate.False;
                         //ChildContainer.postChanges( false );
+                        //ChildContainer.Undispose.setHidden( value: true, SaveToDb: true );
                         _ContainersToView.Add( ChildContainer.NodeId );
                     } );
             }

@@ -25,7 +25,7 @@ namespace ChemSW.Nbt.Schema
             // Add nodetypes for new object classes
             CswNbtMetaDataObjectClass RegListMemberOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.RegulatoryListMemberClass );
             CswNbtMetaDataObjectClassProp RegListMemberChemicalOCP = RegListMemberOC.getObjectClassProp( CswNbtObjClassRegulatoryListMember.PropertyName.Chemical );
-            CswNbtMetaDataNodeType RegListMemberNT = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( new CswNbtWcfMetaDataModel.NodeType( RegListMemberOC )
+            CswNbtMetaDataNodeType RegListMemberNT = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeTypeDeprecated( new CswNbtWcfMetaDataModel.NodeType( RegListMemberOC )
                 {
                     NodeTypeName = "Regulatory List Member",
                     Category = "Materials",
@@ -37,7 +37,7 @@ namespace ChemSW.Nbt.Schema
 
             CswNbtMetaDataObjectClass RegListCasNoOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.RegulatoryListCasNoClass );
             CswNbtMetaDataObjectClassProp RegListCasNoRegListOCP = RegListCasNoOC.getObjectClassProp( CswNbtObjClassRegulatoryListCasNo.PropertyName.RegulatoryList );
-            CswNbtMetaDataNodeType RegListCasNoNT = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( new CswNbtWcfMetaDataModel.NodeType( RegListCasNoOC )
+            CswNbtMetaDataNodeType RegListCasNoNT = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeTypeDeprecated( new CswNbtWcfMetaDataModel.NodeType( RegListCasNoOC )
                 {
                     NodeTypeName = "Regulatory List CAS",
                     Category = "Materials",

@@ -87,7 +87,7 @@ namespace ChemSW.Nbt.WebServices
             if( Int32.MinValue != RelationshipNodeTypePropId )
             {
                 CswNbtMetaDataNodeTypeProp RelationshipProp = _CswNbtResources.MetaData.getNodeTypeProp( RelationshipNodeTypePropId );
-                NodeTypes = _CswNbtResources.MetaData.getNodeTypes().Where( nt => RelationshipProp.FkMatches( nt ) );
+                NodeTypes = _CswNbtResources.MetaData.getNodeTypes().Where( nt => RelationshipProp.FkMatchesDeprecated( nt ) );
             }
             else if( null != PropertySet )
             {
@@ -127,7 +127,7 @@ namespace ChemSW.Nbt.WebServices
                         {
                             CswNbtMetaDataNodeType RelatedNodeType = _CswNbtResources.MetaData.getNodeType( RelationshipTargetNodeTypeId );
                             if( null == RelatedNodeType ||
-                                false == RelationshipNtp.FkMatches( RelatedNodeType, true ) )
+                                false == RelationshipNtp.FkMatchesDeprecated( RelatedNodeType, true ) )
                             {
                                 AddThisNodeType = false;
                             }
@@ -179,7 +179,26 @@ namespace ChemSW.Nbt.WebServices
             return ReturnVal;
         }
 
-        private bool _userHasTabPermission( CswEnumNbtNodeTypePermission PermissionType, CswNbtMetaDataNodeType NodeType, CswNbtMetaDataNodeTypeTab Tab )
+        //Get fieldtypes
+        public JArray getFieldTypes()
+        {
+            JArray ret = new JArray();
+            //todo: Standard mode vs Inspection mode?? Adding 'Question' to list of fieldtypes
+            //foreach
+            //create jobject and add to it
+
+            foreach( CswNbtMetaDataFieldType FieldType in _CswNbtResources.MetaData.getFieldTypes() )
+            {
+                JObject ThisFieldTypeObj = new JObject();
+                ThisFieldTypeObj["fieldtypeid"] = FieldType.FieldTypeId.ToString();
+                ThisFieldTypeObj["fieldtypename"] = FieldType.FieldType.ToString();
+                ret.Add( ThisFieldTypeObj );
+            }
+
+            return ret;
+        }
+private bool _userHasTabPermission( CswEnumNbtNodeTypePermission PermissionType, CswNbtMetaDataNodeType NodeType, CswNbtMetaDataNodeTypeTab Tab )
+
         {
             bool hasPermission = true;
             hasPermission = _CswNbtResources.Permit.canTab( PermissionType, NodeType, Tab );

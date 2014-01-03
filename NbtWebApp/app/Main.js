@@ -169,6 +169,7 @@ window.initMain = window.initMain || function (undefined) {
             Csw.tryExec(onSuccess);
         }
 
+                    //Csw.main.leftDiv.text('not clear!');
 
     }); // _finishInitAll()
 

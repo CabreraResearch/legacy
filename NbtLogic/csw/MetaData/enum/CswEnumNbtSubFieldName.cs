@@ -19,14 +19,14 @@ namespace ChemSW.Nbt.MetaData
         }
         public static readonly CswEnumNbtSubFieldName Unknown = new CswEnumNbtSubFieldName( "Unknown" );
 
-        public static readonly CswEnumNbtSubFieldName AllowedAnswers = new CswEnumNbtSubFieldName( "AllowedAnswers" );
+        //public static readonly CswEnumNbtSubFieldNameTemp AllowedAnswers = new CswEnumNbtSubFieldNameTemp( "AllowedAnswers" );
         public static readonly CswEnumNbtSubFieldName Answer = new CswEnumNbtSubFieldName( "Answer" );
         public static readonly CswEnumNbtSubFieldName Barcode = new CswEnumNbtSubFieldName( "Barcode" );
         public static readonly CswEnumNbtSubFieldName Blob = new CswEnumNbtSubFieldName( "Blob" );
         public static readonly CswEnumNbtSubFieldName Checked = new CswEnumNbtSubFieldName( "Checked" );
         public static readonly CswEnumNbtSubFieldName Column = new CswEnumNbtSubFieldName( "Column" );
         public static readonly CswEnumNbtSubFieldName Comments = new CswEnumNbtSubFieldName( "Comments" );
-        public static readonly CswEnumNbtSubFieldName CompliantAnswers = new CswEnumNbtSubFieldName( "CompliantAnswers" );
+        //public static readonly CswEnumNbtSubFieldNameTemp CompliantAnswers = new CswEnumNbtSubFieldNameTemp( "CompliantAnswers" );
         public static readonly CswEnumNbtSubFieldName ContentType = new CswEnumNbtSubFieldName( "ContentType" );
         public static readonly CswEnumNbtSubFieldName CorrectiveAction = new CswEnumNbtSubFieldName( "CorrectiveAction" );
         public static readonly CswEnumNbtSubFieldName DateAnswered = new CswEnumNbtSubFieldName( "DateAnswered" );
@@ -36,6 +36,8 @@ namespace ChemSW.Nbt.MetaData
         public static readonly CswEnumNbtSubFieldName GestaltSearch = new CswEnumNbtSubFieldName( "GestaltSearch" );
         public static readonly CswEnumNbtSubFieldName Hidden = new CswEnumNbtSubFieldName( "Hidden" );
         public static readonly CswEnumNbtSubFieldName Href = new CswEnumNbtSubFieldName( "Href" );
+        public static readonly CswEnumNbtSubFieldName Icon = new CswEnumNbtSubFieldName( "Icon" );
+        public static readonly CswEnumNbtSubFieldName Id = new CswEnumNbtSubFieldName( "Id" );
         public static readonly CswEnumNbtSubFieldName Image = new CswEnumNbtSubFieldName( "Image" );
         public static readonly CswEnumNbtSubFieldName Interval = new CswEnumNbtSubFieldName( "Interval" );
         public static readonly CswEnumNbtSubFieldName IsCompliant = new CswEnumNbtSubFieldName( "IsCompliant" );
@@ -44,15 +46,17 @@ namespace ChemSW.Nbt.MetaData
         public static readonly CswEnumNbtSubFieldName NodeID = new CswEnumNbtSubFieldName( "NodeID" );
         public static readonly CswEnumNbtSubFieldName NodeType = new CswEnumNbtSubFieldName( "NodeType" );
         public static readonly CswEnumNbtSubFieldName Number = new CswEnumNbtSubFieldName( "Number" );
+        public static readonly CswEnumNbtSubFieldName Options = new CswEnumNbtSubFieldName( "Options" );
         public static readonly CswEnumNbtSubFieldName Password = new CswEnumNbtSubFieldName( "Password" );
         public static readonly CswEnumNbtSubFieldName Path = new CswEnumNbtSubFieldName( "Path" );
         public static readonly CswEnumNbtSubFieldName PendingUpdate = new CswEnumNbtSubFieldName( "PendingUpdate" );
+        //public static readonly CswEnumNbtSubFieldName Required = new CswEnumNbtSubFieldNameTemp( "Required" );
         public static readonly CswEnumNbtSubFieldName ReadOnly = new CswEnumNbtSubFieldName( "ReadOnly" );
-        public static readonly CswEnumNbtSubFieldName Required = new CswEnumNbtSubFieldName( "Required" );
         public static readonly CswEnumNbtSubFieldName Row = new CswEnumNbtSubFieldName( "Row" );
         public static readonly CswEnumNbtSubFieldName Sequence = new CswEnumNbtSubFieldName( "Sequence" );
         public static readonly CswEnumNbtSubFieldName StartDateTime = new CswEnumNbtSubFieldName( "StartDateTime" );
         public static readonly CswEnumNbtSubFieldName Text = new CswEnumNbtSubFieldName( "Text" );
+        public static readonly CswEnumNbtSubFieldName Type = new CswEnumNbtSubFieldName( "Type" );
         public static readonly CswEnumNbtSubFieldName Units = new CswEnumNbtSubFieldName( "Units" );
         public static readonly CswEnumNbtSubFieldName Value = new CswEnumNbtSubFieldName( "Value" );
         public static readonly CswEnumNbtSubFieldName ViewID = new CswEnumNbtSubFieldName( "ViewID" );

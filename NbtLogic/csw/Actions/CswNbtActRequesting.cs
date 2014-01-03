@@ -5,6 +5,7 @@ using System.Runtime.Serialization;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
@@ -157,13 +158,14 @@ namespace ChemSW.Nbt.Actions
                     {
                         //This error is misleading - it makes it sound like the user did something wrong
                         throw new CswDniException( CswEnumErrorType.Warning,
-                            "Cannot make a Request without a valid Request object.",
-                            "No Request NodeType could be found." );
+                                                   "Cannot make a Request without a valid Request object.",
+                                                   "No Request NodeType could be found." );
                     }
                     _RecurringRequestNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( RequestNt.NodeTypeId, delegate( CswNbtNode NewNode )
                     {
                         ( (CswNbtObjClassRequest) NewNode ).IsRecurring.Checked = CswEnumTristate.True;
                     } );
+                        } );
                 }
             }
             return _RecurringRequestNode;
@@ -350,7 +352,7 @@ namespace ChemSW.Nbt.Actions
                 ShowInGrid: false );
             Ret.AddViewPropertyAndFilter( RootVr,
                 _RequestOC.getObjectClassProp( CswNbtObjClassRequest.PropertyName.Requestor ),
-                SubFieldName: CswEnumNbtSubFieldName.NodeID,
+                SubFieldName: CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID,
                 Value: _ThisUser.UserId.PrimaryKey.ToString(),
                 ShowInGrid: false );
 
@@ -395,7 +397,7 @@ namespace ChemSW.Nbt.Actions
             Ret.AddViewPropertyAndFilter( RequestItemRel,
                 _RequestItemOC.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Request ),
                 ShowInGrid: false,
-                SubFieldName: CswEnumNbtSubFieldName.NodeID,
+                SubFieldName : CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID,
                 Value: getRecurringRequestNode().NodeId.PrimaryKey.ToString() );
             return Ret;
         }

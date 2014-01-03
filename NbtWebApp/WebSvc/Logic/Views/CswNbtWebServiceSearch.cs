@@ -35,7 +35,6 @@ namespace ChemSW.Nbt.WebServices
         [DataContract]
         public class SearchResponse
         {
-            [DataMember]
             public Collection<CswNbtNodeTypePropListOption> Options;
         }
 
@@ -240,10 +239,9 @@ namespace ChemSW.Nbt.WebServices
                     // Note: We are assuming that this property is a list!
                     // Todo: Handle the above condition
                     Node.Properties[ThisNTP].AsList.filterOptions( Request.SearchTerm );
-
+                    
                     Return.Data.Options = Node.Properties[ThisNTP].AsList.Options.Options;
                 }
-
             }//if( NodeTypePropId != Int32.MinValue )
         }//doListOptionsSearch()
 

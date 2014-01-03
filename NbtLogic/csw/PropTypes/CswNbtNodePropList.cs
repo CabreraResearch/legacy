@@ -23,17 +23,20 @@ namespace ChemSW.Nbt.PropTypes
             _ValueSubField = ( (CswNbtFieldTypeRuleList) _FieldTypeRule ).ValueSubField;
             _TextSubField = ( (CswNbtFieldTypeRuleList) _FieldTypeRule ).TextSubField;
 
+            // Associate subfields with methods on this object, for SetSubFieldValue()
+            _SubFieldMethods.Add( _ValueSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Value, x => Value = CswConvert.ToString( x ) ) );
+            _SubFieldMethods.Add( _TextSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Text, null ) );
+
             _SearchThreshold = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumNbtConfigurationVariables.relationshipoptionlimit.ToString() ) );
             if( _SearchThreshold <= 0 )
             {
                 _SearchThreshold = 100;
             }
+        }
 
             // Associate subfields with methods on this object, for SetSubFieldValue()
             _SubFieldMethods.Add( _ValueSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Value, x => Value = CswConvert.ToString( x ) ) );
             _SubFieldMethods.Add( _TextSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Text, null ) );
-
-        }//generic
 
         private CswNbtSubField _ValueSubField;
         private CswNbtSubField _TextSubField;
@@ -94,21 +97,34 @@ namespace ChemSW.Nbt.PropTypes
             get { return Gestalt; }
         }
 
+        public delegate CswNbtNodeTypePropListOptions InitOptionsHandler();
+        public InitOptionsHandler InitOptions = null;
 
         private CswNbtNodeTypePropListOptions _Options = null;
         public CswNbtNodeTypePropListOptions Options
         {
             get
             {
-                if( null == _Options )
+
+                if( _Options == null )
                 {
-                    _Options = new CswNbtNodeTypePropListOptions( _CswNbtResources, _CswNbtMetaDataNodeTypeProp );
+                    if( InitOptions != null )
+                    {
+                        // Override, usually from CswNbtObjClass*
+                        _Options = InitOptions();
+                    }
+                    if( _Options == null )
+                    {
+                        // Default
+                        //_Options = new CswNbtNodeTypePropListOptions( _CswNbtResources, _CswNbtMetaDataNodeTypeProp );
+                        _Options = new CswNbtNodeTypePropListOptions( _CswNbtResources,
+                                                                      _CswNbtNodePropData[CswNbtFieldTypeRuleList.AttributeName.Options],
+                                                                      _CswNbtNodePropData[CswNbtFieldTypeRuleList.AttributeName.FKType] == "fkeydefid" ? CswConvert.ToInt32( _CswNbtNodePropData[CswNbtFieldTypeRuleList.AttributeName.FKValue] ) : Int32.MinValue,
+                                                                      CswConvert.ToBoolean( _CswNbtNodePropData[CswNbtFieldTypeRuleList.AttributeName.Required] ) );
+                    }
                 }
-
                 return ( _Options );
-
             }//get
-
         }//Options
 
         public delegate void FilterOptionsHandler( string SearchTerm, Int32 SearchThreshold );
@@ -131,6 +147,7 @@ namespace ChemSW.Nbt.PropTypes
             }
 
         }//filterOptions()
+
 
         public static string OptionTextField = "Text";
         public static string OptionValueField = "Value";
@@ -186,7 +203,7 @@ namespace ChemSW.Nbt.PropTypes
                 ParentObject["search"] = true;
                 ParentObject["options"] = "";
             }
-        }
+        } // ToJSON()
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {

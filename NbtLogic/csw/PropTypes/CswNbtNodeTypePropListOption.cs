@@ -1,3 +1,4 @@
+using System.Runtime.Serialization;
 
 using System.Runtime.Serialization;
 
@@ -21,7 +22,7 @@ namespace ChemSW.Nbt.PropTypes
         public bool Empty
         {
             get { return ( string.Empty == Text || string.Empty == Value ); }
-        }//Empty
+        }
 
         private string _Text = "";
         private string _Value = "";

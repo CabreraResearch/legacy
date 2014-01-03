@@ -495,7 +495,7 @@ namespace ChemSW.Nbt.Schema.CmdLn
                         {
                             if( false == SuppressRealTimeProgressTics )
                             {
-                                CswConsoleOutput.write( ". " );
+                                CswConsoleOutput.write( "." );
                             }
 
                             Thread.Sleep( 1000 );

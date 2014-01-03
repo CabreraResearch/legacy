@@ -70,6 +70,7 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Web" />
     <Reference Include="System.ServiceModel.Web" />
     <Reference Include="System.Web" />
     <Reference Include="System.Windows.Forms" />
@@ -120,6 +121,7 @@
     <Compile Include="csw\ImportExport\CswNbtImportTools.cs" />
     <Compile Include="csw\LandingPage\CswNbtLandingPage.cs" />
     <Compile Include="csw\MetaData\enum\CswEnumNbtCategory.cs" />
+    <Compile Include="csw\MetaData\enum\CswEnumNbtPropertyAttributeColumn.cs" />
     <Compile Include="csw\MetaData\enum\CswEnumNbtFilterConjunction.cs" />
     <Compile Include="csw\MetaData\enum\CswEnumNbtFilterResultMode.cs" />
     <Compile Include="csw\MetaData\enum\CswEnumNbtFilterMode.cs" />
@@ -134,6 +136,9 @@
     <Compile Include="csw\MetaData\enum\CswEnumNbtPropertySelectMode.cs" />
     <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleReportLink.cs" />
     <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleFormula.cs" />
+    <Compile Include="csw\MetaData\enum\CswEnumNbtPropertyAttributeName.cs" />
+    <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleMetaDataList.cs" />
+    <Compile Include="csw\MetaData\Infr\CswNbtFieldTypeAttribute.cs" />
     <Compile Include="csw\MetaData\Infr\ICswNbtMetaDataObject.cs" />
     <Compile Include="csw\MetaData\enum\CswEnumNbtPropertySet.cs" />
     <Compile Include="csw\MetaData\Collection\CswNbtMetaDataCollectionPropertySet.cs" />
@@ -156,6 +161,7 @@
     <Compile Include="csw\Modules\CswNbtModuleRuleContainers.cs" />
     <Compile Include="csw\MetaData\CswNbtMetaDataPropertySet.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassGHSClassification.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassDesignSequence.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassRequestItem.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassGHSSignalWord.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassDSDPhrase.cs" />
@@ -174,6 +180,9 @@
     <Compile Include="csw\ObjClasses\CswNbtObjClassCofADocument.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassSDSDocument.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassNonChemical.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassDesignNodeTypeProp.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassDesignNodeTypeTab.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassDesignNodeType.cs" />
     <Compile Include="csw\ObjClasses\enum\CswEnumNbtUnitTypes.cs" />
     <Compile Include="csw\ObjClasses\enum\CswEnumNbtMailReportFormatOptions.cs" />
     <Compile Include="csw\ObjClasses\enum\CswEnumNbtMailReportEventOption.cs" />
@@ -203,6 +212,7 @@
     <Compile Include="csw\PropertySets\CswNbtPropertySetPermission.cs" />
     <Compile Include="csw\PropertySets\CswNbtPropertySetDocument.cs" />
     <Compile Include="csw\PropertySets\CswNbtPropertySetMaterial.cs" />
+    <Compile Include="csw\PropTypes\CswNbtNodePropMetaDataList.cs" />
     <Compile Include="csw\PropertySets\ICswNbtPermissionGroup.cs" />
     <Compile Include="csw\PropTypes\ICswNbtNodePropNodeReference.cs" />
     <Compile Include="csw\PropTypes\CswNbtNodePropReportLink.cs" />
@@ -466,6 +476,16 @@
     <None Include="csw\Schema\scripts\past\02B\CswUpdateSchema_02B_Case29812.cs" />
     <None Include="csw\Schema\scripts\past\02B\CswUpdateSchema_02B_Case29773.cs" />
     <None Include="csw\Schema\scripts\past\02B\CswUpdateSchema_02B_Case29798.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02D\CswUpdateSchema_02D_Case30207.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02D\RunBeforeEveryExecutionOfUpdater_02D_Case29311_AddRelationalColumn.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02D\CswUpdateSchema_02D_Case29314.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02D\CswUpdateSchema_02D_Case29311_MoreFixes.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02D\CswUpdateSchema_02D_Case29311_DefaultValue.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02D\CswUpdateSchema_02D_Case29311_Fixes.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02D\CswUpdateSchema_02D_Case29311_Sequences.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02D\CswUpdateSchema_02D_Case30126.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02D\RunBeforeEveryExecutionOfUpdater_02D_Case29311.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02D\CswUpdateSchema_02D_Case29311_Design.cs" />
     <None Include="csw\Schema\scripts\past\02B\CswUpdateSchema_02B_Case29684.cs" />
     <None Include="csw\Schema\scripts\past\02B\CswUpdateSchema_02B_Case29691.cs" />
     <None Include="csw\Schema\scripts\past\02B\CswUpdateSchema_02B_Case29707.cs" />

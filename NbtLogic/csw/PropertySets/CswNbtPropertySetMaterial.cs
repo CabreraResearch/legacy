@@ -5,6 +5,7 @@ using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 using Newtonsoft.Json.Linq;
@@ -145,6 +146,8 @@ namespace ChemSW.Nbt.ObjClasses
         public virtual DateTime getDefaultExpirationDate( DateTime InitialDate ) { return DateTime.MinValue; }
 
         public virtual void onUpdatePropertyValue() {}
+
+        public abstract void onUpdatePropertyValue();
 
         #endregion Abstract Methods
 
@@ -374,7 +377,7 @@ namespace ChemSW.Nbt.ObjClasses
             // If we are looking for other Constituents, we don't need Supplier and PartNo
             if( false == IsConstituent )
             {
-                Ret.AddViewPropertyAndFilter( MaterialRel, SupplierNtp, SupplierId.PrimaryKey.ToString(), CswEnumNbtSubFieldName.NodeID );
+                Ret.AddViewPropertyAndFilter( MaterialRel, SupplierNtp, SupplierId.PrimaryKey.ToString(), CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID );
                 CswEnumNbtFilterMode PartNoFilterMode = CswEnumNbtFilterMode.Equals;
                 if( string.IsNullOrEmpty( PartNo ) )
                 {

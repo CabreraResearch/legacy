@@ -7,6 +7,7 @@ using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.ChemCatCentral;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.ServiceDrivers;
 using ChemSW.StructureSearch;
@@ -748,14 +749,14 @@ namespace ChemSW.Nbt.WebServices
                 MatchingUOMsView.AddViewPropertyAndFilter( ParentRelationship,
                                                                MetaDataProp: NameOCP,
                                                                Value: Value,
-                                                               SubFieldName: CswEnumNbtSubFieldName.Text,
+                                                               SubFieldName: CswNbtFieldTypeRuleText.SubFieldName.Text,
                                                                FilterMode: CswEnumNbtFilterMode.Equals );
 
 
                 MatchingUOMsView.AddViewPropertyAndFilter( ParentRelationship,
                                                                MetaDataProp: AliasesOCP,
                                                                Value: Value,
-                                                               SubFieldName: CswEnumNbtSubFieldName.Text,
+                                                               SubFieldName: CswNbtFieldTypeRuleMemo.SubFieldName.Text,
                                                                FilterMode: CswEnumNbtFilterMode.Contains,
                                                                Conjunction: CswEnumNbtFilterConjunction.Or );
 

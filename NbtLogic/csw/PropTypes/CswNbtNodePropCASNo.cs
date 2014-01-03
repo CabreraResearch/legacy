@@ -59,10 +59,16 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                if( false == String.IsNullOrEmpty( _CswNbtMetaDataNodeTypeProp.Attribute1 ) )
-                    return CswConvert.ToInt32( _CswNbtMetaDataNodeTypeProp.Attribute1 );
-                else
-                    return 25;
+                //if( false == String.IsNullOrEmpty( _CswNbtMetaDataNodeTypeProp.Attribute1 ) )
+                //    return CswConvert.ToInt32( _CswNbtMetaDataNodeTypeProp.Attribute1 );
+                //else
+                //    return 25;
+                Int32 ret = CswConvert.ToInt32( _CswNbtNodePropData[CswNbtFieldTypeRuleCASNo.AttributeName.Size] );
+                if( Int32.MinValue == ret )
+                {
+                    ret = 25;
+                }
+                return ret;
             }
         }
 

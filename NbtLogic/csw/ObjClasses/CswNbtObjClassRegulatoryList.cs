@@ -70,7 +70,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void beforeWriteNode( bool Creating )
         {
-            // Set which node grid is displayed
+            // Set which properties are displayed
             switch( ListMode.Value )
             {
                 case CswEnumRegulatoryListListModes.ArielManaged:
@@ -136,7 +136,6 @@ namespace ChemSW.Nbt.ObjClasses
                                         newCasNoNode.CASNo.Text = CAS;
                                         //newCasNoNode.ErrorMessage.Text = errormsg;
                                         newCasNoNode.RegulatoryList.RelatedNodeId = this.NodeId;
-                                        //newCasNoNode.postChanges( false );
                                     } );
                             }
                         }
@@ -171,7 +170,7 @@ namespace ChemSW.Nbt.ObjClasses
             View.AddViewProperty( casnoRel, RegListCasNoCasNoOCP );
             View.AddViewPropertyAndFilter( casnoRel,
                                            RegListCasNoRegListOCP,
-                                           SubFieldName: CswEnumNbtSubFieldName.NodeID,
+                                           SubFieldName: CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID,
                                            FilterMode: CswEnumNbtFilterMode.Equals,
                                            Value: this.NodeId.PrimaryKey.ToString() );
 
@@ -281,7 +280,7 @@ namespace ChemSW.Nbt.ObjClasses
                                 View1.AddViewPropertyAndFilter( ParentViewRelationship: ParentRelationship,
                                                                 MetaDataProp: RegListListModeOCP,
                                                                 Value: SyncModule, //sync module that is enabled
-                                                                SubFieldName: CswEnumNbtSubFieldName.Value,
+                                                               SubFieldName: CswNbtFieldTypeRuleList.SubFieldName.Value,
                                                                 FilterMode: CswEnumNbtFilterMode.Equals );
                                 CswNbtViewRelationship SecondaryRelationship = View1.AddViewRelationship( ParentRelationship, CswEnumNbtViewPropOwnerType.Second, RegListListCodeRegulatoryListOCP, false );
                                 View1.AddViewProperty( SecondaryRelationship, RegListListCodeListCodeOCP );

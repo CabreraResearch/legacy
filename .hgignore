@@ -54,5 +54,6 @@ syntax: regexp
 .*\.vsp
 .*\.psess
 bin/.*\.XML
+.*.rej$
 bin/Debug/*
 bin/Release/*

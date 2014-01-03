@@ -344,7 +344,7 @@ namespace ChemSW.Nbt.MetaData
         } // _PkDictsWhere(Where)
 
         private Dictionary<Int32, ICswNbtMetaDataObject> _ByPk = null;
-        public ICswNbtMetaDataObject getByPk( Int32 Pk )
+        public ICswNbtMetaDataObject getByPk( Int32 Pk, bool BypassModuleCheck = false )
         {
             ICswNbtMetaDataObject ret = null;
             if( Pk != Int32.MinValue )
@@ -353,10 +353,13 @@ namespace ChemSW.Nbt.MetaData
                 {
                     _ByPk = new Dictionary<Int32, ICswNbtMetaDataObject>();
                 }
-                if( false == _ByPk.ContainsKey( Pk ) )
+                if( false == _ByPk.ContainsKey( Pk ) || null == _ByPk[Pk] )
                 {
                     string WhereClause = string.Empty;
-                    addModuleWhereClause( ref WhereClause );
+                    if( false == BypassModuleCheck )
+                    {
+                        addModuleWhereClause( ref WhereClause );
+                    }
 
                     DataTable Table = _TableUpdate.getTable( _PkColumnName, Pk, WhereClause, false );
                     if( Table.Rows.Count > 0 )

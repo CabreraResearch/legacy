@@ -27,6 +27,7 @@ namespace ChemSW.Nbt.MetaData
                 {CswEnumNbtFieldType.Logical, CswEnumNbtFieldType.Logical},
                 {CswEnumNbtFieldType.LogicalSet, CswEnumNbtFieldType.LogicalSet},
                 {CswEnumNbtFieldType.Memo, CswEnumNbtFieldType.Memo},
+                {CswEnumNbtFieldType.MetaDataList, CswEnumNbtFieldType.MetaDataList },
                 {CswEnumNbtFieldType.MOL, CswEnumNbtFieldType.MOL},
                 {CswEnumNbtFieldType.MTBF, CswEnumNbtFieldType.MTBF},
                 {CswEnumNbtFieldType.MultiList, CswEnumNbtFieldType.MultiList},
@@ -100,6 +101,7 @@ namespace ChemSW.Nbt.MetaData
         public const string Logical = "Logical";
         public const string LogicalSet = "LogicalSet";
         public const string Memo = "Memo";
+        public const string MetaDataList = "MetaDataList";
         public const string MOL = "MOL";
         public const string MTBF = "MTBF";
         public const string MultiList = "MultiList";

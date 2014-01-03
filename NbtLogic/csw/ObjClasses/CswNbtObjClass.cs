@@ -53,7 +53,7 @@ namespace ChemSW.Nbt.ObjClasses
                         }
                         else
                         {
-                            Ret = _CswNbtResources.Permit.canAnyTab( CswEnumNbtNodeTypePermission.Edit, this.NodeType, NodeId : NodeId );
+                            Ret = _CswNbtResources.Permit.canAnyTab( CswEnumNbtNodeTypePermission.Edit, this.NodeType, NodeId: NodeId );
                         }
                         break;
                 }
@@ -73,10 +73,11 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Post node property changes to the database
         /// </summary>
-        /// <param name="ForceUpdate">If true, an update will happen whether properties have been modified or not</param>
-        public void postChanges( bool ForceUpdate ) //bz# 5446
+        /// <param name="ForceUpdate">If true, an update will happen whether properties have been modified or not (case 5446)</param>
+        /// <param name="SkipEvents">Prevent calling node or property events (for use when you are inside such an event)</param>
+        public void postChanges( bool ForceUpdate, bool SkipEvents = false )
         {
-            _CswNbtNode.postChanges( ForceUpdate );
+            _CswNbtNode.postChanges( ForceUpdate, SkipEvents: SkipEvents );
         }//postChanges()
 
         /// <summary>
@@ -586,6 +587,13 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNode Node { get { return _CswNbtNode; } }
         public bool IsDemo { get { return _CswNbtNode.IsDemo; } set { _CswNbtNode.IsDemo = value; } }
         public bool IsTemp { get { return _CswNbtNode.IsTemp; } } //set { _CswNbtNode.IsTemp = value; } }
+
+        public CswPrimaryKey RelationalId
+        {
+            get { return _CswNbtNode.RelationalId; }
+            set { _CswNbtNode.RelationalId = value; }
+        }
+
         public class NbtButtonData
         {
             public NbtButtonData( CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp )

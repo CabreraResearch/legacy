@@ -185,6 +185,9 @@
                                 if (subNameSpace !== 'constants') {
                                     newNameSpace.register('constants', makeNameSpace('constants', nsTree), false);
                                 }
+        cswPublic.designmode = cswPublic.designmode || cswPublic.register('designmode', makeNameSpace());
+
+        //
 
                                 proto.register(subNameSpace, newNameSpace, false);
                                 return newNameSpace;

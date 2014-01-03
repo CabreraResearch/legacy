@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using ChemSW.Core;
+using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
@@ -43,6 +44,7 @@ namespace ChemSW.Nbt.PropTypes
         }//Empty
 
 
+
         /// <summary>
         /// ViewId for referenced view
         /// </summary>
@@ -63,15 +65,19 @@ namespace ChemSW.Nbt.PropTypes
                     // Case 20194. KLUGE Alert!!!
                     CswNbtNode node = _CswNbtResources.Nodes.GetNode( NodeId );
                     if( null != node )
+                    {
                         node.postChanges( false );
+                    }
                 }
 
                 return new CswNbtViewId( CswConvert.ToInt32( GetPropRowValue( _ViewIdSubField ) ) );
             }
-            private set
+            set
             {
                 if( SetPropRowValue( _ViewIdSubField, value.get() ) )
+                {
                     PendingUpdate = true;
+                }
             }
         }
 

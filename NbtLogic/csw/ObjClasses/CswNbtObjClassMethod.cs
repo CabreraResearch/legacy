@@ -33,7 +33,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        //Extend CswNbtObjClass events here
+        public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
 
         #endregion
 

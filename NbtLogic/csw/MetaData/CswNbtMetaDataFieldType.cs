@@ -1,6 +1,7 @@
 using System;
 using System.Data;
 using ChemSW.Core;
+using ChemSW.Nbt.MetaData.FieldTypeRules;
 
 namespace ChemSW.Nbt.MetaData
 {
@@ -10,7 +11,6 @@ namespace ChemSW.Nbt.MetaData
         private CswDateTime _Date = null;
 
         private DataRow _FieldTypeRow;
-        //public ICswNbtFieldTypeRule FieldTypeRule = null;
 
         public CswNbtMetaDataFieldType( CswNbtMetaDataResources CswNbtMetaDataResources, DataRow Row, CswDateTime Date = null )
         {
@@ -18,9 +18,6 @@ namespace ChemSW.Nbt.MetaData
             _Date = Date;
 
             Reassign( Row );
-
-            //CswNbtFieldTypeRuleFactory CswNbtFieldTypeRuleFactory = new CswNbtFieldTypeRuleFactory( CswNbtMetaDataResources.CswNbtResources );
-            //FieldTypeRule = CswNbtFieldTypeRuleFactory.makeRule( FieldType );
         }
 
         public static CswEnumNbtFieldType getFieldTypeFromString( string FieldTypeName )
@@ -60,6 +57,14 @@ namespace ChemSW.Nbt.MetaData
             {
                 return CswConvert.ToString( _FieldTypeRow["fieldtype"] );
             }
+        }
+
+        private ICswNbtFieldTypeRule _FieldTypeRule = null;
+        public ICswNbtFieldTypeRule getFieldTypeRule()
+        {
+            if( _FieldTypeRule == null )
+                _FieldTypeRule = _CswNbtMetaDataResources.makeFieldTypeRule( FieldType );
+            return _FieldTypeRule;
         }
 
         /// <summary>

@@ -45,11 +45,13 @@ namespace ChemSW.Nbt.PropTypes
 
         public string TemplateValue
         {
-            get { return _CswNbtMetaDataNodeTypeProp.CompositeTemplateValue; }
+            // get { return _CswNbtMetaDataNodeTypeProp.CompositeTemplateValue; }
+            get { return _CswNbtNodePropData[CswNbtFieldTypeRuleComposite.AttributeName.Template]; }
         }
         public string TemplateText()
         {
-            return _CswNbtMetaDataNodeTypeProp.getCompositeTemplateText();
+            // return _CswNbtMetaDataNodeTypeProp.getCompositeTemplateText();
+            return _CswNbtNodePropData.getCompositeTemplateText();
         }
         public override string ValueForNameTemplate
         {
@@ -60,7 +62,8 @@ namespace ChemSW.Nbt.PropTypes
 
         public string RecalculateCompositeValue()
         {
-            string Value = CswNbtMetaData.TemplateValueToDisplayValue( _CswNbtResources.MetaData.getNodeTypeProps( _CswNbtMetaDataNodeTypeProp.NodeTypeId ), TemplateValue, this );
+            //string Value = CswNbtMetaData.TemplateValueToDisplayValue( _CswNbtResources.MetaData.getNodeTypeProps( _CswNbtMetaDataNodeTypeProp.NodeTypeId ), TemplateValue, this );
+            string Value = CswNbtMetaData.TemplateValueToDisplayValue( _CswNbtResources.MetaData.getNodeTypeProps( _CswNbtNodePropData.NodeTypeId ), TemplateValue, _CswNbtNodePropData );
             SetPropRowValue( _CachedValueSubField, Value );
             Gestalt = Value;
             PendingUpdate = false;
@@ -86,7 +89,8 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void SyncGestalt()
         {
-            string gestaltVal = CswNbtMetaData.TemplateValueToDisplayValue( _CswNbtResources.MetaData.getNodeTypeProps( _CswNbtMetaDataNodeTypeProp.NodeTypeId ), TemplateValue, this );
+            //string gestaltVal = CswNbtMetaData.TemplateValueToDisplayValue( _CswNbtResources.MetaData.getNodeTypeProps( _CswNbtMetaDataNodeTypeProp.NodeTypeId ), TemplateValue, this );
+            string gestaltVal = CswNbtMetaData.TemplateValueToDisplayValue( _CswNbtResources.MetaData.getNodeTypeProps( _CswNbtNodePropData.NodeTypeId ), TemplateValue, _CswNbtNodePropData );
             SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, gestaltVal );
         }
     }//CswNbtNodePropComposite

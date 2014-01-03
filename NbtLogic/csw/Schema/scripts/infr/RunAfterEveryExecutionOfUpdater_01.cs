@@ -62,7 +62,6 @@ namespace ChemSW.Nbt.Schema
             _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( "truncate table sessionlist" );
             _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( "truncate table session_data" );
             _resetBlame();
-
             _CswNbtSchemaModTrnsctn.Modules.TriggerModuleEventHandlers();
 
 

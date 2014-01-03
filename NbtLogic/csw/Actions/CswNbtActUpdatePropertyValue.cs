@@ -13,7 +13,6 @@ namespace ChemSW.Nbt.Actions
             _CswNbtResources = CswNbtResources;
         }
 
-
         public void UpdateNode( CswNbtNode Node, bool ForceUpdate )
         {
             // BZ 10240

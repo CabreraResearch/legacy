@@ -119,6 +119,9 @@
     <Compile Include="Services\Search.svc.cs">
       <DependentUpon>Search.svc</DependentUpon>
     </Compile>
+    <Compile Include="Services\Design.svc.cs">
+      <DependentUpon>Design.svc</DependentUpon>
+    </Compile>
     <Compile Include="Services\ViewEditor.svc.cs">
       <DependentUpon>ViewEditor.svc</DependentUpon>
     </Compile>
@@ -219,6 +222,7 @@
     <Compile Include="WebSvc\Logic\DemoData\CswNbtDemoDataRequests.cs" />
     <Compile Include="WebSvc\Logic\DemoData\CswNbtDemoDataReturn.cs" />
     <Compile Include="WebSvc\Logic\Import\CswNbtImportWcf.cs" />
+    <Compile Include="WebSvc\Logic\Design\CswNbtWebServiceDesign.cs" />
     <Compile Include="WebSvc\Logic\Import\CswNbtWebServiceImport.cs" />
     <Compile Include="WebSvc\Logic\Menus\CswEnumNbtMainMenuActions.cs" />
     <Compile Include="WebSvc\Logic\DemoData\CswNbtDemoDataManager.cs" />
@@ -793,6 +797,7 @@
     <Content Include="Services\Properties.svc" />
     <Content Include="Services\Balances.svc" />
     <Content Include="Services\Search.svc" />
+    <Content Include="Services\Design.svc" />
     <Content Include="Services\Query.svc" />
     <Content Include="Services\ViewEditor.svc" />
     <Content Include="Services\Modules.svc" />
@@ -1327,7 +1332,6 @@
     </Compile>
     <Compile Include="Design.aspx.cs">
       <DependentUpon>Design.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="DisplayLog.aspx.cs">
       <DependentUpon>DisplayLog.aspx</DependentUpon>

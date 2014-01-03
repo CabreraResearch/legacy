@@ -1,6 +1,7 @@
 using System;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.ObjClasses
@@ -70,6 +71,14 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
+        public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
+        {
+        }
+
+        public override void afterCreateNode()
+        {
+        }
+
         protected override void afterPopulateProps()
         {
             if( Type.RelatedNodeId != null )
@@ -122,7 +131,7 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtViewProperty OwnerProperty = GeneratorView.AddViewProperty( GeneratorRelationship, GeneratorObjectClass.getObjectClassProp( CswNbtObjClassGenerator.PropertyName.Owner ) );
             CswNbtViewPropertyFilter OwnerIsEquipmentFilter = GeneratorView.AddViewPropertyFilter(
                 OwnerProperty,
-                CswEnumNbtSubFieldName.NodeID,
+                CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID,
                 CswEnumNbtFilterMode.Equals,
                 NodeId.PrimaryKey.ToString() );
 
@@ -212,7 +221,7 @@ namespace ChemSW.Nbt.ObjClasses
                                     EquipProp.setReadOnly( value : true, SaveToDb : true );
                                     FoundMatch = true;
                                     // case 21809
-                                    EquipProp.HelpText = EquipProp.PropName + " is set on the Assembly, and must be modified there.";
+                                    EquipProp[CswEnumNbtPropertyAttributeName.HelpText] = EquipProp.PropName + " is set on the Assembly, and must be modified there.";
                                 }
                             }
                         }

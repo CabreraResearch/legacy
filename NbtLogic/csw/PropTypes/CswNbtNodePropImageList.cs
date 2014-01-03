@@ -32,10 +32,23 @@ namespace ChemSW.Nbt.PropTypes
 
         public bool AllowMultiple
         {
+            //get { return CswConvert.ToBoolean( _CswNbtMetaDataNodeTypeProp.Extended ); }
+            get { return CswConvert.ToBoolean( _CswNbtNodePropData[CswNbtFieldTypeRuleImageList.AttributeName.AllowMultipleValues] ); }
+        }
+
+        private string _ImagePrefix;
+        public string ImagePrefix
+        {
             get
             {
-                return CswConvert.ToBoolean( _CswNbtMetaDataNodeTypeProp.Extended );
+                if( string.IsNullOrEmpty( _ImagePrefix ) )
+                {
+                    //_ImagePrefix = CswConvert.ToString( _CswNbtMetaDataNodeTypeProp.Attribute1 );
+                    _ImagePrefix = _CswNbtNodePropData[CswNbtFieldTypeRuleImageList.AttributeName.Prefix];
+                }
+                return _ImagePrefix;
             }
+            set { _ImagePrefix = value; }
         }
 
         override public bool Empty
@@ -95,6 +108,9 @@ namespace ChemSW.Nbt.PropTypes
             Value = myValue;
         }
 
+
+
+
         private Dictionary<string, string> _Options = null;
         public Dictionary<string, string> Options
         {
@@ -110,8 +126,10 @@ namespace ChemSW.Nbt.PropTypes
                     ret = new Dictionary<string, string>();
                     CswDelimitedString NameOptions = new CswDelimitedString( Delimiter );
                     CswDelimitedString ValueOptions = new CswDelimitedString( Delimiter );
-                    NameOptions.FromString( _CswNbtMetaDataNodeTypeProp.ListOptions.Trim() );
-                    ValueOptions.FromString( _CswNbtMetaDataNodeTypeProp.ValueOptions.Trim() );
+                    //NameOptions.FromString( _CswNbtMetaDataNodeTypeProp.ListOptions.Trim() );
+                    //ValueOptions.FromString( _CswNbtMetaDataNodeTypeProp.ValueOptions.Trim() );
+                    NameOptions.FromString( _CswNbtNodePropData[CswNbtFieldTypeRuleImageList.AttributeName.ImageNames].Trim() );
+                    ValueOptions.FromString( _CswNbtNodePropData[CswNbtFieldTypeRuleImageList.AttributeName.ImageUrls].Trim() );
 
                     for( Int32 i = 0; i < ValueOptions.Count; i++ )
                     {
@@ -136,7 +154,8 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return _CswNbtMetaDataNodeTypeProp.TextAreaRows;
+                //return _CswNbtMetaDataNodeTypeProp.TextAreaRows;
+                return CswConvert.ToInt32( _CswNbtNodePropData[CswNbtFieldTypeRuleImageList.AttributeName.HeightInPixels] );
             }
         }
 
@@ -144,7 +163,8 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return _CswNbtMetaDataNodeTypeProp.TextAreaColumns;
+                //return _CswNbtMetaDataNodeTypeProp.TextAreaColumns;
+                return CswConvert.ToInt32( _CswNbtNodePropData[CswNbtFieldTypeRuleImageList.AttributeName.WidthInPixels] );
             }
         }
 
@@ -181,6 +201,7 @@ namespace ChemSW.Nbt.PropTypes
             ParentObject["width"] = Width;
             ParentObject["height"] = Height;
             ParentObject["allowmultiple"] = AllowMultiple;
+            ParentObject["imageprefix"] = ImagePrefix;
 
             JObject OptionsObj = new JObject();
             ParentObject["options"] = OptionsObj;

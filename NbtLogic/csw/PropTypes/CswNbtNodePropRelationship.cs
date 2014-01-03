@@ -35,6 +35,17 @@ namespace ChemSW.Nbt.PropTypes
             // Associate subfields with methods on this object, for SetSubFieldValue()
             _SubFieldMethods.Add( _NameSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => CachedNodeName, x => CachedNodeName = CswConvert.ToString( x ) ) );
             _SubFieldMethods.Add( _NodeIDSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => RelatedNodeId, x => RelatedNodeId = CswConvert.ToPrimaryKey( x ) ) );
+                                                                                              x =>
+                                                                                              {
+                                                                                                  if( CswTools.IsInteger( x ) )
+                                                                                                  {
+                                                                                                      RelatedNodeId = new CswPrimaryKey( "nodes", x );
+                                                                                                  }
+                                                                                                  else
+                                                                                                  {
+                                                                                                      RelatedNodeId = CswConvert.ToPrimaryKey( x );
+                                                                                                  }
+                                                                                              } ) );
         }
 
         private CswNbtSubField _NameSubField;
@@ -42,7 +53,7 @@ namespace ChemSW.Nbt.PropTypes
 
         private Int32 _SearchThreshold;
 
-        override public bool Empty
+        public override bool Empty
         {
             get
             {
@@ -55,12 +66,14 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                CswNbtViewId ViewId = _CswNbtMetaDataNodeTypeProp.ViewId;
-                if( null != ViewId && ViewId.isSet() )
+
+                if( null == _View )
                 {
-                    _View = _getView( _CswNbtResources, ViewId );
-                    if( null != _View )
+                    //_View = _getView( _CswNbtResources, _CswNbtMetaDataNodeTypeProp );
+                    Int32 ViewId = CswConvert.ToInt32( _CswNbtNodePropData[CswNbtFieldTypeRuleRelationship.AttributeName.View] );
+                    if( Int32.MinValue != ViewId )
                     {
+                        _View = _getView( _CswNbtResources, new CswNbtViewId( ViewId ) );
                         _setRootRelationship( _View );
                     }
                 }
@@ -91,11 +104,12 @@ namespace ChemSW.Nbt.PropTypes
         {
             // case 27488
             // If the root nodetype or object class of the Relationship options view matches the current nodetype or object class, 
-            // and does not match the target of the relationship, 
+            // and the view is more than one level deep,
             // limit the root to the current node.
-            if( null != this.NodeId && Int32.MinValue != this.NodeId.PrimaryKey && null != this.NodeTypeProp )
+            if( CswTools.IsPrimaryKey( this.NodeId ) && null != this.NodeTypeProp )
             {
-                if( false == CswNbtViewRelationship.Matches( _CswNbtResources, TargetType, TargetId, this.NodeTypeProp.getNodeType() ) )
+                //if( false == CswNbtViewRelationship.Matches( _CswNbtResources, TargetType, TargetId, this.NodeTypeProp.getNodeType() ) )
+                if( ( View.Root.ChildRelationships.Count > 0 && View.Root.ChildRelationships[0].ChildRelationships.Count > 0 ) )
                 {
                     foreach( CswNbtViewRelationship RootRel in View.Root.ChildRelationships )
                     {
@@ -103,9 +117,8 @@ namespace ChemSW.Nbt.PropTypes
                         {
                             RootRel.NodeIdsToFilterIn.Add( this.NodeId );
                         }
-                    }
-                }
-            }
+                } // if( ( View.Root.ChildRelationships.Count > 0 && View.Root.ChildRelationships[0].ChildRelationships.Count > 0 ) )
+            } // if( CswTools.IsPrimaryKey( this.NodeId ) && this.NodeTypeProp != null )
         } // _setRootRelationship()
 
         private string TargetTableName
@@ -212,25 +225,26 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                CswEnumNbtViewRelatedIdType ret = _targetType( _CswNbtResources, _CswNbtMetaDataNodeTypeProp );
+                //CswEnumNbtViewRelatedIdType ret = _targetType( _CswNbtResources, _CswNbtMetaDataNodeTypeProp );
+                CswEnumNbtViewRelatedIdType ret = _CswNbtNodePropData[CswNbtFieldTypeRuleRelationship.AttributeName.Target, CswNbtFieldTypeRuleMetaDataList.SubFieldName.Type];
                 return ret;
             }
         }
 
-        private static CswEnumNbtViewRelatedIdType _targetType( CswNbtResources NbtResources, CswNbtMetaDataNodeTypeProp RelationshipProp )
-        {
-            CswEnumNbtViewRelatedIdType ret = CswEnumNbtViewRelatedIdType.Unknown;
-            try
-            {
-                ret = (CswEnumNbtViewRelatedIdType) RelationshipProp.FKType;
-            }
-            catch( Exception ex )
-            {
-                if( !( ex is System.ArgumentException ) )
-                    throw ( ex );
-            }
-            return ret;
-        }
+        //private static CswEnumNbtViewRelatedIdType _targetType( CswNbtResources NbtResources, CswNbtMetaDataNodeTypeProp RelationshipProp )
+        //{
+        //    CswEnumNbtViewRelatedIdType ret = CswEnumNbtViewRelatedIdType.Unknown;
+        //    try
+        //    {
+        //        ret = (CswEnumNbtViewRelatedIdType) RelationshipProp.FKType;
+        //    }
+        //    catch( Exception ex )
+        //    {
+        //        if( !( ex is System.ArgumentException ) )
+        //            throw ( ex );
+        //    }
+        //    return ret;
+        //}
 
         /// <summary>
         /// Relationship's Target NodeTypeId
@@ -239,7 +253,8 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return _CswNbtMetaDataNodeTypeProp.FKValue;
+                //return _CswNbtMetaDataNodeTypeProp.FKValue;
+                return CswConvert.ToInt32( _CswNbtNodePropData[CswNbtFieldTypeRuleRelationship.AttributeName.Target, CswNbtFieldTypeRuleMetaDataList.SubFieldName.Id] );
             }
         }
 
@@ -269,10 +284,16 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                if( _CswNbtMetaDataNodeTypeProp.TextAreaRows == Int32.MinValue )
-                    return 4;
-                else
-                    return _CswNbtMetaDataNodeTypeProp.TextAreaRows;
+                //if( _CswNbtMetaDataNodeTypeProp.TextAreaRows == Int32.MinValue )
+                //    return 4;
+                //else
+                //    return _CswNbtMetaDataNodeTypeProp.TextAreaRows;
+                Int32 ret = CswConvert.ToInt32( _CswNbtNodePropData[CswNbtFieldTypeRuleRelationship.AttributeName.Rows] );
+                if( Int32.MinValue == ret )
+                {
+                    ret = 4;
+                }
+                return ret;
             }
         }
 
@@ -301,9 +322,9 @@ namespace ChemSW.Nbt.PropTypes
                 }
 
                 ICswNbtTree CswNbtTree = NbtResources.Trees.getTreeFromView( View : OptionsView,
-                                                                             IncludeSystemNodes : false,
-                                                                             RequireViewPermissions : false,
-                                                                             IncludeHiddenNodes : false );
+                                                                             IncludeSystemNodes: false,
+                                                                             RequireViewPermissions: false,
+                                                                             IncludeHiddenNodes: false );
                 CswEnumNbtViewRelatedIdType targetType = _targetType( NbtResources, _CswNbtMetaDataNodeTypeProp );
                 _addOptionsRecurse( NbtResources, Options, CswNbtTree, targetType, FkValue );
                 if( IsRequired && Options.Count == 2 )
@@ -314,13 +335,15 @@ namespace ChemSW.Nbt.PropTypes
             return Options;
         }
 
-        private static void _addOptionsRecurse( CswNbtResources NbtResources, Dictionary<CswPrimaryKey, string> Options, ICswNbtTree CswNbtTree, CswEnumNbtViewRelatedIdType TargetType, Int32 TargetId ) //, Int32 TargetNodeTypeId, Int32 TargetObjectClassId )
+        private void _addOptionsRecurse( CswNbtResources NbtResources, Dictionary<CswPrimaryKey, string> Options, ICswNbtTree CswNbtTree, CswEnumNbtViewRelatedIdType TargetType, Int32 TargetId ) //, Int32 TargetNodeTypeId, Int32 TargetObjectClassId )
         {
             for( Int32 c = 0; c < CswNbtTree.getChildNodeCount(); c++ )
             {
                 CswNbtTree.goToNthChild( c );
+                CswPrimaryKey currentNodeId = CswNbtTree.getNodeIdForCurrentPosition();
                 CswNbtMetaDataNodeType NodeType = NbtResources.MetaData.getNodeType( CswNbtTree.getNodeKeyForCurrentPosition().NodeTypeId );
-                if( CswNbtViewRelationship.Matches( NbtResources, TargetType, TargetId, NodeType ) )
+                if( currentNodeId != this.NodeId &&    // No self-referencing relationships
+                    CswNbtViewRelationship.Matches( NbtResources, TargetType, TargetId, NodeType ) )
                 {
                     Options.Add( CswNbtTree.getNodeIdForCurrentPosition(), CswNbtTree.getNodeNameForCurrentPosition() );
                 }
@@ -358,7 +381,11 @@ namespace ChemSW.Nbt.PropTypes
                 {
                     pk = RelatedNode.NodeId;
                 }
-                Dictionary<CswPrimaryKey, string> Options = _OptionsOverride ?? _getOptions( _CswNbtResources, _CswNbtMetaDataNodeTypeProp.IsRequired, _CswNbtMetaDataNodeTypeProp.FKValue, pk, View );
+                //Dictionary<CswPrimaryKey, string> Options = _OptionsOverride ?? _getOptions( _CswNbtResources, _CswNbtMetaDataNodeTypeProp.IsRequired, _CswNbtMetaDataNodeTypeProp.FKValue, pk, View );
+                Dictionary<CswPrimaryKey, string> Options = _OptionsOverride ?? _getOptions( _CswNbtResources,
+                                                                         CswConvert.ToBoolean( _CswNbtNodePropData[CswNbtFieldTypeRuleRelationship.AttributeName.Required] ),
+                                                                         CswConvert.ToInt32( _CswNbtNodePropData[CswNbtFieldTypeRuleRelationship.AttributeName.Target, CswNbtFieldTypeRuleMetaDataList.SubFieldName.Id] ),
+                                                                         pk, View );
                 if( Options.Count > _SearchThreshold )
                 {
                     ParentObject["usesearch"] = true;
@@ -522,7 +549,8 @@ namespace ChemSW.Nbt.PropTypes
 
         public bool IsUserRelationship()
         {
-            return _CswNbtMetaDataNodeTypeProp.IsUserRelationship();
+            //return _CswNbtMetaDataNodeTypeProp.IsUserRelationship();
+            return _CswNbtNodePropData.IsUserRelationship();
         }
 
         public override void SyncGestalt()

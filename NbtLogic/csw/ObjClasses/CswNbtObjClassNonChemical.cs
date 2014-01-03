@@ -1,6 +1,5 @@
 using System;
 using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -76,6 +75,8 @@ namespace ChemSW.Nbt.ObjClasses
             ButtonData.Data["state"]["canAddSDS"] = false;
         }
 
+
+        public override void onUpdatePropertyValue() { }
         #endregion Inherited Events
 
         #region ObjectClass-specific properties

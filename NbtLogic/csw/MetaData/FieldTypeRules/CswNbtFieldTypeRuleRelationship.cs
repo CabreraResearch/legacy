@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 using ChemSW.Exceptions;
+using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 
@@ -9,6 +12,11 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
     public class CswNbtFieldTypeRuleRelationship : ICswNbtFieldTypeRule
     {
+        public sealed class SubFieldName : ICswNbtFieldTypeRuleSubFieldName
+        {
+            public static CswEnumNbtSubFieldName Name = CswEnumNbtSubFieldName.Name;
+            public static CswEnumNbtSubFieldName NodeID = CswEnumNbtSubFieldName.NodeID;
+        }
 
         private CswNbtFieldTypeRuleDefaultImpl _CswNbtFieldTypeRuleDefault = null;
         private CswNbtFieldResources _CswNbtFieldResources = null;
@@ -18,7 +26,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldResources = CswNbtFieldResources;
             _CswNbtFieldTypeRuleDefault = new CswNbtFieldTypeRuleDefaultImpl( _CswNbtFieldResources );
 
-            NameSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1, CswEnumNbtSubFieldName.Name );
+            NameSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1, SubFieldName.Name );
             NameSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Equals );
             NameSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Begins );
             NameSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Ends );
@@ -29,7 +37,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             NameSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Null );
             SubFields.add( NameSubField, true );
 
-            NodeIDSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1_FK, CswEnumNbtSubFieldName.NodeID, true );
+            NodeIDSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1_FK, SubFieldName.NodeID, true );
             NodeIDSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Equals );
             NodeIDSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotEquals );
             NodeIDSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotNull );
@@ -58,7 +66,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             string OldValue = CswNbtViewPropertyFilterIn.Value;
 
             // BZ 8558
-            if( OldSubfieldName == NameSubField.Name && OldValue.ToLower() == "me" )
+            if( OldSubfieldName == SubFieldName.Name && OldValue.ToLower() == "me" )
             {
                 CswNbtViewProperty Prop = (CswNbtViewProperty) CswNbtViewPropertyFilterIn.Parent;
                 ICswNbtMetaDataProp MetaDataProp = null;
@@ -71,7 +79,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                 {
                     if( CswNbtViewPropertyFilterIn.Value.ToLower() == "me" && false == ( RunAsUser is CswNbtSystemUser ) )
                     {
-                        CswNbtViewPropertyFilterIn.SubfieldName = NodeIDSubField.Name;
+                        CswNbtViewPropertyFilterIn.SubfieldName = SubFieldName.NodeID;
                         CswNbtViewPropertyFilterIn.FilterMode = CswEnumNbtFilterMode.Equals;
                         CswNbtViewPropertyFilterIn.Value = RunAsUser.UserId.PrimaryKey.ToString();
                     }
@@ -162,48 +170,94 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             return RetView;
         }
 
-        public void setFk( CswNbtMetaDataNodeTypeProp MetaDataProp, CswNbtMetaDataNodeTypeProp.doSetFk doSetFk, string inFKType, Int32 inFKValue, string inValuePropType = "", Int32 inValuePropId = Int32.MinValue )
+        public void onSetFk( CswNbtMetaDataNodeTypeProp MetaDataProp, CswNbtObjClassDesignNodeTypeProp DesignNTPNode )
         {
-            string OutFkType = inFKType;
-            Int32 OutFkValue = inFKValue;
-            string OutValuePropType = inValuePropType;
-            Int32 OutValuePropId = inValuePropId;
-
-            //New PropIdTypes
-            CswEnumNbtViewRelatedIdType NewFkPropIdType = inFKType;
-
-            //Current PropIdTypes
-            CswEnumNbtViewRelatedIdType CurrentFkPropIdType = MetaDataProp.FKType;
-
-            //We have valid values that are different that what is currently set
-            if( ( false == string.IsNullOrEmpty( inFKType ) &&
-                  Int32.MinValue != inFKValue &&
-                  NewFkPropIdType != CswEnumNbtViewRelatedIdType.Unknown
-                ) &&
-                (
-                  NewFkPropIdType != CurrentFkPropIdType ||
-                  inFKValue != MetaDataProp.FKValue
-                ) //something has changed 
-              )
+            Collection<CswNbtFieldTypeAttribute> Attributes = getAttributes();
+            CswNbtFieldTypeAttribute FkTypeAttr = Attributes.FirstOrDefault( a => a.Column == CswEnumNbtPropertyAttributeColumn.Fktype );
+            if( DesignNTPNode.AttributeProperty.ContainsKey( FkTypeAttr.Name ) )
             {
-                _setDefaultView( MetaDataProp, NewFkPropIdType, inFKValue, false );
-                OutFkType = NewFkPropIdType.ToString();
-                OutFkValue = inFKValue;
-                OutValuePropType = string.Empty;
-                OutValuePropId = Int32.MinValue;
-                doSetFk( OutFkType, OutFkValue, OutValuePropType, OutValuePropId );
-            }
-            else
-            {
-                //Make sure a default view is set
-                _setDefaultView( MetaDataProp, CurrentFkPropIdType, MetaDataProp.FKValue, true );
-            }
+                CswNbtNodePropWrapper FkTypeProp = DesignNTPNode.AttributeProperty[FkTypeAttr.Name];
+                if( null != FkTypeProp && FkTypeProp.WasModified )
+                {
+                    CswNbtNodePropMetaDataList FkProp = FkTypeProp.AsMetaDataList;
+                    if( CswEnumNbtViewRelatedIdType.Unknown != FkProp.Type && Int32.MinValue != FkProp.Id )
+                    {
+                        //We have valid values that are different that what is currently set
+                        _setDefaultView( MetaDataProp, FkProp.Type, FkProp.Id, false );
+                    }
+                    else
+                    {
+                        //Make sure a default view is set
+                        _setDefaultView( MetaDataProp, MetaDataProp.FKType, MetaDataProp.FKValue, true );
+                    }
+                }
+            } // if( DesignNTPNode.AttributeProperty.ContainsKey( FkTypeAttr.Name ) )
+        } // onSetFk()
+
+        public sealed class AttributeName : ICswNbtFieldTypeRuleAttributeName
+        {
+            public const string IsFK = CswEnumNbtPropertyAttributeName.IsFK;
+            public const string Target = CswEnumNbtPropertyAttributeName.Target;
+            public const string View = CswEnumNbtPropertyAttributeName.View;
+            public const string Rows = CswEnumNbtPropertyAttributeName.Rows;
+            public const string DefaultValue = CswEnumNbtPropertyAttributeName.DefaultValue;
+        }
+
+        public Collection<CswNbtFieldTypeAttribute> getAttributes()
+        {
+            Collection<CswNbtFieldTypeAttribute> ret = _CswNbtFieldTypeRuleDefault.getAttributes( CswEnumNbtFieldType.Relationship );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+                {
+                    OwnerFieldType = CswEnumNbtFieldType.Relationship,
+                    Name = AttributeName.IsFK,
+                    AttributeFieldType = CswEnumNbtFieldType.Logical,
+                    Column = CswEnumNbtPropertyAttributeColumn.Isfk
+                } );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+                {
+                    OwnerFieldType = CswEnumNbtFieldType.Relationship,
+                    Name = AttributeName.Target,
+                    AttributeFieldType = CswEnumNbtFieldType.MetaDataList,
+                    SubFieldName = CswNbtFieldTypeRuleMetaDataList.SubFieldName.Type,
+                    Column = CswEnumNbtPropertyAttributeColumn.Fktype
+                } );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+                {
+                    OwnerFieldType = CswEnumNbtFieldType.Relationship,
+                    Name = AttributeName.Target,
+                    AttributeFieldType = CswEnumNbtFieldType.MetaDataList,
+                    SubFieldName = CswNbtFieldTypeRuleMetaDataList.SubFieldName.Id,
+                    Column = CswEnumNbtPropertyAttributeColumn.Fkvalue
+                } );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+                {
+                    OwnerFieldType = CswEnumNbtFieldType.Relationship,
+                    Name = AttributeName.View,
+                    AttributeFieldType = CswEnumNbtFieldType.ViewReference,
+                    Column = CswEnumNbtPropertyAttributeColumn.Nodeviewid,
+                    SubFieldName = CswNbtFieldTypeRuleViewReference.SubFieldName.ViewID
+                } );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+                {
+                    OwnerFieldType = CswEnumNbtFieldType.Relationship,
+                    Name = AttributeName.Rows,
+                    Column = CswEnumNbtPropertyAttributeColumn.Textarearows,
+                    AttributeFieldType = CswEnumNbtFieldType.Number
+                } );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+                {
+                    OwnerFieldType = CswEnumNbtFieldType.Relationship,
+                    Name = AttributeName.DefaultValue,
+                    Column = CswEnumNbtPropertyAttributeColumn.Defaultvalueid,
+                    AttributeFieldType = CswEnumNbtFieldType.Relationship
+                } );
+            return ret;
         }
 
         public void afterCreateNodeTypeProp( CswNbtMetaDataNodeTypeProp NodeTypeProp )
         {
             //Schema Updater will trigger afterCreateNodeTypeProp(), but it won't call setFk
-            if( null != NodeTypeProp )
+            if( null != NodeTypeProp && null != NodeTypeProp.DesignNode )
             {
                 string FkType = NodeTypeProp.FKType;
                 Int32 FkValue = NodeTypeProp.FKValue;
@@ -211,9 +265,10 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                 if( false == string.IsNullOrEmpty( FkType ) &&
                     Int32.MinValue != FkValue )
                 {
-                    NodeTypeProp.SetFK( FkType, FkValue );
+                    //NodeTypeProp.SetFK( FkType, FkValue );
+                    NodeTypeProp.DesignNode.AttributeProperty[AttributeName.Target].AsMetaDataList.setValue( FkType, FkValue );
+                    NodeTypeProp.DesignNode.postChanges( false );
                 }
-
                 _CswNbtFieldTypeRuleDefault.afterCreateNodeTypeProp( NodeTypeProp );
             }
         }
