@@ -81,9 +81,9 @@ namespace ChemSW.Nbt.MetaData
             return _getNodeTypesLatestVersion( _CollImpl.getAll() );
         }
 
-        public CswNbtMetaDataNodeType getNodeType( Int32 NodeTypeId, bool BypassModuleCheck = false, CswDateTime Date = null )
+        public CswNbtMetaDataNodeType getNodeType( Int32 NodeTypeId, CswDateTime Date = null, bool BypassModuleCheck = false )
         {
-            return (CswNbtMetaDataNodeType) _CollImpl.getByPk( NodeTypeId, BypassModuleCheck, Date );
+            return (CswNbtMetaDataNodeType) _CollImpl.getByPk( NodeTypeId, Date, BypassModuleCheck );
         }
 
 

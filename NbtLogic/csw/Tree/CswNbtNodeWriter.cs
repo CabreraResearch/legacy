@@ -71,7 +71,7 @@ namespace ChemSW.Nbt
                 Node.Locked = true;
             }
 
-            getWriterImpl( Node.NodeTypeId ).makeNewNodeEntry( Node, true );
+            getWriterImpl( Node.NodeTypeId ).makeNewNodeEntry( Node );
             //setDefaultPropertyValues( Node );
 
             // case 22591 - make empty rows for every property

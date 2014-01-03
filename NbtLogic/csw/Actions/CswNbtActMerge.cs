@@ -159,7 +159,7 @@ namespace ChemSW.Nbt.Actions
                     // and they now would be compound unique violations, we have to merge those too.
 
                     // First, find references that point to the merged nodes
-                    foreach( CswNbtMetaDataNodeTypeProp thisProp in _CswNbtResources.MetaData.getNodeTypeProps().Where( p => p.IsNodeReference() && p.FkMatches( Node1.getNodeType() ) ) )
+                    foreach( CswNbtMetaDataNodeTypeProp thisProp in _CswNbtResources.MetaData.getNodeTypeProps().Where( p => p.IsNodeReference() && p.FkMatchesNew( Node1.getNodeType() ) ) )
                     {
                         // Find unique key sets for nodes using this reference that point to either node1 or node2
                         Dictionary<CswDelimitedString, CswPrimaryKey> Node1UniqueKeysDict = _getUniqueKeysDict( NodePair, Node1, thisProp );

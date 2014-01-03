@@ -126,11 +126,19 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
         public sealed class AttributeName : ICswNbtFieldTypeRuleAttributeName
         {
             public const string DefaultValue = CswEnumNbtPropertyAttributeName.DefaultValue;
+            public const string AllowHourly = CswEnumNbtPropertyAttributeName.AllowHourly;
         }
 
         public Collection<CswNbtFieldTypeAttribute> getAttributes()
         {
             Collection<CswNbtFieldTypeAttribute> ret = _CswNbtFieldTypeRuleDefault.getAttributes( CswEnumNbtFieldType.TimeInterval );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+            {
+                OwnerFieldType = CswEnumNbtFieldType.TimeInterval,
+                Name = AttributeName.AllowHourly,
+                Column = CswEnumNbtPropertyAttributeColumn.Attribute1,
+                AttributeFieldType = CswEnumNbtFieldType.Logical
+            } );
             ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
             {
                 OwnerFieldType = CswEnumNbtFieldType.TimeInterval,

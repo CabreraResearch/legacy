@@ -65,7 +65,7 @@ namespace ChemSW.Nbt.Actions
             [DataMember( IsRequired = false )]
             public CswNbtView FavoriteItemsView;
 
-            [DataMember] 
+            [DataMember]
             public Collection<String> CopyableRequestTypes;
 
             [DataMember]
@@ -165,7 +165,6 @@ namespace ChemSW.Nbt.Actions
                     {
                         ( (CswNbtObjClassRequest) NewNode ).IsRecurring.Checked = CswEnumTristate.True;
                     } );
-                        } );
                 }
             }
             return _RecurringRequestNode;
@@ -397,7 +396,7 @@ namespace ChemSW.Nbt.Actions
             Ret.AddViewPropertyAndFilter( RequestItemRel,
                 _RequestItemOC.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Request ),
                 ShowInGrid: false,
-                SubFieldName : CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID,
+                SubFieldName: CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID,
                 Value: getRecurringRequestNode().NodeId.PrimaryKey.ToString() );
             return Ret;
         }
@@ -607,8 +606,8 @@ namespace ChemSW.Nbt.Actions
                 {
                     RequestItemNode.Container.RelatedNodeId = Container.NodeId;
                     RequestItemNode.Material.RelatedNodeId = Container.Material.RelatedNodeId;
-                    CswPrimaryKey SelectedLocationId = CswTools.IsPrimaryKey( _ThisUser.DefaultLocationId ) ? 
-                        _ThisUser.DefaultLocationId : 
+                    CswPrimaryKey SelectedLocationId = CswTools.IsPrimaryKey( _ThisUser.DefaultLocationId ) ?
+                        _ThisUser.DefaultLocationId :
                         Container.Location.SelectedNodeId;
                     ButtonData.Action = CswEnumNbtButtonAction.request;
                     switch( ButtonData.SelectedText )

@@ -112,7 +112,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return CswConvert.ToBoolean( _CswNbtMetaDataNodeTypeProp.Attribute1 );
+                return CswConvert.ToBoolean( _CswNbtNodePropData[CswNbtFieldTypeRuleTimeInterval.AttributeName.AllowHourly] );
             }
         }
 

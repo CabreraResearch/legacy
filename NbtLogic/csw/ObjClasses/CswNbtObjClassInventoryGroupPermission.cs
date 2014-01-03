@@ -77,14 +77,6 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
-        {
-        }
-
-        public override void afterCreateNode()
-        {
-        }
-
         public override bool canAction( CswNbtAction Action )
         {
             bool hasPermission = false;

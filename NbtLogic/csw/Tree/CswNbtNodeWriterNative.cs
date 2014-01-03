@@ -83,8 +83,6 @@ namespace ChemSW.Nbt
                 NewNodeRow["relationalid"] = Node.RelationalId.PrimaryKey;
                 NewNodeRow["relationaltable"] = Node.RelationalId.TableName;
             }
-        } // makeNewNodeEntry()
-
             CswTableUpdateNodes.update( NewNodeTable );
         } // makeNewNodeEntry()
 
@@ -114,7 +112,7 @@ namespace ChemSW.Nbt
             // case 29311 - Sync with relational data
             if( Node.getNodeType().DoRelationalSync )
             {
-                _CswNbtNodeWriterRelationalDb.write( Node, ForceSave, IsCopy );
+                _CswNbtNodeWriterRelationalDb.write( Node, ForceSave, IsCopy, AllowAuditing );
             }
 
             if( null != Node.RelationalId )

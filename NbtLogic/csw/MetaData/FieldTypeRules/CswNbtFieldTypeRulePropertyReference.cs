@@ -229,7 +229,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             CswNbtFieldTypeAttribute FkValueAttr = Attributes.FirstOrDefault( a => a.Column == CswEnumNbtPropertyAttributeColumn.Fkvalue );
             CswNbtFieldTypeAttribute ValuePropTypeAttr = Attributes.FirstOrDefault( a => a.Column == CswEnumNbtPropertyAttributeColumn.Valueproptype );
             CswNbtFieldTypeAttribute ValuePropIdAttr = Attributes.FirstOrDefault( a => a.Column == CswEnumNbtPropertyAttributeColumn.Valuepropid );
-            
+
             if( DesignNTPNode.AttributeProperty.ContainsKey( FkTypeAttr.Name ) )
             {
                 CswNbtNodePropList FkTypeProp = DesignNTPNode.AttributeProperty[FkTypeAttr.Name].AsList;
@@ -237,8 +237,10 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                 CswNbtNodePropList ValuePropTypeProp = DesignNTPNode.AttributeProperty[ValuePropTypeAttr.Name].AsList;
                 CswNbtNodePropRelationship ValuePropIdProp = DesignNTPNode.AttributeProperty[ValuePropIdAttr.Name].AsRelationship;
 
-                if( FkTypeProp.WasModified || FkValueProp.WasModified ||
-                    ValuePropTypeProp.WasModified || ValuePropIdProp.WasModified )
+                if( FkTypeProp.wasSubFieldModified( CswNbtFieldTypeRuleList.SubFieldName.Value ) ||
+                    FkValueProp.wasSubFieldModified( CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID ) ||
+                    ValuePropTypeProp.wasSubFieldModified( CswNbtFieldTypeRuleList.SubFieldName.Value ) ||
+                    ValuePropIdProp.wasSubFieldModified( CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID ) )
                 {
                     //We're changing the relationship
                     if( _isInvalidFkTarget( FkTypeProp.Value, FkValueProp.RelatedNodeId.PrimaryKey, ValuePropTypeProp.Value, ValuePropIdProp.RelatedNodeId.PrimaryKey ) )

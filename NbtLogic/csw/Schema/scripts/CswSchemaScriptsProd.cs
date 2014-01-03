@@ -30,9 +30,10 @@ namespace ChemSW.Nbt.Schema
 
             Collection<ICswSchemaScripts> AllScripts = new Collection<ICswSchemaScripts>()
                 {
-                    new CswSchemaScriptsIronwood(),
+                    //new CswSchemaScriptsIronwood(),
                     new CswSchemaScriptsJuniper(),
-                    new CswSchemaScriptsCAF()
+                    new CswSchemaScriptsKatsura()//,
+                    //new CswSchemaScriptsCAF()
                 };
 
             // DDL

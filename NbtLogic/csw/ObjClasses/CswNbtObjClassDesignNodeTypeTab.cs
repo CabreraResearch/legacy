@@ -21,12 +21,12 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
 
-        private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
+        //private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
         public CswNbtObjClassDesignNodeTypeTab( CswNbtResources CswNbtResources, CswNbtNode Node )
             : base( CswNbtResources, Node )
         {
-            _CswNbtObjClassDefault = new CswNbtObjClassDefault( _CswNbtResources, Node );
+            //_CswNbtObjClassDefault = new CswNbtObjClassDefault( _CswNbtResources, Node );
         }//ctor()
 
         public override CswNbtMetaDataObjectClass ObjectClass
@@ -65,16 +65,16 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
+        public override void beforePromoteNode() // bool IsCopy, bool OverrideUniqueValidation )
         {
             if( Int32.MinValue == Order.Value )
             {
                 Order.Value = NodeType.getNextTabOrder();
             }
-            _CswNbtObjClassDefault.beforeCreateNode( IsCopy, OverrideUniqueValidation );
+            //_CswNbtObjClassDefault.beforeCreateNode( IsCopy, OverrideUniqueValidation );
         }
 
-        public override void afterCreateNode()
+        public override void afterPromoteNode()
         {
             // ------------------------------------------------------------
             // This logic from makeNewTab in CswNbtMetaData.cs
@@ -107,23 +107,7 @@ namespace ChemSW.Nbt.ObjClasses
                 }
                 //} // if( TabsTable.Rows.Count > 0 )
             } // if( CswTools.IsPrimaryKey( RelationalId ) )
-            _CswNbtObjClassDefault.afterCreateNode();
-        } // afterCreateNode()
-
-        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
-        {
-            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
-        }//beforeWriteNode()
-
-        public override void afterWriteNode()
-        {
-            _CswNbtObjClassDefault.afterWriteNode();
-        }//afterWriteNode()
-
-        public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
-        {
-            _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes );
-        }//beforeDeleteNode()
+        } // afterPromoteNode()
 
         /// <summary>
         /// True if the delete is a result of deleting the nodetype
@@ -177,19 +161,9 @@ namespace ChemSW.Nbt.ObjClasses
 
             } // if( false == InternalDelete )
 
-            _CswNbtObjClassDefault.afterDeleteNode();
+            //_CswNbtObjClassDefault.afterDeleteNode();
 
         } //afterDeleteNode()        
-
-        protected override void afterPopulateProps()
-        {
-            _CswNbtObjClassDefault.triggerAfterPopulateProps();
-        }//afterPopulateProps()
-
-        public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
-        {
-            _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
-        }
 
         protected override bool onButtonClick( NbtButtonData ButtonData )
         {

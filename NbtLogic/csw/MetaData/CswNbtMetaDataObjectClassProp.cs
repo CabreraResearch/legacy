@@ -258,26 +258,26 @@ namespace ChemSW.Nbt.MetaData
             return SubField.Column.ToString() + FilterDelimiter + FilterMode + FilterDelimiter + FilterValue;
         }
 
-        public void setFilter( Int32 FilterObjectClassPropId, CswNbtSubField SubField, CswEnumNbtFilterMode FilterMode, object FilterValue )
+        public void setFilterDeprecated( Int32 FilterObjectClassPropId, CswNbtSubField SubField, CswEnumNbtFilterMode FilterMode, object FilterValue )
         {
             string FilterString = makeFilter( SubField, FilterMode, FilterValue );
             CswNbtMetaDataObjectClassProp FilterProp = _CswNbtMetaDataResources.CswNbtMetaData.getObjectClassProp( FilterObjectClassPropId );
-            _setFilter( FilterProp, FilterString );
+            _setFilterDeprecated( FilterProp, FilterString );
         }
 
-        public void setFilter( CswNbtMetaDataObjectClassProp FilterProp, CswNbtSubField SubField, CswEnumNbtFilterMode FilterMode, object FilterValue )
+        public void setFilterDeprecated( CswNbtMetaDataObjectClassProp FilterProp, CswNbtSubField SubField, CswEnumNbtFilterMode FilterMode, object FilterValue )
         {
             string FilterString = makeFilter( SubField, FilterMode, FilterValue );
-            _setFilter( FilterProp, FilterString );
+            _setFilterDeprecated( FilterProp, FilterString );
         }
 
-        public void setFilter( Int32 FilterObjectClassPropId, string FilterString )
+        public void setFilterDeprecated( Int32 FilterObjectClassPropId, string FilterString )
         {
             CswNbtMetaDataObjectClassProp FilterProp = _CswNbtMetaDataResources.CswNbtMetaData.getObjectClassProp( FilterObjectClassPropId );
-            _setFilter( FilterProp, FilterString );
+            _setFilterDeprecated( FilterProp, FilterString );
         }
 
-        private void _setFilter( CswNbtMetaDataObjectClassProp FilterProp, string FilterString )
+        private void _setFilterDeprecated( CswNbtMetaDataObjectClassProp FilterProp, string FilterString )
         {
             if( IsRequired )
             {
@@ -309,17 +309,17 @@ namespace ChemSW.Nbt.MetaData
 
             if( changed )
             {
-                _setNodeTypePropFilters( FilterProp, FilterString );
+                _setNodeTypePropFiltersDeprecated( FilterProp, FilterString );
             }
         }
 
-        public void setNodeTypePropFilters()
+        public void setNodeTypePropFiltersDeprecated()
         {
             CswNbtMetaDataObjectClassProp FilterProp = _CswNbtMetaDataResources.CswNbtMetaData.getObjectClassProp( FilterObjectClassPropId );
-            _setNodeTypePropFilters( FilterProp, getFilterString() );
+            _setNodeTypePropFiltersDeprecated( FilterProp, getFilterString() );
         }
 
-        private void _setNodeTypePropFilters( CswNbtMetaDataObjectClassProp FilterProp, string FilterString )
+        private void _setNodeTypePropFiltersDeprecated( CswNbtMetaDataObjectClassProp FilterProp, string FilterString )
         {
             foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in this.getNodeTypeProps() )
             {
@@ -329,7 +329,7 @@ namespace ChemSW.Nbt.MetaData
                     {
                         if( FilterPropNodeTypeProp.NodeTypeId == NodeTypeProp.NodeTypeId )
                         {
-                            NodeTypeProp.setFilter( FilterPropNodeTypeProp, FilterString );
+                            NodeTypeProp.setFilterDeprecated( FilterPropNodeTypeProp, FilterString );
                         }
                     }
                 }
@@ -377,13 +377,13 @@ namespace ChemSW.Nbt.MetaData
             private set { _ObjectClassPropRow["fkvalue"] = value; }
         }
 
-        public void setNodeTypePropFK()
+        public void setNodeTypePropFKDeprecated()
         {
             if( IsFK && false == String.IsNullOrEmpty( FKType ) && Int32.MinValue != FKValue )
             {
                 foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in this.getNodeTypeProps() )
                 {
-                    NodeTypeProp.SetFK( FKType, FKValue, ValuePropType, ValuePropId );
+                    NodeTypeProp.SetFKDeprecated( FKType, FKValue, ValuePropType, ValuePropId );
                 }
             }
         }

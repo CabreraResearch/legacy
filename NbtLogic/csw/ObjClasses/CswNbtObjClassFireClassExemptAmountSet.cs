@@ -5,14 +5,14 @@ using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassFireClassExemptAmountSet: CswNbtObjClass
+    public class CswNbtObjClassFireClassExemptAmountSet : CswNbtObjClass
     {
         public new sealed class PropertyName : CswNbtObjClass.PropertyName
         {
             public const string SetName = "Set Name";
         }
 
-        public CswNbtObjClassFireClassExemptAmountSet( CswNbtResources CswNbtResources, CswNbtNode Node ) : base( CswNbtResources, Node ) {}
+        public CswNbtObjClassFireClassExemptAmountSet( CswNbtResources CswNbtResources, CswNbtNode Node ) : base( CswNbtResources, Node ) { }
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
@@ -34,13 +34,9 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public override CswNbtNode CopyNode( bool IsNodeTemp = false )
+        public override CswNbtNode CopyNode( bool IsNodeTemp = false, Action<CswNbtNode> OnCopy = null )
         {
-            CswNbtNode CopiedFireClassExemptAmountSetNode = base.CopyNodeImpl( IsNodeTemp: IsNodeTemp, OnCopy: delegate( CswNbtNode NewNode )
-                {
-                    NewNode.copyPropertyValues( Node );
-                    // CopiedFireClassExemptAmountSetNode.postChanges( true, true );
-                } );
+            CswNbtNode CopiedFireClassExemptAmountSetNode = base.CopyNodeImpl( IsNodeTemp, OnCopy );
 
             // Copy all Related FireClassExemptAmount Nodes
             CswNbtMetaDataObjectClass FireClassExemptAmountObjectClass = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.FireClassExemptAmountClass );
@@ -64,7 +60,6 @@ namespace ChemSW.Nbt.ObjClasses
                     {
                         NewNode.copyPropertyValues( OriginalFCEANode.Node );
                         ( (CswNbtObjClassFireClassExemptAmount) NewNode ).SetName.RelatedNodeId = CopiedFireClassExemptAmountSetNode.NodeId;
-                        //CopiedFCEANode.postChanges( true );
                     } );
                 FCEATree.goToParentNode();
                 ChildrenCopied++;

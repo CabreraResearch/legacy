@@ -79,11 +79,10 @@ namespace ChemSW.Nbt
                 _CswNbtResources.Modules.HideProp( containerNT.NodeTypeId, CswNbtObjClassContainer.PropertyName.LotControlled );
                 _CswNbtResources.Modules.HideProp( containerNT.NodeTypeId, CswNbtObjClassContainer.PropertyName.Requisitionable );
                 _CswNbtResources.Modules.HideProp( containerNT.NodeTypeId, CswNbtObjClassContainer.PropertyName.ReservedFor );
-                if( null != cmgTab )
-                {
-                    cmgTab.DesignNode.Node.delete( false, true );
-                }
-                    CmgTab.DesignNode.Node.delete( false, true );
+                //if( null != cmgTab )
+                //{
+                //    cmgTab.DesignNode.Node.delete( false, true );
+                //}
             }
 
             CswNbtMetaDataObjectClass RequestItemOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestItemClass );

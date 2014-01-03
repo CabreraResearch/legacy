@@ -177,7 +177,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             if( DesignNTPNode.AttributeProperty.ContainsKey( FkTypeAttr.Name ) )
             {
                 CswNbtNodePropWrapper FkTypeProp = DesignNTPNode.AttributeProperty[FkTypeAttr.Name];
-                if( null != FkTypeProp && FkTypeProp.WasModified )
+                if( null != FkTypeProp && FkTypeProp.wasAnySubFieldModified( false ) )
                 {
                     CswNbtNodePropMetaDataList FkProp = FkTypeProp.AsMetaDataList;
                     if( CswEnumNbtViewRelatedIdType.Unknown != FkProp.Type && Int32.MinValue != FkProp.Id )

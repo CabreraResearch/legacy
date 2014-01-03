@@ -27,11 +27,11 @@ namespace ChemSW.Nbt.Schema
         {
             if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "nodes", "relationalid" ) )
             {
-                _CswNbtSchemaModTrnsctn.addLongColumn( "nodes", "relationalid", "Foreign key to relational-model copy of this node", false, false );
+                _CswNbtSchemaModTrnsctn.addLongColumn( "nodes", "relationalid", "Foreign key to relational-model copy of this node", false );
             }
             if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "nodes", "relationaltable" ) )
             {
-                _CswNbtSchemaModTrnsctn.addStringColumn( "nodes", "relationaltable", "Table of relational-model copy of this node", false, false, 50 );
+                _CswNbtSchemaModTrnsctn.addStringColumn( "nodes", "relationaltable", "Table of relational-model copy of this node", false, 50 );
             }
         } // update()
 

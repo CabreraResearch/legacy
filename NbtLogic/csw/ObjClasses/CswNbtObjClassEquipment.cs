@@ -71,14 +71,6 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
-        {
-        }
-
-        public override void afterCreateNode()
-        {
-        }
-
         protected override void afterPopulateProps()
         {
             if( Type.RelatedNodeId != null )
@@ -117,13 +109,10 @@ namespace ChemSW.Nbt.ObjClasses
             return true;
         }
 
-        public override CswNbtNode CopyNode( bool IsNodeTemp = false )
+        public override CswNbtNode CopyNode( bool IsNodeTemp = false, Action<CswNbtNode> OnCopy = null )
         {
-            CswNbtNode CopiedEquipmentNode = base.CopyNodeImpl( IsNodeTemp : IsNodeTemp, OnCopy : delegate( CswNbtNode NewNode )
-                {
-                    NewNode.copyPropertyValues( Node );
-                    //CopiedEquipmentNode.postChanges( true, true );
-                } );
+            CswNbtNode CopiedEquipmentNode = base.CopyNodeImpl( IsNodeTemp, OnCopy );
+
             // Copy all Generators
             CswNbtMetaDataObjectClass GeneratorObjectClass = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.GeneratorClass );
             CswNbtView GeneratorView = new CswNbtView( _CswNbtResources );
@@ -146,7 +135,6 @@ namespace ChemSW.Nbt.ObjClasses
                     {
                         NewNode.copyPropertyValues( OriginalGeneratorNode );
                         ( (CswNbtObjClassGenerator) NewNode ).Owner.RelatedNodeId = CopiedEquipmentNode.NodeId;
-                        //CopiedGeneratorNode.postChanges( true, true );
                     } );
                 GeneratorTree.goToParentNode();
                 c++;

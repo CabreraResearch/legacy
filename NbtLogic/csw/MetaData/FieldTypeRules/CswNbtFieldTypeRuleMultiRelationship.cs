@@ -55,11 +55,11 @@
 //            _CswNbtFieldTypeRuleDefault.onSetFk( MetaDataProp, DesignNTPNode );
 //        }
 
-        }
 
-        public string getHelpText()
-        {
-            return string.Empty;
+        //public string getHelpText()
+        //{
+        //    return string.Empty;
+        //}
         
 //        public Collection<CswNbtFieldTypeAttribute> getAttributes()
 //        {

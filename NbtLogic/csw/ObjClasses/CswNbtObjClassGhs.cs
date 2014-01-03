@@ -76,7 +76,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events      
 
-        public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
+        public override void beforePromoteNode() // bool IsCopy, bool OverrideUniqueValidation )
         {
             LabelCodes.InitOptions = _initGhsPhraseOptions;
             Classifications.InitOptions = _initGhsClassificationOptions;

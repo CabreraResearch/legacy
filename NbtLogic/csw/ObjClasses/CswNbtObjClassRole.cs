@@ -27,7 +27,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public const string ActionPermissionsXValueName = CswNbtAction.PermissionXValue;
 
-        public CswNbtObjClassRole( CswNbtResources CswNbtResources, CswNbtNode Node ) : base( CswNbtResources, Node ) {}
+        public CswNbtObjClassRole( CswNbtResources CswNbtResources, CswNbtNode Node ) : base( CswNbtResources, Node ) { }
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
@@ -52,8 +52,8 @@ namespace ChemSW.Nbt.ObjClasses
         public override void beforeWriteNode( bool Creating )
         {
             // The user cannot change his or her own Administrator privileges.
-            if( Administrator.wasAnySubFieldModified() && 
-                Administrator.Checked != CswConvert.ToTristate(Administrator.GetOriginalPropRowValue()) &&
+            if( Administrator.wasAnySubFieldModified() &&
+                Administrator.Checked != CswConvert.ToTristate( Administrator.GetOriginalPropRowValue() ) &&
                 _CswNbtResources.CurrentUser.RoleId == _CswNbtNode.NodeId )
             {
                 _CswNbtNode.Properties.clearModifiedFlag();  // prevents multiple error messages from appearing if we attempt to write() again
@@ -70,7 +70,7 @@ namespace ChemSW.Nbt.ObjClasses
                 throw new CswDniException( CswEnumErrorType.Warning, "The " + ChemSWAdminRoleName + " role cannot be edited", "Current user (" + _CswNbtResources.CurrentUser.Username + ") attempted to edit the '" + ChemSWAdminRoleName + "' role." );
             }
 
-            if( NodeTypePermissions.WasModified )
+            if( NodeTypePermissions.wasAnySubFieldModified( false ) )
             {
                 // case 25444 - was it *really* modified?
                 CswNbtNodePropWrapper NodeTypePermissionsPropWrapper = Node.Properties[PropertyName.NodeTypePermissions];

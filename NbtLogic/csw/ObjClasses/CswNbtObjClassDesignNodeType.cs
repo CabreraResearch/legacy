@@ -36,12 +36,12 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
 
-        private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
+        //private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
         public CswNbtObjClassDesignNodeType( CswNbtResources CswNbtResources, CswNbtNode Node )
             : base( CswNbtResources, Node )
         {
-            _CswNbtObjClassDefault = new CswNbtObjClassDefault( _CswNbtResources, Node );
+            //_CswNbtObjClassDefault = new CswNbtObjClassDefault( _CswNbtResources, Node );
         }
 
         //ctor()
@@ -91,18 +91,16 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         public bool InternalCreate = false;
 
-        public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
+        public override void beforePromoteNode() //bool IsCopy, bool OverrideUniqueValidation )
         {
-            if( false == OverrideUniqueValidation && null != _CswNbtResources.MetaData.getNodeType( NodeTypeName.Text ) )
+            if( //false == OverrideUniqueValidation && 
+                null != _CswNbtResources.MetaData.getNodeType( NodeTypeName.Text ) )
             {
                 throw new CswDniException( CswEnumErrorType.Warning, "Node Type Name must be unique", "Attempted to create a new nodetype with the same name as an existing nodetype" );
             }
-            _CswNbtObjClassDefault.beforeCreateNode( IsCopy, OverrideUniqueValidation );
         }
 
-        // beforeCreateNode()
-
-        public override void afterCreateNode()
+        public override void afterPromoteNode()
         {
             // ------------------------------------------------------------
             // This logic from makeNewNodeType in CswNbtMetaData.cs
@@ -233,8 +231,7 @@ namespace ChemSW.Nbt.ObjClasses
 
             } // if( CswTools.IsPrimaryKey( RelationalId ) )
 
-            _CswNbtObjClassDefault.afterCreateNode();
-        } // afterCreateNode()
+        } // afterPromoteNode()
 
 
 
@@ -287,7 +284,7 @@ namespace ChemSW.Nbt.ObjClasses
 
 
 
-        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
+        public override void beforeWriteNode( bool IsCreating ) // bool IsCopy, bool OverrideUniqueValidation )
         {
             if( null != RelationalNodeType )
             {
@@ -295,15 +292,10 @@ namespace ChemSW.Nbt.ObjClasses
                 NameTemplateValue.Text = CswNbtMetaData.TemplateTextToTemplateValue( RelationalNodeType.getNodeTypeProps(), NameTemplateText.Text );
             }
 
-            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
+            //_CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
         } //beforeWriteNode()
 
-        public override void afterWriteNode()
-        {
-            _CswNbtObjClassDefault.afterWriteNode();
-        } //afterWriteNode()
-
-        public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
+        public override void beforeDeleteNode() // bool DeleteAllRequiredRelatedNodes = false )
         {
             if( false == IsTemp )
             {
@@ -349,10 +341,8 @@ namespace ChemSW.Nbt.ObjClasses
                 //}
                 //ViewsUpdate.update( ViewsTable );
             } // if( false == IsTemp )
-            _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes );
-        }
-
-        //beforeDeleteNode()
+            //_CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes );
+        } //beforeDeleteNode()
 
         public override void afterDeleteNode()
         {
@@ -367,10 +357,7 @@ namespace ChemSW.Nbt.ObjClasses
 
                 //_CswNbtResources.MetaData.DeleteNodeType( RelationalNodeType );
             }
-            _CswNbtObjClassDefault.afterDeleteNode();
-        }
-
-        // afterDeleteNode()        
+        } // afterDeleteNode()        
 
         protected override void afterPopulateProps()
         {
@@ -379,7 +366,7 @@ namespace ChemSW.Nbt.ObjClasses
             ObjectClassProperty.SetOnPropChange( _ObjectClassProperty_Change );
 
             // Prevent renaming "Design" nodetypes
-            if( null != RelationalNodeType && 
+            if( null != RelationalNodeType &&
                 null != RelationalNodeType.getObjectClass() &&
                 ( RelationalNodeType.getObjectClass().ObjectClass == CswEnumNbtObjectClass.DesignNodeTypeClass ||
                   RelationalNodeType.getObjectClass().ObjectClass == CswEnumNbtObjectClass.DesignNodeTypeTabClass ||
@@ -423,16 +410,7 @@ namespace ChemSW.Nbt.ObjClasses
                 IconFileName.ImagePrefix = CswNbtMetaDataObjectClass.IconPrefix16;
                 IconFileName.Options = IconOptions;
             }
-
-            _CswNbtObjClassDefault.triggerAfterPopulateProps();
-        }
-
-        //afterPopulateProps()
-
-        public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
-        {
-            _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
-        }
+        } //afterPopulateProps()
 
         protected override bool onButtonClick( NbtButtonData ButtonData )
         {
@@ -457,7 +435,7 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
 
-        public override CswNbtNode CopyNode( Action<CswNbtNode> OnCopy )
+        public override CswNbtNode CopyNode( bool IsNodeTemp = false, Action<CswNbtNode> OnCopy = null )
         {
             // Copy NodeType
             string NewNodeTypeName = "Copy Of " + NodeTypeName.Text;
@@ -468,22 +446,21 @@ namespace ChemSW.Nbt.ObjClasses
                 NewNodeTypeName = "Copy " + CopyInt.ToString() + " Of " + NodeTypeName.Text;
             }
 
-            CswNbtObjClassDesignNodeType NodeTypeCopy = base.CopyNode( delegate( CswNbtNode NewNode )
+            CswNbtObjClassDesignNodeType NodeTypeCopy = base.CopyNodeImpl( IsNodeTemp, delegate( CswNbtNode NewNode )
+            {
+                ( (CswNbtObjClassDesignNodeType) NewNode ).InternalCreate = true;
+                ( (CswNbtObjClassDesignNodeType) NewNode ).NodeTypeName.Text = NewNodeTypeName;
+                if( null != OnCopy )
                 {
-                    ( (CswNbtObjClassDesignNodeType) NewNode ).InternalCreate = true;
-                    ( (CswNbtObjClassDesignNodeType) NewNode ).NodeTypeName.Text = NewNodeTypeName;
-                    if( null != OnCopy )
-                    {
-                        OnCopy( NewNode );
-                    }
-                } );
-
+                    OnCopy( NewNode );
+                }
+            } );
 
             // Copy Tabs
             Dictionary<Int32, CswNbtObjClassDesignNodeTypeTab> TabMap = new Dictionary<Int32, CswNbtObjClassDesignNodeTypeTab>();
             foreach( CswNbtObjClassDesignNodeTypeTab TabNode in getTabNodes() )
             {
-                CswNbtObjClassDesignNodeTypeTab TabCopy = TabNode.CopyNode( delegate( CswNbtNode CopiedNode )
+                CswNbtObjClassDesignNodeTypeTab TabCopy = TabNode.CopyNode( IsNodeTemp, delegate( CswNbtNode CopiedNode )
                     {
                         ( (CswNbtObjClassDesignNodeTypeTab) CopiedNode ).NodeTypeValue.RelatedNodeId = NodeTypeCopy.NodeId;
                         ( (CswNbtObjClassDesignNodeTypeTab) CopiedNode ).TabName.Text = TabNode.TabName.Text;
@@ -498,7 +475,7 @@ namespace ChemSW.Nbt.ObjClasses
             Dictionary<Int32, CswNbtObjClassDesignNodeTypeProp> PropMap = new Dictionary<Int32, CswNbtObjClassDesignNodeTypeProp>();
             foreach( CswNbtObjClassDesignNodeTypeProp PropNode in PropNodes )
             {
-                CswNbtObjClassDesignNodeTypeProp PropCopy = PropNode.CopyNode( delegate( CswNbtNode CopiedNode )
+                CswNbtObjClassDesignNodeTypeProp PropCopy = PropNode.CopyNode( IsNodeTemp, delegate( CswNbtNode CopiedNode )
                     {
                         ( (CswNbtObjClassDesignNodeTypeProp) CopiedNode ).NodeTypeValue.RelatedNodeId = NodeTypeCopy.NodeId;
                         ( (CswNbtObjClassDesignNodeTypeProp) CopiedNode ).PropName.Text = PropNode.PropName.Text;
@@ -522,7 +499,7 @@ namespace ChemSW.Nbt.ObjClasses
                 {
                     foreach( CswEnumNbtLayoutType LayoutType in CswEnumNbtLayoutType._All )
                     {
-                        Dictionary<Int32, CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout> OriginalLayouts = _CswNbtResources.MetaData.NodeTypeLayout.getLayout( LayoutType, PropNode.RelationalNodeTypeProp );
+                        Dictionary<Int32, CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout> OriginalLayouts = _CswNbtResources.MetaData.NodeTypeLayout.getLayout( LayoutType, PropNode.RelationalNodeTypeProp, null );
                         foreach( CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout OriginalLayout in OriginalLayouts.Values )
                         {
                             if( OriginalLayout != null )
@@ -580,7 +557,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropText NameTemplateValue { get { return ( _CswNbtNode.Properties[PropertyName.NameTemplateValue] ); } }
 
         public CswNbtNodePropRelationship NameTemplateAdd { get { return ( _CswNbtNode.Properties[PropertyName.NameTemplateAdd] ); } }
-        private void _NameTemplateAdd_Change( CswNbtNodeProp Prop )
+        private void _NameTemplateAdd_Change( CswNbtNodeProp Prop, bool Creating )
         {
             // Add the selected value to the name template
             CswNbtObjClassDesignNodeTypeProp SelectedProp = _CswNbtResources.Nodes[NameTemplateAdd.RelatedNodeId];
@@ -602,7 +579,7 @@ namespace ChemSW.Nbt.ObjClasses
         } // _NameTemplateAdd_Change()
 
         public CswNbtNodePropText NodeTypeName { get { return ( _CswNbtNode.Properties[PropertyName.NodeTypeName] ); } }
-        public void _NodeTypeName_Change( CswNbtNodeProp Prop )
+        public void _NodeTypeName_Change( CswNbtNodeProp Prop, bool Creating )
         {
             //if( null != RelationalNodeType && RelationalNodeType.getObjectClass().ObjectClass == CswEnumNbtObjectClass.InspectionDesignClass )
             if( null != RelationalNodeType &&
@@ -618,7 +595,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropList ObjectClassProperty { get { return ( _CswNbtNode.Properties[PropertyName.ObjectClass] ); } }
 
         public CswNbtMetaDataObjectClass ObjectClassPropertyValue { get { return _CswNbtResources.MetaData.getObjectClass( CswConvert.ToInt32( ObjectClassProperty.Value ) ); } }
-        private void _ObjectClassProperty_Change( CswNbtNodeProp Prop )
+        private void _ObjectClassProperty_Change( CswNbtNodeProp Prop, bool Creating )
         {
             CswEnumNbtObjectClass OriginalOC = ObjectClassProperty.GetOriginalPropRowValue( CswNbtFieldTypeRuleList.SubFieldName.Text );
             if( false == string.IsNullOrEmpty( OriginalOC ) &&

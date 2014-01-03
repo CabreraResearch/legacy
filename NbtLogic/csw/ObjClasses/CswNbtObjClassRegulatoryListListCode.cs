@@ -48,22 +48,22 @@ namespace ChemSW.Nbt.ObjClasses
                 ListCode.Text = ListName.Value;
                 ListCode.SyncGestalt();
             }
-        }//beforeWriteNode()
+        }
 
-        public override void afterWriteNode()
+        public override void afterPromoteNode()
         {
-            _setChemicalsPendingUpdate(); // TODO: Move to afterCreateNode() when Design Mode is done
-        }//afterWriteNode()
+            _setChemicalsPendingUpdate();
+        }
 
         public override void afterDeleteNode()
         {
             _setChemicalsPendingUpdate();
-        }//afterDeleteNode()        
+        }
 
         protected override void afterPopulateProps()
         {
             ListName.OnBeforeFilterOptions = _searchRegulationDb;
-        }//afterPopulateProps()
+        }
 
         #endregion
 

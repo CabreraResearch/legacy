@@ -86,7 +86,8 @@ namespace ChemSW.Nbt.PropTypes
         {
             base.ToJSON( ParentObject );  // FIRST
 
-            ParentObject[CswEnumNbtSubFieldName.Required.ToString()] = Required;
+            //ParentObject[CswEnumNbtSubFieldName.Required.ToString()] = Required;
+            ParentObject["required"] = Required;
             ParentObject[_CheckedSubField.ToXmlNodeName( true )] = Checked.ToString().ToLower();
         }
 

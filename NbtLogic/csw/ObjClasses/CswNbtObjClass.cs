@@ -536,9 +536,9 @@ namespace ChemSW.Nbt.ObjClasses
             return Ret;
         }
 
-        public virtual CswNbtNode CopyNode( bool IsNodeTemp = false )
+        public virtual CswNbtNode CopyNode( bool IsNodeTemp = false, Action<CswNbtNode> OnCopy = null )
         {
-            return CopyNodeImpl( IsNodeTemp );
+            return CopyNodeImpl( IsNodeTemp, OnCopy );
         }
         protected CswNbtNode CopyNodeImpl( bool IsNodeTemp = false, Action<CswNbtNode> OnCopy = null )
         {

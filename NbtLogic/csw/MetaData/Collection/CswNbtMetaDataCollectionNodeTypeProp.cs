@@ -39,9 +39,9 @@ namespace ChemSW.Nbt.MetaData
             return new CswNbtMetaDataNodeTypeProp( Resources, Row, Date );
         }
 
-        public CswNbtMetaDataNodeTypeProp getNodeTypeProp( Int32 NodeTypePropId, bool BypassModuleCheck = false, CswDateTime Date = null )
+        public CswNbtMetaDataNodeTypeProp getNodeTypeProp( Int32 NodeTypePropId, CswDateTime Date = null, bool BypassModuleCheck = false )
         {
-            return (CswNbtMetaDataNodeTypeProp) _CollImpl.getByPk( NodeTypePropId, BypassModuleCheck, Date );
+            return (CswNbtMetaDataNodeTypeProp) _CollImpl.getByPk( NodeTypePropId, Date, BypassModuleCheck );
         }
 
         public CswNbtMetaDataNodeTypeProp getNodeTypePropVersion( Int32 NodeTypeId, Int32 NodeTypePropId )

@@ -97,14 +97,7 @@ namespace ChemSW.Nbt.ObjClasses
         #region Inherited Events
 
         //Extend CswNbtObjClass events here
-        {
-        }
-
-        public override void afterCreateNode()
-        {
-        }
-
-
+        
         #endregion
 
         #region Object class specific properties

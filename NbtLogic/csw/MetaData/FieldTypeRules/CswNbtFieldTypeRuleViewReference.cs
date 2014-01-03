@@ -79,7 +79,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldTypeRuleDefault.onSetFk( MetaDataProp, DesignNTPNode );
         }
 
-        public new sealed class AttributeName
+        public sealed class AttributeName
         {
             // public const string DefaultValue = CswEnumNbtPropertyAttributeName.DefaultValue;
         }

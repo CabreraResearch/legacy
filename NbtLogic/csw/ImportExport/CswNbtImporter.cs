@@ -466,7 +466,7 @@ namespace ChemSW.Nbt.ImportExport
 
                         foreach( CswNbtImportDefRelationship Relation in UniqueRelationships )
                         {
-                            CswNbtImportDefOrder thisTargetOrder = BindingDef.ImportOrder.Values.FirstOrDefault( o => Relation.Relationship.FkMatches( o.NodeType ) && o.Instance == Relation.Instance );
+                            CswNbtImportDefOrder thisTargetOrder = BindingDef.ImportOrder.Values.FirstOrDefault( o => Relation.Relationship.FkMatchesNew( o.NodeType ) && o.Instance == Relation.Instance );
                             Int32 Value = _getRelationValue( BindingDef, Relation, ImportRow );
                             if( Value != Int32.MinValue )
                             {
@@ -497,7 +497,7 @@ namespace ChemSW.Nbt.ImportExport
 
         private Int32 _getRelationValue( CswNbtImportDef BindingDef, CswNbtImportDefRelationship Relation, DataRow ImportRow )
         {
-            CswNbtImportDefOrder thisTargetOrder = BindingDef.ImportOrder.Values.FirstOrDefault( o => Relation.Relationship.FkMatches( o.NodeType ) &&
+            CswNbtImportDefOrder thisTargetOrder = BindingDef.ImportOrder.Values.FirstOrDefault( o => Relation.Relationship.FkMatchesNew( o.NodeType ) &&
                                                                                                       o.Instance == Relation.Instance );
             Int32 Value = Int32.MinValue;
             if( null != thisTargetOrder )
@@ -655,7 +655,7 @@ namespace ChemSW.Nbt.ImportExport
 
             foreach( CswNbtImportDefRelationship RowRelationship in RowRelationships )
             {
-                CswNbtImportDefOrder TargetOrder = BindingDef.ImportOrder.Values.FirstOrDefault( o => RowRelationship.Relationship.FkMatches( o.NodeType ) && o.Instance == RowRelationship.Instance );
+                CswNbtImportDefOrder TargetOrder = BindingDef.ImportOrder.Values.FirstOrDefault( o => RowRelationship.Relationship.FkMatchesNew( o.NodeType ) && o.Instance == RowRelationship.Instance );
 
                 // If we have a value for the SourceRelColumnName
                 if( false == string.IsNullOrEmpty( RowRelationship.SourceRelColumnName ) &&

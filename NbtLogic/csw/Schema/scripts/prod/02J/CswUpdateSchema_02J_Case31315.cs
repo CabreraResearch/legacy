@@ -40,7 +40,7 @@ namespace ChemSW.Nbt.Schema
                 CswNbtMetaDataNodeTypeProp PPENTP = ChemicalNT.getNodeTypePropByObjectClassProp( CswNbtObjClassChemical.PropertyName.PPE );
                 if( null != PPENTP )
                 {
-                    PPENTP.ListOptions = UpdatedPPEOptions;
+                    PPENTP._DataRow["listoptions"] = UpdatedPPEOptions;
                 }
             }
         } // update()

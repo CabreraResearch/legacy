@@ -298,13 +298,7 @@ namespace ChemSW.Nbt.PropTypes
                 }
             }//set
         } //NodeId
-
-        public CswEnumNbtFieldType getFieldTypeValue()
-        {
-            CswEnumNbtFieldType Ret = ( null != NodeTypeProp ) ? NodeTypeProp.getFieldTypeValue() : _CswNbtResources.MetaData.getObjectClassProp( _ObjectClassPropId ).getFieldTypeValue();
-            return Ret;
-        }
-
+        
         private bool _ReadOnlyTemporary = false;
 
         /// <summary>
@@ -339,7 +333,7 @@ namespace ChemSW.Nbt.PropTypes
         /// </summary>
         public bool Hidden
         {
-            get { return NodeTypeProp.Hidden || _HiddenTemporary || _getRowBoolVal( CswEnumNbtPropColumn.Hidden ); }
+            get { return _NodeTypeProp.Hidden || _HiddenTemporary || _getRowBoolVal( CswEnumNbtPropColumn.Hidden ); }
         }
         /// <summary>
         /// Mark a Node's property as Hidden. 
@@ -524,7 +518,7 @@ namespace ChemSW.Nbt.PropTypes
 
         public void ClearValue()
         {
-            foreach( CswNbtSubField SubField in NodeTypeProp.getFieldTypeRule().SubFields )
+            foreach( CswNbtSubField SubField in _NodeTypeProp.getFieldTypeRule().SubFields )
             {
                 SetPropRowValue( SubField, string.Empty );
             }
@@ -644,7 +638,7 @@ namespace ChemSW.Nbt.PropTypes
             }
         } //NodeTypeId
 
-        private CswEnumNbtFieldType getFieldTypeValue()
+        public CswEnumNbtFieldType getFieldTypeValue()
         {
             CswEnumNbtFieldType ret = CswNbtResources.UnknownEnum;
             if( null != _NodeTypeProp )
@@ -654,7 +648,7 @@ namespace ChemSW.Nbt.PropTypes
             return ret;
         } // getFieldTypeValue()
 
-        private CswNbtNodePropWrapper DefaultValue
+        public CswNbtNodePropWrapper DefaultValue
         {
             get
             {

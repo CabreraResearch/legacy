@@ -47,12 +47,12 @@ namespace ChemSW.Nbt.ObjClasses
         public override void afterPromoteNode()
         {
             CswNbtPropertySetPermission.createDefaultWildcardPermission( _CswNbtResources, PermissionClass, NodeId );
-        }//afterCreateNode()  
+        }  
 
         protected override void afterPopulateProps()
         {
             AutomaticCertificateApproval.setHidden( Central.Checked != CswEnumTristate.True, false );
-        }//afterPopulateProps()
+        }
 
         protected override bool onButtonClick( NbtButtonData ButtonData )
         {

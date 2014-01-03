@@ -66,27 +66,27 @@ namespace ChemSW.Nbt.PropTypes
             get { return ( 0 == Gestalt.Length && Int32.MinValue == Id ); }
         }
 
-        override public string Gestalt
-        {
-            get { return _CswNbtNodePropData.Gestalt; }
-        }
+        //override public string Gestalt
+        //{
+        //    get { return _CswNbtNodePropData.Gestalt; }
+        //}
 
         public CswEnumNbtViewRelatedIdType Type
         {
             get { return _CswNbtNodePropData.GetPropRowValue( _TypeSubField.Column ); }
-            private set { _CswNbtNodePropData.SetPropRowValue( _TypeSubField.Column, value.ToString() ); }
+            private set { _CswNbtNodePropData.SetPropRowValue( _TypeSubField, value.ToString() ); }
         }
 
         public Int32 Id
         {
             get { return CswConvert.ToInt32( _CswNbtNodePropData.GetPropRowValue( _IdSubField.Column ) ); }
-            private set { _CswNbtNodePropData.SetPropRowValue( _IdSubField.Column, value ); }
+            private set { _CswNbtNodePropData.SetPropRowValue( _IdSubField, value ); }
         }
 
         public string Text
         {
             get { return _CswNbtNodePropData.GetPropRowValue( _TextSubField.Column ); }
-            private set { _CswNbtNodePropData.SetPropRowValue( _TextSubField.Column, Text ); }
+            private set { _CswNbtNodePropData.SetPropRowValue( _TextSubField, Text ); }
         }
 
         private void _setValue( CswEnumNbtViewRelatedIdType inType, Int32 inId, string inText )
@@ -275,7 +275,7 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void SyncGestalt()
         {
-            _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, Text );
+            _CswNbtNodePropData.SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, Text );
         }
     }//CswNbtNodeProp
 

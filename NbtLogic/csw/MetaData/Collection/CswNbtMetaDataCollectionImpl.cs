@@ -376,18 +376,21 @@ namespace ChemSW.Nbt.MetaData
             return ret;
         } // getByPk()
 
-        public ICswNbtMetaDataObject getByPk( Int32 Pk, CswDateTime Date )
+        public ICswNbtMetaDataObject getByPk( Int32 Pk, CswDateTime Date, bool BypassModuleCheck = false )
         {
             ICswNbtMetaDataObject ret = null;
             if( false == CswTools.IsDate( Date ) )
             {
-                ret = getByPk( Pk );
+                ret = getByPk( Pk, BypassModuleCheck );
             }
             else
             {
                 string Sql = "select * from " + CswNbtAuditTableAbbreviation.getAuditTableSql( _CswNbtMetaDataResources.CswNbtResources, _TableSelect.TableName, Date ) + " " + _TableSelect.TableName;
                 string Where = " where " + _PkColumnName + " = " + Pk.ToString();
-                addModuleWhereClause( ref Where );
+                if( false == BypassModuleCheck )
+                {
+                    addModuleWhereClause( ref Where );
+                }
                 Sql += Where;
 
                 CswArbitrarySelect AuditSelect = _CswNbtMetaDataResources.CswNbtResources.makeCswArbitrarySelect( "MetaDataCollectionImpl_getbypk_audit_select", Sql );
@@ -401,7 +404,7 @@ namespace ChemSW.Nbt.MetaData
         }
 
         private Dictionary<string, Collection<ICswNbtMetaDataObject>> _getWhere = null;
-        public Collection<ICswNbtMetaDataObject> getWhere( string Where )
+        public Collection<ICswNbtMetaDataObject> getWhere( string Where, bool BypassModuleCheck = false )
         {
             if( _getWhere == null )
             {
@@ -410,8 +413,10 @@ namespace ChemSW.Nbt.MetaData
             if( false == _getWhere.ContainsKey( Where ) )
             {
                 string WhereClause = Where;
-                addModuleWhereClause( ref WhereClause );
-
+                if( false == BypassModuleCheck )
+                {
+                    addModuleWhereClause( ref WhereClause );
+                }
                 DataTable Table = _TableUpdate.getTable( WhereClause );
 
                 _getWhere[Where] = _makeObjs( Table );
@@ -419,18 +424,20 @@ namespace ChemSW.Nbt.MetaData
             return _getWhere[Where];
         } // getWhere(Where)
 
-        public Collection<ICswNbtMetaDataObject> getWhere( string Where, CswDateTime Date )
+        public Collection<ICswNbtMetaDataObject> getWhere( string Where, CswDateTime Date, bool BypassModuleCheck = false )
         {
             Collection<ICswNbtMetaDataObject> ret = null;
             if( false == CswTools.IsDate( Date ) )
             {
-                ret = getWhere( Where );
+                ret = getWhere( Where, BypassModuleCheck );
             }
             else
             {
                 string Sql = "select * from " + CswNbtAuditTableAbbreviation.getAuditTableSql( _CswNbtMetaDataResources.CswNbtResources, _TableSelect.TableName, Date ) + " " + _TableSelect.TableName + " " + Where;
-                addModuleWhereClause( ref Sql );
-
+                if( false == BypassModuleCheck )
+                {
+                    addModuleWhereClause( ref Sql );
+                }
                 CswArbitrarySelect AuditSelect = _CswNbtMetaDataResources.CswNbtResources.makeCswArbitrarySelect( "MetaDataCollectionImpl_getWhere_audit_select", Sql );
                 DataTable Table = AuditSelect.getTable();
                 ret = _makeObjs( Table, Date, useCache: false );
@@ -438,10 +445,10 @@ namespace ChemSW.Nbt.MetaData
             return ret;
         } // getWhere(Where,Date)
 
-        public ICswNbtMetaDataObject getWhereFirst( string WhereClause, CswDateTime Date = null )
+        public ICswNbtMetaDataObject getWhereFirst( string WhereClause, CswDateTime Date = null, bool BypassModuleCheck = false )
         {
             ICswNbtMetaDataObject ret = null;
-            Collection<ICswNbtMetaDataObject> Coll = getWhere( WhereClause, Date );
+            Collection<ICswNbtMetaDataObject> Coll = getWhere( WhereClause, Date, BypassModuleCheck );
             if( Coll.Count > 0 )
             {
                 ret = Coll[0];

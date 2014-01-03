@@ -264,9 +264,9 @@ namespace ChemSW.Nbt.MetaData
         /// <summary>
         /// Returns the CswNbtMetaDataNodeType record by primary key
         /// </summary>
-        public CswNbtMetaDataNodeType getNodeType( Int32 NodeTypeId, bool BypassModuleCheck = false, CswDateTime Date = null )
+        public CswNbtMetaDataNodeType getNodeType( Int32 NodeTypeId, CswDateTime Date = null, bool BypassModuleCheck = false )
         {
-            return _CswNbtMetaDataResources.NodeTypesCollection.getNodeType( NodeTypeId, BypassModuleCheck, Date );
+            return _CswNbtMetaDataResources.NodeTypesCollection.getNodeType( NodeTypeId, Date, BypassModuleCheck );
         }
 
         public CswNbtMetaDataNodeType getNodeTypeFromNodeId( CswPrimaryKey NodeId, CswDateTime Date = null )
@@ -325,9 +325,9 @@ namespace ChemSW.Nbt.MetaData
         /// <summary>
         /// Fetches a NodeType Property based on the primary key (all nodetypes)
         /// </summary>
-        public CswNbtMetaDataNodeTypeProp getNodeTypeProp( Int32 NodeTypePropId, bool BypassModuleCheck = false, CswDateTime Date = null )
+        public CswNbtMetaDataNodeTypeProp getNodeTypeProp( Int32 NodeTypePropId, CswDateTime Date = null, bool BypassModuleCheck = false )
         {
-            return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypeProp( NodeTypePropId, BypassModuleCheck, Date );
+            return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypeProp( NodeTypePropId, Date, BypassModuleCheck );
         }
 
         /// <summary>
@@ -377,9 +377,9 @@ namespace ChemSW.Nbt.MetaData
         /// <summary>
         /// Fetches a NodeType Tab based on the primary key (all nodetypes)
         /// </summary>
-        public CswNbtMetaDataNodeTypeTab getNodeTypeTab( Int32 NodeTypeId, string TabName )
+        public CswNbtMetaDataNodeTypeTab getNodeTypeTab( Int32 NodeTypeId, string TabName, bool BypassModuleCheck = false )
         {
-            return _CswNbtMetaDataResources.NodeTypeTabsCollection.getNodeTypeTab( NodeTypeId, TabName );
+            return _CswNbtMetaDataResources.NodeTypeTabsCollection.getNodeTypeTab( NodeTypeId, TabName, BypassModuleCheck );
         }
 
         /// <summary>
@@ -1256,8 +1256,8 @@ namespace ChemSW.Nbt.MetaData
             if( NtpModel.ObjectClassPropToCopy != null )
             {
                 CopyNodeTypePropDefaultValueFromObjectClassProp( NtpModel.ObjectClassPropToCopy, NewProp );
-                NtpModel.ObjectClassPropToCopy.setNodeTypePropFK();
-                NtpModel.ObjectClassPropToCopy.setNodeTypePropFilters();
+                NtpModel.ObjectClassPropToCopy.setNodeTypePropFKDeprecated();
+                NtpModel.ObjectClassPropToCopy.setNodeTypePropFiltersDeprecated();
             }
 
             if( OnMakeNewNodeTypeProp != null )

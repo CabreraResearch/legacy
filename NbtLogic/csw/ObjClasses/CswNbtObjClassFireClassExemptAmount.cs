@@ -60,15 +60,7 @@ namespace ChemSW.Nbt.ObjClasses
         #endregion Properties and ctor
 
         #region Inherited Events
-
-        public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
-        {
-        }
-
-        public override void afterCreateNode()
-        {
-        }
-
+        
         public override void afterWriteNode()
         {
             _syncDefaultHazardClassOptions();

@@ -78,12 +78,12 @@ namespace ChemSW.Nbt.ObjClasses
         public override void afterPromoteNode()
         {
             _onCreateFromRequestItem();
-        }//afterCreateNode()
+        }
 
         public override void beforeWriteNode( bool Creating )
         {
             _CswNbtNode.setReadOnly( value: true, SaveToDb: true ); //case 24508
-        }//beforeWriteNode()
+        }
 
         #endregion Inherited Events
 

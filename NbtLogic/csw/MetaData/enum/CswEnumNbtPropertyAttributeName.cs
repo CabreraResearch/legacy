@@ -30,6 +30,7 @@ namespace ChemSW.Nbt.MetaData
               { Unique                        , Unique                       },
               { UseNumbering                  , UseNumbering                 },
             
+              { AllowHourly                   , AllowHourly                   }, 
               { AllowMultipleValues           , AllowMultipleValues           }, 
               { ButtonText                    , ButtonText                    }, 
               { ChildRelationship             , ChildRelationship             }, 
@@ -62,6 +63,7 @@ namespace ChemSW.Nbt.MetaData
               { QuantityOptional              , QuantityOptional              },
               { ReadOnlyDelimiter             , ReadOnlyDelimiter             }, 
               { ReadOnlyHideThreshold         , ReadOnlyHideThreshold         }, 
+              { Regex                         , Regex                         }, 
               { RegexMessage                  , RegexMessage                  }, 
               { Relationship                  , Relationship                  }, 
               { RelatedProperty               , RelatedProperty               }, 
@@ -160,6 +162,7 @@ namespace ChemSW.Nbt.MetaData
         public const string Unique = "Unique";
         public const string UseNumbering = "Use Numbering";
 
+        public const string AllowHourly = "Allow Hourly";
         public const string AllowMultipleValues = "Allow Multiple Values";
         public const string ButtonText = "Button Text";
         public const string ChildRelationship = "Child Relationship";
@@ -192,6 +195,7 @@ namespace ChemSW.Nbt.MetaData
         public const string QuantityOptional = "Quantity Optional";
         public const string ReadOnlyDelimiter = "ReadOnly Delimiter";
         public const string ReadOnlyHideThreshold = "ReadOnly Hide Threshold";
+        public const string Regex = "Regex";
         public const string RegexMessage = "Regex Message";
         public const string Relationship = "Relationship";
         public const string RelatedProperty = "Related Property";

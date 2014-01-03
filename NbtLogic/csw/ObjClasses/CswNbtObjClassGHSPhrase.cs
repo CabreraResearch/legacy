@@ -40,14 +40,6 @@ namespace ChemSW.Nbt.ObjClasses
 
         //Extend CswNbtPropertySetPhase events here
 
-        public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
-        {
-        }
-
-        public override void afterCreateNode()
-        {
-        }
-
         #endregion
 
         #region Object class specific properties

@@ -34,18 +34,18 @@ namespace ChemSW.Nbt.PropTypes
 
             // Associate subfields with methods on this object, for SetSubFieldValue()
             _SubFieldMethods.Add( _NameSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => CachedNodeName, x => CachedNodeName = CswConvert.ToString( x ) ) );
-            _SubFieldMethods.Add( _NodeIDSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => RelatedNodeId, x => RelatedNodeId = CswConvert.ToPrimaryKey( x ) ) );
+            _SubFieldMethods.Add( _NodeIDSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => RelatedNodeId,
                                                                                               x =>
-                                                                                              {
-                                                                                                  if( CswTools.IsInteger( x ) )
                                                                                                   {
-                                                                                                      RelatedNodeId = new CswPrimaryKey( "nodes", x );
-                                                                                                  }
-                                                                                                  else
-                                                                                                  {
-                                                                                                      RelatedNodeId = CswConvert.ToPrimaryKey( x );
-                                                                                                  }
-                                                                                              } ) );
+                                                                                                      if( CswTools.IsInteger( x ) )
+                                                                                                      {
+                                                                                                          RelatedNodeId = new CswPrimaryKey( "nodes", x );
+                                                                                                      }
+                                                                                                      else
+                                                                                                      {
+                                                                                                          RelatedNodeId = CswConvert.ToPrimaryKey( x );
+                                                                                                      }
+                                                                                                  } ) );
         }
 
         private CswNbtSubField _NameSubField;
@@ -117,6 +117,7 @@ namespace ChemSW.Nbt.PropTypes
                         {
                             RootRel.NodeIdsToFilterIn.Add( this.NodeId );
                         }
+                    }
                 } // if( ( View.Root.ChildRelationships.Count > 0 && View.Root.ChildRelationships[0].ChildRelationships.Count > 0 ) )
             } // if( CswTools.IsPrimaryKey( this.NodeId ) && this.NodeTypeProp != null )
         } // _setRootRelationship()
@@ -325,8 +326,8 @@ namespace ChemSW.Nbt.PropTypes
                                                                              IncludeSystemNodes: false,
                                                                              RequireViewPermissions: false,
                                                                              IncludeHiddenNodes: false );
-                CswEnumNbtViewRelatedIdType targetType = _targetType( NbtResources, _CswNbtMetaDataNodeTypeProp );
-                _addOptionsRecurse( NbtResources, Options, CswNbtTree, targetType, FkValue );
+                //CswEnumNbtViewRelatedIdType targetType = _targetType( NbtResources, _CswNbtMetaDataNodeTypeProp );
+                _addOptionsRecurse( NbtResources, Options, CswNbtTree, TargetType, FkValue );
                 if( IsRequired && Options.Count == 2 )
                 {
                     Options.Remove( new CswPrimaryKey() );

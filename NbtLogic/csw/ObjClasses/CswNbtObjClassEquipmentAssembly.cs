@@ -72,14 +72,6 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
-        {
-        }
-
-        public override void afterCreateNode()
-        {
-        }
-
         public override void afterWriteNode()
         {
             _updateEquipment();
@@ -130,15 +122,12 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }//afterPopulateProps()
 
-        public override CswNbtNode CopyNode( bool IsNodeTemp = false)
+        public override CswNbtNode CopyNode( bool IsNodeTemp = false, Action<CswNbtNode> OnCopy = null )
         {
             // Copy this Assembly
-            CswNbtNode CopiedAssemblyNode = base.CopyNodeImpl( IsNodeTemp: IsNodeTemp, OnCopy: delegate( CswNbtNode NewNode )
-                {
-                    NewNode.copyPropertyValues( Node );
-                } );
+            CswNbtNode CopiedAssemblyNode = base.CopyNodeImpl( IsNodeTemp, OnCopy );
 
-                                                                                                                                       // Copy all Equipment
+            // Copy all Equipment
             CswNbtMetaDataObjectClass EquipmentObjectClass = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.EquipmentClass );
             CswNbtView EquipmentView = new CswNbtView( _CswNbtResources );
             CswNbtViewRelationship EquipmentRelationship = EquipmentView.AddViewRelationship( EquipmentObjectClass, false );
@@ -156,7 +145,7 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 EquipmentTree.goToNthChild( c );
                 CswNbtObjClassEquipment OriginalEquipmentNode = EquipmentTree.getNodeForCurrentPosition();
-                OriginalEquipmentNode.CopyNode( delegate( CswNbtNode CopiedEquipmentNode )
+                OriginalEquipmentNode.CopyNode( IsNodeTemp, delegate( CswNbtNode CopiedEquipmentNode )
                     {
                         ( (CswNbtObjClassEquipment) CopiedEquipmentNode ).Assembly.RelatedNodeId = CopiedAssemblyNode.NodeId;
                     } );

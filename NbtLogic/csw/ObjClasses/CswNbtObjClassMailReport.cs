@@ -161,9 +161,9 @@ namespace ChemSW.Nbt.ObjClasses
             return true;
         }
 
-        public override CswNbtNode CopyNode( bool IsNodeTemp = false )
+        public override CswNbtNode CopyNode( bool IsNodeTemp = false, Action<CswNbtNode> OnCopy = null )
         {
-            CswNbtObjClassMailReport CopiedMailReport = base.CopyNodeImpl();
+            CswNbtObjClassMailReport CopiedMailReport = base.CopyNodeImpl( IsNodeTemp, OnCopy );
             if( ReportView.ViewId.isSet() )
             {
                 CswNbtView OriginalView = _CswNbtResources.ViewSelect.restoreView( ReportView.ViewId );

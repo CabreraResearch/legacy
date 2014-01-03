@@ -22,7 +22,7 @@ namespace ChemSW.Nbt.PropTypes
         /// <summary>
         /// Database interaction layer
         /// </summary>
-        private CswNbtNodePropData _CswNbtNodePropData = null;
+        protected CswNbtNodePropData _CswNbtNodePropData = null;
 
         /// <summary>
         /// Reference to the CswNbtResources object
@@ -37,7 +37,7 @@ namespace ChemSW.Nbt.PropTypes
         /// <summary>
         /// Meta Data for this property
         /// </summary>
-        private CswNbtMetaDataNodeTypeProp _CswNbtMetaDataNodeTypeProp = null;
+        protected CswNbtMetaDataNodeTypeProp _CswNbtMetaDataNodeTypeProp = null;
 
         //public CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp
         //{
@@ -533,7 +533,7 @@ namespace ChemSW.Nbt.PropTypes
                     //Implementing FieldType specific behavior here. Blame Steve.
                     if( FieldType == CswEnumNbtFieldType.ViewReference )
                     {
-                        CswNbtView View = _CswNbtResources.ViewSelect.restoreView( Source.NodeTypeProp.DefaultValue.AsViewReference.ViewId );
+                        CswNbtView View = _CswNbtResources.ViewSelect.restoreView( Source.DefaultValue.AsViewReference.ViewId );
                         CswNbtView ViewCopy = new CswNbtView( _CswNbtResources );
                         ViewCopy.saveNew( View.ViewName, View.Visibility, View.VisibilityRoleId, View.VisibilityUserId, View );
                         SetSubFieldValue( CswEnumNbtSubFieldName.ViewID, ViewCopy.ViewId );

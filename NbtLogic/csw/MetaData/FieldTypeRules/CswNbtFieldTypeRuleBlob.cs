@@ -14,6 +14,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
         {
             public static CswEnumNbtSubFieldName Name = CswEnumNbtSubFieldName.Name;
             public static CswEnumNbtSubFieldName ContentType = CswEnumNbtSubFieldName.ContentType;
+            public static CswEnumNbtSubFieldName DateModified = CswEnumNbtSubFieldName.DateModified;
         }
 
         private CswNbtFieldTypeRuleDefaultImpl _CswNbtFieldTypeRuleDefault = null;
@@ -34,7 +35,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             ContentTypeSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Null );
             SubFields.add( ContentTypeSubField );
 
-            DateModifiedSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field2_Date, CswEnumNbtSubFieldName.DateModified );
+            DateModifiedSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field2_Date, SubFieldName.DateModified );
             DateModifiedSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Equals );
             DateModifiedSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.GreaterThan );
             DateModifiedSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.GreaterThanOrEquals );

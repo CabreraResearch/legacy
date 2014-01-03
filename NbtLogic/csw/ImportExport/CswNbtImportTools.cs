@@ -50,10 +50,16 @@ namespace ChemSW.Nbt.csw.ImportExport
 
                     CswEnumNbtFieldType propFT = GetFieldTypeFromCAFPropTypeCode( row["propertytype"].ToString() );
 
-                    CswNbtMetaDataNodeTypeProp newProp = NbtResources.MetaData.makeNewProp( NodeType, propFT, PropName, Int32.MinValue );
-                    newProp.IsRequired = CswConvert.ToBoolean( row["required"] );
-                    newProp.ReadOnly = CswConvert.ToBoolean( row["readonly"] );
-                    newProp.ListOptions = row["listopts"].ToString();
+                    CswNbtMetaDataNodeTypeProp newProp = NbtResources.MetaData.makeNewPropNew( new CswNbtWcfMetaDataModel.NodeTypeProp( NodeType, NbtResources.MetaData.getFieldType( propFT ), PropName ) );
+                    //newProp.IsRequired = CswConvert.ToBoolean( row["required"] );
+                    //newProp.ReadOnly = CswConvert.ToBoolean( row["readonly"] );
+                    //newProp.ListOptions = row["listopts"].ToString();
+                    newProp.DesignNode.AttributeProperty[CswEnumNbtPropertyAttributeName.Required].AsLogical.Checked = CswConvert.ToTristate( row["required"] );
+                    newProp.DesignNode.AttributeProperty[CswEnumNbtPropertyAttributeName.ReadOnly].AsLogical.Checked = CswConvert.ToTristate( row["readonly"] );
+                    if( null != newProp.DesignNode.AttributeProperty[CswEnumNbtPropertyAttributeName.Options] )
+                    {
+                        newProp.DesignNode.AttributeProperty[CswEnumNbtPropertyAttributeName.Options].AsText.Text = CswConvert.ToString( row["listopts"] );
+                    }
                     newProp.removeFromAllLayouts();
 
                     string cafColPropName = "prop" + row["propertyid"];
@@ -107,8 +113,8 @@ namespace ChemSW.Nbt.csw.ImportExport
                              .Replace( ");\r\n\r\n\r\ncreate or replace trigger", ");\r\n\r\n\r\n/\r\ncreate or replace trigger" )
                              .Replace( "create or replace procedure", "\r\n/\r\ncreate or replace procedure" ),
                          @"\s+/" );
-            
-                                      
+
+
 
             foreach( string SQLCommand in SQLCommands )
             {   //if the string starts with any of these, it's a PL/SQL block and can be sent as-is
@@ -154,11 +160,11 @@ namespace ChemSW.Nbt.csw.ImportExport
                 TableUpdate.update( DataTable );
             }
 
-            
+
             //create a connection to the schedule service
             WSHttpBinding Binding = new WSHttpBinding();
             EndpointAddress Endpoint = new EndpointAddress( CswResources.SetupVbls["SchedServiceUri"] );
-            CswSchedSvcAdminEndPointClient SchedSvcRef = new CswSchedSvcAdminEndPointClient(Binding, Endpoint);
+            CswSchedSvcAdminEndPointClient SchedSvcRef = new CswSchedSvcAdminEndPointClient( Binding, Endpoint );
 
 
             //fetch the CAFImport rule from ScheduleService

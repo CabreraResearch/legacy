@@ -24,9 +24,6 @@ namespace ChemSW.Nbt
             _propCollRelational = new CswNbtNodePropCollDataRelational( _CswNbtResources );
         }//ctor
 
-        private CswDateTime _Date = null;
-        public CswDateTime Date
-        {
         private CswPrimaryKey _RelationalId = null;
         public CswPrimaryKey RelationalId
         {
@@ -34,6 +31,9 @@ namespace ChemSW.Nbt
             get { return ( _RelationalId ); }
         }//RelationalId
 
+        private CswDateTime _Date = null;
+        public CswDateTime Date
+        {
             get { return _Date; }
             set { _Date = value; }
         }
@@ -102,11 +102,14 @@ namespace ChemSW.Nbt
 
         public void update( bool AllowAuditing = true )
         {
-            _PropsUpdate.update( _PropsTable, ( AllowAuditing && false == _Node.IsTemp ) );
-
-            if( CswTools.IsPrimaryKey( RelationalId ) && "nodes" != RelationalId.TableName.ToLower() )
+            if( null != _Node )
             {
-                _propCollRelational.update( NodeTypeId, RelationalId, _PropsTable );
+                _PropsUpdate.update( _PropsTable, ( AllowAuditing && false == _Node.IsTemp ) );
+
+                if( CswTools.IsPrimaryKey( RelationalId ) && "nodes" != RelationalId.TableName.ToLower() )
+                {
+                    _propCollRelational.update( _Node.NodeTypeId, RelationalId, _PropsTable );
+                }
             }
         }
 

@@ -234,7 +234,7 @@ namespace ChemSW.Nbt
                 //    string PrimeKeyCol = _CswNbtResources.DataDictionary.getPrimeKeyColumn( SubField.RelationalTable );
                 //    SQLQuery += " (select " + PrimeKeyCol + " nodeid, '" + SubField.RelationalTable + "' tablename ";
                 //    SQLQuery += "    from " + SubField.RelationalTable + " ";
-                    SQLQuery += "   where " + SubField.RelationalColumn + " = '" + PropWrapper.GetSubFieldValue( SubField ) + "') ";
+                //    SQLQuery += "   where " + SubField.RelationalColumn + " = '" + PropWrapper.GetSubFieldValue( SubField ) + "') ";
                 //}
             }
             SQLQuery = "select nodeid, tablename from " + SQLQuery;
@@ -421,7 +421,8 @@ namespace ChemSW.Nbt
                 OnAfterMakeNode( Node );
             }
 
-            Node.postChanges( true, IsCopy: false, OverrideUniqueValidation: OverrideUniqueValidation, IsCreate: ( false == IsTemp ) );
+            //Node.postChanges( true, IsCopy: false, OverrideUniqueValidation: OverrideUniqueValidation, IsCreate: ( false == IsTemp ) );
+            Node.postChanges( true, IsCopy: false, OverrideUniqueValidation: OverrideUniqueValidation );
 
             // We need to hash the Int32.MinValue keys for the Add form to work
             // But we can simply override what's in the hash if we make another new node

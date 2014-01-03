@@ -64,10 +64,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public override void beforePropertySetWriteNode()
-
-        public override void afterCreateNode() { }
-
+        public override void afterPromoteNode()
         {
             this.MakeFilePropReadonly();
         }

@@ -9,13 +9,13 @@ using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassGenerator: CswNbtObjClass, ICswNbtPropertySetScheduler
+    public class CswNbtObjClassGenerator : CswNbtObjClass, ICswNbtPropertySetScheduler
     {
         #region Properties and ctor
 
         public const string InspectionGeneratorNodeTypeName = "Inspection Schedule";
 
-        public new sealed class PropertyName: CswNbtObjClass.PropertyName
+        public new sealed class PropertyName : CswNbtObjClass.PropertyName
         {
             public static string DueDateInterval = "Due Date Interval";
             public static string RunTime = "Run Time";
@@ -41,7 +41,8 @@ namespace ChemSW.Nbt.ObjClasses
 
         private CswNbtPropertySetSchedulerImpl _CswNbtPropertySetSchedulerImpl;
 
-        public CswNbtObjClassGenerator( CswNbtResources CswNbtResources, CswNbtNode Node ) : base( CswNbtResources, Node )
+        public CswNbtObjClassGenerator( CswNbtResources CswNbtResources, CswNbtNode Node )
+            : base( CswNbtResources, Node )
         {
             _CswNbtPropertySetSchedulerImpl = new CswNbtPropertySetSchedulerImpl( _CswNbtResources, this, Node );
         }
@@ -84,7 +85,7 @@ namespace ChemSW.Nbt.ObjClasses
         public override void beforeWriteNode( bool Creating )
         {
             //Case 24572
-            updateNextDueDate( ForceUpdate : false, DeleteFutureNodes : ( TargetType.wasAnySubFieldModified() || ParentType.wasAnySubFieldModified() ) );
+            updateNextDueDate( ForceUpdate: false, DeleteFutureNodes: ( TargetType.wasAnySubFieldModified() || ParentType.wasAnySubFieldModified() ) );
 
             // case 28352
             Int32 max = DueDateInterval.getMaximumWarningDays();
@@ -120,13 +121,15 @@ namespace ChemSW.Nbt.ObjClasses
             Enabled.SetOnPropChange( onEnabledChange );
         }//afterPopulateProps()
 
-        public override CswNbtNode CopyNode( bool IsNodeTemp = false )
+        public override CswNbtNode CopyNode( bool IsNodeTemp = false, Action<CswNbtNode> OnCopy = null )
         {
-            CswNbtObjClassGenerator CopiedIDNode = base.CopyNodeImpl( IsNodeTemp : IsNodeTemp, OnCopy : delegate( CswNbtNode NewNode )
+            CswNbtObjClassGenerator CopiedIDNode = base.CopyNodeImpl( IsNodeTemp, delegate( CswNbtNode NewNode )
                 {
-                    NewNode.copyPropertyValues( Node );
                     ( (CswNbtObjClassGenerator) NewNode ).RunStatus.CommentsJson = new Newtonsoft.Json.Linq.JArray();
-                    //CopiedIDNode.postChanges( true );
+                    if( null != OnCopy )
+                    {
+                        OnCopy( NewNode );
+                    }
                 } );
             return CopiedIDNode.Node;
         }
@@ -158,20 +161,20 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtViewRelationship TargetRel = View.AddViewRelationship( TargetNT, false );
             View.AddViewPropertyAndFilter( TargetRel,
                                            GeneratorNTP,
-                                           Conjunction : CswEnumNbtFilterConjunction.And,
-                                           ResultMode : CswEnumNbtFilterResultMode.Hide,
-                                           Value : this.NodeId.PrimaryKey.ToString(),
-                                           SubFieldName : ( (CswNbtFieldTypeRuleRelationship) GeneratorNTP.getFieldTypeRule() ).NodeIDSubField.Name,
-                                           FilterMode : CswEnumNbtFilterMode.Equals );
+                                           Conjunction: CswEnumNbtFilterConjunction.And,
+                                           ResultMode: CswEnumNbtFilterResultMode.Hide,
+                                           Value: this.NodeId.PrimaryKey.ToString(),
+                                           SubFieldName: ( (CswNbtFieldTypeRuleRelationship) GeneratorNTP.getFieldTypeRule() ).NodeIDSubField.Name,
+                                           FilterMode: CswEnumNbtFilterMode.Equals );
 
             if( DateTime.MinValue != TargetDay )
             {
                 View.AddViewPropertyAndFilter( TargetRel,
                                                CreatedDateNTP,
-                                               Conjunction : CswEnumNbtFilterConjunction.And,
-                                               ResultMode : CswEnumNbtFilterResultMode.Hide,
-                                               Value : TargetDay.Date.ToString(),
-                                               FilterMode : CswEnumNbtFilterMode.Equals );
+                                               Conjunction: CswEnumNbtFilterConjunction.And,
+                                               ResultMode: CswEnumNbtFilterResultMode.Hide,
+                                               Value: TargetDay.Date.ToString(),
+                                               FilterMode: CswEnumNbtFilterMode.Equals );
             }
             return View;
         }
@@ -448,11 +451,11 @@ namespace ChemSW.Nbt.ObjClasses
         {
             if( DueDateInterval.RateInterval.RateType == CswEnumRateIntervalType.Hourly )
             {
-                RunTime.setHidden( value : true, SaveToDb : true );
+                RunTime.setHidden( value: true, SaveToDb: true );
             }
             else
             {
-                RunTime.setHidden( value : false, SaveToDb : true );
+                RunTime.setHidden( value: false, SaveToDb: true );
             }
         }
         public CswNbtNodePropDateTime RunTime { get { return ( _CswNbtNode.Properties[PropertyName.RunTime] ); } }
