@@ -35,11 +35,7 @@
             var defaultHandlePrint = function () {
                 Csw.ajaxWcf.post({
                     urlMethod: 'Labels/newPrintJob',
-                    data: {
-                        LabelId: labelSel.val(),
-                        PrinterId: printerSel.selectedNodeId(),
-                        TargetIds: cswPrivate.nodeids.join(',')
-                    },
+                    data: cswPublic.getPrintData(),
                     success: function (data) {
                         labelsDiv.empty();
                         labelsDiv.nodeLink({ text: 'Label(s) will be printed in Job: ' + data.JobLink });
@@ -110,6 +106,16 @@
             if (false == cswPrivate.showButton) {
                 printBtn.hide();
             }
+
+            cswPublic.getPrintData = function() {
+                var ret = {
+                    LabelId: labelSel.val(),
+                    PrinterId: printerSel.selectedNodeId(),
+                    TargetIds: cswPrivate.nodeids.join(',')
+                };
+
+                return ret;
+            };
 
         }());
         return cswPublic;
