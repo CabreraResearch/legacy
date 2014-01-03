@@ -494,6 +494,8 @@
                             if (column.header == pkcolumnname.toUpperCase()) {
                                 column.hidden = true;
                             }
+                            column.sortable = false; //case 31144: sorting/filtering breaks editable grids for now
+                            column.filterable = false;
                             column.editable = true;
                             Object.defineProperty(column, 'editor', {
                                 writable: true,

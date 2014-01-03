@@ -678,7 +678,7 @@
             this.ClientSize = new System.Drawing.Size(774, 455);
             this.Controls.Add(this.tabControl1);
             this.Name = "Form1";
-            this.Text = "Balance Reader Client v1.0.4";
+            this.Text = "Balance Reader Client v1.0.5";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.tabControl1.ResumeLayout(false);
             this.HardwareTab.ResumeLayout(false);

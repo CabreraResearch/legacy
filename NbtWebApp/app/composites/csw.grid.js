@@ -29,6 +29,7 @@
                     urlMethod: '',
                     data: {}
                 },
+                
 
                 showMultiEditToolbar: true,
                 showCheckboxes: false,
@@ -490,7 +491,9 @@
             var columns = Csw.extend([], cswPrivate.columns);
 
             Csw.each(columns, function (val) {
-                val.filterable = true;
+                if (undefined === val.filterable) {
+                    val.filterable = true;
+                }
             });
 
             var gridopts = {

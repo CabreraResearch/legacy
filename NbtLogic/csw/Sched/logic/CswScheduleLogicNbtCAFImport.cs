@@ -246,27 +246,40 @@ namespace ChemSW.Nbt.Sched
             {
                 //we cannot check a view that references the target table from within the trigger, so we need to set values for multiplexed tables and views
                 //all of this information is derived from the create view statements in Nbt/Scripts/cafsql/CAF.sql
-                string SourceColumn;
-                string TriggerName;
-                switch( Row["tablename"].ToString() )
+                string SourceColumn = Row["pkcolumnname"].ToString();
+                string LegacyColumn = null;
+                string RenamedViewColumn = null;
+                string TriggerName = Row["sourcename"].ToString();
+                string TableName = Row["tablename"].ToString();
+                switch( TableName )
                 {
+                    //max inventory and min inventory are in the same view, but actually require two separate triggers on different source tables
                     case "maxinventory_basic":
-                        SourceColumn = "maxinventorybasicid";
+                        LegacyColumn = "maxinventorybasicid";
+                        RenamedViewColumn = "inventorybasicid";
                         TriggerName = "max_inventory";
                         break;
                     case "mininventory_basic":
-                        SourceColumn = "mininventorybasicid";
+                        LegacyColumn = "mininventorybasicid";
+                        RenamedViewColumn = "inventorybasicid";
                         TriggerName = "min_inventory";
                         break;
+
+                    //GHS, synonyms, and documents use a manufactured legacy id which is stored in the import queue that we need to account for in the trigger
                     case "documents":
-                        SourceColumn = "documentid";
-                        TriggerName = Row["sourcename"].ToString();
+                        LegacyColumn = "documentid";
+                        break;
+                    case "jct_ghsphrase_matsite":
+                        LegacyColumn = "packageid";
+                        break;
+                    case "materials_synonyms":
+                        LegacyColumn = "materialsynonymid";
                         break;
                     default:
-                        SourceColumn = Row["pkcolumnname"].ToString();
-                        TriggerName = Row["sourcename"].ToString();
+                        LegacyColumn = SourceColumn;
                         break;
                 }
+                RenamedViewColumn = RenamedViewColumn ?? LegacyColumn;
 
                 string WhenClause = "";
                 switch( Row["sourcename"].ToString() )
@@ -304,24 +317,8 @@ namespace ChemSW.Nbt.Sched
                 if( false == String.IsNullOrEmpty( WhenClause ) ) { Ret += "  when (" + WhenClause + ")\r\n"; }
 
                 // Case 31062
-                Ret += "declare statestr varchar(1);";
-
-                //Ret += "begin" + "\r\n" +
-                //       "  if inserting then" + "\r\n" +
-                //       "    insert into nbtimportqueue(nbtimportqueueid, state, itempk, sheetname, priority, errorlog)" + "\r\n" +
-                //       "       values (seq_nbtimportqueueid.nextval, 'I', :new." + SourceColumn + ", '" + Row["sourcename"] + "', 0, '');" + "\r\n" +
-                //       "  elsif updating then" + "\r\n" +
-                //       "    if :new.deleted = 1 then" + "\r\n" +
-                //       "      insert into nbtimportqueue(nbtimportqueueid, state, itempk, sheetname, priority, errorlog)" + "\r\n" +
-                //       "         values (seq_nbtimportqueueid.nextval, 'D', :new." + SourceColumn + ", '" + Row["sourcename"] + "', 0, '');" + "\r\n" +
-                //       "    else" + "\r\n" +
-                //       "      insert into nbtimportqueue(nbtimportqueueid, state, itempk, sheetname, priority, errorlog)" + "\r\n" +
-                //       "         values (seq_nbtimportqueueid.nextval, 'U', :new." + SourceColumn + ", '" + Row["sourcename"] + "', 0, '');" + "\r\n" +
-                //       "    end if;" + "\r\n" +
-                //       "  end if;" + "\r\n" +
-                //       "end;\r\n/";
-
-                Ret += @"begin
+                Ret += @"declare statestr varchar(1);
+                       begin
                           if inserting then
                             statestr := 'I';
                           elsif updating then
@@ -332,12 +329,14 @@ namespace ChemSW.Nbt.Sched
                             end if;
                           end if;
 
+                          for queue_item in (select * from " + Row["sourcename"] + " where " + RenamedViewColumn + " = :new." + LegacyColumn + @" ) loop
+
                           for x in (select count(*) cnt
                                       from dual
                                      where exists (select null
                                               from nbtimportqueue
                                              where state = statestr
-                                               and itempk = :new." + SourceColumn + @" 
+                                               and itempk = queue_item." + SourceColumn + @" 
                                                and sheetname = '" + Row["sourcename"] + @"')) loop
                             if (x.cnt = 0) then
                               insert into nbtimportqueue
@@ -345,12 +344,13 @@ namespace ChemSW.Nbt.Sched
                               values
                                 (seq_nbtimportqueueid.nextval,
                                  statestr,
-                                 :new." + SourceColumn + @",
+                                 queue_item." + SourceColumn + @",
                                  '" + Row["sourcename"] + @"',
                                  0,
                                  '');
                             end if;
                           end loop;
+                         end loop;
                         end;
                         /";
             }
