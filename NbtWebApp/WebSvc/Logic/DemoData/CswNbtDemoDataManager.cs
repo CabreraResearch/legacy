@@ -82,7 +82,7 @@ namespace ChemSW.Nbt.WebServices
 
             //*****************************
             //Populate views
-            string NodesQuery = @"select n." + CswNbtDemoDataReturn.ColumnNames.NodeId + @",n.nodename,t.nodetypename
+            string NodesQuery = @"select n." + CswNbtDemoDataReturn.ColumnNames.NodeId + @",n.nodename,t.nodetypename, t.enabled
                                                 from nodes n 
                                                 join nodetypes t on (n.nodetypeid=t.nodetypeid )
                                                 where n.isdemo = '1'
@@ -95,11 +95,14 @@ namespace ChemSW.Nbt.WebServices
             DataTable DemoNodesTable = ArbitraryNodesSelect.getTable();
             foreach( DataRow CurrentDemoNodeRow in DemoNodesTable.Rows )
             {
+                bool NodeEnabled = CswConvert.ToBoolean( CurrentDemoNodeRow["enabled"].ToString() );
+                String DisabledLabel = NodeEnabled ? "" : "(Disabled) ";
+
                 DataRow NewGridRowOfNodes = GridTable.NewRow();
                 GridTable.Rows.Add( NewGridRowOfNodes );
                 NewGridRowOfNodes[CswNbtDemoDataReturn.ColumnNames.NodeId] = CurrentDemoNodeRow["nodeid"].ToString();
                 NewGridRowOfNodes[CswNbtDemoDataReturn.ColumnNames.Name] = CurrentDemoNodeRow["nodename"].ToString();
-                NewGridRowOfNodes[CswNbtDemoDataReturn.ColumnNames.Type] = CurrentDemoNodeRow["nodetypename"].ToString();
+                NewGridRowOfNodes[CswNbtDemoDataReturn.ColumnNames.Type] = DisabledLabel + CurrentDemoNodeRow["nodetypename"].ToString();
 
                 CswDelimitedString UsedByNodeIds = new CswDelimitedString( ',' );
                 Int32 UsedByCount = 0;
