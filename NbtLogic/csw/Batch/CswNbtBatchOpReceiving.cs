@@ -1,12 +1,14 @@
 ﻿using System;
+using System.IO;
+using System.Runtime.Serialization.Json;
+using System.Text;
 using ChemSW.Config;
 using ChemSW.Core;
-using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.ServiceDrivers;
-using Newtonsoft.Json.Linq;
+using NbtWebApp.Actions.Receiving;
 
 namespace ChemSW.Nbt.Batch
 {
@@ -25,6 +27,9 @@ namespace ChemSW.Nbt.Batch
             _MaxNodeProcessed = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumConfigurationVariableNames.NodesProcessedPerCycle ) );
         }
 
+        /// <summary>
+        /// To override the maximum number of containers created per run (for Unit Tests)
+        /// </summary>
         public void OverrideMaxProcessed( int NewMax )
         {
             _MaxNodeProcessed = NewMax;
@@ -33,7 +38,7 @@ namespace ChemSW.Nbt.Batch
         /// <summary>
         /// Create a new batch operation to handle creation of Containers from the receiving wizard
         /// </summary>
-        public CswNbtObjClassBatchOp makeBatchOp( string ReceiptDefinition )
+        public CswNbtObjClassBatchOp makeBatchOp( CswNbtReceivingDefiniton ReceiptDefinition )
         {
             CswNbtObjClassBatchOp BatchNode = null;
             ReceivingBatchData BatchData = new ReceivingBatchData( ReceiptDefinition );
@@ -48,19 +53,13 @@ namespace ChemSW.Nbt.Batch
             if( BatchNode != null && BatchNode.OpNameValue == CswEnumNbtBatchOpName.Receiving )
             {
                 ReceivingBatchData BatchData = new ReceivingBatchData( BatchNode.BatchData.Text );
-                int containersLeft = BatchData.getNumberContainersToCreate();
+                int containersLeft = BatchData.CountNumberContainersToCreate();
                 int totalContainers = BatchData.CountTotalContainers();
                 ret = Math.Round( (Double) ( totalContainers - containersLeft ) / totalContainers * 100, 0 );
             }
             return ret;
         } // getPercentDone()
-
-        public JArray getContainerIds( CswNbtObjClassBatchOp Op )
-        {
-            ReceivingBatchData Data = new ReceivingBatchData( Op.BatchData.Text );
-            return Data.getContainerIds();
-        }
-
+        
         /// <summary>
         /// Run the next iteration of this batch operation
         /// </summary>
@@ -75,9 +74,11 @@ namespace ChemSW.Nbt.Batch
                     BatchNode.start();
 
                     ReceivingBatchData BatchData = new ReceivingBatchData( BatchNode.BatchData.Text );
-                    _receiveContainers( BatchData );
-                    
-                    if( 0 == BatchData.getNumberContainersToCreate() || 0 == _NodesProcessed )
+                    CswNbtReceivingDefiniton UpdatedReceiptDef = _receiveContainers( BatchData.ReceiptDef );
+                    ReceivingBatchData UpdatedBatchData = new ReceivingBatchData( UpdatedReceiptDef );
+                    BatchNode.BatchData.Text = UpdatedBatchData.ToString();
+
+                    if( 0 == BatchData.CountNumberContainersToCreate() || 0 == _NodesProcessed )
                     {
                         BatchNode.finish();
                     }
@@ -96,153 +97,83 @@ namespace ChemSW.Nbt.Batch
 
         } // runBatchOp()
 
-        private static CswPrimaryKey _getRequestId( JObject ReceiptObj )
+        private CswNbtReceivingDefiniton _receiveContainers( CswNbtReceivingDefiniton ReceiptDef )
         {
-            CswPrimaryKey RequestId = null;
-            if( ReceiptObj["requestitem"] != null )
-            {
-                RequestId = new CswPrimaryKey();
-                RequestId.FromString( CswConvert.ToString( ReceiptObj["requestitem"]["requestitemid"] ) );
-                if( false == CswTools.IsPrimaryKey( RequestId ) )
-                {
-                    RequestId = null;
-                }
-            }
-            return RequestId;
-        }
+            CswNbtMetaDataNodeType ContainerNt = _CswNbtResources.MetaData.getNodeType( ReceiptDef.ContainerNodeTypeId );
 
-        private void _receiveContainers( ReceivingBatchData BatchData )
-        {
-            JObject ReceiptObj = BatchData.ReceiptDefinitionObj;
-            JObject ContainerAddProps = CswConvert.ToJObject( ReceiptObj["props"] );
-            Int32 ContainerNodeTypeId = CswConvert.ToInt32( ReceiptObj["containernodetypeid"] );
-            if( Int32.MinValue != ContainerNodeTypeId )
+            foreach( CswNbtAmountsGridQuantity QuantityDef in ReceiptDef.Quantities )
             {
-                CswNbtMetaDataNodeType ContainerNt = _CswNbtResources.MetaData.getNodeType( ContainerNodeTypeId );
-                CswPrimaryKey MaterialId = new CswPrimaryKey();
-                MaterialId.FromString( CswConvert.ToString( ReceiptObj["materialid"] ) );
-                JArray Quantities = CswConvert.ToJArray( ReceiptObj["quantities"] );
-                if( null != ContainerNt && CswTools.IsPrimaryKey( MaterialId ) && Quantities.HasValues )
+                for( Int32 C = 0; C < QuantityDef.NumContainers; C += 1 )
                 {
-                    CswPrimaryKey RequestId = _getRequestId( ReceiptObj );
-                    CswPrimaryKey ReceiptLotId = CswConvert.ToPrimaryKey( ReceiptObj["receiptLotId"].ToString() );
-                    CswNbtNode ReceiptLot = _CswNbtResources.Nodes[ReceiptLotId];
-
-                    for( int index = 0; index < Quantities.Count; index++ )
+                    //we promote the first container before the batch op starts, so there should always be at least one container id in the first set of quantities
+                    if( C >= QuantityDef.ContainerIds.Count && _NodesProcessed < _MaxNodeProcessed ) //only create a container where we haven't already
                     {
-                        JObject QuantityDef = CswConvert.ToJObject( Quantities[index] );
-                        Int32 NoContainers = CswConvert.ToInt32( QuantityDef["containerNo"] );
-
-                        CswCommaDelimitedString Barcodes = new CswCommaDelimitedString();
-                        Barcodes.FromString( CswConvert.ToString( QuantityDef["barcodes"] ) );
-
-                        JArray ContainerIds = CswConvert.ToJArray( QuantityDef["containerids"].ToString() );
-
-                        for( Int32 C = 0; C < NoContainers; C += 1 )
-                        {
-                            //we promote the first container before the batch op starts, so there should always be at least one container id in the first set of quantities
-                            if( C >= ContainerIds.Count && _NodesProcessed < _MaxNodeProcessed ) //only create a container where we haven't already
+                        CswNbtActReceiving.HandleContainer( _CswNbtResources, ReceiptDef, QuantityDef, QuantityDef.Barcodes[C], delegate( Action<CswNbtNode> After )
                             {
-                                CswNbtActReceiving.HandleContainer( _CswNbtResources, MaterialId, RequestId, ReceiptLot.NodeId, QuantityDef, C, delegate( Action<CswNbtNode> After )
-                                    {
-                                        CswNbtNodeKey ContainerNodeKey;
-                                        CswNbtObjClassContainer AsContainer = _CswNbtSdTabsAndProps.addNode( ContainerNt, null, ContainerAddProps, out ContainerNodeKey, After );
-                                        CswNbtActReceiving.AddContainerIdToReceiptDefinition( BatchData.ReceiptDefinitionObj, index, AsContainer.NodeId.ToString() );
-                                        _NodesProcessed++;
-                                    } );
-                            }
-                        } //for( Int32 C = 0; C < NoContainers; C += 1 )
-                    }//for( int index = 0; index < Quantities.Count; index++ )
-                }//if( null != ContainerNt )
-            }//if( Int32.MinValue != ContainerNodeTypeId )
+                                CswNbtNodeKey ContainerNodeKey;
+                                CswNbtObjClassContainer AsContainer = _CswNbtSdTabsAndProps.addNode( ContainerNt, null, ReceiptDef.ContainerProps, out ContainerNodeKey, After );
+                                QuantityDef.ContainerIds.Add( AsContainer.NodeId.ToString() );
+                                _NodesProcessed++;
+                            } );
+                    }
+                } //for( Int32 C = 0; C < NoContainers; C += 1 )
+            }
+
+            return ReceiptDef;
         }
 
         #region ReceivingBatchData
 
-        // This internal class is specific to this batch operation
         private class ReceivingBatchData
         {
-            private readonly JObject _BatchData;
+            private CswNbtReceivingDefiniton _receiptDef;
+            private readonly Type _receiptDefType = typeof( CswNbtReceivingDefiniton );
 
-            public ReceivingBatchData( string ReceiptDefinition )
+            public ReceivingBatchData( CswNbtReceivingDefiniton ReceiptDefinition )
             {
-                _BatchData = CswConvert.ToJObject( ReceiptDefinition, true, "ReceiptDefinitionForReceivingBatchOp" );
+                _receiptDef = ReceiptDefinition;
             }
 
-            public JObject ReceiptDefinitionObj
+            public ReceivingBatchData( string ReceiptDefinitionStr )
             {
-                get { return _BatchData; }
+                _receiptDef = CswSerialize<CswNbtReceivingDefiniton>.ToObject( ReceiptDefinitionStr );
             }
 
-            public Int32 CountTotalContainers()
+            public CswNbtReceivingDefiniton ReceiptDef { get { return _receiptDef; } }
+
+            public int CountNumberContainersToCreate()
             {
-                int Ret = 0;
-                JArray Quantities = CswConvert.ToJArray( _BatchData["quantities"].ToString(), true );
-                for( int index = 0; index < Quantities.Count; index++ )
+                int ret = 0;
+                foreach( CswNbtAmountsGridQuantity Quantity in _receiptDef.Quantities )
                 {
-                    JObject QuantityDef = CswConvert.ToJObject( Quantities[index].ToString(), true, "QuantifyDefinition" );
-                    if( QuantityDef.HasValues )
-                    {
-                        int NumContainers = CswConvert.ToInt32( QuantityDef["containerNo"] );
-                        if( Int32.MinValue != NumContainers )
-                        {
-                            Ret += NumContainers;
-                        }
-                        else
-                        {
-                            throw new CswDniException( CswEnumErrorType.Error, "Cannot calculate number of containers to create", "Receipt Definition is missing number of containers for a quantity." );
-                        }
-                    }
+                    ret += Quantity.NumContainers - ( Quantity.ContainerIds.Count );
                 }
-                return Ret;
+                return ret;
             }
 
-            public Int32 getNumberContainersToCreate()
+            public int CountTotalContainers()
             {
-                Int32 Ret = 0;
-
-                JArray Quantities = CswConvert.ToJArray( _BatchData["quantities"].ToString(), true );
-                for( int index = 0; index < Quantities.Count; index++ )
+                int ret = 0;
+                foreach( CswNbtAmountsGridQuantity Quantity in _receiptDef.Quantities )
                 {
-                    JObject QuantityDef = CswConvert.ToJObject( Quantities[index].ToString(), true, "QuantityDefinition" );
-                    if( QuantityDef.HasValues )
-                    {
-                        int NumContainers = CswConvert.ToInt32( QuantityDef["containerNo"] );
-                        JArray ContainerIds = CswConvert.ToJArray( QuantityDef["containerids"].ToString() );
-                        int ContainerIdsCount = ContainerIds.Count;
-
-                        Ret += ( NumContainers - ContainerIdsCount );
-                    }
+                    ret += Quantity.NumContainers;
                 }
-
-                return Ret;
-            }
-
-            public JArray getContainerIds()
-            {
-                JArray Ret = new JArray();
-                JArray Quantities = CswConvert.ToJArray( _BatchData["quantities"].ToString(), true );
-                for( int index = 0; index < Quantities.Count; index++ )
-                {
-                    JObject QuantityDef = CswConvert.ToJObject( Quantities[index].ToString(), true, "QuantityDefinition" );
-                    if( QuantityDef.HasValues )
-                    {
-                        JArray ContainerIds = CswConvert.ToJArray( QuantityDef["containerids"].ToString() );
-                        for( int i = 0; i < ContainerIds.Count; i++ )
-                        {
-                            Ret.Add( ContainerIds[i] );
-                        }
-                    }
-                }
-
-                return Ret;
+                return ret;
             }
 
             public override string ToString()
             {
-                return _BatchData.ToString();
+                string Ret = string.Empty;
+                using( MemoryStream ms = new MemoryStream() )
+                {
+                    DataContractJsonSerializer serializer = new DataContractJsonSerializer( _receiptDefType );
+                    serializer.WriteObject( ms, _receiptDef );
+                    Ret = Encoding.UTF8.GetString( ms.GetBuffer(), 0, CswConvert.ToInt32( ms.Length ) );
+                }
+                return Ret;
             }
-        } // class ReceivingBatchData
+            
+        }
 
         #endregion ReceivingBatchData
 

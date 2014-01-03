@@ -273,7 +273,7 @@ namespace ChemSW.Nbt.ObjClasses
                         if( _CswNbtResources.Permit.can( CswEnumNbtActionName.Receiving ) )
                         {
                             HasPermission = true;
-                            CswNbtActReceiving Act = new CswNbtActReceiving( _CswNbtResources, ObjectClass, NodeId );
+                            CswNbtActReceiving Act = new CswNbtActReceiving( _CswNbtResources, NodeId );
                             _CswNbtResources.setAuditActionContext( CswEnumNbtActionName.Receiving );
 
                             Action<CswNbtNode> After = delegate( CswNbtNode NewNode )
