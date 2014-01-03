@@ -25,11 +25,6 @@ namespace ChemSW.Nbt.Schema
             get { return "Add aliases to units of measure"; }
         }
 
-        public override string AppendToScriptName()
-        {
-            return "V3";
-        }
-
         public override void update()
         {
             // Set aliases for Units of Measurement nodes
