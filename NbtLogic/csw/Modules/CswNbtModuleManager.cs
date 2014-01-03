@@ -524,6 +524,12 @@ namespace ChemSW.Nbt
             return modulesDT.Rows.Count > 0;
         }
 
+        /// <summary>
+        /// NOTE: In this case, 'hidden' means hidden from the Modules page on the UI. This does
+        ///       not restrict you from accessing the module on the server. 
+        /// </summary>
+        /// <param name="Module"></param>
+        /// <returns></returns>
         public bool ModuleIsHidden( CswEnumNbtModuleName Module )
         {
             bool Ret = false;
