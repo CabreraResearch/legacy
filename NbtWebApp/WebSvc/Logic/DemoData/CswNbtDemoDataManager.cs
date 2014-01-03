@@ -85,7 +85,7 @@ namespace ChemSW.Nbt.WebServices
             string NodesQuery = @"select n." + CswNbtDemoDataReturn.ColumnNames.NodeId + @",n.nodename,t.nodetypename
                                                 from nodes n 
                                                 join nodetypes t on (n.nodetypeid=t.nodetypeid )
-                                                where n.isdemo = '1' and t.enabled = '1'
+                                                where n.isdemo = '1'
                                                 order by lower( n.nodename ), lower( t.nodetypename )";
 
 
@@ -246,8 +246,10 @@ namespace ChemSW.Nbt.WebServices
         public static void updateDemoData( ICswResources CswResources, CswNbtDemoDataReturn Return, CswNbtDemoDataRequests.CswUpdateDemoNodesRequest Request )
         {
             CswNbtResources CswNbtResources = (CswNbtResources) CswResources;
+            CswNbtWebServiceMetaData wsMd = new CswNbtWebServiceMetaData( CswNbtResources );
+            CswNbtResources OtherResources = wsMd.makeSystemUserResources( CswNbtResources.AccessId, false );
 
-            CswNbtActDeleteDemoData CswNbtActDeleteDemoData = new CswNbtActDeleteDemoData( CswNbtResources );
+            CswNbtActDeleteDemoData CswNbtActDeleteDemoData = new CswNbtActDeleteDemoData( OtherResources );
 
             List<string> Errors = new List<string>();
 
@@ -257,6 +259,9 @@ namespace ChemSW.Nbt.WebServices
             {
                 Return.addException( CswResources, new CswDniException( "There were errors updating the demo data: " + CurrentError ) );
             }
+
+            OtherResources.finalize();
+            OtherResources.release();
         }
 
 
