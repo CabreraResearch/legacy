@@ -90,7 +90,7 @@ namespace ChemSW.Nbt.Actions
                 HandleInitialContainer( InitialContainerNode, ReceiptDefinition );
 
                 CswNbtBatchOpReceiving ReceivingBatchOp = new CswNbtBatchOpReceiving( _CswNbtResources );
-                //ReceivingBatchOp.makeBatchOp( ReceiptObj.ToString() ); //TODO: fix batch op to use receipt def
+                ReceivingBatchOp.makeBatchOp( ReceiptDefinition );
 
                 //TODO: spawn print jobs
                 //TODO: get landing page data

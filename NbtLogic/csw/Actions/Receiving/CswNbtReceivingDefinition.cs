@@ -40,7 +40,7 @@ namespace NbtWebApp.Actions.Receiving
                 if( null == _materialNodeId )
                 {
                     _materialNodeId = CswConvert.ToPrimaryKey( _materialIdStr );
-                    if( false == CswTools.IsPrimaryKey( _containerNodeId ) )
+                    if( false == CswTools.IsPrimaryKey( _materialNodeId ) )
                     {
                         _materialNodeId = null;
                     }
@@ -173,7 +173,7 @@ namespace NbtWebApp.Actions.Receiving
         {
             get
             {
-                if( null == _sdsPropsJSON)
+                if( null == _sdsPropsJSON )
                 {
                     _sdsPropsJSON = CswConvert.ToJObject( _sdsPropsJSONStr );
                 }

@@ -435,7 +435,7 @@
                         var printLabelsTbl = cswPrivate['divStep' + StepNo].table().css({
                             'padding-top': '20px'
                         });
-                        
+
                         var printLabelCell = printLabelsTbl.cell(1, 1).css({ 'padding-bottom': '20px' });
                         printLabelCell.div({ text: 'I want to print labels: ' }).checkBox({
                             name: 'printLabelCheckBox',
@@ -450,7 +450,7 @@
                                 }
                             }
                         });
-                        
+
                         var labelsDiv = printLabelsTbl.cell(2, 1).div().hide();
                         var printLabels = Csw.composites.printLabels(labelsDiv,
                             {
@@ -480,42 +480,23 @@
                 receiptLotId: cswPrivate.state.receiptLotId,
                 quantities: cswPrivate.amountsGrid.quantities(),
                 sizeid: cswPrivate.state.selectedSizeId,
-                props: cswPrivate.containerTabsAndProps.getProps(),
+                props: Csw.serialize(cswPrivate.containerTabsAndProps.getProps()),
                 requestitem: cswPrivate.state.requestitem
             };
             if (false === Csw.isNullOrEmpty(cswPrivate.sdsDocTabsAndProps)) {
-                container.sdsDocProperties = cswPrivate.sdsDocTabsAndProps.getProps();
+                container.sdsDocProperties = Csw.serialize(cswPrivate.sdsDocTabsAndProps.getProps());
             }
             if (false === Csw.isNullOrEmpty(cswPrivate.cofaDocTabsAndProps)) {
-                container.cofaDocProperties = cswPrivate.cofaDocTabsAndProps.getProps();
+                container.cofaDocProperties = Csw.serialize(cswPrivate.cofaDocTabsAndProps.getProps());
             }
             if (false === Csw.isNullOrEmpty(cswPrivate.receiptLotTabsAndProps)) {
-                container.receiptLotProperties = cswPrivate.receiptLotTabsAndProps.getProps();
+                container.receiptLotProperties = Csw.serialize(cswPrivate.receiptLotTabsAndProps.getProps());
             }
-            Csw.ajax.deprecatedWsNbt({
-                urlMethod: 'receiveMaterial',
-                data: { ReceiptDefinition: Csw.serialize(container) },
+            Csw.ajaxWcf.post({
+                urlMethod: 'Containers/Receive',
+                data: container,
                 success: function (data) {
-
-                    Csw.tryExec(cswPrivate.onFinish, data);
-
-                    //if (Csw.number(data.containerscreated) < 1) {
-                    //    Csw.error.throwException(Csw.error.exception('Failed to create any containers.'));
-                    //} else {
-                    //    Csw.tryExec(cswPrivate.onFinish, data.viewid);
-                    //    if (cswPrivate.printBarcodes) {
-                    //        if (false === Csw.isNullOrEmpty(data.barcodes) &&
-                    //            Object.keys(data.barcodes).length > 0) {
-                    //
-                    //            $.CswDialog('PrintLabelDialog', {
-                    //                nodes: data.barcodes,
-                    //                nodetypeid: cswPrivate.state.containerNodeTypeId
-                    //            });
-                    //        } else {
-                    //            //handle warning
-                    //        }
-                    //    }
-                    //}
+                    var x = 10;
                 }
             });
         };

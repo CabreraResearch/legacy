@@ -6,6 +6,7 @@ using System.Web;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.WebServices;
 using ChemSW.WebSvc;
+using NbtWebApp.Actions.Receiving;
 
 namespace NbtWebApp
 {
@@ -133,6 +134,23 @@ namespace NbtWebApp
             return ( Ret );
         }
 
+        [OperationContract]
+        [WebInvoke( Method = "POST", UriTemplate = "Receive" )]
+        [FaultContract( typeof( FaultException ) )]
+        [Description( "Create Containers" )]
+        public CswNbtWebServiceReceiving.CswNbtReceivingDefinitonReturn Receive( CswNbtReceivingDefiniton Request )
+        {
+            CswNbtWebServiceReceiving.CswNbtReceivingDefinitonReturn Ret = new CswNbtWebServiceReceiving.CswNbtReceivingDefinitonReturn();
+            var GetViewDriverType = new CswWebSvcDriver<CswNbtWebServiceReceiving.CswNbtReceivingDefinitonReturn, CswNbtReceivingDefiniton>(
+                CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj : Ret,
+                WebSvcMethodPtr : CswNbtWebServiceReceiving.ReceiveMaterial,
+                ParamObj : Request
+                );
+            GetViewDriverType.run();
+            return ( Ret );
+        }
         #endregion Receive Material Wizard
     }
+
 }
