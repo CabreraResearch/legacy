@@ -480,10 +480,12 @@ namespace ChemSW.Nbt.Actions
                         CswNbtActReceiving Receiving = new CswNbtActReceiving( _CswNbtResources );
 
                         CswPrimaryKey SDSNodeId = new CswPrimaryKey();
-                        SDSNodeId.FromString( MaterialObj["sdsnodeid"].ToString() );
-                        JObject SDSProps = CswConvert.ToJObject( MaterialObj["sdsprops"] );
-                        Receiving.commitSDSDocNode( NodeAsMaterial.NodeId, SDSNodeId, SDSProps );
-
+                        if( null != MaterialObj["sdsDocId"] )
+                        {
+                            SDSNodeId.FromString( MaterialObj["sdsnodeid"].ToString() );
+                            JObject SDSProps = CswConvert.ToJObject( MaterialObj["sdsprops"] );
+                            Receiving.commitSDSDocNode( NodeAsMaterial.NodeId, SDSNodeId, SDSProps );
+                        }
                         Ret.PromoteTempToReal();
                     }
                 }

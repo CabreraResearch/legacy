@@ -1,8 +1,8 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Data;
 using ChemSW.Core;
 using ChemSW.DB;
-using System.Collections.ObjectModel;
 
 namespace ChemSW.Nbt.LandingPage
 {

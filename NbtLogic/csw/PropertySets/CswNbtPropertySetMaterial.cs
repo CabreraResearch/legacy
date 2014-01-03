@@ -331,7 +331,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Custom Logic
 
-        public static CswNbtView getMaterialNodeView( CswNbtResources NbtResources, CswNbtPropertySetMaterial MaterialNode )
+        public static CswNbtView getMaterialNodeView( CswNbtResources NbtResources, CswNbtPropertySetMaterial MaterialNode, string Prepend = "New Material: " )
         {
             CswNbtView Ret = null;
             if( MaterialNode != null )
@@ -343,7 +343,7 @@ namespace ChemSW.Nbt.ObjClasses
                     CswNbtMetaDataObjectClassProp MaterialOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.Material );
                     Ret.AddViewRelationship( Ret.Root.ChildRelationships[0], CswEnumNbtViewPropOwnerType.Second, MaterialOcp, false );
                 }
-                Ret.ViewName = "New Material: " + MaterialNode.NodeName;
+                Ret.ViewName = Prepend + MaterialNode.NodeName;
             }
             return Ret;
         }

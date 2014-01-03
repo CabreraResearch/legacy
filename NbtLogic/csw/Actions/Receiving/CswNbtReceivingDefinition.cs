@@ -10,6 +10,9 @@ namespace NbtWebApp.Actions.Receiving
     [DataContract]
     public class CswNbtReceivingDefiniton
     {
+        [DataMember]
+        public string ActionData;
+
         private CswPrimaryKey _containerNodeId = null;
         public CswPrimaryKey ContainerNodeId
         {

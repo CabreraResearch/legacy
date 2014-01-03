@@ -1,8 +1,8 @@
-﻿using ChemSW.Core;
+﻿using System;
+using System.Data;
+using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
-using System;
-using System.Data;
 
 namespace ChemSW.Nbt.LandingPage
 {

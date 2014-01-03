@@ -496,7 +496,7 @@
                 urlMethod: 'Containers/Receive',
                 data: container,
                 success: function (data) {
-                    var x = 10;
+                    cswPrivate.onFinish(Csw.deserialize(data.ActionData));
                 }
             });
         };

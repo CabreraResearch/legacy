@@ -276,13 +276,41 @@
             });
             actionHandler.add('receiving', function (o) {
                 var opts = Csw.extend({}, o);
-                opts.onFinish = function (viewid) {
-                    Csw.main.clear({ 'all': true });
-                    Csw.main.handleItemSelect({
-                        type: 'view',
-                        mode: 'tree',
-                        itemid: viewid
-                    });
+                opts.onFinish = function (actionData) {
+                    var receivingLandingPage = function () {
+                        Csw.main.setLandingPage(function () {
+                            Csw.layouts.landingpage(Csw.main.centerBottomDiv, {
+                                name: 'receiveLandingPage',
+                                Title: 'Received Material: ',
+                                ActionId: actionData.ActionId,
+                                ObjectClassId: actionData.RelatedObjectClassId,
+                                onLinkClick: Csw.main.handleItemSelect,
+                                onTabClick: function (itemData) {
+                                    Csw.cookie.set(Csw.cookie.cookieNames.CurrentTabId, itemData.TabId);
+                                    Csw.main.handleItemSelect(itemData);
+                                },
+                                onButtonClick: function (itemData) {
+                                    Csw.composites.nodeButton(Csw.main.centerBottomDiv, {
+                                        name: itemData.Text,
+                                        value: itemData.ActionName,
+                                        mode: 'landingpage',
+                                        propId: itemData.NodeTypePropId
+                                    });
+                                },
+                                onAddComponent: receivingLandingPage,
+                                landingPageRequestData: actionData,
+                                onActionLinkClick: function (viewId) {
+                                    Csw.main.handleItemSelect({
+                                        type: 'view',
+                                        mode: 'tree',
+                                        itemid: viewId
+                                    });
+                                },
+                                isConfigurable: actionData.isConfigurable
+                            });
+                        });
+                    };
+                    receivingLandingPage();
                 };
                 opts.onCancel = onCancel;
                 return Csw.nbt.receiveMaterialWizard(Csw.main.centerTopDiv, opts);

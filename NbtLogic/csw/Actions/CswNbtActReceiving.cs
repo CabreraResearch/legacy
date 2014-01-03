@@ -83,7 +83,6 @@ namespace ChemSW.Nbt.Actions
         {
             JObject Ret = new JObject();
 
-
             CswNbtObjClassContainer InitialContainerNode = _CswNbtResources.Nodes[ReceiptDefinition.ContainerNodeId];
             if( null != InitialContainerNode )
             {
@@ -93,9 +92,44 @@ namespace ChemSW.Nbt.Actions
                 ReceivingBatchOp.makeBatchOp( ReceiptDefinition );
 
                 //TODO: spawn print jobs
-                //TODO: get landing page data
+                CswNbtNode MaterialNode = _CswNbtResources.Nodes.GetNode( ReceiptDefinition.MaterialNodeId );
+                Ret = getLandingPageData( _CswNbtResources, MaterialNode );
             }
 
+            return Ret;
+        }
+
+        /// <summary>
+        /// Get a landing page for a Material
+        /// </summary>
+        public static JObject getLandingPageData( CswNbtResources NbtResources, CswNbtNode MaterialNode, CswNbtView MaterialNodeView = null )
+        {
+            JObject Ret = new JObject();
+            if( null != MaterialNode )
+            {
+                MaterialNodeView = MaterialNodeView ?? CswNbtPropertySetMaterial.getMaterialNodeView( NbtResources, MaterialNode, "Received: " );
+                MaterialNodeView.SaveToCache( IncludeInQuickLaunch : false );
+
+                Ret["ActionId"] = NbtResources.Actions[CswEnumNbtActionName.Receiving].ActionId.ToString();
+
+                //Used for Tab and Button items
+                Ret["NodeId"] = MaterialNode.NodeId.ToString();
+                Ret["NodeViewId"] = MaterialNodeView.SessionViewId.ToString();
+
+                //Used for node-specific Add items
+                Ret["RelatedNodeId"] = MaterialNode.NodeId.ToString();
+                Ret["RelatedNodeName"] = MaterialNode.NodeName;
+
+                //If (and when) action landing pages are slated to be roleId-specific, remove this line
+                Ret["isConfigurable"] = NbtResources.CurrentNbtUser.IsAdministrator();
+
+                //Used for viewing new material
+                Ret["ActionLinks"] = new JObject();
+                string ActionLinkName = MaterialNode.NodeId.ToString();
+                Ret["ActionLinks"][ActionLinkName] = new JObject();
+                Ret["ActionLinks"][ActionLinkName]["Text"] = MaterialNode.NodeName;
+                Ret["ActionLinks"][ActionLinkName]["ViewId"] = MaterialNodeView.SessionViewId.ToString();
+            }
             return Ret;
         }
 
