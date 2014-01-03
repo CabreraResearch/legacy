@@ -3475,7 +3475,7 @@ namespace ChemSW.Nbt.WebServices
 
                 _setEditMode( CswEnumNbtNodeEditMode.Add );
                 CswNbtActReceiving Receiving = new CswNbtActReceiving( _CswNbtResources );
-                ReturnVal = Receiving.receiveMaterial( ReceiptDefinition );
+                //ReturnVal = Receiving.receiveMaterial( ReceiptDefinition );
 
                 _deInitResources();
             }

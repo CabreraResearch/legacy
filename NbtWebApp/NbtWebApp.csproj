@@ -206,6 +206,7 @@
     <Compile Include="WebSvc\Logic\Actions\Explorer\CswNbtArborGraph.cs" />
     <Compile Include="WebSvc\Logic\Actions\Explorer\CswNbtArborNode.cs" />
     <Compile Include="WebSvc\Logic\Actions\Explorer\CswNbtWebServiceNodeExplorer.cs" />
+    <Compile Include="WebSvc\Logic\Actions\Receiving\CswNbtWebServiceReceiving.cs" />
     <Compile Include="WebSvc\Logic\Balances\CswNbtBalanceData.cs" />
     <Compile Include="WebSvc\Logic\Balances\CswNbtWebServiceSerialBalance.cs" />
     <Compile Include="WebSvc\Logic\CISPro\CswNbtWebServiceLocationsCis.cs" />

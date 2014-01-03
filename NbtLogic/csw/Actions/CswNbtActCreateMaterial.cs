@@ -478,7 +478,11 @@ namespace ChemSW.Nbt.Actions
                             _processRequest( CswConvert.ToString( RequestObj["requestitemid"] ), NodeAsMaterial );
                         }
                         CswNbtActReceiving Receiving = new CswNbtActReceiving( _CswNbtResources );
-                        Receiving.commitSDSDocNode( NodeAsMaterial.NodeId, MaterialObj );
+
+                        CswPrimaryKey SDSNodeId = new CswPrimaryKey();
+                        SDSNodeId.FromString( MaterialObj["sdsnodeid"].ToString() );
+                        JObject SDSProps = CswConvert.ToJObject( MaterialObj["sdsprops"] );
+                        Receiving.commitSDSDocNode( NodeAsMaterial.NodeId, SDSNodeId, SDSProps );
 
                         Ret.PromoteTempToReal();
                     }
