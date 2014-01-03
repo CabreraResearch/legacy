@@ -101,6 +101,8 @@
     <Compile Include="csw\Actions\KioskModeRules\CswNbtKioskModeRuleStatus.cs" />
     <Compile Include="csw\Actions\KioskModeRules\CswNbtKioskModeDataContracts.cs" />
     <Compile Include="csw\Actions\KioskModeRules\CswNbtKioskModeRule.cs" />
+    <Compile Include="csw\Actions\Receiving\CswNbtAmountsGridQuantity.cs" />
+    <Compile Include="csw\Actions\Receiving\CswNbtReceivingDefinition.cs" />
     <Compile Include="csw\Batch\CswNbtBatchOpReceiving.cs" />
     <Compile Include="csw\Batch\CswNbtBatchOpMultiButtonClick.cs" />
     <Compile Include="csw\Batch\CswEnumNbtBatchOpStatus.cs" />
@@ -650,6 +652,7 @@
     <Compile Include="csw\Schema\scripts\prod\02I\CswUpdateMetaData_02I_Case31114A.cs" />
     <Compile Include="csw\Schema\scripts\prod\02I\CswUpdateDDL_02I_Case31057.cs" />
     <Compile Include="csw\Schema\scripts\prod\02I\CswUpdateSchema_02I_Case31061B.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02J\CswUpdateSchema_02J_Case30665.cs" />
     <Compile Include="csw\Schema\scripts\prod\02J\CswUpdateMetaData_02J_Case31156.cs" />
     <Compile Include="csw\Schema\scripts\prod\02J\CswUpdateMetaData_02J_Case30825D.cs" />
     <Compile Include="csw\Schema\scripts\prod\02J\CswUpdateSchema_02J_Case29409.cs" />
