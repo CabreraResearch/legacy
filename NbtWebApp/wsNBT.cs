@@ -2603,7 +2603,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string doUniversalSearch( string SearchTerm, string SearchType, string NodeTypeId, string ObjectClassId, string PropertySetId, string Page, string Limit, string OnlyMergeableNodeTypes, List<string> ExcludeNodeIds )
+        public string doUniversalSearch( string SearchTerm, string SearchType, string NodeTypeId, string ObjectClassId, string PropertySetId, string Page, string Limit, string OnlyMergeableNodeTypes, List<string> ExcludeNodeIds, string IncludeInRecent )
         {
             JObject ReturnVal = new JObject();
             CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
@@ -2625,7 +2625,8 @@ namespace ChemSW.Nbt.WebServices
                         CswConvert.ToInt32( Page ),
                         CswConvert.ToInt32( Limit ),
                         CswConvert.ToBoolean( OnlyMergeableNodeTypes ),
-                        ExcludeNodeIds
+                        ExcludeNodeIds,
+                        CswConvert.ToBoolean( IncludeInRecent )
                         );
                 }
                 _deInitResources();
@@ -3823,7 +3824,7 @@ namespace ChemSW.Nbt.WebServices
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
         public string finalizeDispenseContainer( string SourceContainerNodeId, string DispenseType, string Quantity,
-            string UnitId, string ContainerNodeTypeId, string DesignGrid, string RequestItemId )
+            string UnitId, string ContainerNodeTypeId, string DesignGrid, string RequestItemId, string DispenseTransactionId, string DispenseTransactionProperties )
         {
             JObject ReturnVal = new JObject();
             CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
@@ -3836,11 +3837,11 @@ namespace ChemSW.Nbt.WebServices
                     CswNbtWebServiceContainer ws = new CswNbtWebServiceContainer( _CswNbtResources );
                     if( DispenseType.Contains( CswEnumNbtContainerDispenseType.Dispense.ToString() ) && false == String.IsNullOrEmpty( DesignGrid ) )
                     {
-                        ReturnVal = ws.upsertDispenseContainers( SourceContainerNodeId, ContainerNodeTypeId, DesignGrid, RequestItemId );
+                        ReturnVal = ws.upsertDispenseContainers( SourceContainerNodeId, ContainerNodeTypeId, DesignGrid, RequestItemId, DispenseTransactionId, DispenseTransactionProperties );
                     }
                     else
                     {
-                        ReturnVal = ws.updateDispensedContainer( SourceContainerNodeId, DispenseType, Quantity, UnitId, RequestItemId );
+                        ReturnVal = ws.updateDispensedContainer( SourceContainerNodeId, DispenseType, Quantity, UnitId, RequestItemId, DispenseTransactionId, DispenseTransactionProperties );
                     }
 
                     ReturnVal["success"] = "true";

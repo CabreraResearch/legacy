@@ -139,6 +139,9 @@
     <None Include="Service References\NbtPublic\BalanceReaderClient.NbtPublic.CswNbtWebServiceSessionCswNbtAuthReturn.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
+    <None Include="Service References\NbtPublic\BalanceReaderClient.NbtPublic.SerialBalance.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
     <None Include="Service References\NbtPublic\NbtPublic.wsdl" />
     <None Include="Service References\NbtPublic\NbtPublic.xsd">
       <SubType>Designer</SubType>

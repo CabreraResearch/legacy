@@ -85,12 +85,12 @@ namespace ChemSW.Nbt.WebServices
 
         #region UniversalSearch
 
-        public JObject doUniversalSearch( string SearchTerm, CswEnumSqlLikeMode SearchType, Int32 NodeTypeId, Int32 ObjectClassId, Int32 PropertySetId, Int32 Page, Int32 PageLimit, bool OnlyMergeableNodeTypes, List<string> ExcludeNodeIds )
+        public JObject doUniversalSearch( string SearchTerm, CswEnumSqlLikeMode SearchType, Int32 NodeTypeId, Int32 ObjectClassId, Int32 PropertySetId, Int32 Page, Int32 PageLimit, bool OnlyMergeableNodeTypes, List<string> ExcludeNodeIds, bool IncludeInRecent )
         {
             CswNbtSearch Search = getSearch( SearchTerm, SearchType, NodeTypeId, ObjectClassId, PropertySetId );
             Search.OnlyMergeableNodeTypes = OnlyMergeableNodeTypes;
             Search.ExcludeNodeIds = ExcludeNodeIds;
-            return _finishUniversalSearch( Search, Page, PageLimit );
+            return _finishUniversalSearch( Search, Page, PageLimit, IncludeInRecent );
         }
 
         public CswNbtSearch getSearch( string SearchTerm, CswEnumSqlLikeMode SearchType, Int32 NodeTypeId, Int32 ObjectClassId, Int32 PropertySetId )
@@ -177,12 +177,12 @@ namespace ChemSW.Nbt.WebServices
             }
             return ret;
         }
-        private JObject _finishUniversalSearch( CswNbtSearch Search, Int32 Page = 0, Int32 PageLimit = 0 )
+        private JObject _finishUniversalSearch( CswNbtSearch Search, Int32 Page = 0, Int32 PageLimit = 0, bool IncludeInRecent = true )
         {
             ICswNbtTree Tree = Search.Results();
             CswNbtWebServiceTable wsTable = new CswNbtWebServiceTable( _CswNbtResources, _CswNbtStatisticsEvents, Int32.MinValue );
 
-            Search.SaveToCache( true );
+            Search.SaveToCache( IncludeInRecent );
 
             JObject ret = Search.ToJObject();
             ret["table"] = wsTable.makeTableFromTree( Tree, Search.getFilteredPropIds(), Page, PageLimit );

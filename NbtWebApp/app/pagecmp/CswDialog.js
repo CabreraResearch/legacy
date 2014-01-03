@@ -1626,7 +1626,8 @@
                     cswPublic.close();
                     Csw.tryExec(cswDlgPrivate.onSelectNode, nodeObj);
                 },
-                excludeNodeIds: cswDlgPrivate.excludeNodeIds
+                excludeNodeIds: cswDlgPrivate.excludeNodeIds,
+                includeInRecent: false,
             });
             return cswPublic;
         }, // SearchDialog

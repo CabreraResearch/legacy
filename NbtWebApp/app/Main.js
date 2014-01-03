@@ -85,6 +85,11 @@ window.initMain = window.initMain || function (undefined) {
     Csw.main.register('initAll', function (onSuccess) {
 
         Csw.main.setUsername();
+        
+        // Case 31251 -- check isDebug on refresh
+        if (Csw.clientSession.isDebug(Csw.queryString())) {
+            Csw.clientSession.enableDebug();
+        }
 
         Csw.main.universalsearch = Csw.composites.universalSearch(null, {
             searchBoxParent: Csw.main.searchDiv,

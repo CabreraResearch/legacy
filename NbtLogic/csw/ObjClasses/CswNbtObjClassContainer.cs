@@ -5,7 +5,6 @@ using ChemSW.Config;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
-using ChemSW.Nbt.Conversion;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.PropertySets;
@@ -72,7 +71,14 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         private bool _InventoryLevelModified = false;
 
-        public CswNbtObjClassContainer( CswNbtResources CswNbtResources, CswNbtNode Node ) : base( CswNbtResources, Node ) { }
+        public CswNbtContainerDispenser Dispenser;
+        private CswNbtContainerDisposer _Disposer;
+
+        public CswNbtObjClassContainer( CswNbtResources CswNbtResources, CswNbtNode Node ) : base( CswNbtResources, Node )
+        {
+            Dispenser = new CswNbtContainerDispenser( _CswNbtResources, new CswNbtContainerDispenseTransactionBuilder( _CswNbtResources ), this );
+            _Disposer = new CswNbtContainerDisposer( _CswNbtResources, new CswNbtContainerDispenseTransactionBuilder( _CswNbtResources ), this );
+        }
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
@@ -371,42 +377,15 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         public void DisposeContainer( bool OverridePermissions = false )
         {
-            if( OverridePermissions || canContainer( _CswNbtResources, _CswNbtResources.Actions[CswEnumNbtActionName.DisposeContainer], getPermissionGroupId() ) )
-            {
-                _createContainerTransactionNode( CswEnumNbtContainerDispenseType.Dispose, -this.Quantity.Quantity, this.Quantity.UnitId, SrcContainer : this );
-                this.Quantity.Quantity = 0;
-                this.Disposed.Checked = CswEnumTristate.True;
-                CreateContainerLocationNode( CswEnumNbtContainerLocationTypeOptions.Dispose );
-                _CswNbtNode.IconFileNameOverride = "x.png";
-                _CswNbtNode.Searchable = false;
-            }
+            _Disposer.Dispose( OverridePermissions );
         }
 
         /// <summary>
-        /// Checks permission and undisposes a container
+        /// Checks permission and undisposes a container (does not post changes!)
         /// </summary>
         public void UndisposeContainer( bool OverridePermissions = false, bool CreateContainerLocation = true )
         {
-
-            if( OverridePermissions || canContainer( _CswNbtResources, _CswNbtResources.Actions[CswEnumNbtActionName.UndisposeContainer], getPermissionGroupId() ) )
-            {
-                CswNbtMetaDataNodeType ContDispTransNT = _CswNbtResources.MetaData.getNodeType( "Container Dispense Transaction" );
-                CswNbtObjClassContainerDispenseTransaction ContDispTransNode = _getMostRecentDisposeTransaction( ContDispTransNT );
-
-                if( ContDispTransNode != null )
-                {
-                    this.Quantity.Quantity = -ContDispTransNode.QuantityDispensed.Quantity;
-                    this.Quantity.UnitId = ContDispTransNode.QuantityDispensed.UnitId;
-                    ContDispTransNode.Node.delete( OverridePermissions : true );
-                }
-                this.Disposed.Checked = CswEnumTristate.False;
-
-                if( CreateContainerLocation )
-                {
-                    CreateContainerLocationNode( CswEnumNbtContainerLocationTypeOptions.Undispose );
-                }
-                _CswNbtNode.IconFileNameOverride = "";
-            }
+            _Disposer.Undispose( OverridePermissions, CreateContainerLocation );
         }
 
         /// <summary>
@@ -420,23 +399,7 @@ namespace ChemSW.Nbt.ObjClasses
         public void DispenseOut( CswEnumNbtContainerDispenseType DispenseType, double QuantityToDeduct, CswPrimaryKey UnitId,
                                  CswPrimaryKey RequestItemId = null, CswNbtObjClassContainer DestinationContainer = null, bool RecordTransaction = true )
         {
-            double RealQuantityToDeduct = _getDispenseAmountInProperUnits( QuantityToDeduct, UnitId, Quantity.UnitId );
-            double CurrentQuantity = 0;
-            if( CswTools.IsDouble( Quantity.Quantity ) )
-            {
-                CurrentQuantity = Quantity.Quantity;
-            }
-            Quantity.Quantity = CurrentQuantity - RealQuantityToDeduct;
-
-            if( DestinationContainer != null )
-            {
-                DestinationContainer.DispenseIn( DispenseType, QuantityToDeduct, UnitId, RequestItemId, this, false );  // false, because we do not want another duplicate transaction record
-            }
-            if( RecordTransaction )
-            {
-                _createContainerTransactionNode( DispenseType, -RealQuantityToDeduct, this.Quantity.UnitId, RequestItemId, this, DestinationContainer );
-            }
-            CreateContainerLocationNode( CswEnumNbtContainerLocationTypeOptions.Dispense );
+            Dispenser.DispenseOut( DispenseType, QuantityToDeduct, UnitId, RequestItemId, DestinationContainer, RecordTransaction );
         } // DispenseOut()
 
         /// <summary>
@@ -450,21 +413,7 @@ namespace ChemSW.Nbt.ObjClasses
         public void DispenseIn( CswEnumNbtContainerDispenseType DispenseType, double QuantityToAdd, CswPrimaryKey UnitId,
                                 CswPrimaryKey RequestItemId = null, CswNbtObjClassContainer SourceContainer = null, bool RecordTransaction = true )
         {
-            double RealQuantityToAdd = _getDispenseAmountInProperUnits( QuantityToAdd, UnitId, Quantity.UnitId );
-            double CurrentQuantity = 0;
-            if( CswTools.IsDouble( Quantity.Quantity ) )
-            {
-                CurrentQuantity = Quantity.Quantity;
-            }
-            Quantity.Quantity = CurrentQuantity + RealQuantityToAdd;
-            if( RecordTransaction )
-            {
-                _createContainerTransactionNode( DispenseType, RealQuantityToAdd, Quantity.UnitId, RequestItemId, SourceContainer, this );
-            }
-            CswEnumNbtContainerLocationTypeOptions ContainerLocationType =
-                SourceContainer == null ? CswEnumNbtContainerLocationTypeOptions.Receipt
-                                        : CswEnumNbtContainerLocationTypeOptions.Dispense;
-            CreateContainerLocationNode( ContainerLocationType );
+            Dispenser.DispenseIn( DispenseType, QuantityToAdd, UnitId, RequestItemId, SourceContainer, RecordTransaction );
         } // DispenseIn()
 
         /// <summary>
@@ -603,17 +552,6 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Private Helper Methods
 
-        private double _getDispenseAmountInProperUnits( double Amount, CswPrimaryKey OldUnitId, CswPrimaryKey NewUnitId )
-        {
-            double convertedValue = Amount;
-            if( OldUnitId != NewUnitId )
-            {
-                CswNbtUnitConversion ConversionObj = new CswNbtUnitConversion( _CswNbtResources, OldUnitId, NewUnitId, Material.RelatedNodeId );
-                convertedValue = ConversionObj.convertUnit( Amount );
-            }
-            return convertedValue;
-        }
-
         private JObject _getDispenseActionData()
         {
             JObject ActionDataObj = new JObject();
@@ -639,6 +577,16 @@ namespace ChemSW.Nbt.ObjClasses
             ActionDataObj["customBarcodes"] = customBarcodes;
             bool netQuantityEnforced = CswConvert.ToBoolean( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumNbtConfigurationVariables.netquantity_enforced.ToString() ) );
             ActionDataObj["netQuantityEnforced"] = netQuantityEnforced;
+
+            CswNbtSdTabsAndProps _TabsAndProps = new CswNbtSdTabsAndProps( _CswNbtResources );
+            CswNbtMetaDataObjectClass CDTOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerDispenseTransactionClass );
+            CswNbtMetaDataNodeType CDTNT = CDTOC.getLatestVersionNodeTypes().FirstOrDefault();
+            if( null != CDTNT )
+            {
+                CswNbtObjClassContainerDispenseTransaction CDT = _TabsAndProps.getAddNodeAndPostChanges( CDTNT, null );
+                ActionDataObj["dispenseTransactionAddLayout"] = _TabsAndProps.getProps( CDT.Node, "", null, CswEnumNbtLayoutType.Add );
+            }
+            
             return ActionDataObj;
         }
 
@@ -667,91 +615,6 @@ namespace ChemSW.Nbt.ObjClasses
             }
             return InitialQuantityObj;
         }
-
-
-        private CswNbtObjClassContainerDispenseTransaction _getMostRecentDisposeTransaction( CswNbtMetaDataNodeType ContDispTransNT )
-        {
-            CswNbtObjClassContainerDispenseTransaction ContDispTransNode = null;
-            if( ContDispTransNT != null )
-            {
-                CswNbtView DisposedContainerTransactionsView = new CswNbtView( _CswNbtResources );
-                DisposedContainerTransactionsView.ViewName = "ContDispTransDisposed";
-                CswNbtViewRelationship ParentRelationship = DisposedContainerTransactionsView.AddViewRelationship( ContDispTransNT, false );
-
-                DisposedContainerTransactionsView.AddViewPropertyAndFilter(
-                    ParentRelationship,
-                    ContDispTransNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainerDispenseTransaction.PropertyName.SourceContainer ),
-                    NodeId.PrimaryKey.ToString(),
-                    CswEnumNbtSubFieldName.NodeID,
-                    false,
-                    CswEnumNbtFilterMode.Equals
-                    );
-
-                DisposedContainerTransactionsView.AddViewPropertyAndFilter(
-                    ParentRelationship,
-                    ContDispTransNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainerDispenseTransaction.PropertyName.Type ),
-                    CswEnumNbtContainerDispenseType.Dispose.ToString(),
-                    CswEnumNbtSubFieldName.Value,
-                    false,
-                    CswEnumNbtFilterMode.Equals
-                    );
-
-                ICswNbtTree DispenseTransactionTree = _CswNbtResources.Trees.getTreeFromView( DisposedContainerTransactionsView, false, true, false );
-                int NumOfTransactions = DispenseTransactionTree.getChildNodeCount();
-                if( NumOfTransactions > 0 )
-                {
-                    DispenseTransactionTree.goToNthChild( 0 );
-                    ContDispTransNode = DispenseTransactionTree.getNodeForCurrentPosition();
-                }
-            }
-            return ContDispTransNode;
-        }
-
-        /// <summary>
-        /// Record a container dispense transaction
-        /// </summary>
-        /// <param name="DispenseType"></param>
-        /// <param name="Quantity">Quantity adjustment (negative for dispenses, disposes, and wastes, positive for receiving and add)</param>
-        /// <param name="UnitId"></param>
-        /// <param name="RequestItemId"></param>
-        /// <param name="SourceContainer"></param>
-        /// <param name="DestinationContainer"></param>
-        private void _createContainerTransactionNode( CswEnumNbtContainerDispenseType DispenseType, double Amount, CswPrimaryKey UnitId, CswPrimaryKey RequestItemId = null,
-                                                      CswNbtObjClassContainer SrcContainer = null, CswNbtObjClassContainer DestinationContainer = null )
-        {
-            CswNbtMetaDataNodeType ContDispTransNT = _CswNbtResources.MetaData.getNodeType( "Container Dispense Transaction" );
-            if( ContDispTransNT != null )
-            {
-                _CswNbtResources.Nodes.makeNodeFromNodeTypeId( ContDispTransNT.NodeTypeId, delegate( CswNbtNode NewNode )
-                    {
-                        CswNbtObjClassContainerDispenseTransaction ContDispTransNode = NewNode;
-                        if( SrcContainer != null )
-                        {
-                            ContDispTransNode.SourceContainer.RelatedNodeId = SrcContainer.NodeId;
-                            ContDispTransNode.RemainingSourceContainerQuantity.Quantity = SrcContainer.Quantity.Quantity;
-                            if( DispenseType == CswEnumNbtContainerDispenseType.Dispose )
-                            {
-                                ContDispTransNode.RemainingSourceContainerQuantity.Quantity = 0;
-                            }
-                            ContDispTransNode.RemainingSourceContainerQuantity.UnitId = SrcContainer.Quantity.UnitId;
-                        }
-                        if( DestinationContainer != null )
-                        {
-                            ContDispTransNode.DestinationContainer.RelatedNodeId = DestinationContainer.NodeId;
-                        }
-                        ContDispTransNode.Dispenser.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
-                        ContDispTransNode.QuantityDispensed.Quantity = Amount;
-                        ContDispTransNode.QuantityDispensed.UnitId = UnitId;
-                        ContDispTransNode.Type.Value = DispenseType.ToString();
-                        ContDispTransNode.DispensedDate.DateTimeValue = DateTime.Now;
-                        if( null != RequestItemId && Int32.MinValue != RequestItemId.PrimaryKey )
-                        {
-                            ContDispTransNode.RequestItem.RelatedNodeId = RequestItemId;
-                        }
-                        //ContDispTransNode.postChanges( false );
-                    } );
-            } // if( ContDispTransNT != null )
-        } // _createContainerTransactionNode
 
         /// <summary>
         /// Sets up onBeforeRender events in order to:

@@ -60,15 +60,15 @@ namespace ChemSW.Nbt.WebServices
 
         #region Public
 
-        public JObject upsertDispenseContainers( string SourceContainerNodeId, string ContainerNodeTypeId, string DesignGrid, string RequestItemId )
+        public JObject upsertDispenseContainers( string SourceContainerNodeId, string ContainerNodeTypeId, string DesignGrid, string RequestItemId, string DispenseTransactionId, string DispenseTransactionProperties )
         {
-            CswNbtActDispenseContainer wiz = new CswNbtActDispenseContainer( _CswNbtResources, SourceContainerNodeId );
+            CswNbtActDispenseContainer wiz = new CswNbtActDispenseContainer( _CswNbtResources, SourceContainerNodeId, DispenseTransactionId, DispenseTransactionProperties );
             return ( wiz.dispenseIntoChildContainers( ContainerNodeTypeId, DesignGrid, RequestItemId ) );
         }
 
-        public JObject updateDispensedContainer( string SourceContainerNodeId, string DispenseType, string Quantity, string UnitId, string RequestItemId )
+        public JObject updateDispensedContainer( string SourceContainerNodeId, string DispenseType, string Quantity, string UnitId, string RequestItemId, string DispenseTransactionId, string DispenseTransactionProperties )
         {
-            CswNbtActDispenseContainer wiz = new CswNbtActDispenseContainer( _CswNbtResources, SourceContainerNodeId );
+            CswNbtActDispenseContainer wiz = new CswNbtActDispenseContainer( _CswNbtResources, SourceContainerNodeId, DispenseTransactionId, DispenseTransactionProperties );
             return ( wiz.dispenseSourceContainer( DispenseType, Quantity, UnitId, RequestItemId ) );
         }
 
