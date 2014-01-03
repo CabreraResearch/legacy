@@ -117,7 +117,7 @@ namespace ChemSW.Nbt.Actions
             HandleContainer( _CswNbtResources,
                              ReceiptObj,
                              QuantityDef : Quantities[0],
-                             Barcode : Quantities[0].Barcodes[0],
+                             Barcode : Quantities[0].Barcodes.FirstOrDefault(),
                              Apply : delegate( Action<CswNbtNode> After )
                              {
                                  After( InitialContainerNode.Node );

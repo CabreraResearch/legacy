@@ -35,6 +35,12 @@ namespace ChemSW.Nbt.Batch
             _MaxNodeProcessed = NewMax;
         }
 
+        public CswNbtReceivingDefiniton GetBatchData( CswNbtObjClassBatchOp Op )
+        {
+            ReceivingBatchData BatchData = new ReceivingBatchData( Op.BatchData.Text );
+            return BatchData.ReceiptDef;
+        }
+
         /// <summary>
         /// Create a new batch operation to handle creation of Containers from the receiving wizard
         /// </summary>
@@ -59,7 +65,7 @@ namespace ChemSW.Nbt.Batch
             }
             return ret;
         } // getPercentDone()
-        
+
         /// <summary>
         /// Run the next iteration of this batch operation
         /// </summary>
@@ -108,7 +114,8 @@ namespace ChemSW.Nbt.Batch
                     //we promote the first container before the batch op starts, so there should always be at least one container id in the first set of quantities
                     if( C >= QuantityDef.ContainerIds.Count && _NodesProcessed < _MaxNodeProcessed ) //only create a container where we haven't already
                     {
-                        CswNbtActReceiving.HandleContainer( _CswNbtResources, ReceiptDef, QuantityDef, QuantityDef.Barcodes[C], delegate( Action<CswNbtNode> After )
+                        string Barcode = ( QuantityDef.Barcodes.Count > C ? QuantityDef.Barcodes[C] : string.Empty );
+                        CswNbtActReceiving.HandleContainer( _CswNbtResources, ReceiptDef, QuantityDef, Barcode, delegate( Action<CswNbtNode> After )
                             {
                                 CswNbtNodeKey ContainerNodeKey;
                                 CswNbtObjClassContainer AsContainer = _CswNbtSdTabsAndProps.addNode( ContainerNt, null, ReceiptDef.ContainerProps, out ContainerNodeKey, After );
@@ -172,7 +179,7 @@ namespace ChemSW.Nbt.Batch
                 }
                 return Ret;
             }
-            
+
         }
 
         #endregion ReceivingBatchData

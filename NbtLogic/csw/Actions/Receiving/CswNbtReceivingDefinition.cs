@@ -161,6 +161,11 @@ namespace NbtWebApp.Actions.Receiving
                 }
                 return _containerPropsJSON;
             }
+            set
+            {
+                _containerPropsJSON = value;
+                _containerPropsJSONStr = value.ToString();
+            }
         }
 
         private JObject _sdsPropsJSON = null;
@@ -168,11 +173,16 @@ namespace NbtWebApp.Actions.Receiving
         {
             get
             {
-                if( null == _sdsPropsJSON )
+                if( null == _sdsPropsJSON)
                 {
-                    _sdsPropsJSON = CswConvert.ToJObject( _sdsPropsJSON );
+                    _sdsPropsJSON = CswConvert.ToJObject( _sdsPropsJSONStr );
                 }
                 return _sdsPropsJSON;
+            }
+            set
+            {
+                _sdsPropsJSON = value;
+                _sdsPropsJSONStr = value.ToString();
             }
         }
 
@@ -187,6 +197,11 @@ namespace NbtWebApp.Actions.Receiving
                 }
                 return _cofaPropsJSON;
             }
+            set
+            {
+                _cofaPropsJSON = value;
+                _cofaJSONStr = value.ToString();
+            }
         }
 
         private JObject _receiptLotPropsJSON = null;
@@ -199,6 +214,11 @@ namespace NbtWebApp.Actions.Receiving
                     _receiptLotPropsJSON = CswConvert.ToJObject( _receiptLotJSONStr );
                 }
                 return _receiptLotPropsJSON;
+            }
+            set
+            {
+                _receiptLotPropsJSON = value;
+                _receiptLotJSONStr = value.ToString();
             }
         }
 
@@ -292,4 +312,4 @@ namespace NbtWebApp.Actions.Receiving
         }
 
     }
- }
+}

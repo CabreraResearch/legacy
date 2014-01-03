@@ -48,7 +48,7 @@ namespace NbtWebApp.Actions.Receiving
             {
                 if( null == _unitNodeId )
                 {
-                    _unitNodeId = CswConvert.ToPrimaryKey( _sizeIdStr );
+                    _unitNodeId = CswConvert.ToPrimaryKey( _unitIdStr );
                     if( false == CswTools.IsPrimaryKey( _unitNodeId ) )
                     {
                         _unitNodeId = null;
@@ -59,16 +59,26 @@ namespace NbtWebApp.Actions.Receiving
             set
             {
                 _unitNodeId = value;
-                _sizeIdStr = _unitNodeId.ToString();
+                _unitIdStr = _unitNodeId.ToString();
             }
         }
 
         //Note - I am unsure about Barcodes, it may be a collection or a comma delimited string.
+        private Collection<string> _Barcodes = new Collection<string>();
         [DataMember( Name = "barcodes" )]
-        public Collection<string> Barcodes { get; set; }
+        public Collection<string> Barcodes
+        {
+            get { return _Barcodes; }
+            set { _Barcodes = value; }
+        }
 
+        private Collection<string> _ContainerIds = new Collection<string>();
         [DataMember( Name = "containerids" )]
-        public Collection<string> ContainerIds { get; set; }
+        public Collection<string> ContainerIds
+        {
+            get { return _ContainerIds; }
+            set { _ContainerIds = value; }
+        }
 
         //FOR WCF ONLY
         private string _sizeIdStr = string.Empty;
