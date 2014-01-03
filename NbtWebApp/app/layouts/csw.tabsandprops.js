@@ -898,20 +898,20 @@
                         isButton: true,
                         onClick: function () {
 
-                                // Old layout editor
-                            cswPrivate.clearTabs();
-                            $.CswDialog('EditLayoutDialog', editLayoutOpt);
+//                                // Old layout editor
+//                            cswPrivate.clearTabs();
+//                            $.CswDialog('EditLayoutDialog', editLayoutOpt);
 
-                                // Uncomment this out for the new sidebar
-                                // var div = Csw.designmode.factory(Csw.main.sidebarDiv, 'sidebar');
-                                // div.sidebar({
-                                //     name: 'newsidebar',
-                                //     tabState: cswPrivate.tabState,
-                                //     Refresh: function () {
-                                //         cswPrivate.tabState.Config = false;
-                                //         cswPrivate.getTabs();
-                                //     }                               
-                                //});
+                                 //Uncomment this out for the new sidebar
+                                 var div = Csw.designmode.factory(Csw.main.sidebarDiv, 'sidebar');
+                                 div.sidebar({
+                                     name: 'newsidebar',
+                                     tabState: cswPrivate.tabState,
+                                     Refresh: function () {
+                                         cswPrivate.tabState.Config = false;
+                                         cswPrivate.getTabs();
+                                     }                               
+                                });
                         }
                     });
                     cswPrivate.toggleConfigIcon(false === cswPrivate.isMultiEdit());
