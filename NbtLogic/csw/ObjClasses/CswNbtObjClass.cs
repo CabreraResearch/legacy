@@ -96,7 +96,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// ObjectClass-specific logic to execute before persisting a new real node (from temp or create)
         /// </summary>
-        public virtual void beforePromoteNode() {}
+        public virtual void beforePromoteNode( bool OverrideUniqueValidation = false) { }
         /// <summary>
         /// ObjectClass-specific logic to execute after persisting a new real node (from temp or create)
         /// </summary>

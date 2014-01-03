@@ -11,7 +11,7 @@ using Newtonsoft.Json.Linq;
 namespace ChemSW.Nbt.PropTypes
 {
 
-    public class CswNbtNodePropViewReference: CswNbtNodeProp
+    public class CswNbtNodePropViewReference : CswNbtNodeProp
     {
         //public static char delimiter = ',';
 
@@ -28,7 +28,26 @@ namespace ChemSW.Nbt.PropTypes
 
 
             // Associate subfields with methods on this object, for SetSubFieldValue()
-            _SubFieldMethods.Add( _ViewIdSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => ViewId, x => ViewId = x ) );
+            _SubFieldMethods.Add( _ViewIdSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => ViewId,
+                                                                                              x =>
+                                                                                                  {
+                                                                                                      if( CswTools.IsInteger( x ) )
+                                                                                                      {
+                                                                                                          ViewId = new CswNbtViewId( CswConvert.ToInt32( x ) );
+                                                                                                      }
+                                                                                                      else if( x is CswNbtViewId )
+                                                                                                      {
+                                                                                                          ViewId = x;
+                                                                                                      }
+                                                                                                      else if( string.IsNullOrEmpty( x.ToString() ) )
+                                                                                                      {
+                                                                                                          ViewId = null;
+                                                                                                      }
+                                                                                                      else
+                                                                                                      {
+                                                                                                          throw new CswDniException( CswEnumErrorType.Error, "Invalid parameter", "CswNbtNodePropViewReference got an invalid parameter for setting ViewId: " + x.ToString() );
+                                                                                                      }
+                                                                                                  } ) );
             _SubFieldMethods.Add( _CachedViewNameSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => CachedViewName, x => CachedViewName = CswConvert.ToString( x ) ) );
         }
 
@@ -74,7 +93,12 @@ namespace ChemSW.Nbt.PropTypes
             }
             set
             {
-                if( SetPropRowValue( _ViewIdSubField, value.get() ) )
+                Int32 valToSave = Int32.MinValue;
+                if( null != value )
+                {
+                    valToSave = value.get();
+                }
+                if( SetPropRowValue( _ViewIdSubField, valToSave ) )
                 {
                     PendingUpdate = true;
                 }

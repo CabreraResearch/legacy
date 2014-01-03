@@ -298,7 +298,7 @@ namespace ChemSW.Nbt.PropTypes
                 }
             }//set
         } //NodeId
-        
+
         private bool _ReadOnlyTemporary = false;
 
         /// <summary>
@@ -644,6 +644,14 @@ namespace ChemSW.Nbt.PropTypes
             if( null != _NodeTypeProp )
             {
                 ret = _NodeTypeProp.getFieldTypeValue();
+            }
+            else if( Int32.MinValue != _ObjectClassPropId )
+            {
+                CswNbtMetaDataObjectClassProp ocp = _CswNbtResources.MetaData.getObjectClassProp( _ObjectClassPropId );
+                if( null != ocp )
+                {
+                    ret = ocp.getFieldTypeValue();
+                }
             }
             return ret;
         } // getFieldTypeValue()

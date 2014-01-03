@@ -45,7 +45,7 @@ namespace ChemSW.Nbt
                                 break;
                             case "nodetype_tabset":
                                 CswTableUpdate = _CswNbtResources.MetaData._CswNbtMetaDataResources.NodeTypeTabTableUpdate;
-                                CswNbtMetaDataNodeTypeTab relatedNTT = _CswNbtResources.MetaData.getNodeTypeTab( RelationalId.PrimaryKey, null, true );
+                                CswNbtMetaDataNodeTypeTab relatedNTT = _CswNbtResources.MetaData.getNodeTypeTab( RelationalId.PrimaryKey, true );
                                 DataTable = relatedNTT._DataRow.Table;
                                 DataRow = relatedNTT._DataRow;
                                 break;

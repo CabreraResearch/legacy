@@ -65,13 +65,12 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public override void beforePromoteNode() // bool IsCopy, bool OverrideUniqueValidation )
+        public override void beforePromoteNode( bool OverrideUniqueValidation )
         {
             if( Int32.MinValue == Order.Value )
             {
                 Order.Value = NodeType.getNextTabOrder();
             }
-            //_CswNbtObjClassDefault.beforeCreateNode( IsCopy, OverrideUniqueValidation );
         }
 
         public override void afterPromoteNode()

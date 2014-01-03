@@ -91,9 +91,9 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         public bool InternalCreate = false;
 
-        public override void beforePromoteNode() //bool IsCopy, bool OverrideUniqueValidation )
+        public override void beforePromoteNode( bool OverrideUniqueValidation )
         {
-            if( //false == OverrideUniqueValidation && 
+            if( false == OverrideUniqueValidation && 
                 null != _CswNbtResources.MetaData.getNodeType( NodeTypeName.Text ) )
             {
                 throw new CswDniException( CswEnumErrorType.Warning, "Node Type Name must be unique", "Attempted to create a new nodetype with the same name as an existing nodetype" );

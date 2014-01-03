@@ -142,14 +142,6 @@ namespace ChemSW.Nbt.ObjClasses
             get { return _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.InspectionDesignClass ); }
         }
 
-        public override void beforePromoteNode()
-        {
-        }
-
-        public override void afterPromoteNode()
-        {
-        }
-
         /// <summary>
         /// Convert a CswNbtNode to a CswNbtObjClassInspectionDesign
         /// </summary>

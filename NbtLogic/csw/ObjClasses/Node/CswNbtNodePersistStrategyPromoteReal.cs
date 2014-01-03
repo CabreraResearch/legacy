@@ -35,7 +35,7 @@ namespace ChemSW.Nbt.ObjClasses
 
             if( null != Node.ObjClass )
             {
-                Node.ObjClass.beforePromoteNode();
+                Node.ObjClass.beforePromoteNode( OverrideUniqueValidation );
                 Node.ObjClass.beforeWriteNode( true );
             }
 

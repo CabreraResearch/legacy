@@ -20,7 +20,7 @@ namespace ChemSW.Nbt.Schema
             _CswNbtResources = CswNbtResources;
 
             // This is where you manually set to the last version of the previous release (the one currently in production)
-            _MinimumVersion = new CswSchemaVersion( 2, 'H', 38 );
+            _MinimumVersion = new CswSchemaVersion( 2, 'I', 72 );
 
             // Set the global variable values
             CurrentReleaseIdentifier = _getNextReleaseIdentifier();
@@ -215,7 +215,7 @@ namespace ChemSW.Nbt.Schema
             char Return = _MinimumVersion.ReleaseIdentifier;
             if( 'Y' != Return )
             {
-                char[] alpha = "ABCDEFGHIJKLMNOPQRSTUVWY".ToCharArray(); //No X or Z
+                char[] alpha = "ABCDEFGHIKLMNOPQRSTUVWY".ToCharArray(); //No X or Z, skip J
                 List<char> Chars = new List<char>( alpha );
                 int ReleaseIdInt = Chars.IndexOf( Return );
                 ReleaseIdInt++;
