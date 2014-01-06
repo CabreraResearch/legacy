@@ -86,15 +86,35 @@ namespace ChemSW.Nbt.Actions
             CswNbtObjClassContainer InitialContainerNode = _CswNbtResources.Nodes[ReceiptDefinition.ContainerNodeId];
             if( null != InitialContainerNode && ReceiptDefinition.Quantities.Count > 0 )
             {
-                JObject ContainerAddProps = ReceiptDefinition.ContainerProps;
-                _CswNbtSdTabsAndProps.saveNodeProps( InitialContainerNode.Node, ContainerAddProps );
                 ReceiptDefinition.Quantities[0].ContainerIds.Add( InitialContainerNode.NodeId.ToString() );
+                int processed = 0;
+                receiveContainers( ReceiptDefinition, ref processed, 1 ); //process only the first container (the initial one)
 
                 commitSDSDocNode( ReceiptDefinition.MaterialNodeId, ReceiptDefinition.SDSNodeId, ReceiptDefinition.SDSProps );
+
                 CswNbtNode ReceiptLot = _makeReceiptLot( ReceiptDefinition.MaterialNodeId, ReceiptDefinition, InitialContainerNode.ExpirationDate.DateTimeValue );
                 if( null == ReceiptDefinition.ReceiptLotNodeId )
                 {
                     ReceiptDefinition.ReceiptLotNodeId = ReceiptLot.NodeId;
+                }
+
+                //Generate the barcodes upfront and treat them as custom barcodes so all Containers in this Receipt Def have similar numbers
+                CswNbtMetaDataNodeTypeProp BarcodeProp = (CswNbtMetaDataNodeTypeProp) InitialContainerNode.NodeType.getBarcodeProperty();
+                CswNbtSequenceValue ContainerBarcodeSequence = new CswNbtSequenceValue( BarcodeProp.PropId, _CswNbtResources );
+                for( int i = 0; i < ReceiptDefinition.Quantities.Count; i++ )
+                {
+                    CswNbtAmountsGridQuantity quantity = ReceiptDefinition.Quantities[i];
+                    while( quantity.Barcodes.Count < quantity.NumContainers )
+                    {
+                        if( quantity.Barcodes.Count == 0 && i == 0 ) //special case: the Initial Container node already has a barcode, so insert that one if a user didn't specify a custom barcode
+                        {
+                            quantity.Barcodes.Add( InitialContainerNode.Barcode.Barcode );
+                        }
+                        else
+                        {
+                            quantity.Barcodes.Add( ContainerBarcodeSequence.getNext() );
+                        }
+                    }
                 }
 
                 int TotalContainersToMake = ReceiptDefinition.CountNumberContainersToMake();
@@ -176,6 +196,7 @@ namespace ChemSW.Nbt.Actions
                             CswNbtNode InitialContainerNode = _CswNbtResources.Nodes.GetNode( ContainerId );
                             if( null != InitialContainerNode && InitialContainerNode.IsTemp )
                             {
+                                _CswNbtSdTabsAndProps.saveNodeProps( InitialContainerNode, ReceiptDef.ContainerProps );
                                 After( InitialContainerNode );
                                 InitialContainerNode.PromoteTempToReal();
                                 NodesProcessed++;
@@ -221,7 +242,7 @@ namespace ChemSW.Nbt.Actions
             }
             return Ret;
         }
-        
+
         /// <summary>
         /// Persist the SDS Document
         /// </summary>

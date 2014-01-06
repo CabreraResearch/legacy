@@ -65,7 +65,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             if( Sequence.Trim() == string.Empty )
             {
-                string value = _SequenceValue.Next;
+                string value = _SequenceValue.getNext();
                 setSequenceValueOverride( value, false );
             }
         }

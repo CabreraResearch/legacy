@@ -202,7 +202,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             if( UseSequence && Sequence.Trim() == string.Empty )
             {
-                string value = _SequenceValue.Next;
+                string value = _SequenceValue.getNext();
                 setSequenceValueOverride( value, false );
             }
         }

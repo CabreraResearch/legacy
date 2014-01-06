@@ -74,7 +74,7 @@ namespace ChemSW.Nbt.PropTypes
             bool Succeeded = false;
             if( Barcode.Trim() == string.Empty || OverrideExisting )
             {
-                string value = _SequenceValue.Next;
+                string value = _SequenceValue.getNext();
                 Succeeded = setBarcodeValueOverride( value, false );
             }
             return Succeeded;

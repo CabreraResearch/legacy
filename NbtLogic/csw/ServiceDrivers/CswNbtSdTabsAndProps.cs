@@ -641,6 +641,9 @@ namespace ChemSW.Nbt.ServiceDrivers
 
         private CswNbtNode _addNode( CswNbtMetaDataNodeType NodeType, CswNbtNode Node, JObject PropsObj, out CswNbtNodeKey RetNbtNodeKey, Action<CswNbtNode> After, CswNbtView View = null, CswNbtMetaDataNodeTypeTab NodeTypeTab = null )
         {
+            CswEnumNbtNodeEditMode prevEditMode = _CswNbtResources.EditMode;
+            _CswNbtResources.EditMode = CswEnumNbtNodeEditMode.Add;
+
             CswNbtNode Ret = Node;
             RetNbtNodeKey = null;
             CswNbtActQuotas QuotaAction = new CswNbtActQuotas( _CswNbtResources );
@@ -679,6 +682,8 @@ namespace ChemSW.Nbt.ServiceDrivers
             {
                 throw new CswDniException( CswEnumErrorType.Warning, "Quota Exceeded", "You have used all of your purchased quota, and must purchase additional quota space in order to add" );
             }
+
+            _CswNbtResources.EditMode = prevEditMode;
             return Ret;
         }
 

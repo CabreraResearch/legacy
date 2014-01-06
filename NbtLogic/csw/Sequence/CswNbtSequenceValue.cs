@@ -1,9 +1,9 @@
+using System;
+using System.Data;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
-using System;
-using System.Data;
 
 namespace ChemSW.Nbt
 {
@@ -143,53 +143,42 @@ namespace ChemSW.Nbt
             return (formatSequence(ExampleValue));
         }
 
-        public string Next
+        public string getNext()
         {
-            get
+            string ReturnVal = "";
+
+            if( null != _CurrentSequenceRow )
             {
-                // BZ 5163
-                //if( null == _CurrentSequenceRow ) 
-                //    throw( new CswDniException( "Internal error", "There is no current row; you must set the NodeTypePropId or SequenceId property" ) );
+                CswSequenceName SequenceName = new CswSequenceName( _CurrentSequenceRow["sequencename"].ToString() );
 
-                string ReturnVal = "";
+                if( !_CswNbtResources.doesUniqueSequenceExist( SequenceName.DBName ) )
+                    _CswNbtResources.makeUniqueSequence( SequenceName.DBName, 1 );
 
-                if (null != _CurrentSequenceRow)
-                {
-                    CswSequenceName SequenceName = new CswSequenceName(_CurrentSequenceRow["sequencename"].ToString());
+                Int32 RawSequenceVal = _CswNbtResources.getNextUniqueSequenceVal( SequenceName.DBName );
 
-                    if (!_CswNbtResources.doesUniqueSequenceExist(SequenceName.DBName))
-                        _CswNbtResources.makeUniqueSequence(SequenceName.DBName, 1);
-
-                    Int32 RawSequenceVal = _CswNbtResources.getNextUniqueSequenceVal(SequenceName.DBName);
-
-                    ReturnVal = formatSequence(RawSequenceVal);
-                }
-                return ReturnVal;
+                ReturnVal = formatSequence( RawSequenceVal );
             }
-
-        }//Next
-
-        public string Current
-        {
-            get
-            {
-                string ReturnVal = "";
-
-                if (null != _CurrentSequenceRow)
-                {
-                    CswSequenceName SequenceName = new CswSequenceName(_CurrentSequenceRow["sequencename"].ToString());
-
-                    if (!_CswNbtResources.doesUniqueSequenceExist(SequenceName.DBName))
-                        _CswNbtResources.makeUniqueSequence(SequenceName.DBName, 1);
-
-                    Int32 RawSequenceVal = _CswNbtResources.getCurrentUniqueSequenceVal(SequenceName.DBName);
-
-                    ReturnVal = formatSequence(RawSequenceVal);
-                }
-                return ReturnVal;
-            }
+            return ReturnVal;
         }
+        
+        public string getCurrent()
+        {
+            string ReturnVal = "";
 
+            if( null != _CurrentSequenceRow )
+            {
+                CswSequenceName SequenceName = new CswSequenceName( _CurrentSequenceRow["sequencename"].ToString() );
+
+                if( !_CswNbtResources.doesUniqueSequenceExist( SequenceName.DBName ) )
+                    _CswNbtResources.makeUniqueSequence( SequenceName.DBName, 1 );
+
+                Int32 RawSequenceVal = _CswNbtResources.getCurrentUniqueSequenceVal( SequenceName.DBName );
+
+                ReturnVal = formatSequence( RawSequenceVal );
+            }
+            return ReturnVal;
+        }
+        
         /// <summary>
         /// Resets next sequence value based on maximum existing value in the database.
         /// </summary>
