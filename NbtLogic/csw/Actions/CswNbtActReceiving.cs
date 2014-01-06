@@ -1,5 +1,4 @@
 using System;
-using System.Collections.ObjectModel;
 using System.Linq;
 using ChemSW.Config;
 using ChemSW.Core;
@@ -85,9 +84,18 @@ namespace ChemSW.Nbt.Actions
             JObject Ret = new JObject();
 
             CswNbtObjClassContainer InitialContainerNode = _CswNbtResources.Nodes[ReceiptDefinition.ContainerNodeId];
-            if( null != InitialContainerNode )
+            if( null != InitialContainerNode && ReceiptDefinition.Quantities.Count > 0 )
             {
-                HandleInitialContainer( InitialContainerNode, ReceiptDefinition );
+                JObject ContainerAddProps = ReceiptDefinition.ContainerProps;
+                _CswNbtSdTabsAndProps.saveNodeProps( InitialContainerNode.Node, ContainerAddProps );
+                ReceiptDefinition.Quantities[0].ContainerIds.Add( InitialContainerNode.NodeId.ToString() );
+
+                commitSDSDocNode( ReceiptDefinition.MaterialNodeId, ReceiptDefinition.SDSNodeId, ReceiptDefinition.SDSProps );
+                CswNbtNode ReceiptLot = _makeReceiptLot( ReceiptDefinition.MaterialNodeId, ReceiptDefinition, InitialContainerNode.ExpirationDate.DateTimeValue );
+                if( null == ReceiptDefinition.ReceiptLotNodeId )
+                {
+                    ReceiptDefinition.ReceiptLotNodeId = ReceiptLot.NodeId;
+                }
 
                 int TotalContainersToMake = ReceiptDefinition.CountNumberContainersToMake();
                 int PerCycle = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumConfigurationVariableNames.NodesProcessedPerCycle ) );
@@ -213,65 +221,7 @@ namespace ChemSW.Nbt.Actions
             }
             return Ret;
         }
-
-        public void HandleInitialContainer( CswNbtObjClassContainer InitialContainerNode, CswNbtReceivingDefiniton ReceiptObj )
-        {
-            JObject ContainerAddProps = ReceiptObj.ContainerProps;
-            _CswNbtSdTabsAndProps.saveNodeProps( InitialContainerNode.Node, ContainerAddProps );
-            ReceiptObj.Quantities[0].ContainerIds.Add( InitialContainerNode.NodeId.ToString() );
-
-            commitSDSDocNode( ReceiptObj.MaterialNodeId, ReceiptObj.SDSNodeId, ReceiptObj.SDSProps );
-            CswNbtNode ReceiptLot = _makeReceiptLot( ReceiptObj.MaterialNodeId, ReceiptObj, InitialContainerNode.ExpirationDate.DateTimeValue );
-            if( null == ReceiptObj.ReceiptLotNodeId )
-            {
-                ReceiptObj.ReceiptLotNodeId = ReceiptLot.NodeId;
-            }
-
-            Collection<CswNbtAmountsGridQuantity> Quantities = ReceiptObj.Quantities;
-            HandleContainer( ReceiptObj,
-                             QuantityDef : Quantities[0],
-                             Barcode : Quantities[0].Barcodes.FirstOrDefault(),
-                             Apply : delegate( Action<CswNbtNode> After )
-                             {
-                                 After( InitialContainerNode.Node );
-                                 InitialContainerNode.PromoteTempToReal();
-                             }
-                );
-        }
-
-        public void HandleContainer( CswNbtReceivingDefiniton ReceiptDef, CswNbtAmountsGridQuantity QuantityDef, string Barcode, Action<Action<CswNbtNode>> Apply )
-        {
-            CswNbtObjClassSize AsSize = _CswNbtResources.Nodes.GetNode( QuantityDef.SizeNodeId );
-
-            Action<CswNbtNode> After = delegate( CswNbtNode NewNode )
-            {
-                CswNbtObjClassContainer thisContainer = NewNode;
-                if( QuantityDef.Barcodes.Count <= QuantityDef.NumContainers && false == string.IsNullOrEmpty( Barcode ) )
-                {
-                    thisContainer.Barcode.setBarcodeValueOverride( Barcode, false );
-                }
-                thisContainer.Size.RelatedNodeId = QuantityDef.SizeNodeId;
-                thisContainer.Material.RelatedNodeId = ReceiptDef.MaterialNodeId;
-                if( AsSize.QuantityEditable.Checked != CswEnumTristate.True )
-                {
-                    QuantityDef.Quantity = AsSize.InitialQuantity.Quantity;
-                    QuantityDef.UnitNodeId = AsSize.InitialQuantity.UnitId;
-                }
-                if( null == thisContainer.Quantity.UnitId || Int32.MinValue == thisContainer.Quantity.UnitId.PrimaryKey )
-                {
-                    thisContainer.Quantity.UnitId = QuantityDef.UnitNodeId;
-                }
-                thisContainer.DispenseIn( CswEnumNbtContainerDispenseType.Receive, QuantityDef.Quantity, QuantityDef.UnitNodeId, ReceiptDef.RequestItemtNodeId );
-                thisContainer.Disposed.Checked = CswEnumTristate.False;
-                thisContainer.ReceiptLot.RelatedNodeId = ReceiptDef.ReceiptLotNodeId;
-            };
-
-            if( QuantityDef.NumContainers > 0 && QuantityDef.Quantity > 0 && Int32.MinValue != QuantityDef.UnitNodeId.PrimaryKey )
-            {
-                Apply( After );
-            }
-        }
-
+        
         /// <summary>
         /// Persist the SDS Document
         /// </summary>
