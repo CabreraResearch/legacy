@@ -19,7 +19,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Aliases = "Aliases";
         }
 
-        public CswNbtObjClassUnitOfMeasure( CswNbtResources CswNbtResources, CswNbtNode Node ) : base( CswNbtResources, Node ) {}
+        public CswNbtObjClassUnitOfMeasure( CswNbtResources CswNbtResources, CswNbtNode Node ) : base( CswNbtResources, Node ) { }
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
@@ -107,11 +107,8 @@ namespace ChemSW.Nbt.ObjClasses
                 {
                     foreach( CswNbtTreeNodeProp TreeNodeProp in UoMNodesTree.getChildNodePropsOfNode() )
                     {
-                        CswNbtMetaDataNodeTypeProp UoMNTP = _CswNbtResources.MetaData.getNodeTypeProp( TreeNodeProp.NodeTypePropId );
-
                         CswCommaDelimitedString UoMNodeCommaDelimitedAliases = new CswCommaDelimitedString();
-                        string UoMNodeAliasesWithoutSpaces = TreeNodeProp.Gestalt.Replace( " ", "" );
-                        UoMNodeCommaDelimitedAliases.FromString( UoMNodeAliasesWithoutSpaces );
+                        UoMNodeCommaDelimitedAliases.FromString( TreeNodeProp.Gestalt, false, true );
 
                         foreach( string Alias1 in AliasesAsDelimitedString )
                         {
@@ -190,6 +187,14 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropMemo Aliases { get { return ( _CswNbtNode.Properties[PropertyName.Aliases] ); } }
         private void onAliasesPropChange( CswNbtNodeProp Prop, bool Creating )
         {
+            // Remove duplicates
+            CswCommaDelimitedString AliasesWithoutDupes = new CswCommaDelimitedString();
+            foreach( string Alias in AliasesAsDelimitedString.Where( Alias => false == AliasesWithoutDupes.Contains( Alias ) ) )
+            {
+                AliasesWithoutDupes.Add( Alias );
+            }
+            Aliases.Text = CswConvert.ToString( AliasesWithoutDupes );
+
             _validateAliasUniqueness();
         }
 
@@ -198,7 +203,7 @@ namespace ChemSW.Nbt.ObjClasses
             get
             {
                 CswCommaDelimitedString ret = new CswCommaDelimitedString();
-                ret.FromString( Aliases.Text.Replace( " ", "" ) );
+                ret.FromString( Aliases.Text, false, true );
                 return ret;
             }
         }
