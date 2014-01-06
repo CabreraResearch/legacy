@@ -77,14 +77,6 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public override void beforePromoteNode()
-        {
-        }
-
-        public override void afterPromoteNode()
-        {
-        }
-
         public override void beforePropertySetWriteNode()
         {
             setDoneOnDate();

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ChemSW.Nbt.MetaData.FieldTypeRules;
+using System;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Drawing;
@@ -344,7 +345,7 @@ namespace ChemSW.Nbt.ServiceDrivers
         public void SetLastModified( CswNbtNodePropWrapper BlobProp )
         {
             //BlobProp.SetPropRowValue( CswEnumNbtPropColumn.Field2_Date, DateTime.Now );
-            BlobProp.SetSubFieldValue( CswEnumNbtSubFieldName.DateModified, DateTime.Now );
+            BlobProp.SetSubFieldValue( CswNbtFieldTypeRuleBlob.SubFieldName.DateModified, DateTime.Now );
         }
 
         public static CswArbitrarySelect GetBlobAuditSelect( CswNbtResources NbtResources, string Date, int JctNodePropId, int BlobDataId = Int32.MinValue )

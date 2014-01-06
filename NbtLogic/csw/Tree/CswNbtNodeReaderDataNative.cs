@@ -39,6 +39,7 @@ namespace ChemSW.Nbt
             if( NodesTable.Rows.Count > 0 )
             {
                 CswNbtNode.read( NodesTable.Rows[0] );
+                CswNbtNode.RelationalId = new CswPrimaryKey( NodesTable.Rows[0]["relationaltable"].ToString(), CswConvert.ToInt32( NodesTable.Rows[0]["relationalid"] ) );
             }
 
             ReturnVal = true;

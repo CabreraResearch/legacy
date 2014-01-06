@@ -1,5 +1,6 @@
 ﻿using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.Actions.KioskMode
@@ -88,7 +89,7 @@ namespace ChemSW.Nbt.Actions.KioskMode
                 view.AddViewPropertyAndFilter( parent,
                     MetaDataProp: barcodeOCP,
                     Value: Barcode,
-                    SubFieldName: CswEnumNbtSubFieldName.Barcode,
+                    SubFieldName: CswNbtFieldTypeRuleBarCode.SubFieldName.Barcode,
                     FilterMode: CswEnumNbtFilterMode.Equals
                 );
 

@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 
@@ -8,15 +10,12 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
     public class CswNbtFieldTypeRuleChildContents : ICswNbtFieldTypeRule
     {
+        public sealed class SubFieldName : ICswNbtFieldTypeRuleSubFieldName
+        {
+        }
 
         private CswNbtFieldTypeRuleDefaultImpl _CswNbtFieldTypeRuleDefault = null;
         private CswNbtFieldResources _CswNbtFieldResources = null;
-
-        public static CswEnumNbtPropColumn SequenceNumberColumn = CswEnumNbtPropColumn.Field1_Numeric;
-
-        public CswNbtSubField CachedValueSubField;
-        public CswNbtSubField SequenceSubField;
-        public CswNbtSubField SequenceNumberSubField;
 
         public CswNbtFieldTypeRuleChildContents( CswNbtFieldResources CswNbtFieldResources )
         {
@@ -49,9 +48,44 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldTypeRuleDefault.AddUniqueFilterToView( View, UniqueValueViewProperty, PropertyValueToCheck, EnforceNullEntries );
         }
 
-        public void setFk( CswNbtMetaDataNodeTypeProp MetaDataProp, CswNbtMetaDataNodeTypeProp.doSetFk doSetFk, string inFKType, Int32 inFKValue, string inValuePropType = "", Int32 inValuePropId = Int32.MinValue )
+        public void onSetFk( CswNbtMetaDataNodeTypeProp MetaDataProp, CswNbtObjClassDesignNodeTypeProp DesignNTPNode )
         {
-            _CswNbtFieldTypeRuleDefault.setFk( MetaDataProp, doSetFk, inFKType, inFKValue, inValuePropType, inValuePropId );
+            _CswNbtFieldTypeRuleDefault.onSetFk( MetaDataProp, DesignNTPNode );
+        }
+
+        public sealed class AttributeName : ICswNbtFieldTypeRuleAttributeName
+        {
+            public const string IsFK = CswEnumNbtPropertyAttributeName.IsFK;
+            public const string ChildRelationship = CswEnumNbtPropertyAttributeName.ChildRelationship;
+            public const string FKType = CswEnumNbtPropertyAttributeName.FKType;
+        }
+
+        public Collection<CswNbtFieldTypeAttribute> getAttributes()
+        {
+            Collection<CswNbtFieldTypeAttribute> ret = _CswNbtFieldTypeRuleDefault.getAttributes( CswEnumNbtFieldType.ChildContents );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+                {
+                    OwnerFieldType = CswEnumNbtFieldType.ChildContents,
+                    Name = AttributeName.IsFK,
+                    AttributeFieldType = CswEnumNbtFieldType.Logical,
+                    Column = CswEnumNbtPropertyAttributeColumn.Isfk
+                } );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+            {
+                OwnerFieldType = CswEnumNbtFieldType.ChildContents,
+                Name = AttributeName.ChildRelationship,
+                AttributeFieldType = CswEnumNbtFieldType.Relationship,
+                Column = CswEnumNbtPropertyAttributeColumn.Fkvalue,
+                SubFieldName = CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID
+            } );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+                {
+                    OwnerFieldType = CswEnumNbtFieldType.ChildContents,
+                    Name = AttributeName.FKType,
+                    AttributeFieldType = CswEnumNbtFieldType.List,
+                    Column = CswEnumNbtPropertyAttributeColumn.Fktype
+                } );
+            return ret;
         }
 
         public void afterCreateNodeTypeProp( CswNbtMetaDataNodeTypeProp NodeTypeProp )

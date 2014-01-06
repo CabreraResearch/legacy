@@ -10,7 +10,7 @@ using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.PropTypes
 {
-    public class CswNbtNodePropTimeInterval: CswNbtNodeProp
+    public class CswNbtNodePropTimeInterval : CswNbtNodeProp
     {
         public static implicit operator CswNbtNodePropTimeInterval( CswNbtNodePropWrapper PropWrapper )
         {
@@ -112,7 +112,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return CswConvert.ToBoolean( _CswNbtMetaDataNodeTypeProp.Attribute1 );
+                return CswConvert.ToBoolean( _CswNbtNodePropData[CswNbtFieldTypeRuleTimeInterval.AttributeName.AllowHourly] );
             }
         }
 

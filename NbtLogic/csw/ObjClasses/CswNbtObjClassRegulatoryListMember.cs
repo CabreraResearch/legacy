@@ -1,5 +1,6 @@
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 
@@ -69,7 +70,7 @@ namespace ChemSW.Nbt.ObjClasses
         public void _RegulatoryList_OnChange( CswNbtNodeProp Prop, bool Creating )
         {
             if( null != RegulatoryList.RelatedNodeId &&
-                RegulatoryList.RelatedNodeId.PrimaryKey != CswConvert.ToInt32( RegulatoryList.GetOriginalPropRowValue( CswEnumNbtSubFieldName.NodeID ) ) )
+                RegulatoryList.RelatedNodeId.PrimaryKey != CswConvert.ToInt32( RegulatoryList.GetOriginalPropRowValue( CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID ) ) )
             {
                 // case 28303 - set ByUser to current user when regulatory list is modified
                 if( false == SetByChemical && false == _CswNbtResources.CurrentNbtUser is CswNbtSystemUser )

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
 using Newtonsoft.Json.Linq;
 
@@ -38,8 +39,10 @@ namespace ChemSW.Nbt.PropTypes
                 if( null == _View )
                 {
                     if( _CswNbtMetaDataNodeTypeProp.ViewId.isSet() )
+                if( Int32.MinValue != CswConvert.ToInt32( _CswNbtNodePropData[CswNbtFieldTypeRuleGrid.AttributeName.View] ) )
                     {
-                        _View = _CswNbtResources.ViewSelect.restoreView( _CswNbtMetaDataNodeTypeProp.ViewId );
+                        //_View = _CswNbtResources.ViewSelect.restoreView( _CswNbtMetaDataNodeTypeProp.ViewId );
+                        _View = _CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( CswConvert.ToInt32( _CswNbtNodePropData[CswNbtFieldTypeRuleGrid.AttributeName.View] ) ) );
                         if( null != _View && false == _View.SessionViewId.isSet() )
                         {
                             _View.SaveToCache( false );
@@ -53,7 +56,8 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return _CswNbtMetaDataNodeTypeProp.TextAreaRows;
+                //return _CswNbtMetaDataNodeTypeProp.TextAreaRows;
+                return CswConvert.ToInt32( _CswNbtNodePropData[CswNbtFieldTypeRuleGrid.AttributeName.WidthInPixels] );
             }
             //set
             //{
@@ -65,7 +69,8 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                CswEnumNbtGridPropMode Ret = (CswEnumNbtGridPropMode) _CswNbtMetaDataNodeTypeProp.Extended;
+                //CswEnumNbtGridPropMode Ret = (CswEnumNbtGridPropMode) _CswNbtMetaDataNodeTypeProp.Extended;
+                CswEnumNbtGridPropMode Ret = (CswEnumNbtGridPropMode) _CswNbtNodePropData[CswNbtFieldTypeRuleGrid.AttributeName.DisplayMode];
                 if( Ret == CswEnumNbtGridPropMode.Unknown )
                 {
                     Ret = CswEnumNbtGridPropMode.Full;
@@ -82,7 +87,8 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 bool ShowHeader = true;
-                String Ret = _CswNbtMetaDataNodeTypeProp.Attribute1;
+                //String Ret = _CswNbtMetaDataNodeTypeProp.Attribute1;
+                string Ret = _CswNbtNodePropData[CswNbtFieldTypeRuleGrid.AttributeName.ShowHeaders];
                 if( false == String.IsNullOrEmpty( Ret ) )
                 {
                     ShowHeader = CswConvert.ToBoolean( Ret );
@@ -95,7 +101,8 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                Int32 Ret = CswConvert.ToInt32( _CswNbtMetaDataNodeTypeProp.MaxValue );
+                //Int32 Ret = CswConvert.ToInt32( _CswNbtMetaDataNodeTypeProp.MaxValue );
+                Int32 Ret = CswConvert.ToInt32( _CswNbtNodePropData[CswNbtFieldTypeRuleGrid.AttributeName.MaximumRows] );
                 if( Int32.MinValue == Ret )
                 {
                     Ret = 3;

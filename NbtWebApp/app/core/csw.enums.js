@@ -461,6 +461,7 @@
             }
         },
         LogicalSet: { name: 'LogicalSet', subfields: {} },
+            MetaDataList: { name: 'MetaDataList', subfields: {} },
         Memo: {
             name: 'Memo',
             subfields: {

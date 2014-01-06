@@ -43,10 +43,10 @@ namespace ChemSW.Nbt.Schema
                     CswNbtMetaDataNodeTypeProp RegionsNTP = CurrentRegulatoryListNT.getNodeTypePropByObjectClassProp( CswNbtObjClassRegulatoryList.PropertyName.Regions );
                     RegionsNTP.updateLayout( CswEnumNbtLayoutType.Add, true, DisplayRow: 3, DisplayColumn: 1 );
                     RegionsNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 3, DisplayColumn: 1 );
-                    RegionsNTP.setFilter( FilterProp: ListModeNTP,
-                                        SubField: ListModeNTP.getFieldTypeRule().SubFields.Default,
-                                        FilterMode: CswEnumNbtFilterMode.Equals,
-                                        FilterValue: CswNbtObjClassRegulatoryList.CswEnumRegulatoryListListModes.ArielManaged );
+                    RegionsNTP.setFilterDeprecated( FilterProp: ListModeNTP,
+                                                    SubField: ListModeNTP.getFieldTypeRule().SubFields.Default,
+                                                    FilterMode: CswEnumNbtFilterMode.Equals,
+                                                    FilterValue: CswNbtObjClassRegulatoryList.CswEnumRegulatoryListListModes.ArielManaged );
 
                 }//foreach( CswNbtMetaDataNodeType CurrentRegulatoryListNT in RegulatoryListOC.getNodeTypes() )
 

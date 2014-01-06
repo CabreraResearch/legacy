@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using ChemSW.Core;
 
 namespace ChemSW.Nbt.MetaData
@@ -15,7 +16,7 @@ namespace ChemSW.Nbt.MetaData
             { BalanceClass                      , BalanceClass                       },
             { BalanceConfigurationClass         , BalanceConfigurationClass          },
             { BatchOpClass                      , BatchOpClass                       },
-            { MaterialComponentClass            , MaterialComponentClass             },
+            { ChemicalClass                     , ChemicalClass                      },
             { CofADocumentClass                 , CofADocumentClass                  },
             { CofAMethodClass                   , CofAMethodClass                    },
             { CofAMethodTemplateClass           , CofAMethodTemplateClass            },
@@ -26,6 +27,10 @@ namespace ChemSW.Nbt.MetaData
             { ControlZoneClass                  , ControlZoneClass                   },
             { CustomerClass                     , CustomerClass                      },
             { DepartmentClass                   , DepartmentClass                    },
+            { DesignNodeTypeClass               , DesignNodeTypeClass                },
+            { DesignNodeTypePropClass           , DesignNodeTypePropClass            },
+            { DesignNodeTypeTabClass            , DesignNodeTypeTabClass             },
+            { DesignSequenceClass               , DesignSequenceClass                },
             { DocumentClass                     , DocumentClass                      },
             { DSDPhraseClass                    , DSDPhraseClass                     },
             { EnterprisePartClass               , EnterprisePartClass                },
@@ -53,7 +58,7 @@ namespace ChemSW.Nbt.MetaData
             { MailReportGroupClass              , MailReportGroupClass               },
             { MailReportGroupPermissionClass    , MailReportGroupPermissionClass     },
             { ManufacturerEquivalentPartClass   , ManufacturerEquivalentPartClass    },
-            { ChemicalClass                     , ChemicalClass                      },
+            { MaterialComponentClass            , MaterialComponentClass             },
             { MaterialSynonymClass              , MaterialSynonymClass               },
             { MethodClass                       , MethodClass                        },
             { NonChemicalClass                  , NonChemicalClass                   },
@@ -86,6 +91,8 @@ namespace ChemSW.Nbt.MetaData
         /// The string value of the current instance
         /// </summary>
         public readonly string Value;
+
+        public static IEnumerable<string> All { get { return _Enums.Values; } }
 
         private static string _Parse( string Val )
         {
@@ -136,6 +143,7 @@ namespace ChemSW.Nbt.MetaData
         public const string BalanceClass = "BalanceClass";
         public const string BalanceConfigurationClass = "BalanceConfigurationClass";
         public const string BatchOpClass = "BatchOpClass";
+        public const string ChemicalClass = "ChemicalClass";
         public const string CofADocumentClass = "CofADocumentClass";
         public const string CofAMethodClass = "CofAMethodClass";
         public const string CofAMethodTemplateClass = "CofAMethodTemplateClass";
@@ -146,6 +154,10 @@ namespace ChemSW.Nbt.MetaData
         public const string ControlZoneClass = "ControlZoneClass";
         public const string CustomerClass = "CustomerClass";
         public const string DepartmentClass = "DepartmentClass";
+        public const string DesignNodeTypeClass = "DesignNodeTypeClass";
+        public const string DesignNodeTypePropClass = "DesignNodeTypePropClass";
+        public const string DesignNodeTypeTabClass = "DesignNodeTypeTabClass";
+        public const string DesignSequenceClass = "DesignSequenceClass";
         public const string DocumentClass = "DocumentClass";
         public const string DSDPhraseClass = "DSDPhraseClass";
         public const string EnterprisePartClass = "EnterprisePartClass";
@@ -171,7 +183,6 @@ namespace ChemSW.Nbt.MetaData
         public const string MailReportClass = "MailReportClass";
         public const string MailReportGroupClass = "MailReportGroupClass";
         public const string MailReportGroupPermissionClass = "MailReportGroupPermissionClass";
-        public const string ChemicalClass = "ChemicalClass";
         public const string ManufacturerEquivalentPartClass = "ManufacturerEquivalentPartClass";
         public const string MaterialComponentClass = "MaterialComponentClass";
         public const string MaterialSynonymClass = "MaterialSynonymClass";

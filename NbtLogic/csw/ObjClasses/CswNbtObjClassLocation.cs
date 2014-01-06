@@ -167,7 +167,7 @@ namespace ChemSW.Nbt.ObjClasses
                         LocReln = LocationsView.AddViewRelationship( LocationOC, true );
                         LocationsView.AddViewPropertyAndFilter( LocReln, LocationLocationOCP,
                                                                 Conjunction: CswEnumNbtFilterConjunction.And,
-                                                                SubFieldName: CswEnumNbtSubFieldName.NodeID,
+                                                                SubFieldName: CswNbtFieldTypeRuleLocation.SubFieldName.NodeID,
                                                                 FilterMode: CswEnumNbtFilterMode.Null );
                     }
                     else
@@ -202,7 +202,7 @@ namespace ChemSW.Nbt.ObjClasses
                                                                 Conjunction: CswEnumNbtFilterConjunction.And,
                                                                 ResultMode: CswEnumNbtFilterResultMode.Disabled,
                                                                 FilterMode: CswEnumNbtFilterMode.In,
-                                                                SubFieldName: CswEnumNbtSubFieldName.NodeID,
+                                                                SubFieldName : CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID,
                                                                 Value: Pks.ToString() );
                     }
 

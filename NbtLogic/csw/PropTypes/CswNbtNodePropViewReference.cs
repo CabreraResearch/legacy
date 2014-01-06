@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using ChemSW.Core;
+using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
@@ -10,7 +11,7 @@ using Newtonsoft.Json.Linq;
 namespace ChemSW.Nbt.PropTypes
 {
 
-    public class CswNbtNodePropViewReference: CswNbtNodeProp
+    public class CswNbtNodePropViewReference : CswNbtNodeProp
     {
         //public static char delimiter = ',';
 
@@ -27,7 +28,26 @@ namespace ChemSW.Nbt.PropTypes
 
 
             // Associate subfields with methods on this object, for SetSubFieldValue()
-            _SubFieldMethods.Add( _ViewIdSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => ViewId, x => ViewId = x ) );
+            _SubFieldMethods.Add( _ViewIdSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => ViewId,
+                                                                                              x =>
+                                                                                                  {
+                                                                                                      if( CswTools.IsInteger( x ) )
+                                                                                                      {
+                                                                                                          ViewId = new CswNbtViewId( CswConvert.ToInt32( x ) );
+                                                                                                      }
+                                                                                                      else if( x is CswNbtViewId )
+                                                                                                      {
+                                                                                                          ViewId = x;
+                                                                                                      }
+                                                                                                      else if( string.IsNullOrEmpty( x.ToString() ) )
+                                                                                                      {
+                                                                                                          ViewId = null;
+                                                                                                      }
+                                                                                                      else
+                                                                                                      {
+                                                                                                          throw new CswDniException( CswEnumErrorType.Error, "Invalid parameter", "CswNbtNodePropViewReference got an invalid parameter for setting ViewId: " + x.ToString() );
+                                                                                                      }
+                                                                                                  } ) );
             _SubFieldMethods.Add( _CachedViewNameSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => CachedViewName, x => CachedViewName = CswConvert.ToString( x ) ) );
         }
 
@@ -41,6 +61,7 @@ namespace ChemSW.Nbt.PropTypes
                 return ( false == ViewId.isSet() );
             }
         }//Empty
+
 
 
         /// <summary>
@@ -63,15 +84,24 @@ namespace ChemSW.Nbt.PropTypes
                     // Case 20194. KLUGE Alert!!!
                     CswNbtNode node = _CswNbtResources.Nodes.GetNode( NodeId );
                     if( null != node )
+                    {
                         node.postChanges( false );
+                    }
                 }
 
                 return new CswNbtViewId( CswConvert.ToInt32( GetPropRowValue( _ViewIdSubField ) ) );
             }
-            private set
+            set
             {
-                if( SetPropRowValue( _ViewIdSubField, value.get() ) )
+                Int32 valToSave = Int32.MinValue;
+                if( null != value )
+                {
+                    valToSave = value.get();
+                }
+                if( SetPropRowValue( _ViewIdSubField, valToSave ) )
+                {
                     PendingUpdate = true;
+                }
             }
         }
 

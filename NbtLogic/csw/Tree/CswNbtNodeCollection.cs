@@ -2,6 +2,7 @@ using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
 using System;
@@ -118,6 +119,7 @@ namespace ChemSW.Nbt
             return Node;
         } // getNode()
 
+
         /// <summary>
         /// Fetch a node from the collection.  NodeTypeId is looked up and NodeSpecies.Plain is assumed.  See <see cref="GetNode(CswPrimaryKey, int, CswEnumNbtNodeSpecies, CswDateTime)"/>
         /// </summary>
@@ -193,6 +195,20 @@ namespace ChemSW.Nbt
             return Node;
         }//GetNode()
 
+
+        public CswNbtNode getNodeByRelationalId( CswPrimaryKey RelationalId )
+        {
+            CswNbtNode ret = null;
+            CswTableSelect NodesSelect = _CswNbtResources.makeCswTableSelect( "getNodeByRelationalId", "nodes" );
+            DataTable NodesTable = NodesSelect.getTable( new CswCommaDelimitedString() {"nodeid"}, "where relationaltable = '" + RelationalId.TableName + "' and relationalid='" + RelationalId.PrimaryKey.ToString() + "'" );
+            if( NodesTable.Rows.Count > 0 )
+            {
+                ret = GetNode( new CswPrimaryKey( "nodes", CswConvert.ToInt32( NodesTable.Rows[0]["nodeid"] ) ) );
+            }
+            return ret;
+        } // getNodeByRelationalId()
+
+
         /// <summary>
         /// Find a node by a unique property value
         /// </summary>
@@ -206,20 +222,20 @@ namespace ChemSW.Nbt
             foreach( CswNbtSubField SubField in MetaDataProp.getFieldTypeRule().SubFields )
             {
                 if( SQLQuery != string.Empty ) SQLQuery += " INTERSECT ";
-                if( SubField.RelationalTable == string.Empty )
-                {
-                    SQLQuery += " (select nodeid, 'nodes' tablename ";
-                    SQLQuery += "    from jct_nodes_props ";
-                    SQLQuery += "   where nodetypepropid = " + MetaDataProp.PropId.ToString() + " ";
+                //if( SubField.RelationalTable == string.Empty )
+                //{
+                SQLQuery += " (select nodeid, 'nodes' tablename ";
+                SQLQuery += "    from jct_nodes_props ";
+                SQLQuery += "   where nodetypepropid = " + MetaDataProp.PropId.ToString() + " ";
                     SQLQuery += "     and " + SubField.Column.ToString() + " = '" + PropWrapper.GetSubFieldValue( SubField ) + "') ";
-                }
-                else
-                {
-                    string PrimeKeyCol = _CswNbtResources.DataDictionary.getPrimeKeyColumn( SubField.RelationalTable );
-                    SQLQuery += " (select " + PrimeKeyCol + " nodeid, '" + SubField.RelationalTable + "' tablename ";
-                    SQLQuery += "    from " + SubField.RelationalTable + " ";
-                    SQLQuery += "   where " + SubField.RelationalColumn + " = '" + PropWrapper.GetSubFieldValue( SubField ) + "') ";
-                }
+                //}
+                //else
+                //{
+                //    string PrimeKeyCol = _CswNbtResources.DataDictionary.getPrimeKeyColumn( SubField.RelationalTable );
+                //    SQLQuery += " (select " + PrimeKeyCol + " nodeid, '" + SubField.RelationalTable + "' tablename ";
+                //    SQLQuery += "    from " + SubField.RelationalTable + " ";
+                //    SQLQuery += "   where " + SubField.RelationalColumn + " = '" + PropWrapper.GetSubFieldValue( SubField ) + "') ";
+                //}
             }
             SQLQuery = "select nodeid, tablename from " + SQLQuery;
 
@@ -377,6 +393,11 @@ namespace ChemSW.Nbt
             _NodeHash.Remove( new NodeHashKey( Node.NodeId, Node.NodeSpecies ) );
         }
 
+        public delegate void AfterMakeNode( CswNbtNode NewNode );
+
+        // <summary>
+        // 
+        // </summary>
         /// <summary>
         /// Create a new, fresh, empty Node from a node type.  Properties are filled in, but Property Values are not. !!POSTS CHANGES!!
         /// </summary>
@@ -399,6 +420,9 @@ namespace ChemSW.Nbt
             {
                 OnAfterMakeNode( Node );
             }
+
+            //Node.postChanges( true, IsCopy: false, OverrideUniqueValidation: OverrideUniqueValidation, IsCreate: ( false == IsTemp ) );
+            Node.postChanges( true, IsCopy: false, OverrideUniqueValidation: OverrideUniqueValidation );
 
             // We need to hash the Int32.MinValue keys for the Add form to work
             // But we can simply override what's in the hash if we make another new node
@@ -445,7 +469,7 @@ namespace ChemSW.Nbt
             View.ViewName = "CswNbtNodes.makeUserNodeFromUsername(" + Username + ")";
             CswNbtViewRelationship UserRelationship = View.AddViewRelationship( User_ObjectClass, false );
             CswNbtViewProperty Prop = View.AddViewProperty( UserRelationship, UserName_ObjectClassProp );
-            CswNbtViewPropertyFilter Filter = View.AddViewPropertyFilter( Prop, CswEnumNbtSubFieldName.Text, CswEnumNbtFilterMode.Equals, Username, false );
+            CswNbtViewPropertyFilter Filter = View.AddViewPropertyFilter( Prop, CswNbtFieldTypeRuleText.SubFieldName.Text, CswEnumNbtFilterMode.Equals, Username, false );
 
             _CswNbtResources.logTimerResult( "makeUserNodeFromUsername 2", Timer );
 
@@ -492,7 +516,7 @@ namespace ChemSW.Nbt
             View.ViewName = "CswNbtNodes.makeRoleNodeFromRoleName(" + RoleName + ")";
             CswNbtViewRelationship RoleRelationship = View.AddViewRelationship( Role_ObjectClass, false );
             CswNbtViewProperty Prop = View.AddViewProperty( RoleRelationship, RoleName_ObjectClassProp );
-            CswNbtViewPropertyFilter Filter = View.AddViewPropertyFilter( Prop, CswEnumNbtSubFieldName.Unknown, CswEnumNbtFilterMode.Equals, RoleName, false );
+            CswNbtViewPropertyFilter Filter = View.AddViewPropertyFilter( Prop, CswNbtFieldTypeRuleText.SubFieldName.Text, CswEnumNbtFilterMode.Equals, RoleName, false );
 
             // generate the tree
             ICswNbtTree UserTree = _CswNbtResources.Trees.getTreeFromView( View, false, true, IncludeHiddenNodes: true );
@@ -524,6 +548,7 @@ namespace ChemSW.Nbt
         }//finalize()
 
         #endregion Database
+
 
     } // CswNbtNodeCollection()
 } // namespace ChemSW.Nbt

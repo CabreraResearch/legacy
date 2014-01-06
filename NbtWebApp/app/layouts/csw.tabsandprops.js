@@ -33,6 +33,7 @@
                 removeTempStatus: true,
                 viewid: '',
                 nodename: '',
+                    nodetypename: '',
                 EditMode: Csw.enums.editMode.Edit,
                 ReadOnly: false,
                 Config: false,
@@ -388,6 +389,7 @@
 
                         cswPrivate.tabState.nodetypeid = Csw.number(data.node.nodetypeid, 0);
                         cswPrivate.tabState.isFavorite = Csw.bool(data.node.isFavorite);
+                        cswPrivate.tabState.nodetypename = Csw.string(data.node.nodetypename);
 
                         if (Object.keys(data).length <= 0 || Object.keys(data.tabs).length <= 0) {
                             Csw.error.throwException('Cannot create a property layout without at least one tab.', 'csw.tabsandprops.js');
@@ -895,8 +897,21 @@
                         size: 16,
                         isButton: true,
                         onClick: function () {
-                            cswPrivate.clearTabs();
-                            $.CswDialog('EditLayoutDialog', editLayoutOpt);
+
+//                                // Old layout editor
+//                            cswPrivate.clearTabs();
+//                            $.CswDialog('EditLayoutDialog', editLayoutOpt);
+
+                                 //Uncomment this out for the new sidebar
+                                 var div = Csw.designmode.factory(Csw.main.sidebarDiv, 'sidebar');
+                                 div.sidebar({
+                                     name: 'newsidebar',
+                                     tabState: cswPrivate.tabState,
+                                     Refresh: function () {
+                                         cswPrivate.tabState.Config = false;
+                                         cswPrivate.getTabs();
+                                     }                               
+                                });
                         }
                     });
                     cswPrivate.toggleConfigIcon(false === cswPrivate.isMultiEdit());

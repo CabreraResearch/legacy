@@ -1,6 +1,7 @@
 using System;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.ObjClasses
@@ -114,7 +115,7 @@ namespace ChemSW.Nbt.ObjClasses
         #endregion Base
 
         #region Inherited Events
-
+        
         public override void beforePropertySetWriteNode()
         {
             this.MakeFilePropReadonly();
@@ -139,7 +140,7 @@ namespace ChemSW.Nbt.ObjClasses
                 {
                     CswNbtView ExistingDocsView = new CswNbtView( _CswNbtResources );
                     CswNbtViewRelationship DocumentVr = ExistingDocsView.AddViewRelationship( NodeType, false );
-                    ExistingDocsView.AddViewPropertyAndFilter( DocumentVr, Owner.NodeTypeProp, OwnerNode.NodeId.PrimaryKey.ToString(), CswEnumNbtSubFieldName.NodeID );
+                    ExistingDocsView.AddViewPropertyAndFilter( DocumentVr, Owner.NodeTypeProp, OwnerNode.NodeId.PrimaryKey.ToString(), CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID );
                     ExistingDocsView.AddViewPropertyAndFilter( DocumentVr, Archived.NodeTypeProp, CswEnumTristate.True.ToString(), FilterMode : CswEnumNbtFilterMode.NotEquals );
                     ExistingDocsView.AddViewPropertyAndFilter( DocumentVr, Format.NodeTypeProp, Format.Value );
                     ExistingDocsView.AddViewPropertyAndFilter( DocumentVr, Language.NodeTypeProp, Language.Value );
@@ -313,7 +314,10 @@ namespace ChemSW.Nbt.ObjClasses
                             break;
                         case CswEnumDocumentFileTypes.Link:
                             CswNbtMetaDataNodeTypeProp linkNTP = SDSDocumentNT.getNodeTypePropByObjectClassProp( PropertyName.Link );
-                            url = CswNbtNodePropLink.GetFullURL( linkNTP.Attribute1, matchedLinkProp.Field1_Big, linkNTP.Attribute2 );
+                            //url = CswNbtNodePropLink.GetFullURL( linkNTP.Attribute1, matchedLinkProp.Field1_Big, linkNTP.Attribute2 );
+                            url = CswNbtNodePropLink.GetFullURL( linkNTP.DesignNode.getAttributeValueByColumn( CswEnumNbtPropertyAttributeColumn.Attribute1 ),
+                                                                 matchedLinkProp.Field1_Big,
+                                                                 linkNTP.DesignNode.getAttributeValueByColumn( CswEnumNbtPropertyAttributeColumn.Attribute2 ) );
                             break;
                         case CswEnumDocumentFileTypes.ChemWatch:
                             url = "Services/ChemWatch/GetSDSDocument?filename=" + matchedChemWatchProp.Field1;

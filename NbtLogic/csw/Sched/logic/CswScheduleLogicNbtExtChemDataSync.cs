@@ -9,6 +9,7 @@ using ChemSW.Exceptions;
 using ChemSW.MtSched.Core;
 using ChemSW.Nbt.ChemCatCentral;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.Sched
@@ -211,7 +212,7 @@ namespace ChemSW.Nbt.Sched
             MaterialsToBeSyncedView.AddViewPropertyAndFilter( ParentRelationship,
                 MetaDataProp: CasNoOCP,
                 Value: "",
-                SubFieldName: CswEnumNbtSubFieldName.Text,
+                SubFieldName: CswNbtFieldTypeRuleCASNo.SubFieldName.Text,
                 FilterMode: CswEnumNbtFilterMode.NotNull );
 
             // Get and iterate the Tree
@@ -234,3 +235,6 @@ namespace ChemSW.Nbt.Sched
 
     }//CswScheduleLogicNbtUpdtMTBF
 }//namespace ChemSW.Nbt.Sched
+
+//grab all at once in get load count then save to private varaible then each iteration, pull from those saved materials
+// example - expired containers

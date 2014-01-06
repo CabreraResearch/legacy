@@ -25,7 +25,7 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         #region Inherited Events    
-
+        
         protected override bool onButtonClick( NbtButtonData ButtonData )
         {
             if( null != ButtonData && null != ButtonData.NodeTypeProp ) { /*Do Something*/ }

@@ -559,7 +559,8 @@ namespace ChemSW.Nbt.Logic
                 OwnerName = nt.NodeTypeName;
             }
             FieldType = NodeTypeProp.getFieldTypeValue();
-            ListOptions.FromString( NodeTypeProp.ListOptions );
+            //ListOptions.FromString( NodeTypeProp.ListOptions );
+            ListOptions.FromString( NodeTypeProp.DesignNode.AttributeProperty[CswEnumNbtPropertyAttributeName.Options].AsText.Text );
             RelatedIdType = CswEnumNbtViewRelatedIdType.NodeTypeId;
             MetaDataPropNameWithQuestionNo = NodeTypeProp.PropNameWithQuestionNo;
             MetaDataPropId = NodeTypeProp.FirstPropVersionId;
@@ -602,7 +603,8 @@ namespace ChemSW.Nbt.Logic
             {
                 OwnerName = _getOwnerName( ViewProperty );
                 FieldType = ViewProperty.NodeTypeProp.getFieldTypeValue();
-                ListOptions.FromString( ViewProperty.NodeTypeProp.ListOptions );
+                //ListOptions.FromString( ViewProperty.NodeTypeProp.ListOptions );
+                ListOptions.FromString( ViewProperty.NodeTypeProp.DesignNode.AttributeProperty[CswEnumNbtPropertyAttributeName.Options].AsText.Text );
                 RelatedIdType = CswEnumNbtViewRelatedIdType.NodeTypeId;
                 MetaDataPropNameWithQuestionNo = ViewProperty.NodeTypeProp.PropNameWithQuestionNo;
                 MetaDataPropId = ViewProperty.NodeTypeProp.FirstPropVersionId;
@@ -655,7 +657,8 @@ namespace ChemSW.Nbt.Logic
                 foreach( CswNbtMetaDataNodeTypeProp VPNodeTypeProp in ObjectClassProp.getNodeTypeProps() )
                 {
                     CswCommaDelimitedString NTPListOptions = new CswCommaDelimitedString();
-                    NTPListOptions.FromString( VPNodeTypeProp.ListOptions );
+                    //NTPListOptions.FromString( VPNodeTypeProp.ListOptions );
+                    NTPListOptions.FromString( VPNodeTypeProp.DesignNode.AttributeProperty[CswEnumNbtPropertyAttributeName.Options].AsText.Text );
 
                     foreach( string Option in NTPListOptions )
                     {

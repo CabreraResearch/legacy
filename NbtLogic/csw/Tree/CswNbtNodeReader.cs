@@ -17,25 +17,25 @@ namespace ChemSW.Nbt
         {
             _CswNbtResources = CswNbtResources;
             _CswNbtNodeReaderDataNative = new CswNbtNodeReaderDataNative( CswNbtResources );
-            _CswNbtNodeReaderDataRelationalDb = new CswNbtNodeReaderDataRelationalDb( CswNbtResources );
+            //_CswNbtNodeReaderDataRelationalDb = new CswNbtNodeReaderDataRelationalDb( CswNbtResources );
         }//CswNbtNodeReader()
 
 
         private CswNbtNodeReaderDataNative _CswNbtNodeReaderDataNative = null;
-        private CswNbtNodeReaderDataRelationalDb _CswNbtNodeReaderDataRelationalDb = null;
+        //private CswNbtNodeReaderDataRelationalDb _CswNbtNodeReaderDataRelationalDb = null;
         private ICswNbtNodeReaderData this[CswPrimaryKey NodeKey]
         {
             get
             {
                 ICswNbtNodeReaderData ReturnVal = null;
-                if( "nodes" == NodeKey.TableName.ToLower() )
-                {
+                //if( "nodes" == NodeKey.TableName.ToLower() )
+                //{
                     ReturnVal = _CswNbtNodeReaderDataNative;
-                }
-                else
-                {
-                    ReturnVal = _CswNbtNodeReaderDataRelationalDb;
-                }
+                //}
+                //else
+                //{
+                //    ReturnVal = _CswNbtNodeReaderDataRelationalDb;
+                //}
 
                 return ( ReturnVal );
             }//get

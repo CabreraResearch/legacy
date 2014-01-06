@@ -223,8 +223,8 @@ namespace ChemSW.Nbt.Test
                     NewUser.UsernameProperty.Text = Username;
                     NewUser.Role.RelatedNodeId = RoleId;
                     NewUser.PasswordProperty.Password = Password;
-                    NewUser.AccountLocked.Checked = isLocked;
-                    NewUser.Archived.Checked = isArchived;
+                    NewUser.AccountLocked.Checked = CswConvert.ToTristate( isLocked );
+                    NewUser.Archived.Checked = CswConvert.ToTristate( isArchived );
                     //NewUser.postChanges( ForceUpdate: false );
                 } );
             _finalize();
@@ -259,7 +259,7 @@ namespace ChemSW.Nbt.Test
             _finalize();
 
             return ret;
-        }
+        } // createGeneratorNode()
 
         #endregion
 

@@ -26,7 +26,7 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClass ReceiptLotOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.ReceiptLotClass );
             foreach( CswNbtMetaDataNodeType ReceiptLotNT in ReceiptLotOC.getNodeTypes() )
             {
-                CswNbtMetaDataNodeTypeProp AssignedCofANTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp(
+                CswNbtMetaDataNodeTypeProp AssignedCofANTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewPropDeprecated(
                     ReceiptLotNT,
                     CswEnumNbtFieldType.Grid,
                     "Assigned C of A",

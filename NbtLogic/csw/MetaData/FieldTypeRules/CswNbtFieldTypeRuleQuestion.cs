@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using ChemSW.Core;
 using ChemSW.Exceptions;
+using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 
@@ -9,6 +12,15 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
     public class CswNbtFieldTypeRuleQuestion : ICswNbtFieldTypeRule
     {
+        public sealed class SubFieldName : ICswNbtFieldTypeRuleSubFieldName
+        {
+            public static CswEnumNbtSubFieldName Answer = CswEnumNbtSubFieldName.Answer;
+            public static CswEnumNbtSubFieldName CorrectiveAction = CswEnumNbtSubFieldName.CorrectiveAction;
+            public static CswEnumNbtSubFieldName IsCompliant = CswEnumNbtSubFieldName.IsCompliant;
+            public static CswEnumNbtSubFieldName Comments = CswEnumNbtSubFieldName.Comments;
+            public static CswEnumNbtSubFieldName DateAnswered = CswEnumNbtSubFieldName.DateAnswered;
+            public static CswEnumNbtSubFieldName DateCorrected = CswEnumNbtSubFieldName.DateCorrected;
+        }
 
         private CswNbtFieldTypeRuleDefaultImpl _CswNbtFieldTypeRuleDefault = null;
         private CswNbtFieldResources _CswNbtFieldResources = null;
@@ -19,7 +31,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldTypeRuleDefault = new CswNbtFieldTypeRuleDefaultImpl( _CswNbtFieldResources );
 
             //List
-            AnswerSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1, CswEnumNbtSubFieldName.Answer, true );
+            AnswerSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1, SubFieldName.Answer, true );
             AnswerSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Equals );
             AnswerSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotEquals );
             AnswerSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotNull );
@@ -27,7 +39,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             SubFields.add( AnswerSubField, true );
 
             //List
-            CorrectiveActionSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field2, CswEnumNbtSubFieldName.CorrectiveAction, true );
+            CorrectiveActionSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field2, SubFieldName.CorrectiveAction, true );
             CorrectiveActionSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Equals );
             CorrectiveActionSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotEquals );
             CorrectiveActionSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotNull );
@@ -35,7 +47,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             SubFields.add( CorrectiveActionSubField );
 
             //Logical
-            IsCompliantSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field3, CswEnumNbtSubFieldName.IsCompliant, true );
+            IsCompliantSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field3, SubFieldName.IsCompliant, true );
             IsCompliantSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Equals );
             IsCompliantSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotEquals );
             IsCompliantSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotNull );
@@ -43,7 +55,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             SubFields.add( IsCompliantSubField );
 
             //Memo
-            CommentsSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.ClobData, CswEnumNbtSubFieldName.Comments, true );
+            CommentsSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.ClobData, SubFieldName.Comments, true );
             CommentsSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Equals );
             CommentsSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Begins );
             CommentsSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Ends );
@@ -54,7 +66,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             SubFields.add( CommentsSubField );
 
             //Date
-            DateAnsweredSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1_Date, CswEnumNbtSubFieldName.DateAnswered, true );
+            DateAnsweredSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1_Date, SubFieldName.DateAnswered, true );
             DateAnsweredSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Equals );
             DateAnsweredSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.GreaterThan );
             DateAnsweredSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.GreaterThanOrEquals );
@@ -66,7 +78,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             SubFields.add( DateAnsweredSubField );
 
             //Date
-            DateCorrectedSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field2_Date, CswEnumNbtSubFieldName.DateCorrected, true );
+            DateCorrectedSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field2_Date, SubFieldName.DateCorrected, true );
             DateCorrectedSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Equals );
             DateCorrectedSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.GreaterThan );
             DateCorrectedSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.GreaterThanOrEquals );
@@ -209,15 +221,61 @@ public string renderViewPropFilter( ICswNbtUser RunAsUser, CswNbtViewPropertyFil
             _CswNbtFieldTypeRuleDefault.AddUniqueFilterToView( View, UniqueValueViewProperty, PropertyValueToCheck, EnforceNullEntries );
         }
 
-        public void setFk( CswNbtMetaDataNodeTypeProp MetaDataProp, CswNbtMetaDataNodeTypeProp.doSetFk doSetFk, string inFKType, Int32 inFKValue, string inValuePropType = "", Int32 inValuePropId = Int32.MinValue )
+        public void onSetFk( CswNbtMetaDataNodeTypeProp MetaDataProp, CswNbtObjClassDesignNodeTypeProp DesignNTPNode )
         {
-            _CswNbtFieldTypeRuleDefault.setFk( MetaDataProp, doSetFk, inFKType, inFKValue, inValuePropType, inValuePropId );
+            _CswNbtFieldTypeRuleDefault.onSetFk( MetaDataProp, DesignNTPNode );
+        }
+
+        public sealed class AttributeName : ICswNbtFieldTypeRuleAttributeName
+        {
+            public const string PossibleAnswers = CswEnumNbtPropertyAttributeName.PossibleAnswers;
+            public const string CompliantAnswers = CswEnumNbtPropertyAttributeName.CompliantAnswers;
+            public const string PreferredAnswer = CswEnumNbtPropertyAttributeName.PreferredAnswer;
+            public const string DefaultValue = CswEnumNbtPropertyAttributeName.DefaultValue;
+        }
+
+        public Collection<CswNbtFieldTypeAttribute> getAttributes()
+        {
+            Collection<CswNbtFieldTypeAttribute> ret = _CswNbtFieldTypeRuleDefault.getAttributes( CswEnumNbtFieldType.Question );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+                {
+                    OwnerFieldType = CswEnumNbtFieldType.Question,
+                    Name = AttributeName.PossibleAnswers,
+                    AttributeFieldType = CswEnumNbtFieldType.Text,
+                    Column = CswEnumNbtPropertyAttributeColumn.Listoptions
+                } );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+                {
+                    OwnerFieldType = CswEnumNbtFieldType.Question,
+                    Name = AttributeName.CompliantAnswers,
+                    AttributeFieldType = CswEnumNbtFieldType.MultiList,
+                    Column = CswEnumNbtPropertyAttributeColumn.Valueoptions
+                } );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+                {
+                    OwnerFieldType = CswEnumNbtFieldType.Question,
+                    Name = AttributeName.PreferredAnswer,
+                    AttributeFieldType = CswEnumNbtFieldType.List,
+                    Column = CswEnumNbtPropertyAttributeColumn.Extended
+                } );
+            //ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+            //{
+            //    OwnerFieldType = CswEnumNbtFieldType.Question,
+            //    Name = CswEnumNbtPropertyAttributeName.DefaultValue,
+            //    Column = CswEnumNbtPropertyAttributeColumn.Defaultvalueid,
+            //    AttributeFieldType = CswEnumNbtFieldType.Question
+            //} );
+            return ret;
         }
 
         public void afterCreateNodeTypeProp( CswNbtMetaDataNodeTypeProp NodeTypeProp )
         {
-            NodeTypeProp.ListOptions = "Yes,No,N/A";
-            NodeTypeProp.ValueOptions = "Yes";        // case 20297
+            //NodeTypeProp.ListOptions = "Yes,No,N/A";
+            //NodeTypeProp.ValueOptions = "Yes";        // case 20297
+            NodeTypeProp.DesignNode.AttributeProperty[AttributeName.PossibleAnswers].AsText.Text = "Yes,No,N/A";
+            NodeTypeProp.DesignNode.AttributeProperty[AttributeName.CompliantAnswers].AsMultiList.Value = new CswCommaDelimitedString() {"Yes"};
+            // shouldn't need to do this?
+            //NodeTypeProp.DesignNode.postChanges( false );
 
             _CswNbtFieldTypeRuleDefault.afterCreateNodeTypeProp( NodeTypeProp );
         }

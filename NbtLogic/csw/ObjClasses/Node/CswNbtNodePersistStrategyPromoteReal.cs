@@ -11,11 +11,22 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePersistStrategyPromoteReal( CswNbtResources CswNbtResources )
         {
             _CswNbtResources = CswNbtResources;
+
+            ForceUpdate = false;
+            IsCopy = false;
+            OverrideUniqueValidation = false;
+            SkipEvents = false;
+            AllowAuditing = false;
+            Creating = true;
         }
 
         public bool ForceUpdate { get; set; }
         public bool IsCopy { get; set; }
         public bool OverrideUniqueValidation { get; set; }
+        public bool SkipEvents { get; set; }
+        public bool AllowAuditing { get; set; }
+        public bool Creating { get; set; }
+
 
         public void postChanges( CswNbtNode Node )
         {
@@ -24,11 +35,11 @@ namespace ChemSW.Nbt.ObjClasses
 
             if( null != Node.ObjClass )
             {
-                Node.ObjClass.beforePromoteNode();
+                Node.ObjClass.beforePromoteNode( OverrideUniqueValidation );
                 Node.ObjClass.beforeWriteNode( true );
             }
 
-            Node.requestWrite( false, IsCopy, OverrideUniqueValidation, true, false );
+            Node.requestWrite( ForceUpdate, IsCopy, OverrideUniqueValidation, Creating, AllowAuditing, SkipEvents );
 
             if( null != Node.ObjClass )
             {

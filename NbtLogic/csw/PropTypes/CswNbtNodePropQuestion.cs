@@ -236,7 +236,7 @@ namespace ChemSW.Nbt.PropTypes
         /// </summary>
         public string Question
         {
-            get { return _CswNbtMetaDataNodeTypeProp.PropName; }
+            get { return _CswNbtNodePropData[CswNbtFieldTypeRuleQuestion.AttributeName.PropName]; }
         }
 
         private CswCommaDelimitedString _CompliantAnswers = null;
@@ -251,7 +251,8 @@ namespace ChemSW.Nbt.PropTypes
                 if( _CompliantAnswers == null )
                 {
                     _CompliantAnswers = new CswCommaDelimitedString();
-                    _CompliantAnswers.FromString( _CswNbtMetaDataNodeTypeProp.ValueOptions );
+                    //_CompliantAnswers.FromString( _CswNbtMetaDataNodeTypeProp.ValueOptions );
+                    _CompliantAnswers.FromString( _CswNbtNodePropData[CswNbtFieldTypeRuleQuestion.AttributeName.CompliantAnswers] );
                 }
                 return _CompliantAnswers;
             }
@@ -263,7 +264,8 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return _CswNbtMetaDataNodeTypeProp.ValueOptions;
+                //return _CswNbtMetaDataNodeTypeProp.ValueOptions;
+                return _CswNbtNodePropData[CswNbtFieldTypeRuleQuestion.AttributeName.CompliantAnswers];
             }
         }
 
@@ -277,10 +279,12 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 if( null == _AllowedAnswers ||
-                    _AllowedAnswers.ToString() != _CswNbtMetaDataNodeTypeProp.ListOptions ) // Case 20629
+                    //_AllowedAnswers.ToString() != _CswNbtMetaDataNodeTypeProp.ListOptions ) // Case 20629
+                    _AllowedAnswers.ToString() != _CswNbtNodePropData[CswNbtFieldTypeRuleQuestion.AttributeName.PossibleAnswers] ) // Case 20629
                 {
                     _AllowedAnswers = new CswCommaDelimitedString();
-                    _AllowedAnswers.FromString( _CswNbtMetaDataNodeTypeProp.ListOptions );
+                    //_AllowedAnswers.FromString( _CswNbtMetaDataNodeTypeProp.ListOptions );
+                    _AllowedAnswers.FromString( _CswNbtNodePropData[CswNbtFieldTypeRuleQuestion.AttributeName.PossibleAnswers] );
 
                     if( _AllowedAnswers.Count == 0 )
                     {
@@ -305,7 +309,8 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                string AnswerString = _CswNbtMetaDataNodeTypeProp.ListOptions;
+                //string AnswerString = _CswNbtMetaDataNodeTypeProp.ListOptions;
+                string AnswerString = _CswNbtNodePropData[CswNbtFieldTypeRuleQuestion.AttributeName.PossibleAnswers];
                 if( string.IsNullOrEmpty( AnswerString ) )
                 { AnswerString = "Yes,No,N/A"; }
                 return AnswerString;
@@ -316,20 +321,26 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                string Ret = "";
-                if( AllowedAnswers.Contains( _CswNbtMetaDataNodeTypeProp.Extended, CaseSensitive: false ) )
+                //string Ret = "";
+                //if( AllowedAnswers.Contains( _CswNbtMetaDataNodeTypeProp.Extended, CaseSensitive: false ) )
+                //{
+                //    Ret = _CswNbtMetaDataNodeTypeProp.Extended;
+                //}
+                //return Ret;
+                string ret = _CswNbtNodePropData[CswNbtFieldTypeRuleQuestion.AttributeName.PreferredAnswer];
+                if( false == AllowedAnswers.Contains( ret, CaseSensitive: false ) )
                 {
-                    Ret = _CswNbtMetaDataNodeTypeProp.Extended;
+                    ret = string.Empty;
                 }
-                return Ret;
+                return ret;
             }
-            set
-            {
-                if( AllowedAnswers.Contains( value, CaseSensitive: false ) )
-                {
-                    _CswNbtMetaDataNodeTypeProp.Extended = value;
-                }
-            }
+            //set
+            //{
+            //    if( AllowedAnswers.Contains( value, CaseSensitive: false ) )
+            //    {
+            //        _CswNbtMetaDataNodeTypeProp.Extended = value;
+            //    }
+            //}
         }
 
         public override string ValueForNameTemplate
@@ -342,8 +353,8 @@ namespace ChemSW.Nbt.PropTypes
             base.ToJSON( ParentObject );  // FIRST
 
             ParentObject[_AnswerSubField.ToXmlNodeName( true )] = Answer;
-            ParentObject[CswEnumNbtSubFieldName.AllowedAnswers.ToString().ToLower()] = AllowedAnswersString;
-            ParentObject[CswEnumNbtSubFieldName.CompliantAnswers.ToString().ToLower()] = CompliantAnswersString;
+            ParentObject["allowedanswers"] = AllowedAnswersString;
+            ParentObject["compliantanswers"] = CompliantAnswersString;
             ParentObject[_CommentsSubField.ToXmlNodeName( true )] = Comments;
             ParentObject[_CorrectiveActionSubField.ToXmlNodeName( true )] = CorrectiveAction;
             ParentObject[_IsCompliantSubField.ToXmlNodeName( true )] = IsCompliant;

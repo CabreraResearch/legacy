@@ -84,6 +84,10 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                     ReturnVal = new CswNbtFieldTypeRuleLogicalSet( CswNbtFieldResources );
                     break;
 
+                case CswEnumNbtFieldType.MetaDataList:
+                    ReturnVal = new CswNbtFieldTypeRuleMetaDataList( CswNbtFieldResources );
+                    break;
+
                 case CswEnumNbtFieldType.Memo:
                     ReturnVal = new CswNbtFieldTypeRuleMemo( CswNbtFieldResources );
                     break;

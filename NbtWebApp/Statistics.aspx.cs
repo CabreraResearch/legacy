@@ -8,6 +8,7 @@ using ChemSW.Core;
 using ChemSW.CswWebControls;
 using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.WebPages
@@ -818,7 +819,7 @@ namespace ChemSW.Nbt.WebPages
             CswNbtView CustomerView = new CswNbtView( Master.CswNbtResources );
             CswNbtViewRelationship CustomerRelationship = CustomerView.AddViewRelationship( CustomerObjectClass, true );
             CswNbtViewProperty AccessIdProperty = CustomerView.AddViewProperty( CustomerRelationship, CustomerObjectClass.getObjectClassProp( CswNbtObjClassCustomer.PropertyName.CompanyID ) );
-            CswNbtViewPropertyFilter AccessIdFilter = CustomerView.AddViewPropertyFilter( AccessIdProperty, CswEnumNbtSubFieldName.Unknown, CswEnumNbtFilterMode.Equals, AccessId, false );
+            CswNbtViewPropertyFilter AccessIdFilter = CustomerView.AddViewPropertyFilter( AccessIdProperty, CswNbtFieldTypeRuleText.SubFieldName.Text, CswEnumNbtFilterMode.Equals, AccessId, false );
 
             CswNbtNode CustomerNode = null;
             ICswNbtTree Tree = Master.CswNbtResources.Trees.getTreeFromView( Master.CswNbtResources.CurrentNbtUser, CustomerView, true, false, false );

@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 
@@ -8,6 +10,14 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
     public class CswNbtFieldTypeRuleButton : ICswNbtFieldTypeRule
     {
+        public sealed class SubFieldName : ICswNbtFieldTypeRuleSubFieldName
+        {
+            public static CswEnumNbtSubFieldName Value = CswEnumNbtSubFieldName.Value;
+            public static CswEnumNbtSubFieldName Options = CswEnumNbtSubFieldName.Options;
+            public static CswEnumNbtSubFieldName Name = CswEnumNbtSubFieldName.Name;
+            public static CswEnumNbtSubFieldName Icon = CswEnumNbtSubFieldName.Icon;
+        }
+
         private CswNbtFieldTypeRuleDefaultImpl _CswNbtFieldTypeRuleDefault = null;
         private CswNbtFieldResources _CswNbtFieldResources = null;
 
@@ -16,16 +26,16 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldResources = CswNbtFieldResources;
             _CswNbtFieldTypeRuleDefault = new CswNbtFieldTypeRuleDefaultImpl( _CswNbtFieldResources );
 
-            StateSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1, CswEnumNbtSubFieldName.Value );
+            StateSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1, SubFieldName.Value );
             SubFields.add( StateSubField );
 
-            MenuOptionsSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field2, CswEnumNbtSubFieldName.Value );
+            MenuOptionsSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field2, SubFieldName.Options );
             SubFields.add( MenuOptionsSubField );
 
-            DisplayNameField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field3, CswEnumNbtSubFieldName.Value );
+            DisplayNameField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field3, SubFieldName.Name );
             SubFields.add( DisplayNameField );
 
-            IconSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field4, CswEnumNbtSubFieldName.Value );
+            IconSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field4, SubFieldName.Icon );
             SubFields.add( IconSubField );
         }//ctor
 
@@ -71,9 +81,43 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldTypeRuleDefault.AddUniqueFilterToView( View, UniqueValueViewProperty, PropertyValueToCheck, EnforceNullEntries );
         }
 
-        public void setFk( CswNbtMetaDataNodeTypeProp MetaDataProp, CswNbtMetaDataNodeTypeProp.doSetFk doSetFk, string inFKType, Int32 inFKValue, string inValuePropType = "", Int32 inValuePropId = Int32.MinValue )
+        public void onSetFk( CswNbtMetaDataNodeTypeProp MetaDataProp, CswNbtObjClassDesignNodeTypeProp DesignNTPNode )
         {
-            _CswNbtFieldTypeRuleDefault.setFk( MetaDataProp, doSetFk, inFKType, inFKValue, inValuePropType, inValuePropId );
+            _CswNbtFieldTypeRuleDefault.onSetFk( MetaDataProp, DesignNTPNode );
+        }
+
+        public sealed class AttributeName : ICswNbtFieldTypeRuleAttributeName
+        {
+            public const string ButtonText = CswEnumNbtPropertyAttributeName.ButtonText;
+            public const string ConfirmationDialogMessage = CswEnumNbtPropertyAttributeName.ConfirmationDialogMessage;
+            public const string DisplayMode = CswEnumNbtPropertyAttributeName.DisplayMode;
+        }
+
+        public Collection<CswNbtFieldTypeAttribute> getAttributes()
+        {
+            Collection<CswNbtFieldTypeAttribute> ret = _CswNbtFieldTypeRuleDefault.getAttributes( CswEnumNbtFieldType.Button );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+            {
+                OwnerFieldType = CswEnumNbtFieldType.Button,
+                Name = AttributeName.ButtonText,
+                AttributeFieldType = CswEnumNbtFieldType.Text,
+                Column = CswEnumNbtPropertyAttributeColumn.Statictext
+            } );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+            {
+                OwnerFieldType = CswEnumNbtFieldType.Button,
+                Name = AttributeName.ConfirmationDialogMessage,
+                AttributeFieldType = CswEnumNbtFieldType.Text,
+                Column = CswEnumNbtPropertyAttributeColumn.Valueoptions
+            } );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+            {
+                OwnerFieldType = CswEnumNbtFieldType.Button,
+                Name = AttributeName.DisplayMode,
+                AttributeFieldType = CswEnumNbtFieldType.List,
+                Column = CswEnumNbtPropertyAttributeColumn.Extended
+            } );
+            return ret;
         }
 
         public void afterCreateNodeTypeProp( CswNbtMetaDataNodeTypeProp NodeTypeProp )

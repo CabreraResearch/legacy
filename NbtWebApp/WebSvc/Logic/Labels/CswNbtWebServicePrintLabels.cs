@@ -10,6 +10,7 @@ using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
 using NbtWebApp.WebSvc.Logic.Labels;
 using NbtWebApp.WebSvc.Returns;
@@ -165,7 +166,7 @@ namespace ChemSW.Nbt.WebServices
                         //    }
                         //}
                         //if( PropMatchesPrintLabel )
-                        if( RelationshipProp.FkMatches( PrintLabelClass ) )
+                        if( RelationshipProp.FkMatchesDeprecated( PrintLabelClass ) )
                         {
                             LabelFormatId = TargetNode.Properties[RelationshipProp].AsRelationship.RelatedNodeId;
                             break;
@@ -305,7 +306,7 @@ namespace ChemSW.Nbt.WebServices
                     {
                         GHSView.AddViewPropertyAndFilter( GHSRel, GhsJurisdictionOCP,
                                                           Value: NbtResources.CurrentNbtUser.JurisdictionId.PrimaryKey.ToString(),
-                                                          SubFieldName: CswEnumNbtSubFieldName.NodeID,
+                                                          SubFieldName: CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID,
                                                           FilterMode: CswEnumNbtFilterMode.Equals );
                     }
 
@@ -692,12 +693,12 @@ namespace ChemSW.Nbt.WebServices
                         CswNbtViewRelationship JobRel = JobQueueView.AddViewRelationship( PrintJobOC, false );
                         // ... assigned to this printer ...
                         JobQueueView.AddViewPropertyAndFilter( JobRel, JobPrinterOCP,
-                                                               SubFieldName: CswEnumNbtSubFieldName.NodeID,
+                                                               SubFieldName: CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID,
                                                                Value: PrinterNodeId.PrimaryKey.ToString(),
                                                                FilterMode: CswEnumNbtFilterMode.Equals );
                         //with state==pending
                         JobQueueView.AddViewPropertyAndFilter( JobRel, JobStateOCP,
-                                                               SubFieldName: CswEnumNbtSubFieldName.Value,
+                                                               SubFieldName: CswNbtFieldTypeRuleList.SubFieldName.Value,
                                                                Value: CswNbtObjClassPrintJob.StateOption.Pending,
                                                                FilterMode: CswEnumNbtFilterMode.Equals );
                         // ... order by Created Date

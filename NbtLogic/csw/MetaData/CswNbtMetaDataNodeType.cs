@@ -34,6 +34,11 @@ namespace ChemSW.Nbt.MetaData
             get { return _NodeTypeRow; }
         }
 
+        public CswNbtObjClassDesignNodeType DesignNode
+        {
+            get { return _CswNbtMetaDataResources.CswNbtResources.Nodes.getNodeByRelationalId( new CswPrimaryKey( "nodetypes", NodeTypeId ) ); }
+        }
+
         private Int32 _UniqueId;
         public Int32 UniqueId
         {
@@ -51,7 +56,7 @@ namespace ChemSW.Nbt.MetaData
 
         private void _checkVersioningNodeType()
         {
-            CswNbtMetaDataNodeType NewNodeType = _CswNbtMetaDataResources.CswNbtMetaData.CheckVersioning( this );
+            CswNbtMetaDataNodeType NewNodeType = _CswNbtMetaDataResources.CswNbtMetaData.CheckVersioningDeprecated( this );
             if( NewNodeType.NodeTypeId != NodeTypeId )
             {
                 // Reassign myself
@@ -70,7 +75,7 @@ namespace ChemSW.Nbt.MetaData
         public string NodeTypeName
         {
             get { return _NodeTypeRow["nodetypename"].ToString(); }
-            set
+            private set
             {
                 if( _NodeTypeRow["nodetypename"].ToString() != value )
                 {
@@ -93,6 +98,11 @@ namespace ChemSW.Nbt.MetaData
             }
         }
 
+        public bool DoRelationalSync
+        {
+            get { return "nodes" != TableName.ToLower(); }
+        }
+
         public string TableName
         {
             get
@@ -102,7 +112,7 @@ namespace ChemSW.Nbt.MetaData
                     ret = _NodeTypeRow["tablename"].ToString();
                 return ret;
             }
-            set { _NodeTypeRow["tablename"] = value; }
+            private set { _NodeTypeRow["tablename"] = value; }
         }
 
         [DataMember( Name = "ViewName" )]
@@ -121,7 +131,7 @@ namespace ChemSW.Nbt.MetaData
         public string Category
         {
             get { return _NodeTypeRow["category"].ToString(); }
-            set
+            private set
             {
                 if( _NodeTypeRow["category"].ToString() != value )
                 {
@@ -133,7 +143,7 @@ namespace ChemSW.Nbt.MetaData
         public string IconFileName
         {
             get { return _NodeTypeRow["iconfilename"].ToString(); }
-            set
+            private set
             {
                 if( _NodeTypeRow["iconfilename"].ToString() != value )
                 {
@@ -146,7 +156,7 @@ namespace ChemSW.Nbt.MetaData
         public Int32 SearchDeferPropId
         {
             get { return CswConvert.ToInt32( _NodeTypeRow["searchdeferpropid"] ); }
-            set { _NodeTypeRow["searchdeferpropid"] = CswConvert.ToDbVal( value ); }
+            private set { _NodeTypeRow["searchdeferpropid"] = CswConvert.ToDbVal( value ); }
         }
         public Int32 Quota
         {
@@ -155,7 +165,7 @@ namespace ChemSW.Nbt.MetaData
         public string NameTemplateValue
         {
             get { return _NodeTypeRow["nametemplate"].ToString(); }
-            set
+            private set
             {
                 if( _NodeTypeRow["nametemplate"].ToString() != value )
                 {
@@ -221,7 +231,7 @@ namespace ChemSW.Nbt.MetaData
         public Int32 PriorVersionNodeTypeId
         {
             get { return CswConvert.ToInt32( _NodeTypeRow["priorversionid"] ); }
-            set
+            private set
             {
                 _NodeTypeRow["priorversionid"] = CswConvert.ToDbVal( value );
                 _PriorVersionNodeType = null;
@@ -231,7 +241,7 @@ namespace ChemSW.Nbt.MetaData
         public Int32 FirstVersionNodeTypeId
         {
             get { return CswConvert.ToInt32( _NodeTypeRow["firstversionid"] ); }
-            set
+            private set
             {
                 _NodeTypeRow["firstversionid"] = CswConvert.ToDbVal( value );
                 _FirstVersionNodeType = null;
@@ -259,7 +269,7 @@ namespace ChemSW.Nbt.MetaData
         public Int32 VersionNo
         {
             get { return CswConvert.ToInt32( _NodeTypeRow["versionno"] ); }
-            set
+            private set
             {
                 _NodeTypeRow["versionno"] = CswConvert.ToDbVal( value );
                 _CswNbtMetaDataResources.NodeTypesCollection.clearCache();
@@ -268,7 +278,7 @@ namespace ChemSW.Nbt.MetaData
         public bool IsLocked
         {
             get { return ( _NodeTypeRow["islocked"].ToString() == "1" ); }
-            set
+            private set
             {
                 // This is the only change to islocked that's allowed
                 if( _NodeTypeRow["islocked"].ToString() == "0" && value )
@@ -305,7 +315,7 @@ namespace ChemSW.Nbt.MetaData
         public bool Enabled
         {
             get { return CswConvert.ToBoolean( _NodeTypeRow["enabled"] ); }
-            set { _NodeTypeRow["enabled"] = CswConvert.ToDbVal( value ); }
+            private set { _NodeTypeRow["enabled"] = CswConvert.ToDbVal( value ); }
         }
 
 
@@ -344,7 +354,7 @@ namespace ChemSW.Nbt.MetaData
         public bool HasLabel
         {
             get { return CswConvert.ToBoolean( _DataRow["haslabel"] ); }
-            set { _DataRow["haslabel"] = CswConvert.ToDbVal( value ); }
+            private set { _DataRow["haslabel"] = CswConvert.ToDbVal( value ); }
         }
 
         public CswNbtMetaDataObjectClass getObjectClass()
@@ -371,7 +381,7 @@ namespace ChemSW.Nbt.MetaData
             {
                 return CswConvert.ToBoolean( _NodeTypeRow["excludeinquotabar"] );
             }
-            set
+            private set
             {
                 _NodeTypeRow["excludeinquotabar"] = CswConvert.ToDbVal( value );
             }
@@ -383,7 +393,7 @@ namespace ChemSW.Nbt.MetaData
             {
                 return CswConvert.ToInt32( _NodeTypeRow["nodecount"] );
             }
-            set
+            private set
             {
                 _NodeTypeRow["nodecount"] = value;
             }
@@ -429,32 +439,17 @@ namespace ChemSW.Nbt.MetaData
 
         public CswNbtMetaDataNodeTypeTab getFirstNodeTypeTab()
         {
-            CswNbtMetaDataNodeTypeTab FirstTab = null;
-            foreach( CswNbtMetaDataNodeTypeTab Tab in getNodeTypeTabs() )
-            {
-                if( FirstTab == null && Tab != getIdentityTab() )
-                {
-                    FirstTab = Tab;
-                    break;
-                }
-            }
-            return FirstTab;
+            return getNodeTypeTabs()
+                .OrderBy( t => t.TabOrder )
+                .FirstOrDefault( t => t != getIdentityTab() );
         }
+
         public CswNbtMetaDataNodeTypeTab getSecondNodeTypeTab()
         {
-            CswNbtMetaDataNodeTypeTab SecondTab = null;
-            bool first = true;
-            foreach( CswNbtMetaDataNodeTypeTab Tab in getNodeTypeTabs() )
-            {
-                if( first )
-                    first = false;
-                else if( SecondTab == null )
-                {
-                    SecondTab = Tab;
-                    break;
-                }
-            }
-            return SecondTab;
+            return getNodeTypeTabs()
+                .OrderBy( t => t.TabOrder )
+                .Where( t => t != getIdentityTab() )
+                .ElementAtOrDefault( 1 ); // second
         }
 
         private CswNbtMetaDataNodeTypeTab _IdentityTab = null;
@@ -550,67 +545,67 @@ namespace ChemSW.Nbt.MetaData
         public const string _Attribute_FirstNodeTypeId = "firstversionid";
         public const string _Attribute_NameTemplate = "nametemplate";
 
-        //TODO: ForMobile needs to go.
-        public XmlDocument ToXml( CswNbtView View, bool ForMobile, bool PropsInViewOnly )
-        {
-            CswNbtMetaDataNodeType LatestVersionNT = getNodeTypeLatestVersion();
-            XmlDocument XmlDoc = new XmlDocument();
+        ////TODO: ForMobile needs to go.
+        //public XmlDocument ToXml( CswNbtView View, bool ForMobile, bool PropsInViewOnly )
+        //{
+        //    CswNbtMetaDataNodeType LatestVersionNT = getNodeTypeLatestVersion();
+        //    XmlDocument XmlDoc = new XmlDocument();
 
-            XmlNode XmlNode = XmlDoc.CreateNode( XmlNodeType.Element, _Element_MetaDataNodeType, "" );
-            XmlDoc.AppendChild( XmlNode );
+        //    XmlNode XmlNode = XmlDoc.CreateNode( XmlNodeType.Element, _Element_MetaDataNodeType, "" );
+        //    XmlDoc.AppendChild( XmlNode );
 
-            XmlAttribute NodeTypeIdAttr = XmlDoc.CreateAttribute( _Attribute_NodeTypeId );
-            NodeTypeIdAttr.Value = NodeTypeId.ToString();
-            XmlNode.Attributes.Append( NodeTypeIdAttr );
+        //    XmlAttribute NodeTypeIdAttr = XmlDoc.CreateAttribute( _Attribute_NodeTypeId );
+        //    NodeTypeIdAttr.Value = NodeTypeId.ToString();
+        //    XmlNode.Attributes.Append( NodeTypeIdAttr );
 
-            XmlAttribute ObjectClassIdAttr = XmlDoc.CreateAttribute( _Attribute_ObjectClassId );
-            ObjectClassIdAttr.Value = ObjectClassId.ToString();
-            XmlNode.Attributes.Append( ObjectClassIdAttr );
+        //    XmlAttribute ObjectClassIdAttr = XmlDoc.CreateAttribute( _Attribute_ObjectClassId );
+        //    ObjectClassIdAttr.Value = ObjectClassId.ToString();
+        //    XmlNode.Attributes.Append( ObjectClassIdAttr );
 
-            XmlAttribute NodeTypeNameAttr = XmlDoc.CreateAttribute( _Attribute_NodeTypeName );
-            NodeTypeNameAttr.Value = NodeTypeName;
-            XmlNode.Attributes.Append( NodeTypeNameAttr );
+        //    XmlAttribute NodeTypeNameAttr = XmlDoc.CreateAttribute( _Attribute_NodeTypeName );
+        //    NodeTypeNameAttr.Value = NodeTypeName;
+        //    XmlNode.Attributes.Append( NodeTypeNameAttr );
 
-            XmlAttribute CategoryAttr = XmlDoc.CreateAttribute( _Attribute_Category );
-            CategoryAttr.Value = Category;
-            XmlNode.Attributes.Append( CategoryAttr );
+        //    XmlAttribute CategoryAttr = XmlDoc.CreateAttribute( _Attribute_Category );
+        //    CategoryAttr.Value = Category;
+        //    XmlNode.Attributes.Append( CategoryAttr );
 
-            XmlAttribute IconFileNameAttr = XmlDoc.CreateAttribute( _Attribute_IconFileName );
-            IconFileNameAttr.Value = IconFileName;
-            XmlNode.Attributes.Append( IconFileNameAttr );
+        //    XmlAttribute IconFileNameAttr = XmlDoc.CreateAttribute( _Attribute_IconFileName );
+        //    IconFileNameAttr.Value = IconFileName;
+        //    XmlNode.Attributes.Append( IconFileNameAttr );
 
-            XmlAttribute VersionAttr = XmlDoc.CreateAttribute( _Attribute_Version ); //bz # 8016
-            VersionAttr.Value = VersionNo.ToString();
-            XmlNode.Attributes.Append( VersionAttr );
+        //    XmlAttribute VersionAttr = XmlDoc.CreateAttribute( _Attribute_Version ); //bz # 8016
+        //    VersionAttr.Value = VersionNo.ToString();
+        //    XmlNode.Attributes.Append( VersionAttr );
 
-            XmlAttribute IsLatestVersionAttr = XmlDoc.CreateAttribute( _Attribute_IsLatestVersion ); //bz # 8016
-            IsLatestVersionAttr.Value = LatestVersionNT.NodeTypeId == NodeTypeId ? "1" : "0";
-            XmlNode.Attributes.Append( IsLatestVersionAttr );
+        //    XmlAttribute IsLatestVersionAttr = XmlDoc.CreateAttribute( _Attribute_IsLatestVersion ); //bz # 8016
+        //    IsLatestVersionAttr.Value = LatestVersionNT.NodeTypeId == NodeTypeId ? "1" : "0";
+        //    XmlNode.Attributes.Append( IsLatestVersionAttr );
 
-            XmlAttribute PriorVersionAttr = XmlDoc.CreateAttribute( _Attribute_PriorNodeTypeId );
-            PriorVersionAttr.Value = PriorVersionNodeTypeId.ToString();
-            XmlNode.Attributes.Append( PriorVersionAttr );
+        //    XmlAttribute PriorVersionAttr = XmlDoc.CreateAttribute( _Attribute_PriorNodeTypeId );
+        //    PriorVersionAttr.Value = PriorVersionNodeTypeId.ToString();
+        //    XmlNode.Attributes.Append( PriorVersionAttr );
 
-            XmlAttribute FirstVersionAttr = XmlDoc.CreateAttribute( _Attribute_FirstNodeTypeId );
-            FirstVersionAttr.Value = FirstVersionNodeTypeId.ToString();
-            XmlNode.Attributes.Append( FirstVersionAttr );
+        //    XmlAttribute FirstVersionAttr = XmlDoc.CreateAttribute( _Attribute_FirstNodeTypeId );
+        //    FirstVersionAttr.Value = FirstVersionNodeTypeId.ToString();
+        //    XmlNode.Attributes.Append( FirstVersionAttr );
 
-            XmlAttribute TableNameAttr = XmlDoc.CreateAttribute( _Attribute_TableName );
-            TableNameAttr.Value = LatestVersionNT.TableName;
-            XmlNode.Attributes.Append( TableNameAttr );
+        //    XmlAttribute TableNameAttr = XmlDoc.CreateAttribute( _Attribute_TableName );
+        //    TableNameAttr.Value = LatestVersionNT.TableName;
+        //    XmlNode.Attributes.Append( TableNameAttr );
 
-            XmlAttribute NameTemplateAttr = XmlDoc.CreateAttribute( _Attribute_NameTemplate );
-            NameTemplateAttr.Value = getNameTemplateText();
-            XmlNode.Attributes.Append( NameTemplateAttr );
+        //    XmlAttribute NameTemplateAttr = XmlDoc.CreateAttribute( _Attribute_NameTemplate );
+        //    NameTemplateAttr.Value = getNameTemplateText();
+        //    XmlNode.Attributes.Append( NameTemplateAttr );
 
-            foreach( CswNbtMetaDataNodeTypeTab Tab in this.getNodeTypeTabs() )
-            {
-                XmlNode TabNode = Tab.ToXml( View, XmlDoc, ForMobile, PropsInViewOnly );
-                if( TabNode != null )
-                    XmlNode.AppendChild( TabNode );
-            }
-            return XmlDoc;
-        }
+        //    foreach( CswNbtMetaDataNodeTypeTab Tab in this.getNodeTypeTabs() )
+        //    {
+        //        XmlNode TabNode = Tab.ToXml( View, XmlDoc, ForMobile, PropsInViewOnly );
+        //        if( TabNode != null )
+        //            XmlNode.AppendChild( TabNode );
+        //    }
+        //    return XmlDoc;
+        //}
 
         private CswNbtMetaDataNodeTypeProp _BarcodeProperty;
         public ICswNbtMetaDataProp getBarcodeProperty()
@@ -738,12 +733,11 @@ namespace ChemSW.Nbt.MetaData
             {
                 return ( ChemSW.Audit.CswEnumAuditLevel.Parse( _NodeTypeRow[_CswAuditMetaData.AuditLevelColName].ToString() ) );
             }
-            set
+            private set
             {
                 _NodeTypeRow[_CswAuditMetaData.AuditLevelColName] = ChemSW.Audit.CswEnumAuditLevel.Parse( value );
             }
         }
-
 
         #region IEquatable
 

@@ -32,7 +32,7 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         #region Inherited Events
-
+        
         //Extend CswNbtObjClass events here
 
         #endregion

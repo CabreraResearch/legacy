@@ -7,6 +7,7 @@ using ChemSW.DB;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.Batch;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.ServiceDrivers;
@@ -658,7 +659,7 @@ namespace ChemSW.Nbt.WebServices
                     sizesView.AddViewPropertyAndFilter( parent,
                         MetaDataProp : materialOCP,
                         Value : pk.PrimaryKey.ToString(),
-                        SubFieldName : CswEnumNbtSubFieldName.NodeID,
+                        SubFieldName: CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID,
                         FilterMode : CswEnumNbtFilterMode.Equals );
 
                     ICswNbtTree tree = NbtResources.Trees.getTreeFromView( sizesView, true, false, false );

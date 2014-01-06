@@ -24,7 +24,7 @@ namespace ChemSW.Nbt
             //   Inventory Group
             //   Storate Compatibility
             CswNbtMetaDataObjectClass locationOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.LocationClass );
-            foreach( int NodeTypeId in locationOC.getNodeTypeIds() )
+            foreach( int NodeTypeId in locationOC.getNodeTypeIds().Keys )
             {
                 _CswNbtResources.Modules.ShowProp( NodeTypeId, CswNbtObjClassLocation.PropertyName.Containers );
                 _CswNbtResources.Modules.ShowProp( NodeTypeId, "Inventory Levels" );
@@ -89,7 +89,7 @@ namespace ChemSW.Nbt
             //   Inventory Group
             //   Storate Compatibility
             CswNbtMetaDataObjectClass locationOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.LocationClass );
-            foreach( int NodeTypeId in locationOC.getNodeTypeIds() )
+            foreach( int NodeTypeId in locationOC.getNodeTypeIds().Keys )
             {
                 _CswNbtResources.Modules.HideProp( NodeTypeId, CswNbtObjClassLocation.PropertyName.Containers );
                 _CswNbtResources.Modules.HideProp( NodeTypeId, "Inventory Levels" );

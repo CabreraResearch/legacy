@@ -22,7 +22,7 @@ namespace ChemSW.Nbt.PropTypes
         /// <summary>
         /// Database interaction layer
         /// </summary>
-        private CswNbtNodePropData _CswNbtNodePropData = null;
+        protected CswNbtNodePropData _CswNbtNodePropData = null;
 
         /// <summary>
         /// Reference to the CswNbtResources object
@@ -165,6 +165,10 @@ namespace ChemSW.Nbt.PropTypes
         }
 
         /// <summary>
+        /// Primary Key of property's nodetype
+        /// </summary>
+        public Int32 NodeTypeId { get { return ( _CswNbtMetaDataNodeTypeProp.NodeTypeId ); } }
+        /// <summary>
         /// MetaData class for NodeTypeProp
         /// </summary>
         public CswNbtMetaDataNodeTypeProp NodeTypeProp
@@ -266,6 +270,34 @@ namespace ChemSW.Nbt.PropTypes
         public bool ReadOnly
         {
             get { return ( _CswNbtNodePropData.ReadOnly ); }
+        }
+
+
+        private bool _ServerManagedOverridden = false;
+        private bool _ServerManaged = false;
+        /// <summary>
+        /// True if the property's value is managed by the server
+        /// </summary>
+        public bool ServerManaged
+        {
+            get
+            {
+                bool ret = false;
+                if( _ServerManagedOverridden )
+                {
+                    ret = _ServerManaged;
+                }
+                else
+                {
+                    ret = NodeTypeProp.ServerManaged;
+                }
+                return ret;
+            }
+            set
+            {
+                _ServerManagedOverridden = true;
+                _ServerManaged = value;
+            }
         }
 
         /// <summary>
@@ -501,7 +533,7 @@ namespace ChemSW.Nbt.PropTypes
                     //Implementing FieldType specific behavior here. Blame Steve.
                     if( FieldType == CswEnumNbtFieldType.ViewReference )
                     {
-                        CswNbtView View = _CswNbtResources.ViewSelect.restoreView( Source.NodeTypeProp.DefaultValue.AsViewReference.ViewId );
+                        CswNbtView View = _CswNbtResources.ViewSelect.restoreView( Source.DefaultValue.AsViewReference.ViewId );
                         CswNbtView ViewCopy = new CswNbtView( _CswNbtResources );
                         ViewCopy.saveNew( View.ViewName, View.Visibility, View.VisibilityRoleId, View.VisibilityUserId, View );
                         SetSubFieldValue( CswEnumNbtSubFieldName.ViewID, ViewCopy.ViewId );
@@ -661,7 +693,14 @@ namespace ChemSW.Nbt.PropTypes
 
         #endregion Xml Operations
 
-
+        /// <summary>
+        /// Gets or sets a property attribute.  Changes temporarily override values from the MetaData database, but are not saved.
+        /// </summary>
+        public string this[CswEnumNbtPropertyAttributeName AttributeName, CswEnumNbtSubFieldName SubFieldName = null]
+        {
+            get { return _CswNbtNodePropData[AttributeName, SubFieldName]; }
+            set { _CswNbtNodePropData[AttributeName, SubFieldName] = value; }
+        }
     }//CswNbtNodeProp
 
 }//namespace ChemSW.Nbt.PropTypes

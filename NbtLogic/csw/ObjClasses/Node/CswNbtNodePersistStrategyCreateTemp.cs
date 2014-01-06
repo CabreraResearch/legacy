@@ -11,12 +11,22 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePersistStrategyCreateTemp( CswNbtResources CswNbtResources )
         {
             _CswNbtResources = CswNbtResources;
+            
+            ForceUpdate = true;
+            IsCopy = false;
+            OverrideUniqueValidation = false;
+            SkipEvents = false;
+            AllowAuditing = true;
+            Creating = true;
         }
 
         public bool ForceUpdate { get; set; }
         public bool IsCopy { get; set; }
         public bool OverrideUniqueValidation { get; set; }
-
+        public bool SkipEvents { get; set; }
+        public bool AllowAuditing { get; set; }
+        public bool Creating { get; set; }
+        
         public void postChanges( CswNbtNode Node )
         {
             Node.checkWriter();
@@ -26,7 +36,7 @@ namespace ChemSW.Nbt.ObjClasses
                 Node.ObjClass.beforeWriteNode( true );
             }
 
-            Node.requestWrite( true, IsCopy, OverrideUniqueValidation, true, false );
+            Node.requestWrite( ForceUpdate, IsCopy, OverrideUniqueValidation, Creating, AllowAuditing, SkipEvents );
 
             if( null != Node.ObjClass )
             {
