@@ -246,49 +246,44 @@ namespace ChemSW.Nbt.Sched
             {
                 //we cannot check a view that references the target table from within the trigger, so we need to set values for multiplexed tables and views
                 //all of this information is derived from the create view statements in Nbt/Scripts/cafsql/CAF.sql
-                string SourceColumn = Row["pkcolumnname"].ToString();
-                string LegacyColumn = null;
-                string RenamedViewColumn = null;
+                string ItemSubquery = "";
                 string TriggerName = Row["sourcename"].ToString();
                 string TableName = Row["tablename"].ToString();
                 switch( TableName )
                 {
                     //max inventory and min inventory are in the same view, but actually require two separate triggers on different source tables
                     case "maxinventory_basic":
-                        LegacyColumn = "maxinventorybasicid";
-                        RenamedViewColumn = "inventorybasicid";
                         TriggerName = "max_inventory";
+                        ItemSubquery = "select :new.maxinventorybasicid as primarykey from dual";
                         break;
                     case "mininventory_basic":
-                        LegacyColumn = "mininventorybasicid";
-                        RenamedViewColumn = "inventorybasicid";
                         TriggerName = "min_inventory";
+                        ItemSubquery = "select :new.mininventorybasicid as primarykey from dual";
                         break;
 
                     //GHS, synonyms, and documents use a manufactured legacy id which is stored in the import queue that we need to account for in the trigger
                     case "documents":
-                        LegacyColumn = "documentid";
+                        ItemSubquery = "select :new.documentid || '_' || :new.packageid as primarykey from dual where :new.packageid is not null UNION select :new.documentid || '_' || p.packageid as primarykey from packages p where :new.packageid is null and :new.materialid = p.materialid ";
                         break;
                     case "jct_ghsphrase_matsite":
-                        LegacyColumn = "packageid";
+                        ItemSubquery = "select p.packageid || '_'|| s.region as primarykey from packages p full join sites s on 1=1 where p.materialid = :new.materialid and s.siteid = :new.siteid";
                         break;
                     case "materials_synonyms":
-                        LegacyColumn = "materialsynonymid";
+                        ItemSubquery = "select :new.materialsynonymid || '_' || packageid as primarykey from packages p where :new.materialid = p.materialid";
                         break;
                     default:
-                        LegacyColumn = SourceColumn;
+                        ItemSubquery = "select :new." + Row["pkcolumnname"] + " as primarykey from dual";
                         break;
                 }
-                RenamedViewColumn = RenamedViewColumn ?? LegacyColumn;
 
                 string WhenClause = "";
                 switch( Row["sourcename"].ToString() )
                 {
                     case "docs_view":
-                        WhenClause = "new.packageid is not null and new.doctype = 'DOC'";
+                        WhenClause = "new.doctype = 'DOC'";
                         break;
                     case "sds_view":
-                        WhenClause = "new.packageid is null and new.doctype = 'MSDS'";
+                        WhenClause = "new.doctype = 'MSDS'";
                         break;
                     case "cofa_docs_view":
                         WhenClause = "new.CA_FileName is not null";
@@ -329,14 +324,14 @@ namespace ChemSW.Nbt.Sched
                             end if;
                           end if;
 
-                          for queue_item in (select * from " + Row["sourcename"] + " where " + RenamedViewColumn + " = :new." + LegacyColumn + @" ) loop
+                          for queue_item in (" + ItemSubquery + @" ) loop
 
                           for x in (select count(*) cnt
                                       from dual
                                      where exists (select null
                                               from nbtimportqueue
                                              where state = statestr
-                                               and itempk = queue_item." + SourceColumn + @" 
+                                               and itempk = queue_item.primarykey 
                                                and sheetname = '" + Row["sourcename"] + @"')) loop
                             if (x.cnt = 0) then
                               insert into nbtimportqueue
@@ -344,7 +339,7 @@ namespace ChemSW.Nbt.Sched
                               values
                                 (seq_nbtimportqueueid.nextval,
                                  statestr,
-                                 queue_item." + SourceColumn + @",
+                                 queue_item.primarykey,
                                  '" + Row["sourcename"] + @"',
                                  0,
                                  '');
