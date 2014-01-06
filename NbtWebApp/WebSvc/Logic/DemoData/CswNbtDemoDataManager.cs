@@ -82,10 +82,10 @@ namespace ChemSW.Nbt.WebServices
 
             //*****************************
             //Populate views
-            string NodesQuery = @"select n." + CswNbtDemoDataReturn.ColumnNames.NodeId + @",n.nodename,t.nodetypename
+            string NodesQuery = @"select n." + CswNbtDemoDataReturn.ColumnNames.NodeId + @",n.nodename,t.nodetypename, t.enabled
                                                 from nodes n 
                                                 join nodetypes t on (n.nodetypeid=t.nodetypeid )
-                                                where n.isdemo = '1' and t.enabled = '1'
+                                                where n.isdemo = '1'
                                                 order by lower( n.nodename ), lower( t.nodetypename )";
 
 
@@ -95,11 +95,14 @@ namespace ChemSW.Nbt.WebServices
             DataTable DemoNodesTable = ArbitraryNodesSelect.getTable();
             foreach( DataRow CurrentDemoNodeRow in DemoNodesTable.Rows )
             {
+                bool NodeEnabled = CswConvert.ToBoolean( CurrentDemoNodeRow["enabled"].ToString() );
+                String DisabledLabel = NodeEnabled ? "" : "(Disabled) ";
+
                 DataRow NewGridRowOfNodes = GridTable.NewRow();
                 GridTable.Rows.Add( NewGridRowOfNodes );
                 NewGridRowOfNodes[CswNbtDemoDataReturn.ColumnNames.NodeId] = CurrentDemoNodeRow["nodeid"].ToString();
                 NewGridRowOfNodes[CswNbtDemoDataReturn.ColumnNames.Name] = CurrentDemoNodeRow["nodename"].ToString();
-                NewGridRowOfNodes[CswNbtDemoDataReturn.ColumnNames.Type] = CurrentDemoNodeRow["nodetypename"].ToString();
+                NewGridRowOfNodes[CswNbtDemoDataReturn.ColumnNames.Type] = DisabledLabel + CurrentDemoNodeRow["nodetypename"].ToString();
 
                 CswDelimitedString UsedByNodeIds = new CswDelimitedString( ',' );
                 Int32 UsedByCount = 0;
@@ -246,8 +249,10 @@ namespace ChemSW.Nbt.WebServices
         public static void updateDemoData( ICswResources CswResources, CswNbtDemoDataReturn Return, CswNbtDemoDataRequests.CswUpdateDemoNodesRequest Request )
         {
             CswNbtResources CswNbtResources = (CswNbtResources) CswResources;
+            CswNbtWebServiceMetaData wsMd = new CswNbtWebServiceMetaData( CswNbtResources );
+            CswNbtResources OtherResources = wsMd.makeSystemUserResources( CswNbtResources.AccessId, false );
 
-            CswNbtActDeleteDemoData CswNbtActDeleteDemoData = new CswNbtActDeleteDemoData( CswNbtResources );
+            CswNbtActDeleteDemoData CswNbtActDeleteDemoData = new CswNbtActDeleteDemoData( OtherResources );
 
             List<string> Errors = new List<string>();
 
@@ -257,6 +262,9 @@ namespace ChemSW.Nbt.WebServices
             {
                 Return.addException( CswResources, new CswDniException( "There were errors updating the demo data: " + CurrentError ) );
             }
+
+            OtherResources.finalize();
+            OtherResources.release();
         }
 
 

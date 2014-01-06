@@ -170,7 +170,8 @@
                                 
                                 cswPrivate.toggleButton(cswPrivate.buttons.next, true);
                                 cswPrivate.wizard.next.click();
-                            }
+                            },
+                            includeInRecent: false,
                         }); // cswPrivate.searchSource
                     } // if (false === wizardStepMergeSource_init) {
                 };
@@ -230,7 +231,8 @@
                                 cswPrivate.mergeData = null;
                                 cswPrivate.toggleButton(cswPrivate.buttons.next, true);
                                 cswPrivate.wizard.next.click();
-                            }
+                            },
+                            includeInRecent: false,
                         });
                     } // if (false === cswPrivate.wizardStepMergeDest_init) 
                 };

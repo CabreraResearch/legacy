@@ -39,6 +39,7 @@
             forceSingleColumn: false,
             onlyMergeableNodeTypes: false,
             excludeNodeIds: [], // exclude specific nodes from the search mechanism
+            includeInRecent: true,
             showC3SrchPromptText: true // Display the alternative search text or not (client-side filter _only_)
             //buttonSingleColumn: '',
             //buttonMultiColumn: ''
@@ -72,7 +73,7 @@
                     cswPrivate.preFilterSelect.setIcon(nodetypeObj.iconfilename);
                     cswPrivate.nodetypeid = nodetypeObj.id;
                 } else {
-                    cswPrivate.preFilterSelect.setText('All');
+                    cswPrivate.preFilterSelect.setText('All');i
                     cswPrivate.preFilterSelect.setIcon('');
                     cswPrivate.nodetypeid = '';
                 }
@@ -255,7 +256,8 @@
                     OnlyMergeableNodeTypes: cswPrivate.onlyMergeableNodeTypes,
                     Page: '0',
                     Limit: '0',
-                    ExcludeNodeIds: cswPrivate.excludeNodeIds
+                    ExcludeNodeIds: cswPrivate.excludeNodeIds,
+                    IncludeInRecent: cswPrivate.includeInRecent,
                 },
                 success: function (data) {
                     cswPublic.handleResults(data);
