@@ -21,7 +21,7 @@ namespace NbtLogic.Test.csw.Batch
         private CswNbtObjClassSize _SizeOne;
         private CswNbtObjClassSize _SizeTwo;
         private CswNbtObjClassChemical _FirstChemicalNode;
-        
+
         #region Setup and Teardown
 
         [SetUp]
@@ -89,7 +89,8 @@ namespace NbtLogic.Test.csw.Batch
                                     Quantity = 10,
                                     SizeName = _SizeOne.NodeName,
                                     SizeNodeId = _SizeOne.NodeId,
-                                    UnitNodeId = GramNode.NodeId
+                                    UnitNodeId = GramNode.NodeId,
+                                    ContainerIds = new Collection<string>() { InitialContainer.NodeId.ToString() }
                                 },
                             new CswNbtAmountsGridQuantity()
                                 {
@@ -103,20 +104,10 @@ namespace NbtLogic.Test.csw.Batch
             };
 
             //This should create out receipt lot and finalize the initial container
-            _ReceivingAction.HandleInitialContainer( InitialContainer, ReceiptDef );
+            int nodesProcessed = 0;
+            _ReceivingAction.receiveContainers( ReceiptDef, ref nodesProcessed, 1 );
 
             return ReceiptDef;
-        }
-
-        [Test]
-        public void TestInitialContainerCreate()
-        {
-            CswNbtReceivingDefiniton ReceiptDef = FinishWizard();
-            CswNbtObjClassContainer InitialContainer = TestData.CswNbtResources.Nodes.GetNode( ReceiptDef.ContainerNodeId );
-            Assert.IsFalse( InitialContainer.IsTemp );
-
-            Assert.AreEqual( InitialContainer.Quantity.Quantity, 10 ); //Did we get the right quantity?
-            Assert.AreEqual( InitialContainer.Quantity.CachedNodeName, _SizeOne.InitialQuantity.CachedNodeName );
         }
 
         [Test]
