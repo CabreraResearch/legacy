@@ -119,19 +119,60 @@ namespace ChemSW.Nbt.Actions
 
             foreach( CswNbtAmountsGridQuantity QuantityDef in ReceiptDef.Quantities )
             {
+                CswNbtObjClassSize AsSize = _CswNbtResources.Nodes.GetNode( QuantityDef.SizeNodeId );
+                string Barcode = string.Empty;
+                Action<CswNbtNode> After = delegate( CswNbtNode NewNode )
+                {
+                    CswNbtObjClassContainer thisContainer = NewNode;
+                    if( QuantityDef.Barcodes.Count <= QuantityDef.NumContainers && false == string.IsNullOrEmpty( Barcode ) )
+                    {
+                        thisContainer.Barcode.setBarcodeValueOverride( Barcode, false );
+                    }
+                    thisContainer.Size.RelatedNodeId = QuantityDef.SizeNodeId;
+                    thisContainer.Material.RelatedNodeId = ReceiptDef.MaterialNodeId;
+                    if( AsSize.QuantityEditable.Checked != CswEnumTristate.True )
+                    {
+                        QuantityDef.Quantity = AsSize.InitialQuantity.Quantity;
+                        QuantityDef.UnitNodeId = AsSize.InitialQuantity.UnitId;
+                    }
+                    if( null == thisContainer.Quantity.UnitId || Int32.MinValue == thisContainer.Quantity.UnitId.PrimaryKey )
+                    {
+                        thisContainer.Quantity.UnitId = QuantityDef.UnitNodeId;
+                    }
+                    thisContainer.DispenseIn( CswEnumNbtContainerDispenseType.Receive, QuantityDef.Quantity, QuantityDef.UnitNodeId, ReceiptDef.RequestItemtNodeId );
+                    thisContainer.Disposed.Checked = CswEnumTristate.False;
+                    thisContainer.ReceiptLot.RelatedNodeId = ReceiptDef.ReceiptLotNodeId;
+                };
+
                 for( Int32 C = 0; C < QuantityDef.NumContainers; C += 1 )
                 {
-                    //we promote the first container before the batch op starts, so there should always be at least one container id in the first set of quantities
-                    if( C >= QuantityDef.ContainerIds.Count && NodesProcessed < MaxProcessed ) //only create a container where we haven't already
+                    if( NodesProcessed < MaxProcessed )
                     {
-                        string Barcode = ( QuantityDef.Barcodes.Count > C ? QuantityDef.Barcodes[C] : string.Empty );
-                        CswNbtActReceiving.HandleContainer( _CswNbtResources, ReceiptDef, QuantityDef, Barcode, delegate( Action<CswNbtNode> After )
+                        //we promote the first container before the batch op starts, so there should always be at least one container id in the first set of quantities
+                        CswPrimaryKey ContainerId = null;
+                        if( C < QuantityDef.ContainerIds.Count )
+                        {
+                            ContainerId = CswConvert.ToPrimaryKey( QuantityDef.ContainerIds[C] );
+                        }
+                        Barcode = ( QuantityDef.Barcodes.Count > C ? QuantityDef.Barcodes[C] : string.Empty );
+
+                        if( null == ContainerId ) //only create a container if we haven't already
                         {
                             CswNbtNodeKey ContainerNodeKey;
-                            CswNbtObjClassContainer AsContainer = _CswNbtSdTabsAndProps.addNode( ContainerNt, null, ReceiptDef.ContainerProps, out ContainerNodeKey, After );
-                            QuantityDef.ContainerIds.Add( AsContainer.NodeId.ToString() );
-                        } );
-                        NodesProcessed++;
+                            CswNbtObjClassContainer Container = _CswNbtSdTabsAndProps.addNode( ContainerNt, ReceiptDef.ContainerProps, out ContainerNodeKey, After );
+                            QuantityDef.ContainerIds.Add( Container.NodeId.ToString() );
+                            NodesProcessed++;
+                        }
+                        else
+                        {
+                            CswNbtNode InitialContainerNode = _CswNbtResources.Nodes.GetNode( ContainerId );
+                            if( null != InitialContainerNode && InitialContainerNode.IsTemp )
+                            {
+                                After( InitialContainerNode );
+                                InitialContainerNode.PromoteTempToReal();
+                                NodesProcessed++;
+                            }
+                        }
                     }
                 } //for( Int32 C = 0; C < NoContainers; C += 1 )
             }
@@ -173,7 +214,6 @@ namespace ChemSW.Nbt.Actions
             return Ret;
         }
 
-        //Abstracted outside receiveMaterial() for Unit Test purposes
         public void HandleInitialContainer( CswNbtObjClassContainer InitialContainerNode, CswNbtReceivingDefiniton ReceiptObj )
         {
             JObject ContainerAddProps = ReceiptObj.ContainerProps;
@@ -188,8 +228,7 @@ namespace ChemSW.Nbt.Actions
             }
 
             Collection<CswNbtAmountsGridQuantity> Quantities = ReceiptObj.Quantities;
-            HandleContainer( _CswNbtResources,
-                             ReceiptObj,
+            HandleContainer( ReceiptObj,
                              QuantityDef : Quantities[0],
                              Barcode : Quantities[0].Barcodes.FirstOrDefault(),
                              Apply : delegate( Action<CswNbtNode> After )
@@ -200,9 +239,9 @@ namespace ChemSW.Nbt.Actions
                 );
         }
 
-        public static void HandleContainer( CswNbtResources NbtResources, CswNbtReceivingDefiniton ReceiptDef, CswNbtAmountsGridQuantity QuantityDef, string Barcode, Action<Action<CswNbtNode>> Apply )
+        public void HandleContainer( CswNbtReceivingDefiniton ReceiptDef, CswNbtAmountsGridQuantity QuantityDef, string Barcode, Action<Action<CswNbtNode>> Apply )
         {
-            CswNbtObjClassSize AsSize = NbtResources.Nodes.GetNode( QuantityDef.SizeNodeId );
+            CswNbtObjClassSize AsSize = _CswNbtResources.Nodes.GetNode( QuantityDef.SizeNodeId );
 
             Action<CswNbtNode> After = delegate( CswNbtNode NewNode )
             {
@@ -338,6 +377,7 @@ namespace ChemSW.Nbt.Actions
                 }
             }
         }
+
 
         #endregion Private Helper Functions
     }

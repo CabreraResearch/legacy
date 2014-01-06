@@ -63,13 +63,31 @@ namespace NbtWebApp.Actions.Receiving
             }
         }
 
-        //Note - I am unsure about Barcodes, it may be a collection or a comma delimited string.
-        private Collection<string> _Barcodes = new Collection<string>();
-        [DataMember( Name = "barcodes" )]
-        public Collection<string> Barcodes
+        private CswCommaDelimitedString _Barcodes = null;
+        public CswCommaDelimitedString Barcodes
         {
-            get { return _Barcodes; }
-            set { _Barcodes = value; }
+            get
+            {
+                if( null == _Barcodes )
+                {
+                    _Barcodes = new CswCommaDelimitedString();
+                    _Barcodes.FromString( _BarcodesStr );
+                }
+                return _Barcodes;
+            }
+            set
+            {
+                _Barcodes = value;
+                _BarcodesStr = _Barcodes.ToString();
+            }
+        }
+
+        private string _BarcodesStr = string.Empty;
+        [DataMember( Name = "barcodes" )]
+        private string BarcodesStr
+        {
+            get { return _BarcodesStr; }
+            set { _BarcodesStr = value; }
         }
 
         private Collection<string> _ContainerIds = new Collection<string>();
