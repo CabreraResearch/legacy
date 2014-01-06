@@ -604,7 +604,10 @@ namespace ChemSW.Nbt.Logic
                 OwnerName = _getOwnerName( ViewProperty );
                 FieldType = ViewProperty.NodeTypeProp.getFieldTypeValue();
                 //ListOptions.FromString( ViewProperty.NodeTypeProp.ListOptions );
-                ListOptions.FromString( ViewProperty.NodeTypeProp.DesignNode.AttributeProperty[CswEnumNbtPropertyAttributeName.Options].AsText.Text );
+                if( ViewProperty.NodeTypeProp.DesignNode.AttributeProperty.ContainsKey( CswEnumNbtPropertyAttributeName.Options ) )
+                {
+                    ListOptions.FromString( ViewProperty.NodeTypeProp.DesignNode.AttributeProperty[CswEnumNbtPropertyAttributeName.Options].AsText.Text );
+                }
                 RelatedIdType = CswEnumNbtViewRelatedIdType.NodeTypeId;
                 MetaDataPropNameWithQuestionNo = ViewProperty.NodeTypeProp.PropNameWithQuestionNo;
                 MetaDataPropId = ViewProperty.NodeTypeProp.FirstPropVersionId;
