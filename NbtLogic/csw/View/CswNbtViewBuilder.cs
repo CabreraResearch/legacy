@@ -661,8 +661,10 @@ namespace ChemSW.Nbt.Logic
                 {
                     CswCommaDelimitedString NTPListOptions = new CswCommaDelimitedString();
                     //NTPListOptions.FromString( VPNodeTypeProp.ListOptions );
-                    NTPListOptions.FromString( VPNodeTypeProp.DesignNode.AttributeProperty[CswEnumNbtPropertyAttributeName.Options].AsText.Text );
-
+                    if( VPNodeTypeProp.DesignNode.AttributeProperty.ContainsKey( CswEnumNbtPropertyAttributeName.Options ) )
+                    {
+                        NTPListOptions.FromString( VPNodeTypeProp.DesignNode.AttributeProperty[CswEnumNbtPropertyAttributeName.Options].AsText.Text );
+                    }
                     foreach( string Option in NTPListOptions )
                     {
                         ListOptions.Add( Option, false, true );
