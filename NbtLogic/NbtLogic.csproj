@@ -78,6 +78,8 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="csw\Actions\Container\CswNbtContainerDispenseTransactionBuilder.cs" />
+    <Compile Include="csw\Actions\Container\CswNbtContainerDisposer.cs" />
     <Compile Include="csw\Actions\CswNbtActMerge.cs" />
     <Compile Include="csw\Actions\ChemWatch\CswNbtChemWatchCookie.cs" />
     <Compile Include="csw\Actions\ChemWatch\CswNbtChemWatchDataContract.cs" />
@@ -92,6 +94,7 @@
     <Compile Include="csw\Actions\CswNbtActCreateMaterial.cs" />
     <Compile Include="csw\Actions\CswNbtActHMISReporting.cs" />
     <Compile Include="csw\Actions\CswNbtActReconciliation.cs" />
+    <Compile Include="csw\Actions\Container\CswNbtContainerDispenser.cs" />
     <Compile Include="csw\Actions\KioskModeRules\CswNbtKioskModeRuleDispose.cs" />
     <Compile Include="csw\Actions\KioskModeRules\CswNbtKioskModeRuleOwner.cs" />
     <Compile Include="csw\Actions\KioskModeRules\CswNbtKioskModeRuleTransfer.cs" />
@@ -669,7 +672,9 @@
     <None Include="csw\Schema\scripts\past\02I\CswUpdateMetaData_02I_Case31114A.cs" />
     <None Include="csw\Schema\scripts\past\02I\CswUpdateDDL_02I_Case31057.cs" />
     <None Include="csw\Schema\scripts\past\02I\CswUpdateSchema_02I_Case31061B.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02J\CswUpdateSchema_02J_Case30691.cs" />
     <Compile Include="csw\Schema\scripts\prod\02J\CswUpdateSchema_02J_Case31315.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02J\CswUpdateSchema_02J_Case31203.cs" />
     <Compile Include="csw\Schema\scripts\prod\02J\CswUpdateMetaData_02J_Case31315.cs" />
     <Compile Include="csw\Schema\scripts\prod\02J\CswUpdateSchema_02J_Case31464.cs" />
     <Compile Include="csw\Schema\scripts\prod\02J\CswUpdateDDL_02JCase31464.cs" />
@@ -1518,7 +1523,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="csw\Actions\CswNbtActDispenseContainer.cs" />
+    <Compile Include="csw\Actions\Container\CswNbtActDispenseContainer.cs" />
     <Compile Include="csw\Actions\CswNbtActReceiving.cs" />
     <Compile Include="csw\Actions\CswNbtActRequesting.cs" />
     <Compile Include="csw\Actions\CswNbtActSystemViews.cs" />
