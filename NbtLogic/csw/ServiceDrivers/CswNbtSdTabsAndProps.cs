@@ -380,18 +380,17 @@ namespace ChemSW.Nbt.ServiceDrivers
 
             if( Node != null )
             {
+                // for prop filters, update node prop value but don't save the change
+                JObject PropJson = CswConvert.ToJObject( NewPropJson, true, "NewPropJson" );
+                CswNbtSdNode NodeAction = new CswNbtSdNode( _CswNbtResources, _CswNbtStatisticsEvents );
+                NodeAction.addSingleNodeProp( Node, PropJson, null );
+
                 // case 30765 - this must be done here in order to prepare the property for export to the UI (e.g. setting 'Hidden' correctly)
                 // We need to do this prop as well as all conditional props
                 foreach( CswNbtNodePropWrapper p in Node.Properties )
                 {
                     p.TriggerOnBeforeRender();
                 }
-
-                // for prop filters, update node prop value but don't save the change
-                JObject PropJson = CswConvert.ToJObject( NewPropJson, true, "NewPropJson" );
-
-                CswNbtSdNode NodeAction = new CswNbtSdNode( _CswNbtResources, _CswNbtStatisticsEvents );
-                NodeAction.addSingleNodeProp( Node, PropJson, null );
 
                 CswPropIdAttr PropIdAttr = new CswPropIdAttr( PropIdFromJson );
                 CswNbtMetaDataNodeTypeProp Prop = _CswNbtResources.MetaData.getNodeTypeProp( PropIdAttr.NodeTypePropId );

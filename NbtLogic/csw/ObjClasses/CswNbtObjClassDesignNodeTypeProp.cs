@@ -465,7 +465,10 @@ namespace ChemSW.Nbt.ObjClasses
             }
 
             // Display conditions
-            _setDisplayConditionOptions();
+            DisplayConditionProperty.onBeforeRender = delegate( CswNbtNodeProp prop )
+                {
+                    _setDisplayConditionOptions();
+                };
             DisplayConditionProperty.SetOnPropChange( _DisplayConditionProperty_Change );
 
             // Servermanaged and ReadOnly
