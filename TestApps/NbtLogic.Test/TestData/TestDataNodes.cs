@@ -62,7 +62,7 @@ namespace ChemSW.Nbt.Test
                         LocationNode.ControlZone.RelatedNodeId = ControlZoneId;
                     }
                     LocationNode.AllowInventory.Checked = AllowInventory ? CswEnumTristate.True : CswEnumTristate.False;
-                } );
+                }, OverrideUniqueValidation: true );
 
             _finalize();
 
@@ -89,7 +89,6 @@ namespace ChemSW.Nbt.Test
                         ContainerLocationNode.Location.RefreshNodeName();
                     }
                     ContainerLocationNode.ContainerScan.Text = ContainerScan;
-                    //ContainerLocationNode.postChanges( true );
                 } );
 
             _finalize();
@@ -124,7 +123,6 @@ namespace ChemSW.Nbt.Test
                     {
                         ContainerNode.Missing.Checked = CswEnumTristate.True;
                     }
-                    //ContainerNode.postChanges( true );
                 } );
             _finalize();
 
@@ -143,7 +141,6 @@ namespace ChemSW.Nbt.Test
                         UnitOfMeasureNode.ConversionFactor.Exponent = ConversionFactorExponent;
                     UnitOfMeasureNode.Fractional.Checked = Fractional;
                     UnitOfMeasureNode.UnitType.Value = NodeTypeName;
-                    //UnitOfMeasureNode.postChanges( true );
                 } );
             _finalize();
 
@@ -179,8 +176,7 @@ namespace ChemSW.Nbt.Test
                         MaterialNode.CasNo.Text = CASNo;
                         MaterialNode.IsTierII.Checked = IsTierII;
                     }
-                    //MaterialNode.postChanges( true );
-                } );
+                }, OverrideUniqueValidation: true );
             _finalize();
 
             return ret;

@@ -82,6 +82,34 @@ namespace ChemSW.Nbt.Test.Actions
             Assert.AreEqual( "New Room", Data.Materials[0].Locations[0].Location );//Location data exists
         }
 
+        /// <summary>
+        /// Given a location and timeframe that has one Material for two days,
+        /// given that the quantity of that Material is different for each day,
+        /// assert that the returned TierII data contains an average quantity of the total quantity between Dat 1 and Day 2.
+        /// Prior to resolving Case 31508, this test failed.
+        /// </summary>
+        [Test]
+        public void getTierIIDataTestTwoDaysAverage()
+        {
+            CswPrimaryKey LocationId = TestData.Nodes.createLocationNode().NodeId;
+            CswNbtNode ChemicalNode = TestData.Nodes.createMaterialNode();
+            CswNbtNode PoundsUnit = TestData.Nodes.createUnitOfMeasureNode( "Weight", "lb", 4.53592, -1, CswEnumTristate.True );
+            TestData.Nodes.createContainerNode( "Container", 1, PoundsUnit, ChemicalNode, LocationId );
+            TestData.CswNbtResources.execStoredProc( "TIER_II_DATA_MANAGER.SET_TIER_II_DATA", new List<CswStoredProcParam>() );
+            TestData.CswNbtResources.execArbitraryPlatformNeutralSql( "update tier2 set dateadded = dateadded - 1 where tier2id > " + _TierIIHWM );
+            TestData.Nodes.createContainerNode( "Container", 1, PoundsUnit, ChemicalNode, LocationId );
+            TestData.CswNbtResources.execStoredProc( "TIER_II_DATA_MANAGER.SET_TIER_II_DATA", new List<CswStoredProcParam>() );
+            TierIIData.TierIIDataRequest Request = new TierIIData.TierIIDataRequest
+            {
+                LocationId = LocationId.ToString(),
+                StartDate = DateTime.Now.AddYears( -1 ).ToString(),
+                EndDate = DateTime.Now.AddDays( 1 ).ToString()
+            };
+            TierIIData Data = TierIIAction.getTierIIData( Request );
+            Assert.AreEqual( 2, Data.Materials[0].DaysOnSite );//Material existed for two days
+            Assert.AreEqual( 1.5, Data.Materials[0].AverageQty );//AverageQty is the average between Day 1 and Day 2
+        }
+
         #endregion getTierIIData
     }
 }
