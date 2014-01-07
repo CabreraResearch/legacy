@@ -30,7 +30,7 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         /// <summary>
-        /// Convert a CswNbtNode to a CswNbtObjClassGeneric
+        /// Convert a CswNbtNode to a CswNbtObjClassCofAMethod
         /// </summary>
         public static implicit operator CswNbtObjClassCofAMethod( CswNbtNode Node )
         {

@@ -43,10 +43,10 @@ namespace ChemSW.Nbt.Schema
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( ListModeOCP, CswEnumNbtObjectClassPropAttributes.listoptions, CswNbtObjClassRegulatoryList.CswEnumRegulatoryListListModes.Options.ToString() );
 
             // Set conditional filter
-            RegionsOCP.setFilter( FilterProp: ListModeOCP,
-                                  SubField: ListModeOCP.getFieldTypeRule().SubFields.Default,
-                                  FilterMode: CswEnumNbtFilterMode.Equals,
-                                  FilterValue: CswNbtObjClassRegulatoryList.CswEnumRegulatoryListListModes.ArielManaged );
+            RegionsOCP.setFilterDeprecated( FilterProp: ListModeOCP,
+                                            SubField: ListModeOCP.getFieldTypeRule().SubFields.Default,
+                                            FilterMode: CswEnumNbtFilterMode.Equals,
+                                            FilterValue: CswNbtObjClassRegulatoryList.CswEnumRegulatoryListListModes.ArielManaged );
 
 
         } // update()

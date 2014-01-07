@@ -39,11 +39,12 @@ namespace ChemSW.Nbt
                     //Move all tabs over
                     foreach( CswNbtMetaDataNodeTypeTab tab in ChemicalNT.getNodeTypeTabs().Where( Tab => Tab.TabOrder > GHSTab.TabOrder ) )
                     {
-                        tab.TabOrder++;
+                        //tab.TabOrder++;
+                        tab.DesignNode.Order.Value += 1;
                     }
 
                     //Create the DSD tab and put it next to the GHS tab
-                    DSDTab = _CswNbtResources.MetaData.makeNewTab( ChemicalNT, "DSD", GHSTab.TabOrder + 1 );
+                    DSDTab = _CswNbtResources.MetaData.makeNewTabNew( ChemicalNT, "DSD", GHSTab.TabOrder + 1 );
                 }
 
                 if( false == DSDTab.HasProps )

@@ -63,7 +63,7 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         public delegate void OnSetNodeIdHandler( CswNbtNode Node, CswPrimaryKey OldNodeId, CswPrimaryKey NewNodeId );
-        public delegate void OnRequestWriteNodeHandler( CswNbtNode Node, bool ForceUpdate, bool IsCopy, bool OverrideUniqueValidation, bool Creating, bool AllowAuditing );
+        public delegate void OnRequestWriteNodeHandler( CswNbtNode Node, bool ForceUpdate, bool IsCopy, bool OverrideUniqueValidation, bool Creating, bool AllowAuditing, bool SkipEvents );
         public delegate void OnRequestDeleteNodeHandler( CswNbtNode Node );
         public delegate void OnRequestFillHandler( CswNbtNode Node, CswDateTime Date );
         public delegate void OnRequestFillFromNodeTypeIdHandler( CswNbtNode Node, Int32 NodeTypeId );
@@ -275,6 +275,17 @@ namespace ChemSW.Nbt.ObjClasses
             set { _NodeId = value; }
         }
 
+        private CswPrimaryKey _RelationalId = null;
+        public CswPrimaryKey RelationalId
+        {
+            get { return ( _RelationalId ); }
+            set
+            {
+                _RelationalId = value;
+                Properties._RelationalId = _RelationalId;
+            }
+        }//RelationalId
+
         private Int32 _NodeTypeId = 0;
         public Int32 NodeTypeId
         {
@@ -395,11 +406,13 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Methods
 
-        public void postChanges( bool ForceUpdate, bool IsCopy = false, bool OverrideUniqueValidation = false )
+        public void postChanges( bool ForceUpdate, bool IsCopy = false, bool OverrideUniqueValidation = false, bool SkipEvents = false )
         {
             ICswNbtNodePersistStrategy NodePersistStrategy = new CswNbtNodePersistStrategyUpdate( _CswNbtResources );
-            NodePersistStrategy.OverrideUniqueValidation = OverrideUniqueValidation;
             NodePersistStrategy.ForceUpdate = ForceUpdate;
+            NodePersistStrategy.IsCopy = IsCopy;
+            NodePersistStrategy.OverrideUniqueValidation = OverrideUniqueValidation;
+            NodePersistStrategy.SkipEvents = SkipEvents;
             NodePersistStrategy.postChanges( this );
         }
 
@@ -409,10 +422,10 @@ namespace ChemSW.Nbt.ObjClasses
                 throw ( new CswDniException( "There is no write handler" ) );
         }
 
-        public void requestWrite( bool ForceUpdate, bool IsCopy, bool OverrideUniqueValidation, bool Creating, bool AllowAuditing )
+        public void requestWrite( bool ForceUpdate, bool IsCopy, bool OverrideUniqueValidation, bool Creating, bool AllowAuditing, bool SkipEvents )
         {
             checkWriter();
-            OnRequestWriteNode( this, ForceUpdate, IsCopy, OverrideUniqueValidation, Creating, AllowAuditing );
+            OnRequestWriteNode( this, ForceUpdate, IsCopy, OverrideUniqueValidation, Creating, AllowAuditing, SkipEvents );
         }
 
         public void setModificationState( String ModState )

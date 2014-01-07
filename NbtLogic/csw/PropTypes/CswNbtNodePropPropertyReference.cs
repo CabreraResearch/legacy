@@ -30,7 +30,7 @@ namespace ChemSW.Nbt.PropTypes
             _SequenceSubField = ( (CswNbtFieldTypeRulePropertyReference) _FieldTypeRule ).SequenceSubField;
             _SequenceNumberSubField = ( (CswNbtFieldTypeRulePropertyReference) _FieldTypeRule ).SequenceNumberSubField;
 
-            _SequenceValue = new CswNbtSequenceValue( _CswNbtMetaDataNodeTypeProp.PropId, _CswNbtResources );
+            _SequenceValue = new CswNbtSequenceValue( NodeTypePropId, _CswNbtResources );
 
             // Associate subfields with methods on this object, for SetSubFieldValue()
             _SubFieldMethods.Add( _CachedValueSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => CachedValue, null ) );
@@ -79,7 +79,8 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return _CswNbtMetaDataNodeTypeProp.FKValue;
+                //return _CswNbtMetaDataNodeTypeProp.FKValue;
+                return CswConvert.ToInt32( _CswNbtNodePropData[CswNbtFieldTypeRulePropertyReference.AttributeName.Relationship] );
             }
         }
 
@@ -87,7 +88,8 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return _CswNbtMetaDataNodeTypeProp.FKType;
+                //return _CswNbtMetaDataNodeTypeProp.FKType;
+                return _CswNbtNodePropData[CswNbtFieldTypeRulePropertyReference.AttributeName.FKType];
             }
         }
 
@@ -95,7 +97,8 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return _CswNbtMetaDataNodeTypeProp.ValuePropId;
+                //return _CswNbtMetaDataNodeTypeProp.ValuePropId;
+                return CswConvert.ToInt32( _CswNbtNodePropData[CswNbtFieldTypeRulePropertyReference.AttributeName.RelatedProperty] );
             }
         }
 
@@ -103,7 +106,8 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return _CswNbtMetaDataNodeTypeProp.ValuePropType;
+                //return _CswNbtMetaDataNodeTypeProp.ValuePropType;
+                return _CswNbtNodePropData[CswNbtFieldTypeRulePropertyReference.AttributeName.RelatedPropType];
             }
         }
 
@@ -191,7 +195,8 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return CswConvert.ToBoolean( _CswNbtMetaDataNodeTypeProp.Attribute1 );
+                //return CswConvert.ToBoolean( _CswNbtMetaDataNodeTypeProp.Attribute1 );
+                return CswConvert.ToBoolean( _CswNbtNodePropData[CswNbtFieldTypeRulePropertyReference.AttributeName.UseSequence] );
             }
         }
 

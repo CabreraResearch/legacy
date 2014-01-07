@@ -40,7 +40,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public override void beforeWriteNode( bool Creating )
+        public override void beforePromoteNode( bool OverrideUniqueValidation )
         {
             if( null != Mixture.RelatedNodeId )
             {

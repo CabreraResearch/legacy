@@ -110,6 +110,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                 } // if-else( filterToPropId != string.Empty )
                 Ret["node"]["nodetypeid"] = NodeTypeId;
                 Ret["node"]["isFavorite"] = Node.isFavorite();
+                Ret["node"]["nodetypename"] = NodeType.NodeTypeName;
             }
             return Ret;
         } // getTabs()
@@ -379,18 +380,17 @@ namespace ChemSW.Nbt.ServiceDrivers
 
             if( Node != null )
             {
+                // for prop filters, update node prop value but don't save the change
+                JObject PropJson = CswConvert.ToJObject( NewPropJson, true, "NewPropJson" );
+                CswNbtSdNode NodeAction = new CswNbtSdNode( _CswNbtResources, _CswNbtStatisticsEvents );
+                NodeAction.addSingleNodeProp( Node, PropJson, null );
+
                 // case 30765 - this must be done here in order to prepare the property for export to the UI (e.g. setting 'Hidden' correctly)
                 // We need to do this prop as well as all conditional props
                 foreach( CswNbtNodePropWrapper p in Node.Properties )
                 {
                     p.TriggerOnBeforeRender();
                 }
-
-                // for prop filters, update node prop value but don't save the change
-                JObject PropJson = CswConvert.ToJObject( NewPropJson, true, "NewPropJson" );
-
-                CswNbtSdNode NodeAction = new CswNbtSdNode( _CswNbtResources, _CswNbtStatisticsEvents );
-                NodeAction.addSingleNodeProp( Node, PropJson, null );
 
                 CswPropIdAttr PropIdAttr = new CswPropIdAttr( PropIdFromJson );
                 CswNbtMetaDataNodeTypeProp Prop = _CswNbtResources.MetaData.getNodeTypeProp( PropIdAttr.NodeTypePropId );
@@ -427,10 +427,9 @@ namespace ChemSW.Nbt.ServiceDrivers
                 JProperty SubPropsJProp = new JProperty( "subprops", SubPropsObj );
                 PropObj.Add( SubPropsJProp );
                 bool HasSubProps = false;
-                foreach( CswNbtMetaDataNodeTypeProp FilterProp in
-                        _CswNbtResources.MetaData.NodeTypeLayout.getPropsInLayout( Prop.NodeTypeId, Layout.TabId, LayoutType ) )
+                foreach( CswNbtMetaDataNodeTypeProp FilterProp in _CswNbtResources.MetaData.NodeTypeLayout.getPropsInLayout( Prop.NodeTypeId, Layout.TabId, LayoutType ) )
                 {
-                    if( FilterProp.FilterNodeTypePropId == Prop.FirstPropVersionId )
+                    if( Int32.MinValue != FilterProp.FilterNodeTypePropId && FilterProp.FilterNodeTypePropId == Prop.FirstPropVersionId )
                     {
                         HasSubProps = true;
                         CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout FilterPropLayout = FilterProp.getLayout( LayoutType, TabId );
@@ -489,7 +488,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             CswEnumNbtFieldType FieldType = Prop.getFieldTypeValue();
             PropObj["id"] = PropIdAttr.ToString();
             PropObj["name"] = Prop.PropNameWithQuestionNo;
-            PropObj["helptext"] = Prop.HelpText;
+            PropObj["helptext"] = PropWrapper[CswEnumNbtPropertyAttributeName.HelpText];
             PropObj["fieldtype"] = FieldType.ToString();
             PropObj["ocpname"] = Prop.getObjectClassPropName();
             Int32 DisplayRow = getUniqueRow( Layout.DisplayRow, Layout.DisplayColumn, _DisplayRowsAndCols );
@@ -502,7 +501,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                     DisplayRow = getUniqueRow( DisplayRow + 1, Layout.DisplayColumn, _DisplayRowsAndCols );
                 }
             }
-            bool ReadOnly = Prop.IsRequired || ( null != PropWrapper && PropWrapper.TemporarilyRequired );
+            bool ReadOnly = ( null != PropWrapper && CswConvert.ToBoolean( PropWrapper[CswEnumNbtPropertyAttributeName.Required] ) );
 
             PropObj["displayrow"] = DisplayRow;
             PropObj["displaycol"] = Layout.DisplayColumn;
@@ -528,7 +527,7 @@ namespace ChemSW.Nbt.ServiceDrivers
 
             if( PropWrapper != null )
             {
-                PropObj["helptext"] = PropWrapper.HelpText;   // case 29342
+                PropObj["helptext"] = PropWrapper[CswEnumNbtPropertyAttributeName.HelpText];   // case 29342
 
                 CswNbtMetaDataNodeType NodeType = Prop.getNodeType();
                 if( //Case 29142: Buttons are never "readonly"--defer entirely to the Object Class to decide whether they are visible

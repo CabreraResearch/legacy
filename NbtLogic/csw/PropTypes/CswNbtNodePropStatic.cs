@@ -40,14 +40,20 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 string PossibleValue = GetPropRowValue( _TextSubField );
-                if( PossibleValue != string.Empty )
-                    return PossibleValue;
-                else
-                    return _CswNbtMetaDataNodeTypeProp.StaticText;
+                //if( PossibleValue != string.Empty )
+                //    return PossibleValue;
+                //else
+                //    return _CswNbtMetaDataNodeTypeProp.StaticText;
+                if( PossibleValue == string.Empty )
+                {
+                    PossibleValue = _CswNbtNodePropData[CswNbtFieldTypeRuleStatic.AttributeName.Text];
+                }
+                return PossibleValue;
             }
             set
             {
-                if( value != _CswNbtMetaDataNodeTypeProp.StaticText )
+                //if( value != _CswNbtMetaDataNodeTypeProp.StaticText )
+                if( value != _CswNbtNodePropData[CswNbtFieldTypeRuleStatic.AttributeName.Text] )
                 {
                     SetPropRowValue( _TextSubField, value );
                     Gestalt = value;
@@ -64,10 +70,11 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                if( _CswNbtMetaDataNodeTypeProp.TextAreaRows != Int32.MinValue )
-                    return _CswNbtMetaDataNodeTypeProp.TextAreaRows;
-                else
-                    return Int32.MinValue;
+                //if( _CswNbtMetaDataNodeTypeProp.TextAreaRows != Int32.MinValue )
+                //    return _CswNbtMetaDataNodeTypeProp.TextAreaRows;
+                //else
+                //    return Int32.MinValue;
+                return CswConvert.ToInt32( _CswNbtNodePropData[CswNbtFieldTypeRuleStatic.AttributeName.Rows] );
             }
             //set
             //{
@@ -79,10 +86,11 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                if( _CswNbtMetaDataNodeTypeProp.TextAreaColumns != Int32.MinValue )
-                    return _CswNbtMetaDataNodeTypeProp.TextAreaColumns;
-                else
-                    return Int32.MinValue;
+                //if( _CswNbtMetaDataNodeTypeProp.TextAreaColumns != Int32.MinValue )
+                //    return _CswNbtMetaDataNodeTypeProp.TextAreaColumns;
+                //else
+                //    return Int32.MinValue;
+                return CswConvert.ToInt32( _CswNbtNodePropData[CswNbtFieldTypeRuleStatic.AttributeName.Columns] );
             }
             //set
             //{

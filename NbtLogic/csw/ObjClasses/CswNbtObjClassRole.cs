@@ -15,7 +15,7 @@ namespace ChemSW.Nbt.ObjClasses
     {
         public const string ChemSWAdminRoleName = CswAuthenticator.ChemSWAdminRoleName;
 
-        public new sealed class PropertyName: CswNbtObjClass.PropertyName
+        public new sealed class PropertyName : CswNbtObjClass.PropertyName
         {
             public const string Administrator = "Administrator";
             public const string Description = "Description";
@@ -27,7 +27,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public const string ActionPermissionsXValueName = CswNbtAction.PermissionXValue;
 
-        public CswNbtObjClassRole( CswNbtResources CswNbtResources, CswNbtNode Node ) : base( CswNbtResources, Node ) {}
+        public CswNbtObjClassRole( CswNbtResources CswNbtResources, CswNbtNode Node ) : base( CswNbtResources, Node ) { }
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
@@ -52,8 +52,8 @@ namespace ChemSW.Nbt.ObjClasses
         public override void beforeWriteNode( bool Creating )
         {
             // The user cannot change his or her own Administrator privileges.
-            if( Administrator.wasAnySubFieldModified() && 
-                Administrator.Checked != CswConvert.ToTristate(Administrator.GetOriginalPropRowValue()) &&
+            if( Administrator.wasAnySubFieldModified() &&
+                Administrator.Checked != CswConvert.ToTristate( Administrator.GetOriginalPropRowValue() ) &&
                 _CswNbtResources.CurrentUser.RoleId == _CswNbtNode.NodeId )
             {
                 _CswNbtNode.Properties.clearModifiedFlag();  // prevents multiple error messages from appearing if we attempt to write() again
@@ -68,6 +68,26 @@ namespace ChemSW.Nbt.ObjClasses
                 false == ( _CswNbtResources.CurrentNbtUser is CswNbtSystemUser ) )
             {
                 throw new CswDniException( CswEnumErrorType.Warning, "The " + ChemSWAdminRoleName + " role cannot be edited", "Current user (" + _CswNbtResources.CurrentUser.Username + ") attempted to edit the '" + ChemSWAdminRoleName + "' role." );
+            }
+
+            if( NodeTypePermissions.wasAnySubFieldModified( false ) )
+            {
+                // case 25444 - was it *really* modified?
+                CswNbtNodePropWrapper NodeTypePermissionsPropWrapper = Node.Properties[PropertyName.NodeTypePermissions];
+                string NodeTypePermissionsOriginalValueStr = NodeTypePermissionsPropWrapper.GetOriginalPropRowValue( ( (CswNbtFieldTypeRuleMultiList) _CswNbtResources.MetaData.getFieldTypeRule( NodeTypePermissionsPropWrapper.getFieldTypeValue() ) ).ValueSubField.Column );
+                CswCommaDelimitedString NodeTypePermissionsOriginalValue = new CswCommaDelimitedString();
+                NodeTypePermissionsOriginalValue.FromString( NodeTypePermissionsOriginalValueStr );
+
+                if( NodeTypePermissions.Value != NodeTypePermissionsOriginalValue )
+                {
+                    // Prevent granting permission to Design nodetypes without Design Action permission
+                    if( NodeTypePermissions.Gestalt.Contains( "Design" ) &&   // shortcut
+                        false == _CswNbtResources.Permit.can( CswEnumNbtActionName.Design, this ) )
+                    {
+                        throw new CswDniException( CswEnumErrorType.Warning, "You may not grant access to Design NodeTypes without the Design Action Permission",
+                                                   "User (" + _CswNbtResources.CurrentUser.Username + ") attempted to grant access to Design NodeTypes on role: " + _CswNbtNode.NodeName );
+                    }
+                }
             }
 
             // case 22437
@@ -107,11 +127,10 @@ namespace ChemSW.Nbt.ObjClasses
                         if( true == _CswNbtResources.Permit.can( Action, this ) ) // permission is being granted
                         {
                             if( ( Action.Name == CswEnumNbtActionName.Design ||
-                                    Action.Name == CswEnumNbtActionName.Create_Inspection || //Case 24288
-                                    Action.Name == CswEnumNbtActionName.View_Scheduled_Rules ) && //Case 28564
-                                    _CswNbtResources.CurrentNbtUser.Rolename != ChemSWAdminRoleName &&  //Case 28433: chemsw_admin can grant Design to anyone.
-                                    false == _CswNbtResources.IsSystemUser
-                                )
+                                  Action.Name == CswEnumNbtActionName.Create_Inspection || //Case 24288
+                                  Action.Name == CswEnumNbtActionName.View_Scheduled_Rules ) && //Case 28564
+                                _CswNbtResources.CurrentNbtUser.Rolename != ChemSWAdminRoleName &&  //Case 28433: chemsw_admin can grant Design to anyone.
+                                false == _CswNbtResources.IsSystemUser )
                             {
                                 // case 23677
                                 throw new CswDniException( CswEnumErrorType.Warning, "You may not grant access to " + Action.DisplayName + " to this role",
@@ -238,22 +257,30 @@ namespace ChemSW.Nbt.ObjClasses
             Dictionary<string, string> NodeTypeOptions = new Dictionary<string, string>();
             foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.getNodeTypesLatestVersion() )
             {
-                foreach( CswEnumNbtNodeTypePermission Permission in CswEnumNbtNodeTypePermission.Members )
+                CswEnumNbtObjectClass oc = NodeType.getObjectClass().ObjectClass;
+                if( ( oc != CswEnumNbtObjectClass.DesignNodeTypeClass &&
+                      oc != CswEnumNbtObjectClass.DesignNodeTypeTabClass &&
+                      oc != CswEnumNbtObjectClass.DesignNodeTypePropClass &&
+                      oc != CswEnumNbtObjectClass.DesignSequenceClass ) ||
+                    _CswNbtResources.Permit.can( CswEnumNbtActionName.Design, this ) )
                 {
-                    string Key = MakeNodeTypePermissionValue( NodeType.FirstVersionNodeTypeId, Permission );
-                    string Value = MakeNodeTypePermissionText( NodeType.NodeTypeName, Permission );
-                    NodeTypeOptions.Add( Key, Value );
-                }
-                foreach( CswNbtMetaDataNodeTypeTab Tab in NodeType.getNodeTypeTabs() )
-                {
-                    foreach( CswEnumNbtNodeTypeTabPermission Permission in CswEnumNbtNodeTypeTabPermission.Members )
+                    foreach( CswEnumNbtNodeTypePermission Permission in CswEnumNbtNodeTypePermission.Members )
                     {
-                        string Key = MakeNodeTypeTabPermissionValue( NodeType.FirstVersionNodeTypeId, Tab.FirstTabVersionId, Permission );
-                        string Value = MakeNodeTypeTabPermissionText( NodeType.NodeTypeName, Tab.TabName, Permission );
+                        string Key = MakeNodeTypePermissionValue( NodeType.FirstVersionNodeTypeId, Permission );
+                        string Value = MakeNodeTypePermissionText( NodeType.NodeTypeName, Permission );
                         NodeTypeOptions.Add( Key, Value );
-
                     }
-                } // foreach( CswNbtMetaDataNodeTypeTab Tab in NodeType.NodeTypeTabs )
+                    foreach( CswNbtMetaDataNodeTypeTab Tab in NodeType.getNodeTypeTabs() )
+                    {
+                        foreach( CswEnumNbtNodeTypeTabPermission Permission in CswEnumNbtNodeTypeTabPermission.Members )
+                        {
+                            string Key = MakeNodeTypeTabPermissionValue( NodeType.FirstVersionNodeTypeId, Tab.FirstTabVersionId, Permission );
+                            string Value = MakeNodeTypeTabPermissionText( NodeType.NodeTypeName, Tab.TabName, Permission );
+                            NodeTypeOptions.Add( Key, Value );
+
+                        }
+                    } // foreach( CswNbtMetaDataNodeTypeTab Tab in NodeType.NodeTypeTabs )
+                }
             } // foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.NodeTypes )
             return NodeTypeOptions;
         } // InitNodeTypePermissionOptions()

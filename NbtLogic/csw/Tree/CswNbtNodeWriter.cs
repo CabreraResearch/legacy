@@ -14,7 +14,7 @@ namespace ChemSW.Nbt
 
         private CswNbtResources _CswNbtResources = null;
         private CswNbtNodeWriterNative _CswNbtNodeWriterNative = null;
-        private CswNbtNodeWriterRelationalDb _CswNbtNodeWriterRelationalDb = null;
+        //private CswNbtNodeWriterRelationalDb _CswNbtNodeWriterRelationalDb = null;
         public CswNbtNodeWriter( CswNbtResources CswNbtResources )
         {
             _CswNbtResources = CswNbtResources;
@@ -28,10 +28,10 @@ namespace ChemSW.Nbt
             }
 
 
-            if( null != _CswNbtNodeWriterRelationalDb )
-            {
-                _CswNbtNodeWriterRelationalDb.clear();
-            }
+            //if( null != _CswNbtNodeWriterRelationalDb )
+            //{
+            //    _CswNbtNodeWriterRelationalDb.clear();
+            //}
         }//clear() 
 
         private ICswNbtNodeWriterImpl getWriterImpl( CswPrimaryKey NodePk )
@@ -45,21 +45,22 @@ namespace ChemSW.Nbt
         private ICswNbtNodeWriterImpl getWriterImpl( string TableName )
         {
             ICswNbtNodeWriterImpl ReturnVal = null;
-            if( TableName.ToLower() == "nodes" )
-            {
+            //if( TableName.ToLower() == "nodes" )
+            //{
                 if( _CswNbtNodeWriterNative == null )
                     _CswNbtNodeWriterNative = new CswNbtNodeWriterNative( _CswNbtResources );
                 ReturnVal = _CswNbtNodeWriterNative;
-            }
-            else
-            {
-                if( _CswNbtNodeWriterRelationalDb == null )
-                    _CswNbtNodeWriterRelationalDb = new CswNbtNodeWriterRelationalDb( _CswNbtResources );
-                ReturnVal = _CswNbtNodeWriterRelationalDb;
-            }
+            //}
+            //else
+            //{
+            //    if( _CswNbtNodeWriterRelationalDb == null )
+            //        _CswNbtNodeWriterRelationalDb = new CswNbtNodeWriterRelationalDb( _CswNbtResources );
+            //    ReturnVal = _CswNbtNodeWriterRelationalDb;
+            //}
             return ( ReturnVal );
         }
 
+        //public void makeNewNodeEntry( CswNbtNode Node, bool IsCopy, bool OverrideUniqueValidation )
         public void makeNewNodeEntry( CswNbtNode Node )
         {
             // case 20970
@@ -70,7 +71,7 @@ namespace ChemSW.Nbt
                 Node.Locked = true;
             }
 
-            getWriterImpl( Node.NodeTypeId ).makeNewNodeEntry( Node, true );
+            getWriterImpl( Node.NodeTypeId ).makeNewNodeEntry( Node );
             //setDefaultPropertyValues( Node );
 
             // case 22591 - make empty rows for every property
@@ -80,7 +81,7 @@ namespace ChemSW.Nbt
             }
         }//makeNewNodeEntry()
 
-        public void write( CswNbtNode Node, bool ForceSave, bool IsCopy, bool OverrideUniqueValidation, bool Creating, bool AllowAuditing )
+        public void write( CswNbtNode Node, bool ForceSave, bool IsCopy, bool OverrideUniqueValidation, bool Creating, bool AllowAuditing, bool SkipEvents )
         {
             if( CswEnumNbtNodeSpecies.Plain == Node.NodeSpecies &&
                 ( ForceSave || CswEnumNbtNodeModificationState.Modified == Node.ModificationState ) )
@@ -91,11 +92,12 @@ namespace ChemSW.Nbt
                 if( null == Node.NodeId )
                 {
                     makeNewNodeEntry( Node );
+                    //makeNewNodeEntry( Node, IsCopy, OverrideUniqueValidation );
                 }
 
                 //bz # 5878
                 //propcoll knows whether or not he's got new values to update (presumably)
-                Node.Properties.update( Node, IsCopy, OverrideUniqueValidation, Creating, null, AllowAuditing );
+                Node.Properties.update( Node, IsCopy, OverrideUniqueValidation, Creating, null, AllowAuditing, SkipEvents );
 
                 //set nodename with updated prop values
                 _synchNodeName( Node );
@@ -116,7 +118,6 @@ namespace ChemSW.Nbt
         }//_makeDefaultNodeName
 
 
-        // TODO: This should defer to CswNbtFieldTypeRules for implementation once NbtBase and NbtLogic are merged
         public void setDefaultPropertyValues( CswNbtNode Node )
         {
             foreach( CswNbtNodePropWrapper Prop in Node.Properties )

@@ -139,6 +139,7 @@
     n$.makeSubNameSpace('composites');
     n$.makeSubNameSpace('cookie');
     n$.makeSubNameSpace('db');
+    n$.makeSubNameSpace('designmode');
     n$.db.makeSubNameSpace('index');
     n$.db.makeSubNameSpace('select');
     n$.db.makeSubNameSpace('table');

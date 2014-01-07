@@ -53,13 +53,13 @@ namespace ChemSW.Nbt.ObjClasses
                 RequestItemNode.Status.Value = CswNbtObjClassRequestItem.Statuses.Received;
                 RequestItemNode.postChanges( false );
             }
-        }//afterCreateNode()
+        }
 
         public override void beforeWriteNode( bool Creating )
         {
             ViewCofA.State = PropertyName.ViewCofA;
             ViewCofA.MenuOptions = PropertyName.ViewCofA + ",View All";
-        }//beforeWriteNode()      
+        }
 
         protected override void afterPopulateProps()
         {
@@ -67,7 +67,7 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 ViewCofA.setHidden( true, false );
             }
-        }//afterPopulateProps()
+        }
 
         protected override bool onButtonClick( NbtButtonData ButtonData )
         {

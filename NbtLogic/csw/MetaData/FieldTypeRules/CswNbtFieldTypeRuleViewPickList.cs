@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 
@@ -8,6 +10,11 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
     public class CswNbtFieldTypeRuleViewPickList : ICswNbtFieldTypeRule
     {
+        public sealed class SubFieldName : ICswNbtFieldTypeRuleSubFieldName
+        {
+            public static CswEnumNbtSubFieldName Name = CswEnumNbtSubFieldName.Name;
+            public static CswEnumNbtSubFieldName ViewID = CswEnumNbtSubFieldName.ViewID;
+        }
 
         private CswNbtFieldTypeRuleDefaultImpl _CswNbtFieldTypeRuleDefault = null;
         //private CswNbtPropFilterSql _CswNbtPropFilterSql = null;
@@ -20,7 +27,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
             _CswNbtFieldTypeRuleDefault = new CswNbtFieldTypeRuleDefaultImpl( _CswNbtFieldResources );
 
-            CachedViewNameSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Gestalt, CswEnumNbtSubFieldName.Name );
+            CachedViewNameSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Gestalt, SubFieldName.Name );
             CachedViewNameSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Equals );
             CachedViewNameSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotNull );
             CachedViewNameSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Null );
@@ -31,7 +38,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             CachedViewNameSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotEquals );
             SubFields.add( CachedViewNameSubField );
 
-            SelectedViewIdsSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1, CswEnumNbtSubFieldName.ViewID );
+            SelectedViewIdsSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1, SubFieldName.ViewID );
             SelectedViewIdsSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Equals );
             SelectedViewIdsSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotNull );
             SelectedViewIdsSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Null );
@@ -67,9 +74,35 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldTypeRuleDefault.AddUniqueFilterToView( View, UniqueValueViewProperty, PropertyValueToCheck, EnforceNullEntries );
         }
 
-        public void setFk( CswNbtMetaDataNodeTypeProp MetaDataProp, CswNbtMetaDataNodeTypeProp.doSetFk doSetFk, string inFKType, Int32 inFKValue, string inValuePropType = "", Int32 inValuePropId = Int32.MinValue )
+        public void onSetFk( CswNbtMetaDataNodeTypeProp MetaDataProp, CswNbtObjClassDesignNodeTypeProp DesignNTPNode )
         {
-            _CswNbtFieldTypeRuleDefault.setFk( MetaDataProp, doSetFk, inFKType, inFKValue, inValuePropType, inValuePropId );
+            _CswNbtFieldTypeRuleDefault.onSetFk( MetaDataProp, DesignNTPNode );
+        }
+
+        public sealed class AttributeName : ICswNbtFieldTypeRuleAttributeName
+        {
+            public const string DefaultValue = CswEnumNbtPropertyAttributeName.DefaultValue;
+            public const string SelectMode = CswEnumNbtPropertyAttributeName.SelectMode;
+        }
+
+        public Collection<CswNbtFieldTypeAttribute> getAttributes()
+        {
+            Collection<CswNbtFieldTypeAttribute> ret = _CswNbtFieldTypeRuleDefault.getAttributes( CswEnumNbtFieldType.ViewPickList );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+                {
+                    OwnerFieldType = CswEnumNbtFieldType.ViewPickList,
+                    Name = AttributeName.SelectMode,
+                    AttributeFieldType = CswEnumNbtFieldType.List,
+                    Column = CswEnumNbtPropertyAttributeColumn.Multi
+                } );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+                {
+                    OwnerFieldType = CswEnumNbtFieldType.ViewPickList,
+                    Name = AttributeName.DefaultValue,
+                    Column = CswEnumNbtPropertyAttributeColumn.Defaultvalueid,
+                    AttributeFieldType = CswEnumNbtFieldType.ViewPickList
+                } );
+            return ret;
         }
 
         public void afterCreateNodeTypeProp( CswNbtMetaDataNodeTypeProp NodeTypeProp )

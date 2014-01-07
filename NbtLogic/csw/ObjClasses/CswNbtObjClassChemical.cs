@@ -355,7 +355,7 @@ namespace ChemSW.Nbt.ObjClasses
             componentsView.AddViewPropertyAndFilter( parent, constituentOCP,
                 Value: NodeId.PrimaryKey.ToString(),
                 FilterMode: CswEnumNbtFilterMode.Equals,
-                SubFieldName: CswEnumNbtSubFieldName.NodeID );
+                SubFieldName: CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID );
             componentsView.AddViewRelationship( parent, CswEnumNbtViewPropOwnerType.First, mixtureOCP, false );
 
             ICswNbtTree componentsTree = _CswNbtResources.Trees.getTreeFromView( componentsView, false, false, false );
@@ -834,7 +834,7 @@ namespace ChemSW.Nbt.ObjClasses
             //CswNbtViewRelationship CompRel = View.AddViewRelationship( ChemRel, CswEnumNbtViewPropOwnerType.Second, ComponentOC.getObjectClassProp( CswNbtObjClassMaterialComponent.PropertyName.Mixture ), false );
             CswNbtViewRelationship CompRel = View.AddViewRelationship( ComponentOC, false );
             View.AddViewPropertyAndFilter( CompRel, ComponentMixtureOCP,
-                                                    SubFieldName: CswEnumNbtSubFieldName.NodeID,
+                                                    SubFieldName: CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID,
                                                     FilterMode: CswEnumNbtFilterMode.Equals,
                                                     Value: this.NodeId.PrimaryKey.ToString() );
             CswNbtViewRelationship ConstRel = View.AddViewRelationship( CompRel, CswEnumNbtViewPropOwnerType.First, ComponentConstituentOCP, false );
@@ -888,7 +888,7 @@ namespace ChemSW.Nbt.ObjClasses
             //CswNbtViewRelationship CompRel = View.AddViewRelationship( ConstRel, CswEnumNbtViewPropOwnerType.Second, ComponentOC.getObjectClassProp( CswNbtObjClassMaterialComponent.PropertyName.Constituent ), false );
             CswNbtViewRelationship CompRel = View.AddViewRelationship( ComponentOC, false );
             View.AddViewPropertyAndFilter( CompRel, ComponentConstituentOCP,
-                                                    SubFieldName: CswEnumNbtSubFieldName.NodeID,
+                                                    SubFieldName: CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID,
                                                     FilterMode: CswEnumNbtFilterMode.Equals,
                                                     Value: this.NodeId.PrimaryKey.ToString() );
             CswNbtViewRelationship ChemRel = View.AddViewRelationship( CompRel, CswEnumNbtViewPropOwnerType.First, ComponentMixtureOCP, false );
@@ -947,7 +947,7 @@ namespace ChemSW.Nbt.ObjClasses
                     CswNbtViewRelationship MemberRel = MemberView.AddViewRelationship( RegListMemberOC, false );
                     MemberView.AddViewProperty( MemberRel, MemberByUserOCP, 1 );
                     MemberView.AddViewPropertyAndFilter( MemberRel, MemberChemicalOCP,
-                                                         SubFieldName: CswEnumNbtSubFieldName.NodeID,
+                                                         SubFieldName: CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID,
                                                          FilterMode: CswEnumNbtFilterMode.Equals,
                                                          Value: this.NodeId.PrimaryKey.ToString(),
                                                          ShowInGrid: false );
@@ -1015,6 +1015,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Refresh regulatory list membership for this Chemical
         /// Does not alter any existing Member records with a non-null ByUser value.
+        /// If LOLI Sync is enabled, LOLI Managed Regulatory Lists are also refreshed.
         /// </summary>
         public void RefreshRegulatoryListMembers()
         {
@@ -1024,32 +1025,42 @@ namespace ChemSW.Nbt.ObjClasses
                 Collection<string> myCasNos = getCASNos();
 
                 CswNbtMetaDataObjectClass RegulatoryListOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RegulatoryListClass );
-                CswNbtMetaDataObjectClass RegListCasNoOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RegulatoryListCasNoClass );
                 CswNbtMetaDataObjectClass RegListMemberOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RegulatoryListMemberClass );
-                if( null != RegulatoryListOC && null != RegListCasNoOC && null != RegListMemberOC )
+                if( null != RegulatoryListOC && null != RegListMemberOC )
                 {
                     CswNbtMetaDataNodeType RegListMemberNT = RegListMemberOC.FirstNodeType;
                     // get existing RegListMembers
                     Collection<RegListEntry> myRegLists = getRegulatoryLists();
 
-                    // get new regulatory list matches
+                    // get new matching regulatory lists
                     Collection<CswPrimaryKey> matchingRegLists = CswNbtObjClassRegulatoryList.findMatches( _CswNbtResources, myCasNos );
 
                     // If the reg list matches, but no current member entry exists, add one
-                    foreach( CswPrimaryKey reglistid in matchingRegLists.Where( reglistid => false == myRegLists.Any( entry => entry.RegulatoryListId == reglistid ) &&
-                                                                                             false == isRegulatoryListSuppressed( reglistid ) ) )
+                    foreach( CswPrimaryKey reglistid in matchingRegLists )
                     {
-                        // add new reg list member node
-                        _CswNbtResources.Nodes.makeNodeFromNodeTypeId( RegListMemberNT.NodeTypeId, delegate( CswNbtNode NewNode )
+                        bool any = false;
+                        foreach( RegListEntry entry in myRegLists )
+                        {
+                            if( entry.RegulatoryListId == reglistid )
                             {
-                                CswNbtObjClassRegulatoryListMember newMemberNode = NewNode;
-                                newMemberNode.SetByChemical = true; // since this node creation was automatically determined
-                                newMemberNode.Chemical.RelatedNodeId = this.NodeId;
-                                newMemberNode.RegulatoryList.RelatedNodeId = reglistid;
-                                //newMemberNode.Show.Checked = CswEnumTristate.True;
-                                //newMemberNode.postChanges( false );
-                            } );
+                                any = true;
+                                break;
+                            }
+                        }
+                        if( false == any && false == isRegulatoryListSuppressed( reglistid ) )
+                        {
+                            // add new reg list member node
+                            _CswNbtResources.Nodes.makeNodeFromNodeTypeId( RegListMemberNT.NodeTypeId, delegate( CswNbtNode NewNode )
+                                {
+                                    CswNbtObjClassRegulatoryListMember newMemberNode = NewNode;
+                                    newMemberNode.SetByChemical = true; // since this node creation was automatically determined
+                                    newMemberNode.Chemical.RelatedNodeId = this.NodeId;
+                                    newMemberNode.RegulatoryList.RelatedNodeId = reglistid;
+                                    //newMemberNode.Show.Checked = CswEnumTristate.True;
+                                } );
+                        }
                     }
+
                     // If a current member entry exists, but the reg list doesn't match, delete it (unless it is a user override)
                     foreach( RegListEntry reglistentry in myRegLists.Where( entry => false == matchingRegLists.Any( reglistid => entry.RegulatoryListId == reglistid ) &&
                                                                                      entry.ByUserId == null ) )
@@ -1062,7 +1073,7 @@ namespace ChemSW.Nbt.ObjClasses
                             doomedMemberNode.Node.delete();
                         }
                     }
-                } // if( null != RegulatoryListOC && null != RegListCasNoOC && null != RegListMemberOC )
+                } // if( null != RegulatoryListOC && null != RegListMemberOC )
 
                 if( CswEnumTristate.True == IsConstituent.Checked )
                 {
@@ -1083,6 +1094,7 @@ namespace ChemSW.Nbt.ObjClasses
                         NodesTableUpdate.update( NodesTable );
                     }
                 }
+
             } // if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.RegulatoryLists ) )
         } // RefreshRegulatoryListMembers()
 

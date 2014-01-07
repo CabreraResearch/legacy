@@ -57,7 +57,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        //Extend CswNbtPropertySetPermission events here
+        //Extend CswNbtObjClass events here
 
         #endregion Inherited Events
 

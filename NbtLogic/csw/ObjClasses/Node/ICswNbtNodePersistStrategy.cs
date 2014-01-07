@@ -8,6 +8,9 @@
         bool ForceUpdate { get; set; }
         bool IsCopy { get; set; }
         bool OverrideUniqueValidation { get; set; }
+        bool SkipEvents { get; set; }
+        bool AllowAuditing { get; set; }
+        bool Creating { get; set; }
 
         void postChanges( CswNbtNode Node );
     }

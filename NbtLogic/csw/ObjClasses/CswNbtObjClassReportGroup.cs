@@ -6,7 +6,7 @@ namespace ChemSW.Nbt.ObjClasses
 {
     public class CswNbtObjClassReportGroup : CswNbtObjClass, ICswNbtPermissionGroup
     {
-        public new sealed class PropertyName: CswNbtObjClass.PropertyName
+        public new sealed class PropertyName : CswNbtObjClass.PropertyName
         {
             /// <summary>
             /// The name of the Report Group
@@ -58,7 +58,7 @@ namespace ChemSW.Nbt.ObjClasses
         public override void afterPromoteNode()
         {
             CswNbtPropertySetPermission.createDefaultWildcardPermission( _CswNbtResources, PermissionClass, NodeId );
-        }//afterCreateNode()
+        }
        
         #endregion Inherited Events
 

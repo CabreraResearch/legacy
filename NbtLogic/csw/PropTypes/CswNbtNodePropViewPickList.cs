@@ -99,7 +99,8 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return _CswNbtMetaDataNodeTypeProp.Multi;
+                //return _CswNbtMetaDataNodeTypeProp.Multi;
+                return _CswNbtNodePropData[CswNbtFieldTypeRuleViewPickList.AttributeName.SelectMode];
             }
         }
 

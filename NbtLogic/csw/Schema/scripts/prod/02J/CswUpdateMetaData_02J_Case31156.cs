@@ -28,7 +28,7 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataNodeType ConstituentNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Constituent" );
             if( null != ConstituentNT )
             {
-                ConstituentNT.SearchDeferPropId = 0;
+                ConstituentNT._DataRow["searchdeferpropid"] = 0;
             }
         } // update()
 

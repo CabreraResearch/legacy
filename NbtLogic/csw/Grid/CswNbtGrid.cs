@@ -146,7 +146,7 @@ namespace ChemSW.Nbt.Grid
                                         string DateDisplayMode = CswEnumNbtDateDisplayMode.Date.ToString();
                                         if( ViewProp.Type == CswEnumNbtViewPropType.NodeTypePropId && ViewProp.NodeTypeProp != null )
                                         {
-                                            DateDisplayMode = ViewProp.NodeTypeProp.Extended;
+                                            DateDisplayMode = ViewProp.NodeTypeProp.DesignNode.getAttributeValueByName( CswNbtFieldTypeRuleDateTime.AttributeName.DateType );
                                         }
                                         else if( ViewProp.Type == CswEnumNbtViewPropType.ObjectClassPropId && ViewProp.ObjectClassProp != null )
                                         {
@@ -268,7 +268,7 @@ namespace ChemSW.Nbt.Grid
                                     MenuOptions = Prop[buttonFTR.MenuOptionsSubField.Column],
                                     SelectedText = oldValue ?? Prop.PropName,
                                     PropAttr = new CswPropIdAttr( NodeId, Prop.NodeTypePropId ).ToString(),
-                                    Mode = String.IsNullOrEmpty( MetaDataProp.Extended ) ? "button" : MetaDataProp.Extended
+                                    Mode = String.IsNullOrEmpty( MetaDataProp.DesignNode.getAttributeValueByColumn( CswEnumNbtPropertyAttributeColumn.Extended ) ) ? "button" : MetaDataProp.DesignNode.getAttributeValueByColumn( CswEnumNbtPropertyAttributeColumn.Extended )
                                 } );
                             }
                             break;
@@ -288,7 +288,10 @@ namespace ChemSW.Nbt.Grid
                             break;
                         case CswEnumNbtFieldType.Link:
                             
-                            string Href = CswNbtNodePropLink.GetFullURL( MetaDataProp.Attribute1, Prop.Field1_Big, MetaDataProp.Attribute2 );
+                            //string Href = CswNbtNodePropLink.GetFullURL( MetaDataProp.Attribute1, Prop.Field1_Big, MetaDataProp.Attribute2 );
+                            string Href = CswNbtNodePropLink.GetFullURL( MetaDataProp.DesignNode.getAttributeValueByColumn( CswEnumNbtPropertyAttributeColumn.Attribute1 ),
+                                                                         Prop.Field1_Big,
+                                                                         MetaDataProp.DesignNode.getAttributeValueByColumn( CswEnumNbtPropertyAttributeColumn.Attribute2 ) );
                             if( false == string.IsNullOrEmpty( Href ) )
                             {
                                 newValue = "<a target=\"blank\" href=\"" + Href + "\">" + ( oldValue ?? "Link" ) + "</a>";

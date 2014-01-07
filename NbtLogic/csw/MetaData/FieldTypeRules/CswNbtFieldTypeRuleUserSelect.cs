@@ -12,6 +12,10 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
     public class CswNbtFieldTypeRuleUserSelect : ICswNbtFieldTypeRule
     {
+        public sealed class SubFieldName : ICswNbtFieldTypeRuleSubFieldName
+        {
+            public static CswEnumNbtSubFieldName NodeID = CswEnumNbtSubFieldName.NodeID;
+        }
 
         private CswNbtFieldTypeRuleDefaultImpl _CswNbtFieldTypeRuleDefault = null;
         private CswNbtFieldResources _CswNbtFieldResources = null;
@@ -123,9 +127,27 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldTypeRuleDefault.AddUniqueFilterToView( View, UniqueValueViewProperty, PropertyValueToCheck, EnforceNullEntries );
         }
 
-        public void setFk( CswNbtMetaDataNodeTypeProp MetaDataProp, CswNbtMetaDataNodeTypeProp.doSetFk doSetFk, string inFKType, Int32 inFKValue, string inValuePropType = "", Int32 inValuePropId = Int32.MinValue )
+        public void onSetFk( CswNbtMetaDataNodeTypeProp MetaDataProp, CswNbtObjClassDesignNodeTypeProp DesignNTPNode )
         {
-            _CswNbtFieldTypeRuleDefault.setFk( MetaDataProp, doSetFk, inFKType, inFKValue, inValuePropType, inValuePropId );
+            _CswNbtFieldTypeRuleDefault.onSetFk( MetaDataProp, DesignNTPNode );
+        }
+
+        public sealed class AttributeName : ICswNbtFieldTypeRuleAttributeName
+        {
+            public const string DefaultValue = CswEnumNbtPropertyAttributeName.DefaultValue;
+        }
+
+        public Collection<CswNbtFieldTypeAttribute> getAttributes()
+        {
+            Collection<CswNbtFieldTypeAttribute> ret = _CswNbtFieldTypeRuleDefault.getAttributes( CswEnumNbtFieldType.UserSelect );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+            {
+                OwnerFieldType = CswEnumNbtFieldType.UserSelect,
+                Name = AttributeName.DefaultValue,
+                Column = CswEnumNbtPropertyAttributeColumn.Defaultvalueid,
+                AttributeFieldType = CswEnumNbtFieldType.UserSelect
+            } );
+            return ret;
         }
 
         public void afterCreateNodeTypeProp( CswNbtMetaDataNodeTypeProp NodeTypeProp )

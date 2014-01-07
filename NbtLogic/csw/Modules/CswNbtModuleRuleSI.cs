@@ -1,5 +1,6 @@
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Sched;
 
@@ -94,7 +95,7 @@ namespace ChemSW.Nbt
             view.AddViewPropertyAndFilter( parent,
                 MetaDataProp: objClassProp,
                 Value: value,
-                SubFieldName: CswEnumNbtSubFieldName.Text,
+                SubFieldName: CswNbtFieldTypeRuleText.SubFieldName.Text,
                 FilterMode: CswEnumNbtFilterMode.Equals );
 
             ICswNbtTree tree = _CswNbtResources.Trees.getTreeFromView( view, false, false, true );

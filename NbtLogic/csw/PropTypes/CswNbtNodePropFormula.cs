@@ -56,24 +56,20 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                Int32 Ret = CswConvert.ToInt32( _CswNbtMetaDataNodeTypeProp.Attribute1 );
+                Int32 Ret = CswConvert.ToInt32( _CswNbtNodePropData[CswNbtFieldTypeRuleFormula.AttributeName.Size] );
                 if( Ret <= 0 )
                 {
                     Ret = 25;
                 }
                 return Ret;
             }
-            //set
-            //{
-            //    _CswNbtMetaDataNodeTypeProp.Length = value;
-            //}
         }
 
         public Int32 MaxLength
         {
             get
             {
-                Int32 Ret = CswConvert.ToInt32( _CswNbtMetaDataNodeTypeProp.Attribute2 );
+                Int32 Ret = CswConvert.ToInt32( _CswNbtNodePropData[CswNbtFieldTypeRuleFormula.AttributeName.MaximumLength] );
                 if( Ret <= 0 )
                 {
                     Ret = 255;
@@ -86,7 +82,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return ( _CswNbtMetaDataNodeTypeProp.Attribute3 );
+                return ( _CswNbtNodePropData[CswNbtFieldTypeRuleFormula.AttributeName.Regex] );
             }
         }
 
@@ -94,7 +90,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return ( _CswNbtMetaDataNodeTypeProp.Attribute4 );
+                return ( _CswNbtNodePropData[CswNbtFieldTypeRuleFormula.AttributeName.RegexMessage] );
             }
         }
 
@@ -177,7 +173,7 @@ namespace ChemSW.Nbt.PropTypes
                         //if the last letter plus this one lowercased make an element and the next is not already lowered
                         if( NextLetter != Char.ToLower( NextLetter ) && PT.ElementExists( "" + LastLetter + Char.ToLower( Letter ) ) )
                             ChemicalCompound[i] = Char.ToLower( Letter );
-                            //if this letter plus the next one lowercased make an element
+                        //if this letter plus the next one lowercased make an element
                         else if( PT.ElementExists( "" + Letter + Char.ToLower( NextLetter ) ) )
                         {
                             ChemicalCompound[i + 1] = Char.ToLower( NextLetter );

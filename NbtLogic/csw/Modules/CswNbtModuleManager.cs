@@ -7,6 +7,7 @@ using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Sched;
 
@@ -224,7 +225,7 @@ namespace ChemSW.Nbt
             usersView.AddViewPropertyAndFilter( parent,
                 MetaDataProp: usernameOCP,
                 Value: modulename,
-                SubFieldName: CswEnumNbtSubFieldName.Text,
+                SubFieldName : CswNbtFieldTypeRuleText.SubFieldName.Text,
                 FilterMode: CswEnumNbtFilterMode.Contains );
 
             ICswNbtTree cisproUsersTree = _CswNbtResources.Trees.getTreeFromView( usersView, false, true, true );
@@ -253,7 +254,7 @@ namespace ChemSW.Nbt
             rolesView.AddViewPropertyAndFilter( parent,
                 MetaDataProp: nameOCP,
                 Value: modulename,
-                SubFieldName: CswEnumNbtSubFieldName.Text,
+                SubFieldName : CswNbtFieldTypeRuleText.SubFieldName.Text,
                 FilterMode: CswEnumNbtFilterMode.Contains );
 
             ICswNbtTree cisproUsersTree = _CswNbtResources.Trees.getTreeFromView( rolesView, false, true, true );
@@ -436,7 +437,7 @@ namespace ChemSW.Nbt
             if( null == tab )
             {
                 CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
-                tab = _CswNbtResources.MetaData.makeNewTab( NodeType, TabName, TabOrder );
+                tab = _CswNbtResources.MetaData.makeNewTabNew( NodeType, TabName, TabOrder );
             }
             AddPropToTab( NodeTypeId, PropName, tab );
         }

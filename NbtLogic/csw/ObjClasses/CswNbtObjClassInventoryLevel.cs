@@ -74,7 +74,7 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         #region Inherited Events
-
+        
         protected override void afterPopulateProps()
         {
             Level.SetOnPropChange( OnLevelPropChange );

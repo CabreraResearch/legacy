@@ -68,6 +68,8 @@
     <Content Include="app\actions\csw.logindata.js" />
     <Content Include="app\actions\csw.scheduledRules.js" />
     <Content Include="app\actions\csw.tierIIReporting.js" />
+    <Content Include="app\composites\csw.window.js" />
+    <Content Include="app\designmode\csw.sidebar.js" />
     <Content Include="app\actions\csw.kioskmode.js" />
     <Content Include="app\actions\csw.arbor.render.js" />
     <Content Include="app\actions\csw.chemwatch.js" />
@@ -89,6 +91,7 @@
     <Content Include="app\core\csw.message.js" />
     <Content Include="app\core\csw.domNode.js" />
     <Content Include="app\currentuser\csw.defaults.js" />
+    <Content Include="app\designmode\_designmode.factory.js" />
     <Content Include="app\db\csw.dbUpdate.js" />
     <Content Include="app\db\csw.dbSelect.js" />
     <Content Include="app\db\csw.dbTable.js" />
@@ -108,6 +111,7 @@
     <Content Include="app\literals\csw.svg.js" />
     <Content Include="app\literals\_template.js" />
     <Content Include="app\main\csw.mainRefreshDashboard.js" />
+    <Content Include="app\proptypes\csw.propTypeMetaDataList.js" />
     <Content Include="app\main\csw.mainClear.js" />
     <Content Include="app\main\csw.mainGetViewGrid.js" />
     <Content Include="app\main\csw.mainGetViewTable.js" />
@@ -357,6 +361,7 @@
     <Content Include="Gruntfile.js" />
     <Content Include="css\csw.dom.css" />
     <Content Include="css\csw.tabs.css" />
+    <Content Include="css\csw.designmode.css" />
     <Content Include="etc\far.exe" />
     <Content Include="app\composites\csw.radiobutton.js" />
     <Content Include="app\composites\buttons\csw.buttonExt.js" />

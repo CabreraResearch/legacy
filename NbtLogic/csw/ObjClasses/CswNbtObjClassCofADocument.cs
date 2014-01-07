@@ -1,6 +1,7 @@
 using System;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.ObjClasses
@@ -63,7 +64,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public override void beforePropertySetWriteNode()
+        public override void afterPromoteNode()
         {
             this.MakeFilePropReadonly();
         }
@@ -78,7 +79,7 @@ namespace ChemSW.Nbt.ObjClasses
                 {
                     CswNbtView ExistingDocsView = new CswNbtView( _CswNbtResources );
                     CswNbtViewRelationship DocumentVr = ExistingDocsView.AddViewRelationship( NodeType, false );
-                    ExistingDocsView.AddViewPropertyAndFilter( DocumentVr, Owner.NodeTypeProp, OwnerNode.NodeId.PrimaryKey.ToString(), CswEnumNbtSubFieldName.NodeID );
+                    ExistingDocsView.AddViewPropertyAndFilter( DocumentVr, Owner.NodeTypeProp, OwnerNode.NodeId.PrimaryKey.ToString(), CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID );
                     ExistingDocsView.AddViewPropertyAndFilter( DocumentVr, Archived.NodeTypeProp, CswEnumTristate.True.ToString(), FilterMode : CswEnumNbtFilterMode.NotEquals );
 
                     ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( ExistingDocsView, true, false, false );

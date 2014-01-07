@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 
@@ -8,6 +10,11 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
     public class CswNbtFieldTypeRuleScientific : ICswNbtFieldTypeRule
     {
+        public sealed class SubFieldName : ICswNbtFieldTypeRuleSubFieldName
+        {
+            public static CswEnumNbtSubFieldName Base = CswEnumNbtSubFieldName.Base;
+            public static CswEnumNbtSubFieldName Exponent = CswEnumNbtSubFieldName.Exponent;
+        }
 
         private CswNbtFieldTypeRuleDefaultImpl _CswNbtFieldTypeRuleDefault = null;
         private CswNbtFieldResources _CswNbtFieldResources = null;
@@ -17,7 +24,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldResources = CswNbtFieldResources;
             _CswNbtFieldTypeRuleDefault = new CswNbtFieldTypeRuleDefaultImpl( _CswNbtFieldResources );
 
-            BaseSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1_Numeric, CswEnumNbtSubFieldName.Base, true );
+            BaseSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1_Numeric, SubFieldName.Base, true );
             BaseSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Equals );
             BaseSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotEquals );
             BaseSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.GreaterThanOrEquals );
@@ -28,7 +35,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             BaseSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Null );
             SubFields.add( BaseSubField );
 
-            ExponentSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field2_Numeric, CswEnumNbtSubFieldName.Exponent, true );
+            ExponentSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field2_Numeric, SubFieldName.Exponent, true );
             ExponentSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Equals );
             ExponentSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotEquals );
             ExponentSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.GreaterThanOrEquals );
@@ -71,9 +78,43 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldTypeRuleDefault.AddUniqueFilterToView( View, UniqueValueViewProperty, PropertyValueToCheck, EnforceNullEntries );
         }
 
-        public void setFk( CswNbtMetaDataNodeTypeProp MetaDataProp, CswNbtMetaDataNodeTypeProp.doSetFk doSetFk, string inFKType, Int32 inFKValue, string inValuePropType = "", Int32 inValuePropId = Int32.MinValue )
+        public void onSetFk( CswNbtMetaDataNodeTypeProp MetaDataProp, CswNbtObjClassDesignNodeTypeProp DesignNTPNode )
         {
-            _CswNbtFieldTypeRuleDefault.setFk( MetaDataProp, doSetFk, inFKType, inFKValue, inValuePropType, inValuePropId );
+            _CswNbtFieldTypeRuleDefault.onSetFk( MetaDataProp, DesignNTPNode );
+        }
+
+        public sealed class AttributeName : ICswNbtFieldTypeRuleAttributeName
+        {
+            public const string Precision = CswEnumNbtPropertyAttributeName.Precision;
+            public const string MinimumValue = CswEnumNbtPropertyAttributeName.MinimumValue;
+            public const string DefaultValue = CswEnumNbtPropertyAttributeName.DefaultValue;
+        }
+
+        public Collection<CswNbtFieldTypeAttribute> getAttributes()
+        {
+            Collection<CswNbtFieldTypeAttribute> ret = _CswNbtFieldTypeRuleDefault.getAttributes( CswEnumNbtFieldType.Scientific );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+            {
+                OwnerFieldType = CswEnumNbtFieldType.Scientific,
+                Name = AttributeName.Precision,
+                Column = CswEnumNbtPropertyAttributeColumn.Numberprecision,
+                AttributeFieldType = CswEnumNbtFieldType.Number
+            } );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+            {
+                OwnerFieldType = CswEnumNbtFieldType.Scientific,
+                Name = AttributeName.MinimumValue,
+                Column = CswEnumNbtPropertyAttributeColumn.Numberminvalue,
+                AttributeFieldType = CswEnumNbtFieldType.Number
+            } );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+            {
+                OwnerFieldType = CswEnumNbtFieldType.Scientific,
+                Name = AttributeName.DefaultValue,
+                Column = CswEnumNbtPropertyAttributeColumn.Defaultvalueid,
+                AttributeFieldType = CswEnumNbtFieldType.Scientific
+            } );
+            return ret;
         }
 
         public void afterCreateNodeTypeProp( CswNbtMetaDataNodeTypeProp NodeTypeProp )

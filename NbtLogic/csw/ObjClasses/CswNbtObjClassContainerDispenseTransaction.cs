@@ -29,7 +29,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region ctor
 
-        public CswNbtObjClassContainerDispenseTransaction( CswNbtResources CswNbtResources, CswNbtNode Node ) : base( CswNbtResources, Node ) {}
+        public CswNbtObjClassContainerDispenseTransaction( CswNbtResources CswNbtResources, CswNbtNode Node ) : base( CswNbtResources, Node ) { }
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
@@ -66,7 +66,7 @@ namespace ChemSW.Nbt.ObjClasses
                         CswNbtUnitConversion Conversion = new CswNbtUnitConversion( _CswNbtResources, QuantityDispensed.UnitId, RequestItemNode.TotalDispensed.UnitId, RequestItemNode.Material.RelatedNodeId );
                         double DispensedQuantity = Conversion.convertUnit( QuantityDispensed.Quantity );
                         RequestItemNode.TotalDispensed.Quantity -= DispensedQuantity; // Subtracting a negative number in order to add
-                        RequestItemNode.FulfillmentHistory.AddComment( "Dispensed " + QuantityDispensed.Gestalt + " into " + CswNbtNode.getNodeLink(DestinationContainer.RelatedNodeId, DestinationContainer.Gestalt) );
+                        RequestItemNode.FulfillmentHistory.AddComment( "Dispensed " + QuantityDispensed.Gestalt + " into " + CswNbtNode.getNodeLink( DestinationContainer.RelatedNodeId, DestinationContainer.Gestalt ) );
                         RequestItemNode.Status.Value = CswNbtObjClassRequestItem.Statuses.Dispensed;
                     }
                     RequestItemNode.postChanges( false );
@@ -74,7 +74,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-        public override void beforePromoteNode()
+        public override void beforePromoteNode( bool OverrideUniqueValidation = false )
         {
             _CswNbtNode.setReadOnly( value: true, SaveToDb: true ); //case 24508
         }
@@ -96,7 +96,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropQuantity RemainingSourceContainerQuantity { get { return _CswNbtNode.Properties[PropertyName.RemainingSourceContainerQuantity]; } }
         public CswNbtNodePropRelationship Dispenser { get { return _CswNbtNode.Properties[PropertyName.Dispenser]; } }
         public CswNbtNodePropRelationship RequestItem { get { return _CswNbtNode.Properties[PropertyName.RequestItem]; } }
-        
+
         #endregion
 
     }//CswNbtObjClassContainerDispenseTransaction

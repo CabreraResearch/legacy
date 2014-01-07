@@ -185,7 +185,7 @@
                                 if (subNameSpace !== 'constants') {
                                     newNameSpace.register('constants', makeNameSpace('constants', nsTree), false);
                                 }
-
+        
                                 proto.register(subNameSpace, newNameSpace, false);
                                 return newNameSpace;
                             }, false);

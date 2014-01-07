@@ -125,6 +125,11 @@ namespace ChemSW.Nbt.ChemCatCentral
             return DataSourceDates;
         }
 
+        /// <summary>
+        /// Get the most recent ExtChemData import date.
+        /// </summary>
+        /// <param name="SearchClient"></param>
+        /// <returns></returns>
         public string getLastExtChemDataImportDate( SearchClient SearchClient )
         {
             string Ret = string.Empty;

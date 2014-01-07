@@ -39,21 +39,21 @@ namespace ChemSW.Nbt.MetaData
             return new CswNbtMetaDataNodeTypeTab( Resources, Row, Date );
         }
 
-        public CswNbtMetaDataNodeTypeTab getNodeTypeTab( Int32 NodeTypeTabId )
+        public CswNbtMetaDataNodeTypeTab getNodeTypeTab( Int32 NodeTypeTabId, bool BypassModuleCheck = false )
         {
-            return (CswNbtMetaDataNodeTypeTab) _CollImpl.getByPk( NodeTypeTabId );
+            return (CswNbtMetaDataNodeTypeTab) _CollImpl.getByPk( NodeTypeTabId, BypassModuleCheck );
         }
-        public CswNbtMetaDataNodeTypeTab getNodeTypeTab( Int32 NodeTypeId, Int32 NodeTypeTabId )
+        public CswNbtMetaDataNodeTypeTab getNodeTypeTab( Int32 NodeTypeId, Int32 NodeTypeTabId, bool BypassModuleCheck = false )
         {
-            return (CswNbtMetaDataNodeTypeTab) _CollImpl.getByPk( NodeTypeTabId );
+            return (CswNbtMetaDataNodeTypeTab) _CollImpl.getByPk( NodeTypeTabId, BypassModuleCheck );
         }
-        public CswNbtMetaDataNodeTypeTab getNodeTypeTab( Int32 NodeTypeId, string NodeTypeTabName )
+        public CswNbtMetaDataNodeTypeTab getNodeTypeTab( Int32 NodeTypeId, string NodeTypeTabName, bool BypassModuleCheck = false )
         {
-            return (CswNbtMetaDataNodeTypeTab) _CollImpl.getWhereFirst( "where nodetypeid = " + NodeTypeId.ToString() + " and lower(tabname) = '" + CswTools.SafeSqlParam( NodeTypeTabName.ToLower() ) + "'" );
+            return (CswNbtMetaDataNodeTypeTab) _CollImpl.getWhereFirst( "where nodetypeid = " + NodeTypeId.ToString() + " and lower(tabname) = '" + CswTools.SafeSqlParam( NodeTypeTabName.ToLower() ) + "'", null, BypassModuleCheck );
         }
-        public CswNbtMetaDataNodeTypeTab getNodeTypeTabVersion( Int32 NodeTypeId, Int32 NodeTypeTabId )
+        public CswNbtMetaDataNodeTypeTab getNodeTypeTabVersion( Int32 NodeTypeId, Int32 NodeTypeTabId, bool BypassModuleCheck = false )
         {
-            return (CswNbtMetaDataNodeTypeTab) _CollImpl.getWhereFirst( "where nodetypeid = " + NodeTypeId.ToString() + " and firsttabversionid = (select firsttabversionid from nodetype_tabset where nodetypetabsetid = " + NodeTypeTabId.ToString() + ")" );
+            return (CswNbtMetaDataNodeTypeTab) _CollImpl.getWhereFirst( "where nodetypeid = " + NodeTypeId.ToString() + " and firsttabversionid = (select firsttabversionid from nodetype_tabset where nodetypetabsetid = " + NodeTypeTabId.ToString() + ")", null, BypassModuleCheck );
         }
         public Collection<Int32> getNodeTypeTabIds( Int32 NodeTypeId )
         {

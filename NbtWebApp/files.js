@@ -14,6 +14,7 @@ module.exports.app = [
     'app/composites/**.js',
 	'app/composites/buttons/**.js',
     'app/actions/**.js',
+    'app/designmode/**.js',
     'app/layouts/**.js',
     'app/dialogs/**.js',
     'app/nodes/**.js',

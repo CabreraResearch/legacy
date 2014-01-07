@@ -99,7 +99,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         // _initRole()
 
-        public new void postChanges( bool ForceUpdate ) //bz# 5446
+        public void postChanges( bool ForceUpdate ) //bz# 5446
         {
             _CswNbtNode.postChanges( ForceUpdate );
             _RoleNodeObjClass.postChanges( ForceUpdate );

@@ -16,7 +16,7 @@ namespace ChemSW.Nbt
             //Show the following Location properties...
             //   Control Zone
             CswNbtMetaDataObjectClass LocationOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.LocationClass );
-            foreach( int LocationNTId in LocationOC.getNodeTypeIds() )
+            foreach( int LocationNTId in LocationOC.getNodeTypeIds().Keys )
             {
                 _CswNbtResources.Modules.ShowProp( LocationNTId, CswNbtObjClassLocation.PropertyName.ControlZone );
             }
@@ -40,7 +40,7 @@ namespace ChemSW.Nbt
             //   Storage Temperature
             //   Use Type
             CswNbtMetaDataObjectClass ContainerOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerClass );
-            foreach( int ContainerNTId in ContainerOC.getNodeTypeIds() )
+            foreach( int ContainerNTId in ContainerOC.getNodeTypeIds().Keys )
             {
                 _CswNbtResources.Modules.ShowProp( ContainerNTId, CswNbtObjClassContainer.PropertyName.StoragePressure );
                 _CswNbtResources.Modules.ShowProp( ContainerNTId, CswNbtObjClassContainer.PropertyName.StorageTemperature );
@@ -53,7 +53,7 @@ namespace ChemSW.Nbt
             //Hide the following Location properties...
             //   Control Zone
             CswNbtMetaDataObjectClass LocationOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.LocationClass );
-            foreach( int LocationNTId in LocationOC.getNodeTypeIds() )
+            foreach( int LocationNTId in LocationOC.getNodeTypeIds().Keys )
             {
                 _CswNbtResources.Modules.HideProp( LocationNTId, CswNbtObjClassLocation.PropertyName.ControlZone );
             }
@@ -77,7 +77,7 @@ namespace ChemSW.Nbt
             //   Storage Temperature
             //   Use Type
             CswNbtMetaDataObjectClass ContainerOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerClass );
-            foreach( int ContainerNTId in ContainerOC.getNodeTypeIds() )
+            foreach( int ContainerNTId in ContainerOC.getNodeTypeIds().Keys )
             {
                 _CswNbtResources.Modules.HideProp( ContainerNTId, CswNbtObjClassContainer.PropertyName.StoragePressure );
                 _CswNbtResources.Modules.HideProp( ContainerNTId, CswNbtObjClassContainer.PropertyName.StorageTemperature );

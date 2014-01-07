@@ -1,6 +1,7 @@
 using System;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.ObjClasses
@@ -108,13 +109,10 @@ namespace ChemSW.Nbt.ObjClasses
             return true;
         }
 
-        public override CswNbtNode CopyNode( bool IsNodeTemp = false )
+        public override CswNbtNode CopyNode( bool IsNodeTemp = false, Action<CswNbtNode> OnCopy = null )
         {
-            CswNbtNode CopiedEquipmentNode = base.CopyNodeImpl( IsNodeTemp : IsNodeTemp, OnCopy : delegate( CswNbtNode NewNode )
-                {
-                    NewNode.copyPropertyValues( Node );
-                    //CopiedEquipmentNode.postChanges( true, true );
-                } );
+            CswNbtNode CopiedEquipmentNode = base.CopyNodeImpl( IsNodeTemp, OnCopy );
+
             // Copy all Generators
             CswNbtMetaDataObjectClass GeneratorObjectClass = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.GeneratorClass );
             CswNbtView GeneratorView = new CswNbtView( _CswNbtResources );
@@ -122,7 +120,7 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtViewProperty OwnerProperty = GeneratorView.AddViewProperty( GeneratorRelationship, GeneratorObjectClass.getObjectClassProp( CswNbtObjClassGenerator.PropertyName.Owner ) );
             CswNbtViewPropertyFilter OwnerIsEquipmentFilter = GeneratorView.AddViewPropertyFilter(
                 OwnerProperty,
-                CswEnumNbtSubFieldName.NodeID,
+                CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID,
                 CswEnumNbtFilterMode.Equals,
                 NodeId.PrimaryKey.ToString() );
 
@@ -137,7 +135,6 @@ namespace ChemSW.Nbt.ObjClasses
                     {
                         NewNode.copyPropertyValues( OriginalGeneratorNode );
                         ( (CswNbtObjClassGenerator) NewNode ).Owner.RelatedNodeId = CopiedEquipmentNode.NodeId;
-                        //CopiedGeneratorNode.postChanges( true, true );
                     } );
                 GeneratorTree.goToParentNode();
                 c++;
@@ -212,7 +209,7 @@ namespace ChemSW.Nbt.ObjClasses
                                     EquipProp.setReadOnly( value : true, SaveToDb : true );
                                     FoundMatch = true;
                                     // case 21809
-                                    EquipProp.HelpText = EquipProp.PropName + " is set on the Assembly, and must be modified there.";
+                                    EquipProp[CswEnumNbtPropertyAttributeName.HelpText] = EquipProp.PropName + " is set on the Assembly, and must be modified there.";
                                 }
                             }
                         }

@@ -34,14 +34,6 @@ namespace ChemSW.Nbt.ObjClasses
             get { return _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.NonChemicalClass ); }
         }
 
-        public override void beforePromoteNode()
-        {
-        }
-
-        public override void afterPromoteNode()
-        {
-        }
-
         /// <summary>
         /// Cast a Request Item PropertySet back to an Object Class
         /// </summary>
@@ -76,6 +68,8 @@ namespace ChemSW.Nbt.ObjClasses
             ButtonData.Data["state"]["canAddSDS"] = false;
         }
 
+
+        public override void onUpdatePropertyValue() { }
         #endregion Inherited Events
 
         #region ObjectClass-specific properties

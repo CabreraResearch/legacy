@@ -47,7 +47,7 @@ namespace ChemSW.Nbt
             //   Assigned CofA
             //   View CofA
             CswNbtMetaDataObjectClass ReceiptLotOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ReceiptLotClass );
-            foreach( int ReceiptLotId in ReceiptLotOC.getNodeTypeIds() )
+            foreach( int ReceiptLotId in ReceiptLotOC.getNodeTypeIds().Keys )
             {
                 _CswNbtResources.Modules.HideProp( ReceiptLotId, CswNbtObjClassReceiptLot.PropertyName.Manufacturer );
                 _CswNbtResources.Modules.HideProp( ReceiptLotId, CswNbtObjClassReceiptLot.PropertyName.ManufacturerLotNo );
@@ -59,7 +59,7 @@ namespace ChemSW.Nbt
             //Hide the following Container properties...
             //   View CofA
             CswNbtMetaDataObjectClass ContainerOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerClass );
-            foreach( int ContainerNTId in ContainerOC.getNodeTypeIds() )
+            foreach( int ContainerNTId in ContainerOC.getNodeTypeIds().Keys )
             {
                 _CswNbtResources.Modules.HideProp( ContainerNTId, CswNbtObjClassContainer.PropertyName.ViewCofA );
             }

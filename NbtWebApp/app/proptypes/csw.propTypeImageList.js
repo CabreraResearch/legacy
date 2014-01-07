@@ -16,6 +16,7 @@
             cswPrivate.width = nodeProperty.propData.values.width;
             cswPrivate.height = nodeProperty.propData.values.height;
             cswPrivate.allowMultiple = nodeProperty.propData.values.allowmultiple;
+                cswPrivate.imageprefix = nodeProperty.propData.values.imageprefix;
 
             var table = nodeProperty.propDiv.table({
                 cellvalign: 'top'
@@ -29,14 +30,15 @@
                 var imageCell = cswPrivate.imageTable.cell(1, cswPrivate.imgTblCol)
                     .css({
                         'text-align': 'center',
-                        'padding-left': '10px'
+                            'padding-left': '10px',
+                            'padding-right': '10px'
                     });
                 imageCell.a({
-                    href: href,
+                        href: cswPrivate.imageprefix + href,
                     target: '_blank'
                 })
                     .img({
-                        src: href,
+                            src: cswPrivate.imageprefix + href,
                         alt: name,
                         width: cswPrivate.width,
                         height: cswPrivate.height
@@ -54,7 +56,7 @@
                 }
 
                 if (name !== href) {
-                    nameCell.a({ href: href, target: '_blank', text: name });
+                        nameCell.a({ href: cswPrivate.imageprefix + href, target: '_blank', text: name });
                 }
                 if (false === nodeProperty.isReadOnly() && (false === nodeProperty.isRequired() || cswPrivate.allowMultiple)) {
                     nameCell.icon({
@@ -103,8 +105,13 @@
                 cswPrivate.saveProp();
             };
 
-            cswPrivate.imageSelectList = table.cell(1, 2).imageSelect({
-                onSelect: function (name, href, id, imageCell, nameCell) {
+            cswPrivate.makeImageSelectList = function (cell) {
+                cell.empty();
+                cswPrivate.imageSelectList = cell.imageSelect({
+                    comboImgHeight: cswPrivate.height,
+                    comboImgWidth: cswPrivate.width,
+                    imageprefix: cswPrivate.imageprefix,
+                  onSelect: function (name, href, id, imageCell, nameCell) {
                     if (false === cswPrivate.allowMultiple) {
                         cswPrivate.imageTable.empty();
                         cswPrivate.selectedValues = [];
@@ -119,7 +126,6 @@
                     return false;
                 }
             });
-
             Csw.iterate(cswPrivate.options, function (thisOpt) {
                 if (Csw.bool(thisOpt.selected)) {
                     cswPrivate.selectedValues.push(thisOpt.value);
@@ -130,18 +136,49 @@
                     }
                 }
             }, true);
-
             if (nodeProperty.isReadOnly()) {
                 cswPrivate.imageSelectList.hide();
             }
             cswPrivate.imageSelectList.required(nodeProperty.isRequired());
+
             if (nodeProperty.isRequired()) {
                 $.validator.addMethod('imageRequired', function (value, element) {
                     return (cswPrivate.selectedValues.length > 0);
                 }, 'An image is required.');
                 cswPrivate.imageSelectList.addClass('imageRequired');
             }
+                };
 
+                (function () {
+                    if (false === nodeProperty.isReadOnly()) {
+                        
+                        if (nodeProperty.tabState.EditMode !== Csw.enums.editMode.Add &&   // Not Add mode and
+                            (false === nodeProperty.isRequired() ||                        // ( Not required or
+                             false === Csw.isNullOrEmpty(cswPrivate.value))) {             //   Already has a value )
+                            
+                            cswPrivate.editButton = table.cell(1, 2).buttonExt({
+                                enabledText: 'Edit',
+                                icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.pencil),
+                                onClick: function () {
+                                    cswPrivate.makeImageSelectList(table.cell(1, 2));
+                                }
+                            });
+
+                        } else {
+
+                            cswPrivate.makeImageSelectList(table.cell(1, 2));
+
+                        }
+                    }
+                    
+                    Csw.iterate(cswPrivate.options, function (thisOpt) {
+                        if (Csw.bool(thisOpt.selected)) {
+                            cswPrivate.selectedValues.push(thisOpt.value);
+                            cswPrivate.addImage(thisOpt.text, thisOpt.value, false);
+                        }
+                    }, false );
+
+                })();
         };
 
         //Bind the callback to the render event

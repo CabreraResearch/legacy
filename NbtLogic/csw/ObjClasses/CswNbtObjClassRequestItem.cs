@@ -405,7 +405,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public override void beforePromoteNode()
+        public override void beforePromoteNode( bool OverrideUniqueValidation )
         {
             RequestType.Value = Type.Value;
             TotalDispensed.UnitId = Quantity.UnitId;

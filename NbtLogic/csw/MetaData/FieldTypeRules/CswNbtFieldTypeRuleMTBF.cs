@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using ChemSW.Exceptions;
+using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 
@@ -9,6 +11,13 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
     public class CswNbtFieldTypeRuleMTBF : ICswNbtFieldTypeRule
     {
+        public sealed class SubFieldName : ICswNbtFieldTypeRuleSubFieldName
+        {
+            public static CswEnumNbtSubFieldName StartDateTime = CswEnumNbtSubFieldName.StartDateTime;
+            public static CswEnumNbtSubFieldName Units = CswEnumNbtSubFieldName.Units;
+            public static CswEnumNbtSubFieldName Value = CswEnumNbtSubFieldName.Value;
+        }
+
 
         private CswNbtFieldTypeRuleDefaultImpl _CswNbtFieldTypeRuleDefault = null;
         private CswNbtFieldResources _CswNbtFieldResources = null;
@@ -19,7 +28,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldResources = CswNbtFieldResources;
             _CswNbtFieldTypeRuleDefault = new CswNbtFieldTypeRuleDefaultImpl( _CswNbtFieldResources );
 
-            StartDateTimeSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1, CswEnumNbtSubFieldName.StartDateTime, true );
+            StartDateTimeSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1, SubFieldName.StartDateTime, true );
             StartDateTimeSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Equals );
             StartDateTimeSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.GreaterThan );
             StartDateTimeSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.GreaterThanOrEquals );
@@ -30,7 +39,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             StartDateTimeSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Null );
             SubFields.add( StartDateTimeSubField );
 
-            UnitsSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field2, CswEnumNbtSubFieldName.Units, true );
+            UnitsSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field2, SubFieldName.Units, true );
             UnitsSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Equals );
             UnitsSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Contains );
             UnitsSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotContains );
@@ -38,7 +47,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             UnitsSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Ends );
             SubFields.add( UnitsSubField );
 
-            ValueSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1_Numeric, CswEnumNbtSubFieldName.Value, true );
+            ValueSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1_Numeric, SubFieldName.Value, true );
             ValueSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Equals );
             ValueSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.GreaterThan );
             ValueSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.LessThan );
@@ -108,9 +117,27 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldTypeRuleDefault.AddUniqueFilterToView( View, UniqueValueViewProperty, PropertyValueToCheck, EnforceNullEntries );
         }
 
-        public void setFk( CswNbtMetaDataNodeTypeProp MetaDataProp, CswNbtMetaDataNodeTypeProp.doSetFk doSetFk, string inFKType, Int32 inFKValue, string inValuePropType = "", Int32 inValuePropId = Int32.MinValue )
+        public void onSetFk( CswNbtMetaDataNodeTypeProp MetaDataProp, CswNbtObjClassDesignNodeTypeProp DesignNTPNode )
         {
-            _CswNbtFieldTypeRuleDefault.setFk( MetaDataProp, doSetFk, inFKType, inFKValue, inValuePropType, inValuePropId );
+            _CswNbtFieldTypeRuleDefault.onSetFk( MetaDataProp, DesignNTPNode );
+        }
+
+        public sealed class AttributeName : ICswNbtFieldTypeRuleAttributeName
+        {
+            public const string DefaultToToday = CswEnumNbtPropertyAttributeName.DefaultToToday;
+        }
+
+        public Collection<CswNbtFieldTypeAttribute> getAttributes()
+        {
+            Collection<CswNbtFieldTypeAttribute> ret = _CswNbtFieldTypeRuleDefault.getAttributes( CswEnumNbtFieldType.MTBF );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+                {
+                    OwnerFieldType = CswEnumNbtFieldType.MTBF,
+                    Name = AttributeName.DefaultToToday,
+                    AttributeFieldType = CswEnumNbtFieldType.Logical,
+                    Column = CswEnumNbtPropertyAttributeColumn.Datetoday
+                } );
+            return ret;
         }
 
         public void afterCreateNodeTypeProp( CswNbtMetaDataNodeTypeProp NodeTypeProp )

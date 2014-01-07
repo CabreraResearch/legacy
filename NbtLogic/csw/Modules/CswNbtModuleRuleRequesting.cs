@@ -18,7 +18,7 @@ namespace ChemSW.Nbt
             //   Requests
             //   Submitted Requests
             CswNbtMetaDataObjectClass ContainerOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerClass );
-            foreach( int NodeTypeId in ContainerOC.getNodeTypeIds() )
+            foreach( int NodeTypeId in ContainerOC.getNodeTypeIds().Keys )
             {
                 _CswNbtResources.Modules.ShowProp( NodeTypeId, CswNbtObjClassContainer.PropertyName.Request );
                 _CswNbtResources.Modules.ShowProp( NodeTypeId, CswNbtObjClassContainer.PropertyName.SubmittedRequests );
@@ -29,7 +29,7 @@ namespace ChemSW.Nbt
             CswNbtMetaDataPropertySet MaterialSet = _CswNbtResources.MetaData.getPropertySet( CswEnumNbtPropertySetName.MaterialSet );
             foreach( CswNbtMetaDataObjectClass MaterialOC in MaterialSet.getObjectClasses() )
             {
-                foreach( int NodeTypeId in MaterialOC.getNodeTypeIds() )
+                foreach( int NodeTypeId in MaterialOC.getNodeTypeIds().Keys )
                 {
                     _CswNbtResources.Modules.ShowProp( NodeTypeId, CswNbtObjClassChemical.PropertyName.Request );
                 }
@@ -53,7 +53,7 @@ namespace ChemSW.Nbt
             //   Requests
             //   Submitted Requests
             CswNbtMetaDataObjectClass ContainerOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerClass );
-            foreach( int NodeTypeId in ContainerOC.getNodeTypeIds() )
+            foreach( int NodeTypeId in ContainerOC.getNodeTypeIds().Keys )
             {
                 _CswNbtResources.Modules.HideProp( NodeTypeId, CswNbtObjClassContainer.PropertyName.Request );
                 _CswNbtResources.Modules.HideProp( NodeTypeId, CswNbtObjClassContainer.PropertyName.SubmittedRequests );
@@ -64,7 +64,7 @@ namespace ChemSW.Nbt
             CswNbtMetaDataPropertySet MaterialSet = _CswNbtResources.MetaData.getPropertySet( CswEnumNbtPropertySetName.MaterialSet );
             foreach( CswNbtMetaDataObjectClass MaterialOC in MaterialSet.getObjectClasses() )
             {
-                foreach( int NodeTypeId in MaterialOC.getNodeTypeIds() )
+                foreach( int NodeTypeId in MaterialOC.getNodeTypeIds().Keys )
                 {
                     _CswNbtResources.Modules.HideProp( NodeTypeId, CswNbtObjClassChemical.PropertyName.Request );
                 }
