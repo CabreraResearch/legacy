@@ -50,11 +50,14 @@ namespace ChemSW.Nbt.Actions
                 Languages cwLanguages = cwCommonClient.GetLanguages();
                 foreach( Language cwLanguage in cwLanguages )
                 {
-                    Languages.Add( new ChemWatchMultiSlctListItem()
-                        {
-                            Name = cwLanguage.Name,
-                            Id = CswConvert.ToString( cwLanguage.Id )
-                        } );
+                    if( cwLanguage.UILanguage )
+                    {
+                        Languages.Add( new ChemWatchMultiSlctListItem()
+                            {
+                                Name = cwLanguage.Name,
+                                Id = CswConvert.ToString( cwLanguage.Id )
+                            } );
+                    }
                 }
                 IEnumerable<ChemWatchMultiSlctListItem> SortedLanguages = Languages.OrderBy( si => si.Name );
                 Return.Languages.options = SortedLanguages.ToList();
