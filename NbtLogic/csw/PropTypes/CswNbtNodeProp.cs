@@ -465,9 +465,9 @@ namespace ChemSW.Nbt.PropTypes
             if( _CswNbtNodePropData.wasAnySubFieldModified() )
             {
                 string GestaltSearchValue = _CswNbtNodePropData.Gestalt.ToLower();
-                if( GestaltSearchValue.Length > 512 )
+                if( GestaltSearchValue.Length > 508 )  // why 508, not 512?  see case 31525.
                 {
-                    GestaltSearchValue = GestaltSearchValue.Substring( 0, 512 );
+                    GestaltSearchValue = GestaltSearchValue.Substring( 0, 508 ); 
                 }
                 SetPropRowValue( CswEnumNbtSubFieldName.GestaltSearch, CswEnumNbtPropColumn.GestaltSearch, GestaltSearchValue );
 
