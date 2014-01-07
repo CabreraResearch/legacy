@@ -1,6 +1,5 @@
 using System;
 using System.Linq;
-using ChemSW.Config;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.Batch;
@@ -118,8 +117,8 @@ namespace ChemSW.Nbt.Actions
                 }
 
                 int TotalContainersToMake = ReceiptDefinition.CountNumberContainersToMake();
-                int PerCycle = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumConfigurationVariableNames.NodesProcessedPerCycle ) );
-                if( TotalContainersToMake > PerCycle )
+                int Threshhold = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( "batchthreshold" ) );
+                if( TotalContainersToMake > Threshhold )
                 {
                     //Containers will be created in a batch op
                     CswNbtBatchOpReceiving ReceivingBatchOp = new CswNbtBatchOpReceiving( _CswNbtResources );
