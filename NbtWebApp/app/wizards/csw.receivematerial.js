@@ -264,7 +264,7 @@
                     cswPrivate.toggleStepButtons(StepNo);
 
                     if (false === cswPrivate['step' + StepNo + 'Complete']) {
-                        cswPrivate.setStepHeader(StepNo, 'Select the number of containers and their quantities to receive.');
+                        cswPrivate.setStepHeader(StepNo, 'Select the number of containers and their quantities to receive. The maximum containers received at once is: ' + cswPrivate.state.containerlimit);
 
                         //Container Select (if multiple container nodetypes exist)
                         var containerSelect = Csw.wizard.nodeTypeSelect(cswPrivate['divStep' + StepNo].div(), {
@@ -510,7 +510,7 @@
         //#region ctor _post
         (function _post() {
             var wizardSteps = cswPrivate.setWizardSteps();
-            cswPrivate.state.containerlimit = Csw.number(cswPrivate.state.containerlimit, 25);
+            cswPrivate.state.containerlimit = Csw.number(cswPrivate.state.containerlimit, 250);
             cswPrivate.currentStepNo = cswPrivate.startingStep;
 
             cswPrivate.wizard = Csw.layouts.wizard(cswParent.div(), {
