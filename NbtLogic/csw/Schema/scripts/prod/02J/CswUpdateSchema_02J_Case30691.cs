@@ -1,4 +1,5 @@
-﻿using ChemSW.Core;
+﻿using System.Linq;
+using ChemSW.Core;
 using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
@@ -34,57 +35,94 @@ namespace ChemSW.Nbt.Schema
                 switch( UoMNode.Name.Text )
                 {
                     case "Each":
-                        _updateAliasesValue( UoMNode, "each,ea,EA" );
+                        _updateAliasesValue( UoMOC, UoMNode, "each,ea,EA" );
                         break;
                     case "fluid ounces":
-                        _updateAliasesValue( UoMNode, "fl oz,fl.oz." );
+                        _updateAliasesValue( UoMOC, UoMNode, "fl oz,fl.oz." );
                         break;
                     case "g":
-                        _updateAliasesValue( UoMNode, "G,gm,GM" );
+                        _updateAliasesValue( UoMOC, UoMNode, "G,gm,GM" );
                         break;
                     case "gal":
-                        _updateAliasesValue( UoMNode, "Gal,GL,GA" );
+                        _updateAliasesValue( UoMOC, UoMNode, "Gal,GL,GA" );
                         break;
                     case "kg":
-                        _updateAliasesValue( UoMNode, "KG" );
+                        _updateAliasesValue( UoMOC, UoMNode, "KG" );
                         break;
                     case "Liters":
-                        _updateAliasesValue( UoMNode, "L,LT" );
+                        _updateAliasesValue( UoMOC, UoMNode, "L,LT" );
                         break;
                     case "mg":
-                        _updateAliasesValue( UoMNode, "MG" );
+                        _updateAliasesValue( UoMOC, UoMNode, "MG" );
                         break;
                     case "mL":
-                        _updateAliasesValue( UoMNode, "ml,ML" );
+                        _updateAliasesValue( UoMOC, UoMNode, "ml,ML" );
                         break;
                     case "ounces":
-                        _updateAliasesValue( UoMNode, "oz,OZ" );
+                        _updateAliasesValue( UoMOC, UoMNode, "oz,OZ" );
                         break;
                     case "µL":
-                        _updateAliasesValue( UoMNode, "microliter,microL,UL,uL" );
+                        _updateAliasesValue( UoMOC, UoMNode, "microliter,microL,UL,uL" );
                         break;
                 }
             }
 
         } // update()
 
-        private void _updateAliasesValue( CswNbtObjClassUnitOfMeasure UoMNode, string NewAliases )
+        private void _updateAliasesValue( CswNbtMetaDataObjectClass UoMOC, CswNbtObjClassUnitOfMeasure UoMNode, string NewAliases )
         {
-            CswCommaDelimitedString UpdatedAliases = UoMNode.AliasesAsDelimitedString;
+            // The new aliases we want to add
             CswCommaDelimitedString NewAliasesCommaDelimited = new CswCommaDelimitedString( NewAliases );
-            foreach( string Alias in NewAliasesCommaDelimited )
+            CswCommaDelimitedString UpdatedAliases = UoMNode.AliasesAsDelimitedString;
+
+            // Create a view of all UoM nodes and their Aliases property
+            CswNbtView UoMView = _CswNbtSchemaModTrnsctn.makeView();
+            CswNbtViewRelationship ParentRelationship = UoMView.AddViewRelationship( UoMOC, false );
+
+            CswNbtMetaDataObjectClassProp AliasesOCP = UoMOC.getObjectClassProp( CswNbtObjClassUnitOfMeasure.PropertyName.Aliases );
+            UoMView.AddViewProperty( ParentRelationship, AliasesOCP );
+
+            CswCommaDelimitedString AliasesToRemove = new CswCommaDelimitedString();
+            ICswNbtTree UoMNodesTree = _CswNbtSchemaModTrnsctn.getTreeFromView( UoMView, false );
+            for( int i = 0; i < UoMNodesTree.getChildNodeCount(); i++ )
             {
-                if( false == UoMNode.AliasesAsDelimitedString.Contains( Alias ) )
+                UoMNodesTree.goToNthChild( i );
+                string CurrentNodeName = UoMNodesTree.getNodeNameForCurrentPosition();
+                CswPrimaryKey CurrentNodeId = UoMNodesTree.getNodeIdForCurrentPosition();
+                if( CurrentNodeId != UoMNode.NodeId )
                 {
-                    UpdatedAliases.Add( Alias );
+                    foreach( CswNbtTreeNodeProp TreeNodeProp in UoMNodesTree.getChildNodePropsOfNode() )
+                    {
+                        CswCommaDelimitedString CurrentUoMNodeAliases = new CswCommaDelimitedString();
+                        CurrentUoMNodeAliases.FromString( TreeNodeProp.Gestalt, false, true );
+
+                        foreach( string alias1 in NewAliasesCommaDelimited )
+                        {
+                            // If alias1 matches the NodeName or any of the Aliases on the Node, we don't want it
+                            if( alias1.Equals( CurrentNodeName ) || CurrentUoMNodeAliases.Any( alias2 => alias1.Equals( alias2 ) ) )
+                            {
+                                AliasesToRemove.Add( alias1 );
+                            }
+                        }
+                    }
+                }
+                UoMNodesTree.goToParentNode();
+            }
+
+            // Make the updated aliases for the node
+            foreach( string alias1 in NewAliasesCommaDelimited )
+            {
+                if( false == AliasesToRemove.Contains( alias1 ) && false == UoMNode.AliasesAsDelimitedString.Contains( alias1 ) )
+                {
+                    UpdatedAliases.Add( alias1 );
                 }
             }
 
             // Update the property value
             UoMNode.Aliases.Text = CswConvert.ToString( UpdatedAliases );
             UoMNode.postChanges( false );
-        }//_updateAliasesValue()
 
+        }//_updateAliasesValue()
     }
 
 }//namespace ChemSW.Nbt.Schema
