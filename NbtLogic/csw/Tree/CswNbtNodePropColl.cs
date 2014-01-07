@@ -60,7 +60,7 @@ namespace ChemSW.Nbt
                 //_CswNbtNodePropCollDataNative.NodePk = _NodePk;
                 //_CswNbtNodePropCollDataNative.NodeTypeId = _NodeTypeId;
                 _CswNbtNodePropCollDataNative.Date = Date;
-                //_CswNbtNodePropCollDataNative.RelationalId = _RelationalId;
+                _CswNbtNodePropCollDataNative.RelationalId = _RelationalId;
             }
             ReturnVal = _CswNbtNodePropCollDataNative;
             //}
