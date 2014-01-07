@@ -452,7 +452,7 @@
                         });
 
                         var labelsDiv = printLabelsTbl.cell(2, 1).div().hide();
-                        var printLabels = Csw.composites.printLabels(labelsDiv,
+                        cswPrivate.printLabels = Csw.composites.printLabels(labelsDiv,
                             {
                                 showButton: false
                             },
@@ -469,7 +469,6 @@
         //#region Finish
         cswPrivate.finalize = function () {
             cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
-
 
             var container = {
                 containernodeid: cswPrivate.state.containerNodeId,
@@ -492,6 +491,18 @@
             if (false === Csw.isNullOrEmpty(cswPrivate.receiptLotTabsAndProps)) {
                 container.receiptLotProperties = Csw.serialize(cswPrivate.receiptLotTabsAndProps.getProps());
             }
+            if (cswPrivate.state.printLabels) {
+                var printData = cswPrivate.printLabels.getPrintData();
+                container.LabelId = printData.LabelId;
+                container.PrinterId = printData.PrinterId;
+                
+                //Create the print job - no success callback
+                Csw.ajaxWcf.post({
+                    urlMethod: 'Containers/CreatePrintJob',
+                    data: container
+                });
+            }
+
             Csw.ajaxWcf.post({
                 urlMethod: 'Containers/Receive',
                 data: container,

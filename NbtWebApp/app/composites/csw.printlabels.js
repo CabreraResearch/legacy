@@ -111,7 +111,7 @@
                 var ret = {
                     LabelId: labelSel.val(),
                     PrinterId: printerSel.selectedNodeId(),
-                    TargetIds: cswPrivate.nodeids.join(',')
+                    TargetIds: cswPrivate.nodeIds.join(',')
                 };
 
                 return ret;

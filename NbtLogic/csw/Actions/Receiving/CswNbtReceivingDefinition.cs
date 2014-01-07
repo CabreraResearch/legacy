@@ -19,7 +19,7 @@ namespace NbtWebApp.Actions.Receiving
             }
             return Ret;
         }
-
+        
         [DataMember]
         public string ActionData;
 
@@ -152,6 +152,50 @@ namespace NbtWebApp.Actions.Receiving
             {
                 _requestItemNodeId = value;
                 _requestItemIdStr = value.ToString();
+            }
+        }
+
+        private CswPrimaryKey _printLabelId = null;
+        public CswPrimaryKey PrintLabelId
+        {
+            get
+            {
+                if( null == _printLabelId )
+                {
+                    _printLabelId = CswConvert.ToPrimaryKey( _printLabelIdStr );
+                    if( false == CswTools.IsPrimaryKey( _printLabelId ) )
+                    {
+                        _printLabelId = null;
+                    }
+                }
+                return _printLabelId;
+            }
+            set
+            {
+                _printLabelId = value;
+                _printLabelIdStr = value.ToString();
+            }
+        }
+
+        private CswPrimaryKey _printerId = null;
+        public CswPrimaryKey PrinterNodeId
+        {
+            get
+            {
+                if( null == _printerId )
+                {
+                    _printerId = CswConvert.ToPrimaryKey( _printerIdStr );
+                    if( false == CswTools.IsPrimaryKey( _printerId ) )
+                    {
+                        _printerId = null;
+                    }
+                }
+                return _printerId;
+            }
+            set
+            {
+                _printerId = value;
+                _printerIdStr = value.ToString();
             }
         }
 
@@ -290,6 +334,22 @@ namespace NbtWebApp.Actions.Receiving
         {
             get { return _requestItemIdStr; }
             set { _requestItemIdStr = value; }
+        }
+
+        private string _printLabelIdStr = string.Empty;
+        [DataMember( Name = "LabelId" )]
+        private string printlabelIdStr
+        {
+            get { return _printLabelIdStr; }
+            set { _printLabelIdStr = value; }
+        }
+
+        private string _printerIdStr = string.Empty;
+        [DataMember( Name = "PrinterId" )]
+        private string printerIdStr
+        {
+            get { return _printerIdStr; }
+            set { _printerIdStr = value; }
         }
 
         private string _containerPropsJSONStr = string.Empty;

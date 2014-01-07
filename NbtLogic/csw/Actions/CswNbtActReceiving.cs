@@ -131,9 +131,7 @@ namespace ChemSW.Nbt.Actions
                     int nodesProcessed = 0;
                     receiveContainers( ReceiptDefinition, ref nodesProcessed, TotalContainersToMake + 1 );
                 }
-
-                //TODO: spawn print jobs
-
+                
                 CswNbtNode MaterialNode = _CswNbtResources.Nodes.GetNode( ReceiptDefinition.MaterialNodeId );
                 Ret = getLandingPageData( _CswNbtResources, MaterialNode );
             }

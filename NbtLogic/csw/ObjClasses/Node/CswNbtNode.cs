@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Runtime.Serialization;
 using ChemSW.Audit;
@@ -615,6 +616,19 @@ namespace ChemSW.Nbt.ObjClasses
             CswTableSelect FavoriteSelect = _CswNbtResources.makeCswTableSelect( "favoriteSelect", "favorites" );
             DataTable FavoriteTable = FavoriteSelect.getTable( "where itemid = " + NodeId.PrimaryKey + " and userid = " + UserId );
             return FavoriteTable.Rows.Count > 0;
+        }
+
+        /// <summary>
+        /// Gets a dictionary of PropName/Gestalt
+        /// </summary>
+        public Dictionary<string, string> getPropertiesAndValues()
+        {
+            Dictionary<string, string> PropVals = new Dictionary<string, string>();
+            foreach( CswNbtNodePropWrapper Prop in this.Properties )
+            {
+                PropVals.Add( Prop.PropName, Prop.Gestalt );
+            }
+            return PropVals;
         }
 
         #endregion Methods
