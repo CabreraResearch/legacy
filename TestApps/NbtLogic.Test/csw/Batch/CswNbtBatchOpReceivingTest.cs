@@ -66,7 +66,7 @@ namespace NbtLogic.Test.csw.Batch
         /// <summary>
         /// Simulates clicking "Finish" on the Receiving Wizard
         /// </summary>
-        private CswNbtReceivingDefiniton FinishWizard()
+        private CswNbtReceivingDefinition FinishWizard()
         {
             CswNbtMetaDataNodeType ContainerNT = TestData.CswNbtResources.MetaData.getNodeType( "Container" );
             CswNbtObjClassContainer InitialContainer = _ReceivingAction.makeContainer( null );
@@ -75,7 +75,7 @@ namespace NbtLogic.Test.csw.Batch
             CswNbtObjClassUnitOfMeasure GramNode = TestData.CswNbtResources.Nodes.GetNode( new CswPrimaryKey( "nodes", 26745 ) ); //TODO: don't hardcode this Gram
 
             //CREATES 16 CONTAINERS
-            CswNbtReceivingDefiniton ReceiptDef = new CswNbtReceivingDefiniton()
+            CswNbtReceivingDefinition ReceiptDef = new CswNbtReceivingDefinition()
             {
                 ContainerNodeId = InitialContainer.NodeId,
                 ContainerNodeTypeId = ContainerNT.NodeTypeId,
@@ -113,7 +113,7 @@ namespace NbtLogic.Test.csw.Batch
         [Test]
         public void TestContainerCreation()
         {
-            CswNbtReceivingDefiniton ReceiptDef = FinishWizard(); //This method is testing by the "TestInitialContainerCreate" test
+            CswNbtReceivingDefinition ReceiptDef = FinishWizard(); //This method is testing by the "TestInitialContainerCreate" test
 
             CswNbtBatchOpReceiving ReceivingBatchOp = new CswNbtBatchOpReceiving( TestData.CswNbtResources );
             ReceivingBatchOp.OverrideMaxProcessed( 10 );

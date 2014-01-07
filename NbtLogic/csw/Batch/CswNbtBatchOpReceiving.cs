@@ -34,7 +34,7 @@ namespace ChemSW.Nbt.Batch
             _MaxNodeProcessed = NewMax;
         }
 
-        public CswNbtReceivingDefiniton GetBatchData( CswNbtObjClassBatchOp Op )
+        public CswNbtReceivingDefinition GetBatchData( CswNbtObjClassBatchOp Op )
         {
             ReceivingBatchData BatchData = new ReceivingBatchData( Op.BatchData.Text );
             return BatchData.ReceiptDef;
@@ -43,7 +43,7 @@ namespace ChemSW.Nbt.Batch
         /// <summary>
         /// Create a new batch operation to handle creation of Containers from the receiving wizard
         /// </summary>
-        public CswNbtObjClassBatchOp makeBatchOp( CswNbtReceivingDefiniton ReceiptDefinition )
+        public CswNbtObjClassBatchOp makeBatchOp( CswNbtReceivingDefinition ReceiptDefinition )
         {
             CswNbtObjClassBatchOp BatchNode = null;
             ReceivingBatchData BatchData = new ReceivingBatchData( ReceiptDefinition );
@@ -81,7 +81,7 @@ namespace ChemSW.Nbt.Batch
                     ReceivingBatchData BatchData = new ReceivingBatchData( BatchNode.BatchData.Text );
 
                     CswNbtActReceiving ActReceiving = new CswNbtActReceiving( _CswNbtResources );
-                    CswNbtReceivingDefiniton UpdatedReceiptDef = ActReceiving.receiveContainers( BatchData.ReceiptDef, ref _NodesProcessed, _MaxNodeProcessed );
+                    CswNbtReceivingDefinition UpdatedReceiptDef = ActReceiving.receiveContainers( BatchData.ReceiptDef, ref _NodesProcessed, _MaxNodeProcessed );
                     
                     ReceivingBatchData UpdatedBatchData = new ReceivingBatchData( UpdatedReceiptDef );
                     BatchNode.BatchData.Text = UpdatedBatchData.ToString();
@@ -109,20 +109,20 @@ namespace ChemSW.Nbt.Batch
 
         private class ReceivingBatchData
         {
-            private CswNbtReceivingDefiniton _receiptDef;
-            private readonly Type _receiptDefType = typeof( CswNbtReceivingDefiniton );
+            private CswNbtReceivingDefinition _receiptDef;
+            private readonly Type _receiptDefType = typeof( CswNbtReceivingDefinition );
 
-            public ReceivingBatchData( CswNbtReceivingDefiniton ReceiptDefinition )
+            public ReceivingBatchData( CswNbtReceivingDefinition ReceiptDefinition )
             {
                 _receiptDef = ReceiptDefinition;
             }
 
             public ReceivingBatchData( string ReceiptDefinitionStr )
             {
-                _receiptDef = CswSerialize<CswNbtReceivingDefiniton>.ToObject( ReceiptDefinitionStr );
+                _receiptDef = CswSerialize<CswNbtReceivingDefinition>.ToObject( ReceiptDefinitionStr );
             }
 
-            public CswNbtReceivingDefiniton ReceiptDef { get { return _receiptDef; } }
+            public CswNbtReceivingDefinition ReceiptDef { get { return _receiptDef; } }
 
             public int CountNumberContainersToCreate()
             {

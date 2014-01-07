@@ -79,7 +79,7 @@ namespace ChemSW.Nbt.Actions
             return ret;
         } // makeContainer()
 
-        public JObject receiveMaterial( CswNbtReceivingDefiniton ReceiptDefinition )
+        public JObject receiveMaterial( CswNbtReceivingDefinition ReceiptDefinition )
         {
             JObject Ret = new JObject();
 
@@ -139,7 +139,7 @@ namespace ChemSW.Nbt.Actions
             return Ret;
         }
 
-        public CswNbtReceivingDefiniton receiveContainers( CswNbtReceivingDefiniton ReceiptDef, ref int NodesProcessed, int MaxProcessed )
+        public CswNbtReceivingDefinition receiveContainers( CswNbtReceivingDefinition ReceiptDef, ref int NodesProcessed, int MaxProcessed )
         {
             CswNbtMetaDataNodeType ContainerNt = _CswNbtResources.MetaData.getNodeType( ReceiptDef.ContainerNodeTypeId );
 
@@ -306,7 +306,7 @@ namespace ChemSW.Nbt.Actions
 
         #region Private Helper Functions
 
-        private CswNbtNode _makeReceiptLot( CswPrimaryKey MaterialId, CswNbtReceivingDefiniton ReceiptDef, DateTime ExpirationDate )
+        private CswNbtNode _makeReceiptLot( CswPrimaryKey MaterialId, CswNbtReceivingDefinition ReceiptDef, DateTime ExpirationDate )
         {
             Action<CswNbtNode> AfterReceiptLot = delegate( CswNbtNode NewNode )
             {
@@ -332,7 +332,7 @@ namespace ChemSW.Nbt.Actions
             return ReceiptLot.Node;
         }
 
-        private void _attachCofA( CswPrimaryKey ReceiptLotId, CswNbtReceivingDefiniton ReceiptDef )
+        private void _attachCofA( CswPrimaryKey ReceiptLotId, CswNbtReceivingDefinition ReceiptDef )
         {
             CswNbtObjClassCofADocument CofADoc = _CswNbtResources.Nodes.GetNode( ReceiptDef.CofADocNodeId );
             if( null != CofADoc )

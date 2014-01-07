@@ -495,12 +495,6 @@
                 var printData = cswPrivate.printLabels.getPrintData();
                 container.LabelId = printData.LabelId;
                 container.PrinterId = printData.PrinterId;
-                
-                //Create the print job - no success callback
-                Csw.ajaxWcf.post({
-                    urlMethod: 'Containers/CreatePrintJob',
-                    data: container
-                });
             }
 
             Csw.ajaxWcf.post({

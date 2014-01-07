@@ -8,7 +8,7 @@ using Newtonsoft.Json.Linq;
 namespace NbtWebApp.Actions.Receiving
 {
     [DataContract]
-    public class CswNbtReceivingDefiniton
+    public class CswNbtReceivingDefinition
     {
         public int CountNumberContainersToMake()
         {

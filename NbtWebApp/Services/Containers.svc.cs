@@ -138,10 +138,10 @@ namespace NbtWebApp
         [WebInvoke( Method = "POST", UriTemplate = "Receive" )]
         [FaultContract( typeof( FaultException ) )]
         [Description( "Create Containers" )]
-        public CswNbtWebServiceReceiving.CswNbtReceivingDefinitonReturn Receive( CswNbtReceivingDefiniton Request )
+        public CswNbtWebServiceReceiving.CswNbtReceivingDefinitionReturn Receive( CswNbtReceivingDefinition Request )
         {
-            CswNbtWebServiceReceiving.CswNbtReceivingDefinitonReturn Ret = new CswNbtWebServiceReceiving.CswNbtReceivingDefinitonReturn();
-            var GetViewDriverType = new CswWebSvcDriver<CswNbtWebServiceReceiving.CswNbtReceivingDefinitonReturn, CswNbtReceivingDefiniton>(
+            CswNbtWebServiceReceiving.CswNbtReceivingDefinitionReturn Ret = new CswNbtWebServiceReceiving.CswNbtReceivingDefinitionReturn();
+            var GetViewDriverType = new CswWebSvcDriver<CswNbtWebServiceReceiving.CswNbtReceivingDefinitionReturn, CswNbtReceivingDefinition>(
                 CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
                 ReturnObj : Ret,
                 WebSvcMethodPtr : CswNbtWebServiceReceiving.ReceiveMaterial,

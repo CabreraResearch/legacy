@@ -12,17 +12,17 @@ namespace ChemSW.Nbt.Actions
     public class CswNbtWebServiceReceiving
     {
         [DataContract]
-        public class CswNbtReceivingDefinitonReturn: CswWebSvcReturn
+        public class CswNbtReceivingDefinitionReturn: CswWebSvcReturn
         {
-            public CswNbtReceivingDefinitonReturn()
+            public CswNbtReceivingDefinitionReturn()
             {
-                Data = new CswNbtReceivingDefiniton();
+                Data = new CswNbtReceivingDefinition();
             }
             [DataMember]
-            public CswNbtReceivingDefiniton Data;
+            public CswNbtReceivingDefinition Data;
         }
 
-        public static void ReceiveMaterial( ICswResources CswResources, CswNbtReceivingDefinitonReturn Response, CswNbtReceivingDefiniton ReceivingDefiniton )
+        public static void ReceiveMaterial( ICswResources CswResources, CswNbtReceivingDefinitionReturn Response, CswNbtReceivingDefinition ReceivingDefiniton )
         {
             CswNbtResources NbtResources = (CswNbtResources) CswResources;
             CswNbtActReceiving ActReceiving = new CswNbtActReceiving( NbtResources, ReceivingDefiniton.MaterialNodeId );
