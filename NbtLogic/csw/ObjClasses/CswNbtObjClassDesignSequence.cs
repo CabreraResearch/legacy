@@ -58,7 +58,7 @@ namespace ChemSW.Nbt.ObjClasses
                 CswNbtSequenceValue NextSequenceValue = new CswNbtSequenceValue( _CswNbtResources, RelationalId.PrimaryKey );
                 if( null != NextSequenceValue )
                 {
-                    NextValue.Text = NextSequenceValue.Current;
+                    NextValue.Text = NextSequenceValue.getCurrent();
                 }
             }
 
