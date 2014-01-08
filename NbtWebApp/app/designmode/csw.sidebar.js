@@ -145,7 +145,6 @@
                 cswPrivate.ajax.designNodeType = Csw.ajaxWcf.post({
                     urlMethod: 'Design/getDesignNodeType',
                     data: cswPrivate.tabState.nodetypeid,
-                    async: false,
                     success: function (data) {
                         if (false === Csw.isNullOrEmpty(data)) {
                             cswPrivate.designNodeType.nodeid = data.NodePk;
@@ -196,7 +195,7 @@
                     LayoutType: 'Edit' //always be edit? how will the user choose to add to the add-layout??
                 };
 
-                cswPrivate.ajax.addLayoutProps = Csw.ajax.post({
+                cswPrivate.ajax.addLayoutProps = Csw.ajax.deprecatedWsNbt({
                     urlMethod: 'getPropertiesForLayoutAdd',
                     data: ajaxdata,
                     success: function (data) {
@@ -253,7 +252,7 @@
                     autoLoad: false
                 });
 
-                cswPrivate.ajax.fieldTypes = Csw.ajax.post({
+                cswPrivate.ajax.fieldTypes = Csw.ajax.deprecatedWsNbt({
                     urlMethod: 'getFieldTypes',
                     success: function (data) {
                         var fieldTypes = [];
