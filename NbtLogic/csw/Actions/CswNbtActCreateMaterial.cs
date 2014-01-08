@@ -482,7 +482,7 @@ namespace ChemSW.Nbt.Actions
                         CswPrimaryKey SDSNodeId = new CswPrimaryKey();
                         if( null != MaterialObj["sdsDocId"] )
                         {
-                            SDSNodeId.FromString( MaterialObj["sdsnodeid"].ToString() );
+                            SDSNodeId.FromString( MaterialObj["sdsDocId"].ToString() );
                             JObject SDSProps = CswConvert.ToJObject( MaterialObj["sdsprops"] );
                             Receiving.commitSDSDocNode( NodeAsMaterial.NodeId, SDSNodeId, SDSProps );
                         }

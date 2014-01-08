@@ -702,7 +702,24 @@ namespace ChemSW.Nbt.Schema
                     ICswNbtFieldTypeRule Rule = _CswNbtSchemaModTrnsctn.MetaData.getFieldType( FieldType ).getFieldTypeRule();
                     foreach( CswNbtFieldTypeAttribute Attr in Rule.getAttributes() )
                     {
-                        if( string.Empty != Attr.Column && CswNbtResources.UnknownEnum != Attr.Column )
+                        if( string.Empty != Attr.Column &&
+                            CswNbtResources.UnknownEnum != Attr.Column &&
+                            CswEnumNbtPropertyAttributeColumn.Auditlevel != Attr.Column &&
+                            CswEnumNbtPropertyAttributeColumn.Iscompoundunique != Attr.Column &&
+                            //CswEnumNbtPropertyAttributeColumn.Displayconditionfilter != Attr.Column &&
+                            CswEnumNbtPropertyAttributeColumn.Filterpropid != Attr.Column &&
+                            //CswEnumNbtPropertyAttributeColumn.Displayconditionsubfield != Attr.Column &&
+                            //CswEnumNbtPropertyAttributeColumn.Displayconditionvalue != Attr.Column &&
+                            CswEnumNbtPropertyAttributeColumn.Fieldtypeid != Attr.Column &&
+                            CswEnumNbtPropertyAttributeColumn.Helptext != Attr.Column &&
+                            CswEnumNbtPropertyAttributeColumn.Nodetypeid != Attr.Column &&
+                            CswEnumNbtPropertyAttributeColumn.Objectclasspropid != Attr.Column &&
+                            CswEnumNbtPropertyAttributeColumn.Propname != Attr.Column &&
+                            CswEnumNbtPropertyAttributeColumn.Readonly != Attr.Column &&
+                            CswEnumNbtPropertyAttributeColumn.Isrequired != Attr.Column &&
+                            CswEnumNbtPropertyAttributeColumn.Servermanaged != Attr.Column &&
+                            CswEnumNbtPropertyAttributeColumn.Isunique != Attr.Column &&
+                            CswEnumNbtPropertyAttributeColumn.Usenumbering != Attr.Column )
                         {
                             CswNbtMetaDataNodeTypeProp thisNTP = NodeTypePropNT.getNodeTypeProp( Attr.Name );
                             _addJctRow( jctTable, thisNTP, NodeTypePropNT.TableName, Attr.Column, Attr.SubFieldName );

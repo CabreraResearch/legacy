@@ -11,7 +11,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Property Nammes
         /// </summary>
-        public new sealed class PropertyName: CswNbtObjClass.PropertyName
+        public new sealed class PropertyName : CswNbtObjClass.PropertyName
         {
             public const string Material = "Material";
             public const string Type = "Type";
@@ -66,7 +66,11 @@ namespace ChemSW.Nbt.ObjClasses
             return RetCopy;
         }
 
-        public CswNbtObjClassInventoryLevel( CswNbtResources CswNbtResources, CswNbtNode Node ) : base( CswNbtResources, Node ) {}
+        public CswNbtObjClassInventoryLevel( CswNbtResources CswNbtResources, CswNbtNode Node )
+            : base( CswNbtResources, Node )
+        {
+            _LevelMgr = new CswNbtSdInventoryLevelMgr( _CswNbtResources );
+        }
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
@@ -74,7 +78,7 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         #region Inherited Events
-        
+
         protected override void afterPopulateProps()
         {
             Level.SetOnPropChange( OnLevelPropChange );
@@ -149,7 +153,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropComments CurrentQuantityLog { get { return _CswNbtNode.Properties[PropertyName.CurrentQuantityLog]; } }
 
         #endregion
-    
+
     }//CswNbtObjClassInventoryLevel
 
 }//namespace ChemSW.Nbt.ObjClasses
