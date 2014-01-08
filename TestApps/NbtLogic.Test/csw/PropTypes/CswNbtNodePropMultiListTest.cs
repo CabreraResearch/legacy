@@ -16,14 +16,13 @@ namespace ChemSW.Nbt.Test.PropTypes
         [SetUp]
         public void MyTestInitialize()
         {
-            TestData = new TestData();
+            TestData = new TestData{ FinalizeNodes = true };
         }
 
         [TearDown]
         public void MyTestCleanup()
         {
-            TestData.DeleteTestNodes();
-            TestData.RevertNodeTypePropAttributes();
+            TestData.Destroy();
         }
 
         #endregion
