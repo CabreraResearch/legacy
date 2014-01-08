@@ -33,7 +33,7 @@
                 removeTempStatus: true,
                 viewid: '',
                 nodename: '',
-                    nodetypename: '',
+                nodetypename: '',
                 EditMode: Csw.enums.editMode.Edit,
                 ReadOnly: false,
                 Config: false,
@@ -898,20 +898,20 @@
                         isButton: true,
                         onClick: function () {
 
-//                                // Old layout editor
-//                            cswPrivate.clearTabs();
-//                            $.CswDialog('EditLayoutDialog', editLayoutOpt);
+                            // Old layout editor
+                            //cswPrivate.clearTabs();
+                            //$.CswDialog('EditLayoutDialog', editLayoutOpt);
 
-                                 //Uncomment this out for the new sidebar
-                                 var div = Csw.designmode.factory(Csw.main.sidebarDiv, 'sidebar');
-                                 div.sidebar({
-                                     name: 'newsidebar',
-                                     tabState: cswPrivate.tabState,
-                                     Refresh: function () {
-                                         cswPrivate.tabState.Config = false;
-                                         cswPrivate.getTabs();
-                                     }                               
-                                });
+                            //Uncomment this out for the new sidebar
+                            var div = Csw.designmode.factory(Csw.main.sidebarDiv, 'sidebar');
+                            div.sidebar({
+                                name: 'newsidebar',
+                                tabState: cswPrivate.tabState,
+                                Refresh: function () {
+                                    cswPrivate.tabState.Config = false;
+                                    cswPrivate.getTabs();
+                                }
+                            });
                         }
                     });
                     cswPrivate.toggleConfigIcon(false === cswPrivate.isMultiEdit());
@@ -1202,7 +1202,7 @@
                     cswPrivate.onTearDownProps();
                     cswPrivate.tabState.propertyData = propData;
                     cswPrivate.getPropsImpl(cswPrivate.tabState.tabid);
-                    
+
                     // Case 30885: Refresh the identity tab
                     cswPrivate.identityForm.empty();
                     cswPrivate.makeIdentityTab();
@@ -1212,7 +1212,7 @@
             }
         };
 
-        cswPublic.refreshOnAdd = function(nodeState) {
+        cswPublic.refreshOnAdd = function (nodeState) {
             Csw.publish('onAnyNodeButtonClickFinish', true);
             Csw.tryExec(cswPrivate.onSave, cswPublic.getNodeId(), cswPublic.getNodeKey(), cswPrivate.tabcnt, nodeState.nodename, nodeState.nodelink);
             if (false == cswPrivate.isInDom()) {

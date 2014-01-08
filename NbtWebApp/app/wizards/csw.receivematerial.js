@@ -40,13 +40,12 @@
                 cofaDocId: '',
                 receiptLotTypeId: '',
                 receiptLotId: '',
-                requestitem: {}
+                requestitem: {},
+                printLabels: false
             },
-            printBarcodes: true,
             amountsGrid: null,
             saveError: false,
-            manufacturerLotInfoChanged: false,
-            printLabels: false
+            manufacturerLotInfoChanged: false
         };
 
         var cswPublic = {};
@@ -282,7 +281,6 @@
                             },
                             onSuccess: function () {
                                 makeAmountsGrid();
-                                makeBarcodeCheckBox();
                             }
                         });
                         //Container Sizes and Amounts
@@ -299,26 +297,6 @@
                                 customBarcodes: cswPrivate.state.customBarcodes,
                                 nodeTypeName: cswPrivate.state.nodetypename
                             });
-                        };
-                        //Print Barcodes Checkbox
-                        var makeBarcodeCheckBox = function () {
-                            cswPrivate.barcodeCheckBoxDiv = cswPrivate.barcodeCheckBoxDiv || cswPrivate['divStep' + StepNo].div();
-                            cswPrivate.barcodeCheckBoxDiv.empty();
-
-                            var checkBoxTable = cswPrivate.barcodeCheckBoxDiv.table({
-                                cellvalign: 'middle'
-                            });
-                            var printBarcodesCheckBox = checkBoxTable.cell(1, 1).checkBox({
-                                checked: true,
-                                onChange: Csw.method(function () {
-                                    if (printBarcodesCheckBox.checked()) {
-                                        cswPrivate.printBarcodes = true;
-                                    } else {
-                                        cswPrivate.printBarcodes = false;
-                                    }
-                                })
-                            });
-                            checkBoxTable.cell(1, 2).span({ text: 'Print barcode labels for new containers' });
                         };
                         cswPrivate['step' + StepNo + 'Complete'] = true;
                     }
@@ -430,7 +408,7 @@
                     cswPrivate.toggleStepButtons(StepNo);
 
                     if (false === cswPrivate['step' + StepNo + 'Complete']) {
-                        cswPrivate.setStepHeader(StepNo, 'Would you like to print labels?');
+                        cswPrivate.setStepHeader(StepNo, 'Print barcode labels for new containers');
 
                         var printLabelsTbl = cswPrivate['divStep' + StepNo].table().css({
                             'padding-top': '20px'

@@ -16,6 +16,7 @@
         Csw.main.register('mainMenuDiv', Csw.domNode({ ID: 'MainMenuDiv' }));
         Csw.main.register('rightDiv', Csw.domNode({ ID: 'RightDiv' }));
         Csw.main.register('searchDiv', Csw.domNode({ ID: 'SearchDiv' }));
+        Csw.main.register('sidebarDiv', Csw.domNode({ ID: 'SidebarDiv' }));
         Csw.main.register('viewSelectDiv', Csw.domNode({ ID: 'ViewSelectDiv' }));
         Csw.main.register('watermark', Csw.domNode({ ID: 'watermark' }));
         
