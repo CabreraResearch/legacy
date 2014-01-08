@@ -41,35 +41,39 @@ namespace ChemSW.Nbt.Test.Security
             _SprocketNt = _TestData.CswNbtResources.MetaData.getNodeTypeFirstVersion( "CswPermit Sprocket" );
             if( null == _SprocketNt )
             {
-                _SprocketNt = _TestData.CswNbtResources.MetaData.makeNewNodeTypeDeprecated( _GenericOc.ObjectClassId, "CswPermit Sprocket", "CswPermit" );
+                _SprocketNt = _TestData.CswNbtResources.MetaData.makeNewNodeTypeNew( new CswNbtWcfMetaDataModel.NodeType( _GenericOc )
+                {
+                    NodeTypeName = "CswPermit Sprocket",
+                    Category = "CswPermit"
+                } );
 
                 _FirstTab = _SprocketNt.getNodeTypeTab( "CswPermit Sprocket" );
                 _SecondTab = _SprocketNt.getNodeTypeTab( "Identity" );
 
-                _NoAttributeNtp = _TestData.CswNbtResources.MetaData.makeNewPropDeprecated( _SprocketNt, CswEnumNbtFieldType.Text, "Name", _FirstTab.TabId );
+                _NoAttributeNtp = _TestData.CswNbtResources.MetaData.makeNewPropNew(
+                    new CswNbtWcfMetaDataModel.NodeTypeProp( _SprocketNt, _TestData.CswNbtResources.MetaData.getFieldType( CswEnumNbtFieldType.Text ), "Name" ) );
                 _NoAttributeNtp.updateLayout( CswEnumNbtLayoutType.Add, DoMove: false );
                 _NoAttributeNtp.updateLayout( CswEnumNbtLayoutType.Edit, DoMove: false, TabId: _FirstTab.TabId );
                 _NoAttributeNtp.updateLayout( CswEnumNbtLayoutType.Edit, DoMove: false, TabId: _SecondTab.TabId );
 
-                _ServerManagedNtp = _TestData.CswNbtResources.MetaData.makeNewPropDeprecated( _SprocketNt, CswEnumNbtFieldType.Text, "Description", _FirstTab.TabId );
-                //_ServerManagedNtp.ServerManaged = true;
+                _ServerManagedNtp = _TestData.CswNbtResources.MetaData.makeNewPropNew(
+                    new CswNbtWcfMetaDataModel.NodeTypeProp( _SprocketNt, _TestData.CswNbtResources.MetaData.getFieldType( CswEnumNbtFieldType.Text ), "Description" ) );
                 _ServerManagedNtp.DesignNode.ServerManaged.Checked = CswEnumTristate.True;
                 _ServerManagedNtp.updateLayout( CswEnumNbtLayoutType.Add, DoMove: false );
                 _ServerManagedNtp.updateLayout( CswEnumNbtLayoutType.Edit, DoMove: false, TabId: _FirstTab.TabId );
                 _ServerManagedNtp.updateLayout( CswEnumNbtLayoutType.Edit, DoMove: false, TabId: _SecondTab.TabId );
 
-                _ReadOnlyNtp = _TestData.CswNbtResources.MetaData.makeNewPropDeprecated( _SprocketNt, CswEnumNbtFieldType.Text, "Status", _FirstTab.TabId );
-                //_ReadOnlyNtp.ReadOnly = true;
-                _ServerManagedNtp.DesignNode.ReadOnly.Checked = CswEnumTristate.True;
+                _ReadOnlyNtp = _TestData.CswNbtResources.MetaData.makeNewPropNew(
+                    new CswNbtWcfMetaDataModel.NodeTypeProp( _SprocketNt, _TestData.CswNbtResources.MetaData.getFieldType( CswEnumNbtFieldType.Text ), "Status" ) );
+                _ReadOnlyNtp.DesignNode.ReadOnly.Checked = CswEnumTristate.True;
                 _ReadOnlyNtp.updateLayout( CswEnumNbtLayoutType.Add, DoMove: false );
                 _ReadOnlyNtp.updateLayout( CswEnumNbtLayoutType.Edit, DoMove: false, TabId: _FirstTab.TabId );
                 _ReadOnlyNtp.updateLayout( CswEnumNbtLayoutType.Edit, DoMove: false, TabId: _SecondTab.TabId );
 
-                _RequiredReadOnlyNtp = _TestData.CswNbtResources.MetaData.makeNewPropDeprecated( _SprocketNt, CswEnumNbtFieldType.Text, "Type", _FirstTab.TabId );
-                //_RequiredReadOnlyNtp.ReadOnly = true;
-                //_RequiredReadOnlyNtp.IsRequired = true;
-                _ServerManagedNtp.DesignNode.ReadOnly.Checked = CswEnumTristate.True;
-                _ServerManagedNtp.DesignNode.Required.Checked = CswEnumTristate.True;
+                _RequiredReadOnlyNtp = _TestData.CswNbtResources.MetaData.makeNewPropNew(
+                    new CswNbtWcfMetaDataModel.NodeTypeProp( _SprocketNt, _TestData.CswNbtResources.MetaData.getFieldType( CswEnumNbtFieldType.Text ), "Type" ) );
+                _RequiredReadOnlyNtp.DesignNode.ReadOnly.Checked = CswEnumTristate.True;
+                _RequiredReadOnlyNtp.DesignNode.Required.Checked = CswEnumTristate.True;
                 _RequiredReadOnlyNtp.updateLayout( CswEnumNbtLayoutType.Add, DoMove: false );
                 _RequiredReadOnlyNtp.updateLayout( CswEnumNbtLayoutType.Edit, DoMove: false, TabId: _FirstTab.TabId );
                 _RequiredReadOnlyNtp.updateLayout( CswEnumNbtLayoutType.Edit, DoMove: false, TabId: _SecondTab.TabId );

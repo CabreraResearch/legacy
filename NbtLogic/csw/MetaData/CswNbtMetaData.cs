@@ -1098,7 +1098,10 @@ namespace ChemSW.Nbt.MetaData
                     NewNtpNode.Unique.Checked = CswConvert.ToTristate( NtpModel.IsUnique );
                     CswNbtObjClassDesignNodeType NTNode = _CswNbtMetaDataResources.CswNbtResources.Nodes.getNodeByRelationalId( new CswPrimaryKey( "nodetypes", NtpModel.NodeTypeId ) );
                     NewNtpNode.NodeTypeValue.RelatedNodeId = NTNode.NodeId;
-                    NewNtpNode.ObjectClassPropName.Value = NtpModel.ObjectClassPropToCopy.ObjectClassPropId.ToString();
+                    if( null != NtpModel.ObjectClassPropToCopy )
+                    {
+                        NewNtpNode.ObjectClassPropName.Value = NtpModel.ObjectClassPropToCopy.ObjectClassPropId.ToString();
+                    }
                     NewNtpNode.PropName.Text = NtpModel.PropName;
                     NewNtpNode.ReadOnly.Checked = CswConvert.ToTristate( NtpModel.ReadOnly );
                     NewNtpNode.UseNumbering.Checked = CswConvert.ToTristate( NtpModel.UseNumbering );
