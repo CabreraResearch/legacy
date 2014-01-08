@@ -817,8 +817,9 @@ namespace ChemSW.Nbt.ObjClasses
 
         private void _updateRequestItems( string RequestItemType )
         {
-            if( RequestItemType == CswNbtObjClassRequestItem.Types.ContainerMove ||
-             RequestItemType == CswNbtObjClassRequestItem.Types.ContainerDispose )
+            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Requesting ) &&
+                ( RequestItemType == CswNbtObjClassRequestItem.Types.ContainerMove ||
+                  RequestItemType == CswNbtObjClassRequestItem.Types.ContainerDispose ) )
             {
                 CswNbtView RequestItemView = new CswNbtView( _CswNbtResources );
                 CswNbtMetaDataObjectClass RequestItemOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestItemClass );
