@@ -192,13 +192,16 @@ namespace ChemSW.Nbt
 
             if( canView )
             {
-                CswNbtMetaDataObjectClass ContainerClass = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerClass );
-                if( null != ContainerClass )
+                if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Requesting ) )
                 {
-                    CswNbtMetaDataObjectClassProp RequestProp = _CswNbtResources.MetaData.getObjectClassProp( ContainerClass.ObjectClassId, CswNbtObjClassContainer.PropertyName.Request );
-                    if( NTProp.ObjectClassPropId == RequestProp.PropId )
+                    CswNbtMetaDataObjectClass ContainerClass = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerClass );
+                    if( null != ContainerClass )
                     {
-                        canView = CswNbtObjClassContainer.canContainer( _CswNbtResources, _CswNbtResources.Actions[CswEnumNbtActionName.Submit_Request], PermissionGroupId );
+                        CswNbtMetaDataObjectClassProp RequestProp = _CswNbtResources.MetaData.getObjectClassProp( ContainerClass.ObjectClassId, CswNbtObjClassContainer.PropertyName.Request );
+                        if( NTProp.ObjectClassPropId == RequestProp.PropId )
+                        {
+                            canView = CswNbtObjClassContainer.canContainer( _CswNbtResources, _CswNbtResources.Actions[CswEnumNbtActionName.Submit_Request], PermissionGroupId );
+                        }
                     }
                 }
             }
