@@ -44,38 +44,19 @@
 
             if (cswPrivate.DateFormat in cswPrivate.dateFormats && undefined != cswPublic.dateBox) {
                 $.validator.addMethod('validateDate', function (value, element) {
-
-                    var ret = true;
-
-                    if (cswPrivate.isRequired || false == Csw.isNullOrEmpty(cswPublic.dateBox.val())) {
-                        var dateExpression = cswPrivate.dateFormats[cswPrivate.DateFormat];
-                        ret = dateExpression.test(cswPublic.val().date);
-                    }
-
-                    return ret;
-
+                    return cswPublic.isDateValid(value);
                 }, 'Please select a valid date');
                 cswPublic.dateBox.addClass('validateDate');
             }//if preferredFormat in dateFormats && undefined != cswPublic.dateBox
 
             if (cswPrivate.TimeFormat in cswPrivate.timeFormats && undefined != cswPublic.timeBox) {
                 $.validator.addMethod('validateTime', function (value, element) {
-
-                    var ret = true;
-
-                    if (cswPrivate.isRequired || false == Csw.isNullOrEmpty(cswPublic.timeBox.val())) {
-                        var timeExpression = cswPrivate.timeFormats[cswPrivate.TimeFormat];
-                        ret = timeExpression.test(cswPublic.val().time);
-                    }
-
-                    return ret;
-
+                    return cswPublic.isTimeValid(value);
                 }, 'Please enter a valid time in the format ' + cswPrivate.TimeFormat);
                 cswPublic.timeBox.addClass('validateTime');
             }//if cswPrivate.TimeFormat in cswPrivate.timeFormats && undefined != cswPublic.timeBox
 
         };//function addValidators()
-
 
         (function () {
             if (options) {
@@ -188,6 +169,30 @@
             }
             return ret;
         };
+
+        cswPublic.isDateValid = function (dateIn) {
+            //incredibly irritating, but after spending 2 hours tracing down the jQuery stack I found a jQuery bug with the way our validator is called, so we have to be able to accept an optional parameter
+            var date = dateIn || cswPublic.dateBox.val();
+            var ret = true;
+            if (cswPrivate.isRequired || false == Csw.isNullOrEmpty(date)) {
+                var dateExpression = cswPrivate.dateFormats[cswPrivate.DateFormat];
+                ret = dateExpression.test(date);
+            }
+            return ret;
+        };
+
+        cswPublic.isTimeValid = function (timeIn) {
+            //incredibly irritating, but after spending 2 hours tracing down the jQuery stack I found a jQuery bug with the way our validator is called, so we have to be able to accept an optional parameter
+            var time = timeIn || cswPublic.timeBox.val();
+            var ret = true;
+            if (cswPrivate.isRequired || false == Csw.isNullOrEmpty(time)) {
+                var timeExpression = cswPrivate.timeFormats[cswPrivate.TimeFormat];
+                ret = timeExpression.test(time);
+            }
+            return ret;
+        };
+
+
 
         return cswPublic;
     });

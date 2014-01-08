@@ -65,38 +65,38 @@
             cswPrivate.LocationName = locationControl.selectedName();
             //StartDate
             cswPrivate.controlTbl.cell(2, 1).span({ text: 'Start Date:' }).addClass('propertylabel');
-            var startDatePicker = cswPrivate.controlTbl.cell(2, 2).form().dateTimePicker({
+            cswPrivate.startDatePicker = cswPrivate.controlTbl.cell(2, 2).form().dateTimePicker({
                 name: 'startDate',
                 Date: cswPrivate.getCurrentDate(),
                 isRequired: true,
                 maxDate: cswPrivate.getCurrentDate(),
                 onChange: function () {
-                    if (startDatePicker.val().date > cswPrivate.EndDate) {
-                        startDatePicker.setMaxDate(cswPrivate.EndDate);
+                    if (cswPrivate.startDatePicker.val().date > cswPrivate.EndDate) {
+                        cswPrivate.startDatePicker.setMaxDate(cswPrivate.EndDate);
                     }
-                    cswPrivate.StartDate = startDatePicker.val().date;
-                    startDatePicker.dateBox.$.valid();
+                    cswPrivate.StartDate = cswPrivate.startDatePicker.val().date;
+                    cswPrivate.startDatePicker.dateBox.$.valid();
                 }
             });
-            cswPrivate.StartDate = startDatePicker.val().date;
+            cswPrivate.StartDate = cswPrivate.startDatePicker.val().date;
             //EndDate
             cswPrivate.controlTbl.cell(3, 1).span({ text: 'End Date:' }).addClass('propertylabel');
-            var endDatePicker = cswPrivate.controlTbl.cell(3, 2).form().dateTimePicker({
+            cswPrivate.endDatePicker = cswPrivate.controlTbl.cell(3, 2).form().dateTimePicker({
                 name: 'endDate',
                 Date: cswPrivate.getCurrentDate(),
                 isRequired: true,
                 maxDate: cswPrivate.getCurrentDate(),
                 onChange: function () {
-                    if (endDatePicker.val().date > cswPrivate.getCurrentDate()) {
-                        endDatePicker.setMaxDate(cswPrivate.getCurrentDate());
+                    if (cswPrivate.endDatePicker.val().date > cswPrivate.getCurrentDate()) {
+                        cswPrivate.endDatePicker.setMaxDate(cswPrivate.getCurrentDate());
                     }
-                    cswPrivate.EndDate = endDatePicker.val().date;
-                    startDatePicker.setMaxDate(cswPrivate.EndDate);
-                    cswPrivate.StartDate = startDatePicker.val().date;
-                    endDatePicker.dateBox.$.valid();
+                    cswPrivate.EndDate = cswPrivate.endDatePicker.val().date;
+                    cswPrivate.startDatePicker.setMaxDate(cswPrivate.EndDate);
+                    cswPrivate.StartDate = cswPrivate.startDatePicker.val().date;
+                    cswPrivate.endDatePicker.dateBox.$.valid();
                 }
             });
-            cswPrivate.EndDate = endDatePicker.val().date;
+            cswPrivate.EndDate = cswPrivate.endDatePicker.val().date;
             //UpdateButton
             var updateButton = cswPrivate.controlTbl.cell(4, 2).buttonExt({
                 enabledText: 'View Report',
@@ -104,7 +104,7 @@
                 tooltip: { title: 'View Report' },
                 icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.magglass),
                 onClick: function () {
-                    if (startDatePicker.dateBox.$.valid() && endDatePicker.dateBox.$.valid()) {
+                    if (cswPrivate.startDatePicker.isDateValid() && cswPrivate.endDatePicker.isDateValid()) {
                         cswPrivate.loadGrid({
                             LocationId: cswPrivate.LocationId,
                             StartDate: cswPrivate.StartDate,
