@@ -488,7 +488,14 @@ namespace ChemSW.Nbt.ServiceDrivers
             CswEnumNbtFieldType FieldType = Prop.getFieldTypeValue();
             PropObj["id"] = PropIdAttr.ToString();
             PropObj["name"] = Prop.PropNameWithQuestionNo;
-            PropObj["helptext"] = PropWrapper[CswEnumNbtPropertyAttributeName.HelpText];
+            if( null != PropWrapper )
+            {
+                PropObj["helptext"] = PropWrapper[CswEnumNbtPropertyAttributeName.HelpText];
+            }
+            else
+            {
+                PropObj["helptext"] = Prop.HelpText;
+            }
             PropObj["fieldtype"] = FieldType.ToString();
             PropObj["ocpname"] = Prop.getObjectClassPropName();
             Int32 DisplayRow = getUniqueRow( Layout.DisplayRow, Layout.DisplayColumn, _DisplayRowsAndCols );
