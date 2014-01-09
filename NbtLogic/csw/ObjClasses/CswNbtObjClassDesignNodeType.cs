@@ -466,6 +466,8 @@ namespace ChemSW.Nbt.ObjClasses
                 TabMap.Add( TabNode.RelationalId.PrimaryKey, TabCopy );
             }
 
+            // case 31518 - props won't be able to see the tab if we don't do this
+            _CswNbtResources.MetaData.refreshAll();
 
             // Copy Props
             Collection<CswNbtObjClassDesignNodeTypeProp> PropNodes = getPropNodes();
@@ -529,9 +531,8 @@ namespace ChemSW.Nbt.ObjClasses
                 }
             }
 
-
-            // Fix the name template
-            //NewNodeType.setNameTemplateText( OldNodeType.getNameTemplateText() );
+            // Fix the name template, now that properties are in place
+            NodeTypeCopy.postChanges( true );
 
             //if( OnCopyNodeType != null )
             //    OnCopyNodeType( OldNodeType, NewNodeType );
