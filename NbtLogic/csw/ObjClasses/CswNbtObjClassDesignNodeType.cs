@@ -288,11 +288,8 @@ namespace ChemSW.Nbt.ObjClasses
         {
             if( null != RelationalNodeType )
             {
-                // Set NameTemplateValue from NameTemplateText
-                NameTemplateValue.Text = CswNbtMetaData.TemplateTextToTemplateValue( RelationalNodeType.getNodeTypeProps(), NameTemplateText.Text );
+                _syncNameTemplate();
             }
-
-            //_CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
         } //beforeWriteNode()
 
         public override void beforeDeleteNode() // bool DeleteAllRequiredRelatedNodes = false )
@@ -544,6 +541,12 @@ namespace ChemSW.Nbt.ObjClasses
 
         #endregion
 
+        private void _syncNameTemplate()
+        {
+            // Set NameTemplateValue from NameTemplateText
+            NameTemplateValue.Text = CswNbtMetaData.TemplateTextToTemplateValue( RelationalNodeType.getNodeTypeProps(), NameTemplateText.Text );
+        }
+
         #region Object class specific properties
 
         public CswNbtNodePropList AuditLevel { get { return ( _CswNbtNode.Properties[PropertyName.AuditLevel] ); } }
@@ -570,12 +573,13 @@ namespace ChemSW.Nbt.ObjClasses
                 }
                 newTemplate += CswNbtMetaData.MakeTemplateEntry( SelectedProp.PropName.Text );
                 NameTemplateText.Text = newTemplate;
+                _syncNameTemplate();
 
                 // Clear the selected value
                 NameTemplateAdd.RelatedNodeId = null;
                 NameTemplateAdd.CachedNodeName = string.Empty;
                 NameTemplateAdd.PendingUpdate = false;
-            }
+            } // if( null != SelectedProp )
         } // _NameTemplateAdd_Change()
 
         public CswNbtNodePropText NodeTypeName { get { return ( _CswNbtNode.Properties[PropertyName.NodeTypeName] ); } }
