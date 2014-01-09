@@ -89,6 +89,11 @@ namespace ChemSW.Nbt.PropTypes
             private set { _CswNbtNodePropData.SetPropRowValue( _TextSubField, Text ); }
         }
 
+        public ICswNbtMetaDataDefinitionObject MetaDataValue
+        {
+            get { return _CswNbtResources.MetaData.getDefinitionObject( Type, Id ); }
+        }
+
         private void _setValue( CswEnumNbtViewRelatedIdType inType, Int32 inId, string inText )
         {
             Type = inType;

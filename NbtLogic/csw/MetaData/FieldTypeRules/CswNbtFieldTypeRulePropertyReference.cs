@@ -286,14 +286,16 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                     OwnerFieldType = CswEnumNbtFieldType.PropertyReference,
                     Name = AttributeName.Relationship,
                     AttributeFieldType = CswEnumNbtFieldType.Relationship,
-                    Column = CswEnumNbtPropertyAttributeColumn.Fkvalue
+                    Column = CswEnumNbtPropertyAttributeColumn.Fkvalue,
+                    SubFieldName = CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID
                 } );
             ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
                 {
                     OwnerFieldType = CswEnumNbtFieldType.PropertyReference,
                     Name = AttributeName.RelatedProperty,
                     AttributeFieldType = CswEnumNbtFieldType.Relationship,
-                    Column = CswEnumNbtPropertyAttributeColumn.Valuepropid
+                    Column = CswEnumNbtPropertyAttributeColumn.Valuepropid,
+                    SubFieldName = CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID
                 } );
             ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
                 {

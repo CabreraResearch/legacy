@@ -362,6 +362,12 @@ namespace ChemSW.Nbt.MetaData
             return _CswNbtMetaDataResources.CswNbtMetaData.getObjectClass( ObjectClassId );
         }
 
+        // for ICswNbtMetaDataDefinitionObject
+        public IEnumerable<CswNbtMetaDataNodeType> getNodeTypes()
+        {
+            return new Collection<CswNbtMetaDataNodeType> { this };
+        }
+
         public CswEnumNbtObjectClass getObjectClassValue()
         {
             return _CswNbtMetaDataResources.CswNbtMetaData.getObjectClassValue( ObjectClassId );
