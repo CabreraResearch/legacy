@@ -51,6 +51,9 @@ namespace ChemSW.Nbt.Schema
                 throw new CswDniException( CswEnumErrorType.Error, "Administrator Role does not exist", "The Administrator Role is needed to configure a landing page for the Receiving Wizard" );
             }
 
+            /*
+             * Case 31560 -- this button is now a link on the left hand side so that it only appears conditionally
+             * 
             _CswNbtSchemaModTrnsctn.LandingPage.addLandingPageItem( CswEnumNbtLandingPageItemType.Link, new LandingPageData.Request()
                 {
                     ActionId = _CswNbtSchemaModTrnsctn.Actions[CswEnumNbtActionName.Receiving].ActionId.ToString(),
@@ -62,6 +65,7 @@ namespace ChemSW.Nbt.Schema
                     NewColumn = 1,
                     NewRow = 1
                 } );
+            */
 
 
             CswNbtMetaDataObjectClass ChemicalClass = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass );
