@@ -118,7 +118,8 @@ namespace ChemSW.Nbt.Actions
 
                 int TotalContainersToMake = ReceiptDefinition.CountNumberContainersToMake();
                 int Threshhold = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( "batchthreshold" ) );
-                if( TotalContainersToMake > Threshhold )
+                bool UseBatchOp = TotalContainersToMake > Threshhold;
+                if( UseBatchOp )
                 {
                     //Containers will be created in a batch op
                     CswNbtBatchOpReceiving ReceivingBatchOp = new CswNbtBatchOpReceiving( _CswNbtResources );
@@ -132,7 +133,7 @@ namespace ChemSW.Nbt.Actions
                 }
                 
                 CswNbtNode MaterialNode = _CswNbtResources.Nodes.GetNode( ReceiptDefinition.MaterialNodeId );
-                Ret = getLandingPageData( _CswNbtResources, MaterialNode );
+                Ret = getLandingPageData( _CswNbtResources, MaterialNode, UseBatchOp );
             }
 
             return Ret;
@@ -209,7 +210,7 @@ namespace ChemSW.Nbt.Actions
         /// <summary>
         /// Get a landing page for a Material
         /// </summary>
-        public static JObject getLandingPageData( CswNbtResources NbtResources, CswNbtNode MaterialNode, CswNbtView MaterialNodeView = null )
+        public static JObject getLandingPageData( CswNbtResources NbtResources, CswNbtNode MaterialNode, bool UseBatchOp, CswNbtView MaterialNodeView = null )
         {
             JObject Ret = new JObject();
             if( null != MaterialNode )
@@ -236,6 +237,13 @@ namespace ChemSW.Nbt.Actions
                 Ret["ActionLinks"][ActionLinkName] = new JObject();
                 Ret["ActionLinks"][ActionLinkName]["Text"] = MaterialNode.NodeName;
                 Ret["ActionLinks"][ActionLinkName]["ViewId"] = MaterialNodeView.SessionViewId.ToString();
+
+                if( UseBatchOp )
+                {
+                    Ret["ActionLinks"]["BatchOps"] = new JObject();
+                    Ret["ActionLinks"]["BatchOps"]["Text"] = "View Batch Operations";
+                    Ret["ActionLinks"]["BatchOps"]["ViewId"] = NbtResources.ViewSelect.getViewIdByName( "My Batch Operations", CswEnumNbtViewVisibility.Global, null, null ).get();
+                }
             }
             return Ret;
         }

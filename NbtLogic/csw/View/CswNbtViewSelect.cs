@@ -228,6 +228,27 @@ namespace ChemSW.Nbt
             return ViewsTable.getTable( WhereClause );
         } // getViews()
 
+
+        public CswNbtViewId getViewIdByName( string ViewName, CswEnumNbtViewVisibility Visibility, CswPrimaryKey VisibilityRoleId, CswPrimaryKey VisibilityUserId )
+        {
+            CswTableSelect ViewsTable = _CswNbtResources.makeCswTableSelect( "CswNbtViewSelect_viewExists_select", "node_views" );
+            string WhereClause = "where viewname = '" + CswTools.SafeSqlParam( ViewName ) + "'";
+            if( Visibility == CswEnumNbtViewVisibility.Role )
+            {
+                WhereClause += " and visibility = 'Role' and roleid = " + VisibilityRoleId.PrimaryKey.ToString();
+            }
+            else if( Visibility == CswEnumNbtViewVisibility.User )
+            {
+                WhereClause += " and visibility = 'User' and userid = " + VisibilityUserId.PrimaryKey.ToString();
+            }
+            else
+            {
+                WhereClause += " and visibility = '" + Visibility.ToString() + "'";
+            }
+            return new CswNbtViewId(Convert.ToInt32(ViewsTable.getTable( new CswCommaDelimitedString("viewid"), WhereClause ).Rows[0]["viewid"]));
+        }
+
+
         /// <summary>
         /// Get a DataTable of all views in the database
         /// </summary>
