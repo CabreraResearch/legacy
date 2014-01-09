@@ -245,7 +245,7 @@ namespace ChemSW.Nbt
             {
                 WhereClause += " and visibility = '" + Visibility.ToString() + "'";
             }
-            return new CswNbtViewId(Convert.ToInt32(ViewsTable.getTable( new CswCommaDelimitedString("viewid"), WhereClause ).Rows[0]["viewid"]));
+            return new CswNbtViewId(Convert.ToInt32(ViewsTable.getTable( new CswCommaDelimitedString("nodeviewid"), WhereClause ).Rows[0]["nodeviewid"]));
         }
 
 
