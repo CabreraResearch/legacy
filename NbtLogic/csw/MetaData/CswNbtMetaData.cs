@@ -720,22 +720,23 @@ namespace ChemSW.Nbt.MetaData
                     NewNTNode.NameTemplateText.Text = NtModel.NameTemplate;
                     NewNTNode.NodeTypeName.Text = NtModel.NodeTypeName;
                     NewNTNode.ObjectClassProperty.Value = NtModel.ObjectClassId.ToString();
-                } );
+                    NewNTNode.Searchable.Checked = CswConvert.ToTristate( NtModel.Searchable );
 
-            //// Handle search defer
-            //CswNbtObjClassDesignNodeTypeProp DeferPropNode = null;
-            //if( Int32.MinValue != NtModel.SearchDeferObjectClassPropId )
-            //{
-            //    DeferPropNode = _CswNbtMetaDataResources.CswNbtResources.Nodes.getNodeByRelationalId( new CswPrimaryKey( "nodetype_props", NtModel.SearchDeferNodeTypePropId ) );
-            //}
-            //if( Int32.MinValue != NtModel.SearchDeferNodeTypePropId )
-            //{
-            //    DeferPropNode = _CswNbtMetaDataResources.CswNbtResources.Nodes.getNodeByRelationalId( new CswPrimaryKey( "nodetype_props", NtModel.SearchDeferNodeTypePropId ) );
-            //}
-            //if( null != DeferPropNode )
-            //{
-            //    NewNodeTypeNode.DeferSearchTo.RelatedNodeId = DeferPropNode.NodeId;
-            //}
+                    // Handle search defer
+                    CswNbtObjClassDesignNodeTypeProp DeferPropNode = null;
+                    if( Int32.MinValue != NtModel.SearchDeferObjectClassPropId )
+                    {
+                        DeferPropNode = _CswNbtMetaDataResources.CswNbtResources.Nodes.getNodeByRelationalId( new CswPrimaryKey( "nodetype_props", NtModel.SearchDeferNodeTypePropId ) );
+                    }
+                    if( Int32.MinValue != NtModel.SearchDeferNodeTypePropId )
+                    {
+                        DeferPropNode = _CswNbtMetaDataResources.CswNbtResources.Nodes.getNodeByRelationalId( new CswPrimaryKey( "nodetype_props", NtModel.SearchDeferNodeTypePropId ) );
+                    }
+                    if( null != DeferPropNode )
+                    {
+                        NewNTNode.DeferSearchTo.RelatedNodeId = DeferPropNode.NodeId;
+                    }
+                } );
 
             refreshAll();
 
@@ -884,14 +885,14 @@ namespace ChemSW.Nbt.MetaData
             // Handle search defer inheritance from object classes
             if( Int32.MinValue != NtModel.SearchDeferObjectClassPropId )
             {
-                if( CswNbtMetaDataObjectClass.NotSearchableValue != NtModel.SearchDeferObjectClassPropId )
-                {
-                    NewNodeType._DataRow["searchdeferpropid"] = CswConvert.ToDbVal( NewNodeType.getNodeTypePropByObjectClassProp( NtModel.SearchDeferObjectClassPropId ).PropId );
-                }
-                else
-                {
-                    NewNodeType._DataRow["searchdeferpropid"] = CswConvert.ToDbVal( CswNbtMetaDataObjectClass.NotSearchableValue );
-                }
+                //if( CswNbtMetaDataObjectClass.NotSearchableValue != NtModel.SearchDeferObjectClassPropId )
+                //{
+                NewNodeType._DataRow["searchdeferpropid"] = CswConvert.ToDbVal( NewNodeType.getNodeTypePropByObjectClassProp( NtModel.SearchDeferObjectClassPropId ).PropId );
+                //}
+                //else
+                //{
+                //    NewNodeType._DataRow["searchdeferpropid"] = CswConvert.ToDbVal( CswNbtMetaDataObjectClass.NotSearchableValue );
+                //}
             }
 
             if( OnMakeNewNodeType != null )

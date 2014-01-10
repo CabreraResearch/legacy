@@ -87,6 +87,12 @@ namespace ChemSW.Nbt.Schema
                         FkType = CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(),
                         FkValue = PropOC.ObjectClassId
                     } );
+                    CswNbtMetaDataObjectClassProp SearchableOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( NodeTypeOC )
+                    {
+                        PropName = CswNbtObjClassDesignNodeType.PropertyName.Searchable,
+                        FieldType = CswEnumNbtFieldType.Logical,
+                        IsRequired = true
+                    } );
                     CswNbtMetaDataObjectClassProp HasLabelOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( NodeTypeOC )
                     {
                         PropName = CswNbtObjClassDesignNodeType.PropertyName.HasLabel,
@@ -154,6 +160,7 @@ namespace ChemSW.Nbt.Schema
                     } );
 
                     _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( AuditLevelOCP, CswEnumAuditLevel.NoAudit.ToString() );
+                    _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( SearchableOCP, CswConvert.TristateToDbVal( CswEnumTristate.True ) );
                     _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( HasLabelOCP, CswConvert.TristateToDbVal( CswEnumTristate.False ) );
                     _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( LockedOCP, CswConvert.TristateToDbVal( CswEnumTristate.False ) );
                     _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( EnabledOCP, CswConvert.TristateToDbVal( CswEnumTristate.True ) );

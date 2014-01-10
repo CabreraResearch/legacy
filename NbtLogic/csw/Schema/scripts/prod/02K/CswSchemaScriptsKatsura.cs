@@ -13,6 +13,7 @@ namespace ChemSW.Nbt.Schema
                 {
                     // new CswUpdateDDL_02K_CaseXXXXX()
                     new CswUpdateDDL_02K_Case29311_AddRelationalColumn(),
+                    new CswUpdateDDL_02K_Case31616()
                 };
         } // _DDLScripts()
 
@@ -21,6 +22,7 @@ namespace ChemSW.Nbt.Schema
             return new Collection<CswUpdateSchemaTo>()
                 {
                     // new CswUpdateMetaData_02K_CaseXXXXX()
+                    new CswUpdateMetaData_02K_Case31616B(),
                     new CswUpdateMetaData_02K_Case29311()
                 };
         } // _MetaDataScripts()
