@@ -137,11 +137,13 @@ namespace ChemSW.Nbt.Schema
                 CswNbtViewRelationship DeferViewRel2 = DeferView.AddViewRelationship( DeferViewRel1, CswEnumNbtViewPropOwnerType.Second, NTPNodeTypeOCP, false );
                 DeferView.AddViewPropertyAndFilter( DeferViewRel2, NTPFieldTypeOCP,
                                                     FilterMode: CswEnumNbtFilterMode.Equals,
-                                                    Value: "Relationship" );
+                                                    SubFieldName: CswNbtFieldTypeRuleList.SubFieldName.Value,
+                                                    Value: _CswNbtSchemaModTrnsctn.MetaData.getFieldType( CswEnumNbtFieldType.Relationship ).FieldTypeId.ToString() );
                 DeferView.AddViewPropertyAndFilter( DeferViewRel2, NTPFieldTypeOCP,
                                                     Conjunction: CswEnumNbtFilterConjunction.Or,
                                                     FilterMode: CswEnumNbtFilterMode.Equals,
-                                                    Value: "Location" );
+                                                    SubFieldName: CswNbtFieldTypeRuleList.SubFieldName.Value,
+                                                    Value: _CswNbtSchemaModTrnsctn.MetaData.getFieldType( CswEnumNbtFieldType.Location ).FieldTypeId.ToString() );
                 DeferView.save();
 
                 // Add Properties and Tabs grids
