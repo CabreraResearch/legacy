@@ -66,14 +66,12 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-
-                if( null == _View )
+                Int32 ViewId = CswConvert.ToInt32( _CswNbtNodePropData[CswNbtFieldTypeRuleRelationship.AttributeName.View] );
+                if( Int32.MinValue != ViewId )
                 {
-                    //_View = _getView( _CswNbtResources, _CswNbtMetaDataNodeTypeProp );
-                    Int32 ViewId = CswConvert.ToInt32( _CswNbtNodePropData[CswNbtFieldTypeRuleRelationship.AttributeName.View] );
-                    if( Int32.MinValue != ViewId )
+                    _View = _getView( _CswNbtResources, new CswNbtViewId( ViewId ) );
+                    if( null != _View )
                     {
-                        _View = _getView( _CswNbtResources, new CswNbtViewId( ViewId ) );
                         _setRootRelationship( _View );
                     }
                 }

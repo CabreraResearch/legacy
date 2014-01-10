@@ -596,6 +596,10 @@ namespace ChemSW.Nbt.ObjClasses
                 CswNbtMetaDataNodeTypeProp NameProp = RelationalNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.Name );
                 NameProp.DefaultValue.AsText.Text = RelationalNodeType.NodeTypeName;
             }
+            if( false == CswTools.IsValidName( NodeTypeName.Text ) )
+            {
+                throw new CswDniException( CswEnumErrorType.Warning, "NodeType Name cannot contain special characters.  Only alphanumeric characters and spaces are allowed.", "" );
+            }
         } // _NodeTypeName_Change()
 
         public CswNbtNodePropList ObjectClassProperty { get { return ( _CswNbtNode.Properties[PropertyName.ObjectClass] ); } }

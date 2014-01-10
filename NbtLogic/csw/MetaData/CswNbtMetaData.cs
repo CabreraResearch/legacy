@@ -766,7 +766,7 @@ namespace ChemSW.Nbt.MetaData
             InsertedNodeTypesRow["searchdeferpropid"] = CswConvert.ToDbVal( NtModel.SearchDeferNodeTypePropId );    // see below for inheritance from object classes
             InsertedNodeTypesRow["nodecount"] = 0;
 
-            InsertedNodeTypesRow["oraviewname"] = CswTools.MakeOracleCompliantIdentifier( NtModel.NodeTypeName );
+            InsertedNodeTypesRow["oraviewname"] = CswFormat.MakeOracleCompliantIdentifier( NtModel.NodeTypeName );
 
             NodeTypesTable.Rows.Add( InsertedNodeTypesRow );
 
@@ -1196,7 +1196,7 @@ namespace ChemSW.Nbt.MetaData
                 {
                     OraViewColName = OraViewColNamePrefix + OraViewColName;
                 }
-                InsertedRow["oraviewcolname"] = CswTools.MakeOracleCompliantIdentifier( OraViewColName );
+                InsertedRow["oraviewcolname"] = CswFormat.MakeOracleCompliantIdentifier( OraViewColName );
 
             }
 
@@ -1465,7 +1465,7 @@ namespace ChemSW.Nbt.MetaData
             InsertedNodeTypeRow["enabled"] = CswConvert.ToDbVal( true );
             InsertedNodeTypeRow["nodecount"] = 0;
 
-            InsertedNodeTypeRow["oraviewname"] = CswTools.MakeOracleCompliantIdentifier( NewNodeTypeName );
+            InsertedNodeTypeRow["oraviewname"] = CswFormat.MakeOracleCompliantIdentifier( NewNodeTypeName );
 
             NewNodeTypeTable.Rows.Add( InsertedNodeTypeRow );
             Int32 NewNodeTypeId = CswConvert.ToInt32( InsertedNodeTypeRow["nodetypeid"].ToString() );

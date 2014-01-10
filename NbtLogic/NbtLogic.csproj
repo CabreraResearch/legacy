@@ -483,6 +483,7 @@
     <None Include="csw\Schema\scripts\past\02B\CswUpdateSchema_02B_Case29773.cs" />
     <None Include="csw\Schema\scripts\past\02B\CswUpdateSchema_02B_Case29798.cs" />
     <Compile Include="csw\Schema\scripts\prod\02K\CswUpdateMetaData_02K_Case31616B.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02K\CswUpdateSchema_02K_Case10480.cs" />
     <Compile Include="csw\Schema\scripts\prod\02K\CswUpdateDDL_02K_Case31616.cs" />
     <Compile Include="csw\Schema\scripts\prod\02K\CswSchemaScriptsKatsura.cs" />
     <Compile Include="csw\Schema\scripts\prod\02K\CswUpdateDDL_02K_Case29311_AddRelationalColumn.cs" />
