@@ -450,10 +450,10 @@ namespace ChemSW.Nbt.ObjClasses
                     return Options;
                 };
 
-            // Options for Compliant Answer
             if( FieldTypeValue == CswEnumNbtFieldType.Question )
             {
-                CswNbtMetaDataNodeTypeProp CompliantAnswersNTP = this.NodeType.getNodeTypeProp( CswEnumNbtPropertyAttributeName.CompliantAnswers.ToString() );
+                // Options for Compliant Answer
+                CswNbtMetaDataNodeTypeProp CompliantAnswersNTP = this.NodeType.getNodeTypeProp( CswNbtFieldTypeRuleQuestion.AttributeName.CompliantAnswers.ToString() );
                 if( null != CompliantAnswersNTP )
                 {
                     CswNbtNodePropWrapper CompliantAnswersProp = Node.Properties[CompliantAnswersNTP];
@@ -462,7 +462,17 @@ namespace ChemSW.Nbt.ObjClasses
                         CompliantAnswersProp.AsMultiList.InitOptions = _initCompliantAnswerOptions;
                     }
                 }
-            }
+                // Options for Preferred Answer
+                CswNbtMetaDataNodeTypeProp PreferredAnswerNTP = this.NodeType.getNodeTypeProp( CswNbtFieldTypeRuleQuestion.AttributeName.PreferredAnswer.ToString() );
+                if( null != PreferredAnswerNTP )
+                {
+                    CswNbtNodePropWrapper PreferredAnswerProp = Node.Properties[PreferredAnswerNTP];
+                    if( null != PreferredAnswerProp )
+                    {
+                        PreferredAnswerProp.AsList.InitOptions = _initPreferredAnswerOptions;
+                    }
+                }
+            } // if( FieldTypeValue == CswEnumNbtFieldType.Question )
 
             // Display conditions
             DisplayConditionProperty.onBeforeRender = delegate( CswNbtNodeProp prop )
@@ -727,6 +737,25 @@ namespace ChemSW.Nbt.ObjClasses
             return ret;
         } // _initCompliantAnswerOptions()
 
+        public CswNbtNodeTypePropListOptions _initPreferredAnswerOptions()
+        {
+            CswNbtNodeTypePropListOptions ret = new CswNbtNodeTypePropListOptions( _CswNbtResources, string.Empty, Int32.MinValue, false );
+            CswNbtMetaDataNodeTypeProp PossibleAnswersNTP = this.NodeType.getNodeTypeProp( CswEnumNbtPropertyAttributeName.PossibleAnswers.ToString() );
+            if( null != PossibleAnswersNTP )
+            {
+                CswNbtNodePropWrapper PossibleAnswersProp = Node.Properties[PossibleAnswersNTP];
+                if( null != PossibleAnswersProp )
+                {
+                    CswCommaDelimitedString PossibleAnswers = new CswCommaDelimitedString();
+                    PossibleAnswers.FromString( PossibleAnswersProp.AsText.Text );
+                    foreach( string Answer in PossibleAnswers )
+                    {
+                        ret.Options.Add( new CswNbtNodeTypePropListOption( Answer, Answer ) );
+                    }
+                }
+            }
+            return ret;
+        } // _initCompliantAnswerOptions()
         public bool DerivesFromObjectClassProp
         {
             get { return false == string.IsNullOrEmpty( ObjectClassPropName.Value ); }
