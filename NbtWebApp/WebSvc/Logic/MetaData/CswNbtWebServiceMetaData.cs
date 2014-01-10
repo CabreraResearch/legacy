@@ -111,7 +111,7 @@ namespace ChemSW.Nbt.WebServices
             Int32 NodeTypeCount = 0;
 
             foreach( CswNbtMetaDataNodeType RetNodeType in NodeTypes
-                                                            .Where( _RetNodeType => ( false == Searchable || _RetNodeType.SearchDeferPropId == Int32.MinValue ) )
+                                                            .Where( _RetNodeType => ( false == Searchable || _RetNodeType.IsSearchResult() ) )
                                                             .OrderBy( _RetNodeType => _RetNodeType.NodeTypeName ) )
             {
                 bool AddThisNodeType = false;
@@ -197,8 +197,7 @@ namespace ChemSW.Nbt.WebServices
 
             return ret;
         }
-private bool _userHasTabPermission( CswEnumNbtNodeTypePermission PermissionType, CswNbtMetaDataNodeType NodeType, CswNbtMetaDataNodeTypeTab Tab )
-
+        private bool _userHasTabPermission( CswEnumNbtNodeTypePermission PermissionType, CswNbtMetaDataNodeType NodeType, CswNbtMetaDataNodeTypeTab Tab )
         {
             bool hasPermission = true;
             hasPermission = _CswNbtResources.Permit.canTab( PermissionType, NodeType, Tab );

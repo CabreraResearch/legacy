@@ -23,15 +23,16 @@ namespace ChemSW.Nbt.ObjClasses
             public const string AuditLevel = "Audit Level";
             public const string Category = "Category";
             public const string DeferSearchTo = "Defer Search To";
+            public const string Enabled = "Enabled";
             public const string HasLabel = "Has Label";
             public const string IconFileName = "Icon File Name";
             public const string Locked = "Locked";
-            public const string Enabled = "Enabled";
             public const string NameTemplateText = "Name Template";
             public const string NameTemplateValue = "Name Template Value";
             public const string NameTemplateAdd = "Add to Name Template";
             public const string NodeTypeName = "NodeType Name";
             public const string ObjectClass = "Object Class";
+            public const string Searchable = "Searchable";
             public const string ViewNodesButton = "View Nodes";
         }
 
@@ -373,7 +374,7 @@ namespace ChemSW.Nbt.ObjClasses
                 NodeTypeName.setReadOnly( true, true );
             }
 
-            // Options for Object Class property
+            // Options for 'Object Class' property
             SortedList<string, CswNbtNodeTypePropListOption> ObjectClassOptions = new SortedList<string, CswNbtNodeTypePropListOption>();
             Dictionary<Int32, CswEnumNbtObjectClass> ObjectClassIds = _CswNbtResources.MetaData.getObjectClassIds();
             foreach( Int32 ObjectClassId in ObjectClassIds.Keys )
@@ -394,7 +395,7 @@ namespace ChemSW.Nbt.ObjClasses
                 ObjectClassProperty.ServerManaged = false;
             }
 
-            // Options for Icon File Name property
+            // Options for 'Icon File Name' property
             Dictionary<string, string> IconOptions = new Dictionary<string, string>();
             if( null != HttpContext.Current )
             {
@@ -628,6 +629,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
         } // _ObjectClassProperty_Change
 
+        public CswNbtNodePropLogical Searchable { get { return ( _CswNbtNode.Properties[PropertyName.Searchable] ); } }
         public CswNbtNodePropButton ViewNodesButton { get { return ( _CswNbtNode.Properties[PropertyName.ViewNodesButton] ); } }
 
         #endregion
@@ -708,16 +710,15 @@ namespace ChemSW.Nbt.ObjClasses
             // Handle search defer inheritance from object classes
             if( Int32.MinValue != ObjectClassPropertyValue.SearchDeferPropId )
             {
-                if( CswNbtMetaDataObjectClass.NotSearchableValue != ObjectClassPropertyValue.SearchDeferPropId )
-                {
+                //if( CswNbtMetaDataObjectClass.NotSearchableValue != ObjectClassPropertyValue.SearchDeferPropId )
+                //{
                     CswNbtObjClassDesignNodeTypeProp SearchDeferProp = NewNTPropsByOCPId[ObjectClassPropertyValue.SearchDeferPropId];
                     this.DeferSearchTo.RelatedNodeId = SearchDeferProp.NodeId;
-                }
-                else
-                {
-                    //NewNodeType.SearchDeferPropId = CswNbtMetaDataObjectClass.NotSearchableValue;
-                    this.DeferSearchTo.RelatedNodeId = null;
-                }
+                //}
+                //else
+                //{
+                //    this.DeferSearchTo.RelatedNodeId = null;
+                //}
             }
 
         } // _setPropertyValuesFromObjectClass()
