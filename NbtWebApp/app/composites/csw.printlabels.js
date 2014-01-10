@@ -15,7 +15,8 @@
             barcodes: [],
             nodeIds: [],
             nodes: [],
-            handlePrint: null //for custom handling of print jobs (see Receiving wizard)
+            handlePrint: null, //for custom handling of print jobs (see Receiving wizard)
+            selectedLabel: null,
         };
         var cswPublic = {};
 
@@ -62,9 +63,14 @@
                 },
                 success: function (data) {
                     if (data.Labels && data.Labels.length > 0) {
+
+                        //if a label to display by default was passed in, use that. Otherwise take the result of the web request
+                        var labelSelectionTarget = Csw.isNullOrEmpty(cswPrivate.selectedLabel) ? data.SelectedLabelId : cswPrivate.selectedLabel;
+                        
+                        //iterate through the list of labels. If the label's nodeid matches our target, set it to be selected
                         for (var i = 0; i < data.Labels.length; i += 1) {
                             var label = data.Labels[i];
-                            var isSelected = Csw.bool(label.Id === data.SelectedLabelId);
+                            var isSelected = Csw.bool(label.Id === labelSelectionTarget);
                             labelSel.option({ value: label.Id, display: label.Name, isSelected: isSelected });
                         }
                     } else {
