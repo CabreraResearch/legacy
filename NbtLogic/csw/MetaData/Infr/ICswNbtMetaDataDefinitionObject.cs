@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 
 namespace ChemSW.Nbt.MetaData
@@ -12,6 +13,8 @@ namespace ChemSW.Nbt.MetaData
         ICswNbtMetaDataProp getBarcodeProperty();
 
         bool HasLabel { get; }
+
+        IEnumerable<CswNbtMetaDataNodeType> getNodeTypes();
     }
 
 

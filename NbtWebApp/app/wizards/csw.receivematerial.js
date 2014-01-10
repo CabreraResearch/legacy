@@ -414,6 +414,16 @@
                             'padding-top': '20px'
                         });
 
+                        //get the properties of the container from the "Define Properties" step. Find the label format, and store it to pass in to the print label composite
+                        var selectedLabel;
+                        var containerProps = cswPrivate.containerTabsAndProps.getProps();
+                        Csw.iterate(containerProps, function(prop) {
+                            if (prop.name == "Label Format") {
+                                selectedLabel = prop.values.nodeid;
+                            }
+                        });
+
+
                         var printLabelCell = printLabelsTbl.cell(1, 1).css({ 'padding-bottom': '20px' });
                         printLabelCell.div({ text: 'I want to print labels: ' }).checkBox({
                             name: 'printLabelCheckBox',
@@ -432,7 +442,8 @@
                         var labelsDiv = printLabelsTbl.cell(2, 1).div().hide();
                         cswPrivate.printLabels = Csw.composites.printLabels(labelsDiv,
                             {
-                                showButton: false
+                                showButton: false,
+                                selectedLabel: selectedLabel,
                             },
                             cswPrivate.state.containerNodeTypeId,
                             cswPrivate.state.containerNodeId);

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
 using ChemSW.Core;
@@ -71,6 +72,16 @@ namespace ChemSW.Nbt.MetaData
         public IEnumerable<CswNbtMetaDataObjectClass> getObjectClasses()
         {
             return _CswNbtMetaDataResources.ObjectClassesCollection.getObjectClassesByPropertySetId( PropertySetId );
+        }
+        // for ICswNbtMetaDataDefinitionObject
+        public IEnumerable<CswNbtMetaDataNodeType> getNodeTypes()
+        {
+            Collection<CswNbtMetaDataNodeType> ret = new Collection<CswNbtMetaDataNodeType>();
+            foreach( CswNbtMetaDataNodeType nt in getObjectClasses().SelectMany( oc => oc.getNodeTypes() ) )
+            {
+                ret.Add( nt );
+            }
+            return ret;
         }
 
         private CswNbtMetaDataObjectClassProp _BarcodeProp = null;
