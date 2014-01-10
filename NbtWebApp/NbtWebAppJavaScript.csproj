@@ -326,6 +326,7 @@
     <Content Include="Content\themes\cupertino\minified\jquery.ui.tabs.min.css" />
     <Content Include="Content\themes\cupertino\minified\jquery.ui.theme.min.css" />
     <Content Include="Content\themes\cupertino\minified\jquery.ui.tooltip.min.css" />
+    <Content Include="css\csw.dd.css" />
     <Content Include="files.js" />
     <Content Include="app\core\csw.is.js" />
     <Content Include="app\core\csw.Number.js" />

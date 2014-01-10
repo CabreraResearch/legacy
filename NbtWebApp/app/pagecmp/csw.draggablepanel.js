@@ -19,7 +19,7 @@
         draggable: { //setting this to "true" would mean we can drag an obj of this type ANYWHERE. "moveOnDrag: false" means the obj will snap the the target drop zone
             moveOnDrag: false
         },
-        //cls: 'csw-draggable',
+        cls: 'csw-draggable',
         header: false,
         border: 0,
         items: [],
@@ -47,9 +47,9 @@
             'Ext.layout.container.Anchor',
             'Csw.ext.draggable'
         ],
+        cls: 'csw-dd-column',
         layout: 'anchor',
-        defaultType: 'draggable',
-        padding: '10px 10px 10px 10px', /* columns must have vertical padding to avoid losing dimensions when empty */
+        defaultType: 'draggable'
     });
 
     //A drop zone
@@ -59,7 +59,6 @@
             this.portal = portal;
             window.Ext.dd.ScrollManager.register(portal.body);
             Csw.ext.dropzone.superclass.constructor.call(this, portal.body, cfg);
-            //Ext.app.PortalDropZone.superclass.constructor.call(this, portal.body, cfg);
             portal.body.ddScrollConfig = this.ddScrollConfig;
         },
         ddScrollConfig: {
@@ -99,7 +98,7 @@
             } else if (this.lastCW != cw) {
                 // client width has changed, so refresh layout & grid calcs
                 this.lastCW = cw;
-                //portal.doLayout();
+                portal.doLayout();
                 this.grid = this.getGrid();
             }
 
@@ -247,19 +246,11 @@
             'Csw.ext.dropzone',
             'Csw.ext.dragcolumn'
         ],
-        //cls: 'x-portal',
-        //bodyCls: 'x-portal-body',
+        cls: 'csw-dd-panel',
+        bodyCls: 'csw-dd-panel-body',
         defaultType: 'dragcolumn',
         autoScroll: true,
         manageHeight: false,
-        style: {
-            'padding': '8px 8px 0 0',
-            //'margin-bottom': '10px'
-            //'border': '2px dashed #99bbe8',
-            //'background': '#f6f6f6',
-            //'border-radius': '4px',
-            //'-moz-border-radius': '4px',
-        },
         initComponent: function () {
             var me = this;
 
@@ -281,7 +272,7 @@
         beforeLayout: function () {
             var items = this.layout.getLayoutItems(),
                 len = items.length,
-                firstAndLast = ['x-portal-column-first', 'x-portal-column-last'],
+                firstAndLast = ['csw-dd-column-first', 'csw-dd-column-last'],
                 i, item, last;
 
             for (i = 0; i < len; i++) {
@@ -289,20 +280,19 @@
                 item.columnWidth = 1 / len;
                 last = (i == len - 1);
 
-                //This is CSS stuff I don't think we care about
-                //if (!i) { // if (first)
-                //    if (last) {
-                //        item.addCls(firstAndLast);
-                //    } else {
-                //        item.addCls('x-portal-column-first');
-                //        item.removeCls('x-portal-column-last');
-                //    }
-                //} else if (last) {
-                //    item.addCls('x-portal-column-last');
-                //    item.removeCls('x-portal-column-first');
-                //} else {
-                //    item.removeCls(firstAndLast);
-                //}
+                if (!i) { // if (first)
+                    if (last) {
+                        item.addCls(firstAndLast);
+                    } else {
+                        item.addCls('csw-dd-column-first');
+                        item.removeCls('csw-dd-column-last');
+                    }
+                } else if (last) {
+                    item.addCls('csw-dd-column-last');
+                    item.removeCls('csw-dd-column-first');
+                } else {
+                    item.removeCls(firstAndLast);
+                }
             }
 
             return this.callParent(arguments);
@@ -311,8 +301,6 @@
         initEvents: function () {
             this.callParent();
             this.dd = window.Ext.create('Csw.ext.dropzone', this, this.dropConfig);
-            var x = this.dd;
-            //this.dd = window.Ext.create('Ext.dd.DropTarget', this, this.dropConfig);
         },
         // private
         beforeDestroy: function () {
@@ -335,7 +323,7 @@
         };
         var cswPublic = {};
 
-        var _colIdPrefix = "dragcol_";
+        var _colIdPrefix = window.Ext.id() + "_dragcol_";
         var _draggables = [];
 
         (function () {
@@ -343,7 +331,7 @@
                 Csw.extend(cswPrivate, options);
             }
 
-            var myDiv = cswParent.div({ height: cswPrivate.height, width: cswPrivate.width });
+            var myDiv = cswParent.div({ width: cswPrivate.width });
 
             //Create column items up front
             var _columns = [];
@@ -360,7 +348,7 @@
                 renderTo: myDiv.getId(),
                 border: 1,
                 items: [{
-                    id: 'draggablepanel',
+                    id: 'draggablepanel' + window.Ext.id(),
                     xtype: 'dragpanel',
                     items: _columns
                 }]
