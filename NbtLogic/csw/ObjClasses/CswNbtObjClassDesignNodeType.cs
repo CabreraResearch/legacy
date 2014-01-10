@@ -288,11 +288,8 @@ namespace ChemSW.Nbt.ObjClasses
         {
             if( null != RelationalNodeType )
             {
-                // Set NameTemplateValue from NameTemplateText
-                NameTemplateValue.Text = CswNbtMetaData.TemplateTextToTemplateValue( RelationalNodeType.getNodeTypeProps(), NameTemplateText.Text );
+                _syncNameTemplate();
             }
-
-            //_CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
         } //beforeWriteNode()
 
         public override void beforeDeleteNode() // bool DeleteAllRequiredRelatedNodes = false )
@@ -469,6 +466,8 @@ namespace ChemSW.Nbt.ObjClasses
                 TabMap.Add( TabNode.RelationalId.PrimaryKey, TabCopy );
             }
 
+            // case 31518 - props won't be able to see the tab if we don't do this
+            _CswNbtResources.MetaData.refreshAll();
 
             // Copy Props
             Collection<CswNbtObjClassDesignNodeTypeProp> PropNodes = getPropNodes();
@@ -532,9 +531,8 @@ namespace ChemSW.Nbt.ObjClasses
                 }
             }
 
-
-            // Fix the name template
-            //NewNodeType.setNameTemplateText( OldNodeType.getNameTemplateText() );
+            // Fix the name template, now that properties are in place
+            NodeTypeCopy.postChanges( true );
 
             //if( OnCopyNodeType != null )
             //    OnCopyNodeType( OldNodeType, NewNodeType );
@@ -543,6 +541,12 @@ namespace ChemSW.Nbt.ObjClasses
         } // CopyNode()
 
         #endregion
+
+        private void _syncNameTemplate()
+        {
+            // Set NameTemplateValue from NameTemplateText
+            NameTemplateValue.Text = CswNbtMetaData.TemplateTextToTemplateValue( RelationalNodeType.getNodeTypeProps(), NameTemplateText.Text );
+        }
 
         #region Object class specific properties
 
@@ -570,12 +574,13 @@ namespace ChemSW.Nbt.ObjClasses
                 }
                 newTemplate += CswNbtMetaData.MakeTemplateEntry( SelectedProp.PropName.Text );
                 NameTemplateText.Text = newTemplate;
+                _syncNameTemplate();
 
                 // Clear the selected value
                 NameTemplateAdd.RelatedNodeId = null;
                 NameTemplateAdd.CachedNodeName = string.Empty;
                 NameTemplateAdd.PendingUpdate = false;
-            }
+            } // if( null != SelectedProp )
         } // _NameTemplateAdd_Change()
 
         public CswNbtNodePropText NodeTypeName { get { return ( _CswNbtNode.Properties[PropertyName.NodeTypeName] ); } }
