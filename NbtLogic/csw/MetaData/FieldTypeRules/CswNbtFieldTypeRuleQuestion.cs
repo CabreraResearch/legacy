@@ -136,7 +136,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
         /// </summary>
         public bool SearchAllowed { get { return ( _CswNbtFieldTypeRuleDefault.SearchAllowed ); } }
 
-public string renderViewPropFilter( ICswNbtUser RunAsUser, CswNbtViewPropertyFilter CswNbtViewPropertyFilterIn, Dictionary<string, string> ParameterCollection, int FilterNumber )
+        public string renderViewPropFilter( ICswNbtUser RunAsUser, CswNbtViewPropertyFilter CswNbtViewPropertyFilterIn, Dictionary<string, string> ParameterCollection, int FilterNumber )
         {
             string ReturnVal = string.Empty;
 
@@ -273,7 +273,7 @@ public string renderViewPropFilter( ICswNbtUser RunAsUser, CswNbtViewPropertyFil
             //NodeTypeProp.ListOptions = "Yes,No,N/A";
             //NodeTypeProp.ValueOptions = "Yes";        // case 20297
             NodeTypeProp.DesignNode.AttributeProperty[AttributeName.PossibleAnswers].AsText.Text = "Yes,No,N/A";
-            NodeTypeProp.DesignNode.AttributeProperty[AttributeName.CompliantAnswers].AsMultiList.Value = new CswCommaDelimitedString() {"Yes"};
+            NodeTypeProp.DesignNode.AttributeProperty[AttributeName.CompliantAnswers].AsMultiList.Value = new CswCommaDelimitedString() { "Yes" };
             // shouldn't need to do this?
             //NodeTypeProp.DesignNode.postChanges( false );
 
