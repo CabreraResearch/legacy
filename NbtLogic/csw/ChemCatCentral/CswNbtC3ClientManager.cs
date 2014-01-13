@@ -27,8 +27,8 @@ namespace ChemSW.Nbt.ChemCatCentral
         {
             _CswNbtResources = CswNbtResources;
             _CswC3SearchParams = CswC3SearchParams;
-            // Set the Regulation Database
             _setRegulationDatabase();
+            _setDataService();
 
         }//ctor2
 
@@ -54,6 +54,29 @@ namespace ChemSW.Nbt.ChemCatCentral
             else
             {
                 _RegulationDatabase = string.Empty;
+            }
+        }
+
+        private string _DataService;
+        public string DataService
+        {
+            get { return _DataService; }
+        }
+
+        private void _setDataService()
+        {
+            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.C3 ) )
+            {
+                _DataService = "C3";
+            }
+            //TODO: Finish with Case 31542
+            //else if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.C3ACD ) )
+            //{
+            //    _DataService = "ACD";
+            //}
+            else
+            {
+                _DataService = string.Empty;
             }
         }
 

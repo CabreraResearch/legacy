@@ -861,9 +861,6 @@ namespace ChemSW.Nbt.ChemCatCentral {
         private string MsdsUrlField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string ObsoleteField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
         private string PartNoField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
@@ -1019,19 +1016,6 @@ namespace ChemSW.Nbt.ChemCatCentral {
                 if ((object.ReferenceEquals(this.MsdsUrlField, value) != true)) {
                     this.MsdsUrlField = value;
                     this.RaisePropertyChanged("MsdsUrl");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string Obsolete {
-            get {
-                return this.ObsoleteField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.ObsoleteField, value) != true)) {
-                    this.ObsoleteField = value;
-                    this.RaisePropertyChanged("Obsolete");
                 }
             }
         }
@@ -2554,6 +2538,9 @@ namespace ChemSW.Nbt.ChemCatCentral {
         private string CustomerLoginNameField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string DataServiceField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
         private string ErrorField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
@@ -2630,6 +2617,19 @@ namespace ChemSW.Nbt.ChemCatCentral {
                 if ((object.ReferenceEquals(this.CustomerLoginNameField, value) != true)) {
                     this.CustomerLoginNameField = value;
                     this.RaisePropertyChanged("CustomerLoginName");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string DataService {
+            get {
+                return this.DataServiceField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.DataServiceField, value) != true)) {
+                    this.DataServiceField = value;
+                    this.RaisePropertyChanged("DataService");
                 }
             }
         }

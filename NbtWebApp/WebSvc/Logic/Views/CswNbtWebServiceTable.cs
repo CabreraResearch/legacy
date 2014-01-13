@@ -105,6 +105,7 @@ namespace ChemSW.Nbt.WebServices
         /// <returns></returns>
         public JObject getTable( CswRetObjSearchResults C3SearchResultsObj, string SearchField )
         {
+
             JObject ret = new JObject();
 
             Collection<string> PropsToHide = new Collection<string>();
@@ -464,8 +465,8 @@ namespace ChemSW.Nbt.WebServices
 
                     }
 
-                    //if there is mol data and a generated mol image for this product, override the default icon
-                    if( false == String.IsNullOrEmpty( product.MolData ) && false == String.IsNullOrEmpty( product.MolImage ) )
+                    // If there is a generated molimage, display it
+                    if( false == String.IsNullOrEmpty( product.MolImage ) )
                     {
                         thisNode.ThumbnailUrl = "data:image/jpeg;base64," + product.MolImage;
                     }
