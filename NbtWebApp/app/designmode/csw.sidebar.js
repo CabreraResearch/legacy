@@ -4,7 +4,7 @@
     var DesignSidebar = Ext.define('Ext.design.sidebar', {
         extend: 'Ext.panel.Panel',
         title: 'Design Mode',
-        width: 325,
+        width: 290,
         height: 600,
         collapsible: true,
         collapseDirection: 'left',
@@ -302,7 +302,9 @@
             cswPrivate.onTearDown = function () {
                 cswParent.empty();
                 Csw.iterate(cswPrivate.ajax, function (call, name) {
-                    call.ajax.abort();
+                    if (call.ajax) {
+                        call.ajax.abort();
+                    }
                     delete cswPrivate.ajax[name];
                 });
                 Csw.main.leftDiv.show();

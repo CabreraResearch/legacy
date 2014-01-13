@@ -888,7 +888,8 @@
                         nodeid: cswPrivate.tabState.nodeid,
                         isFavorite: cswPrivate.tabState.isFavorite,
                     });
-
+                    
+                    cswPrivate.tabState.sidebarVisible = false;
                     /* Show the 'fake' config button to open the dialog */
                     cswPrivate.tabState.configIcn = formTable.cell(1, 3).icon({
                         name: cswPrivate.name + 'configbtn',
@@ -903,15 +904,24 @@
                             //$.CswDialog('EditLayoutDialog', editLayoutOpt);
 
                             //Uncomment this out for the new sidebar
-                            var div = Csw.designmode.factory(Csw.main.sidebarDiv, 'sidebar');
-                            div.sidebar({
-                                name: 'newsidebar',
-                                tabState: cswPrivate.tabState,
-                                Refresh: function () {
-                                    cswPrivate.tabState.Config = false;
-                                    cswPrivate.getTabs();
-                                }
-                            });
+                            if (cswPrivate.tabState.sidebarVisible) {
+                                Csw.main.sidebarDiv.hide();
+                                Csw.main.sidebarDiv.empty();
+                                Csw.main.leftDiv.show();
+                                cswPrivate.tabState.sidebarVisible = false;
+                            } else {
+                                var sidebarDiv = Csw.designmode.factory(Csw.main.sidebarDiv, 'sidebar');
+                                sidebarDiv.sidebar({
+                                    name: 'newsidebar',
+                                    tabState: cswPrivate.tabState,
+                                    Refresh: function() {
+                                        cswPrivate.tabState.Config = false;
+                                        cswPrivate.getTabs();
+                                    }
+                                });
+                                Csw.main.sidebarDiv.show();
+                                cswPrivate.tabState.sidebarVisible = true;
+                            }
                         }
                     });
                     cswPrivate.toggleConfigIcon(false === cswPrivate.isMultiEdit());
