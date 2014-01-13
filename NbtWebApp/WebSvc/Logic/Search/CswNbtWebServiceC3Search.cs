@@ -318,6 +318,9 @@ namespace ChemSW.Nbt.WebServices
             SearchClient C3SearchClient = CswNbtC3ClientManager.initializeC3Client();
             if( null != C3SearchClient )
             {
+                // For now, the only option here is C3
+                CswC3SearchParams.DataService = CswNbtC3ClientManager.DataService;
+
                 CswRetObjSearchResults SearchResults = C3SearchClient.getProductDetails( CswC3SearchParams );
                 if( SearchResults.CswC3SearchResults.Length > 0 )
                 {
@@ -336,7 +339,10 @@ namespace ChemSW.Nbt.WebServices
             SearchClient C3SearchClient = CswNbtC3ClientManager.initializeC3Client();
             if( null != C3SearchClient )
             {
-                CswRetObjSearchResults SearchResults = null;
+                CswRetObjSearchResults SearchResults;
+
+                // For now, the only option here is C3
+                CswC3SearchParams.DataService = CswNbtC3ClientManager.DataService;
 
                 try
                 {

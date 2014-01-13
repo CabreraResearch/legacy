@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using ChemSW.Core;
+using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
@@ -136,6 +137,29 @@ namespace ChemSW.Nbt.PropTypes
         public override void SyncGestalt()
         {
             SetPropRowValue( CswEnumNbtSubFieldName.Gestalt, CswEnumNbtPropColumn.Gestalt, Text );
+        }
+
+        /// <summary>
+        /// Compares this prop's Text value with all existing values that share the same NodeTypePropId and changes it until it becomes unqiue. 
+        /// </summary>
+        public void makeUnique()
+        {
+            bool isUnique = false;
+            CswTableSelect JctNodePropSelect = _CswNbtResources.makeCswTableSelect( NodeTypePropId + "_matching select", "jct_nodes_props" );
+            int PropNum = 1;
+            while( false == isUnique )
+            {
+                DataTable MatchingPropsTable = JctNodePropSelect.getTable( "where nodetypepropid = " + NodeTypePropId + " and " + _TextSubField.Column + " = '" + Text + "'" );
+                if( MatchingPropsTable.Rows.Count > 1 )
+                {
+                    Text = Text + PropNum;
+                    PropNum++;
+                }
+                else
+                {
+                    isUnique = true;
+                }
+            }
         }
 
     }//CswNbtNodePropText

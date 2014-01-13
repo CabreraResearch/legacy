@@ -231,7 +231,8 @@ namespace ChemSW.Nbt.Schema
                             NewNTNode.Locked.Checked = CswConvert.ToTristate( thisNodeType.IsLocked );
                             NewNTNode.Enabled.Checked = CswConvert.ToTristate( thisNodeType.Enabled );
                             NewNTNode.NameTemplateText.Text = thisNodeType.getNameTemplateText();
-                            NewNTNode.NodeTypeName.Text = thisNodeType.NodeTypeName;
+                            NewNTNode.NodeTypeName.Text = CswFormat.MakeIntoValidName( thisNodeType.NodeTypeName );
+                            NewNTNode.NodeTypeName.makeUnique();
                             //NewNTNode.ObjectClassName.Text = thisNodeType.getObjectClass().ObjectClass.ToString();
                             NewNTNode.ObjectClassProperty.Value = thisNodeType.ObjectClassId.ToString();
                             NewNTNode.Searchable.Checked = thisNodeType.Searchable;  //CswNbtMetaDataObjectClass.NotSearchableValue

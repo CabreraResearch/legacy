@@ -1,0 +1,37 @@
+.x-field-label-cell{
+    cursor: default;  /* DD makes this into a 4 way arrow on hover - force it to NOT be that */
+}
+
+.x-panel-ghost {
+    z-index: 1;
+}
+.x-border-layout-ct {
+    background: #DFE8F6;
+}
+.csw-dd-panel-body {
+    padding: 0 0 0 8px;
+}
+.csw-dd-panel .csw-dd-column {
+    /* columns must have vertical padding to avoid losing dimensions when empty */
+    padding: 10px 10px 50px 10px;
+}
+.csw-dd-panel .x-panel-dd-spacer {
+    border: 2px dashed #99bbe8;
+    background: #f6f6f6;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    margin-bottom: 10px;
+}
+.csw-draggable {
+    margin-bottom:10px;
+    padding: 1px;
+    cursor: default;  /* for the prop section */
+}
+.csw-draggable .x-panel-body {
+    background: #fff;
+}
+/*.portlet-content {
+    padding: 10px;
+    font-size: 11px;
+}*/
+
