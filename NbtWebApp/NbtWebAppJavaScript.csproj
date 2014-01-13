@@ -111,6 +111,8 @@
     <Content Include="app\literals\csw.svg.js" />
     <Content Include="app\literals\_template.js" />
     <Content Include="app\main\csw.mainRefreshDashboard.js" />
+    <Content Include="app\pagecmp\csw.dd.js" />
+    <Content Include="app\pagecmp\csw.draggablepanel.js" />
     <Content Include="app\proptypes\csw.propTypeMetaDataList.js" />
     <Content Include="app\main\csw.mainClear.js" />
     <Content Include="app\main\csw.mainGetViewGrid.js" />
@@ -325,6 +327,7 @@
     <Content Include="Content\themes\cupertino\minified\jquery.ui.tabs.min.css" />
     <Content Include="Content\themes\cupertino\minified\jquery.ui.theme.min.css" />
     <Content Include="Content\themes\cupertino\minified\jquery.ui.tooltip.min.css" />
+    <Content Include="css\csw.dd.css" />
     <Content Include="files.js" />
     <Content Include="app\core\csw.is.js" />
     <Content Include="app\core\csw.Number.js" />
