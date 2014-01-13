@@ -54,7 +54,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #endregion Enums
 
-        public CswNbtObjClassGHS( CswNbtResources CswNbtResources, CswNbtNode Node ) : base( CswNbtResources, Node ) {}
+        public CswNbtObjClassGHS( CswNbtResources CswNbtResources, CswNbtNode Node ) : base( CswNbtResources, Node ) { }
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
@@ -74,29 +74,32 @@ namespace ChemSW.Nbt.ObjClasses
             return ret;
         }
 
-        #region Inherited Events      
+        #region Inherited Events
 
         public override void beforePromoteNode( bool OverrideUniqueValidation )
         {
             LabelCodes.InitOptions = _initGhsPhraseOptions;
             Classifications.InitOptions = _initGhsClassificationOptions;
+        }
 
+        protected override void afterPopulateProps()
+        {
             AddLabelCodes.SetOnPropChange( OnAddLabelCodesPropChange );
 
-            _CswNbtNode.Properties[PropertyName.LabelCodesGrid].SetOnBeforeRender( delegate( CswNbtNodeProp Prop )
+            LabelCodesGrid.SetOnBeforeRender( delegate( CswNbtNodeProp Prop )
                 {
                     CswNbtNodePropGrid PropAsGrid = (CswNbtNodePropGrid) Prop;
                     CswNbtView UpdatedPhraseView = setupPhraseView( PropAsGrid.View, LabelCodes.Value );
                     UpdatedPhraseView.SaveToCache( IncludeInQuickLaunch: false, UpdateCache: true, KeepInQuickLaunch: false );
                 } );
 
-            _CswNbtNode.Properties[PropertyName.ClassificationsGrid].SetOnBeforeRender( delegate( CswNbtNodeProp Prop )
+            ClassificationsGrid.SetOnBeforeRender( delegate( CswNbtNodeProp Prop )
                 {
                     CswNbtNodePropGrid PropAsGrid = (CswNbtNodePropGrid) Prop;
                     _setupClassificationView( PropAsGrid.View, Classifications.Value );
                 } );
 
-            _CswNbtNode.Properties[PropertyName.SignalWord].SetOnBeforeRender( delegate( CswNbtNodeProp Prop )
+            SignalWord.SetOnBeforeRender( delegate( CswNbtNodeProp Prop )
                 {
                     CswNbtNodePropRelationship PropAsRelationship = (CswNbtNodePropRelationship) Prop;
                     Dictionary<CswPrimaryKey, string> TranslatedOpts = new Dictionary<CswPrimaryKey, string>();
@@ -140,6 +143,7 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtMetaDataNodeType GhsPhraseNT = GhsPhraseOC.FirstNodeType;
 
             View.SetVisibility( CswEnumNbtViewVisibility.Hidden, null, null );
+            View.ViewMode = CswEnumNbtViewRenderingMode.Grid;
             View.Root.ChildRelationships.Clear();
             if( SelectedPhraseIds.Count > 0 )
             {
@@ -171,6 +175,7 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtMetaDataNodeType GhsClassNT = GhsClassOC.FirstNodeType;
 
             View.SetVisibility( CswEnumNbtViewVisibility.Hidden, null, null );
+            View.ViewMode = CswEnumNbtViewRenderingMode.Grid; 
             View.Root.ChildRelationships.Clear();
             if( SelectedClassIds.Count > 0 )
             {
