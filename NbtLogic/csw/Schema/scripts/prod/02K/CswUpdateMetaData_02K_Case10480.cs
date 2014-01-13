@@ -17,6 +17,11 @@ namespace ChemSW.Nbt.Schema
             get { return 10480; }
         }
 
+        public override string AppendToScriptName()
+        {
+            return "A";
+        }
+
         public override string Title
         {
             get { return "Winter is coming."; }
