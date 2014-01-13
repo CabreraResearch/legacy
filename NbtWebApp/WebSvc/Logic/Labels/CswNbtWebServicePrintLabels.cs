@@ -930,7 +930,8 @@ namespace ChemSW.Nbt.WebServices
             string ret = string.Empty;
             foreach( string ImageUrl in ImageUrls )
             {
-                string RealImageUrl = ImageUrl.Replace( ".jpg", "" );
+                string RealImageUrl = ImageUrl.Replace( ".jpg", "" )
+                                              .Replace( ".gif", "" );
                 RealImageUrl = RealImageUrl.Replace( "/512/", "/" + Scale.ToString() + "/" );
                 if( NoBorder )
                 {
