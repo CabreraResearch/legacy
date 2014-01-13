@@ -139,7 +139,9 @@ namespace ChemSW.Nbt.ObjClasses
             LabelCodes.InitOptions = _initDsdPhraseOptions;
             LabelCodes.SetOnPropChange( OnLabelCodesChange );
             AddLabelCodes.SetOnPropChange( OnAddLabelCodesPropChange );
-            _setUpDsdPhraseView();
+
+            CswNbtView DsdView = setupDsdPhraseView();
+            DsdView.SaveToCache( false, true );
 
             ViewSDS.SetOnBeforeRender( delegate( CswNbtNodeProp prop )
                 {
@@ -1110,15 +1112,16 @@ namespace ChemSW.Nbt.ObjClasses
             return Ret;
         } // _initDsdPhraseOptions()
 
-        private void _setUpDsdPhraseView()
+        public CswNbtView setupDsdPhraseView()
         {
+            CswNbtView DsdView = null;
             if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.DSD ) )
             {
                 CswNbtMetaDataObjectClass DsdPhraseOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.DSDPhraseClass );
                 CswNbtMetaDataObjectClassProp CodeOCP = DsdPhraseOC.getObjectClassProp( CswNbtObjClassDSDPhrase.PropertyName.Code );
                 CswNbtMetaDataObjectClassProp EngOCP = DsdPhraseOC.getObjectClassProp( CswNbtObjClassDSDPhrase.PropertyName.English );
 
-                CswNbtView DsdView = LabelCodesGrid.View;
+                DsdView = LabelCodesGrid.View;
 
                 DsdView.Root.ChildRelationships.Clear();
                 if( LabelCodes.Value.Count > 0 )
@@ -1134,10 +1137,9 @@ namespace ChemSW.Nbt.ObjClasses
                         parent.NodeIdsToFilterIn.Add( PhrasePk );
                     }
                 }
-
-                DsdView.SaveToCache( false, true );
             }
-        }
+            return DsdView;
+        } // setupDsdPhraseView()
 
         #endregion Custom Logic
 
@@ -1224,7 +1226,8 @@ namespace ChemSW.Nbt.ObjClasses
         {
             if( Creating == false )
             {
-                _setUpDsdPhraseView();
+                CswNbtView DsdView = setupDsdPhraseView();
+                DsdView.SaveToCache( false, true );
             }
         }
 

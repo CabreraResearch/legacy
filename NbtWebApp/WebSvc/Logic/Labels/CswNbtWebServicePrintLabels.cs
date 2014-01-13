@@ -407,9 +407,9 @@ namespace ChemSW.Nbt.WebServices
                 {
                     // Fetch template value
                     string TemplateValue = string.Empty;
-                    if( TemplateName.StartsWith( _GHSTemplatePrefix ) )
+                    if( _IsHazardTemplateName( TemplateName ) )
                     {
-                        TemplateValue = _handleGHSTemplate( NbtResources, TargetNode, TemplateName );
+                        TemplateValue = _handleHazardTemplate( NbtResources, TargetNode, TemplateName );
                     }
                     else if( null != SqlResultRow && SqlResultRow.Table.Columns.Contains( TemplateName ) )
                     {
@@ -443,37 +443,39 @@ namespace ChemSW.Nbt.WebServices
             {
                 string TemplateName = Pair.Key;
                 string TemplateValue = Pair.Value;
-
-                IEnumerable<string> ValueChunks = null;
-                if( ParamSizes.ContainsKey( TemplateName ) )
+                if( false == ChunkedTemplateValues.ContainsKey( TemplateName ) )
                 {
-                    ValueChunks = CswTools.Chunk( TemplateValue, ParamSizes[TemplateName] );
-                }
-                else if( TemplateValue.Contains( "\n" ) )
-                {
-                    ValueChunks = TemplateValue.Replace( "\r", "" ).Split( '\n' );
-                }
-
-                if( null != ValueChunks )
-                {
-                    Int32 CurrentIteration = 1;
-                    string CurrentTemplateName = TemplateName.Split( ':' )[0];
-                    foreach( string Chunk in ValueChunks )
+                    IEnumerable<string> ValueChunks = null;
+                    if( ParamSizes.ContainsKey( TemplateName ) )
                     {
-                        if( CurrentIteration == 1 )
-                        {
-                            ChunkedTemplateValues[TemplateName] = Chunk;
-                        }
-                        else
-                        {
-                            ChunkedTemplateValues[CurrentTemplateName + "_" + CurrentIteration] = Chunk;
-                        }
-                        CurrentIteration++;
+                        ValueChunks = CswTools.Chunk( TemplateValue, ParamSizes[TemplateName] );
                     }
-                } // if( null != ValueChunks )
-                else
-                {
-                    ChunkedTemplateValues[TemplateName] = TemplateValue;
+                    else if( TemplateValue.Contains( "\n" ) )
+                    {
+                        ValueChunks = TemplateValue.Replace( "\r", "" ).Split( '\n' );
+                    }
+
+                    if( null != ValueChunks )
+                    {
+                        Int32 CurrentIteration = 1;
+                        string CurrentTemplateName = TemplateName.Split( ':' )[0];
+                        foreach( string Chunk in ValueChunks )
+                        {
+                            if( CurrentIteration == 1 )
+                            {
+                                ChunkedTemplateValues[TemplateName] = Chunk;
+                            }
+                            else
+                            {
+                                ChunkedTemplateValues[CurrentTemplateName + "_" + CurrentIteration] = Chunk;
+                            }
+                            CurrentIteration++;
+                        }
+                    } // if( null != ValueChunks )
+                    else
+                    {
+                        ChunkedTemplateValues[TemplateName] = TemplateValue;
+                    }
                 }
             }
             return ChunkedTemplateValues;
@@ -510,9 +512,9 @@ namespace ChemSW.Nbt.WebServices
                     // Apply template values to EPLScript
                     foreach( string TemplateName in ChunkedTemplateValues.Keys )
                     {
-                        if( TemplateValues.ContainsKey( TemplateName ) )
+                        if( ChunkedTemplateValues.ContainsKey( TemplateName ) )
                         {
-                            EPLScript = EPLScript.Replace( "{" + TemplateName + "}", TemplateValues[TemplateName] );
+                            EPLScript = EPLScript.Replace( "{" + TemplateName + "}", ChunkedTemplateValues[TemplateName] );
                         }
                         else
                         {
@@ -704,63 +706,109 @@ namespace ChemSW.Nbt.WebServices
         } // updateLabelJob()
 
 
-        #region GHS
+        #region Hazard Label
 
         private const string _GHSTemplatePrefix = "NBTGHS";
+        private const string _DSDTemplatePrefix = "NBTDSD";
 
-        private static string _handleGHSTemplate( CswNbtResources NbtResources, CswNbtNode TargetNode, string TemplateName )
+        private static bool _IsHazardTemplateName( string TemplateName )
+        {
+            return ( TemplateName.StartsWith( _GHSTemplatePrefix ) || TemplateName.StartsWith( _DSDTemplatePrefix ) );
+        }
+
+        private static string _handleHazardTemplate( CswNbtResources NbtResources, CswNbtNode TargetNode, string TemplateName )
         {
             string TemplateValue = string.Empty;
 
-            CswNbtObjClassGHS GHSNode = _GetGhsNodeForContainer( NbtResources, TargetNode );
-            if( null != GHSNode )
+            if( TargetNode.getObjectClass().ObjectClass == CswEnumNbtObjectClass.ContainerClass )
             {
-                if( TemplateName.Equals( "NBTGHS" ) || TemplateName.Equals( "NBTGHSA" ) ) // Ignore NBTGHS_2, will fill in below
+                CswNbtObjClassContainer ContainerNode = TargetNode;
+                if( null != ContainerNode.Material.RelatedNodeId )
                 {
-                    // A - phrases only
-                    TemplateValue = _getGhsValueForLabel( NbtResources, GHSNode, ShowCodes: false, ShowPhrases: true );
-                }
-                else if( TemplateName.Equals( "NBTGHSB" ) )
-                {
-                    // B - codes only
-                    TemplateValue = _getGhsValueForLabel( NbtResources, GHSNode, ShowCodes: true, ShowPhrases: false );
-                }
-                else if( TemplateName.Equals( "NBTGHSC" ) )
-                {
-                    // C - phrases and codes
-                    TemplateValue = _getGhsValueForLabel( NbtResources, GHSNode, ShowCodes: true, ShowPhrases: true );
-                }
-                else if( TemplateName.StartsWith( "NBTGHSPICTOS:" ) || ( TemplateName.Equals( "NBTGHSPICTOS" ) ) ) // Ignore NBTGHSPICTOS_2
-                {
-                    // pictos
-                    Int32 Scale = 256;
-                    bool NoBorder = false;
-                    if( TemplateName.StartsWith( "NBTGHSPICTOS:" ) )
+                    CswNbtPropertySetMaterial MaterialNode = NbtResources.Nodes[ContainerNode.Material.RelatedNodeId];
+                    if( MaterialNode.ObjectClass.ObjectClass == CswEnumNbtObjectClass.ChemicalClass )
                     {
-                        // decode parameters
-                        CswCommaDelimitedString GHSParams = new CswCommaDelimitedString();
-                        GHSParams.FromString( TemplateName.Substring( TemplateName.IndexOf( ':' ) + 1 ).ToLower().Trim() );
-                        foreach( string GHSParam in GHSParams )
+                        CswNbtObjClassChemical ChemicalNode = MaterialNode.Node;
+
+                        // Figure out configuration from GHS/DSD
+                        CswNbtView LabelCodeView = null;
+                        CswDelimitedString ImageUrls = new CswCommaDelimitedString();
+                        string Prefix = string.Empty;
+                        if( TemplateName.StartsWith( _DSDTemplatePrefix ) )
                         {
-                            if( GHSParam.StartsWith( "scale" ) )
+                            // DSD - from Chemical DSD tab
+                            Prefix = _DSDTemplatePrefix;
+                            LabelCodeView = ChemicalNode.setupDsdPhraseView();
+                            LabelCodeView = LabelCodeView.PrepGridView( ChemicalNode.NodeId );
+                            ImageUrls = ChemicalNode.Pictograms.Value;
+                        }
+                        else if( TemplateName.StartsWith( _GHSTemplatePrefix ) )
+                        {
+                            // GHS - from user's matching GHS node
+                            Prefix = _GHSTemplatePrefix;
+                            CswNbtObjClassGHS GHSNode = _GetGhsNodeForContainer( NbtResources, TargetNode );
+                            if( null != GHSNode )
                             {
-                                Int32 NewScale = CswConvert.ToInt32( GHSParam.Substring( "scale".Length ) );
-                                if( NewScale > 0 && NewScale % 16 == 0 ) // case 30937
+                                LabelCodeView = GHSNode.setupPhraseView( GHSNode.LabelCodesGrid.View, GHSNode.LabelCodes.Value );
+                                LabelCodeView = LabelCodeView.PrepGridView( GHSNode.NodeId );
+                                ImageUrls = GHSNode.Pictograms.Value;
+                            }
+                        }
+
+                        // Apply the template value
+                        if( TemplateName.StartsWith( Prefix + "PICTOS:" ) || TemplateName.Equals( Prefix + "PICTOS" ) )  // Ignore "NBTGHSPICTOS_2"
+                        {
+                            if( ImageUrls.Count > 0 )
+                            {
+                                // pictos
+                                Int32 Scale = 256;
+                                bool NoBorder = false;
+                                if( TemplateName.StartsWith( Prefix + "PICTOS:" ) )
                                 {
-                                    Scale = NewScale;
-                                }
-                            }
-                            if( GHSParam == "noborder" )
-                            {
-                                NoBorder = true;
-                            }
-                        } // foreach( string GHSParam in GHSParams )
-                    } // if( TemplateName.StartsWith( "NBTGHSPICTOS:" ) )
-                    TemplateValue = _getGhsPictosForLabel( NbtResources, GHSNode, Scale, NoBorder );
-                }
-            } // if( null != GHSNode )
+                                    // decode parameters
+                                    CswCommaDelimitedString hazParams = new CswCommaDelimitedString();
+                                    hazParams.FromString( TemplateName.Substring( TemplateName.IndexOf( ':' ) + 1 ).ToLower().Trim() );
+                                    foreach( string hazParam in hazParams )
+                                    {
+                                        if( hazParam.StartsWith( "scale" ) )
+                                        {
+                                            Int32 NewScale = CswConvert.ToInt32( hazParam.Substring( "scale".Length ) );
+                                            if( NewScale > 0 && NewScale % 16 == 0 ) // case 30937
+                                            {
+                                                Scale = NewScale;
+                                            }
+                                        }
+                                        if( hazParam == "noborder" )
+                                        {
+                                            NoBorder = true;
+                                        }
+                                    } // foreach( string hazParam in hazParams )
+                                } // if( TemplateName.StartsWith( Prefix + "PICTOS:" ) )
+
+                                TemplateValue = _getHazardPictosForLabel( NbtResources, ImageUrls, Scale, NoBorder );
+
+                            } // if( ImageUrls.Count > 0 )
+                        } // if( TemplateName.StartsWith( Prefix + "PICTOS:" ) || TemplateName.Equals( Prefix + "PICTOS" ) )
+                        else if( null != LabelCodeView )
+                        {
+                            // NBTGHS  - phrases only
+                            // NBTGHSA - phrases only
+                            // NBTGHSB - codes only
+                            // NBTGHSC - phrases and codes
+                            TemplateValue = _getHazardCodeValueForLabel( NbtResources,
+                                                                         LabelCodeView,
+                                                                         ShowCodes: TemplateName.Equals( Prefix + "B" ) ||
+                                                                                    TemplateName.Equals( Prefix + "C" ),
+                                                                         ShowPhrases: TemplateName.Equals( Prefix ) ||
+                                                                                      TemplateName.Equals( Prefix + "A" ) ||
+                                                                                      TemplateName.Equals( Prefix + "C" ) );
+                        } // else if( null != LabelCodeView )
+                    } // if( MaterialNode.ObjectClass.ObjectClass == CswEnumNbtObjectClass.ChemicalClass )
+                } // if( null != ContainerNode.Material.RelatedNodeId )
+            } // if( ContainerNode.getObjectClass().ObjectClass == CswEnumNbtObjectClass.ContainerClass)
             return TemplateValue;
-        }
+        } // _handleHazardTemplate()
+
 
         private static CswNbtNode _GetGhsNodeForContainer( CswNbtResources NbtResources, CswNbtObjClassContainer ContainerNode )
         {
@@ -815,18 +863,15 @@ namespace ChemSW.Nbt.WebServices
             return ret;
         } // _getGhsForContainer()
 
-        // case 28716
-        // Special case: Spool GHS data from this container's Material's GHS in the user's Jurisdiction and language
-        private static string _getGhsValueForLabel( CswNbtResources NbtResources, CswNbtObjClassGHS GHSNode, bool ShowCodes, bool ShowPhrases )
+
+        private static string _getHazardCodeValueForLabel( CswNbtResources NbtResources, CswNbtView LabelCodesView, bool ShowCodes, bool ShowPhrases )
         {
             string ret = string.Empty;
 
-            if( null != GHSNode )
+            if( null != LabelCodesView )
             {
                 // Run the Label Codes View
-                CswNbtView PreppedView = GHSNode.setupPhraseView( GHSNode.LabelCodesGrid.View, GHSNode.LabelCodes.Value );
-                PreppedView = PreppedView.PrepGridView( GHSNode.NodeId );
-                ICswNbtTree LabelCodesTree = NbtResources.Trees.getTreeFromView( PreppedView, false, false, false );
+                ICswNbtTree LabelCodesTree = NbtResources.Trees.getTreeFromView( LabelCodesView, false, false, false );
                 SortedList<string, string> Phrases = new SortedList<string, string>();
                 for( Int32 p = 0; p < LabelCodesTree.getChildNodeCount(); p++ )
                 {
@@ -839,7 +884,7 @@ namespace ChemSW.Nbt.WebServices
                     foreach( CswNbtTreeNodeProp Prop in Props )
                     {
                         CswNbtMetaDataNodeTypeProp Ntp = NbtResources.MetaData.getNodeTypeProp( Prop.NodeTypePropId );
-                        if( null != Ntp && Ntp.getObjectClassPropName() == CswNbtObjClassGHSPhrase.PropertyName.Code )
+                        if( null != Ntp && Ntp.getObjectClassPropName() == CswNbtPropertySetPhrase.PropertyName.Code )
                         {
                             Code = Prop.Gestalt;
                         }
@@ -875,53 +920,48 @@ namespace ChemSW.Nbt.WebServices
                         ret += Phrases[Code] + "\n";
                     }
                 } // foreach( string Code in Phrases.Keys )
-            } // if( null != GHSNode )
+            } // if( null != LabelCodesView )
 
             return ret;
-        } // _getGhsValueForLabel()
+        } // _getHazardCodeValueForLabel()
 
-        private static string _getGhsPictosForLabel( CswNbtResources NbtResources, CswNbtObjClassGHS GHSNode, Int32 Scale, bool NoBorder )
+        private static string _getHazardPictosForLabel( CswNbtResources NbtResources, CswDelimitedString ImageUrls, Int32 Scale, bool NoBorder )
         {
             string ret = string.Empty;
-
-            if( null != GHSNode )
+            foreach( string ImageUrl in ImageUrls )
             {
-                CswDelimitedString ImageUrls = GHSNode.Pictograms.Value;
-                foreach( string ImageUrl in ImageUrls )
+                string RealImageUrl = ImageUrl.Replace( ".jpg", "" );
+                RealImageUrl = RealImageUrl.Replace( "/512/", "/" + Scale.ToString() + "/" );
+                if( NoBorder )
                 {
-                    string RealImageUrl = ImageUrl.Replace( ".jpg", "" );
-                    RealImageUrl = RealImageUrl.Replace( "ghs/512/", "ghs/" + Scale.ToString() + "/" );
-                    if( NoBorder )
-                    {
-                        RealImageUrl += "_nobrd";
-                    }
-                    RealImageUrl += ".bmp";
+                    RealImageUrl += "_nobrd";
+                }
+                RealImageUrl += ".bmp";
 
-                    // use the EPL command GWx_orig,y_orig,width_bytes,height_bits,[byte array data]
-                    // image must be BMP
-                    byte[] rawimage = File.ReadAllBytes( CswFilePath.getConfigurationFilePath( CswEnumSetupMode.NbtWeb ) + "/../" + RealImageUrl );
-                    Int32 headerLen = _fourBytesToInt32( rawimage, 10 ); // BMP format has a variable length header block
-                    Int32 heightPixels = _fourBytesToInt32( rawimage, 18 );
-                    Int32 widthBytes = _fourBytesToInt32( rawimage, 22 ) / 8;
-                    //widthBytes = 256;
+                // use the EPL command GWx_orig,y_orig,width_bytes,height_bits,[byte array data]
+                // image must be BMP
+                byte[] rawimage = File.ReadAllBytes( CswFilePath.getConfigurationFilePath( CswEnumSetupMode.NbtWeb ) + "/../" + RealImageUrl );
+                Int32 headerLen = _fourBytesToInt32( rawimage, 10 ); // BMP format has a variable length header block
+                Int32 heightPixels = _fourBytesToInt32( rawimage, 18 );
+                Int32 widthBytes = _fourBytesToInt32( rawimage, 22 ) / 8;
+                //widthBytes = 256;
 
-                    // strip out header content
-                    Int32 newlen = rawimage.Length - headerLen;
-                    byte[] image = new byte[newlen];
-                    System.Buffer.BlockCopy( rawimage, headerLen, image, 0, newlen );
+                // strip out header content
+                Int32 newlen = rawimage.Length - headerLen;
+                byte[] image = new byte[newlen];
+                System.Buffer.BlockCopy( rawimage, headerLen, image, 0, newlen );
 
-                    // Convert the byte[] to a hex string with markup
-                    string imageHex = Convert.ToBase64String( image );
+                // Convert the byte[] to a hex string with markup
+                string imageHex = Convert.ToBase64String( image );
 
-                    //build the epl data and append the width (bytes) and height (pixels). template has the leading "GWn,n,"  before width
-                    ret += widthBytes + "," + heightPixels + ",<HEX>" + imageHex + "</HEX>\n";
+                //build the epl data and append the width (bytes) and height (pixels). template has the leading "GWn,n,"  before width
+                ret += widthBytes + "," + heightPixels + ",<HEX>" + imageHex + "</HEX>\n";
 
-                } // foreach( string ImageUrl in ImageUrls )
-            } // if( null != GHSNode )
+            } // foreach( string ImageUrl in ImageUrls )
             return ret;
-        } // getGhsPictosForLabel()
+        } // _getHazardPictosForLabel()
 
-        #endregion GHS
+        #endregion Hazard Label
 
 
     } // class CswNbtWebServiceTabsAndProps
