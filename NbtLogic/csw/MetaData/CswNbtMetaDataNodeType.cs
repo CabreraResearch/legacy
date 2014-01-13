@@ -153,6 +153,11 @@ namespace ChemSW.Nbt.MetaData
             }
         }
 
+        public CswEnumTristate Searchable
+        {
+            get { return CswConvert.ToTristate( _NodeTypeRow["searchable"] ); }
+            private set { _NodeTypeRow["searchable"] = CswConvert.ToDbVal( value ); }
+        }
         public Int32 SearchDeferPropId
         {
             get { return CswConvert.ToInt32( _NodeTypeRow["searchdeferpropid"] ); }
@@ -360,6 +365,12 @@ namespace ChemSW.Nbt.MetaData
         public CswNbtMetaDataObjectClass getObjectClass()
         {
             return _CswNbtMetaDataResources.CswNbtMetaData.getObjectClass( ObjectClassId );
+        }
+
+        // for ICswNbtMetaDataDefinitionObject
+        public IEnumerable<CswNbtMetaDataNodeType> getNodeTypes()
+        {
+            return new Collection<CswNbtMetaDataNodeType> { this };
         }
 
         public CswEnumNbtObjectClass getObjectClassValue()
@@ -839,6 +850,11 @@ namespace ChemSW.Nbt.MetaData
                 NodesRow["pendingupdate"] = "1";
             }
             NodesUpdate.update( NodesTable );
+        }
+
+        public bool IsSearchResult()
+        {
+            return this.Searchable == CswEnumTristate.True && this.SearchDeferPropId == Int32.MinValue;
         }
     }
 }

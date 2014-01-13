@@ -1,4 +1,5 @@
 using System;
+using System.Collections.ObjectModel;
 using System.Linq;
 using ChemSW.Core;
 using ChemSW.Exceptions;
@@ -118,7 +119,9 @@ namespace ChemSW.Nbt.Actions
 
                 int TotalContainersToMake = ReceiptDefinition.CountNumberContainersToMake();
                 int Threshhold = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( "batchthreshold" ) );
-                if( TotalContainersToMake > Threshhold )
+                bool UseBatchOp = TotalContainersToMake > Threshhold;
+                Collection<CswPrimaryKey> ContainerIds = null;
+                if( UseBatchOp )
                 {
                     //Containers will be created in a batch op
                     CswNbtBatchOpReceiving ReceivingBatchOp = new CswNbtBatchOpReceiving( _CswNbtResources );
@@ -128,11 +131,19 @@ namespace ChemSW.Nbt.Actions
                 {
                     //Create the containers now
                     int nodesProcessed = 0;
-                    receiveContainers( ReceiptDefinition, ref nodesProcessed, TotalContainersToMake + 1 );
+                    CswNbtReceivingDefinition ReceivedContainers = receiveContainers( ReceiptDefinition, ref nodesProcessed, TotalContainersToMake + 1 );
+                    ContainerIds = new Collection<CswPrimaryKey>();
+                    foreach( CswNbtAmountsGridQuantity Quantity in ReceivedContainers.Quantities )
+                    {
+                        foreach( string ContainerId in Quantity.ContainerIds )
+                        {
+                            ContainerIds.Add(CswConvert.ToPrimaryKey(ContainerId));
+                        }
+                    }
                 }
                 
                 CswNbtNode MaterialNode = _CswNbtResources.Nodes.GetNode( ReceiptDefinition.MaterialNodeId );
-                Ret = getLandingPageData( _CswNbtResources, MaterialNode );
+                Ret = getLandingPageData( _CswNbtResources, MaterialNode, UseBatchOp, ContainerIds );
             }
 
             return Ret;
@@ -209,7 +220,7 @@ namespace ChemSW.Nbt.Actions
         /// <summary>
         /// Get a landing page for a Material
         /// </summary>
-        public static JObject getLandingPageData( CswNbtResources NbtResources, CswNbtNode MaterialNode, CswNbtView MaterialNodeView = null )
+        public static JObject getLandingPageData( CswNbtResources NbtResources, CswNbtNode MaterialNode, bool UseBatchOp, Collection<CswPrimaryKey> ContainerIds, CswNbtView MaterialNodeView = null )
         {
             JObject Ret = new JObject();
             if( null != MaterialNode )
@@ -236,6 +247,31 @@ namespace ChemSW.Nbt.Actions
                 Ret["ActionLinks"][ActionLinkName] = new JObject();
                 Ret["ActionLinks"][ActionLinkName]["Text"] = MaterialNode.NodeName;
                 Ret["ActionLinks"][ActionLinkName]["ViewId"] = MaterialNodeView.SessionViewId.ToString();
+
+                if( UseBatchOp )
+                {
+                    Ret["Title"] = "The containers for this material have been scheduled for creation, but may not be available immediately. Click 'View Batch Operations' to check their progress.";
+                    Ret["ActionLinks"]["BatchOps"] = new JObject();
+                    Ret["ActionLinks"]["BatchOps"]["ActionName"] = "These containers will be created in a batch operation and may not be immediately available. You can check the progress of their creation below:";
+                    Ret["ActionLinks"]["BatchOps"]["Text"] = "View Batch Operations";
+                    Ret["ActionLinks"]["BatchOps"]["ViewId"] = NbtResources.ViewSelect.getViewIdByName( "My Batch Operations", CswEnumNbtViewVisibility.Global, null, null ).ToString();
+                }
+                else
+                {
+                    CswNbtMetaDataNodeType ContainerNT = NbtResources.MetaData.getNodeType( "Container" );
+                    if( null != ContainerNT )
+                    {
+                        CswNbtView NewContainersView = new CswNbtView( NbtResources );
+                        NewContainersView.ViewName = "New Containers";
+                        CswNbtViewRelationship ContainerVr = NewContainersView.AddViewRelationship( ContainerNT, true );
+                        ContainerVr.NodeIdsToFilterIn = ContainerIds;
+                        NewContainersView.SaveToCache( false );
+
+                        Ret["ActionLinks"]["NewContainers"] = new JObject();
+                        Ret["ActionLinks"]["NewContainers"]["Text"] = "View Received Containers";
+                        Ret["ActionLinks"]["NewContainers"]["ViewId"] = NewContainersView.SessionViewId.ToString(); ;
+                    }
+                }
             }
             return Ret;
         }

@@ -59,7 +59,7 @@
                             Csw.main.setLandingPage(function () {
                                 Csw.layouts.landingpage(Csw.main.centerBottomDiv, {
                                     name: 'createMaterialLandingPage',
-                                    Title: 'Created:',
+                                    LinkTitle: 'Created:',
                                     ActionId: actionData.ActionId,
                                     ObjectClassId: actionData.RelatedObjectClassId,
                                     onLinkClick: Csw.main.handleItemSelect,
@@ -282,7 +282,8 @@
                         Csw.main.setLandingPage(function () {
                             Csw.layouts.landingpage(Csw.main.centerBottomDiv, {
                                 name: 'receiveLandingPage',
-                                Title: 'Received Material: ',
+                                Title: actionData.Title,
+                                LinkTitle: 'Received Material:',
                                 ActionId: actionData.ActionId,
                                 ObjectClassId: actionData.RelatedObjectClassId,
                                 onLinkClick: Csw.main.handleItemSelect,

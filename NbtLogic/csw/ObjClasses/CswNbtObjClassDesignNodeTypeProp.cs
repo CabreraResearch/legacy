@@ -114,7 +114,7 @@ namespace ChemSW.Nbt.ObjClasses
                                            "Property must be attached to a nodetype",
                                            "Attempted to save a new property without a nodetype" );
             }
-            if( false == OverrideUniqueValidation && 
+            if( false == OverrideUniqueValidation &&
                 null != RelationalNodeType && null != RelationalNodeType.getNodeTypeProp( PropName.Text ) )
             {
                 throw new CswDniException( CswEnumErrorType.Warning,
@@ -450,10 +450,10 @@ namespace ChemSW.Nbt.ObjClasses
                     return Options;
                 };
 
-            // Options for Compliant Answer
             if( FieldTypeValue == CswEnumNbtFieldType.Question )
             {
-                CswNbtMetaDataNodeTypeProp CompliantAnswersNTP = this.NodeType.getNodeTypeProp( CswEnumNbtPropertyAttributeName.CompliantAnswers.ToString() );
+                // Options for Compliant Answer
+                CswNbtMetaDataNodeTypeProp CompliantAnswersNTP = this.NodeType.getNodeTypeProp( CswNbtFieldTypeRuleQuestion.AttributeName.CompliantAnswers.ToString() );
                 if( null != CompliantAnswersNTP )
                 {
                     CswNbtNodePropWrapper CompliantAnswersProp = Node.Properties[CompliantAnswersNTP];
@@ -462,7 +462,17 @@ namespace ChemSW.Nbt.ObjClasses
                         CompliantAnswersProp.AsMultiList.InitOptions = _initCompliantAnswerOptions;
                     }
                 }
-            }
+                // Options for Preferred Answer
+                CswNbtMetaDataNodeTypeProp PreferredAnswerNTP = this.NodeType.getNodeTypeProp( CswNbtFieldTypeRuleQuestion.AttributeName.PreferredAnswer.ToString() );
+                if( null != PreferredAnswerNTP )
+                {
+                    CswNbtNodePropWrapper PreferredAnswerProp = Node.Properties[PreferredAnswerNTP];
+                    if( null != PreferredAnswerProp )
+                    {
+                        PreferredAnswerProp.AsList.InitOptions = _initPreferredAnswerOptions;
+                    }
+                }
+            } // if( FieldTypeValue == CswEnumNbtFieldType.Question )
 
             // Display conditions
             DisplayConditionProperty.onBeforeRender = delegate( CswNbtNodeProp prop )
@@ -490,6 +500,45 @@ namespace ChemSW.Nbt.ObjClasses
                 CswNbtMetaDataNodeTypeProp TargetNTP = this.NodeType.getNodeTypeProp( CswEnumNbtPropertyAttributeName.Target.ToString() );
                 this.Node.Properties[TargetNTP].setReadOnly( true, true );
             }
+
+            // PropertyReference - filter to my relationships
+            if( FieldTypeValue == CswEnumNbtFieldType.PropertyReference )
+            {
+                // Choices for Related Property derive from the selected Relationship
+                CswNbtMetaDataNodeTypeProp RelatedPropertyNTP = NodeType.getNodeTypeProp( CswNbtFieldTypeRulePropertyReference.AttributeName.RelatedProperty );
+                this.Node.Properties[RelatedPropertyNTP].SetOnBeforeRender( delegate( CswNbtNodeProp prop )
+                    {
+                        CswNbtMetaDataObjectClass NodeTypePropOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.DesignNodeTypePropClass );
+                        CswNbtMetaDataObjectClassProp NTPNodeTypeOCP = NodeTypePropOC.getObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.NodeTypeValue );
+
+                        CswNbtMetaDataNodeTypeProp RelationshipNTP = NodeType.getNodeTypeProp( CswNbtFieldTypeRulePropertyReference.AttributeName.Relationship );
+                        CswNbtNodePropRelationship RelationshipPropValue = this.Node.Properties[RelationshipNTP].AsRelationship;
+                        if( CswTools.IsPrimaryKey( RelationshipPropValue.RelatedNodeId ) )
+                        {
+                            CswNbtObjClassDesignNodeTypeProp RelationshipPropertyNode = _CswNbtResources.Nodes[RelationshipPropValue.RelatedNodeId];
+                            CswNbtMetaDataNodeTypeProp RelationshipPropertyTargetNTP = RelationshipPropertyNode.NodeType.getNodeTypeProp( CswNbtFieldTypeRuleRelationship.AttributeName.Target );
+                            CswNbtNodePropMetaDataList RelationshipTargetValue = RelationshipPropertyNode.Node.Properties[RelationshipPropertyTargetNTP].AsMetaDataList;
+                            ICswNbtMetaDataDefinitionObject RelationshipTarget = RelationshipTargetValue.MetaDataValue;
+                            if( null != RelationshipTarget )
+                            {
+                                // View of all properties of the target nodetype
+                                CswNbtView relpropview = new CswNbtView( _CswNbtResources );
+                                relpropview.ViewName = "propref_relprop_targets_" + NodeTypeId;
+                                CswNbtViewRelationship rel1 = relpropview.AddViewRelationship( NodeTypePropOC, false );
+                                foreach( CswNbtMetaDataNodeType TargetNodeType in RelationshipTarget.getNodeTypes() )
+                                {
+                                    relpropview.AddViewPropertyAndFilter( rel1,
+                                                                          NTPNodeTypeOCP,
+                                                                          Conjunction: CswEnumNbtFilterConjunction.Or,
+                                                                          SubFieldName: CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID,
+                                                                          Value: TargetNodeType.DesignNode.NodeId.PrimaryKey.ToString() );
+                                }
+
+                                this.Node.Properties[RelatedPropertyNTP].AsRelationship.OverrideView( relpropview );
+                            }
+                        }
+                    } );
+            } // if( FieldTypeValue == CswEnumNbtFieldType.PropertyReference )
 
             // ChildContents ChildRelationship - filter to relationships that point to my relational nodetype
             if( FieldTypeValue == CswEnumNbtFieldType.ChildContents )
@@ -688,6 +737,25 @@ namespace ChemSW.Nbt.ObjClasses
             return ret;
         } // _initCompliantAnswerOptions()
 
+        public CswNbtNodeTypePropListOptions _initPreferredAnswerOptions()
+        {
+            CswNbtNodeTypePropListOptions ret = new CswNbtNodeTypePropListOptions( _CswNbtResources, string.Empty, Int32.MinValue, false );
+            CswNbtMetaDataNodeTypeProp PossibleAnswersNTP = this.NodeType.getNodeTypeProp( CswEnumNbtPropertyAttributeName.PossibleAnswers.ToString() );
+            if( null != PossibleAnswersNTP )
+            {
+                CswNbtNodePropWrapper PossibleAnswersProp = Node.Properties[PossibleAnswersNTP];
+                if( null != PossibleAnswersProp )
+                {
+                    CswCommaDelimitedString PossibleAnswers = new CswCommaDelimitedString();
+                    PossibleAnswers.FromString( PossibleAnswersProp.AsText.Text );
+                    foreach( string Answer in PossibleAnswers )
+                    {
+                        ret.Options.Add( new CswNbtNodeTypePropListOption( Answer, Answer ) );
+                    }
+                }
+            }
+            return ret;
+        } // _initCompliantAnswerOptions()
         public bool DerivesFromObjectClassProp
         {
             get { return false == string.IsNullOrEmpty( ObjectClassPropName.Value ); }

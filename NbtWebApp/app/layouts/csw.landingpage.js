@@ -88,9 +88,12 @@
                     width: '100%'
                 });
 
-                cswPrivate.buildActionLinkTable(table.cell(1, 1));
+                var titleCell = table.cell(1, 1).propDom('colspan', 2).propDom('align', 'center');
+                titleCell.span({ text: cswPrivate.Title }).br({ number: 2 });
+                
+                cswPrivate.buildActionLinkTable(table.cell(2, 1).css({'max-width': '20%'}));
 
-                var layoutTable = table.cell(1, 2).layoutTable({
+                var layoutTable = table.cell(2, 2).layoutTable({
                     name: 'landingpagetable',
                     cellSet: { rows: 2, columns: 1 },
                     TableCssClass: 'LandingPageTable',
@@ -191,16 +194,18 @@
             });
         }());
 
+
         cswPrivate.buildActionLinkTable = function (parentDiv) {
             cswPrivate.actionLinkTable = parentDiv.table({
                 name: 'actionLink_tbl',
                 cellpadding: 5,
-                align: 'left',
-                width: null
+                align: 'left'
             });
+            
             cswPrivate.landingPageTitle = cswPrivate.actionLinkTable.cell(1, 1).span({
-                text: cswPrivate.Title
+                text: cswPrivate.LinkTitle
             });
+            
             var actionLinkRow = 2;
             Csw.iterate(cswPrivate.landingPageRequestData.ActionLinks, function (ActionLink) {
                 if (false === Csw.isNullOrEmpty(ActionLink)) {

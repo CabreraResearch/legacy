@@ -172,6 +172,8 @@ namespace ChemSW.Nbt.MetaData
             [DataMember]
             public string NameTemplate = string.Empty;
             [DataMember]
+            public bool Searchable = true;
+            [DataMember]
             public Int32 SearchDeferObjectClassPropId = Int32.MinValue;
             [DataMember]
             public Int32 SearchDeferNodeTypePropId = Int32.MinValue;

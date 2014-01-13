@@ -720,22 +720,23 @@ namespace ChemSW.Nbt.MetaData
                     NewNTNode.NameTemplateText.Text = NtModel.NameTemplate;
                     NewNTNode.NodeTypeName.Text = NtModel.NodeTypeName;
                     NewNTNode.ObjectClassProperty.Value = NtModel.ObjectClassId.ToString();
-                } );
+                    NewNTNode.Searchable.Checked = CswConvert.ToTristate( NtModel.Searchable );
 
-            //// Handle search defer
-            //CswNbtObjClassDesignNodeTypeProp DeferPropNode = null;
-            //if( Int32.MinValue != NtModel.SearchDeferObjectClassPropId )
-            //{
-            //    DeferPropNode = _CswNbtMetaDataResources.CswNbtResources.Nodes.getNodeByRelationalId( new CswPrimaryKey( "nodetype_props", NtModel.SearchDeferNodeTypePropId ) );
-            //}
-            //if( Int32.MinValue != NtModel.SearchDeferNodeTypePropId )
-            //{
-            //    DeferPropNode = _CswNbtMetaDataResources.CswNbtResources.Nodes.getNodeByRelationalId( new CswPrimaryKey( "nodetype_props", NtModel.SearchDeferNodeTypePropId ) );
-            //}
-            //if( null != DeferPropNode )
-            //{
-            //    NewNodeTypeNode.DeferSearchTo.RelatedNodeId = DeferPropNode.NodeId;
-            //}
+                    // Handle search defer
+                    CswNbtObjClassDesignNodeTypeProp DeferPropNode = null;
+                    if( Int32.MinValue != NtModel.SearchDeferObjectClassPropId )
+                    {
+                        DeferPropNode = _CswNbtMetaDataResources.CswNbtResources.Nodes.getNodeByRelationalId( new CswPrimaryKey( "nodetype_props", NtModel.SearchDeferNodeTypePropId ) );
+                    }
+                    if( Int32.MinValue != NtModel.SearchDeferNodeTypePropId )
+                    {
+                        DeferPropNode = _CswNbtMetaDataResources.CswNbtResources.Nodes.getNodeByRelationalId( new CswPrimaryKey( "nodetype_props", NtModel.SearchDeferNodeTypePropId ) );
+                    }
+                    if( null != DeferPropNode )
+                    {
+                        NewNTNode.DeferSearchTo.RelatedNodeId = DeferPropNode.NodeId;
+                    }
+                } );
 
             refreshAll();
 
@@ -765,7 +766,7 @@ namespace ChemSW.Nbt.MetaData
             InsertedNodeTypesRow["searchdeferpropid"] = CswConvert.ToDbVal( NtModel.SearchDeferNodeTypePropId );    // see below for inheritance from object classes
             InsertedNodeTypesRow["nodecount"] = 0;
 
-            InsertedNodeTypesRow["oraviewname"] = CswTools.MakeOracleCompliantIdentifier( NtModel.NodeTypeName );
+            InsertedNodeTypesRow["oraviewname"] = CswFormat.MakeOracleCompliantIdentifier( NtModel.NodeTypeName );
 
             NodeTypesTable.Rows.Add( InsertedNodeTypesRow );
 
@@ -884,14 +885,14 @@ namespace ChemSW.Nbt.MetaData
             // Handle search defer inheritance from object classes
             if( Int32.MinValue != NtModel.SearchDeferObjectClassPropId )
             {
-                if( CswNbtMetaDataObjectClass.NotSearchableValue != NtModel.SearchDeferObjectClassPropId )
-                {
-                    NewNodeType._DataRow["searchdeferpropid"] = CswConvert.ToDbVal( NewNodeType.getNodeTypePropByObjectClassProp( NtModel.SearchDeferObjectClassPropId ).PropId );
-                }
-                else
-                {
-                    NewNodeType._DataRow["searchdeferpropid"] = CswConvert.ToDbVal( CswNbtMetaDataObjectClass.NotSearchableValue );
-                }
+                //if( CswNbtMetaDataObjectClass.NotSearchableValue != NtModel.SearchDeferObjectClassPropId )
+                //{
+                NewNodeType._DataRow["searchdeferpropid"] = CswConvert.ToDbVal( NewNodeType.getNodeTypePropByObjectClassProp( NtModel.SearchDeferObjectClassPropId ).PropId );
+                //}
+                //else
+                //{
+                //    NewNodeType._DataRow["searchdeferpropid"] = CswConvert.ToDbVal( CswNbtMetaDataObjectClass.NotSearchableValue );
+                //}
             }
 
             if( OnMakeNewNodeType != null )
@@ -1195,7 +1196,7 @@ namespace ChemSW.Nbt.MetaData
                 {
                     OraViewColName = OraViewColNamePrefix + OraViewColName;
                 }
-                InsertedRow["oraviewcolname"] = CswTools.MakeOracleCompliantIdentifier( OraViewColName );
+                InsertedRow["oraviewcolname"] = CswFormat.MakeOracleCompliantIdentifier( OraViewColName );
 
             }
 
@@ -1464,7 +1465,7 @@ namespace ChemSW.Nbt.MetaData
             InsertedNodeTypeRow["enabled"] = CswConvert.ToDbVal( true );
             InsertedNodeTypeRow["nodecount"] = 0;
 
-            InsertedNodeTypeRow["oraviewname"] = CswTools.MakeOracleCompliantIdentifier( NewNodeTypeName );
+            InsertedNodeTypeRow["oraviewname"] = CswFormat.MakeOracleCompliantIdentifier( NewNodeTypeName );
 
             NewNodeTypeTable.Rows.Add( InsertedNodeTypeRow );
             Int32 NewNodeTypeId = CswConvert.ToInt32( InsertedNodeTypeRow["nodetypeid"].ToString() );
