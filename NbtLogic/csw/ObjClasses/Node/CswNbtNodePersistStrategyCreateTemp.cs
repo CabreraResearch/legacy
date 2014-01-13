@@ -16,7 +16,7 @@ namespace ChemSW.Nbt.ObjClasses
             IsCopy = false;
             OverrideUniqueValidation = false;
             SkipEvents = false;
-            AllowAuditing = true;
+            AllowAuditing = false;
             Creating = true;
         }
 
