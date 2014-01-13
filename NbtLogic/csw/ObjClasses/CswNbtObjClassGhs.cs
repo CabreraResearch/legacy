@@ -76,14 +76,11 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public override void beforePromoteNode( bool OverrideUniqueValidation )
+        protected override void afterPopulateProps()
         {
             LabelCodes.InitOptions = _initGhsPhraseOptions;
             Classifications.InitOptions = _initGhsClassificationOptions;
-        }
 
-        protected override void afterPopulateProps()
-        {
             AddLabelCodes.SetOnPropChange( OnAddLabelCodesPropChange );
 
             LabelCodesGrid.SetOnBeforeRender( delegate( CswNbtNodeProp Prop )
