@@ -60,12 +60,22 @@
             });
             var dragPanelCmp = window.Ext.getCmp(dragPanelCmpId);
 
-            cswPublic.addItemToCol = function (colNo, styleParams, render) {
-                var extComponent = getCol(colNo);
+            cswPublic.addItemToCol = function (colNo, paramsIn) {
+                var params = {
+                    style: {},
+                    render: function () { },
+                    onDrop: function (extCmp, col, row) { }
+                };
+                if (paramsIn) {
+                    Csw.extend(params, paramsIn);
+                }
+
+                var extCol = getCol(colNo);
 
                 //Add our drag panel
-                var extRenderTo = extComponent.add({
-                    id: window.Ext.id()
+                var extRenderTo = extCol.add({
+                    id: window.Ext.id(),
+                    onDrop: params.onDrop
                 });
                 _draggables.push(extRenderTo);
 
@@ -75,11 +85,11 @@
                     el: extRenderTo.body.dom
                 });
 
-                Csw.tryExec(render, extRenderTo, cswRenderTo);
+                Csw.tryExec(params.render, extRenderTo, cswRenderTo);
 
                 //Apply any styling supplied
-                for (var name in styleParams) {
-                    window.Ext.get(extRenderTo.getId()).setStyle(name, styleParams[name]);
+                for (var name in params.style) {
+                    window.Ext.get(extRenderTo.getId()).setStyle(name, params.style[name]);
                 }
             };
 
@@ -106,12 +116,11 @@
                         extComponent = dragPanelCmp.items.items[0];
                     }
                 }
-                
+
                 if (extComponent) {
                     extComponent.destroy();
                 }
             };
-
 
         }());
         return cswPublic;
