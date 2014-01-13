@@ -17,6 +17,15 @@
         var _colIdPrefix = window.Ext.id() + "_dragcol_";
         var _draggables = [];
 
+        var getCol = function (colNo) {
+            var colId = _colIdPrefix + colNo;
+            var extComponent = window.Ext.getCmp(colId);
+            if (!extComponent) { //Did we get a real column?
+                Csw.error.throwException('Cannot render to drag column', 'csw.draggablepanel.js');
+            }
+            return extComponent;
+        };
+
         (function () {
             if (options) {
                 Csw.extend(cswPrivate, options);
@@ -24,33 +33,35 @@
 
             var myDiv = cswParent.div({ width: cswPrivate.width });
 
+            var makeCol = function (colNo) {
+                return {
+                    id: _colIdPrefix + colNo,
+                    width: 200,
+                    border: 1
+                };
+            };
+
             //Create column items up front
             var _columns = [];
             for (var i = 0; i < cswPrivate.columns; i++) {
-                _columns.push({
-                    id: _colIdPrefix + i,
-                    width: 200,
-                    border: 1
-                });
+                _columns.push(makeCol(i));
             }
 
             //Set up parent
+            var dragPanelCmpId = 'draggablepanel' + window.Ext.id();
             window.Ext.create('Ext.panel.Panel', {
                 renderTo: myDiv.getId(),
                 border: 1,
                 items: [{
-                    id: 'draggablepanel' + window.Ext.id(),
+                    id: dragPanelCmpId,
                     xtype: 'dragpanel',
                     items: _columns
                 }]
             });
+            var dragPanelCmp = window.Ext.getCmp(dragPanelCmpId);
 
             cswPublic.addItemToCol = function (colNo, styleParams, render) {
-                var colId = _colIdPrefix + colNo;
-                var extComponent = window.Ext.getCmp(colId);
-                if (!extComponent) { //Did we get a real column?
-                    Csw.error.throwException('Cannot render to drag column', 'csw.draggablepanel.js');
-                }
+                var extComponent = getCol(colNo);
 
                 //Add our drag panel
                 var extRenderTo = extComponent.add({
@@ -76,6 +87,28 @@
                 for (var idx in _draggables) {
                     var draggableItem = _draggables[idx];
                     draggableItem.allowDrag(allow);
+                }
+            };
+
+            cswPublic.addCol = function () {
+                //figure out how many columns we have
+                var existingCols = dragPanelCmp.items.items.length;
+
+                dragPanelCmp.add(makeCol(existingCols + 1));
+            };
+
+            cswPublic.removeCol = function (colNo) {
+                var extComponent;
+                if (colNo) {
+                    extComponent = getCol(colNo);
+                } else {
+                    if (dragPanelCmp.items.items.length > 0) {
+                        extComponent = dragPanelCmp.items.items[0];
+                    }
+                }
+                
+                if (extComponent) {
+                    extComponent.destroy();
                 }
             };
 
