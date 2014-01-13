@@ -21,7 +21,7 @@ namespace ChemSW.Nbt.WebServices
     /// Label List Return Object
     /// </summary>
     [DataContract]
-    public class CswNbtLabelList: CswWebSvcReturn
+    public class CswNbtLabelList : CswWebSvcReturn
     {
         /// <summary> ctor </summary>
         public CswNbtLabelList()
@@ -38,7 +38,7 @@ namespace ChemSW.Nbt.WebServices
     /// Label EPL Return Object
     /// </summary>
     [DataContract]
-    public class CswNbtLabelEpl: CswWebSvcReturn
+    public class CswNbtLabelEpl : CswWebSvcReturn
     {
         /// <summary> ctor </summary>
         public CswNbtLabelEpl()
@@ -55,7 +55,7 @@ namespace ChemSW.Nbt.WebServices
     /// Print Job Return Object
     /// </summary>
     [DataContract]
-    public class CswNbtPrintJobReturn: CswWebSvcReturn
+    public class CswNbtPrintJobReturn : CswWebSvcReturn
     {
         /// <summary> ctor </summary>
         public CswNbtPrintJobReturn()
@@ -73,7 +73,7 @@ namespace ChemSW.Nbt.WebServices
     /// Label EPL Return Object
     /// </summary>
     [DataContract]
-    public class CswNbtLabelPrinterReg: CswWebSvcReturn
+    public class CswNbtLabelPrinterReg : CswWebSvcReturn
     {
         /// <summary> ctor </summary>
         public CswNbtLabelPrinterReg()
@@ -228,8 +228,7 @@ namespace ChemSW.Nbt.WebServices
                 if( null != TargetNode )
                 {
                     Dictionary<string, string> PropVals = TargetNode.getPropertiesAndValues();
-                    CswNbtObjClassGHS GHSNode = _getGhsNodeForContainer( NbtResources, TargetNode );
-                    JobData += GenerateEPLScript( NbtResources, PrintLabel, TargetNode.NodeId, PropVals, GHSNode );
+                    JobData += GenerateEPLScript( NbtResources, PrintLabel, TargetNode, PropVals );
                     JobCount += 1;
                 }
             } // foreach( string TargetId in RealTargetIds )
@@ -297,14 +296,13 @@ namespace ChemSW.Nbt.WebServices
              * This method is for generating a print job when a user clicks finish on the Receiving wizard. We don't have the node ids for each container, so this print job will use the 
              * SAME node id for each label. This means we COULD get wrong data for labels when using an SQL query.
              * 
-             * EXAMPLE: User writes in a query to get the Containers "Cotnainer Type" which lives on the Size. If two quantities use different sizes with different Container Types, then
+             * EXAMPLE: User writes in a query to get the Containers "Container Type" which lives on the Size. If two quantities use different sizes with different Container Types, then
              * the query will only fetch the container type of the FIRST container because we only have the container id of the container that was used to initialize the wizard
              */
             CswNbtNode TargetNode = NbtResources.Nodes[InitialContainerId];
-            CswNbtObjClassGHS GHSNode = _getGhsNodeForContainer( NbtResources, TargetNode );
             foreach( Dictionary<string, string> PropVals in ContainerPropVals )
             {
-                JobData += GenerateEPLScript( NbtResources, PrintLabel, TargetNode.NodeId, PropVals, GHSNode );
+                JobData += GenerateEPLScript( NbtResources, PrintLabel, TargetNode, PropVals );
                 JobCount += 1;
             }
 
@@ -334,13 +332,11 @@ namespace ChemSW.Nbt.WebServices
                     if( null != TargetNode )
                     {
                         Dictionary<string, string> PropVals = TargetNode.getPropertiesAndValues();
-                        CswNbtObjClassGHS GHSNode = _getGhsNodeForContainer( NbtResources, TargetNode );
-
                         Return.Data.Labels.Add( new PrintLabel
                             {
                                 TargetId = TargetNode.NodeId.ToString(),
                                 TargetName = TargetNode.NodeName,
-                                EplText = GenerateEPLScript( NbtResources, PrintLabel, TargetNode.NodeId, PropVals, GHSNode )
+                                EplText = GenerateEPLScript( NbtResources, PrintLabel, TargetNode, PropVals )
                             } );
                     }
                 }
@@ -351,64 +347,6 @@ namespace ChemSW.Nbt.WebServices
             }
         } // getEPLText()
 
-        private static CswNbtObjClassGHS _getGhsNodeForContainer( CswNbtResources NbtResources, CswNbtObjClassContainer Node )
-        {
-            CswPrimaryKey GHSPk = GetGhsNodeIdForContainer( NbtResources, Node );
-            return NbtResources.Nodes.GetNode( GHSPk );
-        }
-
-        public static CswPrimaryKey GetGhsNodeIdForContainer( CswNbtResources NbtResources, CswNbtObjClassContainer Node )
-        {
-            CswPrimaryKey GHSNodeId = null;
-
-            CswNbtMetaDataNodeType ContainerNT = Node.NodeType;
-            if( null != ContainerNT && ContainerNT.getObjectClass().ObjectClass == CswEnumNbtObjectClass.ContainerClass )
-            {
-                CswNbtMetaDataNodeTypeProp ContainerMaterialNTP = ContainerNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.PropertyName.Material );
-
-                CswNbtMetaDataObjectClass GhsOC = NbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.GHSClass );
-                if( null != GhsOC )
-                {
-                    CswNbtMetaDataObjectClassProp GhsMaterialOCP = GhsOC.getObjectClassProp( CswNbtObjClassGHS.PropertyName.Material );
-                    CswNbtMetaDataObjectClassProp GhsJurisdictionOCP = GhsOC.getObjectClassProp( CswNbtObjClassGHS.PropertyName.Jurisdiction );
-
-                    CswNbtView GHSView = new CswNbtView( NbtResources );
-                    GHSView.ViewName = "GHS for Container";
-
-                    CswNbtViewRelationship ContainerRel = GHSView.AddViewRelationship( Node.NodeType, false );
-                    CswNbtViewRelationship MaterialRel = GHSView.AddViewRelationship( ContainerRel, CswEnumNbtViewPropOwnerType.First, ContainerMaterialNTP, false );
-                    CswNbtViewRelationship GHSRel = GHSView.AddViewRelationship( MaterialRel, CswEnumNbtViewPropOwnerType.Second, GhsMaterialOCP, false );
-
-                    ContainerRel.NodeIdsToFilterIn.Add( Node.NodeId );
-                    CswPrimaryKey JurisdictionId = NbtResources.CurrentNbtUser.JurisdictionId;
-                    if( CswTools.IsPrimaryKey( JurisdictionId ) )
-                    {
-                        GHSView.AddViewPropertyAndFilter( GHSRel, GhsJurisdictionOCP,
-                                                          Value : NbtResources.CurrentNbtUser.JurisdictionId.PrimaryKey.ToString(),
-                                                          SubFieldName: CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID,
-                                                          FilterMode : CswEnumNbtFilterMode.Equals );
-                    }
-
-                    ICswNbtTree GHSTree = NbtResources.Trees.getTreeFromView( GHSView, false, false, false );
-                    if( GHSTree.getChildNodeCount() > 0 )
-                    {
-                        GHSTree.goToNthChild( 0 ); // Container
-                        if( GHSTree.getChildNodeCount() > 0 )
-                        {
-                            GHSTree.goToNthChild( 0 ); // Material
-                            if( GHSTree.getChildNodeCount() > 0 )
-                            {
-                                GHSTree.goToNthChild( 0 ); // GHS
-
-                                GHSNodeId = GHSTree.getNodeIdForCurrentPosition();
-
-                            } // if( GHSTree.getChildNodeCount() > 0 ) ghs
-                        } // if( GHSTree.getChildNodeCount() > 0 )     material
-                    } // if( GHSTree.getChildNodeCount() > 0 )         container
-                } // if(null != GhsOC)
-            } // if( null != ContainerNT && ContainerNT.getObjectClass().ObjectClass == NbtObjectClass.ContainerClass )
-            return GHSNodeId;
-        } // _getGhsForContainer()
 
         /// <summary>
         /// Convert four-byte little-endian hex to integer
@@ -422,111 +360,6 @@ namespace ChemSW.Nbt.WebServices
             return headerLen;
         }
 
-        private static string _getGhsPictosForLabel( CswNbtResources NbtResources, CswNbtObjClassGHS GHSNode, Int32 Scale, bool NoBorder )
-        {
-            string ret = string.Empty;
-
-            if( null != GHSNode )
-            {
-                CswDelimitedString ImageUrls = GHSNode.Pictograms.Value;
-                foreach( string ImageUrl in ImageUrls )
-                {
-                    string RealImageUrl = ImageUrl.Replace( ".jpg", "" );
-                    RealImageUrl = RealImageUrl.Replace( "ghs/512/", "ghs/" + Scale.ToString() + "/" );
-                    if( NoBorder )
-                    {
-                        RealImageUrl += "_nobrd";
-                    }
-                    RealImageUrl += ".bmp";
-
-                    // use the EPL command GWx_orig,y_orig,width_bytes,height_bits,[byte array data]
-                    // image must be BMP
-                    byte[] rawimage = File.ReadAllBytes( CswFilePath.getConfigurationFilePath( CswEnumSetupMode.NbtWeb ) + "/../" + RealImageUrl );
-                    Int32 headerLen = _fourBytesToInt32( rawimage, 10 ); // BMP format has a variable length header block
-                    Int32 heightPixels = _fourBytesToInt32( rawimage, 18 );
-                    Int32 widthBytes = _fourBytesToInt32( rawimage, 22 ) / 8;
-                    //widthBytes = 256;
-
-                    // strip out header content
-                    Int32 newlen = rawimage.Length - headerLen;
-                    byte[] image = new byte[newlen];
-                    System.Buffer.BlockCopy( rawimage, headerLen, image, 0, newlen );
-
-                    // Convert the byte[] to a hex string with markup
-                    string imageHex = Convert.ToBase64String( image );
-
-                    //build the epl data and append the width (bytes) and height (pixels). template has the leading "GWn,n,"  before width
-                    ret += widthBytes + "," + heightPixels + ",<HEX>" + imageHex + "</HEX>\n";
-
-                } // foreach( string ImageUrl in ImageUrls )
-            } // if( null != GHSNode )
-            return ret;
-        } // getGhsPictosForLabel()
-
-        // case 28716
-        // Special case: Spool GHS data from this container's Material's GHS in the user's Jurisdiction and language
-        private static string _getGhsValueForLabel( CswNbtResources NbtResources, CswNbtObjClassGHS GHSNode, bool ShowCodes, bool ShowPhrases )
-        {
-            string ret = string.Empty;
-
-            if( null != GHSNode )
-            {
-                // Run the Label Codes View
-                CswNbtView PreppedView = GHSNode.setupPhraseView( GHSNode.LabelCodesGrid.View, GHSNode.LabelCodes.Value );
-                PreppedView = PreppedView.PrepGridView( GHSNode.NodeId );
-                ICswNbtTree LabelCodesTree = NbtResources.Trees.getTreeFromView( PreppedView, false, false, false );
-                SortedList<string, string> Phrases = new SortedList<string, string>();
-                for( Int32 p = 0; p < LabelCodesTree.getChildNodeCount(); p++ )
-                {
-                    LabelCodesTree.goToNthChild( p );
-
-                    Collection<CswNbtTreeNodeProp> Props = LabelCodesTree.getChildNodePropsOfNode();
-
-                    string Code = string.Empty;
-                    string Phrase = string.Empty;
-                    foreach( CswNbtTreeNodeProp Prop in Props )
-                    {
-                        CswNbtMetaDataNodeTypeProp Ntp = NbtResources.MetaData.getNodeTypeProp( Prop.NodeTypePropId );
-                        if( null != Ntp && Ntp.getObjectClassPropName() == CswNbtObjClassGHSPhrase.PropertyName.Code )
-                        {
-                            Code = Prop.Gestalt;
-                        }
-                        else
-                        {
-                            Phrase = Prop.Gestalt;
-                        }
-                    }
-                    if( false == Phrases.ContainsKey( Code ) )
-                    {
-                        Phrases.Add( Code, Phrase );
-                    }
-
-                    LabelCodesTree.goToParentNode();
-                } // for( Int32 p = 0; p < LabelCodesTree.getChildNodeCount(); p++ )
-
-                foreach( string Code in Phrases.Keys )
-                {
-                    if( ShowCodes )
-                    {
-                        if( false == ShowPhrases && ret != string.Empty )
-                        {
-                            ret += ",";
-                        }
-                        ret += Code;
-                    }
-                    if( ShowPhrases )
-                    {
-                        if( ShowCodes )
-                        {
-                            ret += ": ";
-                        }
-                        ret += Phrases[Code] + "\n";
-                    }
-                } // foreach( string Code in Phrases.Keys )
-            } // if( null != GHSNode )
-
-            return ret;
-        } // _getGhsValueForLabel()
 
         private static Dictionary<string, Int32> _extractParamSizes( string Params )
         {
@@ -546,12 +379,12 @@ namespace ChemSW.Nbt.WebServices
             return ParamSizes;
         }
 
-        private static DataRow _executeSqlQuery( CswNbtResources NbtResources, string SqlScript, CswPrimaryKey NodeId )
+        private static DataRow _executeSqlQuery( CswNbtResources NbtResources, string SqlScript, CswNbtNode Node )
         {
             DataRow SqlResultRow = null;
             if( false == string.IsNullOrEmpty( SqlScript ) )
             {
-                String FormattedSqlScript = SqlScript.Replace( "{nodeid}", NodeId.PrimaryKey.ToString() );
+                String FormattedSqlScript = SqlScript.Replace( "{nodeid}", Node.NodeId.PrimaryKey.ToString() );
                 CswArbitrarySelect SqlSelect = NbtResources.makeCswArbitrarySelect( "GenerateEPLScript_Sql", FormattedSqlScript );
                 DataTable SqlResultTable = SqlSelect.getTable();
                 if( SqlResultTable.Rows.Count > 0 )
@@ -562,7 +395,7 @@ namespace ChemSW.Nbt.WebServices
             return SqlResultRow;
         }
 
-        private static Dictionary<string, string> _findTemplateMatchesInEPLText( CswNbtResources NbtResources, string EPLText, Dictionary<string, string> PropVals, DataRow SqlResultRow, CswNbtObjClassGHS GHSNode )
+        private static Dictionary<string, string> _findTemplateMatchesInEPLText( CswNbtResources NbtResources, string EPLText, Dictionary<string, string> PropVals, DataRow SqlResultRow, CswNbtNode TargetNode )
         {
             Dictionary<string, string> TemplateValues = new Dictionary<string, string>();
             MatchCollection TemplateMatches = Regex.Matches( EPLText, @"{.+}" );
@@ -574,51 +407,9 @@ namespace ChemSW.Nbt.WebServices
                 {
                     // Fetch template value
                     string TemplateValue = string.Empty;
-                    if( TemplateName.StartsWith( "NBTGHS" ) ) // Ignore NBTGHS_2, will fill in below
+                    if( TemplateName.StartsWith( _GHSTemplatePrefix ) )
                     {
-                        if( TemplateName.Equals( "NBTGHS" ) || TemplateName.Equals( "NBTGHSA" ) )
-                        {
-                            // A - phrases only
-                            TemplateValue = _getGhsValueForLabel( NbtResources, GHSNode, ShowCodes : false, ShowPhrases : true );
-                        }
-                        else if( TemplateName.Equals( "NBTGHSB" ) )
-                        {
-                            // B - codes only
-                            TemplateValue = _getGhsValueForLabel( NbtResources, GHSNode, ShowCodes : true, ShowPhrases : false );
-                        }
-                        else if( TemplateName.Equals( "NBTGHSC" ) )
-                        {
-                            // C - phrases and codes
-                            TemplateValue = _getGhsValueForLabel( NbtResources, GHSNode, ShowCodes : true, ShowPhrases : true );
-                        }
-                        else if( TemplateName.StartsWith( "NBTGHSPICTOS:" ) || ( TemplateName.Equals( "NBTGHSPICTOS" ) ) ) // Ignore NBTGHSPICTOS_2
-                        {
-                            // pictos
-                            Int32 Scale = 256;
-                            bool NoBorder = false;
-                            if( TemplateName.StartsWith( "NBTGHSPICTOS:" ) )
-                            {
-                                // decode parameters
-                                CswCommaDelimitedString GHSParams = new CswCommaDelimitedString();
-                                GHSParams.FromString( TemplateName.Substring( TemplateName.IndexOf( ':' ) + 1 ).ToLower().Trim() );
-                                foreach( string GHSParam in GHSParams )
-                                {
-                                    if( GHSParam.StartsWith( "scale" ) )
-                                    {
-                                        Int32 NewScale = CswConvert.ToInt32( GHSParam.Substring( "scale".Length ) );
-                                        if( NewScale > 0 && NewScale % 16 == 0 ) // case 30937
-                                        {
-                                            Scale = NewScale;
-                                        }
-                                    }
-                                    if( GHSParam == "noborder" )
-                                    {
-                                        NoBorder = true;
-                                    }
-                                } // foreach( string GHSParam in GHSParams )
-                            } // if( TemplateName.StartsWith( "NBTGHSPICTOS:" ) )
-                            TemplateValue = _getGhsPictosForLabel( NbtResources, GHSNode, Scale, NoBorder );
-                        }
+                        TemplateValue = _handleGHSTemplate( NbtResources, TargetNode, TemplateName );
                     }
                     else if( null != SqlResultRow && SqlResultRow.Table.Columns.Contains( TemplateName ) )
                     {
@@ -691,7 +482,7 @@ namespace ChemSW.Nbt.WebServices
         /// <summary>
         /// 
         /// </summary>
-        private static string GenerateEPLScript( CswNbtResources NbtResources, CswNbtObjClassPrintLabel PrintLabel, CswPrimaryKey NodeId, Dictionary<string, string> PropVals, CswNbtObjClassGHS GHSNode )
+        private static string GenerateEPLScript( CswNbtResources NbtResources, CswNbtObjClassPrintLabel PrintLabel, CswNbtNode TargetNode, Dictionary<string, string> PropVals )
         {
             string EPLScript = string.Empty;
 
@@ -708,10 +499,10 @@ namespace ChemSW.Nbt.WebServices
                     Dictionary<string, Int32> ParamSizes = _extractParamSizes( Params );
 
                     // Run SQL script (case 31308)
-                    DataRow SqlResultRow = _executeSqlQuery( NbtResources, PrintLabel.SqlScript.Text, NodeId );
+                    DataRow SqlResultRow = _executeSqlQuery( NbtResources, PrintLabel.SqlScript.Text, TargetNode );
 
                     // Find template names in the EPLText
-                    Dictionary<string, string> TemplateValues = _findTemplateMatchesInEPLText( NbtResources, EPLText, PropVals, SqlResultRow, GHSNode );
+                    Dictionary<string, string> TemplateValues = _findTemplateMatchesInEPLText( NbtResources, EPLText, PropVals, SqlResultRow, TargetNode );
 
                     // Handle splitting template value over lines
                     Dictionary<string, string> ChunkedTemplateValues = _chunkData( ParamSizes, TemplateValues );
@@ -719,7 +510,14 @@ namespace ChemSW.Nbt.WebServices
                     // Apply template values to EPLScript
                     foreach( string TemplateName in ChunkedTemplateValues.Keys )
                     {
-                        EPLScript = EPLScript.Replace( "{" + TemplateName + "}", TemplateValues[TemplateName] );
+                        if( TemplateValues.ContainsKey( TemplateName ) )
+                        {
+                            EPLScript = EPLScript.Replace( "{" + TemplateName + "}", TemplateValues[TemplateName] );
+                        }
+                        else
+                        {
+                            EPLScript = EPLScript.Replace( "{" + TemplateName + "}", string.Empty );
+                        }
                     }
 
                 } // false == string.IsNullOrEmpty( EPLText ) && null != Node )
@@ -749,8 +547,8 @@ namespace ChemSW.Nbt.WebServices
                     ExistingPrintersView.ViewName = "Existing Printers";
                     CswNbtViewRelationship PrinterRel = ExistingPrintersView.AddViewRelationship( PrinterOC, false );
                     ExistingPrintersView.AddViewPropertyAndFilter( PrinterRel, PrinterNameOCP,
-                                                                   Value : Request.LpcName,
-                                                                   FilterMode : CswEnumNbtFilterMode.Equals );
+                                                                   Value: Request.LpcName,
+                                                                   FilterMode: CswEnumNbtFilterMode.Equals );
                     ICswNbtTree ExistingPrintersTree = NbtResources.Trees.getTreeFromView( ExistingPrintersView, false, true, true );
                     if( ExistingPrintersTree.getChildNodeCount() == 0 )
                     {
@@ -806,13 +604,13 @@ namespace ChemSW.Nbt.WebServices
                         // ... assigned to this printer ...
                         JobQueueView.AddViewPropertyAndFilter( JobRel, JobPrinterOCP,
                                                                SubFieldName: CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID,
-                                                               Value : PrinterNodeId.PrimaryKey.ToString(),
-                                                               FilterMode : CswEnumNbtFilterMode.Equals );
+                                                               Value: PrinterNodeId.PrimaryKey.ToString(),
+                                                               FilterMode: CswEnumNbtFilterMode.Equals );
                         //with state==pending
                         JobQueueView.AddViewPropertyAndFilter( JobRel, JobStateOCP,
                                                                SubFieldName: CswNbtFieldTypeRuleList.SubFieldName.Value,
-                                                               Value : CswNbtObjClassPrintJob.StateOption.Pending,
-                                                               FilterMode : CswEnumNbtFilterMode.Equals );
+                                                               Value: CswNbtObjClassPrintJob.StateOption.Pending,
+                                                               FilterMode: CswEnumNbtFilterMode.Equals );
                         // ... order by Created Date
                         CswNbtViewProperty CreatedDateVP = JobQueueView.AddViewProperty( JobRel, JobCreatedDateOCP );
                         JobQueueView.setSortProperty( CreatedDateVP, CswEnumNbtViewPropertySortMethod.Ascending );
@@ -904,6 +702,227 @@ namespace ChemSW.Nbt.WebServices
                 Return.addException( CswResources, new CswDniException( CswEnumErrorType.Error, "Invalid Job.", "updateLabelJob() got an invalid job key:" + Request.JobKey ) );
             }
         } // updateLabelJob()
+
+
+        #region GHS
+
+        private const string _GHSTemplatePrefix = "NBTGHS";
+
+        private static string _handleGHSTemplate( CswNbtResources NbtResources, CswNbtNode TargetNode, string TemplateName )
+        {
+            string TemplateValue = string.Empty;
+
+            CswNbtObjClassGHS GHSNode = _GetGhsNodeForContainer( NbtResources, TargetNode );
+            if( null != GHSNode )
+            {
+                if( TemplateName.Equals( "NBTGHS" ) || TemplateName.Equals( "NBTGHSA" ) ) // Ignore NBTGHS_2, will fill in below
+                {
+                    // A - phrases only
+                    TemplateValue = _getGhsValueForLabel( NbtResources, GHSNode, ShowCodes: false, ShowPhrases: true );
+                }
+                else if( TemplateName.Equals( "NBTGHSB" ) )
+                {
+                    // B - codes only
+                    TemplateValue = _getGhsValueForLabel( NbtResources, GHSNode, ShowCodes: true, ShowPhrases: false );
+                }
+                else if( TemplateName.Equals( "NBTGHSC" ) )
+                {
+                    // C - phrases and codes
+                    TemplateValue = _getGhsValueForLabel( NbtResources, GHSNode, ShowCodes: true, ShowPhrases: true );
+                }
+                else if( TemplateName.StartsWith( "NBTGHSPICTOS:" ) || ( TemplateName.Equals( "NBTGHSPICTOS" ) ) ) // Ignore NBTGHSPICTOS_2
+                {
+                    // pictos
+                    Int32 Scale = 256;
+                    bool NoBorder = false;
+                    if( TemplateName.StartsWith( "NBTGHSPICTOS:" ) )
+                    {
+                        // decode parameters
+                        CswCommaDelimitedString GHSParams = new CswCommaDelimitedString();
+                        GHSParams.FromString( TemplateName.Substring( TemplateName.IndexOf( ':' ) + 1 ).ToLower().Trim() );
+                        foreach( string GHSParam in GHSParams )
+                        {
+                            if( GHSParam.StartsWith( "scale" ) )
+                            {
+                                Int32 NewScale = CswConvert.ToInt32( GHSParam.Substring( "scale".Length ) );
+                                if( NewScale > 0 && NewScale % 16 == 0 ) // case 30937
+                                {
+                                    Scale = NewScale;
+                                }
+                            }
+                            if( GHSParam == "noborder" )
+                            {
+                                NoBorder = true;
+                            }
+                        } // foreach( string GHSParam in GHSParams )
+                    } // if( TemplateName.StartsWith( "NBTGHSPICTOS:" ) )
+                    TemplateValue = _getGhsPictosForLabel( NbtResources, GHSNode, Scale, NoBorder );
+                }
+            } // if( null != GHSNode )
+            return TemplateValue;
+        }
+
+        private static CswNbtNode _GetGhsNodeForContainer( CswNbtResources NbtResources, CswNbtObjClassContainer ContainerNode )
+        {
+            CswNbtNode ret = null;
+
+            CswNbtMetaDataNodeType ContainerNT = ContainerNode.NodeType;
+            if( null != ContainerNT && ContainerNT.getObjectClass().ObjectClass == CswEnumNbtObjectClass.ContainerClass )
+            {
+                CswNbtMetaDataNodeTypeProp ContainerMaterialNTP = ContainerNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.PropertyName.Material );
+
+                CswNbtMetaDataObjectClass GhsOC = NbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.GHSClass );
+                if( null != GhsOC )
+                {
+                    CswNbtMetaDataObjectClassProp GhsMaterialOCP = GhsOC.getObjectClassProp( CswNbtObjClassGHS.PropertyName.Material );
+                    CswNbtMetaDataObjectClassProp GhsJurisdictionOCP = GhsOC.getObjectClassProp( CswNbtObjClassGHS.PropertyName.Jurisdiction );
+
+                    CswNbtView GHSView = new CswNbtView( NbtResources );
+                    GHSView.ViewName = "GHS for Container";
+
+                    CswNbtViewRelationship ContainerRel = GHSView.AddViewRelationship( ContainerNode.NodeType, false );
+                    CswNbtViewRelationship MaterialRel = GHSView.AddViewRelationship( ContainerRel, CswEnumNbtViewPropOwnerType.First, ContainerMaterialNTP, false );
+                    CswNbtViewRelationship GHSRel = GHSView.AddViewRelationship( MaterialRel, CswEnumNbtViewPropOwnerType.Second, GhsMaterialOCP, false );
+
+                    ContainerRel.NodeIdsToFilterIn.Add( ContainerNode.NodeId );
+                    CswPrimaryKey JurisdictionId = NbtResources.CurrentNbtUser.JurisdictionId;
+                    if( CswTools.IsPrimaryKey( JurisdictionId ) )
+                    {
+                        GHSView.AddViewPropertyAndFilter( GHSRel, GhsJurisdictionOCP,
+                                                          Value: NbtResources.CurrentNbtUser.JurisdictionId.PrimaryKey.ToString(),
+                                                          SubFieldName: CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID,
+                                                          FilterMode: CswEnumNbtFilterMode.Equals );
+                    }
+
+                    ICswNbtTree GHSTree = NbtResources.Trees.getTreeFromView( GHSView, false, false, false );
+                    if( GHSTree.getChildNodeCount() > 0 )
+                    {
+                        GHSTree.goToNthChild( 0 ); // Container
+                        if( GHSTree.getChildNodeCount() > 0 )
+                        {
+                            GHSTree.goToNthChild( 0 ); // Material
+                            if( GHSTree.getChildNodeCount() > 0 )
+                            {
+                                GHSTree.goToNthChild( 0 ); // GHS
+
+                                ret = GHSTree.getNodeForCurrentPosition();
+
+                            } // if( GHSTree.getChildNodeCount() > 0 ) ghs
+                        } // if( GHSTree.getChildNodeCount() > 0 )     material
+                    } // if( GHSTree.getChildNodeCount() > 0 )         container
+                } // if(null != GhsOC)
+            } // if( null != ContainerNT && ContainerNT.getObjectClass().ObjectClass == NbtObjectClass.ContainerClass )
+            return ret;
+        } // _getGhsForContainer()
+
+        // case 28716
+        // Special case: Spool GHS data from this container's Material's GHS in the user's Jurisdiction and language
+        private static string _getGhsValueForLabel( CswNbtResources NbtResources, CswNbtObjClassGHS GHSNode, bool ShowCodes, bool ShowPhrases )
+        {
+            string ret = string.Empty;
+
+            if( null != GHSNode )
+            {
+                // Run the Label Codes View
+                CswNbtView PreppedView = GHSNode.setupPhraseView( GHSNode.LabelCodesGrid.View, GHSNode.LabelCodes.Value );
+                PreppedView = PreppedView.PrepGridView( GHSNode.NodeId );
+                ICswNbtTree LabelCodesTree = NbtResources.Trees.getTreeFromView( PreppedView, false, false, false );
+                SortedList<string, string> Phrases = new SortedList<string, string>();
+                for( Int32 p = 0; p < LabelCodesTree.getChildNodeCount(); p++ )
+                {
+                    LabelCodesTree.goToNthChild( p );
+
+                    Collection<CswNbtTreeNodeProp> Props = LabelCodesTree.getChildNodePropsOfNode();
+
+                    string Code = string.Empty;
+                    string Phrase = string.Empty;
+                    foreach( CswNbtTreeNodeProp Prop in Props )
+                    {
+                        CswNbtMetaDataNodeTypeProp Ntp = NbtResources.MetaData.getNodeTypeProp( Prop.NodeTypePropId );
+                        if( null != Ntp && Ntp.getObjectClassPropName() == CswNbtObjClassGHSPhrase.PropertyName.Code )
+                        {
+                            Code = Prop.Gestalt;
+                        }
+                        else
+                        {
+                            Phrase = Prop.Gestalt;
+                        }
+                    }
+                    if( false == Phrases.ContainsKey( Code ) )
+                    {
+                        Phrases.Add( Code, Phrase );
+                    }
+
+                    LabelCodesTree.goToParentNode();
+                } // for( Int32 p = 0; p < LabelCodesTree.getChildNodeCount(); p++ )
+
+                foreach( string Code in Phrases.Keys )
+                {
+                    if( ShowCodes )
+                    {
+                        if( false == ShowPhrases && ret != string.Empty )
+                        {
+                            ret += ",";
+                        }
+                        ret += Code;
+                    }
+                    if( ShowPhrases )
+                    {
+                        if( ShowCodes )
+                        {
+                            ret += ": ";
+                        }
+                        ret += Phrases[Code] + "\n";
+                    }
+                } // foreach( string Code in Phrases.Keys )
+            } // if( null != GHSNode )
+
+            return ret;
+        } // _getGhsValueForLabel()
+
+        private static string _getGhsPictosForLabel( CswNbtResources NbtResources, CswNbtObjClassGHS GHSNode, Int32 Scale, bool NoBorder )
+        {
+            string ret = string.Empty;
+
+            if( null != GHSNode )
+            {
+                CswDelimitedString ImageUrls = GHSNode.Pictograms.Value;
+                foreach( string ImageUrl in ImageUrls )
+                {
+                    string RealImageUrl = ImageUrl.Replace( ".jpg", "" );
+                    RealImageUrl = RealImageUrl.Replace( "ghs/512/", "ghs/" + Scale.ToString() + "/" );
+                    if( NoBorder )
+                    {
+                        RealImageUrl += "_nobrd";
+                    }
+                    RealImageUrl += ".bmp";
+
+                    // use the EPL command GWx_orig,y_orig,width_bytes,height_bits,[byte array data]
+                    // image must be BMP
+                    byte[] rawimage = File.ReadAllBytes( CswFilePath.getConfigurationFilePath( CswEnumSetupMode.NbtWeb ) + "/../" + RealImageUrl );
+                    Int32 headerLen = _fourBytesToInt32( rawimage, 10 ); // BMP format has a variable length header block
+                    Int32 heightPixels = _fourBytesToInt32( rawimage, 18 );
+                    Int32 widthBytes = _fourBytesToInt32( rawimage, 22 ) / 8;
+                    //widthBytes = 256;
+
+                    // strip out header content
+                    Int32 newlen = rawimage.Length - headerLen;
+                    byte[] image = new byte[newlen];
+                    System.Buffer.BlockCopy( rawimage, headerLen, image, 0, newlen );
+
+                    // Convert the byte[] to a hex string with markup
+                    string imageHex = Convert.ToBase64String( image );
+
+                    //build the epl data and append the width (bytes) and height (pixels). template has the leading "GWn,n,"  before width
+                    ret += widthBytes + "," + heightPixels + ",<HEX>" + imageHex + "</HEX>\n";
+
+                } // foreach( string ImageUrl in ImageUrls )
+            } // if( null != GHSNode )
+            return ret;
+        } // getGhsPictosForLabel()
+
+        #endregion GHS
+
 
     } // class CswNbtWebServiceTabsAndProps
 
