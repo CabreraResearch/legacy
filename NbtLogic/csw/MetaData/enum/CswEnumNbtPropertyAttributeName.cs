@@ -55,6 +55,7 @@ namespace ChemSW.Nbt.MetaData
               { MaximumRows                   , MaximumRows                   }, 
               { MaximumValue                  , MaximumValue                  }, 
               { MinimumValue                  , MinimumValue                  }, 
+              { ObjectClassesOnly             , ObjectClassesOnly             }, 
               { Options                       , Options                       }, 
               { PossibleAnswers               , PossibleAnswers               }, 
               { Precision                     , Precision                     }, 
@@ -187,6 +188,7 @@ namespace ChemSW.Nbt.MetaData
         public const string MaximumRows = "Maximum Rows";
         public const string MaximumValue = "Maximum Value";
         public const string MinimumValue = "Minimum Value";
+        public const string ObjectClassesOnly = "Object Classes Only";
         public const string Options = "Options";
         public const string PossibleAnswers = "Possible Answers";
         public const string Precision = "Precision";

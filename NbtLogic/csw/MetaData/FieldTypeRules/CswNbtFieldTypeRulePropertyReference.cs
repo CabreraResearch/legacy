@@ -243,7 +243,10 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                     ValuePropIdProp.wasSubFieldModified( CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID ) )
                 {
                     //We're changing the relationship
-                    if( _isInvalidFkTarget( FkTypeProp.Value, FkValueProp.RelatedNodeId.PrimaryKey, ValuePropTypeProp.Value, ValuePropIdProp.RelatedNodeId.PrimaryKey ) )
+                    if( _isInvalidFkTarget( FkTypeProp.Value,
+                                            FkValueProp.RelatedNodeId != null ? FkValueProp.RelatedNodeId.PrimaryKey : Int32.MinValue,
+                                            ValuePropTypeProp.Value,
+                                            ValuePropIdProp.RelatedNodeId != null ? ValuePropIdProp.RelatedNodeId.PrimaryKey : Int32.MinValue ) )
                     {
                         ValuePropTypeProp.Value = "";
                         ValuePropIdProp.RelatedNodeId = null;
