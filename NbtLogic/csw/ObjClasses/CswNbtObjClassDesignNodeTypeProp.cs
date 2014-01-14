@@ -141,7 +141,10 @@ namespace ChemSW.Nbt.ObjClasses
                 {
                     //DataRow InsertedRow = PropsTable.Rows[0];
                     InsertedRow["firstpropversionid"] = PropId;
-                    InsertedRow["nodetypeid"] = RelationalNodeType.NodeTypeId;
+                    if( null != RelationalNodeType )
+                    {
+                        InsertedRow["nodetypeid"] = RelationalNodeType.NodeTypeId;
+                    }
                     if( DerivesFromObjectClassProp )
                     {
                         InsertedRow["objectclasspropid"] = CswConvert.ToInt32( ObjectClassPropName.Value );
@@ -181,7 +184,10 @@ namespace ChemSW.Nbt.ObjClasses
                 {
                     _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Add, RelationalNodeTypeProp.NodeTypeId, RelationalNodeTypeProp, false );
                 }
-                _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, RelationalNodeTypeProp.NodeTypeId, RelationalNodeTypeProp, false, RelationalNodeType.getFirstNodeTypeTab().TabId );
+                if( null != RelationalNodeType )
+                {
+                    _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, RelationalNodeTypeProp.NodeTypeId, RelationalNodeTypeProp, false, RelationalNodeType.getFirstNodeTypeTab().TabId );
+                }
             } // if( null != RelationalNodeTypeProp )
 
             _UpdateEquipmentAssemblyMatchingProperties( CswEnumNbtPropAction.Add );
@@ -268,47 +274,53 @@ namespace ChemSW.Nbt.ObjClasses
                         if( Action != CswEnumNbtPropAction.Delete )
                         {
                             CswNbtMetaDataNodeType EquipmentNodeType = RelationalNodeTypeProp.getNodeType();
-                            CswNbtMetaDataNodeTypeProp RelationshipProp = EquipmentNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassEquipment.PropertyName.Assembly );
-                            if( RelationshipProp != null )
+                            if( null != EquipmentNodeType )
                             {
-                                // We have to update all these nodes always, not just when there's a prop name 
-                                // that matches, in case we renamed a prop and it no longer matches.
-
-                                // We do this directly, not using a view, for performance
-                                CswTableUpdate NodesTableUpdate = _CswNbtResources.makeCswTableUpdate( "nodes_pendingupdate_update", "nodes" );
-                                DataTable NodesTable = NodesTableUpdate.getTable( "nodetypeid", EquipmentNodeType.NodeTypeId );
-                                foreach( DataRow NodesRow in NodesTable.Rows )
+                                CswNbtMetaDataNodeTypeProp RelationshipProp = EquipmentNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassEquipment.PropertyName.Assembly );
+                                if( RelationshipProp != null )
                                 {
-                                    NodesRow["pendingupdate"] = "1";
-                                }
-                                NodesTableUpdate.update( NodesTable );
-                            }
-                        }
-                    }
-                    else if( EditedPropObjectClass == CswEnumNbtObjectClass.EquipmentAssemblyClass )
-                    {
-                        CswNbtMetaDataNodeType AssemblyNodeType = RelationalNodeTypeProp.getNodeType();
-                        CswNbtMetaDataObjectClass EquipmentOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.EquipmentClass );
-                        foreach( CswNbtMetaDataNodeType EquipmentNodeType in EquipmentOC.getNodeTypes() )
-                        {
-                            CswNbtMetaDataNodeTypeProp RelationshipProp = EquipmentNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassEquipment.PropertyName.Assembly );
-                            if( RelationshipProp != null )
-                            {
-                                if( RelationshipProp.FkMatchesDeprecated( AssemblyNodeType ) )
-                                {
-                                    // There is a matching property on the assembly.  Mark all nodes of this nodetype as pendingupdate
                                     // We have to update all these nodes always, not just when there's a prop name 
                                     // that matches, in case we renamed a prop and it no longer matches.
-                                    CswTableUpdate NodesUpdate = _CswNbtResources.makeCswTableUpdate( "UpdateEquipmentAssemblyMatchingProperties_nodespendingupdate_update", "nodes" );
-                                    DataTable NodesTable = NodesUpdate.getTable( "nodetypeid", EquipmentNodeType.NodeTypeId );
+
+                                    // We do this directly, not using a view, for performance
+                                    CswTableUpdate NodesTableUpdate = _CswNbtResources.makeCswTableUpdate( "nodes_pendingupdate_update", "nodes" );
+                                    DataTable NodesTable = NodesTableUpdate.getTable( "nodetypeid", EquipmentNodeType.NodeTypeId );
                                     foreach( DataRow NodesRow in NodesTable.Rows )
                                     {
                                         NodesRow["pendingupdate"] = "1";
                                     }
-                                    NodesUpdate.update( NodesTable );
+                                    NodesTableUpdate.update( NodesTable );
                                 }
-                            } // if( RelationshipProp != null )
-                        } // foreach( CswNbtMetaDataNodeType EquipmentNodeType in EquipmentOC.NodeTypes )
+                            } // if( null != EquipmentNodeType )
+                        } // if( Action != CswEnumNbtPropAction.Delete )
+                    }
+                    else if( EditedPropObjectClass == CswEnumNbtObjectClass.EquipmentAssemblyClass )
+                    {
+                        CswNbtMetaDataNodeType AssemblyNodeType = RelationalNodeTypeProp.getNodeType();
+                        if( null != AssemblyNodeType )
+                        {
+                            CswNbtMetaDataObjectClass EquipmentOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.EquipmentClass );
+                            foreach( CswNbtMetaDataNodeType EquipmentNodeType in EquipmentOC.getNodeTypes() )
+                            {
+                                CswNbtMetaDataNodeTypeProp RelationshipProp = EquipmentNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassEquipment.PropertyName.Assembly );
+                                if( RelationshipProp != null )
+                                {
+                                    if( RelationshipProp.FkMatchesDeprecated( AssemblyNodeType ) )
+                                    {
+                                        // There is a matching property on the assembly.  Mark all nodes of this nodetype as pendingupdate
+                                        // We have to update all these nodes always, not just when there's a prop name 
+                                        // that matches, in case we renamed a prop and it no longer matches.
+                                        CswTableUpdate NodesUpdate = _CswNbtResources.makeCswTableUpdate( "UpdateEquipmentAssemblyMatchingProperties_nodespendingupdate_update", "nodes" );
+                                        DataTable NodesTable = NodesUpdate.getTable( "nodetypeid", EquipmentNodeType.NodeTypeId );
+                                        foreach( DataRow NodesRow in NodesTable.Rows )
+                                        {
+                                            NodesRow["pendingupdate"] = "1";
+                                        }
+                                        NodesUpdate.update( NodesTable );
+                                    }
+                                } // if( RelationshipProp != null )
+                            } // foreach( CswNbtMetaDataNodeType EquipmentNodeType in EquipmentOC.NodeTypes )
+                        } // if( null != AssemblyNodeType )
                     } // else if( EditedPropObjectClass == CswEnumNbtObjectClass.EquipmentAssemblyClass )
                 } // if( null != NodeTypeNode && null != NodeTypeNode.ObjectClassPropertyValue )
             } // if( null != RelationalNodeTypeProp )
@@ -386,23 +398,6 @@ namespace ChemSW.Nbt.ObjClasses
 
         protected override void afterPopulateProps()
         {
-            // Populate collection of AttributeProperties
-            if( CswNbtResources.UnknownEnum != FieldTypeValue )
-            {
-                ICswNbtFieldTypeRule RelationalRule = _CswNbtResources.MetaData.getFieldTypeRule( FieldTypeValue );
-                foreach( CswNbtFieldTypeAttribute a in RelationalRule.getAttributes() )
-                {
-                    CswNbtMetaDataNodeTypeProp AttributeProp = this.NodeType.getNodeTypeProp( a.Name );
-                    if( null != AttributeProp )
-                    {
-                        if( false == AttributeProperty.ContainsKey( a.Name ) )
-                        {
-                            AttributeProperty.Add( a.Name, this.Node.Properties[AttributeProp] );
-                        }
-                    }
-                }
-            }
-
             PropName.SetOnPropChange( _PropName_OnChange );
 
             // Prevent renaming "Design" properties
@@ -775,7 +770,35 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-        public Dictionary<CswEnumNbtPropertyAttributeName, CswNbtNodePropWrapper> AttributeProperty = new Dictionary<CswEnumNbtPropertyAttributeName, CswNbtNodePropWrapper>();
+        public Dictionary<CswEnumNbtPropertyAttributeName, CswNbtNodePropWrapper> _AttributeProperty = new Dictionary<CswEnumNbtPropertyAttributeName, CswNbtNodePropWrapper>();
+        public Dictionary<CswEnumNbtPropertyAttributeName, CswNbtNodePropWrapper> AttributeProperty
+        {
+            get
+            {
+                if( null == _AttributeProperty || _AttributeProperty.Count == 0 )
+                {
+                    // Populate collection of AttributeProperties
+                    _AttributeProperty = new Dictionary<CswEnumNbtPropertyAttributeName, CswNbtNodePropWrapper>();
+                    if( CswNbtResources.UnknownEnum != FieldTypeValue )
+                    {
+                        ICswNbtFieldTypeRule RelationalRule = _CswNbtResources.MetaData.getFieldTypeRule( FieldTypeValue );
+                        foreach( CswNbtFieldTypeAttribute a in RelationalRule.getAttributes() )
+                        {
+                            CswNbtMetaDataNodeTypeProp AttributeProp = this.NodeType.getNodeTypeProp( a.Name );
+                            if( null != AttributeProp )
+                            {
+                                if( false == _AttributeProperty.ContainsKey( a.Name ) )
+                                {
+                                    _AttributeProperty.Add( a.Name, this.Node.Properties[AttributeProp] );
+                                }
+                            }
+                        }
+                    }
+                }
+                return _AttributeProperty;
+            }
+        }
+
 
         public string getAttributeValueByName( CswEnumNbtPropertyAttributeName attributeName )
         {
@@ -880,24 +903,24 @@ namespace ChemSW.Nbt.ObjClasses
 
 
                     // Layout
-                    CswNbtMetaDataNodeTypeTab FirstTab = RelationalNodeType.getFirstNodeTypeTab();
-                    if( OCProp.PropName.Equals( CswNbtObjClass.PropertyName.Save ) ) //case 29181 - Save prop on Add/Edit layouts at the bottom of tab
-                    {
-                        _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Add, RelationalNodeType.NodeTypeId, RelationalNodeTypeProp, true, FirstTab.TabId, Int32.MaxValue, 1 );
-                        _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, RelationalNodeType.NodeTypeId, RelationalNodeTypeProp, true, FirstTab.TabId, Int32.MaxValue, 1 );
-                    }
-                    else
-                    {
-                        _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, RelationalNodeType.NodeTypeId, RelationalNodeTypeProp, true, FirstTab.TabId, Int32.MinValue, 1 );
-                        if( OCProp.getFieldType().IsLayoutCompatible( CswEnumNbtLayoutType.Add ) &&
-                            ( ( OCProp.IsRequired && false == OCProp.HasDefaultValue() ) ||
-                              ( OCProp.SetValueOnAdd ||
-                                ( Int32.MinValue != OCProp.DisplayColAdd &&
-                                  Int32.MinValue != OCProp.DisplayRowAdd ) ) ) )
-                        {
-                            _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Add, RelationalNodeType.NodeTypeId, RelationalNodeTypeProp, true, FirstTab.TabId, OCProp.DisplayRowAdd, OCProp.DisplayColAdd );
-                        }
-                    }
+                    //CswNbtMetaDataNodeTypeTab FirstTab = RelationalNodeType.getFirstNodeTypeTab();
+                    //if( OCProp.PropName.Equals( CswNbtObjClass.PropertyName.Save ) ) //case 29181 - Save prop on Add/Edit layouts at the bottom of tab
+                    //{
+                    //    _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Add, RelationalNodeType.NodeTypeId, RelationalNodeTypeProp, true, FirstTab.TabId, Int32.MaxValue, 1 );
+                    //    _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, RelationalNodeType.NodeTypeId, RelationalNodeTypeProp, true, FirstTab.TabId, Int32.MaxValue, 1 );
+                    //}
+                    //else
+                    //{
+                    //    _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, RelationalNodeType.NodeTypeId, RelationalNodeTypeProp, true, FirstTab.TabId, Int32.MinValue, 1 );
+                    //    if( OCProp.getFieldType().IsLayoutCompatible( CswEnumNbtLayoutType.Add ) &&
+                    //        ( ( OCProp.IsRequired && false == OCProp.HasDefaultValue() ) ||
+                    //          ( OCProp.SetValueOnAdd ||
+                    //            ( Int32.MinValue != OCProp.DisplayColAdd &&
+                    //              Int32.MinValue != OCProp.DisplayRowAdd ) ) ) )
+                    //    {
+                    //        _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Add, RelationalNodeType.NodeTypeId, RelationalNodeTypeProp, true, FirstTab.TabId, OCProp.DisplayRowAdd, OCProp.DisplayColAdd );
+                    //    }
+                    //}
 
 
                     // Handle default values from ObjectClassProp
