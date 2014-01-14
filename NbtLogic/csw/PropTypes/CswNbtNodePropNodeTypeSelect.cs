@@ -109,7 +109,7 @@ namespace ChemSW.Nbt.PropTypes
             get { return _CswNbtNodePropData[CswNbtFieldTypeRuleNodeTypeSelect.AttributeName.FKType]; }
         }
 
-        public Int32 FKValue
+        public Int32 ConstrainToObjectClassId
         {
             get
             {
@@ -140,23 +140,16 @@ namespace ChemSW.Nbt.PropTypes
                 bool first = true;
                 foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.getNodeTypesLatestVersion() )
                 {
-                    Int32 NodeTypeFKId = Int32.MinValue;
-                    if( FKType == CswEnumNbtViewRelatedIdType.PropertySetId.ToString() )
-                    {
-                        CswNbtMetaDataPropertySet PropertySet = NodeType.getObjectClass().getPropertySet();
-                        if( PropertySet != null )
-                        {
-                            NodeTypeFKId = PropertySet.PropertySetId;
-                        }
-                    }
-                    else
-                    {
-                        NodeTypeFKId = NodeType.ObjectClassId;
-                    }
-                    if( FKValue == Int32.MinValue || NodeTypeFKId == FKValue )
+                    if( Int32.MinValue == ConstrainToObjectClassId ||                                              //  no constraint, or
+                        ( FKType == CswEnumNbtViewRelatedIdType.ObjectClassId.ToString() &&                        //  constraint is object-class-based and
+                          NodeType.ObjectClassId == ConstrainToObjectClassId ) ||                                  //   constraint matches object class, or 
+                        ( FKType == CswEnumNbtViewRelatedIdType.PropertySetId.ToString() &&                        //  constraint is property-set-based and
+                          null != NodeType.getObjectClass() &&                                                     //   nodetype has an object class and 
+                          null != NodeType.getObjectClass().getPropertySet() &&                                    //   object class has a property set and 
+                          NodeType.getObjectClass().getPropertySet().PropertySetId == ConstrainToObjectClassId ) ) //   constraint matches property set
                     {
                         DataRow NTRow = Data.NewRow();
-                        NTRow[NameColumn] = NodeType.NodeTypeName;          // latest name
+                        NTRow[NameColumn] = NodeType.NodeTypeName;            // latest name
                         NTRow[KeyColumn] = NodeType.FirstVersionNodeTypeId;   // first nodetypeid
                         NTRow[ValueColumn] = ( SelectedNodeTypeIds.Contains( NodeType.FirstVersionNodeTypeId.ToString() ) ||
                                              ( first && Required && SelectedNodeTypeIds.Count == 0 ) );

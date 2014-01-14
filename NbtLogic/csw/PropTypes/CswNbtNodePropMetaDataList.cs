@@ -199,15 +199,15 @@ namespace ChemSW.Nbt.PropTypes
                     {
                         newOptions.Add( new CswNbtNodeTypePropListOption( ocDict[ocid], ObjectClassPrefix + ocid ) );
                     }
-                    if( false == ConstrainToObjectClass )
-                    {
+                    //if( false == ConstrainToObjectClass )
+                    //{
                         // Property Sets
                         Dictionary<Int32, CswEnumNbtPropertySetName> psDict = _CswNbtResources.MetaData.getPropertySetIds();
                         foreach( Int32 psid in psDict.Keys.OrderBy( k => psDict[k] ) )
                         {
                             newOptions.Add( new CswNbtNodeTypePropListOption( psDict[psid], PropertySetPrefix + psid ) );
                         }
-                    }
+                    //}
                     _CswNbtNodeTypePropListOptions.Override( newOptions );
                 }
 
