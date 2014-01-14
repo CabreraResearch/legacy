@@ -141,7 +141,10 @@ namespace ChemSW.Nbt.ObjClasses
             AddLabelCodes.SetOnPropChange( OnAddLabelCodesPropChange );
 
             CswNbtView DsdView = setupDsdPhraseView();
-            DsdView.SaveToCache( false, true );
+            if( null != DsdView )
+            {
+                DsdView.SaveToCache( false, true );
+            }
 
             ViewSDS.SetOnBeforeRender( delegate( CswNbtNodeProp prop )
                 {
@@ -1227,7 +1230,10 @@ namespace ChemSW.Nbt.ObjClasses
             if( Creating == false )
             {
                 CswNbtView DsdView = setupDsdPhraseView();
-                DsdView.SaveToCache( false, true );
+                if( null != DsdView )
+                {
+                    DsdView.SaveToCache( false, true );
+                }
             }
         }
 
