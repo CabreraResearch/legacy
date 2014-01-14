@@ -201,7 +201,7 @@ namespace NbtWebApp
 
         [OperationContract]
         [WebInvoke( Method = "POST" )]
-        [Description( "Creates a temporary node of the given NodeTypeId and returns a view containing the temp node" )]
+        [Description( "Creates a temporary node of the given NodeType and returns a view containing the temp node" )]
         [FaultContract( typeof( FaultException ) )]
         public CswNbtViewIdReturn createTempNode( string NodeTypeName )
         {

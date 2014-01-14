@@ -347,11 +347,12 @@
             };
 
             cswPrivate.onButtonClick = function (buttonName) {
+                var windowItems, posX, posY;
                 switch (buttonName) {
                     case 'Versions':
 
-                        var posX = (document.documentElement.clientWidth / 2) - (400 / 2) + 0;
-                        var posY = (document.documentElement.clientHeight / 2) - (200 / 2) + 0;
+                        posX = (document.documentElement.clientWidth / 2) - (400 / 2) + 0;
+                        posY = (document.documentElement.clientHeight / 2) - (200 / 2) + 0;
 
                         cswPrivate.extWindowVersions = Csw.composites.window(cswParent, {
                             title: 'Versions of ' + cswPrivate.tabState.nodetypename,
@@ -369,10 +370,9 @@
 
                         break;
                     case 'Copy':
-                        var windowItems = {};
                         
-                        var posX = (document.documentElement.clientWidth / 2) - (400 / 2) + 0;
-                        var posY = (document.documentElement.clientHeight / 2) - (200 / 2) + 0;
+                        posX = (document.documentElement.clientWidth / 2) - (400 / 2) + 0;
+                        posY = (document.documentElement.clientHeight / 2) - (200 / 2) + 0;
 
                         cswPrivate.extWindowCopy = Csw.composites.window(cswParent, {
                             title: 'Copy ' + cswPrivate.tabState.nodetypename,
@@ -384,40 +384,16 @@
                             buttons: [
                                 {
                                     text: 'Copy', handler: function () {
-
-                                        // Prevent copy if quota is reached
-                                        cswPrivate.ajax.checkQuota = Csw.ajaxWcf.post({
-                                            urlMethod: 'Quotas/check',
+                                        Csw.ajax.deprecatedWsNbt({
+                                            urlMethod: 'CopyNode',
                                             data: {
-                                                NodeTypeId: cswPrivate.designNodeType.nodetypeid,
-                                                NodeKey: cswPrivate.designNodeType.nodekey
+                                                NodeId: cswPrivate.designNodeType.nodeid,
+                                                NodeKey: Csw.string('')
                                             },
-                                            success: function (data) {
-                                                if (Csw.bool(data.HasSpace)) {
-
-                                                    Csw.copyNode({
-                                                        'nodeid': cswPrivate.designNodeType.nodeid,
-                                                        'nodekey': '',
-                                                        'onSuccess': function (nodeid, nodekey) {
-                                                            //To do:
-                                                            //  1.Reopen design mode with the new copied nodetype
-                                                            cswPrivate.extWindowCopy.close();
-                                                            //cswDlgPrivate.onCopyNode(nodeid, nodekey);
-                                                            //note: the above calls the following which needs to be incorporated: 
-                                                            //onAlterNode: function (nodeid, nodekey) {
-                                                            //var state = Csw.clientState.getCurrent();
-                                                            //refreshSelected({ 'nodeid': nodeid, 'nodekey': nodekey, 'IncludeNodeRequired': true, 'searchid': state.searchid });
-                                                            //},
-                                                        },
-                                                        'onError': function () {
-                                                            //error
-                                                        }
-                                                    });
-
-                                                } else {
-                                                    cswPrivate.extWindowCopy.attachToMe().span({ text: 'You have used all of your purchased quota, and must purchase additional quota space in order to add more.' });
-                                                } // if-else (Csw.bool(data.result)) {
-                                            } // success()
+                                            success: function (result) {
+                                                cswPrivate.createNewNodeTypeNode(result.NewNodeId);
+                                                cswPrivate.extWindowCopy.close();
+                                            }
                                         });
                                     }
                                 },
@@ -429,19 +405,16 @@
                                 }
                             ]
                         });
-
-                        cswPrivate.extWindowCopy.attachToMe().input({
-                            name: 'testinput',
-                            labelText: 'Copy As ',
-                            value: cswPrivate.tabState.nodetypename + ' Copy'
+                        
+                        cswPrivate.extWindowCopy.attachToMe().div({
+                            text: 'Copying ' + cswPrivate.tabState.nodetypename
                         });
 
                         break;
                     case 'Delete':
-                        var windowItems = {};
                         
-                        var posX = (document.documentElement.clientWidth / 2) - (400 / 2) + 0;
-                        var posY = (document.documentElement.clientHeight / 2) - (200 / 2) + 0;
+                        posX = (document.documentElement.clientWidth / 2) - (400 / 2) + 0;
+                        posY = (document.documentElement.clientHeight / 2) - (200 / 2) + 0;
 
                         cswPrivate.extWindowDelete = Csw.composites.window(cswParent, {
                             title: 'Delete ' + cswPrivate.tabState.nodetypename,
@@ -489,10 +462,8 @@
                         break;
                     case 'New':
 
-                        var windowItems = {};
-                        
-                        var posX = (document.documentElement.clientWidth / 2) - (400 / 2) + 0;
-                        var posY = (document.documentElement.clientHeight / 2) - (200 / 2) + 0;
+                        posX = (document.documentElement.clientWidth / 2) - (400 / 2) + 0;
+                        posY = (document.documentElement.clientHeight / 2) - (200 / 2) + 0;
 
                         cswPrivate.extWindowNew = Csw.composites.window(cswParent, {
                             title: 'New Design NodeType',
@@ -528,24 +499,8 @@
                             },
                             ReloadTabOnSave: false,
                             onSave: function (nodeid, nodekey, tabcount, nodename, nodelink) {
-                                Csw.ajaxWcf.post({
-                                    urlMethod: 'Nodes/createTempNode',
-                                    data: nodename,
-                                    success: function (data) {
-                                        Csw.clientDb.setItem('openSidebar', true);
-                                        Csw.main.handleItemSelect({
-                                            type: 'view',
-                                            mode: 'tree',
-                                            itemid: data.ViewId
-                                        });
-                                    },
-                                    error: function () {
-                                        //ERRRRRRRRRRRRROR
-                                    },
-                                    complete: function() {
-                                        cswPrivate.extWindowNew.close();
-                                    }
-                                });
+                                cswPrivate.createNewNodeTypeNode(nodeid);
+                                cswPrivate.extWindowNew.close();
                             },
                             onInitFinish: function () { }
                         });
@@ -553,6 +508,24 @@
                         break;
                     default:
                 }
+            };
+
+            cswPrivate.createNewNodeTypeNode = function(designNTNodeId) {
+                Csw.ajaxWcf.post({
+                    urlMethod: 'Nodes/createTempNode',
+                    data: designNTNodeId,
+                    success: function (data) {
+                        Csw.clientDb.setItem('openSidebar', true);
+                        Csw.main.handleItemSelect({
+                            type: 'view',
+                            mode: 'tree',
+                            itemid: data.ViewId
+                        });
+                    },
+                    error: function () {
+                        //ERRRRRRRRRRRRROR
+                    }
+                });
             };
 
             //constructor
