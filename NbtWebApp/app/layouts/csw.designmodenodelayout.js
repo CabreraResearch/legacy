@@ -184,6 +184,31 @@
             }); // ajax
         };
 
+        cswPrivate.makePropOpt = function(tabid, node, prop, propDiv) {
+            var fieldOpt = Csw.nbt.propertyOption({
+                isMulti: false,
+                fieldtype: prop.fieldtype,
+                tabState: {
+                    nodeid: node.nodeid,
+                    nodename: node.nodename,
+                    EditMode: Csw.enums.editMode.PrintReport,
+                    ReadOnly: true,
+                    Config: true,
+                    showSaveButton: false,
+                    relatednodeid: '',
+                    relatednodename: '',
+                    nodetypeid: node.nodetypeid
+                },
+                tabid: tabid,
+                identityTabId: cswPrivate.identityTabId,
+                propid: prop.id,
+                propData: prop,
+                Required: Csw.bool(prop.required),
+                issaveprop: prop.issaveprop
+            }, propDiv);
+            return fieldOpt;
+        };
+
         cswPrivate.renderProps = function (node, properties, extid, tabid) {
             var cols = cswPrivate.howManyCols(properties);
             var identityTabDiv = cswPrivate.makeDiv(extid);
@@ -193,48 +218,47 @@
                 border: 0
             });
 
+            var seenProps = {};
             for (var propIdx in properties) {
                 var prop = properties[propIdx];
-                var realCol = prop.displaycol - 1; //server starts cols at 1, dragpanel starts at 0
-                dragPanel.addItemToCol(realCol, {
-                    render: function (extEl, cswEl) {
+                if (!seenProps[prop.id]) {
+                    seenProps[prop.id] = prop;
+                    var realCol = prop.displaycol - 1; //server starts cols at 1, dragpanel starts at 0
+                    dragPanel.addItemToCol(realCol, {
+                        render: function(extEl, cswEl) {
 
-                        var propTbl = cswEl.table();
-                        var labelDiv = propTbl.cell(1, 1).div().css({ 'padding': '5px 10px' });
-                        var propDiv = propTbl.cell(1, 2).div().css({ 'padding': '5px 10px' });
+                            var propTbl = cswEl.table();
+                            var labelDiv = propTbl.cell(1, 1).div().css({ 'padding': '5px 10px' });
+                            var propDiv = propTbl.cell(1, 2).div().css({ 'padding': '5px 10px' });
+                            var subPropsDiv = propTbl.cell(2, 2).div();
 
-                        labelDiv.setLabelText(prop.name, prop.required, true); //in design mode, readonly better always be true OR ELSE!!
+                            labelDiv.setLabelText(prop.name, prop.required, true); //in design mode, readonly better always be true OR ELSE!!
 
-                        var fieldOpt = Csw.nbt.propertyOption({
-                            isMulti: false,
-                            fieldtype: prop.fieldtype,
-                            tabState: {
-                                nodeid: node.nodeid,
-                                nodename: node.nodename,
-                                EditMode: Csw.enums.editMode.PrintReport,
-                                ReadOnly: true,
-                                Config: true,
-                                showSaveButton: false,
-                                relatednodeid: '',
-                                relatednodename: '',
-                                nodetypeid: node.nodetypeid
-                            },
-                            tabid: tabid,
-                            identityTabId: cswPrivate.identityTabId,
-                            propid: prop.id,
-                            propData: prop,
-                            Required: Csw.bool(prop.required),
-                            issaveprop: prop.issaveprop
-                        }, propDiv);
+                            var fieldOpt = cswPrivate.makePropOpt(tabid, node, prop, propDiv);
+                            Csw.nbt.property(fieldOpt, {});
 
-                        Csw.nbt.property(fieldOpt, {});
+                            if (prop.hassubprops) {
+                                var subPropTbl = subPropsDiv.table().css('border', '1px solid #ccc');
+                                var idx = 1;
+                                for (var subPropIdx in prop.subprops) {
+                                    var subProp = prop.subprops[subPropIdx];
+                                    seenProps[subProp.id] = subProp;
+                                    
+                                    var subLabelDiv = subPropTbl.cell(idx, 1).div().css({ 'padding': '5px 10px' });
+                                    var subPropDiv = subPropTbl.cell(idx, 2).div().css({ 'padding': '5px 10px' });
+                                    idx++;
 
-                        //TODO: subprops go here
-                    },
-                    onDrop: function (col, row) {
-                        //TODO: save prop in new layout
-                    }
-                });
+                                    subLabelDiv.setLabelText(subProp.name, subProp.required, true);
+                                    var subFieldOpt = cswPrivate.makePropOpt(tabid, node, subProp, subPropDiv);
+                                    Csw.nbt.property(subFieldOpt, {});
+                                }
+                            }
+                        },
+                        onDrop: function(col, row) {
+                            //TODO: save prop in new layout
+                        }
+                    });
+                }
             }
 
             //trigger the prop render events:
