@@ -474,6 +474,11 @@ namespace ChemSW.Nbt.Schema
                             locfkvalueNTP.removeFromAllLayouts();
                             break;
 
+                        case CswEnumNbtFieldType.MetaDataList:
+                            CswNbtMetaDataNodeTypeProp mdlfkvalueNTP = NodeTypePropNT.getNodeTypeProp( CswNbtFieldTypeRuleMetaDataList.AttributeName.ConstrainToObjectClass.ToString() );
+                            mdlfkvalueNTP._DataRow["attribute1"] = CswConvert.ToDbVal( true );
+                            break;
+
                         case CswEnumNbtFieldType.NFPA:
                             CswNbtMetaDataNodeTypeProp nfpadisplaymodeNTP = NodeTypePropNT.getNodeTypeProp( CswEnumNbtPropertyAttributeName.DisplayMode.ToString() );
                             nfpadisplaymodeNTP._DataRow["listoptions"] = new CswCommaDelimitedString()

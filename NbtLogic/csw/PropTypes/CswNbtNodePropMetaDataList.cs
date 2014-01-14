@@ -29,6 +29,8 @@ namespace ChemSW.Nbt.PropTypes
             _IdSubField = ( (CswNbtFieldTypeRuleMetaDataList) _FieldTypeRule ).IdSubField;
             _TextSubField = ( (CswNbtFieldTypeRuleMetaDataList) _FieldTypeRule ).TextSubField;
 
+            _ConstrainToObjectClass = CswNbtNodePropData[CswNbtFieldTypeRuleMetaDataList.AttributeName.ConstrainToObjectClass];
+
             // Associate subfields with methods on this object, for SetSubFieldValue()
             _SubFieldMethods.Add( _TypeSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Type, x => Type = CswConvert.ToString( x ) ) );
             _SubFieldMethods.Add( _TextSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Text, x => Text = CswConvert.ToString( x ) ) );
@@ -94,6 +96,12 @@ namespace ChemSW.Nbt.PropTypes
             get { return CswConvert.ToBoolean( _CswNbtNodePropData[CswNbtFieldTypeRuleMetaDataList.AttributeName.ObjectClassesOnly] ); }
         }
 
+        private string _ConstrainToObjectClass;
+        public string ConstrainToObjectClass
+        {
+            get { return _ConstrainToObjectClass; }
+            set { _ConstrainToObjectClass = value; }
+        }
 
         public ICswNbtMetaDataDefinitionObject MetaDataValue
         {
@@ -181,29 +189,75 @@ namespace ChemSW.Nbt.PropTypes
 
 
                     Collection<CswNbtNodeTypePropListOption> newOptions = new Collection<CswNbtNodeTypePropListOption>();
-                    // NodeTypes
-                    if( false == ObjectClassesOnly )
+                    if( string.Empty == ConstrainToObjectClass )
                     {
-                        Dictionary<Int32, string> ntDict = _CswNbtResources.MetaData.getNodeTypeIds();
-                        foreach( Int32 ntid in ntDict.Keys.OrderBy( k => ntDict[k] ) )
+                        // The cheaper way
+
+                        // NodeTypes
+                        if( false == ObjectClassesOnly )
                         {
-                            newOptions.Add( new CswNbtNodeTypePropListOption( ntDict[ntid], NodeTypePrefix + ntid ) );
+                            Dictionary<Int32, string> ntDict = _CswNbtResources.MetaData.getNodeTypeIds();
+                            foreach( Int32 ntid in ntDict.Keys.OrderBy( k => ntDict[k] ) )
+                            {
+                                newOptions.Add( new CswNbtNodeTypePropListOption( ntDict[ntid], NodeTypePrefix + ntid ) );
+                            }
                         }
-                    }
-                    // Object Classes
-                    Dictionary<Int32, CswEnumNbtObjectClass> ocDict = _CswNbtResources.MetaData.getObjectClassIds();
-                    foreach( Int32 ocid in ocDict.Keys.OrderBy( k => ocDict[k] ) )
+                        // Object Classes
+                        Dictionary<Int32, CswEnumNbtObjectClass> ocDict = _CswNbtResources.MetaData.getObjectClassIds();
+                        foreach( Int32 ocid in ocDict.Keys.OrderBy( k => ocDict[k] ) )
+                        {
+                            newOptions.Add( new CswNbtNodeTypePropListOption( ocDict[ocid], ObjectClassPrefix + ocid ) );
+                        }
+                        // Property Sets
+                        Dictionary<Int32, CswEnumNbtPropertySetName> psDict = _CswNbtResources.MetaData.getPropertySetIds();
+                        foreach( Int32 psid in psDict.Keys.OrderBy( k => psDict[k] ) )
+                        {
+                            newOptions.Add( new CswNbtNodeTypePropListOption( psDict[psid], PropertySetPrefix + psid ) );
+                        }
+                    } // if( string.Empty == ConstrainToObjectClass )
+                    else
                     {
-                        newOptions.Add( new CswNbtNodeTypePropListOption( ocDict[ocid], ObjectClassPrefix + ocid ) );
-                    }
-                    // Property Sets
-                    Dictionary<Int32, CswEnumNbtPropertySetName> psDict = _CswNbtResources.MetaData.getPropertySetIds();
-                    foreach( Int32 psid in psDict.Keys.OrderBy( k => psDict[k] ) )
-                    {
-                        newOptions.Add( new CswNbtNodeTypePropListOption( psDict[psid], PropertySetPrefix + psid ) );
-                    }
+                        // More expensive, because we have to check everything
+
+                        // NodeTypes
+                        if( false == ObjectClassesOnly )
+                        {
+                            IEnumerable<CswNbtMetaDataNodeType> NodeTypes = _CswNbtResources.MetaData.getNodeTypes();
+                            foreach( CswNbtMetaDataNodeType nt in NodeTypes )
+                            {
+                                if( NodeTypePrefix + nt.NodeTypeId == ConstrainToObjectClass ||
+                                    ObjectClassPrefix + nt.ObjectClassId == ConstrainToObjectClass ||
+                                    ( null != nt.getObjectClass() &&
+                                      null != nt.getObjectClass().getPropertySet() &&
+                                      PropertySetPrefix + nt.getObjectClass().getPropertySet().PropertySetId == ConstrainToObjectClass ) )
+                                {
+                                    newOptions.Add( new CswNbtNodeTypePropListOption( nt.NodeTypeName, NodeTypePrefix + nt.NodeTypeId ) );
+                                }
+                            }
+                        }
+                        // Object Classes
+                        IEnumerable<CswNbtMetaDataObjectClass> ObjectClasses = _CswNbtResources.MetaData.getObjectClasses();
+                        foreach( CswNbtMetaDataObjectClass oc in ObjectClasses )
+                        {
+                            if( ObjectClassPrefix + oc.ObjectClassId == ConstrainToObjectClass ||
+                                ( null != oc.getPropertySet() &&
+                                  PropertySetPrefix + oc.getPropertySet().PropertySetId == ConstrainToObjectClass ) )
+                            {
+                                newOptions.Add( new CswNbtNodeTypePropListOption( oc.ObjectClassName, ObjectClassPrefix + oc.ObjectClassId ) );
+                            }
+                        }
+                        // Property Sets
+                        IEnumerable<CswNbtMetaDataPropertySet> PropertySets = _CswNbtResources.MetaData.getPropertySets();
+                        foreach( CswNbtMetaDataPropertySet ps in PropertySets )
+                        {
+                            if( PropertySetPrefix + ps.PropertySetId == ConstrainToObjectClass )
+                            {
+                                newOptions.Add( new CswNbtNodeTypePropListOption( ps.Name, PropertySetPrefix + ps.PropertySetId ) );
+                            }
+                        }
+                    } // if-else( string.Empty == ConstrainToObjectClass )
                     _CswNbtNodeTypePropListOptions.Override( newOptions );
-                }
+                } // if( null == _CswNbtNodeTypePropListOptions )
 
                 return ( _CswNbtNodeTypePropListOptions );
 

@@ -486,15 +486,32 @@ namespace ChemSW.Nbt.ObjClasses
                 this.Node.setReadOnly( true, true );
             }
 
-            // If nodes exist, relationship target is readonly
-            // See cases 7176, 7600, 8025
-            if( RelationalNodeTypeProp != null &&
-                FieldTypeValue == CswEnumNbtFieldType.Relationship &&
-                RelationalNodeTypeProp.InUse )
+            // Relationship - Target
+            if( FieldTypeValue == CswEnumNbtFieldType.Relationship )
             {
-                CswNbtMetaDataNodeTypeProp TargetNTP = this.NodeType.getNodeTypeProp( CswEnumNbtPropertyAttributeName.Target.ToString() );
-                this.Node.Properties[TargetNTP].setReadOnly( true, true );
-            }
+                CswNbtNodePropWrapper TargetProp = this.AttributeProperty[CswNbtFieldTypeRuleRelationship.AttributeName.Target];
+                //this.NodeType.getNodeTypeProp( CswEnumNbtPropertyAttributeName.Target.ToString() );
+
+                // If nodes exist, relationship target is readonly
+                // See cases 7176, 7600, 8025
+                if( RelationalNodeTypeProp != null && RelationalNodeTypeProp.InUse )
+                {
+                    TargetProp.setReadOnly( true, true );
+                }
+                
+                // case 31526 - If derived from Object Class, restrict Target options
+                if( DerivesFromObjectClassProp )
+                {
+                    if( ObjectClassPropValue.FKType == CswEnumNbtViewRelatedIdType.ObjectClassId.ToString() )
+                    {
+                        TargetProp.AsMetaDataList.ConstrainToObjectClass = CswNbtNodePropMetaDataList.ObjectClassPrefix + ObjectClassPropValue.FKValue;
+                    }
+                    else if( ObjectClassPropValue.FKType == CswEnumNbtViewRelatedIdType.PropertySetId.ToString() )
+                    {
+                        TargetProp.AsMetaDataList.ConstrainToObjectClass = CswNbtNodePropMetaDataList.PropertySetPrefix + ObjectClassPropValue.FKValue;
+                    }
+                }
+            } // if( FieldTypeValue == CswEnumNbtFieldType.Relationship )
 
             // PropertyReference - filter to my relationships
             if( FieldTypeValue == CswEnumNbtFieldType.PropertyReference )
