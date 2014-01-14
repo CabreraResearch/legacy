@@ -92,6 +92,8 @@
                     //Todo: throw exception
                 }
                 
+                //Hide the Tree
+                Csw.main.leftDiv.hide();
                 isSidebarVisible = true;
 
                 // Create the sizebar
