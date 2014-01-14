@@ -21,6 +21,8 @@ namespace ChemSW.Nbt
         {
             {ArielSync                , ArielSync},
             {C3                       , C3},
+            {C3ACD                    , C3ACD},
+            {C3Products               , C3Products},
             {ChemWatch                , ChemWatch},
             {CISPro                   , CISPro},
             {Containers               , Containers},
@@ -171,6 +173,15 @@ namespace ChemSW.Nbt
         /// Module that syncs Regulatory List data with Ariel.
         /// </summary>
         public const string ArielSync = "Ariel Sync";
+        /// <summary>
+        /// Child module of C3 that allows searching of ACD product data
+        /// </summary>
+        public const string C3ACD = "C3 ACD";
+        /// <summary>
+        /// Child module of C3 that allows earching of C3 product data
+        /// </summary>
+        public const string C3Products = "C3 Products";
+
 
         #endregion
 
