@@ -89,6 +89,15 @@ namespace ChemSW.Nbt.PropTypes
             private set { _CswNbtNodePropData.SetPropRowValue( _TextSubField, Text ); }
         }
 
+        /// <summary>
+        /// Object classes only
+        /// </summary>
+        public bool ConstrainToObjectClass
+        {
+            get { return CswConvert.ToBoolean( _CswNbtNodePropData[CswNbtFieldTypeRuleMetaDataList.AttributeName.ConstrainToObjectClass] ); }
+        }
+
+
         public ICswNbtMetaDataDefinitionObject MetaDataValue
         {
             get { return _CswNbtResources.MetaData.getDefinitionObject( Type, Id ); }
@@ -176,10 +185,13 @@ namespace ChemSW.Nbt.PropTypes
 
                     Collection<CswNbtNodeTypePropListOption> newOptions = new Collection<CswNbtNodeTypePropListOption>();
                     // NodeTypes
-                    Dictionary<Int32, string> ntDict = _CswNbtResources.MetaData.getNodeTypeIds();
-                    foreach( Int32 ntid in ntDict.Keys.OrderBy( k => ntDict[k] ) )
+                    if( false == ConstrainToObjectClass )
                     {
-                        newOptions.Add( new CswNbtNodeTypePropListOption( ntDict[ntid], NodeTypePrefix + ntid ) );
+                        Dictionary<Int32, string> ntDict = _CswNbtResources.MetaData.getNodeTypeIds();
+                        foreach( Int32 ntid in ntDict.Keys.OrderBy( k => ntDict[k] ) )
+                        {
+                            newOptions.Add( new CswNbtNodeTypePropListOption( ntDict[ntid], NodeTypePrefix + ntid ) );
+                        }
                     }
                     // Object Classes
                     Dictionary<Int32, CswEnumNbtObjectClass> ocDict = _CswNbtResources.MetaData.getObjectClassIds();
@@ -187,11 +199,14 @@ namespace ChemSW.Nbt.PropTypes
                     {
                         newOptions.Add( new CswNbtNodeTypePropListOption( ocDict[ocid], ObjectClassPrefix + ocid ) );
                     }
-                    // Property Sets
-                    Dictionary<Int32, CswEnumNbtPropertySetName> psDict = _CswNbtResources.MetaData.getPropertySetIds();
-                    foreach( Int32 psid in psDict.Keys.OrderBy( k => psDict[k] ) )
+                    if( false == ConstrainToObjectClass )
                     {
-                        newOptions.Add( new CswNbtNodeTypePropListOption( psDict[psid], PropertySetPrefix + psid ) );
+                        // Property Sets
+                        Dictionary<Int32, CswEnumNbtPropertySetName> psDict = _CswNbtResources.MetaData.getPropertySetIds();
+                        foreach( Int32 psid in psDict.Keys.OrderBy( k => psDict[k] ) )
+                        {
+                            newOptions.Add( new CswNbtNodeTypePropListOption( psDict[psid], PropertySetPrefix + psid ) );
+                        }
                     }
                     _CswNbtNodeTypePropListOptions.Override( newOptions );
                 }
