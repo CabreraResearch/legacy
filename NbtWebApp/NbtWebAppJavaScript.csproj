@@ -106,6 +106,7 @@
     <Content Include="app\dialogs\csw.copynode.js" />
     <Content Include="app\dialogs\csw.addnode.js" />
     <Content Include="app\db\csw.dbIndex.js" />
+    <Content Include="app\layouts\csw.designmodenodelayout.js" />
     <Content Include="app\literals\csw.fieldset.js" />
     <Content Include="app\layouts\csw.landingpage.js" />
     <Content Include="app\literals\csw.svg.js" />

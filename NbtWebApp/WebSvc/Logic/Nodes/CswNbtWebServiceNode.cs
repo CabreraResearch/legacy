@@ -381,10 +381,12 @@ namespace ChemSW.Nbt.WebServices
         /// <param name="_CswResources">Resources</param>
         /// <param name="Response">Repsonse Object containing the ViewId</param>
         /// <param name="NodeTypeName">NodeTypeName of which to create a temp node</param>
-        public static void createTempNode( ICswResources _CswResources, CswNbtViewIdReturn Response, string NodeTypeName )
+        public static void createTempNode( ICswResources _CswResources, CswNbtViewIdReturn Response, string DesignNodeTypeNodeId )
         {
             CswNbtResources _CswNbtResources = (CswNbtResources) _CswResources;
-            CswNbtMetaDataNodeType NT = _CswNbtResources.MetaData.getNodeType( NodeTypeName );
+            CswPrimaryKey DesignNTNodeId = CswConvert.ToPrimaryKey( DesignNodeTypeNodeId );
+            CswNbtObjClassDesignNodeType DesignNTNode = _CswNbtResources.Nodes[DesignNTNodeId];
+            CswNbtMetaDataNodeType NT = _CswNbtResources.MetaData.getNodeType( DesignNTNode.NodeTypeName.Text );
             CswNbtNode TempNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NT.NodeTypeId, null, true );
             CswNbtView TempView = TempNode.getViewOfNode( false );
             TempView.Root.ChildRelationships[0].AllowAdd = true;
