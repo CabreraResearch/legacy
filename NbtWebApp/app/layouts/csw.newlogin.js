@@ -173,21 +173,27 @@
                    cswPrivate.progresstext.$.fadeTo(1000, 0);
                }
            };
-           window.applicationCache.addEventListener('noupdate', updateComplete);
-           window.applicationCache.addEventListener('updateready', updateComplete);
-           window.applicationCache.addEventListener('cached', updateComplete);
-        //these two aren't technically "completions", but when the appCache fails we want to just continue on to the app and assume its going to fail repeatedly
-           window.applicationCache.addEventListener('error', updateComplete);
-           window.applicationCache.addEventListener('obsolete', updateComplete);
-        
+
+        if (window.applicationCache) {
+            window.applicationCache.addEventListener('noupdate', updateComplete);
+            window.applicationCache.addEventListener('updateready', updateComplete);
+            window.applicationCache.addEventListener('cached', updateComplete);
+            //these two aren't technically "completions", but when the appCache fails we want to just continue on to the app and assume its going to fail repeatedly
+               window.applicationCache.addEventListener('error', updateComplete);
+               window.applicationCache.addEventListener('obsolete', updateComplete);
+        } else {
+            //well don't we feel stupid for doing all the work making this pretty bar for IE9
+            updateComplete();
+        }
 
 
         //for each downloaded file, fill the bar to the appropriate fraction
            var inProgress = function(p) {
                cswPrivate.progressbar.updateProgress((p.loaded / p.total));
            };
-           window.applicationCache.addEventListener('progress', inProgress);
-        
+           if (window.applicationCache) {
+               window.applicationCache.addEventListener('progress', inProgress);
+           }        
 
 
         return cswPublic;
