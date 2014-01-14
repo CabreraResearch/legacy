@@ -28,6 +28,11 @@
                     Csw.tryExec(o.onAuthenticate, Csw.cookie.get(Csw.cookie.cookieNames.Username));
                 }
                 else {
+
+                    //when user has no stored session id, send them back to Login.aspx
+                    window.location = "Login.aspx";
+
+                    /***  THIS IS THE OLD LOGIN PAGE, DEPRECATED BY LAYOUTS/CSW.NEWLOGIN.JS ON 1/14/2014, CASE 31348  ***
                     loginDiv = parent.div({
                         name: 'logindiv',
                         align: 'center'
@@ -109,6 +114,9 @@
                     inpAccessId.$.focus();
 
                     return ret;
+                    */
+
+                    
                 } // if-else(ThisSessionId !== null)
             } // init
         }; // methods

@@ -199,6 +199,24 @@ namespace NbtWebApp
             return ( Ret );
         }
 
+        [OperationContract]
+        [WebInvoke( Method = "POST" )]
+        [Description( "Creates a temporary node of the given NodeType and returns a view containing the temp node" )]
+        [FaultContract( typeof( FaultException ) )]
+        public CswNbtViewIdReturn createTempNode( string NodeTypeName )
+        {
+            CswNbtViewIdReturn Ret = new CswNbtViewIdReturn();
+
+            var SvcDriver = new CswWebSvcDriver<CswNbtViewIdReturn, string>(
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context ),
+                ReturnObj: Ret,
+                WebSvcMethodPtr: CswNbtWebServiceNode.createTempNode,
+                ParamObj: NodeTypeName
+                );
+
+            SvcDriver.run();
+            return ( Ret );
+        }
 
     }
 }

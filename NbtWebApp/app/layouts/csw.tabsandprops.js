@@ -602,7 +602,7 @@
             }
             return ret || 'newnode';
         };
-
+        
         cswPublic.getNodeKey = function () {
             /// <summary>
             /// Get the current NodeKey
@@ -905,19 +905,17 @@
                             if (Csw.designmode.isSidebarVisible()) {
                                 Csw.publish('designModeSidebarTearDown');
                             } else {
-                                var sidebarDiv = Csw.designmode.factory(Csw.main.sidebarDiv, 'sidebar');
-                                sidebarDiv.sidebar({
-                                    name: 'newsidebar',
-                                    tabState: cswPrivate.tabState,
-                                    Refresh: function() {
-                                        cswPrivate.tabState.Config = false;
-                                        cswPrivate.getTabs();
-                                    }
-                                });
+                                cswPrivate.openSidebar();
                             }
                         }
                     });
                     cswPrivate.toggleConfigIcon(false === cswPrivate.isMultiEdit());
+                    
+                    var openSidebar = Csw.clientDb.getItem('openSidebar');
+                    if (openSidebar) {
+                        Csw.clientDb.removeItem('openSidebar');
+                        cswPrivate.openSidebar();
+                    }
                 }
 
                 Csw.tryExec(cswPrivate.onInitFinish, cswPrivate.atLeastOne.Property);
@@ -960,6 +958,25 @@
                 makePropLayout();
             }
         }; // getPropsImpl()
+
+        cswPrivate.openSidebar = function() {
+            var sidebarDiv = Csw.designmode.factory(Csw.main.sidebarDiv, 'sidebar');
+            sidebarDiv.sidebar({
+                name: 'newsidebar',
+                tabState: cswPrivate.tabState,
+                Refresh: function () {
+                    cswPrivate.tabState.Config = false;
+                    cswPrivate.getTabs();
+                }
+            });
+            
+            Csw.layouts.designmodenodelayout({}, {
+                nodeId: cswPrivate.tabState.nodeid,
+                nodeKey: cswPrivate.tabState.nodekey,
+                nodeTypeId: cswPrivate.tabState.nodetypeid,
+                tabs: cswPrivate.tabs
+            });
+        };
 
         cswPrivate.onEmptyProps = function () {
             Csw.debug.warn('No properties have been configured for this layout: ' + cswPrivate.tabState.EditMode);

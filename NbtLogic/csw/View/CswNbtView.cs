@@ -106,6 +106,22 @@ namespace ChemSW.Nbt
             }
         }
 
+        /// <summary>
+        /// Whether or not Temp Nodes should be included in the view
+        /// </summary>
+        [DataMember]
+        public bool IncludeTempNodes
+        {
+            get { return Root.IncludeTempNodes; }
+            set
+            {
+                if( null != Root )
+                {
+                    Root.IncludeTempNodes = value;
+                }
+            }
+        }
+
         [DataMember( Name = "ViewMode" )]
         public string NbtViewMode
         {

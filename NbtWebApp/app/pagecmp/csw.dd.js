@@ -1,5 +1,5 @@
 ﻿(function _initDDComponents() {
-    
+
     Csw.main.onReady.then(function () {
 
         //A draggable div
@@ -33,7 +33,8 @@
                 } else {
                     this.dd.lock();
                 }
-            }
+            },
+            onDrop: function (extCmp, col, row) { } //Optionally overridden when adding items to panel
         });
 
         //A column that csw.draggables reside in
@@ -190,11 +191,12 @@
                     dd.panelProxy.hide();
                     dd.proxy.hide();
 
-                    if (pos !== false) {
-                        c.insert(pos, panel); //add the draggabke into it's new spot
-                    } else {
-                        c.add(panel); //snap the draggable back to it's prev spot
+                    if (pos === false) { //if we're adding to an empty column
+                        pos = c.items.getCount();
                     }
+
+                    c.insert(pos, panel);
+                    Csw.tryExec(panel.onDrop, panel, col, pos);
 
                     Ext.resumeLayouts(true);
 
@@ -232,6 +234,7 @@
                 //window.Ext.app.PortalDropZone.superclass.unreg.call(this);
                 Csw.ext.dropzone.superclass.unreg.call(this);
             }
+
         });
 
         //A panel that contains columns that contains draggables
@@ -307,7 +310,7 @@
                 this.callParent();
             }
         });
-        
+
     }()); //mainOnReady
 
 }()); //_initDDComponents
