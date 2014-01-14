@@ -602,7 +602,7 @@
             }
             return ret || 'newnode';
         };
-
+        
         cswPublic.getNodeKey = function () {
             /// <summary>
             /// Get the current NodeKey
@@ -897,6 +897,13 @@
                         size: 16,
                         isButton: true,
                         onClick: function () {
+
+                            Csw.layouts.designmodenodelayout({}, {
+                                nodeId: cswPrivate.tabState.nodeid,
+                                nodeKey: cswPrivate.tabState.nodekey,
+                                nodeTypeId: cswPrivate.tabState.nodetypeid,
+                                tabs: cswPrivate.tabs
+                            });
 
                             // Old layout editor
                             //cswPrivate.clearTabs();

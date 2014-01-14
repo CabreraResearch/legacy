@@ -10,10 +10,8 @@
             nodeId: '',
             nodeKey: '',
             nodeTypeId: '',
-            nodeName: 'Sample Name',
-            tabs: {},
-
-            identityTabId: ''
+            identityTabId: '',
+            Layout: 'Edit'
         };
         if (options) {
             Csw.extend(cswPrivate, options);
@@ -23,11 +21,17 @@
 
         (function _pre() {
             Csw.main.clear({ right: true });
+            cswPrivate.nameDiv = Csw.main.rightDiv.div({ cssclass: 'CswIdentityTabHeader' });
 
+            cswPrivate.contentDiv = Csw.main.rightDiv.div();
+
+        })();
+
+        cswPrivate.makeEditNodeLayout = function () {
             cswPrivate.getTabsAjax = Csw.ajax.deprecatedWsNbt({
                 urlMethod: 'getTabs',
                 data: {
-                    EditMode: 'Edit',
+                    EditMode: cswPrivate.Layout,
                     NodeId: cswPrivate.nodeId,
                     SafeNodeKey: cswPrivate.nodeKey,
                     Date: new Date().toDateString(),
@@ -36,6 +40,8 @@
                     ConfigMode: true
                 },
                 success: function (data) {
+                    //cswPrivate.nameDiv.append(data.node.nodename);
+
                     var tabs = [];
                     for (var tabIdx in data.tabs) {
                         var tabData = data.tabs[tabIdx];
@@ -48,9 +54,6 @@
                                         if (!renderedTabs[tab.id]) {
                                             renderedTabs[tab.id] = tab;
                                             cswPrivate.renderTab(tab.id, tab.id);
-                                            return true;
-                                        } else {
-                                            return false;
                                         }
                                     }
                                 }
@@ -59,9 +62,18 @@
                             cswPrivate.identityTabId = tabData.id;
                         }
                     }
+                    tabs.push({
+                        id: window.Ext.id(),
+                        title: "New Tab (+)",
+                        listeners: {
+                            activate: function () {
+                                //TODO: add new tab to NodeType edit layout
+                            }
+                        }
+                    });
 
                     window.Ext.create('Ext.panel.Panel', {
-                        renderTo: Csw.main.rightDiv.getId(),
+                        renderTo: cswPrivate.contentDiv.getId(),
                         layout: {
                             align: 'stretch',    // Each takes up full width
                             padding: 1
@@ -81,10 +93,51 @@
                         }]
                     });
 
+                    cswPrivate.renderTab(identityTabId, cswPrivate.identityTabId);
+
                 }
             });
+        };
 
-        })();
+        cswPrivate.makeAddNodeLayout = function () {
+            cswPrivate.nameDiv.append('Add Node Layout');
+            var addPanel = window.Ext.create('Ext.panel.Panel', {
+                renderTo: cswPrivate.contentDiv.getId(),
+                height: 700,
+                layout: {
+                    align: 'stretch',
+                    padding: 1
+                }
+            });
+            cswPrivate.renderTab(addPanel.id, Csw.int32MinVal);
+        };
+
+        cswPrivate.makePreviewNodeLayout = function () {
+            cswPrivate.nameDiv.append('Preview Node Layout');
+            var addPanel = window.Ext.create('Ext.panel.Panel', {
+                renderTo: cswPrivate.contentDiv.getId(),
+                height: 700,
+                layout: {
+                    align: 'stretch',
+                    padding: 1
+                }
+            });
+            cswPrivate.renderTab(addPanel.id, Csw.int32MinVal);
+        };
+
+        //TODO: fix search (aka Table) layouts then make this layout
+        cswPrivate.makeSearchNodeLayout = function () {
+            cswPrivate.nameDiv.append('Search Node Layout');
+            var addPanel = window.Ext.create('Ext.panel.Panel', {
+                renderTo: cswPrivate.contentDiv.getId(),
+                height: 700,
+                layout: {
+                    align: 'stretch',
+                    padding: 1
+                }
+            });
+            cswPrivate.renderTab(addPanel.id, Csw.int32MinVal);
+        };
 
         cswPrivate.makeDiv = function (extId) {
             var tabPanel = window.Ext.getCmp(extId);
@@ -110,7 +163,7 @@
             Csw.ajax.deprecatedWsNbt({
                 urlMethod: 'getProps',
                 data: {
-                    EditMode: 'Edit',
+                    EditMode: cswPrivate.Layout,
                     NodeId: cswPrivate.nodeId,
                     TabId: tabid,
                     SafeNodeKey: cswPrivate.nodeKey,
@@ -120,8 +173,8 @@
                     filterToPropId: '',
                     ConfigMode: true,
                     RelatedNodeId: '',
-                    GetIdentityTab: true,
-                    ForceReadOnly: true
+                    GetIdentityTab: false,
+                    ForceReadOnly: false
                 },
                 success: function (data) {
 
@@ -158,7 +211,7 @@
                             tabState: {
                                 nodeid: node.nodeid,
                                 nodename: node.nodename,
-                                EditMode: Csw.enums.editMode.PrintReport, //TODO: do we want PrintReport?
+                                EditMode: Csw.enums.editMode.PrintReport,
                                 ReadOnly: true,
                                 Config: true,
                                 showSaveButton: false,
@@ -177,6 +230,9 @@
                         Csw.nbt.property(fieldOpt, {});
 
                         //TODO: subprops go here
+                    },
+                    onDrop: function (col, row) {
+                        //TODO: save prop in new layout
                     }
                 });
             }
@@ -192,11 +248,16 @@
 
         (function _post() {
 
-            cswPrivate.getTabsAjax.then(function () {
-                cswPrivate.renderTab(identityTabId, cswPrivate.identityTabId);
-            });
-
-
+            if (cswPrivate.Layout === 'Edit') {
+                cswPrivate.makeEditNodeLayout();
+            } else if (cswPrivate.Layout === 'Add') {
+                cswPrivate.makeAddNodeLayout();
+            } else if (cswPrivate.Layout === 'Preview') {
+                cswPrivate.makePreviewNodeLayout();
+            } else if (cswPrivate.Layout === 'Search') {
+                cswPrivate.Layout = 'Table';
+                cswPrivate.makeSearchNodeLayout();
+            }
         })();
     });
 }());
