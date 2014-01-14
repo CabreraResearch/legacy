@@ -20,10 +20,34 @@
         var renderedTabs = {};
 
         (function _pre() {
-            Csw.main.clear({ right: true });
-            cswPrivate.nameDiv = Csw.main.rightDiv.div({ cssclass: 'CswIdentityTabHeader' });
 
-            cswPrivate.contentDiv = Csw.main.rightDiv.div();
+            var init = function () {
+                Csw.main.clear({ right: true });
+                var layoutSelectDiv = Csw.main.rightDiv.div().css('float', 'right');
+                layoutSelectDiv.setLabelText('Select Layout:', false, false);
+                layoutSelectDiv.select({
+                    values: ['Edit', 'Add', 'Search', 'Preview'],
+                    selected: cswPrivate.Layout,
+                    onChange: function (val) {
+                        cswPrivate.Layout = val;
+                        init();
+                        if (val === 'Edit') {
+                            cswPrivate.makeEditNodeLayout();
+                        } else if (val === 'Add') {
+                            cswPrivate.makeAddNodeLayout();
+                        } else if (val === 'Search') {
+                            cswPrivate.Layout = 'Table'; //TODO: rename Table layout to Search
+                            cswPrivate.makeSearchNodeLayout();
+                        } else if (val === 'Preview') {
+                            cswPrivate.makePreviewNodeLayout();
+                        }
+                    }
+                });
+                cswPrivate.nameDiv = Csw.main.rightDiv.div({ cssclass: 'CswIdentityTabHeader' });
+
+                cswPrivate.contentDiv = Csw.main.rightDiv.div();
+            };
+            init();
 
         })();
 
@@ -40,7 +64,7 @@
                     ConfigMode: true
                 },
                 success: function (data) {
-                    //cswPrivate.nameDiv.append(data.node.nodename);
+                    cswPrivate.nameDiv.append(data.node.nodename);
 
                     var tabs = [];
                     for (var tabIdx in data.tabs) {
@@ -184,7 +208,7 @@
             }); // ajax
         };
 
-        cswPrivate.makePropOpt = function(tabid, node, prop, propDiv) {
+        cswPrivate.makePropOpt = function (tabid, node, prop, propDiv) {
             var fieldOpt = Csw.nbt.propertyOption({
                 isMulti: false,
                 fieldtype: prop.fieldtype,
@@ -225,7 +249,7 @@
                     seenProps[prop.id] = prop;
                     var realCol = prop.displaycol - 1; //server starts cols at 1, dragpanel starts at 0
                     dragPanel.addItemToCol(realCol, {
-                        render: function(extEl, cswEl) {
+                        render: function (extEl, cswEl) {
 
                             var propTbl = cswEl.table();
                             var labelDiv = propTbl.cell(1, 1).div().css({ 'padding': '5px 10px' });
@@ -243,7 +267,7 @@
                                 for (var subPropIdx in prop.subprops) {
                                     var subProp = prop.subprops[subPropIdx];
                                     seenProps[subProp.id] = subProp;
-                                    
+
                                     var subLabelDiv = subPropTbl.cell(idx, 1).div().css({ 'padding': '5px 10px' });
                                     var subPropDiv = subPropTbl.cell(idx, 2).div().css({ 'padding': '5px 10px' });
                                     idx++;
@@ -254,7 +278,7 @@
                                 }
                             }
                         },
-                        onDrop: function(col, row) {
+                        onDrop: function (col, row) {
                             //TODO: save prop in new layout
                         }
                     });
