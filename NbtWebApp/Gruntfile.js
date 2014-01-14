@@ -37,7 +37,7 @@ module.exports = function (grunt) {
 
         concat: {
             login: { //ExternalLogin.html
-                src: ['templates/MainHeader.txt', 'templates/MainForm_Start.txt', 'templates/LoginForm_Body.txt',
+                src: ['templates/ExternalLoginHeader.txt', 'templates/MainForm_Start.txt', 'templates/LoginForm_Body.txt',
                       'templates/MainIncludes.txt', 'templates/LoginInit.txt', 'templates/MainEnd.txt'],
                 dest: 'release/login.tmpl'
             },
