@@ -104,7 +104,13 @@
             loginTable.cell(3, 1).text('Username: ').align('right');
             var usernameBox = loginTable.cell(3, 2).input({ cssclass: 'required' });
             loginTable.cell(4, 1).text('Password: ').align('right');
-            var passwordBox = loginTable.cell(4, 2).input({ cssclass: 'required', type: Csw.enums.inputTypes.password });
+            var passwordBox = loginTable.cell(4, 2).input({
+                cssclass: 'required',
+                type: Csw.enums.inputTypes.password,
+                onKeyEnter: function() {
+                    loginButton.click();
+                }
+            });
             
             
             var onLoginButnClick = function() {
