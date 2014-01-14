@@ -420,8 +420,8 @@
                             title: 'Delete ' + cswPrivate.tabState.nodetypename,
                             y: posY,
                             x: posX,
-                            height: 100,
-                            width: 400,
+                            height: 150,
+                            width: 450,
                             layout: 'fit',
                             buttons: [
                                 {
@@ -456,7 +456,9 @@
                         });
 
                         cswPrivate.extWindowDelete.attachToMe().div({
-                            text: "Are you sure you want to delete the " + cswPrivate.tabState.nodetypename + " nodetype?"
+                            text: 'Are you sure you want to delete the "' + cswPrivate.tabState.nodetypename +
+                                '" nodetype?  All instances of "' + cswPrivate.tabState.nodetypename + '" will be deleted.' +
+                                '<br/><br/>Warning: this action <strong>cannot</strong> be undone.'
                         });
 
                         break;
