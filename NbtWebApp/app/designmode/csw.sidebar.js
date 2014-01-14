@@ -30,6 +30,16 @@
             beforeclose: null
         }
     });
+    
+    var isSidebarVisible = false;
+    Csw.designmode.isSidebarVisible = Csw.designmode.isSidebarVisible ||
+        Csw.designmode.register('isSidebarVisible', function () {
+        /// <summary>
+        /// Getter for isSidebarVisible
+        /// </summary>
+        /// <returns type="">True if the Design Mode sidebar is visible</returns>
+        return isSidebarVisible;
+    });
 
     // This needs to be defined globally. It should only be defined once and then 
     //call new Sidebar to create instances of it
@@ -82,8 +92,7 @@
                     //Todo: throw exception
                 }
                 
-                // Hide the left div
-                Csw.main.leftDiv.hide();
+                isSidebarVisible = true;
 
                 // Create the sizebar
                 cswPrivate.newSidebar = new DesignSidebar({
@@ -307,6 +316,7 @@
                     }
                     delete cswPrivate.ajax[name];
                 });
+                isSidebarVisible = false;
                 Csw.main.leftDiv.show();
             };
 
@@ -535,6 +545,7 @@
             //constructor
             (function _postCtor() {
                 cswPrivate.init();
+                Csw.subscribe('designModeSidebarTearDown', cswPrivate.onTearDown);
             }());
 
             //#endregion _postCtor

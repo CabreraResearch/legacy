@@ -866,22 +866,22 @@
                             cswPrivate.tabs[tabid] &&
                             Csw.bool(cswPrivate.tabs[tabid].data('canEditLayout'))) {
                     /* Case 24437 */
-                    var editLayoutOpt = {
-                        name: cswPrivate.name,
-                        tabState: {
-                            nodeid: cswPublic.getNodeId(),
-                            nodekey: cswPublic.getNodeKey(),
-                            nodetypeid: cswPrivate.tabState.nodetypeid,
-                            tabid: cswPrivate.tabState.tabid,
-                            tabNo: cswPrivate.tabState.tabNo,
-                            EditMode: cswPrivate.tabState.EditMode
-                        },
-                        Refresh: function () {
-                            //Csw.tryExec(cswPrivate.Refresh);
-                            cswPrivate.tabState.Config = false;
-                            cswPrivate.getTabs();
-                        }
-                    };
+                    //var editLayoutOpt = {
+                    //    name: cswPrivate.name,
+                    //    tabState: {
+                    //        nodeid: cswPublic.getNodeId(),
+                    //        nodekey: cswPublic.getNodeKey(),
+                    //        nodetypeid: cswPrivate.tabState.nodetypeid,
+                    //        tabid: cswPrivate.tabState.tabid,
+                    //        tabNo: cswPrivate.tabState.tabNo,
+                    //        EditMode: cswPrivate.tabState.EditMode
+                    //    },
+                    //    Refresh: function () {
+                    //        //Csw.tryExec(cswPrivate.Refresh);
+                    //        cswPrivate.tabState.Config = false;
+                    //        cswPrivate.getTabs();
+                    //    }
+                    //};
 
                     formTable.cell(1, 2).favoriteButton({
                         name: cswPrivate.name + '_favBtn',
@@ -889,7 +889,6 @@
                         isFavorite: cswPrivate.tabState.isFavorite,
                     });
                     
-                    cswPrivate.tabState.sidebarVisible = false;
                     /* Show the 'fake' config button to open the dialog */
                     cswPrivate.tabState.configIcn = formTable.cell(1, 3).icon({
                         name: cswPrivate.name + 'configbtn',
@@ -903,12 +902,8 @@
                             //cswPrivate.clearTabs();
                             //$.CswDialog('EditLayoutDialog', editLayoutOpt);
 
-                            //Uncomment this out for the new sidebar
-                            if (cswPrivate.tabState.sidebarVisible) {
-                                Csw.main.sidebarDiv.hide();
-                                Csw.main.sidebarDiv.empty();
-                                Csw.main.leftDiv.show();
-                                cswPrivate.tabState.sidebarVisible = false;
+                            if (Csw.designmode.isSidebarVisible()) {
+                                Csw.publish('designModeSidebarTearDown');
                             } else {
                                 var sidebarDiv = Csw.designmode.factory(Csw.main.sidebarDiv, 'sidebar');
                                 sidebarDiv.sidebar({
@@ -919,8 +914,6 @@
                                         cswPrivate.getTabs();
                                     }
                                 });
-                                Csw.main.sidebarDiv.show();
-                                cswPrivate.tabState.sidebarVisible = true;
                             }
                         }
                     });

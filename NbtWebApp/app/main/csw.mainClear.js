@@ -25,7 +25,7 @@
 
             if (o.all || o.left) {
                 Csw.main.leftDiv.empty();
-                Csw.main.sidebarDiv.empty();
+                Csw.publish('designModeSidebarTearDown');
                 Csw.main.leftDiv.show();
             }
             if (o.all || o.right) {
