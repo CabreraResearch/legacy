@@ -93,7 +93,8 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
         public sealed class AttributeName : ICswNbtFieldTypeRuleAttributeName
         {
-            public const string ConstrainToObjectClass = CswEnumNbtPropertyAttributeName.ConstrainToObjectClass;
+            //public const string ConstrainToObjectClass = CswEnumNbtPropertyAttributeName.ConstrainToObjectClass;
+            public const string ObjectClassesOnly = CswEnumNbtPropertyAttributeName.ObjectClassesOnly;
             public const string DefaultValue = CswEnumNbtPropertyAttributeName.DefaultValue;
         }
 
@@ -110,7 +111,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
             {
                 OwnerFieldType = CswEnumNbtFieldType.MetaDataList,
-                Name = AttributeName.ConstrainToObjectClass,
+                Name = AttributeName.ObjectClassesOnly,
                 Column = CswEnumNbtPropertyAttributeColumn.Attribute1,
                 AttributeFieldType = CswEnumNbtFieldType.Logical
             } );
