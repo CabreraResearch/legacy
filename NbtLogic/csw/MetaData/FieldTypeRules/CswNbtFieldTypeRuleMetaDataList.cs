@@ -93,6 +93,9 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
         public sealed class AttributeName : ICswNbtFieldTypeRuleAttributeName
         {
+            public const string FKType = CswEnumNbtPropertyAttributeName.FKType;
+            public const string ConstrainToObjectClass = CswEnumNbtPropertyAttributeName.ConstrainToObjectClass;
+            public const string ObjectClassesOnly = CswEnumNbtPropertyAttributeName.ObjectClassesOnly;
             public const string DefaultValue = CswEnumNbtPropertyAttributeName.DefaultValue;
         }
 
@@ -105,6 +108,29 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                 Name = AttributeName.DefaultValue,
                 Column = CswEnumNbtPropertyAttributeColumn.Defaultvalueid,
                 AttributeFieldType = CswEnumNbtFieldType.MetaDataList
+            } );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+            {
+                OwnerFieldType = CswEnumNbtFieldType.MetaDataList,
+                Name = AttributeName.ConstrainToObjectClass,
+                Column = CswEnumNbtPropertyAttributeColumn.Fktype,
+                AttributeFieldType = CswEnumNbtFieldType.MetaDataList,
+                SubFieldName = CswNbtFieldTypeRuleMetaDataList.SubFieldName.Type
+            } );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+            {
+                OwnerFieldType = CswEnumNbtFieldType.MetaDataList,
+                Name = AttributeName.ConstrainToObjectClass,
+                Column = CswEnumNbtPropertyAttributeColumn.Fkvalue,
+                AttributeFieldType = CswEnumNbtFieldType.MetaDataList,
+                SubFieldName = CswNbtFieldTypeRuleMetaDataList.SubFieldName.Id
+            } );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+            {
+                OwnerFieldType = CswEnumNbtFieldType.MetaDataList,
+                Name = AttributeName.ObjectClassesOnly,
+                Column = CswEnumNbtPropertyAttributeColumn.Attribute1,
+                AttributeFieldType = CswEnumNbtFieldType.Logical
             } );
             return ret;
         }

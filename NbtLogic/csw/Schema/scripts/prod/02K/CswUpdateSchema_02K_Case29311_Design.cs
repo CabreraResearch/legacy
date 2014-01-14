@@ -474,6 +474,11 @@ namespace ChemSW.Nbt.Schema
                             locfkvalueNTP.removeFromAllLayouts();
                             break;
 
+                        case CswEnumNbtFieldType.MetaDataList:
+                            CswNbtMetaDataNodeTypeProp mdlfkvalueNTP = NodeTypePropNT.getNodeTypeProp( CswNbtFieldTypeRuleMetaDataList.AttributeName.ConstrainToObjectClass.ToString() );
+                            mdlfkvalueNTP._DataRow["attribute1"] = CswConvert.ToDbVal( true );
+                            break;
+
                         case CswEnumNbtFieldType.NFPA:
                             CswNbtMetaDataNodeTypeProp nfpadisplaymodeNTP = NodeTypePropNT.getNodeTypeProp( CswEnumNbtPropertyAttributeName.DisplayMode.ToString() );
                             nfpadisplaymodeNTP._DataRow["listoptions"] = new CswCommaDelimitedString()
@@ -491,10 +496,13 @@ namespace ChemSW.Nbt.Schema
                                     CswEnumNbtPropertySelectMode.Multiple.ToString(),
                                 }.ToString();
 
-                            CswNbtMetaDataNodeTypeProp ntsfktypeNTP = NodeTypePropNT.getNodeTypeProp( CswEnumNbtPropertyAttributeName.FKType.ToString() );
+                            CswNbtMetaDataNodeTypeProp ntsfktypeNTP = NodeTypePropNT.getNodeTypeProp( CswNbtFieldTypeRuleNodeTypeSelect.AttributeName.FKType.ToString() );
                             ntsfktypeNTP._DataRow["servermanaged"] = CswConvert.ToDbVal( true );
                             ntsfktypeNTP.DefaultValue.AsText.Text = CswEnumNbtViewRelatedIdType.ObjectClassId.ToString();
                             ntsfktypeNTP.removeFromAllLayouts();
+
+                            CswNbtMetaDataNodeTypeProp ntsfkvalueNTP = NodeTypePropNT.getNodeTypeProp( CswNbtFieldTypeRuleNodeTypeSelect.AttributeName.ConstrainToObjectClass.ToString() );
+                            ntsfkvalueNTP._DataRow["attribute1"] = CswConvert.ToDbVal( true );
                             break;
 
                         case CswEnumNbtFieldType.PropertyReference:

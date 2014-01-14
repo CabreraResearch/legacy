@@ -165,7 +165,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                 {
                     OwnerFieldType = CswEnumNbtFieldType.NodeTypeSelect,
                     Name = AttributeName.ConstrainToObjectClass,
-                    AttributeFieldType = CswEnumNbtFieldType.List,
+                    AttributeFieldType = CswEnumNbtFieldType.MetaDataList,
                     Column = CswEnumNbtPropertyAttributeColumn.Fkvalue
                 } );
             ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
