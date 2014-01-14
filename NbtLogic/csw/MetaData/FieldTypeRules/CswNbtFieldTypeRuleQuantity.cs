@@ -128,11 +128,11 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                         //We have valid values that are different that what is currently set
                         _setDefaultView( MetaDataProp, FkProp.Type, FkProp.Id, false );
                     }
-                    else
-                    {
-                        //Make sure a default view is set
-                        _setDefaultView( MetaDataProp, MetaDataProp.FKType, MetaDataProp.FKValue, true );
-                    }
+                    //else
+                    //{
+                    //    //Make sure a default view is set
+                    //    _setDefaultView( MetaDataProp, MetaDataProp.FKType, MetaDataProp.FKValue, true );
+                    //}
                 }
             } // if( DesignNTPNode.AttributeProperty.ContainsKey( FkTypeAttr.Name ) )
         } // onSetFk()
