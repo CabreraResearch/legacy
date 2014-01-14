@@ -4,7 +4,7 @@
     var DesignSidebar = Ext.define('Ext.design.sidebar', {
         extend: 'Ext.panel.Panel',
         title: 'Design Mode',
-        width: 325,
+        width: 290,
         height: 600,
         collapsible: true,
         collapseDirection: 'left',
@@ -29,6 +29,16 @@
         listeners: {
             beforeclose: null
         }
+    });
+    
+    var isSidebarVisible = false;
+    Csw.designmode.isSidebarVisible = Csw.designmode.isSidebarVisible ||
+        Csw.designmode.register('isSidebarVisible', function () {
+        /// <summary>
+        /// Getter for isSidebarVisible
+        /// </summary>
+        /// <returns type="">True if the Design Mode sidebar is visible</returns>
+        return isSidebarVisible;
     });
 
     // This needs to be defined globally. It should only be defined once and then 
@@ -82,8 +92,9 @@
                     //Todo: throw exception
                 }
                 
-                // Hide the left div
+                //Hide the Tree
                 Csw.main.leftDiv.hide();
+                isSidebarVisible = true;
 
                 // Create the sizebar
                 cswPrivate.newSidebar = new DesignSidebar({
@@ -302,9 +313,12 @@
             cswPrivate.onTearDown = function () {
                 cswParent.empty();
                 Csw.iterate(cswPrivate.ajax, function (call, name) {
-                    call.ajax.abort();
+                    if (call.ajax) {
+                        call.ajax.abort();
+                    }
                     delete cswPrivate.ajax[name];
                 });
+                isSidebarVisible = false;
                 Csw.main.leftDiv.show();
             };
 
@@ -514,13 +528,24 @@
                             },
                             ReloadTabOnSave: false,
                             onSave: function (nodeid, nodekey, tabcount, nodename, nodelink) {
-                                //To do:
-                                //  1. Create the new nodetype
-                                //  2. Create a temporary node
-                                //  3. Change the view to the temporary node
-                                //  4. Open design mode on the temporary node
-                                cswPublic.close(nodeid, nodekey, tabcount, nodename, nodelink);
-                                cswPrivate.extWindowNew.close();
+                                Csw.ajaxWcf.post({
+                                    urlMethod: 'Nodes/createTempNode',
+                                    data: nodename,
+                                    success: function (data) {
+                                        Csw.clientDb.setItem('openSidebar', true);
+                                        Csw.main.handleItemSelect({
+                                            type: 'view',
+                                            mode: 'tree',
+                                            itemid: data.ViewId
+                                        });
+                                    },
+                                    error: function () {
+                                        //ERRRRRRRRRRRRROR
+                                    },
+                                    complete: function() {
+                                        cswPrivate.extWindowNew.close();
+                                    }
+                                });
                             },
                             onInitFinish: function () { }
                         });
@@ -533,6 +558,7 @@
             //constructor
             (function _postCtor() {
                 cswPrivate.init();
+                Csw.subscribe('designModeSidebarTearDown', cswPrivate.onTearDown);
             }());
 
             //#endregion _postCtor

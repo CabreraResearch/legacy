@@ -113,6 +113,7 @@
     <Content Include="app\literals\_template.js" />
     <Content Include="app\main\csw.mainRefreshDashboard.js" />
     <Content Include="app\pagecmp\csw.dd.js" />
+    <Content Include="app\layouts\csw.newlogin.js" />
     <Content Include="app\pagecmp\csw.draggablepanel.js" />
     <Content Include="app\proptypes\csw.propTypeMetaDataList.js" />
     <Content Include="app\main\csw.mainClear.js" />

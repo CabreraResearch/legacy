@@ -32,7 +32,7 @@ namespace ChemSW.Nbt.WebPages
                 if( Session["logoutpath"] != null && Session["logoutpath"].ToString() != string.Empty )
                     return Session["logoutpath"].ToString();
                 else
-                    return "Main.html";
+                    return "Login.aspx";
             }
             set
             {
