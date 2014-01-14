@@ -122,6 +122,12 @@
                 }
             };
 
+            cswPublic.doLayout = function () {
+                /* When rendering Csw content to ExtJS controls, the layout is already calculated. Calling doLayout()
+                   after rendering arbitrary csw content will cause the Ext controls to fix their width/height/ect */
+                dragPanelCmp.doLayout();
+            };
+
         }());
         return cswPublic;
     });
