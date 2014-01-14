@@ -898,13 +898,6 @@
                         isButton: true,
                         onClick: function () {
 
-                            Csw.layouts.designmodenodelayout({}, {
-                                nodeId: cswPrivate.tabState.nodeid,
-                                nodeKey: cswPrivate.tabState.nodekey,
-                                nodeTypeId: cswPrivate.tabState.nodetypeid,
-                                tabs: cswPrivate.tabs
-                            });
-
                             // Old layout editor
                             //cswPrivate.clearTabs();
                             //$.CswDialog('EditLayoutDialog', editLayoutOpt);
@@ -975,6 +968,13 @@
                     cswPrivate.tabState.Config = false;
                     cswPrivate.getTabs();
                 }
+            });
+            
+            Csw.layouts.designmodenodelayout({}, {
+                nodeId: cswPrivate.tabState.nodeid,
+                nodeKey: cswPrivate.tabState.nodekey,
+                nodeTypeId: cswPrivate.tabState.nodetypeid,
+                tabs: cswPrivate.tabs
             });
         };
 
