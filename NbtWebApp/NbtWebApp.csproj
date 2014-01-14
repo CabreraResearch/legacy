@@ -94,6 +94,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Login.aspx.cs">
+      <DependentUpon>Login.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Login.aspx.designer.cs">
+      <DependentUpon>Login.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Modules\WcfReadEntityBodyModeWorkaroundModule.cs" />
     <Compile Include="Services\Balances.svc.cs">
       <DependentUpon>Balances.svc</DependentUpon>
@@ -314,6 +321,7 @@
     <Content Include="Content\themes\base\minified\jquery.ui.tabs.min.css" />
     <Content Include="Content\themes\base\minified\jquery.ui.theme.min.css" />
     <Content Include="Content\themes\base\minified\jquery.ui.tooltip.min.css" />
+    <Content Include="Login.aspx" />
     <Content Include="Images\blank.png" />
     <Content Include="Images\c3\cat100.png" />
     <Content Include="Images\c3\cat16.png" />
@@ -1333,7 +1341,6 @@
     </Compile>
     <Compile Include="Design.aspx.cs">
       <DependentUpon>Design.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="DisplayLog.aspx.cs">
       <DependentUpon>DisplayLog.aspx</DependentUpon>
@@ -1341,7 +1348,6 @@
     </Compile>
     <Compile Include="Main.aspx.cs">
       <DependentUpon>Main.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="MainLayout.master.cs">
       <DependentUpon>MainLayout.master</DependentUpon>
@@ -1359,7 +1365,6 @@
     </Compile>
     <Compile Include="Popup_DesignAdd.aspx.cs">
       <DependentUpon>Popup_DesignAdd.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Popup_DesignAdd.aspx.designer.cs">
       <DependentUpon>Popup_DesignAdd.aspx</DependentUpon>

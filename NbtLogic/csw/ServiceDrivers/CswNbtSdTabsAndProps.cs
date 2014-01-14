@@ -164,7 +164,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                     }
                     else
                     {
-                        Ret = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, IsTemp: true, OnAfterMakeNode: delegate( CswNbtNode NewNode )
+                        Ret = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, IsTemp : true, OnAfterMakeNode : delegate( CswNbtNode NewNode )
                         {
                             if( null != After )
                             {
@@ -176,10 +176,10 @@ namespace ChemSW.Nbt.ServiceDrivers
                             {
                                 foreach( CswNbtNodePropRelationship Relationship in from _Prop
                                     in NewNode.Properties
-                                    where _Prop.getFieldTypeValue() == CswEnumNbtFieldType.Relationship &&
-                                            ( _Prop.AsRelationship.TargetMatches( RelatedNode.getNodeType() ) ||
-                                            _Prop.AsRelationship.TargetMatches( RelatedNode.getObjectClass() ) )
-                                    select _Prop )
+                                                                                    where _Prop.getFieldTypeValue() == CswEnumNbtFieldType.Relationship &&
+                                                                                            ( _Prop.AsRelationship.TargetMatches( RelatedNode.getNodeType() ) ||
+                                                                                            _Prop.AsRelationship.TargetMatches( RelatedNode.getObjectClass() ) )
+                                                                                    select _Prop )
                                 {
                                     Relationship.RelatedNodeId = RelatedNodePk;
                                 }
@@ -201,7 +201,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             {
                 if( _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Create, NodeType ) )
                 {
-                    Ret = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeType.NodeTypeId, After, IsTemp: true );
+                    Ret = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeType.NodeTypeId, After, IsTemp : true );
                 }
                 else
                 {
@@ -318,7 +318,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                         bool TabHasAnyEditableProp = CswNbtMetaDataNodeTypeProps.Any( Prop => Prop.IsSaveable );
 
                         CswNbtMetaDataNodeTypeTab IdentityTab = Node.getNodeType().getIdentityTab();
-                        if( TabIdPk != IdentityTab.TabId )
+                        if( TabIdPk != IdentityTab.TabId && CswEnumNbtLayoutType.Add != LayoutType )
                         {
                             IEnumerable<CswNbtMetaDataNodeTypeProp> IdentityProps = _CswNbtResources.MetaData.NodeTypeLayout.getPropsInLayout( Node.NodeTypeId, IdentityTab.TabId, LayoutType, Date );
                             IEnumerable<CswNbtMetaDataNodeTypeProp> IdentityTabProps = Props as CswNbtMetaDataNodeTypeProp[] ?? IdentityProps.ToArray();
@@ -375,7 +375,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                 ( _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Add || _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Temp ) &&
                 NodeTypeId != Int32.MinValue )
             {
-                Node = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, IsTemp: true );
+                Node = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, IsTemp : true );
             }
 
             if( Node != null )
@@ -901,7 +901,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                     {
                         CopyToNode.Properties[NodeTypeProp].copy( SourceNode.Properties[NodeTypeProp] );
                     }
-                    CopyToNode.postChanges( ForceUpdate: false );
+                    CopyToNode.postChanges( ForceUpdate : false );
                 } // foreach( string NodeIdStr in CopyNodeIds )
             }
         }

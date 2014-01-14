@@ -94,7 +94,7 @@
                     success: function (result) {
                         Csw.clientChanges.unsetChanged();
                         Csw.publish(Csw.enums.events.main.reauthenticate, { username: result.username, customerid: result.customerid });
-                        Csw.window.location('Main.html');
+                        Csw.window.location('Login.aspx');
                     }
                 });
 

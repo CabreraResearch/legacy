@@ -29,7 +29,7 @@ namespace ChemSW.Nbt
             _View = View;
             _IncludeSystemNodes = IncludeSystemNodes;
             _IncludeHiddenNodes = IncludeHiddenNodes;
-            _IncludeTempNodes = IncludeTempNodes;
+            _IncludeTempNodes = IncludeTempNodes || View.IncludeTempNodes;
         }
 
         public override void load( bool RequireViewPermissions, Int32 ResultsLimit = Int32.MinValue )
