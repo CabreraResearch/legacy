@@ -23,7 +23,12 @@ window.Ext.require([
     'Ext.ux.form.MultiSelect',
     'Ext.ux.form.ItemSelector',
     'Ext.ux.ajax.JsonSimlet',
-    'Ext.ux.ajax.SimManager'
+    'Ext.ux.ajax.SimManager',
+
+    'Ext.layout.container.*',
+    'Ext.resizer.Splitter',
+    'Ext.fx.target.Element',
+    'Ext.fx.target.Component'
 ]);
 
 

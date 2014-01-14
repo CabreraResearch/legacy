@@ -274,7 +274,8 @@ namespace ChemSW.Nbt
                                               where f.searchable = '1'";
                 if( false == _SingleNodetype )
                 {
-                Query += @"                   and t.searchdeferpropid is null";
+                    Query += @"                   and t.searchdeferpropid is null";
+                    Query += @"                   and t.searchable = '1'";
                 }
                 Query += @"                UNION
                                             select rn.nodeid, jnp.gestaltsearch
@@ -371,6 +372,7 @@ namespace ChemSW.Nbt
                 Query += @"                        ) ";
                 if( false == _SingleNodetype )
                 {
+                    Query += @"                    and t.searchable = '1'";
                     Query += @"                    and t.searchdeferpropid is null";
                 }
                 Query += @"                    and ( n.searchable = '1' or ( props.fieldtype = 'Barcode' and propval.field1 = '" + CswTools.SafeSqlParam( _SearchTerm ) + @"' ) )";

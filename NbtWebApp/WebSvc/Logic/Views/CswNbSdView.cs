@@ -29,6 +29,27 @@ namespace ChemSW.Nbt.WebServices
         public ViewSelect.Response Data;
     }
 
+    /// <summary>
+    /// ViewId Select Return Object
+    /// </summary>
+    [DataContract]
+    public class CswNbtViewIdReturn : CswWebSvcReturn
+    {
+        public CswNbtViewIdReturn()
+        {
+            Data = new ViewIdResponse();
+        }
+        [DataMember]
+        public ViewIdResponse Data;
+
+        [DataContract]
+        public class ViewIdResponse
+        {
+            [DataMember]
+            public string ViewId;
+        }
+    }
+
     public class CswNbtSdView
     {
         private const string ActionName = "actionname";

@@ -383,11 +383,11 @@ namespace ChemSW.Nbt.MetaData
             {
                 if( UseNumbering && QuestionNo != Int32.MinValue )
                 {
-                    _NodeTypePropRow["oraviewcolname"] = CswTools.MakeOracleCompliantIdentifier( CswNbtMetaData.OraViewColNamePrefix + FullQuestionNo.Replace( ".", "x" ) );
+                    _NodeTypePropRow["oraviewcolname"] = CswFormat.MakeOracleCompliantIdentifier( CswNbtMetaData.OraViewColNamePrefix + FullQuestionNo.Replace( ".", "x" ) );
                 }
                 else
                 {
-                    _NodeTypePropRow["oraviewcolname"] = CswTools.MakeOracleCompliantIdentifier( CswNbtMetaData.OraViewColNamePrefix + PropName );
+                    _NodeTypePropRow["oraviewcolname"] = CswFormat.MakeOracleCompliantIdentifier( CswNbtMetaData.OraViewColNamePrefix + PropName );
                 }
             }
         }
@@ -1810,7 +1810,10 @@ namespace ChemSW.Nbt.MetaData
             Collection<CswNbtFieldTypeAttribute> Attributes = new Collection<CswNbtFieldTypeAttribute>();
             foreach( CswNbtFieldTypeAttribute attribute in getFieldTypeRule().getAttributes() )
             {
-                attribute.Value = _DataRow[attribute.Column].ToString();
+                if( _DataRow.Table.Columns.Contains( attribute.Column ) )
+                {
+                    attribute.Value = _DataRow[attribute.Column].ToString();
+                }
                 Attributes.Add( attribute );
             }
             return Attributes;

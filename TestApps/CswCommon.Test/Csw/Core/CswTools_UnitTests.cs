@@ -80,6 +80,22 @@ namespace CswCommon.Test.Csw.Core
         }
 
         [Test]
+        public void IsValidNameTest()
+        {
+            string[] ValidStrings = { "abc", "a b c", "abc 123" };
+            string[] InvalidStrings = { "abc!", "a,bc", "123abc" };
+
+            foreach( string StringToValidate in ValidStrings )
+            {
+                Assert.IsTrue( CswTools.IsValidName( StringToValidate ) );
+            }
+            foreach( string StringToValidate in InvalidStrings )
+            {
+                Assert.IsFalse( CswTools.IsValidName( StringToValidate ) );
+            }
+        }
+
+        [Test]
         public void TestValidUsernames()
         {
             const string Username1 = "Batman";

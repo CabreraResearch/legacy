@@ -89,7 +89,7 @@ namespace ChemSW.Nbt.MetaData
             get { return _ObjectClassRow["iconfilename"].ToString(); }
         }
 
-        public const Int32 NotSearchableValue = 0;
+        //public const Int32 NotSearchableValue = 0;
         public Int32 SearchDeferPropId
         {
             get { return CswConvert.ToInt32( _ObjectClassRow["searchdeferpropid"] ); }

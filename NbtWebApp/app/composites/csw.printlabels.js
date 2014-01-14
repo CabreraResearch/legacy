@@ -29,7 +29,7 @@
             labelsDiv.br();
 
             Csw.iterate(cswPrivate.nodes, function (nodeObj) {
-                cswPrivate.nodeids.push(nodeObj.nodeid);
+                cswPrivate.nodeIds.push(nodeObj.nodeid);
                 labelsDiv.span({ text: nodeObj.nodename }).css({ 'padding-left': '10px' }).br();
             });
 

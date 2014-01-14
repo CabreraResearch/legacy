@@ -417,8 +417,27 @@ namespace ChemSW.Nbt
             }
         } // IsSystem
 
+        // 21 - IncludeTempNodes
         [DataMember]
-        private Int32 _PropCount = 21;
+        public bool IncludeTempNodes
+        {
+            get
+            {
+                _makeWcfSafe();
+                bool ret = false;
+                if( _RootString[21] != string.Empty )
+                    ret = CswConvert.ToBoolean( _RootString[21] );
+                return ret;
+            }
+            set
+            {
+                _makeWcfSafe();
+                _RootString[21] = value.ToString();
+            }
+        } // IsDemo
+
+        [DataMember]
+        private Int32 _PropCount = 22;
 
         #endregion Properties in _RootString
 
@@ -548,6 +567,10 @@ namespace ChemSW.Nbt
                 if( Node.Attributes["issystem"] != null )
                 {
                     IsSystem = CswConvert.ToBoolean( Node.Attributes["issystem"].Value );
+                }
+                if( Node.Attributes["includetempnodes"] != null )
+                {
+                    IncludeTempNodes = CswConvert.ToBoolean( Node.Attributes["includetempnodes"].Value );
                 }
                 if( Node.Attributes["gridgroupbycol"] != null )
                 {
@@ -789,6 +812,10 @@ namespace ChemSW.Nbt
             IsSystemAttribute.Value = IsSystem.ToString().ToLower();
             RootXmlNode.Attributes.Append( IsSystemAttribute );
 
+            XmlAttribute IncludeTempNodesAttribute = XmlDoc.CreateAttribute( "includetempnodes" );
+            IncludeTempNodesAttribute.Value = IncludeTempNodes.ToString().ToLower();
+            RootXmlNode.Attributes.Append( IncludeTempNodesAttribute );
+
             XmlAttribute GridGroupByColAttribute = XmlDoc.CreateAttribute( "gridgroupbycol" );
             GridGroupByColAttribute.Value = GridGroupByCol.ToString().ToLower();
             RootXmlNode.Attributes.Append( GridGroupByColAttribute );
@@ -828,6 +855,7 @@ namespace ChemSW.Nbt
             RootPropObj["included"] = Included.ToString().ToLower();
             RootPropObj["isdemo"] = IsDemo.ToString().ToLower();
             RootPropObj["issystem"] = IsSystem.ToString().ToLower();
+            RootPropObj["includetempnodes"] = IncludeTempNodes.ToString().ToLower();
             RootPropObj["gridgroupbycol"] = GridGroupByCol.ToString().ToLower();
             RootPropObj["showdelete"] = false; //for ViewContentTree - don't show the "X" on view root
 

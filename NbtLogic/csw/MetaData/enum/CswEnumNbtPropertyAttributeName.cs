@@ -167,7 +167,7 @@ namespace ChemSW.Nbt.MetaData
         public const string ButtonText = "Button Text";
         public const string ChildRelationship = "Child Relationship";
         public const string Columns = "Columns";
-        public const string CompliantAnswers = "CompliantAnswers";
+        public const string CompliantAnswers = "Compliant Answers";
         public const string ConfirmationDialogMessage = "Confirmation Dialog Message";
         public const string ConstrainToObjectClass = "Constrain to Object Class";
         public const string DateType = "Date Type";
@@ -188,9 +188,9 @@ namespace ChemSW.Nbt.MetaData
         public const string MaximumValue = "Maximum Value";
         public const string MinimumValue = "Minimum Value";
         public const string Options = "Options";
-        public const string PossibleAnswers = "PossibleAnswers";
+        public const string PossibleAnswers = "Possible Answers";
         public const string Precision = "Precision";
-        public const string PreferredAnswer = "PreferredAnswer";
+        public const string PreferredAnswer = "Preferred Answer";
         public const string Prefix = "Prefix";
         public const string QuantityOptional = "Quantity Optional";
         public const string ReadOnlyDelimiter = "ReadOnly Delimiter";

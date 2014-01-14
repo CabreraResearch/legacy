@@ -98,6 +98,7 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataNodeTypeProp NTNodeTypeNameNTP = NodeTypeNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeType.PropertyName.NodeTypeName );
             //CswNbtMetaDataNodeTypeProp NTObjectClassNameNTP = NodeTypeNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeType.PropertyName.ObjectClassName );
             CswNbtMetaDataNodeTypeProp NTObjectClassValueNTP = NodeTypeNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeType.PropertyName.ObjectClass );
+            CswNbtMetaDataNodeTypeProp NTSearchableNTP = NodeTypeNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeType.PropertyName.Searchable );
 
             CswNbtMetaDataNodeTypeProp NTTNodeTypeNTP = NodeTypeTabNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeTab.PropertyName.NodeTypeValue );
             CswNbtMetaDataNodeTypeProp NTTOrderNTP = NodeTypeTabNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeTab.PropertyName.Order );
@@ -130,6 +131,9 @@ namespace ChemSW.Nbt.Schema
                 CswNbtViewRelationship NameViewRel2 = NameView.AddViewRelationship( NameViewRel1, CswEnumNbtViewPropOwnerType.Second, NTPNodeTypeOCP, false );
                 NameView.save();
 
+                // DeferSearchTo is conditional on Searchable
+                NTDeferSearchToNTP.setFilterDeprecated( NTSearchableNTP, NTSearchableNTP.getFieldTypeRule().SubFields[CswNbtFieldTypeRuleLogical.SubFieldName.Checked], CswEnumNbtFilterMode.Equals, CswEnumTristate.True );
+                
                 // Set view for DeferSearchToNTP
                 CswNbtView DeferView = _CswNbtSchemaModTrnsctn.restoreView( NTDeferSearchToNTP.ViewId );
                 DeferView.Root.ChildRelationships.Clear();
@@ -137,11 +141,13 @@ namespace ChemSW.Nbt.Schema
                 CswNbtViewRelationship DeferViewRel2 = DeferView.AddViewRelationship( DeferViewRel1, CswEnumNbtViewPropOwnerType.Second, NTPNodeTypeOCP, false );
                 DeferView.AddViewPropertyAndFilter( DeferViewRel2, NTPFieldTypeOCP,
                                                     FilterMode: CswEnumNbtFilterMode.Equals,
-                                                    Value: "Relationship" );
+                                                    SubFieldName: CswNbtFieldTypeRuleList.SubFieldName.Value,
+                                                    Value: _CswNbtSchemaModTrnsctn.MetaData.getFieldType( CswEnumNbtFieldType.Relationship ).FieldTypeId.ToString() );
                 DeferView.AddViewPropertyAndFilter( DeferViewRel2, NTPFieldTypeOCP,
                                                     Conjunction: CswEnumNbtFilterConjunction.Or,
                                                     FilterMode: CswEnumNbtFilterMode.Equals,
-                                                    Value: "Location" );
+                                                    SubFieldName: CswNbtFieldTypeRuleList.SubFieldName.Value,
+                                                    Value: _CswNbtSchemaModTrnsctn.MetaData.getFieldType( CswEnumNbtFieldType.Location ).FieldTypeId.ToString() );
                 DeferView.save();
 
                 // Add Properties and Tabs grids
@@ -180,8 +186,9 @@ namespace ChemSW.Nbt.Schema
                 NTNameTemplateTextNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 1, DisplayColumn: 2 );
                 NTNameTemplateAddNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 2, DisplayColumn: 2 );
                 NTAuditLevelNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 6, DisplayColumn: 1 );
-                NTDeferSearchToNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 7, DisplayColumn: 1 );
-                NTLockedNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 8, DisplayColumn: 1 );
+                NTSearchableNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 7, DisplayColumn: 1 );
+                NTDeferSearchToNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 8, DisplayColumn: 1 );
+                NTLockedNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 9, DisplayColumn: 1 );
 
                 NTTabsGridNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabsTab.TabId, DisplayRow: 1, DisplayColumn: 1 );
                 NTPropsGridNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, PropertiesTab.TabId, DisplayRow: 1, DisplayColumn: 1 );
@@ -192,6 +199,7 @@ namespace ChemSW.Nbt.Schema
                 NTCategoryNTP.updateLayout( CswEnumNbtLayoutType.Add, true, DisplayRow: 3, DisplayColumn: 1 );
                 NTIconFileNameNTP.updateLayout( CswEnumNbtLayoutType.Add, true, DisplayRow: 4, DisplayColumn: 1 );
                 NTAuditLevelNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
+                NTSearchableNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
                 NTDeferSearchToNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
                 NTLockedNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
                 NTNameTemplateTextNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
@@ -223,9 +231,11 @@ namespace ChemSW.Nbt.Schema
                             NewNTNode.Locked.Checked = CswConvert.ToTristate( thisNodeType.IsLocked );
                             NewNTNode.Enabled.Checked = CswConvert.ToTristate( thisNodeType.Enabled );
                             NewNTNode.NameTemplateText.Text = thisNodeType.getNameTemplateText();
-                            NewNTNode.NodeTypeName.Text = thisNodeType.NodeTypeName;
+                            NewNTNode.NodeTypeName.Text = CswFormat.MakeIntoValidName( thisNodeType.NodeTypeName );
+                            NewNTNode.NodeTypeName.makeUnique();
                             //NewNTNode.ObjectClassName.Text = thisNodeType.getObjectClass().ObjectClass.ToString();
                             NewNTNode.ObjectClassProperty.Value = thisNodeType.ObjectClassId.ToString();
+                            NewNTNode.Searchable.Checked = thisNodeType.Searchable;  //CswNbtMetaDataObjectClass.NotSearchableValue
                         } );
                     node.RelationalId = new CswPrimaryKey( "nodetypes", thisNodeType.NodeTypeId );
                     node.postChanges( false );
@@ -243,6 +253,7 @@ namespace ChemSW.Nbt.Schema
                 _addJctRow( jctTable, NTIconFileNameNTP, NodeTypeNT.TableName, "iconfilename" );
                 _addJctRow( jctTable, NTNameTemplateValueNTP, NodeTypeNT.TableName, "nametemplate" );
                 _addJctRow( jctTable, NTAuditLevelNTP, NodeTypeNT.TableName, "auditlevel" );
+                _addJctRow( jctTable, NTSearchableNTP, NodeTypeNT.TableName, "searchable" );
                 _addJctRow( jctTable, NTDeferSearchToNTP, NodeTypeNT.TableName, "searchdeferpropid", CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID );
                 _addJctRow( jctTable, NTLockedNTP, NodeTypeNT.TableName, "islocked" );
                 _addJctRow( jctTable, NTEnabledNTP, NodeTypeNT.TableName, "enabled" );
