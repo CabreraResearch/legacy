@@ -532,6 +532,7 @@
                                     urlMethod: 'Nodes/createTempNode',
                                     data: nodename,
                                     success: function (data) {
+                                        Csw.clientDb.setItem('openSidebar', true);
                                         Csw.main.handleItemSelect({
                                             type: 'view',
                                             mode: 'tree',
@@ -542,7 +543,6 @@
                                         //ERRRRRRRRRRRRROR
                                     },
                                     complete: function() {
-                                        cswPublic.close();
                                         cswPrivate.extWindowNew.close();
                                     }
                                 });
