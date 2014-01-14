@@ -528,13 +528,24 @@
                             },
                             ReloadTabOnSave: false,
                             onSave: function (nodeid, nodekey, tabcount, nodename, nodelink) {
-                                //To do:
-                                //  1. Create the new nodetype
-                                //  2. Create a temporary node
-                                //  3. Change the view to the temporary node
-                                //  4. Open design mode on the temporary node
-                                cswPublic.close(nodeid, nodekey, tabcount, nodename, nodelink);
-                                cswPrivate.extWindowNew.close();
+                                Csw.ajaxWcf.post({
+                                    urlMethod: 'Nodes/createTempNode',
+                                    data: nodename,
+                                    success: function (data) {
+                                        Csw.main.handleItemSelect({
+                                            type: 'view',
+                                            mode: 'tree',
+                                            itemid: data.ViewId
+                                        });
+                                    },
+                                    error: function () {
+                                        //ERRRRRRRRRRRRROR
+                                    },
+                                    complete: function() {
+                                        cswPublic.close();
+                                        cswPrivate.extWindowNew.close();
+                                    }
+                                });
                             },
                             onInitFinish: function () { }
                         });
