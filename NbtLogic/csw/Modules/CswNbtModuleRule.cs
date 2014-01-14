@@ -29,7 +29,10 @@ namespace ChemSW.Nbt
             if( _CswNbtResources.Modules.ModuleHasPrereq( this.ModuleName ) )
             {
                 CswEnumNbtModuleName modulePrereq = _CswNbtResources.Modules.GetModulePrereq( this.ModuleName );
-                _CswNbtResources.Modules.EnableModule( modulePrereq );
+                if( false == _CswNbtResources.Modules.IsModuleEnabled( modulePrereq ) )
+                {
+                    _CswNbtResources.Modules.EnableModule( modulePrereq );
+                }
             }
             OnEnable();
         }
@@ -39,7 +42,10 @@ namespace ChemSW.Nbt
             IEnumerable<CswEnumNbtModuleName> childModules = _CswNbtResources.Modules.GetChildModules( this.ModuleName );
             foreach( CswEnumNbtModuleName childModule in childModules )
             {
-                _CswNbtResources.Modules.DisableModule( childModule );
+                if( _CswNbtResources.Modules.IsModuleEnabled( childModule ) )
+                {
+                    _CswNbtResources.Modules.DisableModule( childModule );
+                }
             }
             OnDisable();
         }

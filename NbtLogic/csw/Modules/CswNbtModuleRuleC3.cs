@@ -17,6 +17,9 @@ namespace ChemSW.Nbt
             //   C3 Search option in the search menu
             //   Link to the C3 search on universal search results page
 
+            // C3 ACD enable by default
+            _CswNbtResources.Modules.EnableModule( CswEnumNbtModuleName.C3ACD );
+
         }// OnEnabled
 
         protected override void OnDisable()
