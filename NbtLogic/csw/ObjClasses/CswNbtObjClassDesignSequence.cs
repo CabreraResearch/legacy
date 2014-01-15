@@ -54,7 +54,10 @@ namespace ChemSW.Nbt.ObjClasses
         {
             if( CswTools.IsPrimaryKey( RelationalId ) )
             {
-                NextValue.Text = getCurrent();
+                NextValue.SetOnBeforeRender( delegate( CswNbtNodeProp prop )
+                    {
+                        NextValue.Text = getCurrent();
+                    } );
             }
         } //afterPopulateProps()
 
