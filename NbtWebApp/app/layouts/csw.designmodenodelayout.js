@@ -17,13 +17,16 @@
             Csw.extend(cswPrivate, options);
         }
 
+        var cswPublic = {};
         var renderedTabs = {};
 
         (function _pre() {
 
+            cswParent = cswParent || Csw.main.rightDiv;
+
             var init = function () {
                 Csw.main.clear({ right: true });
-                var layoutSelectDiv = Csw.main.rightDiv.div().css('float', 'right');
+                var layoutSelectDiv = cswParent.div().css('float', 'right');
                 layoutSelectDiv.setLabelText('Select Layout:', false, false);
                 layoutSelectDiv.select({
                     values: ['Edit', 'Add', 'Search', 'Preview'],
@@ -43,9 +46,8 @@
                         }
                     }
                 });
-                cswPrivate.nameDiv = Csw.main.rightDiv.div({ cssclass: 'CswIdentityTabHeader' });
-
-                cswPrivate.contentDiv = Csw.main.rightDiv.div();
+                cswPrivate.nameDiv = cswParent.div({ cssclass: 'CswIdentityTabHeader' });
+                cswPrivate.contentDiv = cswParent.div();
             };
             init();
 
@@ -294,6 +296,10 @@
             }, 2000);
         };
 
+        cswPublic.tearDown = function () {
+            cswParent.empty();
+        };
+
         (function _post() {
 
             if (cswPrivate.Layout === 'Edit') {
@@ -307,5 +313,7 @@
                 cswPrivate.makeSearchNodeLayout();
             }
         })();
+
+        return cswPublic;
     });
 }());
