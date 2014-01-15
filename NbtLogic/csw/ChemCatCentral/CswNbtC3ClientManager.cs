@@ -65,15 +65,14 @@ namespace ChemSW.Nbt.ChemCatCentral
 
         private void _setDataService()
         {
-            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.C3 ) )
+            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.C3Products ) )
             {
                 _DataService = "C3";
             }
-            //TODO: Finish with Case 31542
-            //else if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.C3ACD ) )
-            //{
-            //    _DataService = "ACD";
-            //}
+            else if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.C3ACD ) )
+            {
+                _DataService = "ACD";
+            }
             else
             {
                 _DataService = string.Empty;
