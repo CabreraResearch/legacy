@@ -1413,51 +1413,20 @@ namespace ChemSW.Nbt.MetaData
             return ( ObjectClassPropId == Int32.MinValue );
         }
 
-        private static string SequenceIdColumn = "sequenceid";
-        public Int32 SequenceId
+        public CswNbtObjClassDesignSequence Sequence
         {
-            get { return CswConvert.ToInt32( _NodeTypePropRow[SequenceIdColumn] ); }
-        }
-
-        private void setSequence( Int32 SequenceId )
-        {
-            if( CswConvert.ToInt32( _NodeTypePropRow[SequenceIdColumn] ) != SequenceId )
+            get
             {
-                _checkVersioningProp();
-
-                _NodeTypePropRow[SequenceIdColumn] = CswConvert.ToDbVal( SequenceId );
-
-                CswNbtMetaDataFieldType FT = getFieldType();
-                if( SequenceId > 0 && ( FT.FieldType == CswEnumNbtFieldType.Sequence ||
-                                        FT.FieldType == CswEnumNbtFieldType.Barcode ) )
+                CswNbtObjClassDesignSequence ret = null;
+                Int32 SequenceId = CswConvert.ToInt32( _NodeTypePropRow["sequenceid"] );
+                if( Int32.MinValue != SequenceId )
                 {
-                    // Update nodes
-                    foreach( CswNbtNode CurrentNode in getNodeType().getNodes( false, false ) )
-                    {
-                        CswNbtNodePropWrapper CurrentProp = CurrentNode.Properties[this];
-
-                        if( CurrentProp.getFieldTypeValue() == CswEnumNbtFieldType.Sequence && CurrentProp.AsSequence.Empty )
-                        {
-                            CurrentNode.Properties[this].AsSequence.setSequenceValue();
-                        }
-                        else if( CurrentProp.getFieldTypeValue() == CswEnumNbtFieldType.Barcode && CurrentProp.AsBarcode.Empty )
-                        {
-                            CurrentNode.Properties[this].AsBarcode.setBarcodeValue();
-                        }
-                    }
-
-                    // need to post this change immediately for resync to work
-                    _CswNbtMetaDataResources.NodeTypePropTableUpdate.update( _NodeTypePropRow.Table );
-
-                    // Resync Sequence to next new value
-                    CswNbtSequenceValue SeqValue = new CswNbtSequenceValue( _CswNbtMetaDataResources.CswNbtResources, SequenceId );
-                    SeqValue.reSync();
-
-                    //} // if( TotalNodes > 0 )
-                } // if prop is sequence or barcode
-            } // if( CswConvert.ToInt32( _NodeTypePropRow[SequenceIdColumn] ) != SequenceId )
-        } // setSequence()
-
+                    ret = _CswNbtMetaDataResources.CswNbtResources.Nodes.getNodeByRelationalId( new CswPrimaryKey( "sequences", SequenceId ) );
+                }
+                return ret;
+            }
+        } // Sequence
+        
         //public static string _Element_MetaDataNodeTypeProp = "MetaDataNodeTypeProp";
         //public static string _Element_DefaultValue = "DefaultValue";
         //public static string _Element_SubFieldMap = "SubFieldMap";

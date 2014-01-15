@@ -253,38 +253,9 @@ namespace ChemSW.Nbt.Schema
         public void prepareDmlOp( string AdapterName, CswEnumSqlType SqlType, DataTable DataTable ) { _CswNbtResources.CswResources.prepareDmlOp( AdapterName, SqlType, DataTable ); }
         public string getPrimeKeyColName( string TableName ) { return ( _CswNbtResources.CswResources.getPrimeKeyColName( TableName ) ); }
         public int getNewPrimeKey( string TableName ) { return ( _CswNbtResources.CswResources.getNewPrimeKey( TableName ) ); }
-
-        public Int32 makeSequence( CswSequenceName SequenceName, string Prepend, string Postpend, Int32 Pad, Int32 InitialValue )
-        {
-            return _CswDdl.makeSequence( SequenceName, Prepend, Postpend, Pad, InitialValue );
-        }
-        public DataTable getSequence( CswSequenceName SequenceName )
-        {
-            return _CswDdl.getSequence( SequenceName );
-        }
-        public DataTable getAllSequences()
-        {
-            return _CswDdl.getAllSequences();
-        }
-
-        public bool doesSequenceExist( CswSequenceName SequenceName )
-        {
-            return ( _CswDdl.doesSequenceExist( SequenceName ) );
-        }
-
         public bool doesS4Exist( string S4Name )
         {
             return ( _CswDdl.doesS4Exist( S4Name ) );
-        }
-
-        public Int32 getSequenceValue( CswSequenceName SequenceName )
-        {
-            return ( _CswDdl.getSequenceValue( SequenceName ) );
-        }
-
-        public void removeSequence( CswSequenceName SequenceName )
-        {
-            _CswDdl.removeSequence( SequenceName );
         }
 
         public bool IsDbLinkConnectionHealthy( string DbLink, ref string ErrorMessage ) { return ( _CswNbtResources.CswResources.IsDbLinkConnectionHealthy( DbLink, ref ErrorMessage ) ); }

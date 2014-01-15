@@ -242,6 +242,42 @@ namespace ChemSW.Nbt.ObjClasses
                     }
                 }
             } // if( FieldTypeValue == CswEnumNbtFieldType.Question )
+
+
+            // Sequence change
+            if( AttributeProperty.ContainsKey( CswEnumNbtPropertyAttributeName.Sequence ) )
+            {
+                CswNbtNodePropRelationship SequenceProp = AttributeProperty[CswEnumNbtPropertyAttributeName.Sequence].AsRelationship;
+                if( SequenceProp.wasSubFieldModified( CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID ) )
+                {
+                    if( null != RelationalNodeType && ( FieldTypeValue == CswEnumNbtFieldType.Sequence ||
+                                                        FieldTypeValue == CswEnumNbtFieldType.Barcode ) )
+                    {
+                        // Update nodes
+                        foreach( CswNbtNode CurrentNode in RelationalNodeType.getNodes( false, false ) )
+                        {
+                            CswNbtNodePropWrapper CurrentProp = CurrentNode.Properties[RelationalNodeTypeProp];
+                            if( CurrentProp.getFieldTypeValue() == CswEnumNbtFieldType.Sequence && CurrentProp.AsSequence.Empty )
+                            {
+                                CurrentProp.AsSequence.setSequenceValue();
+                            }
+                            else if( CurrentProp.getFieldTypeValue() == CswEnumNbtFieldType.Barcode && CurrentProp.AsBarcode.Empty )
+                            {
+                                CurrentProp.AsBarcode.setBarcodeValue();
+                            }
+                        }
+
+                        //// need to post this change immediately for resync to work
+                        //_CswNbtMetaDataResources.NodeTypePropTableUpdate.update( _NodeTypePropRow.Table );
+
+                        //// Resync Sequence to next new value
+                        //CswNbtSequenceValue SeqValue = new CswNbtSequenceValue( _CswNbtMetaDataResources.CswNbtResources, SequenceId );
+                        //SeqValue.reSync();
+
+                    } // if prop is sequence or barcode
+                } // if(SequenceProp.wasSubFieldModified( CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID ) )
+            } // if( AttributeProperty.ContainsKey( CswEnumNbtPropertyAttributeName.Sequence ) )
+
         }//beforeWriteNode()
 
         public override void afterWriteNode()
@@ -498,7 +534,7 @@ namespace ChemSW.Nbt.ObjClasses
                 {
                     TargetProp.setReadOnly( true, true );
                 }
-                
+
                 // case 31526 - If derived from Object Class, restrict Target options
                 if( DerivesFromObjectClassProp )
                 {
