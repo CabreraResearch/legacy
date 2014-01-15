@@ -44,7 +44,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public override void beforeWriteNode( bool Creating )
+        protected override void beforeWriteNodeLogic( bool Creating )
         {
             if( null != _CswNbtResources.CurrentNbtUser.Cookies && null == Material.RelatedNodeId && _CswNbtResources.CurrentNbtUser.Cookies.ContainsKey( "csw_currentnodeid" ) )
             {

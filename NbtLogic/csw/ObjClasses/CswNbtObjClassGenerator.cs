@@ -82,7 +82,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public override void beforeWriteNode( bool Creating )
+        protected override void beforeWriteNodeLogic( bool Creating )
         {
             //Case 24572
             updateNextDueDate( ForceUpdate: false, DeleteFutureNodes: ( TargetType.wasAnySubFieldModified() || ParentType.wasAnySubFieldModified() ) );
@@ -95,12 +95,12 @@ namespace ChemSW.Nbt.ObjClasses
             }
         } //beforeWriteNode()
 
-        public override void afterWriteNode()
+        protected override void afterWriteNodeLogic()
         {
             _CswNbtPropertySetSchedulerImpl.setLastFutureDate();
         }//afterWriteNode()
 
-        public override void beforeDeleteNode()
+        protected override void beforeDeleteNodeLogic()
         {
             _deleteFutureNodes();
         } //beforeDeleteNode()     

@@ -4,12 +4,11 @@ using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.Batch;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.Test;
 using NbtWebApp.Actions.Receiving;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 
-namespace NbtLogic.Test.csw.Batch
+namespace ChemSW.Nbt.Test.Batch
 {
     [TestFixture]
     public class CswNbtBatchOpReceivingTest
@@ -43,7 +42,7 @@ namespace NbtLogic.Test.csw.Batch
                     AsSize.UnitCount.Value = 5;
                     AsSize.InitialQuantity.Quantity = 10;
                     AsSize.InitialQuantity.UnitId = GramNode.NodeId;
-                } );
+                }, OverrideUniqueValidation: true );
 
             _SizeTwo = TestData.CswNbtResources.Nodes.makeNodeFromNodeTypeId( SizeNT.NodeTypeId, OnAfterMakeNode : delegate( CswNbtNode NewNode )
                 {
@@ -52,7 +51,7 @@ namespace NbtLogic.Test.csw.Batch
                     AsSize.UnitCount.Value = 10;
                     AsSize.InitialQuantity.Quantity = 100;
                     AsSize.InitialQuantity.UnitId = GramNode.NodeId;
-                } );
+                }, OverrideUniqueValidation: true );
         }
 
         [TearDown]

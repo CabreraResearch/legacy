@@ -40,7 +40,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public override void beforePromoteNode( bool OverrideUniqueValidation )
+        protected override void beforePromoteNodeLogic( bool OverrideUniqueValidation = false )
         {
             if( null != Mixture.RelatedNodeId )
             {
@@ -58,7 +58,7 @@ namespace ChemSW.Nbt.ObjClasses
             Percentage.Value = HighPercentageValue.Value;
         }//beforeWriteNode()
 
-        public override void afterWriteNode()
+        protected override void afterWriteNodeLogic()
         {
             if( Mixture.wasAnySubFieldModified() || Constituent.wasAnySubFieldModified() )
             {
@@ -66,7 +66,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }//afterWriteNode()
 
-        public override void afterDeleteNode()
+        protected override void afterDeleteNodeLogic()
         {
             _recalculateRegListMembership();
         }//afterDeleteNode()        
