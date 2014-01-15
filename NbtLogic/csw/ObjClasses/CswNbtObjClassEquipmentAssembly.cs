@@ -72,7 +72,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public override void afterWriteNode()
+        protected override void afterWriteNodeLogic()
         {
             _updateEquipment();
         }//afterWriteNode()

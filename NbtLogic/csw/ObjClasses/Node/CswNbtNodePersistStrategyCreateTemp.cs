@@ -33,7 +33,7 @@ namespace ChemSW.Nbt.ObjClasses
 
             if( null != Node.ObjClass )
             {
-                Node.ObjClass.beforeWriteNode( true );
+                Node.ObjClass.beforeWriteNode( IsCopy, OverrideUniqueValidation, Creating );
             }
 
             Node.SessionId = _CswNbtResources.Session.SessionId;
@@ -42,7 +42,7 @@ namespace ChemSW.Nbt.ObjClasses
 
             if( null != Node.ObjClass )
             {
-                Node.ObjClass.afterWriteNode();
+                Node.ObjClass.afterWriteNode( Creating );
             }
 
             Node.setModificationState( CswEnumNbtNodeModificationState.Posted );

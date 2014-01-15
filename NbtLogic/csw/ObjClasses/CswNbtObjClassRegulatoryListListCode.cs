@@ -40,7 +40,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public override void beforeWriteNode( bool Creating )
+        protected override void beforeWriteNodeLogic( bool Creating )
         {
             // Set the value of the ListCode property
             if( ListCode.Empty && false == string.IsNullOrEmpty( ListName.Value ) )
@@ -50,12 +50,12 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-        public override void afterPromoteNode()
+        protected override void afterPromoteNodeLogic()
         {
             _setChemicalsPendingUpdate();
         }
 
-        public override void afterDeleteNode()
+        protected override void afterDeleteNodeLogic()
         {
             _setChemicalsPendingUpdate();
         }

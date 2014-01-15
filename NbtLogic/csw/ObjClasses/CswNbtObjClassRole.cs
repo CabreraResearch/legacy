@@ -49,7 +49,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public override void beforeWriteNode( bool Creating )
+        protected override void beforeWriteNodeLogic( bool Creating )
         {
             // The user cannot change his or her own Administrator privileges.
             if( Administrator.wasAnySubFieldModified() &&
@@ -170,12 +170,12 @@ namespace ChemSW.Nbt.ObjClasses
             } // if( ActionPermissions.getAnySubFieldModified() )
         }//beforeWriteNode()
 
-        public override void afterWriteNode()
+        protected override void afterWriteNodeLogic()
         {
             _CswNbtResources.ConfigVbls.setConfigVariableValue( "cache_lastupdated", DateTime.Now.ToString() );
         }//afterWriteNode()
 
-        public override void beforeDeleteNode()
+        protected override void beforeDeleteNodeLogic()
         {
             // Prevent deleting your own role
             if( _CswNbtNode.NodeId == _CswNbtResources.CurrentUser.RoleId )
