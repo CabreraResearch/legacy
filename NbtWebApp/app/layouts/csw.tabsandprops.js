@@ -902,19 +902,19 @@
                             //cswPrivate.clearTabs();
                             //$.CswDialog('EditLayoutDialog', editLayoutOpt);
 
-                            if (Csw.designmode.isSidebarVisible()) {
-                                Csw.publish('designModeSidebarTearDown');
+                            if (Csw.designmode.isDesignModeVisible()) {
+                                Csw.publish('designModeTearDown');
                             } else {
-                                cswPrivate.openSidebar();
+                                cswPrivate.openDesignMode();
                             }
                         }
                     });
                     cswPrivate.toggleConfigIcon(false === cswPrivate.isMultiEdit());
                     
-                    var openSidebar = Csw.clientDb.getItem('openSidebar');
-                    if (openSidebar) {
-                        Csw.clientDb.removeItem('openSidebar');
-                        cswPrivate.openSidebar();
+                    var openDesignMode = Csw.clientDb.getItem('openDesignMode');
+                    if (openDesignMode) {
+                        Csw.clientDb.removeItem('openDesignMode');
+                        cswPrivate.openDesignMode();
                     }
                 }
 
@@ -959,22 +959,24 @@
             }
         }; // getPropsImpl()
 
-        cswPrivate.openSidebar = function() {
-            var sidebarDiv = Csw.designmode.factory(Csw.main.sidebarDiv, 'sidebar');
-            sidebarDiv.sidebar({
-                name: 'newsidebar',
-                tabState: cswPrivate.tabState,
-                Refresh: function () {
-                    cswPrivate.tabState.Config = false;
-                    cswPrivate.getTabs();
+        cswPrivate.openDesignMode = function() {
+            Csw.layouts.designmode({
+                sidebarDiv: Csw.main.sidebarDiv,
+                sidebarOptions: {
+                    name: 'newsidebar',
+                    tabState: cswPrivate.tabState,
+                    Refresh: function () {
+                        cswPrivate.tabState.Config = false;
+                        cswPrivate.getTabs();
+                    }
+                },
+                nodeLayoutDiv: Csw.main.rightDiv,
+                nodelayoutOptions: {
+                    nodeId: cswPrivate.tabState.nodeid,
+                    nodeKey: cswPrivate.tabState.nodekey,
+                    nodeTypeId: cswPrivate.tabState.nodetypeid,
+                    tabs: cswPrivate.tabs
                 }
-            });
-            
-            Csw.layouts.designmodenodelayout({}, {
-                nodeId: cswPrivate.tabState.nodeid,
-                nodeKey: cswPrivate.tabState.nodekey,
-                nodeTypeId: cswPrivate.tabState.nodetypeid,
-                tabs: cswPrivate.tabs
             });
         };
 
