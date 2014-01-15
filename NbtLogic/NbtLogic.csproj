@@ -151,6 +151,8 @@
     <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleChildContents.cs" />
     <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleCASNo.cs" />
     <Compile Include="csw\Mobile\CswNbtMobileRapidLoader.cs" />
+    <Compile Include="csw\Modules\CswNbtModuleRuleC3Products.cs" />
+    <Compile Include="csw\Modules\CswNbtModuleRuleC3ACD.cs" />
     <Compile Include="csw\Modules\CswNbtModuleRuleArielSync.cs" />
     <Compile Include="csw\Modules\CswNbtModuleRuleRequesting.cs" />
     <Compile Include="csw\Modules\CswNbtModuleRuleChemWatch.cs" />
@@ -482,6 +484,8 @@
     <None Include="csw\Schema\scripts\past\02B\CswUpdateSchema_02B_Case29812.cs" />
     <None Include="csw\Schema\scripts\past\02B\CswUpdateSchema_02B_Case29773.cs" />
     <None Include="csw\Schema\scripts\past\02B\CswUpdateSchema_02B_Case29798.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02K\CswUpdateMetaData_02K_Case31542B.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02K\CswUpdateMetaData_02K_Case31542A.cs" />
     <Compile Include="csw\Schema\scripts\prod\02K\CswUpdateMetaData_02K_Case10480.cs" />
     <Compile Include="csw\Schema\scripts\prod\02K\CswUpdateMetaData_02K_Case31616B.cs" />
     <Compile Include="csw\Schema\scripts\prod\02K\CswUpdateSchema_02K_Case31396.cs" />

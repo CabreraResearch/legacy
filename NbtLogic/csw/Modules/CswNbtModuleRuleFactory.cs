@@ -94,6 +94,14 @@ namespace ChemSW.Nbt
             {
                 ret = new CswNbtModuleRuleArielSync( CswNbtResources );
             }
+            else if( CswEnumNbtModuleName.C3ACD == ModuleName )
+            {
+                ret = new CswNbtModuleRuleC3ACD( CswNbtResources );
+            }
+            else if( CswEnumNbtModuleName.C3Products == ModuleName )
+            {
+                ret = new CswNbtModuleRuleC3Products( CswNbtResources );
+            }
             else
             {
                 throw new CswDniException( CswEnumErrorType.Error,
