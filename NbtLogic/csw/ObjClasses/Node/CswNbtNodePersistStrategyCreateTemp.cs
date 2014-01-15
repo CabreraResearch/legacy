@@ -36,6 +36,8 @@ namespace ChemSW.Nbt.ObjClasses
                 Node.ObjClass.beforeWriteNode( true );
             }
 
+            Node.SessionId = _CswNbtResources.Session.SessionId;
+
             Node.requestWrite( ForceUpdate, IsCopy, OverrideUniqueValidation, Creating, AllowAuditing, SkipEvents );
 
             if( null != Node.ObjClass )
