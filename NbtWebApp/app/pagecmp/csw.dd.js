@@ -34,7 +34,8 @@
                     this.dd.lock();
                 }
             },
-            onDrop: function (extCmp, col, row) { } //Optionally overridden when adding items to panel
+            onDrop: function (extCmp, col, row) { }, //Optionally overridden when adding items to panel
+            canMoveIntoNewPanel: false //if we can drag this panel into a different drag panel than the original one
         });
 
         //A column that csw.draggables reside in
@@ -195,8 +196,13 @@
                         pos = c.items.getCount();
                     }
 
-                    c.insert(pos, panel);
-                    Csw.tryExec(panel.onDrop, panel, col, pos);
+                    var panelOrigDragPanelId = panel.up().up().id; //panel -> drag col -> drag panel
+                    var thisPanelId = c.up().id; //col -> drag panel
+
+                    if (panel.canMoveIntoNewPanel || (panelOrigDragPanelId === thisPanelId)) {
+                        c.insert(pos, panel);
+                        Csw.tryExec(panel.onDrop, panel, col, pos);
+                    }
 
                     Ext.resumeLayouts(true);
 
@@ -234,7 +240,6 @@
                 //window.Ext.app.PortalDropZone.superclass.unreg.call(this);
                 Csw.ext.dropzone.superclass.unreg.call(this);
             }
-
         });
 
         //A panel that contains columns that contains draggables
@@ -308,6 +313,13 @@
                     this.dd.unreg();
                 }
                 this.callParent();
+            },
+            allowDrag: function(allow) {
+                if (allow) {
+                    this.dd = window.Ext.create('Csw.ext.dropzone', this, this.dropConfig);
+                } else {
+                    this.dd.unreg();
+                }
             }
         });
 

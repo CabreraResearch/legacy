@@ -174,7 +174,7 @@
         };
 
         cswPrivate.howManyCols = function (properties) {
-            var cols = 0;
+            var cols = 0; //We always need a col
             Csw.iterate(properties, function (prop) {
                 if (prop.displaycol > cols) {
                     cols = prop.displaycol;
@@ -233,14 +233,26 @@
             return fieldOpt;
         };
 
+        cswPrivate.renderPropDiv = function (tabid, node, prop, div) {
+            var propTbl = div.table();
+            var labelDiv = propTbl.cell(1, 1).div().css({ 'padding': '5px 10px' });
+            var propDiv = propTbl.cell(1, 2).div().css({ 'padding': '5px 10px' });
+
+            labelDiv.setLabelText(prop.name, prop.required, true); //in design mode, readonly better always be true OR ELSE!!
+
+            var fieldOpt = cswPrivate.makePropOpt(tabid, node, prop, propDiv);
+            Csw.nbt.property(fieldOpt, {});
+        };
+
         cswPrivate.renderProps = function (node, properties, extid, tabid) {
             var cols = cswPrivate.howManyCols(properties);
-            var identityTabDiv = cswPrivate.makeDiv(extid);
+            var propsDiv = cswPrivate.makeDiv(extid);
 
-            var dragPanel = Csw.composites.draggablepanel(identityTabDiv, {
+            var dragPanel = Csw.composites.draggablepanel(propsDiv, {
                 columns: cols,
                 border: 0
             });
+            dragPanel.allowDrag(false);
 
             var seenProps = {};
             for (var propIdx in properties) {
@@ -248,47 +260,57 @@
                 if (!seenProps[prop.id]) {
                     seenProps[prop.id] = prop;
                     var realCol = prop.displaycol - 1; //server starts cols at 1, dragpanel starts at 0
+                    var subDragPanel;
                     dragPanel.addItemToCol(realCol, {
                         render: function (extEl, cswEl) {
 
                             var propTbl = cswEl.table();
-                            var labelDiv = propTbl.cell(1, 1).div().css({ 'padding': '5px 10px' });
-                            var propDiv = propTbl.cell(1, 2).div().css({ 'padding': '5px 10px' });
-                            var subPropsDiv = propTbl.cell(2, 2).div();
+                            var propDiv = propTbl.cell(1, 1).div().css({ 'padding': '5px 10px' });
+                            var subPropsDiv = propTbl.cell(2, 2).div().css({
+                                'border': '1px solid #ccc'
+                            });
 
-                            labelDiv.setLabelText(prop.name, prop.required, true); //in design mode, readonly better always be true OR ELSE!!
-
-                            var fieldOpt = cswPrivate.makePropOpt(tabid, node, prop, propDiv);
-                            Csw.nbt.property(fieldOpt, {});
+                            cswPrivate.renderPropDiv(tabid, node, prop, propDiv);
 
                             if (prop.hassubprops) {
-                                var subPropTbl = subPropsDiv.table().css('border', '1px solid #ccc');
-                                var idx = 1;
+                                var subCols = cswPrivate.howManyCols(prop.subprops);
+                                subDragPanel = Csw.composites.draggablepanel(subPropsDiv, {
+                                    columns: subCols
+                                });
+
                                 for (var subPropIdx in prop.subprops) {
                                     var subProp = prop.subprops[subPropIdx];
                                     seenProps[subProp.id] = subProp;
 
-                                    var subLabelDiv = subPropTbl.cell(idx, 1).div().css({ 'padding': '5px 10px' });
-                                    var subPropDiv = subPropTbl.cell(idx, 2).div().css({ 'padding': '5px 10px' });
-                                    idx++;
-
-                                    subLabelDiv.setLabelText(subProp.name, subProp.required, true);
-                                    var subFieldOpt = cswPrivate.makePropOpt(tabid, node, subProp, subPropDiv);
-                                    Csw.nbt.property(subFieldOpt, {});
-                                }
+                                    var subRealCol = subProp.displaycol - 1;
+                                    subDragPanel.addItemToCol(subRealCol, {
+                                        render: function (extRenderTo, cswRenderTo) {
+                                            seenProps[subProp.id] = subProp;
+                                            cswPrivate.renderPropDiv(tabid, node, subProp, cswRenderTo);
+                                        },
+                                        onDrop: function (el, col, row) {
+                                            subDragPanel.doLayout();
+                                            dragPanel.doLayout();
+                                            //TODO: update subprops position in layout
+                                        }
+                                    });
+                                } //for subProp in subProps
+                                subDragPanel.doLayout();
                             }
                         },
-                        onDrop: function (col, row) {
+                        onDrop: function (ext, col, row) {
                             //TODO: save prop in new layout
                         }
                     });
-                }
-            }
+                } //if (!seenProps[prop.id)
+            } //for prop in properties
 
-            //trigger the prop render events:
+
+            dragPanel.allowDrag(true);
+            //trigger the prop render events
             Csw.publish('render_' + node.nodeid + '_' + tabid);
 
-            //TODO: fix this hack - we need to wait for all property ajax requests to finish before calling doLayout()
+            //TODO: fix this hack - we need to wait for all property ajax requests (like grid) to finish before calling doLayout()
             Csw.defer(function () {
                 dragPanel.doLayout(); //fix our layout
             }, 2000);

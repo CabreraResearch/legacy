@@ -93,13 +93,6 @@
                 }
             };
 
-            cswPublic.allowDrag = function (allow) {
-                for (var idx in _draggables) {
-                    var draggableItem = _draggables[idx];
-                    draggableItem.allowDrag(allow);
-                }
-            };
-
             cswPublic.addCol = function () {
                 //figure out how many columns we have
                 var existingCols = dragPanelCmp.items.items.length;
@@ -126,6 +119,21 @@
                 /* When rendering Csw content to ExtJS controls, the layout is already calculated. Calling doLayout()
                    after rendering arbitrary csw content will cause the Ext controls to fix their width/height/ect */
                 dragPanelCmp.doLayout();
+            };
+            
+            cswPublic.lockPanels = function (lock) {
+                /* Lock/Unlock all the child draggables in this drag panel. 
+                   This prevents the draggables from being moved, but other items can be dragged into the panel */
+                for (var idx in _draggables) {
+                    var draggableItem = _draggables[idx];
+                    draggableItem.allowDrag(lock);
+                }
+            };
+
+            cswPublic.allowDrag = function (allow) {
+                /* Lock/unlock all child draggables inside this drag panel and then register/unregister the DropTarget*/
+                cswPublic.lockPanels(allow);
+                dragPanelCmp.allowDrag(allow);
             };
 
         }());
