@@ -133,7 +133,7 @@ namespace ChemSW.Nbt.Schema
 
                 // DeferSearchTo is conditional on Searchable
                 NTDeferSearchToNTP.setFilterDeprecated( NTSearchableNTP, NTSearchableNTP.getFieldTypeRule().SubFields[CswNbtFieldTypeRuleLogical.SubFieldName.Checked], CswEnumNbtFilterMode.Equals, CswEnumTristate.True );
-                
+
                 // Set view for DeferSearchToNTP
                 CswNbtView DeferView = _CswNbtSchemaModTrnsctn.restoreView( NTDeferSearchToNTP.ViewId );
                 DeferView.Root.ChildRelationships.Clear();
@@ -412,6 +412,11 @@ namespace ChemSW.Nbt.Schema
                     // Handle special configurations
                     switch( FieldType.FieldType )
                     {
+                        case CswEnumNbtFieldType.Barcode:
+                            CswNbtMetaDataNodeTypeProp barcodeSequenceNTP = NodeTypePropNT.getNodeTypeProp( CswNbtFieldTypeRuleBarCode.AttributeName.Sequence.ToString() );
+                            barcodeSequenceNTP._DataRow["isrequired"] = CswConvert.ToDbVal( true );
+                            break;
+
                         case CswEnumNbtFieldType.Composite:
                             CswNbtMetaDataNodeTypeProp addTemplateNTP = _makePropNTP( NodeTypePropNT, TabId, CswEnumNbtFieldType.Relationship, "Add To Template", "" );
                             addTemplateNTP.SetFKDeprecated( CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(), NodeTypePropOC.ObjectClassId, string.Empty, Int32.MinValue );
@@ -548,6 +553,11 @@ namespace ChemSW.Nbt.Schema
                             CswNbtMetaDataNodeTypeProp reltargetNTP = NodeTypePropNT.getNodeTypeProp( CswEnumNbtPropertyAttributeName.Target.ToString() );
                             CswNbtMetaDataNodeTypeProp relviewNTP = NodeTypePropNT.getNodeTypeProp( CswEnumNbtPropertyAttributeName.View.ToString() );
                             relviewNTP.setFilterDeprecated( reltargetNTP, reltargetNTP.getFieldTypeRule().SubFields.Default, CswEnumNbtFilterMode.NotNull, string.Empty );
+                            break;
+
+                        case CswEnumNbtFieldType.Sequence:
+                            CswNbtMetaDataNodeTypeProp seqSequenceNTP = NodeTypePropNT.getNodeTypeProp( CswNbtFieldTypeRuleSequence.AttributeName.Sequence.ToString() );
+                            seqSequenceNTP._DataRow["isrequired"] = CswConvert.ToDbVal( true );
                             break;
 
                         case CswEnumNbtFieldType.ViewPickList:
