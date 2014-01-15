@@ -245,7 +245,7 @@ namespace ChemSW.Nbt.ObjClasses
 
 
             // Sequence change
-            if( AttributeProperty.ContainsKey( CswEnumNbtPropertyAttributeName.Sequence ) )
+            if( null != RelationalNodeTypeProp && AttributeProperty.ContainsKey( CswEnumNbtPropertyAttributeName.Sequence ) )
             {
                 CswNbtNodePropRelationship SequenceProp = AttributeProperty[CswEnumNbtPropertyAttributeName.Sequence].AsRelationship;
                 if( SequenceProp.wasSubFieldModified( CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID ) )
