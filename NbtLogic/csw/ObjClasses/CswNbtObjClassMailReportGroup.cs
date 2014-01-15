@@ -54,8 +54,8 @@ namespace ChemSW.Nbt.ObjClasses
         #endregion Base
 
         #region Inherited Events
-        
-        public override void afterPromoteNode()
+
+        protected override void afterPromoteNodeLogic()
         {
             CswNbtPropertySetPermission.createDefaultWildcardPermission( _CswNbtResources, PermissionClass, NodeId );
         }

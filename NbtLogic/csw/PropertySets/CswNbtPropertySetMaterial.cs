@@ -153,7 +153,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public override void beforeWriteNode( bool Creating )
+        protected override void beforeWriteNodeLogic( bool Creating )
         {
             beforePropertySetWriteNode();
 
@@ -166,17 +166,17 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-        public override void afterWriteNode()
+        protected override void afterWriteNodeLogic()
         {
             afterPropertySetWriteNode();
         }
 
-        public override void beforeDeleteNode()
+        protected override void beforeDeleteNodeLogic()
         {
             beforePropertySetDeleteNode();
         }
 
-        public override void afterDeleteNode()
+        protected override void afterDeleteNodeLogic()
         {
             afterPropertySetDeleteNode();
         }

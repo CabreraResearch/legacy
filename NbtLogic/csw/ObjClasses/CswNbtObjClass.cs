@@ -96,27 +96,27 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// ObjectClass-specific logic to execute before persisting a new real node (from temp or create)
         /// </summary>
-        public virtual void beforePromoteNode( bool OverrideUniqueValidation = false) { }
+        protected virtual void beforePromoteNodeLogic( bool OverrideUniqueValidation = false ) { }
         /// <summary>
         /// ObjectClass-specific logic to execute after persisting a new real node (from temp or create)
         /// </summary>
-        public virtual void afterPromoteNode() {}
+        protected virtual void afterPromoteNodeLogic() { }
         /// <summary>
         /// ObjectClass-specific logic to execute before updating a new or existing node
         /// </summary>
-        public virtual void beforeWriteNode( bool Creating ) {}
+        protected virtual void beforeWriteNodeLogic( bool Creating ) { }
         /// <summary>
         /// ObjectClass-specific logic to execute after updating a new or existing node
         /// </summary>
-        public virtual void afterWriteNode() {}
+        protected virtual void afterWriteNodeLogic() { }
         /// <summary>
         /// ObjectClass-specific logic to execute before deleting a node
         /// </summary>
-        public virtual void beforeDeleteNode() {}
+        protected virtual void beforeDeleteNodeLogic() { }
         /// <summary>
         /// ObjectClass-specific logic to execute after deleting a node
         /// </summary>
-        public virtual void afterDeleteNode() {}
+        protected virtual void afterDeleteNodeLogic() { }
         /// <summary>
         /// ObjectClass-specific logic to execute after clicking an object-class button (including the Save button)
         /// </summary>
@@ -130,9 +130,19 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Base Node Event Logic
 
+        public void beforePromoteNode( bool OverrideUniqueValidation = false )
+        {
+            beforePromoteNodeLogic( OverrideUniqueValidation: OverrideUniqueValidation );
+        }
+
+        public void afterPromoteNode()
+        {
+            afterPromoteNodeLogic();
+        }
+
         public void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation, bool Creating )
         {
-            beforeWriteNode( Creating );
+            beforeWriteNodeLogic( Creating );
             List<CswNbtNodePropWrapper> CompoundUniqueProps = new List<CswNbtNodePropWrapper>();
             foreach( CswNbtNodePropWrapper CurrentProp in _CswNbtNode.Properties )
             {
@@ -299,7 +309,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public void afterWriteNode( bool Creating )
         {
-            afterWriteNode();
+            afterWriteNodeLogic();
             // BZ 10094 - Notification event
             Collection<CswNbtNodePropWrapper> ModifiedProps = new Collection<CswNbtNodePropWrapper>();
             foreach( CswNbtNodePropWrapper CurrentProp in _CswNbtNode.Properties )
@@ -317,7 +327,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes, bool ValidateRequiredRelationships )
         {
-            beforeDeleteNode();
+            beforeDeleteNodeLogic();
             if( ValidateRequiredRelationships )
             {
                 // case 22486 - Don't allow deleting targets of required relationships
@@ -362,7 +372,12 @@ namespace ChemSW.Nbt.ObjClasses
                     }
                 } // if( MatchTable.Rows.Count > 0 )
             } // if( ValidateRequiredRelationships )
-        } // beforeDeleteNode()
+        } // baseBeforeDeleteNode()
+
+        public void afterDeleteNode()
+        {
+            afterDeleteNodeLogic();
+        }
 
         public void triggerAfterPopulateProps()
         {

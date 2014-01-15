@@ -101,13 +101,13 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public override void afterPromoteNode()
+        protected override void afterPromoteNodeLogic()
         {
             // originally case 27330, moved here by case 30647
             Size.setReadOnly( value: true, SaveToDb: true );
         }
 
-        public override void beforeWriteNode( bool Creating )
+        protected override void beforeWriteNodeLogic( bool Creating )
         {
             ViewSDS.State = PropertyName.ViewSDS;
             ViewSDS.MenuOptions = PropertyName.ViewSDS + ",View All";
@@ -166,7 +166,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }//beforeWriteNode()
 
-        public override void afterDeleteNode()
+        protected override void afterDeleteNodeLogic()
         {
             CswNbtSdInventoryLevelMgr Mgr = new CswNbtSdInventoryLevelMgr( _CswNbtResources );
             string Reason = "Container " + Barcode.Barcode + " with quantity " + Quantity.Quantity + " has been deleted.";

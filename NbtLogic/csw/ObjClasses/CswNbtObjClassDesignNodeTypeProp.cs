@@ -105,7 +105,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public override void beforePromoteNode( bool OverrideUniqueValidation )
+        protected override void beforePromoteNodeLogic( bool OverrideUniqueValidation = false )
         {
             // Make sure propname is unique for this nodetype
             if( false == CswTools.IsPrimaryKey( NodeTypeValue.RelatedNodeId ) )
@@ -123,7 +123,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
         } // beforePromoteNode()
 
-        public override void afterPromoteNode()
+        protected override void afterPromoteNodeLogic()
         {
             // ------------------------------------------------------------
             // This logic from makeNewNodeType and makeNewProp in CswNbtMetaData.cs
@@ -194,7 +194,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         } // afterPromoteNode()
 
-        public override void beforeWriteNode( bool IsCreating ) // bool IsCopy, bool OverrideUniqueValidation )
+        protected override void beforeWriteNodeLogic( bool IsCreating ) // bool IsCopy, bool OverrideUniqueValidation )
         {
             // If display condition is set, required must be false
             if( false == DisplayConditionProperty.Empty )
@@ -280,7 +280,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         }//beforeWriteNode()
 
-        public override void afterWriteNode()
+        protected override void afterWriteNodeLogic()
         {
             if( null != RelationalNodeTypeProp )
             {
@@ -368,7 +368,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         public bool InternalDelete = false;
 
-        public override void beforeDeleteNode() //bool DeleteAllRequiredRelatedNodes = false )
+        protected override void beforeDeleteNodeLogic() //bool DeleteAllRequiredRelatedNodes = false )
         {
             if( false == IsTemp )
             {
@@ -427,7 +427,7 @@ namespace ChemSW.Nbt.ObjClasses
             } // if( false == IsTemp )
         }//beforeDeleteNode()
 
-        public override void afterDeleteNode()
+        protected override void afterDeleteNodeLogic()
         {
             _UpdateEquipmentAssemblyMatchingProperties( CswEnumNbtPropAction.Delete );
         }//afterDeleteNode()        

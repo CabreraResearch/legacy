@@ -72,12 +72,12 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public override void beforeWriteNode( bool Creating )
+        protected override void beforeWriteNodeLogic( bool Creating )
         {
             _checkForConfigFileUpdate();
         }
 
-        public override void afterWriteNode()
+        protected override void afterWriteNodeLogic()
         {
             _doConfigFileUpdate();
         } // afterWriteNode()

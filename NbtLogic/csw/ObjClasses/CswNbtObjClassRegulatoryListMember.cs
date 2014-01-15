@@ -40,7 +40,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public override void afterDeleteNode()
+        protected override void afterDeleteNodeLogic()
         {
             // case 28303 - add list to Chemical's Suppressed list
             if( false == SetByChemical && CswTools.IsPrimaryKey( Chemical.RelatedNodeId ) )
