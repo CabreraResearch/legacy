@@ -94,7 +94,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void beforePromoteNode( bool OverrideUniqueValidation )
         {
-            if( false == OverrideUniqueValidation && 
+            if( false == OverrideUniqueValidation &&
                 null != _CswNbtResources.MetaData.getNodeType( NodeTypeName.Text ) )
             {
                 throw new CswDniException( CswEnumErrorType.Warning, "Node Type Name must be unique", "Attempted to create a new nodetype with the same name as an existing nodetype" );
@@ -649,21 +649,25 @@ namespace ChemSW.Nbt.ObjClasses
             // Create/convert object class props
             foreach( CswNbtMetaDataObjectClassProp OCProp in ObjectClassPropertyValue.getObjectClassProps() )
             {
-                CswNbtObjClassDesignNodeTypeProp PropNode = ( from Prop in RelationalNodeType.getNodeTypeProps()
-                                                              where Prop.PropName == OCProp.PropName && Prop.FieldTypeId == OCProp.FieldTypeId
-                                                              select _CswNbtResources.Nodes.getNodeByRelationalId( new CswPrimaryKey( "nodetype_props", Prop.PropId ) )
-                                                            ).FirstOrDefault();
+                CswNbtObjClassDesignNodeTypeProp PropNode = null;
+                if( null != RelationalNodeType )
+                {
+                    PropNode = ( from Prop in RelationalNodeType.getNodeTypeProps()
+                                 where Prop.PropName == OCProp.PropName && Prop.FieldTypeId == OCProp.FieldTypeId
+                                 select _CswNbtResources.Nodes.getNodeByRelationalId( new CswPrimaryKey( "nodetype_props", Prop.PropId ) )
+                               ).FirstOrDefault();
+                }
                 // If converting, need to detect existing properties
                 if( null != PropNode )
                 {
                     PropNode.ObjectClassPropName.Value = OCProp.PropId.ToString();
-
                     NewNTPropsByOCPId.Add( OCProp.PropId, PropNode );
                 }
                 else
                 {
                     string NewPropName = OCProp.PropName;
-                    while( null != RelationalNodeType.getNodeTypeProp( NewPropName ) )
+                    while( null != RelationalNodeType &&
+                           null != RelationalNodeType.getNodeTypeProp( NewPropName ) )
                     {
                         NewPropName = NewPropName + " (new)";
                     }
@@ -673,6 +677,7 @@ namespace ChemSW.Nbt.ObjClasses
                         {
                             ( (CswNbtObjClassDesignNodeTypeProp) NewNode ).NodeTypeValue.RelatedNodeId = this.NodeId;
                             ( (CswNbtObjClassDesignNodeTypeProp) NewNode ).ObjectClassPropName.Value = OCProp.PropId.ToString();
+                            ( (CswNbtObjClassDesignNodeTypeProp) NewNode ).FieldType.Value = OCProp.FieldTypeId.ToString();
                             ( (CswNbtObjClassDesignNodeTypeProp) NewNode ).PropName.Text = NewPropName;
                         } );
 
@@ -716,8 +721,8 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 //if( CswNbtMetaDataObjectClass.NotSearchableValue != ObjectClassPropertyValue.SearchDeferPropId )
                 //{
-                    CswNbtObjClassDesignNodeTypeProp SearchDeferProp = NewNTPropsByOCPId[ObjectClassPropertyValue.SearchDeferPropId];
-                    this.DeferSearchTo.RelatedNodeId = SearchDeferProp.NodeId;
+                CswNbtObjClassDesignNodeTypeProp SearchDeferProp = NewNTPropsByOCPId[ObjectClassPropertyValue.SearchDeferPropId];
+                this.DeferSearchTo.RelatedNodeId = SearchDeferProp.NodeId;
                 //}
                 //else
                 //{

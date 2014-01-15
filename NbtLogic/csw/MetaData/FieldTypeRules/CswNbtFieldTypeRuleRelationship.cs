@@ -257,20 +257,20 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
         public void afterCreateNodeTypeProp( CswNbtMetaDataNodeTypeProp NodeTypeProp )
         {
             //Schema Updater will trigger afterCreateNodeTypeProp(), but it won't call setFk
-            if( null != NodeTypeProp && null != NodeTypeProp.DesignNode )
-            {
-                string FkType = NodeTypeProp.FKType;
-                Int32 FkValue = NodeTypeProp.FKValue;
+            //if( null != NodeTypeProp && null != NodeTypeProp.DesignNode )
+            //{
+            //    string FkType = NodeTypeProp.FKType;
+            //    Int32 FkValue = NodeTypeProp.FKValue;
 
-                if( false == string.IsNullOrEmpty( FkType ) &&
-                    Int32.MinValue != FkValue )
-                {
-                    //NodeTypeProp.SetFK( FkType, FkValue );
-                    NodeTypeProp.DesignNode.AttributeProperty[AttributeName.Target].AsMetaDataList.setValue( FkType, FkValue );
-                    NodeTypeProp.DesignNode.postChanges( false );
-                }
+            //    if( false == string.IsNullOrEmpty( FkType ) &&
+            //        Int32.MinValue != FkValue )
+            //    {
+            //        //NodeTypeProp.SetFK( FkType, FkValue );
+            //        NodeTypeProp.DesignNode.AttributeProperty[AttributeName.Target].AsMetaDataList.setValue( FkType, FkValue );
+            //        NodeTypeProp.DesignNode.postChanges( false );
+            //    }
                 _CswNbtFieldTypeRuleDefault.afterCreateNodeTypeProp( NodeTypeProp );
-            }
+            //}
         }
 
         public string getHelpText()

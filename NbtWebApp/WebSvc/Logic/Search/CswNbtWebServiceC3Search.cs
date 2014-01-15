@@ -888,7 +888,7 @@ namespace ChemSW.Nbt.WebServices
 
                 // Get the Size NodeTypeId
                 CswNbtMetaDataObjectClass SizeOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.SizeClass );
-                string SizeNTId = CswConvert.ToString( SizeOC.getNodeTypeIds().FirstOrDefault() );
+                string SizeNTId = CswConvert.ToString( SizeOC.getNodeTypeIds().FirstOrDefault().Key );
 
                 // First set the sizes to import to the original set of sizes
                 _SizesToImport = _ProductToImport.ProductSize.ToList();
