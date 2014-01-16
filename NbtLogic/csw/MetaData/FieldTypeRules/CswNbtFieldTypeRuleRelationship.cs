@@ -104,7 +104,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldTypeRuleDefault.AddUniqueFilterToView( View, UniqueValueViewProperty, PropertyValueToCheck, EnforceNullEntries, NodeIDSubField );
         }
 
-        private CswNbtView _setDefaultView( CswNbtMetaDataNodeTypeProp MetaDataProp, CswEnumNbtViewRelatedIdType RelatedIdType, Int32 inFKValue, bool OnlyCreateIfNull )
+        public CswNbtView setDefaultView( CswNbtMetaDataNodeTypeProp MetaDataProp, CswEnumNbtViewRelatedIdType RelatedIdType, Int32 inFKValue, bool OnlyCreateIfNull )
         {
             //CswNbtMetaDataNodeTypeProp ThisNtProp = _CswNbtFieldResources.CswNbtResources.MetaData.getNodeTypeProp( MetaDataProp.PropId );
             CswNbtView RetView = _CswNbtFieldResources.CswNbtResources.ViewSelect.restoreView( MetaDataProp.ViewId );
@@ -158,7 +158,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                 }
                 else
                 {
-                    throw new CswDniException( CswEnumErrorType.Error, "Cannot create a relationship without a valid target.", "_setDefaultView() got an invalid RelatedIdType: " + RelatedIdType + " or value: " + inFKValue );
+                    throw new CswDniException( CswEnumErrorType.Error, "Cannot create a relationship without a valid target.", "setDefaultView() got an invalid RelatedIdType: " + RelatedIdType + " or value: " + inFKValue );
                 }
 
                 RetView.ViewId = MetaDataProp.ViewId;
@@ -183,12 +183,12 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                     if( CswEnumNbtViewRelatedIdType.Unknown != FkProp.Type && Int32.MinValue != FkProp.Id )
                     {
                         //We have valid values that are different that what is currently set
-                        _setDefaultView( MetaDataProp, FkProp.Type, FkProp.Id, false );
+                        setDefaultView( MetaDataProp, FkProp.Type, FkProp.Id, false );
                     }
                     else
                     {
                         //Make sure a default view is set
-                        _setDefaultView( MetaDataProp, MetaDataProp.FKType, MetaDataProp.FKValue, true );
+                        setDefaultView( MetaDataProp, MetaDataProp.FKType, MetaDataProp.FKValue, true );
                     }
                 }
             } // if( DesignNTPNode.AttributeProperty.ContainsKey( FkTypeAttr.Name ) )
