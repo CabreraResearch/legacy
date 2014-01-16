@@ -20,13 +20,32 @@ namespace NbtWebApp
         private HttpContext _Context = HttpContext.Current;
 
         /// <summary>
-        /// 
+        /// Returns either C3 or ACD depending on which module is enabled.
         /// </summary>
         [OperationContract]
-        [WebInvoke( Method = "POST", UriTemplate = "GetAvailableDataSources" )]
+        [WebInvoke( Method = "POST", UriTemplate = "GetC3DataService" )]
         [Description( "" )]
         [FaultContract( typeof( FaultException ) )]
-        public CswNbtWebServiceC3Search.CswNbtC3SearchReturn GetAvailableDataSources()
+        public CswNbtWebServiceC3Search.CswNbtC3SearchReturn GetC3DataService()
+        {
+            CswNbtWebServiceC3Search.CswNbtC3SearchReturn Ret = new CswNbtWebServiceC3Search.CswNbtC3SearchReturn();
+
+            var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceC3Search.CswNbtC3SearchReturn, object>(
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj: Ret,
+                WebSvcMethodPtr: CswNbtWebServiceC3Search.GetC3DataService,
+                ParamObj: null
+                );
+
+            SvcDriver.run();
+            return ( Ret );
+        }
+
+        [OperationContract]
+        [WebInvoke( Method = "POST", UriTemplate = "GetVendorOptions" )]
+        [Description( "" )]
+        [FaultContract( typeof( FaultException ) )]
+        public CswNbtWebServiceC3Search.CswNbtC3SearchReturn GetVendorOptions()
         {
             CswC3Params CswC3Params = new CswC3Params();
             CswNbtWebServiceC3Search.CswNbtC3SearchReturn Ret = new CswNbtWebServiceC3Search.CswNbtC3SearchReturn();
@@ -34,13 +53,59 @@ namespace NbtWebApp
             var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceC3Search.CswNbtC3SearchReturn, CswC3Params>(
                 CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
                 ReturnObj: Ret,
-                WebSvcMethodPtr: CswNbtWebServiceC3Search.GetAvailableDataSources,
+                WebSvcMethodPtr: CswNbtWebServiceC3Search.GetVendorOptions,
                 ParamObj: CswC3Params
                 );
 
             SvcDriver.run();
             return ( Ret );
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [OperationContract]
+        [WebInvoke( Method = "POST", UriTemplate = "GetACDSuppliers" )]
+        [Description( "" )]
+        [FaultContract( typeof( FaultException ) )]
+        public CswNbtWebServiceC3Search.CswNbtC3SearchReturn GetACDSuppliers()
+        {
+            CswC3Params CswC3Params = new CswC3Params();
+            CswNbtWebServiceC3Search.CswNbtC3SearchReturn Ret = new CswNbtWebServiceC3Search.CswNbtC3SearchReturn();
+
+            var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceC3Search.CswNbtC3SearchReturn, CswC3Params>(
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj: Ret,
+                WebSvcMethodPtr: CswNbtWebServiceC3Search.GetACDSuppliers,
+                ParamObj: CswC3Params
+                );
+
+            SvcDriver.run();
+            return ( Ret );
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [OperationContract]
+        [WebInvoke( Method = "POST", UriTemplate = "UpdateACDPrefSuppliers" )]
+        [Description( "" )]
+        [FaultContract( typeof( FaultException ) )]
+        public CswNbtWebServiceC3Search.CswNbtC3SearchReturn UpdateACDPrefSuppliers( string PrefSupplierIds )
+        {
+            CswNbtWebServiceC3Search.CswNbtC3SearchReturn Ret = new CswNbtWebServiceC3Search.CswNbtC3SearchReturn();
+
+            var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceC3Search.CswNbtC3SearchReturn, string>(
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj: Ret,
+                WebSvcMethodPtr: CswNbtWebServiceC3Search.UpdateACDPrefSuppliers,
+                ParamObj: PrefSupplierIds
+                );
+
+            SvcDriver.run();
+            return ( Ret );
+        }
+
 
         /// <summary>
         /// 

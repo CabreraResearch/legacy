@@ -67,7 +67,13 @@ namespace ChemSW.Nbt.WebServices
         public class C3SearchResponse
         {
             [DataMember]
-            public Collection<DataSource> AvailableDataSources = new Collection<DataSource>();
+            public string DataService = string.Empty;
+
+            [DataMember]
+            public Collection<VendorOption> VendorListOptions = new Collection<VendorOption>();
+
+            [DataMember]
+            public Collection<ACDSupplier> ACDSuppliers = new Collection<ACDSupplier>();
 
             [DataMember]
             public List<string> SearchProperties = new List<string>();
@@ -83,13 +89,29 @@ namespace ChemSW.Nbt.WebServices
         }
 
         [DataContract]
-        public class DataSource
+        public class VendorOption
         {
             [DataMember]
             public string value = string.Empty;
 
             [DataMember]
             public string display = string.Empty;
+
+            [DataMember]
+            public bool isSelected = false;
+        }
+
+        [DataContract]
+        public class ACDSupplier
+        {
+            [DataMember( Name = "text" )]
+            public string Name { get; set; }
+
+            [DataMember( Name = "value" )]
+            public string Id { get; set; }
+
+            [DataMember( Name = "selected" )]
+            public bool Selected { get; set; }
         }
 
         [DataContract]
@@ -265,27 +287,80 @@ namespace ChemSW.Nbt.WebServices
             }
 
             return ImportableNodeTypes;
-        }
+        }//getImportBtnItems()
 
-        public static void GetAvailableDataSources( ICswResources CswResources, CswNbtC3SearchReturn Return, CswC3Params CswC3Params )
+        /// <summary>
+        /// Returns either C3 or ACD depending on which module is enabled.
+        /// </summary>
+        /// <param name="CswResources"></param>
+        /// <param name="Return"></param>
+        /// <param name="EmptyObject"></param>
+        public static void GetC3DataService( ICswResources CswResources, CswNbtC3SearchReturn Return, object EmptyObject )
+        {
+            CswNbtResources _CswNbtResources = (CswNbtResources) CswResources;
+            CswC3SearchParams CswC3SearchParams = new CswC3SearchParams();
+            CswNbtC3ClientManager CswNbtC3ClientManager = new CswNbtC3ClientManager( _CswNbtResources, CswC3SearchParams );
+            Return.Data.DataService = CswNbtC3ClientManager.DataService;
+        }//getC3DataService()
+
+        public static void GetVendorOptions( ICswResources CswResources, CswNbtC3SearchReturn Return, CswC3Params CswC3Params )
         {
             CswNbtResources _CswNbtResources = (CswNbtResources) CswResources;
 
             CswNbtC3ClientManager CswNbtC3ClientManager = new CswNbtC3ClientManager( _CswNbtResources, CswC3Params );
+            if( CswNbtC3ClientManager.DataService == "C3" )
+            {
+                Return.Data.VendorListOptions = _getAvailableDataSources( CswNbtC3ClientManager, CswC3Params );
+            }
+            else if( CswNbtC3ClientManager.DataService == "ACD" )
+            {
+                Return.Data.VendorListOptions = _getPreferredSuppliers( _CswNbtResources );
+            }
+        }
+
+        private static Collection<VendorOption> _getPreferredSuppliers( CswNbtResources CswNbtResources )
+        {
+            Collection<VendorOption> ACDVendorOptions = new Collection<VendorOption>();
+
+            // We want the 'Preferred' option to default to selected _if_ there are preferred suppliers set on the User
+            bool PreferredOptionSelected = false;
+            CswNbtObjClassUser CurrentUser = CswNbtResources.Nodes.GetNode( CswNbtResources.CurrentNbtUser.UserId );
+            if( false == CurrentUser.C3ACDPreferredSuppliers.Empty )
+            {
+                PreferredOptionSelected = true;
+            }
+
+            ACDVendorOptions.Add( new VendorOption
+                {
+                    value = "Any Suppliers",
+                    display = "Any Suppliers"
+                } );
+
+            ACDVendorOptions.Add( new VendorOption
+                {
+                    value = "Preferred Vendors",
+                    display = "Preferred Vendors",
+                    isSelected = PreferredOptionSelected
+                } );
+
+            return ACDVendorOptions;
+        }//_getPreferredSuppliers()
+
+        private static Collection<VendorOption> _getAvailableDataSources( CswNbtC3ClientManager CswNbtC3ClientManager, CswC3Params CswC3Params )
+        {
+            Collection<VendorOption> AvailableDataSources = new Collection<VendorOption>();
+
             SearchClient C3SearchClient = CswNbtC3ClientManager.initializeC3Client();
             if( null != C3SearchClient )
             {
                 CswRetObjSearchResults SourcesList = C3SearchClient.getDataSources( CswC3Params );
-
-                Collection<DataSource> AvailableDataSources = new Collection<DataSource>();
-
                 if( null != SourcesList )
                 {
                     //Create the "All Sources" option
                     CswCommaDelimitedString AllSources = new CswCommaDelimitedString();
                     AllSources.FromArray( SourcesList.AvailableDataSources );
 
-                    DataSource allSourcesDs = new DataSource();
+                    VendorOption allSourcesDs = new VendorOption();
                     allSourcesDs.value = AllSources.ToString();
                     allSourcesDs.display = "All Sources";
                     AvailableDataSources.Add( allSourcesDs );
@@ -293,22 +368,83 @@ namespace ChemSW.Nbt.WebServices
                     //Add available data source options
                     foreach( string DataSource in SourcesList.AvailableDataSources )
                     {
-                        DataSource dS = new DataSource();
+                        VendorOption dS = new VendorOption();
                         dS.value = DataSource;
                         dS.display = DataSource;
                         AvailableDataSources.Add( dS );
                     }
+
+                }//if( null != SourcesList )
+
+            }//if( null != C3SearchClient )
+
+            return AvailableDataSources;
+        }//_getAvailableDataSources()
+
+        public static void GetACDSuppliers( ICswResources CswResources, CswNbtC3SearchReturn Return, CswC3Params CswC3Params )
+        {
+            CswNbtResources _CswNbtResources = (CswNbtResources) CswResources;
+
+            CswNbtC3ClientManager CswNbtC3ClientManager = new CswNbtC3ClientManager( _CswNbtResources, CswC3Params );
+            SearchClient C3SearchClient = CswNbtC3ClientManager.initializeC3Client();
+            if( null != C3SearchClient )
+            {
+                CswRetObjSearchResults Results = C3SearchClient.getACDSuppliers( CswC3Params );
+
+                // Get the already set perferred suppliers so we can select them
+                List<string> PreferredSuppliers = new List<string>();
+                CswNbtObjClassUser CurrentUser = _CswNbtResources.Nodes.GetNode( _CswNbtResources.CurrentNbtUser.UserId );
+                if( null != CurrentUser )
+                {
+                    PreferredSuppliers = CurrentUser.C3ACDPreferredSuppliers.Text.Split( ',' ).ToList();
                 }
 
-                Return.Data.AvailableDataSources = AvailableDataSources;
+                Collection<ACDSupplier> ACDSuppliers = new Collection<ACDSupplier>();
+
+                if( null != Results )
+                {
+                    for( int i = 0; i < 51; i++ )
+                    //foreach( CswC3ACDResponseACDSupplier ACDSupplier in Results.ACDSuppliers )
+                    {
+                        CswC3ACDResponseACDSupplier ACDSupplier = Results.ACDSuppliers[i];
+                        ACDSupplier NewSupplier = new ACDSupplier();
+                        NewSupplier.Name = ACDSupplier.Name + ": " + ACDSupplier.Country;
+                        NewSupplier.Id = CswConvert.ToString( ACDSupplier.Id );
+                        NewSupplier.Selected = PreferredSuppliers.Contains( ACDSupplier.Id.ToString() );
+                        ACDSuppliers.Add( NewSupplier );
+                    }
+                }
+
+                Return.Data.ACDSuppliers = ACDSuppliers;
             }
-        }
+        }//GetACDSuppliers()
+
+        public static void UpdateACDPrefSuppliers( ICswResources CswResources, CswNbtC3SearchReturn Return, string PrefSupplierIds )
+        {
+            CswNbtResources _CswNbtResources = (CswNbtResources) CswResources;
+
+            CswNbtObjClassUser CurrentUser = _CswNbtResources.Nodes.GetNode( _CswNbtResources.CurrentNbtUser.UserId );
+            if( null != CurrentUser )
+            {
+                CurrentUser.C3ACDPreferredSuppliers.Text = PrefSupplierIds;
+                CurrentUser.postChanges( false );
+            }
+        }//UpdateACDPrefSuppliers()
 
         public static void GetSearchProperties( ICswResources CswResources, CswNbtC3SearchReturn Return, CswC3Params CswC3Params )
         {
+            CswNbtResources _CswNbtResources = (CswNbtResources) CswResources;
+
             List<string> SearchProperties = ( from CswC3SearchParams.SearchFieldType SearchType in Enum.GetValues( typeof( CswC3SearchParams.SearchFieldType ) ) select SearchType.ToString() ).ToList();
+
+            // TODO: Remove when we implement Structure Search in ACD
+            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.C3ACD ) )
+            {
+                SearchProperties.Remove( CswC3SearchParams.SearchFieldType.Structure.ToString() );
+            }
+
             Return.Data.SearchProperties = SearchProperties;
-        }
+        }//GetSearchProperties()
 
         public static void GetC3ProductDetails( ICswResources CswResources, CswNbtC3SearchReturn Return, CswC3SearchParams CswC3SearchParams )
         {

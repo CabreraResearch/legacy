@@ -20,6 +20,8 @@ namespace ChemSW.Nbt.ChemCatCentral
         {
             _CswNbtResources = CswNbtResources;
             _CswC3Params = CswC3Params;
+            _setRegulationDatabase();
+            _setDataService();
 
         }//ctor1
 
