@@ -303,30 +303,27 @@
                             }
                         },
                         onDrop: function (ext, col, row) {
-                            var propsReq = [];
-                            var numCols = dragPanel.getNumCols();
-                            for (var i = 0; i < numCols; i++) {
-                                var propPanels = dragPanel.getItemsInCol(i);
-                                var thisCol = i + 1;
-                                var thisRow = 1;
-                                Csw.iterate(propPanels, function (panel) {
-                                    var panelProp = seenProps[panel.id];
-                                    propsReq.push({
-                                        layout: cswPrivate.Layout,
-                                        nodetypeid: node.nodetypeid,
-                                        nodetypepropid: panelProp.id.substr(panelProp.id.lastIndexOf('_') + 1), //this id is 'nodes_<nodeid>_<propid>'
-                                        tabid: tabid,
-                                        displaycol: thisCol,    
-                                        displayrow: thisRow
+                            cswPrivate.saveLayout(dragPanel, node, seenProps, tabid);
+                        },
+                        onClose: function (draggable) {
+                            var confirm = Csw.dialogs.confirmDialog({
+                                title: 'Remove Property From Layout',
+                                message: 'Are you sure you want to remove this property from the layout?',
+                                onYes: function () {
+                                    var doomedProp = seenProps[draggable.id];
+                                    var doomedPropsCollection = [{
+                                        nodetypepropid: doomedProp.id.substr(doomedProp.id.lastIndexOf('_') + 1),
+                                        displaycol: Csw.int32MinVal,
+                                        displayrow: Csw.int32MinVal
+                                    }];
+                                    dragPanel.removeDraggableFromCol(realCol, draggable.id);
+                                    cswPrivate.removePropsFromLayout(node, doomedPropsCollection, tabid, function () {
+                                        cswPrivate.saveLayout(dragPanel, node, seenProps, tabid);
                                     });
-                                    thisRow++;
-                                });
-                            }
-                            Csw.ajaxWcf.post({
-                                urlMethod: 'Design/updateLayout',
-                                data: { Props: propsReq },
-                                success: function (response) {
-                                    //nothing to do here
+                                    confirm.close();
+                                },
+                                onNo: function () {
+                                    confirm.close();
                                 }
                             });
                         }
@@ -343,6 +340,52 @@
             Csw.defer(function () {
                 dragPanel.doLayout(); //fix our layout
             }, 2000);
+        };
+
+        cswPrivate.saveLayout = function (dragPanel, node, props, tabid) {
+            var propsReq = [];
+            var numCols = dragPanel.getNumCols();
+            for (var i = 0; i < numCols; i++) {
+                var propPanels = dragPanel.getItemsInCol(i);
+                var thisCol = i + 1;
+                var thisRow = 1;
+                Csw.iterate(propPanels, function (panel) {
+                    var panelProp = props[panel.id];
+                    propsReq.push({
+                        nodetypepropid: panelProp.id.substr(panelProp.id.lastIndexOf('_') + 1), //this id is 'nodes_<nodeid>_<propid>'
+                        displaycol: thisCol,
+                        displayrow: thisRow
+                    });
+                    thisRow++;
+                });
+            }
+            Csw.ajaxWcf.post({
+                urlMethod: 'Design/updateLayout',
+                data: {
+                    layout: cswPrivate.Layout,
+                    nodetypeid: node.nodetypeid,
+                    tabid: tabid,
+                    props: propsReq
+                },
+                success: function (response) {
+                    //nothing to do here
+                }
+            });
+        };
+
+        cswPrivate.removePropsFromLayout = function (node, props, tabid, onSuccess) {
+            Csw.ajaxWcf.post({
+                urlMethod: 'Design/removePropsFromLayout',
+                data: {
+                    layout: cswPrivate.Layout,
+                    nodetypeid: node.nodetypeid,
+                    tabid: tabid,
+                    props: props
+                },
+                success: function (response) {
+                    Csw.tryExec(onSuccess);
+                }
+            });
         };
 
         cswPublic.tearDown = function () {

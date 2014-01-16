@@ -11,13 +11,10 @@
             layout: 'fit',
             anchor: '100%',
             frame: true,
-            closable: true,
-            collapsible: true,
             draggable: { //setting this to "true" would mean we can drag an obj of this type ANYWHERE. "moveOnDrag: false" means the obj will snap the the target drop zone
                 moveOnDrag: false
             },
             cls: 'csw-draggable',
-            header: false,
             border: 0,
             items: [],
             style: {
@@ -25,7 +22,6 @@
                 'padding': '1px',
                 'cursor': 'default' //suppress the drag cursor
             },
-
             //custom configs:
             allowDrag: function (allow) { //Whether or not this item can be moved around
                 if (allow) {
@@ -314,7 +310,7 @@
                 }
                 this.callParent();
             },
-            allowDrag: function(allow) {
+            allowDrag: function (allow) {
                 if (allow) {
                     this.dd = window.Ext.create('Csw.ext.dropzone', this, this.dropConfig);
                 } else {

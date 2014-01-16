@@ -74,7 +74,9 @@
                     id: window.Ext.id(),
                     style: {},
                     render: function () { },
-                    onDrop: function (extCmp, col, row) { }
+                    onDrop: function (extCmp, col, row) { },
+                    onClose: function () { },
+                    onConfigure: function () { }
                 };
                 if (paramsIn) {
                     Csw.extend(params, paramsIn);
@@ -85,6 +87,30 @@
                 //Add our drag panel
                 var extRenderTo = extCol.add({
                     id: params.id,
+                    tools: [{
+                        type: 'gear',
+                        handler: function () {
+                            params.onConfigure();
+                        }
+                    }, {
+                        type: 'close',
+                        handler: function () {
+                            params.onClose(extRenderTo);
+                        }
+                    }],
+                    listeners: {
+                        render: function (c) {
+                            c.body.on('click', function () {
+                                Csw.iterate(_draggables, function (draggable) {
+                                    draggable.header.hide();
+                                });
+                                extRenderTo.header.show();
+                            });
+                        },
+                        afterrender: function () {
+                            this.header.hide();
+                        }
+                    },
                     onDrop: params.onDrop
                 });
                 _draggables.push(extRenderTo);
@@ -155,6 +181,18 @@
             cswPublic.getNumCols = function () {
                 /* How many columns does this panel have? */
                 return dragPanelCmp.items.items.length;
+            };
+
+            cswPublic.removeDraggableFromCol = function (colNo, draggableId) {
+                var newDraggables = [];
+                Csw.iterate(_draggables, function(draggable) {
+                    if (draggable.getId() !== draggableId) {
+                        newDraggables.push(draggable);
+                    }
+                });
+                _draggables = newDraggables;
+                var extCol = getCol(colNo);
+                extCol.remove(window.Ext.getCmp(draggableId));
             };
 
         }());

@@ -1,5 +1,4 @@
-﻿using System.Collections.ObjectModel;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.ServiceModel;
 using System.ServiceModel.Activation;
 using System.ServiceModel.Web;
@@ -46,14 +45,33 @@ namespace NbtWebApp.Services
         [WebInvoke( Method = "POST" )]
         [FaultContract( typeof( FaultException ) )]
         [Description( "" )]
-        public CswNbtLayoutDataReturn updateLayout( CswNbtLayoutDataCollection LayoutData )
+        public CswNbtLayoutDataReturn updateLayout( CswNbtNodeTypeLayout LayoutData )
         {
             CswNbtLayoutDataReturn Ret = new CswNbtLayoutDataReturn();
 
-            var GetViewDriverType = new CswWebSvcDriver<CswNbtLayoutDataReturn, CswNbtLayoutDataCollection>(
+            var GetViewDriverType = new CswWebSvcDriver<CswNbtLayoutDataReturn, CswNbtNodeTypeLayout>(
                 CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
                 ReturnObj : Ret,
                 WebSvcMethodPtr : CswNbtWebServiceLayout.UpdateLayout,
+                ParamObj : LayoutData
+                );
+
+            GetViewDriverType.run();
+            return ( Ret );
+        }
+
+        [OperationContract]
+        [WebInvoke( Method = "POST" )]
+        [FaultContract( typeof( FaultException ) )]
+        [Description( "" )]
+        public CswNbtLayoutDataReturn removePropsFromLayout( CswNbtNodeTypeLayout LayoutData )
+        {
+            CswNbtLayoutDataReturn Ret = new CswNbtLayoutDataReturn();
+
+            var GetViewDriverType = new CswWebSvcDriver<CswNbtLayoutDataReturn, CswNbtNodeTypeLayout>(
+                CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj : Ret,
+                WebSvcMethodPtr : CswNbtWebServiceLayout.RemovePropsFromLayout,
                 ParamObj : LayoutData
                 );
 

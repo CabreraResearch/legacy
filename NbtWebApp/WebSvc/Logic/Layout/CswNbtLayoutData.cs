@@ -11,23 +11,19 @@ namespace NbtWebApp.WebSvc.Logic.Layout
     {
         public CswNbtLayoutDataReturn()
         {
-            Data = new CswNbtLayoutData();
+            Data = new CswNbtNodeTypeLayout();
         }
 
         [DataMember]
-        public CswNbtLayoutData Data;
+        public CswNbtNodeTypeLayout Data;
     }
 
     [DataContract]
-    public class CswNbtLayoutDataCollection
+    public class CswNbtNodeTypeLayout
     {
-        [DataMember]
-        public Collection<CswNbtLayoutData> Props = new Collection<CswNbtLayoutData>();
-    }
+        [DataMember (Name = "props")]
+        public Collection<CswNbtLayoutProp> Props = new Collection<CswNbtLayoutProp>();
 
-    [DataContract]
-    public class CswNbtLayoutData
-    {
         private CswEnumNbtLayoutType _layout = null;
         public CswEnumNbtLayoutType Layout
         {
@@ -46,42 +42,6 @@ namespace NbtWebApp.WebSvc.Logic.Layout
             }
         }
 
-        //private CswNbtMetaDataNodeType _nodeType;
-        //public CswNbtMetaDataNodeType NodeType
-        //{
-        //    get
-        //    {
-        //        if( null == _nodeType && Int32.MinValue != _nodeTypeId )
-        //        {
-        //            _nodeType = CswNbtResources.MetaData.getNodeType( _nodeTypeId );
-        //        }
-        //        return _nodeType;
-        //    }
-        //    set
-        //    {
-        //        _nodeType = value;
-        //        _nodeTypeId = ( null != value ? value.NodeTypeId : Int32.MinValue );
-        //    }
-        //}
-
-        //private CswNbtMetaDataNodeTypeProp _nodeTypeProp;
-        //public CswNbtMetaDataNodeTypeProp NodeTypeProp
-        //{
-        //    get
-        //    {
-        //        if( null == _nodeTypeProp )
-        //        {
-        //            _nodeTypeProp = CswNbtResources.MetaData.getNodeTypeProp( _nodeTypePropId );
-        //        }
-        //        return _nodeTypeProp;
-        //    }
-        //    set
-        //    {
-        //        _nodeTypeProp = value;
-        //        _nodeTypePropId = ( null != value ? value.PropId : Int32.MinValue );
-        //    }
-        //}
-
         private string _layoutStr = string.Empty;
         [DataMember( Name = "layout" )]
         private string LayoutStr
@@ -98,10 +58,16 @@ namespace NbtWebApp.WebSvc.Logic.Layout
             set
             {
                 _nodeTypeId = value;
-                //_nodeType = null;
             }
         }
 
+        [DataMember( Name = "tabid" )]
+        public int TabId { get; set; }
+    }
+
+    [DataContract]
+    public class CswNbtLayoutProp
+    {
         private int _nodeTypePropId = Int32.MinValue;
         [DataMember( Name = "nodetypepropid" )]
         public int NodeTypePropId
@@ -110,7 +76,6 @@ namespace NbtWebApp.WebSvc.Logic.Layout
             set
             {
                 _nodeTypePropId = value;
-                //_nodeTypeProp = null;
             }
         }
 
@@ -119,8 +84,5 @@ namespace NbtWebApp.WebSvc.Logic.Layout
 
         [DataMember( Name = "displayrow" )]
         public int DisplayRow { get; set; }
-
-        [DataMember( Name = "tabid" )]
-        public int TabId { get; set; }
     }
 }
