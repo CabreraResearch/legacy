@@ -222,7 +222,9 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                 ICswNbtMetaDataDefinitionObject targetObj = MetaData.getDefinitionObject( RelatedIdType, inFKValue );
                 if( null != targetObj )
                 {
+                    CswNbtViewId OldViewId = View.ViewId;
                     View = targetObj.CreateDefaultView();
+                    View.ViewId = OldViewId;
                 }
                 else
                 {
