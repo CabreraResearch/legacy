@@ -53,6 +53,15 @@
                 renderTo: myDiv.getId(),
                 border: 1,
                 items: [{
+                    xtype: 'toolbar',
+                    items: [{
+                        xtype: 'button',
+                        text: 'Add Column (+)',
+                        onClick: function () {
+                            cswPublic.addCol();
+                        }
+                    }]
+                }, {
                     id: dragPanelCmpId,
                     xtype: 'dragpanel',
                     items: _columns
@@ -98,7 +107,7 @@
                 //figure out how many columns we have
                 var existingCols = dragPanelCmp.items.items.length;
 
-                dragPanelCmp.add(makeCol(existingCols + 1));
+                dragPanelCmp.add(makeCol(existingCols));
             };
 
             cswPublic.removeCol = function (colNo) {
@@ -143,7 +152,7 @@
                 return extComponent.items.items;
             };
 
-            cswPublic.getNumCols = function() {
+            cswPublic.getNumCols = function () {
                 /* How many columns does this panel have? */
                 return dragPanelCmp.items.items.length;
             };
