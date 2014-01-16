@@ -255,13 +255,15 @@
             dragPanel.allowDrag(false);
 
             var seenProps = {};
-            for (var propIdx in properties) {
-                var prop = properties[propIdx];
+            Csw.iterate(properties, function (prop) {
+                //for (var propIdx in properties) {
+                //var prop = properties[propIdx];
                 if (!seenProps[prop.id]) {
                     seenProps[prop.id] = prop;
                     var realCol = prop.displaycol - 1; //server starts cols at 1, dragpanel starts at 0
                     var subDragPanel;
                     dragPanel.addItemToCol(realCol, {
+                        id: prop.id,
                         render: function (extEl, cswEl) {
 
                             var propTbl = cswEl.table();
@@ -299,11 +301,36 @@
                             }
                         },
                         onDrop: function (ext, col, row) {
-                            //TODO: save prop in new layout
+                            var propsReq = [];
+                            var numCols = dragPanel.getNumCols();
+                            for (var i = 0; i < numCols; i++) {
+                                var propPanels = dragPanel.getItemsInCol(i);
+                                var thisCol = i + 1;
+                                var thisRow = 1;
+                                Csw.iterate(propPanels, function (panel) {
+                                    var panelProp = seenProps[panel.id];
+                                    propsReq.push({
+                                        layout: cswPrivate.Layout,
+                                        nodetypeid: node.nodetypeid,
+                                        nodetypepropid: panelProp.id.substr(panelProp.id.lastIndexOf('_') + 1), //this id is 'nodes_<nodeid>_<propid>'
+                                        tabid: tabid,
+                                        displaycol: thisCol,    
+                                        displayrow: thisRow
+                                    });
+                                    thisRow++;
+                                });
+                            }
+                            Csw.ajaxWcf.post({
+                                urlMethod: 'Design/updateLayout',
+                                data: { Props: propsReq },
+                                success: function (response) {
+                                    //nothing to do here
+                                }
+                            });
                         }
                     });
                 } //if (!seenProps[prop.id)
-            } //for prop in properties
+            }); //for prop in properties
 
 
             dragPanel.allowDrag(true);

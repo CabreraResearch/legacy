@@ -1,10 +1,12 @@
-﻿using System.ComponentModel;
+﻿using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.ServiceModel;
 using System.ServiceModel.Activation;
 using System.ServiceModel.Web;
 using System.Web;
 using ChemSW.Nbt.WebServices;
 using ChemSW.WebSvc;
+using NbtWebApp.WebSvc.Logic.Layout;
 
 namespace NbtWebApp.Services
 {
@@ -34,6 +36,25 @@ namespace NbtWebApp.Services
                 ReturnObj: Ret,
                 WebSvcMethodPtr: CswNbtWebServiceDesign.getDesignNodeType,
                 ParamObj: NodeTypeId
+                );
+
+            GetViewDriverType.run();
+            return ( Ret );
+        }
+
+        [OperationContract]
+        [WebInvoke( Method = "POST" )]
+        [FaultContract( typeof( FaultException ) )]
+        [Description( "" )]
+        public CswNbtLayoutDataReturn updateLayout( CswNbtLayoutDataCollection LayoutData )
+        {
+            CswNbtLayoutDataReturn Ret = new CswNbtLayoutDataReturn();
+
+            var GetViewDriverType = new CswWebSvcDriver<CswNbtLayoutDataReturn, CswNbtLayoutDataCollection>(
+                CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj : Ret,
+                WebSvcMethodPtr : CswNbtWebServiceLayout.UpdateLayout,
+                ParamObj : LayoutData
                 );
 
             GetViewDriverType.run();

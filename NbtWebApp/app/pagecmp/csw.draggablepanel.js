@@ -21,7 +21,7 @@
             var colId = _colIdPrefix + colNo;
             var extComponent = window.Ext.getCmp(colId);
             if (!extComponent) { //Did we get a real column?
-                Csw.error.throwException('Cannot render to drag column', 'csw.draggablepanel.js');
+                Csw.error.throwException('Could not find column: ' + colNo, 'csw.draggablepanel.js');
             }
             return extComponent;
         };
@@ -62,6 +62,7 @@
 
             cswPublic.addItemToCol = function (colNo, paramsIn) {
                 var params = {
+                    id: window.Ext.id(),
                     style: {},
                     render: function () { },
                     onDrop: function (extCmp, col, row) { }
@@ -74,7 +75,7 @@
 
                 //Add our drag panel
                 var extRenderTo = extCol.add({
-                    id: window.Ext.id(),
+                    id: params.id,
                     onDrop: params.onDrop
                 });
                 _draggables.push(extRenderTo);
@@ -120,7 +121,7 @@
                    after rendering arbitrary csw content will cause the Ext controls to fix their width/height/ect */
                 dragPanelCmp.doLayout();
             };
-            
+
             cswPublic.lockPanels = function (lock) {
                 /* Lock/Unlock all the child draggables in this drag panel. 
                    This prevents the draggables from being moved, but other items can be dragged into the panel */
@@ -134,6 +135,17 @@
                 /* Lock/unlock all child draggables inside this drag panel and then register/unregister the DropTarget*/
                 cswPublic.lockPanels(allow);
                 dragPanelCmp.allowDrag(allow);
+            };
+
+            cswPublic.getItemsInCol = function (colNo) {
+                /* Gets all draggables in the specified column */
+                var extComponent = getCol(colNo);
+                return extComponent.items.items;
+            };
+
+            cswPublic.getNumCols = function() {
+                /* How many columns does this panel have? */
+                return dragPanelCmp.items.items.length;
             };
 
         }());
