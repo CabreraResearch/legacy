@@ -29,7 +29,7 @@
         
         //put a big logo on the front page
            cswPrivate.splashDiv.css('margin-top', '150px').css('margin-bottom', '50px');
-           cswPrivate.splashDiv.img({ src: 'Images/chemswlive_logo_highrez.png', width: 600 });
+           cswPrivate.splashDiv.img({ src: 'Images/cisprocloud_highrez.png', width: 600 });
 
         cswPrivate.splashDiv.br();
 

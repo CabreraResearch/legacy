@@ -78,5 +78,24 @@ namespace NbtWebApp.Services
             GetViewDriverType.run();
             return ( Ret );
         }
+
+        [OperationContract]
+        [WebInvoke( Method = "POST" )]
+        [FaultContract( typeof( FaultException ) )]
+        [Description( "Gets the Design NodeType definition for the given FieldTypeId" )]
+        public CswNbtWebServiceDesign.CswNbtDesignReturn getDesignNodeTypePropDefinition( string FieldTypeId )
+        {
+            CswNbtWebServiceDesign.CswNbtDesignReturn Ret = new CswNbtWebServiceDesign.CswNbtDesignReturn();
+
+            var GetViewDriverType = new CswWebSvcDriver<CswNbtWebServiceDesign.CswNbtDesignReturn, string>(
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj: Ret,
+                WebSvcMethodPtr: CswNbtWebServiceDesign.getDesignNodeTypePropDefinition,
+                ParamObj: FieldTypeId
+                );
+
+            GetViewDriverType.run();
+            return ( Ret );
+        }
     }
 }

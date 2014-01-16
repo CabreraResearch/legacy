@@ -127,6 +127,10 @@ namespace ChemSW.Nbt.Schema
                 CswNbtMetaDataNodeTypeProp SequenceNTP = PropNT.getNodeTypeProp( CswEnumNbtPropertyAttributeName.Sequence );
                 SequenceNTP.SetFKDeprecated( CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(), SequenceOC.ObjectClassId );
 
+                CswNbtViewId ViewId = SequenceNTP.DesignNode.AttributeProperty[CswNbtFieldTypeRuleRelationship.AttributeName.View].AsViewReference.ViewId;
+                CswNbtView View = _CswNbtSchemaModTrnsctn.ViewSelect.restoreView( ViewId );
+                CswNbtFieldTypeRuleDefaultImpl.setDefaultView( _CswNbtSchemaModTrnsctn.MetaData, SequenceNTP.DesignNode, View, CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(), SequenceOC.ObjectClassId, false );
+
                 foreach( CswNbtObjClassDesignNodeTypeProp PropNode in PropNT.getNodes( false, true ) )
                 {
                     if( SequenceValueMap.ContainsKey( PropNode.NodeId.PrimaryKey ) )
