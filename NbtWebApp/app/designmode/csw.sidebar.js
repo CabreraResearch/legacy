@@ -58,7 +58,6 @@
                 },
                 config: {
                     buttonNames: {
-                        versionsBtn: 'Versions',
                         copyBtn: 'Copy',
                         deleteBtn: 'Delete',
                         newBtn: 'New'
@@ -116,12 +115,10 @@
                     width: '100%',
                     cellalign: 'center'
                 });
-                var versionBtnCell = btnTbl.cell(1, 1).empty();
-                var copyBtnCell = btnTbl.cell(1, 2).empty();
-                var deleteBtnCell = btnTbl.cell(1, 3).empty();
-                var newBtnCell = btnTbl.cell(1, 4).empty();
+                var copyBtnCell = btnTbl.cell(1, 1).empty();
+                var deleteBtnCell = btnTbl.cell(1, 2).empty();
+                var newBtnCell = btnTbl.cell(1, 3).empty();
 
-                cswPrivate.makeButton('Versions', versionBtnCell);
                 cswPrivate.makeButton('Copy', copyBtnCell);
                 cswPrivate.makeButton('Delete', deleteBtnCell);
                 cswPrivate.makeButton('New', newBtnCell);
@@ -337,26 +334,6 @@
             cswPrivate.onButtonClick = function (buttonName) {
                 var windowItems, posX, posY;
                 switch (buttonName) {
-                    case 'Versions':
-
-                        posX = (document.documentElement.clientWidth / 2) - (400 / 2) + 0;
-                        posY = (document.documentElement.clientHeight / 2) - (200 / 2) + 0;
-
-                        cswPrivate.extWindowVersions = Csw.composites.window(cswParent, {
-                            title: 'Versions of ' + cswPrivate.tabState.nodetypename,
-                            x: posX,
-                            y: posY,
-                            height: 200,
-                            width: 400,
-                            layout: 'fit',
-                            modal: true
-                        });
-
-                        cswPrivate.extWindowVersions.attachToMe().span({
-                            text: "So we really aren't sure what this will do yet but here is a placeholder for when we figure it out! :p"
-                        });
-
-                        break;
                     case 'Copy':
                         
                         posX = (document.documentElement.clientWidth / 2) - (400 / 2) + 0;
