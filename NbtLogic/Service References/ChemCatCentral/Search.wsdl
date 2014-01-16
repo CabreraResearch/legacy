@@ -182,6 +182,15 @@
   <wsdl:message name="Search_getListCodesByName_SampleFaultExceptionFault_FaultMessage">
     <wsdl:part xmlns:q19="http://schemas.datacontract.org/2004/07/c3WebServii" name="detail" element="q19:SampleFaultException" />
   </wsdl:message>
+  <wsdl:message name="Search_getACDSuppliers_InputMessage">
+    <wsdl:part name="parameters" element="tns:getACDSuppliers" />
+  </wsdl:message>
+  <wsdl:message name="Search_getACDSuppliers_OutputMessage">
+    <wsdl:part name="parameters" element="tns:getACDSuppliersResponse" />
+  </wsdl:message>
+  <wsdl:message name="Search_getACDSuppliers_SampleFaultExceptionFault_FaultMessage">
+    <wsdl:part xmlns:q20="http://schemas.datacontract.org/2004/07/c3WebServii" name="detail" element="q20:SampleFaultException" />
+  </wsdl:message>
   <wsdl:portType name="Search">
     <wsdl:operation name="canConnect">
       <wsdl:input wsaw:Action="http://tempuri.org/Search/canConnect" message="tns:Search_canConnect_InputMessage" />
@@ -277,6 +286,11 @@
       <wsdl:input wsaw:Action="http://tempuri.org/Search/getListCodesByName" message="tns:Search_getListCodesByName_InputMessage" />
       <wsdl:output wsaw:Action="http://tempuri.org/Search/getListCodesByNameResponse" message="tns:Search_getListCodesByName_OutputMessage" />
       <wsdl:fault wsaw:Action="http://tempuri.org/Search/getListCodesByNameSampleFaultExceptionFault" name="SampleFaultExceptionFault" message="tns:Search_getListCodesByName_SampleFaultExceptionFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="getACDSuppliers">
+      <wsdl:input wsaw:Action="http://tempuri.org/Search/getACDSuppliers" message="tns:Search_getACDSuppliers_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/Search/getACDSuppliersResponse" message="tns:Search_getACDSuppliers_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://tempuri.org/Search/getACDSuppliersSampleFaultExceptionFault" name="SampleFaultExceptionFault" message="tns:Search_getACDSuppliers_SampleFaultExceptionFault_FaultMessage" />
     </wsdl:operation>
   </wsdl:portType>
   <wsdl:service name="Search" />

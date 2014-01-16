@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="e9cb0967-02be-4766-b231-bcc6864a3624" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
+<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="0a395f0d-a87c-4dea-8722-8a3ec1d65551" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
   <ClientOptions>
     <GenerateAsynchronousMethods>false</GenerateAsynchronousMethods>
     <EnableDataBinding>true</EnableDataBinding>
@@ -12,26 +12,8 @@
     <GenerateSerializableTypes>true</GenerateSerializableTypes>
     <Serializer>Auto</Serializer>
     <UseSerializerForFaults>true</UseSerializerForFaults>
-    <ReferenceAllAssemblies>false</ReferenceAllAssemblies>
-    <ReferencedAssemblies>
-      <ReferencedAssembly AssemblyName="CrystalDecisions.CrystalReports.Engine" />
-      <ReferencedAssembly AssemblyName="CrystalDecisions.ReportSource" />
-      <ReferencedAssembly AssemblyName="CrystalDecisions.Shared" />
-      <ReferencedAssembly AssemblyName="CswCommon" />
-      <ReferencedAssembly AssemblyName="Microsoft.CSharp" />
-      <ReferencedAssembly AssemblyName="mscorlib" />
-      <ReferencedAssembly AssemblyName="StructureSearch" />
-      <ReferencedAssembly AssemblyName="System" />
-      <ReferencedAssembly AssemblyName="System.Core" />
-      <ReferencedAssembly AssemblyName="System.Data" />
-      <ReferencedAssembly AssemblyName="System.Data.DataSetExtensions" />
-      <ReferencedAssembly AssemblyName="System.Drawing" />
-      <ReferencedAssembly AssemblyName="System.Runtime.Serialization" />
-      <ReferencedAssembly AssemblyName="System.ServiceModel" />
-      <ReferencedAssembly AssemblyName="System.Windows.Forms" />
-      <ReferencedAssembly AssemblyName="System.Xml" />
-      <ReferencedAssembly AssemblyName="System.Xml.Linq" />
-    </ReferencedAssemblies>
+    <ReferenceAllAssemblies>true</ReferenceAllAssemblies>
+    <ReferencedAssemblies />
     <ReferencedDataContractTypes />
     <ServiceContractMappings />
   </ClientOptions>
@@ -39,15 +21,15 @@
     <MetadataSource Address="http://localhost/c3dev/Search.svc" Protocol="http" SourceId="1" />
   </MetadataSources>
   <Metadata>
-    <MetadataFile FileName="Search.disco" MetadataType="Disco" ID="216efac8-2d1d-4246-9eb4-45570bebe123" SourceId="1" SourceUrl="http://localhost/c3dev/Search.svc?disco" />
-    <MetadataFile FileName="Search.xsd" MetadataType="Schema" ID="5d0317a9-9381-431c-b822-060548b0250c" SourceId="1" SourceUrl="http://localhost/c3dev/Search.svc?xsd=xsd6" />
-    <MetadataFile FileName="Search1.xsd" MetadataType="Schema" ID="7de412da-6403-4c5f-a5db-cdc380e9319e" SourceId="1" SourceUrl="http://localhost/c3dev/Search.svc?xsd=xsd4" />
-    <MetadataFile FileName="Search.wsdl" MetadataType="Wsdl" ID="4503a94c-50a3-476f-863b-bb0e5022e20d" SourceId="1" SourceUrl="http://localhost/c3dev/Search.svc?wsdl" />
-    <MetadataFile FileName="Search2.xsd" MetadataType="Schema" ID="ea9f22f9-93b7-4797-980b-bde98dee3e03" SourceId="1" SourceUrl="http://localhost/c3dev/Search.svc?xsd=xsd2" />
-    <MetadataFile FileName="Search3.xsd" MetadataType="Schema" ID="4bd583c8-69ee-4780-bc04-ee686be5f519" SourceId="1" SourceUrl="http://localhost/c3dev/Search.svc?xsd=xsd3" />
-    <MetadataFile FileName="Search5.xsd" MetadataType="Schema" ID="19422046-d88c-4936-8819-1160cc47a878" SourceId="1" SourceUrl="http://localhost/c3dev/Search.svc?xsd=xsd0" />
-    <MetadataFile FileName="Search6.xsd" MetadataType="Schema" ID="01fc4d09-eef2-4620-8858-58645d18c8ab" SourceId="1" SourceUrl="http://localhost/c3dev/Search.svc?xsd=xsd1" />
-    <MetadataFile FileName="Search7.xsd" MetadataType="Schema" ID="9358cd13-db39-4c87-b4ae-0078646b0eaf" SourceId="1" SourceUrl="http://localhost/c3dev/Search.svc?xsd=xsd5" />
+    <MetadataFile FileName="Search.disco" MetadataType="Disco" ID="e5a6f135-5f3e-4b9f-ae78-512470a0222f" SourceId="1" SourceUrl="http://localhost/c3dev/Search.svc?disco" />
+    <MetadataFile FileName="Search.xsd" MetadataType="Schema" ID="80088eb3-e358-4109-8e80-2a7dcc362144" SourceId="1" SourceUrl="http://localhost/c3dev/Search.svc?xsd=xsd6" />
+    <MetadataFile FileName="Search1.xsd" MetadataType="Schema" ID="19552f35-8e9a-4142-8ea3-1a75ea6e415a" SourceId="1" SourceUrl="http://localhost/c3dev/Search.svc?xsd=xsd4" />
+    <MetadataFile FileName="Search.wsdl" MetadataType="Wsdl" ID="7a29a8a9-b46e-43ce-8314-ce221e190590" SourceId="1" SourceUrl="http://localhost/c3dev/Search.svc?wsdl" />
+    <MetadataFile FileName="Search2.xsd" MetadataType="Schema" ID="ef0a4460-dfbb-4321-ba94-db646f550732" SourceId="1" SourceUrl="http://localhost/c3dev/Search.svc?xsd=xsd2" />
+    <MetadataFile FileName="Search3.xsd" MetadataType="Schema" ID="debf1e9a-9580-4136-8548-c4e3d76a4b96" SourceId="1" SourceUrl="http://localhost/c3dev/Search.svc?xsd=xsd3" />
+    <MetadataFile FileName="Search4.xsd" MetadataType="Schema" ID="9082ec84-26f0-4bd5-bde7-9b5547990bd8" SourceId="1" SourceUrl="http://localhost/c3dev/Search.svc?xsd=xsd0" />
+    <MetadataFile FileName="Search5.xsd" MetadataType="Schema" ID="c1e48dbb-2713-4855-9165-7708bf622aa9" SourceId="1" SourceUrl="http://localhost/c3dev/Search.svc?xsd=xsd1" />
+    <MetadataFile FileName="Search6.xsd" MetadataType="Schema" ID="57c4e03a-e21b-4fdc-8be6-eebed5fef11f" SourceId="1" SourceUrl="http://localhost/c3dev/Search.svc?xsd=xsd5" />
   </Metadata>
   <Extensions>
     <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />
