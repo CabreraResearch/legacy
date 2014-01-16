@@ -1,5 +1,6 @@
 ﻿
 using ChemSW;
+using ChemSW.Exceptions;
 using ChemSW.Nbt;
 using ChemSW.Nbt.MetaData;
 
@@ -24,6 +25,10 @@ namespace NbtWebApp.WebSvc.Logic.Layout
             foreach( CswNbtLayoutProp Prop in Req.Props )
             {
                 CswNbtMetaDataNodeTypeProp ntp = NbtResources.MetaData.getNodeTypeProp( Prop.NodeTypePropId );
+                if( CswEnumNbtLayoutType.Add == Req.Layout && ntp.IsRequired )
+                {
+                    throw new CswDniException( CswEnumErrorType.Warning, "Cannot remove required properties from Add layouts", "" );
+                }
                 NbtResources.MetaData.NodeTypeLayout.removePropFromLayout( Req.Layout, ntp, Req.TabId );
             }
         }

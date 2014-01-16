@@ -240,7 +240,7 @@
             var labelDiv = propTbl.cell(1, 1).div().css({ 'padding': '5px 10px' });
             var propDiv = propTbl.cell(1, 2).div().css({ 'padding': '5px 10px' });
 
-            labelDiv.setLabelText(prop.name, prop.required, true); //in design mode, readonly better always be true OR ELSE!!
+            labelDiv.setLabelText(prop.name, prop.required, false); //in design mode, readonly better always be true, but we want required props to have the "*"
 
             var fieldOpt = cswPrivate.makePropOpt(tabid, node, prop, propDiv);
             Csw.nbt.property(fieldOpt, {});
@@ -306,26 +306,36 @@
                             cswPrivate.saveLayout(dragPanel, node, seenProps, tabid);
                         },
                         onClose: function (draggable) {
-                            var confirm = Csw.dialogs.confirmDialog({
-                                title: 'Remove Property From Layout',
-                                message: 'Are you sure you want to remove this property from the layout?',
-                                onYes: function () {
-                                    var doomedProp = seenProps[draggable.id];
-                                    var doomedPropsCollection = [{
-                                        nodetypepropid: doomedProp.id.substr(doomedProp.id.lastIndexOf('_') + 1),
-                                        displaycol: Csw.int32MinVal,
-                                        displayrow: Csw.int32MinVal
-                                    }];
-                                    dragPanel.removeDraggableFromCol(realCol, draggable.id);
-                                    cswPrivate.removePropsFromLayout(node, doomedPropsCollection, tabid, function () {
-                                        cswPrivate.saveLayout(dragPanel, node, seenProps, tabid);
-                                    });
-                                    confirm.close();
-                                },
-                                onNo: function () {
-                                    confirm.close();
-                                }
-                            });
+                            var doomedProp = seenProps[draggable.id];
+                            if (false === doomedProp.required && 'Add' === cswPrivate.Layout) {
+                                var confirm = Csw.dialogs.confirmDialog({
+                                    title: 'Remove Property From Layout',
+                                    message: 'Are you sure you want to remove this property from the layout?',
+                                    height: 200,
+                                    width: 300,
+                                    onYes: function () {
+                                        var doomedPropsCollection = [{
+                                            nodetypepropid: doomedProp.id.substr(doomedProp.id.lastIndexOf('_') + 1),
+                                            displaycol: Csw.int32MinVal,
+                                            displayrow: Csw.int32MinVal
+                                        }];
+                                        dragPanel.removeDraggableFromCol(realCol, draggable.id);
+                                        cswPrivate.removePropsFromLayout(node, doomedPropsCollection, tabid, function () {
+                                            cswPrivate.saveLayout(dragPanel, node, seenProps, tabid);
+                                        });
+                                        confirm.close();
+                                    },
+                                    onNo: function () {
+                                        confirm.close();
+                                    }
+                                });
+                            } else {
+                                var alert = Csw.dialogs.alert({
+                                    title: 'Error removing property',
+                                    message: 'Cannot remove required properties from the Add layout'
+                                });
+                                alert.open();
+                            }
                         }
                     });
                 } //if (!seenProps[prop.id)
