@@ -41,7 +41,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public override void beforeWriteNode( bool Creating )
+        protected override void beforeWriteNodeLogic( bool Creating )
         {
             if( false == IsTemp )
             {
@@ -49,7 +49,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }//beforeWriteNode()
 
-        public override void beforeDeleteNode()
+        protected override void beforeDeleteNodeLogic()
         {
             if( Name.Text == BaseUnit.Text )
             {

@@ -405,7 +405,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public override void beforePromoteNode( bool OverrideUniqueValidation )
+        protected override void beforePromoteNodeLogic( bool OverrideUniqueValidation = false )
         {
             RequestType.Value = Type.Value;
             TotalDispensed.UnitId = Quantity.UnitId;
@@ -420,12 +420,12 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-        public override void afterPromoteNode()
+        protected override void afterPromoteNodeLogic()
         {
             _updateCartCounts();
         }
 
-        public override void beforeWriteNode( bool Creating )
+        protected override void beforeWriteNodeLogic( bool Creating )
         {
             if( Creating )
             {
@@ -441,7 +441,7 @@ namespace ChemSW.Nbt.ObjClasses
             TypeDef.setDescription();
         }
 
-        public override void beforeDeleteNode()
+        protected override void beforeDeleteNodeLogic()
         {
             _updateCartCounts( -1 );
         }

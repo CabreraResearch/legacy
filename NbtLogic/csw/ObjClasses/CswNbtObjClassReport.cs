@@ -76,7 +76,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public override void beforeWriteNode( bool Creating )
+        protected override void beforeWriteNodeLogic( bool Creating )
         {
             if( CswSqlAnalysis.doesSqlContainDmlOrDdl( SQL.Text ) )
             {
@@ -84,7 +84,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }//beforeWriteNode()
 
-        public override void afterWriteNode()
+        protected override void afterWriteNodeLogic()
         {
             // BZ 10048
             Collection<object> AfterModifyReportEvents = _CswNbtResources.CswEventLinker.Trigger( AfterModifyReportEventName );

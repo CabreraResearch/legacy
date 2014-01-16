@@ -21,17 +21,17 @@ namespace ChemSW.Nbt.PropTypes
         {
             _SequenceSubField = ( (CswNbtFieldTypeRuleSequence) _FieldTypeRule ).SequenceSubField;
             _SequenceNumberSubField = ( (CswNbtFieldTypeRuleSequence) _FieldTypeRule ).SequenceNumberSubField;
-
-            _SequenceValue = new CswNbtSequenceValue( NodeTypePropId, _CswNbtResources );
+            _Sequence = CswNbtMetaDataNodeTypeProp.Sequence;
 
             // Associate subfields with methods on this object, for SetSubFieldValue()
             _SubFieldMethods.Add( _SequenceSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Sequence, x => setSequenceValueOverride( CswConvert.ToString( x ), true ) ) );
             _SubFieldMethods.Add( _SequenceNumberSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => SequenceNumber, null ) );
         }
 
-        private CswNbtSequenceValue _SequenceValue;
+        //private CswNbtSequenceValue _SequenceValue;
         private CswNbtSubField _SequenceSubField;
         private CswNbtSubField _SequenceNumberSubField;
+        private CswNbtObjClassDesignSequence _Sequence;
 
 
         override public bool Empty
@@ -65,7 +65,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             if( Sequence.Trim() == string.Empty )
             {
-                string value = _SequenceValue.getNext();
+                string value = _Sequence.getNext();
                 setSequenceValueOverride( value, false );
             }
         }
@@ -80,14 +80,14 @@ namespace ChemSW.Nbt.PropTypes
         public void setSequenceValueOverride( string SeqValue, bool ResetSequence )
         {
             SetPropRowValue( _SequenceSubField, SeqValue );
-            Int32 ThisSeqValue = _SequenceValue.deformatSequence( SeqValue );
+            Int32 ThisSeqValue = _Sequence.deformatSequence( SeqValue );
             SetPropRowValue( _SequenceNumberSubField, ThisSeqValue );
             Gestalt = SeqValue;
 
             if( ResetSequence )
             {
                 // Keep the sequence up to date
-                _SequenceValue.reSync( ThisSeqValue );
+                _Sequence.reSync( CswNbtFieldTypeRuleSequence.SequenceNumberColumn, ThisSeqValue );
             }
         }
 

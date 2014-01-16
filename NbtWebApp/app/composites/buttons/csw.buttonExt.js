@@ -77,8 +77,10 @@
             /// <summary>Enable the button.</summary>
             /// <returns type="button">The button object.</returns>
             cswPrivate.isEnabled = true;
-            cswPrivate.button.enable();
-            cswPrivate.button.setText(cswPrivate.enabledText);
+            if (cswPrivate.button) {
+                cswPrivate.button.enable();
+                cswPrivate.button.setText(cswPrivate.enabledText);
+            }
             return cswPublic;
         });
 
@@ -90,9 +92,11 @@
             /// <summary>Disable the button.</summary>
             /// <returns type="button">The button object.</returns>
             cswPrivate.isEnabled = false;
-            cswPrivate.button.disable();
-            if (false === Csw.isNullOrEmpty(cswPrivate.disabledText)) {
-                cswPrivate.button.setText(cswPrivate.disabledText);
+            if (cswPrivate.button) {
+                cswPrivate.button.disable();
+                if (false === Csw.isNullOrEmpty(cswPrivate.disabledText)) {
+                    cswPrivate.button.setText(cswPrivate.disabledText);
+                }
             }
             return cswPublic;
         });

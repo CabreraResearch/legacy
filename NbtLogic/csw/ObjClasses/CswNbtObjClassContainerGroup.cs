@@ -41,7 +41,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public override void beforeWriteNode( bool Creating )
+        protected override void beforeWriteNodeLogic( bool Creating )
         {
             if( CswEnumTristate.True == this.SyncLocation.Checked && ( this.Location.wasAnySubFieldModified() || this.SyncLocation.wasAnySubFieldModified() ) )
             {

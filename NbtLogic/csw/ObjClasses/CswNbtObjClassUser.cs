@@ -169,7 +169,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public override void beforeWriteNode( bool Creating )
+        protected override void beforeWriteNodeLogic( bool Creating )
         {
             if( _unableToWriteNodeInvalidUserName() )
             {
@@ -210,7 +210,7 @@ namespace ChemSW.Nbt.ObjClasses
                  ( this.AccountLocked.wasAnySubFieldModified() && this.AccountLocked.Checked == CswEnumTristate.False ) );
         }
 
-        public override void afterWriteNode()
+        protected override void afterWriteNodeLogic()
         {
             CachedData.setHidden( value: true, SaveToDb: true );
             // BZ 9170
@@ -219,7 +219,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         //afterWriteNode()
 
-        public override void beforeDeleteNode()
+        protected override void beforeDeleteNodeLogic()
         {
             //prevent user from deleting their own user
             if( _CswNbtNode.NodeId == _CswNbtResources.CurrentUser.UserId )

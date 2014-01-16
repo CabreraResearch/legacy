@@ -60,13 +60,13 @@ namespace ChemSW.Nbt.ObjClasses
         #endregion Properties and ctor
 
         #region Inherited Events
-        
-        public override void afterWriteNode()
+
+        protected override void afterWriteNodeLogic()
         {
             _syncDefaultHazardClassOptions();
         }//afterWriteNode()
 
-        public override void afterDeleteNode()
+        protected override void afterDeleteNodeLogic()
         {
             _syncDefaultHazardClassOptions();
         }//afterDeleteNode()        

@@ -31,16 +31,6 @@
         }
     });
     
-    var isSidebarVisible = false;
-    Csw.designmode.isSidebarVisible = Csw.designmode.isSidebarVisible ||
-        Csw.designmode.register('isSidebarVisible', function () {
-        /// <summary>
-        /// Getter for isSidebarVisible
-        /// </summary>
-        /// <returns type="">True if the Design Mode sidebar is visible</returns>
-        return isSidebarVisible;
-    });
-
     // This needs to be defined globally. It should only be defined once and then 
     //call new Sidebar to create instances of it
 
@@ -94,7 +84,6 @@
                 
                 //Hide the Tree
                 Csw.main.leftDiv.hide();
-                isSidebarVisible = true;
 
                 // Create the sizebar
                 cswPrivate.newSidebar = new DesignSidebar({
@@ -300,13 +289,13 @@
                 });
                 //#endregion Add Properties
                 
-                Ext.create('Ext.Button', {
-                    text: 'Click me',
-                    renderTo: cswPublic.componentItem.div().getId(),
-                    handler: function () {
-                        alert('You clicked the button!');
-                    }
-                });
+                //Ext.create('Ext.Button', {
+                //    text: 'Click me',
+                //    renderTo: cswPublic.componentItem.div().getId(),
+                //    handler: function () {
+                //        alert('You clicked the button!');
+                //    }
+                //});
             };
 
 
@@ -318,7 +307,6 @@
                     }
                     delete cswPrivate.ajax[name];
                 });
-                isSidebarVisible = false;
                 Csw.main.leftDiv.show();
             };
 
@@ -420,8 +408,8 @@
                             title: 'Delete ' + cswPrivate.tabState.nodetypename,
                             y: posY,
                             x: posX,
-                            height: 100,
-                            width: 400,
+                            height: 150,
+                            width: 450,
                             layout: 'fit',
                             buttons: [
                                 {
@@ -456,7 +444,9 @@
                         });
 
                         cswPrivate.extWindowDelete.attachToMe().div({
-                            text: "Are you sure you want to delete the " + cswPrivate.tabState.nodetypename + " nodetype?"
+                            text: 'Are you sure you want to delete the "' + cswPrivate.tabState.nodetypename +
+                                '" nodetype?  All instances of "' + cswPrivate.tabState.nodetypename + '" will be deleted.' +
+                                '<br/><br/>Warning: this action <strong>cannot</strong> be undone.'
                         });
 
                         break;
@@ -515,7 +505,7 @@
                     urlMethod: 'Nodes/createTempNode',
                     data: designNTNodeId,
                     success: function (data) {
-                        Csw.clientDb.setItem('openSidebar', true);
+                        Csw.clientDb.setItem('openDesignMode', true);
                         Csw.main.handleItemSelect({
                             type: 'view',
                             mode: 'tree',
@@ -531,7 +521,6 @@
             //constructor
             (function _postCtor() {
                 cswPrivate.init();
-                Csw.subscribe('designModeSidebarTearDown', cswPrivate.onTearDown);
             }());
 
             //#endregion _postCtor

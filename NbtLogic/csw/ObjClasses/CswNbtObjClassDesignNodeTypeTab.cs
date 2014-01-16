@@ -65,7 +65,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public override void beforePromoteNode( bool OverrideUniqueValidation )
+        protected override void beforePromoteNodeLogic( bool OverrideUniqueValidation = false )
         {
             if( Int32.MinValue == Order.Value )
             {
@@ -73,7 +73,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-        public override void afterPromoteNode()
+        protected override void afterPromoteNodeLogic()
         {
             // ------------------------------------------------------------
             // This logic from makeNewTab in CswNbtMetaData.cs
@@ -113,7 +113,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         public bool InternalDelete = false;
 
-        public override void afterDeleteNode()
+        protected override void afterDeleteNodeLogic()
         {
             if( false == InternalDelete )
             {

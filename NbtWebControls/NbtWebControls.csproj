@@ -71,7 +71,6 @@
     <Compile Include="csw\CswPropertyTableJQuery.cs" />
     <Compile Include="csw\CswPropertyTableLabel.cs" />
     <Compile Include="csw\CswQuickLaunch.cs" />
-    <Compile Include="csw\CswSequencesEditor.cs" />
     <Compile Include="csw\CswSessionResourcesNbt.cs" />
     <Compile Include="csw\CswSuperCycleCacheWeb.cs" />
     <Compile Include="csw\CswTabOuterTable.cs" />

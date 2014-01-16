@@ -105,7 +105,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public override void beforePromoteNode( bool OverrideUniqueValidation )
+        protected override void beforePromoteNodeLogic( bool OverrideUniqueValidation = false )
         {
             // Make sure propname is unique for this nodetype
             if( false == CswTools.IsPrimaryKey( NodeTypeValue.RelatedNodeId ) )
@@ -123,7 +123,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
         } // beforePromoteNode()
 
-        public override void afterPromoteNode()
+        protected override void afterPromoteNodeLogic()
         {
             // ------------------------------------------------------------
             // This logic from makeNewNodeType and makeNewProp in CswNbtMetaData.cs
@@ -194,7 +194,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         } // afterPromoteNode()
 
-        public override void beforeWriteNode( bool IsCreating ) // bool IsCopy, bool OverrideUniqueValidation )
+        protected override void beforeWriteNodeLogic( bool IsCreating ) // bool IsCopy, bool OverrideUniqueValidation )
         {
             // If display condition is set, required must be false
             if( false == DisplayConditionProperty.Empty )
@@ -242,9 +242,45 @@ namespace ChemSW.Nbt.ObjClasses
                     }
                 }
             } // if( FieldTypeValue == CswEnumNbtFieldType.Question )
+
+
+            // Sequence change
+            if( null != RelationalNodeTypeProp && AttributeProperty.ContainsKey( CswEnumNbtPropertyAttributeName.Sequence ) )
+            {
+                CswNbtNodePropRelationship SequenceProp = AttributeProperty[CswEnumNbtPropertyAttributeName.Sequence].AsRelationship;
+                if( SequenceProp.wasSubFieldModified( CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID ) )
+                {
+                    if( null != RelationalNodeType && ( FieldTypeValue == CswEnumNbtFieldType.Sequence ||
+                                                        FieldTypeValue == CswEnumNbtFieldType.Barcode ) )
+                    {
+                        // Update nodes
+                        foreach( CswNbtNode CurrentNode in RelationalNodeType.getNodes( false, false ) )
+                        {
+                            CswNbtNodePropWrapper CurrentProp = CurrentNode.Properties[RelationalNodeTypeProp];
+                            if( CurrentProp.getFieldTypeValue() == CswEnumNbtFieldType.Sequence && CurrentProp.AsSequence.Empty )
+                            {
+                                CurrentProp.AsSequence.setSequenceValue();
+                            }
+                            else if( CurrentProp.getFieldTypeValue() == CswEnumNbtFieldType.Barcode && CurrentProp.AsBarcode.Empty )
+                            {
+                                CurrentProp.AsBarcode.setBarcodeValue();
+                            }
+                        }
+
+                        //// need to post this change immediately for resync to work
+                        //_CswNbtMetaDataResources.NodeTypePropTableUpdate.update( _NodeTypePropRow.Table );
+
+                        //// Resync Sequence to next new value
+                        //CswNbtSequenceValue SeqValue = new CswNbtSequenceValue( _CswNbtMetaDataResources.CswNbtResources, SequenceId );
+                        //SeqValue.reSync();
+
+                    } // if prop is sequence or barcode
+                } // if(SequenceProp.wasSubFieldModified( CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID ) )
+            } // if( AttributeProperty.ContainsKey( CswEnumNbtPropertyAttributeName.Sequence ) )
+
         }//beforeWriteNode()
 
-        public override void afterWriteNode()
+        protected override void afterWriteNodeLogic()
         {
             if( null != RelationalNodeTypeProp )
             {
@@ -332,7 +368,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         public bool InternalDelete = false;
 
-        public override void beforeDeleteNode() //bool DeleteAllRequiredRelatedNodes = false )
+        protected override void beforeDeleteNodeLogic() //bool DeleteAllRequiredRelatedNodes = false )
         {
             if( false == IsTemp )
             {
@@ -391,7 +427,7 @@ namespace ChemSW.Nbt.ObjClasses
             } // if( false == IsTemp )
         }//beforeDeleteNode()
 
-        public override void afterDeleteNode()
+        protected override void afterDeleteNodeLogic()
         {
             _UpdateEquipmentAssemblyMatchingProperties( CswEnumNbtPropAction.Delete );
         }//afterDeleteNode()        
@@ -498,7 +534,7 @@ namespace ChemSW.Nbt.ObjClasses
                 {
                     TargetProp.setReadOnly( true, true );
                 }
-                
+
                 // case 31526 - If derived from Object Class, restrict Target options
                 if( DerivesFromObjectClassProp )
                 {

@@ -35,8 +35,8 @@ namespace ChemSW.Nbt.ObjClasses
 
             if( null != Node.ObjClass )
             {
-                Node.ObjClass.beforePromoteNode( OverrideUniqueValidation );
-                Node.ObjClass.beforeWriteNode( true );
+                Node.ObjClass.beforePromoteNode( OverrideUniqueValidation: OverrideUniqueValidation );
+                Node.ObjClass.beforeWriteNode( IsCopy, OverrideUniqueValidation, Creating );
             }
 
             Node.requestWrite( ForceUpdate, IsCopy, OverrideUniqueValidation, Creating, AllowAuditing, SkipEvents );
@@ -44,7 +44,7 @@ namespace ChemSW.Nbt.ObjClasses
             if( null != Node.ObjClass )
             {
                 Node.ObjClass.afterPromoteNode();
-                Node.ObjClass.afterWriteNode();
+                Node.ObjClass.afterWriteNode( Creating );
             }
 
             Node.setModificationState( CswEnumNbtNodeModificationState.Posted );

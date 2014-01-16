@@ -72,7 +72,9 @@ namespace ChemSW.Nbt.Schema
             // Populate nodes
             // Very important that this happens BEFORE we map to the nodetypes table, or else we'll end up duplicating rows!
             Dictionary<Int32, CswNbtObjClassDesignSequence> SequenceNodeMap = new Dictionary<int, CswNbtObjClassDesignSequence>();
-            foreach( DataRow SeqRow in _CswNbtSchemaModTrnsctn.getAllSequences().Rows )
+            CswTableSelect SequencesTableSelect = _CswNbtSchemaModTrnsctn.makeCswTableSelect( "29311_sequencetable_select", "sequences" );
+            DataTable SequencesTable = SequencesTableSelect.getTable();
+            foreach( DataRow SeqRow in SequencesTable.Rows )
             {
                 CswNbtObjClassDesignSequence node = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( SequenceNT.NodeTypeId, OverrideUniqueValidation: true, OnAfterMakeNode: delegate( CswNbtNode NewNode )
                     {
@@ -111,7 +113,7 @@ namespace ChemSW.Nbt.Schema
             foreach( DataRow row in ExistingSequenceIdTable.Rows )
             {
                 Int32 thisSeqId = CswConvert.ToInt32( row["sequenceid"] );
-                if( Int32.MinValue != thisSeqId && SequenceNodeMap.ContainsKey( thisSeqId ))
+                if( Int32.MinValue != thisSeqId && SequenceNodeMap.ContainsKey( thisSeqId ) )
                 {
                     SequenceValueMap.Add( CswConvert.ToInt32( row["nodeid"] ), SequenceNodeMap[thisSeqId] );
                 }

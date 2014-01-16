@@ -100,7 +100,6 @@ namespace ChemSW.Nbt.Actions
 
                 //Generate the barcodes upfront and treat them as custom barcodes so all Containers in this Receipt Def have similar numbers
                 CswNbtMetaDataNodeTypeProp BarcodeProp = (CswNbtMetaDataNodeTypeProp) InitialContainerNode.NodeType.getBarcodeProperty();
-                CswNbtSequenceValue ContainerBarcodeSequence = new CswNbtSequenceValue( BarcodeProp.PropId, _CswNbtResources );
                 for( int i = 0; i < ReceiptDefinition.Quantities.Count; i++ )
                 {
                     CswNbtAmountsGridQuantity quantity = ReceiptDefinition.Quantities[i];
@@ -112,7 +111,7 @@ namespace ChemSW.Nbt.Actions
                         }
                         else
                         {
-                            quantity.Barcodes.Add( ContainerBarcodeSequence.getNext() );
+                            quantity.Barcodes.Add( BarcodeProp.Sequence.getNext() );
                         }
                     }
                 }
