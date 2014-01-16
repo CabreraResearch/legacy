@@ -48,9 +48,10 @@ namespace ChemSW.Nbt.ObjClasses
             public const string CachedData = "Cached Data";
             public const string AvailableWorkUnits = "Available Work Units";
             public const string CostCode = "Cost Code";
+            public const string C3ACDPreferredSuppliers = "C3 ACD Preferred Suppliers";
         }
 
-        public CswNbtObjClassUser( CswNbtResources CswNbtResources, CswNbtNode Node ) : base( CswNbtResources, Node ) {}
+        public CswNbtObjClassUser( CswNbtResources CswNbtResources, CswNbtNode Node ) : base( CswNbtResources, Node ) { }
 
         private CswNbtNode __RoleNode = null;
 
@@ -141,7 +142,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get { return CachedData.Text; }
         }
-        
+
         public static bool IsUserNameUnique( CswNbtResources Resources, string UserName )
         {
             CswNbtObjClassUser ExistingUserNode = Resources.Nodes.makeUserNodeFromUsername( UserName );
@@ -657,6 +658,8 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         public CswNbtNodePropMemo CachedData { get { return _CswNbtNode.Properties[PropertyName.CachedData]; } }
+        // Note for C3ACDPreferredSuppliers: Comma delimited list of companyids
+        public CswNbtNodePropMemo C3ACDPreferredSuppliers { get { return _CswNbtNode.Properties[PropertyName.C3ACDPreferredSuppliers]; } }
 
         #endregion Object class specific properties
 
