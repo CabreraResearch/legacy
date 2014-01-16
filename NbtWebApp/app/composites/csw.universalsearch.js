@@ -195,12 +195,20 @@
                             $.CswDialog('StructureSearchDialog', { loadView: cswPrivate.onLoadView });
                             break;
                         case 'ChemCatCentral Search':
-                            $.CswDialog('C3SearchDialog', {
-                                loadView: cswPrivate.onLoadView,
+                            
+                            Csw.dialogs.c3SearchDialog({
                                 c3searchterm: cswPrivate.searchinput.val(),
                                 c3handleresults: cswPublic.handleResults,
-                                clearview: cswPrivate.onBeforeSearch
+                                clearview: cswPrivate.onBeforeSearch,
+                                loadView: cswPrivate.onLoadView
                             });
+
+                            //$.CswDialog('C3SearchDialog', {
+                            //    loadView: cswPrivate.onLoadView,
+                            //    c3searchterm: cswPrivate.searchinput.val(),
+                            //    c3handleresults: cswPublic.handleResults,
+                            //    clearview: cswPrivate.onBeforeSearch
+                            //});
                             break;
                         default:
                             Csw.publish('initPropertyTearDown');
@@ -324,12 +332,20 @@
                             cssclass: 'SearchC3Label',
                             text: 'ChemCatCentral.',
                             onClick: function () {
-                                $.CswDialog('C3SearchDialog', {
-                                    loadView: cswPrivate.onLoadView,
+                                
+                                Csw.dialogs.c3SearchDialog({
                                     c3searchterm: cswPrivate.searchinput.val(),
                                     c3handleresults: cswPublic.handleResults,
-                                    clearview: cswPrivate.onBeforeSearch
+                                    clearview: cswPrivate.onBeforeSearch,
+                                    loadView: cswPrivate.onLoadView
                                 });
+
+                                //$.CswDialog('C3SearchDialog', {
+                                //    loadView: cswPrivate.onLoadView,
+                                //    c3searchterm: cswPrivate.searchinput.val(),
+                                //    c3handleresults: cswPublic.handleResults,
+                                //    clearview: cswPrivate.onBeforeSearch
+                                //});
                             }
                         });
 
