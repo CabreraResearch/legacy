@@ -63,7 +63,7 @@ namespace ChemSW.Nbt.PropTypes
         /// </summary>
         public void setSequenceValue()
         {
-            if( Sequence.Trim() == string.Empty )
+            if( Sequence.Trim() == string.Empty && null != _Sequence )
             {
                 string value = _Sequence.getNext();
                 setSequenceValueOverride( value, false );
@@ -79,15 +79,18 @@ namespace ChemSW.Nbt.PropTypes
         /// (set true if the value was not just generated from the sequence)</param>
         public void setSequenceValueOverride( string SeqValue, bool ResetSequence )
         {
-            SetPropRowValue( _SequenceSubField, SeqValue );
-            Int32 ThisSeqValue = _Sequence.deformatSequence( SeqValue );
-            SetPropRowValue( _SequenceNumberSubField, ThisSeqValue );
-            Gestalt = SeqValue;
-
-            if( ResetSequence )
+            if( null != _Sequence )
             {
-                // Keep the sequence up to date
-                _Sequence.reSync( CswNbtFieldTypeRuleSequence.SequenceNumberColumn, ThisSeqValue );
+                SetPropRowValue( _SequenceSubField, SeqValue );
+                Int32 ThisSeqValue = _Sequence.deformatSequence( SeqValue );
+                SetPropRowValue( _SequenceNumberSubField, ThisSeqValue );
+                Gestalt = SeqValue;
+
+                if( ResetSequence )
+                {
+                    // Keep the sequence up to date
+                    _Sequence.reSync( CswNbtFieldTypeRuleSequence.SequenceNumberColumn, ThisSeqValue );
+                }
             }
         }
 

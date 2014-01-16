@@ -221,7 +221,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             return RetClearPropVal;
         }
 
-        public void onSetFk( CswNbtMetaDataNodeTypeProp MetaDataProp, CswNbtObjClassDesignNodeTypeProp DesignNTPNode )
+        public void onSetFk( CswNbtObjClassDesignNodeTypeProp DesignNTPNode )
         {
             Collection<CswNbtFieldTypeAttribute> Attributes = getAttributes();
 
