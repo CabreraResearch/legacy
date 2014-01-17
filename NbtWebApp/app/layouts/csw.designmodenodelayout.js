@@ -109,20 +109,15 @@
                     window.Ext.create('Ext.panel.Panel', {
                         renderTo: cswPrivate.contentDiv.getId(),
                         layout: {
-                            align: 'stretch',    // Each takes up full width
-                            padding: 1
+                            type: 'vbox',
+                            align: 'stretch'    // Each takes up full width
                         },
-                        height: 700,
                         items: [{
                             id: identityTabId,
-                            xtype: 'panel',
-                            height: 200,
-                            border: 1
+                            xtype: 'panel'
                         }, {
                             id: tabPanelId,
                             xtype: 'tabpanel',
-                            height: 500,
-                            border: 1,
                             items: tabs
                         }]
                     });
@@ -137,7 +132,6 @@
             cswPrivate.nameDiv.append('Add Node Layout');
             var addPanel = window.Ext.create('Ext.panel.Panel', {
                 renderTo: cswPrivate.contentDiv.getId(),
-                height: 700,
                 layout: {
                     align: 'stretch',
                     padding: 1
@@ -150,7 +144,6 @@
             cswPrivate.nameDiv.append('Preview Node Layout');
             var addPanel = window.Ext.create('Ext.panel.Panel', {
                 renderTo: cswPrivate.contentDiv.getId(),
-                height: 700,
                 layout: {
                     align: 'stretch',
                     padding: 1
@@ -164,7 +157,6 @@
             cswPrivate.nameDiv.append('Search Node Layout');
             var addPanel = window.Ext.create('Ext.panel.Panel', {
                 renderTo: cswPrivate.contentDiv.getId(),
-                height: 700,
                 layout: {
                     align: 'stretch',
                     padding: 1
@@ -311,6 +303,7 @@
                             }
                         },
                         onDrop: function (ext, col, row) {
+                            window.Ext.getCmp(extid).doLayout();
                             cswPrivate.saveLayout(dragPanel, node, seenProps, tabid);
                         },
                         onClose: function (draggable) {
@@ -357,6 +350,7 @@
             //TODO: fix this hack - we need to wait for all property ajax requests (like grid) to finish before calling doLayout()
             Csw.defer(function () {
                 dragPanel.doLayout(); //fix our layout
+                window.Ext.getCmp(extid).doLayout();
             }, 2000);
         };
 

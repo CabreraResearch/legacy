@@ -36,8 +36,7 @@
             var makeCol = function (colNo) {
                 return {
                     id: _colIdPrefix + colNo,
-                    width: 200,
-                    border: 1
+                    width: 200
                 };
             };
 
@@ -46,28 +45,22 @@
             for (var i = 0; i < cswPrivate.columns; i++) {
                 _columns.push(makeCol(i));
             }
-
             //Set up parent
             var dragPanelCmpId = 'draggablepanel' + window.Ext.id();
-            window.Ext.create('Ext.panel.Panel', {
+
+            window.Ext.create('Csw.ext.dragpanel', {
                 renderTo: myDiv.getId(),
-                border: 1,
-                items: [{
-                    xtype: 'toolbar',
-                    items: [{
-                        xtype: 'button',
-                        text: 'Add Column (+)',
-                        onClick: function () {
-                            cswPublic.addCol();
-                        }
-                    }]
-                }, {
-                    id: dragPanelCmpId,
-                    xtype: 'dragpanel',
-                    items: _columns
-                }]
+                id: dragPanelCmpId,
+                border: 0,
+                items: _columns
             });
             var dragPanelCmp = window.Ext.getCmp(dragPanelCmpId);
+            myDiv.div().buttonExt({
+                enabledText: 'Add Column',
+                onClick: function() {
+                    cswPublic.addCol();
+                }
+            });
 
             cswPublic.addItemToCol = function (colNo, paramsIn) {
                 var params = {
@@ -185,7 +178,7 @@
 
             cswPublic.removeDraggableFromCol = function (colNo, draggableId) {
                 var newDraggables = [];
-                Csw.iterate(_draggables, function(draggable) {
+                Csw.iterate(_draggables, function (draggable) {
                     if (draggable.getId() !== draggableId) {
                         newDraggables.push(draggable);
                     }
