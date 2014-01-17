@@ -281,30 +281,30 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                 {
                     OwnerFieldType = CswEnumNbtFieldType.PropertyReference,
                     Name = AttributeName.FKType,
-                    AttributeFieldType = CswEnumNbtFieldType.List,
+                    AttributeFieldType = CswEnumNbtFieldType.Text,
                     Column = CswEnumNbtPropertyAttributeColumn.Fktype
                 } );
             ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
                 {
                     OwnerFieldType = CswEnumNbtFieldType.PropertyReference,
                     Name = AttributeName.Relationship,
-                    AttributeFieldType = CswEnumNbtFieldType.Relationship,
+                    AttributeFieldType = CswEnumNbtFieldType.List,
                     Column = CswEnumNbtPropertyAttributeColumn.Fkvalue,
-                    SubFieldName = CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID
+                    SubFieldName = CswNbtFieldTypeRuleList.SubFieldName.Value
                 } );
             ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
                 {
                     OwnerFieldType = CswEnumNbtFieldType.PropertyReference,
                     Name = AttributeName.RelatedProperty,
-                    AttributeFieldType = CswEnumNbtFieldType.Relationship,
+                    AttributeFieldType = CswEnumNbtFieldType.List,
                     Column = CswEnumNbtPropertyAttributeColumn.Valuepropid,
-                    SubFieldName = CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID
+                    SubFieldName = CswNbtFieldTypeRuleList.SubFieldName.Value
                 } );
             ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
                 {
                     OwnerFieldType = CswEnumNbtFieldType.PropertyReference,
                     Name = AttributeName.RelatedPropType,
-                    AttributeFieldType = CswEnumNbtFieldType.List,
+                    AttributeFieldType = CswEnumNbtFieldType.Text,
                     Column = CswEnumNbtPropertyAttributeColumn.Valueproptype
                 } );
             ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
