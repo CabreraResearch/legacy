@@ -150,6 +150,18 @@ namespace ChemSW.Nbt.ObjClasses
                         InsertedRow["objectclasspropid"] = CswConvert.ToInt32( ObjectClassPropName.Value );
                     }
 
+                    //NOTE: this does not keep the oraviewcolname up to date with updates after original post
+                    if( UseNumbering.Checked != CswEnumTristate.True )
+                    {
+                        string OraViewColName  = PropName.Text;
+                        if( null == ObjectClass ) //Case 31160 - all NTPs with no ObjClass get a special prefix
+                        {
+                            OraViewColName = "cu_" + OraViewColName;
+                        }
+                        InsertedRow["oraviewcolname"] = CswFormat.MakeOracleCompliantIdentifier( OraViewColName );
+
+                    }
+
                     // Copy values from ObjectClassProp
                     _syncFromObjectClassProp( InsertedRow );
                     postChanges( false, SkipEvents: true );
