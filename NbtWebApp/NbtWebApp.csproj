@@ -232,6 +232,8 @@
     <Compile Include="WebSvc\Logic\Import\CswNbtImportWcf.cs" />
     <Compile Include="WebSvc\Logic\Design\CswNbtWebServiceDesign.cs" />
     <Compile Include="WebSvc\Logic\Import\CswNbtWebServiceImport.cs" />
+    <Compile Include="WebSvc\Logic\Layout\CswNbtLayoutData.cs" />
+    <Compile Include="WebSvc\Logic\Layout\CswNbtWebServiceLayout.cs" />
     <Compile Include="WebSvc\Logic\Menus\CswEnumNbtMainMenuActions.cs" />
     <Compile Include="WebSvc\Logic\DemoData\CswNbtDemoDataManager.cs" />
     <Compile Include="WebSvc\Logic\Menus\CswNbtWebServiceSearchMenu.cs" />
