@@ -89,6 +89,10 @@ namespace ChemSW.Nbt.MetaData
         {
             return _CollImpl.getWhere( "where objectclassid = " + ObjectClassId.ToString() ).Cast<CswNbtMetaDataObjectClassProp>();
         }
+        public IEnumerable<CswNbtMetaDataObjectClassProp> getObjectClassPropsByObjectClass( Int32 ObjectClassId, CswEnumNbtFieldType FieldType )
+        {
+            return _CollImpl.getWhere( "where objectclassid = " + ObjectClassId.ToString() + " and fieldtypeid in (select fieldtypeid from field_types where fieldtype = '" + FieldType.ToString() + "')" ).Cast<CswNbtMetaDataObjectClassProp>();
+        }
 
         public IEnumerable<CswNbtMetaDataObjectClassProp> getObjectClassPropsByFieldType( CswEnumNbtFieldType FieldType )
         {
@@ -98,6 +102,11 @@ namespace ChemSW.Nbt.MetaData
         public IEnumerable<CswNbtMetaDataObjectClassProp> getObjectClassPropsByPropertySetId( Int32 PropertySetId )
         {
             return _CollImpl.getWhere( "where objectclasspropid in (select objectclasspropid from jct_propertyset_ocprop where propertysetid = " + PropertySetId + ")" ).Cast<CswNbtMetaDataObjectClassProp>();
+        }
+        public IEnumerable<CswNbtMetaDataObjectClassProp> getObjectClassPropsByPropertySetId( Int32 PropertySetId, CswEnumNbtFieldType FieldType )
+        {
+            return _CollImpl.getWhere( "where objectclasspropid in (select objectclasspropid from jct_propertyset_ocprop where propertysetid = " + PropertySetId + ")" +
+                                       "  and fieldtypeid in (select fieldtypeid from field_types where fieldtype = '" + FieldType.ToString() + "')" ).Cast<CswNbtMetaDataObjectClassProp>();
         }
 
 

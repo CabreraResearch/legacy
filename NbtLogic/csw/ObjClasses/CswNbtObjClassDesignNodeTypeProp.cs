@@ -35,6 +35,8 @@ namespace ChemSW.Nbt.ObjClasses
             public const string UseNumbering = "Use Numbering";
         }
 
+        private const string PropRefValue_OCP_Suffix = " (by Object Class)";
+
         //private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
         public CswNbtObjClassDesignNodeTypeProp( CswNbtResources CswNbtResources, CswNbtNode Node )
@@ -148,6 +150,18 @@ namespace ChemSW.Nbt.ObjClasses
                     if( DerivesFromObjectClassProp )
                     {
                         InsertedRow["objectclasspropid"] = CswConvert.ToInt32( ObjectClassPropName.Value );
+                    }
+
+                    //NOTE: this does not keep the oraviewcolname up to date with updates after original post
+                    if( UseNumbering.Checked != CswEnumTristate.True )
+                    {
+                        string OraViewColName  = PropName.Text;
+                        if( null == ObjectClass ) //Case 31160 - all NTPs with no ObjClass get a special prefix
+                        {
+                            OraViewColName = "cu_" + OraViewColName;
+                        }
+                        InsertedRow["oraviewcolname"] = CswFormat.MakeOracleCompliantIdentifier( OraViewColName );
+
                     }
 
                     // Copy values from ObjectClassProp
@@ -278,6 +292,73 @@ namespace ChemSW.Nbt.ObjClasses
                 } // if(SequenceProp.wasSubFieldModified( CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID ) )
             } // if( AttributeProperty.ContainsKey( CswEnumNbtPropertyAttributeName.Sequence ) )
 
+            if( FieldTypeValue == CswEnumNbtFieldType.PropertyReference )
+            {
+                // Set values for FKType and RelatedPropType
+                CswNbtNodePropText FKTypeWrapper = AttributeProperty[CswNbtFieldTypeRulePropertyReference.AttributeName.FKType].AsText;
+                CswNbtNodePropList RelationshipWrapper = AttributeProperty[CswNbtFieldTypeRulePropertyReference.AttributeName.Relationship].AsList;
+                if( false == FKTypeWrapper.wasAnySubFieldModified( false ) )
+                {
+                    if( false == RelationshipWrapper.Empty )
+                    {
+                        if( RelationshipWrapper.Text.EndsWith( PropRefValue_OCP_Suffix ) )
+                        {
+                            FKTypeWrapper.Text = CswEnumNbtViewPropIdType.ObjectClassPropId.ToString();
+                        }
+                        else
+                        {
+                            FKTypeWrapper.Text = CswEnumNbtViewPropIdType.NodeTypePropId.ToString();
+                        }
+                    }
+                    else
+                    {
+                        FKTypeWrapper.Text = string.Empty;
+                    }
+                }
+                CswNbtNodePropText RelatedPropTypeWrapper = AttributeProperty[CswNbtFieldTypeRulePropertyReference.AttributeName.RelatedPropType].AsText;
+                CswNbtNodePropList RelatedPropWrapper = AttributeProperty[CswNbtFieldTypeRulePropertyReference.AttributeName.RelatedProperty].AsList;
+                if( false == RelatedPropTypeWrapper.wasAnySubFieldModified( false ) )
+                {
+                    if( false == RelatedPropWrapper.Empty )
+                    {
+                        if( RelatedPropWrapper.Text.EndsWith( PropRefValue_OCP_Suffix ) )
+                        {
+                            RelatedPropTypeWrapper.Text = CswEnumNbtViewPropIdType.ObjectClassPropId.ToString();
+                        }
+                        else
+                        {
+                            RelatedPropTypeWrapper.Text = CswEnumNbtViewPropIdType.NodeTypePropId.ToString();
+                        }
+                    }
+                    else
+                    {
+                        RelatedPropTypeWrapper.Text = string.Empty;
+                    }
+                }
+            } // if( FieldTypeValue == CswEnumNbtFieldType.PropertyReference )
+
+
+            if( FieldTypeValue == CswEnumNbtFieldType.ChildContents )
+            {
+                // Set values for FKType
+                CswNbtNodePropText FKTypeWrapper = AttributeProperty[CswNbtFieldTypeRuleChildContents.AttributeName.FKType].AsText;
+                CswNbtNodePropList ChildRelationshipWrapper = AttributeProperty[CswNbtFieldTypeRuleChildContents.AttributeName.ChildRelationship].AsList;
+                if( false == ChildRelationshipWrapper.Empty )
+                {
+                    if( ChildRelationshipWrapper.Text.EndsWith( PropRefValue_OCP_Suffix ) )
+                    {
+                        FKTypeWrapper.Text = CswEnumNbtViewPropIdType.ObjectClassPropId.ToString();
+                    }
+                    else
+                    {
+                        FKTypeWrapper.Text = CswEnumNbtViewPropIdType.NodeTypePropId.ToString();
+                    }
+                }
+                else
+                {
+                    FKTypeWrapper.Text = string.Empty;
+                }
+            } // if( FieldTypeValue == CswEnumNbtFieldType.ChildContents )
         }//beforeWriteNode()
 
         protected override void afterWriteNodeLogic()
@@ -549,80 +630,104 @@ namespace ChemSW.Nbt.ObjClasses
             // PropertyReference - filter to my relationships
             if( FieldTypeValue == CswEnumNbtFieldType.PropertyReference )
             {
-                // Choices for Related Property derive from the selected Relationship
-                CswNbtMetaDataNodeTypeProp RelatedPropertyNTP = NodeType.getNodeTypeProp( CswNbtFieldTypeRulePropertyReference.AttributeName.RelatedProperty );
-                this.Node.Properties[RelatedPropertyNTP].SetOnBeforeRender( delegate( CswNbtNodeProp prop )
+                CswNbtNodePropText FKTypeWrapper = AttributeProperty[CswNbtFieldTypeRulePropertyReference.AttributeName.FKType].AsText;
+                CswNbtNodePropList RelationshipWrapper = AttributeProperty[CswNbtFieldTypeRulePropertyReference.AttributeName.Relationship].AsList;
+                CswNbtNodePropText RelatedPropTypeWrapper = AttributeProperty[CswNbtFieldTypeRulePropertyReference.AttributeName.RelatedPropType].AsText;
+                CswNbtNodePropList RelatedPropWrapper = AttributeProperty[CswNbtFieldTypeRulePropertyReference.AttributeName.RelatedProperty].AsList;
+
+                // Choices for Relationship derive from other Relationships on this NodeType
+                RelationshipWrapper.InitOptions = delegate
                     {
-                        CswNbtMetaDataObjectClass NodeTypePropOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.DesignNodeTypePropClass );
-                        CswNbtMetaDataObjectClassProp NTPNodeTypeOCP = NodeTypePropOC.getObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.NodeTypeValue );
-
-                        CswNbtMetaDataNodeTypeProp RelationshipNTP = NodeType.getNodeTypeProp( CswNbtFieldTypeRulePropertyReference.AttributeName.Relationship );
-                        CswNbtNodePropRelationship RelationshipPropValue = this.Node.Properties[RelationshipNTP].AsRelationship;
-                        if( CswTools.IsPrimaryKey( RelationshipPropValue.RelatedNodeId ) )
+                        CswNbtNodeTypePropListOptions ret = new CswNbtNodeTypePropListOptions( _CswNbtResources, string.Empty, Int32.MinValue, true );
+                        if( null != RelationalNodeType )
                         {
-                            CswNbtObjClassDesignNodeTypeProp RelationshipPropertyNode = _CswNbtResources.Nodes[RelationshipPropValue.RelatedNodeId];
-                            CswNbtMetaDataNodeTypeProp RelationshipPropertyTargetNTP = RelationshipPropertyNode.NodeType.getNodeTypeProp( CswNbtFieldTypeRuleRelationship.AttributeName.Target );
-                            CswNbtNodePropMetaDataList RelationshipTargetValue = RelationshipPropertyNode.Node.Properties[RelationshipPropertyTargetNTP].AsMetaDataList;
-                            ICswNbtMetaDataDefinitionObject RelationshipTarget = RelationshipTargetValue.MetaDataValue;
-                            if( null != RelationshipTarget )
+                            // We have to embed whether this is an object class or nodetype in the Text of the list value, 
+                            // or else the Value won't sync with nodetype_props correctly
+                            foreach( CswNbtMetaDataNodeTypeProp RelationshipNTP in RelationalNodeType.getNodeTypeProps( CswEnumNbtFieldType.Relationship ) )
                             {
-                                // View of all properties of the target nodetype
-                                CswNbtView relpropview = new CswNbtView( _CswNbtResources );
-                                relpropview.ViewName = "propref_relprop_targets_" + NodeTypeId;
-                                CswNbtViewRelationship rel1 = relpropview.AddViewRelationship( NodeTypePropOC, false );
-                                foreach( CswNbtMetaDataNodeType TargetNodeType in RelationshipTarget.getNodeTypes() )
-                                {
-                                    relpropview.AddViewPropertyAndFilter( rel1,
-                                                                          NTPNodeTypeOCP,
-                                                                          Conjunction: CswEnumNbtFilterConjunction.Or,
-                                                                          SubFieldName: CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID,
-                                                                          Value: TargetNodeType.DesignNode.NodeId.PrimaryKey.ToString() );
-                                }
-
-                                this.Node.Properties[RelatedPropertyNTP].AsRelationship.OverrideView( relpropview );
+                                ret.Options.Add( new CswNbtNodeTypePropListOption( RelationshipNTP.PropName, RelationshipNTP.PropId.ToString() ) );
+                            }
+                            foreach( CswNbtMetaDataObjectClassProp RelationshipOCP in RelationalNodeType.getObjectClass().getObjectClassProps( CswEnumNbtFieldType.Relationship ) )
+                            {
+                                ret.Options.Add( new CswNbtNodeTypePropListOption( RelationshipOCP.PropName + PropRefValue_OCP_Suffix, RelationshipOCP.PropId.ToString() ) );
                             }
                         }
-                    } );
+                        return ret;
+                    };
+
+                // Choices for Related Property derive from all properties on the selected Relationship
+                RelatedPropWrapper.InitOptions = delegate
+                    {
+                        CswNbtNodeTypePropListOptions ret = new CswNbtNodeTypePropListOptions( _CswNbtResources, string.Empty, Int32.MinValue, false );
+                        if( false == FKTypeWrapper.Empty && false == RelationshipWrapper.Empty )
+                        {
+                            if( FKTypeWrapper.Text == CswEnumNbtViewPropIdType.NodeTypePropId.ToString() )
+                            {
+                                CswNbtMetaDataNodeTypeProp SelectedNTP = _CswNbtResources.MetaData.getNodeTypeProp( CswConvert.ToInt32( RelationshipWrapper.Value ) );
+                                CswNbtNodePropMetaDataList SelectedNTPTarget = SelectedNTP.DesignNode.AttributeProperty[CswNbtFieldTypeRuleRelationship.AttributeName.Target].AsMetaDataList;
+                                if( SelectedNTPTarget.Type == CswEnumNbtViewRelatedIdType.NodeTypeId )
+                                {
+                                    CswNbtMetaDataNodeType SelectedTargetNT = (CswNbtMetaDataNodeType) SelectedNTPTarget.MetaDataValue;
+                                    foreach( CswNbtMetaDataNodeTypeProp OtherNTP in SelectedTargetNT.getNodeTypeProps() )
+                                    {
+                                        ret.Options.Add( new CswNbtNodeTypePropListOption( OtherNTP.PropName, OtherNTP.PropId.ToString() ) );
+                                    }
+                                }
+                                if( SelectedNTPTarget.Type == CswEnumNbtViewRelatedIdType.ObjectClassId )
+                                {
+                                    CswNbtMetaDataObjectClass SelectedTargetOC = (CswNbtMetaDataObjectClass) SelectedNTPTarget.MetaDataValue;
+                                    foreach( CswNbtMetaDataObjectClassProp OtherOCP in SelectedTargetOC.getObjectClassProps() )
+                                    {
+                                        ret.Options.Add( new CswNbtNodeTypePropListOption( OtherOCP.PropName + PropRefValue_OCP_Suffix, OtherOCP.PropId.ToString() ) );
+                                    }
+                                }
+                            }
+                            else if( FKTypeWrapper.Text == CswEnumNbtViewPropIdType.ObjectClassPropId.ToString() )
+                            {
+                                CswNbtMetaDataObjectClassProp SelectedOCP = _CswNbtResources.MetaData.getObjectClassProp( CswConvert.ToInt32( RelationshipWrapper.Value ) );
+                                CswNbtMetaDataObjectClass SelectedTarget = _CswNbtResources.MetaData.getObjectClass( SelectedOCP.FKValue );
+                                foreach( CswNbtMetaDataObjectClassProp OtherOCP in SelectedTarget.getObjectClassProps() )
+                                {
+                                    ret.Options.Add( new CswNbtNodeTypePropListOption( OtherOCP.PropName + PropRefValue_OCP_Suffix, OtherOCP.PropId.ToString() ) );
+                                }
+                            }
+                        } // if( false == FKTypeWrapper.Empty && false == RelationshipWrapper.Empty )
+                        return ret;
+                    };
+
             } // if( FieldTypeValue == CswEnumNbtFieldType.PropertyReference )
 
-            // ChildContents ChildRelationship - filter to relationships that point to my relational nodetype
             if( FieldTypeValue == CswEnumNbtFieldType.ChildContents )
             {
-                //CswNbtMetaDataObjectClass DesignNtpOC = this.ObjectClass;
-                CswNbtMetaDataNodeType RelationshipPropNT = _CswNbtResources.MetaData.getNodeType( getNodeTypeName( CswEnumNbtFieldType.Relationship ) );
-                CswNbtView ChildView = new CswNbtView( _CswNbtResources );
-                ChildView.ViewName = "childrelationship_targets_" + NodeTypeId;
-                // relationships...
-                CswNbtViewRelationship ntpRel = ChildView.AddViewRelationship( RelationshipPropNT, false );
-                // ...with target equal to my nodetype
-                ChildView.AddViewPropertyAndFilter( ntpRel,
-                                                    RelationshipPropNT.getNodeTypeProp( CswEnumNbtPropertyAttributeName.Target ),
-                                                    SubFieldName: CswNbtFieldTypeRuleMetaDataList.SubFieldName.Type,
-                                                    FilterMode: CswEnumNbtFilterMode.Equals,
-                                                    Value: CswEnumNbtViewRelatedIdType.NodeTypeId.ToString() );
-                ChildView.AddViewPropertyAndFilter( ntpRel,
-                                                    RelationshipPropNT.getNodeTypeProp( CswEnumNbtPropertyAttributeName.Target ),
-                                                    Conjunction: CswEnumNbtFilterConjunction.And,
-                                                    SubFieldName: CswNbtFieldTypeRuleMetaDataList.SubFieldName.Id,
-                                                    FilterMode: CswEnumNbtFilterMode.Equals,
-                                                    Value: this.RelationalNodeType.NodeTypeId.ToString() );
-                // ...or my object class
-                ChildView.AddViewPropertyAndFilter( ntpRel,
-                                                    RelationshipPropNT.getNodeTypeProp( CswEnumNbtPropertyAttributeName.Target ),
-                                                    Conjunction: CswEnumNbtFilterConjunction.Or,
-                                                    SubFieldName: CswNbtFieldTypeRuleMetaDataList.SubFieldName.Type,
-                                                    FilterMode: CswEnumNbtFilterMode.Equals,
-                                                    Value: CswEnumNbtViewRelatedIdType.ObjectClassId.ToString() );
-                ChildView.AddViewPropertyAndFilter( ntpRel,
-                                                    RelationshipPropNT.getNodeTypeProp( CswEnumNbtPropertyAttributeName.Target ),
-                                                    Conjunction: CswEnumNbtFilterConjunction.And,
-                                                    SubFieldName: CswNbtFieldTypeRuleMetaDataList.SubFieldName.Id,
-                                                    FilterMode: CswEnumNbtFilterMode.Equals,
-                                                    Value: this.RelationalNodeType.ObjectClassId.ToString() );
+                CswNbtNodePropText FKTypeWrapper = AttributeProperty[CswNbtFieldTypeRuleChildContents.AttributeName.FKType].AsText;
+                CswNbtNodePropList ChildRelationshipWrapper = AttributeProperty[CswNbtFieldTypeRuleChildContents.AttributeName.ChildRelationship].AsList;
 
-                CswNbtMetaDataNodeTypeProp ChildRelationshipNTP = NodeType.getNodeTypeProp( CswEnumNbtPropertyAttributeName.ChildRelationship );
-                this.Node.Properties[ChildRelationshipNTP].AsRelationship.OverrideView( ChildView );
-            }
+                // ChildContents ChildRelationship - filter to relationships that point to my relational nodetype
+                ChildRelationshipWrapper.InitOptions = delegate
+                    {
+                        CswNbtNodeTypePropListOptions ret = new CswNbtNodeTypePropListOptions( _CswNbtResources, string.Empty, Int32.MinValue, true );
+                        if( null != RelationalNodeType )
+                        {
+                            // We have to embed whether this is an object class or nodetype in the Text of the list value, 
+                            // or else the Value won't sync with nodetype_props correctly
+                            foreach( CswNbtMetaDataNodeTypeProp RelationshipNTP in _CswNbtResources.MetaData.getNodeTypeProps( CswEnumNbtFieldType.Relationship ) )
+                            {
+                                if( RelationshipNTP.FkMatchesNew( RelationalNodeType ) )
+                                {
+                                    ret.Options.Add( new CswNbtNodeTypePropListOption( RelationshipNTP.getNodeType().NodeTypeName +": "+ RelationshipNTP.PropName, RelationshipNTP.PropId.ToString() ) );
+                                }
+                            }
+                            foreach( CswNbtMetaDataObjectClassProp RelationshipOCP in _CswNbtResources.MetaData.getObjectClassProps( CswEnumNbtFieldType.Relationship ) )
+                            {
+                                if( RelationshipOCP.FkMatches( RelationalNodeType ) )
+                                {
+                                    ret.Options.Add( new CswNbtNodeTypePropListOption( RelationshipOCP.getObjectClass().ObjectClass + ": " + RelationshipOCP.PropName + PropRefValue_OCP_Suffix, RelationshipOCP.PropId.ToString() ) );
+                                }
+                            }
+                        }
+                        return ret;
+                    };
+            } // if( FieldTypeValue == CswEnumNbtFieldType.ChildContents )
 
             // Default value
             CswNbtMetaDataNodeTypeProp DefaultValueNTP = NodeType.getNodeTypeProp( CswEnumNbtPropertyAttributeName.DefaultValue );
